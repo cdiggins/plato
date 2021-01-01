@@ -67,8 +67,27 @@ var builder = ListBuilder.Create<Int32>();
 foreach (var i in Range(0,10))
     builder = builder.Add(i * 10);
 foreach (var x in builder)
+    Console = Console.WriteLine(x);
+ ```
+
+Further more this is rewritten as:
+
+```
+var builder = Range(0,10)
+ .Aggregate(ListBuilder.Create<Int32>(), (builder, i) => builder.Add(i * 10));
+Console = builder.Aggrega
     Console.WriteLine(x);
  ```
+ 
+And finally:
+
+```
+var builder = Range(0,10)
+ .Aggregate(ListBuilder.Create<Int32>(), (builder, i) => builder.Add(i * 10));
+foreach (var x in builder)
+    Console.WriteLine(x);
+ ```
+
  
 ## Plato Rules
 
@@ -92,19 +111,9 @@ Plato only supports reflection on expressions for which the values that can be d
 
 ## Plato Compilation Optimization
 
+The Plato language and compiler also built in understanding of the core semantics of collections, allowing substantial high-level stream fusion optimizations (e.g. combining `Select` statements, and so-forth). 
+
 C# maps to IL code in very straightforward and predictable ways. The C# optimizer is very conservative, and does not analyze side effects, and risk any code changes that could change the behavior of code with regards to those side effects. 
 
-The Plato compiler optimizes code with the following assumptions:
-
-* lambdas are primarily used in tight loops
-* foreach statements can be rewritten without using iterators 
-* the ordering of side effects
-* the built-in operations do not map 
-
-Some of the plat 
-
-* Partial evaluation 
-* Function inlining
-* Lambda lifting
-* Stream fusion
+Because Plato does not have side effects, and more expressions can be evaluated at compile-time, the optimizer does numerous passes of inlining and rewriting before generating the final code passed to the IL compiler. 
 
