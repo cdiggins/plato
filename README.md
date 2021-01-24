@@ -111,14 +111,17 @@ Console = Range(0,10)
   
 ## Platonic Reflection
 
-Plato only supports reflection on expressions for which the values that can be determined at compile-time. In this case their is no run-time cost. 
+Plato only supports reflection on expressions for which the values that can be determined at compile-time. This means that reflection in Plato has no run-time cost. 
 The Plato compiler uses a whole program optimizer and because of its strict rules can evaluate a much larger set of expressions at compile-time than the C# compiler. 
 
 # Plato Optimization
 
-The C# optimizer is very conservative, and does not analyze side effects, and risk any code changes that could change the behavior of 
-code with regards to those side effects. Plato does not have side effects, and more expressions can be evaluated at compile-time, 
-so the optimizer does numerous passes of inlining and rewriting before generating the final code passed to the IL compiler. 
+In C# it is considered good practice to not have side effects in lambda functions, particularly when using LINQ. However this is just a guideline, 
+programmers are free to do so. The language semantics are such that if a side-effect happens in a LINQ expression, it does so in a predictable manner. This significantly 
+limits what an optimizing compiler can do in terms of term rewriting and applying optimizations, because it has to guarantee that those side-effects occur as expected 
+regardless of whether a particular optimization is applied or not. 
+
+Plato does not have side effects, and more expressions can be evaluated at compile-time, so the compiler has a wider range of optimization heurisitics it can apply. 
 
 The Plato optimizer assumes a coding style where developers:
 * Prefer code that is succinct
