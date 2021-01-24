@@ -1,23 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Plato
 {
     /// <summary>
-    /// Linear types can't be shared. There can only be one reference to it. 
+    /// Values of a unique type can't be shared. 
+    /// There can only ever be one reference to it. 
+    /// This is enforced by the compiler. 
     /// </summary>
-    public class LinearType : Attribute
+    public class UniqueType : Attribute
     { }
-
-    public static class EnforceLinearity
-    {
-        public static void AssignCopy<T>(ref T src, out T dest) where T: class
-        {
-            dest = src;
-            src = null;
-        }
-    }
 
     public interface IEnumerator<T>
     {
@@ -46,27 +37,27 @@ namespace Plato
         IBidirectionalMapping<TDest, TSrc> Invert();
     }
 
-    [LinearType]
+    [UniqueType]
     public interface IInputStream<T>
     {
         (IInputStream<T>, T) Read();
         bool HasValue { get; }
     }
 
-    [LinearType]
+    [UniqueType]
     public interface IOutputStream<T>
     {
         IOutputStream<T> Write(T x);
         bool Close();
     }
 
-    [LinearType]
+    [UniqueType]
     public interface ICancelToken
-    { 
+    {
         bool IsCanceled { get; }
     }
 
-    [LinearType]
+    [UniqueType]
     public interface ICancelable
     {
         bool IsCanceled { get; }
@@ -79,7 +70,7 @@ namespace Plato
         float Progress { get; }
     }
 
-    [LinearType]
+    [UniqueType]
     public interface IInputOuputStream<T> : IInputStream<T>, IOutputStream<T>
     { }
 
@@ -87,9 +78,9 @@ namespace Plato
     {
         bool Contains(T value);
     }
-    
+
     public interface IOrderedSet<T> : ISet<T>, IArray<T>
-    {        
+    {
     }
 
     public interface IArray<T> : ICountable, IMapping<int, T>
@@ -97,29 +88,34 @@ namespace Plato
         T this[long n] { get; }
     }
 
-    // NOTE: Bags and sets are similar
-    // NOTE: enumerating has to have a predefined order ... what is it? 
-    // NOTE: there are three types of builders: grow only, inspectable 
+    public interface IList<T>
+    {
+        bool IsEmpty { get; }
+        T Head { get; }
+        IList<T> Tail { get; }
+    }
 
-    public interface IArrayBuilder<T> 
+    [UniqueType]
+    public interface IArrayBuilder<T> : IArray<T>
     {
         IArrayBuilder<T> SetCount(long n);
         IArrayBuilder<T> SetValue(long n, T x);
-        IArray<T> ToArray();
     }
 
-    public interface IListBuilder<T> 
+    [UniqueType]
+    public interface IListBuilder<T> : IList<T>
     {
         IListBuilder<T> Add(T x);
-        IArray<T> ToArray();
     }
 
+    [UniqueType]
     public interface IOrderedSetBuilder<T>
     {
         IOrderedSetBuilder<T> Add(T x);
         IOrderedSet<T> ToOrderedSet();
     }
 
+    [UniqueType]
     public interface ISetBuilder<T> 
     {
         ISetBuilder<T> Add(T x);

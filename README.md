@@ -1,6 +1,8 @@
 # Plato
 
-Plato is a strongly typed pure functional programming language designed for high-performance scripting. Syntactically it is a strict subset of C# but has additional semantics and restrictions that facilitate significant optimization of functional code. 
+Plato is a strongly typed pure functional programming language designed for high-performance scripting. 
+Syntactically it is a strict subset of C# but has additional semantics and restrictions that facilitate 
+optimization of functional code. 
 
 ## Why Does Plato Exist
 
@@ -11,34 +13,54 @@ Plato was developed to address the fact that most scripting languages have defic
 * performance
 * type safety
 
-The design goal of Plato is to provide both experienced and inexperienced programmers with a language that has a familiar syntax, and is approachable for both experienced and new developers, and that naturally encourages code that is easily maintained and improved. 
+The design of Plato strives to provide both experienced and inexperienced programmers with a language with a 
+familiar and easy to learn syntax, that naturally encourages code that is easily maintained and improved. 
 
 ### The Problem of Too Much Flexibility 
 
-Any software worth writing will be maintained, modified, and reused. Many scripting languages are designed on a principle of providing extensive flexibility to the programmer, allowing them to stumble into code that appears to be working through trial and error. This ultimately does not do anyone any favors. It makes it easy for programmers to introduce subtle but crippling design flaws into software that make it hard. 
+Any software worth writing will be maintained, modified, and reused. Many languages are designed 
+on the principle of providing a core set of rules and primitives that can be combined in various ways
+that may be surprising and novel, and produce curious and unexpected results. 
 
-Good quality code should not only be the domain of experienced and well trained programmers. A programming language can guide people down a path by making it hard to write poor quality code, and easy to write good quality code.
+This has the advantage of allowing users to invent new use cases to show up, but it also tends to make it easy for 
+programmers, especially inexperienced ones, to introduce subtle but crippling design flaws into software 
+that can be hard to find and undo. 
 
-This is a fundamentally different approach to programming language design to most. 
+JavaScript is a good example of this. It is a language which is very small and elegant, and very flexible, enabling many
+different methods of using it. However large scale code produced in JavaScript is hard to validate and maintain. 
+
+Good quality code should not only be the domain of experienced and well trained programmers. A programming language can 
+guide people down a path by making it hard to write poor quality code, and easy to write good quality code.
 
 ### Can New Programmers Learn a Language Based on Math and Functional Programming
 
-I was part of the team that developed a visual programming language MCG (Max Creation Graph) for Autodesk 3ds Max, a popular 3D and Animation software package. It was based on the functional programming concepts and immutable data structures. It was interesting seeing non-programmers take to it as quickly as they would any other language. Surprisingly, people with some previous programming language experience anecdotally seemed to struggle a bit more, in that they were already used to think in terms 
+I was the architect for the visual programming language MCG (Max Creation Graph) first released as part of Autodesk 3ds Max 2016. 
+It was based on the functional programming concepts and immutable data structures. 
+It was interesting seeing non-programmers take to it as quickly as they would any other language. 
+Surprisingly, people with some previous programming language experience anecdotally seemed to struggle a bit more, in 
+that they were already used to think in terms of mutation. 
 
 ## How does Plato differ from C#
 
-Plato has more types and operations built into the language specification, particularly around immutable collections. 
+Plato is a more restricted language than C#, with less syntax, and non-mutable collections. 
+There are also more types and operations built into the language specification, particularly around immutable collections.
 
-* `IEnumerable<T>`
-* `IArray<T>`
-* `ISet<T>`
-* `IList<T>` 
-* `IRange<T>`
-* `IComparable<T>`
-* `ILookup<TKey, TValue>`
-* `IGrouping<TKey, TValue>`
-* `ITuple<THead, TRest>`
-* `INullable<TValue>`
+## Unique Types
+
+Plato allows certain types to be declared as [UniqueTypes](https://en.wikipedia.org/wiki/Uniqueness_type). A value of a unique type can only 
+ever have a single reference to it, in other words it can't be shared. Unique types are similar to and often used interchangably 
+with linear type.
+
+The syntax for declaring a unique type is as follows: 
+
+```
+    [UniqueType]
+    public interface IInputStream<T>
+    {
+        (IInputStream<T>, T) Read();
+        bool HasValue { get; }
+    }
+```
 
 ## Mutation Exists as an Illusion
 
@@ -60,7 +82,7 @@ foreach (var x in builder)
     Console.WriteLine(x);
 ```
  
-This is equivalent to and is rewritten as:
+This is syntactic sugar for:
 
 ```
 var builder = ListBuilder.Create<Int32>();
@@ -74,46 +96,91 @@ Further more this is rewritten as:
 
 ```
 var builder = Range(0,10)
- .Aggregate(ListBuilder.Create<Int32>(), (builder, i) => builder.Add(i * 10));
-Console = builder.Aggrega
-    Console.WriteLine(x);
+  .Aggregate(ListBuilder.Create<Int32>(), (builder, i) => builder.Add(i * 10));
+Console = builder
+  .Aggregate(Console, Console.WriteLine);
  ```
  
-And finally:
+Which becomes:
 
 ```
-var builder = Range(0,10)
- .Aggregate(ListBuilder.Create<Int32>(), (builder, i) => builder.Add(i * 10));
-foreach (var x in builder)
-    Console.WriteLine(x);
- ```
-
- 
-## Plato Rules
-
-* Lambdas cannot modify state 
-* Function calls can be made in any order, at the discretion of the compiler, if the input maps to the output as expected 
-* Functions with side-effects can be applied non-deterministically 
-* The compiler can o
-* All structs are immutable
-* Class fields are readonly by default 
-* Methods that modify state have to identified using the `Impure` attribute
-* Mutable class fields have to identified using the `Impure` attribute
-* Classes with mutable methods or mutable classe fields have to be identified using the `Impure` attribute 
-* All structs have precise layout semantics when serialized and deserialized.
-* Class and interface references can't be null, unless they derive from nullable 
-* Virtual, abstract, private,and protected functions are prohibited
-* Classes cannot be downcast (i.e. cast from a base class to a derived class) unless it can be determined safely at compile-time 
-
+Console = Range(0,10)
+  .Aggregate(ListBuilder.Create<Int32>(), (builder, i) => builder.Add(i * 10));
+  .Aggregate(Console, Console.WriteLine);
+```
+  
 ## Platonic Reflection
 
-Plato only supports reflection on expressions for which the values that can be determined at compile-time. In this case their is no run-time cost. The Plato compiler is a whole program optimizer and because of its strict rules can evaluate a much larger set of expressions at compile-time than the C# compiler. 
+Plato only supports reflection on expressions for which the values that can be determined at compile-time. In this case their is no run-time cost. 
+The Plato compiler uses a whole program optimizer and because of its strict rules can evaluate a much larger set of expressions at compile-time than the C# compiler. 
 
-## Plato Compilation Optimization
+# Plato Optimization
 
-The Plato language and compiler also built in understanding of the core semantics of collections, allowing substantial high-level stream fusion optimizations (e.g. combining `Select` statements, and so-forth). 
+The C# optimizer is very conservative, and does not analyze side effects, and risk any code changes that could change the behavior of 
+code with regards to those side effects. Plato does not have side effects, and more expressions can be evaluated at compile-time, 
+so the optimizer does numerous passes of inlining and rewriting before generating the final code passed to the IL compiler. 
 
-C# maps to IL code in very straightforward and predictable ways. The C# optimizer is very conservative, and does not analyze side effects, and risk any code changes that could change the behavior of code with regards to those side effects. 
+The Plato optimizer assumes a coding style where developers:
+* Prefer code that is succinct
+* Prefer to not to prematurely optimize code 
+* Frequently use lambdas 
+* Frequently use interfaces and other abstractions 
+* Use many small functions 
 
-Because Plato does not have side effects, and more expressions can be evaluated at compile-time, the optimizer does numerous passes of inlining and rewriting before generating the final code passed to the IL compiler. 
+## Lambda Subexpression Elimination
 
+One of the most effective optimizations performed by Plato is is pre-computation of sub-expressions in lambdas. This is a technique closely related to 
+[Common Subexpression Elimination](https://en.wikipedia.org/wiki/Common_subexpression_elimination).
+
+Consider the following code for computing the variance in C#: 
+
+```
+float Sum(IEnumerable<float> values)
+   => values.Aggregate(0, (acc, x) => acc + x);
+
+float Count(IEnumerable<float> values)
+   => values.Aggregate(0, (acc, x) => acc + y);
+
+float Average(IEnumerable<float> values) 
+   => MySum(values) / MyCount(values); 
+
+float Sqr(float x) 
+   => x * x;
+
+float MyVariance(IEnumerable<float> values)
+   => MySum(values.Select(x => Sqr(x - MyAverage(values))));
+```
+
+This function `MyVariance` is very inefficient, it has `O(N^2)` complexity, 
+because the `MyAverage` function will be called for each item in the list. 
+
+A programmer would naturally rewrite the function as: 
+
+```
+float MyVariance(IEnumerable<float> values)
+{
+   var avg = MyAverage(values);
+   return MySum(values.Select(x => Sqr(x - avg)));
+}
+```
+
+The problem with placing the onus for this on the programmer is that, the code is more complicated, and the programmer has to know that 
+the function `MyAverage` has a significant compute cost in order to do the rewrite. 
+
+This rewrite is performed automatically by the Plato compiler. The compiler does this by:
+
+1. identifying the lambda expression `x => Sqr(x - MyAverage(values))` inside of `MyVariance` (call it `lambda1`)
+2. identifying that the sub-expression `MyAverage(values)` has no dependence on arguments to lambda1` 
+3. lifting the sub-expression `MyAverage(values)` out of the lambda and assigning it to a variable.
+
+In general expressions the rule is that any expression within a lambda that is not dependent on the lambda arguments, 
+is replaced with a variable. 
+
+## Aggressive Inlining
+
+Plato inlining heuristics are very aggressive and performed early to maximize the impact of other optimization passes. 
+
+## Fusion 
+
+The Plato language and compiler leverages the built-in understanding of core semantics of collections, allowing substantial high-level fusion optimizations 
+(e.g. combining `Select` or `Where` statements, and so-forth). 
