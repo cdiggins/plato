@@ -65,16 +65,24 @@ class C
         }
 
         public static float Sqr(float x)
-            => x * x;
+        {
+            return x * x;
+        }
 
         public static string[] SqrToString(float[] vals)
         {
             var tmp = new float[vals.Length];
             var r = new string[vals.Length];
             for (var i = 0; i < vals.Length; ++i)
+            {
                 tmp[i] = vals[i];
+            }
+
             for (var i = 0; i < vals.Length; ++i)
+            {
                 r[i] = tmp[i].ToString();
+            }
+
             return r;
         }
 
@@ -82,7 +90,10 @@ class C
         {
             var r = new string[vals.Length];
             for (var i = 0; i < vals.Length; ++i)
+            {
                 r[i] = (vals[i] * vals[i]).ToString();
+            }
+
             return r;
         }
 
@@ -90,12 +101,17 @@ class C
         {
             var r = new List<string>();
             for (var i = 0; i < vals.Length; ++i)
+            {
                 r.Add((vals[i] * vals[i]).ToString());
+            }
+
             return r;
         }
 
         public static double[] MakeInputFloatArray(int count)
-            => Enumerable.Range(0, count).Select(x => x / 1000.0).ToArray();
+        {
+            return Enumerable.Range(0, count).Select(x => x / 1000.0).ToArray();
+        }
 
         public static TestResult Compare<T, TOutput1, TOutput2>(T input, Func<T, TOutput1> f1, Func<T, TOutput2> f2)
         {
@@ -106,18 +122,25 @@ class C
         }
 
         public static void Output(this TestResult result)
-            => Console.WriteLine(
-                $"Result A = {result.ResultA}, TimeSpan A = {result.SpanA.ToFormattedString()}\n" +
-                $"Result B = {result.ResultB}, TimeSpan A = {result.SpanB.ToFormattedString()}");
+        {
+            Console.WriteLine(
+                           $"Result A = {result.ResultA}, TimeSpan A = {result.SpanA.ToFormattedString()}\n" +
+                           $"Result B = {result.ResultB}, TimeSpan A = {result.SpanB.ToFormattedString()}");
+        }
 
         public static double SumAggregate(double[] xs)
-            => xs.Aggregate((acc, x) => acc + x);
+        {
+            return xs.Aggregate((acc, x) => acc + x);
+        }
 
         public static double SumManual(double[] x)
         {
             var r = 0.0;
             for (var i = 0; i < x.Length; ++i)
+            {
                 r += x[i];
+            }
+
             return r;
         }
 

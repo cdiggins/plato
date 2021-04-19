@@ -14,9 +14,11 @@ namespace Plato
             var num = Math.Round(bytes / Math.Pow(1024, place), numPlacesToRound);
             return $"{Math.Sign(byteCount) * num}{ByteSuffixes[place]}";
         }
-       
+
         public static string ToFormattedString(this TimeSpan ts)
-            => $"{ts.Minutes}:{ts.Seconds}.{ts.Milliseconds:D3}";
+        {
+            return $"{ts.Minutes}:{ts.Seconds}.{ts.Milliseconds:D3}";
+        }
 
         public static (T, TimeSpan) InvokeWithTiming<T>(this Func<T> function)
         {
