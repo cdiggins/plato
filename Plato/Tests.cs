@@ -1,11 +1,4 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.CodeAnalysis.FindSymbols;
-using Microsoft.CodeAnalysis;
+﻿using System;
 
 namespace Plato
 {
@@ -19,6 +12,8 @@ namespace Plato
         public TimeSpan SpanB;
     }
 
+    // TODO: this code is reference code for the future. 
+    /*
     public static class Tests
     {
         [Test]
@@ -164,4 +159,5 @@ class C
 
         }
     }
+    */
 }
