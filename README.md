@@ -1,5 +1,7 @@
 # Plato
 
+April 20th Status: The source code of this project currently only contains utilities for compiling C#. 
+
 Plato is a strongly typed pure functional programming language designed for high-performance scripting. 
 Syntactically it is a strict subset of C# but has additional semantics and restrictions that facilitate 
 optimization of functional code. 
