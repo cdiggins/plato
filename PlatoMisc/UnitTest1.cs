@@ -86,12 +86,6 @@ namespace MyCode
         [Test]
         public void Test1()
         {
-            
-            var a = new[] {1, 2, 3, 4};
-            var p = a.ToPlato();
-            foreach (var x in p)
-                Console.WriteLine(x);
-
             OutputResults(CompareSelect(DefaultSizes, RandomIntegers, x => Math.Sqrt(x)));
         }
 

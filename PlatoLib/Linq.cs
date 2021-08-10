@@ -4,16 +4,9 @@ using System.Linq;
 
 namespace PlatoLib
 {
-    public interface IEnumerator<out T>
-    {
-        bool MoveNext();
-        void Reset();
-        T Current { get; }
-    }
-
     public interface IEnumerable<T>
     {
-        IEnumerator<T> GetEnumerator();
+        TAcc Aggregate<TAcc>(TAcc init, Func<TAcc, T, TAcc> f);
     }
 
     public interface IArray<T> : IEnumerable<T>
@@ -22,32 +15,26 @@ namespace PlatoLib
         int Count { get; }
     }
 
-    public sealed class ArrayEnumerator<T> : IArray<T>, IEnumerator<T>
+    public sealed class ArrayEnumerator<T> : IArray<T>
     {
         public T this[int index]
             => Func(index);
 
         public int Count { get; }
         public readonly Func<int, T> Func;
-        private int _index; 
 
         public ArrayEnumerator(int count, Func<int, T> f)
-            => (Count, Func, _index) = (count, f, -1);
+            => (Count, Func) = (count, f);
 
-        public bool MoveNext()
-            => ++_index < Count;
-
-        public T Current
-            => this[_index];
-
-        public void Reset()
-            => _index = -1;
-
-        public IEnumerator<T> GetEnumerator()
-            => this;
+        public TAcc Aggregate<TAcc>(TAcc init, Func<TAcc, T, TAcc> f)
+        {
+            for (var i = 0; i < Count; ++i)
+                init = f(init, Func(i));
+            return init;
+        }
     }
 
-    public sealed class ArrayAdapter<T> : IArray<T>, IEnumerator<T>
+    public sealed class ArrayAdapter<T> : IArray<T>
     {
         public T this[int index]
             => _list[index];
@@ -55,134 +42,39 @@ namespace PlatoLib
         public int Count => _list.Count;
         private readonly IReadOnlyList<T> _list;
         
-        private int _index;
-
         public ArrayAdapter(IReadOnlyList<T> list)
-            => (_list, _index) = (list, -1);
+            => (_list) = (list);
 
-        public bool MoveNext()
-            => ++_index < Count;
-
-        public T Current
-            => this[_index];
-
-        public void Reset()
-            => _index = -1;
-
-        public IEnumerator<T> GetEnumerator()
-            => this;
+        public TAcc Aggregate<TAcc>(TAcc init, Func<TAcc, T, TAcc> f)
+        {
+            for (var i = 0; i < Count; ++i)
+                init = f(init, _list[i]);
+            return init;
+        }
     }
 
-    public sealed class SelectEnumerator<TSource, TResult> : IEnumerable<TResult>, IEnumerator<TResult>
+    public sealed class SelectEnumerator<TSource, TResult> : IEnumerable<TResult>
     {
-        public readonly IEnumerator<TSource> Source;
+        public readonly IEnumerable<TSource> Source;
         public readonly Func<TSource, TResult> Func;
 
-        public SelectEnumerator(IEnumerator<TSource> source, Func<TSource, TResult> f)
+        public SelectEnumerator(IEnumerable<TSource> source, Func<TSource, TResult> f)
             => (Source, Func) = (source, f);
 
-        public IEnumerator<TResult> GetEnumerator()
-            => this;
-
-        public TResult Current 
-            => Func(Source.Current);
-
-        public bool MoveNext()
-            => Source.MoveNext();
-
-        public void Reset()
-            => Source.Reset();
+        public TAcc Aggregate<TAcc>(TAcc init, Func<TAcc, TResult, TAcc> f)
+            => Source.Aggregate(init, (acc, x) => f(acc, Func(x)));
     }
 
-    public sealed class SelectEnumeratorIndexed<TSource, TResult> : IEnumerable<TResult>, IEnumerator<TResult>
+    public sealed class WhereEnumerator<T> : IEnumerable<T>
     {
-        public readonly IEnumerator<TSource> Source;
-        public readonly Func<TSource, int, TResult> Func;
-        public int _index;
-
-        public SelectEnumeratorIndexed(IEnumerator<TSource> source, Func<TSource, int, TResult> f)
-            => (Source, Func, _index) = (source, f, -1);
-
-        public IEnumerator<TResult> GetEnumerator()
-            => this;
-
-        public TResult Current
-            => Func(Source.Current, _index);
-
-        public bool MoveNext()
-        {
-            _index++;
-            return Source.MoveNext();
-        }
-
-        public void Reset()
-        {
-            _index = -1;
-            Source.Reset();
-        }
-    }
-
-    public sealed class WhereEnumerator<T> : IEnumerable<T>, IEnumerator<T>
-    {
-        public readonly IEnumerator<T> Source;
+        public readonly IEnumerable<T> Source;
         public readonly Func<T, bool> Func;
 
-        public WhereEnumerator(IEnumerator<T> source, Func<T, bool> f)
+        public WhereEnumerator(IEnumerable<T> source, Func<T, bool> f)
             => (Source, Func) = (source, f);
 
-        public IEnumerator<T> GetEnumerator()
-            => this;
-
-        public T Current
-            => Source.Current;
-
-        public bool MoveNext()
-        {
-            while (Source.MoveNext())
-            {
-                if (Func(Current))
-                    return true;
-            }
-
-            return false;
-        }
-
-        public void Reset()
-            => Source.Reset();
-    }
-
-    public sealed class WhereEnumeratorIndexed<T> : IEnumerable<T>, IEnumerator<T>
-    {
-        public readonly IEnumerator<T> Source;
-        public readonly Func<T, int, bool> Func;
-        private int _index;
-
-        public WhereEnumeratorIndexed(IEnumerator<T> source, Func<T, int, bool> f)
-            => (Source, Func, _index) = (source, f, -1);
-
-        public IEnumerator<T> GetEnumerator()
-            => this;
-
-        public T Current
-            => Source.Current;
-
-        public bool MoveNext()
-        {
-            _index++;
-            while (Source.MoveNext())
-            {
-                if (Func(Current, _index))
-                    return true;
-            }
-
-            return false;
-        }
-
-        public void Reset()
-        {
-            _index = -1;
-            Source.Reset();
-        }
+        public TAcc Aggregate<TAcc>(TAcc init, Func<TAcc, T, TAcc> f)
+            => Source.Aggregate(init, (acc, x) => Func(x) ? f(acc, x) : acc);
     }
 
     // I want all of these to work on arrays (IReadOnlyList), and I want them to work on IArray as well (and System IEnumerable)
@@ -193,13 +85,13 @@ namespace PlatoLib
             => new ArrayAdapter<T>(self);
 
         public static IEnumerable<TSource> Where<TSource>(this IEnumerable<TSource> source,
-            Func<TSource, bool> predicate) => new WhereEnumerator<TSource>(source.GetEnumerator(), predicate);
+            Func<TSource, bool> predicate) => new WhereEnumerator<TSource>(source, predicate);
 
         public static IEnumerable<TSource> Where<TSource>(this IEnumerable<TSource> source,
-            Func<TSource, int, bool> predicate) => new WhereEnumeratorIndexed<TSource>(source.GetEnumerator(), predicate);
+            Func<TSource, int, bool> predicate) => throw new NotImplementedException(); //new WhereEnumeratorIndexed<TSource>(source.GetEnumerator(), predicate);
 
         public static IEnumerable<TResult> Select<TSource, TResult>(this IEnumerable<TSource> source,
-            Func<TSource, TResult> selector) => new SelectEnumerator<TSource, TResult>(source.GetEnumerator(), selector);
+            Func<TSource, TResult> selector) => new SelectEnumerator<TSource, TResult>(source, selector);
 
         public static IArray<TResult> Select<TSource, TResult>(this IArray<TSource> source,
             Func<TSource, TResult> selector) => new ArrayEnumerator<TResult>(source.Count, i => selector(source[i]));
@@ -304,12 +196,11 @@ namespace PlatoLib
         }
 
         public static List<TSource> ToList<TSource>(this IEnumerable<TSource> source)
-        {
-            var r = new List<TSource>();
-            foreach (var x in source)
-                r.Add(x);
-            return r;
-        }
+            => source.Aggregate(new List<TSource>(), (list, x) =>
+            {
+                list.Add(x);
+                return list;
+            });
 
         public static List<TSource> ToList<TSource>(this IArray<TSource> source)
         {
@@ -388,13 +279,7 @@ namespace PlatoLib
         public static bool All<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate) => throw new NotImplementedException();
 
         public static int Count<TSource>(this IEnumerable<TSource> source)
-        {
-            var r = 0;
-            var e = source.GetEnumerator(); 
-            while (e.MoveNext())
-                r++;
-            return r;
-        }
+            => source.Aggregate(0, (i, x) => i + 1);
 
         public static int Count<TSource>(this IArray<TSource> source)
             => source.Count;
@@ -412,22 +297,6 @@ namespace PlatoLib
 
         public static TSource Aggregate<TSource>(this IEnumerable<TSource> source, Func<TSource, TSource, TSource> func)
             => source.Aggregate(default, func);
-
-        public static TAccumulate Aggregate<TSource, TAccumulate>(this IEnumerable<TSource> source, TAccumulate seed,
-            Func<TAccumulate, TSource, TAccumulate> func)
-        {
-            foreach (var x in source)
-                seed = func(seed, x);
-            return seed;
-        }
-
-        public static TAccumulate Aggregate<TSource, TAccumulate>(this IArray<TSource> source, TAccumulate seed,
-            Func<TAccumulate, TSource, TAccumulate> func)
-        {
-            for (var i = 0; i < source.Count; ++i)
-                seed = func(seed, source[i]);
-            return seed;
-        }
 
         public static TResult Aggregate<TSource, TAccumulate, TResult>(this IEnumerable<TSource> source, TAccumulate seed, Func<TAccumulate, TSource, TAccumulate> func, Func<TAccumulate, TResult> resultSelector) => throw new NotImplementedException();
 
