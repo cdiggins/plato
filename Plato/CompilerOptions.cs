@@ -8,6 +8,10 @@ namespace Plato
 {
     public class CompilerOptions
     {
+        public CompilerOptions(IEnumerable<string> fileReferences = null, string outputFileName = null, bool debug = true)
+            => (FileReferences, OutputFileName, Debug) = 
+                ((fileReferences ?? PlatoUtils.LoadedAssemblyLocations()).ToArray(), outputFileName ?? PlatoUtils.GenerateNewDllFileName(), debug);
+
         public string OutputFileName { get; }
         public bool Debug { get; }
         public IReadOnlyList<string> FileReferences { get; }
@@ -15,7 +19,7 @@ namespace Plato
         public string AssemblyName
             => Path.GetFileNameWithoutExtension(OutputFileName);
 
-        public LanguageVersion Language { get;  } 
+        public readonly LanguageVersion Language 
             = LanguageVersion.CSharp9;
 
         public CSharpParseOptions ParseOptions
@@ -25,21 +29,11 @@ namespace Plato
             => new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
                 .WithOverflowChecks(true)                
                 .WithOptimizationLevel(Debug ? OptimizationLevel.Debug : OptimizationLevel.Release);
-
-        public static string GenerateNewDllFileName()
-        {
-            return Path.ChangeExtension(Path.GetTempFileName(), "dll");
-        }
-
+    
         public IEnumerable<MetadataReference> MetadataReferences
-            => RoslynUtils.ReferencesFromFiles(FileReferences);
-
-        public CompilerOptions(IEnumerable<string> fileReferences, string outputFileName = null, bool debug = true)
-            => (FileReferences, OutputFileName, Debug) = (fileReferences.ToArray(), outputFileName ?? GenerateNewDllFileName(), debug);
+            => PlatoUtils.ReferencesFromFiles(FileReferences);
 
         public CompilerOptions WithNewOutputFilePath(string fileName = null)
-        {
-            return new CompilerOptions(FileReferences, fileName, Debug);
-        }
+            => new CompilerOptions(FileReferences, fileName, Debug);
     }
 }

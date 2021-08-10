@@ -1,16 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Company>Christopher Diggins</Company>
     <Authors>Christopher Diggins</Authors>
-    <Description>A high-performance strongly typed functional scripting language based on C#.</Description>
+    <Description>A set of utilities for working with Roslyn and the a high-performance strongly typed functional scripting language based on C#.</Description>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/cdiggins/plato</PackageProjectUrl>
     <RepositoryUrl>https://github.com/cdiggins/plato</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
     <PackageId>PlatoLanguage</PackageId>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

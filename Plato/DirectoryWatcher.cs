@@ -17,7 +17,7 @@ namespace Plato
 
         private Action OnChange { get; }
 
-        public DirectoryWatcher(string dir, string filter, bool subDirectories, Action onChange, ISynchronizeInvoke syncObject)
+        public DirectoryWatcher(string dir, string filter, bool subDirectories, Action onChange, ISynchronizeInvoke syncObject = null)
         {
             Watcher = new FileSystemWatcher(dir)
             {

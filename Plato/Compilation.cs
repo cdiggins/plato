@@ -14,12 +14,20 @@ namespace Plato
         public CompilerOptions Options { get; }
         public CSharpCompilation Compiler { get;  }
 
-        public Compilation(IEnumerable<ScriptFile> inputFiles = null, CSharpCompilation compiler = default, CompilerOptions options = default, EmitResult result = default)
+        public Compilation(IEnumerable<ScriptFile> inputFiles = null, CompilerOptions options = default, CSharpCompilation compiler = default, EmitResult result = default)
         {
             InputFileLookup = (inputFiles ?? Array.Empty<ScriptFile>()).ToDictionary(f => f.FilePath, f => f);
-            Options = options ?? new CompilerOptions(RoslynUtils.LoadedAssemblyLocations());
-            Compiler = compiler ?? CSharpCompilation.Create(Options.AssemblyName, null, Options.MetadataReferences, Options.CompilationOptions);
+            Options = options ?? new CompilerOptions(PlatoUtils.LoadedAssemblyLocations());
+            var syntaxTrees = InputFileLookup.Values.Select(f => f.SyntaxTree);
+            Compiler = compiler ?? CSharpCompilation.Create(Options.AssemblyName, syntaxTrees, Options.MetadataReferences, Options.CompilationOptions);
             EmitResult = result;
         }
+
+        public static Compilation Create(IEnumerable<ScriptFile> inputFiles = null,
+            CompilerOptions options = default, CSharpCompilation compiler = default, EmitResult result = default)
+            => new Compilation(inputFiles, options, compiler, result);
+
+        public static Compilation Create(IEnumerable<string> inputFiles, CompilerOptions options = default, CSharpCompilation compiler = default, EmitResult result = default)
+            => new Compilation(inputFiles.Select(f => ScriptFile.Create(f, options?.ParseOptions)), options, compiler, result);
     }
 }
