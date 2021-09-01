@@ -55,7 +55,7 @@ namespace Plato
 
                 Debug.WriteLine($"Emitted assembly success = {Compilation.EmitResult.Success} output = {Compilation.Options.OutputFileName}");
 
-                Debug.WriteLine($"Diagnostics");
+                Debug.WriteLine("Diagnostics");
                 foreach (var x in Compilation.EmitResult.Diagnostics)
                 {
                     Debug.WriteLine($"Diagnostic: {x}");

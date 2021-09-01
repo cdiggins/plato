@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -25,7 +26,7 @@ namespace Plato
         public static ScriptFile Create(ScriptFileId id, CSharpParseOptions options, CancellationToken token = default)
         {
             var f = id.Path;
-            var newSource = SourceText.From(File.ReadAllText(f), System.Text.Encoding.UTF8);
+            var newSource = SourceText.From(File.ReadAllText(f), Encoding.UTF8);
             var newTree = CSharpSyntaxTree.ParseText(newSource, options, f, token);
             return new ScriptFile(id, newSource, newTree);
         }

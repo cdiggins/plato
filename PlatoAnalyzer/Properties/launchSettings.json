@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PlatoAnalyzer": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

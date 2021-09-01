@@ -29,7 +29,7 @@ namespace AutoNotify
         public void Initialize(GeneratorInitializationContext context)
         {
             // Register the attribute source
-            context.RegisterForPostInitialization((i) => i.AddSource("AutoNotifyAttribute", attributeText));
+            context.RegisterForPostInitialization(i => i.AddSource("AutoNotifyAttribute", attributeText));
 
             // Register a syntax receiver that will be created for each generation pass
             context.RegisterForSyntaxNotifications(() => new SyntaxReceiver());

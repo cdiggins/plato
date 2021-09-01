@@ -1,8 +1,8 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Plato
 {
@@ -23,7 +23,7 @@ namespace Plato
             = LanguageVersion.CSharp9;
 
         public CSharpParseOptions ParseOptions
-            => new CSharpParseOptions(Language, DocumentationMode.Parse, SourceCodeKind.Regular, null);
+            => new CSharpParseOptions(Language);
 
         public CSharpCompilationOptions CompilationOptions
             => new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)

@@ -1,7 +1,7 @@
-﻿using Microsoft.CodeAnalysis;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
 namespace PlatoAnalyzer
@@ -23,11 +23,6 @@ namespace PlatoAnalyzer
     [Generator]
     public class HelloWorldGenerator : ISourceGenerator
     {
-        static HelloWorldGenerator()
-        {
-            //Debugger.Launch();
-        }
-
         public void Execute(GeneratorExecutionContext context)
         {
             Debugger.Break();
