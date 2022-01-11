@@ -63,67 +63,67 @@ namespace PlatoAnalyzer
         IList<IExpression> Elements { get; set; }
     }
 
-    public interface IOperation : IExpression
+    public interface IOp : IExpression
     {
         string Operator { get; set; }
         IExpression this[int index] { get; }
         IList<IExpression> Operands { get; set; }
     }
 
-    public interface IAssignmentOp : IOperation
+    public interface IAssignmentOp : IOp
     {
     }
 
-    public interface IPrefixOp : IOperation
+    public interface IPrefixOp : IOp
     {
     }
 
-    public interface IPostfixOp : IOperation
+    public interface IPostfixOp : IOp
     {
     }
 
-    public interface IBinaryOp : IOperation
+    public interface IBinaryOp : IOp
     {
     }
 
-    public interface IConditionalOp : IOperation
+    public interface IConditionalOp : IOp
     {
     }
 
-    public interface ICastOp : IOperation
+    public interface ICastOp : IOp
     {
     }
 
-    public interface ITypeOfOp : IOperation
+    public interface ITypeOfOp : IOp
     {
     }
 
-    public interface IDefaultOp : IOperation
+    public interface IDefaultOp : IOp
     {
     }
 
-    public interface IThisOp : IOperation
+    public interface IThisOp : IOp
     {
     }
 
-    public interface IIndexOp : IOperation
+    public interface IIndexOp : IOp
     {
     }
 
-    public interface ITupleOp : IOperation 
+    public interface ITupleOp : IOp 
     { }
 
-    public interface IParenthesizedOp : IOperation
+    public interface IParenthesizedOp : IOp
     { }
 
-    public interface INewOp : IOperation
+    public interface INewOp : IOp
     {
         IFunctionRef ConstructorRef { get; set; }
         IList<IExpression> Args { get; set; }
         IList<IArg> Initializers { get; set; }
     }
 
-    public interface IThrowOp : IOperation
+    public interface IThrowOp : IOp
     { }
 
     public interface ILiteral : IExpression
@@ -156,7 +156,7 @@ namespace PlatoAnalyzer
         IStatement Body { get; set; }
     }
 
-    public interface IFunctionRef : IRef, IExpression
+    public interface IFunctionRef : INameRef, IExpression
     {
         IList<ITypeRef> TypeArgs { get; set; }
     }
@@ -221,7 +221,7 @@ namespace PlatoAnalyzer
 
     public interface IWhileStatement : IStatement
     {
-        IExpression Conditional { get; set; }
+        IExpression Condition { get; set; }
         IStatement Body { get; set; }
     }
 

@@ -17,7 +17,7 @@ namespace PlatoAnalyzer
 
         public TypeInfo? CSharpTypeInfo => CSharpSyntaxElement?.Type;
         public ITypeSymbol CSharpType => CSharpTypeInfo?.ConvertedType;
-        public IOperation CSharpOperation => CSharpSyntaxElement?.Operation;
+        public IOperation CSharpOp => CSharpSyntaxElement?.Operation;
 
         public SymbolInfo? CSharpSymbolInfo => CSharpSyntaxElement?.Symbol;
         public ISymbol CSharpSymbol => CSharpSymbolInfo?.Symbol;

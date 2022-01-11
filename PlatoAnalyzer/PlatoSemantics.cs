@@ -52,7 +52,7 @@ namespace PlatoAnalyzer
         public ITypeRef Type { get; set; }
     }
 
-    public class VarRef : NameRef, IExpression
+    public class VarRef : NameRef, IVarRef
     {
         public ITypeRef Type { get; set; }
     }
@@ -64,89 +64,89 @@ namespace PlatoAnalyzer
         public IList<IExpression> Elements { get; set; } = new List<IExpression>();
     }
 
-    public class Operation : Expression, IOperation
+    public class Op : Expression, IOp
     {
         public string Operator { get; set; }
         public IList<IExpression> Operands { get; set; } = new List<IExpression>();
         public IExpression this[int index] => Operands[index];
 
-        public Operation(string op = null)
+        public Op(string op = null)
             => Operator = op ?? "_NOOP_";
     }
 
-    public class Assignment : Operation, IAssignmentOp
+    public class Assignment : Op, IAssignmentOp
     {
     }
 
-    public class PrefixOp : Operation, IPrefixOp
+    public class PrefixOp : Op, IPrefixOp
     {
     }
 
-    public class PostfixOp : Operation, IPostfixOp
+    public class PostfixOp : Op, IPostfixOp
     {
     }
 
-    public class BinaryOp : Operation, IBinaryOp
+    public class BinaryOp : Op, IBinaryOp
     {
     }
 
-    public class ConditionalOp : Operation, IConditionalOp
+    public class ConditionalOp : Op, IConditionalOp
     {
         public ConditionalOp() : base("?")
         {
         }
     }
 
-    public class CastOp : Operation, ICastOp
+    public class CastOp : Op, ICastOp
     {
         public CastOp() : base("as")
         {
         }
     }
 
-    public class TypeOfOp : Operation, ITypeOfOp
+    public class TypeOfOp : Op, ITypeOfOp
     {
         public TypeOfOp() : base("typeof")
         {
         }
     }
 
-    public class DefaultOp : Operation, IDefaultOp
+    public class DefaultOp : Op, IDefaultOp
     {
         public DefaultOp() : base("default")
         {
         }
     }
 
-    public class ThisOp : Operation, IThisOp
+    public class ThisOp : Op, IThisOp
     {
         public ThisOp() : base("this")
         {
         }
     }
 
-    public class IndexOp : Operation, IIndexOp
+    public class IndexOp : Op, IIndexOp
     {
         public IndexOp() : base("[]")
         {
         }
     }
 
-    public class TupleOp : Operation, ITupleOp
+    public class TupleOp : Op, ITupleOp
     {
         public TupleOp() : base("(,)")
         {
         }
     }
 
-    public class ParenthesizedOp : Operation, IParenthesizedOp
+    public class ParenthesizedOp : Op, IParenthesizedOp
     {
         public ParenthesizedOp() : base("()")
         {
         }
     }
 
-    public class NewOp : Operation, INewOp
+    public class NewOp : Op, INewOp
     {
         public NewOp() : base("new")
         { }
@@ -157,7 +157,7 @@ namespace PlatoAnalyzer
         public IList<IArg> Initializers { get; set; }
     }
 
-    public class ThrowOp : Operation, IThrowOp
+    public class ThrowOp : Op, IThrowOp
     {
         public ThrowOp() : base("throw")
         {
@@ -195,7 +195,7 @@ namespace PlatoAnalyzer
         public ITypeRef ReturnType { get; set; }
     }
 
-    public class FunctionRef : Ref, IFunctionRef
+    public class FunctionRef : NameRef, IFunctionRef
     {
         public IList<ITypeRef> TypeArgs { get; set; } = new List<ITypeRef>();
         public ITypeRef Type { get; set; }
@@ -271,7 +271,7 @@ namespace PlatoAnalyzer
 
     public class WhileStatement : Statement, IWhileStatement
     {
-        public IExpression Conditional { get; set; }
+        public IExpression Condition { get; set; }
         public IStatement Body { get; set; }
     }
 
