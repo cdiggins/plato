@@ -19,6 +19,8 @@ namespace PlatoAnalyzer
         }
 
         public GeneratorExecutionContext ExecutionContext { get; private set; }
+
+        // TODO: I need probably to have a bunch of these 
         public DiagnosticDescriptor PlatoError { get; } = new DiagnosticDescriptor("PLATO001", "Error", "Exception occurred: {0}", "Plato", DiagnosticSeverity.Error, true);
 
         public void Execute(GeneratorExecutionContext context)
