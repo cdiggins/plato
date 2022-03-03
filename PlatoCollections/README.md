@@ -32,37 +32,37 @@ from scratch while enforcing immutability and thread-safety.
 Most types in the `Plato.Collections` namespace provides the same LINQ operations 
 as `IEnumerable`, with the only difference being the types that are returned. 
 
-Some of the `Plato.Collections` interface include:
+Some of the `Plato.Collections` interfaces include the following:
 
 ```csharp
-interface IMap<TDomain, TCoDomain>
-interface IArray<T> : IMap<int, T>, ISequence<T>
-interface ISet<T>
-interface IGenerator<T>
-interface ISequence<T>
-interface IBag<T>
-interface IContainer<T> : IBag<T>, ISet<T>
-interface IList<T> : ISequence<T>
-interface ISorted<T>
-interface ISortedArray<T> : IArray<T>, ISorted<T>
-interface ISortedBag<T> : IBag<T>, ISorted<T>
-interface ISortedContainer<T> : IContainer<T>, ISorted<T>
-interface ISortedSequence<T> : ISequence<T>, ISortedBag<T>
-interface ITree<T> : ISequence<T>
-interface ISortedTree<T> : ITree<T>, ISorted<T>
-interface IHeap<T> : ITree<T>, ISorted<T>
-interface IStack<T> : IBag<T>
-interface IQueue<T> : IBag<T>
-interface IDeque<T> : IBag<T>
-interface IPriorityQueue<TKey, TValue> : ISorted<TKey>, IStack<(TKey, TValue)>
-interface IDictionary<TKey, TValue> : IMap<TKey, TValue>, ISorted<TKey>, ISet<TKey>
-interface IMultiDictionary<TKey, TValue> : IDictionary<TKey, ISequence<TValue>> 
-interface IBiDictionary<TKey, TValue> : IDictionary<TKey, TValue>
-interface ISubSequence<T> : ISequence<T>
-interface ISlice<T> : IArray<T>
+interface IMap<TDomain, TCoDomain> {}
+interface IArray<T> : IMap<int, T>, ISequence<T> {}
+interface ISet<T> {}
+interface IGenerator<T> {}
+interface ISequence<T> {}
+interface IBag<T> {}
+interface IContainer<T> : IBag<T>, ISet<T> {}
+interface IList<T> : ISequence<T> {} 
+interface ISorted<T> {}
+interface ISortedArray<T> : IArray<T>, ISorted<T> {}
+interface ISortedBag<T> : IBag<T>, ISorted<T> {}
+interface ISortedContainer<T> : IContainer<T>, ISorted<T> {}
+interface ISortedSequence<T> : ISequence<T>, ISortedBag<T> {}
+interface ITree<T> : ISequence<T> {}
+interface ISortedTree<T> : ITree<T>, ISorted<T> {}
+interface IHeap<T> : ITree<T>, ISorted<T> {}
+interface IStack<T> : IBag<T> {}
+interface IQueue<T> : IBag<T> {}
+interface IDeque<T> : IBag<T> {}
+interface IPriorityQueue<TKey, TValue> : ISorted<TKey>, IStack<(TKey, TValue)> {}
+interface IDictionary<TKey, TValue> : IMap<TKey, TValue>, ISorted<TKey>, ISet<TKey> {}
+interface IMultiDictionary<TKey, TValue> : IDictionary<TKey, ISequence<TValue>>  {}
+interface IBiDictionary<TKey, TValue> : IDictionary<TKey, TValue> {}
+interface ISubSequence<T> : ISequence<T> {}
+interface ISlice<T> : IArray<T> {}
 ```
 
-Some of the types in the col
+These interfaces are defined in [Collections.cs](Collections.cs).
 
 ## Enumerator Example
 
