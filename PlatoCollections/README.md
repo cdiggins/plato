@@ -33,7 +33,7 @@ as `IEnumerable`, with the only difference being the types that are returned.
 
 Some of the `Plato.Collections` interface include:
 
-```
+```csharp
 interface IMap<TDomain, TCoDomain>
 interface IArray<T> : IMap<int, T>, ISequence<T>
 interface ISet<T>
@@ -67,10 +67,10 @@ Some of the types in the col
 
 In pseudo-code the default .NET libraries an enumerator looks like:
 
-```
+```csharp
 interface IEnumerator<T> 
 {    
-	T Current { get; }
+    T Current { get; }
     bool MoveNext(); 
     void Reset();
     void Dispose();
@@ -82,7 +82,7 @@ can trigger an error in the case that is "invalidated due to changes made in the
 
 Plato offers a side-effect-free alternative called `IGenerator` designed for immutable collections:
 
-```
+```csharp
 interface IGenerator<T>
 {
     T Current { get; }
@@ -99,7 +99,7 @@ Unlike `IEnumerator` the `IGenerator` will never throw exceptions. If `Current` 
 In order to differentiate from `IEnumerable`, Plato introduces a new core interface that many collection 
 derive from called `ISequence` which has one property:
 
-```
+```csharp
 interface ISequence<T>
 {
     IGenerator<T> Generator { get; }
@@ -117,7 +117,7 @@ elements, when it would be trivial to provide those guarantees.
 Plato offers an interface called `IArray` that has a number of LINQ style operations that return `IArray` ensuring the same algorithmic 
 properties. 
 
-```
+```csharp
 interface IArray<T> 
 {
     int Count { get; }
@@ -134,7 +134,7 @@ is a specialization of an `IMap` that has a finite set of ordered keys and value
 
 This is illustrated by the interface definition. 
 
-```
+```csharp
 interface IDictionary<TKey, TValue> : 
     IMap<TKey, TValue>, ISorted<TKey>, ISet<TKey>
 { }
@@ -144,7 +144,7 @@ interface IDictionary<TKey, TValue> :
 
 A set is defined by the ability simply to query membership:
 
-```
+```csharp
 interface ISet<T>
 {
     bool Contains(T item);
@@ -156,7 +156,7 @@ like set complement.
 
 A set is an abstract concept as opposed to an explicit collection data type like `IContainer` which is a finite set. 
 
-```
+```csharp
 interface IContainer<T> : IBag<T>, ISet<T>
 {
 }
@@ -166,7 +166,7 @@ interface IContainer<T> : IBag<T>, ISet<T>
 
 Some collections are explcitily unordered by definition. Consider for example the bag:
 
-```
+```csharp
 interface IBag<T>
 {
     bool Empty { get; }
@@ -185,7 +185,7 @@ Collections that have been created with a specific ordering, store the ordering 
 complexity of certain operation. For example an `ISortedSequence` that has the property of faster search `O(Log N)` compared to the 
 regular `O(N)` for the `IndexOf` operation, and related derived operations.
 
-```
+```csharp
 interface ISorted<T> 
 {
     Func<T, T, int> Ordering { get; }
