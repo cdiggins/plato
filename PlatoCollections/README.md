@@ -6,12 +6,12 @@ The definition of the interfaces can be found at [Collections.cs](Collections.cs
 
 ## About Plato 
 
-Plato.Collections is written using Plato, a strict subset of C# 9 that
+Plato.Collections is written using [Plato](https://github.com/cdiggins/plato), a strict subset of C# 9 that
 leverages Roslyn source generators to enforce the rules, and add extra
 code. 
 
-Plato enforces that code is pure functional. In other words classes are immutable, 
-and functions have no side-effects. 
+Plato enforces that code is pure functional. In other words classes are immutable and thread-safe and functions 
+have no side-effects. 
 
 ## Design Principles
 
