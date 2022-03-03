@@ -193,7 +193,6 @@ namespace PlatoAnalyzer
             SyntaxKind.OrKeyword,
             SyntaxKind.AndKeyword,
             SyntaxKind.NotKeyword,
-            SyntaxKind.DataKeyword,
             SyntaxKind.WithKeyword,
             SyntaxKind.InitKeyword,
             SyntaxKind.RecordKeyword,
