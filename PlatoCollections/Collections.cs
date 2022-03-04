@@ -3,58 +3,19 @@
     All Plato collections are immutable, side-effect free, and thread-safe.
   
     Plato is inspired heavily by LINQ. Many of the LINQ extension methods 
-    are available for the various types, as it makes sense. 
- 
-    Some advantages of this system:
-    - Arrays with LINQ operations maintain O(1) properties for count and indexing
-    - Infinite sets
-    - Separates containers implementations from abstractions (e.g. IDictionary and IMap)
-    - Interfaces have a minimal footprint 
-    - Ordering collections have an explicit ordering function   
-    - Interfaces for stack, queue, deque, priority queue, tree
-    - Much simpler than having multiple interfaces 
+    will implemented for the various types, as they makes sense.     
 */
 namespace Plato;
 
 //================================================================
 // High Level interfaces for abstract concepts 
-// These interface do not necessarily represent containers.
-// In other words, there might be no memory allocation in the underlying implementation
-// other than a function
 //================================================================
 
 /// <summary>
-/// An abstraction of the concept of a mathematical mapping. 
-/// </summary>
-public partial interface IMap<TDomain, TCoDomain>
-{
-    TCoDomain this[TDomain input] { get; }
-}
-
-/// <summary>
-/// An immutable array. It contains only a count and an indexer. 
-/// Both are expected to return in O(1) time. 
-/// </summary>
-public partial interface IArray<T> : IMap<int, T>, ISequence<T>
-{
-    int Count { get; }
-}
-
-/// <summary>
-/// A set. It tells us only whether membership exists or not. 
-/// A pure set is infinite and unordered, so we cannot extract
-/// members from it. In such cases you will want to use a bag or dictionary. 
-/// </summary>
-public partial interface ISet<T>
-{
-    bool Contains(T item);
-}
-
-/// <summary>
 /// A generator can generate infinite values. This is very similar to 
-/// an IEnumerator in the C# standard library. Unlike the C# library it cannot have 
-/// side-effects and is not mutable. 
-/// Unlike C#, the entire set of LINQ operations is available on both IGenerator and ISequence. 
+/// an IEnumerator in the C# standard library. Unlike IEnumerator it has 
+/// no side-effects and is not mutable. IGenerator supports 
+/// a number of LINQ operations on it directly.  
 /// </summary>
 public partial interface IGenerator<T>
 {
@@ -65,12 +26,42 @@ public partial interface IGenerator<T>
 
 /// <summary>
 /// A sequence is roughly equivalent of IEnumerable in the C# standard library. 
-/// It is a potentially infinite sequence of values. 
-/// It is guaranteed to have no side effect and can be enumerated multiple times. 
+/// It is a potentially infinite sequence of values, however
+/// it is guaranteed to have no side effects and can be enumerated multiple times. 
 /// </summary>
 public partial interface ISequence<T>
 {
     IGenerator<T> Generator { get; }
+}
+
+/// <summary>
+/// An abstraction of the concept of a mathematical mapping. 
+/// </summary>
+public partial interface IMap<TDomain, TCoDomain>
+{
+    TCoDomain this[TDomain input] { get; }
+}
+
+/// <summary>
+/// An immutable  set. It tells us only whether membership exists or not.
+/// A pure set is infinite and unordered, so we cannot extract
+/// members from it. In such cases you will want to use a bag or dictionary. 
+/// </summary>
+public partial interface ISet<T>
+{
+    bool Contains(T item);
+}
+
+/// <summary>
+/// An immutable array. It contains only a count and an indexer. 
+/// Both are expected to return in O(1) time. 
+/// An array is a specialization of a map (from the integer domain to any codomain)
+/// and it can be trivially used as a sequence. 
+/// </summary>
+public partial interface IArray<T> 
+    : IMap<int, T>, ISequence<T>
+{
+    int Count { get; }
 }
 
 //========================================================================================
@@ -94,14 +85,16 @@ public partial interface IBag<T>
 /// Containers are finite sets, or looked at another way they are bags that are 
 /// aware of membership.
 /// </summary>
-public partial interface IContainer<T> : IBag<T>, ISet<T>
+public partial interface IContainer<T> 
+    : IBag<T>, ISet<T>
 {
 }
 
 /// <summary>
 /// A classic linked list with a head and the rest of the list. 
 /// </summary>
-public partial interface IList<T> : ISequence<T>
+public partial interface IList<T> 
+    : ISequence<T>
 {
     T Value { get; }
     IList<T>? Next { get; }
@@ -120,31 +113,46 @@ public partial interface ISorted<T>
 }
 
 /// <summary>
+/// This is used by types that support the notion of being searchable in 
+/// at least O(Log N) time. For example a sorted sequence or a binary tree. 
+/// </summary>
+public partial interface ISearchable<TValue, TKey>
+{
+    TKey FindKey(TValue item);
+}
+
+/// <summary>
 /// An ordered array enables much faster finding of items.
 /// </summary>
-public partial interface ISortedArray<T> : IArray<T>, ISorted<T>
+public partial interface ISortedArray<T> 
+    : IArray<T>, ISorted<T>, ISearchable<T, int>
 {
 }
 
 /// <summary>
 /// An ordered bag has a predefined order that it maintains.
 /// </summary>
-public partial interface ISortedBag<T> : IBag<T>, ISorted<T>
+public partial interface ISortedBag<T> 
+    : IBag<T>, ISorted<T>
 {
     ISortedSequence<T> ToSequence();
 }
 
 /// <summary>
 /// An ordered container has a predefined order that it maintains.
+/// Retrieving a sorted sequence from a sorted container is faster, 
+/// but adding items to it is slower. 
 /// </summary>
-public partial interface ISortedContainer<T> : IContainer<T>, ISorted<T>
+public partial interface ISortedContainer<T> 
+    : IContainer<T>, ISorted<T>
 {
 }
 
 /// <summary>
 /// An ordered sequence is a sequence with a predefined ordering that it maintains. 
 /// </summary>
-public partial interface ISortedSequence<T> : ISequence<T>, ISortedBag<T>
+public partial interface ISortedSequence<T> 
+    : ISequence<T>, ISortedBag<T>
 {
 }
 
@@ -166,7 +174,7 @@ public partial interface ITree<T> : ISequence<T>
 /// A tree where all values on the left sub-trees are always less than or equal to values on the right sub-tree
 /// </summary>
 public partial interface ISortedTree<T> 
-    : ITree<T>, ISorted<T>
+    : ITree<T>, ISorted<T>, ISearchable<T, ISortedTree<T>>
 {
     ISortedTree<T> Add(T item);
 }
@@ -184,21 +192,24 @@ public partial interface IHeap<T>
 // Stack, Queue, Deques
 //================================================================
 
-public partial interface IStack<T> : IBag<T>
+public partial interface IStack<T> 
+    : IBag<T>
 {
     IStack<T> Pop(int n = 1);
     IStack<T> Push(ISequence<T> item);
     T Top { get; }
 }
 
-public partial interface IQueue<T> : IBag<T>
+public partial interface IQueue<T> 
+    : IBag<T>
 {
     T Front { get; }
     IQueue<T> Dequeue(int n = 1);
     IQueue<T> Enqueue(ISequence<T> item);
 }
 
-public partial interface IDeque<T> : IBag<T>
+public partial interface IDeque<T> 
+    : IBag<T>
 {
     T Front { get; }
     T Back { get; }
