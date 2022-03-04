@@ -1,5 +1,4 @@
 ﻿/*
- 
     This is the standard library for Plato collection interfaces.
     All Plato collections are immutable, side-effect free, and thread-safe.
   
@@ -61,7 +60,7 @@ public partial interface IGenerator<T>
 {
     IGenerator<T>? Next { get; }
     bool HasValue { get; }
-    T Current { get; }
+    T? Current { get; }
 }
 
 /// <summary>
