@@ -17,11 +17,11 @@ namespace Plato;
 /// no side-effects and is not mutable. IGenerator supports 
 /// a number of LINQ operations on it directly.  
 /// </summary>
-public partial interface IGenerator<T>
+public partial interface IGenerator<T> : ISequence<T>
 {
-    IGenerator<T>? Next { get; }
+    IGenerator<T> Next { get; }
     bool HasValue { get; }
-    T? Current { get; }
+    T Value { get; }     
 }
 
 /// <summary>
@@ -37,13 +37,13 @@ public partial interface ISequence<T>
 /// <summary>
 /// An abstraction of the concept of a mathematical mapping. 
 /// </summary>
-public partial interface IMap<TDomain, TCoDomain>
+public partial interface IMap<T1, T2>
 {
-    TCoDomain this[TDomain input] { get; }
+    T2 this[T1 input] { get; }
 }
 
 /// <summary>
-/// An immutable  set. It tells us only whether membership exists or not.
+/// An immutable set. It tells us only whether membership exists or not.
 /// A pure set is infinite and unordered, so we cannot extract
 /// members from it. In such cases you will want to use a bag or dictionary. 
 /// </summary>
@@ -73,7 +73,7 @@ public partial interface IArray<T>
 /// (until you convert to a sequence). 
 /// Bags are known only to be empty or not. They can be explicitly converted into a sequence,
 /// but it requires an ordering to be applied. Bags do not return membership information.
-/// Bags can be combined. You cannot remove items from a bag. 
+/// You cannot remove items from a bag. 
 /// </summary>
 public partial interface IBag<T>
 {
@@ -82,8 +82,7 @@ public partial interface IBag<T>
 }
 
 /// <summary>
-/// Containers are finite sets, or looked at another way they are bags that are 
-/// aware of membership.
+/// Containers are finite sets, bags that are of membership.
 /// </summary>
 public partial interface IContainer<T> 
     : IBag<T>, ISet<T>
@@ -94,7 +93,7 @@ public partial interface IContainer<T>
 /// A classic linked list with a head and the rest of the list. 
 /// </summary>
 public partial interface IList<T> 
-    : ISequence<T>
+    : ISequence<T>, IBag<T>
 {
     T Value { get; }
     IList<T>? Next { get; }

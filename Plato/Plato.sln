@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoAnalyzer", "..\PlatoAn
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTestConsole", "..\PlatoTestConsole\PlatoTestConsole.csproj", "{D883B23C-439A-4B7E-9D51-B14E623AA111}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoLib", "..\PlatoLib\PlatoLib.csproj", "{41CEB937-21D9-4DFB-893C-9CA081F8697F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTestConsole2", "..\PlatoTestConsole2\PlatoTestConsole2.csproj", "{B4EF03AF-7E6B-472F-8266-4C4BFA47F1DA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoGenerator", "..\PlatoGenerator\PlatoGenerator.csproj", "{04EA8367-8FB0-499C-BC36-DF628FE2EF10}"
@@ -25,7 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoMath", "..\PlatoMath\P
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTestConsole3", "..\PlatoTestConsole3\PlatoTestConsole3.csproj", "{D6D7B05B-92F3-4483-A5B9-210B2FD7E66A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatoCollections", "..\PlatoCollections\PlatoCollections.csproj", "{12BE0F24-88AF-4FDE-98D9-E8FC18DEBC8F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoCollections", "..\PlatoCollections\PlatoCollections.csproj", "{12BE0F24-88AF-4FDE-98D9-E8FC18DEBC8F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatoCollectionsTest", "..\PlatoCollectionsTest\PlatoCollectionsTest.csproj", "{854A7693-ED7E-493E-8C3B-1960091904C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,10 +45,6 @@ Global
 		{D883B23C-439A-4B7E-9D51-B14E623AA111}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D883B23C-439A-4B7E-9D51-B14E623AA111}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D883B23C-439A-4B7E-9D51-B14E623AA111}.Release|Any CPU.Build.0 = Release|Any CPU
-		{41CEB937-21D9-4DFB-893C-9CA081F8697F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{41CEB937-21D9-4DFB-893C-9CA081F8697F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{41CEB937-21D9-4DFB-893C-9CA081F8697F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{41CEB937-21D9-4DFB-893C-9CA081F8697F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B4EF03AF-7E6B-472F-8266-4C4BFA47F1DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B4EF03AF-7E6B-472F-8266-4C4BFA47F1DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4EF03AF-7E6B-472F-8266-4C4BFA47F1DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -69,6 +65,10 @@ Global
 		{12BE0F24-88AF-4FDE-98D9-E8FC18DEBC8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12BE0F24-88AF-4FDE-98D9-E8FC18DEBC8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12BE0F24-88AF-4FDE-98D9-E8FC18DEBC8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{854A7693-ED7E-493E-8C3B-1960091904C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{854A7693-ED7E-493E-8C3B-1960091904C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{854A7693-ED7E-493E-8C3B-1960091904C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{854A7693-ED7E-493E-8C3B-1960091904C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
