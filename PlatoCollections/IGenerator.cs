@@ -1,5 +1,16 @@
 ﻿namespace Plato;
 
+/*
+public static class Generator
+{
+    public static IGenerator<U> Select<T, U>(this IGenerator<T> self, Func<T, U> mapFunc)
+        => self.Select(mapFunc);
+
+    public static IGenerator<T> Take<T>(this IGenerator<T> self, int n)
+        => self.Take(n);
+}
+*/
+
 public partial interface IGenerator<T>
 {
     IArray<T> ToArray()
@@ -29,7 +40,7 @@ public partial interface IGenerator<T>
     IGenerator<U> Select<U>(Func<T, int, U> mapFunc)
         => new SelectIndexGenerator<T, U>(this, mapFunc);
 
-    IGenerator<T> Take(int n) 
+    new IGenerator<T> Take(int n) 
         => TakeWhile((_, i) => i < n);
 
     IGenerator<T> TakeWhile(Func<T, bool> predicate)
@@ -46,8 +57,8 @@ public partial interface IGenerator<T>
         return r;
     }
 
-    IArray<T> SkipLast(int n)
-        => ToArray().SkipLast(n);
+    IGenerator<T> SkipLast(int n)
+        => Take(CountElements() - n);
 
     IGenerator<T> SkipWhile(Func<T, bool> predicate)
         => AdvanceWhile(g => predicate(g.Value));
@@ -235,7 +246,7 @@ public partial record EmptyGenerator<T>
     public T Value => throw new NotSupportedException();
     public T this[int n] => throw new NotSupportedException();
     public bool Contains(T item) => false;
-    public static readonly EmptyGenerator<T> Default = new();
+    public static readonly EmptyGenerator<T> Instance = new();
 }
 
 public partial record RepeatGenerator<T>(T Value, int Count)
@@ -248,8 +259,15 @@ public partial record RepeatGenerator<T>(T Value, int Count)
     public bool Contains(T item) => item.Equals(Value);
 }
 
+public interface IRangeGenerator
+    : IArray<int>, ISet<int>
+{
+    int From { get; }
+    int To { get; }
+}
+
 public partial record RangeGenerator(int From, int To)
-    : IGenerator<int>, IArray<int>, ISet<int>
+    : IRangeGenerator
 {
     public IGenerator<int> Next => new RangeGenerator(From + 1, To);
     public int Count => To - From;
@@ -335,7 +353,7 @@ public record GeneratorWithIndex<T>(
     {
         get
         {
-            if (Value == null) return EmptyGenerator<T>.Default;
+            if (Value == null) return EmptyGenerator<T>.Instance;
             var (nextValue, nextIndex) = NextFunc(Value, Index);
             return this with { Value = nextValue, Index = nextIndex };
         }

@@ -20,6 +20,13 @@ public class Tests
         Assert.True(Compare(x, y));
     }
 
+    [Test]
+    public void Test2()
+    {
+        var xs1 = 42.Range();
+        var xs2 = xs1.Take(3);
+    }
+
     public static bool Compare<T>(ISequence<T> s, IEnumerable<T> e)
         => s.ToEnumerable().SequenceEqual(e);
 }

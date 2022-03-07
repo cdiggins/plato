@@ -1,5 +1,11 @@
 ﻿namespace Plato;
 
+public partial record EmptySet<T>
+    : ISet<T>
+{ 
+    public static EmptySet<T> Instance { get; } = new EmptySet<T>();
+}
+
 public partial record Set<T>(Func<T, bool> Predicate)
     : ISet<T>
 {

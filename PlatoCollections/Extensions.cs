@@ -9,13 +9,13 @@ public static class Extensions
         => Empty<T>();
 
     public static EmptyGenerator<T> Empty<T>()
-        => EmptyGenerator<T>.Default;
+        => EmptyGenerator<T>.Instance;
 
-    public static RangeGenerator Range(this int n)
-        => new(0, n);
+    public static IRangeGenerator Range(this int n)
+        => Range(0, n);
 
-    public static RangeGenerator Range(this int n, int upto)
-        => new(n, upto);
+    public static IRangeGenerator Range(this int n, int upto)
+        => new RangeGenerator(n, upto);
 
     public static RepeatGenerator<T> Repeat<T>(this T x, int value)
         => new(x, value);

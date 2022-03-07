@@ -1,5 +1,15 @@
 ﻿namespace Plato;
 
+/*
+public static class Array
+{
+    public static IArray<U> Select<T, U>(this IArray<T> self, Func<T, U> mapFunc)
+        => self.Select(mapFunc);
+
+    public static ISlice<T> Take<T>(this IArray<T> self, int n)
+        => self.Take(n);
+}
+*/
 public partial interface IArray<T>
 {
     IArray<ISlice<T>> Chunk(int size)
@@ -23,7 +33,7 @@ public partial interface IArray<T>
     ISlice<T> Slice(int from, int count)
         => new Slice<T>(this, from, count);
 
-    ISlice<T> Take(int n)
+    new ISlice<T> Take(int n)
         => Slice(0, n);
 
     int IndexOf(Func<T, bool> f)

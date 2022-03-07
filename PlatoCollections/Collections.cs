@@ -19,9 +19,12 @@ namespace Plato;
 /// </summary>
 public partial interface IGenerator<T> : ISequence<T>
 {
-    IGenerator<T> Next { get; }
-    bool HasValue { get; }
-    T Value { get; }     
+    IGenerator<T> Next => this;
+    bool HasValue => false;
+    T Value => throw new NotSupportedException();   
+
+    // ISequence implementaion
+    IGenerator<T> ISequence<T>.Generator => this;
 }
 
 /// <summary>
@@ -31,7 +34,7 @@ public partial interface IGenerator<T> : ISequence<T>
 /// </summary>
 public partial interface ISequence<T>
 {
-    IGenerator<T> Generator { get; }
+    IGenerator<T> Generator => EmptyGenerator<T>.Instance;
 }
 
 /// <summary>
@@ -39,7 +42,7 @@ public partial interface ISequence<T>
 /// </summary>
 public partial interface IMap<T1, T2>
 {
-    T2 this[T1 input] { get; }
+    T2 this[T1 input] => throw new IndexOutOfRangeException;
 }
 
 /// <summary>
@@ -49,7 +52,9 @@ public partial interface IMap<T1, T2>
 /// </summary>
 public partial interface ISet<T>
 {
-    bool Contains(T item);
+    bool Contains(T item) => false;
+
+    static ISet<T> Default { get; } = EmptySet<T>.Instance;
 }
 
 /// <summary>
@@ -59,9 +64,14 @@ public partial interface ISet<T>
 /// and it can be trivially used as a sequence. 
 /// </summary>
 public partial interface IArray<T> 
-    : IMap<int, T>, ISequence<T>
+    : IMap<int, T>, ISequence<T>, IGenerator<T>
 {
-    int Count { get; }
+    int Count => 0;
+
+    // Implementation of IGenerator 
+    bool IGenerator<T>.HasValue => Count > 0;
+    IGenerator<T> IGenerator<T>.Next => Skip(1);
+    T IGenerator<T>.Value => this[0];
 }
 
 //========================================================================================
@@ -77,7 +87,7 @@ public partial interface IArray<T>
 /// </summary>
 public partial interface IBag<T>
 {
-    bool Empty { get; }
+    bool Empty => true;
     ISortedSequence<T> ToSequence(Func<T, T, int> ordering);
 }
 
@@ -95,8 +105,9 @@ public partial interface IContainer<T>
 public partial interface IList<T> 
     : ISequence<T>, IBag<T>
 {
-    T Value { get; }
-    IList<T>? Next { get; }
+    T Value => throw new ArgumentOutOfRangeException();
+    bool HasValue => false;
+    IList<T> Next => throw new ArgumentOutOfRangeException();
 }
 
 //======================================================================
@@ -182,9 +193,9 @@ public partial interface ISortedTree<T>
 /// A heap is a tree where each item is greater than the elements in all the sub-trees. 
 /// </summary>
 public partial interface IHeap<T> 
-    : ITree<T>, ISorted<T>
+    : ITree<T>, ISortedTree<T>
 {
-    IHeap<T> Add(T item);
+    new IHeap<T> Add(T item);
 }
 
 //================================================================

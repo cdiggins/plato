@@ -1,5 +1,16 @@
 ﻿namespace Plato;
 
+/*
+public static class Sequence
+{
+    public static IGenerator<U> Select<T, U>(this ISequence<T> self, Func<T, U> mapFunc)
+        => self.Select(mapFunc);
+
+    public static IGenerator<T> Take<T>(this ISequence<T> self, int n)
+        => self.Take(n);
+}
+*/
+
 public partial interface ISequence<T>
 {
     IGenerator<IGenerator<T>> Chunk(int size)
