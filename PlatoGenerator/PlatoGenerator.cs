@@ -103,6 +103,12 @@ namespace PlatoGenerator
             foreach (var x in expression.Children)
                 OutputExpression(sw, x, indent + "--");
 
+            var m = expression.SourceExpression?.RelatedMethod;
+            if (m != null)
+            {
+                sw.WriteLine($"METHOD: {m.Name}");
+            }
+
             // TODO: look for 
             //if (expression.SourceExpression)
         }

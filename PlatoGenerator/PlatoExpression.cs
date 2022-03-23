@@ -20,6 +20,7 @@ namespace PlatoGenerator
         public ITypeSymbol Type;
         public PlatoSyntax TypeDeclaration;
         public PlatoExpression This;
+        public PlatoMethodSyntax RelatedMethod => Declaration as PlatoMethodSyntax;
         public string SyntaxNodeTypeName => Syntax.Node.GetType().Name;
         public string SymbolTypeName => Symbol?.GetType().Name;
         public SyntaxKind SyntaxKind => Syntax.Node.Kind();
