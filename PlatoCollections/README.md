@@ -40,8 +40,7 @@ interface IArray<T> : IMap<int, T>, ISequence<T> {}
 interface ISet<T> {}
 interface IGenerator<T> {}
 interface ISequence<T> {}
-interface IBag<T> {}
-interface IContainer<T> : IBag<T>, ISet<T> {}
+interface IContainer<T> : ISet<T> {}
 interface IList<T> : ISequence<T> {} 
 interface ISorted<T> {}
 interface ISortedArray<T> : IArray<T>, ISorted<T> {}
@@ -51,9 +50,9 @@ interface ISortedSequence<T> : ISequence<T>, ISortedBag<T> {}
 interface ITree<T> : ISequence<T> {}
 interface ISortedTree<T> : ITree<T>, ISorted<T> {}
 interface IHeap<T> : ITree<T>, ISorted<T> {}
-interface IStack<T> : IBag<T> {}
-interface IQueue<T> : IBag<T> {}
-interface IDeque<T> : IBag<T> {}
+interface IStack<T> {}
+interface IQueue<T> {}
+interface IDeque<T> {}
 interface IPriorityQueue<TKey, TValue> : ISorted<TKey>, IStack<(TKey, TValue)> {}
 interface IDictionary<TKey, TValue> : IMap<TKey, TValue>, ISorted<TKey>, ISet<TKey> {}
 interface IMultiDictionary<TKey, TValue> : IDictionary<TKey, ISequence<TValue>>  {}
@@ -155,30 +154,7 @@ interface ISet<T>
 By keeping the interface minimal, it is possible to implement infinite sets, and provide efficient representation of operations 
 like set complement.
 
-A set is an abstract concept as opposed to an explicit collection data type like `IContainer` which is a finite set. 
-
-```csharp
-interface IContainer<T> : IBag<T>, ISet<T>
-{
-}
 ```
-
-## Collections that aren't Sequences 
-
-Some collections are explcitily unordered by definition. Consider for example the bag:
-
-```csharp
-interface IBag<T>
-{
-    bool Empty { get; }
-    ISortedSequence<T> ToSequence(Func<T, T, int> ordering);
-}
-```
-
-Because there is no requirement to access the elements in order, the bag can implement certain operations more efficiently (e.g. Concat), 
-while omitting operations that either don't make sense for an unordered collection (e.g. Take) or would result in potentially undefined behavior. 
-
-Extracting elements out of a bag requires a supplied ordering, and is an `O(N Log N)` operation. 
 
 ## Explicit Ordering 
 

@@ -1,194 +1,137 @@
 ﻿namespace Plato;
 
-/*
-public static class Array
+public static class ArrayExtensions
 {
+    public static IArray<T> Reverse<T>(this IArray<T> self)
+        => self.Count.Select(i => self[self.Count - 1 - i]);
+
+    public static IArray<ISlice<T>> Chunk<T>(this IArray<T> self, int size)
+        => (size / self.Count).Select(i => self.Slice(i * size, size));
+
+    public static IArray<U> SelectIndices<T, U>(this IArray<T> self, Func<int, U> func)
+        => self.Count.Select(func);
+
+    public static IArray<T> Choose<T>(this IArray<T> self, IArray<int> indices)
+        => indices.Select(self.ElementAt);
+
     public static IArray<U> Select<T, U>(this IArray<T> self, Func<T, U> mapFunc)
-        => self.Select(mapFunc);
+        => new SelectArray<T, U>(self, mapFunc);
+
+    public static IArray<U> Select<T, U>(this IArray<T> self, Func<T, int, U> mapFunc)
+        => new SelectIndexArray<T, U>(self, mapFunc);
+
+    public static ISlice<T> Slice<T>(this IArray<T> self, int from, int count)
+        => new Slice<T>(self, from, count);
 
     public static ISlice<T> Take<T>(this IArray<T> self, int n)
-        => self.Take(n);
-}
-*/
-public partial interface IArray<T>
-{
-    IArray<ISlice<T>> Chunk(int size)
-        => (size / Count).Select(i => Slice(i * size, size));
+        => self.Slice(0, n);
 
-    IGenerator<T> Generator 
-        => new ArrayGenerator<T>(this, 0);
+    public static ISlice<T> TakeSliceWhile<T>(this IArray<T> self, Func<T, bool> predicate)
+        => self.Take(self.IndexOf(predicate));
 
-    IArray<U> SelectIndices<U>(Func<int, U> func)
-        => Count.Select(func);
+    public static ISlice<T> TakeSliceWhile<T>(this IArray<T> self, Func<T, int, bool> predicate)
+        => self.Take(self.IndexOf(predicate));
 
-    IArray<T> Choose(IArray<int> indicies)
-        => indicies.Select(ElementAt);
+    public static ISlice<T> Skip<T>(this IArray<T> self, int n)
+        => self.Slice(n, self.Count - n);
 
-    IArray<U> Select<U>(Func<T, U> mapFunc)
-        => new SelectArray<T, U>(this, mapFunc);
+    public static ISlice<T> SkipLast<T>(this IArray<T> self, int n)
+        => self.Slice(0, self.Count - n);
 
-    IArray<U> Select<U>(Func<T, int, U> mapFunc)
-        => new SelectIndexArray<T, U>(this, mapFunc);
+    public static ISlice<T> SkipSliceWhile<T>(this IArray<T> self, Func<T, bool> predicate)
+        => self.Skip(self.IndexOf(predicate));
 
-    ISlice<T> Slice(int from, int count)
-        => new Slice<T>(this, from, count);
+    public static ISlice<T> SkipSliceWhile<T>(this IArray<T> self, Func<T, int, bool> predicate)
+        => self.Skip(self.IndexOf(predicate));
 
-    new ISlice<T> Take(int n)
-        => Slice(0, n);
+    public static bool Any<T>(this IArray<T> self)
+        => self.Count > 0;
 
-    int IndexOf(Func<T, bool> f)
-    {
-        for (var i = 0; i < Count; i++)
-            if (f(this[i]))
-                return i;
-        return -1;
-    }
+    public static T? ValueOrDefault<T>(this IArray<T> self)
+        => self.Count > 0 ? self[0] : default;
 
-    int IndexOfLast(Func<T, bool> f)
-    {
-        for (var i = Count; i > 0; --i)
-            if (f(this[i-1]))
-                return i;
-        return -1;
-    }
+    public static T First<T>(this IArray<T> self)
+        => self[0];
 
-    int IndexOf(Func<T, int, bool> f)
-    {
-        for (var i = 0; i < Count; i++)
-            if (f(this[i], i))
-                return i;
-        return -1;
-    }
+    public static T? FirstOrDefault<T>(this IArray<T> self)
+        => self.Count > 0 ? self.First() : default;
 
-    int IndexOfLast(Func<T, int, bool> f)
-    {
-        for (var i = Count; i > 0; --i)
-            if (f(this[i - 1], i))
-                return i;
-        return -1;
-    }
+    public static T? ElementAtOrDefault<T>(this IArray<T> self, int index)
+        => index >= 0 ? self[index] : default;
 
-    ISlice<T> TakeSliceWhile(Func<T, bool> predicate)
-        => Take(IndexOf(predicate));
+    public static T? FirstOrDefault<T>(this IArray<T> self, Func<T, bool> predicate)
+        => self.ElementAtOrDefault(self.IndexOf(predicate));
 
-    ISlice<T> TakeSliceWhile(Func<T, int, bool> predicate)
-        => Take(IndexOf(predicate));
+    public static T Last<T>(this IArray<T> self)
+        => self[self.Count - 1];
 
-    ISlice<T> Skip(int n)
-        => Slice(n, Count - n);
+    public static T Last<T>(this IArray<T> self, Func<T, bool> predicate)
+        => self[self.IndexOfLast(predicate)];
 
-    ISlice<T> SkipLast(int n)
-        => Slice(0, Count - n);
+    public static T? LastOrDefault<T>(this IArray<T> self)
+        => self.ElementAtOrDefault(self.Count - 1);
 
-    ISlice<T> SkipSliceWhile(Func<T, bool> predicate)
-        => Skip(IndexOf(predicate));
+    public static T? LastOrDefault<T>(this IArray<T> self, Func<T, bool> predicate)
+        => self.ElementAtOrDefault(self.IndexOfLast(predicate));
 
-    ISlice<T> SkipSliceWhile(Func<T, int, bool> predicate)
-        => Skip(IndexOf(predicate));
+    public static int Count<T>(this IArray<T> self)
+        => self.Count;
 
-    bool Any()
-        => Count > 0;
+    public static IArray<T> ToArray<T>(this IArray<T> self)
+        => self;
 
-    bool Any(Func<T, bool> predicate)
-        => Generator.Any(predicate);
+    public static T ElementAt<T>(this IArray<T> self, int n)
+        => self[n];
 
-    bool All(Func<T, bool> predicate)
-        => Generator.All(predicate);
-
-    T? ValueOrDefault()
-        => Count > 0 ? this[0] : default;
-
-    T First()
-        => this[0];
-
-    T First(Func<T, bool> predicate)
-        => this[IndexOf(predicate)];
-
-    T? FirstOrDefault()
-        => ValueOrDefault();
-
-    T? ElementAtOrDefault(int index)
-        => index >= 0 ? this[index] : default;
-
-    T? FirstOrDefault(Func<T, bool> predicate)
-        => ElementAtOrDefault(IndexOf(predicate));
-
-    T Last()
-        => this[Count - 1];
-
-    T Last(Func<T, bool> predicate)
-        => this[IndexOfLast(predicate)];
-
-    T? LastOrDefault()
-        => ElementAtOrDefault(Count - 1);
-
-    T? LastOrDefault(Func<T, bool> predicate)
-        => ElementAtOrDefault(IndexOfLast(predicate));
-
-    int CountElements()
-        => Count;
-
-    IArray<T> Reverse()
-        => new ReverseArray<T>(this);
-
-    IArray<T> ToArray()
-        => this;
-
-    T ElementAt(int n)
-        => this[n];
-
-    bool Contains(T item)
-        => IndexOf(x => x.Equals(item)) >= 0;
-
-    IArray<T> Concat(IArray<T> other)
-        => new ConcatArray<T>(this, other);
+    public static IArray<T> Concat<T>(this IArray<T> self, IArray<T> other)
+        => new ConcatArray<T>(self, other);
 }
 
-public partial record SelectArray<T, U>(IArray<T> Source, Func<T, U> Map)
+public readonly record struct SelectArray<T, U>(IArray<T> Source, Func<T, U> Map)
     : IArray<U>
 {
     public U this[int input] => Map(Source[input]);
     public int Count => Source.Count;
-    public IGenerator<U> Generator => new ArrayGenerator<U>(this);
+    public IIterator<U> Iterator => new ArrayIterator<U>(this);
 }
 
-public partial record SelectIndexArray<T, U>(IArray<T> Source, Func<T, int, U> Map)
+public readonly record struct SelectIndexArray<T, U>(IArray<T> Source, Func<T, int, U> Map)
     : IArray<U>
 {
     public U this[int input] => Map(Source[input], input);
     public int Count => Source.Count;
-    public IGenerator<U> Generator => new ArrayGenerator<U>(this);
+    public IIterator<U> Iterator => new ArrayIterator<U>(this);
 }
 
-public partial record FunctionalArray<T>(int Count, Func<int, T> Map)
+public readonly record struct  FunctionalArray<T>(int Count, Func<int, T> Map)
     : IArray<T>
 {
-    public IGenerator<T> Generator => new ArrayGenerator<T>(this);
+    public IIterator<T> Iterator => new ArrayIterator<T>(this);
     public T this[int n] => Map(n);
 }
 
-public partial record ReverseArray<T>(IArray<T> Source)
+public readonly record struct  ReverseArray<T>(IArray<T> Source)
     : IArray<T>
 {
     public T this[int input] => Source[Count - input];
     public int Count => Source.Count;
-    public IGenerator<T> Generator => new ArrayGenerator<T>(this);
+    public IIterator<T> Iterator => new ArrayIterator<T>(this);
 }
 
-public partial record ConcatArray<T>(IArray<T> Source1, IArray<T> Source2)
+public readonly record struct  ConcatArray<T>(IArray<T> Source1, IArray<T> Source2)
     : IArray<T>
 {
     public T this[int input] => input < Source1.Count ? Source1[input] : Source2[input - Source1.Count];
     public int Count => Source1.Count + Source2.Count;
-    public IGenerator<T> Generator => new ArrayGenerator<T>(this);
+    public IIterator<T> Iterator => new ArrayIterator<T>(this);
 }
 
-public partial record ArrayAdapter<T>(IReadOnlyList<T> Source)
+public readonly record struct  ArrayAdapter<T>(IReadOnlyList<T> Source)
     : IArray<T>
 {
     public T this[int input] => Source[input];
     public int Count => Source.Count;
-    public IGenerator<T> Generator => new ArrayGenerator<T>(this);
+    public IIterator<T> Iterator => new ArrayIterator<T>(this);
 }
 
 // TODO: there could be a special ArrayWhere generator and probably more that I haven't thought of yet. 

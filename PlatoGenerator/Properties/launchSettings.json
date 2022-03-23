@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "PlatoGenerator": {
+      "commandName": "Project"
+    },
+    "Profile 1": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\PlatoCollections\\PlatoCollections.csproj"
+    }
+  }
+}

@@ -3,7 +3,9 @@
     All Plato collections are immutable, side-effect free, and thread-safe.
   
     Plato is inspired heavily by LINQ. Many of the LINQ extension methods 
-    will implemented for the various types, as they makes sense.     
+    are implemented for various types, as they makes sense.
+
+    MIT License 2022, Christopher Diggins 
 */
 namespace Plato;
 
@@ -12,49 +14,69 @@ namespace Plato;
 //================================================================
 
 /// <summary>
-/// A generator can generate infinite values. This is very similar to 
-/// an IEnumerator in the C# standard library. Unlike IEnumerator it has 
-/// no side-effects and is not mutable. IGenerator supports 
-/// a number of LINQ operations on it directly.  
+/// Very similar to an IEnumerator in the C# standard library.
+/// Unlike IEnumerator it has no side-effects and is not mutable. 
 /// </summary>
-public partial interface IGenerator<T> : ISequence<T>
+public interface IIterator<T> 
 {
-    IGenerator<T> Next => this;
-    bool HasValue => false;
-    T Value => throw new NotSupportedException();   
-
-    // ISequence implementaion
-    IGenerator<T> ISequence<T>.Generator => this;
+    IIterator<T> Next { get; }
+    bool HasValue { get; }
+    T Value { get;  }
 }
 
 /// <summary>
 /// A sequence is roughly equivalent of IEnumerable in the C# standard library. 
-/// It is a potentially infinite sequence of values, however
+/// It is a potentially infinite sequence of values. Unlike IEnumerable
 /// it is guaranteed to have no side effects and can be enumerated multiple times. 
 /// </summary>
-public partial interface ISequence<T>
+public interface ISequence<T> 
 {
-    IGenerator<T> Generator => EmptyGenerator<T>.Instance;
+    IIterator<T> Iterator { get; }
+}
+
+public interface ISequence<T, TIterator> : ISequence<T> where TIterator : IIterator<T>
+{
+    TIterator Iterator { get; }
+    IIterator<T> ISequence<T>.Iterator => Iterator;
+}
+
+
+/// <summary>
+/// Any collection that maintains a count implements this interface.
+/// This implies that the implementing type can return the count in at least O(Log N) time
+/// if not O(1).
+/// </summary>
+public interface ICounted
+{
+    int Count { get; }
+}
+
+/// <summary>
+/// For sequences that track how many items they have, and can return that in O(1)
+/// time. This does not guarantee O(1) element access though, for that you
+/// would want to use an IArray.
+/// </summary>
+public interface ICountedSequence<T> : ICounted, ISequence<T> 
+{
 }
 
 /// <summary>
 /// An abstraction of the concept of a mathematical mapping. 
+/// Maps are not counted, they may or may not be empty. 
 /// </summary>
-public partial interface IMap<T1, T2>
+public interface IMap<T1, T2>
 {
-    T2 this[T1 input] => throw new IndexOutOfRangeException;
+    T2 this[T1 input] { get; }
 }
 
 /// <summary>
 /// An immutable set. It tells us only whether membership exists or not.
 /// A pure set is infinite and unordered, so we cannot extract
-/// members from it. In such cases you will want to use a bag or dictionary. 
+/// members from it. In such cases you may want a dictionary. 
 /// </summary>
-public partial interface ISet<T>
+public interface ISet<T>
 {
-    bool Contains(T item) => false;
-
-    static ISet<T> Default { get; } = EmptySet<T>.Instance;
+    bool Contains(T item);
 }
 
 /// <summary>
@@ -63,51 +85,14 @@ public partial interface ISet<T>
 /// An array is a specialization of a map (from the integer domain to any codomain)
 /// and it can be trivially used as a sequence. 
 /// </summary>
-public partial interface IArray<T> 
-    : IMap<int, T>, ISequence<T>, IGenerator<T>
-{
-    int Count => 0;
-
-    // Implementation of IGenerator 
-    bool IGenerator<T>.HasValue => Count > 0;
-    IGenerator<T> IGenerator<T>.Next => Skip(1);
-    T IGenerator<T>.Value => this[0];
-}
-
-//========================================================================================
-// Interface for containers. 
-//=========================================================================================
-
-/// <summary>
-/// Bags are unordered collections of things, with an unknown (but finite) quantity 
-/// (until you convert to a sequence). 
-/// Bags are known only to be empty or not. They can be explicitly converted into a sequence,
-/// but it requires an ordering to be applied. Bags do not return membership information.
-/// You cannot remove items from a bag. 
-/// </summary>
-public partial interface IBag<T>
-{
-    bool Empty => true;
-    ISortedSequence<T> ToSequence(Func<T, T, int> ordering);
-}
-
-/// <summary>
-/// Containers are finite sets, bags that are of membership.
-/// </summary>
-public partial interface IContainer<T> 
-    : IBag<T>, ISet<T>
-{
-}
+public interface IArray<T> : IMap<int, T>, ICountedSequence<T>
+{ }
 
 /// <summary>
 /// A classic linked list with a head and the rest of the list. 
 /// </summary>
-public partial interface IList<T> 
-    : ISequence<T>, IBag<T>
+public interface IList<T> : ISequence<T>
 {
-    T Value => throw new ArgumentOutOfRangeException();
-    bool HasValue => false;
-    IList<T> Next => throw new ArgumentOutOfRangeException();
 }
 
 //======================================================================
@@ -117,52 +102,31 @@ public partial interface IList<T>
 /// <summary>
 /// Collections with a specific ordering store their ordering function. 
 /// </summary>
-public partial interface ISorted<T>
+public interface ISorted<T>
 {
-    Func<T, T, int> Ordering { get; }
+    IComparer<T> Ordering => NoOrder<T>.Instance;
 }
 
 /// <summary>
 /// This is used by types that support the notion of being searchable in 
 /// at least O(Log N) time. For example a sorted sequence or a binary tree. 
 /// </summary>
-public partial interface ISearchable<TValue, TKey>
+public interface ISearchable<TValue, TKey>
 {
-    TKey FindKey(TValue item);
+    TKey FindKey(TValue item) => throw new NotImplementedException();
 }
 
 /// <summary>
 /// An ordered array enables much faster finding of items.
 /// </summary>
-public partial interface ISortedArray<T> 
-    : IArray<T>, ISorted<T>, ISearchable<T, int>
+public interface ISortedArray<T> : IArray<T>, ISorted<T>, ISearchable<T, int>
 {
 }
 
 /// <summary>
-/// An ordered bag has a predefined order that it maintains.
+/// An sequence with a specific fixed ordering. 
 /// </summary>
-public partial interface ISortedBag<T> 
-    : IBag<T>, ISorted<T>
-{
-    ISortedSequence<T> ToSequence();
-}
-
-/// <summary>
-/// An ordered container has a predefined order that it maintains.
-/// Retrieving a sorted sequence from a sorted container is faster, 
-/// but adding items to it is slower. 
-/// </summary>
-public partial interface ISortedContainer<T> 
-    : IContainer<T>, ISorted<T>
-{
-}
-
-/// <summary>
-/// An ordered sequence is a sequence with a predefined ordering that it maintains. 
-/// </summary>
-public partial interface ISortedSequence<T> 
-    : ISequence<T>, ISortedBag<T>
+public partial interface ISortedSequence<T> : ISequence<T>, ISorted<T>
 {
 }
 
@@ -173,7 +137,7 @@ public partial interface ISortedSequence<T>
 /// <summary>
 /// A binary tree.
 /// </summary>
-public partial interface ITree<T> : ISequence<T>
+public interface ITree<T> : ISequence<T>
 {
     T Value { get; }
     ITree<T>? Left { get; }
@@ -183,44 +147,42 @@ public partial interface ITree<T> : ISequence<T>
 /// <summary>
 /// A tree where all values on the left sub-trees are always less than or equal to values on the right sub-tree
 /// </summary>
-public partial interface ISortedTree<T> 
-    : ITree<T>, ISorted<T>, ISearchable<T, ISortedTree<T>>
+public interface ISortedTree<T> : ITree<T>, ISorted<T>, ISearchable<T, ISortedTree<T>>
 {
-    ISortedTree<T> Add(T item);
+    ISortedTree<T> Add(T item) => throw new NotImplementedException();
 }
 
 /// <summary>
 /// A heap is a tree where each item is greater than the elements in all the sub-trees. 
 /// </summary>
-public partial interface IHeap<T> 
-    : ITree<T>, ISortedTree<T>
+public interface IHeap<T> : ITree<T>, ISortedTree<T>
 {
-    new IHeap<T> Add(T item);
+    new IHeap<T> Add(T item) => throw new NotImplementedException();
 }
 
 //================================================================
 // Stack, Queue, Deques
 //================================================================
 
-public partial interface IStack<T> 
-    : IBag<T>
+public interface IStack<T> 
 {
+    bool IsEmpty { get; }
     IStack<T> Pop(int n = 1);
     IStack<T> Push(ISequence<T> item);
     T Top { get; }
 }
 
-public partial interface IQueue<T> 
-    : IBag<T>
+public interface IQueue<T> 
 {
+    bool IsEmpty { get; }
     T Front { get; }
     IQueue<T> Dequeue(int n = 1);
     IQueue<T> Enqueue(ISequence<T> item);
 }
 
-public partial interface IDeque<T> 
-    : IBag<T>
+public interface IDeque<T> 
 {
+    bool IsEmpty { get; }
     T Front { get; }
     T Back { get; }
     IDeque<T> PushFront(ISequence<T> item);
@@ -229,8 +191,7 @@ public partial interface IDeque<T>
     IDeque<T> PopEnd(int n = 1);
 }
 
-public partial interface IPriorityQueue<TKey, TValue> 
-    : ISorted<TKey>, IStack<(TKey, TValue)>
+public interface IPriorityQueue<TKey, TValue> : ISorted<TKey>, IStack<(TKey, TValue)>
 {    
 }
 
@@ -242,8 +203,7 @@ public partial interface IPriorityQueue<TKey, TValue>
 /// A dictionary data type is a mapping from key to values,
 /// where the keys have an explicit ordering, and are finite.
 /// </summary>
-public partial interface IDictionary<TKey, TValue> 
-    : IMap<TKey, TValue>, ISorted<TKey>, ISet<TKey>
+public interface IDictionary<TKey, TValue> : IMap<TKey, TValue>, ISorted<TKey>, ISet<TKey>
 {
     ISortedSequence<(TKey, TValue)> ToSequence();
 }
@@ -251,16 +211,14 @@ public partial interface IDictionary<TKey, TValue>
 /// <summary>
 /// A dictionary data type that allows multiple items per key 
 /// </summary>
-public partial interface IMultiDictionary<TKey, TValue> 
-    : IDictionary<TKey, ISequence<TValue>>
+public interface IMultiDictionary<TKey, TValue> : IDictionary<TKey, ISequence<TValue>>
 {
 }
 
 /// <summary>
 /// A dictionary data type that allows multiple items per key, and can retrieve keys from values. 
 /// </summary>
-public partial interface IBiDictionary<TKey, TValue> 
-    : IDictionary<TKey, TValue>
+public interface IBiDictionary<TKey, TValue> : IDictionary<TKey, TValue>
 {
     IMultiDictionary<TValue, TKey> GetValueDictionary();
 }
@@ -268,26 +226,6 @@ public partial interface IBiDictionary<TKey, TValue>
 //====================================================
 // Specialized Collections
 //====================================================
-
-/// <summary>
-/// An interval is a special kind of set based on two ordered values. 
-/// </summary>
-public partial interface IInterval<T> : ISorted<T>, ISet<T>
-{
-    T From { get; }
-    T To { get; }
-}
-
-/// <summary>
-/// A subsequence is a sequence built from another sequence, starting from
-/// a particular location and continuing for a set number of values.
-/// </summary>
-public partial interface ISubSequence<T> : ISequence<T>
-{
-    ISequence<T> Sequence { get; }
-    int Index { get; }
-    int Count { get; }
-}
 
 /// <summary>
 /// A slice is a section of array, which itself is also an array. 
@@ -298,3 +236,11 @@ public partial interface ISlice<T> : IArray<T>
     int Index { get; }
 }
 
+
+/// <summary>
+/// A monotonically increasing sequence of integers 
+/// </summary>
+public interface IRange : ISortedArray<int>, ISet<int>
+{
+    int From { get; }
+}

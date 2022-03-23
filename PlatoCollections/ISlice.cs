@@ -1,14 +1,8 @@
 ﻿namespace Plato;
 
-public partial interface ISlice<T>
-{
-    ISlice<T> Slice(int from, int count)
-        => new Slice<T>(Array, Index + from, count);
-}
-
-public partial record Slice<T>(IArray<T> Array, int Index, int Count)
-    : ISlice<T>
+public readonly record struct Slice<T>(IArray<T> Array, int Index, int Count) : ISlice<T>
 {
     public T this[int input] => Array[input + Index];
-    public IGenerator<T> Generator => new ArrayGenerator<T>(this);
+    public IIterator<T> Iterator => new ArrayIterator<T>(this);
+    T IMap<int, T>.this[int index] => Array[Index + index];
 }
