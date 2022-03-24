@@ -14,9 +14,11 @@ namespace PlatoGenerator
         string Name { get; }
     }
 
-    public class PlatoSyntax
+    public abstract class PlatoSyntax
     {
         public readonly int Id = Lookup.Count;
+
+        public abstract SyntaxNode GetNode();
 
         public static Dictionary<(TextSpan, SyntaxKind), PlatoSyntax> Lookup 
             = new Dictionary<(TextSpan, SyntaxKind), PlatoSyntax>();
@@ -31,6 +33,9 @@ namespace PlatoGenerator
         where TSelf: PlatoSyntax<T, TSelf>, new()
     {
         public T Node { get; set; }
+
+        public override SyntaxNode GetNode()
+            => Node;
 
         public virtual void OnInit()
         { }
@@ -71,7 +76,7 @@ namespace PlatoGenerator
         public PlatoSyntax FindParent(SyntaxNode syntax)
         {
             if (syntax == null) return null;
-            var tmp = PlatoSyntax.GetSyntax(syntax);
+            var tmp = GetSyntax(syntax);
             if (tmp != null) return tmp;
             return FindParent(syntax.Parent);
         }
@@ -117,7 +122,7 @@ namespace PlatoGenerator
         public override void OnInit()
         {
             base.OnInit();
-            ChildStatements = Node.ChildNodes().OfType<StatementSyntax>().Select(PlatoStatementSyntax.Create).ToList();
+            ChildStatements = Node.ChildNodes().OfType<StatementSyntax>().Select(Create).ToList();
             ChildExpressions = Node.ChildNodes().OfType<ExpressionSyntax>().Select(PlatoExpressionSyntax.Create).ToList();
             ChildTypes = Node.ChildNodes().OfType<TypeDeclarationSyntax>().Select(PlatoTypeSyntax.Create).ToList();
             Variables = Node.ChildNodes().OfType<VariableDeclaratorSyntax>().Select(PlatoVariableSyntax.Create).ToList();

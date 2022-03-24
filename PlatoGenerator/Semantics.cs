@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 
 namespace PlatoGenerator
 {
-    public static class PlatoSemantics
+    public static class Semantics
     {
         public static SyntaxNode GetDeclaringSyntax(this ISymbol symbol)
         {

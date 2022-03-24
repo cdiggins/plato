@@ -10,43 +10,13 @@ using Microsoft.CodeAnalysis.Text;
 namespace PlatoGenerator
 {
     [Generator]
-    public class PlatoGenerator : ISourceGenerator
+    public class Generator : ISourceGenerator
     {
         public static string LogFileName = Path.Combine(Path.GetTempPath(), "plato.txt");
 
         public static void OutputExpression(StreamWriter sw, PlatoExpressionSyntax expr, SemanticModel model,
             string indent = "")
-        {
-            // TODO: Figure out how this happens.
-            if (expr == null)
-                return;
-
-            OutputExpression(sw, PlatoExpression.Create(expr, model), indent);
-        }
-
-        public static void OutputExpression(StreamWriter sw, PlatoExpression expr, string indent = "")
-        {
-            if (expr == null)
-                return;
-
-            sw.WriteLine($"{indent}Def:{expr.Name} Value:{expr.Value} IsMethod:{expr.IsMethod} Symbol:{expr.Symbol} Type:{expr.Type} Kind:{expr.SyntaxKind} Decl:{expr.Declaration?.Id}");
-            if (expr.Arguments.Count > 0)
-            {
-                sw.WriteLine(indent + "  Arguments:");
-                foreach (var a in expr.Arguments)
-                {
-                    OutputExpression(sw, a, indent + "    ");
-                }
-            }
-            if (expr.Children.Count > 0)
-            {
-                sw.WriteLine(indent + "  Children:");
-                foreach (var c in expr.Children)
-                {
-                    OutputExpression(sw, c, indent + "   ");
-                }
-            }
-        }
+            => OutputExpression(sw, expr.Node.CreateExpression(model), indent);
 
         public static void OutputStatement(StreamWriter sw, PlatoStatementSyntax st, SemanticModel model, string indent = "")
         {
@@ -95,44 +65,48 @@ namespace PlatoGenerator
             }
         }
 
-        public static void OutputExpression(StreamWriter sw, ExpressionIR expression, string indent = "")
+        public static void OutputExpression(StreamWriter sw, Expression expression, string indent = "")
         {
             if (expression == null)
                 return;
-            sw.WriteLine($"{indent}{expression.Name}@{expression.Id}:{expression.Type} {expression.Kind}");
+
             foreach (var x in expression.Children)
                 OutputExpression(sw, x, indent + "--");
 
-            var m = expression.SourceExpression?.RelatedMethod;
+            var t = expression.Type?.ToString() ?? "UNTYPED";
+            sw.WriteLine($"{indent}{expression.Name}@{expression.Id}:{t} {expression.SyntaxKind}");
+
+            var m = expression.RelatedMethod;
             if (m != null)
             {
-                sw.WriteLine($"METHOD: {m.Name}");
+                // TODO: later.
+                // sw.WriteLine($"METHOD: {m.Name}@{m.Id}:{m.ReturnType.Text}");
             }
 
             // TODO: look for 
             //if (expression.SourceExpression)
         }
 
-        public static void OutputStatement(StreamWriter sw, StatementIR statement, string indent = "")
+        public static void OutputStatement(StreamWriter sw, Statement statement, string indent = "")
         {
             if (statement == null)
                 return;
             switch (statement)
             {
-                case BlockStatementIR blockStatementIr:
+                case BlockStatement blockStatementIr:
                     sw.WriteLine($"{indent}{{");
                     foreach (var s in blockStatementIr.Statements)
                         OutputStatement(sw, s, indent + "  ");
                     sw.WriteLine($"{indent}}}");
                     break;
-                case ExpressionStatementIR expressionStatementIr:
+                case ExpressionStatement expressionStatementIr:
                     OutputExpression(sw, expressionStatementIr.Expression, indent);
                     sw.WriteLine($"{indent};");
                     break;
-                case FunctionDefinitionIR functionDefinitionIr:
+                case FunctionDefinition functionDefinitionIr:
                     sw.WriteLine("UNSUPPORTED FUNCTION DEFINITION");
                     break;
-                case IfStatementIR ifStatementIr:
+                case IfStatement ifStatementIr:
                     sw.WriteLine($"{indent}if(");
                     OutputExpression(sw, ifStatementIr.Condition, indent + "  ");
                     sw.WriteLine($"{indent})");
@@ -143,21 +117,21 @@ namespace PlatoGenerator
                         OutputStatement(sw, ifStatementIr.OnFalse);
                     }
                     break;
-                case ReturnStatementIR returnStatementIr:
+                case ReturnStatement returnStatementIr:
                     sw.WriteLine($"{indent}return ");
                     OutputExpression(sw, returnStatementIr.Expression, indent + "  ");
                     sw.WriteLine($"{indent};");
                     break;
-                case ThrowStatementIR throwStatementIr:
+                case ThrowStatement throwStatementIr:
                     sw.WriteLine($"{indent}throw ");
                     if (throwStatementIr.Expression != null)
                         OutputExpression(sw, throwStatementIr.Expression, indent + "  ");
                     sw.WriteLine($"{indent};");
                     break;
-                case UnsupportedStatementIR unsupportedStatementIr:
+                case UnsupportedStatement unsupportedStatementIr:
                     sw.WriteLine($"UNSUPPORTED {unsupportedStatementIr.Syntax.Kind()}");
                     break;
-                case WhileStatementIR whileStatementIr:
+                case WhileStatement whileStatementIr:
                     OutputStatement(sw, whileStatementIr.Initialization, indent);
                     sw.WriteLine($"{indent}while(");
                     OutputExpression(sw, whileStatementIr.Condition, indent + "  ");
@@ -172,10 +146,14 @@ namespace PlatoGenerator
             }
         }
 
-        public static void OutputFunction(StreamWriter sw, FunctionDefinitionIR func, string indent = "")
+        public static void OutputFunction(StreamWriter sw, FunctionDefinition func, string indent = "")
         {
             var paramList = string.Join(", ", func.Parameters.Select(p => $"{p.Name}@{p.Id}:{p.Type}"));
-            sw.WriteLine($"{indent}Function {func.Name}({paramList})");
+            var isStatic = func.IsStatic ? "static " : "";
+            sw.WriteLine($"{indent}{isStatic}{func.Result?.Type} {func.Name}@{func.Id}({paramList})");
+            sw.WriteLine($"/*");
+            sw.WriteLine(func.Syntax);
+            sw.WriteLine($"*/");
             sw.WriteLine($"{indent}{{");
             OutputStatement(sw, func.Body, indent + "  ");
             sw.WriteLine($"{indent}}}");
@@ -185,7 +163,7 @@ namespace PlatoGenerator
         {
             var types = context.Compilation.SyntaxTrees.GetPlatoTypes();
 
-            using (var sw = new StreamWriter(File.OpenWrite(LogFileName)))
+            using (var sw = new StreamWriter(File.Create(LogFileName)))
             {
                 foreach (var t in types)
                 {
@@ -194,14 +172,14 @@ namespace PlatoGenerator
                     sw.WriteLine($"{t.Kind} {t.Name}");
                     foreach (var m in t.Methods)
                     {
-                        var func = FunctionDefinitionIR.Create(m, model);
+                        var func = FunctionDefinition.Create(m, model);
                         OutputFunction(sw, func, "  ");
                     }
                 }
             }
         }
 
-        public static void OutputTypes(GeneratorExecutionContext context)
+        public static void OLD_OutputTypes(GeneratorExecutionContext context)
         {
             var types = context.Compilation.SyntaxTrees.GetPlatoTypes();
 
