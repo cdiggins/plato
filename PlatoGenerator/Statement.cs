@@ -19,54 +19,101 @@ namespace PlatoGenerator
     // Calling a known function involves replacing the parameters with arguments
     // What about captured variables? This means that the function has to be created. 
     // It is similar to calling a function that returns a function. 
-    public class FunctionDefinition : Statement
+    public class FunctionDefinition : Expression
     {
-        public static Dictionary<int, FunctionDefinition> Lookup = new Dictionary<int, FunctionDefinition>();
-        public int Id = Lookup.Count;
-
-        public FunctionDefinition()
-        {
-            Lookup.Add(Id, this);
-        }
-
-        public string Name;
-        public PlatoMethodSyntax SourceMethod;
-        public IMethodSymbol Symbol;
-        public Expression This;
         public bool IsStatic => This == null;
         public List<Expression> Parameters = new List<Expression>();
         public Expression Result; 
-        //public List<Expression> Captured = new List<Expression>();
-        //public bool IsClosure => Captured.Count > 0;
         public Statement Body;
 
-        public static FunctionDefinition Create(PlatoMethodSyntax method, SemanticModel model)
+        // TODO: add these for lambdas and local functions 
+        //public List<Expression> Captured = new List<Expression>();
+        //public bool IsClosure => Captured.Count > 0;
+
+        // TODO: get captured variables 
+        public static FunctionDefinition Create(LambdaExpressionSyntax syntax, SemanticModel model)
         {
-            var symbol = model.GetDeclaredSymbol(method.Node) as IMethodSymbol;
+            // TODO: assure that this is always an IMethodSymbol, if not, what is it? 
+            var symbol = model.GetSymbolInfo(syntax).Symbol as IMethodSymbol;
+
+            /*
+            var result = new Expression("#result", symbol?.ReturnType);
+            var @this = symbol?.ReceiverType == null ? null : new Expression("#this", symbol?.ReceiverType);
+            */
+
+            var tmp1 = syntax as SimpleLambdaExpressionSyntax;
+            var tmp2 = syntax as ParenthesizedLambdaExpressionSyntax;
+
+            var parameters = new List<ParameterSyntax>();
+            if (tmp1 != null) parameters.Add(tmp1.Parameter);
+            if (tmp2 != null) parameters.AddRange(tmp2.ParameterList.Parameters);
+
+            var r = new FunctionDefinition
+            {
+                Name = "#lambda",
+                Body = syntax.Block.CreateStatement(syntax.ExpressionBody, model),
+                Syntax = syntax,
+                Symbol = symbol,
+                Model = model,
+                //Result = result,
+                Parameters = parameters.Select(p => p.CreateExpression(model)).ToList()
+            };
+
+            return r;
+        }
+
+        // TODO: should I really be getting the function definition from a "PlatoMethodSyntax" 
+        public static FunctionDefinition Create(MethodDeclarationSyntax method, SemanticModel model)
+        {
+            var symbol = model.GetDeclaredSymbol(method) as IMethodSymbol;
             var result = new Expression("#result", symbol?.ReturnType);
             var @this = symbol?.ReceiverType == null ? null : new Expression("#this", symbol?.ReceiverType);
 
             var r = new FunctionDefinition
             {
-                Name = method.Name,
+                Name = method.Identifier.ToString(),
                 
-                Body = method.StatementBody.CreateStatement(method.ExpressionBody, model),
-                SourceMethod = method,
-                Syntax = method.Node,
+                Body = method.Body.CreateStatement(method.ExpressionBody?.Expression, model),
+                Syntax = method,
                 Symbol = symbol,
                 Model = model,
                 Result = result,
                 This = @this,
-                Parameters = method.Parameters.Select(p => p.Node.CreateExpression(model)).ToList()
+                Parameters = method.ParameterList.Parameters.Select(p => p.CreateExpression(model)).ToList()
             };
 
             return r;
         }
+
+        // TODO: get captured variables! 
+        public static FunctionDefinition Create(LocalFunctionStatementSyntax method, SemanticModel model)
+        {
+            var symbol = model.GetDeclaredSymbol(method) as IMethodSymbol;
+            var result = new Expression("#result", symbol?.ReturnType);
+            var @this = symbol?.ReceiverType == null ? null : new Expression("#this", symbol?.ReceiverType);
+
+            var r = new FunctionDefinition
+            {
+                Name = method.Identifier.ToString(),
+
+                Body = method.Body.CreateStatement(method.ExpressionBody?.Expression, model),
+                Syntax = method,
+                Symbol = symbol,
+                Model = model,
+                Result = result,
+                This = @this,
+                Parameters = method.ParameterList.Parameters.Select(p => p.CreateExpression(model)).ToList()
+            };
+
+            return r;
+        }
+
+        public List<Expression> GetReturnExpressions()
+        {
+            throw new NotImplementedException("TODO: get the list of all of the returned expressions.");
+        }
     }
 
-    /// <summary>
-    /// Defines a variable
-    /// </summary>
     public class ExpressionStatement : Statement
     {
         public Expression Expression;
@@ -78,6 +125,11 @@ namespace PlatoGenerator
         public Expression Condition;
         public Statement Body;
         public Statement Increment;
+    }
+
+    public class MultiStatement : Statement
+    {
+        public List<Statement> Statements = new List<Statement>();
     }
 
     public class BlockStatement : Statement
@@ -102,6 +154,9 @@ namespace PlatoGenerator
         public Expression Expression;
     }
 
+    public class EmptyStatement : Statement
+    { }
+
     public class UnsupportedStatement : Statement
     {
     }
@@ -115,10 +170,7 @@ namespace PlatoGenerator
             switch (syntax)
             {
                 case BlockSyntax blockSyntax:
-                    r = new BlockStatement
-                    {
-                        Statements = blockSyntax.Statements.Select(x => x.CreateStatement(model)).ToList(),
-                    };
+                    r = blockSyntax.Statements.Select(x => x.CreateStatement(model)).ToBlockStatement(model);
                     break;
 
                 case DoStatementSyntax doStatementSyntax:
@@ -150,8 +202,10 @@ namespace PlatoGenerator
                 case WhileStatementSyntax whileStatementSyntax:
                     r = new WhileStatement
                     {
+                        Initialization = new EmptyStatement(),
                         Body = whileStatementSyntax.Statement.CreateStatement(model),
                         Condition = whileStatementSyntax.Condition.CreateExpression(model),
+                        Increment = new EmptyStatement(),
                     };
                     break;
 
@@ -162,28 +216,27 @@ namespace PlatoGenerator
                         Condition = ifStatementSyntax.Condition.CreateExpression(model),
                         OnTrue = CreateStatement(ifStatementSyntax.Statement, model),
                         OnFalse = ifStatementSyntax.Else == null
-                            ? null
+                            ? new EmptyStatement()
                             : CreateStatement(ifStatementSyntax.Else.Statement, model)
                     };
                     break;
 
                 case ReturnStatementSyntax returnStatementSyntax:
-                    r = new ReturnStatement
-                    {
-                        Expression = returnStatementSyntax.Expression.CreateExpression(model),
-                    };
+                    r = returnStatementSyntax.Expression.CreateExpression(model).ToReturnStatement();
                     break;
 
                 case LocalDeclarationStatementSyntax localDeclarationStatementSyntax:
-                    // TODO: 
+                    r = localDeclarationStatementSyntax.CreateExpressions(model).ToMultiStatement(model);
                     break;
 
                 case LocalFunctionStatementSyntax localFunctionStatementSyntax:
-                    //TODO:
+                    // TODO: decide whether this should really stay in Plato. 
+                    // I do not find local functions to be very readable, but in the past they were a feature I wanted. 
+                    r = FunctionDefinition.Create(localFunctionStatementSyntax, model).ToExpressionStatement();
                     break;
 
                 case ThrowStatementSyntax throwStatementSyntax:
-                    r = new ThrowStatement { Expression = throwStatementSyntax.Expression.CreateExpression(model) };
+                    r = throwStatementSyntax.Expression.CreateExpression(model).ToThrowStatement();
                     break;
 
                 case BreakStatementSyntax breakStatementSyntax:
@@ -215,25 +268,27 @@ namespace PlatoGenerator
                 case UsingStatementSyntax usingStatementSyntax:
 
                 case YieldStatementSyntax yieldStatementSyntax:
-
                     break;
 
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
             r.Model = model;
             r.Syntax = syntax;
             return r;
         }
 
-        public static Statement CreateStatement(this PlatoStatementSyntax statement, PlatoExpressionSyntax expr,
-            SemanticModel model) 
-            => statement == null && expr != null
-                ? CreateStatement(expr.Node, model)
-                : statement != null
-                    ? CreateStatement(statement.Node, model)
-                    : null;
+        public static Statement CreateStatement(this StatementSyntax statement, ExpressionSyntax expr,
+            SemanticModel model)
+        {
+            if (statement != null) return statement.CreateStatement(model);
+            return new ReturnStatement
+            {
+                Expression = expr.CreateExpression(model),
+                Model = model,
+                Syntax = expr,
+            };
+        }
 
         public static Statement CreateStatement(this IEnumerable<Statement> statements, SemanticModel model)
             => new BlockStatement { Statements = statements.ToList(), Model = model };
@@ -242,6 +297,24 @@ namespace PlatoGenerator
             => CreateStatement(syntax.Select(x => x.CreateStatement(model)), model);
 
         public static Statement CreateStatement(this ExpressionSyntax syntax, SemanticModel model)
-            => new ExpressionStatement { Expression = syntax.CreateExpression(model), Syntax = syntax, Model = model };
+            => syntax.CreateExpression(model).ToExpressionStatement();
+
+        public static Statement ToExpressionStatement(this Expression expr)
+            => new ExpressionStatement { Expression = expr, Syntax = expr.Syntax, Model = expr.Model };
+
+        public static Statement ToReturnStatement(this Expression expr)
+            => new ReturnStatement { Expression = expr, Syntax = expr.Syntax, Model = expr.Model };
+
+        public static Statement ToThrowStatement(this Expression expr)
+            => new ThrowStatement { Expression = expr, Syntax = expr.Syntax, Model = expr.Model };
+
+        public static Statement ToMultiStatement(this IEnumerable<Expression> expr, SemanticModel model)
+            => expr.Select(ToExpressionStatement).ToMultiStatement(model);
+
+        public static Statement ToMultiStatement(this IEnumerable<Statement> statements, SemanticModel model)
+            => new MultiStatement { Statements = statements.ToList(), Model = model};
+
+        public static Statement ToBlockStatement(this IEnumerable<Statement> statements, SemanticModel model)
+            => new BlockStatement { Statements = statements.ToList(), Model = model };
     }
 }

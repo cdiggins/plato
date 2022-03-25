@@ -8,120 +8,10 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace PlatoGenerator
 {
-    /*
-    public class ExpressionIR
+    public class Definition
     {
-        public static Dictionary<int, ExpressionIR> Lookup = new Dictionary<int, ExpressionIR>();
+    }
 
-        public ExpressionIR()
-            => Lookup.Add(Id = Lookup.Count, this);
-
-        public int Id;
-        public string Name;
-        public List<object> ValueOptions = new List<object>();
-        public bool HasValue => ValueOptions.Count == 1;
-        public object Value => ValueOptions[0];
-        public SyntaxNode Syntax;
-        public SemanticModel Model;
-        public PlatoExpression SourceExpression;
-        public ITypeSymbol Type => SourceExpression?.Type;
-        public SyntaxKind Kind => SourceExpression?.SyntaxKind ?? SyntaxKind.None;
-
-        // A list of all references to this expression
-        public List<ExpressionRefIR> Refs = new List<ExpressionRefIR>();
-
-        public List<ExpressionRefIR> Args = new List<ExpressionRefIR>();
-        public ExpressionRefIR This;
-
-        public List<ExpressionIR> Children = new List<ExpressionIR>();
-        public List<StatementIR> Statements = new List<StatementIR>();
-
-        public ExpressionRefIR LastUse => Refs.Last();
-        public bool IsUsed => Refs.Any();
-
-        public bool IsParameter => Name == "#parameter";
-        public bool IsThis => Name == "#this";
-        public bool IsInvocation => Name == "#invocation";
-        public bool IsKnownFunction => IsConstant && Value is FunctionDefinitionIR;
-        public bool IsKnownFunctionInvocation => IsInvocation && This.Def.IsKnownFunction;
-        public bool IsLexicalCapture => Name == "#closure";
-        public bool IsConstant => Name == "#constant";
-
-        public void CheckAssumptions()
-        {
-            if (IsLexicalCapture)
-            {
-                Assert(This.Def.IsKnownFunction);
-            }
-
-            if (IsConstant)
-            {
-                Assert(HasValue);
-            }
-
-            switch (Name)
-            {
-                case "#constant":
-                case "#parameter":
-                case "#invocation":
-                case "#closure":
-                case "#operator":
-                case "":
-                    break;
-                default:
-                    Assert(false);
-                    break;
-            }
-        }
-
-        public static void Assert(bool condition)
-        {
-            Debug.Assert(condition);
-        }
-
-        public ExpressionRefIR MakeRef()
-        {
-            var r = new ExpressionRefIR { Def = this };
-            Refs.Add(r);
-            return r;
-        }
-
-        public static ExpressionIR Create(ExpressionSyntax expr, SemanticModel model)
-        {
-            if (expr == null)
-                return null;
-            return Create(PlatoExpression.Create(expr, model));
-        }
-
-        public static ExpressionIR Create(PlatoExpression expr)
-        {
-            if (expr == null)
-                return null;
-            return new ExpressionIR()
-            {
-                SourceExpression = expr,
-                Name = expr.Name,
-                Syntax = expr.Syntax.Node,
-                Model = expr.Model,
-                Children = expr.Children.Select(Create).ToList(),
-            };
-        }
-
-        public static ExpressionIR Create(ParameterSyntax syntax, SemanticModel model)
-            => Create(PlatoParamSyntax.Create(syntax), model);
-
-        public static ExpressionIR Create(PlatoParamSyntax expr, SemanticModel model)
-        {
-            if (expr == null)
-                return null;
-            return new ExpressionIR()
-            {
-                Name = expr.Name,
-                Syntax = expr.Node,
-                Model = model,
-            };
-        }
-    }*/
 
     /// <summary>
     /// Every expression corresponds to the evaluation of some value
@@ -166,7 +56,7 @@ namespace PlatoGenerator
             Type = type;
         }
 
-        public string Name = "unknown";
+        public string Name = "#unknown";
         public int Id = Lookup.Count;
         public SemanticModel Model;
         public SyntaxNode Syntax;
@@ -182,6 +72,8 @@ namespace PlatoGenerator
         public List<Expression> Initializer = new List<Expression>();
 
         public SyntaxKind SyntaxKind => Syntax.Kind();
+
+        public string TypeString => Type?.ToString() ?? (Symbol is IMethodSymbol ms ? "METHOD_" + ms.Name : "UNTYPED");
 
         public IEnumerable<Expression> Children
         {
@@ -216,6 +108,9 @@ namespace PlatoGenerator
             return self;
         }
 
+        public static IEnumerable<Expression> CreateExpressions(this LocalDeclarationStatementSyntax syntax, SemanticModel model)
+            => syntax.Declaration.Variables.Select(v => v.CreateExpression(model));
+
         public static Expression CreateExpression(this SyntaxNode syntax, SemanticModel model)
         {
             if (syntax == null)
@@ -228,7 +123,6 @@ namespace PlatoGenerator
 
             var r = new Expression
             {
-                Name = "#unsupported",
                 Syntax = syntax,
                 Model = model,
                 Symbol = symbol,
@@ -250,11 +144,40 @@ namespace PlatoGenerator
 
                     if (r.Type == null) 
                         throw new Exception("Could not determine type");
-
                 }
                 else if (syntax is VariableDeclaratorSyntax variableSyntax)
                 {
-                    throw new NotImplementedException("TODO");
+                    // TODO: perhaps the declared type is useful 
+                    // var declaration = variableSyntax.Parent as VariableDeclarationSyntax;
+
+                    if (r.Symbol != null) throw new Exception("Expected no symbol");
+                    
+                    r.Symbol = model.GetDeclaredSymbol(syntax);
+
+                    if (r.Type == null)
+                    {
+                        // TODO: I suspect it might be from the initializer, if not it is the declared type. 
+                        // Really it could have both. 
+                        Debug.WriteLine("TODO: figure out the variable type");
+                    }
+
+                    r.Name = variableSyntax.Identifier.ToString();
+                    r.AddArguments(variableSyntax.ArgumentList?.Arguments, model);
+
+                    if (variableSyntax.Initializer != null)
+                    {
+                        if (variableSyntax.ArgumentList?.Arguments.Count > 0)
+                        {
+                            // TODO: I need to have different kinds of exceptions.
+                            throw new Exception("If initializer is not null, then there are no expected arguments ");
+                        }
+
+                        // TODO: this is the first assignment, it might make more sense to move this out. 
+                        // TODO: this might also be the actual type of the variable 
+                        r.Arguments.Add(variableSyntax.Initializer.Value.CreateExpression(model));
+                    }
+                    // r.AddInitializer(variableSyntax.Initializer?.E)
+
                 }
                 else if (syntax is ArgumentSyntax argumentSyntax)
                 {
@@ -264,7 +187,7 @@ namespace PlatoGenerator
                 }
                 else
                 {
-                    throw new NotImplementedException($"Unsupported syntax {syntax}");
+                    throw new Exception($"Unhandled non-expression syntax {syntax.Kind()}");
                 }
 
                 // TODO: handle implicit return value
@@ -376,7 +299,11 @@ namespace PlatoGenerator
                         break;
 
                     case MemberAccessExpressionSyntax memberAccess:
-                        r.Name = "#member:" + memberAccess.Name.Identifier.ToString();
+                        if (r.Type == null)
+                        {
+                            Debug.WriteLine("No type can be determined for the member");
+                        }
+                        r.Name = "#member:" + memberAccess.Name.Identifier;
                         r.This = CreateExpression(memberAccess.Expression, model);
                         break;
 
@@ -387,12 +314,22 @@ namespace PlatoGenerator
                         break;
 
                     case ParenthesizedLambdaExpressionSyntax parenthesizedlambda:
+                        r = FunctionDefinition.Create(parenthesizedlambda, model);
                         break;
 
                     case SimpleLambdaExpressionSyntax simpleLambda:
+                        r = FunctionDefinition.Create(simpleLambda, model);
                         break;
 
+                    case LambdaExpressionSyntax lambdaExpressionSyntax:
+                        r = FunctionDefinition.Create(lambdaExpressionSyntax, model);
+                        break;
+
+                    case AnonymousFunctionExpressionSyntax anonymousFunctionExpressionSyntax:
+                        throw new NotSupportedException("Anonymous function expressions (delegates) are not supported");
+
                     case ParenthesizedExpressionSyntax parenthesized:
+                        r.Name = "#parantheized";
                         r.Arguments.Add(CreateExpression(parenthesized.Expression, model));
                         break;
 
@@ -439,9 +376,6 @@ namespace PlatoGenerator
                     case WithExpressionSyntax withExpression:
                         break;
 
-                    case AnonymousMethodExpressionSyntax anonymousMethodExpressionSyntax:
-                        break;
-
                     case AnonymousObjectCreationExpressionSyntax anonymousObjectCreationExpressionSyntax:
                         break;
 
@@ -473,12 +407,6 @@ namespace PlatoGenerator
                         r.AddInitializer(baseObjectCreationExpressionSyntax.Initializer?.Expressions, model);
                         break;
 
-                    case LambdaExpressionSyntax lambdaExpressionSyntax:
-                        break;
-
-                    case AnonymousFunctionExpressionSyntax anonymousFunctionExpressionSyntax:
-                        break;
-
                     case InstanceExpressionSyntax instanceExpressionSyntax:
                         throw new NotImplementedException("Instance expression syntax should be derived from");
 
@@ -487,9 +415,9 @@ namespace PlatoGenerator
                 }
             }
 
-            if (r.Name == "#unsupported")
+            if (r.Name == "#unknown")
             {
-                Debug.WriteLine($"Unsupported type {syntax.Kind()}");
+                throw new Exception($"Unsupported expression type {syntax.Kind()}");
             }
 
             return r;

@@ -73,8 +73,7 @@ namespace PlatoGenerator
             foreach (var x in expression.Children)
                 OutputExpression(sw, x, indent + "--");
 
-            var t = expression.Type?.ToString() ?? "UNTYPED";
-            sw.WriteLine($"{indent}{expression.Name}@{expression.Id}:{t} {expression.SyntaxKind}");
+            sw.WriteLine($"{indent}{expression.Name}@{expression.Id}:{expression.TypeString} {expression.SyntaxKind}");
 
             var m = expression.RelatedMethod;
             if (m != null)
@@ -99,13 +98,11 @@ namespace PlatoGenerator
                         OutputStatement(sw, s, indent + "  ");
                     sw.WriteLine($"{indent}}}");
                     break;
+
                 case ExpressionStatement expressionStatementIr:
                     OutputExpression(sw, expressionStatementIr.Expression, indent);
-                    sw.WriteLine($"{indent};");
                     break;
-                case FunctionDefinition functionDefinitionIr:
-                    sw.WriteLine("UNSUPPORTED FUNCTION DEFINITION");
-                    break;
+
                 case IfStatement ifStatementIr:
                     sw.WriteLine($"{indent}if(");
                     OutputExpression(sw, ifStatementIr.Condition, indent + "  ");
@@ -117,20 +114,18 @@ namespace PlatoGenerator
                         OutputStatement(sw, ifStatementIr.OnFalse);
                     }
                     break;
+
                 case ReturnStatement returnStatementIr:
                     sw.WriteLine($"{indent}return ");
                     OutputExpression(sw, returnStatementIr.Expression, indent + "  ");
-                    sw.WriteLine($"{indent};");
                     break;
+
                 case ThrowStatement throwStatementIr:
                     sw.WriteLine($"{indent}throw ");
                     if (throwStatementIr.Expression != null)
                         OutputExpression(sw, throwStatementIr.Expression, indent + "  ");
-                    sw.WriteLine($"{indent};");
                     break;
-                case UnsupportedStatement unsupportedStatementIr:
-                    sw.WriteLine($"UNSUPPORTED {unsupportedStatementIr.Syntax.Kind()}");
-                    break;
+
                 case WhileStatement whileStatementIr:
                     OutputStatement(sw, whileStatementIr.Initialization, indent);
                     sw.WriteLine($"{indent}while(");
@@ -141,6 +136,18 @@ namespace PlatoGenerator
                     OutputStatement(sw, whileStatementIr.Increment, indent + "  ");
                     sw.WriteLine($"{indent}}}");
                     break;
+                
+                case EmptyStatement _:
+                    break;
+                
+                case MultiStatement multiStatement:
+                    foreach (var st in multiStatement.Statements)
+                        OutputStatement(sw, st, indent);
+                    break;
+
+                case UnsupportedStatement unsupportedStatementIr:
+                    throw new NotSupportedException($"{unsupportedStatementIr.Syntax.Kind()}");
+                
                 default:
                     throw new ArgumentOutOfRangeException(nameof(statement));
             }
@@ -152,7 +159,7 @@ namespace PlatoGenerator
             var isStatic = func.IsStatic ? "static " : "";
             sw.WriteLine($"{indent}{isStatic}{func.Result?.Type} {func.Name}@{func.Id}({paramList})");
             sw.WriteLine($"/*");
-            sw.WriteLine(func.Syntax);
+            sw.WriteLine(func.Syntax.ToString());
             sw.WriteLine($"*/");
             sw.WriteLine($"{indent}{{");
             OutputStatement(sw, func.Body, indent + "  ");
@@ -172,8 +179,8 @@ namespace PlatoGenerator
                     sw.WriteLine($"{t.Kind} {t.Name}");
                     foreach (var m in t.Methods)
                     {
-                        var func = FunctionDefinition.Create(m, model);
-                        OutputFunction(sw, func, "  ");
+                        var func = FunctionDefinition.Create(m.Node, model);
+                        OutputFunction(sw, func, "  "); 
                     }
                 }
             }
