@@ -76,11 +76,10 @@ namespace PlatoGenerator
             //sw.WriteLine($"{indent}{expression.Name}@{expression.Id}:{expression.TypeString} {expression.SyntaxKind}");
 
             var ds = expression.DeclarationSyntax;
-            var sym = expression.Model.GetSymbolInfo(ds);
-            sw.WriteLine($"{indent}{sym}");
+            if (ds != null)
             {
-                // TODO: later.
-                // sw.WriteLine($"METHOD: {m.Name}@{m.Id}:{m.ReturnType.Text}");
+                var sym = expression.Model.GetSymbolInfo(ds);
+                sw.WriteLine($"{indent}{sym}");
             }
 
             // TODO: look for 
