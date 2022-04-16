@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -12,6 +13,8 @@ namespace PlatoGenerator
     [Generator]
     public class Generator : ISourceGenerator
     {
+        public static Dictionary<SyntaxNode, FunctionDefinition> SyntaxToFunctions = new Dictionary<SyntaxNode, FunctionDefinition>();
+
         public static string LogFileName = Path.Combine(Path.GetTempPath(), "plato.txt");
 
         public static void OutputExpression(StreamWriter sw, PlatoExpressionSyntax expr, SemanticModel model,
@@ -78,9 +81,32 @@ namespace PlatoGenerator
             var ds = expression.DeclarationSyntax;
             if (ds != null)
             {
-                var sym = expression.Model.GetSymbolInfo(ds);
-                sw.WriteLine($"{indent}{sym}");
+                sw.Write($"{indent}{ds.Kind()} = ");
+                if (SyntaxToFunctions.TryGetValue(ds, out var func))
+                {
+                    sw.WriteLine($"{func.Name}@{func.Id}");
+                }
+                else
+                {
+                    sw.WriteLine($"NO PLATO METHOD FOUND");
+                }
             }
+            else
+            {
+                sw.Write($"{indent}NO ASSOCIATED DECLARATION");
+            }
+
+            /* NOTE: no symbols are available. It is just a syntactic look-up. From Roslyn
+
+            var sym = expression.Model.GetSymbolInfo(ds).Symbol;
+            if (sym != null)
+            {
+                sw.WriteLine($"{indent}{sym.Name} is-method={sym is IMethodSymbol ms}");
+            }
+            else
+            {
+                sw.WriteLine($"{indent}NO SYMBOL ASSOCIATED WITH DECLARATION");
+            }*/
 
             // TODO: look for 
             //if (expression.SourceExpression)
@@ -166,6 +192,21 @@ namespace PlatoGenerator
             sw.WriteLine($"{indent}}}");
         }
 
+        public static void GatherFunctions(GeneratorExecutionContext context, Dictionary<SyntaxNode, FunctionDefinition> syntaxToFunctions)
+        {
+            var types = context.Compilation.SyntaxTrees.GetPlatoTypes();
+
+            foreach (var t in types)
+            {
+                var model = context.Compilation.GetSemanticModel(t.Node.SyntaxTree);
+                foreach (var m in t.Methods)
+                {
+                    var func = FunctionDefinition.Create(m.Node, model);
+                    syntaxToFunctions.Add(m.Node, func);
+                }
+            }
+        }
+
         public static void OutputTypes2(GeneratorExecutionContext context)
         {
             var types = context.Compilation.SyntaxTrees.GetPlatoTypes();
@@ -179,7 +220,7 @@ namespace PlatoGenerator
                     sw.WriteLine($"{t.Kind} {t.Name}");
                     foreach (var m in t.Methods)
                     {
-                        var func = FunctionDefinition.Create(m.Node, model);
+                        var func = SyntaxToFunctions[m.Node];
                         OutputFunction(sw, func, "  "); 
                     }
                 }
@@ -241,7 +282,6 @@ namespace PlatoGenerator
                             OutputStatementOrExpression(sw, p.Getter.BlockStatement, p.Getter.ArrowExpression, model);
                         }
 
-
                         //var propSymbol = model.GetDeclaredSymbol(p.Node) as IPropertySymbol;
                         //sw.WriteLine($"Has property symbol {propSymbol}");
                     }
@@ -266,6 +306,7 @@ namespace PlatoGenerator
         {
             Console.WriteLine("I am executing!");
 
+            GatherFunctions(context, SyntaxToFunctions);
             OutputTypes2(context);
 
             // begin creating the source we'll inject into the users compilation
