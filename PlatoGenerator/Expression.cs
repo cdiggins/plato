@@ -8,11 +8,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace PlatoGenerator
 {
-    public class Definition
-    {
-    }
-
-
     /// <summary>
     /// Every expression corresponds to the evaluation of some value
     /// and assigning it to an variable.
@@ -63,8 +58,6 @@ namespace PlatoGenerator
         public ISymbol Symbol;
         public ITypeSymbol Type;
         public SyntaxNode DeclarationSyntax;
-
-        public PlatoMethodSyntax RelatedMethod => null; // Declaration as PlatoMethodSyntax;
 
         public object Value;
         public Expression This;

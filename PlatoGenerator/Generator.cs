@@ -73,10 +73,11 @@ namespace PlatoGenerator
             foreach (var x in expression.Children)
                 OutputExpression(sw, x, indent + "--");
 
-            sw.WriteLine($"{indent}{expression.Name}@{expression.Id}:{expression.TypeString} {expression.SyntaxKind}");
+            //sw.WriteLine($"{indent}{expression.Name}@{expression.Id}:{expression.TypeString} {expression.SyntaxKind}");
 
-            var m = expression.RelatedMethod;
-            if (m != null)
+            var ds = expression.DeclarationSyntax;
+            var sym = expression.Model.GetSymbolInfo(ds);
+            sw.WriteLine($"{indent}{sym}");
             {
                 // TODO: later.
                 // sw.WriteLine($"METHOD: {m.Name}@{m.Id}:{m.ReturnType.Text}");
