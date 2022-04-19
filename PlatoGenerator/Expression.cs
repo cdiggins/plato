@@ -238,13 +238,15 @@ namespace PlatoGenerator
 
                     // TODO: this should become a statement 
                     case ConditionalExpressionSyntax conditional:
-                        r.Name = "#conditional";
+                        r.Name = "#operator?";
                         r.Arguments.Add(CreateExpression(conditional.Condition, model));
                         r.Arguments.Add(CreateExpression(conditional.WhenTrue, model));
                         r.Arguments.Add(CreateExpression(conditional.WhenFalse, model));
                         break;
 
                     case DeclarationExpressionSyntax declaration:
+                        r.Name = "#declaration";
+                        // TODO: no idea what to do.
                         break;
 
                     case DefaultExpressionSyntax defaultExpression:
@@ -367,6 +369,8 @@ namespace PlatoGenerator
                         break;
 
                     case WithExpressionSyntax withExpression:
+                        r.Name = "#with";
+                        // TODO: no clue what to do next.
                         break;
 
                     case AnonymousObjectCreationExpressionSyntax anonymousObjectCreationExpressionSyntax:

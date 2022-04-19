@@ -78,10 +78,11 @@ namespace PlatoGenerator
 
             //sw.WriteLine($"{indent}{expression.Name}@{expression.Id}:{expression.TypeString} {expression.SyntaxKind}");
 
+            sw.Write($"{indent}{expression.SyntaxKind}::");
             var ds = expression.DeclarationSyntax;
             if (ds != null)
             {
-                sw.Write($"{indent}{ds.Kind()} = ");
+                sw.Write($"{ds.Kind()}::");
                 if (SyntaxToFunctions.TryGetValue(ds, out var func))
                 {
                     sw.WriteLine($"{func.Name}@{func.Id}");
@@ -93,7 +94,7 @@ namespace PlatoGenerator
             }
             else
             {
-                sw.Write($"{indent}NO ASSOCIATED DECLARATION");
+                sw.WriteLine($"NO ASSOCIATED DECLARATION");
             }
 
             /* NOTE: no symbols are available. It is just a syntactic look-up. From Roslyn
@@ -307,7 +308,11 @@ namespace PlatoGenerator
             Console.WriteLine("I am executing!");
 
             GatherFunctions(context, SyntaxToFunctions);
-            OutputTypes2(context);
+
+
+            var expander = new JavaScriptGenerator();
+            expander.ToJavaScript(context);
+            //OutputTypes2(context);
 
             // begin creating the source we'll inject into the users compilation
             var sourceBuilder = new StringBuilder(@"

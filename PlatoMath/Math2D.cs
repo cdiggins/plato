@@ -1,6 +1,6 @@
 ﻿namespace PlatoMath;
 
-public partial interface INumeric<T>
+public interface INumeric<T>
 {
     T op_Add(T v);
     T op_Subtract(T v);
@@ -9,7 +9,15 @@ public partial interface INumeric<T>
     T op_Negate();
 }
 
-public partial interface IBoolean<T>
+public interface IVector<VectorT, ScalarT> : INumeric<VectorT>
+{
+    VectorT op_Add(ScalarT v);
+    VectorT op_Subtract(ScalarT v);
+    VectorT op_Multiply(ScalarT v);
+    VectorT op_Divide(ScalarT v);
+}
+
+public interface IBoolean<T>
 {
     T op_And(T v);
     T op_Or(T v);
@@ -17,55 +25,50 @@ public partial interface IBoolean<T>
     T op_Not();
 }
 
-public partial interface IDistance<T> : IMembership<T>, IBoolean<IDistance<T>>
+public interface IDistance<T> : IMembership<T>, IBoolean<IDistance<T>>
 {
     double Distance(T point);
-    bool Contains(T point, double epsilon) => Distance(point) <= epsilon;
 }
 
-public partial interface IMembership<T> : IBoolean<IMembership<T>>
+public interface IMembership<T> : IBoolean<IMembership<T>>
 {
-    bool Contains(T item, double epsilon);
+    bool Contains(T item);
 }
 
-public partial interface IIntersection<TSelf, TResult>
+public interface IIntersection<TSelf, TResult>
 {
     TResult? Intersection(TSelf other);
 }
 
-public partial interface ITransformable2D<TSelf> 
+public interface ITransformable2D<TSelf> 
 {
     TSelf Transform(Matrix3x3 matrix);
 }
 
-public partial interface IEquatable<TSelf>
+public interface IEquatable<TSelf>
 { 
     bool Equals(TSelf other);
 }
 
-public partial interface IOrderable<TSelf>
+public interface IOrderable<TSelf>
 {
     int CompareTo(TSelf other);
 }
 
-public partial interface IArray<T>
+public interface IArray<T>
 {
     T this[int index] { get; }
     int Count { get; }
 }
 
-public partial interface IMagnitude 
+public interface IMagnitude 
 {
     double Magnitude { get; }
 }
 
-public partial interface IVector<T>
+public interface IVector<T>
     : IOrderable<T>, ITransformable2D<T>, IMagnitude, IEquatable<T>, IArray<double>, ILerpable<T> where T: IVector<T>
 {
-    int CompareTo(T other) => 
-        Magnitude > other.Magnitude ? 1 : 
-        Magnitude < other.Magnitude ? -1 : 
-        0;
 }
 
 public partial class Vector2D : IVector<Vector2D>, INumeric<Vector2D>
