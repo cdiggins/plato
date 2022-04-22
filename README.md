@@ -10,8 +10,9 @@ Some features:
 
 # Quick Overview
 
+Some example Plato code can be found at [blob/main/PlatoTestJavaScript/PlatoTestCode.cs](https://github.com/cdiggins/plato/blob/main/PlatoTestJavaScript/PlatoTestCode.cs).
 In general Plato supports most of the syntax and semantics of C# with some notable 
-differences: 
+differences listed below.
 
 ## Classes and User Defined Type 
 
