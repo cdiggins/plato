@@ -23,7 +23,7 @@ The Plato compiler may decide to implement the class as a struct or class.
 
 ## Arrays
 
-Arrays cannot be modified after they are designed. 
+Arrays cannot be modified. 
 
 ## Reflection
 
@@ -61,6 +61,10 @@ Plato properties declared with an `init` keyword trigger the generation of a cor
 ## Lambdas
 
 Plato lambdas capture values not variables. 
+
+## LINQ Query Syntax
+
+LINQ Query Syntax is not allowed. 
 
 # History and Motivation
 
