@@ -10,7 +10,7 @@ Some features:
 
 ## History and Motivation
 
-I have been working in C# for over 15 years, using it real-time 3D applications. 
+I have been working with C# for over 15 years, using it in various domains such as real-time 3D applications. 
 
 I used to be a reasonably competent C++ developer. I co-authored the [C++ Cookbook from O'Reilly press](https://www.amazon.ca/Cookbook-Solutions-Examples-Programmers/dp/0596007612) 
 and was a regular contributor to the [C++ Users Journal](https://en.wikipedia.org/wiki/C/C%2B%2B_Users_Journal).
@@ -23,27 +23,29 @@ I have always been fascinated with programming language theory and design, and e
 [Cat](https://github.com/cdiggins/cat-language), [Heron](https://github.com/cdiggins/heron-language), 
 [Chickadee](https://github.com/Clemex/chickadee), and [Max Creation Graph](https://knowledge.autodesk.com/support/3ds-max/learn-explore/caas/CloudHelp/cloudhelp/2017/ENU/3DSMax/files/GUID-608EC963-75ED-4F63-96B7-D8AE57E75959-htm.html). 
 
-While I enjoyed creating and using these languages, I found that when I switch hats from language designer to
+While I enjoyed creating and using these languages,I found that when I switch hats from language designer to
 professional softare developer there wasn't a very satisfying reason for me to use any of them in commerical products. 
 
-As a developer I realized that look for several things when choosing a programming language for a project.
+As a developer there are several things I look for when choosing a programming language for a project.
 
-1. *Familiarity* - how familiar is the development team with the syntax, semantics, and idioms of the langauge, and how
+1. **Familiarity** - how familiar is the development team with the syntax, semantics, and idioms of the langauge, and how
 long would it take for them to ramp up. 
-2. *Expressiveness* - how easy is it to write algorithms and data-structures for the relevant problem domain. 
-3. *Performance* - does common implementations of the language provide adequates performance for the problem domain
+2. **Expressiveness** - how easy is it to write algorithms and data-structures for the relevant problem domain. 
+3. **Performance** - does common implementations of the language provide adequates performance for the problem domain
 
-Beyond the language itself I usually consider the following 
+Beyond the actual language itself I also consider the following factors: 
 
 1. Tooling 
 1. Libraries 
 1. Documentation 
 1. Community 
 
-These were all things that C# did more than adequately for the majority of work I did. The times that I needed to 
-target the browser I opted to use JavaScript or TypeScript. I will confess it has been frustrating tryin to switch 
-between two different languages and tool-chains, and maintaining two code-bases which resemble each other very closely
-apart from the syntax. 
+These were all things that C# did adequately for the majority of work I did, except when need to develop web-clients,
+for which I would use either JavaScript or TypeScript. 
+
+Supporting two code bases and separate tool-chains, creates challenges for us in time, cost, and people. 
+This has become one of the primary motivators for implementing a new language: to enable myself and my 
+colleagues to use single shared a code-base for both desktop applications and web browser apps. 
 
 As C# evolved and introduced new features, many tended to fall into one of two categories: improving support for 
 functional programming or for improved performance. It has gotten to the point that I think it fair to say that 
@@ -52,10 +54,12 @@ their exists two language within C#:
 1. A high-level cross-platform language with support for functional programming and immutable data-structure 
 2. A low-level language that emphasizes low-level control over memory and performance   
 
-One problem is that the two sides of the language don't work together well. High-level features have poor performance 
-and low-level features are complex and unsafe. 
+One problem is that the two sides of the language don't work together well. The high-level features have poor performance 
+and the low-level features are complex and unsafe. 
 
 As a developer I want to work with a single high-level cross-platform langauge that is reliable and has good performance. 
+As a software development lead, I want my team to be able to produce high quality code with low effort, and to be 
+comfortable with tooling environment. 
 
 Plato attempts to solve the problem by:
 
@@ -70,3 +74,8 @@ Source generator.
 
 Previously I was designing the standard library and experimenting with Plato semantics using 
 various C# projects. 
+
+## Final Words
+
+I am always interested in feedback in any form. 
+You can find me on twitter as [@cdiggins](https://twitter.com/cdiggins).
