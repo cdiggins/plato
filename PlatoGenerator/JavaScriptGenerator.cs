@@ -7,6 +7,18 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
+    /*
+    • Indexer(this) properties not generated.
+    • Backing fields for auto-generated properties are missing
+    • No constructor generated.
+    • Interpolated string not supported
+    • Cast doesn't work.
+    • Need MathF functions provided. 
+    • Missing ids on parameter references
+    • Missing ids of function references
+    * Extension functions are translated into member functions. 
+    */
+
 namespace PlatoGenerator
 {
     public class JavaScriptGenerator
@@ -184,7 +196,7 @@ namespace PlatoGenerator
             var name = expr.Name;
             if (name == "#at")
             {
-                name = "AtOperator";
+                name = "Plato.At";
             }
 
             var exprValue = $"{name}({args})";
@@ -217,7 +229,7 @@ namespace PlatoGenerator
             }
             else if (name.StartsWith("#invoke"))
             {
-                // TODO: an interesting problem is that when a method is an extension method, we need to explicitly call the "this"
+                // TODO: an interesting problem is that when a method is an extension method, we need to pass the "this"
                 // I can make a trampoline function maybe? I think no matter what I need to know when I am accessing a method group,
                 // and if that method group is known at compile-time I am going to do some things differently. 
                 // This touches on one of the problems that I also want to tackle. This system can learn new things about values. 
@@ -288,6 +300,7 @@ namespace PlatoGenerator
 
             if (st.ChildExpressions.Count > 0)
             {
+                //??
             }
 
             if (st.ChildStatements.Count > 0)
