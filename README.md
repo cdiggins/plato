@@ -17,17 +17,19 @@ differences:
 
 Plato supports only two kind of user-defined data type: enums and classes. Structs and records
 are not allowed. All classes must have the partial keyword as part of their declaration so
-that the code generator can generate necessary types. 
+that the code generator can generate necessary additional code (e.g. With functions). 
 
-The Plato compiler may decide to implement the class as a struct or class. 
+The Plato compiler may decide to implement the class as a struct or class, but this is invisble
+to the users. 
 
 ## Arrays
 
-Arrays cannot be modified. 
+Arrays cannot be modified once they are created.  
 
 ## Reflection
 
-The only run-time reflection capability is querying the type of an object. 
+The only run-time reflection capability provided is querying the type of an object. 
+Both `is` and `as` operations work as expected. 
 
 ## Immutability
 
@@ -65,6 +67,10 @@ Plato lambdas capture values not variables.
 ## LINQ Query Syntax
 
 LINQ Query Syntax is not allowed. 
+
+## Unsafe
+
+Unsafe code blocks are not allowed. 
 
 # History and Motivation
 
