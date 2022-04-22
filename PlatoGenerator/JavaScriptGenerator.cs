@@ -364,11 +364,11 @@ namespace PlatoGenerator
         public void OutputFunction(FunctionDefinition func, string indent = "")
         {
             var paramList = string.Join(", ", func.Parameters.Select(p => $"{p.Name}_{p.Id} /* :{p.Type} */"));
-            var isStatic = func.IsStatic ? "static" : "instance";
+            var staticKeyword = func.IsStatic ? "static " : "";
             sw.WriteLine($"/* ORIGINAL: ");
             sw.WriteLine(func.Syntax.ToString());
             sw.WriteLine($"*/");
-            sw.WriteLine($"{func.Name}_{func.Id}({paramList}) // :{func.Result?.Type} {isStatic}");
+            sw.WriteLine($"{indent}{staticKeyword}{func.Name}_{func.Id}({paramList}) // :{func.Result?.Type}");
             sw.WriteLine($"{indent}{{");
             OutputStatement(func.Body, indent + "  ");
             sw.WriteLine($"{indent}}}");
@@ -381,12 +381,14 @@ namespace PlatoGenerator
             indent += "  ";
             foreach (var f in t.Fields)
             {
-                sw.WriteLine($"{indent}{f.Name};");
+                var staticKeyword = f.IsStatic ? "static " : "";
+                sw.WriteLine($"{indent}{staticKeyword}{f.Name};");
             }
 
             foreach (var p in t.Properties)
             {
-                sw.WriteLine($"{indent}get {p.Name}()");
+                var staticKeyword = p.IsStatic ? "static " : "";
+                sw.WriteLine($"{indent}{staticKeyword}get {p.Name}()");
 
                 var pdef = SyntaxToProperties[p.Node];
 

@@ -9,6 +9,8 @@ namespace PlatoGenerator
 {
     public class PropertyDefinition : Expression
     {
+        public bool IsStatic => throw new NotImplementedException();
+
         public FunctionDefinition Getter { get; set; }
 
         public static PropertyDefinition Create(PropertyDeclarationSyntax property, SemanticModel model)
@@ -69,7 +71,7 @@ namespace PlatoGenerator
 
     public class FunctionDefinition : Expression
     {
-        public bool IsStatic => This == null;
+        public bool IsStatic { get; set; } 
         public List<Expression> Parameters = new List<Expression>();
         public Expression Result; 
         public Statement Body;
@@ -98,6 +100,7 @@ namespace PlatoGenerator
 
             var r = new FunctionDefinition
             {
+                IsStatic = false,
                 Name = "#lambda",
                 Body = syntax.Block.CreateStatement(syntax.ExpressionBody, model),
                 Syntax = syntax,
@@ -120,7 +123,7 @@ namespace PlatoGenerator
             var r = new FunctionDefinition
             {
                 Name = method.Identifier.ToString(),
-                
+                IsStatic = method.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword)),
                 Body = method.Body.CreateStatement(method.ExpressionBody?.Expression, model),
                 Syntax = method,
                 Symbol = symbol,
@@ -143,7 +146,7 @@ namespace PlatoGenerator
             var r = new FunctionDefinition
             {
                 Name = method.Identifier.ToString(),
-
+                IsStatic = false,
                 Body = method.Body.CreateStatement(method.ExpressionBody?.Expression, model),
                 Syntax = method,
                 Symbol = symbol,

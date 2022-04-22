@@ -164,6 +164,8 @@ namespace PlatoGenerator
         public PlatoVariableSyntax Variable;
         public string Name => Variable.Name;
 
+        public bool IsStatic => Node.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword));
+
         public override void OnInit()
         {
             base.OnInit();
@@ -198,6 +200,8 @@ namespace PlatoGenerator
         public PlatoAccessorSyntax Getter;
         public PlatoAccessorSyntax Setter;
 
+        public bool IsStatic => Node.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword));
+
         public override void OnInit()
         {
             base.OnInit();
@@ -221,6 +225,8 @@ namespace PlatoGenerator
         public PlatoExpressionSyntax ExpressionBody;
         public PlatoTypeRefSyntax ReturnType;
         public List<PlatoParamSyntax> Parameters;
+
+        public bool IsStatic => Node.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword));
 
         public override void OnInit()
         {

@@ -1,24 +1,72 @@
 # Plato
 
-Plato is a programming languages strict subset of C# that enforces pure functional programming practices.
+Plato is a pure functional programming language derived from C#.  
 
-Plato is designed to work with modern C# tools like Visual Studio through the use of 
-[source generators](https://docs.microsoft.com/en-us/dotnet/csharp/roslyn-sdk/source-generators-overview).
+Some features:
 
-Plato comes with a set of standard libraries that are useful from any .NET 6.0 projects. 
+* Syntax is a strict subset of C# and works with Visual Studio 
+* Support for referential transparency is provided through affine types
+* Current implementation is targetting .NET and JavaScript 
 
-## Why Plato Exists
+## History and Motivation
 
-Many people are becoming aware of the benefits of pure functional programming practices such as 
-eliminating side-effects and using immutable data structures. 
+I have been working in C# for over 15 years, using it real-time 3D applications. 
 
-A challenge with mixing pure functional code with imperative code, is that certain guarantees about 
-properties of code cannot be made. This limits the effectiveness of tools like optimizers, compilers, 
-and analyzers. 
+I used to be a reasonably competent C++ developer. I co-authored the [C++ Cookbook from O'Reilly press](https://www.amazon.ca/Cookbook-Solutions-Examples-Programmers/dp/0596007612) 
+and was a regular contributor to the [C++ Users Journal](https://en.wikipedia.org/wiki/C/C%2B%2B_Users_Journal).
 
-When a system can guarantee that the same output will always be produced reliably for a given set of 
-inputs, much more interesting optimizations can be performed. 
+I was orignally quite skeptical of the C# language when it was introduced, dismissing it as a Java clone, but I 
+eventually found that C# provided me with a significant productivity boost. As the language matured it became my 
+primary go-to language. 
 
-Because Plato is a smaller language it makes certain tools, like transpilers (tools that translate from one language 
-into another, e.g., Plato to JavaScript) significantly easier to implement. 
+I have always been fascinated with programming language theory and design, and even created a couple: 
+[Cat](https://github.com/cdiggins/cat-language), [Heron](https://github.com/cdiggins/heron-language), 
+[Chickadee](https://github.com/Clemex/chickadee), and [Max Creation Graph](https://knowledge.autodesk.com/support/3ds-max/learn-explore/caas/CloudHelp/cloudhelp/2017/ENU/3DSMax/files/GUID-608EC963-75ED-4F63-96B7-D8AE57E75959-htm.html). 
 
+While I enjoyed creating and using these languages, I found that when I switch hats from language designer to
+professional softare developer there wasn't a very satisfying reason for me to use any of them in commerical products. 
+
+As a developer I realized that look for several things when choosing a programming language for a project.
+
+1. *Familiarity* - how familiar is the development team with the syntax, semantics, and idioms of the langauge, and how
+long would it take for them to ramp up. 
+2. *Expressiveness* - how easy is it to write algorithms and data-structures for the relevant problem domain. 
+3. *Performance* - does common implementations of the language provide adequates performance for the problem domain
+
+Beyond the language itself I usually consider the following 
+
+1. Tooling 
+1. Libraries 
+1. Documentation 
+1. Community 
+
+These were all things that C# did more than adequately for the majority of work I did. The times that I needed to 
+target the browser I opted to use JavaScript or TypeScript. I will confess it has been frustrating tryin to switch 
+between two different languages and tool-chains, and maintaining two code-bases which resemble each other very closely
+apart from the syntax. 
+
+As C# evolved and introduced new features, many tended to fall into one of two categories: improving support for 
+functional programming or for improved performance. It has gotten to the point that I think it fair to say that 
+their exists two language within C#:
+
+1. A high-level cross-platform language with support for functional programming and immutable data-structure 
+2. A low-level language that emphasizes low-level control over memory and performance   
+
+One problem is that the two sides of the language don't work together well. High-level features have poor performance 
+and low-level features are complex and unsafe. 
+
+As a developer I want to work with a single high-level cross-platform langauge that is reliable and has good performance. 
+
+Plato attempts to solve the problem by:
+
+1. Restricting the language to a pure-functional subset
+2. Providing an optimizer that rewrites Plato so that it can be executed efficiently by the run-time 
+3. Provide a cross-compiler, to generate efficient JavaScript code
+
+## Status: April 22nd, 2022
+
+Right now I am working on the Plato to JavaScript compiler which is being implemented via a Roslyn 
+Source generator. 
+
+Previously I was designing the standard library and experimenting with Plato semantics using 
+various C# projects. 
