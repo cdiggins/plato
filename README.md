@@ -14,32 +14,34 @@ Some example Plato code can be found at [blob/main/PlatoTestJavaScript/PlatoTest
 In general Plato supports most of the syntax and semantics of C# with some notable 
 differences listed below.
 
-## Classes and User Defined Type 
+### Classes and User Defined Type 
 
 Plato supports only two kind of user-defined data type: enums and classes. Structs and records
 are not allowed. All classes must have the partial keyword as part of their declaration so
-that the code generator can generate necessary types. 
+that the code generator can generate necessary additional code (e.g. With functions). 
 
-The Plato compiler may decide to implement the class as a struct or class. 
+The Plato compiler may decide to implement the class as a struct or class, but this is invisble
+to the users. 
 
-## Arrays
+### Arrays
 
-Arrays cannot be modified after they are designed. 
+Arrays cannot be modified once they are created.  
 
-## Reflection
+### Reflection
 
-The only run-time reflection capability is querying the type of an object. 
+The only run-time reflection capability provided is querying the type of an object. 
+Both `is` and `as` operations work as expected. 
 
-## Immutability
+### Immutability
 
 All classes in Plato are immutable by default, unless they are labeled as affine types.  
 This means they cannot be modified at run-time. 
 
-## Imported Types
+### Imported Types
 
 All types imported from non-Plato libraries are treated as affine types. 
 
-## Affine Types 
+### Affine Types 
 
 Classes with the `[Affine]` attribute are mutable. 
 Functions on an affine class, may
@@ -51,17 +53,25 @@ modify fields of the class. Instances of an Affine class:
 
 They can however be passed to a function by argument or returned from a function. 
 
-## Properties 
+### Properties 
 
 Plato properties cannot have setters. 
 
-## Init Properties and With Functions
+### Init Properties and With Functions
 
 Plato properties declared with an `init` keyword trigger the generation of a corresponding `With<Name>()` function.
 
-## Lambdas
+### Lambdas
 
 Plato lambdas capture values not variables. 
+
+### LINQ Query Syntax
+
+LINQ Query Syntax is not allowed. 
+
+### Unsafe
+
+Unsafe code blocks are not allowed. 
 
 # History and Motivation
 
@@ -90,10 +100,10 @@ long would it take for them to ramp up.
 
 Beyond the actual language itself I also consider the following factors: 
 
-1. Tooling 
-1. Libraries 
-1. Documentation 
-1. Community 
+1. **Tooling** 
+1. **Libraries** 
+1. **Documentation** 
+1. **Community** 
 
 These were all things that C# did adequately for the majority of work I did, except when need to develop web-clients,
 for which I would use either JavaScript or TypeScript. 
@@ -106,8 +116,8 @@ As C# evolved and introduced new features, many tended to fall into one of two c
 functional programming or for improved performance. It has gotten to the point that I think it fair to say that 
 their exists two language within C#:
 
-1. A high-level cross-platform language with support for functional programming and immutable data-structure 
-2. A low-level language that emphasizes low-level control over memory and performance   
+1. A **high-level** cross-platform language with support for functional programming and immutable data-structure 
+2. A **low-level** language that emphasizes low-level control over memory and performance   
 
 One problem is that the two sides of the language don't work together well. The high-level features have poor performance 
 and the low-level features are complex and unsafe. 
