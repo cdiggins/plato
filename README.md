@@ -8,7 +8,61 @@ Some features:
 * Support for referential transparency is provided through affine types
 * Current implementation is targetting .NET and JavaScript 
 
-## History and Motivation
+# Quick Overview
+
+In general Plato supports most of the syntax and semantics of C# with some notable 
+differences: 
+
+## Classes and User Defined Type 
+
+Plato supports only two kind of user-defined data type: enums and classes. Structs and records
+are not allowed. All classes must have the partial keyword as part of their declaration so
+that the code generator can generate necessary types. 
+
+The Plato compiler may decide to implement the class as a struct or class. 
+
+## Arrays
+
+Arrays cannot be modified after they are designed. 
+
+## Reflection
+
+The only run-time reflection capability is querying the type of an object. 
+
+## Immutability
+
+All classes in Plato are immutable by default, unless they are labeled as affine types.  
+This means they cannot be modified at run-time. 
+
+## Imported Types
+
+All types imported from non-Plato libraries are treated as affine types. 
+
+## Affine Types 
+
+Classes with the `[Affine]` attribute are mutable. 
+Functions on an affine class, may
+modify fields of the class. Instances of an Affine class:
+
+* Cannot be captured by a lambda
+* Cannot be stored in an array
+* Cannot be stored as a member of a non-affine type
+
+They can however be passed to a function by argument or returned from a function. 
+
+## Properties 
+
+Plato properties cannot have setters. 
+
+## Init Properties and With Functions
+
+Plato properties declared with an `init` keyword trigger the generation of a corresponding `With<Name>()` function.
+
+## Lambdas
+
+Plato lambdas capture values not variables. 
+
+# History and Motivation
 
 I have been working with C# for over 15 years, using it in various domains such as real-time 3D applications. 
 

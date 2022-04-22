@@ -290,8 +290,11 @@ namespace PlatoGenerator
                     sw.WriteLine("// Fields");
                     foreach (var f in t.Fields)
                     {
-                        OutputVariable(sw, f.Variable);
-                        sw.WriteLine();
+                        foreach (var v in f.Variables)
+                        {
+                            OutputVariable(sw, v);
+                            sw.WriteLine();
+                        }
 
                         //var fieldSymbol = model.GetDeclaredSymbol(f.Node) as IFieldSymbol;
                         //sw.WriteLine($"Has field symbol {fieldSymbol}");

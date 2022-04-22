@@ -252,6 +252,16 @@ namespace PlatoGenerator
                 // TODO: what to do? 
                 //Debug.Assert(false);
             }
+            else if (name.StartsWith("#interpolatedstring"))
+            {
+                // TODO: 
+                //Debug.Assert(false);
+            }
+            else if (name.StartsWith("#cast"))
+            {
+                // TODO: 
+                //Debug.Assert(false);
+            }
             else if (name.StartsWith("#"))
             {
                 Debug.WriteLine($"Unrecognized type {name}");
@@ -381,8 +391,11 @@ namespace PlatoGenerator
             indent += "  ";
             foreach (var f in t.Fields)
             {
-                var staticKeyword = f.IsStatic ? "static " : "";
-                sw.WriteLine($"{indent}{staticKeyword}{f.Name};");
+                foreach (var v in f.Variables)
+                {
+                    var staticKeyword = f.IsStatic ? "static " : "";
+                    sw.WriteLine($"{indent}{staticKeyword}{v.Name};");
+                }
             }
 
             foreach (var p in t.Properties)

@@ -159,22 +159,16 @@ namespace PlatoGenerator
         }
     }
 
-    public class PlatoFieldSyntax : PlatoSyntax<FieldDeclarationSyntax, PlatoFieldSyntax>, INamed
+    public class PlatoFieldSyntax : PlatoSyntax<FieldDeclarationSyntax, PlatoFieldSyntax>
     {
-        public PlatoVariableSyntax Variable;
-        public string Name => Variable.Name;
+        public IReadOnlyList<PlatoVariableSyntax> Variables;
 
         public bool IsStatic => Node.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword));
 
         public override void OnInit()
         {
             base.OnInit();
-            if (Node.Declaration.Variables.Count != 1)
-            {
-                throw new Exception("Fields can only support one variable declaration");
-            }
-
-            Variable = PlatoVariableSyntax.Create(Node.Declaration.Variables[0]);
+            Variables = Node.Declaration.Variables.Select(PlatoVariableSyntax.Create).ToList();
         }
     }
 

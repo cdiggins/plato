@@ -274,6 +274,7 @@ namespace PlatoGenerator
                         break;
 
                     case InterpolatedStringExpressionSyntax interpolatedString:
+                        r.Name = "#interpolatedstring";
                         break;
 
                     case InvocationExpressionSyntax invocation:
