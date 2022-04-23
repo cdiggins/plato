@@ -275,6 +275,8 @@ namespace PlatoGenerator
 
                     case InterpolatedStringExpressionSyntax interpolatedString:
                         r.Name = "#interpolatedstring";
+                        //throw new NotImplementedException("TODO");
+                        //r.Arguments.AddRange(interpolatedString.)
                         break;
 
                     case InvocationExpressionSyntax invocation:

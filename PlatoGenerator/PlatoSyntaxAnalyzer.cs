@@ -185,6 +185,7 @@ namespace PlatoGenerator
         }
     }
 
+
     public class PlatoPropertySyntax : PlatoSyntax<PropertyDeclarationSyntax, PlatoPropertySyntax>, INamed
     {
         public string Name => Node.Identifier.ToString();
@@ -212,6 +213,31 @@ namespace PlatoGenerator
         }
     }
 
+
+    public class PlatoIndexerSyntax : PlatoSyntax<IndexerDeclarationSyntax, PlatoIndexerSyntax>
+    {
+        public PlatoExpressionSyntax ArrowExpression;
+        public PlatoTypeRefSyntax Type;
+        public PlatoAccessorSyntax Getter;
+
+        public override void OnInit()
+        {
+            base.OnInit();
+            if (Node.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword)))
+                throw new Exception("Static indexers not allowed");
+
+            var getAccessor = Node.AccessorList?.Accessors.FirstOrDefault(acc => acc.Kind() == SyntaxKind.GetAccessorDeclaration);
+            Getter = PlatoAccessorSyntax.Create(getAccessor);
+
+            var setAccessor = Node.AccessorList?.Accessors.FirstOrDefault(acc => acc.Kind() == SyntaxKind.SetAccessorDeclaration);
+            if (setAccessor != null)
+                throw new Exception("No setters allowed");
+
+            ArrowExpression = PlatoExpressionSyntax.Create(Node.ExpressionBody?.Expression);
+            Type = PlatoTypeRefSyntax.Create(Node.Type);
+        }
+    }
+
     public class PlatoMethodSyntax : PlatoSyntax<MethodDeclarationSyntax, PlatoMethodSyntax>, INamed
     {
         public string Name => Node.Identifier.ToString();
@@ -232,6 +258,27 @@ namespace PlatoGenerator
         }
     }
 
+
+    public class PlatoConstructorSyntax : PlatoSyntax<ConstructorDeclarationSyntax, PlatoConstructorSyntax>
+    {
+        public string Name => Node.Identifier.ToString();
+        public PlatoStatementSyntax StatementBody;
+        public PlatoExpressionSyntax ExpressionBody;
+        public PlatoTypeRefSyntax ReturnType;
+        public List<PlatoParamSyntax> Parameters;
+
+        public bool IsStatic => Node.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword));
+
+        public override void OnInit()
+        {
+            base.OnInit();
+            Parameters = Node.ParameterList.Parameters.Select(PlatoParamSyntax.Create).ToList();
+            StatementBody = PlatoStatementSyntax.Create(Node.Body);
+            ExpressionBody = PlatoExpressionSyntax.Create(Node.ExpressionBody?.Expression);
+        }
+    }
+
+
     public class PlatoTypeSyntax: PlatoSyntax<TypeDeclarationSyntax, PlatoTypeSyntax>, INamed
     {
         public string Name => Node.Identifier.ToString();
@@ -240,13 +287,17 @@ namespace PlatoGenerator
         public List<PlatoFieldSyntax> Fields;
         public List<PlatoPropertySyntax> Properties;
         public List<PlatoMethodSyntax> Methods;
+        public List<PlatoConstructorSyntax> Ctors;
+        public List<PlatoIndexerSyntax> Indexers;
 
         public override void OnInit()
         {
             base.OnInit();
+            Ctors = Node.Members.OfType<ConstructorDeclarationSyntax>().Select(PlatoConstructorSyntax.Create).ToList();
             Methods = Node.Members.OfType<MethodDeclarationSyntax>().Select(PlatoMethodSyntax.Create).ToList();
             Fields = Node.Members.OfType<FieldDeclarationSyntax>().Select(PlatoFieldSyntax.Create).ToList();
             Properties = Node.Members.OfType<PropertyDeclarationSyntax>().Select(PlatoPropertySyntax.Create).ToList();
+            Indexers = Node.Members.OfType<IndexerDeclarationSyntax>().Select(PlatoIndexerSyntax.Create).ToList();
         }
     }
 

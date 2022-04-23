@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+﻿    using System.Reflection;
 using System.Runtime.Versioning;
 using System.Text;
 
@@ -196,12 +196,10 @@ namespace PathTracer
 
         static void Main(string[] args)
         {
-            //const int w = 960; //8; 
-            //const int h = 540; //8; 
-            const int w = 96 * 4; //8; 
-            const int h = 54 * 4; //8; 
+            const int w = 960 / 4; //8; 
+            const int h = 540 / 4; //8; 
 
-            const int samplesCount = 256; //8; 
+            const int samplesCount = 8; //8; 
             var position = Vector(-22, 5, 25);
             var goal = !(Vector(-3, 4, 0) + position * -1);
             var left = !Vector(goal.Z, 0, -goal.X) * (1.0f / w);
@@ -227,9 +225,9 @@ namespace PathTracer
             using var fileStream = File.Open(fileName, FileMode.CreateNew, FileAccess.Write);
             using var writer = new BinaryWriter(fileStream, Encoding.ASCII);
             writer.Write(Encoding.ASCII.GetBytes($"P6 {w} {h} 255 ")); // trailing space!!!
-            for (var y = (h - 1); y >= h / 4 * 3; y--)
+            for (var y = (h - 1); y >= 0; y--)
             {
-                for (var x = (w - 1); x >= w / 4 * 3; x--)
+                for (var x = (w - 1); x >= 0; x--)
                 {
                     Vector color = 0;
                     for (var p = samplesCount - 1; p >= 0; p--)

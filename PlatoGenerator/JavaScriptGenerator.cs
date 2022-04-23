@@ -7,17 +7,19 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    /*
-    • Indexer(this) properties not generated.
-    • Backing fields for auto-generated properties are missing
-    • No constructor generated.
-    • Interpolated string not supported
-    • Cast doesn't work.
-    • Need MathF functions provided. 
-    • Missing ids on parameter references
-    • Missing ids of function references
-    * Extension functions are translated into member functions. 
-    */
+/*
+• DONE: Indexer(this) properties not generated.
+• DONE: No constructor generated.
+* DONE: No type provided for expressions.
+• Backing fields for auto-generated properties are missing
+• SKIPPED: Interpolated string not supported
+• DONE: Tuple expressions and tuple assignment 
+* Cast doesn't work.
+• Need MathF functions provided. 
+• Missing ids on parameter references
+• Missing ids of function references
+* Extension functions are translated into member functions. 
+*/
 
 namespace PlatoGenerator
 {
@@ -35,6 +37,27 @@ namespace PlatoGenerator
 
         public string ReduceExpression(Expression expr, bool declareVar = true)
         {
+            if (expr.Syntax is AssignmentExpressionSyntax assExpr)
+            {
+                var children = expr.Children.ToList();
+                if (children.Count != 2)
+                    throw new Exception("Expected two children");
+                var lvalue = children[0];
+                var rvalue = ReduceExpression(children[1]);
+                if (lvalue.Syntax is TupleExpressionSyntax tupleExpr)
+                {
+                    // We have multiple parts. 
+                    var output = "";
+                    for (var i=0; i < tupleExpr.Arguments.Count; ++i)
+                    {
+                        output += $"{ReduceExpression(lvalue.Arguments[i])} {assExpr.OperatorToken} {rvalue}.Item{i + 1}; ";
+                    }
+                    return output;
+                }
+
+                return $"{ReduceExpression(lvalue)} {assExpr.OperatorToken} {rvalue}";
+            }
+
             var childNames = expr.Children.Select(x => ReduceExpression(x)).ToList();
             var args = string.Join(",", childNames);
             var ds = expr.DeclarationSyntax;
@@ -55,7 +78,7 @@ namespace PlatoGenerator
                 case ArrayTypeSyntax arrayTypeSyntax:
                     break;
                 case AssignmentExpressionSyntax assignmentExpressionSyntax:
-                    return $"{childNames[0]} {assignmentExpressionSyntax.OperatorToken} {childNames[1]}";
+                    throw new Exception("Was supposed to be handled earlier in the function");
                 case AwaitExpressionSyntax awaitExpressionSyntax:
                     break;
                 case BaseExpressionSyntax baseExpressionSyntax:
@@ -198,6 +221,29 @@ namespace PlatoGenerator
             {
                 name = "Plato.At";
             }
+            else if (name == "#tuple")
+            {
+                name = "Plato.Tuple";
+            }
+            else if (name == "#interpolatedstring")
+            {
+                // Why are there no arguments? 
+                //name = "Plato.Format";
+                throw new NotImplementedException("TODO");
+            }
+            else if (name.StartsWith("#cast"))
+            {
+                name = "Plato.Cast";
+                
+                // NOTE: maybe this should be a "TypeOf" operation? 
+                var typeArg = $"\"{expr.TypeString}\"";
+
+                if (args.Length != 0)
+                    args = $"{typeArg}, " + args;
+                else
+                    args = $"{typeArg}";
+            }
+
 
             var exprValue = $"{name}({args})";
 
@@ -256,8 +302,7 @@ namespace PlatoGenerator
             }
             else if (name.StartsWith("#with"))
             {
-                // TODO: forbid
-                //Debug.Assert(false);
+                throw new Exception("With expressions are not allowed, because records aren't allowed");
             }
             else if (name.StartsWith("#declaration"))
             {
@@ -266,11 +311,7 @@ namespace PlatoGenerator
             }
             else if (name.StartsWith("#interpolatedstring"))
             {
-                // TODO: 
-                //Debug.Assert(false);
-            }
-            else if (name.StartsWith("#cast"))
-            {
+                // 
                 // TODO: 
                 //Debug.Assert(false);
             }
@@ -279,10 +320,10 @@ namespace PlatoGenerator
                 Debug.WriteLine($"Unrecognized type {name}");
                 throw new Exception("Unrecognized special syntax");
             }
-
+           
             if (declareVar)
             {
-                sw.WriteLine($"    var {exprVarName} = {exprValue}; // {dsKind} {defText}");
+                sw.WriteLine($"    var {exprVarName} = {exprValue}; // :{expr.TypeString} Kind={dsKind} Def={defText}");
             }
 
             return exprVarName;
@@ -391,7 +432,12 @@ namespace PlatoGenerator
             sw.WriteLine($"/* ORIGINAL: ");
             sw.WriteLine(func.Syntax.ToString());
             sw.WriteLine($"*/");
-            sw.WriteLine($"{indent}{staticKeyword}{func.Name}_{func.Id}({paramList}) // :{func.Result?.Type}");
+            var name = $"{func.Name}_{func.Id}";
+            if (func.Name == "#ctor")
+            {
+                name = "constructor";
+            }
+            sw.WriteLine($"{indent}{staticKeyword}{name}({paramList}) // :{func.Result?.Type}");
             sw.WriteLine($"{indent}{{");
             OutputStatement(func.Body, indent + "  ");
             sw.WriteLine($"{indent}}}");
@@ -431,6 +477,13 @@ namespace PlatoGenerator
             }
 
             // A global namespace version of each function and one just on the type? 
+            foreach (var c in t.Ctors)
+            {
+                var func = SyntaxToFunctions[c.Node];
+                OutputFunction(func, "  ");
+            }
+
+            // A global namespace version of each function and one just on the type? 
             foreach (var m in t.Methods)
             {
                 var func = SyntaxToFunctions[m.Node];
@@ -449,6 +502,12 @@ namespace PlatoGenerator
                 {
                     var func = FunctionDefinition.Create(m.Node, model);
                     SyntaxToFunctions.Add(m.Node, func);
+                }
+
+                foreach (var c in t.Ctors)
+                {
+                    var func = FunctionDefinition.Create(c.Node, model);
+                    SyntaxToFunctions.Add(c.Node, func);
                 }
 
                 foreach (var p in t.Properties)

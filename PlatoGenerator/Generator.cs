@@ -10,6 +10,23 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace PlatoGenerator
 {
+    /* Generated functions:
+     * - ToString()
+     * - GetHashCode()
+     * - Equals()
+     * - to/from Value tuple implicit operator
+     * - ToArray() / FromArray() functions (if labeled as a Vector)
+     * - add/subtract/multiply/divide by self and scalar (if labeled as Vector)
+     * - deconstructor operator.
+     * - binary serialization 
+     * - Parse() function 
+     * - to/from Json. 
+     * 
+     * When are serialization / Deseraraialization functions allowed/not-allowed.
+     * If there is a function, not allowed. If affine not allowed. 
+     * 
+     * How can you create cycles? Only affine types can have cycles.    
+     */
     [Generator]
     public class Generator : ISourceGenerator
     {

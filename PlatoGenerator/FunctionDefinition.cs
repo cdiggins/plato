@@ -7,66 +7,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace PlatoGenerator
 {
-    public class PropertyDefinition : Expression
-    {
-        public bool IsStatic => throw new NotImplementedException();
-
-        public FunctionDefinition Getter { get; set; }
-
-        public static PropertyDefinition Create(PropertyDeclarationSyntax property, SemanticModel model)
-        {
-            var symbol = ModelExtensions.GetDeclaredSymbol(model, property) as IPropertySymbol;
-            var result = new Expression("#result", symbol?.Type);
-            var @this = symbol?.GetMethod?.ReceiverType == null ? null : new Expression("#this", symbol.GetMethod.ReceiverType);
-
-            // Find the getter body. 
-            Statement body = null;
-            if (property.AccessorList != null)
-            {
-                foreach (var acc in property.AccessorList.Accessors)
-                {
-                    if (acc.Kind() == SyntaxKind.GetAccessorDeclaration)
-                    {
-
-                        body = acc.Body.CreateStatement(acc.ExpressionBody?.Expression, model);
-                    }
-                }
-            }
-            // TODO: do I ever actually get here? 
-            if (body == null)
-            {
-                // Check for an arrow 
-                if (property.ExpressionBody?.Expression != null)
-                {
-                    body = property.ExpressionBody.Expression.CreateStatement(model);
-                }
-
-                // TODO: check for a backing field
-            }
-
-            var getter = new FunctionDefinition
-            {
-                Name = property.Identifier.ToString(),
-
-                Body = body,
-                Syntax = null,
-                Symbol = null,
-                Model = model,
-                Result = result,
-                This = @this,
-                Parameters = new List<Expression>(), // TODO: What about indexed properties? 
-            };
-
-            return new PropertyDefinition()
-            {
-                Getter = getter,
-                Syntax = property,
-                Symbol = symbol,
-                Model = model,
-                This = @this
-            };
-        }
-    }
 
 
     public class FunctionDefinition : Expression
@@ -113,7 +53,6 @@ namespace PlatoGenerator
             return r;
         }
 
-        // TODO: should I really be getting the function definition from a "PlatoMethodSyntax" 
         public static FunctionDefinition Create(MethodDeclarationSyntax method, SemanticModel model)
         {
             var symbol = ModelExtensions.GetDeclaredSymbol(model, method) as IMethodSymbol;
@@ -135,6 +74,38 @@ namespace PlatoGenerator
 
             return r;
         }
+
+        public static Statement CreateConstructorBody(BlockSyntax block, ExpressionSyntax expr, SemanticModel model)
+        {
+            if (block != null) return block.CreateStatement(model);
+            return new ExpressionStatement
+            {
+                Expression = expr.CreateExpression(model),
+            };
+        }
+
+        public static FunctionDefinition Create(ConstructorDeclarationSyntax method, SemanticModel model)
+        {
+            var symbol = ModelExtensions.GetDeclaredSymbol(model, method) as IMethodSymbol;
+            var result = new Expression("#result", symbol?.ReturnType);
+            var @this = symbol?.ReceiverType == null ? null : new Expression("#this", symbol?.ReceiverType);
+
+            var r = new FunctionDefinition
+            {
+                Name = "#ctor",
+                IsStatic = method.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword)),
+                Body = CreateConstructorBody(method.Body, method.ExpressionBody?.Expression, model),
+                Syntax = method,
+                Symbol = symbol,
+                Model = model,
+                Result = result,
+                This = @this,
+                Parameters = method.ParameterList.Parameters.Select(p => p.CreateExpression(model)).ToList()
+            };
+
+            return r;
+        }
+
 
         // TODO: get captured variables! 
         public static FunctionDefinition Create(LocalFunctionStatementSyntax method, SemanticModel model)

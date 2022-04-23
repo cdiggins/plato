@@ -29,7 +29,7 @@
         public float MagnitudeSquared => Dot(this);
         public float Magnitude => MathF.Sqrt(MagnitudeSquared);
         public Vector2 Normal => this / Magnitude;
-        public override string ToString() => $"Vector2({X},{Y})";
+        public override string ToString() => "Vector2(" + X  + "," + Y + ")";
     }
 
     public class Vector3
@@ -48,7 +48,7 @@
         public float MagnitudeSquared => Dot(this);
         public float Magnitude => MathF.Sqrt(MagnitudeSquared);
         public Vector3 Normal => this / Magnitude;
-        public override string ToString() => $"Vector3({X},{Y},{Z})";
+        public override string ToString() => "Vector3(" + X + "," + Y + "," + Z + ")";
     }
 
     public class Int3
@@ -59,7 +59,7 @@
         public Int3 WithX(int x) => new(x, Y, Z);
         public Int3 WithY(int y) => new(X, y, Z);
         public Int3 WithZ(int z) => new(X, Y, z);
-        public override string ToString() => $"Int3({X},{Y},{Z})";
+        public override string ToString() => "Int3(" + X + "," + Y + "," + Z + ")";
     }
 
     public class Int4
@@ -71,7 +71,7 @@
         public Int4 WithY(int y) => new(X, y, Z, W);
         public Int4 WithZ(int z) => new(X, Y, z, W);
         public Int4 WithW(int w) => new(X, Y, Z, w);
-        public override string ToString() => $"Int4({X},{Y},{Z},{W})";
+        public override string ToString() => "Int4(" + X + "," + Y + "," + Z + "," + W + ")";
     }
 
     public class TriMesh

@@ -8,25 +8,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution items", "solution 
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTestConsole", "..\PlatoTestConsole\PlatoTestConsole.csproj", "{D883B23C-439A-4B7E-9D51-B14E623AA111}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTestConsole2", "..\PlatoTestConsole2\PlatoTestConsole2.csproj", "{B4EF03AF-7E6B-472F-8266-4C4BFA47F1DA}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoGenerator", "..\PlatoGenerator\PlatoGenerator.csproj", "{04EA8367-8FB0-499C-BC36-DF628FE2EF10}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoMath", "..\PlatoMath\PlatoMath.csproj", "{288A8923-C47D-46E0-B0A2-BFF564BC54A8}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTestConsole3", "..\PlatoTestConsole3\PlatoTestConsole3.csproj", "{D6D7B05B-92F3-4483-A5B9-210B2FD7E66A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoCollections", "..\PlatoCollections\PlatoCollections.csproj", "{12BE0F24-88AF-4FDE-98D9-E8FC18DEBC8F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoCollectionsTest", "..\PlatoCollectionsTest\PlatoCollectionsTest.csproj", "{854A7693-ED7E-493E-8C3B-1960091904C6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vim.Math3D", "D:\github\math3d\src\Vim.Math3D.csproj", "{975CFB68-A326-45AF-B4FC-54CFE1DBC746}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PathTracer", "RayTracerDemo\PathTracer.csproj", "{642BF723-397E-472B-9C01-16A0A4F97B24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatoTestJavaScript", "..\PlatoTestJavaScript\PlatoTestJavaScript.csproj", "{80901414-925B-46F1-9C9C-D251FF59EFEF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTestJavaScript", "..\PlatoTestJavaScript\PlatoTestJavaScript.csproj", "{80901414-925B-46F1-9C9C-D251FF59EFEF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatoIR", "PlatoIR\PlatoIR.csproj", "{A71401DF-F388-4F54-B581-4D555D48CEE9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,26 +26,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D883B23C-439A-4B7E-9D51-B14E623AA111}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D883B23C-439A-4B7E-9D51-B14E623AA111}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D883B23C-439A-4B7E-9D51-B14E623AA111}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D883B23C-439A-4B7E-9D51-B14E623AA111}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B4EF03AF-7E6B-472F-8266-4C4BFA47F1DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B4EF03AF-7E6B-472F-8266-4C4BFA47F1DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B4EF03AF-7E6B-472F-8266-4C4BFA47F1DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B4EF03AF-7E6B-472F-8266-4C4BFA47F1DA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{04EA8367-8FB0-499C-BC36-DF628FE2EF10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{04EA8367-8FB0-499C-BC36-DF628FE2EF10}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04EA8367-8FB0-499C-BC36-DF628FE2EF10}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04EA8367-8FB0-499C-BC36-DF628FE2EF10}.Release|Any CPU.Build.0 = Release|Any CPU
-		{288A8923-C47D-46E0-B0A2-BFF564BC54A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{288A8923-C47D-46E0-B0A2-BFF564BC54A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{288A8923-C47D-46E0-B0A2-BFF564BC54A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{288A8923-C47D-46E0-B0A2-BFF564BC54A8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D6D7B05B-92F3-4483-A5B9-210B2FD7E66A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D6D7B05B-92F3-4483-A5B9-210B2FD7E66A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D6D7B05B-92F3-4483-A5B9-210B2FD7E66A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D6D7B05B-92F3-4483-A5B9-210B2FD7E66A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{12BE0F24-88AF-4FDE-98D9-E8FC18DEBC8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{12BE0F24-88AF-4FDE-98D9-E8FC18DEBC8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12BE0F24-88AF-4FDE-98D9-E8FC18DEBC8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -62,10 +38,6 @@ Global
 		{854A7693-ED7E-493E-8C3B-1960091904C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{854A7693-ED7E-493E-8C3B-1960091904C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{854A7693-ED7E-493E-8C3B-1960091904C6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{975CFB68-A326-45AF-B4FC-54CFE1DBC746}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{975CFB68-A326-45AF-B4FC-54CFE1DBC746}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{975CFB68-A326-45AF-B4FC-54CFE1DBC746}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{975CFB68-A326-45AF-B4FC-54CFE1DBC746}.Release|Any CPU.Build.0 = Release|Any CPU
 		{642BF723-397E-472B-9C01-16A0A4F97B24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{642BF723-397E-472B-9C01-16A0A4F97B24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{642BF723-397E-472B-9C01-16A0A4F97B24}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -74,6 +46,10 @@ Global
 		{80901414-925B-46F1-9C9C-D251FF59EFEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80901414-925B-46F1-9C9C-D251FF59EFEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80901414-925B-46F1-9C9C-D251FF59EFEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A71401DF-F388-4F54-B581-4D555D48CEE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A71401DF-F388-4F54-B581-4D555D48CEE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A71401DF-F388-4F54-B581-4D555D48CEE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A71401DF-F388-4F54-B581-4D555D48CEE9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
