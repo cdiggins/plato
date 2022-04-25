@@ -92,7 +92,7 @@ namespace PlatoGenerator
                     break;
 
                 case ExpressionStatementSyntax expressionStatementSyntax:
-                    r = CreateStatement(expressionStatementSyntax.Expression, model);
+                    r = CreateExpressionStatement(expressionStatementSyntax.Expression, model);
                     break;
 
                 case ForStatementSyntax forStatementSyntax:
@@ -185,9 +185,13 @@ namespace PlatoGenerator
         }
 
         public static Statement CreateStatement(this StatementSyntax statement, ExpressionSyntax expr,
-            SemanticModel model)
+            SemanticModel model) =>
+            statement != null 
+                ? statement.CreateStatement(model) 
+                : expr.CreateReturnStatement(model);
+
+        public static Statement CreateReturnStatement(this ExpressionSyntax expr, SemanticModel model)
         {
-            if (statement != null) return statement.CreateStatement(model);
             return new ReturnStatement
             {
                 Expression = expr.CreateExpression(model),
@@ -200,9 +204,9 @@ namespace PlatoGenerator
             => new BlockStatement { Statements = statements.ToList(), Model = model };
 
         public static Statement CreateStatement(this IEnumerable<ExpressionSyntax> syntax, SemanticModel model)
-            => CreateStatement(syntax.Select(x => x.CreateStatement(model)), model);
+            => CreateStatement(syntax.Select(x => x.CreateExpressionStatement(model)), model);
 
-        public static Statement CreateStatement(this ExpressionSyntax syntax, SemanticModel model)
+        public static Statement CreateExpressionStatement(this ExpressionSyntax syntax, SemanticModel model)
             => syntax.CreateExpression(model).ToExpressionStatement();
 
         public static Statement ToExpressionStatement(this Expression expr)

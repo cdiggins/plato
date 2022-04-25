@@ -202,7 +202,7 @@ namespace PlatoGenerator
             var paramList = string.Join(", ", func.Parameters.Select(p => $"{p.Name}@{p.Id}:{p.Type}"));
             var isStatic = func.IsStatic ? "static " : "";
             sw.WriteLine($"{indent}{isStatic}{func.Result?.Type} {func.Name}@{func.Id}({paramList})");
-            sw.WriteLine($"/*");
+            sw.WriteLine($"/*");    
             sw.WriteLine(func.Syntax.ToString());
             sw.WriteLine($"*/");
             sw.WriteLine($"{indent}{{");

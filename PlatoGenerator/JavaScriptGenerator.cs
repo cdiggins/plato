@@ -8,20 +8,39 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 /*
-• DONE: Indexer(this) properties not generated.
-• DONE: No constructor generated.
-* DONE: No type provided for expressions.
-• DONE: Backing fields for auto-generated properties are missing
-• SKIPPED: Interpolated string not supported
-• DONE: Tuple expressions and tuple assignment 
-* DONE: Cast doesn't work.
-• Need MathF functions provided. 
-• Missing ids on parameter references
-• Missing ids of function references
-* DONE: Extension functions are translated into member functions. 
-* DONE: Get the list of captured variables
-* Construcotr returning interface 
-* Can't find operator method (need to add "OperationDeclaration")
+ * DONE: Indexer(this) properties not generated.
+ * DONE: No constructor generated.
+ * DONE: No type provided for expressions.
+ * DONE: Backing fields for auto-generated properties are missing
+ * SKIPPED: Interpolated string not supported
+ * DONE: Tuple expressions and tuple assignment 
+ * DONE: Cast doesn't work.
+ * DONE: Extension functions are translated into member functions. 
+ * DONE: Get the list of captured variables
+ * DONE: Construcotr returning interface 
+ * DONE: Can't find operator method (need to add "OperationDeclaration")
+ * SKIPPED: constructor type overloading is not supported (only one constructor is allowed for now)
+ * DONE: overloaded operators need to be converted to functions
+ * DONE: operators need to be renamed
+ * DONE: auto operators don't have a return statement
+ * DONE: all field, method, and property variables need to use a "this"
+ * LATER TODO: Need MathF functions  
+ * LATER TODO: Need Plato built-in functions (Plato.At , Plato.Cast) 
+ * SKIPPED: Missing ids on parameter references
+ * DONE: Missing ids of function references
+ * TODO: generic type constructors are missing type parameters
+ * TODO: something odd is happening when declarating a variable and assigning a new expression to it.
+ * TODO: anything leabled VariableDeclarator seems to be a problem
+ * TODO: extension methods need to be moved to global namespace.
+ * TODO: handle local functions,
+ * TODO: anonymous types
+ * TODO: anonymous functions
+ * TODO: 
+ *
+ * NOTES:
+ * - Type constructors looks like it is going to be an interesting challenge.
+ * - How do I know the name of the parameter? For now, I think I might just skip it. 
+ *
 */
 
 namespace PlatoGenerator
@@ -107,17 +126,35 @@ namespace PlatoGenerator
                 case GenericNameSyntax genericNameSyntax:
                     break;
                 case IdentifierNameSyntax identifierNameSyntax:
-                    return identifierNameSyntax.Identifier.ToString();
+                    {
+                        var ident = identifierNameSyntax.Identifier.ToString();
+                        switch (expr.Symbol)
+                        {
+                            case IParameterSymbol paramSym:
+                                ident = ident + "/* param */"; break;
+                            case IFieldSymbol fieldSym:
+                                ident = "this." + ident + "/* field */"; break;
+                            case ILocalSymbol localSym:
+                                ident = ident + "/* local */"; break;
+                            case IPropertySymbol propSym:
+                                ident = "this." + ident + "/* property */"; break;
+                            case IMethodSymbol methSym:
+                                ident = "this." + ident + "/* method */"; break;
+                            case ITypeSymbol typeSym:
+                                ident = ident + "/* type */"; break;
+                            default:
+                                ident += "/* unknown */"; break;
+                        }
+                        return ident;
+                    }
+
                 case ImplicitArrayCreationExpressionSyntax implicitArrayCreationExpressionSyntax:
                     break;
                 case ImplicitElementAccessSyntax implicitElementAccessSyntax:
                     break;
                 case ImplicitObjectCreationExpressionSyntax implicitObjectCreationExpressionSyntax:
-                {
-                    var type = expr.Type;
-                    // TODO: get the type ID. I currently don't have the PlatoType.
-                    return $"new {type.Name}({args})";
-                }
+                    // TODO: need type arguments
+                    return $"new {expr.GetExpressionType().Name}({args})";
 
                 case ImplicitStackAllocArrayCreationExpressionSyntax implicitStackAllocArrayCreationExpressionSyntax:
                     break;
@@ -143,11 +180,9 @@ namespace PlatoGenerator
                 case NullableTypeSyntax nullableTypeSyntax:
                     break;
                 case ObjectCreationExpressionSyntax objectCreationExpressionSyntax:
-                    {
-                        var type = expr.Type;
-                        // TODO: get the type ID. I currently don't have the PlatoType.
-                        return $"new {type.Name}({args})";
-                    }
+                    // TODO: need type arguments
+                    return $"new {expr.GetExpressionType().Name}({args})";
+
                 case OmittedArraySizeExpressionSyntax omittedArraySizeExpressionSyntax:
                     break;
                 case OmittedTypeArgumentSyntax omittedTypeArgumentSyntax:
@@ -253,28 +288,35 @@ namespace PlatoGenerator
 
             if (name.StartsWith("#operator"))
             {
-                // TODO: this should go to functions so that we can have operator overloading. 
-
-                switch (expr.Syntax)
+                // Check if this is a function
+                if (def != null)
                 {
-                    case ConditionalExpressionSyntax conditionalExpressionSyntax:
-                        if (childNames.Count != 3) throw new Exception("Expected three children");
-                        exprValue = $"{childNames[0]} ? {childNames[1]} : {childNames[2]}";
-                        break;
-                    case BinaryExpressionSyntax binaryExpressionSyntax:
-                        if (childNames.Count != 2) throw new Exception("Expected two children");
-                        exprValue = $"{childNames[0]} {binaryExpressionSyntax.OperatorToken} {childNames[1]}";
-                        break;
-                    case PostfixUnaryExpressionSyntax postfixUnaryExpressionSyntax:
-                        if (childNames.Count != 1) throw new Exception("Expected one child");
-                        exprValue = $"{childNames[0]}{postfixUnaryExpressionSyntax.OperatorToken}";
-                        break;
-                    case PrefixUnaryExpressionSyntax prefixUnaryExpressionSyntax:
-                        if (childNames.Count != 1) throw new Exception("Expected one child");
-                        exprValue = $"{prefixUnaryExpressionSyntax.OperatorToken}{childNames[0]}";
-                        break;
-                    default:
-                        throw new Exception($"Unrecognized operator {name} : {expr.SyntaxKind}");
+                    var invokeArgList = string.Join(", ", childNames);
+                    exprValue = $"{def.Name}_{def.Id}({invokeArgList})";
+                }
+                else
+                {
+                    switch (expr.Syntax)
+                    {
+                        case ConditionalExpressionSyntax conditionalExpressionSyntax:
+                            if (childNames.Count != 3) throw new Exception("Expected three children");
+                            exprValue = $"{childNames[0]} ? {childNames[1]} : {childNames[2]}";
+                            break;
+                        case BinaryExpressionSyntax binaryExpressionSyntax:
+                            if (childNames.Count != 2) throw new Exception("Expected two children");
+                            exprValue = $"{childNames[0]} {binaryExpressionSyntax.OperatorToken} {childNames[1]}";
+                            break;
+                        case PostfixUnaryExpressionSyntax postfixUnaryExpressionSyntax:
+                            if (childNames.Count != 1) throw new Exception("Expected one child");
+                            exprValue = $"{childNames[0]}{postfixUnaryExpressionSyntax.OperatorToken}";
+                            break;
+                        case PrefixUnaryExpressionSyntax prefixUnaryExpressionSyntax:
+                            if (childNames.Count != 1) throw new Exception("Expected one child");
+                            exprValue = $"{prefixUnaryExpressionSyntax.OperatorToken}{childNames[0]}";
+                            break;
+                        default:
+                            throw new Exception($"Unrecognized operator {name} : {expr.SyntaxKind}");
+                    }
                 }
             }
             else if (name.StartsWith("#invoke"))
@@ -450,7 +492,8 @@ namespace PlatoGenerator
 
         public void OutputFunction(FunctionDefinition func, string indent = "")
         {
-            var paramList = string.Join(", ", func.Parameters.Select(p => $"{p.Name}_{p.Id} /* :{p.Type} */"));
+
+            var paramList = string.Join(", ", func.Parameters.Select(p => $"{p.Name} /* {p.Id}:{p.Type} */"));
             var staticKeyword = func.IsStatic ? "static " : "";
             sw.WriteLine($"/* ORIGINAL: ");
             sw.WriteLine(func.Syntax.ToString());
@@ -464,6 +507,11 @@ namespace PlatoGenerator
             sw.WriteLine($"{indent}{{");
             OutputStatement(func.Body, indent + "  ");
             sw.WriteLine($"{indent}}}");
+        }
+
+        public void OutputExtension(PlatoTypeSyntax t, string indent = "")
+        {
+
         }
 
         public void OutputType(PlatoTypeSyntax t, string indent = "")
@@ -569,6 +617,12 @@ namespace PlatoGenerator
            
             using (sw = new StreamWriter(File.Create(LogFileName)))
             {
+                foreach (var t in types)
+                {
+                    OutputExtensionMethods(t);
+                }
+
+
                 foreach (var t in types)
                 {
                     OutputType(t);

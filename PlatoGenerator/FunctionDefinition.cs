@@ -56,12 +56,14 @@ namespace PlatoGenerator
         public static FunctionDefinition Create(OperatorDeclarationSyntax op, SemanticModel model)
         {
             var symbol = ModelExtensions.GetDeclaredSymbol(model, op) as IMethodSymbol;
+            if (symbol == null)
+                throw new Exception($"Could not find method symbol for operator {op.OperatorToken}");
             var result = new Expression("#result", symbol?.ReturnType);
             var @this = symbol?.ReceiverType == null ? null : new Expression("#this", symbol?.ReceiverType);
 
             var r = new FunctionDefinition
             {
-                Name = op.OperatorToken.ToString(),
+                Name = symbol?.Name,
                 IsStatic = op.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword)),
                 IsExtension = op.ParameterList.Parameters.Any(p => p.Modifiers.Any(m => m.IsKind(SyntaxKind.ThisKeyword))),
                 Body = op.Body.CreateStatement(op.ExpressionBody?.Expression, model),

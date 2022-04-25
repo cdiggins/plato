@@ -41,7 +41,7 @@ namespace PlatoGenerator
                 // Check for an arrow 
                 if (property.ExpressionBody?.Expression != null)
                 {
-                    body = property.ExpressionBody.Expression.CreateStatement(model);
+                    body = property.ExpressionBody.Expression.CreateReturnStatement(model);
                 }
 
                 // TODO: check for a backing field
