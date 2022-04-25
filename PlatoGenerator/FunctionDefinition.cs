@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -7,11 +8,10 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace PlatoGenerator
 {
-
-
     public class FunctionDefinition : Expression
     {
         public bool IsStatic { get; set; } 
+        public bool IsExtension { get; set; }
         public List<Expression> Parameters = new List<Expression>();
         public Expression Result; 
         public Statement Body;
@@ -53,6 +53,29 @@ namespace PlatoGenerator
             return r;
         }
 
+        public static FunctionDefinition Create(OperatorDeclarationSyntax op, SemanticModel model)
+        {
+            var symbol = ModelExtensions.GetDeclaredSymbol(model, op) as IMethodSymbol;
+            var result = new Expression("#result", symbol?.ReturnType);
+            var @this = symbol?.ReceiverType == null ? null : new Expression("#this", symbol?.ReceiverType);
+
+            var r = new FunctionDefinition
+            {
+                Name = op.OperatorToken.ToString(),
+                IsStatic = op.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword)),
+                IsExtension = op.ParameterList.Parameters.Any(p => p.Modifiers.Any(m => m.IsKind(SyntaxKind.ThisKeyword))),
+                Body = op.Body.CreateStatement(op.ExpressionBody?.Expression, model),
+                Syntax = op,
+                Symbol = symbol,
+                Model = model,
+                Result = result,
+                This = @this,
+                Parameters = op.ParameterList.Parameters.Select(p => p.CreateExpression(model)).ToList()
+            };
+
+            return r;
+        }
+
         public static FunctionDefinition Create(MethodDeclarationSyntax method, SemanticModel model)
         {
             var symbol = ModelExtensions.GetDeclaredSymbol(model, method) as IMethodSymbol;
@@ -63,6 +86,7 @@ namespace PlatoGenerator
             {
                 Name = method.Identifier.ToString(),
                 IsStatic = method.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword)),
+                IsExtension = method.ParameterList.Parameters.Any(p => p.Modifiers.Any(m => m.IsKind(SyntaxKind.ThisKeyword))),
                 Body = method.Body.CreateStatement(method.ExpressionBody?.Expression, model),
                 Syntax = method,
                 Symbol = symbol,

@@ -11,6 +11,7 @@ namespace PlatoGenerator
         public bool IsStatic => throw new NotImplementedException();
 
         public FunctionDefinition Getter { get; set; }
+        public bool IsAutoProperty => Getter == null || Getter.Body == null;
 
         public static PropertyDefinition Create(PropertyDeclarationSyntax property, SemanticModel model)
         {
@@ -26,8 +27,11 @@ namespace PlatoGenerator
                 {
                     if (acc.Kind() == SyntaxKind.GetAccessorDeclaration)
                     {
-
-                        body = acc.Body.CreateStatement(acc.ExpressionBody?.Expression, model);
+                        // Only if there is an actual body.
+                        if (acc.ExpressionBody?.Expression != null)
+                        {
+                            body = acc.Body.CreateStatement(acc.ExpressionBody?.Expression, model);
+                        }
                     }
                 }
             }

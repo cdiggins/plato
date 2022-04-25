@@ -11,20 +11,25 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 • DONE: Indexer(this) properties not generated.
 • DONE: No constructor generated.
 * DONE: No type provided for expressions.
-• Backing fields for auto-generated properties are missing
+• DONE: Backing fields for auto-generated properties are missing
 • SKIPPED: Interpolated string not supported
 • DONE: Tuple expressions and tuple assignment 
-* Cast doesn't work.
+* DONE: Cast doesn't work.
 • Need MathF functions provided. 
 • Missing ids on parameter references
 • Missing ids of function references
-* Extension functions are translated into member functions. 
+* DONE: Extension functions are translated into member functions. 
+* DONE: Get the list of captured variables
+* Construcotr returning interface 
+* Can't find operator method (need to add "OperationDeclaration")
 */
 
 namespace PlatoGenerator
 {
     public class JavaScriptGenerator
     {
+        // TODO: symbols? 
+
         public Dictionary<SyntaxNode, FunctionDefinition> SyntaxToFunctions = new Dictionary<SyntaxNode, FunctionDefinition>();
         public Dictionary<SyntaxNode, PropertyDefinition> SyntaxToProperties = new Dictionary<SyntaxNode, PropertyDefinition>();
 
@@ -214,7 +219,7 @@ namespace PlatoGenerator
             var exprVarName = $"var{expr.Id}";
             FunctionDefinition def = null;
             if (ds != null) SyntaxToFunctions.TryGetValue(ds, out def);
-            var defText = def != null ? $"{def.Name}@{def.Id}" : "no defintion found";
+            var defText = def != null ? $"{def.Name}@{def.Id}" : "";
 
             var name = expr.Name;
             if (name == "#at")
@@ -243,7 +248,6 @@ namespace PlatoGenerator
                 else
                     args = $"{typeArg}";
             }
-
 
             var exprValue = $"{name}({args})";
 
@@ -285,12 +289,30 @@ namespace PlatoGenerator
                 // TODO: this means that I have to come up with a decent intermediate representation that will facilitate the work required. 
                 // Good news, is that what this system is doing looks a bit like the system that will create the intermediate representation. 
 
-                var invokeArgList = string.Join(", ", childNames.Skip(1));
-                exprValue = $"{childNames[0]}({invokeArgList})";
+                if (def != null && def.IsExtension)
+                {
+                    var pos = childNames[0].LastIndexOf(".");
+                    var stripEnding = childNames[0].Substring(0, pos);
+                    childNames[0] = stripEnding;
+
+                    var invokeArgList = string.Join(", ", childNames);
+                    // TODO: what is the owner type? 
+                    // TODO: we have a problem because the first child name is the method resolution, not the actual
+                    exprValue = $"{def.Name}_{def.Id}({invokeArgList})";
+                }
+                else
+                {
+                    var invokeArgList = string.Join(", ", childNames.Skip(1));
+                    exprValue = $"{childNames[0]}({invokeArgList})";
+                }
             }
             else if (name.StartsWith("#lambda"))
             {
                 var f = (FunctionDefinition)expr;
+                var dataFlow = f.Model.AnalyzeDataFlow(f.Syntax);
+                var capVars = dataFlow.Captured.Select(sym => sym.Name).ToArray() ?? Array.Empty<string>();
+
+                sw.WriteLine($"// Captured: {string.Join(", ", capVars)}");
                 var parameters = string.Join(", ", f.Parameters.Select(p => p.Name));
                 sw.WriteLine($"var {exprVarName} = ({parameters}) => ");
                 sw.WriteLine("{");
@@ -323,7 +345,8 @@ namespace PlatoGenerator
            
             if (declareVar)
             {
-                sw.WriteLine($"    var {exprVarName} = {exprValue}; // :{expr.TypeString} Kind={dsKind} Def={defText}");
+                var declKind = expr.Symbol?.GetDeclaringSyntax()?.Kind();
+                sw.WriteLine($"    var {exprVarName} = {exprValue}; // Type={expr.TypeString} Def={defText} Sym={expr.Symbol?.Name}:{expr.Symbol?.Kind} DeclSyn={declKind}");
             }
 
             return exprVarName;
@@ -456,23 +479,28 @@ namespace PlatoGenerator
                     sw.WriteLine($"{indent}{staticKeyword}{v.Name};");
                 }
             }
-
+            
             foreach (var p in t.Properties)
             {
                 var staticKeyword = p.IsStatic ? "static " : "";
-                sw.WriteLine($"{indent}{staticKeyword}get {p.Name}()");
+             
 
                 var pdef = SyntaxToProperties[p.Node];
 
-                if (pdef != null)
+                if (pdef == null)
+                    throw new Exception("Could not find property");
+
+                if (pdef.IsAutoProperty)
                 {
-                    sw.WriteLine($"{indent}{{");
-                    OutputStatement(pdef.Getter.Body, indent + "  ");
-                    sw.WriteLine($"{indent}}}");
+                    // It is indistinguishable from a field. 
+                    sw.WriteLine($"{indent}{staticKeyword} {p.Name};");
                 }
                 else
                 {
-                    sw.WriteLine($"{indent}; // ERROR: couldn't find property definition ");
+                    sw.WriteLine($"{indent}{staticKeyword}get {p.Name}()");
+                    sw.WriteLine($"{indent}{{");
+                    OutputStatement(pdef.Getter.Body, indent + "  ");
+                    sw.WriteLine($"{indent}}}");
                 }
             }
 
@@ -490,6 +518,12 @@ namespace PlatoGenerator
                 OutputFunction(func, "  ");
             }
 
+            foreach (var op in t.Operators)
+            {
+                var func = SyntaxToFunctions[op.Node];
+                OutputFunction(func, "  ");
+            }
+
             sw.WriteLine("}");
         }
 
@@ -502,6 +536,12 @@ namespace PlatoGenerator
                 {
                     var func = FunctionDefinition.Create(m.Node, model);
                     SyntaxToFunctions.Add(m.Node, func);
+                }
+
+                foreach (var op in t.Operators)
+                {
+                    var func = FunctionDefinition.Create(op.Node, model);
+                    SyntaxToFunctions.Add(op.Node, func);
                 }
 
                 foreach (var c in t.Ctors)

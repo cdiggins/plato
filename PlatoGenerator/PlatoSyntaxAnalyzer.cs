@@ -238,6 +238,24 @@ namespace PlatoGenerator
         }
     }
 
+    public class PlatoOperatorSyntax : PlatoSyntax<OperatorDeclarationSyntax, PlatoOperatorSyntax>, INamed
+    {
+        public string Name => Node.OperatorToken.ToString();
+        public PlatoStatementSyntax StatementBody;
+        public PlatoExpressionSyntax ExpressionBody;
+        public PlatoTypeRefSyntax ReturnType;
+        public List<PlatoParamSyntax> Parameters;
+
+        public override void OnInit()
+        {
+            base.OnInit();
+            ReturnType = PlatoTypeRefSyntax.Create(Node.ReturnType);
+            Parameters = Node.ParameterList.Parameters.Select(PlatoParamSyntax.Create).ToList();
+            StatementBody = PlatoStatementSyntax.Create(Node.Body);
+            ExpressionBody = PlatoExpressionSyntax.Create(Node.ExpressionBody?.Expression);
+        }
+    }
+
     public class PlatoMethodSyntax : PlatoSyntax<MethodDeclarationSyntax, PlatoMethodSyntax>, INamed
     {
         public string Name => Node.Identifier.ToString();
@@ -285,6 +303,7 @@ namespace PlatoGenerator
         public string Kind => Node.Keyword.ToString();
 
         public List<PlatoFieldSyntax> Fields;
+        public List<PlatoOperatorSyntax> Operators;
         public List<PlatoPropertySyntax> Properties;
         public List<PlatoMethodSyntax> Methods;
         public List<PlatoConstructorSyntax> Ctors;
@@ -296,6 +315,7 @@ namespace PlatoGenerator
             Ctors = Node.Members.OfType<ConstructorDeclarationSyntax>().Select(PlatoConstructorSyntax.Create).ToList();
             Methods = Node.Members.OfType<MethodDeclarationSyntax>().Select(PlatoMethodSyntax.Create).ToList();
             Fields = Node.Members.OfType<FieldDeclarationSyntax>().Select(PlatoFieldSyntax.Create).ToList();
+            Operators = Node.Members.OfType<OperatorDeclarationSyntax>().Select(PlatoOperatorSyntax.Create).ToList();
             Properties = Node.Members.OfType<PropertyDeclarationSyntax>().Select(PlatoPropertySyntax.Create).ToList();
             Indexers = Node.Members.OfType<IndexerDeclarationSyntax>().Select(PlatoIndexerSyntax.Create).ToList();
         }

@@ -140,7 +140,12 @@ Source generator.
 Previously I was designing the standard library and experimenting with Plato semantics using 
 various C# projects. 
 
-## Final Words
+# Compiling and Running
+
+
+https://stackoverflow.com/questions/70774200/how-to-debug-roslyn-source-generator-in-vs-2022
+
+# Final Words
 
 I am always interested in feedback in any form. 
 You can find me on twitter as [@cdiggins](https://twitter.com/cdiggins).

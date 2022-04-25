@@ -154,5 +154,11 @@
                 (radius + tube * uv.Y.Cos()) * uv.X.Sin(),
                 tube * uv.Y.Sin());
         }
+
+        public static void TestOperator()
+        {
+            var x = new Vector3(1, 2, 3);
+            var y = x + x;
+        }
     }
 }
