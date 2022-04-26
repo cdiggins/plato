@@ -24,23 +24,30 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
  * DONE: operators need to be renamed
  * DONE: auto operators don't have a return statement
  * DONE: all field, method, and property variables need to use a "this"
- * LATER TODO: Need MathF functions  
- * LATER TODO: Need Plato built-in functions (Plato.At , Plato.Cast) 
- * SKIPPED: Missing ids on parameter references
  * DONE: Missing ids of function references
+ * DONE: something odd is happening when declarating a variable and assigning a new expression to it.
+ * DONE: anything leabled VariableDeclarator seems to be a problem
+ * DONE: operators need to be class qualfieid
+ * DONE: extension methods need to be class qualified
  * TODO: generic type constructors are missing type parameters
- * TODO: something odd is happening when declarating a variable and assigning a new expression to it.
- * TODO: anything leabled VariableDeclarator seems to be a problem
- * TODO: extension methods need to be moved to global namespace.
- * TODO: handle local functions,
- * TODO: anonymous types
- * TODO: anonymous functions
- * TODO: 
+ * TODO: get all of the type refrences and generate the appropriate types in advance. 
+ * LATER TODO: handle local functions,
+ * LATER TODO: anonymous types
+ * LATER TODO: anonymous functions
+ * LATER TODO: Need MathF functions  
+ * LATER TODO: Need Plato built-in functions (Plato.At , Plato.Cast)
+ * LATER TODO: reduce number of expression calls
+ * LATER TODO: add ids to parameter references 
+ * LATER TODO: add ids to local references
  *
  * NOTES:
  * - Type constructors looks like it is going to be an interesting challenge.
- * - How do I know the name of the parameter? For now, I think I might just skip it. 
+ * I think I need to pre-construct all of the types.
+ * What is interesting is that they are all going to be the result of functions.
  *
+ * - How do I know the name of the parameter? For now, I think I might just skip it. 
+ * - I would rather that an extension method is called on the type it was declared on.
+ * At least we know 
 */
 
 namespace PlatoGenerator
@@ -244,9 +251,28 @@ namespace PlatoGenerator
                     return nameSyntax.ToString();
                 case TypeSyntax typeSyntax:
                     break;
+
+                case ConditionalExpressionSyntax conditionalExpressionSyntax:
+                    break;
+                case BinaryExpressionSyntax binaryExpressionSyntax:
+                    break;
+                case PostfixUnaryExpressionSyntax postfixUnaryExpressionSyntax:
+                    break;
+                case PrefixUnaryExpressionSyntax prefixUnaryExpressionSyntax:
+                    break;
+
+                case VariableDeclaratorSyntax variableDeclaratorSyntax:
+                {
+                    var varName = variableDeclaratorSyntax.Identifier.ToString();
+                    if (childNames.Count != 1)
+                        throw new Exception("Expected one child expression");
+                    sw.WriteLine($"var {varName} = {childNames[0]};");
+                    return varName;
+                }
+
                 default:
                     // TODO: when I figure out why expressions have non-expression syntax, reinstate this check. 
-                    //throw new ArgumentOutOfRangeException(nameof(syntax));
+                    throw new ArgumentOutOfRangeException(nameof(syntax));
                     break;
             }
 
@@ -292,7 +318,8 @@ namespace PlatoGenerator
                 if (def != null)
                 {
                     var invokeArgList = string.Join(", ", childNames);
-                    exprValue = $"{def.Name}_{def.Id}({invokeArgList})";
+                    var classQualifier = def.ParentType?.Identifier + "." ?? "";
+                    exprValue = $"{classQualifier}{def.Name}_{def.Id}({invokeArgList})";
                 }
                 else
                 {
@@ -331,8 +358,11 @@ namespace PlatoGenerator
                 // TODO: this means that I have to come up with a decent intermediate representation that will facilitate the work required. 
                 // Good news, is that what this system is doing looks a bit like the system that will create the intermediate representation. 
 
+
                 if (def != null && def.IsExtension)
                 {
+                    var classQualifier = def.ParentType?.Identifier + "." ?? "";
+
                     var pos = childNames[0].LastIndexOf(".");
                     var stripEnding = childNames[0].Substring(0, pos);
                     childNames[0] = stripEnding;
@@ -340,7 +370,7 @@ namespace PlatoGenerator
                     var invokeArgList = string.Join(", ", childNames);
                     // TODO: what is the owner type? 
                     // TODO: we have a problem because the first child name is the method resolution, not the actual
-                    exprValue = $"{def.Name}_{def.Id}({invokeArgList})";
+                    exprValue = $"{classQualifier}{def.Name}_{def.Id}({invokeArgList})";
                 }
                 else
                 {
@@ -433,7 +463,14 @@ namespace PlatoGenerator
                     break;
 
                 case ExpressionStatement expressionStatementIr:
-                    sw.WriteLine($"{indent}{ReduceExpression(expressionStatementIr.Expression)};");
+                    if (statement.Syntax is VariableDeclaratorSyntax syn)
+                    {
+                        _ = ReduceExpression(expressionStatementIr.Expression);
+                    }
+                    else
+                    {
+                        sw.WriteLine($"{indent}{ReduceExpression(expressionStatementIr.Expression)};");
+                    }
                     break;
 
                 case IfStatement ifStatementIr:
@@ -507,11 +544,6 @@ namespace PlatoGenerator
             sw.WriteLine($"{indent}{{");
             OutputStatement(func.Body, indent + "  ");
             sw.WriteLine($"{indent}}}");
-        }
-
-        public void OutputExtension(PlatoTypeSyntax t, string indent = "")
-        {
-
         }
 
         public void OutputType(PlatoTypeSyntax t, string indent = "")
@@ -617,12 +649,6 @@ namespace PlatoGenerator
            
             using (sw = new StreamWriter(File.Create(LogFileName)))
             {
-                foreach (var t in types)
-                {
-                    OutputExtensionMethods(t);
-                }
-
-
                 foreach (var t in types)
                 {
                     OutputType(t);

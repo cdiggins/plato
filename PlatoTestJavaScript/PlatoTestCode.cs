@@ -8,7 +8,7 @@
 
     public class Array<T> : IArray<T>
     {
-        public Array(int count, Func<int, T> func) => Func = func;
+        public Array(int count, Func<int, T> func) => (Count, Func) = (count, func);
         public Func<int, T> Func { get; }
         public int Count { get; }
         public T this[int index] => Func(index);

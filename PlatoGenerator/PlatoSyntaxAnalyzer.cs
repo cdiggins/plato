@@ -266,6 +266,9 @@ namespace PlatoGenerator
 
         public bool IsStatic => Node.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword));
 
+        public bool IsExtensionMethod =>
+            IsStatic && Parameters.Any(p => p.Node.Modifiers.Any(m => m.IsKind(SyntaxKind.ThisKeyword)));
+
         public override void OnInit()
         {
             base.OnInit();

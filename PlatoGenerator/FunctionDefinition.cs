@@ -10,6 +10,7 @@ namespace PlatoGenerator
 {
     public class FunctionDefinition : Expression
     {
+        public TypeDeclarationSyntax ParentType { get; set; }
         public bool IsStatic { get; set; } 
         public bool IsExtension { get; set; }
         public List<Expression> Parameters = new List<Expression>();
@@ -63,6 +64,7 @@ namespace PlatoGenerator
 
             var r = new FunctionDefinition
             {
+                ParentType = op.Parent as TypeDeclarationSyntax,
                 Name = symbol?.Name,
                 IsStatic = op.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword)),
                 IsExtension = op.ParameterList.Parameters.Any(p => p.Modifiers.Any(m => m.IsKind(SyntaxKind.ThisKeyword))),
@@ -86,6 +88,7 @@ namespace PlatoGenerator
 
             var r = new FunctionDefinition
             {
+                ParentType = method.Parent as TypeDeclarationSyntax, 
                 Name = method.Identifier.ToString(),
                 IsStatic = method.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword)),
                 IsExtension = method.ParameterList.Parameters.Any(p => p.Modifiers.Any(m => m.IsKind(SyntaxKind.ThisKeyword))),
@@ -119,6 +122,7 @@ namespace PlatoGenerator
             var r = new FunctionDefinition
             {
                 Name = "#ctor",
+                ParentType = method.Parent as TypeDeclarationSyntax,
                 IsStatic = method.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword)),
                 Body = CreateConstructorBody(method.Body, method.ExpressionBody?.Expression, model),
                 Syntax = method,

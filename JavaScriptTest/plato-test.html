@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Three.js Geometry Browser</title>
+		<link rel="shortcut icon" href="https://threejs.org/files/favicon.ico" />
+		<link rel="stylesheet" type="text/css" href="https://threejs.org/files/main.css">
+		<style>
+			canvas {
+				display: block;
+				width: 100%;
+				height: 100%;
+			}
+
+			#newWindow {
+				display: block;
+				position: absolute;
+				bottom: 0.3em;
+				left: 0.5em;
+				color: #fff;
+			}
+		</style>
+	</head>
+	<body>
+
+		<!-- Import maps polyfill -->
+		<!-- Remove this when import maps will be widely supported -->
+		<script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
+
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "https://threejs.org/build/three.module.js"
+				}
+			}
+		</script>
+
+		<a id='newWindow' href='./geometry-browser.html' target='_blank'>Open in New Window</a>
+
+		<script type="module">
+			import {
+				BoxGeometry,
+				BufferGeometry,
+				//CapsuleGeometry,
+				CircleGeometry,
+				Color,
+				ConeGeometry,
+				Curve,
+				CylinderGeometry,
+				DodecahedronGeometry,
+				DoubleSide,
+				ExtrudeGeometry,
+				Float32BufferAttribute,
+				Group,
+				IcosahedronGeometry,
+				LatheGeometry,
+				LineSegments,
+				LineBasicMaterial,
+				Mesh,
+				MeshPhongMaterial,
+				OctahedronGeometry,
+				PerspectiveCamera,
+				PlaneGeometry,
+				PointLight,
+				RingGeometry,
+				Scene,
+				Shape,
+				ShapeGeometry,
+				SphereGeometry,
+				TetrahedronGeometry,
+				TorusGeometry,
+				TorusKnotGeometry,
+				TubeGeometry,
+				//Vector2,
+				//Vector3,
+				WireframeGeometry,
+				WebGLRenderer
+			} from 'three';
+
+			import { GUI } from 'https://threejs.org/examples/jsm/libs/lil-gui.module.min.js';
+			import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
+
+			const twoPi = Math.PI * 2;
+
+			class CustomSinCurve extends Curve {
+
+				constructor( scale = 1 ) {
+
+					super();
+
+					this.scale = scale;
+
+				}
+
+				getPoint( t, optionalTarget = new Vector3() ) {
+
+					const tx = t * 3 - 1.5;
+					const ty = Math.sin( 2 * Math.PI * t );
+					const tz = 0;
+
+					return optionalTarget.set( tx, ty, tz ).multiplyScalar( this.scale );
+
+				}
+
+			}
+
+			function updateGroupGeometry( mesh, geometry ) {
+
+				mesh.children[ 0 ].geometry.dispose();
+				mesh.children[ 1 ].geometry.dispose();
+
+				mesh.children[ 0 ].geometry = new WireframeGeometry( geometry );
+				mesh.children[ 1 ].geometry = geometry;
+
+				// these do not update nicely together if shared
+
+			}
+
+			// heart shape
+
+			const x = 0, y = 0;
+
+			const heartShape = new Shape();
+
+			heartShape.moveTo( x + 5, y + 5 );
+			heartShape.bezierCurveTo( x + 5, y + 5, x + 4, y, x, y );
+			heartShape.bezierCurveTo( x - 6, y, x - 6, y + 7, x - 6, y + 7 );
+			heartShape.bezierCurveTo( x - 6, y + 11, x - 3, y + 15.4, x + 5, y + 19 );
+			heartShape.bezierCurveTo( x + 12, y + 15.4, x + 16, y + 11, x + 16, y + 7 );
+			heartShape.bezierCurveTo( x + 16, y + 7, x + 16, y, x + 10, y );
+			heartShape.bezierCurveTo( x + 7, y, x + 5, y + 5, x + 5, y + 5 );
+
+			const guis = {
+
+				BoxGeometry: function ( mesh ) {
+
+					const data = {
+						width: 15,
+						height: 15,
+						depth: 15,
+						widthSegments: 1,
+						heightSegments: 1,
+						depthSegments: 1
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new BoxGeometry(
+								data.width, data.height, data.depth, data.widthSegments, data.heightSegments, data.depthSegments
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.BoxGeometry' );
+
+					folder.add( data, 'width', 1, 30 ).onChange( generateGeometry );
+					folder.add( data, 'height', 1, 30 ).onChange( generateGeometry );
+					folder.add( data, 'depth', 1, 30 ).onChange( generateGeometry );
+					folder.add( data, 'widthSegments', 1, 10 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'heightSegments', 1, 10 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'depthSegments', 1, 10 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				CapsuleGeometry: function ( mesh ) {
+
+					const data = {
+						radius: 5,
+						length: 5,
+						capSegments: 10,
+						heightSegments: 20
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new CapsuleGeometry( data.radius, data.length, data.capSegments, data.heightSegments ),
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.CapsuleGeometry' );
+
+					folder.add( data, 'radius', 1, 30 ).onChange( generateGeometry );
+					folder.add( data, 'length', 1, 30 ).onChange( generateGeometry );
+					folder.add( data, 'capSegments', 1, 32 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'heightSegments', 1, 64 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				CylinderGeometry: function ( mesh ) {
+
+					const data = {
+						radiusTop: 5,
+						radiusBottom: 5,
+						height: 10,
+						radialSegments: 8,
+						heightSegments: 1,
+						openEnded: false,
+						thetaStart: 0,
+						thetaLength: twoPi
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new CylinderGeometry(
+								data.radiusTop,
+								data.radiusBottom,
+								data.height,
+								data.radialSegments,
+								data.heightSegments,
+								data.openEnded,
+								data.thetaStart,
+								data.thetaLength
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.CylinderGeometry' );
+
+					folder.add( data, 'radiusTop', 0, 30 ).onChange( generateGeometry );
+					folder.add( data, 'radiusBottom', 0, 30 ).onChange( generateGeometry );
+					folder.add( data, 'height', 1, 50 ).onChange( generateGeometry );
+					folder.add( data, 'radialSegments', 3, 64 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'heightSegments', 1, 64 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'openEnded' ).onChange( generateGeometry );
+					folder.add( data, 'thetaStart', 0, twoPi ).onChange( generateGeometry );
+					folder.add( data, 'thetaLength', 0, twoPi ).onChange( generateGeometry );
+
+
+					generateGeometry();
+
+				},
+
+				ConeGeometry: function ( mesh ) {
+
+					const data = {
+						radius: 5,
+						height: 10,
+						radialSegments: 8,
+						heightSegments: 1,
+						openEnded: false,
+						thetaStart: 0,
+						thetaLength: twoPi
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new ConeGeometry(
+								data.radius,
+								data.height,
+								data.radialSegments,
+								data.heightSegments,
+								data.openEnded,
+								data.thetaStart,
+								data.thetaLength
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.ConeGeometry' );
+
+					folder.add( data, 'radius', 0, 30 ).onChange( generateGeometry );
+					folder.add( data, 'height', 1, 50 ).onChange( generateGeometry );
+					folder.add( data, 'radialSegments', 3, 64 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'heightSegments', 1, 64 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'openEnded' ).onChange( generateGeometry );
+					folder.add( data, 'thetaStart', 0, twoPi ).onChange( generateGeometry );
+					folder.add( data, 'thetaLength', 0, twoPi ).onChange( generateGeometry );
+
+
+					generateGeometry();
+
+				},
+
+				CircleGeometry: function ( mesh ) {
+
+					const data = {
+						radius: 10,
+						segments: 32,
+						thetaStart: 0,
+						thetaLength: twoPi
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new CircleGeometry(
+								data.radius, data.segments, data.thetaStart, data.thetaLength
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.CircleGeometry' );
+
+					folder.add( data, 'radius', 1, 20 ).onChange( generateGeometry );
+					folder.add( data, 'segments', 0, 128 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'thetaStart', 0, twoPi ).onChange( generateGeometry );
+					folder.add( data, 'thetaLength', 0, twoPi ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				DodecahedronGeometry: function ( mesh ) {
+
+					const data = {
+						radius: 10,
+						detail: 0
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new DodecahedronGeometry(
+								data.radius, data.detail
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.DodecahedronGeometry' );
+
+					folder.add( data, 'radius', 1, 20 ).onChange( generateGeometry );
+					folder.add( data, 'detail', 0, 5 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				IcosahedronGeometry: function ( mesh ) {
+
+					const data = {
+						radius: 10,
+						detail: 0
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new IcosahedronGeometry(
+								data.radius, data.detail
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.IcosahedronGeometry' );
+
+					folder.add( data, 'radius', 1, 20 ).onChange( generateGeometry );
+					folder.add( data, 'detail', 0, 5 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				LatheGeometry: function ( mesh ) {
+
+					const points = [];
+
+					for ( let i = 0; i < 10; i ++ ) {
+
+						points.push( new THREE.Vector2( Math.sin( i * 0.2 ) * 10 + 5, ( i - 5 ) * 2 ) );
+
+					}
+
+					const data = {
+						segments: 12,
+						phiStart: 0,
+						phiLength: twoPi
+					};
+
+					function generateGeometry() {
+
+						const geometry = new LatheGeometry(
+							points, data.segments, data.phiStart, data.phiLength
+						);
+
+						updateGroupGeometry( mesh, geometry );
+
+					}
+
+					const folder = gui.addFolder( 'THREE.LatheGeometry' );
+
+					folder.add( data, 'segments', 1, 30 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'phiStart', 0, twoPi ).onChange( generateGeometry );
+					folder.add( data, 'phiLength', 0, twoPi ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				OctahedronGeometry: function ( mesh ) {
+
+					const data = {
+						radius: 10,
+						detail: 0
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new OctahedronGeometry(
+								data.radius, data.detail
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.OctahedronGeometry' );
+
+					folder.add( data, 'radius', 1, 20 ).onChange( generateGeometry );
+					folder.add( data, 'detail', 0, 5 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				PlaneGeometry: function ( mesh ) {
+
+					const data = {
+						width: 10,
+						height: 10,
+						widthSegments: 1,
+						heightSegments: 1
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new PlaneGeometry(
+								data.width, data.height, data.widthSegments, data.heightSegments
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.PlaneGeometry' );
+
+					folder.add( data, 'width', 1, 30 ).onChange( generateGeometry );
+					folder.add( data, 'height', 1, 30 ).onChange( generateGeometry );
+					folder.add( data, 'widthSegments', 1, 30 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'heightSegments', 1, 30 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				RingGeometry: function ( mesh ) {
+
+					const data = {
+						innerRadius: 5,
+						outerRadius: 10,
+						thetaSegments: 8,
+						phiSegments: 8,
+						thetaStart: 0,
+						thetaLength: twoPi
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new RingGeometry(
+								data.innerRadius, data.outerRadius, data.thetaSegments, data.phiSegments, data.thetaStart, data.thetaLength
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.RingGeometry' );
+
+					folder.add( data, 'innerRadius', 1, 30 ).onChange( generateGeometry );
+					folder.add( data, 'outerRadius', 1, 30 ).onChange( generateGeometry );
+					folder.add( data, 'thetaSegments', 1, 30 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'phiSegments', 1, 30 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'thetaStart', 0, twoPi ).onChange( generateGeometry );
+					folder.add( data, 'thetaLength', 0, twoPi ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				SphereGeometry: function ( mesh ) {
+
+					const data = {
+						radius: 15,
+						widthSegments: 32,
+						heightSegments: 16,
+						phiStart: 0,
+						phiLength: twoPi,
+						thetaStart: 0,
+						thetaLength: Math.PI
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new SphereGeometry(
+								data.radius, data.widthSegments, data.heightSegments, data.phiStart, data.phiLength, data.thetaStart, data.thetaLength
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.SphereGeometry' );
+
+					folder.add( data, 'radius', 1, 30 ).onChange( generateGeometry );
+					folder.add( data, 'widthSegments', 3, 64 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'heightSegments', 2, 32 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'phiStart', 0, twoPi ).onChange( generateGeometry );
+					folder.add( data, 'phiLength', 0, twoPi ).onChange( generateGeometry );
+					folder.add( data, 'thetaStart', 0, twoPi ).onChange( generateGeometry );
+					folder.add( data, 'thetaLength', 0, twoPi ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				TetrahedronGeometry: function ( mesh ) {
+
+					const data = {
+						radius: 10,
+						detail: 0
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new TetrahedronGeometry(
+								data.radius, data.detail
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.TetrahedronGeometry' );
+
+					folder.add( data, 'radius', 1, 20 ).onChange( generateGeometry );
+					folder.add( data, 'detail', 0, 5 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				TorusGeometry: function ( mesh ) {
+
+					const data = {
+						radius: 10,
+						tube: 3,
+						radialSegments: 16,
+						tubularSegments: 100,
+						arc: twoPi
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new TorusGeometry(
+								data.radius, data.tube, data.radialSegments, data.tubularSegments, data.arc
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.TorusGeometry' );
+
+					folder.add( data, 'radius', 1, 20 ).onChange( generateGeometry );
+					folder.add( data, 'tube', 0.1, 10 ).onChange( generateGeometry );
+					folder.add( data, 'radialSegments', 2, 30 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'tubularSegments', 3, 200 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'arc', 0.1, twoPi ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				TorusKnotGeometry: function ( mesh ) {
+
+					const data = {
+						radius: 10,
+						tube: 3,
+						tubularSegments: 64,
+						radialSegments: 8,
+						p: 2,
+						q: 3
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new TorusKnotGeometry(
+								data.radius, data.tube, data.tubularSegments, data.radialSegments,
+								data.p, data.q
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.TorusKnotGeometry' );
+
+					folder.add( data, 'radius', 1, 20 ).onChange( generateGeometry );
+					folder.add( data, 'tube', 0.1, 10 ).onChange( generateGeometry );
+					folder.add( data, 'tubularSegments', 3, 300 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'radialSegments', 3, 20 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'p', 1, 20 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'q', 1, 20 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				TubeGeometry: function ( mesh ) {
+
+					const data = {
+						segments: 20,
+						radius: 2,
+						radialSegments: 8
+					};
+
+					const path = new CustomSinCurve( 10 );
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new TubeGeometry( path, data.segments, data.radius, data.radialSegments, false )
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.TubeGeometry' );
+
+					folder.add( data, 'segments', 1, 100 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'radius', 1, 10 ).onChange( generateGeometry );
+					folder.add( data, 'radialSegments', 1, 20 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				ShapeGeometry: function ( mesh ) {
+
+					const data = {
+						segments: 12
+					};
+
+					function generateGeometry() {
+
+						const geometry = new ShapeGeometry( heartShape, data.segments );
+						geometry.center();
+
+						updateGroupGeometry( mesh, geometry );
+
+					}
+
+					const folder = gui.addFolder( 'THREE.ShapeGeometry' );
+					folder.add( data, 'segments', 1, 100 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				ExtrudeGeometry: function ( mesh ) {
+
+					const data = {
+						steps: 2,
+						depth: 16,
+						bevelEnabled: true,
+						bevelThickness: 1,
+						bevelSize: 1,
+						bevelOffset: 0,
+						bevelSegments: 1
+					};
+
+					const length = 12, width = 8;
+
+					const shape = new Shape();
+					shape.moveTo( 0, 0 );
+					shape.lineTo( 0, width );
+					shape.lineTo( length, width );
+					shape.lineTo( length, 0 );
+					shape.lineTo( 0, 0 );
+
+					function generateGeometry() {
+
+						const geometry = new ExtrudeGeometry( shape, data );
+						geometry.center();
+
+						updateGroupGeometry( mesh, geometry );
+
+					}
+
+					const folder = gui.addFolder( 'THREE.ExtrudeGeometry' );
+
+					folder.add( data, 'steps', 1, 10 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'depth', 1, 20 ).onChange( generateGeometry );
+					folder.add( data, 'bevelThickness', 1, 5 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'bevelSize', 0, 5 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'bevelOffset', - 4, 5 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'bevelSegments', 1, 5 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				}
+
+			};
+
+			function chooseFromHash( mesh ) {
+
+				const selectedGeometry = window.location.hash.substring( 1 ) || 'TorusGeometry';
+
+				if ( guis[ selectedGeometry ] !== undefined ) {
+
+					guis[ selectedGeometry ]( mesh );
+
+				}
+
+				if ( selectedGeometry === 'TextGeometry' ) {
+
+					return { fixed: true };
+
+				}
+
+				//No configuration options
+				return {};
+
+			}
+
+			//
+
+class Plato
+{
+    static Tuple(...args)
+    {
+        var r = {};
+        for (var i=0; i < args.length; i++)
+        {
+            r["Item" + (i+1)] = args[i];
+        }
+        return r;
+    }
+}
+
+            class IArray // interface
+{
+   Count;
+}
+class Array // class
+{
+   Func;
+   Count;
+/* ORIGINAL: 
+public Array(int count, Func<int, T> func) => Func = func;
+*/
+  constructor(count /* 509:int */, func /* 510:System.Func<int, T> */) // :void
+  {
+      this.Count = count;
+    this.Func/* property */ = func/* param */;
+  }
+}
+class Vector2 // class
+{
+  X;
+  Y;
+  static get Zero()
+  {
+    return new Vector2();
+  }
+  get MagnitudeSquared()
+  {
+    var var611 = this.Dot/* method */(this); // Type=float Def=Dot@529 Sym=Dot:Method DeclSyn=MethodDeclaration
+    return var611;
+  }
+  get Magnitude()
+  {
+    var var617 = MathF/* type */.Sqrt(this.MagnitudeSquared/* property */); // Type=float Def= Sym=Sqrt:Method DeclSyn=
+    return var617;
+  }
+  get Normal()
+  {
+    var var624 = Vector2.op_Division_582(this, this.Magnitude/* property */); // Type=PlatoTestJavaScript.Vector2 Def=op_Division@582 Sym=op_Division:Method DeclSyn=OperatorDeclaration
+    return var624;
+  }
+/* ORIGINAL: 
+public Vector2(float x = 0, float y = 0) => (X, Y) = (x, y);
+*/
+  constructor(x /* 606:float */, y /* 607:float */) // :void
+  {
+    var var603 = Plato.Tuple(x/* param */,y/* param */); // Type=(float, float) Def= Sym=: DeclSyn=
+    this.X/* field */ = var603.Item1; this.Y/* field */ = var603.Item2; ;
+  }
+/* ORIGINAL: 
+public Vector2 WithX(float x) => new(x, Y);
+*/
+  WithX_515(x /* 521:float */) // :PlatoTestJavaScript.Vector2
+  {
+    return new Vector2(x/* param */,this.Y/* field */);
+  }
+/* ORIGINAL: 
+public Vector2 WithY(float y) => new(X, y);
+*/
+  WithY_522(y /* 528:float */) // :PlatoTestJavaScript.Vector2
+  {
+    return new Vector2(this.X/* field */,y/* param */);
+  }
+/* ORIGINAL: 
+public float Dot(Vector2 v) => X * v.X + v.Y * Y;
+*/
+  Dot_529(v /* 539:PlatoTestJavaScript.Vector2 */) // :float
+  {
+    var var531 = this.X/* field */ * v/* param */.X; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var535 = v/* param */.Y * this.Y/* field */; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var530 = var531 + var535; // Type=float Def= Sym=op_Addition:Method DeclSyn=
+    return var530;
+  }
+/* ORIGINAL: 
+public override string ToString() => "Vector2(" + X  + "," + Y + ")";
+*/
+  ToString_540() // :string
+  {
+    var var544 = "Vector2(" + this.X/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var543 = var544 + ","; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var542 = var543 + this.Y/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var541 = var542 + ")"; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    return var541;
+  }
+/* ORIGINAL: 
+public static Vector2 operator +(Vector2 q, Vector2 r) => new(q.X + r.X, q.Y + r.Y);
+*/
+  static op_Addition_550(q /* 564:PlatoTestJavaScript.Vector2 */, r /* 565:PlatoTestJavaScript.Vector2 */) // :PlatoTestJavaScript.Vector2
+  {
+    var var553 = q/* param */.X + r/* param */.X; // Type=float Def= Sym=op_Addition:Method DeclSyn=
+    var var559 = q/* param */.Y + r/* param */.Y; // Type=float Def= Sym=op_Addition:Method DeclSyn=
+    return new Vector2(var553,var559);
+  }
+/* ORIGINAL: 
+public static Vector2 operator *(Vector2 q, Vector2 r) => new(q.X * r.X, q.Y * r.Y);
+*/
+  static op_Multiply_566(q /* 580:PlatoTestJavaScript.Vector2 */, r /* 581:PlatoTestJavaScript.Vector2 */) // :PlatoTestJavaScript.Vector2
+  {
+    var var569 = q/* param */.X * r/* param */.X; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var575 = q/* param */.Y * r/* param */.Y; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    return new Vector2(var569,var575);
+  }
+/* ORIGINAL: 
+public static Vector2 operator /(Vector2 q, Vector2 r) => new(q.X / r.X, q.Y / r.Y);
+*/
+  static op_Division_582(q /* 596:PlatoTestJavaScript.Vector2 */, r /* 597:PlatoTestJavaScript.Vector2 */) // :PlatoTestJavaScript.Vector2
+  {
+    var var585 = q/* param */.X / r/* param */.X; // Type=float Def= Sym=op_Division:Method DeclSyn=
+    var var591 = q/* param */.Y / r/* param */.Y; // Type=float Def= Sym=op_Division:Method DeclSyn=
+    return new Vector2(var585,var591);
+  }
+}
+class Vector3 // class
+{
+  X;
+  Y;
+  Z;
+  static get Zero()
+  {
+    return new Vector3();
+  }
+  get MagnitudeSquared()
+  {
+    var var768 = this.Dot/* method */(this); // Type=float Def=Dot@656 Sym=Dot:Method DeclSyn=MethodDeclaration
+    return var768;
+  }
+  get Magnitude()
+  {
+    var var774 = MathF/* type */.Sqrt(this.MagnitudeSquared/* property */); // Type=float Def= Sym=Sqrt:Method DeclSyn=
+    return var774;
+  }
+  get Normal()
+  {
+    var var781 = Vector3.op_Division_730(this, this.Magnitude/* property */); // Type=PlatoTestJavaScript.Vector3 Def=op_Division@730 Sym=op_Division:Method DeclSyn=OperatorDeclaration
+    return var781;
+  }
+/* ORIGINAL: 
+public Vector3(float x = 0, float y = 0, float z = 0) => (X, Y, Z) = (x, y, z);
+*/
+  constructor(x /* 762:float */, y /* 763:float */, z /* 764:float */) // :void
+  {
+    var var758 = Plato.Tuple(x/* param */,y/* param */,z/* param */); // Type=(float, float, float) Def= Sym=: DeclSyn=
+    this.X/* field */ = var758.Item1; this.Y/* field */ = var758.Item2; this.Z/* field */ = var758.Item3; ;
+  }
+/* ORIGINAL: 
+public Vector3 WithX(float x) => new(x, Y, Z);
+*/
+  WithX_629(x /* 637:float */) // :PlatoTestJavaScript.Vector3
+  {
+    return new Vector3(x/* param */,this.Y/* field */,this.Z/* field */);
+  }
+/* ORIGINAL: 
+public Vector3 WithY(float y) => new(X, y, Z);
+*/
+  WithY_638(y /* 646:float */) // :PlatoTestJavaScript.Vector3
+  {
+    return new Vector3(this.X/* field */,y/* param */,this.Z/* field */);
+  }
+/* ORIGINAL: 
+public Vector3 WithZ(float z) => new(X, Y, z);
+*/
+  WithZ_647(z /* 655:float */) // :PlatoTestJavaScript.Vector3
+  {
+    return new Vector3(this.X/* field */,this.Y/* field */,z/* param */);
+  }
+/* ORIGINAL: 
+public float Dot(Vector3 v) => X * v.X + v.Y * Y + Z * v.Z;
+*/
+  Dot_656(v /* 671:PlatoTestJavaScript.Vector3 */) // :float
+  {
+    var var659 = this.X/* field */ * v/* param */.X; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var663 = v/* param */.Y * this.Y/* field */; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var658 = var659 + var663; // Type=float Def= Sym=op_Addition:Method DeclSyn=
+    var var667 = this.Z/* field */ * v/* param */.Z; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var657 = var658 + var667; // Type=float Def= Sym=op_Addition:Method DeclSyn=
+    return var657;
+  }
+/* ORIGINAL: 
+public override string ToString() => "Vector3(" + X + "," + Y + "," + Z + ")";
+*/
+  ToString_672() // :string
+  {
+    var var678 = "Vector3(" + this.X/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var677 = var678 + ","; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var676 = var677 + this.Y/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var675 = var676 + ","; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var674 = var675 + this.Z/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var673 = var674 + ")"; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    return var673;
+  }
+/* ORIGINAL: 
+public static Vector3 operator +(Vector3 q, Vector3 r) => new(q.X + r.X, q.Y + r.Y, q.Z + r.Z);
+*/
+  static op_Addition_686(q /* 706:PlatoTestJavaScript.Vector3 */, r /* 707:PlatoTestJavaScript.Vector3 */) // :PlatoTestJavaScript.Vector3
+  {
+    var var689 = q/* param */.X + r/* param */.X; // Type=float Def= Sym=op_Addition:Method DeclSyn=
+    var var695 = q/* param */.Y + r/* param */.Y; // Type=float Def= Sym=op_Addition:Method DeclSyn=
+    var var701 = q/* param */.Z + r/* param */.Z; // Type=float Def= Sym=op_Addition:Method DeclSyn=
+    return new Vector3(var689,var695,var701);
+  }
+/* ORIGINAL: 
+public static Vector3 operator *(Vector3 q, Vector3 r) => new(q.X * r.X, q.Y * r.Y, q.Z * r.Z);
+*/
+  static op_Multiply_708(q /* 728:PlatoTestJavaScript.Vector3 */, r /* 729:PlatoTestJavaScript.Vector3 */) // :PlatoTestJavaScript.Vector3
+  {
+    var var711 = q/* param */.X * r/* param */.X; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var717 = q/* param */.Y * r/* param */.Y; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var723 = q/* param */.Z * r/* param */.Z; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    return new Vector3(var711,var717,var723);
+  }
+/* ORIGINAL: 
+public static Vector3 operator /(Vector3 q, Vector3 r) => new(q.X / r.X, q.Y / r.Y, q.Z / r.Z);
+*/
+  static op_Division_730(q /* 750:PlatoTestJavaScript.Vector3 */, r /* 751:PlatoTestJavaScript.Vector3 */) // :PlatoTestJavaScript.Vector3
+  {
+    var var733 = q/* param */.X / r/* param */.X; // Type=float Def= Sym=op_Division:Method DeclSyn=
+    var var739 = q/* param */.Y / r/* param */.Y; // Type=float Def= Sym=op_Division:Method DeclSyn=
+    var var745 = q/* param */.Z / r/* param */.Z; // Type=float Def= Sym=op_Division:Method DeclSyn=
+    return new Vector3(var733,var739,var745);
+  }
+}
+class Int3 // class
+{
+  X;
+  Y;
+  Z;
+  static get Zero()
+  {
+    return new Int3();
+  }
+/* ORIGINAL: 
+public Int3(int x = 0, int y = 0, int z = 0) => (X, Y, Z) = (x, y, z);
+*/
+  constructor(x /* 837:int */, y /* 838:int */, z /* 839:int */) // :void
+  {
+    var var833 = Plato.Tuple(x/* param */,y/* param */,z/* param */); // Type=(int, int, int) Def= Sym=: DeclSyn=
+    this.X/* field */ = var833.Item1; this.Y/* field */ = var833.Item2; this.Z/* field */ = var833.Item3; ;
+  }
+/* ORIGINAL: 
+public Int3 WithX(int x) => new(x, Y, Z);
+*/
+  WithX_786(x /* 794:int */) // :PlatoTestJavaScript.Int3
+  {
+    return new Int3(x/* param */,this.Y/* field */,this.Z/* field */);
+  }
+/* ORIGINAL: 
+public Int3 WithY(int y) => new(X, y, Z);
+*/
+  WithY_795(y /* 803:int */) // :PlatoTestJavaScript.Int3
+  {
+    return new Int3(this.X/* field */,y/* param */,this.Z/* field */);
+  }
+/* ORIGINAL: 
+public Int3 WithZ(int z) => new(X, Y, z);
+*/
+  WithZ_804(z /* 812:int */) // :PlatoTestJavaScript.Int3
+  {
+    return new Int3(this.X/* field */,this.Y/* field */,z/* param */);
+  }
+/* ORIGINAL: 
+public override string ToString() => "Int3(" + X + "," + Y + "," + Z + ")";
+*/
+  ToString_813() // :string
+  {
+    var var819 = "Int3(" + this.X/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var818 = var819 + ","; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var817 = var818 + this.Y/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var816 = var817 + ","; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var815 = var816 + this.Z/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var814 = var815 + ")"; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    return var814;
+  }
+}
+class Int4 // class
+{
+  X;
+  Y;
+  Z;
+  W;
+  static get Zero()
+  {
+    return new Int4();
+  }
+/* ORIGINAL: 
+public Int4(int x = 0, int y = 0, int z = 0, int w = 0) => (X, Y, Z, W) = (x, y, z, w);
+*/
+  constructor(x /* 917:int */, y /* 918:int */, z /* 919:int */, w /* 920:int */) // :void
+  {
+    var var912 = Plato.Tuple(x/* param */,y/* param */,z/* param */,w/* param */); // Type=(int, int, int, int) Def= Sym=: DeclSyn=
+    this.X/* field */ = var912.Item1; this.Y/* field */ = var912.Item2; this.Z/* field */ = var912.Item3; this.W/* field */ = var912.Item4; ;
+  }
+/* ORIGINAL: 
+public Int4 WithX(int x) => new(x, Y, Z, W);
+*/
+  WithX_843(x /* 853:int */) // :PlatoTestJavaScript.Int4
+  {
+    return new Int4(x/* param */,this.Y/* field */,this.Z/* field */,this.W/* field */);
+  }
+/* ORIGINAL: 
+public Int4 WithY(int y) => new(X, y, Z, W);
+*/
+  WithY_854(y /* 864:int */) // :PlatoTestJavaScript.Int4
+  {
+    return new Int4(this.X/* field */,y/* param */,this.Z/* field */,this.W/* field */);
+  }
+/* ORIGINAL: 
+public Int4 WithZ(int z) => new(X, Y, z, W);
+*/
+  WithZ_865(z /* 875:int */) // :PlatoTestJavaScript.Int4
+  {
+    return new Int4(this.X/* field */,this.Y/* field */,z/* param */,this.W/* field */);
+  }
+/* ORIGINAL: 
+public Int4 WithW(int w) => new(X, Y, Z, w);
+*/
+  WithW_876(w /* 886:int */) // :PlatoTestJavaScript.Int4
+  {
+    return new Int4(this.X/* field */,this.Y/* field */,this.Z/* field */,w/* param */);
+  }
+/* ORIGINAL: 
+public override string ToString() => "Int4(" + X + "," + Y + "," + Z + "," + W + ")";
+*/
+  ToString_887() // :string
+  {
+    var var895 = "Int4(" + this.X/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var894 = var895 + ","; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var893 = var894 + this.Y/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var892 = var893 + ","; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var891 = var892 + this.Z/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var890 = var891 + ","; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var889 = var890 + this.W/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var888 = var889 + ")"; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    return var888;
+  }
+}
+class TriMesh // class
+{
+   Indices;
+   Points;
+/* ORIGINAL: 
+public TriMesh(IArray<Vector3> points, IArray<Int3> indices)
+            => (Points, Indices) = (points, indices);
+*/
+  constructor(points /* 932:PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3> */, indices /* 933:PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int3> */) // :void
+  {
+    var var929 = Plato.Tuple(points/* param */,indices/* param */); // Type=(PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3>, PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int3>) Def= Sym=: DeclSyn=
+    this.Points/* property */ = var929.Item1; this.Indices/* property */ = var929.Item2; ;
+  }
+}
+class QuadMesh // class
+{
+   Points;
+   Indices;
+/* ORIGINAL: 
+public QuadMesh(IArray<Vector3> points, IArray<Int4> indices)
+            => (Points, Indices) = (points, indices);
+*/
+  constructor(points /* 946:PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3> */, indices /* 947:PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int4> */) // :void
+  {
+    var var943 = Plato.Tuple(points/* param */,indices/* param */); // Type=(PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3>, PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int4>) Def= Sym=: DeclSyn=
+    this.Points/* property */ = var943.Item1; this.Indices/* property */ = var943.Item2; ;
+  }
+}
+class Extensions // class
+{
+/* ORIGINAL: 
+public static IArray<T> Select<T>(this int count, Func<int, T> func)
+            => new Array<T>(count, func);
+*/
+  static Select_952(count /* 958:int */, func /* 959:System.Func<int, T> */) // :PlatoTestJavaScript.IArray<T>
+  {
+    return new Array(count/* param */,func/* param */);
+  }
+/* ORIGINAL: 
+public static IArray<U> Select<T, U>(this IArray<T> self, Func<T, U> func)
+            => self.Count.Select(i => func(self[i]));
+*/
+  static Select_960(self /* 976:PlatoTestJavaScript.IArray<T> */, func /* 977:System.Func<T, U> */) // :PlatoTestJavaScript.IArray<U>
+  {
+// Captured: self, func
+var var967 = (i) => 
+{
+    var var971 = Plato.At(self/* param */,i/* param */); // Type=T? Def= Sym=this[]:Property DeclSyn=IndexerDeclaration
+    var var968 = func/* param */(var971); // Type=U? Def= Sym=Invoke:Method DeclSyn=
+  return var968;
+}
+    var var961 = Extensions.Select_952(self/* param */.Count, var967); // Type=PlatoTestJavaScript.IArray<U> Def=Select@952 Sym=Select:Method DeclSyn=MethodDeclaration
+    return var961;
+  }
+/* ORIGINAL: 
+public static float Cos(this float self) 
+            => MathF.Cos(self);
+*/
+  static Cos_978(self /* 984:float */) // :float
+  {
+    var var979 = MathF/* type */.Cos(self/* param */); // Type=float Def= Sym=Cos:Method DeclSyn=
+    return var979;
+  }
+/* ORIGINAL: 
+public static float Sin(this float self) 
+            => MathF.Sin(self);
+*/
+  static Sin_985(self /* 991:float */) // :float
+  {
+    var var986 = MathF/* type */.Sin(self/* param */); // Type=float Def= Sym=Sin:Method DeclSyn=
+    return var986;
+  }
+/* ORIGINAL: 
+public static float UnitToRad(this float self)
+            => self * MathF.PI;
+*/
+  static UnitToRad_992(self /* 997:float */) // :float
+  {
+    var var993 = self/* param */ * MathF/* type */.PI; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    return var993;
+  }
+/* ORIGINAL: 
+public static IArray<float> SampleFloats(int count, float max = 1.0f)
+            => count.Select(i => max * count);
+*/
+  static SampleFloats_998(count /* 1009:int */, max /* 1010:float */) // :PlatoTestJavaScript.IArray<float>
+  {
+// Captured: count, max
+var var1004 = (i) => 
+{
+    var var1005 = max/* param */ * count/* param */; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+  return var1005;
+}
+    var var999 = Extensions.Select_952(count/* param */, var1004); // Type=PlatoTestJavaScript.IArray<float> Def=Select@952 Sym=Select:Method DeclSyn=MethodDeclaration
+    return var999;
+  }
+/* ORIGINAL: 
+public static QuadMesh ToQuadMesh(this Func<Vector2, Vector3> func, int rows, int cols, bool wrapRows = false, bool wrapCols = false)
+            => new (
+                ComputeQuadStripUVs(rows, cols).Select(func),
+                ComputeQuadStripIndices(rows, cols, wrapRows, wrapCols));
+*/
+  static ToQuadMesh_1011(func /* 1035:System.Func<PlatoTestJavaScript.Vector2, PlatoTestJavaScript.Vector3> */, rows /* 1036:int */, cols /* 1037:int */, wrapRows /* 1038:bool */, wrapCols /* 1039:bool */) // :PlatoTestJavaScript.QuadMesh
+  {
+    var var1016 = this.ComputeQuadStripUVs_1040/* method */(rows/* param */, cols/* param */); // Type=PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector2> Def=ComputeQuadStripUVs@1040 Sym=ComputeQuadStripUVs:Method DeclSyn=MethodDeclaration
+    var var1014 = Extensions.Select_960(var1016, func/* param */); // Type=PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3> Def=Select@960 Sym=Select:Method DeclSyn=MethodDeclaration
+    var var1025 = this.ComputeQuadStripIndices_1069/* method */(rows/* param */, cols/* param */, wrapRows/* param */, wrapCols/* param */); // Type=PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int4> Def=ComputeQuadStripIndices@1069 Sym=ComputeQuadStripIndices:Method DeclSyn=MethodDeclaration
+    return new QuadMesh(var1014,var1025);
+  }
+/* ORIGINAL: 
+public static IArray<Vector2> ComputeQuadStripUVs(int usegs, int vsegs)
+            => new Array<Vector2>(usegs * vsegs, 
+                i => new((float)i / (usegs - 1), (float)i % (vsegs - 1)));
+*/
+  static ComputeQuadStripUVs_1040(usegs /* 1067:int */, vsegs /* 1068:int */) // :PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector2>
+  {
+    var var1043 = usegs/* param */ * vsegs/* param */; // Type=int Def= Sym=op_Multiply:Method DeclSyn=
+// Captured: usegs, vsegs
+var var1048 = (i) => 
+{
+    var var1052 = Plato.Cast("float", i/* param */); // Type=float Def= Sym=: DeclSyn=
+    var var1055 = usegs/* param */ - 1; // Type=float Def= Sym=op_Subtraction:Method DeclSyn=
+    var var1051 = var1052 / var1055; // Type=float Def= Sym=op_Division:Method DeclSyn=
+    var var1060 = Plato.Cast("float", i/* param */); // Type=float Def= Sym=: DeclSyn=
+    var var1063 = vsegs/* param */ - 1; // Type=float Def= Sym=op_Subtraction:Method DeclSyn=
+    var var1059 = var1060 % var1063; // Type=float Def= Sym=op_Modulus:Method DeclSyn=
+  return new Vector2(var1051,var1059);
+}
+    return new Array(var1043,var1048);
+  }
+/* ORIGINAL: 
+public static IArray<Int4> ComputeQuadStripIndices(int usegs, int vsegs, bool wrapUSegs = false, bool wrapVSegs = false)
+        {
+            var maxUSegs = wrapUSegs ? usegs : usegs + 1;
+            var maxVSegs = wrapVSegs ? vsegs : vsegs + 1;
+
+            return new Array<Int4>(usegs * vsegs, k =>
+            {
+                var i = k / vsegs;
+                var rowA = i * maxUSegs;
+                var rowB = ((i + 1) % maxVSegs) * maxUSegs;
+
+                var j = k % usegs;
+                var colA = j;
+                var colB = (j + 1) % maxUSegs;
+
+                return new(rowA + colA, rowA + colB, rowB + colB, rowB + colA);
+            });
+        }
+*/
+  static ComputeQuadStripIndices_1069(usegs /* 1141:int */, vsegs /* 1142:int */, wrapUSegs /* 1143:bool */, wrapVSegs /* 1144:bool */) // :PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int4>
+  {
+    {
+    var var1074 = usegs/* param */ + 1; // Type=int Def= Sym=op_Addition:Method DeclSyn=
+    var var1071 = wrapUSegs/* param */ ? usegs/* param */ : var1074; // Type=int Def= Sym=: DeclSyn=
+var maxUSegs = var1071;
+    var var1081 = vsegs/* param */ + 1; // Type=int Def= Sym=op_Addition:Method DeclSyn=
+    var var1078 = wrapVSegs/* param */ ? vsegs/* param */ : var1081; // Type=int Def= Sym=: DeclSyn=
+var maxVSegs = var1078;
+    var var1086 = usegs/* param */ * vsegs/* param */; // Type=int Def= Sym=op_Multiply:Method DeclSyn=
+// Captured: usegs, vsegs, maxUSegs, maxVSegs
+var var1091 = (k) => 
+{
+  {
+    var var1093 = k/* param */ / vsegs/* param */; // Type=int Def= Sym=op_Division:Method DeclSyn=
+var i = var1093;
+    var var1097 = i/* local */ * maxUSegs/* local */; // Type=int Def= Sym=op_Multiply:Method DeclSyn=
+var rowA = var1097;
+    var var1105 = i/* local */ + 1; // Type=int Def= Sym=op_Addition:Method DeclSyn=
+    var var1103 = var1105 % maxVSegs/* local */; // Type=int Def= Sym=op_Modulus:Method DeclSyn=
+    var var1101 = var1103 * maxUSegs/* local */; // Type=int Def= Sym=op_Multiply:Method DeclSyn=
+var rowB = var1101;
+    var var1111 = k/* param */ % usegs/* param */; // Type=int Def= Sym=op_Modulus:Method DeclSyn=
+var j = var1111;
+var colA = j/* local */;
+    var var1119 = j/* local */ + 1; // Type=int Def= Sym=op_Addition:Method DeclSyn=
+    var var1117 = var1119 % maxUSegs/* local */; // Type=int Def= Sym=op_Modulus:Method DeclSyn=
+var colB = var1117;
+    var var1125 = rowA/* local */ + colA/* local */; // Type=int Def= Sym=op_Addition:Method DeclSyn=
+    var var1129 = rowA/* local */ + colB/* local */; // Type=int Def= Sym=op_Addition:Method DeclSyn=
+    var var1133 = rowB/* local */ + colB/* local */; // Type=int Def= Sym=op_Addition:Method DeclSyn=
+    var var1137 = rowB/* local */ + colA/* local */; // Type=int Def= Sym=op_Addition:Method DeclSyn=
+    return new Int4(var1125,var1129,var1133,var1137);
+  }
+}
+      return new Array(var1086,var1091);
+    }
+  }
+/* ORIGINAL: 
+public static Vector3 UvToSphere(Vector2 uv, float radius)
+            => new(
+                -radius * uv.X.UnitToRad().Cos() * (uv.Y * MathF.PI).Sin(),
+                radius * (uv.Y * MathF.PI).Cos(),
+                radius * uv.X.UnitToRad().Cos() * (uv.Y * MathF.PI).Sin());
+*/
+  static UvToSphere_1145(uv /* 1195:PlatoTestJavaScript.Vector2 */, radius /* 1196:float */) // :PlatoTestJavaScript.Vector3
+  {
+    var var1150 = -radius/* param */; // Type=float Def= Sym=op_UnaryNegation:Method DeclSyn=
+    var var1154 = Extensions.UnitToRad_992(uv/* param */.X); // Type=float Def=UnitToRad@992 Sym=UnitToRad:Method DeclSyn=MethodDeclaration
+    var var1152 = Extensions.Cos_978(var1154); // Type=float Def=Cos@978 Sym=Cos:Method DeclSyn=MethodDeclaration
+    var var1149 = var1150 * var1152; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1161 = uv/* param */.Y * MathF/* type */.PI; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1158 = Extensions.Sin_985(var1161); // Type=float Def=Sin@985 Sym=Sin:Method DeclSyn=MethodDeclaration
+    var var1148 = var1149 * var1158; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1172 = uv/* param */.Y * MathF/* type */.PI; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1169 = Extensions.Cos_978(var1172); // Type=float Def=Cos@978 Sym=Cos:Method DeclSyn=MethodDeclaration
+    var var1167 = radius/* param */ * var1169; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1183 = Extensions.UnitToRad_992(uv/* param */.X); // Type=float Def=UnitToRad@992 Sym=UnitToRad:Method DeclSyn=MethodDeclaration
+    var var1181 = Extensions.Cos_978(var1183); // Type=float Def=Cos@978 Sym=Cos:Method DeclSyn=MethodDeclaration
+    var var1179 = radius/* param */ * var1181; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1190 = uv/* param */.Y * MathF/* type */.PI; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1187 = Extensions.Sin_985(var1190); // Type=float Def=Sin@985 Sym=Sin:Method DeclSyn=MethodDeclaration
+    var var1178 = var1179 * var1187; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    return new Vector3(var1148,var1167,var1178);
+  }
+/* ORIGINAL: 
+public static Vector3 UvToTorus(Vector2 uv, float radius, float tube)
+        {
+            uv = uv * MathF.PI * 2;
+            return new Vector3(
+                (radius + tube * uv.Y.Cos()) * uv.X.Cos(),
+                (radius + tube * uv.Y.Cos()) * uv.X.Sin(),
+                tube * uv.Y.Sin());
+        }
+*/
+  static UvToTorus_1197(uv /* 1244:PlatoTestJavaScript.Vector2 */, radius /* 1245:float */, tube /* 1246:float */) // :PlatoTestJavaScript.Vector3
+  {
+    {
+    var var1201 = Vector2.op_Multiply_566(uv/* param */, MathF/* type */.PI); // Type=PlatoTestJavaScript.Vector2 Def=op_Multiply@566 Sym=op_Multiply:Method DeclSyn=OperatorDeclaration
+    var var1200 = Vector2.op_Multiply_566(var1201, 2); // Type=PlatoTestJavaScript.Vector2 Def=op_Multiply@566 Sym=op_Multiply:Method DeclSyn=OperatorDeclaration
+      uv/* param */ = var1200;
+    var var1214 = Extensions.Cos_978(uv/* param */.Y); // Type=float Def=Cos@978 Sym=Cos:Method DeclSyn=MethodDeclaration
+    var var1212 = tube/* param */ * var1214; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1210 = radius/* param */ + var1212; // Type=float Def= Sym=op_Addition:Method DeclSyn=
+    var var1218 = Extensions.Cos_978(uv/* param */.X); // Type=float Def=Cos@978 Sym=Cos:Method DeclSyn=MethodDeclaration
+    var var1208 = var1210 * var1218; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1229 = Extensions.Cos_978(uv/* param */.Y); // Type=float Def=Cos@978 Sym=Cos:Method DeclSyn=MethodDeclaration
+    var var1227 = tube/* param */ * var1229; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1225 = radius/* param */ + var1227; // Type=float Def= Sym=op_Addition:Method DeclSyn=
+    var var1233 = Extensions.Sin_985(uv/* param */.X); // Type=float Def=Sin@985 Sym=Sin:Method DeclSyn=MethodDeclaration
+    var var1223 = var1225 * var1233; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1240 = Extensions.Sin_985(uv/* param */.Y); // Type=float Def=Sin@985 Sym=Sin:Method DeclSyn=MethodDeclaration
+    var var1238 = tube/* param */ * var1240; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+      return new Vector3(var1208,var1223,var1238);
+    }
+  }
+/* ORIGINAL: 
+public static void TestOperator()
+        {
+            var x = new Vector3(1, 2, 3);
+            var y = x + x;
+        }
+*/
+  static TestOperator_1247() // :void
+  {
+    {
+var x = new Vector3(1,2,3);
+    var var1257 = Vector3.op_Addition_686(x/* local */, x/* local */); // Type=PlatoTestJavaScript.Vector3 Def=op_Addition@686 Sym=op_Addition:Method DeclSyn=OperatorDeclaration
+var y = var1257;
+    }
+  }
+}
+
+			const selectedGeometry = window.location.hash.substring( 1 );
+
+			if ( guis[ selectedGeometry ] !== undefined ) {
+
+				document.getElementById( 'newWindow' ).href += '#' + selectedGeometry;
+
+			}
+
+			const gui = new GUI();
+
+			const scene = new Scene();
+			scene.background = new Color( 0x444444 );
+
+			const camera = new PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 50 );
+			camera.position.z = 30;
+
+			const renderer = new WebGLRenderer( { antialias: true } );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+			const orbit = new OrbitControls( camera, renderer.domElement );
+			orbit.enableZoom = false;
+
+			const lights = [];
+			lights[ 0 ] = new PointLight( 0xffffff, 1, 0 );
+			lights[ 1 ] = new PointLight( 0xffffff, 1, 0 );
+			lights[ 2 ] = new PointLight( 0xffffff, 1, 0 );
+
+			lights[ 0 ].position.set( 0, 200, 0 );
+			lights[ 1 ].position.set( 100, 200, 100 );
+			lights[ 2 ].position.set( - 100, - 200, - 100 );
+
+			scene.add( lights[ 0 ] );
+			scene.add( lights[ 1 ] );
+			scene.add( lights[ 2 ] );
+
+			const group = new Group();
+
+			const geometry = new BufferGeometry();
+			geometry.setAttribute( 'position', new Float32BufferAttribute( [], 3 ) );
+
+			const lineMaterial = new LineBasicMaterial( { color: 0xffffff, transparent: true, opacity: 0.5 } );
+			const meshMaterial = new MeshPhongMaterial( { color: 0x156289, emissive: 0x072534, side: DoubleSide, flatShading: true } );
+
+			group.add( new LineSegments( geometry, lineMaterial ) );
+			group.add( new Mesh( geometry, meshMaterial ) );
+
+            var xs = Extensions.Select_952(5, x => x * 2);
+            console.log(xs);
+
+            var torus = Extensions.ToQuadMesh_1011(Extensions.UvToTorus_1197, 20, 20);
+            console.log(torus);
+
+			const options = chooseFromHash( group );
+
+			scene.add( group );
+
+			function render() {
+
+				requestAnimationFrame( render );
+
+				if ( ! options.fixed ) {
+
+					group.rotation.x += 0.005;
+					group.rotation.y += 0.005;
+
+				}
+
+				renderer.render( scene, camera );
+
+			}
+
+			window.addEventListener( 'resize', function () {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}, false );
+
+			render();
+
+		</script>
+	</body>
+</html>
