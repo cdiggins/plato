@@ -80,6 +80,32 @@ namespace PlatoGenerator
             return r;
         }
 
+        public static FunctionDefinition Create(ConversionOperatorDeclarationSyntax op, SemanticModel model)
+        {
+            var symbol = ModelExtensions.GetDeclaredSymbol(model, op) as IMethodSymbol;
+            if (symbol == null)
+                throw new Exception($"Could not find method symbol for cast operator");
+            var result = new Expression("#result", symbol?.ReturnType);
+            var @this = symbol?.ReceiverType == null ? null : new Expression("#this", symbol?.ReceiverType);
+
+            var r = new FunctionDefinition
+            {
+                ParentType = op.Parent as TypeDeclarationSyntax,
+                Name = symbol?.Name,
+                IsStatic = op.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword)),
+                IsExtension = op.ParameterList.Parameters.Any(p => p.Modifiers.Any(m => m.IsKind(SyntaxKind.ThisKeyword))),
+                Body = op.Body.CreateStatement(op.ExpressionBody?.Expression, model),
+                Syntax = op,
+                Symbol = symbol,
+                Model = model,
+                Result = result,
+                This = @this,
+                Parameters = op.ParameterList.Parameters.Select(p => p.CreateExpression(model)).ToList()
+            };
+
+            return r;
+        }
+
         public static FunctionDefinition Create(MethodDeclarationSyntax method, SemanticModel model)
         {
             var symbol = ModelExtensions.GetDeclaredSymbol(model, method) as IMethodSymbol;

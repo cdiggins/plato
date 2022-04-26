@@ -256,6 +256,25 @@ namespace PlatoGenerator
         }
     }
 
+    public class PlatoConversionSyntax : PlatoSyntax<ConversionOperatorDeclarationSyntax, PlatoConversionSyntax>, INamed
+    {
+        public string Name => "#castoperator";
+        public bool IsImplicit => Node.ImplicitOrExplicitKeyword.ToString() == "implicit";
+        public PlatoStatementSyntax StatementBody;
+        public PlatoExpressionSyntax ExpressionBody;
+        public PlatoTypeRefSyntax ReturnType;
+        public List<PlatoParamSyntax> Parameters;
+
+        public override void OnInit()
+        {
+            base.OnInit();
+            ReturnType = PlatoTypeRefSyntax.Create(Node.Type);
+            Parameters = Node.ParameterList.Parameters.Select(PlatoParamSyntax.Create).ToList();
+            StatementBody = PlatoStatementSyntax.Create(Node.Body);
+            ExpressionBody = PlatoExpressionSyntax.Create(Node.ExpressionBody?.Expression);
+        }
+    }
+
     public class PlatoMethodSyntax : PlatoSyntax<MethodDeclarationSyntax, PlatoMethodSyntax>, INamed
     {
         public string Name => Node.Identifier.ToString();
@@ -311,6 +330,7 @@ namespace PlatoGenerator
         public List<PlatoMethodSyntax> Methods;
         public List<PlatoConstructorSyntax> Ctors;
         public List<PlatoIndexerSyntax> Indexers;
+        public List<PlatoConversionSyntax> Converters;
 
         public override void OnInit()
         {
@@ -321,6 +341,7 @@ namespace PlatoGenerator
             Operators = Node.Members.OfType<OperatorDeclarationSyntax>().Select(PlatoOperatorSyntax.Create).ToList();
             Properties = Node.Members.OfType<PropertyDeclarationSyntax>().Select(PlatoPropertySyntax.Create).ToList();
             Indexers = Node.Members.OfType<IndexerDeclarationSyntax>().Select(PlatoIndexerSyntax.Create).ToList();
+            Converters = Node.Members.OfType<ConversionOperatorDeclarationSyntax>().Select(PlatoConversionSyntax.Create).ToList();
         }
     }
 

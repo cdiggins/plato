@@ -82,664 +82,30 @@
 
 			const twoPi = Math.PI * 2;
 
-			class CustomSinCurve extends Curve {
-
-				constructor( scale = 1 ) {
-
-					super();
-
-					this.scale = scale;
-
-				}
-
-				getPoint( t, optionalTarget = new Vector3() ) {
-
-					const tx = t * 3 - 1.5;
-					const ty = Math.sin( 2 * Math.PI * t );
-					const tz = 0;
-
-					return optionalTarget.set( tx, ty, tz ).multiplyScalar( this.scale );
-
-				}
-
-			}
-
-			function updateGroupGeometry( mesh, geometry ) {
-
-				mesh.children[ 0 ].geometry.dispose();
-				mesh.children[ 1 ].geometry.dispose();
-
-				mesh.children[ 0 ].geometry = new WireframeGeometry( geometry );
-				mesh.children[ 1 ].geometry = geometry;
-
-				// these do not update nicely together if shared
-
-			}
-
-			// heart shape
-
-			const x = 0, y = 0;
-
-			const heartShape = new Shape();
-
-			heartShape.moveTo( x + 5, y + 5 );
-			heartShape.bezierCurveTo( x + 5, y + 5, x + 4, y, x, y );
-			heartShape.bezierCurveTo( x - 6, y, x - 6, y + 7, x - 6, y + 7 );
-			heartShape.bezierCurveTo( x - 6, y + 11, x - 3, y + 15.4, x + 5, y + 19 );
-			heartShape.bezierCurveTo( x + 12, y + 15.4, x + 16, y + 11, x + 16, y + 7 );
-			heartShape.bezierCurveTo( x + 16, y + 7, x + 16, y, x + 10, y );
-			heartShape.bezierCurveTo( x + 7, y, x + 5, y + 5, x + 5, y + 5 );
-
-			const guis = {
-
-				BoxGeometry: function ( mesh ) {
-
-					const data = {
-						width: 15,
-						height: 15,
-						depth: 15,
-						widthSegments: 1,
-						heightSegments: 1,
-						depthSegments: 1
-					};
-
-					function generateGeometry() {
-
-						updateGroupGeometry( mesh,
-							new BoxGeometry(
-								data.width, data.height, data.depth, data.widthSegments, data.heightSegments, data.depthSegments
-							)
-						);
-
-					}
-
-					const folder = gui.addFolder( 'THREE.BoxGeometry' );
-
-					folder.add( data, 'width', 1, 30 ).onChange( generateGeometry );
-					folder.add( data, 'height', 1, 30 ).onChange( generateGeometry );
-					folder.add( data, 'depth', 1, 30 ).onChange( generateGeometry );
-					folder.add( data, 'widthSegments', 1, 10 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'heightSegments', 1, 10 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'depthSegments', 1, 10 ).step( 1 ).onChange( generateGeometry );
-
-					generateGeometry();
-
-				},
-
-				CapsuleGeometry: function ( mesh ) {
-
-					const data = {
-						radius: 5,
-						length: 5,
-						capSegments: 10,
-						heightSegments: 20
-					};
-
-					function generateGeometry() {
-
-						updateGroupGeometry( mesh,
-							new CapsuleGeometry( data.radius, data.length, data.capSegments, data.heightSegments ),
-						);
-
-					}
-
-					const folder = gui.addFolder( 'THREE.CapsuleGeometry' );
-
-					folder.add( data, 'radius', 1, 30 ).onChange( generateGeometry );
-					folder.add( data, 'length', 1, 30 ).onChange( generateGeometry );
-					folder.add( data, 'capSegments', 1, 32 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'heightSegments', 1, 64 ).step( 1 ).onChange( generateGeometry );
-
-					generateGeometry();
-
-				},
-
-				CylinderGeometry: function ( mesh ) {
-
-					const data = {
-						radiusTop: 5,
-						radiusBottom: 5,
-						height: 10,
-						radialSegments: 8,
-						heightSegments: 1,
-						openEnded: false,
-						thetaStart: 0,
-						thetaLength: twoPi
-					};
-
-					function generateGeometry() {
-
-						updateGroupGeometry( mesh,
-							new CylinderGeometry(
-								data.radiusTop,
-								data.radiusBottom,
-								data.height,
-								data.radialSegments,
-								data.heightSegments,
-								data.openEnded,
-								data.thetaStart,
-								data.thetaLength
-							)
-						);
-
-					}
-
-					const folder = gui.addFolder( 'THREE.CylinderGeometry' );
-
-					folder.add( data, 'radiusTop', 0, 30 ).onChange( generateGeometry );
-					folder.add( data, 'radiusBottom', 0, 30 ).onChange( generateGeometry );
-					folder.add( data, 'height', 1, 50 ).onChange( generateGeometry );
-					folder.add( data, 'radialSegments', 3, 64 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'heightSegments', 1, 64 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'openEnded' ).onChange( generateGeometry );
-					folder.add( data, 'thetaStart', 0, twoPi ).onChange( generateGeometry );
-					folder.add( data, 'thetaLength', 0, twoPi ).onChange( generateGeometry );
-
-
-					generateGeometry();
-
-				},
-
-				ConeGeometry: function ( mesh ) {
-
-					const data = {
-						radius: 5,
-						height: 10,
-						radialSegments: 8,
-						heightSegments: 1,
-						openEnded: false,
-						thetaStart: 0,
-						thetaLength: twoPi
-					};
-
-					function generateGeometry() {
-
-						updateGroupGeometry( mesh,
-							new ConeGeometry(
-								data.radius,
-								data.height,
-								data.radialSegments,
-								data.heightSegments,
-								data.openEnded,
-								data.thetaStart,
-								data.thetaLength
-							)
-						);
-
-					}
-
-					const folder = gui.addFolder( 'THREE.ConeGeometry' );
-
-					folder.add( data, 'radius', 0, 30 ).onChange( generateGeometry );
-					folder.add( data, 'height', 1, 50 ).onChange( generateGeometry );
-					folder.add( data, 'radialSegments', 3, 64 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'heightSegments', 1, 64 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'openEnded' ).onChange( generateGeometry );
-					folder.add( data, 'thetaStart', 0, twoPi ).onChange( generateGeometry );
-					folder.add( data, 'thetaLength', 0, twoPi ).onChange( generateGeometry );
-
-
-					generateGeometry();
-
-				},
-
-				CircleGeometry: function ( mesh ) {
-
-					const data = {
-						radius: 10,
-						segments: 32,
-						thetaStart: 0,
-						thetaLength: twoPi
-					};
-
-					function generateGeometry() {
-
-						updateGroupGeometry( mesh,
-							new CircleGeometry(
-								data.radius, data.segments, data.thetaStart, data.thetaLength
-							)
-						);
-
-					}
-
-					const folder = gui.addFolder( 'THREE.CircleGeometry' );
-
-					folder.add( data, 'radius', 1, 20 ).onChange( generateGeometry );
-					folder.add( data, 'segments', 0, 128 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'thetaStart', 0, twoPi ).onChange( generateGeometry );
-					folder.add( data, 'thetaLength', 0, twoPi ).onChange( generateGeometry );
-
-					generateGeometry();
-
-				},
-
-				DodecahedronGeometry: function ( mesh ) {
-
-					const data = {
-						radius: 10,
-						detail: 0
-					};
-
-					function generateGeometry() {
-
-						updateGroupGeometry( mesh,
-							new DodecahedronGeometry(
-								data.radius, data.detail
-							)
-						);
-
-					}
-
-					const folder = gui.addFolder( 'THREE.DodecahedronGeometry' );
-
-					folder.add( data, 'radius', 1, 20 ).onChange( generateGeometry );
-					folder.add( data, 'detail', 0, 5 ).step( 1 ).onChange( generateGeometry );
-
-					generateGeometry();
-
-				},
-
-				IcosahedronGeometry: function ( mesh ) {
-
-					const data = {
-						radius: 10,
-						detail: 0
-					};
-
-					function generateGeometry() {
-
-						updateGroupGeometry( mesh,
-							new IcosahedronGeometry(
-								data.radius, data.detail
-							)
-						);
-
-					}
-
-					const folder = gui.addFolder( 'THREE.IcosahedronGeometry' );
-
-					folder.add( data, 'radius', 1, 20 ).onChange( generateGeometry );
-					folder.add( data, 'detail', 0, 5 ).step( 1 ).onChange( generateGeometry );
-
-					generateGeometry();
-
-				},
-
-				LatheGeometry: function ( mesh ) {
-
-					const points = [];
-
-					for ( let i = 0; i < 10; i ++ ) {
-
-						points.push( new THREE.Vector2( Math.sin( i * 0.2 ) * 10 + 5, ( i - 5 ) * 2 ) );
-
-					}
-
-					const data = {
-						segments: 12,
-						phiStart: 0,
-						phiLength: twoPi
-					};
-
-					function generateGeometry() {
-
-						const geometry = new LatheGeometry(
-							points, data.segments, data.phiStart, data.phiLength
-						);
-
-						updateGroupGeometry( mesh, geometry );
-
-					}
-
-					const folder = gui.addFolder( 'THREE.LatheGeometry' );
-
-					folder.add( data, 'segments', 1, 30 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'phiStart', 0, twoPi ).onChange( generateGeometry );
-					folder.add( data, 'phiLength', 0, twoPi ).onChange( generateGeometry );
-
-					generateGeometry();
-
-				},
-
-				OctahedronGeometry: function ( mesh ) {
-
-					const data = {
-						radius: 10,
-						detail: 0
-					};
-
-					function generateGeometry() {
-
-						updateGroupGeometry( mesh,
-							new OctahedronGeometry(
-								data.radius, data.detail
-							)
-						);
-
-					}
-
-					const folder = gui.addFolder( 'THREE.OctahedronGeometry' );
-
-					folder.add( data, 'radius', 1, 20 ).onChange( generateGeometry );
-					folder.add( data, 'detail', 0, 5 ).step( 1 ).onChange( generateGeometry );
-
-					generateGeometry();
-
-				},
-
-				PlaneGeometry: function ( mesh ) {
-
-					const data = {
-						width: 10,
-						height: 10,
-						widthSegments: 1,
-						heightSegments: 1
-					};
-
-					function generateGeometry() {
-
-						updateGroupGeometry( mesh,
-							new PlaneGeometry(
-								data.width, data.height, data.widthSegments, data.heightSegments
-							)
-						);
-
-					}
-
-					const folder = gui.addFolder( 'THREE.PlaneGeometry' );
-
-					folder.add( data, 'width', 1, 30 ).onChange( generateGeometry );
-					folder.add( data, 'height', 1, 30 ).onChange( generateGeometry );
-					folder.add( data, 'widthSegments', 1, 30 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'heightSegments', 1, 30 ).step( 1 ).onChange( generateGeometry );
-
-					generateGeometry();
-
-				},
-
-				RingGeometry: function ( mesh ) {
-
-					const data = {
-						innerRadius: 5,
-						outerRadius: 10,
-						thetaSegments: 8,
-						phiSegments: 8,
-						thetaStart: 0,
-						thetaLength: twoPi
-					};
-
-					function generateGeometry() {
-
-						updateGroupGeometry( mesh,
-							new RingGeometry(
-								data.innerRadius, data.outerRadius, data.thetaSegments, data.phiSegments, data.thetaStart, data.thetaLength
-							)
-						);
-
-					}
-
-					const folder = gui.addFolder( 'THREE.RingGeometry' );
-
-					folder.add( data, 'innerRadius', 1, 30 ).onChange( generateGeometry );
-					folder.add( data, 'outerRadius', 1, 30 ).onChange( generateGeometry );
-					folder.add( data, 'thetaSegments', 1, 30 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'phiSegments', 1, 30 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'thetaStart', 0, twoPi ).onChange( generateGeometry );
-					folder.add( data, 'thetaLength', 0, twoPi ).onChange( generateGeometry );
-
-					generateGeometry();
-
-				},
-
-				SphereGeometry: function ( mesh ) {
-
-					const data = {
-						radius: 15,
-						widthSegments: 32,
-						heightSegments: 16,
-						phiStart: 0,
-						phiLength: twoPi,
-						thetaStart: 0,
-						thetaLength: Math.PI
-					};
-
-					function generateGeometry() {
-
-						updateGroupGeometry( mesh,
-							new SphereGeometry(
-								data.radius, data.widthSegments, data.heightSegments, data.phiStart, data.phiLength, data.thetaStart, data.thetaLength
-							)
-						);
-
-					}
-
-					const folder = gui.addFolder( 'THREE.SphereGeometry' );
-
-					folder.add( data, 'radius', 1, 30 ).onChange( generateGeometry );
-					folder.add( data, 'widthSegments', 3, 64 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'heightSegments', 2, 32 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'phiStart', 0, twoPi ).onChange( generateGeometry );
-					folder.add( data, 'phiLength', 0, twoPi ).onChange( generateGeometry );
-					folder.add( data, 'thetaStart', 0, twoPi ).onChange( generateGeometry );
-					folder.add( data, 'thetaLength', 0, twoPi ).onChange( generateGeometry );
-
-					generateGeometry();
-
-				},
-
-				TetrahedronGeometry: function ( mesh ) {
-
-					const data = {
-						radius: 10,
-						detail: 0
-					};
-
-					function generateGeometry() {
-
-						updateGroupGeometry( mesh,
-							new TetrahedronGeometry(
-								data.radius, data.detail
-							)
-						);
-
-					}
-
-					const folder = gui.addFolder( 'THREE.TetrahedronGeometry' );
-
-					folder.add( data, 'radius', 1, 20 ).onChange( generateGeometry );
-					folder.add( data, 'detail', 0, 5 ).step( 1 ).onChange( generateGeometry );
-
-					generateGeometry();
-
-				},
-
-				TorusGeometry: function ( mesh ) {
-
-					const data = {
-						radius: 10,
-						tube: 3,
-						radialSegments: 16,
-						tubularSegments: 100,
-						arc: twoPi
-					};
-
-					function generateGeometry() {
-
-						updateGroupGeometry( mesh,
-							new TorusGeometry(
-								data.radius, data.tube, data.radialSegments, data.tubularSegments, data.arc
-							)
-						);
-
-					}
-
-					const folder = gui.addFolder( 'THREE.TorusGeometry' );
-
-					folder.add( data, 'radius', 1, 20 ).onChange( generateGeometry );
-					folder.add( data, 'tube', 0.1, 10 ).onChange( generateGeometry );
-					folder.add( data, 'radialSegments', 2, 30 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'tubularSegments', 3, 200 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'arc', 0.1, twoPi ).onChange( generateGeometry );
-
-					generateGeometry();
-
-				},
-
-				TorusKnotGeometry: function ( mesh ) {
-
-					const data = {
-						radius: 10,
-						tube: 3,
-						tubularSegments: 64,
-						radialSegments: 8,
-						p: 2,
-						q: 3
-					};
-
-					function generateGeometry() {
-
-						updateGroupGeometry( mesh,
-							new TorusKnotGeometry(
-								data.radius, data.tube, data.tubularSegments, data.radialSegments,
-								data.p, data.q
-							)
-						);
-
-					}
-
-					const folder = gui.addFolder( 'THREE.TorusKnotGeometry' );
-
-					folder.add( data, 'radius', 1, 20 ).onChange( generateGeometry );
-					folder.add( data, 'tube', 0.1, 10 ).onChange( generateGeometry );
-					folder.add( data, 'tubularSegments', 3, 300 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'radialSegments', 3, 20 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'p', 1, 20 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'q', 1, 20 ).step( 1 ).onChange( generateGeometry );
-
-					generateGeometry();
-
-				},
-
-				TubeGeometry: function ( mesh ) {
-
-					const data = {
-						segments: 20,
-						radius: 2,
-						radialSegments: 8
-					};
-
-					const path = new CustomSinCurve( 10 );
-
-					function generateGeometry() {
-
-						updateGroupGeometry( mesh,
-							new TubeGeometry( path, data.segments, data.radius, data.radialSegments, false )
-						);
-
-					}
-
-					const folder = gui.addFolder( 'THREE.TubeGeometry' );
-
-					folder.add( data, 'segments', 1, 100 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'radius', 1, 10 ).onChange( generateGeometry );
-					folder.add( data, 'radialSegments', 1, 20 ).step( 1 ).onChange( generateGeometry );
-
-					generateGeometry();
-
-				},
-
-				ShapeGeometry: function ( mesh ) {
-
-					const data = {
-						segments: 12
-					};
-
-					function generateGeometry() {
-
-						const geometry = new ShapeGeometry( heartShape, data.segments );
-						geometry.center();
-
-						updateGroupGeometry( mesh, geometry );
-
-					}
-
-					const folder = gui.addFolder( 'THREE.ShapeGeometry' );
-					folder.add( data, 'segments', 1, 100 ).step( 1 ).onChange( generateGeometry );
-
-					generateGeometry();
-
-				},
-
-				ExtrudeGeometry: function ( mesh ) {
-
-					const data = {
-						steps: 2,
-						depth: 16,
-						bevelEnabled: true,
-						bevelThickness: 1,
-						bevelSize: 1,
-						bevelOffset: 0,
-						bevelSegments: 1
-					};
-
-					const length = 12, width = 8;
-
-					const shape = new Shape();
-					shape.moveTo( 0, 0 );
-					shape.lineTo( 0, width );
-					shape.lineTo( length, width );
-					shape.lineTo( length, 0 );
-					shape.lineTo( 0, 0 );
-
-					function generateGeometry() {
-
-						const geometry = new ExtrudeGeometry( shape, data );
-						geometry.center();
-
-						updateGroupGeometry( mesh, geometry );
-
-					}
-
-					const folder = gui.addFolder( 'THREE.ExtrudeGeometry' );
-
-					folder.add( data, 'steps', 1, 10 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'depth', 1, 20 ).onChange( generateGeometry );
-					folder.add( data, 'bevelThickness', 1, 5 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'bevelSize', 0, 5 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'bevelOffset', - 4, 5 ).step( 1 ).onChange( generateGeometry );
-					folder.add( data, 'bevelSegments', 1, 5 ).step( 1 ).onChange( generateGeometry );
-
-					generateGeometry();
-
-				}
-
-			};
-
-			function chooseFromHash( mesh ) {
-
-				const selectedGeometry = window.location.hash.substring( 1 ) || 'TorusGeometry';
-
-				if ( guis[ selectedGeometry ] !== undefined ) {
-
-					guis[ selectedGeometry ]( mesh );
-
-				}
-
-				if ( selectedGeometry === 'TextGeometry' ) {
-
-					return { fixed: true };
-
-				}
-
-				//No configuration options
-				return {};
-
-			}
-
-			//
+class MathF
+{
+	static PI = 3.14159265235879;
+	static Cos = Math.cos;
+	static Sin = Math.sin;
+	static Sqrt = Math.sqrt;
+}
 
 class Plato
 {
+	static Cast(type, value)
+	{
+		return value;
+	}
+
+	static At(array, index)
+	{
+		if (array.Func != undefined)
+		{
+			return array.Func(index);
+		}
+		return array[index];
+	}
+
     static Tuple(...args)
     {
         var r = {};
@@ -1211,7 +577,7 @@ var var1048 = (i) =>
     var var1060 = Plato.Cast("float", i/* param */); // Type=float Def= Sym=: DeclSyn=
     var var1063 = vsegs/* param */ - 1; // Type=float Def= Sym=op_Subtraction:Method DeclSyn=
     var var1059 = var1060 % var1063; // Type=float Def= Sym=op_Modulus:Method DeclSyn=
-  return new Vector2(var1051,var1059);
+  return new Vector2(i / vsegs / (usegs - 1), i / usegs % (vsegs - 1));
 }
     return new Array(var1043,var1048);
   }
@@ -1313,8 +679,8 @@ public static Vector3 UvToTorus(Vector2 uv, float radius, float tube)
   static UvToTorus_1197(uv /* 1244:PlatoTestJavaScript.Vector2 */, radius /* 1245:float */, tube /* 1246:float */) // :PlatoTestJavaScript.Vector3
   {
     {
-    var var1201 = Vector2.op_Multiply_566(uv/* param */, MathF/* type */.PI); // Type=PlatoTestJavaScript.Vector2 Def=op_Multiply@566 Sym=op_Multiply:Method DeclSyn=OperatorDeclaration
-    var var1200 = Vector2.op_Multiply_566(var1201, 2); // Type=PlatoTestJavaScript.Vector2 Def=op_Multiply@566 Sym=op_Multiply:Method DeclSyn=OperatorDeclaration
+    var var1201 = Vector2.op_Multiply_566(uv/* param */, new Vector2(MathF.PI, MathF.PI)); // Type=PlatoTestJavaScript.Vector2 Def=op_Multiply@566 Sym=op_Multiply:Method DeclSyn=OperatorDeclaration
+    var var1200 = Vector2.op_Multiply_566(var1201, new Vector2(2,2)); // Type=PlatoTestJavaScript.Vector2 Def=op_Multiply@566 Sym=op_Multiply:Method DeclSyn=OperatorDeclaration
       uv/* param */ = var1200;
     var var1214 = Extensions.Cos_978(uv/* param */.Y); // Type=float Def=Cos@978 Sym=Cos:Method DeclSyn=MethodDeclaration
     var var1212 = tube/* param */ * var1214; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
@@ -1347,6 +713,683 @@ var y = var1257;
     }
   }
 }
+
+    function createPlatoTorusGeometry(options)
+    {
+        var torus = Extensions.ToQuadMesh_1011(x => Extensions.UvToTorus_1197(x, 5, 10), 20, 20);        
+        var points = [];
+        for (var i=0; i < torus.Points.Count; ++i)
+        {
+            var p = Plato.At( torus.Points, i);
+            points.push(p.X);
+            points.push(p.Y);
+            points.push(p.Z);
+        }
+		var indices = [];
+        for (var i=0; i < torus.Indices.Count; ++i)
+        {
+            var f = Plato.At(torus.Indices, i);
+            indices.push(Math.round(f.X));
+            indices.push(Math.round(f.Y));
+            indices.push(Math.round(f.Z));
+            indices.push(Math.round(f.Z));
+            indices.push(Math.round(f.W));
+            indices.push(Math.round(f.X));
+        }
+        var g = new BufferGeometry();
+		g.setIndex(indices);
+		g.setAttribute( 'position', new Float32BufferAttribute( points, 3 ) );
+		g.setAttribute( 'normal', new Float32BufferAttribute( points.slice(), 3 ) );
+        g.computeVertexNormals();
+        return g;
+    }
+
+			class CustomSinCurve extends Curve {
+
+				constructor( scale = 1 ) {
+					super();
+					this.scale = scale;
+				}
+
+				getPoint( t, optionalTarget = new Vector3() ) {
+					const tx = t * 3 - 1.5;
+					const ty = Math.sin( 2 * Math.PI * t );
+					const tz = 0;
+					return optionalTarget.set( tx, ty, tz ).multiplyScalar( this.scale );
+				}
+			}
+
+			function updateGroupGeometry( mesh, geometry ) {
+
+				mesh.children[ 0 ].geometry.dispose();
+				mesh.children[ 1 ].geometry.dispose();
+
+				mesh.children[ 0 ].geometry = new WireframeGeometry( geometry );
+				mesh.children[ 1 ].geometry = geometry;
+
+				// these do not update nicely together if shared
+
+			}
+
+			// heart shape
+
+			const x = 0, y = 0;
+
+			const heartShape = new Shape();
+
+			heartShape.moveTo( x + 5, y + 5 );
+			heartShape.bezierCurveTo( x + 5, y + 5, x + 4, y, x, y );
+			heartShape.bezierCurveTo( x - 6, y, x - 6, y + 7, x - 6, y + 7 );
+			heartShape.bezierCurveTo( x - 6, y + 11, x - 3, y + 15.4, x + 5, y + 19 );
+			heartShape.bezierCurveTo( x + 12, y + 15.4, x + 16, y + 11, x + 16, y + 7 );
+			heartShape.bezierCurveTo( x + 16, y + 7, x + 16, y, x + 10, y );
+			heartShape.bezierCurveTo( x + 7, y, x + 5, y + 5, x + 5, y + 5 );
+
+			const guis = {
+
+				BoxGeometry: function ( mesh ) {
+
+					const data = {
+						width: 15,
+						height: 15,
+						depth: 15,
+						widthSegments: 1,
+						heightSegments: 1,
+						depthSegments: 1
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new BoxGeometry(
+								data.width, data.height, data.depth, data.widthSegments, data.heightSegments, data.depthSegments
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.BoxGeometry' );
+
+					folder.add( data, 'width', 1, 30 ).onChange( generateGeometry );
+					folder.add( data, 'height', 1, 30 ).onChange( generateGeometry );
+					folder.add( data, 'depth', 1, 30 ).onChange( generateGeometry );
+					folder.add( data, 'widthSegments', 1, 10 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'heightSegments', 1, 10 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'depthSegments', 1, 10 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				CapsuleGeometry: function ( mesh ) {
+
+					const data = {
+						radius: 5,
+						length: 5,
+						capSegments: 10,
+						heightSegments: 20
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new CapsuleGeometry( data.radius, data.length, data.capSegments, data.heightSegments ),
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.CapsuleGeometry' );
+
+					folder.add( data, 'radius', 1, 30 ).onChange( generateGeometry );
+					folder.add( data, 'length', 1, 30 ).onChange( generateGeometry );
+					folder.add( data, 'capSegments', 1, 32 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'heightSegments', 1, 64 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				CylinderGeometry: function ( mesh ) {
+
+					const data = {
+						radiusTop: 5,
+						radiusBottom: 5,
+						height: 10,
+						radialSegments: 8,
+						heightSegments: 1,
+						openEnded: false,
+						thetaStart: 0,
+						thetaLength: twoPi
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new CylinderGeometry(
+								data.radiusTop,
+								data.radiusBottom,
+								data.height,
+								data.radialSegments,
+								data.heightSegments,
+								data.openEnded,
+								data.thetaStart,
+								data.thetaLength
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.CylinderGeometry' );
+
+					folder.add( data, 'radiusTop', 0, 30 ).onChange( generateGeometry );
+					folder.add( data, 'radiusBottom', 0, 30 ).onChange( generateGeometry );
+					folder.add( data, 'height', 1, 50 ).onChange( generateGeometry );
+					folder.add( data, 'radialSegments', 3, 64 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'heightSegments', 1, 64 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'openEnded' ).onChange( generateGeometry );
+					folder.add( data, 'thetaStart', 0, twoPi ).onChange( generateGeometry );
+					folder.add( data, 'thetaLength', 0, twoPi ).onChange( generateGeometry );
+
+
+					generateGeometry();
+
+				},
+
+				ConeGeometry: function ( mesh ) {
+
+					const data = {
+						radius: 5,
+						height: 10,
+						radialSegments: 8,
+						heightSegments: 1,
+						openEnded: false,
+						thetaStart: 0,
+						thetaLength: twoPi
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new ConeGeometry(
+								data.radius,
+								data.height,
+								data.radialSegments,
+								data.heightSegments,
+								data.openEnded,
+								data.thetaStart,
+								data.thetaLength
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.ConeGeometry' );
+
+					folder.add( data, 'radius', 0, 30 ).onChange( generateGeometry );
+					folder.add( data, 'height', 1, 50 ).onChange( generateGeometry );
+					folder.add( data, 'radialSegments', 3, 64 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'heightSegments', 1, 64 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'openEnded' ).onChange( generateGeometry );
+					folder.add( data, 'thetaStart', 0, twoPi ).onChange( generateGeometry );
+					folder.add( data, 'thetaLength', 0, twoPi ).onChange( generateGeometry );
+
+
+					generateGeometry();
+
+				},
+
+				CircleGeometry: function ( mesh ) {
+
+					const data = {
+						radius: 10,
+						segments: 32,
+						thetaStart: 0,
+						thetaLength: twoPi
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new CircleGeometry(
+								data.radius, data.segments, data.thetaStart, data.thetaLength
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.CircleGeometry' );
+
+					folder.add( data, 'radius', 1, 20 ).onChange( generateGeometry );
+					folder.add( data, 'segments', 0, 128 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'thetaStart', 0, twoPi ).onChange( generateGeometry );
+					folder.add( data, 'thetaLength', 0, twoPi ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				DodecahedronGeometry: function ( mesh ) {
+
+					const data = {
+						radius: 10,
+						detail: 0
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new DodecahedronGeometry(
+								data.radius, data.detail
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.DodecahedronGeometry' );
+
+					folder.add( data, 'radius', 1, 20 ).onChange( generateGeometry );
+					folder.add( data, 'detail', 0, 5 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				IcosahedronGeometry: function ( mesh ) {
+
+					const data = {
+						radius: 10,
+						detail: 0
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new IcosahedronGeometry(
+								data.radius, data.detail
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.IcosahedronGeometry' );
+
+					folder.add( data, 'radius', 1, 20 ).onChange( generateGeometry );
+					folder.add( data, 'detail', 0, 5 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				LatheGeometry: function ( mesh ) {
+
+					const points = [];
+
+					for ( let i = 0; i < 10; i ++ ) {
+
+						points.push( new THREE.Vector2( Math.sin( i * 0.2 ) * 10 + 5, ( i - 5 ) * 2 ) );
+
+					}
+
+					const data = {
+						segments: 12,
+						phiStart: 0,
+						phiLength: twoPi
+					};
+
+					function generateGeometry() {
+
+						const geometry = new LatheGeometry(
+							points, data.segments, data.phiStart, data.phiLength
+						);
+
+						updateGroupGeometry( mesh, geometry );
+
+					}
+
+					const folder = gui.addFolder( 'THREE.LatheGeometry' );
+
+					folder.add( data, 'segments', 1, 30 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'phiStart', 0, twoPi ).onChange( generateGeometry );
+					folder.add( data, 'phiLength', 0, twoPi ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				OctahedronGeometry: function ( mesh ) {
+
+					const data = {
+						radius: 10,
+						detail: 0
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new OctahedronGeometry(
+								data.radius, data.detail
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.OctahedronGeometry' );
+
+					folder.add( data, 'radius', 1, 20 ).onChange( generateGeometry );
+					folder.add( data, 'detail', 0, 5 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				PlaneGeometry: function ( mesh ) {
+
+					const data = {
+						width: 10,
+						height: 10,
+						widthSegments: 1,
+						heightSegments: 1
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new PlaneGeometry(
+								data.width, data.height, data.widthSegments, data.heightSegments
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.PlaneGeometry' );
+
+					folder.add( data, 'width', 1, 30 ).onChange( generateGeometry );
+					folder.add( data, 'height', 1, 30 ).onChange( generateGeometry );
+					folder.add( data, 'widthSegments', 1, 30 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'heightSegments', 1, 30 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				RingGeometry: function ( mesh ) {
+
+					const data = {
+						innerRadius: 5,
+						outerRadius: 10,
+						thetaSegments: 8,
+						phiSegments: 8,
+						thetaStart: 0,
+						thetaLength: twoPi
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new RingGeometry(
+								data.innerRadius, data.outerRadius, data.thetaSegments, data.phiSegments, data.thetaStart, data.thetaLength
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.RingGeometry' );
+
+					folder.add( data, 'innerRadius', 1, 30 ).onChange( generateGeometry );
+					folder.add( data, 'outerRadius', 1, 30 ).onChange( generateGeometry );
+					folder.add( data, 'thetaSegments', 1, 30 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'phiSegments', 1, 30 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'thetaStart', 0, twoPi ).onChange( generateGeometry );
+					folder.add( data, 'thetaLength', 0, twoPi ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				SphereGeometry: function ( mesh ) {
+
+					const data = {
+						radius: 15,
+						widthSegments: 32,
+						heightSegments: 16,
+						phiStart: 0,
+						phiLength: twoPi,
+						thetaStart: 0,
+						thetaLength: Math.PI
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new SphereGeometry(
+								data.radius, data.widthSegments, data.heightSegments, data.phiStart, data.phiLength, data.thetaStart, data.thetaLength
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.SphereGeometry' );
+
+					folder.add( data, 'radius', 1, 30 ).onChange( generateGeometry );
+					folder.add( data, 'widthSegments', 3, 64 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'heightSegments', 2, 32 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'phiStart', 0, twoPi ).onChange( generateGeometry );
+					folder.add( data, 'phiLength', 0, twoPi ).onChange( generateGeometry );
+					folder.add( data, 'thetaStart', 0, twoPi ).onChange( generateGeometry );
+					folder.add( data, 'thetaLength', 0, twoPi ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				TetrahedronGeometry: function ( mesh ) {
+
+					const data = {
+						radius: 10,
+						detail: 0
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new TetrahedronGeometry(
+								data.radius, data.detail
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.TetrahedronGeometry' );
+
+					folder.add( data, 'radius', 1, 20 ).onChange( generateGeometry );
+					folder.add( data, 'detail', 0, 5 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				TorusGeometry: function ( mesh ) {
+
+					const data = {
+						radius: 10,
+						tube: 3,
+						radialSegments: 16,
+						tubularSegments: 100,
+						arc: twoPi
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							createPlatoTorusGeometry(data)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.TorusGeometry' );
+
+					folder.add( data, 'radius', 1, 20 ).onChange( generateGeometry );
+					folder.add( data, 'tube', 0.1, 10 ).onChange( generateGeometry );
+					folder.add( data, 'radialSegments', 2, 30 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'tubularSegments', 3, 200 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'arc', 0.1, twoPi ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				TorusKnotGeometry: function ( mesh ) {
+
+					const data = {
+						radius: 10,
+						tube: 3,
+						tubularSegments: 64,
+						radialSegments: 8,
+						p: 2,
+						q: 3
+					};
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new TorusKnotGeometry(
+								data.radius, data.tube, data.tubularSegments, data.radialSegments,
+								data.p, data.q
+							)
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.TorusKnotGeometry' );
+
+					folder.add( data, 'radius', 1, 20 ).onChange( generateGeometry );
+					folder.add( data, 'tube', 0.1, 10 ).onChange( generateGeometry );
+					folder.add( data, 'tubularSegments', 3, 300 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'radialSegments', 3, 20 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'p', 1, 20 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'q', 1, 20 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				TubeGeometry: function ( mesh ) {
+
+					const data = {
+						segments: 20,
+						radius: 2,
+						radialSegments: 8
+					};
+
+					const path = new CustomSinCurve( 10 );
+
+					function generateGeometry() {
+
+						updateGroupGeometry( mesh,
+							new TubeGeometry( path, data.segments, data.radius, data.radialSegments, false )
+						);
+
+					}
+
+					const folder = gui.addFolder( 'THREE.TubeGeometry' );
+
+					folder.add( data, 'segments', 1, 100 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'radius', 1, 10 ).onChange( generateGeometry );
+					folder.add( data, 'radialSegments', 1, 20 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				ShapeGeometry: function ( mesh ) {
+
+					const data = {
+						segments: 12
+					};
+
+					function generateGeometry() {
+
+						const geometry = new ShapeGeometry( heartShape, data.segments );
+						geometry.center();
+
+						updateGroupGeometry( mesh, geometry );
+
+					}
+
+					const folder = gui.addFolder( 'THREE.ShapeGeometry' );
+					folder.add( data, 'segments', 1, 100 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				},
+
+				ExtrudeGeometry: function ( mesh ) {
+
+					const data = {
+						steps: 2,
+						depth: 16,
+						bevelEnabled: true,
+						bevelThickness: 1,
+						bevelSize: 1,
+						bevelOffset: 0,
+						bevelSegments: 1
+					};
+
+					const length = 12, width = 8;
+
+					const shape = new Shape();
+					shape.moveTo( 0, 0 );
+					shape.lineTo( 0, width );
+					shape.lineTo( length, width );
+					shape.lineTo( length, 0 );
+					shape.lineTo( 0, 0 );
+
+					function generateGeometry() {
+
+						const geometry = new ExtrudeGeometry( shape, data );
+						geometry.center();
+
+						updateGroupGeometry( mesh, geometry );
+
+					}
+
+					const folder = gui.addFolder( 'THREE.ExtrudeGeometry' );
+
+					folder.add( data, 'steps', 1, 10 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'depth', 1, 20 ).onChange( generateGeometry );
+					folder.add( data, 'bevelThickness', 1, 5 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'bevelSize', 0, 5 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'bevelOffset', - 4, 5 ).step( 1 ).onChange( generateGeometry );
+					folder.add( data, 'bevelSegments', 1, 5 ).step( 1 ).onChange( generateGeometry );
+
+					generateGeometry();
+
+				}
+
+			};
+
+			function chooseFromHash( mesh ) {
+
+				const selectedGeometry = window.location.hash.substring( 1 ) || 'TorusGeometry';
+
+				if ( guis[ selectedGeometry ] !== undefined ) {
+
+					guis[ selectedGeometry ]( mesh );
+
+				}
+
+				if ( selectedGeometry === 'TextGeometry' ) {
+
+					return { fixed: true };
+
+				}
+
+				//No configuration options
+				return {};
+
+			}
+
+			//
 
 			const selectedGeometry = window.location.hash.substring( 1 );
 
@@ -1399,9 +1442,11 @@ var y = var1257;
             var xs = Extensions.Select_952(5, x => x * 2);
             console.log(xs);
 
-            var torus = Extensions.ToQuadMesh_1011(Extensions.UvToTorus_1197, 20, 20);
+            var torus = Extensions.ToQuadMesh_1011(x => Extensions.UvToTorus_1197(x, 10, 30), 20, 20);
             console.log(torus);
 
+			var pt1 = Extensions.UvToTorus_1197(new Vector2(0.1, 0.2), 10, 3);
+			console.log(pt1);
 			const options = chooseFromHash( group );
 
 			scene.add( group );

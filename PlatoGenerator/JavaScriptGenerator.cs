@@ -29,8 +29,12 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
  * DONE: anything leabled VariableDeclarator seems to be a problem
  * DONE: operators need to be class qualfieid
  * DONE: extension methods need to be class qualified
+ * DONE: add casts to type definition
  * TODO: generic type constructors are missing type parameters
- * TODO: get all of the type refrences and generate the appropriate types in advance. 
+ * TODO: get all of the type refrences and generate the appropriate types in advance.
+ * TODO: this.method calls missing ID
+ * TODO: need to generate a function for indexing. operator_Subscript
+ * TODO: call cast operator function 
  * LATER TODO: handle local functions,
  * LATER TODO: anonymous types
  * LATER TODO: anonymous functions
@@ -146,7 +150,11 @@ namespace PlatoGenerator
                             case IPropertySymbol propSym:
                                 ident = "this." + ident + "/* property */"; break;
                             case IMethodSymbol methSym:
-                                ident = "this." + ident + "/* method */"; break;
+                            {
+                                throw new Exception("TODO: get the id");
+                                ident = "this." + ident + "/* method */";
+                                break;
+                            }
                             case ITypeSymbol typeSym:
                                 ident = ident + "/* type */"; break;
                             default:
@@ -604,6 +612,12 @@ namespace PlatoGenerator
                 OutputFunction(func, "  ");
             }
 
+            foreach (var op in t.Converters)
+            {
+                var func = SyntaxToFunctions[op.Node];
+                OutputFunction(func, "  ");
+            }
+
             sw.WriteLine("}");
         }
 
@@ -619,6 +633,12 @@ namespace PlatoGenerator
                 }
 
                 foreach (var op in t.Operators)
+                {
+                    var func = FunctionDefinition.Create(op.Node, model);
+                    SyntaxToFunctions.Add(op.Node, func);
+                }
+
+                foreach (var op in t.Converters)
                 {
                     var func = FunctionDefinition.Create(op.Node, model);
                     SyntaxToFunctions.Add(op.Node, func);
