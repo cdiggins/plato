@@ -34,7 +34,8 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
  * TODO: get all of the type refrences and generate the appropriate types in advance.
  * TODO: this.method calls missing ID
  * TODO: need to generate a function for indexing. operator_Subscript
- * TODO: call cast operator function 
+ * TODO: call cast operator function
+ * TODO: need to explicitly cast numbers to ints when doing integers 
  * LATER TODO: handle local functions,
  * LATER TODO: anonymous types
  * LATER TODO: anonymous functions

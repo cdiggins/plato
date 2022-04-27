@@ -18,7 +18,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PathTracer", "RayTracerDemo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTestJavaScript", "..\PlatoTestJavaScript\PlatoTestJavaScript.csproj", "{80901414-925B-46F1-9C9C-D251FF59EFEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatoIR", "PlatoIR\PlatoIR.csproj", "{A71401DF-F388-4F54-B581-4D555D48CEE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoIR", "PlatoIR\PlatoIR.csproj", "{A71401DF-F388-4F54-B581-4D555D48CEE9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatoRoslynSyntaxAnalyzer", "..\PlatoRoslynSyntaxAnalyzer\PlatoRoslynSyntaxAnalyzer.csproj", "{F2E12DF6-379A-4866-A313-B84E3DC8C528}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +52,10 @@ Global
 		{A71401DF-F388-4F54-B581-4D555D48CEE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A71401DF-F388-4F54-B581-4D555D48CEE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A71401DF-F388-4F54-B581-4D555D48CEE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2E12DF6-379A-4866-A313-B84E3DC8C528}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2E12DF6-379A-4866-A313-B84E3DC8C528}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2E12DF6-379A-4866-A313-B84E3DC8C528}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2E12DF6-379A-4866-A313-B84E3DC8C528}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

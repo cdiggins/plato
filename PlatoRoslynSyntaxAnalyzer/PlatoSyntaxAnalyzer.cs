@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
 
-namespace PlatoGenerator
+namespace PlatoRoslynSyntaxAnalyzer
 {
     public interface INamed
     {
@@ -90,8 +86,8 @@ namespace PlatoGenerator
         public override void OnInit()
         {
             base.OnInit();
-            ChildExpressions = Node.ChildNodes().OfType<ExpressionSyntax>().Select(Create).ToList();
-            Variables = Node.ChildNodes().OfType<VariableDeclaratorSyntax>().Select(PlatoVariableSyntax.Create).ToList();
+            ChildExpressions = Enumerable.ToList<PlatoExpressionSyntax>(Node.ChildNodes().OfType<ExpressionSyntax>().Select(Create));
+            Variables = Enumerable.ToList<PlatoVariableSyntax>(Node.ChildNodes().OfType<VariableDeclaratorSyntax>().Select(PlatoVariableSyntax.Create));
         }
     }
 
@@ -106,7 +102,7 @@ namespace PlatoGenerator
         public override void OnInit()
         {
             base.OnInit();
-            Arguments = Node.ArgumentList?.Arguments.Select(PlatoArgSyntax.Create).ToList() ?? new List<PlatoArgSyntax>();
+            Arguments = Enumerable.ToList<PlatoArgSyntax>(Node.ArgumentList?.Arguments.Select(PlatoArgSyntax.Create)) ?? new List<PlatoArgSyntax>();
             Type = PlatoTypeRefSyntax.Create((Node.Parent as VariableDeclarationSyntax)?.Type);
             Initializer = PlatoExpressionSyntax.Create(Node.Initializer?.Value);
         }
@@ -122,10 +118,10 @@ namespace PlatoGenerator
         public override void OnInit()
         {
             base.OnInit();
-            ChildStatements = Node.ChildNodes().OfType<StatementSyntax>().Select(Create).ToList();
-            ChildExpressions = Node.ChildNodes().OfType<ExpressionSyntax>().Select(PlatoExpressionSyntax.Create).ToList();
-            ChildTypes = Node.ChildNodes().OfType<TypeDeclarationSyntax>().Select(PlatoTypeSyntax.Create).ToList();
-            Variables = Node.ChildNodes().OfType<VariableDeclaratorSyntax>().Select(PlatoVariableSyntax.Create).ToList();
+            ChildStatements = Enumerable.ToList<PlatoStatementSyntax>(Node.ChildNodes().OfType<StatementSyntax>().Select(Create));
+            ChildExpressions = Enumerable.ToList<PlatoExpressionSyntax>(Node.ChildNodes().OfType<ExpressionSyntax>().Select(PlatoExpressionSyntax.Create));
+            ChildTypes = Enumerable.ToList<PlatoTypeSyntax>(Node.ChildNodes().OfType<TypeDeclarationSyntax>().Select(PlatoTypeSyntax.Create));
+            Variables = Enumerable.ToList<PlatoVariableSyntax>(Node.ChildNodes().OfType<VariableDeclaratorSyntax>().Select(PlatoVariableSyntax.Create));
             // TODO: special processing of LocalFunctionStatementSyntax, which basically needs to be converted into a lambda
             // 
         }
@@ -168,7 +164,7 @@ namespace PlatoGenerator
         public override void OnInit()
         {
             base.OnInit();
-            Variables = Node.Declaration.Variables.Select(PlatoVariableSyntax.Create).ToList();
+            Variables = Enumerable.ToList<PlatoVariableSyntax>(Node.Declaration.Variables.Select(PlatoVariableSyntax.Create));
         }
     }
 
@@ -250,7 +246,7 @@ namespace PlatoGenerator
         {
             base.OnInit();
             ReturnType = PlatoTypeRefSyntax.Create(Node.ReturnType);
-            Parameters = Node.ParameterList.Parameters.Select(PlatoParamSyntax.Create).ToList();
+            Parameters = Enumerable.ToList<PlatoParamSyntax>(Node.ParameterList.Parameters.Select(PlatoParamSyntax.Create));
             StatementBody = PlatoStatementSyntax.Create(Node.Body);
             ExpressionBody = PlatoExpressionSyntax.Create(Node.ExpressionBody?.Expression);
         }
@@ -269,7 +265,7 @@ namespace PlatoGenerator
         {
             base.OnInit();
             ReturnType = PlatoTypeRefSyntax.Create(Node.Type);
-            Parameters = Node.ParameterList.Parameters.Select(PlatoParamSyntax.Create).ToList();
+            Parameters = Enumerable.ToList<PlatoParamSyntax>(Node.ParameterList.Parameters.Select(PlatoParamSyntax.Create));
             StatementBody = PlatoStatementSyntax.Create(Node.Body);
             ExpressionBody = PlatoExpressionSyntax.Create(Node.ExpressionBody?.Expression);
         }
@@ -292,7 +288,7 @@ namespace PlatoGenerator
         {
             base.OnInit();
             ReturnType = PlatoTypeRefSyntax.Create(Node.ReturnType);
-            Parameters = Node.ParameterList.Parameters.Select(PlatoParamSyntax.Create).ToList();
+            Parameters = Enumerable.ToList<PlatoParamSyntax>(Node.ParameterList.Parameters.Select(PlatoParamSyntax.Create));
             StatementBody = PlatoStatementSyntax.Create(Node.Body);
             ExpressionBody = PlatoExpressionSyntax.Create(Node.ExpressionBody?.Expression);
         }
@@ -312,7 +308,7 @@ namespace PlatoGenerator
         public override void OnInit()
         {
             base.OnInit();
-            Parameters = Node.ParameterList.Parameters.Select(PlatoParamSyntax.Create).ToList();
+            Parameters = Enumerable.ToList<PlatoParamSyntax>(Node.ParameterList.Parameters.Select(PlatoParamSyntax.Create));
             StatementBody = PlatoStatementSyntax.Create(Node.Body);
             ExpressionBody = PlatoExpressionSyntax.Create(Node.ExpressionBody?.Expression);
         }
@@ -335,13 +331,13 @@ namespace PlatoGenerator
         public override void OnInit()
         {
             base.OnInit();
-            Ctors = Node.Members.OfType<ConstructorDeclarationSyntax>().Select(PlatoConstructorSyntax.Create).ToList();
-            Methods = Node.Members.OfType<MethodDeclarationSyntax>().Select(PlatoMethodSyntax.Create).ToList();
-            Fields = Node.Members.OfType<FieldDeclarationSyntax>().Select(PlatoFieldSyntax.Create).ToList();
-            Operators = Node.Members.OfType<OperatorDeclarationSyntax>().Select(PlatoOperatorSyntax.Create).ToList();
-            Properties = Node.Members.OfType<PropertyDeclarationSyntax>().Select(PlatoPropertySyntax.Create).ToList();
-            Indexers = Node.Members.OfType<IndexerDeclarationSyntax>().Select(PlatoIndexerSyntax.Create).ToList();
-            Converters = Node.Members.OfType<ConversionOperatorDeclarationSyntax>().Select(PlatoConversionSyntax.Create).ToList();
+            Ctors = Enumerable.ToList<PlatoConstructorSyntax>(Node.Members.OfType<ConstructorDeclarationSyntax>().Select(PlatoConstructorSyntax.Create));
+            Methods = Enumerable.ToList<PlatoMethodSyntax>(Node.Members.OfType<MethodDeclarationSyntax>().Select(PlatoMethodSyntax.Create));
+            Fields = Enumerable.ToList<PlatoFieldSyntax>(Node.Members.OfType<FieldDeclarationSyntax>().Select(PlatoFieldSyntax.Create));
+            Operators = Enumerable.ToList<PlatoOperatorSyntax>(Node.Members.OfType<OperatorDeclarationSyntax>().Select(PlatoOperatorSyntax.Create));
+            Properties = Enumerable.ToList<PlatoPropertySyntax>(Node.Members.OfType<PropertyDeclarationSyntax>().Select(PlatoPropertySyntax.Create));
+            Indexers = Enumerable.ToList<PlatoIndexerSyntax>(Node.Members.OfType<IndexerDeclarationSyntax>().Select(PlatoIndexerSyntax.Create));
+            Converters = Enumerable.ToList<PlatoConversionSyntax>(Node.Members.OfType<ConversionOperatorDeclarationSyntax>().Select(PlatoConversionSyntax.Create));
         }
     }
 
@@ -350,6 +346,6 @@ namespace PlatoGenerator
         public static List<PlatoTypeSyntax> GetPlatoTypes(this IEnumerable<SyntaxTree> trees)
             => trees.SelectMany(tree =>
                 tree.GetRoot().DescendantNodes(node => !(node is TypeDeclarationSyntax))
-                    .OfType<TypeDeclarationSyntax>().Select(PlatoTypeSyntax.Create)).ToList();
+                    .OfType<TypeDeclarationSyntax>().Select(PlatoTypeSyntax.Create)).ToList<PlatoTypeSyntax>();
     }
 }
