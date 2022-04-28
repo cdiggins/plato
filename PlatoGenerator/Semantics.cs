@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using PlatoRoslynSyntaxAnalyzer;
 
 namespace PlatoGenerator
 {

@@ -1,4 +1,7 @@
-﻿namespace PlatoTestJavaScript
+﻿using System.Collections.Immutable;
+using System.Xml.Schema;
+
+namespace PlatoTestJavaScript
 {
     public interface IArray<T>
     {
@@ -32,7 +35,7 @@
         public override string ToString() => "Vector2(" + X  + "," + Y + ")";
     }
 
-    public class Vector3
+    public class Vector3 : IArray<float>
     {
         public readonly float X, Y, Z;
         public Vector3(float x = 0, float y = 0, float z = 0) => (X, Y, Z) = (x, y, z);
@@ -42,6 +45,7 @@
         public Vector3 WithZ(float z) => new(X, Y, z);
         public static implicit operator Vector3(float v) => new(v, v, v);
         public static Vector3 operator +(Vector3 q, Vector3 r) => new(q.X + r.X, q.Y + r.Y, q.Z + r.Z);
+        public static Vector3 operator -(Vector3 q, Vector3 r) => new(q.X - r.X, q.Y - r.Y, q.Z - r.Z);
         public static Vector3 operator *(Vector3 q, Vector3 r) => new(q.X * r.X, q.Y * r.Y, q.Z * r.Z);
         public static Vector3 operator /(Vector3 q, Vector3 r) => new(q.X / r.X, q.Y / r.Y, q.Z / r.Z);
         public float Dot(Vector3 v) => X * v.X + v.Y * Y + Z * v.Z;
@@ -49,9 +53,19 @@
         public float Magnitude => MathF.Sqrt(MagnitudeSquared);
         public Vector3 Normal => this / Magnitude;
         public override string ToString() => "Vector3(" + X + "," + Y + "," + Z + ")";
+        public int Count => 3;
+        public float this[int i] => i switch
+        {
+            0 => X,
+            1 => Y,
+            2 => Z,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        public Vector3 Cross(Vector3 v)
+            => new(Y* v.Z - Z* v.Y, Z* v.X - X* v.Z, X* v.Y - Y* v.X);
     }
 
-    public class Int3
+    public class Int3 : IArray<int>
     {
         public readonly int X, Y, Z;
         public Int3(int x = 0, int y = 0, int z = 0) => (X, Y, Z) = (x, y, z);
@@ -60,9 +74,17 @@
         public Int3 WithY(int y) => new(X, y, Z);
         public Int3 WithZ(int z) => new(X, Y, z);
         public override string ToString() => "Int3(" + X + "," + Y + "," + Z + ")";
+        public int Count => 3;
+        public int this[int i] => i switch
+        {
+            0 => X,
+            1 => Y,
+            2 => Z,
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
-    public class Int4
+    public class Int4 : IArray<int>
     {
         public readonly int X, Y, Z, W;
         public Int4(int x = 0, int y = 0, int z = 0, int w = 0) => (X, Y, Z, W) = (x, y, z, w);
@@ -72,28 +94,75 @@
         public Int4 WithZ(int z) => new(X, Y, z, W);
         public Int4 WithW(int w) => new(X, Y, Z, w);
         public override string ToString() => "Int4(" + X + "," + Y + "," + Z + "," + W + ")";
+        public int Count => 4;
+        public int this[int i] => i switch
+        {
+            0 => X,
+            1 => Y,
+            2 => Z,
+            3 => W,
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
-    public class TriMesh
+    public class Points
     {
-        public TriMesh(IArray<Vector3> points, IArray<Int3> indices)
-            => (Points, Indices) = (points, indices);
-        public IArray<Int3> Indices { get; }
-        public IArray<Vector3> Points { get; }
+        public Points(IArray<Vector3> positions, IArray<Vector2> uvs, IArray<Vector3> normals)
+            => (Positions, UVs, Normals) = (positions, uvs, normals);
+        public IArray<Vector3> Positions { get; }
+        public IArray<Vector2> UVs { get; }
+        public IArray<Vector3> Normals { get; }
+    }
+
+    public class TriMesh 
+    {
+        public TriMesh(Points points, IArray<Int3> faces)
+            => (Points, Faces) = (points, faces);
+        public Points Points { get; }
+        public IArray<Int3> Faces { get; }
     }
 
     public class QuadMesh
     {
-        public QuadMesh(IArray<Vector3> points, IArray<Int4> indices)
-            => (Points, Indices) = (points, indices);
-        public IArray<Vector3> Points { get; }
-        public IArray<Int4> Indices { get; }
+        public QuadMesh(Points points, IArray<Int4> faces)
+            => (Points, Faces) = (points, faces);
+        public Points Points { get; }
+        public IArray<Int4> Faces { get; }
     }
 
     public static class Extensions
     {
+        public static IArray<T> ToIArray<T>(this IReadOnlyList<T> self)
+            => self.Count.Select(i => self[i]);
+
+        // TODO: stuff like this, should probably be moved to an adapter layer. A special project for interop 
+        // with legacy code. A Plato project might not need this. Though technically this is like FFI / Interop / Marshalling
+        public static T[] ToArray<T>(this IArray<T> self)
+        {
+            var r = new T[self.Count];
+            for (var i = 0; i < self.Count; ++i)
+                r[i] = self[i];
+            return r;
+        }
+
+        public static float[] ToFloatArray(this IArray<Vector3> self)
+            => self.SelectMany(x => x).ToArray();
+
         public static IArray<T> Select<T>(this int count, Func<int, T> func)
             => new Array<T>(count, func);
+
+        public static IArray<U> SelectMany<T, U>(this IArray<T> self, Func<T, IArray<U>> func)
+        {
+            var r = new List<U>();
+            for (var i = 0; i < self.Count; ++i)
+            {
+                var tmp = func(self[i]);
+                for (var j=0; j < tmp.Count; ++j)
+                    r.Add(tmp[j]);
+            }
+
+            return r.Count.Select(i => r[i]);
+        }
 
         public static IArray<U> Select<T, U>(this IArray<T> self, Func<T, U> func)
             => self.Count.Select(i => func(self[i]));
@@ -110,31 +179,53 @@
         public static IArray<float> SampleFloats(int count, float max = 1.0f)
             => count.Select(i => max * count);
 
-        public static QuadMesh ToQuadMesh(this Func<Vector2, Vector3> func, int rows, int cols, bool wrapRows = false, bool wrapCols = false)
-            => new (
-                ComputeQuadStripUVs(rows, cols).Select(func),
-                ComputeQuadStripIndices(rows, cols, wrapRows, wrapCols));
+        public static IArray<Int3> ToTriangles(this IArray<Int4> self)
+            => self.SelectMany(f => new[] { new Int3(f.X, f.Y, f.Z), new Int3(f.Z, f.W, f.X) }.ToIArray());
+
+        public static QuadMesh ToQuadMesh(this Func<Vector2, Vector3> func, int rows, int cols)
+            => new (ComputeQuadStripPoints(func, rows, cols),
+                ComputeQuadStripIndices(rows, cols));
+
+        public static Vector3 UVToNormal(this Vector2 uv, Func<Vector2, Vector3> func, float epsilon = 0.00001f)
+        {
+            var a = func(new(uv.X + epsilon, uv.Y));
+            var b = func(new(uv.X - epsilon, uv.Y));
+            var c = func(new(uv.X, uv.Y + epsilon));
+            var d = func(new(uv.X, uv.Y - epsilon));
+            var v1 = b - a;
+            var v2 = d - c;
+            var r = v1.Cross(v2);
+            return r.Normal;
+        }
+
+        public static Points UVsToPoints(this IArray<Vector2> uvs, Func<Vector2, Vector3> func)
+            => new(uvs.Select(func), uvs, uvs.Select(uv => uv.UVToNormal(func)));
+
+        public static Points ComputeQuadStripPoints(this Func<Vector2, Vector3> func, int usegs, int vsegs)
+            => ComputeQuadStripUVs(usegs, vsegs).UVsToPoints(func);
 
         public static IArray<Vector2> ComputeQuadStripUVs(int usegs, int vsegs)
             => new Array<Vector2>(usegs * vsegs, 
-                i => new((float)i / (usegs - 1), (float)i % (vsegs - 1)));
+                i =>
+                {
+                    var row = i / vsegs;
+                    var col = i % usegs;
+                    return new((float)col / (usegs - 1), (float)row / (vsegs - 1));
+                });
 
-        public static IArray<Int4> ComputeQuadStripIndices(int usegs, int vsegs, bool wrapUSegs = false, bool wrapVSegs = false)
+        public static IArray<Int4> ComputeQuadStripIndices(int usegs, int vsegs)
         {
-            var maxUSegs = wrapUSegs ? usegs : usegs + 1;
-            var maxVSegs = wrapVSegs ? vsegs : vsegs + 1;
-
-            return new Array<Int4>(usegs * vsegs, k =>
+            return new Array<Int4>((usegs - 1) * (vsegs - 1), i =>
             {
-                var i = k / vsegs;
-                var rowA = i * maxUSegs;
-                var rowB = ((i + 1) % maxVSegs) * maxUSegs;
-
-                var j = k % usegs;
-                var colA = j;
-                var colB = (j + 1) % maxUSegs;
-
-                return new(rowA + colA, rowA + colB, rowB + colB, rowB + colA);
+                var row = i / (vsegs - 1);
+                var col = i % (usegs - 1);
+                var nextCol = (col + 1);
+                var nextRow = (row + 1);
+                var a = (row * usegs) + col;
+                var b = (row * usegs) + nextCol;
+                var c = (nextRow * usegs) + nextCol;
+                var d = (nextRow * usegs) + col;
+                return new(a, b, c, d);
             });
         }
 
@@ -160,5 +251,11 @@
             var x = new Vector3(1, 2, 3);
             var y = x + x;
         }
+
+        public static QuadMesh Torus(int rows, int cols, float radius, float tube)
+            => ToQuadMesh(uv => UvToTorus(uv, radius, tube), rows, cols);
+
+        public static int[] ToIntArray(this IArray<Int3> faces)
+            => faces.SelectMany(f => f).ToArray();
     }
 }
