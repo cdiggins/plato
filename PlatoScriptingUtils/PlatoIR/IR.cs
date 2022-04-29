@@ -21,12 +21,6 @@ using System.Collections.Generic;
 
 namespace PlatoIR
 {
-    public class SourceLocation
-    {
-        public string FileName { get; set; }
-        public int CharIndex { get; set; }
-        public int SyntaxKind { get; set; }
-    }
 
     public class IR
     { 
