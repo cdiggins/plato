@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using PlatoRoslynSyntaxAnalyzer;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using PlatoRoslynSyntaxAnalyzer;
+using System.Runtime.InteropServices;
 
 /*
  * DONE: Indexer(this) properties not generated.
@@ -88,6 +89,9 @@ namespace PlatoGenerator
 
         public string ReduceExpression(Expression expr, bool declareVar = true)
         {
+            var ds = expr.DeclarationSyntax;
+            var dsKind = ds?.Kind().ToString() ?? "unknown declaration syntax";
+
             if (expr.Operation?.Kind == OperationKind.Conversion)
             {
                 sw.WriteLine($"// Performing conversion {expr.UnconvertedType} to {expr.Type}");
@@ -95,7 +99,8 @@ namespace PlatoGenerator
 
             if (expr.Type?.ToString() != expr.UnconvertedType?.ToString())
             {
-                sw.WriteLine($"// Different types {expr.UnconvertedType} to {expr.Type}");
+                var conversion = expr.Model.Compilation.ClassifyConversion(expr.UnconvertedType, expr.Type);
+                sw.WriteLine($"// Different types {expr.UnconvertedType} to {expr.Type} declaration:{dsKind} operation:{expr.Operation?.Kind} implicit:{conversion.IsImplicit} conversion:{conversion.MethodSymbol} exists:{conversion.Exists}");
             }
 
             if (expr.Syntax is AssignmentExpressionSyntax assExpr)
@@ -121,8 +126,6 @@ namespace PlatoGenerator
 
             var childNames = expr.Children.Select(x => ReduceExpression(x)).ToList();
             var args = string.Join(",", childNames);
-            var ds = expr.DeclarationSyntax;
-            var dsKind = ds?.Kind().ToString() ?? "unknown declaration syntax";
 
             // TODO: somehow this isn't always expression syntax. I had a cast and it blew up. 
             var syntax = expr.Syntax;
