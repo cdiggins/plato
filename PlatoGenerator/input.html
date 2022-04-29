@@ -121,19 +121,19 @@ class Plato
 
     function createPlatoTorusGeometry(options)
     {
-        var torus = Extensions.ToQuadMesh_1011(x => Extensions.UvToTorus_1197(x, 5, 10), 20, 20);        
+        var torus = Extensions.ToQuadMesh_788(x => Extensions.UvToTorus_1088(x, 5, 10), 20, 20);
         var points = [];
-        for (var i=0; i < torus.Points.Count; ++i)
+        for (var i=0; i < torus.Points.Positions.Count; ++i)
         {
-            var p = Plato.At( torus.Points, i);
+            var p = Plato.At( torus.Positions.Points, i);
             points.push(p.X);
             points.push(p.Y);
             points.push(p.Z);
         }
 		var indices = [];
-        for (var i=0; i < torus.Indices.Count; ++i)
+        for (var i=0; i < torus.Faces.Count; ++i)
         {
-            var f = Plato.At(torus.Indices, i);
+            var f = Plato.At(torus.Faces, i);
             indices.push(Math.round(f.X));
             indices.push(Math.round(f.Y));
             indices.push(Math.round(f.Z));
@@ -844,13 +844,13 @@ class Plato
 			group.add( new LineSegments( geometry, lineMaterial ) );
 			group.add( new Mesh( geometry, meshMaterial ) );
 
-            var xs = Extensions.Select_952(5, x => x * 2);
+            var xs = Extensions.Select_652(5, x => x * 2);
             console.log(xs);
 
-            var torus = Extensions.ToQuadMesh_1011(x => Extensions.UvToTorus_1197(x, 10, 30), 20, 20);
+            var torus = Extensions.ToQuadMesh_788(x => Extensions.UvToTorus_1197(x, 10, 30), 20, 20);
             console.log(torus);
 
-			var pt1 = Extensions.UvToTorus_1197(new Vector2(0.1, 0.2), 10, 3);
+            var pt1 = Extensions.UvToTorus_1088(new Vector2(0.1, 0.2), 10, 3);
 			console.log(pt1);
 			const options = chooseFromHash( group );
 

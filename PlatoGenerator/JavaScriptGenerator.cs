@@ -34,9 +34,9 @@ using System.Runtime.InteropServices;
  * DONE: add casts to type definition
  * TODO: generic type constructors are missing type parameters
  * TODO: get all of the type refrences and generate the appropriate types in advance.
- * TODO: this.method calls missing ID
+ * DONE: this.method calls missing ID
  * TODO: need to generate a function for indexing. operator_Subscript
- * TODO: call cast operator function
+ * DONE: call cast operator function
  * TODO: need to explicitly cast numbers to ints when doing integers 
  * LATER TODO: handle local functions,
  * LATER TODO: anonymous types
@@ -55,11 +55,13 @@ using System.Runtime.InteropServices;
  * TODO: a tool for debugging the structure (syntax and semantics)
  * DONE: the indexer will not have an IMethodSymbol, this could cause some problems. 
  * TODO: JavaScriptGenerator is too big.
- * TODO: I need to replace a token in a file, for the generated JavaScript 
+ * DONE: I need to replace a token in a file, for the generated JavaScript 
  * DONE: I need to create the input file
  * TODO: I need to automatically launch the web-browser
  * TODO: add call when casting floats to ints 
- * TODO: handle swithc expressions
+ * DONE: handle swithc expressions
+ * TODO: test switch expression code generation
+ * DONE: 
  * 
  * NOTES:
  * - Type constructors looks like it is going to be an interesting challenge.
@@ -85,7 +87,7 @@ namespace PlatoGenerator
         // TODO: catch and deal with recursion.
         //public HashSet<FunctionDefinition> InliningFunction;
 
-        public string LogFileName = Path.Combine(Path.GetTempPath(), "plato.js");
+        public string GeneratedFile = Path.Combine(Path.GetTempPath(), "plato.js");
 
         public FunctionDefinition FindFunction(IMethodSymbol symbol)
             => symbol == null ? null : FindFunction(symbol.GetDeclaringSyntax());
@@ -93,10 +95,21 @@ namespace PlatoGenerator
         public FunctionDefinition FindFunction(SyntaxNode node)
             => node == null ? null : SyntaxToFunctions.TryGetValue(node, out var result) ? result : null;
 
+        public static string GetFunctionName(FunctionDefinition func)
+        {
+            var qualifier = func.ParentType?.Identifier != null ? $"{func.ParentType.Identifier}." : "";
+            return $"{qualifier}{func.Name}_{func.Id}";
+        }
+
         public string ReduceExpression(Expression expr, bool declareVar = true, bool conversion = false)
         {
             var ds = expr.DeclarationSyntax;
             var dsKind = ds?.Kind().ToString() ?? "unknown declaration syntax";
+
+            var exprVarName = $"var{expr.Id}";
+            FunctionDefinition def = null;
+            if (ds != null) SyntaxToFunctions.TryGetValue(ds, out def);
+            var defText = def != null ? $"{def.Name}_{def.Id}" : "";
 
             if (!conversion && expr.Conversion.Exists)
             {
@@ -105,7 +118,7 @@ namespace PlatoGenerator
                 if (conversionFunction != null)
                 {
                     var exprToConvert = ReduceExpression(expr, declareVar, true);
-                    return $"{conversionFunction.Name}_{conversionFunction.Id}({exprToConvert})";
+                    return $"({exprToConvert})";
                 }
             }
 
@@ -186,8 +199,7 @@ namespace PlatoGenerator
                                 ident = "this." + ident + "/* property */"; break;
                             case IMethodSymbol methSym:
                             {
-                                //throw new Exception("TODO: get the id");
-                                ident = "this." + ident + "/* method */";
+                                ident = $"this.{defText}";
                                 break;
                             }
                             case ITypeSymbol typeSym:
@@ -316,14 +328,7 @@ namespace PlatoGenerator
                 default:
                     // TODO: when I figure out why expressions have non-expression syntax, reinstate this check. 
                     throw new ArgumentOutOfRangeException(nameof(syntax));
-                    break;
             }
-
-            // TODO: do the same for initializers. 
-            var exprVarName = $"var{expr.Id}";
-            FunctionDefinition def = null;
-            if (ds != null) SyntaxToFunctions.TryGetValue(ds, out def);
-            var defText = def != null ? $"{def.Name}@{def.Id}" : "";
 
             var name = expr.Name;
             if (name == "#at")
@@ -365,8 +370,7 @@ namespace PlatoGenerator
                 if (def != null)
                 {
                     var invokeArgList = string.Join(", ", childNames);
-                    var classQualifier = def.ParentType?.Identifier + "." ?? "";
-                    exprValue = $"{classQualifier}{def.Name}_{def.Id}({invokeArgList})";
+                    exprValue = $"{GetFunctionName(def)}({invokeArgList})";
                 }
                 else
                 {
@@ -402,12 +406,12 @@ namespace PlatoGenerator
                 // In other-words, I can't just rely on Roslyn to tell me things... if a value can be determined by this tool, it 
                 // has to be kept. This is what the result of inlining gives us, and is a key observation of the system. 
 
-                // TODO: this means that I have to come up with a decent intermediate representation that will facilitate the work required. 
-                // Good news, is that what this system is doing looks a bit like the system that will create the intermediate representation. 
-
                 if (def != null && def.IsExtension)
                 {
                     var classQualifier = def.ParentType?.Identifier + "." ?? "";
+
+                    // TODO: this is a problem. We might be calling as a static function, 
+                    // in which case ... this is not what we really should be doing. 
 
                     var pos = childNames[0].LastIndexOf(".");
                     var stripEnding = childNames[0].Substring(0, pos);
@@ -711,13 +715,23 @@ namespace PlatoGenerator
 
             CreateLookups(context, types);
            
-            using (sw = new StreamWriter(File.Create(LogFileName)))
+            using (sw = new StreamWriter(File.Create(GeneratedFile)))
             {
                 foreach (var t in types)
                 {
                     OutputType(t);
                 }
             }
+
+            var inputFile = GeneratedFile;
+            var thisRepo = @"C:\Users\Acer\source\repos\Plato";
+            var outputFile = Path.Combine(thisRepo, "JavaScriptTest", "output.html");
+            var templateFile = Path.Combine(thisRepo, "PlatoGenerator", "input.html");
+
+            var inputText = File.ReadAllText(inputFile);
+            var templateText = File.ReadAllText(templateFile);
+            var outputText = templateText.Replace("{{REPLACEME}}", inputText);
+            File.WriteAllText(outputFile, outputText);
         }
     }
 }
