@@ -60,6 +60,7 @@ namespace PlatoGenerator
         public ITypeSymbol Type;
         public SyntaxNode DeclarationSyntax;
         public IOperation Operation;
+        public Conversion Conversion;
 
         public object Value;
         public Expression This;
@@ -141,6 +142,10 @@ namespace PlatoGenerator
             var decl = symbol?.GetDeclaringSyntax();
             var op = model.GetOperation(syntax);
 
+            var conversion = unconvertedType != null && convertedType != null 
+                ? model.Compilation.ClassifyConversion(unconvertedType, convertedType)
+                : new Conversion();
+
             var r = new Expression
             {
                 Syntax = syntax,
@@ -150,6 +155,7 @@ namespace PlatoGenerator
                 UnconvertedType = unconvertedType,
                 DeclarationSyntax = decl,
                 Operation = op,
+                Conversion = conversion,
             };           
 
             if (!(syntax is ExpressionSyntax))

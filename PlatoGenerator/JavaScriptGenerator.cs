@@ -87,20 +87,26 @@ namespace PlatoGenerator
 
         public string LogFileName = Path.Combine(Path.GetTempPath(), "plato.js");
 
-        public string ReduceExpression(Expression expr, bool declareVar = true)
+        public FunctionDefinition FindFunction(IMethodSymbol symbol)
+            => symbol == null ? null : FindFunction(symbol.GetDeclaringSyntax());
+
+        public FunctionDefinition FindFunction(SyntaxNode node)
+            => node == null ? null : SyntaxToFunctions.TryGetValue(node, out var result) ? result : null;
+
+        public string ReduceExpression(Expression expr, bool declareVar = true, bool conversion = false)
         {
             var ds = expr.DeclarationSyntax;
             var dsKind = ds?.Kind().ToString() ?? "unknown declaration syntax";
 
-            if (expr.Operation?.Kind == OperationKind.Conversion)
+            if (!conversion && expr.Conversion.Exists)
             {
-                sw.WriteLine($"// Performing conversion {expr.UnconvertedType} to {expr.Type}");
-            }
-
-            if (expr.Type?.ToString() != expr.UnconvertedType?.ToString())
-            {
-                var conversion = expr.Model.Compilation.ClassifyConversion(expr.UnconvertedType, expr.Type);
-                sw.WriteLine($"// Different types {expr.UnconvertedType} to {expr.Type} declaration:{dsKind} operation:{expr.Operation?.Kind} implicit:{conversion.IsImplicit} conversion:{conversion.MethodSymbol} exists:{conversion.Exists}");
+                var conversionFunction = FindFunction(expr.Conversion.MethodSymbol);
+                
+                if (conversionFunction != null)
+                {
+                    var exprToConvert = ReduceExpression(expr, declareVar, true);
+                    return $"{conversionFunction.Name}_{conversionFunction.Id}({exprToConvert})";
+                }
             }
 
             if (expr.Syntax is AssignmentExpressionSyntax assExpr)
@@ -398,7 +404,6 @@ namespace PlatoGenerator
 
                 // TODO: this means that I have to come up with a decent intermediate representation that will facilitate the work required. 
                 // Good news, is that what this system is doing looks a bit like the system that will create the intermediate representation. 
-
 
                 if (def != null && def.IsExtension)
                 {
