@@ -479,7 +479,7 @@ namespace PlatoGenerator
             if (st == null)
                 return;
 
-            sw.WriteLine($"{indent}{st.Node.GetType().Name}@{st.Id}");
+            sw.WriteLine($"{indent}{st.Node.GetType().Name}");
 
             //var statementSymbol = model.GetSymbolInfo(st.Node).Symbol;
             //sw.WriteLine($"Has statement symbol {statementSymbol}");

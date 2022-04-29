@@ -15,8 +15,5 @@ namespace PlatoGenerator
             if (refs.Count > 1) throw new Exception("Partial declaration not currently supported");
             return refs[0];
         }
-
-        public static PlatoSyntax GetDeclaringPlatoSyntax(this ISymbol symbol)
-            => PlatoSyntax.GetSyntax(GetDeclaringSyntax(symbol));
     }
 }

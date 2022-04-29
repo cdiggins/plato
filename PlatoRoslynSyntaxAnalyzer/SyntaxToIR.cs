@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using PlatoIR;
 
 namespace PlatoRoslynSyntaxAnalyzer
 {
@@ -8,7 +9,7 @@ namespace PlatoRoslynSyntaxAnalyzer
     {
         public static IR ToIR(PlatoSyntax syntax, IRBuilder builder)
         {
-
+            throw new NotImplementedException();
         }
 
     }
