@@ -45,7 +45,21 @@ using PlatoRoslynSyntaxAnalyzer;
  * LATER TODO: reduce number of expression calls
  * LATER TODO: add ids to parameter references 
  * LATER TODO: add ids to local references
- *
+ * TODO: separate the function defintion gathering (semantic analysis)
+ * TODO: for function and property definition creation use the PlatoSyntax objects 
+ * TODO: get resharper
+ * TODO: find a way to better track my to-do list
+ * TODO: generate output from the intermediate representation
+ * TODO: have a better way of reporting errors 
+ * TODO: a tool for debugging the structure (syntax and semantics)
+ * DONE: the indexer will not have an IMethodSymbol, this could cause some problems. 
+ * TODO: JavaScriptGenerator is too big.
+ * TODO: I need to replace a token in a file, for the generated JavaScript 
+ * DONE: I need to create the input file
+ * TODO: I need to automatically launch the web-browser
+ * TODO: add call when casting floats to ints 
+ * TODO: handle swithc expressions
+ * 
  * NOTES:
  * - Type constructors looks like it is going to be an interesting challenge.
  * I think I need to pre-construct all of the types.
@@ -74,6 +88,16 @@ namespace PlatoGenerator
 
         public string ReduceExpression(Expression expr, bool declareVar = true)
         {
+            if (expr.Operation?.Kind == OperationKind.Conversion)
+            {
+                sw.WriteLine($"// Performing conversion {expr.UnconvertedType} to {expr.Type}");
+            }
+
+            if (expr.Type?.ToString() != expr.UnconvertedType?.ToString())
+            {
+                sw.WriteLine($"// Different types {expr.UnconvertedType} to {expr.Type}");
+            }
+
             if (expr.Syntax is AssignmentExpressionSyntax assExpr)
             {
                 var children = expr.Children.ToList();
@@ -153,7 +177,7 @@ namespace PlatoGenerator
                                 ident = "this." + ident + "/* property */"; break;
                             case IMethodSymbol methSym:
                             {
-                                throw new Exception("TODO: get the id");
+                                //throw new Exception("TODO: get the id");
                                 ident = "this." + ident + "/* method */";
                                 break;
                             }
@@ -300,6 +324,10 @@ namespace PlatoGenerator
             else if (name == "#tuple")
             {
                 name = "Plato.Tuple";
+            }
+            else if (name == "#array")
+            {
+                name = "Plato.Array";
             }
             else if (name == "#interpolatedstring")
             {
@@ -650,6 +678,12 @@ namespace PlatoGenerator
                 {
                     var func = FunctionDefinition.Create(c.Node, model);
                     SyntaxToFunctions.Add(c.Node, func);
+                }
+
+                foreach (var i in t.Indexers)
+                {
+                    var func = FunctionDefinition.Create(i.Node, model);
+                    SyntaxToFunctions.Add(i.Node, func);
                 }
 
                 foreach (var p in t.Properties)

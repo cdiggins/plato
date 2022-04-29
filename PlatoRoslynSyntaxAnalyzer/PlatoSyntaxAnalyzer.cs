@@ -106,7 +106,7 @@ namespace PlatoRoslynSyntaxAnalyzer
         public override void OnInit()
         {
             base.OnInit();
-            Arguments = Enumerable.ToList<PlatoArgSyntax>(Node.ArgumentList?.Arguments.Select(PlatoArgSyntax.Create)) ?? new List<PlatoArgSyntax>();
+            Arguments = Enumerable.ToList<PlatoArgSyntax>(Node.ArgumentList?.Arguments.Select(PlatoArgSyntax.Create) ?? new List<PlatoArgSyntax>());
             Type = PlatoTypeRefSyntax.Create((Node.Parent as VariableDeclarationSyntax)?.Type);
             Initializer = PlatoExpressionSyntax.Create(Node.Initializer?.Value);
         }
@@ -212,7 +212,6 @@ namespace PlatoRoslynSyntaxAnalyzer
             Type = PlatoTypeRefSyntax.Create(Node.Type);
         }
     }
-
 
     public class PlatoIndexerSyntax : PlatoSyntax<IndexerDeclarationSyntax, PlatoIndexerSyntax>
     {

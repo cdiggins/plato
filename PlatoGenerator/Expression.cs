@@ -56,8 +56,10 @@ namespace PlatoGenerator
         public SemanticModel Model;
         public SyntaxNode Syntax;
         public ISymbol Symbol;
+        public ITypeSymbol UnconvertedType;
         public ITypeSymbol Type;
         public SyntaxNode DeclarationSyntax;
+        public IOperation Operation;
 
         public object Value;
         public Expression This;
@@ -133,17 +135,22 @@ namespace PlatoGenerator
 
             model = model.Compilation.GetSemanticModel(syntax.SyntaxTree);
             var symbol = model.GetSymbolInfo(syntax).Symbol;
-            var type = model.GetTypeInfo(syntax).ConvertedType;
+            var typeInfo = model.GetTypeInfo(syntax);
+            var unconvertedType = typeInfo.Type;
+            var convertedType = typeInfo.ConvertedType;
             var decl = symbol?.GetDeclaringSyntax();
+            var op = model.GetOperation(syntax);
 
             var r = new Expression
             {
                 Syntax = syntax,
                 Model = model,
                 Symbol = symbol,
-                Type = type,
+                Type = convertedType,
+                UnconvertedType = unconvertedType,
                 DeclarationSyntax = decl,
-            };
+                Operation = op,
+            };           
 
             if (!(syntax is ExpressionSyntax))
             {
@@ -199,6 +206,15 @@ namespace PlatoGenerator
                     if (argumentSyntax.NameColon != null)
                         throw new NotImplementedException("Named arguments not supported yet");
                     return argumentSyntax.Expression.CreateExpression(model);
+                }
+                else if (syntax is ConstantPatternSyntax constantPatternSyntax)
+                {
+                    return CreateExpression(constantPatternSyntax.Expression, model);
+                }
+                else if (syntax is DiscardPatternSyntax discardPatternSyntax)
+                {
+                    r.Name = "#discard";
+                    return r;
                 }
                 else
                 {
@@ -287,6 +303,8 @@ namespace PlatoGenerator
                         break;
 
                     case ImplicitArrayCreationExpressionSyntax implicitArrayCreation:
+                        r.Name = "#array";
+                        r.AddArguments(implicitArrayCreation.Initializer.Expressions, model);
                         break;
 
                     case ImplicitElementAccessSyntax implicitElementAccess:
@@ -367,6 +385,12 @@ namespace PlatoGenerator
                         break;
 
                     case SwitchExpressionSyntax switchExpression:
+                        r.Name = "#switch";
+                        r.Arguments.Add(CreateExpression(switchExpression.GoverningExpression, model));
+                        foreach (var arm in switchExpression.Arms) {
+                            r.Arguments.Add(CreateExpression(arm.Expression, model));
+                            r.Arguments.Add(CreateExpression(arm.Pattern, model));
+                        };
                         break;
 
                     case ThisExpressionSyntax thisExpression:

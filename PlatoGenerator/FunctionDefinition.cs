@@ -162,6 +162,8 @@ namespace PlatoGenerator
             return r;
         }
 
+        public static FunctionDefinition Create(IndexerDeclarationSyntax indexer, SemanticModel model)
+            => indexer.GetFunctionDefinition(model);
 
         // TODO: get captured variables! 
         public static FunctionDefinition Create(LocalFunctionStatementSyntax method, SemanticModel model)

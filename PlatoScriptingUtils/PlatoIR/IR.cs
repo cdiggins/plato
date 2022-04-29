@@ -53,7 +53,7 @@ namespace PlatoIR
 
     public class TypedNamedIR : NamedIR
     {
-        public TypeIR Type { get; }
+        public TypeDefinitionIR Type { get; }
     }
 
     public class FunctionIR : TypedNamedIR
@@ -62,7 +62,7 @@ namespace PlatoIR
         public StatementIR Body { get; set; }
         public List<TypeParameterIR> TypeParameters { get; } = new List<TypeParameterIR>();
         public bool IsStatic { get; set; }
-        public TypeIR ReturnType { get; set; }
+        public TypeDefinitionIR ReturnType { get; set; }
     }
 
     public class MethodIR : FunctionIR
@@ -71,19 +71,26 @@ namespace PlatoIR
 
     public class ConstructorIR : FunctionIR
     {
-        public TypeIR Type { get; set; }
+        public TypeDefinitionIR Type { get; set; }
     }
 
     public class LocalFunctionIR : FunctionIR
     { }
 
-    public class ClassIR : TypeIR
+    public class ClassIR : TypeDefinitionIR
     {
+        public ClassIR BaseClass { get; set; }
+        public List<InterfaceIR> Interface { get; } = new List<InterfaceIR>(); 
         public List<FieldIR> Fields { get; } = new List<FieldIR>();
         public List<MethodIR> Methods { get; } = new List<MethodIR>();
         public List<ConstructorIR> Constructors { get; } = new List<ConstructorIR>();
         public List<PropertyIR> Properties { get; } = new List<PropertyIR>();
         public List<IndexerIR> Indexers { get; } = new List<IndexerIR>();
+    }
+
+    public class InterfaceIR : TypeDefinitionIR
+    {
+        public List<InterfaceIR> Interfaces { get; } = new List<InterfaceIR>();
     }
 
     public class FieldIR : TypedNamedIR
@@ -93,14 +100,20 @@ namespace PlatoIR
 
     public class PropertyIR : TypedNamedIR 
     {
-        public MethodIR Getter { get; }
-        public bool HasInit { get; }
-        public bool IsStatic { get; }
+        public MethodIR Getter { get; set; }
+        public bool HasInit { get; set; }
+        public bool IsStatic { get; set; }
     }
 
     public class IndexerIR : TypedNamedIR 
     {
         public MethodIR Getter { get; set; }
+    }
+
+    public class ConverterIR : TypedNamedIR
+    {
+        public MethodIR Method { get; set; }
+        public bool IsImplicit { get; set; }
     }
     
     public class StatementIR : DeclarationIR { }
@@ -113,7 +126,7 @@ namespace PlatoIR
     }
     public class ExpressionIR : IR 
     {
-        public TypeIR Type { get; set; }
+        public TypeDefinitionIR Type { get; set; }
     }
 
     public class ThrowExpressionIR : IR
@@ -161,12 +174,12 @@ namespace PlatoIR
     {
         public override string Name => Method.Name;
         public MethodIR Method { get; set; }
-        public List<TypeIR> TypeArguments { get; } = new List<TypeIR>();
+        public List<TypeDefinitionIR> TypeArguments { get; } = new List<TypeDefinitionIR>();
     }
 
     public class TypeReferenceIR : ExpressionIR
     {
-        public List<TypeIR> TypeArguments { get; } = new List<TypeIR>();
+        public List<TypeDefinitionIR> TypeArguments { get; } = new List<TypeDefinitionIR>();
     }
 
     public class LocalReferenceIR : ExpressionIR
@@ -227,7 +240,7 @@ namespace PlatoIR
         public List<StatementIR> Statements { get; } = new List<StatementIR>();
     }
 
-    public class TypeIR : NamedIR
+    public class TypeDefinitionIR : NamedIR
     {
         public List<TypeParameterIR> TypeParameters { get; } = new List<TypeParameterIR>();
     }
@@ -238,7 +251,7 @@ namespace PlatoIR
     public class ParameterIR : TypedNamedIR 
     { }
 
-    public class PrimitiveTypeIR : TypeIR { }
+    public class PrimitiveTypeIR : TypeDefinitionIR { }
     
     public class LiteralIR : ExpressionIR 
     {
