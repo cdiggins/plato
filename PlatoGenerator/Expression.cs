@@ -85,27 +85,7 @@ namespace PlatoGenerator
         }
         public bool IsMethod => Symbol is IMethodSymbol;
 
-        public ITypeSymbol GetExpressionType()
-        {
-            /*
-            {
-                // NOTE: this returns an interface sometimes, not the actual type returned by the constructor.
-                // var expressionType = expr.Type;
-                var sym = expr.Model.GetSymbolInfo(objectCreationExpressionSyntax).Symbol;
-                // TODO: get the type ID. I currently don't have the PlatoType.
-                sw.WriteLine($"// Symbol{sym?.Name} {sym?.Kind}");
-                if (!(sym is IMethodSymbol method))
-                    throw new Exception("Could not find appropriate constructor method for");
-                // NOTE: this returns void 
-                //var ctorReturnType = method.ReturnType;
-
-                // This works because it is the "unconverted" type. 
-                var type = expr.Model.GetTypeInfo(objectCreationExpressionSyntax).Type;
-                return $"new {type?.Name}({args})";
-            }
-            */
-            return Model.GetTypeInfo(Syntax).Type;
-        }
+        public ITypeSymbol GetExpressionType()  => Model.GetTypeInfo(Syntax).Type;
     }
 
     public static class ExpressionExtensions

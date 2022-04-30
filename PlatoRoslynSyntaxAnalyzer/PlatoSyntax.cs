@@ -15,14 +15,6 @@ namespace PlatoRoslynSyntaxAnalyzer
     public abstract class PlatoSyntax
     {
         public abstract SyntaxNode GetNode();
-
-        /*
-        public static PlatoSyntax Create(SyntaxNode node)
-        {
-            switch (node)
-            {
-            }
-        }*/
     }
 
     public class PlatoSyntax<T> : PlatoSyntax where T : SyntaxNode
@@ -36,6 +28,85 @@ namespace PlatoRoslynSyntaxAnalyzer
     {
         public PlatoExpressionSyntax(ExpressionSyntax node) : base(node)
         {
+            switch (node)
+            {
+                // Unsupported expressions
+                case AwaitExpressionSyntax awaitExpressionSyntax:
+                case AnonymousMethodExpressionSyntax anonymousMethodExpressionSyntax:
+                case CheckedExpressionSyntax checkedExpressionSyntax:
+                case ImplicitStackAllocArrayCreationExpressionSyntax implicitStackAllocArrayCreationExpressionSyntax:
+                case PointerTypeSyntax pointerTypeSyntax:
+                case QueryExpressionSyntax queryExpressionSyntax:
+                case RangeExpressionSyntax rangeExpressionSyntax:
+                case RefExpressionSyntax refExpressionSyntax:
+                case RefTypeExpressionSyntax refTypeExpressionSyntax:
+                case RefTypeSyntax refTypeSyntax:
+                case RefValueExpressionSyntax refValueExpressionSyntax:
+                case SizeOfExpressionSyntax sizeOfExpressionSyntax:
+                case StackAllocArrayCreationExpressionSyntax stackAllocArrayCreationExpressionSyntax:
+                case WithExpressionSyntax withExpressionSyntax:
+                case FunctionPointerTypeSyntax functionPointerTypeSyntax:
+                    node.UnsupportedExpression();
+                    break;
+
+                // Supported expressions
+                case AliasQualifiedNameSyntax aliasQualifiedNameSyntax:
+                case AnonymousObjectCreationExpressionSyntax anonymousObjectCreationExpressionSyntax:
+                case ArrayCreationExpressionSyntax arrayCreationExpressionSyntax:
+                case ArrayTypeSyntax arrayTypeSyntax:
+                case AssignmentExpressionSyntax assignmentExpressionSyntax:
+                case BaseExpressionSyntax baseExpressionSyntax:
+                case BinaryExpressionSyntax binaryExpressionSyntax:
+                case CastExpressionSyntax castExpressionSyntax:
+                case ConditionalAccessExpressionSyntax conditionalAccessExpressionSyntax:
+                case ConditionalExpressionSyntax conditionalExpressionSyntax:
+                case DeclarationExpressionSyntax declarationExpressionSyntax:
+                case DefaultExpressionSyntax defaultExpressionSyntax:
+                case ElementAccessExpressionSyntax elementAccessExpressionSyntax:
+                case ElementBindingExpressionSyntax elementBindingExpressionSyntax:
+                case GenericNameSyntax genericNameSyntax:
+                case IdentifierNameSyntax identifierNameSyntax:
+                case ImplicitArrayCreationExpressionSyntax implicitArrayCreationExpressionSyntax:
+                case ImplicitElementAccessSyntax implicitElementAccessSyntax:
+                case ImplicitObjectCreationExpressionSyntax implicitObjectCreationExpressionSyntax:
+                case InitializerExpressionSyntax initializerExpressionSyntax:
+                case InterpolatedStringExpressionSyntax interpolatedStringExpressionSyntax:
+                case InvocationExpressionSyntax invocationExpressionSyntax:
+                case IsPatternExpressionSyntax isPatternExpressionSyntax:
+                case LiteralExpressionSyntax literalExpressionSyntax:
+                case MakeRefExpressionSyntax makeRefExpressionSyntax:
+                case MemberAccessExpressionSyntax memberAccessExpressionSyntax:
+                case MemberBindingExpressionSyntax memberBindingExpressionSyntax:
+                case NullableTypeSyntax nullableTypeSyntax:
+                case ObjectCreationExpressionSyntax objectCreationExpressionSyntax:
+                case OmittedArraySizeExpressionSyntax omittedArraySizeExpressionSyntax:
+                case OmittedTypeArgumentSyntax omittedTypeArgumentSyntax:
+                case ParenthesizedExpressionSyntax parenthesizedExpressionSyntax:
+                case ParenthesizedLambdaExpressionSyntax parenthesizedLambdaExpressionSyntax:
+                case PostfixUnaryExpressionSyntax postfixUnaryExpressionSyntax:
+                case PredefinedTypeSyntax predefinedTypeSyntax:
+                case PrefixUnaryExpressionSyntax prefixUnaryExpressionSyntax:
+                case QualifiedNameSyntax qualifiedNameSyntax:
+                case SimpleLambdaExpressionSyntax simpleLambdaExpressionSyntax:
+                case SwitchExpressionSyntax switchExpressionSyntax:
+                case ThisExpressionSyntax thisExpressionSyntax:
+                case ThrowExpressionSyntax throwExpressionSyntax:
+                case TupleExpressionSyntax tupleExpressionSyntax:
+                case TupleTypeSyntax tupleTypeSyntax:
+                case TypeOfExpressionSyntax typeOfExpressionSyntax:
+                case BaseObjectCreationExpressionSyntax baseObjectCreationExpressionSyntax:
+                case InstanceExpressionSyntax instanceExpressionSyntax:
+                case LambdaExpressionSyntax lambdaExpressionSyntax:
+                case SimpleNameSyntax simpleNameSyntax:
+                case AnonymousFunctionExpressionSyntax anonymousFunctionExpressionSyntax:
+                case NameSyntax nameSyntax:
+                case TypeSyntax typeSyntax:
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(node));
+            }
+
             ChildExpressions = node.ChildNodes().OfType<ExpressionSyntax>().Select(Create).ToList();
             Variables = node.ChildNodes().OfType<VariableDeclaratorSyntax>().Select(PlatoVariableSyntax.Create).ToList();
         }
@@ -77,13 +148,49 @@ namespace PlatoRoslynSyntaxAnalyzer
 
         public PlatoStatementSyntax(StatementSyntax node) : base(node)
         {
+            switch (node)
+            {
+                // Supported statements
+                case BlockSyntax blockSyntax:
+                case DoStatementSyntax doStatementSyntax:
+                case ExpressionStatementSyntax expressionStatementSyntax:
+                case ForStatementSyntax forStatementSyntax:
+                case WhileStatementSyntax whileStatementSyntax:
+                case IfStatementSyntax ifStatementSyntax:
+                case ReturnStatementSyntax returnStatementSyntax:
+                case LocalDeclarationStatementSyntax localDeclarationStatementSyntax:
+                case LocalFunctionStatementSyntax localFunctionStatementSyntax:
+                case ThrowStatementSyntax throwStatementSyntax:
+                    break;
+
+                // Unsupported statements
+                case BreakStatementSyntax breakStatementSyntax:
+                case CheckedStatementSyntax checkedStatementSyntax:
+                case ForEachStatementSyntax forEachStatementSyntax:
+                case ForEachVariableStatementSyntax forEachVariableStatementSyntax:
+                case CommonForEachStatementSyntax commonForEachStatementSyntax:
+                case ContinueStatementSyntax continueStatementSyntax:
+                case FixedStatementSyntax fixedStatementSyntax:
+                case GotoStatementSyntax gotoStatementSyntax:
+                case LabeledStatementSyntax labeledStatementSyntax:
+                case LockStatementSyntax lockStatementSyntax:
+                case SwitchStatementSyntax switchStatementSyntax:
+                case TryStatementSyntax tryStatementSyntax:
+                case UnsafeStatementSyntax unsafeStatementSyntax:
+                case UsingStatementSyntax usingStatementSyntax:
+                case YieldStatementSyntax yieldStatementSyntax:
+                    node.UnsupportedStatement();
+                    break;
+
+                default:
+                    node.UnrecognizedStatement();
+                    break;
+            }
+
             ChildStatements = node.ChildNodes().OfType<StatementSyntax>().Select(Create).ToList();
             ChildExpressions = node.ChildNodes().OfType<ExpressionSyntax>().Select(PlatoExpressionSyntax.Create).ToList();
             ChildTypes = node.ChildNodes().OfType<TypeDeclarationSyntax>().Select(PlatoTypeSyntax.Create).ToList();
             Variables = node.ChildNodes().OfType<VariableDeclaratorSyntax>().Select(PlatoVariableSyntax.Create).ToList();
-            
-            // TODO: special processing of LocalFunctionStatementSyntax, which basically needs to be converted into a lambda
-            //
         }
     }
 
@@ -240,9 +347,8 @@ namespace PlatoRoslynSyntaxAnalyzer
             => new PlatoOperatorSyntax(node);
     }
 
-    public class PlatoConversionSyntax : PlatoMemberSyntax<ConversionOperatorDeclarationSyntax>, INamed
+    public class PlatoConversionSyntax : PlatoMemberSyntax<ConversionOperatorDeclarationSyntax>
     {
-        public string Name => "#castoperator";
         public bool IsImplicit => Node.ImplicitOrExplicitKeyword.ToString() == "implicit";
         public PlatoStatementSyntax StatementBody { get; }
         public PlatoExpressionSyntax ExpressionBody { get; }
@@ -284,7 +390,6 @@ namespace PlatoRoslynSyntaxAnalyzer
             => new PlatoMethodSyntax(node);
     }
 
-
     public class PlatoConstructorSyntax : PlatoMemberSyntax<ConstructorDeclarationSyntax>
     {
         public PlatoStatementSyntax StatementBody { get; }
@@ -317,6 +422,8 @@ namespace PlatoRoslynSyntaxAnalyzer
 
         public PlatoTypeSyntax(TypeDeclarationSyntax node) : base(node)
         {
+            node.SupportedType(Kind == "class" || Kind == "enum" || Kind == "interface");
+
             Ctors = Node.Members.OfType<ConstructorDeclarationSyntax>().Select(PlatoConstructorSyntax.Create).ToList();
             Methods = Node.Members.OfType<MethodDeclarationSyntax>().Select(PlatoMethodSyntax.Create).ToList();
             Fields = Node.Members.OfType<FieldDeclarationSyntax>().Select(PlatoFieldSyntax.Create).ToList();

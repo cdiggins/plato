@@ -115,7 +115,6 @@ namespace PlatoGenerator
                     };
                     break;
 
-
                 case IfStatementSyntax ifStatementSyntax:
                     r = new IfStatement
                     {
@@ -145,39 +144,8 @@ namespace PlatoGenerator
                     r = throwStatementSyntax.Expression.CreateExpression(model).ToThrowStatement();
                     break;
 
-                case BreakStatementSyntax breakStatementSyntax:
-
-                case CheckedStatementSyntax checkedStatementSyntax:
-
-                case ForEachStatementSyntax forEachStatementSyntax:
-
-                case ForEachVariableStatementSyntax forEachVariableStatementSyntax:
-
-                case CommonForEachStatementSyntax commonForEachStatementSyntax:
-
-                case ContinueStatementSyntax continueStatementSyntax:
-
-                case FixedStatementSyntax fixedStatementSyntax:
-
-                case GotoStatementSyntax gotoStatementSyntax:
-
-                case LabeledStatementSyntax labeledStatementSyntax:
-
-                case LockStatementSyntax lockStatementSyntax:
-
-                case SwitchStatementSyntax switchStatementSyntax:
-
-                case TryStatementSyntax tryStatementSyntax:
-
-                case UnsafeStatementSyntax unsafeStatementSyntax:
-
-                case UsingStatementSyntax usingStatementSyntax:
-
-                case YieldStatementSyntax yieldStatementSyntax:
-                    break;
-
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new Exception("Unexpected statement type");
             }
             r.Model = model;
             r.Syntax = syntax;

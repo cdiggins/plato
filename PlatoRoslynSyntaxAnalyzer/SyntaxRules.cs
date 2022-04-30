@@ -1,11 +1,12 @@
 ﻿using System;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace PlatoRoslynSyntaxAnalyzer
 {
     public static class SyntaxRules
     {
-        public static bool Throw(SyntaxNode node, string msg) => throw new Exception($"Unsupported syntax: {msg}");
+        public static bool Throw(SyntaxNode node, string msg) => throw new Exception($"Unsupported syntax {msg} at {node}");
 
         /// <summary>
         /// Plato will probably never support support ref parameters. They can lead to hard to read non-fluent code. 
@@ -49,6 +50,29 @@ namespace PlatoRoslynSyntaxAnalyzer
         /// </summary>
         public static bool IndexerHasSingleParameter(this SyntaxNode node, bool condition) => condition || Throw(node, "indexer with number of parameters other than one");
 
+        /// <summary>
+        /// Used for signaling unrecognized statement types
+        /// </summary>
+        public static bool UnrecognizedStatement(this StatementSyntax node) => Throw(node, "unrecognized statement");
 
+        /// <summary>
+        /// Used for signaling unsupported statement types
+        /// </summary>
+        public static bool UnsupportedStatement(this StatementSyntax node) => Throw(node, "unsupported statement");
+
+        /// <summary>
+        /// Used for signaling unrecognized expression types
+        /// </summary>
+        public static bool UnrecognizedExpression(this ExpressionSyntax node) => Throw(node, "unrecognized expression");
+
+        /// <summary>
+        /// Used for signaling unsupported expression types
+        /// </summary>
+        public static bool UnsupportedExpression(this ExpressionSyntax node) => Throw(node, "unsupported exporession");
+
+        /// <summary>
+        /// Unrecognized type declaration
+        /// </summary>
+        public static bool SupportedType(this TypeDeclarationSyntax node, bool condition) => condition || Throw(node, "unrecognized type");
     }
 }
