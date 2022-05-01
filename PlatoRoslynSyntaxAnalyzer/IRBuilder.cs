@@ -13,16 +13,24 @@ namespace PlatoRoslynSyntaxAnalyzer
         public readonly Dictionary<(TextSpan, SyntaxKind), DeclarationIR> Declarations 
             = new Dictionary<(TextSpan, SyntaxKind), DeclarationIR>();
 
-        public readonly Dictionary<(TextSpan, SyntaxKind), IR> NonDeclarations
-            = new Dictionary<(TextSpan, SyntaxKind), IR>();
+        public readonly Dictionary<(TextSpan, SyntaxKind), SyntaxNode> SyntaxNodes
+            = new Dictionary<(TextSpan, SyntaxKind), SyntaxNode>();
 
-        public IRBuilder AddDeclaration(SyntaxNode node, DeclarationIR ir)
+        public T AddIR<T>(PlatoSyntax syntax, T ir) where T : IR
+            => AddIR<T>(syntax.GetNode(), ir);
+
+        public T AddIR<T>(SyntaxNode node, T ir) where T: IR
         {
             Debug.Assert(ir.Id == 0);
-            Debug.Assert(!Declarations.ContainsKey(node.ToKey()));
-            ir.Id = Declarations.Count;
-            Declarations.Add(node.ToKey(), ir);
-            return this;
+            if (ir is DeclarationIR declarationIr)
+            {
+                Debug.Assert(!Declarations.ContainsKey(node.ToKey()));
+                ir.Id = Declarations.Count;
+                var key = node.ToKey();
+                Declarations.Add(key, declarationIr);
+                SyntaxNodes.Add(key, node);
+            }
+            return ir;
         }
 
         public IR GetIR(SyntaxNode node)

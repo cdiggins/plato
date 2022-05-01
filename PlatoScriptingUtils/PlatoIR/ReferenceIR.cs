@@ -34,14 +34,14 @@ namespace PlatoIR
     {
         public override string Name => Method.Name;
         public MethodIR Method { get; set; }
-        public List<TypeIR> TypeArguments { get; } = new List<TypeIR>();
+        public List<TypeDeclarationIR> TypeArguments { get; } = new List<TypeDeclarationIR>();
     }
 
     public class TypeReferenceIR : ReferenceIR
     {
-        public override string Name => ReferencedType.Name;
-        public TypeIR ReferencedType { get; set; }
-        public List<TypeIR> TypeArguments { get; } = new List<TypeIR>();
+        public override string Name => ReferencedTypeDeclaration.Name;
+        public TypeDeclarationIR ReferencedTypeDeclaration { get; set; }
+        public List<TypeDeclarationIR> TypeArguments { get; } = new List<TypeDeclarationIR>();
     }
 
     public class VariableReferenceIR : ReferenceIR
@@ -58,7 +58,7 @@ namespace PlatoIR
 
     public class TypeParameterReferenceIR : ReferenceIR
     {
-        public override string Name => TypeParameter.Name;
-        public TypeParameterIR TypeParameter { get; set; }
+        public override string Name => TypeParameterDeclaration.Name;
+        public TypeParameterDeclarationIR TypeParameterDeclaration { get; set; }
     }
 }

@@ -243,6 +243,11 @@ namespace PlatoRoslynSyntaxAnalyzer
         public bool IsStatic => Node.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword));
     }
 
+    public class PlatoTypeParameterSyntax : PlatoSyntax<TypeParameterSyntax>
+    {
+        public PlatoTypeParameterSyntax(TypeParameterSyntax node) : base(node) { }
+    }
+
     public class PlatoFieldSyntax : PlatoMemberSyntax<FieldDeclarationSyntax>
     {
         public IReadOnlyList<PlatoVariableSyntax> Variables { get; }
@@ -419,6 +424,7 @@ namespace PlatoRoslynSyntaxAnalyzer
         public IReadOnlyList<PlatoConstructorSyntax> Ctors { get; }
         public IReadOnlyList<PlatoIndexerSyntax> Indexers { get; }
         public IReadOnlyList<PlatoConversionSyntax> Converters { get; }
+        public IReadOnlyList<PlatoTypeParameterSyntax> TypeParameters { get; }
 
         public PlatoTypeSyntax(TypeDeclarationSyntax node) : base(node)
         {
@@ -431,6 +437,7 @@ namespace PlatoRoslynSyntaxAnalyzer
             Properties = Node.Members.OfType<PropertyDeclarationSyntax>().Select(PlatoPropertySyntax.Create).ToList();
             Indexers = Node.Members.OfType<IndexerDeclarationSyntax>().Select(PlatoIndexerSyntax.Create).ToList();
             Converters = Node.Members.OfType<ConversionOperatorDeclarationSyntax>().Select(PlatoConversionSyntax.Create).ToList();
+            TypeParameters = Node.Members.OfType<TypeParameterSyntax>().Select(PlatoTypeParameterSyntax.Create).ToList();
         }
 
         public static PlatoTypeSyntax Create(TypeDeclarationSyntax node) 

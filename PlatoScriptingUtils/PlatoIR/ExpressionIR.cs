@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
 namespace PlatoIR
 {
     public class ExpressionIR : IR 
     {
-        public TypeIR Type { get; set; }
+        public TypeDeclarationIR TypeDeclaration { get; set; }
         public List<ExpressionIR> Args { get; set; } = new List<ExpressionIR>();
     }
 
@@ -24,14 +21,14 @@ namespace PlatoIR
         public ExpressionIR Function { get; set; }
     }
 
-    public class OperationIR : InvocationIR
+    public class OperatorIR : InvocationIR
     {
         public string Operator { get; set; }
     }
     
-    public class PrefixOperationIR : OperationIR { }
-    public class PostfixOperationIR : OperationIR {}
-    public class BinaryOperationIR : OperationIR {}
+    public class PrefixOperatorIr : OperatorIR { }
+    public class PostfixOperatorIr : OperatorIR {}
+    public class BinaryOperatorIr : OperatorIR {}
 
     public class KnownFunctionIR : ExpressionIR
     {
@@ -41,7 +38,7 @@ namespace PlatoIR
     public class GenericFunctionIR : ExpressionIR
     {
         public FunctionIR Function { get; set; }
-        public List<TypeIR> TypeArguments { get; } = new List<TypeIR>();
+        public List<TypeDeclarationIR> TypeArguments { get; } = new List<TypeDeclarationIR>();
     }
 
     public class TupleIR : ExpressionIR {}
@@ -78,7 +75,7 @@ namespace PlatoIR
 
     public class KnownType : ExpressionIR
     {
-        public TypeIR ReferencedType { get; set; }
+        public TypeDeclarationIR ReferencedTypeDeclaration { get; set; }
     }
 
     public enum BuiltInTypes
@@ -101,8 +98,9 @@ namespace PlatoIR
 
     public class LambdaIR : ExpressionIR
     {
-        public List<ParameterIR> CapturedVariables { get; } = new List<ParameterIR>();
-        public FunctionReferenceIR Function { get; set; }
+        public List<DeclarationIR> CapturedVariables { get; set; } = new List<DeclarationIR>();
+        public List<ParameterIR> Parameters { get; set; } = new List<ParameterIR>();
+        public StatementIR Body { get; set; }
     }
 
     public class LiteralIR : ExpressionIR

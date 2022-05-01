@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 /*
  * DONE: Indexer(this) properties not generated.
  * DONE: No constructor generated.
- * DONE: No type provided for expressions.
+ * DONE: No typeDeclaration provided for expressions.
  * DONE: Backing fields for auto-generated properties are missing
  * SKIPPED: Interpolated string not supported
  * DONE: Tuple expressions and tuple assignment 
@@ -21,7 +21,7 @@ using System.Runtime.InteropServices;
  * DONE: Get the list of captured variables
  * DONE: Construcotr returning interface 
  * DONE: Can't find operator method (need to add "OperationDeclaration")
- * SKIPPED: constructor type overloading is not supported (only one constructor is allowed for now)
+ * SKIPPED: constructor typeDeclaration overloading is not supported (only one constructor is allowed for now)
  * DONE: overloaded operators need to be converted to functions
  * DONE: operators need to be renamed
  * DONE: auto operators don't have a return statement
@@ -31,9 +31,9 @@ using System.Runtime.InteropServices;
  * DONE: anything leabled VariableDeclarator seems to be a problem
  * DONE: operators need to be class qualfieid
  * DONE: extension methods need to be class qualified
- * DONE: add casts to type definition
- * TODO: generic type constructors are missing type parameters
- * TODO: get all of the type refrences and generate the appropriate types in advance.
+ * DONE: add casts to typeDeclaration definition
+ * TODO: generic typeDeclaration constructors are missing typeDeclaration parameters
+ * TODO: get all of the typeDeclaration refrences and generate the appropriate types in advance.
  * DONE: this.method calls missing ID
  * TODO: need to generate a function for indexing. operator_Subscript
  * DONE: call cast operator function
@@ -64,12 +64,12 @@ using System.Runtime.InteropServices;
  * DONE: 
  * 
  * NOTES:
- * - Type constructors looks like it is going to be an interesting challenge.
+ * - TypeDeclaration constructors looks like it is going to be an interesting challenge.
  * I think I need to pre-construct all of the types.
  * What is interesting is that they are all going to be the result of functions.
  *
  * - How do I know the name of the parameter? For now, I think I might just skip it. 
- * - I would rather that an extension method is called on the type it was declared on.
+ * - I would rather that an extension method is called on the typeDeclaration it was declared on.
  * At least we know 
 */
 
@@ -203,7 +203,7 @@ namespace PlatoGenerator
                                 break;
                             }
                             case ITypeSymbol typeSym:
-                                ident = ident + "/* type */"; break;
+                                ident = ident + "/* typeDeclaration */"; break;
                             default:
                                 ident += "/* unknown */"; break;
                         }
@@ -215,7 +215,7 @@ namespace PlatoGenerator
                 case ImplicitElementAccessSyntax implicitElementAccessSyntax:
                     break;
                 case ImplicitObjectCreationExpressionSyntax implicitObjectCreationExpressionSyntax:
-                    // TODO: need type arguments
+                    // TODO: need typeDeclaration arguments
                     return $"new {expr.GetExpressionType().Name}({args})";
 
                 case ImplicitStackAllocArrayCreationExpressionSyntax implicitStackAllocArrayCreationExpressionSyntax:
@@ -242,7 +242,7 @@ namespace PlatoGenerator
                 case NullableTypeSyntax nullableTypeSyntax:
                     break;
                 case ObjectCreationExpressionSyntax objectCreationExpressionSyntax:
-                    // TODO: need type arguments
+                    // TODO: need typeDeclaration arguments
                     return $"new {expr.GetExpressionType().Name}({args})";
 
                 case OmittedArraySizeExpressionSyntax omittedArraySizeExpressionSyntax:
@@ -418,7 +418,7 @@ namespace PlatoGenerator
                     childNames[0] = stripEnding;
 
                     var invokeArgList = string.Join(", ", childNames);
-                    // TODO: what is the owner type? 
+                    // TODO: what is the owner typeDeclaration? 
                     // TODO: we have a problem because the first child name is the method resolution, not the actual
                     exprValue = $"{classQualifier}{def.Name}_{def.Id}({invokeArgList})";
                 }
@@ -461,14 +461,14 @@ namespace PlatoGenerator
             }
             else if (name.StartsWith("#"))
             {
-                Debug.WriteLine($"Unrecognized type {name}");
+                Debug.WriteLine($"Unrecognized typeDeclaration {name}");
                 throw new Exception("Unrecognized special syntax");
             }
            
             if (declareVar)
             {
                 var declKind = expr.Symbol?.GetDeclaringSyntax()?.Kind();
-                sw.WriteLine($"    var {exprVarName} = {exprValue}; // Type={expr.TypeString} Def={defText} Sym={expr.Symbol?.Name}:{expr.Symbol?.Kind} DeclSyn={declKind}");
+                sw.WriteLine($"    var {exprVarName} = {exprValue}; // TypeDeclaration={expr.TypeString} Def={defText} Sym={expr.Symbol?.Name}:{expr.Symbol?.Kind} DeclSyn={declKind}");
             }
 
             return exprVarName;
@@ -634,14 +634,14 @@ namespace PlatoGenerator
                 }
             }
 
-            // A global namespace version of each function and one just on the type? 
+            // A global namespace version of each function and one just on the typeDeclaration? 
             foreach (var c in t.Ctors)
             {
                 var func = SyntaxToFunctions[c.Node];
                 OutputFunction(func, "  ");
             }
 
-            // A global namespace version of each function and one just on the type? 
+            // A global namespace version of each function and one just on the typeDeclaration? 
             foreach (var m in t.Methods)
             {
                 var func = SyntaxToFunctions[m.Node];

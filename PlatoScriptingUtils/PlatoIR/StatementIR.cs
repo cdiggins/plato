@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace PlatoIR
 {
@@ -6,34 +7,65 @@ namespace PlatoIR
 
     public class WhileStatementIR : StatementIR
     {
+        public WhileStatementIR(ExpressionIR condition, StatementIR body)
+            => (Condition, Body) = (condition, body);
         public StatementIR Body { get; set; }
         public ExpressionIR Condition { get; set; }
     }
 
-    public class AssignmentStatementIR : StatementIR
+    public class DoStatementIR : StatementIR
     {
-        public AssignmentIR Assignment { get; set; }
+        public DoStatementIR(ExpressionIR condition, StatementIR body)
+            => (Condition, Body) = (condition, body);
+        public StatementIR Body { get; set; }
+        public ExpressionIR Condition { get; set; }
     }
 
-    public class ThrowStatement : StatementIR
+    public class ExpressionStatementIR : StatementIR
     {
-        public ThrowExpressionIR ThrowExpresion;
+        public ExpressionStatementIR(ExpressionIR expression)
+            => Expression = expression;
+        public ExpressionIR Expression { get; }
     }
 
     public class IfStatementIR : StatementIR
     {
-        public ExpressionIR Condition { get; set; }
-        public StatementIR OnTrue { get; set; }
-        public StatementIR OnFalse { get; set; }
+        public IfStatementIR(ExpressionIR condition, StatementIR onTrue, StatementIR onFalse)
+            => (Condition, OnTrue, OnFalse) = (condition, onTrue, onFalse);
+        public ExpressionIR Condition { get;  }
+        public StatementIR OnTrue { get; }
+        public StatementIR OnFalse { get; }
     }
 
     public class ReturnStatementIR : StatementIR
     {
-        public ExpressionIR Expression { get; set; }
+        public ReturnStatementIR(ExpressionIR expression)
+            => Expression = expression;
+        public ExpressionIR Expression { get; }
     }
 
     public class MultiStatementIR : StatementIR
     {
-        public List<StatementIR> Statements { get; } = new List<StatementIR>();
+        public MultiStatementIR(params StatementIR[] statements)
+            => Statements = statements.ToList();
+        public MultiStatementIR(IEnumerable<StatementIR> statements)
+            : this(statements.ToArray()) { }
+        public List<StatementIR> Statements { get; }
+    }
+
+    public class BlockStatementIR : StatementIR
+    {
+        public BlockStatementIR(params StatementIR[] statements)
+            => Statements = statements.ToList();
+        public BlockStatementIR(IEnumerable<StatementIR> statements)
+            : this(statements.ToArray()) {}
+        public List<StatementIR> Statements { get; }
+    }
+
+    public class DeclarationStatementIR : StatementIR
+    {
+        public DeclarationStatementIR(DeclarationIR declaration)
+            => Declaration = declaration;
+        public DeclarationIR Declaration { get; }
     }
 }

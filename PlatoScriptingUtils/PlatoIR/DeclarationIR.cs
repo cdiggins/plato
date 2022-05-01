@@ -1,24 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PlatoIR
 {
     public class DeclarationIR : IR
     {
         public bool IsStatic { get; set; }
+        public DeclarationIR Parent { get; set; }
         public string Name { get; set; }
-        public TypeIR Type { get; set; }
-        public TypeIR ParentType { get; set;  }
-        public StatementIR EnclosingStatement { get; set; }
-        public ExpressionIR EnclosingExpression { get; set; }
-        public bool IsMembeDeclaration => Type != null;
+        public TypeReferenceIR Type { get; set; }
+        public TypeReferenceIR ParentType { get; set;  }
+        public bool IsMemberDeclaration => ParentType != null;
     }
 
     public class FunctionIR : DeclarationIR
     {
         public List<ParameterIR> Parameters { get; } = new List<ParameterIR>();
         public StatementIR Body { get; set; }
-        public List<TypeParameterIR> TypeParameters { get; } = new List<TypeParameterIR>();
-        public TypeIR ReturnType { get; set; }
+        public List<TypeParameterDeclarationIR> TypeParameters { get; } = new List<TypeParameterDeclarationIR>();
+        public TypeReferenceIR ReturnTypeDeclaration { get; set; }
     }
 
     public class VariableDeclarationIR : DeclarationIR
@@ -26,16 +26,12 @@ namespace PlatoIR
         public ExpressionIR InitialValue { get; set; }
     }
 
-    public class TypeIR : DeclarationIR
-    {
-        public List<TypeParameterIR> TypeParameters { get; } = new List<TypeParameterIR>();
-    }
-
-    public class TypeParameterIR : DeclarationIR
+    public class TypeParameterDeclarationIR : DeclarationIR
     { }
 
     public class ParameterIR : DeclarationIR
     {
+        public ExpressionIR DefaultValue { get; set; }
     }
 
     public class MethodIR : FunctionIR
@@ -48,6 +44,7 @@ namespace PlatoIR
 
     public class FieldIR : DeclarationIR
     {
+        public ExpressionIR InitialValue { get; set; }
     }
 
     public class PropertyIR : DeclarationIR
@@ -67,23 +64,32 @@ namespace PlatoIR
         public bool IsImplicit { get; set; }
     }
 
-    public class PrimitiveTypeIR : TypeIR
+    public class OperationIR : DeclarationIR
     {
+        public MethodIR Method { get; set; }
     }
 
-    public class ClassIR : TypeIR
+    public class TypeDeclarationIR : DeclarationIR
     {
-        public ClassIR BaseClass { get; set; }
-        public List<InterfaceIR> Interface { get; } = new List<InterfaceIR>();
+        public TypeDeclarationIR BaseClassDeclaration { get; set; }
+        public List<TypeDeclarationIR> Interface { get; } = new List<TypeDeclarationIR>();
         public List<FieldIR> Fields { get; } = new List<FieldIR>();
         public List<MethodIR> Methods { get; } = new List<MethodIR>();
         public List<ConstructorIR> Constructors { get; } = new List<ConstructorIR>();
+        public List<ConverterIR> Converters { get; } = new List<ConverterIR>();
         public List<PropertyIR> Properties { get; } = new List<PropertyIR>();
         public List<IndexerIR> Indexers { get; } = new List<IndexerIR>();
+        public List<OperationIR> Operations { get; } = new List<OperationIR>();
+        public List<TypeParameterDeclarationIR> TypeParameters { get; } = new List<TypeParameterDeclarationIR>();
     }
 
-    public class InterfaceIR : TypeIR
+    public static class IRExtensions
     {
-        public List<InterfaceIR> Interfaces { get; } = new List<InterfaceIR>();
+        public static T SetParent<T>(this T self, DeclarationIR parent) where T: DeclarationIR
+        {
+            self.Parent = parent;
+            return self;
+        }
+
     }
 }
