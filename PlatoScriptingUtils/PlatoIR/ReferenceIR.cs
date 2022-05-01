@@ -24,6 +24,12 @@ namespace PlatoIR
         public FieldIR Field { get; set; }
     }
 
+    public class FunctionReferenceIR : ReferenceIR
+    {
+        public override string Name => Function.Name;
+        public FunctionIR Function { get; set; }
+    }
+
     public class MethodReferenceIR : MemberReferenceIR
     {
         public override string Name => Method.Name;

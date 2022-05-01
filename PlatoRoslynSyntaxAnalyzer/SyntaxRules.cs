@@ -74,5 +74,11 @@ namespace PlatoRoslynSyntaxAnalyzer
         /// Unrecognized type declaration
         /// </summary>
         public static bool SupportedType(this TypeDeclarationSyntax node, bool condition) => condition || Throw(node, "unrecognized type");
+
+        public class UnsupportedSymbolException : Exception
+        {
+            public UnsupportedSymbolException(ISymbol symbol) : base($"unsupported symbol {symbol}") { }
+        }
+
     }
 }
