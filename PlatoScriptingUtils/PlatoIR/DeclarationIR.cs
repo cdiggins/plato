@@ -13,12 +13,12 @@ namespace PlatoIR
         public bool IsMemberDeclaration => ParentType != null;
     }
 
-    public class FunctionIR : DeclarationIR
+    public class FunctionDeclarationIR : DeclarationIR
     {
-        public List<ParameterIR> Parameters { get; } = new List<ParameterIR>();
+        public List<ParameterDeclarationIR> Parameters { get; set; } = new List<ParameterDeclarationIR>();
         public StatementIR Body { get; set; }
-        public List<TypeParameterDeclarationIR> TypeParameters { get; } = new List<TypeParameterDeclarationIR>();
-        public TypeReferenceIR ReturnTypeDeclaration { get; set; }
+        public List<TypeParameterDeclarationIR> TypeParameters { get; set;  } = new List<TypeParameterDeclarationIR>();
+        public TypeReferenceIR ReturnType { get; set; }
     }
 
     public class VariableDeclarationIR : DeclarationIR
@@ -29,58 +29,56 @@ namespace PlatoIR
     public class TypeParameterDeclarationIR : DeclarationIR
     { }
 
-    public class ParameterIR : DeclarationIR
+    public class ParameterDeclarationIR : DeclarationIR
     {
         public ExpressionIR DefaultValue { get; set; }
     }
 
-    public class MethodIR : FunctionIR
+    public class MethodDeclarationIr : FunctionDeclarationIR
     {
     }
 
-    public class ConstructorIR : FunctionIR
+    public class ConstructorDeclarationIr : MethodDeclarationIr
     {
     }
 
-    public class FieldIR : DeclarationIR
+    public class FieldDeclarationIR : DeclarationIR
     {
         public ExpressionIR InitialValue { get; set; }
     }
 
-    public class PropertyIR : DeclarationIR
+    public class PropertyDeclarationIR : DeclarationIR
     {
-        public MethodIR Getter { get; set; }
+        public MethodDeclarationIr Getter { get; set; }
         public bool HasInit { get; set; }
     }
 
-    public class IndexerIR : DeclarationIR
+    public class IndexerDeclarationIr : MethodDeclarationIr
     {
-        public MethodIR Getter { get; set; }
+        public MethodDeclarationIr Getter { get; set; }
     }
 
-    public class ConverterIR : DeclarationIR
+    public class ConverterDeclarationIr : MethodDeclarationIr
     {
-        public MethodIR Method { get; set; }
         public bool IsImplicit { get; set; }
     }
 
-    public class OperationIR : DeclarationIR
+    public class OperationDeclarationIr : MethodDeclarationIr
     {
-        public MethodIR Method { get; set; }
     }
 
     public class TypeDeclarationIR : DeclarationIR
     {
         public TypeDeclarationIR BaseClassDeclaration { get; set; }
-        public List<TypeDeclarationIR> Interface { get; } = new List<TypeDeclarationIR>();
-        public List<FieldIR> Fields { get; } = new List<FieldIR>();
-        public List<MethodIR> Methods { get; } = new List<MethodIR>();
-        public List<ConstructorIR> Constructors { get; } = new List<ConstructorIR>();
-        public List<ConverterIR> Converters { get; } = new List<ConverterIR>();
-        public List<PropertyIR> Properties { get; } = new List<PropertyIR>();
-        public List<IndexerIR> Indexers { get; } = new List<IndexerIR>();
-        public List<OperationIR> Operations { get; } = new List<OperationIR>();
-        public List<TypeParameterDeclarationIR> TypeParameters { get; } = new List<TypeParameterDeclarationIR>();
+        public List<TypeDeclarationIR> Interface { get; set; } = new List<TypeDeclarationIR>();
+        public List<FieldDeclarationIR> Fields { get; set; } = new List<FieldDeclarationIR>();
+        public List<MethodDeclarationIr> Methods { get; set; } = new List<MethodDeclarationIr>();
+        public List<ConstructorDeclarationIr> Constructors { get; set; } = new List<ConstructorDeclarationIr>();
+        public List<ConverterDeclarationIr> Converters { get; set; } = new List<ConverterDeclarationIr>();
+        public List<PropertyDeclarationIR> Properties { get; set; } = new List<PropertyDeclarationIR>();
+        public List<IndexerDeclarationIr> Indexers { get; set; } = new List<IndexerDeclarationIr>();
+        public List<OperationDeclarationIr> Operations { get; set; } = new List<OperationDeclarationIr>();
+        public List<TypeParameterDeclarationIR> TypeParameters { get; set; } = new List<TypeParameterDeclarationIR>();
     }
 
     public static class IRExtensions

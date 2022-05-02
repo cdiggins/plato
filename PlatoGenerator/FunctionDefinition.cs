@@ -58,7 +58,7 @@ namespace PlatoGenerator
         {
             var symbol = ModelExtensions.GetDeclaredSymbol(model, op) as IMethodSymbol;
             if (symbol == null)
-                throw new Exception($"Could not find method symbol for operator {op.OperatorToken}");
+                throw new Exception($"Could not find methodDeclaration symbol for operator {op.OperatorToken}");
             var result = new Expression("#result", symbol?.ReturnType);
             var @this = symbol?.ReceiverType == null ? null : new Expression("#this", symbol?.ReceiverType);
 
@@ -84,7 +84,7 @@ namespace PlatoGenerator
         {
             var symbol = ModelExtensions.GetDeclaredSymbol(model, op) as IMethodSymbol;
             if (symbol == null)
-                throw new Exception($"Could not find method symbol for cast operator");
+                throw new Exception($"Could not find methodDeclaration symbol for cast operator");
             var result = new Expression("#result", symbol?.ReturnType);
             var @this = symbol?.ReceiverType == null ? null : new Expression("#this", symbol?.ReceiverType);
 

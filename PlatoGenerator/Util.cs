@@ -9,7 +9,7 @@ namespace PlatoGenerator
 {
     public static class Util
     {
-        // https://stackoverflow.com/questions/35741219/how-to-get-il-of-one-method-body-with-roslyn
+        // https://stackoverflow.com/questions/35741219/how-to-get-il-of-one-methodDeclaration-body-with-roslyn
         public static MethodBody Compile(this CSharpCompilation initial, IMethodSymbol method)
         {
             // 1. get source

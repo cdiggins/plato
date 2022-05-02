@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
+using PlatoIR;
 
 /*
  * DONE: Indexer(this) properties not generated.
@@ -20,13 +20,13 @@ using System.Runtime.InteropServices;
  * DONE: Extension functions are translated into member functions. 
  * DONE: Get the list of captured variables
  * DONE: Construcotr returning interface 
- * DONE: Can't find operator method (need to add "OperationDeclaration")
+ * DONE: Can't find operator methodDeclaration (need to add "OperationDeclaration")
  * SKIPPED: constructor typeDeclaration overloading is not supported (only one constructor is allowed for now)
  * DONE: overloaded operators need to be converted to functions
  * DONE: operators need to be renamed
  * DONE: auto operators don't have a return statement
- * DONE: all field, method, and property variables need to use a "this"
- * DONE: Missing ids of function references
+ * DONE: all field, methodDeclaration, and propertyDeclaration variables need to use a "this"
+ * DONE: Missing ids of functionDeclaration references
  * DONE: something odd is happening when declarating a variable and assigning a new expression to it.
  * DONE: anything leabled VariableDeclarator seems to be a problem
  * DONE: operators need to be class qualfieid
@@ -34,9 +34,9 @@ using System.Runtime.InteropServices;
  * DONE: add casts to typeDeclaration definition
  * TODO: generic typeDeclaration constructors are missing typeDeclaration parameters
  * TODO: get all of the typeDeclaration refrences and generate the appropriate types in advance.
- * DONE: this.method calls missing ID
- * TODO: need to generate a function for indexing. operator_Subscript
- * DONE: call cast operator function
+ * DONE: this.methodDeclaration calls missing ID
+ * TODO: need to generate a functionDeclaration for indexing. operator_Subscript
+ * DONE: call cast operator functionDeclaration
  * TODO: need to explicitly cast numbers to ints when doing integers 
  * LATER TODO: handle local functions,
  * LATER TODO: anonymous types
@@ -46,8 +46,8 @@ using System.Runtime.InteropServices;
  * LATER TODO: reduce number of expression calls
  * LATER TODO: add ids to parameter references 
  * LATER TODO: add ids to local references
- * TODO: separate the function defintion gathering (semantic analysis)
- * TODO: for function and property definition creation use the PlatoSyntax objects 
+ * TODO: separate the functionDeclaration defintion gathering (semantic analysis)
+ * TODO: for functionDeclaration and propertyDeclaration definition creation use the PlatoSyntax objects 
  * TODO: get resharper
  * TODO: find a way to better track my to-do list
  * TODO: generate output from the intermediate representation
@@ -69,7 +69,7 @@ using System.Runtime.InteropServices;
  * What is interesting is that they are all going to be the result of functions.
  *
  * - How do I know the name of the parameter? For now, I think I might just skip it. 
- * - I would rather that an extension method is called on the typeDeclaration it was declared on.
+ * - I would rather that an extension methodDeclaration is called on the typeDeclaration it was declared on.
  * At least we know 
 */
 
@@ -161,7 +161,7 @@ namespace PlatoGenerator
                 case ArrayTypeSyntax arrayTypeSyntax:
                     break;
                 case AssignmentExpressionSyntax assignmentExpressionSyntax:
-                    throw new Exception("Was supposed to be handled earlier in the function");
+                    throw new Exception("Was supposed to be handled earlier in the functionDeclaration");
                 case AwaitExpressionSyntax awaitExpressionSyntax:
                     break;
                 case BaseExpressionSyntax baseExpressionSyntax:
@@ -196,7 +196,7 @@ namespace PlatoGenerator
                             case ILocalSymbol localSym:
                                 ident = ident + "/* local */"; break;
                             case IPropertySymbol propSym:
-                                ident = "this." + ident + "/* property */"; break;
+                                ident = "this." + ident + "/* propertyDeclaration */"; break;
                             case IMethodSymbol methSym:
                             {
                                 ident = $"this.{defText}";
@@ -366,7 +366,7 @@ namespace PlatoGenerator
 
             if (name.StartsWith("#operator"))
             {
-                // Check if this is a function
+                // Check if this is a functionDeclaration
                 if (def != null)
                 {
                     var invokeArgList = string.Join(", ", childNames);
@@ -399,9 +399,9 @@ namespace PlatoGenerator
             }
             else if (name.StartsWith("#invoke"))
             {
-                // TODO: an interesting problem is that when a method is an extension method, we need to pass the "this"
-                // I can make a trampoline function maybe? I think no matter what I need to know when I am accessing a method group,
-                // and if that method group is known at compile-time I am going to do some things differently. 
+                // TODO: an interesting problem is that when a methodDeclaration is an extension methodDeclaration, we need to pass the "this"
+                // I can make a trampoline functionDeclaration maybe? I think no matter what I need to know when I am accessing a methodDeclaration group,
+                // and if that methodDeclaration group is known at compile-time I am going to do some things differently. 
                 // This touches on one of the problems that I also want to tackle. This system can learn new things about values. 
                 // In other-words, I can't just rely on Roslyn to tell me things... if a value can be determined by this tool, it 
                 // has to be kept. This is what the result of inlining gives us, and is a key observation of the system. 
@@ -410,7 +410,7 @@ namespace PlatoGenerator
                 {
                     var classQualifier = def.ParentType?.Identifier + "." ?? "";
 
-                    // TODO: this is a problem. We might be calling as a static function, 
+                    // TODO: this is a problem. We might be calling as a static functionDeclaration, 
                     // in which case ... this is not what we really should be doing. 
 
                     var pos = childNames[0].LastIndexOf(".");
@@ -419,7 +419,7 @@ namespace PlatoGenerator
 
                     var invokeArgList = string.Join(", ", childNames);
                     // TODO: what is the owner typeDeclaration? 
-                    // TODO: we have a problem because the first child name is the method resolution, not the actual
+                    // TODO: we have a problem because the first child name is the methodDeclaration resolution, not the actual
                     exprValue = $"{classQualifier}{def.Name}_{def.Id}({invokeArgList})";
                 }
                 else
@@ -618,7 +618,7 @@ namespace PlatoGenerator
                 var pdef = SyntaxToProperties[p.Node];
 
                 if (pdef == null)
-                    throw new Exception("Could not find property");
+                    throw new Exception("Could not find propertyDeclaration");
 
                 if (pdef.IsAutoProperty)
                 {
@@ -634,14 +634,14 @@ namespace PlatoGenerator
                 }
             }
 
-            // A global namespace version of each function and one just on the typeDeclaration? 
+            // A global namespace version of each functionDeclaration and one just on the typeDeclaration? 
             foreach (var c in t.Ctors)
             {
                 var func = SyntaxToFunctions[c.Node];
                 OutputFunction(func, "  ");
             }
 
-            // A global namespace version of each function and one just on the typeDeclaration? 
+            // A global namespace version of each functionDeclaration and one just on the typeDeclaration? 
             foreach (var m in t.Methods)
             {
                 var func = SyntaxToFunctions[m.Node];
@@ -700,7 +700,7 @@ namespace PlatoGenerator
 
                 foreach (var p in t.Properties)
                 {
-                    // TODO: The problem here is a property is complicated. It can have multiple functions associated with it. 
+                    // TODO: The problem here is a propertyDeclaration is complicated. It can have multiple functions associated with it. 
                     // A getter/init/setter
                     // So the solution is to make these things 
                     var prop = PropertyDefinition.Create(p.Node, model);
@@ -713,8 +713,15 @@ namespace PlatoGenerator
         {
             var types = context.Compilation.SyntaxTrees.GetPlatoTypes();
 
+
+            var inputFile = GeneratedFile;
+            var thisRepo = @"C:\Users\Acer\source\repos\Plato";
+            var outputFile = Path.Combine(thisRepo, "JavaScriptTest", "output.html");
+            var templateFile = Path.Combine(thisRepo, "PlatoGenerator", "input.html");
+            
+            /*
             CreateLookups(context, types);
-           
+
             using (sw = new StreamWriter(File.Create(GeneratedFile)))
             {
                 foreach (var t in types)
@@ -723,15 +730,21 @@ namespace PlatoGenerator
                 }
             }
 
-            var inputFile = GeneratedFile;
-            var thisRepo = @"C:\Users\Acer\source\repos\Plato";
-            var outputFile = Path.Combine(thisRepo, "JavaScriptTest", "output.html");
-            var templateFile = Path.Combine(thisRepo, "PlatoGenerator", "input.html");
-
             var inputText = File.ReadAllText(inputFile);
             var templateText = File.ReadAllText(templateFile);
             var outputText = templateText.Replace("{{REPLACEME}}", inputText);
             File.WriteAllText(outputFile, outputText);
+            */
+
+            var builder = new IRBuilder();
+            builder = SyntaxToIR.BuildIR(builder, context.Compilation, types);
+            var outputCsFile = Path.ChangeExtension(outputFile, "cs");
+            var decls = builder.Declarations.Values.ToList();
+            using (sw = new StreamWriter(File.Create(outputCsFile)))
+            {
+                var srlzr = new IRSerializer(sw);
+                srlzr.Write(decls, "");
+            }
         }
     }
 }

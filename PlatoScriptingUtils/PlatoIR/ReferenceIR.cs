@@ -1,64 +1,86 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace PlatoIR
 {
     public abstract class ReferenceIR : ExpressionIR
     {
-        public abstract string Name { get; }
+        public ReferenceIR(string name)
+            => Name = name ?? "#unknown";
+        public string Name { get; }
+        public abstract DeclarationIR Declaration { get; }
     }
 
     public abstract class MemberReferenceIR : ReferenceIR
     {
-        public ExpressionIR ThisObject { get; set; }
+        public MemberReferenceIR(string name, ExpressionIR receiver)
+            : base(name) => (Receiver) = (receiver);
+        public ExpressionIR Receiver { get; }
     }
 
     public class PropertyReferenceIR : MemberReferenceIR
     {
-        public override string Name => Property.Name;
-        public PropertyIR Property { get; set; }
+        public PropertyReferenceIR(string name, ExpressionIR receiver, PropertyDeclarationIR propertyDeclaration)
+            : base(name, receiver) => PropertyDeclaration = propertyDeclaration;
+        public PropertyDeclarationIR PropertyDeclaration { get; }
+        public override DeclarationIR Declaration => PropertyDeclaration;
     }
 
     public class FieldReferenceIR : MemberReferenceIR
     {
-        public override string Name => Field.Name;
-        public FieldIR Field { get; set; }
+        public FieldReferenceIR(string name, ExpressionIR receiver, FieldDeclarationIR fieldDeclaration)
+            : base(name, receiver) => FieldDeclaration = fieldDeclaration;
+        public FieldDeclarationIR FieldDeclaration { get; }
+        public override DeclarationIR Declaration => FieldDeclaration;
     }
 
     public class FunctionReferenceIR : ReferenceIR
     {
-        public override string Name => Function.Name;
-        public FunctionIR Function { get; set; }
+        public FunctionReferenceIR(string name, FunctionDeclarationIR functionDeclaration)
+            : base(name) => FunctionDeclaration = functionDeclaration;
+        public FunctionDeclarationIR FunctionDeclaration { get; }
+        public override DeclarationIR Declaration => FunctionDeclaration;
     }
 
     public class MethodReferenceIR : MemberReferenceIR
     {
-        public override string Name => Method.Name;
-        public MethodIR Method { get; set; }
-        public List<TypeDeclarationIR> TypeArguments { get; } = new List<TypeDeclarationIR>();
+        public MethodReferenceIR(string name, ExpressionIR reciever, MethodDeclarationIr methodDeclaration, IEnumerable<TypeReferenceIR> typeArgs = null)
+            : base(name, reciever) => (MethodDeclaration, TypeArguments) = (methodDeclaration, typeArgs?.ToList() ?? new List<TypeReferenceIR>());
+        public MethodDeclarationIr MethodDeclaration { get; }
+        public List<TypeReferenceIR> TypeArguments { get; }
+        public override DeclarationIR Declaration => MethodDeclaration;
     }
 
     public class TypeReferenceIR : ReferenceIR
     {
-        public override string Name => ReferencedTypeDeclaration.Name;
-        public TypeDeclarationIR ReferencedTypeDeclaration { get; set; }
-        public List<TypeDeclarationIR> TypeArguments { get; } = new List<TypeDeclarationIR>();
+        public TypeReferenceIR(string name, TypeDeclarationIR type, IEnumerable<TypeReferenceIR> typeArgs = null)
+            : base(name) => (TypeDeclaration, TypeArguments) = (type, typeArgs?.ToList() ?? new List<TypeReferenceIR>());
+        public TypeDeclarationIR TypeDeclaration { get; }
+        public List<TypeReferenceIR> TypeArguments { get; }
+        public override DeclarationIR Declaration => TypeDeclaration;
     }
 
     public class VariableReferenceIR : ReferenceIR
     {
-        public override string Name => Variable.Name;
-        public VariableDeclarationIR Variable { get; set; }
+        public VariableReferenceIR(string name, VariableDeclarationIR variableDeclaration)
+            : base(name) => VariableDeclaration = variableDeclaration;
+        public VariableDeclarationIR VariableDeclaration { get; }
+        public override DeclarationIR Declaration => VariableDeclaration;
     }
 
     public class ParameterReferenceIR : ReferenceIR
     {
-        public override string Name => Parameter.Name;
-        public ParameterIR Parameter { get; set; }
+        public ParameterReferenceIR(string name, ParameterDeclarationIR parameterDeclaration)
+            : base(name) => ParameterDeclaration = parameterDeclaration;
+        public ParameterDeclarationIR ParameterDeclaration { get; }
+        public override DeclarationIR Declaration => ParameterDeclaration;
     }
 
     public class TypeParameterReferenceIR : ReferenceIR
     {
-        public override string Name => TypeParameterDeclaration.Name;
-        public TypeParameterDeclarationIR TypeParameterDeclaration { get; set; }
+        public TypeParameterReferenceIR(string name, TypeParameterDeclarationIR typeParameterDeclaration)
+            : base(name) => TypeParameterDeclaration = typeParameterDeclaration;
+        public TypeParameterDeclarationIR TypeParameterDeclaration { get; }
+        public override DeclarationIR Declaration => TypeParameterDeclaration;
     }
 }

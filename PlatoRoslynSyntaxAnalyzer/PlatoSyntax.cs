@@ -246,6 +246,7 @@ namespace PlatoRoslynSyntaxAnalyzer
     public class PlatoTypeParameterSyntax : PlatoSyntax<TypeParameterSyntax>
     {
         public PlatoTypeParameterSyntax(TypeParameterSyntax node) : base(node) { }
+        public static PlatoTypeParameterSyntax Create(TypeParameterSyntax node) => new PlatoTypeParameterSyntax(node);
     }
 
     public class PlatoFieldSyntax : PlatoMemberSyntax<FieldDeclarationSyntax>

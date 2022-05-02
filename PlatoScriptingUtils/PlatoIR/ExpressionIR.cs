@@ -5,7 +5,7 @@ namespace PlatoIR
 {
     public class ExpressionIR : IR 
     {
-        public TypeDeclarationIR TypeDeclaration { get; set; }
+        public TypeDeclarationIR ExpressionType { get; set; }
         public List<ExpressionIR> Args { get; set; } = new List<ExpressionIR>();
     }
 
@@ -28,16 +28,21 @@ namespace PlatoIR
     
     public class PrefixOperatorIr : OperatorIR { }
     public class PostfixOperatorIr : OperatorIR {}
-    public class BinaryOperatorIr : OperatorIR {}
+
+    public class BinaryOperatorIr : OperatorIR
+    {
+        public ExpressionIR Operand1 => Args[0];
+        public ExpressionIR Operand2 => Args[1];
+    }
 
     public class KnownFunctionIR : ExpressionIR
     {
-        public FunctionIR Function { get; set; }
+        public FunctionDeclarationIR FunctionDeclaration { get; set; }
     }
 
     public class GenericFunctionIR : ExpressionIR
     {
-        public FunctionIR Function { get; set; }
+        public FunctionDeclarationIR FunctionDeclaration { get; set; }
         public List<TypeDeclarationIR> TypeArguments { get; } = new List<TypeDeclarationIR>();
     }
 
@@ -99,17 +104,19 @@ namespace PlatoIR
     public class LambdaIR : ExpressionIR
     {
         public List<DeclarationIR> CapturedVariables { get; set; } = new List<DeclarationIR>();
-        public List<ParameterIR> Parameters { get; set; } = new List<ParameterIR>();
+        public List<ParameterDeclarationIR> Parameters { get; set; } = new List<ParameterDeclarationIR>();
         public StatementIR Body { get; set; }
     }
 
     public class LiteralIR : ExpressionIR
     {
+        public string Text;
         public object Value;
     }
 
     public class AssignmentIR : ExpressionIR
     {
-        public ReferenceIR LValue;
+        public ExpressionIR LValue;
+        public ExpressionIR RValue => Args[0];
     }
 }

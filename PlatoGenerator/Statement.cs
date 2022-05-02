@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace PlatoGenerator
 {
     /// <summary>
-    /// A statement is either a function definition, a block,
+    /// A statement is either a functionDeclaration definition, a block,
     /// a variable declaration, a while statement, an if statement
     /// </summary>
     public class Statement
@@ -16,9 +16,9 @@ namespace PlatoGenerator
         public SemanticModel Model;
     }
 
-    // Calling a known function involves replacing the parameters with arguments
-    // What about captured variables? This means that the function has to be created. 
-    // It is similar to calling a function that returns a function. 
+    // Calling a known functionDeclaration involves replacing the parameters with arguments
+    // What about captured variables? This means that the functionDeclaration has to be created. 
+    // It is similar to calling a functionDeclaration that returns a functionDeclaration. 
 
     public class ExpressionStatement : Statement
     {
@@ -145,7 +145,7 @@ namespace PlatoGenerator
                     break;
 
                 default:
-                    throw new Exception("Unexpected statement type");
+                    throw new Exception("Unexpected statement typeDeclaration");
             }
             r.Model = model;
             r.Syntax = syntax;

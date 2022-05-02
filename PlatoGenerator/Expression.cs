@@ -18,19 +18,19 @@ namespace PlatoGenerator
     ///
     /// Perhaps surprisingly, an expression can have statements.
     /// This is because ever sub-expression is evaluated as an expression
-    /// statement, and can contain an inlined method invocation.
+    /// statement, and can contain an inlined methodDeclaration invocation.
     ///
     /// Main possibilities:
     /// * Constant
     /// * Initalization 
     /// * Reassignment (conditional, or un-conditional, depending on context)
-    /// * Known method invocation
-    /// * Unknown method invovation
+    /// * Known methodDeclaration invocation
+    /// * Unknown methodDeclaration invovation
     /// * Built-in operator invovation
     /// * Name lookup (compile-time, or run-time)
     ///
     /// Passes:
-    /// * Method inlining - is it a known function, then expand it. 
+    /// * MethodDeclaration inlining - is it a known functionDeclaration, then expand it. 
     /// * Evaluation - can the value be determined at compile-time (or at least a couple of possibilities) 
     /// * Elimination - is the value unused, and can be removed 
     /// * Coalescing - is the evaluation done multiple times?
@@ -143,7 +143,7 @@ namespace PlatoGenerator
                 if (syntax is ParameterSyntax parameterSyntax)
                 {
                     if (r.Symbol != null) throw new Exception("Expected no symbol");
-                    if (r.Type != null) throw new Exception("Expected no type");
+                    if (r.Type != null) throw new Exception("Expected no typeDeclaration");
 
                     var paramSymbol = (IParameterSymbol)model.GetDeclaredSymbol(syntax);
                     r.Symbol = paramSymbol;
@@ -151,11 +151,11 @@ namespace PlatoGenerator
                     r.Name = parameterSyntax.Identifier.ToString();
 
                     if (r.Type == null) 
-                        throw new Exception("Could not determine type");
+                        throw new Exception("Could not determine typeDeclaration");
                 }
                 else if (syntax is VariableDeclaratorSyntax variableSyntax)
                 {
-                    // TODO: perhaps the declared type is useful 
+                    // TODO: perhaps the declared typeDeclaration is useful 
                     // var declaration = variableSyntax.Parent as VariableDeclarationSyntax;
 
                     if (r.Symbol != null) throw new Exception("Expected no symbol");
@@ -164,9 +164,9 @@ namespace PlatoGenerator
 
                     if (r.Type == null)
                     {
-                        // TODO: I suspect it might be from the initializer, if not it is the declared type. 
+                        // TODO: I suspect it might be from the initializer, if not it is the declared typeDeclaration. 
                         // Really it could have both. 
-                        Debug.WriteLine("TODO: figure out the variable type");
+                        Debug.WriteLine("TODO: figure out the variable typeDeclaration");
                     }
 
                     r.Name = variableSyntax.Identifier.ToString();
@@ -181,7 +181,7 @@ namespace PlatoGenerator
                         }
 
                         // TODO: this is the first assignment, it might make more sense to move this out. 
-                        // TODO: this might also be the actual type of the variable 
+                        // TODO: this might also be the actual typeDeclaration of the variable 
                         r.Arguments.Add(variableSyntax.Initializer.Value.CreateExpression(model));
                     }
                     // r.AddInitializer(variableSyntax.Initializer?.E)
@@ -325,7 +325,7 @@ namespace PlatoGenerator
                     case MemberAccessExpressionSyntax memberAccess:
                         if (r.Type == null)
                         {
-                            Debug.WriteLine("No type can be determined for the member");
+                            Debug.WriteLine("No typeDeclaration can be determined for the member");
                         }
                         r.Name = "#member:" + memberAccess.Name.Identifier;
                         r.This = CreateExpression(memberAccess.Expression, model);
@@ -350,7 +350,7 @@ namespace PlatoGenerator
                         break;
 
                     case AnonymousFunctionExpressionSyntax anonymousFunctionExpressionSyntax:
-                        throw new NotSupportedException("Anonymous function expressions (delegates) are not supported");
+                        throw new NotSupportedException("Anonymous functionDeclaration expressions (delegates) are not supported");
 
                     case ParenthesizedExpressionSyntax parenthesized:
                         r.Name = "#parantheized";
@@ -399,7 +399,7 @@ namespace PlatoGenerator
                         break;
 
                     case TypeSyntax typeSyntax:
-                        r.Name = "#type";
+                        r.Name = "#typeDeclaration";
                         r.Value = typeSyntax.ToString();
                         break;
 
@@ -449,7 +449,7 @@ namespace PlatoGenerator
 
             if (r.Name == "#unknown")
             {
-                throw new Exception($"Unsupported expression type {syntax.Kind()}");
+                throw new Exception($"Unsupported expression typeDeclaration {syntax.Kind()}");
             }
 
             return r;

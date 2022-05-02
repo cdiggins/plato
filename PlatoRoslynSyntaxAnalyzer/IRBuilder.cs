@@ -34,23 +34,23 @@ namespace PlatoRoslynSyntaxAnalyzer
         }
 
         public IR GetIR(SyntaxNode node)
-            => Declarations[node.ToKey()];
+            => node == null ? null : Declarations.TryGetValue(node.ToKey(), out var result) ? result : null;
 
         public T GetIR<T>(SyntaxNode node) where T : IR
-            => (T)GetIR(node);
+            => GetIR(node) as T;
 
         public T GetDeclarationIR<T>(ISymbol symbol) where T : IR
-            => (T)GetDeclarationIR(symbol);
+            => GetDeclarationIR(symbol) as T;
 
         public IR GetDeclarationIR(ISymbol symbol)
         {
             if (symbol == null) return null;
             var refs = symbol.DeclaringSyntaxReferences;
-            if (refs.Length > 0)
+            if (refs.Length > 1)
                 throw new Exception("Multiple declarations found");
-            if (refs.Length == 0)
-                return null;
-            return GetIR(refs[0].GetSyntax());
+            return refs.Length == 0 
+                ? null 
+                : GetIR(refs[0].GetSyntax());
         }
     }
 

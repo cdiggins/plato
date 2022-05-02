@@ -130,7 +130,7 @@ public Array(int count, Func<int, T> func) => (Count, Func) = (count, func);
 */
   constructor(count /* 11:int */, func /* 12:System.Func<int, T> */) // :void
   {
-    var var8 = Plato.Tuple(count/* param */,func/* param */); // Type=(int, System.Func<int, T>) Def= Sym=: DeclSyn=
+    var var8 = Plato.Tuple(count/* param */,func/* param */); // TypeDeclaration=(int, System.Func<int, T>) Def= Sym=: DeclSyn=
     this.Count/* property */ = var8.Item1; this.Func/* property */ = var8.Item2; ;
   }
 }
@@ -144,17 +144,17 @@ class Vector2 // class
   }
   get MagnitudeSquared()
   {
-    var var125 = this.Dot_36(this); // Type=float Def=Dot_36 Sym=Dot:Method DeclSyn=MethodDeclaration
+    var var125 = this.Dot_36(this); // TypeDeclaration=float Def=Dot_36 Sym=Dot:Method DeclSyn=MethodDeclaration
     return var125;
   }
   get Magnitude()
   {
-    var var131 = MathF/* type */.Sqrt(this.MagnitudeSquared/* property */); // Type=float Def= Sym=Sqrt:Method DeclSyn=
+    var var131 = MathF/* typeDeclaration */.Sqrt(this.MagnitudeSquared/* property */); // TypeDeclaration=float Def= Sym=Sqrt:Method DeclSyn=
     return var131;
   }
   get Normal()
   {
-    var var138 = Vector2.op_Division_89(this, (this.Magnitude/* property */)); // Type=PlatoTestJavaScript.Vector2 Def=op_Division_89 Sym=op_Division:Method DeclSyn=OperatorDeclaration
+    var var138 = Vector2.op_Division_89(this, (this.Magnitude/* property */)); // TypeDeclaration=PlatoTestJavaScript.Vector2 Def=op_Division_89 Sym=op_Division:Method DeclSyn=OperatorDeclaration
     return var138;
   }
 /* ORIGINAL: 
@@ -162,7 +162,7 @@ public Vector2(float x = 0, float y = 0) => (X, Y) = (x, y);
 */
   constructor(x /* 120:float */, y /* 121:float */) // :void
   {
-    var var117 = Plato.Tuple(x/* param */,y/* param */); // Type=(float, float) Def= Sym=: DeclSyn=
+    var var117 = Plato.Tuple(x/* param */,y/* param */); // TypeDeclaration=(float, float) Def= Sym=: DeclSyn=
     this.X/* field */ = var117.Item1; this.Y/* field */ = var117.Item2; ;
   }
 /* ORIGINAL: 
@@ -184,9 +184,9 @@ public float Dot(Vector2 v) => X * v.X + v.Y * Y;
 */
   Dot_36(v /* 46:PlatoTestJavaScript.Vector2 */) // :float
   {
-    var var38 = this.X/* field */ * v/* param */.X; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var42 = v/* param */.Y * this.Y/* field */; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var37 = var38 + var42; // Type=float Def= Sym=op_Addition:Method DeclSyn=
+    var var38 = this.X/* field */ * v/* param */.X; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var42 = v/* param */.Y * this.Y/* field */; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var37 = var38 + var42; // TypeDeclaration=float Def= Sym=op_Addition:Method DeclSyn=
     return var37;
   }
 /* ORIGINAL: 
@@ -194,10 +194,10 @@ public override string ToString() => "Vector2(" + X  + "," + Y + ")";
 */
   ToString_47() // :string
   {
-    var var51 = "Vector2(" + this.X/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
-    var var50 = var51 + ","; // Type=string Def= Sym=op_Addition:Method DeclSyn=
-    var var49 = var50 + this.Y/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
-    var var48 = var49 + ")"; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var51 = "Vector2(" + this.X/* field */; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
+    var var50 = var51 + ","; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
+    var var49 = var50 + this.Y/* field */; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
+    var var48 = var49 + ")"; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
     return var48;
   }
 /* ORIGINAL: 
@@ -205,8 +205,8 @@ public static Vector2 operator +(Vector2 q, Vector2 r) => new(q.X + r.X, q.Y + r
 */
   static op_Addition_57(q /* 71:PlatoTestJavaScript.Vector2 */, r /* 72:PlatoTestJavaScript.Vector2 */) // :PlatoTestJavaScript.Vector2
   {
-    var var60 = q/* param */.X + r/* param */.X; // Type=float Def= Sym=op_Addition:Method DeclSyn=
-    var var66 = q/* param */.Y + r/* param */.Y; // Type=float Def= Sym=op_Addition:Method DeclSyn=
+    var var60 = q/* param */.X + r/* param */.X; // TypeDeclaration=float Def= Sym=op_Addition:Method DeclSyn=
+    var var66 = q/* param */.Y + r/* param */.Y; // TypeDeclaration=float Def= Sym=op_Addition:Method DeclSyn=
     return new Vector2(var60,var66);
   }
 /* ORIGINAL: 
@@ -214,8 +214,8 @@ public static Vector2 operator *(Vector2 q, Vector2 r) => new(q.X * r.X, q.Y * r
 */
   static op_Multiply_73(q /* 87:PlatoTestJavaScript.Vector2 */, r /* 88:PlatoTestJavaScript.Vector2 */) // :PlatoTestJavaScript.Vector2
   {
-    var var76 = q/* param */.X * r/* param */.X; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var82 = q/* param */.Y * r/* param */.Y; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var76 = q/* param */.X * r/* param */.X; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var82 = q/* param */.Y * r/* param */.Y; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
     return new Vector2(var76,var82);
   }
 /* ORIGINAL: 
@@ -223,8 +223,8 @@ public static Vector2 operator /(Vector2 q, Vector2 r) => new(q.X / r.X, q.Y / r
 */
   static op_Division_89(q /* 103:PlatoTestJavaScript.Vector2 */, r /* 104:PlatoTestJavaScript.Vector2 */) // :PlatoTestJavaScript.Vector2
   {
-    var var92 = q/* param */.X / r/* param */.X; // Type=float Def= Sym=op_Division:Method DeclSyn=
-    var var98 = q/* param */.Y / r/* param */.Y; // Type=float Def= Sym=op_Division:Method DeclSyn=
+    var var92 = q/* param */.X / r/* param */.X; // TypeDeclaration=float Def= Sym=op_Division:Method DeclSyn=
+    var var98 = q/* param */.Y / r/* param */.Y; // TypeDeclaration=float Def= Sym=op_Division:Method DeclSyn=
     return new Vector2(var92,var98);
   }
 /* ORIGINAL: 
@@ -246,17 +246,17 @@ class Vector3 // class
   }
   get MagnitudeSquared()
   {
-    var var361 = this.Dot_170(this); // Type=float Def=Dot_170 Sym=Dot:Method DeclSyn=MethodDeclaration
+    var var361 = this.Dot_170(this); // TypeDeclaration=float Def=Dot_170 Sym=Dot:Method DeclSyn=MethodDeclaration
     return var361;
   }
   get Magnitude()
   {
-    var var367 = MathF/* type */.Sqrt(this.MagnitudeSquared/* property */); // Type=float Def= Sym=Sqrt:Method DeclSyn=
+    var var367 = MathF/* typeDeclaration */.Sqrt(this.MagnitudeSquared/* property */); // TypeDeclaration=float Def= Sym=Sqrt:Method DeclSyn=
     return var367;
   }
   get Normal()
   {
-    var var374 = Vector3.op_Division_299(this, (this.Magnitude/* property */)); // Type=PlatoTestJavaScript.Vector3 Def=op_Division_299 Sym=op_Division:Method DeclSyn=OperatorDeclaration
+    var var374 = Vector3.op_Division_299(this, (this.Magnitude/* property */)); // TypeDeclaration=PlatoTestJavaScript.Vector3 Def=op_Division_299 Sym=op_Division:Method DeclSyn=OperatorDeclaration
     return var374;
   }
   get Count()
@@ -268,7 +268,7 @@ public Vector3(float x = 0, float y = 0, float z = 0) => (X, Y, Z) = (x, y, z);
 */
   constructor(x /* 340:float */, y /* 341:float */, z /* 342:float */) // :void
   {
-    var var336 = Plato.Tuple(x/* param */,y/* param */,z/* param */); // Type=(float, float, float) Def= Sym=: DeclSyn=
+    var var336 = Plato.Tuple(x/* param */,y/* param */,z/* param */); // TypeDeclaration=(float, float, float) Def= Sym=: DeclSyn=
     this.X/* field */ = var336.Item1; this.Y/* field */ = var336.Item2; this.Z/* field */ = var336.Item3; ;
   }
 /* ORIGINAL: 
@@ -297,11 +297,11 @@ public float Dot(Vector3 v) => X * v.X + v.Y * Y + Z * v.Z;
 */
   Dot_170(v /* 185:PlatoTestJavaScript.Vector3 */) // :float
   {
-    var var173 = this.X/* field */ * v/* param */.X; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var177 = v/* param */.Y * this.Y/* field */; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var172 = var173 + var177; // Type=float Def= Sym=op_Addition:Method DeclSyn=
-    var var181 = this.Z/* field */ * v/* param */.Z; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var171 = var172 + var181; // Type=float Def= Sym=op_Addition:Method DeclSyn=
+    var var173 = this.X/* field */ * v/* param */.X; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var177 = v/* param */.Y * this.Y/* field */; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var172 = var173 + var177; // TypeDeclaration=float Def= Sym=op_Addition:Method DeclSyn=
+    var var181 = this.Z/* field */ * v/* param */.Z; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var171 = var172 + var181; // TypeDeclaration=float Def= Sym=op_Addition:Method DeclSyn=
     return var171;
   }
 /* ORIGINAL: 
@@ -309,12 +309,12 @@ public override string ToString() => "Vector3(" + X + "," + Y + "," + Z + ")";
 */
   ToString_186() // :string
   {
-    var var192 = "Vector3(" + this.X/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
-    var var191 = var192 + ","; // Type=string Def= Sym=op_Addition:Method DeclSyn=
-    var var190 = var191 + this.Y/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
-    var var189 = var190 + ","; // Type=string Def= Sym=op_Addition:Method DeclSyn=
-    var var188 = var189 + this.Z/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
-    var var187 = var188 + ")"; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var192 = "Vector3(" + this.X/* field */; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
+    var var191 = var192 + ","; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
+    var var190 = var191 + this.Y/* field */; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
+    var var189 = var190 + ","; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
+    var var188 = var189 + this.Z/* field */; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
+    var var187 = var188 + ")"; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
     return var187;
   }
 /* ORIGINAL: 
@@ -323,15 +323,15 @@ public Vector3 Cross(Vector3 v)
 */
   Cross_200(v /* 232:PlatoTestJavaScript.Vector3 */) // :PlatoTestJavaScript.Vector3
   {
-    var var204 = this.Y/* field */ * v/* param */.Z; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var208 = this.Z/* field */ * v/* param */.Y; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var203 = var204 - var208; // Type=float Def= Sym=op_Subtraction:Method DeclSyn=
-    var var214 = this.Z/* field */ * v/* param */.X; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var218 = this.X/* field */ * v/* param */.Z; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var213 = var214 - var218; // Type=float Def= Sym=op_Subtraction:Method DeclSyn=
-    var var224 = this.X/* field */ * v/* param */.Y; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var228 = this.Y/* field */ * v/* param */.X; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var223 = var224 - var228; // Type=float Def= Sym=op_Subtraction:Method DeclSyn=
+    var var204 = this.Y/* field */ * v/* param */.Z; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var208 = this.Z/* field */ * v/* param */.Y; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var203 = var204 - var208; // TypeDeclaration=float Def= Sym=op_Subtraction:Method DeclSyn=
+    var var214 = this.Z/* field */ * v/* param */.X; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var218 = this.X/* field */ * v/* param */.Z; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var213 = var214 - var218; // TypeDeclaration=float Def= Sym=op_Subtraction:Method DeclSyn=
+    var var224 = this.X/* field */ * v/* param */.Y; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var228 = this.Y/* field */ * v/* param */.X; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var223 = var224 - var228; // TypeDeclaration=float Def= Sym=op_Subtraction:Method DeclSyn=
     return new Vector3(var203,var213,var223);
   }
 /* ORIGINAL: 
@@ -339,9 +339,9 @@ public static Vector3 operator +(Vector3 q, Vector3 r) => new(q.X + r.X, q.Y + r
 */
   static op_Addition_233(q /* 253:PlatoTestJavaScript.Vector3 */, r /* 254:PlatoTestJavaScript.Vector3 */) // :PlatoTestJavaScript.Vector3
   {
-    var var236 = q/* param */.X + r/* param */.X; // Type=float Def= Sym=op_Addition:Method DeclSyn=
-    var var242 = q/* param */.Y + r/* param */.Y; // Type=float Def= Sym=op_Addition:Method DeclSyn=
-    var var248 = q/* param */.Z + r/* param */.Z; // Type=float Def= Sym=op_Addition:Method DeclSyn=
+    var var236 = q/* param */.X + r/* param */.X; // TypeDeclaration=float Def= Sym=op_Addition:Method DeclSyn=
+    var var242 = q/* param */.Y + r/* param */.Y; // TypeDeclaration=float Def= Sym=op_Addition:Method DeclSyn=
+    var var248 = q/* param */.Z + r/* param */.Z; // TypeDeclaration=float Def= Sym=op_Addition:Method DeclSyn=
     return new Vector3(var236,var242,var248);
   }
 /* ORIGINAL: 
@@ -349,9 +349,9 @@ public static Vector3 operator -(Vector3 q, Vector3 r) => new(q.X - r.X, q.Y - r
 */
   static op_Subtraction_255(q /* 275:PlatoTestJavaScript.Vector3 */, r /* 276:PlatoTestJavaScript.Vector3 */) // :PlatoTestJavaScript.Vector3
   {
-    var var258 = q/* param */.X - r/* param */.X; // Type=float Def= Sym=op_Subtraction:Method DeclSyn=
-    var var264 = q/* param */.Y - r/* param */.Y; // Type=float Def= Sym=op_Subtraction:Method DeclSyn=
-    var var270 = q/* param */.Z - r/* param */.Z; // Type=float Def= Sym=op_Subtraction:Method DeclSyn=
+    var var258 = q/* param */.X - r/* param */.X; // TypeDeclaration=float Def= Sym=op_Subtraction:Method DeclSyn=
+    var var264 = q/* param */.Y - r/* param */.Y; // TypeDeclaration=float Def= Sym=op_Subtraction:Method DeclSyn=
+    var var270 = q/* param */.Z - r/* param */.Z; // TypeDeclaration=float Def= Sym=op_Subtraction:Method DeclSyn=
     return new Vector3(var258,var264,var270);
   }
 /* ORIGINAL: 
@@ -359,9 +359,9 @@ public static Vector3 operator *(Vector3 q, Vector3 r) => new(q.X * r.X, q.Y * r
 */
   static op_Multiply_277(q /* 297:PlatoTestJavaScript.Vector3 */, r /* 298:PlatoTestJavaScript.Vector3 */) // :PlatoTestJavaScript.Vector3
   {
-    var var280 = q/* param */.X * r/* param */.X; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var286 = q/* param */.Y * r/* param */.Y; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var292 = q/* param */.Z * r/* param */.Z; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var280 = q/* param */.X * r/* param */.X; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var286 = q/* param */.Y * r/* param */.Y; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var292 = q/* param */.Z * r/* param */.Z; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
     return new Vector3(var280,var286,var292);
   }
 /* ORIGINAL: 
@@ -369,9 +369,9 @@ public static Vector3 operator /(Vector3 q, Vector3 r) => new(q.X / r.X, q.Y / r
 */
   static op_Division_299(q /* 319:PlatoTestJavaScript.Vector3 */, r /* 320:PlatoTestJavaScript.Vector3 */) // :PlatoTestJavaScript.Vector3
   {
-    var var302 = q/* param */.X / r/* param */.X; // Type=float Def= Sym=op_Division:Method DeclSyn=
-    var var308 = q/* param */.Y / r/* param */.Y; // Type=float Def= Sym=op_Division:Method DeclSyn=
-    var var314 = q/* param */.Z / r/* param */.Z; // Type=float Def= Sym=op_Division:Method DeclSyn=
+    var var302 = q/* param */.X / r/* param */.X; // TypeDeclaration=float Def= Sym=op_Division:Method DeclSyn=
+    var var308 = q/* param */.Y / r/* param */.Y; // TypeDeclaration=float Def= Sym=op_Division:Method DeclSyn=
+    var var314 = q/* param */.Z / r/* param */.Z; // TypeDeclaration=float Def= Sym=op_Division:Method DeclSyn=
     return new Vector3(var302,var308,var314);
   }
 /* ORIGINAL: 
@@ -400,7 +400,7 @@ public Int3(int x = 0, int y = 0, int z = 0) => (X, Y, Z) = (x, y, z);
 */
   constructor(x /* 433:int */, y /* 434:int */, z /* 435:int */) // :void
   {
-    var var429 = Plato.Tuple(x/* param */,y/* param */,z/* param */); // Type=(int, int, int) Def= Sym=: DeclSyn=
+    var var429 = Plato.Tuple(x/* param */,y/* param */,z/* param */); // TypeDeclaration=(int, int, int) Def= Sym=: DeclSyn=
     this.X/* field */ = var429.Item1; this.Y/* field */ = var429.Item2; this.Z/* field */ = var429.Item3; ;
   }
 /* ORIGINAL: 
@@ -429,12 +429,12 @@ public override string ToString() => "Int3(" + X + "," + Y + "," + Z + ")";
 */
   ToString_409() // :string
   {
-    var var415 = "Int3(" + this.X/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
-    var var414 = var415 + ","; // Type=string Def= Sym=op_Addition:Method DeclSyn=
-    var var413 = var414 + this.Y/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
-    var var412 = var413 + ","; // Type=string Def= Sym=op_Addition:Method DeclSyn=
-    var var411 = var412 + this.Z/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
-    var var410 = var411 + ")"; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var415 = "Int3(" + this.X/* field */; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
+    var var414 = var415 + ","; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
+    var var413 = var414 + this.Y/* field */; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
+    var var412 = var413 + ","; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
+    var var411 = var412 + this.Z/* field */; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
+    var var410 = var411 + ")"; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
     return var410;
   }
 }
@@ -457,7 +457,7 @@ public Int4(int x = 0, int y = 0, int z = 0, int w = 0) => (X, Y, Z, W) = (x, y,
 */
   constructor(x /* 531:int */, y /* 532:int */, z /* 533:int */, w /* 534:int */) // :void
   {
-    var var526 = Plato.Tuple(x/* param */,y/* param */,z/* param */,w/* param */); // Type=(int, int, int, int) Def= Sym=: DeclSyn=
+    var var526 = Plato.Tuple(x/* param */,y/* param */,z/* param */,w/* param */); // TypeDeclaration=(int, int, int, int) Def= Sym=: DeclSyn=
     this.X/* field */ = var526.Item1; this.Y/* field */ = var526.Item2; this.Z/* field */ = var526.Item3; this.W/* field */ = var526.Item4; ;
   }
 /* ORIGINAL: 
@@ -493,14 +493,14 @@ public override string ToString() => "Int4(" + X + "," + Y + "," + Z + "," + W +
 */
   ToString_501() // :string
   {
-    var var509 = "Int4(" + this.X/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
-    var var508 = var509 + ","; // Type=string Def= Sym=op_Addition:Method DeclSyn=
-    var var507 = var508 + this.Y/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
-    var var506 = var507 + ","; // Type=string Def= Sym=op_Addition:Method DeclSyn=
-    var var505 = var506 + this.Z/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
-    var var504 = var505 + ","; // Type=string Def= Sym=op_Addition:Method DeclSyn=
-    var var503 = var504 + this.W/* field */; // Type=string Def= Sym=op_Addition:Method DeclSyn=
-    var var502 = var503 + ")"; // Type=string Def= Sym=op_Addition:Method DeclSyn=
+    var var509 = "Int4(" + this.X/* field */; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
+    var var508 = var509 + ","; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
+    var var507 = var508 + this.Y/* field */; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
+    var var506 = var507 + ","; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
+    var var505 = var506 + this.Z/* field */; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
+    var var504 = var505 + ","; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
+    var var503 = var504 + this.W/* field */; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
+    var var502 = var503 + ")"; // TypeDeclaration=string Def= Sym=op_Addition:Method DeclSyn=
     return var502;
   }
 }
@@ -515,7 +515,7 @@ public Points(IArray<Vector3> positions, IArray<Vector2> uvs, IArray<Vector3> no
 */
   constructor(positions /* 569:PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3> */, uvs /* 570:PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector2> */, normals /* 571:PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3> */) // :void
   {
-    var var565 = Plato.Tuple(positions/* param */,uvs/* param */,normals/* param */); // Type=(PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3>, PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector2>, PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3>) Def= Sym=: DeclSyn=
+    var var565 = Plato.Tuple(positions/* param */,uvs/* param */,normals/* param */); // TypeDeclaration=(PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3>, PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector2>, PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3>) Def= Sym=: DeclSyn=
     this.Positions/* property */ = var565.Item1; this.UVs/* property */ = var565.Item2; this.Normals/* property */ = var565.Item3; ;
   }
 }
@@ -529,7 +529,7 @@ public TriMesh(Points points, IArray<Int3> faces)
 */
   constructor(points /* 586:PlatoTestJavaScript.Points */, faces /* 587:PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int3> */) // :void
   {
-    var var583 = Plato.Tuple(points/* param */,faces/* param */); // Type=(PlatoTestJavaScript.Points, PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int3>) Def= Sym=: DeclSyn=
+    var var583 = Plato.Tuple(points/* param */,faces/* param */); // TypeDeclaration=(PlatoTestJavaScript.Points, PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int3>) Def= Sym=: DeclSyn=
     this.Points/* property */ = var583.Item1; this.Faces/* property */ = var583.Item2; ;
   }
 }
@@ -543,7 +543,7 @@ public QuadMesh(Points points, IArray<Int4> faces)
 */
   constructor(points /* 600:PlatoTestJavaScript.Points */, faces /* 601:PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int4> */) // :void
   {
-    var var597 = Plato.Tuple(points/* param */,faces/* param */); // Type=(PlatoTestJavaScript.Points, PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int4>) Def= Sym=: DeclSyn=
+    var var597 = Plato.Tuple(points/* param */,faces/* param */); // TypeDeclaration=(PlatoTestJavaScript.Points, PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int4>) Def= Sym=: DeclSyn=
     this.Points/* property */ = var597.Item1; this.Faces/* property */ = var597.Item2; ;
   }
 }
@@ -558,10 +558,10 @@ public static IArray<T> ToIArray<T>(this IReadOnlyList<T> self)
 // Captured: self
 var var613 = (i) => 
 {
-    var var614 = Plato.At(self/* param */,i/* param */); // Type=T? Def= Sym=this[]:Property DeclSyn=
+    var var614 = Plato.At(self/* param */,i/* param */); // TypeDeclaration=T? Def= Sym=this[]:Property DeclSyn=
   return var614;
 }
-    var var607 = Extensions.Select_652(self/* param */.Count, var613); // Type=PlatoTestJavaScript.IArray<T> Def=Select_652 Sym=Select:Method DeclSyn=MethodDeclaration
+    var var607 = Extensions.Select_652(self/* param */.Count, var613); // TypeDeclaration=PlatoTestJavaScript.IArray<T> Def=Select_652 Sym=Select:Method DeclSyn=MethodDeclaration
     return var607;
   }
 /* ORIGINAL: 
@@ -576,18 +576,18 @@ public static T[] ToArray<T>(this IArray<T> self)
   static ToArray_620(self /* 639:PlatoTestJavaScript.IArray<T> */) // :T[]
   {
     {
-    var var622 = Plato.Array(); // Type=T[] Def= Sym=: DeclSyn=
+    var var622 = Plato.Array(); // TypeDeclaration=T[] Def= Sym=: DeclSyn=
 var r = var622;
       {
       }
-    var var632 = i/* local */ < self/* param */.Count; // Type=bool Def= Sym=op_LessThan:Method DeclSyn=
+    var var632 = i/* local */ < self/* param */.Count; // TypeDeclaration=bool Def= Sym=op_LessThan:Method DeclSyn=
       while (var632)
       {
-    var var628 = Plato.At(self/* param */,i/* local */); // Type=T? Def=op_Subscript_0 Sym=this[]:Property DeclSyn=IndexerDeclaration
-    var var624 = Plato.At(r/* local */,i/* local */); // Type=T? Def= Sym=: DeclSyn=
+    var var628 = Plato.At(self/* param */,i/* local */); // TypeDeclaration=T? Def=op_Subscript_0 Sym=this[]:Property DeclSyn=IndexerDeclaration
+    var var624 = Plato.At(r/* local */,i/* local */); // TypeDeclaration=T? Def= Sym=: DeclSyn=
         var624 = var628;
         {
-    var var636 = ++i/* local */; // Type=int Def= Sym=op_Increment:Method DeclSyn=
+    var var636 = ++i/* local */; // TypeDeclaration=int Def= Sym=op_Increment:Method DeclSyn=
           var636;
         }
 var632 = var632;
@@ -606,8 +606,8 @@ var var648 = (x) =>
 {
   return x/* param */;
 }
-    var var643 = Extensions.SelectMany_660(self/* param */, var648); // Type=PlatoTestJavaScript.IArray<float> Def=SelectMany_660 Sym=SelectMany:Method DeclSyn=MethodDeclaration
-    var var641 = Extensions.ToArray_620(var643); // Type=float[] Def=ToArray_620 Sym=ToArray:Method DeclSyn=MethodDeclaration
+    var var643 = Extensions.SelectMany_660(self/* param */, var648); // TypeDeclaration=PlatoTestJavaScript.IArray<float> Def=SelectMany_660 Sym=SelectMany:Method DeclSyn=MethodDeclaration
+    var var641 = Extensions.ToArray_620(var643); // TypeDeclaration=float[] Def=ToArray_620 Sym=ToArray:Method DeclSyn=MethodDeclaration
     return var641;
   }
 /* ORIGINAL: 
@@ -638,30 +638,30 @@ public static IArray<U> SelectMany<T, U>(this IArray<T> self, Func<T, IArray<U>>
 var r = new List();
       {
       }
-    var var685 = i/* local */ < self/* param */.Count; // Type=bool Def= Sym=op_LessThan:Method DeclSyn=
+    var var685 = i/* local */ < self/* param */.Count; // TypeDeclaration=bool Def= Sym=op_LessThan:Method DeclSyn=
       while (var685)
       {
         {
-    var var667 = Plato.At(self/* param */,i/* local */); // Type=T? Def=op_Subscript_0 Sym=this[]:Property DeclSyn=IndexerDeclaration
-    var var664 = func/* param */(var667); // Type=PlatoTestJavaScript.IArray<U> Def= Sym=Invoke:Method DeclSyn=
+    var var667 = Plato.At(self/* param */,i/* local */); // TypeDeclaration=T? Def=op_Subscript_0 Sym=this[]:Property DeclSyn=IndexerDeclaration
+    var var664 = func/* param */(var667); // TypeDeclaration=PlatoTestJavaScript.IArray<U> Def= Sym=Invoke:Method DeclSyn=
 var tmp = var664;
           {
           }
-    var var679 = j/* local */ < tmp/* local */.Count; // Type=bool Def= Sym=op_LessThan:Method DeclSyn=
+    var var679 = j/* local */ < tmp/* local */.Count; // TypeDeclaration=bool Def= Sym=op_LessThan:Method DeclSyn=
           while (var679)
           {
-    var var675 = Plato.At(tmp/* local */,j/* local */); // Type=U? Def=op_Subscript_0 Sym=this[]:Property DeclSyn=IndexerDeclaration
-    var var671 = r/* local */.Add(var675); // Type=void Def= Sym=Add:Method DeclSyn=
+    var var675 = Plato.At(tmp/* local */,j/* local */); // TypeDeclaration=U? Def=op_Subscript_0 Sym=this[]:Property DeclSyn=IndexerDeclaration
+    var var671 = r/* local */.Add(var675); // TypeDeclaration=void Def= Sym=Add:Method DeclSyn=
             var671;
             {
-    var var683 = ++j/* local */; // Type=int Def= Sym=op_Increment:Method DeclSyn=
+    var var683 = ++j/* local */; // TypeDeclaration=int Def= Sym=op_Increment:Method DeclSyn=
               var683;
             }
 var679 = var679;
           }
         }
         {
-    var var689 = ++i/* local */; // Type=int Def= Sym=op_Increment:Method DeclSyn=
+    var var689 = ++i/* local */; // TypeDeclaration=int Def= Sym=op_Increment:Method DeclSyn=
           var689;
         }
 var685 = var685;
@@ -669,10 +669,10 @@ var685 = var685;
 // Captured: r, i
 var var697 = (i) => 
 {
-    var var698 = Plato.At(r/* local */,i/* param */); // Type=U? Def= Sym=this[]:Property DeclSyn=
+    var var698 = Plato.At(r/* local */,i/* param */); // TypeDeclaration=U? Def= Sym=this[]:Property DeclSyn=
   return var698;
 }
-    var var691 = Extensions.Select_652(r/* local */.Count, var697); // Type=PlatoTestJavaScript.IArray<U> Def=Select_652 Sym=Select:Method DeclSyn=MethodDeclaration
+    var var691 = Extensions.Select_652(r/* local */.Count, var697); // TypeDeclaration=PlatoTestJavaScript.IArray<U> Def=Select_652 Sym=Select:Method DeclSyn=MethodDeclaration
       return var691;
     }
   }
@@ -685,11 +685,11 @@ public static IArray<U> Select<T, U>(this IArray<T> self, Func<T, U> func)
 // Captured: self, func
 var var712 = (i) => 
 {
-    var var716 = Plato.At(self/* param */,i/* param */); // Type=T? Def=op_Subscript_0 Sym=this[]:Property DeclSyn=IndexerDeclaration
-    var var713 = func/* param */(var716); // Type=U? Def= Sym=Invoke:Method DeclSyn=
+    var var716 = Plato.At(self/* param */,i/* param */); // TypeDeclaration=T? Def=op_Subscript_0 Sym=this[]:Property DeclSyn=IndexerDeclaration
+    var var713 = func/* param */(var716); // TypeDeclaration=U? Def= Sym=Invoke:Method DeclSyn=
   return var713;
 }
-    var var706 = Extensions.Select_652(self/* param */.Count, var712); // Type=PlatoTestJavaScript.IArray<U> Def=Select_652 Sym=Select:Method DeclSyn=MethodDeclaration
+    var var706 = Extensions.Select_652(self/* param */.Count, var712); // TypeDeclaration=PlatoTestJavaScript.IArray<U> Def=Select_652 Sym=Select:Method DeclSyn=MethodDeclaration
     return var706;
   }
 /* ORIGINAL: 
@@ -698,7 +698,7 @@ public static float Cos(this float self)
 */
   static Cos_723(self /* 729:float */) // :float
   {
-    var var724 = MathF/* type */.Cos(self/* param */); // Type=float Def= Sym=Cos:Method DeclSyn=
+    var var724 = MathF/* typeDeclaration */.Cos(self/* param */); // TypeDeclaration=float Def= Sym=Cos:Method DeclSyn=
     return var724;
   }
 /* ORIGINAL: 
@@ -707,7 +707,7 @@ public static float Sin(this float self)
 */
   static Sin_730(self /* 736:float */) // :float
   {
-    var var731 = MathF/* type */.Sin(self/* param */); // Type=float Def= Sym=Sin:Method DeclSyn=
+    var var731 = MathF/* typeDeclaration */.Sin(self/* param */); // TypeDeclaration=float Def= Sym=Sin:Method DeclSyn=
     return var731;
   }
 /* ORIGINAL: 
@@ -716,7 +716,7 @@ public static float UnitToRad(this float self)
 */
   static UnitToRad_737(self /* 742:float */) // :float
   {
-    var var738 = self/* param */ * MathF/* type */.PI; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var738 = self/* param */ * MathF/* typeDeclaration */.PI; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
     return var738;
   }
 /* ORIGINAL: 
@@ -728,10 +728,10 @@ public static IArray<float> SampleFloats(int count, float max = 1.0f)
 // Captured: count, max
 var var749 = (i) => 
 {
-    var var750 = max/* param */ * count/* param */; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var750 = max/* param */ * count/* param */; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
   return var750;
 }
-    var var744 = Extensions.Select_652(count/* param */, var749); // Type=PlatoTestJavaScript.IArray<float> Def=Select_652 Sym=Select:Method DeclSyn=MethodDeclaration
+    var var744 = Extensions.Select_652(count/* param */, var749); // TypeDeclaration=PlatoTestJavaScript.IArray<float> Def=Select_652 Sym=Select:Method DeclSyn=MethodDeclaration
     return var744;
   }
 /* ORIGINAL: 
@@ -743,11 +743,11 @@ public static IArray<Int3> ToTriangles(this IArray<Int4> self)
 // Captured: 
 var var762 = (f) => 
 {
-    var var765 = Plato.Array(new Int3(f/* param */.X,f/* param */.Y,f/* param */.Z),new Int3(f/* param */.Z,f/* param */.W,f/* param */.X)); // Type=System.Collections.Generic.IReadOnlyList<PlatoTestJavaScript.Int3> Def= Sym=: DeclSyn=
-    var var763 = Extensions.ToIArray_606(var765); // Type=PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int3> Def=ToIArray_606 Sym=ToIArray:Method DeclSyn=MethodDeclaration
+    var var765 = Plato.Array(new Int3(f/* param */.X,f/* param */.Y,f/* param */.Z),new Int3(f/* param */.Z,f/* param */.W,f/* param */.X)); // TypeDeclaration=System.Collections.Generic.IReadOnlyList<PlatoTestJavaScript.Int3> Def= Sym=: DeclSyn=
+    var var763 = Extensions.ToIArray_606(var765); // TypeDeclaration=PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int3> Def=ToIArray_606 Sym=ToIArray:Method DeclSyn=MethodDeclaration
   return var763;
 }
-    var var757 = Extensions.SelectMany_660(self/* param */, var762); // Type=PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int3> Def=SelectMany_660 Sym=SelectMany:Method DeclSyn=MethodDeclaration
+    var var757 = Extensions.SelectMany_660(self/* param */, var762); // TypeDeclaration=PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int3> Def=SelectMany_660 Sym=SelectMany:Method DeclSyn=MethodDeclaration
     return var757;
   }
 /* ORIGINAL: 
@@ -757,8 +757,8 @@ public static QuadMesh ToQuadMesh(this Func<Vector2, Vector3> func, int rows, in
 */
   static ToQuadMesh_788(func /* 806:System.Func<PlatoTestJavaScript.Vector2, PlatoTestJavaScript.Vector3> */, rows /* 807:int */, cols /* 808:int */) // :PlatoTestJavaScript.QuadMesh
   {
-    var var791 = Extensions.ComputeQuadStripPoints_906(this, func/* param */, rows/* param */, cols/* param */); // Type=PlatoTestJavaScript.Points Def=ComputeQuadStripPoints_906 Sym=ComputeQuadStripPoints:Method DeclSyn=MethodDeclaration
-    var var800 = this.ComputeQuadStripIndices_957(rows/* param */, cols/* param */); // Type=PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int4> Def=ComputeQuadStripIndices_957 Sym=ComputeQuadStripIndices:Method DeclSyn=MethodDeclaration
+    var var791 = Extensions.ComputeQuadStripPoints_906(this, func/* param */, rows/* param */, cols/* param */); // TypeDeclaration=PlatoTestJavaScript.Points Def=ComputeQuadStripPoints_906 Sym=ComputeQuadStripPoints:Method DeclSyn=MethodDeclaration
+    var var800 = this.ComputeQuadStripIndices_957(rows/* param */, cols/* param */); // TypeDeclaration=PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int4> Def=ComputeQuadStripIndices_957 Sym=ComputeQuadStripIndices:Method DeclSyn=MethodDeclaration
     return new QuadMesh(var791,var800);
   }
 /* ORIGINAL: 
@@ -777,23 +777,23 @@ public static Vector3 UVToNormal(this Vector2 uv, Func<Vector2, Vector3> func, f
   static UVToNormal_809(uv /* 878:PlatoTestJavaScript.Vector2 */, func /* 879:System.Func<PlatoTestJavaScript.Vector2, PlatoTestJavaScript.Vector3> */, epsilon /* 880:float */) // :PlatoTestJavaScript.Vector3
   {
     {
-    var var816 = uv/* param */.X + epsilon/* param */; // Type=float Def= Sym=op_Addition:Method DeclSyn=
-    var var811 = func/* param */(new Vector2(var816,uv/* param */.Y)); // Type=PlatoTestJavaScript.Vector3 Def= Sym=Invoke:Method DeclSyn=
+    var var816 = uv/* param */.X + epsilon/* param */; // TypeDeclaration=float Def= Sym=op_Addition:Method DeclSyn=
+    var var811 = func/* param */(new Vector2(var816,uv/* param */.Y)); // TypeDeclaration=PlatoTestJavaScript.Vector3 Def= Sym=Invoke:Method DeclSyn=
 var a = var811;
-    var var829 = uv/* param */.X - epsilon/* param */; // Type=float Def= Sym=op_Subtraction:Method DeclSyn=
-    var var824 = func/* param */(new Vector2(var829,uv/* param */.Y)); // Type=PlatoTestJavaScript.Vector3 Def= Sym=Invoke:Method DeclSyn=
+    var var829 = uv/* param */.X - epsilon/* param */; // TypeDeclaration=float Def= Sym=op_Subtraction:Method DeclSyn=
+    var var824 = func/* param */(new Vector2(var829,uv/* param */.Y)); // TypeDeclaration=PlatoTestJavaScript.Vector3 Def= Sym=Invoke:Method DeclSyn=
 var b = var824;
-    var var845 = uv/* param */.Y + epsilon/* param */; // Type=float Def= Sym=op_Addition:Method DeclSyn=
-    var var837 = func/* param */(new Vector2(uv/* param */.X,var845)); // Type=PlatoTestJavaScript.Vector3 Def= Sym=Invoke:Method DeclSyn=
+    var var845 = uv/* param */.Y + epsilon/* param */; // TypeDeclaration=float Def= Sym=op_Addition:Method DeclSyn=
+    var var837 = func/* param */(new Vector2(uv/* param */.X,var845)); // TypeDeclaration=PlatoTestJavaScript.Vector3 Def= Sym=Invoke:Method DeclSyn=
 var c = var837;
-    var var858 = uv/* param */.Y - epsilon/* param */; // Type=float Def= Sym=op_Subtraction:Method DeclSyn=
-    var var850 = func/* param */(new Vector2(uv/* param */.X,var858)); // Type=PlatoTestJavaScript.Vector3 Def= Sym=Invoke:Method DeclSyn=
+    var var858 = uv/* param */.Y - epsilon/* param */; // TypeDeclaration=float Def= Sym=op_Subtraction:Method DeclSyn=
+    var var850 = func/* param */(new Vector2(uv/* param */.X,var858)); // TypeDeclaration=PlatoTestJavaScript.Vector3 Def= Sym=Invoke:Method DeclSyn=
 var d = var850;
-    var var863 = Vector3.op_Subtraction_255(b/* local */, a/* local */); // Type=PlatoTestJavaScript.Vector3 Def=op_Subtraction_255 Sym=op_Subtraction:Method DeclSyn=OperatorDeclaration
+    var var863 = Vector3.op_Subtraction_255(b/* local */, a/* local */); // TypeDeclaration=PlatoTestJavaScript.Vector3 Def=op_Subtraction_255 Sym=op_Subtraction:Method DeclSyn=OperatorDeclaration
 var v1 = var863;
-    var var867 = Vector3.op_Subtraction_255(d/* local */, c/* local */); // Type=PlatoTestJavaScript.Vector3 Def=op_Subtraction_255 Sym=op_Subtraction:Method DeclSyn=OperatorDeclaration
+    var var867 = Vector3.op_Subtraction_255(d/* local */, c/* local */); // TypeDeclaration=PlatoTestJavaScript.Vector3 Def=op_Subtraction_255 Sym=op_Subtraction:Method DeclSyn=OperatorDeclaration
 var v2 = var867;
-    var var871 = v1/* local */.Cross(v2/* local */); // Type=PlatoTestJavaScript.Vector3 Def=Cross_200 Sym=Cross:Method DeclSyn=MethodDeclaration
+    var var871 = v1/* local */.Cross(v2/* local */); // TypeDeclaration=PlatoTestJavaScript.Vector3 Def=Cross_200 Sym=Cross:Method DeclSyn=MethodDeclaration
 var r = var871;
       return r/* local */.Normal;
     }
@@ -804,14 +804,14 @@ public static Points UVsToPoints(this IArray<Vector2> uvs, Func<Vector2, Vector3
 */
   static UVsToPoints_881(uvs /* 904:PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector2> */, func /* 905:System.Func<PlatoTestJavaScript.Vector2, PlatoTestJavaScript.Vector3> */) // :PlatoTestJavaScript.Points
   {
-    var var884 = Extensions.Select_705(uvs/* param */, func/* param */); // Type=PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3> Def=Select_705 Sym=Select:Method DeclSyn=MethodDeclaration
+    var var884 = Extensions.Select_705(uvs/* param */, func/* param */); // TypeDeclaration=PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3> Def=Select_705 Sym=Select:Method DeclSyn=MethodDeclaration
 // Captured: func
 var var897 = (uv) => 
 {
-    var var898 = Extensions.UVToNormal_809(uv/* param */, func/* param */); // Type=PlatoTestJavaScript.Vector3 Def=UVToNormal_809 Sym=UVToNormal:Method DeclSyn=MethodDeclaration
+    var var898 = Extensions.UVToNormal_809(uv/* param */, func/* param */); // TypeDeclaration=PlatoTestJavaScript.Vector3 Def=UVToNormal_809 Sym=UVToNormal:Method DeclSyn=MethodDeclaration
   return var898;
 }
-    var var892 = Extensions.Select_705(uvs/* param */, var897); // Type=PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3> Def=Select_705 Sym=Select:Method DeclSyn=MethodDeclaration
+    var var892 = Extensions.Select_705(uvs/* param */, var897); // TypeDeclaration=PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3> Def=Select_705 Sym=Select:Method DeclSyn=MethodDeclaration
     return new Points(var884,uvs/* param */,var892);
   }
 /* ORIGINAL: 
@@ -820,8 +820,8 @@ public static Points ComputeQuadStripPoints(this Func<Vector2, Vector3> func, in
 */
   static ComputeQuadStripPoints_906(func /* 917:System.Func<PlatoTestJavaScript.Vector2, PlatoTestJavaScript.Vector3> */, usegs /* 918:int */, vsegs /* 919:int */) // :PlatoTestJavaScript.Points
   {
-    var var909 = this.ComputeQuadStripUVs_920(usegs/* param */, vsegs/* param */); // Type=PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector2> Def=ComputeQuadStripUVs_920 Sym=ComputeQuadStripUVs:Method DeclSyn=MethodDeclaration
-    var var907 = Extensions.UVsToPoints_881(var909, func/* param */); // Type=PlatoTestJavaScript.Points Def=UVsToPoints_881 Sym=UVsToPoints:Method DeclSyn=MethodDeclaration
+    var var909 = this.ComputeQuadStripUVs_920(usegs/* param */, vsegs/* param */); // TypeDeclaration=PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector2> Def=ComputeQuadStripUVs_920 Sym=ComputeQuadStripUVs:Method DeclSyn=MethodDeclaration
+    var var907 = Extensions.UVsToPoints_881(var909, func/* param */); // TypeDeclaration=PlatoTestJavaScript.Points Def=UVsToPoints_881 Sym=UVsToPoints:Method DeclSyn=MethodDeclaration
     return var907;
   }
 /* ORIGINAL: 
@@ -836,21 +836,21 @@ public static IArray<Vector2> ComputeQuadStripUVs(int usegs, int vsegs)
 */
   static ComputeQuadStripUVs_920(usegs /* 955:int */, vsegs /* 956:int */) // :PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector2>
   {
-    var var923 = usegs/* param */ * vsegs/* param */; // Type=int Def= Sym=op_Multiply:Method DeclSyn=
+    var var923 = usegs/* param */ * vsegs/* param */; // TypeDeclaration=int Def= Sym=op_Multiply:Method DeclSyn=
 // Captured: usegs, vsegs
 var var928 = (i) => 
 {
   {
-    var var930 = i/* param */ / vsegs/* param */; // Type=int Def= Sym=op_Division:Method DeclSyn=
+    var var930 = i/* param */ / vsegs/* param */; // TypeDeclaration=int Def= Sym=op_Division:Method DeclSyn=
 var row = var930;
-    var var934 = i/* param */ % usegs/* param */; // Type=int Def= Sym=op_Modulus:Method DeclSyn=
+    var var934 = i/* param */ % usegs/* param */; // TypeDeclaration=int Def= Sym=op_Modulus:Method DeclSyn=
 var col = var934;
-    var var940 = Plato.Cast("float", col/* local */); // Type=float Def= Sym=: DeclSyn=
-    var var943 = usegs/* param */ - 1; // Type=float Def= Sym=op_Subtraction:Method DeclSyn=
-    var var939 = var940 / var943; // Type=float Def= Sym=op_Division:Method DeclSyn=
-    var var948 = Plato.Cast("float", row/* local */); // Type=float Def= Sym=: DeclSyn=
-    var var951 = vsegs/* param */ - 1; // Type=float Def= Sym=op_Subtraction:Method DeclSyn=
-    var var947 = var948 / var951; // Type=float Def= Sym=op_Division:Method DeclSyn=
+    var var940 = Plato.Cast("float", col/* local */); // TypeDeclaration=float Def= Sym=: DeclSyn=
+    var var943 = usegs/* param */ - 1; // TypeDeclaration=float Def= Sym=op_Subtraction:Method DeclSyn=
+    var var939 = var940 / var943; // TypeDeclaration=float Def= Sym=op_Division:Method DeclSyn=
+    var var948 = Plato.Cast("float", row/* local */); // TypeDeclaration=float Def= Sym=: DeclSyn=
+    var var951 = vsegs/* param */ - 1; // TypeDeclaration=float Def= Sym=op_Subtraction:Method DeclSyn=
+    var var947 = var948 / var951; // TypeDeclaration=float Def= Sym=op_Division:Method DeclSyn=
     return new Vector2(var939,var947);
   }
 }
@@ -876,34 +876,34 @@ public static IArray<Int4> ComputeQuadStripIndices(int usegs, int vsegs)
   static ComputeQuadStripIndices_957(usegs /* 1034:int */, vsegs /* 1035:int */) // :PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int4>
   {
     {
-    var var962 = usegs/* param */ - 1; // Type=int Def= Sym=op_Subtraction:Method DeclSyn=
-    var var966 = vsegs/* param */ - 1; // Type=int Def= Sym=op_Subtraction:Method DeclSyn=
-    var var960 = var962 * var966; // Type=int Def= Sym=op_Multiply:Method DeclSyn=
+    var var962 = usegs/* param */ - 1; // TypeDeclaration=int Def= Sym=op_Subtraction:Method DeclSyn=
+    var var966 = vsegs/* param */ - 1; // TypeDeclaration=int Def= Sym=op_Subtraction:Method DeclSyn=
+    var var960 = var962 * var966; // TypeDeclaration=int Def= Sym=op_Multiply:Method DeclSyn=
 // Captured: usegs, vsegs
 var var971 = (i) => 
 {
   {
-    var var976 = vsegs/* param */ - 1; // Type=int Def= Sym=op_Subtraction:Method DeclSyn=
-    var var973 = i/* param */ / var976; // Type=int Def= Sym=op_Division:Method DeclSyn=
+    var var976 = vsegs/* param */ - 1; // TypeDeclaration=int Def= Sym=op_Subtraction:Method DeclSyn=
+    var var973 = i/* param */ / var976; // TypeDeclaration=int Def= Sym=op_Division:Method DeclSyn=
 var row = var973;
-    var var983 = usegs/* param */ - 1; // Type=int Def= Sym=op_Subtraction:Method DeclSyn=
-    var var980 = i/* param */ % var983; // Type=int Def= Sym=op_Modulus:Method DeclSyn=
+    var var983 = usegs/* param */ - 1; // TypeDeclaration=int Def= Sym=op_Subtraction:Method DeclSyn=
+    var var980 = i/* param */ % var983; // TypeDeclaration=int Def= Sym=op_Modulus:Method DeclSyn=
 var col = var980;
-    var var988 = col/* local */ + 1; // Type=int Def= Sym=op_Addition:Method DeclSyn=
+    var var988 = col/* local */ + 1; // TypeDeclaration=int Def= Sym=op_Addition:Method DeclSyn=
 var nextCol = var988;
-    var var993 = row/* local */ + 1; // Type=int Def= Sym=op_Addition:Method DeclSyn=
+    var var993 = row/* local */ + 1; // TypeDeclaration=int Def= Sym=op_Addition:Method DeclSyn=
 var nextRow = var993;
-    var var999 = row/* local */ * usegs/* param */; // Type=int Def= Sym=op_Multiply:Method DeclSyn=
-    var var997 = var999 + col/* local */; // Type=int Def= Sym=op_Addition:Method DeclSyn=
+    var var999 = row/* local */ * usegs/* param */; // TypeDeclaration=int Def= Sym=op_Multiply:Method DeclSyn=
+    var var997 = var999 + col/* local */; // TypeDeclaration=int Def= Sym=op_Addition:Method DeclSyn=
 var a = var997;
-    var var1006 = row/* local */ * usegs/* param */; // Type=int Def= Sym=op_Multiply:Method DeclSyn=
-    var var1004 = var1006 + nextCol/* local */; // Type=int Def= Sym=op_Addition:Method DeclSyn=
+    var var1006 = row/* local */ * usegs/* param */; // TypeDeclaration=int Def= Sym=op_Multiply:Method DeclSyn=
+    var var1004 = var1006 + nextCol/* local */; // TypeDeclaration=int Def= Sym=op_Addition:Method DeclSyn=
 var b = var1004;
-    var var1013 = nextRow/* local */ * usegs/* param */; // Type=int Def= Sym=op_Multiply:Method DeclSyn=
-    var var1011 = var1013 + nextCol/* local */; // Type=int Def= Sym=op_Addition:Method DeclSyn=
+    var var1013 = nextRow/* local */ * usegs/* param */; // TypeDeclaration=int Def= Sym=op_Multiply:Method DeclSyn=
+    var var1011 = var1013 + nextCol/* local */; // TypeDeclaration=int Def= Sym=op_Addition:Method DeclSyn=
 var c = var1011;
-    var var1020 = nextRow/* local */ * usegs/* param */; // Type=int Def= Sym=op_Multiply:Method DeclSyn=
-    var var1018 = var1020 + col/* local */; // Type=int Def= Sym=op_Addition:Method DeclSyn=
+    var var1020 = nextRow/* local */ * usegs/* param */; // TypeDeclaration=int Def= Sym=op_Multiply:Method DeclSyn=
+    var var1018 = var1020 + col/* local */; // TypeDeclaration=int Def= Sym=op_Addition:Method DeclSyn=
 var d = var1018;
     return new Int4(a/* local */,b/* local */,c/* local */,d/* local */);
   }
@@ -920,22 +920,22 @@ public static Vector3 UvToSphere(Vector2 uv, float radius)
 */
   static UvToSphere_1036(uv /* 1086:PlatoTestJavaScript.Vector2 */, radius /* 1087:float */) // :PlatoTestJavaScript.Vector3
   {
-    var var1041 = -radius/* param */; // Type=float Def= Sym=op_UnaryNegation:Method DeclSyn=
-    var var1045 = Extensions.UnitToRad_737(uv/* param */.X); // Type=float Def=UnitToRad_737 Sym=UnitToRad:Method DeclSyn=MethodDeclaration
-    var var1043 = Extensions.Cos_723(var1045); // Type=float Def=Cos_723 Sym=Cos:Method DeclSyn=MethodDeclaration
-    var var1040 = var1041 * var1043; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var1052 = uv/* param */.Y * MathF/* type */.PI; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var1049 = Extensions.Sin_730(var1052); // Type=float Def=Sin_730 Sym=Sin:Method DeclSyn=MethodDeclaration
-    var var1039 = var1040 * var1049; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var1063 = uv/* param */.Y * MathF/* type */.PI; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var1060 = Extensions.Cos_723(var1063); // Type=float Def=Cos_723 Sym=Cos:Method DeclSyn=MethodDeclaration
-    var var1058 = radius/* param */ * var1060; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var1074 = Extensions.UnitToRad_737(uv/* param */.X); // Type=float Def=UnitToRad_737 Sym=UnitToRad:Method DeclSyn=MethodDeclaration
-    var var1072 = Extensions.Cos_723(var1074); // Type=float Def=Cos_723 Sym=Cos:Method DeclSyn=MethodDeclaration
-    var var1070 = radius/* param */ * var1072; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var1081 = uv/* param */.Y * MathF/* type */.PI; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var1078 = Extensions.Sin_730(var1081); // Type=float Def=Sin_730 Sym=Sin:Method DeclSyn=MethodDeclaration
-    var var1069 = var1070 * var1078; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1041 = -radius/* param */; // TypeDeclaration=float Def= Sym=op_UnaryNegation:Method DeclSyn=
+    var var1045 = Extensions.UnitToRad_737(uv/* param */.X); // TypeDeclaration=float Def=UnitToRad_737 Sym=UnitToRad:Method DeclSyn=MethodDeclaration
+    var var1043 = Extensions.Cos_723(var1045); // TypeDeclaration=float Def=Cos_723 Sym=Cos:Method DeclSyn=MethodDeclaration
+    var var1040 = var1041 * var1043; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1052 = uv/* param */.Y * MathF/* typeDeclaration */.PI; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1049 = Extensions.Sin_730(var1052); // TypeDeclaration=float Def=Sin_730 Sym=Sin:Method DeclSyn=MethodDeclaration
+    var var1039 = var1040 * var1049; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1063 = uv/* param */.Y * MathF/* typeDeclaration */.PI; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1060 = Extensions.Cos_723(var1063); // TypeDeclaration=float Def=Cos_723 Sym=Cos:Method DeclSyn=MethodDeclaration
+    var var1058 = radius/* param */ * var1060; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1074 = Extensions.UnitToRad_737(uv/* param */.X); // TypeDeclaration=float Def=UnitToRad_737 Sym=UnitToRad:Method DeclSyn=MethodDeclaration
+    var var1072 = Extensions.Cos_723(var1074); // TypeDeclaration=float Def=Cos_723 Sym=Cos:Method DeclSyn=MethodDeclaration
+    var var1070 = radius/* param */ * var1072; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1081 = uv/* param */.Y * MathF/* typeDeclaration */.PI; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1078 = Extensions.Sin_730(var1081); // TypeDeclaration=float Def=Sin_730 Sym=Sin:Method DeclSyn=MethodDeclaration
+    var var1069 = var1070 * var1078; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
     return new Vector3(var1039,var1058,var1069);
   }
 /* ORIGINAL: 
@@ -951,21 +951,21 @@ public static Vector3 UvToTorus(Vector2 uv, float radius, float tube)
   static UvToTorus_1088(uv /* 1135:PlatoTestJavaScript.Vector2 */, radius /* 1136:float */, tube /* 1137:float */) // :PlatoTestJavaScript.Vector3
   {
     {
-    var var1092 = Vector2.op_Multiply_73(uv/* param */, (MathF/* type */.PI)); // Type=PlatoTestJavaScript.Vector2 Def=op_Multiply_73 Sym=op_Multiply:Method DeclSyn=OperatorDeclaration
-    var var1091 = Vector2.op_Multiply_73(var1092, (2)); // Type=PlatoTestJavaScript.Vector2 Def=op_Multiply_73 Sym=op_Multiply:Method DeclSyn=OperatorDeclaration
+    var var1092 = Vector2.op_Multiply_73(uv/* param */, (MathF/* typeDeclaration */.PI)); // TypeDeclaration=PlatoTestJavaScript.Vector2 Def=op_Multiply_73 Sym=op_Multiply:Method DeclSyn=OperatorDeclaration
+    var var1091 = Vector2.op_Multiply_73(var1092, (2)); // TypeDeclaration=PlatoTestJavaScript.Vector2 Def=op_Multiply_73 Sym=op_Multiply:Method DeclSyn=OperatorDeclaration
       uv/* param */ = var1091;
-    var var1105 = Extensions.Cos_723(uv/* param */.Y); // Type=float Def=Cos_723 Sym=Cos:Method DeclSyn=MethodDeclaration
-    var var1103 = tube/* param */ * var1105; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var1101 = radius/* param */ + var1103; // Type=float Def= Sym=op_Addition:Method DeclSyn=
-    var var1109 = Extensions.Cos_723(uv/* param */.X); // Type=float Def=Cos_723 Sym=Cos:Method DeclSyn=MethodDeclaration
-    var var1099 = var1101 * var1109; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var1120 = Extensions.Cos_723(uv/* param */.Y); // Type=float Def=Cos_723 Sym=Cos:Method DeclSyn=MethodDeclaration
-    var var1118 = tube/* param */ * var1120; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var1116 = radius/* param */ + var1118; // Type=float Def= Sym=op_Addition:Method DeclSyn=
-    var var1124 = Extensions.Sin_730(uv/* param */.X); // Type=float Def=Sin_730 Sym=Sin:Method DeclSyn=MethodDeclaration
-    var var1114 = var1116 * var1124; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
-    var var1131 = Extensions.Sin_730(uv/* param */.Y); // Type=float Def=Sin_730 Sym=Sin:Method DeclSyn=MethodDeclaration
-    var var1129 = tube/* param */ * var1131; // Type=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1105 = Extensions.Cos_723(uv/* param */.Y); // TypeDeclaration=float Def=Cos_723 Sym=Cos:Method DeclSyn=MethodDeclaration
+    var var1103 = tube/* param */ * var1105; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1101 = radius/* param */ + var1103; // TypeDeclaration=float Def= Sym=op_Addition:Method DeclSyn=
+    var var1109 = Extensions.Cos_723(uv/* param */.X); // TypeDeclaration=float Def=Cos_723 Sym=Cos:Method DeclSyn=MethodDeclaration
+    var var1099 = var1101 * var1109; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1120 = Extensions.Cos_723(uv/* param */.Y); // TypeDeclaration=float Def=Cos_723 Sym=Cos:Method DeclSyn=MethodDeclaration
+    var var1118 = tube/* param */ * var1120; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1116 = radius/* param */ + var1118; // TypeDeclaration=float Def= Sym=op_Addition:Method DeclSyn=
+    var var1124 = Extensions.Sin_730(uv/* param */.X); // TypeDeclaration=float Def=Sin_730 Sym=Sin:Method DeclSyn=MethodDeclaration
+    var var1114 = var1116 * var1124; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
+    var var1131 = Extensions.Sin_730(uv/* param */.Y); // TypeDeclaration=float Def=Sin_730 Sym=Sin:Method DeclSyn=MethodDeclaration
+    var var1129 = tube/* param */ * var1131; // TypeDeclaration=float Def= Sym=op_Multiply:Method DeclSyn=
       return new Vector3(var1099,var1114,var1129);
     }
   }
@@ -980,7 +980,7 @@ public static void TestOperator()
   {
     {
 var x = new Vector3(1,2,3);
-    var var1148 = Vector3.op_Addition_233(x/* local */, x/* local */); // Type=PlatoTestJavaScript.Vector3 Def=op_Addition_233 Sym=op_Addition:Method DeclSyn=OperatorDeclaration
+    var var1148 = Vector3.op_Addition_233(x/* local */, x/* local */); // TypeDeclaration=PlatoTestJavaScript.Vector3 Def=op_Addition_233 Sym=op_Addition:Method DeclSyn=OperatorDeclaration
 var y = var1148;
     }
   }
@@ -993,10 +993,10 @@ public static QuadMesh Torus(int rows, int cols, float radius, float tube)
 // Captured: radius, tube
 var var1156 = (uv) => 
 {
-    var var1157 = this.UvToTorus_1088(uv/* param */, radius/* param */, tube/* param */); // Type=PlatoTestJavaScript.Vector3 Def=UvToTorus_1088 Sym=UvToTorus:Method DeclSyn=MethodDeclaration
+    var var1157 = this.UvToTorus_1088(uv/* param */, radius/* param */, tube/* param */); // TypeDeclaration=PlatoTestJavaScript.Vector3 Def=UvToTorus_1088 Sym=UvToTorus:Method DeclSyn=MethodDeclaration
   return var1157;
 }
-    var var1152 = Extensions.ToQuadMesh_788(this, var1156, rows/* param */, cols/* param */); // Type=PlatoTestJavaScript.QuadMesh Def=ToQuadMesh_788 Sym=ToQuadMesh:Method DeclSyn=MethodDeclaration
+    var var1152 = Extensions.ToQuadMesh_788(this, var1156, rows/* param */, cols/* param */); // TypeDeclaration=PlatoTestJavaScript.QuadMesh Def=ToQuadMesh_788 Sym=ToQuadMesh:Method DeclSyn=MethodDeclaration
     return var1152;
   }
 /* ORIGINAL: 
@@ -1010,8 +1010,8 @@ var var1182 = (f) =>
 {
   return f/* param */;
 }
-    var var1177 = Extensions.SelectMany_660(faces/* param */, var1182); // Type=PlatoTestJavaScript.IArray<int> Def=SelectMany_660 Sym=SelectMany:Method DeclSyn=MethodDeclaration
-    var var1175 = Extensions.ToArray_620(var1177); // Type=int[] Def=ToArray_620 Sym=ToArray:Method DeclSyn=MethodDeclaration
+    var var1177 = Extensions.SelectMany_660(faces/* param */, var1182); // TypeDeclaration=PlatoTestJavaScript.IArray<int> Def=SelectMany_660 Sym=SelectMany:Method DeclSyn=MethodDeclaration
+    var var1175 = Extensions.ToArray_620(var1177); // TypeDeclaration=int[] Def=ToArray_620 Sym=ToArray:Method DeclSyn=MethodDeclaration
     return var1175;
   }
 }
