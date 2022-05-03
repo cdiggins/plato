@@ -92,13 +92,17 @@ namespace PlatoIR
 
     public class BuiltInTypeIR : ExpressionIR
     {
-        public string Name { get; set; }
+        public BuiltInTypeIR(string name)
+            => Name = name;
+        public string Name { get; }
     }
 
     public class ArgumentIR : ExpressionIR
     {
-        public string Name { get; set; }
-        public ExpressionIR Value { get; set; }
+        public ArgumentIR(string name, ExpressionIR value)
+            => (Name, Value) = (name, value);
+        public string Name { get; }
+        public ExpressionIR Value { get; }
     }
 
     public class LambdaIR : ExpressionIR

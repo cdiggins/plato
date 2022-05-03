@@ -15,9 +15,22 @@ namespace PlatoIR
      * TODO: types are missing the names
      * TODO: need to output type parameters for functions and classes
      * TODO: references are unresolved for fields (and probably more things)
-     * TODO: need to have real ".ctor"
-     * TODO: don't havea  line break in the class declaration
-     *
+     * TODO: need to have the proper name for the ".ctor"     
+     * DONE: don't have a line break in the class declaration
+     * TODO: I am doing something weird with interfaces
+     * TODO: I am missing type arguments, particularly when working with built-in types
+     * TODO: does Void actually work?
+     * TODO: does Single work as well?
+     * TODO: I need to make my lambdas work.
+     * TODO: I would like the operators to be called explicitly
+     * TODO: call the conversion operators explicitly.
+     * TODO: design the testing program
+     * TODO: namespace is missing
+     * TODO: I want to have an explicit "this" when it can be added
+     * TODO: I want to convert a whole file into C#, and then compile and test the result.
+     * TODO: are there tests taht I can generate
+     * TODO: add the parameters (and variable declarations) to the references. 
+     * TODO: some parameters aren't being added to the IRBuilder
      */
     public class IRSerializer
     {
@@ -58,22 +71,32 @@ namespace PlatoIR
             return Write(indent);
         }
 
-        public IRSerializer WriteParenthesizedList(IEnumerable<IR> argList, string indent = "")
+        public IRSerializer WriteParenthesizedList(IEnumerable<IR> argList, string indent)
             => Write("(").Write(argList, indent, ", ").Write(")");
 
-        public IRSerializer WriteBracedList(IEnumerable<IR> argList, string indent = "")
+        public IRSerializer WriteBracedList(IEnumerable<IR> argList, string indent)
             => Write("{").Write(argList, indent, ", ").Write("}");
 
-        public IRSerializer WriteBracketedList(IEnumerable<IR> argList, string indent = "")
+        public IRSerializer WriteBracketedList(IEnumerable<IR> argList, string indent)
             => Write("[").Write(argList, indent, ", ").Write("]");
+
+        public IRSerializer WriteOptionalAngledList(IEnumerable<IR> argList, string indent)
+            => argList == null || !argList.Any() ? this : Write("<").Write(argList, indent, ", ").Write(">");
 
         public IRSerializer WriteOptionalInitializer(IR value, string indent)
             => value == null ? this : Write(" = ").Write(value, indent);
 
-        public IRSerializer WriteSignature(FunctionDeclarationIR functionDeclarationIr, string indent)
-            => Write("public ").Write(functionDeclarationIr.IsStatic ? "static " : "").Write(functionDeclarationIr.ReturnType, indent).Write(" ")
-                .Write(functionDeclarationIr.Name).WriteParenthesizedList(functionDeclarationIr.Parameters).WriteLine(indent)
-                .Write(functionDeclarationIr.Body, indent + "  ");
+        public IRSerializer WriteTypeParameters(IEnumerable<IR> typeParams, string indent)
+            => WriteOptionalAngledList(typeParams, indent);
+
+        public IRSerializer WriteFunction(FunctionDeclarationIR functionDeclarationIr, string indent)
+            => Write("public ").Write(functionDeclarationIr.IsStatic ? "static " : "")
+                .Write(functionDeclarationIr.ReturnType, indent).Write(" ")
+                .Write(functionDeclarationIr.Name)
+                .WriteTypeParameters(functionDeclarationIr.TypeParameters, indent)
+                .WriteParenthesizedList(functionDeclarationIr.Parameters, indent)
+                .WriteLine(indent)
+                .Write(functionDeclarationIr.Body, indent);
 
         public IRSerializer WriteDeclaration(DeclarationIR ir)
             => ir == null ? Write("/* unresolved */") : Write($"/* {ir.Name}@{ir.Id} */");
@@ -101,7 +124,8 @@ namespace PlatoIR
                         .Write(binaryOperatorIr.Operand2, indent);
 
                 case BlockStatementIR blockStatementIr:
-                    return WriteLine("{", indent).Write(blockStatementIr.Statements, indent + "  ")
+                    return WriteLine("{", indent + "  ").Write(blockStatementIr.Statements, indent + "  ")
+                        .WriteLine(indent)
                         .WriteLine("}", indent);
 
                 case BuiltInTypeIR builtInTypeIr:
@@ -115,12 +139,8 @@ namespace PlatoIR
                         .Write(conditionalIr.Args[2], indent);
 
                 case ConstructorDeclarationIr constructorIr:
-                    return Write("public ").Write(".ctor").WriteParenthesizedList(constructorIr.Parameters, indent)
+                    return Write("public ").Write(".ctor").WriteParenthesizedList(constructorIr.Parameters, indent).WriteDeclaration(constructorIr)
                         .WriteLine(indent).Write(constructorIr.Body, indent + "  ");
-
-                case ConverterDeclarationIr converterIr:
-                    return Write("public ").Write("static ").Write("operator ").Write(converterIr.IsImplicit ? "implicit " : "explicit ").Write(converterIr.ReturnType, indent)
-                        .WriteParenthesizedList(converterIr.Parameters).WriteLine(indent).Write(converterIr.Body, indent + "  ");
 
                 case ArgumentIR argumentIr:
                     return Write(string.IsNullOrWhiteSpace(argumentIr.Name) ? "" : $"{argumentIr.Name}: ")
@@ -146,7 +166,7 @@ namespace PlatoIR
 
                 case FieldDeclarationIR fieldIr:
                     return Write(fieldIr.Type, indent).Write(" ").Write(fieldIr.Name).Write(" ")
-                        .Write(fieldIr.InitialValue != null ? " = " : "").Write(fieldIr.InitialValue, indent).WriteLine(";", indent);
+                        .WriteOptionalInitializer(fieldIr.InitialValue, indent).WriteDeclaration(fieldIr).WriteLine(";", indent);
 
                 case FieldReferenceIR fieldReferenceIr:
                     return Write(fieldReferenceIr.Name).WriteReference(fieldReferenceIr);
@@ -189,13 +209,13 @@ namespace PlatoIR
                     return Write(nameIr.Name).WriteDeclaration(nameIr.ReferencedIR);
 
                 case NewIR newIr:
-                    return Write("new ").Write(newIr.CreatedType, indent).WriteParenthesizedList(newIr.Args);
+                    return Write("new ").Write(newIr.CreatedType, indent).WriteParenthesizedList(newIr.Args, indent);
 
                 case OperationDeclarationIr operationIr:
-                    return Write("#").Write(nameof(operationIr));
+                    return WriteFunction(operationIr, indent);
 
                 case ParameterDeclarationIR parameterIr:
-                    return Write(parameterIr.Type, indent).Write(parameterIr.Name).WriteOptionalInitializer(parameterIr.DefaultValue, indent);
+                    return Write(parameterIr.Type, indent).Write(parameterIr.Name).WriteOptionalInitializer(parameterIr.DefaultValue, indent).WriteDeclaration(parameterIr);
 
                 case ParameterReferenceIR parameterReferenceIr:
                     return Write(parameterReferenceIr.Name).WriteReference(parameterReferenceIr);
@@ -235,13 +255,15 @@ namespace PlatoIR
                     return WriteParenthesizedList(tupleIr.Args, indent);
 
                 case TypeDeclarationIR typeDeclarationIr:
-                    return Write("public ").Write("class ").WriteLine(typeDeclarationIr.Name, indent).WriteDeclaration(typeDeclarationIr)
+                    return Write("public ").Write(typeDeclarationIr.Kind).Write(" ").Write(typeDeclarationIr.Name)
+                        .WriteTypeParameters(typeDeclarationIr.TypeParameters, indent)
+                        .WriteDeclaration(typeDeclarationIr)
+                        .WriteLine(indent)
                         .WriteLine("{", indent + "  ")
                         .Write(typeDeclarationIr.Fields, indent + "  ")
                         .Write(typeDeclarationIr.Constructors, indent + "  ")
                         .Write(typeDeclarationIr.Properties, indent + "  ")
                         .Write(typeDeclarationIr.Methods, indent + "  ")
-                        .Write(typeDeclarationIr.Converters, indent + "  ")
                         .Write(typeDeclarationIr.Operations, indent + "  ")
                         .WriteLine("}", indent);
 
@@ -249,13 +271,13 @@ namespace PlatoIR
                     return Write("typeof").Write("(").Write(typeOfIr.Args[0], indent).Write(")");
 
                 case TypeParameterDeclarationIR typeParameterDeclarationIr:
-                    return Write(typeParameterDeclarationIr.Name);
+                    return Write(typeParameterDeclarationIr.Name).WriteDeclaration(typeParameterDeclarationIr);
 
                 case TypeParameterReferenceIR typeParameterReferenceIr:
                     return Write(typeParameterReferenceIr.Name).WriteReference(typeParameterReferenceIr);
 
                 case TypeReferenceIR typeReferenceIr:
-                    return Write(typeReferenceIr.Name).WriteReference(typeReferenceIr);
+                    return Write(typeReferenceIr.Name).WriteOptionalAngledList(typeReferenceIr.TypeArguments, indent).WriteReference(typeReferenceIr);
 
                 case VariableDeclarationIR variableDeclarationIr:
                     return Write(variableDeclarationIr.Type, indent).Write(" ").Write(variableDeclarationIr.Name)
@@ -273,7 +295,7 @@ namespace PlatoIR
                         .WriteReference(memberReferenceIr);
 
                 case MethodDeclarationIr methodIr:
-                    return WriteSignature(methodIr, indent);
+                    return WriteFunction(methodIr, indent);
 
                 case OperatorIR operatorIr:
                     return Write("#").Write(nameof(operatorIr));
@@ -282,7 +304,7 @@ namespace PlatoIR
                     return Write("#").Write(nameof(statementIr));
 
                 case FunctionDeclarationIR functionIr:
-                    return WriteSignature(functionIr, indent);
+                    return WriteFunction(functionIr, indent);
 
                 case InvocationIR invocationIr:
                     return Write(invocationIr.Function, indent).WriteParenthesizedList(invocationIr.Args, indent);

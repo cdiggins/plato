@@ -58,23 +58,20 @@ namespace PlatoIR
         public MethodDeclarationIr Getter { get; set; }
     }
 
-    public class ConverterDeclarationIr : MethodDeclarationIr
-    {
-        public bool IsImplicit { get; set; }
-    }
-
     public class OperationDeclarationIr : MethodDeclarationIr
     {
     }
 
     public class TypeDeclarationIR : DeclarationIR
     {
+        public TypeDeclarationIR(string kind, string name)
+            => (Name, Kind) = (name, kind);
+        public string Kind { get; }
         public TypeDeclarationIR BaseClassDeclaration { get; set; }
         public List<TypeDeclarationIR> Interface { get; set; } = new List<TypeDeclarationIR>();
         public List<FieldDeclarationIR> Fields { get; set; } = new List<FieldDeclarationIR>();
         public List<MethodDeclarationIr> Methods { get; set; } = new List<MethodDeclarationIr>();
         public List<ConstructorDeclarationIr> Constructors { get; set; } = new List<ConstructorDeclarationIr>();
-        public List<ConverterDeclarationIr> Converters { get; set; } = new List<ConverterDeclarationIr>();
         public List<PropertyDeclarationIR> Properties { get; set; } = new List<PropertyDeclarationIR>();
         public List<IndexerDeclarationIr> Indexers { get; set; } = new List<IndexerDeclarationIr>();
         public List<OperationDeclarationIr> Operations { get; set; } = new List<OperationDeclarationIr>();

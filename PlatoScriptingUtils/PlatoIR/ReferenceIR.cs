@@ -5,16 +5,15 @@ namespace PlatoIR
 {
     public abstract class ReferenceIR : ExpressionIR
     {
-        public ReferenceIR(string name)
-            => Name = name ?? "#unknown";
+        protected ReferenceIR(string name) => Name = name ?? "#unknown";
         public string Name { get; }
         public abstract DeclarationIR Declaration { get; }
     }
 
     public abstract class MemberReferenceIR : ReferenceIR
     {
-        public MemberReferenceIR(string name, ExpressionIR receiver)
-            : base(name) => (Receiver) = (receiver);
+        protected MemberReferenceIR(string name, ExpressionIR receiver) 
+            : base(name) => Receiver = receiver;
         public ExpressionIR Receiver { get; }
     }
 
