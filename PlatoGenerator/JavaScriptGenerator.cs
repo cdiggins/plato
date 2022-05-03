@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using PlatoIR;
+using System.Reflection;
 
 /*
  * DONE: Indexer(this) properties not generated.
@@ -715,7 +716,10 @@ namespace PlatoGenerator
 
 
             var inputFile = GeneratedFile;
-            var thisRepo = @"C:\Users\Acer\source\repos\Plato";
+
+            //var thisRepo = @"C:\Users\Acer\source\repos\Plato";
+            var thisRepo = @"C:\git\plato\";
+
             var outputFile = Path.Combine(thisRepo, "JavaScriptTest", "output.html");
             var templateFile = Path.Combine(thisRepo, "PlatoGenerator", "input.html");
             
@@ -739,7 +743,7 @@ namespace PlatoGenerator
             var builder = new IRBuilder();
             builder = SyntaxToIR.BuildIR(builder, context.Compilation, types);
             var outputCsFile = Path.ChangeExtension(outputFile, "cs");
-            var decls = builder.Declarations.Values.ToList();
+            var decls = builder.Declarations.Values.OfType<TypeDeclarationIR>().ToList();
             using (sw = new StreamWriter(File.Create(outputCsFile)))
             {
                 var srlzr = new IRSerializer(sw);

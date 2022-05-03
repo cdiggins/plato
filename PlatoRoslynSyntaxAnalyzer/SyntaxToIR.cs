@@ -10,43 +10,6 @@ using TypeParameterSyntax = Microsoft.CodeAnalysis.CSharp.Syntax.TypeParameterSy
 
 namespace PlatoRoslynSyntaxAnalyzer
 {
-    // TODO: add more things to the declarations. 
-    public class SemanticRules
-    {
-        public static void UnsupportedSymbol(ISymbol symbol)
-            => throw new Exception($"Could not find symbol {symbol}");
-
-        public static void CheckResolution(ISymbol symbol, IR ir)
-        {
-            if (ir == null)
-                throw new Exception($"could not resolve IR for {symbol}");
-        }
-
-        public static void ResolutionFailed(SyntaxNode node)
-            => throw new Exception($"no symbol found for {node}");
-
-        public static void UnsupportedSyntax(SyntaxNode node)
-            => throw new Exception($"unsupported syntax {node}");
-
-        public static void NotAValidLValue(SyntaxNode syntax)
-            => throw new Exception($"cannot assign to {syntax}");
-
-        public static void OnlyOneSubscriptSupported(SyntaxNode syntax)
-            => throw new Exception($"only one subscript is allowed {syntax}");
-
-        public static void NotSupportedLiteral(LiteralExpressionSyntax literal)
-            => throw new Exception($"literal is not supported {literal}");
-
-        public static void OnlyDotNotationSupported(SyntaxNode syntax)
-            => throw new Exception($"only dot notation supported {syntax}");
-
-        public static void AssureBodyOrBlock(SyntaxNode syntax, bool cond)
-        {
-            if (!cond)
-                throw new Exception($"either body or block must be present, but not both {syntax}");
-        }
-    }
-
     public static class SyntaxToIR
     {
         public static IRBuilder BuildIR(this IRBuilder builder, Compilation compilation, IEnumerable<PlatoTypeSyntax> syntaxes)
@@ -61,8 +24,15 @@ namespace PlatoRoslynSyntaxAnalyzer
                 {
                     var decl = builder.AddIR(ctor, new ConstructorDeclarationIr()).SetParent(ir);
                     decl.IsStatic = ctor.IsStatic;
-                    decl.Parent = ir;
                     ir.Constructors.Add(decl);
+                }
+
+                foreach (var p in type.Properties)
+                {
+                    var decl = builder.AddIR(p, new PropertyDeclarationIR()).SetParent(ir);
+                    decl.IsStatic = p.IsStatic;
+                    decl.Name = p.Name;
+                    ir.Properties.Add(decl);
                 }
 
                 foreach (var conv in type.Converters)
@@ -145,6 +115,7 @@ namespace PlatoRoslynSyntaxAnalyzer
                     case IndexerDeclarationIr indexerIr:
                     {
                         var syntax = node as IndexerDeclarationSyntax;
+                        indexerIr.Type = syntax.Type.ToReference(model, builder);
                         indexerIr.Getter = CreateGetter(syntax, model, builder);
                         break;
                     }
@@ -258,6 +229,20 @@ namespace PlatoRoslynSyntaxAnalyzer
             methodDeclarationIr.Parameters = syntax.ParameterList.Parameters.Select(p => p.ToIR(model, builder)).ToList();
             methodDeclarationIr.Body = CreateStatementBody(block, expression, model, builder);
             return methodDeclarationIr;
+        }
+        
+        public static MethodDeclarationIr UpdateMethod(OperationDeclarationIr operatorIr, ConversionOperatorDeclarationSyntax syntax, SemanticModel model, IRBuilder builder)
+        {
+            UpdateMethod(operatorIr, (BaseMethodDeclarationSyntax)syntax, model, builder);
+            operatorIr.ReturnType = syntax.Type.ToReference(model, builder);
+            return operatorIr;
+        }
+
+        public static MethodDeclarationIr UpdateMethod(OperationDeclarationIr operatorIr, OperatorDeclarationSyntax syntax, SemanticModel model, IRBuilder builder)
+        {
+            UpdateMethod(operatorIr, (BaseMethodDeclarationSyntax)syntax, model, builder);
+            operatorIr.ReturnType = syntax.ReturnType.ToReference(model, builder);
+            return operatorIr;
         }
 
         public static MethodDeclarationIr UpdateMethod(MethodDeclarationIr methodDeclarationIr, MethodDeclarationSyntax syntax, SemanticModel model, IRBuilder builder)
@@ -870,6 +855,31 @@ namespace PlatoRoslynSyntaxAnalyzer
                 CapturedVariables = capVars,
                 Body = body,
             };
+        }
+
+        public static string TypeToKeyword(string s)
+        {
+            switch (s)
+            {
+                case "Boolean": return "bool";
+                case "Byte": return "byte";
+                case "SByte": return "sbyte";
+                case "Char": return "char";
+                case "Decimal": return "decimal";
+                case "Double": return "double";
+                case "Single": return "float";
+                case "Int32": return "int";
+                case "UInt32": return "uint";
+                case "IntPtr": return "nint";
+                case "UIntPtr": return "nuint";
+                case "Int64": return "long";
+                case "UInt64": return "ulong";
+                case "Int16": return "short";
+                case "UInt16": return "ushort";
+                case "Void": return "void";
+                case "String": return "string";
+                default: return s;
+            }
         }
     }
 }

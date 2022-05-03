@@ -438,7 +438,7 @@ namespace PlatoRoslynSyntaxAnalyzer
             Properties = Node.Members.OfType<PropertyDeclarationSyntax>().Select(PlatoPropertySyntax.Create).ToList();
             Indexers = Node.Members.OfType<IndexerDeclarationSyntax>().Select(PlatoIndexerSyntax.Create).ToList();
             Converters = Node.Members.OfType<ConversionOperatorDeclarationSyntax>().Select(PlatoConversionSyntax.Create).ToList();
-            TypeParameters = Node.Members.OfType<TypeParameterSyntax>().Select(PlatoTypeParameterSyntax.Create).ToList();
+            TypeParameters = Node.TypeParameterList?.Parameters.Select(PlatoTypeParameterSyntax.Create).ToList() ?? new List<PlatoTypeParameterSyntax>();
         }
 
         public static PlatoTypeSyntax Create(TypeDeclarationSyntax node) 

@@ -6,20 +6,20 @@ using System.Linq;
 namespace PlatoIR
 {
     /*
-     * TODO: too many constructors
-     * TODO: missing parameter types
-     * TODO: names not becoming references
-     * TODO: some classes missing names.
-     * TODO: fix extra indent after first line
+     * DONE: too many constructors
+     * DONE: missing parameter types
+     * DONE: names not becoming references
+     * DONE: some classes missing names.
+     * DONE: fix extra indent after first line
      * TODO: need more declaration information
-     * TODO: types are missing the names
-     * TODO: need to output type parameters for functions and classes
-     * TODO: references are unresolved for fields (and probably more things)
-     * TODO: need to have the proper name for the ".ctor"     
+     * DONE: types are missing the names
+     * DONE: need to output type parameters for functions and classes
+     * DONE: references are unresolved for fields (and probably more things)
+     * DONE: need to have the proper name for the ".ctor"     
      * DONE: don't have a line break in the class declaration
      * TODO: I am doing something weird with interfaces
      * TODO: I am missing type arguments, particularly when working with built-in types
-     * TODO: does Void actually work?
+     * DONE: does Void actually work?
      * TODO: does Single work as well?
      * TODO: I need to make my lambdas work.
      * TODO: I would like the operators to be called explicitly
@@ -29,8 +29,17 @@ namespace PlatoIR
      * TODO: I want to have an explicit "this" when it can be added
      * TODO: I want to convert a whole file into C#, and then compile and test the result.
      * TODO: are there tests taht I can generate
-     * TODO: add the parameters (and variable declarations) to the references. 
+     * DONE: add the parameters (and variable declarations) to the references. 
      * TODO: some parameters aren't being added to the IRBuilder
+     * TODO: renamed the "TYPE operator implicit" to "operator implicit TYPE"
+     * TODO: output the property getter
+     * TODO: output the indexer getter
+     * TODO: generate fields when the property requires it.
+     * TODO: don't have return statements in constructors.
+     * TODO: replace the built-in type names with the correct key words
+     * TODO: output the lambda
+     * TODO: output the source code 
+     * TODO: output the source location 
      */
     public class IRSerializer
     {
@@ -139,7 +148,7 @@ namespace PlatoIR
                         .Write(conditionalIr.Args[2], indent);
 
                 case ConstructorDeclarationIr constructorIr:
-                    return Write("public ").Write(".ctor").WriteParenthesizedList(constructorIr.Parameters, indent).WriteDeclaration(constructorIr)
+                    return Write("public ").Write(constructorIr.Parent.Name).WriteParenthesizedList(constructorIr.Parameters, indent).WriteDeclaration(constructorIr)
                         .WriteLine(indent).Write(constructorIr.Body, indent + "  ");
 
                 case ArgumentIR argumentIr:
@@ -255,7 +264,9 @@ namespace PlatoIR
                     return WriteParenthesizedList(tupleIr.Args, indent);
 
                 case TypeDeclarationIR typeDeclarationIr:
-                    return Write("public ").Write(typeDeclarationIr.Kind).Write(" ").Write(typeDeclarationIr.Name)
+                    return
+                        WriteLine("//==begin==//", indent)
+                        .Write("public ").Write(typeDeclarationIr.Kind).Write(" ").Write(typeDeclarationIr.Name)
                         .WriteTypeParameters(typeDeclarationIr.TypeParameters, indent)
                         .WriteDeclaration(typeDeclarationIr)
                         .WriteLine(indent)
@@ -264,8 +275,10 @@ namespace PlatoIR
                         .Write(typeDeclarationIr.Constructors, indent + "  ")
                         .Write(typeDeclarationIr.Properties, indent + "  ")
                         .Write(typeDeclarationIr.Methods, indent + "  ")
+                        .Write(typeDeclarationIr.Indexers, indent + "  ")
                         .Write(typeDeclarationIr.Operations, indent + "  ")
-                        .WriteLine("}", indent);
+                        .WriteLine("}", indent)
+                        .WriteLine("//==end==//", indent);
 
                 case TypeOfIR typeOfIr:
                     return Write("typeof").Write("(").Write(typeOfIr.Args[0], indent).Write(")");
@@ -297,7 +310,7 @@ namespace PlatoIR
                 case MethodDeclarationIr methodIr:
                     return WriteFunction(methodIr, indent);
 
-                case OperatorIR operatorIr:
+                case OperationIR operatorIr:
                     return Write("#").Write(nameof(operatorIr));
 
                 case StatementIR statementIr:

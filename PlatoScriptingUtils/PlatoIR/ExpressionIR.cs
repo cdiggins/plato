@@ -21,15 +21,15 @@ namespace PlatoIR
         public ExpressionIR Function { get; set; }
     }
 
-    public class OperatorIR : InvocationIR
+    public class OperationIR : InvocationIR
     {
         public string Operator { get; set; }
     }
     
-    public class PrefixOperatorIr : OperatorIR { }
-    public class PostfixOperatorIr : OperatorIR {}
+    public class PrefixOperatorIr : OperationIR { }
+    public class PostfixOperatorIr : OperationIR {}
 
-    public class BinaryOperatorIr : OperatorIR
+    public class BinaryOperatorIr : OperationIR
     {
         public ExpressionIR Operand1 => Args[0];
         public ExpressionIR Operand2 => Args[1];
