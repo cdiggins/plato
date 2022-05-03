@@ -11,16 +11,16 @@ namespace PlatoIR
      * DONE: names not becoming references
      * DONE: some classes missing names.
      * DONE: fix extra indent after first line
-     * TODO: need more declaration information
+     * DONE: need more declaration information
      * DONE: types are missing the names
      * DONE: need to output type parameters for functions and classes
      * DONE: references are unresolved for fields (and probably more things)
      * DONE: need to have the proper name for the ".ctor"     
      * DONE: don't have a line break in the class declaration
-     * TODO: I am doing something weird with interfaces
-     * TODO: I am missing type arguments, particularly when working with built-in types
+     * TODO: don't output the method and getter bodies for interfaces.
+     * DONE: I am missing type arguments, particularly when working with built-in types
      * DONE: does Void actually work?
-     * TODO: does Single work as well?
+     * DONE: does Single work as well?
      * TODO: I need to make my lambdas work.
      * TODO: I would like the operators to be called explicitly
      * TODO: call the conversion operators explicitly.
@@ -32,14 +32,39 @@ namespace PlatoIR
      * DONE: add the parameters (and variable declarations) to the references. 
      * TODO: some parameters aren't being added to the IRBuilder
      * TODO: renamed the "TYPE operator implicit" to "operator implicit TYPE"
-     * TODO: output the property getter
-     * TODO: output the indexer getter
+     * DONE: output the property getter
+     * DONE: output the indexer getter
      * TODO: generate fields when the property requires it.
      * TODO: don't have return statements in constructors.
      * TODO: replace the built-in type names with the correct key words
-     * TODO: output the lambda
      * TODO: output the source code 
-     * TODO: output the source location 
+     * TODO: output the source location
+     * DONE: remove the function reference (should only be type reference)
+     * DONE: move the type arguments into a reference
+     * DONE: add the list of interfaces to generated code
+     * DONE: add the inherited class to code
+     * TODO: generate JavaScript from the serializer
+     * TODO: compile the generated code
+     * TODO: report the results
+     * TODO: why do "names" exist? I should really be using a refernce.
+     * DONE: only allow block statements for method bodies.
+     * DONE: type parameters of methods aren't being added as IR items.
+     * TODO: output recievers.
+     * DONE: resolve type parameters.
+     * DONE: some types aren't showing. 
+     * DONE: after merging TypeParameterReference with TypeParameter, some types aren't showing.
+     * DONE: I now have some "#unknown" tags.
+     * TODO: when a function is a parameter it is shown as "unresolved".
+     * TODO: In "ToTriangles" I don't get the array declaration
+     * TODO: the type of bilt-in arrays is invisible and shows as unresolved.
+     * DONE: add public and static (where appropriate) to members.
+     * DONE: indexers did not have the correct return type.
+     * TODO: I want to start doing some inlining.
+     * TODO: I want to try rewriting the code in a variable declaration form (like I'm doing in JavaScript).
+     * TODO: I want to try evaluating the IR.
+     * TODO: create a test project.
+     * TODO: profiling of code nsippets
+     *
      */
     public class IRSerializer
     {
@@ -98,9 +123,21 @@ namespace PlatoIR
         public IRSerializer WriteTypeParameters(IEnumerable<IR> typeParams, string indent)
             => WriteOptionalAngledList(typeParams, indent);
 
-        public IRSerializer WriteFunction(FunctionDeclarationIR functionDeclarationIr, string indent)
+        public IRSerializer WriteBaseClassAndInterfaces(TypeReferenceIR baseClass, List<TypeReferenceIR> interfaces, string indent)
+        {
+            var types = interfaces.Prepend(baseClass).ToList();
+            var r = this;
+            for (var i = 0; i < types.Count; ++i)
+            {
+                r = r.Write(i == 0 ? " : " : ", ");
+                r = r.Write(types[i], indent);
+            }
+            return r;
+        }
+
+        public IRSerializer WriteFunction(MethodDeclarationIR functionDeclarationIr, string indent)
             => Write("public ").Write(functionDeclarationIr.IsStatic ? "static " : "")
-                .Write(functionDeclarationIr.ReturnType, indent).Write(" ")
+                .Write(functionDeclarationIr.Type, indent).Write(" ")
                 .Write(functionDeclarationIr.Name)
                 .WriteTypeParameters(functionDeclarationIr.TypeParameters, indent)
                 .WriteParenthesizedList(functionDeclarationIr.Parameters, indent)
@@ -112,6 +149,14 @@ namespace PlatoIR
 
         public IRSerializer WriteReference(ReferenceIR ir)
             => WriteDeclaration(ir?.Declaration);
+
+        public IRSerializer WriteMetaData(ExpressionIR expr)
+            => expr is LambdaIR lambdaIr ? Write("/* Captured: ").Write(lambdaIr.CapturedVariables, ", ").Write("*/") : this;
+
+        public IRSerializer WriteGetter(MethodDeclarationIR method, string indent)
+            => method == null ? this
+                : WriteLine("{", indent).WriteLine("get", indent + "  ").Write(method.Body, indent + "  ")
+                    .WriteLine("}", indent);
 
         public IRSerializer Write(IR ir, string indent)
         {
@@ -148,7 +193,7 @@ namespace PlatoIR
                         .Write(conditionalIr.Args[2], indent);
 
                 case ConstructorDeclarationIr constructorIr:
-                    return Write("public ").Write(constructorIr.Parent.Name).WriteParenthesizedList(constructorIr.Parameters, indent).WriteDeclaration(constructorIr)
+                    return Write("public ").Write(constructorIr.IsStatic ? "static " : "").Write(constructorIr.Parent.Name).WriteParenthesizedList(constructorIr.Parameters, indent).WriteDeclaration(constructorIr)
                         .WriteLine(indent).Write(constructorIr.Body, indent + "  ");
 
                 case ArgumentIR argumentIr:
@@ -174,36 +219,27 @@ namespace PlatoIR
                     return Write(expressionStatementIr.Expression, indent).WriteLine(";", indent);
 
                 case FieldDeclarationIR fieldIr:
-                    return Write(fieldIr.Type, indent).Write(" ").Write(fieldIr.Name).Write(" ")
+                    return Write("public ").Write(fieldIr.IsStatic ? "static " : "").Write(fieldIr.Type, indent).Write(" ").Write(fieldIr.Name).Write(" ")
                         .WriteOptionalInitializer(fieldIr.InitialValue, indent).WriteDeclaration(fieldIr).WriteLine(";", indent);
 
                 case FieldReferenceIR fieldReferenceIr:
                     return Write(fieldReferenceIr.Name).WriteReference(fieldReferenceIr);
-
-                case FunctionReferenceIR functionReferenceIr:
-                    return Write(functionReferenceIr.Name).WriteReference(functionReferenceIr);
-
-                case GenericFunctionIR genericFunctionIr:
-                    return Write("#").Write(nameof(genericFunctionIr));
 
                 case IfStatementIR ifStatementIr:
                     return Write("if").Write("(").Write(ifStatementIr.Condition, indent).WriteLine(")", indent)
                         .Write(ifStatementIr.OnTrue, indent + "  ").WriteLine("else", indent).Write(ifStatementIr.OnFalse, indent + "  ");
 
                 case IndexerDeclarationIr indexerIr:
-                    return Write(indexerIr.ReturnType, indent).Write(" ").Write("this").Write("[")
-                        .Write(indexerIr.Getter.Parameters, indent, ", ").Write("]").WriteLine(indent)
-                        .WriteLine("{", indent + "  ").Write("get")
-                        .Write(indexerIr.Getter.Body, indent + "  " + "  ").WriteLine("}", indent);
-
-                case KnownFunctionIR knownFunctionIr:
-                    return Write("#").Write(nameof(knownFunctionIr));
-
-                case KnownType knownType:
-                    return Write("#").Write(nameof(knownType));
+                    return Write("public ").Write(indexerIr.IsStatic ? "static " : "")
+                        .Write(indexerIr.Type, indent).Write(" this").WriteBracketedList(
+                        indexerIr.Getter.Parameters, indent).WriteLine(indent)
+                        .WriteLine("{", indent).WriteLine("get", indent)
+                        .Write(indexerIr.Getter.Body, indent + "  ").WriteLine("}", indent);
 
                 case LambdaIR lambdaIr:
-                    return Write("#").Write(nameof(lambdaIr));
+                    return WriteMetaData(lambdaIr)
+                        .WriteParenthesizedList(lambdaIr.Parameters, indent).WriteLine(indent).Write(" => ")
+                        .Write(lambdaIr.Body, indent + "  ");
 
                 case LiteralIR literalIr:
                     return Write(literalIr.Text);
@@ -215,7 +251,8 @@ namespace PlatoIR
                     return multiStatementIr.Statements.Aggregate(this, (a, st) => a.Write(st, indent));
 
                 case NameIR nameIr:
-                    return Write(nameIr.Name).WriteDeclaration(nameIr.ReferencedIR);
+                    return (nameIr.Object == null ? this : Write(nameIr.Object, indent).Write("."))
+                        .Write(nameIr.Name).WriteDeclaration(nameIr.ReferencedIR);
 
                 case NewIR newIr:
                     return Write("new ").Write(newIr.CreatedType, indent).WriteParenthesizedList(newIr.Args, indent);
@@ -239,8 +276,9 @@ namespace PlatoIR
                     return Write(prefixOperatorIr.Operator).Write(prefixOperatorIr.Args[0], indent);
 
                 case PropertyDeclarationIR propertyIr:
-                    // TODO: add the getter. 
-                    return Write(propertyIr.Type, indent).Write(" ").Write(propertyIr.Name).WriteLine(";", indent);
+                    return Write("public ").Write(propertyIr.IsStatic ? "static " : "").Write(propertyIr.Type, indent).Write(" ").Write(propertyIr.Name)
+                        .WriteGetter(propertyIr.Getter, indent)
+                        .WriteLine(";", indent);
 
                 case PropertyReferenceIR propertyReferenceIr:
                     return Write(propertyReferenceIr.Name).WriteReference(propertyReferenceIr);
@@ -266,8 +304,11 @@ namespace PlatoIR
                 case TypeDeclarationIR typeDeclarationIr:
                     return
                         WriteLine("//==begin==//", indent)
-                        .Write("public ").Write(typeDeclarationIr.Kind).Write(" ").Write(typeDeclarationIr.Name)
+                        .Write("public ")
+                        .Write(typeDeclarationIr.IsStatic ? "static " : "")
+                        .Write(typeDeclarationIr.Kind).Write(" ").Write(typeDeclarationIr.Name)
                         .WriteTypeParameters(typeDeclarationIr.TypeParameters, indent)
+                        .WriteBaseClassAndInterfaces(typeDeclarationIr.BaseClass, typeDeclarationIr.Interfaces, indent)
                         .WriteDeclaration(typeDeclarationIr)
                         .WriteLine(indent)
                         .WriteLine("{", indent + "  ")
@@ -286,9 +327,6 @@ namespace PlatoIR
                 case TypeParameterDeclarationIR typeParameterDeclarationIr:
                     return Write(typeParameterDeclarationIr.Name).WriteDeclaration(typeParameterDeclarationIr);
 
-                case TypeParameterReferenceIR typeParameterReferenceIr:
-                    return Write(typeParameterReferenceIr.Name).WriteReference(typeParameterReferenceIr);
-
                 case TypeReferenceIR typeReferenceIr:
                     return Write(typeReferenceIr.Name).WriteOptionalAngledList(typeReferenceIr.TypeArguments, indent).WriteReference(typeReferenceIr);
 
@@ -303,34 +341,18 @@ namespace PlatoIR
                     return Write("while").Write("(").Write(whileStatementIr.Condition, indent).WriteLine(")", indent)
                         .Write(whileStatementIr.Body, indent + "  ");
 
-                case MemberReferenceIR memberReferenceIr:
-                    return Write(memberReferenceIr.Receiver, indent).Write(".").Write(memberReferenceIr.Name)
-                        .WriteReference(memberReferenceIr);
-
-                case MethodDeclarationIr methodIr:
+                case MethodDeclarationIR methodIr:
                     return WriteFunction(methodIr, indent);
-
-                case OperationIR operatorIr:
-                    return Write("#").Write(nameof(operatorIr));
-
-                case StatementIR statementIr:
-                    return Write("#").Write(nameof(statementIr));
-
-                case FunctionDeclarationIR functionIr:
-                    return WriteFunction(functionIr, indent);
 
                 case InvocationIR invocationIr:
                     return Write(invocationIr.Function, indent).WriteParenthesizedList(invocationIr.Args, indent);
 
+                //case OperationIR operatorIr:
+                case MemberReferenceIR memberReferenceIr:
+                case StatementIR statementIr:
                 case ReferenceIR referenceIr:
-                    return Write("#").Write(nameof(referenceIr)).WriteReference(referenceIr);
-
                 case DeclarationIR declarationIr:
-                    return Write("#").Write(nameof(declarationIr));
-
                 case ExpressionIR expressionIr:
-                    return Write("#").Write(nameof(expressionIr));
-
                 default:
                     throw new ArgumentOutOfRangeException(nameof(ir));
             }

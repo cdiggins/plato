@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace PlatoIR
 {
@@ -13,12 +12,11 @@ namespace PlatoIR
         public bool IsMemberDeclaration => ParentType != null;
     }
 
-    public class FunctionDeclarationIR : DeclarationIR
+    public class MethodDeclarationIR : DeclarationIR
     {
         public List<ParameterDeclarationIR> Parameters { get; set; } = new List<ParameterDeclarationIR>();
-        public StatementIR Body { get; set; }
+        public BlockStatementIR Body { get; set; }
         public List<TypeParameterDeclarationIR> TypeParameters { get; set;  } = new List<TypeParameterDeclarationIR>();
-        public TypeReferenceIR ReturnType { get; set; }
     }
 
     public class VariableDeclarationIR : DeclarationIR
@@ -34,11 +32,7 @@ namespace PlatoIR
         public ExpressionIR DefaultValue { get; set; }
     }
 
-    public class MethodDeclarationIr : FunctionDeclarationIR
-    {
-    }
-
-    public class ConstructorDeclarationIr : MethodDeclarationIr
+    public class ConstructorDeclarationIr : MethodDeclarationIR
     {
     }
 
@@ -49,16 +43,15 @@ namespace PlatoIR
 
     public class PropertyDeclarationIR : DeclarationIR
     {
-        public MethodDeclarationIr Getter { get; set; }
-        public bool HasInit { get; set; }
+        public MethodDeclarationIR Getter { get; set; }
     }
 
-    public class IndexerDeclarationIr : MethodDeclarationIr
+    public class IndexerDeclarationIr : MethodDeclarationIR
     {
-        public MethodDeclarationIr Getter { get; set; }
+        public MethodDeclarationIR Getter { get; set; }
     }
 
-    public class OperationDeclarationIr : MethodDeclarationIr
+    public class OperationDeclarationIr : MethodDeclarationIR
     {
     }
 
@@ -67,10 +60,10 @@ namespace PlatoIR
         public TypeDeclarationIR(string kind, string name)
             => (Name, Kind) = (name, kind);
         public string Kind { get; }
-        public TypeDeclarationIR BaseClassDeclaration { get; set; }
-        public List<TypeDeclarationIR> Interface { get; set; } = new List<TypeDeclarationIR>();
+        public TypeReferenceIR BaseClass { get; set; }
+        public List<TypeReferenceIR> Interfaces { get; set; } = new List<TypeReferenceIR>();
         public List<FieldDeclarationIR> Fields { get; set; } = new List<FieldDeclarationIR>();
-        public List<MethodDeclarationIr> Methods { get; set; } = new List<MethodDeclarationIr>();
+        public List<MethodDeclarationIR> Methods { get; set; } = new List<MethodDeclarationIR>();
         public List<ConstructorDeclarationIr> Constructors { get; set; } = new List<ConstructorDeclarationIr>();
         public List<PropertyDeclarationIR> Properties { get; set; } = new List<PropertyDeclarationIR>();
         public List<IndexerDeclarationIr> Indexers { get; set; } = new List<IndexerDeclarationIr>();

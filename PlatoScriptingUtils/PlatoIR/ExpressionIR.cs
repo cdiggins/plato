@@ -35,17 +35,6 @@ namespace PlatoIR
         public ExpressionIR Operand2 => Args[1];
     }
 
-    public class KnownFunctionIR : ExpressionIR
-    {
-        public FunctionDeclarationIR FunctionDeclaration { get; set; }
-    }
-
-    public class GenericFunctionIR : ExpressionIR
-    {
-        public FunctionDeclarationIR FunctionDeclaration { get; set; }
-        public List<TypeDeclarationIR> TypeArguments { get; } = new List<TypeDeclarationIR>();
-    }
-
     public class TupleIR : ExpressionIR {}
     public class ArrayIR : ExpressionIR { }
 
