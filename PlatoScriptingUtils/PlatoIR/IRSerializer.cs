@@ -64,10 +64,24 @@ namespace PlatoIR
      * TODO: I want to try evaluating the IR.
      * TODO: create a test project.
      * TODO: profiling of code nsippets
-     *
+     * DONE: dont't put blocks for empty getters.
+     * TODO: Fix the formatting, it looks awful. 
+     * TODO: make the meta-data optional. 
+     * DONE: interfaces should not have fields.
+     * TODO: indexer body is missing in some cases
+     * TODO: assigning to the auto-property needs to be allowed. 
+     * TODO: all references to a property as a lvalue need to be replaced with the auto-property.
+     * TODO: decide if I should change it on write, or on parse.
+     * TODO: create a hidden constructor. 
+     * TODO: normalization of the code. 
+     * TODO: rewrite all tuples as lvalues. 
+     * TODO: handle "this" function calls.
+     * TODO: handle "base" function calls
      */
     public class IRSerializer
     {
+        public bool ShowResolution = false;
+
         public IRSerializer(StreamWriter writer)
             => Writer = writer;
 
@@ -145,7 +159,7 @@ namespace PlatoIR
                 .Write(functionDeclarationIr.Body, indent);
 
         public IRSerializer WriteDeclaration(DeclarationIR ir)
-            => ir == null ? Write("/* unresolved */") : Write($"/* {ir.Name}@{ir.Id} */");
+            => ir == null ? Write("/* unresolved */") : ShowResolution ? Write($"/* {ir.Name}@{ir.Id} */") : this;
 
         public IRSerializer WriteReference(ReferenceIR ir)
             => WriteDeclaration(ir?.Declaration);
@@ -153,14 +167,23 @@ namespace PlatoIR
         public IRSerializer WriteMetaData(ExpressionIR expr)
             => expr is LambdaIR lambdaIr ? Write("/* Captured: ").Write(lambdaIr.CapturedVariables, ", ").Write("*/") : this;
 
+        public IRSerializer WriteGetterBody(BlockStatementIR body, string indent)
+            => body == null ? WriteLine("get;", indent) : WriteLine("get", indent + "  ").Write(body, indent + "  ");
+
         public IRSerializer WriteGetter(MethodDeclarationIR method, string indent)
             => method == null ? this
-                : WriteLine("{", indent).WriteLine("get", indent + "  ").Write(method.Body, indent + "  ")
-                    .WriteLine("}", indent);
+                : WriteLine(indent).WriteLine("{", indent).WriteGetterBody(method.Body, indent + "  ").WriteLine("}", indent);
 
         public IRSerializer Write(IR ir, string indent)
         {
             if (ir == null) return this;
+
+            if (!String.IsNullOrEmpty(ir.Source))
+            {
+                WriteLine("/*", indent);
+                WriteLine(ir.Source.Replace("*/", " "), indent);
+                WriteLine("*/", indent);
+            }
 
             switch (ir)
             {
@@ -174,19 +197,21 @@ namespace PlatoIR
                     return Write("base");
 
                 case BinaryOperatorIr binaryOperatorIr:
-                    return Write(binaryOperatorIr.Operand1, indent).Write(binaryOperatorIr.Operator)
+                    return Write(binaryOperatorIr.Operand1, indent)
+                        .Write(binaryOperatorIr.Operator)
                         .Write(binaryOperatorIr.Operand2, indent);
 
                 case BlockStatementIR blockStatementIr:
-                    return WriteLine("{", indent + "  ").Write(blockStatementIr.Statements, indent + "  ")
-                        .WriteLine(indent)
+                    return WriteLine("{", indent + "  ")
+                        .Write(blockStatementIr.Statements, indent + "  ")
                         .WriteLine("}", indent);
 
                 case BuiltInTypeIR builtInTypeIr:
                     return Write("#").Write(nameof(builtInTypeIr));
-
+                     
                 case CastIR castIr:
-                    return Write("(").Write(castIr.CastType, indent).Write(")").Write(castIr.Args[0], indent);
+                    return Write("(")
+                        .Write(castIr.CastType, indent).Write(")").Write(castIr.Args[0], indent);
 
                 case ConditionalIR conditionalIr:
                     return Write(conditionalIr.Args[0], indent).Write(" ? ").Write(conditionalIr.Args[1], indent).Write(" : ")
@@ -232,9 +257,7 @@ namespace PlatoIR
                 case IndexerDeclarationIr indexerIr:
                     return Write("public ").Write(indexerIr.IsStatic ? "static " : "")
                         .Write(indexerIr.Type, indent).Write(" this").WriteBracketedList(
-                        indexerIr.Getter.Parameters, indent).WriteLine(indent)
-                        .WriteLine("{", indent).WriteLine("get", indent)
-                        .Write(indexerIr.Getter.Body, indent + "  ").WriteLine("}", indent);
+                        indexerIr.Getter.Parameters, indent).WriteLine(indent).WriteGetter(indexerIr.Getter, indent);
 
                 case LambdaIR lambdaIr:
                     return WriteMetaData(lambdaIr)
@@ -261,7 +284,7 @@ namespace PlatoIR
                     return WriteFunction(operationIr, indent);
 
                 case ParameterDeclarationIR parameterIr:
-                    return Write(parameterIr.Type, indent).Write(parameterIr.Name).WriteOptionalInitializer(parameterIr.DefaultValue, indent).WriteDeclaration(parameterIr);
+                    return Write(parameterIr.Type, indent).Write(" ").Write(parameterIr.Name).WriteOptionalInitializer(parameterIr.DefaultValue, indent).WriteDeclaration(parameterIr);
 
                 case ParameterReferenceIR parameterReferenceIr:
                     return Write(parameterReferenceIr.Name).WriteReference(parameterReferenceIr);

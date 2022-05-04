@@ -10,12 +10,11 @@ namespace PlatoRoslynSyntaxAnalyzer
 {
     public class IRBuilder
     {
-        public readonly Dictionary<(TextSpan, SyntaxKind), DeclarationIR> Declarations 
-            = new Dictionary<(TextSpan, SyntaxKind), DeclarationIR>();
+        public readonly Dictionary<(TextSpan, SyntaxKind), int> DeclarationLookup
+            = new Dictionary<(TextSpan, SyntaxKind), int>();
 
-        public readonly Dictionary<(TextSpan, SyntaxKind), SyntaxNode> SyntaxNodes
-            = new Dictionary<(TextSpan, SyntaxKind), SyntaxNode>();
-
+        public readonly List<(SyntaxNode, DeclarationIR)> Declarations = new List<(SyntaxNode, DeclarationIR)>();
+        
         public T AddIR<T>(PlatoSyntax syntax, T ir) where T : IR
             => AddIR<T>(syntax.GetNode(), ir);
 
@@ -24,17 +23,29 @@ namespace PlatoRoslynSyntaxAnalyzer
             Debug.Assert(ir.Id == 0);
             if (ir is DeclarationIR declarationIr)
             {
-                Debug.Assert(!Declarations.ContainsKey(node.ToKey()));
                 ir.Id = Declarations.Count;
-                var key = node.ToKey();
-                Declarations.Add(key, declarationIr);
-                SyntaxNodes.Add(key, node);
+                Declarations.Add((node, declarationIr));
+                if (node != null)
+                {
+                    var key = node.ToKey();
+                    if (!DeclarationLookup.ContainsKey(key))
+                    {
+                        DeclarationLookup.Add(key, ir.Id);
+                    }
+                }
             }
             return ir;
         }
 
         public IR GetIR(SyntaxNode node)
-            => node == null ? null : Declarations.TryGetValue(node.ToKey(), out var result) ? result : null;
+            => node == null ? null 
+                : DeclarationLookup.TryGetValue(node.ToKey(), out var result) ? Declarations[result].Item2 : null;
+
+        public IR GetIR(int n)
+            => Declarations[n].Item2;
+
+        public SyntaxNode GetSyntax(IR ir)
+            => Declarations[ir.Id].Item1;
 
         public T GetIR<T>(SyntaxNode node) where T : IR
             => GetIR(node) as T;
