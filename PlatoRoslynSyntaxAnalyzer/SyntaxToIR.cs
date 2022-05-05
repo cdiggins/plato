@@ -239,6 +239,18 @@ namespace PlatoRoslynSyntaxAnalyzer
                 r.Body = new BlockStatementIR(ps.ExpressionBody?.Expression.ToIR(model, builder).ToReturnStatementIR());
             }
 
+            // Find the body amd parameters of the indexerDeclaration 
+            if (property is IndexerDeclarationSyntax indexer)
+            {
+                if (indexer.ExpressionBody != null)
+                {
+                    r.Body = new BlockStatementIR(indexer.ExpressionBody?.Expression.ToIR(model, builder)
+                        .ToReturnStatementIR());
+                }
+
+                r.Parameters = indexer.ParameterList.Parameters.Select(p => p.ToIR(model, builder)).ToList();
+            }
+
             if (property.AccessorList != null)
             {
                 foreach (var acc in property.AccessorList?.Accessors)
@@ -258,11 +270,6 @@ namespace PlatoRoslynSyntaxAnalyzer
                 }
             }
 
-            if (property is IndexerDeclarationSyntax indexer)
-            {
-                r.Parameters = indexer.ParameterList.Parameters.Select(p => p.ToIR(model, builder)).ToList();
-            }
-
             return r;
         }
 
@@ -278,7 +285,7 @@ namespace PlatoRoslynSyntaxAnalyzer
             var block = syntax.Body;
             var expression = syntax.ExpressionBody?.Expression;
             methodDeclarationIr.Parameters = syntax.ParameterList.Parameters.Select(p => p.ToIR(model, builder)).ToList();
-            methodDeclarationIr.Body = CreateStatementBody(block, expression, model, builder);
+            methodDeclarationIr.Body = CreateStatementBody(block, expression, model, builder, methodDeclarationIr is ConstructorDeclarationIr);
             
             return methodDeclarationIr;
         }
@@ -304,7 +311,7 @@ namespace PlatoRoslynSyntaxAnalyzer
             return methodDeclarationIr;
         }
 
-        public static BlockStatementIR CreateStatementBody(BlockSyntax block, ExpressionSyntax expression, SemanticModel model, IRBuilder builder)
+        public static BlockStatementIR CreateStatementBody(BlockSyntax block, ExpressionSyntax expression, SemanticModel model, IRBuilder builder, bool isConstructor)
         {
             if (block != null)
             {
@@ -315,6 +322,14 @@ namespace PlatoRoslynSyntaxAnalyzer
 
             if (expression == null)
                 throw new Exception("internal error: both statement and expression body can't be null");
+
+            if (isConstructor)
+            {
+                // Constructors don't have return statements.
+                var expr = expression.ToIR(model, builder);
+                return new BlockStatementIR(expr.ToExpressionStatementIR());
+            }
+ 
             return new BlockStatementIR(expression.ToIR(model, builder).ToReturnStatementIR());
         }
 
@@ -356,11 +371,11 @@ namespace PlatoRoslynSyntaxAnalyzer
         public static ReturnStatementIR ToReturnStatementIR(this ExpressionIR expression)
             => new ReturnStatementIR(expression);
 
-        public static ExpressionStatementIR ToExpressionStatementIR(this ExpressionIR expression)
+        public static StatementIR ToExpressionStatementIR(this ExpressionIR expression)
             => new ExpressionStatementIR(expression);
 
         public static ThrowIR ToThrowIR(this ExpressionIR expression)
-            => new ThrowIR() { Args = new List<ExpressionIR>() { expression } };
+            => new ThrowIR(expression);
 
         public static StatementIR ToIR(this StatementSyntax syntax, SemanticModel model, IRBuilder builder)
         {
@@ -463,21 +478,13 @@ namespace PlatoRoslynSyntaxAnalyzer
         public static ExpressionIR ToIR(this ExpressionSyntax syntax, Compilation compilation, IRBuilder builder)
             => syntax.ToIR(compilation.GetSemanticModel(syntax.SyntaxTree), builder);
 
-        public static ExpressionIR AddArguments(this ExpressionIR ir, IEnumerable<ArgumentSyntax> arguments,
+        public static ExpressionIR[] ToIR(this IEnumerable<ArgumentSyntax> arguments,
             SemanticModel model, IRBuilder builder)
-        {
-            if (arguments != null)
-                ir.Args.AddRange(arguments.Select(x => x.ToIR(model, builder)));
-            return ir;
-        }
+            => arguments?.Select(x => x.ToIR(model, builder) as ExpressionIR).ToArray() ?? Array.Empty<ExpressionIR>();
 
-        public static ExpressionIR AddArguments(this ExpressionIR ir, IEnumerable<ExpressionSyntax> expressions,
+        public static ExpressionIR[] ToIR(this IEnumerable<ExpressionSyntax> expressions,
             SemanticModel model, IRBuilder builder)
-        {
-            if (expressions != null)
-                ir.Args.AddRange(expressions.Select(x => x.ToIR(model, builder)));
-            return ir;
-        }
+            => expressions.Select(x => x.ToIR(model, builder)).ToArray() ?? Array.Empty<ExpressionIR>();
 
         public static TypeReferenceIR ToReference(this TypeSyntax syntax, SemanticModel model, IRBuilder builder)
             => model.GetSymbolInfo(syntax).Symbol.GetTypeReference(builder);
@@ -490,7 +497,7 @@ namespace PlatoRoslynSyntaxAnalyzer
         public static TypeReferenceIR GetTypeReference(this ISymbol symbol, IRBuilder builder)
             => symbol is ITypeParameterSymbol tps 
                 ? new TypeReferenceIR(tps.Name, builder.GetDeclarationIR<TypeParameterDeclarationIR>(tps))
-                : new TypeReferenceIR(symbol?.Name, builder.GetDeclarationIR<TypeDeclarationIR>(symbol), symbol.GetTypeArguments(builder));
+                : new TypeReferenceIR(TypeToKeyword(symbol?.Name), builder.GetDeclarationIR<TypeDeclarationIR>(symbol), symbol.GetTypeArguments(builder));
 
         public static MethodReferenceIR GetFunctionReference(this ExpressionSyntax syntax, SemanticModel model, IRBuilder builder)
             => model.GetSymbolInfo(syntax).Symbol.GetFunctionReference(builder);
@@ -555,16 +562,18 @@ namespace PlatoRoslynSyntaxAnalyzer
             // TODO: indexers 
             // TODO: store local declarations 
 
+            var symbol = model.GetSymbolInfo(syntax).Symbol;
+
             ExpressionIR r = null;
 
             switch (syntax)
             {
                 case IdentifierNameSyntax identifierNameSyntax:
-                    r = new NameIR() { Name = identifierNameSyntax.Identifier.ToString() };
+                    r = new NameIR(identifierNameSyntax.Identifier.ToString());
                     break;
 
                 case SimpleNameSyntax simpleNameSyntax:
-                    r = new NameIR() { Name = simpleNameSyntax.Identifier.ToString() };
+                    r = new NameIR(simpleNameSyntax.Identifier.ToString());
                     break;
 
                 case NameSyntax nameSyntax:
@@ -572,32 +581,52 @@ namespace PlatoRoslynSyntaxAnalyzer
                     break;
 
                 case ArrayCreationExpressionSyntax arrayCreation:
-                    r = new ArrayIR();
-                    r.AddArguments(arrayCreation.Initializer?.Expressions, model, builder);
+                    r = new ArrayIR(arrayCreation.Initializer?.Expressions.ToIR(model, builder));
                     break;
 
                 case AssignmentExpressionSyntax assignment:
-                    // TODO: this could be tuples, and should be broken up into multiple assignments.
-                    r = new AssignmentIR() { LValue = GetLValue(assignment.Left, model, builder), };
-                    r.Args.Add(assignment.Right.ToIR(model, builder));
+                {
+                    var lvalue = GetLValue(assignment.Left, model, builder);
+                    var rvalue = assignment.Right.ToIR(model, builder);
+                    if (lvalue is TupleIR tuple)
+                    {
+                        // Deconstruct "(x, y, z) = tuple" 
+                        // into "let tmp = tuple in (x = tmp.Item1, y = tmp.Item2, z = tmp.Item3)"
+                        var newVarDecl = builder.CreateNewVar(rvalue);
+                        var newRValue = builder.CreateTuple(
+                            tuple.Args.Select((arg, i)
+                                => builder.CreateAssignment(arg, 
+                                    builder.CreateName(
+                                        $"Item{i+1}",
+                                        builder.CreateReference(newVarDecl))))
+                                .Cast<ExpressionIR>().
+                                ToArray());
+                        r = builder.CreateLet(newVarDecl, newRValue);
+                    }
+                    else
+                    {
+                        r = builder.CreateAssignment(lvalue, rvalue);
+                    }
                     break;
+                }
 
                 case ObjectCreationExpressionSyntax objectCreation:
-                    r = new NewIR() { CreatedType = objectCreation.Type.ToReference(model, builder) };
                     if (objectCreation.Initializer != null)
                         SemanticRules.UnsupportedSyntax(objectCreation.Initializer);
-                    r.AddArguments(objectCreation.ArgumentList?.Arguments, model, builder);
+                    r = new NewIR(objectCreation.Type.ToReference(model, builder),
+                        objectCreation.ArgumentList?.Arguments.ToIR(model, builder));
                     break;
 
                 case BinaryExpressionSyntax binary:
-                    r = new BinaryOperatorIr() { Operator = binary.OperatorToken.ToString() };
-                    r.Args.Add(binary.Left.ToIR(model, builder));
-                    r.Args.Add(binary.Right.ToIR(model, builder));
+                    r = new BinaryOperatorIR(binary.OperatorToken.ToString(),
+                        symbol.GetFunctionReference(builder),
+                        binary.Left.ToIR(model, builder),
+                        binary.Right.ToIR(model, builder));
                     break;
 
                 case CastExpressionSyntax castExpression:
-                    r = new CastIR() { CastType = ToReference(castExpression.Type, model, builder) };
-                    r.Args.Add(castExpression.Expression.ToIR(model, builder));
+                    r = new CastIR(castExpression.Type.ToReference(model, builder), 
+                        castExpression.Expression.ToIR(model, builder));
                     break;
 
                 case CheckedExpressionSyntax checkedExpression:
@@ -609,10 +638,10 @@ namespace PlatoRoslynSyntaxAnalyzer
                     break;
 
                 case ConditionalExpressionSyntax conditional:
-                    r = new ConditionalIR(); 
-                    r.Args.Add(conditional.Condition.ToIR(model, builder));
-                    r.Args.Add(conditional.WhenTrue.ToIR(model, builder));
-                    r.Args.Add(conditional.WhenFalse.ToIR(model, builder));
+                    r = new ConditionalIR(
+                        conditional.Condition.ToIR(model, builder),
+                        conditional.WhenTrue.ToIR(model, builder),
+                        conditional.WhenFalse.ToIR(model, builder));
                     break;
 
                 case DeclarationExpressionSyntax declaration:
@@ -620,15 +649,15 @@ namespace PlatoRoslynSyntaxAnalyzer
                     break;
 
                 case DefaultExpressionSyntax defaultExpression:
-                    r = new DefaultIR() { DefaultType = defaultExpression.Type.ToReference(model, builder) };
+                    r = new DefaultIR(defaultExpression.Type.ToReference(model, builder));
                     break;
 
                 case ElementAccessExpressionSyntax elementAccess:
-                    r = new SubscriptIR();
-                    r.Args.Add(elementAccess.Expression.ToIR(model, builder));
                     if (elementAccess.ArgumentList.Arguments.Count != 1)
                         SemanticRules.OnlyOneSubscriptSupported(elementAccess);
-                    r.AddArguments(elementAccess.ArgumentList.Arguments, model, builder);
+                    r = new SubscriptIR(
+                        elementAccess.Expression.ToIR(model, builder),
+                        elementAccess.ArgumentList.Arguments[0].ToIR(model, builder));
                     break;
 
                 case ElementBindingExpressionSyntax elementBinding:
@@ -636,8 +665,7 @@ namespace PlatoRoslynSyntaxAnalyzer
                     break;
 
                 case ImplicitArrayCreationExpressionSyntax implicitArrayCreation:
-                    r = new ArrayIR();
-                    r.AddArguments(implicitArrayCreation.Initializer.Expressions, model, builder);
+                    r = new ArrayIR(implicitArrayCreation.Initializer.Expressions.ToIR(model, builder));
                     break;
 
                 case ImplicitElementAccessSyntax implicitElementAccess:
@@ -653,8 +681,8 @@ namespace PlatoRoslynSyntaxAnalyzer
                     break;
 
                 case InvocationExpressionSyntax invocation:
-                    r = new InvocationIR() { Function = invocation.Expression.GetFunctionReference(model, builder), };
-                    r.AddArguments(invocation.ArgumentList.Arguments, model, builder);
+                    r = new InvocationIR(invocation.Expression.GetFunctionReference(model, builder),
+                        invocation.ArgumentList.Arguments.ToIR(model, builder));
                     break;
 
                 case IsPatternExpressionSyntax isPattern:
@@ -664,11 +692,11 @@ namespace PlatoRoslynSyntaxAnalyzer
                 case LiteralExpressionSyntax literal:
                     if (literal.Kind() == SyntaxKind.DefaultLiteralExpression)
                     {
-                        r = new DefaultIR() { DefaultType = finalTypeIR };
+                        r = new DefaultIR(finalTypeIR);
                     }
                     else
                     {
-                        r = new LiteralIR() { Text = literal.Token.ToString(), Value = literal.Token.Value };
+                        r = new LiteralIR(literal.Token.ToString(), literal.Token.Value);
                     }
                     break;
 
@@ -679,12 +707,7 @@ namespace PlatoRoslynSyntaxAnalyzer
                 case MemberAccessExpressionSyntax memberAccess:
                     if (memberAccess.OperatorToken.ToString() != ".")
                         SemanticRules.OnlyDotNotationSupported(memberAccess);
-
-                    r = new NameIR()
-                    {
-                        Object = memberAccess.Expression.ToIR(model, builder),
-                        Name = memberAccess.Name.ToString(),
-                    };
+                    r = new NameIR(memberAccess.Name.ToString(), memberAccess.Expression.ToIR(model, builder));
                     break;
 
                 case MemberBindingExpressionSyntax memberBinding:
@@ -713,18 +736,21 @@ namespace PlatoRoslynSyntaxAnalyzer
                     break;
 
                 case ParenthesizedExpressionSyntax parenthesized:
-                    r = new ParenthesizedIR();
-                    r.Args.Add(parenthesized.Expression.ToIR(model, builder));
+                    r = new ParenthesizedIR(parenthesized.Expression.ToIR(model, builder));
                     break;
 
                 case PostfixUnaryExpressionSyntax postfix:
-                    r = new PostfixOperatorIr() { Operator = postfix.OperatorToken.ToString() };
-                    r.Args.Add(postfix.Operand.ToIR(model, builder));
+                    r = new PostfixOperatorIR(
+                        postfix.OperatorToken.ToString(),
+                        symbol.GetFunctionReference(builder),
+                        postfix.Operand.ToIR(model, builder));
                     break;
 
                 case PrefixUnaryExpressionSyntax prefix:
-                    r = new PrefixOperatorIr() { Operator = prefix.OperatorToken.ToString() };
-                    r.Args.Add(prefix.Operand.ToIR(model, builder));
+                    r = new PrefixOperatorIR(
+                        prefix.OperatorToken.ToString(),
+                        symbol.GetFunctionReference(builder),
+                        prefix.Operand.ToIR(model, builder));
                     break;
 
                 case RangeExpressionSyntax rangeExpression:
@@ -732,8 +758,7 @@ namespace PlatoRoslynSyntaxAnalyzer
                     break;
 
                 case SwitchExpressionSyntax switchExpression:
-                    r = new SwitchIR();
-                    r.Args.Add(switchExpression.GoverningExpression.ToIR(model, builder));
+                    r = new SwitchIR(switchExpression.GoverningExpression.ToIR(model, builder));
                     foreach (var arm in switchExpression.Arms)
                     {
                         r.Args.Add(arm.Pattern.ToIR(model, builder));
@@ -746,17 +771,15 @@ namespace PlatoRoslynSyntaxAnalyzer
                     break;
 
                 case ThrowExpressionSyntax throwExpression:
-                    r = new ThrowIR();
-                    r.Args.Add(throwExpression.Expression.ToIR(model, builder));
+                    r = new ThrowIR(throwExpression.Expression.ToIR(model, builder));
                     break;
 
                 case TupleExpressionSyntax tuple:
-                    r = new TupleIR();
-                    r.AddArguments(tuple.Arguments, model, builder);
+                    r = new TupleIR(tuple.Arguments.ToIR(model, builder));
                     break;
 
                 case TypeOfExpressionSyntax typeOf:
-                    r = new TypeOfIR() { TypeArgument = typeOf.Type.ToReference(model, builder) };
+                    r = new TypeOfIR(typeOf.Type.ToReference(model, builder));
                     break;
 
                 case TypeSyntax typeSyntax:
@@ -780,10 +803,10 @@ namespace PlatoRoslynSyntaxAnalyzer
                     break;
 
                 case ImplicitObjectCreationExpressionSyntax implicitObjectCreationExpressionSyntax:
-                    r = new NewIR() { CreatedType = finalTypeIR };
                     if (implicitObjectCreationExpressionSyntax.Initializer != null)
                         SemanticRules.UnsupportedSyntax(implicitObjectCreationExpressionSyntax.Initializer);
-                    r.AddArguments(implicitObjectCreationExpressionSyntax.ArgumentList?.Arguments, model, builder);
+                    r = new NewIR(finalTypeIR,
+                        implicitObjectCreationExpressionSyntax.ArgumentList?.Arguments.ToIR(model, builder));
                     break;
 
                 case ImplicitStackAllocArrayCreationExpressionSyntax implicitStackAllocArrayCreationExpressionSyntax:
@@ -811,8 +834,6 @@ namespace PlatoRoslynSyntaxAnalyzer
                     break;
             }
 
-            var symbol = ModelExtensions.GetSymbolInfo(model, syntax).Symbol;
-
             if (r is NameIR nameIR)
             {
                 if (symbol != null)
@@ -830,7 +851,7 @@ namespace PlatoRoslynSyntaxAnalyzer
                 }
             }
 
-            return r;
+            return builder.AddIR(r);
         }
 
         public static DeclarationIR ToDeclarationIR(this ISymbol symbol, IRBuilder builder)
@@ -901,7 +922,7 @@ namespace PlatoRoslynSyntaxAnalyzer
         public static LambdaIR CreateLambda(SyntaxNode node, SemanticModel model, IRBuilder builder,
             IEnumerable<ParameterSyntax> parameters, ExpressionSyntax body, BlockSyntax block)
             => CreateLambda(node, model, builder, parameters.Select(p => p.ToIR(model, builder)).ToList(),
-                CreateStatementBody(block, body, model, builder));
+                CreateStatementBody(block, body, model, builder, false));
 
         public static LambdaIR CreateLambda(SyntaxNode node, SemanticModel model, IRBuilder builder, IEnumerable<ParameterDeclarationIR> parameters, StatementIR body)
         {

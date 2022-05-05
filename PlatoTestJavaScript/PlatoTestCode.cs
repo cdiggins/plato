@@ -130,6 +130,18 @@ namespace PlatoTestJavaScript
         public IArray<Int4> Faces { get; }
     }
 
+    public class Triangle
+    {
+        public Vector3 A { get; }
+        public Vector3 B { get; }
+        public Vector3 C { get; }
+
+        public Triangle(Vector3 a, Vector3 b, Vector3 c)
+            => (A, B, C) = (a, b, c);
+
+        public Vector3 Normal => (B - A).Cross(C - A).Normal;
+    }
+
     public static class Extensions
     {
         public static IArray<T> ToIArray<T>(this IReadOnlyList<T> self)
@@ -257,5 +269,11 @@ namespace PlatoTestJavaScript
 
         public static int[] ToIntArray(this IArray<Int3> faces)
             => faces.SelectMany(f => f).ToArray();
+
+        public static IArray<Triangle> Triangles(this TriMesh mesh)
+            => mesh.Faces.Select(f => new Triangle(mesh.Points.Positions[f.X], mesh.Points.Positions[f.Y], mesh.Points.Positions[f.Z]));
+
+        public static IArray<Vector3> FaceNormals(this TriMesh mesh)
+            => mesh.Triangles().Select(tri => tri.Normal);
     }
 }

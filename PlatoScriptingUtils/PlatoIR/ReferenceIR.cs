@@ -54,7 +54,6 @@ namespace PlatoIR
         public TypeParameterDeclarationIR TypeParameterDeclaration { get; }
         public override DeclarationIR Declaration 
             => TypeDeclaration as DeclarationIR ?? TypeParameterDeclaration;
-
     }
 
     public class VariableReferenceIR : ReferenceIR

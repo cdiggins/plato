@@ -5,6 +5,7 @@ VisualStudioVersion = 17.1.32104.313
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution items", "solution items", "{318BE9D9-D200-4BE2-AB8B-569AFFA70E0E}"
 	ProjectSection(SolutionItems) = preProject
+		notes.md = notes.md
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
@@ -20,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTestJavaScript", "..\P
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoIR", "PlatoIR\PlatoIR.csproj", "{A71401DF-F388-4F54-B581-4D555D48CEE9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatoRoslynSyntaxAnalyzer", "..\PlatoRoslynSyntaxAnalyzer\PlatoRoslynSyntaxAnalyzer.csproj", "{F2E12DF6-379A-4866-A313-B84E3DC8C528}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoRoslynSyntaxAnalyzer", "..\PlatoRoslynSyntaxAnalyzer\PlatoRoslynSyntaxAnalyzer.csproj", "{F2E12DF6-379A-4866-A313-B84E3DC8C528}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

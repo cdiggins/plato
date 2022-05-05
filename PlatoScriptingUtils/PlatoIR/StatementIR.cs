@@ -1,9 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PlatoIR
 {
-    public class StatementIR : IR { }
+    public class StatementIR : IR
+    {
+        public virtual IEnumerable<ExpressionIR> Expressions 
+            => Enumerable.Empty<ExpressionIR>();
+
+        public IEnumerable<ExpressionIR> AllExpressions
+            => Expressions.SelectMany(x => x?.AllExpressions ?? Enumerable.Empty<ExpressionIR>());
+
+        public IEnumerable<VariableDeclarationIR> AllExpressionDeclarations
+            => AllExpressions.SelectMany(x => x?.Declarations ?? Enumerable.Empty<VariableDeclarationIR>());
+    }
 
     public class WhileStatementIR : StatementIR
     {
@@ -11,6 +22,9 @@ namespace PlatoIR
             => (Condition, Body) = (condition, body);
         public StatementIR Body { get; set; }
         public ExpressionIR Condition { get; set; }
+
+        public override IEnumerable<ExpressionIR> Expressions
+            => Enumerable.Repeat(Condition, 1);
     }
 
     public class DoStatementIR : StatementIR
@@ -19,6 +33,8 @@ namespace PlatoIR
             => (Condition, Body) = (condition, body);
         public StatementIR Body { get; set; }
         public ExpressionIR Condition { get; set; }
+        public override IEnumerable<ExpressionIR> Expressions
+            => Enumerable.Repeat(Condition, 1);
     }
 
     public class ExpressionStatementIR : StatementIR
@@ -26,6 +42,8 @@ namespace PlatoIR
         public ExpressionStatementIR(ExpressionIR expression)
             => Expression = expression;
         public ExpressionIR Expression { get; }
+        public override IEnumerable<ExpressionIR> Expressions
+            => Enumerable.Repeat(Expression, 1);
     }
 
     public class IfStatementIR : StatementIR
@@ -35,6 +53,8 @@ namespace PlatoIR
         public ExpressionIR Condition { get;  }
         public StatementIR OnTrue { get; }
         public StatementIR OnFalse { get; }
+        public override IEnumerable<ExpressionIR> Expressions
+            => Enumerable.Repeat(Condition, 1);
     }
 
     public class ReturnStatementIR : StatementIR
@@ -42,6 +62,8 @@ namespace PlatoIR
         public ReturnStatementIR(ExpressionIR expression)
             => Expression = expression;
         public ExpressionIR Expression { get; }
+        public override IEnumerable<ExpressionIR> Expressions
+            => Enumerable.Repeat(Expression, 1);
     }
 
     public class MultiStatementIR : StatementIR
@@ -67,5 +89,8 @@ namespace PlatoIR
         public DeclarationStatementIR(DeclarationIR declaration)
             => Declaration = declaration;
         public DeclarationIR Declaration { get; }
+
+        public override IEnumerable<ExpressionIR> Expressions
+            => Declaration.Expressions;
     }
 }

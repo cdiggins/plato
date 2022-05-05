@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace PlatoIR
 {
@@ -10,6 +11,8 @@ namespace PlatoIR
         public TypeReferenceIR Type { get; set; }
         public TypeReferenceIR ParentType { get; set;  }
         public bool IsMemberDeclaration => ParentType != null;
+        public virtual IEnumerable<ExpressionIR> Expressions
+            => Enumerable.Empty<ExpressionIR>();
     }
 
     public class MethodDeclarationIR : DeclarationIR
@@ -22,6 +25,9 @@ namespace PlatoIR
     public class VariableDeclarationIR : DeclarationIR
     {
         public ExpressionIR InitialValue { get; set; }
+
+        public override IEnumerable<ExpressionIR> Expressions
+            => Enumerable.Repeat(InitialValue, 1);
     }
 
     public class TypeParameterDeclarationIR : DeclarationIR
@@ -30,6 +36,9 @@ namespace PlatoIR
     public class ParameterDeclarationIR : DeclarationIR
     {
         public ExpressionIR DefaultValue { get; set; }
+
+        public override IEnumerable<ExpressionIR> Expressions
+            => Enumerable.Repeat(DefaultValue, 1);
     }
 
     public class ConstructorDeclarationIr : MethodDeclarationIR
@@ -39,6 +48,9 @@ namespace PlatoIR
     public class FieldDeclarationIR : DeclarationIR
     {
         public ExpressionIR InitialValue { get; set; }
+
+        public override IEnumerable<ExpressionIR> Expressions
+            => Enumerable.Repeat(InitialValue, 1);
     }
 
     public class PropertyDeclarationIR : DeclarationIR
@@ -78,6 +90,5 @@ namespace PlatoIR
             self.Parent = parent;
             return self;
         }
-
     }
 }

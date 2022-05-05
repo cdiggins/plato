@@ -18,6 +18,9 @@ namespace PlatoRoslynSyntaxAnalyzer
         public T AddIR<T>(PlatoSyntax syntax, T ir) where T : IR
             => AddIR<T>(syntax.GetNode(), ir);
 
+        public T AddIR<T>(T ir) where T : IR
+            => AddIR(null as SyntaxNode, ir);
+
         public T AddIR<T>(SyntaxNode node, T ir) where T: IR
         {
             Debug.Assert(ir.Id == 0);
@@ -69,5 +72,34 @@ namespace PlatoRoslynSyntaxAnalyzer
     {
         public static (TextSpan, SyntaxKind) ToKey(this SyntaxNode node)
             => (node.Span, node.Kind());
+
+        public static VariableDeclarationIR CreateNewVar(this IRBuilder builder, ExpressionIR value)
+        {
+            var r = builder.AddIR(new VariableDeclarationIR());
+            r.Name = $"_var{r.Id}";
+            r.InitialValue = value;
+            return r;
+        }
+
+        public static T SetType<T>(this T self, TypeReferenceIR type) where T : ExpressionIR
+        {
+            self.ExpressionType = type;
+            return self;
+        }
+
+        public static VariableReferenceIR CreateReference(this IRBuilder builder, VariableDeclarationIR var)
+            => builder.AddIR(new VariableReferenceIR(var.Name, var)).SetType(var.Type);
+
+        public static NameIR CreateName(this IRBuilder builder, string name, ExpressionIR receiver = null)
+            => builder.AddIR(new NameIR(name, receiver));
+
+        public static TupleIR CreateTuple(this IRBuilder builder, params ExpressionIR[] expressions)
+            => builder.AddIR(new TupleIR(expressions));
+
+        public static AssignmentIR CreateAssignment(this IRBuilder builder, ExpressionIR lvalue, ExpressionIR rvalue)
+            => builder.AddIR(new AssignmentIR(lvalue, rvalue)).SetType(rvalue.ExpressionType);
+
+        public static LetIR CreateLet(this IRBuilder builder, VariableDeclarationIR variable, ExpressionIR expression)
+            => builder.AddIR(new LetIR(variable, expression)).SetType(expression.ExpressionType);
     }
 }
