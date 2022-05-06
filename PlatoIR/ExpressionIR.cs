@@ -19,18 +19,9 @@ namespace PlatoIR
         public TypeReferenceIR ExpressionType { get; set; }
 
         public IEnumerable<ExpressionIR> AllExpressions
-        {
-            get
-            {
-                foreach (var x in Expressions)
-                {
-                    if (x == null) continue;
-                    foreach (var y in x.AllExpressions)
-                        yield return y;
-                }
-                yield return this;
-            }
-        }
+            => Expressions
+            .SelectMany(x => x?.AllExpressions ?? Enumerable.Empty<ExpressionIR>())
+            .Where(x => x != null).Append(this);
     }
 
     public class NameIR : ExpressionIR

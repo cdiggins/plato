@@ -8,7 +8,7 @@ public interface IArray<T> : var
   {
   get;
     }
-  ;
+  
   /*
   T this[int index] { get; }
   */
@@ -44,7 +44,7 @@ public class Array<T> : var
         return _Func_;
         }
       }
-  ;
+  
   /*
   public int Count { get; }
   */
@@ -55,7 +55,7 @@ public class Array<T> : var
         return _Count_;
         }
       }
-  ;
+  
   /*
   public T this[int index] => Func(index);
   */
@@ -92,7 +92,7 @@ public class Vector2 : var
         return new Vector2();
         }
       }
-  ;
+  
   /*
   public float MagnitudeSquared => Dot(this);
   */
@@ -103,7 +103,7 @@ public class Vector2 : var
         return Dot(this);
         }
       }
-  ;
+  
   /*
   public float Magnitude => MathF.Sqrt(MagnitudeSquared);
   */
@@ -114,7 +114,7 @@ public class Vector2 : var
         return Sqrt/* unresolved */(MagnitudeSquared);
         }
       }
-  ;
+  
   /*
   public Vector2 Normal => this / Magnitude;
   */
@@ -125,7 +125,7 @@ public class Vector2 : var
         return this/Magnitude;
         }
       }
-  ;
+  
   /*
   public Vector2 WithX(float x) => new(x, Y);
   */
@@ -208,7 +208,7 @@ public class Vector3 : var
         return new Vector3();
         }
       }
-  ;
+  
   /*
   public float MagnitudeSquared => Dot(this);
   */
@@ -219,7 +219,7 @@ public class Vector3 : var
         return Dot(this);
         }
       }
-  ;
+  
   /*
   public float Magnitude => MathF.Sqrt(MagnitudeSquared);
   */
@@ -230,7 +230,7 @@ public class Vector3 : var
         return Sqrt/* unresolved */(MagnitudeSquared);
         }
       }
-  ;
+  
   /*
   public Vector3 Normal => this / Magnitude;
   */
@@ -241,7 +241,7 @@ public class Vector3 : var
         return this/Magnitude;
         }
       }
-  ;
+  
   /*
   public int Count => 3;
   */
@@ -252,7 +252,7 @@ public class Vector3 : var
         return 3;
         }
       }
-  ;
+  
   /*
   public Vector3 WithX(float x) => new(x, Y, Z);
   */
@@ -381,7 +381,7 @@ public class Int3 : var
         return new Int3();
         }
       }
-  ;
+  
   /*
   public int Count => 3;
   */
@@ -392,7 +392,7 @@ public class Int3 : var
         return 3;
         }
       }
-  ;
+  
   /*
   public Int3 WithX(int x) => new(x, Y, Z);
   */
@@ -472,7 +472,7 @@ public class Int4 : var
         return new Int4();
         }
       }
-  ;
+  
   /*
   public int Count => 4;
   */
@@ -483,7 +483,7 @@ public class Int4 : var
         return 4;
         }
       }
-  ;
+  
   /*
   public Int4 WithX(int x) => new(x, Y, Z, W);
   */
@@ -575,7 +575,7 @@ public class Points : var
         return _Positions_;
         }
       }
-  ;
+  
   /*
   public IArray<Vector2> UVs { get; }
   */
@@ -586,7 +586,7 @@ public class Points : var
         return _UVs_;
         }
       }
-  ;
+  
   /*
   public IArray<Vector3> Normals { get; }
   */
@@ -597,7 +597,7 @@ public class Points : var
         return _Normals_;
         }
       }
-  ;
+  
   }
 //==end==//
 //==begin==//
@@ -626,7 +626,7 @@ public class TriMesh : var
         return _Points_;
         }
       }
-  ;
+  
   /*
   public IArray<Int3> Faces { get; }
   */
@@ -637,7 +637,7 @@ public class TriMesh : var
         return _Faces_;
         }
       }
-  ;
+  
   }
 //==end==//
 //==begin==//
@@ -666,7 +666,7 @@ public class QuadMesh : var
         return _Points_;
         }
       }
-  ;
+  
   /*
   public IArray<Int4> Faces { get; }
   */
@@ -677,7 +677,7 @@ public class QuadMesh : var
         return _Faces_;
         }
       }
-  ;
+  
   }
 //==end==//
 //==begin==//
@@ -708,7 +708,7 @@ public class Triangle : var
         return _A_;
         }
       }
-  ;
+  
   /*
   public Vector3 B { get; }
   */
@@ -719,7 +719,7 @@ public class Triangle : var
         return _B_;
         }
       }
-  ;
+  
   /*
   public Vector3 C { get; }
   */
@@ -730,7 +730,7 @@ public class Triangle : var
         return _C_;
         }
       }
-  ;
+  
   /*
   public Vector3 Normal => (B - A).Cross(C - A).Normal;
   */
@@ -741,7 +741,7 @@ public class Triangle : var
         return Cross(C-A).Normal;
         }
       }
-  ;
+  
   }
 //==end==//
 //==begin==//

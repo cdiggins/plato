@@ -88,7 +88,9 @@ namespace PlatoIR
      * DONE: get all declarations from a statement
      * DONE: output var, when a type reference is not known.
      * TODO: customize output.https://docs.microsoft.com/en-us/cpp/build/formatting-the-output-of-a-custom-build-step-or-build-event?view=msvc-170
-     *
+     * DONE: extra semicolons on the property
+     * TODO: base class is a "var" 
+     * TODO: assignment to properties, should be assignment to the field 
      */
     public class IRSerializer
     {
@@ -357,7 +359,7 @@ namespace PlatoIR
                 case PropertyDeclarationIR propertyIr:
                     return Write("public ").Write(propertyIr.IsStatic ? "static " : "").Write(propertyIr.Type, indent).Write(" ").Write(propertyIr.Name)
                         .WriteGetter(propertyIr.Getter, indent)
-                        .WriteLine(";", indent);
+                        .WriteLine(propertyIr.Getter == null ? ";" : "", indent);
 
                 case PropertyReferenceIR propertyReferenceIr:
                     return Write(propertyReferenceIr.Name).WriteReference(propertyReferenceIr);

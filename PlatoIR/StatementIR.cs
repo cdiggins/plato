@@ -6,7 +6,7 @@ namespace PlatoIR
 {
     public class StatementIR : IR
     {
-        public virtual IEnumerable<ExpressionIR> Expressions 
+        public virtual IEnumerable<ExpressionIR> Expressions
             => Enumerable.Empty<ExpressionIR>();
 
         public IEnumerable<ExpressionIR> AllExpressions
@@ -14,6 +14,12 @@ namespace PlatoIR
 
         public IEnumerable<VariableDeclarationIR> AllExpressionDeclarations
             => AllExpressions.SelectMany(x => x?.Declarations ?? Enumerable.Empty<VariableDeclarationIR>());
+
+        public virtual IEnumerable<StatementIR> GetStatements()
+            => Enumerable.Empty<StatementIR>();
+
+        public IEnumerable<StatementIR> AllStatements
+            => GetStatements().SelectMany(st => st.AllStatements).Append(this);
     }
 
     public class WhileStatementIR : StatementIR
@@ -25,6 +31,9 @@ namespace PlatoIR
 
         public override IEnumerable<ExpressionIR> Expressions
             => Enumerable.Repeat(Condition, 1);
+
+        public virtual IEnumerable<StatementIR> Statements
+            => Enumerable.Repeat(Body, 1);
     }
 
     public class DoStatementIR : StatementIR
@@ -35,6 +44,8 @@ namespace PlatoIR
         public ExpressionIR Condition { get; set; }
         public override IEnumerable<ExpressionIR> Expressions
             => Enumerable.Repeat(Condition, 1);
+        public virtual IEnumerable<StatementIR> Statements
+            => Enumerable.Repeat(Body, 1);
     }
 
     public class ExpressionStatementIR : StatementIR
@@ -55,6 +66,8 @@ namespace PlatoIR
         public StatementIR OnFalse { get; }
         public override IEnumerable<ExpressionIR> Expressions
             => Enumerable.Repeat(Condition, 1);
+        public override IEnumerable<StatementIR> GetStatements()
+            => new[] { OnTrue, OnFalse };
     }
 
     public class ReturnStatementIR : StatementIR
@@ -73,6 +86,7 @@ namespace PlatoIR
         public MultiStatementIR(IEnumerable<StatementIR> statements)
             : this(statements.ToArray()) { }
         public List<StatementIR> Statements { get; }
+        public override IEnumerable<StatementIR> GetStatements() => Statements;
     }
 
     public class BlockStatementIR : StatementIR
@@ -82,6 +96,7 @@ namespace PlatoIR
         public BlockStatementIR(IEnumerable<StatementIR> statements)
             : this(statements.ToArray()) {}
         public List<StatementIR> Statements { get; }
+        public override IEnumerable<StatementIR> GetStatements() => Statements;
     }
 
     public class DeclarationStatementIR : StatementIR

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -17,7 +18,7 @@ namespace PlatoRoslynSyntaxAnalyzer
             var r = builder.StoreDeclarations(compilation, syntaxes);
             r = builder.CreateDefinitions(compilation, syntaxes);
             r = builder.NormalizeIR(compilation);
-                return r;
+            return r;
         }
 
         public static IRBuilder NormalizeIR(this IRBuilder builder, Compilation compilation)
@@ -27,8 +28,37 @@ namespace PlatoRoslynSyntaxAnalyzer
             // TODO: add default constructor calls
             // TODO: fix the type-names
             // TODO: find a way to visit sub-expressions etc. 
+            foreach (var type in builder.GetTypes())
+            {
+                foreach (var ctor in type.Constructors)
+                {
+                    foreach (var st in ctor.Body.AllStatements)
+                    {
+                        foreach (var expr in st.AllExpressions)
+                        {
+                            if (expr is AssignmentIR assIR)
+                            {
+                                if (assIR.LValue is PropertyReferenceIR propertyReferenceIR)
+                                {
+                                    Debug.WriteLine("Property reference");
+                                }
+                                if (assIR.LValue is NameIR nameIR)
+                                {
+                                    Debug.WriteLine("Property reference");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             return builder;
         }
+
+        public static IEnumerable<TypeDeclarationIR> GetTypes(this IRBuilder builder)
+            => builder.GetIR<TypeDeclarationIR>();
+
+        public static IEnumerable<T> GetIR<T>(this IRBuilder builder) where T: IR
+            => builder.Declarations.Select(kv => kv.Item2).OfType<T>();
 
         public static IRBuilder StoreDeclarations(this IRBuilder builder, Compilation compilation, IEnumerable<PlatoTypeSyntax> syntaxes)
         {
