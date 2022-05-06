@@ -742,7 +742,7 @@ namespace PlatoGenerator
 
             var builder = new IRBuilder();
             builder = SyntaxToIR.BuildIR(builder, context.Compilation, types);
-            var outputCsFile = Path.ChangeExtension(outputFile, "cs");
+            var outputCsFile = @"C:\Users\Acer\source\repos\Plato\PlatoTestCSharp\Program.cs";
             var decls = builder.Declarations.Select(d => d.Item2).OfType<TypeDeclarationIR>().ToList();
             using (sw = new StreamWriter(File.Create(outputCsFile)))
             {

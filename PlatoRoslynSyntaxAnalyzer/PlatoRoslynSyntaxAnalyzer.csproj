@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PlatoScriptingUtils\PlatoIR\PlatoIR.csproj" />
+    <ProjectReference Include="..\PlatoIR\PlatoIR.csproj" />
   </ItemGroup>
 
 </Project>

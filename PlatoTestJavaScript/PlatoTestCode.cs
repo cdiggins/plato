@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Xml.Schema;
 
 namespace PlatoTestJavaScript
@@ -191,7 +192,7 @@ namespace PlatoTestJavaScript
         public static IArray<float> SampleFloats(int count, float max = 1.0f)
             => count.Select(i => max * count);
 
-        public static IArray<Int3> ToTriangles(this IArray<Int4> self)
+        public static IArray<Int3> ToTriangleIndices(this IArray<Int4> self)
             => self.SelectMany(f => new[] { new Int3(f.X, f.Y, f.Z), new Int3(f.Z, f.W, f.X) }.ToIArray());
 
         public static QuadMesh ToQuadMesh(this Func<Vector2, Vector3> func, int rows, int cols)
@@ -258,6 +259,9 @@ namespace PlatoTestJavaScript
                 tube * uv.Y.Sin());
         }
 
+        public static TriMesh ToTriMesh(this QuadMesh mesh)
+            => new(mesh.Points, mesh.Faces.ToTriangleIndices());
+
         public static void TestOperator()
         {
             var x = new Vector3(1, 2, 3);
@@ -275,5 +279,29 @@ namespace PlatoTestJavaScript
 
         public static IArray<Vector3> FaceNormals(this TriMesh mesh)
             => mesh.Triangles().Select(tri => tri.Normal);
+
+        public static (T, TimeSpan) TimeIt<T>(Func<T> func)
+        {
+            var sw = Stopwatch.StartNew();
+            return (func(), sw.Elapsed);
+        }
+
+        public static void Log(string s)
+            => Debug.WriteLine(s);
+
+        public static T LogTiming<T>(Func<T> func)
+        {
+            var r = TimeIt(func);
+            Debug.WriteLine("msec elapsed: " + r.Item2.Milliseconds);
+            return r.Item1;
+        }
+
+        public static void Main()
+        {
+            var torus = Torus(500, 100, 1, 0.2f).ToTriMesh();
+            var floats = LogTiming(torus.FaceNormals().ToFloatArray);
+            var filePath = Path.Combine(Path.GetTempPath(), "profiling.txt");
+            File.WriteAllLines(filePath, floats.Select(f => f.ToString()));
+        }
     }
 }
