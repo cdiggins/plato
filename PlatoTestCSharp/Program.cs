@@ -1169,7 +1169,7 @@ public static class Extensions
   */
   public static void Log(System.String s)
   {
-    return System.Diagnostics.Debug.WriteLine(s);
+    System.Diagnostics.Debug.WriteLine(s);
     }
   /*
   public static T LogTiming<T>(Func<T> func)

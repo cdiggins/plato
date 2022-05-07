@@ -20,6 +20,7 @@ namespace PlatoIR
         public List<ParameterDeclarationIR> Parameters { get; set; } = new List<ParameterDeclarationIR>();
         public BlockStatementIR Body { get; set; }
         public List<TypeParameterDeclarationIR> TypeParameters { get; set;  } = new List<TypeParameterDeclarationIR>();
+        public bool IsVoid => Type.IsVoid;
     }
 
     public class VariableDeclarationIR : DeclarationIR

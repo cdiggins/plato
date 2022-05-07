@@ -247,7 +247,7 @@ namespace PlatoRoslynSyntaxAnalyzer
             // Find the body of the propertyDeclaration 
             if (property is PropertyDeclarationSyntax ps && ps.ExpressionBody != null)
             {
-                r.Body = new BlockStatementIR(ps.ExpressionBody?.Expression.ToIR(model, builder).ToReturnStatementIR());
+                r.Body = CreateStatementBody(null, ps.ExpressionBody?.Expression, model, builder, false);
             }
 
             // Find the body amd parameters of the indexerDeclaration 
@@ -255,8 +255,7 @@ namespace PlatoRoslynSyntaxAnalyzer
             {
                 if (indexer.ExpressionBody != null)
                 {
-                    r.Body = new BlockStatementIR(indexer.ExpressionBody?.Expression.ToIR(model, builder)
-                        .ToReturnStatementIR());
+                    r.Body = CreateStatementBody(null, indexer.ExpressionBody?.Expression, model, builder, false);
                 }
 
                 r.Parameters = indexer.ParameterList.Parameters.Select(p => p.ToIR(model, builder)).ToList();
@@ -266,17 +265,9 @@ namespace PlatoRoslynSyntaxAnalyzer
             {
                 foreach (var acc in property.AccessorList?.Accessors)
                 {
-                    if (r.Body == null && acc.Kind() == SyntaxKind.GetAccessorDeclaration)
+                    if (r.Body == null && acc.ExpressionBody?.Expression != null && acc.Kind() == SyntaxKind.GetAccessorDeclaration)
                     {
-                        // Only if there is an actual body.
-                        if (acc.ExpressionBody?.Expression != null)
-                        {
-                            r.Body = new BlockStatementIR(acc.ExpressionBody?.Expression.ToIR(model, builder).ToReturnStatementIR());
-                        }
-                        else if (acc.Body != null)
-                        {
-                            r.Body = (BlockStatementIR)acc.Body.ToIR(model, builder);
-                        }
+                        r.Body = CreateStatementBody(acc.Body, acc.ExpressionBody?.Expression, model, builder, false);
                     }
                 }
             }
@@ -296,9 +287,18 @@ namespace PlatoRoslynSyntaxAnalyzer
             var block = syntax.Body;
             var expression = syntax.ExpressionBody?.Expression;
             methodDeclarationIr.Parameters = syntax.ParameterList.Parameters.Select(p => p.ToIR(model, builder)).ToList();
-            methodDeclarationIr.Body = CreateStatementBody(block, expression, model, builder, methodDeclarationIr is ConstructorDeclarationIr);
+            methodDeclarationIr.Body = CreateStatementBody(block, expression, model, builder, syntax.IsVoid());
             
             return methodDeclarationIr;
+        }
+
+        public static bool IsVoid(this BaseMethodDeclarationSyntax syntax)
+        {
+            if (syntax is ConstructorDeclarationSyntax)
+                return true;
+            if (syntax is MethodDeclarationSyntax ms)
+                return ms.ReturnType is PredefinedTypeSyntax predefined && predefined.Keyword.IsKind(SyntaxKind.VoidKeyword);
+            return false;
         }
         
         public static MethodDeclarationIR UpdateMethod(OperationDeclarationIr operatorIr, ConversionOperatorDeclarationSyntax syntax, SemanticModel model, IRBuilder builder)
@@ -322,7 +322,7 @@ namespace PlatoRoslynSyntaxAnalyzer
             return methodDeclarationIr;
         }
 
-        public static BlockStatementIR CreateStatementBody(BlockSyntax block, ExpressionSyntax expression, SemanticModel model, IRBuilder builder, bool isConstructor)
+        public static BlockStatementIR CreateStatementBody(BlockSyntax block, ExpressionSyntax expression, SemanticModel model, IRBuilder builder, bool isVoid)
         {
             if (block != null)
             {
@@ -334,14 +334,11 @@ namespace PlatoRoslynSyntaxAnalyzer
             if (expression == null)
                 throw new Exception("internal error: both statement and expression body can't be null");
 
-            if (isConstructor)
-            {
-                // Constructors don't have return statements.
-                var expr = expression.ToIR(model, builder);
-                return new BlockStatementIR(expr.ToExpressionStatementIR());
-            }
- 
-            return new BlockStatementIR(expression.ToIR(model, builder).ToReturnStatementIR());
+            var expr = expression.ToIR(model, builder);
+            
+            return new BlockStatementIR(isVoid
+                ? expr.ToExpressionStatementIR()
+                : expr.ToReturnStatementIR());
         }
 
         public static VariableDeclarationIR ToDeclarationIR(this VariableDeclaratorSyntax syntax, TypeReferenceIR type, SemanticModel model,
