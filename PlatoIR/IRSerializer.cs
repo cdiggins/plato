@@ -96,7 +96,7 @@ namespace PlatoIR
      * TODO: basic inlining as an option.
      * DONE: implemented interfaces are missing
      * DONE: add this parameters 
-     * TODO: arrays are ascrewed up (   r  = new var[]{}; <= var r = new T[self.Count]; }
+     * TODO: arrays initializers are ascrewed up (   r  = new var[]{}; <= var r = new T[self.Count]; }
      * DONE: array types are declarated property 
      * DONE: lambda parameters without types, should just omit the type
      * DONE: make sure static classes are specified as static classes.
