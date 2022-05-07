@@ -609,7 +609,12 @@ namespace PlatoRoslynSyntaxAnalyzer
                     break;
 
                 case ArrayCreationExpressionSyntax arrayCreation:
-                    r = new ArrayIR(arrayCreation.Initializer?.Expressions.ToIR(model, builder));
+                    if (arrayCreation.Type.RankSpecifiers.Count != 1
+                        || arrayCreation.Type.RankSpecifiers[0].Sizes.Count() != 1)
+                        SemanticRules.InvalidArray(arrayCreation);
+                    r = new ArrayIR(
+                        arrayCreation.Type.RankSpecifiers[0].Sizes.First().ToIR(model, builder),
+                        arrayCreation.Initializer?.Expressions.ToIR(model, builder));
                     break;
 
                 case AssignmentExpressionSyntax assignment:
@@ -694,7 +699,9 @@ namespace PlatoRoslynSyntaxAnalyzer
                     break;
 
                 case ImplicitArrayCreationExpressionSyntax implicitArrayCreation:
-                    r = new ArrayIR(implicitArrayCreation.Initializer.Expressions.ToIR(model, builder));
+                    r = new ArrayIR(
+                        implicitArrayCreation.Initializer.Expressions.Count.ToLiteralIR(),
+                        implicitArrayCreation.Initializer.Expressions.ToIR(model, builder));
                     break;
 
                 case ImplicitElementAccessSyntax implicitElementAccess:
@@ -863,6 +870,7 @@ namespace PlatoRoslynSyntaxAnalyzer
                     break;
             }
 
+            r.ExpressionType = finalTypeIR;
             return builder.AddIR(r);
         }
 

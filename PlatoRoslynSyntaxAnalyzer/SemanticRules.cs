@@ -43,5 +43,8 @@ namespace PlatoRoslynSyntaxAnalyzer
 
         public static Exception LabeledArgsNotSupportedException(SyntaxNode node)
             => new Exception($"labeled arguments not supported {node}");
+
+        public static void InvalidArray(SyntaxNode syntax)
+            => new Exception($"Not a valid array form {syntax}");
     }
 }

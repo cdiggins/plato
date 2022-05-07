@@ -98,5 +98,8 @@ namespace PlatoRoslynSyntaxAnalyzer
 
         public static LetIR CreateLet(this IRBuilder builder, VariableDeclarationIR variable, ExpressionIR expression)
             => builder.AddIR(new LetIR(variable, expression)).SetType(expression.ExpressionType);
+
+        public static LiteralIR ToLiteralIR(this int n)
+            => new LiteralIR(n.ToString(), n);
     }
 }

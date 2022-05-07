@@ -67,8 +67,13 @@ namespace PlatoIR
 
     public class ArrayIR : ExpressionIR
     {
-        public ArrayIR(params ExpressionIR[] expressions)
-            : base(expressions) { }
+        public ArrayIR(ExpressionIR size, params ExpressionIR[] expressions)
+            : base(expressions) => Size = size;
+        public ExpressionIR Size { get; }
+        public override IEnumerable<ExpressionIR> GetExpressions()
+        {
+            return base.GetExpressions().Prepend(Size);
+        }
     }
 
     public class CastIR : ExpressionIR

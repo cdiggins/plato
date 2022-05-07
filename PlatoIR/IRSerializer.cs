@@ -97,6 +97,7 @@ namespace PlatoIR
      * DONE: implemented interfaces are missing
      * DONE: add this parameters 
      * TODO: arrays initializers are ascrewed up (   r  = new var[]{}; <= var r = new T[self.Count]; }
+     * TODO: arrays initializers are ascrewed up (   r  = new var[]{}; <= var r = new T[self.Count]; }
      * DONE: array types are declarated property 
      * DONE: lambda parameters without types, should just omit the type
      * DONE: make sure static classes are specified as static classes.
@@ -231,6 +232,10 @@ namespace PlatoIR
         public IRSerializer WriteReference(ReferenceIR referenceIr, string indent)
         {
             var r = this;
+
+            if (referenceIr.Name == "Void")
+                return Write("void");
+
             if (referenceIr.Receiver != null)
                 r = r.Write(referenceIr.Receiver, indent).Write(".");
 
@@ -315,7 +320,12 @@ namespace PlatoIR
                     return WriteReference(referenceIr, indent);
 
                 case ArrayIR arrayIr:
-                    return Write("new ").Write(arrayIr.ExpressionType, indent).Write("[]").WriteBracedList(arrayIr.Args, indent);
+                {
+                    var r = Write("new ").Write(arrayIr.ExpressionType.TypeArguments[0], indent).Write("[")
+                        .Write(arrayIr.Size,indent).Write("]");
+                    if (arrayIr.Args?.Count != 0) r = r.WriteBracedList(arrayIr.Args, indent);
+                    return r;
+                }
 
                 case AssignmentIR assignmentIr:
                     return Write(assignmentIr.LValue, indent).Write(" = ").Write(assignmentIr.RValue, indent);
@@ -469,7 +479,7 @@ namespace PlatoIR
                     return Write(typeParameterDeclarationIr.Name).WriteDeclaration(typeParameterDeclarationIr);
 
                 case VariableDeclarationIR variableDeclarationIr:
-                    return (variableDeclarationIr.Type == null ? Write("var") : Write(variableDeclarationIr.Type, indent).Write(" ")).Write(variableDeclarationIr.Name)
+                    return (variableDeclarationIr.Type == null ? Write("var ") : Write(variableDeclarationIr.Type, indent).Write(" ")).Write(variableDeclarationIr.Name)
                         .Write(" ").WriteOptionalInitializer(variableDeclarationIr.InitialValue, indent).WriteDeclaration(variableDeclarationIr);
 
                 case WhileStatementIR whileStatementIr:

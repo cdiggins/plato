@@ -31,7 +31,7 @@ public class Array<T> : PlatoTestJavaScript.IArray<T>
   public Array(System.Int32 count, System.Func<System.Int32, T> func)
   {
       // Let declaration
-      var_var135  = (count, func);
+      var _var135  = (count, func);
       _Count_ = _var135.Item1;
       _Func_ = _var135.Item2;
       }
@@ -87,7 +87,7 @@ public class Vector2
   public Vector2(System.Single x = 0, System.Single y = 0)
   {
       // Let declaration
-      var_var141  = (x, y);
+      var _var141  = (x, y);
       X = _var141.Item1;
       Y = _var141.Item2;
       }
@@ -214,7 +214,7 @@ public class Vector3 : PlatoTestJavaScript.IArray<System.Single>
   public Vector3(System.Single x = 0, System.Single y = 0, System.Single z = 0)
   {
       // Let declaration
-      var_var155  = (x, y, z);
+      var _var155  = (x, y, z);
       X = _var155.Item1;
       Y = _var155.Item2;
       Z = _var155.Item3;
@@ -399,7 +399,7 @@ public class Int3 : PlatoTestJavaScript.IArray<System.Int32>
   public Int3(System.Int32 x = 0, System.Int32 y = 0, System.Int32 z = 0)
   {
       // Let declaration
-      var_var174  = (x, y, z);
+      var _var174  = (x, y, z);
       X = _var174.Item1;
       Y = _var174.Item2;
       Z = _var174.Item3;
@@ -505,7 +505,7 @@ public class Int4 : PlatoTestJavaScript.IArray<System.Int32>
   public Int4(System.Int32 x = 0, System.Int32 y = 0, System.Int32 z = 0, System.Int32 w = 0)
   {
       // Let declaration
-      var_var183  = (x, y, z, w);
+      var _var183  = (x, y, z, w);
       X = _var183.Item1;
       Y = _var183.Item2;
       Z = _var183.Item3;
@@ -609,7 +609,7 @@ public class Points
   public Points(PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3> positions, PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector2> uvs, PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3> normals)
   {
       // Let declaration
-      var_var192  = (positions, uvs, normals);
+      var _var192  = (positions, uvs, normals);
       _Positions_ = _var192.Item1;
       _UVs_ = _var192.Item2;
       _Normals_ = _var192.Item3;
@@ -661,7 +661,7 @@ public class TriMesh
   public TriMesh(PlatoTestJavaScript.Points points, PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int3> faces)
   {
       // Let declaration
-      var_var198  = (points, faces);
+      var _var198  = (points, faces);
       _Points_ = _var198.Item1;
       _Faces_ = _var198.Item2;
       }
@@ -701,7 +701,7 @@ public class QuadMesh
   public QuadMesh(PlatoTestJavaScript.Points points, PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int4> faces)
   {
       // Let declaration
-      var_var203  = (points, faces);
+      var _var203  = (points, faces);
       _Points_ = _var203.Item1;
       _Faces_ = _var203.Item2;
       }
@@ -742,7 +742,7 @@ public class Triangle
   public Triangle(PlatoTestJavaScript.Vector3 a, PlatoTestJavaScript.Vector3 b, PlatoTestJavaScript.Vector3 c)
   {
       // Let declaration
-      var_var209  = (a, b, c);
+      var _var209  = (a, b, c);
       _A_ = _var209.Item1;
       _B_ = _var209.Item2;
       _C_ = _var209.Item3;
@@ -819,7 +819,7 @@ public static class Extensions
   */
   public static T[] ToArray<T>(this PlatoTestJavaScript.IArray<T> self)
   {
-    T[] r  = new []{};
+    T[] r  = new T[self.Count];
     {
       System.Int32 i  = 0;
       while(i<self.Count)
@@ -947,7 +947,7 @@ public static class Extensions
   {
     return self.SelectMany<PlatoTestJavaScript.Int4, PlatoTestJavaScript.Int3>(/* Captured: */( f)
      => {
-        return new []{new PlatoTestJavaScript.Int3(f.X, f.Y, f.Z), new PlatoTestJavaScript.Int3(f.Z, f.W, f.X)}.ToIArray<PlatoTestJavaScript.Int3>();
+        return new PlatoTestJavaScript.Int3[2]{new PlatoTestJavaScript.Int3(f.X, f.Y, f.Z), new PlatoTestJavaScript.Int3(f.Z, f.W, f.X)}.ToIArray<PlatoTestJavaScript.Int3>();
         }
       );
     }
@@ -1098,7 +1098,7 @@ public static class Extensions
             var y = x + x;
         }
   */
-  public static System.Void TestOperator()
+  public static void TestOperator()
   {
     PlatoTestJavaScript.Vector3 x  = new PlatoTestJavaScript.Vector3(1, 2, 3);
     PlatoTestJavaScript.Vector3 y  = x+x;
@@ -1167,7 +1167,7 @@ public static class Extensions
   public static void Log(string s)
             => Debug.WriteLine(s);
   */
-  public static System.Void Log(System.String s)
+  public static void Log(System.String s)
   {
     return System.Diagnostics.Debug.WriteLine(s);
     }
@@ -1194,7 +1194,7 @@ public static class Extensions
             File.WriteAllLines(filePath, floats.Select(f => f.ToString()));
         }
   */
-  public static System.Void Main()
+  public static void Main()
   {
     PlatoTestJavaScript.TriMesh torus  = Torus(500, 100, 1, 0.2f).ToTriMesh();
     System.Single[] floats  = LogTiming<System.Single[]>(torus.FaceNormals().ToFloatArray);
