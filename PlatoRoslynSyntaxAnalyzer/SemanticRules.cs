@@ -40,5 +40,8 @@ namespace PlatoRoslynSyntaxAnalyzer
             if (!cond)
                 throw new Exception($"either body or block must be present, but not both {syntax}");
         }
+
+        public static Exception LabeledArgsNotSupportedException(SyntaxNode node)
+            => new Exception($"labeled arguments not supported {node}");
     }
 }

@@ -426,11 +426,12 @@ namespace PlatoRoslynSyntaxAnalyzer
         public IReadOnlyList<PlatoIndexerSyntax> Indexers { get; }
         public IReadOnlyList<PlatoConversionSyntax> Converters { get; }
         public IReadOnlyList<PlatoTypeParameterSyntax> TypeParameters { get; }
+        public IReadOnlyList<PlatoTypeRefSyntax> BaseList { get; }
 
         public PlatoTypeSyntax(TypeDeclarationSyntax node) : base(node)
         {
             node.SupportedType(Kind == "class" || Kind == "enum" || Kind == "interface");
-
+            BaseList = Node.BaseList?.Types.Select(bt => PlatoTypeRefSyntax.Create(bt.Type)).ToList() ?? new List<PlatoTypeRefSyntax>();
             Ctors = Node.Members.OfType<ConstructorDeclarationSyntax>().Select(PlatoConstructorSyntax.Create).ToList();
             Methods = Node.Members.OfType<MethodDeclarationSyntax>().Select(PlatoMethodSyntax.Create).ToList();
             Fields = Node.Members.OfType<FieldDeclarationSyntax>().Select(PlatoFieldSyntax.Create).ToList();

@@ -36,7 +36,7 @@ namespace PlatoIR
     public class ParameterDeclarationIR : DeclarationIR
     {
         public ExpressionIR DefaultValue { get; set; }
-
+        public bool IsThisParameter { get; set; }
         public override IEnumerable<ExpressionIR> Expressions
             => Enumerable.Repeat(DefaultValue, 1);
     }
@@ -55,6 +55,7 @@ namespace PlatoIR
 
     public class PropertyDeclarationIR : DeclarationIR
     {
+        public FieldDeclarationIR Field { get; set; }
         public MethodDeclarationIR Getter { get; set; }
     }
 
@@ -72,8 +73,7 @@ namespace PlatoIR
         public TypeDeclarationIR(string kind, string name)
             => (Name, Kind) = (name, kind);
         public string Kind { get; }
-        public TypeReferenceIR BaseClass { get; set; }
-        public List<TypeReferenceIR> Interfaces { get; set; } = new List<TypeReferenceIR>();
+        public List<TypeReferenceIR> Bases { get; set; } = new List<TypeReferenceIR>();
         public List<FieldDeclarationIR> Fields { get; set; } = new List<FieldDeclarationIR>();
         public List<MethodDeclarationIR> Methods { get; set; } = new List<MethodDeclarationIR>();
         public List<ConstructorDeclarationIr> Constructors { get; set; } = new List<ConstructorDeclarationIr>();

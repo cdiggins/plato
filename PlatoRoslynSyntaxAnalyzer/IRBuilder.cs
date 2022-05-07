@@ -90,9 +90,6 @@ namespace PlatoRoslynSyntaxAnalyzer
         public static VariableReferenceIR CreateReference(this IRBuilder builder, VariableDeclarationIR var)
             => builder.AddIR(new VariableReferenceIR(var.Name, var)).SetType(var.Type);
 
-        public static NameIR CreateName(this IRBuilder builder, string name, ExpressionIR receiver = null)
-            => builder.AddIR(new NameIR(name, receiver));
-
         public static TupleIR CreateTuple(this IRBuilder builder, params ExpressionIR[] expressions)
             => builder.AddIR(new TupleIR(expressions));
 

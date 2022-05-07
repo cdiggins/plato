@@ -11,35 +11,25 @@ namespace PlatoIR
     {
         protected ExpressionIR(params ExpressionIR[] args)
             => Args = args?.ToList() ?? new List<ExpressionIR>();
-        public List<ExpressionIR> Args { get; } 
-        
-        public virtual IEnumerable<ExpressionIR> Expressions => Args;
-        public virtual IEnumerable<VariableDeclarationIR> Declarations => Enumerable.Empty<VariableDeclarationIR>();
+        public List<ExpressionIR> Args { get; }
+
+        public virtual IEnumerable<ExpressionIR> GetExpressions() => Args;
+        public virtual IEnumerable<VariableDeclarationIR> GetDeclarations() => Enumerable.Empty<VariableDeclarationIR>();
 
         public TypeReferenceIR ExpressionType { get; set; }
 
-        public IEnumerable<ExpressionIR> AllExpressions
-            => Expressions
-            .SelectMany(x => x?.AllExpressions ?? Enumerable.Empty<ExpressionIR>())
-            .Where(x => x != null).Append(this);
-    }
-
-    public class NameIR : ExpressionIR
-    {
-        public NameIR(string name, ExpressionIR reciever = null, DeclarationIR decl = null)
-            : base(reciever) => (Name, ReferencedIR) = (name, decl);
-        public ExpressionIR Reciever => Args[0];
-        public string Name { get; }
-        public DeclarationIR ReferencedIR { get; set; }
-
+        public IEnumerable<ExpressionIR> GetAllExpressions() =>
+            GetExpressions()
+                .SelectMany(x => x?.GetAllExpressions() ?? Enumerable.Empty<ExpressionIR>())
+                .Where(x => x != null).Append(this);
     }
 
     public class InvocationIR : ExpressionIR
     {
-        public InvocationIR(MethodReferenceIR function, params ExpressionIR[] args)
+        public InvocationIR(ExpressionIR function, params ExpressionIR[] args)
             : base(args) => Function = function;
-        public MethodReferenceIR Function { get; }
-        public override IEnumerable<ExpressionIR> Expressions => Args.Prepend(Function);
+        public ExpressionIR Function { get; }
+        public override IEnumerable<ExpressionIR> GetExpressions() => Args.Prepend(Function);
     }
 
     public class OperationIR : InvocationIR
@@ -155,17 +145,9 @@ namespace PlatoIR
         public TypeReferenceIR CreatedType { get;  }
     }
 
-    public class ArgumentIR : ExpressionIR
-    {
-        public ArgumentIR(string name, ExpressionIR value)
-            : base(value) => Name = name;
-        public string Name { get; }
-        public ExpressionIR Value => Args[0];
-    }
-
     public class LambdaIR : ExpressionIR
     {
-        public List<DeclarationIR> CapturedVariables { get; set; } = new List<DeclarationIR>();
+        public List<ReferenceIR> CapturedVariables { get; set; } = new List<ReferenceIR>();
         public List<ParameterDeclarationIR> Parameters { get; set; } = new List<ParameterDeclarationIR>();
         public StatementIR Body { get; set; }
     }
@@ -192,7 +174,7 @@ namespace PlatoIR
             : base(expression) => Variable = varDecl;
         public VariableDeclarationIR Variable { get; }
         public ExpressionIR Expression => Args[0];
-        public override IEnumerable<VariableDeclarationIR> Declarations => Enumerable.Repeat(Variable, 1);
-        public override IEnumerable<ExpressionIR> Expressions => new[] { Variable.InitialValue, Expression };
+        public override IEnumerable<VariableDeclarationIR> GetDeclarations() => Enumerable.Repeat(Variable, 1);
+        public override IEnumerable<ExpressionIR> GetExpressions() => new[] { Variable.InitialValue, Expression };
     }
 }

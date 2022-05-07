@@ -1,10 +1,11 @@
+namespace PlatoTestJavaScript {
 //==begin==//
-public interface IArray<T> : var
+public interface IArray<T>
 {
   /*
   int Count { get; }
   */
-  public int/* unresolved */ Count
+  public System.Int32 Count
   {
   get;
     }
@@ -12,7 +13,7 @@ public interface IArray<T> : var
   /*
   T this[int index] { get; }
   */
-  public T this [int/* unresolved */ index]
+  public T this [System.Int32 index]
   
   {
   get;
@@ -20,24 +21,24 @@ public interface IArray<T> : var
   }
 //==end==//
 //==begin==//
-public class Array<T> : var
+public class Array<T> : PlatoTestJavaScript.IArray<T>
 {
-  public Func<int/* unresolved */, T>/* unresolved */ _Func_ ;
-  public int/* unresolved */ _Count_ ;
+  public System.Func<System.Int32, T> _Func_ ;
+  public System.Int32 _Count_ ;
   /*
   public Array(int count, Func<int, T> func) => (Count, Func) = (count, func);
   */
-  public Array(int/* unresolved */ count, Func<int/* unresolved */, T>/* unresolved */ func)
+  public Array(System.Int32 count, System.Func<System.Int32, T> func)
   {
       // Let declaration
-      var _var135  = (count, func);
-      Count = _var135.Item1/* unresolved */;
-      Func = _var135.Item2/* unresolved */;
+      var_var135  = (count, func);
+      _Count_ = _var135.Item1;
+      _Func_ = _var135.Item2;
       }
     /*
   public Func<int, T> Func { get; }
   */
-  public Func<int/* unresolved */, T>/* unresolved */ Func
+  public System.Func<System.Int32, T> Func
   {
   get
       {
@@ -48,7 +49,7 @@ public class Array<T> : var
   /*
   public int Count { get; }
   */
-  public int/* unresolved */ Count
+  public System.Int32 Count
   {
   get
       {
@@ -59,44 +60,52 @@ public class Array<T> : var
   /*
   public T this[int index] => Func(index);
   */
-  public T this [int/* unresolved */ index]
+  public T this [System.Int32 index]
   
   {
   get
       {
-        return Func/* unresolved */(index/* unresolved */);
+        return _Func_(index);
         }
       }
   }
 //==end==//
 //==begin==//
-public class Vector2 : var
+public class Vector2
 {
+  /*
+  X
+  */
+  public System.Single X ;
+  /*
+  Y
+  */
+  public System.Single Y ;
   /*
   public Vector2(float x = 0, float y = 0) => (X, Y) = (x, y);
   */
-  public Vector2(float/* unresolved */ x = 0, float/* unresolved */ y = 0)
+  public Vector2(System.Single x = 0, System.Single y = 0)
   {
       // Let declaration
-      var _var141  = (x, y);
-      X = _var141.Item1/* unresolved */;
-      Y = _var141.Item2/* unresolved */;
+      var_var141  = (x, y);
+      X = _var141.Item1;
+      Y = _var141.Item2;
       }
     /*
   public static Vector2 Zero => new();
   */
-  public static Vector2 Zero
+  public static PlatoTestJavaScript.Vector2 Zero
   {
   get
       {
-        return new Vector2();
+        return new PlatoTestJavaScript.Vector2();
         }
       }
   
   /*
   public float MagnitudeSquared => Dot(this);
   */
-  public float/* unresolved */ MagnitudeSquared
+  public System.Single MagnitudeSquared
   {
   get
       {
@@ -107,18 +116,18 @@ public class Vector2 : var
   /*
   public float Magnitude => MathF.Sqrt(MagnitudeSquared);
   */
-  public float/* unresolved */ Magnitude
+  public System.Single Magnitude
   {
   get
       {
-        return Sqrt/* unresolved */(MagnitudeSquared);
+        return System.MathF.Sqrt(MagnitudeSquared);
         }
       }
   
   /*
   public Vector2 Normal => this / Magnitude;
   */
-  public Vector2 Normal
+  public PlatoTestJavaScript.Vector2 Normal
   {
   get
       {
@@ -129,90 +138,102 @@ public class Vector2 : var
   /*
   public Vector2 WithX(float x) => new(x, Y);
   */
-  public Vector2 WithX(float/* unresolved */ x)
+  public PlatoTestJavaScript.Vector2 WithX(System.Single x)
   {
-    return new Vector2(x, Y);
+    return new PlatoTestJavaScript.Vector2(x, Y);
     }
   /*
   public Vector2 WithY(float y) => new(X, y);
   */
-  public Vector2 WithY(float/* unresolved */ y)
+  public PlatoTestJavaScript.Vector2 WithY(System.Single y)
   {
-    return new Vector2(X, y);
+    return new PlatoTestJavaScript.Vector2(X, y);
     }
   /*
   public float Dot(Vector2 v) => X * v.X + v.Y * Y;
   */
-  public float/* unresolved */ Dot(Vector2 v)
+  public System.Single Dot(PlatoTestJavaScript.Vector2 v)
   {
     return X*v.X+v.Y*Y;
     }
   /*
   public override string ToString() => "Vector2(" + X  + "," + Y + ")";
   */
-  public string/* unresolved */ ToString()
+  public System.String ToString()
   {
     return "Vector2("+X+","+Y+")";
     }
   /*
   public static implicit operator Vector2(float v) => new(v, v);
   */
-  public static Vector2 operator implicit(float/* unresolved */ v)
+  public static implicit operator PlatoTestJavaScript.Vector2(System.Single v)
   {
-    return new Vector2(v, v);
+    return new PlatoTestJavaScript.Vector2(v, v);
     }
   /*
   public static Vector2 operator +(Vector2 q, Vector2 r) => new(q.X + r.X, q.Y + r.Y);
   */
-  public static Vector2 operator +(Vector2 q, Vector2 r)
+  public static PlatoTestJavaScript.Vector2 operator +(PlatoTestJavaScript.Vector2 q, PlatoTestJavaScript.Vector2 r)
   {
-    return new Vector2(q.X+r.X, q.Y+r.Y);
+    return new PlatoTestJavaScript.Vector2(q.X+r.X, q.Y+r.Y);
     }
   /*
   public static Vector2 operator *(Vector2 q, Vector2 r) => new(q.X * r.X, q.Y * r.Y);
   */
-  public static Vector2 operator *(Vector2 q, Vector2 r)
+  public static PlatoTestJavaScript.Vector2 operator *(PlatoTestJavaScript.Vector2 q, PlatoTestJavaScript.Vector2 r)
   {
-    return new Vector2(q.X*r.X, q.Y*r.Y);
+    return new PlatoTestJavaScript.Vector2(q.X*r.X, q.Y*r.Y);
     }
   /*
   public static Vector2 operator /(Vector2 q, Vector2 r) => new(q.X / r.X, q.Y / r.Y);
   */
-  public static Vector2 operator /(Vector2 q, Vector2 r)
+  public static PlatoTestJavaScript.Vector2 operator /(PlatoTestJavaScript.Vector2 q, PlatoTestJavaScript.Vector2 r)
   {
-    return new Vector2(q.X/r.X, q.Y/r.Y);
+    return new PlatoTestJavaScript.Vector2(q.X/r.X, q.Y/r.Y);
     }
   }
 //==end==//
 //==begin==//
-public class Vector3 : var
+public class Vector3 : PlatoTestJavaScript.IArray<System.Single>
 {
+  /*
+  X
+  */
+  public System.Single X ;
+  /*
+  Y
+  */
+  public System.Single Y ;
+  /*
+  Z
+  */
+  public System.Single Z ;
   /*
   public Vector3(float x = 0, float y = 0, float z = 0) => (X, Y, Z) = (x, y, z);
   */
-  public Vector3(float/* unresolved */ x = 0, float/* unresolved */ y = 0, float/* unresolved */ z = 0)
+  public Vector3(System.Single x = 0, System.Single y = 0, System.Single z = 0)
   {
       // Let declaration
-      var _var155  = (x, y, z);
-      X = _var155.Item1/* unresolved */;
-      Y = _var155.Item2/* unresolved */;
-      Z = _var155.Item3/* unresolved */;
+      var_var155  = (x, y, z);
+      X = _var155.Item1;
+      Y = _var155.Item2;
+      Z = _var155.Item3;
       }
     /*
   public static Vector3 Zero => new();
   */
-  public static Vector3 Zero
+  public static PlatoTestJavaScript.Vector3 Zero
   {
   get
       {
-        return new Vector3();
+        return new PlatoTestJavaScript.Vector3();
         }
       }
   
   /*
   public float MagnitudeSquared => Dot(this);
   */
-  public float/* unresolved */ MagnitudeSquared
+  public System.Single MagnitudeSquared
   {
   get
       {
@@ -223,18 +244,18 @@ public class Vector3 : var
   /*
   public float Magnitude => MathF.Sqrt(MagnitudeSquared);
   */
-  public float/* unresolved */ Magnitude
+  public System.Single Magnitude
   {
   get
       {
-        return Sqrt/* unresolved */(MagnitudeSquared);
+        return System.MathF.Sqrt(MagnitudeSquared);
         }
       }
   
   /*
   public Vector3 Normal => this / Magnitude;
   */
-  public Vector3 Normal
+  public PlatoTestJavaScript.Vector3 Normal
   {
   get
       {
@@ -245,7 +266,7 @@ public class Vector3 : var
   /*
   public int Count => 3;
   */
-  public int/* unresolved */ Count
+  public System.Int32 Count
   {
   get
       {
@@ -256,35 +277,35 @@ public class Vector3 : var
   /*
   public Vector3 WithX(float x) => new(x, Y, Z);
   */
-  public Vector3 WithX(float/* unresolved */ x)
+  public PlatoTestJavaScript.Vector3 WithX(System.Single x)
   {
-    return new Vector3(x, Y, Z);
+    return new PlatoTestJavaScript.Vector3(x, Y, Z);
     }
   /*
   public Vector3 WithY(float y) => new(X, y, Z);
   */
-  public Vector3 WithY(float/* unresolved */ y)
+  public PlatoTestJavaScript.Vector3 WithY(System.Single y)
   {
-    return new Vector3(X, y, Z);
+    return new PlatoTestJavaScript.Vector3(X, y, Z);
     }
   /*
   public Vector3 WithZ(float z) => new(X, Y, z);
   */
-  public Vector3 WithZ(float/* unresolved */ z)
+  public PlatoTestJavaScript.Vector3 WithZ(System.Single z)
   {
-    return new Vector3(X, Y, z);
+    return new PlatoTestJavaScript.Vector3(X, Y, z);
     }
   /*
   public float Dot(Vector3 v) => X * v.X + v.Y * Y + Z * v.Z;
   */
-  public float/* unresolved */ Dot(Vector3 v)
+  public System.Single Dot(PlatoTestJavaScript.Vector3 v)
   {
     return X*v.X+v.Y*Y+Z*v.Z;
     }
   /*
   public override string ToString() => "Vector3(" + X + "," + Y + "," + Z + ")";
   */
-  public string/* unresolved */ ToString()
+  public System.String ToString()
   {
     return "Vector3("+X+","+Y+","+Z+")";
     }
@@ -292,9 +313,9 @@ public class Vector3 : var
   public Vector3 Cross(Vector3 v)
             => new(Y* v.Z - Z* v.Y, Z* v.X - X* v.Z, X* v.Y - Y* v.X);
   */
-  public Vector3 Cross(Vector3 v)
+  public PlatoTestJavaScript.Vector3 Cross(PlatoTestJavaScript.Vector3 v)
   {
-    return new Vector3(Y*v.Z-Z*v.Y, Z*v.X-X*v.Z, X*v.Y-Y*v.X);
+    return new PlatoTestJavaScript.Vector3(Y*v.Z-Z*v.Y, Z*v.X-X*v.Z, X*v.Y-Y*v.X);
     }
   /*
   public float this[int i] => i switch
@@ -305,17 +326,17 @@ public class Vector3 : var
             _ => throw new ArgumentOutOfRangeException()
         };
   */
-  public float/* unresolved */ this [int/* unresolved */ i]
+  public System.Single this [System.Int32 i]
   
   {
   get
       {
-        return i/* unresolved */ switch 
+        return i switch 
         {
           0 => X,
           1 => Y,
           2 => Z,
-          _ => throw new ArgumentOutOfRangeException/* unresolved */(),
+          _ => throw new System.ArgumentOutOfRangeException(),
           }
         ;
         }
@@ -323,69 +344,81 @@ public class Vector3 : var
   /*
   public static implicit operator Vector3(float v) => new(v, v, v);
   */
-  public static Vector3 operator implicit(float/* unresolved */ v)
+  public static implicit operator PlatoTestJavaScript.Vector3(System.Single v)
   {
-    return new Vector3(v, v, v);
+    return new PlatoTestJavaScript.Vector3(v, v, v);
     }
   /*
   public static Vector3 operator +(Vector3 q, Vector3 r) => new(q.X + r.X, q.Y + r.Y, q.Z + r.Z);
   */
-  public static Vector3 operator +(Vector3 q, Vector3 r)
+  public static PlatoTestJavaScript.Vector3 operator +(PlatoTestJavaScript.Vector3 q, PlatoTestJavaScript.Vector3 r)
   {
-    return new Vector3(q.X+r.X, q.Y+r.Y, q.Z+r.Z);
+    return new PlatoTestJavaScript.Vector3(q.X+r.X, q.Y+r.Y, q.Z+r.Z);
     }
   /*
   public static Vector3 operator -(Vector3 q, Vector3 r) => new(q.X - r.X, q.Y - r.Y, q.Z - r.Z);
   */
-  public static Vector3 operator -(Vector3 q, Vector3 r)
+  public static PlatoTestJavaScript.Vector3 operator -(PlatoTestJavaScript.Vector3 q, PlatoTestJavaScript.Vector3 r)
   {
-    return new Vector3(q.X-r.X, q.Y-r.Y, q.Z-r.Z);
+    return new PlatoTestJavaScript.Vector3(q.X-r.X, q.Y-r.Y, q.Z-r.Z);
     }
   /*
   public static Vector3 operator *(Vector3 q, Vector3 r) => new(q.X * r.X, q.Y * r.Y, q.Z * r.Z);
   */
-  public static Vector3 operator *(Vector3 q, Vector3 r)
+  public static PlatoTestJavaScript.Vector3 operator *(PlatoTestJavaScript.Vector3 q, PlatoTestJavaScript.Vector3 r)
   {
-    return new Vector3(q.X*r.X, q.Y*r.Y, q.Z*r.Z);
+    return new PlatoTestJavaScript.Vector3(q.X*r.X, q.Y*r.Y, q.Z*r.Z);
     }
   /*
   public static Vector3 operator /(Vector3 q, Vector3 r) => new(q.X / r.X, q.Y / r.Y, q.Z / r.Z);
   */
-  public static Vector3 operator /(Vector3 q, Vector3 r)
+  public static PlatoTestJavaScript.Vector3 operator /(PlatoTestJavaScript.Vector3 q, PlatoTestJavaScript.Vector3 r)
   {
-    return new Vector3(q.X/r.X, q.Y/r.Y, q.Z/r.Z);
+    return new PlatoTestJavaScript.Vector3(q.X/r.X, q.Y/r.Y, q.Z/r.Z);
     }
   }
 //==end==//
 //==begin==//
-public class Int3 : var
+public class Int3 : PlatoTestJavaScript.IArray<System.Int32>
 {
+  /*
+  X
+  */
+  public System.Int32 X ;
+  /*
+  Y
+  */
+  public System.Int32 Y ;
+  /*
+  Z
+  */
+  public System.Int32 Z ;
   /*
   public Int3(int x = 0, int y = 0, int z = 0) => (X, Y, Z) = (x, y, z);
   */
-  public Int3(int/* unresolved */ x = 0, int/* unresolved */ y = 0, int/* unresolved */ z = 0)
+  public Int3(System.Int32 x = 0, System.Int32 y = 0, System.Int32 z = 0)
   {
       // Let declaration
-      var _var174  = (x, y, z);
-      X = _var174.Item1/* unresolved */;
-      Y = _var174.Item2/* unresolved */;
-      Z = _var174.Item3/* unresolved */;
+      var_var174  = (x, y, z);
+      X = _var174.Item1;
+      Y = _var174.Item2;
+      Z = _var174.Item3;
       }
     /*
   public static Int3 Zero => new();
   */
-  public static Int3 Zero
+  public static PlatoTestJavaScript.Int3 Zero
   {
   get
       {
-        return new Int3();
+        return new PlatoTestJavaScript.Int3();
         }
       }
   
   /*
   public int Count => 3;
   */
-  public int/* unresolved */ Count
+  public System.Int32 Count
   {
   get
       {
@@ -396,28 +429,28 @@ public class Int3 : var
   /*
   public Int3 WithX(int x) => new(x, Y, Z);
   */
-  public Int3 WithX(int/* unresolved */ x)
+  public PlatoTestJavaScript.Int3 WithX(System.Int32 x)
   {
-    return new Int3(x, Y, Z);
+    return new PlatoTestJavaScript.Int3(x, Y, Z);
     }
   /*
   public Int3 WithY(int y) => new(X, y, Z);
   */
-  public Int3 WithY(int/* unresolved */ y)
+  public PlatoTestJavaScript.Int3 WithY(System.Int32 y)
   {
-    return new Int3(X, y, Z);
+    return new PlatoTestJavaScript.Int3(X, y, Z);
     }
   /*
   public Int3 WithZ(int z) => new(X, Y, z);
   */
-  public Int3 WithZ(int/* unresolved */ z)
+  public PlatoTestJavaScript.Int3 WithZ(System.Int32 z)
   {
-    return new Int3(X, Y, z);
+    return new PlatoTestJavaScript.Int3(X, Y, z);
     }
   /*
   public override string ToString() => "Int3(" + X + "," + Y + "," + Z + ")";
   */
-  public string/* unresolved */ ToString()
+  public System.String ToString()
   {
     return "Int3("+X+","+Y+","+Z+")";
     }
@@ -430,17 +463,17 @@ public class Int3 : var
             _ => throw new ArgumentOutOfRangeException()
         };
   */
-  public int/* unresolved */ this [int/* unresolved */ i]
+  public System.Int32 this [System.Int32 i]
   
   {
   get
       {
-        return i/* unresolved */ switch 
+        return i switch 
         {
           0 => X,
           1 => Y,
           2 => Z,
-          _ => throw new ArgumentOutOfRangeException/* unresolved */(),
+          _ => throw new System.ArgumentOutOfRangeException(),
           }
         ;
         }
@@ -448,35 +481,51 @@ public class Int3 : var
   }
 //==end==//
 //==begin==//
-public class Int4 : var
+public class Int4 : PlatoTestJavaScript.IArray<System.Int32>
 {
+  /*
+  X
+  */
+  public System.Int32 X ;
+  /*
+  Y
+  */
+  public System.Int32 Y ;
+  /*
+  Z
+  */
+  public System.Int32 Z ;
+  /*
+  W
+  */
+  public System.Int32 W ;
   /*
   public Int4(int x = 0, int y = 0, int z = 0, int w = 0) => (X, Y, Z, W) = (x, y, z, w);
   */
-  public Int4(int/* unresolved */ x = 0, int/* unresolved */ y = 0, int/* unresolved */ z = 0, int/* unresolved */ w = 0)
+  public Int4(System.Int32 x = 0, System.Int32 y = 0, System.Int32 z = 0, System.Int32 w = 0)
   {
       // Let declaration
-      var _var183  = (x, y, z, w);
-      X = _var183.Item1/* unresolved */;
-      Y = _var183.Item2/* unresolved */;
-      Z = _var183.Item3/* unresolved */;
-      W = _var183.Item4/* unresolved */;
+      var_var183  = (x, y, z, w);
+      X = _var183.Item1;
+      Y = _var183.Item2;
+      Z = _var183.Item3;
+      W = _var183.Item4;
       }
     /*
   public static Int4 Zero => new();
   */
-  public static Int4 Zero
+  public static PlatoTestJavaScript.Int4 Zero
   {
   get
       {
-        return new Int4();
+        return new PlatoTestJavaScript.Int4();
         }
       }
   
   /*
   public int Count => 4;
   */
-  public int/* unresolved */ Count
+  public System.Int32 Count
   {
   get
       {
@@ -487,35 +536,35 @@ public class Int4 : var
   /*
   public Int4 WithX(int x) => new(x, Y, Z, W);
   */
-  public Int4 WithX(int/* unresolved */ x)
+  public PlatoTestJavaScript.Int4 WithX(System.Int32 x)
   {
-    return new Int4(x, Y, Z, W);
+    return new PlatoTestJavaScript.Int4(x, Y, Z, W);
     }
   /*
   public Int4 WithY(int y) => new(X, y, Z, W);
   */
-  public Int4 WithY(int/* unresolved */ y)
+  public PlatoTestJavaScript.Int4 WithY(System.Int32 y)
   {
-    return new Int4(X, y, Z, W);
+    return new PlatoTestJavaScript.Int4(X, y, Z, W);
     }
   /*
   public Int4 WithZ(int z) => new(X, Y, z, W);
   */
-  public Int4 WithZ(int/* unresolved */ z)
+  public PlatoTestJavaScript.Int4 WithZ(System.Int32 z)
   {
-    return new Int4(X, Y, z, W);
+    return new PlatoTestJavaScript.Int4(X, Y, z, W);
     }
   /*
   public Int4 WithW(int w) => new(X, Y, Z, w);
   */
-  public Int4 WithW(int/* unresolved */ w)
+  public PlatoTestJavaScript.Int4 WithW(System.Int32 w)
   {
-    return new Int4(X, Y, Z, w);
+    return new PlatoTestJavaScript.Int4(X, Y, Z, w);
     }
   /*
   public override string ToString() => "Int4(" + X + "," + Y + "," + Z + "," + W + ")";
   */
-  public string/* unresolved */ ToString()
+  public System.String ToString()
   {
     return "Int4("+X+","+Y+","+Z+","+W+")";
     }
@@ -529,18 +578,18 @@ public class Int4 : var
             _ => throw new ArgumentOutOfRangeException()
         };
   */
-  public int/* unresolved */ this [int/* unresolved */ i]
+  public System.Int32 this [System.Int32 i]
   
   {
   get
       {
-        return i/* unresolved */ switch 
+        return i switch 
         {
           0 => X,
           1 => Y,
           2 => Z,
           3 => W,
-          _ => throw new ArgumentOutOfRangeException/* unresolved */(),
+          _ => throw new System.ArgumentOutOfRangeException(),
           }
         ;
         }
@@ -548,27 +597,27 @@ public class Int4 : var
   }
 //==end==//
 //==begin==//
-public class Points : var
+public class Points
 {
-  public IArray<Vector3> _Positions_ ;
-  public IArray<Vector2> _UVs_ ;
-  public IArray<Vector3> _Normals_ ;
+  public PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3> _Positions_ ;
+  public PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector2> _UVs_ ;
+  public PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3> _Normals_ ;
   /*
   public Points(IArray<Vector3> positions, IArray<Vector2> uvs, IArray<Vector3> normals)
             => (Positions, UVs, Normals) = (positions, uvs, normals);
   */
-  public Points(IArray<Vector3> positions, IArray<Vector2> uvs, IArray<Vector3> normals)
+  public Points(PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3> positions, PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector2> uvs, PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3> normals)
   {
       // Let declaration
-      var _var192  = (positions, uvs, normals);
-      Positions = _var192.Item1/* unresolved */;
-      UVs = _var192.Item2/* unresolved */;
-      Normals = _var192.Item3/* unresolved */;
+      var_var192  = (positions, uvs, normals);
+      _Positions_ = _var192.Item1;
+      _UVs_ = _var192.Item2;
+      _Normals_ = _var192.Item3;
       }
     /*
   public IArray<Vector3> Positions { get; }
   */
-  public IArray<Vector3> Positions
+  public PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3> Positions
   {
   get
       {
@@ -579,7 +628,7 @@ public class Points : var
   /*
   public IArray<Vector2> UVs { get; }
   */
-  public IArray<Vector2> UVs
+  public PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector2> UVs
   {
   get
       {
@@ -590,7 +639,7 @@ public class Points : var
   /*
   public IArray<Vector3> Normals { get; }
   */
-  public IArray<Vector3> Normals
+  public PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3> Normals
   {
   get
       {
@@ -601,25 +650,25 @@ public class Points : var
   }
 //==end==//
 //==begin==//
-public class TriMesh : var
+public class TriMesh
 {
-  public Points _Points_ ;
-  public IArray<Int3> _Faces_ ;
+  public PlatoTestJavaScript.Points _Points_ ;
+  public PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int3> _Faces_ ;
   /*
   public TriMesh(Points points, IArray<Int3> faces)
             => (Points, Faces) = (points, faces);
   */
-  public TriMesh(Points points, IArray<Int3> faces)
+  public TriMesh(PlatoTestJavaScript.Points points, PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int3> faces)
   {
       // Let declaration
-      var _var198  = (points, faces);
-      Points = _var198.Item1/* unresolved */;
-      Faces = _var198.Item2/* unresolved */;
+      var_var198  = (points, faces);
+      _Points_ = _var198.Item1;
+      _Faces_ = _var198.Item2;
       }
     /*
   public Points Points { get; }
   */
-  public Points Points
+  public PlatoTestJavaScript.Points Points
   {
   get
       {
@@ -630,7 +679,7 @@ public class TriMesh : var
   /*
   public IArray<Int3> Faces { get; }
   */
-  public IArray<Int3> Faces
+  public PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int3> Faces
   {
   get
       {
@@ -641,25 +690,25 @@ public class TriMesh : var
   }
 //==end==//
 //==begin==//
-public class QuadMesh : var
+public class QuadMesh
 {
-  public Points _Points_ ;
-  public IArray<Int4> _Faces_ ;
+  public PlatoTestJavaScript.Points _Points_ ;
+  public PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int4> _Faces_ ;
   /*
   public QuadMesh(Points points, IArray<Int4> faces)
             => (Points, Faces) = (points, faces);
   */
-  public QuadMesh(Points points, IArray<Int4> faces)
+  public QuadMesh(PlatoTestJavaScript.Points points, PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int4> faces)
   {
       // Let declaration
-      var _var203  = (points, faces);
-      Points = _var203.Item1/* unresolved */;
-      Faces = _var203.Item2/* unresolved */;
+      var_var203  = (points, faces);
+      _Points_ = _var203.Item1;
+      _Faces_ = _var203.Item2;
       }
     /*
   public Points Points { get; }
   */
-  public Points Points
+  public PlatoTestJavaScript.Points Points
   {
   get
       {
@@ -670,7 +719,7 @@ public class QuadMesh : var
   /*
   public IArray<Int4> Faces { get; }
   */
-  public IArray<Int4> Faces
+  public PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int4> Faces
   {
   get
       {
@@ -681,27 +730,27 @@ public class QuadMesh : var
   }
 //==end==//
 //==begin==//
-public class Triangle : var
+public class Triangle
 {
-  public Vector3 _A_ ;
-  public Vector3 _B_ ;
-  public Vector3 _C_ ;
+  public PlatoTestJavaScript.Vector3 _A_ ;
+  public PlatoTestJavaScript.Vector3 _B_ ;
+  public PlatoTestJavaScript.Vector3 _C_ ;
   /*
   public Triangle(Vector3 a, Vector3 b, Vector3 c)
             => (A, B, C) = (a, b, c);
   */
-  public Triangle(Vector3 a, Vector3 b, Vector3 c)
+  public Triangle(PlatoTestJavaScript.Vector3 a, PlatoTestJavaScript.Vector3 b, PlatoTestJavaScript.Vector3 c)
   {
       // Let declaration
-      var _var209  = (a, b, c);
-      A = _var209.Item1/* unresolved */;
-      B = _var209.Item2/* unresolved */;
-      C = _var209.Item3/* unresolved */;
+      var_var209  = (a, b, c);
+      _A_ = _var209.Item1;
+      _B_ = _var209.Item2;
+      _C_ = _var209.Item3;
       }
     /*
   public Vector3 A { get; }
   */
-  public Vector3 A
+  public PlatoTestJavaScript.Vector3 A
   {
   get
       {
@@ -712,7 +761,7 @@ public class Triangle : var
   /*
   public Vector3 B { get; }
   */
-  public Vector3 B
+  public PlatoTestJavaScript.Vector3 B
   {
   get
       {
@@ -723,7 +772,7 @@ public class Triangle : var
   /*
   public Vector3 C { get; }
   */
-  public Vector3 C
+  public PlatoTestJavaScript.Vector3 C
   {
   get
       {
@@ -734,26 +783,26 @@ public class Triangle : var
   /*
   public Vector3 Normal => (B - A).Cross(C - A).Normal;
   */
-  public Vector3 Normal
+  public PlatoTestJavaScript.Vector3 Normal
   {
   get
       {
-        return Cross(C-A).Normal;
+        return (_B_-_A_).Cross(_C_-_A_).Normal;
         }
       }
   
   }
 //==end==//
 //==begin==//
-public class Extensions : var
+public static class Extensions
 {
   /*
   public static IArray<T> ToIArray<T>(this IReadOnlyList<T> self)
             => self.Count.Select(i => self[i]);
   */
-  public static IArray<T> ToIArray<T>(IReadOnlyList<T>/* unresolved */ self)
+  public static PlatoTestJavaScript.IArray<T> ToIArray<T>(this System.Collections.Generic.IReadOnlyList<T> self)
   {
-    return Select(/* Captured: IReadOnlyList<T>/* unresolved */ self*/(var i)
+    return self.Count.Select<T>(/* Captured: self*/( i)
      => {
         return self[i];
         }
@@ -768,11 +817,11 @@ public class Extensions : var
             return r;
         }
   */
-  public static /* unresolved */ ToArray<T>(IArray<T> self)
+  public static T[] ToArray<T>(this PlatoTestJavaScript.IArray<T> self)
   {
-    /* unresolved */ r  = new var[]{};
+    T[] r  = new []{};
     {
-      int/* unresolved */ i  = 0;
+      System.Int32 i  = 0;
       while(i<self.Count)
       {
           r[i] = self[i];
@@ -785,17 +834,21 @@ public class Extensions : var
   public static float[] ToFloatArray(this IArray<Vector3> self)
             => self.SelectMany(x => x).ToArray();
   */
-  public static /* unresolved */ ToFloatArray(IArray<Vector3> self)
+  public static System.Single[] ToFloatArray(this PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3> self)
   {
-    return ToArray();
+    return self.SelectMany<PlatoTestJavaScript.Vector3, System.Single>(/* Captured: */( x)
+     => {
+        return x;
+        }
+      ).ToArray<System.Single>();
     }
   /*
   public static IArray<T> Select<T>(this int count, Func<int, T> func)
             => new Array<T>(count, func);
   */
-  public static IArray<T> Select<T>(int/* unresolved */ count, Func<int/* unresolved */, T>/* unresolved */ func)
+  public static PlatoTestJavaScript.IArray<T> Select<T>(this System.Int32 count, System.Func<System.Int32, T> func)
   {
-    return new Array<T>(count, func);
+    return new PlatoTestJavaScript.Array<T>(count, func);
     }
   /*
   public static IArray<U> SelectMany<T, U>(this IArray<T> self, Func<T, IArray<U>> func)
@@ -811,20 +864,20 @@ public class Extensions : var
             return r.Count.Select(i => r[i]);
         }
   */
-  public static IArray<U> SelectMany<T, U>(IArray<T> self, Func<T, IArray<U>>/* unresolved */ func)
+  public static PlatoTestJavaScript.IArray<U> SelectMany<T, U>(this PlatoTestJavaScript.IArray<T> self, System.Func<T, PlatoTestJavaScript.IArray<U>> func)
   {
-    List<U>/* unresolved */ r  = new List<U>/* unresolved */();
+    System.Collections.Generic.List<U> r  = new System.Collections.Generic.List<U>();
     {
-      int/* unresolved */ i  = 0;
+      System.Int32 i  = 0;
       while(i<self.Count)
       {
           {
-            IArray<U> tmp  = func/* unresolved */(self[i]);
+            PlatoTestJavaScript.IArray<U> tmp  = func(self[i]);
             {
-              int/* unresolved */ j  = 0;
+              System.Int32 j  = 0;
               while(j<tmp.Count)
               {
-                  Add/* unresolved */(tmp[j]);
+                  r.Add(tmp[j]);
                   ++j;
                   }
                 }
@@ -832,7 +885,7 @@ public class Extensions : var
           ++i;
           }
         }
-    return Select(/* Captured: List<U>/* unresolved */ r  = new List<U>/* unresolved */()var i*/(var i)
+    return r.Count.Select<U>(/* Captured: ri*/( i)
      => {
         return r[i];
         }
@@ -842,11 +895,11 @@ public class Extensions : var
   public static IArray<U> Select<T, U>(this IArray<T> self, Func<T, U> func)
             => self.Count.Select(i => func(self[i]));
   */
-  public static IArray<U> Select<T, U>(IArray<T> self, Func<T, U>/* unresolved */ func)
+  public static PlatoTestJavaScript.IArray<U> Select<T, U>(this PlatoTestJavaScript.IArray<T> self, System.Func<T, U> func)
   {
-    return Select(/* Captured: IArray<T> selfFunc<T, U>/* unresolved */ func*/(var i)
+    return self.Count.Select<U>(/* Captured: selffunc*/( i)
      => {
-        return func/* unresolved */(self[i]);
+        return func(self[i]);
         }
       );
     }
@@ -854,33 +907,33 @@ public class Extensions : var
   public static float Cos(this float self) 
             => MathF.Cos(self);
   */
-  public static float/* unresolved */ Cos(float/* unresolved */ self)
+  public static System.Single Cos(this System.Single self)
   {
-    return Cos/* unresolved */(self);
+    return System.MathF.Cos(self);
     }
   /*
   public static float Sin(this float self) 
             => MathF.Sin(self);
   */
-  public static float/* unresolved */ Sin(float/* unresolved */ self)
+  public static System.Single Sin(this System.Single self)
   {
-    return Sin/* unresolved */(self);
+    return System.MathF.Sin(self);
     }
   /*
   public static float UnitToRad(this float self)
             => self * MathF.PI;
   */
-  public static float/* unresolved */ UnitToRad(float/* unresolved */ self)
+  public static System.Single UnitToRad(this System.Single self)
   {
-    return self*MathF/* unresolved */.PI/* unresolved */;
+    return self*System.MathF.PI;
     }
   /*
   public static IArray<float> SampleFloats(int count, float max = 1.0f)
             => count.Select(i => max * count);
   */
-  public static IArray<float/* unresolved */> SampleFloats(int/* unresolved */ count, float/* unresolved */ max = 1.0f)
+  public static PlatoTestJavaScript.IArray<System.Single> SampleFloats(System.Int32 count, System.Single max = 1.0f)
   {
-    return Select(/* Captured: int/* unresolved */ countfloat/* unresolved */ max = 1.0f*/(var i)
+    return count.Select<System.Single>(/* Captured: countmax*/( i)
      => {
         return max*count;
         }
@@ -890,11 +943,11 @@ public class Extensions : var
   public static IArray<Int3> ToTriangleIndices(this IArray<Int4> self)
             => self.SelectMany(f => new[] { new Int3(f.X, f.Y, f.Z), new Int3(f.Z, f.W, f.X) }.ToIArray());
   */
-  public static IArray<Int3> ToTriangleIndices(IArray<Int4> self)
+  public static PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int3> ToTriangleIndices(this PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int4> self)
   {
-    return SelectMany(/* Captured: */(var f)
+    return self.SelectMany<PlatoTestJavaScript.Int4, PlatoTestJavaScript.Int3>(/* Captured: */( f)
      => {
-        return ToIArray();
+        return new []{new PlatoTestJavaScript.Int3(f.X, f.Y, f.Z), new PlatoTestJavaScript.Int3(f.Z, f.W, f.X)}.ToIArray<PlatoTestJavaScript.Int3>();
         }
       );
     }
@@ -903,9 +956,9 @@ public class Extensions : var
             => new (ComputeQuadStripPoints(func, rows, cols),
                 ComputeQuadStripIndices(rows, cols));
   */
-  public static QuadMesh ToQuadMesh(Func<Vector2, Vector3>/* unresolved */ func, int/* unresolved */ rows, int/* unresolved */ cols)
+  public static PlatoTestJavaScript.QuadMesh ToQuadMesh(this System.Func<PlatoTestJavaScript.Vector2, PlatoTestJavaScript.Vector3> func, System.Int32 rows, System.Int32 cols)
   {
-    return new QuadMesh(ComputeQuadStripPoints(func, rows, cols), ComputeQuadStripIndices(rows, cols));
+    return new PlatoTestJavaScript.QuadMesh(ComputeQuadStripPoints(func, rows, cols), ComputeQuadStripIndices(rows, cols));
     }
   /*
   public static Vector3 UVToNormal(this Vector2 uv, Func<Vector2, Vector3> func, float epsilon = 0.00001f)
@@ -920,26 +973,26 @@ public class Extensions : var
             return r.Normal;
         }
   */
-  public static Vector3 UVToNormal(Vector2 uv, Func<Vector2, Vector3>/* unresolved */ func, float/* unresolved */ epsilon = 0.00001f)
+  public static PlatoTestJavaScript.Vector3 UVToNormal(this PlatoTestJavaScript.Vector2 uv, System.Func<PlatoTestJavaScript.Vector2, PlatoTestJavaScript.Vector3> func, System.Single epsilon = 0.00001f)
   {
-    Vector3 a  = func/* unresolved */(new Vector2(uv.X+epsilon, uv.Y));
-    Vector3 b  = func/* unresolved */(new Vector2(uv.X-epsilon, uv.Y));
-    Vector3 c  = func/* unresolved */(new Vector2(uv.X, uv.Y+epsilon));
-    Vector3 d  = func/* unresolved */(new Vector2(uv.X, uv.Y-epsilon));
-    Vector3 v1  = b-a;
-    Vector3 v2  = d-c;
-    Vector3 r  = Cross(v2);
+    PlatoTestJavaScript.Vector3 a  = func(new PlatoTestJavaScript.Vector2(uv.X+epsilon, uv.Y));
+    PlatoTestJavaScript.Vector3 b  = func(new PlatoTestJavaScript.Vector2(uv.X-epsilon, uv.Y));
+    PlatoTestJavaScript.Vector3 c  = func(new PlatoTestJavaScript.Vector2(uv.X, uv.Y+epsilon));
+    PlatoTestJavaScript.Vector3 d  = func(new PlatoTestJavaScript.Vector2(uv.X, uv.Y-epsilon));
+    PlatoTestJavaScript.Vector3 v1  = b-a;
+    PlatoTestJavaScript.Vector3 v2  = d-c;
+    PlatoTestJavaScript.Vector3 r  = v1.Cross(v2);
     return r.Normal;
     }
   /*
   public static Points UVsToPoints(this IArray<Vector2> uvs, Func<Vector2, Vector3> func)
             => new(uvs.Select(func), uvs, uvs.Select(uv => uv.UVToNormal(func)));
   */
-  public static Points UVsToPoints(IArray<Vector2> uvs, Func<Vector2, Vector3>/* unresolved */ func)
+  public static PlatoTestJavaScript.Points UVsToPoints(this PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector2> uvs, System.Func<PlatoTestJavaScript.Vector2, PlatoTestJavaScript.Vector3> func)
   {
-    return new Points(Select(func), uvs, Select(/* Captured: Func<Vector2, Vector3>/* unresolved */ func*/(var uv)
+    return new PlatoTestJavaScript.Points(uvs.Select<PlatoTestJavaScript.Vector2, PlatoTestJavaScript.Vector3>(func), uvs, uvs.Select<PlatoTestJavaScript.Vector2, PlatoTestJavaScript.Vector3>(/* Captured: func*/( uv)
      => {
-        return UVToNormal(func);
+        return uv.UVToNormal(func);
         }
       ));
     }
@@ -947,9 +1000,9 @@ public class Extensions : var
   public static Points ComputeQuadStripPoints(this Func<Vector2, Vector3> func, int usegs, int vsegs)
             => ComputeQuadStripUVs(usegs, vsegs).UVsToPoints(func);
   */
-  public static Points ComputeQuadStripPoints(Func<Vector2, Vector3>/* unresolved */ func, int/* unresolved */ usegs, int/* unresolved */ vsegs)
+  public static PlatoTestJavaScript.Points ComputeQuadStripPoints(this System.Func<PlatoTestJavaScript.Vector2, PlatoTestJavaScript.Vector3> func, System.Int32 usegs, System.Int32 vsegs)
   {
-    return UVsToPoints(func);
+    return ComputeQuadStripUVs(usegs, vsegs).UVsToPoints(func);
     }
   /*
   public static IArray<Vector2> ComputeQuadStripUVs(int usegs, int vsegs)
@@ -961,13 +1014,13 @@ public class Extensions : var
                     return new((float)col / (usegs - 1), (float)row / (vsegs - 1));
                 });
   */
-  public static IArray<Vector2> ComputeQuadStripUVs(int/* unresolved */ usegs, int/* unresolved */ vsegs)
+  public static PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector2> ComputeQuadStripUVs(System.Int32 usegs, System.Int32 vsegs)
   {
-    return new Array<Vector2>(usegs*vsegs, /* Captured: int/* unresolved */ usegsint/* unresolved */ vsegs*/(var i)
+    return new PlatoTestJavaScript.Array<PlatoTestJavaScript.Vector2>(usegs*vsegs, /* Captured: usegsvsegs*/( i)
      => {
-        int/* unresolved */ row  = i/vsegs;
-        int/* unresolved */ col  = i%usegs;
-        return new Vector2((float/* unresolved */)col/(usegs-1), (float/* unresolved */)row/(vsegs-1));
+        System.Int32 row  = i/vsegs;
+        System.Int32 col  = i%usegs;
+        return new PlatoTestJavaScript.Vector2((System.Single)col/(usegs-1), (System.Single)row/(vsegs-1));
         }
       );
     }
@@ -988,19 +1041,19 @@ public class Extensions : var
             });
         }
   */
-  public static IArray<Int4> ComputeQuadStripIndices(int/* unresolved */ usegs, int/* unresolved */ vsegs)
+  public static PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int4> ComputeQuadStripIndices(System.Int32 usegs, System.Int32 vsegs)
   {
-    return new Array<Int4>((usegs-1)*(vsegs-1), /* Captured: int/* unresolved */ usegsint/* unresolved */ vsegs*/(var i)
+    return new PlatoTestJavaScript.Array<PlatoTestJavaScript.Int4>((usegs-1)*(vsegs-1), /* Captured: usegsvsegs*/( i)
      => {
-        int/* unresolved */ row  = i/(vsegs-1);
-        int/* unresolved */ col  = i%(usegs-1);
-        int/* unresolved */ nextCol  = (col+1);
-        int/* unresolved */ nextRow  = (row+1);
-        int/* unresolved */ a  = (row*usegs)+col;
-        int/* unresolved */ b  = (row*usegs)+nextCol;
-        int/* unresolved */ c  = (nextRow*usegs)+nextCol;
-        int/* unresolved */ d  = (nextRow*usegs)+col;
-        return new Int4(a, b, c, d);
+        System.Int32 row  = i/(vsegs-1);
+        System.Int32 col  = i%(usegs-1);
+        System.Int32 nextCol  = (col+1);
+        System.Int32 nextRow  = (row+1);
+        System.Int32 a  = (row*usegs)+col;
+        System.Int32 b  = (row*usegs)+nextCol;
+        System.Int32 c  = (nextRow*usegs)+nextCol;
+        System.Int32 d  = (nextRow*usegs)+col;
+        return new PlatoTestJavaScript.Int4(a, b, c, d);
         }
       );
     }
@@ -1011,9 +1064,9 @@ public class Extensions : var
                 radius * (uv.Y * MathF.PI).Cos(),
                 radius * uv.X.UnitToRad().Cos() * (uv.Y * MathF.PI).Sin());
   */
-  public static Vector3 UvToSphere(Vector2 uv, float/* unresolved */ radius)
+  public static PlatoTestJavaScript.Vector3 UvToSphere(PlatoTestJavaScript.Vector2 uv, System.Single radius)
   {
-    return new Vector3(-radius*Cos()*Sin(), radius*Cos(), radius*Cos()*Sin());
+    return new PlatoTestJavaScript.Vector3(-radius*uv.X.UnitToRad().Cos()*(uv.Y*System.MathF.PI).Sin(), radius*(uv.Y*System.MathF.PI).Cos(), radius*uv.X.UnitToRad().Cos()*(uv.Y*System.MathF.PI).Sin());
     }
   /*
   public static Vector3 UvToTorus(Vector2 uv, float radius, float tube)
@@ -1025,18 +1078,18 @@ public class Extensions : var
                 tube * uv.Y.Sin());
         }
   */
-  public static Vector3 UvToTorus(Vector2 uv, float/* unresolved */ radius, float/* unresolved */ tube)
+  public static PlatoTestJavaScript.Vector3 UvToTorus(PlatoTestJavaScript.Vector2 uv, System.Single radius, System.Single tube)
   {
-    uv = uv*MathF/* unresolved */.PI/* unresolved */*2;
-    return new Vector3((radius+tube*Cos())*Cos(), (radius+tube*Cos())*Sin(), tube*Sin());
+    uv = uv*System.MathF.PI*2;
+    return new PlatoTestJavaScript.Vector3((radius+tube*uv.Y.Cos())*uv.X.Cos(), (radius+tube*uv.Y.Cos())*uv.X.Sin(), tube*uv.Y.Sin());
     }
   /*
   public static TriMesh ToTriMesh(this QuadMesh mesh)
             => new(mesh.Points, mesh.Faces.ToTriangleIndices());
   */
-  public static TriMesh ToTriMesh(QuadMesh mesh)
+  public static PlatoTestJavaScript.TriMesh ToTriMesh(this PlatoTestJavaScript.QuadMesh mesh)
   {
-    return new TriMesh(mesh.Points, ToTriangleIndices());
+    return new PlatoTestJavaScript.TriMesh(mesh._Points_, mesh._Faces_.ToTriangleIndices());
     }
   /*
   public static void TestOperator()
@@ -1045,18 +1098,18 @@ public class Extensions : var
             var y = x + x;
         }
   */
-  public static void/* unresolved */ TestOperator()
+  public static System.Void TestOperator()
   {
-    Vector3 x  = new Vector3(1, 2, 3);
-    Vector3 y  = x+x;
+    PlatoTestJavaScript.Vector3 x  = new PlatoTestJavaScript.Vector3(1, 2, 3);
+    PlatoTestJavaScript.Vector3 y  = x+x;
     }
   /*
   public static QuadMesh Torus(int rows, int cols, float radius, float tube)
             => ToQuadMesh(uv => UvToTorus(uv, radius, tube), rows, cols);
   */
-  public static QuadMesh Torus(int/* unresolved */ rows, int/* unresolved */ cols, float/* unresolved */ radius, float/* unresolved */ tube)
+  public static PlatoTestJavaScript.QuadMesh Torus(System.Int32 rows, System.Int32 cols, System.Single radius, System.Single tube)
   {
-    return ToQuadMesh(/* Captured: float/* unresolved */ radiusfloat/* unresolved */ tube*/(var uv)
+    return ToQuadMesh(/* Captured: radiustube*/( uv)
      => {
         return UvToTorus(uv, radius, tube);
         }
@@ -1066,19 +1119,23 @@ public class Extensions : var
   public static int[] ToIntArray(this IArray<Int3> faces)
             => faces.SelectMany(f => f).ToArray();
   */
-  public static /* unresolved */ ToIntArray(IArray<Int3> faces)
+  public static System.Int32[] ToIntArray(this PlatoTestJavaScript.IArray<PlatoTestJavaScript.Int3> faces)
   {
-    return ToArray();
+    return faces.SelectMany<PlatoTestJavaScript.Int3, System.Int32>(/* Captured: */( f)
+     => {
+        return f;
+        }
+      ).ToArray<System.Int32>();
     }
   /*
   public static IArray<Triangle> Triangles(this TriMesh mesh)
             => mesh.Faces.Select(f => new Triangle(mesh.Points.Positions[f.X], mesh.Points.Positions[f.Y], mesh.Points.Positions[f.Z]));
   */
-  public static IArray<Triangle> Triangles(TriMesh mesh)
+  public static PlatoTestJavaScript.IArray<PlatoTestJavaScript.Triangle> Triangles(this PlatoTestJavaScript.TriMesh mesh)
   {
-    return Select(/* Captured: TriMesh mesh*/(var f)
+    return mesh._Faces_.Select<PlatoTestJavaScript.Int3, PlatoTestJavaScript.Triangle>(/* Captured: mesh*/( f)
      => {
-        return new Triangle(mesh.Points.Positions[f.X], mesh.Points.Positions[f.Y], mesh.Points.Positions[f.Z]);
+        return new PlatoTestJavaScript.Triangle(mesh._Points_._Positions_[f.X], mesh._Points_._Positions_[f.Y], mesh._Points_._Positions_[f.Z]);
         }
       );
     }
@@ -1086,9 +1143,9 @@ public class Extensions : var
   public static IArray<Vector3> FaceNormals(this TriMesh mesh)
             => mesh.Triangles().Select(tri => tri.Normal);
   */
-  public static IArray<Vector3> FaceNormals(TriMesh mesh)
+  public static PlatoTestJavaScript.IArray<PlatoTestJavaScript.Vector3> FaceNormals(this PlatoTestJavaScript.TriMesh mesh)
   {
-    return Select(/* Captured: */(var tri)
+    return mesh.Triangles().Select<PlatoTestJavaScript.Triangle, PlatoTestJavaScript.Vector3>(/* Captured: */( tri)
      => {
         return tri.Normal;
         }
@@ -1101,18 +1158,18 @@ public class Extensions : var
             return (func(), sw.Elapsed);
         }
   */
-  public static ValueTuple<T, TimeSpan/* unresolved */>/* unresolved */ TimeIt<T>(Func<T>/* unresolved */ func)
+  public static System.ValueTuple<T, System.TimeSpan> TimeIt<T>(System.Func<T> func)
   {
-    Stopwatch/* unresolved */ sw  = StartNew/* unresolved */();
-    return (func/* unresolved */(), sw.Elapsed/* unresolved */);
+    System.Diagnostics.Stopwatch sw  = System.Diagnostics.Stopwatch.StartNew();
+    return (func(), sw.Elapsed);
     }
   /*
   public static void Log(string s)
             => Debug.WriteLine(s);
   */
-  public static void/* unresolved */ Log(string/* unresolved */ s)
+  public static System.Void Log(System.String s)
   {
-    return WriteLine/* unresolved */(s);
+    return System.Diagnostics.Debug.WriteLine(s);
     }
   /*
   public static T LogTiming<T>(Func<T> func)
@@ -1122,11 +1179,11 @@ public class Extensions : var
             return r.Item1;
         }
   */
-  public static T LogTiming<T>(Func<T>/* unresolved */ func)
+  public static T LogTiming<T>(System.Func<T> func)
   {
-    ValueTuple<T, TimeSpan/* unresolved */>/* unresolved */ r  = TimeIt(func);
-    WriteLine/* unresolved */("msec elapsed: "+r.Item2/* unresolved */.Milliseconds/* unresolved */);
-    return r.Item1/* unresolved */;
+    System.ValueTuple<T, System.TimeSpan> r  = TimeIt<T>(func);
+    System.Diagnostics.Debug.WriteLine("msec elapsed: "+r.Item2.Milliseconds);
+    return r.Item1;
     }
   /*
   public static void Main()
@@ -1137,16 +1194,17 @@ public class Extensions : var
             File.WriteAllLines(filePath, floats.Select(f => f.ToString()));
         }
   */
-  public static void/* unresolved */ Main()
+  public static System.Void Main()
   {
-    TriMesh torus  = ToTriMesh();
-    /* unresolved */ floats  = LogTiming(FaceNormals().ToFloatArray);
-    string/* unresolved */ filePath  = Combine/* unresolved */(GetTempPath/* unresolved */(), "profiling.txt");
-    WriteAllLines/* unresolved */(filePath, Select/* unresolved */(/* Captured: */(var f)
+    PlatoTestJavaScript.TriMesh torus  = Torus(500, 100, 1, 0.2f).ToTriMesh();
+    System.Single[] floats  = LogTiming<System.Single[]>(torus.FaceNormals().ToFloatArray);
+    System.String filePath  = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "profiling.txt");
+    System.IO.File.WriteAllLines(filePath, floats.Select<System.Single, System.String>(/* Captured: */( f)
      => {
-        return ToString/* unresolved */();
+        return f.ToString();
         }
       ));
     }
   }
 //==end==//
+}

@@ -28,29 +28,6 @@ namespace PlatoRoslynSyntaxAnalyzer
             // TODO: add default constructor calls
             // TODO: fix the type-names
             // TODO: find a way to visit sub-expressions etc. 
-            foreach (var type in builder.GetTypes())
-            {
-                foreach (var ctor in type.Constructors)
-                {
-                    foreach (var st in ctor.Body.AllStatements)
-                    {
-                        foreach (var expr in st.AllExpressions)
-                        {
-                            if (expr is AssignmentIR assIR)
-                            {
-                                if (assIR.LValue is PropertyReferenceIR propertyReferenceIR)
-                                {
-                                    Debug.WriteLine("Property reference");
-                                }
-                                if (assIR.LValue is NameIR nameIR)
-                                {
-                                    Debug.WriteLine("Property reference");
-                                }
-                            }
-                        }
-                    }
-                }
-            }
             return builder;
         }
 
@@ -66,6 +43,7 @@ namespace PlatoRoslynSyntaxAnalyzer
             foreach (var type in syntaxes)
             {
                 var typeIr = new TypeDeclarationIR(type.Kind, type.Name);
+                typeIr.IsStatic = type.Node.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword));
                 builder.AddIR(type, typeIr);
 
                 foreach (var ctor in type.Ctors)
@@ -90,7 +68,7 @@ namespace PlatoRoslynSyntaxAnalyzer
                     var decl = builder.AddIR(conv, new OperationDeclarationIr()).SetParent(typeIr);
                     decl.Source = conv.Node.ToString();
                     decl.IsStatic = conv.IsStatic;
-                    decl.Name = "operator " + conv.Node.ImplicitOrExplicitKeyword.Text;
+                    decl.Name = conv.Node.ImplicitOrExplicitKeyword.Text + " operator";
                     typeIr.Operations.Add(decl);
                 }
 
@@ -102,6 +80,7 @@ namespace PlatoRoslynSyntaxAnalyzer
                         decl.Source = fieldVar.Node.ToString();
                         decl.IsStatic = field.IsStatic;
                         decl.Name = fieldVar.Name;
+                        typeIr.Fields.Add(decl);
                     }
                 }
 
@@ -214,8 +193,7 @@ namespace PlatoRoslynSyntaxAnalyzer
                         propertyIr.Getter = CreateGetter(syntax, model, builder);
                         if (propertyIr.Getter.Body == null)
                         {
-                            var typeIr = propertyIr.Parent as TypeDeclarationIR;
-                            if (typeIr != null && typeIr.Kind == "class")
+                            if (propertyIr.Parent is TypeDeclarationIR typeIr && typeIr.Kind == "class")
                             {
                                 var fieldName = "_" + propertyIr.Name + "_";
                                 var fieldIr = new FieldDeclarationIR() { Name = fieldName };
@@ -223,20 +201,23 @@ namespace PlatoRoslynSyntaxAnalyzer
                                 fieldIr.Parent = typeIr;
                                 fieldIr.Type = propertyIr.Type;
                                 typeIr.Fields.Add(fieldIr);
-                                var fieldRef = new FieldReferenceIR(fieldName, fieldIr);
+                                var fieldRef = new FieldReferenceIR(fieldName, null, fieldIr);
                                 var retStatement = new ReturnStatementIR(fieldRef);
                                 propertyIr.Getter.Body = new BlockStatementIR(retStatement);
+                                propertyIr.Field = fieldIr;
                             }
                         }
                         break;
                     }
 
-                    case TypeDeclarationIR typeDeclarationIr:
+                    case TypeParameterDeclarationIR typeParameterDeclarationIr:
                         // No additional procesing required
                         break;
 
-                    case TypeParameterDeclarationIR typeParameterDeclarationIr:
-                        // No additional procesing required
+                    case TypeDeclarationIR typeDeclarationIr:
+                        typeDeclarationIr.Bases = 
+                            ((TypeDeclarationSyntax)node).BaseList?.Types.Select(t => t.Type.ToReference(model, builder))
+                            .ToList() ?? new List<TypeReferenceIR>();
                         break;
 
                     case VariableDeclarationIR variableDeclarationIr:
@@ -517,34 +498,51 @@ namespace PlatoRoslynSyntaxAnalyzer
             => expressions.Select(x => x.ToIR(model, builder)).ToArray() ?? Array.Empty<ExpressionIR>();
 
         public static TypeReferenceIR ToReference(this TypeSyntax syntax, SemanticModel model, IRBuilder builder)
-            => model.GetSymbolInfo(syntax).Symbol.GetTypeReference(builder);
+            => model.GetSymbolInfo(syntax).Symbol.ToTypeReference(builder);
 
         public static IEnumerable<TypeReferenceIR> GetTypeArguments(this ISymbol symbol, IRBuilder builder)
-            => symbol is INamedTypeSymbol nts ? nts.TypeArguments.Select(arg => arg.GetTypeReference(builder))
-                : symbol is IMethodSymbol ms ? ms.TypeArguments.Select(arg => arg.GetTypeReference(builder))
-            : Enumerable.Empty<TypeReferenceIR>();
+            => symbol is INamedTypeSymbol nts 
+                ? nts.TypeArguments.Select(arg => arg.ToTypeReference(builder)) : symbol is IMethodSymbol ms 
+                ? ms.TypeArguments.Select(arg => arg.ToTypeReference(builder)) : symbol is IArrayTypeSymbol ats
+                ? Enumerable.Repeat(ats.ElementType.ToTypeReference(builder), 1) : Enumerable.Empty<TypeReferenceIR>();
 
-        public static TypeReferenceIR GetTypeReference(this ISymbol symbol, IRBuilder builder)
+        public static ExpressionIR GetReceiver(this ISymbol symbol, IRBuilder builder)
+        {
+            if (symbol.ContainingType != null)
+                return symbol.ContainingType.ToTypeReference(builder);
+
+            if (symbol.ContainingNamespace != null && !symbol.ContainingNamespace.IsGlobalNamespace)
+                return symbol.ContainingNamespace.ToReference(builder);
+
+            return null;
+        }
+
+        public static NamespaceReferenceIR ToReference(this INamespaceSymbol nameSpace, IRBuilder builder)
+            => new NamespaceReferenceIR(nameSpace.Name, GetReceiver(nameSpace, builder));
+
+        // TODO: validate
+        public static TypeReferenceIR ToTypeReference(this ISymbol symbol, IRBuilder builder)
             => symbol is ITypeParameterSymbol tps 
-                ? new TypeReferenceIR(tps.Name, builder.GetDeclarationIR<TypeParameterDeclarationIR>(tps))
-                : new TypeReferenceIR(TypeToKeyword(symbol?.Name), builder.GetDeclarationIR<TypeDeclarationIR>(symbol), symbol.GetTypeArguments(builder));
+                ? new TypeReferenceIR(tps.Name, null, builder.GetDeclarationIR<TypeParameterDeclarationIR>(tps))
+                : symbol is IArrayTypeSymbol ats 
+                ? new TypeReferenceIR("[]", symbol.GetReceiver(builder), builder.GetDeclarationIR<TypeDeclarationIR>(symbol), symbol.GetTypeArguments(builder))
+                : new TypeReferenceIR(symbol?.Name, symbol.GetReceiver(builder), builder.GetDeclarationIR<TypeDeclarationIR>(symbol), symbol.GetTypeArguments(builder));
 
+        // TODO: validate
         public static MethodReferenceIR GetFunctionReference(this ExpressionSyntax syntax, SemanticModel model, IRBuilder builder)
             => model.GetSymbolInfo(syntax).Symbol.GetFunctionReference(builder);
 
         public static MethodReferenceIR GetFunctionReference(this ISymbol symbol, IRBuilder builder)
-            => new MethodReferenceIR(symbol?.Name, builder.GetDeclarationIR<MethodDeclarationIR>(symbol), symbol.GetTypeArguments(builder));
+            => new MethodReferenceIR(symbol?.Name, null, builder.GetDeclarationIR<MethodDeclarationIR>(symbol), symbol.GetTypeArguments(builder));
 
         // TODO: maybe add some checks about what can be assigned to.
         public static ExpressionIR GetLValue(this ExpressionSyntax syntax, SemanticModel model, IRBuilder builder)
             => syntax.ToIR(model, builder);
 
-        public static ArgumentIR ToIR(this ArgumentSyntax syntax, SemanticModel model, IRBuilder builder)
-            => new ArgumentIR
-            (
-                syntax.NameColon?.Name.ToString(),
-                syntax.Expression.ToIR(model, builder)
-            );
+        public static ExpressionIR ToIR(this ArgumentSyntax syntax, SemanticModel model, IRBuilder builder)
+            => string.IsNullOrEmpty(syntax.NameColon?.Name.ToString())
+                ? syntax.Expression.ToIR(model, builder)
+                : throw SemanticRules.LabeledArgsNotSupportedException(syntax);
 
         public static ExpressionIR ToIR(this PatternSyntax syntax, SemanticModel model, IRBuilder builder)
         {
@@ -579,8 +577,8 @@ namespace PlatoRoslynSyntaxAnalyzer
             var type = ModelExtensions.GetTypeInfo(model, syntax);
             var originalType = type.Type;
             var finalType = type.ConvertedType;
-            var originalTypeIR = originalType?.GetTypeReference(builder);
-            var finalTypeIR = finalType?.GetTypeReference(builder);
+            var originalTypeIR = originalType?.ToTypeReference(builder);
+            var finalTypeIR = finalType?.ToTypeReference(builder);
             
             var conversion = originalType != null && finalType != null
                 ? model.Compilation.ClassifyConversion(originalType, finalType)
@@ -599,11 +597,11 @@ namespace PlatoRoslynSyntaxAnalyzer
             switch (syntax)
             {
                 case IdentifierNameSyntax identifierNameSyntax:
-                    r = new NameIR(identifierNameSyntax.Identifier.ToString());
+                    r = symbol.ToReference(identifierNameSyntax.Identifier.ToString(), null, builder);
                     break;
 
                 case SimpleNameSyntax simpleNameSyntax:
-                    r = new NameIR(simpleNameSyntax.Identifier.ToString());
+                    r = symbol.ToReference(simpleNameSyntax.Identifier.ToString(), null, builder);
                     break;
 
                 case NameSyntax nameSyntax:
@@ -626,9 +624,10 @@ namespace PlatoRoslynSyntaxAnalyzer
                         var newRValue = builder.CreateTuple(
                             tuple.Args.Select((arg, i)
                                 => builder.CreateAssignment(arg, 
-                                    builder.CreateName(
+                                    new FieldReferenceIR(
                                         $"Item{i+1}",
-                                        builder.CreateReference(newVarDecl))))
+                                        builder.CreateReference(newVarDecl),
+                                        null)))
                                 .Cast<ExpressionIR>().
                                 ToArray());
                         r = builder.CreateLet(newVarDecl, newRValue);
@@ -711,7 +710,7 @@ namespace PlatoRoslynSyntaxAnalyzer
                     break;
 
                 case InvocationExpressionSyntax invocation:
-                    r = new InvocationIR(invocation.Expression.GetFunctionReference(model, builder),
+                    r = new InvocationIR(invocation.Expression.ToIR(model, builder),
                         invocation.ArgumentList.Arguments.ToIR(model, builder));
                     break;
 
@@ -737,7 +736,7 @@ namespace PlatoRoslynSyntaxAnalyzer
                 case MemberAccessExpressionSyntax memberAccess:
                     if (memberAccess.OperatorToken.ToString() != ".")
                         SemanticRules.OnlyDotNotationSupported(memberAccess);
-                    r = new NameIR(memberAccess.Name.ToString(), memberAccess.Expression.ToIR(model, builder));
+                    r = symbol.ToReference(memberAccess.Name.ToString(), memberAccess.Expression.ToIR(model, builder), builder);
                     break;
 
                 case MemberBindingExpressionSyntax memberBinding:
@@ -864,28 +863,16 @@ namespace PlatoRoslynSyntaxAnalyzer
                     break;
             }
 
-            if (r is NameIR nameIR)
-            {
-                if (symbol != null)
-                {
-                    if (symbol is IDiscardSymbol)
-                    {
-                        r = new DiscardIR();
-                    }
-                    else
-                    {
-                        if (symbol.Name != nameIR.Name)
-                            throw new Exception($"symbol name {symbol.Name} does not match syntax name {nameIR.Name}");
-                        nameIR.ReferencedIR = symbol.ToDeclarationIR(builder);
-                    }
-                }
-            }
-
             return builder.AddIR(r);
         }
 
-        public static DeclarationIR ToDeclarationIR(this ISymbol symbol, IRBuilder builder)
+        public static ReferenceIR ToReference(this ISymbol symbol, string name, ExpressionIR reciever, IRBuilder builder)
         {
+            if (string.IsNullOrWhiteSpace(name))
+                name = symbol.Name;
+            if (name != symbol.Name)
+                throw new Exception($"Given name {name} does not match symbol name {symbol.Name}");
+
             switch (symbol)
             {
                 case null:
@@ -895,33 +882,37 @@ namespace PlatoRoslynSyntaxAnalyzer
                     throw new Exception(@"Not supported : {nameof(arrayTypeSymbol)}");
 
                 case IFieldSymbol fieldSymbol:
-                    return builder.GetDeclarationIR<FieldDeclarationIR>(fieldSymbol);
+                    //if (reciever == null) reciever = new ThisIR();
+                    return new FieldReferenceIR(name, reciever, builder.GetDeclarationIR<FieldDeclarationIR>(fieldSymbol));
 
                 case ILocalSymbol localSymbol:
-                    return builder.GetDeclarationIR<VariableDeclarationIR>(localSymbol);
+                    if (reciever != null) throw new Exception("Expected no reciever when accessing local variable");
+                    return new VariableReferenceIR(name, builder.GetDeclarationIR<VariableDeclarationIR>(localSymbol));
 
                 case IMethodSymbol methodSymbol:
-                    return builder.GetDeclarationIR<MethodDeclarationIR>(methodSymbol);
+                    //if (reciever == null) reciever = new ThisIR();
+                    return new MethodReferenceIR(name, reciever, builder.GetDeclarationIR<MethodDeclarationIR>(methodSymbol), methodSymbol.GetTypeArguments(builder));
 
                 case INamedTypeSymbol namedTypeSymbol:
-                    return builder.GetDeclarationIR<TypeDeclarationIR>(namedTypeSymbol);
+                    return namedTypeSymbol.ToTypeReference(builder);
 
                 case INamespaceSymbol namespaceSymbol:
-                    break;
+                    return namespaceSymbol.ToReference(builder);
 
                 case ITypeParameterSymbol typeParameterSymbol:
-                    return builder.GetDeclarationIR<TypeParameterDeclarationIR>(typeParameterSymbol);
+                    return typeParameterSymbol.ToTypeReference(builder);
 
                 case ITypeSymbol typeSymbol:
-                    return builder.GetDeclarationIR<TypeDeclarationIR>(typeSymbol);
+                    return typeSymbol.ToTypeReference(builder);
 
                 case IParameterSymbol parameterSymbol:
-                    return builder.GetDeclarationIR<ParameterDeclarationIR>(parameterSymbol);
+                    if (reciever != null) throw new Exception("Expected no parameter symbol");
+                    return new ParameterReferenceIR(name, builder.GetDeclarationIR<ParameterDeclarationIR>(parameterSymbol));
 
                 case IPropertySymbol propertySymbol:
-                    return builder.GetDeclarationIR<PropertyDeclarationIR>(propertySymbol);
+                    //if (reciever == null) reciever = new ThisIR();
+                    return new PropertyReferenceIR(name, reciever, builder.GetDeclarationIR<PropertyDeclarationIR>(propertySymbol));
 
-                //case INamespaceOrTypeSymbol namespaceOrTypeSymbol:
                 case IModuleSymbol moduleSymbol:
                 //case IPointerTypeSymbol pointerTypeSymbol:
                 case IPreprocessingSymbol preprocessingSymbol:
@@ -937,12 +928,16 @@ namespace PlatoRoslynSyntaxAnalyzer
                     break;
             }
 
-            return null;
+            throw new Exception($"Cannot resolve symbol {symbol}");
         }
 
         public static ParameterDeclarationIR ToIR(this ParameterSyntax parameter, SemanticModel model, IRBuilder builder)
         {
-            var r = new ParameterDeclarationIR() { Name = parameter.Identifier.ToString() };
+            var r = new ParameterDeclarationIR()
+            {
+                Name = parameter.Identifier.ToString(),
+                IsThisParameter = parameter.Modifiers.Any(m => m.IsKind(SyntaxKind.ThisKeyword))
+            };
             builder.AddIR(new PlatoParamSyntax(parameter), r);
             r.DefaultValue = parameter.Default?.Value.ToIR(model, builder);
             r.Type = parameter.Type?.ToReference(model, builder);
@@ -957,7 +952,7 @@ namespace PlatoRoslynSyntaxAnalyzer
         public static LambdaIR CreateLambda(SyntaxNode node, SemanticModel model, IRBuilder builder, IEnumerable<ParameterDeclarationIR> parameters, StatementIR body)
         {
             var dataFlow = model.AnalyzeDataFlow(node);
-            var capVars = dataFlow.Captured.Select(sym => sym.ToDeclarationIR(builder)).ToList();
+            var capVars = dataFlow.Captured.Select(sym => sym.ToReference(null, null, builder)).ToList();
 
             return new LambdaIR()
             {

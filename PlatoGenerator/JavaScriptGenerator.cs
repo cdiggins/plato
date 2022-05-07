@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using PlatoIR;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 /*
  * DONE: Indexer(this) properties not generated.
@@ -710,6 +711,13 @@ namespace PlatoGenerator
             }
         }
 
+        // https://stackoverflow.com/questions/816566/how-do-you-get-the-current-project-directory-from-c-sharp-code-when-creating-a-c
+        public static string GetSourceFilePathName([CallerFilePath] string callerFilePath = null) 
+            => callerFilePath ?? "";
+
+        public static string ThisFolder 
+            => Path.GetDirectoryName(GetSourceFilePathName());
+
         public void ToJavaScript(GeneratorExecutionContext context)
         {
             var types = context.Compilation.SyntaxTrees.GetPlatoTypes();
@@ -717,8 +725,11 @@ namespace PlatoGenerator
 
             var inputFile = GeneratedFile;
 
+
+
             //var thisRepo = @"C:\Users\Acer\source\repos\Plato";
-            var thisRepo = @"C:\git\plato\";
+            //var thisRepo = @"C:\git\plato\";
+            var thisRepo = Path.Combine(Path.GetDirectoryName(GetSourceFilePathName()), "..");
 
             var outputFile = Path.Combine(thisRepo, "JavaScriptTest", "output.html");
             var templateFile = Path.Combine(thisRepo, "PlatoGenerator", "input.html");
@@ -747,7 +758,10 @@ namespace PlatoGenerator
             using (sw = new StreamWriter(File.Create(outputCsFile)))
             {
                 var srlzr = new IRSerializer(sw);
+                // TODO: this is a hack until I add proper namespace support. 
+                sw.WriteLine("namespace PlatoTestJavaScript {");
                 srlzr.Write(decls, "");
+                sw.WriteLine("}");
             }
         }
     }
