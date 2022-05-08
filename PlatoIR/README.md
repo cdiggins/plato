@@ -44,3 +44,23 @@ If:
 	* Operators <=, >=, <, >
 * IArithmetic 
 	* Operators +, -, *, /
+
+# Optimizations to-do:
+
+Reporting
+* disassembly output
+* memory consumption
+* executable size
+* cold start-up
+
+Rewriting
+* Fields versus properties
+* variables over structs
+* inlining
+
+Output
+* var over type-declaration
+* Structs versus classes
+* https://docs.microsoft.com/en-us/dotnet/csharp/write-safe-efficient-code#declare-immutable-structs-as-readonly
+* https://docs.microsoft.com/en-us/dotnet/csharp/write-safe-efficient-code#use-ref-struct-types
+* https://docs.microsoft.com/en-us/dotnet/csharp/write-safe-efficient-code#use-ref-readonly-return-statements

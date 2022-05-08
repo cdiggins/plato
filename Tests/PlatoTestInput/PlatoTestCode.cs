@@ -1,8 +1,9 @@
-﻿using System.Collections.Immutable;
+﻿using BenchmarkDotNet.Attributes;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Xml.Schema;
 
-namespace PlatoTestJavaScript
+namespace PlatoTest
 {
     public interface IArray<T>
     {
@@ -170,7 +171,7 @@ namespace PlatoTestJavaScript
             for (var i = 0; i < self.Count; ++i)
             {
                 var tmp = func(self[i]);
-                for (var j=0; j < tmp.Count; ++j)
+                for (var j = 0; j < tmp.Count; ++j)
                     r.Add(tmp[j]);
             }
 
@@ -180,10 +181,10 @@ namespace PlatoTestJavaScript
         public static IArray<U> Select<T, U>(this IArray<T> self, Func<T, U> func)
             => self.Count.Select(i => func(self[i]));
 
-        public static float Cos(this float self) 
+        public static float Cos(this float self)
             => MathF.Cos(self);
 
-        public static float Sin(this float self) 
+        public static float Sin(this float self)
             => MathF.Sin(self);
 
         public static float UnitToRad(this float self)
@@ -196,7 +197,7 @@ namespace PlatoTestJavaScript
             => self.SelectMany(f => new[] { new Int3(f.X, f.Y, f.Z), new Int3(f.Z, f.W, f.X) }.ToIArray());
 
         public static QuadMesh ToQuadMesh(this Func<Vector2, Vector3> func, int rows, int cols)
-            => new (ComputeQuadStripPoints(func, rows, cols),
+            => new(ComputeQuadStripPoints(func, rows, cols),
                 ComputeQuadStripIndices(rows, cols));
 
         public static Vector3 UVToNormal(this Vector2 uv, Func<Vector2, Vector3> func, float epsilon = 0.00001f)
@@ -218,7 +219,7 @@ namespace PlatoTestJavaScript
             => ComputeQuadStripUVs(usegs, vsegs).UVsToPoints(func);
 
         public static IArray<Vector2> ComputeQuadStripUVs(int usegs, int vsegs)
-            => new Array<Vector2>(usegs * vsegs, 
+            => new Array<Vector2>(usegs * vsegs,
                 i =>
                 {
                     var row = i / vsegs;
@@ -295,8 +296,7 @@ namespace PlatoTestJavaScript
             Console.WriteLine("msec elapsed: " + r.Item2.Milliseconds);
             return r.Item1;
         }
-
-        public static void Main()
+        public static void ManualBenchmark()
         {
             var torus = Torus(5000, 1000, 1, 0.2f).ToTriMesh();
             var floats = LogTiming(torus.FaceNormals().ToFloatArray);

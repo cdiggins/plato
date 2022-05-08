@@ -15,15 +15,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoCollections", "..\Plat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoCollectionsTest", "..\PlatoCollectionsTest\PlatoCollectionsTest.csproj", "{854A7693-ED7E-493E-8C3B-1960091904C6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTestJavaScript", "..\PlatoTestJavaScript\PlatoTestJavaScript.csproj", "{80901414-925B-46F1-9C9C-D251FF59EFEF}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoRoslynSyntaxAnalyzer", "..\PlatoRoslynSyntaxAnalyzer\PlatoRoslynSyntaxAnalyzer.csproj", "{F2E12DF6-379A-4866-A313-B84E3DC8C528}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatoTestCSharp", "..\PlatoTestCSharp\PlatoTestCSharp.csproj", "{C577B825-F0C0-486C-A4DF-5C0767E7405D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato", "Plato.csproj", "{673EFFC7-811E-422E-9EDC-6B4561EFCFBB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoIR", "..\PlatoIR\PlatoIR.csproj", "{F838CC7A-8C62-4024-A572-D15EE6FD76D9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1FCE65BD-CCDA-4516-8F62-1DBD09BB8D67}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTestInput", "..\Tests\PlatoTestInput\PlatoTestInput.csproj", "{EE3FB2DA-FF17-432C-92F8-42868570503C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTestOutput", "..\Tests\PlatoTestOutput\PlatoTestOutput.csproj", "{10146F21-30CC-4C16-BBDD-08B868C95691}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,18 +45,10 @@ Global
 		{854A7693-ED7E-493E-8C3B-1960091904C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{854A7693-ED7E-493E-8C3B-1960091904C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{854A7693-ED7E-493E-8C3B-1960091904C6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{80901414-925B-46F1-9C9C-D251FF59EFEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{80901414-925B-46F1-9C9C-D251FF59EFEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{80901414-925B-46F1-9C9C-D251FF59EFEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{80901414-925B-46F1-9C9C-D251FF59EFEF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F2E12DF6-379A-4866-A313-B84E3DC8C528}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F2E12DF6-379A-4866-A313-B84E3DC8C528}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2E12DF6-379A-4866-A313-B84E3DC8C528}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2E12DF6-379A-4866-A313-B84E3DC8C528}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C577B825-F0C0-486C-A4DF-5C0767E7405D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C577B825-F0C0-486C-A4DF-5C0767E7405D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C577B825-F0C0-486C-A4DF-5C0767E7405D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C577B825-F0C0-486C-A4DF-5C0767E7405D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{673EFFC7-811E-422E-9EDC-6B4561EFCFBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{673EFFC7-811E-422E-9EDC-6B4561EFCFBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{673EFFC7-811E-422E-9EDC-6B4561EFCFBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -63,9 +57,21 @@ Global
 		{F838CC7A-8C62-4024-A572-D15EE6FD76D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F838CC7A-8C62-4024-A572-D15EE6FD76D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F838CC7A-8C62-4024-A572-D15EE6FD76D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE3FB2DA-FF17-432C-92F8-42868570503C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE3FB2DA-FF17-432C-92F8-42868570503C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE3FB2DA-FF17-432C-92F8-42868570503C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE3FB2DA-FF17-432C-92F8-42868570503C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10146F21-30CC-4C16-BBDD-08B868C95691}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10146F21-30CC-4C16-BBDD-08B868C95691}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10146F21-30CC-4C16-BBDD-08B868C95691}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10146F21-30CC-4C16-BBDD-08B868C95691}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EE3FB2DA-FF17-432C-92F8-42868570503C} = {1FCE65BD-CCDA-4516-8F62-1DBD09BB8D67}
+		{10146F21-30CC-4C16-BBDD-08B868C95691} = {1FCE65BD-CCDA-4516-8F62-1DBD09BB8D67}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {517AB64C-0D81-463D-8CAE-1E7D933C389F}
