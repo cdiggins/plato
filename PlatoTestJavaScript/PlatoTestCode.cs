@@ -287,18 +287,18 @@ namespace PlatoTestJavaScript
         }
 
         public static void Log(string s)
-            => Debug.WriteLine(s);
+            => Console.WriteLine(s);
 
         public static T LogTiming<T>(Func<T> func)
         {
             var r = TimeIt(func);
-            Debug.WriteLine("msec elapsed: " + r.Item2.Milliseconds);
+            Console.WriteLine("msec elapsed: " + r.Item2.Milliseconds);
             return r.Item1;
         }
 
         public static void Main()
         {
-            var torus = Torus(500, 100, 1, 0.2f).ToTriMesh();
+            var torus = Torus(5000, 1000, 1, 0.2f).ToTriMesh();
             var floats = LogTiming(torus.FaceNormals().ToFloatArray);
             var filePath = Path.Combine(Path.GetTempPath(), "profiling.txt");
             File.WriteAllLines(filePath, floats.Select(f => f.ToString()));

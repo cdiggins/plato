@@ -4,9 +4,10 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
   </PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\PlatoGenerator\PlatoGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"  />
+		<ProjectReference Include="..\PlatoGenerator\PlatoGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 	</ItemGroup>
 </Project>

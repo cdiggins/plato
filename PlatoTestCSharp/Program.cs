@@ -1182,7 +1182,7 @@ public static class Extensions
   public static T LogTiming<T>(System.Func<T> func)
   {
     System.ValueTuple<T, System.TimeSpan> r  = TimeIt<T>(func);
-    System.Diagnostics.Debug.WriteLine("msec elapsed: "+r.Item2.Milliseconds);
+    System.Console.WriteLine("msec elapsed: "+r.Item2.Milliseconds);
     return r.Item1;
     }
   /*
@@ -1196,7 +1196,7 @@ public static class Extensions
   */
   public static void Main()
   {
-    PlatoTestJavaScript.TriMesh torus  = Torus(500, 100, 1, 0.2f).ToTriMesh();
+    PlatoTestJavaScript.TriMesh torus  = Torus(5000, 1000, 1, 0.2f).ToTriMesh();
     System.Single[] floats  = LogTiming<System.Single[]>(torus.FaceNormals().ToFloatArray);
     System.String filePath  = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "profiling.txt");
     System.IO.File.WriteAllLines(filePath, floats.Select<System.Single, System.String>(/* Captured: */( f)
