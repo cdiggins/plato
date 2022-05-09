@@ -753,13 +753,13 @@ namespace PlatoGenerator
 
             var builder = new IRBuilder();
             builder = SyntaxToIR.BuildIR(builder, context.Compilation, types);
-            var outputCsFile = Path.Combine(thisRepo, "PlatoTestCSharp", "Program.cs");
+            var outputCsFile = Path.Combine(thisRepo, "Tests", "PlatoTestOutput", "PlatoTestCode.g.cs");
             var decls = builder.Declarations.Select(d => d.Item2).OfType<TypeDeclarationIR>().ToList();
             using (sw = new StreamWriter(File.Create(outputCsFile)))
             {
                 var srlzr = new IRSerializer(sw);
                 // TODO: this is a hack until I add proper namespace support. 
-                sw.WriteLine("namespace PlatoTestJavaScript {");
+                sw.WriteLine("namespace PlatoTest {");
                 srlzr.Write(decls, "");
                 sw.WriteLine("}");
             }

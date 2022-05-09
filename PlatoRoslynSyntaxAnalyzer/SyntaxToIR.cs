@@ -740,7 +740,18 @@ namespace PlatoRoslynSyntaxAnalyzer
                 case MemberAccessExpressionSyntax memberAccess:
                     if (memberAccess.OperatorToken.ToString() != ".")
                         SemanticRules.OnlyDotNotationSupported(memberAccess);
-                    r = symbol.ToReference(memberAccess.Name.ToString(), memberAccess.Expression.ToIR(model, builder), builder);
+                    {
+                        var name = memberAccess.Name.ToString();
+                        var typeArgs = new List<TypeReferenceIR>();
+                        if (memberAccess.Name is GenericNameSyntax gns)
+                        {
+                            name = gns.Identifier.Text;
+                            typeArgs = gns.TypeArgumentList.Arguments.Select(t => t.ToReference(model, builder)).ToList();
+                        }
+                        var refIr = symbol.ToReference(name, memberAccess.Expression.ToIR(model, builder), builder);
+                        refIr.TypeArguments.AddRange(typeArgs);
+                        r = refIr;
+                    }
                     break;
 
                 case MemberBindingExpressionSyntax memberBinding:

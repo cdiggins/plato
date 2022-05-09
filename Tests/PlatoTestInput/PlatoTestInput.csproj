@@ -16,6 +16,6 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\PlatoGenerator\PlatoGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\..\PlatoGenerator\PlatoGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 	</ItemGroup>
 </Project>
