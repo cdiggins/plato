@@ -35,6 +35,9 @@ namespace PlatoIR
         {}
 
         public override DeclarationIR Declaration => null;
+
+        public override IR Clone()
+            => new UnknownReferenceIR(Name, Receiver.TypedClone(), TypeArguments.Clone());
     }
 
     public class NamespaceReferenceIR : ReferenceIR
@@ -45,6 +48,9 @@ namespace PlatoIR
 
         public NamespaceDeclarationIR Namespace { get; }
         public override DeclarationIR Declaration => Namespace;
+
+        public override IR Clone()
+            => new NamespaceReferenceIR(Name, Receiver.TypedClone(), Namespace);
     }
 
     public class PropertyReferenceIR : ReferenceIR
@@ -53,6 +59,9 @@ namespace PlatoIR
             : base(name, receiver, null) => PropertyDeclaration = propertyDeclaration;
         public PropertyDeclarationIR PropertyDeclaration { get; }
         public override DeclarationIR Declaration => PropertyDeclaration;
+
+        public override IR Clone()
+            => new PropertyReferenceIR(Name, Receiver.TypedClone(), PropertyDeclaration);
     }
 
     public class FieldReferenceIR : ReferenceIR
@@ -61,6 +70,8 @@ namespace PlatoIR
             : base(name, reciever, null) => FieldDeclaration = fieldDeclaration;
         public FieldDeclarationIR FieldDeclaration { get; }
         public override DeclarationIR Declaration => FieldDeclaration;
+        public override IR Clone()
+            => new FieldReferenceIR(Name, Receiver.TypedClone(), FieldDeclaration);
     }
 
     public class MethodReferenceIR : ReferenceIR
@@ -69,14 +80,18 @@ namespace PlatoIR
             : base(name, reciever, typeArgs) => MethodDeclaration = methodDeclaration;
         public MethodDeclarationIR MethodDeclaration { get; }
         public override DeclarationIR Declaration => MethodDeclaration;
+        public override IR Clone()
+            => new MethodReferenceIR(Name, Receiver.TypedClone(), MethodDeclaration, TypeArguments.Clone());
     }
 
     public class TypeReferenceIR : ReferenceIR
     {
+        public TypeReferenceIR(string name, ExpressionIR reciever, TypeDeclarationIR type, TypeParameterDeclarationIR typeParameter, IEnumerable<TypeReferenceIR> typeArgs)
+            : base(name, reciever, typeArgs) => (TypeDeclaration, TypeParameterDeclaration) = (type, typeParameter);
         public TypeReferenceIR(string name, ExpressionIR reciever, TypeDeclarationIR type, IEnumerable<TypeReferenceIR> typeArgs)
-            : base(name, reciever, typeArgs) => TypeDeclaration = type;
+            : this(name, reciever, type, null, typeArgs) { }
         public TypeReferenceIR(string name, ExpressionIR reciever, TypeParameterDeclarationIR typeParameter)
-            : base(name, reciever, null) => TypeParameterDeclaration = typeParameter;
+            : this(name, reciever, null, typeParameter, null) {  }
         public TypeDeclarationIR TypeDeclaration { get; }
         public TypeParameterDeclarationIR TypeParameterDeclaration { get; }
         public override DeclarationIR Declaration 
@@ -85,6 +100,9 @@ namespace PlatoIR
 
         public override string ToString()
             => IsVoid ? "void" : base.ToString();
+
+        public override IR Clone()
+            => new TypeReferenceIR(Name, Receiver.TypedClone(), TypeDeclaration, TypeParameterDeclaration, TypeArguments.Clone());
     }
 
     public class VariableReferenceIR : ReferenceIR
@@ -93,6 +111,8 @@ namespace PlatoIR
             : base(name, null, null) => VariableDeclaration = variableDeclaration;
         public VariableDeclarationIR VariableDeclaration { get; }
         public override DeclarationIR Declaration => VariableDeclaration;
+        public override IR Clone()
+            => new VariableReferenceIR(Name, VariableDeclaration);
     }
 
     public class ParameterReferenceIR : ReferenceIR
@@ -101,5 +121,7 @@ namespace PlatoIR
             : base(name, null, null) => ParameterDeclaration = parameterDeclaration;
         public ParameterDeclarationIR ParameterDeclaration { get; }
         public override DeclarationIR Declaration => ParameterDeclaration;
+        public override IR Clone()
+            => new ParameterReferenceIR(Name, ParameterDeclaration);
     }
 }

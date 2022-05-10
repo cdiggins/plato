@@ -88,8 +88,6 @@ namespace PlatoIR
                 InitialValue = new DefaultIR(invocation.ExpressionType),
                 IsStatic = false,
                 Name = $"result_{VarId}",
-                Parent = null,
-                ParentType = null,
                 Type = invocation.ExpressionType,
             };
             VarId++;

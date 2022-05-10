@@ -20,17 +20,22 @@ namespace PlatoRoslynSyntaxAnalyzer
 
         public static IRBuilder NormalizeIR(this IRBuilder builder, Compilation compilation)
         {
+            // Add generated fields 
+            foreach (var t in builder.GetTypes())
+            {
+                foreach (var p in t.Properties)
+                {
+                    var fieldDecl = p.Field?.FieldDeclaration;
+                    if (fieldDecl != null)
+                        t.Fields.Add(fieldDecl);
+                }
+            }
+
             // TODO: remove tuples from lvalues (make them all single assignments)
             // TODO: add default constructor calls
             // TODO: fix the type-names
             return builder;
         }
-
-        public static IEnumerable<TypeDeclarationIR> GetTypes(this IRBuilder builder)
-            => builder.GetIR<TypeDeclarationIR>();
-
-        public static IEnumerable<T> GetIR<T>(this IRBuilder builder) where T: IR
-            => builder.Declarations.Select(kv => kv.Item2).OfType<T>();
 
         public static IRBuilder StoreDeclarations(this IRBuilder builder, Compilation compilation, IEnumerable<PlatoTypeSyntax> syntaxes)
         {
@@ -43,15 +48,16 @@ namespace PlatoRoslynSyntaxAnalyzer
 
                 foreach (var ctor in type.Ctors)
                 {
-                    var decl = builder.AddIR(ctor, new ConstructorDeclarationIr()).SetParent(typeIr);
+                    var decl = builder.AddIR(ctor, new ConstructorDeclarationIr());
                     decl.Source = ctor.Node.ToString();
+                    decl.Name = type.Name;
                     decl.IsStatic = ctor.IsStatic;
                     typeIr.Constructors.Add(decl);
                 }
 
                 foreach (var p in type.Properties)
                 {
-                    var decl = builder.AddIR(p, new PropertyDeclarationIR()).SetParent(typeIr);
+                    var decl = builder.AddIR(p, new PropertyDeclarationIR() { TypeKind = type.Kind });
                     decl.Source = p.Node.ToString();
                     decl.IsStatic = p.IsStatic;
                     decl.Name = p.Name;
@@ -60,7 +66,7 @@ namespace PlatoRoslynSyntaxAnalyzer
 
                 foreach (var conv in type.Converters)
                 {
-                    var decl = builder.AddIR(conv, new OperationDeclarationIR()).SetParent(typeIr);
+                    var decl = builder.AddIR(conv, new OperationDeclarationIR());
                     decl.Source = conv.Node.ToString();
                     decl.IsStatic = conv.IsStatic;
                     decl.Name = conv.Node.ImplicitOrExplicitKeyword.Text + " operator";
@@ -71,7 +77,7 @@ namespace PlatoRoslynSyntaxAnalyzer
                 {
                     foreach (var fieldVar in field.Variables)
                     {
-                        var decl = builder.AddIR(fieldVar, new FieldDeclarationIR()).SetParent(typeIr);
+                        var decl = builder.AddIR(fieldVar, new FieldDeclarationIR());
                         decl.Source = fieldVar.Node.ToString();
                         decl.IsStatic = field.IsStatic;
                         decl.Name = fieldVar.Name;
@@ -81,7 +87,7 @@ namespace PlatoRoslynSyntaxAnalyzer
 
                 foreach (var op in type.Operators)
                 {
-                    var decl = builder.AddIR(op, new OperationDeclarationIR()).SetParent(typeIr);
+                    var decl = builder.AddIR(op, new OperationDeclarationIR());
                     decl.Source = op.Node.ToString();
                     decl.IsStatic = op.IsStatic;
                     decl.Name = "operator " + op.Name;
@@ -90,13 +96,12 @@ namespace PlatoRoslynSyntaxAnalyzer
 
                 foreach (var meth in type.Methods)
                 {
-                    var decl = builder.AddIR(meth, new MethodDeclarationIR()).SetParent(typeIr);
+                    var decl = builder.AddIR(meth, new MethodDeclarationIR());
                     decl.Source = meth.Node.ToString();
 
                     foreach (var tp in meth.Node.TypeParameterList?.Parameters ?? Enumerable.Empty<TypeParameterSyntax>())
                     {
                         var declTp = builder.AddIR(tp, new TypeParameterDeclarationIR());
-                        declTp.SetParent(decl);
                         declTp.Name = tp.Identifier.ToString();
                         decl.TypeParameters.Add(declTp);
                     }
@@ -108,7 +113,7 @@ namespace PlatoRoslynSyntaxAnalyzer
 
                 foreach (var idx in type.Indexers)
                 {
-                    var decl = builder.AddIR(idx, new IndexerDeclarationIR()).SetParent(typeIr);
+                    var decl = builder.AddIR(idx, new IndexerDeclarationIR());
                     decl.Source = idx.Node.ToString();
                     decl.IsStatic = idx.IsStatic;
                     typeIr.Indexers.Add(decl);
@@ -116,7 +121,7 @@ namespace PlatoRoslynSyntaxAnalyzer
 
                 foreach (var tp in type.TypeParameters)
                 {
-                    var decl = builder.AddIR(tp, new TypeParameterDeclarationIR()).SetParent(typeIr);
+                    var decl = builder.AddIR(tp, new TypeParameterDeclarationIR());
                     decl.Name = tp.Node.Identifier.ToString();
                     typeIr.TypeParameters.Add(decl);
                 }
@@ -127,7 +132,7 @@ namespace PlatoRoslynSyntaxAnalyzer
         public static IRBuilder CreateDefinitions(this IRBuilder builder, Compilation compilation, IEnumerable<PlatoTypeSyntax> syntaxes)
         { 
             // Create all of the definitions. Note: there are more declarations added as we go, but those are only local.   
-            foreach (var kv in builder.Declarations.ToArray())
+            foreach (var kv in builder.Declarations.Values.ToArray())
             {
                 var node = kv.Item1;
                 var decl = kv.Item2;
@@ -189,18 +194,17 @@ namespace PlatoRoslynSyntaxAnalyzer
                         if (propertyIr.Getter.Body == null)
                         {
                             // TODO: figure out a better way to communicate this 
-                            if (propertyIr.Parent is TypeDeclarationIR typeIr && typeIr.Kind == "class")
+                            if (propertyIr.TypeKind == "class")
                             {
                                 var fieldName = "_" + propertyIr.Name + "_";
+                                // The field is added during the "Normalization" phase 
                                 var fieldIr = new FieldDeclarationIR() { Name = fieldName };
                                 builder.AddIR(null as SyntaxNode, fieldIr);
-                                fieldIr.Parent = typeIr;
-                                fieldIr.Type = propertyIr.Type;
-                                typeIr.Fields.Add(fieldIr);
-                                var fieldRef = new FieldReferenceIR(fieldName, null, fieldIr);
+                                fieldIr.Type = propertyIr.Type.TypedClone();
+                                var fieldRef = fieldIr.ToReference();
                                 var retStatement = new ReturnStatementIR(fieldRef);
                                 propertyIr.Getter.Body = new BlockStatementIR(retStatement);
-                                propertyIr.Field = fieldIr;
+                                propertyIr.Field = fieldIr.ToReference(null);
                             }
                         }
                         break;

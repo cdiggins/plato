@@ -44,6 +44,9 @@ namespace PlatoIR
 
         public override string ToString()
             => $"while ({Condition}) {Body}";
+
+        public override IR Clone()
+            => new WhileStatementIR(Condition.TypedClone(), Body.TypedClone());
     }
 
     public class DoStatementIR : StatementIR
@@ -68,6 +71,9 @@ namespace PlatoIR
 
         public override string ToString()
             => $"do {Body} while ({Condition})";
+
+        public override IR Clone()
+            => new DoStatementIR(Condition.TypedClone(), Body.TypedClone());
     }
 
     public class ExpressionStatementIR : StatementIR
@@ -87,6 +93,9 @@ namespace PlatoIR
         
         public override string ToString()
             => $"{Expression};";
+
+        public override IR Clone()
+            => new ExpressionStatementIR(Expression.TypedClone());
     }
 
     public class IfStatementIR : StatementIR
@@ -113,6 +122,9 @@ namespace PlatoIR
 
         public override string ToString()
             => $"if ({Condition}) {OnTrue} else {OnFalse}";
+
+        public override IR Clone()
+            => new IfStatementIR(Condition.TypedClone(), OnTrue.TypedClone(), OnFalse.TypedClone());
     }
 
     public class ReturnStatementIR : StatementIR
@@ -132,6 +144,9 @@ namespace PlatoIR
 
         public override string ToString()
             => $"{Expression};";
+
+        public override IR Clone()
+            => new ReturnStatementIR(Expression.TypedClone());
     }
 
     public class MultiStatementIR : StatementIR
@@ -152,6 +167,9 @@ namespace PlatoIR
 
         public override string ToString()
             => string.Join("\n", Statements);
+
+        public override IR Clone()
+            => new MultiStatementIR(Statements.Clone());
     }
 
     public class BlockStatementIR : StatementIR
@@ -171,6 +189,9 @@ namespace PlatoIR
 
         public override string ToString()
             => "{" + string.Join("\n", Statements) + "}";
+
+        public override IR Clone()
+            => new BlockStatementIR(Statements.Clone());
     }
 
     public class DeclarationStatementIR : StatementIR
@@ -189,5 +210,8 @@ namespace PlatoIR
 
         public override string ToString()
             => $"{Declaration};";
+
+        public override IR Clone()
+            => new DeclarationStatementIR(Declaration.TypedClone());
     }
 }

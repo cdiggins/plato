@@ -37,6 +37,13 @@ namespace PlatoIR
 
         public override string ToString()
             => $"{Function}({string.Join(",", Args)})";
+
+        public override IR Clone()
+            => new InvocationIR(
+                Function.TypedClone(), 
+                Args.Clone().ToArray()) { 
+                ExpressionType = ExpressionType.TypedClone()
+            };
     }
 
     public class OperationIR : InvocationIR
@@ -44,6 +51,16 @@ namespace PlatoIR
         public OperationIR(string op, MethodReferenceIR function, params ExpressionIR[] args)
             : base(function, args) => Operator = op;
         public string Operator { get; }
+        public new MethodReferenceIR Function => (MethodReferenceIR)base.Function;
+
+        public override IR Clone()
+            => new OperationIR(
+                Operator,
+                Function.TypedClone(),
+                Args.Clone().ToArray())
+            {
+                ExpressionType = ExpressionType.TypedClone()
+            };
     }
 
     public class PrefixOperatorIR : OperationIR
@@ -55,6 +72,15 @@ namespace PlatoIR
 
         public override string ToString()
             => $"{Operator}{Operand}";
+
+        public override IR Clone()
+            => new PrefixOperatorIR(
+                Operator,
+                Function.TypedClone(),
+                Operand.TypedClone())
+            {
+                ExpressionType = ExpressionType.TypedClone()
+            };
     }
 
     public class PostfixOperatorIR : OperationIR
@@ -77,6 +103,9 @@ namespace PlatoIR
 
         public override string ToString()
             => $"{Operand1} {Operator} {Operand2}";
+
+        public override IR Clone()
+            => new BinaryOperatorIR(Operator, Function.TypedClone(), Operand1.TypedClone(), Operand2.TypedClone());
     }
 
     public class TupleIR : ExpressionIR
@@ -92,6 +121,9 @@ namespace PlatoIR
 
         public override string ToString()
             => $"({string.Join(", ", Args)})";
+
+        public override IR Clone()
+            => new TupleIR(Args.Clone().ToArray()) {  ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class ArrayIR : ExpressionIR
@@ -114,6 +146,9 @@ namespace PlatoIR
         
         public override string ToString()
             => $"new {ElementType}[] {{ {string.Join(",", Args)} }}";
+
+        public override IR Clone()
+            => new ArrayIR(Size.TypedClone(), Args.Clone().ToArray()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class CastIR : ExpressionIR
@@ -131,6 +166,9 @@ namespace PlatoIR
 
         public override string ToString()
             => $"({CastType}){CastExpression}";
+
+        public override IR Clone()
+            => new CastIR(CastType.TypedClone(), CastExpression.TypedClone()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class SwitchIR : ExpressionIR
@@ -153,6 +191,9 @@ namespace PlatoIR
 
         public override string ToString()
             => $"{Control} switch {{ {string.Join(",", Arms.Select(arm => $"{arm.Item1} => {arm.Item2}"))}}}";
+
+        public override IR Clone()
+            => new SwitchIR(Control.TypedClone(), Cases.Clone().ToArray()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class DiscardIR : ExpressionIR
@@ -164,6 +205,10 @@ namespace PlatoIR
 
         public override string ToString()
             => $"_";
+
+
+        public override IR Clone()
+            => new DiscardIR() { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class DefaultIR : ExpressionIR
@@ -179,6 +224,9 @@ namespace PlatoIR
 
         public override string ToString()
             => $"default({DefaultType})";
+
+        public override IR Clone()
+            => new DefaultIR(DefaultType.TypedClone()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class BaseIR : ExpressionIR
@@ -190,6 +238,9 @@ namespace PlatoIR
 
         public override string ToString()
             => $"base";
+
+        public override IR Clone()
+            => new BaseIR() { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class ThisIR : ExpressionIR
@@ -201,12 +252,15 @@ namespace PlatoIR
 
         public override string ToString()
             => $"this";
+
+        public override IR Clone()
+            => new ThisIR() { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class SubscriptIR : ExpressionIR
     {
-        public SubscriptIR(ExpressionIR reciever, ExpressionIR arg)
-            : base(reciever, arg) { }
+        public SubscriptIR(ExpressionIR reciever, ExpressionIR subscript)
+            : base(reciever, subscript) { }
 
         public ExpressionIR Reciever => Args[0];
         public ExpressionIR Subscript => Args[1];
@@ -219,6 +273,9 @@ namespace PlatoIR
 
         public override string ToString()
             => $"{Reciever}[{Subscript}]";
+
+        public override IR Clone()
+            => new SubscriptIR(Reciever.TypedClone(), Subscript.TypedClone()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class ThrowIR : ExpressionIR
@@ -237,6 +294,9 @@ namespace PlatoIR
 
         public override string ToString()
             => $"throw {Expression}";
+
+        public override IR Clone()
+            => new ThrowIR(Expression.TypedClone()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class ConditionalIR : ExpressionIR
@@ -256,6 +316,9 @@ namespace PlatoIR
 
         public override string ToString()
             => $"{Condition} ? {OnTrue} : {OnFalse}";
+
+        public override IR Clone()
+            => new TupleIR(Condition.TypedClone(), OnTrue.TypedClone(), OnFalse.TypedClone()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class TypeOfIR : ExpressionIR
@@ -272,6 +335,9 @@ namespace PlatoIR
 
         public override string ToString()
             => $"typeof({TypeArgument})";
+
+        public override IR Clone()
+            => new TypeOfIR(TypeArgument.TypedClone()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class ParenthesizedIR : ExpressionIR
@@ -288,6 +354,10 @@ namespace PlatoIR
 
         public override string ToString()
             => $"({Expression}";
+
+
+        public override IR Clone()
+            => new ParenthesizedIR(Expression.TypedClone()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class NewIR : ExpressionIR
@@ -305,6 +375,9 @@ namespace PlatoIR
 
         public override string ToString()
             => $"new {CreatedType}({string.Join(",", Args)})";
+
+        public override IR Clone()
+            => new NewIR(CreatedType.TypedClone(), Args.Clone().ToArray()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class LambdaIR : ExpressionIR
@@ -322,6 +395,13 @@ namespace PlatoIR
 
         public override string ToString()
             => $"({string.Join(",", Parameters)}) => {Body}";
+
+        public override IR Clone()
+            => new LambdaIR() {
+                CapturedVariables = CapturedVariables.Clone().ToList(),
+                Parameters = Parameters.Clone().ToList(), 
+                Body = Body.TypedClone(),
+                ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class LiteralIR : ExpressionIR
@@ -338,6 +418,9 @@ namespace PlatoIR
 
         public override string ToString()
             => Text;
+
+        public override IR Clone()
+            => new LiteralIR(Text, Value);
     }
 
     public class AssignmentIR : ExpressionIR
@@ -355,6 +438,9 @@ namespace PlatoIR
 
         public override string ToString()
             => $"{LValue} = {RValue}";
+
+        public override IR Clone()
+            => new AssignmentIR(LValue.TypedClone(), RValue.TypedClone()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class LetIR : ExpressionIR
@@ -375,5 +461,8 @@ namespace PlatoIR
 
         public override string ToString()
             => $"{Variable.InitialValue} as var {Variable.Name} in {Expression}";
+
+        public override IR Clone()
+            => new LetIR(Variable.TypedClone(), Expression.TypedClone()) { ExpressionType= ExpressionType.TypedClone() };
     }
 }

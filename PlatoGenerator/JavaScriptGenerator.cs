@@ -735,9 +735,7 @@ namespace PlatoGenerator
             builder = SyntaxToIR.BuildIR(builder, context.Compilation, types);
             var outputCsFile = Path.Combine(thisRepo, "Tests", "PlatoTestOutput", "PlatoTestCode.g.cs");
             var decls = builder
-                .Declarations
-                .Select(d => d.Item2)
-                .OfType<TypeDeclarationIR>()
+                .GetTypes()
                 // TEMP: ignore stuff that is included manually 
                 .Where(td => td.Name != "Program" && td.Name != "Benchmarks")
                 .ToList();

@@ -40,9 +40,9 @@ namespace PlatoIR
             => new MethodDeclarationIR()
             {
                 Parameters = Parameters.Clone().ToList(),
-                Body = Body.Clone() as BlockStatementIR,
+                Body = Body.TypedClone(),
                 TypeParameters = TypeParameters.Clone().ToList(),
-                Type = Type.Clone() as TypeReferenceIR,
+                Type = Type.TypedClone(),
                 IsStatic = IsStatic,
                 Name = Name,
             };
@@ -67,8 +67,8 @@ namespace PlatoIR
         public override IR Clone()
             => new VariableDeclarationIR()
             {
-                InitialValue = InitialValue.Clone() as ExpressionIR,
-                Type = Type.Clone() as TypeReferenceIR,
+                InitialValue = InitialValue.TypedClone(),
+                Type = Type.TypedClone(),
                 IsStatic = IsStatic,
                 Name = Name,
             };
@@ -87,7 +87,7 @@ namespace PlatoIR
         public override IR Clone()
             => new TypeParameterDeclarationIR()
             {
-                Type = Type.Clone() as TypeReferenceIR,
+                Type = Type.TypedClone(),
                 IsStatic = IsStatic,
                 Name = Name,
             };
@@ -113,9 +113,9 @@ namespace PlatoIR
         public override IR Clone()
             => new ParameterDeclarationIR()
             {
-                DefaultValue = DefaultValue.Clone() as ExpressionIR,
+                DefaultValue = DefaultValue.TypedClone(),
                 IsThisParameter = IsThisParameter,
-                Type = Type.Clone() as TypeReferenceIR,
+                Type = Type.TypedClone(),
                 IsStatic = IsStatic,
                 Name = Name,
             };
@@ -127,9 +127,9 @@ namespace PlatoIR
             => new ConstructorDeclarationIr()
             {
                 Parameters = Parameters.Clone().ToList(),
-                Body = Body.Clone() as BlockStatementIR,
+                Body = Body.TypedClone(),
                 TypeParameters = TypeParameters.Clone().ToList(),
-                Type = Type.Clone() as TypeReferenceIR,
+                Type = Type.TypedClone(),
                 IsStatic = IsStatic,
                 Name = Name,
             };
@@ -154,8 +154,8 @@ namespace PlatoIR
         public override IR Clone()
             => new FieldDeclarationIR()
             {
-                InitialValue = InitialValue.Clone() as ExpressionIR,
-                Type = Type.Clone() as TypeReferenceIR,
+                InitialValue = InitialValue.TypedClone(),
+                Type = Type.TypedClone(),
                 IsStatic = IsStatic,
                 Name = Name,
             };
@@ -165,6 +165,7 @@ namespace PlatoIR
     {
         public FieldReferenceIR Field { get; set; }
         public MethodDeclarationIR Getter { get; set; }
+        public string TypeKind { get; set; }
 
         public override void Visit(Func<IR, bool> action)
         {
@@ -178,9 +179,9 @@ namespace PlatoIR
         public override IR Clone()
             => new PropertyDeclarationIR()
             {
-                Field = Field.Clone() as FieldReferenceIR,
-                Getter = Getter.Clone() as MethodDeclarationIR,
-                Type = Type.Clone() as TypeReferenceIR,
+                Field = Field.TypedClone(),
+                Getter = Getter.TypedClone(),
+                Type = Type.TypedClone(),
                 IsStatic = IsStatic,
                 Name = Name,
             };
@@ -202,8 +203,8 @@ namespace PlatoIR
         public override IR Clone()
             => new IndexerDeclarationIR()
             {
-                Getter = Getter.Clone() as MethodDeclarationIR,
-                Type = Type.Clone() as TypeReferenceIR,
+                Getter = Getter.TypedClone(),
+                Type = Type.TypedClone(),
                 IsStatic = IsStatic,
                 Name = Name,
             };
@@ -215,9 +216,9 @@ namespace PlatoIR
             => new OperationDeclarationIR()
             {
                 Parameters = Parameters.Clone().ToList(),
-                Body = Body.Clone() as BlockStatementIR,
+                Body = Body.TypedClone(),
                 TypeParameters = TypeParameters.Clone().ToList(),
-                Type = Type.Clone() as TypeReferenceIR,
+                Type = Type.TypedClone(),
                 IsStatic = IsStatic,
                 Name = Name,
             };
@@ -287,7 +288,7 @@ namespace PlatoIR
                 Indexers = Indexers.Clone().ToList(),
                 Operations = Operations.Clone().ToList(),
                 TypeParameters = TypeParameters.Clone().ToList(),
-                Type = Type.Clone() as TypeReferenceIR,
+                Type = Type.TypedClone(),
                 IsStatic = IsStatic,
                 Name = Name,
             };
@@ -310,7 +311,7 @@ namespace PlatoIR
             {
                 Usings = Usings.Clone().ToList(),
                 Types = Types.Clone().ToList(),
-                Type = Type.Clone() as TypeReferenceIR,
+                Type = Type.TypedClone(),
                 IsStatic = IsStatic,
                 Name = Name,
             };
