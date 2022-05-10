@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PlatoIR
@@ -8,9 +9,23 @@ namespace PlatoIR
         protected ReferenceIR(string name, ExpressionIR receiver, IEnumerable<TypeReferenceIR> typeArgs) =>
             (Name, Receiver, TypeArguments) = (name ?? "#unknown", receiver, typeArgs?.ToList() ?? new List<TypeReferenceIR>());
         public string Name { get; }
-        public ExpressionIR Receiver { get; }
-        public List<TypeReferenceIR> TypeArguments { get; }
+        public ExpressionIR Receiver { get; set; }
+        public List<TypeReferenceIR> TypeArguments { get; set; }
         public abstract DeclarationIR Declaration { get; }
+
+        public override void Visit(Func<IR, bool> action)
+        {
+            action(this);
+        }
+
+        public string TypeArgumentsString =>
+            TypeArguments?.Count > 0 ? $"<{string.Join(", ", TypeArguments)}>" : "";
+
+        public string ReceieverString =>
+            Receiver != null ? $"{Receiver}." : "";
+
+        public override string ToString()
+            => $"{ReceieverString}{Name}{TypeArgumentsString}";
     }
 
     public class UnknownReferenceIR : ReferenceIR
@@ -24,11 +39,12 @@ namespace PlatoIR
 
     public class NamespaceReferenceIR : ReferenceIR
     {
-        public NamespaceReferenceIR(string name, ExpressionIR reciever)
+        public NamespaceReferenceIR(string name, ExpressionIR reciever, NamespaceDeclarationIR namespaceDeclaration)
             : base(name, reciever, null)
         { }
 
-        public override DeclarationIR Declaration => null;
+        public NamespaceDeclarationIR Namespace { get; }
+        public override DeclarationIR Declaration => Namespace;
     }
 
     public class PropertyReferenceIR : ReferenceIR
@@ -66,6 +82,9 @@ namespace PlatoIR
         public override DeclarationIR Declaration 
             => TypeDeclaration as DeclarationIR ?? TypeParameterDeclaration;
         public bool IsVoid => Name.ToLowerInvariant() == "void";
+
+        public override string ToString()
+            => IsVoid ? "void" : base.ToString();
     }
 
     public class VariableReferenceIR : ReferenceIR

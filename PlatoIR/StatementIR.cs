@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace PlatoIR
 {
-    public class StatementIR : IR
+    public abstract class StatementIR : IR
     {
         public virtual IEnumerable<ExpressionIR> GetExpressions() 
             => Enumerable.Empty<ExpressionIR>();
@@ -34,6 +34,16 @@ namespace PlatoIR
 
         public override IEnumerable<StatementIR> GetStatements()
             => Enumerable.Repeat(Body, 1);
+
+        public override void Visit(Func<IR, bool> action)
+        {
+            if (!action(this)) return;
+            Body?.Visit(action);
+            Condition?.Visit(action);
+        }
+
+        public override string ToString()
+            => $"while ({Condition}) {Body}";
     }
 
     public class DoStatementIR : StatementIR
@@ -48,6 +58,16 @@ namespace PlatoIR
 
         public override IEnumerable<StatementIR> GetStatements()
             => Enumerable.Repeat(Body, 1);
+
+        public override void Visit(Func<IR, bool> action)
+        {
+            if (!action(this)) return;
+            Body?.Visit(action);
+            Condition?.Visit(action);
+        }
+
+        public override string ToString()
+            => $"do {Body} while ({Condition})";
     }
 
     public class ExpressionStatementIR : StatementIR
@@ -58,6 +78,15 @@ namespace PlatoIR
 
         public override IEnumerable<ExpressionIR> GetExpressions() 
             => Enumerable.Repeat(Expression, 1);
+
+        public override void Visit(Func<IR, bool> action)
+        {
+            if (!action(this)) return;
+            Expression?.Visit(action);
+        }
+        
+        public override string ToString()
+            => $"{Expression};";
     }
 
     public class IfStatementIR : StatementIR
@@ -73,6 +102,17 @@ namespace PlatoIR
 
         public override IEnumerable<StatementIR> GetStatements()
             => new[] { OnTrue, OnFalse };
+
+        public override void Visit(Func<IR, bool> action)
+        {
+            if (!action(this)) return;
+            Condition?.Visit(action);
+            OnTrue?.Visit(action);
+            OnFalse?.Visit(action);
+        }
+
+        public override string ToString()
+            => $"if ({Condition}) {OnTrue} else {OnFalse}";
     }
 
     public class ReturnStatementIR : StatementIR
@@ -83,6 +123,15 @@ namespace PlatoIR
 
         public override IEnumerable<ExpressionIR> GetExpressions() 
             => Enumerable.Repeat(Expression, 1);
+
+        public override void Visit(Func<IR, bool> action)
+        {
+            if (!action(this)) return;
+            Expression?.Visit(action);
+        }
+
+        public override string ToString()
+            => $"{Expression};";
     }
 
     public class MultiStatementIR : StatementIR
@@ -91,9 +140,18 @@ namespace PlatoIR
             => Statements = statements.ToList();
         public MultiStatementIR(IEnumerable<StatementIR> statements)
             : this(statements.ToArray()) { }
-        public List<StatementIR> Statements { get; }
+        public List<StatementIR> Statements { get; set; }
         public override IEnumerable<StatementIR> GetStatements() 
             => Statements;
+
+        public override void Visit(Func<IR, bool> action)
+        {
+            if (!action(this)) return;
+            Statements?.Visit(action);
+        }
+
+        public override string ToString()
+            => string.Join("\n", Statements);
     }
 
     public class BlockStatementIR : StatementIR
@@ -102,8 +160,17 @@ namespace PlatoIR
             => Statements = statements.ToList();
         public BlockStatementIR(IEnumerable<StatementIR> statements)
             : this(statements.ToArray()) {}
-        public List<StatementIR> Statements { get; }
+        public List<StatementIR> Statements { get; set; }
         public override IEnumerable<StatementIR> GetStatements() => Statements;
+
+        public override void Visit(Func<IR, bool> action)
+        {
+            if (!action(this)) return;
+            Statements?.Visit(action);
+        }
+
+        public override string ToString()
+            => "{" + string.Join("\n", Statements) + "}";
     }
 
     public class DeclarationStatementIR : StatementIR
@@ -113,5 +180,14 @@ namespace PlatoIR
         public DeclarationIR Declaration { get; }
 
         public override IEnumerable<ExpressionIR> GetExpressions() => Declaration.Expressions;
+
+        public override void Visit(Func<IR, bool> action)
+        {
+            if (!action(this)) return;
+            Declaration?.Visit(action);
+        }
+
+        public override string ToString()
+            => $"{Declaration};";
     }
 }

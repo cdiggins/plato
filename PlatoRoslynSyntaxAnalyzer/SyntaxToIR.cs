@@ -14,20 +14,15 @@ namespace PlatoRoslynSyntaxAnalyzer
     public static class SyntaxToIR
     {
         public static IRBuilder BuildIR(this IRBuilder builder, Compilation compilation, IEnumerable<PlatoTypeSyntax> syntaxes)
-        {
-            var r = builder.StoreDeclarations(compilation, syntaxes);
-            r = builder.CreateDefinitions(compilation, syntaxes);
-            r = builder.NormalizeIR(compilation);
-            return r;
-        }
+            => builder.StoreDeclarations(compilation, syntaxes)
+                .CreateDefinitions(compilation, syntaxes)
+                .NormalizeIR(compilation);
 
         public static IRBuilder NormalizeIR(this IRBuilder builder, Compilation compilation)
         {
             // TODO: remove tuples from lvalues (make them all single assignments)
-            // TODO: update auto property sets
             // TODO: add default constructor calls
             // TODO: fix the type-names
-            // TODO: find a way to visit sub-expressions etc. 
             return builder;
         }
 
@@ -515,7 +510,7 @@ namespace PlatoRoslynSyntaxAnalyzer
         }
 
         public static NamespaceReferenceIR ToReference(this INamespaceSymbol nameSpace, IRBuilder builder)
-            => new NamespaceReferenceIR(nameSpace.Name, GetReceiver(nameSpace, builder));
+            => new NamespaceReferenceIR(nameSpace.Name, GetReceiver(nameSpace, builder), builder.GetDeclarationIR<NamespaceDeclarationIR>(nameSpace));
 
         // TODO: validate
         public static TypeReferenceIR ToTypeReference(this ISymbol symbol, IRBuilder builder)

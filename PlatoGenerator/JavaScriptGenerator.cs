@@ -722,10 +722,7 @@ namespace PlatoGenerator
         {
             var types = context.Compilation.SyntaxTrees.GetPlatoTypes();
 
-
             var inputFile = GeneratedFile;
-
-
 
             //var thisRepo = @"C:\Users\Acer\source\repos\Plato";
             //var thisRepo = @"C:\git\plato\";
@@ -734,31 +731,33 @@ namespace PlatoGenerator
             var outputFile = Path.Combine(thisRepo, "JavaScriptTest", "output.html");
             var templateFile = Path.Combine(thisRepo, "PlatoGenerator", "input.html");
             
-            /*
-            CreateLookups(context, types);
-
-            using (sw = new StreamWriter(File.Create(GeneratedFile)))
-            {
-                foreach (var t in types)
-                {
-                    OutputType(t);
-                }
-            }
-
-            var inputText = File.ReadAllText(inputFile);
-            var templateText = File.ReadAllText(templateFile);
-            var outputText = templateText.Replace("{{REPLACEME}}", inputText);
-            File.WriteAllText(outputFile, outputText);
-            */
-
             var builder = new IRBuilder();
             builder = SyntaxToIR.BuildIR(builder, context.Compilation, types);
             var outputCsFile = Path.Combine(thisRepo, "Tests", "PlatoTestOutput", "PlatoTestCode.g.cs");
-            var decls = builder.Declarations.Select(d => d.Item2).OfType<TypeDeclarationIR>().ToList();
+            var decls = builder
+                .Declarations
+                .Select(d => d.Item2)
+                .OfType<TypeDeclarationIR>()
+                // TEMP: ignore stuff that is included manually 
+                .Where(td => td.Name != "Program" && td.Name != "Benchmarks")
+                .ToList();
+
+            // Optimize 
+            var optimizer = new IROptimizer();
+            foreach (var decl in decls)
+            {
+                decl.Visit(optimizer.Optimize);
+            }
+
+            // Inline methods 
+            var inliner = new IRMethodInliner();
+            decls = decls.Rewrite(inliner.Inline).ToList();
+            
             using (sw = new StreamWriter(File.Create(outputCsFile)))
             {
                 var srlzr = new IRSerializer(sw);
                 // TODO: this is a hack until I add proper namespace support. 
+                sw.WriteLine("using System.Runtime.CompilerServices;");
                 sw.WriteLine("namespace PlatoTest {");
                 srlzr.Write(decls, "");
                 sw.WriteLine("}");

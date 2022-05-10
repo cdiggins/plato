@@ -1,35 +1,7 @@
+using System.Runtime.CompilerServices;
 namespace PlatoTest {
 //==begin==//
-public readonly struct Benchmarks
-{
-  /*
-  [Benchmark]
-        public float[] Torus()
-            => Extensions.Torus(500, 100, 1, 0.2f).ToTriMesh().FaceNormals().ToFloatArray();
-  */
-  public System.Single[] Torus()
-  {
-    return PlatoTest.Extensions.Torus(500, 100, 1, 0.2f).ToTriMesh().FaceNormals().ToFloatArray();
-    }
-  }
-//==end==//
-//==begin==//
-public static readonly struct Program
-{
-  /*
-  public static void Main()
-        {
-            var _ = BenchmarkRunner.Run<Benchmarks>();
-        }
-  */
-  public static void Main()
-  {
-    BenchmarkDotNet.Reports.Summary _  = BenchmarkDotNet.Running.BenchmarkRunner.Run<PlatoTest.Benchmarks, PlatoTest.Benchmarks>();
-    }
-  }
-//==end==//
-//==begin==//
-public readonly struct IArray<T>
+public interface IArray<T>
 {
   /*
   int Count { get; }
@@ -52,8 +24,8 @@ public readonly struct IArray<T>
 //==begin==//
 public readonly struct Array<T> : PlatoTest.IArray<T>
 {
-  public System.Func<System.Int32, T> _Func_ ;
-  public System.Int32 _Count_ ;
+  public readonly System.Func<System.Int32, T> _Func_ ;
+  public readonly System.Int32 _Count_ ;
   /*
   public Array(int count, Func<int, T> func) => (Count, Func) = (count, func);
   */
@@ -105,11 +77,11 @@ public readonly struct Vector2
   /*
   X
   */
-  public System.Single X ;
+  public readonly System.Single X ;
   /*
   Y
   */
-  public System.Single Y ;
+  public readonly System.Single Y ;
   /*
   public Vector2(float x = 0, float y = 0) => (X, Y) = (x, y);
   */
@@ -138,7 +110,16 @@ public readonly struct Vector2
   {
   get
       {
-        return Dot(this);
+        /*
+        <generated>
+        */
+        System.Single result_0  = default(System.Single);
+        {
+          {
+            result_0 = X*this.X+this.Y*Y;
+            }
+          }
+        return result_0;
         }
       }
   
@@ -160,65 +141,74 @@ public readonly struct Vector2
   {
   get
       {
-        return this/Magnitude;
+        /*
+        <generated>
+        */
+        PlatoTest.Vector2 result_1  = default(PlatoTest.Vector2);
+        {
+          {
+            result_1 = new PlatoTest.Vector2(this.X/Magnitude.X, this.Y/Magnitude.Y);
+            }
+          }
+        return result_1;
         }
       }
   
   /*
   public Vector2 WithX(float x) => new(x, Y);
   */
-  public PlatoTest.Vector2 WithX(System.Single x)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public PlatoTest.Vector2 _inlined_WithX(System.Single x)
   {
     return new PlatoTest.Vector2(x, Y);
     }
   /*
   public Vector2 WithY(float y) => new(X, y);
   */
-  public PlatoTest.Vector2 WithY(System.Single y)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public PlatoTest.Vector2 _inlined_WithY(System.Single y)
   {
     return new PlatoTest.Vector2(X, y);
     }
   /*
   public float Dot(Vector2 v) => X * v.X + v.Y * Y;
   */
-  public System.Single Dot(PlatoTest.Vector2 v)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public System.Single _inlined_Dot(PlatoTest.Vector2 v)
   {
-    return X*v.X+v.Y*Y;
+    return X*this.X+this.Y*Y;
     }
   /*
   public override string ToString() => "Vector2(" + X  + "," + Y + ")";
   */
-  public System.String ToString()
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public System.String _inlined_ToString()
   {
     return "Vector2("+X+","+Y+")";
     }
   /*
   public static implicit operator Vector2(float v) => new(v, v);
   */
-  public static implicit operator PlatoTest.Vector2(System.Single v)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static implicit operator PlatoTest.Vector2(System.Single v)
   {
     return new PlatoTest.Vector2(v, v);
     }
   /*
   public static Vector2 operator +(Vector2 q, Vector2 r) => new(q.X + r.X, q.Y + r.Y);
   */
-  public static PlatoTest.Vector2 operator +(PlatoTest.Vector2 q, PlatoTest.Vector2 r)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.Vector2 operator +(PlatoTest.Vector2 q, PlatoTest.Vector2 r)
   {
     return new PlatoTest.Vector2(q.X+r.X, q.Y+r.Y);
     }
   /*
   public static Vector2 operator *(Vector2 q, Vector2 r) => new(q.X * r.X, q.Y * r.Y);
   */
-  public static PlatoTest.Vector2 operator *(PlatoTest.Vector2 q, PlatoTest.Vector2 r)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.Vector2 operator *(PlatoTest.Vector2 q, PlatoTest.Vector2 r)
   {
     return new PlatoTest.Vector2(q.X*r.X, q.Y*r.Y);
     }
   /*
   public static Vector2 operator /(Vector2 q, Vector2 r) => new(q.X / r.X, q.Y / r.Y);
   */
-  public static PlatoTest.Vector2 operator /(PlatoTest.Vector2 q, PlatoTest.Vector2 r)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.Vector2 operator /(PlatoTest.Vector2 q, PlatoTest.Vector2 r)
   {
-    return new PlatoTest.Vector2(q.X/r.X, q.Y/r.Y);
+    return new PlatoTest.Vector2(this.X/Magnitude.X, this.Y/Magnitude.Y);
     }
   }
 //==end==//
@@ -228,15 +218,15 @@ public readonly struct Vector3 : PlatoTest.IArray<System.Single>
   /*
   X
   */
-  public System.Single X ;
+  public readonly System.Single X ;
   /*
   Y
   */
-  public System.Single Y ;
+  public readonly System.Single Y ;
   /*
   Z
   */
-  public System.Single Z ;
+  public readonly System.Single Z ;
   /*
   public Vector3(float x = 0, float y = 0, float z = 0) => (X, Y, Z) = (x, y, z);
   */
@@ -266,7 +256,16 @@ public readonly struct Vector3 : PlatoTest.IArray<System.Single>
   {
   get
       {
-        return Dot(this);
+        /*
+        <generated>
+        */
+        System.Single result_2  = default(System.Single);
+        {
+          {
+            result_2 = X*this.X+this.Y*Y+Z*this.Z;
+            }
+          }
+        return result_2;
         }
       }
   
@@ -288,7 +287,16 @@ public readonly struct Vector3 : PlatoTest.IArray<System.Single>
   {
   get
       {
-        return this/Magnitude;
+        /*
+        <generated>
+        */
+        PlatoTest.Vector3 result_3  = default(PlatoTest.Vector3);
+        {
+          {
+            result_3 = new PlatoTest.Vector3(this.X/Magnitude.X, this.Y/Magnitude.Y, this.Z/Magnitude.Z);
+            }
+          }
+        return result_3;
         }
       }
   
@@ -306,35 +314,35 @@ public readonly struct Vector3 : PlatoTest.IArray<System.Single>
   /*
   public Vector3 WithX(float x) => new(x, Y, Z);
   */
-  public PlatoTest.Vector3 WithX(System.Single x)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public PlatoTest.Vector3 _inlined_WithX(System.Single x)
   {
     return new PlatoTest.Vector3(x, Y, Z);
     }
   /*
   public Vector3 WithY(float y) => new(X, y, Z);
   */
-  public PlatoTest.Vector3 WithY(System.Single y)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public PlatoTest.Vector3 _inlined_WithY(System.Single y)
   {
     return new PlatoTest.Vector3(X, y, Z);
     }
   /*
   public Vector3 WithZ(float z) => new(X, Y, z);
   */
-  public PlatoTest.Vector3 WithZ(System.Single z)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public PlatoTest.Vector3 _inlined_WithZ(System.Single z)
   {
     return new PlatoTest.Vector3(X, Y, z);
     }
   /*
   public float Dot(Vector3 v) => X * v.X + v.Y * Y + Z * v.Z;
   */
-  public System.Single Dot(PlatoTest.Vector3 v)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public System.Single _inlined_Dot(PlatoTest.Vector3 v)
   {
-    return X*v.X+v.Y*Y+Z*v.Z;
+    return X*this.X+this.Y*Y+Z*this.Z;
     }
   /*
   public override string ToString() => "Vector3(" + X + "," + Y + "," + Z + ")";
   */
-  public System.String ToString()
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public System.String _inlined_ToString()
   {
     return "Vector3("+X+","+Y+","+Z+")";
     }
@@ -342,9 +350,9 @@ public readonly struct Vector3 : PlatoTest.IArray<System.Single>
   public Vector3 Cross(Vector3 v)
             => new(Y* v.Z - Z* v.Y, Z* v.X - X* v.Z, X* v.Y - Y* v.X);
   */
-  public PlatoTest.Vector3 Cross(PlatoTest.Vector3 v)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public PlatoTest.Vector3 _inlined_Cross(PlatoTest.Vector3 v)
   {
-    return new PlatoTest.Vector3(Y*v.Z-Z*v.Y, Z*v.X-X*v.Z, X*v.Y-Y*v.X);
+    return new PlatoTest.Vector3(Y*v2.Z-Z*v2.Y, Z*v2.X-X*v2.Z, X*v2.Y-Y*v2.X);
     }
   /*
   public float this[int i] => i switch
@@ -373,37 +381,37 @@ public readonly struct Vector3 : PlatoTest.IArray<System.Single>
   /*
   public static implicit operator Vector3(float v) => new(v, v, v);
   */
-  public static implicit operator PlatoTest.Vector3(System.Single v)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static implicit operator PlatoTest.Vector3(System.Single v)
   {
     return new PlatoTest.Vector3(v, v, v);
     }
   /*
   public static Vector3 operator +(Vector3 q, Vector3 r) => new(q.X + r.X, q.Y + r.Y, q.Z + r.Z);
   */
-  public static PlatoTest.Vector3 operator +(PlatoTest.Vector3 q, PlatoTest.Vector3 r)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.Vector3 operator +(PlatoTest.Vector3 q, PlatoTest.Vector3 r)
   {
-    return new PlatoTest.Vector3(q.X+r.X, q.Y+r.Y, q.Z+r.Z);
+    return new PlatoTest.Vector3(x.X+x.X, x.Y+x.Y, x.Z+x.Z);
     }
   /*
   public static Vector3 operator -(Vector3 q, Vector3 r) => new(q.X - r.X, q.Y - r.Y, q.Z - r.Z);
   */
-  public static PlatoTest.Vector3 operator -(PlatoTest.Vector3 q, PlatoTest.Vector3 r)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.Vector3 operator -(PlatoTest.Vector3 q, PlatoTest.Vector3 r)
   {
-    return new PlatoTest.Vector3(q.X-r.X, q.Y-r.Y, q.Z-r.Z);
+    return new PlatoTest.Vector3(b.X-a.X, b.Y-a.Y, b.Z-a.Z);
     }
   /*
   public static Vector3 operator *(Vector3 q, Vector3 r) => new(q.X * r.X, q.Y * r.Y, q.Z * r.Z);
   */
-  public static PlatoTest.Vector3 operator *(PlatoTest.Vector3 q, PlatoTest.Vector3 r)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.Vector3 operator *(PlatoTest.Vector3 q, PlatoTest.Vector3 r)
   {
     return new PlatoTest.Vector3(q.X*r.X, q.Y*r.Y, q.Z*r.Z);
     }
   /*
   public static Vector3 operator /(Vector3 q, Vector3 r) => new(q.X / r.X, q.Y / r.Y, q.Z / r.Z);
   */
-  public static PlatoTest.Vector3 operator /(PlatoTest.Vector3 q, PlatoTest.Vector3 r)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.Vector3 operator /(PlatoTest.Vector3 q, PlatoTest.Vector3 r)
   {
-    return new PlatoTest.Vector3(q.X/r.X, q.Y/r.Y, q.Z/r.Z);
+    return new PlatoTest.Vector3(this.X/Magnitude.X, this.Y/Magnitude.Y, this.Z/Magnitude.Z);
     }
   }
 //==end==//
@@ -413,15 +421,15 @@ public readonly struct Int3 : PlatoTest.IArray<System.Int32>
   /*
   X
   */
-  public System.Int32 X ;
+  public readonly System.Int32 X ;
   /*
   Y
   */
-  public System.Int32 Y ;
+  public readonly System.Int32 Y ;
   /*
   Z
   */
-  public System.Int32 Z ;
+  public readonly System.Int32 Z ;
   /*
   public Int3(int x = 0, int y = 0, int z = 0) => (X, Y, Z) = (x, y, z);
   */
@@ -458,28 +466,28 @@ public readonly struct Int3 : PlatoTest.IArray<System.Int32>
   /*
   public Int3 WithX(int x) => new(x, Y, Z);
   */
-  public PlatoTest.Int3 WithX(System.Int32 x)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public PlatoTest.Int3 _inlined_WithX(System.Int32 x)
   {
     return new PlatoTest.Int3(x, Y, Z);
     }
   /*
   public Int3 WithY(int y) => new(X, y, Z);
   */
-  public PlatoTest.Int3 WithY(System.Int32 y)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public PlatoTest.Int3 _inlined_WithY(System.Int32 y)
   {
     return new PlatoTest.Int3(X, y, Z);
     }
   /*
   public Int3 WithZ(int z) => new(X, Y, z);
   */
-  public PlatoTest.Int3 WithZ(System.Int32 z)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public PlatoTest.Int3 _inlined_WithZ(System.Int32 z)
   {
     return new PlatoTest.Int3(X, Y, z);
     }
   /*
   public override string ToString() => "Int3(" + X + "," + Y + "," + Z + ")";
   */
-  public System.String ToString()
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public System.String _inlined_ToString()
   {
     return "Int3("+X+","+Y+","+Z+")";
     }
@@ -515,19 +523,19 @@ public readonly struct Int4 : PlatoTest.IArray<System.Int32>
   /*
   X
   */
-  public System.Int32 X ;
+  public readonly System.Int32 X ;
   /*
   Y
   */
-  public System.Int32 Y ;
+  public readonly System.Int32 Y ;
   /*
   Z
   */
-  public System.Int32 Z ;
+  public readonly System.Int32 Z ;
   /*
   W
   */
-  public System.Int32 W ;
+  public readonly System.Int32 W ;
   /*
   public Int4(int x = 0, int y = 0, int z = 0, int w = 0) => (X, Y, Z, W) = (x, y, z, w);
   */
@@ -565,35 +573,35 @@ public readonly struct Int4 : PlatoTest.IArray<System.Int32>
   /*
   public Int4 WithX(int x) => new(x, Y, Z, W);
   */
-  public PlatoTest.Int4 WithX(System.Int32 x)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public PlatoTest.Int4 _inlined_WithX(System.Int32 x)
   {
     return new PlatoTest.Int4(x, Y, Z, W);
     }
   /*
   public Int4 WithY(int y) => new(X, y, Z, W);
   */
-  public PlatoTest.Int4 WithY(System.Int32 y)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public PlatoTest.Int4 _inlined_WithY(System.Int32 y)
   {
     return new PlatoTest.Int4(X, y, Z, W);
     }
   /*
   public Int4 WithZ(int z) => new(X, Y, z, W);
   */
-  public PlatoTest.Int4 WithZ(System.Int32 z)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public PlatoTest.Int4 _inlined_WithZ(System.Int32 z)
   {
     return new PlatoTest.Int4(X, Y, z, W);
     }
   /*
   public Int4 WithW(int w) => new(X, Y, Z, w);
   */
-  public PlatoTest.Int4 WithW(System.Int32 w)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public PlatoTest.Int4 _inlined_WithW(System.Int32 w)
   {
     return new PlatoTest.Int4(X, Y, Z, w);
     }
   /*
   public override string ToString() => "Int4(" + X + "," + Y + "," + Z + "," + W + ")";
   */
-  public System.String ToString()
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public System.String _inlined_ToString()
   {
     return "Int4("+X+","+Y+","+Z+","+W+")";
     }
@@ -628,9 +636,9 @@ public readonly struct Int4 : PlatoTest.IArray<System.Int32>
 //==begin==//
 public readonly struct Points
 {
-  public PlatoTest.IArray<PlatoTest.Vector3> _Positions_ ;
-  public PlatoTest.IArray<PlatoTest.Vector2> _UVs_ ;
-  public PlatoTest.IArray<PlatoTest.Vector3> _Normals_ ;
+  public readonly PlatoTest.IArray<PlatoTest.Vector3> _Positions_ ;
+  public readonly PlatoTest.IArray<PlatoTest.Vector2> _UVs_ ;
+  public readonly PlatoTest.IArray<PlatoTest.Vector3> _Normals_ ;
   /*
   public Points(IArray<Vector3> positions, IArray<Vector2> uvs, IArray<Vector3> normals)
             => (Positions, UVs, Normals) = (positions, uvs, normals);
@@ -681,8 +689,8 @@ public readonly struct Points
 //==begin==//
 public readonly struct TriMesh
 {
-  public PlatoTest.Points _Points_ ;
-  public PlatoTest.IArray<PlatoTest.Int3> _Faces_ ;
+  public readonly PlatoTest.Points _Points_ ;
+  public readonly PlatoTest.IArray<PlatoTest.Int3> _Faces_ ;
   /*
   public TriMesh(Points points, IArray<Int3> faces)
             => (Points, Faces) = (points, faces);
@@ -721,8 +729,8 @@ public readonly struct TriMesh
 //==begin==//
 public readonly struct QuadMesh
 {
-  public PlatoTest.Points _Points_ ;
-  public PlatoTest.IArray<PlatoTest.Int4> _Faces_ ;
+  public readonly PlatoTest.Points _Points_ ;
+  public readonly PlatoTest.IArray<PlatoTest.Int4> _Faces_ ;
   /*
   public QuadMesh(Points points, IArray<Int4> faces)
             => (Points, Faces) = (points, faces);
@@ -761,9 +769,9 @@ public readonly struct QuadMesh
 //==begin==//
 public readonly struct Triangle
 {
-  public PlatoTest.Vector3 _A_ ;
-  public PlatoTest.Vector3 _B_ ;
-  public PlatoTest.Vector3 _C_ ;
+  public readonly PlatoTest.Vector3 _A_ ;
+  public readonly PlatoTest.Vector3 _B_ ;
+  public readonly PlatoTest.Vector3 _C_ ;
   /*
   public Triangle(Vector3 a, Vector3 b, Vector3 c)
             => (A, B, C) = (a, b, c);
@@ -816,26 +824,35 @@ public readonly struct Triangle
   {
   get
       {
-        return (_B_-_A_).Cross(_C_-_A_).Normal;
+        return (_B_-_A_)._inlined_Cross(_C_-_A_).Normal;
         }
       }
   
   }
 //==end==//
 //==begin==//
-public static readonly struct Extensions
+public static class Extensions
 {
   /*
   public static IArray<T> ToIArray<T>(this IReadOnlyList<T> self)
             => self.Count.Select(i => self[i]);
   */
-  public static PlatoTest.IArray<T> ToIArray<T>(this System.Collections.Generic.IReadOnlyList<T> self)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.IArray<T> _inlined_ToIArray<T>(this System.Collections.Generic.IReadOnlyList<T> self)
   {
-    return self.Count.Select<T>(/* Captured: self*/( i)
-     => {
-        return self[i];
+    /*
+    <generated>
+    */
+    PlatoTest.IArray<T> result_4  = default(PlatoTest.IArray<T>);
+    {
+      {
+        result_4 = new PlatoTest.Array<T>(self.Count, /* Captured: self*/( i)
+         => {
+            return self[i];
+            }
+          );
         }
-      );
+      }
+    return result_4;
     }
   /*
   public static T[] ToArray<T>(this IArray<T> self)
@@ -846,12 +863,12 @@ public static readonly struct Extensions
             return r;
         }
   */
-  public static T[] ToArray<T>(this PlatoTest.IArray<T> self)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static T[] _inlined_ToArray<T>(this PlatoTest.IArray<System.Single> self)
   {
-    T[] r  = new T[self.Count];
+    System.Single[] r  = new System.Single[self.Count];
     {
       System.Int32 i  = 0;
-      while(i<self.Count)
+      while(i<self_7.Count)
       {
           r[i] = self[i];
           ++i;
@@ -863,19 +880,38 @@ public static readonly struct Extensions
   public static float[] ToFloatArray(this IArray<Vector3> self)
             => self.SelectMany(x => x).ToArray();
   */
-  public static System.Single[] ToFloatArray(this PlatoTest.IArray<PlatoTest.Vector3> self)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static System.Single[] _inlined_ToFloatArray(this PlatoTest.IArray<PlatoTest.Vector3> self)
   {
-    return self.SelectMany<PlatoTest.Vector3, System.Single>(/* Captured: */( x)
-     => {
-        return x;
+    /*
+    <generated>
+    */
+    System.Single[] result_6  = default(System.Single[]);
+    {
+      PlatoTest.IArray<System.Single> self_7  = self._inlined_SelectMany<PlatoTest.Vector3, System.Single>(/* Captured: */( x)
+       => {
+          return x;
+          }
+        );
+      {
+        System.Single[] r  = new System.Single[self.Count];
+        {
+          System.Int32 i  = 0;
+          while(i<self_7.Count)
+          {
+              r[i] = self_7[i];
+              ++i;
+              }
+            }
+        result_6 = r;
         }
-      ).ToArray<System.Single>();
+      }
+    return result_6;
     }
   /*
   public static IArray<T> Select<T>(this int count, Func<int, T> func)
             => new Array<T>(count, func);
   */
-  public static PlatoTest.IArray<T> Select<T>(this System.Int32 count, System.Func<System.Int32, T> func)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.IArray<T> _inlined_Select<T>(this System.Int32 count, System.Func<System.Int32, T> func)
   {
     return new PlatoTest.Array<T>(count, func);
     }
@@ -893,15 +929,19 @@ public static readonly struct Extensions
             return r.Count.Select(i => r[i]);
         }
   */
-  public static PlatoTest.IArray<U> SelectMany<T, U>(this PlatoTest.IArray<T> self, System.Func<T, PlatoTest.IArray<U>> func)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.IArray<U> _inlined_SelectMany<T, U>(this PlatoTest.IArray<T> self, System.Func<T, PlatoTest.IArray<U>> func)
   {
-    System.Collections.Generic.List<U> r  = new System.Collections.Generic.List<U>();
+    System.Collections.Generic.List<PlatoTest.Int3> r  = new System.Collections.Generic.List<PlatoTest.Int3>();
     {
       System.Int32 i  = 0;
       while(i<self.Count)
       {
           {
-            PlatoTest.IArray<U> tmp  = func(self[i]);
+            PlatoTest.IArray<PlatoTest.Int3> tmp  = /* Captured: */( f)
+             => {
+                return new PlatoTest.Int3[2]{new PlatoTest.Int3(f.X, f.Y, f.Z), new PlatoTest.Int3(f.Z, f.W, f.X)}._inlined_ToIArray<PlatoTest.Int3>();
+                }
+              (self[i]);
             {
               System.Int32 j  = 0;
               while(j<tmp.Count)
@@ -914,29 +954,51 @@ public static readonly struct Extensions
           ++i;
           }
         }
-    return r.Count.Select<U>(/* Captured: ri*/( i)
-     => {
-        return r[i];
+    /*
+    <generated>
+    */
+    PlatoTest.IArray<PlatoTest.Int3> result_5  = default(PlatoTest.IArray<PlatoTest.Int3>);
+    {
+      {
+        result_5 = new PlatoTest.Array<T>(r.Count, /* Captured: ri*/( i)
+         => {
+            return r[i];
+            }
+          );
         }
-      );
+      }
+    return result_5;
     }
   /*
   public static IArray<U> Select<T, U>(this IArray<T> self, Func<T, U> func)
             => self.Count.Select(i => func(self[i]));
   */
-  public static PlatoTest.IArray<U> Select<T, U>(this PlatoTest.IArray<T> self, System.Func<T, U> func)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.IArray<U> _inlined_Select<T, U>(this PlatoTest.IArray<PlatoTest.Triangle> self, System.Func<T, U> func)
   {
-    return self.Count.Select<U>(/* Captured: selffunc*/( i)
-     => {
-        return func(self[i]);
+    /*
+    <generated>
+    */
+    PlatoTest.IArray<PlatoTest.Triangle> result_8  = default(PlatoTest.IArray<PlatoTest.Triangle>);
+    {
+      {
+        result_8 = new PlatoTest.Array<T>(mesh._Faces_.Count, /* Captured: selffunc*/( i)
+         => {
+            return /* Captured: mesh*/( f)
+             => {
+                return new PlatoTest.Triangle(mesh._Points_._Positions_[f.X], mesh._Points_._Positions_[f.Y], mesh._Points_._Positions_[f.Z]);
+                }
+              (mesh._Faces_[i]);
+            }
+          );
         }
-      );
+      }
+    return result_8;
     }
   /*
   public static float Cos(this float self)
             => MathF.Cos(self);
   */
-  public static System.Single Cos(this System.Single self)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static System.Single _inlined_Cos(this System.Single self)
   {
     return System.MathF.Cos(self);
     }
@@ -944,7 +1006,7 @@ public static readonly struct Extensions
   public static float Sin(this float self)
             => MathF.Sin(self);
   */
-  public static System.Single Sin(this System.Single self)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static System.Single _inlined_Sin(this System.Single self)
   {
     return System.MathF.Sin(self);
     }
@@ -952,7 +1014,7 @@ public static readonly struct Extensions
   public static float UnitToRad(this float self)
             => self * MathF.PI;
   */
-  public static System.Single UnitToRad(this System.Single self)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static System.Single _inlined_UnitToRad(this System.Single self)
   {
     return self*System.MathF.PI;
     }
@@ -960,34 +1022,84 @@ public static readonly struct Extensions
   public static IArray<float> SampleFloats(int count, float max = 1.0f)
             => count.Select(i => max * count);
   */
-  public static PlatoTest.IArray<System.Single> SampleFloats(System.Int32 count, System.Single max = 1.0f)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.IArray<System.Single> _inlined_SampleFloats(System.Int32 count, System.Single max = 1.0f)
   {
-    return count.Select<System.Single>(/* Captured: countmax*/( i)
-     => {
-        return max*count;
+    /*
+    <generated>
+    */
+    PlatoTest.IArray<System.Single> result_9  = default(PlatoTest.IArray<System.Single>);
+    {
+      {
+        result_9 = new PlatoTest.Array<T>(count, /* Captured: countmax*/( i)
+         => {
+            return max*count;
+            }
+          );
         }
-      );
+      }
+    return result_9;
     }
   /*
   public static IArray<Int3> ToTriangleIndices(this IArray<Int4> self)
             => self.SelectMany(f => new[] { new Int3(f.X, f.Y, f.Z), new Int3(f.Z, f.W, f.X) }.ToIArray());
   */
-  public static PlatoTest.IArray<PlatoTest.Int3> ToTriangleIndices(this PlatoTest.IArray<PlatoTest.Int4> self)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.IArray<PlatoTest.Int3> _inlined_ToTriangleIndices(this PlatoTest.IArray<PlatoTest.Int4> self)
   {
-    return self.SelectMany<PlatoTest.Int4, PlatoTest.Int3>(/* Captured: */( f)
-     => {
-        return new PlatoTest.Int3[2]{new PlatoTest.Int3(f.X, f.Y, f.Z), new PlatoTest.Int3(f.Z, f.W, f.X)}.ToIArray<PlatoTest.Int3>();
+    /*
+    <generated>
+    */
+    PlatoTest.IArray<PlatoTest.Int3> result_10  = default(PlatoTest.IArray<PlatoTest.Int3>);
+    {
+      {
+        System.Collections.Generic.List<PlatoTest.Int3> r  = new System.Collections.Generic.List<PlatoTest.Int3>();
+        {
+          System.Int32 i  = 0;
+          while(i<self.Count)
+          {
+              {
+                PlatoTest.IArray<PlatoTest.Int3> tmp  = /* Captured: */( f)
+                 => {
+                    return new PlatoTest.Int3[2]{new PlatoTest.Int3(f.X, f.Y, f.Z), new PlatoTest.Int3(f.Z, f.W, f.X)}._inlined_ToIArray<PlatoTest.Int3>();
+                    }
+                  (self[i]);
+                {
+                  System.Int32 j  = 0;
+                  while(j<tmp.Count)
+                  {
+                      r.Add(tmp[j]);
+                      ++j;
+                      }
+                    }
+                }
+              ++i;
+              }
+            }
+        /*
+        <generated>
+        */
+        PlatoTest.IArray<PlatoTest.Int3> result_5  = default(PlatoTest.IArray<PlatoTest.Int3>);
+        {
+          {
+            result_5 = new PlatoTest.Array<T>(r.Count, /* Captured: ri*/( i)
+             => {
+                return r[i];
+                }
+              );
+            }
+          }
+        result_10 = result_5;
         }
-      );
+      }
+    return result_10;
     }
   /*
   public static QuadMesh ToQuadMesh(this Func<Vector2, Vector3> func, int rows, int cols)
             => new(ComputeQuadStripPoints(func, rows, cols),
                 ComputeQuadStripIndices(rows, cols));
   */
-  public static PlatoTest.QuadMesh ToQuadMesh(this System.Func<PlatoTest.Vector2, PlatoTest.Vector3> func, System.Int32 rows, System.Int32 cols)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.QuadMesh _inlined_ToQuadMesh(this System.Func<PlatoTest.Vector2, PlatoTest.Vector3> func, System.Int32 rows, System.Int32 cols)
   {
-    return new PlatoTest.QuadMesh(ComputeQuadStripPoints(func, rows, cols), ComputeQuadStripIndices(rows, cols));
+    return new PlatoTest.QuadMesh(_inlined_ComputeQuadStripPoints(func, rows, cols), _inlined_ComputeQuadStripIndices(rows, cols));
     }
   /*
   public static Vector3 UVToNormal(this Vector2 uv, Func<Vector2, Vector3> func, float epsilon = 0.00001f)
@@ -1002,26 +1114,96 @@ public static readonly struct Extensions
             return r.Normal;
         }
   */
-  public static PlatoTest.Vector3 UVToNormal(this PlatoTest.Vector2 uv, System.Func<PlatoTest.Vector2, PlatoTest.Vector3> func, System.Single epsilon = 0.00001f)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.Vector3 _inlined_UVToNormal(this PlatoTest.Vector2 uv, System.Func<PlatoTest.Vector2, PlatoTest.Vector3> func, System.Single epsilon = 0.00001f)
   {
-    PlatoTest.Vector3 a  = func(new PlatoTest.Vector2(uv.X+epsilon, uv.Y));
-    PlatoTest.Vector3 b  = func(new PlatoTest.Vector2(uv.X-epsilon, uv.Y));
-    PlatoTest.Vector3 c  = func(new PlatoTest.Vector2(uv.X, uv.Y+epsilon));
-    PlatoTest.Vector3 d  = func(new PlatoTest.Vector2(uv.X, uv.Y-epsilon));
-    PlatoTest.Vector3 v1  = b-a;
-    PlatoTest.Vector3 v2  = d-c;
-    PlatoTest.Vector3 r  = v1.Cross(v2);
+    PlatoTest.Vector3 a  = func(new PlatoTest.Vector2(uv.X+0.00001f, uv.Y));
+    PlatoTest.Vector3 b  = func(new PlatoTest.Vector2(uv.X-0.00001f, uv.Y));
+    PlatoTest.Vector3 c  = func(new PlatoTest.Vector2(uv.X, uv.Y+0.00001f));
+    PlatoTest.Vector3 d  = func(new PlatoTest.Vector2(uv.X, uv.Y-0.00001f));
+    /*
+    <generated>
+    */
+    PlatoTest.Vector3 result_11  = default(PlatoTest.Vector3);
+    {
+      {
+        result_11 = new PlatoTest.Vector3(b.X-a.X, b.Y-a.Y, b.Z-a.Z);
+        }
+      }
+    PlatoTest.Vector3 v1  = result_11;
+    /*
+    <generated>
+    */
+    PlatoTest.Vector3 result_12  = default(PlatoTest.Vector3);
+    {
+      {
+        result_12 = new PlatoTest.Vector3(b.X-a.X, b.Y-a.Y, b.Z-a.Z);
+        }
+      }
+    PlatoTest.Vector3 v2  = result_12;
+    /*
+    <generated>
+    */
+    PlatoTest.Vector3 result_13  = default(PlatoTest.Vector3);
+    {
+      {
+        result_13 = new PlatoTest.Vector3(Y*v2.Z-Z*v2.Y, Z*v2.X-X*v2.Z, X*v2.Y-Y*v2.X);
+        }
+      }
+    PlatoTest.Vector3 r  = result_13;
     return r.Normal;
     }
   /*
   public static Points UVsToPoints(this IArray<Vector2> uvs, Func<Vector2, Vector3> func)
             => new(uvs.Select(func), uvs, uvs.Select(uv => uv.UVToNormal(func)));
   */
-  public static PlatoTest.Points UVsToPoints(this PlatoTest.IArray<PlatoTest.Vector2> uvs, System.Func<PlatoTest.Vector2, PlatoTest.Vector3> func)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.Points _inlined_UVsToPoints(this PlatoTest.IArray<PlatoTest.Vector2> uvs, System.Func<PlatoTest.Vector2, PlatoTest.Vector3> func)
   {
-    return new PlatoTest.Points(uvs.Select<PlatoTest.Vector2, PlatoTest.Vector3>(func), uvs, uvs.Select<PlatoTest.Vector2, PlatoTest.Vector3>(/* Captured: func*/( uv)
+    return new PlatoTest.Points(uvs_16._inlined_Select<PlatoTest.Vector2, PlatoTest.Vector3>(func), uvs, uvs_16._inlined_Select<PlatoTest.Vector2, PlatoTest.Vector3>(/* Captured: func*/( uv)
      => {
-        return uv.UVToNormal(func);
+        /*
+        <generated>
+        */
+        PlatoTest.Vector3 result_14  = default(PlatoTest.Vector3);
+        {
+          {
+            PlatoTest.Vector3 a  = func(new PlatoTest.Vector2(uv.X+0.00001f, uv.Y));
+            PlatoTest.Vector3 b  = func(new PlatoTest.Vector2(uv.X-0.00001f, uv.Y));
+            PlatoTest.Vector3 c  = func(new PlatoTest.Vector2(uv.X, uv.Y+0.00001f));
+            PlatoTest.Vector3 d  = func(new PlatoTest.Vector2(uv.X, uv.Y-0.00001f));
+            /*
+            <generated>
+            */
+            PlatoTest.Vector3 result_11  = default(PlatoTest.Vector3);
+            {
+              {
+                result_11 = new PlatoTest.Vector3(b.X-a.X, b.Y-a.Y, b.Z-a.Z);
+                }
+              }
+            PlatoTest.Vector3 v1  = result_11;
+            /*
+            <generated>
+            */
+            PlatoTest.Vector3 result_12  = default(PlatoTest.Vector3);
+            {
+              {
+                result_12 = new PlatoTest.Vector3(b.X-a.X, b.Y-a.Y, b.Z-a.Z);
+                }
+              }
+            PlatoTest.Vector3 v2  = result_12;
+            /*
+            <generated>
+            */
+            PlatoTest.Vector3 result_13  = default(PlatoTest.Vector3);
+            {
+              {
+                result_13 = new PlatoTest.Vector3(Y*v2.Z-Z*v2.Y, Z*v2.X-X*v2.Z, X*v2.Y-Y*v2.X);
+                }
+              }
+            PlatoTest.Vector3 r  = result_13;
+            result_14 = r.Normal;
+            }
+          }
+        return result_14;
         }
       ));
     }
@@ -1029,9 +1211,66 @@ public static readonly struct Extensions
   public static Points ComputeQuadStripPoints(this Func<Vector2, Vector3> func, int usegs, int vsegs)
             => ComputeQuadStripUVs(usegs, vsegs).UVsToPoints(func);
   */
-  public static PlatoTest.Points ComputeQuadStripPoints(this System.Func<PlatoTest.Vector2, PlatoTest.Vector3> func, System.Int32 usegs, System.Int32 vsegs)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.Points _inlined_ComputeQuadStripPoints(this System.Func<PlatoTest.Vector2, PlatoTest.Vector3> func, System.Int32 usegs, System.Int32 vsegs)
   {
-    return ComputeQuadStripUVs(usegs, vsegs).UVsToPoints(func);
+    /*
+    <generated>
+    */
+    PlatoTest.Points result_15  = default(PlatoTest.Points);
+    {
+      PlatoTest.IArray<PlatoTest.Vector2> uvs_16  = _inlined_ComputeQuadStripUVs(usegs, vsegs);
+      {
+        result_15 = new PlatoTest.Points(uvs_16._inlined_Select<PlatoTest.Vector2, PlatoTest.Vector3>(func), uvs_16, uvs_16._inlined_Select<PlatoTest.Vector2, PlatoTest.Vector3>(/* Captured: func*/( uv)
+         => {
+            /*
+            <generated>
+            */
+            PlatoTest.Vector3 result_14  = default(PlatoTest.Vector3);
+            {
+              {
+                PlatoTest.Vector3 a  = func(new PlatoTest.Vector2(uv.X+0.00001f, uv.Y));
+                PlatoTest.Vector3 b  = func(new PlatoTest.Vector2(uv.X-0.00001f, uv.Y));
+                PlatoTest.Vector3 c  = func(new PlatoTest.Vector2(uv.X, uv.Y+0.00001f));
+                PlatoTest.Vector3 d  = func(new PlatoTest.Vector2(uv.X, uv.Y-0.00001f));
+                /*
+                <generated>
+                */
+                PlatoTest.Vector3 result_11  = default(PlatoTest.Vector3);
+                {
+                  {
+                    result_11 = new PlatoTest.Vector3(b.X-a.X, b.Y-a.Y, b.Z-a.Z);
+                    }
+                  }
+                PlatoTest.Vector3 v1  = result_11;
+                /*
+                <generated>
+                */
+                PlatoTest.Vector3 result_12  = default(PlatoTest.Vector3);
+                {
+                  {
+                    result_12 = new PlatoTest.Vector3(b.X-a.X, b.Y-a.Y, b.Z-a.Z);
+                    }
+                  }
+                PlatoTest.Vector3 v2  = result_12;
+                /*
+                <generated>
+                */
+                PlatoTest.Vector3 result_13  = default(PlatoTest.Vector3);
+                {
+                  {
+                    result_13 = new PlatoTest.Vector3(Y*v2.Z-Z*v2.Y, Z*v2.X-X*v2.Z, X*v2.Y-Y*v2.X);
+                    }
+                  }
+                PlatoTest.Vector3 r  = result_13;
+                result_14 = r.Normal;
+                }
+              }
+            return result_14;
+            }
+          ));
+        }
+      }
+    return result_15;
     }
   /*
   public static IArray<Vector2> ComputeQuadStripUVs(int usegs, int vsegs)
@@ -1043,7 +1282,7 @@ public static readonly struct Extensions
                     return new((float)col / (usegs - 1), (float)row / (vsegs - 1));
                 });
   */
-  public static PlatoTest.IArray<PlatoTest.Vector2> ComputeQuadStripUVs(System.Int32 usegs, System.Int32 vsegs)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.IArray<PlatoTest.Vector2> _inlined_ComputeQuadStripUVs(System.Int32 usegs, System.Int32 vsegs)
   {
     return new PlatoTest.Array<PlatoTest.Vector2>(usegs*vsegs, /* Captured: usegsvsegs*/( i)
      => {
@@ -1070,7 +1309,7 @@ public static readonly struct Extensions
             });
         }
   */
-  public static PlatoTest.IArray<PlatoTest.Int4> ComputeQuadStripIndices(System.Int32 usegs, System.Int32 vsegs)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.IArray<PlatoTest.Int4> _inlined_ComputeQuadStripIndices(System.Int32 usegs, System.Int32 vsegs)
   {
     return new PlatoTest.Array<PlatoTest.Int4>((usegs-1)*(vsegs-1), /* Captured: usegsvsegs*/( i)
      => {
@@ -1093,9 +1332,9 @@ public static readonly struct Extensions
                 radius * (uv.Y * MathF.PI).Cos(),
                 radius * uv.X.UnitToRad().Cos() * (uv.Y * MathF.PI).Sin());
   */
-  public static PlatoTest.Vector3 UvToSphere(PlatoTest.Vector2 uv, System.Single radius)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.Vector3 _inlined_UvToSphere(PlatoTest.Vector2 uv, System.Single radius)
   {
-    return new PlatoTest.Vector3(-radius*uv.X.UnitToRad().Cos()*(uv.Y*System.MathF.PI).Sin(), radius*(uv.Y*System.MathF.PI).Cos(), radius*uv.X.UnitToRad().Cos()*(uv.Y*System.MathF.PI).Sin());
+    return new PlatoTest.Vector3(-radius*uv.X._inlined_UnitToRad()._inlined_Cos()*(uv.Y*System.MathF.PI)._inlined_Sin(), radius*(uv.Y*System.MathF.PI)._inlined_Cos(), radius*uv.X._inlined_UnitToRad()._inlined_Cos()*(uv.Y*System.MathF.PI)._inlined_Sin());
     }
   /*
   public static Vector3 UvToTorus(Vector2 uv, float radius, float tube)
@@ -1107,18 +1346,18 @@ public static readonly struct Extensions
                 tube * uv.Y.Sin());
         }
   */
-  public static PlatoTest.Vector3 UvToTorus(PlatoTest.Vector2 uv, System.Single radius, System.Single tube)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.Vector3 _inlined_UvToTorus(PlatoTest.Vector2 uv, System.Single radius, System.Single tube)
   {
     uv = uv*System.MathF.PI*2;
-    return new PlatoTest.Vector3((radius+tube*uv.Y.Cos())*uv.X.Cos(), (radius+tube*uv.Y.Cos())*uv.X.Sin(), tube*uv.Y.Sin());
+    return new PlatoTest.Vector3((radius+tube*uv.Y._inlined_Cos())*uv.X._inlined_Cos(), (radius+tube*uv.Y._inlined_Cos())*uv.X._inlined_Sin(), tube*uv.Y._inlined_Sin());
     }
   /*
   public static TriMesh ToTriMesh(this QuadMesh mesh)
             => new(mesh.Points, mesh.Faces.ToTriangleIndices());
   */
-  public static PlatoTest.TriMesh ToTriMesh(this PlatoTest.QuadMesh mesh)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.TriMesh _inlined_ToTriMesh(this PlatoTest.QuadMesh mesh)
   {
-    return new PlatoTest.TriMesh(mesh._Points_, mesh._Faces_.ToTriangleIndices());
+    return new PlatoTest.TriMesh(mesh_26._Points_, mesh_26._Faces_._inlined_ToTriangleIndices());
     }
   /*
   public static void TestOperator()
@@ -1127,58 +1366,140 @@ public static readonly struct Extensions
             var y = x + x;
         }
   */
-  public static void TestOperator()
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static void _inlined_TestOperator()
   {
     PlatoTest.Vector3 x  = new PlatoTest.Vector3(1, 2, 3);
-    PlatoTest.Vector3 y  = x+x;
+    /*
+    <generated>
+    */
+    PlatoTest.Vector3 result_17  = default(PlatoTest.Vector3);
+    {
+      {
+        result_17 = new PlatoTest.Vector3(x.X+x.X, x.Y+x.Y, x.Z+x.Z);
+        }
+      }
+    PlatoTest.Vector3 y  = result_17;
     }
   /*
   public static QuadMesh Torus(int rows, int cols, float radius, float tube)
             => ToQuadMesh(uv => UvToTorus(uv, radius, tube), rows, cols);
   */
-  public static PlatoTest.QuadMesh Torus(System.Int32 rows, System.Int32 cols, System.Single radius, System.Single tube)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.QuadMesh _inlined_Torus(System.Int32 rows, System.Int32 cols, System.Single radius, System.Single tube)
   {
-    return ToQuadMesh(/* Captured: radiustube*/( uv)
-     => {
-        return UvToTorus(uv, radius, tube);
+    /*
+    <generated>
+    */
+    PlatoTest.QuadMesh result_18  = default(PlatoTest.QuadMesh);
+    {
+      {
+        result_18 = new PlatoTest.QuadMesh(_inlined_ComputeQuadStripPoints(/* Captured: radiustube*/( uv)
+         => {
+            return _inlined_UvToTorus(uv, radius, tube);
+            }
+          , rows, cols), _inlined_ComputeQuadStripIndices(rows, cols));
         }
-      , rows, cols);
+      }
+    return result_18;
     }
   /*
   public static int[] ToIntArray(this IArray<Int3> faces)
             => faces.SelectMany(f => f).ToArray();
   */
-  public static System.Int32[] ToIntArray(this PlatoTest.IArray<PlatoTest.Int3> faces)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static System.Int32[] _inlined_ToIntArray(this PlatoTest.IArray<PlatoTest.Int3> faces)
   {
-    return faces.SelectMany<PlatoTest.Int3, System.Int32>(/* Captured: */( f)
-     => {
-        return f;
+    /*
+    <generated>
+    */
+    System.Int32[] result_19  = default(System.Int32[]);
+    {
+      PlatoTest.IArray<System.Single> self_20  = faces._inlined_SelectMany<PlatoTest.Int3, System.Int32>(/* Captured: */( f)
+       => {
+          return f;
+          }
+        );
+      {
+        System.Single[] r  = new System.Single[self.Count];
+        {
+          System.Int32 i  = 0;
+          while(i<self_7.Count)
+          {
+              r[i] = self_20[i];
+              ++i;
+              }
+            }
+        result_19 = r;
         }
-      ).ToArray<System.Int32>();
+      }
+    return result_19;
     }
   /*
   public static IArray<Triangle> Triangles(this TriMesh mesh)
             => mesh.Faces.Select(f => new Triangle(mesh.Points.Positions[f.X], mesh.Points.Positions[f.Y], mesh.Points.Positions[f.Z]));
   */
-  public static PlatoTest.IArray<PlatoTest.Triangle> Triangles(this PlatoTest.TriMesh mesh)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.IArray<PlatoTest.Triangle> _inlined_Triangles(this PlatoTest.TriMesh mesh)
   {
-    return mesh._Faces_.Select<PlatoTest.Int3, PlatoTest.Triangle>(/* Captured: mesh*/( f)
-     => {
-        return new PlatoTest.Triangle(mesh._Points_._Positions_[f.X], mesh._Points_._Positions_[f.Y], mesh._Points_._Positions_[f.Z]);
+    /*
+    <generated>
+    */
+    PlatoTest.IArray<PlatoTest.Triangle> result_21  = default(PlatoTest.IArray<PlatoTest.Triangle>);
+    {
+      {
+        /*
+        <generated>
+        */
+        PlatoTest.IArray<PlatoTest.Triangle> result_8  = default(PlatoTest.IArray<PlatoTest.Triangle>);
+        {
+          {
+            result_8 = new PlatoTest.Array<T>(mesh._Faces_.Count, /* Captured: selffunc*/( i)
+             => {
+                return /* Captured: mesh*/( f)
+                 => {
+                    return new PlatoTest.Triangle(mesh._Points_._Positions_[f.X], mesh._Points_._Positions_[f.Y], mesh._Points_._Positions_[f.Z]);
+                    }
+                  (mesh._Faces_[i]);
+                }
+              );
+            }
+          }
+        result_21 = result_8;
         }
-      );
+      }
+    return result_21;
     }
   /*
   public static IArray<Vector3> FaceNormals(this TriMesh mesh)
             => mesh.Triangles().Select(tri => tri.Normal);
   */
-  public static PlatoTest.IArray<PlatoTest.Vector3> FaceNormals(this PlatoTest.TriMesh mesh)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.IArray<PlatoTest.Vector3> _inlined_FaceNormals(this PlatoTest.TriMesh mesh)
   {
-    return mesh.Triangles().Select<PlatoTest.Triangle, PlatoTest.Vector3>(/* Captured: */( tri)
-     => {
-        return tri.Normal;
+    /*
+    <generated>
+    */
+    PlatoTest.IArray<PlatoTest.Vector3> result_22  = default(PlatoTest.IArray<PlatoTest.Vector3>);
+    {
+      PlatoTest.IArray<PlatoTest.Triangle> self_23  = mesh._inlined_Triangles();
+      {
+        /*
+        <generated>
+        */
+        PlatoTest.IArray<PlatoTest.Triangle> result_8  = default(PlatoTest.IArray<PlatoTest.Triangle>);
+        {
+          {
+            result_8 = new PlatoTest.Array<T>(mesh._Faces_.Count, /* Captured: selffunc*/( i)
+             => {
+                return /* Captured: mesh*/( f)
+                 => {
+                    return new PlatoTest.Triangle(mesh._Points_._Positions_[f.X], mesh._Points_._Positions_[f.Y], mesh._Points_._Positions_[f.Z]);
+                    }
+                  (mesh._Faces_[i]);
+                }
+              );
+            }
+          }
+        result_22 = result_8;
         }
-      );
+      }
+    return result_22;
     }
   /*
   public static (T, TimeSpan) TimeIt<T>(Func<T> func)
@@ -1187,7 +1508,7 @@ public static readonly struct Extensions
             return (func(), sw.Elapsed);
         }
   */
-  public static System.ValueTuple<T, System.TimeSpan> TimeIt<T>(System.Func<T> func)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static System.ValueTuple<T, System.TimeSpan> _inlined_TimeIt<T>(System.Func<T> func)
   {
     System.Diagnostics.Stopwatch sw  = System.Diagnostics.Stopwatch.StartNew();
     return (func(), sw.Elapsed);
@@ -1196,7 +1517,7 @@ public static readonly struct Extensions
   public static void Log(string s)
             => Console.WriteLine(s);
   */
-  public static void Log(System.String s)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static void _inlined_Log(System.String s)
   {
     System.Console.WriteLine(s);
     }
@@ -1208,9 +1529,19 @@ public static readonly struct Extensions
             return r.Item1;
         }
   */
-  public static T LogTiming<T>(System.Func<T> func)
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static T _inlined_LogTiming<T>(System.Func<T> func)
   {
-    System.ValueTuple<T, System.TimeSpan> r  = TimeIt<T>(func);
+    /*
+    <generated>
+    */
+    System.ValueTuple<System.Single[], System.TimeSpan> result_24  = default(System.ValueTuple<System.Single[], System.TimeSpan>);
+    {
+      {
+        System.Diagnostics.Stopwatch sw  = System.Diagnostics.Stopwatch.StartNew();
+        result_24 = (func(), sw.Elapsed);
+        }
+      }
+    System.ValueTuple<System.Single[], System.TimeSpan> r  = result_24;
     System.Console.WriteLine("msec elapsed: "+r.Item2.Milliseconds);
     return r.Item1;
     }
@@ -1223,10 +1554,41 @@ public static readonly struct Extensions
             File.WriteAllLines(filePath, floats.Select(f => f.ToString()));
         }
   */
-  public static void ManualBenchmark()
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]public static void _inlined_ManualBenchmark()
   {
-    PlatoTest.TriMesh torus  = Torus(5000, 1000, 1, 0.2f).ToTriMesh();
-    System.Single[] floats  = LogTiming<System.Single[]>(torus.FaceNormals().ToFloatArray);
+    /*
+    <generated>
+    */
+    PlatoTest.TriMesh result_25  = default(PlatoTest.TriMesh);
+    {
+      PlatoTest.QuadMesh mesh_26  = _inlined_Torus(5000, 1000, 1, 0.2f);
+      {
+        result_25 = new PlatoTest.TriMesh(mesh_26._Points_, mesh_26._Faces_._inlined_ToTriangleIndices());
+        }
+      }
+    PlatoTest.TriMesh torus  = result_25;
+    /*
+    <generated>
+    */
+    System.Single[] result_27  = default(System.Single[]);
+    {
+      {
+        /*
+        <generated>
+        */
+        System.ValueTuple<System.Single[], System.TimeSpan> result_24  = default(System.ValueTuple<System.Single[], System.TimeSpan>);
+        {
+          {
+            System.Diagnostics.Stopwatch sw  = System.Diagnostics.Stopwatch.StartNew();
+            result_24 = (torus._inlined_FaceNormals()._inlined_ToFloatArray(), sw.Elapsed);
+            }
+          }
+        System.ValueTuple<System.Single[], System.TimeSpan> r  = result_24;
+        System.Console.WriteLine("msec elapsed: "+r.Item2.Milliseconds);
+        result_27 = r.Item1;
+        }
+      }
+    System.Single[] floats  = result_27;
     System.String filePath  = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "profiling.txt");
     System.IO.File.WriteAllLines(filePath, floats.Select<System.Single, System.String>(/* Captured: */( f)
      => {

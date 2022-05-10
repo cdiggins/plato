@@ -60,8 +60,10 @@ namespace PlatoRoslynSyntaxAnalyzer
         {
             if (symbol == null) return null;
             var refs = symbol.DeclaringSyntaxReferences;
-            if (refs.Length > 1)
-                throw new Exception("Multiple declarations found");
+
+            // TODO: handle shared namespace and partial classes
+            //if (refs.Length > 1) throw new Exception("Multiple declarations found");
+
             return refs.Length == 0 
                 ? null 
                 : GetIR(refs[0].GetSyntax());

@@ -96,19 +96,40 @@ namespace PlatoIR
      * TODO: basic inlining as an option.
      * DONE: implemented interfaces are missing
      * DONE: add this parameters 
-     * TODO: arrays initializers are ascrewed up (   r  = new var[]{}; <= var r = new T[self.Count]; }
-     * TODO: arrays initializers are ascrewed up (   r  = new var[]{}; <= var r = new T[self.Count]; }
+     * DONE: arrays initializers are ascrewed up (   r  = new var[]{}; <= var r = new T[self.Count]; }
      * DONE: array types are declarated property 
      * DONE: lambda parameters without types, should just omit the type
      * DONE: make sure static classes are specified as static classes.
      * DONE: don't add "this" when calling a static method.
-     * TODO: don't use "System.Void"
-     * TODO: don't use return for void functions (e.g. Log)
-     * 
+     * DONE: don't use "System.Void"
+     * DONE: don't use return for void functions (e.g. Log)
+     * TODO: support the fact that namespaces are shared across files
+     * TODO: support namespaces
+     * TODO: add compilation unit
+     * TODO: support partial types
+     * TODO: support nested types 
      */
     public class IRSerializer
     {
         public bool ShowResolution = false;
+
+        /// <summary>
+        /// Initial tests show a small amount of improvement: a bit more than 10%
+        /// </summary>
+        public bool InliningAttribute = true;
+
+        /// <summary>
+        /// Initial tests showed no improvement (at least when combined with inlining attribute, which makes sense)
+        /// Also not fully implemented.
+        /// Can't reassign "in" parameter.
+        /// Can't use "in" parameters in a lambda
+        /// </summary>
+        public bool UseInParameters = false;
+
+        /// <summary>
+        /// Whether to use implicit local variable type declarations.
+        /// </summary>
+        public bool UseImplicitVars = false;
 
         public IRSerializer(StreamWriter writer)
             => Writer = writer;
@@ -165,7 +186,7 @@ namespace PlatoIR
         public IRSerializer WriteTypeArgsOrParameters(IEnumerable<IR> typeParams, string indent)
             => WriteOptionalAngledList(typeParams, indent);
 
-        public IRSerializer WriteBaseClassAndInterfaces(List<TypeReferenceIR> baseList, string indent)
+        public IRSerializer WriteBaseClassAndInterfaces(IReadOnlyList<TypeReferenceIR> baseList, string indent)
         {
             var r = this;
             for (var i = 0; i < baseList.Count; ++i)
@@ -182,8 +203,11 @@ namespace PlatoIR
             ? Write(functionDeclarationIr.Name).Write(" ").Write(functionDeclarationIr.Type, indent)
             : Write(functionDeclarationIr.Type, indent).Write(" ").Write(functionDeclarationIr.Name);
 
+        
         public IRSerializer WriteFunction(MethodDeclarationIR functionDeclarationIr, string indent)
-            => Write("public ").Write(functionDeclarationIr.IsStatic ? "static " : "")
+            => 
+                (InliningAttribute ? Write("[MethodImpl(MethodImplOptions.AggressiveInlining)]") : this)
+                .Write("public ").Write(functionDeclarationIr.IsStatic ? "static " : "")
                 .WriteFunctionNameAndType(functionDeclarationIr, indent)
                 .WriteTypeArgsOrParameters(functionDeclarationIr.TypeParameters, indent)
                 .WriteParenthesizedList(functionDeclarationIr.Parameters, indent)
@@ -288,6 +312,15 @@ namespace PlatoIR
             return r.WriteTypeArgsOrParameters(referenceIr.TypeArguments, indent);
         }
 
+        public IRSerializer WriteInParameter(ParameterDeclarationIR parameter)
+        {
+            if (!UseInParameters) return this;
+            var typeDecl = parameter?.Type?.TypeDeclaration;
+            if (typeDecl == null) return this;
+            if (typeDecl.IsValueType) return Write("in ");
+            return this;
+        }
+
         public IRSerializer Write(IR ir, string indent)
         {
             if (ir == null) return this;
@@ -374,7 +407,7 @@ namespace PlatoIR
                     return WriteExpressionAsStatement(expressionStatementIr.Expression, indent);
 
                 case FieldDeclarationIR fieldIr:
-                    return Write("public ").Write(fieldIr.IsStatic ? "static " : "").Write(fieldIr.Type, indent).Write(" ").Write(fieldIr.Name).Write(" ")
+                    return Write("public ").Write("readonly ").Write(fieldIr.IsStatic ? "static " : "").Write(fieldIr.Type, indent).Write(" ").Write(fieldIr.Name).Write(" ")
                         .WriteOptionalInitializer(fieldIr.InitialValue, indent).WriteDeclaration(fieldIr).WriteLine(";", indent);
 
                 case IfStatementIR ifStatementIr:
@@ -407,7 +440,10 @@ namespace PlatoIR
                     return WriteFunction(operationIr, indent);
 
                 case ParameterDeclarationIR parameterIr:
-                    return Write(parameterIr.IsThisParameter ? "this " : "").Write(parameterIr.Type, indent).Write(" ").Write(parameterIr.Name).WriteOptionalInitializer(parameterIr.DefaultValue, indent).WriteDeclaration(parameterIr);
+                    return Write(parameterIr.IsThisParameter ? "this " : "")
+                        .WriteInParameter(parameterIr)
+                        .Write(parameterIr.Type, indent)
+                        .Write(" ").Write(parameterIr.Name).WriteOptionalInitializer(parameterIr.DefaultValue, indent).WriteDeclaration(parameterIr);
 
                 case ParenthesizedIR parenthesizedIr:
                     return Write("(").Write(parenthesizedIr.Args[0], indent).Write(")");
@@ -457,8 +493,7 @@ namespace PlatoIR
                         WriteLine("//==begin==//", indent)
                         .Write("public ")
                         .Write(typeDeclarationIr.IsStatic ? "static " : "")
-                        //.Write(typeDeclarationIr.Kind)
-                        .Write("readonly struct")
+                        .Write(typeDeclarationIr.Kind)
                         .Write(" ").Write(typeDeclarationIr.Name)
                         .WriteTypeArgsOrParameters(typeDeclarationIr.TypeParameters, indent)
                         .WriteBaseClassAndInterfaces(typeDeclarationIr.Bases, indent)
@@ -481,7 +516,7 @@ namespace PlatoIR
                     return Write(typeParameterDeclarationIr.Name).WriteDeclaration(typeParameterDeclarationIr);
 
                 case VariableDeclarationIR variableDeclarationIr:
-                    return (variableDeclarationIr.Type == null ? Write("var ") : Write(variableDeclarationIr.Type, indent).Write(" ")).Write(variableDeclarationIr.Name)
+                    return (variableDeclarationIr.Type == null || UseImplicitVars ? Write("var ") : Write(variableDeclarationIr.Type, indent).Write(" ")).Write(variableDeclarationIr.Name)
                         .Write(" ").WriteOptionalInitializer(variableDeclarationIr.InitialValue, indent).WriteDeclaration(variableDeclarationIr);
 
                 case WhileStatementIR whileStatementIr:
