@@ -116,7 +116,7 @@ namespace PlatoIR
         /// <summary>
         /// Initial tests show a small amount of improvement: a bit more than 10%
         /// </summary>
-        public bool InliningAttribute = true;
+        public bool InliningAttribute = false;
 
         /// <summary>
         /// Initial tests showed no improvement (at least when combined with inlining attribute, which makes sense)
@@ -385,7 +385,7 @@ namespace PlatoIR
                         .Write(conditionalIr.Args[2], indent);
 
                 case ConstructorDeclarationIr constructorIr:
-                    return Write("public ").Write(constructorIr.IsStatic ? "static " : "").Write(constructorIr.Parent.Name).WriteParenthesizedList(constructorIr.Parameters, indent).WriteDeclaration(constructorIr)
+                    return Write("public ").Write(constructorIr.IsStatic ? "static " : "").Write(constructorIr.Name).WriteParenthesizedList(constructorIr.Parameters, indent).WriteDeclaration(constructorIr)
                         .WriteLine(indent).Write(constructorIr.Body, indent + "  ");
 
                 case DeclarationStatementIR declarationStatementIr:
@@ -414,7 +414,7 @@ namespace PlatoIR
                     return Write("if").Write("(").Write(ifStatementIr.Condition, indent).WriteLine(")", indent)
                         .Write(ifStatementIr.OnTrue, indent + "  ").WriteLine("else", indent).Write(ifStatementIr.OnFalse, indent + "  ");
 
-                case IndexerDeclarationIr indexerIr:
+                case IndexerDeclarationIR indexerIr:
                     return Write("public ").Write(indexerIr.IsStatic ? "static " : "")
                         .Write(indexerIr.Type, indent).Write(" this ").WriteBracketedList(
                         indexerIr.Getter.Parameters, indent).WriteLine(indent).WriteGetter(indexerIr.Getter, indent);
@@ -436,7 +436,7 @@ namespace PlatoIR
                 case NewIR newIr:
                     return Write("new ").Write(newIr.CreatedType, indent).WriteParenthesizedList(newIr.Args, indent);
 
-                case OperationDeclarationIr operationIr:
+                case OperationDeclarationIR operationIr:
                     return WriteFunction(operationIr, indent);
 
                 case ParameterDeclarationIR parameterIr:

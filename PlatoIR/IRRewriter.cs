@@ -105,7 +105,7 @@ namespace PlatoIR
                     return new IfStatementIR(ifStatementIr.Condition.Rewrite(func),
                         ifStatementIr.OnTrue.Rewrite(func), ifStatementIr.OnFalse.Rewrite(func));
 
-                case IndexerDeclarationIr indexerDeclarationIr:
+                case IndexerDeclarationIR indexerDeclarationIr:
                     indexerDeclarationIr.Getter = indexerDeclarationIr.Getter.Rewrite(func) as MethodDeclarationIR;
                     return indexerDeclarationIr;
 
@@ -135,7 +135,7 @@ namespace PlatoIR
                 case NewIR newIr:
                     return new NewIR(newIr.CreatedType.Rewrite(func) as TypeReferenceIR, newIr.Args.Rewrite(func));
 
-                case OperationDeclarationIr operationDeclarationIr:
+                case OperationDeclarationIR operationDeclarationIr:
                     operationDeclarationIr.Body = operationDeclarationIr.Body.Rewrite(func) as BlockStatementIR;
                     return operationDeclarationIr;
 

@@ -60,7 +60,7 @@ namespace PlatoRoslynSyntaxAnalyzer
 
                 foreach (var conv in type.Converters)
                 {
-                    var decl = builder.AddIR(conv, new OperationDeclarationIr()).SetParent(typeIr);
+                    var decl = builder.AddIR(conv, new OperationDeclarationIR()).SetParent(typeIr);
                     decl.Source = conv.Node.ToString();
                     decl.IsStatic = conv.IsStatic;
                     decl.Name = conv.Node.ImplicitOrExplicitKeyword.Text + " operator";
@@ -81,7 +81,7 @@ namespace PlatoRoslynSyntaxAnalyzer
 
                 foreach (var op in type.Operators)
                 {
-                    var decl = builder.AddIR(op, new OperationDeclarationIr()).SetParent(typeIr);
+                    var decl = builder.AddIR(op, new OperationDeclarationIR()).SetParent(typeIr);
                     decl.Source = op.Node.ToString();
                     decl.IsStatic = op.IsStatic;
                     decl.Name = "operator " + op.Name;
@@ -108,7 +108,7 @@ namespace PlatoRoslynSyntaxAnalyzer
 
                 foreach (var idx in type.Indexers)
                 {
-                    var decl = builder.AddIR(idx, new IndexerDeclarationIr()).SetParent(typeIr);
+                    var decl = builder.AddIR(idx, new IndexerDeclarationIR()).SetParent(typeIr);
                     decl.Source = idx.Node.ToString();
                     decl.IsStatic = idx.IsStatic;
                     typeIr.Indexers.Add(decl);
@@ -151,7 +151,7 @@ namespace PlatoRoslynSyntaxAnalyzer
                         break;
                     }
 
-                    case IndexerDeclarationIr indexerIr:
+                    case IndexerDeclarationIR indexerIr:
                     {
                         var syntax = node as IndexerDeclarationSyntax;
                         indexerIr.Type = syntax.Type.ToReference(model, builder);
@@ -159,7 +159,7 @@ namespace PlatoRoslynSyntaxAnalyzer
                         break;
                     }
 
-                    case OperationDeclarationIr operationIR:
+                    case OperationDeclarationIR operationIR:
                     {
                         if (node is OperatorDeclarationSyntax operatorSyntax)
                         {
@@ -188,6 +188,7 @@ namespace PlatoRoslynSyntaxAnalyzer
                         propertyIr.Getter = CreateGetter(syntax, model, builder);
                         if (propertyIr.Getter.Body == null)
                         {
+                            // TODO: figure out a better way to communicate this 
                             if (propertyIr.Parent is TypeDeclarationIR typeIr && typeIr.Kind == "class")
                             {
                                 var fieldName = "_" + propertyIr.Name + "_";
@@ -296,14 +297,14 @@ namespace PlatoRoslynSyntaxAnalyzer
             return false;
         }
         
-        public static MethodDeclarationIR UpdateMethod(OperationDeclarationIr operatorIr, ConversionOperatorDeclarationSyntax syntax, SemanticModel model, IRBuilder builder)
+        public static MethodDeclarationIR UpdateMethod(OperationDeclarationIR operatorIr, ConversionOperatorDeclarationSyntax syntax, SemanticModel model, IRBuilder builder)
         {
             UpdateMethod(operatorIr, (BaseMethodDeclarationSyntax)syntax, model, builder);
             operatorIr.Type = syntax.Type.ToReference(model, builder);
             return operatorIr;
         }
 
-        public static MethodDeclarationIR UpdateMethod(OperationDeclarationIr operatorIr, OperatorDeclarationSyntax syntax, SemanticModel model, IRBuilder builder)
+        public static MethodDeclarationIR UpdateMethod(OperationDeclarationIR operatorIr, OperatorDeclarationSyntax syntax, SemanticModel model, IRBuilder builder)
         {
             UpdateMethod(operatorIr, (BaseMethodDeclarationSyntax)syntax, model, builder);
             operatorIr.Type = syntax.ReturnType.ToReference(model, builder);

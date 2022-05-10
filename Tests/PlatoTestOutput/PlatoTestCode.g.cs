@@ -111,7 +111,11 @@ public readonly struct Vector2
   get
       {
         /*
-        <generated>
+        Inlining _inlined_Dot(this)
+parameters:
+PlatoTest.Vector2 v <-- this
+types:
+
         */
         System.Single result_0  = default(System.Single);
         {
@@ -142,7 +146,12 @@ public readonly struct Vector2
   get
       {
         /*
-        <generated>
+        Inlining this / Magnitude
+parameters:
+PlatoTest.Vector2 q <-- this
+PlatoTest.Vector2 r <-- Magnitude
+types:
+
         */
         PlatoTest.Vector2 result_1  = default(PlatoTest.Vector2);
         {
@@ -257,7 +266,11 @@ public readonly struct Vector3 : PlatoTest.IArray<System.Single>
   get
       {
         /*
-        <generated>
+        Inlining _inlined_Dot(this)
+parameters:
+PlatoTest.Vector3 v <-- this
+types:
+
         */
         System.Single result_2  = default(System.Single);
         {
@@ -288,7 +301,12 @@ public readonly struct Vector3 : PlatoTest.IArray<System.Single>
   get
       {
         /*
-        <generated>
+        Inlining this / Magnitude
+parameters:
+PlatoTest.Vector3 q <-- this
+PlatoTest.Vector3 r <-- Magnitude
+types:
+
         */
         PlatoTest.Vector3 result_3  = default(PlatoTest.Vector3);
         {
@@ -840,7 +858,12 @@ public static class Extensions
   [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.IArray<T> _inlined_ToIArray<T>(this System.Collections.Generic.IReadOnlyList<T> self)
   {
     /*
-    <generated>
+    Inlining self.Count._inlined_Select<T>(( i) => {self[i];})
+parameters:
+this System.Int32 count <-- self.Count
+System.Func<System.Int32, T> func <-- ( i) => {self[i];}
+types:
+T <-- T
     */
     PlatoTest.IArray<T> result_4  = default(PlatoTest.IArray<T>);
     {
@@ -883,7 +906,11 @@ public static class Extensions
   [MethodImpl(MethodImplOptions.AggressiveInlining)]public static System.Single[] _inlined_ToFloatArray(this PlatoTest.IArray<PlatoTest.Vector3> self)
   {
     /*
-    <generated>
+    Inlining self._inlined_SelectMany<PlatoTest.Vector3, System.Single>(( x) => {x;})._inlined_ToArray<System.Single>()
+parameters:
+this PlatoTest.IArray<System.Single> self <-- self_7
+types:
+T <-- System.Single
     */
     System.Single[] result_6  = default(System.Single[]);
     {
@@ -955,7 +982,12 @@ public static class Extensions
           }
         }
     /*
-    <generated>
+    Inlining r.Count._inlined_Select<U>(( i) => {r[i];})
+parameters:
+this System.Int32 count <-- r.Count
+System.Func<System.Int32, T> func <-- ( i) => {r[i];}
+types:
+T <-- U
     */
     PlatoTest.IArray<PlatoTest.Int3> result_5  = default(PlatoTest.IArray<PlatoTest.Int3>);
     {
@@ -976,7 +1008,12 @@ public static class Extensions
   [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.IArray<U> _inlined_Select<T, U>(this PlatoTest.IArray<PlatoTest.Triangle> self, System.Func<T, U> func)
   {
     /*
-    <generated>
+    Inlining self.Count._inlined_Select<U>(( i) => {func(self[i]);})
+parameters:
+this System.Int32 count <-- self.Count
+System.Func<System.Int32, T> func <-- ( i) => {func(self[i]);}
+types:
+T <-- U
     */
     PlatoTest.IArray<PlatoTest.Triangle> result_8  = default(PlatoTest.IArray<PlatoTest.Triangle>);
     {
@@ -1025,7 +1062,12 @@ public static class Extensions
   [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.IArray<System.Single> _inlined_SampleFloats(System.Int32 count, System.Single max = 1.0f)
   {
     /*
-    <generated>
+    Inlining count._inlined_Select<System.Single>(( i) => {max * count;})
+parameters:
+this System.Int32 count <-- count
+System.Func<System.Int32, T> func <-- ( i) => {max * count;}
+types:
+T <-- System.Single
     */
     PlatoTest.IArray<System.Single> result_9  = default(PlatoTest.IArray<System.Single>);
     {
@@ -1046,7 +1088,13 @@ public static class Extensions
   [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.IArray<PlatoTest.Int3> _inlined_ToTriangleIndices(this PlatoTest.IArray<PlatoTest.Int4> self)
   {
     /*
-    <generated>
+    Inlining self._inlined_SelectMany<PlatoTest.Int4, PlatoTest.Int3>(( f) => {new PlatoTest.Int3[] { new PlatoTest.Int3(f.X,f.Y,f.Z),new PlatoTest.Int3(f.Z,f.W,f.X) }._inlined_ToIArray<PlatoTest.Int3>();})
+parameters:
+this PlatoTest.IArray<T> self <-- self
+System.Func<T, PlatoTest.IArray<U>> func <-- ( f) => {new PlatoTest.Int3[] { new PlatoTest.Int3(f.X,f.Y,f.Z),new PlatoTest.Int3(f.Z,f.W,f.X) }._inlined_ToIArray<PlatoTest.Int3>();}
+types:
+T <-- PlatoTest.Int4
+U <-- PlatoTest.Int3
     */
     PlatoTest.IArray<PlatoTest.Int3> result_10  = default(PlatoTest.IArray<PlatoTest.Int3>);
     {
@@ -1075,7 +1123,12 @@ public static class Extensions
               }
             }
         /*
-        <generated>
+        Inlining r.Count._inlined_Select<U>(( i) => {r[i];})
+parameters:
+this System.Int32 count <-- r.Count
+System.Func<System.Int32, T> func <-- ( i) => {r[i];}
+types:
+T <-- U
         */
         PlatoTest.IArray<PlatoTest.Int3> result_5  = default(PlatoTest.IArray<PlatoTest.Int3>);
         {
@@ -1121,7 +1174,12 @@ public static class Extensions
     PlatoTest.Vector3 c  = func(new PlatoTest.Vector2(uv.X, uv.Y+0.00001f));
     PlatoTest.Vector3 d  = func(new PlatoTest.Vector2(uv.X, uv.Y-0.00001f));
     /*
-    <generated>
+    Inlining b - a
+parameters:
+PlatoTest.Vector3 q <-- b
+PlatoTest.Vector3 r <-- a
+types:
+
     */
     PlatoTest.Vector3 result_11  = default(PlatoTest.Vector3);
     {
@@ -1131,7 +1189,12 @@ public static class Extensions
       }
     PlatoTest.Vector3 v1  = result_11;
     /*
-    <generated>
+    Inlining d - c
+parameters:
+PlatoTest.Vector3 q <-- d
+PlatoTest.Vector3 r <-- c
+types:
+
     */
     PlatoTest.Vector3 result_12  = default(PlatoTest.Vector3);
     {
@@ -1141,7 +1204,11 @@ public static class Extensions
       }
     PlatoTest.Vector3 v2  = result_12;
     /*
-    <generated>
+    Inlining v1._inlined_Cross(v2)
+parameters:
+PlatoTest.Vector3 v <-- v2
+types:
+
     */
     PlatoTest.Vector3 result_13  = default(PlatoTest.Vector3);
     {
@@ -1161,7 +1228,13 @@ public static class Extensions
     return new PlatoTest.Points(uvs_16._inlined_Select<PlatoTest.Vector2, PlatoTest.Vector3>(func), uvs, uvs_16._inlined_Select<PlatoTest.Vector2, PlatoTest.Vector3>(/* Captured: func*/( uv)
      => {
         /*
-        <generated>
+        Inlining uv._inlined_UVToNormal(func)
+parameters:
+this PlatoTest.Vector2 uv <-- uv
+System.Func<PlatoTest.Vector2, PlatoTest.Vector3> func <-- func
+System.Single epsilon = 0.00001f <-- 0.00001f
+types:
+
         */
         PlatoTest.Vector3 result_14  = default(PlatoTest.Vector3);
         {
@@ -1171,7 +1244,12 @@ public static class Extensions
             PlatoTest.Vector3 c  = func(new PlatoTest.Vector2(uv.X, uv.Y+0.00001f));
             PlatoTest.Vector3 d  = func(new PlatoTest.Vector2(uv.X, uv.Y-0.00001f));
             /*
-            <generated>
+            Inlining b - a
+parameters:
+PlatoTest.Vector3 q <-- b
+PlatoTest.Vector3 r <-- a
+types:
+
             */
             PlatoTest.Vector3 result_11  = default(PlatoTest.Vector3);
             {
@@ -1181,7 +1259,12 @@ public static class Extensions
               }
             PlatoTest.Vector3 v1  = result_11;
             /*
-            <generated>
+            Inlining d - c
+parameters:
+PlatoTest.Vector3 q <-- d
+PlatoTest.Vector3 r <-- c
+types:
+
             */
             PlatoTest.Vector3 result_12  = default(PlatoTest.Vector3);
             {
@@ -1191,7 +1274,11 @@ public static class Extensions
               }
             PlatoTest.Vector3 v2  = result_12;
             /*
-            <generated>
+            Inlining v1._inlined_Cross(v2)
+parameters:
+PlatoTest.Vector3 v <-- v2
+types:
+
             */
             PlatoTest.Vector3 result_13  = default(PlatoTest.Vector3);
             {
@@ -1214,7 +1301,12 @@ public static class Extensions
   [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.Points _inlined_ComputeQuadStripPoints(this System.Func<PlatoTest.Vector2, PlatoTest.Vector3> func, System.Int32 usegs, System.Int32 vsegs)
   {
     /*
-    <generated>
+    Inlining _inlined_ComputeQuadStripUVs(usegs,vsegs)._inlined_UVsToPoints(func)
+parameters:
+this PlatoTest.IArray<PlatoTest.Vector2> uvs <-- uvs_16
+System.Func<PlatoTest.Vector2, PlatoTest.Vector3> func <-- func
+types:
+
     */
     PlatoTest.Points result_15  = default(PlatoTest.Points);
     {
@@ -1223,7 +1315,13 @@ public static class Extensions
         result_15 = new PlatoTest.Points(uvs_16._inlined_Select<PlatoTest.Vector2, PlatoTest.Vector3>(func), uvs_16, uvs_16._inlined_Select<PlatoTest.Vector2, PlatoTest.Vector3>(/* Captured: func*/( uv)
          => {
             /*
-            <generated>
+            Inlining uv._inlined_UVToNormal(func)
+parameters:
+this PlatoTest.Vector2 uv <-- uv
+System.Func<PlatoTest.Vector2, PlatoTest.Vector3> func <-- func
+System.Single epsilon = 0.00001f <-- 0.00001f
+types:
+
             */
             PlatoTest.Vector3 result_14  = default(PlatoTest.Vector3);
             {
@@ -1233,7 +1331,12 @@ public static class Extensions
                 PlatoTest.Vector3 c  = func(new PlatoTest.Vector2(uv.X, uv.Y+0.00001f));
                 PlatoTest.Vector3 d  = func(new PlatoTest.Vector2(uv.X, uv.Y-0.00001f));
                 /*
-                <generated>
+                Inlining b - a
+parameters:
+PlatoTest.Vector3 q <-- b
+PlatoTest.Vector3 r <-- a
+types:
+
                 */
                 PlatoTest.Vector3 result_11  = default(PlatoTest.Vector3);
                 {
@@ -1243,7 +1346,12 @@ public static class Extensions
                   }
                 PlatoTest.Vector3 v1  = result_11;
                 /*
-                <generated>
+                Inlining d - c
+parameters:
+PlatoTest.Vector3 q <-- d
+PlatoTest.Vector3 r <-- c
+types:
+
                 */
                 PlatoTest.Vector3 result_12  = default(PlatoTest.Vector3);
                 {
@@ -1253,7 +1361,11 @@ public static class Extensions
                   }
                 PlatoTest.Vector3 v2  = result_12;
                 /*
-                <generated>
+                Inlining v1._inlined_Cross(v2)
+parameters:
+PlatoTest.Vector3 v <-- v2
+types:
+
                 */
                 PlatoTest.Vector3 result_13  = default(PlatoTest.Vector3);
                 {
@@ -1370,7 +1482,12 @@ public static class Extensions
   {
     PlatoTest.Vector3 x  = new PlatoTest.Vector3(1, 2, 3);
     /*
-    <generated>
+    Inlining x + x
+parameters:
+PlatoTest.Vector3 q <-- x
+PlatoTest.Vector3 r <-- x
+types:
+
     */
     PlatoTest.Vector3 result_17  = default(PlatoTest.Vector3);
     {
@@ -1387,7 +1504,13 @@ public static class Extensions
   [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.QuadMesh _inlined_Torus(System.Int32 rows, System.Int32 cols, System.Single radius, System.Single tube)
   {
     /*
-    <generated>
+    Inlining _inlined_ToQuadMesh(( uv) => {_inlined_UvToTorus(uv,radius,tube);},rows,cols)
+parameters:
+this System.Func<PlatoTest.Vector2, PlatoTest.Vector3> func <-- ( uv) => {_inlined_UvToTorus(uv,radius,tube);}
+System.Int32 rows <-- rows
+System.Int32 cols <-- cols
+types:
+
     */
     PlatoTest.QuadMesh result_18  = default(PlatoTest.QuadMesh);
     {
@@ -1408,7 +1531,11 @@ public static class Extensions
   [MethodImpl(MethodImplOptions.AggressiveInlining)]public static System.Int32[] _inlined_ToIntArray(this PlatoTest.IArray<PlatoTest.Int3> faces)
   {
     /*
-    <generated>
+    Inlining faces._inlined_SelectMany<PlatoTest.Int3, System.Int32>(( f) => {f;})._inlined_ToArray<System.Int32>()
+parameters:
+this PlatoTest.IArray<System.Single> self <-- self_20
+types:
+T <-- System.Int32
     */
     System.Int32[] result_19  = default(System.Int32[]);
     {
@@ -1439,13 +1566,24 @@ public static class Extensions
   [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.IArray<PlatoTest.Triangle> _inlined_Triangles(this PlatoTest.TriMesh mesh)
   {
     /*
-    <generated>
+    Inlining mesh.Faces._inlined_Select<PlatoTest.Int3, PlatoTest.Triangle>(( f) => {new PlatoTest.Triangle(mesh.Points.Positions[f.X],mesh.Points.Positions[f.Y],mesh.Points.Positions[f.Z]);})
+parameters:
+this PlatoTest.IArray<T> self <-- mesh.Faces
+System.Func<T, U> func <-- ( f) => {new PlatoTest.Triangle(mesh.Points.Positions[f.X],mesh.Points.Positions[f.Y],mesh.Points.Positions[f.Z]);}
+types:
+T <-- PlatoTest.Int3
+U <-- PlatoTest.Triangle
     */
     PlatoTest.IArray<PlatoTest.Triangle> result_21  = default(PlatoTest.IArray<PlatoTest.Triangle>);
     {
       {
         /*
-        <generated>
+        Inlining self.Count._inlined_Select<U>(( i) => {func(self[i]);})
+parameters:
+this System.Int32 count <-- self.Count
+System.Func<System.Int32, T> func <-- ( i) => {func(self[i]);}
+types:
+T <-- U
         */
         PlatoTest.IArray<PlatoTest.Triangle> result_8  = default(PlatoTest.IArray<PlatoTest.Triangle>);
         {
@@ -1473,14 +1611,25 @@ public static class Extensions
   [MethodImpl(MethodImplOptions.AggressiveInlining)]public static PlatoTest.IArray<PlatoTest.Vector3> _inlined_FaceNormals(this PlatoTest.TriMesh mesh)
   {
     /*
-    <generated>
+    Inlining mesh._inlined_Triangles()._inlined_Select<PlatoTest.Triangle, PlatoTest.Vector3>(( tri) => {tri.Normal;})
+parameters:
+this PlatoTest.IArray<PlatoTest.Triangle> self <-- self_23
+System.Func<T, U> func <-- ( tri) => {tri.Normal;}
+types:
+T <-- PlatoTest.Triangle
+U <-- PlatoTest.Vector3
     */
     PlatoTest.IArray<PlatoTest.Vector3> result_22  = default(PlatoTest.IArray<PlatoTest.Vector3>);
     {
       PlatoTest.IArray<PlatoTest.Triangle> self_23  = mesh._inlined_Triangles();
       {
         /*
-        <generated>
+        Inlining self.Count._inlined_Select<U>(( i) => {func(self[i]);})
+parameters:
+this System.Int32 count <-- self.Count
+System.Func<System.Int32, T> func <-- ( i) => {func(self[i]);}
+types:
+T <-- U
         */
         PlatoTest.IArray<PlatoTest.Triangle> result_8  = default(PlatoTest.IArray<PlatoTest.Triangle>);
         {
@@ -1532,7 +1681,11 @@ public static class Extensions
   [MethodImpl(MethodImplOptions.AggressiveInlining)]public static T _inlined_LogTiming<T>(System.Func<T> func)
   {
     /*
-    <generated>
+    Inlining _inlined_TimeIt<T>(func)
+parameters:
+System.Func<T> func <-- func
+types:
+T <-- T
     */
     System.ValueTuple<System.Single[], System.TimeSpan> result_24  = default(System.ValueTuple<System.Single[], System.TimeSpan>);
     {
@@ -1557,7 +1710,11 @@ public static class Extensions
   [MethodImpl(MethodImplOptions.AggressiveInlining)]public static void _inlined_ManualBenchmark()
   {
     /*
-    <generated>
+    Inlining _inlined_Torus(5000,1000,1,0.2f)._inlined_ToTriMesh()
+parameters:
+this PlatoTest.QuadMesh mesh <-- mesh_26
+types:
+
     */
     PlatoTest.TriMesh result_25  = default(PlatoTest.TriMesh);
     {
@@ -1568,13 +1725,21 @@ public static class Extensions
       }
     PlatoTest.TriMesh torus  = result_25;
     /*
-    <generated>
+    Inlining _inlined_LogTiming<[]<System.Single>>(torus._inlined_FaceNormals()._inlined_ToFloatArray)
+parameters:
+System.Func<T> func <-- torus._inlined_FaceNormals()._inlined_ToFloatArray
+types:
+T <-- []<System.Single>
     */
     System.Single[] result_27  = default(System.Single[]);
     {
       {
         /*
-        <generated>
+        Inlining _inlined_TimeIt<T>(func)
+parameters:
+System.Func<T> func <-- func
+types:
+T <-- T
         */
         System.ValueTuple<System.Single[], System.TimeSpan> result_24  = default(System.ValueTuple<System.Single[], System.TimeSpan>);
         {
