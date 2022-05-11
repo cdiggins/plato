@@ -12,24 +12,6 @@ namespace PlatoIR
 
         public static int VarId = 0;
 
-        public IR Inline(IR ir)
-        {
-            if (ir is MethodReferenceIR methodRef)
-            {
-                var decl = GetOrComputeInlined(methodRef.MethodDeclaration);
-                if (decl == null) return ir;
-                return new MethodReferenceIR(decl.Name, methodRef.Receiver.Rewrite(Inline), decl,
-                    methodRef.TypeArguments);
-            }
-
-            if (ir is MethodDeclarationIR methodDeclaration)
-            {
-                return GetOrComputeInlined(methodDeclaration);
-            }
-
-            return ir;
-        }
-
         public static IR ReplaceParameters(IR ir, Dictionary<ParameterDeclarationIR, ExpressionIR> replacements,
             Dictionary<TypeParameterDeclarationIR, TypeReferenceIR> typeReplacements)
         {
@@ -70,11 +52,11 @@ namespace PlatoIR
             return ir;
         }
 
-        public static (MultiStatementIR, VariableDeclarationIR) InvocationToStatement(InvocationIR invocation)
+        public (MultiStatementIR, VariableDeclarationIR) InvocationToStatement(InvocationIR invocation)
         {
             var methodRef = invocation.Function as MethodReferenceIR;
             var lambda = invocation.Function as LambdaIR;
-            var method = methodRef?.MethodDeclaration;
+            var method = GetOrComputeInlined(methodRef?.MethodDeclaration);            
             var parameters = method?.Parameters ?? lambda?.Parameters ?? new List<ParameterDeclarationIR>();
             var typeArgs = methodRef?.TypeArguments ?? new List<TypeReferenceIR>();
             var typeParameters = method?.TypeParameters ?? new List<TypeParameterDeclarationIR>();
@@ -150,15 +132,16 @@ namespace PlatoIR
                 .Rewrite(ir => ReplaceParameters(ir, parameterReplacements, typeReplacements))
                 .Rewrite(ir => ReplaceReturnStatements(ir, resultVar)).ToList();
 
+            /*
             var replaceString1 = string.Join("\n", parameterReplacements.Select(kv => $"{kv.Key} <-- {kv.Value}"));
             var replaceString2 = string.Join("\n", typeReplacements.Select(kv => $"{kv.Key} <-- {kv.Value}"));
-
             resultVar.Source = $"Inlining {invocation}\nparameters:\n{replaceString1}\ntypes:\n{replaceString2}";
+            */
 
             return (r, resultVar);
         }
 
-        public static IR InlineInvocations(IR ir)
+        public IR InlineInvocations(IR ir)
         {
             if (ir is StatementIR st)
             {
@@ -185,14 +168,19 @@ namespace PlatoIR
         public MethodDeclarationIR GetOrComputeInlined(MethodDeclarationIR original)
         {
             if (original == null) return null;
-            if (Inlined.ContainsKey(original)) return Inlined[original];
+            // TODO: I don't understand how this happens
+            if (original.Name.StartsWith("_inlined_")) return original;
             if (original is OperationDeclarationIR) return original;
-
-            var result = (MethodDeclarationIR)original.Clone();
+            if (Inlined.ContainsKey(original)) return Inlined[original];
+            Inlined.Add(original, original);
+            var result = original.TypedClone();
             result.Name = $"_inlined_{original.Name}";
-            result = result.Rewrite(Inline).Rewrite(InlineInvocations) as MethodDeclarationIR;
-            Inlined.Add(original, result);
+            result.Body = result.Body.Rewrite(InlineInvocations) as BlockStatementIR;
+            Inlined[original] = result;
             return result;
         }
+
+        public IEnumerable<MethodDeclarationIR> GetInlinedMethods()
+            => Inlined.Values.Where(f => f.Name.StartsWith("_inlined_"));
     }
 }

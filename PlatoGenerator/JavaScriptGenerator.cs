@@ -63,7 +63,10 @@ using System.Runtime.CompilerServices;
  * TODO: add call when casting floats to ints 
  * DONE: handle swithc expressions
  * TODO: test switch expression code generation
- * DONE: 
+ * DONE: add clone functions
+ * DONE: simplify declartions
+ * TODO: stack overflow
+ * TODO: cloning doesn't back-patch references.  
  * 
  * NOTES:
  * - TypeDeclaration constructors looks like it is going to be an interesting challenge.
@@ -734,7 +737,7 @@ namespace PlatoGenerator
             var builder = new IRBuilder();
             builder = SyntaxToIR.BuildIR(builder, context.Compilation, types);
             var outputCsFile = Path.Combine(thisRepo, "Tests", "PlatoTestOutput", "PlatoTestCode.g.cs");
-            var decls = builder
+            var typeDecls = builder
                 .GetTypes()
                 // TEMP: ignore stuff that is included manually 
                 .Where(td => td.Name != "Program" && td.Name != "Benchmarks")
@@ -742,14 +745,26 @@ namespace PlatoGenerator
 
             // Optimize 
             var optimizer = new IROptimizer();
-            foreach (var decl in decls)
+            foreach (var type in typeDecls)
             {
-                decl.Visit(optimizer.Optimize);
+                type.Visit(optimizer.Optimize);
             }
 
             // Inline methods 
             var inliner = new IRMethodInliner();
-            decls = decls.Rewrite(inliner.Inline).ToList();
+            foreach (var type in typeDecls)
+            {
+                var inlineFuncs = new List<MethodDeclarationIR>();
+                foreach (var method in type.Methods)
+                {
+                    var inline = inliner.GetOrComputeInlined(method);
+                    if (inline != null && inline.Name.StartsWith("_inlined_"))
+                    {
+                        inlineFuncs.Add(inline);
+                    }
+                }
+                type.Methods.AddRange(inlineFuncs);
+            }
             
             using (sw = new StreamWriter(File.Create(outputCsFile)))
             {
@@ -757,7 +772,7 @@ namespace PlatoGenerator
                 // TODO: this is a hack until I add proper namespace support. 
                 sw.WriteLine("using System.Runtime.CompilerServices;");
                 sw.WriteLine("namespace PlatoTest {");
-                srlzr.Write(decls, "");
+                srlzr.Write(typeDecls, "");
                 sw.WriteLine("}");
             }
         }
