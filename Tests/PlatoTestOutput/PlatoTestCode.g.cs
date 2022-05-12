@@ -1309,7 +1309,7 @@ public static class Extensions
   {
     System.Single[] result_1  = default(System.Single[]);
     {
-      PlatoTest.IArray<T> self_2  = self.SelectMany<PlatoTest.Vector3, System.Single>(/* Captured: */( x)
+      var self_2  = self.SelectMany<PlatoTest.Vector3, System.Single>(/* Captured: */( x)
        => {
           return x;
           }
