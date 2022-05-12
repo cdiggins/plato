@@ -12,41 +12,43 @@ namespace PlatoIR
 
         public static int VarId = 0;
 
-        public static IR ReplaceParameters(IR ir, Dictionary<ParameterDeclarationIR, ExpressionIR> replacements,
-            Dictionary<TypeParameterDeclarationIR, TypeReferenceIR> typeReplacements)
+        public static IR ReplaceParametersAndReturnStatements(IR ir, Dictionary<string, ExpressionIR> replacements, Dictionary<string, TypeReferenceIR> typeReplacements, VariableDeclarationIR resultVar, bool inLambda = false)
         {
             if (ir is ParameterReferenceIR pir)
             {
                 var pDecl = pir.ParameterDeclaration;
-                if (pDecl != null && replacements.ContainsKey(pDecl))
+                if (pDecl != null && replacements.ContainsKey(pDecl.ToString()))
                 {
-                    return replacements[pDecl];
+                    return replacements[pDecl.ToString()];
                 }
             }
 
             if (ir is TypeReferenceIR tir)
             {
-                if (tir.TypeParameterDeclaration != null && typeReplacements.ContainsKey(tir.TypeParameterDeclaration))
+                if (tir.TypeParameterDeclaration != null && typeReplacements.ContainsKey(tir.TypeParameterDeclaration.ToString()))
                 {
-                    return typeReplacements[tir.TypeParameterDeclaration];
+                    return typeReplacements[tir.TypeParameterDeclaration.ToString()];
                 }
             }
 
-            return ir;
-        }
-
-        public static IR ReplaceReturnStatements(IR ir, VariableDeclarationIR resultVar)
-        {
-            if (ir is ReturnStatementIR rst)
+            if (!inLambda && ir is ReturnStatementIR rst)
             {
                 return new ExpressionStatementIR(
-                    new AssignmentIR(new VariableReferenceIR(resultVar.Name, resultVar), rst.Expression));
+                    new AssignmentIR(new VariableReferenceIR(resultVar.Name, resultVar),
+                        rst.Expression.Rewrite(expr =>
+                            ReplaceParametersAndReturnStatements(expr, replacements, typeReplacements, resultVar))));
             }
 
-            if (ir is LambdaIR lambda)
+            if (ir is LambdaIR lambdaIr)
             {
-                // Prevents recursing into lambdas (they have return statements too, but they must stay as is).
-                return lambda.Clone();
+                Func<IR, IR> func2 = x =>
+                    ReplaceParametersAndReturnStatements(x, replacements, typeReplacements, resultVar, true);
+
+                return new LambdaIR()
+                {
+                    Body = lambdaIr.Body.Rewrite(func2),
+                    Parameters = lambdaIr.Parameters.Rewrite(func2).ToList(),
+                };
             }
 
             return ir;
@@ -78,8 +80,8 @@ namespace PlatoIR
             r.Statements.Add(new DeclarationStatementIR(resultVar));
 
             var block = new BlockStatementIR();
-            var parameterReplacements = new Dictionary<ParameterDeclarationIR, ExpressionIR>();
-            var typeReplacements = new Dictionary<TypeParameterDeclarationIR, TypeReferenceIR>();
+            var parameterReplacements = new Dictionary<string, ExpressionIR>();
+            var typeReplacements = new Dictionary<string, TypeReferenceIR>();
 
             var args = invocation.Args.ToList();
             if (parameters.Count > 0)
@@ -94,7 +96,7 @@ namespace PlatoIR
             {
                 var typeRef = typeArgs[i];
                 var typeParam = typeParameters[i];
-                typeReplacements.Add(typeParam, typeRef);
+                typeReplacements.Add(typeParam.ToString(), typeRef);
             }
 
             for (var i = 0; i < parameters.Count; i++)
@@ -117,26 +119,25 @@ namespace PlatoIR
                         InitialValue = arg,
                     };
                     VarId++;
-                    parameterReplacements.Add(p, decl.ToReference());
+                    parameterReplacements.Add(p.ToString(), decl.ToReference());
                     block.Statements.Add(new DeclarationStatementIR(decl));
                 }
                 else
                 {
-                    parameterReplacements.Add(p, arg);
+                    parameterReplacements.Add(p.ToString(), arg);
                 }
             }
 
+            body = body.Rewrite(ir =>
+                    ReplaceParametersAndReturnStatements(ir, parameterReplacements, typeReplacements, resultVar),
+                    new Dictionary<DeclarationIR, DeclarationIR>());
+
             block.Statements.Add(body);
             r.Statements.Add(block);
-            r.Statements = r.Statements
-                .Rewrite(ir => ReplaceParameters(ir, parameterReplacements, typeReplacements))
-                .Rewrite(ir => ReplaceReturnStatements(ir, resultVar)).ToList();
 
-            /*
-            var replaceString1 = string.Join("\n", parameterReplacements.Select(kv => $"{kv.Key} <-- {kv.Value}"));
-            var replaceString2 = string.Join("\n", typeReplacements.Select(kv => $"{kv.Key} <-- {kv.Value}"));
-            resultVar.Source = $"Inlining {invocation}\nparameters:\n{replaceString1}\ntypes:\n{replaceString2}";
-            */
+            var replaceString1 = string.Join(Environment.NewLine, parameterReplacements.Select(kv => $"{kv.Key} <- {kv.Value}"));
+            var replaceString2 = string.Join(Environment.NewLine, typeReplacements.Select(kv => $"{kv.Key} <- {kv.Value}"));
+            resultVar.Source = $"Inlining {invocation} {Environment.NewLine}parameters: {replaceString1} {Environment.NewLine}types: {replaceString2}";
 
             return (r, resultVar);
         }
@@ -158,8 +159,11 @@ namespace PlatoIR
                 if (lookup.Count == 0)
                     return ir;
 
-                newStatements.Add(st.Replace(lookup) as StatementIR);
-                return new MultiStatementIR(newStatements);
+                newStatements.Add((StatementIR)st.Replace(lookup));
+                var result = new MultiStatementIR(newStatements);
+
+                // If there are more invocations to inline, then this should do it. 
+                return result.Rewrite(InlineInvocations);
             }
 
             return ir;
@@ -173,9 +177,8 @@ namespace PlatoIR
             if (original is OperationDeclarationIR) return original;
             if (Inlined.ContainsKey(original)) return Inlined[original];
             Inlined.Add(original, original);
-            var result = original.TypedClone();
+            var result = original.Rewrite(InlineInvocations);
             result.Name = $"_inlined_{original.Name}";
-            result.Body = result.Body.Rewrite(InlineInvocations) as BlockStatementIR;
             Inlined[original] = result;
             return result;
         }

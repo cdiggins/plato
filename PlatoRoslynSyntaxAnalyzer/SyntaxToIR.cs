@@ -198,9 +198,9 @@ namespace PlatoRoslynSyntaxAnalyzer
                             {
                                 var fieldName = "_" + propertyIr.Name + "_";
                                 // The field is added during the "Normalization" phase 
-                                var fieldIr = new FieldDeclarationIR() { Name = fieldName };
+                                var fieldIr = new FieldDeclarationIR { Name = fieldName };
                                 builder.AddIR(null as SyntaxNode, fieldIr);
-                                fieldIr.Type = propertyIr.Type.TypedClone();
+                                fieldIr.Type = propertyIr.Type.Clone();
                                 var fieldRef = fieldIr.ToReference();
                                 var retStatement = new ReturnStatementIR(fieldRef);
                                 propertyIr.Getter.Body = new BlockStatementIR(retStatement);

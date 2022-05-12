@@ -394,14 +394,14 @@ public readonly struct Vector3 : PlatoTest.IArray<System.Single>
   */
   public static PlatoTest.Vector3 operator +(PlatoTest.Vector3 q, PlatoTest.Vector3 r)
   {
-    return new PlatoTest.Vector3(x.X+x.X, x.Y+x.Y, x.Z+x.Z);
+    return new PlatoTest.Vector3(q.X+r.X, q.Y+r.Y, q.Z+r.Z);
     }
   /*
   public static Vector3 operator -(Vector3 q, Vector3 r) => new(q.X - r.X, q.Y - r.Y, q.Z - r.Z);
   */
   public static PlatoTest.Vector3 operator -(PlatoTest.Vector3 q, PlatoTest.Vector3 r)
   {
-    return new PlatoTest.Vector3(b.X-a.X, b.Y-a.Y, b.Z-a.Z);
+    return new PlatoTest.Vector3(q.X-r.X, q.Y-r.Y, q.Z-r.Z);
     }
   /*
   public static Vector3 operator *(Vector3 q, Vector3 r) => new(q.X * r.X, q.Y * r.Y, q.Z * r.Z);
@@ -962,7 +962,7 @@ public static class Extensions
           ++i;
           }
         }
-    return r.Count.Select<U>(/* Captured: ri*/( i)
+    return r.Count.Select<U>(/* Captured: r, i*/( i)
      => {
         return r[i];
         }
@@ -974,7 +974,7 @@ public static class Extensions
   */
   public static PlatoTest.IArray<U> Select<T, U>(this PlatoTest.IArray<T> self, System.Func<T, U> func)
   {
-    return self.Count.Select<U>(/* Captured: selffunc*/( i)
+    return self.Count.Select<U>(/* Captured: self, func*/( i)
      => {
         return func(self[i]);
         }
@@ -1010,7 +1010,7 @@ public static class Extensions
   */
   public static PlatoTest.IArray<System.Single> SampleFloats(System.Int32 count, System.Single max = 1.0f)
   {
-    return count.Select<System.Single>(/* Captured: countmax*/( i)
+    return count.Select<System.Single>(/* Captured: count, max*/( i)
      => {
         return max*count;
         }
@@ -1093,7 +1093,7 @@ public static class Extensions
   */
   public static PlatoTest.IArray<PlatoTest.Vector2> ComputeQuadStripUVs(System.Int32 usegs, System.Int32 vsegs)
   {
-    return new PlatoTest.Array<PlatoTest.Vector2>(usegs*vsegs, /* Captured: usegsvsegs*/( i)
+    return new PlatoTest.Array<PlatoTest.Vector2>(usegs*vsegs, /* Captured: usegs, vsegs*/( i)
      => {
         System.Int32 row  = i/vsegs;
         System.Int32 col  = i%usegs;
@@ -1120,7 +1120,7 @@ public static class Extensions
   */
   public static PlatoTest.IArray<PlatoTest.Int4> ComputeQuadStripIndices(System.Int32 usegs, System.Int32 vsegs)
   {
-    return new PlatoTest.Array<PlatoTest.Int4>((usegs-1)*(vsegs-1), /* Captured: usegsvsegs*/( i)
+    return new PlatoTest.Array<PlatoTest.Int4>((usegs-1)*(vsegs-1), /* Captured: usegs, vsegs*/( i)
      => {
         System.Int32 row  = i/(vsegs-1);
         System.Int32 col  = i%(usegs-1);
@@ -1186,7 +1186,7 @@ public static class Extensions
   */
   public static PlatoTest.QuadMesh Torus(System.Int32 rows, System.Int32 cols, System.Single radius, System.Single tube)
   {
-    return ToQuadMesh(/* Captured: radiustube*/( uv)
+    return ToQuadMesh(/* Captured: radius, tube*/( uv)
      => {
         return UvToTorus(uv, radius, tube);
         }
@@ -1287,7 +1287,11 @@ public static class Extensions
     PlatoTest.IArray<T> result_0  = default(PlatoTest.IArray<T>);
     {
       {
-        result_0 = new PlatoTest.Array<T>(count, func);
+        result_0 = new PlatoTest.Array<T>(self.Count, /* Captured: self*/( i)
+         => {
+            return self[i];
+            }
+          );
         }
       }
     return result_0;
@@ -1309,18 +1313,55 @@ public static class Extensions
   {
     System.Single[] result_1  = default(System.Single[]);
     {
-      PlatoTest.IArray<T> self_2  = self.SelectMany<PlatoTest.Vector3, System.Single>(/* Captured: */( x)
-       => {
-          return x;
-          }
-        );
+      PlatoTest.IArray<System.Single> result_4  = default(PlatoTest.IArray<System.Single>);
       {
-        T[] r  = new T[self.Count];
+        {
+          System.Collections.Generic.List<System.Single> r  = new System.Collections.Generic.List<System.Single>();
+          {
+            System.Int32 i  = 0;
+            while(i<self.Count)
+            {
+                {
+                  PlatoTest.IArray<System.Single> result_5  = default(PlatoTest.IArray<System.Single>);
+                  {
+                    {
+                      result_5 = self[i];
+                      }
+                    }
+                  PlatoTest.IArray<System.Single> tmp  = result_5;
+                  {
+                    System.Int32 j  = 0;
+                    while(j<tmp.Count)
+                    {
+                        r.Add(tmp[j]);
+                        ++j;
+                        }
+                      }
+                  }
+                ++i;
+                }
+              }
+          PlatoTest.IArray<System.Single> result_3  = default(PlatoTest.IArray<System.Single>);
+          {
+            {
+              result_3 = new PlatoTest.Array<System.Single>(r.Count, /* Captured: */( i)
+               => {
+                  return r[i];
+                  }
+                );
+              }
+            }
+          result_4 = result_3;
+          }
+        }
+      PlatoTest.IArray<T> self_2  = result_4;
+      {
+        System.Single[] r  = new System.Single[self.Count];
         {
           System.Int32 i  = 0;
-          while(i<self.Count)
+          while(i<self_2.Count)
           {
-              r[i] = self[i];
+              r[i] = self_2[i];
               ++i;
               }
             }
@@ -1357,20 +1398,28 @@ public static class Extensions
     PlatoTest.IArray<U> result_3  = default(PlatoTest.IArray<U>);
     {
       {
-        result_3 = new PlatoTest.Array<T>(count, func);
+        result_3 = new PlatoTest.Array<U>(r.Count, /* Captured: r, i*/( i)
+         => {
+            return r[i];
+            }
+          );
         }
       }
     return result_3;
     }
   public static PlatoTest.IArray<U> _inlined_Select<T, U>(this PlatoTest.IArray<T> self, System.Func<T, U> func)
   {
-    PlatoTest.IArray<U> result_4  = default(PlatoTest.IArray<U>);
+    PlatoTest.IArray<U> result_6  = default(PlatoTest.IArray<U>);
     {
       {
-        result_4 = new PlatoTest.Array<T>(count, func);
+        result_6 = new PlatoTest.Array<U>(self.Count, /* Captured: self, func*/( i)
+         => {
+            return func(self[i]);
+            }
+          );
         }
       }
-    return result_4;
+    return result_6;
     }
   public static System.Single _inlined_Cos(this System.Single self)
   {
@@ -1386,26 +1435,36 @@ public static class Extensions
     }
   public static PlatoTest.IArray<System.Single> _inlined_SampleFloats(System.Int32 count, System.Single max = 1.0f)
   {
-    PlatoTest.IArray<System.Single> result_5  = default(PlatoTest.IArray<System.Single>);
+    PlatoTest.IArray<System.Single> result_7  = default(PlatoTest.IArray<System.Single>);
     {
       {
-        result_5 = new PlatoTest.Array<T>(count, func);
+        result_7 = new PlatoTest.Array<System.Single>(count, /* Captured: count, max*/( i)
+         => {
+            return max*count;
+            }
+          );
         }
       }
-    return result_5;
+    return result_7;
     }
   public static PlatoTest.IArray<PlatoTest.Int3> _inlined_ToTriangleIndices(this PlatoTest.IArray<PlatoTest.Int4> self)
   {
-    PlatoTest.IArray<PlatoTest.Int3> result_6  = default(PlatoTest.IArray<PlatoTest.Int3>);
+    PlatoTest.IArray<PlatoTest.Int3> result_8  = default(PlatoTest.IArray<PlatoTest.Int3>);
     {
       {
-        System.Collections.Generic.List<U> r  = new System.Collections.Generic.List<U>();
+        System.Collections.Generic.List<PlatoTest.Int3> r  = new System.Collections.Generic.List<PlatoTest.Int3>();
         {
           System.Int32 i  = 0;
           while(i<self.Count)
           {
               {
-                PlatoTest.IArray<U> tmp  = func(self[i]);
+                PlatoTest.IArray<PlatoTest.Int3> result_9  = default(PlatoTest.IArray<PlatoTest.Int3>);
+                {
+                  {
+                    result_9 = new PlatoTest.Int3[2]{new PlatoTest.Int3(self[i].X, self[i].Y, self[i].Z), new PlatoTest.Int3(self[i].Z, self[i].W, self[i].X)}.ToIArray<PlatoTest.Int3>();
+                    }
+                  }
+                PlatoTest.IArray<PlatoTest.Int3> tmp  = result_9;
                 {
                   System.Int32 j  = 0;
                   while(j<tmp.Count)
@@ -1418,16 +1477,20 @@ public static class Extensions
               ++i;
               }
             }
-        PlatoTest.IArray<U> result_3  = default(PlatoTest.IArray<U>);
+        PlatoTest.IArray<PlatoTest.Int3> result_3  = default(PlatoTest.IArray<PlatoTest.Int3>);
         {
           {
-            result_3 = new PlatoTest.Array<T>(count, func);
+            result_3 = new PlatoTest.Array<PlatoTest.Int3>(r.Count, /* Captured: */( i)
+             => {
+                return r[i];
+                }
+              );
             }
           }
-        result_6 = result_3;
+        result_8 = result_3;
         }
       }
-    return result_6;
+    return result_8;
     }
   public static PlatoTest.QuadMesh _inlined_ToQuadMesh(this System.Func<PlatoTest.Vector2, PlatoTest.Vector3> func, System.Int32 rows, System.Int32 cols)
   {
@@ -1439,117 +1502,129 @@ public static class Extensions
     PlatoTest.Vector3 b  = func(new PlatoTest.Vector2(uv.X-epsilon, uv.Y));
     PlatoTest.Vector3 c  = func(new PlatoTest.Vector2(uv.X, uv.Y+epsilon));
     PlatoTest.Vector3 d  = func(new PlatoTest.Vector2(uv.X, uv.Y-epsilon));
-    var result_7  = default;
+    PlatoTest.Vector3 result_10  = default(PlatoTest.Vector3);
     {
       {
-        result_7 = new PlatoTest.Vector3(b.X-a.X, b.Y-a.Y, b.Z-a.Z);
+        result_10 = new PlatoTest.Vector3(b.X-a.X, b.Y-a.Y, b.Z-a.Z);
         }
       }
-    PlatoTest.Vector3 v1  = result_7;
-    var result_8  = default;
+    PlatoTest.Vector3 v1  = result_10;
+    PlatoTest.Vector3 result_11  = default(PlatoTest.Vector3);
     {
       {
-        result_8 = new PlatoTest.Vector3(b.X-a.X, b.Y-a.Y, b.Z-a.Z);
+        result_11 = new PlatoTest.Vector3(d.X-c.X, d.Y-c.Y, d.Z-c.Z);
         }
       }
-    PlatoTest.Vector3 v2  = result_8;
-    PlatoTest.Vector3 result_9  = default(PlatoTest.Vector3);
+    PlatoTest.Vector3 v2  = result_11;
+    PlatoTest.Vector3 result_12  = default(PlatoTest.Vector3);
     {
       {
-        result_9 = new PlatoTest.Vector3(Y*v.Z-Z*v.Y, Z*v.X-X*v.Z, X*v.Y-Y*v.X);
+        result_12 = new PlatoTest.Vector3(Y*v2.Z-Z*v2.Y, Z*v2.X-X*v2.Z, X*v2.Y-Y*v2.X);
         }
       }
-    PlatoTest.Vector3 r  = result_9;
+    PlatoTest.Vector3 r  = result_12;
     return r.Normal;
     }
   public static PlatoTest.Points _inlined_UVsToPoints(this PlatoTest.IArray<PlatoTest.Vector2> uvs, System.Func<PlatoTest.Vector2, PlatoTest.Vector3> func)
   {
     return new PlatoTest.Points(uvs.Select<PlatoTest.Vector2, PlatoTest.Vector3>(func), uvs, uvs.Select<PlatoTest.Vector2, PlatoTest.Vector3>(/* Captured: func*/( uv)
      => {
-        PlatoTest.Vector3 result_10  = default(PlatoTest.Vector3);
+        PlatoTest.Vector3 result_13  = default(PlatoTest.Vector3);
         {
           {
-            PlatoTest.Vector3 a  = func(new PlatoTest.Vector2(uv.X+epsilon, uv.Y));
-            PlatoTest.Vector3 b  = func(new PlatoTest.Vector2(uv.X-epsilon, uv.Y));
-            PlatoTest.Vector3 c  = func(new PlatoTest.Vector2(uv.X, uv.Y+epsilon));
-            PlatoTest.Vector3 d  = func(new PlatoTest.Vector2(uv.X, uv.Y-epsilon));
-            var result_7  = default;
+            PlatoTest.Vector3 a  = func(new PlatoTest.Vector2(uv.X+0.00001f, uv.Y));
+            PlatoTest.Vector3 b  = func(new PlatoTest.Vector2(uv.X-0.00001f, uv.Y));
+            PlatoTest.Vector3 c  = func(new PlatoTest.Vector2(uv.X, uv.Y+0.00001f));
+            PlatoTest.Vector3 d  = func(new PlatoTest.Vector2(uv.X, uv.Y-0.00001f));
+            PlatoTest.Vector3 result_10  = default(PlatoTest.Vector3);
             {
               {
-                result_7 = new PlatoTest.Vector3(b.X-a.X, b.Y-a.Y, b.Z-a.Z);
+                result_10 = new PlatoTest.Vector3(b.X-a.X, b.Y-a.Y, b.Z-a.Z);
                 }
               }
-            PlatoTest.Vector3 v1  = result_7;
-            var result_8  = default;
+            PlatoTest.Vector3 v1  = result_10;
+            PlatoTest.Vector3 result_11  = default(PlatoTest.Vector3);
             {
               {
-                result_8 = new PlatoTest.Vector3(b.X-a.X, b.Y-a.Y, b.Z-a.Z);
+                result_11 = new PlatoTest.Vector3(d.X-c.X, d.Y-c.Y, d.Z-c.Z);
                 }
               }
-            PlatoTest.Vector3 v2  = result_8;
-            PlatoTest.Vector3 result_9  = default(PlatoTest.Vector3);
+            PlatoTest.Vector3 v2  = result_11;
+            PlatoTest.Vector3 result_12  = default(PlatoTest.Vector3);
             {
               {
-                result_9 = new PlatoTest.Vector3(Y*v.Z-Z*v.Y, Z*v.X-X*v.Z, X*v.Y-Y*v.X);
+                result_12 = new PlatoTest.Vector3(Y*v2.Z-Z*v2.Y, Z*v2.X-X*v2.Z, X*v2.Y-Y*v2.X);
                 }
               }
-            PlatoTest.Vector3 r  = result_9;
-            result_10 = r.Normal;
+            PlatoTest.Vector3 r  = result_12;
+            result_13 = r.Normal;
             }
           }
-        return result_10;
+        return result_13;
         }
       ));
     }
   public static PlatoTest.Points _inlined_ComputeQuadStripPoints(this System.Func<PlatoTest.Vector2, PlatoTest.Vector3> func, System.Int32 usegs, System.Int32 vsegs)
   {
-    PlatoTest.Points result_11  = default(PlatoTest.Points);
+    PlatoTest.Points result_14  = default(PlatoTest.Points);
     {
-      PlatoTest.IArray<PlatoTest.Vector2> uvs_12  = ComputeQuadStripUVs(usegs, vsegs);
+      PlatoTest.IArray<PlatoTest.Vector2> result_16  = default(PlatoTest.IArray<PlatoTest.Vector2>);
       {
-        result_11 = new PlatoTest.Points(uvs.Select<PlatoTest.Vector2, PlatoTest.Vector3>(func), uvs, uvs.Select<PlatoTest.Vector2, PlatoTest.Vector3>(/* Captured: func*/( uv)
+        {
+          result_16 = new PlatoTest.Array<PlatoTest.Vector2>(usegs*vsegs, /* Captured: */( i)
+           => {
+              System.Int32 row  = i/vsegs;
+              System.Int32 col  = i%usegs;
+              return new PlatoTest.Vector2((System.Single)col/(usegs-1), (System.Single)row/(vsegs-1));
+              }
+            );
+          }
+        }
+      PlatoTest.IArray<PlatoTest.Vector2> uvs_15  = result_16;
+      {
+        result_14 = new PlatoTest.Points(uvs_15.Select<PlatoTest.Vector2, PlatoTest.Vector3>(func), uvs_15, uvs_15.Select<PlatoTest.Vector2, PlatoTest.Vector3>(/* Captured: */( uv)
          => {
-            PlatoTest.Vector3 result_10  = default(PlatoTest.Vector3);
+            PlatoTest.Vector3 result_13  = default(PlatoTest.Vector3);
             {
               {
-                PlatoTest.Vector3 a  = func(new PlatoTest.Vector2(uv.X+epsilon, uv.Y));
-                PlatoTest.Vector3 b  = func(new PlatoTest.Vector2(uv.X-epsilon, uv.Y));
-                PlatoTest.Vector3 c  = func(new PlatoTest.Vector2(uv.X, uv.Y+epsilon));
-                PlatoTest.Vector3 d  = func(new PlatoTest.Vector2(uv.X, uv.Y-epsilon));
-                var result_7  = default;
+                PlatoTest.Vector3 a  = func(new PlatoTest.Vector2(uv.X+0.00001f, uv.Y));
+                PlatoTest.Vector3 b  = func(new PlatoTest.Vector2(uv.X-0.00001f, uv.Y));
+                PlatoTest.Vector3 c  = func(new PlatoTest.Vector2(uv.X, uv.Y+0.00001f));
+                PlatoTest.Vector3 d  = func(new PlatoTest.Vector2(uv.X, uv.Y-0.00001f));
+                PlatoTest.Vector3 result_10  = default(PlatoTest.Vector3);
                 {
                   {
-                    result_7 = new PlatoTest.Vector3(b.X-a.X, b.Y-a.Y, b.Z-a.Z);
+                    result_10 = new PlatoTest.Vector3(b.X-a.X, b.Y-a.Y, b.Z-a.Z);
                     }
                   }
-                PlatoTest.Vector3 v1  = result_7;
-                var result_8  = default;
+                PlatoTest.Vector3 v1  = result_10;
+                PlatoTest.Vector3 result_11  = default(PlatoTest.Vector3);
                 {
                   {
-                    result_8 = new PlatoTest.Vector3(b.X-a.X, b.Y-a.Y, b.Z-a.Z);
+                    result_11 = new PlatoTest.Vector3(d.X-c.X, d.Y-c.Y, d.Z-c.Z);
                     }
                   }
-                PlatoTest.Vector3 v2  = result_8;
-                PlatoTest.Vector3 result_9  = default(PlatoTest.Vector3);
+                PlatoTest.Vector3 v2  = result_11;
+                PlatoTest.Vector3 result_12  = default(PlatoTest.Vector3);
                 {
                   {
-                    result_9 = new PlatoTest.Vector3(Y*v.Z-Z*v.Y, Z*v.X-X*v.Z, X*v.Y-Y*v.X);
+                    result_12 = new PlatoTest.Vector3(Y*v2.Z-Z*v2.Y, Z*v2.X-X*v2.Z, X*v2.Y-Y*v2.X);
                     }
                   }
-                PlatoTest.Vector3 r  = result_9;
-                result_10 = r.Normal;
+                PlatoTest.Vector3 r  = result_12;
+                result_13 = r.Normal;
                 }
               }
-            return result_10;
+            return result_13;
             }
           ));
         }
       }
-    return result_11;
+    return result_14;
     }
   public static PlatoTest.IArray<PlatoTest.Vector2> _inlined_ComputeQuadStripUVs(System.Int32 usegs, System.Int32 vsegs)
   {
-    return new PlatoTest.Array<PlatoTest.Vector2>(usegs*vsegs, /* Captured: usegsvsegs*/( i)
+    return new PlatoTest.Array<PlatoTest.Vector2>(usegs*vsegs, /* Captured: usegs, vsegs*/( i)
      => {
         System.Int32 row  = i/vsegs;
         System.Int32 col  = i%usegs;
@@ -1559,7 +1634,7 @@ public static class Extensions
     }
   public static PlatoTest.IArray<PlatoTest.Int4> _inlined_ComputeQuadStripIndices(System.Int32 usegs, System.Int32 vsegs)
   {
-    return new PlatoTest.Array<PlatoTest.Int4>((usegs-1)*(vsegs-1), /* Captured: usegsvsegs*/( i)
+    return new PlatoTest.Array<PlatoTest.Int4>((usegs-1)*(vsegs-1), /* Captured: usegs, vsegs*/( i)
      => {
         System.Int32 row  = i/(vsegs-1);
         System.Int32 col  = i%(usegs-1);
@@ -1589,80 +1664,176 @@ public static class Extensions
   public static void _inlined_TestOperator()
   {
     PlatoTest.Vector3 x  = new PlatoTest.Vector3(1, 2, 3);
-    var result_13  = default;
+    PlatoTest.Vector3 result_17  = default(PlatoTest.Vector3);
     {
       {
-        result_13 = new PlatoTest.Vector3(x.X+x.X, x.Y+x.Y, x.Z+x.Z);
+        result_17 = new PlatoTest.Vector3(x.X+x.X, x.Y+x.Y, x.Z+x.Z);
         }
       }
-    PlatoTest.Vector3 y  = result_13;
+    PlatoTest.Vector3 y  = result_17;
     }
   public static PlatoTest.QuadMesh _inlined_Torus(System.Int32 rows, System.Int32 cols, System.Single radius, System.Single tube)
   {
-    PlatoTest.QuadMesh result_14  = default(PlatoTest.QuadMesh);
+    PlatoTest.QuadMesh result_18  = default(PlatoTest.QuadMesh);
     {
       {
-        result_14 = new PlatoTest.QuadMesh(ComputeQuadStripPoints(func, rows, cols), ComputeQuadStripIndices(rows, cols));
-        }
-      }
-    return result_14;
-    }
-  public static System.Int32[] _inlined_ToIntArray(this PlatoTest.IArray<PlatoTest.Int3> faces)
-  {
-    System.Int32[] result_15  = default(System.Int32[]);
-    {
-      PlatoTest.IArray<T> self_16  = faces.SelectMany<PlatoTest.Int3, System.Int32>(/* Captured: */( f)
-       => {
-          return f;
-          }
-        );
-      {
-        T[] r  = new T[self.Count];
-        {
-          System.Int32 i  = 0;
-          while(i<self.Count)
-          {
-              r[i] = self[i];
-              ++i;
+        result_18 = new PlatoTest.QuadMesh(ComputeQuadStripPoints(/* Captured: radius, tube*/( uv)
+         => {
+            PlatoTest.Vector3 result_19  = default(PlatoTest.Vector3);
+            {
+              {
+                uv = uv*System.MathF.PI*2;
+                result_19 = new PlatoTest.Vector3((radius+tube*uv.Y.Cos())*uv.X.Cos(), (radius+tube*uv.Y.Cos())*uv.X.Sin(), tube*uv.Y.Sin());
+                }
               }
+            return result_19;
             }
-        result_15 = r;
-        }
-      }
-    return result_15;
-    }
-  public static PlatoTest.IArray<PlatoTest.Triangle> _inlined_Triangles(this PlatoTest.TriMesh mesh)
-  {
-    PlatoTest.IArray<PlatoTest.Triangle> result_17  = default(PlatoTest.IArray<PlatoTest.Triangle>);
-    {
-      {
-        PlatoTest.IArray<U> result_4  = default(PlatoTest.IArray<U>);
-        {
-          {
-            result_4 = new PlatoTest.Array<T>(count, func);
-            }
-          }
-        result_17 = result_4;
-        }
-      }
-    return result_17;
-    }
-  public static PlatoTest.IArray<PlatoTest.Vector3> _inlined_FaceNormals(this PlatoTest.TriMesh mesh)
-  {
-    PlatoTest.IArray<PlatoTest.Vector3> result_18  = default(PlatoTest.IArray<PlatoTest.Vector3>);
-    {
-      PlatoTest.IArray<T> self_19  = mesh.Triangles();
-      {
-        PlatoTest.IArray<U> result_4  = default(PlatoTest.IArray<U>);
-        {
-          {
-            result_4 = new PlatoTest.Array<T>(count, func);
-            }
-          }
-        result_18 = result_4;
+          , rows, cols), ComputeQuadStripIndices(rows, cols));
         }
       }
     return result_18;
+    }
+  public static System.Int32[] _inlined_ToIntArray(this PlatoTest.IArray<PlatoTest.Int3> faces)
+  {
+    System.Int32[] result_20  = default(System.Int32[]);
+    {
+      PlatoTest.IArray<System.Int32> result_22  = default(PlatoTest.IArray<System.Int32>);
+      {
+        {
+          System.Collections.Generic.List<System.Int32> r  = new System.Collections.Generic.List<System.Int32>();
+          {
+            System.Int32 i  = 0;
+            while(i<faces.Count)
+            {
+                {
+                  PlatoTest.IArray<System.Int32> result_23  = default(PlatoTest.IArray<System.Int32>);
+                  {
+                    {
+                      result_23 = faces[i];
+                      }
+                    }
+                  PlatoTest.IArray<System.Int32> tmp  = result_23;
+                  {
+                    System.Int32 j  = 0;
+                    while(j<tmp.Count)
+                    {
+                        r.Add(tmp[j]);
+                        ++j;
+                        }
+                      }
+                  }
+                ++i;
+                }
+              }
+          PlatoTest.IArray<System.Int32> result_3  = default(PlatoTest.IArray<System.Int32>);
+          {
+            {
+              result_3 = new PlatoTest.Array<System.Int32>(r.Count, /* Captured: */( i)
+               => {
+                  return r[i];
+                  }
+                );
+              }
+            }
+          result_22 = result_3;
+          }
+        }
+      PlatoTest.IArray<T> self_21  = result_22;
+      {
+        System.Int32[] r  = new System.Int32[self.Count];
+        {
+          System.Int32 i  = 0;
+          while(i<self_21.Count)
+          {
+              r[i] = self_21[i];
+              ++i;
+              }
+            }
+        result_20 = r;
+        }
+      }
+    return result_20;
+    }
+  public static PlatoTest.IArray<PlatoTest.Triangle> _inlined_Triangles(this PlatoTest.TriMesh mesh)
+  {
+    PlatoTest.IArray<PlatoTest.Triangle> result_24  = default(PlatoTest.IArray<PlatoTest.Triangle>);
+    {
+      {
+        PlatoTest.IArray<PlatoTest.Triangle> result_6  = default(PlatoTest.IArray<PlatoTest.Triangle>);
+        {
+          {
+            result_6 = new PlatoTest.Array<PlatoTest.Triangle>(mesh._Faces_.Count, /* Captured: */( i)
+             => {
+                PlatoTest.Triangle result_25  = default(PlatoTest.Triangle);
+                {
+                  {
+                    result_25 = new PlatoTest.Triangle(mesh._Points_._Positions_[mesh._Faces_[i].X], mesh._Points_._Positions_[mesh._Faces_[i].Y], mesh._Points_._Positions_[mesh._Faces_[i].Z]);
+                    }
+                  }
+                return result_25;
+                }
+              );
+            }
+          }
+        result_24 = result_6;
+        }
+      }
+    return result_24;
+    }
+  public static PlatoTest.IArray<PlatoTest.Vector3> _inlined_FaceNormals(this PlatoTest.TriMesh mesh)
+  {
+    PlatoTest.IArray<PlatoTest.Vector3> result_26  = default(PlatoTest.IArray<PlatoTest.Vector3>);
+    {
+      PlatoTest.IArray<PlatoTest.Triangle> result_28  = default(PlatoTest.IArray<PlatoTest.Triangle>);
+      {
+        {
+          PlatoTest.IArray<PlatoTest.Triangle> result_24  = default(PlatoTest.IArray<PlatoTest.Triangle>);
+          {
+            {
+              PlatoTest.IArray<PlatoTest.Triangle> result_6  = default(PlatoTest.IArray<PlatoTest.Triangle>);
+              {
+                {
+                  result_6 = new PlatoTest.Array<PlatoTest.Triangle>(mesh._Faces_.Count, /* Captured: */( i)
+                   => {
+                      PlatoTest.Triangle result_25  = default(PlatoTest.Triangle);
+                      {
+                        {
+                          result_25 = new PlatoTest.Triangle(mesh._Points_._Positions_[mesh._Faces_[i].X], mesh._Points_._Positions_[mesh._Faces_[i].Y], mesh._Points_._Positions_[mesh._Faces_[i].Z]);
+                          }
+                        }
+                      return result_25;
+                      }
+                    );
+                  }
+                }
+              result_24 = result_6;
+              }
+            }
+          result_28 = result_24;
+          }
+        }
+      PlatoTest.IArray<T> self_27  = result_28;
+      {
+        PlatoTest.IArray<PlatoTest.Vector3> result_6  = default(PlatoTest.IArray<PlatoTest.Vector3>);
+        {
+          {
+            result_6 = new PlatoTest.Array<PlatoTest.Vector3>(self_27.Count, /* Captured: */( i)
+             => {
+                PlatoTest.Vector3 result_29  = default(PlatoTest.Vector3);
+                {
+                  {
+                    result_29 = self_27[i].Normal;
+                    }
+                  }
+                return result_29;
+                }
+              );
+            }
+          }
+        result_26 = result_6;
+        }
+      }
+    return result_26;
     }
   public static System.ValueTuple<T, System.TimeSpan> _inlined_TimeIt<T>(System.Func<T> func)
   {
@@ -1675,43 +1846,66 @@ public static class Extensions
     }
   public static T _inlined_LogTiming<T>(System.Func<T> func)
   {
-    System.ValueTuple<T, System.TimeSpan> result_20  = default(System.ValueTuple<T, System.TimeSpan>);
+    System.ValueTuple<T, System.TimeSpan> result_30  = default(System.ValueTuple<T, System.TimeSpan>);
     {
       {
         System.Diagnostics.Stopwatch sw  = System.Diagnostics.Stopwatch.StartNew();
-        result_20 = (func(), sw.Elapsed);
+        result_30 = (func(), sw.Elapsed);
         }
       }
-    System.ValueTuple<T, System.TimeSpan> r  = result_20;
+    System.ValueTuple<T, System.TimeSpan> r  = result_30;
     System.Console.WriteLine("msec elapsed: "+r.Item2.Milliseconds);
     return r.Item1;
     }
   public static void _inlined_ManualBenchmark()
   {
-    PlatoTest.TriMesh result_21  = default(PlatoTest.TriMesh);
+    PlatoTest.TriMesh result_31  = default(PlatoTest.TriMesh);
     {
-      PlatoTest.QuadMesh mesh_22  = Torus(5000, 1000, 1, 0.2f);
+      PlatoTest.QuadMesh result_33  = default(PlatoTest.QuadMesh);
       {
-        result_21 = new PlatoTest.TriMesh(mesh._Points_, mesh._Faces_.ToTriangleIndices());
+        {
+          PlatoTest.QuadMesh result_18  = default(PlatoTest.QuadMesh);
+          {
+            {
+              result_18 = new PlatoTest.QuadMesh(ComputeQuadStripPoints(/* Captured: */( uv)
+               => {
+                  PlatoTest.Vector3 result_19  = default(PlatoTest.Vector3);
+                  {
+                    {
+                      uv = uv*System.MathF.PI*2;
+                      result_19 = new PlatoTest.Vector3((1+0.2f*uv.Y.Cos())*uv.X.Cos(), (1+0.2f*uv.Y.Cos())*uv.X.Sin(), 0.2f*uv.Y.Sin());
+                      }
+                    }
+                  return result_19;
+                  }
+                , 5000, 1000), ComputeQuadStripIndices(5000, 1000));
+              }
+            }
+          result_33 = result_18;
+          }
+        }
+      PlatoTest.QuadMesh mesh_32  = result_33;
+      {
+        result_31 = new PlatoTest.TriMesh(mesh_32._Points_, mesh_32._Faces_.ToTriangleIndices());
         }
       }
-    PlatoTest.TriMesh torus  = result_21;
-    System.Single[] result_23  = default(System.Single[]);
+    PlatoTest.TriMesh torus  = result_31;
+    System.Single[] result_34  = default(System.Single[]);
     {
       {
-        System.ValueTuple<T, System.TimeSpan> result_20  = default(System.ValueTuple<T, System.TimeSpan>);
+        System.ValueTuple<System.Single[], System.TimeSpan> result_30  = default(System.ValueTuple<System.Single[], System.TimeSpan>);
         {
           {
             System.Diagnostics.Stopwatch sw  = System.Diagnostics.Stopwatch.StartNew();
-            result_20 = (func(), sw.Elapsed);
+            result_30 = (torus.FaceNormals().ToFloatArray(), sw.Elapsed);
             }
           }
-        System.ValueTuple<T, System.TimeSpan> r  = result_20;
+        System.ValueTuple<System.Single[], System.TimeSpan> r  = result_30;
         System.Console.WriteLine("msec elapsed: "+r.Item2.Milliseconds);
-        result_23 = r.Item1;
+        result_34 = r.Item1;
         }
       }
-    System.Single[] floats  = result_23;
+    System.Single[] floats  = result_34;
     System.String filePath  = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "profiling.txt");
     System.IO.File.WriteAllLines(filePath, floats.Select<System.Single, System.String>(/* Captured: */( f)
      => {

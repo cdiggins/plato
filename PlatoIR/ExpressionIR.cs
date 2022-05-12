@@ -28,22 +28,8 @@ namespace PlatoIR
         public ExpressionIR Function { get; }
         public override IEnumerable<ExpressionIR> GetExpressions() => Args.Prepend(Function);
 
-        public override void Visit(Func<IR, bool> action)
-        {
-            if (!action(this)) return;
-            Function?.Visit(action);
-            Args?.Visit(action);
-        }
-
         public override string ToString()
             => $"{Function}({string.Join(",", Args)})";
-
-        public override IR Clone()
-            => new InvocationIR(
-                Function.TypedClone(), 
-                Args.Clone().ToArray()) { 
-                ExpressionType = ExpressionType.TypedClone()
-            };
     }
 
     public class OperationIR : InvocationIR
@@ -52,15 +38,6 @@ namespace PlatoIR
             : base(function, args) => Operator = op;
         public string Operator { get; }
         public new MethodReferenceIR Function => (MethodReferenceIR)base.Function;
-
-        public override IR Clone()
-            => new OperationIR(
-                Operator,
-                Function.TypedClone(),
-                Args.Clone().ToArray())
-            {
-                ExpressionType = ExpressionType.TypedClone()
-            };
     }
 
     public class PrefixOperatorIR : OperationIR
@@ -72,15 +49,6 @@ namespace PlatoIR
 
         public override string ToString()
             => $"{Operator}{Operand}";
-
-        public override IR Clone()
-            => new PrefixOperatorIR(
-                Operator,
-                Function.TypedClone(),
-                Operand.TypedClone())
-            {
-                ExpressionType = ExpressionType.TypedClone()
-            };
     }
 
     public class PostfixOperatorIR : OperationIR
@@ -103,9 +71,6 @@ namespace PlatoIR
 
         public override string ToString()
             => $"{Operand1} {Operator} {Operand2}";
-
-        public override IR Clone()
-            => new BinaryOperatorIR(Operator, Function.TypedClone(), Operand1.TypedClone(), Operand2.TypedClone());
     }
 
     public class TupleIR : ExpressionIR
@@ -113,17 +78,8 @@ namespace PlatoIR
         public TupleIR(params ExpressionIR[] expressions)
             : base(expressions) { }
 
-        public override void Visit(Func<IR, bool> action)
-        {
-            if (!action(this)) return;
-            Args?.Visit(action);
-        }
-
         public override string ToString()
             => $"({string.Join(", ", Args)})";
-
-        public override IR Clone()
-            => new TupleIR(Args.Clone().ToArray()) {  ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class ArrayIR : ExpressionIR
@@ -136,19 +92,10 @@ namespace PlatoIR
             return base.GetExpressions().Prepend(Size);
         }
 
-        public override void Visit(Func<IR, bool> action)
-        {
-            if (!action(this)) return;
-            Args?.Visit(action);
-        }
-
         public TypeReferenceIR ElementType => ExpressionType.TypeArguments.FirstOrDefault();
         
         public override string ToString()
             => $"new {ElementType}[] {{ {string.Join(",", Args)} }}";
-
-        public override IR Clone()
-            => new ArrayIR(Size.TypedClone(), Args.Clone().ToArray()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class CastIR : ExpressionIR
@@ -157,18 +104,9 @@ namespace PlatoIR
             : base(expr) => CastType = type;
         public TypeReferenceIR CastType { get; }
         public ExpressionIR CastExpression => Args[0];
-        public override void Visit(Func<IR, bool> action)
-        {
-            if (!action(this)) return;
-            CastType?.Visit(action);
-            Args?.Visit(action);
-        }
 
         public override string ToString()
             => $"({CastType}){CastExpression}";
-
-        public override IR Clone()
-            => new CastIR(CastType.TypedClone(), CastExpression.TypedClone()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class SwitchIR : ExpressionIR
@@ -183,32 +121,14 @@ namespace PlatoIR
         public IEnumerable<(ExpressionIR, ExpressionIR)> Arms =>
             Enumerable.Range(0, (Args.Count - 1) / 2).Select(i => (Args[i * 2], Args[i * 2 + 1]));
 
-        public override void Visit(Func<IR, bool> action)
-        {
-            if (!action(this)) return;
-            Args?.Visit(action);
-        }
-
         public override string ToString()
             => $"{Control} switch {{ {string.Join(",", Arms.Select(arm => $"{arm.Item1} => {arm.Item2}"))}}}";
-
-        public override IR Clone()
-            => new SwitchIR(Control.TypedClone(), Cases.Clone().ToArray()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class DiscardIR : ExpressionIR
     {
-        public override void Visit(Func<IR, bool> action)
-        {
-            if (!action(this)) return;
-        }
-
         public override string ToString()
             => $"_";
-
-
-        public override IR Clone()
-            => new DiscardIR() { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class DefaultIR : ExpressionIR
@@ -216,45 +136,21 @@ namespace PlatoIR
         public DefaultIR(TypeReferenceIR type)
             => DefaultType = type;
         public TypeReferenceIR DefaultType { get; }
-        public override void Visit(Func<IR, bool> action)
-        {
-            if (!action(this)) return;
-            DefaultType?.Visit(action);
-        }
 
         public override string ToString()
             => $"default({DefaultType})";
-
-        public override IR Clone()
-            => new DefaultIR(DefaultType.TypedClone()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class BaseIR : ExpressionIR
     {
-        public override void Visit(Func<IR, bool> action)
-        {
-            if (!action(this)) return;
-        }
-
         public override string ToString()
             => $"base";
-
-        public override IR Clone()
-            => new BaseIR() { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class ThisIR : ExpressionIR
     {
-        public override void Visit(Func<IR, bool> action)
-        {
-            if (!action(this)) return;
-        }
-
         public override string ToString()
             => $"this";
-
-        public override IR Clone()
-            => new ThisIR() { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class SubscriptIR : ExpressionIR
@@ -265,17 +161,8 @@ namespace PlatoIR
         public ExpressionIR Reciever => Args[0];
         public ExpressionIR Subscript => Args[1];
 
-        public override void Visit(Func<IR, bool> action)
-        {
-            if (!action(this)) return;
-            Args?.Visit(action);
-        }
-
         public override string ToString()
             => $"{Reciever}[{Subscript}]";
-
-        public override IR Clone()
-            => new SubscriptIR(Reciever.TypedClone(), Subscript.TypedClone()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class ThrowIR : ExpressionIR
@@ -286,17 +173,8 @@ namespace PlatoIR
 
         public ExpressionIR Expression => Args[0];
 
-        public override void Visit(Func<IR, bool> action)
-        {
-            if (!action(this)) return;
-            Args?.Visit(action);
-        }
-
         public override string ToString()
             => $"throw {Expression}";
-
-        public override IR Clone()
-            => new ThrowIR(Expression.TypedClone()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class ConditionalIR : ExpressionIR
@@ -308,76 +186,41 @@ namespace PlatoIR
         public ExpressionIR OnTrue => Args[1];
         public ExpressionIR OnFalse => Args[2];
 
-        public override void Visit(Func<IR, bool> action)
-        {
-            if (!action(this)) return;
-            Args?.Visit(action);
-        }
-
         public override string ToString()
             => $"{Condition} ? {OnTrue} : {OnFalse}";
-
-        public override IR Clone()
-            => new TupleIR(Condition.TypedClone(), OnTrue.TypedClone(), OnFalse.TypedClone()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class TypeOfIR : ExpressionIR
     {
         public TypeOfIR(TypeReferenceIR type)
             => TypeArgument = type;
+        
         public TypeReferenceIR TypeArgument { get; }
-
-        public override void Visit(Func<IR, bool> action)
-        {
-            if (!action(this)) return;
-            TypeArgument?.Visit(action);
-        }
 
         public override string ToString()
             => $"typeof({TypeArgument})";
-
-        public override IR Clone()
-            => new TypeOfIR(TypeArgument.TypedClone()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class ParenthesizedIR : ExpressionIR
     {
         public ParenthesizedIR(ExpressionIR expr)
             : base(expr) { }
-        public ExpressionIR Expression => Args[0];
 
-        public override void Visit(Func<IR, bool> action)
-        {
-            if (!action(this)) return;
-            Args?.Visit(action);
-        }
+        public ExpressionIR Expression => Args[0];
 
         public override string ToString()
             => $"({Expression}";
-
-
-        public override IR Clone()
-            => new ParenthesizedIR(Expression.TypedClone()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class NewIR : ExpressionIR
     {
         public NewIR(TypeReferenceIR type, params ExpressionIR[] args)
             : base(args) => CreatedType = type;
+        
         public TypeReferenceIR CreatedType { get;  }
-
-        public override void Visit(Func<IR, bool> action)
-        {
-            if (!action(this)) return;
-            Args?.Visit(action);
-            CreatedType?.Visit(action);
-        }
 
         public override string ToString()
             => $"new {CreatedType}({string.Join(",", Args)})";
-
-        public override IR Clone()
-            => new NewIR(CreatedType.TypedClone(), Args.Clone().ToArray()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class LambdaIR : ExpressionIR
@@ -386,83 +229,45 @@ namespace PlatoIR
         public List<ParameterDeclarationIR> Parameters { get; set; } = new List<ParameterDeclarationIR>();
         public StatementIR Body { get; set; }
 
-        public override void Visit(Func<IR, bool> action)
-        {
-            if (!action(this)) return;
-            Parameters?.Visit(action);
-            Body?.Visit(action);
-        }
-
         public override string ToString()
             => $"({string.Join(",", Parameters)}) => {Body}";
-
-        public override IR Clone()
-            => new LambdaIR() {
-                CapturedVariables = CapturedVariables.Clone().ToList(),
-                Parameters = Parameters.Clone().ToList(), 
-                Body = Body.TypedClone(),
-                ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class LiteralIR : ExpressionIR
     {
         public LiteralIR(string text, object value)
             => (Text, Value) = (text, value);
+        
         public string Text { get; }
         public object Value { get; }
 
-        public override void Visit(Func<IR, bool> action)
-        {
-            if (!action(this)) return;
-        }
-
         public override string ToString()
             => Text;
-
-        public override IR Clone()
-            => new LiteralIR(Text, Value);
     }
 
     public class AssignmentIR : ExpressionIR
     {
         public AssignmentIR(ExpressionIR lvalue, ExpressionIR rvalue)
             : base(lvalue, rvalue) { }
+        
         public ExpressionIR LValue => Args[0];
         public ExpressionIR RValue => Args[1];
 
-        public override void Visit(Func<IR, bool> action)
-        {
-            if (!action(this)) return;
-            Args?.Visit(action);
-        }
-
         public override string ToString()
             => $"{LValue} = {RValue}";
-
-        public override IR Clone()
-            => new AssignmentIR(LValue.TypedClone(), RValue.TypedClone()) { ExpressionType = ExpressionType.TypedClone() };
     }
 
     public class LetIR : ExpressionIR
     {
         public LetIR(VariableDeclarationIR varDecl, ExpressionIR expression)
             : base(expression) => Variable = varDecl;
+        
         public VariableDeclarationIR Variable { get; }
         public ExpressionIR Expression => Args[0];
         public override IEnumerable<VariableDeclarationIR> GetDeclarations() => Enumerable.Repeat(Variable, 1);
         public override IEnumerable<ExpressionIR> GetExpressions() => new[] { Variable.InitialValue, Expression };
 
-        public override void Visit(Func<IR, bool> action)
-        {
-            if (!action(this)) return;
-            Variable?.Visit(action);
-            Args?.Visit(action);
-        }
-
         public override string ToString()
             => $"{Variable.InitialValue} as var {Variable.Name} in {Expression}";
-
-        public override IR Clone()
-            => new LetIR(Variable.TypedClone(), Expression.TypedClone()) { ExpressionType= ExpressionType.TypedClone() };
     }
 }
