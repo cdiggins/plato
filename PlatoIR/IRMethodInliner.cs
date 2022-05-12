@@ -23,6 +23,14 @@ namespace PlatoIR
                 }
             }
 
+            if (ir is ThisIR)
+            {
+                if (replacements.ContainsKey("this"))
+                {
+                    return replacements["this"];
+                }
+            }
+
             if (ir is TypeReferenceIR tir)
             {
                 if (tir.TypeParameterDeclaration != null && typeReplacements.ContainsKey(tir.TypeParameterDeclaration.ToString()))
@@ -69,10 +77,10 @@ namespace PlatoIR
 
             var resultVar = new VariableDeclarationIR()
             {
-                InitialValue = new DefaultIR(invocation.ExpressionType),
+                InitialValue = new DefaultIR(invocation.ExpressionType.Clone()),
                 IsStatic = false,
                 Name = $"result_{VarId}",
-                Type = invocation.ExpressionType,
+                Type = invocation.ExpressionType.Clone(),
             };
             VarId++;
             var r = new MultiStatementIR();
@@ -89,6 +97,15 @@ namespace PlatoIR
                 if (parameters[0].IsThisParameter && methodRef?.Receiver != null)
                 {
                     args.Insert(0, methodRef.Receiver);
+                }
+            }
+
+            // Are we calling a memeber function, if so we are going to need to replace the "this"
+            if (methodRef?.MethodDeclaration?.IsStatic != false)
+            {
+                if (methodRef?.Receiver != null)
+                {
+                    parameterReplacements["this"] = methodRef.Receiver;
                 }
             }
 
@@ -114,7 +131,7 @@ namespace PlatoIR
                 {
                     var decl = new VariableDeclarationIR()
                     {
-                        Type = p.Type,
+                        Type = arg.ExpressionType,
                         Name = $"{p.Name}_{VarId}",
                         InitialValue = arg,
                     };

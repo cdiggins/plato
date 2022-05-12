@@ -32,9 +32,9 @@ public readonly struct Array<T> : PlatoTest.IArray<T>
   public Array(System.Int32 count, System.Func<System.Int32, T> func)
   {
       // Let declaration
-      var _var338  = (count, func);
-      _Count_ = _var338.Item1;
-      _Func_ = _var338.Item2;
+      var _var340  = (count, func);
+      this._Count_ = _var340.Item1;
+      this._Func_ = _var340.Item2;
       }
     /*
   public Func<int, T> Func { get; }
@@ -66,7 +66,7 @@ public readonly struct Array<T> : PlatoTest.IArray<T>
   {
   get
       {
-        return _Func_(index);
+        return this._Func_(index);
         }
       }
   }
@@ -88,9 +88,9 @@ public readonly struct Vector2
   public Vector2(System.Single x = 0, System.Single y = 0)
   {
       // Let declaration
-      var _var483  = (x, y);
-      X = _var483.Item1;
-      Y = _var483.Item2;
+      var _var488  = (x, y);
+      this.X = _var488.Item1;
+      this.Y = _var488.Item2;
       }
     /*
   public static Vector2 Zero => new();
@@ -110,7 +110,7 @@ public readonly struct Vector2
   {
   get
       {
-        return Dot(this);
+        return this.Dot(this);
         }
       }
   
@@ -121,7 +121,7 @@ public readonly struct Vector2
   {
   get
       {
-        return System.MathF.Sqrt(MagnitudeSquared);
+        return System.MathF.Sqrt(this.MagnitudeSquared);
         }
       }
   
@@ -132,7 +132,7 @@ public readonly struct Vector2
   {
   get
       {
-        return this/Magnitude;
+        return this/this.Magnitude;
         }
       }
   
@@ -141,44 +141,44 @@ public readonly struct Vector2
   */
   public PlatoTest.Vector2 WithX(System.Single x)
   {
-    return new PlatoTest.Vector2(x, Y);
+    return new PlatoTest.Vector2(x, this.Y);
     }
   /*
   public Vector2 WithY(float y) => new(X, y);
   */
   public PlatoTest.Vector2 WithY(System.Single y)
   {
-    return new PlatoTest.Vector2(X, y);
+    return new PlatoTest.Vector2(this.X, y);
     }
   /*
   public float Dot(Vector2 v) => X * v.X + v.Y * Y;
   */
   public System.Single Dot(PlatoTest.Vector2 v)
   {
-    return X*v.X+v.Y*Y;
+    return this.X*v.X+v.Y*this.Y;
     }
   /*
   public override string ToString() => "Vector2(" + X  + "," + Y + ")";
   */
   public System.String ToString()
   {
-    return "Vector2("+X+","+Y+")";
+    return "Vector2("+this.X+","+this.Y+")";
     }
   public PlatoTest.Vector2 _inlined_WithX(System.Single x)
   {
-    return new PlatoTest.Vector2(x, Y);
+    return new PlatoTest.Vector2(x, this.Y);
     }
   public PlatoTest.Vector2 _inlined_WithY(System.Single y)
   {
-    return new PlatoTest.Vector2(X, y);
+    return new PlatoTest.Vector2(this.X, y);
     }
   public System.Single _inlined_Dot(PlatoTest.Vector2 v)
   {
-    return X*v.X+v.Y*Y;
+    return this.X*v.X+v.Y*this.Y;
     }
   public System.String _inlined_ToString()
   {
-    return "Vector2("+X+","+Y+")";
+    return "Vector2("+this.X+","+this.Y+")";
     }
   /*
   public static implicit operator Vector2(float v) => new(v, v);
@@ -231,10 +231,10 @@ public readonly struct Vector3 : PlatoTest.IArray<System.Single>
   public Vector3(System.Single x = 0, System.Single y = 0, System.Single z = 0)
   {
       // Let declaration
-      var _var1058  = (x, y, z);
-      X = _var1058.Item1;
-      Y = _var1058.Item2;
-      Z = _var1058.Item3;
+      var _var1075  = (x, y, z);
+      this.X = _var1075.Item1;
+      this.Y = _var1075.Item2;
+      this.Z = _var1075.Item3;
       }
     /*
   public static Vector3 Zero => new();
@@ -254,7 +254,7 @@ public readonly struct Vector3 : PlatoTest.IArray<System.Single>
   {
   get
       {
-        return Dot(this);
+        return this.Dot(this);
         }
       }
   
@@ -265,7 +265,7 @@ public readonly struct Vector3 : PlatoTest.IArray<System.Single>
   {
   get
       {
-        return System.MathF.Sqrt(MagnitudeSquared);
+        return System.MathF.Sqrt(this.MagnitudeSquared);
         }
       }
   
@@ -276,7 +276,7 @@ public readonly struct Vector3 : PlatoTest.IArray<System.Single>
   {
   get
       {
-        return this/Magnitude;
+        return this/this.Magnitude;
         }
       }
   
@@ -296,35 +296,35 @@ public readonly struct Vector3 : PlatoTest.IArray<System.Single>
   */
   public PlatoTest.Vector3 WithX(System.Single x)
   {
-    return new PlatoTest.Vector3(x, Y, Z);
+    return new PlatoTest.Vector3(x, this.Y, this.Z);
     }
   /*
   public Vector3 WithY(float y) => new(X, y, Z);
   */
   public PlatoTest.Vector3 WithY(System.Single y)
   {
-    return new PlatoTest.Vector3(X, y, Z);
+    return new PlatoTest.Vector3(this.X, y, this.Z);
     }
   /*
   public Vector3 WithZ(float z) => new(X, Y, z);
   */
   public PlatoTest.Vector3 WithZ(System.Single z)
   {
-    return new PlatoTest.Vector3(X, Y, z);
+    return new PlatoTest.Vector3(this.X, this.Y, z);
     }
   /*
   public float Dot(Vector3 v) => X * v.X + v.Y * Y + Z * v.Z;
   */
   public System.Single Dot(PlatoTest.Vector3 v)
   {
-    return X*v.X+v.Y*Y+Z*v.Z;
+    return this.X*v.X+v.Y*this.Y+this.Z*v.Z;
     }
   /*
   public override string ToString() => "Vector3(" + X + "," + Y + "," + Z + ")";
   */
   public System.String ToString()
   {
-    return "Vector3("+X+","+Y+","+Z+")";
+    return "Vector3("+this.X+","+this.Y+","+this.Z+")";
     }
   /*
   public Vector3 Cross(Vector3 v)
@@ -332,31 +332,31 @@ public readonly struct Vector3 : PlatoTest.IArray<System.Single>
   */
   public PlatoTest.Vector3 Cross(PlatoTest.Vector3 v)
   {
-    return new PlatoTest.Vector3(Y*v.Z-Z*v.Y, Z*v.X-X*v.Z, X*v.Y-Y*v.X);
+    return new PlatoTest.Vector3(this.Y*v.Z-this.Z*v.Y, this.Z*v.X-this.X*v.Z, this.X*v.Y-this.Y*v.X);
     }
   public PlatoTest.Vector3 _inlined_WithX(System.Single x)
   {
-    return new PlatoTest.Vector3(x, Y, Z);
+    return new PlatoTest.Vector3(x, this.Y, this.Z);
     }
   public PlatoTest.Vector3 _inlined_WithY(System.Single y)
   {
-    return new PlatoTest.Vector3(X, y, Z);
+    return new PlatoTest.Vector3(this.X, y, this.Z);
     }
   public PlatoTest.Vector3 _inlined_WithZ(System.Single z)
   {
-    return new PlatoTest.Vector3(X, Y, z);
+    return new PlatoTest.Vector3(this.X, this.Y, z);
     }
   public System.Single _inlined_Dot(PlatoTest.Vector3 v)
   {
-    return X*v.X+v.Y*Y+Z*v.Z;
+    return this.X*v.X+v.Y*this.Y+this.Z*v.Z;
     }
   public System.String _inlined_ToString()
   {
-    return "Vector3("+X+","+Y+","+Z+")";
+    return "Vector3("+this.X+","+this.Y+","+this.Z+")";
     }
   public PlatoTest.Vector3 _inlined_Cross(PlatoTest.Vector3 v)
   {
-    return new PlatoTest.Vector3(Y*v.Z-Z*v.Y, Z*v.X-X*v.Z, X*v.Y-Y*v.X);
+    return new PlatoTest.Vector3(this.Y*v.Z-this.Z*v.Y, this.Z*v.X-this.X*v.Z, this.X*v.Y-this.Y*v.X);
     }
   /*
   public float this[int i] => i switch
@@ -374,9 +374,9 @@ public readonly struct Vector3 : PlatoTest.IArray<System.Single>
       {
         return i switch 
         {
-          0 => X,
-          1 => Y,
-          2 => Z,
+          0 => this.X,
+          1 => this.Y,
+          2 => this.Z,
           _ => throw new System.ArgumentOutOfRangeException(),
           }
         ;
@@ -440,10 +440,10 @@ public readonly struct Int3 : PlatoTest.IArray<System.Int32>
   public Int3(System.Int32 x = 0, System.Int32 y = 0, System.Int32 z = 0)
   {
       // Let declaration
-      var _var2129  = (x, y, z);
-      X = _var2129.Item1;
-      Y = _var2129.Item2;
-      Z = _var2129.Item3;
+      var _var2173  = (x, y, z);
+      this.X = _var2173.Item1;
+      this.Y = _var2173.Item2;
+      this.Z = _var2173.Item3;
       }
     /*
   public static Int3 Zero => new();
@@ -472,44 +472,44 @@ public readonly struct Int3 : PlatoTest.IArray<System.Int32>
   */
   public PlatoTest.Int3 WithX(System.Int32 x)
   {
-    return new PlatoTest.Int3(x, Y, Z);
+    return new PlatoTest.Int3(x, this.Y, this.Z);
     }
   /*
   public Int3 WithY(int y) => new(X, y, Z);
   */
   public PlatoTest.Int3 WithY(System.Int32 y)
   {
-    return new PlatoTest.Int3(X, y, Z);
+    return new PlatoTest.Int3(this.X, y, this.Z);
     }
   /*
   public Int3 WithZ(int z) => new(X, Y, z);
   */
   public PlatoTest.Int3 WithZ(System.Int32 z)
   {
-    return new PlatoTest.Int3(X, Y, z);
+    return new PlatoTest.Int3(this.X, this.Y, z);
     }
   /*
   public override string ToString() => "Int3(" + X + "," + Y + "," + Z + ")";
   */
   public System.String ToString()
   {
-    return "Int3("+X+","+Y+","+Z+")";
+    return "Int3("+this.X+","+this.Y+","+this.Z+")";
     }
   public PlatoTest.Int3 _inlined_WithX(System.Int32 x)
   {
-    return new PlatoTest.Int3(x, Y, Z);
+    return new PlatoTest.Int3(x, this.Y, this.Z);
     }
   public PlatoTest.Int3 _inlined_WithY(System.Int32 y)
   {
-    return new PlatoTest.Int3(X, y, Z);
+    return new PlatoTest.Int3(this.X, y, this.Z);
     }
   public PlatoTest.Int3 _inlined_WithZ(System.Int32 z)
   {
-    return new PlatoTest.Int3(X, Y, z);
+    return new PlatoTest.Int3(this.X, this.Y, z);
     }
   public System.String _inlined_ToString()
   {
-    return "Int3("+X+","+Y+","+Z+")";
+    return "Int3("+this.X+","+this.Y+","+this.Z+")";
     }
   /*
   public int this[int i] => i switch
@@ -527,9 +527,9 @@ public readonly struct Int3 : PlatoTest.IArray<System.Int32>
       {
         return i switch 
         {
-          0 => X,
-          1 => Y,
-          2 => Z,
+          0 => this.X,
+          1 => this.Y,
+          2 => this.Z,
           _ => throw new System.ArgumentOutOfRangeException(),
           }
         ;
@@ -562,11 +562,11 @@ public readonly struct Int4 : PlatoTest.IArray<System.Int32>
   public Int4(System.Int32 x = 0, System.Int32 y = 0, System.Int32 z = 0, System.Int32 w = 0)
   {
       // Let declaration
-      var _var2528  = (x, y, z, w);
-      X = _var2528.Item1;
-      Y = _var2528.Item2;
-      Z = _var2528.Item3;
-      W = _var2528.Item4;
+      var _var2588  = (x, y, z, w);
+      this.X = _var2588.Item1;
+      this.Y = _var2588.Item2;
+      this.Z = _var2588.Item3;
+      this.W = _var2588.Item4;
       }
     /*
   public static Int4 Zero => new();
@@ -595,55 +595,55 @@ public readonly struct Int4 : PlatoTest.IArray<System.Int32>
   */
   public PlatoTest.Int4 WithX(System.Int32 x)
   {
-    return new PlatoTest.Int4(x, Y, Z, W);
+    return new PlatoTest.Int4(x, this.Y, this.Z, this.W);
     }
   /*
   public Int4 WithY(int y) => new(X, y, Z, W);
   */
   public PlatoTest.Int4 WithY(System.Int32 y)
   {
-    return new PlatoTest.Int4(X, y, Z, W);
+    return new PlatoTest.Int4(this.X, y, this.Z, this.W);
     }
   /*
   public Int4 WithZ(int z) => new(X, Y, z, W);
   */
   public PlatoTest.Int4 WithZ(System.Int32 z)
   {
-    return new PlatoTest.Int4(X, Y, z, W);
+    return new PlatoTest.Int4(this.X, this.Y, z, this.W);
     }
   /*
   public Int4 WithW(int w) => new(X, Y, Z, w);
   */
   public PlatoTest.Int4 WithW(System.Int32 w)
   {
-    return new PlatoTest.Int4(X, Y, Z, w);
+    return new PlatoTest.Int4(this.X, this.Y, this.Z, w);
     }
   /*
   public override string ToString() => "Int4(" + X + "," + Y + "," + Z + "," + W + ")";
   */
   public System.String ToString()
   {
-    return "Int4("+X+","+Y+","+Z+","+W+")";
+    return "Int4("+this.X+","+this.Y+","+this.Z+","+this.W+")";
     }
   public PlatoTest.Int4 _inlined_WithX(System.Int32 x)
   {
-    return new PlatoTest.Int4(x, Y, Z, W);
+    return new PlatoTest.Int4(x, this.Y, this.Z, this.W);
     }
   public PlatoTest.Int4 _inlined_WithY(System.Int32 y)
   {
-    return new PlatoTest.Int4(X, y, Z, W);
+    return new PlatoTest.Int4(this.X, y, this.Z, this.W);
     }
   public PlatoTest.Int4 _inlined_WithZ(System.Int32 z)
   {
-    return new PlatoTest.Int4(X, Y, z, W);
+    return new PlatoTest.Int4(this.X, this.Y, z, this.W);
     }
   public PlatoTest.Int4 _inlined_WithW(System.Int32 w)
   {
-    return new PlatoTest.Int4(X, Y, Z, w);
+    return new PlatoTest.Int4(this.X, this.Y, this.Z, w);
     }
   public System.String _inlined_ToString()
   {
-    return "Int4("+X+","+Y+","+Z+","+W+")";
+    return "Int4("+this.X+","+this.Y+","+this.Z+","+this.W+")";
     }
   /*
   public int this[int i] => i switch
@@ -662,10 +662,10 @@ public readonly struct Int4 : PlatoTest.IArray<System.Int32>
       {
         return i switch 
         {
-          0 => X,
-          1 => Y,
-          2 => Z,
-          3 => W,
+          0 => this.X,
+          1 => this.Y,
+          2 => this.Z,
+          3 => this.W,
           _ => throw new System.ArgumentOutOfRangeException(),
           }
         ;
@@ -686,10 +686,10 @@ public readonly struct Points
   public Points(PlatoTest.IArray<PlatoTest.Vector3> positions, PlatoTest.IArray<PlatoTest.Vector2> uvs, PlatoTest.IArray<PlatoTest.Vector3> normals)
   {
       // Let declaration
-      var _var3028  = (positions, uvs, normals);
-      _Positions_ = _var3028.Item1;
-      _UVs_ = _var3028.Item2;
-      _Normals_ = _var3028.Item3;
+      var _var3111  = (positions, uvs, normals);
+      this._Positions_ = _var3111.Item1;
+      this._UVs_ = _var3111.Item2;
+      this._Normals_ = _var3111.Item3;
       }
     /*
   public IArray<Vector3> Positions { get; }
@@ -738,9 +738,9 @@ public readonly struct TriMesh
   public TriMesh(PlatoTest.Points points, PlatoTest.IArray<PlatoTest.Int3> faces)
   {
       // Let declaration
-      var _var3182  = (points, faces);
-      _Points_ = _var3182.Item1;
-      _Faces_ = _var3182.Item2;
+      var _var3267  = (points, faces);
+      this._Points_ = _var3267.Item1;
+      this._Faces_ = _var3267.Item2;
       }
     /*
   public Points Points { get; }
@@ -778,9 +778,9 @@ public readonly struct QuadMesh
   public QuadMesh(PlatoTest.Points points, PlatoTest.IArray<PlatoTest.Int4> faces)
   {
       // Let declaration
-      var _var3309  = (points, faces);
-      _Points_ = _var3309.Item1;
-      _Faces_ = _var3309.Item2;
+      var _var3396  = (points, faces);
+      this._Points_ = _var3396.Item1;
+      this._Faces_ = _var3396.Item2;
       }
     /*
   public Points Points { get; }
@@ -819,10 +819,10 @@ public readonly struct Triangle
   public Triangle(PlatoTest.Vector3 a, PlatoTest.Vector3 b, PlatoTest.Vector3 c)
   {
       // Let declaration
-      var _var3439  = (a, b, c);
-      _A_ = _var3439.Item1;
-      _B_ = _var3439.Item2;
-      _C_ = _var3439.Item3;
+      var _var3529  = (a, b, c);
+      this._A_ = _var3529.Item1;
+      this._B_ = _var3529.Item2;
+      this._C_ = _var3529.Item3;
       }
     /*
   public Vector3 A { get; }
@@ -864,7 +864,7 @@ public readonly struct Triangle
   {
   get
       {
-        return (_B_-_A_).Cross(_C_-_A_).Normal;
+        return (this._B_-this._A_).Cross(this._C_-this._A_).Normal;
         }
       }
   
@@ -1354,7 +1354,7 @@ public static class Extensions
           result_4 = result_3;
           }
         }
-      PlatoTest.IArray<T> self_2  = result_4;
+      PlatoTest.IArray<System.Single> self_2  = result_4;
       {
         System.Single[] r  = new System.Single[self.Count];
         {
@@ -1519,7 +1519,7 @@ public static class Extensions
     PlatoTest.Vector3 result_12  = default(PlatoTest.Vector3);
     {
       {
-        result_12 = new PlatoTest.Vector3(Y*v2.Z-Z*v2.Y, Z*v2.X-X*v2.Z, X*v2.Y-Y*v2.X);
+        result_12 = new PlatoTest.Vector3(this.Y*v2.Z-this.Z*v2.Y, this.Z*v2.X-this.X*v2.Z, this.X*v2.Y-this.Y*v2.X);
         }
       }
     PlatoTest.Vector3 r  = result_12;
@@ -1553,7 +1553,7 @@ public static class Extensions
             PlatoTest.Vector3 result_12  = default(PlatoTest.Vector3);
             {
               {
-                result_12 = new PlatoTest.Vector3(Y*v2.Z-Z*v2.Y, Z*v2.X-X*v2.Z, X*v2.Y-Y*v2.X);
+                result_12 = new PlatoTest.Vector3(uv.Y*v2.Z-uv.Z*v2.Y, uv.Z*v2.X-uv.X*v2.Z, uv.X*v2.Y-uv.Y*v2.X);
                 }
               }
             PlatoTest.Vector3 r  = result_12;
@@ -1608,7 +1608,7 @@ public static class Extensions
                 PlatoTest.Vector3 result_12  = default(PlatoTest.Vector3);
                 {
                   {
-                    result_12 = new PlatoTest.Vector3(Y*v2.Z-Z*v2.Y, Z*v2.X-X*v2.Z, X*v2.Y-Y*v2.X);
+                    result_12 = new PlatoTest.Vector3(uv.Y*v2.Z-uv.Z*v2.Y, uv.Z*v2.X-uv.X*v2.Z, uv.X*v2.Y-uv.Y*v2.X);
                     }
                   }
                 PlatoTest.Vector3 r  = result_12;
@@ -1738,7 +1738,7 @@ public static class Extensions
           result_22 = result_3;
           }
         }
-      PlatoTest.IArray<T> self_21  = result_22;
+      PlatoTest.IArray<System.Int32> self_21  = result_22;
       {
         System.Int32[] r  = new System.Int32[self.Count];
         {
@@ -1812,7 +1812,7 @@ public static class Extensions
           result_28 = result_24;
           }
         }
-      PlatoTest.IArray<T> self_27  = result_28;
+      PlatoTest.IArray<PlatoTest.Triangle> self_27  = result_28;
       {
         PlatoTest.IArray<PlatoTest.Vector3> result_6  = default(PlatoTest.IArray<PlatoTest.Vector3>);
         {

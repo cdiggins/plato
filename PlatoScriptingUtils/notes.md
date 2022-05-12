@@ -206,4 +206,5 @@ Intel Core i5-1035G1 CPU 1.00GHz, 1 CPU, 8 logical and 4 physical cores
         * Then when doing the rewriting I need to replace "this" with the reciever. 
     * There might be an issue with the type. 
     * I am going to have a problem in the futujre because 
-   
+    * 25 bugs
+    * DOwnto 19 

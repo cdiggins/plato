@@ -898,17 +898,21 @@ namespace PlatoRoslynSyntaxAnalyzer
                     throw new Exception(@"Not supported : {nameof(arrayTypeSymbol)}");
 
                 case IFieldSymbol fieldSymbol:
-                    //if (reciever == null) reciever = new ThisIR();
-                    return new FieldReferenceIR(name, reciever, builder.GetDeclarationIR<FieldDeclarationIR>(fieldSymbol));
-
+                    {
+                        var decl = builder.GetDeclarationIR<FieldDeclarationIR>(fieldSymbol);
+                        if (reciever == null && !decl.IsStatic) reciever = new ThisIR();
+                        return new FieldReferenceIR(name, reciever, decl);
+                    }
                 case ILocalSymbol localSymbol:
                     if (reciever != null) throw new Exception("Expected no reciever when accessing local variable");
                     return new VariableReferenceIR(name, builder.GetDeclarationIR<VariableDeclarationIR>(localSymbol));
 
                 case IMethodSymbol methodSymbol:
-                    //if (reciever == null) reciever = new ThisIR();
-                    return new MethodReferenceIR(name, reciever, builder.GetDeclarationIR<MethodDeclarationIR>(methodSymbol), methodSymbol.GetTypeArguments(builder));
-
+                    {
+                        var decl = builder.GetDeclarationIR<MethodDeclarationIR>(methodSymbol);
+                        if (reciever == null && !decl.IsStatic) reciever = new ThisIR();
+                        return new MethodReferenceIR(name, reciever, decl, methodSymbol.GetTypeArguments(builder));
+                    }
                 case INamedTypeSymbol namedTypeSymbol:
                     return namedTypeSymbol.ToTypeReference(builder);
 
@@ -926,9 +930,11 @@ namespace PlatoRoslynSyntaxAnalyzer
                     return new ParameterReferenceIR(name, builder.GetDeclarationIR<ParameterDeclarationIR>(parameterSymbol));
 
                 case IPropertySymbol propertySymbol:
-                    //if (reciever == null) reciever = new ThisIR();
-                    return new PropertyReferenceIR(name, reciever, builder.GetDeclarationIR<PropertyDeclarationIR>(propertySymbol));
-
+                    {
+                        var decl = builder.GetDeclarationIR<PropertyDeclarationIR>(propertySymbol);
+                        if (reciever == null && !decl.IsStatic) reciever = new ThisIR();
+                        return new PropertyReferenceIR(name, reciever, decl);
+                    }
                 case IModuleSymbol moduleSymbol:
                 //case IPointerTypeSymbol pointerTypeSymbol:
                 case IPreprocessingSymbol preprocessingSymbol:
