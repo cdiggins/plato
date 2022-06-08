@@ -685,22 +685,27 @@ namespace PlatoGenerator
                 }
             }
 
-            // Inline methods 
-            var inliner = new IRMethodInliner();
-            foreach (var type in typeDecls)
+            bool performInlining = false;
+
+            if (performInlining)
             {
-                var inlineFuncs = new List<MethodDeclarationIR>();
-                foreach (var method in type.Methods)
+                // Inline methods 
+                var inliner = new IRMethodInliner();
+                foreach (var type in typeDecls)
                 {
-                    var inline = inliner.GetOrComputeInlined(method);
-                    if (inline != null && inline.Name.StartsWith("_inlined_"))
+                    var inlineFuncs = new List<MethodDeclarationIR>();
+                    foreach (var method in type.Methods)
                     {
-                        inlineFuncs.Add(inline);
+                        var inline = inliner.GetOrComputeInlined(method);
+                        if (inline != null && inline.Name.StartsWith("_inlined_"))
+                        {
+                            inlineFuncs.Add(inline);
+                        }
                     }
+                    type.Methods.AddRange(inlineFuncs);
                 }
-                type.Methods.AddRange(inlineFuncs);
             }
-            
+
             using (sw = new StreamWriter(File.Create(outputCsFile)))
             {
                 var srlzr = new IRSerializer(sw);

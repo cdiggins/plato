@@ -208,3 +208,82 @@ Intel Core i5-1035G1 CPU 1.00GHz, 1 CPU, 8 logical and 4 physical cores
     * I am going to have a problem in the futujre because 
     * 25 bugs
     * DOwnto 19 
+
+TODO: 
+* What is the build and test process?
+* I was working on the inliner. Does it work? 
+* I need to generate JavaScript code and C# code.
+* I need to set up some automated tests
+* I need to get the main repository set-up. 
+* What is the organization? 
+* cdiggins/plato
+* cdiggins/plato-studio/
+* platosoft/
+
+Housekeeping tasks:
+* Set-up the Github organization. 
+
+There are a few things: 
+* Some of the system is going to involve tests. 
+
+I don't want too many things going on. 
+
+* Plato Collections
+* I really want to do something with G3D. It is an amazing format. 
+
+//==
+
+Plato.Math
+Plato.Collections
+Plato.Util.Windows
+Plato.Util
+Plato.G3D
+Plato.WebViewer 
+
+//==
+
+Can I generate readable G3D code? 
+
+If I was to go out an make the G3D format famous, how would I do it?
+
+I would promote the formats ... and branch off of VIM. 
+
+cdiggins/bfast
+cdiggins/g3d 
+cdiggins/g3d.webgl.viewer
+cdiggins/domo
+cdiggins/ptarmigan
+cdiggins/peacock
+cdiggins/emu
+cdiggins/plato 
+cdiggins/plato.studio
+cdiggins/plato/math
+cdiggins/plato/collections
+cdiggins/plato/libraries
+cdiggins/plato/geometry
+
+//==
+
+I need a script to clone all of the necessary repos. 
+
+//== 
+
+How is each project managed? 
+
+Wait ... do I really need one solution for everything? 
+
+Well ... no, I need a bunch of solutions. 
+
+//==
+
+
+
+
+
+
+
+
+
+
+
+
