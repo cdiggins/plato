@@ -108,12 +108,14 @@ namespace PlatoRoslynSyntaxAnalyzer
             }
 
             ChildExpressions = node.ChildNodes().OfType<ExpressionSyntax>().Select(Create).ToList();
-            Variables = node.ChildNodes().OfType<VariableDeclaratorSyntax>().Select(PlatoVariableSyntax.Create).ToList();
+            Variables = node.ChildNodes().OfType<VariableDeclaratorSyntax>().Select(PlatoVariableSyntax.Create)
+                .ToList();
         }
-        public IReadOnlyList<PlatoExpressionSyntax> ChildExpressions { get; }
-        public IReadOnlyList<PlatoVariableSyntax> Variables { get; }  
 
-        public static PlatoExpressionSyntax Create(ExpressionSyntax node) => 
+        public IReadOnlyList<PlatoExpressionSyntax> ChildExpressions { get; }
+        public IReadOnlyList<PlatoVariableSyntax> Variables { get; }
+
+        public static PlatoExpressionSyntax Create(ExpressionSyntax node) =>
             node == null ? null : new PlatoExpressionSyntax(node);
     }
 
@@ -125,12 +127,13 @@ namespace PlatoRoslynSyntaxAnalyzer
 
         public string Name => Node.Identifier.ToString();
 
-        public static PlatoVariableSyntax Create(VariableDeclaratorSyntax node) 
+        public static PlatoVariableSyntax Create(VariableDeclaratorSyntax node)
             => new PlatoVariableSyntax(node);
 
         public PlatoVariableSyntax(VariableDeclaratorSyntax node) : base(node)
         {
-            Arguments = node.ArgumentList?.Arguments.Select(PlatoArgSyntax.Create).ToList() ?? new List<PlatoArgSyntax>();
+            Arguments = node.ArgumentList?.Arguments.Select(PlatoArgSyntax.Create).ToList() ??
+                        new List<PlatoArgSyntax>();
             Type = PlatoTypeRefSyntax.Create((node.Parent as VariableDeclarationSyntax)?.Type);
             Initializer = PlatoExpressionSyntax.Create(node.Initializer?.Value);
         }
@@ -143,7 +146,7 @@ namespace PlatoRoslynSyntaxAnalyzer
         public IReadOnlyList<PlatoTypeSyntax> ChildTypes { get; }
         public IReadOnlyList<PlatoVariableSyntax> Variables { get; }
 
-        public static PlatoStatementSyntax Create(StatementSyntax node) 
+        public static PlatoStatementSyntax Create(StatementSyntax node)
             => node == null ? null : new PlatoStatementSyntax(node);
 
         public PlatoStatementSyntax(StatementSyntax node) : base(node)
@@ -188,15 +191,20 @@ namespace PlatoRoslynSyntaxAnalyzer
             }
 
             ChildStatements = node.ChildNodes().OfType<StatementSyntax>().Select(Create).ToList();
-            ChildExpressions = node.ChildNodes().OfType<ExpressionSyntax>().Select(PlatoExpressionSyntax.Create).ToList();
+            ChildExpressions = node.ChildNodes().OfType<ExpressionSyntax>().Select(PlatoExpressionSyntax.Create)
+                .ToList();
             ChildTypes = node.ChildNodes().OfType<TypeDeclarationSyntax>().Select(PlatoTypeSyntax.Create).ToList();
-            Variables = node.ChildNodes().OfType<VariableDeclaratorSyntax>().Select(PlatoVariableSyntax.Create).ToList();
+            Variables = node.ChildNodes().OfType<VariableDeclaratorSyntax>().Select(PlatoVariableSyntax.Create)
+                .ToList();
         }
     }
 
     public class PlatoTypeRefSyntax : PlatoSyntax<TypeSyntax>
     {
-        public PlatoTypeRefSyntax(TypeSyntax node) : base(node) {}
+        public PlatoTypeRefSyntax(TypeSyntax node) : base(node)
+        {
+        }
+
         public static PlatoTypeRefSyntax Create(TypeSyntax node) => new PlatoTypeRefSyntax(node);
     }
 
@@ -239,20 +247,27 @@ namespace PlatoRoslynSyntaxAnalyzer
     public class PlatoMemberSyntax<SyntaxType> : PlatoSyntax<SyntaxType>
         where SyntaxType : MemberDeclarationSyntax
     {
-        public PlatoMemberSyntax(SyntaxType node) : base(node) { }
+        public PlatoMemberSyntax(SyntaxType node) : base(node)
+        {
+        }
+
         public bool IsStatic => Node.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword));
     }
 
     public class PlatoTypeParameterSyntax : PlatoSyntax<TypeParameterSyntax>
     {
-        public PlatoTypeParameterSyntax(TypeParameterSyntax node) : base(node) { }
+        public PlatoTypeParameterSyntax(TypeParameterSyntax node) : base(node)
+        {
+        }
+
         public static PlatoTypeParameterSyntax Create(TypeParameterSyntax node) => new PlatoTypeParameterSyntax(node);
     }
 
     public class PlatoFieldSyntax : PlatoMemberSyntax<FieldDeclarationSyntax>
     {
         public IReadOnlyList<PlatoVariableSyntax> Variables { get; }
-        public PlatoFieldSyntax(FieldDeclarationSyntax node) : base(node) 
+
+        public PlatoFieldSyntax(FieldDeclarationSyntax node) : base(node)
         {
             Variables = Node.Declaration.Variables.Select(PlatoVariableSyntax.Create).ToList();
         }
@@ -265,7 +280,7 @@ namespace PlatoRoslynSyntaxAnalyzer
         public PlatoExpressionSyntax ArrowExpression { get; }
         public PlatoStatementSyntax BlockStatement { get; }
 
-        public PlatoAccessorSyntax(AccessorDeclarationSyntax node) :base(node)
+        public PlatoAccessorSyntax(AccessorDeclarationSyntax node) : base(node)
         {
             ArrowExpression = PlatoExpressionSyntax.Create(Node.ExpressionBody?.Expression);
             BlockStatement = PlatoStatementSyntax.Create(Node.Body);
@@ -283,15 +298,18 @@ namespace PlatoRoslynSyntaxAnalyzer
         public PlatoTypeRefSyntax Type { get; }
         public PlatoAccessorSyntax Getter { get; }
 
-        public PlatoPropertySyntax(PropertyDeclarationSyntax node) :base(node)
+        public PlatoPropertySyntax(PropertyDeclarationSyntax node) : base(node)
         {
-            var getAccessor = Node.AccessorList?.Accessors.FirstOrDefault(acc => acc.Kind() == SyntaxKind.GetAccessorDeclaration);
+            var getAccessor =
+                Node.AccessorList?.Accessors.FirstOrDefault(acc => acc.Kind() == SyntaxKind.GetAccessorDeclaration);
             Getter = PlatoAccessorSyntax.Create(getAccessor);
 
-            var setAccessor = Node.AccessorList?.Accessors.FirstOrDefault(acc => acc.Kind() == SyntaxKind.SetAccessorDeclaration);
-            node.NoSetter(setAccessor== null);
+            var setAccessor =
+                Node.AccessorList?.Accessors.FirstOrDefault(acc => acc.Kind() == SyntaxKind.SetAccessorDeclaration);
+            node.NoSetter(setAccessor == null);
 
-            var initAccessor = Node.AccessorList?.Accessors.FirstOrDefault(acc => acc.Kind() == SyntaxKind.InitAccessorDeclaration);
+            var initAccessor =
+                Node.AccessorList?.Accessors.FirstOrDefault(acc => acc.Kind() == SyntaxKind.InitAccessorDeclaration);
             node.NoInitOnlySetter(initAccessor == null);
 
             InitializerExpression = PlatoExpressionSyntax.Create(Node.Initializer?.Value);
@@ -314,14 +332,16 @@ namespace PlatoRoslynSyntaxAnalyzer
         {
             node.NoStaticIndexer(!IsStatic);
 
-            var getAccessor = Node.AccessorList?.Accessors.FirstOrDefault(acc => acc.Kind() == SyntaxKind.GetAccessorDeclaration);
+            var getAccessor =
+                Node.AccessorList?.Accessors.FirstOrDefault(acc => acc.Kind() == SyntaxKind.GetAccessorDeclaration);
             Getter = PlatoAccessorSyntax.Create(getAccessor);
 
             var parameters = node.ParameterList.Parameters.Select(PlatoParamSyntax.Create).ToList();
             node.IndexerHasSingleParameter(parameters.Count == 1);
             Parameter = parameters[0];
 
-            var setAccessor = Node.AccessorList?.Accessors.FirstOrDefault(acc => acc.Kind() == SyntaxKind.SetAccessorDeclaration);
+            var setAccessor =
+                Node.AccessorList?.Accessors.FirstOrDefault(acc => acc.Kind() == SyntaxKind.SetAccessorDeclaration);
             node.NoSetter(setAccessor == null);
 
             ArrowExpression = PlatoExpressionSyntax.Create(Node.ExpressionBody?.Expression);
@@ -369,7 +389,7 @@ namespace PlatoRoslynSyntaxAnalyzer
             ExpressionBody = PlatoExpressionSyntax.Create(Node.ExpressionBody?.Expression);
         }
 
-        public static PlatoConversionSyntax Create(ConversionOperatorDeclarationSyntax node) 
+        public static PlatoConversionSyntax Create(ConversionOperatorDeclarationSyntax node)
             => new PlatoConversionSyntax(node);
     }
 
@@ -384,7 +404,7 @@ namespace PlatoRoslynSyntaxAnalyzer
         public bool IsExtensionMethod =>
             IsStatic && Parameters.Any(p => p.Node.Modifiers.Any(m => m.IsKind(SyntaxKind.ThisKeyword)));
 
-        public PlatoMethodSyntax(MethodDeclarationSyntax node) :base(node)
+        public PlatoMethodSyntax(MethodDeclarationSyntax node) : base(node)
         {
             ReturnType = PlatoTypeRefSyntax.Create(Node.ReturnType);
             Parameters = Node.ParameterList.Parameters.Select(PlatoParamSyntax.Create).ToList();
@@ -392,7 +412,7 @@ namespace PlatoRoslynSyntaxAnalyzer
             ExpressionBody = PlatoExpressionSyntax.Create(Node.ExpressionBody?.Expression);
         }
 
-        public static PlatoMethodSyntax Create(MethodDeclarationSyntax node) 
+        public static PlatoMethodSyntax Create(MethodDeclarationSyntax node)
             => new PlatoMethodSyntax(node);
     }
 
@@ -402,7 +422,7 @@ namespace PlatoRoslynSyntaxAnalyzer
         public PlatoExpressionSyntax ExpressionBody { get; }
         public IReadOnlyList<PlatoParamSyntax> Parameters { get; }
 
-        public PlatoConstructorSyntax(ConstructorDeclarationSyntax node): base(node)
+        public PlatoConstructorSyntax(ConstructorDeclarationSyntax node) : base(node)
         {
             Parameters = Node.ParameterList.Parameters.Select(PlatoParamSyntax.Create).ToList();
             StatementBody = PlatoStatementSyntax.Create(Node.Body);
@@ -431,18 +451,67 @@ namespace PlatoRoslynSyntaxAnalyzer
         public PlatoTypeSyntax(TypeDeclarationSyntax node) : base(node)
         {
             node.SupportedType(Kind == "class" || Kind == "enum" || Kind == "interface");
-            BaseList = Node.BaseList?.Types.Select(bt => PlatoTypeRefSyntax.Create(bt.Type)).ToList() ?? new List<PlatoTypeRefSyntax>();
+            BaseList = Node.BaseList?.Types.Select(bt => PlatoTypeRefSyntax.Create(bt.Type)).ToList() ??
+                       new List<PlatoTypeRefSyntax>();
             Ctors = Node.Members.OfType<ConstructorDeclarationSyntax>().Select(PlatoConstructorSyntax.Create).ToList();
             Methods = Node.Members.OfType<MethodDeclarationSyntax>().Select(PlatoMethodSyntax.Create).ToList();
             Fields = Node.Members.OfType<FieldDeclarationSyntax>().Select(PlatoFieldSyntax.Create).ToList();
             Operators = Node.Members.OfType<OperatorDeclarationSyntax>().Select(PlatoOperatorSyntax.Create).ToList();
             Properties = Node.Members.OfType<PropertyDeclarationSyntax>().Select(PlatoPropertySyntax.Create).ToList();
             Indexers = Node.Members.OfType<IndexerDeclarationSyntax>().Select(PlatoIndexerSyntax.Create).ToList();
-            Converters = Node.Members.OfType<ConversionOperatorDeclarationSyntax>().Select(PlatoConversionSyntax.Create).ToList();
-            TypeParameters = Node.TypeParameterList?.Parameters.Select(PlatoTypeParameterSyntax.Create).ToList() ?? new List<PlatoTypeParameterSyntax>();
+            Converters = Node.Members.OfType<ConversionOperatorDeclarationSyntax>().Select(PlatoConversionSyntax.Create)
+                .ToList();
+            TypeParameters = Node.TypeParameterList?.Parameters.Select(PlatoTypeParameterSyntax.Create).ToList() ??
+                             new List<PlatoTypeParameterSyntax>();
         }
 
-        public static PlatoTypeSyntax Create(TypeDeclarationSyntax node) 
+        public static PlatoTypeSyntax Create(TypeDeclarationSyntax node)
             => new PlatoTypeSyntax(node);
+    }
+
+    public class PlatoUsingSyntax : PlatoSyntax<UsingDirectiveSyntax>
+    {
+        public PlatoUsingSyntax(UsingDirectiveSyntax node) : base(node)
+        {
+        }
+
+        public static PlatoUsingSyntax Create(UsingDirectiveSyntax node)
+            => new PlatoUsingSyntax(node);
+    }
+
+    public class PlatoNamespaceSyntax : PlatoSyntax<NamespaceDeclarationSyntax>
+    {
+        public string Name => Node.Name.ToString();
+        public IReadOnlyList<PlatoUsingSyntax> Usings { get; }
+        public IReadOnlyList<PlatoTypeSyntax> Types { get; }
+        public IReadOnlyList<PlatoNamespaceSyntax> Namespaces { get; }
+
+        public PlatoNamespaceSyntax(NamespaceDeclarationSyntax node) : base(node)
+        {
+            Usings = node.Usings.Select(PlatoUsingSyntax.Create).ToList();
+            var types = new List<PlatoTypeSyntax>();
+            var namespaces = new List<PlatoNamespaceSyntax>();
+            foreach (var m in node.Members)
+            {
+                switch (m)
+                {
+                    case TypeDeclarationSyntax typeDecl:
+                        types.Add(PlatoTypeSyntax.Create(typeDecl));
+                        break;
+                    case NamespaceDeclarationSyntax namespaceDecl:
+                        namespaces.Add(PlatoNamespaceSyntax.Create(namespaceDecl));
+                        break;
+                    default:
+                        SyntaxRules.Throw(m, "invalid namespace member");
+                        break;
+                }
+            }
+
+            Types = types;
+            Namespaces = namespaces;
+        }
+
+        public static PlatoNamespaceSyntax Create(NamespaceDeclarationSyntax node)
+            => new PlatoNamespaceSyntax(node);
     }
 }

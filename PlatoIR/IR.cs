@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-
-namespace PlatoIR
+﻿namespace PlatoIR
 {
-    public class IR
+    public abstract class IR
     {
-        public int Id { get; set; }
+        public int Id { get; } = NewId++;
+        public IR Original { get; set; }
+        public static int NewId;
         public string Source { get; set; }
     }
 }

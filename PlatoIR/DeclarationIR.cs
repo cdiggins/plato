@@ -3,16 +3,16 @@ using System.Linq;
 
 namespace PlatoIR
 {
-    public class DeclarationIR : IR
+    public abstract class DeclarationIR : IR
     {
         public bool IsStatic { get; set; }
-        public DeclarationIR Parent { get; set; }
         public string Name { get; set; }
         public TypeReferenceIR Type { get; set; }
-        public TypeReferenceIR ParentType { get; set;  }
-        public bool IsMemberDeclaration => ParentType != null;
         public virtual IEnumerable<ExpressionIR> Expressions
             => Enumerable.Empty<ExpressionIR>();
+        public string StaticModifier
+            => IsStatic ? "static" : "";
+        public bool IsVoid => Type.IsVoid;
     }
 
     public class MethodDeclarationIR : DeclarationIR
@@ -20,7 +20,12 @@ namespace PlatoIR
         public List<ParameterDeclarationIR> Parameters { get; set; } = new List<ParameterDeclarationIR>();
         public BlockStatementIR Body { get; set; }
         public List<TypeParameterDeclarationIR> TypeParameters { get; set;  } = new List<TypeParameterDeclarationIR>();
-        public bool IsVoid => Type.IsVoid;
+
+        public string TypeParametersString
+            => TypeParameters?.Count > 0 ? $"<{string.Join(", ", TypeParameters)}>" : "";
+        
+        public override string ToString()
+            => $"public {StaticModifier} {Type} {Name}{TypeParametersString}({string.Join(", ", Parameters)}) {Body}";
     }
 
     public class VariableDeclarationIR : DeclarationIR
@@ -29,10 +34,16 @@ namespace PlatoIR
 
         public override IEnumerable<ExpressionIR> Expressions
             => Enumerable.Repeat(InitialValue, 1);
+
+        public override string ToString()
+            => $"{Type} {Name}" + (InitialValue == null ? "" : $" = {InitialValue}");
     }
 
     public class TypeParameterDeclarationIR : DeclarationIR
-    { }
+    {
+        public override string ToString()
+            => $"{Name}";
+    }
 
     public class ParameterDeclarationIR : DeclarationIR
     {
@@ -40,6 +51,10 @@ namespace PlatoIR
         public bool IsThisParameter { get; set; }
         public override IEnumerable<ExpressionIR> Expressions
             => Enumerable.Repeat(DefaultValue, 1);
+
+        public override string ToString()
+            => (IsThisParameter ? "this " : "") + 
+            $"{Type} {Name}" + (DefaultValue == null ? "" : $" = {DefaultValue}");
     }
 
     public class ConstructorDeclarationIr : MethodDeclarationIR
@@ -52,20 +67,31 @@ namespace PlatoIR
 
         public override IEnumerable<ExpressionIR> Expressions
             => Enumerable.Repeat(InitialValue, 1);
+
+        public override string ToString()
+            => $"public readonly {StaticModifier} {Type} {Name}" + (InitialValue == null ? "" : $"= {InitialValue}") + ";";
     }
 
     public class PropertyDeclarationIR : DeclarationIR
     {
-        public FieldDeclarationIR Field { get; set; }
+        public FieldReferenceIR Field { get; set; }
         public MethodDeclarationIR Getter { get; set; }
+        public string TypeKind { get; set; }
+
+        public override string ToString()
+            => $"public {StaticModifier} {Type} {Name} {{ get {Getter.Body} }}";
     }
 
-    public class IndexerDeclarationIr : MethodDeclarationIR
+    // TODO: why is this a method declaration IR, when it has a method declaration IR? 
+    public class IndexerDeclarationIR : MethodDeclarationIR
     {
         public MethodDeclarationIR Getter { get; set; }
+
+        public override string ToString()
+            => $"public {StaticModifier} {Type} this[{string.Join(", ", Getter.Parameters)}] {{ get {Getter.Body} }}";
     }
 
-    public class OperationDeclarationIr : MethodDeclarationIR
+    public class OperationDeclarationIR : MethodDeclarationIR
     {
     }
 
@@ -73,23 +99,46 @@ namespace PlatoIR
     {
         public TypeDeclarationIR(string kind, string name)
             => (Name, Kind) = (name, kind);
-        public string Kind { get; }
+        public string Kind { get; set; }
         public List<TypeReferenceIR> Bases { get; set; } = new List<TypeReferenceIR>();
         public List<FieldDeclarationIR> Fields { get; set; } = new List<FieldDeclarationIR>();
         public List<MethodDeclarationIR> Methods { get; set; } = new List<MethodDeclarationIR>();
         public List<ConstructorDeclarationIr> Constructors { get; set; } = new List<ConstructorDeclarationIr>();
         public List<PropertyDeclarationIR> Properties { get; set; } = new List<PropertyDeclarationIR>();
-        public List<IndexerDeclarationIr> Indexers { get; set; } = new List<IndexerDeclarationIr>();
-        public List<OperationDeclarationIr> Operations { get; set; } = new List<OperationDeclarationIr>();
+        public List<IndexerDeclarationIR> Indexers { get; set; } = new List<IndexerDeclarationIR>();
+        public List<OperationDeclarationIR> Operations { get; set; } = new List<OperationDeclarationIR>();
         public List<TypeParameterDeclarationIR> TypeParameters { get; set; } = new List<TypeParameterDeclarationIR>();
+
+        public IR SetKind(string kind)
+        {
+            Kind = kind;
+            return this;
+        }
+
+        public bool IsValueType 
+            => Kind.Contains("struct");
+
+        public string TypeParametersString
+            => TypeParameters?.Count > 0 ? $"<{string.Join(", ", TypeParameters)}>" : "";
+
+        public string BasesString
+            => Bases?.Count > 0 ? $": {string.Join(", ", Bases)}" : "";
+
+        public override string ToString()
+            => $@"public {StaticModifier} {Kind} {Name}{TypeParametersString} {BasesString}
+{{
+    {string.Join("\r\n", Fields)}
+    {string.Join("\r\n", Properties)}
+    {string.Join("\r\n", Methods)}
+    {string.Join("\r\n", Constructors)}
+    {string.Join("\r\n", Indexers)}
+    {string.Join("\r\n", Operations)}
+}}";
     }
 
-    public static class IRExtensions
+    public class NamespaceDeclarationIR : DeclarationIR
     {
-        public static T SetParent<T>(this T self, DeclarationIR parent) where T: DeclarationIR
-        {
-            self.Parent = parent;
-            return self;
-        }
+        public List<NamespaceReferenceIR> Usings { get; set; } = new List<NamespaceReferenceIR>();
+        public List<TypeDeclarationIR> Types { get; set; } = new List<TypeDeclarationIR>();
     }
 }

@@ -1,8 +1,10 @@
 ﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Engines;
 using BenchmarkDotNet.Running;
 
 namespace PlatoTest
 {
+    [SimpleJob(warmupCount:5, launchCount:2, targetCount: 10)]
     public class Benchmarks
     {
         [Benchmark]

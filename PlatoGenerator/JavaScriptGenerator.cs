@@ -11,72 +11,9 @@ using PlatoIR;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-/*
- * DONE: Indexer(this) properties not generated.
- * DONE: No constructor generated.
- * DONE: No typeDeclaration provided for expressions.
- * DONE: Backing fields for auto-generated properties are missing
- * SKIPPED: Interpolated string not supported
- * DONE: Tuple expressions and tuple assignment 
- * DONE: Cast doesn't work.
- * DONE: Extension functions are translated into member functions. 
- * DONE: Get the list of captured variables
- * DONE: Construcotr returning interface 
- * DONE: Can't find operator methodDeclaration (need to add "OperationDeclaration")
- * SKIPPED: constructor typeDeclaration overloading is not supported (only one constructor is allowed for now)
- * DONE: overloaded operators need to be converted to functions
- * DONE: operators need to be renamed
- * DONE: auto operators don't have a return statement
- * DONE: all field, methodDeclaration, and propertyDeclaration variables need to use a "this"
- * DONE: Missing ids of functionDeclaration references
- * DONE: something odd is happening when declarating a variable and assigning a new expression to it.
- * DONE: anything leabled VariableDeclarator seems to be a problem
- * DONE: operators need to be class qualfieid
- * DONE: extension methods need to be class qualified
- * DONE: add casts to typeDeclaration definition
- * TODO: generic typeDeclaration constructors are missing typeDeclaration parameters
- * TODO: get all of the typeDeclaration refrences and generate the appropriate types in advance.
- * DONE: this.methodDeclaration calls missing ID
- * TODO: need to generate a functionDeclaration for indexing. operator_Subscript
- * DONE: call cast operator functionDeclaration
- * TODO: need to explicitly cast numbers to ints when doing integers 
- * LATER TODO: handle local functions,
- * LATER TODO: anonymous types
- * LATER TODO: anonymous functions
- * LATER TODO: Need MathF functions  
- * LATER TODO: Need Plato built-in functions (Plato.At , Plato.Cast)
- * LATER TODO: reduce number of expression calls
- * LATER TODO: add ids to parameter references 
- * LATER TODO: add ids to local references
- * TODO: separate the functionDeclaration defintion gathering (semantic analysis)
- * TODO: for functionDeclaration and propertyDeclaration definition creation use the PlatoSyntax objects 
- * TODO: get resharper
- * TODO: find a way to better track my to-do list
- * TODO: generate output from the intermediate representation
- * TODO: have a better way of reporting errors 
- * TODO: a tool for debugging the structure (syntax and semantics)
- * DONE: the indexer will not have an IMethodSymbol, this could cause some problems. 
- * TODO: JavaScriptGenerator is too big.
- * DONE: I need to replace a token in a file, for the generated JavaScript 
- * DONE: I need to create the input file
- * TODO: I need to automatically launch the web-browser
- * TODO: add call when casting floats to ints 
- * DONE: handle swithc expressions
- * TODO: test switch expression code generation
- * DONE: 
- * 
- * NOTES:
- * - TypeDeclaration constructors looks like it is going to be an interesting challenge.
- * I think I need to pre-construct all of the types.
- * What is interesting is that they are all going to be the result of functions.
- *
- * - How do I know the name of the parameter? For now, I think I might just skip it. 
- * - I would rather that an extension methodDeclaration is called on the typeDeclaration it was declared on.
- * At least we know 
-*/
-
 namespace PlatoGenerator
 {
+    // TODO: what the heck is this? It is a combination of things. 
     public class JavaScriptGenerator
     {
         // TODO: symbols? 
@@ -496,7 +433,7 @@ namespace PlatoGenerator
                 sw.WriteLine(indent + "  Statements:");
                 foreach (var c in st.ChildStatements)
                 {
-                    OutputStatement(c, model, indent + "     ");
+                    OutputStatement(c, model, indent +   "     ");
                 }
             }
         }
@@ -721,46 +658,29 @@ namespace PlatoGenerator
         public void ToJavaScript(GeneratorExecutionContext context)
         {
             var types = context.Compilation.SyntaxTrees.GetPlatoTypes();
-
-
-            var inputFile = GeneratedFile;
-
-
-
-            //var thisRepo = @"C:\Users\Acer\source\repos\Plato";
-            //var thisRepo = @"C:\git\plato\";
             var thisRepo = Path.Combine(Path.GetDirectoryName(GetSourceFilePathName()), "..");
 
-            var outputFile = Path.Combine(thisRepo, "JavaScriptTest", "output.html");
-            var templateFile = Path.Combine(thisRepo, "PlatoGenerator", "input.html");
+            var typeDecls = new RoslynToIR().BuildIr(context.Compilation);            
+            typeDecls = RoslynToIR.InlineMethods(typeDecls);
             
-            /*
-            CreateLookups(context, types);
+            var outputCsFile = Path.Combine(thisRepo, "Tests", "PlatoTestOutput", "PlatoTestCode.g.cs");
 
-            using (sw = new StreamWriter(File.Create(GeneratedFile)))
+            // Optimize 
+            foreach (var type in typeDecls)
             {
-                foreach (var t in types)
+                if (type.Kind == "class" && !type.IsStatic)
                 {
-                    OutputType(t);
+                    type.SetKind("readonly struct");
                 }
             }
 
-            var inputText = File.ReadAllText(inputFile);
-            var templateText = File.ReadAllText(templateFile);
-            var outputText = templateText.Replace("{{REPLACEME}}", inputText);
-            File.WriteAllText(outputFile, outputText);
-            */
-
-            var builder = new IRBuilder();
-            builder = SyntaxToIR.BuildIR(builder, context.Compilation, types);
-            var outputCsFile = Path.Combine(thisRepo, "Tests", "PlatoTestOutput", "PlatoTestCode.g.cs");
-            var decls = builder.Declarations.Select(d => d.Item2).OfType<TypeDeclarationIR>().ToList();
-            using (sw = new StreamWriter(File.Create(outputCsFile)))
+            using (var sw = new StreamWriter(File.Create(outputCsFile)))
             {
                 var srlzr = new IRSerializer(sw);
                 // TODO: this is a hack until I add proper namespace support. 
+                sw.WriteLine("using System.Runtime.CompilerServices;");
                 sw.WriteLine("namespace PlatoTest {");
-                srlzr.Write(decls, "");
+                srlzr.Write(typeDecls, "", "");
                 sw.WriteLine("}");
             }
         }

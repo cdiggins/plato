@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
@@ -13,21 +14,20 @@ namespace PlatoRoslynSyntaxAnalyzer
         public readonly Dictionary<(TextSpan, SyntaxKind), int> DeclarationLookup
             = new Dictionary<(TextSpan, SyntaxKind), int>();
 
-        public readonly List<(SyntaxNode, DeclarationIR)> Declarations = new List<(SyntaxNode, DeclarationIR)>();
-        
-        public T AddIR<T>(PlatoSyntax syntax, T ir) where T : IR
-            => AddIR<T>(syntax.GetNode(), ir);
+        public readonly Dictionary<int, (SyntaxNode, DeclarationIR)> Declarations 
+            = new Dictionary<int, (SyntaxNode, DeclarationIR)>();
 
         public T AddIR<T>(T ir) where T : IR
             => AddIR(null as SyntaxNode, ir);
 
+        public T AddIR<T>(PlatoSyntax syntax, T ir) where T : IR
+            => AddIR(syntax.GetNode(), ir);
+
         public T AddIR<T>(SyntaxNode node, T ir) where T: IR
         {
-            Debug.Assert(ir.Id == 0);
             if (ir is DeclarationIR declarationIr)
             {
-                ir.Id = Declarations.Count;
-                Declarations.Add((node, declarationIr));
+                Declarations.Add(ir.Id, (node, declarationIr));
                 if (node != null)
                 {
                     var key = node.ToKey();
@@ -60,8 +60,10 @@ namespace PlatoRoslynSyntaxAnalyzer
         {
             if (symbol == null) return null;
             var refs = symbol.DeclaringSyntaxReferences;
-            if (refs.Length > 1)
-                throw new Exception("Multiple declarations found");
+
+            // TODO: handle shared namespace and partial classes
+            //if (refs.Length > 1) throw new Exception("Multiple declarations found");
+
             return refs.Length == 0 
                 ? null 
                 : GetIR(refs[0].GetSyntax());
@@ -101,5 +103,11 @@ namespace PlatoRoslynSyntaxAnalyzer
 
         public static LiteralIR ToLiteralIR(this int n)
             => new LiteralIR(n.ToString(), n);
+
+        public static IEnumerable<TypeDeclarationIR> GetTypes(this IRBuilder self)
+            => self.GetDeclarations<TypeDeclarationIR>();
+
+        public static IEnumerable<T> GetDeclarations<T>(this IRBuilder self) where T: DeclarationIR
+            => self.Declarations.Values.Select(pair => pair.Item2).OfType<T>();
     }
 }
