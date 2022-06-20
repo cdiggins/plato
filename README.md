@@ -142,7 +142,6 @@ various C# projects.
 
 # Compiling and Running
 
-
 https://stackoverflow.com/questions/70774200/how-to-debug-roslyn-source-generator-in-vs-2022
 
 # Final Words
