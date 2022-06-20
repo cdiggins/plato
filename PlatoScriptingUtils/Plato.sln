@@ -27,7 +27,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTestInput", "..\Tests\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTestOutput", "..\Tests\PlatoTestOutput\PlatoTestOutput.csproj", "{10146F21-30CC-4C16-BBDD-08B868C95691}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Studio", "..\Plato.Studio\Plato.Studio.csproj", "{86593E4C-0E21-445C-A867-2D097A4917BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Studio", "..\Plato.Studio\Plato.Studio.csproj", "{86593E4C-0E21-445C-A867-2D097A4917BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatoDebugger", "..\PlatoDebugger\PlatoDebugger.csproj", "{A82402C2-A434-4A82-AF7C-82F876F09760}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatoRoslyn", "..\PlatoRoslyn\PlatoRoslyn.csproj", "{1492B97E-CD0F-49D1-8037-77BCC8BC3B08}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +75,14 @@ Global
 		{86593E4C-0E21-445C-A867-2D097A4917BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86593E4C-0E21-445C-A867-2D097A4917BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86593E4C-0E21-445C-A867-2D097A4917BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A82402C2-A434-4A82-AF7C-82F876F09760}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A82402C2-A434-4A82-AF7C-82F876F09760}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A82402C2-A434-4A82-AF7C-82F876F09760}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A82402C2-A434-4A82-AF7C-82F876F09760}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1492B97E-CD0F-49D1-8037-77BCC8BC3B08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1492B97E-CD0F-49D1-8037-77BCC8BC3B08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1492B97E-CD0F-49D1-8037-77BCC8BC3B08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1492B97E-CD0F-49D1-8037-77BCC8BC3B08}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

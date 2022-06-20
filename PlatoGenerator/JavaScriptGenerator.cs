@@ -13,6 +13,7 @@ using System.Runtime.CompilerServices;
 
 namespace PlatoGenerator
 {
+    // TODO: what the heck is this? It is a combination of things. 
     public class JavaScriptGenerator
     {
         // TODO: symbols? 
@@ -432,7 +433,7 @@ namespace PlatoGenerator
                 sw.WriteLine(indent + "  Statements:");
                 foreach (var c in st.ChildStatements)
                 {
-                    OutputStatement(c, model, indent + "     ");
+                    OutputStatement(c, model, indent +   "     ");
                 }
             }
         }
@@ -657,24 +658,12 @@ namespace PlatoGenerator
         public void ToJavaScript(GeneratorExecutionContext context)
         {
             var types = context.Compilation.SyntaxTrees.GetPlatoTypes();
-
-            var inputFile = GeneratedFile;
-
-            //var thisRepo = @"C:\Users\Acer\source\repos\Plato";
-            //var thisRepo = @"C:\git\plato\";
             var thisRepo = Path.Combine(Path.GetDirectoryName(GetSourceFilePathName()), "..");
 
-            var outputFile = Path.Combine(thisRepo, "JavaScriptTest", "output.html");
-            var templateFile = Path.Combine(thisRepo, "PlatoGenerator", "input.html");
+            var typeDecls = new RoslynToIR().BuildIr(context.Compilation);            
+            typeDecls = RoslynToIR.InlineMethods(typeDecls);
             
-            var builder = new IRBuilder();
-            builder = SyntaxToIR.BuildIR(builder, context.Compilation, types);
             var outputCsFile = Path.Combine(thisRepo, "Tests", "PlatoTestOutput", "PlatoTestCode.g.cs");
-            var typeDecls = builder
-                .GetTypes()
-                // TEMP: ignore stuff that is included manually 
-                .Where(td => td.Name != "Program" && td.Name != "Benchmarks")
-                .ToList();
 
             // Optimize 
             foreach (var type in typeDecls)
@@ -685,28 +674,7 @@ namespace PlatoGenerator
                 }
             }
 
-            bool performInlining = false;
-
-            if (performInlining)
-            {
-                // Inline methods 
-                var inliner = new IRMethodInliner();
-                foreach (var type in typeDecls)
-                {
-                    var inlineFuncs = new List<MethodDeclarationIR>();
-                    foreach (var method in type.Methods)
-                    {
-                        var inline = inliner.GetOrComputeInlined(method);
-                        if (inline != null && inline.Name.StartsWith("_inlined_"))
-                        {
-                            inlineFuncs.Add(inline);
-                        }
-                    }
-                    type.Methods.AddRange(inlineFuncs);
-                }
-            }
-
-            using (sw = new StreamWriter(File.Create(outputCsFile)))
+            using (var sw = new StreamWriter(File.Create(outputCsFile)))
             {
                 var srlzr = new IRSerializer(sw);
                 // TODO: this is a hack until I add proper namespace support. 
