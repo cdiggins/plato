@@ -268,14 +268,14 @@ namespace Plato.Math
             => ray.Intersects(this);
 
         public Sphere Transform(Matrix4x4 m)
-            => new Sphere(Center.Transform(m),
+            => new(Center.Transform(m),
                 Radius * ((float)System.Math.Sqrt(
                     System.Math.Max((m.M11 * m.M11) + (m.M12 * m.M12) + (m.M13 * m.M13),
                     System.Math.Max((m.M21 * m.M21) + (m.M22 * m.M22) + (m.M23 * m.M23),
                     (m.M31 * m.M31) + (m.M32 * m.M32) + (m.M33 * m.M33))))));
 
         public Sphere Translate(Vector3 offset)
-            => new Sphere(Center + offset, Radius);
+            => new(Center + offset, Radius);
 
         public float Distance(Vector3 point)
             => (Center.Distance(point) - Radius).ClampLower(0);

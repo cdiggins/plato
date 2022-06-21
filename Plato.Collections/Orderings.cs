@@ -15,15 +15,14 @@ public readonly record struct  Comparer<T>(Func<T, T, int> Func) : IComparer<T>
 
 public static class Orderings
 {
-    public static IComparer<int> IntegerOrder 
+    public static IComparer<int> IntegerOrder { get; }
         = new Comparer<int>((a, b) => b - a);
 }
 
 public class NoOrder<T> : IComparer<T>
 {
     public int Compare(T? x, T? y) => 0;
-
-    public static NoOrder<T> Instance = new();
+    public static NoOrder<T> Instance { get; } = new();
 }
 
 

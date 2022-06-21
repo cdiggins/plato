@@ -22,23 +22,23 @@ namespace Plato.Math
         public bool IsValid
             => Min.X <= Max.X && Min.Y <= Max.Y;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public float Distance(Vector2 point)
             => Vector2.Zero.Max(Min - point).Max(point - Max).Length();
 
         /// <summary>
         /// Returns the distance of the point to the box center. 
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public float CenterDistance(Vector2 point)
             => Center.Distance(point);
 
         /// <summary>
         /// Moves the box by the given vector offset
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public AABox2D Translate(Vector2 offset)
-            => new AABox2D(Min + offset, Max + offset);
+            => new(Min + offset, Max + offset);
 
         public float DistanceToOrigin
             => Distance(Vector2.Zero);
@@ -61,7 +61,7 @@ namespace Plato.Math
         public float Diagonal
             => Extent.Length();
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public ContainmentType Contains(AABox2D box)
         {
             //test if all corner is in the same side of a face by just checking min and max
@@ -84,7 +84,7 @@ namespace Plato.Math
             return ContainmentType.Intersects;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public bool Contains(Vector2 point)
             => !(point.X < Min.X
                 || point.X > Max.X
@@ -94,7 +94,7 @@ namespace Plato.Math
         /// <summary>
         /// Create a bounding box from the given list of points.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static AABox2D Create(IEnumerable<Vector2> points)
         {
             var minVec = Vector2.MaxValue;
@@ -107,11 +107,11 @@ namespace Plato.Math
             return new AABox2D(minVec, maxVec);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static AABox2D Create(params Vector2[] points)
             => Create(points.AsEnumerable());
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public Vector2[] GetCorners(Vector2[] corners = null)
         {
             corners = corners ?? new Vector2[4];
@@ -129,38 +129,38 @@ namespace Plato.Math
         // CCW
         public static readonly int[] Indices = { 0, 1, 2, 3, };
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static bool Intersects(AABox2D box1, AABox2D box2)
             => box1.Min.X <= box2.Max.X
                && box1.Max.X >= box2.Min.X
                && box1.Min.Y <= box2.Max.Y
                && box1.Max.Y >= box2.Min.Y;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public bool Intersects(AABox2D box)
             => Intersects(this, box);
 
         public static readonly AABox2D Unit
-            = new AABox2D(Vector2.Zero, new Vector2(1));
+            = new(Vector2.Zero, new Vector2(1));
 
         /// <summary>
         /// Returns where a point is relative to the bounding box on a scale of 0..1 
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public Vector2 RelativePosition(Vector2 v)
             => v.InverseLerp(Min, Max);
 
         /// <summary>
         /// Moves the box so that it's origin is on the center
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public AABox2D Recenter()
             => Translate(-Center);
 
         /// <summary>
         /// Rescales the box
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public AABox2D Scale(float scale)
             => new AABox2D(Recenter().Min * scale, Recenter().Max * scale).Translate(Center);
     }

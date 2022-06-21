@@ -31,7 +31,7 @@ namespace Plato.Math
         /// <summary>
         /// Performs a Catmull-Rom interpolation using the specified positions.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static float CatmullRom(this float value1, float value2, float value3, float value4, float amount)
         {
             // Using formula from http://www.mvps.org/directx/articles/catmull/
@@ -47,7 +47,7 @@ namespace Plato.Math
         /// <summary>
         /// Performs a Hermite spline interpolation.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static float Hermite(this float value1, float tangent1, float value2, float tangent2, float amount)
         {
             // All transformed to double not to lose precision
@@ -79,7 +79,7 @@ namespace Plato.Math
         /// Interpolates between two values using a cubic equation (Hermite),
         /// clamping the amount to 0 to 1
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static float SmoothStep(this float value1, float value2, float amount)
             => Hermite(value1, 0f, value2, 0f, Clamp(amount, 0f, 1f));
 
@@ -100,11 +100,11 @@ namespace Plato.Math
             return angle;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static bool IsNonZeroAndValid(this float self, float tolerance = Constants.Tolerance)
             => !self.IsInfinity() && !self.IsNaN() && self.Abs() > tolerance;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static float[] ToFloats(this Matrix4x4 m)
             => new[]
             {
@@ -114,7 +114,7 @@ namespace Plato.Math
                 m.M41, m.M42, m.M43, m.M44
             };
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static float[] ToFloats(this Matrix4x4[] matrixArray)
         {
             var ret = new float[matrixArray.Length * 16];
@@ -142,12 +142,12 @@ namespace Plato.Math
             return ret;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 ToMatrix(this float[] m)
-            => new Matrix4x4(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[11], m[12], m[13],
+            => new(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[11], m[12], m[13],
                 m[14], m[15]);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4[] ToMatrixArray(this float[] m)
         {
             Debug.Assert((m.Length % 16) == 0);
@@ -157,9 +157,9 @@ namespace Plato.Math
             {
                 var i16 = i * 16;
                 ret[i] = new Matrix4x4(
-                    m[i16 + 0], m[i16 + 1], m[i16 + 2], m[i16 + 3], 
-                    m[i16 + 4], m[i16 + 5], m[i16 + 6], m[i16 + 7], 
-                    m[i16 + 8], m[i16 + 9], m[i16 + 10], m[i16 + 11], 
+                    m[i16 + 0], m[i16 + 1], m[i16 + 2], m[i16 + 3],
+                    m[i16 + 4], m[i16 + 5], m[i16 + 6], m[i16 + 7],
+                    m[i16 + 8], m[i16 + 9], m[i16 + 10], m[i16 + 11],
                     m[i16 + 12], m[i16 + 13], m[i16 + 14], m[i16 + 15]
                     );
             }
@@ -167,7 +167,7 @@ namespace Plato.Math
             return ret;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static AABox[] ToAABoxArray(this float[] m)
         {
             const int numFloats = 6;
@@ -186,7 +186,7 @@ namespace Plato.Math
             return ret;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Ray RayFromProjectionMatrix(this Matrix4x4 projection, Vector2 normalisedScreenCoordinates)
         {
             var invProjection = projection.Inverse();
@@ -207,21 +207,21 @@ namespace Plato.Math
             return ret;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 Inverse(this Matrix4x4 m)
             => Matrix4x4.Invert(m, out var r) ? r : throw new Exception("No inversion of matrix available");
 
         /// <summary>
         /// Transforms a vector by the given Quaternion rotation value.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Vector4 Transform(this Vector4 value, Matrix4x4 matrix)
             => value.Transform(matrix);
 
         /// <summary>
         /// Transforms a vector by the given Quaternion rotation value.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Vector4 Transform(this Vector4 value, Quaternion rotation)
         {
             var x2 = rotation.X + rotation.X;
@@ -244,56 +244,56 @@ namespace Plato.Math
                 value.X * (xz2 - wy2) + value.Y * (yz2 + wx2) + value.Z * (1.0f - xx2 - yy2),
                 value.W);
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector2 ToVector2(this float v) => new Vector2(v);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector2 ToVector2(this Vector3 v) => new Vector2(v.X, v.Y);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector2 ToVector2(this Vector4 v) => new Vector2(v.X, v.Y);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector3 ToVector3(this float v) => new Vector3(v);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector3 ToVector3(this Vector2 v) => new Vector3(v.X, v.Y, 0);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector3 ToVector3(this Vector4 v) => new Vector3(v.X, v.Y, v.Z);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 ToVector4(this float v) => new Vector4(v);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 ToVector4(this Vector2 v) => new Vector4(v.X, v.Y, 0, 0);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 ToVector4(this Vector3 v) => new Vector4(v.X, v.Y, v.Z, 0);
+        public static Vector2 ToVector2(this float v) => new(v);
+        public static Vector2 ToVector2(this Vector3 v) => new(v.X, v.Y);
+        public static Vector2 ToVector2(this Vector4 v) => new(v.X, v.Y);
+        public static Vector3 ToVector3(this float v) => new(v);
+        public static Vector3 ToVector3(this Vector2 v) => new(v.X, v.Y, 0);
+        public static Vector3 ToVector3(this Vector4 v) => new(v.X, v.Y, v.Z);
+        public static Vector4 ToVector4(this float v) => new(v);
+        public static Vector4 ToVector4(this Vector2 v) => new(v.X, v.Y, 0, 0);
+        public static Vector4 ToVector4(this Vector3 v) => new(v.X, v.Y, v.Z, 0);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Vector3 Rotate(this Vector3 self, Vector3 axis, float angle)
             => self.Transform(Matrix4x4.CreateFromAxisAngle(axis, angle));
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static bool IsNonZeroAndValid(this Vector3 self)
             => self.LengthSquared().IsNonZeroAndValid();
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static bool IsZeroOrInvalid(this Vector3 self)
             => !self.IsNonZeroAndValid();
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static bool IsPerpendicular(this Vector3 v1, Vector3 v2, float tolerance = Constants.Tolerance)
             // If either vector is vector(0,0,0) the vectors are not perpendicular
             => v1 != Vector3.Zero && v2 != Vector3.Zero && v1.Dot(v2).AlmostZero(tolerance);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Vector3 Projection(this Vector3 v1, Vector3 v2)
             => v2 * (v1.Dot(v2) / v2.LengthSquared());
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Vector3 Rejection(this Vector3 v1, Vector3 v2)
             => v1 - v1.Projection(v2);
 
         // The smaller of the two possible angles between the two vectors is returned, therefore the result will never be greater than 180 degrees or smaller than -180 degrees.
         // If you imagine the from and to vectors as lines on a piece of paper, both originating from the same point, then the /axis/ vector would point up out of the paper.
         // The measured angle between the two vectors would be positive in a clockwise direction and negative in an anti-clockwise direction.
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static float SignedAngle(Vector3 from, Vector3 to, Vector3 axis)
             => Angle(from, to) * System.Math.Sign(axis.Dot(from.Cross(to)));
 
         // The smaller of the two possible angles between the two vectors is returned, therefore the result will never be greater than 180 degrees or smaller than -180 degrees.
         // If you imagine the from and to vectors as lines on a piece of paper, both originating from the same point, then the /axis/ vector would point up out of the paper.
         // The measured angle between the two vectors would be positive in a clockwise direction and negative in an anti-clockwise direction.
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static float SignedAngle(this Vector3 from, Vector3 to)
             => SignedAngle(from, to, Vector3.UnitZ);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static float Angle(this Vector3 v1, Vector3 v2, float tolerance = Constants.Tolerance)
         {
             var d = v1.LengthSquared() * v2.LengthSquared().Sqrt();
@@ -302,45 +302,45 @@ namespace Plato.Math
             return (v1.Dot(v2) / d).Clamp(-1F, 1F).Acos();
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static bool Colinear(this Vector3 v1, Vector3 v2, float tolerance = Constants.Tolerance)
             => !v1.IsNaN() && !v2.IsNaN() && v1.SignedAngle(v2) <= tolerance;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static bool IsBackFace(this Vector3 normal, Vector3 lineOfSight)
             => normal.Dot(lineOfSight) < 0;
 
         /// <summary>
         /// Creates a new <see cref="Vector3"/> that contains CatmullRom interpolation of the specified vectors.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Vector3 CatmullRom(this Vector3 value1, Vector3 value2, Vector3 value3, Vector3 value4, float amount) =>
-            new Vector3(value1.X.CatmullRom(value2.X, value3.X, value4.X, amount), value1.Y.CatmullRom(value2.Y, value3.Y, value4.Y, amount), value1.Z.CatmullRom(value2.Z, value3.Z, value4.Z, amount));
+            new(value1.X.CatmullRom(value2.X, value3.X, value4.X, amount), value1.Y.CatmullRom(value2.Y, value3.Y, value4.Y, amount), value1.Z.CatmullRom(value2.Z, value3.Z, value4.Z, amount));
 
         /// <summary>
         /// Creates a new <see cref="Vector3"/> that contains hermite spline interpolation.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Vector3 Hermite(this Vector3 value1, Vector3 tangent1, Vector3 value2, Vector3 tangent2, float amount) =>
-            new Vector3(value1.X.Hermite(tangent1.X, value2.X, tangent2.X, amount), value1.Y.Hermite(tangent1.Y, value2.Y, tangent2.Y, amount), value1.Z.Hermite(tangent1.Z, value2.Z, tangent2.Z, amount));
+            new(value1.X.Hermite(tangent1.X, value2.X, tangent2.X, amount), value1.Y.Hermite(tangent1.Y, value2.Y, tangent2.Y, amount), value1.Z.Hermite(tangent1.Z, value2.Z, tangent2.Z, amount));
 
         /// <summary>
         /// Creates a new <see cref="Vector3"/> that contains cubic interpolation of the specified vectors.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector3 SmoothStep(this Vector3 value1, Vector3 value2, float amount) =>
-            new Vector3(value1.X.SmoothStep(value2.X, amount), value1.Y.SmoothStep(value2.Y, amount), value1.Z.SmoothStep(value2.Z, amount));
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Line ToLine(this Vector3 v) => new Line(Vector3.Zero, v);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector3 Along(this Vector3 v, float d) => v.Normalize() * d;
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector3 AlongX(this float self) => Vector3.UnitX * self;
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector3 AlongY(this float self) => Vector3.UnitY * self;
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector3 AlongZ(this float self) => Vector3.UnitX * self;
+        public static Vector3 SmoothStep(this Vector3 value1, Vector3 value2, float amount) =>
+            new(value1.X.SmoothStep(value2.X, amount), value1.Y.SmoothStep(value2.Y, amount), value1.Z.SmoothStep(value2.Z, amount));
+
+        public static Line ToLine(this Vector3 v) => new(Vector3.Zero, v);
+        public static Vector3 Along(this Vector3 v, float d) => v.Normalize() * d;
+        public static Vector3 AlongX(this float self) => Vector3.UnitX * self;
+        public static Vector3 AlongY(this float self) => Vector3.UnitY * self;
+        public static Vector3 AlongZ(this float self) => Vector3.UnitX * self;
 
         /// <summary>
         /// Transforms a vector by the given Quaternion rotation value.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Vector3 Transform(this Vector3 value, Quaternion rotation)
         {
             var x2 = rotation.X + rotation.X;
@@ -362,45 +362,45 @@ namespace Plato.Math
                 value.X * (xy2 + wz2) + value.Y * (1.0f - xx2 - zz2) + value.Z * (yz2 - wx2),
                 value.X * (xz2 - wy2) + value.Y * (yz2 + wx2) + value.Z * (1.0f - xx2 - yy2));
         }
-        
+
         /// <summary>
         /// Returns the reflection of a vector off a surface that has the specified normal.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Vector2 Reflect(Vector2 vector, Vector2 normal)
             => vector - (2 * (vector.Dot(normal) * normal));
 
         /// <summary>
         /// Returns the reflection of a vector off a surface that has the specified normal.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Vector3 Reflect(Vector3 vector, Vector3 normal)
             => vector - (2 * (vector.Dot(normal) * normal));
 
         /// <summary>
         /// Transforms a vector by the given matrix.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Vector2 Transform(this Vector2 position, Matrix4x4 matrix)
-            => new Vector2(
+            => new(
                 position.X * matrix.M11 + position.Y * matrix.M21 + matrix.M41,
                 position.X * matrix.M12 + position.Y * matrix.M22 + matrix.M42);
 
         /// <summary>
         /// Transforms a vector normal by the given matrix.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Vector2 TransformNormal(Vector2 normal, Matrix4x4 matrix)
-            => new Vector2(
+            => new(
                 normal.X * matrix.M11 + normal.Y * matrix.M21,
                 normal.X * matrix.M12 + normal.Y * matrix.M22);
 
         /// <summary>
         /// Transforms a vector normal by the given matrix.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Vector3 TransformNormal(Vector3 normal, Matrix4x4 matrix)
-            => new Vector3(
+            => new(
                 normal.X * matrix.M11 + normal.Y * matrix.M21 + normal.Z * matrix.M31,
                 normal.X * matrix.M12 + normal.Y * matrix.M22 + normal.Z * matrix.M32,
                 normal.X * matrix.M13 + normal.Y * matrix.M23 + normal.Z * matrix.M33
@@ -409,9 +409,9 @@ namespace Plato.Math
         /// <summary>
         /// Transforms a vector normal by the given matrix.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Vector4 TransformNormal(Vector4 normal, Matrix4x4 matrix)
-            => new Vector4(
+            => new(
                 normal.X * matrix.M11 + normal.Y * matrix.M21 + normal.Z * matrix.M31 + normal.W * matrix.M41,
                 normal.X * matrix.M12 + normal.Y * matrix.M22 + normal.Z * matrix.M32 + normal.W * matrix.M42,
                 normal.X * matrix.M13 + normal.Y * matrix.M23 + normal.Z * matrix.M33 + normal.W * matrix.M43,
@@ -421,7 +421,7 @@ namespace Plato.Math
         /// <summary>
         /// Transforms a vector by the given Quaternion rotation value.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Vector2 Transform(this Vector2 value, Quaternion rotation)
         {
             var x2 = rotation.X + rotation.X;
@@ -441,7 +441,7 @@ namespace Plato.Math
         /// <summary>
         /// Transforms a vector by the given Quaternion rotation value.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Vector4 TransformToVector4(Vector2 value, Quaternion rotation)
         {
             var x2 = rotation.X + rotation.X;
@@ -468,7 +468,7 @@ namespace Plato.Math
         /// <summary>
         /// Transforms a vector by the given Quaternion rotation value.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Vector4 TransformToVector4(Vector3 value, Quaternion rotation)
         {
             var x2 = rotation.X + rotation.X;
@@ -495,9 +495,9 @@ namespace Plato.Math
         /// <summary>
         /// Transforms a vector by the given matrix.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Vector4 TransformToVector4(Vector2 position, Matrix4x4 matrix)
-            => new Vector4(
+            => new(
                 position.X * matrix.M11 + position.Y * matrix.M21 + matrix.M41,
                 position.X * matrix.M12 + position.Y * matrix.M22 + matrix.M42,
                 position.X * matrix.M13 + position.Y * matrix.M23 + matrix.M43,
@@ -506,68 +506,68 @@ namespace Plato.Math
         /// <summary>
         /// Transforms a vector by the given matrix.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Vector4 TransformToVector4(Vector3 position, Matrix4x4 matrix)
-            => new Vector4(
+            => new(
                 position.X * matrix.M11 + position.Y * matrix.M21 + position.Z * matrix.M31 + matrix.M41,
                 position.X * matrix.M12 + position.Y * matrix.M22 + position.Z * matrix.M32 + matrix.M42,
                 position.X * matrix.M13 + position.Y * matrix.M23 + position.Z * matrix.M33 + matrix.M43,
                 position.X * matrix.M14 + position.Y * matrix.M24 + position.Z * matrix.M34 + matrix.M44);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Vector3 Cross(Vector3 a, Vector3 b)
             => a.Cross(b);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static DVector3 Cross(DVector3 a, DVector3 b)
             => a.Cross(b);
 
         /// <summary>
         /// Returns the bounding box, given stats on a Vector3
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static AABox ToBox(this Stats<Vector3> stats)
-            => new AABox(stats.Min, stats.Max);
+            => new(stats.Min, stats.Max);
 
         /// <summary>
         /// Returns the bounding box, given stats on a DVector3
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static DAABox ToBox(this Stats<DVector3> stats)
-            => new DAABox(stats.Min, stats.Max);
+            => new(stats.Min, stats.Max);
 
         /// <summary>
         /// Returns the bounding box for a series of points
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static AABox ToBox(this IEnumerable<Vector3> points)
             => AABox.Create(points);
 
         /// <summary>
         /// Returns true if the four points are co-planar. 
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static bool Coplanar(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4, float epsilon = Constants.Tolerance)
             => System.Math.Abs(Vector3.Dot(v3 - v1, (v2 - v1).Cross(v4 - v1))) < epsilon;
 
         /// <summary>
         /// Returns a translation matrix. 
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 ToMatrix(this Vector3 self)
             => Matrix4x4.CreateTranslation(self);
 
         /// <summary>
         /// Returns a rotation matrix. 
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 ToMatrix(this Quaternion self)
             => Matrix4x4.CreateRotation(self);
 
         /// <summary>
         /// Returns a matri for translation and then rotation. 
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 ToMatrix(this Transform self)
             => Matrix4x4.CreateTRS(self.Position, self.Orientation, Vector3.One);
     }

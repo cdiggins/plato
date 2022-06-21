@@ -21,15 +21,15 @@ namespace Plato.Math
     [StructLayout(LayoutKind.Sequential), DataContract]
     public struct Matrix4x4 : System.IEquatable<Matrix4x4>, ITransformable3D<Matrix4x4>
     {
-        public Vector3 Col0 => new Vector3(M11, M21, M31);
-        public Vector3 Col1 => new Vector3(M12, M22, M32);
-        public Vector3 Col2 => new Vector3(M13, M23, M33);
-        public Vector3 Col3 => new Vector3(M14, M24, M34);
+        public Vector3 Col0 => new(M11, M21, M31);
+        public Vector3 Col1 => new(M12, M22, M32);
+        public Vector3 Col2 => new(M13, M23, M33);
+        public Vector3 Col3 => new(M14, M24, M34);
 
-        public Vector3 Row0 => new Vector3(M11, M12, M13);
-        public Vector3 Row1 => new Vector3(M21, M22, M23);
-        public Vector3 Row2 => new Vector3(M31, M32, M33);
-        public Vector3 Row3 => new Vector3(M41, M42, M43);
+        public Vector3 Row0 => new(M11, M12, M13);
+        public Vector3 Row1 => new(M21, M22, M23);
+        public Vector3 Row2 => new(M31, M32, M33);
+        public Vector3 Row3 => new(M41, M42, M43);
 
         public Vector3 GetRow(int row)
             => row == 0 ? Row0 : row == 1 ? Row1 : row == 2 ? Row2 : Row3;
@@ -108,8 +108,7 @@ namespace Plato.Math
         /// <summary>
         /// Returns the multiplicative identity matrix.
         /// </summary>
-        public static Matrix4x4 Identity = new Matrix4x4
-        (
+        public static Matrix4x4 Identity = new        (
             1f, 0f, 0f, 0f,
             0f, 1f, 0f, 0f,
             0f, 0f, 1f, 0f,
@@ -130,19 +129,19 @@ namespace Plato.Math
         /// Gets the translation component of this matrix.
         /// </summary>
         public Vector3 Translation
-            => new Vector3(M41, M42, M43);
+            => new(M41, M42, M43);
 
         /// <summary>
         /// Sets the translation component of this matrix, returning a new Matrix
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public Matrix4x4 SetTranslation(Vector3 v)
             => CreateFromRows(Row0, Row1, Row2, v);
 
         /// <summary>
         /// Constructs a Matrix4x4 from the given components.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public Matrix4x4(float m11, float m12, float m13, float m14,
                          float m21, float m22, float m23, float m24,
                          float m31, float m32, float m33, float m34,
@@ -169,21 +168,21 @@ namespace Plato.Math
             M44 = m44;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateFromRows(Vector3 row0, Vector3 row1, Vector3 row2)
             => CreateFromRows(row0.ToVector4(), row1.ToVector4(), row2.ToVector4(), new Vector4(0, 0, 0, 1));
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateFromRows(Vector3 row0, Vector3 row1, Vector3 row2, Vector3 row3)
             => CreateFromRows(row0.ToVector4(), row1.ToVector4(), row2.ToVector4(), new Vector4(row3.X, row3.Y, row3.Z, 1));
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateFromRows(Vector4 row0, Vector4 row1, Vector4 row2)
             => CreateFromRows(row0.ToVector3(), row1.ToVector3(), row2.ToVector3(), Vector3.Zero);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateFromRows(Vector4 row0, Vector4 row1, Vector4 row2, Vector4 row3)
-            => new Matrix4x4(row0.X, row0.Y, row0.Z, row0.W,
+            => new(row0.X, row0.Y, row0.Z, row0.W,
                 row1.X, row1.Y, row1.Z, row1.W,
                 row2.X, row2.Y, row2.Z, row2.W,
                 row3.X, row3.Y, row3.Z, row3.W);
@@ -191,7 +190,7 @@ namespace Plato.Math
         /// <summary>
         /// Creates a spherical billboard that rotates around a specified object position.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateBillboard(Vector3 objectPosition, Vector3 cameraPosition, Vector3 cameraUpVector, Vector3 cameraForwardVector)
         {
             const float epsilon = 1e-4f;
@@ -241,7 +240,7 @@ namespace Plato.Math
         /// <summary>
         /// Creates a cylindrical billboard that rotates around a specified axis.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateConstrainedBillboard(Vector3 objectPosition, Vector3 cameraPosition, Vector3 rotateAxis, Vector3 cameraForwardVector, Vector3 objectForwardVector)
         {
             const float epsilon = 1e-4f;
@@ -320,7 +319,7 @@ namespace Plato.Math
         /// </summary>
         /// <param name="position">The amount to translate in each axis.</param>
         /// <returns>The translation matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateTranslation(Vector3 position)
         {
             Matrix4x4 result;
@@ -349,7 +348,7 @@ namespace Plato.Math
         /// <summary>
         /// Creates a translation matrix.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateTranslation(float x, float y, float z)
             => CreateTranslation(new Vector3(x, y, z));
 
@@ -360,7 +359,7 @@ namespace Plato.Math
         /// <param name="yScale">Value to scale by on the Y-axis.</param>
         /// <param name="zScale">Value to scale by on the Z-axis.</param>
         /// <returns>The scaling matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateScale(float xScale, float yScale, float zScale)
         {
             Matrix4x4 result;
@@ -393,7 +392,7 @@ namespace Plato.Math
         /// <param name="zScale">Value to scale by on the Z-axis.</param>
         /// <param name="centerPoint">The center point.</param>
         /// <returns>The scaling matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateScale(float xScale, float yScale, float zScale, Vector3 centerPoint)
         {
             Matrix4x4 result;
@@ -427,14 +426,14 @@ namespace Plato.Math
         /// </summary>
         /// <param name="scales">The vector containing the amount to scale by on each axis.</param>
         /// <returns>The scaling matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateScale(Vector3 scales)
             => CreateScale(scales.X, scales.Y, scales.Z);
 
         /// <summary>
         /// Creates a scaling matrix with a center point.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateScale(Vector3 scales, Vector3 centerPoint)
             => CreateScale(scales.X, scales.Y, scales.Z, centerPoint);
 
@@ -443,7 +442,7 @@ namespace Plato.Math
         /// </summary>
         /// <param name="scale">The uniform scaling factor.</param>
         /// <returns>The scaling matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateScale(float scale)
             => CreateScale(scale, scale, scale);
 
@@ -453,14 +452,14 @@ namespace Plato.Math
         /// <param name="scale">The uniform scaling factor.</param>
         /// <param name="centerPoint">The center point.</param>
         /// <returns>The scaling matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateScale(float scale, Vector3 centerPoint)
             => CreateScale(scale, scale, scale, centerPoint);
 
         /// <summary>
         /// Creates a matrix for rotating points around the X-axis.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateRotationX(float radians)
         {
             Matrix4x4 result;
@@ -498,7 +497,7 @@ namespace Plato.Math
         /// <param name="radians">The amount, in radians, by which to rotate around the X-axis.</param>
         /// <param name="centerPoint">The center point.</param>
         /// <returns>The rotation matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateRotationX(float radians, Vector3 centerPoint)
         {
             Matrix4x4 result;
@@ -538,7 +537,7 @@ namespace Plato.Math
         /// </summary>
         /// <param name="radians">The amount, in radians, by which to rotate around the Y-axis.</param>
         /// <returns>The rotation matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateRotationY(float radians)
         {
             Matrix4x4 result;
@@ -576,7 +575,7 @@ namespace Plato.Math
         /// <param name="radians">The amount, in radians, by which to rotate around the Y-axis.</param>
         /// <param name="centerPoint">The center point.</param>
         /// <returns>The rotation matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateRotationY(float radians, Vector3 centerPoint)
         {
             Matrix4x4 result;
@@ -616,7 +615,7 @@ namespace Plato.Math
         /// </summary>
         /// <param name="radians">The amount, in radians, by which to rotate around the Z-axis.</param>
         /// <returns>The rotation matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateRotationZ(float radians)
         {
             Matrix4x4 result;
@@ -654,7 +653,7 @@ namespace Plato.Math
         /// <param name="radians">The amount, in radians, by which to rotate around the Z-axis.</param>
         /// <param name="centerPoint">The center point.</param>
         /// <returns>The rotation matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateRotationZ(float radians, Vector3 centerPoint)
         {
             Matrix4x4 result;
@@ -695,7 +694,7 @@ namespace Plato.Math
         /// <param name="axis">The axis to rotate around.</param>
         /// <param name="angle">The angle to rotate around the given axis, in radians.</param>
         /// <returns>The rotation matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateFromAxisAngle(Vector3 axis, float angle)
         {
             // a: angle
@@ -758,7 +757,7 @@ namespace Plato.Math
         /// <param name="nearPlaneDistance">Distance to the near view plane.</param>
         /// <param name="farPlaneDistance">Distance to the far view plane.</param>
         /// <returns>The perspective projection matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreatePerspectiveFieldOfView(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)
         {
             if (fieldOfView <= 0.0f || fieldOfView >= Constants.Pi)
@@ -803,7 +802,7 @@ namespace Plato.Math
         /// <param name="nearPlaneDistance">Distance to the near view plane.</param>
         /// <param name="farPlaneDistance">Distance to the far view plane.</param>
         /// <returns>The perspective projection matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreatePerspective(float width, float height, float nearPlaneDistance, float farPlaneDistance)
         {
             if (nearPlaneDistance <= 0.0f)
@@ -844,7 +843,7 @@ namespace Plato.Math
         /// <param name="nearPlaneDistance">Distance to the near view plane.</param>
         /// <param name="farPlaneDistance">Distance to of the far view plane.</param>
         /// <returns>The perspective projection matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreatePerspectiveOffCenter(float left, float right, float bottom, float top, float nearPlaneDistance, float farPlaneDistance)
         {
             if (nearPlaneDistance <= 0.0f)
@@ -884,7 +883,7 @@ namespace Plato.Math
         /// <param name="zNearPlane">Minimum Z-value of the view volume.</param>
         /// <param name="zFarPlane">Maximum Z-value of the view volume.</param>
         /// <returns>The orthographic projection matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateOrthographic(float width, float height, float zNearPlane, float zFarPlane)
         {
             Matrix4x4 result;
@@ -915,7 +914,7 @@ namespace Plato.Math
         /// <param name="zNearPlane">Minimum Z-value of the view volume.</param>
         /// <param name="zFarPlane">Maximum Z-value of the view volume.</param>
         /// <returns>The orthographic projection matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateOrthographicOffCenter(float left, float right, float bottom, float top, float zNearPlane, float zFarPlane)
         {
             Matrix4x4 result;
@@ -944,7 +943,7 @@ namespace Plato.Math
         /// <param name="cameraTarget">The target towards which the camera is pointing.</param>
         /// <param name="cameraUpVector">The direction that is "up" from the camera's point of view.</param>
         /// <returns>The view matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateLookAt(Vector3 cameraPosition, Vector3 cameraTarget, Vector3 cameraUpVector)
         {
             var zaxis = (cameraPosition - cameraTarget).Normalize();
@@ -980,7 +979,7 @@ namespace Plato.Math
         /// <param name="forward">Forward direction of the object.</param>
         /// <param name="up">Upward direction of the object; usually [0, 1, 0].</param>
         /// <returns>The world matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateWorld(Vector3 position, Vector3 forward, Vector3 up)
         {
             var zaxis = (-forward).Normalize();
@@ -1012,14 +1011,14 @@ namespace Plato.Math
         /// <summary>
         /// Creates a rotation matrix from the given Quaternion rotation value.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateFromQuaternion(Quaternion quaternion)
             => CreateRotation(quaternion);
 
         /// <summary>
         /// Creates a rotation matrix from the given Quaternion rotation value.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateRotation(Quaternion quaternion)
         {
             Matrix4x4 result;
@@ -1062,7 +1061,7 @@ namespace Plato.Math
         /// <param name="pitch">Angle of rotation, in radians, around the X-axis.</param>
         /// <param name="roll">Angle of rotation, in radians, around the Z-axis.</param>
         /// <returns>The rotation matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateFromYawPitchRoll(float yaw, float pitch, float roll)
             => CreateRotation(Quaternion.CreateFromYawPitchRoll(yaw, pitch, roll));
 
@@ -1072,7 +1071,7 @@ namespace Plato.Math
         /// <param name="lightDirection">The direction from which the light that will cast the shadow is coming.</param>
         /// <param name="plane">The Plane onto which the new matrix should flatten geometry so as to cast a shadow.</param>
         /// <returns>A new Matrix that can be used to flatten geometry onto the specified plane from the specified direction.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateShadow(Vector3 lightDirection, Plane plane)
         {
             var p = Plane.Normalize(plane);
@@ -1113,7 +1112,7 @@ namespace Plato.Math
         /// </summary>
         /// <param name="value">The Plane about which to create a reflection.</param>
         /// <returns>A new matrix expressing the reflection.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateReflection(Plane value)
         {
             value = Plane.Normalize(value);
@@ -1155,7 +1154,7 @@ namespace Plato.Math
         /// Calculates the determinant of the 3x3 rotational component of the matrix.
         /// </summary>
         /// <returns>The determinant of the 3x3 rotational component matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public float Get3x3RotationDeterminant()
         {
             // | a b c |
@@ -1200,7 +1199,7 @@ namespace Plato.Math
         /// Calculates the determinant of the matrix.
         /// </summary>
         /// <returns>The determinant of the matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public float GetDeterminant()
         {
             // | a b c d |     | f g h |     | e g h |     | e f h |     | e f g |
@@ -1254,7 +1253,7 @@ namespace Plato.Math
         /// <param name="matrix">The source matrix to invert.</param>
         /// <param name="result">If successful, contains the inverted matrix.</param>
         /// <returns>True if the source matrix could be inverted; False otherwise.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static bool Invert(Matrix4x4 matrix, out Matrix4x4 result)
         {
             //                                       -1
@@ -1422,7 +1421,7 @@ namespace Plato.Math
         /// <param name="value">The source matrix to transform.</param>
         /// <param name="rotation">The rotation to apply.</param>
         /// <returns>The transformed matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 Transform(Matrix4x4 value, Quaternion rotation)
         {
             // Compute rotation matrix.
@@ -1484,7 +1483,7 @@ namespace Plato.Math
         /// <summary>
         /// Transposes the rows and columns of a matrix.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 Transpose(Matrix4x4 matrix)
         {
             Matrix4x4 result;
@@ -1510,14 +1509,14 @@ namespace Plato.Math
         /// <summary>
         /// Transposes the rows and columns of a matrix.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public Matrix4x4 Transpose()
             => Transpose(this);
 
         /// <summary>
         /// Linearly interpolates between the corresponding values of two matrices.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 Lerp(Matrix4x4 matrix1, Matrix4x4 matrix2, float amount)
         {
             Matrix4x4 result;
@@ -1554,37 +1553,37 @@ namespace Plato.Math
         /// </summary>
         /// <param name="value">The source matrix.</param>
         /// <returns>The negated matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 Negate(Matrix4x4 value) => -value;
 
         /// <summary>
         /// Adds two matrices together.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 Add(Matrix4x4 value1, Matrix4x4 value2) => value1 + value2;
 
         /// <summary>
         /// Subtracts the second matrix from the first.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 Subtract(Matrix4x4 value1, Matrix4x4 value2) => value1 - value2;
 
         /// <summary>
         /// Multiplies a matrix by another matrix.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 Multiply(Matrix4x4 value1, Matrix4x4 value2) => value1 * value2;
 
         /// <summary>
         /// Multiplies a matrix by a scalar value.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 Multiply(Matrix4x4 value1, float value2) => value1 * value2;
 
         /// <summary>
         /// Returns a new matrix with the negated elements of the given matrix.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 operator -(Matrix4x4 value)
         {
             Matrix4x4 m;
@@ -1615,7 +1614,7 @@ namespace Plato.Math
         /// <param name="value1">The first source matrix.</param>
         /// <param name="value2">The second source matrix.</param>
         /// <returns>The resulting matrix.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 operator +(Matrix4x4 value1, Matrix4x4 value2)
         {
             Matrix4x4 m;
@@ -1646,7 +1645,7 @@ namespace Plato.Math
         /// <param name="value1">The first source matrix.</param>
         /// <param name="value2">The second source matrix.</param>
         /// <returns>The result of the subtraction.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 operator -(Matrix4x4 value1, Matrix4x4 value2)
         {
             Matrix4x4 m;
@@ -1677,7 +1676,7 @@ namespace Plato.Math
         /// <param name="value1">The first source matrix.</param>
         /// <param name="value2">The second source matrix.</param>
         /// <returns>The result of the multiplication.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 operator *(Matrix4x4 value1, Matrix4x4 value2)
         {
 
@@ -1713,7 +1712,7 @@ namespace Plato.Math
         /// <summary>
         /// Multiplies a matrix by a scalar value.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 operator *(Matrix4x4 value1, float value2)
         {
             Matrix4x4 m;
@@ -1740,7 +1739,7 @@ namespace Plato.Math
         /// <summary>
         /// Returns a boolean indicating whether the given two matrices are equal.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static bool operator ==(Matrix4x4 value1, Matrix4x4 value2)
             => (value1.M11 == value2.M11 && value1.M22 == value2.M22 && value1.M33 == value2.M33 && value1.M44 == value2.M44 && // Check diagonal element first for early out.
                 value1.M12 == value2.M12 && value1.M13 == value2.M13 && value1.M14 == value2.M14 && value1.M21 == value2.M21 &&
@@ -1750,7 +1749,7 @@ namespace Plato.Math
         /// <summary>
         /// Returns a boolean indicating whether the given two matrices are not equal.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static bool operator !=(Matrix4x4 value1, Matrix4x4 value2)
             => (value1.M11 != value2.M11 || value1.M12 != value2.M12 || value1.M13 != value2.M13 || value1.M14 != value2.M14 ||
                 value1.M21 != value2.M21 || value1.M22 != value2.M22 || value1.M23 != value2.M23 || value1.M24 != value2.M24 ||
@@ -1762,7 +1761,7 @@ namespace Plato.Math
         /// </summary>
         /// <param name="other">The matrix to compare this instance to.</param>
         /// <returns>True if the matrices are equal; False otherwise.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public bool Equals(Matrix4x4 other) => this == other;
 
         /// <summary>
@@ -1770,14 +1769,14 @@ namespace Plato.Math
         /// </summary>
         /// <param name="obj">The Object to compare against.</param>
         /// <returns>True if the Object is equal to this matrix; False otherwise.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public override bool Equals(object obj) => (obj is Matrix4x4 other) && (this == other);
 
         /// <summary>
         /// Returns a String representing this matrix instance.
         /// </summary>
         /// <returns>The string representation.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public override string ToString()
         {
             var ci = CultureInfo.CurrentCulture;
@@ -1793,7 +1792,7 @@ namespace Plato.Math
         /// Returns the hash code for this instance.
         /// </summary>
         /// <returns>The hash code.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public override int GetHashCode()
         {
             unchecked
@@ -1810,7 +1809,7 @@ namespace Plato.Math
         /// If successful, the out parameters will contained the extracted values.
         /// https://referencesource.microsoft.com/#System.Numerics/System/Numerics/Matrix4x4.cs
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public bool Decompose(out Vector3 scale, out Quaternion rotation, out Vector3 translation)
             => Decompose(this, out scale, out rotation, out translation);
 
@@ -1819,7 +1818,7 @@ namespace Plato.Math
         /// If successful, the out parameters will contained the extracted values.
         /// https://referencesource.microsoft.com/#System.Numerics/System/Numerics/Matrix4x4.cs
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static bool Decompose(Matrix4x4 matrix, out Vector3 scale, out Quaternion rotation,
             out Vector3 translation)
         {
@@ -1980,11 +1979,11 @@ namespace Plato.Math
             return result;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public Matrix4x4 Transform(Matrix4x4 mat)
             => this * mat;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Matrix4x4 CreateTRS(Vector3 translation, Quaternion rotation, Vector3 scale)
             => CreateTranslation(translation) * CreateRotation(rotation) * CreateScale(scale);
 
@@ -1999,15 +1998,15 @@ namespace Plato.Math
         /// NOTE: This could probably be improved to handle more generic cases by using
         /// CrossProduct to determine axis flipping: (X Cross Y) Dot Z < 0 == Flip
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public Vector3 ExtractDirectScale()
-        => new Vector3(
+        => new(
                 Row0.Length() * (M11 > 0 ? 1 : -1),
                 Row1.Length() * (M22 > 0 ? 1 : -1),
                 Row2.Length() * (M33 > 0 ? 1 : -1)
             );
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public Matrix4x4 ScaleTranslation(float amount)
             => SetTranslation(Translation * amount);
     }

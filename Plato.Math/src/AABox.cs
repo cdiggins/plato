@@ -30,23 +30,23 @@ namespace Plato.Math
             => Min.X <= Max.X && Min.Y <= Max.Y && Min.Z < Max.Z;
 
         // Inspired by: https://stackoverflow.com/questions/5254838/calculating-distance-between-a-point-and-a-rectangular-box-nearest-point
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public float Distance(Vector3 point)
             => Vector3.Zero.Max(Min - point).Max(point - Max).Length();
 
         /// <summary>
         /// Returns the distance of the point to the box center. 
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public float CenterDistance(Vector3 point)
             => Center.Distance(point);
 
         /// <summary>
         /// Moves the box by the given vector offset
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public AABox Translate(Vector3 offset)
-            => new AABox(Min + offset, Max + offset);
+            => new(Min + offset, Max + offset);
 
         public float DistanceToOrigin
             => Distance(Vector3.Zero);
@@ -74,7 +74,7 @@ namespace Plato.Math
         public float Diagonal
             => Extent.Length();
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public ContainmentType Contains(AABox box)
         {
             //test if all corner is in the same side of a face by just checking min and max
@@ -179,7 +179,7 @@ namespace Plato.Math
             return ContainmentType.Disjoint;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public bool Contains(Vector3 point)
             => !(point.X < Min.X
                 || point.X > Max.X
@@ -191,7 +191,7 @@ namespace Plato.Math
         /// <summary>
         /// Create a bounding box from the given list of points.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static AABox Create(IEnumerable<Vector3> points = null)
         {
             var minVec = Vector3.MaxValue;
@@ -207,19 +207,19 @@ namespace Plato.Math
             return new AABox(minVec, maxVec);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static AABox Create(params Vector3[] points)
             => Create(points.AsEnumerable());
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static AABox CreateFromSphere(Sphere sphere)
-            => new AABox(sphere.Center - new Vector3(sphere.Radius), sphere.Center + new Vector3(sphere.Radius));
+            => new(sphere.Center - new Vector3(sphere.Radius), sphere.Center + new Vector3(sphere.Radius));
 
         /// <summary>
         /// This is the four front corners followed by the four back corners all as if looking from the front
         /// going in counter-clockwise order from bottom left. 
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public Vector3[] GetCorners(Vector3[] corners = null)
         {
             corners = corners ?? new Vector3[8];
@@ -246,14 +246,14 @@ namespace Plato.Math
         public static readonly int[] BackIndices = { 6, 7, 3, 2 };
         public static readonly int[] LeftIndices = { 7, 4, 0, 3 };
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public bool Intersects(AABox box)
         {
             Intersects(box, out var result);
             return result;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public void Intersects(AABox box, out bool result)
         {
             if ((Max.X >= box.Min.X) && (Min.X <= box.Max.X))
@@ -272,7 +272,7 @@ namespace Plato.Math
             return;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public bool Intersects(Sphere sphere)
         {
             if (sphere.Center.X - Min.X > sphere.Radius
@@ -308,7 +308,7 @@ namespace Plato.Math
             return false;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public PlaneIntersectionType Intersects(Plane plane)
         {
             // See http://zach.in.tu-clausthal.de/teaching/cg_literatur/lighthouse3d_view_frustum_culling/index.html
@@ -362,33 +362,33 @@ namespace Plato.Math
         }
 
         public static readonly AABox Unit
-            = new AABox(Vector3.Zero, new Vector3(1));
+            = new(Vector3.Zero, new Vector3(1));
 
         /// <summary>
         /// Returns where a point is relative to the bounding box on a scale of 0..1 
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public Vector3 RelativePosition(Vector3 v)
             => v.InverseLerp(Min, Max);
 
         /// <summary>
         /// Moves the box so that it's origin is on the center
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public AABox Recenter()
             => Translate(-Center);
 
         /// <summary>
         /// Rescales the box
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public AABox Scale(float scale)
             => new AABox(Recenter().Min * scale, Recenter().Max * scale).Translate(Center);
 
         /// <summary>
         /// Returns the center of each face.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public Vector3[] FaceCenters()
         {
             var corners = GetCorners();
@@ -403,7 +403,7 @@ namespace Plato.Math
             };
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public IEnumerable<Vector3> GetCornersAndFaceCenters()
             => Corners.Concat(FaceCenters());
 
@@ -417,7 +417,7 @@ namespace Plato.Math
         /// <summary>
         /// Given a normalized position in bounding box, returns the actual position. 
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public Vector3 Lerp(Vector3 v)
             => Min + Extent * v;
 
@@ -428,7 +428,7 @@ namespace Plato.Math
             => FromCenterAndExtent(Center, v);
 
         public static AABox FromCenterAndExtent(Vector3 center, Vector3 extent)
-            => new AABox(center - extent / 2f, center + extent / 2f);
+            => new(center - extent / 2f, center + extent / 2f);
 
         public AABox Transform(Matrix4x4 mat)
             => Create(Corners.Select(v => v.Transform(mat)));

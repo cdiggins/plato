@@ -34,13 +34,6 @@ public interface ISequence<T>
     IIterator<T> Iterator { get; }
 }
 
-public interface ISequence<T, TIterator> : ISequence<T> where TIterator : IIterator<T>
-{
-    TIterator Iterator { get; }
-    IIterator<T> ISequence<T>.Iterator => Iterator;
-}
-
-
 /// <summary>
 /// Any collection that maintains a count implements this interface.
 /// This implies that the implementing type can return the count in at least O(Log N) time
@@ -104,7 +97,7 @@ public interface IList<T> : ISequence<T>
 /// </summary>
 public interface ISorted<T>
 {
-    IComparer<T> Ordering => NoOrder<T>.Instance;
+    IComparer<T> Ordering { get; }
 }
 
 /// <summary>
@@ -113,7 +106,7 @@ public interface ISorted<T>
 /// </summary>
 public interface ISearchable<TValue, TKey>
 {
-    TKey FindKey(TValue item) => throw new NotImplementedException();
+    TKey FindKey(TValue item);
 }
 
 /// <summary>
@@ -149,7 +142,7 @@ public interface ITree<T> : ISequence<T>
 /// </summary>
 public interface ISortedTree<T> : ITree<T>, ISorted<T>, ISearchable<T, ISortedTree<T>>
 {
-    ISortedTree<T> Add(T item) => throw new NotImplementedException();
+    ISortedTree<T> Add(T item);
 }
 
 /// <summary>
@@ -157,7 +150,7 @@ public interface ISortedTree<T> : ITree<T>, ISorted<T>, ISearchable<T, ISortedTr
 /// </summary>
 public interface IHeap<T> : ITree<T>, ISortedTree<T>
 {
-    new IHeap<T> Add(T item) => throw new NotImplementedException();
+    new IHeap<T> Add(T item);
 }
 
 //================================================================
@@ -235,7 +228,6 @@ public partial interface ISlice<T> : IArray<T>
     IArray<T> Array { get; }
     int Index { get; }
 }
-
 
 /// <summary>
 /// A monotonically increasing sequence of integers 

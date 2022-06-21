@@ -13,9 +13,9 @@ namespace Plato.Math
 {
     public static class Constants
     {
-        public static readonly Plane XYPlane = new Plane(Vector3.UnitZ, 0);
-        public static readonly Plane XZPlane = new Plane(Vector3.UnitY, 0);
-        public static readonly Plane YZPlane = new Plane(Vector3.UnitX, 0);
+        public static readonly Plane XYPlane = new(Vector3.UnitZ, 0);
+        public static readonly Plane XZPlane = new(Vector3.UnitY, 0);
+        public static readonly Plane YZPlane = new(Vector3.UnitX, 0);
 
         public const float Pi = (float)System.Math.PI;
         public const float HalfPi = Pi / 2f;

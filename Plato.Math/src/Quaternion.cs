@@ -22,7 +22,7 @@ namespace Plato.Math
         /// Returns a Quaternion representing no rotation. 
         /// </summary>
         public static Quaternion Identity
-            => new Quaternion(0, 0, 0, 1);
+            => new(0, 0, 0, 1);
 
         /// <summary>
         /// Returns whether the Quaternion is the identity Quaternion.
@@ -33,7 +33,7 @@ namespace Plato.Math
         /// <summary>
         /// Constructs a Quaternion from the given vector and rotation parts.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public Quaternion(Vector3 vectorPart, float scalarPart)
             : this(vectorPart.X, vectorPart.Y, vectorPart.Z, scalarPart)
         { }
@@ -41,49 +41,49 @@ namespace Plato.Math
         /// <summary>
         /// Calculates the length of the Quaternion.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public float Length()
             => LengthSquared().Sqrt();
 
         /// <summary>
         /// Calculates the length squared of the Quaternion. This operation is cheaper than Length().
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public float LengthSquared()
             => X * X + Y * Y + Z * Z + W * W;
 
         /// <summary>
         /// Divides each component of the Quaternion by the length of the Quaternion.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public Quaternion Normalize()
             => this * Length().Inverse();
 
         /// <summary>
         /// Returns the conjugate of the quaternion
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public Quaternion Conjugate()
-            => new Quaternion(-X, -Y, -Z, W);
+            => new(-X, -Y, -Z, W);
 
         /// <summary>
         /// Returns the inverse of a Quaternion.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public Quaternion Inverse()
             => Conjugate() * LengthSquared().Inverse();
 
         /// <summary>
         /// Creates a Quaternion from a normalized vector axis and an angle to rotate about the vector.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Quaternion CreateFromAxisAngle(Vector3 axis, float angle)
-            => new Quaternion(axis * (angle * 0.5f).Sin(), (angle * 0.5f).Cos());
+            => new(axis * (angle * 0.5f).Sin(), (angle * 0.5f).Cos());
 
         /// <summary>
         /// Creates a new Quaternion from the given rotation around X, Y, and Z
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Quaternion CreateFromEulerAngles(Vector3 v)
         {
             var c1 = System.Math.Cos(v.X / 2);
@@ -103,28 +103,28 @@ namespace Plato.Math
         /// <summary>
         /// Creates a new Quaternion from the given rotation around the X axis
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Quaternion CreateXRotation(float theta)
-            => new Quaternion((float)System.Math.Sin(theta * 0.5f), 0.0f, 0.0f, (float)System.Math.Cos(theta * 0.5f));
+            => new((float)System.Math.Sin(theta * 0.5f), 0.0f, 0.0f, (float)System.Math.Cos(theta * 0.5f));
 
         /// <summary>
         /// Creates a new Quaternion from the given rotation around the Y axis
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Quaternion CreateYRotation(float theta)
-            => new Quaternion(0.0f, (float)System.Math.Sin(theta * 0.5f), 0.0f, (float)System.Math.Cos(theta * 0.5f));
+            => new(0.0f, (float)System.Math.Sin(theta * 0.5f), 0.0f, (float)System.Math.Cos(theta * 0.5f));
 
         /// <summary>
         /// Creates a new Quaternion from the given rotation around the Z axis
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Quaternion CreateZRotation(float theta)
-            => new Quaternion(0.0f, 0.0f, (float)System.Math.Sin(theta * 0.5f), (float)System.Math.Cos(theta * 0.5f));
+            => new(0.0f, 0.0f, (float)System.Math.Sin(theta * 0.5f), (float)System.Math.Cos(theta * 0.5f));
 
         /// <summary>
         /// Creates a new look-at Quaternion
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Quaternion LookAt(Vector3 position, Vector3 targetPosition, Vector3 up, Vector3 forward)
         {
             var plane = Plane.CreateFromNormalAndPoint(up, position);
@@ -141,7 +141,7 @@ namespace Plato.Math
         /// <summary>
         /// Creates a new Quaternion rotating vector 'fromA' to 'toB'
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Quaternion CreateRotationFromAToB(Vector3 fromA, Vector3 toB)
         {
             var axis = fromA.Cross(toB);
@@ -163,7 +163,7 @@ namespace Plato.Math
         /// <param name="yaw">The yaw angle, in radians, around the Y-axis.</param>
         /// <param name="pitch">The pitch angle, in radians, around the X-axis.</param>
         /// <param name="roll">The roll angle, in radians, around the Z-axis.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Quaternion CreateFromYawPitchRoll(float yaw, float pitch, float roll)
         {
 
@@ -189,7 +189,7 @@ namespace Plato.Math
         /// <summary>
         /// Creates a Quaternion from the given rotation matrix.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Quaternion CreateFromRotationMatrix(Matrix4x4 matrix)
         {
             var trace = matrix.M11 + matrix.M22 + matrix.M33;
@@ -238,7 +238,7 @@ namespace Plato.Math
         /// <summary>
         /// Calculates the dot product of two Quaternions.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static float Dot(Quaternion quaternion1, Quaternion quaternion2)
             => quaternion1.X * quaternion2.X +
                    quaternion1.Y * quaternion2.Y +
@@ -248,7 +248,7 @@ namespace Plato.Math
         /// <summary>
         /// Interpolates between two quaternions, using spherical linear interpolation.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Quaternion Slerp(Quaternion q1, Quaternion q2, float t)
         {
             const float epsilon = 1e-6f;
@@ -290,7 +290,7 @@ namespace Plato.Math
         ///  Linearly interpolates between two quaternions.
         /// </summary>
         /// (1.0f - 1) 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Quaternion Lerp(Quaternion q1, Quaternion q2, float t)
             => (Dot(q1, q2) >= 0.0f
                 ? (q1 * (1.0f - t) + q2 * t)
@@ -299,7 +299,7 @@ namespace Plato.Math
         /// <summary>
         /// Concatenates two Quaternions; the result represents the value1 rotation followed by the value2 rotation.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Quaternion Concatenate(Quaternion value1, Quaternion value2)
         {
             // Concatenate rotation is actually q2 * q1 instead of q1 * q2.
@@ -332,26 +332,26 @@ namespace Plato.Math
         /// Flips the sign of each component of the quaternion.
         /// </summary>
         public static Quaternion operator -(Quaternion value)
-            => new Quaternion(-value.X, -value.Y, -value.Z, -value.W);
+            => new(-value.X, -value.Y, -value.Z, -value.W);
 
         /// <summary>
         /// Adds two Quaternions element-by-element.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Quaternion operator +(Quaternion value1, Quaternion value2)
-            => new Quaternion(value1.X + value2.X, value1.Y + value2.Y, value1.Z + value2.Z, value1.W + value2.W);
+            => new(value1.X + value2.X, value1.Y + value2.Y, value1.Z + value2.Z, value1.W + value2.W);
 
         /// <summary>
         /// Subtracts one Quaternion from another.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Quaternion operator -(Quaternion value1, Quaternion value2)
-            => new Quaternion(value1.X - value2.X, value1.Y - value2.Y, value1.Z - value2.Z, value1.W - value2.W);
+            => new(value1.X - value2.X, value1.Y - value2.Y, value1.Z - value2.Z, value1.W - value2.W);
 
         /// <summary>
         /// Multiplies two Quaternions together.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Quaternion operator *(Quaternion value1, Quaternion value2)
         {
             // 9 muls, 27 adds
@@ -377,14 +377,14 @@ namespace Plato.Math
         /// <summary>
         /// Multiplies a Quaternion by a scalar value.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Quaternion operator *(Quaternion value1, float value2)
-            => new Quaternion(value1.X * value2, value1.Y * value2, value1.Z * value2, value1.W * value2);
+            => new(value1.X * value2, value1.Y * value2, value1.Z * value2, value1.W * value2);
 
         /// <summary>
         /// Divides a Quaternion by another Quaternion.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static Quaternion operator /(Quaternion value1, Quaternion value2)
             => value1 * value2.Inverse();
 
@@ -392,7 +392,7 @@ namespace Plato.Math
         /// Returns Euler123 angles (rotate around, X, then Y, then Z).
         /// </summary>
         /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public Vector3 ToEulerAngles()
         {
             /*
@@ -435,7 +435,7 @@ namespace Plato.Math
         }
 
         public Vector4 Vector4
-            => new Vector4(X, Y, Z, W);
+            => new(X, Y, Z, W);
 
         public HorizontalCoordinate ToSphericalAngle()
             => ToSphericalAngle(Vector3.UnitY);
