@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\src\Plato.Math.csproj" />
+        <ProjectReference Include="..\src\Plato.Math.csproj" />
     </ItemGroup>
 
 </Project>

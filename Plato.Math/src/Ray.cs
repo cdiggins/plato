@@ -14,14 +14,14 @@ namespace Plato.Math
     public partial struct Ray : ITransformable3D<Ray>
     {
         // adapted from http://www.scratchapixel.com/lessons/3d-basic-lessons/lesson-7-intersecting-simple-shapes/ray-box-intersection/
-
-        public float? Intersects(AABox box)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public float? Intersects(Box box)
         {
             const float Epsilon = 1e-6f;
 
             float? tMin = null, tMax = null;
 
-            if (System.Math.Abs(Direction.X) < Epsilon)
+            if (System.Math..Abs(Direction.X) < Epsilon)
             {
                 if (Position.X < box.Min.X || Position.X > box.Max.X)
                     return null;
@@ -39,7 +39,7 @@ namespace Plato.Math
                 }
             }
 
-            if (System.Math.Abs(Direction.Y) < Epsilon)
+            if (System.Math..Abs(Direction.Y) < Epsilon)
             {
                 if (Position.Y < box.Min.Y || Position.Y > box.Max.Y)
                     return null;
@@ -63,7 +63,7 @@ namespace Plato.Math
                 if (!tMax.HasValue || tMaxY < tMax) tMax = tMaxY;
             }
 
-            if (System.Math.Abs(Direction.Z) < Epsilon)
+            if (System.Math..Abs(Direction.Z) < Epsilon)
             {
                 if (Position.Z < box.Min.Z || Position.Z > box.Max.Z)
                     return null;
@@ -98,7 +98,7 @@ namespace Plato.Math
             return tMin;
         }
 
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float? Intersects(Plane plane, float tolerance = Constants.Tolerance)
         {
             var den = Vector3.Dot(Direction, plane.Normal);
@@ -119,7 +119,7 @@ namespace Plato.Math
             return result;
         }
 
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float? Intersects(Sphere sphere)
         {
             // Find the vector between where the ray starts the the sphere's centre
@@ -144,11 +144,11 @@ namespace Plato.Math
             // if z = the distance we've travelled along the ray
             // if x^2 + z^2 - y^2 < 0, we do not intersect
             var dist = sphereRadiusSquared + distanceAlongRay.Sqr() - differenceLengthSquared;
-            return (dist < 0) ? null : distanceAlongRay - (float?)System.Math.Sqrt(dist);
+            return (dist < 0) ? null : distanceAlongRay - (float?)System.Math..Sqrt(dist);
         }
 
         public Ray Transform(Matrix4x4 mat)
-            => new(Position.Transform(mat), Direction.TransformNormal(mat));
+            => new Ray(Position.Transform(mat), Direction.TransformNormal(mat));
 
         // Adapted from https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
         // Does not require or benefit from precomputed normals.

@@ -20,18 +20,18 @@ namespace Plato.Math
             => RandomFloat(0, 1, index, seed);
 
         public static Vector2 RandomVector2(int index, int seed = 0)
-            => new(
+            => new Vector2(
                 RandomFloat(index * 2, seed),
                 RandomFloat(index * 2 + 1, seed));
 
         public static Vector3 RandomVector3(int index, int seed = 0)
-            => new(
+            => new Vector3(
                 RandomFloat(index * 3, seed),
                 RandomFloat(index * 3 + 1, seed),
                 RandomFloat(index * 3 + 2, seed));
 
         public static Vector4 RandomVector4(int index, int seed = 0)
-            => new(
+            => new Vector4(
                 RandomFloat(index * 4, seed),
                 RandomFloat(index * 4 + 1, seed),
                 RandomFloat(index * 4 + 2, seed),

@@ -242,9 +242,9 @@ namespace Plato.Math.Tests
 
             if (scaleIsZeroOrNegative)
             {
-                Assert.True(MathHelper.Equal(System.Math.Abs(expectedScales.X), System.Math.Abs(scales.X)), "Matrix4x4.Decompose did not return expected value.");
-                Assert.True(MathHelper.Equal(System.Math.Abs(expectedScales.Y), System.Math.Abs(scales.Y)), "Matrix4x4.Decompose did not return expected value.");
-                Assert.True(MathHelper.Equal(System.Math.Abs(expectedScales.Z), System.Math.Abs(scales.Z)), "Matrix4x4.Decompose did not return expected value.");
+                Assert.True(MathHelper.Equal(Math.Abs(expectedScales.X), Math.Abs(scales.X)), "Matrix4x4.Decompose did not return expected value.");
+                Assert.True(MathHelper.Equal(Math.Abs(expectedScales.Y), Math.Abs(scales.Y)), "Matrix4x4.Decompose did not return expected value.");
+                Assert.True(MathHelper.Equal(Math.Abs(expectedScales.Z), Math.Abs(scales.Z)), "Matrix4x4.Decompose did not return expected value.");
             }
             else
             {

@@ -80,7 +80,7 @@ namespace Plato.Math.Tests
             var point3 = new Vector3(1.0f, 1.0f, 0.0f);
 
             var target = Plane.CreateFromVertices(point1, point2, point3);
-            var invRoot2 = (float)(1 / System.Math.Sqrt(2));
+            var invRoot2 = (float)(1 / Math.Sqrt(2));
 
             var expected = new Plane(new Vector3(invRoot2, 0, invRoot2), -invRoot2);
             Assert.True(MathHelper.Equal(target, expected), "Plane.cstor did not return the expected value.");

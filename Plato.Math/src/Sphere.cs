@@ -20,7 +20,7 @@ namespace Plato.Math
         /// <summary>
         /// Test if a bounding box is fully inside, outside, or just intersecting the sphere.
         /// </summary>
-        public ContainmentType Contains(AABox box)
+        public ContainmentType Contains(Box box)
         {
             //check if all corner is in sphere
             var inside = true;
@@ -110,7 +110,7 @@ namespace Plato.Math
         /// <summary>
         /// Creates the smallest sphere that contains the box. 
         /// </summary>
-        public static Sphere Create(AABox box)
+        public static Sphere Create(Box box)
         {
             var center = box.Center;
             var radius = center.Distance(box.Max);
@@ -233,9 +233,9 @@ namespace Plato.Math
         }
 
         /// <summary>
-        /// Gets whether or not a specified <see cref="AABox"/> intersects with this sphere.
+        /// Gets whether or not a specified <see cref="Box"/> intersects with this sphere.
         /// </summary>
-        public bool Intersects(AABox box)
+        public bool Intersects(Box box)
             => box.Intersects(this);
 
         /// <summary>
@@ -268,14 +268,14 @@ namespace Plato.Math
             => ray.Intersects(this);
 
         public Sphere Transform(Matrix4x4 m)
-            => new(Center.Transform(m),
+            => new Sphere(Center.Transform(m),
                 Radius * ((float)System.Math.Sqrt(
                     System.Math.Max((m.M11 * m.M11) + (m.M12 * m.M12) + (m.M13 * m.M13),
                     System.Math.Max((m.M21 * m.M21) + (m.M22 * m.M22) + (m.M23 * m.M23),
                     (m.M31 * m.M31) + (m.M32 * m.M32) + (m.M33 * m.M33))))));
 
         public Sphere Translate(Vector3 offset)
-            => new(Center + offset, Radius);
+            => new Sphere(Center + offset, Radius);
 
         public float Distance(Vector3 point)
             => (Center.Distance(point) - Radius).ClampLower(0);

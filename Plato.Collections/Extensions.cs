@@ -2,6 +2,9 @@
 
 public static class Extensions
 {
+    public static IArray<T> ToIArray<T>(this T[] xs)
+        => new ArrayAdapter<T>(xs);
+
     public static SingleSequence<T> Unit<T>(this T x) => new(x);
 
     public static EmptySequence<T> Empty<T>(this T _)

@@ -11,7 +11,7 @@ namespace Plato.Math.Tests
         public static void Ray_IntersectBox_IsFalse_OutsideBox()
         {
             var ray = new Ray(new Vector3(-2, 0, -2), new Vector3(0, 0, 1));
-            var box = new AABox(new Vector3(-1, -1, -1), new Vector3(1, 1, 1));
+            var box = new Box(new Vector3(-1, -1, -1), new Vector3(1, 1, 1));
 
             Assert.IsNull(ray.Intersects(box));
         }
@@ -36,7 +36,7 @@ namespace Plato.Math.Tests
                 (under, nameof(under), 1, 3),
             };
 
-            var box = new AABox(new Vector3(-1, -1, -1), new Vector3(1, 1, 1));
+            var box = new Box(new Vector3(-1, -1, -1), new Vector3(1, 1, 1));
 
             foreach (var (ray, msg, min, max) in sides)
             {
@@ -61,7 +61,7 @@ namespace Plato.Math.Tests
                 (XnYnZ, nameof(XnYnZ), 1, 3),
             };
 
-            var box = new AABox(new Vector3(-1, -1, -1), new Vector3(1, 1, 1));
+            var box = new Box(new Vector3(-1, -1, -1), new Vector3(1, 1, 1));
 
             foreach (var (ray, msg, min, max) in sides)
             {
@@ -90,7 +90,7 @@ namespace Plato.Math.Tests
                 (under, nameof(under)),
             };
 
-            var box = new AABox(new Vector3(-1, -1, -1), new Vector3(1, 1, 1));
+            var box = new Box(new Vector3(-1, -1, -1), new Vector3(1, 1, 1));
 
             foreach (var (ray, msg) in sides)
             {
@@ -118,7 +118,7 @@ namespace Plato.Math.Tests
                 (under, nameof(under)),
             };
 
-            var box = new AABox(new Vector3(-1, -1, -1), new Vector3(1, 1, 1));
+            var box = new Box(new Vector3(-1, -1, -1), new Vector3(1, 1, 1));
 
             foreach (var (ray, msg) in sides)
             {
@@ -130,7 +130,7 @@ namespace Plato.Math.Tests
         public static void Ray_IntersectBox_IsFalse_NearEdge()
         {
             var ray = new Ray(new Vector3(0, 0, -2), new Vector3(0, 1.1f, 1));
-            var box = new AABox(new Vector3(-1, -1, -1), new Vector3(1, 1, 1));
+            var box = new Box(new Vector3(-1, -1, -1), new Vector3(1, 1, 1));
 
             Assert.IsNull(ray.Intersects(box));
         }
@@ -138,7 +138,7 @@ namespace Plato.Math.Tests
         [Test]
         public static void Ray_IntersectBox_IsTrue_FlatBox()
         {
-            var box = new AABox(new Vector3(-1, -1, 0), new Vector3(1, 1, 0));
+            var box = new Box(new Vector3(-1, -1, 0), new Vector3(1, 1, 0));
             var ray = new Ray(new Vector3(0, 0, -1), new Vector3(0, 0, 1));
 
             Assert.IsNotNull(ray.Intersects(box));

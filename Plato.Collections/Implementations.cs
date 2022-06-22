@@ -137,6 +137,8 @@ public readonly record struct RangeSequence(int From, int Count) : IRange, IIter
     public int To => From + Count;
     public IIterator<int> Next => new RangeSequence(From + 1, Count - 1);
     public bool Contains(int item) => item >= From && item <= Count + From;
+    public IComparer<int> Ordering => Orderings.IntegerOrder;
+    public int FindKey(int n) => n < From || n >= Count ? -1 : n - From;
 }
 
 public readonly record struct TakeIterator<T>(IIterator<T> Source, Func<T, int, bool> Predicate, int Index = 0)

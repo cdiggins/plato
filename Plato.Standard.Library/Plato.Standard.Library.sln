@@ -3,7 +3,31 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Math", "..\Plato.Math\src\Plato.Math.csproj", "{6918DC9B-D6D3-408E-BCEF-F9446D8F68E3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Math.Tests", "..\Plato.Math\tests\Plato.Math.Tests.csproj", "{8ADF531F-7BD0-4DB1-B245-E21D6BC3C2DA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Collections", "..\Plato.Collections\Plato.Collections.csproj", "{D3BBFD62-E1E0-4134-BB5A-F68331A0DF2E}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6918DC9B-D6D3-408E-BCEF-F9446D8F68E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6918DC9B-D6D3-408E-BCEF-F9446D8F68E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6918DC9B-D6D3-408E-BCEF-F9446D8F68E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6918DC9B-D6D3-408E-BCEF-F9446D8F68E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8ADF531F-7BD0-4DB1-B245-E21D6BC3C2DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8ADF531F-7BD0-4DB1-B245-E21D6BC3C2DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8ADF531F-7BD0-4DB1-B245-E21D6BC3C2DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8ADF531F-7BD0-4DB1-B245-E21D6BC3C2DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3BBFD62-E1E0-4134-BB5A-F68331A0DF2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3BBFD62-E1E0-4134-BB5A-F68331A0DF2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3BBFD62-E1E0-4134-BB5A-F68331A0DF2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3BBFD62-E1E0-4134-BB5A-F68331A0DF2E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection

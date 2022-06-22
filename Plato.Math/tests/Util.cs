@@ -100,13 +100,13 @@ namespace Plato.Math.Tests
             }
 
             dynamic dyn = (dynamic)value;
-            var abs = System.Math.Abs(dyn);
+            var abs = Math.Abs(dyn);
             var ret = (T)abs;
             return ret;
         }
 
         public static T Sqrt<T>(T value) where T : struct
-            => unchecked((T)(dynamic)(System.Math.Sqrt((dynamic)value)));
+            => unchecked((T)(dynamic)(Math.Sqrt((dynamic)value)));
 
         public static T Multiply<T>(T left, T right) where T : struct
             => unchecked((T)((dynamic)left * right));
@@ -166,7 +166,7 @@ namespace Plato.Math.Tests
         {
             for (var g = 0; g < left.Length; g++)
             {
-                if (((System.IEquatable<T>)left[g]).Equals(right[g]))
+                if (((IEquatable<T>)left[g]).Equals(right[g]))
                 {
                     return true;
                 }
@@ -178,7 +178,7 @@ namespace Plato.Math.Tests
         {
             for (var g = 0; g < left.Length; g++)
             {
-                if (!((System.IEquatable<T>)left[g]).Equals(right[g]))
+                if (!((IEquatable<T>)left[g]).Equals(right[g]))
                 {
                     return false;
                 }

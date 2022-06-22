@@ -876,9 +876,9 @@ namespace Plato.Math.Tests
         [Test]
         public static void ToEulerAndBack()
         {
-            var x = (float)System.Math.PI / 5f;
-            var y = (float)System.Math.PI * 2f / 7f;
-            var z = (float)System.Math.PI / 3f;
+            var x = (float)Math.PI / 5f;
+            var y = (float)Math.PI * 2f / 7f;
+            var z = (float)Math.PI / 3f;
             var euler = new Vector3(x, y, z);
             var quat = Quaternion.CreateFromEulerAngles(euler);
             var euler2 = quat.ToEulerAngles();

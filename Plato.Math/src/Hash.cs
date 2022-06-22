@@ -31,7 +31,7 @@ namespace Plato.Math
             }
         }
 
-        public static int Combine(IList<int> xs)
+        public static int Combine(IArray<int> xs)
         {
             if (xs.Count == 0) return 0;
             var r = xs[0];
@@ -41,7 +41,7 @@ namespace Plato.Math
         }
 
         public static int Combine(params int[] xs)
-            => Combine(xs as IList<int>);
+            => Combine(xs.ToIArray());
 
         public static int Combine(int x0, int x1, int x2)
             => Combine(Combine(x0, x1), x2);
