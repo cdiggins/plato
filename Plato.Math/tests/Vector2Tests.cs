@@ -764,7 +764,7 @@ namespace Plato.Math.Tests
             Assert.AreEqual(expected, actual);
 
             // case 2: compare between different values
-            b = b.SetX(10.0f);
+            b = b.WithX(10.0f);
             obj = b;
             expected = false;
             actual = a.Equals(obj);
@@ -843,7 +843,7 @@ namespace Plato.Math.Tests
             Assert.AreEqual(expected, actual);
 
             // case 2: compare between different values
-            b = b.SetX(10f);
+            b = b.WithX(10f);
             expected = true;
             actual = a != b;
             Assert.AreEqual(expected, actual);
@@ -862,7 +862,7 @@ namespace Plato.Math.Tests
             Assert.AreEqual(expected, actual);
 
             // case 2: compare between different values
-            b = b.SetX(10f);
+            b = b.WithX(10f);
             expected = false;
             actual = a == b;
             Assert.AreEqual(expected, actual);
@@ -927,7 +927,7 @@ namespace Plato.Math.Tests
             Assert.AreEqual(expected, actual);
 
             // case 2: compare between different values
-            b = b.SetX(10f);
+            b = b.WithX(10f);
             expected = false;
             actual = a.Equals(b);
             Assert.AreEqual(expected, actual);
@@ -1032,15 +1032,15 @@ namespace Plato.Math.Tests
         [StructLayout(LayoutKind.Sequential)]
         struct Vector2_2x
         {
-            private Vector2 _a;
-            private Vector2 _b;
+            private readonly Vector2 _a;
+            private readonly Vector2 _b;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         struct Vector2PlusFloat
         {
-            private Vector2 _v;
-            private float _f;
+            private readonly Vector2 _v;
+            private readonly float _f;
         }
 
         [StructLayout(LayoutKind.Sequential)]

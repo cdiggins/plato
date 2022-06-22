@@ -21,7 +21,7 @@ namespace Plato.Math
 
             float? tMin = null, tMax = null;
 
-            if (System.Math..Abs(Direction.X) < Epsilon)
+            if (System.Math.Abs(Direction.X) < Epsilon)
             {
                 if (Position.X < box.Min.X || Position.X > box.Max.X)
                     return null;
@@ -39,7 +39,7 @@ namespace Plato.Math
                 }
             }
 
-            if (System.Math..Abs(Direction.Y) < Epsilon)
+            if (System.Math.Abs(Direction.Y) < Epsilon)
             {
                 if (Position.Y < box.Min.Y || Position.Y > box.Max.Y)
                     return null;
@@ -63,7 +63,7 @@ namespace Plato.Math
                 if (!tMax.HasValue || tMaxY < tMax) tMax = tMaxY;
             }
 
-            if (System.Math..Abs(Direction.Z) < Epsilon)
+            if (System.Math.Abs(Direction.Z) < Epsilon)
             {
                 if (Position.Z < box.Min.Z || Position.Z > box.Max.Z)
                     return null;
@@ -144,7 +144,7 @@ namespace Plato.Math
             // if z = the distance we've travelled along the ray
             // if x^2 + z^2 - y^2 < 0, we do not intersect
             var dist = sphereRadiusSquared + distanceAlongRay.Sqr() - differenceLengthSquared;
-            return (dist < 0) ? null : distanceAlongRay - (float?)System.Math..Sqrt(dist);
+            return (dist < 0) ? null : distanceAlongRay - (float?)System.Math.Sqrt(dist);
         }
 
         public Ray Transform(Matrix4x4 mat)

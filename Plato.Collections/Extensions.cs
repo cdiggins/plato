@@ -2,9 +2,6 @@
 
 public static class Extensions
 {
-    public static IArray<T> ToIArray<T>(this T[] xs)
-        => new ArrayAdapter<T>(xs);
-
     public static SingleSequence<T> Unit<T>(this T x) => new(x);
 
     public static EmptySequence<T> Empty<T>(this T _)
@@ -19,10 +16,8 @@ public static class Extensions
     public static IRange Range(this int n, int upto)
         => new RangeSequence(n, upto);
 
-    public static RepeatedSequence<T> Repeat<T>(this T x, int value) => new(x, value);
-
-    public static IArray<T> Select<T>(this int count, Func<int, T> func)
-        => new FunctionalArray<T>(count, func);
+    public static RepeatedSequence<T> Repeat<T>(this T x, int value) 
+        => new(x, value);
 
     public static ISet<T> ToSet<T>(this Func<T, bool> predicate) 
         => new Set<T>(predicate);
@@ -243,12 +238,6 @@ public static class Extensions
     public static int Count<T>(this ISequence<T> seq, Func<T, bool> predicate)
         => seq.Iterator.Count(predicate);
 
-    public static IArray<T> Reverse<T>(this IIterator<T> iter)
-        => iter.ToArray().Reverse();
-
-    public static IArray<T> Reverse<T>(this ISequence<T> seq)
-        => seq.Iterator.Reverse();
-
     public static IIterator<T> Prepend<T>(this IIterator<T> iter, T x)
         => x.Unit().Concat(iter);
 
@@ -298,7 +287,7 @@ public static class Extensions
         => seq.Iterator.Aggregate(init, func);
 
     public static bool Contains<T>(this IIterator<T> iter, T item)
-        => iter.Aggregate(false, (_, x) => _ || x.Equals(item));
+        => iter.Aggregate(false, (_, x) => _ || (x?.Equals(item) ?? false));
 
     public static bool Contains<T>(this ISequence<T> seq, T item)
         => seq.Iterator.Contains(item);

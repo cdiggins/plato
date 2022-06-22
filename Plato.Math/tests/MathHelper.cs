@@ -8,7 +8,7 @@ namespace Plato.Math.Tests
 {
     static class MathHelper
     {
-        public const float Pi = (float)Math.PI;
+        public const float Pi = (float)System.Math.PI;
         public const float PiOver2 = Pi / 2f;
         public const float PiOver4 = Pi / 4f;
 
@@ -20,10 +20,10 @@ namespace Plato.Math.Tests
 
         // Comparison helpers with small tolerance to allow for floating point rounding during computations.
         public static bool Equal(float a, float b)
-            => (Math.Abs(a - b) < 1e-5);
+            => (System.Math.Abs(a - b) < 1e-5);
 
         public static bool Equal(double a, double b)
-            => (Math.Abs(a - b) < 1e-5);
+            => (System.Math.Abs(a - b) < 1e-5);
 
         public static bool Equal(Vector2 a, Vector2 b)
             => Equal(a.X, b.X) && Equal(a.Y, b.Y);

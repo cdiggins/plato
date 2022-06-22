@@ -339,8 +339,8 @@ namespace Plato.Math.Tests
 
             var actual1 = Quaternion.CreateFromAxisAngle(axis, angle1);
             var actual2 = Quaternion.CreateFromAxisAngle(axis, angle2);
-            actual1 = actual1.SetX(-actual1.X);
-            actual1 = actual1.SetW(-actual1.W);
+            actual1 = actual1.WithX(-actual1.X);
+            actual1 = actual1.WithW(-actual1.W);
 
             Assert.True(MathHelper.Equal(actual1, actual2), $"Quaternion.CreateFromAxisAngle did not return the expected value: actual1 {actual1} actual2 {actual2}");
         }
@@ -591,7 +591,7 @@ namespace Plato.Math.Tests
 
             // case 2: compare between different values
             expected = true;
-            actual = a != b.SetX(10.0f);
+            actual = a != b.WithX(10.0f);
             Assert.AreEqual(expected, actual);
         }
 
@@ -608,7 +608,7 @@ namespace Plato.Math.Tests
             Assert.AreEqual(expected, actual);
 
             // case 2: compare between different values
-            b = b.SetX(10.0f);
+            b = b.WithX(10.0f);
             expected = false;
             actual = a == b;
             Assert.AreEqual(expected, actual);
@@ -790,7 +790,7 @@ namespace Plato.Math.Tests
             Assert.AreEqual(expected, actual);
 
             // case 2: compare between different values
-            b = b.SetX(10.0f);
+            b = b.WithX(10.0f);
             expected = false;
             actual = a.Equals(b);
             Assert.AreEqual(expected, actual);
@@ -855,15 +855,15 @@ namespace Plato.Math.Tests
         [StructLayout(LayoutKind.Sequential)]
         struct Quaternion_2x
         {
-            private Quaternion _a;
-            private Quaternion _b;
+            private readonly Quaternion _a;
+            private readonly Quaternion _b;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         struct QuaternionPlusFloat
         {
-            private Quaternion _v;
-            private float _f;
+            private readonly Quaternion _v;
+            private readonly float _f;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -876,9 +876,9 @@ namespace Plato.Math.Tests
         [Test]
         public static void ToEulerAndBack()
         {
-            var x = (float)Math.PI / 5f;
-            var y = (float)Math.PI * 2f / 7f;
-            var z = (float)Math.PI / 3f;
+            var x = (float)System.Math.PI / 5f;
+            var y = (float)System.Math.PI * 2f / 7f;
+            var z = (float)System.Math.PI / 3f;
             var euler = new Vector3(x, y, z);
             var quat = Quaternion.CreateFromEulerAngles(euler);
             var euler2 = quat.ToEulerAngles();

@@ -116,7 +116,7 @@ public readonly record struct SingleSequence<T>(T Value) : IIterator<T>, ISet<T>
     public IIterator<T> Iterator => this;
     public int Count => 1;
     public T this[int n] => Value;
-    public bool Contains(T item) => item.Equals(Value);
+    public bool Contains(T item) => item?.Equals(Value) ?? false;
 }
 
 public readonly record struct RepeatedSequence<T>(T Value, int Count) : IIterator<T>, ISet<T>, IArray<T>
@@ -125,7 +125,7 @@ public readonly record struct RepeatedSequence<T>(T Value, int Count) : IIterato
     public bool HasValue => Count > 0;
     public IIterator<T> Iterator => this;
     public T this[int n] => Value;
-    public bool Contains(T item) => item.Equals(Value);
+    public bool Contains(T item) => item?.Equals(Value) ?? false;
 }
 
 public readonly record struct RangeSequence(int From, int Count) : IRange, IIterator<int>

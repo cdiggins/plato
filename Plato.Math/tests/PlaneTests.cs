@@ -80,7 +80,7 @@ namespace Plato.Math.Tests
             var point3 = new Vector3(1.0f, 1.0f, 0.0f);
 
             var target = Plane.CreateFromVertices(point1, point2, point3);
-            var invRoot2 = (float)(1 / Math.Sqrt(2));
+            var invRoot2 = (float)(1 / System.Math.Sqrt(2));
 
             var expected = new Plane(new Vector3(invRoot2, 0, invRoot2), -invRoot2);
             Assert.True(MathHelper.Equal(target, expected), "Plane.cstor did not return the expected value.");
@@ -176,8 +176,7 @@ namespace Plato.Math.Tests
             m.M42 = 20.0f;
             m.M43 = 30.0f;
 
-            Matrix4x4 inv;
-            Matrix4x4.Invert(m, out inv);
+            Matrix4x4.Invert(m, out Matrix4x4 inv);
             var itm = Matrix4x4.Transpose(inv);
             float x = target.Normal.X, y = target.Normal.Y, z = target.Normal.Z, w = target.D;
             var Normal = new Vector3(
@@ -260,22 +259,22 @@ namespace Plato.Math.Tests
         [StructLayout(LayoutKind.Sequential)]
         struct Plane_2x
         {
-            private Plane _a;
-            private Plane _b;
+            private readonly Plane _a;
+            private readonly Plane _b;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         struct PlanePlusFloat
         {
-            private Plane _v;
-            private float _f;
+            private readonly Plane _v;
+            private readonly float _f;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         struct PlanePlusFloat_2x
         {
-            private PlanePlusFloat _a;
-            private PlanePlusFloat _b;
+            private readonly PlanePlusFloat _a;
+            private readonly PlanePlusFloat _b;
         }
     }
 }

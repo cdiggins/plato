@@ -76,7 +76,7 @@ namespace Plato.Math.Tests
         {
             var a = new Vector4(new Vector2(1.051f, 2.05f), 3.478f, 1.0f);
             var b = new Vector4(new Vector3(1.051f, 2.05f, 3.478f), 0.0f);
-            b = b.SetW(1f);
+            b = b.WithW(1f);
 
             var actual = MathOps.Distance(a, b);
             Assert.AreEqual(0.0f, actual);
@@ -413,7 +413,7 @@ namespace Plato.Math.Tests
             Assert.True(MathHelper.Equal(expected, actual), "Vector4f.Transform did not return the expected value.");
 
             // 
-            v = v.SetW(1f);
+            v = v.WithW(1f);
 
             expected = new Vector4(12.19198728f, 21.53349376f, 32.61602545f, 1.0f);
             actual = MathOps.Transform(v, m);
@@ -596,8 +596,8 @@ namespace Plato.Math.Tests
             Assert.True(MathHelper.Equal(expected, actual), "Vector4f.Transform did not return the expected value.");
 
             // 
-            v = v.SetW(1f);
-            expected = expected.SetW(1f);
+            v = v.WithW(1f);
+            expected = expected.WithW(1f);
             actual = MathOps.Transform(v, q);
             Assert.True(MathHelper.Equal(expected, actual), "Vector4f.Transform did not return the expected value.");
         }
@@ -1048,7 +1048,7 @@ namespace Plato.Math.Tests
             Assert.AreEqual(expected, actual);
 
             // case 2: compare between different values
-            b = b.SetX(10f);
+            b = b.WithX(10f);
             obj = b;
             expected = false;
             actual = a.Equals(obj);
@@ -1127,7 +1127,7 @@ namespace Plato.Math.Tests
             Assert.AreEqual(expected, actual);
 
             // case 2: compare between different values
-            b = b.SetX(10f);
+            b = b.WithX(10f);
             expected = true;
             actual = a != b;
             Assert.AreEqual(expected, actual);
@@ -1146,7 +1146,7 @@ namespace Plato.Math.Tests
             Assert.AreEqual(expected, actual);
 
             // case 2: compare between different values
-            b = b.SetX(10f);
+            b = b.WithX(10f);
             expected = false;
             actual = a == b;
             Assert.AreEqual(expected, actual);
@@ -1226,7 +1226,7 @@ namespace Plato.Math.Tests
             Assert.True(a.Equals(b));
 
             // case 2: compare between different values
-            b = b.SetX(10.0f);
+            b = b.WithX(10.0f);
             Assert.False(a.Equals(b));
         }
 
@@ -1308,15 +1308,15 @@ namespace Plato.Math.Tests
         [StructLayout(LayoutKind.Sequential)]
         struct Vector4_2x
         {
-            private Vector4 _a;
-            private Vector4 _b;
+            private readonly Vector4 _a;
+            private readonly Vector4 _b;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         struct Vector4PlusFloat
         {
-            private Vector4 _v;
-            private float _f;
+            private readonly Vector4 _v;
+            private readonly float _f;
         }
 
         // Contrived test for strangely-sized and shaped embedded structures, with unused buffer fields.
@@ -1344,38 +1344,38 @@ namespace Plato.Math.Tests
 
             public struct Level0
             {
-                private float _buffer0, _buffer1;
+                private readonly float _buffer0, _buffer1;
                 public Level1 L1;
-                private float _buffer2;
+                private readonly float _buffer2;
                 public struct Level1
                 {
-                    private float _buffer0, _buffer1;
+                    private readonly float _buffer0, _buffer1;
                     public Level2 L2;
-                    private byte _buffer2;
+                    private readonly byte _buffer2;
                     public struct Level2
                     {
                         public Level3 L3;
-                        private float _buffer0;
-                        private byte _buffer1;
+                        private readonly float _buffer0;
+                        private readonly byte _buffer1;
                         public struct Level3
                         {
                             public Level4 L4;
                             public struct Level4
                             {
-                                private float _buffer0;
+                                private readonly float _buffer0;
                                 public Level5 L5;
-                                private long _buffer1;
-                                private byte _buffer2;
-                                private double _buffer3;
+                                private readonly long _buffer1;
+                                private readonly byte _buffer2;
+                                private readonly double _buffer3;
                                 public struct Level5
                                 {
-                                    private byte _buffer0;
+                                    private readonly byte _buffer0;
                                     public Level6 L6;
                                     public struct Level6
                                     {
-                                        private byte _buffer0;
+                                        private readonly byte _buffer0;
                                         public Level7 L7;
-                                        private byte _buffer1, _buffer2;
+                                        private readonly byte _buffer1, _buffer2;
                                         public struct Level7
                                         {
                                             public Vector4 EmbeddedVector;
