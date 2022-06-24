@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Math.Tests", "..\Plat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Collections", "..\Plato.Collections\Plato.Collections.csproj", "{D3BBFD62-E1E0-4134-BB5A-F68331A0DF2E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Geometry", "..\Plato.Geometry\Plato.Geometry.csproj", "{D58CDE5B-1FF9-40C2-83DA-09D43564D6BC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{D3BBFD62-E1E0-4134-BB5A-F68331A0DF2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3BBFD62-E1E0-4134-BB5A-F68331A0DF2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3BBFD62-E1E0-4134-BB5A-F68331A0DF2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D58CDE5B-1FF9-40C2-83DA-09D43564D6BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D58CDE5B-1FF9-40C2-83DA-09D43564D6BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D58CDE5B-1FF9-40C2-83DA-09D43564D6BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D58CDE5B-1FF9-40C2-83DA-09D43564D6BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
