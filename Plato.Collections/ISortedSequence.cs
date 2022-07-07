@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 
-namespace Plato;
+namespace Plato
+{
+}
 
 /*
 public readonly record struct SortedSequence<T>(IComparer<T> Ordering, ISequence<T> Items) 

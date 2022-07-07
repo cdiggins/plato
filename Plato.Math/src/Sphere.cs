@@ -15,7 +15,7 @@ namespace Plato.Math
     /// <summary>
     /// Describes a sphere in 3D-space for bounding operations.
     /// </summary>
-    public partial struct Sphere : ITransformable3D<Sphere>
+    public partial struct Sphere : ITransformable<Sphere>
     {
         /// <summary>
         /// Test if a bounding box is fully inside, outside, or just intersecting the sphere.

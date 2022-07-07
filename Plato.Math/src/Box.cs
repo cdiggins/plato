@@ -12,7 +12,7 @@ using System.Runtime.CompilerServices;
 
 namespace Plato.Math
 {
-    public partial struct Box : ITransformable3D<Box>
+    public partial struct Box : ITransformable<Box>
     {
         public int Count
             => 2;

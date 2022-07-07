@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 
 namespace Plato.Math
 {
-    public partial struct Ray : ITransformable3D<Ray>
+    public partial struct Ray : ITransformable<Ray>
     {
         // adapted from http://www.scratchapixel.com/lessons/3d-basic-lessons/lesson-7-intersecting-simple-shapes/ray-box-intersection/
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

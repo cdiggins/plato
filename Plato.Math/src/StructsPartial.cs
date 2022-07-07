@@ -11,6 +11,8 @@ namespace Plato.Math
 {
     public partial struct ColorRGBA
     {
+        public static readonly ColorRGBA Black = new ColorRGBA(0, 0, 0, 0xFF);
+        public static readonly ColorRGBA White = new ColorRGBA(0xFF, 0xFF, 0xFF, 0xFF);
        public static readonly ColorRGBA LightRed = new ColorRGBA(255, 128, 128, 255);
        public static readonly ColorRGBA DarkRed = new ColorRGBA(255, 0, 0, 255);
        public static readonly ColorRGBA LightGreen = new ColorRGBA(128, 255, 128, 255);
@@ -19,7 +21,7 @@ namespace Plato.Math
        public static readonly ColorRGBA DarkBlue = new ColorRGBA(0, 0, 255, 255);
     }
 
-    public partial struct Vector4 : ITransformable3D<Vector4>
+    public partial struct Vector4 : ITransformable<Vector4>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector4(Vector3 v, float w)
@@ -42,11 +44,11 @@ namespace Plato.Math
                 X * matrix.M13 + Y * matrix.M23 + Z * matrix.M33 + W * matrix.M43,
                 X * matrix.M14 + Y * matrix.M24 + Z * matrix.M34 + W * matrix.M44);
 
-        public Vector3 XYZ => new Vector3(X, Y, Z);
-        public Vector2 XY => new Vector2(X, Y);
+        public Vector3 ToVector3() => new Vector3(X, Y, Z);
+        public Vector2 ToVector2() => new Vector2(X, Y);
     }
 
-    public partial struct Vector3 : ITransformable3D<Vector3>
+    public partial struct Vector3 : ITransformable<Vector3>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector3(float x, float y)
@@ -116,7 +118,7 @@ namespace Plato.Math
         public Vector3 YZX => new Vector3(Y, Z, X);
     }
 
-    public partial struct Line : ITransformable3D<Line>, IPoints, IMappable<Line, Vector3>
+    public partial struct Line : ITransformable<Line>, IPoints, IMappable<Line, Vector3>
     {
         public Vector3 Vector => B - A;
         public Ray Ray => new Ray(A, Vector);
@@ -168,19 +170,15 @@ namespace Plato.Math
 
     public partial struct Vector2
     {
-        public Vector3 ToVector3()
-            => new Vector3(X, Y, 0);
+        public Vector3 ToVector3(float z = 0)
+            => new Vector3(X, Y, z);
 
         public static implicit operator Vector3(Vector2 self)
             => self.ToVector3();
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public double PointCrossProduct(Vector2 other) => X * other.Y - other.X * Y;
+        public double PointCrossProduct(Vector2 other) 
+            => X * other.Y - other.X * Y;
 
-        /// <summary>
-        /// Computes the cross product of two vectors.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float Cross(Vector2 v2) => X * v2.Y - Y * v2.X;
     }
 
@@ -268,7 +266,7 @@ namespace Plato.Math
 
     public partial struct Pose
     {
-        public static Pose Identity => new(Vector3.Zero, Quaternion.Identity);
+        public static Pose Identity => (Vector3.Zero, Quaternion.Identity);
     }
 
     public partial struct HorizontalCoordinate
@@ -284,6 +282,21 @@ namespace Plato.Math
 
         public static implicit operator HorizontalCoordinate(Vector2 vector)
             => new HorizontalCoordinate(vector.X, vector.Y);
+    }
+
+    public partial struct ColorRGBA
+    {
+        public ColorHDR ToHdr()
+            => (R / 255f, G / 255f, B / 255f, A / 255f);
+    }
+
+    public partial struct ColorRGB
+    {
+        public ColorHDR ToHdr()
+            => (R / 255f, G / 255f, B / 255f, 1);
+
+        public ColorRGBA ToRgba()
+            => (R, G, B, byte.MaxValue);
     }
 
     public static class MovementExtensions

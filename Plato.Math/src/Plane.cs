@@ -13,7 +13,7 @@ namespace Plato.Math
     /// <summary>
     /// A structure encapsulating a 3D Plane
     /// </summary>
-    public partial struct Plane : ITransformable3D<Plane>
+    public partial struct Plane : ITransformable<Plane>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Plane(float x, float y, float z, float d)

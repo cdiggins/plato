@@ -1,8 +1,53 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using Plato.Math;
 
-namespace Vim.Experimental
+namespace Plato.Geometry.Experimental
 {
+    // https://en.wikipedia.org/wiki/Boy%27s_surface
+    // https://en.wikipedia.org/wiki/Roman_surface
+    // https://en.wikipedia.org/wiki/M%C3%B6bius_strip#Making_the_boundary_circular
+    // https://en.wikipedia.org/wiki/Trefoil_knot
+    // https://en.wikipedia.org/wiki/Figure-eight_knot_(mathematics)
+    // https://en.wikipedia.org/wiki/Metric_(mathematics)
+    // https://en.wikipedia.org/wiki/Implicit_curve
+    // https://en.wikipedia.org/wiki/Implicit_surface
+
+    // http://rodolphe-vaillant.fr/entry/86/implicit-surface-aka-signed-distance-field-definition
+    // https://github.com/EmmetOT/IsoMesh
+
+    // Octree ...
+    // https://en.wikipedia.org/wiki/Octree
+    // https://en.wikipedia.org/wiki/K-d_tree
+
+    // https://www.boristhebrave.com/2018/04/15/dual-contouring-tutorial/
+    // https://github.com/Lin20/isosurface
+
+
+    interface ISignedDistanceField2D : IMap<Vector2, float> { }
+    interface ISignedDistanceField : IMap<Vector3, float> { }
+    interface IVectorField2D : IMap<Vector2, Vector2> { }
+    //interface IVolume : IMap<Vector3, bool> { }
+    interface IVectorField : IMap<Vector3, Vector3> { }
+    //interface ICurve : IMap<float, Vector2> { }
+    interface IPath : IMap<float, Vector3> { }
+    //interface ISurface : IMap<Vector2, Vector3> { }
+    interface IHeightMap : IArray2D<float> { }
+    interface IBitmask: IArray2D<bool> { }
+    interface IDisplacementMap : IArray2D<Vector3> { }
+    interface IBitmap : IArray2D<ColorRGBA> { }
+    interface IVoxels : IArray3D<ColorRGBA> { }
+    interface IArray2D<T> { }
+    interface IArray3D<T> { }
+    interface INumericFunction : IMap<float, float> {  }
+    interface IVolumeGrid<T> : IArray3D<float> { }
+    
+    interface IImplicitCurve 
+    { }
+
+    interface IImplicitSurface
+    { }
+
+
     // ISliceable? 
     // IRayHittable? 
     // ISignedDistanceField?
@@ -45,10 +90,9 @@ namespace Vim.Experimental
         Vector3 Scale { get; }
     }
 
-    public interface IPoints<T> : ITransformable3D<T>
+    public interface IPoints<T> : ITransformable<T>
     {
-        IEnumerable<Vector3> Points { get; }
-        T SetPoints(IEnumerable<Vector3> points);
+        IArray<Vector3> Points { get; }
     }
 
     public interface IRange<T>
@@ -69,12 +113,6 @@ namespace Vim.Experimental
         //bool PeriodicY { get; }
         //bool PeriodicZ { get; }
     }
-
-    public interface IVectorField : IField<Vector3>
-    { }
-
-    public interface ISignedDistanceField : IField<float>
-    { }
 
     public interface ICurve
     {
@@ -123,14 +161,14 @@ namespace Vim.Experimental
     }
 
     public interface IPrimitiveShape :
-        IPolygon, IPositionRotationScale, ITransformable3D<IPrimitiveVolume>
+        IPolygon, IPositionRotationScale, ITransformable<IPrimitiveVolume>
     { }
 
-    public interface IPrimitiveCurve : ICurve, IPositionRotationScale, ITransformable3D<IPrimitiveVolume>
+    public interface IPrimitiveCurve : ICurve, IPositionRotationScale, ITransformable<IPrimitiveVolume>
     {
     }
 
-    public interface IPrimitiveVolume : IVolume, IPositionRotationScale, ITransformable3D<IPrimitiveVolume>
+    public interface IPrimitiveVolume : IVolume, IPositionRotationScale, ITransformable<IPrimitiveVolume>
     {
     }
 
@@ -171,5 +209,45 @@ namespace Vim.Experimental
         public static readonly IPrimitiveVolume Icosahedron;
 
         // Other things: hollowed out / constrained / 
+    }
+    public interface IMeshQuery
+    {
+        Box Box { get; }
+        Vector3 WeightedCenter { get; }
+    }
+    public interface IBuffer
+    {
+        Type Type { get; }
+        int ByteLength { get; }
+        int Count { get; }
+        int TypeSize { get; }
+        int Arity { get; }
+    }
+
+    public interface IBufferSet : IMap<string, IBuffer>
+    {
+    }
+
+    public interface IBuffer<T> : IBuffer { }
+
+    public interface IAttribute
+    {
+        string Name { get; }
+        IBuffer Data { get; }
+        IMap<string, IAttribute> ChildAttributes { get; }
+    }
+
+    public interface IAttribute<T> : IAttribute
+    {
+        new IBuffer<T> Data { get; }
+    }
+
+    public interface IVertexAttribute : IAttribute<Vertex>
+    { }
+
+
+    public interface IMeshTopology
+    {
+        IMap<int, IArray<Face>> VertexToFace { get; }
     }
 }

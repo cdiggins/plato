@@ -7,7 +7,7 @@ using System;
 
 namespace Plato.Math
 {
-    public partial struct Quad : ITransformable3D<Quad>, IPoints, IMappable<Quad, Vector3>
+    public partial struct Quad : ITransformable<Quad>, IPoints, IMappable<Quad, Vector3>
     {
         public Quad Transform(Matrix4x4 mat) => Map(x => x.Transform(mat));
         public int NumPoints => 4;

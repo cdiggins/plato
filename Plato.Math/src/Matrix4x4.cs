@@ -19,23 +19,23 @@ namespace Plato.Math
     /// A structure encapsulating a 4x4 matrix.
     /// </summary>
     [StructLayout(LayoutKind.Sequential), DataContract]
-    public struct Matrix4x4 : IEquatable<Matrix4x4>, ITransformable3D<Matrix4x4>
+    public struct Matrix4x4 : IEquatable<Matrix4x4>, ITransformable<Matrix4x4>
     {
-        public Vector3 Col0 => new Vector3(M11, M21, M31);
-        public Vector3 Col1 => new Vector3(M12, M22, M32);
-        public Vector3 Col2 => new Vector3(M13, M23, M33);
-        public Vector3 Col3 => new Vector3(M14, M24, M34);
+        public Vector4 Column0 => (M11, M21, M31, M41);
+        public Vector4 Column1 => (M12, M22, M32, M42);
+        public Vector4 Column2 => (M13, M23, M33, M43);
+        public Vector4 Column3 => (M14, M24, M34, M44);
 
-        public Vector3 Row0 => new Vector3(M11, M12, M13);
-        public Vector3 Row1 => new Vector3(M21, M22, M23);
-        public Vector3 Row2 => new Vector3(M31, M32, M33);
-        public Vector3 Row3 => new Vector3(M41, M42, M43);
+        public Vector4 Row0 => (M11, M12, M13, M14);
+        public Vector4 Row1 => (M21, M22, M23, M24);
+        public Vector4 Row2 => (M31, M32, M33, M34);
+        public Vector4 Row3 => (M41, M42, M43, M44);
 
-        public Vector3 GetRow(int row)
+        public Vector4 GetRow(int row)
             => row == 0 ? Row0 : row == 1 ? Row1 : row == 2 ? Row2 : Row3;
 
-        public Vector3 GetCol(int col)
-            => col == 0 ? Col0 : col == 1 ? Col1 : col == 2 ? Col2 : Col3;
+        public Vector4 GetColumn(int col)
+            => col == 0 ? Column0 : col == 1 ? Column1 : col == 2 ? Column2 : Column3;
 
         /// <summary>
         /// Value at row 1, column 1 of the matrix.
@@ -137,7 +137,7 @@ namespace Plato.Math
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Matrix4x4 SetTranslation(Vector3 v)
-            => CreateFromRows(Row0, Row1, Row2, v);
+            => CreateFromRows(Row0, Row1, Row2, new Vector4(v, 0));
 
         /// <summary>
         /// Constructs a Matrix4x4 from the given components.
@@ -148,38 +148,11 @@ namespace Plato.Math
                          float m31, float m32, float m33, float m34,
                          float m41, float m42, float m43, float m44)
         {
-            M11 = m11;
-            M12 = m12;
-            M13 = m13;
-            M14 = m14;
-
-            M21 = m21;
-            M22 = m22;
-            M23 = m23;
-            M24 = m24;
-
-            M31 = m31;
-            M32 = m32;
-            M33 = m33;
-            M34 = m34;
-
-            M41 = m41;
-            M42 = m42;
-            M43 = m43;
-            M44 = m44;
+            M11 = m11; M12 = m12; M13 = m13; M14 = m14;
+            M21 = m21; M22 = m22; M23 = m23; M24 = m24;
+            M31 = m31; M32 = m32; M33 = m33; M34 = m34;
+            M41 = m41; M42 = m42; M43 = m43; M44 = m44;
         }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Matrix4x4 CreateFromRows(Vector3 row0, Vector3 row1, Vector3 row2)
-            => CreateFromRows(row0.ToVector4(), row1.ToVector4(), row2.ToVector4(), new Vector4(0, 0, 0, 1));
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Matrix4x4 CreateFromRows(Vector3 row0, Vector3 row1, Vector3 row2, Vector3 row3)
-            => CreateFromRows(row0.ToVector4(), row1.ToVector4(), row2.ToVector4(), new Vector4(row3.X, row3.Y, row3.Z, 1));
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Matrix4x4 CreateFromRows(Vector4 row0, Vector4 row1, Vector4 row2)
-            => CreateFromRows(row0.ToVector3(), row1.ToVector3(), row2.ToVector3(), Vector3.Zero);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Matrix4x4 CreateFromRows(Vector4 row0, Vector4 row1, Vector4 row2, Vector4 row3)
@@ -1835,9 +1808,9 @@ namespace Plato.Math
             };
 
             var pVectorBasis = new[] {
-                matrix.Row0,
-                matrix.Row1,
-                matrix.Row2
+                matrix.Row0.ToVector3(),
+                matrix.Row1.ToVector3(),
+                matrix.Row2.ToVector3()
             };
 
             pfScales[0] = pVectorBasis[0].Length();
@@ -1900,39 +1873,11 @@ namespace Plato.Math
                 var cc = 0;
                 if (fAbsX < fAbsY)
                 {
-                    if (fAbsY < fAbsZ)
-                    {
-                        cc = 0;
-                    }
-                    else
-                    {
-                        if (fAbsX < fAbsZ)
-                        {
-                            cc = 0;
-                        }
-                        else
-                        {
-                            cc = 2;
-                        }
-                    }
+                    cc = fAbsY < fAbsZ ? 0 : fAbsX < fAbsZ ? 0 : 2;
                 }
                 else
                 {
-                    if (fAbsX < fAbsZ)
-                    {
-                        cc = 1;
-                    }
-                    else
-                    {
-                        if (fAbsY < fAbsZ)
-                        {
-                            cc = 1;
-                        }
-                        else
-                        {
-                            cc = 2;
-                        }
-                    }
+                    cc = fAbsX < fAbsZ ? 1 : fAbsY < fAbsZ ? 1 : 2;
                 }
                 pVectorBasis[b] = pVectorBasis[a].Cross(pCanonicalBasis[cc]);
             }
@@ -1947,7 +1892,7 @@ namespace Plato.Math
             pVectorBasis[c] = pVectorBasis[c].Normalize();
 
             // Update mat tmp;
-            var det = CreateFromRows(pVectorBasis[0], pVectorBasis[1], pVectorBasis[2])
+            var det = CreateFromRows(pVectorBasis[0].ToVector4(), pVectorBasis[1].ToVector4(), pVectorBasis[2].ToVector4(), Vector4.Zero)
                 .GetDeterminant();
 
             // use Kramer's rule to check for handedness of coordinate system
@@ -1971,7 +1916,7 @@ namespace Plato.Math
             else
             {
                 // generate the quaternion from the matrix
-                var matTemp = CreateFromRows(pVectorBasis[0], pVectorBasis[1], pVectorBasis[2]);
+                var matTemp = CreateFromRows(pVectorBasis[0].ToVector4(), pVectorBasis[1].ToVector4(), pVectorBasis[2].ToVector4(), Vector4.Zero);
                 rotation = Quaternion.CreateFromRotationMatrix(matTemp);
             }
 

@@ -87,7 +87,6 @@ namespace Plato.Math
     CreateStruct("AxisAngle", new[] { "Axis", "Angle" }, new[] { "DVector3", "double" });
     CreateVectorStruct("Euler", new[] { "Yaw", "Pitch", "Roll" }, "double");
 
-    CreateVectorStruct("Vector2D", new[] { "X", "Y" }, "double");
     CreateVectorStruct("Point", new[] { "X", "Y" }, "double");
     CreateStruct("Size", new[] { "Width", "Height" }, new[] { "double", "double" }); 
     CreateStruct("Rectangle", new[] { "TopLeft", "Size" }, new[] { "Point", "Size" });

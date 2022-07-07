@@ -83,13 +83,13 @@ namespace Plato
         /// <summary>
         /// Returns the first item in the array.
         /// </summary>
-        public static T? First<T>(this IArray<T> self, T? @default = default)
+        public static T First<T>(this IArray<T> self, T @default = default)
             => self.IsEmpty() ? @default : self[0];
 
         /// <summary>
         /// Returns the last item in the array
         /// </summary>
-        public static T? Last<T>(this IArray<T> self, T? @default = default)
+        public static T Last<T>(this IArray<T> self, T @default = default)
             => self.IsEmpty() ? @default : self[self.Count - 1];
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace Plato
         /// <summary>
         /// Converts the array into a function that returns values from an integer, returning a default value if out of range.
         /// </summary>
-        public static Func<int, T?> ToFunction<T>(this IArray<T> self, T? def = default)
+        public static Func<int, T> ToFunction<T>(this IArray<T> self, T def = default)
             => i => self.InRange(i) ? self[i] : def;
 
         /// <summary>
@@ -239,7 +239,7 @@ namespace Plato
         /// <summary>
         /// Returns an array given a function that generates a tuple from each member. Eager evaluation.
         /// </summary>
-        public static IArray<U> SelectMany<T, U>(this IArray<T> self, Func<T, Tuple<U, U>> func)
+        public static IArray<U> SelectMany<T, U>(this IArray<T> self, Func<T, (U, U)> func)
         {
             var r = new U[self.Count * 2];
             for (var i = 0; i < self.Count; ++i)
@@ -255,7 +255,7 @@ namespace Plato
         /// <summary>
         /// Returns an array given a function that generates a tuple from each member. Eager evaluation.
         /// </summary>
-        public static IArray<U> SelectMany<T, U>(this IArray<T> self, Func<T, Tuple<U, U, U>> func)
+        public static IArray<U> SelectMany<T, U>(this IArray<T> self, Func<T, (U, U, U)> func)
         {
             var r = new U[self.Count * 3];
             for (var i = 0; i < self.Count; ++i)
@@ -271,7 +271,7 @@ namespace Plato
         /// <summary>
         /// Returns an array given a function that generates a tuple from each member. Eager evaluation.
         /// </summary>
-        public static IArray<U> SelectMany<T, U>(this IArray<T> self, Func<T, Tuple<U, U, U, U>> func)
+        public static IArray<U> SelectMany<T, U>(this IArray<T> self, Func<T, (U, U, U, U)> func)
         {
             var r = new U[self.Count * 4];
             for (var i = 0; i < self.Count; ++i)
@@ -396,7 +396,7 @@ namespace Plato
         /// <summary>
         /// Shortcut for ToEnumerable.Aggregate()
         /// </summary>
-        public static U? Aggregate<T, U>(this IArray<T> self, Func<U?, T, U> func)
+        public static U Aggregate<T, U>(this IArray<T> self, Func<U, T, U> func)
             => Aggregate(self, default, func);
 
         /// <summary>
@@ -412,7 +412,7 @@ namespace Plato
         /// <summary>
         /// Shortcut for ToEnumerable.Aggregate()
         /// </summary>
-        public static U? Aggregate<T, U>(this IArray<T> self, Func<U?, T, int, U> func)
+        public static U Aggregate<T, U>(this IArray<T> self, Func<U, T, int, U> func)
             => Aggregate(self, default, func);
 
         /// <summary>
@@ -642,7 +642,7 @@ namespace Plato
         /// <summary>
         /// Returns the Nth element of the array, or a default value if out of range/
         /// </summary>
-        public static T? ElementAtOrDefault<T>(this IArray<T> xs, int n, T? defaultValue = default)
+        public static T ElementAtOrDefault<T>(this IArray<T> xs, int n, T defaultValue = default)
             => xs != null && n >= 0 && n < xs.Count ? xs[n] : defaultValue;
 
         /// <summary>
@@ -702,7 +702,7 @@ namespace Plato
         /// Applies a function (like "+") to each element in the series to create an effect similar to partial sums.
         /// The first value in the array will be zero.
         /// </summary>
-        public static IArray<T> PostAccumulate<T>(this IArray<T> self, Func<T, T, T> f, T? init = default)
+        public static IArray<T> PostAccumulate<T>(this IArray<T> self, Func<T, T, T> f, T init = default)
         {
             if (init == null) throw new ArgumentNullException(nameof(init));
             var n = self.Count;
@@ -722,7 +722,6 @@ namespace Plato
         /// </summary>
         public static bool SequenceEquals<T>(this IArray<T> self, IArray<T> other) where T : IEquatable<T>
             => self == other || (self.Count == other.Count && self.Zip(other, (x, y) => x?.Equals(y) ?? y == null).All(x => x));
-
 
         /// <summary>
         /// Creates an array of arrays, split at the given indices
@@ -841,13 +840,13 @@ namespace Plato
         public static bool Contains<T>(this IArray<T> xs, T value)
             => xs.Any(x => x?.Equals(value) ?? false);
 
-        public static T? FirstOrDefault<T>(this IArray<T> xs)
+        public static T FirstOrDefault<T>(this IArray<T> xs)
             => xs.Count > 0 ? xs[0] : default;
 
         public static T FirstOrDefault<T>(this IArray<T> xs, T @default)
             => xs.Count > 0 ? xs[0] : @default;
 
-        public static T? FirstOrDefault<T>(this IArray<T> xs, Func<T, bool> predicate)
+        public static T FirstOrDefault<T>(this IArray<T> xs, Func<T, bool> predicate)
             => xs.Where(predicate).FirstOrDefault();
 
         public static IArray<long> ToLongs(this IArray<int> xs)
