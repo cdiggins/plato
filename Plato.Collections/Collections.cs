@@ -9,9 +9,11 @@
 */
 
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Plato
 {
+
     //================================================================
     // High Level interfaces for abstract concepts 
     //================================================================
@@ -82,7 +84,8 @@ namespace Plato
     /// and it can be trivially used as a sequence. 
     /// </summary>
     public interface IArray<T> : IMap<int, T>, ICountedSequence<T>
-    { }
+    {
+    }
 
     /// <summary>
     /// A classic linked list with a head and the rest of the list. 

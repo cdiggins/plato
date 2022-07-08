@@ -1,9 +1,11 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Plato
 {
+    [DebuggerTypeProxy(typeof(DebuggerArray<>))]
     public readonly struct SelectArray<T, U>
         : IArray<U>
     {
@@ -15,6 +17,7 @@ namespace Plato
         public IIterator<U> Iterator => new ArrayIterator<U>(this);
     }
 
+    [DebuggerTypeProxy(typeof(DebuggerArray<>))]
     public readonly struct SelectIndexArray<T, U>
         : IArray<U>
     {
@@ -27,6 +30,7 @@ namespace Plato
         public IIterator<U> Iterator => new ArrayIterator<U>(this);
     }
 
+    [DebuggerTypeProxy(typeof(DebuggerArray<>))]
     public readonly struct FunctionalArray<T>
         : IArray<T>
     {
@@ -38,6 +42,7 @@ namespace Plato
         public T this[int n] => Map(n);
     }
 
+    [DebuggerTypeProxy(typeof(DebuggerArray<>))]
     public readonly struct ReverseArray<T>
         : IArray<T>
     {
@@ -49,6 +54,7 @@ namespace Plato
         public IIterator<T> Iterator => new ArrayIterator<T>(this);
     }
 
+    [DebuggerTypeProxy(typeof(DebuggerArray<>))]
     public readonly struct ConcatArray<T>
         : IArray<T>
     {
@@ -61,6 +67,7 @@ namespace Plato
         public IIterator<T> Iterator => new ArrayIterator<T>(this);
     }
 
+    [DebuggerTypeProxy(typeof(DebuggerArray<>))]
     public readonly struct ArrayAdapter<T>
         : IArray<T>
     {

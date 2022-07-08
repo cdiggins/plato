@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using Plato;
 
@@ -120,6 +121,7 @@ namespace Plato
         public U Value => Map(Source.Value, Index);
     }
 
+    [DebuggerDisplay("[]")]
     public readonly struct EmptySequence<T> : IIterator<T>, ISet<T>, IArray<T>
     {
         public static EmptySequence<T> Instance = new EmptySequence<T>();
@@ -132,6 +134,7 @@ namespace Plato
         public bool Contains(T item) => false;
     }
 
+    [DebuggerDisplay("[{Value}]")]
     public readonly struct SingleSequence<T> : IIterator<T>, ISet<T>, IArray<T>
     {
         public SingleSequence(T value) => Value = value;
@@ -144,6 +147,7 @@ namespace Plato
         public bool Contains(T item) => item?.Equals(Value) ?? false;
     }
 
+    [DebuggerDisplay("[{Value} * {Count}]")]
     public readonly struct RepeatedSequence<T> : IIterator<T>, ISet<T>, IArray<T>
     {
         public RepeatedSequence(T value, int count) => (Value, Count) = (value, count);
@@ -156,6 +160,7 @@ namespace Plato
         public bool Contains(T item) => item?.Equals(Value) ?? false;
     }
 
+    [DebuggerDisplay("[{From} .. {To})")]
     public readonly struct RangeSequence : IRange, IIterator<int>
     {
         public RangeSequence(int from, int count) => (From, Count) = (from, count);
