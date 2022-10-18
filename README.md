@@ -12,8 +12,14 @@ a large number of platforms.
 
 There are two other compilers in the works that use the same code base:
 
-	1. An optimizing Plato to C# compiler
-	2. A Plato to JavaScript compiler 
+1. An optimizing Plato to C# compiler
+2. A Plato to JavaScript compiler 
+
+# Examples
+
+See [Structs.cs](https://github.com/cdiggins/plato/blob/main/PlatoTestGenerator/PlatoTestGenerator/Structs.cs) for an example of the library in action. 
+See [generated.cs](https://github.com/cdiggins/plato/blob/main/Plato.Core/generated.cs) for an example of the code that the Plato source generator 
+produces for those values. 
 
 # Motivation 
 
@@ -34,9 +40,15 @@ to generate heavily optimized C# by performing analysis of a Plato project.
 Many of these optimizations leverage the fact that functions are known to be side-effect free, and others are based on 
 the knowledge that Plato programs make heavy use of functional paradigms, and are optimized for this. 
 
+# About the Affine Type System
+
+Affine types in Plato, are types whose values cannot be aliased (shared). A non-affine type cannot contain or reference an object with an affine type.
+An affine typed object cannot be captured by a lambda or stored in an an array. Affine types represent the fact that the associated value can 
+be modified, or that it has potential side effects (e.g., a file).
+
 # Status 
 
-I have developed an analyzer and several source generator prototypes. 
+I have developed an analyzer and several source generator prototypes to validate the various hypothesis. 
 I am now using Plato to write a mathematics and geometry library for C# that is compatible with Unity 
 
 # Final Words
