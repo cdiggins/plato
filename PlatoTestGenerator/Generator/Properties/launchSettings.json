@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Test Generator": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\PlatoTestGenerator\\PlatoTestGenerator.csproj"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+To-do:
+
+* Get the list of implemented interfaces 
+* Definition (and requirement) of "INumeric" is that every field is INumeric
+	* Need to validate that.
+* Definition (and requirement) of "IVector" is that it is also an INumeric, and that the elements are "INumeric"
+* NOTE: a collection of some INumeric type, should automatically have some operations. 
+* Todo: there needs to be a bunch of math functions: Math.Sqrt, Math.Abs, etc. 
+	* These need to be extension methods (float/double/int/etc.)
+	* Then they have to work on all of the INumeric types themselves as extension methods 
+* There are then math functions that make sense on an "IVector" or more specifically, any "IArray<Z>". 
+	* Maybe for things like Sum() they could work on an IEnumerable. 
+	* What would I get ... "Average", "Sum", "Variance", "StandardDeviation". 
+	* PrefixSums, PostfixSums, PartialDifference 
+	* Maybe a bit more excel type stuff: Binormal distrubition function, Chisquare, 
+	* Frequency/histogram
+	* Mode/median 
+	* Skew/Kurtosis 
+	* Student-T distribution 
+	* COrrelation 
+	* DotProduct 
+* To-do: add the interface chain!!! 
+* Given a TypeReference ... how do I figure out the declaration?

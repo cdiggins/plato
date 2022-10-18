@@ -1,148 +1,43 @@
 # Plato
 
-Plato is a pure functional programming language derived from C#.  
+Plato is a pure functional programming language that is strict subset of C# 8.0. 
 
-Some features:
+# Implementation
 
-* Syntax is a strict subset of C# and works with Visual Studio 
-* Support for referential transparency is provided through affine types
-* Current implementation is targetting .NET and JavaScript 
+The current Plato implementation is a [Source Generator](https://learn.microsoft.com/en-us/dotnet/csharp/roslyn-sdk/source-generators-overview) 
+that enables Plato to work within Visual Studio by generating the necessary boiler-plate code, and that enforces the rules of the Plato language. 
 
-# Quick Overview
+Code written in Visual Studio using the Plato Source Generator is compatible with .NET Standard 2.0, making it applicable for usage on 
+a large number of platforms. 
 
-Some example Plato code can be found at [blob/main/PlatoTestJavaScript/PlatoTestCode.cs](https://github.com/cdiggins/plato/blob/main/PlatoTestJavaScript/PlatoTestCode.cs).
-In general Plato supports most of the syntax and semantics of C# with some notable 
-differences listed below.
+There are two other compilers in the works that use the same code base:
 
-### Classes and User Defined Type 
+	1. An optimizing Plato to C# compiler
+	2. A Plato to JavaScript compiler 
 
-Plato supports only two kind of user-defined data type: enums and classes. Structs and records
-are not allowed. All classes must have the partial keyword as part of their declaration so
-that the code generator can generate necessary additional code (e.g. With functions). 
+# Motivation 
 
-The Plato compiler may decide to implement the class as a struct or class, but this is invisble
-to the users. 
+Plato strives to tackle a few things:
 
-### Arrays
+1. Enforce immutability at the langauge level
+2. Introduce an affine type system to track side-effects formally 
+3. Generate assemblies that work across the widest number of platforms (e.g., Unity and .NET Framework)
+4. Reduce boiler plate code 
+5. Target web-browsers directly, without requiring the .NET runtime embedded  
+6. Produce more efficient code while using functional programming paradigms 
 
-Arrays cannot be modified once they are created.  
+# About the Plato to C# Optimizing Compiler
 
-### Reflection
+Even though Plato can be used as-is, within the Visual Studio environment by just adding some boiler plate, it is possible 
+to generate heavily optimized C# by performing analysis of a Plato project. 
 
-The only run-time reflection capability provided is querying the type of an object. 
-Both `is` and `as` operations work as expected. 
+Many of these optimizations leverage the fact that functions are known to be side-effect free, and others are based on 
+the knowledge that Plato programs make heavy use of functional paradigms, and are optimized for this. 
 
-### Immutability
+# Status 
 
-All classes in Plato are immutable by default, unless they are labeled as affine types.  
-This means they cannot be modified at run-time. 
-
-### Imported Types
-
-All types imported from non-Plato libraries are treated as affine types. 
-
-### Affine Types 
-
-Classes with the `[Affine]` attribute are mutable. 
-Functions on an affine class, may
-modify fields of the class. Instances of an Affine class:
-
-* Cannot be captured by a lambda
-* Cannot be stored in an array
-* Cannot be stored as a member of a non-affine type
-
-They can however be passed to a function by argument or returned from a function. 
-
-### Properties 
-
-Plato properties cannot have setters. 
-
-### Init Properties and With Functions
-
-Plato properties declared with an `init` keyword trigger the generation of a corresponding `With<Name>()` function.
-
-### Lambdas
-
-Plato lambdas capture values not variables. 
-
-### LINQ Query Syntax
-
-LINQ Query Syntax is not allowed. 
-
-### Unsafe
-
-Unsafe code blocks are not allowed. 
-
-# History and Motivation
-
-I have been working with C# for over 15 years, using it in various domains such as real-time 3D applications. 
-
-I used to be a reasonably competent C++ developer. I co-authored the [C++ Cookbook from O'Reilly press](https://www.amazon.ca/Cookbook-Solutions-Examples-Programmers/dp/0596007612) 
-and was a regular contributor to the [C++ Users Journal](https://en.wikipedia.org/wiki/C/C%2B%2B_Users_Journal).
-
-I was orignally quite skeptical of the C# language when it was introduced, dismissing it as a Java clone, but I 
-eventually found that C# provided me with a significant productivity boost. As the language matured it became my 
-primary go-to language. 
-
-I have always been fascinated with programming language theory and design, and even created a couple: 
-[Cat](https://github.com/cdiggins/cat-language), [Heron](https://github.com/cdiggins/heron-language), 
-[Chickadee](https://github.com/Clemex/chickadee), and [Max Creation Graph](https://knowledge.autodesk.com/support/3ds-max/learn-explore/caas/CloudHelp/cloudhelp/2017/ENU/3DSMax/files/GUID-608EC963-75ED-4F63-96B7-D8AE57E75959-htm.html). 
-
-While I enjoyed creating and using these languages,I found that when I switch hats from language designer to
-professional softare developer there wasn't a very satisfying reason for me to use any of them in commerical products. 
-
-As a developer there are several things I look for when choosing a programming language for a project.
-
-1. **Familiarity** - how familiar is the development team with the syntax, semantics, and idioms of the langauge, and how
-long would it take for them to ramp up. 
-2. **Expressiveness** - how easy is it to write algorithms and data-structures for the relevant problem domain. 
-3. **Performance** - does common implementations of the language provide adequates performance for the problem domain
-
-Beyond the actual language itself I also consider the following factors: 
-
-1. **Tooling** 
-1. **Libraries** 
-1. **Documentation** 
-1. **Community** 
-
-These were all things that C# did adequately for the majority of work I did, except when need to develop web-clients,
-for which I would use either JavaScript or TypeScript. 
-
-Supporting two code bases and separate tool-chains, creates challenges for us in time, cost, and people. 
-This has become one of the primary motivators for implementing a new language: to enable myself and my 
-colleagues to use single shared a code-base for both desktop applications and web browser apps. 
-
-As C# evolved and introduced new features, many tended to fall into one of two categories: improving support for 
-functional programming or for improved performance. It has gotten to the point that I think it fair to say that 
-their exists two language within C#:
-
-1. A **high-level** cross-platform language with support for functional programming and immutable data-structure 
-2. A **low-level** language that emphasizes low-level control over memory and performance   
-
-One problem is that the two sides of the language don't work together well. The high-level features have poor performance 
-and the low-level features are complex and unsafe. 
-
-As a developer I want to work with a single high-level cross-platform langauge that is reliable and has good performance. 
-As a software development lead, I want my team to be able to produce high quality code with low effort, and to be 
-comfortable with tooling environment. 
-
-Plato attempts to solve the problem by:
-
-1. Restricting the language to a pure-functional subset
-2. Providing an optimizer that rewrites Plato so that it can be executed efficiently by the run-time 
-3. Provide a cross-compiler, to generate efficient JavaScript code
-
-## Status: April 22nd, 2022
-
-Right now I am working on the Plato to JavaScript compiler which is being implemented via a Roslyn 
-Source generator. 
-
-Previously I was designing the standard library and experimenting with Plato semantics using 
-various C# projects. 
-
-# Compiling and Running
-
-https://stackoverflow.com/questions/70774200/how-to-debug-roslyn-source-generator-in-vs-2022
+I have developed an analyzer and several source generator prototypes. 
+I am now using Plato to write a mathematics and geometry library for C# that is compatible with Unity 
 
 # Final Words
 
