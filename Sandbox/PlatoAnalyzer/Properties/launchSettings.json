@@ -1,8 +1,8 @@
 {
   "profiles": {
-    "PlatoAnalyzer": {
-      "commandName": "Project",
-      "nativeDebugging": true
+    "Profile 1": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\..\\..\\..\\plato\\test-generator\\PlatoTestGenerator\\PlatoTestGenerator\\PlatoTestGenerator.csproj"
     }
   }
 }

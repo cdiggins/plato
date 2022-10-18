@@ -1,14 +1,13 @@
 ﻿# Plato.Collections
 
-Plato.Collections is a library of thread-safe  immutable collections for .NET 6 inspired by LINQ.
+Plato.Collections is a library of thread-safe immutable collections for .NET Standard 2.0 inspired by LINQ.
 
 The definition of the interfaces can be found at [Collections.cs](Collections.cs).
 
 ## About Plato 
 
-Plato.Collections is written using [Plato](https://github.com/cdiggins/plato), a strict subset of C# 9 that
-leverages Roslyn source generators to enforce the rules, and add extra
-code. 
+Plato.Collections is written using [Plato](https://github.com/cdiggins/plato), a strict subset of C# that
+leverages Roslyn source generators to enforce rules and add extra code. 
 
 Plato enforces that code is pure functional. In other words classes are immutable and thread-safe and functions 
 have no side-effects. 

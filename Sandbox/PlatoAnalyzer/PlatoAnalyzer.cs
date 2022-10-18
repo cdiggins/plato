@@ -13,6 +13,10 @@ namespace PlatoAnalyzer
             Mapping.Model = model;
             foreach (var classDecl in tree.GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>())
                 Mapping.Add(() => classDecl.ToPlato(Mapping), classDecl);
+            foreach (var structDecl in tree.GetRoot().DescendantNodes().OfType<StructDeclarationSyntax>())
+                Mapping.Add(() => structDecl.ToPlato(Mapping), structDecl);
+            foreach (var interfaceDecl in tree.GetRoot().DescendantNodes().OfType<InterfaceDeclarationSyntax>())
+                Mapping.Add(() => interfaceDecl.ToPlato(Mapping), interfaceDecl);
         }
 
         public void Analyze(Compilation compilation)
@@ -20,5 +24,8 @@ namespace PlatoAnalyzer
             foreach (var tree in compilation.SyntaxTrees)
                 Analyze(tree, compilation.GetSemanticModel(tree));
         }
+
+        public PlatoAnalyzer(Compilation compilation)
+            => Analyze(compilation);
     }
 }

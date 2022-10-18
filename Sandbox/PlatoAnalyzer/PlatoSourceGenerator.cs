@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace PlatoAnalyzer
 {
-    [Generator]
+    //[Generator]
     public class PlatoSourceGenerator : ISourceGenerator, ISyntaxContextReceiver
     {
         public PlatoSemanticMapping Mapping = new PlatoSemanticMapping();

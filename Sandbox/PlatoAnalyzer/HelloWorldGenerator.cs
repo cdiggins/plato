@@ -6,26 +6,12 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace PlatoAnalyzer
 {
-    [Generator]
-    public class PlatoGenerator : ISourceGenerator
-    {
-        public void Initialize(GeneratorInitializationContext context)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Execute(GeneratorExecutionContext context)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    [Generator]
+    //[Generator]
     public class HelloWorldGenerator : ISourceGenerator
     {
         public void Execute(GeneratorExecutionContext context)
         {
-            Debugger.Break();
+            //Debugger.Break();
             Console.WriteLine("I am executing!");
 
 

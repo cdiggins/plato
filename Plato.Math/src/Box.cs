@@ -1,5 +1,6 @@
 ﻿// MIT License
-// Copyright (C) 2019 VIMaec LLC.
+// Copyright (C) 2022 Christopher Diggins
+// Copyright (C) 2019 VIMaec LLC
 // Copyright (C) 2018 Ara 3D. Inc
 // Copyright (C) The Mono.Xna Team
 // This file is subject to the terms and conditions defined in

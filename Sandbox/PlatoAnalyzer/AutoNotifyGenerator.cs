@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace PlatoAnalyzer
 {
-    [Generator]
+    //[Generator]
     public class AutoNotifyGenerator : ISourceGenerator
     {
         private const string attributeText = @"

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Permissions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -25,67 +26,76 @@ namespace PlatoAnalyzer
 
         public static PlatoTypeExpr GetPlatoType(this ISymbol self, PlatoSemanticMapping mapping)
         {
-            switch (self)
+            PlatoTypeExpr GetPlatoType_Local(ISymbol selfInner, PlatoSemanticMapping mappingInner)
             {
-                case IAliasSymbol aliasSymbol:
-                    throw self.NotSupported();
-                case IArrayTypeSymbol arrayTypeSymbol:
-                    return new PlatoTypeExpr(mapping.NextId, "Array", new[] { arrayTypeSymbol.ElementType.GetPlatoType(mapping) });
-                case ISourceAssemblySymbol sourceAssemblySymbol:
-                    throw self.NotSupported();
-                case IAssemblySymbol assemblySymbol:
-                    throw self.NotSupported();
-                case IDiscardSymbol discardSymbol:
-                    throw self.NotSupported();
-                case IDynamicTypeSymbol dynamicTypeSymbol:
-                    throw self.NotSupported();
-                case IErrorTypeSymbol errorTypeSymbol:
-                    throw self.NotSupported();
-                case IEventSymbol eventSymbol:
-                    throw self.NotSupported();
-                case IFieldSymbol fieldSymbol:
-                    return fieldSymbol.Type.GetPlatoType(mapping);
-                case IFunctionPointerTypeSymbol functionPointerTypeSymbol:
-                    throw self.NotSupported();
-                case ILabelSymbol labelSymbol:
-                    throw self.NotSupported();
-                case ILocalSymbol localSymbol:
-                    return localSymbol.Type.GetPlatoType(mapping);
-                case IMethodSymbol methodSymbol:
+                switch (selfInner)
+                {
+                    case IAliasSymbol aliasSymbol:
+                        throw selfInner.NotSupported();
+                    case IArrayTypeSymbol arrayTypeSymbol:
+                        return new PlatoTypeExpr(mappingInner.NextId, "Array",
+                            new[] { arrayTypeSymbol.ElementType.GetPlatoType(mappingInner) });
+                    case ISourceAssemblySymbol sourceAssemblySymbol:
+                        throw selfInner.NotSupported();
+                    case IAssemblySymbol assemblySymbol:
+                        throw selfInner.NotSupported();
+                    case IDiscardSymbol discardSymbol:
+                        throw selfInner.NotSupported();
+                    case IDynamicTypeSymbol dynamicTypeSymbol:
+                        throw selfInner.NotSupported();
+                    case IErrorTypeSymbol errorTypeSymbol:
+                        throw selfInner.NotSupported();
+                    case IEventSymbol eventSymbol:
+                        throw selfInner.NotSupported();
+                    case IFieldSymbol fieldSymbol:
+                        return fieldSymbol.Type.GetPlatoType(mappingInner);
+                    case IFunctionPointerTypeSymbol functionPointerTypeSymbol:
+                        throw selfInner.NotSupported();
+                    case ILabelSymbol labelSymbol:
+                        throw selfInner.NotSupported();
+                    case ILocalSymbol localSymbol:
+                        return localSymbol.Type.GetPlatoType(mappingInner);
+                    case IMethodSymbol methodSymbol:
                     {
                         var name = methodSymbol.ReturnsVoid ? "Action" : "Func";
 
-                        var parameters = methodSymbol.Parameters.Select(p => p.GetPlatoType(mapping));
+                        var parameters = methodSymbol.Parameters.Select(p => p.GetPlatoType(mappingInner)).ToList();
 
                         if (methodSymbol.ReceiverType != null)
-                            parameters = parameters.Prepend(methodSymbol.ReceiverType.GetPlatoType(mapping));
+                            parameters = parameters.Prepend(methodSymbol.ReceiverType.GetPlatoType(mappingInner)).ToList();
 
                         if (!methodSymbol.ReturnsVoid)
-                            parameters = parameters.Append(methodSymbol.ReturnType.GetPlatoType(mapping));
+                            parameters = parameters.Append(methodSymbol.ReturnType.GetPlatoType(mappingInner)).ToList();
 
-                        return new PlatoTypeExpr(mapping.NextId, name, parameters);
+                        return new PlatoTypeExpr(mappingInner.NextId, name, parameters);
                     }
-                case IModuleSymbol moduleSymbol:
-                    throw self.NotSupported();
-                case INamedTypeSymbol namedTypeSymbol:
-                    return new PlatoTypeExpr(mapping.NextId, self.Name, namedTypeSymbol.TypeArguments.Select(t => GetPlatoType((ISymbol)t, mapping)));
-                case INamespaceSymbol namespaceSymbol:
-                    throw self.NotSupported();
-                case IPointerTypeSymbol pointerTypeSymbol:
-                    throw self.NotSupported();
-                case ITypeParameterSymbol typeParameterSymbol:
-                    return new PlatoTypeExpr(mapping.NextId, typeParameterSymbol.Name);
-                case IParameterSymbol parameterSymbol:
-                    return parameterSymbol.Type.GetPlatoType(mapping);
-                case IPreprocessingSymbol preprocessingSymbol:
-                    throw self.NotSupported();
-                case IPropertySymbol propertySymbol:
-                    return propertySymbol.Type.GetPlatoType(mapping);
-                case IRangeVariableSymbol rangeVariableSymbol:
-                    throw self.NotSupported();
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(self));
+                    case IModuleSymbol moduleSymbol:
+                        throw selfInner.NotSupported();
+                    case INamedTypeSymbol namedTypeSymbol:
+                        return new PlatoTypeExpr(mappingInner.NextId, selfInner.Name,
+                            namedTypeSymbol.TypeArguments.Select(t => GetPlatoType((ISymbol)t, mappingInner)));
+                    case INamespaceSymbol namespaceSymbol:
+                        throw selfInner.NotSupported();
+                    case IPointerTypeSymbol pointerTypeSymbol:
+                        throw selfInner.NotSupported();
+                    case ITypeParameterSymbol typeParameterSymbol:
+                        return new PlatoTypeExpr(mappingInner.NextId, typeParameterSymbol.Name);
+                    case IParameterSymbol parameterSymbol:
+                        return parameterSymbol.Type.GetPlatoType(mappingInner);
+                    case IPreprocessingSymbol preprocessingSymbol:
+                        throw selfInner.NotSupported();
+                    case IPropertySymbol propertySymbol:
+                        return propertySymbol.Type.GetPlatoType(mappingInner);
+                    case IRangeVariableSymbol rangeVariableSymbol:
+                        throw selfInner.NotSupported();
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(selfInner));
+                }
             }
+
+            var result = GetPlatoType_Local(self, mapping);
+            mapping.Add(result, self);
+            return result;
         }
 
         public static PlatoTypeExpr GetPlatoType(this SyntaxNode self, PlatoSemanticMapping mapping)
@@ -124,8 +134,34 @@ namespace PlatoAnalyzer
                     ? text.TextToken.ToPlatoLiteral(mapping)
                     : throw self.NotSupported();
 
+        public static PlatoExpression ToPlato(this InvocationExpressionSyntax self, PlatoTypeExpr type, PlatoSemanticMapping mapping)
+        {
+            if (self.Expression.GetText().ToString() == "nameof")
+            {
+                var name = self.ArgumentList.Arguments[0].ToString();
+                return new PlatoNameOf(mapping.NextId, name);;
+            }
+
+            return new PlatoInvoke(mapping.NextId, type,
+                self.Expression.ToPlato(mapping),
+                self.Expression is MemberAccessExpressionSyntax maes
+                    ? maes.Expression.ToPlato(mapping)
+                    : null,
+                self.ArgumentList.ToPlato(mapping));
+        }
+
+
         public static PlatoExpression ToPlato(this ExpressionSyntax self, PlatoSemanticMapping mapping)
         {
+            if (self is IdentifierNameSyntax ins)
+            {
+                if (ins.Identifier.Text == "nameof")
+                {
+                    var expr = mapping.Add(() => new PlatoNameOf(mapping.NextId, "Test"));
+                    return expr;
+                }
+            }
+
             var type = self.GetPlatoType(mapping);
             switch (self)
             {
@@ -204,12 +240,7 @@ namespace PlatoAnalyzer
                     return mapping.Add(() => new PlatoInterpolation(mapping.NextId, interpolatedString.Contents.Select(x => x.ToPlato(mapping))), self);
 
                 case InvocationExpressionSyntax invocation:
-                    return mapping.Add(() => new PlatoInvoke(mapping.NextId, type, 
-                            invocation.Expression.ToPlato(mapping),
-                            invocation.Expression is MemberAccessExpressionSyntax maes
-                                ? maes.Expression.ToPlato(mapping)
-                                : null,
-                            invocation.ArgumentList.ToPlato(mapping)), self);
+                    return mapping.Add(() => invocation.ToPlato(type, mapping), self);
 
                 case IsPatternExpressionSyntax isPattern: 
                     throw self.NotSupported();
@@ -298,7 +329,8 @@ namespace PlatoAnalyzer
                     throw self.NotSupported();
 
                 case BaseExpressionSyntax baseExpressionSyntax:
-                    throw self.NotSupported();
+                    return mapping.Add(() => new PlatoBase(mapping.NextId, type), self);
+
 
                 case ImplicitObjectCreationExpressionSyntax implicitObjectCreationExpressionSyntax:
                 case ImplicitStackAllocArrayCreationExpressionSyntax implicitStackAllocArrayCreationExpressionSyntax:
@@ -471,7 +503,7 @@ namespace PlatoAnalyzer
             => mapping.Add(() => new PlatoReturnStatement(mapping.NextId, self.Expression.ToPlato(mapping)));
 
         public static PlatoStatement ToPlato(this BlockSyntax self, ArrowExpressionClauseSyntax arrow, PlatoSemanticMapping mapping)
-            => (PlatoStatement) self?.ToPlato(mapping) ?? arrow.ToPlato(mapping);
+            => (PlatoStatement) self?.ToPlato(mapping) ?? arrow?.ToPlato(mapping);
 
         public static PlatoTypeParameterList ToPlato(this TypeParameterListSyntax self, PlatoSemanticMapping mapping)
             => mapping.Add(() => new PlatoTypeParameterList(mapping.NextId, self?.Parameters.Select(t => t.ToPlato(mapping))), self);
@@ -517,12 +549,47 @@ namespace PlatoAnalyzer
         public static PlatoTypeParam ToPlato(this TypeParameterSyntax self, PlatoSemanticMapping mapping)
             => mapping.Add(() => new PlatoTypeParam(mapping.NextId, self.Identifier.ToString()), self);
 
+        public static IEnumerable<PlatoTypeExpr> GetBaseTypes(this BaseListSyntax self,
+            PlatoSemanticMapping mapping)
+        {
+            return self == null 
+                ? Enumerable.Empty<PlatoTypeExpr>() 
+                : self.Types.Select(b => b.Type.ToPlato(mapping));
+        }
+
         public static PlatoClass ToPlato(this ClassDeclarationSyntax self, PlatoSemanticMapping mapping)
             => mapping.Add(() => new PlatoClass(mapping.NextId, 
                 self.Identifier.Text,
+                false,
+                false,
                 self.GetElements<MethodDeclarationSyntax>().Select(x => x.ToPlato(mapping)),
                 self.GetElements<PropertyDeclarationSyntax>().Select(x => x.ToPlato(mapping)),
                 self.GetElements<FieldDeclarationSyntax>().SelectMany(x => x.ToPlato(mapping)),
+                self.BaseList.GetBaseTypes(mapping),
+                self.TypeParameterList?.ToPlato(mapping) ?? new PlatoTypeParameterList(mapping.NextId)
+            ), self);
+
+        public static PlatoClass ToPlato(this StructDeclarationSyntax self, PlatoSemanticMapping mapping)
+            => mapping.Add(() => new PlatoClass(mapping.NextId,
+                self.Identifier.Text,
+                true,
+                false,
+                self.GetElements<MethodDeclarationSyntax>().Select(x => x.ToPlato(mapping)),
+                self.GetElements<PropertyDeclarationSyntax>().Select(x => x.ToPlato(mapping)),
+                self.GetElements<FieldDeclarationSyntax>().SelectMany(x => x.ToPlato(mapping)),
+                self.BaseList.GetBaseTypes(mapping),
+                self.TypeParameterList?.ToPlato(mapping) ?? new PlatoTypeParameterList(mapping.NextId)
+            ), self);
+
+        public static PlatoClass ToPlato(this InterfaceDeclarationSyntax self, PlatoSemanticMapping mapping)
+            => mapping.Add(() => new PlatoClass(mapping.NextId,
+                self.Identifier.Text,
+                false,
+                true,
+                self.GetElements<MethodDeclarationSyntax>().Select(x => x.ToPlato(mapping)),
+                self.GetElements<PropertyDeclarationSyntax>().Select(x => x.ToPlato(mapping)),
+                Enumerable.Empty<PlatoField>(),
+                self.BaseList.GetBaseTypes(mapping),
                 self.TypeParameterList?.ToPlato(mapping) ?? new PlatoTypeParameterList(mapping.NextId)
             ), self);
     }

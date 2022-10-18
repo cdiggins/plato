@@ -80,18 +80,27 @@ namespace PlatoAnalyzer
         public readonly IReadOnlyList<PlatoFunction> Methods;
         public readonly IReadOnlyList<PlatoField> Fields;
         public readonly IReadOnlyList<PlatoProperty> Properties;
+        public readonly IReadOnlyList<PlatoTypeExpr> BaseTypes;
         public readonly PlatoTypeParameterList TypeParameters;
+        public readonly bool IsValueType;
+        public readonly bool IsInterface;
+        public bool IsClass => !IsValueType && !IsInterface;
+        public bool IsStruct => IsValueType && !IsInterface;
 
-        public PlatoClass(int id, string name,
+        public PlatoClass(int id, string name, bool isValueType, bool isInterface,
             IEnumerable<PlatoFunction> funcs = null,
             IEnumerable<PlatoProperty> props = null,
             IEnumerable<PlatoField> fields = null,
+            IEnumerable<PlatoTypeExpr> baseTypes = null,
             PlatoTypeParameterList typeParams = null)
             : base(id, name, PlatoTypeExpr.ClassType)
         {
+            IsValueType = isValueType;
+            IsInterface = isInterface;
             Properties = props.ToListOrEmpty();
             Methods = funcs.ToListOrEmpty();
-            Fields = fields.ToListOrEmpty();
+            Fields = fields.ToListOrEmpty();    
+            BaseTypes = baseTypes.ToListOrEmpty();
             TypeParameters = typeParams ?? new PlatoTypeParameterList(0);
         }
     }
@@ -321,6 +330,12 @@ namespace PlatoAnalyzer
     public class PlatoThis : PlatoExpression
     {
         public PlatoThis(int id, PlatoTypeExpr type)
+            : base(id, type) { }
+    }
+
+    public class PlatoBase : PlatoExpression
+    {
+        public PlatoBase(int id, PlatoTypeExpr type)
             : base(id, type) { }
     }
 
@@ -609,17 +624,5 @@ namespace PlatoAnalyzer
 
         public override IEnumerable<PlatoStatement> ChildStatements
             => new[] { Body};
-    }
-
-    public static class Extensions
-    {
-        public static IReadOnlyList<T> ToListOrEmpty<T>(this IEnumerable<T> self)
-            => self?.ToList() ?? new List<T>();
-
-        public static PlatoTypeExpr ToPlatoType(this Type t)
-            => new PlatoTypeExpr(0, t.FullName);
-
-        public static PlatoLiteral ToPlatoLiteral(this object value)
-            => new PlatoLiteral(0, value.GetType().ToPlatoType(), value);
     }
 }

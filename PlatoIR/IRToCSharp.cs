@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace PlatoIR
 {
-    public class IRSerializer
+    public class IRToCSharp
     {
         public bool ShowResolution = false;
 
@@ -27,18 +27,18 @@ namespace PlatoIR
         /// </summary>
         public bool UseImplicitVars = false;
 
-        public IRSerializer(StreamWriter writer)
+        public IRToCSharp(StreamWriter writer)
             => Writer = writer;
 
         public StreamWriter Writer { get; }
 
-        public IRSerializer Write(string s)
+        public IRToCSharp Write(string s)
         {
             Writer.Write(s);
             return this;
         }
 
-        public IRSerializer Write(IEnumerable<IR> irs, string indent, string separator)
+        public IRToCSharp Write(IEnumerable<IR> irs, string indent, string separator)
         {
             var r = this;
             var first = true;
@@ -52,37 +52,37 @@ namespace PlatoIR
             return r;
         }
 
-        public IRSerializer WriteLines(IEnumerable<IR> irs, string indent)
+        public IRToCSharp WriteLines(IEnumerable<IR> irs, string indent)
             => irs.Aggregate(this, (a, b) => a.Write(b, indent).WriteLine(indent));
 
-        public IRSerializer WriteLine(string text, string indent)
+        public IRToCSharp WriteLine(string text, string indent)
             => Write(text).WriteLine(indent);
 
-        public IRSerializer WriteLine(string indent)
+        public IRToCSharp WriteLine(string indent)
         {
             Writer.WriteLine();
             return Write(indent);
         }
 
-        public IRSerializer WriteParenthesizedList(IEnumerable<IR> argList, string indent)
+        public IRToCSharp WriteParenthesizedList(IEnumerable<IR> argList, string indent)
             => Write("(").Write(argList, indent, ", ").Write(")");
 
-        public IRSerializer WriteBracedList(IEnumerable<IR> argList, string indent)
+        public IRToCSharp WriteBracedList(IEnumerable<IR> argList, string indent)
             => Write("{").Write(argList, indent, ", ").Write("}");
 
-        public IRSerializer WriteBracketedList(IEnumerable<IR> argList, string indent)
+        public IRToCSharp WriteBracketedList(IEnumerable<IR> argList, string indent)
             => Write("[").Write(argList, indent, ", ").Write("]");
 
-        public IRSerializer WriteOptionalAngledList(IEnumerable<IR> argList, string indent)
+        public IRToCSharp WriteOptionalAngledList(IEnumerable<IR> argList, string indent)
             => argList == null || !argList.Any() ? this : Write("<").Write(argList, indent, ", ").Write(">");
 
-        public IRSerializer WriteOptionalInitializer(IR value, string indent)
+        public IRToCSharp WriteOptionalInitializer(IR value, string indent)
             => value == null ? this : Write(" = ").Write(value, indent);
 
-        public IRSerializer WriteTypeArgsOrParameters(IEnumerable<IR> typeParams, string indent)
+        public IRToCSharp WriteTypeArgsOrParameters(IEnumerable<IR> typeParams, string indent)
             => WriteOptionalAngledList(typeParams, indent);
 
-        public IRSerializer WriteBaseClassAndInterfaces(IReadOnlyList<TypeReferenceIR> baseList, string indent)
+        public IRToCSharp WriteBaseClassAndInterfaces(IReadOnlyList<TypeReferenceIR> baseList, string indent)
         {
             var r = this;
             for (var i = 0; i < baseList.Count; ++i)
@@ -93,14 +93,14 @@ namespace PlatoIR
             return r;
         }
 
-        public IRSerializer WriteFunctionNameAndType(MethodDeclarationIR functionDeclarationIr, string indent)
+        public IRToCSharp WriteFunctionNameAndType(MethodDeclarationIR functionDeclarationIr, string indent)
             => functionDeclarationIr.Name == "implicit operator" ||
                 functionDeclarationIr.Name == "explicit operator"
             ? Write(functionDeclarationIr.Name).Write(" ").Write(functionDeclarationIr.Type, indent)
             : Write(functionDeclarationIr.Type, indent).Write(" ").Write(functionDeclarationIr.Name);
 
         
-        public IRSerializer WriteFunction(MethodDeclarationIR functionDeclarationIr, string indent)
+        public IRToCSharp WriteFunction(MethodDeclarationIR functionDeclarationIr, string indent)
             => 
                 (InliningAttribute ? Write("[MethodImpl(MethodImplOptions.AggressiveInlining)]") : this)
                 .Write("public ").Write(functionDeclarationIr.IsStatic ? "static " : "")
@@ -110,20 +110,20 @@ namespace PlatoIR
                 .WriteLine(indent)
                 .Write(functionDeclarationIr.Body, indent);
 
-        public IRSerializer WriteDeclaration(DeclarationIR ir)
+        public IRToCSharp WriteDeclaration(DeclarationIR ir)
             => ir == null ? Write("/* unresolved */") : ShowResolution ? Write($"/* {ir.Name}@{ir.Id} */") : this;
 
-        public IRSerializer WriteMetaData(ExpressionIR expr)
+        public IRToCSharp WriteMetaData(ExpressionIR expr)
             => expr is LambdaIR lambdaIr ? Write("/* Captured: ").Write(lambdaIr.CapturedVariables, "", ", ").Write("*/") : this;
 
-        public IRSerializer WriteGetterBody(BlockStatementIR body, string indent)
+        public IRToCSharp WriteGetterBody(BlockStatementIR body, string indent)
             => body == null ? WriteLine("get;", indent) : WriteLine("get", indent + "  ").Write(body, indent + "  ");
 
-        public IRSerializer WriteGetter(MethodDeclarationIR method, string indent)
+        public IRToCSharp WriteGetter(MethodDeclarationIR method, string indent)
             => method == null ? this
                 : WriteLine(indent).WriteLine("{", indent).WriteGetterBody(method.Body, indent + "  ").WriteLine("}", indent);
 
-        public IRSerializer WriteExpressionAsStatement(ExpressionIR ir, string indent)
+        public IRToCSharp WriteExpressionAsStatement(ExpressionIR ir, string indent)
         {
             var r = this;
             if (ir is TupleIR tupleIr)
@@ -149,7 +149,7 @@ namespace PlatoIR
             return Write(ir, indent).WriteLine(";", indent);
         }
 
-        public IRSerializer WriteReference(ReferenceIR referenceIr, string indent)
+        public IRToCSharp WriteReference(ReferenceIR referenceIr, string indent)
         {
             var r = this;
 
@@ -208,7 +208,7 @@ namespace PlatoIR
             return r.WriteTypeArgsOrParameters(referenceIr.TypeArguments, indent);
         }
 
-        public IRSerializer WriteInParameter(ParameterDeclarationIR parameter)
+        public IRToCSharp WriteInParameter(ParameterDeclarationIR parameter)
         {
             if (!UseInParameters) return this;
             var typeDecl = parameter?.Type?.TypeDeclaration;
@@ -217,7 +217,7 @@ namespace PlatoIR
             return this;
         }
 
-        public IRSerializer Write(IR ir, string indent)
+        public IRToCSharp Write(IR ir, string indent)
         {
             if (ir == null) return this;
 

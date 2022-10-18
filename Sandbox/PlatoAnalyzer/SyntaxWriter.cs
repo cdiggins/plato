@@ -68,6 +68,9 @@ namespace PlatoAnalyzer
         public SyntaxWriter AddParenthesized(IEnumerable<PlatoSyntaxNode> nodes)
             => Add("(").Add(nodes, ", ").Add(")");
 
+        public static string GetKind(PlatoClass cls)
+            => cls.IsInterface ? "interface" : cls.IsStruct ? "struct" : "class";
+
         public SyntaxWriter Add(PlatoSyntaxNode syntaxNode)
         {
             switch (syntaxNode)
@@ -93,7 +96,7 @@ namespace PlatoAnalyzer
                 case PlatoCast cast:
                     return Add("(").Add(cast.Type).Add(")").Add(cast.Expression);
                 case PlatoClass platoClass:
-                    return Add("public class ").Add(platoClass.Name).AddLine().AddBraced(f =>
+                    return Add($"public {GetKind(platoClass)} ").Add(platoClass.Name).AddLine().AddBraced(f =>
                         f.Add(platoClass.Methods, "\n").AddLine()
                         .Add(platoClass.Properties, "\n").AddLine()
                         .Add(platoClass.Fields, "\n"));

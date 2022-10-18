@@ -116,6 +116,8 @@ namespace Plato.Math
         public Vector3 ZYX => new Vector3(Z, Y, Z);
         public Vector3 YXZ => new Vector3(Y, X, Z);
         public Vector3 YZX => new Vector3(Y, Z, X);
+
+        public static implicit operator Matrix4x4(Vector3 v) => Matrix4x4.CreateTranslation(v);
     }
 
     public partial struct Line : ITransformable<Line>, IPoints, IMappable<Line, Vector3>
@@ -264,9 +266,18 @@ namespace Plato.Math
             => new DVector4(X, Y, Z, W);
     }
 
+    public partial struct Quaternion
+    {
+        public static implicit operator Matrix4x4(Quaternion q) 
+            => Matrix4x4.CreateRotation(q);
+
+    }
+
     public partial struct Pose
     {
         public static Pose Identity => (Vector3.Zero, Quaternion.Identity);
+
+        public static implicit operator Matrix4x4(Pose p) => Matrix4x4.CreateTRS(p.Position, p.Orientation, Vector3.One);
     }
 
     public partial struct HorizontalCoordinate

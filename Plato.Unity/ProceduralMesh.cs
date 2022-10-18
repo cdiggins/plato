@@ -2,6 +2,7 @@
 using System.Linq;
 using Plato.Geometry;
 using UnityEngine;
+// ReSharper disable InconsistentNaming
 
 namespace Plato.Unity
 {

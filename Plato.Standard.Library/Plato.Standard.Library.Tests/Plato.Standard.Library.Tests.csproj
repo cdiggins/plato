@@ -16,4 +16,9 @@
     <PackageReference Include="coverlet.collector" Version="3.1.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Plato.Collections\Plato.Collections.csproj" />
+    <ProjectReference Include="..\..\Plato.Geometry\Plato.Geometry.csproj" />
+  </ItemGroup>
+
 </Project>

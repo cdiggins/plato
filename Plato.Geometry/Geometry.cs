@@ -17,11 +17,10 @@
 
 namespace Plato.Geometry
 {
-    public interface IScene
+    public interface IScene3D
     {
-        IArray<INode> Nodes { get; }
+        IArray<IObject3D> Objects { get; }
         IArray<IMesh> Meshes { get; }
-        IArray<IMaterial> Materials { get; }
     }
 
     public interface IMaterial
@@ -30,13 +29,48 @@ namespace Plato.Geometry
         ColorRGBA Color { get; }
         string Name { get; }
     }
-    public interface INode
+
+    public interface IArrayElement<T>
     {
-        int Id { get; }
-        int ParentId { get; }
-        Matrix4x4 Transform { get; }
-        Pose Pose { get; }
+        IArray<T> Array { get; }
+        int Index { get; }
+    }
+
+    public interface IMeshInstance
+    {
+        IArray<IMesh> Meshes { get; }
+        int MeshIndex { get; }
+    }
+
+    public interface ITransformedMesh
+    {
         IMesh Mesh { get; }
+        Matrix4x4 Transform { get; }
+    }
+
+    public interface IObject3D : ITransformedMesh, IMeshInstance
+    {
+    }
+
+    public class Scene3D : IScene3D
+    {
+        public Scene3D(IArray<IMesh> meshes, IArray<(int MeshIndex, Matrix4x4 Transform)> nodeData)
+            => (Meshes, _nodeData) = (meshes, nodeData);
+
+        private readonly IArray<(int MeshIndex, Matrix4x4 Transform)> _nodeData;
+        public IArray<IObject3D> Objects => _nodeData.Select(nd => (IObject3D)new Object3D(Meshes, nd.MeshIndex, nd.Transform));
+        public IArray<IMesh> Meshes { get; }
+    }
+
+    public class Object3D : IObject3D
+    {
+        public IMesh Mesh => Meshes[MeshIndex];
+        public int MeshIndex { get; }
+        public Matrix4x4 Transform { get; }
+        public IArray<IMesh> Meshes { get; }
+
+        public Object3D(IArray<IMesh> meshes, int index, Matrix4x4 matrix)
+            => (Meshes, MeshIndex, Transform) = (meshes, index, matrix);
     }
 
     public interface IVolume

@@ -68,8 +68,8 @@ namespace Plato.Geometry
         public static IArray<float> SampleFloats(this int n, float max = 1f)
             => n == 1 ? 0f.Unit() : n.Select(i => i * max / (n - 1));
 
-        public static IArray<V> CartesianProduct<T, U, V>(this IArray<U> self, IArray<T> other, Func<T, U, V> func)
-            => other.SelectMany(x => self.Select(y => func(x, y)));
+        public static IArray<V> CartesianProduct<T, U, V>(this IArray<T> self, IArray<U> other, Func<T, U, V> func)
+            => self.SelectMany(x => other.Select(y => func(x, y)));
 
         public static QuadMesh ToMesh(this ISurface surface, int cols, int rows)
         {
@@ -79,7 +79,7 @@ namespace Plato.Geometry
             var ny = surface.ClosedY ? rows - 1 : rows;
             var us = nx.SampleFloats();
             var vs = ny.SampleFloats();
-            var uvs = us.CartesianProduct(vs, (u, v) => new Vector2(u, v));
+            var uvs = vs.CartesianProduct(us, (v, u) => new Vector2(u, v));
             var vertices = uvs.Select(surface.GetVertex);
 
             Int4 QuadMeshFaceVertices(int row, int col)
@@ -91,7 +91,7 @@ namespace Plato.Geometry
                 return (a, b, c, d);
             }
 
-            var faceVertices = (cols - 1).Range().CartesianProduct((rows - 1).Range(), QuadMeshFaceVertices);
+            var faceVertices = (rows - 1).Range().CartesianProduct((cols - 1).Range(), QuadMeshFaceVertices);
             return new QuadMesh(vertices, faceVertices);
         }
     }
