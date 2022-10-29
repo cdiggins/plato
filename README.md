@@ -2,6 +2,9 @@
 
 Plato is a pure functional programming language that is strict subset of C# 8.0. 
 
+Plato is designed as a general purpose cross-platform functional programming language that is appropriate for high-performance computing 
+(e.g., 3D real-time graphics) and that is easy to learn. 
+
 # Implementation
 
 The current Plato implementation is a [Source Generator](https://learn.microsoft.com/en-us/dotnet/csharp/roslyn-sdk/source-generators-overview) 

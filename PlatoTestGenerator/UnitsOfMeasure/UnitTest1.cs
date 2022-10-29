@@ -53,6 +53,7 @@ namespace UnitsOfMeasure
         public static Measure<DivideUnits<Radians, T>> operator /(Measure<Radians> other, Measure<T> self) => new Measure<DivideUnits<Radians, T>>(other.Quantity / self.Quantity);
         public static Measure<DivideUnits<T, Radians>> operator /(Measure<T> self, Measure<Radians> other) => new Measure<DivideUnits<T, Radians>>(self.Quantity / other.Quantity);
 
+
         public static implicit operator Measure<T>(double q) => new Measure<T>(q);
         public static implicit operator double(Measure<T> m) => m.Quantity;
     }

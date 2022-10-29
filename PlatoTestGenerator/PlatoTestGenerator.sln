@@ -14,13 +14,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "notes", "notes", "{239039FA-2578-4851-8C40-88098C7EE5D4}"
 	ProjectSection(SolutionItems) = preProject
 		notes.txt = notes.txt
+		todo.txt = todo.txt
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestProject1", "TestProject1\TestProject1.csproj", "{E0ECAF84-5336-43CB-BBB0-2C5B5DD165F8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Core", "..\Plato.Core\Plato.Core.csproj", "{1C62012E-CE8F-48FF-A80F-C49FFBAA94C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitsOfMeasure", "UnitsOfMeasure\UnitsOfMeasure.csproj", "{66F10AB5-70F9-495A-94F4-C946B7B0D0D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitsOfMeasure", "UnitsOfMeasure\UnitsOfMeasure.csproj", "{66F10AB5-70F9-495A-94F4-C946B7B0D0D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

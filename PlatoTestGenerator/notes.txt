@@ -21,3 +21,122 @@ To-do:
 	* DotProduct 
 * To-do: add the interface chain!!! 
 * Given a TypeReference ... how do I figure out the declaration?
+
+//==
+
+How should Unity work with Plato code and vice versa.
+
+I want an animation controller:
+* Animation controller allows you to assign arbitrary animation to different fields? 
+	* I'll say start the animation now, 
+	* Animate(50.Seconds(), 1f, 3f);
+	* But how do I track it? 
+	* I can't "animate" 
+	* I have to run the values through the animation controller, which will provide me with values? 
+	* var pos = (Circle(t) * Radius).Animate(50.Seconds(), 1f, 3f);
+
+* That last bit is kind of obvious ... I suppose? But the problem is where is time coming from? 
+* There are some systems that come directly from the computer, and I can't really do much about that. 
+
+* FileSystem / Keyboard / Mouse / OS / Network / Debugger / Peripherals / Clock 
+
+* So let's say that the animation only starts when a certain condition is set ...
+* And let's say the values of that animation are determined elsewhere. 
+
+	* var t = ??;
+	* t *= Controller.AddAnimation(50.Seconds(), 0f, 1f);
+	* var pos = (Circle(t) * Radius);
+
+* Now the question is, 
+
+	* var t = ??;
+	* curve = Controller.AddAnimation(50.Seconds(), 0f, 1f);
+	* var pos = (Circle(t * curve) * Radius);
+
+* This is the easy thing. 
+
+* Not even imperative. 
+* the challenge is when I want to do something like create a ripple everytime someone clicks.
+* The ripple is a thing. I need to collect the ripple curves. 
+* That is a list. The list is mutable.
+* Each thing in the list is a kind of influence
+* The list is the only affine type I need 
+//==
+
+* Maybe I could put the VIM structs in a new namespace, and then just generate everything in another namespace. 
+Could that work? 
+
+* The problem is that the usage in functions would be mostly illegal. 
+* Maybe I 
+
+//==
+
+To-do: 
+- With templates all functions have to be defined as extensions.
+- The template doesn't allow for much. 
+- Well ... technically it does. 
+- But the problem is that any function using something else, will fail. This is because in the "template" namespace, things are different. 
+
+
+- I need to:
+	- Infer the "static". Well it is always static, so that is easy.
+	- Infer the interfaces. 
+	- Does it implement an interface? If so, great then get the interface.
+	- Does it implement an 
+	- Infer operations
+	- Infer composite actions 
+	- Infer implicit casts (e.g., ) when only one value, we know that it can to/from that thing.
+	- Interface 
+	- Functions are made static. 
+	- Static function are placed inside the class. 
+	- Can a class have a static and non-static with the same name? 
+
+
+    class AnimatedValue<T>
+    {
+        Time Time;
+        T Value => Function(Time);
+        Func<Time, T> Function;
+    }
+
+    class Animation<T>
+    {
+        Func<Time, T> Function;
+        T GetValue(Time time) => Function(time);
+    }
+
+    public class Mesh
+    {
+        public IArray<Triangle> Triangles { get; }
+        public IArray<Double2> UVs { get; }
+        public IArray<Double3> Points { get; }
+        public IArray<Int3> Indices { get; }
+    }
+
+
+// 
+
+It's always going to be the same problem. 
+
+I need to compile to have working code.
+So ... 
+
+There is part 1: 
+* Get the structs and make them valid.
+* Part two write the algorithms
+* IF I write them as static functions, it is fine ... it just works.  
+* If I want to use fluent API in the algorithms, I have to wait for the 
+	extension methods to be created. 
+* The problem is that those fluent methods are where? 
+	I mean if I just write some algorithms, is it going to make a copy of those 
+	functions? 
+* It's a bit funny, but some of this is just a question of writing it out. 
+* The last problem is wrestling with the darn intellisense. 
+* Intellisense wants everything to be public / static / compile, etc. 
+
+//==
+
+So what about the interfaces? 
+In order to add fun interfaces to the classes, I will have to look for extension methods.
+	
+//==

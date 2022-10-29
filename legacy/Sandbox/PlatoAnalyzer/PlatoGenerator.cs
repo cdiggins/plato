@@ -280,6 +280,9 @@ namespace PlatoAnalyzer
             // TODO: FromBytes
             // TODO: math functions when appropriate ... like all of that scaled stuff. 
             // - How am I going to deal with the math functions 
+            // TODO: implicit to array operator 
+            // TODO: explicit from array function 
+
 
             foreach (var prop in props)
             {

@@ -45,13 +45,38 @@ namespace Plato
     {
     }
 
-    public interface IInterval<T>
+    public interface IInterval<T> 
     {
         T Lower { get; }
         T Upper { get; }
     }
 
-    //== 
-    // Generated code 
-    
+    public interface IMeasure : IValue
+    {
+    }
+
+    public interface ISignedDistanceField
+    {
+        double Distance(Double3 pos);
+    }
+
+    public interface ISignedDistanceField2D
+    {
+        double Distance(Double2 pos);
+    }
+
+    public interface IShape : ISignedDistanceField
+    {
+        double Volume { get; }
+    }
+
+    public interface IShape2D : ISignedDistanceField2D
+    {
+        double Area { get; }
+    }
+
+    public interface IDifference<T>
+    {
+        T Subtract(T x, T y);
+    }
 }

@@ -1,0 +1,3 @@
+* Write a rule enforcer ... show syntax errors when things aren't right.
+* Structs or classes? Why not just keep everything as classes. Making them structs just makes inheritance harder. 
+* Animation controller 

@@ -77,32 +77,33 @@ public static byte One(this byte _) => (byte)1;
 public static byte MinValue(this byte _) => byte.MinValue;
 public static byte MaxValue(this byte _) => byte.MaxValue;
 }
-public partial struct Vector2
+public partial struct Float2
 {
-public Vector2(Single x, Single y) => (X, Y) = (x, y);
-public static implicit operator Vector2((Single X, Single Y) tuple) => new Vector2(tuple.X, tuple.Y);
-public static implicit operator (Single X, Single Y)(Vector2 self) => (self.X, self.Y);
+public Float2(Single x, Single y) => (X, Y) = (x, y);
+public static implicit operator Float2((Single X, Single Y) tuple) => new Float2(tuple.X, tuple.Y);
+public static implicit operator (Single X, Single Y)(Float2 self) => (self.X, self.Y);
 public void Deconstruct(out Single x, out Single y) => (x, y) = (X, Y);
 public override string ToString() => $"{{ \"X\" : { X }, \"Y\" : { Y } }}";
-public override bool Equals(object other) => other is Vector2 typedOther && this == typedOther;
+public override bool Equals(object other) => other is Float2 typedOther && this == typedOther;
 public override int GetHashCode() => (X, Y).GetHashCode();
-public static readonly Vector2 Default = default;
-public static Vector2 Zero = new Vector2(Default.X.Zero(),Default.Y.Zero());
-public static Vector2 One = new Vector2(Default.X.One(),Default.Y.One());
-public static Vector2 MinValue = new Vector2(Default.X.MinValue(),Default.Y.MinValue());
-public static Vector2 MaxValue = new Vector2(Default.X.MaxValue(),Default.Y.MaxValue());
-public static bool operator ==(Vector2 a, Vector2 b) => (a.X == b.X) && (a.Y == b.Y);
-public static bool operator !=(Vector2 a, Vector2 b) => (a.X != b.X) || (a.Y != b.Y);
-public Vector2 WithX(Single value) => new Vector2(value, Y);
-public Vector2 WithY(Single value) => new Vector2(X, value);
-public static Vector2 operator +(Vector2 a, Vector2 b) => new Vector2(a.X + b.X, a.Y + b.Y);
-public static Vector2 operator -(Vector2 a, Vector2 b) => new Vector2(a.X - b.X, a.Y - b.Y);
-public static Vector2 operator *(Vector2 a, Vector2 b) => new Vector2(a.X * b.X, a.Y * b.Y);
-public static Vector2 operator /(Vector2 a, Vector2 b) => new Vector2(a.X / b.X, a.Y / b.Y);
-public static Vector2 operator -(Vector2 a) => new Vector2(- a.X, - a.Y);
-public static Vector2 operator *(Vector2 self, Single scalar) => new Vector2(self.X * scalar, self.Y * scalar);
-public static Vector2 operator /(Vector2 self, Single scalar) => new Vector2(self.X / scalar, self.Y / scalar);
+public static readonly Float2 Default = default;
+public static Float2 Zero = new Float2(Default.X.Zero(),Default.Y.Zero());
+public static Float2 One = new Float2(Default.X.One(),Default.Y.One());
+public static Float2 MinValue = new Float2(Default.X.MinValue(),Default.Y.MinValue());
+public static Float2 MaxValue = new Float2(Default.X.MaxValue(),Default.Y.MaxValue());
+public static bool operator ==(Float2 a, Float2 b) => (a.X == b.X) && (a.Y == b.Y);
+public static bool operator !=(Float2 a, Float2 b) => (a.X != b.X) || (a.Y != b.Y);
+public Float2 WithX(Single value) => new Float2(value, Y);
+public Float2 WithY(Single value) => new Float2(X, value);
+public static Float2 operator +(Float2 a, Float2 b) => new Float2(a.X + b.X, a.Y + b.Y);
+public static Float2 operator -(Float2 a, Float2 b) => new Float2(a.X - b.X, a.Y - b.Y);
+public static Float2 operator *(Float2 a, Float2 b) => new Float2(a.X * b.X, a.Y * b.Y);
+public static Float2 operator /(Float2 a, Float2 b) => new Float2(a.X / b.X, a.Y / b.Y);
+public static Float2 operator -(Float2 a) => new Float2(- a.X, - a.Y);
+public static Float2 operator *(Float2 self, Single scalar) => new Float2(self.X * scalar, self.Y * scalar);
+public static Float2 operator /(Float2 self, Single scalar) => new Float2(self.X / scalar, self.Y / scalar);
 public int Count => 2;
+public static implicit operator Single[](Float2 v) => new[] { v.X, v.Y };
 public Single this[int index] { get { switch (index) {
 case 0: return X;
 case 1: return Y;
@@ -110,45 +111,45 @@ default: throw new System.ArgumentOutOfRangeException(nameof(index));
 } } }
 }
 public static partial class Intrinsics {
-public static Vector2 Add(this Vector2 a, Vector2 b) => a + b;
-public static Vector2 Subtract(this Vector2 a, Vector2 b) => a - b;
-public static Vector2 Multiply(this Vector2 a, Vector2 b) => a * b;
-public static Vector2 Divide(this Vector2 a, Vector2 b) => a / b;
-public static Vector2 Negate(this Vector2 a) => - a;
-public static bool Equals(this Vector2 a, Vector2 b) => a == b;
-public static bool NotEquals(this Vector2 a, Vector2 b) => a != b;
-public static Vector2 Default(this Vector2 _) => default(Vector2);
-public static Vector2 Zero(this Vector2 _) => Vector2.Zero;
-public static Vector2 One(this Vector2 _) => Vector2.One;
-public static Vector2 MinValue(this Vector2 _) => Vector2.MinValue;
-public static Vector2 MaxValue(this Vector2 _) => Vector2.MaxValue;
+public static Float2 Add(this Float2 a, Float2 b) => a + b;
+public static Float2 Subtract(this Float2 a, Float2 b) => a - b;
+public static Float2 Multiply(this Float2 a, Float2 b) => a * b;
+public static Float2 Divide(this Float2 a, Float2 b) => a / b;
+public static Float2 Negate(this Float2 a) => - a;
+public static bool Equals(this Float2 a, Float2 b) => a == b;
+public static bool NotEquals(this Float2 a, Float2 b) => a != b;
+public static Float2 Default(this Float2 _) => default(Float2);
+public static Float2 Zero(this Float2 _) => Float2.Zero;
+public static Float2 One(this Float2 _) => Float2.One;
+public static Float2 MinValue(this Float2 _) => Float2.MinValue;
+public static Float2 MaxValue(this Float2 _) => Float2.MaxValue;
 }
-public partial struct Vector3
+public partial struct Float3
 {
-public Vector3(Single x, Single y, Single z) => (X, Y, Z) = (x, y, z);
-public static implicit operator Vector3((Single X, Single Y, Single Z) tuple) => new Vector3(tuple.X, tuple.Y, tuple.Z);
-public static implicit operator (Single X, Single Y, Single Z)(Vector3 self) => (self.X, self.Y, self.Z);
+public Float3(Single x, Single y, Single z) => (X, Y, Z) = (x, y, z);
+public static implicit operator Float3((Single X, Single Y, Single Z) tuple) => new Float3(tuple.X, tuple.Y, tuple.Z);
+public static implicit operator (Single X, Single Y, Single Z)(Float3 self) => (self.X, self.Y, self.Z);
 public void Deconstruct(out Single x, out Single y, out Single z) => (x, y, z) = (X, Y, Z);
 public override string ToString() => $"{{ \"X\" : { X }, \"Y\" : { Y }, \"Z\" : { Z } }}";
-public override bool Equals(object other) => other is Vector3 typedOther && this == typedOther;
+public override bool Equals(object other) => other is Float3 typedOther && this == typedOther;
 public override int GetHashCode() => (X, Y, Z).GetHashCode();
-public static readonly Vector3 Default = default;
-public static Vector3 Zero = new Vector3(Default.X.Zero(),Default.Y.Zero(),Default.Z.Zero());
-public static Vector3 One = new Vector3(Default.X.One(),Default.Y.One(),Default.Z.One());
-public static Vector3 MinValue = new Vector3(Default.X.MinValue(),Default.Y.MinValue(),Default.Z.MinValue());
-public static Vector3 MaxValue = new Vector3(Default.X.MaxValue(),Default.Y.MaxValue(),Default.Z.MaxValue());
-public static bool operator ==(Vector3 a, Vector3 b) => (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z);
-public static bool operator !=(Vector3 a, Vector3 b) => (a.X != b.X) || (a.Y != b.Y) || (a.Z != b.Z);
-public Vector3 WithX(Single value) => new Vector3(value, Y, Z);
-public Vector3 WithY(Single value) => new Vector3(X, value, Z);
-public Vector3 WithZ(Single value) => new Vector3(X, Y, value);
-public static Vector3 operator +(Vector3 a, Vector3 b) => new Vector3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
-public static Vector3 operator -(Vector3 a, Vector3 b) => new Vector3(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
-public static Vector3 operator *(Vector3 a, Vector3 b) => new Vector3(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
-public static Vector3 operator /(Vector3 a, Vector3 b) => new Vector3(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
-public static Vector3 operator -(Vector3 a) => new Vector3(- a.X, - a.Y, - a.Z);
-public static Vector3 operator *(Vector3 self, Single scalar) => new Vector3(self.X * scalar, self.Y * scalar, self.Z * scalar);
-public static Vector3 operator /(Vector3 self, Single scalar) => new Vector3(self.X / scalar, self.Y / scalar, self.Z / scalar);
+public static readonly Float3 Default = default;
+public static Float3 Zero = new Float3(Default.X.Zero(),Default.Y.Zero(),Default.Z.Zero());
+public static Float3 One = new Float3(Default.X.One(),Default.Y.One(),Default.Z.One());
+public static Float3 MinValue = new Float3(Default.X.MinValue(),Default.Y.MinValue(),Default.Z.MinValue());
+public static Float3 MaxValue = new Float3(Default.X.MaxValue(),Default.Y.MaxValue(),Default.Z.MaxValue());
+public static bool operator ==(Float3 a, Float3 b) => (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z);
+public static bool operator !=(Float3 a, Float3 b) => (a.X != b.X) || (a.Y != b.Y) || (a.Z != b.Z);
+public Float3 WithX(Single value) => new Float3(value, Y, Z);
+public Float3 WithY(Single value) => new Float3(X, value, Z);
+public Float3 WithZ(Single value) => new Float3(X, Y, value);
+public static Float3 operator +(Float3 a, Float3 b) => new Float3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+public static Float3 operator -(Float3 a, Float3 b) => new Float3(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+public static Float3 operator *(Float3 a, Float3 b) => new Float3(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
+public static Float3 operator /(Float3 a, Float3 b) => new Float3(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
+public static Float3 operator -(Float3 a) => new Float3(- a.X, - a.Y, - a.Z);
+public static Float3 operator *(Float3 self, Single scalar) => new Float3(self.X * scalar, self.Y * scalar, self.Z * scalar);
+public static Float3 operator /(Float3 self, Single scalar) => new Float3(self.X / scalar, self.Y / scalar, self.Z / scalar);
 public int Count => 3;
 public Single this[int index] { get { switch (index) {
 case 0: return X;
@@ -158,46 +159,46 @@ default: throw new System.ArgumentOutOfRangeException(nameof(index));
 } } }
 }
 public static partial class Intrinsics {
-public static Vector3 Add(this Vector3 a, Vector3 b) => a + b;
-public static Vector3 Subtract(this Vector3 a, Vector3 b) => a - b;
-public static Vector3 Multiply(this Vector3 a, Vector3 b) => a * b;
-public static Vector3 Divide(this Vector3 a, Vector3 b) => a / b;
-public static Vector3 Negate(this Vector3 a) => - a;
-public static bool Equals(this Vector3 a, Vector3 b) => a == b;
-public static bool NotEquals(this Vector3 a, Vector3 b) => a != b;
-public static Vector3 Default(this Vector3 _) => default(Vector3);
-public static Vector3 Zero(this Vector3 _) => Vector3.Zero;
-public static Vector3 One(this Vector3 _) => Vector3.One;
-public static Vector3 MinValue(this Vector3 _) => Vector3.MinValue;
-public static Vector3 MaxValue(this Vector3 _) => Vector3.MaxValue;
+public static Double3 Add(this Double3 a, Double3 b) => a + b;
+public static Double3 Subtract(this Double3 a, Double3 b) => a - b;
+public static Double3 Multiply(this Double3 a, Double3 b) => a * b;
+public static Double3 Divide(this Double3 a, Double3 b) => a / b;
+public static Double3 Negate(this Double3 a) => - a;
+public static bool Equals(this Double3 a, Double3 b) => a == b;
+public static bool NotEquals(this Double3 a, Double3 b) => a != b;
+public static Double3 Default(this Double3 _) => default(Double3);
+public static Double3 Zero(this Double3 _) => Double3.Zero;
+public static Double3 One(this Double3 _) => Double3.One;
+public static Double3 MinValue(this Double3 _) => Double3.MinValue;
+public static Double3 MaxValue(this Double3 _) => Double3.MaxValue;
 }
-public partial struct Vector4
+public partial struct Float4
 {
-public Vector4(Single x, Single y, Single z, Single w) => (X, Y, Z, W) = (x, y, z, w);
-public static implicit operator Vector4((Single X, Single Y, Single Z, Single W) tuple) => new Vector4(tuple.X, tuple.Y, tuple.Z, tuple.W);
-public static implicit operator (Single X, Single Y, Single Z, Single W)(Vector4 self) => (self.X, self.Y, self.Z, self.W);
+public Float4(Single x, Single y, Single z, Single w) => (X, Y, Z, W) = (x, y, z, w);
+public static implicit operator Float4((Single X, Single Y, Single Z, Single W) tuple) => new Float4(tuple.X, tuple.Y, tuple.Z, tuple.W);
+public static implicit operator (Single X, Single Y, Single Z, Single W)(Float4 self) => (self.X, self.Y, self.Z, self.W);
 public void Deconstruct(out Single x, out Single y, out Single z, out Single w) => (x, y, z, w) = (X, Y, Z, W);
 public override string ToString() => $"{{ \"X\" : { X }, \"Y\" : { Y }, \"Z\" : { Z }, \"W\" : { W } }}";
-public override bool Equals(object other) => other is Vector4 typedOther && this == typedOther;
+public override bool Equals(object other) => other is Float4 typedOther && this == typedOther;
 public override int GetHashCode() => (X, Y, Z, W).GetHashCode();
-public static readonly Vector4 Default = default;
-public static Vector4 Zero = new Vector4(Default.X.Zero(),Default.Y.Zero(),Default.Z.Zero(),Default.W.Zero());
-public static Vector4 One = new Vector4(Default.X.One(),Default.Y.One(),Default.Z.One(),Default.W.One());
-public static Vector4 MinValue = new Vector4(Default.X.MinValue(),Default.Y.MinValue(),Default.Z.MinValue(),Default.W.MinValue());
-public static Vector4 MaxValue = new Vector4(Default.X.MaxValue(),Default.Y.MaxValue(),Default.Z.MaxValue(),Default.W.MaxValue());
-public static bool operator ==(Vector4 a, Vector4 b) => (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z) && (a.W == b.W);
-public static bool operator !=(Vector4 a, Vector4 b) => (a.X != b.X) || (a.Y != b.Y) || (a.Z != b.Z) || (a.W != b.W);
-public Vector4 WithX(Single value) => new Vector4(value, Y, Z, W);
-public Vector4 WithY(Single value) => new Vector4(X, value, Z, W);
-public Vector4 WithZ(Single value) => new Vector4(X, Y, value, W);
-public Vector4 WithW(Single value) => new Vector4(X, Y, Z, value);
-public static Vector4 operator +(Vector4 a, Vector4 b) => new Vector4(a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W);
-public static Vector4 operator -(Vector4 a, Vector4 b) => new Vector4(a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W);
-public static Vector4 operator *(Vector4 a, Vector4 b) => new Vector4(a.X * b.X, a.Y * b.Y, a.Z * b.Z, a.W * b.W);
-public static Vector4 operator /(Vector4 a, Vector4 b) => new Vector4(a.X / b.X, a.Y / b.Y, a.Z / b.Z, a.W / b.W);
-public static Vector4 operator -(Vector4 a) => new Vector4(- a.X, - a.Y, - a.Z, - a.W);
-public static Vector4 operator *(Vector4 self, Single scalar) => new Vector4(self.X * scalar, self.Y * scalar, self.Z * scalar, self.W * scalar);
-public static Vector4 operator /(Vector4 self, Single scalar) => new Vector4(self.X / scalar, self.Y / scalar, self.Z / scalar, self.W / scalar);
+public static readonly Float4 Default = default;
+public static Float4 Zero = new Float4(Default.X.Zero(),Default.Y.Zero(),Default.Z.Zero(),Default.W.Zero());
+public static Float4 One = new Float4(Default.X.One(),Default.Y.One(),Default.Z.One(),Default.W.One());
+public static Float4 MinValue = new Float4(Default.X.MinValue(),Default.Y.MinValue(),Default.Z.MinValue(),Default.W.MinValue());
+public static Float4 MaxValue = new Float4(Default.X.MaxValue(),Default.Y.MaxValue(),Default.Z.MaxValue(),Default.W.MaxValue());
+public static bool operator ==(Float4 a, Float4 b) => (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z) && (a.W == b.W);
+public static bool operator !=(Float4 a, Float4 b) => (a.X != b.X) || (a.Y != b.Y) || (a.Z != b.Z) || (a.W != b.W);
+public Float4 WithX(Single value) => new Float4(value, Y, Z, W);
+public Float4 WithY(Single value) => new Float4(X, value, Z, W);
+public Float4 WithZ(Single value) => new Float4(X, Y, value, W);
+public Float4 WithW(Single value) => new Float4(X, Y, Z, value);
+public static Float4 operator +(Float4 a, Float4 b) => new Float4(a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W);
+public static Float4 operator -(Float4 a, Float4 b) => new Float4(a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W);
+public static Float4 operator *(Float4 a, Float4 b) => new Float4(a.X * b.X, a.Y * b.Y, a.Z * b.Z, a.W * b.W);
+public static Float4 operator /(Float4 a, Float4 b) => new Float4(a.X / b.X, a.Y / b.Y, a.Z / b.Z, a.W / b.W);
+public static Float4 operator -(Float4 a) => new Float4(- a.X, - a.Y, - a.Z, - a.W);
+public static Float4 operator *(Float4 self, Single scalar) => new Float4(self.X * scalar, self.Y * scalar, self.Z * scalar, self.W * scalar);
+public static Float4 operator /(Float4 self, Single scalar) => new Float4(self.X / scalar, self.Y / scalar, self.Z / scalar, self.W / scalar);
 public int Count => 4;
 public Single this[int index] { get { switch (index) {
 case 0: return X;
@@ -208,18 +209,18 @@ default: throw new System.ArgumentOutOfRangeException(nameof(index));
 } } }
 }
 public static partial class Intrinsics {
-public static Vector4 Add(this Vector4 a, Vector4 b) => a + b;
-public static Vector4 Subtract(this Vector4 a, Vector4 b) => a - b;
-public static Vector4 Multiply(this Vector4 a, Vector4 b) => a * b;
-public static Vector4 Divide(this Vector4 a, Vector4 b) => a / b;
-public static Vector4 Negate(this Vector4 a) => - a;
-public static bool Equals(this Vector4 a, Vector4 b) => a == b;
-public static bool NotEquals(this Vector4 a, Vector4 b) => a != b;
-public static Vector4 Default(this Vector4 _) => default(Vector4);
-public static Vector4 Zero(this Vector4 _) => Vector4.Zero;
-public static Vector4 One(this Vector4 _) => Vector4.One;
-public static Vector4 MinValue(this Vector4 _) => Vector4.MinValue;
-public static Vector4 MaxValue(this Vector4 _) => Vector4.MaxValue;
+public static Float4 Add(this Float4 a, Float4 b) => a + b;
+public static Float4 Subtract(this Float4 a, Float4 b) => a - b;
+public static Float4 Multiply(this Float4 a, Float4 b) => a * b;
+public static Float4 Divide(this Float4 a, Float4 b) => a / b;
+public static Float4 Negate(this Float4 a) => - a;
+public static bool Equals(this Float4 a, Float4 b) => a == b;
+public static bool NotEquals(this Float4 a, Float4 b) => a != b;
+public static Float4 Default(this Float4 _) => default(Float4);
+public static Float4 Zero(this Float4 _) => Float4.Zero;
+public static Float4 One(this Float4 _) => Float4.One;
+public static Float4 MinValue(this Float4 _) => Float4.MinValue;
+public static Float4 MaxValue(this Float4 _) => Float4.MaxValue;
 }
 public partial struct Quaternion
 {
@@ -261,31 +262,31 @@ public static Quaternion One(this Quaternion _) => Quaternion.One;
 public static Quaternion MinValue(this Quaternion _) => Quaternion.MinValue;
 public static Quaternion MaxValue(this Quaternion _) => Quaternion.MaxValue;
 }
-public partial struct DVector2
+public partial struct Double2
 {
-public DVector2(Double x, Double y) => (X, Y) = (x, y);
-public static implicit operator DVector2((Double X, Double Y) tuple) => new DVector2(tuple.X, tuple.Y);
-public static implicit operator (Double X, Double Y)(DVector2 self) => (self.X, self.Y);
+public Double2(Double x, Double y) => (X, Y) = (x, y);
+public static implicit operator Double2((Double X, Double Y) tuple) => new Double2(tuple.X, tuple.Y);
+public static implicit operator (Double X, Double Y)(Double2 self) => (self.X, self.Y);
 public void Deconstruct(out Double x, out Double y) => (x, y) = (X, Y);
 public override string ToString() => $"{{ \"X\" : { X }, \"Y\" : { Y } }}";
-public override bool Equals(object other) => other is DVector2 typedOther && this == typedOther;
+public override bool Equals(object other) => other is Double2 typedOther && this == typedOther;
 public override int GetHashCode() => (X, Y).GetHashCode();
-public static readonly DVector2 Default = default;
-public static DVector2 Zero = new DVector2(Default.X.Zero(),Default.Y.Zero());
-public static DVector2 One = new DVector2(Default.X.One(),Default.Y.One());
-public static DVector2 MinValue = new DVector2(Default.X.MinValue(),Default.Y.MinValue());
-public static DVector2 MaxValue = new DVector2(Default.X.MaxValue(),Default.Y.MaxValue());
-public static bool operator ==(DVector2 a, DVector2 b) => (a.X == b.X) && (a.Y == b.Y);
-public static bool operator !=(DVector2 a, DVector2 b) => (a.X != b.X) || (a.Y != b.Y);
-public DVector2 WithX(Double value) => new DVector2(value, Y);
-public DVector2 WithY(Double value) => new DVector2(X, value);
-public static DVector2 operator +(DVector2 a, DVector2 b) => new DVector2(a.X + b.X, a.Y + b.Y);
-public static DVector2 operator -(DVector2 a, DVector2 b) => new DVector2(a.X - b.X, a.Y - b.Y);
-public static DVector2 operator *(DVector2 a, DVector2 b) => new DVector2(a.X * b.X, a.Y * b.Y);
-public static DVector2 operator /(DVector2 a, DVector2 b) => new DVector2(a.X / b.X, a.Y / b.Y);
-public static DVector2 operator -(DVector2 a) => new DVector2(- a.X, - a.Y);
-public static DVector2 operator *(DVector2 self, Double scalar) => new DVector2(self.X * scalar, self.Y * scalar);
-public static DVector2 operator /(DVector2 self, Double scalar) => new DVector2(self.X / scalar, self.Y / scalar);
+public static readonly Double2 Default = default;
+public static Double2 Zero = new Double2(Default.X.Zero(),Default.Y.Zero());
+public static Double2 One = new Double2(Default.X.One(),Default.Y.One());
+public static Double2 MinValue = new Double2(Default.X.MinValue(),Default.Y.MinValue());
+public static Double2 MaxValue = new Double2(Default.X.MaxValue(),Default.Y.MaxValue());
+public static bool operator ==(Double2 a, Double2 b) => (a.X == b.X) && (a.Y == b.Y);
+public static bool operator !=(Double2 a, Double2 b) => (a.X != b.X) || (a.Y != b.Y);
+public Double2 WithX(Double value) => new Double2(value, Y);
+public Double2 WithY(Double value) => new Double2(X, value);
+public static Double2 operator +(Double2 a, Double2 b) => new Double2(a.X + b.X, a.Y + b.Y);
+public static Double2 operator -(Double2 a, Double2 b) => new Double2(a.X - b.X, a.Y - b.Y);
+public static Double2 operator *(Double2 a, Double2 b) => new Double2(a.X * b.X, a.Y * b.Y);
+public static Double2 operator /(Double2 a, Double2 b) => new Double2(a.X / b.X, a.Y / b.Y);
+public static Double2 operator -(Double2 a) => new Double2(- a.X, - a.Y);
+public static Double2 operator *(Double2 self, Double scalar) => new Double2(self.X * scalar, self.Y * scalar);
+public static Double2 operator /(Double2 self, Double scalar) => new Double2(self.X / scalar, self.Y / scalar);
 public int Count => 2;
 public Double this[int index] { get { switch (index) {
 case 0: return X;
@@ -294,45 +295,45 @@ default: throw new System.ArgumentOutOfRangeException(nameof(index));
 } } }
 }
 public static partial class Intrinsics {
-public static DVector2 Add(this DVector2 a, DVector2 b) => a + b;
-public static DVector2 Subtract(this DVector2 a, DVector2 b) => a - b;
-public static DVector2 Multiply(this DVector2 a, DVector2 b) => a * b;
-public static DVector2 Divide(this DVector2 a, DVector2 b) => a / b;
-public static DVector2 Negate(this DVector2 a) => - a;
-public static bool Equals(this DVector2 a, DVector2 b) => a == b;
-public static bool NotEquals(this DVector2 a, DVector2 b) => a != b;
-public static DVector2 Default(this DVector2 _) => default(DVector2);
-public static DVector2 Zero(this DVector2 _) => DVector2.Zero;
-public static DVector2 One(this DVector2 _) => DVector2.One;
-public static DVector2 MinValue(this DVector2 _) => DVector2.MinValue;
-public static DVector2 MaxValue(this DVector2 _) => DVector2.MaxValue;
+public static Double2 Add(this Double2 a, Double2 b) => a + b;
+public static Double2 Subtract(this Double2 a, Double2 b) => a - b;
+public static Double2 Multiply(this Double2 a, Double2 b) => a * b;
+public static Double2 Divide(this Double2 a, Double2 b) => a / b;
+public static Double2 Negate(this Double2 a) => - a;
+public static bool Equals(this Double2 a, Double2 b) => a == b;
+public static bool NotEquals(this Double2 a, Double2 b) => a != b;
+public static Double2 Default(this Double2 _) => default(Double2);
+public static Double2 Zero(this Double2 _) => Double2.Zero;
+public static Double2 One(this Double2 _) => Double2.One;
+public static Double2 MinValue(this Double2 _) => Double2.MinValue;
+public static Double2 MaxValue(this Double2 _) => Double2.MaxValue;
 }
-public partial struct DVector3
+public partial struct Double3
 {
-public DVector3(Double x, Double y, Double z) => (X, Y, Z) = (x, y, z);
-public static implicit operator DVector3((Double X, Double Y, Double Z) tuple) => new DVector3(tuple.X, tuple.Y, tuple.Z);
-public static implicit operator (Double X, Double Y, Double Z)(DVector3 self) => (self.X, self.Y, self.Z);
+public Double3(Double x, Double y, Double z) => (X, Y, Z) = (x, y, z);
+public static implicit operator Double3((Double X, Double Y, Double Z) tuple) => new Double3(tuple.X, tuple.Y, tuple.Z);
+public static implicit operator (Double X, Double Y, Double Z)(Double3 self) => (self.X, self.Y, self.Z);
 public void Deconstruct(out Double x, out Double y, out Double z) => (x, y, z) = (X, Y, Z);
 public override string ToString() => $"{{ \"X\" : { X }, \"Y\" : { Y }, \"Z\" : { Z } }}";
-public override bool Equals(object other) => other is DVector3 typedOther && this == typedOther;
+public override bool Equals(object other) => other is Double3 typedOther && this == typedOther;
 public override int GetHashCode() => (X, Y, Z).GetHashCode();
-public static readonly DVector3 Default = default;
-public static DVector3 Zero = new DVector3(Default.X.Zero(),Default.Y.Zero(),Default.Z.Zero());
-public static DVector3 One = new DVector3(Default.X.One(),Default.Y.One(),Default.Z.One());
-public static DVector3 MinValue = new DVector3(Default.X.MinValue(),Default.Y.MinValue(),Default.Z.MinValue());
-public static DVector3 MaxValue = new DVector3(Default.X.MaxValue(),Default.Y.MaxValue(),Default.Z.MaxValue());
-public static bool operator ==(DVector3 a, DVector3 b) => (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z);
-public static bool operator !=(DVector3 a, DVector3 b) => (a.X != b.X) || (a.Y != b.Y) || (a.Z != b.Z);
-public DVector3 WithX(Double value) => new DVector3(value, Y, Z);
-public DVector3 WithY(Double value) => new DVector3(X, value, Z);
-public DVector3 WithZ(Double value) => new DVector3(X, Y, value);
-public static DVector3 operator +(DVector3 a, DVector3 b) => new DVector3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
-public static DVector3 operator -(DVector3 a, DVector3 b) => new DVector3(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
-public static DVector3 operator *(DVector3 a, DVector3 b) => new DVector3(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
-public static DVector3 operator /(DVector3 a, DVector3 b) => new DVector3(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
-public static DVector3 operator -(DVector3 a) => new DVector3(- a.X, - a.Y, - a.Z);
-public static DVector3 operator *(DVector3 self, Double scalar) => new DVector3(self.X * scalar, self.Y * scalar, self.Z * scalar);
-public static DVector3 operator /(DVector3 self, Double scalar) => new DVector3(self.X / scalar, self.Y / scalar, self.Z / scalar);
+public static readonly Double3 Default = default;
+public static Double3 Zero = new Double3(Default.X.Zero(),Default.Y.Zero(),Default.Z.Zero());
+public static Double3 One = new Double3(Default.X.One(),Default.Y.One(),Default.Z.One());
+public static Double3 MinValue = new Double3(Default.X.MinValue(),Default.Y.MinValue(),Default.Z.MinValue());
+public static Double3 MaxValue = new Double3(Default.X.MaxValue(),Default.Y.MaxValue(),Default.Z.MaxValue());
+public static bool operator ==(Double3 a, Double3 b) => (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z);
+public static bool operator !=(Double3 a, Double3 b) => (a.X != b.X) || (a.Y != b.Y) || (a.Z != b.Z);
+public Double3 WithX(Double value) => new Double3(value, Y, Z);
+public Double3 WithY(Double value) => new Double3(X, value, Z);
+public Double3 WithZ(Double value) => new Double3(X, Y, value);
+public static Double3 operator +(Double3 a, Double3 b) => new Double3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+public static Double3 operator -(Double3 a, Double3 b) => new Double3(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+public static Double3 operator *(Double3 a, Double3 b) => new Double3(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
+public static Double3 operator /(Double3 a, Double3 b) => new Double3(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
+public static Double3 operator -(Double3 a) => new Double3(- a.X, - a.Y, - a.Z);
+public static Double3 operator *(Double3 self, Double scalar) => new Double3(self.X * scalar, self.Y * scalar, self.Z * scalar);
+public static Double3 operator /(Double3 self, Double scalar) => new Double3(self.X / scalar, self.Y / scalar, self.Z / scalar);
 public int Count => 3;
 public Double this[int index] { get { switch (index) {
 case 0: return X;
@@ -342,46 +343,46 @@ default: throw new System.ArgumentOutOfRangeException(nameof(index));
 } } }
 }
 public static partial class Intrinsics {
-public static DVector3 Add(this DVector3 a, DVector3 b) => a + b;
-public static DVector3 Subtract(this DVector3 a, DVector3 b) => a - b;
-public static DVector3 Multiply(this DVector3 a, DVector3 b) => a * b;
-public static DVector3 Divide(this DVector3 a, DVector3 b) => a / b;
-public static DVector3 Negate(this DVector3 a) => - a;
-public static bool Equals(this DVector3 a, DVector3 b) => a == b;
-public static bool NotEquals(this DVector3 a, DVector3 b) => a != b;
-public static DVector3 Default(this DVector3 _) => default(DVector3);
-public static DVector3 Zero(this DVector3 _) => DVector3.Zero;
-public static DVector3 One(this DVector3 _) => DVector3.One;
-public static DVector3 MinValue(this DVector3 _) => DVector3.MinValue;
-public static DVector3 MaxValue(this DVector3 _) => DVector3.MaxValue;
+public static Double3 Add(this Double3 a, Double3 b) => a + b;
+public static Double3 Subtract(this Double3 a, Double3 b) => a - b;
+public static Double3 Multiply(this Double3 a, Double3 b) => a * b;
+public static Double3 Divide(this Double3 a, Double3 b) => a / b;
+public static Double3 Negate(this Double3 a) => - a;
+public static bool Equals(this Double3 a, Double3 b) => a == b;
+public static bool NotEquals(this Double3 a, Double3 b) => a != b;
+public static Double3 Default(this Double3 _) => default(Double3);
+public static Double3 Zero(this Double3 _) => Double3.Zero;
+public static Double3 One(this Double3 _) => Double3.One;
+public static Double3 MinValue(this Double3 _) => Double3.MinValue;
+public static Double3 MaxValue(this Double3 _) => Double3.MaxValue;
 }
-public partial struct DVector4
+public partial struct Double4
 {
-public DVector4(Double x, Double y, Double z, Double w) => (X, Y, Z, W) = (x, y, z, w);
-public static implicit operator DVector4((Double X, Double Y, Double Z, Double W) tuple) => new DVector4(tuple.X, tuple.Y, tuple.Z, tuple.W);
-public static implicit operator (Double X, Double Y, Double Z, Double W)(DVector4 self) => (self.X, self.Y, self.Z, self.W);
+public Double4(Double x, Double y, Double z, Double w) => (X, Y, Z, W) = (x, y, z, w);
+public static implicit operator Double4((Double X, Double Y, Double Z, Double W) tuple) => new Double4(tuple.X, tuple.Y, tuple.Z, tuple.W);
+public static implicit operator (Double X, Double Y, Double Z, Double W)(Double4 self) => (self.X, self.Y, self.Z, self.W);
 public void Deconstruct(out Double x, out Double y, out Double z, out Double w) => (x, y, z, w) = (X, Y, Z, W);
 public override string ToString() => $"{{ \"X\" : { X }, \"Y\" : { Y }, \"Z\" : { Z }, \"W\" : { W } }}";
-public override bool Equals(object other) => other is DVector4 typedOther && this == typedOther;
+public override bool Equals(object other) => other is Double4 typedOther && this == typedOther;
 public override int GetHashCode() => (X, Y, Z, W).GetHashCode();
-public static readonly DVector4 Default = default;
-public static DVector4 Zero = new DVector4(Default.X.Zero(),Default.Y.Zero(),Default.Z.Zero(),Default.W.Zero());
-public static DVector4 One = new DVector4(Default.X.One(),Default.Y.One(),Default.Z.One(),Default.W.One());
-public static DVector4 MinValue = new DVector4(Default.X.MinValue(),Default.Y.MinValue(),Default.Z.MinValue(),Default.W.MinValue());
-public static DVector4 MaxValue = new DVector4(Default.X.MaxValue(),Default.Y.MaxValue(),Default.Z.MaxValue(),Default.W.MaxValue());
-public static bool operator ==(DVector4 a, DVector4 b) => (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z) && (a.W == b.W);
-public static bool operator !=(DVector4 a, DVector4 b) => (a.X != b.X) || (a.Y != b.Y) || (a.Z != b.Z) || (a.W != b.W);
-public DVector4 WithX(Double value) => new DVector4(value, Y, Z, W);
-public DVector4 WithY(Double value) => new DVector4(X, value, Z, W);
-public DVector4 WithZ(Double value) => new DVector4(X, Y, value, W);
-public DVector4 WithW(Double value) => new DVector4(X, Y, Z, value);
-public static DVector4 operator +(DVector4 a, DVector4 b) => new DVector4(a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W);
-public static DVector4 operator -(DVector4 a, DVector4 b) => new DVector4(a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W);
-public static DVector4 operator *(DVector4 a, DVector4 b) => new DVector4(a.X * b.X, a.Y * b.Y, a.Z * b.Z, a.W * b.W);
-public static DVector4 operator /(DVector4 a, DVector4 b) => new DVector4(a.X / b.X, a.Y / b.Y, a.Z / b.Z, a.W / b.W);
-public static DVector4 operator -(DVector4 a) => new DVector4(- a.X, - a.Y, - a.Z, - a.W);
-public static DVector4 operator *(DVector4 self, Double scalar) => new DVector4(self.X * scalar, self.Y * scalar, self.Z * scalar, self.W * scalar);
-public static DVector4 operator /(DVector4 self, Double scalar) => new DVector4(self.X / scalar, self.Y / scalar, self.Z / scalar, self.W / scalar);
+public static readonly Double4 Default = default;
+public static Double4 Zero = new Double4(Default.X.Zero(),Default.Y.Zero(),Default.Z.Zero(),Default.W.Zero());
+public static Double4 One = new Double4(Default.X.One(),Default.Y.One(),Default.Z.One(),Default.W.One());
+public static Double4 MinValue = new Double4(Default.X.MinValue(),Default.Y.MinValue(),Default.Z.MinValue(),Default.W.MinValue());
+public static Double4 MaxValue = new Double4(Default.X.MaxValue(),Default.Y.MaxValue(),Default.Z.MaxValue(),Default.W.MaxValue());
+public static bool operator ==(Double4 a, Double4 b) => (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z) && (a.W == b.W);
+public static bool operator !=(Double4 a, Double4 b) => (a.X != b.X) || (a.Y != b.Y) || (a.Z != b.Z) || (a.W != b.W);
+public Double4 WithX(Double value) => new Double4(value, Y, Z, W);
+public Double4 WithY(Double value) => new Double4(X, value, Z, W);
+public Double4 WithZ(Double value) => new Double4(X, Y, value, W);
+public Double4 WithW(Double value) => new Double4(X, Y, Z, value);
+public static Double4 operator +(Double4 a, Double4 b) => new Double4(a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W);
+public static Double4 operator -(Double4 a, Double4 b) => new Double4(a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W);
+public static Double4 operator *(Double4 a, Double4 b) => new Double4(a.X * b.X, a.Y * b.Y, a.Z * b.Z, a.W * b.W);
+public static Double4 operator /(Double4 a, Double4 b) => new Double4(a.X / b.X, a.Y / b.Y, a.Z / b.Z, a.W / b.W);
+public static Double4 operator -(Double4 a) => new Double4(- a.X, - a.Y, - a.Z, - a.W);
+public static Double4 operator *(Double4 self, Double scalar) => new Double4(self.X * scalar, self.Y * scalar, self.Z * scalar, self.W * scalar);
+public static Double4 operator /(Double4 self, Double scalar) => new Double4(self.X / scalar, self.Y / scalar, self.Z / scalar, self.W / scalar);
 public int Count => 4;
 public Double this[int index] { get { switch (index) {
 case 0: return X;
@@ -392,18 +393,18 @@ default: throw new System.ArgumentOutOfRangeException(nameof(index));
 } } }
 }
 public static partial class Intrinsics {
-public static DVector4 Add(this DVector4 a, DVector4 b) => a + b;
-public static DVector4 Subtract(this DVector4 a, DVector4 b) => a - b;
-public static DVector4 Multiply(this DVector4 a, DVector4 b) => a * b;
-public static DVector4 Divide(this DVector4 a, DVector4 b) => a / b;
-public static DVector4 Negate(this DVector4 a) => - a;
-public static bool Equals(this DVector4 a, DVector4 b) => a == b;
-public static bool NotEquals(this DVector4 a, DVector4 b) => a != b;
-public static DVector4 Default(this DVector4 _) => default(DVector4);
-public static DVector4 Zero(this DVector4 _) => DVector4.Zero;
-public static DVector4 One(this DVector4 _) => DVector4.One;
-public static DVector4 MinValue(this DVector4 _) => DVector4.MinValue;
-public static DVector4 MaxValue(this DVector4 _) => DVector4.MaxValue;
+public static Double4 Add(this Double4 a, Double4 b) => a + b;
+public static Double4 Subtract(this Double4 a, Double4 b) => a - b;
+public static Double4 Multiply(this Double4 a, Double4 b) => a * b;
+public static Double4 Divide(this Double4 a, Double4 b) => a / b;
+public static Double4 Negate(this Double4 a) => - a;
+public static bool Equals(this Double4 a, Double4 b) => a == b;
+public static bool NotEquals(this Double4 a, Double4 b) => a != b;
+public static Double4 Default(this Double4 _) => default(Double4);
+public static Double4 Zero(this Double4 _) => Double4.Zero;
+public static Double4 One(this Double4 _) => Double4.One;
+public static Double4 MinValue(this Double4 _) => Double4.MinValue;
+public static Double4 MaxValue(this Double4 _) => Double4.MaxValue;
 }
 public partial struct DQuaternion
 {
@@ -528,10 +529,10 @@ public static Byte4 MaxValue(this Byte4 _) => Byte4.MaxValue;
 }
 public partial struct Pose
 {
-public Pose(Vector3 position, Quaternion orientation) => (Position, Orientation) = (position, orientation);
-public static implicit operator Pose((Vector3 Position, Quaternion Orientation) tuple) => new Pose(tuple.Position, tuple.Orientation);
-public static implicit operator (Vector3 Position, Quaternion Orientation)(Pose self) => (self.Position, self.Orientation);
-public void Deconstruct(out Vector3 position, out Quaternion orientation) => (position, orientation) = (Position, Orientation);
+public Pose(Double3 position, Quaternion orientation) => (Position, Orientation) = (position, orientation);
+public static implicit operator Pose((Double3 Position, Quaternion Orientation) tuple) => new Pose(tuple.Position, tuple.Orientation);
+public static implicit operator (Double3 Position, Quaternion Orientation)(Pose self) => (self.Position, self.Orientation);
+public void Deconstruct(out Double3 position, out Quaternion orientation) => (position, orientation) = (Position, Orientation);
 public override string ToString() => $"{{ \"Position\" : { Position }, \"Orientation\" : { Orientation } }}";
 public override bool Equals(object other) => other is Pose typedOther && this == typedOther;
 public override int GetHashCode() => (Position, Orientation).GetHashCode();
@@ -542,7 +543,7 @@ public static Pose MinValue = new Pose(Default.Position.MinValue(),Default.Orien
 public static Pose MaxValue = new Pose(Default.Position.MaxValue(),Default.Orientation.MaxValue());
 public static bool operator ==(Pose a, Pose b) => (a.Position == b.Position) && (a.Orientation == b.Orientation);
 public static bool operator !=(Pose a, Pose b) => (a.Position != b.Position) || (a.Orientation != b.Orientation);
-public Pose WithPosition(Vector3 value) => new Pose(value, Orientation);
+public Pose WithPosition(Double3 value) => new Pose(value, Orientation);
 public Pose WithOrientation(Quaternion value) => new Pose(Position, value);
 public static Pose operator +(Pose a, Pose b) => new Pose(a.Position + b.Position, a.Orientation + b.Orientation);
 public static Pose operator -(Pose a, Pose b) => new Pose(a.Position - b.Position, a.Orientation - b.Orientation);
@@ -566,10 +567,10 @@ public static Pose MaxValue(this Pose _) => Pose.MaxValue;
 }
 public partial struct DPose
 {
-public DPose(DVector3 position, DQuaternion orientation) => (Position, Orientation) = (position, orientation);
-public static implicit operator DPose((DVector3 Position, DQuaternion Orientation) tuple) => new DPose(tuple.Position, tuple.Orientation);
-public static implicit operator (DVector3 Position, DQuaternion Orientation)(DPose self) => (self.Position, self.Orientation);
-public void Deconstruct(out DVector3 position, out DQuaternion orientation) => (position, orientation) = (Position, Orientation);
+public DPose(Double3 position, DQuaternion orientation) => (Position, Orientation) = (position, orientation);
+public static implicit operator DPose((Double3 Position, DQuaternion Orientation) tuple) => new DPose(tuple.Position, tuple.Orientation);
+public static implicit operator (Double3 Position, DQuaternion Orientation)(DPose self) => (self.Position, self.Orientation);
+public void Deconstruct(out Double3 position, out DQuaternion orientation) => (position, orientation) = (Position, Orientation);
 public override string ToString() => $"{{ \"Position\" : { Position }, \"Orientation\" : { Orientation } }}";
 public override bool Equals(object other) => other is DPose typedOther && this == typedOther;
 public override int GetHashCode() => (Position, Orientation).GetHashCode();
@@ -580,7 +581,7 @@ public static DPose MinValue = new DPose(Default.Position.MinValue(),Default.Ori
 public static DPose MaxValue = new DPose(Default.Position.MaxValue(),Default.Orientation.MaxValue());
 public static bool operator ==(DPose a, DPose b) => (a.Position == b.Position) && (a.Orientation == b.Orientation);
 public static bool operator !=(DPose a, DPose b) => (a.Position != b.Position) || (a.Orientation != b.Orientation);
-public DPose WithPosition(DVector3 value) => new DPose(value, Orientation);
+public DPose WithPosition(Double3 value) => new DPose(value, Orientation);
 public DPose WithOrientation(DQuaternion value) => new DPose(Position, value);
 public static DPose operator +(DPose a, DPose b) => new DPose(a.Position + b.Position, a.Orientation + b.Orientation);
 public static DPose operator -(DPose a, DPose b) => new DPose(a.Position - b.Position, a.Orientation - b.Orientation);
@@ -604,10 +605,10 @@ public static DPose MaxValue(this DPose _) => DPose.MaxValue;
 }
 public partial struct Transform
 {
-public Transform(Vector3 translation, Quaternion rotation, Vector3 scale) => (Translation, Rotation, Scale) = (translation, rotation, scale);
-public static implicit operator Transform((Vector3 Translation, Quaternion Rotation, Vector3 Scale) tuple) => new Transform(tuple.Translation, tuple.Rotation, tuple.Scale);
-public static implicit operator (Vector3 Translation, Quaternion Rotation, Vector3 Scale)(Transform self) => (self.Translation, self.Rotation, self.Scale);
-public void Deconstruct(out Vector3 translation, out Quaternion rotation, out Vector3 scale) => (translation, rotation, scale) = (Translation, Rotation, Scale);
+public Transform(Double3 translation, Quaternion rotation, Double3 scale) => (Translation, Rotation, Scale) = (translation, rotation, scale);
+public static implicit operator Transform((Double3 Translation, Quaternion Rotation, Double3 Scale) tuple) => new Transform(tuple.Translation, tuple.Rotation, tuple.Scale);
+public static implicit operator (Double3 Translation, Quaternion Rotation, Double3 Scale)(Transform self) => (self.Translation, self.Rotation, self.Scale);
+public void Deconstruct(out Double3 translation, out Quaternion rotation, out Double3 scale) => (translation, rotation, scale) = (Translation, Rotation, Scale);
 public override string ToString() => $"{{ \"Translation\" : { Translation }, \"Rotation\" : { Rotation }, \"Scale\" : { Scale } }}";
 public override bool Equals(object other) => other is Transform typedOther && this == typedOther;
 public override int GetHashCode() => (Translation, Rotation, Scale).GetHashCode();
@@ -618,9 +619,9 @@ public static Transform MinValue = new Transform(Default.Translation.MinValue(),
 public static Transform MaxValue = new Transform(Default.Translation.MaxValue(),Default.Rotation.MaxValue(),Default.Scale.MaxValue());
 public static bool operator ==(Transform a, Transform b) => (a.Translation == b.Translation) && (a.Rotation == b.Rotation) && (a.Scale == b.Scale);
 public static bool operator !=(Transform a, Transform b) => (a.Translation != b.Translation) || (a.Rotation != b.Rotation) || (a.Scale != b.Scale);
-public Transform WithTranslation(Vector3 value) => new Transform(value, Rotation, Scale);
+public Transform WithTranslation(Double3 value) => new Transform(value, Rotation, Scale);
 public Transform WithRotation(Quaternion value) => new Transform(Translation, value, Scale);
-public Transform WithScale(Vector3 value) => new Transform(Translation, Rotation, value);
+public Transform WithScale(Double3 value) => new Transform(Translation, Rotation, value);
 public static Transform operator +(Transform a, Transform b) => new Transform(a.Translation + b.Translation, a.Rotation + b.Rotation, a.Scale + b.Scale);
 public static Transform operator -(Transform a, Transform b) => new Transform(a.Translation - b.Translation, a.Rotation - b.Rotation, a.Scale - b.Scale);
 public static Transform operator *(Transform a, Transform b) => new Transform(a.Translation * b.Translation, a.Rotation * b.Rotation, a.Scale * b.Scale);
@@ -643,10 +644,10 @@ public static Transform MaxValue(this Transform _) => Transform.MaxValue;
 }
 public partial struct BoundingBox2D
 {
-public BoundingBox2D(Vector2 lower, Vector2 upper) => (Lower, Upper) = (lower, upper);
-public static implicit operator BoundingBox2D((Vector2 Lower, Vector2 Upper) tuple) => new BoundingBox2D(tuple.Lower, tuple.Upper);
-public static implicit operator (Vector2 Lower, Vector2 Upper)(BoundingBox2D self) => (self.Lower, self.Upper);
-public void Deconstruct(out Vector2 lower, out Vector2 upper) => (lower, upper) = (Lower, Upper);
+public BoundingBox2D(Float2 lower, Float2 upper) => (Lower, Upper) = (lower, upper);
+public static implicit operator BoundingBox2D((Float2 Lower, Float2 Upper) tuple) => new BoundingBox2D(tuple.Lower, tuple.Upper);
+public static implicit operator (Float2 Lower, Float2 Upper)(BoundingBox2D self) => (self.Lower, self.Upper);
+public void Deconstruct(out Float2 lower, out Float2 upper) => (lower, upper) = (Lower, Upper);
 public override string ToString() => $"{{ \"Lower\" : { Lower }, \"Upper\" : { Upper } }}";
 public override bool Equals(object other) => other is BoundingBox2D typedOther && this == typedOther;
 public override int GetHashCode() => (Lower, Upper).GetHashCode();
@@ -657,8 +658,8 @@ public static BoundingBox2D MinValue = new BoundingBox2D(Default.Lower.MinValue(
 public static BoundingBox2D MaxValue = new BoundingBox2D(Default.Lower.MaxValue(),Default.Upper.MaxValue());
 public static bool operator ==(BoundingBox2D a, BoundingBox2D b) => (a.Lower == b.Lower) && (a.Upper == b.Upper);
 public static bool operator !=(BoundingBox2D a, BoundingBox2D b) => (a.Lower != b.Lower) || (a.Upper != b.Upper);
-public BoundingBox2D WithLower(Vector2 value) => new BoundingBox2D(value, Upper);
-public BoundingBox2D WithUpper(Vector2 value) => new BoundingBox2D(Lower, value);
+public BoundingBox2D WithLower(Float2 value) => new BoundingBox2D(value, Upper);
+public BoundingBox2D WithUpper(Float2 value) => new BoundingBox2D(Lower, value);
 }
 public static partial class Intrinsics {
 public static BoundingBox2D Default(this BoundingBox2D _) => default(BoundingBox2D);
@@ -669,10 +670,10 @@ public static BoundingBox2D MaxValue(this BoundingBox2D _) => BoundingBox2D.MaxV
 }
 public partial struct BoundingBox3D
 {
-public BoundingBox3D(Vector3 lower, Vector3 upper) => (Lower, Upper) = (lower, upper);
-public static implicit operator BoundingBox3D((Vector3 Lower, Vector3 Upper) tuple) => new BoundingBox3D(tuple.Lower, tuple.Upper);
-public static implicit operator (Vector3 Lower, Vector3 Upper)(BoundingBox3D self) => (self.Lower, self.Upper);
-public void Deconstruct(out Vector3 lower, out Vector3 upper) => (lower, upper) = (Lower, Upper);
+public BoundingBox3D(Double3 lower, Double3 upper) => (Lower, Upper) = (lower, upper);
+public static implicit operator BoundingBox3D((Double3 Lower, Double3 Upper) tuple) => new BoundingBox3D(tuple.Lower, tuple.Upper);
+public static implicit operator (Double3 Lower, Double3 Upper)(BoundingBox3D self) => (self.Lower, self.Upper);
+public void Deconstruct(out Double3 lower, out Double3 upper) => (lower, upper) = (Lower, Upper);
 public override string ToString() => $"{{ \"Lower\" : { Lower }, \"Upper\" : { Upper } }}";
 public override bool Equals(object other) => other is BoundingBox3D typedOther && this == typedOther;
 public override int GetHashCode() => (Lower, Upper).GetHashCode();
@@ -683,8 +684,8 @@ public static BoundingBox3D MinValue = new BoundingBox3D(Default.Lower.MinValue(
 public static BoundingBox3D MaxValue = new BoundingBox3D(Default.Lower.MaxValue(),Default.Upper.MaxValue());
 public static bool operator ==(BoundingBox3D a, BoundingBox3D b) => (a.Lower == b.Lower) && (a.Upper == b.Upper);
 public static bool operator !=(BoundingBox3D a, BoundingBox3D b) => (a.Lower != b.Lower) || (a.Upper != b.Upper);
-public BoundingBox3D WithLower(Vector3 value) => new BoundingBox3D(value, Upper);
-public BoundingBox3D WithUpper(Vector3 value) => new BoundingBox3D(Lower, value);
+public BoundingBox3D WithLower(Double3 value) => new BoundingBox3D(value, Upper);
+public BoundingBox3D WithUpper(Double3 value) => new BoundingBox3D(Lower, value);
 }
 public static partial class Intrinsics {
 public static BoundingBox3D Default(this BoundingBox3D _) => default(BoundingBox3D);
@@ -793,10 +794,10 @@ public static Complex MaxValue(this Complex _) => Complex.MaxValue;
 }
 public partial struct Ray
 {
-public Ray(Vector3 direction, Vector3 position) => (Direction, Position) = (direction, position);
-public static implicit operator Ray((Vector3 Direction, Vector3 Position) tuple) => new Ray(tuple.Direction, tuple.Position);
-public static implicit operator (Vector3 Direction, Vector3 Position)(Ray self) => (self.Direction, self.Position);
-public void Deconstruct(out Vector3 direction, out Vector3 position) => (direction, position) = (Direction, Position);
+public Ray(Double3 direction, Double3 position) => (Direction, Position) = (direction, position);
+public static implicit operator Ray((Double3 Direction, Double3 Position) tuple) => new Ray(tuple.Direction, tuple.Position);
+public static implicit operator (Double3 Direction, Double3 Position)(Ray self) => (self.Direction, self.Position);
+public void Deconstruct(out Double3 direction, out Double3 position) => (direction, position) = (Direction, Position);
 public override string ToString() => $"{{ \"Direction\" : { Direction }, \"Position\" : { Position } }}";
 public override bool Equals(object other) => other is Ray typedOther && this == typedOther;
 public override int GetHashCode() => (Direction, Position).GetHashCode();
@@ -807,8 +808,8 @@ public static Ray MinValue = new Ray(Default.Direction.MinValue(),Default.Positi
 public static Ray MaxValue = new Ray(Default.Direction.MaxValue(),Default.Position.MaxValue());
 public static bool operator ==(Ray a, Ray b) => (a.Direction == b.Direction) && (a.Position == b.Position);
 public static bool operator !=(Ray a, Ray b) => (a.Direction != b.Direction) || (a.Position != b.Position);
-public Ray WithDirection(Vector3 value) => new Ray(value, Position);
-public Ray WithPosition(Vector3 value) => new Ray(Direction, value);
+public Ray WithDirection(Double3 value) => new Ray(value, Position);
+public Ray WithPosition(Double3 value) => new Ray(Direction, value);
 }
 public static partial class Intrinsics {
 public static Ray Default(this Ray _) => default(Ray);
@@ -819,10 +820,10 @@ public static Ray MaxValue(this Ray _) => Ray.MaxValue;
 }
 public partial struct Sphere
 {
-public Sphere(Vector3 center, Single radius) => (Center, Radius) = (center, radius);
-public static implicit operator Sphere((Vector3 Center, Single Radius) tuple) => new Sphere(tuple.Center, tuple.Radius);
-public static implicit operator (Vector3 Center, Single Radius)(Sphere self) => (self.Center, self.Radius);
-public void Deconstruct(out Vector3 center, out Single radius) => (center, radius) = (Center, Radius);
+public Sphere(Double3 center, Single radius) => (Center, Radius) = (center, radius);
+public static implicit operator Sphere((Double3 Center, Single Radius) tuple) => new Sphere(tuple.Center, tuple.Radius);
+public static implicit operator (Double3 Center, Single Radius)(Sphere self) => (self.Center, self.Radius);
+public void Deconstruct(out Double3 center, out Single radius) => (center, radius) = (Center, Radius);
 public override string ToString() => $"{{ \"Center\" : { Center }, \"Radius\" : { Radius } }}";
 public override bool Equals(object other) => other is Sphere typedOther && this == typedOther;
 public override int GetHashCode() => (Center, Radius).GetHashCode();
@@ -833,7 +834,7 @@ public static Sphere MinValue = new Sphere(Default.Center.MinValue(),Default.Rad
 public static Sphere MaxValue = new Sphere(Default.Center.MaxValue(),Default.Radius.MaxValue());
 public static bool operator ==(Sphere a, Sphere b) => (a.Center == b.Center) && (a.Radius == b.Radius);
 public static bool operator !=(Sphere a, Sphere b) => (a.Center != b.Center) || (a.Radius != b.Radius);
-public Sphere WithCenter(Vector3 value) => new Sphere(value, Radius);
+public Sphere WithCenter(Double3 value) => new Sphere(value, Radius);
 public Sphere WithRadius(Single value) => new Sphere(Center, value);
 }
 public static partial class Intrinsics {
@@ -845,10 +846,10 @@ public static Sphere MaxValue(this Sphere _) => Sphere.MaxValue;
 }
 public partial struct Plane
 {
-public Plane(Vector3 normal, Single d) => (Normal, D) = (normal, d);
-public static implicit operator Plane((Vector3 Normal, Single D) tuple) => new Plane(tuple.Normal, tuple.D);
-public static implicit operator (Vector3 Normal, Single D)(Plane self) => (self.Normal, self.D);
-public void Deconstruct(out Vector3 normal, out Single d) => (normal, d) = (Normal, D);
+public Plane(Double3 normal, Single d) => (Normal, D) = (normal, d);
+public static implicit operator Plane((Double3 Normal, Single D) tuple) => new Plane(tuple.Normal, tuple.D);
+public static implicit operator (Double3 Normal, Single D)(Plane self) => (self.Normal, self.D);
+public void Deconstruct(out Double3 normal, out Single d) => (normal, d) = (Normal, D);
 public override string ToString() => $"{{ \"Normal\" : { Normal }, \"D\" : { D } }}";
 public override bool Equals(object other) => other is Plane typedOther && this == typedOther;
 public override int GetHashCode() => (Normal, D).GetHashCode();
@@ -859,7 +860,7 @@ public static Plane MinValue = new Plane(Default.Normal.MinValue(),Default.D.Min
 public static Plane MaxValue = new Plane(Default.Normal.MaxValue(),Default.D.MaxValue());
 public static bool operator ==(Plane a, Plane b) => (a.Normal == b.Normal) && (a.D == b.D);
 public static bool operator !=(Plane a, Plane b) => (a.Normal != b.Normal) || (a.D != b.D);
-public Plane WithNormal(Vector3 value) => new Plane(value, D);
+public Plane WithNormal(Double3 value) => new Plane(value, D);
 public Plane WithD(Single value) => new Plane(Normal, value);
 }
 public static partial class Intrinsics {
@@ -871,10 +872,10 @@ public static Plane MaxValue(this Plane _) => Plane.MaxValue;
 }
 public partial struct Triangle
 {
-public Triangle(Vector3 a, Vector3 b, Vector3 c) => (A, B, C) = (a, b, c);
-public static implicit operator Triangle((Vector3 A, Vector3 B, Vector3 C) tuple) => new Triangle(tuple.A, tuple.B, tuple.C);
-public static implicit operator (Vector3 A, Vector3 B, Vector3 C)(Triangle self) => (self.A, self.B, self.C);
-public void Deconstruct(out Vector3 a, out Vector3 b, out Vector3 c) => (a, b, c) = (A, B, C);
+public Triangle(Double3 a, Double3 b, Double3 c) => (A, B, C) = (a, b, c);
+public static implicit operator Triangle((Double3 A, Double3 B, Double3 C) tuple) => new Triangle(tuple.A, tuple.B, tuple.C);
+public static implicit operator (Double3 A, Double3 B, Double3 C)(Triangle self) => (self.A, self.B, self.C);
+public void Deconstruct(out Double3 a, out Double3 b, out Double3 c) => (a, b, c) = (A, B, C);
 public override string ToString() => $"{{ \"A\" : { A }, \"B\" : { B }, \"C\" : { C } }}";
 public override bool Equals(object other) => other is Triangle typedOther && this == typedOther;
 public override int GetHashCode() => (A, B, C).GetHashCode();
@@ -885,18 +886,18 @@ public static Triangle MinValue = new Triangle(Default.A.MinValue(),Default.B.Mi
 public static Triangle MaxValue = new Triangle(Default.A.MaxValue(),Default.B.MaxValue(),Default.C.MaxValue());
 public static bool operator ==(Triangle a, Triangle b) => (a.A == b.A) && (a.B == b.B) && (a.C == b.C);
 public static bool operator !=(Triangle a, Triangle b) => (a.A != b.A) || (a.B != b.B) || (a.C != b.C);
-public Triangle WithA(Vector3 value) => new Triangle(value, B, C);
-public Triangle WithB(Vector3 value) => new Triangle(A, value, C);
-public Triangle WithC(Vector3 value) => new Triangle(A, B, value);
+public Triangle WithA(Double3 value) => new Triangle(value, B, C);
+public Triangle WithB(Double3 value) => new Triangle(A, value, C);
+public Triangle WithC(Double3 value) => new Triangle(A, B, value);
 public static Triangle operator +(Triangle a, Triangle b) => new Triangle(a.A + b.A, a.B + b.B, a.C + b.C);
 public static Triangle operator -(Triangle a, Triangle b) => new Triangle(a.A - b.A, a.B - b.B, a.C - b.C);
 public static Triangle operator *(Triangle a, Triangle b) => new Triangle(a.A * b.A, a.B * b.B, a.C * b.C);
 public static Triangle operator /(Triangle a, Triangle b) => new Triangle(a.A / b.A, a.B / b.B, a.C / b.C);
 public static Triangle operator -(Triangle a) => new Triangle(- a.A, - a.B, - a.C);
-public static Triangle operator *(Triangle self, Vector3 scalar) => new Triangle(self.A * scalar, self.B * scalar, self.C * scalar);
-public static Triangle operator /(Triangle self, Vector3 scalar) => new Triangle(self.A / scalar, self.B / scalar, self.C / scalar);
+public static Triangle operator *(Triangle self, Double3 scalar) => new Triangle(self.A * scalar, self.B * scalar, self.C * scalar);
+public static Triangle operator /(Triangle self, Double3 scalar) => new Triangle(self.A / scalar, self.B / scalar, self.C / scalar);
 public int Count => 3;
-public Vector3 this[int index] { get { switch (index) {
+public Double3 this[int index] { get { switch (index) {
 case 0: return A;
 case 1: return B;
 case 2: return C;
@@ -919,10 +920,10 @@ public static Triangle MaxValue(this Triangle _) => Triangle.MaxValue;
 }
 public partial struct Triangle2D
 {
-public Triangle2D(Vector2 a, Vector2 b, Vector2 c) => (A, B, C) = (a, b, c);
-public static implicit operator Triangle2D((Vector2 A, Vector2 B, Vector2 C) tuple) => new Triangle2D(tuple.A, tuple.B, tuple.C);
-public static implicit operator (Vector2 A, Vector2 B, Vector2 C)(Triangle2D self) => (self.A, self.B, self.C);
-public void Deconstruct(out Vector2 a, out Vector2 b, out Vector2 c) => (a, b, c) = (A, B, C);
+public Triangle2D(Float2 a, Float2 b, Float2 c) => (A, B, C) = (a, b, c);
+public static implicit operator Triangle2D((Float2 A, Float2 B, Float2 C) tuple) => new Triangle2D(tuple.A, tuple.B, tuple.C);
+public static implicit operator (Float2 A, Float2 B, Float2 C)(Triangle2D self) => (self.A, self.B, self.C);
+public void Deconstruct(out Float2 a, out Float2 b, out Float2 c) => (a, b, c) = (A, B, C);
 public override string ToString() => $"{{ \"A\" : { A }, \"B\" : { B }, \"C\" : { C } }}";
 public override bool Equals(object other) => other is Triangle2D typedOther && this == typedOther;
 public override int GetHashCode() => (A, B, C).GetHashCode();
@@ -933,18 +934,18 @@ public static Triangle2D MinValue = new Triangle2D(Default.A.MinValue(),Default.
 public static Triangle2D MaxValue = new Triangle2D(Default.A.MaxValue(),Default.B.MaxValue(),Default.C.MaxValue());
 public static bool operator ==(Triangle2D a, Triangle2D b) => (a.A == b.A) && (a.B == b.B) && (a.C == b.C);
 public static bool operator !=(Triangle2D a, Triangle2D b) => (a.A != b.A) || (a.B != b.B) || (a.C != b.C);
-public Triangle2D WithA(Vector2 value) => new Triangle2D(value, B, C);
-public Triangle2D WithB(Vector2 value) => new Triangle2D(A, value, C);
-public Triangle2D WithC(Vector2 value) => new Triangle2D(A, B, value);
+public Triangle2D WithA(Float2 value) => new Triangle2D(value, B, C);
+public Triangle2D WithB(Float2 value) => new Triangle2D(A, value, C);
+public Triangle2D WithC(Float2 value) => new Triangle2D(A, B, value);
 public static Triangle2D operator +(Triangle2D a, Triangle2D b) => new Triangle2D(a.A + b.A, a.B + b.B, a.C + b.C);
 public static Triangle2D operator -(Triangle2D a, Triangle2D b) => new Triangle2D(a.A - b.A, a.B - b.B, a.C - b.C);
 public static Triangle2D operator *(Triangle2D a, Triangle2D b) => new Triangle2D(a.A * b.A, a.B * b.B, a.C * b.C);
 public static Triangle2D operator /(Triangle2D a, Triangle2D b) => new Triangle2D(a.A / b.A, a.B / b.B, a.C / b.C);
 public static Triangle2D operator -(Triangle2D a) => new Triangle2D(- a.A, - a.B, - a.C);
-public static Triangle2D operator *(Triangle2D self, Vector2 scalar) => new Triangle2D(self.A * scalar, self.B * scalar, self.C * scalar);
-public static Triangle2D operator /(Triangle2D self, Vector2 scalar) => new Triangle2D(self.A / scalar, self.B / scalar, self.C / scalar);
+public static Triangle2D operator *(Triangle2D self, Float2 scalar) => new Triangle2D(self.A * scalar, self.B * scalar, self.C * scalar);
+public static Triangle2D operator /(Triangle2D self, Float2 scalar) => new Triangle2D(self.A / scalar, self.B / scalar, self.C / scalar);
 public int Count => 3;
-public Vector2 this[int index] { get { switch (index) {
+public Float2 this[int index] { get { switch (index) {
 case 0: return A;
 case 1: return B;
 case 2: return C;
@@ -967,10 +968,10 @@ public static Triangle2D MaxValue(this Triangle2D _) => Triangle2D.MaxValue;
 }
 public partial struct Quad
 {
-public Quad(Vector3 a, Vector3 b, Vector3 c, Vector3 d) => (A, B, C, D) = (a, b, c, d);
-public static implicit operator Quad((Vector3 A, Vector3 B, Vector3 C, Vector3 D) tuple) => new Quad(tuple.A, tuple.B, tuple.C, tuple.D);
-public static implicit operator (Vector3 A, Vector3 B, Vector3 C, Vector3 D)(Quad self) => (self.A, self.B, self.C, self.D);
-public void Deconstruct(out Vector3 a, out Vector3 b, out Vector3 c, out Vector3 d) => (a, b, c, d) = (A, B, C, D);
+public Quad(Double3 a, Double3 b, Double3 c, Double3 d) => (A, B, C, D) = (a, b, c, d);
+public static implicit operator Quad((Double3 A, Double3 B, Double3 C, Double3 D) tuple) => new Quad(tuple.A, tuple.B, tuple.C, tuple.D);
+public static implicit operator (Double3 A, Double3 B, Double3 C, Double3 D)(Quad self) => (self.A, self.B, self.C, self.D);
+public void Deconstruct(out Double3 a, out Double3 b, out Double3 c, out Double3 d) => (a, b, c, d) = (A, B, C, D);
 public override string ToString() => $"{{ \"A\" : { A }, \"B\" : { B }, \"C\" : { C }, \"D\" : { D } }}";
 public override bool Equals(object other) => other is Quad typedOther && this == typedOther;
 public override int GetHashCode() => (A, B, C, D).GetHashCode();
@@ -981,19 +982,19 @@ public static Quad MinValue = new Quad(Default.A.MinValue(),Default.B.MinValue()
 public static Quad MaxValue = new Quad(Default.A.MaxValue(),Default.B.MaxValue(),Default.C.MaxValue(),Default.D.MaxValue());
 public static bool operator ==(Quad a, Quad b) => (a.A == b.A) && (a.B == b.B) && (a.C == b.C) && (a.D == b.D);
 public static bool operator !=(Quad a, Quad b) => (a.A != b.A) || (a.B != b.B) || (a.C != b.C) || (a.D != b.D);
-public Quad WithA(Vector3 value) => new Quad(value, B, C, D);
-public Quad WithB(Vector3 value) => new Quad(A, value, C, D);
-public Quad WithC(Vector3 value) => new Quad(A, B, value, D);
-public Quad WithD(Vector3 value) => new Quad(A, B, C, value);
+public Quad WithA(Double3 value) => new Quad(value, B, C, D);
+public Quad WithB(Double3 value) => new Quad(A, value, C, D);
+public Quad WithC(Double3 value) => new Quad(A, B, value, D);
+public Quad WithD(Double3 value) => new Quad(A, B, C, value);
 public static Quad operator +(Quad a, Quad b) => new Quad(a.A + b.A, a.B + b.B, a.C + b.C, a.D + b.D);
 public static Quad operator -(Quad a, Quad b) => new Quad(a.A - b.A, a.B - b.B, a.C - b.C, a.D - b.D);
 public static Quad operator *(Quad a, Quad b) => new Quad(a.A * b.A, a.B * b.B, a.C * b.C, a.D * b.D);
 public static Quad operator /(Quad a, Quad b) => new Quad(a.A / b.A, a.B / b.B, a.C / b.C, a.D / b.D);
 public static Quad operator -(Quad a) => new Quad(- a.A, - a.B, - a.C, - a.D);
-public static Quad operator *(Quad self, Vector3 scalar) => new Quad(self.A * scalar, self.B * scalar, self.C * scalar, self.D * scalar);
-public static Quad operator /(Quad self, Vector3 scalar) => new Quad(self.A / scalar, self.B / scalar, self.C / scalar, self.D / scalar);
+public static Quad operator *(Quad self, Double3 scalar) => new Quad(self.A * scalar, self.B * scalar, self.C * scalar, self.D * scalar);
+public static Quad operator /(Quad self, Double3 scalar) => new Quad(self.A / scalar, self.B / scalar, self.C / scalar, self.D / scalar);
 public int Count => 4;
-public Vector3 this[int index] { get { switch (index) {
+public Double3 this[int index] { get { switch (index) {
 case 0: return A;
 case 1: return B;
 case 2: return C;
@@ -1017,10 +1018,10 @@ public static Quad MaxValue(this Quad _) => Quad.MaxValue;
 }
 public partial struct Line
 {
-public Line(Vector3 a, Vector3 b) => (A, B) = (a, b);
-public static implicit operator Line((Vector3 A, Vector3 B) tuple) => new Line(tuple.A, tuple.B);
-public static implicit operator (Vector3 A, Vector3 B)(Line self) => (self.A, self.B);
-public void Deconstruct(out Vector3 a, out Vector3 b) => (a, b) = (A, B);
+public Line(Double3 a, Double3 b) => (A, B) = (a, b);
+public static implicit operator Line((Double3 A, Double3 B) tuple) => new Line(tuple.A, tuple.B);
+public static implicit operator (Double3 A, Double3 B)(Line self) => (self.A, self.B);
+public void Deconstruct(out Double3 a, out Double3 b) => (a, b) = (A, B);
 public override string ToString() => $"{{ \"A\" : { A }, \"B\" : { B } }}";
 public override bool Equals(object other) => other is Line typedOther && this == typedOther;
 public override int GetHashCode() => (A, B).GetHashCode();
@@ -1031,17 +1032,17 @@ public static Line MinValue = new Line(Default.A.MinValue(),Default.B.MinValue()
 public static Line MaxValue = new Line(Default.A.MaxValue(),Default.B.MaxValue());
 public static bool operator ==(Line a, Line b) => (a.A == b.A) && (a.B == b.B);
 public static bool operator !=(Line a, Line b) => (a.A != b.A) || (a.B != b.B);
-public Line WithA(Vector3 value) => new Line(value, B);
-public Line WithB(Vector3 value) => new Line(A, value);
+public Line WithA(Double3 value) => new Line(value, B);
+public Line WithB(Double3 value) => new Line(A, value);
 public static Line operator +(Line a, Line b) => new Line(a.A + b.A, a.B + b.B);
 public static Line operator -(Line a, Line b) => new Line(a.A - b.A, a.B - b.B);
 public static Line operator *(Line a, Line b) => new Line(a.A * b.A, a.B * b.B);
 public static Line operator /(Line a, Line b) => new Line(a.A / b.A, a.B / b.B);
 public static Line operator -(Line a) => new Line(- a.A, - a.B);
-public static Line operator *(Line self, Vector3 scalar) => new Line(self.A * scalar, self.B * scalar);
-public static Line operator /(Line self, Vector3 scalar) => new Line(self.A / scalar, self.B / scalar);
+public static Line operator *(Line self, Double3 scalar) => new Line(self.A * scalar, self.B * scalar);
+public static Line operator /(Line self, Double3 scalar) => new Line(self.A / scalar, self.B / scalar);
 public int Count => 2;
-public Vector3 this[int index] { get { switch (index) {
+public Double3 this[int index] { get { switch (index) {
 case 0: return A;
 case 1: return B;
 default: throw new System.ArgumentOutOfRangeException(nameof(index));
@@ -1063,10 +1064,10 @@ public static Line MaxValue(this Line _) => Line.MaxValue;
 }
 public partial struct Line2D
 {
-public Line2D(Vector2 a, Vector2 b) => (A, B) = (a, b);
-public static implicit operator Line2D((Vector2 A, Vector2 B) tuple) => new Line2D(tuple.A, tuple.B);
-public static implicit operator (Vector2 A, Vector2 B)(Line2D self) => (self.A, self.B);
-public void Deconstruct(out Vector2 a, out Vector2 b) => (a, b) = (A, B);
+public Line2D(Float2 a, Float2 b) => (A, B) = (a, b);
+public static implicit operator Line2D((Float2 A, Float2 B) tuple) => new Line2D(tuple.A, tuple.B);
+public static implicit operator (Float2 A, Float2 B)(Line2D self) => (self.A, self.B);
+public void Deconstruct(out Float2 a, out Float2 b) => (a, b) = (A, B);
 public override string ToString() => $"{{ \"A\" : { A }, \"B\" : { B } }}";
 public override bool Equals(object other) => other is Line2D typedOther && this == typedOther;
 public override int GetHashCode() => (A, B).GetHashCode();
@@ -1077,17 +1078,17 @@ public static Line2D MinValue = new Line2D(Default.A.MinValue(),Default.B.MinVal
 public static Line2D MaxValue = new Line2D(Default.A.MaxValue(),Default.B.MaxValue());
 public static bool operator ==(Line2D a, Line2D b) => (a.A == b.A) && (a.B == b.B);
 public static bool operator !=(Line2D a, Line2D b) => (a.A != b.A) || (a.B != b.B);
-public Line2D WithA(Vector2 value) => new Line2D(value, B);
-public Line2D WithB(Vector2 value) => new Line2D(A, value);
+public Line2D WithA(Float2 value) => new Line2D(value, B);
+public Line2D WithB(Float2 value) => new Line2D(A, value);
 public static Line2D operator +(Line2D a, Line2D b) => new Line2D(a.A + b.A, a.B + b.B);
 public static Line2D operator -(Line2D a, Line2D b) => new Line2D(a.A - b.A, a.B - b.B);
 public static Line2D operator *(Line2D a, Line2D b) => new Line2D(a.A * b.A, a.B * b.B);
 public static Line2D operator /(Line2D a, Line2D b) => new Line2D(a.A / b.A, a.B / b.B);
 public static Line2D operator -(Line2D a) => new Line2D(- a.A, - a.B);
-public static Line2D operator *(Line2D self, Vector2 scalar) => new Line2D(self.A * scalar, self.B * scalar);
-public static Line2D operator /(Line2D self, Vector2 scalar) => new Line2D(self.A / scalar, self.B / scalar);
+public static Line2D operator *(Line2D self, Float2 scalar) => new Line2D(self.A * scalar, self.B * scalar);
+public static Line2D operator /(Line2D self, Float2 scalar) => new Line2D(self.A / scalar, self.B / scalar);
 public int Count => 2;
-public Vector2 this[int index] { get { switch (index) {
+public Float2 this[int index] { get { switch (index) {
 case 0: return A;
 case 1: return B;
 default: throw new System.ArgumentOutOfRangeException(nameof(index));
@@ -1351,10 +1352,10 @@ public static GeoCoordinate MaxValue(this GeoCoordinate _) => GeoCoordinate.MaxV
 }
 public partial struct AxisAngle
 {
-public AxisAngle(DVector3 axis, Angle angle) => (Axis, Angle) = (axis, angle);
-public static implicit operator AxisAngle((DVector3 Axis, Angle Angle) tuple) => new AxisAngle(tuple.Axis, tuple.Angle);
-public static implicit operator (DVector3 Axis, Angle Angle)(AxisAngle self) => (self.Axis, self.Angle);
-public void Deconstruct(out DVector3 axis, out Angle angle) => (axis, angle) = (Axis, Angle);
+public AxisAngle(Double3 axis, Angle angle) => (Axis, Angle) = (axis, angle);
+public static implicit operator AxisAngle((Double3 Axis, Angle Angle) tuple) => new AxisAngle(tuple.Axis, tuple.Angle);
+public static implicit operator (Double3 Axis, Angle Angle)(AxisAngle self) => (self.Axis, self.Angle);
+public void Deconstruct(out Double3 axis, out Angle angle) => (axis, angle) = (Axis, Angle);
 public override string ToString() => $"{{ \"Axis\" : { Axis }, \"Angle\" : { Angle } }}";
 public override bool Equals(object other) => other is AxisAngle typedOther && this == typedOther;
 public override int GetHashCode() => (Axis, Angle).GetHashCode();
@@ -1365,7 +1366,7 @@ public static AxisAngle MinValue = new AxisAngle(Default.Axis.MinValue(),Default
 public static AxisAngle MaxValue = new AxisAngle(Default.Axis.MaxValue(),Default.Angle.MaxValue());
 public static bool operator ==(AxisAngle a, AxisAngle b) => (a.Axis == b.Axis) && (a.Angle == b.Angle);
 public static bool operator !=(AxisAngle a, AxisAngle b) => (a.Axis != b.Axis) || (a.Angle != b.Angle);
-public AxisAngle WithAxis(DVector3 value) => new AxisAngle(value, Angle);
+public AxisAngle WithAxis(Double3 value) => new AxisAngle(value, Angle);
 public AxisAngle WithAngle(Angle value) => new AxisAngle(Axis, value);
 }
 public static partial class Intrinsics {
@@ -1404,10 +1405,10 @@ public static EulerAngles MaxValue(this EulerAngles _) => EulerAngles.MaxValue;
 }
 public partial struct Circle
 {
-public Circle(DVector2 position, Double radius) => (Position, Radius) = (position, radius);
-public static implicit operator Circle((DVector2 Position, Double Radius) tuple) => new Circle(tuple.Position, tuple.Radius);
-public static implicit operator (DVector2 Position, Double Radius)(Circle self) => (self.Position, self.Radius);
-public void Deconstruct(out DVector2 position, out Double radius) => (position, radius) = (Position, Radius);
+public Circle(Double2 position, Double radius) => (Position, Radius) = (position, radius);
+public static implicit operator Circle((Double2 Position, Double Radius) tuple) => new Circle(tuple.Position, tuple.Radius);
+public static implicit operator (Double2 Position, Double Radius)(Circle self) => (self.Position, self.Radius);
+public void Deconstruct(out Double2 position, out Double radius) => (position, radius) = (Position, Radius);
 public override string ToString() => $"{{ \"Position\" : { Position }, \"Radius\" : { Radius } }}";
 public override bool Equals(object other) => other is Circle typedOther && this == typedOther;
 public override int GetHashCode() => (Position, Radius).GetHashCode();
@@ -1418,7 +1419,7 @@ public static Circle MinValue = new Circle(Default.Position.MinValue(),Default.R
 public static Circle MaxValue = new Circle(Default.Position.MaxValue(),Default.Radius.MaxValue());
 public static bool operator ==(Circle a, Circle b) => (a.Position == b.Position) && (a.Radius == b.Radius);
 public static bool operator !=(Circle a, Circle b) => (a.Position != b.Position) || (a.Radius != b.Radius);
-public Circle WithPosition(DVector2 value) => new Circle(value, Radius);
+public Circle WithPosition(Double2 value) => new Circle(value, Radius);
 public Circle WithRadius(Double value) => new Circle(Position, value);
 }
 public static partial class Intrinsics {
@@ -1456,10 +1457,10 @@ public static Size MaxValue(this Size _) => Size.MaxValue;
 }
 public partial struct Rectangle
 {
-public Rectangle(DVector2 topleft, Size size) => (TopLeft, Size) = (topleft, size);
-public static implicit operator Rectangle((DVector2 TopLeft, Size Size) tuple) => new Rectangle(tuple.TopLeft, tuple.Size);
-public static implicit operator (DVector2 TopLeft, Size Size)(Rectangle self) => (self.TopLeft, self.Size);
-public void Deconstruct(out DVector2 topleft, out Size size) => (topleft, size) = (TopLeft, Size);
+public Rectangle(Double2 topleft, Size size) => (TopLeft, Size) = (topleft, size);
+public static implicit operator Rectangle((Double2 TopLeft, Size Size) tuple) => new Rectangle(tuple.TopLeft, tuple.Size);
+public static implicit operator (Double2 TopLeft, Size Size)(Rectangle self) => (self.TopLeft, self.Size);
+public void Deconstruct(out Double2 topleft, out Size size) => (topleft, size) = (TopLeft, Size);
 public override string ToString() => $"{{ \"TopLeft\" : { TopLeft }, \"Size\" : { Size } }}";
 public override bool Equals(object other) => other is Rectangle typedOther && this == typedOther;
 public override int GetHashCode() => (TopLeft, Size).GetHashCode();
@@ -1470,7 +1471,7 @@ public static Rectangle MinValue = new Rectangle(Default.TopLeft.MinValue(),Defa
 public static Rectangle MaxValue = new Rectangle(Default.TopLeft.MaxValue(),Default.Size.MaxValue());
 public static bool operator ==(Rectangle a, Rectangle b) => (a.TopLeft == b.TopLeft) && (a.Size == b.Size);
 public static bool operator !=(Rectangle a, Rectangle b) => (a.TopLeft != b.TopLeft) || (a.Size != b.Size);
-public Rectangle WithTopLeft(DVector2 value) => new Rectangle(value, Size);
+public Rectangle WithTopLeft(Double2 value) => new Rectangle(value, Size);
 public Rectangle WithSize(Size value) => new Rectangle(TopLeft, value);
 }
 public static partial class Intrinsics {
@@ -1582,38 +1583,38 @@ public static Mass One(this Mass _) => Mass.One;
 public static Mass MinValue(this Mass _) => Mass.MinValue;
 public static Mass MaxValue(this Mass _) => Mass.MaxValue;
 }
-public partial struct Duration
+public partial struct Time
 {
-public Duration(Double value) => (Value) = (value);
-public override string ToString() => $"{{ \"Value\" : { Value } }}";
-public override bool Equals(object other) => other is Duration typedOther && this == typedOther;
-public override int GetHashCode() => (Value).GetHashCode();
-public static readonly Duration Default = default;
-public static Duration Zero = new Duration(Default.Value.Zero());
-public static Duration One = new Duration(Default.Value.One());
-public static Duration MinValue = new Duration(Default.Value.MinValue());
-public static Duration MaxValue = new Duration(Default.Value.MaxValue());
-public static bool operator ==(Duration a, Duration b) => (a.Value == b.Value);
-public static bool operator !=(Duration a, Duration b) => (a.Value != b.Value);
-public Duration WithValue(Double value) => new Duration(value);
-public static Duration operator +(Duration a, Duration b) => new Duration(a.Value + b.Value);
-public static Duration operator -(Duration a, Duration b) => new Duration(a.Value - b.Value);
-public static Duration operator *(Duration a, Duration b) => new Duration(a.Value * b.Value);
-public static Duration operator /(Duration a, Duration b) => new Duration(a.Value / b.Value);
-public static Duration operator -(Duration a) => new Duration(- a.Value);
+public Time(Double value) => (Seconds) = (value);
+public override string ToString() => $"{{ \"Value\" : { Seconds } }}";
+public override bool Equals(object other) => other is Time typedOther && this == typedOther;
+public override int GetHashCode() => (Seconds).GetHashCode();
+public static readonly Time Default = default;
+public static Time Zero = new Time(Default.Seconds.Zero());
+public static Time One = new Time(Default.Seconds.One());
+public static Time MinValue = new Time(Default.Seconds.MinValue());
+public static Time MaxValue = new Time(Default.Seconds.MaxValue());
+public static bool operator ==(Time a, Time b) => (a.Seconds == b.Seconds);
+public static bool operator !=(Time a, Time b) => (a.Seconds != b.Seconds);
+public Time WithValue(Double value) => new Time(value);
+public static Time operator +(Time a, Time b) => new Time(a.Seconds + b.Seconds);
+public static Time operator -(Time a, Time b) => new Time(a.Seconds - b.Seconds);
+public static Time operator *(Time a, Time b) => new Time(a.Seconds * b.Seconds);
+public static Time operator /(Time a, Time b) => new Time(a.Seconds / b.Seconds);
+public static Time operator -(Time a) => new Time(- a.Seconds);
 }
 public static partial class Intrinsics {
-public static Duration Add(this Duration a, Duration b) => a + b;
-public static Duration Subtract(this Duration a, Duration b) => a - b;
-public static Duration Multiply(this Duration a, Duration b) => a * b;
-public static Duration Divide(this Duration a, Duration b) => a / b;
-public static Duration Negate(this Duration a) => - a;
-public static bool Equals(this Duration a, Duration b) => a == b;
-public static bool NotEquals(this Duration a, Duration b) => a != b;
-public static Duration Default(this Duration _) => default(Duration);
-public static Duration Zero(this Duration _) => Duration.Zero;
-public static Duration One(this Duration _) => Duration.One;
-public static Duration MinValue(this Duration _) => Duration.MinValue;
-public static Duration MaxValue(this Duration _) => Duration.MaxValue;
+public static Time Add(this Time a, Time b) => a + b;
+public static Time Subtract(this Time a, Time b) => a - b;
+public static Time Multiply(this Time a, Time b) => a * b;
+public static Time Divide(this Time a, Time b) => a / b;
+public static Time Negate(this Time a) => - a;
+public static bool Equals(this Time a, Time b) => a == b;
+public static bool NotEquals(this Time a, Time b) => a != b;
+public static Time Default(this Time _) => default(Time);
+public static Time Zero(this Time _) => Time.Zero;
+public static Time One(this Time _) => Time.One;
+public static Time MinValue(this Time _) => Time.MinValue;
+public static Time MaxValue(this Time _) => Time.MaxValue;
 }
 } // End namespace
