@@ -10,7 +10,7 @@ public static bool Equals(this float a, float b) => a == b;
 public static bool NotEquals(this float a, float b) => a != b;
 public static float Default(this float _) => default(float);
 public static float Zero(this float _) => (float)0;
-public static float One(this float _) => (float)1;
+ClassLibrary1public static float One(this float _) => (float)1;
 public static float MinValue(this float _) => float.MinValue;
 public static float MaxValue(this float _) => float.MaxValue;
 }

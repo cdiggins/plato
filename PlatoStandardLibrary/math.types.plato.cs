@@ -1,13 +1,5 @@
-﻿using System;
-using Plato;
-
-public class VectorAttribute : Attribute { }
-public class ValueAttribute : Attribute { }
-public class MeasureAttribute : Attribute { }
-public class NumberAttribute : Attribute { }
-public class IntervalAttribute : Attribute { }
-
-namespace Plato     
+﻿
+namespace Plato.__TYPES__     
 {
     [Number]
     class Float
@@ -33,7 +25,7 @@ namespace Plato
         long Value;
     }
 
-    [Number]
+    [Value]
     class Byte
     {
         byte Value;
@@ -245,13 +237,13 @@ namespace Plato
         Double2 Value;
     }
 
-    [Vector]
+    [Value]
     class Line 
     {
         Point A, B;
     }
 
-    [Vector]
+    [Value]
     class Line2D 
     {
         Point2D A, B;
@@ -371,7 +363,7 @@ namespace Plato
     }
 
     [Measure]
-    class Distance 
+    class Length
     {
         Double Meters;
     }
@@ -457,7 +449,7 @@ namespace Plato
     [Value]
     class Box 
     {
-        Position Center;
+        Point Center;
         Rotation Rotation;
         Double3 Extent;
     }

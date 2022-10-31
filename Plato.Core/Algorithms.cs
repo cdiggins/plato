@@ -6,6 +6,20 @@
         double Dot(Double3 a, Double3 b) => (a * b).Sum();
     }
 
+    interface IArithmetic<T>
+    {
+        T Add(T x, T y);
+        T Subtract(T x, T y);
+    }
+
+    class Arithmetic
+    {
+        T Add<T>(T a, T b) where T : IArithmetic<T>
+        {
+            return a.Add(a, b);
+        }
+    }
+
     class Algorithms
     {
         Time FromNanoseconds(double value) => value / 1000 / 1000 / 10000;
@@ -161,5 +175,12 @@
 
         implicit operator double(Mass mass) => mass.Kilograms;
         implicit operator Mass(double kilograms) => new Mass(kilograms);
+    }
+
+    class Algorithms
+    {
+        double Distance(Sphere sphere, Position p)
+            => sphere.Center.Distance(p) - sphere.Radius;
+
     }
 }

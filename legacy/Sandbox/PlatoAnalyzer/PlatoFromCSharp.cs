@@ -24,6 +24,115 @@ namespace PlatoAnalyzer
         public static PlatoBlockStatement ToPlato(this BlockSyntax self, ExpressionSyntax expr, PlatoSemanticMapping mapping)
             => self?.ToPlato(mapping) ?? expr.ToPlatoBlockStatement(mapping);
 
+        public static PlatoTypeExpr GetSpecialType(this SpecialType self, PlatoSemanticMapping mapping)
+        {
+            switch (self)
+            {
+                case SpecialType.None:
+                    break;
+                case SpecialType.System_Object:
+                    return new PlatoTypeExpr(mapping.NextId, "object");
+                case SpecialType.System_Enum:
+                    break;
+                case SpecialType.System_MulticastDelegate:
+                    break;
+                case SpecialType.System_Delegate:
+                    break;
+                case SpecialType.System_ValueType:
+                    break;
+                case SpecialType.System_Void:
+                    break;
+                case SpecialType.System_Boolean:
+                    return new PlatoTypeExpr(mapping.NextId, "bool");
+                case SpecialType.System_Char:
+                    return new PlatoTypeExpr(mapping.NextId, "char");
+                case SpecialType.System_SByte:
+                    return new PlatoTypeExpr(mapping.NextId, "sbyte");
+                case SpecialType.System_Byte:
+                    return new PlatoTypeExpr(mapping.NextId, "byte");
+                case SpecialType.System_Int16:
+                    return new PlatoTypeExpr(mapping.NextId, "short");
+                case SpecialType.System_UInt16:
+                    return new PlatoTypeExpr(mapping.NextId, "ushort");
+                case SpecialType.System_Int32:
+                    return new PlatoTypeExpr(mapping.NextId, "int");
+                case SpecialType.System_UInt32:
+                    return new PlatoTypeExpr(mapping.NextId, "uint");
+                case SpecialType.System_Int64:
+                    return new PlatoTypeExpr(mapping.NextId, "long");
+                case SpecialType.System_UInt64:
+                    return new PlatoTypeExpr(mapping.NextId, "ulong");
+                case SpecialType.System_Decimal:
+                    return new PlatoTypeExpr(mapping.NextId, "decimal");
+                case SpecialType.System_Single:
+                    return new PlatoTypeExpr(mapping.NextId, "float");
+                case SpecialType.System_Double:
+                    return new PlatoTypeExpr(mapping.NextId, "double");
+                case SpecialType.System_String:
+                    return new PlatoTypeExpr(mapping.NextId, "string");
+                case SpecialType.System_IntPtr:
+                    break;
+                case SpecialType.System_UIntPtr:
+                    break;
+                case SpecialType.System_Array:
+                    break;
+                case SpecialType.System_Collections_IEnumerable:
+                    break;
+                case SpecialType.System_Collections_Generic_IEnumerable_T:
+                    break;
+                case SpecialType.System_Collections_Generic_IList_T:
+                    break;
+                case SpecialType.System_Collections_Generic_ICollection_T:
+                    break;
+                case SpecialType.System_Collections_IEnumerator:
+                    break;
+                case SpecialType.System_Collections_Generic_IEnumerator_T:
+                    break;
+                case SpecialType.System_Collections_Generic_IReadOnlyList_T:
+                    break;
+                case SpecialType.System_Collections_Generic_IReadOnlyCollection_T:
+                    break;
+                case SpecialType.System_Nullable_T:
+                    break;
+                case SpecialType.System_DateTime:
+                    break;
+                case SpecialType.System_Runtime_CompilerServices_IsVolatile:
+                    break;
+                case SpecialType.System_IDisposable:
+                    break;
+                case SpecialType.System_TypedReference:
+                    break;
+                case SpecialType.System_ArgIterator:
+                    break;
+                case SpecialType.System_RuntimeArgumentHandle:
+                    break;
+                case SpecialType.System_RuntimeFieldHandle:
+                    break;
+                case SpecialType.System_RuntimeMethodHandle:
+                    break;
+                case SpecialType.System_RuntimeTypeHandle:
+                    break;
+                case SpecialType.System_IAsyncResult:
+                    break;
+                case SpecialType.System_AsyncCallback:
+                    break;
+                case SpecialType.System_Runtime_CompilerServices_RuntimeFeature:
+                    break;
+                case SpecialType.System_Runtime_CompilerServices_PreserveBaseOverridesAttribute:
+                    break;
+            }
+            return null;
+        }
+
+        public static PlatoTypeExpr ToPlato(this INamedTypeSymbol self, PlatoSemanticMapping mapping)
+        {
+            var r = self.SpecialType.GetSpecialType(mapping);
+            if (r != null)
+                return r;
+            return new PlatoTypeExpr(mapping.NextId, self.Name,
+                self.TypeArguments.Select(t => GetPlatoType((ISymbol)t, mapping)));
+        }
+
         public static PlatoTypeExpr GetPlatoType(this ISymbol self, PlatoSemanticMapping mapping)
         {
             PlatoTypeExpr GetPlatoType_Local(ISymbol selfInner, PlatoSemanticMapping mappingInner)
@@ -72,8 +181,7 @@ namespace PlatoAnalyzer
                     case IModuleSymbol moduleSymbol:
                         throw selfInner.NotSupported();
                     case INamedTypeSymbol namedTypeSymbol:
-                        return new PlatoTypeExpr(mappingInner.NextId, selfInner.Name,
-                            namedTypeSymbol.TypeArguments.Select(t => GetPlatoType((ISymbol)t, mappingInner)));
+                        return namedTypeSymbol.ToPlato(mappingInner);
                     case INamespaceSymbol namespaceSymbol:
                         throw selfInner.NotSupported();
                     case IPointerTypeSymbol pointerTypeSymbol:
@@ -331,7 +439,6 @@ namespace PlatoAnalyzer
                 case BaseExpressionSyntax baseExpressionSyntax:
                     return mapping.Add(() => new PlatoBase(mapping.NextId, type), self);
 
-
                 case ImplicitObjectCreationExpressionSyntax implicitObjectCreationExpressionSyntax:
                 case ImplicitStackAllocArrayCreationExpressionSyntax implicitStackAllocArrayCreationExpressionSyntax:
                 case SizeOfExpressionSyntax sizeOfExpressionSyntax:
@@ -518,6 +625,17 @@ namespace PlatoAnalyzer
                     self.TypeParameterList?.ToPlato(mapping)
                 ), self);
 
+
+        public static PlatoArg ToPlato(this AttributeArgumentSyntax self, PlatoSemanticMapping mapping)
+            => mapping.Add(() => new PlatoArg(mapping.NextId, self.Expression.GetPlatoType(mapping), self.Expression.ToPlato(mapping)));
+       
+        public static PlatoArgList ToPlato(this AttributeArgumentListSyntax self, PlatoSemanticMapping mapping)
+            => mapping.Add(() =>
+                new PlatoArgList(mapping.NextId, self?.Arguments.Select(arg => arg.ToPlato(mapping)) ?? Enumerable.Empty<PlatoArg>()), self);
+
+        public static PlatoAttribute ToPlato(this AttributeSyntax self, PlatoSemanticMapping mapping)
+            => mapping.Add(() => new PlatoAttribute(mapping.NextId, self.Name.ToString(), self.ArgumentList.ToPlato(mapping))); 
+
         public static PlatoProperty ToPlato(this PropertyDeclarationSyntax self, PlatoSemanticMapping mapping)
             => mapping.Add(() => new PlatoProperty(mapping.NextId, 
                     self.Identifier.ToString(),
@@ -562,6 +680,7 @@ namespace PlatoAnalyzer
                 self.Identifier.Text,
                 false,
                 false,
+                self.GetElements<AttributeSyntax>().Select(x => x.ToPlato(mapping)), 
                 self.GetElements<MethodDeclarationSyntax>().Select(x => x.ToPlato(mapping)),
                 self.GetElements<PropertyDeclarationSyntax>().Select(x => x.ToPlato(mapping)),
                 self.GetElements<FieldDeclarationSyntax>().SelectMany(x => x.ToPlato(mapping)),
@@ -574,6 +693,7 @@ namespace PlatoAnalyzer
                 self.Identifier.Text,
                 true,
                 false,
+                self.GetElements<AttributeSyntax>().Select(x => x.ToPlato(mapping)),
                 self.GetElements<MethodDeclarationSyntax>().Select(x => x.ToPlato(mapping)),
                 self.GetElements<PropertyDeclarationSyntax>().Select(x => x.ToPlato(mapping)),
                 self.GetElements<FieldDeclarationSyntax>().SelectMany(x => x.ToPlato(mapping)),
@@ -586,6 +706,7 @@ namespace PlatoAnalyzer
                 self.Identifier.Text,
                 false,
                 true,
+                self.GetElements<AttributeSyntax>().Select(x => x.ToPlato(mapping)),
                 self.GetElements<MethodDeclarationSyntax>().Select(x => x.ToPlato(mapping)),
                 self.GetElements<PropertyDeclarationSyntax>().Select(x => x.ToPlato(mapping)),
                 Enumerable.Empty<PlatoField>(),

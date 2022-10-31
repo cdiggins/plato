@@ -75,12 +75,25 @@ namespace PlatoAnalyzer
         }
     }
 
+    public class PlatoAttribute : PlatoSyntaxNode
+    {
+        public readonly string Name;
+        public readonly PlatoArgList Args;
+        public PlatoAttribute(int id, string name, PlatoArgList args)
+            : base(id)
+        {
+            Name = name;
+            Args = args;
+        }
+    }
+
     public class PlatoClass : PlatoIdentifier
     {
         public readonly IReadOnlyList<PlatoFunction> Methods;
         public readonly IReadOnlyList<PlatoField> Fields;
         public readonly IReadOnlyList<PlatoProperty> Properties;
         public readonly IReadOnlyList<PlatoTypeExpr> BaseTypes;
+        public readonly IReadOnlyList<PlatoAttribute> Attributes;
         public readonly PlatoTypeParameterList TypeParameters;
         public readonly bool IsValueType;
         public readonly bool IsInterface;
@@ -88,6 +101,7 @@ namespace PlatoAnalyzer
         public bool IsStruct => IsValueType && !IsInterface;
 
         public PlatoClass(int id, string name, bool isValueType, bool isInterface,
+            IEnumerable<PlatoAttribute> attrs = null,
             IEnumerable<PlatoFunction> funcs = null,
             IEnumerable<PlatoProperty> props = null,
             IEnumerable<PlatoField> fields = null,
@@ -97,6 +111,7 @@ namespace PlatoAnalyzer
         {
             IsValueType = isValueType;
             IsInterface = isInterface;
+            Attributes = attrs.ToListOrEmpty();
             Properties = props.ToListOrEmpty();
             Methods = funcs.ToListOrEmpty();
             Fields = fields.ToListOrEmpty();    

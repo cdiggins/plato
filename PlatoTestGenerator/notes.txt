@@ -113,7 +113,6 @@ To-do:
         public IArray<Int3> Indices { get; }
     }
 
-
 // 
 
 It's always going to be the same problem. 
@@ -140,3 +139,107 @@ So what about the interfaces?
 In order to add fun interfaces to the classes, I will have to look for extension methods.
 	
 //==
+
+Can I do the math operations automatically? 
+
+Does Plato have to be valid C#? Or can I just make it generate. 
+
+After compilation, it will probably all just work. 
+
+The question though is how do I deal with type constraints on numerics. 
+
+I could use a placeholder. 
+
+I don't have to be strict. This is mostly a code generation issue. 
+ 
+I could have a value called "Number" that acts as an implicit place holder. 
+Same with Value. 
+
+I could enumerate it Value1, Value2. This implies that they are both values
+but different. 
+
+The thing is that operations on generics that are different.
+
+An operation that mixes two different types of numbers is not possible.
+
+Treating an interface like a template argument. 
+
+Some interfaces aren't really interfaces. They are actually 
+
+//==
+
+* I invented concepts.
+* It isn't really that useful.
+* So the thing is that I need to have interfaces and implementations.
+* IArray<T>
+* I want to write a Sum() function, so how do I do that?
+* So ... I wanto to write some of the algorithms, that are going to be used. 
+* IVector ... 
+
+//==
+
+Vector / Number 
+
+* What am I doing? 
+* I am defining classes that can be used as a "templates". 
+* Do they need to be valid C#? 
+	* Maybe. 
+* I have decided that Plato is going to be much simpler than C#. 
+	* The syntax is tight and small. 
+* The thing is that the idea of just predefining all of these extra things is a bit burdensome.
+	* HOWEVER ... I don't have time to fix everything. 
+	* What I need is for the class templates to just work. 
+	* So generate all of the necessary code. 
+	* By the way, instead of types, they could just be functions. 
+	* That would be interesting. 
+* The problem is that I'm getting way too fancy off the bat. 
+	* Keep it simple.
+	* Look at the structs, generate the core stuff. 
+	* Using Roslyn. 
+	* The whole thing was a paper tiger.
+
+* I need a "PlatoInput" project.
+	* It will have a source file. 
+	* I need to restructure all of this stuff. 
+	* I need to take it seriously.
+	* RIght now I'm confused, and half the stuff isn't used. 
+	* People are going to be using this next weekend. 
+	* So better get cracking. 
+
+* To do that I will need to:
+	* Port the math routines over. 
+	* Most should work. 
+
+* So once I have the types, what about the algorithsm. 
+	* Where do they live? 
+	* I can't just keep adding things to the generator can I? 
+	* I need a place to write stuff. 
+
+* The example is:
+	* Capsule. 
+	* Capsule
+
+* What I find amazing, is that this looks exactly like the visual language I wanted. 
+
+* So we do the structs first. 
+* Then we do a pass on the algorithms.
+
+* AlmostEquals
+* Epsilon
+* Comparison = Gt  :t  
+* Measures can be added together 
+* CompareTo 
+* Measures can be compared
+* Clamp 
+* Lerp
+
+* Magnitude
+* Dot
+* MagnitudeSquared
+* Sum
+* Product
+
+
+* Compare
+* Min
+* Max
