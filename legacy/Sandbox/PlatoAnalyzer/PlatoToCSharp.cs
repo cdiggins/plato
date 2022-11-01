@@ -49,25 +49,25 @@ namespace PlatoAnalyzer
                 foreach (var (m, op) in AdditiveBinaryOps)
                 {
                     sb.AppendLine($"public static {t} {m}(this {t} a, {t} b) => a {op} b;");
-                    sb.AppendLine($"public static IEnumerable<{t}> {m}(this IEnumerable<{t}> self, IEnumerable<{t}> other) => self.Zip(other, (a,b) => a {op} b);");
+                    sb.AppendLine($"public static IArray<{t}> {m}(this IArray<{t}> self, IArray<{t}> other) => self.Zip(other, (a,b) => a {op} b);");
                 }
-                sb.AppendLine($"public static {t} Sum(this IEnumerable<{t}> self) => self.Aggregate((a, b) => a + b);");
+                sb.AppendLine($"public static {t} Sum(this IArray<{t}> self) => self.Aggregate((a, b) => a + b);");
 
                 if (multiplicative)
                 {
                     foreach (var (m, op) in MultiplicativeBinaryOps)
                     {
                         sb.AppendLine($"public static {t} {m}(this {t} a, {t} b) => a {op} b;");
-                        sb.AppendLine($"public static IEnumerable<{t}> {m}(this IEnumerable<{t}> self, IEnumerable<{t}> other) => self.Zip(other, (a,b) => a {op} b);");
+                        sb.AppendLine($"public static IArray<{t}> {m}(this IArray<{t}> self, IArray<{t}> other) => self.Zip(other, (a,b) => a {op} b);");
                     }
 
-                    sb.AppendLine($"public static {t} Product(this IEnumerable<{t}> self) => self.Aggregate((a, b) => a * b);");
+                    sb.AppendLine($"public static {t} Product(this IArray<{t}> self) => self.Aggregate((a, b) => a * b);");
                 }
 
                 foreach (var (m, op) in UnaryOps)
                 {
                     sb.AppendLine($"public static {t} {m}(this {t} a) => {op} a;");
-                    sb.AppendLine($"public static IEnumerable<{t}> {m}(this IEnumerable<{t}> self) => self.Select(a => {op} a);");
+                    sb.AppendLine($"public static IArray<{t}> {m}(this IArray<{t}> self) => self.Select(a => {op} a);");
                 }
 
 
@@ -78,12 +78,12 @@ namespace PlatoAnalyzer
             if (comparable)
             {
                 sb.AppendLine($"public static int CompareTo(this {type} self, {type} other) => self < other ? -1 : self > other ? 1 : 0;");
-                sb.AppendLine($"public static IEnumerable<int> CompareTo(this IEnumerable<{t}> self, IEnumerable<{t}> other) => self.Zip(other, (a,b) => a.CompareTo(b));");
+                sb.AppendLine($"public static IArray<int> CompareTo(this IArray<{t}> self, IArray<{t}> other) => self.Zip(other, (a,b) => a.CompareTo(b));");
 
                 foreach (var (m, op) in BinaryComparisonOps)
                 {
                     sb.AppendLine($"public static bool {m}(this {t} a, {t} b) => a {op} b;");
-                    sb.AppendLine($"public static IEnumerable<bool> {m}(this IEnumerable<{t}> self, IEnumerable<{t}> other) => self.Zip(other, (a,b) => a {op} b);");
+                    sb.AppendLine($"public static IArray<bool> {m}(this IArray<{t}> self, IArray<{t}> other) => self.Zip(other, (a,b) => a {op} b);");
                 }
             }
 
@@ -128,6 +128,7 @@ namespace PlatoAnalyzer
             sb.AppendLine($"public static implicit operator {scalarType}[]({t} value) => new[] {{ {toArrayBody} }};");
 
             // IArray implementation 
+            sb.AppendLine($"public IIterator<{scalarType}> Iterator => new ArrayIterator<{scalarType}>(this);");
             sb.AppendLine($"public int Count => {members.Count};");
             sb.AppendLine($"public {scalarType} this[int index] {{ get {{ switch (index) {{");
             for (var i = 0; i < members.Count; ++i)
@@ -273,7 +274,10 @@ namespace PlatoAnalyzer
         public static StringBuilder AddImplementation(StringBuilder sb, PlatoAnalyzer analyzer, PlatoClass classType)
         {
             var name = classType.Name;
-
+            var isNumeric = IsNumeric(classType, analyzer.Mapping);
+            var isVector = IsVector(classType, analyzer.Mapping, out var scalarType);
+            var isComparable = IsComparable(classType, analyzer.Mapping);
+            var isMultiplicative = isNumeric || isVector;
 
             if (IsValue(classType))
             {
@@ -284,6 +288,12 @@ namespace PlatoAnalyzer
             {
                 sb.AppendLine($"public partial class {classType.Name}");
             }
+
+            if (isVector)
+            {
+                sb.AppendLine($": IArray<{scalarType}>");
+            }
+
             sb.AppendLine("{");
 
 
@@ -305,7 +315,6 @@ namespace PlatoAnalyzer
 
             foreach (var p in props)
             {
-                var type = 
                 sb.AppendLine($"public {p.Type.Name} {p.Name} {{ get; }}");
             }
 
@@ -368,11 +377,6 @@ namespace PlatoAnalyzer
                 // TODO: add a method 
             }
             */
-
-            var isNumeric = IsNumeric(classType, analyzer.Mapping);
-            var isVector = IsVector(classType, analyzer.Mapping, out var scalarType);
-            var isComparable = IsComparable(classType, analyzer.Mapping);
-            var isMultiplicative = isNumeric || isVector;
 
             if (isNumeric || isComparable)
                 GenerateOps(sb, name, isMultiplicative, isComparable, propNames);

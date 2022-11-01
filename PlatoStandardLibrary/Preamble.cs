@@ -6,6 +6,11 @@ namespace Plato
 {
     // The following are prerequisites built into Plato
 
+    public interface IValue { }
+    public interface IMeasure { }
+    public interface IInterval { }
+    public interface IVector { }
+
     public class VectorAttribute : Attribute { }
     public class ValueAttribute : Attribute { }
     public class MeasureAttribute : Attribute { }

@@ -1,76 +1,47 @@
 ﻿
 namespace Plato.__TYPES__     
 {
-    [Number]
-    class Float
-    {
-        float Value;
-    }
-
-    [Number]
-    class Double
-    {
-        double Value;
-    }
-
-    [Number]
-    class Int
-    {
-        int Value;
-    }
-
-    [Number]
-    class Long
-    {
-        long Value;
-    }
-
-    [Value]
-    class Byte
-    {
-        byte Value;
-    }
 
     [Vector]
     class Float2 
     {
-        Float X, Y;
+        float X, Y;
     }
 
     [Vector]
     class Float3 
     {
-        Float X, Y, Z;
+        float X, Y, Z;
     }
 
     [Vector]
     class Float4
     {
-        Float X, Y, Z, W;
+        float X, Y, Z, W;
     }
 
     [Vector]
     class Double2 
     {
-        Double X, Y;
+        double X, Y;
     }
 
     [Vector]
     class Double3 
     {
-        Double X, Y, Z;
+        double X, Y, Z;
     }
 
     [Vector]
     class Double4 
     {
-        Double X, Y, Z, W;
+        double X, Y, Z, W;
     }
 
     [Value]
     class Quaternion 
     {
-        Double X, Y, Z, W;
+        double X, Y, Z, W;
     }
 
     [Value]
@@ -95,55 +66,55 @@ namespace Plato.__TYPES__
     [Value]
     class Byte2 
     {
-        Byte A, B, C, D;
+        byte A, B, C, D;
     }
 
     [Value]
     class Byte3 
     {
-        Byte A, B, C, D;
+        byte A, B, C, D;
     }
 
     [Value]
     class Byte4 
     {
-        Byte A, B, C, D;
+        byte A, B, C, D;
     }
 
     [Vector]
     class Int2 
     {
-        Int A, B;
+        int A, B;
     }
 
     [Vector]
     class Int3 
     {
-        Int A, B, C;
+        int A, B, C;
     }
 
     [Vector]
     class Int4 
     {
-        Int A, B, C, D;
+        int A, B, C, D;
     }
 
     [Vector]
     class Long2
     {
-        Long A, B;
+        long A, B;
     }
 
     [Vector]
     class Long3
     {
-        Long A, B, C;
+        long A, B, C;
     }
 
     [Vector]
     class Long4
     {
-        Long A, B, C, D;
+        long A, B, C, D;
     }
 
     [Value]
@@ -176,7 +147,7 @@ namespace Plato.__TYPES__
     [Vector]
     class Complex 
     {
-        Double Real, Imaginary;
+        double Real, Imaginary;
     }
 
     [Value]
@@ -197,14 +168,14 @@ namespace Plato.__TYPES__
     class Sphere
     {
         Point Center;
-        Double Radius;
+        double Radius;
     }
 
     [Value]
     class Plane 
     {
         Double3 Normal;
-        Double D;
+        double D;
     }
 
     [Value]
@@ -252,33 +223,33 @@ namespace Plato.__TYPES__
     [Value]
     class Color 
     {
-        Double R, G, B, A;
+        double R, G, B, A;
     }
 
     [Value]
     class ColorHSV 
     {
-        Double H, S, V;
+        double H, S, V;
     }
 
     [Value]
     class ColorHSL
     {
-        Double Hue;
-        Double Saturation;
-        Double Luminance;
+        double Hue;
+        double Saturation;
+        double Luminance;
     }
 
     [Value]
     class ColorYCbCr
     {
-        Double Y, Cb, Cr;
+        double Y, Cb, Cr;
     }
 
     [Value]
     class SphericalCoordinate
     {
-        Double Radius;
+        double Radius;
         Angle Azimuth;
         Angle Inclination;
     }
@@ -286,43 +257,43 @@ namespace Plato.__TYPES__
     [Value]
     class PolarCoordinate
     {
-        Double Radius;
+        double Radius;
         Angle Azimuth;
     }
 
     [Value]
     class LogPolarCoordinate
     {
-        Double Rho;
+        double Rho;
         Angle Azimuth;
     }
 
     [Value]
     class HorizontalCoordinate
     {
-        Double Radius;
+        double Radius;
         Angle Azimuth;
-        Double Height;
+        double Height;
     }
 
     [Value]
     class GeoCoordinate
     {
-        Double Latitude, Longitude, Altitude;
+        double Latitude, Longitude, Altitude;
     }
 
     [Value]
     class Circle
     {
         Point2D Center;
-        Double Radius;
+        double Radius;
     }
 
     [Value]
     class Size
     {
-        Double Width;
-        Double Height;
+        double Width;
+        double Height;
     }
 
     [Value]
@@ -335,55 +306,55 @@ namespace Plato.__TYPES__
     [Value]
     class Percent
     {
-        Double Value;
+        double Value;
     }
 
     [Number]
     class Unit 
     {
-        Double Value;
+        double Value;
     }
 
     [Value]
     class Amount
     {
-        Double Mole;
+        double Mole;
     }
 
     [Value]
     class Fraction 
     {
-        Double Numerator, Denominator;
+        double Numerator, Denominator;
     }
 
     [Measure]
     class Angle
     {
-        Double Radians;
+        double Radians;
     }
 
     [Measure]
     class Length
     {
-        Double Meters;
+        double Meters;
     }
 
     [Measure]
     class Mass 
     {
-        Double Kilograms;
+        double Kilograms;
     }
 
     [Number]
     class Temperature 
     {
-        Double Celsius;
+        double Celsius;
     }
 
     [Interval]
     class Time
     {
-        Double Seconds;
+        double Seconds;
     }
 
     [Interval]
@@ -395,7 +366,7 @@ namespace Plato.__TYPES__
     [Interval]
     class Interval 
     {
-        Double A, B;
+        double A, B;
     }
 
     [Interval]
@@ -414,36 +385,36 @@ namespace Plato.__TYPES__
     class Capsule 
     {
         Line Line;
-        Double Radius;
+        double Radius;
     }
 
     [Value]
     class Cylinder 
     {
         Line Line;
-        Double Radius;
+        double Radius;
     }
 
     [Value]
     class Cone 
     {
         Line Line;
-        Double Radius;
+        double Radius;
     }
 
     [Value]
     class Tube 
     {
         Line Line;
-        Double InnerRadius; 
-        Double OuterRadius;
+        double InnerRadius; 
+        double OuterRadius;
     }
 
     [Value]
     class ConeSegment 
     {
         Line Line;
-        Double Radius1, Radius2;
+        double Radius1, Radius2;
     }
 
     [Value]
