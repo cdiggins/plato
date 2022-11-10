@@ -1,7 +1,6 @@
 ﻿
 namespace Plato.__TYPES__     
 {
-
     [Vector]
     class Float2 
     {
