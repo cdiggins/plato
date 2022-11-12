@@ -38,9 +38,6 @@ namespace PlatoAnalyzer
         public void Execute(GeneratorExecutionContext context)
         {
             //context.AddSource($"generated.g.cs", "/* no content right now */");
-
-            // TEMP: 
-            PlatoToCSharp.Output(context.Compilation, @"C:\GitHub\plato\Plato.Core\generated.cs");
         }
 
         // https://stackoverflow.com/questions/33420559/how-to-find-type-of-the-field-with-specific-name-in-roslyn

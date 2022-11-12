@@ -29,6 +29,8 @@ namespace PlatoAnalyzer
         public T Add<T>(T r, ISymbol symbol = null)
             where T : PlatoSyntaxNode
         {
+            if (r == null)
+                return null;
             if (symbol == null)
                 return r;
             if (IdsToSymbols.ContainsKey(r.Id))

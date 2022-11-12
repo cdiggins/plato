@@ -135,6 +135,7 @@ namespace PlatoAnalyzer
         public static readonly PlatoTypeExpr TypeParamType = new PlatoTypeExpr(-4, "TypeParam");
         public static readonly PlatoTypeExpr StringType = new PlatoTypeExpr(-5, "String");
         public static readonly PlatoTypeExpr ThrowType = new PlatoTypeExpr(-6, "Throw");
+        public static readonly PlatoTypeExpr VoidType = new PlatoTypeExpr(-7, "Void");
 
         public static PlatoTypeExpr CreateArrayType(PlatoTypeExpr elementType)
             => new PlatoTypeExpr(0, "Array", new[] {elementType});
@@ -142,9 +143,11 @@ namespace PlatoAnalyzer
 
     public class PlatoParameter : PlatoIdentifier
     {
-        public PlatoParameter(int id, string name, PlatoTypeExpr type)
+        public readonly PlatoExpression DefaultValue;
+
+        public PlatoParameter(int id, string name, PlatoTypeExpr type, PlatoExpression defaultValue)
             : base(id, name, type)
-        { }
+            => DefaultValue = defaultValue;
     }
 
     public class PlatoExpression : PlatoSyntaxNode
@@ -282,6 +285,29 @@ namespace PlatoAnalyzer
             : base(id) => TypeParameters = parameters.ToListOrEmpty();
     }
 
+    public class PlatoPatternMatch : PlatoExpression
+    {
+        public readonly string Name;
+
+        public PlatoPatternMatch(int id, string name, PlatoTypeExpr type)
+            : base(id, type)
+        {
+            Name = name;
+        }
+    }
+
+    public class PlatoPatternIs : PlatoExpression
+    {
+        public readonly PlatoExpression Expr;
+        public readonly PlatoPatternMatch Pattern;
+
+        public PlatoPatternIs(int id, PlatoExpression expr, PlatoPatternMatch pattern)
+            : base(id, pattern.Type)
+        {
+            Expr = expr;
+            Pattern = pattern;
+        }
+    }
 
     public class PlatoInterpolation : PlatoExpression
     {

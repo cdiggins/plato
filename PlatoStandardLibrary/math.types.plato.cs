@@ -257,7 +257,7 @@ namespace Plato.__TYPES__
     class PolarCoordinate
     {
         double Radius;
-        Angle Azimuth;
+        Angle Angle;
     }
 
     [Value]
@@ -350,7 +350,7 @@ namespace Plato.__TYPES__
         double Celsius;
     }
 
-    [Interval]
+    [Measure]
     class Time
     {
         double Seconds;

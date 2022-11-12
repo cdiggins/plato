@@ -13,8 +13,13 @@ using System.Diagnostics;
 
 namespace Plato
 {
+
+    //================================================================
+    // High Level interfaces for abstract concepts 
+    //================================================================
+
     /// <summary>
-    /// Very similar to an IEnumerator in the C# standard librar    y.
+    /// Very similar to an IEnumerator in the C# standard library.
     /// Unlike IEnumerator it has no side-effects and is not mutable. 
     /// </summary>
     public interface IIterator<T>

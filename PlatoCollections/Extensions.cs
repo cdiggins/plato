@@ -381,6 +381,30 @@ namespace Plato
 
         public static ISequence<T> Except<T>(this ISequence<T> self, ISequence<T> other)
             => self.Iterator.Except(other.Iterator).ToSequence();
-
     }
+
+    public static class SetExtensions
+    {
+        public static ISet<T> Union<T>(this ISet<T> self, ISet<T> other)
+            => new Set<T>(x => self.Contains(x) || other.Contains(x));
+
+        public static ISet<T> Intersection<T>(this ISet<T> self, ISet<T> other)
+            => new Set<T>(x => self.Contains(x) && other.Contains(x));
+
+        public static ISet<T> Difference<T>(this ISet<T> self, ISet<T> other)
+            => new Set<T>(x => self.Contains(x) && !other.Contains(x));
+
+        public static ISet<T> Complement<T>(this ISet<T> self)
+            => new Set<T>(x => !self.Contains(x));
+
+        public static ISet<T> SymmetricDifference<T>(this ISet<T> self, ISet<T> other)
+            => new Set<T>(x => self.Contains(x) ^ other.Contains(x));
+    }
+
+    public static class MapExtensions
+    {
+        public static IMap<T1, T3> Select<T1, T2, T3>(this IMap<T1, T2> self, Func<T2, T3> func)
+            => new Map<T1, T3>(x => func(self[x]));
+    }
+
 }

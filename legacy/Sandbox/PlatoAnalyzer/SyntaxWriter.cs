@@ -10,7 +10,7 @@ namespace PlatoAnalyzer
         public int tabs;
 
         public override string ToString()
-            => Builder.ToString();
+            => Builder.ToString().Replace("\n", "\r\n");
 
         public SyntaxWriter Add(string s = null)
         {
@@ -103,7 +103,8 @@ namespace PlatoAnalyzer
                 case PlatoCompoundStatement platoCompoundStatement:
                     return Add(platoCompoundStatement.Statements, "\n");
                 case PlatoConditional platoConditional:
-                    return Add(platoConditional.Condition).Add("?").Add(platoConditional.OnTrue).Add(":")
+                    return Add(platoConditional.Condition).Add(" ? ")
+                        .Add(platoConditional.OnTrue).Add(" : ")
                         .Add(platoConditional.OnFalse);
                 case PlatoContinueStatement _:
                     return Add("continue;");
@@ -195,7 +196,9 @@ namespace PlatoAnalyzer
                 case PlatoTypeParam platoTypeParam:
                     return Add(platoTypeParam.Name);
                 case PlatoVarDeclStatement varDecl:
-                    return Add(varDecl.Type).Add(" ").Add(varDecl.Name).Add(varDecl.Value != null ? " = " : null).Add(varDecl.Value).Add(";");
+                    return Add(string.IsNullOrEmpty(varDecl.Type?.ToString()) ? "var" : varDecl.Type.ToString())
+                        .Add(" ").Add(varDecl.Name).Add(varDecl.Value != null ? " = " : null)
+                        .Add(varDecl.Value).Add(";");
                 case PlatoWhileStatement platoWhileStatement:
                     return Add("while (").Add(platoWhileStatement.Condition).AddLine(")").AddBracedIfNeeded(platoWhileStatement.Body);
                 case PlatoExpression platoExpression:

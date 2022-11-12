@@ -182,6 +182,7 @@ public partial struct Float2
 : IArray<float>
 {
 public Float2(float x, float y) => (X, Y) = (x, y);
+public static Float2 Create(float x, float y) => new Float2(x, y);
 public float X { get; }
 public float Y { get; }
 public static implicit operator Float2((float X, float Y) tuple) => new Float2(tuple.X, tuple.Y);
@@ -200,14 +201,25 @@ public static bool operator !=(Float2 a, Float2 b) => (a.X != b.X) || (a.Y != b.
 public Float2 WithX(float value) => new Float2(value, Y);
 public Float2 WithY(float value) => new Float2(X, value);
 public static Float2 operator +(Float2 a, Float2 b) => new Float2(a.X + b.X, a.Y + b.Y);
+public static Float2 operator +(float a, Float2 b) => new Float2(a + b.X, a + b.Y);
+public static Float2 operator +(Float2 a, float b) => new Float2(a.X + b, a.Y + b);
 public static Float2 operator -(Float2 a, Float2 b) => new Float2(a.X - b.X, a.Y - b.Y);
+public static Float2 operator -(float a, Float2 b) => new Float2(a - b.X, a - b.Y);
+public static Float2 operator -(Float2 a, float b) => new Float2(a.X - b, a.Y - b);
 public static Float2 operator *(Float2 a, Float2 b) => new Float2(a.X * b.X, a.Y * b.Y);
+public static Float2 operator *(Float2 a, float  b) => new Float2(a.X * b, a.Y * b);
+public static Float2 operator *(float  a, Float2 b) => new Float2(a * b.X, a * b.Y);
 public static Float2 operator /(Float2 a, Float2 b) => new Float2(a.X / b.X, a.Y / b.Y);
+public static Float2 operator /(Float2 a, float  b) => new Float2(a.X / b, a.Y / b);
+public static Float2 operator /(float  a, Float2 b) => new Float2(a / b.X, a / b.Y);
 public static Float2 operator %(Float2 a, Float2 b) => new Float2(a.X % b.X, a.Y % b.Y);
+public static Float2 operator %(Float2 a, float  b) => new Float2(a.X % b, a.Y % b);
+public static Float2 operator %(float  a, Float2 b) => new Float2(a % b.X, a % b.Y);
 public static Float2 operator -(Float2 a) => new Float2(- a.X, - a.Y);
-public static Float2 operator *(Float2 self, float scalar) => new Float2(self.X * scalar, self.Y * scalar);
-public static Float2 operator /(Float2 self, float scalar) => new Float2(self.X / scalar, self.Y / scalar);
 public static implicit operator float[](Float2 value) => new[] { value.X, value.Y };
+public double Dot(Float2 other) => this.Multiply(other).Sum();
+public double LengthSquared() => this.Dot(this);
+public double Length() => System.Math.Sqrt(LengthSquared());
 public IIterator<float> Iterator => new ArrayIterator<float>(this);
 public int Count => 2;
 public float this[int index] { get { switch (index) {
@@ -244,6 +256,7 @@ public partial struct Float3
 : IArray<float>
 {
 public Float3(float x, float y, float z) => (X, Y, Z) = (x, y, z);
+public static Float3 Create(float x, float y, float z) => new Float3(x, y, z);
 public float X { get; }
 public float Y { get; }
 public float Z { get; }
@@ -264,14 +277,25 @@ public Float3 WithX(float value) => new Float3(value, Y, Z);
 public Float3 WithY(float value) => new Float3(X, value, Z);
 public Float3 WithZ(float value) => new Float3(X, Y, value);
 public static Float3 operator +(Float3 a, Float3 b) => new Float3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+public static Float3 operator +(float a, Float3 b) => new Float3(a + b.X, a + b.Y, a + b.Z);
+public static Float3 operator +(Float3 a, float b) => new Float3(a.X + b, a.Y + b, a.Z + b);
 public static Float3 operator -(Float3 a, Float3 b) => new Float3(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+public static Float3 operator -(float a, Float3 b) => new Float3(a - b.X, a - b.Y, a - b.Z);
+public static Float3 operator -(Float3 a, float b) => new Float3(a.X - b, a.Y - b, a.Z - b);
 public static Float3 operator *(Float3 a, Float3 b) => new Float3(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
+public static Float3 operator *(Float3 a, float  b) => new Float3(a.X * b, a.Y * b, a.Z * b);
+public static Float3 operator *(float  a, Float3 b) => new Float3(a * b.X, a * b.Y, a * b.Z);
 public static Float3 operator /(Float3 a, Float3 b) => new Float3(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
+public static Float3 operator /(Float3 a, float  b) => new Float3(a.X / b, a.Y / b, a.Z / b);
+public static Float3 operator /(float  a, Float3 b) => new Float3(a / b.X, a / b.Y, a / b.Z);
 public static Float3 operator %(Float3 a, Float3 b) => new Float3(a.X % b.X, a.Y % b.Y, a.Z % b.Z);
+public static Float3 operator %(Float3 a, float  b) => new Float3(a.X % b, a.Y % b, a.Z % b);
+public static Float3 operator %(float  a, Float3 b) => new Float3(a % b.X, a % b.Y, a % b.Z);
 public static Float3 operator -(Float3 a) => new Float3(- a.X, - a.Y, - a.Z);
-public static Float3 operator *(Float3 self, float scalar) => new Float3(self.X * scalar, self.Y * scalar, self.Z * scalar);
-public static Float3 operator /(Float3 self, float scalar) => new Float3(self.X / scalar, self.Y / scalar, self.Z / scalar);
 public static implicit operator float[](Float3 value) => new[] { value.X, value.Y, value.Z };
+public double Dot(Float3 other) => this.Multiply(other).Sum();
+public double LengthSquared() => this.Dot(this);
+public double Length() => System.Math.Sqrt(LengthSquared());
 public IIterator<float> Iterator => new ArrayIterator<float>(this);
 public int Count => 3;
 public float this[int index] { get { switch (index) {
@@ -309,6 +333,7 @@ public partial struct Float4
 : IArray<float>
 {
 public Float4(float x, float y, float z, float w) => (X, Y, Z, W) = (x, y, z, w);
+public static Float4 Create(float x, float y, float z, float w) => new Float4(x, y, z, w);
 public float X { get; }
 public float Y { get; }
 public float Z { get; }
@@ -331,14 +356,25 @@ public Float4 WithY(float value) => new Float4(X, value, Z, W);
 public Float4 WithZ(float value) => new Float4(X, Y, value, W);
 public Float4 WithW(float value) => new Float4(X, Y, Z, value);
 public static Float4 operator +(Float4 a, Float4 b) => new Float4(a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W);
+public static Float4 operator +(float a, Float4 b) => new Float4(a + b.X, a + b.Y, a + b.Z, a + b.W);
+public static Float4 operator +(Float4 a, float b) => new Float4(a.X + b, a.Y + b, a.Z + b, a.W + b);
 public static Float4 operator -(Float4 a, Float4 b) => new Float4(a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W);
+public static Float4 operator -(float a, Float4 b) => new Float4(a - b.X, a - b.Y, a - b.Z, a - b.W);
+public static Float4 operator -(Float4 a, float b) => new Float4(a.X - b, a.Y - b, a.Z - b, a.W - b);
 public static Float4 operator *(Float4 a, Float4 b) => new Float4(a.X * b.X, a.Y * b.Y, a.Z * b.Z, a.W * b.W);
+public static Float4 operator *(Float4 a, float  b) => new Float4(a.X * b, a.Y * b, a.Z * b, a.W * b);
+public static Float4 operator *(float  a, Float4 b) => new Float4(a * b.X, a * b.Y, a * b.Z, a * b.W);
 public static Float4 operator /(Float4 a, Float4 b) => new Float4(a.X / b.X, a.Y / b.Y, a.Z / b.Z, a.W / b.W);
+public static Float4 operator /(Float4 a, float  b) => new Float4(a.X / b, a.Y / b, a.Z / b, a.W / b);
+public static Float4 operator /(float  a, Float4 b) => new Float4(a / b.X, a / b.Y, a / b.Z, a / b.W);
 public static Float4 operator %(Float4 a, Float4 b) => new Float4(a.X % b.X, a.Y % b.Y, a.Z % b.Z, a.W % b.W);
+public static Float4 operator %(Float4 a, float  b) => new Float4(a.X % b, a.Y % b, a.Z % b, a.W % b);
+public static Float4 operator %(float  a, Float4 b) => new Float4(a % b.X, a % b.Y, a % b.Z, a % b.W);
 public static Float4 operator -(Float4 a) => new Float4(- a.X, - a.Y, - a.Z, - a.W);
-public static Float4 operator *(Float4 self, float scalar) => new Float4(self.X * scalar, self.Y * scalar, self.Z * scalar, self.W * scalar);
-public static Float4 operator /(Float4 self, float scalar) => new Float4(self.X / scalar, self.Y / scalar, self.Z / scalar, self.W / scalar);
 public static implicit operator float[](Float4 value) => new[] { value.X, value.Y, value.Z, value.W };
+public double Dot(Float4 other) => this.Multiply(other).Sum();
+public double LengthSquared() => this.Dot(this);
+public double Length() => System.Math.Sqrt(LengthSquared());
 public IIterator<float> Iterator => new ArrayIterator<float>(this);
 public int Count => 4;
 public float this[int index] { get { switch (index) {
@@ -377,6 +413,7 @@ public partial struct Double2
 : IArray<double>
 {
 public Double2(double x, double y) => (X, Y) = (x, y);
+public static Double2 Create(double x, double y) => new Double2(x, y);
 public double X { get; }
 public double Y { get; }
 public static implicit operator Double2((double X, double Y) tuple) => new Double2(tuple.X, tuple.Y);
@@ -395,14 +432,25 @@ public static bool operator !=(Double2 a, Double2 b) => (a.X != b.X) || (a.Y != 
 public Double2 WithX(double value) => new Double2(value, Y);
 public Double2 WithY(double value) => new Double2(X, value);
 public static Double2 operator +(Double2 a, Double2 b) => new Double2(a.X + b.X, a.Y + b.Y);
+public static Double2 operator +(double a, Double2 b) => new Double2(a + b.X, a + b.Y);
+public static Double2 operator +(Double2 a, double b) => new Double2(a.X + b, a.Y + b);
 public static Double2 operator -(Double2 a, Double2 b) => new Double2(a.X - b.X, a.Y - b.Y);
+public static Double2 operator -(double a, Double2 b) => new Double2(a - b.X, a - b.Y);
+public static Double2 operator -(Double2 a, double b) => new Double2(a.X - b, a.Y - b);
 public static Double2 operator *(Double2 a, Double2 b) => new Double2(a.X * b.X, a.Y * b.Y);
+public static Double2 operator *(Double2 a, double  b) => new Double2(a.X * b, a.Y * b);
+public static Double2 operator *(double  a, Double2 b) => new Double2(a * b.X, a * b.Y);
 public static Double2 operator /(Double2 a, Double2 b) => new Double2(a.X / b.X, a.Y / b.Y);
+public static Double2 operator /(Double2 a, double  b) => new Double2(a.X / b, a.Y / b);
+public static Double2 operator /(double  a, Double2 b) => new Double2(a / b.X, a / b.Y);
 public static Double2 operator %(Double2 a, Double2 b) => new Double2(a.X % b.X, a.Y % b.Y);
+public static Double2 operator %(Double2 a, double  b) => new Double2(a.X % b, a.Y % b);
+public static Double2 operator %(double  a, Double2 b) => new Double2(a % b.X, a % b.Y);
 public static Double2 operator -(Double2 a) => new Double2(- a.X, - a.Y);
-public static Double2 operator *(Double2 self, double scalar) => new Double2(self.X * scalar, self.Y * scalar);
-public static Double2 operator /(Double2 self, double scalar) => new Double2(self.X / scalar, self.Y / scalar);
 public static implicit operator double[](Double2 value) => new[] { value.X, value.Y };
+public double Dot(Double2 other) => this.Multiply(other).Sum();
+public double LengthSquared() => this.Dot(this);
+public double Length() => System.Math.Sqrt(LengthSquared());
 public IIterator<double> Iterator => new ArrayIterator<double>(this);
 public int Count => 2;
 public double this[int index] { get { switch (index) {
@@ -439,6 +487,7 @@ public partial struct Double3
 : IArray<double>
 {
 public Double3(double x, double y, double z) => (X, Y, Z) = (x, y, z);
+public static Double3 Create(double x, double y, double z) => new Double3(x, y, z);
 public double X { get; }
 public double Y { get; }
 public double Z { get; }
@@ -459,14 +508,25 @@ public Double3 WithX(double value) => new Double3(value, Y, Z);
 public Double3 WithY(double value) => new Double3(X, value, Z);
 public Double3 WithZ(double value) => new Double3(X, Y, value);
 public static Double3 operator +(Double3 a, Double3 b) => new Double3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+public static Double3 operator +(double a, Double3 b) => new Double3(a + b.X, a + b.Y, a + b.Z);
+public static Double3 operator +(Double3 a, double b) => new Double3(a.X + b, a.Y + b, a.Z + b);
 public static Double3 operator -(Double3 a, Double3 b) => new Double3(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+public static Double3 operator -(double a, Double3 b) => new Double3(a - b.X, a - b.Y, a - b.Z);
+public static Double3 operator -(Double3 a, double b) => new Double3(a.X - b, a.Y - b, a.Z - b);
 public static Double3 operator *(Double3 a, Double3 b) => new Double3(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
+public static Double3 operator *(Double3 a, double  b) => new Double3(a.X * b, a.Y * b, a.Z * b);
+public static Double3 operator *(double  a, Double3 b) => new Double3(a * b.X, a * b.Y, a * b.Z);
 public static Double3 operator /(Double3 a, Double3 b) => new Double3(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
+public static Double3 operator /(Double3 a, double  b) => new Double3(a.X / b, a.Y / b, a.Z / b);
+public static Double3 operator /(double  a, Double3 b) => new Double3(a / b.X, a / b.Y, a / b.Z);
 public static Double3 operator %(Double3 a, Double3 b) => new Double3(a.X % b.X, a.Y % b.Y, a.Z % b.Z);
+public static Double3 operator %(Double3 a, double  b) => new Double3(a.X % b, a.Y % b, a.Z % b);
+public static Double3 operator %(double  a, Double3 b) => new Double3(a % b.X, a % b.Y, a % b.Z);
 public static Double3 operator -(Double3 a) => new Double3(- a.X, - a.Y, - a.Z);
-public static Double3 operator *(Double3 self, double scalar) => new Double3(self.X * scalar, self.Y * scalar, self.Z * scalar);
-public static Double3 operator /(Double3 self, double scalar) => new Double3(self.X / scalar, self.Y / scalar, self.Z / scalar);
 public static implicit operator double[](Double3 value) => new[] { value.X, value.Y, value.Z };
+public double Dot(Double3 other) => this.Multiply(other).Sum();
+public double LengthSquared() => this.Dot(this);
+public double Length() => System.Math.Sqrt(LengthSquared());
 public IIterator<double> Iterator => new ArrayIterator<double>(this);
 public int Count => 3;
 public double this[int index] { get { switch (index) {
@@ -504,6 +564,7 @@ public partial struct Double4
 : IArray<double>
 {
 public Double4(double x, double y, double z, double w) => (X, Y, Z, W) = (x, y, z, w);
+public static Double4 Create(double x, double y, double z, double w) => new Double4(x, y, z, w);
 public double X { get; }
 public double Y { get; }
 public double Z { get; }
@@ -526,14 +587,25 @@ public Double4 WithY(double value) => new Double4(X, value, Z, W);
 public Double4 WithZ(double value) => new Double4(X, Y, value, W);
 public Double4 WithW(double value) => new Double4(X, Y, Z, value);
 public static Double4 operator +(Double4 a, Double4 b) => new Double4(a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W);
+public static Double4 operator +(double a, Double4 b) => new Double4(a + b.X, a + b.Y, a + b.Z, a + b.W);
+public static Double4 operator +(Double4 a, double b) => new Double4(a.X + b, a.Y + b, a.Z + b, a.W + b);
 public static Double4 operator -(Double4 a, Double4 b) => new Double4(a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W);
+public static Double4 operator -(double a, Double4 b) => new Double4(a - b.X, a - b.Y, a - b.Z, a - b.W);
+public static Double4 operator -(Double4 a, double b) => new Double4(a.X - b, a.Y - b, a.Z - b, a.W - b);
 public static Double4 operator *(Double4 a, Double4 b) => new Double4(a.X * b.X, a.Y * b.Y, a.Z * b.Z, a.W * b.W);
+public static Double4 operator *(Double4 a, double  b) => new Double4(a.X * b, a.Y * b, a.Z * b, a.W * b);
+public static Double4 operator *(double  a, Double4 b) => new Double4(a * b.X, a * b.Y, a * b.Z, a * b.W);
 public static Double4 operator /(Double4 a, Double4 b) => new Double4(a.X / b.X, a.Y / b.Y, a.Z / b.Z, a.W / b.W);
+public static Double4 operator /(Double4 a, double  b) => new Double4(a.X / b, a.Y / b, a.Z / b, a.W / b);
+public static Double4 operator /(double  a, Double4 b) => new Double4(a / b.X, a / b.Y, a / b.Z, a / b.W);
 public static Double4 operator %(Double4 a, Double4 b) => new Double4(a.X % b.X, a.Y % b.Y, a.Z % b.Z, a.W % b.W);
+public static Double4 operator %(Double4 a, double  b) => new Double4(a.X % b, a.Y % b, a.Z % b, a.W % b);
+public static Double4 operator %(double  a, Double4 b) => new Double4(a % b.X, a % b.Y, a % b.Z, a % b.W);
 public static Double4 operator -(Double4 a) => new Double4(- a.X, - a.Y, - a.Z, - a.W);
-public static Double4 operator *(Double4 self, double scalar) => new Double4(self.X * scalar, self.Y * scalar, self.Z * scalar, self.W * scalar);
-public static Double4 operator /(Double4 self, double scalar) => new Double4(self.X / scalar, self.Y / scalar, self.Z / scalar, self.W / scalar);
 public static implicit operator double[](Double4 value) => new[] { value.X, value.Y, value.Z, value.W };
+public double Dot(Double4 other) => this.Multiply(other).Sum();
+public double LengthSquared() => this.Dot(this);
+public double Length() => System.Math.Sqrt(LengthSquared());
 public IIterator<double> Iterator => new ArrayIterator<double>(this);
 public int Count => 4;
 public double this[int index] { get { switch (index) {
@@ -571,6 +643,7 @@ public static Double4 MaxValue(this Double4 _) => Double4.MaxValue;
 public partial struct Quaternion
 {
 public Quaternion(double x, double y, double z, double w) => (X, Y, Z, W) = (x, y, z, w);
+public static Quaternion Create(double x, double y, double z, double w) => new Quaternion(x, y, z, w);
 public double X { get; }
 public double Y { get; }
 public double Z { get; }
@@ -604,6 +677,7 @@ public static Quaternion MaxValue(this Quaternion _) => Quaternion.MaxValue;
 public partial struct AxisAngle
 {
 public AxisAngle(Double3 axis, Angle angle) => (Axis, Angle) = (axis, angle);
+public static AxisAngle Create(Double3 axis, Angle angle) => new AxisAngle(axis, angle);
 public Double3 Axis { get; }
 public Angle Angle { get; }
 public static implicit operator AxisAngle((Double3 Axis, Angle Angle) tuple) => new AxisAngle(tuple.Axis, tuple.Angle);
@@ -633,6 +707,7 @@ public static AxisAngle MaxValue(this AxisAngle _) => AxisAngle.MaxValue;
 public partial struct EulerAngles
 {
 public EulerAngles(Angle yaw, Angle pitch, Angle roll) => (Yaw, Pitch, Roll) = (yaw, pitch, roll);
+public static EulerAngles Create(Angle yaw, Angle pitch, Angle roll) => new EulerAngles(yaw, pitch, roll);
 public Angle Yaw { get; }
 public Angle Pitch { get; }
 public Angle Roll { get; }
@@ -664,6 +739,7 @@ public static EulerAngles MaxValue(this EulerAngles _) => EulerAngles.MaxValue;
 public partial struct Rotation
 {
 public Rotation(Quaternion quaternion) => (Quaternion) = (quaternion);
+public static Rotation Create(Quaternion quaternion) => new Rotation(quaternion);
 public Quaternion Quaternion { get; }
 public static implicit operator Rotation(Quaternion value) => new Rotation(value);
 public static implicit operator Quaternion(Rotation value) => value.Quaternion;
@@ -691,6 +767,7 @@ public static Rotation MaxValue(this Rotation _) => Rotation.MaxValue;
 public partial struct Byte2
 {
 public Byte2(byte a, byte b, byte c, byte d) => (A, B, C, D) = (a, b, c, d);
+public static Byte2 Create(byte a, byte b, byte c, byte d) => new Byte2(a, b, c, d);
 public byte A { get; }
 public byte B { get; }
 public byte C { get; }
@@ -724,6 +801,7 @@ public static Byte2 MaxValue(this Byte2 _) => Byte2.MaxValue;
 public partial struct Byte3
 {
 public Byte3(byte a, byte b, byte c, byte d) => (A, B, C, D) = (a, b, c, d);
+public static Byte3 Create(byte a, byte b, byte c, byte d) => new Byte3(a, b, c, d);
 public byte A { get; }
 public byte B { get; }
 public byte C { get; }
@@ -757,6 +835,7 @@ public static Byte3 MaxValue(this Byte3 _) => Byte3.MaxValue;
 public partial struct Byte4
 {
 public Byte4(byte a, byte b, byte c, byte d) => (A, B, C, D) = (a, b, c, d);
+public static Byte4 Create(byte a, byte b, byte c, byte d) => new Byte4(a, b, c, d);
 public byte A { get; }
 public byte B { get; }
 public byte C { get; }
@@ -791,6 +870,7 @@ public partial struct Int2
 : IArray<int>
 {
 public Int2(int a, int b) => (A, B) = (a, b);
+public static Int2 Create(int a, int b) => new Int2(a, b);
 public int A { get; }
 public int B { get; }
 public static implicit operator Int2((int A, int B) tuple) => new Int2(tuple.A, tuple.B);
@@ -809,14 +889,25 @@ public static bool operator !=(Int2 a, Int2 b) => (a.A != b.A) || (a.B != b.B);
 public Int2 WithA(int value) => new Int2(value, B);
 public Int2 WithB(int value) => new Int2(A, value);
 public static Int2 operator +(Int2 a, Int2 b) => new Int2(a.A + b.A, a.B + b.B);
+public static Int2 operator +(int a, Int2 b) => new Int2(a + b.A, a + b.B);
+public static Int2 operator +(Int2 a, int b) => new Int2(a.A + b, a.B + b);
 public static Int2 operator -(Int2 a, Int2 b) => new Int2(a.A - b.A, a.B - b.B);
+public static Int2 operator -(int a, Int2 b) => new Int2(a - b.A, a - b.B);
+public static Int2 operator -(Int2 a, int b) => new Int2(a.A - b, a.B - b);
 public static Int2 operator *(Int2 a, Int2 b) => new Int2(a.A * b.A, a.B * b.B);
+public static Int2 operator *(Int2 a, int  b) => new Int2(a.A * b, a.B * b);
+public static Int2 operator *(int  a, Int2 b) => new Int2(a * b.A, a * b.B);
 public static Int2 operator /(Int2 a, Int2 b) => new Int2(a.A / b.A, a.B / b.B);
+public static Int2 operator /(Int2 a, int  b) => new Int2(a.A / b, a.B / b);
+public static Int2 operator /(int  a, Int2 b) => new Int2(a / b.A, a / b.B);
 public static Int2 operator %(Int2 a, Int2 b) => new Int2(a.A % b.A, a.B % b.B);
+public static Int2 operator %(Int2 a, int  b) => new Int2(a.A % b, a.B % b);
+public static Int2 operator %(int  a, Int2 b) => new Int2(a % b.A, a % b.B);
 public static Int2 operator -(Int2 a) => new Int2(- a.A, - a.B);
-public static Int2 operator *(Int2 self, int scalar) => new Int2(self.A * scalar, self.B * scalar);
-public static Int2 operator /(Int2 self, int scalar) => new Int2(self.A / scalar, self.B / scalar);
 public static implicit operator int[](Int2 value) => new[] { value.A, value.B };
+public double Dot(Int2 other) => this.Multiply(other).Sum();
+public double LengthSquared() => this.Dot(this);
+public double Length() => System.Math.Sqrt(LengthSquared());
 public IIterator<int> Iterator => new ArrayIterator<int>(this);
 public int Count => 2;
 public int this[int index] { get { switch (index) {
@@ -853,6 +944,7 @@ public partial struct Int3
 : IArray<int>
 {
 public Int3(int a, int b, int c) => (A, B, C) = (a, b, c);
+public static Int3 Create(int a, int b, int c) => new Int3(a, b, c);
 public int A { get; }
 public int B { get; }
 public int C { get; }
@@ -873,14 +965,25 @@ public Int3 WithA(int value) => new Int3(value, B, C);
 public Int3 WithB(int value) => new Int3(A, value, C);
 public Int3 WithC(int value) => new Int3(A, B, value);
 public static Int3 operator +(Int3 a, Int3 b) => new Int3(a.A + b.A, a.B + b.B, a.C + b.C);
+public static Int3 operator +(int a, Int3 b) => new Int3(a + b.A, a + b.B, a + b.C);
+public static Int3 operator +(Int3 a, int b) => new Int3(a.A + b, a.B + b, a.C + b);
 public static Int3 operator -(Int3 a, Int3 b) => new Int3(a.A - b.A, a.B - b.B, a.C - b.C);
+public static Int3 operator -(int a, Int3 b) => new Int3(a - b.A, a - b.B, a - b.C);
+public static Int3 operator -(Int3 a, int b) => new Int3(a.A - b, a.B - b, a.C - b);
 public static Int3 operator *(Int3 a, Int3 b) => new Int3(a.A * b.A, a.B * b.B, a.C * b.C);
+public static Int3 operator *(Int3 a, int  b) => new Int3(a.A * b, a.B * b, a.C * b);
+public static Int3 operator *(int  a, Int3 b) => new Int3(a * b.A, a * b.B, a * b.C);
 public static Int3 operator /(Int3 a, Int3 b) => new Int3(a.A / b.A, a.B / b.B, a.C / b.C);
+public static Int3 operator /(Int3 a, int  b) => new Int3(a.A / b, a.B / b, a.C / b);
+public static Int3 operator /(int  a, Int3 b) => new Int3(a / b.A, a / b.B, a / b.C);
 public static Int3 operator %(Int3 a, Int3 b) => new Int3(a.A % b.A, a.B % b.B, a.C % b.C);
+public static Int3 operator %(Int3 a, int  b) => new Int3(a.A % b, a.B % b, a.C % b);
+public static Int3 operator %(int  a, Int3 b) => new Int3(a % b.A, a % b.B, a % b.C);
 public static Int3 operator -(Int3 a) => new Int3(- a.A, - a.B, - a.C);
-public static Int3 operator *(Int3 self, int scalar) => new Int3(self.A * scalar, self.B * scalar, self.C * scalar);
-public static Int3 operator /(Int3 self, int scalar) => new Int3(self.A / scalar, self.B / scalar, self.C / scalar);
 public static implicit operator int[](Int3 value) => new[] { value.A, value.B, value.C };
+public double Dot(Int3 other) => this.Multiply(other).Sum();
+public double LengthSquared() => this.Dot(this);
+public double Length() => System.Math.Sqrt(LengthSquared());
 public IIterator<int> Iterator => new ArrayIterator<int>(this);
 public int Count => 3;
 public int this[int index] { get { switch (index) {
@@ -918,6 +1021,7 @@ public partial struct Int4
 : IArray<int>
 {
 public Int4(int a, int b, int c, int d) => (A, B, C, D) = (a, b, c, d);
+public static Int4 Create(int a, int b, int c, int d) => new Int4(a, b, c, d);
 public int A { get; }
 public int B { get; }
 public int C { get; }
@@ -940,14 +1044,25 @@ public Int4 WithB(int value) => new Int4(A, value, C, D);
 public Int4 WithC(int value) => new Int4(A, B, value, D);
 public Int4 WithD(int value) => new Int4(A, B, C, value);
 public static Int4 operator +(Int4 a, Int4 b) => new Int4(a.A + b.A, a.B + b.B, a.C + b.C, a.D + b.D);
+public static Int4 operator +(int a, Int4 b) => new Int4(a + b.A, a + b.B, a + b.C, a + b.D);
+public static Int4 operator +(Int4 a, int b) => new Int4(a.A + b, a.B + b, a.C + b, a.D + b);
 public static Int4 operator -(Int4 a, Int4 b) => new Int4(a.A - b.A, a.B - b.B, a.C - b.C, a.D - b.D);
+public static Int4 operator -(int a, Int4 b) => new Int4(a - b.A, a - b.B, a - b.C, a - b.D);
+public static Int4 operator -(Int4 a, int b) => new Int4(a.A - b, a.B - b, a.C - b, a.D - b);
 public static Int4 operator *(Int4 a, Int4 b) => new Int4(a.A * b.A, a.B * b.B, a.C * b.C, a.D * b.D);
+public static Int4 operator *(Int4 a, int  b) => new Int4(a.A * b, a.B * b, a.C * b, a.D * b);
+public static Int4 operator *(int  a, Int4 b) => new Int4(a * b.A, a * b.B, a * b.C, a * b.D);
 public static Int4 operator /(Int4 a, Int4 b) => new Int4(a.A / b.A, a.B / b.B, a.C / b.C, a.D / b.D);
+public static Int4 operator /(Int4 a, int  b) => new Int4(a.A / b, a.B / b, a.C / b, a.D / b);
+public static Int4 operator /(int  a, Int4 b) => new Int4(a / b.A, a / b.B, a / b.C, a / b.D);
 public static Int4 operator %(Int4 a, Int4 b) => new Int4(a.A % b.A, a.B % b.B, a.C % b.C, a.D % b.D);
+public static Int4 operator %(Int4 a, int  b) => new Int4(a.A % b, a.B % b, a.C % b, a.D % b);
+public static Int4 operator %(int  a, Int4 b) => new Int4(a % b.A, a % b.B, a % b.C, a % b.D);
 public static Int4 operator -(Int4 a) => new Int4(- a.A, - a.B, - a.C, - a.D);
-public static Int4 operator *(Int4 self, int scalar) => new Int4(self.A * scalar, self.B * scalar, self.C * scalar, self.D * scalar);
-public static Int4 operator /(Int4 self, int scalar) => new Int4(self.A / scalar, self.B / scalar, self.C / scalar, self.D / scalar);
 public static implicit operator int[](Int4 value) => new[] { value.A, value.B, value.C, value.D };
+public double Dot(Int4 other) => this.Multiply(other).Sum();
+public double LengthSquared() => this.Dot(this);
+public double Length() => System.Math.Sqrt(LengthSquared());
 public IIterator<int> Iterator => new ArrayIterator<int>(this);
 public int Count => 4;
 public int this[int index] { get { switch (index) {
@@ -986,6 +1101,7 @@ public partial struct Long2
 : IArray<long>
 {
 public Long2(long a, long b) => (A, B) = (a, b);
+public static Long2 Create(long a, long b) => new Long2(a, b);
 public long A { get; }
 public long B { get; }
 public static implicit operator Long2((long A, long B) tuple) => new Long2(tuple.A, tuple.B);
@@ -1004,14 +1120,25 @@ public static bool operator !=(Long2 a, Long2 b) => (a.A != b.A) || (a.B != b.B)
 public Long2 WithA(long value) => new Long2(value, B);
 public Long2 WithB(long value) => new Long2(A, value);
 public static Long2 operator +(Long2 a, Long2 b) => new Long2(a.A + b.A, a.B + b.B);
+public static Long2 operator +(long a, Long2 b) => new Long2(a + b.A, a + b.B);
+public static Long2 operator +(Long2 a, long b) => new Long2(a.A + b, a.B + b);
 public static Long2 operator -(Long2 a, Long2 b) => new Long2(a.A - b.A, a.B - b.B);
+public static Long2 operator -(long a, Long2 b) => new Long2(a - b.A, a - b.B);
+public static Long2 operator -(Long2 a, long b) => new Long2(a.A - b, a.B - b);
 public static Long2 operator *(Long2 a, Long2 b) => new Long2(a.A * b.A, a.B * b.B);
+public static Long2 operator *(Long2 a, long  b) => new Long2(a.A * b, a.B * b);
+public static Long2 operator *(long  a, Long2 b) => new Long2(a * b.A, a * b.B);
 public static Long2 operator /(Long2 a, Long2 b) => new Long2(a.A / b.A, a.B / b.B);
+public static Long2 operator /(Long2 a, long  b) => new Long2(a.A / b, a.B / b);
+public static Long2 operator /(long  a, Long2 b) => new Long2(a / b.A, a / b.B);
 public static Long2 operator %(Long2 a, Long2 b) => new Long2(a.A % b.A, a.B % b.B);
+public static Long2 operator %(Long2 a, long  b) => new Long2(a.A % b, a.B % b);
+public static Long2 operator %(long  a, Long2 b) => new Long2(a % b.A, a % b.B);
 public static Long2 operator -(Long2 a) => new Long2(- a.A, - a.B);
-public static Long2 operator *(Long2 self, long scalar) => new Long2(self.A * scalar, self.B * scalar);
-public static Long2 operator /(Long2 self, long scalar) => new Long2(self.A / scalar, self.B / scalar);
 public static implicit operator long[](Long2 value) => new[] { value.A, value.B };
+public double Dot(Long2 other) => this.Multiply(other).Sum();
+public double LengthSquared() => this.Dot(this);
+public double Length() => System.Math.Sqrt(LengthSquared());
 public IIterator<long> Iterator => new ArrayIterator<long>(this);
 public int Count => 2;
 public long this[int index] { get { switch (index) {
@@ -1048,6 +1175,7 @@ public partial struct Long3
 : IArray<long>
 {
 public Long3(long a, long b, long c) => (A, B, C) = (a, b, c);
+public static Long3 Create(long a, long b, long c) => new Long3(a, b, c);
 public long A { get; }
 public long B { get; }
 public long C { get; }
@@ -1068,14 +1196,25 @@ public Long3 WithA(long value) => new Long3(value, B, C);
 public Long3 WithB(long value) => new Long3(A, value, C);
 public Long3 WithC(long value) => new Long3(A, B, value);
 public static Long3 operator +(Long3 a, Long3 b) => new Long3(a.A + b.A, a.B + b.B, a.C + b.C);
+public static Long3 operator +(long a, Long3 b) => new Long3(a + b.A, a + b.B, a + b.C);
+public static Long3 operator +(Long3 a, long b) => new Long3(a.A + b, a.B + b, a.C + b);
 public static Long3 operator -(Long3 a, Long3 b) => new Long3(a.A - b.A, a.B - b.B, a.C - b.C);
+public static Long3 operator -(long a, Long3 b) => new Long3(a - b.A, a - b.B, a - b.C);
+public static Long3 operator -(Long3 a, long b) => new Long3(a.A - b, a.B - b, a.C - b);
 public static Long3 operator *(Long3 a, Long3 b) => new Long3(a.A * b.A, a.B * b.B, a.C * b.C);
+public static Long3 operator *(Long3 a, long  b) => new Long3(a.A * b, a.B * b, a.C * b);
+public static Long3 operator *(long  a, Long3 b) => new Long3(a * b.A, a * b.B, a * b.C);
 public static Long3 operator /(Long3 a, Long3 b) => new Long3(a.A / b.A, a.B / b.B, a.C / b.C);
+public static Long3 operator /(Long3 a, long  b) => new Long3(a.A / b, a.B / b, a.C / b);
+public static Long3 operator /(long  a, Long3 b) => new Long3(a / b.A, a / b.B, a / b.C);
 public static Long3 operator %(Long3 a, Long3 b) => new Long3(a.A % b.A, a.B % b.B, a.C % b.C);
+public static Long3 operator %(Long3 a, long  b) => new Long3(a.A % b, a.B % b, a.C % b);
+public static Long3 operator %(long  a, Long3 b) => new Long3(a % b.A, a % b.B, a % b.C);
 public static Long3 operator -(Long3 a) => new Long3(- a.A, - a.B, - a.C);
-public static Long3 operator *(Long3 self, long scalar) => new Long3(self.A * scalar, self.B * scalar, self.C * scalar);
-public static Long3 operator /(Long3 self, long scalar) => new Long3(self.A / scalar, self.B / scalar, self.C / scalar);
 public static implicit operator long[](Long3 value) => new[] { value.A, value.B, value.C };
+public double Dot(Long3 other) => this.Multiply(other).Sum();
+public double LengthSquared() => this.Dot(this);
+public double Length() => System.Math.Sqrt(LengthSquared());
 public IIterator<long> Iterator => new ArrayIterator<long>(this);
 public int Count => 3;
 public long this[int index] { get { switch (index) {
@@ -1113,6 +1252,7 @@ public partial struct Long4
 : IArray<long>
 {
 public Long4(long a, long b, long c, long d) => (A, B, C, D) = (a, b, c, d);
+public static Long4 Create(long a, long b, long c, long d) => new Long4(a, b, c, d);
 public long A { get; }
 public long B { get; }
 public long C { get; }
@@ -1135,14 +1275,25 @@ public Long4 WithB(long value) => new Long4(A, value, C, D);
 public Long4 WithC(long value) => new Long4(A, B, value, D);
 public Long4 WithD(long value) => new Long4(A, B, C, value);
 public static Long4 operator +(Long4 a, Long4 b) => new Long4(a.A + b.A, a.B + b.B, a.C + b.C, a.D + b.D);
+public static Long4 operator +(long a, Long4 b) => new Long4(a + b.A, a + b.B, a + b.C, a + b.D);
+public static Long4 operator +(Long4 a, long b) => new Long4(a.A + b, a.B + b, a.C + b, a.D + b);
 public static Long4 operator -(Long4 a, Long4 b) => new Long4(a.A - b.A, a.B - b.B, a.C - b.C, a.D - b.D);
+public static Long4 operator -(long a, Long4 b) => new Long4(a - b.A, a - b.B, a - b.C, a - b.D);
+public static Long4 operator -(Long4 a, long b) => new Long4(a.A - b, a.B - b, a.C - b, a.D - b);
 public static Long4 operator *(Long4 a, Long4 b) => new Long4(a.A * b.A, a.B * b.B, a.C * b.C, a.D * b.D);
+public static Long4 operator *(Long4 a, long  b) => new Long4(a.A * b, a.B * b, a.C * b, a.D * b);
+public static Long4 operator *(long  a, Long4 b) => new Long4(a * b.A, a * b.B, a * b.C, a * b.D);
 public static Long4 operator /(Long4 a, Long4 b) => new Long4(a.A / b.A, a.B / b.B, a.C / b.C, a.D / b.D);
+public static Long4 operator /(Long4 a, long  b) => new Long4(a.A / b, a.B / b, a.C / b, a.D / b);
+public static Long4 operator /(long  a, Long4 b) => new Long4(a / b.A, a / b.B, a / b.C, a / b.D);
 public static Long4 operator %(Long4 a, Long4 b) => new Long4(a.A % b.A, a.B % b.B, a.C % b.C, a.D % b.D);
+public static Long4 operator %(Long4 a, long  b) => new Long4(a.A % b, a.B % b, a.C % b, a.D % b);
+public static Long4 operator %(long  a, Long4 b) => new Long4(a % b.A, a % b.B, a % b.C, a % b.D);
 public static Long4 operator -(Long4 a) => new Long4(- a.A, - a.B, - a.C, - a.D);
-public static Long4 operator *(Long4 self, long scalar) => new Long4(self.A * scalar, self.B * scalar, self.C * scalar, self.D * scalar);
-public static Long4 operator /(Long4 self, long scalar) => new Long4(self.A / scalar, self.B / scalar, self.C / scalar, self.D / scalar);
 public static implicit operator long[](Long4 value) => new[] { value.A, value.B, value.C, value.D };
+public double Dot(Long4 other) => this.Multiply(other).Sum();
+public double LengthSquared() => this.Dot(this);
+public double Length() => System.Math.Sqrt(LengthSquared());
 public IIterator<long> Iterator => new ArrayIterator<long>(this);
 public int Count => 4;
 public long this[int index] { get { switch (index) {
@@ -1180,6 +1331,7 @@ public static Long4 MaxValue(this Long4 _) => Long4.MaxValue;
 public partial struct Pose
 {
 public Pose(Double3 position, Rotation orientation) => (Position, Orientation) = (position, orientation);
+public static Pose Create(Double3 position, Rotation orientation) => new Pose(position, orientation);
 public Double3 Position { get; }
 public Rotation Orientation { get; }
 public static implicit operator Pose((Double3 Position, Rotation Orientation) tuple) => new Pose(tuple.Position, tuple.Orientation);
@@ -1209,6 +1361,7 @@ public static Pose MaxValue(this Pose _) => Pose.MaxValue;
 public partial struct Transform
 {
 public Transform(Double3 translation, Rotation rotation, Double3 scale) => (Translation, Rotation, Scale) = (translation, rotation, scale);
+public static Transform Create(Double3 translation, Rotation rotation, Double3 scale) => new Transform(translation, rotation, scale);
 public Double3 Translation { get; }
 public Rotation Rotation { get; }
 public Double3 Scale { get; }
@@ -1238,9 +1391,9 @@ public static Transform MaxValue(this Transform _) => Transform.MaxValue;
 }
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct AABBox2D
-: IArray<Double2>
 {
 public AABBox2D(Double2 a, Double2 b) => (A, B) = (a, b);
+public static AABBox2D Create(Double2 a, Double2 b) => new AABBox2D(a, b);
 public Double2 A { get; }
 public Double2 B { get; }
 public static implicit operator AABBox2D((Double2 A, Double2 B) tuple) => new AABBox2D(tuple.A, tuple.B);
@@ -1258,40 +1411,8 @@ public static bool operator ==(AABBox2D a, AABBox2D b) => (a.A == b.A) && (a.B =
 public static bool operator !=(AABBox2D a, AABBox2D b) => (a.A != b.A) || (a.B != b.B);
 public AABBox2D WithA(Double2 value) => new AABBox2D(value, B);
 public AABBox2D WithB(Double2 value) => new AABBox2D(A, value);
-public static AABBox2D operator +(AABBox2D a, AABBox2D b) => new AABBox2D(a.A + b.A, a.B + b.B);
-public static AABBox2D operator -(AABBox2D a, AABBox2D b) => new AABBox2D(a.A - b.A, a.B - b.B);
-public static AABBox2D operator *(AABBox2D a, AABBox2D b) => new AABBox2D(a.A * b.A, a.B * b.B);
-public static AABBox2D operator /(AABBox2D a, AABBox2D b) => new AABBox2D(a.A / b.A, a.B / b.B);
-public static AABBox2D operator %(AABBox2D a, AABBox2D b) => new AABBox2D(a.A % b.A, a.B % b.B);
-public static AABBox2D operator -(AABBox2D a) => new AABBox2D(- a.A, - a.B);
-public static AABBox2D operator *(AABBox2D self, Double2 scalar) => new AABBox2D(self.A * scalar, self.B * scalar);
-public static AABBox2D operator /(AABBox2D self, Double2 scalar) => new AABBox2D(self.A / scalar, self.B / scalar);
-public static implicit operator Double2[](AABBox2D value) => new[] { value.A, value.B };
-public IIterator<Double2> Iterator => new ArrayIterator<Double2>(this);
-public int Count => 2;
-public Double2 this[int index] { get { switch (index) {
-case 0: return A;
-case 1: return B;
-default: throw new System.ArgumentOutOfRangeException(nameof(index));
-} } }
 }
 public static partial class Intrinsics {
-public static AABBox2D Add(this AABBox2D a, AABBox2D b) => a + b;
-public static IArray<AABBox2D> Add(this IArray<AABBox2D> self, IArray<AABBox2D> other) => self.Zip(other, (a,b) => a + b);
-public static AABBox2D Subtract(this AABBox2D a, AABBox2D b) => a - b;
-public static IArray<AABBox2D> Subtract(this IArray<AABBox2D> self, IArray<AABBox2D> other) => self.Zip(other, (a,b) => a - b);
-public static AABBox2D Sum(this IArray<AABBox2D> self) => self.Aggregate((a, b) => a + b);
-public static AABBox2D Multiply(this AABBox2D a, AABBox2D b) => a * b;
-public static IArray<AABBox2D> Multiply(this IArray<AABBox2D> self, IArray<AABBox2D> other) => self.Zip(other, (a,b) => a * b);
-public static AABBox2D Divide(this AABBox2D a, AABBox2D b) => a / b;
-public static IArray<AABBox2D> Divide(this IArray<AABBox2D> self, IArray<AABBox2D> other) => self.Zip(other, (a,b) => a / b);
-public static AABBox2D Modulo(this AABBox2D a, AABBox2D b) => a % b;
-public static IArray<AABBox2D> Modulo(this IArray<AABBox2D> self, IArray<AABBox2D> other) => self.Zip(other, (a,b) => a % b);
-public static AABBox2D Product(this IArray<AABBox2D> self) => self.Aggregate((a, b) => a * b);
-public static AABBox2D Negate(this AABBox2D a) => - a;
-public static IArray<AABBox2D> Negate(this IArray<AABBox2D> self) => self.Select(a => - a);
-public static bool Equals(this AABBox2D a, AABBox2D b) => a == b;
-public static bool NotEquals(this AABBox2D a, AABBox2D b) => a != b;
 public static AABBox2D Default(this AABBox2D _) => default(AABBox2D);
 public static AABBox2D Zero(this AABBox2D _) => AABBox2D.Zero;
 public static AABBox2D One(this AABBox2D _) => AABBox2D.One;
@@ -1300,9 +1421,9 @@ public static AABBox2D MaxValue(this AABBox2D _) => AABBox2D.MaxValue;
 }
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct AABBox3D
-: IArray<Double3>
 {
 public AABBox3D(Double3 a, Double3 b) => (A, B) = (a, b);
+public static AABBox3D Create(Double3 a, Double3 b) => new AABBox3D(a, b);
 public Double3 A { get; }
 public Double3 B { get; }
 public static implicit operator AABBox3D((Double3 A, Double3 B) tuple) => new AABBox3D(tuple.A, tuple.B);
@@ -1320,40 +1441,8 @@ public static bool operator ==(AABBox3D a, AABBox3D b) => (a.A == b.A) && (a.B =
 public static bool operator !=(AABBox3D a, AABBox3D b) => (a.A != b.A) || (a.B != b.B);
 public AABBox3D WithA(Double3 value) => new AABBox3D(value, B);
 public AABBox3D WithB(Double3 value) => new AABBox3D(A, value);
-public static AABBox3D operator +(AABBox3D a, AABBox3D b) => new AABBox3D(a.A + b.A, a.B + b.B);
-public static AABBox3D operator -(AABBox3D a, AABBox3D b) => new AABBox3D(a.A - b.A, a.B - b.B);
-public static AABBox3D operator *(AABBox3D a, AABBox3D b) => new AABBox3D(a.A * b.A, a.B * b.B);
-public static AABBox3D operator /(AABBox3D a, AABBox3D b) => new AABBox3D(a.A / b.A, a.B / b.B);
-public static AABBox3D operator %(AABBox3D a, AABBox3D b) => new AABBox3D(a.A % b.A, a.B % b.B);
-public static AABBox3D operator -(AABBox3D a) => new AABBox3D(- a.A, - a.B);
-public static AABBox3D operator *(AABBox3D self, Double3 scalar) => new AABBox3D(self.A * scalar, self.B * scalar);
-public static AABBox3D operator /(AABBox3D self, Double3 scalar) => new AABBox3D(self.A / scalar, self.B / scalar);
-public static implicit operator Double3[](AABBox3D value) => new[] { value.A, value.B };
-public IIterator<Double3> Iterator => new ArrayIterator<Double3>(this);
-public int Count => 2;
-public Double3 this[int index] { get { switch (index) {
-case 0: return A;
-case 1: return B;
-default: throw new System.ArgumentOutOfRangeException(nameof(index));
-} } }
 }
 public static partial class Intrinsics {
-public static AABBox3D Add(this AABBox3D a, AABBox3D b) => a + b;
-public static IArray<AABBox3D> Add(this IArray<AABBox3D> self, IArray<AABBox3D> other) => self.Zip(other, (a,b) => a + b);
-public static AABBox3D Subtract(this AABBox3D a, AABBox3D b) => a - b;
-public static IArray<AABBox3D> Subtract(this IArray<AABBox3D> self, IArray<AABBox3D> other) => self.Zip(other, (a,b) => a - b);
-public static AABBox3D Sum(this IArray<AABBox3D> self) => self.Aggregate((a, b) => a + b);
-public static AABBox3D Multiply(this AABBox3D a, AABBox3D b) => a * b;
-public static IArray<AABBox3D> Multiply(this IArray<AABBox3D> self, IArray<AABBox3D> other) => self.Zip(other, (a,b) => a * b);
-public static AABBox3D Divide(this AABBox3D a, AABBox3D b) => a / b;
-public static IArray<AABBox3D> Divide(this IArray<AABBox3D> self, IArray<AABBox3D> other) => self.Zip(other, (a,b) => a / b);
-public static AABBox3D Modulo(this AABBox3D a, AABBox3D b) => a % b;
-public static IArray<AABBox3D> Modulo(this IArray<AABBox3D> self, IArray<AABBox3D> other) => self.Zip(other, (a,b) => a % b);
-public static AABBox3D Product(this IArray<AABBox3D> self) => self.Aggregate((a, b) => a * b);
-public static AABBox3D Negate(this AABBox3D a) => - a;
-public static IArray<AABBox3D> Negate(this IArray<AABBox3D> self) => self.Select(a => - a);
-public static bool Equals(this AABBox3D a, AABBox3D b) => a == b;
-public static bool NotEquals(this AABBox3D a, AABBox3D b) => a != b;
 public static AABBox3D Default(this AABBox3D _) => default(AABBox3D);
 public static AABBox3D Zero(this AABBox3D _) => AABBox3D.Zero;
 public static AABBox3D One(this AABBox3D _) => AABBox3D.One;
@@ -1365,6 +1454,7 @@ public partial struct Complex
 : IArray<double>
 {
 public Complex(double real, double imaginary) => (Real, Imaginary) = (real, imaginary);
+public static Complex Create(double real, double imaginary) => new Complex(real, imaginary);
 public double Real { get; }
 public double Imaginary { get; }
 public static implicit operator Complex((double Real, double Imaginary) tuple) => new Complex(tuple.Real, tuple.Imaginary);
@@ -1383,14 +1473,25 @@ public static bool operator !=(Complex a, Complex b) => (a.Real != b.Real) || (a
 public Complex WithReal(double value) => new Complex(value, Imaginary);
 public Complex WithImaginary(double value) => new Complex(Real, value);
 public static Complex operator +(Complex a, Complex b) => new Complex(a.Real + b.Real, a.Imaginary + b.Imaginary);
+public static Complex operator +(double a, Complex b) => new Complex(a + b.Real, a + b.Imaginary);
+public static Complex operator +(Complex a, double b) => new Complex(a.Real + b, a.Imaginary + b);
 public static Complex operator -(Complex a, Complex b) => new Complex(a.Real - b.Real, a.Imaginary - b.Imaginary);
+public static Complex operator -(double a, Complex b) => new Complex(a - b.Real, a - b.Imaginary);
+public static Complex operator -(Complex a, double b) => new Complex(a.Real - b, a.Imaginary - b);
 public static Complex operator *(Complex a, Complex b) => new Complex(a.Real * b.Real, a.Imaginary * b.Imaginary);
+public static Complex operator *(Complex a, double  b) => new Complex(a.Real * b, a.Imaginary * b);
+public static Complex operator *(double  a, Complex b) => new Complex(a * b.Real, a * b.Imaginary);
 public static Complex operator /(Complex a, Complex b) => new Complex(a.Real / b.Real, a.Imaginary / b.Imaginary);
+public static Complex operator /(Complex a, double  b) => new Complex(a.Real / b, a.Imaginary / b);
+public static Complex operator /(double  a, Complex b) => new Complex(a / b.Real, a / b.Imaginary);
 public static Complex operator %(Complex a, Complex b) => new Complex(a.Real % b.Real, a.Imaginary % b.Imaginary);
+public static Complex operator %(Complex a, double  b) => new Complex(a.Real % b, a.Imaginary % b);
+public static Complex operator %(double  a, Complex b) => new Complex(a % b.Real, a % b.Imaginary);
 public static Complex operator -(Complex a) => new Complex(- a.Real, - a.Imaginary);
-public static Complex operator *(Complex self, double scalar) => new Complex(self.Real * scalar, self.Imaginary * scalar);
-public static Complex operator /(Complex self, double scalar) => new Complex(self.Real / scalar, self.Imaginary / scalar);
 public static implicit operator double[](Complex value) => new[] { value.Real, value.Imaginary };
+public double Dot(Complex other) => this.Multiply(other).Sum();
+public double LengthSquared() => this.Dot(this);
+public double Length() => System.Math.Sqrt(LengthSquared());
 public IIterator<double> Iterator => new ArrayIterator<double>(this);
 public int Count => 2;
 public double this[int index] { get { switch (index) {
@@ -1426,6 +1527,7 @@ public static Complex MaxValue(this Complex _) => Complex.MaxValue;
 public partial struct Ray
 {
 public Ray(Double3 direction, Point position) => (Direction, Position) = (direction, position);
+public static Ray Create(Double3 direction, Point position) => new Ray(direction, position);
 public Double3 Direction { get; }
 public Point Position { get; }
 public static implicit operator Ray((Double3 Direction, Point Position) tuple) => new Ray(tuple.Direction, tuple.Position);
@@ -1455,6 +1557,7 @@ public static Ray MaxValue(this Ray _) => Ray.MaxValue;
 public partial struct Ray2D
 {
 public Ray2D(Double2 direction, Point2D position) => (Direction, Position) = (direction, position);
+public static Ray2D Create(Double2 direction, Point2D position) => new Ray2D(direction, position);
 public Double2 Direction { get; }
 public Point2D Position { get; }
 public static implicit operator Ray2D((Double2 Direction, Point2D Position) tuple) => new Ray2D(tuple.Direction, tuple.Position);
@@ -1484,6 +1587,7 @@ public static Ray2D MaxValue(this Ray2D _) => Ray2D.MaxValue;
 public partial struct Sphere
 {
 public Sphere(Point center, double radius) => (Center, Radius) = (center, radius);
+public static Sphere Create(Point center, double radius) => new Sphere(center, radius);
 public Point Center { get; }
 public double Radius { get; }
 public static implicit operator Sphere((Point Center, double Radius) tuple) => new Sphere(tuple.Center, tuple.Radius);
@@ -1513,6 +1617,7 @@ public static Sphere MaxValue(this Sphere _) => Sphere.MaxValue;
 public partial struct Plane
 {
 public Plane(Double3 normal, double d) => (Normal, D) = (normal, d);
+public static Plane Create(Double3 normal, double d) => new Plane(normal, d);
 public Double3 Normal { get; }
 public double D { get; }
 public static implicit operator Plane((Double3 Normal, double D) tuple) => new Plane(tuple.Normal, tuple.D);
@@ -1542,6 +1647,7 @@ public static Plane MaxValue(this Plane _) => Plane.MaxValue;
 public partial struct Triangle
 {
 public Triangle(Double3 a, Double3 b, Double3 c) => (A, B, C) = (a, b, c);
+public static Triangle Create(Double3 a, Double3 b, Double3 c) => new Triangle(a, b, c);
 public Double3 A { get; }
 public Double3 B { get; }
 public Double3 C { get; }
@@ -1573,6 +1679,7 @@ public static Triangle MaxValue(this Triangle _) => Triangle.MaxValue;
 public partial struct Triangle2D
 {
 public Triangle2D(Double2 a, Double2 b, Double2 c) => (A, B, C) = (a, b, c);
+public static Triangle2D Create(Double2 a, Double2 b, Double2 c) => new Triangle2D(a, b, c);
 public Double2 A { get; }
 public Double2 B { get; }
 public Double2 C { get; }
@@ -1604,6 +1711,7 @@ public static Triangle2D MaxValue(this Triangle2D _) => Triangle2D.MaxValue;
 public partial struct Quad
 {
 public Quad(Double3 a, Double3 b, Double3 c, Double3 d) => (A, B, C, D) = (a, b, c, d);
+public static Quad Create(Double3 a, Double3 b, Double3 c, Double3 d) => new Quad(a, b, c, d);
 public Double3 A { get; }
 public Double3 B { get; }
 public Double3 C { get; }
@@ -1637,6 +1745,7 @@ public static Quad MaxValue(this Quad _) => Quad.MaxValue;
 public partial struct Point
 {
 public Point(Double3 value) => (Value) = (value);
+public static Point Create(Double3 value) => new Point(value);
 public Double3 Value { get; }
 public static implicit operator Point(Double3 value) => new Point(value);
 public static implicit operator Double3(Point value) => value.Value;
@@ -1664,6 +1773,7 @@ public static Point MaxValue(this Point _) => Point.MaxValue;
 public partial struct Point2D
 {
 public Point2D(Double2 value) => (Value) = (value);
+public static Point2D Create(Double2 value) => new Point2D(value);
 public Double2 Value { get; }
 public static implicit operator Point2D(Double2 value) => new Point2D(value);
 public static implicit operator Double2(Point2D value) => value.Value;
@@ -1691,6 +1801,7 @@ public static Point2D MaxValue(this Point2D _) => Point2D.MaxValue;
 public partial struct Line
 {
 public Line(Point a, Point b) => (A, B) = (a, b);
+public static Line Create(Point a, Point b) => new Line(a, b);
 public Point A { get; }
 public Point B { get; }
 public static implicit operator Line((Point A, Point B) tuple) => new Line(tuple.A, tuple.B);
@@ -1720,6 +1831,7 @@ public static Line MaxValue(this Line _) => Line.MaxValue;
 public partial struct Line2D
 {
 public Line2D(Point2D a, Point2D b) => (A, B) = (a, b);
+public static Line2D Create(Point2D a, Point2D b) => new Line2D(a, b);
 public Point2D A { get; }
 public Point2D B { get; }
 public static implicit operator Line2D((Point2D A, Point2D B) tuple) => new Line2D(tuple.A, tuple.B);
@@ -1749,6 +1861,7 @@ public static Line2D MaxValue(this Line2D _) => Line2D.MaxValue;
 public partial struct Color
 {
 public Color(double r, double g, double b, double a) => (R, G, B, A) = (r, g, b, a);
+public static Color Create(double r, double g, double b, double a) => new Color(r, g, b, a);
 public double R { get; }
 public double G { get; }
 public double B { get; }
@@ -1782,6 +1895,7 @@ public static Color MaxValue(this Color _) => Color.MaxValue;
 public partial struct ColorHSV
 {
 public ColorHSV(double h, double s, double v) => (H, S, V) = (h, s, v);
+public static ColorHSV Create(double h, double s, double v) => new ColorHSV(h, s, v);
 public double H { get; }
 public double S { get; }
 public double V { get; }
@@ -1813,6 +1927,7 @@ public static ColorHSV MaxValue(this ColorHSV _) => ColorHSV.MaxValue;
 public partial struct ColorHSL
 {
 public ColorHSL(double hue, double saturation, double luminance) => (Hue, Saturation, Luminance) = (hue, saturation, luminance);
+public static ColorHSL Create(double hue, double saturation, double luminance) => new ColorHSL(hue, saturation, luminance);
 public double Hue { get; }
 public double Saturation { get; }
 public double Luminance { get; }
@@ -1844,6 +1959,7 @@ public static ColorHSL MaxValue(this ColorHSL _) => ColorHSL.MaxValue;
 public partial struct ColorYCbCr
 {
 public ColorYCbCr(double y, double cb, double cr) => (Y, Cb, Cr) = (y, cb, cr);
+public static ColorYCbCr Create(double y, double cb, double cr) => new ColorYCbCr(y, cb, cr);
 public double Y { get; }
 public double Cb { get; }
 public double Cr { get; }
@@ -1875,6 +1991,7 @@ public static ColorYCbCr MaxValue(this ColorYCbCr _) => ColorYCbCr.MaxValue;
 public partial struct SphericalCoordinate
 {
 public SphericalCoordinate(double radius, Angle azimuth, Angle inclination) => (Radius, Azimuth, Inclination) = (radius, azimuth, inclination);
+public static SphericalCoordinate Create(double radius, Angle azimuth, Angle inclination) => new SphericalCoordinate(radius, azimuth, inclination);
 public double Radius { get; }
 public Angle Azimuth { get; }
 public Angle Inclination { get; }
@@ -1905,24 +2022,25 @@ public static SphericalCoordinate MaxValue(this SphericalCoordinate _) => Spheri
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct PolarCoordinate
 {
-public PolarCoordinate(double radius, Angle azimuth) => (Radius, Azimuth) = (radius, azimuth);
+public PolarCoordinate(double radius, Angle angle) => (Radius, Angle) = (radius, angle);
+public static PolarCoordinate Create(double radius, Angle angle) => new PolarCoordinate(radius, angle);
 public double Radius { get; }
-public Angle Azimuth { get; }
-public static implicit operator PolarCoordinate((double Radius, Angle Azimuth) tuple) => new PolarCoordinate(tuple.Radius, tuple.Azimuth);
-public static implicit operator (double Radius, Angle Azimuth)(PolarCoordinate self) => (self.Radius, self.Azimuth);
-public void Deconstruct(out double radius, out Angle azimuth) => (radius, azimuth) = (Radius, Azimuth);
-public override string ToString() => $"{{ \"Radius\" : { Radius }, \"Azimuth\" : { Azimuth } }}";
+public Angle Angle { get; }
+public static implicit operator PolarCoordinate((double Radius, Angle Angle) tuple) => new PolarCoordinate(tuple.Radius, tuple.Angle);
+public static implicit operator (double Radius, Angle Angle)(PolarCoordinate self) => (self.Radius, self.Angle);
+public void Deconstruct(out double radius, out Angle angle) => (radius, angle) = (Radius, Angle);
+public override string ToString() => $"{{ \"Radius\" : { Radius }, \"Angle\" : { Angle } }}";
 public override bool Equals(object other) => other is PolarCoordinate typedOther && this == typedOther;
-public override int GetHashCode() => (Radius, Azimuth).GetHashCode();
+public override int GetHashCode() => (Radius, Angle).GetHashCode();
 public static readonly PolarCoordinate Default = default;
-public static PolarCoordinate Zero = new PolarCoordinate(Default.Radius.Zero(),Default.Azimuth.Zero());
-public static PolarCoordinate One = new PolarCoordinate(Default.Radius.One(),Default.Azimuth.One());
-public static PolarCoordinate MinValue = new PolarCoordinate(Default.Radius.MinValue(),Default.Azimuth.MinValue());
-public static PolarCoordinate MaxValue = new PolarCoordinate(Default.Radius.MaxValue(),Default.Azimuth.MaxValue());
-public static bool operator ==(PolarCoordinate a, PolarCoordinate b) => (a.Radius == b.Radius) && (a.Azimuth == b.Azimuth);
-public static bool operator !=(PolarCoordinate a, PolarCoordinate b) => (a.Radius != b.Radius) || (a.Azimuth != b.Azimuth);
-public PolarCoordinate WithRadius(double value) => new PolarCoordinate(value, Azimuth);
-public PolarCoordinate WithAzimuth(Angle value) => new PolarCoordinate(Radius, value);
+public static PolarCoordinate Zero = new PolarCoordinate(Default.Radius.Zero(),Default.Angle.Zero());
+public static PolarCoordinate One = new PolarCoordinate(Default.Radius.One(),Default.Angle.One());
+public static PolarCoordinate MinValue = new PolarCoordinate(Default.Radius.MinValue(),Default.Angle.MinValue());
+public static PolarCoordinate MaxValue = new PolarCoordinate(Default.Radius.MaxValue(),Default.Angle.MaxValue());
+public static bool operator ==(PolarCoordinate a, PolarCoordinate b) => (a.Radius == b.Radius) && (a.Angle == b.Angle);
+public static bool operator !=(PolarCoordinate a, PolarCoordinate b) => (a.Radius != b.Radius) || (a.Angle != b.Angle);
+public PolarCoordinate WithRadius(double value) => new PolarCoordinate(value, Angle);
+public PolarCoordinate WithAngle(Angle value) => new PolarCoordinate(Radius, value);
 }
 public static partial class Intrinsics {
 public static PolarCoordinate Default(this PolarCoordinate _) => default(PolarCoordinate);
@@ -1935,6 +2053,7 @@ public static PolarCoordinate MaxValue(this PolarCoordinate _) => PolarCoordinat
 public partial struct LogPolarCoordinate
 {
 public LogPolarCoordinate(double rho, Angle azimuth) => (Rho, Azimuth) = (rho, azimuth);
+public static LogPolarCoordinate Create(double rho, Angle azimuth) => new LogPolarCoordinate(rho, azimuth);
 public double Rho { get; }
 public Angle Azimuth { get; }
 public static implicit operator LogPolarCoordinate((double Rho, Angle Azimuth) tuple) => new LogPolarCoordinate(tuple.Rho, tuple.Azimuth);
@@ -1964,6 +2083,7 @@ public static LogPolarCoordinate MaxValue(this LogPolarCoordinate _) => LogPolar
 public partial struct HorizontalCoordinate
 {
 public HorizontalCoordinate(double radius, Angle azimuth, double height) => (Radius, Azimuth, Height) = (radius, azimuth, height);
+public static HorizontalCoordinate Create(double radius, Angle azimuth, double height) => new HorizontalCoordinate(radius, azimuth, height);
 public double Radius { get; }
 public Angle Azimuth { get; }
 public double Height { get; }
@@ -1995,6 +2115,7 @@ public static HorizontalCoordinate MaxValue(this HorizontalCoordinate _) => Hori
 public partial struct GeoCoordinate
 {
 public GeoCoordinate(double latitude, double longitude, double altitude) => (Latitude, Longitude, Altitude) = (latitude, longitude, altitude);
+public static GeoCoordinate Create(double latitude, double longitude, double altitude) => new GeoCoordinate(latitude, longitude, altitude);
 public double Latitude { get; }
 public double Longitude { get; }
 public double Altitude { get; }
@@ -2026,6 +2147,7 @@ public static GeoCoordinate MaxValue(this GeoCoordinate _) => GeoCoordinate.MaxV
 public partial struct Circle
 {
 public Circle(Point2D center, double radius) => (Center, Radius) = (center, radius);
+public static Circle Create(Point2D center, double radius) => new Circle(center, radius);
 public Point2D Center { get; }
 public double Radius { get; }
 public static implicit operator Circle((Point2D Center, double Radius) tuple) => new Circle(tuple.Center, tuple.Radius);
@@ -2055,6 +2177,7 @@ public static Circle MaxValue(this Circle _) => Circle.MaxValue;
 public partial struct Size
 {
 public Size(double width, double height) => (Width, Height) = (width, height);
+public static Size Create(double width, double height) => new Size(width, height);
 public double Width { get; }
 public double Height { get; }
 public static implicit operator Size((double Width, double Height) tuple) => new Size(tuple.Width, tuple.Height);
@@ -2084,6 +2207,7 @@ public static Size MaxValue(this Size _) => Size.MaxValue;
 public partial struct Rectangle
 {
 public Rectangle(Double2 topleft, Size size) => (TopLeft, Size) = (topleft, size);
+public static Rectangle Create(Double2 topleft, Size size) => new Rectangle(topleft, size);
 public Double2 TopLeft { get; }
 public Size Size { get; }
 public static implicit operator Rectangle((Double2 TopLeft, Size Size) tuple) => new Rectangle(tuple.TopLeft, tuple.Size);
@@ -2113,6 +2237,7 @@ public static Rectangle MaxValue(this Rectangle _) => Rectangle.MaxValue;
 public partial struct Percent
 {
 public Percent(double value) => (Value) = (value);
+public static Percent Create(double value) => new Percent(value);
 public double Value { get; }
 public static implicit operator Percent(double value) => new Percent(value);
 public static implicit operator double(Percent value) => value.Value;
@@ -2140,6 +2265,7 @@ public static Percent MaxValue(this Percent _) => Percent.MaxValue;
 public partial struct Unit
 {
 public Unit(double value) => (Value) = (value);
+public static Unit Create(double value) => new Unit(value);
 public double Value { get; }
 public static implicit operator Unit(double value) => new Unit(value);
 public static implicit operator double(Unit value) => value.Value;
@@ -2155,10 +2281,20 @@ public static bool operator ==(Unit a, Unit b) => (a.Value == b.Value);
 public static bool operator !=(Unit a, Unit b) => (a.Value != b.Value);
 public Unit WithValue(double value) => new Unit(value);
 public static Unit operator +(Unit a, Unit b) => new Unit(a.Value + b.Value);
+public static Unit operator +(double a, Unit b) => new Unit(a + b.Value);
+public static Unit operator +(Unit a, double b) => new Unit(a.Value + b);
 public static Unit operator -(Unit a, Unit b) => new Unit(a.Value - b.Value);
+public static Unit operator -(double a, Unit b) => new Unit(a - b.Value);
+public static Unit operator -(Unit a, double b) => new Unit(a.Value - b);
 public static Unit operator *(Unit a, Unit b) => new Unit(a.Value * b.Value);
+public static Unit operator *(Unit a, double  b) => new Unit(a.Value * b);
+public static Unit operator *(double  a, Unit b) => new Unit(a * b.Value);
 public static Unit operator /(Unit a, Unit b) => new Unit(a.Value / b.Value);
+public static Unit operator /(Unit a, double  b) => new Unit(a.Value / b);
+public static Unit operator /(double  a, Unit b) => new Unit(a / b.Value);
 public static Unit operator %(Unit a, Unit b) => new Unit(a.Value % b.Value);
+public static Unit operator %(Unit a, double  b) => new Unit(a.Value % b);
+public static Unit operator %(double  a, Unit b) => new Unit(a % b.Value);
 public static Unit operator -(Unit a) => new Unit(- a.Value);
 public static bool operator <(Unit a, Unit b) => a.Value < b.Value;
 public static bool operator <=(Unit a, Unit b) => a.Value <= b.Value;
@@ -2204,6 +2340,7 @@ public static Unit MaxValue(this Unit _) => Unit.MaxValue;
 public partial struct Amount
 {
 public Amount(double mole) => (Mole) = (mole);
+public static Amount Create(double mole) => new Amount(mole);
 public double Mole { get; }
 public static implicit operator Amount(double value) => new Amount(value);
 public static implicit operator double(Amount value) => value.Mole;
@@ -2231,6 +2368,7 @@ public static Amount MaxValue(this Amount _) => Amount.MaxValue;
 public partial struct Fraction
 {
 public Fraction(double numerator, double denominator) => (Numerator, Denominator) = (numerator, denominator);
+public static Fraction Create(double numerator, double denominator) => new Fraction(numerator, denominator);
 public double Numerator { get; }
 public double Denominator { get; }
 public static implicit operator Fraction((double Numerator, double Denominator) tuple) => new Fraction(tuple.Numerator, tuple.Denominator);
@@ -2260,6 +2398,8 @@ public static Fraction MaxValue(this Fraction _) => Fraction.MaxValue;
 public partial struct Angle
 {
 public Angle(double radians) => (Radians) = (radians);
+public static Angle Create(double radians) => new Angle(radians);
+public const string Units = nameof(Radians);
 public double Radians { get; }
 public static implicit operator Angle(double value) => new Angle(value);
 public static implicit operator double(Angle value) => value.Radians;
@@ -2275,7 +2415,17 @@ public static bool operator ==(Angle a, Angle b) => (a.Radians == b.Radians);
 public static bool operator !=(Angle a, Angle b) => (a.Radians != b.Radians);
 public Angle WithRadians(double value) => new Angle(value);
 public static Angle operator +(Angle a, Angle b) => new Angle(a.Radians + b.Radians);
+public static Angle operator +(double a, Angle b) => new Angle(a + b.Radians);
+public static Angle operator +(Angle a, double b) => new Angle(a.Radians + b);
 public static Angle operator -(Angle a, Angle b) => new Angle(a.Radians - b.Radians);
+public static Angle operator -(double a, Angle b) => new Angle(a - b.Radians);
+public static Angle operator -(Angle a, double b) => new Angle(a.Radians - b);
+public static Angle operator *(Angle a, double  b) => new Angle(a.Radians * b);
+public static Angle operator *(double  a, Angle b) => new Angle(a * b.Radians);
+public static Angle operator /(Angle a, double  b) => new Angle(a.Radians / b);
+public static Angle operator /(double  a, Angle b) => new Angle(a / b.Radians);
+public static Angle operator %(Angle a, double  b) => new Angle(a.Radians % b);
+public static Angle operator %(double  a, Angle b) => new Angle(a % b.Radians);
 public static Angle operator -(Angle a) => new Angle(- a.Radians);
 public static bool operator <(Angle a, Angle b) => a.Radians < b.Radians;
 public static bool operator <=(Angle a, Angle b) => a.Radians <= b.Radians;
@@ -2305,6 +2455,8 @@ public static Angle MaxValue(this Angle _) => Angle.MaxValue;
 public partial struct Length
 {
 public Length(double meters) => (Meters) = (meters);
+public static Length Create(double meters) => new Length(meters);
+public const string Units = nameof(Meters);
 public double Meters { get; }
 public static implicit operator Length(double value) => new Length(value);
 public static implicit operator double(Length value) => value.Meters;
@@ -2320,7 +2472,17 @@ public static bool operator ==(Length a, Length b) => (a.Meters == b.Meters);
 public static bool operator !=(Length a, Length b) => (a.Meters != b.Meters);
 public Length WithMeters(double value) => new Length(value);
 public static Length operator +(Length a, Length b) => new Length(a.Meters + b.Meters);
+public static Length operator +(double a, Length b) => new Length(a + b.Meters);
+public static Length operator +(Length a, double b) => new Length(a.Meters + b);
 public static Length operator -(Length a, Length b) => new Length(a.Meters - b.Meters);
+public static Length operator -(double a, Length b) => new Length(a - b.Meters);
+public static Length operator -(Length a, double b) => new Length(a.Meters - b);
+public static Length operator *(Length a, double  b) => new Length(a.Meters * b);
+public static Length operator *(double  a, Length b) => new Length(a * b.Meters);
+public static Length operator /(Length a, double  b) => new Length(a.Meters / b);
+public static Length operator /(double  a, Length b) => new Length(a / b.Meters);
+public static Length operator %(Length a, double  b) => new Length(a.Meters % b);
+public static Length operator %(double  a, Length b) => new Length(a % b.Meters);
 public static Length operator -(Length a) => new Length(- a.Meters);
 public static bool operator <(Length a, Length b) => a.Meters < b.Meters;
 public static bool operator <=(Length a, Length b) => a.Meters <= b.Meters;
@@ -2350,6 +2512,8 @@ public static Length MaxValue(this Length _) => Length.MaxValue;
 public partial struct Mass
 {
 public Mass(double kilograms) => (Kilograms) = (kilograms);
+public static Mass Create(double kilograms) => new Mass(kilograms);
+public const string Units = nameof(Kilograms);
 public double Kilograms { get; }
 public static implicit operator Mass(double value) => new Mass(value);
 public static implicit operator double(Mass value) => value.Kilograms;
@@ -2365,7 +2529,17 @@ public static bool operator ==(Mass a, Mass b) => (a.Kilograms == b.Kilograms);
 public static bool operator !=(Mass a, Mass b) => (a.Kilograms != b.Kilograms);
 public Mass WithKilograms(double value) => new Mass(value);
 public static Mass operator +(Mass a, Mass b) => new Mass(a.Kilograms + b.Kilograms);
+public static Mass operator +(double a, Mass b) => new Mass(a + b.Kilograms);
+public static Mass operator +(Mass a, double b) => new Mass(a.Kilograms + b);
 public static Mass operator -(Mass a, Mass b) => new Mass(a.Kilograms - b.Kilograms);
+public static Mass operator -(double a, Mass b) => new Mass(a - b.Kilograms);
+public static Mass operator -(Mass a, double b) => new Mass(a.Kilograms - b);
+public static Mass operator *(Mass a, double  b) => new Mass(a.Kilograms * b);
+public static Mass operator *(double  a, Mass b) => new Mass(a * b.Kilograms);
+public static Mass operator /(Mass a, double  b) => new Mass(a.Kilograms / b);
+public static Mass operator /(double  a, Mass b) => new Mass(a / b.Kilograms);
+public static Mass operator %(Mass a, double  b) => new Mass(a.Kilograms % b);
+public static Mass operator %(double  a, Mass b) => new Mass(a % b.Kilograms);
 public static Mass operator -(Mass a) => new Mass(- a.Kilograms);
 public static bool operator <(Mass a, Mass b) => a.Kilograms < b.Kilograms;
 public static bool operator <=(Mass a, Mass b) => a.Kilograms <= b.Kilograms;
@@ -2395,6 +2569,7 @@ public static Mass MaxValue(this Mass _) => Mass.MaxValue;
 public partial struct Temperature
 {
 public Temperature(double celsius) => (Celsius) = (celsius);
+public static Temperature Create(double celsius) => new Temperature(celsius);
 public double Celsius { get; }
 public static implicit operator Temperature(double value) => new Temperature(value);
 public static implicit operator double(Temperature value) => value.Celsius;
@@ -2410,10 +2585,20 @@ public static bool operator ==(Temperature a, Temperature b) => (a.Celsius == b.
 public static bool operator !=(Temperature a, Temperature b) => (a.Celsius != b.Celsius);
 public Temperature WithCelsius(double value) => new Temperature(value);
 public static Temperature operator +(Temperature a, Temperature b) => new Temperature(a.Celsius + b.Celsius);
+public static Temperature operator +(double a, Temperature b) => new Temperature(a + b.Celsius);
+public static Temperature operator +(Temperature a, double b) => new Temperature(a.Celsius + b);
 public static Temperature operator -(Temperature a, Temperature b) => new Temperature(a.Celsius - b.Celsius);
+public static Temperature operator -(double a, Temperature b) => new Temperature(a - b.Celsius);
+public static Temperature operator -(Temperature a, double b) => new Temperature(a.Celsius - b);
 public static Temperature operator *(Temperature a, Temperature b) => new Temperature(a.Celsius * b.Celsius);
+public static Temperature operator *(Temperature a, double  b) => new Temperature(a.Celsius * b);
+public static Temperature operator *(double  a, Temperature b) => new Temperature(a * b.Celsius);
 public static Temperature operator /(Temperature a, Temperature b) => new Temperature(a.Celsius / b.Celsius);
+public static Temperature operator /(Temperature a, double  b) => new Temperature(a.Celsius / b);
+public static Temperature operator /(double  a, Temperature b) => new Temperature(a / b.Celsius);
 public static Temperature operator %(Temperature a, Temperature b) => new Temperature(a.Celsius % b.Celsius);
+public static Temperature operator %(Temperature a, double  b) => new Temperature(a.Celsius % b);
+public static Temperature operator %(double  a, Temperature b) => new Temperature(a % b.Celsius);
 public static Temperature operator -(Temperature a) => new Temperature(- a.Celsius);
 public static bool operator <(Temperature a, Temperature b) => a.Celsius < b.Celsius;
 public static bool operator <=(Temperature a, Temperature b) => a.Celsius <= b.Celsius;
@@ -2457,9 +2642,10 @@ public static Temperature MaxValue(this Temperature _) => Temperature.MaxValue;
 }
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct Time
-: IArray<double>
 {
 public Time(double seconds) => (Seconds) = (seconds);
+public static Time Create(double seconds) => new Time(seconds);
+public const string Units = nameof(Seconds);
 public double Seconds { get; }
 public static implicit operator Time(double value) => new Time(value);
 public static implicit operator double(Time value) => value.Seconds;
@@ -2475,38 +2661,35 @@ public static bool operator ==(Time a, Time b) => (a.Seconds == b.Seconds);
 public static bool operator !=(Time a, Time b) => (a.Seconds != b.Seconds);
 public Time WithSeconds(double value) => new Time(value);
 public static Time operator +(Time a, Time b) => new Time(a.Seconds + b.Seconds);
+public static Time operator +(double a, Time b) => new Time(a + b.Seconds);
+public static Time operator +(Time a, double b) => new Time(a.Seconds + b);
 public static Time operator -(Time a, Time b) => new Time(a.Seconds - b.Seconds);
-public static Time operator *(Time a, Time b) => new Time(a.Seconds * b.Seconds);
-public static Time operator /(Time a, Time b) => new Time(a.Seconds / b.Seconds);
-public static Time operator %(Time a, Time b) => new Time(a.Seconds % b.Seconds);
+public static Time operator -(double a, Time b) => new Time(a - b.Seconds);
+public static Time operator -(Time a, double b) => new Time(a.Seconds - b);
+public static Time operator *(Time a, double  b) => new Time(a.Seconds * b);
+public static Time operator *(double  a, Time b) => new Time(a * b.Seconds);
+public static Time operator /(Time a, double  b) => new Time(a.Seconds / b);
+public static Time operator /(double  a, Time b) => new Time(a / b.Seconds);
+public static Time operator %(Time a, double  b) => new Time(a.Seconds % b);
+public static Time operator %(double  a, Time b) => new Time(a % b.Seconds);
 public static Time operator -(Time a) => new Time(- a.Seconds);
-public static Time operator *(Time self, double scalar) => new Time(self.Seconds * scalar);
-public static Time operator /(Time self, double scalar) => new Time(self.Seconds / scalar);
-public static implicit operator double[](Time value) => new[] { value.Seconds };
-public IIterator<double> Iterator => new ArrayIterator<double>(this);
-public int Count => 1;
-public double this[int index] { get { switch (index) {
-case 0: return Seconds;
-default: throw new System.ArgumentOutOfRangeException(nameof(index));
-} } }
+public static bool operator <(Time a, Time b) => a.Seconds < b.Seconds;
+public static bool operator <=(Time a, Time b) => a.Seconds <= b.Seconds;
+public static bool operator >(Time a, Time b) => a.Seconds > b.Seconds;
+public static bool operator >=(Time a, Time b) => a.Seconds >= b.Seconds;
+public int CompareTo(Time other) => this < other ? -1 : this > other ? 1 : 0;
 }
 public static partial class Intrinsics {
-public static Time Add(this Time a, Time b) => a + b;
-public static IArray<Time> Add(this IArray<Time> self, IArray<Time> other) => self.Zip(other, (a,b) => a + b);
-public static Time Subtract(this Time a, Time b) => a - b;
-public static IArray<Time> Subtract(this IArray<Time> self, IArray<Time> other) => self.Zip(other, (a,b) => a - b);
-public static Time Sum(this IArray<Time> self) => self.Aggregate((a, b) => a + b);
-public static Time Multiply(this Time a, Time b) => a * b;
-public static IArray<Time> Multiply(this IArray<Time> self, IArray<Time> other) => self.Zip(other, (a,b) => a * b);
-public static Time Divide(this Time a, Time b) => a / b;
-public static IArray<Time> Divide(this IArray<Time> self, IArray<Time> other) => self.Zip(other, (a,b) => a / b);
-public static Time Modulo(this Time a, Time b) => a % b;
-public static IArray<Time> Modulo(this IArray<Time> self, IArray<Time> other) => self.Zip(other, (a,b) => a % b);
-public static Time Product(this IArray<Time> self) => self.Aggregate((a, b) => a * b);
-public static Time Negate(this Time a) => - a;
-public static IArray<Time> Negate(this IArray<Time> self) => self.Select(a => - a);
-public static bool Equals(this Time a, Time b) => a == b;
-public static bool NotEquals(this Time a, Time b) => a != b;
+public static int CompareTo(this Time self, Time other) => self < other ? -1 : self > other ? 1 : 0;
+public static IArray<int> CompareTo(this IArray<Time> self, IArray<Time> other) => self.Zip(other, (a,b) => a.CompareTo(b));
+public static bool LessThan(this Time a, Time b) => a < b;
+public static IArray<bool> LessThan(this IArray<Time> self, IArray<Time> other) => self.Zip(other, (a,b) => a < b);
+public static bool LessThanOrEquals(this Time a, Time b) => a <= b;
+public static IArray<bool> LessThanOrEquals(this IArray<Time> self, IArray<Time> other) => self.Zip(other, (a,b) => a <= b);
+public static bool GreaterThan(this Time a, Time b) => a > b;
+public static IArray<bool> GreaterThan(this IArray<Time> self, IArray<Time> other) => self.Zip(other, (a,b) => a > b);
+public static bool GreaterThanOrEquals(this Time a, Time b) => a >= b;
+public static IArray<bool> GreaterThanOrEquals(this IArray<Time> self, IArray<Time> other) => self.Zip(other, (a,b) => a >= b);
 public static Time Default(this Time _) => default(Time);
 public static Time Zero(this Time _) => Time.Zero;
 public static Time One(this Time _) => Time.One;
@@ -2516,9 +2699,9 @@ public static Time MaxValue(this Time _) => Time.MaxValue;
 }
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct TimeInterval
-: IArray<Time>
 {
 public TimeInterval(Time start, Time end) => (Start, End) = (start, end);
+public static TimeInterval Create(Time start, Time end) => new TimeInterval(start, end);
 public Time Start { get; }
 public Time End { get; }
 public static implicit operator TimeInterval((Time Start, Time End) tuple) => new TimeInterval(tuple.Start, tuple.End);
@@ -2536,40 +2719,8 @@ public static bool operator ==(TimeInterval a, TimeInterval b) => (a.Start == b.
 public static bool operator !=(TimeInterval a, TimeInterval b) => (a.Start != b.Start) || (a.End != b.End);
 public TimeInterval WithStart(Time value) => new TimeInterval(value, End);
 public TimeInterval WithEnd(Time value) => new TimeInterval(Start, value);
-public static TimeInterval operator +(TimeInterval a, TimeInterval b) => new TimeInterval(a.Start + b.Start, a.End + b.End);
-public static TimeInterval operator -(TimeInterval a, TimeInterval b) => new TimeInterval(a.Start - b.Start, a.End - b.End);
-public static TimeInterval operator *(TimeInterval a, TimeInterval b) => new TimeInterval(a.Start * b.Start, a.End * b.End);
-public static TimeInterval operator /(TimeInterval a, TimeInterval b) => new TimeInterval(a.Start / b.Start, a.End / b.End);
-public static TimeInterval operator %(TimeInterval a, TimeInterval b) => new TimeInterval(a.Start % b.Start, a.End % b.End);
-public static TimeInterval operator -(TimeInterval a) => new TimeInterval(- a.Start, - a.End);
-public static TimeInterval operator *(TimeInterval self, Time scalar) => new TimeInterval(self.Start * scalar, self.End * scalar);
-public static TimeInterval operator /(TimeInterval self, Time scalar) => new TimeInterval(self.Start / scalar, self.End / scalar);
-public static implicit operator Time[](TimeInterval value) => new[] { value.Start, value.End };
-public IIterator<Time> Iterator => new ArrayIterator<Time>(this);
-public int Count => 2;
-public Time this[int index] { get { switch (index) {
-case 0: return Start;
-case 1: return End;
-default: throw new System.ArgumentOutOfRangeException(nameof(index));
-} } }
 }
 public static partial class Intrinsics {
-public static TimeInterval Add(this TimeInterval a, TimeInterval b) => a + b;
-public static IArray<TimeInterval> Add(this IArray<TimeInterval> self, IArray<TimeInterval> other) => self.Zip(other, (a,b) => a + b);
-public static TimeInterval Subtract(this TimeInterval a, TimeInterval b) => a - b;
-public static IArray<TimeInterval> Subtract(this IArray<TimeInterval> self, IArray<TimeInterval> other) => self.Zip(other, (a,b) => a - b);
-public static TimeInterval Sum(this IArray<TimeInterval> self) => self.Aggregate((a, b) => a + b);
-public static TimeInterval Multiply(this TimeInterval a, TimeInterval b) => a * b;
-public static IArray<TimeInterval> Multiply(this IArray<TimeInterval> self, IArray<TimeInterval> other) => self.Zip(other, (a,b) => a * b);
-public static TimeInterval Divide(this TimeInterval a, TimeInterval b) => a / b;
-public static IArray<TimeInterval> Divide(this IArray<TimeInterval> self, IArray<TimeInterval> other) => self.Zip(other, (a,b) => a / b);
-public static TimeInterval Modulo(this TimeInterval a, TimeInterval b) => a % b;
-public static IArray<TimeInterval> Modulo(this IArray<TimeInterval> self, IArray<TimeInterval> other) => self.Zip(other, (a,b) => a % b);
-public static TimeInterval Product(this IArray<TimeInterval> self) => self.Aggregate((a, b) => a * b);
-public static TimeInterval Negate(this TimeInterval a) => - a;
-public static IArray<TimeInterval> Negate(this IArray<TimeInterval> self) => self.Select(a => - a);
-public static bool Equals(this TimeInterval a, TimeInterval b) => a == b;
-public static bool NotEquals(this TimeInterval a, TimeInterval b) => a != b;
 public static TimeInterval Default(this TimeInterval _) => default(TimeInterval);
 public static TimeInterval Zero(this TimeInterval _) => TimeInterval.Zero;
 public static TimeInterval One(this TimeInterval _) => TimeInterval.One;
@@ -2578,9 +2729,9 @@ public static TimeInterval MaxValue(this TimeInterval _) => TimeInterval.MaxValu
 }
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct Interval
-: IArray<double>
 {
 public Interval(double a, double b) => (A, B) = (a, b);
+public static Interval Create(double a, double b) => new Interval(a, b);
 public double A { get; }
 public double B { get; }
 public static implicit operator Interval((double A, double B) tuple) => new Interval(tuple.A, tuple.B);
@@ -2598,40 +2749,8 @@ public static bool operator ==(Interval a, Interval b) => (a.A == b.A) && (a.B =
 public static bool operator !=(Interval a, Interval b) => (a.A != b.A) || (a.B != b.B);
 public Interval WithA(double value) => new Interval(value, B);
 public Interval WithB(double value) => new Interval(A, value);
-public static Interval operator +(Interval a, Interval b) => new Interval(a.A + b.A, a.B + b.B);
-public static Interval operator -(Interval a, Interval b) => new Interval(a.A - b.A, a.B - b.B);
-public static Interval operator *(Interval a, Interval b) => new Interval(a.A * b.A, a.B * b.B);
-public static Interval operator /(Interval a, Interval b) => new Interval(a.A / b.A, a.B / b.B);
-public static Interval operator %(Interval a, Interval b) => new Interval(a.A % b.A, a.B % b.B);
-public static Interval operator -(Interval a) => new Interval(- a.A, - a.B);
-public static Interval operator *(Interval self, double scalar) => new Interval(self.A * scalar, self.B * scalar);
-public static Interval operator /(Interval self, double scalar) => new Interval(self.A / scalar, self.B / scalar);
-public static implicit operator double[](Interval value) => new[] { value.A, value.B };
-public IIterator<double> Iterator => new ArrayIterator<double>(this);
-public int Count => 2;
-public double this[int index] { get { switch (index) {
-case 0: return A;
-case 1: return B;
-default: throw new System.ArgumentOutOfRangeException(nameof(index));
-} } }
 }
 public static partial class Intrinsics {
-public static Interval Add(this Interval a, Interval b) => a + b;
-public static IArray<Interval> Add(this IArray<Interval> self, IArray<Interval> other) => self.Zip(other, (a,b) => a + b);
-public static Interval Subtract(this Interval a, Interval b) => a - b;
-public static IArray<Interval> Subtract(this IArray<Interval> self, IArray<Interval> other) => self.Zip(other, (a,b) => a - b);
-public static Interval Sum(this IArray<Interval> self) => self.Aggregate((a, b) => a + b);
-public static Interval Multiply(this Interval a, Interval b) => a * b;
-public static IArray<Interval> Multiply(this IArray<Interval> self, IArray<Interval> other) => self.Zip(other, (a,b) => a * b);
-public static Interval Divide(this Interval a, Interval b) => a / b;
-public static IArray<Interval> Divide(this IArray<Interval> self, IArray<Interval> other) => self.Zip(other, (a,b) => a / b);
-public static Interval Modulo(this Interval a, Interval b) => a % b;
-public static IArray<Interval> Modulo(this IArray<Interval> self, IArray<Interval> other) => self.Zip(other, (a,b) => a % b);
-public static Interval Product(this IArray<Interval> self) => self.Aggregate((a, b) => a * b);
-public static Interval Negate(this Interval a) => - a;
-public static IArray<Interval> Negate(this IArray<Interval> self) => self.Select(a => - a);
-public static bool Equals(this Interval a, Interval b) => a == b;
-public static bool NotEquals(this Interval a, Interval b) => a != b;
 public static Interval Default(this Interval _) => default(Interval);
 public static Interval Zero(this Interval _) => Interval.Zero;
 public static Interval One(this Interval _) => Interval.One;
@@ -2640,9 +2759,9 @@ public static Interval MaxValue(this Interval _) => Interval.MaxValue;
 }
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct Interval2D
-: IArray<Double2>
 {
 public Interval2D(Double2 a, Double2 b) => (A, B) = (a, b);
+public static Interval2D Create(Double2 a, Double2 b) => new Interval2D(a, b);
 public Double2 A { get; }
 public Double2 B { get; }
 public static implicit operator Interval2D((Double2 A, Double2 B) tuple) => new Interval2D(tuple.A, tuple.B);
@@ -2660,40 +2779,8 @@ public static bool operator ==(Interval2D a, Interval2D b) => (a.A == b.A) && (a
 public static bool operator !=(Interval2D a, Interval2D b) => (a.A != b.A) || (a.B != b.B);
 public Interval2D WithA(Double2 value) => new Interval2D(value, B);
 public Interval2D WithB(Double2 value) => new Interval2D(A, value);
-public static Interval2D operator +(Interval2D a, Interval2D b) => new Interval2D(a.A + b.A, a.B + b.B);
-public static Interval2D operator -(Interval2D a, Interval2D b) => new Interval2D(a.A - b.A, a.B - b.B);
-public static Interval2D operator *(Interval2D a, Interval2D b) => new Interval2D(a.A * b.A, a.B * b.B);
-public static Interval2D operator /(Interval2D a, Interval2D b) => new Interval2D(a.A / b.A, a.B / b.B);
-public static Interval2D operator %(Interval2D a, Interval2D b) => new Interval2D(a.A % b.A, a.B % b.B);
-public static Interval2D operator -(Interval2D a) => new Interval2D(- a.A, - a.B);
-public static Interval2D operator *(Interval2D self, Double2 scalar) => new Interval2D(self.A * scalar, self.B * scalar);
-public static Interval2D operator /(Interval2D self, Double2 scalar) => new Interval2D(self.A / scalar, self.B / scalar);
-public static implicit operator Double2[](Interval2D value) => new[] { value.A, value.B };
-public IIterator<Double2> Iterator => new ArrayIterator<Double2>(this);
-public int Count => 2;
-public Double2 this[int index] { get { switch (index) {
-case 0: return A;
-case 1: return B;
-default: throw new System.ArgumentOutOfRangeException(nameof(index));
-} } }
 }
 public static partial class Intrinsics {
-public static Interval2D Add(this Interval2D a, Interval2D b) => a + b;
-public static IArray<Interval2D> Add(this IArray<Interval2D> self, IArray<Interval2D> other) => self.Zip(other, (a,b) => a + b);
-public static Interval2D Subtract(this Interval2D a, Interval2D b) => a - b;
-public static IArray<Interval2D> Subtract(this IArray<Interval2D> self, IArray<Interval2D> other) => self.Zip(other, (a,b) => a - b);
-public static Interval2D Sum(this IArray<Interval2D> self) => self.Aggregate((a, b) => a + b);
-public static Interval2D Multiply(this Interval2D a, Interval2D b) => a * b;
-public static IArray<Interval2D> Multiply(this IArray<Interval2D> self, IArray<Interval2D> other) => self.Zip(other, (a,b) => a * b);
-public static Interval2D Divide(this Interval2D a, Interval2D b) => a / b;
-public static IArray<Interval2D> Divide(this IArray<Interval2D> self, IArray<Interval2D> other) => self.Zip(other, (a,b) => a / b);
-public static Interval2D Modulo(this Interval2D a, Interval2D b) => a % b;
-public static IArray<Interval2D> Modulo(this IArray<Interval2D> self, IArray<Interval2D> other) => self.Zip(other, (a,b) => a % b);
-public static Interval2D Product(this IArray<Interval2D> self) => self.Aggregate((a, b) => a * b);
-public static Interval2D Negate(this Interval2D a) => - a;
-public static IArray<Interval2D> Negate(this IArray<Interval2D> self) => self.Select(a => - a);
-public static bool Equals(this Interval2D a, Interval2D b) => a == b;
-public static bool NotEquals(this Interval2D a, Interval2D b) => a != b;
 public static Interval2D Default(this Interval2D _) => default(Interval2D);
 public static Interval2D Zero(this Interval2D _) => Interval2D.Zero;
 public static Interval2D One(this Interval2D _) => Interval2D.One;
@@ -2702,9 +2789,9 @@ public static Interval2D MaxValue(this Interval2D _) => Interval2D.MaxValue;
 }
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct Interval3D
-: IArray<Double3>
 {
 public Interval3D(Double3 a, Double3 b) => (A, B) = (a, b);
+public static Interval3D Create(Double3 a, Double3 b) => new Interval3D(a, b);
 public Double3 A { get; }
 public Double3 B { get; }
 public static implicit operator Interval3D((Double3 A, Double3 B) tuple) => new Interval3D(tuple.A, tuple.B);
@@ -2722,40 +2809,8 @@ public static bool operator ==(Interval3D a, Interval3D b) => (a.A == b.A) && (a
 public static bool operator !=(Interval3D a, Interval3D b) => (a.A != b.A) || (a.B != b.B);
 public Interval3D WithA(Double3 value) => new Interval3D(value, B);
 public Interval3D WithB(Double3 value) => new Interval3D(A, value);
-public static Interval3D operator +(Interval3D a, Interval3D b) => new Interval3D(a.A + b.A, a.B + b.B);
-public static Interval3D operator -(Interval3D a, Interval3D b) => new Interval3D(a.A - b.A, a.B - b.B);
-public static Interval3D operator *(Interval3D a, Interval3D b) => new Interval3D(a.A * b.A, a.B * b.B);
-public static Interval3D operator /(Interval3D a, Interval3D b) => new Interval3D(a.A / b.A, a.B / b.B);
-public static Interval3D operator %(Interval3D a, Interval3D b) => new Interval3D(a.A % b.A, a.B % b.B);
-public static Interval3D operator -(Interval3D a) => new Interval3D(- a.A, - a.B);
-public static Interval3D operator *(Interval3D self, Double3 scalar) => new Interval3D(self.A * scalar, self.B * scalar);
-public static Interval3D operator /(Interval3D self, Double3 scalar) => new Interval3D(self.A / scalar, self.B / scalar);
-public static implicit operator Double3[](Interval3D value) => new[] { value.A, value.B };
-public IIterator<Double3> Iterator => new ArrayIterator<Double3>(this);
-public int Count => 2;
-public Double3 this[int index] { get { switch (index) {
-case 0: return A;
-case 1: return B;
-default: throw new System.ArgumentOutOfRangeException(nameof(index));
-} } }
 }
 public static partial class Intrinsics {
-public static Interval3D Add(this Interval3D a, Interval3D b) => a + b;
-public static IArray<Interval3D> Add(this IArray<Interval3D> self, IArray<Interval3D> other) => self.Zip(other, (a,b) => a + b);
-public static Interval3D Subtract(this Interval3D a, Interval3D b) => a - b;
-public static IArray<Interval3D> Subtract(this IArray<Interval3D> self, IArray<Interval3D> other) => self.Zip(other, (a,b) => a - b);
-public static Interval3D Sum(this IArray<Interval3D> self) => self.Aggregate((a, b) => a + b);
-public static Interval3D Multiply(this Interval3D a, Interval3D b) => a * b;
-public static IArray<Interval3D> Multiply(this IArray<Interval3D> self, IArray<Interval3D> other) => self.Zip(other, (a,b) => a * b);
-public static Interval3D Divide(this Interval3D a, Interval3D b) => a / b;
-public static IArray<Interval3D> Divide(this IArray<Interval3D> self, IArray<Interval3D> other) => self.Zip(other, (a,b) => a / b);
-public static Interval3D Modulo(this Interval3D a, Interval3D b) => a % b;
-public static IArray<Interval3D> Modulo(this IArray<Interval3D> self, IArray<Interval3D> other) => self.Zip(other, (a,b) => a % b);
-public static Interval3D Product(this IArray<Interval3D> self) => self.Aggregate((a, b) => a * b);
-public static Interval3D Negate(this Interval3D a) => - a;
-public static IArray<Interval3D> Negate(this IArray<Interval3D> self) => self.Select(a => - a);
-public static bool Equals(this Interval3D a, Interval3D b) => a == b;
-public static bool NotEquals(this Interval3D a, Interval3D b) => a != b;
 public static Interval3D Default(this Interval3D _) => default(Interval3D);
 public static Interval3D Zero(this Interval3D _) => Interval3D.Zero;
 public static Interval3D One(this Interval3D _) => Interval3D.One;
@@ -2766,6 +2821,7 @@ public static Interval3D MaxValue(this Interval3D _) => Interval3D.MaxValue;
 public partial struct Capsule
 {
 public Capsule(Line line, double radius) => (Line, Radius) = (line, radius);
+public static Capsule Create(Line line, double radius) => new Capsule(line, radius);
 public Line Line { get; }
 public double Radius { get; }
 public static implicit operator Capsule((Line Line, double Radius) tuple) => new Capsule(tuple.Line, tuple.Radius);
@@ -2795,6 +2851,7 @@ public static Capsule MaxValue(this Capsule _) => Capsule.MaxValue;
 public partial struct Cylinder
 {
 public Cylinder(Line line, double radius) => (Line, Radius) = (line, radius);
+public static Cylinder Create(Line line, double radius) => new Cylinder(line, radius);
 public Line Line { get; }
 public double Radius { get; }
 public static implicit operator Cylinder((Line Line, double Radius) tuple) => new Cylinder(tuple.Line, tuple.Radius);
@@ -2824,6 +2881,7 @@ public static Cylinder MaxValue(this Cylinder _) => Cylinder.MaxValue;
 public partial struct Cone
 {
 public Cone(Line line, double radius) => (Line, Radius) = (line, radius);
+public static Cone Create(Line line, double radius) => new Cone(line, radius);
 public Line Line { get; }
 public double Radius { get; }
 public static implicit operator Cone((Line Line, double Radius) tuple) => new Cone(tuple.Line, tuple.Radius);
@@ -2853,6 +2911,7 @@ public static Cone MaxValue(this Cone _) => Cone.MaxValue;
 public partial struct Tube
 {
 public Tube(Line line, double innerradius, double outerradius) => (Line, InnerRadius, OuterRadius) = (line, innerradius, outerradius);
+public static Tube Create(Line line, double innerradius, double outerradius) => new Tube(line, innerradius, outerradius);
 public Line Line { get; }
 public double InnerRadius { get; }
 public double OuterRadius { get; }
@@ -2884,6 +2943,7 @@ public static Tube MaxValue(this Tube _) => Tube.MaxValue;
 public partial struct ConeSegment
 {
 public ConeSegment(Line line, double radius1, double radius2) => (Line, Radius1, Radius2) = (line, radius1, radius2);
+public static ConeSegment Create(Line line, double radius1, double radius2) => new ConeSegment(line, radius1, radius2);
 public Line Line { get; }
 public double Radius1 { get; }
 public double Radius2 { get; }
@@ -2915,6 +2975,7 @@ public static ConeSegment MaxValue(this ConeSegment _) => ConeSegment.MaxValue;
 public partial struct Box
 {
 public Box(Point center, Rotation rotation, Double3 extent) => (Center, Rotation, Extent) = (center, rotation, extent);
+public static Box Create(Point center, Rotation rotation, Double3 extent) => new Box(center, rotation, extent);
 public Point Center { get; }
 public Rotation Rotation { get; }
 public Double3 Extent { get; }

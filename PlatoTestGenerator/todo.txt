@@ -1,3 +1,106 @@
 * Write a rule enforcer ... show syntax errors when things aren't right.
 * Structs or classes? Why not just keep everything as classes. Making them structs just makes inheritance harder. 
 * Animation controller 
+
+//==
+
+* Array operations 
+* Math library on floats
+* All functions extended to arrays
+
+B SomeFunc(A);
+IArray<B> SomeFunc(IArray<A>);
+2 function versions 
+
+C SomeFunc(A, B);
+IArray<C> SomeFunc(IArray<A>, B);
+IArray<C> SomeFunc(IArray<A>, IArray<B>);
+IArray<C> SomeFunc(A, IArray<B>);
+4 function versions 
+
+D SomeFunc(A, B, C);
+IArray<D> SomeFunc(IArray<A>, IArray<B>, IArray<C>);
+IArray<D> SomeFunc(IArray<A>, IArray<B>, C);
+IArray<D> SomeFunc(IArray<A>, B, IArray<C>);
+IArray<D> SomeFunc(IArray<A>, B, C);
+IArray<D> SomeFunc(A, IArray<B>, IArray<C>);
+IArray<D> SomeFunc(A, IArray<B>, C);
+IArray<D> SomeFunc(A, B, IArray<C>);
+8 function versions 
+
+
+Really what this is: 
+
+
+Do I need to have a version of IEnumerable, and another for IArray? 
+
+How do I make sure that if I pass the thing an IArray, that it does 
+the right thing? 
+
+Well the thing is that I want people to use arrays over IIterable / etc. 
+
+//==
+
+What about type inference? Do I care?
+
+//== 
+
+How do I do Type inference? 
+Everything is an an Any, or some thing.
+
+So the thing is, I have a WHOLE lot of functions to write. 
+
+Luckily, not many are generic. 
+
+The only problem I have is that some of them really should 
+be applied in multiple places. 
+
+A bunch I don't want to write multiple times: 
+So I am going to say something like "Number". Etc. 
+
+Then the expectation is that the extra stuff will get generated. 
+
+Q: can every value be "lerpped"? It would have to contain values that consist of things that can be lerpped. 
+
+
+//==
+
+* Demo tweens and curves in different applications
+
+* Tweening a color gradient / or gray-scale, or a rotation, 
+* Or a "wipe"
+* Or draw a line graph
+* Or a movement between two camera positions
+* or a bounce
+* Up/down only 
+* left/right 
+
+* Shapes demo.
+
+//==
+
+* There are a large number of Vector operations that I want. 
+	* Magnitude / Length
+	* LengthSquared
+	* Dot 
+	* Clamp 
+	* Lerp
+	* Abs 
+	* Normalize 
+* There is some twizzling 
+* I kind of want "lerp" for everything, which suggests 
+	* Clamp / Min / Max / Abs / Within / Mix  
+	* It really doesn't make sense though. 
+	* Lerp = A * 1 - t + B * t; 
+	* So if there is a scalar multiply, then sure. But ... 
+
+* Is a "Long3" really a vector? No, not really. 
+	* Can't do numerical operations on it. 
+
+//== 
+
+* Translating to GLSL would be very cool7
+
+//==
+
+* I'm going to do: Length, LenqthSquared, and Dot. 

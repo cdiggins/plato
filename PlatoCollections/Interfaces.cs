@@ -120,7 +120,7 @@ namespace Plato
     /// <summary>
     /// An sequence with a specific fixed ordering. 
     /// </summary>
-    public partial interface ISortedSequence<T> : ISequence<T>, ISorted<T>
+    public interface ISortedSequence<T> : ISequence<T>, ISorted<T>
     {
     }
 
@@ -224,7 +224,7 @@ namespace Plato
     /// <summary>
     /// A slice is a section of array, which itself is also an array. 
     /// </summary>
-    public partial interface ISlice<T> : IArray<T>
+    public interface ISlice<T> : IArray<T>
     {
         IArray<T> Array { get; }
         int Index { get; }

@@ -238,8 +238,28 @@ Vector / Number
 * MagnitudeSquared
 * Sum
 * Product
-
-
 * Compare
 * Min
 * Max
+
+//==
+
+* Stupid performance hack.
+	* Put all of the extension functions in the classes directly 
+	* But seriously ... don't do that
+	* Just inline at the code site. 
+* Do we care about performance
+	* Not yet
+* The problem:
+	* Visual programming mapping to/from 
+* I do want:
+	* Don't say "public static this" all the freaking time. 
+	* Of course it is "public static this", just figure that out. 
+* I also want:
+	* Express algorithms in terms of concepts. 
+	* Express algorithms without supplying the darn type parameters.
+	* Type parameters can be implied. 
+	* This is an interesting thing. 
+* Ultimately, I want to be able to express the entire LinqArray library as a graph.
+	* To do this, means the system implies the type signatures. 
+

@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ptarmigan.Utils", "..\..\..
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Collections", "..\PlatoCollections\Plato.Collections.csproj", "{6DF8C94B-5133-4A8B-99E7-D96486015EBA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Math", "..\..\math3d\src\Plato.Math.csproj", "{FF8DB81D-E94A-4B2C-A9F5-BC7524242B71}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{6DF8C94B-5133-4A8B-99E7-D96486015EBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DF8C94B-5133-4A8B-99E7-D96486015EBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DF8C94B-5133-4A8B-99E7-D96486015EBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF8DB81D-E94A-4B2C-A9F5-BC7524242B71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF8DB81D-E94A-4B2C-A9F5-BC7524242B71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF8DB81D-E94A-4B2C-A9F5-BC7524242B71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF8DB81D-E94A-4B2C-A9F5-BC7524242B71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

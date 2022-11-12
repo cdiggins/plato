@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -12,7 +13,7 @@ namespace PlatoAnalyzer
     {
         public static (string, string)[] AdditiveBinaryOps = { ("Add", "+"), ("Subtract", "-") };
         public static (string, string)[] MultiplicativeBinaryOps = { ("Multiply", "*"), ("Divide", "/"), ("Modulo", "%") };
-        public static (string, string)[] VectorScalarBinaryOps = { ("Multiply", "*"), ("Divide", "/") };
+        public static (string, string)[] VectorScalarBinaryOps = { ("Multiply", "*"), ("Divide", "/"), ("Modulo", "%"), ("Add", "+"), ("Subtract", "-"),  };
         public static (string, string)[] UnaryOps = { ("Negate", "-") };
         public static (string, string)[] BinaryBooleanOps = { ("Equals", "=="), ("NotEquals", "!=") };
         public static (string, string)[] BinaryComparisonOps = { ("LessThan", "<"), ("LessThanOrEquals", "<="), ("GreaterThan", ">"), ("GreaterThanOrEquals", ">=") };
@@ -115,17 +116,33 @@ namespace PlatoAnalyzer
         {
             var t = type;
 
+            /*
             foreach (var (m, op) in VectorScalarBinaryOps)
             {
-                var args = members.Select(x => $"self.{x} {op} scalar").ToCommaDelimitedStrings();
-                sb.AppendLine($"public static {t} operator {op}({t} self, {scalarType} scalar) => new {t}({args});");
-
+                // Vector <op> Scalar
+                {
+                    var args = members.Select(x => $"self.{x} {op} scalar").ToCommaDelimitedStrings();
+                    sb.AppendLine(
+                        $"public static {t} operator {op}({t} self, {scalarType} scalar) => new {t}({args});");
+                }
+                // Scalar <op> Vector
+                {
+                    var args = members.Select(x => $"scalar {op} self.{x}").ToCommaDelimitedStrings();
+                    sb.AppendLine(
+                        $"public static {t} operator {op}({scalarType} scalar, {t} self) => new {t}({args});");
+                }
                 // This would give us a member function named "Multiply" or "Divide" that takes a scalar. Not sure it is necessary.  
                 //sb.AppendLine($"public {t} {m}({t} self, {scalarType} scalar) => self {op} scalar;");
             }
+            */
 
             var toArrayBody = members.Select(m => $"value.{m}").ToCommaDelimitedStrings();
             sb.AppendLine($"public static implicit operator {scalarType}[]({t} value) => new[] {{ {toArrayBody} }};");
+
+            // Common vector functions 
+            sb.AppendLine($"public double Dot({t} other) => this.Multiply(other).Sum();");
+            sb.AppendLine($"public double LengthSquared() => this.Dot(this);");
+            sb.AppendLine($"public double Length() => System.Math.Sqrt(LengthSquared());");
 
             // IArray implementation 
             sb.AppendLine($"public IIterator<{scalarType}> Iterator => new ArrayIterator<{scalarType}>(this);");
@@ -142,22 +159,34 @@ namespace PlatoAnalyzer
             return sb;
         }
 
-        public static StringBuilder GenerateOps(StringBuilder sb, string type, bool multiplicative, bool comparable, IReadOnlyList<string> members)
+        public static StringBuilder GenerateOps(StringBuilder sb, string type, string scalar, bool multiplicative, bool supportsScalar, bool comparable, IReadOnlyList<string> members)
         {
             var t = type;
-
+            
             foreach (var (m, op) in AdditiveBinaryOps)
             {
                 var args = members.Select(x => $"a.{x} {op} b.{x}").ToCommaDelimitedStrings();
                 sb.AppendLine($"public static {t} operator {op}({t} a, {t} b) => new {t}({args});");
+                args = members.Select(x => $"a {op} b.{x}").ToCommaDelimitedStrings();
+                sb.AppendLine($"public static {t} operator {op}({scalar} a, {t} b) => new {t}({args});");
+                args = members.Select(x => $"a.{x} {op} b").ToCommaDelimitedStrings();
+                sb.AppendLine($"public static {t} operator {op}({t} a, {scalar} b) => new {t}({args});");
             }
 
-            if (multiplicative)
+            foreach (var (m, op) in MultiplicativeBinaryOps)
             {
-                foreach (var (m, op) in MultiplicativeBinaryOps)
+                if (multiplicative)
                 {
                     var args = members.Select(x => $"a.{x} {op} b.{x}").ToCommaDelimitedStrings();
                     sb.AppendLine($"public static {t} operator {op}({t} a, {t} b) => new {t}({args});");
+                }
+
+                if (supportsScalar)
+                {
+                    var args = members.Select(x => $"a.{x} {op} b").ToCommaDelimitedStrings();
+                    sb.AppendLine($"public static {t} operator {op}({t} a, {scalar}  b) => new {t}({args});");
+                    args = members.Select(x => $"a {op} b.{x}").ToCommaDelimitedStrings();
+                    sb.AppendLine($"public static {t} operator {op}({scalar}  a, {t} b) => new {t}({args});");
                 }
             }
 
@@ -221,20 +250,33 @@ namespace PlatoAnalyzer
         public static IEnumerable<PlatoClass> GetInterfaces(PlatoClass classType, PlatoSemanticMapping mapping)
             => GetSelfAndBaseTypes(classType, mapping).Where(t => t?.IsInterface == true);
 
-        public static bool IsNumeric(PlatoClass classType, PlatoSemanticMapping mapping)
+        public static bool IsNumeric(PlatoClass classType)
             => classType.Attributes.Any(attr =>
-                attr.Name == "Vector" || attr.Name == "Interval" || attr.Name == "Number");
+                attr.Name == "Vector" || attr.Name == "Number");
 
-        public static bool IsComparable(PlatoClass classType, PlatoSemanticMapping mapping)
+        public static bool IsComparable(PlatoClass classType)
             => classType.Attributes.Any(attr =>
                 attr.Name == "Number" || attr.Name == "Measure");
+
+        public static bool IsMeasure(PlatoClass classType)
+            => classType.Attributes.Any(attr =>
+                attr.Name == "Measure");
 
         // TODO: concepts derived from concepts. In the future we will look at the inheritance chain. 
         public static bool IsValue(PlatoClass classType)
             => classType.Attributes.Any(attr =>
                 attr.Name == "Vector" || attr.Name == "Interval" || attr.Name == "Value" || attr.Name == "Number" || attr.Name == "Measure");
 
-        public static bool IsVector(PlatoClass classType, PlatoSemanticMapping mapping, out string scalarType)
+        public static bool IsOperations(PlatoClass classType)
+            => classType.Attributes.Any(attr => attr.Name == "Operations");
+
+        public static bool IsVectorizedOperations(PlatoClass classType)
+            => classType.Attributes.Any(attr => attr.Name == "VectorizedOperations");
+
+        public static bool IsVector(PlatoClass classType)
+            => IsVector(classType, out _);
+
+        public static bool IsVector(PlatoClass classType, out string scalarType)
         {
             scalarType = null;
 
@@ -248,35 +290,16 @@ namespace PlatoAnalyzer
                     return false;
             }
 
-            return classType.Attributes.Any(attr => attr.Name == "Vector" || attr.Name == "Interval");
-
-            // This was when the "IsVector" comes from the list of interfaces. 
-            /* 
-            foreach (var baseType in classType.BaseTypes)
-            {
-                if (baseType.Name == "IVector")
-                {
-                    if (baseType.TypeArguments.Count > 0)
-                    {
-                        scalarType = baseType.TypeArguments[0].Name;
-                        return true;
-                    }
-                }
-                if (IsVector(GetPlatoClass(baseType, mapping), mapping, out scalarType))
-                    return true;
-            }
-
-            scalarType = null;
-            return false;
-            */
+            return classType.Attributes.Any(attr => attr.Name == "Vector");
         }
 
         public static StringBuilder AddImplementation(StringBuilder sb, PlatoAnalyzer analyzer, PlatoClass classType)
         {
             var name = classType.Name;
-            var isNumeric = IsNumeric(classType, analyzer.Mapping);
-            var isVector = IsVector(classType, analyzer.Mapping, out var scalarType);
-            var isComparable = IsComparable(classType, analyzer.Mapping);
+            var isNumeric = IsNumeric(classType);
+            var isVector = IsVector(classType, out var scalarType);
+            var isComparable = IsComparable(classType);
+            var isMeasure = IsMeasure(classType);
             var isMultiplicative = isNumeric || isVector;
 
             if (IsValue(classType))
@@ -296,7 +319,6 @@ namespace PlatoAnalyzer
 
             sb.AppendLine("{");
 
-
             // TODO: we would expect the list of interfaces to be included in the class type.
             var symbol = analyzer.Mapping.GetSymbol(classType);
             if (symbol != null)
@@ -312,6 +334,13 @@ namespace PlatoAnalyzer
             var propsWithTypes = string.Join(", ", propNames.Zip(propTypes, (p, type) => $"{type} {p}"));
             var argsWithTypes = string.Join(", ", args.Zip(propTypes, (arg, type) => $"{type} {arg}"));
             sb.AppendLine($"public {classType.Name}({argsWithTypes}) => ({propNames.ToCommaDelimitedStrings()}) = ({args.ToCommaDelimitedStrings()});");
+
+            sb.AppendLine($"public static {classType.Name} Create({argsWithTypes}) => new {classType.Name}({args.ToCommaDelimitedStrings()});");
+
+            if (IsMeasure(classType))
+            {
+                sb.AppendLine($"public const string Units = nameof({propNames[0]});");
+            }
 
             foreach (var p in props)
             {
@@ -358,28 +387,14 @@ namespace PlatoAnalyzer
                 sb.AppendLine($"public static bool operator !=({name} a, {name} b) => {impl};");
             }
 
-            // TODO: Parse method
-            // TODO: ToBytes
-            // TODO: FromBytes
-            // - How am I going to deal with the math functions 
-
             foreach (var prop in props)
             {
-                //sb.AppendLine($"public {prop.Type.Name} {prop.Name} {{ get; }}");
-
                 var withArgs = props.Select(p => p.Name == prop.Name ? "value" : p.Name);
                 sb.AppendLine($"public {name} With{prop.Name}({prop.Type.Name} value) => new {name}({string.Join(", ", withArgs)});");
             }
 
-            /*
-            foreach (var method in ifaceType.GetMethods())
-            {
-                // TODO: add a method 
-            }
-            */
-
             if (isNumeric || isComparable)
-                GenerateOps(sb, name, isMultiplicative, isComparable, propNames);
+                GenerateOps(sb, name, scalarType, isMultiplicative, isNumeric || isMeasure, isComparable, propNames);
 
             if (isVector)
                 GenerateVectorOps(sb, name, scalarType, propNames);
@@ -391,13 +406,158 @@ namespace PlatoAnalyzer
 
             GenerateIntrinsics(sb, name, isNumeric, isMultiplicative, isComparable, propTypes);
 
-            //sb.AppendLine()
             return sb;
         }
 
-        public static void Output(Compilation compilation, string outputFile)
+        public static void OutputMethodBody(PlatoFunction method, StringBuilder sb)
         {
-            // TODO: get the classes 
+            sb.AppendLine("{");
+            // Body
+            sb.AppendLine(method.Body.ToString());
+            sb.AppendLine("}");
+        }
+
+        public static string DefaultExpression(PlatoParameter p)
+        {
+            if (p.DefaultValue == null) return null;
+            return $" = {p.DefaultValue.ToFormattedString()}";
+        }
+
+        public static void OutputVectorizedMethod(PlatoFunction f, PlatoClass vectorType, StringBuilder sb)
+        {
+            var rt = f.ReturnType.ToString();
+            var parameters = f.Parameters.Parameters;
+
+            if (rt != "double" || parameters.Count < 1)
+                return;
+
+
+            var firstParam = parameters[0];
+            if (firstParam.Type.ToString() != "double")
+                return;
+
+            sb.Append($"public static {vectorType.Name} {f.Name}(this {vectorType.Name} {firstParam.Name}");
+            for (var i = 1; i < parameters.Count; ++i)
+            {
+                var p = parameters[i];
+                if (p.Type.ToString() == "double")
+                {
+                    sb.Append($", {vectorType.Name} {p.Name}");
+                }
+                else
+                {
+                    sb.Append($", {p.Type} {p.Name}");
+                }
+            }
+
+            sb.Append(") => (");
+
+            var elements = vectorType.Fields.Select(field => field.Name).ToList();
+            var scalarType = vectorType.Fields[0].Type.ToString();
+
+            for (var i = 0; i < elements.Count; ++i)
+            {
+                var member = elements[i];
+                if (i > 0) sb.Append(", ");
+                sb.Append($"({scalarType})");
+                sb.Append(f.Name);
+                sb.Append("(");
+                for (var j = 0; j < parameters.Count; ++j)
+                {
+                    if (j > 0) sb.Append(", ");
+                    var p = parameters[j];
+                    if (p.Type.ToString() == "double")
+                    {
+                        sb.Append($"(double){p.Name}.{member}");
+                    }
+                    else
+                    {
+                        sb.Append(p.Name);
+                    }
+                }
+                sb.Append($")");
+            }
+            sb.AppendLine(");");
+        }
+
+        public static void OutputOperations(PlatoClass cls, List<PlatoClass> vectorTypes, StringBuilder sb)
+        {
+            // TODO: walk through the class's functions.
+            // make sure there are only functions for now.
+            // create a public static class with the same name
+            // Create a whole bunch of functions: each is a public static function with a This
+            // Make all of those functions work for Arrays as well. 
+            // Arrays of 1, 2, or 3 arguments. 
+            // NOTE: where is "IArray" defined?
+            // NOTE: should those functions exist on the class? Nah. 
+
+            // TODO: would be nice ... optimize the "functional" versions!
+            // TODO: make it an optimization, and have benchmarks and stuff 
+
+            if (cls.Fields.Count > 0)
+                throw new System.Exception("Fields not supported in an operations class");
+            
+            if (cls.Properties.Count > 0)
+                throw new System.Exception("Properties not supported in an operations class");
+
+            sb.AppendLine("public static partial class Operations {");
+            for (var i = 0; i < cls.Methods.Count; ++i)
+            {
+                var m = cls.Methods[i];
+                var rt = m.ReturnType.ToString();
+                var parameters = m.Parameters.Parameters.Select(p => $"{p.Type} {p.Name}{DefaultExpression(p)}").ToCommaDelimitedStrings();
+                sb.AppendLine($"public static {rt} {m.Name}(this {parameters})");
+                OutputMethodBody(m, sb);
+
+                if (vectorTypes != null)
+                {
+                    foreach (var vt in vectorTypes)
+                    {
+                        OutputVectorizedMethod(m, vt, sb);
+                    }
+                }
+            }
+
+            sb.AppendLine("}");
+        }
+
+        public static void OutputOperations(Compilation compilation, string outputFile)
+        {
+            var analyzer = new PlatoAnalyzer(compilation);
+
+            var sb = new StringBuilder();
+            sb.AppendLine("using System;");
+            sb.AppendLine("using System.Runtime.CompilerServices;");
+            sb.AppendLine("using System.Runtime.InteropServices;");
+            sb.AppendLine("using System.Runtime.Serialization;");
+
+            // TODO: this should be replaced with the Plato collection library 
+            sb.AppendLine("using System.Collections.Generic;");
+            sb.AppendLine("using System.Linq;");
+
+            sb.AppendLine("namespace Plato {");
+
+            var vectorTypes = analyzer.Mapping.GetClasses().Where(IsVector).ToList();
+
+            foreach (var c in analyzer.Mapping.GetClasses())
+            {
+                if (IsOperations(c))
+                {
+                    OutputOperations(c, null, sb);
+                }
+                if (IsVectorizedOperations(c))
+                {
+                    OutputOperations(c, vectorTypes, sb);
+                }
+            }
+
+            sb.AppendLine("} // End namespace");
+            var source = sb.ToString();
+            File.WriteAllText(outputFile, source);
+        }
+
+        public static void OutputTypes(Compilation compilation, string outputFile)
+        {
             var analyzer = new PlatoAnalyzer(compilation);
 
             var sb = new StringBuilder();
@@ -419,7 +579,6 @@ namespace PlatoAnalyzer
                 GenerateIntrinsics(sb, p, notByte, true, notByte, null);
             }
 
-            //sb.AppendLine("/*");
             foreach (var c in analyzer.Mapping.GetClasses())
             {
                 if (IsValue(c))
@@ -427,17 +586,11 @@ namespace PlatoAnalyzer
                     AddImplementation(sb, analyzer, c);
                 }
             }
-            //sb.AppendLine("*/");
 
             sb.AppendLine("} // End namespace");
+
             var source = sb.ToString();
-
-            // For debugging. 
-
             File.WriteAllText(outputFile, source);
-            //File.WriteAllText(@"C:\GitHub\plato\test-generator\PlatoTestGenerator\PlatoTestGenerator\generated.cs", source);
-
         }
-
     }
 }

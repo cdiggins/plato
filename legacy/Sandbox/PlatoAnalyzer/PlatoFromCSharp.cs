@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Permissions;
 using Microsoft.CodeAnalysis;
@@ -153,7 +155,8 @@ namespace PlatoAnalyzer
                     case IDynamicTypeSymbol dynamicTypeSymbol:
                         throw selfInner.NotSupported();
                     case IErrorTypeSymbol errorTypeSymbol:
-                        throw selfInner.NotSupported();
+                        return null;    
+                        //throw selfInner.NotSupported();
                     case IEventSymbol eventSymbol:
                         throw selfInner.NotSupported();
                     case IFieldSymbol fieldSymbol:
@@ -183,7 +186,7 @@ namespace PlatoAnalyzer
                     case INamedTypeSymbol namedTypeSymbol:
                         return namedTypeSymbol.ToPlato(mappingInner);
                     case INamespaceSymbol namespaceSymbol:
-                        throw selfInner.NotSupported();
+                        return PlatoTypeExpr.VoidType;
                     case IPointerTypeSymbol pointerTypeSymbol:
                         throw selfInner.NotSupported();
                     case ITypeParameterSymbol typeParameterSymbol:
@@ -211,7 +214,11 @@ namespace PlatoAnalyzer
                mapping.Model.GetSymbolInfo(self).Symbol?.GetPlatoType(mapping);
 
         public static PlatoTypeExpr ToPlatoType(this TypeInfo self, PlatoSemanticMapping mapping)
-            => self.Type?.GetPlatoType(mapping);
+        {
+            if (self.Type == null || self.Type.Kind == SymbolKind.ErrorType)
+                return self.ConvertedType?.GetPlatoType(mapping);
+            return self.Type?.GetPlatoType(mapping);
+        }
 
         public static PlatoArg ToPlato(this ArgumentSyntax self, PlatoSemanticMapping mapping)
             => mapping.Add(() => new PlatoArg(mapping.NextId, self.Expression.GetPlatoType(mapping), self.Expression.ToPlato(mapping), self.NameColon?.Name.ToString()), self);
@@ -258,6 +265,26 @@ namespace PlatoAnalyzer
                 self.ArgumentList.ToPlato(mapping));
         }
 
+        public static PlatoPatternMatch ToPlato(this PatternSyntax syntax, PlatoSemanticMapping mapping)
+        {
+            if (syntax is TypePatternSyntax tps)
+            {
+                return new PlatoPatternMatch(mapping.NextId, null, tps.Type.ToPlato(mapping));
+            }
+
+            if (syntax is DeclarationPatternSyntax dps)
+            {
+                var d = dps.Designation;
+                if (d is SingleVariableDesignationSyntax svds)
+                {
+                    return new PlatoPatternMatch(mapping.NextId, svds.Identifier.Text, dps.Type.ToPlato(mapping));
+                }
+
+                throw new Exception($"Unrecognized designation type {d}");
+            }
+
+            throw new Exception($"Unreocgnized declaration pattern {syntax}");
+        }
 
         public static PlatoExpression ToPlato(this ExpressionSyntax self, PlatoSemanticMapping mapping)
         {
@@ -350,8 +377,12 @@ namespace PlatoAnalyzer
                 case InvocationExpressionSyntax invocation:
                     return mapping.Add(() => invocation.ToPlato(type, mapping), self);
 
-                case IsPatternExpressionSyntax isPattern: 
-                    throw self.NotSupported();
+                case IsPatternExpressionSyntax isPattern:
+                    return mapping.Add(() => new PlatoPatternIs(
+                        mapping.NextId, 
+                        isPattern.Expression.ToPlato(mapping),
+                        isPattern.Pattern.ToPlato(mapping)));
+;                    //throw self.NotSupported();
 
                 case LiteralExpressionSyntax literal:
                     return mapping.Add(() => new PlatoLiteral(mapping.NextId, type, literal.Token), self);
@@ -376,7 +407,7 @@ namespace PlatoAnalyzer
 
                 case SimpleLambdaExpressionSyntax lambda:
                     return mapping.Add(() =>
-                        new PlatoLambda(mapping.NextId, type, new PlatoParameterList(mapping.NextId),
+                        new PlatoLambda(mapping.NextId, type, lambda.Parameter.ToParameterList(mapping.Model.GetSymbolInfo(lambda).Symbol as IMethodSymbol, mapping),
                             lambda.Block?.ToPlato(mapping) ?? lambda.ExpressionBody.ToPlatoBlockStatement(mapping)), self);
 
                 case ParenthesizedExpressionSyntax parenthesized:
@@ -389,7 +420,7 @@ namespace PlatoAnalyzer
                     
                 case PrefixUnaryExpressionSyntax prefix:
                     return mapping.Add(() =>
-                        new PlatoPostfix(mapping.NextId, type, prefix.OperatorToken.Text,
+                        new PlatoPrefix(mapping.NextId, type, prefix.OperatorToken.Text,
                             prefix.Operand.ToPlato(mapping)), self);
 
                 case RangeExpressionSyntax rangeExpression: 
@@ -482,8 +513,11 @@ namespace PlatoAnalyzer
             params Func<PlatoStatement>[] funcs)
             => mapping.Add(() => new PlatoBlockStatement(mapping.NextId, funcs.Select(f => mapping.Add(f))), null);
 
-        public static PlatoVarDeclStatement ToPlato(this VariableDeclaratorSyntax varDecl, PlatoTypeExpr type, PlatoSemanticMapping mapping)
-            => mapping.Add(() => new PlatoVarDeclStatement(mapping.NextId, type, varDecl.Identifier.ToString(), 
+        public static PlatoTypeExpr GetPlatoType(this VariableDeclaratorSyntax varDecl, PlatoSemanticMapping mapping)
+            => mapping.Model.GetSymbolInfo(varDecl).Symbol?.GetPlatoType(mapping);
+
+        public static PlatoVarDeclStatement ToPlato(this VariableDeclaratorSyntax varDecl, PlatoSemanticMapping mapping)
+            => mapping.Add(() => new PlatoVarDeclStatement(mapping.NextId, varDecl.GetPlatoType(mapping), varDecl.Identifier.ToString(), 
                 varDecl.Initializer?.Value.ToPlato(mapping), varDecl.ArgumentList?.ToPlato(mapping)), varDecl);
 
         public static PlatoStatement ToPlato(this ForStatementSyntax self, PlatoSemanticMapping mapping)
@@ -585,25 +619,45 @@ namespace PlatoAnalyzer
         }
 
         public static PlatoBlockStatement ToPlato(this BlockSyntax self, PlatoSemanticMapping mapping)
-            => mapping.Add(() => new PlatoBlockStatement(mapping.NextId, self.Statements.Select(st => st.ToPlato(mapping))), self);
+            => mapping.Add(() => new PlatoBlockStatement(mapping.NextId, 
+                self.Statements.Select(st => st.ToPlato(mapping))), self);
 
         public static PlatoParameter ToPlato(this ParameterSyntax self, PlatoSemanticMapping mapping)
-            => mapping.Add(() => new PlatoParameter(mapping.NextId, self.Identifier.ToString(), self.GetPlatoType(mapping)), self);
+            => (mapping.Model.GetSymbolInfo(self).Symbol is IParameterSymbol ips)
+                ? ips.ToPlato(self, mapping)
+                : new PlatoParameter(mapping.NextId, 
+                    self.Identifier.ToString(), 
+                    self.Type.GetPlatoType(mapping),
+                    self?.Default?.Value.ToPlato(mapping));
 
         public static PlatoParameter ToPlato(this IParameterSymbol self, ParameterSyntax syntax, PlatoSemanticMapping mapping)
-            => mapping.Add(() => new PlatoParameter(mapping.NextId, self.Name, self.Type.GetPlatoType(mapping)), syntax);
+            => mapping.Add(() => 
+                new PlatoParameter(mapping.NextId, self.Name, self.Type.GetPlatoType(mapping), syntax?.Default?.Value.ToPlato(mapping)), syntax);
 
         public static PlatoParameterList ToPlato(this ParameterListSyntax self, PlatoSemanticMapping mapping)
             => mapping.Add(() =>
                 new PlatoParameterList(mapping.NextId, self.Parameters.Select(x => x.ToPlato(mapping))));
 
+
+        public static PlatoParameterList ToParameterList(this ParameterSyntax self, IMethodSymbol methodSymbol,
+            PlatoSemanticMapping mapping)
+        {
+            return new[] { self }.ToPlato(self, methodSymbol, mapping);
+        }
+
+        public static PlatoParameterList ToPlato(this IList<ParameterSyntax> self, SyntaxNode syntax, IMethodSymbol methodSymbol,
+            PlatoSemanticMapping mapping)
+        {
+            var parameterSymbols = methodSymbol.Parameters.ToList();
+            var parameters = self.Zip(parameterSymbols, (a, b) => b.ToPlato(a, mapping)).ToList();
+            Debug.Assert(self.Count == parameterSymbols.Count);
+            return mapping.Add(() => new PlatoParameterList(mapping.NextId, parameters), syntax);
+        }
+
         public static PlatoParameterList ToPlato(this ParameterListSyntax self, IMethodSymbol methodSymbol,
             PlatoSemanticMapping mapping)
         {
-            var parameterSyntaxNodes = self.Parameters;
-            var parameterSymbols = methodSymbol.Parameters;
-            var parameters = parameterSymbols.Zip(parameterSyntaxNodes, (a, b) => a.ToPlato(b, mapping));
-            return mapping.Add(() => new PlatoParameterList(mapping.NextId, parameters), self);
+            return self.Parameters.ToList().ToPlato(self, methodSymbol, mapping);
         }
 
         public static PlatoReturnStatement ToPlato(this ArrowExpressionClauseSyntax self, PlatoSemanticMapping mapping)
@@ -662,18 +716,16 @@ namespace PlatoAnalyzer
 
         public static PlatoCompoundStatement ToPlato(this VariableDeclarationSyntax self, PlatoSemanticMapping mapping)
             => mapping.Add(() => new PlatoCompoundStatement(mapping.NextId, 
-                self.Variables.Select(v => v.ToPlato(self.Type.ToPlato(mapping), mapping))), self);
+                self.Variables.Select(v => v.ToPlato(mapping))), self);
 
         public static PlatoTypeParam ToPlato(this TypeParameterSyntax self, PlatoSemanticMapping mapping)
             => mapping.Add(() => new PlatoTypeParam(mapping.NextId, self.Identifier.ToString()), self);
 
         public static IEnumerable<PlatoTypeExpr> GetBaseTypes(this BaseListSyntax self,
             PlatoSemanticMapping mapping)
-        {
-            return self == null 
+            => self == null 
                 ? Enumerable.Empty<PlatoTypeExpr>() 
                 : self.Types.Select(b => b.Type.ToPlato(mapping));
-        }
 
         public static PlatoClass ToPlato(this ClassDeclarationSyntax self, PlatoSemanticMapping mapping)
             => mapping.Add(() => new PlatoClass(mapping.NextId, 
