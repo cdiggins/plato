@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
-using static Plato.Operations;
 
-namespace Plato
+namespace Plato.__FUNCS__
 {
     [Operations]
     class VectorOperations
@@ -126,6 +125,34 @@ namespace Plato
     }
 
     [Operations]
+    class IntervalOperations
+    {
+        double Size(Interval interval) => (interval.A - interval.B).Abs();
+        Interval ResetLeftToZero(Interval interval) => (0, Size(interval));
+        Interval ResetRightToZero(Interval interval) => (-Size(interval), 0);
+        double HalfSize(Interval interval) => (interval.A - interval.B).Abs().Half();
+        Interval Invert(Interval interval) => (interval.B, interval.A);
+        Interval Normalize(Interval interval) => (interval.A.Min(interval.B), interval.B.Max(interval.B));
+        double Clamp(double value, Interval interval) => value.Clamp(interval.A, interval.B);
+        double Lerp(double value, Interval interval) => value.Lerp(interval.A, interval.B);
+        double InverseLerp(double value, Interval interval) => value.InverseLerp(interval.A, interval.B);
+        double Clamp(Interval interval, double value) => Clamp(value, interval);
+        double Lerp(Interval interval, double value) => Lerp(value, interval);
+        double InverseLerp(Interval interval, double value) => InverseLerp(value, interval);
+        double Remap(double value, Interval input, Interval output) => Lerp(InverseLerp(value, input), output);
+        double Center(Interval interval) => Lerp(0.5, interval);
+        Interval Left(Interval interval, double amount) => (interval.A, Lerp(amount, interval));
+        Interval Right(Interval interval, double amount) => (Lerp(amount, interval), interval.B);
+        (Interval, Interval) Split(Interval interval, double amount) => (Left(interval, amount), Right(interval, amount));
+        Interval Resize(Interval interval, double amount) => (Center(interval) - amount / 2, Center(interval) + amount * 2);
+        Interval ResizeRelative(Interval interval, double amount) => Resize(interval, Size(interval) * amount);
+        Interval Multiply(Interval interval, double amount) => ResizeRelative(interval, Size(interval) * amount);
+        Interval Divide(Interval interval, double amount) => Multiply(interval, 1.0 / amount);
+        Interval Offset(Interval interval, double amount) => (interval.A + amount, interval.B + amount);
+        Interval CenterAt(Interval interval, double value = 0) => Offset(interval, value - Center(interval));
+    }
+
+    [Operations]
     class EasingOperations
     {
         //===
@@ -133,39 +160,38 @@ namespace Plato
         // https://easings.net/
         // https://github.com/acron0/Easings/blob/master/Easings.cs
 
-        Func<double, double> EaseInOutFunc(Func<double, double> easeIn, Func<double, double> easeOut) => p => p < 0.5 ? 0.5 * easeIn(p * 2) : 0.5 * easeOut(p * 2 - 1) + 0.5;
-        Func<double, double> EaseInOutFunc(Func<double, double> easeIn) => EaseInOutFunc(easeIn, InvertEaseFunc(easeIn));
+        Func<double, double> BlendEaseFunc(Func<double, double> easeIn, Func<double, double> easeOut) => p => p < 0.5 ? 0.5 * easeIn(p * 2) : 0.5 * easeOut(p * 2 - 1) + 0.5;
         Func<double, double> InvertEaseFunc(Func<double, double> easeIn) => p => 1 - easeIn(1 - p);
 
         double Linear(double p) => p;
         double QuadraticEaseIn(double p) => p.Pow2();
         double QuadraticEaseOut(double p) => InvertEaseFunc(QuadraticEaseIn)(p);
-        double QuadraticEaseInOut(double p) => EaseInOutFunc(QuadraticEaseIn)(p);
+        double QuadraticEaseInOut(double p) => BlendEaseFunc(QuadraticEaseIn, QuadraticEaseOut)(p);
         double CubicEaseIn(double p) => p.Pow3();
         double CubicEaseOut(double p) => InvertEaseFunc(CubicEaseIn)(p);
-        double CubicEaseInOut(double p) => EaseInOutFunc(CubicEaseIn)(p);
+        double CubicEaseInOut(double p) => BlendEaseFunc(CubicEaseIn, CubicEaseOut)(p);
         double QuarticEaseIn(double p) => p.Pow4();
         double QuarticEaseOut(double p) => InvertEaseFunc(QuarticEaseIn)(p);
-        double QuarticEaseInOut(double p) => EaseInOutFunc(QuarticEaseIn)(p);
+        double QuarticEaseInOut(double p) => BlendEaseFunc(QuarticEaseIn, QuarticEaseOut)(p);
         double QuinticEaseIn(double p) => p.Pow5();
         double QuinticEaseOut(double p) => InvertEaseFunc(QuinticEaseIn)(p);
-        double QuinticEaseInOut(double p) => EaseInOutFunc(QuinticEaseIn)(p);
+        double QuinticEaseInOut(double p) => BlendEaseFunc(QuinticEaseIn, QuinticEaseOut)(p);
         double SineEaseIn(double p) => InvertEaseFunc(SineEaseOut)(p);
         double SineEaseOut(double p) => p.Quarter().Revs().Sin();
-        double SineEaseInOut(double p) => EaseInOutFunc(SineEaseIn, SineEaseOut)(p);
+        double SineEaseInOut(double p) => BlendEaseFunc(SineEaseIn, SineEaseOut)(p);
         double CircularEaseIn(double p) => 1 - (1 - p.Pow2()).Sqrt();
         double CircularEaseOut(double p) => InvertEaseFunc(CircularEaseIn)(p);
-        double CircularEaseInOut(double p) => EaseInOutFunc(CircularEaseIn, CircularEaseOut)(p);
+        double CircularEaseInOut(double p) => BlendEaseFunc(CircularEaseIn, CircularEaseOut)(p);
         double ExponentialEaseIn(double p) => p.AlmostZero() ? p : 2.0.Pow(10 * (p - 1));
         double ExponentialEaseOut(double p) => InvertEaseFunc(ExponentialEaseIn)(p);
-        double ExponentialEaseInOut(double p) => EaseInOutFunc(ExponentialEaseIn)(p);
+        double ExponentialEaseInOut(double p) => BlendEaseFunc(ExponentialEaseIn, ExponentialEaseOut)(p);
         double ElasticEaseIn(double p) => (13 * p.Quarter().Revs()) * 2.0.Pow(10 * (p - 1)).Rads().Sin();
         double ElasticEaseOut(double p) => InvertEaseFunc(ElasticEaseIn)(p);
-        double ElasticEaseInOut(double p) => EaseInOutFunc(ElasticEaseIn)(p);
+        double ElasticEaseInOut(double p) => BlendEaseFunc(ElasticEaseIn, ElasticEaseOut)(p);
         double BackEaseIn(double p) => p.Pow3() - p * p.Half().Revs().Sin();
         double BackEaseOut(double p) => InvertEaseFunc(BackEaseIn)(p);
-        double BackEaseInOut(double p) => EaseInOutFunc(BackEaseIn)(p);
-        double BounceEaseIn(double p) => InvertEaseFunc(BounceEaseIn)(p);
+        double BackEaseInOut(double p) => BlendEaseFunc(BackEaseIn, BackEaseOut)(p);
+        double BounceEaseIn(double p) => InvertEaseFunc(BounceEaseOut)(p);
         double BounceEaseOut(double p)
         {
             if (p < 4 / 11.0) return 121.0 * p.Pow2() / 16.0;
@@ -173,7 +199,7 @@ namespace Plato
             if (p < 9 / 10.0) return 4356.0 / 361.0 * p.Pow2() - 35442.0 / 1805.0 * p + 16061.0 / 1805.0;
             return 54.0 / 5.0 * p.Pow2() - 513.0 / 25.0 * p + 268.0 / 25.0;
         }
-        double BounceEaseInOut(double p) => EaseInOutFunc(BounceEaseIn, BounceEaseOut)(p);
+        double BounceEaseInOut(double p) => BlendEaseFunc(BounceEaseIn, BounceEaseOut)(p);
     }
 
     [Operations]
@@ -193,9 +219,9 @@ namespace Plato
         double Sinc(double x, double k) { var a = k * (x - 1.0).Half().Revs(); return a.Sin() / a; }
         double Gain(double x, double k) { var a = 0.5 * (2.0 * ((x < 0.5) ? x : 1.0 - x).Pow(k)); return (x < 0.5) ? a : 1.0 - a; }
         double ExponentialStep(double x, double k, double n) => (-k * x.Pow(n)).Exp();
-        //double AlmostIdentityCubic(double x, double m, double n) { if (x > m) return x; var a = 2.0 * n - m; var b = 2.0 * m - 3.0 * n; var t = x / m; return (a * t + b) * t * t + n; }
-        //double AlmostIdentitySqrt(double x, double m, double n) => (x * x + n).Sqrt();
-        //double AlmostUnityIdentity(double x) => x * x * (2.0 - x);
+        double NearIdentityCubic(double x, double threshold, double constant = 0) { if (x > threshold) return x; var a = 2.0 * constant - threshold; var b = 2.0 * threshold - 3.0 * constant; var t = x / threshold; return (a * t + b) * t * t + constant; }
+        double NearIdentitySqrt(double x, double constant = 0) => (x * x + constant).Sqrt();
+        double NearUnityIdentity(double x) => x * x * (2.0 - x);
         double IntegralSmoothstep(double x, double t) => (x > t) ? x - t / 2.0 : (x).Pow3() * (1.0 - x * 0.5 / t) / t / t;
     }
 
@@ -306,8 +332,11 @@ namespace Plato
     {    
         // https://iquilezles.org/articles/distfunctions2d/
         
-        double CircleDistance(Double2 p) => p.Length();
-        double CircleDistance(Double2 p, double r) => p.Length() - r;
+        double CircleSDF(Double2 p) 
+            => CircleSDF(p, 1);
+        
+        double CircleSDF(Double2 p, double r) 
+            => p.Length() - r;
 
         Double2 XY(Double4 d) => (d.X, d.Y);
         Double2 ZW(Double4 d) => (d.Z, d.W);

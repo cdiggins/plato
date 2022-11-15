@@ -263,3 +263,20 @@ Vector / Number
 * Ultimately, I want to be able to express the entire LinqArray library as a graph.
 	* To do this, means the system implies the type signatures. 
 
+//==
+
+* Demos 
+	* Drawing the SDFs 
+		* How to plot an SDF ? 
+		* Pixels 
+	* Drawing the 2D functions 
+	* Draw it on 
+
+//==
+
+* How to draw a function ... flood fill? 
+* Direction - tangent. 
+* Piece wise direction. 
+* I could do small line segments ... 
+* The jagged bits will still show. 
+* AB CD EF GH 

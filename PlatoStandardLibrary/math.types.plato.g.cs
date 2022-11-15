@@ -1399,6 +1399,7 @@ public Double2 B { get; }
 public static implicit operator AABBox2D((Double2 A, Double2 B) tuple) => new AABBox2D(tuple.A, tuple.B);
 public static implicit operator (Double2 A, Double2 B)(AABBox2D self) => (self.A, self.B);
 public void Deconstruct(out Double2 a, out Double2 b) => (a, b) = (A, B);
+public static implicit operator AABBox2D(Double2 value) => new AABBox2D(default, value);
 public override string ToString() => $"{{ \"A\" : { A }, \"B\" : { B } }}";
 public override bool Equals(object other) => other is AABBox2D typedOther && this == typedOther;
 public override int GetHashCode() => (A, B).GetHashCode();
@@ -1429,6 +1430,7 @@ public Double3 B { get; }
 public static implicit operator AABBox3D((Double3 A, Double3 B) tuple) => new AABBox3D(tuple.A, tuple.B);
 public static implicit operator (Double3 A, Double3 B)(AABBox3D self) => (self.A, self.B);
 public void Deconstruct(out Double3 a, out Double3 b) => (a, b) = (A, B);
+public static implicit operator AABBox3D(Double3 value) => new AABBox3D(default, value);
 public override string ToString() => $"{{ \"A\" : { A }, \"B\" : { B } }}";
 public override bool Equals(object other) => other is AABBox3D typedOther && this == typedOther;
 public override int GetHashCode() => (A, B).GetHashCode();
@@ -2707,6 +2709,7 @@ public Time End { get; }
 public static implicit operator TimeInterval((Time Start, Time End) tuple) => new TimeInterval(tuple.Start, tuple.End);
 public static implicit operator (Time Start, Time End)(TimeInterval self) => (self.Start, self.End);
 public void Deconstruct(out Time start, out Time end) => (start, end) = (Start, End);
+public static implicit operator TimeInterval(Time value) => new TimeInterval(default, value);
 public override string ToString() => $"{{ \"Start\" : { Start }, \"End\" : { End } }}";
 public override bool Equals(object other) => other is TimeInterval typedOther && this == typedOther;
 public override int GetHashCode() => (Start, End).GetHashCode();
@@ -2737,6 +2740,7 @@ public double B { get; }
 public static implicit operator Interval((double A, double B) tuple) => new Interval(tuple.A, tuple.B);
 public static implicit operator (double A, double B)(Interval self) => (self.A, self.B);
 public void Deconstruct(out double a, out double b) => (a, b) = (A, B);
+public static implicit operator Interval(double value) => new Interval(default, value);
 public override string ToString() => $"{{ \"A\" : { A }, \"B\" : { B } }}";
 public override bool Equals(object other) => other is Interval typedOther && this == typedOther;
 public override int GetHashCode() => (A, B).GetHashCode();
@@ -2767,6 +2771,7 @@ public Double2 B { get; }
 public static implicit operator Interval2D((Double2 A, Double2 B) tuple) => new Interval2D(tuple.A, tuple.B);
 public static implicit operator (Double2 A, Double2 B)(Interval2D self) => (self.A, self.B);
 public void Deconstruct(out Double2 a, out Double2 b) => (a, b) = (A, B);
+public static implicit operator Interval2D(Double2 value) => new Interval2D(default, value);
 public override string ToString() => $"{{ \"A\" : { A }, \"B\" : { B } }}";
 public override bool Equals(object other) => other is Interval2D typedOther && this == typedOther;
 public override int GetHashCode() => (A, B).GetHashCode();
@@ -2797,6 +2802,7 @@ public Double3 B { get; }
 public static implicit operator Interval3D((Double3 A, Double3 B) tuple) => new Interval3D(tuple.A, tuple.B);
 public static implicit operator (Double3 A, Double3 B)(Interval3D self) => (self.A, self.B);
 public void Deconstruct(out Double3 a, out Double3 b) => (a, b) = (A, B);
+public static implicit operator Interval3D(Double3 value) => new Interval3D(default, value);
 public override string ToString() => $"{{ \"A\" : { A }, \"B\" : { B } }}";
 public override bool Equals(object other) => other is Interval3D typedOther && this == typedOther;
 public override int GetHashCode() => (A, B).GetHashCode();

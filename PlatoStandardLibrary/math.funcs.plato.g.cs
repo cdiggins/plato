@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Collections.Generic;
 using System.Linq;
 namespace Plato {
-public static partial class Operations {
+public static class VectorOperations {
 public static Double2 Normal(this Double2 v)
 {
 return v / v.Length();
@@ -59,7 +59,7 @@ public static double Distance(this Float4 a, Float4 b)
 return (b - a).Length();
 }
 }
-public static partial class Operations {
+public static class VectorizedOperations {
 public static double SafeDivide(this double x, double y)
 {
 return y.AlmostZero() ? x : x / y;
@@ -690,7 +690,7 @@ public static Long3 Pow(this Long3 x, Long3 y) => ((long)Pow((double)x.A, (doubl
 public static Long4 Pow(this Long4 x, Long4 y) => ((long)Pow((double)x.A, (double)y.A), (long)Pow((double)x.B, (double)y.B), (long)Pow((double)x.C, (double)y.C), (long)Pow((double)x.D, (double)y.D));
 public static Complex Pow(this Complex x, Complex y) => ((double)Pow((double)x.Real, (double)y.Real), (double)Pow((double)x.Imaginary, (double)y.Imaginary));
 }
-public static partial class Operations {
+public static class ConversionOperations {
 public static Angle Revs(this double x)
 {
 return x * Constants.TwoPi;
@@ -716,7 +716,7 @@ public static double Degrees(this Angle x)
 return x.Revs() * 360;
 }
 }
-public static partial class Operations {
+public static class TrigOperations {
 public static Angle Acos(this double x)
 {
 return Math.Acos(x);
@@ -806,7 +806,7 @@ public static double Cot(this Angle x)
 return 1.0 / Tan(x);
 }
 }
-public static partial class Operations {
+public static class ComparisonOperations {
 public static bool GtZ(this double x)
 {
 return x > 0;
@@ -864,17 +864,107 @@ public static bool Within(this double v, double min, double max)
 return v >= min && v < max;
 }
 }
-public static partial class Operations {
-public static Func<double, double> EaseInOutFunc(this Func<double, double> easeIn, Func<double, double> easeOut)
+public static class IntervalOperations {
+public static double Size(this Interval interval)
+{
+return (interval.A - interval.B).Abs();
+}
+public static Interval ResetLeftToZero(this Interval interval)
+{
+return (0, Size(interval));
+}
+public static Interval ResetRightToZero(this Interval interval)
+{
+return (-Size(interval), 0);
+}
+public static double HalfSize(this Interval interval)
+{
+return (interval.A - interval.B).Abs().Half();
+}
+public static Interval Invert(this Interval interval)
+{
+return (interval.B, interval.A);
+}
+public static Interval Normalize(this Interval interval)
+{
+return (interval.A.Min(interval.B), interval.B.Max(interval.B));
+}
+public static double Clamp(this double value, Interval interval)
+{
+return value.Clamp(interval.A, interval.B);
+}
+public static double Lerp(this double value, Interval interval)
+{
+return value.Lerp(interval.A, interval.B);
+}
+public static double InverseLerp(this double value, Interval interval)
+{
+return value.InverseLerp(interval.A, interval.B);
+}
+public static double Clamp(this Interval interval, double value)
+{
+return Clamp(value, interval);
+}
+public static double Lerp(this Interval interval, double value)
+{
+return Lerp(value, interval);
+}
+public static double InverseLerp(this Interval interval, double value)
+{
+return InverseLerp(value, interval);
+}
+public static double Remap(this double value, Interval input, Interval output)
+{
+return Lerp(InverseLerp(value, input), output);
+}
+public static double Center(this Interval interval)
+{
+return Lerp(0.5, interval);
+}
+public static Interval Left(this Interval interval, double amount)
+{
+return (interval.A, Lerp(amount, interval));
+}
+public static Interval Right(this Interval interval, double amount)
+{
+return (Lerp(amount, interval), interval.B);
+}
+public static ValueTuple<Interval, Interval> Split(this Interval interval, double amount)
+{
+return (Left(interval, amount), Right(interval, amount));
+}
+public static Interval Resize(this Interval interval, double amount)
+{
+return (Center(interval) - amount / 2, Center(interval) + amount * 2);
+}
+public static Interval ResizeRelative(this Interval interval, double amount)
+{
+return Resize(interval, Size(interval) * amount);
+}
+public static Interval Multiply(this Interval interval, double amount)
+{
+return ResizeRelative(interval, Size(interval) * amount);
+}
+public static Interval Divide(this Interval interval, double amount)
+{
+return Multiply(interval, 1.0 / amount);
+}
+public static Interval Offset(this Interval interval, double amount)
+{
+return (interval.A + amount, interval.B + amount);
+}
+public static Interval CenterAt(this Interval interval, double value = 0)
+{
+return Offset(interval, value - Center(interval));
+}
+}
+public static class EasingOperations {
+public static Func<double, double> BlendEaseFunc(this Func<double, double> easeIn, Func<double, double> easeOut)
 {
 return (double p) => {
     return p < 0.5 ? 0.5 * easeIn(p * 2) : 0.5 * easeOut(p * 2 - 1) + 0.5;
 }
 ;
-}
-public static Func<double, double> EaseInOutFunc(this Func<double, double> easeIn)
-{
-return EaseInOutFunc(easeIn, InvertEaseFunc(easeIn));
 }
 public static Func<double, double> InvertEaseFunc(this Func<double, double> easeIn)
 {
@@ -897,7 +987,7 @@ return InvertEaseFunc(QuadraticEaseIn)(p);
 }
 public static double QuadraticEaseInOut(this double p)
 {
-return EaseInOutFunc(QuadraticEaseIn)(p);
+return BlendEaseFunc(QuadraticEaseIn, QuadraticEaseOut)(p);
 }
 public static double CubicEaseIn(this double p)
 {
@@ -909,7 +999,7 @@ return InvertEaseFunc(CubicEaseIn)(p);
 }
 public static double CubicEaseInOut(this double p)
 {
-return EaseInOutFunc(CubicEaseIn)(p);
+return BlendEaseFunc(CubicEaseIn, CubicEaseOut)(p);
 }
 public static double QuarticEaseIn(this double p)
 {
@@ -921,7 +1011,7 @@ return InvertEaseFunc(QuarticEaseIn)(p);
 }
 public static double QuarticEaseInOut(this double p)
 {
-return EaseInOutFunc(QuarticEaseIn)(p);
+return BlendEaseFunc(QuarticEaseIn, QuarticEaseOut)(p);
 }
 public static double QuinticEaseIn(this double p)
 {
@@ -933,7 +1023,7 @@ return InvertEaseFunc(QuinticEaseIn)(p);
 }
 public static double QuinticEaseInOut(this double p)
 {
-return EaseInOutFunc(QuinticEaseIn)(p);
+return BlendEaseFunc(QuinticEaseIn, QuinticEaseOut)(p);
 }
 public static double SineEaseIn(this double p)
 {
@@ -945,7 +1035,7 @@ return p.Quarter().Revs().Sin();
 }
 public static double SineEaseInOut(this double p)
 {
-return EaseInOutFunc(SineEaseIn, SineEaseOut)(p);
+return BlendEaseFunc(SineEaseIn, SineEaseOut)(p);
 }
 public static double CircularEaseIn(this double p)
 {
@@ -957,7 +1047,7 @@ return InvertEaseFunc(CircularEaseIn)(p);
 }
 public static double CircularEaseInOut(this double p)
 {
-return EaseInOutFunc(CircularEaseIn, CircularEaseOut)(p);
+return BlendEaseFunc(CircularEaseIn, CircularEaseOut)(p);
 }
 public static double ExponentialEaseIn(this double p)
 {
@@ -969,7 +1059,7 @@ return InvertEaseFunc(ExponentialEaseIn)(p);
 }
 public static double ExponentialEaseInOut(this double p)
 {
-return EaseInOutFunc(ExponentialEaseIn)(p);
+return BlendEaseFunc(ExponentialEaseIn, ExponentialEaseOut)(p);
 }
 public static double ElasticEaseIn(this double p)
 {
@@ -981,7 +1071,7 @@ return InvertEaseFunc(ElasticEaseIn)(p);
 }
 public static double ElasticEaseInOut(this double p)
 {
-return EaseInOutFunc(ElasticEaseIn)(p);
+return BlendEaseFunc(ElasticEaseIn, ElasticEaseOut)(p);
 }
 public static double BackEaseIn(this double p)
 {
@@ -993,11 +1083,11 @@ return InvertEaseFunc(BackEaseIn)(p);
 }
 public static double BackEaseInOut(this double p)
 {
-return EaseInOutFunc(BackEaseIn)(p);
+return BlendEaseFunc(BackEaseIn, BackEaseOut)(p);
 }
 public static double BounceEaseIn(this double p)
 {
-return InvertEaseFunc(BounceEaseIn)(p);
+return InvertEaseFunc(BounceEaseOut)(p);
 }
 public static double BounceEaseOut(this double p)
 {
@@ -1035,10 +1125,10 @@ public static double BounceEaseOut(this double p)
 }
 public static double BounceEaseInOut(this double p)
 {
-return EaseInOutFunc(BounceEaseIn, BounceEaseOut)(p);
+return BlendEaseFunc(BounceEaseIn, BounceEaseOut)(p);
 }
 }
-public static partial class Operations {
+public static class ShapingOperations {
 public static double ExponentialImpulse(this double x, double k)
 {
 return k * x * (1.0 - k * x).Exp();
@@ -1083,12 +1173,39 @@ public static double ExponentialStep(this double x, double k, double n)
 {
 return (-k * x.Pow(n)).Exp();
 }
+public static double NearIdentityCubic(this double x, double threshold, double constant = 0)
+{
+{
+    if (x > threshold)
+    {
+        return x;
+    }
+    else
+    {
+        ;
+    }
+    
+    var a = 2.0 * constant - threshold;
+    var b = 2.0 * threshold - 3.0 * constant;
+    var t = x / threshold;
+    return (a * t + b) * t * t + constant;
+}
+
+}
+public static double NearIdentitySqrt(this double x, double constant = 0)
+{
+return (x * x + constant).Sqrt();
+}
+public static double NearUnityIdentity(this double x)
+{
+return x * x * (2.0 - x);
+}
 public static double IntegralSmoothstep(this double x, double t)
 {
 return (x > t) ? x - t / 2.0 : (x).Pow3() * (1.0 - x * 0.5 / t) / t / t;
 }
 }
-public static partial class Operations {
+public static class CurveOperations {
 public static double CircleSigmoid(this double x, double a = 0.5)
 {
 return x <= a ? a - (a.Pow2() - x.Pow2()).Sqrt() : a + ((1 - a).Pow2() - (x - 1).Pow2().Pow2()).Sqrt();
@@ -1194,12 +1311,12 @@ public static Double2 ToCartesian(this PolarCoordinate polar)
 return Circle(polar.Angle) * polar.Radius;
 }
 }
-public static partial class Operations {
-public static double CircleDistance(this Double2 p)
+public static class DistanceField2DOperations {
+public static double CircleSDF(this Double2 p)
 {
-return p.Length();
+return CircleSDF(p, 1);
 }
-public static double CircleDistance(this Double2 p, double r)
+public static double CircleSDF(this Double2 p, double r)
 {
 return p.Length() - r;
 }

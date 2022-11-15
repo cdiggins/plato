@@ -262,6 +262,10 @@ namespace PlatoAnalyzer
             => classType.Attributes.Any(attr =>
                 attr.Name == "Measure");
 
+        public static bool IsInterval(PlatoClass classType)
+            => classType.Attributes.Any(attr =>
+                attr.Name == "Interval");
+
         // TODO: concepts derived from concepts. In the future we will look at the inheritance chain. 
         public static bool IsValue(PlatoClass classType)
             => classType.Attributes.Any(attr =>
@@ -300,6 +304,7 @@ namespace PlatoAnalyzer
             var isVector = IsVector(classType, out var scalarType);
             var isComparable = IsComparable(classType);
             var isMeasure = IsMeasure(classType);
+            var isInterval = IsInterval(classType);
             var isMultiplicative = isNumeric || isVector;
 
             if (IsValue(classType))
@@ -362,6 +367,12 @@ namespace PlatoAnalyzer
                 // Single field structs are automatically convertible to/from 
                 sb.AppendLine($"public static implicit operator {name}({propType} value) => new {name}(value);");
                 sb.AppendLine($"public static implicit operator {propType}({name} value) => value.{propName};");
+            }
+
+            if (isInterval)
+            {
+                var propType = propTypes[0];
+                sb.AppendLine($"public static implicit operator {name}({propType} value) => new {name}(default, value);");
             }
 
             var stringFields = string.Join(", ", propNames.Select(f => $"\\\"{f}\\\" : {{ {f} }}"));
@@ -431,7 +442,6 @@ namespace PlatoAnalyzer
             if (rt != "double" || parameters.Count < 1)
                 return;
 
-
             var firstParam = parameters[0];
             if (firstParam.Type.ToString() != "double")
                 return;
@@ -500,7 +510,7 @@ namespace PlatoAnalyzer
             if (cls.Properties.Count > 0)
                 throw new System.Exception("Properties not supported in an operations class");
 
-            sb.AppendLine("public static partial class Operations {");
+            sb.AppendLine($"public static class {cls.Name} {{");
             for (var i = 0; i < cls.Methods.Count; ++i)
             {
                 var m = cls.Methods[i];
