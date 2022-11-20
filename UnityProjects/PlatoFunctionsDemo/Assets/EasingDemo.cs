@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-
 public class EasingDemo : MonoBehaviour
 {
     public Func<double, double>[] EasingFuncs =
@@ -60,13 +59,14 @@ public class EasingDemo : MonoBehaviour
 
     public void PlotLines(LineRenderer lineRenderer, int i, Func<double, double> func)
     {
+        var p0 = GetSourcePosition(i);
+        var p1 = GetTargetPosition(i);
         lineRenderer.positionCount = LineSamples;
         lineRenderer.widthMultiplier = 0.1f;
         for (var index = 0; index < lineRenderer.positionCount; ++index)
         {
-            var amt = index / (float)lineRenderer.positionCount;
-            var y = Mathf.Clamp((float)func(amt), -2, +2);
-            var pos = new Vector3(amt, y, i * Height);
+            var amt = func(index / (double)lineRenderer.positionCount);
+            var pos = Vector3.Lerp(p0, p1, (float)amt);
             lineRenderer.SetPosition(index, pos);
         }
     }
@@ -78,10 +78,6 @@ public class EasingDemo : MonoBehaviour
             var obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
             GameObjects.Add(obj);
             var go = new GameObject();
-            var p0 = GetSourcePosition(i);
-            var p1 = GetTargetPosition(i);
-            var p = Vector3.Lerp(p0, p1, 0.5f);
-            go.transform.position = p; 
             var lineRenderer = go.AddComponent<LineRenderer>();
             lineRenderer.material = LineMaterial;
             PlotLines(lineRenderer, i, EasingFuncs[i]);
@@ -106,4 +102,5 @@ public class EasingDemo : MonoBehaviour
             obj.transform.position = pos;
         }
     }
+
 }

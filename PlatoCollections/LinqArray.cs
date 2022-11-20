@@ -383,9 +383,8 @@ namespace Plato
             => self.IndicesWhere(mask.ToPredicate());
 
         /// <summary>
-        /// Shortcut for ToEnumerable.Aggregate()
+        /// Combines values in the array using an aggregator function and a seed value. 
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static U Aggregate<T, U>(this IArray<T> self, U init, Func<U, T, U> func)
         {
             for (var i = 0; i < self.Count; ++i)

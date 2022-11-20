@@ -62,16 +62,6 @@ namespace Plato
     }
 
     /// <summary>
-    /// An immutable set. It tells us only whether membership exists or not.
-    /// A pure set is infinite and unordered, so we cannot extract
-    /// members from it. In such cases you may want a dictionary. 
-    /// </summary>
-    public interface ISet<T>
-    {
-        bool Contains(T item);
-    }
-
-    /// <summary>
     /// An immutable array. It contains only a count and an indexer. 
     /// Both are expected to return in O(1) time. 
     /// An array is a specialization of a map (from the integer domain to any codomain)
@@ -79,6 +69,16 @@ namespace Plato
     /// </summary>
     public interface IArray<T> : IMap<int, T>, ICountedSequence<T>
     {
+    }
+
+    /// <summary>
+    /// An immutable set. It tells us only whether membership exists or not.
+    /// A pure set is infinite and unordered, so we cannot extract
+    /// members from it. In such cases you may want a dictionary. 
+    /// </summary>
+    public interface ISet<T>
+    {
+        bool Contains(T item);
     }
 
     /// <summary>

@@ -52,29 +52,8 @@ public class ExampleScript : MonoBehaviour
     public static void UpdateMaterial(Material material, Bitmap bmp)
         => material.mainTexture = bmp.GetUpdatedTexture();
 
-    public void UpdateMaterial(Bitmap bmp)
+    public void UpdateMaterial(Bitmap bmp)  
         => UpdateMaterial(GetComponent<Renderer>().sharedMaterial, bmp);
-
-    // https://forum.unity.com/threads/re-map-a-number-from-one-range-to-another.119437/
-    public static (float min, float max) UnitInterval = (0, 1);
-
-    public static float Lerp((float min, float max) range, float amount)
-        => Mathf.Lerp(range.min, range.max, amount);
-
-    public static float InverseLerp((float min, float max) range, float amount)
-        => Mathf.InverseLerp(range.min, range.max, amount);
-
-    public static float Remap(float v, (float min, float max) input, (float min, float max) output)
-        => Lerp(output, InverseLerp(input, v));
-
-    public static float Clamp(float v, (float min, float max) range)
-        => Mathf.Clamp(v, range.min, range.max);
-
-    public static float ClampAndRemap(float v, (float min, float max) input, (float min, float max) output)
-        => Remap(Clamp(v, input), input, output);
-
-    public static float CircleSDF(float x, float y, float r = 1)
-        => Mathf.Sqrt((x * x) + (y * y)) - r;
 
     public float Distance(int a, int b)
     {
@@ -88,20 +67,21 @@ public class ExampleScript : MonoBehaviour
         Distances[b * Width + a] = Mathf.Min(Distances[b * Width + a], f);
     }
 
+    /*
     public static void DrawSDF(Bitmap bmp, float thickness, float blend, float radius, Color color1, Color color2, Func<float, float, float> sdf)
     {
 
         for (var j=0; j < bmp.Width; j++)
         for (var i=0; i < bmp.Width; i++)
         {
-            var x = Remap(i, (0, bmp.Width), (-2, +2));
-            var y = Remap(j, (0, bmp.Width), (-2, +2));
+            var x = (i, (0, bmp.Width), (-2, +2));
+            var y = (j, (0, bmp.Width), (-2, +2));
             var distance = Mathf.Abs(sdf(x, y)) - thickness;
             var colorAmount = ClampAndRemap(distance, (0, blend), UnitInterval);
             var color = Color.Lerp(color1, color2, colorAmount);
             bmp.SetColor(i, j, color);
         }
-    }
+    }*/
 
     public void DrawCurve(Bitmap bmp, float thickness, float blend, float radius, Color color1, Color color2, Func<float, float> curve)
     {
@@ -187,9 +167,9 @@ public class ExampleScript : MonoBehaviour
     {
         yield return null;
 
-//        DrawSDF(Bitmap, Thickness, Blend, Radius, Color1, Color2, GetSDF());
+        DrawSDF(Bitmap, Thickness, Blend, Radius, Color1, Color2, GetSDF());
 
-        DrawCurve(Bitmap, Thickness, Blend, Radius, Color1, Color2, GetCurve());
+//        DrawCurve(Bitmap, Thickness, Blend, Radius, Color1, Color2, GetCurve());
 
         yield return null;
         UpdateMaterial(Bitmap);
