@@ -55,7 +55,7 @@ public class EasingDemo : MonoBehaviour
     public List<GameObject> GameObjects = new();
 
     public Vector3 GetSourcePosition(int i) => Vector3.left * Width + Vector3.forward * Height * i;
-    public Vector3 GetTargetPosition(int i) => Vector3.right * Width + Vector3.forward * Height * i;
+    public Vector3 GetTargetPosition(int i) => Vector3.right * Width + Vector3.forward * Height * i + Vector3.up * Width;
 
     public void PlotLines(LineRenderer lineRenderer, int i, Func<double, double> func)
     {

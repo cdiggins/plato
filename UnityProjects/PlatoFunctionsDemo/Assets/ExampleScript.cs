@@ -1,8 +1,9 @@
 using System;
 using System.Collections;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
+using Plato;
+using Color = UnityEngine.Color;
+using Time = UnityEngine.Time;
 
 public class Bitmap
 {
@@ -40,14 +41,14 @@ public class ExampleScript : MonoBehaviour
     public int Height => Width;
     public float Saturation = 1f;
     public float Value = 1f;
-    public Color Color1 = Color.red;
-    public Color Color2 = Color.green;
-    public float Thickness = 0.2f;
-    public float Blend = 0.1f;
-    public float Radius = 1f;
+    public UnityEngine.Color Color1 = UnityEngine.Color.red;
+    public UnityEngine.Color Color2 = UnityEngine.Color.green;
+    public double Thickness = 0.2f;
+    public double Blend = 0.1f;
+    public double Radius = 1f;
     public int FunctionIndex = 0;
     public Bitmap Bitmap;
-    public float[] Distances;
+    public double[] Distances;
 
     public static void UpdateMaterial(Material material, Bitmap bmp)
         => material.mainTexture = bmp.GetUpdatedTexture();
@@ -55,48 +56,50 @@ public class ExampleScript : MonoBehaviour
     public void UpdateMaterial(Bitmap bmp)  
         => UpdateMaterial(GetComponent<Renderer>().sharedMaterial, bmp);
 
-    public float Distance(int a, int b)
+    public double Distance(int a, int b)
     {
-        if (a < 0 || b < 0 || a >= Width || b >= Height) return float.PositiveInfinity;
+        if (a < 0 || b < 0 || a >= Width || b >= Height) return double.PositiveInfinity;
         return Distances[b * Width + a];
     }
 
-    public void SetDistance(int a, int b, float f)
+    public void SetDistance(int a, int b, double d)
     {
         if (a < 0 || b < 0 || a >= Width || b >= Height) return;
-        Distances[b * Width + a] = Mathf.Min(Distances[b * Width + a], f);
+        Distances[b * Width + a] = d.Min(Distances[b * Width + a]);
     }
 
-    /*
-    public static void DrawSDF(Bitmap bmp, float thickness, float blend, float radius, Color color1, Color color2, Func<float, float, float> sdf)
+    public static void DrawSDF(Bitmap bmp, double thickness, double blend, double radius, Color color1, Color color2, Func<double, double, double> sdf)
     {
 
         for (var j=0; j < bmp.Width; j++)
         for (var i=0; i < bmp.Width; i++)
         {
-            var x = (i, (0, bmp.Width), (-2, +2));
-            var y = (j, (0, bmp.Width), (-2, +2));
-            var distance = Mathf.Abs(sdf(x, y)) - thickness;
-            var colorAmount = ClampAndRemap(distance, (0, blend), UnitInterval);
-            var color = Color.Lerp(color1, color2, colorAmount);
+            var x = ClampAndRemap(i, (0, bmp.Width), (-2, +2));
+            var y = ClampAndRemap(j, (0, bmp.Width), (-2, +2));
+            var distance = Math.Abs(sdf(x, y)) - thickness;
+            var colorAmount = ClampAndRemap(distance, (0, blend), 1);
+            var color = Color.Lerp(color1, color2, (float)colorAmount);
             bmp.SetColor(i, j, color);
         }
-    }*/
+    }
 
-    public void DrawCurve(Bitmap bmp, float thickness, float blend, float radius, Color color1, Color color2, Func<float, float> curve)
+    public static double ClampAndRemap(double v, Interval input, Interval output)
+        => v.Clamp(input).Remap(input, output);
+
+    public void DrawCurve(Bitmap bmp, float thickness, float blend, float radius, Color color1, Color color2, Func<double, double> curve)
     {
         for (var i = 0; i < Distances.Length; ++i)
             Distances[i] = float.PositiveInfinity;
 
         for (var i = 0; i < bmp.Width; i++)
         {
-            var x = Remap(i, (0, bmp.Width), (-1, +1));
+            var x = IntervalOperations.Remap(i, (0, bmp.Width), (-1, +1));
             var computedY = curve(x);
 
             for (var j = 0; j < bmp.Width; j++)
             {
-                var localY = Remap(j, (0, bmp.Width), (-1, +1));
-                var verticalDistance = Mathf.Abs(localY - computedY) - thickness;
+                var localY = IntervalOperations.Remap(j, (0, bmp.Width), (-1, +1));
+                var verticalDistance = Math.Abs(localY - computedY) - thickness;
                 SetDistance(i, j, verticalDistance);
             }
         }
@@ -127,24 +130,24 @@ public class ExampleScript : MonoBehaviour
         for (var j = 0; j < bmp.Width; j++)
         for (var i = 0; i < bmp.Width; i++)
         {
-            var colorAmount = ClampAndRemap(Distance(i, j), (0, blend), UnitInterval);
-            var color = Color.Lerp(color1, color2, colorAmount);
+            var colorAmount = ClampAndRemap(Distance(i, j), (0, blend), 1);
+            var color = Color.Lerp(color1, color2, (float)colorAmount);
             bmp.SetColor(i, j, color);
         }
     }
 
-    public Func<float, float, float> GetSDF()
+    public Func<double, double, double> GetSDF()
     {
         switch (FunctionIndex)
         {
-            case 0: return (x, y) => CircleSDF(x, y, Radius);
-            case 1: return (x, y) => Mathf.Abs(y - x * x);
-            case 2: return (x, y) => Mathf.Abs(y - x * x * x);
-            case 3: return (x, y) => Mathf.Abs(y - Mathf.Sqrt(x));
-            case 4: return (x, y) => Mathf.Abs(y - Mathf.Sin(x));
-            case 5: return (x, y) => Mathf.Abs(y - Mathf.Cos(x));
-            case 6: return (x, y) => Mathf.Abs(y - Mathf.Tan(x));
-            default: return (x, y) => CircleSDF(x, y, Radius);
+            case 0: return (x, y) => DistanceField2DOperations.CircleSDF((x, y), Radius);
+            case 1: return (x, y) => Math.Abs(y - x * x);
+            case 2: return (x, y) => Math.Abs(y - x * x * x);
+            case 3: return (x, y) => Math.Abs(y - Math.Sqrt(x));
+            case 4: return (x, y) => Math.Abs(y - Math.Sin(x));
+            case 5: return (x, y) => Math.Abs(y - Math.Cos(x));
+            case 6: return (x, y) => Math.Abs(y - Math.Tan(x));
+            default: return (x, y) => DistanceField2DOperations.CircleSDF((x, y), Radius);
         }
     }
 
@@ -181,8 +184,8 @@ public class ExampleScript : MonoBehaviour
         return (time % period) / period;
     }
 
-    public float SinEasing(float t)
-        => (Mathf.Sin(t * Mathf.PI * 2) + 1) / 2;
+    public double SinEasing(double t)
+        => (Math.Sin(t * Math.PI * 2) + 1) / 2;
 
     /*
 
@@ -223,15 +226,15 @@ public class ExampleScript : MonoBehaviour
         if (Width != Bitmap?.Width || Height != Bitmap?.Width)
         {
             Bitmap = new Bitmap(Width, Height);
-            Distances = new float[Width * Height];
+            Distances = new double[Width * Height];
         }
 
         var hue = RelativeTime(Time.time, 12);
         var t = RelativeTime(Time.time, 3);
         Color1 = Color.HSVToRGB(hue, Saturation, Value);
         Color2 = Color.HSVToRGB((hue + 0.3f) % 1, Saturation, Value);
-        Thickness = Lerp((0.001f, 0.5f), SinEasing(t));
-        Radius = Lerp((0, 1.5f), SinEasing(t));
+        Thickness = SinEasing(t).Lerp(0.001f, 0.5f);
+        Radius = SinEasing(t).Lerp(0, 1.5f);
         StartCoroutine(UpdateMaterial());
     }
 }

@@ -25,11 +25,25 @@ MonoBehaviour:
     m_Scopes: []
     m_IsDefault: 1
     m_Capabilities: 7
-  m_UserSelectedRegistryName: 
+  - m_Id: scoped:package.openupm.com
+    m_Name: package.openupm.com
+    m_Url: https://package.openupm.com
+    m_Scopes:
+    - com.dbrizov.naughtyattributes
+    - com.openupm
+    - com.solidalloy.unity-dropdown
+    - com.solidalloy.util
+    - org.nuget.system.buffers
+    - org.nuget.system.memory
+    - org.nuget.system.numerics.vectors
+    - org.nuget.system.runtime.compilerservices.unsafe
+    m_IsDefault: 0
+    m_Capabilities: 0
+  m_UserSelectedRegistryName: package.openupm.com
   m_UserAddingNewScopedRegistry: 0
   m_RegistryInfoDraft:
     m_Modified: 0
     m_ErrorMessage: 
-    m_UserModificationsInstanceId: -852
-    m_OriginalInstanceId: -854
+    m_UserModificationsInstanceId: -828
+    m_OriginalInstanceId: -830
   m_LoadAssets: 0
