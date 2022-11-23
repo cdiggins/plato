@@ -49,8 +49,8 @@ public class InterpolatorEditor : Editor
         }
         else if (prop.Type == "Quaternion")
         {
-            prop.Q.From = Quaternion.Euler(EditorGUILayout.Vector3Field("From", prop.Q.From.ToEulerAngles()));
-            prop.Q.To = Quaternion.Euler(EditorGUILayout.Vector3Field("To", prop.Q.To.ToEulerAngles()));
+            prop.Q.From = Quaternion.Euler(EditorGUILayout.Vector3Field("From", prop.Q.From.eulerAngles));
+            prop.Q.To = Quaternion.Euler(EditorGUILayout.Vector3Field("To", prop.Q.To.eulerAngles));
         }
 
         prop.Amount = EditorGUILayout.Slider(prop.Amount, 0, 1);

@@ -6,8 +6,8 @@ using Transform = UnityEngine.Transform;
 
 public class QuaternionRange : ScriptableObject
 {
-    public Vector3 From;
-    public Vector3 To;
+    public Quaternion From;
+    public Quaternion To;
     public static QuaternionRange Create(Quaternion q)
     {
         var r = CreateInstance<QuaternionRange>(); r.From = r.To = q; return r;
