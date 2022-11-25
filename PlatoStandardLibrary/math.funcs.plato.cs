@@ -1,8 +1,277 @@
-﻿using System;
-using System.Security.Cryptography;
+﻿using Plato.__TYPES__;
+using System;
 
 namespace Plato.__FUNCS__
 {
+    // Here is a version in C#: https://gist.github.com/cdiggins/bdbc6b4c54909456d881ac704eb6f02f
+    // Also look at: https://frinklang.org/frinkdata/units.txt
+    // https://www.codeproject.com/Articles/23087/Measurement-Unit-Conversion-Library
+    // https://github.com/angularsen/UnitsNet 
+    // https://stackoverflow.com/questions/348853/units-of-measure-in-c-sharp-almost
+    // https://www.codeproject.com/Articles/413750/Units-of-Measure-Validator-for-Csharp
+    // https://stackoverflow.com/questions/2791724/units-of-measurement-conversion-logic-in-c-sharp
+    // https://digidemic.github.io/UnitOf/
+    // https://github.com/martinmoene/PhysUnits-CT-Cpp11 - Overview of C++ libraries
+    [Operations]
+    class UnitOperations
+    {
+        // https://en.wikipedia.org/wiki/Angle
+        Angle Radians(double d) => d;
+        Angle Turns(double d) => d * 2 * Math.PI;
+        Angle Degrees(double d) => Turns(d / 360.0);
+        Angle Grads(double d) => Turns(d / 400.0);
+        Angle ArcMinutes(double d) => Degrees(d / 60);
+        Angle ArcSeconds(double d) => ArcMinutes(d / 60);
+        double ToTurns(Angle a) => a * 2 * Math.PI;
+        double ToDegrees(Angle a) => ToTurns(a) * 360;
+        double ToGrads(Angle a) => ToTurns(a) * 400;
+        double ToArcMinutes(Angle a) => ToDegrees(a) * 60;
+        double ToArcSeconds(Angle a) => ToArcMinutes(a) * 60;
+
+        // Proportion: percent of one 
+        // https://en.wikipedia.org/wiki/Percentage
+        // Some interesting discussions 
+        // https://english.stackexchange.com/questions/275734/a-word-for-a-value-between-0-and-1-inclusive
+        // https://twitter.com/cdiggins/status/1583610796331843584
+        Proportion Proportion(double d) => d;
+        Proportion Percent(double d) => d / 100;
+        Proportion BasisPoints(double d) => Percent(d / 100);
+        Proportion Proportion(Angle a) => ToTurns(a);
+        double ToPercent(Proportion p) => p * 100.0;
+        double Of(Proportion p, double amount) => p / amount;
+        double OfOne(Proportion p) => Of(p, 1);
+        double ToBasisPoints(Proportion p) => ToPercent(p) * 100;
+        Angle ToAngle(Proportion p) => Turns(p);
+
+        // Units of distance/length
+        // https://en.wikipedia.org/wiki/Unit_of_length
+        Length Meters(double value) => value;
+        Length Kilometer(double value) => value * 1000;
+        Length Centimeters(double value) => value / 100;
+        Length Decimeters(double value) => value / 10;
+        Length Millimeters(double value) => value / 100;
+        Length Microns(double value) => value / 1000 / 1000;
+        Length Nanometers(double value) => value / 1000 / 1000 / 1000;
+        Length Inches(double value) => Feet(value / 12);
+        Length Feet(double value) => value / Constants.FeetPerMeter;
+        Length Yards(double value) => Feet(value * 3);
+        Length Rods(double value) => Chains(value / 4);
+        Length Chains(double value) => Yards(value * 22);
+        Length Miles(double value) => Feet(value * Constants.FeetPerMile);
+        Length Leagues(double value) => Miles(value * 3);
+        Length Lightyears(double value) => value * Constants.MetersPerLightyear;
+        Length AU(double value) => value * Constants.MetersPerAU;
+        Length HubbleLength(double value) => value * 14.4 * Billion(Lightyears(value));
+        double ToKilometers(Length l) => l.Meters / 1000;
+        double ToDecimeters(Length l) => l.Meters * 10;
+        double ToCentimeters(Length l) => l.Meters * 100;
+        double ToMillimeters(Length l) => l.Meters * 1000;
+        double ToMicrons(Length l) => ToMillimeters(l) * 1000;
+        double ToNanometers(Length l) => ToMicrons(l) * 1000;
+        double ToInches(Length l) => ToFeet(l) * 12;
+        double ToFeet(Length l) => l * Constants.FeetPerMeter;
+        double ToYards(Length l) => ToFeet(l) / 3;
+        double ToRods(Length l) => ToChains(l) * 4;
+        double ToChains(Length l) => ToYards(l) / 22;
+        double ToMiles(Length l) => l.Meters * Constants.FeetPerMeter / Constants.FeetPerMile;
+        double ToLeague(Length l) => ToMiles(l) / 3;
+        double ToLightyears(Length l) => l / Constants.MetersPerLightyear;
+        double ToAU(Length l) => l / Constants.MetersPerAU;
+        double ToHubbleLength(double value) => value / (14.4 * Billion(Lightyears(value)));
+
+        // Units of weight or mass 
+        // https://en.wikipedia.org/wiki/Mass
+        Mass Milligrams(double value) => value / 1000 / 1000;
+        Mass Grams(double value) => value / 1000;
+        Mass Grains(double value) => Milligrams(value * Constants.GrainToMilligram);
+        Mass Kilograms(double value) => value;
+        Mass Dalton(double value) => value * Constants.DaltonPerKilogram;
+        Mass Tonne(double value) => value * 1000;
+        Mass Pound(double value) => value * Constants.PoundPerKilogram;
+        Mass Ton(double value) => Pound(value * Constants.PoundPerTon);
+        Mass SolarMass(double value) => value * Constants.KilogramPerSolarMass;
+        Mass Ounce(double value) => Grams(value * Constants.OunceToGram);
+        double ToMilligrams(Mass m) => ToGrams(m) * 1000;
+        double ToGrams(Mass m) => m.Kilograms * 1000;
+        double ToGrains(Mass m) => ToMilligrams(m) / Constants.GrainToMilligram;
+        double ToDalton(Mass m) => m.Kilograms / Constants.DaltonPerKilogram;
+        double ToTonne(Mass m) => m.Kilograms / 1000;
+        double ToPound(Mass m) => m.Kilograms / Constants.PoundPerKilogram;
+        double ToTon(Mass m) => ToPound(m) / Constants.PoundPerTon;
+        double ToSolarMass(Mass m) => m / Constants.KilogramPerSolarMass;
+        double ToOunce(Mass m) => ToGrams(m) / Constants.OunceToGram;
+
+        // Temperature      
+        Temperature Celsius(double value) => value;
+        Temperature Kelvin(double value) => value + 273.15;
+        Temperature Faranheit(double value) => (value - 32) * 5.0 / 9.0;
+        double ToKelvin(Temperature t) => t - 273.15;
+        double ToFaranheit(Temperature t) => t * 9.0 / 5.0 + 32.0;
+
+        // Memory
+        // https://en.wikipedia.org/wiki/Byte#Multiple-byte_units
+        Memory Bytes(double value) => value;
+        Memory Bits(double value) => value * 8;
+        Memory Octets(double value) => value;
+        Memory Nibbles(double value) => value / 2;
+        Memory Kilobytes(double value) => value * 1000;
+        Memory Megabytes(double value) => Kilobytes(value) * 1000;
+        Memory Gigabytes(double value) => Megabytes(value) * 1000;
+        Memory Terabytes(double value) => Gigabytes(value) * 1000;
+        Memory Petabytes(double value) => Terabytes(value) * 1000;
+        Memory Exabytes(double value) => Petabytes(value) * 1000;
+        Memory Kebibytes(double value) => value * 1024;
+        Memory Mebibytes(double value) => Kebibytes(value) * 1024;
+        Memory Gibibytes(double value) => Mebibytes(value) * 1024;
+        Memory Tebibytes(double value) => Gibibytes(value) * 1024;
+        Memory Pebibytes(double value) => Tebibytes(value) * 1024;
+        Memory Exibytes(double value) => Pebibytes(value) * 1024;
+        double ToBits(Memory m) => m.Bytes / 8;
+        double ToOctet(Memory m) => m.Bytes;
+        double ToNibble(Memory m) => m.Bytes / 2;
+        double ToKilobytes(Memory m) => m.Bytes / 1000;
+        double ToMegabytes(Memory m) => m.Kilobytes / 1000;
+        double ToGigabytes(Memory m) => m.Megabytes / 1000;
+        double ToTerabytes(Memory m) => m.Gigabytes / 1000;
+        double ToPetabytes(Memory m) => m.Terabytes / 1000;
+        double ToExabytes(Memory m) => m.Petabytes / 1000;
+        double ToKebibytes(Memory m) => m.Bytes / 1024;
+        double ToMebibytes(Memory m) => m.Kebibytes / 1024;
+        double ToGibibytes(Memory m) => m.Mebibytes / 1024;
+        double ToTebibytes(Memory m) => m.Gibibytes / 1024;
+        double ToPebibytes(Memory m) => m.Tebibytes / 1024;
+        double ToExibytes(Memory m) => m.Pebibytes / 1024;
+
+        // Units of time
+        // https://en.wikipedia.org/wiki/TU_(Time_Unit)
+        Time Nanoseconds(double value) => value / 1000 / 1000 / 10000;
+        Time Microseconds(double value) => value / 1000 / 1000;
+        Time Milliseconds(double value) => value / 1000;
+        Time TimeUnits(double value) => Microseconds(value * 1024);
+        Time Seconds(double value) => value;
+        Time Minutes(double value) => value * 60;
+        Time Hours(double value) => value * 60 * 60;
+        Time Days(double value) => value * 60 * 60 * 24;
+        Time Weeks(double value) => value * 60 * 60 * 24 * 7;
+        Time JulianYears(double value) => value * Constants.JulianYearSeconds;
+        Time GregorianYears(double value) => Days(value * Constants.GregorianYearDays);
+        double ToNanosecond(Time t) => t.Seconds * 1000 * 1000 * 1000;
+        double ToMicroeconds(Time t) => t.Seconds * 1000 * 1000;
+        double ToTimeUnits(Time t) => ToMicroeconds(t) / 1024;
+        double ToMilliseconds(Time t) => t.Seconds * 1000;
+        double ToMinutes(Time t) => t.Seconds / 60;
+        double ToHours(Time t) => t.Seconds / (60 * 60);
+        double ToDays(Time t) => t.Seconds / (60 * 60 * 24);
+        double ToWeeks(Time t) => t.Seconds / (60 * 60 * 24 * 7);
+        double ToJulianYears(Time t) => t.Seconds / Constants.JulianYearSeconds;
+        double ToGregorianYears(Time t) => Days(t) / Constants.GregorianYearDays;
+        
+        // https://en.wikipedia.org/wiki/Names_of_large_numbers
+        // Some big numbers 
+        double Hundred(double x) => x * Constants.Hundred;
+        double Thousand(double x) => x * Constants.Thousand;
+        double Million(double x) => x * Constants.Million;
+        double Billion(double x) => x * Constants.Billion;
+        double Trillion(double x) => x * Constants.Trillion;
+        double Tenth(double x) => x / 10;
+        double Hundredth(double x) => x / Constants.Hundred;
+        double Thousandth(double x) => x / Constants.Thousand;
+        double Millionth(double x) => x / Constants.Million;
+        double Billionth(double x) => x / Constants.Billion;
+        double Trillionth(double x) => x / Constants.Trillion;
+
+        // https://en.wikipedia.org/wiki/Metric_prefix
+        double Quetta(double x) => x * 1e+30;
+        double Ronna(double x) => x * 1e+27;
+        double Yotta(double x) => x * 1e+24;
+        double Zetta(double x) => x * 1e+21;
+        double Exa(double x) => x * 1e+18;
+        double Peta(double x) => x * 1e+15;
+        double Tera(double x) => x * 1e+12;
+        double Giga(double x) => x * 1e+9;
+        double Mega(double x) => x * 1e+6;
+        double Kilo(double x) => x * 1000;
+        double Hecto(double x) => x * 100;
+        double Deka(double x) => x * 10;
+        double Deci(double x) => x / 10;
+        double Centi(double x) => x * 100;
+        double Milli(double x) => x * 1e-3;
+        double Micro(double x) => x * 1e-6;
+        double Nano(double x) => x * 1e-9;
+        double Pico(double x) => x * 1e-12;
+        double Femto(double x) => x * 1e-15;
+        double Atto(double x) => x * 1e-18;
+        double Zepto(double x) => x * 1e-21;
+        double Yocto(double x) => x * 1e-24;
+        double Ronto(double x) => x * 1e-27;
+        double Quecto(double x) => x * 1e-30;
+
+        double Reciprocal(double x) => 1 / x;
+        double MultiplicativeInverse(double x) => Reciprocal(x);
+
+        Velocity Light() => 299792458;
+
+        // Combining different units of measure to create compound units
+        Area Multiply(Length length, Length width) => length.Meters * width.Meters;
+        Volume Multiply(Area area, Length height) => area.MetersSquared * height.Meters;
+        Volume Multiply(Length height, Area area) => Multiply(area, height);
+        Force Multiply(Mass mass, Acceleration accel) => mass.Kilograms * accel.MetersPerSecondSquared;
+        Force Multiply(Acceleration accel, Mass mass) => Multiply(mass, accel);
+        Energy Multiply(Force force, Length length) => force.Newtons * length.Meters;
+        Energy Multiply(Length length, Force force) => Multiply(force, length);
+
+        Pressure Divide(Force force, Area area) => force.Newtons / area.MetersSquared;
+        Velocity Divide(Length length, Time time) => length.Meters / time.Seconds;
+        Acceleration Divide(Velocity Velocity, Time time) => Velocity.MetersPerSecond / time.Seconds;
+
+        Length Divide(Area area, Length length) => area.MetersSquared / length.Meters;
+        Area Divide(Volume volume, Length length) => volume.MetersCubed / length.Meters;
+        Length Divide(Volume volume, Area area) => volume.MetersCubed / area.MetersSquared;
+        Force Multiply(Pressure pressure, Area area) => pressure.Pascals * area.MetersSquared;
+        Force Multiply(Area area, Pressure pressure) => Multiply(pressure, area);
+        Area Divide(Pressure pressure, Force force) => pressure.Pascals * force.Newtons;
+        Length Multiply(Velocity Velocity, Time time) => Velocity.MetersPerSecond * time.Seconds;
+        Time Divide(Velocity Velocity, Length length) => Velocity.MetersPerSecond / length.Meters;
+        Velocity Multiply(Acceleration acceleration, Time time) => acceleration.MetersPerSecondSquared * time.Seconds;
+        Velocity Multiply(Time time, Acceleration acceleration) => Multiply(acceleration, time);
+        Time Divide(Acceleration acceleration, Velocity Velocity) => acceleration.MetersPerSecondSquared / Velocity.MetersPerSecond;
+        Mass Divide(Force force, Acceleration acceleration) => force.Newtons / acceleration.MetersPerSecondSquared;
+        Acceleration Divide(Force force, Mass mass) => force.Newtons / mass.Kilograms;
+        Force Divide(Energy energy, Length length) => energy.Joules / length.Meters;
+        Length Divide(Energy energy, Force force) => energy.Joules / force.Newtons;
+        Power Divide(Energy energy, Time time) => energy.Joules / time.Seconds;
+        Energy Multiply(Power power, Time time) => power.Watts * time.Seconds;
+        Energy Multiply(Time time, Power power) => Multiply(power, time);
+        Power Multiply(ElectricPotential ep, ElectricCurrent ec) => ep.Volts * ec.Amperes;
+        Density Divide(Mass m, Volume v) => m.Kilograms / v.MetersCubed;
+        Mass Muliply(Density d, Volume v) => d.KilogramsPerMeterCubed * v.MetersCubed;
+        Volume Divide(Density d, Mass m) => d.KilogramsPerMeterCubed / m.Kilograms;
+
+        Velocity PerSecond(Length l) => l / 1.Seconds();
+        Acceleration PerSecond(Velocity s) => s / 1.Seconds();
+        Power PerSecond(Energy e) => e / 1.Seconds();
+        Energy Kilojoules(double d) => d.Thousand().Joules();
+        Energy WattHours(double d) => d * 1.Hours().Seconds;
+        Energy NewtonMeters(double d) => d;
+        Energy Joules(double d) => d;
+        Density KilogramsPerMeterCubed(double d) => d;
+        Power Watts(double d) => d;
+        ElectricResistance Ohms(double d) => d;
+        ElectricCurrent Amperes(double d) => d;
+        ElectricCharge Columbs(double d) => d;
+        LuminousIntensity Candela(double d) => d;
+        Frequency Hertz(double d) => d;
+        Pressure Pascals(double d) => d;
+        Force Newtons(double d) => d;
+        Acceleration MetersPerSecondSquared(double d) => d;
+        Velocity MetersPerSecond(double d) => d;
+        Area MetersSquared(double d) => d;
+        Volume MetersCubed(double d) => d;
+
+        // TODO: volume
+        // https://en.wikipedia.org/wiki/Fluid_ounce
+    }
+
     [Operations]
     class VectorOperations
     {
@@ -31,7 +300,7 @@ namespace Plato.__FUNCS__
         double Thrice(double x) => x * 3;
         double MinusOne(double x) => x - 1;
         double PlusOne(double x) => x + 1;
-        double FromOne(double x) => 1 - x;
+        double OneMinus(double x) => 1 - x;
         double Abs(double x) => Math.Abs(x);
         double Exp(double x) => Math.Exp(x);
         double Log(double x) => Math.Log(x);
@@ -61,17 +330,6 @@ namespace Plato.__FUNCS__
         double Pow4(double x) => x * x * x * x;
         double Pow5(double x) => x * x * x * x * x;
         double Pow(double x, double y) => Math.Pow(x, y);
-    }
-
-    [Operations]
-    class ConversionOperations
-    {
-        Angle Revs(double x) => x * Constants.TwoPi;
-        Angle Rads(double x) => x;
-        Angle Degrees(double x) => (x / 360).Revs();
-        double Revs(Angle x) => x.Radians / Constants.TwoPi;
-        double Rads(Angle x) => x.Radians;
-        double Degrees(Angle x) => x.Revs() * 360;
     }
 
     [Operations]
@@ -177,7 +435,7 @@ namespace Plato.__FUNCS__
         double QuinticEaseOut(double p) => InvertEaseFunc(QuinticEaseIn)(p);
         double QuinticEaseInOut(double p) => BlendEaseFunc(QuinticEaseIn, QuinticEaseOut)(p);
         double SineEaseIn(double p) => InvertEaseFunc(SineEaseOut)(p);
-        double SineEaseOut(double p) => p.Quarter().Revs().Sin();
+        double SineEaseOut(double p) => p.Quarter().Turns().Sin();
         double SineEaseInOut(double p) => BlendEaseFunc(SineEaseIn, SineEaseOut)(p);
         double CircularEaseIn(double p) => 1 - (1 - p.Pow2()).Sqrt();
         double CircularEaseOut(double p) => InvertEaseFunc(CircularEaseIn)(p);
@@ -185,10 +443,10 @@ namespace Plato.__FUNCS__
         double ExponentialEaseIn(double p) => p.AlmostZero() ? p : 2.0.Pow(10 * (p - 1));
         double ExponentialEaseOut(double p) => InvertEaseFunc(ExponentialEaseIn)(p);
         double ExponentialEaseInOut(double p) => BlendEaseFunc(ExponentialEaseIn, ExponentialEaseOut)(p);
-        double ElasticEaseIn(double p) => (13 * p.Quarter().Revs()) * 2.0.Pow(10 * (p - 1)).Rads().Sin();
+        double ElasticEaseIn(double p) => (13 * p.Quarter().Turns()) * 2.0.Pow(10 * (p - 1)).Radians().Sin();
         double ElasticEaseOut(double p) => InvertEaseFunc(ElasticEaseIn)(p);
         double ElasticEaseInOut(double p) => BlendEaseFunc(ElasticEaseIn, ElasticEaseOut)(p);
-        double BackEaseIn(double p) => p.Pow3() - p * p.Half().Revs().Sin();
+        double BackEaseIn(double p) => p.Pow3() - p * p.Half().Turns().Sin();
         double BackEaseOut(double p) => InvertEaseFunc(BackEaseIn)(p);
         double BackEaseInOut(double p) => BlendEaseFunc(BackEaseIn, BackEaseOut)(p);
         double BounceEaseIn(double p) => InvertEaseFunc(BounceEaseOut)(p);
@@ -216,7 +474,7 @@ namespace Plato.__FUNCS__
         double NormalizedPowerCurve(double x, double a, double b) => (a + b.Pow(a + b) / (a.Pow(a) * (b.Pow(b)) * UnnormalizedPowerCurve(x, a, b)));
         double UnnormalizedPowerCurve(double x, double a, double b) => x.Pow(a) * (1.0 - x).Pow(b);
         double Parabola(double x, double k) => 4.0 * x * (1.0 - x).Pow(k);
-        double Sinc(double x, double k) { var a = k * (x - 1.0).Half().Revs(); return a.Sin() / a; }
+        double Sinc(double x, double k) { var a = k * (x - 1.0).Half().Turns(); return a.Sin() / a; }
         double Gain(double x, double k) { var a = 0.5 * (2.0 * ((x < 0.5) ? x : 1.0 - x).Pow(k)); return (x < 0.5) ? a : 1.0 - a; }
         double ExponentialStep(double x, double k, double n) => (-k * x.Pow(n)).Exp();
         double NearIdentityCubic(double x, double threshold, double constant = 0) { if (x > threshold) return x; var a = 2.0 * constant - threshold; var b = 2.0 * threshold - 3.0 * constant; var t = x / threshold; return (a * t + b) * t * t + constant; }
@@ -247,7 +505,7 @@ namespace Plato.__FUNCS__
             b + ((1 - b) / (1 - a)) * ((1 - a).Pow2() - (x - 1).Pow2()).Sqrt();
 
         // https://en.wikipedia.org/wiki/Catenary
-        double Caternay(double x, double a = 1.0) => (x / a).Rads().Cosh();
+        double Caternay(double x, double a = 1.0) => (x / a).Radians().Cosh();
 
         //== 
         // Some parametric curves 
@@ -387,7 +645,7 @@ namespace Plato.__FUNCS__
                 var b = w - e * (w.Dot(e) / e.Dot(e)).ClampZeroToOne();
                 d = d.Min(b.Dot(b));
 
-                // winding number from http://geomalgorithms.com/a03-_inclusion.html
+                // winding number  http://geomalgorithms.com/a03-_inclusion.html
                 var cond1 = p.Y >= v[i].Y;
                 var cond2 = p.Y < v[j].Y;
                 var cond3 = e.X * w.Y > e.Y * w.X;

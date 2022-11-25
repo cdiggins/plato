@@ -280,3 +280,50 @@ Vector / Number
 * I could do small line segments ... 
 * The jagged bits will still show. 
 * AB CD EF GH 
+
+//==
+
+November 23rd
+=============
+Don't forget to add more unit conversion functions.
+Also add those functions to integers / floats / doubles.
+Bezier2D
+Bezier3D
+SDF Class (track if it is bounded or exact)
+Interpolator interface and class
+For Bezier functions: there is amn implicit curve as well. 
+Beziers, Lines, and some other things can return an SDF. 
+
+An SDK though is more of an interface than anything.
+
+interface ISignedDistanceField2D {
+	double Distance(Point2D p);
+	bool Exact;
+}
+
+interface ISignedDistanceField3D {
+	double Distance(Point2D p);
+	bool Exact;
+}
+
+Related to this is the problem of finding derivatives. 
+Some functions have known derivatives. 
+
+https://twitter.com/Frinklang/status/1536257595610103809?s=20&t=l9tqreYvYRkmaYcJeqNPSw
+
+//==
+
+I can release this stuff bit by bit. 
+
+* Units of measure
+
+//==
+
+x.ToABC => property
+x.Multiply() 
+
+//==
+
+* I should implement "IEquatable" as well. 
+* And allow doubles to be compared.
+* GOing to have a problem with "ToX"

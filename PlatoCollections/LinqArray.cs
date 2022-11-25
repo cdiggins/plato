@@ -28,6 +28,24 @@ namespace Plato
     public static class LinqArray
     {
         /// <summary>
+        /// Returns N values from 0 inclusive to 1 exclusive.
+        /// </summary>
+        public static IArray<double> Subdivisions(this int n) 
+            => n.Range().Select(x => (double)x / n);
+
+        /// <summary>
+        /// Returns N values from 0 inclusive to X exclusive.
+        /// </summary>
+        public static IArray<double> Subdivide(this double x, int n) 
+            => n.Subdivisions().Select(i => i * x);
+
+        /// <summary>
+        /// Returns N values from 0 inclusive to X exclusive.
+        /// </summary>
+        public static IArray<double> Subdivide(this int x, int n)
+            => ((double)x).Subdivide(n);
+
+        /// <summary>
         /// Helper function for creating an IArray from the arguments.
         /// </summary>
         public static IArray<T> Create<T>(params T[] self)

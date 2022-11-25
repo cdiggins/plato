@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -12,11 +13,19 @@ namespace PlatoAnalyzer
     public static class PlatoToCSharp
     {
         public static (string, string)[] AdditiveBinaryOps = { ("Add", "+"), ("Subtract", "-") };
-        public static (string, string)[] MultiplicativeBinaryOps = { ("Multiply", "*"), ("Divide", "/"), ("Modulo", "%") };
-        public static (string, string)[] VectorScalarBinaryOps = { ("Multiply", "*"), ("Divide", "/"), ("Modulo", "%"), ("Add", "+"), ("Subtract", "-"),  };
+
+        public static (string, string)[] MultiplicativeBinaryOps =
+            { ("Multiply", "*"), ("Divide", "/"), ("Modulo", "%") };
+
+        public static (string, string)[] VectorScalarBinaryOps =
+            { ("Multiply", "*"), ("Divide", "/"), ("Modulo", "%"), ("Add", "+"), ("Subtract", "-"), };
+
         public static (string, string)[] UnaryOps = { ("Negate", "-") };
         public static (string, string)[] BinaryBooleanOps = { ("Equals", "=="), ("NotEquals", "!=") };
-        public static (string, string)[] BinaryComparisonOps = { ("LessThan", "<"), ("LessThanOrEquals", "<="), ("GreaterThan", ">"), ("GreaterThanOrEquals", ">=") };
+
+        public static (string, string)[] BinaryComparisonOps =
+            { ("LessThan", "<"), ("LessThanOrEquals", "<="), ("GreaterThan", ">"), ("GreaterThanOrEquals", ">=") };
+
         public static string[] NumericConstants = { "Zero", "One", "MinValue", "MaxValue" };
 
         public static HashSet<string> PrimitiveNumberTypes = new HashSet<string>
@@ -40,7 +49,8 @@ namespace PlatoAnalyzer
             return PrimitiveNumberTypes.Contains(type);
         }
 
-        public static StringBuilder GenerateIntrinsics(StringBuilder sb, string type, bool generateOps, bool multiplicative, bool comparable, List<string> propTypes)
+        public static StringBuilder GenerateIntrinsics(StringBuilder sb, string type, bool generateOps,
+            bool multiplicative, bool comparable, List<string> propTypes)
         {
             var t = type;
             sb.AppendLine("public static partial class Intrinsics {");
@@ -50,8 +60,10 @@ namespace PlatoAnalyzer
                 foreach (var (m, op) in AdditiveBinaryOps)
                 {
                     sb.AppendLine($"public static {t} {m}(this {t} a, {t} b) => a {op} b;");
-                    sb.AppendLine($"public static IArray<{t}> {m}(this IArray<{t}> self, IArray<{t}> other) => self.Zip(other, (a,b) => a {op} b);");
+                    sb.AppendLine(
+                        $"public static IArray<{t}> {m}(this IArray<{t}> self, IArray<{t}> other) => self.Zip(other, (a,b) => a {op} b);");
                 }
+
                 sb.AppendLine($"public static {t} Sum(this IArray<{t}> self) => self.Aggregate((a, b) => a + b);");
 
                 if (multiplicative)
@@ -59,10 +71,12 @@ namespace PlatoAnalyzer
                     foreach (var (m, op) in MultiplicativeBinaryOps)
                     {
                         sb.AppendLine($"public static {t} {m}(this {t} a, {t} b) => a {op} b;");
-                        sb.AppendLine($"public static IArray<{t}> {m}(this IArray<{t}> self, IArray<{t}> other) => self.Zip(other, (a,b) => a {op} b);");
+                        sb.AppendLine(
+                            $"public static IArray<{t}> {m}(this IArray<{t}> self, IArray<{t}> other) => self.Zip(other, (a,b) => a {op} b);");
                     }
 
-                    sb.AppendLine($"public static {t} Product(this IArray<{t}> self) => self.Aggregate((a, b) => a * b);");
+                    sb.AppendLine(
+                        $"public static {t} Product(this IArray<{t}> self) => self.Aggregate((a, b) => a * b);");
                 }
 
                 foreach (var (m, op) in UnaryOps)
@@ -78,13 +92,18 @@ namespace PlatoAnalyzer
 
             if (comparable)
             {
-                sb.AppendLine($"public static int CompareTo(this {type} self, {type} other) => self < other ? -1 : self > other ? 1 : 0;");
-                sb.AppendLine($"public static IArray<int> CompareTo(this IArray<{t}> self, IArray<{t}> other) => self.Zip(other, (a,b) => a.CompareTo(b));");
+                sb.AppendLine(
+                    $"public static " +
+                    $"int " +
+                    $"CompareTo(this {type} self, {type} other) => self < other ? -1 : self > other ? 1 : 0;");
+                sb.AppendLine(
+                    $"public static IArray<int> CompareTo(this IArray<{t}> self, IArray<{t}> other) => self.Zip(other, (a,b) => a.CompareTo(b));");
 
                 foreach (var (m, op) in BinaryComparisonOps)
                 {
                     sb.AppendLine($"public static bool {m}(this {t} a, {t} b) => a {op} b;");
-                    sb.AppendLine($"public static IArray<bool> {m}(this IArray<{t}> self, IArray<{t}> other) => self.Zip(other, (a,b) => a {op} b);");
+                    sb.AppendLine(
+                        $"public static IArray<bool> {m}(this IArray<{t}> self, IArray<{t}> other) => self.Zip(other, (a,b) => a {op} b);");
                 }
             }
 
@@ -106,13 +125,15 @@ namespace PlatoAnalyzer
                     sb.AppendLine($"public static {propType} To{casedPropType}(this {t} self) => self;");
                 }
             }
+
             sb.AppendLine($"public static {t} MinValue(this {t} _) => {t}.MinValue;");
             sb.AppendLine($"public static {t} MaxValue(this {t} _) => {t}.MaxValue;");
 
             return sb.AppendLine("}");
         }
 
-        public static StringBuilder GenerateVectorOps(StringBuilder sb, string type, string scalarType, IReadOnlyList<string> members)
+        public static StringBuilder GenerateVectorOps(StringBuilder sb, string type, string scalarType,
+            IReadOnlyList<string> members)
         {
             var t = type;
 
@@ -159,10 +180,11 @@ namespace PlatoAnalyzer
             return sb;
         }
 
-        public static StringBuilder GenerateOps(StringBuilder sb, string type, string scalar, bool multiplicative, bool supportsScalar, bool comparable, IReadOnlyList<string> members)
+        public static StringBuilder GenerateOps(StringBuilder sb, string type, string scalar, bool multiplicative,
+            bool supportsScalar, bool comparable, IReadOnlyList<string> members)
         {
             var t = type;
-            
+
             foreach (var (m, op) in AdditiveBinaryOps)
             {
                 var args = members.Select(x => $"a.{x} {op} b.{x}").ToCommaDelimitedStrings();
@@ -208,7 +230,8 @@ namespace PlatoAnalyzer
             return sb;
         }
 
-        public static DiagnosticDescriptor PlatoError { get; } = new DiagnosticDescriptor("PLATO001", "Error", "Exception occurred: {0}", "Plato", DiagnosticSeverity.Error, true);
+        public static DiagnosticDescriptor PlatoError { get; } = new DiagnosticDescriptor("PLATO001", "Error",
+            "Exception occurred: {0}", "Plato", DiagnosticSeverity.Error, true);
 
         public static IEnumerable<INamedTypeSymbol> GetAllTypes(Compilation compilation) =>
             GetAllTypes(compilation.GlobalNamespace);
@@ -245,7 +268,8 @@ namespace PlatoAnalyzer
             => GetBaseTypes(classType, mapping).SelectMany(t => GetSelfAndBaseTypes(t, mapping)).Prepend(classType);
 
         public static IEnumerable<PlatoClass> GetBaseTypes(PlatoClass classType, PlatoSemanticMapping mapping)
-            => classType.BaseTypes?.Select(bt => GetPlatoClass(bt, mapping)).Where(c => c != null) ?? Enumerable.Empty<PlatoClass>();
+            => classType.BaseTypes?.Select(bt => GetPlatoClass(bt, mapping)).Where(c => c != null) ??
+               Enumerable.Empty<PlatoClass>();
 
         public static IEnumerable<PlatoClass> GetInterfaces(PlatoClass classType, PlatoSemanticMapping mapping)
             => GetSelfAndBaseTypes(classType, mapping).Where(t => t?.IsInterface == true);
@@ -269,7 +293,8 @@ namespace PlatoAnalyzer
         // TODO: concepts derived from concepts. In the future we will look at the inheritance chain. 
         public static bool IsValue(PlatoClass classType)
             => classType.Attributes.Any(attr =>
-                attr.Name == "Vector" || attr.Name == "Interval" || attr.Name == "Value" || attr.Name == "Number" || attr.Name == "Measure");
+                attr.Name == "Vector" || attr.Name == "Interval" || attr.Name == "Value" || attr.Name == "Number" ||
+                attr.Name == "Measure");
 
         public static bool IsOperations(PlatoClass classType)
             => classType.Attributes.Any(attr => attr.Name == "Operations");
@@ -289,7 +314,7 @@ namespace PlatoAnalyzer
             {
                 if (scalarType == null)
                     scalarType = f.Type.Name;
-                
+
                 if (scalarType != f.Type.Name)
                     return false;
             }
@@ -338,9 +363,11 @@ namespace PlatoAnalyzer
             var propTypes = props.Select(p => p.Type.Name).ToList();
             var propsWithTypes = string.Join(", ", propNames.Zip(propTypes, (p, type) => $"{type} {p}"));
             var argsWithTypes = string.Join(", ", args.Zip(propTypes, (arg, type) => $"{type} {arg}"));
-            sb.AppendLine($"public {classType.Name}({argsWithTypes}) => ({propNames.ToCommaDelimitedStrings()}) = ({args.ToCommaDelimitedStrings()});");
+            sb.AppendLine(
+                $"public {classType.Name}({argsWithTypes}) => ({propNames.ToCommaDelimitedStrings()}) = ({args.ToCommaDelimitedStrings()});");
 
-            sb.AppendLine($"public static {classType.Name} Create({argsWithTypes}) => new {classType.Name}({args.ToCommaDelimitedStrings()});");
+            sb.AppendLine(
+                $"public static {classType.Name} Create({argsWithTypes}) => new {classType.Name}({args.ToCommaDelimitedStrings()});");
 
             if (IsMeasure(classType))
             {
@@ -354,10 +381,13 @@ namespace PlatoAnalyzer
 
             if (propNames.Count > 1)
             {
-                sb.AppendLine($"public static implicit operator {name}(({propsWithTypes}) tuple) => new {name}({string.Join(", ", propNames.Select(p => $"tuple.{p}"))});");
-                sb.AppendLine($"public static implicit operator ({propsWithTypes})({name} self) => ({string.Join(", ", propNames.Select(p => $"self.{p}"))});");
+                sb.AppendLine(
+                    $"public static implicit operator {name}(({propsWithTypes}) tuple) => new {name}({string.Join(", ", propNames.Select(p => $"tuple.{p}"))});");
+                sb.AppendLine(
+                    $"public static implicit operator ({propsWithTypes})({name} self) => ({string.Join(", ", propNames.Select(p => $"self.{p}"))});");
                 var outArgsWithTypes = string.Join(", ", args.Zip(propTypes, (arg, type) => $"out {type} {arg}"));
-                sb.AppendLine($"public void Deconstruct({outArgsWithTypes}) => ({string.Join(", ", args)}) = ({string.Join(", ", propNames)});");
+                sb.AppendLine(
+                    $"public void Deconstruct({outArgsWithTypes}) => ({string.Join(", ", args)}) = ({string.Join(", ", propNames)});");
             }
             else
             {
@@ -372,13 +402,16 @@ namespace PlatoAnalyzer
             if (isInterval)
             {
                 var propType = propTypes[0];
-                sb.AppendLine($"public static implicit operator {name}({propType} value) => new {name}(default, value);");
+                sb.AppendLine(
+                    $"public static implicit operator {name}({propType} value) => new {name}(default, value);");
             }
 
             var stringFields = string.Join(", ", propNames.Select(f => $"\\\"{f}\\\" : {{ {f} }}"));
             sb.AppendLine($"public override string ToString() => $\"{{{{ {stringFields} }}}}\";");
-            sb.AppendLine($"public override bool Equals(object other) => other is {name} typedOther && this == typedOther;");
-            sb.AppendLine($"public override int GetHashCode() => ({propNames.ToCommaDelimitedStrings()}).GetHashCode();");
+            sb.AppendLine(
+                $"public override bool Equals(object other) => other is {name} typedOther && this == typedOther;");
+            sb.AppendLine(
+                $"public override int GetHashCode() => ({propNames.ToCommaDelimitedStrings()}).GetHashCode();");
 
             sb.AppendLine($"public static readonly {name} Default = default;");
 
@@ -392,7 +425,7 @@ namespace PlatoAnalyzer
                 var impl = string.Join(" && ", propNames.Select(x => $"(a.{x} == b.{x})"));
                 sb.AppendLine($"public static bool operator ==({name} a, {name} b) => {impl};");
             }
-            
+
             {
                 var impl = string.Join(" || ", propNames.Select(x => $"(a.{x} != b.{x})"));
                 sb.AppendLine($"public static bool operator !=({name} a, {name} b) => {impl};");
@@ -401,7 +434,8 @@ namespace PlatoAnalyzer
             foreach (var prop in props)
             {
                 var withArgs = props.Select(p => p.Name == prop.Name ? "value" : p.Name);
-                sb.AppendLine($"public {name} With{prop.Name}({prop.Type.Name} value) => new {name}({string.Join(", ", withArgs)});");
+                sb.AppendLine(
+                    $"public {name} With{prop.Name}({prop.Type.Name} value) => new {name}({string.Join(", ", withArgs)});");
             }
 
             if (isNumeric || isComparable)
@@ -485,11 +519,18 @@ namespace PlatoAnalyzer
                         sb.Append(p.Name);
                     }
                 }
+
                 sb.Append($")");
             }
+
             sb.AppendLine(");");
         }
 
+        public static bool IsPrimitive(string type)
+        {
+            return PrimitiveNumberTypes.Contains(type);
+        }
+    
         public static void OutputOperations(PlatoClass cls, List<PlatoClass> vectorTypes, StringBuilder sb)
         {
             // TODO: walk through the class's functions.
@@ -516,8 +557,25 @@ namespace PlatoAnalyzer
                 var m = cls.Methods[i];
                 var rt = m.ReturnType.ToString();
                 var parameters = m.Parameters.Parameters.Select(p => $"{p.Type} {p.Name}{DefaultExpression(p)}").ToCommaDelimitedStrings();
-                sb.AppendLine($"public static {rt} {m.Name}(this {parameters})");
+                var args = m.Parameters.Parameters.Select(p => p.Name).ToCommaDelimitedStrings();
+
+                if (m.Parameters.Parameters.Count > 0)
+                {
+                    sb.AppendLine($"public static {rt} {m.Name}(this {parameters})");
+                }
+                else
+                {
+                    sb.AppendLine($"public static {rt} {m.Name}()");
+                }
+
                 OutputMethodBody(m, sb);
+
+                // Extension methods on doubles are extended to ints and floats. 
+                if (parameters.StartsWith("double "))
+                {
+                    sb.AppendLine($"public static {rt} {m.Name}(this int {parameters.Substring(7)}) => {m.Name}({args});");
+                    sb.AppendLine($"public static {rt} {m.Name}(this float {parameters.Substring(7)}) => {m.Name}({args});");
+                }
 
                 if (vectorTypes != null)
                 {
@@ -529,7 +587,70 @@ namespace PlatoAnalyzer
             }
 
             sb.AppendLine("}");
+
+            // Any new operators? 
+            // Any new properties?
+
+            for (var i = 0; i < cls.Methods.Count; ++i)
+            {
+                var m = cls.Methods[i];
+                var rType = m.ReturnType.ToString();
+                if (m.Parameters.Parameters.Count > 0)
+                {
+                    if (Operators.ContainsKey(m.Name))
+                    {
+                        var p0 = m.Parameters.Parameters[0];
+                        var pType = p0.Type.ToString();
+                        var op = Operators[m.Name];
+                        sb.AppendLine($"public partial struct {pType}");
+                        sb.AppendLine("{");
+                        var parameters = m.Parameters.Parameters.Select(p => $"{p.Type} {p.Name}").ToCommaDelimitedStrings();
+                        var args = m.Parameters.Parameters.Select(p => p.Name).ToCommaDelimitedStrings();
+                        sb.AppendLine($"public static {rType} operator {op}({parameters}) => {cls.Name}.{m.Name}({args});");
+                        sb.AppendLine("}");
+                    }
+                }
+                else
+                {
+                    if (!IsPrimitive(rType))
+                    {
+                        sb.AppendLine($"public partial struct {rType}");
+                        sb.AppendLine("{");
+                        sb.AppendLine($"public static {rType} {m.Name} => {cls.Name}.{m.Name}();");
+                        sb.AppendLine("}");
+                    }
+                }
+
+                // "ToBla(x)" becomes a property "x.Bla"
+                if (m.Name.StartsWith("To") && m.Parameters.Parameters.Count == 1)
+                {
+                    var p0 = m.Parameters.Parameters[0];
+                    var pType = p0.Type.ToString();
+                    if (!IsPrimitive(pType))
+                    {
+                        sb.AppendLine($"public partial struct {pType}");
+                        sb.AppendLine("{");
+                        var parameters = m.Parameters.Parameters.Select(p => $"{p.Type} {p.Name}")
+                            .ToCommaDelimitedStrings();
+                        var args = m.Parameters.Parameters.Select(p => p.Name).ToCommaDelimitedStrings();
+                        sb.AppendLine($"public {rType} {m.Name.Substring(2)} => {cls.Name}.{m.Name}(this);");
+                        sb.AppendLine("}");
+                    }
+                }
+            }
         }
+
+        public static Dictionary<string, string> Operators = new Dictionary<string, string>()
+        {
+            { "Multiply", "*" },
+            { "Divide", "/" },
+            { "Add", "+" },
+            { "Subtract", "-" },
+            { "Modulo", "%" },
+            { "And", "&&" },
+            { "Or", "||" },
+            { "Not", "!" },
+        };
 
         public static void OutputOperations(Compilation compilation, string outputFile)
         {

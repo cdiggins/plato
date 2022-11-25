@@ -5,6 +5,1490 @@ using System.Runtime.Serialization;
 using System.Collections.Generic;
 using System.Linq;
 namespace Plato {
+public static class UnitOperations {
+public static Angle Radians(this double d)
+{
+return d;
+}
+public static Angle Radians(this int d) => Radians(d);
+public static Angle Radians(this float d) => Radians(d);
+public static Angle Turns(this double d)
+{
+return d * 2 * Math.PI;
+}
+public static Angle Turns(this int d) => Turns(d);
+public static Angle Turns(this float d) => Turns(d);
+public static Angle Degrees(this double d)
+{
+return Turns(d / 360.0);
+}
+public static Angle Degrees(this int d) => Degrees(d);
+public static Angle Degrees(this float d) => Degrees(d);
+public static Angle Grads(this double d)
+{
+return Turns(d / 400.0);
+}
+public static Angle Grads(this int d) => Grads(d);
+public static Angle Grads(this float d) => Grads(d);
+public static Angle ArcMinutes(this double d)
+{
+return Degrees(d / 60);
+}
+public static Angle ArcMinutes(this int d) => ArcMinutes(d);
+public static Angle ArcMinutes(this float d) => ArcMinutes(d);
+public static Angle ArcSeconds(this double d)
+{
+return ArcMinutes(d / 60);
+}
+public static Angle ArcSeconds(this int d) => ArcSeconds(d);
+public static Angle ArcSeconds(this float d) => ArcSeconds(d);
+public static double ToTurns(this Angle a)
+{
+return a * 2 * Math.PI;
+}
+public static double ToDegrees(this Angle a)
+{
+return ToTurns(a) * 360;
+}
+public static double ToGrads(this Angle a)
+{
+return ToTurns(a) * 400;
+}
+public static double ToArcMinutes(this Angle a)
+{
+return ToDegrees(a) * 60;
+}
+public static double ToArcSeconds(this Angle a)
+{
+return ToArcMinutes(a) * 60;
+}
+public static Proportion Proportion(this double d)
+{
+return d;
+}
+public static Proportion Proportion(this int d) => Proportion(d);
+public static Proportion Proportion(this float d) => Proportion(d);
+public static Proportion Percent(this double d)
+{
+return d / 100;
+}
+public static Proportion Percent(this int d) => Percent(d);
+public static Proportion Percent(this float d) => Percent(d);
+public static Proportion BasisPoints(this double d)
+{
+return Percent(d / 100);
+}
+public static Proportion BasisPoints(this int d) => BasisPoints(d);
+public static Proportion BasisPoints(this float d) => BasisPoints(d);
+public static Proportion Proportion(this Angle a)
+{
+return ToTurns(a);
+}
+public static double ToPercent(this Proportion p)
+{
+return p * 100.0;
+}
+public static double Of(this Proportion p, double amount)
+{
+return p / amount;
+}
+public static double OfOne(this Proportion p)
+{
+return Of(p, 1);
+}
+public static double ToBasisPoints(this Proportion p)
+{
+return ToPercent(p) * 100;
+}
+public static Angle ToAngle(this Proportion p)
+{
+return Turns(p);
+}
+public static Length Meters(this double value)
+{
+return value;
+}
+public static Length Meters(this int value) => Meters(value);
+public static Length Meters(this float value) => Meters(value);
+public static Length Kilometer(this double value)
+{
+return value * 1000;
+}
+public static Length Kilometer(this int value) => Kilometer(value);
+public static Length Kilometer(this float value) => Kilometer(value);
+public static Length Centimeters(this double value)
+{
+return value / 100;
+}
+public static Length Centimeters(this int value) => Centimeters(value);
+public static Length Centimeters(this float value) => Centimeters(value);
+public static Length Decimeters(this double value)
+{
+return value / 10;
+}
+public static Length Decimeters(this int value) => Decimeters(value);
+public static Length Decimeters(this float value) => Decimeters(value);
+public static Length Millimeters(this double value)
+{
+return value / 100;
+}
+public static Length Millimeters(this int value) => Millimeters(value);
+public static Length Millimeters(this float value) => Millimeters(value);
+public static Length Microns(this double value)
+{
+return value / 1000 / 1000;
+}
+public static Length Microns(this int value) => Microns(value);
+public static Length Microns(this float value) => Microns(value);
+public static Length Nanometers(this double value)
+{
+return value / 1000 / 1000 / 1000;
+}
+public static Length Nanometers(this int value) => Nanometers(value);
+public static Length Nanometers(this float value) => Nanometers(value);
+public static Length Inches(this double value)
+{
+return Feet(value / 12);
+}
+public static Length Inches(this int value) => Inches(value);
+public static Length Inches(this float value) => Inches(value);
+public static Length Feet(this double value)
+{
+return value / Constants.FeetPerMeter;
+}
+public static Length Feet(this int value) => Feet(value);
+public static Length Feet(this float value) => Feet(value);
+public static Length Yards(this double value)
+{
+return Feet(value * 3);
+}
+public static Length Yards(this int value) => Yards(value);
+public static Length Yards(this float value) => Yards(value);
+public static Length Rods(this double value)
+{
+return Chains(value / 4);
+}
+public static Length Rods(this int value) => Rods(value);
+public static Length Rods(this float value) => Rods(value);
+public static Length Chains(this double value)
+{
+return Yards(value * 22);
+}
+public static Length Chains(this int value) => Chains(value);
+public static Length Chains(this float value) => Chains(value);
+public static Length Miles(this double value)
+{
+return Feet(value * Constants.FeetPerMile);
+}
+public static Length Miles(this int value) => Miles(value);
+public static Length Miles(this float value) => Miles(value);
+public static Length Leagues(this double value)
+{
+return Miles(value * 3);
+}
+public static Length Leagues(this int value) => Leagues(value);
+public static Length Leagues(this float value) => Leagues(value);
+public static Length Lightyears(this double value)
+{
+return value * Constants.MetersPerLightyear;
+}
+public static Length Lightyears(this int value) => Lightyears(value);
+public static Length Lightyears(this float value) => Lightyears(value);
+public static Length AU(this double value)
+{
+return value * Constants.MetersPerAU;
+}
+public static Length AU(this int value) => AU(value);
+public static Length AU(this float value) => AU(value);
+public static Length HubbleLength(this double value)
+{
+return value * 14.4 * Billion(Lightyears(value));
+}
+public static Length HubbleLength(this int value) => HubbleLength(value);
+public static Length HubbleLength(this float value) => HubbleLength(value);
+public static double ToKilometers(this Length l)
+{
+return l.Meters / 1000;
+}
+public static double ToDecimeters(this Length l)
+{
+return l.Meters * 10;
+}
+public static double ToCentimeters(this Length l)
+{
+return l.Meters * 100;
+}
+public static double ToMillimeters(this Length l)
+{
+return l.Meters * 1000;
+}
+public static double ToMicrons(this Length l)
+{
+return ToMillimeters(l) * 1000;
+}
+public static double ToNanometers(this Length l)
+{
+return ToMicrons(l) * 1000;
+}
+public static double ToInches(this Length l)
+{
+return ToFeet(l) * 12;
+}
+public static double ToFeet(this Length l)
+{
+return l * Constants.FeetPerMeter;
+}
+public static double ToYards(this Length l)
+{
+return ToFeet(l) / 3;
+}
+public static double ToRods(this Length l)
+{
+return ToChains(l) * 4;
+}
+public static double ToChains(this Length l)
+{
+return ToYards(l) / 22;
+}
+public static double ToMiles(this Length l)
+{
+return l.Meters * Constants.FeetPerMeter / Constants.FeetPerMile;
+}
+public static double ToLeague(this Length l)
+{
+return ToMiles(l) / 3;
+}
+public static double ToLightyears(this Length l)
+{
+return l / Constants.MetersPerLightyear;
+}
+public static double ToAU(this Length l)
+{
+return l / Constants.MetersPerAU;
+}
+public static double ToHubbleLength(this double value)
+{
+return value / (14.4 * Billion(Lightyears(value)));
+}
+public static double ToHubbleLength(this int value) => ToHubbleLength(value);
+public static double ToHubbleLength(this float value) => ToHubbleLength(value);
+public static Mass Milligrams(this double value)
+{
+return value / 1000 / 1000;
+}
+public static Mass Milligrams(this int value) => Milligrams(value);
+public static Mass Milligrams(this float value) => Milligrams(value);
+public static Mass Grams(this double value)
+{
+return value / 1000;
+}
+public static Mass Grams(this int value) => Grams(value);
+public static Mass Grams(this float value) => Grams(value);
+public static Mass Grains(this double value)
+{
+return Milligrams(value * Constants.GrainToMilligram);
+}
+public static Mass Grains(this int value) => Grains(value);
+public static Mass Grains(this float value) => Grains(value);
+public static Mass Kilograms(this double value)
+{
+return value;
+}
+public static Mass Kilograms(this int value) => Kilograms(value);
+public static Mass Kilograms(this float value) => Kilograms(value);
+public static Mass Dalton(this double value)
+{
+return value * Constants.DaltonPerKilogram;
+}
+public static Mass Dalton(this int value) => Dalton(value);
+public static Mass Dalton(this float value) => Dalton(value);
+public static Mass Tonne(this double value)
+{
+return value * 1000;
+}
+public static Mass Tonne(this int value) => Tonne(value);
+public static Mass Tonne(this float value) => Tonne(value);
+public static Mass Pound(this double value)
+{
+return value * Constants.PoundPerKilogram;
+}
+public static Mass Pound(this int value) => Pound(value);
+public static Mass Pound(this float value) => Pound(value);
+public static Mass Ton(this double value)
+{
+return Pound(value * Constants.PoundPerTon);
+}
+public static Mass Ton(this int value) => Ton(value);
+public static Mass Ton(this float value) => Ton(value);
+public static Mass SolarMass(this double value)
+{
+return value * Constants.KilogramPerSolarMass;
+}
+public static Mass SolarMass(this int value) => SolarMass(value);
+public static Mass SolarMass(this float value) => SolarMass(value);
+public static Mass Ounce(this double value)
+{
+return Grams(value * Constants.OunceToGram);
+}
+public static Mass Ounce(this int value) => Ounce(value);
+public static Mass Ounce(this float value) => Ounce(value);
+public static double ToMilligrams(this Mass m)
+{
+return ToGrams(m) * 1000;
+}
+public static double ToGrams(this Mass m)
+{
+return m.Kilograms * 1000;
+}
+public static double ToGrains(this Mass m)
+{
+return ToMilligrams(m) / Constants.GrainToMilligram;
+}
+public static double ToDalton(this Mass m)
+{
+return m.Kilograms / Constants.DaltonPerKilogram;
+}
+public static double ToTonne(this Mass m)
+{
+return m.Kilograms / 1000;
+}
+public static double ToPound(this Mass m)
+{
+return m.Kilograms / Constants.PoundPerKilogram;
+}
+public static double ToTon(this Mass m)
+{
+return ToPound(m) / Constants.PoundPerTon;
+}
+public static double ToSolarMass(this Mass m)
+{
+return m / Constants.KilogramPerSolarMass;
+}
+public static double ToOunce(this Mass m)
+{
+return ToGrams(m) / Constants.OunceToGram;
+}
+public static Temperature Celsius(this double value)
+{
+return value;
+}
+public static Temperature Celsius(this int value) => Celsius(value);
+public static Temperature Celsius(this float value) => Celsius(value);
+public static Temperature Kelvin(this double value)
+{
+return value + 273.15;
+}
+public static Temperature Kelvin(this int value) => Kelvin(value);
+public static Temperature Kelvin(this float value) => Kelvin(value);
+public static Temperature Faranheit(this double value)
+{
+return (value - 32) * 5.0 / 9.0;
+}
+public static Temperature Faranheit(this int value) => Faranheit(value);
+public static Temperature Faranheit(this float value) => Faranheit(value);
+public static double ToKelvin(this Temperature t)
+{
+return t - 273.15;
+}
+public static double ToFaranheit(this Temperature t)
+{
+return t * 9.0 / 5.0 + 32.0;
+}
+public static Memory Bytes(this double value)
+{
+return value;
+}
+public static Memory Bytes(this int value) => Bytes(value);
+public static Memory Bytes(this float value) => Bytes(value);
+public static Memory Bits(this double value)
+{
+return value * 8;
+}
+public static Memory Bits(this int value) => Bits(value);
+public static Memory Bits(this float value) => Bits(value);
+public static Memory Octets(this double value)
+{
+return value;
+}
+public static Memory Octets(this int value) => Octets(value);
+public static Memory Octets(this float value) => Octets(value);
+public static Memory Nibbles(this double value)
+{
+return value / 2;
+}
+public static Memory Nibbles(this int value) => Nibbles(value);
+public static Memory Nibbles(this float value) => Nibbles(value);
+public static Memory Kilobytes(this double value)
+{
+return value * 1000;
+}
+public static Memory Kilobytes(this int value) => Kilobytes(value);
+public static Memory Kilobytes(this float value) => Kilobytes(value);
+public static Memory Megabytes(this double value)
+{
+return Kilobytes(value) * 1000;
+}
+public static Memory Megabytes(this int value) => Megabytes(value);
+public static Memory Megabytes(this float value) => Megabytes(value);
+public static Memory Gigabytes(this double value)
+{
+return Megabytes(value) * 1000;
+}
+public static Memory Gigabytes(this int value) => Gigabytes(value);
+public static Memory Gigabytes(this float value) => Gigabytes(value);
+public static Memory Terabytes(this double value)
+{
+return Gigabytes(value) * 1000;
+}
+public static Memory Terabytes(this int value) => Terabytes(value);
+public static Memory Terabytes(this float value) => Terabytes(value);
+public static Memory Petabytes(this double value)
+{
+return Terabytes(value) * 1000;
+}
+public static Memory Petabytes(this int value) => Petabytes(value);
+public static Memory Petabytes(this float value) => Petabytes(value);
+public static Memory Exabytes(this double value)
+{
+return Petabytes(value) * 1000;
+}
+public static Memory Exabytes(this int value) => Exabytes(value);
+public static Memory Exabytes(this float value) => Exabytes(value);
+public static Memory Kebibytes(this double value)
+{
+return value * 1024;
+}
+public static Memory Kebibytes(this int value) => Kebibytes(value);
+public static Memory Kebibytes(this float value) => Kebibytes(value);
+public static Memory Mebibytes(this double value)
+{
+return Kebibytes(value) * 1024;
+}
+public static Memory Mebibytes(this int value) => Mebibytes(value);
+public static Memory Mebibytes(this float value) => Mebibytes(value);
+public static Memory Gibibytes(this double value)
+{
+return Mebibytes(value) * 1024;
+}
+public static Memory Gibibytes(this int value) => Gibibytes(value);
+public static Memory Gibibytes(this float value) => Gibibytes(value);
+public static Memory Tebibytes(this double value)
+{
+return Gibibytes(value) * 1024;
+}
+public static Memory Tebibytes(this int value) => Tebibytes(value);
+public static Memory Tebibytes(this float value) => Tebibytes(value);
+public static Memory Pebibytes(this double value)
+{
+return Tebibytes(value) * 1024;
+}
+public static Memory Pebibytes(this int value) => Pebibytes(value);
+public static Memory Pebibytes(this float value) => Pebibytes(value);
+public static Memory Exibytes(this double value)
+{
+return Pebibytes(value) * 1024;
+}
+public static Memory Exibytes(this int value) => Exibytes(value);
+public static Memory Exibytes(this float value) => Exibytes(value);
+public static double ToBits(this Memory m)
+{
+return m.Bytes / 8;
+}
+public static double ToOctet(this Memory m)
+{
+return m.Bytes;
+}
+public static double ToNibble(this Memory m)
+{
+return m.Bytes / 2;
+}
+public static double ToKilobytes(this Memory m)
+{
+return m.Bytes / 1000;
+}
+public static double ToMegabytes(this Memory m)
+{
+return m.Kilobytes / 1000;
+}
+public static double ToGigabytes(this Memory m)
+{
+return m.Megabytes / 1000;
+}
+public static double ToTerabytes(this Memory m)
+{
+return m.Gigabytes / 1000;
+}
+public static double ToPetabytes(this Memory m)
+{
+return m.Terabytes / 1000;
+}
+public static double ToExabytes(this Memory m)
+{
+return m.Petabytes / 1000;
+}
+public static double ToKebibytes(this Memory m)
+{
+return m.Bytes / 1024;
+}
+public static double ToMebibytes(this Memory m)
+{
+return m.Kebibytes / 1024;
+}
+public static double ToGibibytes(this Memory m)
+{
+return m.Mebibytes / 1024;
+}
+public static double ToTebibytes(this Memory m)
+{
+return m.Gibibytes / 1024;
+}
+public static double ToPebibytes(this Memory m)
+{
+return m.Tebibytes / 1024;
+}
+public static double ToExibytes(this Memory m)
+{
+return m.Pebibytes / 1024;
+}
+public static Time Nanoseconds(this double value)
+{
+return value / 1000 / 1000 / 10000;
+}
+public static Time Nanoseconds(this int value) => Nanoseconds(value);
+public static Time Nanoseconds(this float value) => Nanoseconds(value);
+public static Time Microseconds(this double value)
+{
+return value / 1000 / 1000;
+}
+public static Time Microseconds(this int value) => Microseconds(value);
+public static Time Microseconds(this float value) => Microseconds(value);
+public static Time Milliseconds(this double value)
+{
+return value / 1000;
+}
+public static Time Milliseconds(this int value) => Milliseconds(value);
+public static Time Milliseconds(this float value) => Milliseconds(value);
+public static Time TimeUnits(this double value)
+{
+return Microseconds(value * 1024);
+}
+public static Time TimeUnits(this int value) => TimeUnits(value);
+public static Time TimeUnits(this float value) => TimeUnits(value);
+public static Time Seconds(this double value)
+{
+return value;
+}
+public static Time Seconds(this int value) => Seconds(value);
+public static Time Seconds(this float value) => Seconds(value);
+public static Time Minutes(this double value)
+{
+return value * 60;
+}
+public static Time Minutes(this int value) => Minutes(value);
+public static Time Minutes(this float value) => Minutes(value);
+public static Time Hours(this double value)
+{
+return value * 60 * 60;
+}
+public static Time Hours(this int value) => Hours(value);
+public static Time Hours(this float value) => Hours(value);
+public static Time Days(this double value)
+{
+return value * 60 * 60 * 24;
+}
+public static Time Days(this int value) => Days(value);
+public static Time Days(this float value) => Days(value);
+public static Time Weeks(this double value)
+{
+return value * 60 * 60 * 24 * 7;
+}
+public static Time Weeks(this int value) => Weeks(value);
+public static Time Weeks(this float value) => Weeks(value);
+public static Time JulianYears(this double value)
+{
+return value * Constants.JulianYearSeconds;
+}
+public static Time JulianYears(this int value) => JulianYears(value);
+public static Time JulianYears(this float value) => JulianYears(value);
+public static Time GregorianYears(this double value)
+{
+return Days(value * Constants.GregorianYearDays);
+}
+public static Time GregorianYears(this int value) => GregorianYears(value);
+public static Time GregorianYears(this float value) => GregorianYears(value);
+public static double ToNanosecond(this Time t)
+{
+return t.Seconds * 1000 * 1000 * 1000;
+}
+public static double ToMicroeconds(this Time t)
+{
+return t.Seconds * 1000 * 1000;
+}
+public static double ToTimeUnits(this Time t)
+{
+return ToMicroeconds(t) / 1024;
+}
+public static double ToMilliseconds(this Time t)
+{
+return t.Seconds * 1000;
+}
+public static double ToMinutes(this Time t)
+{
+return t.Seconds / 60;
+}
+public static double ToHours(this Time t)
+{
+return t.Seconds / (60 * 60);
+}
+public static double ToDays(this Time t)
+{
+return t.Seconds / (60 * 60 * 24);
+}
+public static double ToWeeks(this Time t)
+{
+return t.Seconds / (60 * 60 * 24 * 7);
+}
+public static double ToJulianYears(this Time t)
+{
+return t.Seconds / Constants.JulianYearSeconds;
+}
+public static double ToGregorianYears(this Time t)
+{
+return Days(t) / Constants.GregorianYearDays;
+}
+public static double Hundred(this double x)
+{
+return x * Constants.Hundred;
+}
+public static double Hundred(this int x) => Hundred(x);
+public static double Hundred(this float x) => Hundred(x);
+public static double Thousand(this double x)
+{
+return x * Constants.Thousand;
+}
+public static double Thousand(this int x) => Thousand(x);
+public static double Thousand(this float x) => Thousand(x);
+public static double Million(this double x)
+{
+return x * Constants.Million;
+}
+public static double Million(this int x) => Million(x);
+public static double Million(this float x) => Million(x);
+public static double Billion(this double x)
+{
+return x * Constants.Billion;
+}
+public static double Billion(this int x) => Billion(x);
+public static double Billion(this float x) => Billion(x);
+public static double Trillion(this double x)
+{
+return x * Constants.Trillion;
+}
+public static double Trillion(this int x) => Trillion(x);
+public static double Trillion(this float x) => Trillion(x);
+public static double Tenth(this double x)
+{
+return x / 10;
+}
+public static double Tenth(this int x) => Tenth(x);
+public static double Tenth(this float x) => Tenth(x);
+public static double Hundredth(this double x)
+{
+return x / Constants.Hundred;
+}
+public static double Hundredth(this int x) => Hundredth(x);
+public static double Hundredth(this float x) => Hundredth(x);
+public static double Thousandth(this double x)
+{
+return x / Constants.Thousand;
+}
+public static double Thousandth(this int x) => Thousandth(x);
+public static double Thousandth(this float x) => Thousandth(x);
+public static double Millionth(this double x)
+{
+return x / Constants.Million;
+}
+public static double Millionth(this int x) => Millionth(x);
+public static double Millionth(this float x) => Millionth(x);
+public static double Billionth(this double x)
+{
+return x / Constants.Billion;
+}
+public static double Billionth(this int x) => Billionth(x);
+public static double Billionth(this float x) => Billionth(x);
+public static double Trillionth(this double x)
+{
+return x / Constants.Trillion;
+}
+public static double Trillionth(this int x) => Trillionth(x);
+public static double Trillionth(this float x) => Trillionth(x);
+public static double Quetta(this double x)
+{
+return x * 1e+30;
+}
+public static double Quetta(this int x) => Quetta(x);
+public static double Quetta(this float x) => Quetta(x);
+public static double Ronna(this double x)
+{
+return x * 1e+27;
+}
+public static double Ronna(this int x) => Ronna(x);
+public static double Ronna(this float x) => Ronna(x);
+public static double Yotta(this double x)
+{
+return x * 1e+24;
+}
+public static double Yotta(this int x) => Yotta(x);
+public static double Yotta(this float x) => Yotta(x);
+public static double Zetta(this double x)
+{
+return x * 1e+21;
+}
+public static double Zetta(this int x) => Zetta(x);
+public static double Zetta(this float x) => Zetta(x);
+public static double Exa(this double x)
+{
+return x * 1e+18;
+}
+public static double Exa(this int x) => Exa(x);
+public static double Exa(this float x) => Exa(x);
+public static double Peta(this double x)
+{
+return x * 1e+15;
+}
+public static double Peta(this int x) => Peta(x);
+public static double Peta(this float x) => Peta(x);
+public static double Tera(this double x)
+{
+return x * 1e+12;
+}
+public static double Tera(this int x) => Tera(x);
+public static double Tera(this float x) => Tera(x);
+public static double Giga(this double x)
+{
+return x * 1e+9;
+}
+public static double Giga(this int x) => Giga(x);
+public static double Giga(this float x) => Giga(x);
+public static double Mega(this double x)
+{
+return x * 1e+6;
+}
+public static double Mega(this int x) => Mega(x);
+public static double Mega(this float x) => Mega(x);
+public static double Kilo(this double x)
+{
+return x * 1000;
+}
+public static double Kilo(this int x) => Kilo(x);
+public static double Kilo(this float x) => Kilo(x);
+public static double Hecto(this double x)
+{
+return x * 100;
+}
+public static double Hecto(this int x) => Hecto(x);
+public static double Hecto(this float x) => Hecto(x);
+public static double Deka(this double x)
+{
+return x * 10;
+}
+public static double Deka(this int x) => Deka(x);
+public static double Deka(this float x) => Deka(x);
+public static double Deci(this double x)
+{
+return x / 10;
+}
+public static double Deci(this int x) => Deci(x);
+public static double Deci(this float x) => Deci(x);
+public static double Centi(this double x)
+{
+return x * 100;
+}
+public static double Centi(this int x) => Centi(x);
+public static double Centi(this float x) => Centi(x);
+public static double Milli(this double x)
+{
+return x * 1e-3;
+}
+public static double Milli(this int x) => Milli(x);
+public static double Milli(this float x) => Milli(x);
+public static double Micro(this double x)
+{
+return x * 1e-6;
+}
+public static double Micro(this int x) => Micro(x);
+public static double Micro(this float x) => Micro(x);
+public static double Nano(this double x)
+{
+return x * 1e-9;
+}
+public static double Nano(this int x) => Nano(x);
+public static double Nano(this float x) => Nano(x);
+public static double Pico(this double x)
+{
+return x * 1e-12;
+}
+public static double Pico(this int x) => Pico(x);
+public static double Pico(this float x) => Pico(x);
+public static double Femto(this double x)
+{
+return x * 1e-15;
+}
+public static double Femto(this int x) => Femto(x);
+public static double Femto(this float x) => Femto(x);
+public static double Atto(this double x)
+{
+return x * 1e-18;
+}
+public static double Atto(this int x) => Atto(x);
+public static double Atto(this float x) => Atto(x);
+public static double Zepto(this double x)
+{
+return x * 1e-21;
+}
+public static double Zepto(this int x) => Zepto(x);
+public static double Zepto(this float x) => Zepto(x);
+public static double Yocto(this double x)
+{
+return x * 1e-24;
+}
+public static double Yocto(this int x) => Yocto(x);
+public static double Yocto(this float x) => Yocto(x);
+public static double Ronto(this double x)
+{
+return x * 1e-27;
+}
+public static double Ronto(this int x) => Ronto(x);
+public static double Ronto(this float x) => Ronto(x);
+public static double Quecto(this double x)
+{
+return x * 1e-30;
+}
+public static double Quecto(this int x) => Quecto(x);
+public static double Quecto(this float x) => Quecto(x);
+public static double Reciprocal(this double x)
+{
+return 1 / x;
+}
+public static double Reciprocal(this int x) => Reciprocal(x);
+public static double Reciprocal(this float x) => Reciprocal(x);
+public static double MultiplicativeInverse(this double x)
+{
+return Reciprocal(x);
+}
+public static double MultiplicativeInverse(this int x) => MultiplicativeInverse(x);
+public static double MultiplicativeInverse(this float x) => MultiplicativeInverse(x);
+public static Velocity Light()
+{
+return 299792458;
+}
+public static Area Multiply(this Length length, Length width)
+{
+return length.Meters * width.Meters;
+}
+public static Volume Multiply(this Area area, Length height)
+{
+return area.MetersSquared * height.Meters;
+}
+public static Volume Multiply(this Length height, Area area)
+{
+return Multiply(area, height);
+}
+public static Force Multiply(this Mass mass, Acceleration accel)
+{
+return mass.Kilograms * accel.MetersPerSecondSquared;
+}
+public static Force Multiply(this Acceleration accel, Mass mass)
+{
+return Multiply(mass, accel);
+}
+public static Energy Multiply(this Force force, Length length)
+{
+return force.Newtons * length.Meters;
+}
+public static Energy Multiply(this Length length, Force force)
+{
+return Multiply(force, length);
+}
+public static Pressure Divide(this Force force, Area area)
+{
+return force.Newtons / area.MetersSquared;
+}
+public static Velocity Divide(this Length length, Time time)
+{
+return length.Meters / time.Seconds;
+}
+public static Acceleration Divide(this Velocity Velocity, Time time)
+{
+return Velocity.MetersPerSecond / time.Seconds;
+}
+public static Length Divide(this Area area, Length length)
+{
+return area.MetersSquared / length.Meters;
+}
+public static Area Divide(this Volume volume, Length length)
+{
+return volume.MetersCubed / length.Meters;
+}
+public static Length Divide(this Volume volume, Area area)
+{
+return volume.MetersCubed / area.MetersSquared;
+}
+public static Force Multiply(this Pressure pressure, Area area)
+{
+return pressure.Pascals * area.MetersSquared;
+}
+public static Force Multiply(this Area area, Pressure pressure)
+{
+return Multiply(pressure, area);
+}
+public static Area Divide(this Pressure pressure, Force force)
+{
+return pressure.Pascals * force.Newtons;
+}
+public static Length Multiply(this Velocity Velocity, Time time)
+{
+return Velocity.MetersPerSecond * time.Seconds;
+}
+public static Time Divide(this Velocity Velocity, Length length)
+{
+return Velocity.MetersPerSecond / length.Meters;
+}
+public static Velocity Multiply(this Acceleration acceleration, Time time)
+{
+return acceleration.MetersPerSecondSquared * time.Seconds;
+}
+public static Velocity Multiply(this Time time, Acceleration acceleration)
+{
+return Multiply(acceleration, time);
+}
+public static Time Divide(this Acceleration acceleration, Velocity Velocity)
+{
+return acceleration.MetersPerSecondSquared / Velocity.MetersPerSecond;
+}
+public static Mass Divide(this Force force, Acceleration acceleration)
+{
+return force.Newtons / acceleration.MetersPerSecondSquared;
+}
+public static Acceleration Divide(this Force force, Mass mass)
+{
+return force.Newtons / mass.Kilograms;
+}
+public static Force Divide(this Energy energy, Length length)
+{
+return energy.Joules / length.Meters;
+}
+public static Length Divide(this Energy energy, Force force)
+{
+return energy.Joules / force.Newtons;
+}
+public static Power Divide(this Energy energy, Time time)
+{
+return energy.Joules / time.Seconds;
+}
+public static Energy Multiply(this Power power, Time time)
+{
+return power.Watts * time.Seconds;
+}
+public static Energy Multiply(this Time time, Power power)
+{
+return Multiply(power, time);
+}
+public static Power Multiply(this ElectricPotential ep, ElectricCurrent ec)
+{
+return ep.Volts * ec.Amperes;
+}
+public static Density Divide(this Mass m, Volume v)
+{
+return m.Kilograms / v.MetersCubed;
+}
+public static Mass Muliply(this Density d, Volume v)
+{
+return d.KilogramsPerMeterCubed * v.MetersCubed;
+}
+public static Volume Divide(this Density d, Mass m)
+{
+return d.KilogramsPerMeterCubed / m.Kilograms;
+}
+public static Velocity PerSecond(this Length l)
+{
+return l / 1.Seconds();
+}
+public static Acceleration PerSecond(this Velocity s)
+{
+return s / 1.Seconds();
+}
+public static Power PerSecond(this Energy e)
+{
+return e / 1.Seconds();
+}
+public static Energy Kilojoules(this double d)
+{
+return d.Thousand().Joules();
+}
+public static Energy Kilojoules(this int d) => Kilojoules(d);
+public static Energy Kilojoules(this float d) => Kilojoules(d);
+public static Energy WattHours(this double d)
+{
+return d * 1.Hours().Seconds;
+}
+public static Energy WattHours(this int d) => WattHours(d);
+public static Energy WattHours(this float d) => WattHours(d);
+public static Energy NewtonMeters(this double d)
+{
+return d;
+}
+public static Energy NewtonMeters(this int d) => NewtonMeters(d);
+public static Energy NewtonMeters(this float d) => NewtonMeters(d);
+public static Energy Joules(this double d)
+{
+return d;
+}
+public static Energy Joules(this int d) => Joules(d);
+public static Energy Joules(this float d) => Joules(d);
+public static Density KilogramsPerMeterCubed(this double d)
+{
+return d;
+}
+public static Density KilogramsPerMeterCubed(this int d) => KilogramsPerMeterCubed(d);
+public static Density KilogramsPerMeterCubed(this float d) => KilogramsPerMeterCubed(d);
+public static Power Watts(this double d)
+{
+return d;
+}
+public static Power Watts(this int d) => Watts(d);
+public static Power Watts(this float d) => Watts(d);
+public static ElectricResistance Ohms(this double d)
+{
+return d;
+}
+public static ElectricResistance Ohms(this int d) => Ohms(d);
+public static ElectricResistance Ohms(this float d) => Ohms(d);
+public static ElectricCurrent Amperes(this double d)
+{
+return d;
+}
+public static ElectricCurrent Amperes(this int d) => Amperes(d);
+public static ElectricCurrent Amperes(this float d) => Amperes(d);
+public static ElectricCharge Columbs(this double d)
+{
+return d;
+}
+public static ElectricCharge Columbs(this int d) => Columbs(d);
+public static ElectricCharge Columbs(this float d) => Columbs(d);
+public static LuminousIntensity Candela(this double d)
+{
+return d;
+}
+public static LuminousIntensity Candela(this int d) => Candela(d);
+public static LuminousIntensity Candela(this float d) => Candela(d);
+public static Frequency Hertz(this double d)
+{
+return d;
+}
+public static Frequency Hertz(this int d) => Hertz(d);
+public static Frequency Hertz(this float d) => Hertz(d);
+public static Pressure Pascals(this double d)
+{
+return d;
+}
+public static Pressure Pascals(this int d) => Pascals(d);
+public static Pressure Pascals(this float d) => Pascals(d);
+public static Force Newtons(this double d)
+{
+return d;
+}
+public static Force Newtons(this int d) => Newtons(d);
+public static Force Newtons(this float d) => Newtons(d);
+public static Acceleration MetersPerSecondSquared(this double d)
+{
+return d;
+}
+public static Acceleration MetersPerSecondSquared(this int d) => MetersPerSecondSquared(d);
+public static Acceleration MetersPerSecondSquared(this float d) => MetersPerSecondSquared(d);
+public static Velocity MetersPerSecond(this double d)
+{
+return d;
+}
+public static Velocity MetersPerSecond(this int d) => MetersPerSecond(d);
+public static Velocity MetersPerSecond(this float d) => MetersPerSecond(d);
+public static Area MetersSquared(this double d)
+{
+return d;
+}
+public static Area MetersSquared(this int d) => MetersSquared(d);
+public static Area MetersSquared(this float d) => MetersSquared(d);
+public static Volume MetersCubed(this double d)
+{
+return d;
+}
+public static Volume MetersCubed(this int d) => MetersCubed(d);
+public static Volume MetersCubed(this float d) => MetersCubed(d);
+}
+public partial struct Angle
+{
+public double Turns => UnitOperations.ToTurns(this);
+}
+public partial struct Angle
+{
+public double Degrees => UnitOperations.ToDegrees(this);
+}
+public partial struct Angle
+{
+public double Grads => UnitOperations.ToGrads(this);
+}
+public partial struct Angle
+{
+public double ArcMinutes => UnitOperations.ToArcMinutes(this);
+}
+public partial struct Angle
+{
+public double ArcSeconds => UnitOperations.ToArcSeconds(this);
+}
+public partial struct Proportion
+{
+public double Percent => UnitOperations.ToPercent(this);
+}
+public partial struct Proportion
+{
+public double BasisPoints => UnitOperations.ToBasisPoints(this);
+}
+public partial struct Proportion
+{
+public Angle Angle => UnitOperations.ToAngle(this);
+}
+public partial struct Length
+{
+public double Kilometers => UnitOperations.ToKilometers(this);
+}
+public partial struct Length
+{
+public double Decimeters => UnitOperations.ToDecimeters(this);
+}
+public partial struct Length
+{
+public double Centimeters => UnitOperations.ToCentimeters(this);
+}
+public partial struct Length
+{
+public double Millimeters => UnitOperations.ToMillimeters(this);
+}
+public partial struct Length
+{
+public double Microns => UnitOperations.ToMicrons(this);
+}
+public partial struct Length
+{
+public double Nanometers => UnitOperations.ToNanometers(this);
+}
+public partial struct Length
+{
+public double Inches => UnitOperations.ToInches(this);
+}
+public partial struct Length
+{
+public double Feet => UnitOperations.ToFeet(this);
+}
+public partial struct Length
+{
+public double Yards => UnitOperations.ToYards(this);
+}
+public partial struct Length
+{
+public double Rods => UnitOperations.ToRods(this);
+}
+public partial struct Length
+{
+public double Chains => UnitOperations.ToChains(this);
+}
+public partial struct Length
+{
+public double Miles => UnitOperations.ToMiles(this);
+}
+public partial struct Length
+{
+public double League => UnitOperations.ToLeague(this);
+}
+public partial struct Length
+{
+public double Lightyears => UnitOperations.ToLightyears(this);
+}
+public partial struct Length
+{
+public double AU => UnitOperations.ToAU(this);
+}
+public partial struct Mass
+{
+public double Milligrams => UnitOperations.ToMilligrams(this);
+}
+public partial struct Mass
+{
+public double Grams => UnitOperations.ToGrams(this);
+}
+public partial struct Mass
+{
+public double Grains => UnitOperations.ToGrains(this);
+}
+public partial struct Mass
+{
+public double Dalton => UnitOperations.ToDalton(this);
+}
+public partial struct Mass
+{
+public double Tonne => UnitOperations.ToTonne(this);
+}
+public partial struct Mass
+{
+public double Pound => UnitOperations.ToPound(this);
+}
+public partial struct Mass
+{
+public double Ton => UnitOperations.ToTon(this);
+}
+public partial struct Mass
+{
+public double SolarMass => UnitOperations.ToSolarMass(this);
+}
+public partial struct Mass
+{
+public double Ounce => UnitOperations.ToOunce(this);
+}
+public partial struct Temperature
+{
+public double Kelvin => UnitOperations.ToKelvin(this);
+}
+public partial struct Temperature
+{
+public double Faranheit => UnitOperations.ToFaranheit(this);
+}
+public partial struct Memory
+{
+public double Bits => UnitOperations.ToBits(this);
+}
+public partial struct Memory
+{
+public double Octet => UnitOperations.ToOctet(this);
+}
+public partial struct Memory
+{
+public double Nibble => UnitOperations.ToNibble(this);
+}
+public partial struct Memory
+{
+public double Kilobytes => UnitOperations.ToKilobytes(this);
+}
+public partial struct Memory
+{
+public double Megabytes => UnitOperations.ToMegabytes(this);
+}
+public partial struct Memory
+{
+public double Gigabytes => UnitOperations.ToGigabytes(this);
+}
+public partial struct Memory
+{
+public double Terabytes => UnitOperations.ToTerabytes(this);
+}
+public partial struct Memory
+{
+public double Petabytes => UnitOperations.ToPetabytes(this);
+}
+public partial struct Memory
+{
+public double Exabytes => UnitOperations.ToExabytes(this);
+}
+public partial struct Memory
+{
+public double Kebibytes => UnitOperations.ToKebibytes(this);
+}
+public partial struct Memory
+{
+public double Mebibytes => UnitOperations.ToMebibytes(this);
+}
+public partial struct Memory
+{
+public double Gibibytes => UnitOperations.ToGibibytes(this);
+}
+public partial struct Memory
+{
+public double Tebibytes => UnitOperations.ToTebibytes(this);
+}
+public partial struct Memory
+{
+public double Pebibytes => UnitOperations.ToPebibytes(this);
+}
+public partial struct Memory
+{
+public double Exibytes => UnitOperations.ToExibytes(this);
+}
+public partial struct Time
+{
+public double Nanosecond => UnitOperations.ToNanosecond(this);
+}
+public partial struct Time
+{
+public double Microeconds => UnitOperations.ToMicroeconds(this);
+}
+public partial struct Time
+{
+public double TimeUnits => UnitOperations.ToTimeUnits(this);
+}
+public partial struct Time
+{
+public double Milliseconds => UnitOperations.ToMilliseconds(this);
+}
+public partial struct Time
+{
+public double Minutes => UnitOperations.ToMinutes(this);
+}
+public partial struct Time
+{
+public double Hours => UnitOperations.ToHours(this);
+}
+public partial struct Time
+{
+public double Days => UnitOperations.ToDays(this);
+}
+public partial struct Time
+{
+public double Weeks => UnitOperations.ToWeeks(this);
+}
+public partial struct Time
+{
+public double JulianYears => UnitOperations.ToJulianYears(this);
+}
+public partial struct Time
+{
+public double GregorianYears => UnitOperations.ToGregorianYears(this);
+}
+public partial struct Velocity
+{
+public static Velocity Light => UnitOperations.Light();
+}
+public partial struct Length
+{
+public static Area operator *(Length length, Length width) => UnitOperations.Multiply(length, width);
+}
+public partial struct Area
+{
+public static Volume operator *(Area area, Length height) => UnitOperations.Multiply(area, height);
+}
+public partial struct Length
+{
+public static Volume operator *(Length height, Area area) => UnitOperations.Multiply(height, area);
+}
+public partial struct Mass
+{
+public static Force operator *(Mass mass, Acceleration accel) => UnitOperations.Multiply(mass, accel);
+}
+public partial struct Acceleration
+{
+public static Force operator *(Acceleration accel, Mass mass) => UnitOperations.Multiply(accel, mass);
+}
+public partial struct Force
+{
+public static Energy operator *(Force force, Length length) => UnitOperations.Multiply(force, length);
+}
+public partial struct Length
+{
+public static Energy operator *(Length length, Force force) => UnitOperations.Multiply(length, force);
+}
+public partial struct Force
+{
+public static Pressure operator /(Force force, Area area) => UnitOperations.Divide(force, area);
+}
+public partial struct Length
+{
+public static Velocity operator /(Length length, Time time) => UnitOperations.Divide(length, time);
+}
+public partial struct Velocity
+{
+public static Acceleration operator /(Velocity Velocity, Time time) => UnitOperations.Divide(Velocity, time);
+}
+public partial struct Area
+{
+public static Length operator /(Area area, Length length) => UnitOperations.Divide(area, length);
+}
+public partial struct Volume
+{
+public static Area operator /(Volume volume, Length length) => UnitOperations.Divide(volume, length);
+}
+public partial struct Volume
+{
+public static Length operator /(Volume volume, Area area) => UnitOperations.Divide(volume, area);
+}
+public partial struct Pressure
+{
+public static Force operator *(Pressure pressure, Area area) => UnitOperations.Multiply(pressure, area);
+}
+public partial struct Area
+{
+public static Force operator *(Area area, Pressure pressure) => UnitOperations.Multiply(area, pressure);
+}
+public partial struct Pressure
+{
+public static Area operator /(Pressure pressure, Force force) => UnitOperations.Divide(pressure, force);
+}
+public partial struct Velocity
+{
+public static Length operator *(Velocity Velocity, Time time) => UnitOperations.Multiply(Velocity, time);
+}
+public partial struct Velocity
+{
+public static Time operator /(Velocity Velocity, Length length) => UnitOperations.Divide(Velocity, length);
+}
+public partial struct Acceleration
+{
+public static Velocity operator *(Acceleration acceleration, Time time) => UnitOperations.Multiply(acceleration, time);
+}
+public partial struct Time
+{
+public static Velocity operator *(Time time, Acceleration acceleration) => UnitOperations.Multiply(time, acceleration);
+}
+public partial struct Acceleration
+{
+public static Time operator /(Acceleration acceleration, Velocity Velocity) => UnitOperations.Divide(acceleration, Velocity);
+}
+public partial struct Force
+{
+public static Mass operator /(Force force, Acceleration acceleration) => UnitOperations.Divide(force, acceleration);
+}
+public partial struct Force
+{
+public static Acceleration operator /(Force force, Mass mass) => UnitOperations.Divide(force, mass);
+}
+public partial struct Energy
+{
+public static Force operator /(Energy energy, Length length) => UnitOperations.Divide(energy, length);
+}
+public partial struct Energy
+{
+public static Length operator /(Energy energy, Force force) => UnitOperations.Divide(energy, force);
+}
+public partial struct Energy
+{
+public static Power operator /(Energy energy, Time time) => UnitOperations.Divide(energy, time);
+}
+public partial struct Power
+{
+public static Energy operator *(Power power, Time time) => UnitOperations.Multiply(power, time);
+}
+public partial struct Time
+{
+public static Energy operator *(Time time, Power power) => UnitOperations.Multiply(time, power);
+}
+public partial struct ElectricPotential
+{
+public static Power operator *(ElectricPotential ep, ElectricCurrent ec) => UnitOperations.Multiply(ep, ec);
+}
+public partial struct Mass
+{
+public static Density operator /(Mass m, Volume v) => UnitOperations.Divide(m, v);
+}
+public partial struct Density
+{
+public static Volume operator /(Density d, Mass m) => UnitOperations.Divide(d, m);
+}
 public static class VectorOperations {
 public static Double2 Normal(this Double2 v)
 {
@@ -64,6 +1548,8 @@ public static double SafeDivide(this double x, double y)
 {
 return y.AlmostZero() ? x : x / y;
 }
+public static double SafeDivide(this int x, double y) => SafeDivide(x, y);
+public static double SafeDivide(this float x, double y) => SafeDivide(x, y);
 public static Float2 SafeDivide(this Float2 x, Float2 y) => ((float)SafeDivide((double)x.X, (double)y.X), (float)SafeDivide((double)x.Y, (double)y.Y));
 public static Float3 SafeDivide(this Float3 x, Float3 y) => ((float)SafeDivide((double)x.X, (double)y.X), (float)SafeDivide((double)x.Y, (double)y.Y), (float)SafeDivide((double)x.Z, (double)y.Z));
 public static Float4 SafeDivide(this Float4 x, Float4 y) => ((float)SafeDivide((double)x.X, (double)y.X), (float)SafeDivide((double)x.Y, (double)y.Y), (float)SafeDivide((double)x.Z, (double)y.Z), (float)SafeDivide((double)x.W, (double)y.W));
@@ -81,6 +1567,8 @@ public static double Half(this double x)
 {
 return x * 0.5;
 }
+public static double Half(this int x) => Half(x);
+public static double Half(this float x) => Half(x);
 public static Float2 Half(this Float2 x) => ((float)Half((double)x.X), (float)Half((double)x.Y));
 public static Float3 Half(this Float3 x) => ((float)Half((double)x.X), (float)Half((double)x.Y), (float)Half((double)x.Z));
 public static Float4 Half(this Float4 x) => ((float)Half((double)x.X), (float)Half((double)x.Y), (float)Half((double)x.Z), (float)Half((double)x.W));
@@ -98,6 +1586,8 @@ public static double Quarter(this double x)
 {
 return x * 0.25;
 }
+public static double Quarter(this int x) => Quarter(x);
+public static double Quarter(this float x) => Quarter(x);
 public static Float2 Quarter(this Float2 x) => ((float)Quarter((double)x.X), (float)Quarter((double)x.Y));
 public static Float3 Quarter(this Float3 x) => ((float)Quarter((double)x.X), (float)Quarter((double)x.Y), (float)Quarter((double)x.Z));
 public static Float4 Quarter(this Float4 x) => ((float)Quarter((double)x.X), (float)Quarter((double)x.Y), (float)Quarter((double)x.Z), (float)Quarter((double)x.W));
@@ -115,6 +1605,8 @@ public static double Twice(this double x)
 {
 return x * 2;
 }
+public static double Twice(this int x) => Twice(x);
+public static double Twice(this float x) => Twice(x);
 public static Float2 Twice(this Float2 x) => ((float)Twice((double)x.X), (float)Twice((double)x.Y));
 public static Float3 Twice(this Float3 x) => ((float)Twice((double)x.X), (float)Twice((double)x.Y), (float)Twice((double)x.Z));
 public static Float4 Twice(this Float4 x) => ((float)Twice((double)x.X), (float)Twice((double)x.Y), (float)Twice((double)x.Z), (float)Twice((double)x.W));
@@ -132,6 +1624,8 @@ public static double Thrice(this double x)
 {
 return x * 3;
 }
+public static double Thrice(this int x) => Thrice(x);
+public static double Thrice(this float x) => Thrice(x);
 public static Float2 Thrice(this Float2 x) => ((float)Thrice((double)x.X), (float)Thrice((double)x.Y));
 public static Float3 Thrice(this Float3 x) => ((float)Thrice((double)x.X), (float)Thrice((double)x.Y), (float)Thrice((double)x.Z));
 public static Float4 Thrice(this Float4 x) => ((float)Thrice((double)x.X), (float)Thrice((double)x.Y), (float)Thrice((double)x.Z), (float)Thrice((double)x.W));
@@ -149,6 +1643,8 @@ public static double MinusOne(this double x)
 {
 return x - 1;
 }
+public static double MinusOne(this int x) => MinusOne(x);
+public static double MinusOne(this float x) => MinusOne(x);
 public static Float2 MinusOne(this Float2 x) => ((float)MinusOne((double)x.X), (float)MinusOne((double)x.Y));
 public static Float3 MinusOne(this Float3 x) => ((float)MinusOne((double)x.X), (float)MinusOne((double)x.Y), (float)MinusOne((double)x.Z));
 public static Float4 MinusOne(this Float4 x) => ((float)MinusOne((double)x.X), (float)MinusOne((double)x.Y), (float)MinusOne((double)x.Z), (float)MinusOne((double)x.W));
@@ -166,6 +1662,8 @@ public static double PlusOne(this double x)
 {
 return x + 1;
 }
+public static double PlusOne(this int x) => PlusOne(x);
+public static double PlusOne(this float x) => PlusOne(x);
 public static Float2 PlusOne(this Float2 x) => ((float)PlusOne((double)x.X), (float)PlusOne((double)x.Y));
 public static Float3 PlusOne(this Float3 x) => ((float)PlusOne((double)x.X), (float)PlusOne((double)x.Y), (float)PlusOne((double)x.Z));
 public static Float4 PlusOne(this Float4 x) => ((float)PlusOne((double)x.X), (float)PlusOne((double)x.Y), (float)PlusOne((double)x.Z), (float)PlusOne((double)x.W));
@@ -179,27 +1677,31 @@ public static Long2 PlusOne(this Long2 x) => ((long)PlusOne((double)x.A), (long)
 public static Long3 PlusOne(this Long3 x) => ((long)PlusOne((double)x.A), (long)PlusOne((double)x.B), (long)PlusOne((double)x.C));
 public static Long4 PlusOne(this Long4 x) => ((long)PlusOne((double)x.A), (long)PlusOne((double)x.B), (long)PlusOne((double)x.C), (long)PlusOne((double)x.D));
 public static Complex PlusOne(this Complex x) => ((double)PlusOne((double)x.Real), (double)PlusOne((double)x.Imaginary));
-public static double FromOne(this double x)
+public static double OneMinus(this double x)
 {
 return 1 - x;
 }
-public static Float2 FromOne(this Float2 x) => ((float)FromOne((double)x.X), (float)FromOne((double)x.Y));
-public static Float3 FromOne(this Float3 x) => ((float)FromOne((double)x.X), (float)FromOne((double)x.Y), (float)FromOne((double)x.Z));
-public static Float4 FromOne(this Float4 x) => ((float)FromOne((double)x.X), (float)FromOne((double)x.Y), (float)FromOne((double)x.Z), (float)FromOne((double)x.W));
-public static Double2 FromOne(this Double2 x) => ((double)FromOne((double)x.X), (double)FromOne((double)x.Y));
-public static Double3 FromOne(this Double3 x) => ((double)FromOne((double)x.X), (double)FromOne((double)x.Y), (double)FromOne((double)x.Z));
-public static Double4 FromOne(this Double4 x) => ((double)FromOne((double)x.X), (double)FromOne((double)x.Y), (double)FromOne((double)x.Z), (double)FromOne((double)x.W));
-public static Int2 FromOne(this Int2 x) => ((int)FromOne((double)x.A), (int)FromOne((double)x.B));
-public static Int3 FromOne(this Int3 x) => ((int)FromOne((double)x.A), (int)FromOne((double)x.B), (int)FromOne((double)x.C));
-public static Int4 FromOne(this Int4 x) => ((int)FromOne((double)x.A), (int)FromOne((double)x.B), (int)FromOne((double)x.C), (int)FromOne((double)x.D));
-public static Long2 FromOne(this Long2 x) => ((long)FromOne((double)x.A), (long)FromOne((double)x.B));
-public static Long3 FromOne(this Long3 x) => ((long)FromOne((double)x.A), (long)FromOne((double)x.B), (long)FromOne((double)x.C));
-public static Long4 FromOne(this Long4 x) => ((long)FromOne((double)x.A), (long)FromOne((double)x.B), (long)FromOne((double)x.C), (long)FromOne((double)x.D));
-public static Complex FromOne(this Complex x) => ((double)FromOne((double)x.Real), (double)FromOne((double)x.Imaginary));
+public static double OneMinus(this int x) => OneMinus(x);
+public static double OneMinus(this float x) => OneMinus(x);
+public static Float2 OneMinus(this Float2 x) => ((float)OneMinus((double)x.X), (float)OneMinus((double)x.Y));
+public static Float3 OneMinus(this Float3 x) => ((float)OneMinus((double)x.X), (float)OneMinus((double)x.Y), (float)OneMinus((double)x.Z));
+public static Float4 OneMinus(this Float4 x) => ((float)OneMinus((double)x.X), (float)OneMinus((double)x.Y), (float)OneMinus((double)x.Z), (float)OneMinus((double)x.W));
+public static Double2 OneMinus(this Double2 x) => ((double)OneMinus((double)x.X), (double)OneMinus((double)x.Y));
+public static Double3 OneMinus(this Double3 x) => ((double)OneMinus((double)x.X), (double)OneMinus((double)x.Y), (double)OneMinus((double)x.Z));
+public static Double4 OneMinus(this Double4 x) => ((double)OneMinus((double)x.X), (double)OneMinus((double)x.Y), (double)OneMinus((double)x.Z), (double)OneMinus((double)x.W));
+public static Int2 OneMinus(this Int2 x) => ((int)OneMinus((double)x.A), (int)OneMinus((double)x.B));
+public static Int3 OneMinus(this Int3 x) => ((int)OneMinus((double)x.A), (int)OneMinus((double)x.B), (int)OneMinus((double)x.C));
+public static Int4 OneMinus(this Int4 x) => ((int)OneMinus((double)x.A), (int)OneMinus((double)x.B), (int)OneMinus((double)x.C), (int)OneMinus((double)x.D));
+public static Long2 OneMinus(this Long2 x) => ((long)OneMinus((double)x.A), (long)OneMinus((double)x.B));
+public static Long3 OneMinus(this Long3 x) => ((long)OneMinus((double)x.A), (long)OneMinus((double)x.B), (long)OneMinus((double)x.C));
+public static Long4 OneMinus(this Long4 x) => ((long)OneMinus((double)x.A), (long)OneMinus((double)x.B), (long)OneMinus((double)x.C), (long)OneMinus((double)x.D));
+public static Complex OneMinus(this Complex x) => ((double)OneMinus((double)x.Real), (double)OneMinus((double)x.Imaginary));
 public static double Abs(this double x)
 {
 return Math.Abs(x);
 }
+public static double Abs(this int x) => Abs(x);
+public static double Abs(this float x) => Abs(x);
 public static Float2 Abs(this Float2 x) => ((float)Abs((double)x.X), (float)Abs((double)x.Y));
 public static Float3 Abs(this Float3 x) => ((float)Abs((double)x.X), (float)Abs((double)x.Y), (float)Abs((double)x.Z));
 public static Float4 Abs(this Float4 x) => ((float)Abs((double)x.X), (float)Abs((double)x.Y), (float)Abs((double)x.Z), (float)Abs((double)x.W));
@@ -217,6 +1719,8 @@ public static double Exp(this double x)
 {
 return Math.Exp(x);
 }
+public static double Exp(this int x) => Exp(x);
+public static double Exp(this float x) => Exp(x);
 public static Float2 Exp(this Float2 x) => ((float)Exp((double)x.X), (float)Exp((double)x.Y));
 public static Float3 Exp(this Float3 x) => ((float)Exp((double)x.X), (float)Exp((double)x.Y), (float)Exp((double)x.Z));
 public static Float4 Exp(this Float4 x) => ((float)Exp((double)x.X), (float)Exp((double)x.Y), (float)Exp((double)x.Z), (float)Exp((double)x.W));
@@ -234,6 +1738,8 @@ public static double Log(this double x)
 {
 return Math.Log(x);
 }
+public static double Log(this int x) => Log(x);
+public static double Log(this float x) => Log(x);
 public static Float2 Log(this Float2 x) => ((float)Log((double)x.X), (float)Log((double)x.Y));
 public static Float3 Log(this Float3 x) => ((float)Log((double)x.X), (float)Log((double)x.Y), (float)Log((double)x.Z));
 public static Float4 Log(this Float4 x) => ((float)Log((double)x.X), (float)Log((double)x.Y), (float)Log((double)x.Z), (float)Log((double)x.W));
@@ -251,6 +1757,8 @@ public static double Log10(this double x)
 {
 return Math.Log10(x);
 }
+public static double Log10(this int x) => Log10(x);
+public static double Log10(this float x) => Log10(x);
 public static Float2 Log10(this Float2 x) => ((float)Log10((double)x.X), (float)Log10((double)x.Y));
 public static Float3 Log10(this Float3 x) => ((float)Log10((double)x.X), (float)Log10((double)x.Y), (float)Log10((double)x.Z));
 public static Float4 Log10(this Float4 x) => ((float)Log10((double)x.X), (float)Log10((double)x.Y), (float)Log10((double)x.Z), (float)Log10((double)x.W));
@@ -268,6 +1776,8 @@ public static double Sqrt(this double x)
 {
 return Math.Sqrt(x);
 }
+public static double Sqrt(this int x) => Sqrt(x);
+public static double Sqrt(this float x) => Sqrt(x);
 public static Float2 Sqrt(this Float2 x) => ((float)Sqrt((double)x.X), (float)Sqrt((double)x.Y));
 public static Float3 Sqrt(this Float3 x) => ((float)Sqrt((double)x.X), (float)Sqrt((double)x.Y), (float)Sqrt((double)x.Z));
 public static Float4 Sqrt(this Float4 x) => ((float)Sqrt((double)x.X), (float)Sqrt((double)x.Y), (float)Sqrt((double)x.Z), (float)Sqrt((double)x.W));
@@ -285,6 +1795,8 @@ public static double Sign(this double x)
 {
 return x > 0 ? 1 : x < 0 ? -1 : 0;
 }
+public static double Sign(this int x) => Sign(x);
+public static double Sign(this float x) => Sign(x);
 public static Float2 Sign(this Float2 x) => ((float)Sign((double)x.X), (float)Sign((double)x.Y));
 public static Float3 Sign(this Float3 x) => ((float)Sign((double)x.X), (float)Sign((double)x.Y), (float)Sign((double)x.Z));
 public static Float4 Sign(this Float4 x) => ((float)Sign((double)x.X), (float)Sign((double)x.Y), (float)Sign((double)x.Z), (float)Sign((double)x.W));
@@ -302,6 +1814,8 @@ public static double Inverse(this double x)
 {
 return 1 / x;
 }
+public static double Inverse(this int x) => Inverse(x);
+public static double Inverse(this float x) => Inverse(x);
 public static Float2 Inverse(this Float2 x) => ((float)Inverse((double)x.X), (float)Inverse((double)x.Y));
 public static Float3 Inverse(this Float3 x) => ((float)Inverse((double)x.X), (float)Inverse((double)x.Y), (float)Inverse((double)x.Z));
 public static Float4 Inverse(this Float4 x) => ((float)Inverse((double)x.X), (float)Inverse((double)x.Y), (float)Inverse((double)x.Z), (float)Inverse((double)x.W));
@@ -319,6 +1833,8 @@ public static double Truncate(this double x)
 {
 return Math.Truncate(x);
 }
+public static double Truncate(this int x) => Truncate(x);
+public static double Truncate(this float x) => Truncate(x);
 public static Float2 Truncate(this Float2 x) => ((float)Truncate((double)x.X), (float)Truncate((double)x.Y));
 public static Float3 Truncate(this Float3 x) => ((float)Truncate((double)x.X), (float)Truncate((double)x.Y), (float)Truncate((double)x.Z));
 public static Float4 Truncate(this Float4 x) => ((float)Truncate((double)x.X), (float)Truncate((double)x.Y), (float)Truncate((double)x.Z), (float)Truncate((double)x.W));
@@ -336,6 +1852,8 @@ public static double Ceiling(this double x)
 {
 return Math.Ceiling(x);
 }
+public static double Ceiling(this int x) => Ceiling(x);
+public static double Ceiling(this float x) => Ceiling(x);
 public static Float2 Ceiling(this Float2 x) => ((float)Ceiling((double)x.X), (float)Ceiling((double)x.Y));
 public static Float3 Ceiling(this Float3 x) => ((float)Ceiling((double)x.X), (float)Ceiling((double)x.Y), (float)Ceiling((double)x.Z));
 public static Float4 Ceiling(this Float4 x) => ((float)Ceiling((double)x.X), (float)Ceiling((double)x.Y), (float)Ceiling((double)x.Z), (float)Ceiling((double)x.W));
@@ -353,6 +1871,8 @@ public static double Floor(this double x)
 {
 return Math.Floor(x);
 }
+public static double Floor(this int x) => Floor(x);
+public static double Floor(this float x) => Floor(x);
 public static Float2 Floor(this Float2 x) => ((float)Floor((double)x.X), (float)Floor((double)x.Y));
 public static Float3 Floor(this Float3 x) => ((float)Floor((double)x.X), (float)Floor((double)x.Y), (float)Floor((double)x.Z));
 public static Float4 Floor(this Float4 x) => ((float)Floor((double)x.X), (float)Floor((double)x.Y), (float)Floor((double)x.Z), (float)Floor((double)x.W));
@@ -370,6 +1890,8 @@ public static double Round(this double x)
 {
 return Math.Round(x);
 }
+public static double Round(this int x) => Round(x);
+public static double Round(this float x) => Round(x);
 public static Float2 Round(this Float2 x) => ((float)Round((double)x.X), (float)Round((double)x.Y));
 public static Float3 Round(this Float3 x) => ((float)Round((double)x.X), (float)Round((double)x.Y), (float)Round((double)x.Z));
 public static Float4 Round(this Float4 x) => ((float)Round((double)x.X), (float)Round((double)x.Y), (float)Round((double)x.Z), (float)Round((double)x.W));
@@ -387,6 +1909,8 @@ public static double Smoothstep(this double v)
 {
 return v.Pow2() * (3 - 2 * v);
 }
+public static double Smoothstep(this int v) => Smoothstep(v);
+public static double Smoothstep(this float v) => Smoothstep(v);
 public static Float2 Smoothstep(this Float2 v) => ((float)Smoothstep((double)v.X), (float)Smoothstep((double)v.Y));
 public static Float3 Smoothstep(this Float3 v) => ((float)Smoothstep((double)v.X), (float)Smoothstep((double)v.Y), (float)Smoothstep((double)v.Z));
 public static Float4 Smoothstep(this Float4 v) => ((float)Smoothstep((double)v.X), (float)Smoothstep((double)v.Y), (float)Smoothstep((double)v.Z), (float)Smoothstep((double)v.W));
@@ -404,6 +1928,8 @@ public static double Lerp(this double v1, double v2, double t)
 {
 return v1 * (1 - t) + v2 * t;
 }
+public static double Lerp(this int v1, double v2, double t) => Lerp(v1, v2, t);
+public static double Lerp(this float v1, double v2, double t) => Lerp(v1, v2, t);
 public static Float2 Lerp(this Float2 v1, Float2 v2, Float2 t) => ((float)Lerp((double)v1.X, (double)v2.X, (double)t.X), (float)Lerp((double)v1.Y, (double)v2.Y, (double)t.Y));
 public static Float3 Lerp(this Float3 v1, Float3 v2, Float3 t) => ((float)Lerp((double)v1.X, (double)v2.X, (double)t.X), (float)Lerp((double)v1.Y, (double)v2.Y, (double)t.Y), (float)Lerp((double)v1.Z, (double)v2.Z, (double)t.Z));
 public static Float4 Lerp(this Float4 v1, Float4 v2, Float4 t) => ((float)Lerp((double)v1.X, (double)v2.X, (double)t.X), (float)Lerp((double)v1.Y, (double)v2.Y, (double)t.Y), (float)Lerp((double)v1.Z, (double)v2.Z, (double)t.Z), (float)Lerp((double)v1.W, (double)v2.W, (double)t.W));
@@ -421,6 +1947,8 @@ public static double Mix(this double v1, double v2, double t)
 {
 return Lerp(v1, v2, t);
 }
+public static double Mix(this int v1, double v2, double t) => Mix(v1, v2, t);
+public static double Mix(this float v1, double v2, double t) => Mix(v1, v2, t);
 public static Float2 Mix(this Float2 v1, Float2 v2, Float2 t) => ((float)Mix((double)v1.X, (double)v2.X, (double)t.X), (float)Mix((double)v1.Y, (double)v2.Y, (double)t.Y));
 public static Float3 Mix(this Float3 v1, Float3 v2, Float3 t) => ((float)Mix((double)v1.X, (double)v2.X, (double)t.X), (float)Mix((double)v1.Y, (double)v2.Y, (double)t.Y), (float)Mix((double)v1.Z, (double)v2.Z, (double)t.Z));
 public static Float4 Mix(this Float4 v1, Float4 v2, Float4 t) => ((float)Mix((double)v1.X, (double)v2.X, (double)t.X), (float)Mix((double)v1.Y, (double)v2.Y, (double)t.Y), (float)Mix((double)v1.Z, (double)v2.Z, (double)t.Z), (float)Mix((double)v1.W, (double)v2.W, (double)t.W));
@@ -438,6 +1966,8 @@ public static double InverseLerp(this double v, double a, double b)
 {
 return (v - a) / (b - a);
 }
+public static double InverseLerp(this int v, double a, double b) => InverseLerp(v, a, b);
+public static double InverseLerp(this float v, double a, double b) => InverseLerp(v, a, b);
 public static Float2 InverseLerp(this Float2 v, Float2 a, Float2 b) => ((float)InverseLerp((double)v.X, (double)a.X, (double)b.X), (float)InverseLerp((double)v.Y, (double)a.Y, (double)b.Y));
 public static Float3 InverseLerp(this Float3 v, Float3 a, Float3 b) => ((float)InverseLerp((double)v.X, (double)a.X, (double)b.X), (float)InverseLerp((double)v.Y, (double)a.Y, (double)b.Y), (float)InverseLerp((double)v.Z, (double)a.Z, (double)b.Z));
 public static Float4 InverseLerp(this Float4 v, Float4 a, Float4 b) => ((float)InverseLerp((double)v.X, (double)a.X, (double)b.X), (float)InverseLerp((double)v.Y, (double)a.Y, (double)b.Y), (float)InverseLerp((double)v.Z, (double)a.Z, (double)b.Z), (float)InverseLerp((double)v.W, (double)a.W, (double)b.W));
@@ -455,6 +1985,8 @@ public static double Unmix(this double v, double a, double b)
 {
 return InverseLerp(v, a, b);
 }
+public static double Unmix(this int v, double a, double b) => Unmix(v, a, b);
+public static double Unmix(this float v, double a, double b) => Unmix(v, a, b);
 public static Float2 Unmix(this Float2 v, Float2 a, Float2 b) => ((float)Unmix((double)v.X, (double)a.X, (double)b.X), (float)Unmix((double)v.Y, (double)a.Y, (double)b.Y));
 public static Float3 Unmix(this Float3 v, Float3 a, Float3 b) => ((float)Unmix((double)v.X, (double)a.X, (double)b.X), (float)Unmix((double)v.Y, (double)a.Y, (double)b.Y), (float)Unmix((double)v.Z, (double)a.Z, (double)b.Z));
 public static Float4 Unmix(this Float4 v, Float4 a, Float4 b) => ((float)Unmix((double)v.X, (double)a.X, (double)b.X), (float)Unmix((double)v.Y, (double)a.Y, (double)b.Y), (float)Unmix((double)v.Z, (double)a.Z, (double)b.Z), (float)Unmix((double)v.W, (double)a.W, (double)b.W));
@@ -472,6 +2004,8 @@ public static double Clamp(this double v, double min, double max)
 {
 return Max(Min(v, max), min);
 }
+public static double Clamp(this int v, double min, double max) => Clamp(v, min, max);
+public static double Clamp(this float v, double min, double max) => Clamp(v, min, max);
 public static Float2 Clamp(this Float2 v, Float2 min, Float2 max) => ((float)Clamp((double)v.X, (double)min.X, (double)max.X), (float)Clamp((double)v.Y, (double)min.Y, (double)max.Y));
 public static Float3 Clamp(this Float3 v, Float3 min, Float3 max) => ((float)Clamp((double)v.X, (double)min.X, (double)max.X), (float)Clamp((double)v.Y, (double)min.Y, (double)max.Y), (float)Clamp((double)v.Z, (double)min.Z, (double)max.Z));
 public static Float4 Clamp(this Float4 v, Float4 min, Float4 max) => ((float)Clamp((double)v.X, (double)min.X, (double)max.X), (float)Clamp((double)v.Y, (double)min.Y, (double)max.Y), (float)Clamp((double)v.Z, (double)min.Z, (double)max.Z), (float)Clamp((double)v.W, (double)min.W, (double)max.W));
@@ -489,6 +2023,8 @@ public static double ClampZeroToOne(this double v)
 {
 return Clamp(v, 0, 1);
 }
+public static double ClampZeroToOne(this int v) => ClampZeroToOne(v);
+public static double ClampZeroToOne(this float v) => ClampZeroToOne(v);
 public static Float2 ClampZeroToOne(this Float2 v) => ((float)ClampZeroToOne((double)v.X), (float)ClampZeroToOne((double)v.Y));
 public static Float3 ClampZeroToOne(this Float3 v) => ((float)ClampZeroToOne((double)v.X), (float)ClampZeroToOne((double)v.Y), (float)ClampZeroToOne((double)v.Z));
 public static Float4 ClampZeroToOne(this Float4 v) => ((float)ClampZeroToOne((double)v.X), (float)ClampZeroToOne((double)v.Y), (float)ClampZeroToOne((double)v.Z), (float)ClampZeroToOne((double)v.W));
@@ -506,6 +2042,8 @@ public static double Average(this double v1, double v2)
 {
 return Lerp(v1, v2, 0.5);
 }
+public static double Average(this int v1, double v2) => Average(v1, v2);
+public static double Average(this float v1, double v2) => Average(v1, v2);
 public static Float2 Average(this Float2 v1, Float2 v2) => ((float)Average((double)v1.X, (double)v2.X), (float)Average((double)v1.Y, (double)v2.Y));
 public static Float3 Average(this Float3 v1, Float3 v2) => ((float)Average((double)v1.X, (double)v2.X), (float)Average((double)v1.Y, (double)v2.Y), (float)Average((double)v1.Z, (double)v2.Z));
 public static Float4 Average(this Float4 v1, Float4 v2) => ((float)Average((double)v1.X, (double)v2.X), (float)Average((double)v1.Y, (double)v2.Y), (float)Average((double)v1.Z, (double)v2.Z), (float)Average((double)v1.W, (double)v2.W));
@@ -523,6 +2061,8 @@ public static double Barycentric(this double v1, double v2, double v3, Double2 u
 {
 return v1 + (v2 - v1) * uv.X + (v3 - v1) * uv.Y;
 }
+public static double Barycentric(this int v1, double v2, double v3, Double2 uv) => Barycentric(v1, v2, v3, uv);
+public static double Barycentric(this float v1, double v2, double v3, Double2 uv) => Barycentric(v1, v2, v3, uv);
 public static Float2 Barycentric(this Float2 v1, Float2 v2, Float2 v3, Double2 uv) => ((float)Barycentric((double)v1.X, (double)v2.X, (double)v3.X, uv), (float)Barycentric((double)v1.Y, (double)v2.Y, (double)v3.Y, uv));
 public static Float3 Barycentric(this Float3 v1, Float3 v2, Float3 v3, Double2 uv) => ((float)Barycentric((double)v1.X, (double)v2.X, (double)v3.X, uv), (float)Barycentric((double)v1.Y, (double)v2.Y, (double)v3.Y, uv), (float)Barycentric((double)v1.Z, (double)v2.Z, (double)v3.Z, uv));
 public static Float4 Barycentric(this Float4 v1, Float4 v2, Float4 v3, Double2 uv) => ((float)Barycentric((double)v1.X, (double)v2.X, (double)v3.X, uv), (float)Barycentric((double)v1.Y, (double)v2.Y, (double)v3.Y, uv), (float)Barycentric((double)v1.Z, (double)v2.Z, (double)v3.Z, uv), (float)Barycentric((double)v1.W, (double)v2.W, (double)v3.W, uv));
@@ -540,6 +2080,8 @@ public static double Min(this double v1, double v2)
 {
 return Math.Min(v1, v2);
 }
+public static double Min(this int v1, double v2) => Min(v1, v2);
+public static double Min(this float v1, double v2) => Min(v1, v2);
 public static Float2 Min(this Float2 v1, Float2 v2) => ((float)Min((double)v1.X, (double)v2.X), (float)Min((double)v1.Y, (double)v2.Y));
 public static Float3 Min(this Float3 v1, Float3 v2) => ((float)Min((double)v1.X, (double)v2.X), (float)Min((double)v1.Y, (double)v2.Y), (float)Min((double)v1.Z, (double)v2.Z));
 public static Float4 Min(this Float4 v1, Float4 v2) => ((float)Min((double)v1.X, (double)v2.X), (float)Min((double)v1.Y, (double)v2.Y), (float)Min((double)v1.Z, (double)v2.Z), (float)Min((double)v1.W, (double)v2.W));
@@ -557,6 +2099,8 @@ public static double Max(this double v1, double v2)
 {
 return Math.Max(v1, v2);
 }
+public static double Max(this int v1, double v2) => Max(v1, v2);
+public static double Max(this float v1, double v2) => Max(v1, v2);
 public static Float2 Max(this Float2 v1, Float2 v2) => ((float)Max((double)v1.X, (double)v2.X), (float)Max((double)v1.Y, (double)v2.Y));
 public static Float3 Max(this Float3 v1, Float3 v2) => ((float)Max((double)v1.X, (double)v2.X), (float)Max((double)v1.Y, (double)v2.Y), (float)Max((double)v1.Z, (double)v2.Z));
 public static Float4 Max(this Float4 v1, Float4 v2) => ((float)Max((double)v1.X, (double)v2.X), (float)Max((double)v1.Y, (double)v2.Y), (float)Max((double)v1.Z, (double)v2.Z), (float)Max((double)v1.W, (double)v2.W));
@@ -574,6 +2118,8 @@ public static double ClampPositive(this double v)
 {
 return Math.Max(v, 0);
 }
+public static double ClampPositive(this int v) => ClampPositive(v);
+public static double ClampPositive(this float v) => ClampPositive(v);
 public static Float2 ClampPositive(this Float2 v) => ((float)ClampPositive((double)v.X), (float)ClampPositive((double)v.Y));
 public static Float3 ClampPositive(this Float3 v) => ((float)ClampPositive((double)v.X), (float)ClampPositive((double)v.Y), (float)ClampPositive((double)v.Z));
 public static Float4 ClampPositive(this Float4 v) => ((float)ClampPositive((double)v.X), (float)ClampPositive((double)v.Y), (float)ClampPositive((double)v.Z), (float)ClampPositive((double)v.W));
@@ -591,6 +2137,8 @@ public static double ClampNegative(this double v)
 {
 return Math.Min(v, 0);
 }
+public static double ClampNegative(this int v) => ClampNegative(v);
+public static double ClampNegative(this float v) => ClampNegative(v);
 public static Float2 ClampNegative(this Float2 v) => ((float)ClampNegative((double)v.X), (float)ClampNegative((double)v.Y));
 public static Float3 ClampNegative(this Float3 v) => ((float)ClampNegative((double)v.X), (float)ClampNegative((double)v.Y), (float)ClampNegative((double)v.Z));
 public static Float4 ClampNegative(this Float4 v) => ((float)ClampNegative((double)v.X), (float)ClampNegative((double)v.Y), (float)ClampNegative((double)v.Z), (float)ClampNegative((double)v.W));
@@ -608,6 +2156,8 @@ public static double Pow2(this double x)
 {
 return x * x;
 }
+public static double Pow2(this int x) => Pow2(x);
+public static double Pow2(this float x) => Pow2(x);
 public static Float2 Pow2(this Float2 x) => ((float)Pow2((double)x.X), (float)Pow2((double)x.Y));
 public static Float3 Pow2(this Float3 x) => ((float)Pow2((double)x.X), (float)Pow2((double)x.Y), (float)Pow2((double)x.Z));
 public static Float4 Pow2(this Float4 x) => ((float)Pow2((double)x.X), (float)Pow2((double)x.Y), (float)Pow2((double)x.Z), (float)Pow2((double)x.W));
@@ -625,6 +2175,8 @@ public static double Pow3(this double x)
 {
 return x * x * x;
 }
+public static double Pow3(this int x) => Pow3(x);
+public static double Pow3(this float x) => Pow3(x);
 public static Float2 Pow3(this Float2 x) => ((float)Pow3((double)x.X), (float)Pow3((double)x.Y));
 public static Float3 Pow3(this Float3 x) => ((float)Pow3((double)x.X), (float)Pow3((double)x.Y), (float)Pow3((double)x.Z));
 public static Float4 Pow3(this Float4 x) => ((float)Pow3((double)x.X), (float)Pow3((double)x.Y), (float)Pow3((double)x.Z), (float)Pow3((double)x.W));
@@ -642,6 +2194,8 @@ public static double Pow4(this double x)
 {
 return x * x * x * x;
 }
+public static double Pow4(this int x) => Pow4(x);
+public static double Pow4(this float x) => Pow4(x);
 public static Float2 Pow4(this Float2 x) => ((float)Pow4((double)x.X), (float)Pow4((double)x.Y));
 public static Float3 Pow4(this Float3 x) => ((float)Pow4((double)x.X), (float)Pow4((double)x.Y), (float)Pow4((double)x.Z));
 public static Float4 Pow4(this Float4 x) => ((float)Pow4((double)x.X), (float)Pow4((double)x.Y), (float)Pow4((double)x.Z), (float)Pow4((double)x.W));
@@ -659,6 +2213,8 @@ public static double Pow5(this double x)
 {
 return x * x * x * x * x;
 }
+public static double Pow5(this int x) => Pow5(x);
+public static double Pow5(this float x) => Pow5(x);
 public static Float2 Pow5(this Float2 x) => ((float)Pow5((double)x.X), (float)Pow5((double)x.Y));
 public static Float3 Pow5(this Float3 x) => ((float)Pow5((double)x.X), (float)Pow5((double)x.Y), (float)Pow5((double)x.Z));
 public static Float4 Pow5(this Float4 x) => ((float)Pow5((double)x.X), (float)Pow5((double)x.Y), (float)Pow5((double)x.Z), (float)Pow5((double)x.W));
@@ -676,6 +2232,8 @@ public static double Pow(this double x, double y)
 {
 return Math.Pow(x, y);
 }
+public static double Pow(this int x, double y) => Pow(x, y);
+public static double Pow(this float x, double y) => Pow(x, y);
 public static Float2 Pow(this Float2 x, Float2 y) => ((float)Pow((double)x.X, (double)y.X), (float)Pow((double)x.Y, (double)y.Y));
 public static Float3 Pow(this Float3 x, Float3 y) => ((float)Pow((double)x.X, (double)y.X), (float)Pow((double)x.Y, (double)y.Y), (float)Pow((double)x.Z, (double)y.Z));
 public static Float4 Pow(this Float4 x, Float4 y) => ((float)Pow((double)x.X, (double)y.X), (float)Pow((double)x.Y, (double)y.Y), (float)Pow((double)x.Z, (double)y.Z), (float)Pow((double)x.W, (double)y.W));
@@ -690,45 +2248,25 @@ public static Long3 Pow(this Long3 x, Long3 y) => ((long)Pow((double)x.A, (doubl
 public static Long4 Pow(this Long4 x, Long4 y) => ((long)Pow((double)x.A, (double)y.A), (long)Pow((double)x.B, (double)y.B), (long)Pow((double)x.C, (double)y.C), (long)Pow((double)x.D, (double)y.D));
 public static Complex Pow(this Complex x, Complex y) => ((double)Pow((double)x.Real, (double)y.Real), (double)Pow((double)x.Imaginary, (double)y.Imaginary));
 }
-public static class ConversionOperations {
-public static Angle Revs(this double x)
-{
-return x * Constants.TwoPi;
-}
-public static Angle Rads(this double x)
-{
-return x;
-}
-public static Angle Degrees(this double x)
-{
-return (x / 360).Revs();
-}
-public static double Revs(this Angle x)
-{
-return x.Radians / Constants.TwoPi;
-}
-public static double Rads(this Angle x)
-{
-return x.Radians;
-}
-public static double Degrees(this Angle x)
-{
-return x.Revs() * 360;
-}
-}
 public static class TrigOperations {
 public static Angle Acos(this double x)
 {
 return Math.Acos(x);
 }
+public static Angle Acos(this int x) => Acos(x);
+public static Angle Acos(this float x) => Acos(x);
 public static Angle Asin(this double x)
 {
 return Math.Asin(x);
 }
+public static Angle Asin(this int x) => Asin(x);
+public static Angle Asin(this float x) => Asin(x);
 public static Angle Atan(this double x)
 {
 return Math.Atan(x);
 }
+public static Angle Atan(this int x) => Atan(x);
+public static Angle Atan(this float x) => Atan(x);
 public static double Versin(this Angle x)
 {
 return 1 - Cos(x);
@@ -811,58 +2349,86 @@ public static bool GtZ(this double x)
 {
 return x > 0;
 }
+public static bool GtZ(this int x) => GtZ(x);
+public static bool GtZ(this float x) => GtZ(x);
 public static bool LtZ(this double x)
 {
 return x < 0;
 }
+public static bool LtZ(this int x) => LtZ(x);
+public static bool LtZ(this float x) => LtZ(x);
 public static bool GtEqZ(this double x)
 {
 return x >= 0;
 }
+public static bool GtEqZ(this int x) => GtEqZ(x);
+public static bool GtEqZ(this float x) => GtEqZ(x);
 public static bool LtEqZ(this double x)
 {
 return x <= 0;
 }
+public static bool LtEqZ(this int x) => LtEqZ(x);
+public static bool LtEqZ(this float x) => LtEqZ(x);
 public static bool Gt(this double x, double y)
 {
 return x > y;
 }
+public static bool Gt(this int x, double y) => Gt(x, y);
+public static bool Gt(this float x, double y) => Gt(x, y);
 public static bool Lt(this double x, double y)
 {
 return x > y;
 }
+public static bool Lt(this int x, double y) => Lt(x, y);
+public static bool Lt(this float x, double y) => Lt(x, y);
 public static bool GtEq(this double x, double y)
 {
 return x >= y;
 }
+public static bool GtEq(this int x, double y) => GtEq(x, y);
+public static bool GtEq(this float x, double y) => GtEq(x, y);
 public static bool LtEq(this double x, double y)
 {
 return x <= y;
 }
+public static bool LtEq(this int x, double y) => LtEq(x, y);
+public static bool LtEq(this float x, double y) => LtEq(x, y);
 public static bool IsInfinity(this double v)
 {
 return double.IsInfinity(v);
 }
+public static bool IsInfinity(this int v) => IsInfinity(v);
+public static bool IsInfinity(this float v) => IsInfinity(v);
 public static bool IsNaN(this double v)
 {
 return double.IsNaN(v);
 }
+public static bool IsNaN(this int v) => IsNaN(v);
+public static bool IsNaN(this float v) => IsNaN(v);
 public static bool AlmostZero(this double v)
 {
 return v.AlmostEquals(0);
 }
+public static bool AlmostZero(this int v) => AlmostZero(v);
+public static bool AlmostZero(this float v) => AlmostZero(v);
 public static bool AlmostOne(this double v)
 {
 return v.AlmostEquals(1);
 }
+public static bool AlmostOne(this int v) => AlmostOne(v);
+public static bool AlmostOne(this float v) => AlmostOne(v);
 public static bool AlmostZeroOrOne(this double v)
 {
 return v.AlmostZero() && v.AlmostOne();
 }
+public static bool AlmostZeroOrOne(this int v) => AlmostZeroOrOne(v);
+public static bool AlmostZeroOrOne(this float v) => AlmostZeroOrOne(v);
 public static bool Within(this double v, double min, double max)
 {
 return v >= min && v < max;
 }
+public static bool Within(this int v, double min, double max) => Within(v, min, max);
+public static bool Within(this float v, double min, double max) => Within(v, min, max);
 }
 public static class IntervalOperations {
 public static double Size(this Interval interval)
@@ -893,14 +2459,20 @@ public static double Clamp(this double value, Interval interval)
 {
 return value.Clamp(interval.A, interval.B);
 }
+public static double Clamp(this int value, Interval interval) => Clamp(value, interval);
+public static double Clamp(this float value, Interval interval) => Clamp(value, interval);
 public static double Lerp(this double value, Interval interval)
 {
 return value.Lerp(interval.A, interval.B);
 }
+public static double Lerp(this int value, Interval interval) => Lerp(value, interval);
+public static double Lerp(this float value, Interval interval) => Lerp(value, interval);
 public static double InverseLerp(this double value, Interval interval)
 {
 return value.InverseLerp(interval.A, interval.B);
 }
+public static double InverseLerp(this int value, Interval interval) => InverseLerp(value, interval);
+public static double InverseLerp(this float value, Interval interval) => InverseLerp(value, interval);
 public static double Clamp(this Interval interval, double value)
 {
 return Clamp(value, interval);
@@ -917,6 +2489,8 @@ public static double Remap(this double value, Interval input, Interval output)
 {
 return Lerp(InverseLerp(value, input), output);
 }
+public static double Remap(this int value, Interval input, Interval output) => Remap(value, input, output);
+public static double Remap(this float value, Interval input, Interval output) => Remap(value, input, output);
 public static double Center(this Interval interval)
 {
 return Lerp(0.5, interval);
@@ -958,6 +2532,14 @@ public static Interval CenterAt(this Interval interval, double value = 0)
 return Offset(interval, value - Center(interval));
 }
 }
+public partial struct Interval
+{
+public static Interval operator *(Interval interval, double amount) => IntervalOperations.Multiply(interval, amount);
+}
+public partial struct Interval
+{
+public static Interval operator /(Interval interval, double amount) => IntervalOperations.Divide(interval, amount);
+}
 public static class EasingOperations {
 public static Func<double, double> BlendEaseFunc(this Func<double, double> easeIn, Func<double, double> easeOut)
 {
@@ -977,118 +2559,176 @@ public static double Linear(this double p)
 {
 return p;
 }
+public static double Linear(this int p) => Linear(p);
+public static double Linear(this float p) => Linear(p);
 public static double QuadraticEaseIn(this double p)
 {
 return p.Pow2();
 }
+public static double QuadraticEaseIn(this int p) => QuadraticEaseIn(p);
+public static double QuadraticEaseIn(this float p) => QuadraticEaseIn(p);
 public static double QuadraticEaseOut(this double p)
 {
 return InvertEaseFunc(QuadraticEaseIn)(p);
 }
+public static double QuadraticEaseOut(this int p) => QuadraticEaseOut(p);
+public static double QuadraticEaseOut(this float p) => QuadraticEaseOut(p);
 public static double QuadraticEaseInOut(this double p)
 {
 return BlendEaseFunc(QuadraticEaseIn, QuadraticEaseOut)(p);
 }
+public static double QuadraticEaseInOut(this int p) => QuadraticEaseInOut(p);
+public static double QuadraticEaseInOut(this float p) => QuadraticEaseInOut(p);
 public static double CubicEaseIn(this double p)
 {
 return p.Pow3();
 }
+public static double CubicEaseIn(this int p) => CubicEaseIn(p);
+public static double CubicEaseIn(this float p) => CubicEaseIn(p);
 public static double CubicEaseOut(this double p)
 {
 return InvertEaseFunc(CubicEaseIn)(p);
 }
+public static double CubicEaseOut(this int p) => CubicEaseOut(p);
+public static double CubicEaseOut(this float p) => CubicEaseOut(p);
 public static double CubicEaseInOut(this double p)
 {
 return BlendEaseFunc(CubicEaseIn, CubicEaseOut)(p);
 }
+public static double CubicEaseInOut(this int p) => CubicEaseInOut(p);
+public static double CubicEaseInOut(this float p) => CubicEaseInOut(p);
 public static double QuarticEaseIn(this double p)
 {
 return p.Pow4();
 }
+public static double QuarticEaseIn(this int p) => QuarticEaseIn(p);
+public static double QuarticEaseIn(this float p) => QuarticEaseIn(p);
 public static double QuarticEaseOut(this double p)
 {
 return InvertEaseFunc(QuarticEaseIn)(p);
 }
+public static double QuarticEaseOut(this int p) => QuarticEaseOut(p);
+public static double QuarticEaseOut(this float p) => QuarticEaseOut(p);
 public static double QuarticEaseInOut(this double p)
 {
 return BlendEaseFunc(QuarticEaseIn, QuarticEaseOut)(p);
 }
+public static double QuarticEaseInOut(this int p) => QuarticEaseInOut(p);
+public static double QuarticEaseInOut(this float p) => QuarticEaseInOut(p);
 public static double QuinticEaseIn(this double p)
 {
 return p.Pow5();
 }
+public static double QuinticEaseIn(this int p) => QuinticEaseIn(p);
+public static double QuinticEaseIn(this float p) => QuinticEaseIn(p);
 public static double QuinticEaseOut(this double p)
 {
 return InvertEaseFunc(QuinticEaseIn)(p);
 }
+public static double QuinticEaseOut(this int p) => QuinticEaseOut(p);
+public static double QuinticEaseOut(this float p) => QuinticEaseOut(p);
 public static double QuinticEaseInOut(this double p)
 {
 return BlendEaseFunc(QuinticEaseIn, QuinticEaseOut)(p);
 }
+public static double QuinticEaseInOut(this int p) => QuinticEaseInOut(p);
+public static double QuinticEaseInOut(this float p) => QuinticEaseInOut(p);
 public static double SineEaseIn(this double p)
 {
 return InvertEaseFunc(SineEaseOut)(p);
 }
+public static double SineEaseIn(this int p) => SineEaseIn(p);
+public static double SineEaseIn(this float p) => SineEaseIn(p);
 public static double SineEaseOut(this double p)
 {
-return p.Quarter().Revs().Sin();
+return p.Quarter().Turns().Sin();
 }
+public static double SineEaseOut(this int p) => SineEaseOut(p);
+public static double SineEaseOut(this float p) => SineEaseOut(p);
 public static double SineEaseInOut(this double p)
 {
 return BlendEaseFunc(SineEaseIn, SineEaseOut)(p);
 }
+public static double SineEaseInOut(this int p) => SineEaseInOut(p);
+public static double SineEaseInOut(this float p) => SineEaseInOut(p);
 public static double CircularEaseIn(this double p)
 {
 return 1 - (1 - p.Pow2()).Sqrt();
 }
+public static double CircularEaseIn(this int p) => CircularEaseIn(p);
+public static double CircularEaseIn(this float p) => CircularEaseIn(p);
 public static double CircularEaseOut(this double p)
 {
 return InvertEaseFunc(CircularEaseIn)(p);
 }
+public static double CircularEaseOut(this int p) => CircularEaseOut(p);
+public static double CircularEaseOut(this float p) => CircularEaseOut(p);
 public static double CircularEaseInOut(this double p)
 {
 return BlendEaseFunc(CircularEaseIn, CircularEaseOut)(p);
 }
+public static double CircularEaseInOut(this int p) => CircularEaseInOut(p);
+public static double CircularEaseInOut(this float p) => CircularEaseInOut(p);
 public static double ExponentialEaseIn(this double p)
 {
 return p.AlmostZero() ? p : 2.0.Pow(10 * (p - 1));
 }
+public static double ExponentialEaseIn(this int p) => ExponentialEaseIn(p);
+public static double ExponentialEaseIn(this float p) => ExponentialEaseIn(p);
 public static double ExponentialEaseOut(this double p)
 {
 return InvertEaseFunc(ExponentialEaseIn)(p);
 }
+public static double ExponentialEaseOut(this int p) => ExponentialEaseOut(p);
+public static double ExponentialEaseOut(this float p) => ExponentialEaseOut(p);
 public static double ExponentialEaseInOut(this double p)
 {
 return BlendEaseFunc(ExponentialEaseIn, ExponentialEaseOut)(p);
 }
+public static double ExponentialEaseInOut(this int p) => ExponentialEaseInOut(p);
+public static double ExponentialEaseInOut(this float p) => ExponentialEaseInOut(p);
 public static double ElasticEaseIn(this double p)
 {
-return (13 * p.Quarter().Revs()) * 2.0.Pow(10 * (p - 1)).Rads().Sin();
+return (13 * p.Quarter().Turns()) * 2.0.Pow(10 * (p - 1)).Radians().Sin();
 }
+public static double ElasticEaseIn(this int p) => ElasticEaseIn(p);
+public static double ElasticEaseIn(this float p) => ElasticEaseIn(p);
 public static double ElasticEaseOut(this double p)
 {
 return InvertEaseFunc(ElasticEaseIn)(p);
 }
+public static double ElasticEaseOut(this int p) => ElasticEaseOut(p);
+public static double ElasticEaseOut(this float p) => ElasticEaseOut(p);
 public static double ElasticEaseInOut(this double p)
 {
 return BlendEaseFunc(ElasticEaseIn, ElasticEaseOut)(p);
 }
+public static double ElasticEaseInOut(this int p) => ElasticEaseInOut(p);
+public static double ElasticEaseInOut(this float p) => ElasticEaseInOut(p);
 public static double BackEaseIn(this double p)
 {
-return p.Pow3() - p * p.Half().Revs().Sin();
+return p.Pow3() - p * p.Half().Turns().Sin();
 }
+public static double BackEaseIn(this int p) => BackEaseIn(p);
+public static double BackEaseIn(this float p) => BackEaseIn(p);
 public static double BackEaseOut(this double p)
 {
 return InvertEaseFunc(BackEaseIn)(p);
 }
+public static double BackEaseOut(this int p) => BackEaseOut(p);
+public static double BackEaseOut(this float p) => BackEaseOut(p);
 public static double BackEaseInOut(this double p)
 {
 return BlendEaseFunc(BackEaseIn, BackEaseOut)(p);
 }
+public static double BackEaseInOut(this int p) => BackEaseInOut(p);
+public static double BackEaseInOut(this float p) => BackEaseInOut(p);
 public static double BounceEaseIn(this double p)
 {
 return InvertEaseFunc(BounceEaseOut)(p);
 }
+public static double BounceEaseIn(this int p) => BounceEaseIn(p);
+public static double BounceEaseIn(this float p) => BounceEaseIn(p);
 public static double BounceEaseOut(this double p)
 {
 {
@@ -1123,44 +2763,62 @@ public static double BounceEaseOut(this double p)
 }
 
 }
+public static double BounceEaseOut(this int p) => BounceEaseOut(p);
+public static double BounceEaseOut(this float p) => BounceEaseOut(p);
 public static double BounceEaseInOut(this double p)
 {
 return BlendEaseFunc(BounceEaseIn, BounceEaseOut)(p);
 }
+public static double BounceEaseInOut(this int p) => BounceEaseInOut(p);
+public static double BounceEaseInOut(this float p) => BounceEaseInOut(p);
 }
 public static class ShapingOperations {
 public static double ExponentialImpulse(this double x, double k)
 {
 return k * x * (1.0 - k * x).Exp();
 }
+public static double ExponentialImpulse(this int x, double k) => ExponentialImpulse(x, k);
+public static double ExponentialImpulse(this float x, double k) => ExponentialImpulse(x, k);
 public static double QuadraticImpulse(this double x, double k)
 {
 return 2.0 * k.Sqrt() * x / (1.0 + k * x * x);
 }
+public static double QuadraticImpulse(this int x, double k) => QuadraticImpulse(x, k);
+public static double QuadraticImpulse(this float x, double k) => QuadraticImpulse(x, k);
 public static double PolynomalialImpulse(this double x, double k, double n)
 {
 return (n / (n - 1.0)) * ((n - 1.0) * k).Pow(1.0 / n) * x / (1.0 + k * x.Pow(n));
 }
+public static double PolynomalialImpulse(this int x, double k, double n) => PolynomalialImpulse(x, k, n);
+public static double PolynomalialImpulse(this float x, double k, double n) => PolynomalialImpulse(x, k, n);
 public static double NormalizedPowerCurve(this double x, double a, double b)
 {
 return (a + b.Pow(a + b) / (a.Pow(a) * (b.Pow(b)) * UnnormalizedPowerCurve(x, a, b)));
 }
+public static double NormalizedPowerCurve(this int x, double a, double b) => NormalizedPowerCurve(x, a, b);
+public static double NormalizedPowerCurve(this float x, double a, double b) => NormalizedPowerCurve(x, a, b);
 public static double UnnormalizedPowerCurve(this double x, double a, double b)
 {
 return x.Pow(a) * (1.0 - x).Pow(b);
 }
+public static double UnnormalizedPowerCurve(this int x, double a, double b) => UnnormalizedPowerCurve(x, a, b);
+public static double UnnormalizedPowerCurve(this float x, double a, double b) => UnnormalizedPowerCurve(x, a, b);
 public static double Parabola(this double x, double k)
 {
 return 4.0 * x * (1.0 - x).Pow(k);
 }
+public static double Parabola(this int x, double k) => Parabola(x, k);
+public static double Parabola(this float x, double k) => Parabola(x, k);
 public static double Sinc(this double x, double k)
 {
 {
-    var a = k * (x - 1.0).Half().Revs();
+    var a = k * (x - 1.0).Half().Turns();
     return a.Sin() / a;
 }
 
 }
+public static double Sinc(this int x, double k) => Sinc(x, k);
+public static double Sinc(this float x, double k) => Sinc(x, k);
 public static double Gain(this double x, double k)
 {
 {
@@ -1169,10 +2827,14 @@ public static double Gain(this double x, double k)
 }
 
 }
+public static double Gain(this int x, double k) => Gain(x, k);
+public static double Gain(this float x, double k) => Gain(x, k);
 public static double ExponentialStep(this double x, double k, double n)
 {
 return (-k * x.Pow(n)).Exp();
 }
+public static double ExponentialStep(this int x, double k, double n) => ExponentialStep(x, k, n);
+public static double ExponentialStep(this float x, double k, double n) => ExponentialStep(x, k, n);
 public static double NearIdentityCubic(this double x, double threshold, double constant = 0)
 {
 {
@@ -1192,44 +2854,64 @@ public static double NearIdentityCubic(this double x, double threshold, double c
 }
 
 }
+public static double NearIdentityCubic(this int x, double threshold, double constant = 0) => NearIdentityCubic(x, threshold, constant);
+public static double NearIdentityCubic(this float x, double threshold, double constant = 0) => NearIdentityCubic(x, threshold, constant);
 public static double NearIdentitySqrt(this double x, double constant = 0)
 {
 return (x * x + constant).Sqrt();
 }
+public static double NearIdentitySqrt(this int x, double constant = 0) => NearIdentitySqrt(x, constant);
+public static double NearIdentitySqrt(this float x, double constant = 0) => NearIdentitySqrt(x, constant);
 public static double NearUnityIdentity(this double x)
 {
 return x * x * (2.0 - x);
 }
+public static double NearUnityIdentity(this int x) => NearUnityIdentity(x);
+public static double NearUnityIdentity(this float x) => NearUnityIdentity(x);
 public static double IntegralSmoothstep(this double x, double t)
 {
 return (x > t) ? x - t / 2.0 : (x).Pow3() * (1.0 - x * 0.5 / t) / t / t;
 }
+public static double IntegralSmoothstep(this int x, double t) => IntegralSmoothstep(x, t);
+public static double IntegralSmoothstep(this float x, double t) => IntegralSmoothstep(x, t);
 }
 public static class CurveOperations {
 public static double CircleSigmoid(this double x, double a = 0.5)
 {
 return x <= a ? a - (a.Pow2() - x.Pow2()).Sqrt() : a + ((1 - a).Pow2() - (x - 1).Pow2().Pow2()).Sqrt();
 }
+public static double CircleSigmoid(this int x, double a = 0.5) => CircleSigmoid(x, a);
+public static double CircleSigmoid(this float x, double a = 0.5) => CircleSigmoid(x, a);
 public static double CircularSeat(this double x, double a = 0.5)
 {
 return x <= a ? (a.Pow2() - (x - a).Pow2()).Sqrt() : ((1 - a).Pow2() - (x - a).Pow2()).Sqrt();
 }
+public static double CircularSeat(this int x, double a = 0.5) => CircularSeat(x, a);
+public static double CircularSeat(this float x, double a = 0.5) => CircularSeat(x, a);
 public static double EllipticalSeat(this double x, double a, double b)
 {
 return (a.AlmostZeroOrOne()) ? a : (x <= a) ? (b / a) * (a.Pow2() - (x - a).Pow2()).Sqrt() : 1 - ((1 - b) / (1 - a)) * ((1 - a).Pow2() - (x - a).Pow2()).Sqrt();
 }
+public static double EllipticalSeat(this int x, double a, double b) => EllipticalSeat(x, a, b);
+public static double EllipticalSeat(this float x, double a, double b) => EllipticalSeat(x, a, b);
 public static double EllipticalSigmoid(this double x, double a, double b)
 {
 return a.AlmostZeroOrOne() ? a : (x <= a) ? b * (1 - ((a.Pow2() - x.Pow2()) / a).Sqrt()) : b + ((1 - b) / (1 - a)) * ((1 - a).Pow2() - (x - 1).Pow2()).Sqrt();
 }
+public static double EllipticalSigmoid(this int x, double a, double b) => EllipticalSigmoid(x, a, b);
+public static double EllipticalSigmoid(this float x, double a, double b) => EllipticalSigmoid(x, a, b);
 public static double Caternay(this double x, double a = 1.0)
 {
-return (x / a).Rads().Cosh();
+return (x / a).Radians().Cosh();
 }
+public static double Caternay(this int x, double a = 1.0) => Caternay(x, a);
+public static double Caternay(this float x, double a = 1.0) => Caternay(x, a);
 public static Double2 Parabola(this double x)
 {
 return (x, x.Pow2());
 }
+public static Double2 Parabola(this int x) => Parabola(x);
+public static Double2 Parabola(this float x) => Parabola(x);
 public static Double2 Hyperbola(this Angle t)
 {
 return (t.Sec(), t.Tan());
@@ -1310,6 +2992,10 @@ public static Double2 ToCartesian(this PolarCoordinate polar)
 {
 return Circle(polar.Angle) * polar.Radius;
 }
+}
+public partial struct PolarCoordinate
+{
+public Double2 Cartesian => CurveOperations.ToCartesian(this);
 }
 public static class DistanceField2DOperations {
 public static double CircleSDF(this Double2 p)

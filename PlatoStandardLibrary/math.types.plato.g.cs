@@ -2264,79 +2264,79 @@ public static Percent MinValue(this Percent _) => Percent.MinValue;
 public static Percent MaxValue(this Percent _) => Percent.MaxValue;
 }
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public partial struct Unit
+public partial struct Proportion
 {
-public Unit(double value) => (Value) = (value);
-public static Unit Create(double value) => new Unit(value);
+public Proportion(double value) => (Value) = (value);
+public static Proportion Create(double value) => new Proportion(value);
 public double Value { get; }
-public static implicit operator Unit(double value) => new Unit(value);
-public static implicit operator double(Unit value) => value.Value;
+public static implicit operator Proportion(double value) => new Proportion(value);
+public static implicit operator double(Proportion value) => value.Value;
 public override string ToString() => $"{{ \"Value\" : { Value } }}";
-public override bool Equals(object other) => other is Unit typedOther && this == typedOther;
+public override bool Equals(object other) => other is Proportion typedOther && this == typedOther;
 public override int GetHashCode() => (Value).GetHashCode();
-public static readonly Unit Default = default;
-public static Unit Zero = new Unit(Default.Value.Zero());
-public static Unit One = new Unit(Default.Value.One());
-public static Unit MinValue = new Unit(Default.Value.MinValue());
-public static Unit MaxValue = new Unit(Default.Value.MaxValue());
-public static bool operator ==(Unit a, Unit b) => (a.Value == b.Value);
-public static bool operator !=(Unit a, Unit b) => (a.Value != b.Value);
-public Unit WithValue(double value) => new Unit(value);
-public static Unit operator +(Unit a, Unit b) => new Unit(a.Value + b.Value);
-public static Unit operator +(double a, Unit b) => new Unit(a + b.Value);
-public static Unit operator +(Unit a, double b) => new Unit(a.Value + b);
-public static Unit operator -(Unit a, Unit b) => new Unit(a.Value - b.Value);
-public static Unit operator -(double a, Unit b) => new Unit(a - b.Value);
-public static Unit operator -(Unit a, double b) => new Unit(a.Value - b);
-public static Unit operator *(Unit a, Unit b) => new Unit(a.Value * b.Value);
-public static Unit operator *(Unit a, double  b) => new Unit(a.Value * b);
-public static Unit operator *(double  a, Unit b) => new Unit(a * b.Value);
-public static Unit operator /(Unit a, Unit b) => new Unit(a.Value / b.Value);
-public static Unit operator /(Unit a, double  b) => new Unit(a.Value / b);
-public static Unit operator /(double  a, Unit b) => new Unit(a / b.Value);
-public static Unit operator %(Unit a, Unit b) => new Unit(a.Value % b.Value);
-public static Unit operator %(Unit a, double  b) => new Unit(a.Value % b);
-public static Unit operator %(double  a, Unit b) => new Unit(a % b.Value);
-public static Unit operator -(Unit a) => new Unit(- a.Value);
-public static bool operator <(Unit a, Unit b) => a.Value < b.Value;
-public static bool operator <=(Unit a, Unit b) => a.Value <= b.Value;
-public static bool operator >(Unit a, Unit b) => a.Value > b.Value;
-public static bool operator >=(Unit a, Unit b) => a.Value >= b.Value;
-public int CompareTo(Unit other) => this < other ? -1 : this > other ? 1 : 0;
+public static readonly Proportion Default = default;
+public static Proportion Zero = new Proportion(Default.Value.Zero());
+public static Proportion One = new Proportion(Default.Value.One());
+public static Proportion MinValue = new Proportion(Default.Value.MinValue());
+public static Proportion MaxValue = new Proportion(Default.Value.MaxValue());
+public static bool operator ==(Proportion a, Proportion b) => (a.Value == b.Value);
+public static bool operator !=(Proportion a, Proportion b) => (a.Value != b.Value);
+public Proportion WithValue(double value) => new Proportion(value);
+public static Proportion operator +(Proportion a, Proportion b) => new Proportion(a.Value + b.Value);
+public static Proportion operator +(double a, Proportion b) => new Proportion(a + b.Value);
+public static Proportion operator +(Proportion a, double b) => new Proportion(a.Value + b);
+public static Proportion operator -(Proportion a, Proportion b) => new Proportion(a.Value - b.Value);
+public static Proportion operator -(double a, Proportion b) => new Proportion(a - b.Value);
+public static Proportion operator -(Proportion a, double b) => new Proportion(a.Value - b);
+public static Proportion operator *(Proportion a, Proportion b) => new Proportion(a.Value * b.Value);
+public static Proportion operator *(Proportion a, double  b) => new Proportion(a.Value * b);
+public static Proportion operator *(double  a, Proportion b) => new Proportion(a * b.Value);
+public static Proportion operator /(Proportion a, Proportion b) => new Proportion(a.Value / b.Value);
+public static Proportion operator /(Proportion a, double  b) => new Proportion(a.Value / b);
+public static Proportion operator /(double  a, Proportion b) => new Proportion(a / b.Value);
+public static Proportion operator %(Proportion a, Proportion b) => new Proportion(a.Value % b.Value);
+public static Proportion operator %(Proportion a, double  b) => new Proportion(a.Value % b);
+public static Proportion operator %(double  a, Proportion b) => new Proportion(a % b.Value);
+public static Proportion operator -(Proportion a) => new Proportion(- a.Value);
+public static bool operator <(Proportion a, Proportion b) => a.Value < b.Value;
+public static bool operator <=(Proportion a, Proportion b) => a.Value <= b.Value;
+public static bool operator >(Proportion a, Proportion b) => a.Value > b.Value;
+public static bool operator >=(Proportion a, Proportion b) => a.Value >= b.Value;
+public int CompareTo(Proportion other) => this < other ? -1 : this > other ? 1 : 0;
 }
 public static partial class Intrinsics {
-public static Unit Add(this Unit a, Unit b) => a + b;
-public static IArray<Unit> Add(this IArray<Unit> self, IArray<Unit> other) => self.Zip(other, (a,b) => a + b);
-public static Unit Subtract(this Unit a, Unit b) => a - b;
-public static IArray<Unit> Subtract(this IArray<Unit> self, IArray<Unit> other) => self.Zip(other, (a,b) => a - b);
-public static Unit Sum(this IArray<Unit> self) => self.Aggregate((a, b) => a + b);
-public static Unit Multiply(this Unit a, Unit b) => a * b;
-public static IArray<Unit> Multiply(this IArray<Unit> self, IArray<Unit> other) => self.Zip(other, (a,b) => a * b);
-public static Unit Divide(this Unit a, Unit b) => a / b;
-public static IArray<Unit> Divide(this IArray<Unit> self, IArray<Unit> other) => self.Zip(other, (a,b) => a / b);
-public static Unit Modulo(this Unit a, Unit b) => a % b;
-public static IArray<Unit> Modulo(this IArray<Unit> self, IArray<Unit> other) => self.Zip(other, (a,b) => a % b);
-public static Unit Product(this IArray<Unit> self) => self.Aggregate((a, b) => a * b);
-public static Unit Negate(this Unit a) => - a;
-public static IArray<Unit> Negate(this IArray<Unit> self) => self.Select(a => - a);
-public static bool Equals(this Unit a, Unit b) => a == b;
-public static bool NotEquals(this Unit a, Unit b) => a != b;
-public static int CompareTo(this Unit self, Unit other) => self < other ? -1 : self > other ? 1 : 0;
-public static IArray<int> CompareTo(this IArray<Unit> self, IArray<Unit> other) => self.Zip(other, (a,b) => a.CompareTo(b));
-public static bool LessThan(this Unit a, Unit b) => a < b;
-public static IArray<bool> LessThan(this IArray<Unit> self, IArray<Unit> other) => self.Zip(other, (a,b) => a < b);
-public static bool LessThanOrEquals(this Unit a, Unit b) => a <= b;
-public static IArray<bool> LessThanOrEquals(this IArray<Unit> self, IArray<Unit> other) => self.Zip(other, (a,b) => a <= b);
-public static bool GreaterThan(this Unit a, Unit b) => a > b;
-public static IArray<bool> GreaterThan(this IArray<Unit> self, IArray<Unit> other) => self.Zip(other, (a,b) => a > b);
-public static bool GreaterThanOrEquals(this Unit a, Unit b) => a >= b;
-public static IArray<bool> GreaterThanOrEquals(this IArray<Unit> self, IArray<Unit> other) => self.Zip(other, (a,b) => a >= b);
-public static Unit Default(this Unit _) => default(Unit);
-public static Unit Zero(this Unit _) => Unit.Zero;
-public static Unit One(this Unit _) => Unit.One;
-public static double ToDouble(this Unit self) => self;
-public static Unit MinValue(this Unit _) => Unit.MinValue;
-public static Unit MaxValue(this Unit _) => Unit.MaxValue;
+public static Proportion Add(this Proportion a, Proportion b) => a + b;
+public static IArray<Proportion> Add(this IArray<Proportion> self, IArray<Proportion> other) => self.Zip(other, (a,b) => a + b);
+public static Proportion Subtract(this Proportion a, Proportion b) => a - b;
+public static IArray<Proportion> Subtract(this IArray<Proportion> self, IArray<Proportion> other) => self.Zip(other, (a,b) => a - b);
+public static Proportion Sum(this IArray<Proportion> self) => self.Aggregate((a, b) => a + b);
+public static Proportion Multiply(this Proportion a, Proportion b) => a * b;
+public static IArray<Proportion> Multiply(this IArray<Proportion> self, IArray<Proportion> other) => self.Zip(other, (a,b) => a * b);
+public static Proportion Divide(this Proportion a, Proportion b) => a / b;
+public static IArray<Proportion> Divide(this IArray<Proportion> self, IArray<Proportion> other) => self.Zip(other, (a,b) => a / b);
+public static Proportion Modulo(this Proportion a, Proportion b) => a % b;
+public static IArray<Proportion> Modulo(this IArray<Proportion> self, IArray<Proportion> other) => self.Zip(other, (a,b) => a % b);
+public static Proportion Product(this IArray<Proportion> self) => self.Aggregate((a, b) => a * b);
+public static Proportion Negate(this Proportion a) => - a;
+public static IArray<Proportion> Negate(this IArray<Proportion> self) => self.Select(a => - a);
+public static bool Equals(this Proportion a, Proportion b) => a == b;
+public static bool NotEquals(this Proportion a, Proportion b) => a != b;
+public static int CompareTo(this Proportion self, Proportion other) => self < other ? -1 : self > other ? 1 : 0;
+public static IArray<int> CompareTo(this IArray<Proportion> self, IArray<Proportion> other) => self.Zip(other, (a,b) => a.CompareTo(b));
+public static bool LessThan(this Proportion a, Proportion b) => a < b;
+public static IArray<bool> LessThan(this IArray<Proportion> self, IArray<Proportion> other) => self.Zip(other, (a,b) => a < b);
+public static bool LessThanOrEquals(this Proportion a, Proportion b) => a <= b;
+public static IArray<bool> LessThanOrEquals(this IArray<Proportion> self, IArray<Proportion> other) => self.Zip(other, (a,b) => a <= b);
+public static bool GreaterThan(this Proportion a, Proportion b) => a > b;
+public static IArray<bool> GreaterThan(this IArray<Proportion> self, IArray<Proportion> other) => self.Zip(other, (a,b) => a > b);
+public static bool GreaterThanOrEquals(this Proportion a, Proportion b) => a >= b;
+public static IArray<bool> GreaterThanOrEquals(this IArray<Proportion> self, IArray<Proportion> other) => self.Zip(other, (a,b) => a >= b);
+public static Proportion Default(this Proportion _) => default(Proportion);
+public static Proportion Zero(this Proportion _) => Proportion.Zero;
+public static Proportion One(this Proportion _) => Proportion.One;
+public static double ToDouble(this Proportion self) => self;
+public static Proportion MinValue(this Proportion _) => Proportion.MinValue;
+public static Proportion MaxValue(this Proportion _) => Proportion.MaxValue;
 }
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct Amount
@@ -3008,5 +3008,1106 @@ public static Box Zero(this Box _) => Box.Zero;
 public static Box One(this Box _) => Box.One;
 public static Box MinValue(this Box _) => Box.MinValue;
 public static Box MaxValue(this Box _) => Box.MaxValue;
+}
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public partial struct CubicBezier2D
+{
+public CubicBezier2D(Point2D a, Point2D b, Point2D c, Point2D d) => (A, B, C, D) = (a, b, c, d);
+public static CubicBezier2D Create(Point2D a, Point2D b, Point2D c, Point2D d) => new CubicBezier2D(a, b, c, d);
+public Point2D A { get; }
+public Point2D B { get; }
+public Point2D C { get; }
+public Point2D D { get; }
+public static implicit operator CubicBezier2D((Point2D A, Point2D B, Point2D C, Point2D D) tuple) => new CubicBezier2D(tuple.A, tuple.B, tuple.C, tuple.D);
+public static implicit operator (Point2D A, Point2D B, Point2D C, Point2D D)(CubicBezier2D self) => (self.A, self.B, self.C, self.D);
+public void Deconstruct(out Point2D a, out Point2D b, out Point2D c, out Point2D d) => (a, b, c, d) = (A, B, C, D);
+public override string ToString() => $"{{ \"A\" : { A }, \"B\" : { B }, \"C\" : { C }, \"D\" : { D } }}";
+public override bool Equals(object other) => other is CubicBezier2D typedOther && this == typedOther;
+public override int GetHashCode() => (A, B, C, D).GetHashCode();
+public static readonly CubicBezier2D Default = default;
+public static CubicBezier2D Zero = new CubicBezier2D(Default.A.Zero(),Default.B.Zero(),Default.C.Zero(),Default.D.Zero());
+public static CubicBezier2D One = new CubicBezier2D(Default.A.One(),Default.B.One(),Default.C.One(),Default.D.One());
+public static CubicBezier2D MinValue = new CubicBezier2D(Default.A.MinValue(),Default.B.MinValue(),Default.C.MinValue(),Default.D.MinValue());
+public static CubicBezier2D MaxValue = new CubicBezier2D(Default.A.MaxValue(),Default.B.MaxValue(),Default.C.MaxValue(),Default.D.MaxValue());
+public static bool operator ==(CubicBezier2D a, CubicBezier2D b) => (a.A == b.A) && (a.B == b.B) && (a.C == b.C) && (a.D == b.D);
+public static bool operator !=(CubicBezier2D a, CubicBezier2D b) => (a.A != b.A) || (a.B != b.B) || (a.C != b.C) || (a.D != b.D);
+public CubicBezier2D WithA(Point2D value) => new CubicBezier2D(value, B, C, D);
+public CubicBezier2D WithB(Point2D value) => new CubicBezier2D(A, value, C, D);
+public CubicBezier2D WithC(Point2D value) => new CubicBezier2D(A, B, value, D);
+public CubicBezier2D WithD(Point2D value) => new CubicBezier2D(A, B, C, value);
+}
+public static partial class Intrinsics {
+public static CubicBezier2D Default(this CubicBezier2D _) => default(CubicBezier2D);
+public static CubicBezier2D Zero(this CubicBezier2D _) => CubicBezier2D.Zero;
+public static CubicBezier2D One(this CubicBezier2D _) => CubicBezier2D.One;
+public static CubicBezier2D MinValue(this CubicBezier2D _) => CubicBezier2D.MinValue;
+public static CubicBezier2D MaxValue(this CubicBezier2D _) => CubicBezier2D.MaxValue;
+}
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public partial struct CubicBezier
+{
+public CubicBezier(Point a, Point b, Point c, Point d) => (A, B, C, D) = (a, b, c, d);
+public static CubicBezier Create(Point a, Point b, Point c, Point d) => new CubicBezier(a, b, c, d);
+public Point A { get; }
+public Point B { get; }
+public Point C { get; }
+public Point D { get; }
+public static implicit operator CubicBezier((Point A, Point B, Point C, Point D) tuple) => new CubicBezier(tuple.A, tuple.B, tuple.C, tuple.D);
+public static implicit operator (Point A, Point B, Point C, Point D)(CubicBezier self) => (self.A, self.B, self.C, self.D);
+public void Deconstruct(out Point a, out Point b, out Point c, out Point d) => (a, b, c, d) = (A, B, C, D);
+public override string ToString() => $"{{ \"A\" : { A }, \"B\" : { B }, \"C\" : { C }, \"D\" : { D } }}";
+public override bool Equals(object other) => other is CubicBezier typedOther && this == typedOther;
+public override int GetHashCode() => (A, B, C, D).GetHashCode();
+public static readonly CubicBezier Default = default;
+public static CubicBezier Zero = new CubicBezier(Default.A.Zero(),Default.B.Zero(),Default.C.Zero(),Default.D.Zero());
+public static CubicBezier One = new CubicBezier(Default.A.One(),Default.B.One(),Default.C.One(),Default.D.One());
+public static CubicBezier MinValue = new CubicBezier(Default.A.MinValue(),Default.B.MinValue(),Default.C.MinValue(),Default.D.MinValue());
+public static CubicBezier MaxValue = new CubicBezier(Default.A.MaxValue(),Default.B.MaxValue(),Default.C.MaxValue(),Default.D.MaxValue());
+public static bool operator ==(CubicBezier a, CubicBezier b) => (a.A == b.A) && (a.B == b.B) && (a.C == b.C) && (a.D == b.D);
+public static bool operator !=(CubicBezier a, CubicBezier b) => (a.A != b.A) || (a.B != b.B) || (a.C != b.C) || (a.D != b.D);
+public CubicBezier WithA(Point value) => new CubicBezier(value, B, C, D);
+public CubicBezier WithB(Point value) => new CubicBezier(A, value, C, D);
+public CubicBezier WithC(Point value) => new CubicBezier(A, B, value, D);
+public CubicBezier WithD(Point value) => new CubicBezier(A, B, C, value);
+}
+public static partial class Intrinsics {
+public static CubicBezier Default(this CubicBezier _) => default(CubicBezier);
+public static CubicBezier Zero(this CubicBezier _) => CubicBezier.Zero;
+public static CubicBezier One(this CubicBezier _) => CubicBezier.One;
+public static CubicBezier MinValue(this CubicBezier _) => CubicBezier.MinValue;
+public static CubicBezier MaxValue(this CubicBezier _) => CubicBezier.MaxValue;
+}
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public partial struct QuadraticBezier2D
+{
+public QuadraticBezier2D(Point2D a, Point2D b, Point2D c) => (A, B, C) = (a, b, c);
+public static QuadraticBezier2D Create(Point2D a, Point2D b, Point2D c) => new QuadraticBezier2D(a, b, c);
+public Point2D A { get; }
+public Point2D B { get; }
+public Point2D C { get; }
+public static implicit operator QuadraticBezier2D((Point2D A, Point2D B, Point2D C) tuple) => new QuadraticBezier2D(tuple.A, tuple.B, tuple.C);
+public static implicit operator (Point2D A, Point2D B, Point2D C)(QuadraticBezier2D self) => (self.A, self.B, self.C);
+public void Deconstruct(out Point2D a, out Point2D b, out Point2D c) => (a, b, c) = (A, B, C);
+public override string ToString() => $"{{ \"A\" : { A }, \"B\" : { B }, \"C\" : { C } }}";
+public override bool Equals(object other) => other is QuadraticBezier2D typedOther && this == typedOther;
+public override int GetHashCode() => (A, B, C).GetHashCode();
+public static readonly QuadraticBezier2D Default = default;
+public static QuadraticBezier2D Zero = new QuadraticBezier2D(Default.A.Zero(),Default.B.Zero(),Default.C.Zero());
+public static QuadraticBezier2D One = new QuadraticBezier2D(Default.A.One(),Default.B.One(),Default.C.One());
+public static QuadraticBezier2D MinValue = new QuadraticBezier2D(Default.A.MinValue(),Default.B.MinValue(),Default.C.MinValue());
+public static QuadraticBezier2D MaxValue = new QuadraticBezier2D(Default.A.MaxValue(),Default.B.MaxValue(),Default.C.MaxValue());
+public static bool operator ==(QuadraticBezier2D a, QuadraticBezier2D b) => (a.A == b.A) && (a.B == b.B) && (a.C == b.C);
+public static bool operator !=(QuadraticBezier2D a, QuadraticBezier2D b) => (a.A != b.A) || (a.B != b.B) || (a.C != b.C);
+public QuadraticBezier2D WithA(Point2D value) => new QuadraticBezier2D(value, B, C);
+public QuadraticBezier2D WithB(Point2D value) => new QuadraticBezier2D(A, value, C);
+public QuadraticBezier2D WithC(Point2D value) => new QuadraticBezier2D(A, B, value);
+}
+public static partial class Intrinsics {
+public static QuadraticBezier2D Default(this QuadraticBezier2D _) => default(QuadraticBezier2D);
+public static QuadraticBezier2D Zero(this QuadraticBezier2D _) => QuadraticBezier2D.Zero;
+public static QuadraticBezier2D One(this QuadraticBezier2D _) => QuadraticBezier2D.One;
+public static QuadraticBezier2D MinValue(this QuadraticBezier2D _) => QuadraticBezier2D.MinValue;
+public static QuadraticBezier2D MaxValue(this QuadraticBezier2D _) => QuadraticBezier2D.MaxValue;
+}
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public partial struct QuadraticBezier
+{
+public QuadraticBezier(Point a, Point b, Point c) => (A, B, C) = (a, b, c);
+public static QuadraticBezier Create(Point a, Point b, Point c) => new QuadraticBezier(a, b, c);
+public Point A { get; }
+public Point B { get; }
+public Point C { get; }
+public static implicit operator QuadraticBezier((Point A, Point B, Point C) tuple) => new QuadraticBezier(tuple.A, tuple.B, tuple.C);
+public static implicit operator (Point A, Point B, Point C)(QuadraticBezier self) => (self.A, self.B, self.C);
+public void Deconstruct(out Point a, out Point b, out Point c) => (a, b, c) = (A, B, C);
+public override string ToString() => $"{{ \"A\" : { A }, \"B\" : { B }, \"C\" : { C } }}";
+public override bool Equals(object other) => other is QuadraticBezier typedOther && this == typedOther;
+public override int GetHashCode() => (A, B, C).GetHashCode();
+public static readonly QuadraticBezier Default = default;
+public static QuadraticBezier Zero = new QuadraticBezier(Default.A.Zero(),Default.B.Zero(),Default.C.Zero());
+public static QuadraticBezier One = new QuadraticBezier(Default.A.One(),Default.B.One(),Default.C.One());
+public static QuadraticBezier MinValue = new QuadraticBezier(Default.A.MinValue(),Default.B.MinValue(),Default.C.MinValue());
+public static QuadraticBezier MaxValue = new QuadraticBezier(Default.A.MaxValue(),Default.B.MaxValue(),Default.C.MaxValue());
+public static bool operator ==(QuadraticBezier a, QuadraticBezier b) => (a.A == b.A) && (a.B == b.B) && (a.C == b.C);
+public static bool operator !=(QuadraticBezier a, QuadraticBezier b) => (a.A != b.A) || (a.B != b.B) || (a.C != b.C);
+public QuadraticBezier WithA(Point value) => new QuadraticBezier(value, B, C);
+public QuadraticBezier WithB(Point value) => new QuadraticBezier(A, value, C);
+public QuadraticBezier WithC(Point value) => new QuadraticBezier(A, B, value);
+}
+public static partial class Intrinsics {
+public static QuadraticBezier Default(this QuadraticBezier _) => default(QuadraticBezier);
+public static QuadraticBezier Zero(this QuadraticBezier _) => QuadraticBezier.Zero;
+public static QuadraticBezier One(this QuadraticBezier _) => QuadraticBezier.One;
+public static QuadraticBezier MinValue(this QuadraticBezier _) => QuadraticBezier.MinValue;
+public static QuadraticBezier MaxValue(this QuadraticBezier _) => QuadraticBezier.MaxValue;
+}
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public partial struct Area
+{
+public Area(double meterssquared) => (MetersSquared) = (meterssquared);
+public static Area Create(double meterssquared) => new Area(meterssquared);
+public const string Units = nameof(MetersSquared);
+public double MetersSquared { get; }
+public static implicit operator Area(double value) => new Area(value);
+public static implicit operator double(Area value) => value.MetersSquared;
+public override string ToString() => $"{{ \"MetersSquared\" : { MetersSquared } }}";
+public override bool Equals(object other) => other is Area typedOther && this == typedOther;
+public override int GetHashCode() => (MetersSquared).GetHashCode();
+public static readonly Area Default = default;
+public static Area Zero = new Area(Default.MetersSquared.Zero());
+public static Area One = new Area(Default.MetersSquared.One());
+public static Area MinValue = new Area(Default.MetersSquared.MinValue());
+public static Area MaxValue = new Area(Default.MetersSquared.MaxValue());
+public static bool operator ==(Area a, Area b) => (a.MetersSquared == b.MetersSquared);
+public static bool operator !=(Area a, Area b) => (a.MetersSquared != b.MetersSquared);
+public Area WithMetersSquared(double value) => new Area(value);
+public static Area operator +(Area a, Area b) => new Area(a.MetersSquared + b.MetersSquared);
+public static Area operator +(double a, Area b) => new Area(a + b.MetersSquared);
+public static Area operator +(Area a, double b) => new Area(a.MetersSquared + b);
+public static Area operator -(Area a, Area b) => new Area(a.MetersSquared - b.MetersSquared);
+public static Area operator -(double a, Area b) => new Area(a - b.MetersSquared);
+public static Area operator -(Area a, double b) => new Area(a.MetersSquared - b);
+public static Area operator *(Area a, double  b) => new Area(a.MetersSquared * b);
+public static Area operator *(double  a, Area b) => new Area(a * b.MetersSquared);
+public static Area operator /(Area a, double  b) => new Area(a.MetersSquared / b);
+public static Area operator /(double  a, Area b) => new Area(a / b.MetersSquared);
+public static Area operator %(Area a, double  b) => new Area(a.MetersSquared % b);
+public static Area operator %(double  a, Area b) => new Area(a % b.MetersSquared);
+public static Area operator -(Area a) => new Area(- a.MetersSquared);
+public static bool operator <(Area a, Area b) => a.MetersSquared < b.MetersSquared;
+public static bool operator <=(Area a, Area b) => a.MetersSquared <= b.MetersSquared;
+public static bool operator >(Area a, Area b) => a.MetersSquared > b.MetersSquared;
+public static bool operator >=(Area a, Area b) => a.MetersSquared >= b.MetersSquared;
+public int CompareTo(Area other) => this < other ? -1 : this > other ? 1 : 0;
+}
+public static partial class Intrinsics {
+public static int CompareTo(this Area self, Area other) => self < other ? -1 : self > other ? 1 : 0;
+public static IArray<int> CompareTo(this IArray<Area> self, IArray<Area> other) => self.Zip(other, (a,b) => a.CompareTo(b));
+public static bool LessThan(this Area a, Area b) => a < b;
+public static IArray<bool> LessThan(this IArray<Area> self, IArray<Area> other) => self.Zip(other, (a,b) => a < b);
+public static bool LessThanOrEquals(this Area a, Area b) => a <= b;
+public static IArray<bool> LessThanOrEquals(this IArray<Area> self, IArray<Area> other) => self.Zip(other, (a,b) => a <= b);
+public static bool GreaterThan(this Area a, Area b) => a > b;
+public static IArray<bool> GreaterThan(this IArray<Area> self, IArray<Area> other) => self.Zip(other, (a,b) => a > b);
+public static bool GreaterThanOrEquals(this Area a, Area b) => a >= b;
+public static IArray<bool> GreaterThanOrEquals(this IArray<Area> self, IArray<Area> other) => self.Zip(other, (a,b) => a >= b);
+public static Area Default(this Area _) => default(Area);
+public static Area Zero(this Area _) => Area.Zero;
+public static Area One(this Area _) => Area.One;
+public static double ToDouble(this Area self) => self;
+public static Area MinValue(this Area _) => Area.MinValue;
+public static Area MaxValue(this Area _) => Area.MaxValue;
+}
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public partial struct Volume
+{
+public Volume(double meterscubed) => (MetersCubed) = (meterscubed);
+public static Volume Create(double meterscubed) => new Volume(meterscubed);
+public const string Units = nameof(MetersCubed);
+public double MetersCubed { get; }
+public static implicit operator Volume(double value) => new Volume(value);
+public static implicit operator double(Volume value) => value.MetersCubed;
+public override string ToString() => $"{{ \"MetersCubed\" : { MetersCubed } }}";
+public override bool Equals(object other) => other is Volume typedOther && this == typedOther;
+public override int GetHashCode() => (MetersCubed).GetHashCode();
+public static readonly Volume Default = default;
+public static Volume Zero = new Volume(Default.MetersCubed.Zero());
+public static Volume One = new Volume(Default.MetersCubed.One());
+public static Volume MinValue = new Volume(Default.MetersCubed.MinValue());
+public static Volume MaxValue = new Volume(Default.MetersCubed.MaxValue());
+public static bool operator ==(Volume a, Volume b) => (a.MetersCubed == b.MetersCubed);
+public static bool operator !=(Volume a, Volume b) => (a.MetersCubed != b.MetersCubed);
+public Volume WithMetersCubed(double value) => new Volume(value);
+public static Volume operator +(Volume a, Volume b) => new Volume(a.MetersCubed + b.MetersCubed);
+public static Volume operator +(double a, Volume b) => new Volume(a + b.MetersCubed);
+public static Volume operator +(Volume a, double b) => new Volume(a.MetersCubed + b);
+public static Volume operator -(Volume a, Volume b) => new Volume(a.MetersCubed - b.MetersCubed);
+public static Volume operator -(double a, Volume b) => new Volume(a - b.MetersCubed);
+public static Volume operator -(Volume a, double b) => new Volume(a.MetersCubed - b);
+public static Volume operator *(Volume a, double  b) => new Volume(a.MetersCubed * b);
+public static Volume operator *(double  a, Volume b) => new Volume(a * b.MetersCubed);
+public static Volume operator /(Volume a, double  b) => new Volume(a.MetersCubed / b);
+public static Volume operator /(double  a, Volume b) => new Volume(a / b.MetersCubed);
+public static Volume operator %(Volume a, double  b) => new Volume(a.MetersCubed % b);
+public static Volume operator %(double  a, Volume b) => new Volume(a % b.MetersCubed);
+public static Volume operator -(Volume a) => new Volume(- a.MetersCubed);
+public static bool operator <(Volume a, Volume b) => a.MetersCubed < b.MetersCubed;
+public static bool operator <=(Volume a, Volume b) => a.MetersCubed <= b.MetersCubed;
+public static bool operator >(Volume a, Volume b) => a.MetersCubed > b.MetersCubed;
+public static bool operator >=(Volume a, Volume b) => a.MetersCubed >= b.MetersCubed;
+public int CompareTo(Volume other) => this < other ? -1 : this > other ? 1 : 0;
+}
+public static partial class Intrinsics {
+public static int CompareTo(this Volume self, Volume other) => self < other ? -1 : self > other ? 1 : 0;
+public static IArray<int> CompareTo(this IArray<Volume> self, IArray<Volume> other) => self.Zip(other, (a,b) => a.CompareTo(b));
+public static bool LessThan(this Volume a, Volume b) => a < b;
+public static IArray<bool> LessThan(this IArray<Volume> self, IArray<Volume> other) => self.Zip(other, (a,b) => a < b);
+public static bool LessThanOrEquals(this Volume a, Volume b) => a <= b;
+public static IArray<bool> LessThanOrEquals(this IArray<Volume> self, IArray<Volume> other) => self.Zip(other, (a,b) => a <= b);
+public static bool GreaterThan(this Volume a, Volume b) => a > b;
+public static IArray<bool> GreaterThan(this IArray<Volume> self, IArray<Volume> other) => self.Zip(other, (a,b) => a > b);
+public static bool GreaterThanOrEquals(this Volume a, Volume b) => a >= b;
+public static IArray<bool> GreaterThanOrEquals(this IArray<Volume> self, IArray<Volume> other) => self.Zip(other, (a,b) => a >= b);
+public static Volume Default(this Volume _) => default(Volume);
+public static Volume Zero(this Volume _) => Volume.Zero;
+public static Volume One(this Volume _) => Volume.One;
+public static double ToDouble(this Volume self) => self;
+public static Volume MinValue(this Volume _) => Volume.MinValue;
+public static Volume MaxValue(this Volume _) => Volume.MaxValue;
+}
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public partial struct Velocity
+{
+public Velocity(double meterspersecond) => (MetersPerSecond) = (meterspersecond);
+public static Velocity Create(double meterspersecond) => new Velocity(meterspersecond);
+public const string Units = nameof(MetersPerSecond);
+public double MetersPerSecond { get; }
+public static implicit operator Velocity(double value) => new Velocity(value);
+public static implicit operator double(Velocity value) => value.MetersPerSecond;
+public override string ToString() => $"{{ \"MetersPerSecond\" : { MetersPerSecond } }}";
+public override bool Equals(object other) => other is Velocity typedOther && this == typedOther;
+public override int GetHashCode() => (MetersPerSecond).GetHashCode();
+public static readonly Velocity Default = default;
+public static Velocity Zero = new Velocity(Default.MetersPerSecond.Zero());
+public static Velocity One = new Velocity(Default.MetersPerSecond.One());
+public static Velocity MinValue = new Velocity(Default.MetersPerSecond.MinValue());
+public static Velocity MaxValue = new Velocity(Default.MetersPerSecond.MaxValue());
+public static bool operator ==(Velocity a, Velocity b) => (a.MetersPerSecond == b.MetersPerSecond);
+public static bool operator !=(Velocity a, Velocity b) => (a.MetersPerSecond != b.MetersPerSecond);
+public Velocity WithMetersPerSecond(double value) => new Velocity(value);
+public static Velocity operator +(Velocity a, Velocity b) => new Velocity(a.MetersPerSecond + b.MetersPerSecond);
+public static Velocity operator +(double a, Velocity b) => new Velocity(a + b.MetersPerSecond);
+public static Velocity operator +(Velocity a, double b) => new Velocity(a.MetersPerSecond + b);
+public static Velocity operator -(Velocity a, Velocity b) => new Velocity(a.MetersPerSecond - b.MetersPerSecond);
+public static Velocity operator -(double a, Velocity b) => new Velocity(a - b.MetersPerSecond);
+public static Velocity operator -(Velocity a, double b) => new Velocity(a.MetersPerSecond - b);
+public static Velocity operator *(Velocity a, double  b) => new Velocity(a.MetersPerSecond * b);
+public static Velocity operator *(double  a, Velocity b) => new Velocity(a * b.MetersPerSecond);
+public static Velocity operator /(Velocity a, double  b) => new Velocity(a.MetersPerSecond / b);
+public static Velocity operator /(double  a, Velocity b) => new Velocity(a / b.MetersPerSecond);
+public static Velocity operator %(Velocity a, double  b) => new Velocity(a.MetersPerSecond % b);
+public static Velocity operator %(double  a, Velocity b) => new Velocity(a % b.MetersPerSecond);
+public static Velocity operator -(Velocity a) => new Velocity(- a.MetersPerSecond);
+public static bool operator <(Velocity a, Velocity b) => a.MetersPerSecond < b.MetersPerSecond;
+public static bool operator <=(Velocity a, Velocity b) => a.MetersPerSecond <= b.MetersPerSecond;
+public static bool operator >(Velocity a, Velocity b) => a.MetersPerSecond > b.MetersPerSecond;
+public static bool operator >=(Velocity a, Velocity b) => a.MetersPerSecond >= b.MetersPerSecond;
+public int CompareTo(Velocity other) => this < other ? -1 : this > other ? 1 : 0;
+}
+public static partial class Intrinsics {
+public static int CompareTo(this Velocity self, Velocity other) => self < other ? -1 : self > other ? 1 : 0;
+public static IArray<int> CompareTo(this IArray<Velocity> self, IArray<Velocity> other) => self.Zip(other, (a,b) => a.CompareTo(b));
+public static bool LessThan(this Velocity a, Velocity b) => a < b;
+public static IArray<bool> LessThan(this IArray<Velocity> self, IArray<Velocity> other) => self.Zip(other, (a,b) => a < b);
+public static bool LessThanOrEquals(this Velocity a, Velocity b) => a <= b;
+public static IArray<bool> LessThanOrEquals(this IArray<Velocity> self, IArray<Velocity> other) => self.Zip(other, (a,b) => a <= b);
+public static bool GreaterThan(this Velocity a, Velocity b) => a > b;
+public static IArray<bool> GreaterThan(this IArray<Velocity> self, IArray<Velocity> other) => self.Zip(other, (a,b) => a > b);
+public static bool GreaterThanOrEquals(this Velocity a, Velocity b) => a >= b;
+public static IArray<bool> GreaterThanOrEquals(this IArray<Velocity> self, IArray<Velocity> other) => self.Zip(other, (a,b) => a >= b);
+public static Velocity Default(this Velocity _) => default(Velocity);
+public static Velocity Zero(this Velocity _) => Velocity.Zero;
+public static Velocity One(this Velocity _) => Velocity.One;
+public static double ToDouble(this Velocity self) => self;
+public static Velocity MinValue(this Velocity _) => Velocity.MinValue;
+public static Velocity MaxValue(this Velocity _) => Velocity.MaxValue;
+}
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public partial struct Acceleration
+{
+public Acceleration(double meterspersecondsquared) => (MetersPerSecondSquared) = (meterspersecondsquared);
+public static Acceleration Create(double meterspersecondsquared) => new Acceleration(meterspersecondsquared);
+public const string Units = nameof(MetersPerSecondSquared);
+public double MetersPerSecondSquared { get; }
+public static implicit operator Acceleration(double value) => new Acceleration(value);
+public static implicit operator double(Acceleration value) => value.MetersPerSecondSquared;
+public override string ToString() => $"{{ \"MetersPerSecondSquared\" : { MetersPerSecondSquared } }}";
+public override bool Equals(object other) => other is Acceleration typedOther && this == typedOther;
+public override int GetHashCode() => (MetersPerSecondSquared).GetHashCode();
+public static readonly Acceleration Default = default;
+public static Acceleration Zero = new Acceleration(Default.MetersPerSecondSquared.Zero());
+public static Acceleration One = new Acceleration(Default.MetersPerSecondSquared.One());
+public static Acceleration MinValue = new Acceleration(Default.MetersPerSecondSquared.MinValue());
+public static Acceleration MaxValue = new Acceleration(Default.MetersPerSecondSquared.MaxValue());
+public static bool operator ==(Acceleration a, Acceleration b) => (a.MetersPerSecondSquared == b.MetersPerSecondSquared);
+public static bool operator !=(Acceleration a, Acceleration b) => (a.MetersPerSecondSquared != b.MetersPerSecondSquared);
+public Acceleration WithMetersPerSecondSquared(double value) => new Acceleration(value);
+public static Acceleration operator +(Acceleration a, Acceleration b) => new Acceleration(a.MetersPerSecondSquared + b.MetersPerSecondSquared);
+public static Acceleration operator +(double a, Acceleration b) => new Acceleration(a + b.MetersPerSecondSquared);
+public static Acceleration operator +(Acceleration a, double b) => new Acceleration(a.MetersPerSecondSquared + b);
+public static Acceleration operator -(Acceleration a, Acceleration b) => new Acceleration(a.MetersPerSecondSquared - b.MetersPerSecondSquared);
+public static Acceleration operator -(double a, Acceleration b) => new Acceleration(a - b.MetersPerSecondSquared);
+public static Acceleration operator -(Acceleration a, double b) => new Acceleration(a.MetersPerSecondSquared - b);
+public static Acceleration operator *(Acceleration a, double  b) => new Acceleration(a.MetersPerSecondSquared * b);
+public static Acceleration operator *(double  a, Acceleration b) => new Acceleration(a * b.MetersPerSecondSquared);
+public static Acceleration operator /(Acceleration a, double  b) => new Acceleration(a.MetersPerSecondSquared / b);
+public static Acceleration operator /(double  a, Acceleration b) => new Acceleration(a / b.MetersPerSecondSquared);
+public static Acceleration operator %(Acceleration a, double  b) => new Acceleration(a.MetersPerSecondSquared % b);
+public static Acceleration operator %(double  a, Acceleration b) => new Acceleration(a % b.MetersPerSecondSquared);
+public static Acceleration operator -(Acceleration a) => new Acceleration(- a.MetersPerSecondSquared);
+public static bool operator <(Acceleration a, Acceleration b) => a.MetersPerSecondSquared < b.MetersPerSecondSquared;
+public static bool operator <=(Acceleration a, Acceleration b) => a.MetersPerSecondSquared <= b.MetersPerSecondSquared;
+public static bool operator >(Acceleration a, Acceleration b) => a.MetersPerSecondSquared > b.MetersPerSecondSquared;
+public static bool operator >=(Acceleration a, Acceleration b) => a.MetersPerSecondSquared >= b.MetersPerSecondSquared;
+public int CompareTo(Acceleration other) => this < other ? -1 : this > other ? 1 : 0;
+}
+public static partial class Intrinsics {
+public static int CompareTo(this Acceleration self, Acceleration other) => self < other ? -1 : self > other ? 1 : 0;
+public static IArray<int> CompareTo(this IArray<Acceleration> self, IArray<Acceleration> other) => self.Zip(other, (a,b) => a.CompareTo(b));
+public static bool LessThan(this Acceleration a, Acceleration b) => a < b;
+public static IArray<bool> LessThan(this IArray<Acceleration> self, IArray<Acceleration> other) => self.Zip(other, (a,b) => a < b);
+public static bool LessThanOrEquals(this Acceleration a, Acceleration b) => a <= b;
+public static IArray<bool> LessThanOrEquals(this IArray<Acceleration> self, IArray<Acceleration> other) => self.Zip(other, (a,b) => a <= b);
+public static bool GreaterThan(this Acceleration a, Acceleration b) => a > b;
+public static IArray<bool> GreaterThan(this IArray<Acceleration> self, IArray<Acceleration> other) => self.Zip(other, (a,b) => a > b);
+public static bool GreaterThanOrEquals(this Acceleration a, Acceleration b) => a >= b;
+public static IArray<bool> GreaterThanOrEquals(this IArray<Acceleration> self, IArray<Acceleration> other) => self.Zip(other, (a,b) => a >= b);
+public static Acceleration Default(this Acceleration _) => default(Acceleration);
+public static Acceleration Zero(this Acceleration _) => Acceleration.Zero;
+public static Acceleration One(this Acceleration _) => Acceleration.One;
+public static double ToDouble(this Acceleration self) => self;
+public static Acceleration MinValue(this Acceleration _) => Acceleration.MinValue;
+public static Acceleration MaxValue(this Acceleration _) => Acceleration.MaxValue;
+}
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public partial struct Force
+{
+public Force(double newtons) => (Newtons) = (newtons);
+public static Force Create(double newtons) => new Force(newtons);
+public const string Units = nameof(Newtons);
+public double Newtons { get; }
+public static implicit operator Force(double value) => new Force(value);
+public static implicit operator double(Force value) => value.Newtons;
+public override string ToString() => $"{{ \"Newtons\" : { Newtons } }}";
+public override bool Equals(object other) => other is Force typedOther && this == typedOther;
+public override int GetHashCode() => (Newtons).GetHashCode();
+public static readonly Force Default = default;
+public static Force Zero = new Force(Default.Newtons.Zero());
+public static Force One = new Force(Default.Newtons.One());
+public static Force MinValue = new Force(Default.Newtons.MinValue());
+public static Force MaxValue = new Force(Default.Newtons.MaxValue());
+public static bool operator ==(Force a, Force b) => (a.Newtons == b.Newtons);
+public static bool operator !=(Force a, Force b) => (a.Newtons != b.Newtons);
+public Force WithNewtons(double value) => new Force(value);
+public static Force operator +(Force a, Force b) => new Force(a.Newtons + b.Newtons);
+public static Force operator +(double a, Force b) => new Force(a + b.Newtons);
+public static Force operator +(Force a, double b) => new Force(a.Newtons + b);
+public static Force operator -(Force a, Force b) => new Force(a.Newtons - b.Newtons);
+public static Force operator -(double a, Force b) => new Force(a - b.Newtons);
+public static Force operator -(Force a, double b) => new Force(a.Newtons - b);
+public static Force operator *(Force a, double  b) => new Force(a.Newtons * b);
+public static Force operator *(double  a, Force b) => new Force(a * b.Newtons);
+public static Force operator /(Force a, double  b) => new Force(a.Newtons / b);
+public static Force operator /(double  a, Force b) => new Force(a / b.Newtons);
+public static Force operator %(Force a, double  b) => new Force(a.Newtons % b);
+public static Force operator %(double  a, Force b) => new Force(a % b.Newtons);
+public static Force operator -(Force a) => new Force(- a.Newtons);
+public static bool operator <(Force a, Force b) => a.Newtons < b.Newtons;
+public static bool operator <=(Force a, Force b) => a.Newtons <= b.Newtons;
+public static bool operator >(Force a, Force b) => a.Newtons > b.Newtons;
+public static bool operator >=(Force a, Force b) => a.Newtons >= b.Newtons;
+public int CompareTo(Force other) => this < other ? -1 : this > other ? 1 : 0;
+}
+public static partial class Intrinsics {
+public static int CompareTo(this Force self, Force other) => self < other ? -1 : self > other ? 1 : 0;
+public static IArray<int> CompareTo(this IArray<Force> self, IArray<Force> other) => self.Zip(other, (a,b) => a.CompareTo(b));
+public static bool LessThan(this Force a, Force b) => a < b;
+public static IArray<bool> LessThan(this IArray<Force> self, IArray<Force> other) => self.Zip(other, (a,b) => a < b);
+public static bool LessThanOrEquals(this Force a, Force b) => a <= b;
+public static IArray<bool> LessThanOrEquals(this IArray<Force> self, IArray<Force> other) => self.Zip(other, (a,b) => a <= b);
+public static bool GreaterThan(this Force a, Force b) => a > b;
+public static IArray<bool> GreaterThan(this IArray<Force> self, IArray<Force> other) => self.Zip(other, (a,b) => a > b);
+public static bool GreaterThanOrEquals(this Force a, Force b) => a >= b;
+public static IArray<bool> GreaterThanOrEquals(this IArray<Force> self, IArray<Force> other) => self.Zip(other, (a,b) => a >= b);
+public static Force Default(this Force _) => default(Force);
+public static Force Zero(this Force _) => Force.Zero;
+public static Force One(this Force _) => Force.One;
+public static double ToDouble(this Force self) => self;
+public static Force MinValue(this Force _) => Force.MinValue;
+public static Force MaxValue(this Force _) => Force.MaxValue;
+}
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public partial struct Pressure
+{
+public Pressure(double pascals) => (Pascals) = (pascals);
+public static Pressure Create(double pascals) => new Pressure(pascals);
+public const string Units = nameof(Pascals);
+public double Pascals { get; }
+public static implicit operator Pressure(double value) => new Pressure(value);
+public static implicit operator double(Pressure value) => value.Pascals;
+public override string ToString() => $"{{ \"Pascals\" : { Pascals } }}";
+public override bool Equals(object other) => other is Pressure typedOther && this == typedOther;
+public override int GetHashCode() => (Pascals).GetHashCode();
+public static readonly Pressure Default = default;
+public static Pressure Zero = new Pressure(Default.Pascals.Zero());
+public static Pressure One = new Pressure(Default.Pascals.One());
+public static Pressure MinValue = new Pressure(Default.Pascals.MinValue());
+public static Pressure MaxValue = new Pressure(Default.Pascals.MaxValue());
+public static bool operator ==(Pressure a, Pressure b) => (a.Pascals == b.Pascals);
+public static bool operator !=(Pressure a, Pressure b) => (a.Pascals != b.Pascals);
+public Pressure WithPascals(double value) => new Pressure(value);
+public static Pressure operator +(Pressure a, Pressure b) => new Pressure(a.Pascals + b.Pascals);
+public static Pressure operator +(double a, Pressure b) => new Pressure(a + b.Pascals);
+public static Pressure operator +(Pressure a, double b) => new Pressure(a.Pascals + b);
+public static Pressure operator -(Pressure a, Pressure b) => new Pressure(a.Pascals - b.Pascals);
+public static Pressure operator -(double a, Pressure b) => new Pressure(a - b.Pascals);
+public static Pressure operator -(Pressure a, double b) => new Pressure(a.Pascals - b);
+public static Pressure operator *(Pressure a, double  b) => new Pressure(a.Pascals * b);
+public static Pressure operator *(double  a, Pressure b) => new Pressure(a * b.Pascals);
+public static Pressure operator /(Pressure a, double  b) => new Pressure(a.Pascals / b);
+public static Pressure operator /(double  a, Pressure b) => new Pressure(a / b.Pascals);
+public static Pressure operator %(Pressure a, double  b) => new Pressure(a.Pascals % b);
+public static Pressure operator %(double  a, Pressure b) => new Pressure(a % b.Pascals);
+public static Pressure operator -(Pressure a) => new Pressure(- a.Pascals);
+public static bool operator <(Pressure a, Pressure b) => a.Pascals < b.Pascals;
+public static bool operator <=(Pressure a, Pressure b) => a.Pascals <= b.Pascals;
+public static bool operator >(Pressure a, Pressure b) => a.Pascals > b.Pascals;
+public static bool operator >=(Pressure a, Pressure b) => a.Pascals >= b.Pascals;
+public int CompareTo(Pressure other) => this < other ? -1 : this > other ? 1 : 0;
+}
+public static partial class Intrinsics {
+public static int CompareTo(this Pressure self, Pressure other) => self < other ? -1 : self > other ? 1 : 0;
+public static IArray<int> CompareTo(this IArray<Pressure> self, IArray<Pressure> other) => self.Zip(other, (a,b) => a.CompareTo(b));
+public static bool LessThan(this Pressure a, Pressure b) => a < b;
+public static IArray<bool> LessThan(this IArray<Pressure> self, IArray<Pressure> other) => self.Zip(other, (a,b) => a < b);
+public static bool LessThanOrEquals(this Pressure a, Pressure b) => a <= b;
+public static IArray<bool> LessThanOrEquals(this IArray<Pressure> self, IArray<Pressure> other) => self.Zip(other, (a,b) => a <= b);
+public static bool GreaterThan(this Pressure a, Pressure b) => a > b;
+public static IArray<bool> GreaterThan(this IArray<Pressure> self, IArray<Pressure> other) => self.Zip(other, (a,b) => a > b);
+public static bool GreaterThanOrEquals(this Pressure a, Pressure b) => a >= b;
+public static IArray<bool> GreaterThanOrEquals(this IArray<Pressure> self, IArray<Pressure> other) => self.Zip(other, (a,b) => a >= b);
+public static Pressure Default(this Pressure _) => default(Pressure);
+public static Pressure Zero(this Pressure _) => Pressure.Zero;
+public static Pressure One(this Pressure _) => Pressure.One;
+public static double ToDouble(this Pressure self) => self;
+public static Pressure MinValue(this Pressure _) => Pressure.MinValue;
+public static Pressure MaxValue(this Pressure _) => Pressure.MaxValue;
+}
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public partial struct Energy
+{
+public Energy(double joules) => (Joules) = (joules);
+public static Energy Create(double joules) => new Energy(joules);
+public const string Units = nameof(Joules);
+public double Joules { get; }
+public static implicit operator Energy(double value) => new Energy(value);
+public static implicit operator double(Energy value) => value.Joules;
+public override string ToString() => $"{{ \"Joules\" : { Joules } }}";
+public override bool Equals(object other) => other is Energy typedOther && this == typedOther;
+public override int GetHashCode() => (Joules).GetHashCode();
+public static readonly Energy Default = default;
+public static Energy Zero = new Energy(Default.Joules.Zero());
+public static Energy One = new Energy(Default.Joules.One());
+public static Energy MinValue = new Energy(Default.Joules.MinValue());
+public static Energy MaxValue = new Energy(Default.Joules.MaxValue());
+public static bool operator ==(Energy a, Energy b) => (a.Joules == b.Joules);
+public static bool operator !=(Energy a, Energy b) => (a.Joules != b.Joules);
+public Energy WithJoules(double value) => new Energy(value);
+public static Energy operator +(Energy a, Energy b) => new Energy(a.Joules + b.Joules);
+public static Energy operator +(double a, Energy b) => new Energy(a + b.Joules);
+public static Energy operator +(Energy a, double b) => new Energy(a.Joules + b);
+public static Energy operator -(Energy a, Energy b) => new Energy(a.Joules - b.Joules);
+public static Energy operator -(double a, Energy b) => new Energy(a - b.Joules);
+public static Energy operator -(Energy a, double b) => new Energy(a.Joules - b);
+public static Energy operator *(Energy a, double  b) => new Energy(a.Joules * b);
+public static Energy operator *(double  a, Energy b) => new Energy(a * b.Joules);
+public static Energy operator /(Energy a, double  b) => new Energy(a.Joules / b);
+public static Energy operator /(double  a, Energy b) => new Energy(a / b.Joules);
+public static Energy operator %(Energy a, double  b) => new Energy(a.Joules % b);
+public static Energy operator %(double  a, Energy b) => new Energy(a % b.Joules);
+public static Energy operator -(Energy a) => new Energy(- a.Joules);
+public static bool operator <(Energy a, Energy b) => a.Joules < b.Joules;
+public static bool operator <=(Energy a, Energy b) => a.Joules <= b.Joules;
+public static bool operator >(Energy a, Energy b) => a.Joules > b.Joules;
+public static bool operator >=(Energy a, Energy b) => a.Joules >= b.Joules;
+public int CompareTo(Energy other) => this < other ? -1 : this > other ? 1 : 0;
+}
+public static partial class Intrinsics {
+public static int CompareTo(this Energy self, Energy other) => self < other ? -1 : self > other ? 1 : 0;
+public static IArray<int> CompareTo(this IArray<Energy> self, IArray<Energy> other) => self.Zip(other, (a,b) => a.CompareTo(b));
+public static bool LessThan(this Energy a, Energy b) => a < b;
+public static IArray<bool> LessThan(this IArray<Energy> self, IArray<Energy> other) => self.Zip(other, (a,b) => a < b);
+public static bool LessThanOrEquals(this Energy a, Energy b) => a <= b;
+public static IArray<bool> LessThanOrEquals(this IArray<Energy> self, IArray<Energy> other) => self.Zip(other, (a,b) => a <= b);
+public static bool GreaterThan(this Energy a, Energy b) => a > b;
+public static IArray<bool> GreaterThan(this IArray<Energy> self, IArray<Energy> other) => self.Zip(other, (a,b) => a > b);
+public static bool GreaterThanOrEquals(this Energy a, Energy b) => a >= b;
+public static IArray<bool> GreaterThanOrEquals(this IArray<Energy> self, IArray<Energy> other) => self.Zip(other, (a,b) => a >= b);
+public static Energy Default(this Energy _) => default(Energy);
+public static Energy Zero(this Energy _) => Energy.Zero;
+public static Energy One(this Energy _) => Energy.One;
+public static double ToDouble(this Energy self) => self;
+public static Energy MinValue(this Energy _) => Energy.MinValue;
+public static Energy MaxValue(this Energy _) => Energy.MaxValue;
+}
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public partial struct Memory
+{
+public Memory(double bytes) => (Bytes) = (bytes);
+public static Memory Create(double bytes) => new Memory(bytes);
+public const string Units = nameof(Bytes);
+public double Bytes { get; }
+public static implicit operator Memory(double value) => new Memory(value);
+public static implicit operator double(Memory value) => value.Bytes;
+public override string ToString() => $"{{ \"Bytes\" : { Bytes } }}";
+public override bool Equals(object other) => other is Memory typedOther && this == typedOther;
+public override int GetHashCode() => (Bytes).GetHashCode();
+public static readonly Memory Default = default;
+public static Memory Zero = new Memory(Default.Bytes.Zero());
+public static Memory One = new Memory(Default.Bytes.One());
+public static Memory MinValue = new Memory(Default.Bytes.MinValue());
+public static Memory MaxValue = new Memory(Default.Bytes.MaxValue());
+public static bool operator ==(Memory a, Memory b) => (a.Bytes == b.Bytes);
+public static bool operator !=(Memory a, Memory b) => (a.Bytes != b.Bytes);
+public Memory WithBytes(double value) => new Memory(value);
+public static Memory operator +(Memory a, Memory b) => new Memory(a.Bytes + b.Bytes);
+public static Memory operator +(double a, Memory b) => new Memory(a + b.Bytes);
+public static Memory operator +(Memory a, double b) => new Memory(a.Bytes + b);
+public static Memory operator -(Memory a, Memory b) => new Memory(a.Bytes - b.Bytes);
+public static Memory operator -(double a, Memory b) => new Memory(a - b.Bytes);
+public static Memory operator -(Memory a, double b) => new Memory(a.Bytes - b);
+public static Memory operator *(Memory a, double  b) => new Memory(a.Bytes * b);
+public static Memory operator *(double  a, Memory b) => new Memory(a * b.Bytes);
+public static Memory operator /(Memory a, double  b) => new Memory(a.Bytes / b);
+public static Memory operator /(double  a, Memory b) => new Memory(a / b.Bytes);
+public static Memory operator %(Memory a, double  b) => new Memory(a.Bytes % b);
+public static Memory operator %(double  a, Memory b) => new Memory(a % b.Bytes);
+public static Memory operator -(Memory a) => new Memory(- a.Bytes);
+public static bool operator <(Memory a, Memory b) => a.Bytes < b.Bytes;
+public static bool operator <=(Memory a, Memory b) => a.Bytes <= b.Bytes;
+public static bool operator >(Memory a, Memory b) => a.Bytes > b.Bytes;
+public static bool operator >=(Memory a, Memory b) => a.Bytes >= b.Bytes;
+public int CompareTo(Memory other) => this < other ? -1 : this > other ? 1 : 0;
+}
+public static partial class Intrinsics {
+public static int CompareTo(this Memory self, Memory other) => self < other ? -1 : self > other ? 1 : 0;
+public static IArray<int> CompareTo(this IArray<Memory> self, IArray<Memory> other) => self.Zip(other, (a,b) => a.CompareTo(b));
+public static bool LessThan(this Memory a, Memory b) => a < b;
+public static IArray<bool> LessThan(this IArray<Memory> self, IArray<Memory> other) => self.Zip(other, (a,b) => a < b);
+public static bool LessThanOrEquals(this Memory a, Memory b) => a <= b;
+public static IArray<bool> LessThanOrEquals(this IArray<Memory> self, IArray<Memory> other) => self.Zip(other, (a,b) => a <= b);
+public static bool GreaterThan(this Memory a, Memory b) => a > b;
+public static IArray<bool> GreaterThan(this IArray<Memory> self, IArray<Memory> other) => self.Zip(other, (a,b) => a > b);
+public static bool GreaterThanOrEquals(this Memory a, Memory b) => a >= b;
+public static IArray<bool> GreaterThanOrEquals(this IArray<Memory> self, IArray<Memory> other) => self.Zip(other, (a,b) => a >= b);
+public static Memory Default(this Memory _) => default(Memory);
+public static Memory Zero(this Memory _) => Memory.Zero;
+public static Memory One(this Memory _) => Memory.One;
+public static double ToDouble(this Memory self) => self;
+public static Memory MinValue(this Memory _) => Memory.MinValue;
+public static Memory MaxValue(this Memory _) => Memory.MaxValue;
+}
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public partial struct Frequency
+{
+public Frequency(double hertz) => (Hertz) = (hertz);
+public static Frequency Create(double hertz) => new Frequency(hertz);
+public const string Units = nameof(Hertz);
+public double Hertz { get; }
+public static implicit operator Frequency(double value) => new Frequency(value);
+public static implicit operator double(Frequency value) => value.Hertz;
+public override string ToString() => $"{{ \"Hertz\" : { Hertz } }}";
+public override bool Equals(object other) => other is Frequency typedOther && this == typedOther;
+public override int GetHashCode() => (Hertz).GetHashCode();
+public static readonly Frequency Default = default;
+public static Frequency Zero = new Frequency(Default.Hertz.Zero());
+public static Frequency One = new Frequency(Default.Hertz.One());
+public static Frequency MinValue = new Frequency(Default.Hertz.MinValue());
+public static Frequency MaxValue = new Frequency(Default.Hertz.MaxValue());
+public static bool operator ==(Frequency a, Frequency b) => (a.Hertz == b.Hertz);
+public static bool operator !=(Frequency a, Frequency b) => (a.Hertz != b.Hertz);
+public Frequency WithHertz(double value) => new Frequency(value);
+public static Frequency operator +(Frequency a, Frequency b) => new Frequency(a.Hertz + b.Hertz);
+public static Frequency operator +(double a, Frequency b) => new Frequency(a + b.Hertz);
+public static Frequency operator +(Frequency a, double b) => new Frequency(a.Hertz + b);
+public static Frequency operator -(Frequency a, Frequency b) => new Frequency(a.Hertz - b.Hertz);
+public static Frequency operator -(double a, Frequency b) => new Frequency(a - b.Hertz);
+public static Frequency operator -(Frequency a, double b) => new Frequency(a.Hertz - b);
+public static Frequency operator *(Frequency a, double  b) => new Frequency(a.Hertz * b);
+public static Frequency operator *(double  a, Frequency b) => new Frequency(a * b.Hertz);
+public static Frequency operator /(Frequency a, double  b) => new Frequency(a.Hertz / b);
+public static Frequency operator /(double  a, Frequency b) => new Frequency(a / b.Hertz);
+public static Frequency operator %(Frequency a, double  b) => new Frequency(a.Hertz % b);
+public static Frequency operator %(double  a, Frequency b) => new Frequency(a % b.Hertz);
+public static Frequency operator -(Frequency a) => new Frequency(- a.Hertz);
+public static bool operator <(Frequency a, Frequency b) => a.Hertz < b.Hertz;
+public static bool operator <=(Frequency a, Frequency b) => a.Hertz <= b.Hertz;
+public static bool operator >(Frequency a, Frequency b) => a.Hertz > b.Hertz;
+public static bool operator >=(Frequency a, Frequency b) => a.Hertz >= b.Hertz;
+public int CompareTo(Frequency other) => this < other ? -1 : this > other ? 1 : 0;
+}
+public static partial class Intrinsics {
+public static int CompareTo(this Frequency self, Frequency other) => self < other ? -1 : self > other ? 1 : 0;
+public static IArray<int> CompareTo(this IArray<Frequency> self, IArray<Frequency> other) => self.Zip(other, (a,b) => a.CompareTo(b));
+public static bool LessThan(this Frequency a, Frequency b) => a < b;
+public static IArray<bool> LessThan(this IArray<Frequency> self, IArray<Frequency> other) => self.Zip(other, (a,b) => a < b);
+public static bool LessThanOrEquals(this Frequency a, Frequency b) => a <= b;
+public static IArray<bool> LessThanOrEquals(this IArray<Frequency> self, IArray<Frequency> other) => self.Zip(other, (a,b) => a <= b);
+public static bool GreaterThan(this Frequency a, Frequency b) => a > b;
+public static IArray<bool> GreaterThan(this IArray<Frequency> self, IArray<Frequency> other) => self.Zip(other, (a,b) => a > b);
+public static bool GreaterThanOrEquals(this Frequency a, Frequency b) => a >= b;
+public static IArray<bool> GreaterThanOrEquals(this IArray<Frequency> self, IArray<Frequency> other) => self.Zip(other, (a,b) => a >= b);
+public static Frequency Default(this Frequency _) => default(Frequency);
+public static Frequency Zero(this Frequency _) => Frequency.Zero;
+public static Frequency One(this Frequency _) => Frequency.One;
+public static double ToDouble(this Frequency self) => self;
+public static Frequency MinValue(this Frequency _) => Frequency.MinValue;
+public static Frequency MaxValue(this Frequency _) => Frequency.MaxValue;
+}
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public partial struct Loudness
+{
+public Loudness(double decibels) => (Decibels) = (decibels);
+public static Loudness Create(double decibels) => new Loudness(decibels);
+public const string Units = nameof(Decibels);
+public double Decibels { get; }
+public static implicit operator Loudness(double value) => new Loudness(value);
+public static implicit operator double(Loudness value) => value.Decibels;
+public override string ToString() => $"{{ \"Decibels\" : { Decibels } }}";
+public override bool Equals(object other) => other is Loudness typedOther && this == typedOther;
+public override int GetHashCode() => (Decibels).GetHashCode();
+public static readonly Loudness Default = default;
+public static Loudness Zero = new Loudness(Default.Decibels.Zero());
+public static Loudness One = new Loudness(Default.Decibels.One());
+public static Loudness MinValue = new Loudness(Default.Decibels.MinValue());
+public static Loudness MaxValue = new Loudness(Default.Decibels.MaxValue());
+public static bool operator ==(Loudness a, Loudness b) => (a.Decibels == b.Decibels);
+public static bool operator !=(Loudness a, Loudness b) => (a.Decibels != b.Decibels);
+public Loudness WithDecibels(double value) => new Loudness(value);
+public static Loudness operator +(Loudness a, Loudness b) => new Loudness(a.Decibels + b.Decibels);
+public static Loudness operator +(double a, Loudness b) => new Loudness(a + b.Decibels);
+public static Loudness operator +(Loudness a, double b) => new Loudness(a.Decibels + b);
+public static Loudness operator -(Loudness a, Loudness b) => new Loudness(a.Decibels - b.Decibels);
+public static Loudness operator -(double a, Loudness b) => new Loudness(a - b.Decibels);
+public static Loudness operator -(Loudness a, double b) => new Loudness(a.Decibels - b);
+public static Loudness operator *(Loudness a, double  b) => new Loudness(a.Decibels * b);
+public static Loudness operator *(double  a, Loudness b) => new Loudness(a * b.Decibels);
+public static Loudness operator /(Loudness a, double  b) => new Loudness(a.Decibels / b);
+public static Loudness operator /(double  a, Loudness b) => new Loudness(a / b.Decibels);
+public static Loudness operator %(Loudness a, double  b) => new Loudness(a.Decibels % b);
+public static Loudness operator %(double  a, Loudness b) => new Loudness(a % b.Decibels);
+public static Loudness operator -(Loudness a) => new Loudness(- a.Decibels);
+public static bool operator <(Loudness a, Loudness b) => a.Decibels < b.Decibels;
+public static bool operator <=(Loudness a, Loudness b) => a.Decibels <= b.Decibels;
+public static bool operator >(Loudness a, Loudness b) => a.Decibels > b.Decibels;
+public static bool operator >=(Loudness a, Loudness b) => a.Decibels >= b.Decibels;
+public int CompareTo(Loudness other) => this < other ? -1 : this > other ? 1 : 0;
+}
+public static partial class Intrinsics {
+public static int CompareTo(this Loudness self, Loudness other) => self < other ? -1 : self > other ? 1 : 0;
+public static IArray<int> CompareTo(this IArray<Loudness> self, IArray<Loudness> other) => self.Zip(other, (a,b) => a.CompareTo(b));
+public static bool LessThan(this Loudness a, Loudness b) => a < b;
+public static IArray<bool> LessThan(this IArray<Loudness> self, IArray<Loudness> other) => self.Zip(other, (a,b) => a < b);
+public static bool LessThanOrEquals(this Loudness a, Loudness b) => a <= b;
+public static IArray<bool> LessThanOrEquals(this IArray<Loudness> self, IArray<Loudness> other) => self.Zip(other, (a,b) => a <= b);
+public static bool GreaterThan(this Loudness a, Loudness b) => a > b;
+public static IArray<bool> GreaterThan(this IArray<Loudness> self, IArray<Loudness> other) => self.Zip(other, (a,b) => a > b);
+public static bool GreaterThanOrEquals(this Loudness a, Loudness b) => a >= b;
+public static IArray<bool> GreaterThanOrEquals(this IArray<Loudness> self, IArray<Loudness> other) => self.Zip(other, (a,b) => a >= b);
+public static Loudness Default(this Loudness _) => default(Loudness);
+public static Loudness Zero(this Loudness _) => Loudness.Zero;
+public static Loudness One(this Loudness _) => Loudness.One;
+public static double ToDouble(this Loudness self) => self;
+public static Loudness MinValue(this Loudness _) => Loudness.MinValue;
+public static Loudness MaxValue(this Loudness _) => Loudness.MaxValue;
+}
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public partial struct LuminousIntensity
+{
+public LuminousIntensity(double candelas) => (Candelas) = (candelas);
+public static LuminousIntensity Create(double candelas) => new LuminousIntensity(candelas);
+public const string Units = nameof(Candelas);
+public double Candelas { get; }
+public static implicit operator LuminousIntensity(double value) => new LuminousIntensity(value);
+public static implicit operator double(LuminousIntensity value) => value.Candelas;
+public override string ToString() => $"{{ \"Candelas\" : { Candelas } }}";
+public override bool Equals(object other) => other is LuminousIntensity typedOther && this == typedOther;
+public override int GetHashCode() => (Candelas).GetHashCode();
+public static readonly LuminousIntensity Default = default;
+public static LuminousIntensity Zero = new LuminousIntensity(Default.Candelas.Zero());
+public static LuminousIntensity One = new LuminousIntensity(Default.Candelas.One());
+public static LuminousIntensity MinValue = new LuminousIntensity(Default.Candelas.MinValue());
+public static LuminousIntensity MaxValue = new LuminousIntensity(Default.Candelas.MaxValue());
+public static bool operator ==(LuminousIntensity a, LuminousIntensity b) => (a.Candelas == b.Candelas);
+public static bool operator !=(LuminousIntensity a, LuminousIntensity b) => (a.Candelas != b.Candelas);
+public LuminousIntensity WithCandelas(double value) => new LuminousIntensity(value);
+public static LuminousIntensity operator +(LuminousIntensity a, LuminousIntensity b) => new LuminousIntensity(a.Candelas + b.Candelas);
+public static LuminousIntensity operator +(double a, LuminousIntensity b) => new LuminousIntensity(a + b.Candelas);
+public static LuminousIntensity operator +(LuminousIntensity a, double b) => new LuminousIntensity(a.Candelas + b);
+public static LuminousIntensity operator -(LuminousIntensity a, LuminousIntensity b) => new LuminousIntensity(a.Candelas - b.Candelas);
+public static LuminousIntensity operator -(double a, LuminousIntensity b) => new LuminousIntensity(a - b.Candelas);
+public static LuminousIntensity operator -(LuminousIntensity a, double b) => new LuminousIntensity(a.Candelas - b);
+public static LuminousIntensity operator *(LuminousIntensity a, double  b) => new LuminousIntensity(a.Candelas * b);
+public static LuminousIntensity operator *(double  a, LuminousIntensity b) => new LuminousIntensity(a * b.Candelas);
+public static LuminousIntensity operator /(LuminousIntensity a, double  b) => new LuminousIntensity(a.Candelas / b);
+public static LuminousIntensity operator /(double  a, LuminousIntensity b) => new LuminousIntensity(a / b.Candelas);
+public static LuminousIntensity operator %(LuminousIntensity a, double  b) => new LuminousIntensity(a.Candelas % b);
+public static LuminousIntensity operator %(double  a, LuminousIntensity b) => new LuminousIntensity(a % b.Candelas);
+public static LuminousIntensity operator -(LuminousIntensity a) => new LuminousIntensity(- a.Candelas);
+public static bool operator <(LuminousIntensity a, LuminousIntensity b) => a.Candelas < b.Candelas;
+public static bool operator <=(LuminousIntensity a, LuminousIntensity b) => a.Candelas <= b.Candelas;
+public static bool operator >(LuminousIntensity a, LuminousIntensity b) => a.Candelas > b.Candelas;
+public static bool operator >=(LuminousIntensity a, LuminousIntensity b) => a.Candelas >= b.Candelas;
+public int CompareTo(LuminousIntensity other) => this < other ? -1 : this > other ? 1 : 0;
+}
+public static partial class Intrinsics {
+public static int CompareTo(this LuminousIntensity self, LuminousIntensity other) => self < other ? -1 : self > other ? 1 : 0;
+public static IArray<int> CompareTo(this IArray<LuminousIntensity> self, IArray<LuminousIntensity> other) => self.Zip(other, (a,b) => a.CompareTo(b));
+public static bool LessThan(this LuminousIntensity a, LuminousIntensity b) => a < b;
+public static IArray<bool> LessThan(this IArray<LuminousIntensity> self, IArray<LuminousIntensity> other) => self.Zip(other, (a,b) => a < b);
+public static bool LessThanOrEquals(this LuminousIntensity a, LuminousIntensity b) => a <= b;
+public static IArray<bool> LessThanOrEquals(this IArray<LuminousIntensity> self, IArray<LuminousIntensity> other) => self.Zip(other, (a,b) => a <= b);
+public static bool GreaterThan(this LuminousIntensity a, LuminousIntensity b) => a > b;
+public static IArray<bool> GreaterThan(this IArray<LuminousIntensity> self, IArray<LuminousIntensity> other) => self.Zip(other, (a,b) => a > b);
+public static bool GreaterThanOrEquals(this LuminousIntensity a, LuminousIntensity b) => a >= b;
+public static IArray<bool> GreaterThanOrEquals(this IArray<LuminousIntensity> self, IArray<LuminousIntensity> other) => self.Zip(other, (a,b) => a >= b);
+public static LuminousIntensity Default(this LuminousIntensity _) => default(LuminousIntensity);
+public static LuminousIntensity Zero(this LuminousIntensity _) => LuminousIntensity.Zero;
+public static LuminousIntensity One(this LuminousIntensity _) => LuminousIntensity.One;
+public static double ToDouble(this LuminousIntensity self) => self;
+public static LuminousIntensity MinValue(this LuminousIntensity _) => LuminousIntensity.MinValue;
+public static LuminousIntensity MaxValue(this LuminousIntensity _) => LuminousIntensity.MaxValue;
+}
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public partial struct ElectricPotential
+{
+public ElectricPotential(double volts) => (Volts) = (volts);
+public static ElectricPotential Create(double volts) => new ElectricPotential(volts);
+public const string Units = nameof(Volts);
+public double Volts { get; }
+public static implicit operator ElectricPotential(double value) => new ElectricPotential(value);
+public static implicit operator double(ElectricPotential value) => value.Volts;
+public override string ToString() => $"{{ \"Volts\" : { Volts } }}";
+public override bool Equals(object other) => other is ElectricPotential typedOther && this == typedOther;
+public override int GetHashCode() => (Volts).GetHashCode();
+public static readonly ElectricPotential Default = default;
+public static ElectricPotential Zero = new ElectricPotential(Default.Volts.Zero());
+public static ElectricPotential One = new ElectricPotential(Default.Volts.One());
+public static ElectricPotential MinValue = new ElectricPotential(Default.Volts.MinValue());
+public static ElectricPotential MaxValue = new ElectricPotential(Default.Volts.MaxValue());
+public static bool operator ==(ElectricPotential a, ElectricPotential b) => (a.Volts == b.Volts);
+public static bool operator !=(ElectricPotential a, ElectricPotential b) => (a.Volts != b.Volts);
+public ElectricPotential WithVolts(double value) => new ElectricPotential(value);
+public static ElectricPotential operator +(ElectricPotential a, ElectricPotential b) => new ElectricPotential(a.Volts + b.Volts);
+public static ElectricPotential operator +(double a, ElectricPotential b) => new ElectricPotential(a + b.Volts);
+public static ElectricPotential operator +(ElectricPotential a, double b) => new ElectricPotential(a.Volts + b);
+public static ElectricPotential operator -(ElectricPotential a, ElectricPotential b) => new ElectricPotential(a.Volts - b.Volts);
+public static ElectricPotential operator -(double a, ElectricPotential b) => new ElectricPotential(a - b.Volts);
+public static ElectricPotential operator -(ElectricPotential a, double b) => new ElectricPotential(a.Volts - b);
+public static ElectricPotential operator *(ElectricPotential a, double  b) => new ElectricPotential(a.Volts * b);
+public static ElectricPotential operator *(double  a, ElectricPotential b) => new ElectricPotential(a * b.Volts);
+public static ElectricPotential operator /(ElectricPotential a, double  b) => new ElectricPotential(a.Volts / b);
+public static ElectricPotential operator /(double  a, ElectricPotential b) => new ElectricPotential(a / b.Volts);
+public static ElectricPotential operator %(ElectricPotential a, double  b) => new ElectricPotential(a.Volts % b);
+public static ElectricPotential operator %(double  a, ElectricPotential b) => new ElectricPotential(a % b.Volts);
+public static ElectricPotential operator -(ElectricPotential a) => new ElectricPotential(- a.Volts);
+public static bool operator <(ElectricPotential a, ElectricPotential b) => a.Volts < b.Volts;
+public static bool operator <=(ElectricPotential a, ElectricPotential b) => a.Volts <= b.Volts;
+public static bool operator >(ElectricPotential a, ElectricPotential b) => a.Volts > b.Volts;
+public static bool operator >=(ElectricPotential a, ElectricPotential b) => a.Volts >= b.Volts;
+public int CompareTo(ElectricPotential other) => this < other ? -1 : this > other ? 1 : 0;
+}
+public static partial class Intrinsics {
+public static int CompareTo(this ElectricPotential self, ElectricPotential other) => self < other ? -1 : self > other ? 1 : 0;
+public static IArray<int> CompareTo(this IArray<ElectricPotential> self, IArray<ElectricPotential> other) => self.Zip(other, (a,b) => a.CompareTo(b));
+public static bool LessThan(this ElectricPotential a, ElectricPotential b) => a < b;
+public static IArray<bool> LessThan(this IArray<ElectricPotential> self, IArray<ElectricPotential> other) => self.Zip(other, (a,b) => a < b);
+public static bool LessThanOrEquals(this ElectricPotential a, ElectricPotential b) => a <= b;
+public static IArray<bool> LessThanOrEquals(this IArray<ElectricPotential> self, IArray<ElectricPotential> other) => self.Zip(other, (a,b) => a <= b);
+public static bool GreaterThan(this ElectricPotential a, ElectricPotential b) => a > b;
+public static IArray<bool> GreaterThan(this IArray<ElectricPotential> self, IArray<ElectricPotential> other) => self.Zip(other, (a,b) => a > b);
+public static bool GreaterThanOrEquals(this ElectricPotential a, ElectricPotential b) => a >= b;
+public static IArray<bool> GreaterThanOrEquals(this IArray<ElectricPotential> self, IArray<ElectricPotential> other) => self.Zip(other, (a,b) => a >= b);
+public static ElectricPotential Default(this ElectricPotential _) => default(ElectricPotential);
+public static ElectricPotential Zero(this ElectricPotential _) => ElectricPotential.Zero;
+public static ElectricPotential One(this ElectricPotential _) => ElectricPotential.One;
+public static double ToDouble(this ElectricPotential self) => self;
+public static ElectricPotential MinValue(this ElectricPotential _) => ElectricPotential.MinValue;
+public static ElectricPotential MaxValue(this ElectricPotential _) => ElectricPotential.MaxValue;
+}
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public partial struct ElectricCharge
+{
+public ElectricCharge(double columbs) => (Columbs) = (columbs);
+public static ElectricCharge Create(double columbs) => new ElectricCharge(columbs);
+public const string Units = nameof(Columbs);
+public double Columbs { get; }
+public static implicit operator ElectricCharge(double value) => new ElectricCharge(value);
+public static implicit operator double(ElectricCharge value) => value.Columbs;
+public override string ToString() => $"{{ \"Columbs\" : { Columbs } }}";
+public override bool Equals(object other) => other is ElectricCharge typedOther && this == typedOther;
+public override int GetHashCode() => (Columbs).GetHashCode();
+public static readonly ElectricCharge Default = default;
+public static ElectricCharge Zero = new ElectricCharge(Default.Columbs.Zero());
+public static ElectricCharge One = new ElectricCharge(Default.Columbs.One());
+public static ElectricCharge MinValue = new ElectricCharge(Default.Columbs.MinValue());
+public static ElectricCharge MaxValue = new ElectricCharge(Default.Columbs.MaxValue());
+public static bool operator ==(ElectricCharge a, ElectricCharge b) => (a.Columbs == b.Columbs);
+public static bool operator !=(ElectricCharge a, ElectricCharge b) => (a.Columbs != b.Columbs);
+public ElectricCharge WithColumbs(double value) => new ElectricCharge(value);
+public static ElectricCharge operator +(ElectricCharge a, ElectricCharge b) => new ElectricCharge(a.Columbs + b.Columbs);
+public static ElectricCharge operator +(double a, ElectricCharge b) => new ElectricCharge(a + b.Columbs);
+public static ElectricCharge operator +(ElectricCharge a, double b) => new ElectricCharge(a.Columbs + b);
+public static ElectricCharge operator -(ElectricCharge a, ElectricCharge b) => new ElectricCharge(a.Columbs - b.Columbs);
+public static ElectricCharge operator -(double a, ElectricCharge b) => new ElectricCharge(a - b.Columbs);
+public static ElectricCharge operator -(ElectricCharge a, double b) => new ElectricCharge(a.Columbs - b);
+public static ElectricCharge operator *(ElectricCharge a, double  b) => new ElectricCharge(a.Columbs * b);
+public static ElectricCharge operator *(double  a, ElectricCharge b) => new ElectricCharge(a * b.Columbs);
+public static ElectricCharge operator /(ElectricCharge a, double  b) => new ElectricCharge(a.Columbs / b);
+public static ElectricCharge operator /(double  a, ElectricCharge b) => new ElectricCharge(a / b.Columbs);
+public static ElectricCharge operator %(ElectricCharge a, double  b) => new ElectricCharge(a.Columbs % b);
+public static ElectricCharge operator %(double  a, ElectricCharge b) => new ElectricCharge(a % b.Columbs);
+public static ElectricCharge operator -(ElectricCharge a) => new ElectricCharge(- a.Columbs);
+public static bool operator <(ElectricCharge a, ElectricCharge b) => a.Columbs < b.Columbs;
+public static bool operator <=(ElectricCharge a, ElectricCharge b) => a.Columbs <= b.Columbs;
+public static bool operator >(ElectricCharge a, ElectricCharge b) => a.Columbs > b.Columbs;
+public static bool operator >=(ElectricCharge a, ElectricCharge b) => a.Columbs >= b.Columbs;
+public int CompareTo(ElectricCharge other) => this < other ? -1 : this > other ? 1 : 0;
+}
+public static partial class Intrinsics {
+public static int CompareTo(this ElectricCharge self, ElectricCharge other) => self < other ? -1 : self > other ? 1 : 0;
+public static IArray<int> CompareTo(this IArray<ElectricCharge> self, IArray<ElectricCharge> other) => self.Zip(other, (a,b) => a.CompareTo(b));
+public static bool LessThan(this ElectricCharge a, ElectricCharge b) => a < b;
+public static IArray<bool> LessThan(this IArray<ElectricCharge> self, IArray<ElectricCharge> other) => self.Zip(other, (a,b) => a < b);
+public static bool LessThanOrEquals(this ElectricCharge a, ElectricCharge b) => a <= b;
+public static IArray<bool> LessThanOrEquals(this IArray<ElectricCharge> self, IArray<ElectricCharge> other) => self.Zip(other, (a,b) => a <= b);
+public static bool GreaterThan(this ElectricCharge a, ElectricCharge b) => a > b;
+public static IArray<bool> GreaterThan(this IArray<ElectricCharge> self, IArray<ElectricCharge> other) => self.Zip(other, (a,b) => a > b);
+public static bool GreaterThanOrEquals(this ElectricCharge a, ElectricCharge b) => a >= b;
+public static IArray<bool> GreaterThanOrEquals(this IArray<ElectricCharge> self, IArray<ElectricCharge> other) => self.Zip(other, (a,b) => a >= b);
+public static ElectricCharge Default(this ElectricCharge _) => default(ElectricCharge);
+public static ElectricCharge Zero(this ElectricCharge _) => ElectricCharge.Zero;
+public static ElectricCharge One(this ElectricCharge _) => ElectricCharge.One;
+public static double ToDouble(this ElectricCharge self) => self;
+public static ElectricCharge MinValue(this ElectricCharge _) => ElectricCharge.MinValue;
+public static ElectricCharge MaxValue(this ElectricCharge _) => ElectricCharge.MaxValue;
+}
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public partial struct ElectricCurrent
+{
+public ElectricCurrent(double amperes) => (Amperes) = (amperes);
+public static ElectricCurrent Create(double amperes) => new ElectricCurrent(amperes);
+public const string Units = nameof(Amperes);
+public double Amperes { get; }
+public static implicit operator ElectricCurrent(double value) => new ElectricCurrent(value);
+public static implicit operator double(ElectricCurrent value) => value.Amperes;
+public override string ToString() => $"{{ \"Amperes\" : { Amperes } }}";
+public override bool Equals(object other) => other is ElectricCurrent typedOther && this == typedOther;
+public override int GetHashCode() => (Amperes).GetHashCode();
+public static readonly ElectricCurrent Default = default;
+public static ElectricCurrent Zero = new ElectricCurrent(Default.Amperes.Zero());
+public static ElectricCurrent One = new ElectricCurrent(Default.Amperes.One());
+public static ElectricCurrent MinValue = new ElectricCurrent(Default.Amperes.MinValue());
+public static ElectricCurrent MaxValue = new ElectricCurrent(Default.Amperes.MaxValue());
+public static bool operator ==(ElectricCurrent a, ElectricCurrent b) => (a.Amperes == b.Amperes);
+public static bool operator !=(ElectricCurrent a, ElectricCurrent b) => (a.Amperes != b.Amperes);
+public ElectricCurrent WithAmperes(double value) => new ElectricCurrent(value);
+public static ElectricCurrent operator +(ElectricCurrent a, ElectricCurrent b) => new ElectricCurrent(a.Amperes + b.Amperes);
+public static ElectricCurrent operator +(double a, ElectricCurrent b) => new ElectricCurrent(a + b.Amperes);
+public static ElectricCurrent operator +(ElectricCurrent a, double b) => new ElectricCurrent(a.Amperes + b);
+public static ElectricCurrent operator -(ElectricCurrent a, ElectricCurrent b) => new ElectricCurrent(a.Amperes - b.Amperes);
+public static ElectricCurrent operator -(double a, ElectricCurrent b) => new ElectricCurrent(a - b.Amperes);
+public static ElectricCurrent operator -(ElectricCurrent a, double b) => new ElectricCurrent(a.Amperes - b);
+public static ElectricCurrent operator *(ElectricCurrent a, double  b) => new ElectricCurrent(a.Amperes * b);
+public static ElectricCurrent operator *(double  a, ElectricCurrent b) => new ElectricCurrent(a * b.Amperes);
+public static ElectricCurrent operator /(ElectricCurrent a, double  b) => new ElectricCurrent(a.Amperes / b);
+public static ElectricCurrent operator /(double  a, ElectricCurrent b) => new ElectricCurrent(a / b.Amperes);
+public static ElectricCurrent operator %(ElectricCurrent a, double  b) => new ElectricCurrent(a.Amperes % b);
+public static ElectricCurrent operator %(double  a, ElectricCurrent b) => new ElectricCurrent(a % b.Amperes);
+public static ElectricCurrent operator -(ElectricCurrent a) => new ElectricCurrent(- a.Amperes);
+public static bool operator <(ElectricCurrent a, ElectricCurrent b) => a.Amperes < b.Amperes;
+public static bool operator <=(ElectricCurrent a, ElectricCurrent b) => a.Amperes <= b.Amperes;
+public static bool operator >(ElectricCurrent a, ElectricCurrent b) => a.Amperes > b.Amperes;
+public static bool operator >=(ElectricCurrent a, ElectricCurrent b) => a.Amperes >= b.Amperes;
+public int CompareTo(ElectricCurrent other) => this < other ? -1 : this > other ? 1 : 0;
+}
+public static partial class Intrinsics {
+public static int CompareTo(this ElectricCurrent self, ElectricCurrent other) => self < other ? -1 : self > other ? 1 : 0;
+public static IArray<int> CompareTo(this IArray<ElectricCurrent> self, IArray<ElectricCurrent> other) => self.Zip(other, (a,b) => a.CompareTo(b));
+public static bool LessThan(this ElectricCurrent a, ElectricCurrent b) => a < b;
+public static IArray<bool> LessThan(this IArray<ElectricCurrent> self, IArray<ElectricCurrent> other) => self.Zip(other, (a,b) => a < b);
+public static bool LessThanOrEquals(this ElectricCurrent a, ElectricCurrent b) => a <= b;
+public static IArray<bool> LessThanOrEquals(this IArray<ElectricCurrent> self, IArray<ElectricCurrent> other) => self.Zip(other, (a,b) => a <= b);
+public static bool GreaterThan(this ElectricCurrent a, ElectricCurrent b) => a > b;
+public static IArray<bool> GreaterThan(this IArray<ElectricCurrent> self, IArray<ElectricCurrent> other) => self.Zip(other, (a,b) => a > b);
+public static bool GreaterThanOrEquals(this ElectricCurrent a, ElectricCurrent b) => a >= b;
+public static IArray<bool> GreaterThanOrEquals(this IArray<ElectricCurrent> self, IArray<ElectricCurrent> other) => self.Zip(other, (a,b) => a >= b);
+public static ElectricCurrent Default(this ElectricCurrent _) => default(ElectricCurrent);
+public static ElectricCurrent Zero(this ElectricCurrent _) => ElectricCurrent.Zero;
+public static ElectricCurrent One(this ElectricCurrent _) => ElectricCurrent.One;
+public static double ToDouble(this ElectricCurrent self) => self;
+public static ElectricCurrent MinValue(this ElectricCurrent _) => ElectricCurrent.MinValue;
+public static ElectricCurrent MaxValue(this ElectricCurrent _) => ElectricCurrent.MaxValue;
+}
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public partial struct ElectricResistance
+{
+public ElectricResistance(double ohms) => (Ohms) = (ohms);
+public static ElectricResistance Create(double ohms) => new ElectricResistance(ohms);
+public const string Units = nameof(Ohms);
+public double Ohms { get; }
+public static implicit operator ElectricResistance(double value) => new ElectricResistance(value);
+public static implicit operator double(ElectricResistance value) => value.Ohms;
+public override string ToString() => $"{{ \"Ohms\" : { Ohms } }}";
+public override bool Equals(object other) => other is ElectricResistance typedOther && this == typedOther;
+public override int GetHashCode() => (Ohms).GetHashCode();
+public static readonly ElectricResistance Default = default;
+public static ElectricResistance Zero = new ElectricResistance(Default.Ohms.Zero());
+public static ElectricResistance One = new ElectricResistance(Default.Ohms.One());
+public static ElectricResistance MinValue = new ElectricResistance(Default.Ohms.MinValue());
+public static ElectricResistance MaxValue = new ElectricResistance(Default.Ohms.MaxValue());
+public static bool operator ==(ElectricResistance a, ElectricResistance b) => (a.Ohms == b.Ohms);
+public static bool operator !=(ElectricResistance a, ElectricResistance b) => (a.Ohms != b.Ohms);
+public ElectricResistance WithOhms(double value) => new ElectricResistance(value);
+public static ElectricResistance operator +(ElectricResistance a, ElectricResistance b) => new ElectricResistance(a.Ohms + b.Ohms);
+public static ElectricResistance operator +(double a, ElectricResistance b) => new ElectricResistance(a + b.Ohms);
+public static ElectricResistance operator +(ElectricResistance a, double b) => new ElectricResistance(a.Ohms + b);
+public static ElectricResistance operator -(ElectricResistance a, ElectricResistance b) => new ElectricResistance(a.Ohms - b.Ohms);
+public static ElectricResistance operator -(double a, ElectricResistance b) => new ElectricResistance(a - b.Ohms);
+public static ElectricResistance operator -(ElectricResistance a, double b) => new ElectricResistance(a.Ohms - b);
+public static ElectricResistance operator *(ElectricResistance a, double  b) => new ElectricResistance(a.Ohms * b);
+public static ElectricResistance operator *(double  a, ElectricResistance b) => new ElectricResistance(a * b.Ohms);
+public static ElectricResistance operator /(ElectricResistance a, double  b) => new ElectricResistance(a.Ohms / b);
+public static ElectricResistance operator /(double  a, ElectricResistance b) => new ElectricResistance(a / b.Ohms);
+public static ElectricResistance operator %(ElectricResistance a, double  b) => new ElectricResistance(a.Ohms % b);
+public static ElectricResistance operator %(double  a, ElectricResistance b) => new ElectricResistance(a % b.Ohms);
+public static ElectricResistance operator -(ElectricResistance a) => new ElectricResistance(- a.Ohms);
+public static bool operator <(ElectricResistance a, ElectricResistance b) => a.Ohms < b.Ohms;
+public static bool operator <=(ElectricResistance a, ElectricResistance b) => a.Ohms <= b.Ohms;
+public static bool operator >(ElectricResistance a, ElectricResistance b) => a.Ohms > b.Ohms;
+public static bool operator >=(ElectricResistance a, ElectricResistance b) => a.Ohms >= b.Ohms;
+public int CompareTo(ElectricResistance other) => this < other ? -1 : this > other ? 1 : 0;
+}
+public static partial class Intrinsics {
+public static int CompareTo(this ElectricResistance self, ElectricResistance other) => self < other ? -1 : self > other ? 1 : 0;
+public static IArray<int> CompareTo(this IArray<ElectricResistance> self, IArray<ElectricResistance> other) => self.Zip(other, (a,b) => a.CompareTo(b));
+public static bool LessThan(this ElectricResistance a, ElectricResistance b) => a < b;
+public static IArray<bool> LessThan(this IArray<ElectricResistance> self, IArray<ElectricResistance> other) => self.Zip(other, (a,b) => a < b);
+public static bool LessThanOrEquals(this ElectricResistance a, ElectricResistance b) => a <= b;
+public static IArray<bool> LessThanOrEquals(this IArray<ElectricResistance> self, IArray<ElectricResistance> other) => self.Zip(other, (a,b) => a <= b);
+public static bool GreaterThan(this ElectricResistance a, ElectricResistance b) => a > b;
+public static IArray<bool> GreaterThan(this IArray<ElectricResistance> self, IArray<ElectricResistance> other) => self.Zip(other, (a,b) => a > b);
+public static bool GreaterThanOrEquals(this ElectricResistance a, ElectricResistance b) => a >= b;
+public static IArray<bool> GreaterThanOrEquals(this IArray<ElectricResistance> self, IArray<ElectricResistance> other) => self.Zip(other, (a,b) => a >= b);
+public static ElectricResistance Default(this ElectricResistance _) => default(ElectricResistance);
+public static ElectricResistance Zero(this ElectricResistance _) => ElectricResistance.Zero;
+public static ElectricResistance One(this ElectricResistance _) => ElectricResistance.One;
+public static double ToDouble(this ElectricResistance self) => self;
+public static ElectricResistance MinValue(this ElectricResistance _) => ElectricResistance.MinValue;
+public static ElectricResistance MaxValue(this ElectricResistance _) => ElectricResistance.MaxValue;
+}
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public partial struct Power
+{
+public Power(double watts) => (Watts) = (watts);
+public static Power Create(double watts) => new Power(watts);
+public const string Units = nameof(Watts);
+public double Watts { get; }
+public static implicit operator Power(double value) => new Power(value);
+public static implicit operator double(Power value) => value.Watts;
+public override string ToString() => $"{{ \"Watts\" : { Watts } }}";
+public override bool Equals(object other) => other is Power typedOther && this == typedOther;
+public override int GetHashCode() => (Watts).GetHashCode();
+public static readonly Power Default = default;
+public static Power Zero = new Power(Default.Watts.Zero());
+public static Power One = new Power(Default.Watts.One());
+public static Power MinValue = new Power(Default.Watts.MinValue());
+public static Power MaxValue = new Power(Default.Watts.MaxValue());
+public static bool operator ==(Power a, Power b) => (a.Watts == b.Watts);
+public static bool operator !=(Power a, Power b) => (a.Watts != b.Watts);
+public Power WithWatts(double value) => new Power(value);
+public static Power operator +(Power a, Power b) => new Power(a.Watts + b.Watts);
+public static Power operator +(double a, Power b) => new Power(a + b.Watts);
+public static Power operator +(Power a, double b) => new Power(a.Watts + b);
+public static Power operator -(Power a, Power b) => new Power(a.Watts - b.Watts);
+public static Power operator -(double a, Power b) => new Power(a - b.Watts);
+public static Power operator -(Power a, double b) => new Power(a.Watts - b);
+public static Power operator *(Power a, double  b) => new Power(a.Watts * b);
+public static Power operator *(double  a, Power b) => new Power(a * b.Watts);
+public static Power operator /(Power a, double  b) => new Power(a.Watts / b);
+public static Power operator /(double  a, Power b) => new Power(a / b.Watts);
+public static Power operator %(Power a, double  b) => new Power(a.Watts % b);
+public static Power operator %(double  a, Power b) => new Power(a % b.Watts);
+public static Power operator -(Power a) => new Power(- a.Watts);
+public static bool operator <(Power a, Power b) => a.Watts < b.Watts;
+public static bool operator <=(Power a, Power b) => a.Watts <= b.Watts;
+public static bool operator >(Power a, Power b) => a.Watts > b.Watts;
+public static bool operator >=(Power a, Power b) => a.Watts >= b.Watts;
+public int CompareTo(Power other) => this < other ? -1 : this > other ? 1 : 0;
+}
+public static partial class Intrinsics {
+public static int CompareTo(this Power self, Power other) => self < other ? -1 : self > other ? 1 : 0;
+public static IArray<int> CompareTo(this IArray<Power> self, IArray<Power> other) => self.Zip(other, (a,b) => a.CompareTo(b));
+public static bool LessThan(this Power a, Power b) => a < b;
+public static IArray<bool> LessThan(this IArray<Power> self, IArray<Power> other) => self.Zip(other, (a,b) => a < b);
+public static bool LessThanOrEquals(this Power a, Power b) => a <= b;
+public static IArray<bool> LessThanOrEquals(this IArray<Power> self, IArray<Power> other) => self.Zip(other, (a,b) => a <= b);
+public static bool GreaterThan(this Power a, Power b) => a > b;
+public static IArray<bool> GreaterThan(this IArray<Power> self, IArray<Power> other) => self.Zip(other, (a,b) => a > b);
+public static bool GreaterThanOrEquals(this Power a, Power b) => a >= b;
+public static IArray<bool> GreaterThanOrEquals(this IArray<Power> self, IArray<Power> other) => self.Zip(other, (a,b) => a >= b);
+public static Power Default(this Power _) => default(Power);
+public static Power Zero(this Power _) => Power.Zero;
+public static Power One(this Power _) => Power.One;
+public static double ToDouble(this Power self) => self;
+public static Power MinValue(this Power _) => Power.MinValue;
+public static Power MaxValue(this Power _) => Power.MaxValue;
+}
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public partial struct Density
+{
+public Density(double kilogramspermetercubed) => (KilogramsPerMeterCubed) = (kilogramspermetercubed);
+public static Density Create(double kilogramspermetercubed) => new Density(kilogramspermetercubed);
+public const string Units = nameof(KilogramsPerMeterCubed);
+public double KilogramsPerMeterCubed { get; }
+public static implicit operator Density(double value) => new Density(value);
+public static implicit operator double(Density value) => value.KilogramsPerMeterCubed;
+public override string ToString() => $"{{ \"KilogramsPerMeterCubed\" : { KilogramsPerMeterCubed } }}";
+public override bool Equals(object other) => other is Density typedOther && this == typedOther;
+public override int GetHashCode() => (KilogramsPerMeterCubed).GetHashCode();
+public static readonly Density Default = default;
+public static Density Zero = new Density(Default.KilogramsPerMeterCubed.Zero());
+public static Density One = new Density(Default.KilogramsPerMeterCubed.One());
+public static Density MinValue = new Density(Default.KilogramsPerMeterCubed.MinValue());
+public static Density MaxValue = new Density(Default.KilogramsPerMeterCubed.MaxValue());
+public static bool operator ==(Density a, Density b) => (a.KilogramsPerMeterCubed == b.KilogramsPerMeterCubed);
+public static bool operator !=(Density a, Density b) => (a.KilogramsPerMeterCubed != b.KilogramsPerMeterCubed);
+public Density WithKilogramsPerMeterCubed(double value) => new Density(value);
+public static Density operator +(Density a, Density b) => new Density(a.KilogramsPerMeterCubed + b.KilogramsPerMeterCubed);
+public static Density operator +(double a, Density b) => new Density(a + b.KilogramsPerMeterCubed);
+public static Density operator +(Density a, double b) => new Density(a.KilogramsPerMeterCubed + b);
+public static Density operator -(Density a, Density b) => new Density(a.KilogramsPerMeterCubed - b.KilogramsPerMeterCubed);
+public static Density operator -(double a, Density b) => new Density(a - b.KilogramsPerMeterCubed);
+public static Density operator -(Density a, double b) => new Density(a.KilogramsPerMeterCubed - b);
+public static Density operator *(Density a, double  b) => new Density(a.KilogramsPerMeterCubed * b);
+public static Density operator *(double  a, Density b) => new Density(a * b.KilogramsPerMeterCubed);
+public static Density operator /(Density a, double  b) => new Density(a.KilogramsPerMeterCubed / b);
+public static Density operator /(double  a, Density b) => new Density(a / b.KilogramsPerMeterCubed);
+public static Density operator %(Density a, double  b) => new Density(a.KilogramsPerMeterCubed % b);
+public static Density operator %(double  a, Density b) => new Density(a % b.KilogramsPerMeterCubed);
+public static Density operator -(Density a) => new Density(- a.KilogramsPerMeterCubed);
+public static bool operator <(Density a, Density b) => a.KilogramsPerMeterCubed < b.KilogramsPerMeterCubed;
+public static bool operator <=(Density a, Density b) => a.KilogramsPerMeterCubed <= b.KilogramsPerMeterCubed;
+public static bool operator >(Density a, Density b) => a.KilogramsPerMeterCubed > b.KilogramsPerMeterCubed;
+public static bool operator >=(Density a, Density b) => a.KilogramsPerMeterCubed >= b.KilogramsPerMeterCubed;
+public int CompareTo(Density other) => this < other ? -1 : this > other ? 1 : 0;
+}
+public static partial class Intrinsics {
+public static int CompareTo(this Density self, Density other) => self < other ? -1 : self > other ? 1 : 0;
+public static IArray<int> CompareTo(this IArray<Density> self, IArray<Density> other) => self.Zip(other, (a,b) => a.CompareTo(b));
+public static bool LessThan(this Density a, Density b) => a < b;
+public static IArray<bool> LessThan(this IArray<Density> self, IArray<Density> other) => self.Zip(other, (a,b) => a < b);
+public static bool LessThanOrEquals(this Density a, Density b) => a <= b;
+public static IArray<bool> LessThanOrEquals(this IArray<Density> self, IArray<Density> other) => self.Zip(other, (a,b) => a <= b);
+public static bool GreaterThan(this Density a, Density b) => a > b;
+public static IArray<bool> GreaterThan(this IArray<Density> self, IArray<Density> other) => self.Zip(other, (a,b) => a > b);
+public static bool GreaterThanOrEquals(this Density a, Density b) => a >= b;
+public static IArray<bool> GreaterThanOrEquals(this IArray<Density> self, IArray<Density> other) => self.Zip(other, (a,b) => a >= b);
+public static Density Default(this Density _) => default(Density);
+public static Density Zero(this Density _) => Density.Zero;
+public static Density One(this Density _) => Density.One;
+public static double ToDouble(this Density self) => self;
+public static Density MinValue(this Density _) => Density.MinValue;
+public static Density MaxValue(this Density _) => Density.MaxValue;
 }
 } // End namespace

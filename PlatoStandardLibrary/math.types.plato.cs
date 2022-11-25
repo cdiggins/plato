@@ -309,7 +309,7 @@ namespace Plato.__TYPES__
     }
 
     [Number]
-    class Unit 
+    class Proportion 
     {
         double Value;
     }
@@ -422,5 +422,141 @@ namespace Plato.__TYPES__
         Point Center;
         Rotation Rotation;
         Double3 Extent;
+    }
+
+    [Value]
+    class CubicBezier2D
+    {
+        Point2D A;
+        Point2D B;
+        Point2D C;
+        Point2D D;
+    }
+
+    [Value]
+    class CubicBezier
+    {
+        Point A;
+        Point B;
+        Point C;
+        Point D;
+    }
+
+    [Value]
+    class QuadraticBezier2D
+    {
+        Point2D A;
+        Point2D B;
+        Point2D C;
+    }
+
+    [Value]
+    class QuadraticBezier
+    {
+        Point A;
+        Point B;
+        Point C;
+    }
+
+    [Measure]
+    class Area
+    {
+        double MetersSquared;
+    }
+
+    [Measure]
+    class Volume
+    {
+        double MetersCubed;
+    }
+
+    [Measure]
+    class Velocity
+    {
+        double MetersPerSecond;
+    }
+
+    [Measure]
+    class Acceleration
+    {
+        double MetersPerSecondSquared;
+    }
+
+    [Measure]
+    class Force
+    {
+        double Newtons; 
+    }
+
+    [Measure]
+    class Pressure
+    {
+        double Pascals;
+    }
+
+    [Measure]
+    class Energy
+    {
+        double Joules;
+    }
+
+    [Measure]
+    class Memory
+    {
+        double Bytes;
+    }
+
+    [Measure]
+    class Frequency
+    {
+        double Hertz;
+    }
+
+    [Measure]
+    class Loudness
+    {
+        double Decibels;
+    }
+
+    [Measure]
+    class LuminousIntensity
+    {
+        double Candelas;
+    }
+
+    [Measure]
+    class ElectricPotential
+    {
+        double Volts;
+    }
+
+    [Measure]
+    class ElectricCharge
+    {
+        double Columbs;
+    }
+
+    [Measure]
+    class ElectricCurrent
+    {
+        double Amperes;
+    }
+
+    [Measure]
+    class ElectricResistance
+    {
+        double Ohms;
+    }
+
+    [Measure]
+    class Power
+    {
+        double Watts;
+    }
+
+    [Measure]
+    class Density
+    {
+        double KilogramsPerMeterCubed;
     }
 }

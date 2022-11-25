@@ -144,7 +144,11 @@ public class GpuCloner  : MonoBehaviour
         {
             InitializeBuffers();
         }
-        Graphics.DrawMeshInstancedIndirect(mesh, 0, material, bounds, argsBuffer);
+
+        if (argsBuffer != null)
+        {
+            Graphics.DrawMeshInstancedIndirect(mesh, 0, material, bounds, argsBuffer);
+        }
     }
 
     private void OnDisable()
