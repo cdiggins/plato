@@ -440,10 +440,10 @@ namespace Plato.__FUNCS__
         double CircularEaseIn(double p) => 1 - (1 - p.Pow2()).Sqrt();
         double CircularEaseOut(double p) => InvertEaseFunc(CircularEaseIn)(p);
         double CircularEaseInOut(double p) => BlendEaseFunc(CircularEaseIn, CircularEaseOut)(p);
-        double ExponentialEaseIn(double p) => p.AlmostZero() ? p : 2.0.Pow(10 * (p - 1));
+        double ExponentialEaseIn(double p) => p.AlmostZero() ? p : 2.Pow(10 * (p - 1));
         double ExponentialEaseOut(double p) => InvertEaseFunc(ExponentialEaseIn)(p);
         double ExponentialEaseInOut(double p) => BlendEaseFunc(ExponentialEaseIn, ExponentialEaseOut)(p);
-        double ElasticEaseIn(double p) => (13 * p.Quarter().Turns()) * 2.0.Pow(10 * (p - 1)).Radians().Sin();
+        double ElasticEaseIn(double p) => (13 * p.Quarter().Turns()) * 2.Pow(10 * (p - 1)).Radians().Sin();
         double ElasticEaseOut(double p) => InvertEaseFunc(ElasticEaseIn)(p);
         double ElasticEaseInOut(double p) => BlendEaseFunc(ElasticEaseIn, ElasticEaseOut)(p);
         double BackEaseIn(double p) => p.Pow3() - p * p.Half().Turns().Sin();
@@ -657,7 +657,7 @@ namespace Plato.__FUNCS__
 
         double EquilateralTriangleSDF(Double2 p)
         {
-            var k = 3.0.Sqrt();
+            var k = 3.Sqrt();
             var x = p.X.Abs() - 1.0;
             var y = p.Y + 1.0 / k;
             var r = p;

@@ -3,15 +3,16 @@
 Plato is a pure functional programming language based on C# syntax. 
 The current Plato implementation generates cross-platform (.NET Standard 2.0) managed assemblies,
 that are compatible with Unity. 
-Support is planned for generating JavaScript in the near future. 
 
 Plato is designed as a general purpose cross-platform functional programming language that 
 is appropriate for high-performance computing (e.g., 3D real-time graphics) and that is 
 easy to teach and learn. 
 
-The other goal of Plato is to develop a visual syntax so that Plato code 
+Another goal of Plato is to develop a visual syntax so that Plato code 
 can be viewed, manipulated, and created in either a node graph editor or 
 as a text based language. 
+
+A Plato to JavaScript compiler is in progress as well.
 
 # Examples
 
@@ -39,7 +40,8 @@ Plato strives to tackle a few things:
 # About Uniqueness Typing
 
 In Plato a unique type is a type whose values cannot be aliased (shared). 
-It allows for in-place mutation and strict ordering of side effects (like a monad).
+This allows for in-place mutation and strict ordering of side effects (like a monad),
+while maintaining referential transparency (aka purity).
 
 A unique type instance cannot be captured by a lambda or stored in an an array or a 
 non-unique type instance .
