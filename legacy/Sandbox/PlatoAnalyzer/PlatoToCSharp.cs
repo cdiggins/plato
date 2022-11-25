@@ -92,12 +92,8 @@ namespace PlatoAnalyzer
 
             if (comparable)
             {
-                sb.AppendLine(
-                    $"public static " +
-                    $"int " +
-                    $"CompareTo(this {type} self, {type} other) => self < other ? -1 : self > other ? 1 : 0;");
-                sb.AppendLine(
-                    $"public static IArray<int> CompareTo(this IArray<{t}> self, IArray<{t}> other) => self.Zip(other, (a,b) => a.CompareTo(b));");
+                sb.AppendLine($"public static int CompareTo(this {type} self, {type} other) => self < other ? -1 : self > other ? 1 : 0;");
+                sb.AppendLine($"public static IArray<int> CompareTo(this IArray<{t}> self, IArray<{t}> other) => self.Zip(other, (a,b) => a.CompareTo(b));");
 
                 foreach (var (m, op) in BinaryComparisonOps)
                 {
@@ -363,11 +359,9 @@ namespace PlatoAnalyzer
             var propTypes = props.Select(p => p.Type.Name).ToList();
             var propsWithTypes = string.Join(", ", propNames.Zip(propTypes, (p, type) => $"{type} {p}"));
             var argsWithTypes = string.Join(", ", args.Zip(propTypes, (arg, type) => $"{type} {arg}"));
-            sb.AppendLine(
-                $"public {classType.Name}({argsWithTypes}) => ({propNames.ToCommaDelimitedStrings()}) = ({args.ToCommaDelimitedStrings()});");
+            sb.AppendLine($"public {classType.Name}({argsWithTypes}) => ({propNames.ToCommaDelimitedStrings()}) = ({args.ToCommaDelimitedStrings()});");
 
-            sb.AppendLine(
-                $"public static {classType.Name} Create({argsWithTypes}) => new {classType.Name}({args.ToCommaDelimitedStrings()});");
+            sb.AppendLine($"public static {classType.Name} Create({argsWithTypes}) => new {classType.Name}({args.ToCommaDelimitedStrings()});");
 
             if (IsMeasure(classType))
             {
@@ -381,13 +375,10 @@ namespace PlatoAnalyzer
 
             if (propNames.Count > 1)
             {
-                sb.AppendLine(
-                    $"public static implicit operator {name}(({propsWithTypes}) tuple) => new {name}({string.Join(", ", propNames.Select(p => $"tuple.{p}"))});");
-                sb.AppendLine(
-                    $"public static implicit operator ({propsWithTypes})({name} self) => ({string.Join(", ", propNames.Select(p => $"self.{p}"))});");
+                sb.AppendLine($"public static implicit operator {name}(({propsWithTypes}) tuple) => new {name}({string.Join(", ", propNames.Select(p => $"tuple.{p}"))});");
+                sb.AppendLine($"public static implicit operator ({propsWithTypes})({name} self) => ({string.Join(", ", propNames.Select(p => $"self.{p}"))});");
                 var outArgsWithTypes = string.Join(", ", args.Zip(propTypes, (arg, type) => $"out {type} {arg}"));
-                sb.AppendLine(
-                    $"public void Deconstruct({outArgsWithTypes}) => ({string.Join(", ", args)}) = ({string.Join(", ", propNames)});");
+                sb.AppendLine($"public void Deconstruct({outArgsWithTypes}) => ({string.Join(", ", args)}) = ({string.Join(", ", propNames)});");
             }
             else
             {
@@ -573,8 +564,8 @@ namespace PlatoAnalyzer
                 // Extension methods on doubles are extended to ints and floats. 
                 if (parameters.StartsWith("double "))
                 {
-                    sb.AppendLine($"public static {rt} {m.Name}(this int {parameters.Substring(7)}) => {m.Name}({args});");
-                    sb.AppendLine($"public static {rt} {m.Name}(this float {parameters.Substring(7)}) => {m.Name}({args});");
+                    sb.AppendLine($"public static {rt} {m.Name}(this int {parameters.Substring(7)}) => {m.Name}((double){args});");
+                    sb.AppendLine($"public static {rt} {m.Name}(this float {parameters.Substring(7)}) => {m.Name}((double){args});");
                 }
 
                 if (vectorTypes != null)

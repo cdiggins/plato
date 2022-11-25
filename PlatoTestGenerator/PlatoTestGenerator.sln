@@ -12,6 +12,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "notes", "notes", "{239039FA-2578-4851-8C40-88098C7EE5D4}"
 	ProjectSection(SolutionItems) = preProject
 		notes.txt = notes.txt
+		..\README.md = ..\README.md
 		todo.txt = todo.txt
 	EndProjectSection
 EndProject
@@ -29,7 +30,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Math", "..\..\math3d\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTestProject", "PlatoTestProject\PlatoTestProject.csproj", "{27F0648C-379B-47DF-8390-3D3ABD72017D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Unity", "..\Plato.Unity\Plato.Unity.csproj", "{C6562DC1-4889-4BEF-865E-F02672ADC0D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Unity", "..\Plato.Unity\Plato.Unity.csproj", "{C6562DC1-4889-4BEF-865E-F02672ADC0D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -22,7 +22,7 @@ namespace Plato.__FUNCS__
         Angle Grads(double d) => d.Turns() / 400.0;
         Angle ArcMinutes(double d) => d.Degrees() / 60;
         Angle ArcSeconds(double d) => d.ArcMinutes() / 60;
-        double ToTurns(Angle a) => a * 2 * Math.PI;
+        double ToTurns(Angle a) => a / 2 / Math.PI;
         double ToDegrees(Angle a) => a.Turns * 360;
         double ToGrads(Angle a) => a.Turns * 400;
         double ToArcMinutes(Angle a) => a.Degrees * 60;

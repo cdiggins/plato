@@ -2236,34 +2236,6 @@ public static Rectangle MinValue(this Rectangle _) => Rectangle.MinValue;
 public static Rectangle MaxValue(this Rectangle _) => Rectangle.MaxValue;
 }
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public partial struct Percent
-{
-public Percent(double value) => (Value) = (value);
-public static Percent Create(double value) => new Percent(value);
-public double Value { get; }
-public static implicit operator Percent(double value) => new Percent(value);
-public static implicit operator double(Percent value) => value.Value;
-public override string ToString() => $"{{ \"Value\" : { Value } }}";
-public override bool Equals(object other) => other is Percent typedOther && this == typedOther;
-public override int GetHashCode() => (Value).GetHashCode();
-public static readonly Percent Default = default;
-public static Percent Zero = new Percent(Default.Value.Zero());
-public static Percent One = new Percent(Default.Value.One());
-public static Percent MinValue = new Percent(Default.Value.MinValue());
-public static Percent MaxValue = new Percent(Default.Value.MaxValue());
-public static bool operator ==(Percent a, Percent b) => (a.Value == b.Value);
-public static bool operator !=(Percent a, Percent b) => (a.Value != b.Value);
-public Percent WithValue(double value) => new Percent(value);
-}
-public static partial class Intrinsics {
-public static Percent Default(this Percent _) => default(Percent);
-public static Percent Zero(this Percent _) => Percent.Zero;
-public static Percent One(this Percent _) => Percent.One;
-public static double ToDouble(this Percent self) => self;
-public static Percent MinValue(this Percent _) => Percent.MinValue;
-public static Percent MaxValue(this Percent _) => Percent.MaxValue;
-}
-[StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct Proportion
 {
 public Proportion(double value) => (Value) = (value);
@@ -2572,6 +2544,7 @@ public partial struct Temperature
 {
 public Temperature(double celsius) => (Celsius) = (celsius);
 public static Temperature Create(double celsius) => new Temperature(celsius);
+public const string Units = nameof(Celsius);
 public double Celsius { get; }
 public static implicit operator Temperature(double value) => new Temperature(value);
 public static implicit operator double(Temperature value) => value.Celsius;
@@ -2592,13 +2565,10 @@ public static Temperature operator +(Temperature a, double b) => new Temperature
 public static Temperature operator -(Temperature a, Temperature b) => new Temperature(a.Celsius - b.Celsius);
 public static Temperature operator -(double a, Temperature b) => new Temperature(a - b.Celsius);
 public static Temperature operator -(Temperature a, double b) => new Temperature(a.Celsius - b);
-public static Temperature operator *(Temperature a, Temperature b) => new Temperature(a.Celsius * b.Celsius);
 public static Temperature operator *(Temperature a, double  b) => new Temperature(a.Celsius * b);
 public static Temperature operator *(double  a, Temperature b) => new Temperature(a * b.Celsius);
-public static Temperature operator /(Temperature a, Temperature b) => new Temperature(a.Celsius / b.Celsius);
 public static Temperature operator /(Temperature a, double  b) => new Temperature(a.Celsius / b);
 public static Temperature operator /(double  a, Temperature b) => new Temperature(a / b.Celsius);
-public static Temperature operator %(Temperature a, Temperature b) => new Temperature(a.Celsius % b.Celsius);
 public static Temperature operator %(Temperature a, double  b) => new Temperature(a.Celsius % b);
 public static Temperature operator %(double  a, Temperature b) => new Temperature(a % b.Celsius);
 public static Temperature operator -(Temperature a) => new Temperature(- a.Celsius);
@@ -2609,22 +2579,6 @@ public static bool operator >=(Temperature a, Temperature b) => a.Celsius >= b.C
 public int CompareTo(Temperature other) => this < other ? -1 : this > other ? 1 : 0;
 }
 public static partial class Intrinsics {
-public static Temperature Add(this Temperature a, Temperature b) => a + b;
-public static IArray<Temperature> Add(this IArray<Temperature> self, IArray<Temperature> other) => self.Zip(other, (a,b) => a + b);
-public static Temperature Subtract(this Temperature a, Temperature b) => a - b;
-public static IArray<Temperature> Subtract(this IArray<Temperature> self, IArray<Temperature> other) => self.Zip(other, (a,b) => a - b);
-public static Temperature Sum(this IArray<Temperature> self) => self.Aggregate((a, b) => a + b);
-public static Temperature Multiply(this Temperature a, Temperature b) => a * b;
-public static IArray<Temperature> Multiply(this IArray<Temperature> self, IArray<Temperature> other) => self.Zip(other, (a,b) => a * b);
-public static Temperature Divide(this Temperature a, Temperature b) => a / b;
-public static IArray<Temperature> Divide(this IArray<Temperature> self, IArray<Temperature> other) => self.Zip(other, (a,b) => a / b);
-public static Temperature Modulo(this Temperature a, Temperature b) => a % b;
-public static IArray<Temperature> Modulo(this IArray<Temperature> self, IArray<Temperature> other) => self.Zip(other, (a,b) => a % b);
-public static Temperature Product(this IArray<Temperature> self) => self.Aggregate((a, b) => a * b);
-public static Temperature Negate(this Temperature a) => - a;
-public static IArray<Temperature> Negate(this IArray<Temperature> self) => self.Select(a => - a);
-public static bool Equals(this Temperature a, Temperature b) => a == b;
-public static bool NotEquals(this Temperature a, Temperature b) => a != b;
 public static int CompareTo(this Temperature self, Temperature other) => self < other ? -1 : self > other ? 1 : 0;
 public static IArray<int> CompareTo(this IArray<Temperature> self, IArray<Temperature> other) => self.Zip(other, (a,b) => a.CompareTo(b));
 public static bool LessThan(this Temperature a, Temperature b) => a < b;
