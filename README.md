@@ -35,7 +35,7 @@ class UnitOperations
     Angle Radians(double d) => d;
     Angle Turns(double d) => d * 2 * Math.PI;
     Angle Degrees(double d) => Turns(d / 360.0);
-    double ToTurns(Angle a) => a * 2 * Math.PI;
+    double ToTurns(Angle a) => a / 2 / Math.PI;
     double ToDegrees(Angle a) => ToTurns(a) * 360;
     double ToGrads(Angle a) => ToTurns(a) * 400;
 }
