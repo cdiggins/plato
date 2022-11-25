@@ -302,12 +302,6 @@ namespace Plato.__TYPES__
         Size Size;
     }
 
-    [Value]
-    class Percent
-    {
-        double Value;
-    }
-
     [Number]
     class Proportion 
     {
@@ -344,7 +338,7 @@ namespace Plato.__TYPES__
         double Kilograms;
     }
 
-    [Number]
+    [Measure]
     class Temperature 
     {
         double Celsius;

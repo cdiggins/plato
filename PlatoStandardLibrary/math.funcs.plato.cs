@@ -18,15 +18,15 @@ namespace Plato.__FUNCS__
         // https://en.wikipedia.org/wiki/Angle
         Angle Radians(double d) => d;
         Angle Turns(double d) => d * 2 * Math.PI;
-        Angle Degrees(double d) => Turns(d / 360.0);
-        Angle Grads(double d) => Turns(d / 400.0);
-        Angle ArcMinutes(double d) => Degrees(d / 60);
-        Angle ArcSeconds(double d) => ArcMinutes(d / 60);
+        Angle Degrees(double d) => d.Turns() / 360.0;
+        Angle Grads(double d) => d.Turns() / 400.0;
+        Angle ArcMinutes(double d) => d.Degrees() / 60;
+        Angle ArcSeconds(double d) => d.ArcMinutes() / 60;
         double ToTurns(Angle a) => a * 2 * Math.PI;
-        double ToDegrees(Angle a) => ToTurns(a) * 360;
-        double ToGrads(Angle a) => ToTurns(a) * 400;
-        double ToArcMinutes(Angle a) => ToDegrees(a) * 60;
-        double ToArcSeconds(Angle a) => ToArcMinutes(a) * 60;
+        double ToDegrees(Angle a) => a.Turns * 360;
+        double ToGrads(Angle a) => a.Turns * 400;
+        double ToArcMinutes(Angle a) => a.Degrees * 60;
+        double ToArcSeconds(Angle a) => a.ArcMinutes * 60;
 
         // Proportion: percent of one 
         // https://en.wikipedia.org/wiki/Percentage
@@ -36,11 +36,11 @@ namespace Plato.__FUNCS__
         Proportion Proportion(double d) => d;
         Proportion Percent(double d) => d / 100;
         Proportion BasisPoints(double d) => Percent(d / 100);
-        Proportion Proportion(Angle a) => ToTurns(a);
-        double ToPercent(Proportion p) => p * 100.0;
+        Proportion Proportion(Angle a) => a.Turns;
+        double ToPercent(Proportion p) => p.Of(100);
         double Of(Proportion p, double amount) => p / amount;
-        double OfOne(Proportion p) => Of(p, 1);
-        double ToBasisPoints(Proportion p) => ToPercent(p) * 100;
+        double OfOne(Proportion p) => p.Value;
+        double ToBasisPoints(Proportion p) => p.Percent * 100;
         Angle ToAngle(Proportion p) => Turns(p);
 
         // Units of distance/length
@@ -61,23 +61,23 @@ namespace Plato.__FUNCS__
         Length Leagues(double value) => Miles(value * 3);
         Length Lightyears(double value) => value * Constants.MetersPerLightyear;
         Length AU(double value) => value * Constants.MetersPerAU;
-        Length HubbleLength(double value) => value * 14.4 * Billion(Lightyears(value));
-        double ToKilometers(Length l) => l.Meters / 1000;
-        double ToDecimeters(Length l) => l.Meters * 10;
-        double ToCentimeters(Length l) => l.Meters * 100;
-        double ToMillimeters(Length l) => l.Meters * 1000;
-        double ToMicrons(Length l) => ToMillimeters(l) * 1000;
-        double ToNanometers(Length l) => ToMicrons(l) * 1000;
-        double ToInches(Length l) => ToFeet(l) * 12;
-        double ToFeet(Length l) => l * Constants.FeetPerMeter;
-        double ToYards(Length l) => ToFeet(l) / 3;
-        double ToRods(Length l) => ToChains(l) * 4;
-        double ToChains(Length l) => ToYards(l) / 22;
-        double ToMiles(Length l) => l.Meters * Constants.FeetPerMeter / Constants.FeetPerMile;
-        double ToLeague(Length l) => ToMiles(l) / 3;
-        double ToLightyears(Length l) => l / Constants.MetersPerLightyear;
-        double ToAU(Length l) => l / Constants.MetersPerAU;
-        double ToHubbleLength(double value) => value / (14.4 * Billion(Lightyears(value)));
+        Length HubbleLength(double value) => value * 14.4.Billion() * Lightyears(value);
+        double ToKilometers(Length length) => length.Meters / 1000;
+        double ToDecimeters(Length length) => length.Meters * 10;
+        double ToCentimeters(Length length) => length.Meters * 100;
+        double ToMillimeters(Length length) => length.Meters * 1000;
+        double ToMicrons(Length length) => length.Millimeters * 1000;
+        double ToNanometers(Length length) => length.Microns * 1000;
+        double ToInches(Length length) => length.Feet * 12;
+        double ToFeet(Length length) => length * Constants.FeetPerMeter;
+        double ToYards(Length length) => ToFeet(length) / 3;
+        double ToRods(Length length) => ToChains(length) * 4;
+        double ToChains(Length length) => ToYards(length) / 22;
+        double ToMiles(Length length) => length.Meters * Constants.FeetPerMeter / Constants.FeetPerMile;
+        double ToLeague(Length length) => ToMiles(length) / 3;
+        double ToLightyears(Length length) => length / Constants.MetersPerLightyear;
+        double ToAU(Length length) => length / Constants.MetersPerAU;
+        double ToHubbleLength(double value) => value / 1.HubbleLength();
 
         // Units of weight or mass 
         // https://en.wikipedia.org/wiki/Mass

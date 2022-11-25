@@ -26,6 +26,44 @@ and the generated C# code
 * [math.types.plato.g.cs](https://github.com/cdiggins/plato/blob/main/PlatoStandardLibrary/math.types.plato.g.cs).
 * [math.funcs.plato.g.cs](https://github.com/cdiggins/plato/blob/main/PlatoStandardLibrary/math.funcs.plato.g.cs).
 
+```csharp
+    [Operations]
+    class UnitOperations
+    {
+        Angle Radians(double d) => d;
+        Angle Turns(double d) => d * 2 * Math.PI;
+        Angle Degrees(double d) => Turns(d / 360.0);
+        Angle Grads(double d) => Turns(d / 400.0);
+        Angle ArcMinutes(double d) => Degrees(d / 60);
+        Angle ArcSeconds(double d) => ArcMinutes(d / 60);
+        double ToTurns(Angle a) => a * 2 * Math.PI;
+        double ToDegrees(Angle a) => ToTurns(a) * 360;
+        double ToGrads(Angle a) => ToTurns(a) * 400;
+        double ToArcMinutes(Angle a) => ToDegrees(a) * 60;
+        double ToArcSeconds(Angle a) => ToArcMinutes(a) * 60;
+    }
+```
+
+# Notable Features of Plato
+
+Plato is very similar in syntax to C# but with a number of simplifications:
+
+1. No structs or records, just classes - the compiler may generate a struct, but this does not change the behavior of a program 
+1. No visibility specifiers - all types and members are public 
+1. No setters - all properties are getters
+1. No readonly keyword - all fields are readonly unless in a Unique type
+1. No static keyword - static classes and methods are inferred 
+1. All static methods are extensions - any function that is inferred to be static is an extension method.
+1. Boilerplate code generates for all classes 
+1. Extra boilerplate code generated for special types - value, number, measure, interval, vector
+
+See the following article for more information:
+
+* [wiki/Static-Classes-and-Methods](https://github.com/cdiggins/plato/wiki/Static-Classes-and-Methods)
+* [wiki/Static-Classes-and-Methods](https://github.com/cdiggins/plato/wiki/Static-Classes-and-Methods)
+
+
+
 # Motivation 
 
 Plato strives to tackle a few things:
