@@ -88,11 +88,16 @@ class Velocity
 [Operations]
 class UnitOperations
 { 
-    Velocity Light() => 299792458;
-    Length Feet(double value) => value / Constants.FeetPerMeter;
-    Length Miles(double value) => Feet(value * Constants.FeetPerMile);
-    Time Hours(double value) => value * 60 * 60;
-    Length Multiply(Velocity Velocity, Time time) => Velocity.MetersPerSecond * time.Seconds;
+    Velocity Light() 
+        => 299792458;
+    Length Feet(double value) 
+        => value / Constants.FeetPerMeter;
+    Length Miles(double value) 
+        => Feet(value * Constants.FeetPerMile);
+    Time Hours(double value) 
+         => value * 60 * 60;
+    Length Multiply(Velocity Velocity, Time time) 
+         => Velocity.MetersPerSecond * time.Seconds;
 }
 
 void Test() 
