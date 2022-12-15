@@ -11,13 +11,14 @@ namespace Plato
     public interface IInterval { }
     public interface IVector { }
 
+    public class ConceptAttribute : Attribute { }
     public class VectorAttribute : Attribute { }
     public class ValueAttribute : Attribute { }
     public class MeasureAttribute : Attribute { }
     public class NumberAttribute : Attribute { }
     public class IntervalAttribute : Attribute { }
     public class OperationsAttribute : Attribute { }
-    public class VectorizedOperationsAttribute : Attribute { }
+    public class VectorizedAttribute : Attribute { }
 
     class Constants
     {

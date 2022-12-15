@@ -207,13 +207,13 @@ namespace Plato.__TYPES__
         Double2 Value;
     }
 
-    [Value]
+    [Interval]
     class Line 
     {
         Point A, B;
     }
 
-    [Value]
+    [Interval]
     class Line2D 
     {
         Point2D A, B;
@@ -289,6 +289,13 @@ namespace Plato.__TYPES__
     }
 
     [Value]
+    class Chord
+    {
+        Circle Circle;
+        Arc Arc;
+    }
+
+    [Value]
     class Size
     {
         double Width;
@@ -350,6 +357,12 @@ namespace Plato.__TYPES__
         double Seconds;
     }
 
+    [Measure]
+    class Arc
+    {
+        Angle Start, End;
+    }
+
     [Interval]
     class TimeInterval 
     {
@@ -357,7 +370,7 @@ namespace Plato.__TYPES__
     }
 
     [Interval]
-    class Interval 
+    class RealInterval
     {
         double A, B;
     }
@@ -552,5 +565,42 @@ namespace Plato.__TYPES__
     class Density
     {
         double KilogramsPerMeterCubed;
+    }
+
+    // https://en.wikipedia.org/wiki/Normal_distribution
+    [Value]
+    class NormalDistribution
+    {
+        double Mean;
+        double StandardDeviation;
+    }
+
+    // https://en.wikipedia.org/wiki/Poisson_distribution
+    [Value]
+    class PoissonDistribution
+    {
+        double Expected;
+        int Occurrences;
+    }
+
+    // https://en.wikipedia.org/wiki/Bernoulli_distribution
+    [Value]
+    class BernoulliDistribution
+    {
+        Probability P;
+    }
+
+    [Number]
+    class Probability
+    {
+        double Value;
+    }
+
+    // https://en.wikipedia.org/wiki/Binomial_distribution
+    [Value]
+    class BinomialDistribution
+    {
+        int NumberTrials;
+        Probability P;
     }
 }

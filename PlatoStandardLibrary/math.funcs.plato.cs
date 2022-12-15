@@ -290,7 +290,7 @@ namespace Plato.__FUNCS__
         double Distance(Float4 a, Float4 b) => (b - a).Length();
     }
 
-    [VectorizedOperations]
+    [Vectorized]
     class VectorizedOperations
     {
         double SafeDivide(double x, double y) => y.AlmostZero() ? x : x / y;

@@ -763,13 +763,33 @@ namespace Plato
         /// Returns true if the predicate is true for all of the elements in the array
         /// </summary>
         public static bool All<T>(this IArray<T> self, Func<T, bool> predicate)
-            => self.ToEnumerable().All(predicate);
+            => self.Select(predicate).All();
+
+        /// <summary>
+        /// Returns true if all of the elements in the array are trye
+        /// </summary>
+        public static bool All(this IArray<bool> self)
+        {
+            for (var i = 0; i < self.Count; ++i)
+                if (!self[i]) return false;
+            return true;
+        }
 
         /// <summary>
         /// Returns true if the predicate is true for any of the elements in the array
         /// </summary>
         public static bool Any<T>(this IArray<T> self, Func<T, bool> predicate)
-            => self.ToEnumerable().Any(predicate);
+            => self.Select(predicate).Any();
+
+        /// <summary>
+        /// Returns true if any of the elements in the array are true
+        /// </summary>
+        public static bool Any(this IArray<bool> self)
+        {
+            for (var i = 0; i < self.Count; ++i)
+                if (self[i]) return true;
+            return false;
+        }
 
         /// <summary>
         /// Sums items in an array using a selector function that returns integers.

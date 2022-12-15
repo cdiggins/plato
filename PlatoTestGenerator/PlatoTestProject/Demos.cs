@@ -4,18 +4,18 @@ namespace PlatoTestProject
 {
     public static class Demos
     {
-    [Test]
-    public static void AngleDemo()
-    {
-        var angle = 1.Turns() / 4;
-        Console.WriteLine($"{angle}");
+        [Test]
+        public static void AngleDemo()
+        {
+            var angle = 1.Turns() / 4;
+            Console.WriteLine($"{angle}");
 
-        var degrees = angle.Degrees;
-        Console.WriteLine($"Angle is {degrees:n2} degrees");
+            var degrees = angle.Degrees;
+            Console.WriteLine($"Angle is {degrees:n2} degrees");
 
-        var sin = angle.Sin();
-        Console.WriteLine($"Sin(angle) = {sin}");
-    }
+            var sin = angle.Sin();
+            Console.WriteLine($"Sin(angle) = {sin}");
+        }
 
         [Test]
         public static void LightDemo()

@@ -26,7 +26,7 @@ public class InterpolatorEditor : Editor
         var index = propNames.IndexOf(oldName);
         EditorGUILayout.PrefixLabel("Property Name");
         var newIndex = EditorGUILayout.Popup(index, propNames);
-        if (newIndex < 0 || newIndex >= propNames.Length)
+            if (newIndex < 0 || newIndex >= propNames.Length)
             return;
         nameProperty.stringValue = propNames[newIndex];
         var prop = interp.Fields[newIndex];

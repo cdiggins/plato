@@ -327,3 +327,102 @@ x.Multiply()
 * I should implement "IEquatable" as well. 
 * And allow doubles to be compared.
 * GOing to have a problem with "ToX"
+
+//==
+
+* Getting the LinqArray class to type porperly will be a big deal. 
+* Getting numerical concepts to work 
+* Get the math libraries compiled
+* Get the array libraries compiled. 
+* Support JavaScript
+* Convert to IR
+* Convert the built-in types to IR 
+* Build a geometry type
+* Get things working with Unity 
+* Write an interpreter 
+* Get the parakeet parser supported 
+* Promote the measures library 
+
+Finishing everything right away is a bit silly 
+
+How to decide. 
+
+* How to handle function constraints. 
+* If I see a function that is part of the constraints.
+* I basically need to know the type of each function that I encounter.
+* This would be a good first step. 
+* Break everything down ... and get the list of functions called on each type. 
+* I think really this is all going to 
+
+To make the type system work properly I think I am going to need the type parser to work. 
+
+I would like an interpreter for the thing.
+
+I would like a parser that is not dependent on Roslyn. 
+
+Would be fun, but is a bunch of extra work. Maybe later. 
+
+Right now. 
+
+//==
+
+There are two questions: 
+* Can I generate IL code?
+* Can I generate C# from the IL code? 
+* Should I generate JavaScript at the same time?
+* Should I use JavaScript for the other things? 
+* Can I simplify the auto-generation of code? Right now there is a lot of string magic. 
+
+* I don't like the fact that so much of the code is just magic. 
+
+//==
+
+Intervals could have things like: "Extent"
+I notice virtually every value type could have "Min(a, b)" and "Max(a, b)"
+The intrinsics are not necessary
+I think each type will need to be in a different file. 
+
+//==
+
+Most of the stuff for intervals will work.
+
+I'm working on how to do "Min" / "Max" in a general way. 
+I might need to treat numbers like 1-d vectors. 
+The other question is what about a TimeInterval? Or any other unit of measure interval? 
+Intervals make sense in a number of cases: I just need to be able to subtract them.
+
+I also need to be able to multiply by a double.
+
+// TODO: how do I implement the Math operations on numbers 
+Number Sqrt(Number n) => throw new NotImplementedException();
+
+So the "intrinsics" is kind of important. 
+
+VectorizedOperations is kind of what I want as the fundamental operations. 
+The problem is that there is a lot of operations on numbers and stuff.
+
+So basically I can look at the things that are defined on a "Number" and then generalize them.
+
+Do I really need to make it all so pretty? 
+
+==
+
+Okay, so instead of having a "Vectorized" version, I can just define the stuff on numbers? 
+But what are the definitions? This "vectorized" approach isn't so bad. 
+
+I think I should call it "Vectorized"
+
+These functions can all be generalized. 
+
+Maybe I could simply define it for a number? 
+The interesting thing is that it is not "Vectorized", because it is defined on the compound type ... not the element.
+self / Magnitude(self)
+
+Are "measures" numbers? The only thing you don't want to do is multiply them together or divide them. 
+They are quantities. An interval is like that. 
+
+A vector does not support comparison. 
+
+An interval can be made of Vectors or Scalars or Measures.
+
+Static functions should also be defined as a non-static functions so that they can be called from the calls.

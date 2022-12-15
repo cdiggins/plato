@@ -31,7 +31,6 @@ public class PInterpolator : MonoBehaviour
         return fieldInfo == null ? x => { } : x => { fieldInfo.SetValue(Component, x); };
     }
 
-
     public void Awake()
     {
         var comps = gameObject.GetComponents<Component>();

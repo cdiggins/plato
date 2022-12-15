@@ -295,8 +295,8 @@ namespace PlatoAnalyzer
         public static bool IsOperations(PlatoClass classType)
             => classType.Attributes.Any(attr => attr.Name == "Operations");
 
-        public static bool IsVectorizedOperations(PlatoClass classType)
-            => classType.Attributes.Any(attr => attr.Name == "VectorizedOperations");
+        public static bool IsVectorized(PlatoClass classType)
+            => classType.Attributes.Any(attr => attr.Name == "Vectorized");
 
         public static bool IsVector(PlatoClass classType)
             => IsVector(classType, out _);
