@@ -24,10 +24,6 @@ namespace Plato
     /// - arithmetical operators: +, - (binary and unary), *, /
     /// - extension methods corresponding to: Addition, Subtraction, 
     /// </summary>
-    ///
-    ///
-    ///
-
     public class ConformsAttribute : Attribute
     {
         public ConformsAttribute(Type t) {}
@@ -40,7 +36,6 @@ namespace Plato
         INumber Negate();
     }
 
-    [Conforms(typeof(INumber))]
     public class Unit
     {
         public double Value { get; }

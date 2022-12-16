@@ -3,36 +3,31 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoAnalyzer", "..\legacy\Sandbox\PlatoAnalyzer\PlatoAnalyzer.csproj", "{5B286A6B-659B-49EA-918E-4041A06C0EC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoAnalyzer", "legacy\Sandbox\PlatoAnalyzer\PlatoAnalyzer.csproj", "{5B286A6B-659B-49EA-918E-4041A06C0EC1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoIR", "..\legacy\PlatoIR\PlatoIR.csproj", "{9073453C-E707-4639-971C-2CD896D13DFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoIR", "legacy\PlatoIR\PlatoIR.csproj", "{9073453C-E707-4639-971C-2CD896D13DFF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Sandbox", "..\legacy\Plato.Sandbox\Plato.Sandbox.csproj", "{A3063915-D5E4-423C-8780-96FE64D36911}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.LegacySandbox", "legacy\Plato.Sandbox\Plato.LegacySandbox.csproj", "{A3063915-D5E4-423C-8780-96FE64D36911}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "notes", "notes", "{239039FA-2578-4851-8C40-88098C7EE5D4}"
-	ProjectSection(SolutionItems) = preProject
-		notes.txt = notes.txt
-		..\README.md = ..\README.md
-		todo.txt = todo.txt
-	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoStandardLibrary", "..\PlatoStandardLibrary\PlatoStandardLibrary.csproj", "{66402015-EB96-4A58-AFA1-BF2BD41DF14C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoStandardLibrary", "PlatoStandardLibrary\PlatoStandardLibrary.csproj", "{66402015-EB96-4A58-AFA1-BF2BD41DF14C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoCompiler", "..\PlatoCompiler\PlatoCompiler.csproj", "{33E56AB3-CAD2-499D-AE06-0AD28FC77B67}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoCompiler", "PlatoCompiler\PlatoCompiler.csproj", "{33E56AB3-CAD2-499D-AE06-0AD28FC77B67}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ptarmigan.Utils.Roslyn", "..\..\..\ptarmigan\src\Ptarmigan.Utils.Roslyn\Ptarmigan.Utils.Roslyn.csproj", "{E4C81643-45AC-4FBE-8F09-E280774D53AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ptarmigan.Utils.Roslyn", "..\..\ptarmigan\src\Ptarmigan.Utils.Roslyn\Ptarmigan.Utils.Roslyn.csproj", "{E4C81643-45AC-4FBE-8F09-E280774D53AA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ptarmigan.Utils", "..\..\..\ptarmigan\src\Ptarmigan.Utils\Ptarmigan.Utils.csproj", "{E9F2768C-5B88-4F7F-9355-99BC4B5809FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ptarmigan.Utils", "..\..\ptarmigan\src\Ptarmigan.Utils\Ptarmigan.Utils.csproj", "{E9F2768C-5B88-4F7F-9355-99BC4B5809FE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Collections", "..\PlatoCollections\Plato.Collections.csproj", "{6DF8C94B-5133-4A8B-99E7-D96486015EBA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Collections", "PlatoCollections\Plato.Collections.csproj", "{6DF8C94B-5133-4A8B-99E7-D96486015EBA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Math", "..\..\math3d\src\Plato.Math.csproj", "{FF8DB81D-E94A-4B2C-A9F5-BC7524242B71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Math", "..\math3d\src\Plato.Math.csproj", "{FF8DB81D-E94A-4B2C-A9F5-BC7524242B71}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTestProject", "PlatoTestProject\PlatoTestProject.csproj", "{27F0648C-379B-47DF-8390-3D3ABD72017D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Unity", "Plato.Unity\Plato.Unity.csproj", "{C6562DC1-4889-4BEF-865E-F02672ADC0D0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Unity", "..\Plato.Unity\Plato.Unity.csproj", "{C6562DC1-4889-4BEF-865E-F02672ADC0D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTypeInference", "PlatoTypeInference\PlatoTypeInference.csproj", "{71C5FB27-E2C3-4329-92F5-0185E552B287}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatoTypeInference", "..\PlatoTypeInference\PlatoTypeInference.csproj", "{71C5FB27-E2C3-4329-92F5-0185E552B287}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTestProject", "PlatoTestProject\PlatoTestProject.csproj", "{D17532D8-733A-4A98-85C7-2F70FE841816}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,10 +71,6 @@ Global
 		{FF8DB81D-E94A-4B2C-A9F5-BC7524242B71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF8DB81D-E94A-4B2C-A9F5-BC7524242B71}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF8DB81D-E94A-4B2C-A9F5-BC7524242B71}.Release|Any CPU.Build.0 = Release|Any CPU
-		{27F0648C-379B-47DF-8390-3D3ABD72017D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{27F0648C-379B-47DF-8390-3D3ABD72017D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{27F0648C-379B-47DF-8390-3D3ABD72017D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{27F0648C-379B-47DF-8390-3D3ABD72017D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C6562DC1-4889-4BEF-865E-F02672ADC0D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C6562DC1-4889-4BEF-865E-F02672ADC0D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6562DC1-4889-4BEF-865E-F02672ADC0D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -88,6 +79,10 @@ Global
 		{71C5FB27-E2C3-4329-92F5-0185E552B287}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71C5FB27-E2C3-4329-92F5-0185E552B287}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71C5FB27-E2C3-4329-92F5-0185E552B287}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D17532D8-733A-4A98-85C7-2F70FE841816}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D17532D8-733A-4A98-85C7-2F70FE841816}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D17532D8-733A-4A98-85C7-2F70FE841816}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D17532D8-733A-4A98-85C7-2F70FE841816}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

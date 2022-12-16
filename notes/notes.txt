@@ -426,3 +426,29 @@ A vector does not support comparison.
 An interval can be made of Vectors or Scalars or Measures.
 
 Static functions should also be defined as a non-static functions so that they can be called from the calls.
+//==
+
+What I am trying to figure out here:
+* How do I deal with errors in the editor.
+* I can't fix them all.
+* It would be nice ... 
+* The part that has me stumped is what to do about types that are computed from other types.
+* Like elements of an array or return types of a function.
+* I could use a special functon I suppose. You usually just want to declare an array of the thing? 
+* Or there are cases where what you want is to declare a concrete type within the implementation. 
+* Just saying "Any" is no good, because the constraints are not clear. 
+* I mean technically I could solve for it as well. It's just the same type inference as everwhere else.
+* Two options:
+	* Leave it all in C# for now
+	* Leave it with errors in the compiler (no intellisense)
+* I find it makes a pretty compelling story: removing all of the boilerplate and inferring the correct types.
+	In fact it is pretty darn amazing. 
+* So "Any" here gets translated into something concrete. Makes sense. 
+* Next step:
+	* Parse this with the parser.
+	* Convert into the intermediate representation (IR).
+	* Convert into literal C# 
+	* See how bad it is 
+	* Generate the "Concepts"? 
+	* Perform the type inference
+	* 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Security.Policy;
 using System.Text;
@@ -7,17 +8,35 @@ using System.Text;
 namespace Plato
 {
     public class Any {}
-    public class Func0 { }
-    public class Func1 { }
-    public class Func2 { }
-    public class Func3 { }
+    
+    public class Func0 {
+        public extern Any Invoke();
+    }
+    
+    public class Func1 {
+        public extern Any Invoke(Any x);
+    }
+    
+    public class Func2 {
+        public extern Any Invoke(Any x0, Any x1);
+        public extern static implicit operator Func2(Func<dynamic, dynamic, dynamic> f);
+    }
+
+    public class Func3 {
+        public extern Any Invoke(Any x0, Any x1, Any x2);
+    }
+
+    public class Func4
+    {
+        public extern Any Invoke(Any x0, Any x1, Any x2, Any x3);
+    }
 
     public class Array : IArray<Any>
     {
-        public Any ElementType;
-        public ElementType this[int input] => throw new NotImplementedException();
+        public Any;
+        public extern Any this[int input] { get; }
         public int Count { get; }
-        public IIterator<ElementType> Iterator { get; }
+        public IIterator<Any> Iterator { get; }
     }
 
     public class Sequence : ISequence<Any>
@@ -25,10 +44,10 @@ namespace Plato
         public IIterator<Any> Iterator { get; }
     }
 
-    public class SequenceFromIterator<T> : ISequence<T>
+    public class SequenceIterator<T> : ISequence<T>
     {
         public IIterator<T> Iterator { get; }
-        public Sequence(IIterator<T> iterator) => Iterator = iterator;
+        public SequenceIterator(IIterator<T> iterator) => Iterator = iterator;
     }
 
     public class WhereIterator<T> : IIterator<T>, ISequence<T>
@@ -36,7 +55,7 @@ namespace Plato
         public IIterator<T> Wrapped { get; }
         public int Index { get; }
 
-        public WhereIterator(IIterator<T> wrapped, Func<T, int> filter, int index)
+        public WhereIterator(IIterator<T> wrapped, Func<T, int, bool> filter, int index)
         {
             while (wrapped.HasValue && !filter(wrapped.Value, index))
             {
@@ -51,7 +70,7 @@ namespace Plato
         public Func<T, int, bool> Filter { get; }
         public T Value => Wrapped.Value;
         public bool HasValue => Wrapped.HasValue;
-        public IIterator<T> Next => new WhereIterator(wrapped.Next, Filter, Index + 1);
+        public IIterator<T> Next => new WhereIterator<T>(Wrapped.Next, Filter, Index + 1);
         public IIterator<T> Iterator => this;
     }
 
@@ -60,7 +79,7 @@ namespace Plato
         public IIterator<T> Wrapped { get; }
         public int Index { get; }
 
-        public SelectIterator(IIterator<T> wrapped, Func<T, U> map, int index)
+        public SelectIterator(IIterator<T> wrapped, Func<T, int, U> map, int index)
         {
             Wrapped = wrapped;
             Map = map;
@@ -68,13 +87,18 @@ namespace Plato
         }
 
         public Func<T, int, U> Map { get; }
-        public U Value => Map(Wrapped.Value);
+        public U Value => Map(Wrapped.Value, Index);
         public bool HasValue => Wrapped.HasValue;
-        public IIterator<T> Next => new SelectIterator(wrapped.Next, Map, Index + 1);
-        public IIterator<T> Iterator => this;
+        public IIterator<U> Next => new SelectIterator<T, U>(Wrapped.Next, Map, Index + 1);
+        public IIterator<U> Iterator => this;
     }
 
     public class Counted : ICounted
+    {
+        public int Count { get; }
+    }
+
+    public class CountedSequence : Sequence, ICountedSequence<Any>
     {
         public int Count { get; }
     }
@@ -140,10 +164,11 @@ namespace Plato
         /// <summary>
         /// Shortcut for ToEnumerable.Aggregate()
         /// </summary>
-        Any Aggregate(Sequence self, Any init, Func2 func)
+        Any Aggregate(Sequence self, Any init, Func3 func)
         {
-            for (var i = self.Iterator; i.HasValue; i = i.Next)
-                init = func(init, self.Value, i);
+            int j = 0;
+            for (var i = self.Iterator; i.HasValue; i = i.Next, ++j)
+                init = func(init, i.Value, j);
             return init;
         }
 
@@ -173,7 +198,7 @@ namespace Plato
         /// An IArray is not created automatically because it is an expensive operation that is potentially unneeded.
         /// </summary>
         Sequence IndicesWhere(CountedSequence self, Array mask)
-            => self.IndicesWhere(mask.ToPredicate());
+            => self.IndicesWhere(mask.ToFunction());
 
         // TODO: All and Any, are IndexOf 
 
@@ -198,7 +223,7 @@ namespace Plato
         /// Returns true if the predicate is true for any of the elements in the array
         /// </summary>
         bool Any(Sequence self)
-            => self.Any(x => x);
+            => self.Any(x => (bool)x);
 
         /// <summary>
         /// Returns true if any of the elements in the array are true
@@ -224,7 +249,7 @@ namespace Plato
         /// Converts any map into a function that returns values.
         /// </summary>
         Map Select(Map self, Func1 f)
-            => new Remap(f(self[x]);
+            => new Remap(self, x => f(self[x]));
     }
 
     class ArrayExtensions
@@ -235,7 +260,7 @@ namespace Plato
         /// <param name="self"></param>
         /// <returns></returns>
         Any[] CopyTo(Array self)
-            => self.CopyTo(new self.ElementType[self.Count]);
+            => self.CopyTo(new Any[self.Count]);
 
         Any[] CopyTo(Array self, Any[] xs)
             => self.CopyTo(xs, 0, self.Count);
@@ -267,7 +292,7 @@ namespace Plato
         /// and uses the function to return items.
         /// </summary>
         Array Select(int count, Func1 f)
-            => new FunctionalArray<Func1.ReturnType>(count, f);
+            => FunctionalArray.Create(count, f);
 
         /// <summary>
         /// Converts any implementation of IList (e.g. Array/List) to an IArray.
@@ -287,7 +312,7 @@ namespace Plato
         /// </summary>
         Array Generate(Any init, int count, Func1 f)
         {
-            var r = new init.Type[count];
+            var r = new Any[count];
             for (var i = 0; i < count; ++i)
             {
                 r[i] = init;
@@ -356,7 +381,7 @@ namespace Plato
         Array Flatten(Array self)
         {
             var counts = self.Select(x => x.Count).PostAccumulate((x, y) => x + y);
-            var r = new self.ElementType[counts.Last()];
+            var r = new Any[counts.Last()];
             var i = 0;
             foreach (var xs in self.ToEnumerable())
                 xs.CopyTo(r, counts[i++]);
@@ -375,13 +400,15 @@ namespace Plato
         Array SelectMany(Array self, int count)
             => Select(self.Count, i => self[i / count][i % count]);
 
+        // TODO: I think the following typesneed to be redone.
+
         /// <summary>
         /// Returns an array given a function that generates an IArray from each member. Eager evaluation.
         /// </summary>
         Array SelectMany(Array self, Func1 func)
         {
             var count = self.Sum(x => func(x).Count);
-            var xs = new self.ElementType[count];
+            var xs = new Any[count];
             var offset = 0;
             for (var i = 0; i < self.Count; ++i)
             {
@@ -398,7 +425,7 @@ namespace Plato
         Array SelectMany(Array self, Func2 func)
         {
             var count = self.Aggregate(0, (acc, x, index) => acc + func(x, index).Count);
-            var xs = new self.ElementType[count];
+            var xs = new Any[count];
             var offset = 0;
             for (var i = 0; i < self.Count; ++i)
             {
@@ -414,7 +441,7 @@ namespace Plato
         /// </summary>
         Array SelectMany(Array self, Func2 func)
         {
-            var r = new self.Element[self.Count * 2];
+            var r = new Any[self.Count * 2];
             for (var i = 0; i < self.Count; ++i)
             {
                 var tmp = func(self[i]);
@@ -618,7 +645,7 @@ namespace Plato
         {
             var n = self.Count;
             if (n == 0) return self;
-            var r = self.ElementType[n];
+            var r = Any[n];
             var prev = r[0] = self[0];
             for (var i = 1; i < n; ++i)
             {
@@ -681,7 +708,7 @@ namespace Plato
         /// <summary>
         /// Given an array of elements of type Any casts them to a Any
         /// </summary>
-        Array Cast(Array xs) where Any : Any
+        Array Cast(Array xs) 
             => xs.Select(x => (Any)x);
 
         /// <summary>
@@ -715,7 +742,7 @@ namespace Plato
         {
             if (self.Count == 0)
                 return Empty<Any>();
-            var r = new self.ElementType[self.Count];
+            var r = new Any[self.Count];
             for (var i = 0; i < self.Count; ++i)
                 init = r[i] = scanFunc(init, self[i]);
             return r.ToIArray();
