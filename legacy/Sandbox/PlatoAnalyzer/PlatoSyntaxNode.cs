@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace PlatoAnalyzer
 {
@@ -396,6 +394,18 @@ namespace PlatoAnalyzer
 
         public override IEnumerable<PlatoExpression> ChildExpressions
             => new[] { Receiver, Index };
+    }
+
+    public class PlatoConditionalAccess : PlatoExpression
+    {
+        public readonly PlatoExpression Expression;
+        public readonly PlatoExpression WhenNotNull;
+
+        public PlatoConditionalAccess(int id, PlatoTypeExpr type, PlatoExpression expr, PlatoExpression whenNotNull)
+            : base(id, type) => (Expression, WhenNotNull) = (expr, whenNotNull);
+
+        public override IEnumerable<PlatoExpression> ChildExpressions
+            => new[] { Expression, WhenNotNull };
     }
 
     public class PlatoMemberGet : PlatoExpression

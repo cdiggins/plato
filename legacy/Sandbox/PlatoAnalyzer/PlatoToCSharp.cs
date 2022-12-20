@@ -667,7 +667,7 @@ namespace PlatoAnalyzer
                 {
                     OutputOperations(c, null, sb);
                 }
-                if (IsVectorizedOperations(c))
+                if (IsVectorized(c))
                 {
                     OutputOperations(c, vectorTypes, sb);
                 }

@@ -5,6 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Array.plato.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="array.plato.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\PlatoCollections\Plato.Collections.csproj" />
   </ItemGroup>
 

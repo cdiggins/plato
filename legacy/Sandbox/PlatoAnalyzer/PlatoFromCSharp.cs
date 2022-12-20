@@ -4,13 +4,38 @@ using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Permissions;
+using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Ptarmigan.Utils;
 
 namespace PlatoAnalyzer
 {
+    public class PlatoException : Exception
+    {
+        public SyntaxNode Node { get; }
+        public ISymbol Symbol { get; }
+        public PlatoException(ISymbol symbol, SyntaxNode node, string message)
+            : base(message)
+        {
+            Node = node;
+        }
+
+        public static PlatoException Create(ISymbol symbol, SyntaxNode node, string message)
+            => new PlatoException(symbol, node, message);
+
+        public static PlatoException Create(ISymbol symbol, string message)
+            => new PlatoException(symbol, null, message);
+
+        public static PlatoException Create(SyntaxNode node, string message)
+            => new PlatoException(null, node, message);
+    }
+
     public static class PlatoFromCSharp
     {
+
+        public static bool ThrowIfTypeUnknown = false;
+
         public static IEnumerable<T> GetElements<T>(this SyntaxNode self) where T : SyntaxNode
             => self.DescendantNodes(x => !(x is T)).OfType<T>();
 
@@ -336,8 +361,9 @@ namespace PlatoAnalyzer
                 case CheckedExpressionSyntax checkedExpression: 
                     throw self.NotSupported();
                 
-                case ConditionalAccessExpressionSyntax conditionalAccess: 
-                    throw self.NotSupported();
+                case ConditionalAccessExpressionSyntax conditionalAccess:
+                    return mapping.Add(() => new PlatoConditionalAccess(mapping.NextId, type,
+                        conditionalAccess.Expression.ToPlato(mapping), conditionalAccess.WhenNotNull.ToPlato(mapping)));
 
                 case ConditionalExpressionSyntax conditional:
                     return mapping.Add(() =>
@@ -494,10 +520,10 @@ namespace PlatoAnalyzer
             => mapping.Add(() => new PlatoCompoundStatement(mapping.NextId, self.Select(x => x.ToPlatoStatement(mapping))), null);
 
         public static Exception NotSupported(this SyntaxNode self)
-            => new NotSupportedException(self.GetType().Name);
+            => PlatoException.Create(self, "Unsupported syntax");
 
         public static Exception NotSupported(this ISymbol self)
-            => new NotSupportedException(self.Kind.ToString());
+            => PlatoException.Create(self, "Unsupported symbol");
 
         public static PlatoLiteral ToPlatoLiteral(this object value, PlatoSemanticMapping mapping)
             => mapping.Add(() => new PlatoLiteral(mapping.NextId, value.GetType().ToPlatoType(), value), null);
@@ -699,9 +725,12 @@ namespace PlatoAnalyzer
                     self.ExpressionBody?.Expression.ToPlato(mapping)
                 ), self);
 
+
+        public static PlatoTypeExpr CheckNull(PlatoTypeExpr expr)
+            => expr == null ? (ThrowIfTypeUnknown ? throw new PlatoException(null, null, "Not a recognized type") : expr) : expr;
+
         public static PlatoTypeExpr ToPlato(this TypeSyntax self, PlatoSemanticMapping mapping)
-            => mapping.Model.GetSymbolInfo(self).Symbol?.GetPlatoType(mapping) 
-               ?? throw new Exception("Not a recognized type");
+            => CheckNull(mapping.Model.GetSymbolInfo(self).Symbol?.GetPlatoType(mapping));
 
         public static PlatoVarDeclStatement ToPlato(this VariableDeclaratorSyntax self, TypeSyntax type, PlatoSemanticMapping mapping)
             => mapping.Add(() =>

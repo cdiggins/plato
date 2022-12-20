@@ -382,8 +382,7 @@ namespace Plato
         {
             var counts = self.Select(x => x.Count).PostAccumulate((x, y) => x + y);
             var r = new Any[counts.Last()];
-            var i = 0;
-            foreach (var xs in self.ToEnumerable())
+            for (var i=0; i < xs.Count; ++i)
                 xs.CopyTo(r, counts[i++]);
             return r.ToIArray();
         }
@@ -715,7 +714,7 @@ namespace Plato
         /// Returns true if the value is present in the array.
         /// </summary>
         bool Contains(Array xs, Any value)
-            => xs.Any(x => x?.Equals(value) ?? false);
+            => xs.Any(x => value.Equals(x));
 
         Any FirstOrDefault(Array xs)
             => xs.FirstOrDefault(xs.DefaultElement);

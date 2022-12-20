@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\ptarmigan\src\Ptarmigan.Utils.Roslyn\Ptarmigan.Utils.Roslyn.csproj" />
+    <ProjectReference Include="..\..\ptarmigan\src\Ptarmigan.Utils.Roslyn\Ptarmigan.Utils.Roslyn.csproj" />
     <ProjectReference Include="..\legacy\Sandbox\PlatoAnalyzer\PlatoAnalyzer.csproj" />
   </ItemGroup>
 

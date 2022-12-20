@@ -452,3 +452,28 @@ What I am trying to figure out here:
 	* Generate the "Concepts"? 
 	* Perform the type inference
 	* 
+
+December 19th
+
+* If there is a syntactic error, I would like to know where it occured. 
+* This looks like it might be non-trivial. 
+
+* I would like to know where the error occurred. 
+	* I would like to have some structures designed to make all of this easier to work with. 
+	* I mean ... we need to know where the error occurred. 
+	* I am using Roslyn for parsing ... which is fine ... I guess
+	* I still need to have a way to represent the source location. 
+	* The thing is that I might not want to use Roslyn for-ever. 
+	* Part of me wants to write this whole thing in Plato. 
+	* It might even be easier. 
+	
+Decemeber 20th
+
+The conditional access is giving me a strange problem. It produces a "MemberBinding" syntax node.
+Which I had never seen prior. This makes life complicated. 
+
+//==
+
+Okay: now that I compiled the thing down into some form, I need to simplify it. 
+
+
