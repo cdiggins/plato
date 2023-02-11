@@ -139,17 +139,17 @@ namespace PlatoAnalyzer
                 // Vector <op> Scalar
                 {
                     var args = members.Select(x => $"self.{x} {op} scalar").ToCommaDelimitedStrings();
-                    sb.AppendLine(
+                    Builder.AppendLine(
                         $"public static {t} operator {op}({t} self, {scalarType} scalar) => new {t}({args});");
                 }
                 // Scalar <op> Vector
                 {
                     var args = members.Select(x => $"scalar {op} self.{x}").ToCommaDelimitedStrings();
-                    sb.AppendLine(
+                    Builder.AppendLine(
                         $"public static {t} operator {op}({scalarType} scalar, {t} self) => new {t}({args});");
                 }
                 // This would give us a member function named "Multiply" or "Divide" that takes a scalar. Not sure it is necessary.  
-                //sb.AppendLine($"public {t} {m}({t} self, {scalarType} scalar) => self {op} scalar;");
+                //Builder.AppendLine($"public {t} {m}({t} self, {scalarType} scalar) => self {op} scalar;");
             }
             */
 

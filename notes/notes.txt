@@ -476,4 +476,91 @@ Which I had never seen prior. This makes life complicated.
 
 Okay: now that I compiled the thing down into some form, I need to simplify it. 
 
+//==
 
+In order to figure out the types of things, I need to figure out what the names are. To what are they referring. 
+
+Bsaic stuff: just go through the code and figure out where each name is defined. 
+
+Is it a function? Is it a variable? Is it a type?
+So I would love this to be a generic algorithm. 
+
+// 
+
+January 2nd.
+
+* Abstract interpretation 
+	* Translating a program
+	* Finding unused parameters and other variables
+	* Simplifying (return a new simplified expression)
+	* Finding constants 
+	* Understanding what changes in a loop 
+	* Finding recursive forms 
+	* Computing a type
+	* Finding dependencies : A depends on B. 
+	* FInding singly used things 
+	* Knowing what things are constants, and what things aren't.
+	* Computing constraints
+	* Evaluating a computer program 
+	* Alpha renaming
+	* Identifying the free and bound variables in an expression
+	* Certain semantic errors  
+	* Function overload resolution
+	* Determining whether something is truly unknown, known, or a finite set of possibilities
+	* A simple evaluator that looks at whether an expression was evaluated once before and if so, what the result is. 
+	* A lazy evaluator that does not evaluate until required 
+	* Is it internal / external 
+	* Is it safe" / unsafe
+	* Is it pure / impure
+	* Is it static / non-static
+	* Is it recursive (re-entrant) or not
+	* Is it a loop or not
+	* Is it async or not
+	* Converting into a byte-code. 
+	* When to clean-up variables
+	* Is it a single reference, or is it shared
+		
+
+So how do I make it easy to do all of those things? 
+
+The "expression" in a sense might just never change. The value returned might. 
+
+The "let binding" is in of itself an expression. 
+
+What about statements. 
+
+How do I represent all of these different forms? 
+
+When we are reducing ... 
+
+What is interesting is that in some of these forms what we are doing is associating an expression with something. 
+
+We aren't just throwing it out ... we are associating it with something. 
+
+That association is kind of important, I think. 
+
+Don't forget that in addition to hte "global" frame, there are namespaces. 
+There are also contexts like "class". A class is similar to a namespace.  
+
+When you call a function you: 
+1. Create a variable binding for each parameter. 
+
+Note:
+* There is a special operation when you return a function: you are creating a closure.
+
+//==
+
+It seems to me that there are any different analyses that can be performed. 
+
+How many different forms do I want to have? 
+
+Does it really make sense to call each one an interpreter. 
+
+It is also a:
+* Symbolic executor
+* Evaluator
+* Abstract interpreter
+* Translator
+* Reducer
+
+When you think about it, interpreter does make sense.

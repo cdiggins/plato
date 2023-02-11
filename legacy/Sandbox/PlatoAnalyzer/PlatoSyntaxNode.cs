@@ -159,7 +159,7 @@ namespace PlatoAnalyzer
     public class PlatoParameterList : PlatoSyntaxNode
     {
         public readonly IReadOnlyList<PlatoParameter> Parameters;
-
+            
         public PlatoParameterList(int id, IEnumerable<PlatoParameter> parameters = null)
             : base(id) => Parameters = parameters.ToListOrEmpty();
     }

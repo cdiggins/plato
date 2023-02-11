@@ -61,12 +61,20 @@ namespace Plato
         T2 this[T1 input] { get; }
     }
 
+
     /// <summary>
-    /// An immutable array. It contains only a count and an indexer. 
-    /// Both are expected to return in O(1) time. 
-    /// An array is a specialization of a map (from the integer domain to any codomain)
-    /// and it can be trivially used as a sequence. 
+    /// A map where each key may have one or more values. 
     /// </summary>
+    public interface IMultiMap<T1, T2> : IMap<T1, ISequence<T2>>
+    {
+    }
+
+     /// <summary>
+     /// An immutable array. It contains only a count and an indexer. 
+     /// Both are expected to return in O(1) time. 
+     /// An array is a specialization of a map (from the integer domain to any codomain)
+     /// and it can be trivially used as a sequence. 
+     /// </summary>
     public interface IArray<T> : IMap<int, T>, ICountedSequence<T>
     {
     }

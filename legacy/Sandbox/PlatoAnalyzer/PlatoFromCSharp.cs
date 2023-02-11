@@ -294,7 +294,7 @@ namespace PlatoAnalyzer
         {
             if (syntax is TypePatternSyntax tps)
             {
-                return new PlatoPatternMatch(mapping.NextId, null, tps.Type.ToPlato(mapping));
+                return new PlatoPatternMatch(mapping.NextId,  null, tps.Type.ToPlato(mapping));
             }
 
             if (syntax is DeclarationPatternSyntax dps)

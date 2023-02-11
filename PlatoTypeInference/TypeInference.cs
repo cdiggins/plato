@@ -16,29 +16,68 @@ namespace PlatoTypeInference
 
     public class TypeVar : BaseType
     {
-        public override string Name => $"{OriginalName}_{Id}";
-        public int Id { get; } 
-        public string OriginalName { get; }
-        public TypeVar(string name, int id) => (OriginalName, Id) = (name, id);
+        public override string Name { get; }
+        public TypeVar(string name) => Name = name;
     }
   
     public class TypeList : BaseType
     {
+        public TypeList(IEnumerable<BaseType> types, params string[] typeParameterNames)
+        {
+            Types = types.ToList();
+            TypeParameterNames = new HashSet<string>(typeParameterNames);
+            foreach (var t in Types)
+            {
+                switch (t)
+                {
+                    case TypeVar tv:
+                        TypeVariables.Add(tv.Name);
+                        break;
+                    case TypeList tl:
+                        foreach (var fv in tl.TypeFreeVariables)
+                            TypeVariables.Add(fv);
+                        break;
+                }
+            }
+
+            TypeFreeVariables = TypeVariables.Keys.Except(typeParameterNames).ToList();
+        }
+        
         public override string Name => "[]";
         public int Count => Types.Count;
         public BaseType this[int index] => Types[index];
-        public IReadOnlyList<BaseType> Types = new List<BaseType>();
-        public IReadOnlyList<TypeVar> TypeParameters = new List<TypeVar>();
-        public bool IsPolyType => TypeParameters.Count > 0;
-        public IEnumerable<string> TypeParameterNames => TypeParameters.Select(p => p.Name);
+        public IReadOnlyList<BaseType> Types { get; }
+        public HashSet<string> TypeVariables { get; } = new HashSet<string>();
+        public HashSet<string> TypeParameterNames { get; } = 
+        public HashSet<string> TypeFreeVariables;
+
+        public bool IsPolyType => TypeParameterNames.Count > 0;
         public string TypeParametersString => IsPolyType ? "!" + string.Join("!", TypeParameterNames) : "";
         public override string ToString() => $"{TypeParametersString}.[{string.Join(",", Types)}]";
-    }
+
+
+        public static IReadOnlyList<BaseType> GatherParameters(IEnumerable<BaseType> types)
+        {
+            var result = new Dictionary<string, TypeVar>();
+            foreach (var type in types)
+            {
+                if (type is TypeList list)
+                {
+                    foreach (var param in list.TypeParameters)
+                    {
+                        if (!result.Contains(param))
+                            result.Add(param);
+                    }
+                }
+            }
+            return result;
+        }
 
     public class TypeConstant : BaseType
     {
         public override string Name { get; }
         public TypeConstant(string name) => Name = name;
+        public override string ToString() => Name;
     }
 
     public class UnificationException : Exception
@@ -143,7 +182,7 @@ namespace PlatoTypeInference
             return tv;
         }
 
-        public BaseType Unify(BaseType t1, BaseType t2, int depth)
+        public BaseType Unify(BaseType t1, BaseType t2, int depth = 0)
         {
             if (t1 is TypeVar tv1)
             {
@@ -177,7 +216,7 @@ namespace PlatoTypeInference
                 if (t2 is TypeConstant tc2 && tc1.Name == tc2.Name)
                     return tc1;
 
-                throw new Exception($"Fail to unify {t1} and {t2}");
+                throw new UnificationException(t1, t2, "Failed");
             }
 
             if (t1 is TypeList tl1 && t2 is TypeList tl2)
@@ -185,7 +224,7 @@ namespace PlatoTypeInference
                 return UnifyLists(tl1, tl2, depth);
             }
 
-            throw new Exception($"Fail to unify {t1} and {t2}");
+            throw new UnificationException(t1, t2, "Failed");
         }
     }
 }

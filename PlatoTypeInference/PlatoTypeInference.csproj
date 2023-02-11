@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\ptarmigan\src\Ptarmigan.Utils\Ptarmigan.Utils.csproj" />
     <ProjectReference Include="..\PlatoCollections\Plato.Collections.csproj" />
   </ItemGroup>
 
