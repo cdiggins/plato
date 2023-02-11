@@ -1,4 +1,7 @@
-﻿namespace PlatoParser
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
+
+namespace PlatoParser
 {
     public interface IRuleOrGrammar
     { }
@@ -18,7 +21,13 @@
         public static Rule Sequence(params Rule[] rules)
             => new Sequence(rules);
 
-        public static Rule Node(Rule r)
-            => new NodeRule(r);
+        public static Rule Node(Rule r, [CallerMemberName] string name = "")
+            => new NodeRule(name, r);
+
+        public static Rule Optional(Rule r)
+            => r.Or(true);
+
+        public static Rule Recursive(Func<Rule> f)
+            => new RecursiveRule(f);
     }
 }

@@ -12,11 +12,17 @@ namespace PlatoParser
         public static Rule Then(this Rule rule, params Rule[] rules)
             => new Sequence(rules.Prepend(rule));
 
+        public static Rule ThenNot(this Rule rule, Rule other)
+            => rule.Then(other.NotAt());
+
         public static Rule Or(this Rule rule, params Rule[] rules)
             => new Choice(rules.Prepend(rule));
 
         public static Rule NotAt(this Rule rule)
             => new NotAt(rule);
+
+        public static Rule ButNot(this Rule rule, Rule except)
+            => except.NotAt().Then(rule);
 
         public static Rule Optional(this Rule rule)
             => rule.Or(true);
