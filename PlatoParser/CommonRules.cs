@@ -1,9 +1,10 @@
-﻿
-using System.Globalization;
-
-namespace PlatoParser
+﻿namespace PlatoParser
 {
-    // https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/lexical-structure
+    // This is currently a parser for a subset of the C# language 
+    // See: https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/lexical-structure
+    // The goal is to separate this into a C# and A Plato grammar.
+    // First step though is to test this on my own source code. 
+
     public class CommonRules : Grammar
     {
         // Helper functions 
@@ -12,11 +13,12 @@ namespace PlatoParser
         public Rule List(Rule r) => List(r, Symbol(","));
         public Rule Delimited(Rule first, Rule middle, Rule last) => first + middle + last;
         public Rule Parenthesized(Rule r) => Delimited(Symbol("("), r, Symbol(")"));
-        public Rule ParenthesizedList(Rule r, Rule sep? = null) => Parenthesized(List(r, sep));
+        public Rule ParenthesizedList(Rule r, Rule? sep = null) => Parenthesized(List(r, sep));
         public Rule Bracketed(Rule r) => Delimited(Symbol("["), r, Symbol("]"));
         public Rule BracketedList(Rule r, Rule? sep = null) => Delimited(Symbol("["), List(r, sep), Symbol("]"));
         public Rule Keyword(string s) => s + IdentifierChar.NotAt() + WS;
-        public Rule UntilPast(Rule r) => r.NotAt().Then(AnyChar).ZeroOrMore().Then(r);
+        public Rule UntilPast(Rule r) => RepeatUntilPast(AnyChar, r);
+        public Rule RepeatUntilPast(Rule repeat, Rule delimiter) => delimiter.NotAt().Then(repeat).ZeroOrMore().Then(repeat);
         public Rule Symbol(string s) => s + WS;
         public Rule Symbols(params string[] strings) => Choice(strings.OrderByDescending(x => x.Length).Select(Symbol).ToArray());
         public Rule Keywords(params string[] strings) => Choice(strings.OrderByDescending(x => x.Length).Select(Keyword).ToArray());
@@ -38,12 +40,12 @@ namespace PlatoParser
         public Rule BinDigit => '0'.To('1');
         public Rule Hexadecimal => Choice("0x" | "0X" + HexDigit.OneOrMore());
         public Rule Binary => Choice("0b" | "0B" + BinDigit.OneOrMore());
-        public Rule IntegerSuffix = Choice("ul", "UL", "u", "U", "l", "L", "lu", "lU", "Lu", "LU");
-        public Rule Integer => (Hexadecimal | Binary | Digits.ThenNot(".fFdDmM".ToCharSetRule())) + IntegerSuffix.Optional();
-        public Rule FloatSuffix = "fFdDmM".ToCharSetRule();
-        public Rule Sign = "+-".ToCharSetRule();
-        public Rule ExponentPart = "eE".ToCharSetRule() + Sign.Optional() + Digits;
-        public Rule Float => Digits + FractionalPart.Optional() + ExponentPart.Optional() + FloatSuffix.Optional();
+        public Rule IntegerSuffix => Choice("ul", "UL", "u", "U", "l", "L", "lu", "lU", "Lu", "LU");
+        public Rule Integer => Node((Hexadecimal | Binary | Digits.ThenNot(".fFdDmM".ToCharSetRule())) + IntegerSuffix.Optional());
+        public Rule FloatSuffix => "fFdDmM".ToCharSetRule();
+        public Rule Sign => "+-".ToCharSetRule();
+        public Rule ExponentPart => "eE".ToCharSetRule() + Sign.Optional() + Digits;
+        public Rule Float => Node(Digits + FractionalPart.Optional() + ExponentPart.Optional() + FloatSuffix.Optional());
         public Rule Digits => Digit.OneOrMore();
         public Rule SpaceChars => " \t\n\r\0\v\f".ToCharSetRule();
         public Rule Spaces => SpaceChars.OneOrMore();
@@ -55,7 +57,7 @@ namespace PlatoParser
         public Rule WS => (Spaces | Comment).ZeroOrMore();
 
         // Literals 
-        public Rule Number => Node(Digits); // TODO: more complex numerical expression
+        public Rule NumberLiteral => (Float | Integer); 
         public Rule EscapedLiteralChar => '\\' + AnyChar; // TODO: handle special codes like \u codes and \x
         public Rule StringLiteralChar => EscapedLiteralChar | AnyChar.Except('"');
         public Rule StringLiteral => Node('"' + StringLiteralChar.ZeroOrMore() + '"');
@@ -64,7 +66,7 @@ namespace PlatoParser
         public Rule BooleanLiteral => Node(Keyword("true") | Keyword("false"));
         public Rule NullLiteral => Node(Keyword("null"));
         public Rule ValueLiteral => Node(Keyword("value"));
-        public Rule Literal => Node(Number
+        public Rule Literal => Node(NumberLiteral
             | StringLiteral
             | CharLiteral
             | BooleanLiteral
@@ -171,7 +173,20 @@ namespace PlatoParser
         public Rule ForStatement => Node(Keyword("for") + Symbol("(") + VarDeclStatement + Expression + EOS + Expression + Symbol(")") + Statement);
         public Rule Initialization => Node(Optional(Symbol("=") + Expression));
         public Rule VarDeclStatement => Node((Keyword("var") | TypeExpr) + Identifier + Initialization + EOS);
-        public Rule Statement => Node(EOS | IfStatement | WhileStatement | DoWhileStatement | ReturnStatement | BreakStatement | ContinueStatement | ForStatement | ForEachStatement | VarDeclStatement | ExpressionStatement);
+        
+        public Rule Statement => Recursive(() => Node(EOS 
+            | CompoundStatement
+            | IfStatement 
+            | WhileStatement 
+            | DoWhileStatement 
+            | ReturnStatement 
+            | BreakStatement 
+            | ContinueStatement 
+            | ForStatement 
+            | ForEachStatement 
+            | VarDeclStatement 
+            | ExpressionStatement));
+        
         public Rule RefKeyword => Keyword("ref");
         public Rule OutKeyword => Keyword("out");
         public Rule ParamsKeyword => Keyword("params");
@@ -235,15 +250,31 @@ namespace PlatoParser
 
         public Rule NamespaceDeclaration => Node(Keyword("namespace") + QualifiedIdentifier + Braced(TopDeclaration.ZeroOrMore()));
         public Rule FileScopedNamespace => Node(Keyword("namespace") + QualifiedIdentifier + EOS);
-        public Rule TopDeclaration => Node(NamespaceDeclaration | TypeDeclarationWithPreamble);
+        public Rule TopDeclaration => Recursive(() => Node(NamespaceDeclaration | TypeDeclarationWithPreamble));
         public Rule File => UsingDirective.ZeroOrMore() + FileScopedNamespace.Optional() + TopDeclaration.ZeroOrMore();
 
         public Rule ArrayRankSpecifier => Node(Bracketed(Node(Symbol(",")).ZeroOrMore()));
         public Rule ArrayRankSpecifiers => Node(ArrayRankSpecifier.ZeroOrMore());
         public Rule TypeArgList => AngledBracketList(TypeExpr);
+        public Rule Nullable => Node(Symbol("?").Optional());
         public Rule TypeExpr => Recursive(() => Node(QualifiedIdentifier + TypeArgList.Optional() + ArrayRankSpecifiers));
 
-        // Not supported:
+        // Tokenization pass 
+        public Rule OperatorChar => "!%^&|*?+-=/><".ToCharSetRule();
+        public Rule OperatorToken => OperatorChar.OneOrMore();
+        public Rule Separator => ";,.".ToCharSetRule();
+        public Rule Delimiter => "[]{}()".ToCharSetRule();
+        public Rule Token => Node(OperatorToken | Identifier | Literal | Comment | Spaces | AnyChar);
+
+        // Structural pass 
+        public Rule TokenGroup => Node(Token.ButNot(Delimiter | Separator).OneOrMore()); 
+        public Rule Element => Node(Structure | TokenGroup);
+        public Rule BracedStructure => Node("{" + Element.ZeroOrMore() + "}");
+        public Rule BracketedStructure => Node("[" + Element.ZeroOrMore() + "]");
+        public Rule ParenthesizedStructure => Node("(" + Element.ZeroOrMore() + ")");
+        public Rule Structure => Node(Recursive(() => BracketedStructure | ParenthesizedStructure | BracedStructure));
+
+        // Some C# features not supported:
         // goto
         // label
         // LINQ natural query syntax
@@ -251,8 +282,7 @@ namespace PlatoParser
         // await
         // fixed
         // lock
-        // Events
-        // nullable type 
+        // events
         // finalizer
         // unsafe
         // checked / unchecked
@@ -265,20 +295,6 @@ namespace PlatoParser
         // records
         // with
         // sizeof
-
-        // Tokenization pass 
-        public Rule OperatorChar => "!%^&|*?+-=/><".ToCharSetRule();
-        public Rule OperatorToken => OperatorChar.OneOrMore();
-        public Rule Separator => ";,.".ToCharSetRule();
-        public Rule Delimiter => "[]{}()".ToCharSetRule();
-        public Rule Token => Node(OperatorToken | Identifier | Literal | Comment | Spaces | AnyChar);
-
-        // Structural pass 
-        public Rule TokenGroup => Node(Token.ButNot(Delimiter | Separator).ZeroOrMore()); 
-        public Rule Element => Structure | TokenGroup;
-        public Rule BracedStructure => Node("{" + Element.ZeroOrMore() + "}");
-        public Rule BracketedStructure => Node("[" + Structure.ZeroOrMore() + "]");
-        public Rule ParenthesizedStructure => Node("(" + Structure.ZeroOrMore() + ")");
-        public Rule Structure => Recursive(() => BracketedStructure | ParenthesizedStructure | BracedStructure);
+        // verbatim strings (to-do)
     }
 }

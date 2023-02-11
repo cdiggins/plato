@@ -11,6 +11,7 @@ public abstract class Rule
     public static implicit operator Rule(char[] cs) => new Choice(cs.Select(c => (Rule)c));
     public static implicit operator Rule(Func<Rule> f) => new RecursiveRule(f);
     public static implicit operator Rule(bool b) => b ? AlwaysTrue.Value : AlwaysFalse.Value;
+    public string Name { get; set; } = string.Empty;
 }
 
 public class RecursiveRule : Rule

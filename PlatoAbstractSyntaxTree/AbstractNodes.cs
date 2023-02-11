@@ -374,17 +374,16 @@
         public Namespace(string name, IReadOnlyList<Namespace> nestedNamespaces, IReadOnlyList<ClassDeclaration> classes)
             : base(name)
         {
-            NestedNamespaces = nestedNamespaces ?? ;
-            Classes = classes;
+            NestedNamespaces = nestedNamespaces ?? Array.Empty<Namespace>();
+            Classes = classes ?? Array.Empty<ClassDeclaration>();
         }
 
         public IReadOnlyList<Namespace> NestedNamespaces { get; }
         public IReadOnlyList<ClassDeclaration> Classes { get; }
         public override IEnumerable<AbstractNode> Children => NestedNamespaces.Cast<AbstractNode>().Concat(Classes);
-    
+
         public static Namespace Create(string name, IReadOnlyList<Namespace> nestedNamespace = null, IReadOnlyList<ClassDeclaration> classes = null)
-            => new Namespace(name, nestedNamespace ?? Array.Empty<Namespace>(), 
-                classes ?? Array.Empty<>);
+            => new Namespace(name, nestedNamespace, classes);
 
         public static Namespace Create(string name, IReadOnlyList<ClassDeclaration> classes)
             => new Namespace(name, Array.Empty<Namespace>(), classes);

@@ -15,6 +15,11 @@ namespace PlatoParser
     {
         public Rule Root { get; }
 
+        public Grammar()
+        { 
+            
+        }
+
         public static Rule Choice(params Rule[] rules)
             => new Choice(rules);
 

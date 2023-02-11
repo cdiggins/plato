@@ -105,7 +105,6 @@ namespace PlatoAstWriter
                         .Indent()
                         .Write(classDeclaration.Fields)
                         .Write(classDeclaration.Functions)
-                        .Write(classDeclaration.ChildClasses)
                         .WriteLine("}")
                         .Dedent();
                 
