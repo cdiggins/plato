@@ -1,38 +1,101 @@
-﻿namespace PlatoParser;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
+
+namespace PlatoParser;
+
+public class ParseResults
+{
+    private readonly ParserState?[] _states;
+
+    public ParseResults(int count)
+    {
+        _states = new ParserState[count];
+    }
+
+    public void Update(ParserState? state)
+    {
+        if (state?.Node == null) return;
+        _states[state.Node.Start] = state;
+    }
+
+    public ParserState? PreviousMatch(Rule rule, int pos)
+        => _states[pos]?.Node?.Rule == rule 
+            ? _states[pos] 
+            : null;
+}
 
 public abstract class Rule 
 {
-    public abstract ParserState? Match(ParserState state);
+    protected abstract ParserState? MatchImplementation(ParserState state, ParseResults results);
+
+    public ParserState? Match(ParserState state, ParseResults results)
+    {
+        // If we have already parsed this position and rule combination: return it. 
+        //var prev = results.PreviousMatch(this, state.Position);
+        //if (prev != null)
+        {
+            //return prev;
+            //Debug.WriteLine($"Fast lookup of {Name} at {state.Position} = {result}");
+        }
+
+        try
+        {
+            // All matching comes through here
+            var result = MatchImplementation(state, results);
+            if (result != null)
+            {
+                //Debug.WriteLine($"Matched rule {Name} at {state.Position}");
+            }
+            else
+            {
+                //Debug.WriteLine($"Failed rule {Name} at {state.Position}");
+            }
+
+            //results.Update(result);
+            return result;
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine($"Uncaught exception {e}");
+            throw;
+        }
+    }
+
     public static Rule operator +(Rule left, Rule right) => new Sequence(left, right);
     public static Rule operator |(Rule left, Rule right) => new Choice(left, right);
     public static Rule operator !(Rule rule) => new NotAt(rule);
     public static implicit operator Rule(string s) => new StringMatchRule(s);
     public static implicit operator Rule(char c) => new CharMatchRule(c);
     public static implicit operator Rule(char[] cs) => new Choice(cs.Select(c => (Rule)c));
+    public static implicit operator Rule(string[] xs) => new Choice(xs.Select(x => (Rule)x));
     public static implicit operator Rule(Func<Rule> f) => new RecursiveRule(f);
     public static implicit operator Rule(bool b) => b ? AlwaysTrue.Value : AlwaysFalse.Value;
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; } = string.Empty;
+    public Rule(string name) => Name = name;
+    public abstract Rule WithName(string name);    
 }
 
 public class RecursiveRule : Rule
 {
     public Func<Rule> RuleFunc { get; }
-    public RecursiveRule(Func<Rule> ruleFunc) => RuleFunc = ruleFunc;
-    public override ParserState? Match(ParserState state)
-        => RuleFunc().Match(state);
+    public RecursiveRule(Func<Rule> ruleFunc, [CallerMemberName] string name = "") : base(name) => RuleFunc = ruleFunc;
+    public override Rule WithName(string s) => new RecursiveRule(RuleFunc, Name);
+    protected override ParserState? MatchImplementation(ParserState state, ParseResults results)
+        => RuleFunc().Match(state, results);
 }
 
 public class StringMatchRule : Rule
 {
     public string Pattern { get; }
-    public StringMatchRule(string s) => Pattern = s;
-    public override ParserState? Match(ParserState state)
+    public StringMatchRule(string s, [CallerMemberName] string name = "") : base(name) => Pattern = s;
+    public override Rule WithName(string s) => new StringMatchRule(Pattern, Name);
+    protected override ParserState? MatchImplementation(ParserState state, ParseResults results)
     {
         if (state.AtEnd)
             return null;
         for (var i=0; i < Pattern.Length; ++i)
         {
-            if (state?.Current != Pattern[i])
+            if (state.AtEnd || state?.Current != Pattern[i])
                 return null;
             var tmp = state?.Advance();
             if (tmp == null) return null;
@@ -44,9 +107,10 @@ public class StringMatchRule : Rule
 
 public class AnyCharRule : Rule
 {
-    public override ParserState? Match(ParserState state)
+    public AnyCharRule([CallerMemberName] string name = "") : base(name) { }
+    public override Rule WithName(string name) => new AnyCharRule(name);
+    protected override ParserState? MatchImplementation(ParserState state, ParseResults results)
         => state.AtEnd ? null : state.Advance();
-
     public static AnyCharRule Default { get; } = new AnyCharRule();
 }
 
@@ -54,49 +118,53 @@ public class CharRangeRule : Rule
 {
     public char Low { get; }
     public char High { get; }
-    public CharRangeRule(char low, char high) => (Low, High) = (low, high);
-    public override ParserState? Match(ParserState state)
+    public CharRangeRule(char low, char high, string name = "") : base(name) => (Low, High) = (low, high);
+    public override Rule WithName(string name) => new CharRangeRule(Low, High, name);
+    protected override ParserState? MatchImplementation(ParserState state, ParseResults results)
         => state.AtEnd ? null : state.Current >= Low && state.Current <= High ? state.Advance() : null;
 }
 
 public class CharSetRule : Rule
 {
     public char[] Chars { get; }
-    public CharSetRule(params char[] chars) => Chars = chars;
-    public override ParserState? Match(ParserState state)
+    public CharSetRule(params char[] chars) : this(chars, "") { }
+    public CharSetRule(char[] chars, [CallerMemberName] string name = "") : base(name) => Chars = chars;
+    public override Rule WithName(string name) => new CharSetRule(Chars, name);
+    protected override ParserState? MatchImplementation(ParserState state, ParseResults results)
         => state.AtEnd ? null : Chars.Contains(state.Current) ? state.Advance() : null;
 }
 
 public class EndOfInputRule : Rule
 {
-    public override ParserState? Match(ParserState state)
-        => state.AtEnd ? state : null;
+    public EndOfInputRule([CallerMemberName] string name = "") : base(name) { }
+    public override Rule WithName(string name) => new EndOfInputRule(name);
+    protected override ParserState? MatchImplementation(ParserState state, ParseResults results) => state.AtEnd ? state : null;
     public static EndOfInputRule Default => new EndOfInputRule();
 }
 
 public class CharMatchRule : Rule
 {
     public char Ch { get; }
-    public CharMatchRule(char ch) => Ch = ch;
-    public override ParserState? Match(ParserState state)
+    public CharMatchRule(char ch, [CallerMemberName] string name = "") : base(name) => Ch = ch;
+    public override Rule WithName(string name) => new CharMatchRule(Ch, name);
+    protected override ParserState? MatchImplementation(ParserState state, ParseResults results)
         => state.AtEnd ? null : state.Current == Ch ? state.Advance() : null;
 }
 
 public class NodeRule : Rule
 {
-    public string Name { get; }
     public Rule Rule { get; }
 
-    public NodeRule(string name, Rule rule)
-        => (Name, Rule) = (name, rule);
+    public NodeRule(Rule rule, [CallerMemberName] string name = "") : base(name) => Rule = rule;
+    public override Rule WithName(string name) => new NodeRule(Rule, name);
 
-    public override ParserState? Match(ParserState state)
+    protected override ParserState? MatchImplementation(ParserState state, ParseResults results)
     {
         var start = state.Position;
-        var result = Rule.Match(state);
+        var result = Rule.Match(state, results);
         if (result is null) return null;
         var node = new ParseNode(result.Input, Name, start, result.Position, result.Node);
-        return new ParserState(state.Input, result.Position, node);
+        return new ParserState(result.Input, result.Position, node);
     }
 }
 
@@ -104,53 +172,55 @@ public class ZeroOrMore : Rule
 {
     public Rule Rule { get; }
 
-    public ZeroOrMore(Rule rule)
-        => Rule = rule;
+    public ZeroOrMore(Rule rule, [CallerMemberName] string name = "") : base(name) => Rule = rule;
+    public override Rule WithName(string name) => new ZeroOrMore(Rule, name);
 
-    public override ParserState? Match(ParserState? state)
+    protected override ParserState? MatchImplementation(ParserState? state, ParseResults results)
     {
-        for (var next = state; next != null; next = Rule.Match(next))
-            state = next;
-        return state;
+        var curr = state;
+        var next = Rule.Match(curr, results);
+        while (next != null)
+        {
+            curr = next;
+            next = Rule.Match(curr, results);
+            if (next != null)
+            {
+                if (next.Position <= curr.Position)
+                {
+                    throw new Exception("Parser is no longer making progress");
+                }
+            }
+        }
+        return curr;
     }
 }
 
-public class RepeatRule : Rule
+public class Optional : Rule
 {
     public Rule Rule { get; }
-    public int Count { get; }
 
-    public RepeatRule(Rule rule, int n)
-        => (Rule, Count) = (rule, n);
+    public Optional(Rule rule, [CallerMemberName] string name = "") : base(name) => Rule = rule;
+    public override Rule WithName(string name) => new Optional(Rule, name);
 
-    public override ParserState? Match(ParserState? state)
-    {
-        var i = 0;        
-        for (var next = state; next != null && i < Count; next = Rule.Match(next), i++)
-            state = next;
-        if (i != Count)
-            return null;
-        return state;
-    }
+    protected override ParserState? MatchImplementation(ParserState? state, ParseResults results)
+        => Rule.Match(state, results) ?? state;
 }
 
 public class Sequence : Rule
 {
-    public Sequence(params Rule[] rules)
-        => Rules = rules.ToArray();
-
-    public Sequence(IEnumerable<Rule> rules)
-        : this(rules.ToArray())
-    {  }
-
     public Rule[] Rules { get; }
 
-    public override ParserState? Match(ParserState state)
+    public Sequence(Rule[] rules, [CallerMemberName] string name = "") : base(name) => Rules = rules;
+    public Sequence(params Rule[] rules) : this(rules, "") { }
+    public Sequence(IEnumerable<Rule> rules, string name = "") : this(rules.ToArray(), name) { }
+    public override Rule WithName(string name) => new Sequence(Rules, name);
+
+    protected override ParserState? MatchImplementation(ParserState state, ParseResults results)
     {
         var newState = state;
         foreach (var rule in Rules)
         {
-            newState = rule.Match(newState);
+            newState = rule.Match(newState, results);
             if (newState == null) return null;
         }
 
@@ -160,20 +230,18 @@ public class Sequence : Rule
 
 public class Choice : Rule
 {
-    public Choice(IEnumerable<Rule> rules)
-        : this(rules.ToArray())
-    { }
-
-    public Choice(params Rule[] rules)
-        => Rules = rules;
-
     public Rule[] Rules { get; }
 
-    public override ParserState? Match(ParserState state)
+    public Choice(IEnumerable<Rule> rules, [CallerMemberName] string name = "") : this(rules.ToArray(), name) { }
+    public Choice(Rule[] rules, string name = "") : base(name) => Rules = rules;
+    public Choice(params Rule[] rules) : this(rules, "") {  }
+    public override Rule WithName(string name) => new Choice(Rules, name);
+
+    protected override ParserState? MatchImplementation(ParserState state, ParseResults results)
     {
         foreach (var rule in Rules)
         {
-            var newState = rule.Match(state);
+            var newState = rule.Match(state, results);
             if (newState != null) return newState;
         }
 
@@ -183,39 +251,42 @@ public class Choice : Rule
 
 public class AlwaysTrue : Rule
 {
-    public override ParserState? Match(ParserState state)
-        => state;
-
-    public static AlwaysTrue Value = new AlwaysTrue();
+    public AlwaysTrue([CallerMemberName] string name = "") : base(name) { }
+    public override Rule WithName(string name) => new AlwaysTrue(name);
+    protected override ParserState? MatchImplementation(ParserState state, ParseResults results) => state;
+    public static readonly AlwaysTrue Value = new();
 }
 
 public class AlwaysFalse : Rule
 {
-    public override ParserState? Match(ParserState state)
-        => null;
-
-    public static AlwaysFalse Value = new AlwaysFalse();
+    public AlwaysFalse([CallerMemberName] string name = "") : base(name) { }
+    public override Rule WithName(string name) => new AlwaysFalse(name);
+    protected override ParserState? MatchImplementation(ParserState state, ParseResults results) => null;
+    public static readonly AlwaysFalse Value = new();
 }
 
 public class At : Rule
 {
     public Rule Rule { get; }
-
-    public At(Rule rule)
-        => (Rule) = (rule);
-
-    public override ParserState? Match(ParserState state)
-        => Rule.Match(state) != null ? state : null;
+    public At(Rule rule, [CallerMemberName] string name = "") : base(name) => (Rule) = (rule);
+    public override Rule WithName(string name) => new At(Rule, name);
+    protected override ParserState? MatchImplementation(ParserState state, ParseResults results)
+        => Rule.Match(state, results) != null ? state : null;
 }
 
 public class NotAt : Rule
 {
     public Rule Rule { get; }
-
-    public NotAt(Rule rule)
-        => (Rule) = (rule);
-
-    public override ParserState? Match(ParserState state)
-        => Rule.Match(state) == null ? state : null;
+    public NotAt(Rule rule, [CallerMemberName] string name = "") : base(name) => (Rule) = (rule);
+    public override Rule WithName(string name) => new NotAt(Rule, name);
+    protected override ParserState? MatchImplementation(ParserState state, ParseResults results)
+        => Rule.Match(state, results) == null ? state : null;
 }
 
+public class Recovery : Rule
+{
+    public Rule Rule { get; }
+    public Recovery(Rule rule, [CallerMemberName] string name = "") : base(name)  => Rule = rule;
+    public override Rule WithName(string name) => new Recovery(Rule, name); 
+    protected override ParserState? MatchImplementation(ParserState state, ParseResults results) => state;
+}

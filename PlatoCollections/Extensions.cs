@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Plato
 {
+
     public static class Extensions
     {
         public static SingleSequence<T> Unit<T>(this T x) => new SingleSequence<T>(x);
@@ -12,6 +13,20 @@ namespace Plato
 
         public static EmptySequence<T> Empty<T>()
             => EmptySequence<T>.Instance;
+
+        public static ArrayBuilder<T> ToArrayBuilder<T>(this ISequence<T> self)
+            => self.Iterator.ToArrayBuilder();
+
+        public static ArrayBuilder<T> ToArrayBuilder<T>(this IIterator<T> self)
+        {
+            var r = new ArrayBuilder<T>();
+            while (self.HasValue)
+            {
+                r.Add(self.Value);
+                self = self.Next;
+            }
+            return r;
+        }
 
         public static IRange Range(this int n)
             => Range(0, n);
@@ -27,9 +42,6 @@ namespace Plato
 
         public static Func<T, bool> Negate<T>(this Func<T, bool> func)
             => x => !func(x);
-
-        public static IArray<T> ToIArray<T>(this IReadOnlyList<T> xs)
-            => xs.Count.Select(i => xs[i]);
 
         public static IArray<T> ToIArray<T>(this IIterator<T> iter)
         {
@@ -51,10 +63,6 @@ namespace Plato
             ToSequence<TValue>(this IIterator<TValue> iterator)
             => new Sequence<TValue>(iterator);
 
-        public static Sequence<TValue, TIterator>
-            ToSequence<TValue, TIterator>(this TIterator iterator)
-            where TIterator : IIterator<TValue, TIterator>
-            => new Sequence<TValue, TIterator>(iterator);
 
         // To:
 
@@ -313,15 +321,11 @@ namespace Plato
         public static bool IsOrderedBy<T>(this ISequence<T> seq, Func<T, T, int> ordering)
             => seq.Iterator.IsOrderedBy(new Comparer<T>(ordering));
 
-        public static ISortedSequence<T> OrderBy<T>(this IIterator<T> iter, IComparer<T> ordering)
-            => iter.ExplicitSort(ordering);
+        public static IArray<T> OrderBy<T>(this ISequence<T> seq, Func<T, T, int> compare)
+            => seq.ToArrayBuilder().OrderBy(compare).ToIArray();
 
-        public static ISortedSequence<T> OrderBy<T>(this IIterator<T> iter, Func<T, T, int> ordering)
-            => iter.OrderBy(new Comparer<T>(ordering));
-
-        // TODO:
-        public static ISortedSequence<T> ExplicitSort<T>(this IIterator<T> iter, IComparer<T> ordering)
-            => throw new NotImplementedException();
+        public static IArray<T0> OrderBy<T0, T1>(this ISequence<T0> seq, Func<T0, T1> selector) where T1: IComparable<T1>
+            => seq.ToArrayBuilder().OrderBy(selector).ToIArray();
 
         public static bool IsOrderedBy<T>(this ISequence<T> seq, IComparer<T> ordering)
             => seq.Iterator.IsOrderedBy(ordering);

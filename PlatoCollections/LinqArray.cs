@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Plato
@@ -72,9 +71,9 @@ namespace Plato
             => new FunctionalArray<T>(count, f);
 
         /// <summary>
-        /// Converts any implementation of IList (e.g. Array/List) to an IArray.
+        /// Converts any implementation of IReadOnlyList (e.g. Array/List) to an IArray.
         /// </summary>
-        public static IArray<T> ToIArray<T>(this T[] self)
+        public static IArray<T> ToIArray<T>(this IReadOnlyList<T> self)
             => new ArrayAdapter<T>(self);
 
         /// <summary>
