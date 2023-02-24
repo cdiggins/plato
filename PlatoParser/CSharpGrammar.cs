@@ -7,9 +7,9 @@ namespace PlatoParser
     // The goal is to separate this into a C# and A Plato grammar.
     // First step though is to test this on my own source code. 
 
-    public class CommonRules : Grammar
+    public class CSharpGrammar : Grammar
     {
-        public CommonRules()
+        public CSharpGrammar()
         {
             WhitespaceRule = WS;
         }
@@ -46,14 +46,10 @@ namespace PlatoParser
         public Rule FractionalPart => Token("." + Digits.Optional());
         public Rule HexDigit => Token(Digit | 'a'.To('f') | 'A'.To('F'));
         public Rule BinDigit => Token('0'.To('1'));
-        public Rule HexLiteral => Token(new[] { "0x", "0X" } + HexDigit.OneOrMore() + IntegerSuffix.Optional());
-        public Rule BinaryLiteral => Token("0b" | "0B" + BinDigit.OneOrMore() + IntegerSuffix.Optional());
         public Rule IntegerSuffix => Token(new[] { "ul", "UL", "u", "U", "l", "L", "lu", "lU", "Lu", "LU" });
-        public Rule IntegerLiteral => Token(Digits.ThenNot(".fFdDmM".ToCharSetRule()) + IntegerSuffix.Optional());
         public Rule FloatSuffix => Token("fFdDmM".ToCharSetRule());
         public Rule Sign => Token("+-".ToCharSetRule());
         public Rule ExponentPart => Token("eE".ToCharSetRule() + Sign.Optional() + Digits);
-        public Rule FloatLiteral => Token(Digits + FractionalPart.Optional() + ExponentPart.Optional() + FloatSuffix.Optional());
         public Rule Digits => Token(Digit.OneOrMore());
         public Rule SpaceChars => Token(" \t\n\r\0\v\f".ToCharSetRule());
         public Rule Spaces => Token(SpaceChars.OneOrMore());
@@ -67,8 +63,12 @@ namespace PlatoParser
         // Literals 
         public Rule EscapedLiteralChar => Token('\\' + AnyChar); // TODO: handle special codes like \u codes and \x
         public Rule StringLiteralChar => Token(EscapedLiteralChar | AnyChar.Except('"'));
-        public Rule CharLiteralChar => Phrase(EscapedLiteralChar | AnyChar.Except('\''));
+        public Rule CharLiteralChar => Token(EscapedLiteralChar | AnyChar.Except('\''));
 
+        public Rule FloatLiteral => Phrase(Digits + FractionalPart.Optional() + ExponentPart.Optional() + FloatSuffix.Optional());
+        public Rule HexLiteral => Phrase(new[] { "0x", "0X" } + HexDigit.OneOrMore() + IntegerSuffix.Optional());
+        public Rule BinaryLiteral => Phrase("0b" | "0B" + BinDigit.OneOrMore() + IntegerSuffix.Optional());
+        public Rule IntegerLiteral => Phrase(Digits.ThenNot(".fFdDmM".ToCharSetRule()) + IntegerSuffix.Optional());
         public Rule StringLiteral => Phrase('"' + StringLiteralChar.ZeroOrMore() + '"');
         public Rule CharLiteral => Phrase('\'' + CharLiteralChar + '\'');
         public Rule BooleanLiteral => Phrase(Keyword("true") | Keyword("false"));
@@ -159,7 +159,7 @@ namespace PlatoParser
             );
 
         // Statements 
-        public Rule EOS => Symbol(";");
+        public Rule EOS => Token(Symbol(";"));
         public Rule ExpressionStatement => Phrase(Expression + EOS);
         public Rule ElseClause => Phrase(Keyword("else") + Statement);
         public Rule IfStatement => Phrase(Keyword("if") + ParenthesizedExpression + Statement + ElseClause.Optional());
@@ -233,7 +233,7 @@ namespace PlatoParser
         public Rule FunctionParameter => Phrase(AttributeList + FunctionParameterKeywords + TypeExpr + Identifier + DefaultValue);
         public Rule FunctionParameterList => Phrase(ParenthesizedList(FunctionParameter));
         public Rule ExpressionBody => Phrase(Symbol("=>") + Expression);
-        public Rule FunctionBody => Phrase(Recursive(() => ExpressionBody | CompoundStatement),true);
+        public Rule FunctionBody => Phrase(Recursive(() => ExpressionBody | CompoundStatement));
         public Rule BaseCall => Phrase(Keyword("base") + ParenthesizedExpression);
         public Rule ThisCall => Phrase(Keyword("this") + ParenthesizedExpression);
         public Rule BaseOrThisCall => Phrase((Symbol(":") + (BaseCall | ThisCall)).Optional());
@@ -260,8 +260,7 @@ namespace PlatoParser
             | ConverterDeclaration
             | TypeDeclaration
             | IndexerDeclaration
-            | PropertyDeclaration,
-            true);
+            | PropertyDeclaration);
 
         public Rule NamespaceDeclaration => Phrase(Keyword("namespace") + QualifiedIdentifier + Braced(TopDeclaration.ZeroOrMore()));
         public Rule FileScopedNamespace => Phrase(Keyword("namespace") + QualifiedIdentifier + EOS);
@@ -281,6 +280,7 @@ namespace PlatoParser
         public Rule Delimiter => "[]{}()".ToCharSetRule();
         public Rule Token => Phrase(OperatorToken | Identifier | Literal | Comment | Spaces | AnyChar);
 
+        /*
         // Structural pass 
         public Rule TokenGroup => Phrase(Token.ButNot(Delimiter | Separator).OneOrMore()); 
         public Rule Element => Phrase(Structure | TokenGroup);
@@ -288,6 +288,7 @@ namespace PlatoParser
         public Rule BracketedStructure => Phrase("[" + Element.ZeroOrMore() + "]");
         public Rule ParenthesizedStructure => Phrase("(" + Element.ZeroOrMore() + ")");
         public Rule Structure => Phrase(Recursive(() => BracketedStructure | ParenthesizedStructure | BracedStructure));
+        */
 
         // Some C# features not supported:
         // goto

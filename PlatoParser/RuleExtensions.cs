@@ -31,9 +31,6 @@ namespace PlatoParser
         public static Rule Except(this Rule rule, Rule except, [CallerMemberName] string name = "")
             => (except.NotAt() + rule).WithName(name);
 
-        public static Rule Node(this Rule rule, [CallerMemberName] string name = "")
-            => new NodeRule(rule, name);
-
         public static Rule ZeroOrMore(this Rule rule, [CallerMemberName] string name = "")
             => new ZeroOrMore(rule, name);
 
@@ -42,11 +39,5 @@ namespace PlatoParser
 
         public static Rule To(this char c1, char c2, [CallerMemberName] string name = "")
             => new CharRangeRule(c1, c2, name);
-
-        public static ParserState? Parse(this string s, Rule r, ParseResults results)
-            => r.Match(new ParserState(s, 0, null), results);
-
-        public static ParserState? Parse(this string s, Rule r)
-            => r.Match(new ParserState(s, 0, null), new ParseResults(s.Length));
     }
 }

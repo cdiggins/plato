@@ -1,9 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
-using System.Xml.Linq;
 
 namespace PlatoParser
 {
-
     // [Mutable]
     public class Grammar 
     {
@@ -17,38 +15,36 @@ namespace PlatoParser
             return pi.GetValue(this) as Rule;
         }
 
+        public IEnumerable<Rule?> GetRules()
+            => GetType()
+                .GetProperties()
+                .Where(pi => pi.PropertyType.IsAssignableTo(typeof(Rule)))
+                .Select(pi => pi.GetValue(this) as Rule);
+
         public static Rule Choice(IEnumerable<Rule> rules, [CallerMemberName] string name = "")
             => new Choice(rules, name);
       
         public static Rule Sequence(IEnumerable<Rule> rules, [CallerMemberName] string name = "")
             => new Sequence(rules, name);
 
-        public static Rule Recursive(Func<Rule> f)
-            => new RecursiveRule(f);
+        public static Rule Recursive(Func<Rule> f, [CallerMemberName] string name = "")
+            => new RecursiveRule(f, name);
 
         public Rule Token(Rule r, [CallerMemberName] string name = "")
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Name must not be null");
             if (Lookup.ContainsKey(name)) return Lookup[name];
+            r = new TokenRule(r, name);
             r = r.WithName(name);
             Lookup.Add(name, r);
             return r;
         }
 
-        public Rule Phrase(Rule r, bool createNode = true, [CallerMemberName] string name = "")
+        public Rule Phrase(Rule r, [CallerMemberName] string name = "")
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Name must not be null");
             if (Lookup.ContainsKey(name)) return Lookup[name];
-            if (createNode)
-            {
-                r = new NodeRule(r);
-            }
-            if (WhitespaceRule != null)
-            {
-                // Parse the whitespace, but don't put it in the node
-                r = r.Then(WhitespaceRule);
-            }
-            r = r.WithName(name);
+            r = new NodeRule(r, WhitespaceRule, name);
             Lookup.Add(name, r);
             return r;
         }

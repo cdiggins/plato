@@ -158,28 +158,11 @@ abc
             "try{}catch(Exception e){}finally{}",
         };
 
-        public static void OutputGrammarRules(object obj)
-        {
-            var type = obj.GetType();
-            foreach (var pi in type.GetProperties())
-            {
-                if (typeof(Rule).IsAssignableFrom(pi.PropertyType))
-                {
-                    var rule = (Rule?)pi.GetValue(obj, null);
-                    if (rule != null)   
-                    {
-                        var t = rule.GetType();
-                        Console.WriteLine($"{pi.Name} = {rule.Name}:{t.Name}");
-                    }
-                }
-            }
-        }
 
         [Test]
-        public static void GrammarTest()
+        public static void GrammarDefinition()
         {
-            var rules = new CommonRules();
-            OutputGrammarRules(rules);
+            Grammar.OutputDefinitions();
         }
 
         public static string TestDigits = "0123456789";
@@ -188,11 +171,11 @@ abc
         public static string MathEquation = "(1.23 + (4.56 / 7.9) - 0.8)";
         public static string SomeCode = "var x = 123; x += 23; f(1, a);";
 
-        public static CommonRules Rules = new CommonRules();
+        public static CSharpGrammar Rules = new CSharpGrammar();
 
         public static int ParseTest(string input, Rule rule)
         {
-            var pr = new ParseResults(input.Length);
+            var pr = new ParseCache(input.Length);
             Console.WriteLine($"Testing Rule {rule.Name} with input {input}");
             var ps = input.Parse(rule, pr);
             if (ps == null)
@@ -210,7 +193,7 @@ abc
             return ps != null && ps.AtEnd ? 1 : 0;
         }
 
-        public static CommonRules Grammar = new CommonRules();
+        public static CSharpGrammar Grammar = new CSharpGrammar();
 
         [Test] public static void TestSpaces() => TestInputsAndRule(Spaces, Grammar.WS);
         [Test] public static void TestLiterals() => TestInputsAndRule(Literals, Grammar.Literal);
@@ -233,30 +216,30 @@ abc
         }
 
         [Test]
-        [TestCase("<T,T>", nameof(CommonRules.TypeArgList))]
-        [TestCase("<T1, T2>", nameof(CommonRules.TypeArgList))]
-        [TestCase("?", nameof(CommonRules.Nullable))]
-        [TestCase("[]", nameof(CommonRules.ArrayRankSpecifier))]
-        [TestCase("[,,]", nameof(CommonRules.ArrayRankSpecifier))]
-        [TestCase("[ , , ] ", nameof(CommonRules.ArrayRankSpecifier))]
-        [TestCase("= 12", nameof(CommonRules.Initialization))]
-        [TestCase("", nameof(CommonRules.InitializationClause))]
-        [TestCase("", nameof(CommonRules.VariantClause))]
-        [TestCase("", nameof(CommonRules.InvariantClause))]
-        [TestCase("var x=12", nameof(CommonRules.InitializationClause))]
-        [TestCase("b < 12", nameof(CommonRules.InvariantClause))]
-        [TestCase("++i", nameof(CommonRules.InvariantClause))]
-        [TestCase("(a)", nameof(CommonRules.LambdaParameters))]
-        [TestCase("a", nameof(CommonRules.LambdaParameters))]
-        [TestCase("()", nameof(CommonRules.LambdaParameters))]
-        [TestCase("(a,b)", nameof(CommonRules.LambdaParameters))]
-        [TestCase("(int a,int b)", nameof(CommonRules.LambdaParameters))]
-        [TestCase("(list<int, int> a,int[] b)", nameof(CommonRules.LambdaParameters))]
-        [TestCase("a", nameof(CommonRules.LambdaParameter))]
-        [TestCase("int a", nameof(CommonRules.LambdaParameter))]
-        [TestCase("List<int> a", nameof(CommonRules.LambdaParameter))]
-        [TestCase("List<int, int> a", nameof(CommonRules.LambdaParameter))]
-        [TestCase("int[] a", nameof(CommonRules.LambdaParameter))]
+        [TestCase("<T,T>", nameof(CSharpGrammar.TypeArgList))]
+        [TestCase("<T1, T2>", nameof(CSharpGrammar.TypeArgList))]
+        [TestCase("?", nameof(CSharpGrammar.Nullable))]
+        [TestCase("[]", nameof(CSharpGrammar.ArrayRankSpecifier))]
+        [TestCase("[,,]", nameof(CSharpGrammar.ArrayRankSpecifier))]
+        [TestCase("[ , , ] ", nameof(CSharpGrammar.ArrayRankSpecifier))]
+        [TestCase("= 12", nameof(CSharpGrammar.Initialization))]
+        [TestCase("", nameof(CSharpGrammar.InitializationClause))]
+        [TestCase("", nameof(CSharpGrammar.VariantClause))]
+        [TestCase("", nameof(CSharpGrammar.InvariantClause))]
+        [TestCase("var x=12", nameof(CSharpGrammar.InitializationClause))]
+        [TestCase("b < 12", nameof(CSharpGrammar.InvariantClause))]
+        [TestCase("++i", nameof(CSharpGrammar.InvariantClause))]
+        [TestCase("(a)", nameof(CSharpGrammar.LambdaParameters))]
+        [TestCase("a", nameof(CSharpGrammar.LambdaParameters))]
+        [TestCase("()", nameof(CSharpGrammar.LambdaParameters))]
+        [TestCase("(a,b)", nameof(CSharpGrammar.LambdaParameters))]
+        [TestCase("(int a,int b)", nameof(CSharpGrammar.LambdaParameters))]
+        [TestCase("(list<int, int> a,int[] b)", nameof(CSharpGrammar.LambdaParameters))]
+        [TestCase("a", nameof(CSharpGrammar.LambdaParameter))]
+        [TestCase("int a", nameof(CSharpGrammar.LambdaParameter))]
+        [TestCase("List<int> a", nameof(CSharpGrammar.LambdaParameter))]
+        [TestCase("List<int, int> a", nameof(CSharpGrammar.LambdaParameter))]
+        [TestCase("int[] a", nameof(CSharpGrammar.LambdaParameter))]
         public static void TargetedTest(string input, string name)
         {
             var rule = Grammar.GetRuleFromName(name);
@@ -264,6 +247,7 @@ abc
             Assert.IsTrue(result == 1);
         }
 
+        /*
         [Test]
         public static void TestToken()
         {           
@@ -275,23 +259,6 @@ abc
                 var ps = MathEquation.Parse(Rules.Element.ZeroOrMore());
                 ps.OutputState();
             }
-        }
-
-
-        [Test]
-        public static void TestParser()
-        {
-            {
-                var pr = new ParseResults(TestDigits.Length);
-                var ps = TestDigits.Parse(Rules.Digits, pr);
-                Assert.NotNull(ps);
-                Assert.IsTrue(ps.AtEnd);
-            }
-            {
-                var pr = new ParseResults(TestDigits.Length);
-                var ps = TestDigits.Parse(Rules.Digits.Node("Digits"), pr);
-                Console.WriteLine(ps.Node);
-            }       
-        }
+        }*/
     }
 }
