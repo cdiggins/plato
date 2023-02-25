@@ -77,5 +77,9 @@ namespace PlatoAstWriter
             }
             return r;
         }
+        public override string ToString()
+        {
+            return sb.ToString();
+        }
     }
 }

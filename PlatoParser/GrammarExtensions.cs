@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using PlatoAstWriter;
+using System.Diagnostics;
+using System.Xml;
 
 namespace PlatoParser
 {
@@ -214,6 +216,71 @@ namespace PlatoParser
                     return new ZeroOrMore(z.Rule.Simplify(), r.Name);
             }
             return r;
+        }
+
+        public static CodeBuilder OutputAstField(CodeBuilder cb, Rule r, int index)
+        {
+            if (r is NodeRule nr)
+                return cb.WriteLine($"{nr.Name} rule{index};");
+            
+            if (r is Sequence)
+                return cb.WriteLine($"Sequence rule{index};");
+            
+            if (r is Choice)
+                return cb.WriteLine($"Choice rule{index};");
+            
+            if (r is Optional opt)
+                return cb.WriteLine($"Optional rule{index};");
+            
+            if (r is ZeroOrMore)
+                return cb.WriteLine($"Star rule{index};");
+
+            if (r is RecursiveRule rr)
+                return OutputAstField(cb, rr.RuleFunc(), index);
+
+            throw new NotImplementedException($"Unrecognized rule type {r}");
+        }
+
+        public static CodeBuilder OutputAstClass(CodeBuilder cb, Rule r)
+        {
+            if (!(r is NodeRule))
+                return cb;
+
+            var body = r.Body()?.OnlyNodes()?.Simplify();
+
+            cb = cb.WriteLine($"// Original Rule: {r.Body().ToDefinition()}");
+            cb = cb.WriteLine($"// Only Nodes: {body?.ToDefinition()}");
+            cb = cb.WriteLine($"public class {r.Name} : AstNode");
+            cb = cb.WriteLine("{").Indent();
+            var index = 0;
+            if (body == null)
+            {
+                cb = cb.WriteLine("// No children");
+            }
+            else if (body is Sequence sequence)
+            {
+                foreach (var child in sequence.Rules)
+                    cb = OutputAstField(cb, child, index++);
+            }
+            else if (body is Choice choice)
+            {
+                foreach (var child in choice.Rules)
+                    cb = OutputAstField(cb, child, index++);
+            }
+            else
+            {
+                cb = OutputAstField(cb, body, index++);
+            }
+            cb = cb.Dedent().WriteLine("}");            
+            return cb.WriteLine();
+        }
+    
+        public static void OutputAstClasses(CodeBuilder cb, IEnumerable<Rule> rules)
+        {
+            foreach (var r in rules)
+            {
+                OutputAstClass(cb, r);
+            }
         }
     }
 }

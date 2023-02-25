@@ -1,3 +1,4 @@
+using PlatoAstWriter;
 using PlatoParser;
 
 namespace PlatoTests
@@ -158,6 +159,14 @@ abc
             "try{}catch(Exception e){}finally{}",
         };
 
+
+        [Test]
+        public static void OutputAstClasses()
+        {
+            var cb = new CodeBuilder();
+            GrammarExtensions.OutputAstClasses(cb, Grammar.GetRules());
+            Console.WriteLine(cb.ToString());   
+        }
 
         [Test]
         public static void GrammarDefinition()
