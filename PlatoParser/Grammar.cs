@@ -1,13 +1,16 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace PlatoParser
 {
     // [Mutable]
     public class Grammar 
     {
-        public Rule? WhitespaceRule { get; protected set; }
+        public Rule WhitespaceRule { get; protected set; }
 
-        public Rule? GetRuleFromName(string name)
+        public Rule GetRuleFromName(string name)
         {
             var t = GetType();
             var pi = t.GetProperties().FirstOrDefault(p => p.Name == name);
@@ -15,10 +18,10 @@ namespace PlatoParser
             return pi.GetValue(this) as Rule;
         }
 
-        public IEnumerable<Rule?> GetRules()
+        public IEnumerable<Rule> GetRules()
             => GetType()
                 .GetProperties()
-                .Where(pi => pi.PropertyType.IsAssignableTo(typeof(Rule)))
+                .Where(pi => typeof(Rule).IsAssignableFrom(typeof(Rule)))
                 .Select(pi => pi.GetValue(this) as Rule);
 
         public static Rule Choice(IEnumerable<Rule> rules, [CallerMemberName] string name = "")

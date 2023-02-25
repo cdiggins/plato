@@ -1,4 +1,6 @@
-﻿namespace PlatoParser
+﻿using System;
+
+namespace PlatoParser
 {
     public class Keywords
     {
@@ -80,7 +82,7 @@ using
 virtual
 void
 volatile
-while".Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+while".Split('\n'); // TODO: remove empty entries and trim them 
 
         // https://www.w3schools.com/js/js_reserved.asp
         public static string[] JavaScriptKeywords = @"
@@ -147,6 +149,6 @@ void
 volatile
 while
 with
-yield".Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+yield".Split('\n'); // TODO: remove empyy entires and trim them 
     }
 }

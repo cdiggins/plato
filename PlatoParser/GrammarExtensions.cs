@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Xml;
 
 namespace PlatoParser
@@ -63,7 +66,7 @@ namespace PlatoParser
                     return rec.RuleFunc().ToDefinition();
                 case StringMatchRule sm:
                     return $"\"{sm.Pattern}\"";
-                case AnyCharRule:
+                case AnyCharRule ac:
                     return $".";
                 case NotAt not:
                     return $"!({not.Rule.ToDefinition()})";
@@ -73,9 +76,9 @@ namespace PlatoParser
                     return $"[{range.Low}..{range.High}]";
                 case CharSetRule set:
                     return $"[{new string(set.Chars)}]";
-                case AlwaysTrue:
+                case AlwaysTrue _:
                     return "&&";
-                case AlwaysFalse:
+                case AlwaysFalse _:
                     return "!!";
                 default:
                     return r.Name;
@@ -110,9 +113,9 @@ namespace PlatoParser
                 case NodeRule nr:
                     return top ? nr.Rule.ChildrenWithNodes() : new[] { r };
                 case Sequence seq:
-                    return seq.Rules.SelectMany(r => r.ChildrenWithNodes());
+                    return seq.Rules.SelectMany(r1 => r1.ChildrenWithNodes());
                 case Choice ch:
-                    return ch.Rules.SelectMany(r => r.ChildrenWithNodes());
+                    return ch.Rules.SelectMany(r1 => r1.ChildrenWithNodes());
                 case Optional opt:
                     return opt.Rule.ChildrenWithNodes();
                 case ZeroOrMore z:
@@ -124,7 +127,7 @@ namespace PlatoParser
             }
         }
 
-        public static Rule? OnlyNodes(this Rule r)
+        public static Rule OnlyNodes(this Rule r)
         {
             switch (r)
             {
@@ -132,17 +135,17 @@ namespace PlatoParser
                     return nr;
                 case Sequence seq:
                     {
-                        var tmp = seq.Rules.Select(r => r.OnlyNodes()).Where(x => x != null).ToList();
+                        var tmp = seq.Rules.Select(r1 => r.OnlyNodes()).Where(x => x != null).ToList();
                         if (tmp.Count > 0)
-                            return new Sequence(tmp!, r.Name);
+                            return new Sequence(tmp, r.Name);
                         break;
                     }
                 case Choice ch:
                     {
-                        var tmp = ch.Rules.Select(r => r.OnlyNodes()).Where(x => x != null).ToList();
+                        var tmp = ch.Rules.Select(r1 => r1.OnlyNodes()).Where(x => x != null).ToList();
 
                         if (tmp.Count > 0)
-                            return new Choice(tmp!, r.Name);
+                            return new Choice(tmp, r.Name);
                         break;
                     }
                 case Optional opt:
@@ -177,12 +180,12 @@ namespace PlatoParser
                 case Sequence seq:
                     {
                         var tmp = seq.Rules.SelectMany(
-                            r =>
+                            r1 =>
                             {
-                                var tmp = r.Simplify();
-                                if (tmp is Sequence seq)
-                                    return seq.Rules;
-                                return new[] { tmp };
+                                var tmp1 = r1.Simplify();
+                                if (tmp1 is Sequence seq1)
+                                    return seq1.Rules;
+                                return new[] { tmp1 };
                             }).ToList();
                         Debug.Assert(tmp.Count > 0);
                         Debug.Assert(!tmp.Any(t => t is Sequence));
@@ -194,12 +197,12 @@ namespace PlatoParser
                 case Choice ch:
                     {
                         var tmp = ch.Rules.SelectMany(
-                            r =>
+                            r1 =>
                             {
-                                var tmp = r.Simplify();
-                                if (tmp is Choice ch)
+                                var tmp1 = r1.Simplify();
+                                if (tmp1 is Choice ch1)
                                     return ch.Rules;
-                                return new[] { tmp };
+                                return new[] { tmp1 };
                             }).ToList();
                         Debug.Assert(tmp.Count > 0);
                         Debug.Assert(!tmp.Any(t => t is Choice));

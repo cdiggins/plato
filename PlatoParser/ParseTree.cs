@@ -1,9 +1,13 @@
-﻿namespace PlatoParser;
+﻿using System.Collections.Generic;
 
-public class ParseTree
+namespace PlatoParser
 {
-    public ParseNode Node { get; }
-    public IReadOnlyList<ParseTree> Children { get; }
-    public ParseTree(ParseNode node, IEnumerable<ParseTree> children)
-        => (Node, Children) = (node, children.ToList());         
+    public class ParseTree
+    {
+        public ParseNode Node { get; }
+        public string Type => Node.Type;
+        public IReadOnlyList<ParseTree> Children { get; }
+        public ParseTree(ParseNode node, IReadOnlyList<ParseTree> children)
+            => (Node, Children) = (node, children);
+    }
 }
