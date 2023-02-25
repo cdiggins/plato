@@ -130,7 +130,7 @@ namespace PlatoParser
         public Rule InitializerClause => Phrase((Identifier + Symbol("=") + Expression) | Expression);
         public Rule Initializer => BracedList(InitializerClause);
         public Rule ArraySizeSpecifier => Phrase(Bracketed(Expression));
-        public Rule NewOperation => Phrase(Keyword("new") + TypeExpr + (FunctionArgs | ArraySizeSpecifier).Optional() + Initializer.Optional());
+        public Rule NewOperation => Phrase(Keyword("new") + TypeExpr + FunctionArgs.Optional() + ArraySizeSpecifier.Optional() + Initializer.Optional());
         public Rule IsOperation => Phrase(Keyword("is") + TypeExpr + Identifier.Optional());
         public Rule AsOperation => Phrase(Keyword("as") + TypeExpr + Identifier.Optional());
         public Rule StringInterpolationContent => Braced(Expression) | StringLiteralChar;

@@ -164,7 +164,7 @@ abc
         public static void OutputAstClasses()
         {
             var cb = new CodeBuilder();
-            GrammarExtensions.OutputAstClasses(cb, Grammar.GetRules());
+            AstClassBuilder.OutputAstClasses(cb, Grammar.GetRules());
             Console.WriteLine(cb.ToString());   
         }
 
