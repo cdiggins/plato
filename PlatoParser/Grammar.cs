@@ -21,7 +21,7 @@ namespace PlatoParser
         public IEnumerable<Rule> GetRules()
             => GetType()
                 .GetProperties()
-                .Where(pi => typeof(Rule).IsAssignableFrom(typeof(Rule)))
+                .Where(pi => typeof(Rule).IsAssignableFrom(pi.PropertyType))
                 .Select(pi => pi.GetValue(this) as Rule);
 
         public static Rule Choice(IEnumerable<Rule> rules, [CallerMemberName] string name = "")

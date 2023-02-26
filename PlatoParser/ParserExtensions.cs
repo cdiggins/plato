@@ -12,7 +12,7 @@ namespace PlatoParser
             => r.Match(new ParserState(s, 0, null), new ParseCache(s.Length));
 
         public static ParseNode CreateParseRoot(this ParseNode node)
-            => new ParseNode(node.Input, "_root_", 0, node.Input.Length, node);
+            => new ParseNode(node.Input, null, 0, node.Input.Length, node);
 
         public static (ParseTree, ParseNode) ToParseTree(this ParseNode node)
         {

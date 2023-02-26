@@ -135,7 +135,7 @@ namespace PlatoParser
                     return nr;
                 case Sequence seq:
                     {
-                        var tmp = seq.Rules.Select(r1 => r.OnlyNodes()).Where(x => x != null).ToList();
+                        var tmp = seq.Rules.Select(r1 => r1.OnlyNodes()).Where(x => x != null).ToList();
                         if (tmp.Count > 0)
                             return new Sequence(tmp, r.Name);
                         break;
@@ -201,7 +201,7 @@ namespace PlatoParser
                             {
                                 var tmp1 = r1.Simplify();
                                 if (tmp1 is Choice ch1)
-                                    return ch.Rules;
+                                    return ch1.Rules;
                                 return new[] { tmp1 };
                             }).ToList();
                         Debug.Assert(tmp.Count > 0);

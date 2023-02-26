@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 
 // A Type Inference Algorithm that provides support for full inference 
 // of non-recursive higher rank polymorphic types.
@@ -19,7 +18,7 @@ namespace PlatoTypeInference
         public override string Name { get; }
         public TypeVar(string name) => Name = name;
     }
-  
+
     public class TypeList : BaseType
     {
         public TypeList(IEnumerable<BaseType> types, params string[] typeParameterNames)
@@ -40,15 +39,15 @@ namespace PlatoTypeInference
                 }
             }
 
-            TypeFreeVariables = TypeVariables.Keys.Except(typeParameterNames).ToList();
+            TypeFreeVariables = new HashSet<string>(TypeVariables.Except(typeParameterNames));
         }
-        
+
         public override string Name => "[]";
         public int Count => Types.Count;
         public BaseType this[int index] => Types[index];
         public IReadOnlyList<BaseType> Types { get; }
         public HashSet<string> TypeVariables { get; } = new HashSet<string>();
-        public HashSet<string> TypeParameterNames { get; } = 
+        public HashSet<string> TypeParameterNames { get; }
         public HashSet<string> TypeFreeVariables;
 
         public bool IsPolyType => TypeParameterNames.Count > 0;
@@ -58,20 +57,25 @@ namespace PlatoTypeInference
 
         public static IReadOnlyList<BaseType> GatherParameters(IEnumerable<BaseType> types)
         {
+            throw new NotImplementedException();
+            /*
             var result = new Dictionary<string, TypeVar>();
             foreach (var type in types)
             {
                 if (type is TypeList list)
                 {
-                    foreach (var param in list.TypeParameters)
+                    foreach (var param in list.TypeParameterNames)
                     {
-                        if (!result.Contains(param))
-                            result.Add(param);
+                        if (!result.ContainsKey(param))
+                            // THROW 
+                            result.Add(param, null);
                     }
                 }
             }
             return result;
+            */
         }
+    }
 
     public class TypeConstant : BaseType
     {

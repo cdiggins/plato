@@ -161,11 +161,14 @@ abc
 
 
         [Test]
-        public static void OutputAstClasses()
+        public static void OutputAstCode()
         {
             var cb = new CodeBuilder();
-            AstClassBuilder.OutputAstClasses(cb, Grammar.GetRules());
-            Console.WriteLine(cb.ToString());   
+            AstClassBuilder.OutputAstFile(cb, "PlatoParser", Grammar.GetRules());
+            var path = @"C:\Users\cdigg\git\plato\PlatoParser\CSharpAst.cs";
+            var text = cb.ToString();
+            Console.WriteLine(text);
+            System.IO.File.WriteAllText(path, text);
         }
 
         [Test]
@@ -199,7 +202,40 @@ abc
             {
                 Console.WriteLine($"PARTIAL PASSED");
             }
-            return ps != null && ps.AtEnd ? 1 : 0;
+
+            if (ps == null || !ps.AtEnd)
+                return 0;
+
+            if (ps.Node == null)
+            {
+                Console.WriteLine($"No parse node created");
+                return 0;
+            }
+            Console.WriteLine($"Node {ps.Node}");
+
+            var treeAndNode = ps.Node.ToParseTree();
+            var tree = treeAndNode.Item1;
+            if (tree == null)
+            {
+                Console.WriteLine($"No parse tree created");
+                return 0;
+            }
+            Console.WriteLine($"Tree {treeAndNode}");
+            Console.WriteLine($"Contents {tree.Contents}");
+
+            var ast = tree.ToNode();
+            Console.WriteLine($"Ast = {ast}");
+
+            var expNodes = rule.OnlyNodes().Simplify();
+            if (expNodes != null)
+            {
+                Console.WriteLine("Expected parse tree is null");
+            }
+            else
+            {
+                Console.WriteLine($"Expected parse tree = {expNodes.ToDefinition()}");
+            }
+            return 1;
         }
 
         public static CSharpGrammar Grammar = new CSharpGrammar();

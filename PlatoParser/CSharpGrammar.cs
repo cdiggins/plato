@@ -267,16 +267,16 @@ namespace PlatoParser
 
         public Rule ArrayRankSpecifier => Phrase(Bracketed(Comma.ZeroOrMore()));
         public Rule ArrayRankSpecifiers => Phrase(ArrayRankSpecifier.ZeroOrMore());
-        public Rule TypeArgList => Phrase(AngledBracketList(TypeExpr).Optional());
+        public Rule TypeArgList => Phrase(AngledBracketList(TypeExpr));
         public Rule Nullable => Phrase(Symbol("?").Optional());
-        public Rule TypeExpr => Phrase(Recursive(() => QualifiedIdentifier + TypeArgList + ArrayRankSpecifiers));
+        public Rule TypeExpr => Phrase(Recursive(() => QualifiedIdentifier + TypeArgList.Optional() + ArrayRankSpecifiers));
 
         // Tokenization pass 
         public Rule OperatorChar => "!%^&|*?+-=/><".ToCharSetRule();
         public Rule OperatorToken => OperatorChar.OneOrMore();
         public Rule Separator => ";,.".ToCharSetRule();
         public Rule Delimiter => "[]{}()".ToCharSetRule();
-        public Rule Token => Phrase(OperatorToken | Identifier | Literal | Comment | Spaces | AnyChar);
+        //public Rule Token => Phrase(OperatorToken | Identifier | Literal | Comment | Spaces | AnyChar);
 
         /*
         // Structural pass 

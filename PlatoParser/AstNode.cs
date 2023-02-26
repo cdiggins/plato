@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace PlatoParser
 {
@@ -17,12 +18,16 @@ namespace PlatoParser
 
     public class AstNode : ITree<AstNode>
     {
+        public int Count => Children.Count;
+        public AstNode this[int index] => Children[index];
         public AstNode(IReadOnlyList<AstNode> children) => Children = children;
         public IReadOnlyList<AstNode> Children { get; }
         public virtual AstNode Transform(Func<AstNode, AstNode> f)
             => throw new NotImplementedException();
         public static implicit operator AstNode(string text) => new AstLeaf(text);
         public bool IsLeaf => this is AstLeaf;
+        public override string ToString()
+            => $"[{GetType().Name}: {string.Join(" ", Children)}]";
     }
 
     public class AstSequence : AstNode
@@ -40,14 +45,16 @@ namespace PlatoParser
     {
         public string Text { get; }
         public AstLeaf(string text) : base(Array.Empty<AstNode>()) => Text = text;
+        public override string ToString()
+            => Text;
     }
 
     public class AstStar<T> : AstNode where T : AstNode
     {
-        public T Node => (T)Children[0];
+        public new T this[int index] => (T)Children[index];
         public AstStar(T node) : base(new[] { node }) { }
     }
-
+   
     public class AstOptional<T> : AstNode where T : AstNode
     {
         public T Node => (T)Children[0];

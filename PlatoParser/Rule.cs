@@ -145,7 +145,7 @@ namespace PlatoParser
             var start = state.Position;
             var result = Rule.Match(state, cache);
             if (result is null) return null;
-            var node = new ParseNode(result.Input, Name, start, result.Position, result.Node);
+            var node = new ParseNode(result.Input, this, start, result.Position, result.Node);
             var r = new ParserState(result.Input, result.Position, node);
             // Parse the data to eat 
             var tmp = Eat?.Match(r, cache);

@@ -4,7 +4,7 @@ namespace PlatoTests
 {
     public static class InferenceTests
     {
-        public static TypeVar Var(string name, int id) => new (name, id);
+        public static TypeVar Var(string name, int id) => new (name);
         public static TypeList List(params BaseType[] types) => new(types);
         public static TypeConstant Const(string name) => new(name);
 
