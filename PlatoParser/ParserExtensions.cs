@@ -25,7 +25,7 @@ namespace PlatoParser
                 (child, prev) = ToParseTree(prev);
                 children.Add(child);
             }
-            return (new ParseTree(node, children), prev);
+            return (new ParseTree(node, children.Reverse().ToList()), prev);
         }
 
         public static List<ParseNode> AllNodes(this ParseNode node)
