@@ -206,37 +206,38 @@ abc
             if (ps == null || !ps.AtEnd)
                 return 0;
 
-            if (ps.Node == null)
+            if (rule is NodeRule)
             {
-                Console.WriteLine($"No parse node created");
-                return 0;
-            }
-            Console.WriteLine($"Node {ps.Node}");
+                if (ps.Node == null)
+                {
+                    Console.WriteLine($"No parse node created");
+                    return 0;
+                }
+                Console.WriteLine($"Node {ps.Node}");
 
-            var treeAndNode = ps.Node.ToParseTree();
-            var tree = treeAndNode.Item1;
-            if (tree == null)
-            {
-                Console.WriteLine($"No parse tree created");
-                return 0;
-            }
-            Console.WriteLine($"Tree {treeAndNode}");
-            Console.WriteLine($"Contents {tree.Contents}");
+                var treeAndNode = ps.Node.ToParseTree();
+                var tree = treeAndNode.Item1;
+                if (tree == null)
+                {
+                    Console.WriteLine($"No parse tree created");
+                    return 0;
+                }
+                Console.WriteLine($"Tree {treeAndNode}");
+                Console.WriteLine($"Contents {tree.Contents}");
 
-            /*
-            var ast = tree.ToNode();
-            Console.WriteLine($"Ast = {ast}");
+                var ast = tree.ToNode();
+                Console.WriteLine($"Ast = {ast}");
 
-            var expNodes = rule.OnlyNodes().Simplify();
-            if (expNodes != null)
-            {
-                Console.WriteLine("Expected parse tree is null");
+                var expNodes = rule.OnlyNodes().Simplify();
+                if (expNodes != null)
+                {
+                    Console.WriteLine("Expected parse tree is null");
+                }
+                else
+                {
+                    Console.WriteLine($"Expected parse tree = {expNodes.ToDefinition()}");
+                }
             }
-            else
-            {
-                Console.WriteLine($"Expected parse tree = {expNodes.ToDefinition()}");
-            }
-            */
             return 1;
         }
 
