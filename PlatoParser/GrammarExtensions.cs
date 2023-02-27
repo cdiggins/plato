@@ -76,10 +76,6 @@ namespace PlatoParser
                     return $"[{range.Low}..{range.High}]";
                 case CharSetRule set:
                     return $"[{new string(set.Chars)}]";
-                case AlwaysTrue _:
-                    return "&&";
-                case AlwaysFalse _:
-                    return "!!";
                 default:
                     return r.Name;
             }
@@ -204,15 +200,72 @@ namespace PlatoParser
                                     return ch1.Rules;
                                 return new[] { tmp1 };
                             }).ToList();
+
                         Debug.Assert(tmp.Count > 0);
                         Debug.Assert(!tmp.Any(t => t is Choice));
                         if (tmp.Count == 1)
                             return tmp[0];
+
+                        if (tmp.Count == 2)
+                        {
+                            // A|A* => A*
+                            {
+                                if (tmp[1] is ZeroOrMore z && z.Rule.Equals(tmp[0]))
+                                    return z;
+                            }
+                            // A*|A => A*
+                            {
+                                if (tmp[0] is ZeroOrMore z && z.Rule.Equals(tmp[1]))
+                                    return z;
+                            }
+                            // (A|A+B) => A+B?
+                            {
+                                if (tmp[1] is Sequence seq && seq.Count == 2 && seq[0].Equals(tmp[0]))
+                                    return new Sequence(tmp[0], new Optional(seq[1]));
+                            }
+                            // (A+B|A) => A+B?
+                            {
+                                if (tmp[0] is Sequence seq && seq.Count == 2 && seq[0].Equals(tmp[1]))
+                                    return new Sequence(tmp[1], new Optional(seq[1]));
+                            }
+                            // (B|A+B) => A?+B
+                            {
+                                if (tmp[1] is Sequence seq && seq.Count == 2 && seq[1].Equals(tmp[0]))
+                                    return new Sequence(new Optional(tmp[0]), seq[1]);
+                            }
+                            // (A+B|B) => A?+B
+                            {
+                                if (tmp[0] is Sequence seq && seq.Count == 2 && seq[1].Equals(tmp[1]))
+                                    return new Sequence(new Optional(seq[0]), tmp[1]);
+                            }
+                        }
+
                         return new Choice(tmp, r.Name);
                     }
 
                 case Optional opt:
-                    return new Optional(opt.Rule.Simplify(), r.Name);
+                    {
+                        var tmp = new Optional(opt.Rule.Simplify(), r.Name);
+
+                        // A*? => A*
+                        if (tmp.Rule is ZeroOrMore)
+                            return tmp.Rule;
+
+                        // Look for: (A+(A*))? and transform it to A*
+                        // This happens when we parse separated lists 
+
+                        if (!(tmp.Rule is Sequence seq))
+                            return tmp;
+
+                        if (seq.Count == 2)
+                        {
+                            if (seq[1] is ZeroOrMore z1)
+                                if (seq[0].Equals(z1.Rule))
+                                    return z1;
+                        }
+
+                        return tmp;
+                    }
 
                 case ZeroOrMore z:
                     return new ZeroOrMore(z.Rule.Simplify(), r.Name);

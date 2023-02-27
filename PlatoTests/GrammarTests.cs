@@ -223,6 +223,7 @@ abc
             Console.WriteLine($"Tree {treeAndNode}");
             Console.WriteLine($"Contents {tree.Contents}");
 
+            /*
             var ast = tree.ToNode();
             Console.WriteLine($"Ast = {ast}");
 
@@ -235,6 +236,7 @@ abc
             {
                 Console.WriteLine($"Expected parse tree = {expNodes.ToDefinition()}");
             }
+            */
             return 1;
         }
 

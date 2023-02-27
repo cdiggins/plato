@@ -126,12 +126,12 @@ namespace PlatoParser
         public Rule NameOf => Phrase(Keyword("nameof") + Parenthesized(Expression));
         public Rule Default => Phrase(Keyword("default") + Parenthesized(TypeExpr).Optional());
         public Rule InitializerClause => Phrase((Identifier + Symbol("=") + Expression) | Expression);
-        public Rule Initializer => BracedList(InitializerClause);
+        public Rule Initializer => Phrase(BracedList(InitializerClause));
         public Rule ArraySizeSpecifier => Phrase(Bracketed(Expression));
         public Rule NewOperation => Phrase(Keyword("new") + TypeExpr + FunctionArgs.Optional() + ArraySizeSpecifier.Optional() + Initializer.Optional());
         public Rule IsOperation => Phrase(Keyword("is") + TypeExpr + Identifier.Optional());
         public Rule AsOperation => Phrase(Keyword("as") + TypeExpr + Identifier.Optional());
-        public Rule StringInterpolationContent => Braced(Expression) | StringLiteralChar;
+        public Rule StringInterpolationContent => Phrase(Braced(Expression) | StringLiteralChar);
         public Rule StringInterpolation => Phrase("$\"" + StringInterpolationContent.ZeroOrMore() + "\"");
         public Rule FunctionArgKeyword => Phrase(Keywords("ref", "out", "in", "params"));
         public Rule FunctionArg => Phrase(FunctionArgKeyword.ZeroOrMore() + Expression);
@@ -167,7 +167,7 @@ namespace PlatoParser
         public Rule BreakStatement => Phrase(Keyword("break") + EOS);
         public Rule YieldStatement => Phrase(Keyword("yield") + Keyword("return") + Expression + EOS);
         public Rule YieldBreakStatement => Phrase(Keyword("yield") + Keyword("break") + EOS);
-        public Rule ContinueStatement => Phrase(Keyword("break") + EOS);
+        public Rule ContinueStatement => Phrase(Keyword("continue") + EOS);
 
         public Rule CompoundStatement => Phrase(Braced(Statement.ZeroOrMore()));
         public Rule CatchClause => Phrase(Keyword("catch") + Parenthesized(VarDecl) + CompoundStatement);

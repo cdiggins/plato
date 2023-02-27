@@ -1,7 +1,7 @@
 ﻿using PlatoAstWriter;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
+using System.Linq;
 
 namespace PlatoParser
 {
@@ -14,25 +14,39 @@ namespace PlatoParser
             return "AstNode";
         }
 
-        public static CodeBuilder OutputAstField(CodeBuilder cb, Rule r, int index, int child)
-        {            
+        public static CodeBuilder OutputAstField(CodeBuilder cb, List<string> fieldNames, Rule r, int index, int child)
+        {
+            var fieldName = fieldNames[index];
+            var cnt = 0;
+            for (var i=0; i < index; ++i)
+            {
+                if (fieldNames[i] == fieldName)
+                {
+                    cnt++;
+                }
+            }
+
+            // In case a field name is used multiple times. 
+            if (cnt > 0)
+                fieldName = $"{fieldName}_{cnt}";
+
             if (r is NodeRule nr)
-                return cb.WriteLine($"public {nr.Name} Node{index} => Children[{child}] as {nr.Name};");
+                return cb.WriteLine($"public {nr.Name} {fieldName} => Children[{child}] as {nr.Name};");
             
             if (r is Sequence)
-                return cb.WriteLine($"public AstSequence Node{index} => Children[{child}] as AstSequence;");
+                return cb.WriteLine($"public AstSequence {fieldName} => Children[{child}] as AstSequence;");
             
             if (r is Choice)
-                return cb.WriteLine($"public AstChoice Node{index} => Children[{child}] as AstChoice;");
+                return cb.WriteLine($"public AstChoice {fieldName} => Children[{child}] as AstChoice;");
             
             if (r is Optional opt)
-                return cb.WriteLine($"public AstOptional<{opt.Rule.AstTypeName()}> Node{index} => Children[{child}] as AstOptional<{opt.Rule.AstTypeName()}>;");
+                return cb.WriteLine($"public AstOptional<{opt.Rule.AstTypeName()}> {fieldName} => Children[{child}] as AstOptional<{opt.Rule.AstTypeName()}>;");
             
             if (r is ZeroOrMore z)
-                return cb.WriteLine($"public AstStar<{z.Rule.AstTypeName()}> Node{index} => Children[{child}] as AstStar<{z.Rule.AstTypeName()}>;");
+                return cb.WriteLine($"public AstZeroOrMore<{z.Rule.AstTypeName()}> {fieldName} => Children[{child}] as AstZeroOrMore<{z.Rule.AstTypeName()}>;");
 
             if (r is RecursiveRule rr)
-                return OutputAstField(cb, rr.RuleFunc(), index, child);
+                return OutputAstField(cb, fieldNames, rr.RuleFunc(), index, child);
 
             throw new NotImplementedException($"Unrecognized rule type {r}");
         }
@@ -43,10 +57,28 @@ namespace PlatoParser
             if (body == null)
                 return 0;
             if (body is Sequence sequence)
-                return sequence.Rules.Length;
+                return sequence.Count;
             if (body is Choice choice)
-                return choice.Rules.Length;
+                return choice.Count;
             return 1;
+        }
+        
+        public static string AstFieldName(this Rule r)
+        {
+            if (r is NodeRule nr)
+                return nr.Name;
+            if (r is ZeroOrMore z)
+                return "ZeroOrMore" + z.Rule.AstFieldName();
+            if (r is Sequence s)
+                return string.IsNullOrWhiteSpace(s.Name) ? "Sequence" : s.Name;
+            if (r is Choice c)
+                return string.IsNullOrWhiteSpace(c.Name) ? "Choice" : c.Name;
+            if (r is Optional opt)
+                return opt.Rule.AstFieldName();
+            if (r is RecursiveRule rec)
+                return rec.RuleFunc().AstFieldName();
+            return "Node";
+
         }
 
         public static CodeBuilder OutputAstClass(CodeBuilder cb, Rule r)
@@ -58,7 +90,21 @@ namespace PlatoParser
 
             cb = cb.WriteLine($"// Original Rule: {r.Body().ToDefinition()}");
             cb = cb.WriteLine($"// Only Nodes: {body?.ToDefinition()}");
-            cb = cb.WriteLine($"public class {r.Name} : AstNode");
+            cb = cb.Write($"public class {r.Name}");
+           
+            if (body is Sequence)
+            {
+                cb = cb.WriteLine($" : AstSequence");
+            }
+            else if (body is Choice)
+            {
+                cb = cb.WriteLine($" : AstChoice");
+            }
+            else 
+            {
+                cb = cb.WriteLine($" : AstNode");
+            }
+
             cb = cb.WriteLine("{").Indent();
 
             cb = cb.WriteLine($"public {r.Name}(params AstNode[] children) : base(children) {{ }}");
@@ -70,17 +116,19 @@ namespace PlatoParser
             }
             else if (body is Sequence sequence)
             {
+                var names = sequence.Rules.Select(AstFieldName).ToList();
                 foreach (var child in sequence.Rules)
-                    cb = OutputAstField(cb, child, index, index++);
+                    cb = OutputAstField(cb, names, child, index, index++);
             }
             else if (body is Choice choice)
             {
+                var names = choice.Rules.Select(AstFieldName).ToList();
                 foreach (var child in choice.Rules)
-                    cb = OutputAstField(cb, child, index++, 0);
-            }
+                    cb = OutputAstField(cb, names, child, index++, 0);
+            }            
             else
             {
-                cb = OutputAstField(cb, body, index, index++);
+                cb = OutputAstField(cb, new List<string>() { body.AstFieldName() }, body, index, index++);
             }
             cb = cb.Dedent().WriteLine("}");            
             return cb.WriteLine();

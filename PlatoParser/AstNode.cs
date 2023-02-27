@@ -22,12 +22,10 @@ namespace PlatoParser
         public AstNode this[int index] => Children[index];
         public AstNode(IReadOnlyList<AstNode> children) => Children = children;
         public IReadOnlyList<AstNode> Children { get; }
-        public virtual AstNode Transform(Func<AstNode, AstNode> f)
-            => throw new NotImplementedException();
+        public virtual AstNode Transform(Func<AstNode, AstNode> f) => throw new NotImplementedException();
         public static implicit operator AstNode(string text) => new AstLeaf(text);
         public bool IsLeaf => this is AstLeaf;
-        public override string ToString()
-            => $"[{GetType().Name}: {string.Join(" ", Children)}]";
+        public override string ToString() => $"[{GetType().Name}: {string.Join(" ", Children)}]";
     }
 
     public class AstSequence : AstNode
@@ -37,7 +35,7 @@ namespace PlatoParser
 
     public class AstChoice: AstNode
     {
-        public AstChoice(AstNode node) : base(new[] { node }) { }
+        public AstChoice(params AstNode[] children) : base(children) { }
         public AstNode Node => Children[0];
     }
 
@@ -45,19 +43,19 @@ namespace PlatoParser
     {
         public string Text { get; }
         public AstLeaf(string text) : base(Array.Empty<AstNode>()) => Text = text;
-        public override string ToString()
-            => Text;
+        public override string ToString() => Text;
     }
 
-    public class AstStar<T> : AstNode where T : AstNode
+    public class AstZeroOrMore<T> : AstNode where T : AstNode
     {
         public new T this[int index] => (T)Children[index];
-        public AstStar(T node) : base(new[] { node }) { }
+        public AstZeroOrMore(T node) : base(new[] { node }) { }
     }
    
     public class AstOptional<T> : AstNode where T : AstNode
     {
         public T Node => (T)Children[0];
         public AstOptional(T node) : base(new[] { node }) { }
+        public static implicit operator T(AstOptional<T> self) => self.Node;
     }
 }
