@@ -51,8 +51,8 @@ namespace PlatoAbstractSyntax
     {
         public class Node
         {
-            public List<Node> Children { get; }
-            public List<Tokenizer.Token> Tokens { get; }
+            public System.Collections.Generic.List<Node> Children { get; }
+            public System.Collections.Generic.List<Tokenizer.Token> Tokens { get; }
             public string Name { get; }
         }
 
@@ -83,7 +83,7 @@ namespace PlatoAbstractSyntax
         }
 
         public string Input { get; }
-        public List<Token> Tokens { get; }
+        public System.Collections.Generic.List<Token> Tokens { get; }
         public Cursor Current { get; }
 
         public int PositionIndexToTokenIndex(int n)

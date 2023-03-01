@@ -124,6 +124,12 @@ interface IArray<T>
 }
 ```
 
+## Similar Work
+
+The `IArray<T>` implementation is based on the [LinqArray](https://github.com/vimaec/LinqArray) library, which in turn
+is based on article at CodeProject.com called [LINQ for Immutable Arrays](https://www.codeproject.com/Articles/517728/LINQ-for-Immutable-Arrays). 
+
+
 ## IMap as a generalization of IArray and IDictionary 
 
 Dictionaries and arrays both map from some input type (a domain) to an output type (a codomain). In the case of arrays the domain is integers. 

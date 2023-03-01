@@ -1,0 +1,3 @@
+[submodule "Plato.Collections"]
+	path = Plato.Collections
+	url = https://github.com/cdiggins/Plato.Collections
