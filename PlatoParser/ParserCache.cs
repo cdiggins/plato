@@ -2,6 +2,14 @@
 
 namespace PlatoParser
 {
+    /// <summary>
+    /// A mutable class that contains a lookup per character of 
+    /// successful parse passes. This is effectively the memoizer
+    /// step of a packrate parsers and allows linear time parsing of 
+    /// PEG grammars.
+    /// 
+    /// This also contains all accumulated parse errors. 
+    /// </summary>
     // [Mutable]
     public class ParserCache
     {

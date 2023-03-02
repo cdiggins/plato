@@ -5,16 +5,25 @@ namespace PlatoParser
 {
     public static class ParserExtensions
     {
+        public static ParserState Parse(this ParserInput input, Rule r, ParserCache results)
+            => r.Match(new ParserState(input), results);
+
+        public static ParserState Parse(this ParserInput input, Rule r)
+            => r.Match(new ParserState(input), new ParserCache(input.Length));
+
         public static ParserState Parse(this string s, Rule r, ParserCache results)
-            => r.Match(new ParserState(s, 0, null), results);
+            => r.Match(new ParserState(s), results);
 
         public static ParserState Parse(this string s, Rule r)
-            => r.Match(new ParserState(s, 0, null), new ParserCache(s.Length));
+            => s.Parse(r, new ParserCache(s.Length));
 
         public static ParseNode CreateParseRoot(this ParseNode node)
             => new ParseNode(node.Input, null, 0, node.Input.Length, node);
 
-        public static (ParseTree, ParseNode) ToParseTree(this ParseNode node)
+        public static ParseTree ToParseTree(this ParseNode node)
+            => node.ToParseTreeAndNode().Item1;
+
+        public static (ParseTree, ParseNode) ToParseTreeAndNode(this ParseNode node)
         {
             if (node == null) return (null, null);
             var prev = node.Previous;
@@ -22,7 +31,7 @@ namespace PlatoParser
             while (prev != null && IsAParent(node, prev))
             {
                 ParseTree child;
-                (child, prev) = ToParseTree(prev);
+                (child, prev) = ToParseTreeAndNode(prev);
                 children.Add(child);
             }
             children.Reverse();

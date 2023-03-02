@@ -2,6 +2,9 @@
 
 namespace PlatoParser
 {
+    /// <summary>
+    /// Created from parse nodes. 
+    /// </summary>
     public class ParseTree
     {
         public ParseNode Node { get; }

@@ -5,6 +5,10 @@ using System.Linq;
 
 namespace PlatoParser
 {
+    /// <summary>
+    /// This class is used to generate AST classes, and a converter function to convert from 
+    /// the typed AST. 
+    /// </summary>
     public static class AstClassBuilder
     {
         public static string AstTypeName(this Rule r)

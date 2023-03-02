@@ -209,10 +209,12 @@ abc
             foreach (var e in cache.Errors)
             {
                 Console.WriteLine($"Parse error at {e.LastState} failed expected rule {e.Expected}, parent state is {e.ParentState}, message is {e.Message}");
+                Console.WriteLine(e.LastState.CurrentLine);
+                Console.WriteLine(e.LastState.Indicator);
             }
         }
 
-        public static int ParseTest(string input, Rule rule, bool outputInput = true)
+        public static int ParseTest(ParserInput input, Rule rule, bool outputInput = true)
         {
             var cache = new ParserCache(input.Length);
             if (outputInput)
@@ -263,7 +265,7 @@ abc
 
                 OutputNodeCounts(ps.Node);
 
-                var treeAndNode = ps.Node.ToParseTree();
+                var treeAndNode = ps.Node.ToParseTreeAndNode();
                 var tree = treeAndNode.Item1;
                 if (tree == null)
                 {
@@ -368,8 +370,8 @@ abc
             foreach (var f in fs)
             {
                 Console.WriteLine($"Parsing file {f}");
-                var text = System.IO.File.ReadAllText(f);
-                ParseTest(text, Grammar.Tokenizer, false);
+                var input = ParserInput.FromFile(f);
+                ParseTest(input, Grammar.Tokenizer, false);
                 Console.WriteLine();
             }
         }

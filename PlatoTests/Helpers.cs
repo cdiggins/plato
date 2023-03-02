@@ -16,7 +16,7 @@ namespace PlatoTests
 
         public static void OutputNodes(this ParseNode last)
         {
-            var list = last.AllNodes();
+            var list = last.AllPreviousNodes();
 
             /*
             foreach (var node in list)
@@ -33,7 +33,7 @@ namespace PlatoTests
             {
 
                 var top = last.CreateParseRoot();
-                var (tree, _) = top.ToParseTree();
+                var (tree, _) = top.ToParseTreeAndNode();
                 OutputTree(tree);
             }
         }

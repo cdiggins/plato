@@ -5,6 +5,13 @@ using System.Runtime.CompilerServices;
 
 namespace PlatoParser
 {
+    /// <summary>
+    /// A class inheriting from grammar contains a set of parsing rules. Each parse rule is defined as 
+    /// property getters returning a rule created by "Token" (generating no node) or "Phrase" (generating a node).  
+    /// This class will store the rules as they are created, and assign them names 
+    /// so that they can have recursive relations in them, have fixed names based on the properties, 
+    /// and minimizes creating superfluous objects. 
+    /// </summary>
     // [Mutable]
     public class Grammar
     {
