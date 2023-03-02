@@ -185,11 +185,56 @@ abc
 
         public static CSharpGrammar Rules = new CSharpGrammar();
 
-        public static int ParseTest(string input, Rule rule)
+        public static void OutputNodeCounts(ParseNode node)
         {
-            var pr = new ParseCache(input.Length);
-            Console.WriteLine($"Testing Rule {rule.Name} with input {input}");
-            var ps = input.Parse(rule, pr);
+            var d = new Dictionary<string,int>();
+            var sum = 0;
+            while (node != null)
+            {
+                if (d.ContainsKey(node.Name))
+                    d[node.Name] += 1;
+                else 
+                    d[node.Name] = 1;
+                sum++;
+                node = node.Previous;
+            }
+
+            Console.WriteLine($"Total number of nodes = {sum}");
+            foreach (var kv in d.OrderBy(kv => kv.Key))
+                Console.WriteLine($"Node {kv.Key} = {kv.Value}");
+        }
+
+        public static void OutputParseErrors(ParserCache cache)
+        {
+            foreach (var e in cache.Errors)
+            {
+                Console.WriteLine($"Parse error at {e.LastState} failed expected rule {e.Expected}, parent state is {e.ParentState}, message is {e.Message}");
+            }
+        }
+
+        public static int ParseTest(string input, Rule rule, bool outputInput = true)
+        {
+            var cache = new ParserCache(input.Length);
+            if (outputInput)
+            {
+                Console.WriteLine($"Testing Rule {rule.Name} with input {input}");
+            }
+            else
+            {
+                Console.WriteLine($"Testing Rule {rule.Name}");
+            }
+
+            ParserState ps = null;
+            try
+            {
+                ps = input.Parse(rule, cache);
+            }
+            catch (ParserException pe)
+            {
+                Console.WriteLine($"Parsing exception {pe.Message} occured at {pe.LastValidState} ");            
+            }
+            OutputParseErrors(cache);
+
             if (ps == null)
             {
                 Console.WriteLine($"FAILED");
@@ -200,11 +245,12 @@ abc
             }
             else
             {
-                Console.WriteLine($"PARTIAL PASSED");
+                Console.WriteLine($"PARTIAL PASSED: {ps.Position}/{ps.Input.Length}");
             }
 
-            if (ps == null || !ps.AtEnd)
+            if (ps == null)
                 return 0;
+
 
             if (rule is NodeRule)
             {
@@ -215,6 +261,8 @@ abc
                 }
                 Console.WriteLine($"Node {ps.Node}");
 
+                OutputNodeCounts(ps.Node);
+
                 var treeAndNode = ps.Node.ToParseTree();
                 var tree = treeAndNode.Item1;
                 if (tree == null)
@@ -222,8 +270,8 @@ abc
                     Console.WriteLine($"No parse tree created");
                     return 0;
                 }
-                Console.WriteLine($"Tree {treeAndNode}");
-                Console.WriteLine($"Contents {tree.Contents}");
+                Console.WriteLine($"Tree {tree}");
+                //Console.WriteLine($"Contents {tree.Contents}");
 
                 var ast = tree.ToNode();
                 Console.WriteLine($"Ast = {ast}");
@@ -238,7 +286,7 @@ abc
                     Console.WriteLine($"Expected parse tree = {expNodes.ToDefinition()}");
                 }
             }
-            return 1;
+            return ps.AtEnd ? 1 : 0;
         }
 
         public static CSharpGrammar Grammar = new CSharpGrammar();
@@ -288,11 +336,42 @@ abc
         [TestCase("List<int> a", nameof(CSharpGrammar.LambdaParameter))]
         [TestCase("List<int, int> a", nameof(CSharpGrammar.LambdaParameter))]
         [TestCase("int[] a", nameof(CSharpGrammar.LambdaParameter))]
+        [TestCase("{}", nameof(BracedStructure))]
+        [TestCase("{ }", nameof(BracedStructure))]
+        [TestCase("{a}", nameof(BracedStructure))]
+        [TestCase("{ /* */ }", nameof(BracedStructure))]
+        [TestCase("{a b c;}", nameof(BracedStructure))]
+        [TestCase("a", nameof(CSharpGrammar.Token))]
+        [TestCase("/* */", nameof(CSharpGrammar.Token))]
+        [TestCase(" \n ", nameof(CSharpGrammar.Token))]
+        [TestCase("/* */", nameof(CSharpGrammar.Comment))]
+        [TestCase(" \n ", nameof(Spaces))]
+        [TestCase("a", nameof(TokenGroup))]
+        [TestCase("/* */", nameof(CSharpGrammar.TokenGroup))]
+        [TestCase("a b c", nameof(CSharpGrammar.TokenGroup))]
+        [TestCase("a b c;", nameof(CSharpGrammar.TokenGroup))]
+        [TestCase("a b c;", nameof(CSharpGrammar.TokenGroup))]
+        [TestCase("a b c;", nameof(Element))]
+        [TestCase("a", nameof(Element))]
+        [TestCase("{ a }", nameof(Element))]
         public static void TargetedTest(string input, string name)
         {
             var rule = Grammar.GetRuleFromName(name);
             var result = ParseTest(input, rule);
             Assert.IsTrue(result == 1);
+        }
+       
+        [Test]
+        public static void TestFiles()
+        {
+            var fs = Directory.GetFiles(@"C:\Users\cdigg\git\Plato.Collections\src", "*.cs");
+            foreach (var f in fs)
+            {
+                Console.WriteLine($"Parsing file {f}");
+                var text = System.IO.File.ReadAllText(f);
+                ParseTest(text, Grammar.Tokenizer, false);
+                Console.WriteLine();
+            }
         }
 
         /*

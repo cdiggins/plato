@@ -12,6 +12,7 @@ namespace PlatoParser
         public CSharpGrammar()
             => WhitespaceRule = WS;
 
+
         // Helper functions 
         public Rule List(Rule r, Rule sep = null) => (r + WS + ((sep ?? Comma) + r + WS).ZeroOrMore()).Optional();
         public Rule Delimited(Rule first, Rule middle, Rule last) => first + middle + last;
@@ -32,8 +33,10 @@ namespace PlatoParser
         public Rule AngledBracketList(Rule r, Rule sep = null) => Delimited(Symbol("<"), List(r, sep), Symbol(">"));
 
         // Basic 
-        public Rule Comma => Token(Symbol(","));
+        public Rule EndOfInput => EndOfInputRule.Default;
         public Rule AnyChar => Token(AnyCharRule.Default);
+        public Rule AdvanceToEnd => AnyChar.ZeroOrMore();
+        public Rule Comma => Token(Symbol(","));
         public Rule LowerCaseLetter => Token('a'.To('z'));
         public Rule UpperCaseLetter => Token('A'.To('Z'));
         public Rule Letter => Token(LowerCaseLetter | UpperCaseLetter);
@@ -222,7 +225,7 @@ namespace PlatoParser
         public Rule ConstraintClause => Phrase(Keyword("where") + Identifier + Symbol(":") + TypeExpr);
         public Rule ConstraintList => Phrase(ConstraintClause.ZeroOrMore());
 
-        public Rule Kind => Phrase(Keywords("class", "struct", "interface"));
+        public Rule Kind => Phrase(Keywords("class", "struct", "interface", "enum"));
         public Rule TypeDeclaration => Phrase(Recursive(() => Kind + Identifier + TypeParameterList + BaseClassList + ConstraintList + Braced(MemberDeclaration.ZeroOrMore())));
         public Rule TypeDeclarationWithPreamble => Phrase(DeclarationPreamble + TypeDeclaration);
 
@@ -272,21 +275,25 @@ namespace PlatoParser
         public Rule TypeExpr => Phrase(Recursive(() => QualifiedIdentifier + TypeArgList.Optional() + ArrayRankSpecifiers));
 
         // Tokenization pass 
-        public Rule OperatorChar => "!%^&|*?+-=/><".ToCharSetRule();
+        public Rule OperatorChar => "!%^&|*?+-=/><:@#~$".ToCharSetRule();
         public Rule OperatorToken => OperatorChar.OneOrMore();
-        public Rule Separator => ";,.".ToCharSetRule();
+        public Rule Separator => Phrase(";,.".ToCharSetRule() | TypeKeyword | StatementKeyword);
         public Rule Delimiter => "[]{}()".ToCharSetRule();
-        //public Rule Token => Phrase(OperatorToken | Identifier | Literal | Comment | Spaces | AnyChar);
+        public Rule TypeKeyword => Phrase(new[] { "class", "struct", "interface", "enum", "namespace" });
+        public Rule StatementKeyword => Phrase(new[] { "for", "if", "return", "break", "continue", "do", "foreach", "throw", "switch", "try", "catch", "finally", "using", "case", "default" });
+        public new Rule Token => Phrase(Separator | Comment | Spaces | OperatorToken | Identifier | Literal);
+        public Rule Tokenizer => Token.ZeroOrMore() + OnError(AdvanceToEnd) + EndOfInput;
 
-        /*
         // Structural pass 
-        public Rule TokenGroup => Phrase(Token.ButNot(Delimiter | Separator).OneOrMore()); 
+        public Rule TokenGroup => Phrase(Token.ButNot(Delimiter | Separator).OneOrMore() + Separator.Optional());
+        public Rule TypeStructure => Phrase(TypeKeyword + TokenGroup + BracedStructure);
+        public Rule StatementStructure => Phrase(StatementKeyword + TokenGroup + BracedStructure.Optional());
         public Rule Element => Phrase(Structure | TokenGroup);
         public Rule BracedStructure => Phrase("{" + Element.ZeroOrMore() + "}");
         public Rule BracketedStructure => Phrase("[" + Element.ZeroOrMore() + "]");
         public Rule ParenthesizedStructure => Phrase("(" + Element.ZeroOrMore() + ")");
         public Rule Structure => Phrase(Recursive(() => BracketedStructure | ParenthesizedStructure | BracedStructure));
-        */
+        public Rule FileStructure => Phrase(Element.ZeroOrMore());
 
         // Some C# features not supported:
         // goto

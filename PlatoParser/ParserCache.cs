@@ -1,11 +1,16 @@
-﻿namespace PlatoParser
+﻿using System.Collections.Generic;
+
+namespace PlatoParser
 {
     // [Mutable]
-    public class ParseCache
+    public class ParserCache
     {
         private readonly ParserState[] _states;
 
-        public ParseCache(int count)
+        public List<ParseError> Errors { get; } 
+            = new List<ParseError>(); 
+
+        public ParserCache(int count)
             => _states = new ParserState[count + 1];
 
         public void Update(ParserState state)

@@ -18,10 +18,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoStandardLibrary", "Pla
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoCompiler", "PlatoCompiler\PlatoCompiler.csproj", "{33E56AB3-CAD2-499D-AE06-0AD28FC77B67}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Collections", "PlatoCollections\Plato.Collections.csproj", "{6DF8C94B-5133-4A8B-99E7-D96486015EBA}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Math", "..\math3d\src\Plato.Math.csproj", "{FF8DB81D-E94A-4B2C-A9F5-BC7524242B71}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Unity", "Plato.Unity\Plato.Unity.csproj", "{C6562DC1-4889-4BEF-865E-F02672ADC0D0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTypeInference", "PlatoTypeInference\PlatoTypeInference.csproj", "{71C5FB27-E2C3-4329-92F5-0185E552B287}"
@@ -40,7 +36,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoParser", "PlatoParser\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoAbstractSyntaxTree", "PlatoAbstractSyntaxTree\PlatoAbstractSyntaxTree.csproj", "{9DF709AB-F5B1-4CB8-9DCD-5FF792A079C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatoAstWriter", "PlatoAstWriter\PlatoAstWriter.csproj", "{B83DC47B-F800-4FED-BC13-A422D1381354}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoAstWriter", "PlatoAstWriter\PlatoAstWriter.csproj", "{B83DC47B-F800-4FED-BC13-A422D1381354}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Math", "legacy\Plato.Math\src\Plato.Math.csproj", "{C1EC224B-9AE2-459B-A2EA-C72B188C4EE6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Collections", "..\Plato.Collections\src\Plato.Collections.csproj", "{93D04BD9-DE3A-41B1-A096-447C261E4559}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,14 +68,6 @@ Global
 		{33E56AB3-CAD2-499D-AE06-0AD28FC77B67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33E56AB3-CAD2-499D-AE06-0AD28FC77B67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33E56AB3-CAD2-499D-AE06-0AD28FC77B67}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6DF8C94B-5133-4A8B-99E7-D96486015EBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6DF8C94B-5133-4A8B-99E7-D96486015EBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6DF8C94B-5133-4A8B-99E7-D96486015EBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6DF8C94B-5133-4A8B-99E7-D96486015EBA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FF8DB81D-E94A-4B2C-A9F5-BC7524242B71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FF8DB81D-E94A-4B2C-A9F5-BC7524242B71}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FF8DB81D-E94A-4B2C-A9F5-BC7524242B71}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FF8DB81D-E94A-4B2C-A9F5-BC7524242B71}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C6562DC1-4889-4BEF-865E-F02672ADC0D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C6562DC1-4889-4BEF-865E-F02672ADC0D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6562DC1-4889-4BEF-865E-F02672ADC0D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -116,6 +108,14 @@ Global
 		{B83DC47B-F800-4FED-BC13-A422D1381354}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B83DC47B-F800-4FED-BC13-A422D1381354}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B83DC47B-F800-4FED-BC13-A422D1381354}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1EC224B-9AE2-459B-A2EA-C72B188C4EE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1EC224B-9AE2-459B-A2EA-C72B188C4EE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1EC224B-9AE2-459B-A2EA-C72B188C4EE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1EC224B-9AE2-459B-A2EA-C72B188C4EE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93D04BD9-DE3A-41B1-A096-447C261E4559}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93D04BD9-DE3A-41B1-A096-447C261E4559}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93D04BD9-DE3A-41B1-A096-447C261E4559}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93D04BD9-DE3A-41B1-A096-447C261E4559}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

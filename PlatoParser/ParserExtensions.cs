@@ -5,11 +5,11 @@ namespace PlatoParser
 {
     public static class ParserExtensions
     {
-        public static ParserState Parse(this string s, Rule r, ParseCache results)
+        public static ParserState Parse(this string s, Rule r, ParserCache results)
             => r.Match(new ParserState(s, 0, null), results);
 
         public static ParserState Parse(this string s, Rule r)
-            => r.Match(new ParserState(s, 0, null), new ParseCache(s.Length));
+            => r.Match(new ParserState(s, 0, null), new ParserCache(s.Length));
 
         public static ParseNode CreateParseRoot(this ParseNode node)
             => new ParseNode(node.Input, null, 0, node.Input.Length, node);
@@ -25,7 +25,8 @@ namespace PlatoParser
                 (child, prev) = ToParseTree(prev);
                 children.Add(child);
             }
-            return (new ParseTree(node, children.Reverse().ToList()), prev);
+            children.Reverse();
+            return (new ParseTree(node, children), prev);
         }
 
         public static List<ParseNode> AllNodes(this ParseNode node)

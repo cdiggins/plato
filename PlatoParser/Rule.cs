@@ -10,9 +10,9 @@ namespace PlatoParser
 {
     public abstract class Rule
     {
-        protected abstract ParserState MatchImplementation(ParserState state, ParseCache cache);
+        protected abstract ParserState MatchImplementation(ParserState state, ParserCache cache);
 
-        public ParserState Match(ParserState state, ParseCache cache)
+        public ParserState Match(ParserState state, ParserCache cache)
         {
             // Set NO_CACHING to true to see performance of naive parser. 
 #if NO_CACHING
@@ -48,16 +48,27 @@ namespace PlatoParser
         public string Name { get; } = string.Empty;
         public Rule(string name) => Name = name;
         public abstract Rule WithName(string name);
-
+        public static int Hash(params object[] objects)
+        {
+            var hashCode = -1669597463;
+            foreach (var o in objects)
+            {
+                hashCode = hashCode * -1521134295 + o?.GetHashCode() ?? 0;
+            }
+            return hashCode;
+        }
     }
+
+
 
     public class TokenRule : Rule
     {
         public Rule Rule { get; }
         public TokenRule(Rule r, [CallerMemberName] string name = "") : base(name) => Rule = r;
         public override Rule WithName(string name) => new TokenRule(Rule, name);
-        protected override ParserState MatchImplementation(ParserState state, ParseCache cache) => Rule.Match(state, cache);
+        protected override ParserState MatchImplementation(ParserState state, ParserCache cache) => Rule.Match(state, cache);
         public override bool Equals(object obj) => obj is TokenRule other && other.Rule.Equals(Rule) && Name == other.Name;
+        public override int GetHashCode() => Hash(Rule);
     }
 
     public class RecursiveRule : Rule
@@ -65,8 +76,9 @@ namespace PlatoParser
         public Func<Rule> RuleFunc { get; }
         public RecursiveRule(Func<Rule> ruleFunc, [CallerMemberName] string name = "") : base(name) => RuleFunc = ruleFunc;
         public override Rule WithName(string name) => new RecursiveRule(RuleFunc, name);
-        protected override ParserState MatchImplementation(ParserState state, ParseCache cache) => RuleFunc().Match(state, cache);
+        protected override ParserState MatchImplementation(ParserState state, ParserCache cache) => RuleFunc().Match(state, cache);
         public override bool Equals(object obj) => obj is RecursiveRule other && other.RuleFunc == RuleFunc && Name == other.Name;
+        public override int GetHashCode() => Hash(RuleFunc());
     }
 
     public class StringMatchRule : Rule
@@ -74,7 +86,7 @@ namespace PlatoParser
         public string Pattern { get; }
         public StringMatchRule(string s, [CallerMemberName] string name = "") : base(name) => Pattern = s;
         public override Rule WithName(string name) => new StringMatchRule(Pattern, name);
-        protected override ParserState MatchImplementation(ParserState state, ParseCache cache)
+        protected override ParserState MatchImplementation(ParserState state, ParserCache cache)
         {
             for (var i = 0; i < Pattern.Length; ++i)
             {
@@ -87,16 +99,18 @@ namespace PlatoParser
             return state;
         }
         public override bool Equals(object obj) => obj is StringMatchRule smr && smr.Pattern == Pattern;
+        public override int GetHashCode() => Hash(Pattern);
     }
 
     public class AnyCharRule : Rule
     {
         public AnyCharRule([CallerMemberName] string name = "") : base(name) { }
         public override Rule WithName(string name) => new AnyCharRule(name);
-        protected override ParserState MatchImplementation(ParserState state, ParseCache cache)
+        protected override ParserState MatchImplementation(ParserState state, ParserCache cache)
             => state.AtEnd ? null : state.Advance();
         public static AnyCharRule Default { get; } = new AnyCharRule();
         public override bool Equals(object obj) => obj is AnyCharRule;
+        public override int GetHashCode() => Hash(Name);
     }
 
     public class CharRangeRule : Rule
@@ -105,9 +119,10 @@ namespace PlatoParser
         public char High { get; }
         public CharRangeRule(char low, char high, string name = "") : base(name) => (Low, High) = (low, high);
         public override Rule WithName(string name) => new CharRangeRule(Low, High, name);
-        protected override ParserState MatchImplementation(ParserState state, ParseCache cache)
+        protected override ParserState MatchImplementation(ParserState state, ParserCache cache)
             => state.AtEnd ? null : state.Current >= Low && state.Current <= High ? state.Advance() : null;
         public override bool Equals(object obj) => obj is CharRangeRule crr && crr.Low == Low && crr.High == High;
+        public override int GetHashCode() => Hash(Low, High);
     }
 
     public class CharSetRule : Rule
@@ -116,17 +131,19 @@ namespace PlatoParser
         public CharSetRule(params char[] chars) : this(chars, "") { }
         public CharSetRule(char[] chars, [CallerMemberName] string name = "") : base(name) => Chars = chars;
         public override Rule WithName(string name) => new CharSetRule(Chars, name);
-        protected override ParserState MatchImplementation(ParserState state, ParseCache cache) => state.AtEnd ? null : Chars.Contains(state.Current) ? state.Advance() : null;
+        protected override ParserState MatchImplementation(ParserState state, ParserCache cache) => state.AtEnd ? null : Chars.Contains(state.Current) ? state.Advance() : null;
         public override bool Equals(object obj) => obj is CharSetRule csr && new string(Chars) == new string(csr.Chars);
+        public override int GetHashCode() => Hash(new string(Chars));
     }
 
     public class EndOfInputRule : Rule
     {
         public EndOfInputRule([CallerMemberName] string name = "") : base(name) { }
         public override Rule WithName(string name) => new EndOfInputRule(name);
-        protected override ParserState MatchImplementation(ParserState state, ParseCache cache) => state.AtEnd ? state : null;
+        protected override ParserState MatchImplementation(ParserState state, ParserCache cache) => state.AtEnd ? state : null;
         public static EndOfInputRule Default => new EndOfInputRule();
         public override bool Equals(object obj) => obj is EndOfInputRule;
+        public override int GetHashCode() => Hash(Name);
     }
 
     public class CharMatchRule : Rule
@@ -134,9 +151,10 @@ namespace PlatoParser
         public char Ch { get; }
         public CharMatchRule(char ch, [CallerMemberName] string name = "") : base(name) => Ch = ch;
         public override Rule WithName(string name) => new CharMatchRule(Ch, name);
-        protected override ParserState MatchImplementation(ParserState state, ParseCache cache)
+        protected override ParserState MatchImplementation(ParserState state, ParserCache cache)
             => state.AtEnd ? null : state.Current == Ch ? state.Advance() : null;
         public override bool Equals(object obj) => obj is CharMatchRule cmr && cmr.Ch == Ch;
+        public override int GetHashCode() => Hash(Ch);
     }
 
     public class NodeRule : Rule
@@ -147,7 +165,7 @@ namespace PlatoParser
         public NodeRule(Rule rule, Rule eat, [CallerMemberName] string name = "") : base(name) => (Rule, Eat) = (rule, eat);
         public override Rule WithName(string name) => new NodeRule(Rule, Eat, name);
 
-        protected override ParserState MatchImplementation(ParserState state, ParseCache cache)
+        protected override ParserState MatchImplementation(ParserState state, ParserCache cache)
         {
             var start = state.Position;
             var result = Rule.Match(state, cache);
@@ -161,6 +179,7 @@ namespace PlatoParser
         }
 
         public override bool Equals(object obj) => obj is NodeRule nr && Name == nr.Name && Rule.Equals(nr.Rule) && Eat.Equals(nr.Eat);
+        public override int GetHashCode() => Hash(Rule, Eat, Name);
     }
 
     public class ZeroOrMore : Rule
@@ -170,7 +189,7 @@ namespace PlatoParser
         public ZeroOrMore(Rule rule, [CallerMemberName] string name = "") : base(name) => Rule = rule;
         public override Rule WithName(string name) => new ZeroOrMore(Rule, name);
 
-        protected override ParserState MatchImplementation(ParserState state, ParseCache cache)
+        protected override ParserState MatchImplementation(ParserState state, ParserCache cache)
         {
             var curr = state;
             var next = Rule.Match(curr, cache);
@@ -182,7 +201,7 @@ namespace PlatoParser
                 {
                     if (next.Position <= curr.Position)
                     {
-                        throw new Exception("Parser is no longer making progress");
+                        throw new ParserException(curr, "Parser is no longer making progress");
                     }
                 }
             }
@@ -190,6 +209,7 @@ namespace PlatoParser
         }
 
         public override bool Equals(object obj) => obj is ZeroOrMore z && z.Rule.Equals(Rule);
+        public override int GetHashCode() => Hash(Rule);
     }
 
     public class Optional : Rule
@@ -199,10 +219,11 @@ namespace PlatoParser
         public Optional(Rule rule, [CallerMemberName] string name = "") : base(name) => Rule = rule;
         public override Rule WithName(string name) => new Optional(Rule, name);
 
-        protected override ParserState MatchImplementation(ParserState state, ParseCache cache)
+        protected override ParserState MatchImplementation(ParserState state, ParserCache cache)
             => Rule.Match(state, cache) ?? state;
 
         public override bool Equals(object obj) => obj is Optional opt && opt.Rule.Equals(Rule);
+        public override int GetHashCode() => Hash(Rule);
     }
 
     public class Sequence : Rule
@@ -215,19 +236,37 @@ namespace PlatoParser
         public override Rule WithName(string name) => new Sequence(Rules, name);
         public int Count => Rules.Count();
         public Rule this[int index] => Rules[index];
-        protected override ParserState MatchImplementation(ParserState state, ParseCache cache)
+        protected override ParserState MatchImplementation(ParserState state, ParserCache cache)
         {
             var newState = state;
+            OnError onError = null;
             foreach (var rule in Rules)
             {
-                newState = rule.Match(newState, cache);
-                if (newState == null) return null;
+                if (rule is OnError)
+                {
+                    onError = (OnError)rule;
+                }
+                else
+                {
+                    var prevState = newState;
+                    var msg = string.Empty;
+                    newState = rule.Match(prevState, cache);
+                    if (newState == null)
+                    {
+                        var error = new ParseError(rule, this, state, prevState, msg);
+                        cache.Errors.Add(error);
+                        if (onError != null)
+                            return onError.Match(prevState, cache);
+                        return null;
+                    }
+                }
             }
 
             return newState;
         }
 
         public override bool Equals(object obj) => obj is Sequence seq && Rules.SequenceEqual(seq.Rules);
+        public override int GetHashCode() => Hash(Rules);
     }
 
     public class Choice : Rule
@@ -240,7 +279,7 @@ namespace PlatoParser
         public override Rule WithName(string name) => new Choice(Rules, name);
         public int Count => Rules.Count();
         public Rule this[int index] => Rules[index];
-        protected override ParserState MatchImplementation(ParserState state, ParseCache cache)
+        protected override ParserState MatchImplementation(ParserState state, ParserCache cache)
         {
             foreach (var rule in Rules)
             {
@@ -252,6 +291,7 @@ namespace PlatoParser
         }
 
         public override bool Equals(object obj) => obj is Choice ch && Rules.SequenceEqual(ch.Rules);
+        public override int GetHashCode() => Hash(Rules);
     }
 
     public class At : Rule
@@ -259,10 +299,11 @@ namespace PlatoParser
         public Rule Rule { get; }
         public At(Rule rule, [CallerMemberName] string name = "") : base(name) => (Rule) = (rule);
         public override Rule WithName(string name) => new At(Rule, name);
-        protected override ParserState MatchImplementation(ParserState state, ParseCache cache)
+        protected override ParserState MatchImplementation(ParserState state, ParserCache cache)
             => Rule.Match(state, cache) != null ? state : null;
 
         public override bool Equals(object obj) => obj is At at && Rule.Equals(at.Rule);
+        public override int GetHashCode() => Hash(Rule);
     }
 
     public class NotAt : Rule
@@ -270,17 +311,19 @@ namespace PlatoParser
         public Rule Rule { get; }
         public NotAt(Rule rule, [CallerMemberName] string name = "") : base(name) => (Rule) = (rule);
         public override Rule WithName(string name) => new NotAt(Rule, name);
-        protected override ParserState MatchImplementation(ParserState state, ParseCache cache)
+        protected override ParserState MatchImplementation(ParserState state, ParserCache cache)
             => Rule.Match(state, cache) == null ? state : null;
         public override bool Equals(object obj) => obj is NotAt notAt && Rule.Equals(notAt.Rule);
+        public override int GetHashCode() => Hash(Rule);
     }
 
-    public class Recovery : Rule
+    public class OnError : Rule
     {
-        public Rule Rule { get; }
-        public Recovery(Rule rule, [CallerMemberName] string name = "") : base(name) => Rule = rule;
-        public override Rule WithName(string name) => new Recovery(Rule, name);
-        protected override ParserState MatchImplementation(ParserState state, ParseCache cache) => state;
-        public override bool Equals(object obj) => obj is Recovery rec && Rule.Equals(rec.Rule);
+        public Rule RecoveryRule { get; }
+        public OnError(Rule rule, [CallerMemberName] string name = "") : base(name) => RecoveryRule = rule;
+        public override Rule WithName(string name) => new OnError(RecoveryRule, name);
+        protected override ParserState MatchImplementation(ParserState state, ParserCache cache) => state;
+        public override bool Equals(object obj) => obj is OnError rec && RecoveryRule.Equals(rec.RecoveryRule);
+        public override int GetHashCode() => Hash(RecoveryRule);
     }
 }

@@ -7,13 +7,14 @@ namespace PlatoParser
         public int Start { get; }
         public int End { get; }
         public Rule Rule { get; }
-        public string Type => Rule.Name;
+        public string Name => Rule.Name;
         public ParseNode Previous { get; }
         public string Input { get; }
         public int Count => Math.Max(End - Start, 0);
         public string Contents => Input.Substring(Start, Count);
+        
         public override string ToString()
-            => $"{Type}:{Start}:{End}:{EllidedContents}";
+            => $"{Name}:{Start}:{End}:{EllidedContents}";
 
         public const int MaxLength = 20;
 

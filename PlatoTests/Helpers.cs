@@ -50,7 +50,7 @@ namespace PlatoTests
         }
 
         public static string Descriptor(this ParseNode node)
-            => $"Node {node.Type}: {node.Start} to {node.End} = {node.EllidedContents}";
+            => $"Node {node.Name}: {node.Start} to {node.End} = {node.EllidedContents}";
 
     }
 }

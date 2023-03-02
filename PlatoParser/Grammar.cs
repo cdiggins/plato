@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 namespace PlatoParser
 {
     // [Mutable]
-    public class Grammar 
+    public class Grammar
     {
         public Rule WhitespaceRule { get; protected set; }
 
@@ -26,7 +26,7 @@ namespace PlatoParser
 
         public static Rule Choice(IEnumerable<Rule> rules, [CallerMemberName] string name = "")
             => new Choice(rules, name);
-      
+
         public static Rule Sequence(IEnumerable<Rule> rules, [CallerMemberName] string name = "")
             => new Sequence(rules, name);
 
@@ -51,6 +51,9 @@ namespace PlatoParser
             Lookup.Add(name, r);
             return r;
         }
+
+        public OnError OnError(Rule r)
+            => new OnError(r);       
 
         public Dictionary<string, Rule> Lookup = new Dictionary<string, Rule>();
     }
