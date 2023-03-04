@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PlatoParser\PlatoParser.csproj" />
     <ProjectReference Include="..\PlatoTypeInference\PlatoTypeInference.csproj" />
   </ItemGroup>
 

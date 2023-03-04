@@ -32,8 +32,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTestEvaluator", "Plato
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTests", "PlatoTests\PlatoTests.csproj", "{8A4899BC-6E5E-4028-87DD-ADB53D430C9D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoParser", "PlatoParser\PlatoParser.csproj", "{CE5B52E7-E96D-47EC-85B8-2EF0AF84BF8B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoAbstractSyntaxTree", "PlatoAbstractSyntaxTree\PlatoAbstractSyntaxTree.csproj", "{9DF709AB-F5B1-4CB8-9DCD-5FF792A079C5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoAstWriter", "PlatoAstWriter\PlatoAstWriter.csproj", "{B83DC47B-F800-4FED-BC13-A422D1381354}"
@@ -41,6 +39,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Math", "legacy\Plato.Math\src\Plato.Math.csproj", "{C1EC224B-9AE2-459B-A2EA-C72B188C4EE6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Collections", "..\Plato.Collections\src\Plato.Collections.csproj", "{93D04BD9-DE3A-41B1-A096-447C261E4559}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parakeet", "..\parakeet\Parakeet\Parakeet.csproj", "{B9BAA796-890C-43A0-BEB9-A92B391E822A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parakeet.Demos", "..\parakeet\Parakeet.Demos\Parakeet.Demos.csproj", "{D38B6D80-6FA9-4BDD-825B-4BCB111F7EDE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parakeet.Tests", "..\parakeet\Parakeet.Tests\Parakeet.Tests.csproj", "{E2AEC27F-F7A1-4DB3-84F1-02C59E8B19FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -96,10 +100,6 @@ Global
 		{8A4899BC-6E5E-4028-87DD-ADB53D430C9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A4899BC-6E5E-4028-87DD-ADB53D430C9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A4899BC-6E5E-4028-87DD-ADB53D430C9D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CE5B52E7-E96D-47EC-85B8-2EF0AF84BF8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CE5B52E7-E96D-47EC-85B8-2EF0AF84BF8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CE5B52E7-E96D-47EC-85B8-2EF0AF84BF8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CE5B52E7-E96D-47EC-85B8-2EF0AF84BF8B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9DF709AB-F5B1-4CB8-9DCD-5FF792A079C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9DF709AB-F5B1-4CB8-9DCD-5FF792A079C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DF709AB-F5B1-4CB8-9DCD-5FF792A079C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -116,6 +116,18 @@ Global
 		{93D04BD9-DE3A-41B1-A096-447C261E4559}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93D04BD9-DE3A-41B1-A096-447C261E4559}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93D04BD9-DE3A-41B1-A096-447C261E4559}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9BAA796-890C-43A0-BEB9-A92B391E822A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9BAA796-890C-43A0-BEB9-A92B391E822A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9BAA796-890C-43A0-BEB9-A92B391E822A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9BAA796-890C-43A0-BEB9-A92B391E822A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D38B6D80-6FA9-4BDD-825B-4BCB111F7EDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D38B6D80-6FA9-4BDD-825B-4BCB111F7EDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D38B6D80-6FA9-4BDD-825B-4BCB111F7EDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D38B6D80-6FA9-4BDD-825B-4BCB111F7EDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2AEC27F-F7A1-4DB3-84F1-02C59E8B19FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2AEC27F-F7A1-4DB3-84F1-02C59E8B19FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2AEC27F-F7A1-4DB3-84F1-02C59E8B19FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2AEC27F-F7A1-4DB3-84F1-02C59E8B19FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
