@@ -73,15 +73,6 @@ namespace Plato
             return Math.Abs(lValue1 - lValue2) <= 1;
         }
 
-
-        /*
-        St. Urbain
-        2115, Unit 104 
-
-        // 2480 Rue 24 Laval
-
-        */
-
         /// <summary>
         /// A second alternative takes advantage of a design feature of the floating-point format: The
         /// difference between the integer representation of two floating-point values indicates the
