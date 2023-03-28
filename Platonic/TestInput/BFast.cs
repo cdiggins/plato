@@ -428,5 +428,6 @@ namespace Vim.BFast
 
             return r.Validate();
         }
+
     }
 }
