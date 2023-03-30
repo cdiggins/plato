@@ -4,7 +4,6 @@ using System.Security.Cryptography.X509Certificates;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Operations;
 using PlatoAnalyzer;
 using Ptarmigan.Utils.Roslyn;
 using Compilation = Ptarmigan.Utils.Roslyn.Compilation;
@@ -13,103 +12,59 @@ namespace Platonic
 {
     public static class Program
     {
-        public static bool IsImmutable(ITypeSymbol symbol, List<string> reasons)
+        public static IEnumerable<PlatoTypeAnalysis> AnalyzeTypes(this Compilation compilation)
         {
-            // All fields are readonly 
-            foreach (var m in symbol.GetDeclaredAndBaseMembers())
+            foreach (var st in compilation.SyntaxTrees)
             {
-                if (m is IFieldSymbol fs)
+                var model = compilation.Compiler.GetSemanticModel(st);
+                foreach (var n in st.GetRoot().DescendantNodesAndSelf().OfType<TypeDeclarationSyntax>())
                 {
-                    if (!fs.IsReadOnly && !fs.IsConst)
-                    {
-                        var node = fs.GetSyntax();
-                        if (node != null)
-                            if (node.IsPublicMember())
-                                reasons.Add($"Type has a public field {fs.Name} that is not readonly or const");
-                    }
+                    yield return new PlatoTypeAnalysis(model, n);
                 }
             }
-                
-            return reasons.Count == 0;
         }
 
-        /// <summary>
-        /// Checks if a method is platonic.
-        /// Check that any mutable types aren't copied. 
-        /// 1) They aren't assigned to anything (including arrays, and fields, and local variables)
-        /// 2) That they aren't captured quietly in a lambda
-        /// </summary>
-        public static bool IsMethodPlatonic(SemanticModel model, MethodDeclarationSyntax method, HashSet<ITypeSymbol> immutableTypes, List<string> reasons)
+        public static void OutputMemberInfo(PlatoMemberAnalysis m)
         {
-            if (method == null)
+            var isPublic = m.IsPublic ? "public" : "private";
+            var isStatic = m.IsStatic ? "static" : "instance";
+            var memberType = m is PlatonicMethodAnalysis ? "method"
+                : m is PlatonicFieldAnalysis ? "field"
+                : m is PlatonicPropertyAnalysis ? "property"
+                : "member";
+            Console.WriteLine($"  It has a {isPublic} {isStatic} {memberType} named {m.Name} with a type {m.MemberType}");
+            Console.WriteLine($"     There is {m.Operation != null} an associated operation of kind {m.Operation?.Kind} and type {m.Operation?.Type}");
+            Console.WriteLine($"     The syntax node is {m.Node.Kind()} and the associated statement/expression is {m.StatementOrExpression?.Kind()}");
+
+            if (m.DataFlow != null)
             {
-                reasons.Add("Could not find method");
-                return false;
+                var writtenTo = string.Join(", ", m.DataFlow.WrittenInside);
+                var usedFuncs = string.Join(", ", m.DataFlow.UsedLocalFunctions);
+                var readInside = string.Join(", ", m.DataFlow.ReadInside);
+                Console.WriteLine($"    Written variables are {writtenTo}, used functions {usedFuncs}, variables read inside {readInside}");
             }
-
-            var sym = model.GetDeclaredSymbol(method) as IMethodSymbol;
-            if (sym == null)
-            {
-                reasons.Add("Could not find symbol");
-                return false;
-            }
-
-            var allParametersAreImmutable = sym.Parameters.Select(p => p.Type).All(t => immutableTypes.Contains(t));
-
-            var op = model.GetOperation(method.Body);
-
-            var assignments = op.DescendantsAndSelf().OfType<IAssignmentOperation>();
-
-            foreach (var ass in assignments)
-            {
-                if (ass.Target is IFieldReferenceOperation fro)
-                {
-                    // We are assigning to a field. 
-                    // Is it inside of this class? Or another one? 
-                    reasons.Add($"Assignment to {fro.Field.Name} occurs");
-                }
-
-                var t = ass.Value.Type;
-
-                if (t == null)
-                {
-                    reasons.Add($"Could not determine type of assigned value {ass.Value}");
-                }
-                else
-                {
-                    if (!immutableTypes.Contains(t))
-                    {
-                        reasons.Add($"The type {t} of the assigned value {ass.Value} is not immutable: you can't copy mutable types!");
-                    }
-                }
-            }
-
-            // Check that lambdas don't capture mutable types
-            var lambdas = method.GetLambdas();
-            foreach (var lambda in lambdas)
-            {
-                foreach (var v in model.GetCapturedVariables(lambda))
-                {
-                    var t = model.GetTypeSymbol(v);
-                    if (!immutableTypes.Contains(t))
-                    {
-                        reasons.Add($"A captured variable {v} has a mutable type {t}");
-                    }
-                }
-            }
-
-            return reasons.Count == 0;
-        }
-
-
-        public static void AnalyzeClass(TypeDeclarationSyntax typeDecl, INamedTypeSymbol symbol)
-        {
-            // Is this a mutable class or not? 
-
-            // If it is mutable, is it used in a non-mutable context 
         }
 
         public static void Main(string[] args)
+        {
+            Console.WriteLine("Starting compilation ... ");
+            var inputFolder = @"C:\Users\cdigg\git\plato\Platonic\TestInput";
+            var inputFiles = Directory.GetFiles(inputFolder, "*.cs");
+            var compilation = Compilation.Create(inputFiles);
+            Console.WriteLine($"Compilation completed {compilation.EmitResult}");
+            var ta = compilation.AnalyzeTypes();
+            foreach (var t in ta)
+            {
+                Console.WriteLine($"Found a type {t.TypeSymbol?.Name} of kind {t.TypeSymbol?.TypeKind}");
+
+                foreach (var m in t.Members)
+                {
+                    OutputMemberInfo(m);
+                }
+            }
+        }
+
+        public static void OldMain(string[] args)
         {
             Console.WriteLine("Starting compilation ... ");
             var inputFolder = @"C:\Users\cdigg\git\plato\Platonic\TestInput";
@@ -181,7 +136,7 @@ namespace Platonic
                 if (kv.Key is ITypeSymbol ts)
                 {
                     var reasons = new List<string>();
-                    var pure = IsImmutable(ts, reasons);
+                    var pure = PlatonicAnalysis.IsImmutable(ts, reasons);
                     Console.WriteLine($"{ts.Name} is immutable {pure}");
                     foreach (var reason in reasons)
                     {
@@ -214,7 +169,7 @@ namespace Platonic
                 foreach (var md in syntaxTree.GetRoot().DescendantNodesAndSelf().OfType<MethodDeclarationSyntax>())
                 {
                     var reasons = new List<string>();
-                    var result = IsMethodPlatonic(semanticModel, md, immutableTypes, reasons);
+                    var result = PlatonicAnalysis.IsMethodPlatonic(semanticModel, md, immutableTypes, reasons);
 
                     var sym = semanticModel.GetDeclaredSymbol(md);
 
