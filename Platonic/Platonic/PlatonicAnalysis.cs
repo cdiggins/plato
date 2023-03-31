@@ -8,7 +8,7 @@ using Ptarmigan.Utils.Roslyn;
 
 namespace Platonic;
 
-public class PlatonicAnalysisContext
+public abstract class PlatonicAnalysisContext
 {
     /// <summary>
     /// The symbol
@@ -36,9 +36,16 @@ public class PlatonicAnalysisContext
     public SyntaxNode? StatementOrExpression;
 
     /// <summary>
-    /// Data flow 
+    /// Data flow analysis 
     /// </summary>
     public DataFlowAnalysis? DataFlow;
+
+    /// <summary>
+    /// Control flow analysis. 
+    /// </summary>
+    public ControlFlowAnalysis? ControlFlow;
+
+    public abstract string Name { get; }
 
     public PlatonicAnalysisContext(SemanticModel model, ISymbol symbol, SyntaxNode node)
     {
@@ -49,6 +56,8 @@ public class PlatonicAnalysisContext
         Node = node;
         Operation = model.GetOperation(StatementOrExpression);
         DataFlow = model.GetDataFlowAnalysis(StatementOrExpression);
+        if (StatementOrExpression is StatementSyntax st)
+            ControlFlow = model.AnalyzeControlFlow(st);
     }
 }
 
@@ -82,6 +91,9 @@ public class PlatoTypeAnalysis : PlatonicAnalysisContext
         }
     }
 
+    public override string Name
+        => TypeSymbol?.Name ?? "_unknowntype_";
+
     public TypeDeclarationSyntax TypeSyntax
         => (TypeDeclarationSyntax)Node;
 
@@ -98,12 +110,12 @@ public class PlatoTypeAnalysis : PlatonicAnalysisContext
 
 public abstract class PlatoMemberAnalysis : PlatonicAnalysisContext
 {
-    public PlatoTypeAnalysis Type { get; }
+    public PlatoTypeAnalysis ParentType { get; }
 
-    public PlatoMemberAnalysis(PlatoTypeAnalysis type, ISymbol? symbol, MemberDeclarationSyntax? node)
-        : base(type.Model, symbol, node)
+    public PlatoMemberAnalysis(PlatoTypeAnalysis parentType, ISymbol? symbol, MemberDeclarationSyntax? node)
+        : base(parentType.Model, symbol, node)
     {
-        Type = type;
+        ParentType = parentType;
     }
 
     public MemberDeclarationSyntax MemberSyntax 
@@ -115,15 +127,13 @@ public abstract class PlatoMemberAnalysis : PlatonicAnalysisContext
     public bool IsStatic 
         => MemberSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword));
 
-    public abstract string Name { get; }
-
     public abstract ITypeSymbol MemberType { get; }
 }
 
 public class PlatonicMethodAnalysis : PlatoMemberAnalysis
 {
-    public PlatonicMethodAnalysis(PlatoTypeAnalysis type, BaseMethodDeclarationSyntax node)
-        : base(type, ModelExtensions.GetDeclaredSymbol(type.Model, node), node)
+    public PlatonicMethodAnalysis(PlatoTypeAnalysis parentType, BaseMethodDeclarationSyntax node)
+        : base(parentType, ModelExtensions.GetDeclaredSymbol(parentType.Model, node), node)
     {
     }
 
@@ -164,8 +174,8 @@ public class PlatonicMethodAnalysis : PlatoMemberAnalysis
 
 public class PlatonicFieldAnalysis : PlatoMemberAnalysis
 {
-    public PlatonicFieldAnalysis(PlatoTypeAnalysis type, FieldDeclarationSyntax field, VariableDeclaratorSyntax node)
-        : base(type, ModelExtensions.GetDeclaredSymbol(type.Model, node), field)
+    public PlatonicFieldAnalysis(PlatoTypeAnalysis parentType, FieldDeclarationSyntax field, VariableDeclaratorSyntax node)
+        : base(parentType, ModelExtensions.GetDeclaredSymbol(parentType.Model, node), field)
     {
     }
 
@@ -190,19 +200,19 @@ public class PlatonicFieldAnalysis : PlatoMemberAnalysis
 
 public class PlatonicPropertyAnalysis : PlatoMemberAnalysis
 {
-    public PlatonicPropertyAnalysis(PlatoTypeAnalysis type, PropertyDeclarationSyntax node)
-        : base(type, ModelExtensions.GetDeclaredSymbol(type.Model, node), node)
+    public PlatonicPropertyAnalysis(PlatoTypeAnalysis parentType, PropertyDeclarationSyntax node)
+        : base(parentType, ModelExtensions.GetDeclaredSymbol(parentType.Model, node), node)
     {
         var getterSyntax = PropertySymbol?.GetMethod?.GetSyntax();
         if (getterSyntax != null)
         {
-            Getter = new PlatonicMethodAnalysis(type, getterSyntax);
+            Getter = new PlatonicMethodAnalysis(parentType, getterSyntax);
         }
 
         var setterSyntax = PropertySymbol?.SetMethod?.GetSyntax();
         if (setterSyntax != null)
         {
-            Setter = new PlatonicMethodAnalysis(type, getterSyntax);
+            Setter = new PlatonicMethodAnalysis(parentType, getterSyntax);
         }
 
         // TODO: look for IPropertyReferenceOperation 
@@ -303,8 +313,8 @@ public static class PlatonicAnalysis
     // public static bool IsTypePure(this SemanticModel model)
 
     // TODO: 
-    // If a method is [Impure] a side-effect (e.g., uses an impure type) 
-    // It does not mean that the enclosing type is impure.  
+    // If a method is [Impure] a side-effect (e.g., uses an impure parentType) 
+    // It does not mean that the enclosing parentType is impure.  
 
     /// <summary>
     /// Checks if a method is platonic.
@@ -346,13 +356,13 @@ public static class PlatonicAnalysis
 
             if (t == null)
             {
-                reasons.Add($"Could not determine type of assigned value {ass.Value}");
+                reasons.Add($"Could not determine parentType of assigned value {ass.Value}");
             }
             else
             {
                 if (!immutableTypes.Contains(t))
                 {
-                    reasons.Add($"The type {t} of the assigned value {ass.Value} is not immutable: you can't copy mutable types!");
+                    reasons.Add($"The parentType {t} of the assigned value {ass.Value} is not immutable: you can't copy mutable types!");
                 }
             }
         }
@@ -366,7 +376,7 @@ public static class PlatonicAnalysis
                 var t = model.GetTypeSymbol(v);
                 if (!immutableTypes.Contains(t))
                 {
-                    reasons.Add($"A captured variable {v} has a mutable type {t}");
+                    reasons.Add($"A captured variable {v} has a mutable parentType {t}");
                 }
             }
         }
@@ -386,7 +396,7 @@ public static class PlatonicAnalysis
                     var node = fs.GetSyntax();
                     if (node != null)
                         if (node.IsPublicMember())
-                            reasons.Add($"Type has a public field {fs.Name} that is not readonly or const");
+                            reasons.Add($"ParentType has a public field {fs.Name} that is not readonly or const");
                 }
             }
         }

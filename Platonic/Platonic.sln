@@ -25,6 +25,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoAnalyzer", "..\legacy\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ptarmigan.Utils.Roslyn", "..\..\ptarmigan\src\Ptarmigan.Utils.Roslyn\Ptarmigan.Utils.Roslyn.csproj", "{50B3694F-3BE5-43CE-8019-9104A633BAFF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestOutput", "TestOutput\TestOutput.csproj", "{B1D9B325-2881-4882-AE77-3D30DEF7EAEF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ptarmigan.Utils", "..\..\ptarmigan\src\Ptarmigan.Utils\Ptarmigan.Utils.csproj", "{1DDA1A27-CEDC-4DB6-8842-CBEA9FA3A473}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +79,14 @@ Global
 		{50B3694F-3BE5-43CE-8019-9104A633BAFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50B3694F-3BE5-43CE-8019-9104A633BAFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{50B3694F-3BE5-43CE-8019-9104A633BAFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1D9B325-2881-4882-AE77-3D30DEF7EAEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1D9B325-2881-4882-AE77-3D30DEF7EAEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1D9B325-2881-4882-AE77-3D30DEF7EAEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1D9B325-2881-4882-AE77-3D30DEF7EAEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DDA1A27-CEDC-4DB6-8842-CBEA9FA3A473}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DDA1A27-CEDC-4DB6-8842-CBEA9FA3A473}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DDA1A27-CEDC-4DB6-8842-CBEA9FA3A473}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DDA1A27-CEDC-4DB6-8842-CBEA9FA3A473}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,10 +1,7 @@
-﻿using System.Diagnostics;
-using System.Net.Http.Headers;
-using System.Security.Cryptography.X509Certificates;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using PlatoAnalyzer;
+using Ptarmigan.Utils;
 using Ptarmigan.Utils.Roslyn;
 using Compilation = Ptarmigan.Utils.Roslyn.Compilation;
 
@@ -12,6 +9,73 @@ namespace Platonic
 {
     public static class Program
     {
+        public static string Describe(ISymbol symbol)
+        {
+            return $"(Name={symbol.Name} Kind={symbol.Kind})";
+        }
+
+        public static string Describe(this IEnumerable<ISymbol> symbols)
+        {
+            return string.Join(", ", symbols.Select(Describe));
+        }
+
+        public static void OutputAnnotatedFiles(this Compilation compilation, string outputFolder)
+        {
+            foreach (var st in compilation.SyntaxTrees)
+            {
+                var fileName = Path.GetFileName(st.FilePath);
+                if (string.IsNullOrWhiteSpace(fileName))
+                    throw new Exception("Expected non-null file path");
+                var model = compilation.Compiler.GetSemanticModel(st);
+
+                var cb = new CodeBuilder();
+                foreach (var n in st.GetRoot().DescendantNodesAndSelf().OfType<TypeDeclarationSyntax>())
+                {
+                    var ta = new PlatoTypeAnalysis(model, n);
+
+                    cb.WriteLine($"// ");
+                    cb.WriteLine($"public {ta.TypeSymbol.Kind} {ta.TypeSymbol.Name}");
+                    cb.WriteLine("{").Indent();
+                    foreach (var m in ta.Members)
+                    {
+                        var isPublic = m.IsPublic ? "public" : "private";
+                        var isStatic = m.IsStatic ? "static" : "instance";
+                        var memberType = m is PlatonicMethodAnalysis ? "method"
+                            : m is PlatonicFieldAnalysis ? "field"
+                            : m is PlatonicPropertyAnalysis ? "property"
+                            : "member";
+
+                        cb.WriteLine($"// It has a {isPublic} {isStatic} {memberType} named {m.Name} with a type {m.MemberType}");
+                        if (m.Operation != null)
+                        {
+                            cb.WriteLine($"// operation kind is {m.Operation?.Kind} and type {m.Operation?.Type}");
+                        }
+                        else
+                        {
+                            cb.WriteLine($"// No associated operation");
+                        }
+
+                        if (m.DataFlow != null)
+                        {
+                            cb.WriteLine($"// Written symbols are {m.DataFlow.WrittenInside.Describe()}");
+                            cb.WriteLine($"// Read symbols are {m.DataFlow.ReadInside.Describe()}");
+                            cb.WriteLine($"// Captured symbols are {m.DataFlow.Captured.Describe()}");
+                            cb.WriteLine($"// Variables declared are {m.DataFlow.VariablesDeclared}");
+                        }
+                        else
+                        {
+                            cb.WriteLine($"// No data-flow analysis could be created");
+                        }
+                        cb.WriteLine(m.Node.ToFullString());
+                    }
+                    cb.WriteLine("}");
+                }
+
+                var outputFile = Path.Combine(outputFolder, fileName);
+                File.WriteAllText(outputFile, cb.ToString());
+            }
+        }
+
         public static IEnumerable<PlatoTypeAnalysis> AnalyzeTypes(this Compilation compilation)
         {
             foreach (var st in compilation.SyntaxTrees)
@@ -44,6 +108,11 @@ namespace Platonic
                 Console.WriteLine($"    Written variables are {writtenTo}, used functions {usedFuncs}, variables read inside {readInside}");
             }
         }
+        
+        // TODO: Output the code.
+        // TODO: make sure there are no modifiers on classes
+        // TODO: probably going to use the code builder? 
+        // TODO: 
 
         public static void Main(string[] args)
         {
