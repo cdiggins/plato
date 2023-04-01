@@ -1,24 +1,33 @@
-﻿using System;
+using System;
+
 using System.Collections.Generic;
+
 using System.IO;
+
 using System.Linq;
+
 using Vim.BFast;
+
 using Vim.LinqArray;
+
 using Vim.Math3d;
 
 namespace Vim.G3d
 {
-    /// <summary>
-    /// A mesh attribute is an array of data associated with some component of a mesh.
-    /// It could be vertices, corners, faces, face groups, sub-meshes, instances or the entire mesh.
-    /// This is the base class of a typed MeshAttribute.
-    /// It provides two core operations we are the foundation for mesh manipulation:
-    /// 1. concatenation with like-typed attributes
-    /// 2. remapping    
-    /// </summary>
+    // Type has fields False
+    // Type has writable fields False
+    // Type has public setters False
     public abstract class GeometryAttribute
     {
-        /// <summary>
+        // A private instance method named .ctor with a type void
+        // operation kind is Block and type 
+        // member references = Descriptor, ElementCount
+        // assignments = Conversion
+        // Written symbols are 
+        // Read symbols are (Name=this Kind=Parameter), (Name=descriptor Kind=Parameter), (Name=count Kind=Parameter)
+        // Captured symbols are 
+        // Variables declared are 
+                /// <summary>
         /// Constructor.
         /// </summary>
         protected GeometryAttribute(AttributeDescriptor descriptor, int count)
@@ -26,44 +35,43 @@ namespace Vim.G3d
             (Descriptor, ElementCount) = (descriptor, count);
         }
 
-        /// <summary>
-        /// The descriptor contains information about the data contained in the attribute:
-        /// * the primitive data type
-        /// * the arity
-        /// * the association
-        /// * the semantic 
-        /// </summary>
-        public AttributeDescriptor Descriptor { get; }
-
-        /// <summary>
-        /// A "name" is a string encoding of the attribute descriptor. 
-        /// </summary>
-        public string Name
-            => Descriptor.Name;
-
-        /// <summary>
-        /// This is the number of data elements in the attribute. This is equal to
-        /// the number of primitives times the arity. All mesh attributes associated
-        /// with the same mesh component (e.g. vertices) must have the same element count.
-        /// </summary>
-        public int ElementCount { get; }
-
+        // A public instance method named Merge with a type Vim.G3d.GeometryAttribute
+        // No associated operation
+        // No data-flow analysis could be created
+        
         /// <summary>
         /// Multiple mesh attributes can be merged together if they have the same
         /// underlying descriptor and data type. 
         /// </summary>
         public abstract GeometryAttribute Merge(IEnumerable<GeometryAttribute> others);
 
+        // A public instance method named Remap with a type Vim.G3d.GeometryAttribute
+        // No associated operation
+        // No data-flow analysis could be created
+        
         /// <summary>
         /// A mesh attribute can be remapped, using the given indices. 
         /// </summary>
         public abstract GeometryAttribute Remap(IArray<int> indices);
 
+        // A public instance method named ToBuffer with a type Vim.BFast.INamedBuffer
+        // No associated operation
+        // No data-flow analysis could be created
+        
         /// <summary>
         /// Converted to an INamedBuffer which consists of a name and an array of unmanaged types. 
         /// </summary>
         public abstract INamedBuffer ToBuffer();
 
+        // A public instance method named IsType with a type bool
+        // operation kind is Block and type 
+        // member references = 
+        // assignments = 
+        // Written symbols are 
+        // Read symbols are (Name=this Kind=Parameter)
+        // Captured symbols are 
+        // Variables declared are 
+        
         /// <summary>
         /// Convenience function to check if this object is a mesh attribute of the given type.
         /// </summary>
@@ -72,6 +80,15 @@ namespace Vim.G3d
             return this is GeometryAttribute<T>;
         }
 
+        // A public instance method named IsTypeAndAssociation with a type bool
+        // operation kind is Block and type 
+        // member references = Association, Descriptor
+        // assignments = 
+        // Written symbols are 
+        // Read symbols are (Name=this Kind=Parameter), (Name=assoc Kind=Parameter)
+        // Captured symbols are 
+        // Variables declared are 
+        
         /// <summary>
         /// Convenience function to check if this object is a mesh attribute of the given type, and the association matches.
         /// </summary>
@@ -80,6 +97,15 @@ namespace Vim.G3d
             return Descriptor.Association == assoc && this is GeometryAttribute<T>;
         }
 
+        // A public instance method named AsType with a type Vim.G3d.GeometryAttribute<T>
+        // operation kind is Block and type 
+        // member references = 
+        // assignments = 
+        // Written symbols are 
+        // Read symbols are (Name=this Kind=Parameter)
+        // Captured symbols are 
+        // Variables declared are 
+        
         /// <summary>
         /// Convenience function to cast this object into a mesh attribute of the given type, throwing an exception if not possible, 
         /// </summary>
@@ -89,26 +115,84 @@ namespace Vim.G3d
                    throw new Exception($"The type of the attribute is {GetType()} not MeshAttribute<{typeof(T)}>");
         }
 
+        // A public instance method named Read with a type Vim.G3d.GeometryAttribute
+        // No associated operation
+        // No data-flow analysis could be created
+        
         /// <summary>
         /// Loads the correct typed data from a Stream.
         /// </summary>
         public abstract GeometryAttribute Read(Stream stream, long byteCount);
 
+        // A public instance method named SetIndex with a type Vim.G3d.GeometryAttribute
+        // No associated operation
+        // No data-flow analysis could be created
+        
         /// <summary>
         /// Creates a new GeometryAttribute with the same data, but with a different index. Useful when constructing attributes 
         /// </summary>
         public abstract GeometryAttribute SetIndex(int index);
-    }
 
-    /// <summary>
-    /// This is a typed attribute associated with some part of the mesh.
-    /// The underlying data is an IArray which means that it can be
-    /// computed on demand. 
-    /// </summary>
-    public class GeometryAttribute<T> : GeometryAttribute 
+        // A public instance property named Descriptor with a type Vim.G3d.AttributeDescriptor
+        // No associated operation
+        // No data-flow analysis could be created
+        
+        /// <summary>
+        /// The descriptor contains information about the data contained in the attribute:
+        /// * the primitive data type
+        /// * the arity
+        /// * the association
+        /// * the semantic 
+        /// </summary>
+        public AttributeDescriptor Descriptor { get; }
+
+        // A public instance property named Name with a type string
+        // operation kind is PropertyReference and type string
+        // member references = Name, Descriptor
+        // assignments = 
+        // Written symbols are 
+        // Read symbols are (Name=this Kind=Parameter)
+        // Captured symbols are 
+        // Variables declared are 
+        
+        /// <summary>
+        /// A "name" is a string encoding of the attribute descriptor. 
+        /// </summary>
+        public string Name
+            => Descriptor.Name;
+
+        // A public instance property named ElementCount with a type int
+        // No associated operation
+        // No data-flow analysis could be created
+        
+        /// <summary>
+        /// This is the number of data elements in the attribute. This is equal to
+        /// the number of primitives times the arity. All mesh attributes associated
+        /// with the same mesh component (e.g. vertices) must have the same element count.
+        /// </summary>
+        public int ElementCount { get; }
+
+    } // type
+} // namespace
+namespace Vim.G3d
+{
+    // Type has fields True
+    // Type has writable fields True
+    // Type has public setters False
+    public class GeometryAttribute
+    <T>
+    : GeometryAttribute 
+
     {
-        public IArray<T> Data;
-
+        // A public instance method named .ctor with a type void
+        // operation kind is Block and type 
+        // member references = Data, dt_uint8, dt_int8, dt_int8, dt_int8, dt_int8, dt_uint16, dt_int16, dt_uint32, dt_int32, dt_int32, dt_int32, dt_int32, dt_uint64, dt_int64, dt_float32, dt_float32, dt_float32, dt_float32, dt_float32, dt_float64, dt_float64, dt_float64, dt_float64, DataType, Descriptor, DataType, Descriptor, DataArity, Descriptor, DataArity, Descriptor
+        // assignments = ParameterReference, Conversion, Conversion, Conversion, Conversion, Conversion, Conversion, Conversion, Conversion, Conversion, Conversion, Conversion, Conversion, Conversion, Conversion, Conversion, Conversion, Conversion, Conversion, Conversion, Conversion, Conversion, Conversion, Conversion
+        // Written symbols are (Name=arity Kind=Local), (Name=dataType Kind=Local)
+        // Read symbols are (Name=this Kind=Parameter), (Name=data Kind=Parameter), (Name=arity Kind=Local), (Name=dataType Kind=Local)
+        // Captured symbols are 
+        // Variables declared are (Name=arity Kind=Local), (Name=dataType Kind=Local)
+        
         public GeometryAttribute(IArray<T> data, AttributeDescriptor descriptor)
             : base(descriptor, data.Count)
         {
@@ -174,6 +258,15 @@ namespace Vim.G3d
                 throw new Exception($"DatArity was {arity} but expected {Descriptor.DataArity}");
         }
 
+        // A public instance method named Merge with a type Vim.G3d.GeometryAttribute
+        // operation kind is Block and type 
+        // member references = Descriptor, Descriptor, Descriptor, Association, Descriptor, assoc_all, Association, Descriptor, assoc_none, Association, Descriptor, assoc_mesh, Association, Descriptor, assoc_instance, Semantic, Descriptor, Index, Data, Descriptor
+        // assignments = 
+        // Written symbols are (Name=ma Kind=Parameter), (Name=ma Kind=Parameter), (Name=ma Kind=Parameter), (Name=attr Kind=Parameter)
+        // Read symbols are (Name=this Kind=Parameter), (Name=others Kind=Parameter), (Name=ma Kind=Parameter), (Name=ma Kind=Parameter), (Name=ma Kind=Parameter), (Name=attr Kind=Parameter)
+        // Captured symbols are (Name=this Kind=Parameter)
+        // Variables declared are (Name=ma Kind=Parameter), (Name=ma Kind=Parameter), (Name=ma Kind=Parameter), (Name=attr Kind=Parameter)
+        
         public override GeometryAttribute Merge(IEnumerable<GeometryAttribute> others)
         {
             if (!others.Any())
@@ -212,16 +305,43 @@ namespace Vim.G3d
                 .ToAttribute(Descriptor);
         }
 
+        // A public instance method named Remap with a type Vim.G3d.GeometryAttribute
+        // operation kind is Block and type 
+        // member references = Data, Descriptor
+        // assignments = 
+        // Written symbols are 
+        // Read symbols are (Name=this Kind=Parameter), (Name=indices Kind=Parameter)
+        // Captured symbols are 
+        // Variables declared are 
+        
         public override GeometryAttribute Remap(IArray<int> indices)
         {
             return Data.SelectByIndex(indices).ToAttribute(Descriptor);
         }
 
+        // A public instance method named ToBuffer with a type Vim.BFast.INamedBuffer
+        // operation kind is Block and type 
+        // member references = Data, Name
+        // assignments = 
+        // Written symbols are 
+        // Read symbols are (Name=this Kind=Parameter)
+        // Captured symbols are 
+        // Variables declared are 
+        
         public override INamedBuffer ToBuffer()
         {
             return Data.ToArray().ToNamedBuffer(Name);
         }
 
+        // A public instance method named Read with a type Vim.G3d.GeometryAttribute
+        // operation kind is Block and type 
+        // member references = DataElementSize, Descriptor, DataElementSize, Descriptor, DataElementSize, Descriptor, MaxValue, Descriptor
+        // assignments = 
+        // Written symbols are (Name=nElements Kind=Local), (Name=data Kind=Local)
+        // Read symbols are (Name=this Kind=Parameter), (Name=stream Kind=Parameter), (Name=byteCount Kind=Parameter), (Name=nElements Kind=Local), (Name=data Kind=Local)
+        // Captured symbols are 
+        // Variables declared are (Name=nElements Kind=Local), (Name=data Kind=Local)
+        
         public override GeometryAttribute Read(Stream stream, long byteCount)
         {
             if (byteCount % Descriptor.DataElementSize != 0)
@@ -235,9 +355,24 @@ namespace Vim.G3d
             return new GeometryAttribute<T>(data.ToIArray(), Descriptor);
         }
 
+        // A public instance method named SetIndex with a type Vim.G3d.GeometryAttribute
+        // operation kind is Block and type 
+        // member references = Index, Descriptor, Data, Descriptor
+        // assignments = 
+        // Written symbols are 
+        // Read symbols are (Name=this Kind=Parameter), (Name=index Kind=Parameter)
+        // Captured symbols are 
+        // Variables declared are 
+        
         public override GeometryAttribute SetIndex(int index)
         {
             return index == Descriptor.Index ? this : new GeometryAttribute<T>(Data, Descriptor.SetIndex(index));
         }
-    }
-}
+
+        // A public instance field named Data with a type Vim.LinqArray.IArray<T>
+        // No associated operation
+        // No data-flow analysis could be created
+                public IArray<T> Data;
+
+    } // type
+} // namespace

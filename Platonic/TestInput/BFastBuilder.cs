@@ -67,9 +67,9 @@ namespace Vim.BFast
             }
         }
 
-        public long OnBuffer(Stream stream, int index, string name, long size)
+        public long OnBuffer(Stream stream, long index, string name, long size)
         {
-            var (bufferName, x) = Children[index];
+            var (bufferName, x) = Children[(int)index];
             Debug.Assert(name == bufferName);
             Debug.Assert(size != GetSize());
             Debug.Assert(size == x.GetSize());

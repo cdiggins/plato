@@ -1,4 +1,4 @@
-﻿/*
+/*
     BFAST - Binary Format for Array Streaming and Transmission
     Copyright 2019, VIMaec LLC
     Copyright 2018, Ara 3D, Inc.
@@ -13,27 +13,37 @@
 */
 
 using System;
+
 using System.Collections.Generic;
+
 using System.Diagnostics;
+
 using System.IO;
+
 using System.Linq;
+
 using System.Runtime.InteropServices;
+
 using System.Text;
+
 using BFastWriterFn  = System.Func<System.IO.Stream, long, string, long, long>;
 
 namespace Vim.BFast
 {
-
-    /// <summary>
-    /// Wraps an array of byte buffers encoding a BFast structure and provides validation and safe access to the memory. 
-    /// The BFAST file/data format is structured as follows:
-    ///   * File header   - Fixed size file descriptor
-    ///   * Ranges        - An array of pairs of offsets that point to the begin and end of each data arrays
-    ///   * Array data    - All of the array data is contained in this section.
-    /// </summary>
+    // Type has fields False
+    // Type has writable fields False
+    // Type has public setters False
     public static class BFast
     {
-        /// <summary>
+        // A public static method named ComputeNextAlignment with a type long
+        // operation kind is Block and type 
+        // member references = ALIGNMENT, ALIGNMENT
+        // assignments = 
+        // Written symbols are 
+        // Read symbols are (Name=n Kind=Parameter)
+        // Captured symbols are 
+        // Variables declared are 
+                /// <summary>
         /// Given a position in the stream, tells us where the the next aligned position will be, if it the current position is not aligned.
         /// </summary>
         public static long ComputeNextAlignment(long n)
@@ -41,6 +51,15 @@ namespace Vim.BFast
             return IsAligned(n) ? n : n + Constants.ALIGNMENT - n % Constants.ALIGNMENT;
         }
 
+        // A public static method named ComputePadding with a type long
+        // operation kind is Block and type 
+        // member references = 
+        // assignments = 
+        // Written symbols are 
+        // Read symbols are (Name=n Kind=Parameter)
+        // Captured symbols are 
+        // Variables declared are 
+        
         /// <summary>
         /// Given a position in the stream, computes how much padding is required to bring the value to an aligned point. 
         /// </summary>
@@ -49,6 +68,15 @@ namespace Vim.BFast
             return ComputeNextAlignment(n) - n;
         }
 
+        // A public static method named ComputePadding with a type long
+        // operation kind is Block and type 
+        // member references = Size, Length, Size
+        // assignments = 
+        // Written symbols are 
+        // Read symbols are (Name=ranges Kind=Parameter)
+        // Captured symbols are 
+        // Variables declared are 
+        
         /// <summary>
         /// Computes the padding requires after the array of BFastRanges are written out. 
         /// </summary>
@@ -59,6 +87,15 @@ namespace Vim.BFast
             return ComputePadding(BFastPreamble.Size + ranges.Length * BFastRange.Size);
         }
 
+        // A public static method named IsAligned with a type bool
+        // operation kind is Block and type 
+        // member references = ALIGNMENT
+        // assignments = 
+        // Written symbols are 
+        // Read symbols are (Name=n Kind=Parameter)
+        // Captured symbols are 
+        // Variables declared are 
+        
         /// <summary>
         /// Given a position in the stream, tells us whether the position is aligned.
         /// </summary>
@@ -67,6 +104,15 @@ namespace Vim.BFast
             return n % Constants.ALIGNMENT == 0;
         }
 
+        // A public static method named WriteZeroBytes with a type void
+        // operation kind is Block and type 
+        // member references = 
+        // assignments = 
+        // Written symbols are (Name=i Kind=Local)
+        // Read symbols are (Name=bw Kind=Parameter), (Name=n Kind=Parameter), (Name=i Kind=Local)
+        // Captured symbols are 
+        // Variables declared are (Name=i Kind=Local)
+        
         /// <summary>
         /// Writes n zero bytes.
         /// </summary>
@@ -76,6 +122,15 @@ namespace Vim.BFast
                 bw.Write((byte)0);
         }
 
+        // A public static method named CheckAlignment with a type void
+        // operation kind is Block and type 
+        // member references = CanSeek, Position, Length, Position, Position
+        // assignments = 
+        // Written symbols are 
+        // Read symbols are (Name=stream Kind=Parameter)
+        // Captured symbols are 
+        // Variables declared are 
+        
         /// <summary>
         /// Checks that the stream (if seekable) is well aligned
         /// </summary>
@@ -91,6 +146,15 @@ namespace Vim.BFast
                 throw new Exception($"Stream position {stream.Position} is not well aligned");
         }
 
+        // A public static method named PackStrings with a type byte[]
+        // operation kind is Block and type 
+        // member references = UTF8
+        // assignments = 
+        // Written symbols are (Name=r Kind=Local), (Name=name Kind=Local), (Name=bytes Kind=Local)
+        // Read symbols are (Name=strings Kind=Parameter), (Name=r Kind=Local), (Name=name Kind=Local), (Name=bytes Kind=Local)
+        // Captured symbols are 
+        // Variables declared are (Name=r Kind=Local), (Name=name Kind=Local), (Name=bytes Kind=Local)
+        
         /// <summary>
         /// Converts a collection of strings, into a null-separated byte[] array 
         /// </summary>
@@ -107,6 +171,15 @@ namespace Vim.BFast
             return r.ToArray();
         }
 
+        // A public static method named UnpackStrings with a type string[]
+        // operation kind is Block and type 
+        // member references = Length, Length, UTF8, Length, UTF8, Length
+        // assignments = Binary
+        // Written symbols are (Name=r Kind=Local), (Name=prev Kind=Local), (Name=i Kind=Local)
+        // Read symbols are (Name=bytes Kind=Parameter), (Name=r Kind=Local), (Name=prev Kind=Local), (Name=i Kind=Local)
+        // Captured symbols are 
+        // Variables declared are (Name=r Kind=Local), (Name=prev Kind=Local), (Name=i Kind=Local)
+        
         /// <summary>
         /// Converts a byte[] array encoding a collection of strings separate by NULL into an array of string   
         /// </summary>
@@ -128,6 +201,15 @@ namespace Vim.BFast
             return r.ToArray();
         }
 
+        // A public static method named CreateBFastHeader with a type Vim.BFast.BFastHeader
+        // operation kind is Block and type 
+        // member references = Length, Length, Length, Length, Names, Magic, Preamble, Magic, NumArrays, Preamble, Length, Ranges, NumArrays, Preamble, DataStart, Preamble, RangesEnd, Preamble, LongLength, DataStart, Preamble, Begin, Ranges, End, Ranges, DataEnd, Preamble
+        // assignments = ParameterReference, FieldReference, Conversion, ArrayCreation, Invocation, Invocation, LocalReference, LocalReference, LocalReference, Invocation
+        // Written symbols are (Name=header Kind=Local), (Name=nameBufferLength Kind=Local), (Name=sizes Kind=Local), (Name=curIndex Kind=Local), (Name=i Kind=Local), (Name=size Kind=Local)
+        // Read symbols are (Name=bufferSizes Kind=Parameter), (Name=bufferNames Kind=Parameter), (Name=header Kind=Local), (Name=nameBufferLength Kind=Local), (Name=sizes Kind=Local), (Name=curIndex Kind=Local), (Name=i Kind=Local), (Name=size Kind=Local)
+        // Captured symbols are 
+        // Variables declared are (Name=header Kind=Local), (Name=nameBufferLength Kind=Local), (Name=sizes Kind=Local), (Name=curIndex Kind=Local), (Name=i Kind=Local), (Name=size Kind=Local)
+        
         /// <summary>
         /// Creates a BFAST structure, without any actual data buffers, from a list of sizes of buffers (not counting the name buffer). 
         /// Used as an intermediate step to create a BFAST. 
@@ -176,6 +258,15 @@ namespace Vim.BFast
             return header.Validate();
         }
 
+        // A public static method named Validate with a type Vim.BFast.BFastPreamble
+        // operation kind is Block and type 
+        // member references = Magic, SameEndian, Magic, SwappedEndian, Magic, DataStart, Size, DataStart, Size, DataStart, DataEnd, DataStart, DataEnd, DataEnd, DataEnd, NumArrays, NumArrays, NumArrays, DataEnd, NumArrays, RangesEnd, DataStart, RangesEnd, DataStart
+        // assignments = 
+        // Written symbols are (Name=preamble Kind=Parameter)
+        // Read symbols are (Name=preamble Kind=Parameter)
+        // Captured symbols are 
+        // Variables declared are 
+        
         /// <summary>
         /// Checks that the header values are sensible, and throws an exception otherwise.
         /// </summary>
@@ -207,6 +298,15 @@ namespace Vim.BFast
             return preamble;
         }
 
+        // A public static method named Validate with a type Vim.BFast.BFastHeader
+        // operation kind is Block and type 
+        // member references = Preamble, Ranges, Names, RangesEnd, DataStart, DataStart, DataStart, DataEnd, Length, Begin, End, End, End, Length, Length, Length, Length
+        // assignments = 
+        // Written symbols are (Name=preamble Kind=Local), (Name=ranges Kind=Local), (Name=names Kind=Local), (Name=min Kind=Local), (Name=max Kind=Local), (Name=i Kind=Local), (Name=begin Kind=Local), (Name=end Kind=Local)
+        // Read symbols are (Name=header Kind=Parameter), (Name=preamble Kind=Local), (Name=ranges Kind=Local), (Name=names Kind=Local), (Name=min Kind=Local), (Name=max Kind=Local), (Name=i Kind=Local), (Name=begin Kind=Local), (Name=end Kind=Local)
+        // Captured symbols are 
+        // Variables declared are (Name=preamble Kind=Local), (Name=ranges Kind=Local), (Name=names Kind=Local), (Name=min Kind=Local), (Name=max Kind=Local), (Name=i Kind=Local), (Name=begin Kind=Local), (Name=end Kind=Local)
+        
         /// <summary>
         /// Checks that the header values are sensible, and throws an exception otherwise.
         /// </summary>
@@ -250,6 +350,15 @@ namespace Vim.BFast
             return header;
         }
 
+        // A public static method named ComputeSize with a type long
+        // operation kind is Block and type 
+        // member references = DataEnd, Preamble
+        // assignments = 
+        // Written symbols are 
+        // Read symbols are (Name=bufferSizes Kind=Parameter), (Name=bufferNames Kind=Parameter)
+        // Captured symbols are 
+        // Variables declared are 
+        
         /// <summary>
         /// The total size required to put a BFAST in the header.
         /// </summary>
@@ -258,6 +367,15 @@ namespace Vim.BFast
             return CreateBFastHeader(bufferSizes, bufferNames).Preamble.DataEnd;
         }
 
+        // A public static method named WriteBFastHeader with a type System.IO.BinaryWriter
+        // operation kind is Block and type 
+        // member references = Length, Ranges, Length, Names, Length, Ranges, Length, Names, Magic, Preamble, DataStart, Preamble, DataEnd, Preamble, NumArrays, Preamble, Ranges, Begin, End, Ranges, Names, LongLength
+        // assignments = 
+        // Written symbols are (Name=bw Kind=Local), (Name=r Kind=Local), (Name=nameBuffer Kind=Local)
+        // Read symbols are (Name=stream Kind=Parameter), (Name=header Kind=Parameter), (Name=bw Kind=Local), (Name=r Kind=Local), (Name=nameBuffer Kind=Local)
+        // Captured symbols are 
+        // Variables declared are (Name=bw Kind=Local), (Name=r Kind=Local), (Name=nameBuffer Kind=Local)
+        
         /// <summary>
         /// Writes the BFAST header and name buffer to stream using the provided BinaryWriter. The BinaryWriter will be properly aligned by padding zeros 
         /// </summary>
@@ -288,6 +406,15 @@ namespace Vim.BFast
             return bw;
         }
 
+        // A public static method named WriteBFast with a type void
+        // operation kind is Block and type 
+        // member references = Length, Length, Length
+        // assignments = 
+        // Written symbols are (Name=sz Kind=Parameter), (Name=header Kind=Local)
+        // Read symbols are (Name=stream Kind=Parameter), (Name=bufferNames Kind=Parameter), (Name=bufferSizes Kind=Parameter), (Name=onBuffer Kind=Parameter), (Name=sz Kind=Parameter), (Name=header Kind=Local)
+        // Captured symbols are 
+        // Variables declared are (Name=sz Kind=Parameter), (Name=header Kind=Local)
+        
         /// <summary>
         /// Enables a user to write a BFAST from an array of names, sizes, and a custom writing function.
         /// The function will receive a BinaryWriter, the index of the buffer, and is expected to return the number of bytes written.
@@ -307,6 +434,15 @@ namespace Vim.BFast
             stream.WriteBFast(header, bufferNames, bufferSizes, onBuffer);
         }
 
+        // A public static method named WriteBFast with a type void
+        // operation kind is Block and type 
+        // member references = 
+        // assignments = 
+        // Written symbols are 
+        // Read symbols are (Name=stream Kind=Parameter), (Name=header Kind=Parameter), (Name=bufferNames Kind=Parameter), (Name=bufferSizes Kind=Parameter), (Name=onBuffer Kind=Parameter)
+        // Captured symbols are 
+        // Variables declared are 
+        
         /// <summary>
         /// Enables a user to write a BFAST from an array of names, sizes, and a custom writing function.
         /// This is useful when the header is already computed.
@@ -319,6 +455,15 @@ namespace Vim.BFast
             stream.WriteBFastBody(header, bufferNames, bufferSizes, onBuffer);
         }
 
+        // A public static method named WriteBFastBody with a type void
+        // operation kind is Block and type 
+        // member references = Length, Length, Length, Length, CanSeek, Position, CanSeek, Position, Position
+        // assignments = 
+        // Written symbols are (Name=sz Kind=Parameter), (Name=i Kind=Local), (Name=nBytes Kind=Local), (Name=pos Kind=Local), (Name=nWrittenBytes Kind=Local), (Name=padding Kind=Local), (Name=j Kind=Local)
+        // Read symbols are (Name=stream Kind=Parameter), (Name=bufferNames Kind=Parameter), (Name=bufferSizes Kind=Parameter), (Name=onBuffer Kind=Parameter), (Name=sz Kind=Parameter), (Name=i Kind=Local), (Name=nBytes Kind=Local), (Name=pos Kind=Local), (Name=nWrittenBytes Kind=Local), (Name=padding Kind=Local), (Name=j Kind=Local)
+        // Captured symbols are 
+        // Variables declared are (Name=sz Kind=Parameter), (Name=i Kind=Local), (Name=nBytes Kind=Local), (Name=pos Kind=Local), (Name=nWrittenBytes Kind=Local), (Name=padding Kind=Local), (Name=j Kind=Local)
+        
         /// <summary>
         /// Must be called after "WriteBFastHeader"
         /// Enables a user to write the contents of a BFAST from an array of names, sizes, and a custom writing function.
@@ -358,17 +503,44 @@ namespace Vim.BFast
             }
         }
 
+        // A public static method named ByteSize with a type long
+        // operation kind is Block and type 
+        // member references = LongLength
+        // assignments = 
+        // Written symbols are 
+        // Read symbols are (Name=self Kind=Parameter)
+        // Captured symbols are 
+        // Variables declared are 
+        
         public static long ByteSize<T>(this T[] self) 
         {
             return self.LongLength * Marshal.SizeOf<T>();
         }
 
+        // A public static method named WriteBFast with a type void
+        // operation kind is Block and type 
+        // member references = 
+        // assignments = 
+        // Written symbols are 
+        // Read symbols are (Name=stream Kind=Parameter), (Name=bufferNames Kind=Parameter), (Name=bufferSizes Kind=Parameter), (Name=onBuffer Kind=Parameter)
+        // Captured symbols are 
+        // Variables declared are 
+        
         public static void WriteBFast(this Stream stream, IEnumerable<string> bufferNames,
             IEnumerable<long> bufferSizes, BFastWriterFn onBuffer)
         {
             WriteBFast(stream, bufferNames.ToArray(), bufferSizes.ToArray(), onBuffer);
         }
 
+        // A public static method named WriteBFastToBytes with a type byte[]
+        // operation kind is Block and type 
+        // member references = 
+        // assignments = 
+        // Written symbols are (Name=stream Kind=Local)
+        // Read symbols are (Name=bufferNames Kind=Parameter), (Name=bufferSizes Kind=Parameter), (Name=onBuffer Kind=Parameter), (Name=stream Kind=Local)
+        // Captured symbols are 
+        // Variables declared are (Name=stream Kind=Local)
+        
         public static byte[] WriteBFastToBytes(IEnumerable<string> bufferNames, IEnumerable<long> bufferSizes,
             BFastWriterFn onBuffer)
         {
@@ -380,16 +552,34 @@ namespace Vim.BFast
             }
         }
 
+        // A public static method named WriteBFastToFile with a type void
+        // operation kind is Block and type 
+        // member references = 
+        // assignments = 
+        // Written symbols are 
+        // Read symbols are (Name=filePath Kind=Parameter), (Name=bufferNames Kind=Parameter), (Name=bufferSizes Kind=Parameter), (Name=onBuffer Kind=Parameter)
+        // Captured symbols are 
+        // Variables declared are 
+        
         public static void WriteBFastToFile(string filePath, IEnumerable<string> bufferNames,
             IEnumerable<long> bufferSizes, BFastWriterFn onBuffer)
         {
             File.OpenWrite(filePath).WriteBFast(bufferNames, bufferSizes, onBuffer);
         }
 
+        // A public static method named ToBFastBuilder with a type Vim.BFast.BFastBuilder
+        // operation kind is Block and type 
+        // member references = 
+        // assignments = 
+        // Written symbols are 
+        // Read symbols are (Name=buffers Kind=Parameter)
+        // Captured symbols are 
+        // Variables declared are 
+        
         public static BFastBuilder ToBFastBuilder(this IEnumerable<INamedBuffer> buffers)
         {
             return new BFastBuilder().Add(buffers);
         }
 
-    }
-}
+    } // type
+} // namespace

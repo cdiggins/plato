@@ -45,6 +45,20 @@ public abstract class PlatonicAnalysisContext
     /// </summary>
     public ControlFlowAnalysis? ControlFlow;
 
+    /// <summary>
+    /// Get the assignment operations 
+    /// </summary>
+    public IEnumerable<IAssignmentOperation> Assignments
+        => Operation?.DescendantsAndSelf().OfType<IAssignmentOperation>()
+           ?? Enumerable.Empty<IAssignmentOperation>();
+
+    /// <summary>
+    /// Get the assignment operations 
+    /// </summary>
+    public IEnumerable<IMemberReferenceOperation> MemberReferences
+        => Operation?.DescendantsAndSelf().OfType<IMemberReferenceOperation>()
+           ?? Enumerable.Empty<IMemberReferenceOperation>();
+
     public abstract string Name { get; }
 
     public PlatonicAnalysisContext(SemanticModel model, ISymbol symbol, SyntaxNode node)
@@ -83,10 +97,18 @@ public class PlatoTypeAnalysis : PlatonicAnalysisContext
             {
                 Properties.Add(new PlatonicPropertyAnalysis(this, pds));
             }
+            else if (m is IndexerDeclarationSyntax ids)
+            {
+                Indexers.Add(new PlatonicIndexerAnalysis(this, ids));
+            }
+            else if (m is TypeDeclarationSyntax tds)
+            {
+                throw new Exception("Nested types not supported");
+            }
             else
             {
                 // TODO: handle nested TypeDeclaration
-                // throw new Exception($"Unhandled member {m}");
+                throw new Exception($"Unhandled member {m}");
             }
         }
     }
@@ -103,9 +125,29 @@ public class PlatoTypeAnalysis : PlatonicAnalysisContext
     public readonly List<PlatonicMethodAnalysis> Methods = new();
     public readonly List<PlatonicFieldAnalysis> Fields = new();
     public readonly List<PlatonicPropertyAnalysis> Properties = new();
+    public readonly List<PlatonicIndexerAnalysis> Indexers = new();
 
     public IEnumerable<PlatoMemberAnalysis> Members 
-        => Methods.Cast<PlatoMemberAnalysis>().Concat(Fields).Concat(Properties);
+        => Methods.Cast<PlatoMemberAnalysis>().Concat(Fields).Concat(Properties).Concat(Indexers);
+
+    public string GetTypeKind()
+    {
+        switch (TypeSymbol.TypeKind)
+        {
+            case TypeKind.Class: return "class";
+            case TypeKind.Struct: return "struct";
+            case TypeKind.Enum: return "enum";
+            case TypeKind.Interface: return "interface";
+        }
+
+        return "_unknownkind_";
+    }
+
+    public bool HasWritableFields => Fields.Any(f => !f.IsReadOnly && !f.IsConst);
+    public bool HasFields => Fields.Any();
+    public IEnumerable<PlatonicMethodAnalysis> Setters => Properties.Select(p => p.Setter).Where(x => x != null);
+    public bool HasAnyPublicSetters => Setters.Any(p => p.IsPublic);
+    public bool HasAnySetters => Setters.Any();
 }
 
 public abstract class PlatoMemberAnalysis : PlatonicAnalysisContext
@@ -196,6 +238,25 @@ public class PlatonicFieldAnalysis : PlatoMemberAnalysis
 
     public override ITypeSymbol MemberType
         => FieldSymbol?.Type;
+}
+
+public class PlatonicIndexerAnalysis : PlatoMemberAnalysis
+{
+    public PlatonicIndexerAnalysis(PlatoTypeAnalysis parentType, IndexerDeclarationSyntax node)
+        : base(parentType, ModelExtensions.GetDeclaredSymbol(parentType.Model, node), node)
+    {
+    }
+
+    public IPropertySymbol? IndexerSymbol
+        => Symbol as IPropertySymbol;
+
+    public IndexerDeclarationSyntax IndexerSyntax
+        => (IndexerDeclarationSyntax)Node;
+
+    public override string Name => "this";
+
+    public override ITypeSymbol MemberType 
+        => IndexerSymbol.Type;
 }
 
 public class PlatonicPropertyAnalysis : PlatoMemberAnalysis

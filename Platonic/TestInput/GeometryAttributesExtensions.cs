@@ -43,7 +43,7 @@ namespace Vim.G3d
         }
 
         public static GeometryAttribute<T> GetAttribute<T>(this IGeometryAttributes g, string attributeName)
-            where T : unmanaged
+            
         {
             return g.GetAttribute(attributeName)?.AsType<T>();
         }
@@ -300,7 +300,7 @@ namespace Vim.G3d
         public static T[] MergeAttributes<T>(
             this IArray<IGeometryAttributes> geometryAttributesArray,
             Func<IGeometryAttributes, GeometryAttribute<T>> getAttributeFunc,
-            Func<(IGeometryAttributes Parent, GeometryAttribute<T> Attribute)[], T[]> mergeFunc) where T : unmanaged
+            Func<(IGeometryAttributes Parent, GeometryAttribute<T> Attribute)[], T[]> mergeFunc) 
         {
             var tuples = geometryAttributesArray
                 .Select(ga => (Parent: ga, GeometryAttribute: getAttributeFunc(ga)))

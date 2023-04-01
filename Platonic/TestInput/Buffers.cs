@@ -40,7 +40,7 @@ namespace Vim.BFast
     /// <summary>
     /// A concrete implementation of IBuffer
     /// </summary>
-    public class Buffer<T> : IBuffer<T> where T : unmanaged
+    public class Buffer<T> : IBuffer<T> 
     {
         public Buffer(byte[] data)
         {
@@ -86,7 +86,7 @@ namespace Vim.BFast
     /// <summary>
     /// A concrete implementation of INamedBuffer with a specific type.
     /// </summary>
-    public class NamedBuffer<T> : INamedBuffer<T> where T : unmanaged
+    public class NamedBuffer<T> : INamedBuffer<T> 
     {
         public readonly T[] Array;
 

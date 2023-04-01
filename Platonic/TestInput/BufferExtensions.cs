@@ -11,19 +11,19 @@ namespace Vim.BFast
     /// </summary>
     public static class BufferExtensions
     {
-        public static byte[] ToBytes<T>(this T[] xs) where T : unmanaged
+        public static byte[] ToBytes<T>(this T[] xs) 
         {
             var bytes = new byte[xs.Length * Marshal.SizeOf<T>()];
             Array.Copy(xs, bytes, xs.Length);
             return bytes;
         }
 
-        public static Buffer<T> ToBuffer<T>(this T[] xs) where T : unmanaged
+        public static Buffer<T> ToBuffer<T>(this T[] xs) 
         {
             return new Buffer<T>(xs.ToBytes());
         }
 
-        public static NamedBuffer<T> ToNamedBuffer<T>(this T[] xs, string name = "") where T : unmanaged
+        public static NamedBuffer<T> ToNamedBuffer<T>(this T[] xs, string name = "") 
         {
             return new NamedBuffer<T>(xs, name);
         }
@@ -65,7 +65,7 @@ namespace Vim.BFast
             return src.ToArray(dest);
         }
 
-        public static byte[] ToBytes<T>(this T[] xs, byte[] dest = null) where T : unmanaged
+        public static byte[] ToBytes<T>(this T[] xs, byte[] dest = null) 
         {
             return xs.RecastArray(dest);
         }
@@ -73,7 +73,7 @@ namespace Vim.BFast
         /// <summary>
         /// Accepts an array of the given type, or creates one if necessary, copy the buffer data into it 
         /// </summary>
-        public static T[] ToArray<T>(this IBuffer buffer, T[] dest = null) where T : unmanaged
+        public static T[] ToArray<T>(this IBuffer buffer, T[] dest = null) 
         {
             return (T[])buffer.CopyBytes(dest ?? new T[buffer.NumBytes() / Marshal.SizeOf<T>()]);
         }
@@ -82,7 +82,7 @@ namespace Vim.BFast
         /// Returns the array in the buffer, if it is of the correct type, or creates a new array of the create type and copies
         /// bytes into it, as necessary. 
         /// </summary>
-        public static T[] AsArray<T>(this IBuffer buffer) where T : unmanaged
+        public static T[] AsArray<T>(this IBuffer buffer) 
         {
             return buffer.Data is T[] r ? r : buffer.ToArray<T>();
         }
@@ -90,7 +90,7 @@ namespace Vim.BFast
         /// <summary>
         /// Copies an array of unmanaged types into another array of unmanaged types
         /// </summary>
-        public static U[] RecastArray<T, U>(this T[] src, U[] r = null) where T : unmanaged where U : unmanaged
+        public static U[] RecastArray<T, U>(this T[] src, U[] r = null)  where U : unmanaged
         {
             return src.ToBuffer().ToArray(r);
         }
@@ -105,7 +105,7 @@ namespace Vim.BFast
             return (long)buffer.NumElements() * buffer.ElementSize;
         }
 
-        public static Buffer<T> ReadBuffer<T>(this Stream stream, int numElements, int elementSize) where T : unmanaged
+        public static Buffer<T> ReadBuffer<T>(this Stream stream, int numElements, int elementSize) 
         {
             return new Buffer<T>(stream.ReadBytes(numElements * elementSize));
         }
@@ -122,7 +122,7 @@ namespace Vim.BFast
             buffer.Write(stream);
         }
 
-        public static T[] ReadArray<T>(this Stream stream, int count) where T: unmanaged
+        public static T[] ReadArray<T>(this Stream stream, int count) 
         {
             var n = count * Marshal.SizeOf<T>();
             var buffer = stream.ReadBytes(n);

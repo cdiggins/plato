@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Ptarmigan.Utils;
 using Ptarmigan.Utils.Roslyn;
 using Compilation = Ptarmigan.Utils.Roslyn.Compilation;
-
+ 
 namespace Platonic
 {
     public static class Program
@@ -29,12 +29,52 @@ namespace Platonic
                 var model = compilation.Compiler.GetSemanticModel(st);
 
                 var cb = new CodeBuilder();
+
+                foreach (var cn in st.GetRoot().ChildNodes())
+                {
+                    if (cn is UsingDirectiveSyntax ud)
+                    {
+                        cb.WriteLine(ud.ToFullString());
+                    }
+                }
+
+                foreach (var n in st.GetRoot().DescendantNodesAndSelf().OfType<EnumDeclarationSyntax>())
+                {
+                    var nds = n.Parent as NamespaceDeclarationSyntax;
+                    if (nds == null) throw new Exception("No namespace found");
+                    cb.WriteLine($"namespace {nds.Name}");
+                    cb.WriteLine("{").Indent();
+
+                    cb.WriteLine(n.ToFullString());
+                    
+                    cb.Dedent().WriteLine("}");
+                }
+
                 foreach (var n in st.GetRoot().DescendantNodesAndSelf().OfType<TypeDeclarationSyntax>())
                 {
+                    var nds = n.Parent as NamespaceDeclarationSyntax;
+                    if (nds == null) throw new Exception("No namespace found");
+                    cb.WriteLine($"namespace {nds.Name}");
+                    cb.WriteLine("{").Indent();
+
                     var ta = new PlatoTypeAnalysis(model, n);
 
-                    cb.WriteLine($"// ");
-                    cb.WriteLine($"public {ta.TypeSymbol.Kind} {ta.TypeSymbol.Name}");
+                    cb.WriteLine($"// Type has fields {ta.HasFields}");
+                    cb.WriteLine($"// Type has writable fields {ta.HasWritableFields}");
+                    cb.WriteLine($"// Type has public setters {ta.HasAnyPublicSetters}");
+                    var isTypeStatic = ta.TypeSymbol.IsStatic ? "static " : "";
+
+                    cb.WriteLine($"{ta.TypeSyntax.Modifiers} {ta.GetTypeKind()} {ta.TypeSymbol.Name}");
+                    if (ta.TypeSyntax.TypeParameterList != null)
+                    {
+                        cb.WriteLine(ta.TypeSyntax.TypeParameterList.ToString());
+                    }
+
+                    if (ta.TypeSyntax.BaseList != null)
+                    {
+                        cb.WriteLine(ta.TypeSyntax.BaseList.ToFullString());
+                    }
+
                     cb.WriteLine("{").Indent();
                     foreach (var m in ta.Members)
                     {
@@ -45,10 +85,16 @@ namespace Platonic
                             : m is PlatonicPropertyAnalysis ? "property"
                             : "member";
 
-                        cb.WriteLine($"// It has a {isPublic} {isStatic} {memberType} named {m.Name} with a type {m.MemberType}");
+                        cb.WriteLine($"// A {isPublic} {isStatic} {memberType} named {m.Name} with a type {m.MemberType}");
                         if (m.Operation != null)
                         {
                             cb.WriteLine($"// operation kind is {m.Operation?.Kind} and type {m.Operation?.Type}");
+
+                            var memRefs = string.Join(", ", m.MemberReferences.Select(m => $"{m.Member.Name}"));
+                            cb.WriteLine($"// member references = {memRefs}");
+
+                            var assOps = string.Join(", ", m.Assignments.Select(op => $"{op.Value.Kind}"));
+                            cb.WriteLine($"// assignments = {assOps}");
                         }
                         else
                         {
@@ -60,7 +106,7 @@ namespace Platonic
                             cb.WriteLine($"// Written symbols are {m.DataFlow.WrittenInside.Describe()}");
                             cb.WriteLine($"// Read symbols are {m.DataFlow.ReadInside.Describe()}");
                             cb.WriteLine($"// Captured symbols are {m.DataFlow.Captured.Describe()}");
-                            cb.WriteLine($"// Variables declared are {m.DataFlow.VariablesDeclared}");
+                            cb.WriteLine($"// Variables declared are {m.DataFlow.VariablesDeclared.Describe()}");
                         }
                         else
                         {
@@ -68,8 +114,11 @@ namespace Platonic
                         }
                         cb.WriteLine(m.Node.ToFullString());
                     }
-                    cb.WriteLine("}");
+                    cb.Dedent().WriteLine("} // type");
+                   cb.Dedent().WriteLine("} // namespace");
                 }
+
+
 
                 var outputFile = Path.Combine(outputFolder, fileName);
                 File.WriteAllText(outputFile, cb.ToString());
@@ -118,9 +167,14 @@ namespace Platonic
         {
             Console.WriteLine("Starting compilation ... ");
             var inputFolder = @"C:\Users\cdigg\git\plato\Platonic\TestInput";
+            var outputFolder = @"C:\Users\cdigg\git\plato\Platonic\TestOutput";
             var inputFiles = Directory.GetFiles(inputFolder, "*.cs");
             var compilation = Compilation.Create(inputFiles);
             Console.WriteLine($"Compilation completed {compilation.EmitResult}");
+
+            compilation.OutputAnnotatedFiles(outputFolder);
+
+            /*
             var ta = compilation.AnalyzeTypes();
             foreach (var t in ta)
             {
@@ -131,6 +185,7 @@ namespace Platonic
                     OutputMemberInfo(m);
                 }
             }
+            */
         }
 
         public static void OldMain(string[] args)
