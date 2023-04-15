@@ -47,7 +47,6 @@ namespace PlatoTypeInference
 
     public class Function : Variable
     {
-        public AbstractSyntaxNode Syntax { get; }
         public IReadOnlyList<TypeParameter> TypeParameters { get; }
         public IReadOnlyList<Variable> LocalVariables {get;}
         public IReadOnlyList<Variable> Parameters { get; }
@@ -104,7 +103,6 @@ namespace PlatoTypeInference
 
     public class Scope
     {
-        public AbstractSyntaxNode Node { get; }
         public int Depth { get; }
     }
 
