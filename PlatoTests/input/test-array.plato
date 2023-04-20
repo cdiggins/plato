@@ -1,0 +1,8 @@
+﻿var xs = new[] { 1, 2, 3, 4 };
+var s = "";
+for (var i=0; i < xs.Count; ++i)
+{
+	if (i > 0) s += ", ";
+	s += xs[i].ToString();
+}
+Print(s);

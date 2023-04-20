@@ -1,43 +1,100 @@
-﻿using Parakeet;
-using Parakeet.Tests;
+﻿using System.Diagnostics;
 using System.Linq.Expressions;
-using System.Security.Cryptography.X509Certificates;
+using Parakeet.Demos.PAIL;
+using Parakeet.Tests;
 using PlatoAst;
 
 namespace PlatoTests
 {
     public class AstTests
     {
-        [Test]
-        public static void Test()
-        {
-        }
-
         public static string DllPath => typeof(AstTests).Assembly.Location;
         public static string ProjectFolder => Path.Combine(Path.GetDirectoryName(DllPath), "..", "..", "..");
         public static string SolutionFolder => Path.Combine(ProjectFolder, "..");
 
-        [Test, Explicit]
-        public static void OutputCstCode()
+        [Test]
+        [TestCase(AstWriter.Language.CSharp)]
+        [TestCase(AstWriter.Language.JavaScript)]
+        [TestCase(AstWriter.Language.Pail)]
+        public void TestAstWriter(AstWriter.Language lang)
         {
-            var g = new AstGrammar();
-            var folder = Path.Combine(SolutionFolder, "PlatoAst");
+            // TODO: create nodes 
+            // TODO: create tests of the parser. 
+            // TODO: convert expressions trees into AST Node
+            // TODO: create AST Nodes.
+            // TODO: test the evaluator. 
+            // TODO: test the writer 
+
+            Console.WriteLine($"AST as {lang}");
+            foreach (var n in TestInputAstNodes())
             {
-                var cb = new CodeBuilder();
-                CstCodeBuilder.OutputCstClassesFile(cb, $"Plato.Ast", g.GetRules());
-                var path = Path.Combine(folder, $"Cst.cs");
-                var text = cb.ToString();
-                Console.WriteLine(text);
-                File.WriteAllText(path, text);
+                Console.WriteLine(NodeToString(n, lang));
             }
+        }
+
+
+        [Test]
+        public void TestAstPrinterAndParser()
+        {
+            var testCount = 0;
+            var successCount = 0;
+
+            foreach (var n in TestInputAstNodes())
             {
-                var cb = new CodeBuilder();
-                CstCodeBuilder.OutputCstFactoryFile(cb, $"Plato.Ast", g.GetRules());
-                var path = Path.Combine(folder, $"CstFactory.cs");
-                var text = cb.ToString();
+                var text = NodeToString(n, AstWriter.Language.Pail);
+
+                testCount++;
+                var r = ParserTests.ParseTest(text, PailTests.Grammar.Expr);
+                successCount += r;
                 Console.WriteLine(text);
-                File.WriteAllText(path, text);
             }
+
+            Assert.AreEqual(testCount, successCount);
+        }
+
+        public static string NodeToString(AstNode n, AstWriter.Language lang = AstWriter.Language.CSharp)
+        {
+            var w = new AstWriter(lang);
+            w.Write(n);
+            return w.ToString();
+        }
+
+        public static IEnumerable<AstNode> TestInputAstNodes()
+        {
+            var k = AstConstant.Create(42);
+            var k2 = AstConstant.True;
+            var lambda = AstLambda.Create(k);
+            var f = AstConstant.Create<Func<int, int>>(x => x * 2);
+            var writeFunc = AstConstant.Create<Action<string>>(Console.WriteLine);
+            var toStr = AstConstant.Create<Func<object, string>>(x => x.ToString());
+            var varDef = AstVarDef.Create("x");
+            var varRef = AstVarRef.Create("x");
+            var varAss = AstAssign.Create(varRef, k);
+            var toStrIvk = AstInvoke.Create(toStr, varRef);
+            var writeIvk = AstInvoke.Create(writeFunc, toStrIvk);
+            var blk = AstBlock.Create(varDef, varAss, writeIvk);
+            var loop = AstLoop.Create(AstConstant.True, blk);
+            var ivk = AstInvoke.Create(f, k);
+            var cond = AstConditional.Create(k2, AstConstant.Create("Hello"), AstConstant.Create("Goodbyte"));
+
+            return new AstNode[]
+            {
+                k,
+                k2,
+                lambda,
+                f,
+                writeFunc,
+                toStr,
+                varDef,
+                varRef,
+                varAss,
+                toStrIvk,
+                writeIvk,
+                blk,
+                loop,
+                ivk,
+                cond,
+            };
         }
 
         public static int MultiplyBy3(int x)
@@ -50,7 +107,7 @@ namespace PlatoTests
             public int Y { get; set; }
         }
 
-        public static Expression<Func<int, int, int>> BinaryInt(int n)
+        public static Expression<Func<int, int, int>> BinaryIntFuncs(int n)
         {
             var tmp = new X();
             Func<int, int> f = (x => x * 2);

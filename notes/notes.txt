@@ -564,3 +564,57 @@ It is also a:
 * Reducer
 
 When you think about it, interpreter does make sense.
+
+//==
+
+So I have a parser that almost works. 
+
+Right now: 
+* I am generating Ast code from delegates. 
+* What I really want to do is write it from some common language.
+* I am going to need a base library that works in:
+	* C# 
+	* JavaScript
+	* C++ 
+
+* And maybe eventually another language. 
+
+* So what is that base library? 
+
+//==
+
+* I need to:
+	* Test the AST evaluator
+	* Generate C# code 
+	* Generate JavaScript code 
+	* Write tools for optimizing 
+	* Generate AST code from Plato, C# 
+	* Generate intrinsic functions.
+
+//==
+
+What about:
+* Allocating an array
+* Allocating an object
+* Getting a field
+* Setting a field 
+
+//==
+
+Guessing the type of stuff! 
+
+//==
+
+Note: 
+* generating JavaScript code is going to be relatively easy. 
+* generating run-time checked C# code is also going to be relatively easy. 
+
+//==
+
+I need to:
+
+* Parse the Plato input files.
+* Create CSTs from them
+* Create ASTs from them. 
+* Run the evaluator? 
+(evaluate the C)

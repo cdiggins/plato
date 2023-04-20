@@ -1,0 +1,18 @@
+﻿class Razzle
+{
+	Razzle()
+	{
+		X = 1;
+	}
+	int X;	
+	int Dazzle(int Y) 
+	{
+		return X = X + Y;
+	}
+}
+
+var r = new Razzle();
+Print(r.X.ToString());
+Print(r.Dazzle(1).ToString());
+Print(r.Dazzle(2).ToString());
+Print(r.Dazzle(3).ToString());

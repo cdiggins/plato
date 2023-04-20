@@ -7,6 +7,7 @@ namespace PlatoAst
 
     public class AstNoop : AstNode
     {
+        private AstNoop() { }
         public static AstNoop Default { get; } = new AstNoop();
     }
 
@@ -116,15 +117,32 @@ namespace PlatoAst
             => new AstConditional(condition, ifTrue, ifFalse);
     }
 
+    public class AstIfThen : AstNode
+    {
+        public AstNode Condition { get; }
+        public AstBlock IfTrue { get; }
+        public AstBlock IfFalse { get; }
+
+        public AstIfThen(AstNode condition, AstBlock ifTrue, AstBlock ifFalse)
+            => (Condition, IfTrue, IfFalse) = (condition, ifTrue, ifFalse);
+
+        public static AstIfThen Create(AstNode condition, AstBlock ifTrue, AstBlock ifFalse)
+            => new AstIfThen(condition, ifTrue, ifFalse);
+    }
+
     public class AstVarDef : AstNode
     {
         public string Name { get; }
+        public AstNode Value { get; }
 
-        public AstVarDef(string name)
-            => (Name) = (name);
+        public AstVarDef(string name, AstNode value)
+            => (Name, Value) = (name, value);
+
+        public static AstVarDef Create(string name, AstNode value)
+            => new AstVarDef(name, value);
 
         public static AstVarDef Create(string name)
-            => new AstVarDef(name);
+            => Create(name, AstNoop.Default);
     }
 
     public class AstVarRef : AstNode

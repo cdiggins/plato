@@ -4,12 +4,12 @@ using System.Reflection;
 
 namespace PlatoAst
 {
-    public class Evaluator
+    public class AstEvaluator
     {
         public Scope Root { get; } = new Scope(null);
         public Scope Current { get; private set; }
 
-        public Evaluator()
+        public AstEvaluator()
         {
             Current = Root;
         }
@@ -101,7 +101,7 @@ namespace PlatoAst
 
         public object Evaluate(AstLambda lambda)
         {
-            object LambdaImplementation(Evaluator e, AstNode[] args)
+            object LambdaImplementation(AstEvaluator e, AstNode[] args)
             {
                 e.PushScope();
                 if (args.Length != lambda.Parameters.Count) throw new Exception("Mismatched argument length size");
@@ -117,7 +117,7 @@ namespace PlatoAst
                 return r;
             }
 
-            return ((Func<Evaluator, AstNode[], object>)LambdaImplementation).Method;
+            return ((Func<AstEvaluator, AstNode[], object>)LambdaImplementation).Method;
         }
     }
 }

@@ -1,0 +1,3 @@
+﻿Print("What is your name?");
+var name = ReadLine();
+Print("Pleased to meet you " + name + "!");

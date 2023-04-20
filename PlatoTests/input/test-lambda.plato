@@ -1,0 +1,3 @@
+﻿var f = (x, y) => x * x + y * y;
+var x = f(3, 4);
+Print(f(x));

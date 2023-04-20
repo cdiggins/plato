@@ -1,0 +1,17 @@
+﻿var x = 0;
+while (x < 10)
+{
+	if (x++ == 4)
+	{
+		Print("Halfway there");
+	}
+	if (x == 3)
+	{
+		continue;
+	}
+	if (x == 9)
+	{
+		break;
+	}
+	Print("On iteration " + x.ToString());
+}

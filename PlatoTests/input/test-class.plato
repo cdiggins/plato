@@ -1,0 +1,13 @@
+﻿[Number]
+class Vector2
+{
+	double X;
+	double Y; 
+}
+
+var v1 = new Vector2(3, 4);
+var v2 = new Vector2(1, 2);
+var x = v1.X + v2.X;
+var y = v1.Y + v2.Y;
+var mag = Sqrt(x * x + y * y);
+Print(mag.ToString());

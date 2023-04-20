@@ -1,0 +1,9 @@
+﻿int Add(int x, int y)
+{
+	return x + y;
+}
+
+var x = 3;
+var y = 4;
+
+Print($"{x} + {y} = {Add(x, y)}");
