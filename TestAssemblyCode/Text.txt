@@ -1,0 +1,28 @@
+I am struggling with the fact that "dip" creates a closure. 
+It is expensive. Sort of. 
+Should I care? 
+Well, yes, if I want this to be aggressively fast. 
+Now it could get kind of interesting if I had a dip stack. 
+Or maybe if I had a "do this next" stack
+But effectively creating closures, composing functions is what it is all about. 
+
+dip => swap quote compose
+
+To really optimize performacne, I have to observe and profile. 
+
+What I need is the simplest thing that could possibly work. 
+
+Done. 
+
+The only last remaining thing that is worrisome is the garbage collector. 
+
+Lists of lists are going to be a problem.
+
+As are lists in quotations ... 
+
+However ... I am getting ahead of myself. 
+
+How often are list references actually duplicated? 
+
+And how often are lists and functions quoted, and then not used!
+
