@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using Parakeet;
-using Parakeet.Demos.CSharp;
+using Parakeet.Demos;
 using Parakeet.Tests;
 using PlatoAbstractSyntax;
 

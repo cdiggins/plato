@@ -1,6 +1,5 @@
-﻿using System.Diagnostics;
-using System.Linq.Expressions;
-using Parakeet.Demos.PAIL;
+﻿using System.Linq.Expressions;
+using Parakeet.Demos;
 using Parakeet.Tests;
 using PlatoAst;
 

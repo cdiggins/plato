@@ -81,6 +81,17 @@ namespace PlatoAst
             => new AstLambda(body, parameters);
     }
 
+    public class AstMulti : AstNode
+    {
+        public IReadOnlyList<AstNode> Nodes { get; }
+
+        public AstMulti(params AstNode[] nodes)
+            => Nodes = nodes;
+
+        public static AstMulti Create(params AstNode[] nodes)
+            => new AstMulti(nodes);
+    }
+
     public class AstBlock : AstNode
     {
         public IReadOnlyList<AstNode> Statements { get; }
@@ -115,19 +126,6 @@ namespace PlatoAst
 
         public static AstConditional Create(AstNode condition, AstNode ifTrue, AstNode ifFalse)
             => new AstConditional(condition, ifTrue, ifFalse);
-    }
-
-    public class AstIfThen : AstNode
-    {
-        public AstNode Condition { get; }
-        public AstBlock IfTrue { get; }
-        public AstBlock IfFalse { get; }
-
-        public AstIfThen(AstNode condition, AstBlock ifTrue, AstBlock ifFalse)
-            => (Condition, IfTrue, IfFalse) = (condition, ifTrue, ifFalse);
-
-        public static AstIfThen Create(AstNode condition, AstBlock ifTrue, AstBlock ifFalse)
-            => new AstIfThen(condition, ifTrue, ifFalse);
     }
 
     public class AstVarDef : AstNode

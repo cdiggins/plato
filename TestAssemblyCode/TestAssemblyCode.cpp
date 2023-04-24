@@ -295,6 +295,7 @@ __declspec(naked) int __fastcall FastPower()
     }
 }
 
+/*
 int main()
 {
     int k = 99;
@@ -308,6 +309,7 @@ next_instruction:
     std::cout << "Hello World!\n" << k;
     //GetKey();
 }
+*/
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
 // Debug program: F5 or Debug > Start Debugging menu

@@ -618,3 +618,29 @@ I need to:
 * Create ASTs from them. 
 * Run the evaluator? 
 (evaluate the C)
+
+
+//==
+
+// Only Nodes: ((Identifier+Expression)|Expression)
+public class CstInitializerClause : CstChoice
+
+// Original Rule: ((TypeExpr+WS+Identifier+WS)|(Identifier+WS))
+// Only Nodes: ((TypeExpr+Identifier)|Identifier)
+// Optimized only nodes: ((TypeExpr+Identifier)|Identifier)
+public class CstLambdaParameter : CstChoice
+   
+
+//==
+
+Right now:
+* Fix the CST code generation. 
+
+//==
+
+// Only Nodes: (LambdaParameter|((LambdaParameter+(LambdaParameter)*))?)
+// Optimized only nodes: (LambdaParameter|(LambdaParameter)*)
+public class CstLambdaParameters : CstChoice
+{
+
+//==

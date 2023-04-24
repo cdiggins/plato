@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -32,6 +33,8 @@ namespace PlatoAst
                     return Evaluate(astAssign);
                 case AstBlock astBlock: 
                     return Evaluate(astBlock);
+                case AstMulti astMulti:
+                    return Evaluate(astMulti);
                 case AstConditional astConditional:
                     return Evaluate(astConditional);
                 case AstInvoke astInvoke:
@@ -55,9 +58,19 @@ namespace PlatoAst
         public object Evaluate(AstBlock block)
         {
             PushScope();
-            var r = block.Statements.Aggregate(null as object, (_, node) => Evaluate(node));
+            var r = Evaluate(block.Statements);
             PopScope();
             return r;
+        }
+
+        public object Evaluate(AstMulti multi)
+        {
+            return Evaluate(multi.Nodes);
+        }
+
+        public object Evaluate(IEnumerable<AstNode> nodes)
+        {
+            return nodes.Aggregate(null as object, (_, node) => Evaluate(node));
         }
 
         public object Evaluate(AstConditional conditional)
