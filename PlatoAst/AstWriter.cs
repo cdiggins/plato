@@ -5,7 +5,6 @@ using Parakeet;
 
 namespace PlatoAst
 {
-
     public class AstWriter : CodeBuilder<AstWriter>
     {
         public enum Language

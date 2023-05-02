@@ -66,7 +66,7 @@ namespace PlatoTests
             var f = AstConstant.Create<Func<int, int>>(x => x * 2);
             var writeFunc = AstConstant.Create<Action<string>>(Console.WriteLine);
             var toStr = AstConstant.Create<Func<object, string>>(x => x.ToString());
-            var varDef = AstVarDef.Create("x");
+            var varDef = AstVarDef.Create("x", AstTypeNode.Create("int"));
             var varRef = AstVarRef.Create("x");
             var varAss = AstAssign.Create(varRef, k);
             var toStrIvk = AstInvoke.Create(toStr, varRef);

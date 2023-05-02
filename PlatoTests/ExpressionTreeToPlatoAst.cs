@@ -237,6 +237,7 @@ public static class ExpressionTreeToPlatoAst
         return AstInvoke.Create(r.ToAst());
     }
 
+    // TODO: this will require a proper type system support 
     public static AstNode ToAst(this Expression? expr)
     {
         if (expr == null)
@@ -337,7 +338,7 @@ public static class ExpressionTreeToPlatoAst
                 return newExpression.ToAst();
 
             case ParameterExpression parameterExpression:
-                return AstVarDef.Create(parameterExpression.Name);
+                return AstVarDef.Create(parameterExpression.Name, AstTypeNode.Create("object"));
                     
             case RuntimeVariablesExpression runtimeVariablesExpression:
                 throw new NotSupportedException();

@@ -1,8 +1,8 @@
-﻿using System.Diagnostics;
-using Parakeet;
+﻿using Parakeet;
 using Parakeet.Demos;
 using Parakeet.Tests;
-using PlatoAbstractSyntax;
+using PlatoAst;
+using Ptarmigan.Utils;
 
 namespace PlatoTests
 {
@@ -12,8 +12,9 @@ namespace PlatoTests
         public static string DllPath => typeof(PlatoParserTests).Assembly.Location;
         public static string ProjectFolder => Path.Combine(Path.GetDirectoryName(DllPath), "..", "..", "..");
         public static string InputFilesFolder => Path.Combine(ProjectFolder, "input");
+        public static string OutputFilesFolder => Path.Combine(ProjectFolder, "output");
 
-		public static IEnumerable<string> InputFiles => 
+        public static IEnumerable<string> InputFiles => 
             Directory.GetFiles(InputFilesFolder);
 
         public static CSharpGrammar Grammar = new CSharpGrammar();
@@ -30,7 +31,7 @@ namespace PlatoTests
             }
             catch (ParserException pe)
             {
-                Console.WriteLine($"Parsing exception {pe.Message} occured at {pe.LastValidState}");
+                Console.WriteLine($"Parsing exception {pe.Message} occurred at {pe.LastValidState}");
                 Assert.Fail();
             }
 
@@ -70,8 +71,21 @@ namespace PlatoTests
             Console.WriteLine($"Tree {tree.Contents}");
 
             var cst = Parakeet.Demos.CSharp.CstNodeFactory.Create(tree);
+            var cstXml = new CstXmlBuilder().Write(cst).ToString();
 
-            // TODO: print the CST.
+            var cstXmlFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".cst.xml");
+            File.WriteAllText(cstXmlFile, cstXml);
+
+            var ast = new AstFromCst().ToAst(cst);
+            var astXml = new AstXmlBuilder().Write(ast).ToString();
+
+            var astXmlFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".ast.xml");
+            File.WriteAllText(astXmlFile, astXml);
+
+            var astWriter = new AstWriter(AstWriter.Language.CSharp);
+            astWriter.Write(ast);
+            var astFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".ast.cs");
+            File.WriteAllText(astFile, astWriter.ToString());
         }
     }
 }

@@ -22,4 +22,8 @@
     <ProjectReference Include="..\PlatoTypeInference\PlatoTypeInference.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="output\" />
+  </ItemGroup>
+
 </Project>
