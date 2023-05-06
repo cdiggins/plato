@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Parakeet;
+using Parakeet.Demos.WIP;
 
 namespace PlatoAst
 {
@@ -12,6 +13,7 @@ namespace PlatoAst
             JavaScript,
             CSharp,
             CPlusPlus,
+            Python,
             Pail,
         }
 
@@ -20,6 +22,14 @@ namespace PlatoAst
         public AstCodeWriter(Language lang)
             => Lang = lang;
 
+        public AstCodeWriter WriteEol()
+        {
+            return Lang != Language.Python 
+                ? WriteLine(";") 
+                : WriteLine();
+        }
+
+        
         public AstCodeWriter WriteStatements(IEnumerable<AstNode> nodes)
         {
             return WriteList(nodes, (w, n) => w.Write(n).WriteLine(";"));
@@ -51,13 +61,15 @@ namespace PlatoAst
             switch (Lang)
             {
                 case Language.Pail:
-                    return WriteToken("let").Write(def.Name).WriteToken(" =").Write(def.Value);
+                    return Write("let ").Write(def.Name).Write(" =").Write(def.Value).WriteLine();
                 case Language.JavaScript:
-                    return WriteToken("let").Write(def.Name).WriteToken(" =").Write(def.Value);
+                    return Write("let ").Write(def.Name).Write(" =").Write(def.Value).WriteLine();
                 case Language.CSharp:
-                    return WriteToken("var").Write(def.Name).WriteToken(" =").Write(def.Value);
+                    return Write("var ").Write(def.Name).Write(" =").Write(def.Value).WriteLine();
                 case Language.CPlusPlus:
-                    return WriteToken("auto").Write(def.Name).WriteToken(" =").Write(def.Value);
+                    return Write("auto ").Write(def.Name).Write(" =").Write(def.Value).WriteLine();
+                case Language.Python:
+                    return Write(def.Name).Write(" =").Write(def.Value).WriteLine();
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -66,7 +78,7 @@ namespace PlatoAst
         public AstCodeWriter WriteParameters(IEnumerable<AstVarDef> parameters)
         {
             return Lang == Language.CPlusPlus 
-                ? WriteCommaList(parameters, (w, p) => w.WriteToken("PlatoObject").Write(p.Name)) 
+                ? WriteCommaList(parameters, (w, p) => w.Write("PlatoObject ").Write(p.Name)) 
                 : WriteCommaList(parameters, (w, p) => Write(p.Name));
         }
 
@@ -74,20 +86,32 @@ namespace PlatoAst
         {
             if (Lang == Language.Pail)
             {
-                return WriteToken("if")
+                return Write("if ")
                     .Write(astConditional.Condition)
-                    .WriteToken(" then")
+                    .Write("then ")
                     .Write(astConditional.IfTrue)
-                    .WriteToken(" else")
+                    .WriteLine()
+                    .Write("else ")
+                    .Write(astConditional.IfFalse)
+                    .WriteLine();
+            }
+            else if (Lang == Language.Python)
+            {
+                return Write(astConditional.IfTrue)
+                    .Write(" if ")
+                    .Write(astConditional.Condition)
+                    .Write(" else ")
                     .Write(astConditional.IfFalse);
             }
             else 
             {
                 return Write(astConditional.Condition)
-                    .WriteToken(" ?")
+                    .WriteLine("?")
                     .Write(astConditional.IfTrue)
-                    .WriteToken(" :")
-                    .Write(astConditional.IfFalse);
+                    .WriteLine()
+                    .Write(":")
+                    .Write(astConditional.IfFalse)
+                    .WriteLine();
             }
         }
 
@@ -95,18 +119,29 @@ namespace PlatoAst
         {
             if (Lang == Language.Pail)
             {
-                return WriteToken("while")
+                return Write("while ")
                     .Write(astLoop.Condition)
-                    .WriteToken(" do")
-                    .Write(astLoop.Body);
+                    .WriteLine(" do ")
+                    .Write(astLoop.Body)
+                    .WriteLine();
+            }
+            else if (Lang == Language.Python)
+            {
+                return Write("while ")
+                    .Write(astLoop.Condition)
+                    .Write(":").Indent().WriteLine()
+                    .Write(astLoop.Body)
+                    .Dedent()
+                    .WriteLine();
             }
             else
             {
-                return WriteToken("while")
+                return Write("while ")
                     .Write("(")
                     .Write(astLoop.Condition)
                     .WriteLine(")")
-                    .Write(astLoop.Body);
+                    .Write(astLoop.Body)
+                    .WriteLine();
             }
         }
 
@@ -116,14 +151,28 @@ namespace PlatoAst
             {
                 case AstAssign astAssign:
                     return Write(astAssign.Var)
-                        .WriteToken(" =")   
+                        .Write(" = ")   
                         .Write(astAssign.Value);
-                    
+
                 case AstBlock astBlock:
-                    return Brace(cb => cb.WriteStatements(astBlock.Statements));
+                {
+                    if (Lang == Language.Python)
+                    {
+                        return Indent()
+                            .WriteLine()
+                            .Write(astBlock.Statements)
+                            .Dedent()
+                            .WriteLine();
+                    }
+                    else
+                    {
+                        return Brace(cb => 
+                            cb.WriteStatements(astBlock.Statements));
+                    }
+                }
 
                 case AstBreak astBreak:
-                    return Write("break");
+                    return WriteLine("break");
 
                 case AstConditional astConditional:
                     return Write(astConditional);
@@ -132,20 +181,20 @@ namespace PlatoAst
                     return ToCSharp(astConstant);
 
                 case AstContinue astContinue:
-                    return Write("continue");
+                    return WriteLine("continue");
 
                 case AstInvoke astInvoke:
                     return Write(astInvoke.Function)
-                        .WriteToken("(")
+                        .Write("( ")
                         .WriteCommaList(astInvoke.AstArguments, (w, x) => w.Write(x))
-                        .WriteToken(")");
+                        .Write(")");
                         
                 case AstLambda astLambda:
                     return Write("(")
                         .WriteParameters(astLambda.Parameters)
-                        .WriteToken(")")
-                        .WriteToken("=>")
-                        .Write(astLambda.Body);
+                        .Write(") => ")
+                        .Write(astLambda.Body)
+                        .WriteLine();
                         
                 case AstLoop astLoop:
                     return Write(astLoop);
@@ -154,8 +203,9 @@ namespace PlatoAst
                     return Lang == Language.Pail ? Write("_") : this;
 
                 case AstReturn astReturn:
-                    return WriteToken("return")
-                        .Write(astReturn.Value);
+                    return Write("return ")
+                        .Write(astReturn.Value)
+                        .WriteLine(";");
 
                 case AstVarDef astVarDef:
                     return Write(astVarDef);
@@ -170,7 +220,9 @@ namespace PlatoAst
                     return Write(astIdent.Text);
 
                 case AstError astError:
-                    return Write($"throw new Exception({astError.Text})");
+                    return Lang == Language.Python
+                            ? WriteLine($"raise ErrorE(\"{astError.Text}\")") 
+                            : WriteLine($"throw new Exception(\"{astError.Text}\")");
 
                 case AstIntrinsic astIntrinsic:
                     return Write(astIntrinsic.Name);

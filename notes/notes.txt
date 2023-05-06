@@ -660,3 +660,48 @@ C:\Users\cdigg\git\plato\PlatoTests\PlatoParserTests.cs
 * XML output needs to escape the entiries. 
 * Outputting C# should be ato a text file. 
 * Find out who is generating "null" nodes. 
+* Find out who is generating the AstError nodes
+* There is a process for developing Plato : 
+	I have to generate the tree, and stuff. 
+	I also have to delete a bunch of files,
+	it is so easy to gorget. 
+
+//==
+
+Make some videos about data types. 
+What language should I use? 
+Would it be a better idea to prepare for Python talk?
+If I have seom videos ... I think it could be good. 
+
+C:\Users\cdigg\git\plato\PlatoTests\InferenceTests.cs
+
+If I get inference to work that would be awesome. 
+
+Plato would then have:
+
+* Strongly typed 
+	* safer 
+	* faster 
+	* immutable
+* Expressive
+	* functional
+	* operator overloading 
+* Simpler syntax 
+	* easier to teach
+	* easier to learn 
+* Cross platform 
+	* Targets multiple languages 
+* Great library 
+* Efficient
+	* Optimizer 
+* Hackable
+	* AST format can be easily reused 
+		* From other languages
+		* 
+
+//==
+
+Can I infer reasonable types for every function? 
+
+Every parameter is assigned an any type? And then it just works. 
+

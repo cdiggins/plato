@@ -12,10 +12,10 @@ namespace PlatoTests
         public static string SolutionFolder => Path.Combine(ProjectFolder, "..");
 
         [Test]
-        [TestCase(AstWriter.Language.CSharp)]
-        [TestCase(AstWriter.Language.JavaScript)]
-        [TestCase(AstWriter.Language.Pail)]
-        public void TestAstWriter(AstWriter.Language lang)
+        [TestCase(AstCodeWriter.Language.CSharp)]
+        [TestCase(AstCodeWriter.Language.JavaScript)]
+        [TestCase(AstCodeWriter.Language.Pail)]
+        public void TestAstWriter(AstCodeWriter.Language lang)
         {
             // TODO: create nodes 
             // TODO: create tests of the parser. 
@@ -40,7 +40,7 @@ namespace PlatoTests
 
             foreach (var n in TestInputAstNodes())
             {
-                var text = NodeToString(n, AstWriter.Language.Pail);
+                var text = NodeToString(n, AstCodeWriter.Language.Pail);
 
                 testCount++;
                 var r = ParserTests.ParseTest(text, PailTests.Grammar.Expr);
@@ -51,9 +51,9 @@ namespace PlatoTests
             Assert.AreEqual(testCount, successCount);
         }
 
-        public static string NodeToString(AstNode n, AstWriter.Language lang = AstWriter.Language.CSharp)
+        public static string NodeToString(AstNode n, AstCodeWriter.Language lang = AstCodeWriter.Language.CSharp)
         {
-            var w = new AstWriter(lang);
+            var w = new AstCodeWriter(lang);
             w.Write(n);
             return w.ToString();
         }
