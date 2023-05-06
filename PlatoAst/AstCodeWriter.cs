@@ -5,7 +5,7 @@ using Parakeet;
 
 namespace PlatoAst
 {
-    public class AstWriter : CodeBuilder<AstWriter>
+    public class AstCodeWriter : CodeBuilder<AstCodeWriter>
     {
         public enum Language
         {
@@ -17,20 +17,20 @@ namespace PlatoAst
 
         public Language Lang { get; }
 
-        public AstWriter(Language lang)
+        public AstCodeWriter(Language lang)
             => Lang = lang;
 
-        public AstWriter WriteStatements(IEnumerable<AstNode> nodes)
+        public AstCodeWriter WriteStatements(IEnumerable<AstNode> nodes)
         {
             return WriteList(nodes, (w, n) => w.Write(n).WriteLine(";"));
         }
 
-        public AstWriter Write(IEnumerable<AstNode> nodes)
+        public AstCodeWriter Write(IEnumerable<AstNode> nodes)
         {
             return nodes.Aggregate(this, (cb, n) => cb.Write(n));
         }
 
-        public AstWriter ToCSharp(AstConstant c)
+        public AstCodeWriter ToCSharp(AstConstant c)
         {
             switch (c.Value)
             {
@@ -46,7 +46,7 @@ namespace PlatoAst
             }
         }
 
-        public AstWriter Write(AstVarDef def)
+        public AstCodeWriter Write(AstVarDef def)
         {
             switch (Lang)
             {
@@ -63,14 +63,14 @@ namespace PlatoAst
             }
         }
 
-        public AstWriter WriteParameters(IEnumerable<AstVarDef> parameters)
+        public AstCodeWriter WriteParameters(IEnumerable<AstVarDef> parameters)
         {
             return Lang == Language.CPlusPlus 
                 ? WriteCommaList(parameters, (w, p) => w.WriteToken("PlatoObject").Write(p.Name)) 
                 : WriteCommaList(parameters, (w, p) => Write(p.Name));
         }
 
-        public AstWriter Write(AstConditional astConditional)
+        public AstCodeWriter Write(AstConditional astConditional)
         {
             if (Lang == Language.Pail)
             {
@@ -91,7 +91,7 @@ namespace PlatoAst
             }
         }
 
-        public AstWriter Write(AstLoop astLoop)
+        public AstCodeWriter Write(AstLoop astLoop)
         {
             if (Lang == Language.Pail)
             {
@@ -110,7 +110,7 @@ namespace PlatoAst
             }
         }
 
-        public AstWriter Write(AstNode node)
+        public AstCodeWriter Write(AstNode node)
         {
             switch (node)
             {
@@ -162,7 +162,19 @@ namespace PlatoAst
                 
                 case AstVarRef astVarRef:
                     return Write(astVarRef.Name);
-                
+
+                case AstMulti astMulti:
+                    return astMulti.Nodes.Aggregate(this, (w, n) => w.Write(n));
+
+                case AstIdentifier astIdent:
+                    return Write(astIdent.Text);
+
+                case AstError astError:
+                    return Write($"throw new Exception({astError.Text})");
+
+                case AstIntrinsic astIntrinsic:
+                    return Write(astIntrinsic.Name);
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(node));
             }

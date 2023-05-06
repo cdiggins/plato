@@ -1,0 +1,12 @@
+<AstMulti>
+    <AstError>Parakeet.Demos.CSharp.CstFunctionDeclStatement had no case statement</AstError>
+    <AstVarDef>
+        <AstIdentifier>x</AstIdentifier>
+        <AstNoop></AstNoop>
+    </AstVarDef>
+    <AstVarDef>
+        <AstIdentifier>y</AstIdentifier>
+        <AstNoop></AstNoop>
+    </AstVarDef>
+    <AstError>Parakeet.CstFilter`1[Parakeet.Demos.CSharp.CstExpression] had no case statement</AstError>
+</AstMulti>

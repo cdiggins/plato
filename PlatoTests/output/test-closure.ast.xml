@@ -1,0 +1,11 @@
+<AstMulti>
+    <AstVarDef>
+        <AstIdentifier>k</AstIdentifier>
+        <AstNoop></AstNoop>
+    </AstVarDef>
+    <AstVarDef>
+        <AstIdentifier>f</AstIdentifier>
+        <AstNoop></AstNoop>
+    </AstVarDef>
+    <AstError>Parakeet.CstFilter`1[Parakeet.Demos.CSharp.CstExpression] had no case statement</AstError>
+</AstMulti>

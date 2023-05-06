@@ -84,7 +84,7 @@ namespace PlatoTests
 
             var astWriter = new AstWriter(AstWriter.Language.CSharp);
             astWriter.Write(ast);
-            var astFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".ast.cs");
+            var astFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".ast.cs.txt");
             File.WriteAllText(astFile, astWriter.ToString());
         }
     }

@@ -9,11 +9,17 @@ namespace PlatoAst
         public virtual IEnumerable<AstNode> Children => Enumerable.Empty<AstNode>();
     }
 
-    public class AstIdentifier : AstNode
+    public class AstLeaf : AstNode
     {
         public string Text { get; }
 
-        public AstIdentifier(string text) => Text = text;
+        public AstLeaf(string text = "")
+            => Text = text;
+    }
+
+    public class AstIdentifier : AstLeaf
+    {
+        public AstIdentifier(string text) : base(text) {} 
         public static AstIdentifier Create(string text) => new AstIdentifier(text);
         public static implicit operator AstIdentifier(string name) => Create(name);
         public static implicit operator string(AstIdentifier ident) => ident.Text;
@@ -23,14 +29,13 @@ namespace PlatoAst
     {
     }
 
-    public class AstError : AstNode
+    public class AstError : AstLeaf
     {
-        public string Message { get; }
-        public AstError(string message) => Message = message;
+        public AstError(string message) : base(message) {}
         public static AstError Create(string message) => new AstError(message);
     }
 
-    public class AstNoop : AstExpr
+    public class AstNoop : AstLeaf
     {
         public static AstNoop Default { get; } = new AstNoop();
     }

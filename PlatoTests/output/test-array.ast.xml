@@ -1,0 +1,21 @@
+<AstMulti>
+    <AstVarDef>
+        <AstIdentifier>xs</AstIdentifier>
+        <AstNoop></AstNoop>
+    </AstVarDef>
+    <AstVarDef>
+        <AstIdentifier>s</AstIdentifier>
+        <AstNoop></AstNoop>
+    </AstVarDef>
+    <AstBlock>
+        <AstError>Parakeet.CstFilter`1[Parakeet.Demos.CSharp.CstForLoopInit] had no case statement</AstError>
+        <AstLoop>
+            <AstError>Parakeet.CstFilter`1[Parakeet.Demos.CSharp.CstForLoopInvariant] had no case statement</AstError>
+            <AstMulti>
+                <AstError>Parakeet.CstFilter`1[Parakeet.Demos.CSharp.CstStatement] had no case statement</AstError>
+                <AstError>Parakeet.CstFilter`1[Parakeet.Demos.CSharp.CstForLoopVariant] had no case statement</AstError>
+            </AstMulti>
+        </AstLoop>
+    </AstBlock>
+    <AstError>Parakeet.CstFilter`1[Parakeet.Demos.CSharp.CstExpression] had no case statement</AstError>
+</AstMulti>

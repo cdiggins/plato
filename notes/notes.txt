@@ -644,3 +644,19 @@ public class CstLambdaParameters : CstChoice
 {
 
 //==
+
+TODO: 
+* Get the CST to AST code working
+* Write some AST to:
+	* Python 
+	* C#
+	* JavaScript
+* Complete the type inference.
+* Get Plato Collections finished and workding
+
+// I am working on this. 
+C:\Users\cdigg\git\plato\PlatoTests\PlatoParserTests.cs
+
+* XML output needs to escape the entiries. 
+* Outputting C# should be ato a text file. 
+* Find out who is generating "null" nodes. 
