@@ -1,8 +1,8 @@
-var xs =
+let xs =_
 {
     throw new Exception("Parakeet.CstFilter`1[Parakeet.Demos.CSharp.CstVarDecl] had no case statement")
     ;
-    while (MoveNext( x))
+    while MoveNext( x) do 
     throw new Exception("Parakeet.CstFilter`1[Parakeet.Demos.CSharp.CstStatement] had no case statement")
 
     ;

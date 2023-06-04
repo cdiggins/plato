@@ -1,7 +1,7 @@
 throw new Exception("Parakeet.Demos.CSharp.CstTypeDeclarationWithPreamble is not implemented")
-var v1 =
-var v2 =
-var x =
-var y =
-var mag =
+let v1 =_
+let v2 =_
+let x =_
+let y =_
+let mag =_
 throw new Exception("Parakeet.CstFilter`1[Parakeet.Demos.CSharp.CstExpression] had no case statement")

@@ -232,4 +232,25 @@ namespace PlatoAst
             }
         }
     }
+
+    public static class CodeWriterExtensions
+    {
+        public static string ToJavaScript(this AstNode node)
+            => new AstCodeWriter(AstCodeWriter.Language.JavaScript).Write(node).ToString();
+
+        public static string ToPython(this AstNode node)
+            => new AstCodeWriter(AstCodeWriter.Language.Python).Write(node).ToString();
+
+        public static string ToPail(this AstNode node)
+            => new AstCodeWriter(AstCodeWriter.Language.Pail).Write(node).ToString();
+
+        public static string ToCSharp(this AstNode node)
+            => new AstCodeWriter(AstCodeWriter.Language.CSharp).Write(node).ToString();
+
+        public static string ToCPlusPlus(this AstNode node)
+            => new AstCodeWriter(AstCodeWriter.Language.CPlusPlus).Write(node).ToString();
+
+        public static string ToXml(this AstNode node)
+            => new AstXmlBuilder().Write(node).ToString();
+    }
 }

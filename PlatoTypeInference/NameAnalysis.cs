@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Dynamic;
-using System.Net.Http.Headers;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
+﻿using System.Collections.Generic;
 using Ptarmigan.Utils;
 
 namespace PlatoTypeInference

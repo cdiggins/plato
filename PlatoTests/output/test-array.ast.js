@@ -1,5 +1,5 @@
-var xs =
-var s =
+let xs =
+let s =
 {
     throw new Exception("Parakeet.CstFilter`1[Parakeet.Demos.CSharp.CstForLoopInit] had no case statement")
     ;

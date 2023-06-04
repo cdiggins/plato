@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Parakeet;
 using Parakeet.Demos.CSharp;
 
@@ -108,10 +107,14 @@ namespace PlatoAst
 
         public AstTypeNode ToAst(CstInnerTypeExpr innerType)
         {
-            if (innerType.CompoundOrSimpleTypeExpr.Node.CompoundTypeExpr != null)
+            if (innerType.CompoundOrSimpleTypeExpr.Node?.CompoundTypeExpr != null)
                 throw new NotImplementedException("Compound types not supported yet");
 
-            var qi = innerType.CompoundOrSimpleTypeExpr.Node.QualifiedIdentifier;
+            var qi = innerType.CompoundOrSimpleTypeExpr.Node?.QualifiedIdentifier;
+
+            if (qi == null)
+                return AstTypeNode.Create("_UNTYPED_");
+
             var name = string.Join(".", qi.Node.Identifier.Nodes.Select(n => n.Text));
 
             if (innerType.ArrayRankSpecifiers.Children.Count > 0)
@@ -137,6 +140,11 @@ namespace PlatoAst
                 AstLoop.Create(
                     ToIntrinsic("MoveNext", AstVarRef.Create(vd.Node.Identifier.Node.Text)),
                     ToAst(forEach.Statement)));
+        }
+
+        public AstNode ToAst<T>(CstFilter<T> filter) where T : CstNode
+        {
+            return ToAst(filter.Node);
         }
 
         public AstNode ToAst(CstNode node)
@@ -351,19 +359,32 @@ namespace PlatoAst
                         ToAst(cstVarDecl.TypeExpr) as AstTypeNode);
                 
                 case CstVarDeclStatement cstVarDeclStatement:
-                    return AstVarDef.Create(
-                        cstVarDeclStatement.VarDecl.Node.Identifier.Node.Text,
-                        AstNoop.Default,
-                        ToAst(cstVarDeclStatement.VarDecl.Node.TypeExpr) as AstTypeNode);
+                    return CreateVarDef(cstVarDeclStatement.VarDecl.Node, 
+                        cstVarDeclStatement.Initialization.Node);
 
                 case CstForLoopVariant cstVariantClause:
                     return ToAst(cstVariantClause.Expression);
 
                 case CstTypeDirectiveOrStatement cstTypeDirectiveOrStatement:
                     return ToAst(cstTypeDirectiveOrStatement.Node);
+
+                case CstForLoopInit forLoopInit:
+                    return forLoopInit.VarDecl.Present
+                        ? (AstNode)CreateVarDef(forLoopInit.VarDecl.Node, forLoopInit.Initialization.Node)
+                        : AstNoop.Default;
             }
 
             return AstError.Create($"{node.GetType()} had no case statement");
+        }
+
+        public AstVarDef CreateVarDef(CstVarDecl cstVarDecl, CstInitialization cstInit)
+        {
+            return AstVarDef.Create(
+                cstVarDecl.Identifier.Node?.Text ?? "_",
+                cstInit.InitializationValue.Present 
+                    ? ToAst(cstInit.InitializationValue.Node) 
+                    : AstNoop.Default,
+                ToAst(cstVarDecl.TypeExpr) as AstTypeNode);
         }
     }
 

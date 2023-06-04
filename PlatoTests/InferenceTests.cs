@@ -1,32 +1,88 @@
-﻿using PlatoTypeInference;
+﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using PlatoTypeInference;
 
 namespace PlatoTests
 {
     public static class InferenceTests
     {
-        public static TypeVar Var(string name, int id) => new (name);
-        public static TypeList List(params BaseType[] types) => new(types);
-        public static TypeConstant Const(string name) => new(name);
-
-        [Test]
-        public static void TestInference()
-        {
-            var t0 = Const("int");
-            var t1 = Const("func");
-            
-            var var0 = Var("a", 0);
-            var var1 = Var("b", 1);
-            var var2 = Var("c", 2);
-            var var3 = Var("d", 3);
-
-            var f1 = List(t1, var0, var1);
-            var f2 = List(t1, var1, var2);
-
+        public static IEnumerable<string> Types
+            = new[]
             {
-                var unifier = new TypeUnifier();
-                var r = unifier.Unify(f1, f2);
-                Console.WriteLine($"Unification of {f1} and {f2} produced {r}");
+                "$a",
+                "abc",
+                "=>",
+                "[a,b,c]",
+                "[a,[b]]",
+                "[[a],[b]]",
+                "[]",
+                "[$a,$b]",
+                "[[a],[b,c]]",
+                "\\($a)[$a]",
+                "\\($a,$b)[=>,[$a,$b],[c,c,$b]]",
+            };
+
+        [TestCaseSource(nameof(Types))]
+        public static void TestType(string name)
+        {
+            var t = BaseType.Parse(name);
+            Assert.NotNull(t);
+            Assert.AreEqual(name, t.Name);
+            Assert.AreEqual(name, t.ToString());
+            if (name.StartsWith("$"))
+            {
+                Assert.IsAssignableFrom(typeof(TypeVariable), t);
             }
+            else if (name.StartsWith("["))
+            {
+                Assert.IsAssignableFrom(typeof(TypeList), t);
+            }
+            else if (name.StartsWith("\\"))
+            {
+                Assert.IsAssignableFrom(typeof(PolyType), t);
+            }
+            else 
+            {
+                Assert.IsAssignableFrom(typeof(TypeConstant), t);
+            }
+        }
+
+        public static IEnumerable<TestCaseData> ConstraintInputs
+            => new[]
+            {
+                new TestCaseData("a", "a"),
+                new TestCaseData("$a", "b"),
+                new TestCaseData("b", "$a"),
+                new TestCaseData("[$a,$b]", "[x,y]"),
+                new TestCaseData("[$a,$a]", "[x,x]"),
+                new TestCaseData("[$a,$b,$c]", "[x,y,$a]"),
+                new TestCaseData("[$a,$b]", "[x,x]"),
+                new TestCaseData("[$a,$b,$c]", "[$b,x,y]"),
+            };
+
+        public static void OutputConstraints(Constraints c)
+        {
+            foreach (var kv in c.Sets)
+            {
+                var types = string.Join(",", kv.Value);
+                Console.WriteLine($"{kv.Key} = {types}");
+            }
+
+            foreach (var g in c.GetVariableGroups())
+            {
+                Console.WriteLine(string.Join('=', g));
+            }
+        }
+
+        [TestCaseSource(nameof(ConstraintInputs))]
+        public static void TestConstraints(string s1, string s2)
+        {
+            TestType(s1); 
+            TestType(s2);
+            var t1 = BaseType.Parse(s1);
+            var t2 = BaseType.Parse(s2);
+            var c = new Constraints();
+            c.AddConstraint(t1, t2);
+            OutputConstraints(c);
         }
     }
 }

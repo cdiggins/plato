@@ -77,15 +77,21 @@ namespace PlatoTests
             File.WriteAllText(cstXmlFile, cstXml);
 
             var ast = new AstFromCst().ToAst(cst);
-            var astXml = new AstXmlBuilder().Write(ast).ToString();
-
+            
             var astXmlFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".ast.xml");
-            File.WriteAllText(astXmlFile, astXml);
+            File.WriteAllText(astXmlFile, ast.ToXml());
 
-            var astWriter = new AstCodeWriter(AstCodeWriter.Language.CSharp);
-            astWriter.Write(ast);
-            var astFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".ast.cs.txt");
-            File.WriteAllText(astFile, astWriter.ToString());
+            var astCSharpFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".ast.cs.txt");
+            File.WriteAllText(astCSharpFile, ast.ToCSharp());
+
+            var astPythonFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".ast.py");
+            File.WriteAllText(astPythonFile, ast.ToPython());
+
+            var astJavaScriptFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".ast.js");
+            File.WriteAllText(astJavaScriptFile, ast.ToJavaScript());
+
+            var astPailFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".ast.pail");
+            File.WriteAllText(astPailFile, ast.ToPail());
         }
     }
 }

@@ -1,3 +1,3 @@
 throw new Exception("Parakeet.CstFilter`1[Parakeet.Demos.CSharp.CstExpression] had no case statement")
-var name =
+let name =
 throw new Exception("Parakeet.CstFilter`1[Parakeet.Demos.CSharp.CstExpression] had no case statement")

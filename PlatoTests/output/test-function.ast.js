@@ -1,4 +1,4 @@
 throw new Exception("Parakeet.Demos.CSharp.CstFunctionDeclStatement had no case statement")
-var x =
-var y =
+let x =
+let y =
 throw new Exception("Parakeet.CstFilter`1[Parakeet.Demos.CSharp.CstExpression] had no case statement")

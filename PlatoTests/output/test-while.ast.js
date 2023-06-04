@@ -1,4 +1,4 @@
-var x =
+let x =
 while (throw new Exception("Parakeet.CstFilter`1[Parakeet.Demos.CSharp.CstParenthesizedExpression] had no case statement")
 )
 throw new Exception("Parakeet.CstFilter`1[Parakeet.Demos.CSharp.CstStatement] had no case statement")
