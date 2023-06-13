@@ -1,0 +1,32 @@
+{
+  "name": "platocodeeditor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "rollup -c"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@codemirror/autocomplete": "^6.8.0",
+    "@codemirror/commands": "^6.2.4",
+    "@codemirror/lang-css": "^6.2.0",
+    "@codemirror/lang-html": "^6.4.4",
+    "@codemirror/lang-javascript": "^6.1.9",
+    "@codemirror/lang-json": "^6.0.1",
+    "@codemirror/language": "^6.8.0",
+    "@codemirror/lint": "^6.2.2",
+    "@codemirror/search": "^6.5.0",
+    "@codemirror/state": "^6.2.1",
+    "@codemirror/view": "^6.13.2"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.1.0",
+    "rollup": "^3.25.1",
+    "typescript": "^5.1.3"
+  }
+}
