@@ -6,10 +6,18 @@ namespace PlatoEditor
     public static class Program
     {
         public static WebServer Server;
-
+        public static DevelopmentFolders DevFolders = new DevelopmentFolders();
+        
+        public static string DevHtmlFolder => DevFolders.SourceFolder.RelativeFolder("html");
+        public static string ReleaseHtmlFolder => AssemblyData.Current.LocationDir.RelativeFolder("html");
         public static string LastUpdate { get; set; }
-        public static DirectoryPath OutputFolder 
-            = AssemblyData.Current.LocationDir.RelativeFolder("html");
+        
+        public static DirectoryPath HtmlFolder =>
+#if DEBUG
+            DevHtmlFolder;
+#else
+            ReleaseHtmlFolder;
+#endif
 
         public static void Main(string[] args)
         {
@@ -36,7 +44,7 @@ namespace PlatoEditor
                     if (path == "")
                         path = "index.html";
 
-                    var file = OutputFolder.RelativeFile(path);
+                    var file = HtmlFolder.RelativeFile(path);
                     //outputStream.Write("Hello!".ToBytesUtf8());
                     if (file.Exists())
                     {

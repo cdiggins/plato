@@ -225,3 +225,24 @@ How to make the template work?
 	* What about the new variables I want? 
 * Maybe just a class. 
 	* user
+
+//== 
+
+June 25th
+* Change "Code Mirror 6 to Plato Demo"
+* Set-up a splitter
+* Need a console. 
+* Would LOVE a menu. 
+* Actually execute code 
+* Run / Stop / Restart button? 
+	* Time slider? 
+* Would love an icon.
+* Try different geometries. 
+* Have the function just return a geometry. 
+	* having modifiers and what not will be pretty cool. 
+	* There is also the question of shading / textures / etc. 
+* So the code returns a class, correct? 
+	* And then we construct it. 
+	* And then we call functions on it. 
+* Where does the initial code come from? 
+	* 

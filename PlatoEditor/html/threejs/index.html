@@ -34,6 +34,13 @@
         import { RGBMLoader } from 'three/addons/loaders/RGBMLoader.js';
         import { DebugEnvironment } from 'three/addons/environments/DebugEnvironment.js';
 
+    import * as Curves from 'three/addons/curves/CurveExtras.js';
+    import { ParametricGeometry } from 'three/addons/geometries/ParametricGeometry.js';
+    import { ParametricGeometries } from 'three/addons/geometries/ParametricGeometries.js';
+
+    const GrannyKnot = new Curves.GrannyKnot();
+    
+
         const params = {
             envMap: 'HDR',
             roughness: 0.0,
@@ -44,13 +51,26 @@
 
         let container, stats;
         let camera, scene, renderer, controls;
-        let torusMesh, planeMesh;
+        let mesh;
         let generatedCubeRenderTarget, ldrCubeRenderTarget, hdrCubeRenderTarget, rgbmCubeRenderTarget;
         let ldrCubeMap, hdrCubeMap, rgbmCubeMap;
         let request, code;
 
         init();
-        animate();
+    animate();
+
+    function addGeometry(g) {
+        let material = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            metalness: params.metalness,
+            roughness: params.roughness
+        });
+
+        mesh = new THREE.Mesh(g, material);
+        scene.clear();
+        scene.add(mesh);
+
+    }
 
         function init() {
 
@@ -67,25 +87,10 @@
             renderer.useLegacyLights = false;
             renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
-            let geometry = new THREE.TorusKnotGeometry(18, 8, 150, 20);
-            // let geometry = new THREE.SphereGeometry( 26, 64, 32 );
-            let material = new THREE.MeshStandardMaterial({
-                color: 0xffffff,
-                metalness: params.metalness,
-                roughness: params.roughness
-            });
-
-            torusMesh = new THREE.Mesh(geometry, material);
-            scene.add(torusMesh);
-
-            geometry = new THREE.PlaneGeometry(200, 200);
-            material = new THREE.MeshBasicMaterial();
-
-            planeMesh = new THREE.Mesh(geometry, material);
-            planeMesh.position.y = - 50;
-            planeMesh.rotation.x = - Math.PI * 0.5;
-
-            //scene.add( planeMesh );
+            //let geometry = new THREE.TorusKnotGeometry(18, 8, 150, 20);
+            //addGeometry(geometry);
+            let geometry = new ParametricGeometries.TubeGeometry(GrannyKnot, 100, 3, 8, true);
+            addGeometry(geometry);
 
             THREE.DefaultLoadingManager.onLoad = function () {
                 pmremGenerator.dispose();
@@ -145,6 +150,27 @@
             gui.open();
         }
 
+    function onCodeChange(newCode) {
+        if (code == newCode) return;
+        code = newCode;
+        if (code.length == 0) return;
+        //let fxn;        
+        try {
+            eval(code)
+        }
+        catch (e) {
+            console.log("Failed to compile code: " + e);
+            return;
+        }
+        try {
+            //let g = fxn(THREE);
+            //addGeometry(g);
+        }
+        catch (e) {
+            console.log("Failed to add geometry: " + e);
+        }
+    }
+
         function makeNewRequest() {
             if (request != null) {
                 return;
@@ -153,11 +179,7 @@
             request = new XMLHttpRequest();
             request.open("GET", "../api/code", true);
             request.onload = () => {
-                if (request.responseText != code)
-                {
-                    code = request.responseText;
-                    console.log(code);
-                }
+                onCodeChange(request.responseText);
                 request = null;
             }
             request.onabort = (e) => {
@@ -193,8 +215,8 @@
             }
             makeNewRequest();
 
-            torusMesh.material.roughness = params.roughness;
-            torusMesh.material.metalness = params.metalness;
+            mesh.material.roughness = params.roughness;
+            mesh.material.metalness = params.metalness;
 
             let renderTarget, cubeMap;
 
@@ -221,18 +243,13 @@
 
             const newEnvMap = renderTarget ? renderTarget.texture : null;
 
-            if (newEnvMap && newEnvMap !== torusMesh.material.envMap) {
+            if (newEnvMap && newEnvMap !== mesh.material.envMap) {
 
-                torusMesh.material.envMap = newEnvMap;
-                torusMesh.material.needsUpdate = true;
-
-                planeMesh.material.map = newEnvMap;
-                planeMesh.material.needsUpdate = true;
-
+                mesh.material.envMap = newEnvMap;
+                mesh.material.needsUpdate = true;
             }
 
-            torusMesh.rotation.y += 0.005;
-            planeMesh.visible = params.debug;
+            mesh.rotation.y += 0.005;
 
             //scene.background = cubeMap;
             renderer.toneMappingExposure = params.exposure;
