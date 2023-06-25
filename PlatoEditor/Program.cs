@@ -7,6 +7,7 @@ namespace PlatoEditor
     {
         public static WebServer Server;
 
+        public static string LastUpdate { get; set; }
         public static DirectoryPath OutputFolder 
             = AssemblyData.Current.LocationDir.RelativeFolder("html");
 
@@ -23,16 +24,29 @@ namespace PlatoEditor
         {
             if (verb.ToLowerInvariant() == "get")
             {
-                var file = OutputFolder.RelativeFile(path);
-                //outputStream.Write("Hello!".ToBytesUtf8());
-                if (file.Exists())
+                if (path.StartsWith("api"))
                 {
-                    file.CopyToStreamAndClose(outputStream);
+                    if (path == "api/code" && LastUpdate != null)
+                    {
+                        outputStream.Write(LastUpdate.ToBytesUtf8());
+                    }
                 }
                 else
                 {
-                    // TODO: switch this to a logging system
-                    Debug.WriteLine($"File {path} was not found");
+                    if (path == "")
+                        path = "index.html";
+
+                    var file = OutputFolder.RelativeFile(path);
+                    //outputStream.Write("Hello!".ToBytesUtf8());
+                    if (file.Exists())
+                    {
+                        file.CopyToStreamAndClose(outputStream);
+                    }
+                    else
+                    {
+                        // TODO: switch this to a logging system
+                        Debug.WriteLine($"File {path} was not found");
+                    }
                 }
             }
 
@@ -40,6 +54,7 @@ namespace PlatoEditor
             {
                 var data = inputStream.ReadAllBytes().ToUtf8();
                 Debug.WriteLine($"A change was posted: {data}");
+                LastUpdate = data;
             }
         }
     }
