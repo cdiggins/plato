@@ -1,0 +1,39 @@
+﻿// Particle Sytem
+
+class BaseParticle 
+{ 
+	alive = true;
+	age = 0;
+	maxAge = 1000;
+	visible = true;
+	position = [0,0];
+	acceleration = [0,0];
+	velocity = [0,0];
+	orientation = 0;
+	rotation = 0;
+	color = red;
+	size = 1;
+	intensity = 1;
+
+	update(timeDelta)
+	{
+		age += timeDelta;		
+		alive = age < maxAge;
+		position += velocity * timeDelta;
+		velocity += acceleration * timeDelta;
+		orientation += rotation * timeDelta;
+		visible = alive;
+	}
+}
+
+class MyParticle extends BaseParticle
+{
+	newParticle()
+	{ }
+
+	updateParticle(particle)
+	{ }
+}
+
+
+

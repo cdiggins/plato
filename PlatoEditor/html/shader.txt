@@ -1,0 +1,6 @@
+﻿class MyShader
+{
+	getColor(x, y)
+	{	
+	}
+}

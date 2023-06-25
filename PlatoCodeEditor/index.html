@@ -10,9 +10,26 @@
   <body>
     <main>
       <h1>CodeMirror 6</h1>
-      <div id="editor">
+      <div id="editor"> 
       </div>
     </main>
-    <script src="editor.bundle.js"></script>
+    <script src="editor.bundle.js">
+    </script>
+    <script>
+    window.Editor = new EditorView({
+       parent: document.querySelector("#editor"),
+       state: EditorState.create({
+           doc: "let value = true\nif (!value == false)\n  console.log(\"good\")\n",
+           extensions: [...basicSetup, EditorView.updateListener.of((v) => {
+             if (v.docChanged) {
+               if (timer) clearTimeout(timer);
+               timer = setTimeout(() => {
+                 console.log(v.state.doc.toString());
+               }, 500);
+             }
+           })]
+       }),
+   });      
+    </script>
   </body>
 </html>
