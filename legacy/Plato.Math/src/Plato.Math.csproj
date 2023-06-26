@@ -42,6 +42,10 @@
       <LastGenOutput>TemplateHelpers1.cs</LastGenOutput>
     </Content>
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Plato.Collections\src\Plato.Collections.csproj" />
+  </ItemGroup>
   
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
@@ -58,10 +62,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Structs.tt</DependentUpon>
     </Compile>
-  </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\..\Plato.Collections\Plato.Collections.csproj" />
   </ItemGroup>
 
 </Project>

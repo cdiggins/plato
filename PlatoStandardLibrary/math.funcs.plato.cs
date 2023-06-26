@@ -307,7 +307,6 @@ namespace Plato.__FUNCS__
         double Log10(double x) => Math.Log10(x);
         double Sqrt(double x) => Math.Sqrt(x);
         double Sign(double x) => x > 0 ? 1 : x < 0 ? -1 : 0;
-        double Inverse(double x) => 1 / x;
         double Truncate(double x) => Math.Truncate(x);
         double Ceiling(double x) => Math.Ceiling(x);
         double Floor(double x) => Math.Floor(x);
@@ -358,9 +357,9 @@ namespace Plato.__FUNCS__
         double Tan(Angle x) => Math.Tan(x);
         double Tanh(Angle x) => Math.Tanh(x);
 
-        double Sec(Angle x) => 1.0 / Cos(x);
-        double Csc(Angle x) => 1.0 / Sin(x);
-        double Cot(Angle x) => 1.0 / Tan(x);
+        double Sec(Angle x) => Cos(x).Reciprocal();
+        double Csc(Angle x) => Sin(x).Reciprocal();
+        double Cot(Angle x) => Tan(x).Reciprocal();
     }
 
     [Operations]
