@@ -5,8 +5,6 @@ VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoAnalyzer", "legacy\Sandbox\PlatoAnalyzer\PlatoAnalyzer.csproj", "{5B286A6B-659B-49EA-918E-4041A06C0EC1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.LegacySandbox", "legacy\Plato.Sandbox\Plato.LegacySandbox.csproj", "{A3063915-D5E4-423C-8780-96FE64D36911}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "notes", "notes", "{239039FA-2578-4851-8C40-88098C7EE5D4}"
 	ProjectSection(SolutionItems) = preProject
 		notes\notes.txt = notes\notes.txt
@@ -38,8 +36,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parakeet.Tests", "..\parake
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoAst", "PlatoAst\PlatoAst.csproj", "{ED345EE9-87F8-464B-B3A1-8B47DA3BBCC0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestAssemblyCode", "TestAssemblyCode\TestAssemblyCode.vcxproj", "{B9D5AF30-B71D-433F-8319-860E3F4FA589}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoIntrinsics", "PlatoIntrinsics\PlatoIntrinsics.csproj", "{786403AB-7FD3-4FBC-88F4-BF9C1CD11832}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoDrawingDemo", "PlatoDrawingDemo\PlatoDrawingDemo.csproj", "{EF01E8A2-C6D5-423A-91E2-9E0FA3D14B89}"
@@ -68,14 +64,6 @@ Global
 		{5B286A6B-659B-49EA-918E-4041A06C0EC1}.Release|x64.Build.0 = Release|Any CPU
 		{5B286A6B-659B-49EA-918E-4041A06C0EC1}.Release|x86.ActiveCfg = Release|Any CPU
 		{5B286A6B-659B-49EA-918E-4041A06C0EC1}.Release|x86.Build.0 = Release|Any CPU
-		{A3063915-D5E4-423C-8780-96FE64D36911}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A3063915-D5E4-423C-8780-96FE64D36911}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A3063915-D5E4-423C-8780-96FE64D36911}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{A3063915-D5E4-423C-8780-96FE64D36911}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{A3063915-D5E4-423C-8780-96FE64D36911}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A3063915-D5E4-423C-8780-96FE64D36911}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A3063915-D5E4-423C-8780-96FE64D36911}.Release|x64.ActiveCfg = Release|Any CPU
-		{A3063915-D5E4-423C-8780-96FE64D36911}.Release|x86.ActiveCfg = Release|Any CPU
 		{66402015-EB96-4A58-AFA1-BF2BD41DF14C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{66402015-EB96-4A58-AFA1-BF2BD41DF14C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66402015-EB96-4A58-AFA1-BF2BD41DF14C}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -220,15 +208,6 @@ Global
 		{ED345EE9-87F8-464B-B3A1-8B47DA3BBCC0}.Release|x64.Build.0 = Release|Any CPU
 		{ED345EE9-87F8-464B-B3A1-8B47DA3BBCC0}.Release|x86.ActiveCfg = Release|Any CPU
 		{ED345EE9-87F8-464B-B3A1-8B47DA3BBCC0}.Release|x86.Build.0 = Release|Any CPU
-		{B9D5AF30-B71D-433F-8319-860E3F4FA589}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{B9D5AF30-B71D-433F-8319-860E3F4FA589}.Debug|Any CPU.Build.0 = Debug|Win32
-		{B9D5AF30-B71D-433F-8319-860E3F4FA589}.Debug|x64.ActiveCfg = Debug|Win32
-		{B9D5AF30-B71D-433F-8319-860E3F4FA589}.Debug|x86.ActiveCfg = Debug|Win32
-		{B9D5AF30-B71D-433F-8319-860E3F4FA589}.Debug|x86.Build.0 = Debug|Win32
-		{B9D5AF30-B71D-433F-8319-860E3F4FA589}.Release|Any CPU.ActiveCfg = Release|Win32
-		{B9D5AF30-B71D-433F-8319-860E3F4FA589}.Release|x64.ActiveCfg = Release|Win32
-		{B9D5AF30-B71D-433F-8319-860E3F4FA589}.Release|x86.ActiveCfg = Release|Win32
-		{B9D5AF30-B71D-433F-8319-860E3F4FA589}.Release|x86.Build.0 = Release|Win32
 		{786403AB-7FD3-4FBC-88F4-BF9C1CD11832}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{786403AB-7FD3-4FBC-88F4-BF9C1CD11832}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{786403AB-7FD3-4FBC-88F4-BF9C1CD11832}.Debug|x64.ActiveCfg = Debug|Any CPU
