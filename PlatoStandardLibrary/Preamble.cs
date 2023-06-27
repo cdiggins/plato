@@ -1,5 +1,5 @@
 ﻿// This file is required to make the input compile correctly
-using Plato.__TYPES__;
+
 using System;
 
 namespace Plato

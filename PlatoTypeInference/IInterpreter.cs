@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Plato;
+﻿using Plato;
 
 // My idea:
 // 1. Create a tokenizer

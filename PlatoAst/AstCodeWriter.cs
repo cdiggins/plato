@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Parakeet;
-using Parakeet.Demos.WIP;
 
 namespace PlatoAst
 {

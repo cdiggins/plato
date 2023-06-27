@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-using PlatoTypeInference;
+﻿using PlatoTypeInference;
 
 namespace PlatoTests
 {

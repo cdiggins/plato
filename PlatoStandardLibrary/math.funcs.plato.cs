@@ -1,5 +1,4 @@
-﻿using Plato.__TYPES__;
-using System;
+﻿using System;
 
 namespace Plato.__FUNCS__
 {

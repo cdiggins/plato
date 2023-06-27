@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace PlatoAbstractSyntax
+﻿namespace PlatoAbstractSyntax
 {
     public class Evaluator
     {
