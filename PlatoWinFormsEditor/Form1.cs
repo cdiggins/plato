@@ -35,38 +35,45 @@ namespace PlatoWinFormsEditor
             }
         }
 
-        public void Compile(ParserInput input)
+        public Compilation Compile(string input)
         {
+            var c = new Compilation(input, Grammar.File);
+
             outputEdit.Clear();
-            var rule = Grammar.File;
             
-            ParserState ps = null;
-            try
+            if (c.State != null)
             {
-                ps = input.Parse(rule);
+                OutputParseErrors(c.State);
             }
-            catch (ParserException pe)
-            {
-                Console.WriteLine($"Parsing exception {pe.Message} occured at {pe.LastValidState} ");
-            }
+        }
 
-            if (ps != null)
-            {
-                OutputParseErrors(ps);
-            }
+        public void OutputCST(ParserTree tree)
+        {
+            richTextBoxCst.Clear();
+            OutputCST(cst);
+        }
 
-            if (ps == null)
+        public void OutputCST(CstNode node, string indent = "")
+        {
+            var xs = node.GetType().Name;
+            if (node.IsLeaf)
             {
-                Console.WriteLine($"FAILED");
-            }
-            else if (ps.AtEnd())
-            {
-                Console.WriteLine($"PASSED");
+                richTextBoxCst.AppendText($"{indent}<{xs}>{node.GetText()}</{xs}>");
             }
             else
             {
-                Console.WriteLine($"PARTIAL PASSED: {ps.Position}/{ps.Input.Length}");
+                richTextBoxCst.AppendText($"{indent}<{xs}>");
+                foreach (var child in node.Children)
+                    OutputCST(child, indent + "  ");
+                richTextBoxCst.AppendText($"{indent}</{xs}>");
             }
+        }
+
+        public void OutputParseTree(ParserState state)
+        {
+            var tree = state.Node.ToParseTree();
+            richTextBoxParseTree.Text = tree.ToString();
+            OutputCST(tree);
         }
 
         private void richTextBox1_TextChanged(object sender, EventArgs e)

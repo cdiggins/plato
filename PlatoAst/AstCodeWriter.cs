@@ -28,7 +28,6 @@ namespace PlatoAst
                 : WriteLine();
         }
 
-        
         public AstCodeWriter WriteStatements(IEnumerable<AstNode> nodes)
         {
             return WriteList(nodes, (w, n) => w.Write(n).WriteLine(";"));

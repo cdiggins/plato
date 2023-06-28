@@ -132,13 +132,22 @@ namespace PlatoAst
             return AstTypeNode.Create(name, ps.ToArray());
         }
 
+        public AstIdentifier ToAst(CstIdentifier ident)
+        {
+            return new AstIdentifier(ident.Text);
+        }
+
         public AstNode ToAst(CstForEachStatement forEach)
         {
-            var vd = forEach.VarDecl;
+            var cstIdent = forEach.Identifier.Node;
+            var cstType = forEach.TypeExpr.Node;
+            var astIdent = ToAst(cstIdent);
+            var astType = ToAst(cstType);
+            var vd = AstVarDef.Create(astIdent, astType);
             return AstBlock.Create(
-                ToAst(vd),
+                vd,
                 AstLoop.Create(
-                    ToIntrinsic("MoveNext", AstVarRef.Create(vd.Node.Identifier.Node.Text)),
+                    ToIntrinsic("MoveNext", AstVarRef.Create(astIdent.Text)),
                     ToAst(forEach.Statement)));
         }
 
@@ -353,14 +362,11 @@ namespace PlatoAst
                     return AstError.Create($"{node.GetType()} is not implemented");
 
                 case CstVarDecl cstVarDecl:
-                    return AstVarDef.Create(
-                        cstVarDecl.Identifier.Node.Text,
-                        AstNoop.Default,
-                        ToAst(cstVarDecl.TypeExpr) as AstTypeNode);
+                    return AstMulti.Create(
+                        CreateVarDefs(cstVarDecl).ToArray());
                 
                 case CstVarDeclStatement cstVarDeclStatement:
-                    return CreateVarDef(cstVarDeclStatement.VarDecl.Node, 
-                        cstVarDeclStatement.Initialization.Node);
+                    return ToAst(cstVarDeclStatement.VarDecl);
 
                 case CstForLoopVariant cstVariantClause:
                     return ToAst(cstVariantClause.Expression);
@@ -370,26 +376,31 @@ namespace PlatoAst
 
                 case CstForLoopInit forLoopInit:
                     return forLoopInit.VarDecl.Present
-                        ? (AstNode)CreateVarDef(forLoopInit.VarDecl.Node, forLoopInit.Initialization.Node)
+                        ? (AstNode)CreateVarDef(forLoopInit.VarDecl.Node, forLoopInit.VarDecl
+                            .Node.VarWithInitialization.Node)
                         : AstNoop.Default;
             }
 
             return AstError.Create($"{node.GetType()} had no case statement");
         }
 
-        public AstVarDef CreateVarDef(CstVarDecl cstVarDecl, CstInitialization cstInit)
+        public IEnumerable<AstVarDef> CreateVarDefs(CstVarDecl cstVarDecl)
+        {
+            foreach (var node in cstVarDecl.VarWithInitialization.Nodes)
+            {
+                yield return CreateVarDef(cstVarDecl, node);
+            }
+        }
+
+        public AstVarDef CreateVarDef(CstVarDecl cstVarDecl, CstVarWithInitialization cstInit)
         {
             return AstVarDef.Create(
-                cstVarDecl.Identifier.Node?.Text ?? "_",
-                cstInit.InitializationValue.Present 
-                    ? ToAst(cstInit.InitializationValue.Node) 
+                cstVarDecl.VarWithInitialization.Node.Identifier.Node?.Text ?? "_",
+                cstInit.Initialization.Present
+                    ? ToAst(cstInit.Initialization.Node) 
                     : AstNoop.Default,
                 ToAst(cstVarDecl.TypeExpr) as AstTypeNode);
         }
     }
 
-    public class TypeLibrary
-    {
-
-    }
 }

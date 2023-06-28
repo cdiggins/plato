@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\parakeet\Parakeet.Demos\Parakeet.Demos.csproj" />
     <ProjectReference Include="..\..\parakeet\Parakeet\Parakeet.csproj" />
+    <ProjectReference Include="..\PlatoAst\PlatoAst.csproj" />
   </ItemGroup>
 
 </Project>
