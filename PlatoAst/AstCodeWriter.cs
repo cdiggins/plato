@@ -148,6 +148,37 @@ namespace PlatoAst
             return Write(ident).Write(" : ").Write(type);
         }
 
+        static (string, string)[] BinaryIntrinsics = new[]
+        {
+            ("+", "Add"),
+            ("-", "Sub"),
+            ("*", "Mul"),
+            ("/", "Div"),
+            ("%", "Mod"),
+            ("==", "Eq"),
+            ("!=", "NEq"),
+            (">", "Gt"),
+            ("<", "Lt"),
+            (">=", "GtEq"),
+            ("<=", "LtEq"),
+            ("&&", "And"),
+            ("||", "Or"),
+            ("&", "And"),
+            ("|", "Or"),
+            ("^", "XOr"),
+        };
+
+        public static Dictionary<string, string> BinaryIntrinsicLookup =
+            BinaryIntrinsics.ToDictionary(bi => bi.Item1, bi => bi.Item2);
+
+        public static string InstrinsicName(string name)
+        {
+            name = name.Trim();
+            return BinaryIntrinsicLookup.ContainsKey(name)
+                ? BinaryIntrinsicLookup[name]
+                : name;
+        }
+
         public AstCodeWriter Write(AstNode node)
         {
             if (node == null)
@@ -190,14 +221,34 @@ namespace PlatoAst
                     return WriteLine("continue");
 
                 case AstInvoke astInvoke:
+                {
+                    if (astInvoke.Function is AstIntrinsic intr)
+                    {
+                        if (intr.Name == ".")
+                        {
+                            return Write(astInvoke.AstArguments[0])
+                                .Write(".")
+                                .Write(astInvoke.AstArguments[1]);
+                        }
+                        else
+                        {
+                            var name = InstrinsicName(intr.Name);
+                            return Write(name)
+                                .Write("( ")
+                                .WriteCommaList(astInvoke.AstArguments, (w, x) => w.Write(x))
+                                .Write(")");
+                        }
+                    }
+
                     return Write(astInvoke.Function)
                         .Write("( ")
                         .WriteCommaList(astInvoke.AstArguments, (w, x) => w.Write(x))
                         .Write(")");
-                        
+                }
+
                 case AstLambda astLambda:
                     return Write("(")
-                        .WriteParameters(astLambda.Parameters)
+                        .WriteCommaList(astLambda.Parameters, (w, x) => w.Write(x))
                         .Write(") => ")
                         .Write(astLambda.Body)
                         .WriteLine();
@@ -273,7 +324,7 @@ namespace PlatoAst
                     return Write("(").Write(parenthesized.Inner).Write(")");
 
                 case AstMethodDeclaration methodDeclaration:
-                    return Write("fn ")
+                    return Write("function")
                         .Write(" ")
                         .Write(methodDeclaration.Name)
                         .Write("(")
@@ -282,7 +333,7 @@ namespace PlatoAst
                         .Write(" : ")
                         .Write(methodDeclaration.Type)
                         .WriteLine()
-                        .Write(" => ")
+                        .Write("  => ")
                         .Write(methodDeclaration.Body)
                         .WriteLine();
 
