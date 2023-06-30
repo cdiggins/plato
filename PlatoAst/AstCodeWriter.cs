@@ -33,7 +33,7 @@ namespace PlatoAst
             return WriteList(nodes, (w, n) => w.Write(n).WriteLine(";"));
         }
 
-        public AstCodeWriter Write(IEnumerable<AstNode> nodes)
+        public AstCodeWriter Write(IEnumerable<AstNode> nodes, string sep = "")
         {
             return nodes.Aggregate(this, (cb, n) => cb.Write(n));
         }
@@ -143,8 +143,16 @@ namespace PlatoAst
             }
         }
 
+        public AstCodeWriter WriteTypedName(AstIdentifier ident, AstTypeNode type)
+        {
+            return Write(ident).Write(" : ").Write(type);
+        }
+
         public AstCodeWriter Write(AstNode node)
         {
+            if (node == null)
+                return this;
+
             switch (node)
             {
                 case AstAssign astAssign:
@@ -224,6 +232,62 @@ namespace PlatoAst
 
                 case AstIntrinsic astIntrinsic:
                     return Write(astIntrinsic.Name);
+
+                case AstTypeDeclaration typeDeclaration:
+                {
+                    var r = Write("class ").Write(typeDeclaration.Name);
+                    r.WriteLine("{");
+                    r = typeDeclaration.Members.Aggregate(r, (w, n) => w.Write(n));
+                    r = r.WriteLine("}");
+                    return r;
+                }
+
+                case AstTypeNode typeNode:
+                {
+                    var r = Write(typeNode.Name);
+                    if (typeNode.TypeArguments.Count > 0)
+                    {
+                        r = r.Write("<");
+                        r = r.Write(typeNode.TypeArguments, ",");
+                        r = r.Write(">");
+                    }
+                    return r;
+                }
+
+                case AstDirective directive:
+                    return WriteLine($"#directive {directive.Argument}");
+
+                case AstFieldDeclaration fieldDeclaration:
+                    return Write("field ").Write(fieldDeclaration.Type).Write(" ").Write(fieldDeclaration.Name).WriteEol();
+
+                case AstPropertyDeclaration propertyDeclaration:
+                    return Write("property ")
+                        .Write(propertyDeclaration.Type)
+                        .Write(" ")
+                        .Write(propertyDeclaration.Name).WriteEol();
+
+                case AstParameterDeclaration parameterDeclaration:
+                    return WriteTypedName(parameterDeclaration.Name, parameterDeclaration.Type);
+
+                case AstParenthesized parenthesized:
+                    return Write("(").Write(parenthesized.Inner).Write(")");
+
+                case AstMethodDeclaration methodDeclaration:
+                    return Write("fn ")
+                        .Write(" ")
+                        .Write(methodDeclaration.Name)
+                        .Write("(")
+                        .Write(methodDeclaration.Parameters, ", ")
+                        .Write(")")
+                        .Write(" : ")
+                        .Write(methodDeclaration.Type)
+                        .WriteLine()
+                        .Write(" => ")
+                        .Write(methodDeclaration.Body)
+                        .WriteLine();
+
+                case AstNamespace astNamespace:
+                    return astNamespace.Children.Aggregate(this, (w, n) => w.Write(n));
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(node));

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Parakeet;
+using Parakeet.Demos;
 using Parakeet.Demos.CSharp;
 
 namespace PlatoAst
@@ -19,9 +21,12 @@ namespace PlatoAst
             return AstInvoke.Create(AstIntrinsic.Create(name), args);
         }
 
+        public AstNode ToAst<T>(CstFilter<T> filter) where T: CstNode
+            => ToAst(filter.Node);
+
         public AstNode ToAst(CstExpression expr)
         {
-            var leaf = ToAst(expr.LeafExpression);
+            var leaf = ToAst(expr.LeafExpression.Node);
             var r = leaf;
             foreach (var postfix in expr.PostfixOperator.Nodes)
             {
@@ -34,35 +39,35 @@ namespace PlatoAst
 
                     throw new NotImplementedException();
                 }
-                else if (postfix.BinaryOperation != null)
+                else if (postfix.BinaryOperation.Present)
                 {
                     return ToIntrinsic(
                         postfix.BinaryOperation.Node.BinaryOperator.Node.Text,
-                        leaf,
+                        leaf,   
                         ToAst(postfix.BinaryOperation.Node.Expression));
                 }
-                else if (postfix.ConditionalMemberAccess != null)
+                else if (postfix.ConditionalMemberAccess.Present)
                 {
                     return ToIntrinsic("?.", leaf, postfix.MemberAccess.Node.Identifier.Node.Text.ToConstant());
                 }
-                else if (postfix.FunctionArgs != null)
+                else if (postfix.FunctionArgs.Present)
                 {
                     return AstInvoke.Create(leaf, 
                         postfix.FunctionArgs.Node.FunctionArg.Nodes.Select(n => ToAst(n.Expression)).ToArray());
                 }
-                else if (postfix.Indexer != null)
+                else if (postfix.Indexer.Present)
                 {
                     return ToIntrinsic("[]", leaf, ToAst(postfix.Indexer.Node.Expression));
                 }
-                else if (postfix.IsOperation != null)
+                else if (postfix.IsOperation.Present)
                 {
                     throw new NotImplementedException();
                 }
-                else if (postfix.MemberAccess != null)
+                else if (postfix.MemberAccess.Present)
                 {
                     return ToIntrinsic(".", leaf, postfix.MemberAccess.Node.Identifier.Node.Text.ToConstant());
                 }
-                else if (postfix.TernaryOperation != null)
+                else if (postfix.TernaryOperation.Present)
                 {
                     return AstConditional.Create(
                         leaf,
@@ -77,11 +82,6 @@ namespace PlatoAst
             }
 
             return leaf;
-        }
-
-        public AstNode ToAst<T>(CstOptional<T> self) where T : CstNode
-        {
-            return self.Present ? ToAst(self.Node) : AstNoop.Default;
         }
 
         public IReadOnlyList<AstVarDef> ToAstList(CstLambdaParameters parameters)
@@ -102,22 +102,30 @@ namespace PlatoAst
 
         public AstTypeNode ToAst(CstTypeExpr type)
         {
+            if (type == null) return null;
             return ToAst(type.InnerTypeExpr.Node);
+        }
+
+        public AstTypeNode ToAst(CstCompoundTypeExpr typeExpr)
+        {
+            return new AstTypeNode("ValueTuple", typeExpr.TypeExpr.Nodes.Select(ToAst).ToArray());
         }
 
         public AstTypeNode ToAst(CstInnerTypeExpr innerType)
         {
-            if (innerType.CompoundOrSimpleTypeExpr.Node?.CompoundTypeExpr != null)
-                throw new NotImplementedException("Compound types not supported yet");
+            if (innerType.CompoundOrSimpleTypeExpr.Node?.CompoundTypeExpr.Present == true)
+            {
+                return ToAst(innerType.CompoundOrSimpleTypeExpr.Node.CompoundTypeExpr.Node);
+            }
 
-            var qi = innerType.CompoundOrSimpleTypeExpr.Node?.QualifiedIdentifier;
+            var qi = innerType.CompoundOrSimpleTypeExpr.Node?.SimpleTypExpr.Node?.QualifiedIdentifier;
 
             if (qi == null)
                 return AstTypeNode.Create("_UNTYPED_");
 
             var name = string.Join(".", qi.Node.Identifier.Nodes.Select(n => n.Text));
 
-            if (innerType.ArrayRankSpecifiers.Children.Count > 0)
+            if (innerType.ArrayRankSpecifiers.Node.ArrayRankSpecifier.Nodes.Count > 0)
                 throw new NotImplementedException("Array rank specifiers not supported yet");
 
             var ps = new List<AstTypeNode>();
@@ -130,11 +138,6 @@ namespace PlatoAst
             }
 
             return AstTypeNode.Create(name, ps.ToArray());
-        }
-
-        public AstIdentifier ToAst(CstIdentifier ident)
-        {
-            return new AstIdentifier(ident.Text);
         }
 
         public AstNode ToAst(CstForEachStatement forEach)
@@ -151,13 +154,237 @@ namespace PlatoAst
                     ToAst(forEach.Statement)));
         }
 
-        public AstNode ToAst<T>(CstFilter<T> filter) where T : CstNode
+        public AstIdentifier ToAst(CstTypeParameter typeParameter)
+            => ToAst(typeParameter.Identifier.Node);
+
+        public AstParameterDeclaration ToAst(CstFunctionParameter fp)
         {
-            return ToAst(filter.Node);
+            return new AstParameterDeclaration(
+                ToAst(fp.Identifier.Node),
+                ToAst(fp.TypeExpr.Node));
+        }
+
+        public AstMemberDeclaration ToAst(CstMemberDeclaration memberDeclaration)
+        {
+            // AttributeList
+            // Modifier
+            // AccessSpecifier
+
+            var attributes = memberDeclaration.DeclarationPreamble.Node?.AttributeList.Nodes;
+            var acc = memberDeclaration.DeclarationPreamble.Node?.AccessSpecifier.Nodes;
+            var mod = memberDeclaration.DeclarationPreamble.Node?.Modifier.Nodes;
+
+            // TODO: validate that those things work 
+
+            if (memberDeclaration.TypeDeclaration.Present)
+            {
+                throw new NotImplementedException();
+            }
+            else if (memberDeclaration.MethodDeclaration.Present)
+            {
+                var md = memberDeclaration.MethodDeclaration.Node;
+                var name = md.Identifier.Node.Text;
+                var ps = md.FunctionParameterList.Node.FunctionParameter.Nodes.Select(ToAst).ToList();
+                Debug.WriteLine($"TODO: need to properly handle parameterized functions. I don't thing they parse.");
+                var ts = Enumerable.Empty<AstIdentifier>();
+                return new AstMethodDeclaration(
+                    ToAst(md.Identifier.Node),
+                    true, 
+                    ToAst(md.TypeExpr.Node),
+                    ps,
+                    ts,
+                    ToAst(md.FunctionBody.Node));
+                    // parameters
+                    // type parameters
+                    // body
+            }
+            else if (memberDeclaration.ConstructorDeclaration.Present)
+            {
+                throw new NotImplementedException();
+            }
+            else if (memberDeclaration.ConverterDeclaration.Present)
+            {
+                throw new NotImplementedException();
+            }
+            else if (memberDeclaration.FieldDeclaration.Present)
+            {
+                throw new NotImplementedException();
+            }
+            else if (memberDeclaration.IndexerDeclaration.Present)
+            {
+                throw new NotImplementedException();
+            }
+            else if (memberDeclaration.OperatorDeclaration.Present)
+            {
+                throw new NotImplementedException();
+            }
+            else if (memberDeclaration.PropertyDeclaration.Present)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                throw new Exception("Unrecognized member type");
+            }
+        }
+
+        public AstTypeDeclaration ToAst(CstTypeDeclarationWithPreamble typeDecl)
+        {
+            Debug.WriteLine("TODO: store the attributes (preamble)");
+            var td = typeDecl.TypeDeclaration.Node;
+            return new AstTypeDeclaration(
+                ToAst(td.Identifier.Node),
+                td.TypeParameterList.Node?.TypeParameter.Nodes.Select(ToAst) 
+                    ?? Enumerable.Empty<AstIdentifier>(),
+                td.BaseClassList.Node?.TypeExpr.Nodes.Select(ToAst)
+                    ?? Enumerable.Empty<AstTypeNode>(),
+                td.MemberDeclaration.Nodes.Select(ToAst).ToArray());
+        }
+
+        public AstDirective ToAst(CstUsingDirective usingDirective)
+        {
+            return new AstDirective("using", usingDirective.QualifiedIdentifier.Text);
+        }
+
+        public AstNamespace ToAst(CstNamespaceDeclaration cstNamespaceDeclaration)
+        {
+            return new AstNamespace(
+                ToAst(cstNamespaceDeclaration.QualifiedIdentifier.Node),
+                cstNamespaceDeclaration.UsingDirective.Nodes.Select(ToAst),
+                cstNamespaceDeclaration.TypeDeclarationWithPreamble.Nodes.Select(ToAst),
+
+                // TODO: this will have to be implemented when passed a source file with nested namespaces
+                Enumerable.Empty<AstNamespace>()
+            );
+        }
+
+        public AstVarDef ToAst(CstLambdaParameter lp)
+        {
+            return new AstVarDef(
+                ToAst(lp.Identifier.Node), null, ToAst(lp.TypeExpr.Node));
+        }
+
+        public AstConstant ToAst(CstLiteral literal)
+        {
+            if (literal.NullLiteral.Present)
+            {
+                return AstConstant.Null;
+            }
+
+            if (literal.BinaryLiteral.Present)
+            {
+                throw new NotImplementedException();
+            }
+
+            if (literal.BooleanLiteral.Present)
+            {
+                return AstConstant.Create(bool.Parse(literal.Text));
+            }
+
+            if (literal.CharLiteral.Present)
+            {
+                 return AstConstant.Create(char.Parse(literal.Text));
+            }
+
+            if (literal.FloatLiteral.Present)
+            {
+                return AstConstant.Create(double.Parse(literal.Text));
+            }
+
+            if (literal.HexLiteral.Present)
+            {
+                throw new NotImplementedException();
+            }
+
+            if (literal.IntegerLiteral.Present)
+            {
+                return AstConstant.Create(int.Parse(literal.Text));
+            }
+
+            if (literal.StringLiteral.Present)
+            {
+                var t = literal.Text;
+                return AstConstant.Create(t.Substring(1, t.Length - 2));
+            }
+
+            throw new Exception($"Unrecognized literal: {literal.Text} of type {literal.GetType()}");
+        }
+
+        public AstNode ToAst(CstLeafExpression expr)
+        {
+            if (expr.Identifier.Present)
+            {
+                return AstIdentifier.Create(expr.Identifier.Text);
+            }
+            else if (expr.Default.Present)
+            {
+                if (expr.Default.Node.TypeExpr.Present)
+                    return ToIntrinsic("default", ToAst(expr.Default.Node.TypeExpr));
+                
+                // TODO: What type is this even, and how will it be figured out? 
+                return ToIntrinsic("default");
+            }
+            else if (expr.CastExpression.Present)
+            {
+                return ToIntrinsic("cast", 
+                    ToAst(expr.CastExpression.Node.TypeExpr),
+                    ToAst(expr.CastExpression.Node.Expression));
+            }
+            else if (expr.LambdaExpr.Present)
+            {
+                var body = ToAst(expr.LambdaExpr.Node.LambdaBody);
+                var parameters = expr.LambdaExpr.Node.LambdaParameters.Node.LambdaParameter.Nodes
+                    .Select(ToAst).ToArray();
+                return new AstLambda(body, parameters);
+                throw new NotImplementedException();
+            }
+            else if (expr.Literal.Present)
+            {
+                return ToAst(expr.Literal.Node);
+            }
+            else if (expr.NameOf.Present)
+            {
+                return new AstConstant(expr.NameOf.Node.Expression.Text);  
+            }
+            else if (expr.NewOperation.Present)
+            {
+                var newOp = expr.NewOperation.Node;
+                if (newOp.ArraySizeSpecifier.Present)
+                    throw new NotImplementedException();
+                if (newOp.Initializer.Present)
+                    throw new NotImplementedException();
+                var args = newOp.FunctionArgs.Node.FunctionArg.Nodes
+                    .Select(ToAst)
+                    .Prepend(ToAst(newOp.TypeExpr));
+
+                return ToIntrinsic("new", args.ToArray());
+            }
+            else if (expr.ParenthesizedExpression.Present)
+            {
+                return new AstParenthesized(ToAst(expr.ParenthesizedExpression.Node.Expression));
+            }
+            else if (expr.StringInterpolation.Present)
+            {
+                return ToIntrinsic("interpolate",
+                    expr.StringInterpolation.Node.StringInterpolationContent.Nodes.Select(ToAst).ToArray());
+            }
+            else if (expr.ThrowExpression.Present)
+            {
+                return ToIntrinsic("throw", ToAst(expr.ThrowExpression.Node.Expression));
+            }
+            else if (expr.TypeOf.Present)
+            {
+                return ToIntrinsic("typeof", ToAst(expr.TypeOf.Node.TypeExpr));
+            }
+
+            throw new Exception("Unrecognized leaf expression");
         }
 
         public AstNode ToAst(CstNode node)
         {
+            if (node == null)
+                return null;
+
             switch (node)
             {
                 case CstBaseCall cstBaseCall:
@@ -253,14 +480,25 @@ namespace PlatoAst
                     return ToAst(cstExpression);
                 
                 case CstExpressionBody cstExpressionBody:
-                    return cstExpressionBody.CompoundStatement != null ? ToAst(cstExpressionBody.CompoundStatement) : ToAst(cstExpressionBody.Expression);
+                    return cstExpressionBody.CompoundStatement.Present
+                        ? ToAst(cstExpressionBody.CompoundStatement.Node)
+                        : cstExpressionBody.Expression.Present
+                            ? ToAst(cstExpressionBody.Expression.Node)
+                            : throw new Exception("Invalid expression body");
 
                 case CstExpressionStatement cstExpressionStatement:
                     return ToAst(cstExpressionStatement.Expression);
 
-                case CstFile cstFile:
-                    return AstError.Create($"{node.GetType()} is not implemented");
+                case CstNamespaceDeclaration cstNamespaceDeclaration:
+                    return ToAst(cstNamespaceDeclaration);
 
+                case CstFile cstFile:
+                    return new AstNamespace(
+                        null, 
+                        cstFile.UsingDirective.Nodes.Select(ToAst),
+                        Enumerable.Empty<AstTypeDeclaration>(),
+                        cstFile.NamespaceDeclaration.Nodes.Select(ToAst));
+                
                 case CstScript cstScript:
                     return AstMulti.Create(cstScript.TypeDirectiveOrStatement.Nodes.Select(ToAst).ToArray());
 
@@ -305,7 +543,7 @@ namespace PlatoAst
                         ToAst(cstLambdaParameter.TypeExpr) as AstTypeNode);
                 
                 case CstLeafExpression cstLeafExpression:
-                    return ToAst(cstLeafExpression.Node);
+                    return ToAst(cstLeafExpression);
 
                 case CstNameOf cstNameOf:
                     return ToIntrinsic("nameof", ToAst(cstNameOf.Expression));
@@ -379,10 +617,36 @@ namespace PlatoAst
                         ? (AstNode)CreateVarDef(forLoopInit.VarDecl.Node, forLoopInit.VarDecl
                             .Node.VarWithInitialization.Node)
                         : AstNoop.Default;
+
+                case CstFunctionBody fxnBody:
+                    return fxnBody.CompoundStatement.Present 
+                        ? ToAst(fxnBody.CompoundStatement.Node)
+                        : fxnBody.ExpressionBody.Present
+                        ? ToAst(fxnBody.ExpressionBody.Node)
+                        : throw new Exception();
+
+                case CstInitialization cstInit:
+                    return ToAst(cstInit);
+
+                case CstFunctionArg functionArg:
+                    return ToAst(functionArg);
             }
 
             return AstError.Create($"{node.GetType()} had no case statement");
         }
+
+        public AstNode ToAst(CstFunctionArg functionArg)
+        {
+            if (functionArg.FunctionArgKeyword.Nodes.Count > 0)
+                throw new NotImplementedException();
+            return ToAst(functionArg.Expression.Node);
+        }
+
+        public AstIdentifier ToAst(CstQualifiedIdentifier cstQualifiedIdentifier)
+            => new AstIdentifier(cstQualifiedIdentifier.Text);
+
+        public AstIdentifier ToAst(CstIdentifier cstIdentifier)
+            => new AstIdentifier(cstIdentifier.Text);
 
         public IEnumerable<AstVarDef> CreateVarDefs(CstVarDecl cstVarDecl)
         {
@@ -392,6 +656,25 @@ namespace PlatoAst
             }
         }
 
+        public AstNode ToAst(CstInitialization init)
+        {
+            var val = init.InitializationValue.Node;
+            if (val == null)
+                return null;
+            if (val.Expression.Present)
+            {
+                if (val.ArrayInitializationValue.Present)
+                    throw new Exception("Initialization expression and array initialization are both present");
+                return ToAst(val.Expression);
+            }
+            if (val.ArrayInitializationValue.Present)
+            {
+                throw new NotImplementedException();
+            }
+
+            return null;
+        }
+
         public AstVarDef CreateVarDef(CstVarDecl cstVarDecl, CstVarWithInitialization cstInit)
         {
             return AstVarDef.Create(
@@ -399,7 +682,7 @@ namespace PlatoAst
                 cstInit.Initialization.Present
                     ? ToAst(cstInit.Initialization.Node) 
                     : AstNoop.Default,
-                ToAst(cstVarDecl.TypeExpr) as AstTypeNode);
+                ToAst(cstVarDecl.TypeExpr.Node));
         }
     }
 
