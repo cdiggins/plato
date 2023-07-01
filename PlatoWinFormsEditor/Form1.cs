@@ -10,8 +10,11 @@ namespace PlatoWinFormsEditor
         public Form1()
         {
             InitializeComponent();
-            var inputFile = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\math.funcs.plato.cs";
-            inputEdit.Text = File.ReadAllText(inputFile);
+            var inputFile1 = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\math.types.plato.cs";
+            var inputFile2 = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\math.funcs.plato.cs";
+            var input1 = File.ReadAllText(inputFile1);
+            var input2 = File.ReadAllText(inputFile2);
+            inputEdit.Text = input1 + Environment.NewLine + input2;
             Compile(inputEdit.Text);
         }
 

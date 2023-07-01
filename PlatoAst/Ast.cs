@@ -209,10 +209,8 @@ namespace PlatoAst
 
     public abstract class AstMemberDeclaration : AstDeclaration
     {
-        public bool IsStatic { get; }
         public AstTypeNode Type { get; }
-
-        protected AstMemberDeclaration(AstIdentifier name, bool isStatic, AstTypeNode type) : base(name) => (IsStatic, Type) = (isStatic, type);
+        protected AstMemberDeclaration(AstIdentifier name, AstTypeNode type) : base(name) => (Type) = (type);
         public override IEnumerable<AstNode> Children => base.Children.Append(Type);
     }
 
@@ -242,7 +240,7 @@ namespace PlatoAst
     {
         public AstNode Node { get; }
 
-        public AstFieldDeclaration(AstIdentifier name, bool isStatic, AstTypeNode type, AstNode node) : base(name, isStatic, type) => Node = node;
+        public AstFieldDeclaration(AstIdentifier name, AstTypeNode type, AstNode node) : base(name, type) => Node = node;
         public override IEnumerable<AstNode> Children => base.Children.Append(Node);
     }
 
@@ -251,7 +249,7 @@ namespace PlatoAst
         public AstNode Body { get; }
         public AstNode Value { get; }
 
-        public AstPropertyDeclaration(AstIdentifier name, bool isStatic, AstTypeNode type, AstNode body, AstNode value) : base(name, isStatic, type)
+        public AstPropertyDeclaration(AstIdentifier name, AstTypeNode type, AstNode body, AstNode value) : base(name, type)
         {
             Body = body;
             Value = value;
@@ -278,11 +276,11 @@ namespace PlatoAst
         public IReadOnlyList<AstIdentifier> TypeParameters { get; }
         public IReadOnlyList<AstParameterDeclaration> Parameters { get; }
 
-        public AstMethodDeclaration(AstIdentifier name, bool isStatic, 
+        public AstMethodDeclaration(AstIdentifier name,
             AstTypeNode type,
             IEnumerable<AstParameterDeclaration> parameters,
             IEnumerable<AstIdentifier> typeParameters, AstNode body) :
-            base(name, isStatic, type)
+            base(name, type)
         {
             Body = body;
             Parameters = parameters.ToList();

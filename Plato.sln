@@ -3,16 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoAnalyzer", "legacy\Sandbox\PlatoAnalyzer\PlatoAnalyzer.csproj", "{5B286A6B-659B-49EA-918E-4041A06C0EC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Platonic.CSharp.Analyzer", "legacy\Sandbox\PlatoAnalyzer\Platonic.CSharp.Analyzer.csproj", "{5B286A6B-659B-49EA-918E-4041A06C0EC1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "notes", "notes", "{239039FA-2578-4851-8C40-88098C7EE5D4}"
 	ProjectSection(SolutionItems) = preProject
 		notes\notes.txt = notes\notes.txt
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoStandardLibrary", "PlatoStandardLibrary\PlatoStandardLibrary.csproj", "{66402015-EB96-4A58-AFA1-BF2BD41DF14C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Platonic.CSharp.StandardLibrary", "PlatoStandardLibrary\Platonic.CSharp.StandardLibrary.csproj", "{66402015-EB96-4A58-AFA1-BF2BD41DF14C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoCompiler", "PlatoCompiler\PlatoCompiler.csproj", "{33E56AB3-CAD2-499D-AE06-0AD28FC77B67}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Platonic.CSharp.Compiler", "PlatoCompiler\Platonic.CSharp.Compiler.csproj", "{33E56AB3-CAD2-499D-AE06-0AD28FC77B67}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTypeInference", "PlatoTypeInference\PlatoTypeInference.csproj", "{71C5FB27-E2C3-4329-92F5-0185E552B287}"
 EndProject
@@ -38,7 +38,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoAst", "PlatoAst\PlatoA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoEditor", "PlatoEditor\PlatoEditor.csproj", "{E8B815E3-ED1A-47F5-9DE8-DE654B786B20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatoWinFormsEditor", "PlatoWinFormsEditor\PlatoWinFormsEditor.csproj", "{2F263E40-7453-40BD-B053-4FF301585652}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoWinFormsEditor", "PlatoWinFormsEditor\PlatoWinFormsEditor.csproj", "{2F263E40-7453-40BD-B053-4FF301585652}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

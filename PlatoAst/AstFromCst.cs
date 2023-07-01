@@ -164,7 +164,19 @@ namespace PlatoAst
                 ToAst(fp.TypeExpr.Node));
         }
 
-        public AstMemberDeclaration ToAst(CstMemberDeclaration memberDeclaration)
+        public IEnumerable<AstFieldDeclaration> ToAst(CstFieldDeclaration fieldDeclaration)
+        {
+            var varDecl = fieldDeclaration.VarDeclStatement.Node.VarDecl.Node;
+            var type = ToAst(varDecl.TypeExpr.Node);
+            foreach (var node in varDecl.VarWithInitialization.Nodes)
+            {
+                var name = ToAst(node.Identifier.Node);
+                var val = ToAst(node.Initialization.Node);
+                yield return new AstFieldDeclaration(name, type, val);
+            }
+        }
+
+        public IEnumerable<AstMemberDeclaration> ToAst(CstMemberDeclaration memberDeclaration)
         {
             // AttributeList
             // Modifier
@@ -187,9 +199,8 @@ namespace PlatoAst
                 var ps = md.FunctionParameterList.Node.FunctionParameter.Nodes.Select(ToAst).ToList();
                 Debug.WriteLine($"TODO: need to properly handle parameterized functions. I don't thing they parse.");
                 var ts = Enumerable.Empty<AstIdentifier>();
-                return new AstMethodDeclaration(
+                yield return new AstMethodDeclaration(
                     ToAst(md.Identifier.Node),
-                    true, 
                     ToAst(md.TypeExpr.Node),
                     ps,
                     ts,
@@ -208,7 +219,9 @@ namespace PlatoAst
             }
             else if (memberDeclaration.FieldDeclaration.Present)
             {
-                throw new NotImplementedException();
+                var fields = ToAst(memberDeclaration.FieldDeclaration.Node);
+                foreach (var x in fields)
+                    yield return x;
             }
             else if (memberDeclaration.IndexerDeclaration.Present)
             {
@@ -238,7 +251,7 @@ namespace PlatoAst
                     ?? Enumerable.Empty<AstIdentifier>(),
                 td.BaseClassList.Node?.TypeExpr.Nodes.Select(ToAst)
                     ?? Enumerable.Empty<AstTypeNode>(),
-                td.MemberDeclaration.Nodes.Select(ToAst).ToArray());
+                td.MemberDeclaration.Nodes.SelectMany(ToAst).ToArray());
         }
 
         public AstDirective ToAst(CstUsingDirective usingDirective)

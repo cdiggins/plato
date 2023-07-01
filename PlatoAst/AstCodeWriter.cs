@@ -35,7 +35,17 @@ namespace PlatoAst
 
         public AstCodeWriter Write(IEnumerable<AstNode> nodes, string sep = "")
         {
-            return nodes.Aggregate(this, (cb, n) => cb.Write(n));
+            var first = true;
+            var r = this;
+            foreach (var n in nodes)
+            {
+                if (!first)
+                    r = r.Write(sep);
+                else
+                    first = false;
+                r = r.Write(n);
+            }
+            return r;
         }
 
         public AstCodeWriter ToCSharp(AstConstant c)
@@ -59,13 +69,13 @@ namespace PlatoAst
             switch (Lang)
             {
                 case Language.Pail:
-                    return Write("let ").Write(def.Name).Write(" =").Write(def.Value).WriteLine();
+                    return Write("let ").Write(def.Name).Write(" = ").Write(def.Value).WriteLine();
                 case Language.JavaScript:
-                    return Write("let ").Write(def.Name).Write(" =").Write(def.Value).WriteLine();
+                    return Write("let ").Write(def.Name).Write(" = ").Write(def.Value).WriteLine();
                 case Language.CSharp:
-                    return Write("var ").Write(def.Name).Write(" =").Write(def.Value).WriteLine();
+                    return Write("var ").Write(def.Name).Write(" = ").Write(def.Value).WriteLine();
                 case Language.CPlusPlus:
-                    return Write("auto ").Write(def.Name).Write(" =").Write(def.Value).WriteLine();
+                    return Write("auto ").Write(def.Name).Write(" = ").Write(def.Value).WriteLine();
                 case Language.Python:
                     return Write(def.Name).Write(" =").Write(def.Value).WriteLine();
                 default:
@@ -101,15 +111,11 @@ namespace PlatoAst
                     .Write(" else ")
                     .Write(astConditional.IfFalse);
             }
-            else 
+            else
             {
-                return Write(astConditional.Condition)
-                    .WriteLine("?")
-                    .Write(astConditional.IfTrue)
-                    .WriteLine()
-                    .Write(":")
-                    .Write(astConditional.IfFalse)
-                    .WriteLine();
+                return Write(astConditional.Condition).Indent().WriteLine()
+                    .Write("? ").Write(astConditional.IfTrue).WriteLine()
+                    .Write(": ").Write(astConditional.IfFalse).Dedent().WriteLine();
             }
         }
 
@@ -179,6 +185,12 @@ namespace PlatoAst
                 : name;
         }
 
+        public static AstCodeWriter Write<T>(AstCodeWriter w, T x)
+            where T : AstNode
+        {
+            return w.Write(x);
+        }
+
         public AstCodeWriter Write(AstNode node)
         {
             if (node == null)
@@ -235,20 +247,20 @@ namespace PlatoAst
                             var name = InstrinsicName(intr.Name);
                             return Write(name)
                                 .Write("( ")
-                                .WriteCommaList(astInvoke.AstArguments, (w, x) => w.Write(x))
+                                .WriteCommaList(astInvoke.AstArguments, Write)
                                 .Write(")");
                         }
                     }
 
                     return Write(astInvoke.Function)
                         .Write("( ")
-                        .WriteCommaList(astInvoke.AstArguments, (w, x) => w.Write(x))
+                        .WriteCommaList(astInvoke.AstArguments, Write)
                         .Write(")");
                 }
 
                 case AstLambda astLambda:
                     return Write("(")
-                        .WriteCommaList(astLambda.Parameters, (w, x) => w.Write(x))
+                        .WriteCommaList(astLambda.Parameters, Write)
                         .Write(") => ")
                         .Write(astLambda.Body)
                         .WriteLine();
@@ -286,10 +298,10 @@ namespace PlatoAst
 
                 case AstTypeDeclaration typeDeclaration:
                 {
-                    var r = Write("class ").Write(typeDeclaration.Name);
-                    r.WriteLine("{");
+                    var r = Write("class ").WriteLine(typeDeclaration.Name);
+                    r = r.WriteLine("{").Indent();
                     r = typeDeclaration.Members.Aggregate(r, (w, n) => w.Write(n));
-                    r = r.WriteLine("}");
+                    r = r.Dedent().WriteLine("}");
                     return r;
                 }
 
@@ -309,7 +321,9 @@ namespace PlatoAst
                     return WriteLine($"#directive {directive.Argument}");
 
                 case AstFieldDeclaration fieldDeclaration:
-                    return Write("field ").Write(fieldDeclaration.Type).Write(" ").Write(fieldDeclaration.Name).WriteEol();
+                    return Write("field ")
+                        .WriteTypedName(fieldDeclaration.Name, fieldDeclaration.Type)
+                        .WriteEol();
 
                 case AstPropertyDeclaration propertyDeclaration:
                     return Write("property ")
@@ -328,7 +342,7 @@ namespace PlatoAst
                         .Write(" ")
                         .Write(methodDeclaration.Name)
                         .Write("(")
-                        .Write(methodDeclaration.Parameters, ", ")
+                        .WriteCommaList(methodDeclaration.Parameters, Write)
                         .Write(")")
                         .Write(" : ")
                         .Write(methodDeclaration.Type)
