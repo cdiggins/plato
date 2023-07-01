@@ -17,10 +17,11 @@ namespace Plato
     public class VectorAttribute : Attribute { }
     public class ValueAttribute : Attribute { }
     public class MeasureAttribute : Attribute { }
-    public class NumberAttribute : Attribute { }
+    public class NumericalAttribute : Attribute { }
     public class IntervalAttribute : Attribute { }
     public class OperationsAttribute : Attribute { }
     public class VectorizedAttribute : Attribute { }
+    public class IntrinsicAttribute : Attribute { }
 
     class Constants
     {

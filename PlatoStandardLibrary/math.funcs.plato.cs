@@ -408,6 +408,9 @@ namespace Plato.__FUNCS__
         Interval CenterAt(Interval interval, double value = 0) => Offset(interval, value - Center(interval));
     }
 
+    /// <summary>
+    /// This is an example of why Plato is so powerful: 
+    /// </summary>
     [Operations]
     class EasingOperations
     {
@@ -613,12 +616,12 @@ namespace Plato.__FUNCS__
 
         // TODO: I need a "Matrix2"
         /*
-        double Line(Double2 p, Line2D line, double thickness)
+        double Line3D(Double2 p, Line2D line3D, double thickness)
         {
-            var d = (line.B - line.A) / line.Length();
-            var q = (p - (line.A + line.B) * 0.5);
+            var d = (line3D.B - line3D.A) / line3D.Length();
+            var q = (p - (line3D.A + line3D.B) * 0.5);
             q = Mat2(d.x, -d.y, d.y, d.x) * q;
-            q = Abs(q) - new Double2(line.Length(), thickness) * 0.5;
+            q = Abs(q) - new Double2(line3D.Length(), thickness) * 0.5;
             return q.ClampPositive().Length() + Max(q.x, q.y).ClampNegative();
         }*/
 
@@ -678,6 +681,6 @@ namespace Plato.__FUNCS__
             => p => func(p).Abs() - r;
 
         Func<Double2, double> RepeatSDF(Func<Double2, double> func, Double2 period)
-            => p => func((p + new Double2(0.5, 0.5) * period).Modulo(period) - period * 0.5);
+            => p => func((p + (0.5, 0.5) * period) % period - period * 0.5);
     }
 }

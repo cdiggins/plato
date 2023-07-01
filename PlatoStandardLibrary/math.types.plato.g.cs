@@ -1368,7 +1368,7 @@ public Double3 Scale { get; }
 public static implicit operator Transform((Double3 Translation, Rotation Rotation, Double3 Scale) tuple) => new Transform(tuple.Translation, tuple.Rotation, tuple.Scale);
 public static implicit operator (Double3 Translation, Rotation Rotation, Double3 Scale)(Transform self) => (self.Translation, self.Rotation, self.Scale);
 public void Deconstruct(out Double3 translation, out Rotation rotation, out Double3 scale) => (translation, rotation, scale) = (Translation, Rotation, Scale);
-public override string ToString() => $"{{ \"Translation\" : { Translation }, \"Rotation\" : { Rotation }, \"Scale\" : { Scale } }}";
+public override string ToString() => $"{{ \"Translation\" : { Translation }, \"Rotation3D\" : { Rotation }, \"Scale\" : { Scale } }}";
 public override bool Equals(object other) => other is Transform typedOther && this == typedOther;
 public override int GetHashCode() => (Translation, Rotation, Scale).GetHashCode();
 public static readonly Transform Default = default;
@@ -1528,13 +1528,13 @@ public static Complex MaxValue(this Complex _) => Complex.MaxValue;
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct Ray
 {
-public Ray(Double3 direction, Point position) => (Direction, Position) = (direction, position);
-public static Ray Create(Double3 direction, Point position) => new Ray(direction, position);
+public Ray(Double3 direction, Point3D position) => (Direction, Position) = (direction, position);
+public static Ray Create(Double3 direction, Point3D position) => new Ray(direction, position);
 public Double3 Direction { get; }
-public Point Position { get; }
-public static implicit operator Ray((Double3 Direction, Point Position) tuple) => new Ray(tuple.Direction, tuple.Position);
-public static implicit operator (Double3 Direction, Point Position)(Ray self) => (self.Direction, self.Position);
-public void Deconstruct(out Double3 direction, out Point position) => (direction, position) = (Direction, Position);
+public Point3D Position { get; }
+public static implicit operator Ray((Double3 Direction, Point3D Position) tuple) => new Ray(tuple.Direction, tuple.Position);
+public static implicit operator (Double3 Direction, Point3D Position)(Ray self) => (self.Direction, self.Position);
+public void Deconstruct(out Double3 direction, out Point3D position) => (direction, position) = (Direction, Position);
 public override string ToString() => $"{{ \"Direction\" : { Direction }, \"Position\" : { Position } }}";
 public override bool Equals(object other) => other is Ray typedOther && this == typedOther;
 public override int GetHashCode() => (Direction, Position).GetHashCode();
@@ -1546,7 +1546,7 @@ public static Ray MaxValue = new Ray(Default.Direction.MaxValue(),Default.Positi
 public static bool operator ==(Ray a, Ray b) => (a.Direction == b.Direction) && (a.Position == b.Position);
 public static bool operator !=(Ray a, Ray b) => (a.Direction != b.Direction) || (a.Position != b.Position);
 public Ray WithDirection(Double3 value) => new Ray(value, Position);
-public Ray WithPosition(Point value) => new Ray(Direction, value);
+public Ray WithPosition(Point3D value) => new Ray(Direction, value);
 }
 public static partial class Intrinsics {
 public static Ray Default(this Ray _) => default(Ray);
@@ -1588,13 +1588,13 @@ public static Ray2D MaxValue(this Ray2D _) => Ray2D.MaxValue;
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct Sphere
 {
-public Sphere(Point center, double radius) => (Center, Radius) = (center, radius);
-public static Sphere Create(Point center, double radius) => new Sphere(center, radius);
-public Point Center { get; }
+public Sphere(Point3D center, double radius) => (Center, Radius) = (center, radius);
+public static Sphere Create(Point3D center, double radius) => new Sphere(center, radius);
+public Point3D Center { get; }
 public double Radius { get; }
-public static implicit operator Sphere((Point Center, double Radius) tuple) => new Sphere(tuple.Center, tuple.Radius);
-public static implicit operator (Point Center, double Radius)(Sphere self) => (self.Center, self.Radius);
-public void Deconstruct(out Point center, out double radius) => (center, radius) = (Center, Radius);
+public static implicit operator Sphere((Point3D Center, double Radius) tuple) => new Sphere(tuple.Center, tuple.Radius);
+public static implicit operator (Point3D Center, double Radius)(Sphere self) => (self.Center, self.Radius);
+public void Deconstruct(out Point3D center, out double radius) => (center, radius) = (Center, Radius);
 public override string ToString() => $"{{ \"Center\" : { Center }, \"Radius\" : { Radius } }}";
 public override bool Equals(object other) => other is Sphere typedOther && this == typedOther;
 public override int GetHashCode() => (Center, Radius).GetHashCode();
@@ -1605,7 +1605,7 @@ public static Sphere MinValue = new Sphere(Default.Center.MinValue(),Default.Rad
 public static Sphere MaxValue = new Sphere(Default.Center.MaxValue(),Default.Radius.MaxValue());
 public static bool operator ==(Sphere a, Sphere b) => (a.Center == b.Center) && (a.Radius == b.Radius);
 public static bool operator !=(Sphere a, Sphere b) => (a.Center != b.Center) || (a.Radius != b.Radius);
-public Sphere WithCenter(Point value) => new Sphere(value, Radius);
+public Sphere WithCenter(Point3D value) => new Sphere(value, Radius);
 public Sphere WithRadius(double value) => new Sphere(Center, value);
 }
 public static partial class Intrinsics {
@@ -1744,32 +1744,32 @@ public static Quad MinValue(this Quad _) => Quad.MinValue;
 public static Quad MaxValue(this Quad _) => Quad.MaxValue;
 }
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public partial struct Point
+public partial struct Point3D
 {
-public Point(Double3 value) => (Value) = (value);
-public static Point Create(Double3 value) => new Point(value);
+public Point3D(Double3 value) => (Value) = (value);
+public static Point3D Create(Double3 value) => new Point3D(value);
 public Double3 Value { get; }
-public static implicit operator Point(Double3 value) => new Point(value);
-public static implicit operator Double3(Point value) => value.Value;
+public static implicit operator Point3D(Double3 value) => new Point3D(value);
+public static implicit operator Double3(Point3D value) => value.Value;
 public override string ToString() => $"{{ \"Value\" : { Value } }}";
-public override bool Equals(object other) => other is Point typedOther && this == typedOther;
+public override bool Equals(object other) => other is Point3D typedOther && this == typedOther;
 public override int GetHashCode() => (Value).GetHashCode();
-public static readonly Point Default = default;
-public static Point Zero = new Point(Default.Value.Zero());
-public static Point One = new Point(Default.Value.One());
-public static Point MinValue = new Point(Default.Value.MinValue());
-public static Point MaxValue = new Point(Default.Value.MaxValue());
-public static bool operator ==(Point a, Point b) => (a.Value == b.Value);
-public static bool operator !=(Point a, Point b) => (a.Value != b.Value);
-public Point WithValue(Double3 value) => new Point(value);
+public static readonly Point3D Default = default;
+public static Point3D Zero = new Point3D(Default.Value.Zero());
+public static Point3D One = new Point3D(Default.Value.One());
+public static Point3D MinValue = new Point3D(Default.Value.MinValue());
+public static Point3D MaxValue = new Point3D(Default.Value.MaxValue());
+public static bool operator ==(Point3D a, Point3D b) => (a.Value == b.Value);
+public static bool operator !=(Point3D a, Point3D b) => (a.Value != b.Value);
+public Point3D WithValue(Double3 value) => new Point3D(value);
 }
 public static partial class Intrinsics {
-public static Point Default(this Point _) => default(Point);
-public static Point Zero(this Point _) => Point.Zero;
-public static Point One(this Point _) => Point.One;
-public static Double3 ToDouble3(this Point self) => self;
-public static Point MinValue(this Point _) => Point.MinValue;
-public static Point MaxValue(this Point _) => Point.MaxValue;
+public static Point3D Default(this Point3D _) => default(Point3D);
+public static Point3D Zero(this Point3D _) => Point3D.Zero;
+public static Point3D One(this Point3D _) => Point3D.One;
+public static Double3 ToDouble3(this Point3D self) => self;
+public static Point3D MinValue(this Point3D _) => Point3D.MinValue;
+public static Point3D MaxValue(this Point3D _) => Point3D.MaxValue;
 }
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct Point2D
@@ -1800,34 +1800,34 @@ public static Point2D MinValue(this Point2D _) => Point2D.MinValue;
 public static Point2D MaxValue(this Point2D _) => Point2D.MaxValue;
 }
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public partial struct Line
+public partial struct Line3D
 {
-public Line(Point a, Point b) => (A, B) = (a, b);
-public static Line Create(Point a, Point b) => new Line(a, b);
-public Point A { get; }
-public Point B { get; }
-public static implicit operator Line((Point A, Point B) tuple) => new Line(tuple.A, tuple.B);
-public static implicit operator (Point A, Point B)(Line self) => (self.A, self.B);
-public void Deconstruct(out Point a, out Point b) => (a, b) = (A, B);
+public Line3D(Point3D a, Point3D b) => (A, B) = (a, b);
+public static Line3D Create(Point3D a, Point3D b) => new Line3D(a, b);
+public Point3D A { get; }
+public Point3D B { get; }
+public static implicit operator Line3D((Point3D A, Point3D B) tuple) => new Line3D(tuple.A, tuple.B);
+public static implicit operator (Point3D A, Point3D B)(Line3D self) => (self.A, self.B);
+public void Deconstruct(out Point3D a, out Point3D b) => (a, b) = (A, B);
 public override string ToString() => $"{{ \"A\" : { A }, \"B\" : { B } }}";
-public override bool Equals(object other) => other is Line typedOther && this == typedOther;
+public override bool Equals(object other) => other is Line3D typedOther && this == typedOther;
 public override int GetHashCode() => (A, B).GetHashCode();
-public static readonly Line Default = default;
-public static Line Zero = new Line(Default.A.Zero(),Default.B.Zero());
-public static Line One = new Line(Default.A.One(),Default.B.One());
-public static Line MinValue = new Line(Default.A.MinValue(),Default.B.MinValue());
-public static Line MaxValue = new Line(Default.A.MaxValue(),Default.B.MaxValue());
-public static bool operator ==(Line a, Line b) => (a.A == b.A) && (a.B == b.B);
-public static bool operator !=(Line a, Line b) => (a.A != b.A) || (a.B != b.B);
-public Line WithA(Point value) => new Line(value, B);
-public Line WithB(Point value) => new Line(A, value);
+public static readonly Line3D Default = default;
+public static Line3D Zero = new Line3D(Default.A.Zero(),Default.B.Zero());
+public static Line3D One = new Line3D(Default.A.One(),Default.B.One());
+public static Line3D MinValue = new Line3D(Default.A.MinValue(),Default.B.MinValue());
+public static Line3D MaxValue = new Line3D(Default.A.MaxValue(),Default.B.MaxValue());
+public static bool operator ==(Line3D a, Line3D b) => (a.A == b.A) && (a.B == b.B);
+public static bool operator !=(Line3D a, Line3D b) => (a.A != b.A) || (a.B != b.B);
+public Line3D WithA(Point3D value) => new Line3D(value, B);
+public Line3D WithB(Point3D value) => new Line3D(A, value);
 }
 public static partial class Intrinsics {
-public static Line Default(this Line _) => default(Line);
-public static Line Zero(this Line _) => Line.Zero;
-public static Line One(this Line _) => Line.One;
-public static Line MinValue(this Line _) => Line.MinValue;
-public static Line MaxValue(this Line _) => Line.MaxValue;
+public static Line3D Default(this Line3D _) => default(Line3D);
+public static Line3D Zero(this Line3D _) => Line3D.Zero;
+public static Line3D One(this Line3D _) => Line3D.One;
+public static Line3D MinValue(this Line3D _) => Line3D.MinValue;
+public static Line3D MaxValue(this Line3D _) => Line3D.MaxValue;
 }
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct Line2D
@@ -2780,25 +2780,25 @@ public static Interval3D MaxValue(this Interval3D _) => Interval3D.MaxValue;
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct Capsule
 {
-public Capsule(Line line, double radius) => (Line, Radius) = (line, radius);
-public static Capsule Create(Line line, double radius) => new Capsule(line, radius);
-public Line Line { get; }
+public Capsule(Line3D line3D, double radius) => (Line3D, Radius) = (line3D, radius);
+public static Capsule Create(Line3D line3D, double radius) => new Capsule(line3D, radius);
+public Line3D Line3D { get; }
 public double Radius { get; }
-public static implicit operator Capsule((Line Line, double Radius) tuple) => new Capsule(tuple.Line, tuple.Radius);
-public static implicit operator (Line Line, double Radius)(Capsule self) => (self.Line, self.Radius);
-public void Deconstruct(out Line line, out double radius) => (line, radius) = (Line, Radius);
-public override string ToString() => $"{{ \"Line\" : { Line }, \"Radius\" : { Radius } }}";
+public static implicit operator Capsule((Line3D Line, double Radius) tuple) => new Capsule(tuple.Line, tuple.Radius);
+public static implicit operator (Line3D Line, double Radius)(Capsule self) => (self.Line3D, self.Radius);
+public void Deconstruct(out Line3D line3D, out double radius) => (line3D, radius) = (Line3D, Radius);
+public override string ToString() => $"{{ \"Line3D\" : { Line3D }, \"Radius\" : { Radius } }}";
 public override bool Equals(object other) => other is Capsule typedOther && this == typedOther;
-public override int GetHashCode() => (Line, Radius).GetHashCode();
+public override int GetHashCode() => (Line: Line3D, Radius).GetHashCode();
 public static readonly Capsule Default = default;
-public static Capsule Zero = new Capsule(Default.Line.Zero(),Default.Radius.Zero());
-public static Capsule One = new Capsule(Default.Line.One(),Default.Radius.One());
-public static Capsule MinValue = new Capsule(Default.Line.MinValue(),Default.Radius.MinValue());
-public static Capsule MaxValue = new Capsule(Default.Line.MaxValue(),Default.Radius.MaxValue());
-public static bool operator ==(Capsule a, Capsule b) => (a.Line == b.Line) && (a.Radius == b.Radius);
-public static bool operator !=(Capsule a, Capsule b) => (a.Line != b.Line) || (a.Radius != b.Radius);
-public Capsule WithLine(Line value) => new Capsule(value, Radius);
-public Capsule WithRadius(double value) => new Capsule(Line, value);
+public static Capsule Zero = new Capsule(Default.Line3D.Zero(),Default.Radius.Zero());
+public static Capsule One = new Capsule(Default.Line3D.One(),Default.Radius.One());
+public static Capsule MinValue = new Capsule(Default.Line3D.MinValue(),Default.Radius.MinValue());
+public static Capsule MaxValue = new Capsule(Default.Line3D.MaxValue(),Default.Radius.MaxValue());
+public static bool operator ==(Capsule a, Capsule b) => (a.Line3D == b.Line3D) && (a.Radius == b.Radius);
+public static bool operator !=(Capsule a, Capsule b) => (a.Line3D != b.Line3D) || (a.Radius != b.Radius);
+public Capsule WithLine(Line3D value) => new Capsule(value, Radius);
+public Capsule WithRadius(double value) => new Capsule(Line3D, value);
 }
 public static partial class Intrinsics {
 public static Capsule Default(this Capsule _) => default(Capsule);
@@ -2810,25 +2810,25 @@ public static Capsule MaxValue(this Capsule _) => Capsule.MaxValue;
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct Cylinder
 {
-public Cylinder(Line line, double radius) => (Line, Radius) = (line, radius);
-public static Cylinder Create(Line line, double radius) => new Cylinder(line, radius);
-public Line Line { get; }
+public Cylinder(Line3D line3D, double radius) => (Line3D, Radius) = (line3D, radius);
+public static Cylinder Create(Line3D line3D, double radius) => new Cylinder(line3D, radius);
+public Line3D Line3D { get; }
 public double Radius { get; }
-public static implicit operator Cylinder((Line Line, double Radius) tuple) => new Cylinder(tuple.Line, tuple.Radius);
-public static implicit operator (Line Line, double Radius)(Cylinder self) => (self.Line, self.Radius);
-public void Deconstruct(out Line line, out double radius) => (line, radius) = (Line, Radius);
-public override string ToString() => $"{{ \"Line\" : { Line }, \"Radius\" : { Radius } }}";
+public static implicit operator Cylinder((Line3D Line, double Radius) tuple) => new Cylinder(tuple.Line, tuple.Radius);
+public static implicit operator (Line3D Line, double Radius)(Cylinder self) => (self.Line3D, self.Radius);
+public void Deconstruct(out Line3D line3D, out double radius) => (line3D, radius) = (Line3D, Radius);
+public override string ToString() => $"{{ \"Line3D\" : { Line3D }, \"Radius\" : { Radius } }}";
 public override bool Equals(object other) => other is Cylinder typedOther && this == typedOther;
-public override int GetHashCode() => (Line, Radius).GetHashCode();
+public override int GetHashCode() => (Line: Line3D, Radius).GetHashCode();
 public static readonly Cylinder Default = default;
-public static Cylinder Zero = new Cylinder(Default.Line.Zero(),Default.Radius.Zero());
-public static Cylinder One = new Cylinder(Default.Line.One(),Default.Radius.One());
-public static Cylinder MinValue = new Cylinder(Default.Line.MinValue(),Default.Radius.MinValue());
-public static Cylinder MaxValue = new Cylinder(Default.Line.MaxValue(),Default.Radius.MaxValue());
-public static bool operator ==(Cylinder a, Cylinder b) => (a.Line == b.Line) && (a.Radius == b.Radius);
-public static bool operator !=(Cylinder a, Cylinder b) => (a.Line != b.Line) || (a.Radius != b.Radius);
-public Cylinder WithLine(Line value) => new Cylinder(value, Radius);
-public Cylinder WithRadius(double value) => new Cylinder(Line, value);
+public static Cylinder Zero = new Cylinder(Default.Line3D.Zero(),Default.Radius.Zero());
+public static Cylinder One = new Cylinder(Default.Line3D.One(),Default.Radius.One());
+public static Cylinder MinValue = new Cylinder(Default.Line3D.MinValue(),Default.Radius.MinValue());
+public static Cylinder MaxValue = new Cylinder(Default.Line3D.MaxValue(),Default.Radius.MaxValue());
+public static bool operator ==(Cylinder a, Cylinder b) => (a.Line3D == b.Line3D) && (a.Radius == b.Radius);
+public static bool operator !=(Cylinder a, Cylinder b) => (a.Line3D != b.Line3D) || (a.Radius != b.Radius);
+public Cylinder WithLine(Line3D value) => new Cylinder(value, Radius);
+public Cylinder WithRadius(double value) => new Cylinder(Line3D, value);
 }
 public static partial class Intrinsics {
 public static Cylinder Default(this Cylinder _) => default(Cylinder);
@@ -2840,25 +2840,25 @@ public static Cylinder MaxValue(this Cylinder _) => Cylinder.MaxValue;
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct Cone
 {
-public Cone(Line line, double radius) => (Line, Radius) = (line, radius);
-public static Cone Create(Line line, double radius) => new Cone(line, radius);
-public Line Line { get; }
+public Cone(Line3D line3D, double radius) => (Line3D, Radius) = (line3D, radius);
+public static Cone Create(Line3D line3D, double radius) => new Cone(line3D, radius);
+public Line3D Line3D { get; }
 public double Radius { get; }
-public static implicit operator Cone((Line Line, double Radius) tuple) => new Cone(tuple.Line, tuple.Radius);
-public static implicit operator (Line Line, double Radius)(Cone self) => (self.Line, self.Radius);
-public void Deconstruct(out Line line, out double radius) => (line, radius) = (Line, Radius);
-public override string ToString() => $"{{ \"Line\" : { Line }, \"Radius\" : { Radius } }}";
+public static implicit operator Cone((Line3D Line, double Radius) tuple) => new Cone(tuple.Line, tuple.Radius);
+public static implicit operator (Line3D Line, double Radius)(Cone self) => (self.Line3D, self.Radius);
+public void Deconstruct(out Line3D line3D, out double radius) => (line3D, radius) = (Line3D, Radius);
+public override string ToString() => $"{{ \"Line3D\" : { Line3D }, \"Radius\" : { Radius } }}";
 public override bool Equals(object other) => other is Cone typedOther && this == typedOther;
-public override int GetHashCode() => (Line, Radius).GetHashCode();
+public override int GetHashCode() => (Line: Line3D, Radius).GetHashCode();
 public static readonly Cone Default = default;
-public static Cone Zero = new Cone(Default.Line.Zero(),Default.Radius.Zero());
-public static Cone One = new Cone(Default.Line.One(),Default.Radius.One());
-public static Cone MinValue = new Cone(Default.Line.MinValue(),Default.Radius.MinValue());
-public static Cone MaxValue = new Cone(Default.Line.MaxValue(),Default.Radius.MaxValue());
-public static bool operator ==(Cone a, Cone b) => (a.Line == b.Line) && (a.Radius == b.Radius);
-public static bool operator !=(Cone a, Cone b) => (a.Line != b.Line) || (a.Radius != b.Radius);
-public Cone WithLine(Line value) => new Cone(value, Radius);
-public Cone WithRadius(double value) => new Cone(Line, value);
+public static Cone Zero = new Cone(Default.Line3D.Zero(),Default.Radius.Zero());
+public static Cone One = new Cone(Default.Line3D.One(),Default.Radius.One());
+public static Cone MinValue = new Cone(Default.Line3D.MinValue(),Default.Radius.MinValue());
+public static Cone MaxValue = new Cone(Default.Line3D.MaxValue(),Default.Radius.MaxValue());
+public static bool operator ==(Cone a, Cone b) => (a.Line3D == b.Line3D) && (a.Radius == b.Radius);
+public static bool operator !=(Cone a, Cone b) => (a.Line3D != b.Line3D) || (a.Radius != b.Radius);
+public Cone WithLine(Line3D value) => new Cone(value, Radius);
+public Cone WithRadius(double value) => new Cone(Line3D, value);
 }
 public static partial class Intrinsics {
 public static Cone Default(this Cone _) => default(Cone);
@@ -2870,27 +2870,27 @@ public static Cone MaxValue(this Cone _) => Cone.MaxValue;
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct Tube
 {
-public Tube(Line line, double innerradius, double outerradius) => (Line, InnerRadius, OuterRadius) = (line, innerradius, outerradius);
-public static Tube Create(Line line, double innerradius, double outerradius) => new Tube(line, innerradius, outerradius);
-public Line Line { get; }
+public Tube(Line3D line3D, double innerradius, double outerradius) => (Line3D, InnerRadius, OuterRadius) = (line3D, innerradius, outerradius);
+public static Tube Create(Line3D line3D, double innerradius, double outerradius) => new Tube(line3D, innerradius, outerradius);
+public Line3D Line3D { get; }
 public double InnerRadius { get; }
 public double OuterRadius { get; }
-public static implicit operator Tube((Line Line, double InnerRadius, double OuterRadius) tuple) => new Tube(tuple.Line, tuple.InnerRadius, tuple.OuterRadius);
-public static implicit operator (Line Line, double InnerRadius, double OuterRadius)(Tube self) => (self.Line, self.InnerRadius, self.OuterRadius);
-public void Deconstruct(out Line line, out double innerradius, out double outerradius) => (line, innerradius, outerradius) = (Line, InnerRadius, OuterRadius);
-public override string ToString() => $"{{ \"Line\" : { Line }, \"InnerRadius\" : { InnerRadius }, \"OuterRadius\" : { OuterRadius } }}";
+public static implicit operator Tube((Line3D Line, double InnerRadius, double OuterRadius) tuple) => new Tube(tuple.Line, tuple.InnerRadius, tuple.OuterRadius);
+public static implicit operator (Line3D Line, double InnerRadius, double OuterRadius)(Tube self) => (self.Line3D, self.InnerRadius, self.OuterRadius);
+public void Deconstruct(out Line3D line3D, out double innerradius, out double outerradius) => (line3D, innerradius, outerradius) = (Line3D, InnerRadius, OuterRadius);
+public override string ToString() => $"{{ \"Line3D\" : { Line3D }, \"InnerRadius\" : { InnerRadius }, \"OuterRadius\" : { OuterRadius } }}";
 public override bool Equals(object other) => other is Tube typedOther && this == typedOther;
-public override int GetHashCode() => (Line, InnerRadius, OuterRadius).GetHashCode();
+public override int GetHashCode() => (Line: Line3D, InnerRadius, OuterRadius).GetHashCode();
 public static readonly Tube Default = default;
-public static Tube Zero = new Tube(Default.Line.Zero(),Default.InnerRadius.Zero(),Default.OuterRadius.Zero());
-public static Tube One = new Tube(Default.Line.One(),Default.InnerRadius.One(),Default.OuterRadius.One());
-public static Tube MinValue = new Tube(Default.Line.MinValue(),Default.InnerRadius.MinValue(),Default.OuterRadius.MinValue());
-public static Tube MaxValue = new Tube(Default.Line.MaxValue(),Default.InnerRadius.MaxValue(),Default.OuterRadius.MaxValue());
-public static bool operator ==(Tube a, Tube b) => (a.Line == b.Line) && (a.InnerRadius == b.InnerRadius) && (a.OuterRadius == b.OuterRadius);
-public static bool operator !=(Tube a, Tube b) => (a.Line != b.Line) || (a.InnerRadius != b.InnerRadius) || (a.OuterRadius != b.OuterRadius);
-public Tube WithLine(Line value) => new Tube(value, InnerRadius, OuterRadius);
-public Tube WithInnerRadius(double value) => new Tube(Line, value, OuterRadius);
-public Tube WithOuterRadius(double value) => new Tube(Line, InnerRadius, value);
+public static Tube Zero = new Tube(Default.Line3D.Zero(),Default.InnerRadius.Zero(),Default.OuterRadius.Zero());
+public static Tube One = new Tube(Default.Line3D.One(),Default.InnerRadius.One(),Default.OuterRadius.One());
+public static Tube MinValue = new Tube(Default.Line3D.MinValue(),Default.InnerRadius.MinValue(),Default.OuterRadius.MinValue());
+public static Tube MaxValue = new Tube(Default.Line3D.MaxValue(),Default.InnerRadius.MaxValue(),Default.OuterRadius.MaxValue());
+public static bool operator ==(Tube a, Tube b) => (a.Line3D == b.Line3D) && (a.InnerRadius == b.InnerRadius) && (a.OuterRadius == b.OuterRadius);
+public static bool operator !=(Tube a, Tube b) => (a.Line3D != b.Line3D) || (a.InnerRadius != b.InnerRadius) || (a.OuterRadius != b.OuterRadius);
+public Tube WithLine(Line3D value) => new Tube(value, InnerRadius, OuterRadius);
+public Tube WithInnerRadius(double value) => new Tube(Line3D, value, OuterRadius);
+public Tube WithOuterRadius(double value) => new Tube(Line3D, InnerRadius, value);
 }
 public static partial class Intrinsics {
 public static Tube Default(this Tube _) => default(Tube);
@@ -2902,27 +2902,27 @@ public static Tube MaxValue(this Tube _) => Tube.MaxValue;
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct ConeSegment
 {
-public ConeSegment(Line line, double radius1, double radius2) => (Line, Radius1, Radius2) = (line, radius1, radius2);
-public static ConeSegment Create(Line line, double radius1, double radius2) => new ConeSegment(line, radius1, radius2);
-public Line Line { get; }
+public ConeSegment(Line3D line3D, double radius1, double radius2) => (Line3D, Radius1, Radius2) = (line3D, radius1, radius2);
+public static ConeSegment Create(Line3D line3D, double radius1, double radius2) => new ConeSegment(line3D, radius1, radius2);
+public Line3D Line3D { get; }
 public double Radius1 { get; }
 public double Radius2 { get; }
-public static implicit operator ConeSegment((Line Line, double Radius1, double Radius2) tuple) => new ConeSegment(tuple.Line, tuple.Radius1, tuple.Radius2);
-public static implicit operator (Line Line, double Radius1, double Radius2)(ConeSegment self) => (self.Line, self.Radius1, self.Radius2);
-public void Deconstruct(out Line line, out double radius1, out double radius2) => (line, radius1, radius2) = (Line, Radius1, Radius2);
-public override string ToString() => $"{{ \"Line\" : { Line }, \"Radius1\" : { Radius1 }, \"Radius2\" : { Radius2 } }}";
+public static implicit operator ConeSegment((Line3D Line, double Radius1, double Radius2) tuple) => new ConeSegment(tuple.Line, tuple.Radius1, tuple.Radius2);
+public static implicit operator (Line3D Line, double Radius1, double Radius2)(ConeSegment self) => (self.Line3D, self.Radius1, self.Radius2);
+public void Deconstruct(out Line3D line3D, out double radius1, out double radius2) => (line3D, radius1, radius2) = (Line3D, Radius1, Radius2);
+public override string ToString() => $"{{ \"Line3D\" : { Line3D }, \"Radius1\" : { Radius1 }, \"Radius2\" : { Radius2 } }}";
 public override bool Equals(object other) => other is ConeSegment typedOther && this == typedOther;
-public override int GetHashCode() => (Line, Radius1, Radius2).GetHashCode();
+public override int GetHashCode() => (Line: Line3D, Radius1, Radius2).GetHashCode();
 public static readonly ConeSegment Default = default;
-public static ConeSegment Zero = new ConeSegment(Default.Line.Zero(),Default.Radius1.Zero(),Default.Radius2.Zero());
-public static ConeSegment One = new ConeSegment(Default.Line.One(),Default.Radius1.One(),Default.Radius2.One());
-public static ConeSegment MinValue = new ConeSegment(Default.Line.MinValue(),Default.Radius1.MinValue(),Default.Radius2.MinValue());
-public static ConeSegment MaxValue = new ConeSegment(Default.Line.MaxValue(),Default.Radius1.MaxValue(),Default.Radius2.MaxValue());
-public static bool operator ==(ConeSegment a, ConeSegment b) => (a.Line == b.Line) && (a.Radius1 == b.Radius1) && (a.Radius2 == b.Radius2);
-public static bool operator !=(ConeSegment a, ConeSegment b) => (a.Line != b.Line) || (a.Radius1 != b.Radius1) || (a.Radius2 != b.Radius2);
-public ConeSegment WithLine(Line value) => new ConeSegment(value, Radius1, Radius2);
-public ConeSegment WithRadius1(double value) => new ConeSegment(Line, value, Radius2);
-public ConeSegment WithRadius2(double value) => new ConeSegment(Line, Radius1, value);
+public static ConeSegment Zero = new ConeSegment(Default.Line3D.Zero(),Default.Radius1.Zero(),Default.Radius2.Zero());
+public static ConeSegment One = new ConeSegment(Default.Line3D.One(),Default.Radius1.One(),Default.Radius2.One());
+public static ConeSegment MinValue = new ConeSegment(Default.Line3D.MinValue(),Default.Radius1.MinValue(),Default.Radius2.MinValue());
+public static ConeSegment MaxValue = new ConeSegment(Default.Line3D.MaxValue(),Default.Radius1.MaxValue(),Default.Radius2.MaxValue());
+public static bool operator ==(ConeSegment a, ConeSegment b) => (a.Line3D == b.Line3D) && (a.Radius1 == b.Radius1) && (a.Radius2 == b.Radius2);
+public static bool operator !=(ConeSegment a, ConeSegment b) => (a.Line3D != b.Line3D) || (a.Radius1 != b.Radius1) || (a.Radius2 != b.Radius2);
+public ConeSegment WithLine(Line3D value) => new ConeSegment(value, Radius1, Radius2);
+public ConeSegment WithRadius1(double value) => new ConeSegment(Line3D, value, Radius2);
+public ConeSegment WithRadius2(double value) => new ConeSegment(Line3D, Radius1, value);
 }
 public static partial class Intrinsics {
 public static ConeSegment Default(this ConeSegment _) => default(ConeSegment);
@@ -2934,15 +2934,15 @@ public static ConeSegment MaxValue(this ConeSegment _) => ConeSegment.MaxValue;
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct Box
 {
-public Box(Point center, Rotation rotation, Double3 extent) => (Center, Rotation, Extent) = (center, rotation, extent);
-public static Box Create(Point center, Rotation rotation, Double3 extent) => new Box(center, rotation, extent);
-public Point Center { get; }
+public Box(Point3D center, Rotation rotation, Double3 extent) => (Center, Rotation, Extent) = (center, rotation, extent);
+public static Box Create(Point3D center, Rotation rotation, Double3 extent) => new Box(center, rotation, extent);
+public Point3D Center { get; }
 public Rotation Rotation { get; }
 public Double3 Extent { get; }
-public static implicit operator Box((Point Center, Rotation Rotation, Double3 Extent) tuple) => new Box(tuple.Center, tuple.Rotation, tuple.Extent);
-public static implicit operator (Point Center, Rotation Rotation, Double3 Extent)(Box self) => (self.Center, self.Rotation, self.Extent);
-public void Deconstruct(out Point center, out Rotation rotation, out Double3 extent) => (center, rotation, extent) = (Center, Rotation, Extent);
-public override string ToString() => $"{{ \"Center\" : { Center }, \"Rotation\" : { Rotation }, \"Extent\" : { Extent } }}";
+public static implicit operator Box((Point3D Center, Rotation Rotation, Double3 Extent) tuple) => new Box(tuple.Center, tuple.Rotation, tuple.Extent);
+public static implicit operator (Point3D Center, Rotation Rotation, Double3 Extent)(Box self) => (self.Center, self.Rotation, self.Extent);
+public void Deconstruct(out Point3D center, out Rotation rotation, out Double3 extent) => (center, rotation, extent) = (Center, Rotation, Extent);
+public override string ToString() => $"{{ \"Center\" : { Center }, \"Rotation3D\" : { Rotation }, \"Extent\" : { Extent } }}";
 public override bool Equals(object other) => other is Box typedOther && this == typedOther;
 public override int GetHashCode() => (Center, Rotation, Extent).GetHashCode();
 public static readonly Box Default = default;
@@ -2952,7 +2952,7 @@ public static Box MinValue = new Box(Default.Center.MinValue(),Default.Rotation.
 public static Box MaxValue = new Box(Default.Center.MaxValue(),Default.Rotation.MaxValue(),Default.Extent.MaxValue());
 public static bool operator ==(Box a, Box b) => (a.Center == b.Center) && (a.Rotation == b.Rotation) && (a.Extent == b.Extent);
 public static bool operator !=(Box a, Box b) => (a.Center != b.Center) || (a.Rotation != b.Rotation) || (a.Extent != b.Extent);
-public Box WithCenter(Point value) => new Box(value, Rotation, Extent);
+public Box WithCenter(Point3D value) => new Box(value, Rotation, Extent);
 public Box WithRotation(Rotation value) => new Box(Center, value, Extent);
 public Box WithExtent(Double3 value) => new Box(Center, Rotation, value);
 }
@@ -3000,15 +3000,15 @@ public static CubicBezier2D MaxValue(this CubicBezier2D _) => CubicBezier2D.MaxV
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct CubicBezier
 {
-public CubicBezier(Point a, Point b, Point c, Point d) => (A, B, C, D) = (a, b, c, d);
-public static CubicBezier Create(Point a, Point b, Point c, Point d) => new CubicBezier(a, b, c, d);
-public Point A { get; }
-public Point B { get; }
-public Point C { get; }
-public Point D { get; }
-public static implicit operator CubicBezier((Point A, Point B, Point C, Point D) tuple) => new CubicBezier(tuple.A, tuple.B, tuple.C, tuple.D);
-public static implicit operator (Point A, Point B, Point C, Point D)(CubicBezier self) => (self.A, self.B, self.C, self.D);
-public void Deconstruct(out Point a, out Point b, out Point c, out Point d) => (a, b, c, d) = (A, B, C, D);
+public CubicBezier(Point3D a, Point3D b, Point3D c, Point3D d) => (A, B, C, D) = (a, b, c, d);
+public static CubicBezier Create(Point3D a, Point3D b, Point3D c, Point3D d) => new CubicBezier(a, b, c, d);
+public Point3D A { get; }
+public Point3D B { get; }
+public Point3D C { get; }
+public Point3D D { get; }
+public static implicit operator CubicBezier((Point3D A, Point3D B, Point3D C, Point3D D) tuple) => new CubicBezier(tuple.A, tuple.B, tuple.C, tuple.D);
+public static implicit operator (Point3D A, Point3D B, Point3D C, Point3D D)(CubicBezier self) => (self.A, self.B, self.C, self.D);
+public void Deconstruct(out Point3D a, out Point3D b, out Point3D c, out Point3D d) => (a, b, c, d) = (A, B, C, D);
 public override string ToString() => $"{{ \"A\" : { A }, \"B\" : { B }, \"C\" : { C }, \"D\" : { D } }}";
 public override bool Equals(object other) => other is CubicBezier typedOther && this == typedOther;
 public override int GetHashCode() => (A, B, C, D).GetHashCode();
@@ -3019,10 +3019,10 @@ public static CubicBezier MinValue = new CubicBezier(Default.A.MinValue(),Defaul
 public static CubicBezier MaxValue = new CubicBezier(Default.A.MaxValue(),Default.B.MaxValue(),Default.C.MaxValue(),Default.D.MaxValue());
 public static bool operator ==(CubicBezier a, CubicBezier b) => (a.A == b.A) && (a.B == b.B) && (a.C == b.C) && (a.D == b.D);
 public static bool operator !=(CubicBezier a, CubicBezier b) => (a.A != b.A) || (a.B != b.B) || (a.C != b.C) || (a.D != b.D);
-public CubicBezier WithA(Point value) => new CubicBezier(value, B, C, D);
-public CubicBezier WithB(Point value) => new CubicBezier(A, value, C, D);
-public CubicBezier WithC(Point value) => new CubicBezier(A, B, value, D);
-public CubicBezier WithD(Point value) => new CubicBezier(A, B, C, value);
+public CubicBezier WithA(Point3D value) => new CubicBezier(value, B, C, D);
+public CubicBezier WithB(Point3D value) => new CubicBezier(A, value, C, D);
+public CubicBezier WithC(Point3D value) => new CubicBezier(A, B, value, D);
+public CubicBezier WithD(Point3D value) => new CubicBezier(A, B, C, value);
 }
 public static partial class Intrinsics {
 public static CubicBezier Default(this CubicBezier _) => default(CubicBezier);
@@ -3066,14 +3066,14 @@ public static QuadraticBezier2D MaxValue(this QuadraticBezier2D _) => QuadraticB
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public partial struct QuadraticBezier
 {
-public QuadraticBezier(Point a, Point b, Point c) => (A, B, C) = (a, b, c);
-public static QuadraticBezier Create(Point a, Point b, Point c) => new QuadraticBezier(a, b, c);
-public Point A { get; }
-public Point B { get; }
-public Point C { get; }
-public static implicit operator QuadraticBezier((Point A, Point B, Point C) tuple) => new QuadraticBezier(tuple.A, tuple.B, tuple.C);
-public static implicit operator (Point A, Point B, Point C)(QuadraticBezier self) => (self.A, self.B, self.C);
-public void Deconstruct(out Point a, out Point b, out Point c) => (a, b, c) = (A, B, C);
+public QuadraticBezier(Point3D a, Point3D b, Point3D c) => (A, B, C) = (a, b, c);
+public static QuadraticBezier Create(Point3D a, Point3D b, Point3D c) => new QuadraticBezier(a, b, c);
+public Point3D A { get; }
+public Point3D B { get; }
+public Point3D C { get; }
+public static implicit operator QuadraticBezier((Point3D A, Point3D B, Point3D C) tuple) => new QuadraticBezier(tuple.A, tuple.B, tuple.C);
+public static implicit operator (Point3D A, Point3D B, Point3D C)(QuadraticBezier self) => (self.A, self.B, self.C);
+public void Deconstruct(out Point3D a, out Point3D b, out Point3D c) => (a, b, c) = (A, B, C);
 public override string ToString() => $"{{ \"A\" : { A }, \"B\" : { B }, \"C\" : { C } }}";
 public override bool Equals(object other) => other is QuadraticBezier typedOther && this == typedOther;
 public override int GetHashCode() => (A, B, C).GetHashCode();
@@ -3084,9 +3084,9 @@ public static QuadraticBezier MinValue = new QuadraticBezier(Default.A.MinValue(
 public static QuadraticBezier MaxValue = new QuadraticBezier(Default.A.MaxValue(),Default.B.MaxValue(),Default.C.MaxValue());
 public static bool operator ==(QuadraticBezier a, QuadraticBezier b) => (a.A == b.A) && (a.B == b.B) && (a.C == b.C);
 public static bool operator !=(QuadraticBezier a, QuadraticBezier b) => (a.A != b.A) || (a.B != b.B) || (a.C != b.C);
-public QuadraticBezier WithA(Point value) => new QuadraticBezier(value, B, C);
-public QuadraticBezier WithB(Point value) => new QuadraticBezier(A, value, C);
-public QuadraticBezier WithC(Point value) => new QuadraticBezier(A, B, value);
+public QuadraticBezier WithA(Point3D value) => new QuadraticBezier(value, B, C);
+public QuadraticBezier WithB(Point3D value) => new QuadraticBezier(A, value, C);
+public QuadraticBezier WithC(Point3D value) => new QuadraticBezier(A, B, value);
 }
 public static partial class Intrinsics {
 public static QuadraticBezier Default(this QuadraticBezier _) => default(QuadraticBezier);

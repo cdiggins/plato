@@ -1,52 +1,61 @@
-﻿
-namespace Plato.__TYPES__     
+﻿namespace Plato.__TYPES__     
 {
-    [Vector]
-    class Float2 
+    // These are the built-in types. These are usually defined in the target language. 
+
+    [Intrinsic, Numerical]
+    class Integer
     {
-        float X, Y;
+        long Value;
     }
 
-    [Vector]
-    class Float3 
+    [Intrinsic, Numerical]
+    class Count
     {
-        float X, Y, Z;
+        ulong Value;
     }
 
-    [Vector]
-    class Float4
+    [Intrinsic, Value]
+    class Index
     {
-        float X, Y, Z, W;
+        long Value;
     }
 
-    [Vector]
-    class Double2 
+    [Intrinsic, Numerical]
+    class Number
     {
-        double X, Y;
+        double Value;
     }
 
-    [Vector]
-    class Double3 
-    {
-        double X, Y, Z;
-    }
+    // The rest of the types are defined in terms of each other and the intrinsics.  
 
-    [Vector]
-    class Double4 
+    [Numerical]
+    class Unit
     {
-        double X, Y, Z, W;
+        Number Value;
     }
 
     [Value]
     class Quaternion 
     {
-        double X, Y, Z, W;
+        Number X, Y, Z, W;
+    }
+
+    [Value]
+    class Normal3D
+    {
+        Unit X, Y, Z;
+    }
+
+    [Value]
+    class Direction3D
+    {
+        Normal3D Value;
     }
 
     [Value]
     class AxisAngle 
     {
-        Double3 Axis;
+        Normal3D Axis;
         Angle Angle;
     }
 
@@ -57,160 +66,151 @@ namespace Plato.__TYPES__
     }
 
     [Value]
-    class Rotation 
+    class Rotation3D
     {
         Quaternion Quaternion;
     }
 
-    [Value]
-    class Byte2 
+    [Vector]
+    class Vector2D
     {
-        byte A, B, C, D;
-    }
-
-    [Value]
-    class Byte3 
-    {
-        byte A, B, C, D;
-    }
-
-    [Value]
-    class Byte4 
-    {
-        byte A, B, C, D;
+        Number X, Y;
     }
 
     [Vector]
-    class Int2 
+    class Vector3D
     {
-        int A, B;
+        Number X, Y, Z;
     }
 
     [Vector]
-    class Int3 
+    class Vector4D
     {
-        int A, B, C;
-    }
-
-    [Vector]
-    class Int4 
-    {
-        int A, B, C, D;
-    }
-
-    [Vector]
-    class Long2
-    {
-        long A, B;
-    }
-
-    [Vector]
-    class Long3
-    {
-        long A, B, C;
-    }
-
-    [Vector]
-    class Long4
-    {
-        long A, B, C, D;
+        Number X, Y, Z, W;
     }
 
     [Value]
-    class Pose 
+    class Orientation3D
     {
-        Double3 Position;
-        Rotation Orientation;
+        Rotation3D Value;
     }
 
     [Value]
-    class Transform 
+    class Pose2D 
     {
-        Double3 Translation;
-        Rotation Rotation;
-        Double3 Scale;
+        Vector3D Position;
+        Orientation3D Orientation;
+    }
+
+    [Value]
+    class Pose3D
+    {
+        Vector3D Position;
+        Orientation3D Orientation;
+    }
+
+    [Value]
+    class Transform3D 
+    {
+        Vector3D Translation;
+        Rotation3D Rotation;
+        Vector3D Scale;
+    }
+
+    [Value]
+    class Transform2D
+    {
+        Vector2D Translation;
+        Angle Rotation;
+        Vector2D Scale;
     }
 
     [Interval]
-    class AABBox2D 
+    class AlignedBox2D
     {
-        Double2 A, B;
+        Vector2D A, B;
     }
 
     [Interval]
-    class AABBox3D 
+    class AlignedBox3D 
     {
-        Double3 A, B;
+        Vector3D A, B;
     }
 
     [Vector]
     class Complex 
     {
-        double Real, Imaginary;
+        Number Real, Imaginary;
     }
 
     [Value]
-    class Ray 
+    class Ray3D 
     {
-        Double3 Direction;
-        Point Position;
+        Vector3D Direction;
+        Point3D Position;
     }
 
     [Value]
     class Ray2D
     {
-        Double2 Direction;
+        Vector2D Direction;
         Point2D Position;
     }
 
     [Value]
     class Sphere
     {
-        Point Center;
-        double Radius;
+        Point3D Center;
+        Number Radius;
     }
 
     [Value]
     class Plane 
     {
-        Double3 Normal;
-        double D;
+        Normal3D Normal;
+        Number D;
     }
 
     [Value]
-    class Triangle 
+    class Triangle3D
     {
-        Double3 A, B, C;
+        Point3D A, B, C;
     }
 
     [Value]
     class Triangle2D 
     {
-        Double2 A, B, C;
+        Point2D A, B, C;
     }
 
     [Value]
-    class Quad 
+    class Quad3D 
     {
-        Double3 A, B, C, D;
+        Point3D A, B, C, D;
     }
 
     [Value]
-    class Point 
+    class Quad2D
     {
-        Double3 Value;
+        Point2D A, B, C, D;
+    }
+
+    [Value]
+    class Point3D 
+    {
+        Vector3D Value;
     }
 
     [Value]
     class Point2D 
     {
-        Double2 Value;
+        Vector2D Value;
     }
 
     [Interval]
-    class Line 
+    class Line3D 
     {
-        Point A, B;
+        Point3D A, B;
     }
 
     [Interval]
@@ -222,33 +222,31 @@ namespace Plato.__TYPES__
     [Value]
     class Color 
     {
-        double R, G, B, A;
+        Unit R, G, B, A;
     }
 
     [Value]
     class ColorHSV 
     {
-        double H, S, V;
+        Unit H, S, V;
     }
 
     [Value]
     class ColorHSL
     {
-        double Hue;
-        double Saturation;
-        double Luminance;
+        Unit Hue, Saturation, Luminance;
     }
 
     [Value]
     class ColorYCbCr
     {
-        double Y, Cb, Cr;
+        Unit Y, Cb, Cr;
     }
 
     [Value]
     class SphericalCoordinate
     {
-        double Radius;
+        Number Radius;
         Angle Azimuth;
         Angle Inclination;
     }
@@ -256,36 +254,36 @@ namespace Plato.__TYPES__
     [Value]
     class PolarCoordinate
     {
-        double Radius;
+        Number Radius;
         Angle Angle;
     }
 
     [Value]
     class LogPolarCoordinate
     {
-        double Rho;
+        Number Rho;
         Angle Azimuth;
     }
 
     [Value]
     class HorizontalCoordinate
     {
-        double Radius;
+        Number Radius;
         Angle Azimuth;
-        double Height;
+        Number Height;
     }
 
     [Value]
     class GeoCoordinate
     {
-        double Latitude, Longitude, Altitude;
+        Number Latitude, Longitude, Altitude;
     }
 
     [Value]
     class Circle
     {
         Point2D Center;
-        double Radius;
+        Number Radius;
     }
 
     [Value]
@@ -296,68 +294,67 @@ namespace Plato.__TYPES__
     }
 
     [Value]
-    class Size
+    class Size2D
     {
-        double Width;
-        double Height;
+        Number Width, Height;
     }
 
     [Value]
-    class Rectangle
+    class Size3D
     {
-        Double2 TopLeft;
-        Size Size;
+        Number Width, Height, Depth;
     }
 
-    [Number]
+    [Value]
+    class Rectangle2D
+    {
+        Point2D Center;
+        Size2D Size;
+    }
+
+    [Numerical]
     class Proportion 
     {
-        double Value;
-    }
-
-    [Value]
-    class Amount
-    {
-        double Mole;
+        Number Value;
     }
 
     [Value]
     class Fraction 
     {
-        double Numerator, Denominator;
+        Number Numerator, Denominator;
     }
 
     [Measure]
     class Angle
     {
-        double Radians;
+        Number Radians;
     }
 
     [Measure]
     class Length
     {
-        double Meters;
+        Number Meters;
     }
 
     [Measure]
     class Mass 
     {
-        double Kilograms;
+        Number Kilograms;
     }
 
     [Measure]
     class Temperature 
     {
-        double Celsius;
+        Number Celsius;
     }
 
     [Measure]
-    class Time
+    class TimeSpan
     {
-        double Seconds;
+        Number Seconds;
     }
 
-    [Measure]
+    [Interval]
     class Arc
     {
         Angle Start, End;
@@ -366,221 +363,248 @@ namespace Plato.__TYPES__
     [Interval]
     class TimeInterval 
     {
-        Time Start, End;
+        TimeSpan Start, End;
     }
 
     [Interval]
     class RealInterval
     {
-        double A, B;
+        Number A, B;
     }
 
     [Interval]
     class Interval2D 
     {
-        Double2 A, B;
+        Vector2D A, B;
     }
 
     [Interval]
     class Interval3D 
     {
-        Double3 A, B;
+        Vector3D A, B;
     }
 
     [Value]
     class Capsule 
     {
-        Line Line;
-        double Radius;
+        Line3D Line;
+        Number Radius;
+    }
+
+    // https://mindcontrol.org/~hplus/graphics/matrix-layout.html
+    // Column major layout in memory 
+    // Translation component is in Column4.XYZ 
+    [Value]
+    class Matrix3D
+    {
+        Vector4D Column1, Column2, Column3, Column4;
     }
 
     [Value]
     class Cylinder 
     {
-        Line Line;
-        double Radius;
+        Line3D Line;
+        Number Radius;
     }
 
     [Value]
     class Cone 
     {
-        Line Line;
-        double Radius;
+        Line3D Line;
+        Number Radius;
     }
 
     [Value]
     class Tube 
     {
-        Line Line;
-        double InnerRadius; 
-        double OuterRadius;
+        Line3D Line;
+        Number InnerRadius;
+        Number OuterRadius;
     }
 
     [Value]
     class ConeSegment 
     {
-        Line Line;
-        double Radius1, Radius2;
+        Line3D Line;
+        Number Radius1, Radius2;
     }
 
     [Value]
-    class Box 
+    class Box3D 
     {
-        Point Center;
-        Rotation Rotation;
-        Double3 Extent;
+        Point3D Center;
+        Rotation3D Rotation;
+        Size3D Extent;
     }
 
+    // https://en.wikipedia.org/wiki/B%C3%A9zier_triangle
+    [Value]
+    class CubicBezierTriangle3D
+    {
+        Point3D A, B, C, A2B, AB2, B2C, BC2, AC2, A2C, ABC;
+    }
+
+    // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
     [Value]
     class CubicBezier2D
     {
-        Point2D A;
-        Point2D B;
-        Point2D C;
-        Point2D D;
+        Point2D A, B, C, D;
     }
 
+    // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
     [Value]
-    class CubicBezier
+    class CubicBezier3D
     {
-        Point A;
-        Point B;
-        Point C;
-        Point D;
+        Point3D A, B, C, D;
     }
 
+    // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
     [Value]
     class QuadraticBezier2D
     {
-        Point2D A;
-        Point2D B;
-        Point2D C;
+        Point2D A, B, C;
     }
 
+    // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
     [Value]
-    class QuadraticBezier
+    class QuadraticBezier3D
     {
-        Point A;
-        Point B;
-        Point C;
+        Point3D A, B, C;
     }
 
+    // https://en.wikipedia.org/wiki/Area
     [Measure]
     class Area
     {
-        double MetersSquared;
+        Number MetersSquared;
     }
 
+    // https://en.wikipedia.org/wiki/Volume
     [Measure]
     class Volume
     {
-        double MetersCubed;
+        Number MetersCubed;
     }
 
+    // https://en.wikipedia.org/wiki/Velocity
     [Measure]
     class Velocity
     {
-        double MetersPerSecond;
+        Number MetersPerSecond;
     }
 
+    // https://en.wikipedia.org/wiki/Acceleration
     [Measure]
     class Acceleration
     {
-        double MetersPerSecondSquared;
+        Number MetersPerSecondSquared;
     }
 
+    // https://en.wikipedia.org/wiki/Force
     [Measure]
     class Force
     {
-        double Newtons; 
+        Number Newtons; 
     }
 
+    // https://en.wikipedia.org/wiki/Pressure
     [Measure]
     class Pressure
     {
-        double Pascals;
+        Number Pascals;
     }
 
+    // https://en.wikipedia.org/wiki/Energy
     [Measure]
     class Energy
     {
-        double Joules;
+        Number Joules;
     }
 
+    // https://en.wikipedia.org/wiki/Byte
     [Measure]
     class Memory
     {
-        double Bytes;
+        Count Bytes;
     }
 
+    // https://en.wikipedia.org/wiki/Frequency
     [Measure]
     class Frequency
     {
-        double Hertz;
+        Number Hertz;
     }
 
+    // https://en.wikipedia.org/wiki/Loudness
     [Measure]
     class Loudness
     {
-        double Decibels;
+        Number Decibels;
     }
 
+    // https://en.wikipedia.org/wiki/Luminous_intensity
     [Measure]
     class LuminousIntensity
     {
-        double Candelas;
+        Number Candelas;
     }
 
+    // https://en.wikipedia.org/wiki/Electric_potential
     [Measure]
     class ElectricPotential
     {
-        double Volts;
+        Number Volts;
     }
 
+    // https://en.wikipedia.org/wiki/Electric_charge
     [Measure]
     class ElectricCharge
     {
-        double Columbs;
+        Number Columbs;
     }
 
+    // https://en.wikipedia.org/wiki/Electric_current
     [Measure]
     class ElectricCurrent
     {
-        double Amperes;
+        Number Amperes;
     }
 
+    // https://en.wikipedia.org/wiki/Electrical_resistance_and_conductance
     [Measure]
     class ElectricResistance
     {
-        double Ohms;
+        Number Ohms;
     }
 
+    // https://en.wikipedia.org/wiki/Power_(physics)
     [Measure]
     class Power
     {
-        double Watts;
+        Number Watts;
     }
 
+    // https://en.wikipedia.org/wiki/Density
     [Measure]
     class Density
     {
-        double KilogramsPerMeterCubed;
+        Number KilogramsPerMeterCubed;
     }
 
     // https://en.wikipedia.org/wiki/Normal_distribution
     [Value]
     class NormalDistribution
     {
-        double Mean;
-        double StandardDeviation;
+        Number Mean;
+        Number StandardDeviation;
     }
 
     // https://en.wikipedia.org/wiki/Poisson_distribution
     [Value]
     class PoissonDistribution
     {
-        double Expected;
-        int Occurrences;
+        Number Expected;
+        Count Occurrences;
     }
 
     // https://en.wikipedia.org/wiki/Bernoulli_distribution
@@ -590,17 +614,17 @@ namespace Plato.__TYPES__
         Probability P;
     }
 
-    [Number]
+    [Numerical]
     class Probability
     {
-        double Value;
+        Number Value;
     }
 
     // https://en.wikipedia.org/wiki/Binomial_distribution
     [Value]
     class BinomialDistribution
     {
-        int NumberTrials;
+        Count Trials;
         Probability P;
     }
 }
