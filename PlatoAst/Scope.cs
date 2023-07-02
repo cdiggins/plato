@@ -22,6 +22,9 @@ namespace PlatoAst
         public void Declare(AstVarDef def)
             => Declare(def, null);
 
+        public void Declare(AstParameterDeclaration decl, object value)
+            => Names[decl.Name] = (default, value);
+
         public void Declare(AstVarDef def, object value)
             => Names[def.Name] = (def, value);
 

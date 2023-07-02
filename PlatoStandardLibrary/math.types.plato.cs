@@ -41,7 +41,13 @@
     }
 
     [Value]
-    class Normal3D
+    class Unit2D
+    {
+        Unit X, Y;
+    }
+
+    [Value]
+    class Unit3D 
     {
         Unit X, Y, Z;
     }
@@ -49,13 +55,13 @@
     [Value]
     class Direction3D
     {
-        Normal3D Value;
+        Unit3D Value;
     }
 
     [Value]
     class AxisAngle 
     {
-        Normal3D Axis;
+        Unit3D Axis;
         Angle Angle;
     }
 
@@ -167,7 +173,7 @@
     [Value]
     class Plane 
     {
-        Normal3D Normal;
+        Unit3D Normal;
         Number D;
     }
 

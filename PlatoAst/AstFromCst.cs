@@ -18,7 +18,12 @@ namespace PlatoAst
     {
         public AstNode ToIntrinsic(string name, params AstNode[] args)
         {
-            return AstInvoke.Create(AstIntrinsic.Create(name), args);
+            if (args.Length == 0) 
+                return AstInvoke.Create(AstIntrinsic.Create(name));
+            return AstInvoke.Create(
+                AstMemberAccess.Create(args[0], name), 
+                args.Skip(1).ToArray());
+
         }
 
         public AstNode ToAst<T>(CstFilter<T> filter) where T: CstNode
@@ -26,8 +31,7 @@ namespace PlatoAst
 
         public AstNode ToAst(CstExpression expr)
         {
-            var leaf = ToAst(expr.LeafExpression.Node);
-            var r = leaf;
+            var r = ToAst(expr.LeafExpression.Node);
             foreach (var postfix in expr.PostfixOperator.Nodes)
             {
                 if (postfix.AsOperation.Present)
@@ -41,23 +45,25 @@ namespace PlatoAst
                 }
                 else if (postfix.BinaryOperation.Present)
                 {
-                    return ToIntrinsic(
+                    r = ToIntrinsic(
                         postfix.BinaryOperation.Node.BinaryOperator.Node.Text,
-                        leaf,   
+                        r,   
                         ToAst(postfix.BinaryOperation.Node.Expression));
                 }
                 else if (postfix.ConditionalMemberAccess.Present)
                 {
-                    return ToIntrinsic("?.", leaf, postfix.MemberAccess.Node.Identifier.Node.Text.ToConstant());
+                    throw new NotImplementedException();
+                    // 
+                    //r = ToIntrinsic("?.", r, postfix.MemberAccess.Node.Identifier.Node.Text.ToConstant());
                 }
                 else if (postfix.FunctionArgs.Present)
                 {
-                    return AstInvoke.Create(leaf, 
+                    r = AstInvoke.Create(r, 
                         postfix.FunctionArgs.Node.FunctionArg.Nodes.Select(n => ToAst(n.Expression)).ToArray());
                 }
                 else if (postfix.Indexer.Present)
                 {
-                    return ToIntrinsic("[]", leaf, ToAst(postfix.Indexer.Node.Expression));
+                    r = ToIntrinsic("[]", r, ToAst(postfix.Indexer.Node.Expression));
                 }
                 else if (postfix.IsOperation.Present)
                 {
@@ -65,12 +71,13 @@ namespace PlatoAst
                 }
                 else if (postfix.MemberAccess.Present)
                 {
-                    return ToIntrinsic(".", leaf, postfix.MemberAccess.Node.Identifier.Node.Text.ToConstant());
+                    r = new AstMemberAccess(r, 
+                        ToAst(postfix.MemberAccess.Node.Identifier.Node));
                 }
                 else if (postfix.TernaryOperation.Present)
                 {
-                    return AstConditional.Create(
-                        leaf,
+                    r = AstConditional.Create(
+                        r,
                         ToAst(postfix.TernaryOperation.Node[0]),
                         ToAst(postfix.TernaryOperation.Node[1]));
                 }
@@ -78,23 +85,23 @@ namespace PlatoAst
 
             foreach (var prefix in expr.PrefixOperator.Nodes)
             {
-                leaf = ToIntrinsic(prefix.Text, leaf);
+                r = ToIntrinsic(prefix.Text, r);
             }
 
-            return leaf;
+            return r;
         }
 
-        public IReadOnlyList<AstVarDef> ToAstList(CstLambdaParameters parameters)
+        public IReadOnlyList<AstParameterDeclaration> ToAstList(CstLambdaParameters parameters)
         {
-            var list = new List<AstVarDef>();
+            var list = new List<AstParameterDeclaration>();
             if (parameters.LambdaParameter != null)
             {
-                list.Add(ToAst(parameters.LambdaParameter) as AstVarDef);
+                list.Add(ToAst(parameters.LambdaParameter.Node));
             }
 
             foreach (var lp in parameters.LambdaParameter.Nodes)
             {
-                list.Add(ToAst(lp) as AstVarDef);
+                list.Add(ToAst(lp));
             }
 
             return list;
@@ -271,10 +278,10 @@ namespace PlatoAst
             );
         }
 
-        public AstVarDef ToAst(CstLambdaParameter lp)
+        public AstParameterDeclaration ToAst(CstLambdaParameter lp)
         {
-            return new AstVarDef(
-                ToAst(lp.Identifier.Node), null, ToAst(lp.TypeExpr.Node));
+            return new AstParameterDeclaration(
+                ToAst(lp.Identifier.Node), ToAst(lp.TypeExpr.Node));
         }
 
         public AstConstant ToAst(CstLiteral literal)
@@ -321,6 +328,18 @@ namespace PlatoAst
             }
 
             throw new Exception($"Unrecognized literal: {literal.Text} of type {literal.GetType()}");
+        }
+
+        public AstNode ToAst(CstParenthesizedExpression expr)
+        {
+            if (expr.Expression.Nodes.Count == 0)
+                throw new Exception("Expected at least one expression");
+
+            if (expr.Expression.Nodes.Count == 1)
+                return new AstParenthesized(ToAst(expr.Expression.Node));
+
+            return AstInvoke.Create(
+                AstIntrinsic.Create("Tuple"), expr.Expression.Nodes.Select(ToAst).ToArray());
         }
 
         public AstNode ToAst(CstLeafExpression expr)
@@ -374,7 +393,7 @@ namespace PlatoAst
             }
             else if (expr.ParenthesizedExpression.Present)
             {
-                return new AstParenthesized(ToAst(expr.ParenthesizedExpression.Node.Expression));
+                return ToAst(expr.ParenthesizedExpression.Node);
             }
             else if (expr.StringInterpolation.Present)
             {
@@ -391,6 +410,16 @@ namespace PlatoAst
             }
 
             throw new Exception("Unrecognized leaf expression");
+        }
+
+        public AstNode ToAst(CstExpressionBody body)
+        {
+            if (body.CompoundStatement.Present)
+                return ToAst(body.CompoundStatement.Node);
+            if (!body.Expression.Present)
+                throw new Exception("Invalid expression body");
+            return AstBlock.Create(
+                AstReturn.Create(ToAst(body.Expression.Node)));
         }
 
         public AstNode ToAst(CstNode node)
@@ -493,11 +522,7 @@ namespace PlatoAst
                     return ToAst(cstExpression);
                 
                 case CstExpressionBody cstExpressionBody:
-                    return cstExpressionBody.CompoundStatement.Present
-                        ? ToAst(cstExpressionBody.CompoundStatement.Node)
-                        : cstExpressionBody.Expression.Present
-                            ? ToAst(cstExpressionBody.Expression.Node)
-                            : throw new Exception("Invalid expression body");
+                    return ToAst(cstExpressionBody);
 
                 case CstExpressionStatement cstExpressionStatement:
                     return ToAst(cstExpressionStatement.Expression);

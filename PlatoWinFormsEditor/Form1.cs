@@ -68,9 +68,8 @@ namespace PlatoWinFormsEditor
             richTextBoxParseTree.Text = Try(() => c.ParseTree?.ToString());
             richTextBoxCst.Text = Try(() => c.CstTree?.ToXml().ToString());
             richTextBoxAst.Text = Try(() => c.AstTree.ToXml());
-            richTextBoxCSharp.Text = Try(() => c.AstTree.ToCSharp());
+            //richTextBoxCSharp.Text = Try(() => c.AstTree.ToCSharp());
             richTextBoxJavaScript.Text = Try(() => c.AstTree.ToJavaScript());
-            richTextBoxPail.Text = Try(() => c.AstTree.ToPail());
             return c;
         }
 

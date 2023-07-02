@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 
 namespace PlatoAst
@@ -91,11 +92,11 @@ namespace PlatoAst
 
     public class AstLambda : AstNode
     {
-        public IReadOnlyList<AstVarDef> Parameters { get; }
+        public IReadOnlyList<AstParameterDeclaration> Parameters { get; }
         public AstNode Body { get; }
 
-        public AstLambda(AstNode body, params AstVarDef[] parameters) => (Parameters, Body) = (parameters, body);
-        public static AstLambda Create(AstNode body, params AstVarDef[] parameters) => new AstLambda(body, parameters);
+        public AstLambda(AstNode body, params AstParameterDeclaration[] parameters) => (Parameters, Body) = (parameters, body);
+        public static AstLambda Create(AstNode body, params AstParameterDeclaration[] parameters) => new AstLambda(body, parameters);
         public override IEnumerable<AstNode> Children => base.Children.Concat(Parameters).Append(Body);
     }
 
@@ -134,7 +135,16 @@ namespace PlatoAst
         public AstLoop(AstNode condition, AstNode body) => (Condition, Body) = (condition, body);
         public static AstLoop Create(AstNode condition, AstNode body) => new AstLoop(condition, body);
         public override IEnumerable<AstNode> Children => base.Children.Append(Condition).Append(Body);
+    }
 
+    public class AstMemberAccess : AstNode
+    {
+        public AstNode Receiver { get; }
+        public AstIdentifier Name { get; }
+
+        public AstMemberAccess(AstNode reciever, AstIdentifier name) => (Receiver, Name) = (reciever, name);
+        public static AstMemberAccess Create(AstNode reciever, AstIdentifier name) => new AstMemberAccess(reciever, name);
+        public override IEnumerable<AstNode> Children => base.Children.Append(Receiver).Append(Name);
     }
 
     public class AstConditional : AstNode
@@ -202,7 +212,6 @@ namespace PlatoAst
     public abstract class AstDeclaration : AstNode
     {
         public AstIdentifier Name { get; }
-
         protected AstDeclaration(AstIdentifier name) => Name = name;
         public override IEnumerable<AstNode> Children => new [] { Name };
     }
@@ -210,7 +219,8 @@ namespace PlatoAst
     public abstract class AstMemberDeclaration : AstDeclaration
     {
         public AstTypeNode Type { get; }
-        protected AstMemberDeclaration(AstIdentifier name, AstTypeNode type) : base(name) => (Type) = (type);
+        protected AstMemberDeclaration(AstIdentifier name, AstTypeNode type) : base(name) 
+            => (Type) = (type);
         public override IEnumerable<AstNode> Children => base.Children.Append(Type);
     }
 
@@ -218,7 +228,8 @@ namespace PlatoAst
     {
         public string Directive;
         public string Argument;
-
+        public static AstDirective Create(string directive, string argument)
+            => new AstDirective(directive, argument);
         public AstDirective(string directive, string argument)
             => (Directive, Argument) = (directive, argument);
     }
@@ -239,9 +250,10 @@ namespace PlatoAst
     public class AstFieldDeclaration : AstMemberDeclaration
     {
         public AstNode Node { get; }
-
         public AstFieldDeclaration(AstIdentifier name, AstTypeNode type, AstNode node) : base(name, type) => Node = node;
         public override IEnumerable<AstNode> Children => base.Children.Append(Node);
+        public static AstFieldDeclaration Create(AstIdentifier name, AstTypeNode type, AstNode node)
+            => new AstFieldDeclaration(name, type, node);
     }
 
     public class AstPropertyDeclaration : AstMemberDeclaration
@@ -260,6 +272,9 @@ namespace PlatoAst
         }
 
         public override IEnumerable<AstNode> Children => base.Children.Append(Body).Append(Value);
+
+        public static AstPropertyDeclaration Create(AstIdentifier name, AstTypeNode type, AstNode body, AstNode value)
+            => new AstPropertyDeclaration(name, type, body, value);
     }
 
     public class AstParameterDeclaration : AstDeclaration
@@ -268,6 +283,9 @@ namespace PlatoAst
 
         public AstParameterDeclaration(AstIdentifier name, AstTypeNode type) : base(name) => Type = type;
         public override IEnumerable<AstNode> Children => base.Children.Append(Type);
+
+        public static AstParameterDeclaration Create(AstIdentifier name, AstTypeNode type)
+            =>  new AstParameterDeclaration(name, type);
     }
 
     public class AstMethodDeclaration : AstMemberDeclaration
@@ -287,8 +305,23 @@ namespace PlatoAst
             TypeParameters = typeParameters.ToList();
         }
 
+        public static AstMethodDeclaration Create(AstIdentifier name,
+            AstTypeNode type,
+            IEnumerable<AstParameterDeclaration> parameters,
+            IEnumerable<AstIdentifier> typeParameters, AstNode body)
+            => new AstMethodDeclaration(name, type, parameters, typeParameters, body);
+
         public override IEnumerable<AstNode> Children =>
             base.Children.Append(Body).Concat(TypeParameters);
+    }
+
+    public class AstExpressionStatement : AstNode
+    {
+        public AstNode Expression { get; }
+        public AstExpressionStatement(AstNode expression) => Expression = expression;
+        public static AstExpressionStatement Create(AstNode expression)
+            => new AstExpressionStatement(expression);
+        public override IEnumerable<AstNode> Children => base.Children.Append(Expression);
     }
 
     public class AstTypeDeclaration : AstDeclaration
@@ -307,5 +340,9 @@ namespace PlatoAst
 
         public override IEnumerable<AstNode> Children =>
             base.Children.Concat(TypeParameters).Concat(BaseTypes).Concat(Members);
+
+        public static AstTypeDeclaration Create(AstIdentifier name, IEnumerable<AstIdentifier> typeParameters,
+            IEnumerable<AstTypeNode> baseTypes, params AstMemberDeclaration[] members)
+            => new AstTypeDeclaration(name, typeParameters, baseTypes, members);
     }
 }

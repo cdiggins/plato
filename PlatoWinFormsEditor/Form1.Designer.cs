@@ -37,16 +37,12 @@
             this.tabPage7 = new System.Windows.Forms.TabPage();
             this.richTextBoxCst = new System.Windows.Forms.RichTextBox();
             this.tabControl2 = new System.Windows.Forms.TabControl();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.richTextBoxOutput = new System.Windows.Forms.RichTextBox();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.richTextBoxCSharp = new System.Windows.Forms.RichTextBox();
-            this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.richTextBoxJavaScript = new System.Windows.Forms.RichTextBox();
-            this.tabPage5 = new System.Windows.Forms.TabPage();
-            this.richTextBoxPail = new System.Windows.Forms.RichTextBox();
             this.tabPage8 = new System.Windows.Forms.TabPage();
             this.richTextBoxAst = new System.Windows.Forms.RichTextBox();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.richTextBoxJavaScript = new System.Windows.Forms.RichTextBox();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.richTextBoxOutput = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -56,11 +52,9 @@
             this.tabPage6.SuspendLayout();
             this.tabPage7.SuspendLayout();
             this.tabControl2.SuspendLayout();
-            this.tabPage3.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            this.tabPage4.SuspendLayout();
-            this.tabPage5.SuspendLayout();
             this.tabPage8.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -161,105 +155,15 @@
             // 
             // tabControl2
             // 
-            this.tabControl2.Controls.Add(this.tabPage3);
-            this.tabControl2.Controls.Add(this.tabPage2);
-            this.tabControl2.Controls.Add(this.tabPage4);
-            this.tabControl2.Controls.Add(this.tabPage5);
             this.tabControl2.Controls.Add(this.tabPage8);
+            this.tabControl2.Controls.Add(this.tabPage4);
+            this.tabControl2.Controls.Add(this.tabPage3);
             this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl2.Location = new System.Drawing.Point(0, 0);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
             this.tabControl2.Size = new System.Drawing.Size(396, 450);
             this.tabControl2.TabIndex = 0;
-            // 
-            // tabPage3
-            // 
-            this.tabPage3.Controls.Add(this.richTextBoxOutput);
-            this.tabPage3.Location = new System.Drawing.Point(4, 29);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(388, 417);
-            this.tabPage3.TabIndex = 0;
-            this.tabPage3.Text = "Errors";
-            this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // richTextBoxOutput
-            // 
-            this.richTextBoxOutput.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBoxOutput.Font = new System.Drawing.Font("Lucida Console", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.richTextBoxOutput.Location = new System.Drawing.Point(3, 3);
-            this.richTextBoxOutput.Name = "richTextBoxOutput";
-            this.richTextBoxOutput.Size = new System.Drawing.Size(382, 411);
-            this.richTextBoxOutput.TabIndex = 0;
-            this.richTextBoxOutput.Text = "";
-            this.richTextBoxOutput.WordWrap = false;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.richTextBoxCSharp);
-            this.tabPage2.Location = new System.Drawing.Point(4, 29);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(388, 417);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "C#";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // richTextBoxCSharp
-            // 
-            this.richTextBoxCSharp.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBoxCSharp.Font = new System.Drawing.Font("Lucida Console", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.richTextBoxCSharp.Location = new System.Drawing.Point(3, 3);
-            this.richTextBoxCSharp.Name = "richTextBoxCSharp";
-            this.richTextBoxCSharp.Size = new System.Drawing.Size(382, 411);
-            this.richTextBoxCSharp.TabIndex = 1;
-            this.richTextBoxCSharp.Text = "";
-            this.richTextBoxCSharp.WordWrap = false;
-            // 
-            // tabPage4
-            // 
-            this.tabPage4.Controls.Add(this.richTextBoxJavaScript);
-            this.tabPage4.Location = new System.Drawing.Point(4, 29);
-            this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(388, 417);
-            this.tabPage4.TabIndex = 2;
-            this.tabPage4.Text = "JavaScript";
-            this.tabPage4.UseVisualStyleBackColor = true;
-            // 
-            // richTextBoxJavaScript
-            // 
-            this.richTextBoxJavaScript.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBoxJavaScript.Font = new System.Drawing.Font("Lucida Console", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.richTextBoxJavaScript.Location = new System.Drawing.Point(3, 3);
-            this.richTextBoxJavaScript.Name = "richTextBoxJavaScript";
-            this.richTextBoxJavaScript.Size = new System.Drawing.Size(382, 411);
-            this.richTextBoxJavaScript.TabIndex = 1;
-            this.richTextBoxJavaScript.Text = "";
-            this.richTextBoxJavaScript.WordWrap = false;
-            // 
-            // tabPage5
-            // 
-            this.tabPage5.Controls.Add(this.richTextBoxPail);
-            this.tabPage5.Location = new System.Drawing.Point(4, 29);
-            this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(388, 417);
-            this.tabPage5.TabIndex = 3;
-            this.tabPage5.Text = "PAIL";
-            this.tabPage5.UseVisualStyleBackColor = true;
-            // 
-            // richTextBoxPail
-            // 
-            this.richTextBoxPail.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBoxPail.Font = new System.Drawing.Font("Lucida Console", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.richTextBoxPail.Location = new System.Drawing.Point(3, 3);
-            this.richTextBoxPail.Name = "richTextBoxPail";
-            this.richTextBoxPail.Size = new System.Drawing.Size(382, 411);
-            this.richTextBoxPail.TabIndex = 1;
-            this.richTextBoxPail.Text = "";
-            this.richTextBoxPail.WordWrap = false;
             // 
             // tabPage8
             // 
@@ -283,6 +187,50 @@
             this.richTextBoxAst.Text = "";
             this.richTextBoxAst.WordWrap = false;
             // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.richTextBoxJavaScript);
+            this.tabPage4.Location = new System.Drawing.Point(4, 29);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(388, 417);
+            this.tabPage4.TabIndex = 2;
+            this.tabPage4.Text = "JavaScript";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // richTextBoxJavaScript
+            // 
+            this.richTextBoxJavaScript.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBoxJavaScript.Font = new System.Drawing.Font("Lucida Console", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.richTextBoxJavaScript.Location = new System.Drawing.Point(3, 3);
+            this.richTextBoxJavaScript.Name = "richTextBoxJavaScript";
+            this.richTextBoxJavaScript.Size = new System.Drawing.Size(382, 411);
+            this.richTextBoxJavaScript.TabIndex = 1;
+            this.richTextBoxJavaScript.Text = "";
+            this.richTextBoxJavaScript.WordWrap = false;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.richTextBoxOutput);
+            this.tabPage3.Location = new System.Drawing.Point(4, 29);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(388, 417);
+            this.tabPage3.TabIndex = 0;
+            this.tabPage3.Text = "Errors";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // richTextBoxOutput
+            // 
+            this.richTextBoxOutput.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBoxOutput.Font = new System.Drawing.Font("Lucida Console", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.richTextBoxOutput.Location = new System.Drawing.Point(3, 3);
+            this.richTextBoxOutput.Name = "richTextBoxOutput";
+            this.richTextBoxOutput.Size = new System.Drawing.Size(382, 411);
+            this.richTextBoxOutput.TabIndex = 0;
+            this.richTextBoxOutput.Text = "";
+            this.richTextBoxOutput.WordWrap = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -300,11 +248,9 @@
             this.tabPage6.ResumeLayout(false);
             this.tabPage7.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
-            this.tabPage3.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage4.ResumeLayout(false);
-            this.tabPage5.ResumeLayout(false);
             this.tabPage8.ResumeLayout(false);
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -318,12 +264,8 @@
         private TabPage tabPage3;
         private RichTextBox inputEdit;
         private RichTextBox richTextBoxOutput;
-        private TabPage tabPage2;
-        private RichTextBox richTextBoxCSharp;
         private TabPage tabPage4;
         private RichTextBox richTextBoxJavaScript;
-        private TabPage tabPage5;
-        private RichTextBox richTextBoxPail;
         private TabPage tabPage6;
         private RichTextBox richTextBoxParseTree;
         private TabPage tabPage7;

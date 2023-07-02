@@ -311,8 +311,8 @@ public static class ExpressionTreeToPlatoAst
                 throw new Exception($"Labels should be removed");
                 
             case LambdaExpression lambdaExpression:
-                return AstLambda.Create(lambdaExpression.Body.ToAst(),
-                    lambdaExpression.Parameters.ToAst().Cast<AstVarDef>().ToArray());
+                throw new NotImplementedException();
+                //return AstLambda.Create(lambdaExpression.Body.ToAst(), new AstParameterDeclaration(lambdaExpression.Parameters.ToAst().ToArray()));
                 
             case ListInitExpression listInitExpression:
                 throw new NotSupportedException();

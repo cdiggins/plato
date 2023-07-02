@@ -30,7 +30,7 @@ namespace PlatoAst
 
         public AstCodeWriter WriteStatements(IEnumerable<AstNode> nodes)
         {
-            return WriteList(nodes, (w, n) => w.Write(n).WriteLine(";"));
+            return WriteList(nodes, (w, n) => w.Write(n));
         }
 
         public AstCodeWriter Write(IEnumerable<AstNode> nodes, string sep = "")
@@ -58,7 +58,12 @@ namespace PlatoAst
                     return Write('\'').Write(c.Value.ToString()).Write('\'');
                 case Delegate d:
                     return Write($"{d.Method.Name}");
-
+                case int n:
+                    return Write($"Integer.Create({n})");
+                case double d:
+                    return Write($"Number.Create({d})");
+                case bool b:
+                    return Write($"Boolean.Create({b})");
                 default:
                     return Write(c.Value.ToString());
             }
@@ -69,25 +74,17 @@ namespace PlatoAst
             switch (Lang)
             {
                 case Language.Pail:
-                    return Write("let ").Write(def.Name).Write(" = ").Write(def.Value).WriteLine();
                 case Language.JavaScript:
-                    return Write("let ").Write(def.Name).Write(" = ").Write(def.Value).WriteLine();
+                    return Write("let ").WriteTypedName(def.Name, def.Type).Write(" = ").Write(def.Value).WriteEol();
                 case Language.CSharp:
-                    return Write("var ").Write(def.Name).Write(" = ").Write(def.Value).WriteLine();
+                    return Write(def.Type).Write(" ").Write(def.Name).Write(" = ").Write(def.Value).WriteEol();
                 case Language.CPlusPlus:
-                    return Write("auto ").Write(def.Name).Write(" = ").Write(def.Value).WriteLine();
+                    return Write("auto ").Write(def.Name).Write(" = ").Write(def.Value).WriteEol();
                 case Language.Python:
-                    return Write(def.Name).Write(" =").Write(def.Value).WriteLine();
+                    return Write(def.Name).Write(" =").Write(def.Value).WriteEol();
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }
-
-        public AstCodeWriter WriteParameters(IEnumerable<AstVarDef> parameters)
-        {
-            return Lang == Language.CPlusPlus 
-                ? WriteCommaList(parameters, (w, p) => w.Write("PlatoObject ").Write(p.Name)) 
-                : WriteCommaList(parameters, (w, p) => Write(p.Name));
         }
 
         public AstCodeWriter Write(AstConditional astConditional)
@@ -172,12 +169,13 @@ namespace PlatoAst
             ("&", "And"),
             ("|", "Or"),
             ("^", "XOr"),
+            ("[]", "At")
         };
 
         public static Dictionary<string, string> BinaryIntrinsicLookup =
             BinaryIntrinsics.ToDictionary(bi => bi.Item1, bi => bi.Item2);
 
-        public static string InstrinsicName(string name)
+        public static string ConvertIntrinsicName(string name)
         {
             name = name.Trim();
             return BinaryIntrinsicLookup.ContainsKey(name)
@@ -232,31 +230,15 @@ namespace PlatoAst
                 case AstContinue astContinue:
                     return WriteLine("continue");
 
-                case AstInvoke astInvoke:
-                {
-                    if (astInvoke.Function is AstIntrinsic intr)
-                    {
-                        if (intr.Name == ".")
-                        {
-                            return Write(astInvoke.AstArguments[0])
-                                .Write(".")
-                                .Write(astInvoke.AstArguments[1]);
-                        }
-                        else
-                        {
-                            var name = InstrinsicName(intr.Name);
-                            return Write(name)
-                                .Write("( ")
-                                .WriteCommaList(astInvoke.AstArguments, Write)
-                                .Write(")");
-                        }
-                    }
+                case AstMemberAccess astMember:
+                    return Write(astMember.Receiver).Write(".").Write(
+                        ConvertIntrinsicName(astMember.Name));
 
+                case AstInvoke astInvoke:
                     return Write(astInvoke.Function)
                         .Write("( ")
                         .WriteCommaList(astInvoke.AstArguments, Write)
                         .Write(")");
-                }
 
                 case AstLambda astLambda:
                     return Write("(")
@@ -274,7 +256,7 @@ namespace PlatoAst
                 case AstReturn astReturn:
                     return Write("return ")
                         .Write(astReturn.Value)
-                        .WriteLine(";");
+                        .WriteEol();
 
                 case AstVarDef astVarDef:
                     return Write(astVarDef);
@@ -294,7 +276,7 @@ namespace PlatoAst
                             : WriteLine($"throw new Exception(\"{astError.Text}\")");
 
                 case AstIntrinsic astIntrinsic:
-                    return Write(astIntrinsic.Name);
+                    return Write(ConvertIntrinsicName(astIntrinsic.Name));
 
                 case AstTypeDeclaration typeDeclaration:
                 {
@@ -347,7 +329,6 @@ namespace PlatoAst
                         .Write(" : ")
                         .Write(methodDeclaration.Type)
                         .WriteLine()
-                        .Write("  => ")
                         .Write(methodDeclaration.Body)
                         .WriteLine();
 
