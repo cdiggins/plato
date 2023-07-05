@@ -261,9 +261,6 @@ namespace PlatoAst
                 case AstVarDef astVarDef:
                     return Write(astVarDef);
                 
-                case AstVarRef astVarRef:
-                    return Write(astVarRef.Name);
-
                 case AstMulti astMulti:
                     return astMulti.Nodes.Aggregate(this, (w, n) => w.Write(n));
 

@@ -157,7 +157,7 @@ namespace PlatoAst
             return AstBlock.Create(
                 vd,
                 AstLoop.Create(
-                    ToIntrinsic("MoveNext", AstVarRef.Create(astIdent.Text)),
+                    ToIntrinsic("MoveNext", AstIdentifier.Create(astIdent.Text)),
                     ToAst(forEach.Statement)));
         }
 
@@ -248,8 +248,28 @@ namespace PlatoAst
             }
         }
 
+        public IEnumerable<CstAttribute> GetAttributes(CstAttributeList list)
+        {
+            if (list == null) 
+                yield break;
+            foreach (var grp in list.AttributeGroup.Nodes)
+            {
+                foreach (var attr in grp.Attribute.Nodes)
+                    yield return attr;
+            }
+        }
+
         public AstTypeDeclaration ToAst(CstTypeDeclarationWithPreamble typeDecl)
         {
+            var attributes = new List<AstAttribute>();
+            if (typeDecl.DeclarationPreamble.Present)
+            {
+                var preamble = typeDecl.DeclarationPreamble.Node;
+                foreach (var attr in GetAttributes(preamble.AttributeList.Node))
+                {
+                    attributes.Add(new AstAttribute(attr.Text));
+                }
+            }
             Debug.WriteLine("TODO: store the attributes (preamble)");
             var td = typeDecl.TypeDeclaration.Node;
             return new AstTypeDeclaration(
@@ -258,6 +278,7 @@ namespace PlatoAst
                     ?? Enumerable.Empty<AstIdentifier>(),
                 td.BaseClassList.Node?.TypeExpr.Nodes.Select(ToAst)
                     ?? Enumerable.Empty<AstTypeNode>(),
+                attributes,
                 td.MemberDeclaration.Nodes.SelectMany(ToAst).ToArray());
         }
 
@@ -544,7 +565,7 @@ namespace PlatoAst
                     throw new NotImplementedException();
 
                 case CstIdentifier cstIdentifier:
-                    return AstVarRef.Create(cstIdentifier.Text);
+                    return AstIdentifier.Create(cstIdentifier.Text);
 
                 case CstIfStatement cstIfStatement:
                     return AstConditional.Create(ToAst(cstIfStatement.ParenthesizedExpression),

@@ -66,9 +66,8 @@ namespace PlatoTests
             var writeFunc = AstConstant.Create<Action<string>>(Console.WriteLine);
             var toStr = AstConstant.Create<Func<object, string>>(x => x.ToString());
             var varDef = AstVarDef.Create("x", AstTypeNode.Create("int"));
-            var varRef = AstVarRef.Create("x");
-            var varAss = AstAssign.Create(varRef, k);
-            var toStrIvk = AstInvoke.Create(toStr, varRef);
+            var varAss = AstAssign.Create("x", k);
+            var toStrIvk = AstInvoke.Create(toStr, varAss);
             var writeIvk = AstInvoke.Create(writeFunc, toStrIvk);
             var blk = AstBlock.Create(varDef, varAss, writeIvk);
             var loop = AstLoop.Create(AstConstant.True, blk);
@@ -84,7 +83,6 @@ namespace PlatoTests
                 writeFunc,
                 toStr,
                 varDef,
-                varRef,
                 varAss,
                 toStrIvk,
                 writeIvk,

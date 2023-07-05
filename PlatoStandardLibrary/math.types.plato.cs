@@ -1,4 +1,6 @@
-﻿namespace Plato.__TYPES__     
+﻿using System.Globalization;
+
+namespace Plato.__TYPES__     
 {
     // These are the built-in types. These are usually defined in the target language. 
 
@@ -11,7 +13,7 @@
     [Intrinsic, Numerical]
     class Count
     {
-        ulong Value;
+        long Value;
     }
 
     [Intrinsic, Value]
@@ -30,6 +32,12 @@
 
     [Numerical]
     class Unit
+    {
+        Number Value;
+    }
+
+    [Numerical]
+    class Percent
     {
         Number Value;
     }
@@ -225,38 +233,70 @@
         Point2D A, B;
     }
 
+    // https://en.wikipedia.org/wiki/RGB_color_spaces
     [Value]
     class Color 
     {
         Unit R, G, B, A;
     }
 
+    // https://en.wikipedia.org/wiki/CIELUV
+    [Value]
+    class ColorLUV
+    {
+        Percent Lightness;
+        Unit U, V;
+    }
+
+    // https://en.wikipedia.org/wiki/CIELAB_color_space
+    [Value]
+    class ColorLAB
+    {
+        Percent Lightness;
+        Integer A, B;
+    }
+
+    // https://en.wikipedia.org/wiki/CIELAB_color_space#Cylindrical_model
+    [Value]
+    class ColorLCh
+    {
+        Percent Lightness;
+        PolarCoordinate ChromaHue;
+    }
+
+    // https://en.wikipedia.org/wiki/HSL_and_HSV
     [Value]
     class ColorHSV 
     {
-        Unit H, S, V;
+        Angle Hue;
+        Unit S, V;
     }
-
+    
+    // https://en.wikipedia.org/wiki/HSL_and_HSV
     [Value]
     class ColorHSL
     {
-        Unit Hue, Saturation, Luminance;
+        Angle Hue;
+        Unit Saturation, Luminance;
     }
 
+    // https://en.wikipedia.org/wiki/YCbCr
     [Value]
     class ColorYCbCr
     {
         Unit Y, Cb, Cr;
     }
 
+    // https://en.wikipedia.org/wiki/Spherical_coordinate_system
     [Value]
     class SphericalCoordinate
     {
         Number Radius;
         Angle Azimuth;
-        Angle Inclination;
+        Angle Polar ;
     }
 
+    // https://en.wikipedia.org/wiki/Polar_coordinate_system
     [Value]
     class PolarCoordinate
     {
@@ -264,6 +304,7 @@
         Angle Angle;
     }
 
+    // https://en.wikipedia.org/wiki/Log-polar_coordinates
     [Value]
     class LogPolarCoordinate
     {
@@ -271,6 +312,16 @@
         Angle Azimuth;
     }
 
+    // https://en.wikipedia.org/wiki/Cylindrical_coordinate_system
+    [Value]
+    class CylindricalCoordinate
+    {
+        Number RadialDistance;
+        Angle Azimuth;
+        Number Height;
+    }
+
+    // https://en.wikipedia.org/wiki/Horizontal_coordinate_system
     [Value]
     class HorizontalCoordinate
     {
@@ -279,10 +330,19 @@
         Number Height;
     }
 
+    // https://en.wikipedia.org/wiki/Geographic_coordinate_system
     [Value]
     class GeoCoordinate
     {
-        Number Latitude, Longitude, Altitude;
+        Angle Latitude, Longitude;
+    }
+
+    // https://en.wikipedia.org/wiki/Geographic_coordinate_system
+    [Value]
+    class GeoCoordinteWithAltitude
+    {
+        GeoCoordinate Coordinate;
+        Number Altitude;
     }
 
     [Value]
@@ -455,6 +515,19 @@
     class CubicBezier2D
     {
         Point2D A, B, C, D;
+    }
+
+    // https://en.wikipedia.org/wiki/UV_mapping
+    [Vector]
+    class UV
+    {
+        Unit U, V;
+    }
+
+    [Vector]
+    class UVW
+    {
+        Unit U, V, W;
     }
 
     // https://en.wikipedia.org/wiki/B%C3%A9zier_curve

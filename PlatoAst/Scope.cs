@@ -1,40 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace PlatoAst
 {
     public class Scope
     {
         public Scope Parent { get; }
+        public Binding Bindings { get; }
 
-        public Scope(Scope parent)
-            => Parent = parent;
+        public Scope(Scope parent, Binding bindings)
+            => (Parent, Bindings) = (parent, bindings);
+    }
 
-        public bool HasName(string name)
-            => Names.ContainsKey(name);
+    public static class ScopeExtensions
+    {
+        public static Scope Bind(this Scope scope, string name, AbstractValue value)
+            => new Scope(scope.Parent, scope.Bindings.Add(name, value));
 
-        public object GetValue(string name)
-            => Names[name].Item2;
+        public static Binding Find(this Scope scope, string name)
+            => scope.EnumerateBindings().FirstOrDefault(x => x.Name == name);
+       
+        public static AbstractValue GetValue(this Scope scope, string name)
+            => scope.Find(name)?.Value;
 
-        public void Bind(string name, object value)
-            => Names[name] = (Names[name].Item1, value);
+        public static Scope Push(this Scope scope)
+            => new Scope(scope, null);
 
-        public void Declare(AstVarDef def)
-            => Declare(def, null);
+        public static Scope Pop(this Scope scope)
+            => scope.Parent;
 
-        public void Declare(AstParameterDeclaration decl, object value)
-            => Names[decl.Name] = (default, value);
+        public static IEnumerable<Scope> Enumerate(this Scope scope)
+        {
+            for (;scope != null; scope = scope.Parent)
+                yield return scope;
+        }
 
-        public void Declare(AstVarDef def, object value)
-            => Names[def.Name] = (def, value);
-
-        public Dictionary<string, (AstVarDef, object)> Names { get; } 
-            = new Dictionary<string, (AstVarDef, object)>();
-
-        public Scope FindName(string name)
-            => HasName(name) 
-                ? this 
-                : Parent?.FindName(name) 
-                  ?? throw new Exception($"No scope found contains {name}");
+        public static IEnumerable<Binding> EnumerateBindings(this Scope scope) 
+            => scope.Enumerate().SelectMany(scp => scp.Bindings.Enumerate());
     }
 }

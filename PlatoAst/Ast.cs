@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 
 namespace PlatoAst
@@ -8,20 +7,21 @@ namespace PlatoAst
     public abstract class AstNode
     {
         public virtual IEnumerable<AstNode> Children => Enumerable.Empty<AstNode>();
-        
-        public override string ToString()
-            => "(" + string.Join(" ", Children) + ")";
+        public override string ToString() => "(" + string.Join(" ", Children) + ")";
+    }
+
+    public class AstAttribute : AstNode
+    {
+        public string Name { get; }
+        public AstAttribute(string name) => Name = name;
+        public static AstAttribute Create(string name) => new AstAttribute(name);
     }
 
     public class AstLeaf : AstNode
     {
         public string Text { get; }
-
-        public AstLeaf(string text = "")
-            => Text = text;
-
-        public override string ToString()
-            => Text;
+        public AstLeaf(string text = "") => Text = text;
+        public override string ToString() => Text;
     }
 
     public class AstIdentifier : AstLeaf
@@ -170,23 +170,14 @@ namespace PlatoAst
         public override IEnumerable<AstNode> Children => base.Children.Append(Name).Append(Value).Append(Type);
     }
 
-    public class AstVarRef : AstNode
-    {
-        public AstIdentifier Name { get; }
-        public AstVarRef(AstIdentifier name) => Name = name;
-
-        public static AstVarRef Create(AstIdentifier name) => new AstVarRef(name);
-        public override IEnumerable<AstNode> Children => base.Children.Append(Name);
-    }
-
     public class AstAssign : AstNode
     {
-        public AstVarRef Var { get; }
+        public string Var { get; }
         public AstNode Value { get; }
 
-        public AstAssign(AstVarRef var, AstNode value) => (Var, Value) = (var, value);
-        public static AstAssign Create(AstVarRef var, AstNode value) => new AstAssign(var, value);
-        public override IEnumerable<AstNode> Children => new [] { Var, Value };
+        public AstAssign(string var, AstNode value) => (Var, Value) = (var, value);
+        public static AstAssign Create(string var, AstNode value) => new AstAssign(var, value);
+        public override IEnumerable<AstNode> Children => new [] { Value };
     }
 
     public class AstInvoke : AstNode
@@ -212,14 +203,22 @@ namespace PlatoAst
     public abstract class AstDeclaration : AstNode
     {
         public AstIdentifier Name { get; }
-        protected AstDeclaration(AstIdentifier name) => Name = name;
+        public IReadOnlyList<AstAttribute> Attributes { get; }
+        public IReadOnlyList<AstDeclaration> Declarations { get; }
+
+        protected AstDeclaration(AstIdentifier name, IReadOnlyList<AstAttribute> attributes)
+        {
+            (Name, Attributes) = (name, attributes ?? Array.Empty<AstAttribute>());
+        }
+
         public override IEnumerable<AstNode> Children => new [] { Name };
+        public bool HasAttribute(string name) => Attributes.Any(a => a.Name == name);
     }
 
     public abstract class AstMemberDeclaration : AstDeclaration
     {
         public AstTypeNode Type { get; }
-        protected AstMemberDeclaration(AstIdentifier name, AstTypeNode type) : base(name) 
+        protected AstMemberDeclaration(AstIdentifier name, AstTypeNode type, IReadOnlyList<AstAttribute> attributes) : base(name, attributes) 
             => (Type) = (type);
         public override IEnumerable<AstNode> Children => base.Children.Append(Type);
     }
@@ -241,16 +240,15 @@ namespace PlatoAst
         public IReadOnlyList<AstNamespace> Namespaces { get; }
         public override IEnumerable<AstNode> Children => 
             Types.Cast<AstNode>().Concat(Namespaces).Concat(Directives);
-
         public AstNamespace(AstIdentifier name, IEnumerable<AstDirective> directives, IEnumerable<AstTypeDeclaration> types, IEnumerable<AstNamespace> namespaces)
-        : base(name)
+        : base(name, null)
             => (Types, Directives, Namespaces) = (types.ToList(), directives.ToList(), namespaces.ToList());
     }
 
     public class AstFieldDeclaration : AstMemberDeclaration
     {
         public AstNode Node { get; }
-        public AstFieldDeclaration(AstIdentifier name, AstTypeNode type, AstNode node) : base(name, type) => Node = node;
+        public AstFieldDeclaration(AstIdentifier name, AstTypeNode type, AstNode node) : base(name, type, null) => Node = node;
         public override IEnumerable<AstNode> Children => base.Children.Append(Node);
         public static AstFieldDeclaration Create(AstIdentifier name, AstTypeNode type, AstNode node)
             => new AstFieldDeclaration(name, type, node);
@@ -261,7 +259,7 @@ namespace PlatoAst
         public AstNode Body { get; }
         public AstNode Value { get; }
 
-        public AstPropertyDeclaration(AstIdentifier name, AstTypeNode type, AstNode body, AstNode value) : base(name, type)
+        public AstPropertyDeclaration(AstIdentifier name, AstTypeNode type, AstNode body, AstNode value) : base(name, type, null)
         {
             Body = body;
             Value = value;
@@ -281,7 +279,7 @@ namespace PlatoAst
     {
         public AstTypeNode Type { get; }
 
-        public AstParameterDeclaration(AstIdentifier name, AstTypeNode type) : base(name) => Type = type;
+        public AstParameterDeclaration(AstIdentifier name, AstTypeNode type) : base(name, null) => Type = type;
         public override IEnumerable<AstNode> Children => base.Children.Append(Type);
 
         public static AstParameterDeclaration Create(AstIdentifier name, AstTypeNode type)
@@ -298,7 +296,7 @@ namespace PlatoAst
             AstTypeNode type,
             IEnumerable<AstParameterDeclaration> parameters,
             IEnumerable<AstIdentifier> typeParameters, AstNode body) :
-            base(name, type)
+            base(name, type, null)
         {
             Body = body;
             Parameters = parameters.ToList();
@@ -331,7 +329,7 @@ namespace PlatoAst
         public IReadOnlyList<AstMemberDeclaration> Members { get; }
 
         public AstTypeDeclaration(AstIdentifier name, IEnumerable<AstIdentifier> typeParameters,
-            IEnumerable<AstTypeNode> baseTypes, params AstMemberDeclaration[] members) : base(name)
+            IEnumerable<AstTypeNode> baseTypes, IEnumerable<AstAttribute> attributes, params AstMemberDeclaration[] members) : base(name, attributes.ToList())
         {
             TypeParameters = typeParameters.ToList();
             BaseTypes = baseTypes.ToList();
@@ -340,9 +338,41 @@ namespace PlatoAst
 
         public override IEnumerable<AstNode> Children =>
             base.Children.Concat(TypeParameters).Concat(BaseTypes).Concat(Members);
+    }
 
-        public static AstTypeDeclaration Create(AstIdentifier name, IEnumerable<AstIdentifier> typeParameters,
-            IEnumerable<AstTypeNode> baseTypes, params AstMemberDeclaration[] members)
-            => new AstTypeDeclaration(name, typeParameters, baseTypes, members);
+    public class AstProject : AstDeclaration
+    {
+        public IReadOnlyList<AstFile> Files { get; }
+
+        public AstProject(AstIdentifier name, IReadOnlyList<AstFile> files) : base(name, null)
+        {
+            Files = files;
+        }
+    }
+
+    public class AstFile : AstDeclaration
+    {
+        public AstNamespace Namespace { get; }
+
+        public AstFile(AstIdentifier name, AstNamespace ns) : base(name, null)
+        {
+            Namespace = ns;
+        }
+    }
+
+    public static class AstNodeExtensions
+    {
+        public static IEnumerable<AstNode> GetAllDescendants(this AstNode node)
+        {
+            if (node == null)
+                yield break;
+            ;
+            yield return node;
+            foreach (var child in node.Children.SelectMany(GetAllDescendants))
+                yield return child;
+        }
+
+        public static IEnumerable<AstTypeDeclaration> GetAllTypes(this AstNode node)
+            => node.GetAllDescendants().OfType<AstTypeDeclaration>();
     }
 }

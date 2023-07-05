@@ -198,7 +198,7 @@ public static class ExpressionTreeToPlatoAst
 
         if (binaryExpression.NodeType == ExpressionType.Assign)
         {
-            var lValue = args[0] as AstVarRef;
+            var lValue = args[0] as AstIdentifier;
 
             // TODO: there is probably special handling required when assigning to a field, property, indexer, or array index 
 

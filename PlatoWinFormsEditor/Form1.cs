@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Text;
 using Parakeet;
 using Parakeet.Demos;
 using Parakeet.Demos.CSharp;
@@ -70,7 +72,37 @@ namespace PlatoWinFormsEditor
             richTextBoxAst.Text = Try(() => c.AstTree.ToXml());
             //richTextBoxCSharp.Text = Try(() => c.AstTree.ToCSharp());
             richTextBoxJavaScript.Text = Try(() => c.AstTree.ToJavaScript());
+
+            richTextBoxOutput.AppendText(Try(() => AstDeclarations(c.AstTree)));
             return c;
+        }
+
+        public static string AstDeclarations(AstNode node)
+        {
+            var ns = node as AstNamespace;
+            Debug.Assert(ns != null);
+            var dl = new DeclarationLookup(ns);
+            var sb = new StringBuilder();
+
+            /*
+            sb.AppendLine("Declarations");
+            foreach (var pair in dl.GetDeclarations())
+            {
+                sb.AppendLine($"{pair.Item1} = {pair.Item2}");
+            }
+            */
+
+            sb.AppendLine("Operations");
+            var ops = Operations.Create(ns.GetAllTypes());
+            foreach (var kv in ops.OperationsFromTypes)
+            {
+                foreach (var m in kv.Value)
+                {
+                    sb.AppendLine($"{kv.Key} has {m.Name.Text}");
+                }
+            }
+
+            return sb.ToString();
         }
 
         private void richTextBox1_TextChanged(object sender, EventArgs e)
