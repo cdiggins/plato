@@ -1,0 +1,109 @@
+﻿
+concept Interval<T : Numerical>
+{
+    field Min : T;
+    field Max : T;  
+}
+
+operations Interval
+{
+    function Size() => Max - Min;
+    function IsEmpty() => Min >= Max;
+    function Lerp(amount) => Min * (1.0 - amount) + Max * amount;
+    function InverseLerp(value) => (value - Min) / Size;
+    function Multiply(x) => (Min * x, Max * x);
+    function Add(x) => (Min + x, Max + x);
+    function Negate() => (-Max, -Min);
+    function Reverse() => (Max, Min);
+    function Resize(size) => (Min, Min + size);
+    function Center() => Lerp(0.5);    
+    function Contains(value) => Min <= value <= Max;
+    function Contains(other) => Min <= other.Min && Max >= other.Max;
+    function Overlaps(other) => other.Contains(this) || Contains(other.Min);
+    function Split(x) => (Left(x), Right(x));
+    function Split() => Split(0.5);
+    function Left(x) => (Min, Lerp(x));
+    function Right(x) => (Lerp(x), Max);
+    function MoveTo(x) => (x, x + Size);
+    function HalfSize() => Size() / 2;
+    function MoveCenterTo(x) => (x - HalfSize, x + HalfSize);
+    function Clamp(value) => value < Min ? Min : value > Max ? Max : value;
+}
+
+concept Vector<T : Numerical> inherits Array
+{
+}
+
+operations Vector
+{
+    function Sum() => Aggregate(0, Add); 
+    function SumSquares() => Map(Square).Aggregate(0, Add); 
+    function LengthSquared() => SumSquares;
+    function Length() => LengthSquared.SquareRoot;
+    function Add(other) => Zip(other, Add);
+    function Multiply(value) => Zip(other, Multiply);
+    function Multiply(scalar) => Map(x, Multiply);
+}
+
+concept Numerical 
+{
+    function SquareRoot() => intrinsic;
+    function Square() => Value * Value;
+    function Clamp(min, max) => Interval(min, max).Clamp(this);
+}
+
+concept Integer
+{
+    field Value: Any;
+    function Negative(): Integer;
+    function Add(x:Integer): Integer;
+    function Subtract(x:Integer): Integer;
+}
+
+concept Comparable
+{
+    function Compare(other: Self): Integer;
+}
+
+operations Comparable
+{
+}
+
+concept Measure
+{ 
+    
+}
+
+concept Array<T>
+{
+    field Count: Count;    
+    function At(n: Index): T;
+}
+
+operations Array
+{
+    function Map(f) => (Count, i => f(At(i)));
+    function Zip(other, f) => (Count, i => f(At(i), other.At(i));
+    function Skip(n) => (Count - n, i => At(i - n));
+    function Take(n) => (n, i => );
+    function Accumulate(init, f) => IsEmpty ? init : f(init, f(Rest));
+    function Rest() => Skip(1);
+    function IsEmpty() => Count == 0;
+    function First() => At(1);
+    function Last() => At(Count - 1);
+    function Slice(from, count) => Skip(from).Take(count);
+    function Join(sep) => IsEmpty ? "" : First.ToString + Skip(1).Accumulate("", (acc, cur) => $"{acc}{sep}{cur}")
+}
+
+concept Value : Array<Object>
+{
+    field Names: Array<string>;
+}
+
+operations Value
+{
+    function One() => (Count, i => At(i).One);
+    function Zero() => (Count, i => At(i).Zero);
+    function Default() => (Count, i => At(i).One);
+    function ToString() => Zip(Names, (val, name) => $"{name} = {val}").Join(", ");
+}

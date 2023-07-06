@@ -421,9 +421,23 @@ namespace Plato.__TYPES__
     }
 
     [Interval]
-    class Arc
+    class AnglePair
     {
         Angle Start, End;
+    }
+
+    [Number]
+    class Ring
+    {
+        Circle Circle;
+        Number InnerRadius;
+    }
+
+    [Value]
+    class Arc
+    {
+        AnglePair Angles;
+        Circle Cirlce;
     }
 
     [Interval]

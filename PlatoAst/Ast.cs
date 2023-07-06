@@ -366,7 +366,6 @@ namespace PlatoAst
         {
             if (node == null)
                 yield break;
-            ;
             yield return node;
             foreach (var child in node.Children.SelectMany(GetAllDescendants))
                 yield return child;
