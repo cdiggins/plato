@@ -1,0 +1,189 @@
+﻿
+concept Interval<T : Numerical>
+{
+    field Min : T;
+    field Max : T;  
+}
+
+extension Interval
+{
+    function Size() => Max - Min;
+    function IsEmpty() => Min >= Max;
+    function Lerp(amount) => Min * (1.0 - amount) + Max * amount;
+    function InverseLerp(value) => (value - Min) / Size;
+    function Multiply(x) => Interval(Min * x, Max * x);
+    function Add(x) => Interval(Min + x, Max + x);
+    function Negate() => Interval(-Max, -Min);
+    function Reverse() => Interval(Max, Min);
+    function Resize(size) => Interval(Min, Min + size);
+    function Center() => Lerp(0.5);    
+    function Contains(value) => Min <= value <= Max;
+    function Contains(other) => Min <= other.Min && Max >= other.Max;
+    function Overlaps(other) => other.Contains(this) || Contains(other.Min);
+    function Split(x) => Interval(Left(x), Right(x));
+    function Split() => Split(0.5);
+    function Left(x) => Interval(Min, Lerp(x));
+    function Right(x) => Interval(Lerp(x), Max);
+    function MoveTo(x) => Interval(x, x + Size);
+    function HalfSize() => Size() / 2;
+    function MoveCenterTo(x) => Interval(x - HalfSize, x + HalfSize);
+    function Clamp(value) => value < Min ? Min : value > Max ? Max : value;
+    function Between(value) => value >= Min && value <= Max;
+    function Unit() => Interval(0, 1);
+}
+
+concept Vector<T : Numerical> 
+    inherits Array, Value, Numerical
+{
+}
+
+extension Vector
+{
+    function Sum() => Aggregate(0, Add); 
+    function SumSquares() => Map(Square).Aggregate(0, Add); 
+    function LengthSquared() => SumSquares;
+    function Length() => LengthSquared.SquareRoot;
+    function Add(other) => Zip(other, Add);
+    function Multiply(value) => Zip(other, Multiply);
+    function Multiply(scalar) => Map(x, Multiply);
+}
+
+concept Numerical 
+    inherits Equatable, Comparable, Arithmetic<Self>
+{
+    field Value: Numerical;
+    function MinValue(): Self;
+    function MaxValue(): Self;
+    function SquareRoot() => intrinsic;
+}
+
+extension Numerical 
+{
+    function Square() => Value * Value;
+    function Clamp(min, max) => Interval(min, max).Clamp(this);
+    function Clamp() => Clamp(0, 1);
+    function PlusOne() => Value + 1;
+    function MinusOne() => Value - 1;
+    function Sign() => CompareTo(0) < 0 ? -1 : CompareTo(1) > 0 ? 1 : 0;
+    function Abs() => Value < 0 ? -Value : Value;
+    function Half() => this * 0.5;
+    function Quarter() => this * 0.25;
+    function Tenth() => this * 0.1;
+    function Hundredth() => this / 100;
+    function Thousandth() => this / 1000;
+    function Millionth() => this / 1000 / 1000;
+    function Billionth() => this / 1000 / 1000 / 1000;
+    function Hundred() => this * 100;
+    function Thousand() => this * 1000;
+    function Million() => this * 1000 * 1000;
+    function Billion() => this * 1000 * 1000 * 1000;
+    function Twice() => this * 2;
+    function Thrice() => this * 3;
+    function SmoothStep() => Square * (3 - 2 * this);
+    function Pow2() => this.Multiply(this);
+    function Pow3() => Pow2.Multiply(this);
+    function Pow4() => Pow3.Multiply(this);
+    function Pow5() => Pow4.Multiply(this);
+}
+
+concept Integer
+{
+    field Value: Any;
+    function Negative(): Integer;
+    function Add(x: Integer): Integer;
+    function Subtract(x: Integer): Integer;
+}
+
+concept Comparable
+{
+    function Compare(other: Self): Integer;
+}
+
+extension Comparable
+{
+    function LessThan(x) => Compare(x) < 0;
+    function LessThanOrEqual(x) => Compare(x) <= 0;
+    function GreaterThan(x) => Compare(x) > 0;
+    function GreaterThanOrEqual(x) => Compare(x) >= 0;
+    function Min(x) => LessThan(x) ? this : x;
+    function Max(x) => GreaterThan(x) ? this : x;
+    function Between(x, y) => Interval(x, y).Between(this);
+}
+
+concept Equatable
+{
+    function Equals(x: Self): Boolean
+}
+
+extension Equatable
+{
+    function NotEquals(x) => !Equals(x);
+}
+
+// https://en.wikipedia.org/wiki/Group_(mathematics)
+concept Additive<T>
+{
+    function Add(x: T): Self;
+    function AdditiveInverse(): Self; 
+    function Negative(): Self;
+    function Subtract(x: T): Self;
+}
+
+// https://en.wikipedia.org/wiki/Group_(mathematics)
+concept Multiplicative<T>
+{
+    function Multiply(x: T): Self;
+    function Reciprocal(): Self;
+    function MultiplicativeIdentity(): Self;
+    function Divide(x: T): Self;
+    function Modulo(x: T): Self;
+}
+
+concept Arithemtic<T>
+    inherits Multiplicative<T>, Additive<T>
+{ 
+}
+
+concept ScalarArithemtic
+    inherits Arithmetic<Number>
+{
+}
+
+concept Measure
+    inherits Value, Additive<Self>, ScalarArithemtic, Equatable, Comparable
+{ 
+}
+
+concept Array<T>
+{
+    field Count: Count;    
+    function At(n: Index): T;
+}
+
+extension Array
+{
+    function Map(f) => Array(Count, i => f(At(i)));
+    function Zip(other, f) => Array(Count, i => f(At(i), other.At(i));
+    function Skip(n) => Array(Count - n, i => At(i - n));
+    function Take(n) => Array(n, i => );
+    function Accumulate(init, f) => IsEmpty ? init : f(init, f(Rest));
+    function Rest() => Skip(1);
+    function IsEmpty() => Count == 0;
+    function First() => At(1);
+    function Last() => At(Count - 1);
+    function Slice(from, count) => Skip(from).Take(count);
+    function Join(sep) => IsEmpty ? "" : First.ToString + Skip(1).Accumulate("", (acc, cur) => $"{acc}{sep}{cur}")
+}
+
+concept Value : Array<Object>
+{
+    field Names: Array<string>;
+}
+
+extension Value
+{
+    function One() => (Count, i => At(i).One);
+    function Zero() => (Count, i => At(i).Zero);
+    function Default() => (Count, i => At(i).One);
+    function ToString() => Zip(Names, (val, name) => $"{name} = {val}").Join(", ");
+}
