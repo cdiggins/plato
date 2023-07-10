@@ -13,7 +13,6 @@ namespace PlatoTests
         [Test]
         [TestCase(AstCodeWriter.Language.CSharp)]
         [TestCase(AstCodeWriter.Language.JavaScript)]
-        [TestCase(AstCodeWriter.Language.Pail)]
         public void TestAstWriter(AstCodeWriter.Language lang)
         {
             // TODO: create nodes 
@@ -39,7 +38,7 @@ namespace PlatoTests
 
             foreach (var n in TestInputAstNodes())
             {
-                var text = NodeToString(n, AstCodeWriter.Language.Pail);
+                var text = NodeToString(n, AstCodeWriter.Language.CSharp);
 
                 testCount++;
                 var r = ParserTests.ParseTest(text, PailTests.Grammar.Expr);

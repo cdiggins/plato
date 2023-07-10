@@ -91,7 +91,7 @@ namespace PlatoTests
             File.WriteAllText(astJavaScriptFile, ast.ToJavaScript());
 
             var astPailFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".ast.pail");
-            File.WriteAllText(astPailFile, ast.ToPail());
+            File.WriteAllText(astPailFile, ast.ToPlato());
         }
     }
 }

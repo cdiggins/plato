@@ -5,12 +5,22 @@ namespace PlatoAst
 {
     public class Compilation
     {
-        public Compilation(string input,
+        public Compilation(
+            string input,
+            Rule rule,
+            Func<ParserTree, CstNode> cstGenerator,
+            Func<CstNode, AstNode> astBuilder)
+            : this(new ParserInput(input), rule, cstGenerator, astBuilder)
+        {
+        }
+
+        public Compilation(
+            ParserInput input,
             Rule rule,
             Func<ParserTree, CstNode> cstGenerator,
             Func<CstNode, AstNode> astBuilder)
         {
-            Input = new ParserInput(input);
+            Input = input;
             Rule = rule;
             try
             {

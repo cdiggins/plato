@@ -1,0 +1,800 @@
+type Integer
+  implements Numerical
+{
+    field Value: Integer;
+}
+
+type Count
+  implements Numerical
+{
+    field Value: Integer;
+}
+
+type Index
+  implements Value
+{
+    field Value: Integer;
+}
+
+type Number
+  implements Numerical
+{
+    field Value: Float64;
+}
+
+type Unit
+  implements Numerical
+{
+    field Value: Number;
+}
+
+type Percent
+  implements Numerical
+{
+    field Value: Number;
+}
+
+type Quaternion
+  implements Value
+{
+    field X: Number;
+    field Y: Number;
+    field Z: Number;
+    field W: Number;
+}
+
+type Unit2D
+  implements Value
+{
+    field X: Unit;
+    field Y: Unit;
+}
+
+type Unit3D
+  implements Value
+{
+    field X: Unit;
+    field Y: Unit;
+    field Z: Unit;
+}
+
+type Direction3D
+  implements Value
+{
+    field Value: Unit3D;
+}
+
+type AxisAngle
+  implements Value
+{
+    field Axis: Unit3D;
+    field Angle: Angle;
+}
+
+type EulerAngles
+  implements Value
+{
+    field Yaw: Angle;
+    field Pitch: Angle;
+    field Roll: Angle;
+}
+
+type Rotation3D
+  implements Value
+{
+    field Quaternion: Quaternion;
+}
+
+type Vector2D
+  implements Vector
+{
+    field X: Number;
+    field Y: Number;
+}
+
+type Vector3D
+  implements Vector
+{
+    field X: Number;
+    field Y: Number;
+    field Z: Number;
+}
+
+type Vector4D
+  implements Vector
+{
+    field X: Number;
+    field Y: Number;
+    field Z: Number;
+    field W: Number;
+}
+
+type Orientation3D
+  implements Value
+{
+    field Value: Rotation3D;
+}
+
+type Pose2D
+  implements Value
+{
+    field Position: Vector3D;
+    field Orientation: Orientation3D;
+}
+
+type Pose3D
+  implements Value
+{
+    field Position: Vector3D;
+    field Orientation: Orientation3D;
+}
+
+type Transform3D
+  implements Value
+{
+    field Translation: Vector3D;
+    field Rotation: Rotation3D;
+    field Scale: Vector3D;
+}
+
+type Transform2D
+  implements Value
+{
+    field Translation: Vector2D;
+    field Rotation: Angle;
+    field Scale: Vector2D;
+}
+
+type AlignedBox2D
+  implements Interval
+{
+    field A: Vector2D;
+    field B: Vector2D;
+}
+
+type AlignedBox3D
+  implements Interval
+{
+    field A: Vector3D;
+    field B: Vector3D;
+}
+
+type Complex
+  implements Vector
+{
+    field Real: Number;
+    field Imaginary: Number;
+}
+
+type Ray3D
+  implements Value
+{
+    field Direction: Vector3D;
+    field Position: Point3D;
+}
+
+type Ray2D
+  implements Value
+{
+    field Direction: Vector2D;
+    field Position: Point2D;
+}
+
+type Sphere
+  implements Value
+{
+    field Center: Point3D;
+    field Radius: Number;
+}
+
+type Plane
+  implements Value
+{
+    field Normal: Unit3D;
+    field D: Number;
+}
+
+type Triangle3D
+  implements Value
+{
+    field A: Point3D;
+    field B: Point3D;
+    field C: Point3D;
+}
+
+type Triangle2D
+  implements Value
+{
+    field A: Point2D;
+    field B: Point2D;
+    field C: Point2D;
+}
+
+type Quad3D
+  implements Value
+{
+    field A: Point3D;
+    field B: Point3D;
+    field C: Point3D;
+    field D: Point3D;
+}
+
+type Quad2D
+  implements Value
+{
+    field A: Point2D;
+    field B: Point2D;
+    field C: Point2D;
+    field D: Point2D;
+}
+
+type Point3D
+  implements Value
+{
+    field Value: Vector3D;
+}
+
+type Point2D
+  implements Value
+{
+    field Value: Vector2D;
+}
+
+type Line3D
+  implements Interval
+{
+    field A: Point3D;
+    field B: Point3D;
+}
+
+type Line2D
+  implements Interval
+{
+    field A: Point2D;
+    field B: Point2D;
+}
+
+// https://en.wikipedia.org/wiki/RGB_color_spaces
+type Color
+  implements Value
+{
+    field R: Unit;
+    field G: Unit;
+    field B: Unit;
+    field A: Unit;
+}
+
+// https://en.wikipedia.org/wiki/CIELUV
+type ColorLUV
+  implements Value
+{
+    field Lightness: Percent;
+    field U: Unit;
+    field V: Unit;
+}
+
+// https://en.wikipedia.org/wiki/CIELAB_color_space
+type ColorLAB
+  implements Value
+{
+    field Lightness: Percent;
+    field A: Integer;
+    field B: Integer;
+}
+
+// https://en.wikipedia.org/wiki/CIELAB_color_space#Cylindrical_model
+type ColorLCh
+  implements Value
+{
+    field Lightness: Percent;
+    field ChromaHue: PolarCoordinate;
+}
+
+// https://en.wikipedia.org/wiki/HSL_and_HSV
+type ColorHSV
+  implements Value
+{
+    field Hue: Angle;
+    field S: Unit;
+    field V: Unit;
+}
+
+// https://en.wikipedia.org/wiki/HSL_and_HSV
+type ColorHSL
+  implements Value
+{
+    field Hue: Angle;
+    field Saturation: Unit;
+    field Luminance: Unit;
+}
+
+// https://en.wikipedia.org/wiki/YCbCr   
+type ColorYCbCr
+  implements Value
+{
+    field Y: Unit;
+    field Cb: Unit;
+    field Cr: Unit;
+}
+
+// https://en.wikipedia.org/wiki/Spherical_coordinate_system    
+type SphericalCoordinate
+  implements Value
+{
+    field Radius: Number;
+    field Azimuth: Angle;
+    field Polar: Angle;
+}
+
+// https://en.wikipedia.org/wiki/Polar_coordinate_system   
+type PolarCoordinate
+  implements Value
+{
+    field Radius: Number;
+    field Angle: Angle;
+}
+
+// https://en.wikipedia.org/wiki/Log-polar_coordinates    
+type LogPolarCoordinate
+  implements Value
+{
+    field Rho: Number;
+    field Azimuth: Angle;
+}
+
+// https://en.wikipedia.org/wiki/Cylindrical_coordinate_system    
+type CylindricalCoordinate
+  implements Value
+{
+    field RadialDistance: Number;
+    field Azimuth: Angle;
+    field Height: Number;
+}
+
+// https://en.wikipedia.org/wiki/Horizontal_coordinate_system    
+type HorizontalCoordinate
+  implements Value
+{
+    field Radius: Number;
+    field Azimuth: Angle;
+    field Height: Number;
+}
+
+// https://en.wikipedia.org/wiki/Geographic_coordinate_system    
+type GeoCoordinate
+  implements Value
+{
+    field Latitude: Angle;
+    field Longitude: Angle;
+}
+
+// https://en.wikipedia.org/wiki/Geographic_coordinate_system    
+type GeoCoordinateWithAltitude
+  implements Value
+{
+    field Coordinate: GeoCoordinate;
+    field Altitude: Number;
+}
+
+type Circle
+  implements Value
+{
+    field Center: Point2D;
+    field Radius: Number;
+}
+
+type Chord
+  implements Value
+{
+    field Circle: Circle;
+    field Arc: Arc;
+}
+
+type Size2D
+  implements Value
+{
+    field Width: Number;
+    field Height: Number;
+}
+
+type Size3D
+  implements Value
+{
+    field Width: Number;
+    field Height: Number;
+    field Depth: Number;
+}
+
+type Rectangle2D
+  implements Value
+{
+    field Center: Point2D;
+    field Size: Size2D;
+}
+
+type Proportion
+  implements Numerical
+{
+    field Value: Number;
+}
+
+type Fraction
+  implements Value
+{
+    field Numerator: Number;
+    field Denominator: Number;
+}
+
+type Angle
+  implements Measure
+{
+    field Radians: Number;
+}
+
+type Length
+  implements Measure
+{
+    field Meters: Number;
+}
+
+type Mass
+  implements Measure
+{
+    field Kilograms: Number;
+}
+
+type Temperature
+  implements Measure
+{
+    field Celsius: Number;
+}
+
+type TimeSpan
+  implements Measure
+{
+    field Seconds: Number;
+}
+
+type TimeRange
+  implements Interval
+{
+    field Min: DateTime;
+    field Max: DateTime;
+}
+
+type DateTime
+  implements Value
+{
+}
+
+type AnglePair
+  implements Interval
+{
+    field Start: Angle;
+    field End: Angle;
+}
+
+type Ring
+  implements Number
+{
+    field Circle: Circle;
+    field InnerRadius: Number;
+}
+
+type Arc
+  implements Value
+{
+    field Angles: AnglePair;
+    field Cirlce: Circle;
+}
+
+type TimeInterval
+  implements Interval
+{
+    field Start: TimeSpan;
+    field End: TimeSpan;
+}
+
+type RealInterval
+  implements Interval
+{
+    field A: Number;
+    field B: Number;
+}
+
+type Interval2D
+  implements Interval
+{
+    field A: Vector2D;
+    field B: Vector2D;
+}
+
+type Interval3D
+  implements Interval
+{
+    field A: Vector3D;
+    field B: Vector3D;
+}
+
+type Capsule
+  implements Value
+{
+    field Line: Line3D;
+    field Radius: Number;
+}
+
+// https://mindcontrol.org/~hplus/graphics/matrix-layout.html
+// Column major layout in memory 
+// Translation component is in Column4.XYZ    
+type Matrix3D
+  implements Value
+{
+    field Column1: Vector4D;
+    field Column2: Vector4D;
+    field Column3: Vector4D;
+    field Column4: Vector4D;
+}
+
+type Cylinder
+  implements Value
+{
+    field Line: Line3D;
+    field Radius: Number;
+}
+
+type Cone
+  implements Value
+{
+    field Line: Line3D;
+    field Radius: Number;
+}
+
+type Tube
+  implements Value
+{
+    field Line: Line3D;
+    field InnerRadius: Number;
+    field OuterRadius: Number;
+}
+
+type ConeSegment
+  implements Value
+{
+    field Line: Line3D;
+    field Radius1: Number;
+    field Radius2: Number;
+}
+
+type Box3D
+  implements Value
+{
+    field Center: Point3D;
+    field Rotation: Rotation3D;
+    field Extent: Size3D;
+}
+
+ // https://en.wikipedia.org/wiki/B%C3%A9zier_triangle    
+type CubicBezierTriangle3D
+  implements Value
+{
+    field A: Point3D;
+    field B: Point3D;
+    field C: Point3D;
+    field A2B: Point3D;
+    field AB2: Point3D;
+    field B2C: Point3D;
+    field BC2: Point3D;
+    field AC2: Point3D;
+    field A2C: Point3D;
+    field ABC: Point3D;
+}
+
+// https://en.wikipedia.org/wiki/B%C3%A9zier_curve    
+type CubicBezier2D
+  implements Value
+{
+    field A: Point2D;
+    field B: Point2D;
+    field C: Point2D;
+    field D: Point2D;
+}
+
+// https://en.wikipedia.org/wiki/UV_mapping    
+type UV
+  implements Vector
+{
+    field U: Unit;
+    field V: Unit;
+}
+
+type UVW
+  implements Vector
+{
+    field U: Unit;
+    field V: Unit;
+    field W: Unit;
+}
+
+// https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+type CubicBezier3D
+  implements Value
+{
+    field A: Point3D;
+    field B: Point3D;
+    field C: Point3D;
+    field D: Point3D;
+}
+
+// https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+type QuadraticBezier2D
+  implements Value
+{
+    field A: Point2D;
+    field B: Point2D;
+    field C: Point2D;
+}
+
+// https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+type QuadraticBezier3D
+  implements Value
+{
+    field A: Point3D;
+    field B: Point3D;
+    field C: Point3D;
+}
+
+// https://en.wikipedia.org/wiki/Area
+type Area
+  implements Measure
+{
+    field MetersSquared: Number;
+}
+
+// https://en.wikipedia.org/wiki/Volume
+type Volume
+  implements Measure
+{
+    field MetersCubed: Number;
+}
+
+// https://en.wikipedia.org/wiki/Velocity   
+type Velocity
+  implements Measure
+{
+    field MetersPerSecond: Number;
+}
+
+// https://en.wikipedia.org/wiki/Acceleration
+type Acceleration
+  implements Measure
+{
+    field MetersPerSecondSquared: Number;
+}
+
+// https://en.wikipedia.org/wiki/Force
+type Force
+  implements Measure
+{
+    field Newtons: Number;
+}
+
+// https://en.wikipedia.org/wiki/Pressure  
+type Pressure
+  implements Measure
+{
+    field Pascals: Number;
+}
+
+// https://en.wikipedia.org/wiki/Energy   
+type Energy
+  implements Measure
+{
+    field Joules: Number;
+}
+
+// https://en.wikipedia.org/wiki/Byte    
+type Memory
+  implements Measure
+{
+    field Bytes: Count;
+}
+
+// https://en.wikipedia.org/wiki/Frequency    
+type Frequency
+  implements Measure
+{
+    field Hertz: Number;
+}
+
+// https://en.wikipedia.org/wiki/Loudness
+type Loudness
+  implements Measure
+{
+    field Decibels: Number;
+}
+
+// https://en.wikipedia.org/wiki/Luminous_intensity    
+type LuminousIntensity
+  implements Measure
+{
+    field Candelas: Number;
+}
+
+// https://en.wikipedia.org/wiki/Electric_potential    
+type ElectricPotential
+  implements Measure
+{
+    field Volts: Number;
+}
+
+// https://en.wikipedia.org/wiki/Electric_charge
+type ElectricCharge
+  implements Measure
+{
+    field Columbs: Number;
+}
+
+// https://en.wikipedia.org/wiki/Electric_current   
+type ElectricCurrent
+  implements Measure
+{
+    field Amperes: Number;
+}
+
+// https://en.wikipedia.org/wiki/Electrical_resistance_and_conductance    
+type ElectricResistance
+  implements Measure
+{
+    field Ohms: Number;
+}
+
+// https://en.wikipedia.org/wiki/Power_(physics)    
+type Power
+  implements Measure
+{
+    field Watts: Number;
+}
+
+// https://en.wikipedia.org/wiki/Density    
+type Density
+  implements Measure
+{
+    field KilogramsPerMeterCubed: Number;
+}
+
+// https://en.wikipedia.org/wiki/Normal_distribution    
+type NormalDistribution
+  implements Value
+{
+    field Mean: Number;
+    field StandardDeviation: Number;
+}
+
+// https://en.wikipedia.org/wiki/Poisson_distribution    
+type PoissonDistribution
+  implements Value
+{
+    field Expected: Number;
+    field Occurrences: Count;
+}
+
+// https://en.wikipedia.org/wiki/Bernoulli_distribution    
+type BernoulliDistribution
+  implements Value
+{
+    field P: Probability;
+}
+
+type Probability
+  implements Numerical
+{
+    field Value: Number;
+}
+
+// https://en.wikipedia.org/wiki/Binomial_distribution    
+type BinomialDistribution
+  implements Value
+{
+    field Trials: Count;
+    field P: Probability;
+}

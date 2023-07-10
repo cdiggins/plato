@@ -1,0 +1,185 @@
+module Interval
+{
+    function Size(x) = x.Max - x.Min;
+    function IsEmpty(x) = x.Min >= x.Max;
+    function Lerp(x, amount) = x.Min * (1.0 - amount) + x.Max * amount;
+    function InverseLerp(x, value) = (value - x.Min) / x.Size;
+    function Negate(x) = Interval(-x.Max, -x.Min);
+    function Reverse(x) = Interval(x.Max, x.Min);
+    function Resize(x, size) = Interval(x.Min, x.Min + size);
+    function Center(x) = x.Lerp(0.5);    
+    function Contains(x, value) = x.Min <= value && value <= x.Max;
+    function Contains(x, other) = x.Min <= other.Min && Max >= other.Max;
+    function Overlaps(x, y) = !x.Clamp(y).IsEmpty;
+    function Split(x, t) = Interval(x.Left(t), x.Right(t));
+    function Split(x) = x.Split(0.5);
+    function Left(x, t) = Interval(Min, x.Lerp(t));
+    function Right(x, t) = Interval(x.Lerp(t), x.Max);
+    function MoveTo(x, t) = Interval(t, t + x.Size);
+    function LeftHalf(x) = x.Left(0.5);
+    function RightHalf(x) = x.Right(0.5);
+    function HalfSize(x) = x.Size.Half;
+    function Recenter(x, c) = Interval(c - x.HalfSize, c + x.HalfSize);
+    function Clamp(x, y) = (x.Clamp(y.Min), x.Clamp(y.Max));
+    function Clamp(x, value) = value < x.Min ? x.Min : value > x.Max ? x.Max : value;
+    function Between(x, value) = value >= x.Min && value <= x.Max;
+    function Unit() = Interval(0, 1);
+}
+
+module Vector
+{
+    function Sum(v) = v.Aggregate(0, Add); 
+    function SumSquares(v) = v.Map(Square).Aggregate(0, Add); 
+    function LengthSquared(v) = v.SumSquares;
+    function Length(v) = v.LengthSquared.SquareRoot;
+    function Dot(v1, v2) = (v1 * v2).Sum;
+}
+
+module Trig
+{
+    function Cos(x) = intrinsic;
+    function Sin(x) = intrinsic;
+    function Tan(x) = intrinsic
+    function Acos(x) = intrinsic;
+    function Asin(x) = intrinsic;
+    function Atan(x) = intrinsic
+    function Cosh(x) = intrinsic;
+    function Sinh(x) = intrinsic;
+    function Tanh(x) = intrinsic
+    function Acosh(x) = intrinsic;
+    function Asinh(x) = intrinsic;
+    function Atanh(x) = intrinsic
+}
+
+module Numerical
+{
+    function Pow(x, y) = intrinsic;
+    function Log(x, y) = intrinsic;
+    function NaturalLog(x) = intrinsic;
+    function NaturalPower(x) = intrinsic;
+
+    function SquareRoot(x) = Pow(x, 0.5);
+    function CubeRoot(x) = Pow(x, 0.5);
+    function Square(x) = Value * Value;
+    function Clamp(x, min, max) = x.Clamp(Interval(min, max));
+    function Clamp(x, i) = i.Clamp(x);
+    function Clamp(x) = Clamp(x, 0, 1);
+    function PlusOne(x) = x + 1;
+    function MinusOne(x) = x - 1;
+    function FromOne(x) = 1 - x;
+    function Sign(x) = x < 0 ? -1 : x > 0 ? 1 : 0;
+    function Abs(x) = Value < 0 ? -Value : Value;
+    function Half(x) = x / 2;
+    function Third(x) = x / 3;
+    function Quarter(x) = x / 4;
+    function Fifth(x) = x / 5;
+    function Sixth(x) = x / 6;
+    function Seventh(x) = x / 7;
+    function Eighth(x) = x / 8;
+    function Ninth(x) = x / 9;
+    function Tenth(x) = x / 10;
+    function Sixteenth(x) = x / 16;
+    function Hundredth(x) = x / 100;
+    function Thousandth(x) = x / 1000;
+    function Millionth(x) = x / 1000 / 1000;
+    function Billionth(x) = x / 1000 / 1000 / 1000;
+    function Hundred(x) = x * 100;
+    function Thousand(x) = x * 1000;
+    function Million(x) = x * 1000 * 1000;
+    function Billion(x) = x * 1000 * 1000 * 1000;
+    function Twice(x) = x * 2;
+    function Thrice(x) = x * 3;
+    function SmoothStep(x) = x.Square * (3 - x.Twice);
+    function Pow2(x) = x * x;
+    function Pow3(x) = x.Pow2 * x;
+    function Pow4(x) = x.Pow3 * x;
+    function Pow5(x) = x.Pow4 * x;
+}
+
+module Comparable
+{
+    function Equals(a, b) = a.Compare(b) == 0;
+    function LessThan(a, b) = a.Compare(b) < 0;
+    function Lesser(a, b) = a.LessThanOrEqual(b) ? a : b;
+    function Greater(a, b) = a.GreaterThanOrEqual(b) ? a : b;
+    function LessThanOrEqual(a, b) = a.Compare(b) <= 0;
+    function GreaterThan(a, b) = a.Compare(b) > 0;
+    function GreaterThanOrEqual(a, b) = a.Compare(b) >= 0;
+    function Min(a, b) = a.LessThan(b) ? a : b;
+    function Max(a, b) = a.GreaterThan(b) ? a : b;
+    function Between(v, a, b) = v.Between(Interval(a, b));
+    function Between(v, i) = i.Contains(v);
+}
+
+module Equatable
+{
+    function NotEquals(x) = !Equals(x);
+}
+
+module Array
+{
+    function Map(xs, f) = Map(xs.Count, i = f(xs.At(i)));
+    function Map(n, f) = Array(n, f);
+    function Zip(xs, ys, f) = Array(xs.Count, i = f(At(i), other.At(i));
+    function Skip(n) = Array(Count - n, i = At(i - n));
+    function Take(n) = Array(n, i = );
+    function Accumulate(init, f) = IsEmpty ? init : f(init, f(Rest));
+    function Rest = Skip(1);
+    function IsEmpty = Count == 0;
+    function First = At(1);
+    function Last = At(Count - 1);
+    function Slice(from, count) = Skip(from).Take(count);
+    function Join(sep) = IsEmpty ? "" : First.ToString + Skip(1).Accumulate("", (acc, cur) => $"{acc}{sep}{cur}")
+}
+
+module Easings
+{
+    //===
+    // Easings.cs
+    // https://easings.net/
+    // https://github.com/acron0/Easings/blob/master/Easings.cs
+    // https://github.com/ai/easings.net/blob/master/src/easings/easingsFunctions.ts
+    // This is an extremely good example of why Plato matters as a language. 
+    // When we look at the source code of the two other implementations. 
+
+    function BlendEaseFunc(p, easeIn, easeOut) = p < 0.5 ? 0.5 * easeIn(p * 2) : 0.5 * easeOut(p * 2 - 1) + 0.5;
+    function InvertEaseFunc(p, easeIn) = 1 - easeIn(1 - p);
+
+    function Linear(p) = p;
+    function QuadraticEaseIn(p) = p.Pow2;
+    function QuadraticEaseOut(p) = InvertEaseFunc(p, QuadraticEaseIn);
+    function QuadraticEaseInOut(p) = BlendEaseFunc(p, QuadraticEaseIn, QuadraticEaseOut);
+    function CubicEaseIn(p) = p.Pow3;
+    function CubicEaseOut(p) = InvertEaseFunc(p, CubicEaseIn);
+    function CubicEaseInOut(p) = BlendEaseFunc(p, CubicEaseIn, CubicEaseOut);
+    function QuarticEaseIn(p) = p.Pow4;
+    function QuarticEaseOut(p) = InvertEaseFunc(p, QuarticEaseIn);
+    function QuarticEaseInOut(p) = BlendEaseFunc(p, QuarticEaseIn, QuarticEaseOut);
+    function QuinticEaseIn(p) = p.Pow5;
+    function QuinticEaseOut(p) = InvertEaseFunc(p, QuinticEaseIn);
+    function QuinticEaseInOut(p) = BlendEaseFunc(p, QuinticEaseIn, QuinticEaseOut);
+    function SineEaseIn(p) = InvertEaseFunc(p, SineEaseOut);
+    function SineEaseOut(p) = p.Quarter.Turns.Sin;
+    function SineEaseInOut(p) = BlendEaseFunc(p, SineEaseIn, SineEaseOut);
+    function CircularEaseIn(p) = p.Pow2.FromOne.Sqrt.FromOne;
+    function CircularEaseOut(p) = InvertEaseFunc(p, CircularEaseIn);
+    function CircularEaseInOut(p) = BlendEaseFunc(p, CircularEaseIn, CircularEaseOut);
+    function ExponentialEaseIn(p) = p.AlmostZero ? p : 2.Pow(10 * p.MinusOne);
+    function ExponentialEaseOut(p) = InvertEaseFunc(p, ExponentialEaseIn);
+    function ExponentialEaseInOut(p) = BlendEaseFunc(p, ExponentialEaseIn, ExponentialEaseOut);
+    function ElasticEaseIn(p) = 13 * p.Quarter.Turns * 2.Pow(10 * p.MinusOne).Radians.Sin;
+    function ElasticEaseOut(p) = InvertEaseFunc(p, ElasticEaseIn);
+    function ElasticEaseInOut(p) = BlendEaseFunc(p, ElasticEaseIn, ElasticEaseOut);
+    function BackEaseIn(p) = p.Pow3 - p * p.Half.Turns.Sin;
+    function BackEaseOut(p) = InvertEaseFunc(p, BackEaseIn);
+    function BackEaseInOut(p) = BlendEaseFunc(p, BackEaseIn, BackEaseOut);
+    function BounceEaseIn(p) = InvertEaseFunc(p, BounceEaseOut);
+    
+    function BounceEaseOut(p) = 
+        (p < 4 / 11.0) ? 121.0 * p.Pow2 / 16.0
+        : (p < 8 / 11.0) ? 363.0 / 40.0 * p.Pow2 - 99.0 / 10.0 * p + 17.0 / 5.0
+        : (p < 9 / 10.0) ? 4356.0 / 361.0 * p.Pow2 - 35442.0 / 1805.0 * p + 16061.0 / 1805.0
+        : 54.0 / 5.0 * p.Pow2 - 513.0 / 25.0 * p + 268.0 / 25.0;
+    
+    function BounceEaseInOut(p) = BlendEaseFunc(p, BounceEaseIn, BounceEaseOut);
+}

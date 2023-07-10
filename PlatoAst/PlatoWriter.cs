@@ -5,34 +5,15 @@ using Parakeet;
 
 namespace PlatoAst
 {
-    public class AstCodeWriter : CodeBuilder<AstCodeWriter>
+    public class PlatoWriter : CodeBuilder<PlatoWriter>
     {
-        public enum Language
-        {
-            JavaScript,
-            CSharp,
-            CPlusPlus,
-            Python
-        }
+        public PlatoWriter WriteEol()
+            => WriteLine(";");
 
-        public Language Lang { get; }
+        public PlatoWriter WriteStatements(IEnumerable<AstNode> nodes)
+            => WriteList(nodes, (w, n) => w.Write(n));
 
-        public AstCodeWriter(Language lang)
-            => Lang = lang;
-
-        public AstCodeWriter WriteEol()
-        {
-            return Lang != Language.Python 
-                ? WriteLine(";") 
-                : WriteLine();
-        }
-
-        public AstCodeWriter WriteStatements(IEnumerable<AstNode> nodes)
-        {
-            return WriteList(nodes, (w, n) => w.Write(n));
-        }
-
-        public AstCodeWriter Write(IEnumerable<AstNode> nodes, string sep = "")
+        public PlatoWriter Write(IEnumerable<AstNode> nodes, string sep = "")
         {
             var first = true;
             var r = this;
@@ -47,7 +28,7 @@ namespace PlatoAst
             return r;
         }
 
-        public AstCodeWriter ToCSharp(AstConstant c)
+        public PlatoWriter ToCSharp(AstConstant c)
         {
             switch (c.Value)
             {
@@ -68,66 +49,35 @@ namespace PlatoAst
             }
         }
 
-        public AstCodeWriter Write(AstVarDef def)
+        public PlatoWriter Write(AstVarDef def)
         {
-            switch (Lang)
-            {
-                case Language.JavaScript:
-                    return Write("let ").WriteTypedName(def.Name, def.Type).Write(" = ").Write(def.Value).WriteEol();
-                case Language.CSharp:
-                    return Write(def.Type).Write(" ").Write(def.Name).Write(" = ").Write(def.Value).WriteEol();
-                case Language.CPlusPlus:
-                    return Write("auto ").Write(def.Name).Write(" = ").Write(def.Value).WriteEol();
-                case Language.Python:
-                    return Write(def.Name).Write(" =").Write(def.Value).WriteEol();
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            return Write("var").Write(" ").Write(def.Name).Write(" = ").Write(def.Value).WriteEol();
         }
 
-        public AstCodeWriter Write(AstConditional astConditional)
+        public PlatoWriter Write(AstConditional astConditional)
         {
-            if (Lang == Language.Python)
-            {
-                return Write(astConditional.IfTrue)
-                    .Write(" if ")
-                    .Write(astConditional.Condition)
-                    .Write(" else ")
-                    .Write(astConditional.IfFalse);
-            }
-            else
-            {
-                return Write(astConditional.Condition).Indent().WriteLine()
-                    .Write("? ").Write(astConditional.IfTrue).WriteLine()
-                    .Write(": ").Write(astConditional.IfFalse).Dedent().WriteLine();
-            }
+            return Write("if ")
+                .Write(astConditional.Condition)
+                .Write("then ")
+                .Write(astConditional.IfTrue)
+                .WriteLine()
+                .Write("else ")
+                .Write(astConditional.IfFalse)
+                .WriteLine();
         }
 
-        public AstCodeWriter Write(AstLoop astLoop)
+        public PlatoWriter Write(AstLoop astLoop)
         {
-            if (Lang == Language.Python)
-            {
-                return Write("while ")
-                    .Write(astLoop.Condition)
-                    .Write(":").Indent().WriteLine()
-                    .Write(astLoop.Body)
-                    .Dedent()
-                    .WriteLine();
-            }
-            else
-            {
-                return Write("while ")
-                    .Write("(")
-                    .Write(astLoop.Condition)
-                    .WriteLine(")")
-                    .Write(astLoop.Body)
-                    .WriteLine();
-            }
+            return Write("while ")
+                .Write(astLoop.Condition)
+                .WriteLine(" do ")
+                .Write(astLoop.Body)
+                .WriteLine();
         }
 
-        public AstCodeWriter WriteTypedName(AstIdentifier ident, AstTypeNode type)
+        public PlatoWriter WriteTypedName(AstIdentifier ident, AstTypeNode type)
         {
-            return Write(ident).Write(" : ").Write(type);
+            return Write(ident).Write(": ").Write(type);
         }
 
         static (string, string)[] BinaryIntrinsics = new[]
@@ -162,13 +112,13 @@ namespace PlatoAst
                 : name;
         }
 
-        public static AstCodeWriter Write<T>(AstCodeWriter w, T x)
+        public static PlatoWriter Write<T>(PlatoWriter w, T x)
             where T : AstNode
         {
             return w.Write(x);
         }
 
-        public AstCodeWriter Write(AstNode node)
+        public PlatoWriter Write(AstNode node)
         {
             if (node == null)
                 return this;
@@ -177,24 +127,13 @@ namespace PlatoAst
             {
                 case AstAssign astAssign:
                     return Write(astAssign.Var)
-                        .Write(" = ")   
+                        .Write(" = ")
                         .Write(astAssign.Value);
 
                 case AstBlock astBlock:
                 {
-                    if (Lang == Language.Python)
-                    {
-                        return Indent()
-                            .WriteLine()
-                            .Write(astBlock.Statements)
-                            .Dedent()
-                            .WriteLine();
-                    }
-                    else
-                    {
-                        return Brace(cb => 
-                            cb.WriteStatements(astBlock.Statements));
-                    }
+                    return Brace(cb =>
+                        cb.WriteStatements(astBlock.Statements));
                 }
 
                 case AstBreak astBreak:
@@ -225,7 +164,7 @@ namespace PlatoAst
                         .Write(") => ")
                         .Write(astLambda.Body)
                         .WriteLine();
-                        
+
                 case AstLoop astLoop:
                     return Write(astLoop);
 
@@ -239,7 +178,7 @@ namespace PlatoAst
 
                 case AstVarDef astVarDef:
                     return Write(astVarDef);
-                
+
                 case AstMulti astMulti:
                     return astMulti.Nodes.Aggregate(this, (w, n) => w.Write(n));
 
@@ -247,19 +186,24 @@ namespace PlatoAst
                     return Write(astIdent.Text);
 
                 case AstError astError:
-                    return Lang == Language.Python
-                            ? WriteLine($"raise ErrorE(\"{astError.Text}\")") 
-                            : WriteLine($"throw new Exception(\"{astError.Text}\")");
+                    return WriteLine($"throw \"{astError.Text}\"");
 
                 case AstIntrinsic astIntrinsic:
                     return Write(ConvertIntrinsicName(astIntrinsic.Name));
 
                 case AstTypeDeclaration typeDeclaration:
                 {
-                    var r = Write("class ").WriteLine(typeDeclaration.Name);
+                    var r = Write("type ").WriteLine(typeDeclaration.Name);
+
+                    // TODO: this needs to convert from attributes to implements list 
+                    if (typeDeclaration.Attributes.Count > 0)
+                    {
+                        r = r.Write("  implements ").WriteCommaList(typeDeclaration.Attributes, Write).WriteLine();
+                    }
                     r = r.WriteLine("{").Indent();
                     r = typeDeclaration.Members.Aggregate(r, (w, n) => w.Write(n));
                     r = r.Dedent().WriteLine("}");
+                    r = r.WriteLine();
                     return r;
                 }
 
@@ -283,11 +227,9 @@ namespace PlatoAst
                         .WriteTypedName(fieldDeclaration.Name, fieldDeclaration.Type)
                         .WriteEol();
 
+                // TODO: remove properties
                 case AstPropertyDeclaration propertyDeclaration:
-                    return Write("property ")
-                        .Write(propertyDeclaration.Type)
-                        .Write(" ")
-                        .Write(propertyDeclaration.Name).WriteEol();
+                    throw new Exception("Properties are not supported");
 
                 case AstParameterDeclaration parameterDeclaration:
                     return WriteTypedName(parameterDeclaration.Name, parameterDeclaration.Type);
@@ -311,30 +253,12 @@ namespace PlatoAst
                 case AstNamespace astNamespace:
                     return astNamespace.Children.Aggregate(this, (w, n) => w.Write(n));
 
+                case AstAttribute astAttribute:
+                    return Write(astAttribute.Name);
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(node));
             }
         }
-    }
-
-    public static class CodeWriterExtensions
-    {
-        public static string ToJavaScript(this AstNode node)
-            => new AstCodeWriter(AstCodeWriter.Language.JavaScript).Write(node).ToString();
-
-        public static string ToPython(this AstNode node)
-            => new AstCodeWriter(AstCodeWriter.Language.Python).Write(node).ToString();
-
-        public static string ToPlato(this AstNode node)
-            => new PlatoWriter().Write(node).ToString();
-
-        public static string ToCSharp(this AstNode node)
-            => new AstCodeWriter(AstCodeWriter.Language.CSharp).Write(node).ToString();
-
-        public static string ToCPlusPlus(this AstNode node)
-            => new AstCodeWriter(AstCodeWriter.Language.CPlusPlus).Write(node).ToString();
-
-        public static string ToXml(this AstNode node)
-            => new AstXmlBuilder().Write(node).ToString();
     }
 }

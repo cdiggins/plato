@@ -11,7 +11,6 @@ namespace PlatoAst
 {
     public static class Boilerplate
     {
-        /
 
         // AdditiveInverse: Negate, 
         // MultiplicativeInverse: Reciprocal,  
@@ -85,8 +84,8 @@ namespace PlatoAst
 
         public static AstMethodDeclaration CreateMethod(string name, AstTypeNode type, string body, params AstParameterDeclaration[] parameters)
         {
-            var bodyNode = Parse(body, Grammar.Expression) as CstExpression;
-            CstExpressionBody =
+            //var bodyNode = Parse(body, Grammar.Expression) as CstExpression;
+            
             
             // TODO: simplify parsing ASTs. 
             // TODO: I think CST 
