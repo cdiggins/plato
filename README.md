@@ -1,188 +1,34 @@
 # Plato
 
-Plato is a pure functional programming language based on C# syntax. 
-The current Plato implementation generates cross-platform (.NET Standard 2.0) managed assemblies,
-that are compatible with Unity. 
+Plato is an efficient and fun programming language inspired by JavaScript, TypeScript, C#, and Haskell.
+Plato is designed to be easy to learn while being efficient and robust enough for production quality coding.
+Plato can be translated into C#, JavaScript, and other platforms. 
 
-Plato is designed as a general purpose cross-platform functional programming language that 
-is appropriate for high-performance computing (e.g., 3D real-time graphics) and that is 
-easy to teach and learn. 
+## Functions and Modules
 
-Another goal of Plato is to develop a visual syntax so that Plato code 
-can be viewed, manipulated, and created in either a node graph editor or 
-as a text based language. 
+Plato functions can be defined with or without type declarations. If type declarations are omitted then the type is inferred.
+Plato functions are not methods: they have no implicit "this" parameter.   
 
-A Plato to JavaScript compiler is in progress as well.
+Functions are organized in groups called modules. A module is like a class with no state, and only static methods in languages like C#, Java, or C++.  
 
-# Examples
+For some [examples of functions and modules see the standard library](https://github.com/cdiggins/plato/blob/main/PlatoStandardLibrary/modules.plato).
 
-Here is the Angle class in Plato 
+## Types and Fields
 
-```csharp
-[Measure]
-class Angle
-{
-   double Radians;
-}
-```
+A type assigned a name to a set of fields (member variables). Types do not contain functions. A type usually implements at 
+least one or more concepts. 
 
-Here are some examples of operations provided to support using the `Angle` class : 
+For some [examples of types see the standard library](https://github.com/cdiggins/plato/blob/main/PlatoStandardLibrary/types.plato).
 
-```csharp
-[Operations]
-class UnitOperations
-{
-    Angle Radians(double d) => d;
-    Angle Turns(double d) => d * 2 * Math.PI;
-    Angle Degrees(double d) => Turns(d / 360.0);
-    double ToTurns(Angle a) => a / 2 / Math.PI;
-    double ToDegrees(Angle a) => ToTurns(a) * 360;
-    double ToGrads(Angle a) => ToTurns(a) * 400;
-}
+## Concepts 
 
-[Operations]
-class TrigOperations
-{
-    double Cos(Angle x) => Math.Cos(x);
-    double Sin(Angle x) => Math.Sin(x);
-    double Tan(Angle x) => Math.Tan(x);
-}
-```
+A concept is a set of fields and functions that describe a particular type. They are similar to 
+interfaces, traits, protocols, and mixins. A type that "implements" a concept must have the fields 
+declared in the concept. The functions within a concept are automatically implemented for the types that declare that they 
+implement the concept.  
 
-All functions that are static are treated as extension methods. In other words 
-they can be called as if they were declared as methods of the type of the first parameter. 
+For some [examples of concepts see the standard library](https://github.com/cdiggins/plato/blob/main/PlatoStandardLibrary/concepts.plato).
 
-Any functions with one parameter that start with "To" like "ToDegrees(Angle a)" are 
-rewritten as properties. 
+# Feedback
 
-Here is an example usage:
-
-```csharp
-   var angle = 1.Turns() / 4;
-   Console.WriteLine($"{angle}");
-   
-   var degrees = angle.Degrees
-   Console.WriteLine($"Angle is {degrees:n2} degrees");
-
-   var sin = angle.Sin();
-   Console.WriteLine($"Sin(angle) = {sin}");
-```
-
-Here is the output:
-
-```
-{ "Radians" : 1.5707963267948966 }
-Angle is 90.00 degrees
-Sin(angle) = 1
-```
-
-Here is another example using `Velocity` and the speed of light.  
-
-```csharp
-[Measure]
-class Velocity
-{
-    double MetersPerSecond;
-}
-
-[Operations]
-class UnitOperations
-{ 
-    Velocity Light() 
-        => 299792458;
-    Length Feet(double value) 
-        => value / Constants.FeetPerMeter;
-    Length Miles(double value) 
-        => Feet(value * Constants.FeetPerMile);
-    Time Hours(double value) 
-         => value * 60 * 60;
-    Length Multiply(Velocity Velocity, Time time) 
-         => Velocity.MetersPerSecond * time.Seconds;
-}
-
-void Test() 
-{
-    Velocity c = Velocity.Light;            
-    double value = c;
-    Console.WriteLine($"Speed of light {value} {Velocity.Units}")
-
-    Length length = c * 1.Hours();
-    Console.WriteLine($"{length.Miles:n0} mph");
-}
-```
-
-This code outputs the following:
-
-```
-Speed of light 299792458 MetersPerSecond
-670,616,629 mph
-```
-
-Here are some Plato code files: 
-
-* [math.types.plato.cs](https://github.com/cdiggins/plato/blob/main/PlatoStandardLibrary/math.types.plato.cs)
-* [math.funcs.plato.cs](https://github.com/cdiggins/plato/blob/main/PlatoStandardLibrary/math.funcs.plato.cs)
-
-Here is the corresponding generated C# code 
-
-* [math.types.plato.g.cs](https://github.com/cdiggins/plato/blob/main/PlatoStandardLibrary/math.types.plato.g.cs).
-* [math.funcs.plato.g.cs](https://github.com/cdiggins/plato/blob/main/PlatoStandardLibrary/math.funcs.plato.g.cs).
-
-
-# Notable Features of Plato
-
-Plato is very similar in syntax to C# but with a number of simplifications:
-
-1. No structs just classes - the compiler may generate a struct, but this does not affect a program's behavior 
-1. Readonly fields by default - all fields are readonly unless in a Unique type
-1. No visibility specifiers - all types and members are public 
-1. No setters - only getter properties are supported
-1. No static keyword - static classes and methods are inferred 
-1. Automatic extension methods - any function that is inferred to be static is an extension method.
-1. Auto-generated functions and properties - similar to records in C# 9 and later
-
-See the following articles for more information:
-
-* [wiki/Static-Classes-and-Methods](https://github.com/cdiggins/plato/wiki/Static-Classes-and-Methods)
-* [wiki/Autogenerated-Code-and-Type-Categories](https://github.com/cdiggins/plato/wiki/Autogenerated-Code-and-Type-Categories)
-
-# Motivation 
-
-Plato strives to tackle a few things:
-
-1. Enforce immutability at the language level
-2. Use uniqueness typing to track side-effects formally and allow safe usage of imperative coding patterns  
-3. Generate assemblies that work across the widest number of platforms (e.g., Unity, and legacy .NET Framework)
-4. Reduce boiler plate code 
-5. Target web-browsers directly, without requiring the .NET runtime embedded  
-6. Produce more efficient code while using functional programming paradigms 
-
-# About Uniqueness Typing
-
-In Plato a unique type is a type whose values cannot be aliased (shared). 
-This allows for in-place mutation and strict ordering of side effects (like a monad),
-while maintaining referential transparency (aka purity).
-
-A unique type instance cannot be captured by a lambda or stored in an an array or a 
-non-unique type instance.
-
-Unique types can be used for representing external libraries with side effects, 
-interactions with the real world (e.g. Console, Files), 
-or writing code that manipulates structures (e.g., Lists and read-write Arrays) in a safe way. 
-
-# Performance 
-
-Early experiments with Plato have demonstrated that it can produce significantly more 
-efficient byte-code than a regular C# compiler
-for comparable code. This is because Plato can safely make a number of assumptions 
-about aliasing and side effects. It is also possible because the C# compiler is not optimized 
-for functional programming patterns. 
-
-# Current Status 
-
-Right now I am building a large math and geometry library using Plato. 
-
-# Final Words
-
-I am always interested in feedback in any form. 
-You can find me on twitter as [@cdiggins](https://twitter.com/cdiggins).
+I am always interested in feedback in any form. You can find me on twitter as [@cdiggins](https://twitter.com/cdiggins) or mail me at [cdiggins@gmail.com](mailto:cdiggins@gmail.com).
