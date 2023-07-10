@@ -5,30 +5,30 @@ concept Interval<T : Numerical>
     field Max : T;  
 }
 
-extension Interval
+operations Interval
 {
-    function Size() => Max - Min;
-    function IsEmpty() => Min >= Max;
-    function Lerp(amount) => Min * (1.0 - amount) + Max * amount;
-    function InverseLerp(value) => (value - Min) / Size;
-    function Multiply(x) => Interval(Min * x, Max * x);
+    function Size(x) => x.Max - x.Min;
+    function IsEmpty(x) => x.Min >= x.Max;
+    function Lerp(x, amount) => x.Min * (1.0 - amount) + x.Max * amount;
+    function InverseLerp(x, value) => (value - x.Min) / x.Size;
+    function Multiply(x, y) => Interval(x.Min * y, x.Max * y);
     function Add(x) => Interval(Min + x, Max + x);
-    function Negate() => Interval(-Max, -Min);
-    function Reverse() => Interval(Max, Min);
-    function Resize(size) => Interval(Min, Min + size);
-    function Center() => Lerp(0.5);    
-    function Contains(value) => Min <= value <= Max;
-    function Contains(other) => Min <= other.Min && Max >= other.Max;
-    function Overlaps(other) => other.Contains(this) || Contains(other.Min);
-    function Split(x) => Interval(Left(x), Right(x));
-    function Split() => Split(0.5);
-    function Left(x) => Interval(Min, Lerp(x));
-    function Right(x) => Interval(Lerp(x), Max);
-    function MoveTo(x) => Interval(x, x + Size);
+    function Negate(x) => Interval(-Max, -Min);
+    function Reverse(x) => Interval(Max, Min);
+    function Resize(x, size) => Interval(x.Min, x.Min + size);
+    function Center(x) => x.Lerp(0.5);    
+    function Contains(x, value) => x.Min <= value && value <= x.Max;
+    function Contains(x, other) => x.Min <= other.Min && Max >= other.Max;
+    function Overlaps(x, y) => y.Contains(x) || x.Contains(y.Min);
+    function Split(x, t) => Interval(x.Left(t), x.Right(t));
+    function Split(x) => x.Split(0.5);
+    function Left(x, t) => Interval(Min, x.Lerp(t));
+    function Right(x, t) => Interval(x.Lerp(t), x.Max);
+    function MoveTo(x, t) => Interval(t, t + x.Size);
     function HalfSize() => Size() / 2;
-    function MoveCenterTo(x) => Interval(x - HalfSize, x + HalfSize);
-    function Clamp(value) => value < Min ? Min : value > Max ? Max : value;
-    function Between(value) => value >= Min && value <= Max;
+    function Recenter(x, c) => Interval(c - x.HalfSize, c + x.HalfSize);
+    function Clamp(x, value) => value < x.Min ? x.Min : value > x.Max ? x.Max : value;
+    function Between(x, value) => value >= x.Min && value <= x.Max;
     function Unit() => Interval(0, 1);
 }
 

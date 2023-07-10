@@ -421,6 +421,17 @@ namespace Plato.__TYPES__
     }
 
     [Interval]
+    class TimeRange
+    {
+        DateTime Min, Max;
+    }
+
+    [Value]
+    class DateTime
+    {
+    }
+
+    [Interval]
     class AnglePair
     {
         Angle Start, End;
