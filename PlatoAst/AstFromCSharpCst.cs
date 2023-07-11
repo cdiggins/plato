@@ -266,6 +266,7 @@ namespace PlatoAst
             Debug.WriteLine("TODO: store the attributes (preamble)");
             var td = typeDecl.TypeDeclaration.Node;
             return new AstTypeDeclaration(
+                "class",
                 ToAst(td.Identifier.Node),
                 td.TypeParameterList.Node?.TypeParameter.Nodes.Select(ToAst) 
                     ?? Enumerable.Empty<AstIdentifier>(),

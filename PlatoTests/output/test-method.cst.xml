@@ -1,7 +1,7 @@
 <CstScript>
     <CstTypeDirectiveOrStatement>
         <CstTypeDeclarationWithPreamble>
-            <CstTypeDeclaration>
+            <CstTypeAnnotation>
                 <CstKind>class </CstKind>
                 <CstIdentifier>Razzle</CstIdentifier>
                 <CstTypeParameterList>
@@ -144,7 +144,7 @@
                         </CstFunctionBody>
                     </CstMethodDeclaration>
                 </CstMemberDeclaration>
-            </CstTypeDeclaration>
+            </CstTypeAnnotation>
         </CstTypeDeclarationWithPreamble>
     </CstTypeDirectiveOrStatement>
     <CstTypeDirectiveOrStatement>

@@ -10,7 +10,7 @@
                     </CstAttributeGroup>
                 </CstAttributeList>
             </CstDeclarationPreamble>
-            <CstTypeDeclaration>
+            <CstTypeAnnotation>
                 <CstKind>class </CstKind>
                 <CstIdentifier>Vector2</CstIdentifier>
                 <CstTypeParameterList>
@@ -63,7 +63,7 @@
                         </CstInitialization>
                     </CstFieldDeclaration>
                 </CstMemberDeclaration>
-            </CstTypeDeclaration>
+            </CstTypeAnnotation>
         </CstTypeDeclarationWithPreamble>
     </CstTypeDirectiveOrStatement>
     <CstTypeDirectiveOrStatement>

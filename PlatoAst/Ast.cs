@@ -242,7 +242,8 @@ namespace PlatoAst
             Types.Cast<AstNode>().Concat(Namespaces).Concat(Directives);
         public AstNamespace(AstIdentifier name, IEnumerable<AstDirective> directives, IEnumerable<AstTypeDeclaration> types, IEnumerable<AstNamespace> namespaces)
         : base(name, null)
-            => (Types, Directives, Namespaces) = (types.ToList(), directives.ToList(), namespaces.ToList());
+            => (Types, Directives, Namespaces) = (
+                types.ToListOrEmpty(), directives.ToListOrEmpty(), namespaces.ToListOrEmpty());
     }
 
     public class AstFieldDeclaration : AstMemberDeclaration
@@ -324,13 +325,16 @@ namespace PlatoAst
 
     public class AstTypeDeclaration : AstDeclaration
     {
+        public string Kind { get; }
         public IReadOnlyList<AstIdentifier> TypeParameters { get; }
         public IReadOnlyList<AstTypeNode> BaseTypes { get; }
         public IReadOnlyList<AstMemberDeclaration> Members { get; }
 
-        public AstTypeDeclaration(AstIdentifier name, IEnumerable<AstIdentifier> typeParameters,
-            IEnumerable<AstTypeNode> baseTypes, IEnumerable<AstAttribute> attributes, params AstMemberDeclaration[] members) : base(name, attributes.ToList())
+        public AstTypeDeclaration(string kind, AstIdentifier name, IEnumerable<AstIdentifier> typeParameters,
+            IEnumerable<AstTypeNode> baseTypes, IEnumerable<AstAttribute> attributes, params AstMemberDeclaration[] members) 
+            : base(name, attributes.ToList())
         {
+            Kind = kind;
             TypeParameters = typeParameters.ToList();
             BaseTypes = baseTypes.ToList();
             Members = members;
@@ -373,5 +377,8 @@ namespace PlatoAst
 
         public static IEnumerable<AstTypeDeclaration> GetAllTypes(this AstNode node)
             => node.GetAllDescendants().OfType<AstTypeDeclaration>();
+
+        public static IReadOnlyList<T> ToListOrEmpty<T>(this IEnumerable<T> items)
+            => items?.ToList() ?? new List<T>();
     }
 }
