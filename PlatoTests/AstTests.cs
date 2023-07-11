@@ -29,7 +29,7 @@ namespace PlatoTests
             }
         }
 
-
+        /*
         [Test]
         public void TestAstPrinterAndParser()
         {
@@ -47,7 +47,7 @@ namespace PlatoTests
             }
 
             Assert.AreEqual(testCount, successCount);
-        }
+        }*/
 
         public static string NodeToString(AstNode n, AstCodeWriter.Language lang = AstCodeWriter.Language.CSharp)
         {

@@ -19,7 +19,7 @@ namespace PlatoTests
             var c = new Compilation(input, 
                 grammar.File, 
                 CstNodeFactory.Create, 
-                cst => new AstFromCst().ToAst(cst));
+                cst => new AstFromCSharpCst().ToAst(cst));
 
             Assert.IsTrue(c.Success);
 

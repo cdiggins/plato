@@ -56,7 +56,7 @@ namespace PlatoWinFormsEditor
 
         public Compilation Compile(string input)
         {
-            var c = new Compilation(input, Grammar.File, CstNodeFactory.Create, cst => new AstFromCst().ToAst(cst));
+            var c = new Compilation(input, Grammar.File, CstNodeFactory.Create, cst => new AstFromCSharpCst().ToAst(cst));
 
             richTextBoxOutput.Clear();
 

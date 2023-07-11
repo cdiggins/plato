@@ -39,16 +39,16 @@ module Trig
 {
     function Cos(x) = intrinsic;
     function Sin(x) = intrinsic;
-    function Tan(x) = intrinsic
+    function Tan(x) = intrinsic;
     function Acos(x) = intrinsic;
     function Asin(x) = intrinsic;
-    function Atan(x) = intrinsic
+    function Atan(x) = intrinsic;
     function Cosh(x) = intrinsic;
     function Sinh(x) = intrinsic;
-    function Tanh(x) = intrinsic
+    function Tanh(x) = intrinsic;
     function Acosh(x) = intrinsic;
     function Asinh(x) = intrinsic;
-    function Atanh(x) = intrinsic
+    function Atanh(x) = intrinsic;
 }
 
 module Numerical
@@ -118,18 +118,18 @@ module Equatable
 
 module Array
 {
-    function Map(xs, f) = Map(xs.Count, i = f(xs.At(i)));
+    function Map(xs, f) = Map(xs.Count, i => f(xs.At(i)));
     function Map(n, f) = Array(n, f);
-    function Zip(xs, ys, f) = Array(xs.Count, i = f(At(i), other.At(i));
-    function Skip(n) = Array(Count - n, i = At(i - n));
-    function Take(n) = Array(n, i = );
-    function Accumulate(init, f) = IsEmpty ? init : f(init, f(Rest));
-    function Rest = Skip(1);
-    function IsEmpty = Count == 0;
-    function First = At(1);
-    function Last = At(Count - 1);
-    function Slice(from, count) = Skip(from).Take(count);
-    function Join(sep) = IsEmpty ? "" : First.ToString + Skip(1).Accumulate("", (acc, cur) => $"{acc}{sep}{cur}")
+    function Zip(xs, ys, f) = Array(xs.Count, i => f(At(i), other.At(i)));
+    function Skip(xs, n) = Array(Count - n, i => At(i - n));
+    function Take(xs, n) = Array(n, i => At);
+    function Accumulate(xs, init, f) = IsEmpty ? init : f(init, f(Rest));
+    function Rest(xs) = Skip(1);
+    function IsEmpty(xs) = xs.Count == 0;
+    function First(xs) = xs.At(0);
+    function Last(xs) = xs.At(xs.Count - 1);
+    function Slice(xs, from, count) = xs.Skip(from).Take(count);
+    function Join(xs, sep) = xs.IsEmpty ? "" : xs.First.ToString + xs.Skip(1).Accumulate("", (acc, cur) => $"{acc}{sep}{cur}");
 }
 
 module Easings

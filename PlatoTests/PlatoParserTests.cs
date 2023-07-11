@@ -76,7 +76,7 @@ namespace PlatoTests
             var cstXmlFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".cst.xml");
             File.WriteAllText(cstXmlFile, cstXml);
 
-            var ast = new AstFromCst().ToAst(cst);
+            var ast = new AstFromCSharpCst().ToAst(cst);
             
             var astXmlFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".ast.xml");
             File.WriteAllText(astXmlFile, ast.ToXml());

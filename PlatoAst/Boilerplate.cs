@@ -70,7 +70,7 @@ namespace PlatoAst
         // I am missing a lot of 
 
         public static CSharpGrammar Grammar = new CSharpGrammar();
-        public static AstFromCst AstFromCst = new AstFromCst();
+        public static AstFromCSharpCst AstFromCSharpCst = new AstFromCSharpCst();
 
         public static AstNode Parse(string input, Rule rule)
         {
@@ -78,7 +78,7 @@ namespace PlatoAst
             var ps = pi.Parse(rule);
             var pt = ps.Node.ToParseTree();
             var cn = CstNodeFactory.Create(pt);
-            var an = AstFromCst.ToAst(cn);
+            var an = AstFromCSharpCst.ToAst(cn);
             return an;
         }
 

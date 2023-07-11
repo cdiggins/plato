@@ -35,7 +35,7 @@ concept Comparable
 
 concept Equatable
 {
-    function Equals(a: Self, b: Self): Boolean
+    function Equals(a: Self, b: Self): Boolean;
 }
 
 concept Additive<T>
@@ -63,7 +63,7 @@ concept Value
     inherits Array<Any>
 {
     function Type(): Type;
-    function Fields(): Array<(String, Type)>;
+    function Fields(): Array<Tuple<String, Type>>;
     function FieldValue(x: Value, n: Index): Value;
 
     function Zero(): Self;
