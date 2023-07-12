@@ -376,7 +376,7 @@ namespace PlatoAst
                 var typeParameters = Enumerable.Empty<AstIdentifier>();
                 var baseTypes = Enumerable.Empty<AstTypeNode>();
                 var attributes = Enumerable.Empty<AstAttribute>();
-                var members = Array.Empty<AstMemberDeclaration>();
+                var members = type.FieldDeclaration.Nodes.Select(ToAst).Cast<AstMemberDeclaration>().ToArray();
                 
                 return new AstTypeDeclaration("type",
                     name, typeParameters, baseTypes, attributes, 
@@ -388,7 +388,7 @@ namespace PlatoAst
                 var name = ToAst(module.Identifier.Node);
                 var typeParameters = Enumerable.Empty<AstIdentifier>();
                 var baseTypes = Enumerable.Empty<AstTypeNode>();
-                var members = module.MethodDeclaration.Nodes.Select(ToAst).ToArray();
+                var members = module.MethodDeclaration.Nodes.Select(ToAst).Cast<AstMemberDeclaration>().ToArray();
                 var attributes = Enumerable.Empty<AstAttribute>();
 
                 return new AstTypeDeclaration("module",

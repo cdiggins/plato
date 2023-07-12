@@ -227,10 +227,6 @@ namespace PlatoAst
                         .WriteTypedName(fieldDeclaration.Name, fieldDeclaration.Type)
                         .WriteEol();
 
-                // TODO: remove properties
-                case AstPropertyDeclaration propertyDeclaration:
-                    throw new Exception("Properties are not supported");
-
                 case AstParameterDeclaration parameterDeclaration:
                     return WriteTypedName(parameterDeclaration.Name, parameterDeclaration.Type);
 

@@ -158,9 +158,6 @@ namespace PlatoAst
                     return new Field(node, Scope, new Variable(node, Scope,
                         astFieldDeclaration.Name, GetType(astFieldDeclaration.Type)));
                 
-                case AstPropertyDeclaration astPropertyDeclaration:
-                    throw new NotSupportedException("Properties are not supported");
-
                 case AstNamespace astNamespace:
                     return new Namespace(node, Scope, astNamespace.Name.Text, 
                         astNamespace.Children.Select(Evaluate));

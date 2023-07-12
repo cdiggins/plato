@@ -255,27 +255,6 @@ namespace PlatoAst
             => new AstFieldDeclaration(name, type, node);
     }
 
-    public class AstPropertyDeclaration : AstMemberDeclaration
-    {
-        public AstNode Body { get; }
-        public AstNode Value { get; }
-
-        public AstPropertyDeclaration(AstIdentifier name, AstTypeNode type, AstNode body, AstNode value) : base(name, type, null)
-        {
-            Body = body;
-            Value = value;
-            if (body != null && value != null)
-            {
-                throw new Exception("Either the body is not null, or the value, not both");
-            }
-        }
-
-        public override IEnumerable<AstNode> Children => base.Children.Append(Body).Append(Value);
-
-        public static AstPropertyDeclaration Create(AstIdentifier name, AstTypeNode type, AstNode body, AstNode value)
-            => new AstPropertyDeclaration(name, type, body, value);
-    }
-
     public class AstParameterDeclaration : AstDeclaration
     {
         public AstTypeNode Type { get; }

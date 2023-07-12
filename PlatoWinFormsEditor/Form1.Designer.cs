@@ -31,7 +31,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.inputEdit = new System.Windows.Forms.RichTextBox();
+            this.richTextBoxInput = new System.Windows.Forms.RichTextBox();
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.richTextBoxParseTree = new System.Windows.Forms.RichTextBox();
             this.tabPage7 = new System.Windows.Forms.TabPage();
@@ -88,7 +88,7 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.inputEdit);
+            this.tabPage1.Controls.Add(this.richTextBoxInput);
             this.tabPage1.Location = new System.Drawing.Point(4, 29);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -97,17 +97,16 @@
             this.tabPage1.Text = "Source";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // inputEdit
+            // richTextBoxInput
             // 
-            this.inputEdit.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.inputEdit.Font = new System.Drawing.Font("Lucida Console", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.inputEdit.Location = new System.Drawing.Point(3, 3);
-            this.inputEdit.Name = "inputEdit";
-            this.inputEdit.Size = new System.Drawing.Size(386, 411);
-            this.inputEdit.TabIndex = 0;
-            this.inputEdit.Text = "";
-            this.inputEdit.WordWrap = false;
-            this.inputEdit.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
+            this.richTextBoxInput.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBoxInput.Font = new System.Drawing.Font("Lucida Console", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.richTextBoxInput.Location = new System.Drawing.Point(3, 3);
+            this.richTextBoxInput.Name = "richTextBoxInput";
+            this.richTextBoxInput.Size = new System.Drawing.Size(386, 411);
+            this.richTextBoxInput.TabIndex = 0;
+            this.richTextBoxInput.Text = "";
+            this.richTextBoxInput.WordWrap = false;
             // 
             // tabPage6
             // 
@@ -262,7 +261,7 @@
         private TabPage tabPage1;
         private TabControl tabControl2;
         private TabPage tabPage3;
-        private RichTextBox inputEdit;
+        private RichTextBox richTextBoxInput;
         private RichTextBox richTextBoxOutput;
         private TabPage tabPage4;
         private RichTextBox richTextBoxJavaScript;
