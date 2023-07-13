@@ -150,12 +150,12 @@ namespace PlatoAst
             return AstBlock.Create(
                 vd,
                 AstLoop.Create(
-                    ToIntrinsic("MoveNext", AstIdentifier.Create(astIdent.Text)),
+                    ToIntrinsic("MoveNext", new AstIdentifier(astIdent)),
                     ToAst(forEach.Statement)));
         }
 
-        public AstIdentifier ToAst(CstTypeParameter typeParameter)
-            => ToAst(typeParameter.Identifier.Node);
+        public AstTypeParameter ToAst(CstTypeParameter typeParameter)
+            => new AstTypeParameter(typeParameter.Identifier.Node.Text);
 
         public AstParameterDeclaration ToAst(CstFunctionParameter fp)
         {
@@ -198,7 +198,7 @@ namespace PlatoAst
                 var name = md.Identifier.Node.Text;
                 var ps = md.FunctionParameterList.Node.FunctionParameter.Nodes.Select(ToAst).ToList();
                 Debug.WriteLine($"TODO: need to properly handle parameterized functions. I don't thing they parse.");
-                var ts = Enumerable.Empty<AstIdentifier>();
+                var ts = Enumerable.Empty<AstTypeParameter>();
                 yield return new AstMethodDeclaration(
                     ToAst(md.Identifier.Node),
                     ToAst(md.TypeExpr.Node),
@@ -254,14 +254,9 @@ namespace PlatoAst
 
         public AstTypeDeclaration ToAst(CstTypeDeclarationWithPreamble typeDecl)
         {
-            var attributes = new List<AstAttribute>();
             if (typeDecl.DeclarationPreamble.Present)
             {
                 var preamble = typeDecl.DeclarationPreamble.Node;
-                foreach (var attr in GetAttributes(preamble.AttributeList.Node))
-                {
-                    attributes.Add(new AstAttribute(attr.Text));
-                }
             }
             Debug.WriteLine("TODO: store the attributes (preamble)");
             var td = typeDecl.TypeDeclaration.Node;
@@ -269,10 +264,9 @@ namespace PlatoAst
                 "class",
                 ToAst(td.Identifier.Node),
                 td.TypeParameterList.Node?.TypeParameter.Nodes.Select(ToAst) 
-                    ?? Enumerable.Empty<AstIdentifier>(),
+                    ?? Enumerable.Empty<AstTypeParameter>(),
                 td.BaseClassList.Node?.TypeExpr.Nodes.Select(ToAst)
                     ?? Enumerable.Empty<AstTypeNode>(),
-                attributes,
                 td.MemberDeclaration.Nodes.SelectMany(ToAst).ToArray());
         }
 
@@ -361,7 +355,7 @@ namespace PlatoAst
         {
             if (expr.Identifier.Present)
             {
-                return AstIdentifier.Create(expr.Identifier.Text);
+                return new AstIdentifier(expr.Identifier.Text);
             }
             else if (expr.Default.Present)
             {
@@ -559,7 +553,7 @@ namespace PlatoAst
                     throw new NotImplementedException();
 
                 case CstIdentifier cstIdentifier:
-                    return AstIdentifier.Create(cstIdentifier.Text);
+                    return new AstIdentifier(cstIdentifier.Text);
 
                 case CstIfStatement cstIfStatement:
                     return AstConditional.Create(ToAst(cstIfStatement.ParenthesizedExpression),
@@ -695,11 +689,11 @@ namespace PlatoAst
             return ToAst(functionArg.Expression.Node);
         }
 
-        public AstIdentifier ToAst(CstQualifiedIdentifier cstQualifiedIdentifier)
-            => new AstIdentifier(cstQualifiedIdentifier.Text);
+        public string ToAst(CstQualifiedIdentifier cstQualifiedIdentifier)
+            => cstQualifiedIdentifier.Text;
 
-        public AstIdentifier ToAst(CstIdentifier cstIdentifier)
-            => new AstIdentifier(cstIdentifier.Text);
+        public string ToAst(CstIdentifier cstIdentifier)
+            => cstIdentifier.Text;
 
         public IEnumerable<AstVarDef> CreateVarDefs(CstVarDecl cstVarDecl)
         {

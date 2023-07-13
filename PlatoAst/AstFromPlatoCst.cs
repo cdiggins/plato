@@ -163,17 +163,18 @@ namespace PlatoAst
         {
             var cstIdent = forEach.Identifier.Node;
             var cstType = forEach.TypeExpr.Node;
-            var astIdent = ToAst(cstIdent);
+            var name = ToAst(cstIdent);
             var astType = ToAst(cstType);
-            var vd = AstVarDef.Create(astIdent, astType);
+            var vd = AstVarDef.Create(name, astType);
+            throw new NotImplementedException();
             return AstBlock.Create(
                 vd,
                 AstLoop.Create(
-                    ToIntrinsic("MoveNext", AstIdentifier.Create(astIdent.Text)),
+                    ToIntrinsic("MoveNext", null),
                     ToAst(forEach.Statement)));
         }
 
-        public AstIdentifier ToAst(CstTypeParameter typeParameter)
+        public string ToAst(CstTypeParameter typeParameter)
             => ToAst(typeParameter.Identifier.Node);
 
         public AstTypeNode ToAst(CstTypeAnnotation typeAnnotation)
@@ -200,7 +201,7 @@ namespace PlatoAst
             var name = md.Identifier.Node.Text;
             var ps = md.FunctionParameterList.Node.FunctionParameter.Nodes.Select(ToAst).ToList();
             Debug.WriteLine($"TODO: need to properly handle parameterized functions. I don't thing they parse.");
-            var ts = Enumerable.Empty<AstIdentifier>();
+            var ts = Enumerable.Empty<AstTypeParameter>();
             return new AstMethodDeclaration(
                 ToAst(md.Identifier.Node),
                 ToAst(md.TypeAnnotation.Node),
@@ -296,7 +297,7 @@ namespace PlatoAst
         {
             if (expr.Identifier.Present)
             {
-                return AstIdentifier.Create(expr.Identifier.Text);
+                return new AstIdentifier(expr.Identifier.Text);
             }
             else if (expr.Default.Present)
             {
@@ -373,41 +374,32 @@ namespace PlatoAst
             {
                 var type = cstTopLevelDeclaration.Type.Node;
                 var name = ToAst(type.Identifier.Node);
-                var typeParameters = Enumerable.Empty<AstIdentifier>();
+                var typeParameters = Enumerable.Empty<AstTypeParameter>();
                 var baseTypes = Enumerable.Empty<AstTypeNode>();
-                var attributes = Enumerable.Empty<AstAttribute>();
                 var members = type.FieldDeclaration.Nodes.Select(ToAst).Cast<AstMemberDeclaration>().ToArray();
                 
-                return new AstTypeDeclaration("type",
-                    name, typeParameters, baseTypes, attributes, 
-                    members);
+                return new AstTypeDeclaration("type", name, typeParameters, baseTypes, members);
             }
             else if (cstTopLevelDeclaration.Module.Present)
             {
                 var module = cstTopLevelDeclaration.Module.Node;
                 var name = ToAst(module.Identifier.Node);
-                var typeParameters = Enumerable.Empty<AstIdentifier>();
+                var typeParameters = Enumerable.Empty<AstTypeParameter>();
                 var baseTypes = Enumerable.Empty<AstTypeNode>();
                 var members = module.MethodDeclaration.Nodes.Select(ToAst).Cast<AstMemberDeclaration>().ToArray();
-                var attributes = Enumerable.Empty<AstAttribute>();
 
-                return new AstTypeDeclaration("module",
-                    name, typeParameters, baseTypes, attributes,
-                    members);
+                return new AstTypeDeclaration("module", name, typeParameters, baseTypes, members);
             }
             else if (cstTopLevelDeclaration.Concept.Present)
             {
                 var concept = cstTopLevelDeclaration.Concept.Node;
 
                 var name = ToAst(concept.Identifier.Node);
-                var typeParameters = Enumerable.Empty<AstIdentifier>();
+                var typeParameters = Enumerable.Empty<AstTypeParameter>();
                 var baseTypes = Enumerable.Empty<AstTypeNode>();
                 var members = concept.MemberDeclaration.Nodes.Select(ToAst).ToArray();
-                var attributes = Enumerable.Empty<AstAttribute>();
 
-                return new AstTypeDeclaration("concept",
-                    name, typeParameters, baseTypes, attributes,
-                    members);
+                return new AstTypeDeclaration("concept", name, typeParameters, baseTypes,members);
             }
 
             throw new Exception("Unhandled type declaration");
@@ -520,7 +512,7 @@ namespace PlatoAst
                     throw new NotImplementedException();
 
                 case CstIdentifier cstIdentifier:
-                    return AstIdentifier.Create(cstIdentifier.Text);
+                    return new AstIdentifier(cstIdentifier.Text);
 
                 case CstIfStatement cstIfStatement:
                     return AstConditional.Create(ToAst(cstIfStatement.ParenthesizedExpression),
@@ -641,11 +633,11 @@ namespace PlatoAst
             return ToAst(functionArg.Expression.Node);
         }
 
-        public AstIdentifier ToAst(CstQualifiedIdentifier cstQualifiedIdentifier)
-            => new AstIdentifier(cstQualifiedIdentifier.Text);
+        public string ToAst(CstQualifiedIdentifier cstQualifiedIdentifier)
+            => cstQualifiedIdentifier.Text;
 
-        public AstIdentifier ToAst(CstIdentifier cstIdentifier)
-            => new AstIdentifier(cstIdentifier.Text);
+        public string ToAst(CstIdentifier cstIdentifier)
+            => cstIdentifier.Text;
 
         public IEnumerable<AstVarDef> CreateVarDefs(CstVarDecl cstVarDecl)
         {

@@ -9,7 +9,7 @@ namespace PlatoAst
         {
             Declaration = declaration;
             InheritedTypes = inherited.ToDictionary(mn => mn.Name, mn => mn);
-            Members = Declaration.Members.ToDictionary(m => m.Name.Text, m => m);
+            Members = Declaration.Members.ToDictionary(m => m.Name, m => m);
         }
 
         public string Name => Declaration.Name;
@@ -44,7 +44,7 @@ namespace PlatoAst
             if (Dictionary.ContainsKey(type.GetName()))
                 return Dictionary[type.GetName()];
             var r = new MemberNames(type,
-                type.BaseTypes.Select(bt => AddOrGetMemberNames(bt.Name.Text)));
+                type.BaseTypes.Select(bt => AddOrGetMemberNames(bt.Name)));
             Dictionary.Add(type.GetName(), r);
             return r;
         }

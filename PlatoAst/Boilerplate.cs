@@ -168,33 +168,33 @@ namespace PlatoAst
                 }
             }
 
-            if (type.HasAttribute("Numerical"))
+            //if (type.HasAttribute("Numerical"))
             {
                 methods.AddRange(CreateMultiplicationOps(type));
                 methods.AddRange(CreateAdditionOps(type));
                 methods.AddRange(CreateComparisonOps(type));
             }
 
-            if (type.HasAttribute("Value"))
+            //if (type.HasAttribute("Value"))
             {
                 // 
             }
 
-            if (type.HasAttribute("Measure"))
+            //if (type.HasAttribute("Measure"))
             {
                 // Comparison:
                 methods.AddRange(CreateComparisonOps(type));
                 methods.AddRange(CreateAdditionOps(type));
             }
 
-            if (type.HasAttribute("Vector"))
+            //if (type.HasAttribute("Vector"))
             {
                 methods.AddRange(CreateMultiplicationOps(type));
                 methods.AddRange(CreateAdditionOps(type));
                 methods.AddRange(CreateScalarOps(type));
             }
 
-            if (type.HasAttribute("Interval"))
+            // if (type.HasAttribute("Interval"))
             {
 
             }

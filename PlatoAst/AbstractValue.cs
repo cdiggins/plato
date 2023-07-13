@@ -41,6 +41,21 @@ namespace PlatoAst
             => Children = children;
     }
 
+    public class TypeDef : AbstractValue
+    {
+        public string Kind => AstTypeDeclaration.Kind;
+        public AstTypeDeclaration AstTypeDeclaration => Location as AstTypeDeclaration;
+        public List<Method> Methods { get; } = new List<Method>();
+        public List<Field> Fields { get; } = new List<Field>();
+        public List<TypeParameter> TypeParameters { get; } = new List<TypeParameter>();
+        public Dictionary<string, AstNode> Lookup { get; } = new Dictionary<string, AstNode>();
+
+        public TypeDef(AstTypeDeclaration location, Scope scope)
+            : base(location, scope, TypeRef.Create(location.Name), location.Name)
+        {
+        }
+    }
+
     public class Conditional : AbstractValue
     {
         public AbstractValue Condition { get; }
@@ -60,7 +75,6 @@ namespace PlatoAst
     public class Function : AbstractValue
     {
         public IReadOnlyList<Parameter> Parameters { get; }
-        public AbstractValue Body { get; }
 
         public Function(AstNode location, Scope scope, string name, TypeRef returnType, params Parameter[] parameters)
             : base(location, scope, TypeRef.CreateFunction(returnType, parameters.Select(p => p.Type).ToArray()), name)
@@ -156,34 +170,22 @@ namespace PlatoAst
             : this(null, null, type.Name)
         { }
 
+        public static TypeRef Create(AstTypeNode typeNode, Scope scope)
+            => new TypeRef(typeNode, scope, typeNode.Name, typeNode.TypeArguments.Select(ta => Create(ta, scope)).ToArray());
+
         public static TypeRef Create(string name, params TypeRef[] args)
             => new TypeRef(null, null, name, args);
 
         public static TypeRef Void = Create("void");
         public static TypeRef MetaType = Create("MetaType");
         public static TypeRef NotImplemented = Create("Not implemented yet");
+        public static TypeRef TypeParameter = Create("TypeParameter");
 
         public static TypeRef CreateFunction(TypeRef returnType, params TypeRef[] parameterTypes)
             => Create("Func", parameterTypes.Append(returnType).ToArray());
 
         public static TypeRef Unify(TypeRef a, TypeRef b)
             => throw new NotImplementedException();
-    }
-
-    public class TypeDef : AbstractValue
-    {
-        public IReadOnlyList<string> TypeParameters { get; }
-        public IReadOnlyList<TypeDef> NestedTypes { get; }
-        public IReadOnlyList<Member> Members { get; }
-
-        public TypeDef(AstNode location, Scope scope, string name, IEnumerable<string> typeParameters,
-            IEnumerable<TypeDef> nested, IEnumerable<Member> members)
-            : base(location, scope, TypeRef.MetaType, name)
-        {
-            TypeParameters = typeParameters?.ToArray() ?? Array.Empty<string>();
-            NestedTypes = nested?.ToArray() ?? Array.Empty<TypeDef>();
-            Members = members?.ToArray() ?? Array.Empty<Member>();
-        }
     }
 
     public abstract class Member : AbstractValue
@@ -211,6 +213,13 @@ namespace PlatoAst
             => Function = function;
     }
 
+    public class TypeParameter : Member
+    {
+        public TypeParameter(AstNode location, Scope scope, string name)
+            : base(location, scope, TypeRef.TypeParameter, name)
+        { }
+    }
+
     public class Namespace : AbstractValue
     {
         public List<AbstractValue> Children { get; }
@@ -220,9 +229,5 @@ namespace PlatoAst
         {
             Children = children.ToList();
         }
-    }
-
-    public static class ValueExtensions
-    {
     }
 }

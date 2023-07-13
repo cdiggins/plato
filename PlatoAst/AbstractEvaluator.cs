@@ -12,16 +12,11 @@ namespace PlatoAst
     /// </summary>
     public class AbstractEvaluator
     {
-        public Scope Scope { get; set; }
-        public Operations Ops { get; }
-        public ReifiedTypes Types { get; set; }
+        public Scope Scope { get; set; } = new Scope(null, null);
+        public TypeDef CurrentType { get; set; }
+        public TypeNames TypeNames { get; set; }
 
-        public AbstractEvaluator(Operations ops, ReifiedTypes types)
-        {
-            Scope = new Scope(null, null);
-            Ops = ops;
-            Types = types;
-        }
+        public Dictionary<Method, AbstractValue> FunctionBodies { get; } = new Dictionary<Method, AbstractValue>();
 
         public AbstractValue Bind(string name, AbstractValue value)
         {
@@ -38,7 +33,7 @@ namespace PlatoAst
 
         public TypeRef GetType(AstTypeNode typeNode)
         {
-            return new TypeRef(typeNode, Scope, typeNode.Name.Text,
+            return new TypeRef(typeNode, Scope, typeNode.Name,
                 typeNode.TypeArguments.Select(GetType).ToArray());
         }
 
@@ -69,8 +64,7 @@ namespace PlatoAst
                     var method = new Method(node, Scope, function);
                     Bind(astMethod.Name, method);
 
-                    // Evaluate the method body 
-                    Evaluate(astMethod.Body);
+                    FunctionBodies.Add(method, null);
 
                     // Return to outer scope 
                     Scope = Scope.Pop();
@@ -115,7 +109,7 @@ namespace PlatoAst
                     return Scoped(() => Evaluate(astExpressionStatement.Expression));
                     
                 case AstIdentifier astIdentifier:
-                    return GetValue(astIdentifier);
+                    return GetValue(astIdentifier.Text);
 
                 case AstIntrinsic astIntrinsic:
                     // TODO: store the intrinsics in a top-level scope 
@@ -159,10 +153,27 @@ namespace PlatoAst
                         astFieldDeclaration.Name, GetType(astFieldDeclaration.Type)));
                 
                 case AstNamespace astNamespace:
-                    return new Namespace(node, Scope, astNamespace.Name.Text, 
+                    return new Namespace(node, Scope, astNamespace.Name, 
                         astNamespace.Children.Select(Evaluate));
 
                 case AstTypeDeclaration astTypeDeclaration:
+                {
+                    var typeDef = new TypeDef(astTypeDeclaration, Scope);
+                    Scope = Scope.Push();
+                    foreach (var t in astTypeDeclaration.TypeParameters)
+                    {
+                        var tp = new TypeParameter(t, Scope, t.Name);
+                        Bind(tp.Name, tp);
+                        typeDef.TypeParameters.Add(tp);
+                    }
+
+                    foreach (var m in astTypeDeclaration.Members)
+                    {
+
+                    }
+                    return typeDef;
+                }
+
                 case AstDeclaration astDeclaration:
                 case AstError astError:
                 case AstLeaf astLeaf:
@@ -214,5 +225,10 @@ namespace PlatoAst
         }
 
         public static NoValue NoValue = NoValue.Instance;
+
+        public static AbstractValue EvaluateTopLevel(AstTypeDeclaration astTypeDeclaration)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

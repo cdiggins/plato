@@ -95,7 +95,7 @@ namespace PlatoAst
                 .WriteLine();
         }
 
-        public AstCodeWriter WriteTypedName(AstIdentifier ident, AstTypeNode type)
+        public AstCodeWriter WriteTypedName(string ident, AstTypeNode type)
         {
             if (Lang == Language.JavaScript)
             {

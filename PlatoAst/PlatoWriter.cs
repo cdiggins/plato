@@ -75,7 +75,7 @@ namespace PlatoAst
                 .WriteLine();
         }
 
-        public PlatoWriter WriteTypedName(AstIdentifier ident, AstTypeNode type)
+        public PlatoWriter WriteTypedName(string ident, AstTypeNode type)
         {
             return Write(ident).Write(": ").Write(type);
         }
@@ -196,9 +196,10 @@ namespace PlatoAst
                     var r = Write("type ").WriteLine(typeDeclaration.Name);
 
                     // TODO: this needs to convert from attributes to implements list 
-                    if (typeDeclaration.Attributes.Count > 0)
+                    if (typeDeclaration.BaseTypes.Count > 0)
                     {
-                        r = r.Write("  implements ").WriteCommaList(typeDeclaration.Attributes, Write).WriteLine();
+                        r = r.Write("  implements ").WriteCommaList(typeDeclaration.BaseTypes, 
+                            Write).WriteLine();
                     }
                     r = r.WriteLine("{").Indent();
                     r = typeDeclaration.Members.Aggregate(r, (w, n) => w.Write(n));
@@ -248,9 +249,6 @@ namespace PlatoAst
 
                 case AstNamespace astNamespace:
                     return astNamespace.Children.Aggregate(this, (w, n) => w.Write(n));
-
-                case AstAttribute astAttribute:
-                    return Write(astAttribute.Name);
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(node));

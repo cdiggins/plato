@@ -206,7 +206,7 @@ public static class ExpressionTreeToPlatoAst
                 throw new Exception(
                     $"Could not determine lvalue from {binaryExpression.Left} converted to {args[0]}");
 
-            return AstAssign.Create(lValue, args[1]);
+            return AstAssign.Create(lValue.Text, args[1]);
         }
 
         var func = binaryExpression.NodeType.ToBinaryFunc();
