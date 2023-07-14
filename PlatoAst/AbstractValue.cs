@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace PlatoAst
 {
@@ -12,223 +11,254 @@ namespace PlatoAst
     public abstract class AbstractValue
     {
         public AstNode Location { get; }
-        public TypeRef Type { get; }
+        public AbstractTypeRef Type { get; }
         public Scope Scope { get; }
         public string Name { get; }
 
-        protected AbstractValue(AstNode location, Scope scope, TypeRef type, string name)
+        protected AbstractValue(AstNode location, Scope scope, AbstractTypeRef type, string name)
             => (Location, Scope, Type, Name) = (location, scope, type, name);
+
+        public abstract IReadOnlyList<AbstractValue> Children { get; }
     }
 
-    public class NoValue : AbstractValue
+    public class AbstractNoValue : AbstractValue
     {
-        public NoValue() 
+        public AbstractNoValue() 
             : base(null, null, null, "$novalue")
         { }
 
-        public static NoValue Instance = new NoValue();
+        public static AbstractNoValue Instance = new AbstractNoValue();
+
+        public override IReadOnlyList<AbstractValue> Children => Array.Empty<AbstractValue>();
     }
 
     /// <summary>
     /// Represents an untyped region of code.
     /// Could be a project, file, namespace, type-declaration, statement. 
     /// </summary>
-    public class Region : AbstractValue
+    public class AbstractRegion : AbstractValue
     {
-        public IReadOnlyList<AbstractValue> Children { get; }
+        public override IReadOnlyList<AbstractValue> Children { get; }
 
-        public Region(AstNode location, Scope scope, params AbstractValue[] children)
-            : base(location, scope, TypeRef.Void, "$region")
+        public AbstractRegion(AstNode location, Scope scope, params AbstractValue[] children)
+            : base(location, scope, AbstractTypeRef.Void, "$region")
             => Children = children;
     }
 
-    public class TypeDef : AbstractValue
+    public class AbstractTypeDef : AbstractValue
     {
         public string Kind => AstTypeDeclaration.Kind;
         public AstTypeDeclaration AstTypeDeclaration => Location as AstTypeDeclaration;
-        public List<MethodDef> Methods { get; } = new List<MethodDef>();
-        public List<FieldDef> Fields { get; } = new List<FieldDef>();
-        public List<TypeParameterDef> TypeParameters { get; } = new List<TypeParameterDef>();
+        public List<AbstractMethodDef> Methods { get; } = new List<AbstractMethodDef>();
+        public List<AbstractFieldDef> Fields { get; } = new List<AbstractFieldDef>();
+        public List<AbstractTypeParameterDef> TypeParameters { get; } = new List<AbstractTypeParameterDef>();
         public Dictionary<string, AstNode> Lookup { get; } = new Dictionary<string, AstNode>();
 
-        public TypeDef(AstTypeDeclaration location, Scope scope)
-            : base(location, scope, TypeRef.Create(location.Name), location.Name)
+        public AbstractTypeDef(AstTypeDeclaration location, Scope scope)
+            : base(location, scope, AbstractTypeRef.Create(location.Name), location.Name)
         {
         }
+
+        public override IReadOnlyList<AbstractValue> Children => Array.Empty<AbstractValue>().Concat(Methods).Concat(Fields).Concat(TypeParameters).ToList();
     }
 
-    public class Conditional : AbstractValue
+    public class AbstractConditional : AbstractValue
     {
         public AbstractValue Condition { get; }
         public AbstractValue IfTrue { get; }
         public AbstractValue IfFalse { get; }
 
-        public Conditional(AstNode location, Scope scope, AbstractValue condition, AbstractValue ifTrue, AbstractValue ifFalse)
-            : base(location, scope, TypeRef.Unify(ifTrue.Type, ifFalse.Type), "conditional")
+        public AbstractConditional(AstNode location, Scope scope, AbstractValue condition, AbstractValue ifTrue, AbstractValue ifFalse)
+            : base(location, scope, AbstractTypeRef.Unify(ifTrue.Type, ifFalse.Type), "conditional")
         {
             // TODO: unify the types of ifTrue and ifFalse
             Condition = condition;
             IfTrue = ifTrue;
             IfFalse = ifFalse;
         }
+
+        public override IReadOnlyList<AbstractValue> Children => new []{ Condition, IfTrue, IfFalse};
     }
 
-    public class Function : AbstractValue
+    public class AbstractFunction : AbstractValue
     {
-        public IReadOnlyList<Parameter> Parameters { get; }
+        public IReadOnlyList<AbstractParameter> Parameters { get; }
         public AbstractValue Body { get; }
 
-        public Function(AstNode location, Scope scope, string name, TypeRef returnType, AbstractValue body, params Parameter[] parameters)
-            : base(location, scope, TypeRef.CreateFunction(returnType, parameters.Select(p => p.Type).ToArray()), name)
+        public AbstractFunction(AstNode location, Scope scope, string name, AbstractTypeRef returnType, AbstractValue body, params AbstractParameter[] parameters)
+            : base(location, scope, AbstractTypeRef.CreateFunction(returnType, parameters.Select(p => p.Type).ToArray()), name)
         {
             Parameters = parameters;
             Body = body;
         }
+
+        public override IReadOnlyList<AbstractValue> Children => Parameters.Append(Body).ToList();
     }
 
-    public class Parameter : AbstractValue
+    public class AbstractParameter : AbstractValue
     {   
-        public Parameter(AstNode location, Scope scope, string name, TypeRef type)
+        public AbstractParameter(AstNode location, Scope scope, string name, AbstractTypeRef type)
             : base(location, scope, type, name)
         { }
+
+        public override IReadOnlyList<AbstractValue> Children => Array.Empty<AbstractValue>();
     }
 
-    public class Variable : AbstractValue
+    public class AbstractVariable : AbstractValue
     {
-        public Variable(AstNode location, Scope scope, string name, TypeRef type)
+        public AbstractVariable(AstNode location, Scope scope, string name, AbstractTypeRef type)
             : base(location, scope, type, name)
         { }
+
+        public override IReadOnlyList<AbstractValue> Children => Array.Empty<AbstractValue>();
     }
 
-    public class Assignment : AbstractValue
+    public class AbstractAssignment : AbstractValue
     {
         public AbstractValue LValue { get; }
         public AbstractValue RValue { get; }
 
-        public Assignment(AstNode location, Scope scope, AbstractValue lvalue, AbstractValue rvalue)
+        public AbstractAssignment(AstNode location, Scope scope, AbstractValue lvalue, AbstractValue rvalue)
             : base(location, scope, lvalue.Type, "$assign")
             => (LValue, RValue) = (lvalue, rvalue);
+
+        public override IReadOnlyList<AbstractValue> Children => new [] { LValue, RValue };
     }
 
-    public class Argument : AbstractValue
+    public class AbstractArgument : AbstractValue
     {
         public AbstractValue Original { get; }
         public int Position { get; }
 
-        public Argument(AstNode location, Scope scope, AbstractValue original, int position)
+        public AbstractArgument(AstNode location, Scope scope, AbstractValue original, int position)
             : base(location, scope, original?.Type, $"$arg{position}")
         {
             Original = original;
             Position = position;
         }
+
+        public override IReadOnlyList<AbstractValue> Children => new [] { Original };
     }
 
     public class Literal : AbstractValue
     {
         public object Value { get; }
         public Literal(AstNode location, Scope scope, object value)
-            : base(location, scope, new TypeRef(value.GetType()), "$literal")
+            : base(location, scope, new AbstractTypeRef(value.GetType()), "$literal")
             => Value = value;
+
+        public override IReadOnlyList<AbstractValue> Children => Array.Empty<AbstractValue>();
     }
 
-    public class MemberRef : AbstractValue
+    public class AbstractMemberRef : AbstractValue
     {
         public AbstractValue Receiver { get; }
-        public TypeDef TypeDef { get; }
 
-        public MemberRef(AstNode location, Scope scope, TypeDef typeDef, string name, AbstractValue receiver)
-            : base(location, scope, TypeRef.Member, name)
+        public AbstractMemberRef(AstNode location, Scope scope, string name, AbstractValue receiver)
+            : base(location, scope, AbstractTypeRef.Member, name)
         {
             Receiver = receiver;
-            TypeDef = typeDef;
         }
+
+        public override IReadOnlyList<AbstractValue> Children => new [] { Receiver };
     }
 
-    public class FunctionResult : AbstractValue
+    public class AbstractFunctionResult : AbstractValue
     {
         public AbstractValue Function { get; }
-        public IReadOnlyList<Argument> Args { get; }
-        public FunctionResult(AstNode location, Scope scope, TypeRef resultType, AbstractValue function, params Argument[] args)
+        public IReadOnlyList<AbstractArgument> Args { get; }
+        public AbstractFunctionResult(AstNode location, Scope scope, AbstractTypeRef resultType, AbstractValue function, params AbstractArgument[] args)
             : base(location, scope, resultType, "$result")
         {
             Function = function;
             Args = args;
         }
+
+        public override IReadOnlyList<AbstractValue> Children => Args.Append(Function).ToList();
     }
 
-    public class TypeRef : AbstractValue
+    public class AbstractTypeRef : AbstractValue
     {
-        public IReadOnlyList<TypeRef> TypeArgs { get; }
+        public IReadOnlyList<AbstractTypeRef> TypeArgs { get; }
 
-        public TypeRef(AstNode location, Scope scope, string name, params TypeRef[] args)
+        public AbstractTypeRef(AstNode location, Scope scope, string name, params AbstractTypeRef[] args)
             : base(location, scope, MetaType, name)
         {
             TypeArgs = args;
         }
 
         // TODO: handle type arguments 
-        public TypeRef(Type type)
+        public AbstractTypeRef(Type type)
             : this(null, null, type.Name)
         { }
 
-        public static TypeRef Create(AstTypeNode typeNode, Scope scope)
-            => new TypeRef(typeNode, scope, typeNode.Name, typeNode.TypeArguments.Select(ta => Create(ta, scope)).ToArray());
+        public static AbstractTypeRef Create(AstTypeNode typeNode, Scope scope)
+            => new AbstractTypeRef(typeNode, scope, typeNode.Name, typeNode.TypeArguments.Select(ta => Create(ta, scope)).ToArray());
 
-        public static TypeRef Create(string name, params TypeRef[] args)
-            => new TypeRef(null, null, name, args);
+        public static AbstractTypeRef Create(string name, params AbstractTypeRef[] args)
+            => new AbstractTypeRef(null, null, name, args);
 
-        public static TypeRef Void = Create("void");
-        public static TypeRef Intrinsic = Create("intrinsic");
-        public static TypeRef MetaType = Create("MetaType");
-        public static TypeRef NotImplemented = Create("Not implemented yet");
-        public static TypeRef TypeParameter = Create("TypeParameterDef");
-        public static TypeRef Member = Create("Member");
-        public static TypeRef Inferred = Create("Infer");
+        public static AbstractTypeRef Void = Create("void");
+        public static AbstractTypeRef Intrinsic = Create("intrinsic");
+        public static AbstractTypeRef MetaType = Create("MetaType");
+        public static AbstractTypeRef NotImplemented = Create("Not implemented yet");
+        public static AbstractTypeRef TypeParameter = Create("AbstractTypeParameterDef");
+        public static AbstractTypeRef Member = Create("AbstractMember");
+        public static AbstractTypeRef Inferred = Create("Infer");
 
-        public static TypeRef CreateFunction(TypeRef returnType, params TypeRef[] parameterTypes)
+        public static AbstractTypeRef CreateFunction(AbstractTypeRef returnType, params AbstractTypeRef[] parameterTypes)
             => Create("Func", parameterTypes.Append(returnType).ToArray());
 
-        public static TypeRef Unify(TypeRef a, TypeRef b)
+        public static AbstractTypeRef Unify(AbstractTypeRef a, AbstractTypeRef b)
             => a;
-        // TODO: implement the unification correctly.
-        //=> throw new NotImplementedException();
+
+        public override IReadOnlyList<AbstractValue> Children => TypeArgs;
     }
 
-    public abstract class Member : AbstractValue
+    public abstract class AbstractMember : AbstractValue
     {
-        protected Member(AstNode location, Scope scope, TypeRef type, string name)
+        protected AbstractMember(AstNode location, Scope scope, AbstractTypeRef type, string name)
             : base(location, scope, type, name)
         { }
     }
 
-    public class FieldDef : Member
+    public class AbstractFieldDef : AbstractMember
     {
-        public FieldDef(AstNode location, Scope scope, TypeRef type, string name)
+        public AbstractFieldDef(AstNode location, Scope scope, AbstractTypeRef type, string name)
             : base(location, scope, type, name)
         { }
+
+        public override IReadOnlyList<AbstractValue> Children => Array.Empty<AbstractValue>();
     }
 
-    public class MethodDef : Member
+    public class AbstractMethodDef : AbstractMember
     {
         // TODO: find a better way to deal with this. Don't make it mutable.
-        public Function Function { get; set; }
+        public AbstractFunction AbstractFunction { get; set; }
 
-        public MethodDef(AstNode location, Scope scope, TypeRef type, string name)
+        public AbstractMethodDef(AstNode location, Scope scope, AbstractTypeRef type, string name)
             : base(location, scope, type, name)
         { }
+
+        public override IReadOnlyList<AbstractValue> Children => new [] { AbstractFunction };
     }
 
-    public class TypeParameterDef : Member
+    public class AbstractTypeParameterDef : AbstractMember
     {
-        public TypeParameterDef(AstNode location, Scope scope, string name)
-            : base(location, scope, TypeRef.TypeParameter, name)
+        public AbstractTypeParameterDef(AstNode location, Scope scope, string name)
+            : base(location, scope, AbstractTypeRef.TypeParameter, name)
         { }
+
+        public override IReadOnlyList<AbstractValue> Children => Array.Empty<AbstractValue>();
     }
 
-    public class Intrinsic : AbstractValue
+    public class AbstractIntrinsic : AbstractValue
     {
-        public Intrinsic(AstNode location, Scope scope, string name)
-            : base(location, scope, TypeRef.Intrinsic, name)
+        public AbstractIntrinsic(AstNode location, Scope scope, string name)
+            : base(location, scope, AbstractTypeRef.Intrinsic, name)
         { }
+    
+        public override IReadOnlyList<AbstractValue> Children => Array.Empty<AbstractValue>();
     }
+
 }
