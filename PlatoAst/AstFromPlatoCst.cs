@@ -166,7 +166,6 @@ namespace PlatoAst
             var name = ToAst(cstIdent);
             var astType = ToAst(cstType);
             var vd = AstVarDef.Create(name, astType);
-            throw new NotImplementedException();
             return AstBlock.Create(
                 vd,
                 AstLoop.Create(
@@ -418,7 +417,7 @@ namespace PlatoAst
                     return ToAst(cstLiteral.Node);
                 
                 case CstBinaryLiteral cstBinaryLiteral:
-                    return AstError.Create($"{node.GetType()} is not implemented");
+                    throw new NotImplementedException();
 
                 case CstBooleanLiteral cstBooleanLiteral:
                     if (cstBooleanLiteral.Text == "true")
@@ -445,7 +444,7 @@ namespace PlatoAst
                         cstStringLiteral.Text.Substring(1, cstStringLiteral.Text.Length - 2));
                 
                 case CstHexLiteral cstHexLiteral:
-                    return AstError.Create($"{node.GetType()} is not implemented");
+                    throw new NotImplementedException();
 
                 // Statements
 
@@ -487,7 +486,7 @@ namespace PlatoAst
                     return ToIntrinsic("cast", ToAst(cstCastExpression.Expression), ToAst(cstCastExpression.TypeExpr));
 
                 case CstCatchClause cstCatchClause:
-                    return AstError.Create($"{node.GetType()} is not implemented");
+                    throw new NotImplementedException();
 
                 case CstDefault cstDefault:
                     return ToIntrinsic("default", ToAst(cstDefault.TypeExpr));
@@ -561,25 +560,26 @@ namespace PlatoAst
                     return ToAst(cstParenthesizedExpression.Expression);
 
                 case CstQualifiedIdentifier cstQualifiedIdentifier:
-                    return AstError.Create($"{node.GetType()} is not implemented");
+                    throw new NotImplementedException();
 
                 case CstStatement cstStatement:
                     return ToAst(cstStatement.Node);
                     
                 case CstStringInterpolation cstStringInterpolation:
-                    return AstError.Create($"{node.GetType()} is not implemented");
+                    return new AstInvoke(new AstIntrinsic("Interpolate"),
+                        cstStringInterpolation.StringInterpolationContent.Nodes.Select(ToAst).ToArray());
 
                 case CstStringInterpolationContent cstStringInterpolationContent:
-                    return AstError.Create($"{node.GetType()} is not implemented");
+                    return ToAst(cstStringInterpolationContent.Expression);
 
                 case CstThrowExpression cstThrowExpression:
                     return ToIntrinsic("throw", ToAst(cstThrowExpression.Expression));
 
                 case CstTryStatement cstTryStatement:
-                    return AstError.Create($"{node.GetType()} is not implemented");
+                    throw new NotImplementedException();
 
                 case CstTypeArgList cstTypeArgList:
-                    return AstError.Create($"{node.GetType()} is not implemented");
+                    throw new NotImplementedException();
 
                 case CstTypeAnnotation cstTypeDeclaration:
                     return ToAst(cstTypeDeclaration);
@@ -588,8 +588,8 @@ namespace PlatoAst
                     return ToAst(cstTypeExpr.InnerTypeExpr);
                     
                 case CstTypeKeyword cstTypeKeyword:
-                    return AstError.Create($"{node.GetType()} is not implemented");
-                    
+                    throw new NotImplementedException();
+
                 case CstTypeOf cstTypeOf:
                     return ToIntrinsic("typeof", ToAst(cstTypeOf.TypeExpr));
 
@@ -623,7 +623,7 @@ namespace PlatoAst
                     return ToAst(functionArg);
             }
 
-            return AstError.Create($"{node.GetType()} had no case statement");
+            throw new NotImplementedException();
         }
 
         public AstNode ToAst(CstFunctionArg functionArg)

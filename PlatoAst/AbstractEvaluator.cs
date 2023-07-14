@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Parakeet.Demos.CSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -13,12 +14,9 @@ namespace PlatoAst
     public class AbstractEvaluator
     {
         public Scope Scope { get; set; } = new Scope(null, null);
-        public TypeDef CurrentType { get; set; }
-        public TypeNames TypeNames { get; set; }
+        public List<TypeDef> TypeDefs { get; } = new List<TypeDef>();
 
-        public Dictionary<Method, AbstractValue> FunctionBodies { get; } = new Dictionary<Method, AbstractValue>();
-
-        public AbstractValue Bind(string name, AbstractValue value)
+        public T Bind<T>(string name, T value) where T : AbstractValue
         {
             Scope = Scope.Bind(name, value);
             return value;
@@ -31,10 +29,19 @@ namespace PlatoAst
             return Scope.GetValue(name);
         }
 
-        public TypeRef GetType(AstTypeNode typeNode)
+        public TypeRef Evaluate(AstTypeNode astTypeNode)
         {
-            return new TypeRef(typeNode, Scope, typeNode.Name,
-                typeNode.TypeArguments.Select(GetType).ToArray());
+            if (astTypeNode == null)
+                return null;
+
+            return new TypeRef(astTypeNode, Scope, astTypeNode.Name,
+                astTypeNode.TypeArguments.Select(Evaluate).ToArray());
+        }
+
+        public Parameter Evaluate(AstParameterDeclaration astParameterDeclaration)
+        {
+            return Bind(astParameterDeclaration.Name,
+                new Parameter(astParameterDeclaration, Scope, astParameterDeclaration.Name, null));
         }
 
         // This is not a pure function. It updates the scope every time a new value is bound
@@ -45,32 +52,8 @@ namespace PlatoAst
 
             switch (node)
             {
-                // TODO: it seems that referencing a type is the same as any other kind of abstract value. 
                 case AstTypeNode astTypeNode:
-                    throw new NotImplementedException();
-
-                case AstParameterDeclaration astParameterDeclaration:
-                    return Bind(astParameterDeclaration.Name,
-                        new Parameter(node, Scope, astParameterDeclaration.Name, null));
-
-                case AstMethodDeclaration astMethod:
-                    // Start a new scope
-                    Scope = Scope.Push();
-                    
-                    var parameters = astMethod.Parameters.Select(Evaluate).Cast<Parameter>().ToArray();
-
-                    // Make the method available to itself for recursion
-                    var function = new Function(node, Scope, astMethod.Name, GetType(astMethod.Type), parameters);
-                    var method = new Method(node, Scope, function);
-                    Bind(astMethod.Name, method);
-
-                    FunctionBodies.Add(method, null);
-
-                    // Return to outer scope 
-                    Scope = Scope.Pop();
-
-                    // Make the method available to the outer scope as well. 
-                    return method;
+                    return Evaluate(astTypeNode);
 
                 case AstAssign astAssign:
                     return Bind(astAssign.Var,
@@ -112,8 +95,7 @@ namespace PlatoAst
                     return GetValue(astIdentifier.Text);
 
                 case AstIntrinsic astIntrinsic:
-                    // TODO: store the intrinsics in a top-level scope 
-                    throw new NotImplementedException();
+                    return new Intrinsic(astIntrinsic, Scope, astIntrinsic.Name);
 
                 case AstInvoke astInvoke:
                 {
@@ -127,84 +109,115 @@ namespace PlatoAst
                 }
                 
                 case AstLambda astLambda:
-                    // 
-                    throw new NotImplementedException();
-
+                    return new Function(astLambda, Scope, "lambda",
+                        TypeRef.Inferred, Scoped(() => Evaluate(astLambda.Body)),
+                        astLambda.Parameters.Select(Evaluate).ToArray());
+ 
                 case AstNoop astNoop:
                     return NoValue;
 
                 case AstMemberAccess astMemberAccess:
-                    // TODO: figure out the correct type def. 
                     return new MemberRef(node, Scope, null, null, 
                         Evaluate(astMemberAccess.Receiver));
                 
                 case AstVarDef astVarDef:
-                    return Bind(astVarDef.Name, new Variable(node, Scope, astVarDef.Name,
-                        GetType(astVarDef.Type)));
-
-                case AstDirective astDirective:
-                    return NoValue;
+                    return Bind(astVarDef.Name, 
+                        new Variable(node, Scope, astVarDef.Name, Evaluate(astVarDef.Type)));
 
                 case AstLoop astLoop:
                     return Region(node, new[] { astLoop.Condition, astLoop.Body });
-
-                case AstFieldDeclaration astFieldDeclaration:
-                    return new Field(node, Scope, new Variable(node, Scope,
-                        astFieldDeclaration.Name, GetType(astFieldDeclaration.Type)));
-                
-                case AstNamespace astNamespace:
-                    return new Namespace(node, Scope, astNamespace.Name, 
-                        astNamespace.Children.Select(Evaluate));
-
-                case AstTypeDeclaration astTypeDeclaration:
-                {
-                    var typeDef = new TypeDef(astTypeDeclaration, Scope);
-                    Scope = Scope.Push();
-                    foreach (var t in astTypeDeclaration.TypeParameters)
-                    {
-                        var tp = new TypeParameter(t, Scope, t.Name);
-                        Bind(tp.Name, tp);
-                        typeDef.TypeParameters.Add(tp);
-                    }
-
-                    foreach (var m in astTypeDeclaration.Members)
-                    {
-
-                    }
-                    return typeDef;
-                }
-
-                case AstDeclaration astDeclaration:
-                case AstError astError:
-                case AstLeaf astLeaf:
-                    break;
             }
 
             throw new Exception($"Node can't be evaluated : {node}");
         }
 
-        /*
-        public object Evaluate(AstLambda lambda)
+        public void CreateTypeDefs(IEnumerable<AstTypeDeclaration> types)
         {
-            object LambdaImplementation(AbstractEvaluator e, AstNode[] args)
+            // Typedefs are at the top-level
+            foreach (var astTypeDeclaration in types)
             {
-                e.PushScope();
-                if (args.Length != lambda.Parameters.Count) throw new Exception("Mismatched argument length size");
-                for (var i = 0; i < args.Length; i++)
-                {
-                    var a = args[i];
-                    var p = lambda.Parameters[i];
-                    e.Current.Declare(p, a);
-                }
-
-                var r = e.Evaluate(lambda.Body);
-                e.PopScope();
-                return r;
+                var typeDef = new TypeDef(astTypeDeclaration, Scope);
+                TypeDefs.Add(typeDef);
+                Bind(typeDef.Name, typeDef);
             }
 
-            return ((Func<AbstractEvaluator, AstNode[], object>)LambdaImplementation).Function;
+            // Foreach type def create the members 
+            foreach (var typeDef in TypeDefs)
+            {
+                Scope = Scope.Push();
+
+                foreach (var tp in typeDef.AstTypeDeclaration.TypeParameters)
+                {
+                    var tpd = new TypeParameterDef(tp, Scope, tp.Name);
+                    Bind(tpd.Name, tpd);
+                    typeDef.TypeParameters.Add(tpd);
+                }
+
+                foreach (var m in typeDef.AstTypeDeclaration.Members)
+                {
+                    if (m is AstFieldDeclaration fd)
+                    {
+                        var fDef = new FieldDef(fd, Scope, Evaluate(fd.Type), fd.Name);
+                        typeDef.Fields.Add(fDef);
+                        Bind(fDef.Name, fDef);
+                    }
+                    else if (m is AstMethodDeclaration md)
+                    {
+                        var mDef = new MethodDef(md, Scope, Evaluate(md.Type), md.Name);
+                        typeDef.Methods.Add(mDef);
+                        Bind(mDef.Name, mDef);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"Member not recognized {m}");
+                    }
+                }
+
+                // For each method in the type 
+                foreach (var method in typeDef.Methods)
+                {
+                    Scope = Scope.Push();
+                    var location = method.Location as AstMethodDeclaration;
+                    var list = new List<Parameter>();
+                    foreach (var p in location.Parameters)
+                    {
+                        var pValue = Evaluate(p);
+                        list.Add(pValue);
+                    }
+
+                    var body = Evaluate(location.Body);
+                    var f = new Function(location, Scope, method.Name, method.Type, body, list.ToArray());
+                    method.Function = f;
+                    Scope = Scope.Pop();
+                }
+
+                // 
+                Scope = Scope.Pop();
+            }
         }
-        */
+
+    /*
+    public object Evaluate(AstLambda lambda)
+    {
+        object LambdaImplementation(AbstractEvaluator e, AstNode[] args)
+        {
+            e.PushScope();
+            if (args.Length != lambda.Parameters.Count) throw new Exception("Mismatched argument length size");
+            for (var i = 0; i < args.Length; i++)
+            {
+                var a = args[i];
+                var p = lambda.Parameters[i];
+                e.Current.Declare(p, a);
+            }
+
+            var r = e.Evaluate(lambda.Body);
+            e.PopScope();
+            return r;
+        }
+
+        return ((Func<AbstractEvaluator, AstNode[], object>)LambdaImplementation).Function;
+    }
+    */
 
         public T Scoped<T>(Func<T> f) where T : AbstractValue
         {

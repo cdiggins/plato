@@ -9,13 +9,16 @@ namespace PlatoAst
         {
             Declaration = declaration;
             InheritedTypes = inherited.ToDictionary(mn => mn.Name, mn => mn);
-            Members = Declaration.Members.ToDictionary(m => m.Name, m => m);
+            foreach (var m in Declaration.Members)
+                Members.Add(m.Name, m);
+            foreach (var tp in Declaration.TypeParameters)
+                Members.Add(tp.Name, tp);
         }
 
         public string Name => Declaration.Name;
         public AstTypeDeclaration Declaration { get; }
         public Dictionary<string, MemberNames> InheritedTypes { get; }
-        public Dictionary<string, AstMemberDeclaration> Members { get; }
+        public Dictionary<string, AstNode> Members { get; } = new Dictionary<string, AstNode>();
     }
 
     public class TypeNames

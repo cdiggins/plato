@@ -229,9 +229,6 @@ namespace PlatoAst
                 case AstIdentifier astIdent:
                     return Write(astIdent.Text);
 
-                case AstError astError:
-                    return WriteLine($"throw new Exception(\"{astError.Text}\")");
-
                 case AstIntrinsic astIntrinsic:
                     return Write(ConvertIntrinsicName(astIntrinsic.Name));
 

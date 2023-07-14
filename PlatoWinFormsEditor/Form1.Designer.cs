@@ -43,6 +43,8 @@
             this.richTextBoxJavaScript = new System.Windows.Forms.RichTextBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.richTextBoxOutput = new System.Windows.Forms.RichTextBox();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.richTextBoxAbstractValue = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -55,6 +57,7 @@
             this.tabPage8.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -157,6 +160,7 @@
             this.tabControl2.Controls.Add(this.tabPage8);
             this.tabControl2.Controls.Add(this.tabPage4);
             this.tabControl2.Controls.Add(this.tabPage3);
+            this.tabControl2.Controls.Add(this.tabPage2);
             this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl2.Location = new System.Drawing.Point(0, 0);
             this.tabControl2.Name = "tabControl2";
@@ -230,6 +234,28 @@
             this.richTextBoxOutput.Text = "";
             this.richTextBoxOutput.WordWrap = false;
             // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.richTextBoxAbstractValue);
+            this.tabPage2.Location = new System.Drawing.Point(4, 29);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(388, 417);
+            this.tabPage2.TabIndex = 5;
+            this.tabPage2.Text = "Abstract Values";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // richTextBoxAbstractValue
+            // 
+            this.richTextBoxAbstractValue.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBoxAbstractValue.Font = new System.Drawing.Font("Lucida Console", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.richTextBoxAbstractValue.Location = new System.Drawing.Point(3, 3);
+            this.richTextBoxAbstractValue.Name = "richTextBoxAbstractValue";
+            this.richTextBoxAbstractValue.Size = new System.Drawing.Size(382, 411);
+            this.richTextBoxAbstractValue.TabIndex = 1;
+            this.richTextBoxAbstractValue.Text = "";
+            this.richTextBoxAbstractValue.WordWrap = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -250,6 +276,7 @@
             this.tabPage8.ResumeLayout(false);
             this.tabPage4.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -271,5 +298,7 @@
         private RichTextBox richTextBoxCst;
         private TabPage tabPage8;
         private RichTextBox richTextBoxAst;
+        private TabPage tabPage2;
+        private RichTextBox richTextBoxAbstractValue;
     }
 }

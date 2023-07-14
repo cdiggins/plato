@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace PlatoAst
 {
@@ -45,9 +46,9 @@ namespace PlatoAst
     {
         public string Kind => AstTypeDeclaration.Kind;
         public AstTypeDeclaration AstTypeDeclaration => Location as AstTypeDeclaration;
-        public List<Method> Methods { get; } = new List<Method>();
-        public List<Field> Fields { get; } = new List<Field>();
-        public List<TypeParameter> TypeParameters { get; } = new List<TypeParameter>();
+        public List<MethodDef> Methods { get; } = new List<MethodDef>();
+        public List<FieldDef> Fields { get; } = new List<FieldDef>();
+        public List<TypeParameterDef> TypeParameters { get; } = new List<TypeParameterDef>();
         public Dictionary<string, AstNode> Lookup { get; } = new Dictionary<string, AstNode>();
 
         public TypeDef(AstTypeDeclaration location, Scope scope)
@@ -75,11 +76,13 @@ namespace PlatoAst
     public class Function : AbstractValue
     {
         public IReadOnlyList<Parameter> Parameters { get; }
+        public AbstractValue Body { get; }
 
-        public Function(AstNode location, Scope scope, string name, TypeRef returnType, params Parameter[] parameters)
+        public Function(AstNode location, Scope scope, string name, TypeRef returnType, AbstractValue body, params Parameter[] parameters)
             : base(location, scope, TypeRef.CreateFunction(returnType, parameters.Select(p => p.Type).ToArray()), name)
         {
             Parameters = parameters;
+            Body = body;
         }
     }
 
@@ -113,7 +116,7 @@ namespace PlatoAst
         public int Position { get; }
 
         public Argument(AstNode location, Scope scope, AbstractValue original, int position)
-            : base(location, scope, original.Type, $"$arg{position}")
+            : base(location, scope, original?.Type, $"$arg{position}")
         {
             Original = original;
             Position = position;
@@ -132,14 +135,12 @@ namespace PlatoAst
     {
         public AbstractValue Receiver { get; }
         public TypeDef TypeDef { get; }
-        public Member Member { get; }
 
-        public MemberRef(AstNode location, Scope scope, TypeDef typeDef, Member member, AbstractValue receiver)
-            : base(location, scope, member.Type, "$member")
+        public MemberRef(AstNode location, Scope scope, TypeDef typeDef, string name, AbstractValue receiver)
+            : base(location, scope, TypeRef.Member, name)
         {
             Receiver = receiver;
             TypeDef = typeDef;
-            Member = member;
         }
     }
 
@@ -177,15 +178,20 @@ namespace PlatoAst
             => new TypeRef(null, null, name, args);
 
         public static TypeRef Void = Create("void");
+        public static TypeRef Intrinsic = Create("intrinsic");
         public static TypeRef MetaType = Create("MetaType");
         public static TypeRef NotImplemented = Create("Not implemented yet");
-        public static TypeRef TypeParameter = Create("TypeParameter");
+        public static TypeRef TypeParameter = Create("TypeParameterDef");
+        public static TypeRef Member = Create("Member");
+        public static TypeRef Inferred = Create("Infer");
 
         public static TypeRef CreateFunction(TypeRef returnType, params TypeRef[] parameterTypes)
             => Create("Func", parameterTypes.Append(returnType).ToArray());
 
         public static TypeRef Unify(TypeRef a, TypeRef b)
-            => throw new NotImplementedException();
+            => a;
+        // TODO: implement the unification correctly.
+        //=> throw new NotImplementedException();
     }
 
     public abstract class Member : AbstractValue
@@ -195,39 +201,34 @@ namespace PlatoAst
         { }
     }
 
-    public class Field : Member
+    public class FieldDef : Member
     {
-        public Variable Variable { get; }
-
-        public Field(AstNode location, Scope scope, Variable variable)
-            : base(location, scope, variable.Type, variable.Name)
-            => Variable = variable;
+        public FieldDef(AstNode location, Scope scope, TypeRef type, string name)
+            : base(location, scope, type, name)
+        { }
     }
 
-    public class Method : Member
+    public class MethodDef : Member
     {
-        public Function Function { get; }
+        // TODO: find a better way to deal with this. Don't make it mutable.
+        public Function Function { get; set; }
 
-        public Method(AstNode location, Scope scope, Function function)
-            : base(location, scope, function.Type, function.Name)
-            => Function = function;
+        public MethodDef(AstNode location, Scope scope, TypeRef type, string name)
+            : base(location, scope, type, name)
+        { }
     }
 
-    public class TypeParameter : Member
+    public class TypeParameterDef : Member
     {
-        public TypeParameter(AstNode location, Scope scope, string name)
+        public TypeParameterDef(AstNode location, Scope scope, string name)
             : base(location, scope, TypeRef.TypeParameter, name)
         { }
     }
 
-    public class Namespace : AbstractValue
+    public class Intrinsic : AbstractValue
     {
-        public List<AbstractValue> Children { get; }
-
-        public Namespace(AstNode location, Scope scope, string name, IEnumerable<AbstractValue> children)
-            : base(location, scope, TypeRef.Void, name)
-        {
-            Children = children.ToList();
-        }
+        public Intrinsic(AstNode location, Scope scope, string name)
+            : base(location, scope, TypeRef.Intrinsic, name)
+        { }
     }
 }

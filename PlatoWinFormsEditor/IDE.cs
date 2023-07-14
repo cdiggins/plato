@@ -13,12 +13,14 @@ public class IDE
     public string Input { get; set; }
     public string Output { get; set; }
     public Compilation Compilation { get; set; }
+    public AbstractEvaluator Evaluator { get; } = new ();
 
     public string ParseTree => Try(() => Compilation?.ParseTree?.ToString());
     public string CstXml => Try(() => Compilation?.CstTree?.ToXml().ToString());
     public string AstXml => Try(() => Compilation?.AstTree?.ToXml());
     public string CSharpAst => Try(() => Compilation?.AstTree?.ToCSharp());
     public string JavaScriptAst => Try(() => Compilation?.AstTree?.ToJavaScript());
+    public string AbstractValuesXml => Evaluator.TypeDefs.ToXml();
 
     public IDE()
     {
@@ -30,6 +32,55 @@ public class IDE
         var input3 = File.ReadAllText(inputFile3);
         Input = input1 + Environment.NewLine + input2 + Environment.NewLine + input3;
         Compilation = Compile(Input);
+
+        /*
+        var types = IDE.Compilation.AstTree.GetAllTypes().ToList();
+
+        foreach (var type in types)
+        {
+            //richTextBoxOutput.AppendText($"{type.Kind} {type.Name.Text} {Environment.NewLine}");
+        }
+
+        var lookup = new TypeNames(types);
+        foreach (var kv in lookup.Dictionary)
+        {
+            richTextBoxOutput.AppendText($"{kv.Key}");
+            richTextBoxOutput.AppendText(Environment.NewLine);
+
+            var memberNames = kv.Value;
+
+            foreach (var kv2 in memberNames.Members)
+            {
+                richTextBoxOutput.AppendText($"{kv2.Key} = {kv2.Value.GetType().Name}");
+                richTextBoxOutput.AppendText(Environment.NewLine);
+            }
+        }
+        */
+
+        // Get the type
+        var types = Compilation.AstTree.GetAllTypes().ToList();
+        Evaluator.CreateTypeDefs(types);
+
+        /*
+
+        var sb = new StringBuilder();
+        sb.AppendLine();
+        foreach (var t in ae.TypeDefs)
+        {
+            sb.AppendLine(t.Kind);
+            foreach (var f in t.Fields)
+            {
+                sb.AppendLine($"Field {f.Name}");
+            }
+
+            foreach (var m in t.Methods)
+            {
+                sb.AppendLine($"Method {m.Name}");
+            }
+        }
+
+        Output += sb.ToString();
+        */
     }
 
     public string Try(Func<string?> f)

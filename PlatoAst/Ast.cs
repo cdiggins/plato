@@ -28,12 +28,6 @@ namespace PlatoAst
         public AstParenthesized(AstNode inner) => Inner = inner;
     }
 
-    public class AstError : AstLeaf
-    {
-        public AstError(string message) : base(message) {}
-        public static AstError Create(string message) => new AstError(message);
-    }
-
     public class AstNoop : AstLeaf
     {
         public static AstNoop Default { get; } = new AstNoop();
