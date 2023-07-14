@@ -7,15 +7,11 @@
   <ItemGroup>
     <Compile Remove="math.funcs.plato.cs" />
     <Compile Remove="math.funcs.plato.g.cs" />
-    <Compile Remove="math.types.plato.cs" />
-    <Compile Remove="math.types.plato.g.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="math.funcs.plato.cs" />
     <None Include="math.funcs.plato.g.cs" />
-    <None Include="math.types.plato.cs" />
-    <None Include="math.types.plato.g.cs" />
   </ItemGroup>
 
   <ItemGroup>

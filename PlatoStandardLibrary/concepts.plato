@@ -74,4 +74,6 @@ concept Value
 
     function ToString(x: Self): String;
     function FromString(s: String): Self;
+
+    function Create(values: Array<Value>): Self;
 }
