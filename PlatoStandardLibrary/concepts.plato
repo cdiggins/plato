@@ -1,4 +1,4 @@
-﻿
+
 concept Interval<T: Numerical>
     inherits Vector<T>
 {
@@ -7,73 +7,120 @@ concept Interval<T: Numerical>
 }
 
 concept Vector<T: Numerical> 
-    inherits Array, Value, Numerical, Arithmetic<T>
+    inherits Array<T>, Value, Numerical, Arithmetic<T>
 {
 }
 
 concept Measure
-    inherits Value, Additive<Self>, Arithemetic<Number>, Equatable, Comparable
+    inherits Value, ScalarArithemetic<Number>, Equatable, Comparable, Magnitude
 { 
     field Value: Number;
 }
 
 concept Numerical 
-    inherits Equatable, Comparable, Arithmetic<Self>
+    inherits Value, Arithmetic, Equatable, Comparable, Magnitude
 {
-    function FromNumber(x: Number): Self;
+    function FromNumber(x: Number): Self
+        = Values.FromNumber(x);
 }
 
-concept Arithemtic<T>
-    inherits Multiplicative<T>, Additive<T>
-{ 
+concept Magnitude
+    inherits Value
+{
+    function Magnitude(x: Self): Number
+        = x.FieldValues.Square.Sum.SquareRoot;
 }
 
 concept Comparable
+    inherits Value
 {
-    function Compare(a: Self, b: Self): Integer;
+    function Compare(a: Self, b: Self): Integer
+        = a.Magnitude < b.Magnitude ? : -1 : a.Magnitude > b.Magnitude ? 1 : 0;
 }
 
 concept Equatable
+    inherits Value
 {
-    function Equals(a: Self, b: Self): Boolean;
+    function Equals(a: Self, b: Self): Boolean
+        = a.FieldValues.Equals(b.FieldValues).All;
 }
 
-concept Additive<T>
-{
-    function Add(x: Self, y: T): Self;
-    function Subtract(x: Self, y: T): Self;
-    function Negative(x: Self): Self;
+concept Arithmetic
+    inherits Value
+{ 
+    function Add(self: Self, other: Self): Self
+        = self.FieldValues.Add(other.FieldValues);
+
+    function Negative(self: Self): Self
+        = self.FieldValues.Negative;
+
+    function Reciprocal(self: Self): Self
+        = self.FieldValues.Reciprocal;
+    
+    function Multiply(self: Self, other: Self): Self
+        = self.FieldValues.Add(other.FieldValues);
+
+    function Divide(self: Self, other: Self): Self
+        = self.FieldValues.Divide(other.FieldValues);
+
+    function Modulo(self: Self, other: Self): Self
+        = self.FieldValues.Modulo(other.FieldValues);
 }
 
-concept Multiplicative<T>
+concept ScalarArithmetic<T>
+    inherits Value
 {
-    function Multiply(x: Self, y: T): Self;
-    function Divide(x: Self, y: T): Self;
-    function Modulo(x: Self, y: T): Self;
-    function Reciprocal(x: Self): Self;
-}
+    function Add(self: Self, scalar: T): Self
+        = self.FieldValues.Add(scalar);
+    
+    function Subtract(self: Self, scalar: T): Self
+        = self.Add(scalar.Negative);
 
-concept Array<T>
-{
-    field Count: Count;    
-    function At(n: Index): T;
+    function Multiply(self: Self, scalar: T): Self
+        = self.FieldValues.Multiply(scalar);
+    
+    function Divide(self: Self, scalar: T): Self
+        = self.Multiply(scalar.Reciprocal);
+
+    function Modulo(self: Self, scalar: T): Self
+        = self.FieldValues.Modulo(scalar);
 }
 
 concept Value 
-    inherits Array<Any>
 {
-    function Type(): Type;
-    function Fields(): Array<Tuple<String, Type>>;
-    function FieldValue(x: Value, n: Index): Value;
+    function Type(): Type
+        = intrinsic;
 
-    function Zero(): Self;
-    function One(): Self;
-    function Default(): Self;
-    function MinValue(): Self;
-    function MaxValue(): Self;
+    function FieldTypes(): Array<Type>
+        = intrinsic;
 
-    function ToString(x: Self): String;
-    function FromString(s: String): Self;
+    function FieldNames(): Array<String>
+        = intrinsic;
 
-    function Create(values: Array<Value>): Self;
+    function FieldValues(self: Self): Array<Value>
+        = intrinsic;
+
+    function Zero(): Self
+        = Types.Zero;
+
+    function One(): Self
+        = Types.One;
+
+    function Default(): Self
+        = Types.Default;
+
+    function MinValue(): Self
+        = Types.MinValue;
+
+    function MaxValue(): Self
+        = Types.MaxValue;
+
+    function ToString(x: Self): String
+        = Values.JoinString(",");
+}
+
+concept Array<T: Any>
+{
+    field Count: Count;    
+    function At(n: Index): T;
 }

@@ -20,7 +20,7 @@ module Interval
     function RightHalf(x) = x.Right(0.5);
     function HalfSize(x) = x.Size.Half;
     function Recenter(x, c) = Interval(c - x.HalfSize, c + x.HalfSize);
-    function Clamp(x, y) = (x.Clamp(y.Min), x.Clamp(y.Max));
+    function Clamp(x, y) = Interval(x.Clamp(y.Min), x.Clamp(y.Max));
     function Clamp(x, value) = value < x.Min ? x.Min : value > x.Max ? x.Max : value;
     function Between(x, value) = value >= x.Min && value <= x.Max;
     function Unit() = Interval(0, 1);
