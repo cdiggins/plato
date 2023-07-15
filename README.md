@@ -7,18 +7,20 @@ production quality coding. Plato can be translated into C#, JavaScript, and othe
 # About Plato 
 
 Plato is a statically typed compiled functional language that looks like a dynamic scripting language. 
+Type annotations are optional, except when defining new types or concepts. 
 
 Plato behaves like an object oriented language in that you can use fluent (aka method chaining) syntax.
 In other words any defined function can be invoked by writing the first argument followed by a "." 
-then the rest of the arguments. 
+then the rest of the arguments. `Clamp(x, min, max)` can be invoked as `x.Clamp(min, max)`.
 
-If a function does not require additional arguments then the "()" can be omitted. This means that any
+If a function does not require additional arguments then the `()` can be omitted. This means that any
 function with only one parameter (e.g. `Cos(x: Number)`) can be invoked as if it was a property: `x.Cos`.
 
 ## Functions and Modules
 
 Plato functions can be defined with or without type declarations. If type declarations are omitted then the type is inferred.
-Plato functions are not methods: they have no implicit "this" parameter.   
+
+    Note: Plato functions are not methods. They have no implicit "this" parameter.   
 
 Functions are organized in groups called modules. A module is like a class with no state, and only static methods in languages like C#, Java, or C++.  
 
