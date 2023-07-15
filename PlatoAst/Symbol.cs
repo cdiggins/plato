@@ -17,18 +17,11 @@ namespace PlatoAst
             => (Location, Scope) = (location, scope);
 
         public override string ToString() => $"{GetType().Name}";
-    }
-
-    public abstract class ContainerSymbol : Symbol
-    {
-        protected ContainerSymbol(AstNode location, Scope scope)
-            : base(location, scope)
-        { }
 
         public abstract IReadOnlyList<Symbol> Children { get; }
     }
 
-    public class DefSymbol : Symbol
+    public abstract class DefSymbol : Symbol
     {
         protected DefSymbol(AstNode location, Scope scope, TypeRefSymbol type, string name)
             : base(location, scope)
@@ -61,9 +54,12 @@ namespace PlatoAst
             => Def = def;
 
         public override string ToString() => $"{GetType().Name}={Name}${Id}:{Type}";
+
+        // References have no children 
+        public override IReadOnlyList<Symbol> Children => Array.Empty<Symbol>();
     }
 
-    public class NoValueSymbol : ContainerSymbol
+    public class NoValueSymbol : Symbol
     {
         public NoValueSymbol() 
             : base(null, null)
@@ -74,7 +70,7 @@ namespace PlatoAst
         public override IReadOnlyList<Symbol> Children => Array.Empty<Symbol>();
     }
 
-    public class RegionSymbol : ContainerSymbol
+    public class RegionSymbol : Symbol
     {
         public override IReadOnlyList<Symbol> Children { get; }
 
@@ -96,9 +92,12 @@ namespace PlatoAst
             : base(location, scope, TypeRefSymbol.Create(location.Name), location.Name)
         {
         }
+
+        public override IReadOnlyList<Symbol> Children 
+            => Array.Empty<Symbol>().Concat(Methods).Concat(Fields).Concat(TypeParameters).ToList();
     }
 
-    public class ConditionalSymbol : ContainerSymbol
+    public class ConditionalSymbol : Symbol
     {
         public Symbol Condition { get; }
         public Symbol IfTrue { get; }
@@ -127,6 +126,9 @@ namespace PlatoAst
             Parameters = parameters;
             Body = body;
         }
+
+        public override IReadOnlyList<Symbol> Children
+            => Array.Empty<Symbol>().Concat(Parameters).Append(Body).ToList();
     }
 
     public class ParameterSymbol : DefSymbol
@@ -134,6 +136,9 @@ namespace PlatoAst
         public ParameterSymbol(AstNode location, Scope scope, string name, TypeRefSymbol type)
             : base(location, scope, type, name)
         { }
+
+        public override IReadOnlyList<Symbol> Children
+            => Array.Empty<Symbol>();
     }
 
     public class VariableSymbol : DefSymbol
@@ -141,9 +146,12 @@ namespace PlatoAst
         public VariableSymbol(AstNode location, Scope scope, string name, TypeRefSymbol type)
             : base(location, scope, type, name)
         { }
+
+        public override IReadOnlyList<Symbol> Children
+            => Array.Empty<Symbol>();
     }
 
-    public class AssignmentSymbol : ContainerSymbol
+    public class AssignmentSymbol : Symbol
     {
         public Symbol LValue { get; }
         public Symbol RValue { get; }
@@ -155,7 +163,7 @@ namespace PlatoAst
         public override IReadOnlyList<Symbol> Children => new [] { LValue, RValue };
     }
 
-    public class ArgumentSymbol : ContainerSymbol
+    public class ArgumentSymbol : Symbol
     {
         public Symbol Original { get; }
         public int Position { get; }
@@ -170,7 +178,7 @@ namespace PlatoAst
         public override IReadOnlyList<Symbol> Children => new[] { Original };
     }
 
-    public class LiteralSymbol : ContainerSymbol
+    public class LiteralSymbol : Symbol
     {
         public object Value { get; }
         public LiteralSymbol(AstNode location, Scope scope, object value)
@@ -180,7 +188,7 @@ namespace PlatoAst
         public override IReadOnlyList<Symbol> Children => Array.Empty<Symbol>();
     }
 
-    public class MemberAccessSymbol : ContainerSymbol
+    public class MemberAccessSymbol : Symbol
     {
         public Symbol Receiver { get; }
         public string Name { get; }
@@ -198,7 +206,7 @@ namespace PlatoAst
             => $"{Receiver}.{Name}";
     }
 
-    public class FunctionResultSymbol : ContainerSymbol
+    public class FunctionResultSymbol : Symbol
     {
         public Symbol Function { get; }
         public IReadOnlyList<ArgumentSymbol> Args { get; }
@@ -212,7 +220,7 @@ namespace PlatoAst
         public override IReadOnlyList<Symbol> Children => Args.Append(Function).ToList();
     }
 
-    public class TypeRefSymbol : ContainerSymbol
+    public class TypeRefSymbol : Symbol
     {
         public string Name { get; }
         public IReadOnlyList<TypeRefSymbol> TypeArgs { get; }
@@ -271,6 +279,9 @@ namespace PlatoAst
         public FieldDefSymbol(AstNode location, Scope scope, TypeRefSymbol type, string name)
             : base(location, scope, type, name)
         { }
+
+        public override IReadOnlyList<Symbol> Children
+            => Array.Empty<Symbol>();
     }
 
     public class MethodDefSymbol : MemberDefSymbol
@@ -281,6 +292,9 @@ namespace PlatoAst
         public MethodDefSymbol(AstNode location, Scope scope, TypeRefSymbol type, string name)
             : base(location, scope, type, name)
         { }
+
+        public override IReadOnlyList<Symbol> Children
+            => new [] { Function };
     }
 
     public class TypeParameterDefSymbol : MemberDefSymbol
@@ -288,9 +302,12 @@ namespace PlatoAst
         public TypeParameterDefSymbol(AstNode location, Scope scope, string name)
             : base(location, scope, TypeRefSymbol.TypeParameter, name)
         { }
+
+        public override IReadOnlyList<Symbol> Children
+            => Array.Empty<Symbol>();
     }
 
-    public class IntrinsicSymbol : ContainerSymbol
+    public class IntrinsicSymbol : Symbol
     {
         public string Name { get; }
 
@@ -300,7 +317,8 @@ namespace PlatoAst
             Name = name;
         }
 
-        public override IReadOnlyList<Symbol> Children => Array.Empty<Symbol>();
+        public override IReadOnlyList<Symbol> Children 
+            => Array.Empty<Symbol>();
     }
 
     public static class SymbolExtensions
@@ -310,7 +328,7 @@ namespace PlatoAst
             if (symbol == null)
                 yield break;
             yield return symbol;
-            if (symbol is ContainerSymbol cs)
+            if (symbol is Symbol cs)
                 foreach (var child in cs.Children.SelectMany(AllDescendantSymbols))
                     yield return child;
         }

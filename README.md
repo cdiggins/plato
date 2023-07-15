@@ -18,18 +18,20 @@ function with only one parameter (e.g. `Cos(x: Number)`) can be invoked as if it
 
 ## Functions and Modules
 
-Plato functions can be defined with or without type declarations. If type declarations are omitted then the type is inferred.
+Functions are organized in groups called modules. A module has no state or variables. 
 
     Note: Plato functions are not methods. They have no implicit "this" parameter.   
 
-Functions are organized in groups called modules. A module is like a class with no state, and only static methods in languages like C#, Java, or C++.  
+Plato functions can be defined with or without type declarations. If type declarations are omitted then the type is inferred.
 
 For some [examples of functions and modules see the standard library](https://github.com/cdiggins/plato/blob/main/PlatoStandardLibrary/modules.plato).
 
 ## Types and Fields
 
-A type assigned a name to a set of fields (member variables). Types do not contain functions. A type usually implements at 
-least one or more concepts. 
+A type assigns a name to a set of fields (member variables). 
+Types do not contain functions. A type may `implement` one or more concepts. 
+When a type declares that it implements a concept, it will support all functions 
+defined within the concept. 
 
 For some [examples of types see the standard library](https://github.com/cdiggins/plato/blob/main/PlatoStandardLibrary/types.plato).
 
@@ -39,6 +41,8 @@ A concept is a set of fields and functions that describe a particular type. They
 interfaces, traits, protocols, and mixins. A type that "implements" a concept must have the fields 
 declared in the concept. The functions within a concept are automatically implemented for the types that declare that they 
 implement the concept.  
+
+Within a concept the `Self` keyword refers to the type of the implementing type. 
 
 For some [examples of concepts see the standard library](https://github.com/cdiggins/plato/blob/main/PlatoStandardLibrary/concepts.plato).
 

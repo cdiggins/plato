@@ -110,12 +110,17 @@ namespace PlatoAst
                     // evaluating a name will gives us a method group!
                     return new FunctionResultSymbol(node, Scope, func, args);
                 }
-                
+
                 case AstLambda astLambda:
-                    return new FunctionSymbol(astLambda, Scope, "lambda",
-                        TypeRefSymbol.Inferred, Scoped(() => Resolve(astLambda.Body)),
-                        astLambda.Parameters.Select(Resolve).ToArray());
- 
+                {
+                    Scope = Scope.Push();
+                    var ps = astLambda.Parameters.Select(Resolve).ToArray();
+                    var body = Resolve(astLambda.Body);
+                    var r = new FunctionSymbol(astLambda, Scope, "lambda",
+                        TypeRefSymbol.Inferred, body, ps);
+                    return r;
+                }
+
                 case AstNoop astNoop:
                     return NoValueSymbol;
 
