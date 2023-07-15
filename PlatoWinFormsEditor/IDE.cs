@@ -69,10 +69,10 @@ public class IDE
             foreach (var m in t.Methods)
             {
                 sb.AppendLine($"Method {m.Name}");
-                var lookup = Semantics.GetParameterReferences(m.Function);
+                var lookup = Constraints.GetParameterConstraints(m.Function);
                 foreach (var kv in lookup)
                 {
-                    var refs = string.Join(",", kv.Value);
+                    var refs = string.Join(", ", kv.Value);
                     sb.AppendLine($"{kv.Key} = {refs}");
                 }
             }

@@ -120,7 +120,7 @@ namespace PlatoAst
                     return NoValueSymbol;
 
                 case AstMemberAccess astMemberAccess:
-                    return new MemberRefSymbol(node, Scope, null, 
+                    return new MemberAccessSymbol(node, Scope, astMemberAccess.Name,
                         Resolve(astMemberAccess.Receiver));
                 
                 case AstVarDef astVarDef:

@@ -1,8 +1,19 @@
 # Plato
 
 Plato is an efficient and fun programming language inspired by JavaScript, TypeScript, C#, and Haskell.
-Plato is designed to be easy to learn while being efficient and robust enough for production quality coding.
-Plato can be translated into C#, JavaScript, and other platforms. 
+Plato is designed to be easy to teach and learn while being efficient and robust enough for 
+production quality coding. Plato can be translated into C#, JavaScript, and other platforms. 
+
+# About Plato 
+
+Plato is a statically typed compiled functional language that looks like a dynamic scripting language. 
+
+Plato behaves like an object oriented language in that you can use fluent (aka method chaining) syntax.
+In other words any defined function can be invoked by writing the first argument followed by a "." 
+then the rest of the arguments. 
+
+If a function does not require additional arguments then the "()" can be omitted. This means that any
+function with only one parameter (e.g. `Cos(x: Number)`) can be invoked as if it was a property: `x.Cos`.
 
 ## Functions and Modules
 

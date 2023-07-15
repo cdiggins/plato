@@ -85,8 +85,8 @@ namespace PlatoAst
                 case MemberDefSymbol member:
                     throw new Exception("Not implemented");
                 
-                case MemberRefSymbol memberRef:
-                    return WriteXml("MemberRefSymbol", avw =>
+                case MemberAccessSymbol memberRef:
+                    return WriteXml("MemberAccessSymbol", avw =>
                         avw.WriteXml("Receiver", memberRef.Receiver)
                             .WriteXml("Name", memberRef.Name));
                 

@@ -16,10 +16,7 @@ namespace PlatoAst
         protected Symbol(AstNode location, Scope scope)
             => (Location, Scope) = (location, scope);
 
-        public override string ToString()
-        {
-            return $"{GetType().Name}";
-        }
+        public override string ToString() => $"{GetType().Name}";
     }
 
     public abstract class ContainerSymbol : Symbol
@@ -33,7 +30,6 @@ namespace PlatoAst
 
     public class DefSymbol : Symbol
     {
-
         protected DefSymbol(AstNode location, Scope scope, TypeRefSymbol type, string name)
             : base(location, scope)
         {
@@ -46,6 +42,11 @@ namespace PlatoAst
         public int Id { get; } = NextId++;
 
         public static int NextId = 0;
+
+        public override bool Equals(object obj) => obj is DefSymbol ds && ds.Id == Id;
+        public override int GetHashCode() => Id.GetHashCode();
+
+        public override string ToString() => $"{GetType().Name}={Name}${Id}:{Type}";
     }
 
     public class RefSymbol : Symbol
@@ -53,12 +54,13 @@ namespace PlatoAst
         public DefSymbol Def { get; }
         public TypeRefSymbol Type => Def.Type;
         public string Name => Def.Name;
+        public int Id => Def.Id;
 
         public RefSymbol(AstNode location, Scope scope, DefSymbol def)
             : base(location, scope)
-        {
-            Def = def;
-        }
+            => Def = def;
+
+        public override string ToString() => $"{GetType().Name}={Name}${Id}:{Type}";
     }
 
     public class NoValueSymbol : ContainerSymbol
@@ -178,12 +180,12 @@ namespace PlatoAst
         public override IReadOnlyList<Symbol> Children => Array.Empty<Symbol>();
     }
 
-    public class MemberRefSymbol : ContainerSymbol
+    public class MemberAccessSymbol : ContainerSymbol
     {
         public Symbol Receiver { get; }
         public string Name { get; }
 
-        public MemberRefSymbol(AstNode location, Scope scope, string name, Symbol receiver)
+        public MemberAccessSymbol(AstNode location, Scope scope, string name, Symbol receiver)
             : base(location, scope)
         {
             Receiver = receiver;
@@ -191,6 +193,9 @@ namespace PlatoAst
         }
 
         public override IReadOnlyList<Symbol> Children => new [] { Receiver };
+
+        public override string ToString()
+            => $"{Receiver}.{Name}";
     }
 
     public class FunctionResultSymbol : ContainerSymbol
