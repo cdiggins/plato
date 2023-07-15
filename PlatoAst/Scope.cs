@@ -15,13 +15,13 @@ namespace PlatoAst
 
     public static class ScopeExtensions
     {
-        public static Scope Bind(this Scope scope, string name, AbstractValue value)
+        public static Scope Bind(this Scope scope, string name, Symbol value)
             => new Scope(scope.Parent, scope.Bindings.Add(name, value));
 
         public static Binding Find(this Scope scope, string name)
             => scope.EnumerateBindings().FirstOrDefault(x => x.Name == name);
        
-        public static AbstractValue GetValue(this Scope scope, string name)
+        public static Symbol GetValue(this Scope scope, string name)
             => scope.Find(name)?.Value;
 
         public static Scope Push(this Scope scope)

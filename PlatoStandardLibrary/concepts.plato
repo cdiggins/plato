@@ -35,7 +35,7 @@ concept Comparable
     inherits Value
 {
     function Compare(a: Self, b: Self): Integer
-        = a.Magnitude < b.Magnitude ? : -1 : a.Magnitude > b.Magnitude ? 1 : 0;
+        = a.Magnitude < b.Magnitude ? -1 : a.Magnitude > b.Magnitude ? 1 : 0;
 }
 
 concept Equatable

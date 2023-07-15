@@ -1,8 +1,6 @@
-﻿using Parakeet.Demos.CSharp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace PlatoAst
 {
@@ -11,41 +9,46 @@ namespace PlatoAst
     /// This allows us to figure out which methods will get called at run-time.
     /// An abstract evaluator returns abstract values which have types, scopes, and locations 
     /// </summary>
-    public class AbstractEvaluator
+    public class SymbolResolver
     {
         public Scope Scope { get; set; } = new Scope(null, null);
-        public List<AbstractTypeDef> TypeDefs { get; } = new List<AbstractTypeDef>();
+        public List<TypeDefSymbol> TypeDefs { get; } = new List<TypeDefSymbol>();
 
-        public T Bind<T>(string name, T value) where T : AbstractValue
+        public T Bind<T>(string name, T value) where T : Symbol
         {
             Scope = Scope.Bind(name, value);
             return value;
         }
 
-        public AbstractValue GetValue(string name)
+        public RefSymbol GetValue(AstNode location, Scope scope, string name)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new Exception("Invalid variable name");
-            return Scope.GetValue(name);
+            var sym = Scope.GetValue(name);
+            if (sym == null)
+                return null;
+            if (sym is DefSymbol ds)
+                return new RefSymbol(location, scope, ds);
+            throw new NotImplementedException();
         }
 
-        public AbstractTypeRef Evaluate(AstTypeNode astTypeNode)
+        public TypeRefSymbol Resolve(AstTypeNode astTypeNode)
         {
             if (astTypeNode == null)
                 return null;
 
-            return new AbstractTypeRef(astTypeNode, Scope, astTypeNode.Name,
-                astTypeNode.TypeArguments.Select(Evaluate).ToArray());
+            return new TypeRefSymbol(astTypeNode, Scope, astTypeNode.Name,
+                astTypeNode.TypeArguments.Select(Resolve).ToArray());
         }
 
-        public AbstractParameter Evaluate(AstParameterDeclaration astParameterDeclaration)
+        public ParameterSymbol Resolve(AstParameterDeclaration astParameterDeclaration)
         {
             return Bind(astParameterDeclaration.Name,
-                new AbstractParameter(astParameterDeclaration, Scope, astParameterDeclaration.Name, null));
+                new ParameterSymbol(astParameterDeclaration, Scope, astParameterDeclaration.Name, null));
         }
 
         // This is not a pure function. It updates the scope every time a new value is bound
-        public AbstractValue Evaluate(AstNode node)
+        public Symbol Resolve(AstNode node)
         {
             if (node == null)
                 return null;
@@ -53,76 +56,76 @@ namespace PlatoAst
             switch (node)
             {
                 case AstTypeNode astTypeNode:
-                    return Evaluate(astTypeNode);
+                    return Resolve(astTypeNode);
 
                 case AstAssign astAssign:
                     return Bind(astAssign.Var,
-                        new AbstractAssignment(node, Scope,
-                            GetValue(astAssign.Var),
-                            Evaluate(astAssign.Value)));
+                        new AssignmentSymbol(node, Scope,
+                            GetValue(node, Scope, astAssign.Var),
+                            Resolve(astAssign.Value)));
 
                 case AstBlock astBlock:
                     return Region(node, astBlock.Statements);
 
                 case AstBreak astBreak:
-                    return NoValue;
+                    return NoValueSymbol;
 
                 case AstMulti astMulti:
                     return Region(node, astMulti.Nodes, false);
 
                 case AstParenthesized astParenthesized:
-                    return Evaluate(astParenthesized.Inner);
+                    return Resolve(astParenthesized.Inner);
                 
                 case AstReturn astReturn:
                     return Region(node, new [] { astReturn.Value });
 
                 case AstConditional astConditional:
-                    return Scoped(() => new AbstractConditional(node, Scope,
-                        Evaluate(astConditional.Condition),
-                        Evaluate(astConditional.IfTrue),
-                        Evaluate(astConditional.IfFalse)));
+                    return Scoped(() => new ConditionalSymbol(node, Scope,
+                        Resolve(astConditional.Condition),
+                        Resolve(astConditional.IfTrue),
+                        Resolve(astConditional.IfFalse)));
 
                 case AstConstant astConstant1:
-                    return new Literal(node, Scope, astConstant1.Value);
+                    return new LiteralSymbol(node, Scope, astConstant1.Value);
 
                 case AstContinue astContinue:
-                    return NoValue;
+                    return NoValueSymbol;
 
                 case AstExpressionStatement astExpressionStatement:
-                    return Scoped(() => Evaluate(astExpressionStatement.Expression));
+                    return Scoped(() => Resolve(astExpressionStatement.Expression));
                     
                 case AstIdentifier astIdentifier:
-                    return GetValue(astIdentifier.Text);
+                    return GetValue(node, Scope, astIdentifier.Text);
 
                 case AstIntrinsic astIntrinsic:
-                    return new AbstractIntrinsic(astIntrinsic, Scope, astIntrinsic.Name);
+                    return new IntrinsicSymbol(astIntrinsic, Scope, astIntrinsic.Name);
 
                 case AstInvoke astInvoke:
                 {
                     var args = astInvoke.AstArguments.Select((a,i) => 
-                        new AbstractArgument(a, Scope, Evaluate(a), i)).ToArray();
-                    var func = Evaluate(astInvoke.Function);
+                        new ArgumentSymbol(a, Scope, Resolve(a), i)).ToArray();
+                    var func = Resolve(astInvoke.Function);
 
                     // TODO: we need to figure out what function it is because really 
                     // evaluating a name will gives us a method group!
-                    return new AbstractFunctionResult(node, Scope, AbstractTypeRef.NotImplemented, func, args);
+                    return new FunctionResultSymbol(node, Scope, func, args);
                 }
                 
                 case AstLambda astLambda:
-                    return new AbstractFunction(astLambda, Scope, "lambda",
-                        AbstractTypeRef.Inferred, Scoped(() => Evaluate(astLambda.Body)),
-                        astLambda.Parameters.Select(Evaluate).ToArray());
+                    return new FunctionSymbol(astLambda, Scope, "lambda",
+                        TypeRefSymbol.Inferred, Scoped(() => Resolve(astLambda.Body)),
+                        astLambda.Parameters.Select(Resolve).ToArray());
  
                 case AstNoop astNoop:
-                    return NoValue;
+                    return NoValueSymbol;
 
                 case AstMemberAccess astMemberAccess:
-                    return new AbstractMemberRef(node, Scope, null, null, 
-                        Evaluate(astMemberAccess.Receiver));
+                    return new MemberRefSymbol(node, Scope, null, 
+                        Resolve(astMemberAccess.Receiver));
                 
                 case AstVarDef astVarDef:
                     return Bind(astVarDef.Name, 
-                        new AbstractVariable(node, Scope, astVarDef.Name, Evaluate(astVarDef.Type)));
+                        new VariableSymbol(node, Scope, astVarDef.Name, Resolve(astVarDef.Type)));
 
                 case AstLoop astLoop:
                     return Region(node, new[] { astLoop.Condition, astLoop.Body });
@@ -136,7 +139,7 @@ namespace PlatoAst
             // Typedefs are at the top-level
             foreach (var astTypeDeclaration in types)
             {
-                var typeDef = new AbstractTypeDef(astTypeDeclaration, Scope);
+                var typeDef = new TypeDefSymbol(astTypeDeclaration, Scope);
                 TypeDefs.Add(typeDef);
                 Bind(typeDef.Name, typeDef);
             }
@@ -148,7 +151,7 @@ namespace PlatoAst
 
                 foreach (var tp in typeDef.AstTypeDeclaration.TypeParameters)
                 {
-                    var tpd = new AbstractTypeParameterDef(tp, Scope, tp.Name);
+                    var tpd = new TypeParameterDefSymbol(tp, Scope, tp.Name);
                     Bind(tpd.Name, tpd);
                     typeDef.TypeParameters.Add(tpd);
                 }
@@ -157,19 +160,19 @@ namespace PlatoAst
                 {
                     if (m is AstFieldDeclaration fd)
                     {
-                        var fDef = new AbstractFieldDef(fd, Scope, Evaluate(fd.Type), fd.Name);
+                        var fDef = new FieldDefSymbol(fd, Scope, Resolve(fd.Type), fd.Name);
                         typeDef.Fields.Add(fDef);
                         Bind(fDef.Name, fDef);
                     }
                     else if (m is AstMethodDeclaration md)
                     {
-                        var mDef = new AbstractMethodDef(md, Scope, Evaluate(md.Type), md.Name);
+                        var mDef = new MethodDefSymbol(md, Scope, Resolve(md.Type), md.Name);
                         typeDef.Methods.Add(mDef);
                         Bind(mDef.Name, mDef);
                     }
                     else
                     {
-                        throw new NotSupportedException($"AbstractMember not recognized {m}");
+                        throw new NotSupportedException($"MemberDefSymbol not recognized {m}");
                     }
                 }
 
@@ -178,16 +181,16 @@ namespace PlatoAst
                 {
                     Scope = Scope.Push();
                     var location = method.Location as AstMethodDeclaration;
-                    var list = new List<AbstractParameter>();
+                    var list = new List<ParameterSymbol>();
                     foreach (var p in location.Parameters)
                     {
-                        var pValue = Evaluate(p);
+                        var pValue = Resolve(p);
                         list.Add(pValue);
                     }
 
-                    var body = Evaluate(location.Body);
-                    var f = new AbstractFunction(location, Scope, method.Name, method.Type, body, list.ToArray());
-                    method.AbstractFunction = f;
+                    var body = Resolve(location.Body);
+                    var f = new FunctionSymbol(location, Scope, method.Name, method.Type, body, list.ToArray());
+                    method.Function = f;
                     Scope = Scope.Pop();
                 }
 
@@ -196,30 +199,7 @@ namespace PlatoAst
             }
         }
 
-    /*
-    public object Evaluate(AstLambda lambda)
-    {
-        object LambdaImplementation(AbstractEvaluator e, AstNode[] args)
-        {
-            e.PushScope();
-            if (args.Length != lambda.Parameters.Count) throw new Exception("Mismatched argument length size");
-            for (var i = 0; i < args.Length; i++)
-            {
-                var a = args[i];
-                var p = lambda.Parameters[i];
-                e.Current.Declare(p, a);
-            }
-
-            var r = e.Evaluate(lambda.Body);
-            e.PopScope();
-            return r;
-        }
-
-        return ((Func<AbstractEvaluator, AstNode[], object>)LambdaImplementation).AbstractFunction;
-    }
-    */
-
-        public T Scoped<T>(Func<T> f) where T : AbstractValue
+        public T Scoped<T>(Func<T> f) where T : Symbol
         {
             Scope = Scope.Push();
             var r = f();
@@ -227,21 +207,16 @@ namespace PlatoAst
             return r;
         }
 
-        public AbstractRegion Region(AstNode location, IEnumerable<AstNode> nodes, bool scoped = true)
+        public RegionSymbol Region(AstNode location, IEnumerable<AstNode> nodes, bool scoped = true)
         {
             if (scoped)
                 Scope = Scope.Push();
-            var r = new AbstractRegion(location, Scope, nodes.Select(Evaluate).ToArray());
+            var r = new RegionSymbol(location, Scope, nodes.Select(Resolve).ToArray());
             if (scoped)
                 Scope = Scope.Pop();
             return r;
         }
 
-        public static AbstractNoValue NoValue = AbstractNoValue.Instance;
-
-        public static AbstractValue EvaluateTopLevel(AstTypeDeclaration astTypeDeclaration)
-        {
-            throw new NotImplementedException();
-        }
+        public static NoValueSymbol NoValueSymbol = NoValueSymbol.Instance;
     }
 }

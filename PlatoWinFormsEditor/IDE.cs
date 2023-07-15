@@ -13,14 +13,14 @@ public class IDE
     public string Input { get; set; }
     public string Output { get; set; }
     public Compilation Compilation { get; set; }
-    public AbstractEvaluator Evaluator { get; } = new ();
+    public SymbolResolver SymbolResolver { get; } = new ();
 
     public string ParseTree => Try(() => Compilation?.ParseTree?.ToString());
     public string CstXml => Try(() => Compilation?.CstTree?.ToXml().ToString());
     public string AstXml => Try(() => Compilation?.AstTree?.ToXml());
     public string CSharpAst => Try(() => Compilation?.AstTree?.ToCSharp());
     public string JavaScriptAst => Try(() => Compilation?.AstTree?.ToJavaScript());
-    public string AbstractValuesXml => Evaluator.TypeDefs.ToXml();
+    public string AbstractValuesXml => SymbolResolver.TypeDefs.ToXml();
 
     public IDE()
     {
@@ -59,28 +59,26 @@ public class IDE
 
         // Get the type
         var types = Compilation.AstTree.GetAllTypes().ToList();
-        Evaluator.CreateTypeDefs(types);
-
-        /*
+        SymbolResolver.CreateTypeDefs(types);
 
         var sb = new StringBuilder();
         sb.AppendLine();
-        foreach (var t in ae.TypeDefs)
+        foreach (var t in SymbolResolver.TypeDefs)
         {
-            sb.AppendLine(t.Kind);
-            foreach (var f in t.Fields)
-            {
-                sb.AppendLine($"Field {f.Name}");
-            }
-
+            sb.AppendLine($"{t.Kind} {t.Name}");
             foreach (var m in t.Methods)
             {
                 sb.AppendLine($"Method {m.Name}");
+                var lookup = Semantics.GetParameterReferences(m.Function);
+                foreach (var kv in lookup)
+                {
+                    var refs = string.Join(",", kv.Value);
+                    sb.AppendLine($"{kv.Key} = {refs}");
+                }
             }
         }
 
         Output += sb.ToString();
-        */
     }
 
     public string Try(Func<string?> f)

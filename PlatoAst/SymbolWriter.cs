@@ -5,116 +5,116 @@ using Parakeet;
 
 namespace PlatoAst
 {
-    public class AbstractValueWriter : CodeBuilder<AbstractValueWriter>
+    public class SymbolWriter : CodeBuilder<SymbolWriter>
     {
-        public AbstractValueWriter WriteXml(string tag, string text)
+        public SymbolWriter WriteXml(string tag, string text)
         {
             return WriteLine($"<{tag}>{text}</{tag}>");
         }
 
-        public AbstractValueWriter WriteXml(string tag, Func<AbstractValueWriter, AbstractValueWriter> outputFunc)
+        public SymbolWriter WriteXml(string tag, Func<SymbolWriter, SymbolWriter> outputFunc)
         {
             return outputFunc(
                 WriteLine($"<{tag}>").Indent()).Dedent().WriteLine($"</{tag}>");
         }
 
-        public AbstractValueWriter WriteXml(string tag, AbstractValue value)
+        public SymbolWriter WriteXml(string tag, Symbol value)
         {
             return WriteXml(tag, self => self.Write(value));
         }
 
-        public AbstractValueWriter WriteXml(string tag, IEnumerable<AbstractValue> values)
+        public SymbolWriter WriteXml(string tag, IEnumerable<Symbol> values)
         {
             return WriteXml(tag, avw => avw.Write(values));
         }
 
-        public AbstractValueWriter Write(IEnumerable<AbstractValue> values)
+        public SymbolWriter Write(IEnumerable<Symbol> values)
         {
             return values.Aggregate(this, (self, value) => self.Write(value));
         }
 
-        public AbstractValueWriter Write(AbstractValue value)
+        public SymbolWriter Write(Symbol value)
         {
             switch (value)
             {
                 case null:
                     return WriteXml("null", "");
 
-                case Argument argument:
-                    return WriteXml("Argument", avw => avw
+                case ArgumentSymbol argument:
+                    return WriteXml("ArgumentSymbol", avw => avw
                         .WriteXml("Position", argument.Position.ToString())
                         .WriteXml("Original", argument.Original));
 
-                case Assignment assignment:
-                    return WriteXml("Assignment", avw => avw
+                case AssignmentSymbol assignment:
+                    return WriteXml("AssignmentSymbol", avw => avw
                         .WriteXml("LValue", assignment.LValue)
                         .WriteXml("RValue", assignment.RValue));
                 
-                case Conditional conditional:
-                    return WriteXml("Conditional", avw => avw
+                case ConditionalSymbol conditional:
+                    return WriteXml("ConditionalSymbol", avw => avw
                         .WriteXml("True", conditional.IfTrue)
                         .WriteXml("False", conditional.IfFalse)
                         .WriteXml("Condition", conditional.Condition));
 
-                case FieldDef fieldDef:
+                case FieldDefSymbol fieldDef:
                     return WriteXml("Field", avw => avw
                         .WriteXml("Name", fieldDef.Name)
                         .WriteXml("Type", fieldDef.Type));
                     
-                case Function function:
+                case FunctionSymbol function:
                     return WriteXml("Function", avw => avw.WriteXml("Parameters",
                         function.Parameters).Write(function.Type));
 
-                case FunctionResult functionResult:
+                case FunctionResultSymbol functionResult:
                     return WriteXml("Result", avw => avw
                         .Write(functionResult.Function)
                         .WriteXml("Arguments", functionResult.Args));
 
-                case Intrinsic intrinsic:
-                    return WriteXml("Intrinsic", intrinsic.Name);
+                case IntrinsicSymbol intrinsic:
+                    return WriteXml("IntrinsicSymbol", intrinsic.Name);
 
-                case Literal literal:
-                    return WriteXml("Literal", literal.Value.ToString());
+                case LiteralSymbol literal:
+                    return WriteXml("LiteralSymbol", literal.Value.ToString());
 
-                case MethodDef methodDef:
+                case MethodDefSymbol methodDef:
                     return WriteXml("Method", methodDef.Function);
                 
-                case TypeParameterDef typeParameterDef:
+                case TypeParameterDefSymbol typeParameterDef:
                     return WriteXml("TypeParameter", typeParameterDef.Name);
 
-                case Member member:
+                case MemberDefSymbol member:
                     throw new Exception("Not implemented");
                 
-                case MemberRef memberRef:
-                    return WriteXml("MemberRef", avw =>
+                case MemberRefSymbol memberRef:
+                    return WriteXml("MemberRefSymbol", avw =>
                         avw.WriteXml("Receiver", memberRef.Receiver)
                             .WriteXml("Name", memberRef.Name));
                 
-                case NoValue noValue:
-                    return WriteXml("NoValue", "");
+                case NoValueSymbol noValue:
+                    return WriteXml("NoValueSymbol", "");
 
-                case Parameter parameter:
-                    return WriteXml("Parameter", avw =>
+                case ParameterSymbol parameter:
+                    return WriteXml("ParameterSymbol", avw =>
                         avw.WriteXml("Name", parameter.Name).Write(parameter.Type));
 
-                case Region region:
-                    return WriteXml("Region", region.Children);
+                case RegionSymbol region:
+                    return WriteXml("RegionSymbol", region.Children);
 
-                case TypeDef typeDef:
-                    return WriteXml("TypeDef", avw => avw
+                case TypeDefSymbol typeDef:
+                    return WriteXml("TypeDefSymbol", avw => avw
                         .WriteXml("Methods", typeDef.Methods)
                         .WriteXml("Fields", typeDef.Fields)
                         .WriteXml("Parameters", typeDef.TypeParameters)
                         .WriteXml("Name", typeDef.Name)
                         .WriteXml("Kind", typeDef.Kind));
 
-                case TypeRef typeRef:
+                case TypeRefSymbol typeRef:
                     return WriteXml("Type", avw => 
                         avw.WriteXml("Name", typeRef.Name)
                         .Write(typeRef.TypeArgs));
 
-                case Variable variable:
-                    return WriteXml("Variable", avw => avw
+                case VariableSymbol variable:
+                    return WriteXml("VariableSymbol", avw => avw
                         .WriteXml("Name", variable.Name)
                         .Write(variable.Type));
                 
@@ -128,16 +128,16 @@ namespace PlatoAst
 
     public static class AbstractValueExtensions
     {
-        public static string ToXml(this AbstractValue value)
+        public static string ToXml(this Symbol value)
         {
-            var avw = new AbstractValueWriter();
+            var avw = new SymbolWriter();
             avw.Write(value);
             return avw.ToString();
         }
 
-        public static string ToXml(this IEnumerable<AbstractValue> values)
+        public static string ToXml(this IEnumerable<Symbol> values)
         {
-            var avw = new AbstractValueWriter();
+            var avw = new SymbolWriter();
             avw.Write(values);
             return avw.ToString();
         }

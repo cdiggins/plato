@@ -58,8 +58,8 @@ namespace PlatoAst
         // Things applied to concepts, how do they get out, and apply to types of those concepts? 
 
         // Meta stuff:
-        // AbstractFieldDef names: IArray<string>
-        // AbstractFieldDef values: IArray<string> 
+        // FieldDefSymbol names: IArray<string>
+        // FieldDefSymbol values: IArray<string> 
         // Type name: 
 
         // Explicit conversion? 

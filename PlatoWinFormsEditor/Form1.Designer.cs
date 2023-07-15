@@ -44,7 +44,7 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.richTextBoxOutput = new System.Windows.Forms.RichTextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.richTextBoxAbstractValue = new System.Windows.Forms.RichTextBox();
+            this.richTextBoxSymbols = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -236,25 +236,25 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.richTextBoxAbstractValue);
+            this.tabPage2.Controls.Add(this.richTextBoxSymbols);
             this.tabPage2.Location = new System.Drawing.Point(4, 29);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(388, 417);
             this.tabPage2.TabIndex = 5;
-            this.tabPage2.Text = "Abstract Values";
+            this.tabPage2.Text = "Symbols";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // richTextBoxAbstractValue
+            // richTextBoxSymbols
             // 
-            this.richTextBoxAbstractValue.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBoxAbstractValue.Font = new System.Drawing.Font("Lucida Console", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.richTextBoxAbstractValue.Location = new System.Drawing.Point(3, 3);
-            this.richTextBoxAbstractValue.Name = "richTextBoxAbstractValue";
-            this.richTextBoxAbstractValue.Size = new System.Drawing.Size(382, 411);
-            this.richTextBoxAbstractValue.TabIndex = 1;
-            this.richTextBoxAbstractValue.Text = "";
-            this.richTextBoxAbstractValue.WordWrap = false;
+            this.richTextBoxSymbols.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBoxSymbols.Font = new System.Drawing.Font("Lucida Console", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.richTextBoxSymbols.Location = new System.Drawing.Point(3, 3);
+            this.richTextBoxSymbols.Name = "richTextBoxSymbols";
+            this.richTextBoxSymbols.Size = new System.Drawing.Size(382, 411);
+            this.richTextBoxSymbols.TabIndex = 1;
+            this.richTextBoxSymbols.Text = "";
+            this.richTextBoxSymbols.WordWrap = false;
             // 
             // Form1
             // 
@@ -299,6 +299,6 @@
         private TabPage tabPage8;
         private RichTextBox richTextBoxAst;
         private TabPage tabPage2;
-        private RichTextBox richTextBoxAbstractValue;
+        private RichTextBox richTextBoxSymbols;
     }
 }

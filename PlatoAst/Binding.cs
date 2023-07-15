@@ -6,9 +6,9 @@ namespace PlatoAst
     public class Binding
     {
         public string Name { get; }
-        public AbstractValue Value { get; }
+        public Symbol Value { get; }
         public Binding Previous { get; }
-        public Binding(string name, AbstractValue value, Binding previous = null)
+        public Binding(string name, Symbol value, Binding previous = null)
             => (Name, Value, Previous) = (name, value, previous);
     }
 
@@ -23,7 +23,7 @@ namespace PlatoAst
         public static Binding Find(this Binding binding, string name)
             => binding.Enumerate().FirstOrDefault(x => x.Name == name);
 
-        public static Binding Add(this Binding binding, string name, AbstractValue value)
+        public static Binding Add(this Binding binding, string name, Symbol value)
             => new Binding(name, value, binding);
     }
 }

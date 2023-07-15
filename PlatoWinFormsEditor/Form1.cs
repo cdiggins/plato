@@ -20,7 +20,7 @@ namespace PlatoWinFormsEditor
             richTextBoxCst.Text = IDE.CstXml;
             richTextBoxAst.Text = IDE.AstXml;
             richTextBoxJavaScript.Text = IDE.JavaScriptAst;
-            richTextBoxAbstractValue.Text = IDE.AbstractValuesXml;
+            richTextBoxSymbols.Text = IDE.AbstractValuesXml;
         }
     }
 }
