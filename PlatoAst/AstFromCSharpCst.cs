@@ -267,6 +267,7 @@ namespace PlatoAst
                     ?? Enumerable.Empty<AstTypeParameter>(),
                 td.BaseClassList.Node?.TypeExpr.Nodes.Select(ToAst)
                     ?? Enumerable.Empty<AstTypeNode>(),
+                Enumerable.Empty<AstTypeNode>(),
                 td.MemberDeclaration.Nodes.SelectMany(ToAst).ToArray());
         }
 

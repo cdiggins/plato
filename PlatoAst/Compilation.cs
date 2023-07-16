@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Parakeet;
 
 namespace PlatoAst
@@ -34,6 +36,10 @@ namespace PlatoAst
                 ParseTree = State.Node.ToParseTree();
                 CstTree = cstGenerator(ParseTree);
                 AstTree = astBuilder(CstTree);
+                TypeDeclarations = AstTree.GetAllTypes().ToList();
+                SymbolResolver.CreateTypeDefs(TypeDeclarations);
+                TypeGuesser = new TypeGuesser(TypeDefSymbols);
+
                 Success = State.AtEnd();
                 if (!Success)
                 {
@@ -62,5 +68,10 @@ namespace PlatoAst
         public ParserTree ParseTree { get; }
         public CstNode CstTree { get; }
         public AstNode AstTree { get; }
+
+        public SymbolResolver SymbolResolver { get; } = new SymbolResolver();
+        public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; }
+        public IReadOnlyList<TypeDefSymbol> TypeDefSymbols => SymbolResolver.TypeDefs;
+        public TypeGuesser TypeGuesser { get; }
     }
 }

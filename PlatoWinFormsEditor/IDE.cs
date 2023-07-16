@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text;
+using System.Text.Json.Nodes;
 using Parakeet;
 using Parakeet.Demos;
 using Parakeet.Demos.Plato;
@@ -13,14 +14,13 @@ public class IDE
     public string Input { get; set; }
     public string Output { get; set; }
     public Compilation Compilation { get; set; }
-    public SymbolResolver SymbolResolver { get; } = new ();
 
     public string ParseTree => Try(() => Compilation?.ParseTree?.ToString());
     public string CstXml => Try(() => Compilation?.CstTree?.ToXml().ToString());
     public string AstXml => Try(() => Compilation?.AstTree?.ToXml());
     public string CSharpAst => Try(() => Compilation?.AstTree?.ToCSharp());
     public string JavaScriptAst => Try(() => Compilation?.AstTree?.ToJavaScript());
-    public string AbstractValuesXml => SymbolResolver.TypeDefs.ToXml();
+    public string AbstractValuesXml => Compilation.TypeDefSymbols.ToXml();
 
     public IDE()
     {
@@ -57,13 +57,35 @@ public class IDE
         }
         */
 
+        // Output += GetConstraintsOutput();
+
+        Output += GetTypeGuesserOutput();
+    }
+
+    public string GetTypeGuesserOutput()
+    {
+        var sb = new StringBuilder();
+        var tg = Compilation.TypeGuesser;
+        foreach (var kv in tg.CandidateTypes)
+        {
+            sb.AppendLine($"Candidates for parameter {kv.Key} are");
+            foreach (var c in kv.Value)
+            {
+                sb.AppendLine($"{c.Kind} {c.Name}");
+            }
+
+        }
+
+        return sb.ToString();
+    }
+
+    public string GetConstraintsOutput()
+    {
         // Get the type
-        var types = Compilation.AstTree.GetAllTypes().ToList();
-        SymbolResolver.CreateTypeDefs(types);
 
         var sb = new StringBuilder();
         sb.AppendLine();
-        foreach (var t in SymbolResolver.TypeDefs)
+        foreach (var t in Compilation.TypeDefSymbols)
         {
             sb.AppendLine($"{t.Kind} {t.Name}");
             foreach (var m in t.Methods)
@@ -77,8 +99,7 @@ public class IDE
                 }
             }
         }
-
-        Output += sb.ToString();
+        return sb.ToString();
     }
 
     public string Try(Func<string?> f)

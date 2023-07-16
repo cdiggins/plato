@@ -79,6 +79,30 @@ namespace PlatoAst
             => Children = children;
     }
 
+    public class Primitive : TypeDefSymbol
+    {
+        public Primitive(string name)
+            : base(null, null)
+        { }
+    }
+
+    public static class Primitives
+    {
+        public static TypeDefSymbol Kind = Create("Kind");
+
+        public static TypeDefSymbol Void = Create("void");
+        public static TypeDefSymbol Intrinsic = Create("intrinsic");
+        public static TypeDefSymbol NotImplemented = Create("Not implemented yet");
+        public static TypeDefSymbol TypeParameter = Create("TypeParameterDefSymbol");
+        public static TypeDefSymbol Member = Create("MemberDefSymbol");
+        public static TypeDefSymbol Inferred = Create("Infer");
+        public static TypeDefSymbol Lambda = Create("Lambda");
+        public static TypeDefSymbol Function = Create("Function");
+
+        public static TypeDefSymbol Create(string name)
+            => new TypeDefSymbol(name);
+    }
+
     public class TypeDefSymbol : DefSymbol
     {
         public string Kind => AstTypeDeclaration.Kind;
@@ -86,15 +110,22 @@ namespace PlatoAst
         public List<MethodDefSymbol> Methods { get; } = new List<MethodDefSymbol>();
         public List<FieldDefSymbol> Fields { get; } = new List<FieldDefSymbol>();
         public List<TypeParameterDefSymbol> TypeParameters { get; } = new List<TypeParameterDefSymbol>();
+        public List<TypeRefSymbol> Inherits { get; } = new List<TypeRefSymbol>();
+        public List<TypeRefSymbol> Implements { get; } = new List<TypeRefSymbol>();
         public Dictionary<string, AstNode> Lookup { get; } = new Dictionary<string, AstNode>();
 
         public TypeDefSymbol(AstTypeDeclaration location, Scope scope)
-            : base(location, scope, TypeRefSymbol.Create(location.Name), location.Name)
-        {
-        }
+            : base(location, scope, null, location.Name)
+        { }
+
+        public TypeDefSymbol(string name)
+            : base(null, null, null, name)
+        { }
 
         public override IReadOnlyList<Symbol> Children 
             => Array.Empty<Symbol>().Concat(Methods).Concat(Fields).Concat(TypeParameters).ToList();
+
+        public TypeRefSymbol ToRef => new TypeRefSymbol(null, null, this);
     }
 
     public class ConditionalSymbol : Symbol
@@ -121,7 +152,7 @@ namespace PlatoAst
         public Symbol Body { get; }
 
         public FunctionSymbol(AstNode location, Scope scope, string name, TypeRefSymbol returnType, Symbol body, params ParameterSymbol[] parameters)
-            : base(location, scope, TypeRefSymbol.CreateFunction(returnType, parameters.Select(p => p.Type).ToArray()), name)
+            : base(location, scope, TypeRefSymbol.CreateFunction(parameters.Select(p => p.Type).Append(returnType).ToArray()), name)
         {
             Parameters = parameters;
             Body = body;
@@ -222,37 +253,19 @@ namespace PlatoAst
 
     public class TypeRefSymbol : Symbol
     {
-        public string Name { get; }
+        public string Name => Def.Name;
+        public TypeDefSymbol Def { get; }
         public IReadOnlyList<TypeRefSymbol> TypeArgs { get; }
 
-        public TypeRefSymbol(AstNode location, Scope scope, string name, params TypeRefSymbol[] args)
+        public TypeRefSymbol(AstNode location, Scope scope, TypeDefSymbol def, params TypeRefSymbol[] args)
             : base(location, scope)
         {
-            Name = name;
+            // TODO resinstate once type resolution is guaranteed. 
+            //if (def == null) throw new Exception("Type not found");
+
+            Def = def;
             TypeArgs = args;
         }
-
-        // TODO: handle type arguments 
-        public TypeRefSymbol(Type type)
-            : this(null, null, type.Name)
-        { }
-
-        public static TypeRefSymbol Create(AstTypeNode typeNode, Scope scope)
-            => new TypeRefSymbol(typeNode, scope, typeNode.Name, typeNode.TypeArguments.Select(ta => Create(ta, scope)).ToArray());
-
-        public static TypeRefSymbol Create(string name, params TypeRefSymbol[] args)
-            => new TypeRefSymbol(null, null, name, args);
-
-        public static TypeRefSymbol Void = Create("void");
-        public static TypeRefSymbol Intrinsic = Create("intrinsic");
-        public static TypeRefSymbol MetaType = Create("MetaType");
-        public static TypeRefSymbol NotImplemented = Create("Not implemented yet");
-        public static TypeRefSymbol TypeParameter = Create("TypeParameterDefSymbol");
-        public static TypeRefSymbol Member = Create("MemberDefSymbol");
-        public static TypeRefSymbol Inferred = Create("Infer");
-
-        public static TypeRefSymbol CreateFunction(TypeRefSymbol returnType, params TypeRefSymbol[] parameterTypes)
-            => Create("Func", parameterTypes.Append(returnType).ToArray());
 
         public static TypeRefSymbol Unify(TypeRefSymbol a, TypeRefSymbol b)
             => a;
@@ -265,6 +278,9 @@ namespace PlatoAst
                 return Name + $"<{string.Join(",", TypeArgs)}>";
             return Name;
         }
+
+        public static TypeRefSymbol CreateFunction(params TypeRefSymbol[] types)
+            => new TypeRefSymbol(null, null, Primitives.Function, types);
     }
 
     public abstract class MemberDefSymbol : DefSymbol
@@ -300,7 +316,7 @@ namespace PlatoAst
     public class TypeParameterDefSymbol : MemberDefSymbol
     {
         public TypeParameterDefSymbol(AstNode location, Scope scope, string name)
-            : base(location, scope, TypeRefSymbol.TypeParameter, name)
+            : base(location, scope, Primitives.TypeParameter.ToRef, name)
         { }
 
         public override IReadOnlyList<Symbol> Children
@@ -331,6 +347,12 @@ namespace PlatoAst
             if (symbol is Symbol cs)
                 foreach (var child in cs.Children.SelectMany(AllDescendantSymbols))
                     yield return child;
+        }
+
+        // NOTE: does not include lambdas
+        public static IEnumerable<FunctionSymbol> GetAllFunctions(this IEnumerable<TypeDefSymbol> typeDefs)
+        {
+            return typeDefs.SelectMany(t => t.Methods.Select(m => m.Function)).Where(f => f != null);
         }
     }
 }

@@ -374,20 +374,21 @@ namespace PlatoAst
                 var type = cstTopLevelDeclaration.Type.Node;
                 var name = ToAst(type.Identifier.Node);
                 var typeParameters = Enumerable.Empty<AstTypeParameter>();
-                var baseTypes = Enumerable.Empty<AstTypeNode>();
+                var inherits = Enumerable.Empty<AstTypeNode>();
+                var implements = type.ImplementsList.Node.TypeExpr.Nodes.Select(ToAst).ToArray();
                 var members = type.FieldDeclaration.Nodes.Select(ToAst).Cast<AstMemberDeclaration>().ToArray();
                 
-                return new AstTypeDeclaration("type", name, typeParameters, baseTypes, members);
+                return new AstTypeDeclaration("type", name, typeParameters, inherits, implements, members);
             }
             else if (cstTopLevelDeclaration.Module.Present)
             {
                 var module = cstTopLevelDeclaration.Module.Node;
                 var name = ToAst(module.Identifier.Node);
                 var typeParameters = Enumerable.Empty<AstTypeParameter>();
-                var baseTypes = Enumerable.Empty<AstTypeNode>();
                 var members = module.MethodDeclaration.Nodes.Select(ToAst).Cast<AstMemberDeclaration>().ToArray();
 
-                return new AstTypeDeclaration("module", name, typeParameters, baseTypes, members);
+                return new AstTypeDeclaration("module", name, typeParameters, Enumerable.Empty<AstTypeNode>(), 
+                    Enumerable.Empty<AstTypeNode>(), members);
             }
             else if (cstTopLevelDeclaration.Concept.Present)
             {
@@ -395,10 +396,10 @@ namespace PlatoAst
 
                 var name = ToAst(concept.Identifier.Node);
                 var typeParameters = Enumerable.Empty<AstTypeParameter>();
-                var baseTypes = Enumerable.Empty<AstTypeNode>();
+                var inherits = concept.InheritsList.Node.TypeExpr.Nodes.Select(ToAst).ToArray();
                 var members = concept.MemberDeclaration.Nodes.Select(ToAst).ToArray();
 
-                return new AstTypeDeclaration("concept", name, typeParameters, baseTypes,members);
+                return new AstTypeDeclaration("concept", name, typeParameters, inherits, Enumerable.Empty<AstTypeNode>(), members);
             }
 
             throw new Exception("Unhandled type declaration");

@@ -47,7 +47,8 @@ namespace PlatoAst
             if (Dictionary.ContainsKey(type.GetName()))
                 return Dictionary[type.GetName()];
             var r = new MemberNames(type,
-                type.BaseTypes.Select(bt => AddOrGetMemberNames(bt.Name)));
+                type.Inherits.Concat(type.Implements)
+                    .Select(bt => AddOrGetMemberNames(bt.Name)));
             Dictionary.Add(type.GetName(), r);
             return r;
         }

@@ -36,9 +36,19 @@ namespace PlatoAst
         {
             if (astTypeNode == null)
                 return null;
+            var name = astTypeNode.Name;
+            if (string.IsNullOrWhiteSpace(name))
+                throw new Exception("Invalid variable name");
+            var sym = Scope.GetValue(name);
+            if (sym == null)
+                return null;
 
-            return new TypeRefSymbol(astTypeNode, Scope, astTypeNode.Name,
-                astTypeNode.TypeArguments.Select(Resolve).ToArray());
+            var tds = sym as TypeDefSymbol;
+
+            // TODO: Won't resolve if the type is a parimitive. Will al nameso potneitally conflict with values.
+            // I think I need to have type versus value scopes (or name binding). 
+
+            return new TypeRefSymbol(astTypeNode, Scope, tds, astTypeNode.TypeArguments.Select(Resolve).ToArray());
         }
 
         public ParameterSymbol Resolve(AstParameterDeclaration astParameterDeclaration)
@@ -117,7 +127,7 @@ namespace PlatoAst
                     var ps = astLambda.Parameters.Select(Resolve).ToArray();
                     var body = Resolve(astLambda.Body);
                     var r = new FunctionSymbol(astLambda, Scope, "lambda",
-                        TypeRefSymbol.Inferred, body, ps);
+                        Primitives.Lambda.ToRef, body, ps);
                     return r;
                 }
 
@@ -199,8 +209,19 @@ namespace PlatoAst
                     Scope = Scope.Pop();
                 }
 
-                // 
                 Scope = Scope.Pop();
+            }
+
+            // Foreach type add the inherited and the implemented type.
+            foreach (var td in TypeDefs)
+            {
+                var astTypeDecl = td.AstTypeDeclaration;
+                
+                foreach (var inheritedType in astTypeDecl.Inherits)
+                    td.Inherits.Add(Resolve(inheritedType));
+
+                foreach (var implementedType in astTypeDecl.Implements)
+                    td.Inherits.Add(Resolve(implementedType));
             }
         }
 

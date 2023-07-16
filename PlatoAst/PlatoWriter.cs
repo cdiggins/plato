@@ -190,14 +190,20 @@ namespace PlatoAst
 
                 case AstTypeDeclaration typeDeclaration:
                 {
-                    var r = Write("type ").WriteLine(typeDeclaration.Name);
+                    var r = Write($"{typeDeclaration.Kind} ").WriteLine(typeDeclaration.Name);
 
                     // TODO: this needs to convert from attributes to implements list 
-                    if (typeDeclaration.BaseTypes.Count > 0)
+                    if (typeDeclaration.Implements.Count > 0)
                     {
-                        r = r.Write("  implements ").WriteCommaList(typeDeclaration.BaseTypes, 
+                        r = r.Write("  implements ").WriteCommaList(typeDeclaration.Implements, 
                             Write).WriteLine();
                     }
+                    else if (typeDeclaration.Inherits.Count > 0)
+                    {
+                        r = r.Write("  inherits ").WriteCommaList(typeDeclaration.Inherits,
+                            Write).WriteLine();
+                    }
+
                     r = r.WriteLine("{").Indent();
                     r = typeDeclaration.Members.Aggregate(r, (w, n) => w.Write(n));
                     r = r.Dedent().WriteLine("}");

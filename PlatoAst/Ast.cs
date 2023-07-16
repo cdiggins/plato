@@ -291,21 +291,23 @@ namespace PlatoAst
     {
         public string Kind { get; }
         public IReadOnlyList<AstTypeParameter> TypeParameters { get; }
-        public IReadOnlyList<AstTypeNode> BaseTypes { get; }
+        public IReadOnlyList<AstTypeNode> Inherits { get; }
+        public IReadOnlyList<AstTypeNode> Implements { get; }
         public IReadOnlyList<AstMemberDeclaration> Members { get; }
 
         public AstTypeDeclaration(string kind, string name, IEnumerable<AstTypeParameter> typeParameters,
-            IEnumerable<AstTypeNode> baseTypes, params AstMemberDeclaration[] members) 
+            IEnumerable<AstTypeNode> inherits, IEnumerable<AstTypeNode> implements, params AstMemberDeclaration[] members) 
             : base(name)
         {
             Kind = kind;
             TypeParameters = typeParameters.ToList();
-            BaseTypes = baseTypes.ToList();
+            Inherits = inherits.ToList();
+            Implements = implements.ToList();
             Members = members;
         }
 
         public override IEnumerable<AstNode> Children =>
-            base.Children.Concat(TypeParameters).Concat(BaseTypes).Concat(Members);
+            base.Children.Concat(TypeParameters).Concat(Inherits).Concat(Implements).Concat(Members);
     }
 
     public class AstProject : AstDeclaration

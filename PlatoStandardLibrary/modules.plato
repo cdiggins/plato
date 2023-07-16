@@ -29,7 +29,7 @@ module Interval
 module Vector
 {
     function Sum(v) = v.Aggregate(0, Add); 
-    function SumSquares(v) = v.Map(Square).Aggregate(0, Add); 
+    function SumSquares(v) = v.Square.Aggregate(0, Add); 
     function LengthSquared(v) = v.SumSquares;
     function Length(v) = v.LengthSquared.SquareRoot;
     function Dot(v1, v2) = (v1 * v2).Sum;
