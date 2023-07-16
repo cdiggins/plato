@@ -253,7 +253,7 @@ namespace PlatoAst
 
     public class TypeRefSymbol : Symbol
     {
-        public string Name => Def.Name;
+        public string Name => Def?.Name ?? "unresolved";
         public TypeDefSymbol Def { get; }
         public IReadOnlyList<TypeRefSymbol> TypeArgs { get; }
 

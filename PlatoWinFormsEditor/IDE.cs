@@ -20,7 +20,7 @@ public class IDE
     public string AstXml => Try(() => Compilation?.AstTree?.ToXml());
     public string CSharpAst => Try(() => Compilation?.AstTree?.ToCSharp());
     public string JavaScriptAst => Try(() => Compilation?.AstTree?.ToJavaScript());
-    public string AbstractValuesXml => Compilation.TypeDefSymbols.ToXml();
+    public string AbstractValuesXml => Compilation.SymbolResolver.TypeDefs.ToXml();
 
     public IDE()
     {
@@ -58,8 +58,24 @@ public class IDE
         */
 
         // Output += GetConstraintsOutput();
-
+        Output += GetOperationsOutput();
         Output += GetTypeGuesserOutput();
+    }
+
+    public string GetOperationsOutput()
+    {
+        var sb = new StringBuilder();
+        var ops = Compilation.Operations;
+        foreach (var kv in ops.TypeLookup)
+        {
+            sb.AppendLine($"Member operations for {kv.Key}");
+            foreach (var m in kv.Value.Members)
+            {
+                sb.AppendLine($"{m}");
+            }
+        }
+
+        return sb.ToString();
     }
 
     public string GetTypeGuesserOutput()
@@ -85,7 +101,7 @@ public class IDE
 
         var sb = new StringBuilder();
         sb.AppendLine();
-        foreach (var t in Compilation.TypeDefSymbols)
+        foreach (var t in Compilation.TypeDefs)
         {
             sb.AppendLine($"{t.Kind} {t.Name}");
             foreach (var m in t.Methods)

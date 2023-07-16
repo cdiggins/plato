@@ -19,10 +19,10 @@ namespace PlatoAst
         public IReadOnlyList<FunctionSymbol> Functions { get; }
         public IReadOnlyList<ParameterSymbol> Parameters { get; } 
 
-        public TypeGuesser(IEnumerable<TypeDefSymbol> types)
+        public TypeGuesser(Operations ops)
         {
-            Types = types.ToList();
-            Ops = new Operations(Types);
+            Ops = ops;
+            Types = Ops.TypeDefSymbols.ToList();
             Functions = Types.GetAllFunctions().ToList();
             Parameters = Functions.SelectMany(f => f.Parameters).ToList();
 
@@ -77,7 +77,7 @@ namespace PlatoAst
 
         public bool Satisfies(TypeDefSymbol type, MemberAccessConstraint mac)
         {
-            var typeOps = Ops.Lookup[type.Name];
+            var typeOps = Ops.TypeLookup[type.Name];
             foreach (var m in typeOps.Members)
             {
                 if (m is FieldDefSymbol fds)

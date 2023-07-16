@@ -5,11 +5,19 @@ namespace PlatoAst
 {
     public class Operations
     {
-        public Dictionary<string, TypeOperations> Lookup { get; }
+        public IEnumerable<TypeDefSymbol> TypeDefSymbols => TypeLookup.Values.Select(v => v.Type);
+
+        public Dictionary<string, TypeOperations> TypeLookup { get; } = new Dictionary<string, TypeOperations>();
 
         public Operations(IEnumerable<TypeDefSymbol> typeDefs)
         {
-            Lookup = typeDefs.ToDictionary(td => td.Name, td => new TypeOperations(td));
+            foreach (var typeDefSymbol in typeDefs)
+            {
+                if (typeDefSymbol.Kind != "module")
+                {
+                    TypeLookup.Add(typeDefSymbol.Name, new TypeOperations(typeDefSymbol));
+                }
+            }
         }
     }
 
