@@ -98,6 +98,7 @@ namespace PlatoAst
         public static TypeDefSymbol Inferred = Create("Infer");
         public static TypeDefSymbol Lambda = Create("Lambda");
         public static TypeDefSymbol Function = Create("Function");
+        public static TypeDefSymbol Any = Create("Any");
 
         public static TypeDefSymbol Create(string name)
             => new TypeDefSymbol(name);
@@ -105,7 +106,7 @@ namespace PlatoAst
 
     public class TypeDefSymbol : DefSymbol
     {
-        public string Kind => AstTypeDeclaration.Kind;
+        public string Kind => AstTypeDeclaration?.Kind ?? "unknown";
         public AstTypeDeclaration AstTypeDeclaration => Location as AstTypeDeclaration;
         public List<MethodDefSymbol> Methods { get; } = new List<MethodDefSymbol>();
         public List<FieldDefSymbol> Fields { get; } = new List<FieldDefSymbol>();

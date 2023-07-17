@@ -15,15 +15,14 @@ namespace PlatoAst
         public List<ParameterSymbol> DeclaredTypes = new List<ParameterSymbol>();
 
         public Operations Ops { get; }
-        public IReadOnlyList<TypeDefSymbol> Types { get; }
+        public IEnumerable<TypeDefSymbol> Types => Ops.TypeDefSymbols;
         public IReadOnlyList<FunctionSymbol> Functions { get; }
         public IReadOnlyList<ParameterSymbol> Parameters { get; } 
 
-        public TypeGuesser(Operations ops)
+        public TypeGuesser(Operations ops, IEnumerable<FunctionSymbol> functions)
         {
             Ops = ops;
-            Types = Ops.TypeDefSymbols.ToList();
-            Functions = Types.GetAllFunctions().ToList();
+            Functions = functions.ToList();
             Parameters = Functions.SelectMany(f => f.Parameters).ToList();
 
             foreach (var f in Functions)
@@ -63,31 +62,34 @@ namespace PlatoAst
                 return new[] { Primitives.Function };
             }
 
-            var candidates = Types;
+            List<TypeDefSymbol> candidates = new List<TypeDefSymbol>();
             foreach (var c in constraints)
             {
                 if (c is MemberAccessConstraint mac)
                 {
-                    candidates = candidates.Where(t => Satisfies(t, mac)).ToList();
+                    candidates.AddRange(Types.Where(t => Satisfies(t, mac)));
+                }
+
+                if (c is FunctionArgConstraint fac)
+                {
+                    candidates.AddRange(Types.Where(t => Satisfies(t, fac)));
                 }
             }
+
+            if (candidates.Count == 0)
+                candidates.Add(Primitives.Any); 
 
             return candidates;
         }
 
         public bool Satisfies(TypeDefSymbol type, MemberAccessConstraint mac)
         {
-            var typeOps = Ops.TypeLookup[type.Name];
-            foreach (var m in typeOps.Members)
-            {
-                if (m is FieldDefSymbol fds)
-                {
-                    if (fds.Name == mac.MemberAccess.Name)
-                        return true;
-                }
-            }
+            return type.Fields.Any(f => f.Name == mac.MemberAccess.Name);
+        }
 
-            return false;
+        public bool Satisfies(TypeDefSymbol type, FunctionArgConstraint fac)
+        {
+            return type.Methods.Any(m => m.Name == fac.Name);
         }
     }
 }

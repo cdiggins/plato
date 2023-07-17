@@ -41,6 +41,7 @@ namespace PlatoAst
                 Members.Add(field);
             }
 
+            /*
             foreach (var tmp in type.Inherits)
             {
                 if (tmp != null)
@@ -52,6 +53,7 @@ namespace PlatoAst
                 if (tmp != null)
                     AddMembers(tmp.Def);
             }
+            */
         }
 
         public TypeOperations(TypeDefSymbol type)

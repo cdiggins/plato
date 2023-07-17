@@ -58,7 +58,7 @@ public class IDE
         */
 
         // Output += GetConstraintsOutput();
-        Output += GetOperationsOutput();
+        //Output += GetOperationsOutput();
         Output += GetTypeGuesserOutput();
     }
 

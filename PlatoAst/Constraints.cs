@@ -23,9 +23,10 @@ namespace PlatoAst
     {
         public Symbol Function { get; }
         public int Position { get; }
+        public string Name { get; }
 
-        public FunctionArgConstraint(Symbol fs, int position)
-            => (Function, Position) = (fs, position);
+        public FunctionArgConstraint(string name, Symbol fs, int position)
+            => (Name, Function, Position) = (name, fs, position);
 
         public override string ToString()
             => $"Passed:{Function}(arg[{Position})";
@@ -86,7 +87,9 @@ namespace PlatoAst
                             {
                                 if (r.ContainsKey(ps))
                                 {
-                                    r[ps].Add(new FunctionArgConstraint(fs.Function, arg.Position));
+                                    var name = (fs.Function as RefSymbol)?.Name ?? "_unknownfunc_";
+
+                                    r[ps].Add(new FunctionArgConstraint(name, fs.Function, arg.Position));
                                 }
                             }
                         }

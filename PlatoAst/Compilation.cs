@@ -38,8 +38,12 @@ namespace PlatoAst
                 AstTree = astBuilder(CstTree);
                 TypeDeclarations = AstTree.GetAllTypes().ToList();
                 SymbolResolver.CreateTypeDefs(TypeDeclarations);
-                Operations = new Operations(SymbolResolver.TypeDefs);
-                TypeGuesser = new TypeGuesser(Operations);
+                TypeDefs = SymbolResolver.TypeDefs;
+                Operations = new Operations(TypeDefs);
+                ModuleFunctions = TypeDefs.Where(td => td.Kind == "module")
+                    .SelectMany(td => td.Methods.Select(m => m.Function));
+
+                TypeGuesser = new TypeGuesser(Operations, ModuleFunctions);
 
                 Success = State.AtEnd();
                 if (!Success)
@@ -74,6 +78,7 @@ namespace PlatoAst
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; }
         public Operations Operations { get; }
         public TypeGuesser TypeGuesser { get; }
-        public IReadOnlyList<TypeDefSymbol> TypeDefs => SymbolResolver.TypeDefs;
+        public IEnumerable<FunctionSymbol> ModuleFunctions { get; }
+        public IReadOnlyList<TypeDefSymbol> TypeDefs { get;}
     }
 }
