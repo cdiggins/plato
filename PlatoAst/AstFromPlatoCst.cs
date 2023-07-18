@@ -14,14 +14,7 @@ namespace PlatoAst
             => new AstFromPlatoCst().ToAst(node);
 
         public AstNode ToIntrinsic(string name, params AstNode[] args)
-        {
-            if (args.Length == 0) 
-                return AstInvoke.Create(AstIntrinsic.Create(name));
-            return AstInvoke.Create(
-                AstMemberAccess.Create(args[0], name), 
-                args.Skip(1).ToArray());
-
-        }
+            => AstInvoke.Create(AstIntrinsic.Create(name), args);
 
         public AstNode ToAst<T>(CstFilter<T> filter) where T: CstNode
             => ToAst(filter.Node);
@@ -29,8 +22,13 @@ namespace PlatoAst
         public AstNode ToAst(CstExpression expr)
         {
             var r = ToAst(expr.LeafExpression.Node);
-            foreach (var postfix in expr.PostfixOperator.Nodes)
+            var i = 0;
+            while (i < expr.PostfixOperator.Nodes.Count)
             {
+                var postfix = expr.PostfixOperator.Nodes[i++];
+                var nextPostfix = i < expr.PostfixOperator.Nodes.Count
+                    ? expr.PostfixOperator.Nodes[i]
+                    : null;
                 if (postfix.AsOperation.Present)
                 {
                     if (postfix.AsOperation.Node.Identifier.Present)
@@ -68,8 +66,19 @@ namespace PlatoAst
                 }
                 else if (postfix.MemberAccess.Present)
                 {
-                    r = new AstMemberAccess(r, 
-                        ToAst(postfix.MemberAccess.Node.Identifier.Node));
+                    var args = new List<AstNode>() { r };
+
+                    // a.b => b(a)
+                    // a.b(c, d) => b(a, c, d);
+
+                    if (nextPostfix != null && nextPostfix.FunctionArgs.Present)
+                    {
+                        i++;
+                        args.AddRange(nextPostfix.FunctionArgs.Node.FunctionArg.Nodes.Select(n => ToAst(n.Expression)));
+                    }
+
+                    var func = ToAst(postfix.MemberAccess.Node.Identifier.Node);
+                    r = AstInvoke.Create(new AstIdentifier(func), args.ToArray());
                 }
                 else if (postfix.TernaryOperation.Present)
                 {

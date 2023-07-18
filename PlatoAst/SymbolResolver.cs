@@ -134,10 +134,6 @@ namespace PlatoAst
                 case AstNoop astNoop:
                     return NoValueSymbol;
 
-                case AstMemberAccess astMemberAccess:
-                    return new MemberAccessSymbol(node, Scope, astMemberAccess.Name,
-                        Resolve(astMemberAccess.Receiver));
-                
                 case AstVarDef astVarDef:
                     return Bind(astVarDef.Name, 
                         new VariableSymbol(node, Scope, astVarDef.Name, Resolve(astVarDef.Type)));

@@ -7,15 +7,15 @@ using Parakeet.Demos.CSharp;
 
 namespace PlatoAst
 {
+    // TODO: this is not currently supported. 
+
     public class AstFromCSharpCst
     {
         public AstNode ToIntrinsic(string name, params AstNode[] args)
         {
             if (args.Length == 0) 
                 return AstInvoke.Create(AstIntrinsic.Create(name));
-            return AstInvoke.Create(
-                AstMemberAccess.Create(args[0], name), 
-                args.Skip(1).ToArray());
+            throw new NotImplementedException();
 
         }
 
@@ -64,8 +64,7 @@ namespace PlatoAst
                 }
                 else if (postfix.MemberAccess.Present)
                 {
-                    r = new AstMemberAccess(r, 
-                        ToAst(postfix.MemberAccess.Node.Identifier.Node));
+                    throw new NotImplementedException();
                 }
                 else if (postfix.TernaryOperation.Present)
                 {

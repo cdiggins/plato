@@ -220,24 +220,6 @@ namespace PlatoAst
         public override IReadOnlyList<Symbol> Children => Array.Empty<Symbol>();
     }
 
-    public class MemberAccessSymbol : Symbol
-    {
-        public Symbol Receiver { get; }
-        public string Name { get; }
-
-        public MemberAccessSymbol(AstNode location, Scope scope, string name, Symbol receiver)
-            : base(location, scope)
-        {
-            Receiver = receiver;
-            Name = name;
-        }
-
-        public override IReadOnlyList<Symbol> Children => new [] { Receiver };
-
-        public override string ToString()
-            => $"{Receiver}.{Name}";
-    }
-
     public class FunctionResultSymbol : Symbol
     {
         public Symbol Function { get; }
@@ -354,6 +336,11 @@ namespace PlatoAst
         public static IEnumerable<FunctionSymbol> GetAllFunctions(this IEnumerable<TypeDefSymbol> typeDefs)
         {
             return typeDefs.SelectMany(t => t.Methods.Select(m => m.Function)).Where(f => f != null);
+        }
+
+        public static DefSymbol GetDef(this Symbol symbol)
+        {
+            return (symbol as RefSymbol)?.Def;
         }
     }
 }

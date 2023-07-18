@@ -1,30 +1,32 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace PlatoAst
 {
     public class Operations
     {
-        public IEnumerable<TypeDefSymbol> TypeDefSymbols => TypeLookup.Values.Select(v => v.Type);
-
-        public Dictionary<string, TypeOperations> TypeLookup { get; } = new Dictionary<string, TypeOperations>();
-
+        public Dictionary<string, List<(TypeDefSymbol, MemberDefSymbol)>> Lookup { get; } 
+            = new Dictionary<string, List<(TypeDefSymbol, MemberDefSymbol)>>();
+        
         public Operations(IEnumerable<TypeDefSymbol> typeDefs)
         {
             foreach (var typeDefSymbol in typeDefs)
-            {
-                if (typeDefSymbol.Kind != "module")
-                {
-                    TypeLookup.Add(typeDefSymbol.Name, new TypeOperations(typeDefSymbol));
-                }
-            }
+                AddMembers(typeDefSymbol);
         }
-    }
 
-    public class TypeOperations
-    {
-        public TypeDefSymbol Type { get; }
-        public List<Symbol> Members = new List<Symbol>();
+        public static string LookupName(MemberDefSymbol member)
+        {
+            if (member is MethodDefSymbol mds)
+                return $"{mds.Name}#{mds.Function.Parameters.Count}";
+            return $"{member.Name}#0";
+        }
+
+        public void AddMember(TypeDefSymbol type, MemberDefSymbol member)
+        {
+            var name = LookupName(member);
+            if (!Lookup.ContainsKey(name))
+                Lookup.Add(name, new List<(TypeDefSymbol, MemberDefSymbol)>());
+            Lookup[name].Add((type, member));
+        }
 
         public void AddMembers(TypeDefSymbol type)
         {
@@ -32,34 +34,10 @@ namespace PlatoAst
                 return;
 
             foreach (var method in type.Methods)
-            {
-                Members.Add(method);
-            }
+                AddMember(type, method);
 
             foreach (var field in type.Fields)
-            {
-                Members.Add(field);
-            }
-
-            /*
-            foreach (var tmp in type.Inherits)
-            {
-                if (tmp != null)
-                    AddMembers(tmp.Def);
-            }
-
-            foreach (var tmp in type.Implements)
-            {
-                if (tmp != null)
-                    AddMembers(tmp.Def);
-            }
-            */
-        }
-
-        public TypeOperations(TypeDefSymbol type)
-        {
-            Type = type;
-            AddMembers(type);
+                AddMember(type, field);
         }
     }
 }

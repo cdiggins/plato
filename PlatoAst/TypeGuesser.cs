@@ -15,13 +15,14 @@ namespace PlatoAst
         public List<ParameterSymbol> DeclaredTypes = new List<ParameterSymbol>();
 
         public Operations Ops { get; }
-        public IEnumerable<TypeDefSymbol> Types => Ops.TypeDefSymbols;
+        public IEnumerable<TypeDefSymbol> Types { get; }
         public IReadOnlyList<FunctionSymbol> Functions { get; }
         public IReadOnlyList<ParameterSymbol> Parameters { get; } 
 
-        public TypeGuesser(Operations ops, IEnumerable<FunctionSymbol> functions)
+        public TypeGuesser(Operations ops, IEnumerable<TypeDefSymbol> typeDefs, IEnumerable<FunctionSymbol> functions)
         {
             Ops = ops;
+            Types = typeDefs.ToList();
             Functions = functions.ToList();
             Parameters = Functions.SelectMany(f => f.Parameters).ToList();
 
@@ -62,14 +63,9 @@ namespace PlatoAst
                 return new[] { Primitives.Function };
             }
 
-            List<TypeDefSymbol> candidates = new List<TypeDefSymbol>();
+            var candidates = new List<TypeDefSymbol>();
             foreach (var c in constraints)
             {
-                if (c is MemberAccessConstraint mac)
-                {
-                    candidates.AddRange(Types.Where(t => Satisfies(t, mac)));
-                }
-
                 if (c is FunctionArgConstraint fac)
                 {
                     candidates.AddRange(Types.Where(t => Satisfies(t, fac)));
@@ -82,14 +78,17 @@ namespace PlatoAst
             return candidates;
         }
 
-        public bool Satisfies(TypeDefSymbol type, MemberAccessConstraint mac)
-        {
-            return type.Fields.Any(f => f.Name == mac.MemberAccess.Name);
-        }
-
         public bool Satisfies(TypeDefSymbol type, FunctionArgConstraint fac)
         {
             return type.Methods.Any(m => m.Name == fac.Name);
         }
-    }
+
+        // A list of methods for which the types are not known. 
+        // Any method that references a name which is in an untyped method is not known  
+        public Dictionary<string, List<MethodDefSymbol>> UntypedMethods = new Dictionary<string, List<MethodDefSymbol>>();
+
+        // TODO: what methods are known types? 
+        // TODO: constraint to method. 
+        // TODO: what methods are available for each name. 
+     }
 }

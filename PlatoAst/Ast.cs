@@ -120,16 +120,6 @@ namespace PlatoAst
         public override IEnumerable<AstNode> Children => base.Children.Append(Condition).Append(Body);
     }
 
-    public class AstMemberAccess : AstNode
-    {
-        public AstNode Receiver { get; }
-        public string Name { get; }
-
-        public AstMemberAccess(AstNode reciever, string name) => (Receiver, Name) = (reciever, name);
-        public static AstMemberAccess Create(AstNode reciever, string name) => new AstMemberAccess(reciever, name);
-        public override IEnumerable<AstNode> Children => base.Children.Append(Receiver);
-    }
-
     public class AstConditional : AstNode
     {
         public AstNode Condition { get; }

@@ -565,6 +565,14 @@ type ConeSegment
     field Radius2: Number;
 }
 
+type Box2D
+  implements Value
+{
+    field Center: Point2D;
+    field Rotation: Angle;
+    field Extent: Size2D;
+}
+
 type Box3D
   implements Value
 {

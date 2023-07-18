@@ -57,21 +57,22 @@ public class IDE
         }
         */
 
-        // Output += GetConstraintsOutput();
-        //Output += GetOperationsOutput();
+        Output += GetConstraintsOutput();
+        Output += GetOperationsOutput();
         Output += GetTypeGuesserOutput();
     }
 
     public string GetOperationsOutput()
     {
         var sb = new StringBuilder();
+        sb.AppendLine().AppendLine("= Operations =").AppendLine();
         var ops = Compilation.Operations;
-        foreach (var kv in ops.TypeLookup)
+        foreach (var kv in ops.Lookup)
         {
-            sb.AppendLine($"Member operations for {kv.Key}");
-            foreach (var m in kv.Value.Members)
+            sb.AppendLine(kv.Key);
+            foreach (var v in kv.Value)
             {
-                sb.AppendLine($"{m}");
+                sb.AppendLine(v.ToString());
             }
         }
 
@@ -81,6 +82,7 @@ public class IDE
     public string GetTypeGuesserOutput()
     {
         var sb = new StringBuilder();
+        sb.AppendLine().AppendLine("= Type Guesser =").AppendLine();
         var tg = Compilation.TypeGuesser;
         foreach (var kv in tg.CandidateTypes)
         {
@@ -100,7 +102,7 @@ public class IDE
         // Get the type
 
         var sb = new StringBuilder();
-        sb.AppendLine();
+        sb.AppendLine().AppendLine("= Constraints =").AppendLine();
         foreach (var t in Compilation.TypeDefs)
         {
             sb.AppendLine($"{t.Kind} {t.Name}");

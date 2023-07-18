@@ -148,10 +148,6 @@ namespace PlatoAst
                 case AstContinue astContinue:
                     return WriteLine("continue");
 
-                case AstMemberAccess astMember:
-                    return Write(astMember.Receiver).Write(".").Write(
-                        ConvertIntrinsicName(astMember.Name));
-
                 case AstInvoke astInvoke:
                     return Write(astInvoke.Function)
                         .Write("( ")
