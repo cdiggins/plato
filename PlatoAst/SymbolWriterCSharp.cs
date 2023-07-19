@@ -29,6 +29,23 @@ namespace PlatoAst
             return r;
         }
 
+        public SymbolWriterCSharp WriteRegion(IReadOnlyList<Symbol> symbols)
+        {
+            if (symbols.Count == 1 && symbols[0] is RegionSymbol rs)
+                return Write(rs);
+            var r = WriteLine("{").Indent();
+            for (var i=0; i < symbols.Count; ++i)
+            {
+                var symbol = symbols[i];
+                if (i == symbols.Count - 1)
+                    r = r.Write("return ");
+                r = r.Write(symbol);
+                r = r.WriteLine(";");
+            }
+            r = r.Dedent().WriteLine("}");
+            return r;
+        }
+
         public SymbolWriterCSharp WriteTypeDecl(TypeRefSymbol typeRef, string defaultType = "var")
         {
             if (typeRef == null)
@@ -85,7 +102,7 @@ namespace PlatoAst
                 case FunctionSymbol function:
                     return WriteTypeDecl(function.Type, "void").Write(function.Name)
                         .Write("(").WriteCommaList(function.Parameters).WriteLine(")")
-                        .WriteBlock(function.Body);
+                        .Write(function.Body);
 
                 case FunctionResultSymbol functionResult:
                     return Write(functionResult.Function).Write("(")
@@ -113,7 +130,7 @@ namespace PlatoAst
                     return WriteTypeDecl(parameter.Type).Write(parameter.Name);
 
                 case RegionSymbol region:
-                    return WriteBlock(region.Children, true);
+                    return WriteRegion(region.Children);
 
                 case TypeDefSymbol typeDef:
                     return Write("class ").WriteLine(typeDef.Name).WriteBlock(typeDef.Members, false);
