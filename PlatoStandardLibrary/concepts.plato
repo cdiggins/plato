@@ -101,22 +101,22 @@ concept Value
         = intrinsic;
 
     function Zero(): Self
-        = Types.Zero;
+        = FieldTypes.Zero;
 
     function One(): Self
-        = Types.One;
+        = FieldTypes.One;
 
     function Default(): Self
-        = Types.Default;
+        = FieldTypes.Default;
 
     function MinValue(): Self
-        = Types.MinValue;
+        = FieldTypes.MinValue;
 
     function MaxValue(): Self
-        = Types.MaxValue;
+        = FieldTypes.MaxValue;
 
     function ToString(x: Self): String
-        = Values.JoinString(",");
+        = FieldValues.JoinStrings(",");
 }
 
 concept Array<T: Any>

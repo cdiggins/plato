@@ -94,6 +94,10 @@ module Numerical
     function Pow3(x) = x.Pow2 * x;
     function Pow4(x) = x.Pow3 * x;
     function Pow5(x) = x.Pow4 * x;
+
+    // TODO: Improve these
+    function Turns(x) = x * 3.1415926535897 * 2;
+    function AlmostZero(x) = x.Abs < 0.00000001; 
 }
 
 module Comparable
@@ -123,13 +127,15 @@ module Array
     function Zip(xs, ys, f) = Array(xs.Count, i => f(At(i), ys.At(i)));
     function Skip(xs, n) = Array(Count - n, i => At(i - n));
     function Take(xs, n) = Array(n, i => At);
-    function Accumulate(xs, init, f) = xs.IsEmpty ? init : f(init, f(Rest));
+    function Aggregate(xs, init, f) = xs.IsEmpty ? init : f(init, f(xs.Rest));
     function Rest(xs) = Skip(1);
     function IsEmpty(xs) = xs.Count == 0;
     function First(xs) = xs.At(0);
     function Last(xs) = xs.At(xs.Count - 1);
     function Slice(xs, from, count) = xs.Skip(from).Take(count);
-    function Join(xs, sep) = xs.IsEmpty ? "" : xs.First.ToString + xs.Skip(1).Accumulate("", (acc, cur) => $"{acc}{sep}{cur}");
+    function Join(xs, sep) = xs.IsEmpty ? "" : xs.First.ToString + xs.Skip(1).Aggregate("", (acc, cur) => $"{acc}{sep}{cur}");
+    function All(xs, f) = xs.IsEmpty ? true : f(xs.First) && f(xs.Rest);
+    function JoinStrings(xs, sep) = xs.IsEmpty ? "" : xs.First + xs.Rest.Aggregate("", (x, acc) => acc + ", " + x.ToString);
 }
 
 module Easings
@@ -161,7 +167,7 @@ module Easings
     function SineEaseIn(p) = InvertEaseFunc(p, SineEaseOut);
     function SineEaseOut(p) = p.Quarter.Turns.Sin;
     function SineEaseInOut(p) = BlendEaseFunc(p, SineEaseIn, SineEaseOut);
-    function CircularEaseIn(p) = p.Pow2.FromOne.Sqrt.FromOne;
+    function CircularEaseIn(p) = p.Pow2.FromOne.SquareRoot.FromOne;
     function CircularEaseOut(p) = InvertEaseFunc(p, CircularEaseIn);
     function CircularEaseInOut(p) = BlendEaseFunc(p, CircularEaseIn, CircularEaseOut);
     function ExponentialEaseIn(p) = p.AlmostZero ? p : 2.Pow(10 * p.MinusOne);

@@ -102,11 +102,13 @@ namespace PlatoAst
             => Children = children;
     }
 
-    public class Primitive : TypeDefSymbol
+    public class PredefinedSymbol : DefSymbol
     {
-        public Primitive(string name)
-            : base(null, null)
+        public PredefinedSymbol(string name, Scope scope)
+            : base(null, scope, null, name)
         { }
+
+        public override IReadOnlyList<Symbol> Children => Array.Empty<Symbol>();
     }
 
     public static class Primitives

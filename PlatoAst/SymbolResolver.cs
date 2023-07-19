@@ -11,12 +11,27 @@ namespace PlatoAst
     /// </summary>
     public class SymbolResolver
     {
+        public SymbolResolver()
+        {
+            BindPredefinedSymbols();
+        }
+
         public Scope Scope { get; set; } = new Scope(null, null);
         
         // TODO: 
         // public Scope TypeBindingsScope { get; set; } = new Scope(null, null);
         
         public List<TypeDefSymbol> TypeDefs { get; } = new List<TypeDefSymbol>();
+
+        public void BindPredefinedSymbols()
+        {
+            BindPredefined("intrinsic");
+        }
+
+        public void BindPredefined(string name)
+        {
+            Bind(name, new PredefinedSymbol(name, Scope));
+        }
 
         public T Bind<T>(string name, T value) where T : Symbol
         {
@@ -161,6 +176,8 @@ namespace PlatoAst
 
             throw new Exception($"Node can't be evaluated : {node}");
         }
+
+
 
         public void CreateTypeDefs(IEnumerable<AstTypeDeclaration> types)
         {
