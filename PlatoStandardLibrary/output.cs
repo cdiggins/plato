@@ -37,7 +37,7 @@ class Comparable{
             {
                 < (Magnitude(a), if (Magnitude(b))
                 {
-                    -(1);
+                    Subtract(1);
                 }
                 else
                 {
@@ -779,7 +779,7 @@ class Interval{
     public static var Negate(var x){
         {
             {
-                Interval(-(null(x)), -(null(x)));
+                Interval(Subtract(null(x)), Subtract(null(x)));
             }
             ;
         }
@@ -1303,7 +1303,7 @@ class Numerical{
             {
                 < (x, if (0)
                 {
-                    -(1);
+                    Subtract(1);
                 }
                 else
                 {
@@ -1329,7 +1329,7 @@ class Numerical{
             {
                 < (Value, if (0)
                 {
-                    -(Value);
+                    Subtract(Value);
                 }
                 else
                 {
