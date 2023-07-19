@@ -100,9 +100,9 @@ module Comparable
 {
     function Equals(a, b) = a.Compare(b) == 0;
     function LessThan(a, b) = a.Compare(b) < 0;
-    function Lesser(a, b) = a.LessThanOrEqual(b) ? a : b;
+    function Lesser(a, b) = a.LessThanOrEquals(b) ? a : b;
     function Greater(a, b) = a.GreaterThanOrEqual(b) ? a : b;
-    function LessThanOrEqual(a, b) = a.Compare(b) <= 0;
+    function LessThanOrEquals(a, b) = a.Compare(b) <= 0;
     function GreaterThan(a, b) = a.Compare(b) > 0;
     function GreaterThanOrEqual(a, b) = a.Compare(b) >= 0;
     function Min(a, b) = a.LessThan(b) ? a : b;

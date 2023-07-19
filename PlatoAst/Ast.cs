@@ -106,7 +106,7 @@ namespace PlatoAst
     {
         public string Name { get; }
 
-        public AstIntrinsic(string name) => Name = AstNames.OperatorToName(name);
+        public AstIntrinsic(string name) => Name = AstNames.OperatorToName(name.Trim());
         public static AstIntrinsic Create(string name) => new AstIntrinsic(name);
     }
 

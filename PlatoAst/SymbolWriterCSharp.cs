@@ -5,34 +5,39 @@ using System.Linq;
 
 namespace PlatoAst
 {
-    public class SymbolCSharpWriter : CodeBuilder<SymbolCSharpWriter>
+    public class SymbolWriterCSharp : CodeBuilder<SymbolWriterCSharp>
     {
-        public SymbolCSharpWriter WriteBlock(params Symbol[] symbols)
-            => WriteBlock((IEnumerable<Symbol>)symbols);
+        public SymbolWriterCSharp WriteBlock(params Symbol[] symbols)
+            => WriteBlock((IEnumerable<Symbol>)symbols, false);
 
-        public SymbolCSharpWriter Write(IEnumerable<Symbol> symbols)
+        public SymbolWriterCSharp Write(IEnumerable<Symbol> symbols)
             => symbols.Aggregate(this, (writer, symbol) => writer.Write(symbol));
 
-        public SymbolCSharpWriter WriteBlock(IEnumerable<Symbol> symbols)
+        public SymbolWriterCSharp WriteBlock(IEnumerable<Symbol> symbols, bool semiColons)
         {
             var r = WriteLine("{").Indent();
             foreach (var symbol in symbols)
             {
-                r = r.Write(symbol).WriteLine(";");
+                r = r.Write(symbol);
+                
+                if (semiColons)
+                    r = r.WriteLine(";");
+                else
+                    r = r.WriteLine("");
             }
             r = r.Dedent().WriteLine("}");
             return r;
         }
 
-        public SymbolCSharpWriter WriteTypeDecl(TypeRefSymbol typeRef)
+        public SymbolWriterCSharp WriteTypeDecl(TypeRefSymbol typeRef, string defaultType = "var")
         {
             if (typeRef == null)
-                return Write("var ");
+                return Write($"{defaultType} ");
             else
                 return Write(typeRef.Name).Write(" ");
         }
 
-        public SymbolCSharpWriter WriteCommaList(IEnumerable<Symbol> symbols)
+        public SymbolWriterCSharp WriteCommaList(IEnumerable<Symbol> symbols)
         {
             var r = this;
             var first = true;
@@ -47,7 +52,7 @@ namespace PlatoAst
             return r;
         }
 
-        public SymbolCSharpWriter Write(Symbol value)
+        public SymbolWriterCSharp Write(Symbol value)
         {
             switch (value)
             {
@@ -66,17 +71,20 @@ namespace PlatoAst
                         .Write(assignment.RValue);
 
                 case ConditionalSymbol conditional:
-                    return Write("if (").Write(conditional.Condition).WriteLine(")")
-                        .WriteBlock(conditional.IfTrue)
-                        .WriteLine("else")
-                        .WriteBlock(conditional.IfFalse);
+                    return Write(conditional.Condition)
+                        .Indent().WriteLine().Write("? ")
+                        .Write(conditional.IfTrue)
+                        .WriteLine()
+                        .Write(": ")
+                        .Write(conditional.IfFalse)
+                        .Dedent().WriteLine();
 
                 case FieldDefSymbol fieldDef:
                     return WriteTypeDecl(fieldDef.Type).Write(fieldDef.Name);
 
                 case FunctionSymbol function:
-                    return WriteTypeDecl(function.Type).Write(function.Name)
-                        .Write("(").WriteCommaList(function.Parameters).Write(")")
+                    return WriteTypeDecl(function.Type, "void").Write(function.Name)
+                        .Write("(").WriteCommaList(function.Parameters).WriteLine(")")
                         .WriteBlock(function.Body);
 
                 case FunctionResultSymbol functionResult:
@@ -105,16 +113,16 @@ namespace PlatoAst
                     return WriteTypeDecl(parameter.Type).Write(parameter.Name);
 
                 case RegionSymbol region:
-                    return WriteBlock(region.Children);
+                    return WriteBlock(region.Children, true);
 
                 case TypeDefSymbol typeDef:
-                    return Write("class ").Write(typeDef.Name).WriteBlock(typeDef.Members);
+                    return Write("class ").WriteLine(typeDef.Name).WriteBlock(typeDef.Members, false);
                    
                 case TypeRefSymbol typeRef:
                     throw new NotImplementedException("Type references are supposed to be handled in a function");
 
                 case VariableSymbol variable:
-                    return Write(variable.Name);
+                    return Write(variable.Name);    
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(value));
@@ -125,7 +133,7 @@ namespace PlatoAst
 
         public static string ToCSharp(IEnumerable<Symbol> symbols)
         {
-            var writer = new SymbolCSharpWriter();
+            var writer = new SymbolWriterCSharp();
             var r = writer.Write(symbols);
             return r.ToString();
         }

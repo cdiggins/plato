@@ -21,7 +21,7 @@ concept Numerical
     inherits Value, Arithmetic, Equatable, Comparable, Magnitude
 {
     function FromNumber(x: Number): Self
-        = Values.FromNumber(x);
+        = x.FieldValues.FromNumber(x);
 }
 
 concept Magnitude

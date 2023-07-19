@@ -12,6 +12,10 @@ namespace PlatoAst
     public class SymbolResolver
     {
         public Scope Scope { get; set; } = new Scope(null, null);
+        
+        // TODO: 
+        // public Scope TypeBindingsScope { get; set; } = new Scope(null, null);
+        
         public List<TypeDefSymbol> TypeDefs { get; } = new List<TypeDefSymbol>();
 
         public T Bind<T>(string name, T value) where T : Symbol
@@ -20,13 +24,26 @@ namespace PlatoAst
             return value;
         }
 
+        public FunctionGroupSymbol BindFunctionToGroup(string name, MemberDefSymbol method)
+        {
+            var val = Scope.GetValue(name);
+
+            if (val is FunctionGroupSymbol group)
+            {
+                return Bind(name, group.Add(method));
+            }
+
+            var fgs = new FunctionGroupSymbol(new[] { method }, method.Name);
+            return Bind(name, fgs);
+        }
+
         public RefSymbol GetValue(AstNode location, Scope scope, string name)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new Exception("Invalid variable name");
             var sym = Scope.GetValue(name);
             if (sym == null)
-                return null;
+                throw new Exception($"Could not find symbol {name}");
             if (sym is DefSymbol ds)
                 return new RefSymbol(location, scope, ds);
             throw new NotImplementedException();
@@ -147,25 +164,14 @@ namespace PlatoAst
 
         public void CreateTypeDefs(IEnumerable<AstTypeDeclaration> types)
         {
-            // Typedefs are at the top-level
+            // Typedefs and their methods are all at the top-level
             foreach (var astTypeDeclaration in types)
             {
                 var typeDef = new TypeDefSymbol(astTypeDeclaration, Scope);
                 TypeDefs.Add(typeDef);
+
+                // TODO: maybe put this into the type scope. 
                 Bind(typeDef.Name, typeDef);
-            }
-
-            // Foreach type def create the members 
-            foreach (var typeDef in TypeDefs)
-            {
-                Scope = Scope.Push();
-
-                foreach (var tp in typeDef.AstTypeDeclaration.TypeParameters)
-                {
-                    var tpd = new TypeParameterDefSymbol(tp, Scope, tp.Name);
-                    Bind(tpd.Name, tpd);
-                    typeDef.TypeParameters.Add(tpd);
-                }
 
                 foreach (var m in typeDef.AstTypeDeclaration.Members)
                 {
@@ -173,18 +179,33 @@ namespace PlatoAst
                     {
                         var fDef = new FieldDefSymbol(fd, Scope, Resolve(fd.Type), fd.Name);
                         typeDef.Fields.Add(fDef);
-                        Bind(fDef.Name, fDef);
+                        BindFunctionToGroup(fDef.Name, fDef);
                     }
                     else if (m is AstMethodDeclaration md)
                     {
                         var mDef = new MethodDefSymbol(md, Scope, Resolve(md.Type), md.Name);
                         typeDef.Methods.Add(mDef);
-                        Bind(mDef.Name, mDef);
+                        BindFunctionToGroup(mDef.Name, mDef);
                     }
                     else
                     {
                         throw new NotSupportedException($"MemberDefSymbol not recognized {m}");
                     }
+                }
+
+            }
+
+            // Foreach type def create the members 
+            foreach (var typeDef in TypeDefs)
+            {
+                Scope = Scope.Push();
+
+                // TODO: should go into the type scope.
+                foreach (var tp in typeDef.AstTypeDeclaration.TypeParameters)
+                {
+                    var tpd = new TypeParameterDefSymbol(tp, Scope, tp.Name);
+                    Bind(tpd.Name, tpd);
+                    typeDef.TypeParameters.Add(tpd);
                 }
 
                 // For each method in the type 

@@ -21,6 +21,26 @@ namespace PlatoAst
         public abstract IReadOnlyList<Symbol> Children { get; }
     }
 
+    public class FunctionGroupSymbol : DefSymbol
+    {
+        public IReadOnlyList<MemberDefSymbol> Functions { get;  }
+        
+        public FunctionGroupSymbol(IEnumerable<MemberDefSymbol> functions, string name)
+            : base(null, null, null, name)
+        {
+            Functions = functions.ToList();
+            foreach (var f in Functions)
+                if (f.Name != name)
+                    throw new Exception($"All functions in group must have same name: {name}");
+        }
+
+        public FunctionGroupSymbol Add(MemberDefSymbol method)
+            => new FunctionGroupSymbol(Functions.Append(method), Name);
+
+        public override IReadOnlyList<Symbol> Children 
+            => Functions;
+    }
+
     public abstract class DefSymbol : Symbol
     {
         protected DefSymbol(AstNode location, Scope scope, TypeRefSymbol type, string name)
@@ -51,7 +71,10 @@ namespace PlatoAst
 
         public RefSymbol(AstNode location, Scope scope, DefSymbol def)
             : base(location, scope)
-            => Def = def;
+        {
+            Def = def ?? 
+                  throw new Exception("No definition provided");
+        }
 
         public override string ToString() => $"{GetType().Name}={Name}${Id}:{Type}";
 

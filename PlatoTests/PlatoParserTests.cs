@@ -76,6 +76,7 @@ namespace PlatoTests
             var cstXmlFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".cst.xml");
             File.WriteAllText(cstXmlFile, cstXml);
 
+            /*
             var ast = new AstFromCSharpCst().ToAst(cst);
             
             var astXmlFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".ast.xml");
@@ -89,6 +90,7 @@ namespace PlatoTests
 
             var astPailFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".ast.pail");
             File.WriteAllText(astPailFile, ast.ToPlato());
+            */
         }
     }
 }

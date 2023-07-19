@@ -34,7 +34,7 @@ public class IDE
         Compilation = Compile(Input);
 
         var outputFile = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\output.cs";
-        var output = SymbolCSharpWriter.ToCSharp(Compilation.SymbolResolver.TypeDefs);
+        var output = SymbolWriterCSharp.ToCSharp(Compilation.SymbolResolver.TypeDefs);
         File.WriteAllText(outputFile, output);
 
         

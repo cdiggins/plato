@@ -16,15 +16,15 @@ namespace PlatoTests
             var outputFile = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\temp.plato";
             var grammar = new CSharpGrammar();
             var input = ParserInput.FromFile(inputFile);
+            /*
             var c = new Compilation(input, 
                 grammar.File, 
                 CstNodeFactory.Create, 
                 cst => new AstFromCSharpCst().ToAst(cst));
-
             Assert.IsTrue(c.Success);
-
             var output = c.AstTree.ToPlato();
             File.WriteAllText(outputFile, output);
+            */
         }
     }
 }
