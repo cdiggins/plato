@@ -126,6 +126,9 @@ namespace PlatoAst
         public override IReadOnlyList<Symbol> Children 
             => Array.Empty<Symbol>().Concat(Methods).Concat(Fields).Concat(TypeParameters).ToList();
 
+        public IEnumerable<MemberDefSymbol> Members => Enumerable.Empty<MemberDefSymbol>()
+            .Concat(Methods).Concat(Fields);
+
         public TypeRefSymbol ToRef => new TypeRefSymbol(null, null, this);
     }
 
@@ -153,7 +156,7 @@ namespace PlatoAst
         public Symbol Body { get; }
 
         public FunctionSymbol(AstNode location, Scope scope, string name, TypeRefSymbol returnType, Symbol body, params ParameterSymbol[] parameters)
-            : base(location, scope, TypeRefSymbol.CreateFunction(parameters.Select(p => p.Type).Append(returnType).ToArray()), name)
+            : base(location, scope, returnType, name)
         {
             Parameters = parameters;
             Body = body;

@@ -5,35 +5,35 @@ using Parakeet;
 
 namespace PlatoAst
 {
-    public class SymbolWriter : CodeBuilder<SymbolWriter>
+    public class SymbolXmlWriter : CodeBuilder<SymbolXmlWriter>
     {
-        public SymbolWriter WriteXml(string tag, string text)
+        public SymbolXmlWriter WriteXml(string tag, string text)
         {
             return WriteLine($"<{tag}>{text}</{tag}>");
         }
 
-        public SymbolWriter WriteXml(string tag, Func<SymbolWriter, SymbolWriter> outputFunc)
+        public SymbolXmlWriter WriteXml(string tag, Func<SymbolXmlWriter, SymbolXmlWriter> outputFunc)
         {
             return outputFunc(
                 WriteLine($"<{tag}>").Indent()).Dedent().WriteLine($"</{tag}>");
         }
 
-        public SymbolWriter WriteXml(string tag, Symbol value)
+        public SymbolXmlWriter WriteXml(string tag, Symbol value)
         {
             return WriteXml(tag, self => self.Write(value));
         }
 
-        public SymbolWriter WriteXml(string tag, IEnumerable<Symbol> values)
+        public SymbolXmlWriter WriteXml(string tag, IEnumerable<Symbol> values)
         {
             return WriteXml(tag, avw => avw.Write(values));
         }
 
-        public SymbolWriter Write(IEnumerable<Symbol> values)
+        public SymbolXmlWriter Write(IEnumerable<Symbol> values)
         {
             return values.Aggregate(this, (self, value) => self.Write(value));
         }
 
-        public SymbolWriter Write(Symbol value)
+        public SymbolXmlWriter Write(Symbol value)
         {
             switch (value)
             {
@@ -121,18 +121,18 @@ namespace PlatoAst
         }
     }
 
-    public static class AbstractValueExtensions
+    public static class SymbolXmlWriterExtensions
     {
         public static string ToXml(this Symbol value)
         {
-            var avw = new SymbolWriter();
+            var avw = new SymbolXmlWriter();
             avw.Write(value);
             return avw.ToString();
         }
 
         public static string ToXml(this IEnumerable<Symbol> values)
         {
-            var avw = new SymbolWriter();
+            var avw = new SymbolXmlWriter();
             avw.Write(values);
             return avw.ToString();
         }

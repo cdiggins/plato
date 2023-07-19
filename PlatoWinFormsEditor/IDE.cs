@@ -33,7 +33,12 @@ public class IDE
         Input = input1 + Environment.NewLine + input2 + Environment.NewLine + input3;
         Compilation = Compile(Input);
 
-        /*
+        var outputFile = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\output.cs";
+        var output = SymbolCSharpWriter.ToCSharp(Compilation.SymbolResolver.TypeDefs);
+        File.WriteAllText(outputFile, output);
+
+        
+            /*
         var types = IDE.Compilation.AstTree.GetAllTypes().ToList();
 
         foreach (var type in types)
