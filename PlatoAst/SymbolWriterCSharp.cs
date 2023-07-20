@@ -1,12 +1,18 @@
 ﻿using Parakeet;
 using System.Collections.Generic;
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace PlatoAst
 {
     public class SymbolWriterCSharp : CodeBuilder<SymbolWriterCSharp>
     {
+        private Operations Ops { get; }
+
+        public SymbolWriterCSharp(Operations ops)
+            => Ops = ops;
+
         public SymbolWriterCSharp WriteBlock(params Symbol[] symbols)
             => WriteBlock((IEnumerable<Symbol>)symbols, false);
 
@@ -54,7 +60,75 @@ namespace PlatoAst
                 return Write(typeRef.Name).Write(" ");
         }
 
+        public SymbolWriterCSharp WriteConstraints(FunctionSymbol function)
+        {
+            var lookup = Constraints.GetParameterConstraints(function);
+            var r = this;
+            foreach (var kv in lookup)
+            {
+                var refs = string.Join(", ", kv.Value);
+                r = r.WriteLine($"// {kv.Key} = {refs}");
+                foreach (var c in kv.Value)
+                {
+                    if (c is FunctionArgConstraint fac)
+                    {
+                        var name = fac.Name;
+                        var members = Ops.GetMembers(name, fac.ArgumentCount);
+                        r = r.WriteLine($"// Candidate types for {kv.Key.Name}: ");
+
+                        var temp = string.Join(" | ", members.Select(m => $"{m.Item1.Name}.{m.Item2.Name}"));
+                        
+                        // TODO: reduce the candidate list. 
+                        // A single concept is preferable to a group of types.
+
+                        if (members.Count == 0)
+                            r = r.WriteLine($"// Any");
+                        else
+                            r = r.WriteLine($"// {temp}");
+                    }
+                }
+            }
+
+            return r;
+        }
+
+        public SymbolWriterCSharp Write(FunctionSymbol function)
+        {
+            if (function.Name == "__lambda__")
+            {
+                return Write("(")
+                    .WriteCommaList(function.Parameters.Select(p => p.Name))
+                    .WriteLine(") => ")
+                    .WriteConstraints(function)
+                    .Write(function.Body);
+            }
+
+            return WriteTypeDecl(function.Type, "void")
+                .Write(function.Name)
+                .Write("(")
+                .WriteCommaList(function.Parameters)
+                .WriteLine(")")
+                .WriteConstraints(function)
+                .Write(function.Body);
+        }
+
+
         public SymbolWriterCSharp WriteCommaList(IEnumerable<Symbol> symbols)
+        {
+            var r = this;
+            var first = true;
+            foreach (var s in symbols)
+            {
+                if (!first)
+                    r = r.Write(", ");
+                first = false;
+                r = r.Write(s);
+            }
+
+            return r;
+        }
+
+        public SymbolWriterCSharp WriteCommaList(IEnumerable<string> symbols)
         {
             var r = this;
             var first = true;
@@ -100,10 +174,8 @@ namespace PlatoAst
                     return WriteTypeDecl(fieldDef.Type).Write(fieldDef.Name);
 
                 case FunctionSymbol function:
-                    return WriteTypeDecl(function.Type, "void").Write(function.Name)
-                        .Write("(").WriteCommaList(function.Parameters).WriteLine(")")
-                        .Write(function.Body);
-
+                    return Write(function);
+                    
                 case FunctionResultSymbol functionResult:
                     return Write(functionResult.Function).Write("(")
                         .WriteCommaList(functionResult.Args).Write(")");
@@ -148,9 +220,9 @@ namespace PlatoAst
             return this;
         }
 
-        public static string ToCSharp(IEnumerable<Symbol> symbols)
+        public static string ToCSharp(IEnumerable<Symbol> symbols, Operations ops)
         {
-            var writer = new SymbolWriterCSharp();
+            var writer = new SymbolWriterCSharp(ops);
             var r = writer.Write(symbols);
             return r.ToString();
         }

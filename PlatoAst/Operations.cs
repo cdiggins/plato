@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Security.Cryptography;
 
 namespace PlatoAst
 {
@@ -7,17 +9,30 @@ namespace PlatoAst
         public Dictionary<string, List<(TypeDefSymbol, MemberDefSymbol)>> Lookup { get; } 
             = new Dictionary<string, List<(TypeDefSymbol, MemberDefSymbol)>>();
         
+
         public Operations(IEnumerable<TypeDefSymbol> typeDefs)
         {
             foreach (var typeDefSymbol in typeDefs)
                 AddMembers(typeDefSymbol);
         }
 
+        public IReadOnlyList<(TypeDefSymbol, MemberDefSymbol)> GetMembers(string name)
+            => Lookup[name];
+
+        public IReadOnlyList<(TypeDefSymbol, MemberDefSymbol)> GetMembers(string name, int parameterCount)
+            => Lookup.TryGetValue(LookupName(name, parameterCount), out var result) 
+                ? result 
+                : new List<(TypeDefSymbol, MemberDefSymbol)>();
+
+        public static string LookupName(string name, int parameterCount)
+            //=> $"{name}#{parameterCount}";
+            => $"{name}";
+
         public static string LookupName(MemberDefSymbol member)
         {
             if (member is MethodDefSymbol mds)
-                return $"{mds.Name}#{mds.Function.Parameters.Count}";
-            return $"{member.Name}#0";
+                return LookupName(mds.Name, mds.Function.Parameters.Count);
+            return LookupName(member.Name, 1);
         }
 
         public void AddMember(TypeDefSymbol type, MemberDefSymbol member)

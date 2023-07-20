@@ -158,7 +158,7 @@ namespace PlatoAst
                     Scope = Scope.Push();
                     var ps = astLambda.Parameters.Select(Resolve).ToArray();
                     var body = Resolve(astLambda.Body);
-                    var r = new FunctionSymbol(astLambda, Scope, "lambda",
+                    var r = new FunctionSymbol(astLambda, Scope, "__lambda__",
                         Primitives.Lambda.ToRef, body, ps);
                     return r;
                 }
@@ -176,8 +176,6 @@ namespace PlatoAst
 
             throw new Exception($"Node can't be evaluated : {node}");
         }
-
-
 
         public void CreateTypeDefs(IEnumerable<AstTypeDeclaration> types)
         {

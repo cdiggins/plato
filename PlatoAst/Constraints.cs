@@ -10,13 +10,14 @@ namespace PlatoAst
     {
         public Symbol Function { get; }
         public int Position { get; }
+        public int ArgumentCount { get; }
         public string Name { get; }
 
-        public FunctionArgConstraint(string name, Symbol fs, int position)
-            => (Name, Function, Position) = (name, fs, position);
+        public FunctionArgConstraint(string name, Symbol fs, int position, int count)
+            => (Name, Function, Position, ArgumentCount) = (name, fs, position, count);
 
         public override string ToString()
-            => $"Passed:{Function}(arg#{Position})";
+            => $"Argument:{Function}({Position}/{ArgumentCount})";
     }
 
     public class FunctionCallConstraint : Constraint
@@ -67,7 +68,7 @@ namespace PlatoAst
                             {
                                 if (r.ContainsKey(ps))
                                 {
-                                    r[ps].Add(new FunctionArgConstraint(name, fs.Function, arg.Position));
+                                    r[ps].Add(new FunctionArgConstraint(name, fs.Function, arg.Position, fs.Args.Count));
                                 }
                             }
                         }
