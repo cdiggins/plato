@@ -179,10 +179,7 @@ namespace PlatoAst
                     return astMulti.Nodes.Aggregate(this, (w, n) => w.Write(n));
 
                 case AstIdentifier astIdent:
-                    return Write(astIdent.Text);
-
-                case AstIntrinsic astIntrinsic:
-                    return Write(ConvertIntrinsicName(astIntrinsic.Name));
+                    return Write(ConvertIntrinsicName(astIdent.Text));
 
                 case AstTypeDeclaration typeDeclaration:
                 {

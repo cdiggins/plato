@@ -139,9 +139,6 @@ namespace PlatoAst
                 case AstIdentifier astIdentifier:
                     return GetValue(node, Scope, astIdentifier.Text);
 
-                case AstIntrinsic astIntrinsic:
-                    return new IntrinsicSymbol(astIntrinsic, Scope, astIntrinsic.Name);
-
                 case AstInvoke astInvoke:
                 {
                     var args = astInvoke.AstArguments.Select((a,i) => 

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace PlatoAst
@@ -100,14 +99,6 @@ namespace PlatoAst
         public AstBlock(params AstNode[] statements) => Statements = statements;
         public static AstBlock Create(params AstNode[] statements) => new AstBlock(statements);
         public override IEnumerable<AstNode> Children => Statements;
-    }
-
-    public class AstIntrinsic : AstNode
-    {
-        public string Name { get; }
-
-        public AstIntrinsic(string name) => Name = AstNames.OperatorToName(name.Trim());
-        public static AstIntrinsic Create(string name) => new AstIntrinsic(name);
     }
 
     public class AstLoop : AstNode
@@ -336,43 +327,5 @@ namespace PlatoAst
 
         public static IReadOnlyList<T> ToListOrEmpty<T>(this IEnumerable<T> items)
             => items?.ToList() ?? new List<T>();
-    }
-
-    public static class AstNames
-    {
-
-        public static (string, string)[] Operators => new[]
-        {
-            ("+", "Add"),
-            ("-", "Subtract"),
-            ("*", "Multiply"),
-            ("/", "Divide"),
-            ("%", "Modulo"),
-            ("==", "Equals"),
-            ("!=", "NotEquals"),
-            (">", "GreaterThan"),
-            ("<", "LessThan"),
-            (">=", "GreaterThanOrEquals"),
-            ("<=", "LessThanOrEquals"),
-            ("&&", "And"),
-            ("||", "Or"),
-            ("&", "BitwiseAnd"),
-            ("|", "BitwiseOr"),
-            ("^", "XOr"),
-            ("[]", "At")
-        };
-
-        public static Dictionary<string, string> OperatorToNames
-            = Operators.ToDictionary(op => op.Item1, op => op.Item2);
-
-        public static Dictionary<string, string> NamesToOperators
-            = Operators.ToDictionary(op => op.Item1, op => op.Item2);
-
-        public static string OperatorToName(string op)
-            => OperatorToNames.ContainsKey(op) ? OperatorToNames[op] : op;
-
-        public static string NameToOperator(string name)
-            => NamesToOperators.ContainsKey(name) ? NamesToOperators[name] : name;
-
     }
 }

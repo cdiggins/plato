@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Xml.Linq;
 using Parakeet;
 using Parakeet.Demos.Plato;
 
@@ -13,8 +12,8 @@ namespace PlatoAst
         public static AstNode Convert(CstNode node)
             => new AstFromPlatoCst().ToAst(node);
 
-        public AstNode ToIntrinsic(string name, params AstNode[] args)
-            => AstInvoke.Create(AstIntrinsic.Create(name), args);
+        public AstNode ToIntrinsicInvocation(string name, params AstNode[] args)
+            => AstInvoke.Create(new AstIdentifier(name), args);
 
         public AstNode ToAst<T>(CstFilter<T> filter) where T: CstNode
             => ToAst(filter.Node);
@@ -40,8 +39,9 @@ namespace PlatoAst
                 }
                 else if (postfix.BinaryOperation.Present)
                 {
-                    r = ToIntrinsic(
-                        postfix.BinaryOperation.Node.BinaryOperator.Node.Text,
+                    var op = postfix.BinaryOperation.Node.BinaryOperator.Node.Text;
+                    r = ToIntrinsicInvocation(
+                        OperatorNameLookup.BinaryOperatorToName(op.Trim()),
                         r,   
                         ToAst(postfix.BinaryOperation.Node.Expression));
                 }
@@ -49,7 +49,7 @@ namespace PlatoAst
                 {
                     throw new NotImplementedException();
                     // 
-                    //r = ToIntrinsic("?.", r, postfix.MemberAccess.Node.Identifier.Node.Text.ToConstant());
+                    //r = ToIntrinsicInvocation("?.", r, postfix.MemberAccess.Node.Identifier.Node.Text.ToConstant());
                 }
                 else if (postfix.FunctionArgs.Present)
                 {
@@ -58,7 +58,8 @@ namespace PlatoAst
                 }
                 else if (postfix.Indexer.Present)
                 {
-                    r = ToIntrinsic("[]", r, ToAst(postfix.Indexer.Node.Expression));
+                    r = ToIntrinsicInvocation(OperatorNameLookup.BinaryOperatorToName("[]")
+                        , r, ToAst(postfix.Indexer.Node.Expression));
                 }
                 else if (postfix.IsOperation.Present)
                 {
@@ -91,7 +92,8 @@ namespace PlatoAst
 
             foreach (var prefix in expr.PrefixOperator.Nodes)
             {
-                r = ToIntrinsic(prefix.Text, r);
+                r = ToIntrinsicInvocation(
+                    OperatorNameLookup.UnaryOperatorToName(prefix.Text.Trim()), r);
             }
 
             return r;
@@ -178,7 +180,7 @@ namespace PlatoAst
             return AstBlock.Create(
                 vd,
                 AstLoop.Create(
-                    ToIntrinsic("MoveNext", null),
+                    ToIntrinsicInvocation("MoveNext", null),
                     ToAst(forEach.Statement)));
         }
 
@@ -297,8 +299,7 @@ namespace PlatoAst
             if (expr.Expression.Nodes.Count == 1)
                 return new AstParenthesized(ToAst(expr.Expression.Node));
 
-            return AstInvoke.Create(
-                AstIntrinsic.Create("Tuple"), expr.Expression.Nodes.Select(ToAst).ToArray());
+            return ToIntrinsicInvocation("Tuple", expr.Expression.Nodes.Select(ToAst).ToArray());
         }
 
         public AstNode ToAst(CstLeafExpression expr)
@@ -310,14 +311,14 @@ namespace PlatoAst
             else if (expr.Default.Present)
             {
                 if (expr.Default.Node.TypeExpr.Present)
-                    return ToIntrinsic("default", ToAst(expr.Default.Node.TypeExpr));
+                    return ToIntrinsicInvocation("default", ToAst(expr.Default.Node.TypeExpr));
                 
                 // TODO: What type is this even, and how will it be figured out? 
-                return ToIntrinsic("default");
+                return ToIntrinsicInvocation("default");
             }
             else if (expr.CastExpression.Present)
             {
-                return ToIntrinsic("cast", 
+                return ToIntrinsicInvocation("cast", 
                     ToAst(expr.CastExpression.Node.TypeExpr),
                     ToAst(expr.CastExpression.Node.Expression));
             }
@@ -347,7 +348,7 @@ namespace PlatoAst
                     .Select(ToAst)
                     .Prepend(ToAst(newOp.TypeExpr));
 
-                return ToIntrinsic("new", args.ToArray());
+                return ToIntrinsicInvocation("New", args.ToArray());
             }
             else if (expr.ParenthesizedExpression.Present)
             {
@@ -355,16 +356,18 @@ namespace PlatoAst
             }
             else if (expr.StringInterpolation.Present)
             {
-                return ToIntrinsic("interpolate",
+                // TODO: this actually needs to convert the interpolated parts into a literal array.
+                // However, Plato doesn't support literal arrays yet. 
+                return ToIntrinsicInvocation("Interpolate",
                     expr.StringInterpolation.Node.StringInterpolationContent.Nodes.Select(ToAst).ToArray());
             }
             else if (expr.ThrowExpression.Present)
             {
-                return ToIntrinsic("throw", ToAst(expr.ThrowExpression.Node.Expression));
+                return ToIntrinsicInvocation("Throw", ToAst(expr.ThrowExpression.Node.Expression));
             }
             else if (expr.TypeOf.Present)
             {
-                return ToIntrinsic("typeof", ToAst(expr.TypeOf.Node.TypeExpr));
+                return ToIntrinsicInvocation("TypeOf", ToAst(expr.TypeOf.Node.TypeExpr));
             }
 
             throw new Exception("Unrecognized leaf expression");
@@ -493,13 +496,13 @@ namespace PlatoAst
                     return AstContinue.Default;
 
                 case CstCastExpression cstCastExpression:
-                    return ToIntrinsic("cast", ToAst(cstCastExpression.Expression), ToAst(cstCastExpression.TypeExpr));
+                    return ToIntrinsicInvocation("Cast", ToAst(cstCastExpression.Expression), ToAst(cstCastExpression.TypeExpr));
 
                 case CstCatchClause cstCatchClause:
                     throw new NotImplementedException();
 
                 case CstDefault cstDefault:
-                    return ToIntrinsic("default", ToAst(cstDefault.TypeExpr));
+                    return ToIntrinsicInvocation("default", ToAst(cstDefault.TypeExpr));
 
                 case CstExpression cstExpression:
                     return ToAst(cstExpression);
@@ -561,10 +564,10 @@ namespace PlatoAst
                     return ToAst(cstLeafExpression);
 
                 case CstNameOf cstNameOf:
-                    return ToIntrinsic("nameof", ToAst(cstNameOf.Expression));
+                    return ToIntrinsicInvocation("NameOf", ToAst(cstNameOf.Expression));
 
                 case CstNewOperation cstNewOperation:
-                    return ToIntrinsic("new", ToAst(cstNewOperation.TypeExpr));
+                    return ToIntrinsicInvocation("New", ToAst(cstNewOperation.TypeExpr));
                 
                 case CstParenthesizedExpression cstParenthesizedExpression:
                     return ToAst(cstParenthesizedExpression.Expression);
@@ -576,14 +579,14 @@ namespace PlatoAst
                     return ToAst(cstStatement.Node);
                     
                 case CstStringInterpolation cstStringInterpolation:
-                    return new AstInvoke(new AstIntrinsic("Interpolate"),
+                    return new AstInvoke(new AstIdentifier("Interpolate"),
                         cstStringInterpolation.StringInterpolationContent.Nodes.Select(ToAst).ToArray());
 
                 case CstStringInterpolationContent cstStringInterpolationContent:
                     return ToAst(cstStringInterpolationContent.Expression);
 
                 case CstThrowExpression cstThrowExpression:
-                    return ToIntrinsic("throw", ToAst(cstThrowExpression.Expression));
+                    return ToIntrinsicInvocation("Throw", ToAst(cstThrowExpression.Expression));
 
                 case CstTryStatement cstTryStatement:
                     throw new NotImplementedException();
@@ -601,7 +604,7 @@ namespace PlatoAst
                     throw new NotImplementedException();
 
                 case CstTypeOf cstTypeOf:
-                    return ToIntrinsic("typeof", ToAst(cstTypeOf.TypeExpr));
+                    return ToIntrinsicInvocation("typeof", ToAst(cstTypeOf.TypeExpr));
 
                 case CstVarDecl cstVarDecl:
                     return AstMulti.Create(

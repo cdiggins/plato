@@ -334,20 +334,6 @@ namespace PlatoAst
             => Array.Empty<Symbol>();
     }
 
-    public class IntrinsicSymbol : Symbol
-    {
-        public string Name { get; }
-
-        public IntrinsicSymbol(AstNode location, Scope scope, string name)
-            : base(location, scope)
-        {
-            Name = name;
-        }
-
-        public override IReadOnlyList<Symbol> Children 
-            => Array.Empty<Symbol>();
-    }
-
     public static class SymbolExtensions
     {
         public static IEnumerable<Symbol> AllDescendantSymbols(this Symbol symbol)

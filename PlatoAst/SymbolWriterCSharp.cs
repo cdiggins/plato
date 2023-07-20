@@ -1,7 +1,6 @@
 ﻿using Parakeet;
 using System.Collections.Generic;
 using System;
-using System.Diagnostics;
 using System.Linq;
 
 namespace PlatoAst
@@ -179,9 +178,6 @@ namespace PlatoAst
                 case FunctionResultSymbol functionResult:
                     return Write(functionResult.Function).Write("(")
                         .WriteCommaList(functionResult.Args).Write(")");
-
-                case IntrinsicSymbol intrinsic:
-                    return Write(intrinsic.Name);//.Write("/* intrinsic */");
 
                 case LiteralSymbol literal:
                     return Write(literal.Value.ToString());

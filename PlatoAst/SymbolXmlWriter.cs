@@ -70,9 +70,6 @@ namespace PlatoAst
                         .Write(functionResult.Function)
                         .WriteXml("Arguments", functionResult.Args));
 
-                case IntrinsicSymbol intrinsic:
-                    return WriteXml("IntrinsicSymbol", intrinsic.Name);
-
                 case LiteralSymbol literal:
                     return WriteXml("LiteralSymbol", literal.Value.ToString());
 
