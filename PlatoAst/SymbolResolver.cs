@@ -4,6 +4,13 @@ using System.Linq;
 
 namespace PlatoAst
 {
+    public class TypeResolver
+    {
+        // Compute the constraints 
+        // Compute the type for each parameter.
+        // 
+    }
+
     /// <summary>
     /// Used primarily to figure out what each name means, and what the type of each expression is.
     /// This allows us to figure out which methods will get called at run-time.
@@ -25,6 +32,7 @@ namespace PlatoAst
         public void BindPredefinedSymbols()
         {
             BindPredefined("intrinsic");
+            BindType("Self", Primitives.Self);
         }
 
         public void BindPredefined(string name)

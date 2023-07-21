@@ -105,6 +105,7 @@ namespace PlatoAst
         public static TypeDefSymbol Lambda = Create("Lambda");
         public static TypeDefSymbol Function = Create("Function");
         public static TypeDefSymbol Any = Create("Any");
+        public static TypeDefSymbol Self = Create("Self");
 
         public static TypeDefSymbol Create(string name)
             => new TypeDefSymbol("primitive", name);

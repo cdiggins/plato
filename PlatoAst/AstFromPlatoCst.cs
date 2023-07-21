@@ -184,8 +184,8 @@ namespace PlatoAst
                     ToAst(forEach.Statement)));
         }
 
-        public string ToAst(CstTypeParameter typeParameter)
-            => ToAst(typeParameter.Identifier.Node);
+        public AstTypeParameter ToAst(CstTypeParameter typeParameter)
+            => new AstTypeParameter(typeParameter.Identifier.Node.Text);
 
         public AstTypeNode ToAst(CstTypeAnnotation typeAnnotation)
         {
@@ -385,9 +385,9 @@ namespace PlatoAst
             {
                 var type = cstTopLevelDeclaration.Type.Node;
                 var name = ToAst(type.Identifier.Node);
-                var typeParameters = Enumerable.Empty<AstTypeParameter>();
+                var typeParameters = type.TypeParameterList.Node?.TypeParameter.Nodes.Select(ToAst).ToArray() ?? Array.Empty<AstTypeParameter>();
                 var inherits = Enumerable.Empty<AstTypeNode>();
-                var implements = type.ImplementsList.Node.TypeExpr.Nodes.Select(ToAst).ToArray();
+                var implements = type.ImplementsList.Node?.TypeExpr.Nodes.Select(ToAst).ToArray();
                 var members = type.FieldDeclaration.Nodes.Select(ToAst).Cast<AstMemberDeclaration>().ToArray();
                 
                 return new AstTypeDeclaration("type", name, typeParameters, inherits, implements, members);
@@ -407,7 +407,7 @@ namespace PlatoAst
                 var concept = cstTopLevelDeclaration.Concept.Node;
 
                 var name = ToAst(concept.Identifier.Node);
-                var typeParameters = Enumerable.Empty<AstTypeParameter>();
+                var typeParameters = concept.TypeParameterList.Node?.TypeParameter.Nodes.Select(ToAst).ToArray() ?? Array.Empty<AstTypeParameter>();
                 var inherits = concept.InheritsList.Node.TypeExpr.Nodes.Select(ToAst).ToArray();
                 var members = concept.MemberDeclaration.Nodes.Select(ToAst).ToArray();
 
