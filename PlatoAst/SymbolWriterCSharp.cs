@@ -1,7 +1,9 @@
 ﻿using Parakeet;
 using System.Collections.Generic;
 using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace PlatoAst
 {
@@ -59,6 +61,46 @@ namespace PlatoAst
                 return Write(typeRef.Name).Write(" ");
         }
 
+        public string GetBestCandidate(FunctionArgConstraint fac)
+        {
+            var name = fac.Name;
+            var members = Ops.GetMembers(name, fac.ArgumentCount);
+            
+            // NOTE: this is not accurate. It has to do with the actual type based on
+            // the position. 
+            var position = fac.Position;
+
+            var tmp = members.Where(pair => pair.Item1.Kind == "concept").ToList();
+            if (tmp.Count == 0)
+                tmp = members.ToList();
+
+            if (tmp.Count > 0)
+            {
+                var t = tmp[0].Item1;
+                var m = tmp[0].Item2;
+                if (m is FieldDefSymbol fds)
+                {
+                    return fds.Type?.Name ?? "dynamic";
+                }
+
+                if (m is MethodDefSymbol mds)
+                {
+                    if (position >= mds.Function.Parameters.Count)
+                    {
+                        Debug.WriteLine($"Position {position} out of range for {mds.Function}, probably auto-mapped?");
+                        position = mds.Function.Parameters.Count - 1;
+                    }
+
+                    var param = mds.Function.Parameters[position];
+
+                    // TODO: right now dynamic is just code for must be inferred later. 
+                    return param.Type?.Name ?? "dynamic";
+                }
+            }
+
+            return "Any";
+        }
+
         public SymbolWriterCSharp WriteConstraints(FunctionSymbol function)
         {
             var lookup = Constraints.GetParameterConstraints(function);
@@ -71,10 +113,11 @@ namespace PlatoAst
                 {
                     if (c is FunctionArgConstraint fac)
                     {
+                        /*
                         var name = fac.Name;
                         var members = Ops.GetMembers(name, fac.ArgumentCount);
-                        r = r.WriteLine($"// Candidate types for {kv.Key.Name}: ");
 
+                        r = r.WriteLine($"// Candidate types for {kv.Key.Name}: ");
                         var temp = string.Join(" | ", members.Select(m => $"{m.Item1.Name}.{m.Item2.Name}"));
                         
                         // TODO: reduce the candidate list. 
@@ -84,6 +127,10 @@ namespace PlatoAst
                             r = r.WriteLine($"// Any");
                         else
                             r = r.WriteLine($"// {temp}");
+                        */
+
+                        var best = GetBestCandidate(fac);
+                        r = r.WriteLine($"// {kv.Key.Name} Best type is {best}");
                     }
                 }
             }
@@ -102,6 +149,10 @@ namespace PlatoAst
                     .Write(function.Body);
             }
 
+            // TODO: 
+            // var node = function.Location;
+
+            // function.T
             return WriteTypeDecl(function.Type, "void")
                 .Write(function.Name)
                 .Write("(")
@@ -110,7 +161,6 @@ namespace PlatoAst
                 .WriteConstraints(function)
                 .Write(function.Body);
         }
-
 
         public SymbolWriterCSharp WriteCommaList(IEnumerable<Symbol> symbols)
         {
@@ -140,6 +190,22 @@ namespace PlatoAst
             }
 
             return r;
+        }
+
+        public SymbolWriterCSharp Write(TypeDefSymbol typeDef)
+        {
+            if (typeDef.Kind == "concept")
+            {
+                var fullName = $"{typeDef.Name}<Self>";
+                return Write("interface ").Write(fullName).Write(" where ")
+                    .WriteLine($"Self : {fullName}")
+                    .WriteBlock(typeDef.Members, false);
+            }
+            else 
+            //if (typeDef.Kind == "type")
+            {
+                return Write("class ").WriteLine(typeDef.Name).WriteBlock(typeDef.Members, false);
+            }
         }
 
         public SymbolWriterCSharp Write(Symbol value)
@@ -201,8 +267,8 @@ namespace PlatoAst
                     return WriteRegion(region.Children);
 
                 case TypeDefSymbol typeDef:
-                    return Write("class ").WriteLine(typeDef.Name).WriteBlock(typeDef.Members, false);
-                   
+                    return Write(typeDef);
+                
                 case TypeRefSymbol typeRef:
                     throw new NotImplementedException("Type references are supposed to be handled in a function");
 

@@ -38,7 +38,7 @@ namespace PlatoAst
                 AstTree = astBuilder(CstTree);
                 TypeDeclarations = AstTree.GetAllTypes().ToList();
                 SymbolResolver.CreateTypeDefs(TypeDeclarations);
-                TypeDefs = SymbolResolver.TypeDefs;
+                TypeDefs = SymbolResolver.TypeDefs.ToList();
                 Operations = new Operations(TypeDefs);
                 ModuleFunctions = TypeDefs.Where(td => td.Kind == "module")
                     .SelectMany(td => td.Methods.Select(m => m.Function));

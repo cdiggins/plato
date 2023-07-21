@@ -16,13 +16,12 @@ namespace PlatoAst
             BindPredefinedSymbols();
         }
 
-        public Scope Scope { get; set; } = new Scope(null, null);
-        
-        // TODO: 
-        // public Scope TypeBindingsScope { get; set; } = new Scope(null, null);
-        
-        public List<TypeDefSymbol> TypeDefs { get; } = new List<TypeDefSymbol>();
+        public Scope ValueBindingsScope { get; set; } = new Scope(null, null);
+        public Scope TypeBindingsScope { get; set; } = new Scope(null, null);
+        public Dictionary<Symbol, AstNode> SymbolsToNames = new Dictionary<Symbol, AstNode>();
 
+        public IEnumerable<TypeDefSymbol> TypeDefs => SymbolsToNames.Keys.OfType<TypeDefSymbol>();
+        
         public void BindPredefinedSymbols()
         {
             BindPredefined("intrinsic");
@@ -30,48 +29,54 @@ namespace PlatoAst
 
         public void BindPredefined(string name)
         {
-            Bind(name, new PredefinedSymbol(name, Scope));
+            BindValue(name, new PredefinedSymbol(null, name));
         }
 
-        public T Bind<T>(string name, T value) where T : Symbol
+        public T BindValue<T>(string name, T value) where T : Symbol
         {
-            Scope = Scope.Bind(name, value);
+            ValueBindingsScope = ValueBindingsScope.Bind(name, value);
+            return value;
+        }
+
+        public T BindType<T>(string name, T value) where T : Symbol
+        {
+            TypeBindingsScope = TypeBindingsScope.Bind(name, value);
             return value;
         }
 
         public FunctionGroupSymbol BindFunctionToGroup(string name, MemberDefSymbol method)
         {
-            var val = Scope.GetValue(name);
+            var val = ValueBindingsScope.GetValue(name);
 
             if (val is FunctionGroupSymbol group)
             {
-                return Bind(name, group.Add(method));
+                return BindValue(name, group.Add(method));
             }
 
             var fgs = new FunctionGroupSymbol(new[] { method }, method.Name);
-            return Bind(name, fgs);
+            return BindValue(name, fgs);
         }
 
         public RefSymbol GetValue(AstNode location, Scope scope, string name)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new Exception("Invalid variable name");
-            var sym = Scope.GetValue(name);
+            var sym = ValueBindingsScope.GetValue(name);
             if (sym == null)
                 throw new Exception($"Could not find symbol {name}");
             if (sym is DefSymbol ds)
-                return new RefSymbol(location, scope, ds);
+                return new RefSymbol(ds);
             throw new NotImplementedException();
         }
 
-        public TypeRefSymbol Resolve(AstTypeNode astTypeNode)
+        public TypeRefSymbol ResolveType(AstTypeNode astTypeNode)
         {
             if (astTypeNode == null)
                 return null;
             var name = astTypeNode.Name;
             if (string.IsNullOrWhiteSpace(name))
                 throw new Exception("Invalid variable name");
-            var sym = Scope.GetValue(name);
+            var sym = TypeBindingsScope.GetValue(name);
             if (sym == null)
                 return null;
 
@@ -80,13 +85,13 @@ namespace PlatoAst
             // TODO: Won't resolve if the type is a parimitive. Will al nameso potneitally conflict with values.
             // I think I need to have type versus value scopes (or name binding). 
 
-            return new TypeRefSymbol(astTypeNode, Scope, tds, astTypeNode.TypeArguments.Select(Resolve).ToArray());
+            return new TypeRefSymbol(tds, astTypeNode.TypeArguments.Select(ResolveType).ToArray());
         }
 
         public ParameterSymbol Resolve(AstParameterDeclaration astParameterDeclaration)
         {
-            return Bind(astParameterDeclaration.Name,
-                new ParameterSymbol(astParameterDeclaration, Scope, astParameterDeclaration.Name, null));
+            return BindValue(astParameterDeclaration.Name,
+                new ParameterSymbol(astParameterDeclaration.Name, null));
         }
 
         // This is not a pure function. It updates the scope every time a new value is bound
@@ -98,12 +103,12 @@ namespace PlatoAst
             switch (node)
             {
                 case AstTypeNode astTypeNode:
-                    return Resolve(astTypeNode);
+                    return ResolveType(astTypeNode);
 
                 case AstAssign astAssign:
-                    return Bind(astAssign.Var,
-                        new AssignmentSymbol(node, Scope,
-                            GetValue(node, Scope, astAssign.Var),
+                    return BindValue(astAssign.Var,
+                        new AssignmentSymbol(
+                            GetValue(node, ValueBindingsScope, astAssign.Var),
                             Resolve(astAssign.Value)));
 
                 case AstBlock astBlock:
@@ -122,13 +127,13 @@ namespace PlatoAst
                     return Region(node, new [] { astReturn.Value });
 
                 case AstConditional astConditional:
-                    return Scoped(() => new ConditionalSymbol(node, Scope,
+                    return Scoped(() => new ConditionalSymbol(
                         Resolve(astConditional.Condition),
                         Resolve(astConditional.IfTrue),
                         Resolve(astConditional.IfFalse)));
 
                 case AstConstant astConstant1:
-                    return new LiteralSymbol(node, Scope, astConstant1.Value);
+                    return new LiteralSymbol(astConstant1.Value);
 
                 case AstContinue astContinue:
                     return NoValueSymbol;
@@ -137,25 +142,25 @@ namespace PlatoAst
                     return Scoped(() => Resolve(astExpressionStatement.Expression));
                     
                 case AstIdentifier astIdentifier:
-                    return GetValue(node, Scope, astIdentifier.Text);
+                    return GetValue(node, ValueBindingsScope, astIdentifier.Text);
 
                 case AstInvoke astInvoke:
                 {
                     var args = astInvoke.AstArguments.Select((a,i) => 
-                        new ArgumentSymbol(a, Scope, Resolve(a), i)).ToArray();
+                        new ArgumentSymbol(Resolve(a), i)).ToArray();
                     var func = Resolve(astInvoke.Function);
 
                     // TODO: we need to figure out what function it is because really 
                     // evaluating a name will gives us a method group!
-                    return new FunctionResultSymbol(node, Scope, func, args);
+                    return new FunctionResultSymbol(func, args);
                 }
 
                 case AstLambda astLambda:
                 {
-                    Scope = Scope.Push();
+                    ValueBindingsScope = ValueBindingsScope.Push();
                     var ps = astLambda.Parameters.Select(Resolve).ToArray();
                     var body = Resolve(astLambda.Body);
-                    var r = new FunctionSymbol(astLambda, Scope, "__lambda__",
+                    var r = new FunctionSymbol("__lambda__",
                         Primitives.Lambda.ToRef, body, ps);
                     return r;
                 }
@@ -164,8 +169,8 @@ namespace PlatoAst
                     return NoValueSymbol;
 
                 case AstVarDef astVarDef:
-                    return Bind(astVarDef.Name, 
-                        new VariableSymbol(node, Scope, astVarDef.Name, Resolve(astVarDef.Type)));
+                    return BindValue(astVarDef.Name, 
+                        new VariableSymbol(astVarDef.Name, ResolveType(astVarDef.Type)));
 
                 case AstLoop astLoop:
                     return Region(node, new[] { astLoop.Condition, astLoop.Body });
@@ -179,24 +184,32 @@ namespace PlatoAst
             // Typedefs and their methods are all at the top-level
             foreach (var astTypeDeclaration in types)
             {
-                var typeDef = new TypeDefSymbol(astTypeDeclaration, Scope);
-                TypeDefs.Add(typeDef);
+                var typeDef = new TypeDefSymbol(astTypeDeclaration.Kind, astTypeDeclaration.Name);
+                SymbolsToNames.Add(typeDef, astTypeDeclaration);
+                BindType(typeDef.Name, typeDef);
+            }
 
-                // TODO: maybe put this into the type scope. 
-                Bind(typeDef.Name, typeDef);
+            foreach (var typeDef in TypeDefs.ToList())
+            {
+                var astTypeDeclaration = SymbolsToNames[typeDef] as AstTypeDeclaration;
 
-                foreach (var m in typeDef.AstTypeDeclaration.Members)
+                // TODO: I'm not sure about this. 
+                BindValue(typeDef.Name, typeDef);
+
+                foreach (var m in astTypeDeclaration.Members)
                 {
                     if (m is AstFieldDeclaration fd)
                     {
-                        var fDef = new FieldDefSymbol(fd, Scope, Resolve(fd.Type), fd.Name);
+                        var fDef = new FieldDefSymbol(ResolveType(fd.Type), fd.Name);
                         typeDef.Fields.Add(fDef);
+                        SymbolsToNames.Add(fDef, fd);
                         BindFunctionToGroup(fDef.Name, fDef);
                     }
                     else if (m is AstMethodDeclaration md)
                     {
-                        var mDef = new MethodDefSymbol(md, Scope, Resolve(md.Type), md.Name);
+                        var mDef = new MethodDefSymbol(ResolveType(md.Type), md.Name);
                         typeDef.Methods.Add(mDef);
+                        SymbolsToNames.Add(mDef, md);
                         BindFunctionToGroup(mDef.Name, mDef);
                     }
                     else
@@ -208,23 +221,30 @@ namespace PlatoAst
             }
 
             // Foreach type def create the members 
-            foreach (var typeDef in TypeDefs)
+            foreach (var kv in SymbolsToNames)
             {
-                Scope = Scope.Push();
+                var typeDef = kv.Key as TypeDefSymbol;
+                var typeDecl = kv.Value as AstTypeDeclaration;
+
+                if (typeDef == null)
+                    continue; 
+
+                ValueBindingsScope = ValueBindingsScope.Push();
+                TypeBindingsScope = TypeBindingsScope.Push();
 
                 // TODO: should go into the type scope.
-                foreach (var tp in typeDef.AstTypeDeclaration.TypeParameters)
+                foreach (var tp in typeDecl.TypeParameters)
                 {
-                    var tpd = new TypeParameterDefSymbol(tp, Scope, tp.Name);
-                    Bind(tpd.Name, tpd);
+                    var tpd = new TypeParameterDefSymbol(tp, ValueBindingsScope, tp.Name);
+                    BindType(tpd.Name, tpd);
                     typeDef.TypeParameters.Add(tpd);
                 }
 
                 // For each method in the type 
                 foreach (var method in typeDef.Methods)
                 {
-                    Scope = Scope.Push();
-                    var location = method.Location as AstMethodDeclaration;
+                    ValueBindingsScope = ValueBindingsScope.Push();
+                    var location = SymbolsToNames[method] as AstMethodDeclaration;
                     var list = new List<ParameterSymbol>();
                     foreach (var p in location.Parameters)
                     {
@@ -233,42 +253,43 @@ namespace PlatoAst
                     }
 
                     var body = Resolve(location.Body);
-                    var f = new FunctionSymbol(location, Scope, method.Name, method.Type, body, list.ToArray());
+                    var f = new FunctionSymbol(method.Name, method.Type, body, list.ToArray());
                     method.Function = f;
-                    Scope = Scope.Pop();
+                    ValueBindingsScope = ValueBindingsScope.Pop();
                 }
 
-                Scope = Scope.Pop();
+                ValueBindingsScope = ValueBindingsScope.Pop();
+                TypeBindingsScope = TypeBindingsScope.Pop();
             }
 
             // Foreach type add the inherited and the implemented type.
             foreach (var td in TypeDefs)
             {
-                var astTypeDecl = td.AstTypeDeclaration;
+                var astTypeDecl = SymbolsToNames[td] as AstTypeDeclaration;
                 
                 foreach (var inheritedType in astTypeDecl.Inherits)
-                    td.Inherits.Add(Resolve(inheritedType));
+                    td.Inherits.Add(ResolveType(inheritedType));
 
                 foreach (var implementedType in astTypeDecl.Implements)
-                    td.Inherits.Add(Resolve(implementedType));
+                    td.Inherits.Add(ResolveType(implementedType));
             }
         }
 
         public T Scoped<T>(Func<T> f) where T : Symbol
         {
-            Scope = Scope.Push();
+            ValueBindingsScope = ValueBindingsScope.Push();
             var r = f();
-            Scope = Scope.Pop();
+            ValueBindingsScope = ValueBindingsScope.Pop();
             return r;
         }
 
         public RegionSymbol Region(AstNode location, IEnumerable<AstNode> nodes, bool scoped = true)
         {
             if (scoped)
-                Scope = Scope.Push();
-            var r = new RegionSymbol(location, Scope, nodes.Select(Resolve).ToArray());
+                ValueBindingsScope = ValueBindingsScope.Push();
+            var r = new RegionSymbol(nodes.Select(Resolve).ToArray());
             if (scoped)
-                Scope = Scope.Pop();
+                ValueBindingsScope = ValueBindingsScope.Pop();
             return r;
         }
 

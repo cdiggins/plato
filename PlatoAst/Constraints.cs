@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PlatoAst
@@ -14,7 +15,11 @@ namespace PlatoAst
         public string Name { get; }
 
         public FunctionArgConstraint(string name, Symbol fs, int position, int count)
-            => (Name, Function, Position, ArgumentCount) = (name, fs, position, count);
+        {
+            (Name, Function, Position, ArgumentCount) = (name, fs, position, count);
+            if (Position >= ArgumentCount)
+                throw new Exception("Internal error!");
+        }
 
         public override string ToString()
             => $"Argument:{Function}({Position}/{ArgumentCount})";

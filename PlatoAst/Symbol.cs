@@ -4,20 +4,9 @@ using System.Linq;
 
 namespace PlatoAst
 {
-    /// <summary>
-    /// An abstract value has a location, scope, and a type.
-    /// It is used for type-checking, and method overload resolution. 
-    /// </summary>
     public abstract class Symbol
     {
-        public AstNode Location { get; }
-        public Scope Scope { get; }
-
-        protected Symbol(AstNode location, Scope scope)
-            => (Location, Scope) = (location, scope);
-
         public override string ToString() => $"{GetType().Name}";
-
         public abstract IReadOnlyList<Symbol> Children { get; }
     }
 
@@ -26,7 +15,7 @@ namespace PlatoAst
         public IReadOnlyList<MemberDefSymbol> Functions { get;  }
         
         public FunctionGroupSymbol(IEnumerable<MemberDefSymbol> functions, string name)
-            : base(null, null, null, name)
+            : base(null, name)
         {
             Functions = functions.ToList();
             foreach (var f in Functions)
@@ -43,8 +32,7 @@ namespace PlatoAst
 
     public abstract class DefSymbol : Symbol
     {
-        protected DefSymbol(AstNode location, Scope scope, TypeRefSymbol type, string name)
-            : base(location, scope)
+        protected DefSymbol(TypeRefSymbol type, string name)
         {
             Type = type;
             Name = name;
@@ -69,8 +57,7 @@ namespace PlatoAst
         public string Name => Def.Name;
         public int Id => Def.Id;
 
-        public RefSymbol(AstNode location, Scope scope, DefSymbol def)
-            : base(location, scope)
+        public RefSymbol(DefSymbol def)
         {
             Def = def ?? 
                   throw new Exception("No definition provided");
@@ -84,12 +71,7 @@ namespace PlatoAst
 
     public class NoValueSymbol : Symbol
     {
-        public NoValueSymbol() 
-            : base(null, null)
-        { }
-
         public static NoValueSymbol Instance = new NoValueSymbol();
-
         public override IReadOnlyList<Symbol> Children => Array.Empty<Symbol>();
     }
 
@@ -97,15 +79,14 @@ namespace PlatoAst
     {
         public override IReadOnlyList<Symbol> Children { get; }
 
-        public RegionSymbol(AstNode location, Scope scope, params Symbol[] children)
-            : base(location, scope)
+        public RegionSymbol(params Symbol[] children)
             => Children = children;
     }
 
     public class PredefinedSymbol : DefSymbol
     {
-        public PredefinedSymbol(string name, Scope scope)
-            : base(null, scope, null, name)
+        public PredefinedSymbol(TypeRefSymbol typeRef, string name)
+            : base(typeRef, name)
         { }
 
         public override IReadOnlyList<Symbol> Children => Array.Empty<Symbol>();
@@ -126,13 +107,12 @@ namespace PlatoAst
         public static TypeDefSymbol Any = Create("Any");
 
         public static TypeDefSymbol Create(string name)
-            => new TypeDefSymbol(name);
+            => new TypeDefSymbol("primitive", name);
     }
 
     public class TypeDefSymbol : DefSymbol
     {
-        public string Kind => AstTypeDeclaration?.Kind ?? "unknown";
-        public AstTypeDeclaration AstTypeDeclaration => Location as AstTypeDeclaration;
+        public string Kind { get; }
         public List<MethodDefSymbol> Methods { get; } = new List<MethodDefSymbol>();
         public List<FieldDefSymbol> Fields { get; } = new List<FieldDefSymbol>();
         public List<TypeParameterDefSymbol> TypeParameters { get; } = new List<TypeParameterDefSymbol>();
@@ -140,13 +120,11 @@ namespace PlatoAst
         public List<TypeRefSymbol> Implements { get; } = new List<TypeRefSymbol>();
         public Dictionary<string, AstNode> Lookup { get; } = new Dictionary<string, AstNode>();
 
-        public TypeDefSymbol(AstTypeDeclaration location, Scope scope)
-            : base(location, scope, null, location.Name)
-        { }
-
-        public TypeDefSymbol(string name)
-            : base(null, null, null, name)
-        { }
+        public TypeDefSymbol(string kind, string name)
+            : base(null, name)
+        {
+            Kind = kind;
+        }
 
         public override IReadOnlyList<Symbol> Children 
             => Array.Empty<Symbol>().Concat(Methods).Concat(Fields).Concat(TypeParameters).ToList();
@@ -154,7 +132,7 @@ namespace PlatoAst
         public IEnumerable<MemberDefSymbol> Members => Enumerable.Empty<MemberDefSymbol>()
             .Concat(Methods).Concat(Fields);
 
-        public TypeRefSymbol ToRef => new TypeRefSymbol(null, null, this);
+        public TypeRefSymbol ToRef => new TypeRefSymbol(this);
     }
 
     public class ConditionalSymbol : Symbol
@@ -163,8 +141,7 @@ namespace PlatoAst
         public Symbol IfTrue { get; }
         public Symbol IfFalse { get; }
 
-        public ConditionalSymbol(AstNode location, Scope scope, Symbol condition, Symbol ifTrue, Symbol ifFalse)
-            : base(location, scope)
+        public ConditionalSymbol(Symbol condition, Symbol ifTrue, Symbol ifFalse)
         {
             // TODO: unify the types of ifTrue and ifFalse
             Condition = condition;
@@ -180,8 +157,8 @@ namespace PlatoAst
         public IReadOnlyList<ParameterSymbol> Parameters { get; }
         public Symbol Body { get; }
 
-        public FunctionSymbol(AstNode location, Scope scope, string name, TypeRefSymbol returnType, Symbol body, params ParameterSymbol[] parameters)
-            : base(location, scope, returnType, name)
+        public FunctionSymbol(string name, TypeRefSymbol returnType, Symbol body, params ParameterSymbol[] parameters)
+            : base(returnType, name)
         {
             Parameters = parameters;
             Body = body;
@@ -193,8 +170,8 @@ namespace PlatoAst
 
     public class ParameterSymbol : DefSymbol
     {   
-        public ParameterSymbol(AstNode location, Scope scope, string name, TypeRefSymbol type)
-            : base(location, scope, type, name)
+        public ParameterSymbol(string name, TypeRefSymbol type)
+            : base(type, name)
         { }
 
         public override IReadOnlyList<Symbol> Children
@@ -203,8 +180,8 @@ namespace PlatoAst
 
     public class VariableSymbol : DefSymbol
     {
-        public VariableSymbol(AstNode location, Scope scope, string name, TypeRefSymbol type)
-            : base(location, scope, type, name)
+        public VariableSymbol(string name, TypeRefSymbol type)
+            : base(type, name)
         { }
 
         public override IReadOnlyList<Symbol> Children
@@ -216,8 +193,7 @@ namespace PlatoAst
         public Symbol LValue { get; }
         public Symbol RValue { get; }
 
-        public AssignmentSymbol(AstNode location, Scope scope, Symbol lvalue, Symbol rvalue)
-            : base(location, scope)
+        public AssignmentSymbol(Symbol lvalue, Symbol rvalue)
             => (LValue, RValue) = (lvalue, rvalue);
 
         public override IReadOnlyList<Symbol> Children => new [] { LValue, RValue };
@@ -228,8 +204,7 @@ namespace PlatoAst
         public Symbol Original { get; }
         public int Position { get; }
 
-        public ArgumentSymbol(AstNode location, Scope scope, Symbol original, int position)
-            : base(location, scope)
+        public ArgumentSymbol(Symbol original, int position)
         {
             Original = original;
             Position = position;
@@ -241,10 +216,7 @@ namespace PlatoAst
     public class LiteralSymbol : Symbol
     {
         public object Value { get; }
-        public LiteralSymbol(AstNode location, Scope scope, object value)
-            : base(location, scope)
-            => Value = value;
-
+        public LiteralSymbol(object value) => Value = value;
         public override IReadOnlyList<Symbol> Children => Array.Empty<Symbol>();
     }
 
@@ -252,8 +224,7 @@ namespace PlatoAst
     {
         public Symbol Function { get; }
         public IReadOnlyList<ArgumentSymbol> Args { get; }
-        public FunctionResultSymbol(AstNode location, Scope scope, Symbol function, params ArgumentSymbol[] args)
-            : base(location, scope)
+        public FunctionResultSymbol(Symbol function, params ArgumentSymbol[] args)
         {
             Function = function;
             Args = args;
@@ -268,8 +239,7 @@ namespace PlatoAst
         public TypeDefSymbol Def { get; }
         public IReadOnlyList<TypeRefSymbol> TypeArgs { get; }
 
-        public TypeRefSymbol(AstNode location, Scope scope, TypeDefSymbol def, params TypeRefSymbol[] args)
-            : base(location, scope)
+        public TypeRefSymbol(TypeDefSymbol def, params TypeRefSymbol[] args)
         {
             // TODO resinstate once type resolution is guaranteed. 
             //if (def == null) throw new Exception("Type not found");
@@ -291,20 +261,20 @@ namespace PlatoAst
         }
 
         public static TypeRefSymbol CreateFunction(params TypeRefSymbol[] types)
-            => new TypeRefSymbol(null, null, Primitives.Function, types);
+            => new TypeRefSymbol(Primitives.Function, types);
     }
 
     public abstract class MemberDefSymbol : DefSymbol
     {
-        protected MemberDefSymbol(AstNode location, Scope scope, TypeRefSymbol type, string name)
-            : base(location, scope, type, name)
+        protected MemberDefSymbol(TypeRefSymbol type, string name)
+            : base(type, name)
         { }
     }
 
     public class FieldDefSymbol : MemberDefSymbol
     {
-        public FieldDefSymbol(AstNode location, Scope scope, TypeRefSymbol type, string name)
-            : base(location, scope, type, name)
+        public FieldDefSymbol(TypeRefSymbol type, string name)
+            : base(type, name)
         { }
 
         public override IReadOnlyList<Symbol> Children
@@ -316,8 +286,7 @@ namespace PlatoAst
         // TODO: find a better way to deal with this. Don't make it mutable.
         public FunctionSymbol Function { get; set; }
 
-        public MethodDefSymbol(AstNode location, Scope scope, TypeRefSymbol type, string name)
-            : base(location, scope, type, name)
+        public MethodDefSymbol(TypeRefSymbol type, string name) : base(type, name)
         { }
 
         public override IReadOnlyList<Symbol> Children
@@ -327,7 +296,7 @@ namespace PlatoAst
     public class TypeParameterDefSymbol : MemberDefSymbol
     {
         public TypeParameterDefSymbol(AstNode location, Scope scope, string name)
-            : base(location, scope, Primitives.TypeParameter.ToRef, name)
+            : base(Primitives.TypeParameter.ToRef, name)
         { }
 
         public override IReadOnlyList<Symbol> Children
