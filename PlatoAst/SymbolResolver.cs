@@ -99,7 +99,7 @@ namespace PlatoAst
         public ParameterSymbol Resolve(AstParameterDeclaration astParameterDeclaration)
         {
             return BindValue(astParameterDeclaration.Name,
-                new ParameterSymbol(astParameterDeclaration.Name, null));
+                new ParameterSymbol(astParameterDeclaration.Name, ResolveType(astParameterDeclaration.Type)));
         }
 
         // This is not a pure function. It updates the scope every time a new value is bound
