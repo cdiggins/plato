@@ -4,12 +4,6 @@ using System.Linq;
 
 namespace PlatoAst
 {
-    public class TypeResolver
-    {
-        // Compute the constraints 
-        // Compute the type for each parameter.
-        // 
-    }
 
     /// <summary>
     /// Used primarily to figure out what each name means, and what the type of each expression is.
@@ -81,7 +75,7 @@ namespace PlatoAst
         {
             if (astTypeNode == null)
                 return null;
-            var name = astTypeNode.Name;
+            var name = astTypeNode.Name.Trim();
             if (string.IsNullOrWhiteSpace(name))
                 throw new Exception("Invalid variable name");
             var sym = TypeBindingsScope.GetValue(name);
@@ -201,7 +195,14 @@ namespace PlatoAst
             {
                 var astTypeDeclaration = SymbolsToNames[typeDef] as AstTypeDeclaration;
 
-                // TODO: I'm not sure about this. 
+                foreach (var tp in astTypeDeclaration.TypeParameters)
+                {
+                    var tpd = new TypeParameterDefSymbol(tp, ValueBindingsScope, tp.Name);
+                    BindType(tpd.Name, tpd);
+                    typeDef.TypeParameters.Add(tpd);
+                }
+
+                // TODO: I'm not sure about this. It exists because I use the name a s a cosntructor and function.  
                 BindValue(typeDef.Name, typeDef);
 
                 foreach (var m in astTypeDeclaration.Members)

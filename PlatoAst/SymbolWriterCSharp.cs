@@ -61,6 +61,7 @@ namespace PlatoAst
                 return Write(typeRef.Name).Write(" ");
         }
 
+        // TODO: this should be moved the type resolver. 
         public string GetBestCandidate(FunctionArgConstraint fac)
         {
             var name = fac.Name;
@@ -85,10 +86,9 @@ namespace PlatoAst
 
                 if (m is MethodDefSymbol mds)
                 {
-                    if (position >= mds.Function.Parameters.Count)
+                    if (fac.ArgumentCount > mds.Function.Parameters.Count)
                     {
-                        Debug.WriteLine($"Position {position} out of range for {mds.Function}, probably auto-mapped?");
-                        position = mds.Function.Parameters.Count - 1;
+                        return "outofrange";
                     }
 
                     var param = mds.Function.Parameters[position];

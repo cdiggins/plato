@@ -115,11 +115,8 @@ module Comparable
     function Between(v, i) = i.Contains(v);
 }
 
-module Booleans
+module Boolean
 {
-    function And(a, b) = intrinsic;
-    function Or(a, b) = intrinsic;
-    function Not(a) = intrinsic;
     function XOr(a, b) = a ? !b : b;
     function NAnd(a, b) = !And(a, b);
     function NOr(a, b) = !Or(a, b);

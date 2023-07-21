@@ -294,10 +294,10 @@ namespace PlatoAst
             => new [] { Function };
     }
 
-    public class TypeParameterDefSymbol : MemberDefSymbol
+    public class TypeParameterDefSymbol : TypeDefSymbol
     {
         public TypeParameterDefSymbol(AstNode location, Scope scope, string name)
-            : base(Primitives.TypeParameter.ToRef, name)
+            : base("typeparameter", name)
         { }
 
         public override IReadOnlyList<Symbol> Children
