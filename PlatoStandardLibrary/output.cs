@@ -13,9 +13,7 @@ interface Measure<Self> where Self : Measure<Self>
 interface Numerical<Self> where Self : Numerical<Self>
 {
     public static Self FromNumber(Number x)
-    // ParameterSymbol=x$962:Number = Argument:RefSymbol=FromNumber$151:(1/2), Argument:RefSymbol=FieldValues$194:(0/1)
-    // x Best type is outofrange
-    // x Best type is Self
+    // ParameterSymbol=x$1418:Number Argument:RefSymbol=FromNumber$157:(1/2), Argument:RefSymbol=FieldValues$200:(0/1)
     {
         return FromNumber(FieldValues(x), x);
     }
@@ -24,8 +22,7 @@ interface Numerical<Self> where Self : Numerical<Self>
 interface Magnitude<Self> where Self : Magnitude<Self>
 {
     public static Number Magnitude(Self x)
-    // ParameterSymbol=x$964:Self = Argument:RefSymbol=FieldValues$194:(0/1)
-    // x Best type is Self
+    // ParameterSymbol=x$1420:Self Argument:RefSymbol=FieldValues$200:(0/1)
     {
         return SquareRoot(Sum(Square(FieldValues(x))));
     }
@@ -34,12 +31,8 @@ interface Magnitude<Self> where Self : Magnitude<Self>
 interface Comparable<Self> where Self : Comparable<Self>
 {
     public static Integer Compare(Self a, Self b)
-    // ParameterSymbol=a$966:Self = Argument:RefSymbol=Magnitude$153:(0/1), Argument:RefSymbol=Magnitude$153:(0/1)
-    // a Best type is Self
-    // a Best type is Self
-    // ParameterSymbol=b$967:Self = Argument:RefSymbol=Magnitude$153:(0/1), Argument:RefSymbol=Magnitude$153:(0/1)
-    // b Best type is Self
-    // b Best type is Self
+    // ParameterSymbol=a$1422:Self Argument:RefSymbol=Magnitude$159:(0/1), Argument:RefSymbol=Magnitude$159:(0/1)
+    // ParameterSymbol=b$1423:Self Argument:RefSymbol=Magnitude$159:(0/1), Argument:RefSymbol=Magnitude$159:(0/1)
     {
         return LessThan(Magnitude(a), Magnitude(b)
             ? Negative(1)
@@ -54,10 +47,8 @@ interface Comparable<Self> where Self : Comparable<Self>
 interface Equatable<Self> where Self : Equatable<Self>
 {
     public static Boolean Equals(Self a, Self b)
-    // ParameterSymbol=a$969:Self = Argument:RefSymbol=FieldValues$194:(0/1)
-    // a Best type is Self
-    // ParameterSymbol=b$970:Self = Argument:RefSymbol=FieldValues$194:(0/1)
-    // b Best type is Self
+    // ParameterSymbol=a$1425:Self Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=b$1426:Self Argument:RefSymbol=FieldValues$200:(0/1)
     {
         return All(Equals(FieldValues(a), FieldValues(b)));
     }
@@ -66,51 +57,41 @@ interface Equatable<Self> where Self : Equatable<Self>
 interface Arithmetic<Self> where Self : Arithmetic<Self>
 {
     public static Self Add(Self self, Self other)
-    // ParameterSymbol=self$972:Self = Argument:RefSymbol=FieldValues$194:(0/1)
-    // self Best type is Self
-    // ParameterSymbol=other$973:Self = Argument:RefSymbol=FieldValues$194:(0/1)
-    // other Best type is Self
+    // ParameterSymbol=self$1428:Self Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=other$1429:Self Argument:RefSymbol=FieldValues$200:(0/1)
     {
         return Add(FieldValues(self), FieldValues(other));
     }
 
     public static Self Negative(Self self)
-    // ParameterSymbol=self$975:Self = Argument:RefSymbol=FieldValues$194:(0/1)
-    // self Best type is Self
+    // ParameterSymbol=self$1431:Self Argument:RefSymbol=FieldValues$200:(0/1)
     {
         return Negative(FieldValues(self));
     }
 
     public static Self Reciprocal(Self self)
-    // ParameterSymbol=self$977:Self = Argument:RefSymbol=FieldValues$194:(0/1)
-    // self Best type is Self
+    // ParameterSymbol=self$1433:Self Argument:RefSymbol=FieldValues$200:(0/1)
     {
         return Reciprocal(FieldValues(self));
     }
 
     public static Self Multiply(Self self, Self other)
-    // ParameterSymbol=self$979:Self = Argument:RefSymbol=FieldValues$194:(0/1)
-    // self Best type is Self
-    // ParameterSymbol=other$980:Self = Argument:RefSymbol=FieldValues$194:(0/1)
-    // other Best type is Self
+    // ParameterSymbol=self$1435:Self Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=other$1436:Self Argument:RefSymbol=FieldValues$200:(0/1)
     {
         return Add(FieldValues(self), FieldValues(other));
     }
 
     public static Self Divide(Self self, Self other)
-    // ParameterSymbol=self$982:Self = Argument:RefSymbol=FieldValues$194:(0/1)
-    // self Best type is Self
-    // ParameterSymbol=other$983:Self = Argument:RefSymbol=FieldValues$194:(0/1)
-    // other Best type is Self
+    // ParameterSymbol=self$1438:Self Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=other$1439:Self Argument:RefSymbol=FieldValues$200:(0/1)
     {
         return Divide(FieldValues(self), FieldValues(other));
     }
 
     public static Self Modulo(Self self, Self other)
-    // ParameterSymbol=self$985:Self = Argument:RefSymbol=FieldValues$194:(0/1)
-    // self Best type is Self
-    // ParameterSymbol=other$986:Self = Argument:RefSymbol=FieldValues$194:(0/1)
-    // other Best type is Self
+    // ParameterSymbol=self$1441:Self Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=other$1442:Self Argument:RefSymbol=FieldValues$200:(0/1)
     {
         return Modulo(FieldValues(self), FieldValues(other));
     }
@@ -119,46 +100,36 @@ interface Arithmetic<Self> where Self : Arithmetic<Self>
 interface ScalarArithmetic<Self> where Self : ScalarArithmetic<Self>
 {
     public static Self Add(Self self, T scalar)
-    // ParameterSymbol=self$989:Self = Argument:RefSymbol=FieldValues$194:(0/1)
-    // self Best type is Self
-    // ParameterSymbol=scalar$990:T = Argument:RefSymbol=Add$172:(1/2)
-    // scalar Best type is Self
+    // ParameterSymbol=self$1445:Self Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=scalar$1446:T Argument:RefSymbol=Add$178:(1/2)
     {
         return Add(FieldValues(self), scalar);
     }
 
     public static Self Subtract(Self self, T scalar)
-    // ParameterSymbol=self$992:Self = Argument:RefSymbol=Add$172:(0/2)
-    // self Best type is Self
-    // ParameterSymbol=scalar$993:T = Argument:RefSymbol=Negative$161:(0/1)
-    // scalar Best type is Self
+    // ParameterSymbol=self$1448:Self Argument:RefSymbol=Add$178:(0/2)
+    // ParameterSymbol=scalar$1449:T Argument:RefSymbol=Negative$167:(0/1)
     {
         return Add(self, Negative(scalar));
     }
 
     public static Self Multiply(Self self, T scalar)
-    // ParameterSymbol=self$995:Self = Argument:RefSymbol=FieldValues$194:(0/1)
-    // self Best type is Self
-    // ParameterSymbol=scalar$996:T = Argument:RefSymbol=Multiply$176:(1/2)
-    // scalar Best type is Self
+    // ParameterSymbol=self$1451:Self Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=scalar$1452:T Argument:RefSymbol=Multiply$182:(1/2)
     {
         return Multiply(FieldValues(self), scalar);
     }
 
     public static Self Divide(Self self, T scalar)
-    // ParameterSymbol=self$998:Self = Argument:RefSymbol=Multiply$176:(0/2)
-    // self Best type is Self
-    // ParameterSymbol=scalar$999:T = Argument:RefSymbol=Reciprocal$163:(0/1)
-    // scalar Best type is Self
+    // ParameterSymbol=self$1454:Self Argument:RefSymbol=Multiply$182:(0/2)
+    // ParameterSymbol=scalar$1455:T Argument:RefSymbol=Reciprocal$169:(0/1)
     {
         return Multiply(self, Reciprocal(scalar));
     }
 
     public static Self Modulo(Self self, T scalar)
-    // ParameterSymbol=self$1001:Self = Argument:RefSymbol=FieldValues$194:(0/1)
-    // self Best type is Self
-    // ParameterSymbol=scalar$1002:T = Argument:RefSymbol=Modulo$180:(1/2)
-    // scalar Best type is Self
+    // ParameterSymbol=self$1457:Self Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=scalar$1458:T Argument:RefSymbol=Modulo$186:(1/2)
     {
         return Modulo(FieldValues(self), scalar);
     }
@@ -167,21 +138,21 @@ interface ScalarArithmetic<Self> where Self : ScalarArithmetic<Self>
 interface Boolean<Self> where Self : Boolean<Self>
 {
     public static Self And(Self a, Self b)
-    // ParameterSymbol=a$1004:Self = 
-    // ParameterSymbol=b$1005:Self = 
+    // ParameterSymbol=a$1460:Self 
+    // ParameterSymbol=b$1461:Self 
     {
         return intrinsic;
     }
 
     public static void Or(Self a, Self b)
-    // ParameterSymbol=a$1007:Self = 
-    // ParameterSymbol=b$1008:Self = 
+    // ParameterSymbol=a$1463:Self 
+    // ParameterSymbol=b$1464:Self 
     {
         return intrinsic;
     }
 
     public static Self Not(Self a)
-    // ParameterSymbol=a$1010:Self = 
+    // ParameterSymbol=a$1466:Self 
     {
         return intrinsic;
     }
@@ -205,7 +176,7 @@ interface Value<Self> where Self : Value<Self>
     }
 
     public static Array FieldValues(Self self)
-    // ParameterSymbol=self$1015:Self = 
+    // ParameterSymbol=self$1471:Self 
     {
         return intrinsic;
     }
@@ -236,7 +207,7 @@ interface Value<Self> where Self : Value<Self>
     }
 
     public static void ToString(Self x)
-    // ParameterSymbol=x$1022:Self = 
+    // ParameterSymbol=x$1478:Self 
     {
         return JoinStrings(FieldValues, ,);
     }
@@ -245,7 +216,7 @@ interface Value<Self> where Self : Value<Self>
 interface Array<Self> where Self : Array<Self>
 {
     public static T At(Index n)
-    // ParameterSymbol=n$1025:Index = 
+    // ParameterSymbol=n$1481:Index 
     null
     Count Count
 }
@@ -801,204 +772,146 @@ class BinomialDistribution
 class Interval
 {
     public static void Size(var x)
-    // ParameterSymbol=x$1027: = Argument:RefSymbol=Max$845:(0/1), Argument:RefSymbol=Min$843:(0/1)
-    // x Best type is T
-    // x Best type is T
+    // ParameterSymbol=x$1483: Argument:RefSymbol=Max$1303:(0/1), Argument:RefSymbol=Min$1301:(0/1)
     {
         return Subtract(Max(x), Min(x));
     }
 
     public static void IsEmpty(var x)
-    // ParameterSymbol=x$1029: = Argument:RefSymbol=Min$843:(0/1), Argument:RefSymbol=Max$845:(0/1)
-    // x Best type is T
-    // x Best type is T
+    // ParameterSymbol=x$1485: Argument:RefSymbol=Min$1301:(0/1), Argument:RefSymbol=Max$1303:(0/1)
     {
         return GreaterThanOrEquals(Min(x), Max(x));
     }
 
     public static void Lerp(var x, var amount)
-    // ParameterSymbol=x$1031: = Argument:RefSymbol=Min$843:(0/1), Argument:RefSymbol=Max$845:(0/1)
-    // x Best type is T
-    // x Best type is T
-    // ParameterSymbol=amount$1032: = Argument:RefSymbol=Subtract$174:(1/2), Argument:RefSymbol=Multiply$176:(1/2)
-    // amount Best type is T
-    // amount Best type is Self
+    // ParameterSymbol=x$1487: Argument:RefSymbol=Min$1301:(0/1), Argument:RefSymbol=Max$1303:(0/1)
+    // ParameterSymbol=amount$1488: Argument:RefSymbol=Subtract$180:(1/2), Argument:RefSymbol=Multiply$182:(1/2)
     {
         return Multiply(Min(x), Add(Subtract(1, amount), Multiply(Max(x), amount)));
     }
 
     public static void InverseLerp(var x, var value)
-    // ParameterSymbol=x$1034: = Argument:RefSymbol=Min$843:(0/1), Argument:RefSymbol=Size$663:(0/1)
-    // x Best type is T
-    // x Best type is Size2D
-    // ParameterSymbol=value$1035: = Argument:RefSymbol=Subtract$174:(0/2)
-    // value Best type is Self
+    // ParameterSymbol=x$1490: Argument:RefSymbol=Min$1301:(0/1), Argument:RefSymbol=Size$1121:(0/1)
+    // ParameterSymbol=value$1491: Argument:RefSymbol=Subtract$180:(0/2)
     {
         return Divide(Subtract(value, Min(x)), Size(x));
     }
 
     public static void Negate(var x)
-    // ParameterSymbol=x$1037: = Argument:RefSymbol=Max$845:(0/1), Argument:RefSymbol=Min$843:(0/1)
-    // x Best type is T
-    // x Best type is T
+    // ParameterSymbol=x$1493: Argument:RefSymbol=Max$1303:(0/1), Argument:RefSymbol=Min$1301:(0/1)
     {
-        return Interval(Negative(Max(x)), Negative(Min(x)));
+        return Tuple(Negative(Max(x)), Negative(Min(x)));
     }
 
     public static void Reverse(var x)
-    // ParameterSymbol=x$1039: = Argument:RefSymbol=Max$845:(0/1), Argument:RefSymbol=Min$843:(0/1)
-    // x Best type is T
-    // x Best type is T
+    // ParameterSymbol=x$1495: Argument:RefSymbol=Max$1303:(0/1), Argument:RefSymbol=Min$1301:(0/1)
     {
-        return Interval(Max(x), Min(x));
+        return Tuple(Max(x), Min(x));
     }
 
     public static void Resize(var x, var size)
-    // ParameterSymbol=x$1041: = Argument:RefSymbol=Min$843:(0/1), Argument:RefSymbol=Min$843:(0/1)
-    // x Best type is T
-    // x Best type is T
-    // ParameterSymbol=size$1042: = Argument:RefSymbol=Add$172:(1/2)
-    // size Best type is Self
+    // ParameterSymbol=x$1497: Argument:RefSymbol=Min$1301:(0/1), Argument:RefSymbol=Min$1301:(0/1)
+    // ParameterSymbol=size$1498: Argument:RefSymbol=Add$178:(1/2)
     {
-        return Interval(Min(x), Add(Min(x), size));
+        return Tuple(Min(x), Add(Min(x), size));
     }
 
     public static void Center(var x)
-    // ParameterSymbol=x$1044: = Argument:RefSymbol=Lerp$667:(0/2)
-    // x Best type is dynamic
+    // ParameterSymbol=x$1500: Argument:RefSymbol=Lerp$1125:(0/2)
     {
         return Lerp(x, 0.5);
     }
 
     public static void Contains(var x, var value)
-    // ParameterSymbol=x$1046: = Argument:RefSymbol=Min$843:(0/1), Argument:RefSymbol=Max$845:(0/1)
-    // x Best type is T
-    // x Best type is T
-    // ParameterSymbol=value$1047: = Argument:RefSymbol=And$182:(0/2), Argument:RefSymbol=LessThanOrEquals$837:(0/2)
-    // value Best type is Self
-    // value Best type is dynamic
+    // ParameterSymbol=x$1502: Argument:RefSymbol=Min$1301:(0/1), Argument:RefSymbol=Max$1303:(0/1)
+    // ParameterSymbol=value$1503: Argument:RefSymbol=And$188:(0/2), Argument:RefSymbol=LessThanOrEquals$1295:(0/2)
     {
         return LessThanOrEquals(Min(x), And(value, LessThanOrEquals(value, Max(x))));
     }
 
     public static void Contains(var x, var other)
-    // ParameterSymbol=x$1049: = Argument:RefSymbol=Min$843:(0/1)
-    // x Best type is T
-    // ParameterSymbol=other$1050: = Argument:RefSymbol=Min$843:(0/1), Argument:RefSymbol=Max$845:(0/1)
-    // other Best type is T
-    // other Best type is T
+    // ParameterSymbol=x$1505: Argument:RefSymbol=Min$1301:(0/1)
+    // ParameterSymbol=other$1506: Argument:RefSymbol=Min$1301:(0/1), Argument:RefSymbol=Max$1303:(0/1)
     {
         return LessThanOrEquals(Min(x), And(Min(other), GreaterThanOrEquals(Max, Max(other))));
     }
 
     public static void Overlaps(var x, var y)
-    // ParameterSymbol=x$1052: = Argument:RefSymbol=Clamp$763:(0/2)
-    // x Best type is dynamic
-    // ParameterSymbol=y$1053: = Argument:RefSymbol=Clamp$763:(1/2)
-    // y Best type is dynamic
+    // ParameterSymbol=x$1508: Argument:RefSymbol=Clamp$1221:(0/2)
+    // ParameterSymbol=y$1509: Argument:RefSymbol=Clamp$1221:(1/2)
     {
         return Not(IsEmpty(Clamp(x, y)));
     }
 
     public static void Split(var x, var t)
-    // ParameterSymbol=x$1055: = Argument:RefSymbol=Left$689:(0/2), Argument:RefSymbol=Right$691:(0/2)
-    // x Best type is dynamic
-    // x Best type is dynamic
-    // ParameterSymbol=t$1056: = Argument:RefSymbol=Left$689:(1/2), Argument:RefSymbol=Right$691:(1/2)
-    // t Best type is dynamic
-    // t Best type is dynamic
+    // ParameterSymbol=x$1511: Argument:RefSymbol=Left$1147:(0/2), Argument:RefSymbol=Right$1149:(0/2)
+    // ParameterSymbol=t$1512: Argument:RefSymbol=Left$1147:(1/2), Argument:RefSymbol=Right$1149:(1/2)
     {
-        return Interval(Left(x, t), Right(x, t));
+        return Tuple(Left(x, t), Right(x, t));
     }
 
     public static void Split(var x)
-    // ParameterSymbol=x$1058: = Argument:RefSymbol=Split$687:(0/2)
-    // x Best type is dynamic
+    // ParameterSymbol=x$1514: Argument:RefSymbol=Split$1145:(0/2)
     {
         return Split(x, 0.5);
     }
 
     public static void Left(var x, var t)
-    // ParameterSymbol=x$1060: = Argument:RefSymbol=Lerp$667:(0/2)
-    // x Best type is dynamic
-    // ParameterSymbol=t$1061: = Argument:RefSymbol=Lerp$667:(1/2)
-    // t Best type is dynamic
+    // ParameterSymbol=x$1516: Argument:RefSymbol=Lerp$1125:(0/2)
+    // ParameterSymbol=t$1517: Argument:RefSymbol=Lerp$1125:(1/2)
     {
-        return Interval(Min, Lerp(x, t));
+        return Tuple(Min, Lerp(x, t));
     }
 
     public static void Right(var x, var t)
-    // ParameterSymbol=x$1063: = Argument:RefSymbol=Lerp$667:(0/2), Argument:RefSymbol=Max$845:(0/1)
-    // x Best type is dynamic
-    // x Best type is T
-    // ParameterSymbol=t$1064: = Argument:RefSymbol=Lerp$667:(1/2)
-    // t Best type is dynamic
+    // ParameterSymbol=x$1519: Argument:RefSymbol=Lerp$1125:(0/2), Argument:RefSymbol=Max$1303:(0/1)
+    // ParameterSymbol=t$1520: Argument:RefSymbol=Lerp$1125:(1/2)
     {
-        return Interval(Lerp(x, t), Max(x));
+        return Tuple(Lerp(x, t), Max(x));
     }
 
     public static void MoveTo(var x, var t)
-    // ParameterSymbol=x$1066: = Argument:RefSymbol=Size$663:(0/1)
-    // x Best type is Size2D
-    // ParameterSymbol=t$1067: = Argument:RefSymbol=Interval$132:(0/2), Argument:RefSymbol=Add$172:(0/2)
-    // t Best type is Any
-    // t Best type is Self
+    // ParameterSymbol=x$1522: Argument:RefSymbol=Size$1121:(0/1)
+    // ParameterSymbol=t$1523: Argument:RefSymbol=Tuple$1:(0/2), Argument:RefSymbol=Add$178:(0/2)
     {
-        return Interval(t, Add(t, Size(x)));
+        return Tuple(t, Add(t, Size(x)));
     }
 
     public static void LeftHalf(var x)
-    // ParameterSymbol=x$1069: = Argument:RefSymbol=Left$689:(0/2)
-    // x Best type is dynamic
+    // ParameterSymbol=x$1525: Argument:RefSymbol=Left$1147:(0/2)
     {
         return Left(x, 0.5);
     }
 
     public static void RightHalf(var x)
-    // ParameterSymbol=x$1071: = Argument:RefSymbol=Right$691:(0/2)
-    // x Best type is dynamic
+    // ParameterSymbol=x$1527: Argument:RefSymbol=Right$1149:(0/2)
     {
         return Right(x, 0.5);
     }
 
     public static void HalfSize(var x)
-    // ParameterSymbol=x$1073: = Argument:RefSymbol=Size$663:(0/1)
-    // x Best type is Size2D
+    // ParameterSymbol=x$1529: Argument:RefSymbol=Size$1121:(0/1)
     {
         return Half(Size(x));
     }
 
     public static void Recenter(var x, var c)
-    // ParameterSymbol=x$1075: = Argument:RefSymbol=HalfSize$699:(0/1), Argument:RefSymbol=HalfSize$699:(0/1)
-    // x Best type is dynamic
-    // x Best type is dynamic
-    // ParameterSymbol=c$1076: = Argument:RefSymbol=Subtract$174:(0/2), Argument:RefSymbol=Add$172:(0/2)
-    // c Best type is Self
-    // c Best type is Self
+    // ParameterSymbol=x$1531: Argument:RefSymbol=HalfSize$1157:(0/1), Argument:RefSymbol=HalfSize$1157:(0/1)
+    // ParameterSymbol=c$1532: Argument:RefSymbol=Subtract$180:(0/2), Argument:RefSymbol=Add$178:(0/2)
     {
-        return Interval(Subtract(c, HalfSize(x)), Add(c, HalfSize(x)));
+        return Tuple(Subtract(c, HalfSize(x)), Add(c, HalfSize(x)));
     }
 
     public static void Clamp(var x, var y)
-    // ParameterSymbol=x$1078: = Argument:RefSymbol=Clamp$763:(0/2), Argument:RefSymbol=Clamp$763:(0/2)
-    // x Best type is dynamic
-    // x Best type is dynamic
-    // ParameterSymbol=y$1079: = Argument:RefSymbol=Min$843:(0/1), Argument:RefSymbol=Max$845:(0/1)
-    // y Best type is T
-    // y Best type is T
+    // ParameterSymbol=x$1534: Argument:RefSymbol=Clamp$1221:(0/2), Argument:RefSymbol=Clamp$1221:(0/2)
+    // ParameterSymbol=y$1535: Argument:RefSymbol=Min$1301:(0/1), Argument:RefSymbol=Max$1303:(0/1)
     {
-        return Interval(Clamp(x, Min(y)), Clamp(x, Max(y)));
+        return Tuple(Clamp(x, Min(y)), Clamp(x, Max(y)));
     }
 
     public static void Clamp(var x, var value)
-    // ParameterSymbol=x$1081: = Argument:RefSymbol=Min$843:(0/1), Argument:RefSymbol=Min$843:(0/1), Argument:RefSymbol=Max$845:(0/1), Argument:RefSymbol=Max$845:(0/1)
-    // x Best type is T
-    // x Best type is T
-    // x Best type is T
-    // x Best type is T
-    // ParameterSymbol=value$1082: = Argument:RefSymbol=LessThan$831:(0/2), Argument:RefSymbol=GreaterThan$839:(0/2)
-    // value Best type is dynamic
-    // value Best type is dynamic
+    // ParameterSymbol=x$1537: Argument:RefSymbol=Min$1301:(0/1), Argument:RefSymbol=Min$1301:(0/1), Argument:RefSymbol=Max$1303:(0/1), Argument:RefSymbol=Max$1303:(0/1)
+    // ParameterSymbol=value$1538: Argument:RefSymbol=LessThan$1289:(0/2), Argument:RefSymbol=GreaterThan$1297:(0/2)
     {
         return LessThan(value, Min(x)
             ? Min(x)
@@ -1010,237 +923,211 @@ class Interval
     }
 
     public static void Between(var x, var value)
-    // ParameterSymbol=x$1084: = Argument:RefSymbol=Min$843:(0/1), Argument:RefSymbol=Max$845:(0/1)
-    // x Best type is T
-    // x Best type is T
-    // ParameterSymbol=value$1085: = Argument:RefSymbol=GreaterThanOrEquals$841:(0/2), Argument:RefSymbol=LessThanOrEquals$837:(0/2)
-    // value Best type is dynamic
-    // value Best type is dynamic
+    // ParameterSymbol=x$1540: Argument:RefSymbol=Min$1301:(0/1), Argument:RefSymbol=Max$1303:(0/1)
+    // ParameterSymbol=value$1541: Argument:RefSymbol=GreaterThanOrEquals$1299:(0/2), Argument:RefSymbol=LessThanOrEquals$1295:(0/2)
     {
         return GreaterThanOrEquals(value, And(Min(x), LessThanOrEquals(value, Max(x))));
     }
 
     public static void Unit()
     {
-        return Interval(0, 1);
+        return Tuple(0, 1);
     }
 
 }
 class Vector
 {
     public static void Sum(var v)
-    // ParameterSymbol=v$1088: = Argument:RefSymbol=Aggregate$869:(0/3)
-    // v Best type is dynamic
+    // ParameterSymbol=v$1544: Argument:RefSymbol=Aggregate$1325:(0/3)
     {
         return Aggregate(v, 0, Add);
     }
 
     public static void SumSquares(var v)
-    // ParameterSymbol=v$1090: = Argument:RefSymbol=Square$757:(0/1)
-    // v Best type is dynamic
+    // ParameterSymbol=v$1546: Argument:RefSymbol=Square$1215:(0/1)
     {
         return Aggregate(Square(v), 0, Add);
     }
 
     public static void LengthSquared(var v)
-    // ParameterSymbol=v$1092: = Argument:RefSymbol=SumSquares$713:(0/1)
-    // v Best type is dynamic
+    // ParameterSymbol=v$1548: Argument:RefSymbol=SumSquares$1171:(0/1)
     {
         return SumSquares(v);
     }
 
     public static void Length(var v)
-    // ParameterSymbol=v$1094: = Argument:RefSymbol=LengthSquared$715:(0/1)
-    // v Best type is dynamic
+    // ParameterSymbol=v$1550: Argument:RefSymbol=LengthSquared$1173:(0/1)
     {
         return SquareRoot(LengthSquared(v));
     }
 
     public static void Dot(var v1, var v2)
-    // ParameterSymbol=v1$1096: = Argument:RefSymbol=Multiply$176:(0/2)
-    // v1 Best type is Self
-    // ParameterSymbol=v2$1097: = Argument:RefSymbol=Multiply$176:(1/2)
-    // v2 Best type is Self
+    // ParameterSymbol=v1$1552: Argument:RefSymbol=Multiply$182:(0/2)
+    // ParameterSymbol=v2$1553: Argument:RefSymbol=Multiply$182:(1/2)
     {
         return Sum(Multiply(v1, v2));
     }
 
 }
-class Trig
+class Numerical
 {
     public static void Cos(var x)
-    // ParameterSymbol=x$1099: = 
+    // ParameterSymbol=x$1555: 
     {
         return intrinsic;
     }
 
     public static void Sin(var x)
-    // ParameterSymbol=x$1101: = 
+    // ParameterSymbol=x$1557: 
     {
         return intrinsic;
     }
 
     public static void Tan(var x)
-    // ParameterSymbol=x$1103: = 
+    // ParameterSymbol=x$1559: 
     {
         return intrinsic;
     }
 
     public static void Acos(var x)
-    // ParameterSymbol=x$1105: = 
+    // ParameterSymbol=x$1561: 
     {
         return intrinsic;
     }
 
     public static void Asin(var x)
-    // ParameterSymbol=x$1107: = 
+    // ParameterSymbol=x$1563: 
     {
         return intrinsic;
     }
 
     public static void Atan(var x)
-    // ParameterSymbol=x$1109: = 
+    // ParameterSymbol=x$1565: 
     {
         return intrinsic;
     }
 
     public static void Cosh(var x)
-    // ParameterSymbol=x$1111: = 
+    // ParameterSymbol=x$1567: 
     {
         return intrinsic;
     }
 
     public static void Sinh(var x)
-    // ParameterSymbol=x$1113: = 
+    // ParameterSymbol=x$1569: 
     {
         return intrinsic;
     }
 
     public static void Tanh(var x)
-    // ParameterSymbol=x$1115: = 
+    // ParameterSymbol=x$1571: 
     {
         return intrinsic;
     }
 
     public static void Acosh(var x)
-    // ParameterSymbol=x$1117: = 
+    // ParameterSymbol=x$1573: 
     {
         return intrinsic;
     }
 
     public static void Asinh(var x)
-    // ParameterSymbol=x$1119: = 
+    // ParameterSymbol=x$1575: 
     {
         return intrinsic;
     }
 
     public static void Atanh(var x)
-    // ParameterSymbol=x$1121: = 
+    // ParameterSymbol=x$1577: 
     {
         return intrinsic;
     }
 
-}
-class Numerical
-{
     public static void Pow(var x, var y)
-    // ParameterSymbol=x$1123: = 
-    // ParameterSymbol=y$1124: = 
+    // ParameterSymbol=x$1579: 
+    // ParameterSymbol=y$1580: 
     {
         return intrinsic;
     }
 
     public static void Log(var x, var y)
-    // ParameterSymbol=x$1126: = 
-    // ParameterSymbol=y$1127: = 
+    // ParameterSymbol=x$1582: 
+    // ParameterSymbol=y$1583: 
     {
         return intrinsic;
     }
 
     public static void NaturalLog(var x)
-    // ParameterSymbol=x$1129: = 
+    // ParameterSymbol=x$1585: 
     {
         return intrinsic;
     }
 
     public static void NaturalPower(var x)
-    // ParameterSymbol=x$1131: = 
+    // ParameterSymbol=x$1587: 
     {
         return intrinsic;
     }
 
     public static void SquareRoot(var x)
-    // ParameterSymbol=x$1133: = Argument:RefSymbol=Pow$745:(0/2)
-    // x Best type is dynamic
+    // ParameterSymbol=x$1589: Argument:RefSymbol=Pow$1203:(0/2)
     {
         return Pow(x, 0.5);
     }
 
     public static void CubeRoot(var x)
-    // ParameterSymbol=x$1135: = Argument:RefSymbol=Pow$745:(0/2)
-    // x Best type is dynamic
+    // ParameterSymbol=x$1591: Argument:RefSymbol=Pow$1203:(0/2)
     {
         return Pow(x, 0.5);
     }
 
     public static void Square(var x)
-    // ParameterSymbol=x$1137: = 
+    // ParameterSymbol=x$1593: 
     {
         return Multiply(Value, Value);
     }
 
     public static void Clamp(var x, var min, var max)
-    // ParameterSymbol=x$1139: = Argument:RefSymbol=Clamp$763:(0/2)
-    // x Best type is dynamic
-    // ParameterSymbol=min$1140: = Argument:RefSymbol=Interval$132:(0/2)
-    // min Best type is Any
-    // ParameterSymbol=max$1141: = Argument:RefSymbol=Interval$132:(1/2)
-    // max Best type is Any
+    // ParameterSymbol=x$1595: Argument:RefSymbol=Clamp$1221:(0/2)
+    // ParameterSymbol=min$1596: Argument:RefSymbol=Interval$133:(0/2)
+    // ParameterSymbol=max$1597: Argument:RefSymbol=Interval$133:(1/2)
     {
         return Clamp(x, Interval(min, max));
     }
 
     public static void Clamp(var x, var i)
-    // ParameterSymbol=x$1143: = Argument:RefSymbol=Clamp$763:(1/2)
-    // x Best type is dynamic
-    // ParameterSymbol=i$1144: = Argument:RefSymbol=Clamp$763:(0/2)
-    // i Best type is dynamic
+    // ParameterSymbol=x$1599: Argument:RefSymbol=Clamp$1221:(1/2)
+    // ParameterSymbol=i$1600: Argument:RefSymbol=Clamp$1221:(0/2)
     {
         return Clamp(i, x);
     }
 
     public static void Clamp(var x)
-    // ParameterSymbol=x$1146: = Argument:RefSymbol=Clamp$763:(0/3)
-    // x Best type is outofrange
+    // ParameterSymbol=x$1602: Argument:RefSymbol=Clamp$1221:(0/3)
     {
         return Clamp(x, 0, 1);
     }
 
     public static void PlusOne(var x)
-    // ParameterSymbol=x$1148: = Argument:RefSymbol=Add$172:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1604: Argument:RefSymbol=Add$178:(0/2)
     {
         return Add(x, 1);
     }
 
     public static void MinusOne(var x)
-    // ParameterSymbol=x$1150: = Argument:RefSymbol=Subtract$174:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1606: Argument:RefSymbol=Subtract$180:(0/2)
     {
         return Subtract(x, 1);
     }
 
     public static void FromOne(var x)
-    // ParameterSymbol=x$1152: = Argument:RefSymbol=Subtract$174:(1/2)
-    // x Best type is T
+    // ParameterSymbol=x$1608: Argument:RefSymbol=Subtract$180:(1/2)
     {
         return Subtract(1, x);
     }
 
     public static void Sign(var x)
-    // ParameterSymbol=x$1154: = Argument:RefSymbol=LessThan$831:(0/2), Argument:RefSymbol=GreaterThan$839:(0/2)
-    // x Best type is dynamic
-    // x Best type is dynamic
+    // ParameterSymbol=x$1610: Argument:RefSymbol=LessThan$1289:(0/2), Argument:RefSymbol=GreaterThan$1297:(0/2)
     {
         return LessThan(x, 0
             ? Negative(1)
@@ -1252,7 +1139,7 @@ class Numerical
     }
 
     public static void Abs(var x)
-    // ParameterSymbol=x$1156: = 
+    // ParameterSymbol=x$1612: 
     {
         return LessThan(Value, 0
             ? Negative(Value)
@@ -1261,195 +1148,163 @@ class Numerical
     }
 
     public static void Half(var x)
-    // ParameterSymbol=x$1158: = Argument:RefSymbol=Divide$178:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1614: Argument:RefSymbol=Divide$184:(0/2)
     {
         return Divide(x, 2);
     }
 
     public static void Third(var x)
-    // ParameterSymbol=x$1160: = Argument:RefSymbol=Divide$178:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1616: Argument:RefSymbol=Divide$184:(0/2)
     {
         return Divide(x, 3);
     }
 
     public static void Quarter(var x)
-    // ParameterSymbol=x$1162: = Argument:RefSymbol=Divide$178:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1618: Argument:RefSymbol=Divide$184:(0/2)
     {
         return Divide(x, 4);
     }
 
     public static void Fifth(var x)
-    // ParameterSymbol=x$1164: = Argument:RefSymbol=Divide$178:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1620: Argument:RefSymbol=Divide$184:(0/2)
     {
         return Divide(x, 5);
     }
 
     public static void Sixth(var x)
-    // ParameterSymbol=x$1166: = Argument:RefSymbol=Divide$178:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1622: Argument:RefSymbol=Divide$184:(0/2)
     {
         return Divide(x, 6);
     }
 
     public static void Seventh(var x)
-    // ParameterSymbol=x$1168: = Argument:RefSymbol=Divide$178:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1624: Argument:RefSymbol=Divide$184:(0/2)
     {
         return Divide(x, 7);
     }
 
     public static void Eighth(var x)
-    // ParameterSymbol=x$1170: = Argument:RefSymbol=Divide$178:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1626: Argument:RefSymbol=Divide$184:(0/2)
     {
         return Divide(x, 8);
     }
 
     public static void Ninth(var x)
-    // ParameterSymbol=x$1172: = Argument:RefSymbol=Divide$178:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1628: Argument:RefSymbol=Divide$184:(0/2)
     {
         return Divide(x, 9);
     }
 
     public static void Tenth(var x)
-    // ParameterSymbol=x$1174: = Argument:RefSymbol=Divide$178:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1630: Argument:RefSymbol=Divide$184:(0/2)
     {
         return Divide(x, 10);
     }
 
     public static void Sixteenth(var x)
-    // ParameterSymbol=x$1176: = Argument:RefSymbol=Divide$178:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1632: Argument:RefSymbol=Divide$184:(0/2)
     {
         return Divide(x, 16);
     }
 
     public static void Hundredth(var x)
-    // ParameterSymbol=x$1178: = Argument:RefSymbol=Divide$178:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1634: Argument:RefSymbol=Divide$184:(0/2)
     {
         return Divide(x, 100);
     }
 
     public static void Thousandth(var x)
-    // ParameterSymbol=x$1180: = Argument:RefSymbol=Divide$178:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1636: Argument:RefSymbol=Divide$184:(0/2)
     {
         return Divide(x, 1000);
     }
 
     public static void Millionth(var x)
-    // ParameterSymbol=x$1182: = Argument:RefSymbol=Divide$178:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1638: Argument:RefSymbol=Divide$184:(0/2)
     {
         return Divide(x, Divide(1000, 1000));
     }
 
     public static void Billionth(var x)
-    // ParameterSymbol=x$1184: = Argument:RefSymbol=Divide$178:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1640: Argument:RefSymbol=Divide$184:(0/2)
     {
         return Divide(x, Divide(1000, Divide(1000, 1000)));
     }
 
     public static void Hundred(var x)
-    // ParameterSymbol=x$1186: = Argument:RefSymbol=Multiply$176:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1642: Argument:RefSymbol=Multiply$182:(0/2)
     {
         return Multiply(x, 100);
     }
 
     public static void Thousand(var x)
-    // ParameterSymbol=x$1188: = Argument:RefSymbol=Multiply$176:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1644: Argument:RefSymbol=Multiply$182:(0/2)
     {
         return Multiply(x, 1000);
     }
 
     public static void Million(var x)
-    // ParameterSymbol=x$1190: = Argument:RefSymbol=Multiply$176:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1646: Argument:RefSymbol=Multiply$182:(0/2)
     {
         return Multiply(x, Multiply(1000, 1000));
     }
 
     public static void Billion(var x)
-    // ParameterSymbol=x$1192: = Argument:RefSymbol=Multiply$176:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1648: Argument:RefSymbol=Multiply$182:(0/2)
     {
         return Multiply(x, Multiply(1000, Multiply(1000, 1000)));
     }
 
     public static void Twice(var x)
-    // ParameterSymbol=x$1194: = Argument:RefSymbol=Multiply$176:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1650: Argument:RefSymbol=Multiply$182:(0/2)
     {
         return Multiply(x, 2);
     }
 
     public static void Thrice(var x)
-    // ParameterSymbol=x$1196: = Argument:RefSymbol=Multiply$176:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1652: Argument:RefSymbol=Multiply$182:(0/2)
     {
         return Multiply(x, 3);
     }
 
     public static void SmoothStep(var x)
-    // ParameterSymbol=x$1198: = Argument:RefSymbol=Square$757:(0/1), Argument:RefSymbol=Twice$811:(0/1)
-    // x Best type is dynamic
-    // x Best type is dynamic
+    // ParameterSymbol=x$1654: Argument:RefSymbol=Square$1215:(0/1), Argument:RefSymbol=Twice$1269:(0/1)
     {
         return Multiply(Square(x), Subtract(3, Twice(x)));
     }
 
     public static void Pow2(var x)
-    // ParameterSymbol=x$1200: = Argument:RefSymbol=Multiply$176:(0/2), Argument:RefSymbol=Multiply$176:(1/2)
-    // x Best type is Self
-    // x Best type is Self
+    // ParameterSymbol=x$1656: Argument:RefSymbol=Multiply$182:(0/2), Argument:RefSymbol=Multiply$182:(1/2)
     {
         return Multiply(x, x);
     }
 
     public static void Pow3(var x)
-    // ParameterSymbol=x$1202: = Argument:RefSymbol=Multiply$176:(1/2), Argument:RefSymbol=Pow2$817:(0/1)
-    // x Best type is Self
-    // x Best type is dynamic
+    // ParameterSymbol=x$1658: Argument:RefSymbol=Multiply$182:(1/2), Argument:RefSymbol=Pow2$1275:(0/1)
     {
         return Multiply(Pow2(x), x);
     }
 
     public static void Pow4(var x)
-    // ParameterSymbol=x$1204: = Argument:RefSymbol=Multiply$176:(1/2), Argument:RefSymbol=Pow3$819:(0/1)
-    // x Best type is Self
-    // x Best type is dynamic
+    // ParameterSymbol=x$1660: Argument:RefSymbol=Multiply$182:(1/2), Argument:RefSymbol=Pow3$1277:(0/1)
     {
         return Multiply(Pow3(x), x);
     }
 
     public static void Pow5(var x)
-    // ParameterSymbol=x$1206: = Argument:RefSymbol=Multiply$176:(1/2), Argument:RefSymbol=Pow4$821:(0/1)
-    // x Best type is Self
-    // x Best type is dynamic
+    // ParameterSymbol=x$1662: Argument:RefSymbol=Multiply$182:(1/2), Argument:RefSymbol=Pow4$1279:(0/1)
     {
         return Multiply(Pow4(x), x);
     }
 
     public static void Turns(var x)
-    // ParameterSymbol=x$1208: = Argument:RefSymbol=Multiply$176:(0/2)
-    // x Best type is Self
+    // ParameterSymbol=x$1664: Argument:RefSymbol=Multiply$182:(0/2)
     {
         return Multiply(x, Multiply(3.1415926535897, 2));
     }
 
     public static void AlmostZero(var x)
-    // ParameterSymbol=x$1210: = Argument:RefSymbol=Abs$773:(0/1)
-    // x Best type is dynamic
+    // ParameterSymbol=x$1666: Argument:RefSymbol=Abs$1231:(0/1)
     {
         return LessThan(Abs(x), 1E-08);
     }
@@ -1458,28 +1313,22 @@ class Numerical
 class Comparable
 {
     public static void Equals(var a, var b)
-    // ParameterSymbol=a$1212: = Argument:RefSymbol=Compare$155:(0/2)
-    // a Best type is Self
-    // ParameterSymbol=b$1213: = Argument:RefSymbol=Compare$155:(1/2)
-    // b Best type is Self
+    // ParameterSymbol=a$1668: Argument:RefSymbol=Compare$161:(0/2)
+    // ParameterSymbol=b$1669: Argument:RefSymbol=Compare$161:(1/2)
     {
         return Equals(Compare(a, b), 0);
     }
 
     public static void LessThan(var a, var b)
-    // ParameterSymbol=a$1215: = Argument:RefSymbol=Compare$155:(0/2)
-    // a Best type is Self
-    // ParameterSymbol=b$1216: = Argument:RefSymbol=Compare$155:(1/2)
-    // b Best type is Self
+    // ParameterSymbol=a$1671: Argument:RefSymbol=Compare$161:(0/2)
+    // ParameterSymbol=b$1672: Argument:RefSymbol=Compare$161:(1/2)
     {
         return LessThan(Compare(a, b), 0);
     }
 
     public static void Lesser(var a, var b)
-    // ParameterSymbol=a$1218: = Argument:RefSymbol=LessThanOrEquals$837:(0/2)
-    // a Best type is dynamic
-    // ParameterSymbol=b$1219: = Argument:RefSymbol=LessThanOrEquals$837:(1/2)
-    // b Best type is dynamic
+    // ParameterSymbol=a$1674: Argument:RefSymbol=LessThanOrEquals$1295:(0/2)
+    // ParameterSymbol=b$1675: Argument:RefSymbol=LessThanOrEquals$1295:(1/2)
     {
         return LessThanOrEquals(a, b)
             ? a
@@ -1488,10 +1337,8 @@ class Comparable
     }
 
     public static void Greater(var a, var b)
-    // ParameterSymbol=a$1221: = Argument:RefSymbol=GreaterThanOrEquals$841:(0/2)
-    // a Best type is dynamic
-    // ParameterSymbol=b$1222: = Argument:RefSymbol=GreaterThanOrEquals$841:(1/2)
-    // b Best type is dynamic
+    // ParameterSymbol=a$1677: Argument:RefSymbol=GreaterThanOrEquals$1299:(0/2)
+    // ParameterSymbol=b$1678: Argument:RefSymbol=GreaterThanOrEquals$1299:(1/2)
     {
         return GreaterThanOrEquals(a, b)
             ? a
@@ -1500,37 +1347,29 @@ class Comparable
     }
 
     public static void LessThanOrEquals(var a, var b)
-    // ParameterSymbol=a$1224: = Argument:RefSymbol=Compare$155:(0/2)
-    // a Best type is Self
-    // ParameterSymbol=b$1225: = Argument:RefSymbol=Compare$155:(1/2)
-    // b Best type is Self
+    // ParameterSymbol=a$1680: Argument:RefSymbol=Compare$161:(0/2)
+    // ParameterSymbol=b$1681: Argument:RefSymbol=Compare$161:(1/2)
     {
         return LessThanOrEquals(Compare(a, b), 0);
     }
 
     public static void GreaterThan(var a, var b)
-    // ParameterSymbol=a$1227: = Argument:RefSymbol=Compare$155:(0/2)
-    // a Best type is Self
-    // ParameterSymbol=b$1228: = Argument:RefSymbol=Compare$155:(1/2)
-    // b Best type is Self
+    // ParameterSymbol=a$1683: Argument:RefSymbol=Compare$161:(0/2)
+    // ParameterSymbol=b$1684: Argument:RefSymbol=Compare$161:(1/2)
     {
         return GreaterThan(Compare(a, b), 0);
     }
 
     public static void GreaterThanOrEquals(var a, var b)
-    // ParameterSymbol=a$1230: = Argument:RefSymbol=Compare$155:(0/2)
-    // a Best type is Self
-    // ParameterSymbol=b$1231: = Argument:RefSymbol=Compare$155:(1/2)
-    // b Best type is Self
+    // ParameterSymbol=a$1686: Argument:RefSymbol=Compare$161:(0/2)
+    // ParameterSymbol=b$1687: Argument:RefSymbol=Compare$161:(1/2)
     {
         return GreaterThanOrEquals(Compare(a, b), 0);
     }
 
     public static void Min(var a, var b)
-    // ParameterSymbol=a$1233: = Argument:RefSymbol=LessThan$831:(0/2)
-    // a Best type is dynamic
-    // ParameterSymbol=b$1234: = Argument:RefSymbol=LessThan$831:(1/2)
-    // b Best type is dynamic
+    // ParameterSymbol=a$1689: Argument:RefSymbol=LessThan$1289:(0/2)
+    // ParameterSymbol=b$1690: Argument:RefSymbol=LessThan$1289:(1/2)
     {
         return LessThan(a, b)
             ? a
@@ -1539,10 +1378,8 @@ class Comparable
     }
 
     public static void Max(var a, var b)
-    // ParameterSymbol=a$1236: = Argument:RefSymbol=GreaterThan$839:(0/2)
-    // a Best type is dynamic
-    // ParameterSymbol=b$1237: = Argument:RefSymbol=GreaterThan$839:(1/2)
-    // b Best type is dynamic
+    // ParameterSymbol=a$1692: Argument:RefSymbol=GreaterThan$1297:(0/2)
+    // ParameterSymbol=b$1693: Argument:RefSymbol=GreaterThan$1297:(1/2)
     {
         return GreaterThan(a, b)
             ? a
@@ -1551,21 +1388,16 @@ class Comparable
     }
 
     public static void Between(var v, var a, var b)
-    // ParameterSymbol=v$1239: = Argument:RefSymbol=Between$849:(0/2)
-    // v Best type is dynamic
-    // ParameterSymbol=a$1240: = Argument:RefSymbol=Interval$132:(0/2)
-    // a Best type is Any
-    // ParameterSymbol=b$1241: = Argument:RefSymbol=Interval$132:(1/2)
-    // b Best type is Any
+    // ParameterSymbol=v$1695: Argument:RefSymbol=Between$1307:(0/2)
+    // ParameterSymbol=a$1696: Argument:RefSymbol=Interval$133:(0/2)
+    // ParameterSymbol=b$1697: Argument:RefSymbol=Interval$133:(1/2)
     {
         return Between(v, Interval(a, b));
     }
 
     public static void Between(var v, var i)
-    // ParameterSymbol=v$1243: = Argument:RefSymbol=Contains$681:(1/2)
-    // v Best type is dynamic
-    // ParameterSymbol=i$1244: = Argument:RefSymbol=Contains$681:(0/2)
-    // i Best type is dynamic
+    // ParameterSymbol=v$1699: Argument:RefSymbol=Contains$1139:(1/2)
+    // ParameterSymbol=i$1700: Argument:RefSymbol=Contains$1139:(0/2)
     {
         return Contains(i, v);
     }
@@ -1574,9 +1406,8 @@ class Comparable
 class Boolean
 {
     public static void XOr(var a, var b)
-    // ParameterSymbol=a$1246: = 
-    // ParameterSymbol=b$1247: = Argument:RefSymbol=Not$186:(0/1)
-    // b Best type is Self
+    // ParameterSymbol=a$1702: 
+    // ParameterSymbol=b$1703: Argument:RefSymbol=Not$192:(0/1)
     {
         return a
             ? Not(b)
@@ -1585,19 +1416,15 @@ class Boolean
     }
 
     public static void NAnd(var a, var b)
-    // ParameterSymbol=a$1249: = Argument:RefSymbol=And$182:(0/2)
-    // a Best type is Self
-    // ParameterSymbol=b$1250: = Argument:RefSymbol=And$182:(1/2)
-    // b Best type is Self
+    // ParameterSymbol=a$1705: Argument:RefSymbol=And$188:(0/2)
+    // ParameterSymbol=b$1706: Argument:RefSymbol=And$188:(1/2)
     {
         return Not(And(a, b));
     }
 
     public static void NOr(var a, var b)
-    // ParameterSymbol=a$1252: = Argument:RefSymbol=Or$184:(0/2)
-    // a Best type is Self
-    // ParameterSymbol=b$1253: = Argument:RefSymbol=Or$184:(1/2)
-    // b Best type is Self
+    // ParameterSymbol=a$1708: Argument:RefSymbol=Or$190:(0/2)
+    // ParameterSymbol=b$1709: Argument:RefSymbol=Or$190:(1/2)
     {
         return Not(Or(a, b));
     }
@@ -1606,8 +1433,7 @@ class Boolean
 class Equatable
 {
     public static void NotEquals(var x)
-    // ParameterSymbol=x$1255: = Argument:RefSymbol=Equals$829:(0/1)
-    // x Best type is Self
+    // ParameterSymbol=x$1711: Argument:RefSymbol=Equals$1287:(0/1)
     {
         return Not(Equals(x));
     }
@@ -1616,69 +1442,46 @@ class Equatable
 class Array
 {
     public static void Map(var xs, var f)
-    // ParameterSymbol=xs$1257: = Argument:RefSymbol=Count$25:(0/1), Argument:RefSymbol=At$211:(0/2)
-    // xs Best type is Count
-    // xs Best type is outofrange
-    // ParameterSymbol=f$1258: = Invoked:(ArgumentSymbol)
+    // ParameterSymbol=xs$1713: Argument:RefSymbol=Count$26:(0/1), Argument:RefSymbol=At$219:(0/2)
+    // ParameterSymbol=f$1714: Invoked:(ArgumentSymbol)
     {
         return Map(Count(xs), (i) => 
-        // ParameterSymbol=i$1259: = Argument:RefSymbol=At$211:(1/2)
-        // i Best type is outofrange
+        // ParameterSymbol=i$1715: Argument:RefSymbol=At$219:(1/2)
         f(At(xs, i)));
     }
 
-    public static void Map(var n, var f)
-    // ParameterSymbol=n$1262: = Argument:RefSymbol=Array$139:(0/2)
-    // n Best type is Any
-    // ParameterSymbol=f$1263: = Argument:RefSymbol=Array$139:(1/2)
-    // f Best type is Any
-    {
-        return Array(n, f);
-    }
-
     public static void Zip(var xs, var ys, var f)
-    // ParameterSymbol=xs$1265: = Argument:RefSymbol=Count$25:(0/1)
-    // xs Best type is Count
-    // ParameterSymbol=ys$1266: = Argument:RefSymbol=At$211:(0/2)
-    // ys Best type is outofrange
-    // ParameterSymbol=f$1267: = Invoked:(ArgumentSymbol,ArgumentSymbol)
+    // ParameterSymbol=xs$1718: Argument:RefSymbol=Count$26:(0/1)
+    // ParameterSymbol=ys$1719: Argument:RefSymbol=At$219:(0/2)
+    // ParameterSymbol=f$1720: Invoked:(ArgumentSymbol,ArgumentSymbol)
     {
         return Array(Count(xs), (i) => 
-        // ParameterSymbol=i$1268: = Argument:RefSymbol=At$211:(0/1), Argument:RefSymbol=At$211:(1/2)
-        // i Best type is Index
-        // i Best type is outofrange
+        // ParameterSymbol=i$1721: Argument:RefSymbol=At$219:(0/1), Argument:RefSymbol=At$219:(1/2)
         f(At(i), At(ys, i)));
     }
 
     public static void Skip(var xs, var n)
-    // ParameterSymbol=xs$1271: = 
-    // ParameterSymbol=n$1272: = Argument:RefSymbol=Subtract$174:(1/2), Argument:RefSymbol=Subtract$174:(1/2)
-    // n Best type is T
-    // n Best type is T
+    // ParameterSymbol=xs$1724: 
+    // ParameterSymbol=n$1725: Argument:RefSymbol=Subtract$180:(1/2), Argument:RefSymbol=Subtract$180:(1/2)
     {
         return Array(Subtract(Count, n), (i) => 
-        // ParameterSymbol=i$1273: = Argument:RefSymbol=Subtract$174:(0/2)
-        // i Best type is Self
+        // ParameterSymbol=i$1726: Argument:RefSymbol=Subtract$180:(0/2)
         At(Subtract(i, n)));
     }
 
     public static void Take(var xs, var n)
-    // ParameterSymbol=xs$1276: = 
-    // ParameterSymbol=n$1277: = Argument:RefSymbol=Array$139:(0/2)
-    // n Best type is Any
+    // ParameterSymbol=xs$1729: 
+    // ParameterSymbol=n$1730: Argument:RefSymbol=Array$139:(0/2)
     {
         return Array(n, (i) => 
-        // ParameterSymbol=i$1278: = 
+        // ParameterSymbol=i$1731: 
         At);
     }
 
     public static void Aggregate(var xs, var init, var f)
-    // ParameterSymbol=xs$1281: = Argument:RefSymbol=IsEmpty$873:(0/1), Argument:RefSymbol=Rest$871:(0/1)
-    // xs Best type is dynamic
-    // xs Best type is dynamic
-    // ParameterSymbol=init$1282: = Argument:RefSymbol=f$1283:(0/2)
-    // init Best type is Any
-    // ParameterSymbol=f$1283: = Invoked:(ArgumentSymbol,ArgumentSymbol), Invoked:(ArgumentSymbol)
+    // ParameterSymbol=xs$1734: Argument:RefSymbol=IsEmpty$1329:(0/1), Argument:RefSymbol=Rest$1327:(0/1)
+    // ParameterSymbol=init$1735: Argument:RefSymbol=f$1736:(0/2)
+    // ParameterSymbol=f$1736: Invoked:(ArgumentSymbol,ArgumentSymbol), Invoked:(ArgumentSymbol)
     {
         return IsEmpty(xs)
             ? init
@@ -1687,69 +1490,53 @@ class Array
     }
 
     public static void Rest(var xs)
-    // ParameterSymbol=xs$1285: = 
+    // ParameterSymbol=xs$1738: 
     {
         return Skip(1);
     }
 
     public static void IsEmpty(var xs)
-    // ParameterSymbol=xs$1287: = Argument:RefSymbol=Count$25:(0/1)
-    // xs Best type is Count
+    // ParameterSymbol=xs$1740: Argument:RefSymbol=Count$26:(0/1)
     {
         return Equals(Count(xs), 0);
     }
 
     public static void First(var xs)
-    // ParameterSymbol=xs$1289: = Argument:RefSymbol=At$211:(0/2)
-    // xs Best type is outofrange
+    // ParameterSymbol=xs$1742: Argument:RefSymbol=At$219:(0/2)
     {
         return At(xs, 0);
     }
 
     public static void Last(var xs)
-    // ParameterSymbol=xs$1291: = Argument:RefSymbol=At$211:(0/2), Argument:RefSymbol=Count$25:(0/1)
-    // xs Best type is outofrange
-    // xs Best type is Count
+    // ParameterSymbol=xs$1744: Argument:RefSymbol=At$219:(0/2), Argument:RefSymbol=Count$26:(0/1)
     {
         return At(xs, Subtract(Count(xs), 1));
     }
 
     public static void Slice(var xs, var from, var count)
-    // ParameterSymbol=xs$1293: = Argument:RefSymbol=Skip$865:(0/2)
-    // xs Best type is dynamic
-    // ParameterSymbol=from$1294: = Argument:RefSymbol=Skip$865:(1/2)
-    // from Best type is dynamic
-    // ParameterSymbol=count$1295: = Argument:RefSymbol=Take$867:(1/2)
-    // count Best type is dynamic
+    // ParameterSymbol=xs$1746: Argument:RefSymbol=Skip$1321:(0/2)
+    // ParameterSymbol=from$1747: Argument:RefSymbol=Skip$1321:(1/2)
+    // ParameterSymbol=count$1748: Argument:RefSymbol=Take$1323:(1/2)
     {
         return Take(Skip(xs, from), count);
     }
 
     public static void Join(var xs, var sep)
-    // ParameterSymbol=xs$1297: = Argument:RefSymbol=IsEmpty$873:(0/1), Argument:RefSymbol=First$875:(0/1), Argument:RefSymbol=Skip$865:(0/2)
-    // xs Best type is dynamic
-    // xs Best type is dynamic
-    // xs Best type is dynamic
-    // ParameterSymbol=sep$1298: = Argument:RefSymbol=Interpolate$953:(1/3)
-    // sep Best type is outofrange
+    // ParameterSymbol=xs$1750: Argument:RefSymbol=IsEmpty$1329:(0/1), Argument:RefSymbol=First$1331:(0/1), Argument:RefSymbol=Skip$1321:(0/2)
+    // ParameterSymbol=sep$1751: Argument:RefSymbol=Interpolate$1409:(1/3)
     {
         return IsEmpty(xs)
             ? 
             : Add(ToString(First(xs)), Aggregate(Skip(xs, 1), , (acc, cur) => 
-            // ParameterSymbol=acc$1299: = Argument:RefSymbol=Interpolate$953:(0/3)
-            // acc Best type is outofrange
-            // ParameterSymbol=cur$1300: = Argument:RefSymbol=Interpolate$953:(2/3)
-            // cur Best type is outofrange
+            // ParameterSymbol=acc$1752: Argument:RefSymbol=Interpolate$1409:(0/3)
+            // ParameterSymbol=cur$1753: Argument:RefSymbol=Interpolate$1409:(2/3)
             Interpolate(acc, sep, cur)))
         ;
     }
 
     public static void All(var xs, var f)
-    // ParameterSymbol=xs$1303: = Argument:RefSymbol=IsEmpty$873:(0/1), Argument:RefSymbol=First$875:(0/1), Argument:RefSymbol=Rest$871:(0/1)
-    // xs Best type is dynamic
-    // xs Best type is dynamic
-    // xs Best type is dynamic
-    // ParameterSymbol=f$1304: = Invoked:(ArgumentSymbol), Invoked:(ArgumentSymbol)
+    // ParameterSymbol=xs$1756: Argument:RefSymbol=IsEmpty$1329:(0/1), Argument:RefSymbol=First$1331:(0/1), Argument:RefSymbol=Rest$1327:(0/1)
+    // ParameterSymbol=f$1757: Invoked:(ArgumentSymbol), Invoked:(ArgumentSymbol)
     {
         return IsEmpty(xs)
             ? True
@@ -1758,19 +1545,14 @@ class Array
     }
 
     public static void JoinStrings(var xs, var sep)
-    // ParameterSymbol=xs$1306: = Argument:RefSymbol=IsEmpty$873:(0/1), Argument:RefSymbol=First$875:(0/1), Argument:RefSymbol=Rest$871:(0/1)
-    // xs Best type is dynamic
-    // xs Best type is dynamic
-    // xs Best type is dynamic
-    // ParameterSymbol=sep$1307: = 
+    // ParameterSymbol=xs$1759: Argument:RefSymbol=IsEmpty$1329:(0/1), Argument:RefSymbol=First$1331:(0/1), Argument:RefSymbol=Rest$1327:(0/1)
+    // ParameterSymbol=sep$1760: 
     {
         return IsEmpty(xs)
             ? 
             : Add(First(xs), Aggregate(Rest(xs), , (x, acc) => 
-            // ParameterSymbol=x$1308: = Argument:RefSymbol=ToString$206:(0/1)
-            // x Best type is Self
-            // ParameterSymbol=acc$1309: = Argument:RefSymbol=Add$172:(0/2)
-            // acc Best type is Self
+            // ParameterSymbol=x$1761: Argument:RefSymbol=ToString$212:(0/1)
+            // ParameterSymbol=acc$1762: Argument:RefSymbol=Add$178:(0/2)
             Add(acc, Add(, , ToString(x)))))
         ;
     }
@@ -1779,12 +1561,9 @@ class Array
 class Easings
 {
     public static void BlendEaseFunc(var p, var easeIn, var easeOut)
-    // ParameterSymbol=p$1312: = Argument:RefSymbol=LessThan$831:(0/2), Argument:RefSymbol=Multiply$176:(0/2), Argument:RefSymbol=Multiply$176:(0/2)
-    // p Best type is dynamic
-    // p Best type is Self
-    // p Best type is Self
-    // ParameterSymbol=easeIn$1313: = Invoked:(ArgumentSymbol)
-    // ParameterSymbol=easeOut$1314: = Invoked:(ArgumentSymbol)
+    // ParameterSymbol=p$1765: Argument:RefSymbol=LessThan$1289:(0/2), Argument:RefSymbol=Multiply$182:(0/2), Argument:RefSymbol=Multiply$182:(0/2)
+    // ParameterSymbol=easeIn$1766: Invoked:(ArgumentSymbol)
+    // ParameterSymbol=easeOut$1767: Invoked:(ArgumentSymbol)
     {
         return LessThan(p, 0.5
             ? Multiply(0.5, easeIn(Multiply(p, 2)))
@@ -1793,149 +1572,128 @@ class Easings
     }
 
     public static void InvertEaseFunc(var p, var easeIn)
-    // ParameterSymbol=p$1316: = Argument:RefSymbol=Subtract$174:(1/2)
-    // p Best type is T
-    // ParameterSymbol=easeIn$1317: = Invoked:(ArgumentSymbol)
+    // ParameterSymbol=p$1769: Argument:RefSymbol=Subtract$180:(1/2)
+    // ParameterSymbol=easeIn$1770: Invoked:(ArgumentSymbol)
     {
         return Subtract(1, easeIn(Subtract(1, p)));
     }
 
     public static void Linear(var p)
-    // ParameterSymbol=p$1319: = 
+    // ParameterSymbol=p$1772: 
     {
         return p;
     }
 
     public static void QuadraticEaseIn(var p)
-    // ParameterSymbol=p$1321: = Argument:RefSymbol=Pow2$817:(0/1)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1774: Argument:RefSymbol=Pow2$1275:(0/1)
     {
         return Pow2(p);
     }
 
     public static void QuadraticEaseOut(var p)
-    // ParameterSymbol=p$1323: = Argument:RefSymbol=InvertEaseFunc$889:(0/2)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1776: Argument:RefSymbol=InvertEaseFunc$1345:(0/2)
     {
         return InvertEaseFunc(p, QuadraticEaseIn);
     }
 
     public static void QuadraticEaseInOut(var p)
-    // ParameterSymbol=p$1325: = Argument:RefSymbol=BlendEaseFunc$887:(0/3)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1778: Argument:RefSymbol=BlendEaseFunc$1343:(0/3)
     {
         return BlendEaseFunc(p, QuadraticEaseIn, QuadraticEaseOut);
     }
 
     public static void CubicEaseIn(var p)
-    // ParameterSymbol=p$1327: = Argument:RefSymbol=Pow3$819:(0/1)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1780: Argument:RefSymbol=Pow3$1277:(0/1)
     {
         return Pow3(p);
     }
 
     public static void CubicEaseOut(var p)
-    // ParameterSymbol=p$1329: = Argument:RefSymbol=InvertEaseFunc$889:(0/2)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1782: Argument:RefSymbol=InvertEaseFunc$1345:(0/2)
     {
         return InvertEaseFunc(p, CubicEaseIn);
     }
 
     public static void CubicEaseInOut(var p)
-    // ParameterSymbol=p$1331: = Argument:RefSymbol=BlendEaseFunc$887:(0/3)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1784: Argument:RefSymbol=BlendEaseFunc$1343:(0/3)
     {
         return BlendEaseFunc(p, CubicEaseIn, CubicEaseOut);
     }
 
     public static void QuarticEaseIn(var p)
-    // ParameterSymbol=p$1333: = Argument:RefSymbol=Pow4$821:(0/1)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1786: Argument:RefSymbol=Pow4$1279:(0/1)
     {
         return Pow4(p);
     }
 
     public static void QuarticEaseOut(var p)
-    // ParameterSymbol=p$1335: = Argument:RefSymbol=InvertEaseFunc$889:(0/2)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1788: Argument:RefSymbol=InvertEaseFunc$1345:(0/2)
     {
         return InvertEaseFunc(p, QuarticEaseIn);
     }
 
     public static void QuarticEaseInOut(var p)
-    // ParameterSymbol=p$1337: = Argument:RefSymbol=BlendEaseFunc$887:(0/3)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1790: Argument:RefSymbol=BlendEaseFunc$1343:(0/3)
     {
         return BlendEaseFunc(p, QuarticEaseIn, QuarticEaseOut);
     }
 
     public static void QuinticEaseIn(var p)
-    // ParameterSymbol=p$1339: = Argument:RefSymbol=Pow5$823:(0/1)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1792: Argument:RefSymbol=Pow5$1281:(0/1)
     {
         return Pow5(p);
     }
 
     public static void QuinticEaseOut(var p)
-    // ParameterSymbol=p$1341: = Argument:RefSymbol=InvertEaseFunc$889:(0/2)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1794: Argument:RefSymbol=InvertEaseFunc$1345:(0/2)
     {
         return InvertEaseFunc(p, QuinticEaseIn);
     }
 
     public static void QuinticEaseInOut(var p)
-    // ParameterSymbol=p$1343: = Argument:RefSymbol=BlendEaseFunc$887:(0/3)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1796: Argument:RefSymbol=BlendEaseFunc$1343:(0/3)
     {
         return BlendEaseFunc(p, QuinticEaseIn, QuinticEaseOut);
     }
 
     public static void SineEaseIn(var p)
-    // ParameterSymbol=p$1345: = Argument:RefSymbol=InvertEaseFunc$889:(0/2)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1798: Argument:RefSymbol=InvertEaseFunc$1345:(0/2)
     {
         return InvertEaseFunc(p, SineEaseOut);
     }
 
     public static void SineEaseOut(var p)
-    // ParameterSymbol=p$1347: = Argument:RefSymbol=Quarter$779:(0/1)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1800: Argument:RefSymbol=Quarter$1237:(0/1)
     {
         return Sin(Turns(Quarter(p)));
     }
 
     public static void SineEaseInOut(var p)
-    // ParameterSymbol=p$1349: = Argument:RefSymbol=BlendEaseFunc$887:(0/3)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1802: Argument:RefSymbol=BlendEaseFunc$1343:(0/3)
     {
         return BlendEaseFunc(p, SineEaseIn, SineEaseOut);
     }
 
     public static void CircularEaseIn(var p)
-    // ParameterSymbol=p$1351: = Argument:RefSymbol=Pow2$817:(0/1)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1804: Argument:RefSymbol=Pow2$1275:(0/1)
     {
         return FromOne(SquareRoot(FromOne(Pow2(p))));
     }
 
     public static void CircularEaseOut(var p)
-    // ParameterSymbol=p$1353: = Argument:RefSymbol=InvertEaseFunc$889:(0/2)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1806: Argument:RefSymbol=InvertEaseFunc$1345:(0/2)
     {
         return InvertEaseFunc(p, CircularEaseIn);
     }
 
     public static void CircularEaseInOut(var p)
-    // ParameterSymbol=p$1355: = Argument:RefSymbol=BlendEaseFunc$887:(0/3)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1808: Argument:RefSymbol=BlendEaseFunc$1343:(0/3)
     {
         return BlendEaseFunc(p, CircularEaseIn, CircularEaseOut);
     }
 
     public static void ExponentialEaseIn(var p)
-    // ParameterSymbol=p$1357: = Argument:RefSymbol=AlmostZero$827:(0/1), Argument:RefSymbol=MinusOne$767:(0/1)
-    // p Best type is dynamic
-    // p Best type is dynamic
+    // ParameterSymbol=p$1810: Argument:RefSymbol=AlmostZero$1285:(0/1), Argument:RefSymbol=MinusOne$1225:(0/1)
     {
         return AlmostZero(p)
             ? p
@@ -1944,83 +1702,61 @@ class Easings
     }
 
     public static void ExponentialEaseOut(var p)
-    // ParameterSymbol=p$1359: = Argument:RefSymbol=InvertEaseFunc$889:(0/2)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1812: Argument:RefSymbol=InvertEaseFunc$1345:(0/2)
     {
         return InvertEaseFunc(p, ExponentialEaseIn);
     }
 
     public static void ExponentialEaseInOut(var p)
-    // ParameterSymbol=p$1361: = Argument:RefSymbol=BlendEaseFunc$887:(0/3)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1814: Argument:RefSymbol=BlendEaseFunc$1343:(0/3)
     {
         return BlendEaseFunc(p, ExponentialEaseIn, ExponentialEaseOut);
     }
 
     public static void ElasticEaseIn(var p)
-    // ParameterSymbol=p$1363: = Argument:RefSymbol=Quarter$779:(0/1), Argument:RefSymbol=MinusOne$767:(0/1)
-    // p Best type is dynamic
-    // p Best type is dynamic
+    // ParameterSymbol=p$1816: Argument:RefSymbol=Quarter$1237:(0/1), Argument:RefSymbol=MinusOne$1225:(0/1)
     {
         return Multiply(13, Multiply(Turns(Quarter(p)), Sin(Radians(Pow(2, Multiply(10, MinusOne(p)))))));
     }
 
     public static void ElasticEaseOut(var p)
-    // ParameterSymbol=p$1365: = Argument:RefSymbol=InvertEaseFunc$889:(0/2)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1818: Argument:RefSymbol=InvertEaseFunc$1345:(0/2)
     {
         return InvertEaseFunc(p, ElasticEaseIn);
     }
 
     public static void ElasticEaseInOut(var p)
-    // ParameterSymbol=p$1367: = Argument:RefSymbol=BlendEaseFunc$887:(0/3)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1820: Argument:RefSymbol=BlendEaseFunc$1343:(0/3)
     {
         return BlendEaseFunc(p, ElasticEaseIn, ElasticEaseOut);
     }
 
     public static void BackEaseIn(var p)
-    // ParameterSymbol=p$1369: = Argument:RefSymbol=Pow3$819:(0/1), Argument:RefSymbol=Multiply$176:(0/2), Argument:RefSymbol=Half$775:(0/1)
-    // p Best type is dynamic
-    // p Best type is Self
-    // p Best type is dynamic
+    // ParameterSymbol=p$1822: Argument:RefSymbol=Pow3$1277:(0/1), Argument:RefSymbol=Multiply$182:(0/2), Argument:RefSymbol=Half$1233:(0/1)
     {
         return Subtract(Pow3(p), Multiply(p, Sin(Turns(Half(p)))));
     }
 
     public static void BackEaseOut(var p)
-    // ParameterSymbol=p$1371: = Argument:RefSymbol=InvertEaseFunc$889:(0/2)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1824: Argument:RefSymbol=InvertEaseFunc$1345:(0/2)
     {
         return InvertEaseFunc(p, BackEaseIn);
     }
 
     public static void BackEaseInOut(var p)
-    // ParameterSymbol=p$1373: = Argument:RefSymbol=BlendEaseFunc$887:(0/3)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1826: Argument:RefSymbol=BlendEaseFunc$1343:(0/3)
     {
         return BlendEaseFunc(p, BackEaseIn, BackEaseOut);
     }
 
     public static void BounceEaseIn(var p)
-    // ParameterSymbol=p$1375: = Argument:RefSymbol=InvertEaseFunc$889:(0/2)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1828: Argument:RefSymbol=InvertEaseFunc$1345:(0/2)
     {
         return InvertEaseFunc(p, BounceEaseOut);
     }
 
     public static void BounceEaseOut(var p)
-    // ParameterSymbol=p$1377: = Argument:RefSymbol=LessThan$831:(0/2), Argument:RefSymbol=Pow2$817:(0/1), Argument:RefSymbol=LessThan$831:(0/2), Argument:RefSymbol=Pow2$817:(0/1), Argument:RefSymbol=Add$172:(0/2), Argument:RefSymbol=LessThan$831:(0/2), Argument:RefSymbol=Pow2$817:(0/1), Argument:RefSymbol=Add$172:(0/2), Argument:RefSymbol=Pow2$817:(0/1), Argument:RefSymbol=Add$172:(0/2)
-    // p Best type is dynamic
-    // p Best type is dynamic
-    // p Best type is dynamic
-    // p Best type is dynamic
-    // p Best type is Self
-    // p Best type is dynamic
-    // p Best type is dynamic
-    // p Best type is Self
-    // p Best type is dynamic
-    // p Best type is Self
+    // ParameterSymbol=p$1830: Argument:RefSymbol=LessThan$1289:(0/2), Argument:RefSymbol=Pow2$1275:(0/1), Argument:RefSymbol=LessThan$1289:(0/2), Argument:RefSymbol=Pow2$1275:(0/1), Argument:RefSymbol=Add$178:(0/2), Argument:RefSymbol=LessThan$1289:(0/2), Argument:RefSymbol=Pow2$1275:(0/1), Argument:RefSymbol=Add$178:(0/2), Argument:RefSymbol=Pow2$1275:(0/1), Argument:RefSymbol=Add$178:(0/2)
     {
         return LessThan(p, Divide(4, 11))
             ? Multiply(121, Divide(Pow2(p), 16))
@@ -2035,8 +1771,7 @@ class Easings
     }
 
     public static void BounceEaseInOut(var p)
-    // ParameterSymbol=p$1379: = Argument:RefSymbol=BlendEaseFunc$887:(0/3)
-    // p Best type is dynamic
+    // ParameterSymbol=p$1832: Argument:RefSymbol=BlendEaseFunc$1343:(0/3)
     {
         return BlendEaseFunc(p, BounceEaseIn, BounceEaseOut);
     }
@@ -2045,25 +1780,25 @@ class Easings
 class Intrinsics
 {
     public static void Interpolate(var xs)
-    // ParameterSymbol=xs$1381: = 
+    // ParameterSymbol=xs$1834: 
     {
         return intrinsic;
     }
 
     public static void Throw(var x)
-    // ParameterSymbol=x$1383: = 
+    // ParameterSymbol=x$1836: 
     {
         return intrinsic;
     }
 
     public static void TypeOf(var x)
-    // ParameterSymbol=x$1385: = 
+    // ParameterSymbol=x$1838: 
     {
         return intrinsic;
     }
 
     public static void New(var x)
-    // ParameterSymbol=x$1387: = 
+    // ParameterSymbol=x$1840: 
     {
         return intrinsic;
     }

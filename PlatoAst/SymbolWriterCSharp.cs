@@ -9,10 +9,10 @@ namespace PlatoAst
 {
     public class SymbolWriterCSharp : CodeBuilder<SymbolWriterCSharp>
     {
-        private Operations Ops { get; }
+        public TypeGuesser TypeGuesser { get; }
 
-        public SymbolWriterCSharp(Operations ops)
-            => Ops = ops;
+        public SymbolWriterCSharp(TypeGuesser tg)
+            => TypeGuesser = tg;
 
         public SymbolWriterCSharp WriteBlock(params Symbol[] symbols)
             => WriteBlock((IEnumerable<Symbol>)symbols, false);
@@ -61,80 +61,15 @@ namespace PlatoAst
                 return Write(typeRef.Name).Write(" ");
         }
 
-        // TODO: this should be moved the type resolver. 
-        public string GetBestCandidate(FunctionArgConstraint fac)
-        {
-            var name = fac.Name;
-            var members = Ops.GetMembers(name, fac.ArgumentCount);
-            
-            // NOTE: this is not accurate. It has to do with the actual type based on
-            // the position. 
-            var position = fac.Position;
-
-            var tmp = members.Where(pair => pair.Item1.Kind == "concept").ToList();
-            if (tmp.Count == 0)
-                tmp = members.ToList();
-
-            if (tmp.Count > 0)
-            {
-                var t = tmp[0].Item1;
-                var m = tmp[0].Item2;
-                if (m is FieldDefSymbol fds)
-                {
-                    return fds.Type?.Name ?? "dynamic";
-                }
-
-                if (m is MethodDefSymbol mds)
-                {
-                    if (fac.ArgumentCount > mds.Function.Parameters.Count)
-                    {
-                        return "outofrange";
-                    }
-
-                    var param = mds.Function.Parameters[position];
-
-                    // TODO: right now dynamic is just code for must be inferred later. 
-                    return param.Type?.Name ?? "dynamic";
-                }
-            }
-
-            return "Any";
-        }
-
         public SymbolWriterCSharp WriteConstraints(FunctionSymbol function)
         {
-            var lookup = Constraints.GetParameterConstraints(function);
             var r = this;
-            foreach (var kv in lookup)
+            foreach (var p in function.Parameters)
             {
-                var refs = string.Join(", ", kv.Value);
-                r = r.WriteLine($"// {kv.Key} = {refs}");
-                foreach (var c in kv.Value)
-                {
-                    if (c is FunctionArgConstraint fac)
-                    {
-                        /*
-                        var name = fac.Name;
-                        var members = Ops.GetMembers(name, fac.ArgumentCount);
-
-                        r = r.WriteLine($"// Candidate types for {kv.Key.Name}: ");
-                        var temp = string.Join(" | ", members.Select(m => $"{m.Item1.Name}.{m.Item2.Name}"));
-                        
-                        // TODO: reduce the candidate list. 
-                        // A single concept is preferable to a group of types.
-
-                        if (members.Count == 0)
-                            r = r.WriteLine($"// Any");
-                        else
-                            r = r.WriteLine($"// {temp}");
-                        */
-
-                        var best = GetBestCandidate(fac);
-                        r = r.WriteLine($"// {kv.Key.Name} Best type is {best}");
-                    }
-                }
+                var constraints = TypeGuesser.ParameterConstraints[p];
+                WriteLine($"// {p} {string.Join(", ", constraints)}");
             }
-
+            // TODO: use the type guesser 
             return r;
         }
 
@@ -282,10 +217,11 @@ namespace PlatoAst
             return this;
         }
 
-        public static string ToCSharp(IEnumerable<Symbol> symbols, Operations ops)
+        public static string ToCSharp(Operations ops)
         {
-            var writer = new SymbolWriterCSharp(ops);
-            var r = writer.Write(symbols);
+            var tg = new TypeGuesser(ops);
+            var writer = new SymbolWriterCSharp(tg);
+            var r = writer.Write(ops.Types);
             return r.ToString();
         }
     }

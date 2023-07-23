@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace PlatoAst
 {
@@ -6,11 +7,13 @@ namespace PlatoAst
     {
         public Dictionary<string, List<(TypeDefSymbol, MemberDefSymbol)>> Lookup { get; } 
             = new Dictionary<string, List<(TypeDefSymbol, MemberDefSymbol)>>();
-        
 
+        public IReadOnlyList<TypeDefSymbol> Types { get; }
+        
         public Operations(IEnumerable<TypeDefSymbol> typeDefs)
         {
-            foreach (var typeDefSymbol in typeDefs)
+            Types = typeDefs.ToList();
+            foreach (var typeDefSymbol in Types)
                 AddMembers(typeDefSymbol);
         }
 
@@ -50,7 +53,7 @@ namespace PlatoAst
                 AddMember(type, method);
 
             foreach (var field in type.Fields)
-                AddMember(type, field);
+                AddMember(type, field);     
         }
     }
 }

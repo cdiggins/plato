@@ -114,6 +114,11 @@ namespace PlatoAst
     public class TypeDefSymbol : DefSymbol
     {
         public string Kind { get; }
+
+        public IEnumerable<FunctionSymbol> Functions => Enumerable.Empty<FunctionSymbol>()
+            .Concat(Methods.Select(m => m.Function))
+            .Concat(Fields.Select(f => f.Function));
+
         public List<MethodDefSymbol> Methods { get; } = new List<MethodDefSymbol>();
         public List<FieldDefSymbol> Fields { get; } = new List<FieldDefSymbol>();
         public List<TypeParameterDefSymbol> TypeParameters { get; } = new List<TypeParameterDefSymbol>();
@@ -267,19 +272,34 @@ namespace PlatoAst
 
     public abstract class MemberDefSymbol : DefSymbol
     {
-        protected MemberDefSymbol(TypeRefSymbol type, string name)
+        protected MemberDefSymbol(TypeDefSymbol parentType, TypeRefSymbol type, string name)
             : base(type, name)
-        { }
+        {
+            ParentType = parentType;
+        }
+
+        public TypeDefSymbol ParentType { get; }
     }
 
     public class FieldDefSymbol : MemberDefSymbol
     {
-        public FieldDefSymbol(TypeRefSymbol type, string name)
-            : base(type, name)
-        { }
+        public FieldDefSymbol(TypeDefSymbol parentType, TypeRefSymbol type, string name)
+            : base(parentType, type, name)
+        {
+            Function = new FunctionSymbol(Name, Type, ToRefSymbol(),
+                new ParameterSymbol("self", parentType.ToRef));
+        }
 
         public override IReadOnlyList<Symbol> Children
-            => Array.Empty<Symbol>();
+            => new [] { Function };
+
+        public string FieldVariableName()
+            => $"__{Name}";
+
+        public RefSymbol ToRefSymbol()
+            => new RefSymbol(this);
+
+        public FunctionSymbol Function { get; }
     }
 
     public class MethodDefSymbol : MemberDefSymbol
@@ -287,7 +307,8 @@ namespace PlatoAst
         // TODO: find a better way to deal with this. Don't make it mutable.
         public FunctionSymbol Function { get; set; }
 
-        public MethodDefSymbol(TypeRefSymbol type, string name) : base(type, name)
+        public MethodDefSymbol(TypeDefSymbol parentType, TypeRefSymbol type, string name) 
+            : base(parentType, type, name)
         { }
 
         public override IReadOnlyList<Symbol> Children
@@ -306,13 +327,16 @@ namespace PlatoAst
 
     public static class SymbolExtensions
     {
-        public static IEnumerable<Symbol> AllDescendantSymbols(this Symbol symbol)
+        public static IEnumerable<FunctionSymbol> GetLambdas(this FunctionSymbol symbol)
+            => symbol.Body.GetDescendantSymbols().OfType<FunctionSymbol>();
+
+        public static IEnumerable<Symbol> GetDescendantSymbols(this Symbol symbol)
         {
             if (symbol == null)
                 yield break;
             yield return symbol;
             if (symbol is Symbol cs)
-                foreach (var child in cs.Children.SelectMany(AllDescendantSymbols))
+                foreach (var child in cs.Children.SelectMany(GetDescendantSymbols))
                     yield return child;
         }
 

@@ -43,7 +43,7 @@ namespace PlatoAst
                 ModuleFunctions = TypeDefs.Where(td => td.Kind == "module")
                     .SelectMany(td => td.Methods.Select(m => m.Function));
 
-                TypeGuesser = new TypeGuesser(Operations, TypeDefs, ModuleFunctions);
+                TypeGuesser = new TypeGuesser(Operations);
 
                 Success = State.AtEnd();
                 if (!Success)

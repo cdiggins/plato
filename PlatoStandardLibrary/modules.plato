@@ -4,26 +4,26 @@ module Interval
     function IsEmpty(x) = x.Min >= x.Max;
     function Lerp(x, amount) = x.Min * (1.0 - amount) + x.Max * amount;
     function InverseLerp(x, value) = (value - x.Min) / x.Size;
-    function Negate(x) = Interval(-x.Max, -x.Min);
-    function Reverse(x) = Interval(x.Max, x.Min);
-    function Resize(x, size) = Interval(x.Min, x.Min + size);
+    function Negate(x) = (-x.Max, -x.Min);
+    function Reverse(x) = (x.Max, x.Min);
+    function Resize(x, size) = (x.Min, x.Min + size);
     function Center(x) = x.Lerp(0.5);    
     function Contains(x, value) = x.Min <= value && value <= x.Max;
     function Contains(x, other) = x.Min <= other.Min && Max >= other.Max;
     function Overlaps(x, y) = !x.Clamp(y).IsEmpty;
-    function Split(x, t) = Interval(x.Left(t), x.Right(t));
+    function Split(x, t) = (x.Left(t), x.Right(t));
     function Split(x) = x.Split(0.5);
-    function Left(x, t) = Interval(Min, x.Lerp(t));
-    function Right(x, t) = Interval(x.Lerp(t), x.Max);
-    function MoveTo(x, t) = Interval(t, t + x.Size);
+    function Left(x, t) = (Min, x.Lerp(t));
+    function Right(x, t) = (x.Lerp(t), x.Max);
+    function MoveTo(x, t) = (t, t + x.Size);
     function LeftHalf(x) = x.Left(0.5);
     function RightHalf(x) = x.Right(0.5);
     function HalfSize(x) = x.Size.Half;
-    function Recenter(x, c) = Interval(c - x.HalfSize, c + x.HalfSize);
-    function Clamp(x, y) = Interval(x.Clamp(y.Min), x.Clamp(y.Max));
+    function Recenter(x, c) = (c - x.HalfSize, c + x.HalfSize);
+    function Clamp(x, y) = (x.Clamp(y.Min), x.Clamp(y.Max));
     function Clamp(x, value) = value < x.Min ? x.Min : value > x.Max ? x.Max : value;
     function Between(x, value) = value >= x.Min && value <= x.Max;
-    function Unit() = Interval(0, 1);
+    function Unit() = (0, 1);
 }
 
 module Vector
@@ -35,7 +35,7 @@ module Vector
     function Dot(v1, v2) = (v1 * v2).Sum;
 }
 
-module Trig
+module Numerical
 {
     function Cos(x) = intrinsic;
     function Sin(x) = intrinsic;
@@ -49,10 +49,7 @@ module Trig
     function Acosh(x) = intrinsic;
     function Asinh(x) = intrinsic;
     function Atanh(x) = intrinsic;
-}
 
-module Numerical
-{
     function Pow(x, y) = intrinsic;
     function Log(x, y) = intrinsic;
     function NaturalLog(x) = intrinsic;
@@ -130,7 +127,6 @@ module Equatable
 module Array
 {
     function Map(xs, f) = Map(xs.Count, i => f(xs.At(i)));
-    function Map(n, f) = Array(n, f);
     function Zip(xs, ys, f) = Array(xs.Count, i => f(At(i), ys.At(i)));
     function Skip(xs, n) = Array(Count - n, i => At(i - n));
     function Take(xs, n) = Array(n, i => At);

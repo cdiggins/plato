@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace PlatoAst
@@ -14,23 +15,53 @@ namespace PlatoAst
         public List<ParameterSymbol> DeclaredTypes = new List<ParameterSymbol>();
 
         public Operations Ops { get; }
-        public IEnumerable<TypeDefSymbol> Types { get; }
+        public IReadOnlyList<TypeDefSymbol> Types => Ops.Types;
         public IReadOnlyList<FunctionSymbol> Functions { get; }
         public IReadOnlyList<ParameterSymbol> Parameters { get; } 
 
-        public TypeGuesser(Operations ops, IEnumerable<TypeDefSymbol> typeDefs, IEnumerable<FunctionSymbol> functions)
+        public TypeGuesser(Operations ops)
         {
             Ops = ops;
-            Types = typeDefs.ToList();
-            Functions = functions.ToList();
+            Functions = Types.SelectMany(t => t.GetDescendantSymbols().OfType<FunctionSymbol>()).ToList();
             Parameters = Functions.SelectMany(f => f.Parameters).ToList();
+            foreach (var p in Parameters)
+            {
+                ParameterConstraints.Add(p, new List<Constraint>());
+            }
 
             foreach (var f in Functions)
             {
                 var localConstraints = Constraints.GetParameterConstraints(f);
                 foreach (var kv in localConstraints)
                 {
-                    ParameterConstraints.Add(kv.Key, kv.Value);
+                    ParameterConstraints[kv.Key].AddRange(kv.Value);
+                }
+            }
+
+            foreach (var type in Types)
+            {
+                if (type.Kind != "module")
+                    continue;
+
+                var relatedType = Types.FirstOrDefault(t => t.Kind != "module" && t.Name == type.Name);
+                
+                if (relatedType == null)
+                    continue;
+
+                Debug.Assert(relatedType != null);
+
+                foreach (var m in type.Methods)
+                {
+                    if (m.Function.Parameters.Count == 0)
+                        continue;
+
+                    var p = m.Function.Parameters[0];
+                    
+                    if (p.Type != null)
+                    {
+                        var constraint = new DeclaredConstraint(relatedType.ToRef);
+                        ParameterConstraints[p].Add(constraint);
+                    }
                 }
             }
 
@@ -51,9 +82,7 @@ namespace PlatoAst
             if (!ParameterConstraints.TryGetValue(ps, out var constraints))
                 return Enumerable.Empty<TypeDefSymbol>();
 
-            // NOW: the question is, I have a list of constraints. Which types might be appropriate? 
-
-            // THe first attempt might be to look at all of the 
+            // The first attempt might be to look at all of the 
 
             // First look to see if the parameter is invoked. If so, then we are going to treat it as a function 
             if (constraints.Any(c => c is FunctionCallConstraint))
@@ -80,6 +109,47 @@ namespace PlatoAst
         public bool Satisfies(TypeDefSymbol type, FunctionArgConstraint fac)
         {
             return type.Methods.Any(m => m.Name == fac.Name);
+        }
+
+
+        // TODO: this should be moved the type resolver. 
+        public string GetBestCandidate(FunctionArgConstraint fac)
+        {
+            var name = fac.Name;
+            var members = Ops.GetMembers(name, fac.ArgumentCount);
+
+            // NOTE: this is not accurate. It has to do with the actual type based on
+            // the position. 
+            var position = fac.Position;
+
+            var tmp = members.Where(pair => pair.Item1.Kind == "concept").ToList();
+            if (tmp.Count == 0)
+                tmp = members.ToList();
+
+            if (tmp.Count > 0)
+            {
+                var t = tmp[0].Item1;
+                var m = tmp[0].Item2;
+                if (m is FieldDefSymbol fds)
+                {
+                    return fds.Type?.Name ?? "dynamic";
+                }
+
+                if (m is MethodDefSymbol mds)
+                {
+                    if (fac.ArgumentCount > mds.Function.Parameters.Count)
+                    {
+                        return "outofrange";
+                    }
+
+                    var param = mds.Function.Parameters[position];
+
+                    // TODO: right now dynamic is just code for must be inferred later. 
+                    return param.Type?.Name ?? "dynamic";
+                }
+            }
+
+            return "Any";
         }
 
         // A list of methods for which the types are not known. 

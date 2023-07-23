@@ -26,6 +26,7 @@ namespace PlatoAst
         public void BindPredefinedSymbols()
         {
             BindPredefined("intrinsic");
+            BindPredefined("Tuple");
             BindType("Self", Primitives.Self);
         }
 
@@ -93,7 +94,8 @@ namespace PlatoAst
         public ParameterSymbol Resolve(AstParameterDeclaration astParameterDeclaration)
         {
             return BindValue(astParameterDeclaration.Name,
-                new ParameterSymbol(astParameterDeclaration.Name, ResolveType(astParameterDeclaration.Type)));
+                new ParameterSymbol(astParameterDeclaration.Name, 
+                    ResolveType(astParameterDeclaration.Type)));
         }
 
         // This is not a pure function. It updates the scope every time a new value is bound
@@ -209,14 +211,14 @@ namespace PlatoAst
                 {
                     if (m is AstFieldDeclaration fd)
                     {
-                        var fDef = new FieldDefSymbol(ResolveType(fd.Type), fd.Name);
+                        var fDef = new FieldDefSymbol(typeDef, ResolveType(fd.Type), fd.Name);
                         typeDef.Fields.Add(fDef);
                         SymbolsToNames.Add(fDef, fd);
                         BindFunctionToGroup(fDef.Name, fDef);
                     }
                     else if (m is AstMethodDeclaration md)
                     {
-                        var mDef = new MethodDefSymbol(ResolveType(md.Type), md.Name);
+                        var mDef = new MethodDefSymbol(typeDef, ResolveType(md.Type), md.Name);
                         typeDef.Methods.Add(mDef);
                         SymbolsToNames.Add(mDef, md);
                         BindFunctionToGroup(mDef.Name, mDef);

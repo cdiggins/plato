@@ -25,6 +25,17 @@ namespace PlatoAst
             => $"Argument:{Function}({Position}/{ArgumentCount})";
     }
 
+    public class DeclaredConstraint : Constraint
+    {
+        public TypeRefSymbol Type { get; }
+
+        public DeclaredConstraint(TypeRefSymbol type)
+            => Type = type;
+
+        public override string ToString()
+            => $"Declared:{Type}";
+    }
+
     public class FunctionCallConstraint : Constraint
     {
         public IReadOnlyList<Symbol> Args { get; }
@@ -50,7 +61,7 @@ namespace PlatoAst
                         r.Add(ps, new List<Constraint>());
                 }
 
-                foreach (var sym in f.Body.AllDescendantSymbols())
+                foreach (var sym in f.Body.GetDescendantSymbols())
                 {
                     if (sym is FunctionResultSymbol fs)
                     {
