@@ -37,30 +37,33 @@ public class IDE
         var output = SymbolWriterCSharp.ToCSharp(Compilation.Operations);
         File.WriteAllText(outputFile, output);
 
-        
-            /*
-        var types = IDE.Compilation.AstTree.GetAllTypes().ToList();
+        var htmlOutput = SymbolWriterPlatoHtml.ToPlatoHtml(Compilation.Operations);
+        var htmlFile = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\output.plato.html";
+        File.WriteAllText(htmlFile, htmlOutput);
 
-        foreach (var type in types)
-        {
-            //richTextBoxOutput.AppendText($"{type.Kind} {type.Name.Text} {Environment.NewLine}");
-        }
+        /*
+    var types = IDE.Compilation.AstTree.GetAllTypes().ToList();
 
-        var lookup = new TypeNames(types);
-        foreach (var kv in lookup.Dictionary)
+    foreach (var type in types)
+    {
+        //richTextBoxOutput.AppendText($"{type.Kind} {type.Name.Text} {Environment.NewLine}");
+    }
+
+    var lookup = new TypeNames(types);
+    foreach (var kv in lookup.Dictionary)
+    {
+        richTextBoxOutput.AppendText($"{kv.Key}");
+        richTextBoxOutput.AppendText(Environment.NewLine);
+
+        var memberNames = kv.Value;
+
+        foreach (var kv2 in memberNames.Members)
         {
-            richTextBoxOutput.AppendText($"{kv.Key}");
+            richTextBoxOutput.AppendText($"{kv2.Key} = {kv2.Value.GetType().Name}");
             richTextBoxOutput.AppendText(Environment.NewLine);
-
-            var memberNames = kv.Value;
-
-            foreach (var kv2 in memberNames.Members)
-            {
-                richTextBoxOutput.AppendText($"{kv2.Key} = {kv2.Value.GetType().Name}");
-                richTextBoxOutput.AppendText(Environment.NewLine);
-            }
         }
-        */
+    }
+    */
 
         Output += GetConstraintsOutput();
         Output += GetOperationsOutput();
