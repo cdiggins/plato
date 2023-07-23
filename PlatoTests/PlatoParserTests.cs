@@ -1,7 +1,6 @@
 ﻿using Parakeet;
 using Parakeet.Demos;
 using Parakeet.Tests;
-using PlatoAst;
 using Ptarmigan.Utils;
 
 namespace PlatoTests

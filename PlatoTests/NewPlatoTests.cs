@@ -1,5 +1,4 @@
-﻿using Parakeet.Tests;
-using Parakeet;
+﻿using Parakeet;
 using Parakeet.Demos;
 using Parakeet.Demos.Plato;
 using PlatoAst;

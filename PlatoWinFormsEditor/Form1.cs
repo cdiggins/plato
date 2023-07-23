@@ -1,10 +1,3 @@
-using System.Diagnostics;
-using System.Text;
-using Parakeet;
-using Parakeet.Demos;
-using Parakeet.Demos.CSharp;
-using PlatoAst;
-
 namespace PlatoWinFormsEditor
 {
     public partial class Form1 : Form

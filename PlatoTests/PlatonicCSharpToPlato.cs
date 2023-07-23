@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Parakeet;
+﻿using Parakeet;
 using Parakeet.Demos;
-using Parakeet.Demos.CSharp;
-using PlatoAst;
 
 namespace PlatoTests
 {
