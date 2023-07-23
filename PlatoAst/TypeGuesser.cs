@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -26,7 +27,12 @@ namespace PlatoAst
             Parameters = Functions.SelectMany(f => f.Parameters).ToList();
             foreach (var p in Parameters)
             {
-                ParameterConstraints.Add(p, new List<Constraint>());
+                var constraints = new List<Constraint>();
+                
+                if (p.Type != null)
+                    constraints.Add(new DeclaredConstraint(p.Type));
+
+                ParameterConstraints.Add(p, constraints);
             }
 
             foreach (var f in Functions)
@@ -91,6 +97,17 @@ namespace PlatoAst
                 return new[] { Primitives.Function };
             }
 
+            var decls = constraints.OfType<DeclaredConstraint>().ToList();
+            if (decls.Count > 1)
+            {
+                throw new Exception("Can't have more than one declared constraint");
+            }
+
+            if (decls.Count == 1)
+            {
+                return new [] { decls[0].Type.Def };
+            }
+
             var candidates = new List<TypeDefSymbol>();
             foreach (var c in constraints)
             {
@@ -100,8 +117,13 @@ namespace PlatoAst
                 }
             }
 
+            // TODO: if one of the candidates is a concept then remove any types implementing the concept 
+            // TODO: remove duplicates 
+
             if (candidates.Count == 0)
-                candidates.Add(Primitives.Any); 
+                candidates.Add(Primitives.Any);
+
+            candidates = candidates.Distinct().ToList();
 
             return candidates;
         }

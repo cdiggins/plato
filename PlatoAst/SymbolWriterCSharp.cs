@@ -66,10 +66,13 @@ namespace PlatoAst
             var r = this;
             foreach (var p in function.Parameters)
             {
+                // DEBUG: 
                 var constraints = TypeGuesser.ParameterConstraints[p];
                 WriteLine($"// {p} {string.Join(", ", constraints)}");
+
+                var candidates = TypeGuesser.GetCandidateTypes(p);
+                WriteLine($"// Candidates = {string.Join(",", candidates.Select(c => c.Name))}");
             }
-            // TODO: use the type guesser 
             return r;
         }
 
@@ -171,7 +174,7 @@ namespace PlatoAst
                         .Dedent().WriteLine();
 
                 case FieldDefSymbol fieldDef:
-                    return WriteTypeDecl(fieldDef.Type).Write(fieldDef.Name);
+                    return WriteTypeDecl(fieldDef.Type).Write(fieldDef.Name).Write(";");
 
                 case FunctionSymbol function:
                     return Write(function);
