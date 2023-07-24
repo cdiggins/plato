@@ -63,7 +63,7 @@ namespace PlatoAst
 
         public SymbolWriterPlatoHtml WriteRegion(IReadOnlyList<Symbol> symbols)
         {
-            if (symbols.Count == 1 && symbols[0] is RegionSymbol rs)
+            if (symbols.Count == 1 && symbols[0] is BlockStatementSymbol rs)
                 return Write(rs);
             var r = WriteLine(Delimiter("{")).Indent();
             for (var i=0; i < symbols.Count; ++i)
@@ -86,13 +86,13 @@ namespace PlatoAst
             return Write(" " + Delimiter(":") + " " + Type(typeRef.Name));
         }
 
-        public SymbolWriterPlatoHtml WriteFunctionBody(RegionSymbol body)
+        public SymbolWriterPlatoHtml WriteFunctionBody(BlockStatementSymbol body)
         {
             if (body.Children.Count != 1)
                 throw new Exception("Expected region symbol to have one child");
             
             var statement = body.Children[0];
-            if (statement is RegionSymbol rs)
+            if (statement is BlockStatementSymbol rs)
                 return WriteFunctionBody(rs);
 
             return Write(statement).Write(Delimiter(";"));
@@ -100,15 +100,15 @@ namespace PlatoAst
 
         public SymbolWriterPlatoHtml WriteFunctionBody(FunctionSymbol function)
         {
-            var body = function.Body;
+            var body = function.ExpressionOrStatementBody;
             if (body == null)
                 return Write("n");
-            if (!(body is RegionSymbol rs))
+            if (!(body is BlockStatementSymbol rs))
             {
                 return Write(body).Write(Delimiter(";"));
             }
 
-            return WriteFunctionBody(rs).Write(Delimiter(";"));
+            return WriteFunctionBody(rs);
 
         }
 
@@ -221,14 +221,14 @@ namespace PlatoAst
                         .Write(" " + Operator("=") + " ")
                         .Write(assignment.RValue);
 
-                case ConditionalSymbol conditional:
+                case ConditionalExpressionSymbol conditional:
                     return Write(conditional.Condition)
                         .Indent().WriteLine().Write(Operator("?") + " ")
                         .Write(conditional.IfTrue)
                         .WriteLine()
                         .Write(Operator(":") + " ")
                         .Write(conditional.IfFalse)
-                        .Dedent().WriteLine();
+                        .Dedent() ;
 
                 case FieldDefSymbol fieldDef:
                     return Write(DeclarationName(fieldDef.Name)).WriteTypeDecl(fieldDef.Type)
@@ -237,7 +237,7 @@ namespace PlatoAst
                 case FunctionSymbol function:
                     return Write(function);
                     
-                case FunctionResultSymbol functionResult:
+                case FunctionCallSymbol functionResult:
                     return
                         functionResult.Args.Count > 0
                             ? Write(functionResult.Args[0]).Write(Operator("."))
@@ -262,7 +262,7 @@ namespace PlatoAst
                 case ParameterSymbol parameter:
                     return Write(Variable(parameter.Name)).WriteTypeDecl(parameter.Type);
 
-                case RegionSymbol region:
+                case BlockStatementSymbol region:
                     return WriteRegion(region.Children);
 
                 case TypeDefSymbol typeDef:
@@ -272,7 +272,10 @@ namespace PlatoAst
                     throw new NotImplementedException("Type references are supposed to be handled in a function");
 
                 case VariableSymbol variable:
-                    return Write(variable.Name);    
+                    return Write(variable.Name);
+
+                case ReturnStatementSymbol returnStatement:
+                    return Write(returnStatement.Expression);
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(value));
@@ -281,14 +284,5 @@ namespace PlatoAst
             return this;
         }
 
-        public static string ToPlatoHtml(Operations ops)
-        {
-            var tg = new TypeGuesser(ops);
-            var r = new SymbolWriterPlatoHtml(tg);
-            r.WriteLine("<html><head><link rel=\"stylesheet\" href=\"style.css\"></head><body><pre>");
-            r.Write(ops.Types);
-            r.WriteLine("</pre></body></html>");
-            return r.ToString();
-        }
     }
 }

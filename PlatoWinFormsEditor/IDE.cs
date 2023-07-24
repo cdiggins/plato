@@ -1,4 +1,5 @@
 using System.Text;
+using Microsoft.VisualBasic.ApplicationServices;
 using Parakeet;
 using Parakeet.Demos;
 using Parakeet.Demos.Plato;
@@ -30,13 +31,11 @@ public class IDE
         Input = input1 + Environment.NewLine + input2 + Environment.NewLine + input3;
         Compilation = Compile(Input);
 
-        var outputFile = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\output.cs";
-        var output = SymbolWriterCSharp.ToCSharp(Compilation.Operations);
-        File.WriteAllText(outputFile, output);
+        var outputFolder = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\";
 
-        var htmlOutput = SymbolWriterPlatoHtml.ToPlatoHtml(Compilation.Operations);
-        var htmlFile = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\output.plato.html";
-        File.WriteAllText(htmlFile, htmlOutput);
+        File.WriteAllText(Path.Combine(outputFolder, "output.cs"), Compilation.ToCSharp());
+        File.WriteAllText(Path.Combine(outputFolder, "output.plato.html"), Compilation.ToPlatoHtml());
+        File.WriteAllText(Path.Combine(outputFolder, "output.js"), Compilation.ToJavaScript());
 
         /*
     var types = IDE.Compilation.AstTree.GetAllTypes().ToList();

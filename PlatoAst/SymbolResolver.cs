@@ -116,22 +116,22 @@ namespace PlatoAst
                             Resolve(astAssign.Value)));
 
                 case AstBlock astBlock:
-                    return Region(node, astBlock.Statements);
+                    return StatementBlock(astBlock.Statements);
 
                 case AstBreak astBreak:
                     return NoValueSymbol;
 
                 case AstMulti astMulti:
-                    return Region(node, astMulti.Nodes, false);
+                    return StatementBlock(astMulti.Nodes);
 
                 case AstParenthesized astParenthesized:
                     return Resolve(astParenthesized.Inner);
                 
                 case AstReturn astReturn:
-                    return Region(node, new [] { astReturn.Value });
+                    return new ReturnStatementSymbol(Resolve(astReturn.Value) as ExpressionSymbol);
 
                 case AstConditional astConditional:
-                    return Scoped(() => new ConditionalSymbol(
+                    return Scoped(() => new ConditionalExpressionSymbol(
                         Resolve(astConditional.Condition),
                         Resolve(astConditional.IfTrue),
                         Resolve(astConditional.IfFalse)));
@@ -156,7 +156,7 @@ namespace PlatoAst
 
                     // TODO: we need to figure out what function it is because really 
                     // evaluating a name will gives us a method group!
-                    return new FunctionResultSymbol(func, args);
+                    return new FunctionCallSymbol(func, args);
                 }
 
                 case AstLambda astLambda:
@@ -177,7 +177,7 @@ namespace PlatoAst
                         new VariableSymbol(astVarDef.Name, ResolveType(astVarDef.Type)));
 
                 case AstLoop astLoop:
-                    return Region(node, new[] { astLoop.Condition, astLoop.Body });
+                    throw new NotImplementedException();
             }
 
             throw new Exception($"Node can't be evaluated : {node}");
@@ -294,13 +294,12 @@ namespace PlatoAst
             return r;
         }
 
-        public RegionSymbol Region(AstNode location, IEnumerable<AstNode> nodes, bool scoped = true)
+        public BlockStatementSymbol StatementBlock(IEnumerable<AstNode> nodes)
         {
-            if (scoped)
-                ValueBindingsScope = ValueBindingsScope.Push();
-            var r = new RegionSymbol(nodes.Select(Resolve).ToArray());
-            if (scoped)
-                ValueBindingsScope = ValueBindingsScope.Pop();
+            ValueBindingsScope = ValueBindingsScope.Push();
+            var r = new BlockStatementSymbol(nodes.Select(Resolve)
+                .Cast<StatementSymbol>().ToArray());
+            ValueBindingsScope = ValueBindingsScope.Pop();
             return r;
         }
 

@@ -13,151 +13,145 @@ interface Measure<Self> where Self : Measure<Self>
 interface Numerical<Self> where Self : Numerical<Self>
 {
     public static Self FromNumber(Number x)
-    // ParameterSymbol=x$1418:Number Declared:Number, Argument:RefSymbol=FromNumber$157:(1/2), Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=x$1418:Number Declared:Number
     // Candidates = Number
     {
-        return FromNumber(FieldValues(x), x);
+        return null;
     }
 
 }
 interface Magnitude<Self> where Self : Magnitude<Self>
 {
     public static Number Magnitude(Self x)
-    // ParameterSymbol=x$1420:Self Declared:Self, Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=x$1420:Self Declared:Self
     // Candidates = Self
     {
-        return SquareRoot(Sum(Square(FieldValues(x))));
+        return null;
     }
 
 }
 interface Comparable<Self> where Self : Comparable<Self>
 {
     public static Integer Compare(Self a, Self b)
-    // ParameterSymbol=a$1422:Self Declared:Self, Argument:RefSymbol=Magnitude$159:(0/1), Argument:RefSymbol=Magnitude$159:(0/1)
+    // ParameterSymbol=a$1422:Self Declared:Self
     // Candidates = Self
-    // ParameterSymbol=b$1423:Self Declared:Self, Argument:RefSymbol=Magnitude$159:(0/1), Argument:RefSymbol=Magnitude$159:(0/1)
+    // ParameterSymbol=b$1423:Self Declared:Self
     // Candidates = Self
     {
-        return LessThan(Magnitude(a), Magnitude(b)
-            ? Negative(1)
-            : GreaterThan(Magnitude(a), Magnitude(b)
-                ? 1
-                : 0
-            )
-        );
+        return null;
     }
 
 }
 interface Equatable<Self> where Self : Equatable<Self>
 {
     public static Boolean Equals(Self a, Self b)
-    // ParameterSymbol=a$1425:Self Declared:Self, Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=a$1425:Self Declared:Self
     // Candidates = Self
-    // ParameterSymbol=b$1426:Self Declared:Self, Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=b$1426:Self Declared:Self
     // Candidates = Self
     {
-        return All(Equals(FieldValues(a), FieldValues(b)));
+        return null;
     }
 
 }
 interface Arithmetic<Self> where Self : Arithmetic<Self>
 {
     public static Self Add(Self self, Self other)
-    // ParameterSymbol=self$1428:Self Declared:Self, Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=self$1428:Self Declared:Self
     // Candidates = Self
-    // ParameterSymbol=other$1429:Self Declared:Self, Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=other$1429:Self Declared:Self
     // Candidates = Self
     {
-        return Add(FieldValues(self), FieldValues(other));
+        return null;
     }
 
     public static Self Negative(Self self)
-    // ParameterSymbol=self$1431:Self Declared:Self, Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=self$1431:Self Declared:Self
     // Candidates = Self
     {
-        return Negative(FieldValues(self));
+        return null;
     }
 
     public static Self Reciprocal(Self self)
-    // ParameterSymbol=self$1433:Self Declared:Self, Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=self$1433:Self Declared:Self
     // Candidates = Self
     {
-        return Reciprocal(FieldValues(self));
+        return null;
     }
 
     public static Self Multiply(Self self, Self other)
-    // ParameterSymbol=self$1435:Self Declared:Self, Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=self$1435:Self Declared:Self
     // Candidates = Self
-    // ParameterSymbol=other$1436:Self Declared:Self, Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=other$1436:Self Declared:Self
     // Candidates = Self
     {
-        return Add(FieldValues(self), FieldValues(other));
+        return null;
     }
 
     public static Self Divide(Self self, Self other)
-    // ParameterSymbol=self$1438:Self Declared:Self, Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=self$1438:Self Declared:Self
     // Candidates = Self
-    // ParameterSymbol=other$1439:Self Declared:Self, Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=other$1439:Self Declared:Self
     // Candidates = Self
     {
-        return Divide(FieldValues(self), FieldValues(other));
+        return null;
     }
 
     public static Self Modulo(Self self, Self other)
-    // ParameterSymbol=self$1441:Self Declared:Self, Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=self$1441:Self Declared:Self
     // Candidates = Self
-    // ParameterSymbol=other$1442:Self Declared:Self, Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=other$1442:Self Declared:Self
     // Candidates = Self
     {
-        return Modulo(FieldValues(self), FieldValues(other));
+        return null;
     }
 
 }
 interface ScalarArithmetic<Self> where Self : ScalarArithmetic<Self>
 {
     public static Self Add(Self self, T scalar)
-    // ParameterSymbol=self$1445:Self Declared:Self, Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=self$1445:Self Declared:Self
     // Candidates = Self
-    // ParameterSymbol=scalar$1446:T Declared:T, Argument:RefSymbol=Add$178:(1/2)
+    // ParameterSymbol=scalar$1446:T Declared:T
     // Candidates = T
     {
-        return Add(FieldValues(self), scalar);
+        return null;
     }
 
     public static Self Subtract(Self self, T scalar)
-    // ParameterSymbol=self$1448:Self Declared:Self, Argument:RefSymbol=Add$178:(0/2)
+    // ParameterSymbol=self$1448:Self Declared:Self
     // Candidates = Self
-    // ParameterSymbol=scalar$1449:T Declared:T, Argument:RefSymbol=Negative$167:(0/1)
+    // ParameterSymbol=scalar$1449:T Declared:T
     // Candidates = T
     {
-        return Add(self, Negative(scalar));
+        return null;
     }
 
     public static Self Multiply(Self self, T scalar)
-    // ParameterSymbol=self$1451:Self Declared:Self, Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=self$1451:Self Declared:Self
     // Candidates = Self
-    // ParameterSymbol=scalar$1452:T Declared:T, Argument:RefSymbol=Multiply$182:(1/2)
+    // ParameterSymbol=scalar$1452:T Declared:T
     // Candidates = T
     {
-        return Multiply(FieldValues(self), scalar);
+        return null;
     }
 
     public static Self Divide(Self self, T scalar)
-    // ParameterSymbol=self$1454:Self Declared:Self, Argument:RefSymbol=Multiply$182:(0/2)
+    // ParameterSymbol=self$1454:Self Declared:Self
     // Candidates = Self
-    // ParameterSymbol=scalar$1455:T Declared:T, Argument:RefSymbol=Reciprocal$169:(0/1)
+    // ParameterSymbol=scalar$1455:T Declared:T
     // Candidates = T
     {
-        return Multiply(self, Reciprocal(scalar));
+        return null;
     }
 
     public static Self Modulo(Self self, T scalar)
-    // ParameterSymbol=self$1457:Self Declared:Self, Argument:RefSymbol=FieldValues$200:(0/1)
+    // ParameterSymbol=self$1457:Self Declared:Self
     // Candidates = Self
-    // ParameterSymbol=scalar$1458:T Declared:T, Argument:RefSymbol=Modulo$186:(1/2)
+    // ParameterSymbol=scalar$1458:T Declared:T
     // Candidates = T
     {
-        return Modulo(FieldValues(self), scalar);
+        return null;
     }
 
 }
@@ -169,7 +163,7 @@ interface Boolean<Self> where Self : Boolean<Self>
     // ParameterSymbol=b$1461:Self Declared:Self
     // Candidates = Self
     {
-        return intrinsic;
+        return null;
     }
 
     public static void Or(Self a, Self b)
@@ -178,14 +172,14 @@ interface Boolean<Self> where Self : Boolean<Self>
     // ParameterSymbol=b$1464:Self Declared:Self
     // Candidates = Self
     {
-        return intrinsic;
+        return null;
     }
 
     public static Self Not(Self a)
     // ParameterSymbol=a$1466:Self Declared:Self
     // Candidates = Self
     {
-        return intrinsic;
+        return null;
     }
 
 }
@@ -193,56 +187,56 @@ interface Value<Self> where Self : Value<Self>
 {
     public static void Type()
     {
-        return intrinsic;
+        return null;
     }
 
     public static Array FieldTypes()
     {
-        return intrinsic;
+        return null;
     }
 
     public static Array FieldNames()
     {
-        return intrinsic;
+        return null;
     }
 
     public static Array FieldValues(Self self)
     // ParameterSymbol=self$1471:Self Declared:Self
     // Candidates = Self
     {
-        return intrinsic;
+        return null;
     }
 
     public static Self Zero()
     {
-        return Zero(FieldTypes);
+        return null;
     }
 
     public static Self One()
     {
-        return One(FieldTypes);
+        return null;
     }
 
     public static Self Default()
     {
-        return Default(FieldTypes);
+        return null;
     }
 
     public static Self MinValue()
     {
-        return MinValue(FieldTypes);
+        return null;
     }
 
     public static Self MaxValue()
     {
-        return MaxValue(FieldTypes);
+        return null;
     }
 
     public static void ToString(Self x)
     // ParameterSymbol=x$1478:Self Declared:Self
     // Candidates = Self
     {
-        return JoinStrings(FieldValues, ,);
+        return null;
     }
 
 }
@@ -806,243 +800,237 @@ class BinomialDistribution
 class Interval
 {
     public static void Size(var x)
-    // ParameterSymbol=x$1483: Argument:RefSymbol=Max$1303:(0/1), Argument:RefSymbol=Min$1301:(0/1)
-    // Candidates = Comparable
+    // ParameterSymbol=x$1483: 
+    // Candidates = Any
     {
-        return Subtract(Max(x), Min(x));
+        return null;
     }
 
     public static void IsEmpty(var x)
-    // ParameterSymbol=x$1485: Argument:RefSymbol=Min$1301:(0/1), Argument:RefSymbol=Max$1303:(0/1)
-    // Candidates = Comparable
+    // ParameterSymbol=x$1485: 
+    // Candidates = Any
     {
-        return GreaterThanOrEquals(Min(x), Max(x));
+        return null;
     }
 
     public static void Lerp(var x, var amount)
-    // ParameterSymbol=x$1487: Argument:RefSymbol=Min$1301:(0/1), Argument:RefSymbol=Max$1303:(0/1)
-    // Candidates = Comparable
-    // ParameterSymbol=amount$1488: Argument:RefSymbol=Subtract$180:(1/2), Argument:RefSymbol=Multiply$182:(1/2)
-    // Candidates = ScalarArithmetic,Arithmetic
+    // ParameterSymbol=x$1487: 
+    // Candidates = Any
+    // ParameterSymbol=amount$1488: 
+    // Candidates = Any
     {
-        return Multiply(Min(x), Add(Subtract(1, amount), Multiply(Max(x), amount)));
+        return null;
     }
 
     public static void InverseLerp(var x, var value)
-    // ParameterSymbol=x$1490: Argument:RefSymbol=Min$1301:(0/1), Argument:RefSymbol=Size$1121:(0/1)
-    // Candidates = Comparable,Interval
-    // ParameterSymbol=value$1491: Argument:RefSymbol=Subtract$180:(0/2)
-    // Candidates = ScalarArithmetic
+    // ParameterSymbol=x$1490: 
+    // Candidates = Any
+    // ParameterSymbol=value$1491: 
+    // Candidates = Any
     {
-        return Divide(Subtract(value, Min(x)), Size(x));
+        return null;
     }
 
     public static void Negate(var x)
-    // ParameterSymbol=x$1493: Argument:RefSymbol=Max$1303:(0/1), Argument:RefSymbol=Min$1301:(0/1)
-    // Candidates = Comparable
+    // ParameterSymbol=x$1493: 
+    // Candidates = Any
     {
-        return Tuple(Negative(Max(x)), Negative(Min(x)));
+        return null;
     }
 
     public static void Reverse(var x)
-    // ParameterSymbol=x$1495: Argument:RefSymbol=Max$1303:(0/1), Argument:RefSymbol=Min$1301:(0/1)
-    // Candidates = Comparable
+    // ParameterSymbol=x$1495: 
+    // Candidates = Any
     {
-        return Tuple(Max(x), Min(x));
+        return null;
     }
 
     public static void Resize(var x, var size)
-    // ParameterSymbol=x$1497: Argument:RefSymbol=Min$1301:(0/1), Argument:RefSymbol=Min$1301:(0/1)
-    // Candidates = Comparable
-    // ParameterSymbol=size$1498: Argument:RefSymbol=Add$178:(1/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1497: 
+    // Candidates = Any
+    // ParameterSymbol=size$1498: 
+    // Candidates = Any
     {
-        return Tuple(Min(x), Add(Min(x), size));
+        return null;
     }
 
     public static void Center(var x)
-    // ParameterSymbol=x$1500: Argument:RefSymbol=Lerp$1125:(0/2)
-    // Candidates = Interval
+    // ParameterSymbol=x$1500: 
+    // Candidates = Any
     {
-        return Lerp(x, 0.5);
+        return null;
     }
 
     public static void Contains(var x, var value)
-    // ParameterSymbol=x$1502: Argument:RefSymbol=Min$1301:(0/1), Argument:RefSymbol=Max$1303:(0/1)
-    // Candidates = Comparable
-    // ParameterSymbol=value$1503: Argument:RefSymbol=And$188:(0/2), Argument:RefSymbol=LessThanOrEquals$1295:(0/2)
-    // Candidates = Boolean,Comparable
+    // ParameterSymbol=x$1502: 
+    // Candidates = Any
+    // ParameterSymbol=value$1503: 
+    // Candidates = Any
     {
-        return LessThanOrEquals(Min(x), And(value, LessThanOrEquals(value, Max(x))));
+        return null;
     }
 
     public static void Contains(var x, var other)
-    // ParameterSymbol=x$1505: Argument:RefSymbol=Min$1301:(0/1)
-    // Candidates = Comparable
-    // ParameterSymbol=other$1506: Argument:RefSymbol=Min$1301:(0/1), Argument:RefSymbol=Max$1303:(0/1)
-    // Candidates = Comparable
+    // ParameterSymbol=x$1505: 
+    // Candidates = Any
+    // ParameterSymbol=other$1506: 
+    // Candidates = Any
     {
-        return LessThanOrEquals(Min(x), And(Min(other), GreaterThanOrEquals(Max, Max(other))));
+        return null;
     }
 
     public static void Overlaps(var x, var y)
-    // ParameterSymbol=x$1508: Argument:RefSymbol=Clamp$1221:(0/2)
-    // Candidates = Interval,Numerical
-    // ParameterSymbol=y$1509: Argument:RefSymbol=Clamp$1221:(1/2)
-    // Candidates = Interval,Numerical
+    // ParameterSymbol=x$1508: 
+    // Candidates = Any
+    // ParameterSymbol=y$1509: 
+    // Candidates = Any
     {
-        return Not(IsEmpty(Clamp(x, y)));
+        return null;
     }
 
     public static void Split(var x, var t)
-    // ParameterSymbol=x$1511: Argument:RefSymbol=Left$1147:(0/2), Argument:RefSymbol=Right$1149:(0/2)
-    // Candidates = Interval
-    // ParameterSymbol=t$1512: Argument:RefSymbol=Left$1147:(1/2), Argument:RefSymbol=Right$1149:(1/2)
-    // Candidates = Interval
+    // ParameterSymbol=x$1511: 
+    // Candidates = Any
+    // ParameterSymbol=t$1512: 
+    // Candidates = Any
     {
-        return Tuple(Left(x, t), Right(x, t));
+        return null;
     }
 
     public static void Split(var x)
-    // ParameterSymbol=x$1514: Argument:RefSymbol=Split$1145:(0/2)
-    // Candidates = Interval
+    // ParameterSymbol=x$1514: 
+    // Candidates = Any
     {
-        return Split(x, 0.5);
+        return null;
     }
 
     public static void Left(var x, var t)
-    // ParameterSymbol=x$1516: Argument:RefSymbol=Lerp$1125:(0/2)
-    // Candidates = Interval
-    // ParameterSymbol=t$1517: Argument:RefSymbol=Lerp$1125:(1/2)
-    // Candidates = Interval
+    // ParameterSymbol=x$1516: 
+    // Candidates = Any
+    // ParameterSymbol=t$1517: 
+    // Candidates = Any
     {
-        return Tuple(Min, Lerp(x, t));
+        return null;
     }
 
     public static void Right(var x, var t)
-    // ParameterSymbol=x$1519: Argument:RefSymbol=Lerp$1125:(0/2), Argument:RefSymbol=Max$1303:(0/1)
-    // Candidates = Interval,Comparable
-    // ParameterSymbol=t$1520: Argument:RefSymbol=Lerp$1125:(1/2)
-    // Candidates = Interval
+    // ParameterSymbol=x$1519: 
+    // Candidates = Any
+    // ParameterSymbol=t$1520: 
+    // Candidates = Any
     {
-        return Tuple(Lerp(x, t), Max(x));
+        return null;
     }
 
     public static void MoveTo(var x, var t)
-    // ParameterSymbol=x$1522: Argument:RefSymbol=Size$1121:(0/1)
-    // Candidates = Interval
-    // ParameterSymbol=t$1523: Argument:RefSymbol=Tuple$1:(0/2), Argument:RefSymbol=Add$178:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1522: 
+    // Candidates = Any
+    // ParameterSymbol=t$1523: 
+    // Candidates = Any
     {
-        return Tuple(t, Add(t, Size(x)));
+        return null;
     }
 
     public static void LeftHalf(var x)
-    // ParameterSymbol=x$1525: Argument:RefSymbol=Left$1147:(0/2)
-    // Candidates = Interval
+    // ParameterSymbol=x$1525: 
+    // Candidates = Any
     {
-        return Left(x, 0.5);
+        return null;
     }
 
     public static void RightHalf(var x)
-    // ParameterSymbol=x$1527: Argument:RefSymbol=Right$1149:(0/2)
-    // Candidates = Interval
+    // ParameterSymbol=x$1527: 
+    // Candidates = Any
     {
-        return Right(x, 0.5);
+        return null;
     }
 
     public static void HalfSize(var x)
-    // ParameterSymbol=x$1529: Argument:RefSymbol=Size$1121:(0/1)
-    // Candidates = Interval
+    // ParameterSymbol=x$1529: 
+    // Candidates = Any
     {
-        return Half(Size(x));
+        return null;
     }
 
     public static void Recenter(var x, var c)
-    // ParameterSymbol=x$1531: Argument:RefSymbol=HalfSize$1157:(0/1), Argument:RefSymbol=HalfSize$1157:(0/1)
-    // Candidates = Interval
-    // ParameterSymbol=c$1532: Argument:RefSymbol=Subtract$180:(0/2), Argument:RefSymbol=Add$178:(0/2)
-    // Candidates = ScalarArithmetic,Arithmetic
+    // ParameterSymbol=x$1531: 
+    // Candidates = Any
+    // ParameterSymbol=c$1532: 
+    // Candidates = Any
     {
-        return Tuple(Subtract(c, HalfSize(x)), Add(c, HalfSize(x)));
+        return null;
     }
 
     public static void Clamp(var x, var y)
-    // ParameterSymbol=x$1534: Argument:RefSymbol=Clamp$1221:(0/2), Argument:RefSymbol=Clamp$1221:(0/2)
-    // Candidates = Interval,Numerical
-    // ParameterSymbol=y$1535: Argument:RefSymbol=Min$1301:(0/1), Argument:RefSymbol=Max$1303:(0/1)
-    // Candidates = Comparable
+    // ParameterSymbol=x$1534: 
+    // Candidates = Any
+    // ParameterSymbol=y$1535: 
+    // Candidates = Any
     {
-        return Tuple(Clamp(x, Min(y)), Clamp(x, Max(y)));
+        return null;
     }
 
     public static void Clamp(var x, var value)
-    // ParameterSymbol=x$1537: Argument:RefSymbol=Min$1301:(0/1), Argument:RefSymbol=Min$1301:(0/1), Argument:RefSymbol=Max$1303:(0/1), Argument:RefSymbol=Max$1303:(0/1)
-    // Candidates = Comparable
-    // ParameterSymbol=value$1538: Argument:RefSymbol=LessThan$1289:(0/2), Argument:RefSymbol=GreaterThan$1297:(0/2)
-    // Candidates = Comparable
+    // ParameterSymbol=x$1537: 
+    // Candidates = Any
+    // ParameterSymbol=value$1538: 
+    // Candidates = Any
     {
-        return LessThan(value, Min(x)
-            ? Min(x)
-            : GreaterThan(value, Max(x)
-                ? Max(x)
-                : value
-            )
-        );
+        return null;
     }
 
     public static void Between(var x, var value)
-    // ParameterSymbol=x$1540: Argument:RefSymbol=Min$1301:(0/1), Argument:RefSymbol=Max$1303:(0/1)
-    // Candidates = Comparable
-    // ParameterSymbol=value$1541: Argument:RefSymbol=GreaterThanOrEquals$1299:(0/2), Argument:RefSymbol=LessThanOrEquals$1295:(0/2)
-    // Candidates = Comparable
+    // ParameterSymbol=x$1540: 
+    // Candidates = Any
+    // ParameterSymbol=value$1541: 
+    // Candidates = Any
     {
-        return GreaterThanOrEquals(value, And(Min(x), LessThanOrEquals(value, Max(x))));
+        return null;
     }
 
     public static void Unit()
     {
-        return Tuple(0, 1);
+        return null;
     }
 
 }
 class Vector
 {
     public static void Sum(var v)
-    // ParameterSymbol=v$1544: Argument:RefSymbol=Aggregate$1325:(0/3)
-    // Candidates = Array
+    // ParameterSymbol=v$1544: 
+    // Candidates = Any
     {
-        return Aggregate(v, 0, Add);
+        return null;
     }
 
     public static void SumSquares(var v)
-    // ParameterSymbol=v$1546: Argument:RefSymbol=Square$1215:(0/1)
-    // Candidates = Numerical
+    // ParameterSymbol=v$1546: 
+    // Candidates = Any
     {
-        return Aggregate(Square(v), 0, Add);
+        return null;
     }
 
     public static void LengthSquared(var v)
-    // ParameterSymbol=v$1548: Argument:RefSymbol=SumSquares$1171:(0/1)
-    // Candidates = Vector
+    // ParameterSymbol=v$1548: 
+    // Candidates = Any
     {
-        return SumSquares(v);
+        return null;
     }
 
     public static void Length(var v)
-    // ParameterSymbol=v$1550: Argument:RefSymbol=LengthSquared$1173:(0/1)
-    // Candidates = Vector
+    // ParameterSymbol=v$1550: 
+    // Candidates = Any
     {
-        return SquareRoot(LengthSquared(v));
+        return null;
     }
 
     public static void Dot(var v1, var v2)
-    // ParameterSymbol=v1$1552: Argument:RefSymbol=Multiply$182:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
-    // ParameterSymbol=v2$1553: Argument:RefSymbol=Multiply$182:(1/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=v1$1552: 
+    // Candidates = Any
+    // ParameterSymbol=v2$1553: 
+    // Candidates = Any
     {
-        return Sum(Multiply(v1, v2));
+        return null;
     }
 
 }
@@ -1052,84 +1040,84 @@ class Numerical
     // ParameterSymbol=x$1555: 
     // Candidates = Any
     {
-        return intrinsic;
+        return null;
     }
 
     public static void Sin(var x)
     // ParameterSymbol=x$1557: 
     // Candidates = Any
     {
-        return intrinsic;
+        return null;
     }
 
     public static void Tan(var x)
     // ParameterSymbol=x$1559: 
     // Candidates = Any
     {
-        return intrinsic;
+        return null;
     }
 
     public static void Acos(var x)
     // ParameterSymbol=x$1561: 
     // Candidates = Any
     {
-        return intrinsic;
+        return null;
     }
 
     public static void Asin(var x)
     // ParameterSymbol=x$1563: 
     // Candidates = Any
     {
-        return intrinsic;
+        return null;
     }
 
     public static void Atan(var x)
     // ParameterSymbol=x$1565: 
     // Candidates = Any
     {
-        return intrinsic;
+        return null;
     }
 
     public static void Cosh(var x)
     // ParameterSymbol=x$1567: 
     // Candidates = Any
     {
-        return intrinsic;
+        return null;
     }
 
     public static void Sinh(var x)
     // ParameterSymbol=x$1569: 
     // Candidates = Any
     {
-        return intrinsic;
+        return null;
     }
 
     public static void Tanh(var x)
     // ParameterSymbol=x$1571: 
     // Candidates = Any
     {
-        return intrinsic;
+        return null;
     }
 
     public static void Acosh(var x)
     // ParameterSymbol=x$1573: 
     // Candidates = Any
     {
-        return intrinsic;
+        return null;
     }
 
     public static void Asinh(var x)
     // ParameterSymbol=x$1575: 
     // Candidates = Any
     {
-        return intrinsic;
+        return null;
     }
 
     public static void Atanh(var x)
     // ParameterSymbol=x$1577: 
     // Candidates = Any
     {
-        return intrinsic;
+        return null;
     }
 
     public static void Pow(var x, var y)
@@ -1138,7 +1126,7 @@ class Numerical
     // ParameterSymbol=y$1580: 
     // Candidates = Any
     {
-        return intrinsic;
+        return null;
     }
 
     public static void Log(var x, var y)
@@ -1147,418 +1135,397 @@ class Numerical
     // ParameterSymbol=y$1583: 
     // Candidates = Any
     {
-        return intrinsic;
+        return null;
     }
 
     public static void NaturalLog(var x)
     // ParameterSymbol=x$1585: 
     // Candidates = Any
     {
-        return intrinsic;
+        return null;
     }
 
     public static void NaturalPower(var x)
     // ParameterSymbol=x$1587: 
     // Candidates = Any
     {
-        return intrinsic;
+        return null;
     }
 
     public static void SquareRoot(var x)
-    // ParameterSymbol=x$1589: Argument:RefSymbol=Pow$1203:(0/2)
-    // Candidates = Numerical
+    // ParameterSymbol=x$1589: 
+    // Candidates = Any
     {
-        return Pow(x, 0.5);
+        return null;
     }
 
     public static void CubeRoot(var x)
-    // ParameterSymbol=x$1591: Argument:RefSymbol=Pow$1203:(0/2)
-    // Candidates = Numerical
+    // ParameterSymbol=x$1591: 
+    // Candidates = Any
     {
-        return Pow(x, 0.5);
+        return null;
     }
 
     public static void Square(var x)
     // ParameterSymbol=x$1593: 
     // Candidates = Any
     {
-        return Multiply(Value, Value);
+        return null;
     }
 
     public static void Clamp(var x, var min, var max)
-    // ParameterSymbol=x$1595: Argument:RefSymbol=Clamp$1221:(0/2)
-    // Candidates = Interval,Numerical
-    // ParameterSymbol=min$1596: Argument:RefSymbol=Interval$133:(0/2)
+    // ParameterSymbol=x$1595: 
     // Candidates = Any
-    // ParameterSymbol=max$1597: Argument:RefSymbol=Interval$133:(1/2)
+    // ParameterSymbol=min$1596: 
+    // Candidates = Any
+    // ParameterSymbol=max$1597: 
     // Candidates = Any
     {
-        return Clamp(x, Interval(min, max));
+        return null;
     }
 
     public static void Clamp(var x, var i)
-    // ParameterSymbol=x$1599: Argument:RefSymbol=Clamp$1221:(1/2)
-    // Candidates = Interval,Numerical
-    // ParameterSymbol=i$1600: Argument:RefSymbol=Clamp$1221:(0/2)
-    // Candidates = Interval,Numerical
+    // ParameterSymbol=x$1599: 
+    // Candidates = Any
+    // ParameterSymbol=i$1600: 
+    // Candidates = Any
     {
-        return Clamp(i, x);
+        return null;
     }
 
     public static void Clamp(var x)
-    // ParameterSymbol=x$1602: Argument:RefSymbol=Clamp$1221:(0/3)
-    // Candidates = Interval,Numerical
+    // ParameterSymbol=x$1602: 
+    // Candidates = Any
     {
-        return Clamp(x, 0, 1);
+        return null;
     }
 
     public static void PlusOne(var x)
-    // ParameterSymbol=x$1604: Argument:RefSymbol=Add$178:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1604: 
+    // Candidates = Any
     {
-        return Add(x, 1);
+        return null;
     }
 
     public static void MinusOne(var x)
-    // ParameterSymbol=x$1606: Argument:RefSymbol=Subtract$180:(0/2)
-    // Candidates = ScalarArithmetic
+    // ParameterSymbol=x$1606: 
+    // Candidates = Any
     {
-        return Subtract(x, 1);
+        return null;
     }
 
     public static void FromOne(var x)
-    // ParameterSymbol=x$1608: Argument:RefSymbol=Subtract$180:(1/2)
-    // Candidates = ScalarArithmetic
+    // ParameterSymbol=x$1608: 
+    // Candidates = Any
     {
-        return Subtract(1, x);
+        return null;
     }
 
     public static void Sign(var x)
-    // ParameterSymbol=x$1610: Argument:RefSymbol=LessThan$1289:(0/2), Argument:RefSymbol=GreaterThan$1297:(0/2)
-    // Candidates = Comparable
+    // ParameterSymbol=x$1610: 
+    // Candidates = Any
     {
-        return LessThan(x, 0
-            ? Negative(1)
-            : GreaterThan(x, 0
-                ? 1
-                : 0
-            )
-        );
+        return null;
     }
 
     public static void Abs(var x)
     // ParameterSymbol=x$1612: 
     // Candidates = Any
     {
-        return LessThan(Value, 0
-            ? Negative(Value)
-            : Value
-        );
+        return null;
     }
 
     public static void Half(var x)
-    // ParameterSymbol=x$1614: Argument:RefSymbol=Divide$184:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1614: 
+    // Candidates = Any
     {
-        return Divide(x, 2);
+        return null;
     }
 
     public static void Third(var x)
-    // ParameterSymbol=x$1616: Argument:RefSymbol=Divide$184:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1616: 
+    // Candidates = Any
     {
-        return Divide(x, 3);
+        return null;
     }
 
     public static void Quarter(var x)
-    // ParameterSymbol=x$1618: Argument:RefSymbol=Divide$184:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1618: 
+    // Candidates = Any
     {
-        return Divide(x, 4);
+        return null;
     }
 
     public static void Fifth(var x)
-    // ParameterSymbol=x$1620: Argument:RefSymbol=Divide$184:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1620: 
+    // Candidates = Any
     {
-        return Divide(x, 5);
+        return null;
     }
 
     public static void Sixth(var x)
-    // ParameterSymbol=x$1622: Argument:RefSymbol=Divide$184:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1622: 
+    // Candidates = Any
     {
-        return Divide(x, 6);
+        return null;
     }
 
     public static void Seventh(var x)
-    // ParameterSymbol=x$1624: Argument:RefSymbol=Divide$184:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1624: 
+    // Candidates = Any
     {
-        return Divide(x, 7);
+        return null;
     }
 
     public static void Eighth(var x)
-    // ParameterSymbol=x$1626: Argument:RefSymbol=Divide$184:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1626: 
+    // Candidates = Any
     {
-        return Divide(x, 8);
+        return null;
     }
 
     public static void Ninth(var x)
-    // ParameterSymbol=x$1628: Argument:RefSymbol=Divide$184:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1628: 
+    // Candidates = Any
     {
-        return Divide(x, 9);
+        return null;
     }
 
     public static void Tenth(var x)
-    // ParameterSymbol=x$1630: Argument:RefSymbol=Divide$184:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1630: 
+    // Candidates = Any
     {
-        return Divide(x, 10);
+        return null;
     }
 
     public static void Sixteenth(var x)
-    // ParameterSymbol=x$1632: Argument:RefSymbol=Divide$184:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1632: 
+    // Candidates = Any
     {
-        return Divide(x, 16);
+        return null;
     }
 
     public static void Hundredth(var x)
-    // ParameterSymbol=x$1634: Argument:RefSymbol=Divide$184:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1634: 
+    // Candidates = Any
     {
-        return Divide(x, 100);
+        return null;
     }
 
     public static void Thousandth(var x)
-    // ParameterSymbol=x$1636: Argument:RefSymbol=Divide$184:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1636: 
+    // Candidates = Any
     {
-        return Divide(x, 1000);
+        return null;
     }
 
     public static void Millionth(var x)
-    // ParameterSymbol=x$1638: Argument:RefSymbol=Divide$184:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1638: 
+    // Candidates = Any
     {
-        return Divide(x, Divide(1000, 1000));
+        return null;
     }
 
     public static void Billionth(var x)
-    // ParameterSymbol=x$1640: Argument:RefSymbol=Divide$184:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1640: 
+    // Candidates = Any
     {
-        return Divide(x, Divide(1000, Divide(1000, 1000)));
+        return null;
     }
 
     public static void Hundred(var x)
-    // ParameterSymbol=x$1642: Argument:RefSymbol=Multiply$182:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1642: 
+    // Candidates = Any
     {
-        return Multiply(x, 100);
+        return null;
     }
 
     public static void Thousand(var x)
-    // ParameterSymbol=x$1644: Argument:RefSymbol=Multiply$182:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1644: 
+    // Candidates = Any
     {
-        return Multiply(x, 1000);
+        return null;
     }
 
     public static void Million(var x)
-    // ParameterSymbol=x$1646: Argument:RefSymbol=Multiply$182:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1646: 
+    // Candidates = Any
     {
-        return Multiply(x, Multiply(1000, 1000));
+        return null;
     }
 
     public static void Billion(var x)
-    // ParameterSymbol=x$1648: Argument:RefSymbol=Multiply$182:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1648: 
+    // Candidates = Any
     {
-        return Multiply(x, Multiply(1000, Multiply(1000, 1000)));
+        return null;
     }
 
     public static void Twice(var x)
-    // ParameterSymbol=x$1650: Argument:RefSymbol=Multiply$182:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1650: 
+    // Candidates = Any
     {
-        return Multiply(x, 2);
+        return null;
     }
 
     public static void Thrice(var x)
-    // ParameterSymbol=x$1652: Argument:RefSymbol=Multiply$182:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1652: 
+    // Candidates = Any
     {
-        return Multiply(x, 3);
+        return null;
     }
 
     public static void SmoothStep(var x)
-    // ParameterSymbol=x$1654: Argument:RefSymbol=Square$1215:(0/1), Argument:RefSymbol=Twice$1269:(0/1)
-    // Candidates = Numerical
+    // ParameterSymbol=x$1654: 
+    // Candidates = Any
     {
-        return Multiply(Square(x), Subtract(3, Twice(x)));
+        return null;
     }
 
     public static void Pow2(var x)
-    // ParameterSymbol=x$1656: Argument:RefSymbol=Multiply$182:(0/2), Argument:RefSymbol=Multiply$182:(1/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1656: 
+    // Candidates = Any
     {
-        return Multiply(x, x);
+        return null;
     }
 
     public static void Pow3(var x)
-    // ParameterSymbol=x$1658: Argument:RefSymbol=Multiply$182:(1/2), Argument:RefSymbol=Pow2$1275:(0/1)
-    // Candidates = Arithmetic,ScalarArithmetic,Numerical
+    // ParameterSymbol=x$1658: 
+    // Candidates = Any
     {
-        return Multiply(Pow2(x), x);
+        return null;
     }
 
     public static void Pow4(var x)
-    // ParameterSymbol=x$1660: Argument:RefSymbol=Multiply$182:(1/2), Argument:RefSymbol=Pow3$1277:(0/1)
-    // Candidates = Arithmetic,ScalarArithmetic,Numerical
+    // ParameterSymbol=x$1660: 
+    // Candidates = Any
     {
-        return Multiply(Pow3(x), x);
+        return null;
     }
 
     public static void Pow5(var x)
-    // ParameterSymbol=x$1662: Argument:RefSymbol=Multiply$182:(1/2), Argument:RefSymbol=Pow4$1279:(0/1)
-    // Candidates = Arithmetic,ScalarArithmetic,Numerical
+    // ParameterSymbol=x$1662: 
+    // Candidates = Any
     {
-        return Multiply(Pow4(x), x);
+        return null;
     }
 
     public static void Turns(var x)
-    // ParameterSymbol=x$1664: Argument:RefSymbol=Multiply$182:(0/2)
-    // Candidates = Arithmetic,ScalarArithmetic
+    // ParameterSymbol=x$1664: 
+    // Candidates = Any
     {
-        return Multiply(x, Multiply(3.1415926535897, 2));
+        return null;
     }
 
     public static void AlmostZero(var x)
-    // ParameterSymbol=x$1666: Argument:RefSymbol=Abs$1231:(0/1)
-    // Candidates = Numerical
+    // ParameterSymbol=x$1666: 
+    // Candidates = Any
     {
-        return LessThan(Abs(x), 1E-08);
+        return null;
     }
 
 }
 class Comparable
 {
     public static void Equals(var a, var b)
-    // ParameterSymbol=a$1668: Argument:RefSymbol=Compare$161:(0/2)
-    // Candidates = Comparable
-    // ParameterSymbol=b$1669: Argument:RefSymbol=Compare$161:(1/2)
-    // Candidates = Comparable
+    // ParameterSymbol=a$1668: 
+    // Candidates = Any
+    // ParameterSymbol=b$1669: 
+    // Candidates = Any
     {
-        return Equals(Compare(a, b), 0);
+        return null;
     }
 
     public static void LessThan(var a, var b)
-    // ParameterSymbol=a$1671: Argument:RefSymbol=Compare$161:(0/2)
-    // Candidates = Comparable
-    // ParameterSymbol=b$1672: Argument:RefSymbol=Compare$161:(1/2)
-    // Candidates = Comparable
+    // ParameterSymbol=a$1671: 
+    // Candidates = Any
+    // ParameterSymbol=b$1672: 
+    // Candidates = Any
     {
-        return LessThan(Compare(a, b), 0);
+        return null;
     }
 
     public static void Lesser(var a, var b)
-    // ParameterSymbol=a$1674: Argument:RefSymbol=LessThanOrEquals$1295:(0/2)
-    // Candidates = Comparable
-    // ParameterSymbol=b$1675: Argument:RefSymbol=LessThanOrEquals$1295:(1/2)
-    // Candidates = Comparable
+    // ParameterSymbol=a$1674: 
+    // Candidates = Any
+    // ParameterSymbol=b$1675: 
+    // Candidates = Any
     {
-        return LessThanOrEquals(a, b)
-            ? a
-            : b
-        ;
+        return null;
     }
 
     public static void Greater(var a, var b)
-    // ParameterSymbol=a$1677: Argument:RefSymbol=GreaterThanOrEquals$1299:(0/2)
-    // Candidates = Comparable
-    // ParameterSymbol=b$1678: Argument:RefSymbol=GreaterThanOrEquals$1299:(1/2)
-    // Candidates = Comparable
+    // ParameterSymbol=a$1677: 
+    // Candidates = Any
+    // ParameterSymbol=b$1678: 
+    // Candidates = Any
     {
-        return GreaterThanOrEquals(a, b)
-            ? a
-            : b
-        ;
+        return null;
     }
 
     public static void LessThanOrEquals(var a, var b)
-    // ParameterSymbol=a$1680: Argument:RefSymbol=Compare$161:(0/2)
-    // Candidates = Comparable
-    // ParameterSymbol=b$1681: Argument:RefSymbol=Compare$161:(1/2)
-    // Candidates = Comparable
+    // ParameterSymbol=a$1680: 
+    // Candidates = Any
+    // ParameterSymbol=b$1681: 
+    // Candidates = Any
     {
-        return LessThanOrEquals(Compare(a, b), 0);
+        return null;
     }
 
     public static void GreaterThan(var a, var b)
-    // ParameterSymbol=a$1683: Argument:RefSymbol=Compare$161:(0/2)
-    // Candidates = Comparable
-    // ParameterSymbol=b$1684: Argument:RefSymbol=Compare$161:(1/2)
-    // Candidates = Comparable
+    // ParameterSymbol=a$1683: 
+    // Candidates = Any
+    // ParameterSymbol=b$1684: 
+    // Candidates = Any
     {
-        return GreaterThan(Compare(a, b), 0);
+        return null;
     }
 
     public static void GreaterThanOrEquals(var a, var b)
-    // ParameterSymbol=a$1686: Argument:RefSymbol=Compare$161:(0/2)
-    // Candidates = Comparable
-    // ParameterSymbol=b$1687: Argument:RefSymbol=Compare$161:(1/2)
-    // Candidates = Comparable
+    // ParameterSymbol=a$1686: 
+    // Candidates = Any
+    // ParameterSymbol=b$1687: 
+    // Candidates = Any
     {
-        return GreaterThanOrEquals(Compare(a, b), 0);
+        return null;
     }
 
     public static void Min(var a, var b)
-    // ParameterSymbol=a$1689: Argument:RefSymbol=LessThan$1289:(0/2)
-    // Candidates = Comparable
-    // ParameterSymbol=b$1690: Argument:RefSymbol=LessThan$1289:(1/2)
-    // Candidates = Comparable
+    // ParameterSymbol=a$1689: 
+    // Candidates = Any
+    // ParameterSymbol=b$1690: 
+    // Candidates = Any
     {
-        return LessThan(a, b)
-            ? a
-            : b
-        ;
+        return null;
     }
 
     public static void Max(var a, var b)
-    // ParameterSymbol=a$1692: Argument:RefSymbol=GreaterThan$1297:(0/2)
-    // Candidates = Comparable
-    // ParameterSymbol=b$1693: Argument:RefSymbol=GreaterThan$1297:(1/2)
-    // Candidates = Comparable
+    // ParameterSymbol=a$1692: 
+    // Candidates = Any
+    // ParameterSymbol=b$1693: 
+    // Candidates = Any
     {
-        return GreaterThan(a, b)
-            ? a
-            : b
-        ;
+        return null;
     }
 
     public static void Between(var v, var a, var b)
-    // ParameterSymbol=v$1695: Argument:RefSymbol=Between$1307:(0/2)
-    // Candidates = Interval,Comparable
-    // ParameterSymbol=a$1696: Argument:RefSymbol=Interval$133:(0/2)
+    // ParameterSymbol=v$1695: 
     // Candidates = Any
-    // ParameterSymbol=b$1697: Argument:RefSymbol=Interval$133:(1/2)
+    // ParameterSymbol=a$1696: 
+    // Candidates = Any
+    // ParameterSymbol=b$1697: 
     // Candidates = Any
     {
-        return Between(v, Interval(a, b));
+        return null;
     }
 
     public static void Between(var v, var i)
-    // ParameterSymbol=v$1699: Argument:RefSymbol=Contains$1139:(1/2)
-    // Candidates = Interval
-    // ParameterSymbol=i$1700: Argument:RefSymbol=Contains$1139:(0/2)
-    // Candidates = Interval
+    // ParameterSymbol=v$1699: 
+    // Candidates = Any
+    // ParameterSymbol=i$1700: 
+    // Candidates = Any
     {
-        return Contains(i, v);
+        return null;
     }
 
 }
@@ -1567,448 +1534,396 @@ class Boolean
     public static void XOr(var a, var b)
     // ParameterSymbol=a$1702: 
     // Candidates = Any
-    // ParameterSymbol=b$1703: Argument:RefSymbol=Not$192:(0/1)
-    // Candidates = Boolean
+    // ParameterSymbol=b$1703: 
+    // Candidates = Any
     {
-        return a
-            ? Not(b)
-            : b
-        ;
+        return null;
     }
 
     public static void NAnd(var a, var b)
-    // ParameterSymbol=a$1705: Argument:RefSymbol=And$188:(0/2)
-    // Candidates = Boolean
-    // ParameterSymbol=b$1706: Argument:RefSymbol=And$188:(1/2)
-    // Candidates = Boolean
+    // ParameterSymbol=a$1705: 
+    // Candidates = Any
+    // ParameterSymbol=b$1706: 
+    // Candidates = Any
     {
-        return Not(And(a, b));
+        return null;
     }
 
     public static void NOr(var a, var b)
-    // ParameterSymbol=a$1708: Argument:RefSymbol=Or$190:(0/2)
-    // Candidates = Boolean
-    // ParameterSymbol=b$1709: Argument:RefSymbol=Or$190:(1/2)
-    // Candidates = Boolean
+    // ParameterSymbol=a$1708: 
+    // Candidates = Any
+    // ParameterSymbol=b$1709: 
+    // Candidates = Any
     {
-        return Not(Or(a, b));
+        return null;
     }
 
 }
 class Equatable
 {
     public static void NotEquals(var x)
-    // ParameterSymbol=x$1711: Argument:RefSymbol=Equals$1287:(0/1)
-    // Candidates = Equatable,Comparable
+    // ParameterSymbol=x$1711: 
+    // Candidates = Any
     {
-        return Not(Equals(x));
+        return null;
     }
 
 }
 class Array
 {
     public static void Map(var xs, var f)
-    // ParameterSymbol=xs$1713: Argument:RefSymbol=Count$26:(0/1), Argument:RefSymbol=At$219:(0/2)
-    // Candidates = Array
-    // ParameterSymbol=f$1714: Invoked:(ArgumentSymbol)
-    // Candidates = Function
+    // ParameterSymbol=xs$1713: 
+    // Candidates = Any
+    // ParameterSymbol=f$1714: 
+    // Candidates = Any
     {
-        return Map(Count(xs), (i) => 
-        // ParameterSymbol=i$1715: Argument:RefSymbol=At$219:(1/2)
-        // Candidates = Array
-        f(At(xs, i)));
+        return null;
     }
 
     public static void Zip(var xs, var ys, var f)
-    // ParameterSymbol=xs$1718: Argument:RefSymbol=Count$26:(0/1)
+    // ParameterSymbol=xs$1718: 
     // Candidates = Any
-    // ParameterSymbol=ys$1719: Argument:RefSymbol=At$219:(0/2)
-    // Candidates = Array
-    // ParameterSymbol=f$1720: Invoked:(ArgumentSymbol,ArgumentSymbol)
-    // Candidates = Function
+    // ParameterSymbol=ys$1719: 
+    // Candidates = Any
+    // ParameterSymbol=f$1720: 
+    // Candidates = Any
     {
-        return Array(Count(xs), (i) => 
-        // ParameterSymbol=i$1721: Argument:RefSymbol=At$219:(0/1), Argument:RefSymbol=At$219:(1/2)
-        // Candidates = Array
-        f(At(i), At(ys, i)));
+        return null;
     }
 
     public static void Skip(var xs, var n)
     // ParameterSymbol=xs$1724: 
     // Candidates = Any
-    // ParameterSymbol=n$1725: Argument:RefSymbol=Subtract$180:(1/2), Argument:RefSymbol=Subtract$180:(1/2)
-    // Candidates = ScalarArithmetic
+    // ParameterSymbol=n$1725: 
+    // Candidates = Any
     {
-        return Array(Subtract(Count, n), (i) => 
-        // ParameterSymbol=i$1726: Argument:RefSymbol=Subtract$180:(0/2)
-        // Candidates = ScalarArithmetic
-        At(Subtract(i, n)));
+        return null;
     }
 
     public static void Take(var xs, var n)
     // ParameterSymbol=xs$1729: 
     // Candidates = Any
-    // ParameterSymbol=n$1730: Argument:RefSymbol=Array$139:(0/2)
+    // ParameterSymbol=n$1730: 
     // Candidates = Any
     {
-        return Array(n, (i) => 
-        // ParameterSymbol=i$1731: 
-        // Candidates = Any
-        At);
+        return null;
     }
 
     public static void Aggregate(var xs, var init, var f)
-    // ParameterSymbol=xs$1734: Argument:RefSymbol=IsEmpty$1329:(0/1), Argument:RefSymbol=Rest$1327:(0/1)
-    // Candidates = Interval,Array
-    // ParameterSymbol=init$1735: Argument:RefSymbol=f$1736:(0/2)
+    // ParameterSymbol=xs$1734: 
     // Candidates = Any
-    // ParameterSymbol=f$1736: Invoked:(ArgumentSymbol,ArgumentSymbol), Invoked:(ArgumentSymbol)
-    // Candidates = Function
+    // ParameterSymbol=init$1735: 
+    // Candidates = Any
+    // ParameterSymbol=f$1736: 
+    // Candidates = Any
     {
-        return IsEmpty(xs)
-            ? init
-            : f(init, f(Rest(xs)))
-        ;
+        return null;
     }
 
     public static void Rest(var xs)
     // ParameterSymbol=xs$1738: 
     // Candidates = Any
     {
-        return Skip(1);
+        return null;
     }
 
     public static void IsEmpty(var xs)
-    // ParameterSymbol=xs$1740: Argument:RefSymbol=Count$26:(0/1)
+    // ParameterSymbol=xs$1740: 
     // Candidates = Any
     {
-        return Equals(Count(xs), 0);
+        return null;
     }
 
     public static void First(var xs)
-    // ParameterSymbol=xs$1742: Argument:RefSymbol=At$219:(0/2)
-    // Candidates = Array
+    // ParameterSymbol=xs$1742: 
+    // Candidates = Any
     {
-        return At(xs, 0);
+        return null;
     }
 
     public static void Last(var xs)
-    // ParameterSymbol=xs$1744: Argument:RefSymbol=At$219:(0/2), Argument:RefSymbol=Count$26:(0/1)
-    // Candidates = Array
+    // ParameterSymbol=xs$1744: 
+    // Candidates = Any
     {
-        return At(xs, Subtract(Count(xs), 1));
+        return null;
     }
 
     public static void Slice(var xs, var from, var count)
-    // ParameterSymbol=xs$1746: Argument:RefSymbol=Skip$1321:(0/2)
-    // Candidates = Array
-    // ParameterSymbol=from$1747: Argument:RefSymbol=Skip$1321:(1/2)
-    // Candidates = Array
-    // ParameterSymbol=count$1748: Argument:RefSymbol=Take$1323:(1/2)
-    // Candidates = Array
+    // ParameterSymbol=xs$1746: 
+    // Candidates = Any
+    // ParameterSymbol=from$1747: 
+    // Candidates = Any
+    // ParameterSymbol=count$1748: 
+    // Candidates = Any
     {
-        return Take(Skip(xs, from), count);
+        return null;
     }
 
     public static void Join(var xs, var sep)
-    // ParameterSymbol=xs$1750: Argument:RefSymbol=IsEmpty$1329:(0/1), Argument:RefSymbol=First$1331:(0/1), Argument:RefSymbol=Skip$1321:(0/2)
-    // Candidates = Interval,Array
-    // ParameterSymbol=sep$1751: Argument:RefSymbol=Interpolate$1409:(1/3)
-    // Candidates = Intrinsics
+    // ParameterSymbol=xs$1750: 
+    // Candidates = Any
+    // ParameterSymbol=sep$1751: 
+    // Candidates = Any
     {
-        return IsEmpty(xs)
-            ? 
-            : Add(ToString(First(xs)), Aggregate(Skip(xs, 1), , (acc, cur) => 
-            // ParameterSymbol=acc$1752: Argument:RefSymbol=Interpolate$1409:(0/3)
-            // Candidates = Intrinsics
-            // ParameterSymbol=cur$1753: Argument:RefSymbol=Interpolate$1409:(2/3)
-            // Candidates = Intrinsics
-            Interpolate(acc, sep, cur)))
-        ;
+        return null;
     }
 
     public static void All(var xs, var f)
-    // ParameterSymbol=xs$1756: Argument:RefSymbol=IsEmpty$1329:(0/1), Argument:RefSymbol=First$1331:(0/1), Argument:RefSymbol=Rest$1327:(0/1)
-    // Candidates = Interval,Array
-    // ParameterSymbol=f$1757: Invoked:(ArgumentSymbol), Invoked:(ArgumentSymbol)
-    // Candidates = Function
+    // ParameterSymbol=xs$1756: 
+    // Candidates = Any
+    // ParameterSymbol=f$1757: 
+    // Candidates = Any
     {
-        return IsEmpty(xs)
-            ? True
-            : And(f(First(xs)), f(Rest(xs)))
-        ;
+        return null;
     }
 
     public static void JoinStrings(var xs, var sep)
-    // ParameterSymbol=xs$1759: Argument:RefSymbol=IsEmpty$1329:(0/1), Argument:RefSymbol=First$1331:(0/1), Argument:RefSymbol=Rest$1327:(0/1)
-    // Candidates = Interval,Array
+    // ParameterSymbol=xs$1759: 
+    // Candidates = Any
     // ParameterSymbol=sep$1760: 
     // Candidates = Any
     {
-        return IsEmpty(xs)
-            ? 
-            : Add(First(xs), Aggregate(Rest(xs), , (x, acc) => 
-            // ParameterSymbol=x$1761: Argument:RefSymbol=ToString$212:(0/1)
-            // Candidates = Value
-            // ParameterSymbol=acc$1762: Argument:RefSymbol=Add$178:(0/2)
-            // Candidates = Arithmetic,ScalarArithmetic
-            Add(acc, Add(, , ToString(x)))))
-        ;
+        return null;
     }
 
 }
 class Easings
 {
     public static void BlendEaseFunc(var p, var easeIn, var easeOut)
-    // ParameterSymbol=p$1765: Argument:RefSymbol=LessThan$1289:(0/2), Argument:RefSymbol=Multiply$182:(0/2), Argument:RefSymbol=Multiply$182:(0/2)
-    // Candidates = Comparable,Arithmetic,ScalarArithmetic
-    // ParameterSymbol=easeIn$1766: Invoked:(ArgumentSymbol)
-    // Candidates = Function
-    // ParameterSymbol=easeOut$1767: Invoked:(ArgumentSymbol)
-    // Candidates = Function
+    // ParameterSymbol=p$1765: 
+    // Candidates = Any
+    // ParameterSymbol=easeIn$1766: 
+    // Candidates = Any
+    // ParameterSymbol=easeOut$1767: 
+    // Candidates = Any
     {
-        return LessThan(p, 0.5
-            ? Multiply(0.5, easeIn(Multiply(p, 2)))
-            : Multiply(0.5, Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5))
-        );
+        return null;
     }
 
     public static void InvertEaseFunc(var p, var easeIn)
-    // ParameterSymbol=p$1769: Argument:RefSymbol=Subtract$180:(1/2)
-    // Candidates = ScalarArithmetic
-    // ParameterSymbol=easeIn$1770: Invoked:(ArgumentSymbol)
-    // Candidates = Function
+    // ParameterSymbol=p$1769: 
+    // Candidates = Any
+    // ParameterSymbol=easeIn$1770: 
+    // Candidates = Any
     {
-        return Subtract(1, easeIn(Subtract(1, p)));
+        return null;
     }
 
     public static void Linear(var p)
     // ParameterSymbol=p$1772: 
     // Candidates = Any
     {
-        return p;
+        return null;
     }
 
     public static void QuadraticEaseIn(var p)
-    // ParameterSymbol=p$1774: Argument:RefSymbol=Pow2$1275:(0/1)
-    // Candidates = Numerical
+    // ParameterSymbol=p$1774: 
+    // Candidates = Any
     {
-        return Pow2(p);
+        return null;
     }
 
     public static void QuadraticEaseOut(var p)
-    // ParameterSymbol=p$1776: Argument:RefSymbol=InvertEaseFunc$1345:(0/2)
-    // Candidates = Easings
+    // ParameterSymbol=p$1776: 
+    // Candidates = Any
     {
-        return InvertEaseFunc(p, QuadraticEaseIn);
+        return null;
     }
 
     public static void QuadraticEaseInOut(var p)
-    // ParameterSymbol=p$1778: Argument:RefSymbol=BlendEaseFunc$1343:(0/3)
-    // Candidates = Easings
+    // ParameterSymbol=p$1778: 
+    // Candidates = Any
     {
-        return BlendEaseFunc(p, QuadraticEaseIn, QuadraticEaseOut);
+        return null;
     }
 
     public static void CubicEaseIn(var p)
-    // ParameterSymbol=p$1780: Argument:RefSymbol=Pow3$1277:(0/1)
-    // Candidates = Numerical
+    // ParameterSymbol=p$1780: 
+    // Candidates = Any
     {
-        return Pow3(p);
+        return null;
     }
 
     public static void CubicEaseOut(var p)
-    // ParameterSymbol=p$1782: Argument:RefSymbol=InvertEaseFunc$1345:(0/2)
-    // Candidates = Easings
+    // ParameterSymbol=p$1782: 
+    // Candidates = Any
     {
-        return InvertEaseFunc(p, CubicEaseIn);
+        return null;
     }
 
     public static void CubicEaseInOut(var p)
-    // ParameterSymbol=p$1784: Argument:RefSymbol=BlendEaseFunc$1343:(0/3)
-    // Candidates = Easings
+    // ParameterSymbol=p$1784: 
+    // Candidates = Any
     {
-        return BlendEaseFunc(p, CubicEaseIn, CubicEaseOut);
+        return null;
     }
 
     public static void QuarticEaseIn(var p)
-    // ParameterSymbol=p$1786: Argument:RefSymbol=Pow4$1279:(0/1)
-    // Candidates = Numerical
+    // ParameterSymbol=p$1786: 
+    // Candidates = Any
     {
-        return Pow4(p);
+        return null;
     }
 
     public static void QuarticEaseOut(var p)
-    // ParameterSymbol=p$1788: Argument:RefSymbol=InvertEaseFunc$1345:(0/2)
-    // Candidates = Easings
+    // ParameterSymbol=p$1788: 
+    // Candidates = Any
     {
-        return InvertEaseFunc(p, QuarticEaseIn);
+        return null;
     }
 
     public static void QuarticEaseInOut(var p)
-    // ParameterSymbol=p$1790: Argument:RefSymbol=BlendEaseFunc$1343:(0/3)
-    // Candidates = Easings
+    // ParameterSymbol=p$1790: 
+    // Candidates = Any
     {
-        return BlendEaseFunc(p, QuarticEaseIn, QuarticEaseOut);
+        return null;
     }
 
     public static void QuinticEaseIn(var p)
-    // ParameterSymbol=p$1792: Argument:RefSymbol=Pow5$1281:(0/1)
-    // Candidates = Numerical
+    // ParameterSymbol=p$1792: 
+    // Candidates = Any
     {
-        return Pow5(p);
+        return null;
     }
 
     public static void QuinticEaseOut(var p)
-    // ParameterSymbol=p$1794: Argument:RefSymbol=InvertEaseFunc$1345:(0/2)
-    // Candidates = Easings
+    // ParameterSymbol=p$1794: 
+    // Candidates = Any
     {
-        return InvertEaseFunc(p, QuinticEaseIn);
+        return null;
     }
 
     public static void QuinticEaseInOut(var p)
-    // ParameterSymbol=p$1796: Argument:RefSymbol=BlendEaseFunc$1343:(0/3)
-    // Candidates = Easings
+    // ParameterSymbol=p$1796: 
+    // Candidates = Any
     {
-        return BlendEaseFunc(p, QuinticEaseIn, QuinticEaseOut);
+        return null;
     }
 
     public static void SineEaseIn(var p)
-    // ParameterSymbol=p$1798: Argument:RefSymbol=InvertEaseFunc$1345:(0/2)
-    // Candidates = Easings
+    // ParameterSymbol=p$1798: 
+    // Candidates = Any
     {
-        return InvertEaseFunc(p, SineEaseOut);
+        return null;
     }
 
     public static void SineEaseOut(var p)
-    // ParameterSymbol=p$1800: Argument:RefSymbol=Quarter$1237:(0/1)
-    // Candidates = Numerical
+    // ParameterSymbol=p$1800: 
+    // Candidates = Any
     {
-        return Sin(Turns(Quarter(p)));
+        return null;
     }
 
     public static void SineEaseInOut(var p)
-    // ParameterSymbol=p$1802: Argument:RefSymbol=BlendEaseFunc$1343:(0/3)
-    // Candidates = Easings
+    // ParameterSymbol=p$1802: 
+    // Candidates = Any
     {
-        return BlendEaseFunc(p, SineEaseIn, SineEaseOut);
+        return null;
     }
 
     public static void CircularEaseIn(var p)
-    // ParameterSymbol=p$1804: Argument:RefSymbol=Pow2$1275:(0/1)
-    // Candidates = Numerical
+    // ParameterSymbol=p$1804: 
+    // Candidates = Any
     {
-        return FromOne(SquareRoot(FromOne(Pow2(p))));
+        return null;
     }
 
     public static void CircularEaseOut(var p)
-    // ParameterSymbol=p$1806: Argument:RefSymbol=InvertEaseFunc$1345:(0/2)
-    // Candidates = Easings
+    // ParameterSymbol=p$1806: 
+    // Candidates = Any
     {
-        return InvertEaseFunc(p, CircularEaseIn);
+        return null;
     }
 
     public static void CircularEaseInOut(var p)
-    // ParameterSymbol=p$1808: Argument:RefSymbol=BlendEaseFunc$1343:(0/3)
-    // Candidates = Easings
+    // ParameterSymbol=p$1808: 
+    // Candidates = Any
     {
-        return BlendEaseFunc(p, CircularEaseIn, CircularEaseOut);
+        return null;
     }
 
     public static void ExponentialEaseIn(var p)
-    // ParameterSymbol=p$1810: Argument:RefSymbol=AlmostZero$1285:(0/1), Argument:RefSymbol=MinusOne$1225:(0/1)
-    // Candidates = Numerical
+    // ParameterSymbol=p$1810: 
+    // Candidates = Any
     {
-        return AlmostZero(p)
-            ? p
-            : Pow(2, Multiply(10, MinusOne(p)))
-        ;
+        return null;
     }
 
     public static void ExponentialEaseOut(var p)
-    // ParameterSymbol=p$1812: Argument:RefSymbol=InvertEaseFunc$1345:(0/2)
-    // Candidates = Easings
+    // ParameterSymbol=p$1812: 
+    // Candidates = Any
     {
-        return InvertEaseFunc(p, ExponentialEaseIn);
+        return null;
     }
 
     public static void ExponentialEaseInOut(var p)
-    // ParameterSymbol=p$1814: Argument:RefSymbol=BlendEaseFunc$1343:(0/3)
-    // Candidates = Easings
+    // ParameterSymbol=p$1814: 
+    // Candidates = Any
     {
-        return BlendEaseFunc(p, ExponentialEaseIn, ExponentialEaseOut);
+        return null;
     }
 
     public static void ElasticEaseIn(var p)
-    // ParameterSymbol=p$1816: Argument:RefSymbol=Quarter$1237:(0/1), Argument:RefSymbol=MinusOne$1225:(0/1)
-    // Candidates = Numerical
+    // ParameterSymbol=p$1816: 
+    // Candidates = Any
     {
-        return Multiply(13, Multiply(Turns(Quarter(p)), Sin(Radians(Pow(2, Multiply(10, MinusOne(p)))))));
+        return null;
     }
 
     public static void ElasticEaseOut(var p)
-    // ParameterSymbol=p$1818: Argument:RefSymbol=InvertEaseFunc$1345:(0/2)
-    // Candidates = Easings
+    // ParameterSymbol=p$1818: 
+    // Candidates = Any
     {
-        return InvertEaseFunc(p, ElasticEaseIn);
+        return null;
     }
 
     public static void ElasticEaseInOut(var p)
-    // ParameterSymbol=p$1820: Argument:RefSymbol=BlendEaseFunc$1343:(0/3)
-    // Candidates = Easings
+    // ParameterSymbol=p$1820: 
+    // Candidates = Any
     {
-        return BlendEaseFunc(p, ElasticEaseIn, ElasticEaseOut);
+        return null;
     }
 
     public static void BackEaseIn(var p)
-    // ParameterSymbol=p$1822: Argument:RefSymbol=Pow3$1277:(0/1), Argument:RefSymbol=Multiply$182:(0/2), Argument:RefSymbol=Half$1233:(0/1)
-    // Candidates = Numerical,Arithmetic,ScalarArithmetic
+    // ParameterSymbol=p$1822: 
+    // Candidates = Any
     {
-        return Subtract(Pow3(p), Multiply(p, Sin(Turns(Half(p)))));
+        return null;
     }
 
     public static void BackEaseOut(var p)
-    // ParameterSymbol=p$1824: Argument:RefSymbol=InvertEaseFunc$1345:(0/2)
-    // Candidates = Easings
+    // ParameterSymbol=p$1824: 
+    // Candidates = Any
     {
-        return InvertEaseFunc(p, BackEaseIn);
+        return null;
     }
 
     public static void BackEaseInOut(var p)
-    // ParameterSymbol=p$1826: Argument:RefSymbol=BlendEaseFunc$1343:(0/3)
-    // Candidates = Easings
+    // ParameterSymbol=p$1826: 
+    // Candidates = Any
     {
-        return BlendEaseFunc(p, BackEaseIn, BackEaseOut);
+        return null;
     }
 
     public static void BounceEaseIn(var p)
-    // ParameterSymbol=p$1828: Argument:RefSymbol=InvertEaseFunc$1345:(0/2)
-    // Candidates = Easings
+    // ParameterSymbol=p$1828: 
+    // Candidates = Any
     {
-        return InvertEaseFunc(p, BounceEaseOut);
+        return null;
     }
 
     public static void BounceEaseOut(var p)
-    // ParameterSymbol=p$1830: Argument:RefSymbol=LessThan$1289:(0/2), Argument:RefSymbol=Pow2$1275:(0/1), Argument:RefSymbol=LessThan$1289:(0/2), Argument:RefSymbol=Pow2$1275:(0/1), Argument:RefSymbol=Add$178:(0/2), Argument:RefSymbol=LessThan$1289:(0/2), Argument:RefSymbol=Pow2$1275:(0/1), Argument:RefSymbol=Add$178:(0/2), Argument:RefSymbol=Pow2$1275:(0/1), Argument:RefSymbol=Add$178:(0/2)
-    // Candidates = Comparable,Numerical,Arithmetic,ScalarArithmetic
+    // ParameterSymbol=p$1830: 
+    // Candidates = Any
     {
-        return LessThan(p, Divide(4, 11))
-            ? Multiply(121, Divide(Pow2(p), 16))
-            : LessThan(p, Divide(8, 11))
-                ? Divide(363, Multiply(40, Subtract(Pow2(p), Divide(99, Multiply(10, Add(p, Divide(17, 5)))))))
-                : LessThan(p, Divide(9, 10))
-                    ? Divide(4356, Multiply(361, Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805)))))))
-                    : Divide(54, Multiply(5, Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25)))))))
-
-
-        ;
+        return null;
     }
 
     public static void BounceEaseInOut(var p)
-    // ParameterSymbol=p$1832: Argument:RefSymbol=BlendEaseFunc$1343:(0/3)
-    // Candidates = Easings
+    // ParameterSymbol=p$1832: 
+    // Candidates = Any
     {
-        return BlendEaseFunc(p, BounceEaseIn, BounceEaseOut);
+        return null;
     }
 
 }
@@ -2018,28 +1933,28 @@ class Intrinsics
     // ParameterSymbol=xs$1834: 
     // Candidates = Any
     {
-        return intrinsic;
+        return null;
     }
 
     public static void Throw(var x)
     // ParameterSymbol=x$1836: 
     // Candidates = Any
     {
-        return intrinsic;
+        return null;
     }
 
     public static void TypeOf(var x)
     // ParameterSymbol=x$1838: 
     // Candidates = Any
     {
-        return intrinsic;
+        return null;
     }
 
     public static void New(var x)
     // ParameterSymbol=x$1840: 
     // Candidates = Any
     {
-        return intrinsic;
+        return null;
     }
 
 }

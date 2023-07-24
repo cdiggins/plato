@@ -50,8 +50,8 @@ namespace PlatoAst
                         .WriteXml("LValue", assignment.LValue)
                         .WriteXml("RValue", assignment.RValue));
                 
-                case ConditionalSymbol conditional:
-                    return WriteXml("ConditionalSymbol", avw => avw
+                case ConditionalExpressionSymbol conditional:
+                    return WriteXml("ConditionalExpressionSymbol", avw => avw
                         .WriteXml("True", conditional.IfTrue)
                         .WriteXml("False", conditional.IfFalse)
                         .WriteXml("Condition", conditional.Condition));
@@ -65,7 +65,7 @@ namespace PlatoAst
                     return WriteXml("Function", avw => avw.WriteXml("Parameters",
                         function.Parameters).Write(function.Type));
 
-                case FunctionResultSymbol functionResult:
+                case FunctionCallSymbol functionResult:
                     return WriteXml("Result", avw => avw
                         .Write(functionResult.Function)
                         .WriteXml("Arguments", functionResult.Args));
@@ -89,8 +89,8 @@ namespace PlatoAst
                     return WriteXml("ParameterSymbol", avw =>
                         avw.WriteXml("Name", parameter.Name).Write(parameter.Type));
 
-                case RegionSymbol region:
-                    return WriteXml("RegionSymbol", region.Children);
+                case BlockStatementSymbol region:
+                    return WriteXml("BlockStatementSymbol", region.Children);
 
                 case TypeDefSymbol typeDef:
                     return WriteXml("TypeDefSymbol", avw => avw

@@ -82,7 +82,7 @@ namespace PlatoTests
             File.WriteAllText(astXmlFile, ast.ToXml());
 
             var astCSharpFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".ast.cs.txt");
-            File.WriteAllText(astCSharpFile, ast.ToCSharp());
+            File.WriteAllText(astCSharpFile, ast.ToJavaScript());
 
             var astJavaScriptFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".ast.js");
             File.WriteAllText(astJavaScriptFile, ast.ToJavaScript());

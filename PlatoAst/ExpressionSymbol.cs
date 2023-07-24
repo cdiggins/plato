@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace PlatoAst
 {
@@ -8,6 +9,15 @@ namespace PlatoAst
     {
         public override string ToString() => $"{GetType().Name}";
         public abstract IReadOnlyList<Symbol> Children { get; }
+    }
+
+    public abstract class ExpressionSymbol : Symbol
+    {
+
+    }
+
+    public abstract class StatementSymbol : Symbol
+    {
     }
 
     public class FunctionGroupSymbol : DefSymbol
@@ -75,11 +85,63 @@ namespace PlatoAst
         public override IReadOnlyList<Symbol> Children => Array.Empty<Symbol>();
     }
 
-    public class RegionSymbol : Symbol
+    public class WhileStatement : StatementSymbol
+    {
+        public ExpressionSymbol Condition { get; }
+        public StatementSymbol Statement { get; }
+
+        public WhileStatement(ExpressionSymbol condition, StatementSymbol statement)
+        {
+            Condition = condition;
+            Statement = statement;
+        }
+
+        public override IReadOnlyList<Symbol> Children => 
+            new Symbol[] { Condition, Statement };
+    }
+
+    public class VarDeclStatement : StatementSymbol
+    {
+        public string Name { get; }
+        public ExpressionSymbol Expression
+        {
+            get;
+        }
+        public VarDeclStatement(string name, ExpressionSymbol expression)
+        {
+            Name = name;
+            Expression = expression;
+        }
+        public override IReadOnlyList<Symbol> Children => new[] { Expression };
+    }
+
+    public class ExpressionStatement : StatementSymbol
+    {
+        public ExpressionSymbol Expression { get; }
+        public ExpressionStatement(ExpressionSymbol expression)
+        {
+            Expression = expression;
+        }
+
+        public override IReadOnlyList<Symbol> Children => new[] { Expression };
+    }
+
+    public class ReturnStatementSymbol : StatementSymbol
+    {
+        public ExpressionSymbol Expression { get; }
+        public ReturnStatementSymbol(ExpressionSymbol expression)
+        {
+            Expression = expression;
+        }
+
+        public override IReadOnlyList<Symbol> Children => new[] { Expression };
+    }
+
+    public class BlockStatementSymbol : StatementSymbol
     {
         public override IReadOnlyList<Symbol> Children { get; }
 
-        public RegionSymbol(params Symbol[] children)
+        public BlockStatementSymbol(params StatementSymbol[] children)
             => Children = children;
     }
 
@@ -141,13 +203,13 @@ namespace PlatoAst
         public TypeRefSymbol ToRef => new TypeRefSymbol(this);
     }
 
-    public class ConditionalSymbol : Symbol
+    public class ConditionalExpressionSymbol : Symbol
     {
         public Symbol Condition { get; }
         public Symbol IfTrue { get; }
         public Symbol IfFalse { get; }
 
-        public ConditionalSymbol(Symbol condition, Symbol ifTrue, Symbol ifFalse)
+        public ConditionalExpressionSymbol(Symbol condition, Symbol ifTrue, Symbol ifFalse)
         {
             // TODO: unify the types of ifTrue and ifFalse
             Condition = condition;
@@ -161,17 +223,32 @@ namespace PlatoAst
     public class FunctionSymbol : DefSymbol
     {
         public IReadOnlyList<ParameterSymbol> Parameters { get; }
-        public Symbol Body { get; }
+        public Symbol ExpressionOrStatementBody { get; }
 
-        public FunctionSymbol(string name, TypeRefSymbol returnType, Symbol body, params ParameterSymbol[] parameters)
+        public FunctionSymbol(string name, TypeRefSymbol returnType, Symbol expressionOrStatementBody, params ParameterSymbol[] parameters)
             : base(returnType, name)
         {
             Parameters = parameters;
-            Body = body;
+            ExpressionOrStatementBody = expressionOrStatementBody;
         }
 
+        public BlockStatementSymbol Body
+        {
+            get
+            {
+                if (ExpressionOrStatementBody == null)
+                    return null;
+
+                if (ExpressionOrStatementBody is BlockStatementSymbol bss)
+                    return bss;
+                if (ExpressionOrStatementBody is ExpressionSymbol es)
+                    return new BlockStatementSymbol(
+                        new ReturnStatementSymbol(es));
+                throw new Exception("Function expressionOrStatementBody should be a block statement or an expression symbol");
+            }
+        }
         public override IReadOnlyList<Symbol> Children
-            => Array.Empty<Symbol>().Concat(Parameters).Append(Body).ToList();
+            => Array.Empty<Symbol>().Concat(Parameters).Append(ExpressionOrStatementBody).ToList();
     }
 
     public class ParameterSymbol : DefSymbol
@@ -226,11 +303,11 @@ namespace PlatoAst
         public override IReadOnlyList<Symbol> Children => Array.Empty<Symbol>();
     }
 
-    public class FunctionResultSymbol : Symbol
+    public class FunctionCallSymbol : Symbol
     {
         public Symbol Function { get; }
         public IReadOnlyList<ArgumentSymbol> Args { get; }
-        public FunctionResultSymbol(Symbol function, params ArgumentSymbol[] args)
+        public FunctionCallSymbol(Symbol function, params ArgumentSymbol[] args)
         {
             Function = function;
             Args = args;
@@ -325,10 +402,11 @@ namespace PlatoAst
             => Array.Empty<Symbol>();
     }
 
+
     public static class SymbolExtensions
     {
         public static IEnumerable<FunctionSymbol> GetLambdas(this FunctionSymbol symbol)
-            => symbol.Body.GetDescendantSymbols().OfType<FunctionSymbol>();
+            => symbol.ExpressionOrStatementBody.GetDescendantSymbols().OfType<FunctionSymbol>();
 
         public static IEnumerable<Symbol> GetDescendantSymbols(this Symbol symbol)
         {
@@ -350,5 +428,6 @@ namespace PlatoAst
         {
             return (symbol as RefSymbol)?.Def;
         }
+
     }
 }

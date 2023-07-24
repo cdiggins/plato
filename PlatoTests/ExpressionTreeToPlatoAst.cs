@@ -312,7 +312,7 @@ public static class ExpressionTreeToPlatoAst
                 
             case LambdaExpression lambdaExpression:
                 throw new NotImplementedException();
-                //return AstLambda.Create(lambdaExpression.Body.ToAst(), new AstParameterDeclaration(lambdaExpression.Parameters.ToAst().ToArray()));
+                //return AstLambda.Create(lambdaExpression.ExpressionOrStatementBody.ToAst(), new AstParameterDeclaration(lambdaExpression.Parameters.ToAst().ToArray()));
                 
             case ListInitExpression listInitExpression:
                 throw new NotSupportedException();

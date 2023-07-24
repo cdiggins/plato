@@ -61,9 +61,9 @@ namespace PlatoAst
                         r.Add(ps, new List<Constraint>());
                 }
 
-                foreach (var sym in f.Body.GetDescendantSymbols())
+                foreach (var sym in f.ExpressionOrStatementBody.GetDescendantSymbols())
                 {
-                    if (sym is FunctionResultSymbol fs)
+                    if (sym is FunctionCallSymbol fs)
                     {
 
                         var name = (fs.Function as RefSymbol)?.Name ?? "_unknownfunc_";
