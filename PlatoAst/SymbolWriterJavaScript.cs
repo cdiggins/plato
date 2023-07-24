@@ -57,25 +57,17 @@ namespace PlatoAst
             => symbols.Aggregate(WriteStartBlock(),
                 (w, s) => w.Write(s)).WriteEndBlock();
 
-        public SymbolWriterJavaScript WriteConstraints(FunctionSymbol function)
-        {
-            var r = this;
-            foreach (var p in function.Parameters)
-            {
-                var candidates = TypeGuesser.GetCandidateTypes(p);
-                WriteLine(Comment($"// Candidates = {string.Join(",", candidates.Select(c => c.Name))}"));
-            }
-            return r;
-        }
-
         public SymbolWriterJavaScript Write(FunctionSymbol function)
         {
             return Write(Keyword("function").PadRight())
                 .Write(Delimiter("("))
                 .WriteCommaList(function.Parameters)
-                .WriteLine(Delimiter(")"))
-                .WriteConstraints(function)
-                .Write(function.Body);
+                .Write(Delimiter(")").PadRight())
+                .Write(Delimiter("{").PadRight())
+                .Write(Keyword("return").PadRight())
+                .Write(function.Body)
+                .Write(Delimiter(";").PadRight())
+                .Write(Delimiter("}"));
         }
 
         public SymbolWriterJavaScript WriteCommaList(IEnumerable<Symbol> symbols)
@@ -193,9 +185,6 @@ namespace PlatoAst
                 case ParameterSymbol parameter:
                     return Write(DeclarationName(parameter.Name));
 
-                case BlockStatementSymbol region:
-                    return WriteBlock(region.Children);
-
                 case TypeDefSymbol typeDef:
                     return Write(typeDef);
 
@@ -204,9 +193,6 @@ namespace PlatoAst
 
                 case VariableSymbol variable:
                     return Write(variable.Name);
-
-                case ReturnStatementSymbol returnStatement:
-                    return Write(returnStatement.Expression);
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(value));

@@ -35,11 +35,7 @@ class P_Numerical
     }
     // field accessors
     // functions 
-    static P_FromNumber = function (P_x)
-    // Candidates = Number
-    {
-        null}
-    ;
+    static P_FromNumber = function (P_x) { return P_FromNumber(P_FieldValues(P_x), P_x); };
 }
 class P_Magnitude
 {
@@ -48,11 +44,7 @@ class P_Magnitude
     }
     // field accessors
     // functions 
-    static P_Magnitude = function (P_x)
-    // Candidates = Self
-    {
-        null}
-    ;
+    static P_Magnitude = function (P_x) { return P_SquareRoot(P_Sum(P_Square(P_FieldValues(P_x)))); };
 }
 class P_Comparable
 {
@@ -61,12 +53,13 @@ class P_Comparable
     }
     // field accessors
     // functions 
-    static P_Compare = function (P_a, P_b)
-    // Candidates = Self
-    // Candidates = Self
-    {
-        null}
-    ;
+    static P_Compare = function (P_a, P_b) { return P_LessThan(P_Magnitude(P_a), P_Magnitude(P_b)
+        ? P_Negative(1)
+        : P_GreaterThan(P_Magnitude(P_a), P_Magnitude(P_b)
+            ? 1
+            : 0
+        )
+    ); };
 }
 class P_Equatable
 {
@@ -75,12 +68,7 @@ class P_Equatable
     }
     // field accessors
     // functions 
-    static P_Equals = function (P_a, P_b)
-    // Candidates = Self
-    // Candidates = Self
-    {
-        null}
-    ;
+    static P_Equals = function (P_a, P_b) { return P_All(P_Equals(P_FieldValues(P_a), P_FieldValues(P_b))); };
 }
 class P_Arithmetic
 {
@@ -89,40 +77,12 @@ class P_Arithmetic
     }
     // field accessors
     // functions 
-    static P_Add = function (P_self, P_other)
-    // Candidates = Self
-    // Candidates = Self
-    {
-        null}
-    ;
-    static P_Negative = function (P_self)
-    // Candidates = Self
-    {
-        null}
-    ;
-    static P_Reciprocal = function (P_self)
-    // Candidates = Self
-    {
-        null}
-    ;
-    static P_Multiply = function (P_self, P_other)
-    // Candidates = Self
-    // Candidates = Self
-    {
-        null}
-    ;
-    static P_Divide = function (P_self, P_other)
-    // Candidates = Self
-    // Candidates = Self
-    {
-        null}
-    ;
-    static P_Modulo = function (P_self, P_other)
-    // Candidates = Self
-    // Candidates = Self
-    {
-        null}
-    ;
+    static P_Add = function (P_self, P_other) { return P_Add(P_FieldValues(P_self), P_FieldValues(P_other)); };
+    static P_Negative = function (P_self) { return P_Negative(P_FieldValues(P_self)); };
+    static P_Reciprocal = function (P_self) { return P_Reciprocal(P_FieldValues(P_self)); };
+    static P_Multiply = function (P_self, P_other) { return P_Add(P_FieldValues(P_self), P_FieldValues(P_other)); };
+    static P_Divide = function (P_self, P_other) { return P_Divide(P_FieldValues(P_self), P_FieldValues(P_other)); };
+    static P_Modulo = function (P_self, P_other) { return P_Modulo(P_FieldValues(P_self), P_FieldValues(P_other)); };
 }
 class P_ScalarArithmetic
 {
@@ -131,36 +91,11 @@ class P_ScalarArithmetic
     }
     // field accessors
     // functions 
-    static P_Add = function (P_self, P_scalar)
-    // Candidates = Self
-    // Candidates = T
-    {
-        null}
-    ;
-    static P_Subtract = function (P_self, P_scalar)
-    // Candidates = Self
-    // Candidates = T
-    {
-        null}
-    ;
-    static P_Multiply = function (P_self, P_scalar)
-    // Candidates = Self
-    // Candidates = T
-    {
-        null}
-    ;
-    static P_Divide = function (P_self, P_scalar)
-    // Candidates = Self
-    // Candidates = T
-    {
-        null}
-    ;
-    static P_Modulo = function (P_self, P_scalar)
-    // Candidates = Self
-    // Candidates = T
-    {
-        null}
-    ;
+    static P_Add = function (P_self, P_scalar) { return P_Add(P_FieldValues(P_self), P_scalar); };
+    static P_Subtract = function (P_self, P_scalar) { return P_Add(P_self, P_Negative(P_scalar)); };
+    static P_Multiply = function (P_self, P_scalar) { return P_Multiply(P_FieldValues(P_self), P_scalar); };
+    static P_Divide = function (P_self, P_scalar) { return P_Multiply(P_self, P_Reciprocal(P_scalar)); };
+    static P_Modulo = function (P_self, P_scalar) { return P_Modulo(P_FieldValues(P_self), P_scalar); };
 }
 class P_Boolean
 {
@@ -169,23 +104,9 @@ class P_Boolean
     }
     // field accessors
     // functions 
-    static P_And = function (P_a, P_b)
-    // Candidates = Self
-    // Candidates = Self
-    {
-        null}
-    ;
-    static P_Or = function (P_a, P_b)
-    // Candidates = Self
-    // Candidates = Self
-    {
-        null}
-    ;
-    static P_Not = function (P_a)
-    // Candidates = Self
-    {
-        null}
-    ;
+    static P_And = function (P_a, P_b) { return P_intrinsic; };
+    static P_Or = function (P_a, P_b) { return P_intrinsic; };
+    static P_Not = function (P_a) { return P_intrinsic; };
 }
 class P_Value
 {
@@ -194,48 +115,16 @@ class P_Value
     }
     // field accessors
     // functions 
-    static P_Type = function ()
-    {
-        null}
-    ;
-    static P_FieldTypes = function ()
-    {
-        null}
-    ;
-    static P_FieldNames = function ()
-    {
-        null}
-    ;
-    static P_FieldValues = function (P_self)
-    // Candidates = Self
-    {
-        null}
-    ;
-    static P_Zero = function ()
-    {
-        null}
-    ;
-    static P_One = function ()
-    {
-        null}
-    ;
-    static P_Default = function ()
-    {
-        null}
-    ;
-    static P_MinValue = function ()
-    {
-        null}
-    ;
-    static P_MaxValue = function ()
-    {
-        null}
-    ;
-    static P_ToString = function (P_x)
-    // Candidates = Self
-    {
-        null}
-    ;
+    static P_Type = function () { return P_intrinsic; };
+    static P_FieldTypes = function () { return P_intrinsic; };
+    static P_FieldNames = function () { return P_intrinsic; };
+    static P_FieldValues = function (P_self) { return P_intrinsic; };
+    static P_Zero = function () { return P_Zero(P_FieldTypes); };
+    static P_One = function () { return P_One(P_FieldTypes); };
+    static P_Default = function () { return P_Default(P_FieldTypes); };
+    static P_MinValue = function () { return P_MinValue(P_FieldTypes); };
+    static P_MaxValue = function () { return P_MaxValue(P_FieldTypes); };
+    static P_ToString = function (P_x) { return P_JoinStrings(P_FieldValues, ,); };
 }
 class P_Array
 {
@@ -246,9 +135,7 @@ class P_Array
     // field accessors
     static P_Count = function(self) { return self._field_Count; }
     // functions 
-    static P_At = function (P_n)
-    // Candidates = Index
-    null;
+    static P_At = function (P_n) { return null; };
 }
 class P_Integer
 {
@@ -1571,139 +1458,36 @@ class P_Interval
     }
     // field accessors
     // functions 
-    static P_Size = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_IsEmpty = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Lerp = function (P_x, P_amount)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_InverseLerp = function (P_x, P_value)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Negate = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Reverse = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Resize = function (P_x, P_size)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Center = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Contains = function (P_x, P_value)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Contains = function (P_x, P_other)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Overlaps = function (P_x, P_y)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Split = function (P_x, P_t)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Split = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Left = function (P_x, P_t)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Right = function (P_x, P_t)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_MoveTo = function (P_x, P_t)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_LeftHalf = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_RightHalf = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_HalfSize = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Recenter = function (P_x, P_c)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Clamp = function (P_x, P_y)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Clamp = function (P_x, P_value)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Between = function (P_x, P_value)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Unit = function ()
-    {
-        null}
-    ;
+    static P_Size = function (P_x) { return P_Subtract(P_Max(P_x), P_Min(P_x)); };
+    static P_IsEmpty = function (P_x) { return P_GreaterThanOrEquals(P_Min(P_x), P_Max(P_x)); };
+    static P_Lerp = function (P_x, P_amount) { return P_Multiply(P_Min(P_x), P_Add(P_Subtract(1, P_amount), P_Multiply(P_Max(P_x), P_amount))); };
+    static P_InverseLerp = function (P_x, P_value) { return P_Divide(P_Subtract(P_value, P_Min(P_x)), P_Size(P_x)); };
+    static P_Negate = function (P_x) { return P_Tuple(P_Negative(P_Max(P_x)), P_Negative(P_Min(P_x))); };
+    static P_Reverse = function (P_x) { return P_Tuple(P_Max(P_x), P_Min(P_x)); };
+    static P_Resize = function (P_x, P_size) { return P_Tuple(P_Min(P_x), P_Add(P_Min(P_x), P_size)); };
+    static P_Center = function (P_x) { return P_Lerp(P_x, 0.5); };
+    static P_Contains = function (P_x, P_value) { return P_LessThanOrEquals(P_Min(P_x), P_And(P_value, P_LessThanOrEquals(P_value, P_Max(P_x)))); };
+    static P_Contains = function (P_x, P_other) { return P_LessThanOrEquals(P_Min(P_x), P_And(P_Min(P_other), P_GreaterThanOrEquals(P_Max, P_Max(P_other)))); };
+    static P_Overlaps = function (P_x, P_y) { return P_Not(P_IsEmpty(P_Clamp(P_x, P_y))); };
+    static P_Split = function (P_x, P_t) { return P_Tuple(P_Left(P_x, P_t), P_Right(P_x, P_t)); };
+    static P_Split = function (P_x) { return P_Split(P_x, 0.5); };
+    static P_Left = function (P_x, P_t) { return P_Tuple(P_Min, P_Lerp(P_x, P_t)); };
+    static P_Right = function (P_x, P_t) { return P_Tuple(P_Lerp(P_x, P_t), P_Max(P_x)); };
+    static P_MoveTo = function (P_x, P_t) { return P_Tuple(P_t, P_Add(P_t, P_Size(P_x))); };
+    static P_LeftHalf = function (P_x) { return P_Left(P_x, 0.5); };
+    static P_RightHalf = function (P_x) { return P_Right(P_x, 0.5); };
+    static P_HalfSize = function (P_x) { return P_Half(P_Size(P_x)); };
+    static P_Recenter = function (P_x, P_c) { return P_Tuple(P_Subtract(P_c, P_HalfSize(P_x)), P_Add(P_c, P_HalfSize(P_x))); };
+    static P_Clamp = function (P_x, P_y) { return P_Tuple(P_Clamp(P_x, P_Min(P_y)), P_Clamp(P_x, P_Max(P_y))); };
+    static P_Clamp = function (P_x, P_value) { return P_LessThan(P_value, P_Min(P_x)
+        ? P_Min(P_x)
+        : P_GreaterThan(P_value, P_Max(P_x)
+            ? P_Max(P_x)
+            : P_value
+        )
+    ); };
+    static P_Between = function (P_x, P_value) { return P_GreaterThanOrEquals(P_value, P_And(P_Min(P_x), P_LessThanOrEquals(P_value, P_Max(P_x)))); };
+    static P_Unit = function () { return P_Tuple(0, 1); };
 }
 class P_Vector
 {
@@ -1712,32 +1496,11 @@ class P_Vector
     }
     // field accessors
     // functions 
-    static P_Sum = function (P_v)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_SumSquares = function (P_v)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_LengthSquared = function (P_v)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Length = function (P_v)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Dot = function (P_v1, P_v2)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
+    static P_Sum = function (P_v) { return P_Aggregate(P_v, 0, P_Add); };
+    static P_SumSquares = function (P_v) { return P_Aggregate(P_Square(P_v), 0, P_Add); };
+    static P_LengthSquared = function (P_v) { return P_SumSquares(P_v); };
+    static P_Length = function (P_v) { return P_SquareRoot(P_LengthSquared(P_v)); };
+    static P_Dot = function (P_v1, P_v2) { return P_Sum(P_Multiply(P_v1, P_v2)); };
 }
 class P_Numerical
 {
@@ -1746,281 +1509,69 @@ class P_Numerical
     }
     // field accessors
     // functions 
-    static P_Cos = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Sin = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Tan = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Acos = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Asin = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Atan = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Cosh = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Sinh = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Tanh = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Acosh = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Asinh = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Atanh = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Pow = function (P_x, P_y)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Log = function (P_x, P_y)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_NaturalLog = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_NaturalPower = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_SquareRoot = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_CubeRoot = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Square = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Clamp = function (P_x, P_min, P_max)
-    // Candidates = Any
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Clamp = function (P_x, P_i)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Clamp = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_PlusOne = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_MinusOne = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_FromOne = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Sign = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Abs = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Half = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Third = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Quarter = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Fifth = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Sixth = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Seventh = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Eighth = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Ninth = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Tenth = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Sixteenth = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Hundredth = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Thousandth = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Millionth = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Billionth = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Hundred = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Thousand = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Million = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Billion = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Twice = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Thrice = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_SmoothStep = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Pow2 = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Pow3 = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Pow4 = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Pow5 = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Turns = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_AlmostZero = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
+    static P_Cos = function (P_x) { return P_intrinsic; };
+    static P_Sin = function (P_x) { return P_intrinsic; };
+    static P_Tan = function (P_x) { return P_intrinsic; };
+    static P_Acos = function (P_x) { return P_intrinsic; };
+    static P_Asin = function (P_x) { return P_intrinsic; };
+    static P_Atan = function (P_x) { return P_intrinsic; };
+    static P_Cosh = function (P_x) { return P_intrinsic; };
+    static P_Sinh = function (P_x) { return P_intrinsic; };
+    static P_Tanh = function (P_x) { return P_intrinsic; };
+    static P_Acosh = function (P_x) { return P_intrinsic; };
+    static P_Asinh = function (P_x) { return P_intrinsic; };
+    static P_Atanh = function (P_x) { return P_intrinsic; };
+    static P_Pow = function (P_x, P_y) { return P_intrinsic; };
+    static P_Log = function (P_x, P_y) { return P_intrinsic; };
+    static P_NaturalLog = function (P_x) { return P_intrinsic; };
+    static P_NaturalPower = function (P_x) { return P_intrinsic; };
+    static P_SquareRoot = function (P_x) { return P_Pow(P_x, 0.5); };
+    static P_CubeRoot = function (P_x) { return P_Pow(P_x, 0.5); };
+    static P_Square = function (P_x) { return P_Multiply(P_Value, P_Value); };
+    static P_Clamp = function (P_x, P_min, P_max) { return P_Clamp(P_x, P_Interval(P_min, P_max)); };
+    static P_Clamp = function (P_x, P_i) { return P_Clamp(P_i, P_x); };
+    static P_Clamp = function (P_x) { return P_Clamp(P_x, 0, 1); };
+    static P_PlusOne = function (P_x) { return P_Add(P_x, 1); };
+    static P_MinusOne = function (P_x) { return P_Subtract(P_x, 1); };
+    static P_FromOne = function (P_x) { return P_Subtract(1, P_x); };
+    static P_Sign = function (P_x) { return P_LessThan(P_x, 0
+        ? P_Negative(1)
+        : P_GreaterThan(P_x, 0
+            ? 1
+            : 0
+        )
+    ); };
+    static P_Abs = function (P_x) { return P_LessThan(P_Value, 0
+        ? P_Negative(P_Value)
+        : P_Value
+    ); };
+    static P_Half = function (P_x) { return P_Divide(P_x, 2); };
+    static P_Third = function (P_x) { return P_Divide(P_x, 3); };
+    static P_Quarter = function (P_x) { return P_Divide(P_x, 4); };
+    static P_Fifth = function (P_x) { return P_Divide(P_x, 5); };
+    static P_Sixth = function (P_x) { return P_Divide(P_x, 6); };
+    static P_Seventh = function (P_x) { return P_Divide(P_x, 7); };
+    static P_Eighth = function (P_x) { return P_Divide(P_x, 8); };
+    static P_Ninth = function (P_x) { return P_Divide(P_x, 9); };
+    static P_Tenth = function (P_x) { return P_Divide(P_x, 10); };
+    static P_Sixteenth = function (P_x) { return P_Divide(P_x, 16); };
+    static P_Hundredth = function (P_x) { return P_Divide(P_x, 100); };
+    static P_Thousandth = function (P_x) { return P_Divide(P_x, 1000); };
+    static P_Millionth = function (P_x) { return P_Divide(P_x, P_Divide(1000, 1000)); };
+    static P_Billionth = function (P_x) { return P_Divide(P_x, P_Divide(1000, P_Divide(1000, 1000))); };
+    static P_Hundred = function (P_x) { return P_Multiply(P_x, 100); };
+    static P_Thousand = function (P_x) { return P_Multiply(P_x, 1000); };
+    static P_Million = function (P_x) { return P_Multiply(P_x, P_Multiply(1000, 1000)); };
+    static P_Billion = function (P_x) { return P_Multiply(P_x, P_Multiply(1000, P_Multiply(1000, 1000))); };
+    static P_Twice = function (P_x) { return P_Multiply(P_x, 2); };
+    static P_Thrice = function (P_x) { return P_Multiply(P_x, 3); };
+    static P_SmoothStep = function (P_x) { return P_Multiply(P_Square(P_x), P_Subtract(3, P_Twice(P_x))); };
+    static P_Pow2 = function (P_x) { return P_Multiply(P_x, P_x); };
+    static P_Pow3 = function (P_x) { return P_Multiply(P_Pow2(P_x), P_x); };
+    static P_Pow4 = function (P_x) { return P_Multiply(P_Pow3(P_x), P_x); };
+    static P_Pow5 = function (P_x) { return P_Multiply(P_Pow4(P_x), P_x); };
+    static P_Turns = function (P_x) { return P_Multiply(P_x, P_Multiply(3.1415926535897, 2)); };
+    static P_AlmostZero = function (P_x) { return P_LessThan(P_Abs(P_x), 1E-08); };
 }
 class P_Comparable
 {
@@ -2029,73 +1580,29 @@ class P_Comparable
     }
     // field accessors
     // functions 
-    static P_Equals = function (P_a, P_b)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_LessThan = function (P_a, P_b)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Lesser = function (P_a, P_b)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Greater = function (P_a, P_b)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_LessThanOrEquals = function (P_a, P_b)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_GreaterThan = function (P_a, P_b)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_GreaterThanOrEquals = function (P_a, P_b)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Min = function (P_a, P_b)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Max = function (P_a, P_b)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Between = function (P_v, P_a, P_b)
-    // Candidates = Any
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Between = function (P_v, P_i)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
+    static P_Equals = function (P_a, P_b) { return P_Equals(P_Compare(P_a, P_b), 0); };
+    static P_LessThan = function (P_a, P_b) { return P_LessThan(P_Compare(P_a, P_b), 0); };
+    static P_Lesser = function (P_a, P_b) { return P_LessThanOrEquals(P_a, P_b)
+        ? P_a
+        : P_b
+    ; };
+    static P_Greater = function (P_a, P_b) { return P_GreaterThanOrEquals(P_a, P_b)
+        ? P_a
+        : P_b
+    ; };
+    static P_LessThanOrEquals = function (P_a, P_b) { return P_LessThanOrEquals(P_Compare(P_a, P_b), 0); };
+    static P_GreaterThan = function (P_a, P_b) { return P_GreaterThan(P_Compare(P_a, P_b), 0); };
+    static P_GreaterThanOrEquals = function (P_a, P_b) { return P_GreaterThanOrEquals(P_Compare(P_a, P_b), 0); };
+    static P_Min = function (P_a, P_b) { return P_LessThan(P_a, P_b)
+        ? P_a
+        : P_b
+    ; };
+    static P_Max = function (P_a, P_b) { return P_GreaterThan(P_a, P_b)
+        ? P_a
+        : P_b
+    ; };
+    static P_Between = function (P_v, P_a, P_b) { return P_Between(P_v, P_Interval(P_a, P_b)); };
+    static P_Between = function (P_v, P_i) { return P_Contains(P_i, P_v); };
 }
 class P_Boolean
 {
@@ -2104,24 +1611,12 @@ class P_Boolean
     }
     // field accessors
     // functions 
-    static P_XOr = function (P_a, P_b)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_NAnd = function (P_a, P_b)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_NOr = function (P_a, P_b)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
+    static P_XOr = function (P_a, P_b) { return P_a
+        ? P_Not(P_b)
+        : P_b
+    ; };
+    static P_NAnd = function (P_a, P_b) { return P_Not(P_And(P_a, P_b)); };
+    static P_NOr = function (P_a, P_b) { return P_Not(P_Or(P_a, P_b)); };
 }
 class P_Equatable
 {
@@ -2130,11 +1625,7 @@ class P_Equatable
     }
     // field accessors
     // functions 
-    static P_NotEquals = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
+    static P_NotEquals = function (P_x) { return P_Not(P_Equals(P_x)); };
 }
 class P_Array
 {
@@ -2143,83 +1634,31 @@ class P_Array
     }
     // field accessors
     // functions 
-    static P_Map = function (P_xs, P_f)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Zip = function (P_xs, P_ys, P_f)
-    // Candidates = Any
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Skip = function (P_xs, P_n)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Take = function (P_xs, P_n)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Aggregate = function (P_xs, P_init, P_f)
-    // Candidates = Any
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Rest = function (P_xs)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_IsEmpty = function (P_xs)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_First = function (P_xs)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Last = function (P_xs)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Slice = function (P_xs, P_from, P_count)
-    // Candidates = Any
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Join = function (P_xs, P_sep)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_All = function (P_xs, P_f)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_JoinStrings = function (P_xs, P_sep)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
+    static P_Map = function (P_xs, P_f) { return P_Map(P_Count(P_xs), function (P_i) { return P_f(P_At(P_xs, P_i)); }); };
+    static P_Zip = function (P_xs, P_ys, P_f) { return P_Array(P_Count(P_xs), function (P_i) { return P_f(P_At(P_i), P_At(P_ys, P_i)); }); };
+    static P_Skip = function (P_xs, P_n) { return P_Array(P_Subtract(P_Count, P_n), function (P_i) { return P_At(P_Subtract(P_i, P_n)); }); };
+    static P_Take = function (P_xs, P_n) { return P_Array(P_n, function (P_i) { return P_At; }); };
+    static P_Aggregate = function (P_xs, P_init, P_f) { return P_IsEmpty(P_xs)
+        ? P_init
+        : P_f(P_init, P_f(P_Rest(P_xs)))
+    ; };
+    static P_Rest = function (P_xs) { return P_Skip(1); };
+    static P_IsEmpty = function (P_xs) { return P_Equals(P_Count(P_xs), 0); };
+    static P_First = function (P_xs) { return P_At(P_xs, 0); };
+    static P_Last = function (P_xs) { return P_At(P_xs, P_Subtract(P_Count(P_xs), 1)); };
+    static P_Slice = function (P_xs, P_from, P_count) { return P_Take(P_Skip(P_xs, P_from), P_count); };
+    static P_Join = function (P_xs, P_sep) { return P_IsEmpty(P_xs)
+        ? 
+        : P_Add(P_ToString(P_First(P_xs)), P_Aggregate(P_Skip(P_xs, 1), , function (P_acc, P_cur) { return P_Interpolate(P_acc, P_sep, P_cur); }))
+    ; };
+    static P_All = function (P_xs, P_f) { return P_IsEmpty(P_xs)
+        ? True
+        : P_And(P_f(P_First(P_xs)), P_f(P_Rest(P_xs)))
+    ; };
+    static P_JoinStrings = function (P_xs, P_sep) { return P_IsEmpty(P_xs)
+        ? 
+        : P_Add(P_First(P_xs), P_Aggregate(P_Rest(P_xs), , function (P_x, P_acc) { return P_Add(P_acc, P_Add(, , P_ToString(P_x))); }))
+    ; };
 }
 class P_Easings
 {
@@ -2228,174 +1667,54 @@ class P_Easings
     }
     // field accessors
     // functions 
-    static P_BlendEaseFunc = function (P_p, P_easeIn, P_easeOut)
-    // Candidates = Any
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_InvertEaseFunc = function (P_p, P_easeIn)
-    // Candidates = Any
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Linear = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_QuadraticEaseIn = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_QuadraticEaseOut = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_QuadraticEaseInOut = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_CubicEaseIn = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_CubicEaseOut = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_CubicEaseInOut = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_QuarticEaseIn = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_QuarticEaseOut = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_QuarticEaseInOut = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_QuinticEaseIn = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_QuinticEaseOut = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_QuinticEaseInOut = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_SineEaseIn = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_SineEaseOut = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_SineEaseInOut = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_CircularEaseIn = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_CircularEaseOut = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_CircularEaseInOut = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_ExponentialEaseIn = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_ExponentialEaseOut = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_ExponentialEaseInOut = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_ElasticEaseIn = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_ElasticEaseOut = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_ElasticEaseInOut = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_BackEaseIn = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_BackEaseOut = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_BackEaseInOut = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_BounceEaseIn = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_BounceEaseOut = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_BounceEaseInOut = function (P_p)
-    // Candidates = Any
-    {
-        null}
-    ;
+    static P_BlendEaseFunc = function (P_p, P_easeIn, P_easeOut) { return P_LessThan(P_p, 0.5
+        ? P_Multiply(0.5, P_easeIn(P_Multiply(P_p, 2)))
+        : P_Multiply(0.5, P_Add(P_easeOut(P_Multiply(P_p, P_Subtract(2, 1))), 0.5))
+    ); };
+    static P_InvertEaseFunc = function (P_p, P_easeIn) { return P_Subtract(1, P_easeIn(P_Subtract(1, P_p))); };
+    static P_Linear = function (P_p) { return P_p; };
+    static P_QuadraticEaseIn = function (P_p) { return P_Pow2(P_p); };
+    static P_QuadraticEaseOut = function (P_p) { return P_InvertEaseFunc(P_p, P_QuadraticEaseIn); };
+    static P_QuadraticEaseInOut = function (P_p) { return P_BlendEaseFunc(P_p, P_QuadraticEaseIn, P_QuadraticEaseOut); };
+    static P_CubicEaseIn = function (P_p) { return P_Pow3(P_p); };
+    static P_CubicEaseOut = function (P_p) { return P_InvertEaseFunc(P_p, P_CubicEaseIn); };
+    static P_CubicEaseInOut = function (P_p) { return P_BlendEaseFunc(P_p, P_CubicEaseIn, P_CubicEaseOut); };
+    static P_QuarticEaseIn = function (P_p) { return P_Pow4(P_p); };
+    static P_QuarticEaseOut = function (P_p) { return P_InvertEaseFunc(P_p, P_QuarticEaseIn); };
+    static P_QuarticEaseInOut = function (P_p) { return P_BlendEaseFunc(P_p, P_QuarticEaseIn, P_QuarticEaseOut); };
+    static P_QuinticEaseIn = function (P_p) { return P_Pow5(P_p); };
+    static P_QuinticEaseOut = function (P_p) { return P_InvertEaseFunc(P_p, P_QuinticEaseIn); };
+    static P_QuinticEaseInOut = function (P_p) { return P_BlendEaseFunc(P_p, P_QuinticEaseIn, P_QuinticEaseOut); };
+    static P_SineEaseIn = function (P_p) { return P_InvertEaseFunc(P_p, P_SineEaseOut); };
+    static P_SineEaseOut = function (P_p) { return P_Sin(P_Turns(P_Quarter(P_p))); };
+    static P_SineEaseInOut = function (P_p) { return P_BlendEaseFunc(P_p, P_SineEaseIn, P_SineEaseOut); };
+    static P_CircularEaseIn = function (P_p) { return P_FromOne(P_SquareRoot(P_FromOne(P_Pow2(P_p)))); };
+    static P_CircularEaseOut = function (P_p) { return P_InvertEaseFunc(P_p, P_CircularEaseIn); };
+    static P_CircularEaseInOut = function (P_p) { return P_BlendEaseFunc(P_p, P_CircularEaseIn, P_CircularEaseOut); };
+    static P_ExponentialEaseIn = function (P_p) { return P_AlmostZero(P_p)
+        ? P_p
+        : P_Pow(2, P_Multiply(10, P_MinusOne(P_p)))
+    ; };
+    static P_ExponentialEaseOut = function (P_p) { return P_InvertEaseFunc(P_p, P_ExponentialEaseIn); };
+    static P_ExponentialEaseInOut = function (P_p) { return P_BlendEaseFunc(P_p, P_ExponentialEaseIn, P_ExponentialEaseOut); };
+    static P_ElasticEaseIn = function (P_p) { return P_Multiply(13, P_Multiply(P_Turns(P_Quarter(P_p)), P_Sin(P_Radians(P_Pow(2, P_Multiply(10, P_MinusOne(P_p))))))); };
+    static P_ElasticEaseOut = function (P_p) { return P_InvertEaseFunc(P_p, P_ElasticEaseIn); };
+    static P_ElasticEaseInOut = function (P_p) { return P_BlendEaseFunc(P_p, P_ElasticEaseIn, P_ElasticEaseOut); };
+    static P_BackEaseIn = function (P_p) { return P_Subtract(P_Pow3(P_p), P_Multiply(P_p, P_Sin(P_Turns(P_Half(P_p))))); };
+    static P_BackEaseOut = function (P_p) { return P_InvertEaseFunc(P_p, P_BackEaseIn); };
+    static P_BackEaseInOut = function (P_p) { return P_BlendEaseFunc(P_p, P_BackEaseIn, P_BackEaseOut); };
+    static P_BounceEaseIn = function (P_p) { return P_InvertEaseFunc(P_p, P_BounceEaseOut); };
+    static P_BounceEaseOut = function (P_p) { return P_LessThan(P_p, P_Divide(4, 11))
+        ? P_Multiply(121, P_Divide(P_Pow2(P_p), 16))
+        : P_LessThan(P_p, P_Divide(8, 11))
+            ? P_Divide(363, P_Multiply(40, P_Subtract(P_Pow2(P_p), P_Divide(99, P_Multiply(10, P_Add(P_p, P_Divide(17, 5)))))))
+            : P_LessThan(P_p, P_Divide(9, 10))
+                ? P_Divide(4356, P_Multiply(361, P_Subtract(P_Pow2(P_p), P_Divide(35442, P_Multiply(1805, P_Add(P_p, P_Divide(16061, 1805)))))))
+                : P_Divide(54, P_Multiply(5, P_Subtract(P_Pow2(P_p), P_Divide(513, P_Multiply(25, P_Add(P_p, P_Divide(268, 25)))))))
+
+
+    ; };
+    static P_BounceEaseInOut = function (P_p) { return P_BlendEaseFunc(P_p, P_BounceEaseIn, P_BounceEaseOut); };
 }
 class P_Intrinsics
 {
@@ -2404,24 +1723,8 @@ class P_Intrinsics
     }
     // field accessors
     // functions 
-    static P_Interpolate = function (P_xs)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_Throw = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_TypeOf = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
-    static P_New = function (P_x)
-    // Candidates = Any
-    {
-        null}
-    ;
+    static P_Interpolate = function (P_xs) { return P_intrinsic; };
+    static P_Throw = function (P_x) { return P_intrinsic; };
+    static P_TypeOf = function (P_x) { return P_intrinsic; };
+    static P_New = function (P_x) { return P_intrinsic; };
 }

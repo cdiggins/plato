@@ -61,55 +61,12 @@ namespace PlatoAst
             return r;
         }
 
-        public SymbolWriterPlatoHtml WriteRegion(IReadOnlyList<Symbol> symbols)
-        {
-            if (symbols.Count == 1 && symbols[0] is BlockStatementSymbol rs)
-                return Write(rs);
-            var r = WriteLine(Delimiter("{")).Indent();
-            for (var i=0; i < symbols.Count; ++i)
-            {
-                var symbol = symbols[i];
-                if (i == symbols.Count - 1)
-                    r = r.Write(Keyword("return") + " ");
-                r = r.Write(symbol);
-                r = r.WriteLine(Delimiter(";"));
-            }
-            r = r.Dedent().WriteLine(Delimiter("}"));
-            return r;
-        }
-
         public SymbolWriterPlatoHtml WriteTypeDecl(TypeRefSymbol typeRef, string defaultType = "var")
         {
             if (typeRef == null)
                 return this;
 
             return Write(" " + Delimiter(":") + " " + Type(typeRef.Name));
-        }
-
-        public SymbolWriterPlatoHtml WriteFunctionBody(BlockStatementSymbol body)
-        {
-            if (body.Children.Count != 1)
-                throw new Exception("Expected region symbol to have one child");
-            
-            var statement = body.Children[0];
-            if (statement is BlockStatementSymbol rs)
-                return WriteFunctionBody(rs);
-
-            return Write(statement).Write(Delimiter(";"));
-        }
-
-        public SymbolWriterPlatoHtml WriteFunctionBody(FunctionSymbol function)
-        {
-            var body = function.ExpressionOrStatementBody;
-            if (body == null)
-                return Write("n");
-            if (!(body is BlockStatementSymbol rs))
-            {
-                return Write(body).Write(Delimiter(";"));
-            }
-
-            return WriteFunctionBody(rs);
-
         }
 
         public SymbolWriterPlatoHtml Write(FunctionSymbol function)
@@ -119,7 +76,7 @@ namespace PlatoAst
                 return Write(Delimiter("("))
                     .WriteCommaList(function.Parameters.Select(p => p.Name))
                     .Write(Delimiter(")") + " " + Delimiter("=>") + " ")
-                    .Indent().WriteLine().WriteFunctionBody(function).Dedent();
+                    .Indent().WriteLine().Write(function.Body).Dedent();
             }
 
             // TODO: 
@@ -133,7 +90,8 @@ namespace PlatoAst
                 .WriteTypeDecl(function.Type, "void")
                 .Write(" " + Delimiter("=>") + " ")
                 .Indent().WriteLine()
-                .WriteFunctionBody(function)
+                .Write(function.Body)
+                .WriteLine(Delimiter(";"))
                 .Dedent();
         }
 
@@ -262,9 +220,6 @@ namespace PlatoAst
                 case ParameterSymbol parameter:
                     return Write(Variable(parameter.Name)).WriteTypeDecl(parameter.Type);
 
-                case BlockStatementSymbol region:
-                    return WriteRegion(region.Children);
-
                 case TypeDefSymbol typeDef:
                     return Write(typeDef);
                 
@@ -273,15 +228,9 @@ namespace PlatoAst
 
                 case VariableSymbol variable:
                     return Write(variable.Name);
-
-                case ReturnStatementSymbol returnStatement:
-                    return Write(returnStatement.Expression);
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(value));
             }
 
-            return this;
+            throw new ArgumentOutOfRangeException(nameof(value));
         }
 
     }

@@ -34,29 +34,11 @@ namespace PlatoAst
             return r;
         }
 
-        public SymbolWriterCSharp WriteRegion(IReadOnlyList<Symbol> symbols)
-        {
-            if (symbols.Count == 1 && symbols[0] is BlockStatementSymbol rs)
-                return Write(rs);
-            var r = WriteLine("{").Indent();
-            for (var i=0; i < symbols.Count; ++i)
-            {
-                var symbol = symbols[i];
-                if (i == symbols.Count - 1)
-                    r = r.Write("return ");
-                r = r.Write(symbol);
-                r = r.WriteLine(";");
-            }
-            r = r.Dedent().WriteLine("}");
-            return r;
-        }
-
         public SymbolWriterCSharp WriteTypeDecl(TypeRefSymbol typeRef, string defaultType = "var")
         {
             if (typeRef == null)
                 return Write($"{defaultType} ");
-            else
-                return Write(typeRef.Name).Write(" ");
+            return Write(typeRef.Name).Write(" ");
         }
 
         public SymbolWriterCSharp WriteConstraints(FunctionSymbol function)
@@ -82,7 +64,7 @@ namespace PlatoAst
                     .WriteCommaList(function.Parameters.Select(p => p.Name))
                     .WriteLine(") => ")
                     .WriteConstraints(function)
-                    .Write(function.ExpressionOrStatementBody);
+                    .Write(function.Body);
             }
 
             // TODO: 
@@ -95,7 +77,7 @@ namespace PlatoAst
                 .WriteCommaList(function.Parameters)
                 .WriteLine(")")
                 .WriteConstraints(function)
-                .Write(function.ExpressionOrStatementBody);
+                .Write(function.Body);
         }
 
         public SymbolWriterCSharp WriteCommaList(IEnumerable<Symbol> symbols)
@@ -199,9 +181,6 @@ namespace PlatoAst
                 case ParameterSymbol parameter:
                     return WriteTypeDecl(parameter.Type).Write(parameter.Name);
 
-                case BlockStatementSymbol region:
-                    return WriteRegion(region.Children);
-
                 case TypeDefSymbol typeDef:
                     return Write(typeDef);
                 
@@ -210,9 +189,6 @@ namespace PlatoAst
 
                 case VariableSymbol variable:
                     return Write(variable.Name);
-
-                case ReturnStatementSymbol returnStatement:
-                    return Write(returnStatement.Expression);
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(value));

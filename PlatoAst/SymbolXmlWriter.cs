@@ -89,9 +89,6 @@ namespace PlatoAst
                     return WriteXml("ParameterSymbol", avw =>
                         avw.WriteXml("Name", parameter.Name).Write(parameter.Type));
 
-                case BlockStatementSymbol region:
-                    return WriteXml("BlockStatementSymbol", region.Children);
-
                 case TypeDefSymbol typeDef:
                     return WriteXml("TypeDefSymbol", avw => avw
                         .WriteXml("Methods", typeDef.Methods)

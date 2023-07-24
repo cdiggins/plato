@@ -116,19 +116,31 @@ namespace PlatoAst
                             Resolve(astAssign.Value)));
 
                 case AstBlock astBlock:
-                    return StatementBlock(astBlock.Statements);
+                {
+                    if (astBlock.Statements.Count == 0)
+                        return null;
+                    if (astBlock.Statements.Count == 1)
+                        return Resolve(astBlock.Statements[0]);
+                    throw new Exception("Cannot handle AstBlock with multiple children");
+                }
 
                 case AstBreak astBreak:
                     return NoValueSymbol;
 
                 case AstMulti astMulti:
-                    return StatementBlock(astMulti.Nodes);
+                {
+                    if (astMulti.Nodes.Count == 0)
+                        return null;
+                    if (astMulti.Nodes.Count == 1)
+                        return Resolve(astMulti.Nodes[0]);
+                    throw new Exception("Cannot handle AstMulti with multiple children");
+                }
 
                 case AstParenthesized astParenthesized:
                     return Resolve(astParenthesized.Inner);
                 
                 case AstReturn astReturn:
-                    return new ReturnStatementSymbol(Resolve(astReturn.Value) as ExpressionSymbol);
+                    return Resolve(astReturn.Value);
 
                 case AstConditional astConditional:
                     return Scoped(() => new ConditionalExpressionSymbol(
@@ -199,7 +211,7 @@ namespace PlatoAst
 
                 foreach (var tp in astTypeDeclaration.TypeParameters)
                 {
-                    var tpd = new TypeParameterDefSymbol(tp, ValueBindingsScope, tp.Name);
+                    var tpd = new TypeParameterDefSymbol(tp.Name);
                     BindType(tpd.Name, tpd);
                     typeDef.TypeParameters.Add(tpd);
                 }
@@ -246,7 +258,7 @@ namespace PlatoAst
                 // TODO: should go into the type scope.
                 foreach (var tp in typeDecl.TypeParameters)
                 {
-                    var tpd = new TypeParameterDefSymbol(tp, ValueBindingsScope, tp.Name);
+                    var tpd = new TypeParameterDefSymbol(tp.Name);
                     BindType(tpd.Name, tpd);
                     typeDef.TypeParameters.Add(tpd);
                 }
@@ -294,15 +306,7 @@ namespace PlatoAst
             return r;
         }
 
-        public BlockStatementSymbol StatementBlock(IEnumerable<AstNode> nodes)
-        {
-            ValueBindingsScope = ValueBindingsScope.Push();
-            var r = new BlockStatementSymbol(nodes.Select(Resolve)
-                .Cast<StatementSymbol>().ToArray());
-            ValueBindingsScope = ValueBindingsScope.Pop();
-            return r;
-        }
-
-        public static NoValueSymbol NoValueSymbol = NoValueSymbol.Instance;
+        public static NoValueSymbol NoValueSymbol 
+            = NoValueSymbol.Instance;
     }
 }

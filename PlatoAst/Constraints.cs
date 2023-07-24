@@ -61,7 +61,7 @@ namespace PlatoAst
                         r.Add(ps, new List<Constraint>());
                 }
 
-                foreach (var sym in f.ExpressionOrStatementBody.GetDescendantSymbols())
+                foreach (var sym in f.Body.GetDescendantSymbols())
                 {
                     if (sym is FunctionCallSymbol fs)
                     {
