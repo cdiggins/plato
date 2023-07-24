@@ -36,8 +36,11 @@ namespace PlatoAst
         public string Literal(string s)
             => Span(s, "literal");
 
+        public string DeclarationName(string s)
+            => Span(s, "declname");
+
         public SymbolWriterPlatoHtml WriteBlock(params Symbol[] symbols)
-            => WriteBlock((IEnumerable<Symbol>)symbols, false);
+            => WriteBlock(symbols, false);
 
         public SymbolWriterPlatoHtml Write(IEnumerable<Symbol> symbols)
             => symbols.Aggregate(this, (writer, symbol) => writer.Write(symbol));
@@ -83,6 +86,32 @@ namespace PlatoAst
             return Write(" " + Delimiter(":") + " " + Type(typeRef.Name));
         }
 
+        public SymbolWriterPlatoHtml WriteFunctionBody(RegionSymbol body)
+        {
+            if (body.Children.Count != 1)
+                throw new Exception("Expected region symbol to have one child");
+            
+            var statement = body.Children[0];
+            if (statement is RegionSymbol rs)
+                return WriteFunctionBody(rs);
+
+            return Write(statement).Write(Delimiter(";"));
+        }
+
+        public SymbolWriterPlatoHtml WriteFunctionBody(FunctionSymbol function)
+        {
+            var body = function.Body;
+            if (body == null)
+                return Write("n");
+            if (!(body is RegionSymbol rs))
+            {
+                return Write(body).Write(Delimiter(";"));
+            }
+
+            return WriteFunctionBody(rs).Write(Delimiter(";"));
+
+        }
+
         public SymbolWriterPlatoHtml Write(FunctionSymbol function)
         {
             if (function.Name == "__lambda__")
@@ -90,20 +119,22 @@ namespace PlatoAst
                 return Write(Delimiter("("))
                     .WriteCommaList(function.Parameters.Select(p => p.Name))
                     .Write(Delimiter(")") + " " + Delimiter("=>") + " ")
-                    .Write(function.Body);
+                    .Indent().WriteLine().WriteFunctionBody(function).Dedent();
             }
 
             // TODO: 
             // var node = function.Location;
 
             // function.T
-            return Write(Variable(function.Name))
+            return Write(DeclarationName(function.Name))
                 .Write(Delimiter("("))
                 .WriteCommaList(function.Parameters)
                 .Write(Delimiter(")"))
                 .WriteTypeDecl(function.Type, "void")
-                .WriteLine()
-                .Write(function.Body);
+                .Write(" " + Delimiter("=>") + " ")
+                .Indent().WriteLine()
+                .WriteFunctionBody(function)
+                .Dedent();
         }
 
         public SymbolWriterPlatoHtml WriteCommaList(IEnumerable<Symbol> symbols)
@@ -163,6 +194,15 @@ namespace PlatoAst
             return WriteBlock(typeDef.Members, false);
         }
 
+        public SymbolWriterPlatoHtml WriteFunctionArgs(IEnumerable<Symbol> symbols)
+        {
+            if (!symbols.Any())
+                return this;
+            return Write(Delimiter("("))
+                .WriteCommaList(symbols)
+                .Write(Delimiter(")"));
+        }
+
         public SymbolWriterPlatoHtml Write(Symbol value)
         {
             switch (value)
@@ -191,15 +231,18 @@ namespace PlatoAst
                         .Dedent().WriteLine();
 
                 case FieldDefSymbol fieldDef:
-                    return Write(Variable(fieldDef.Name)).WriteTypeDecl(fieldDef.Type)
+                    return Write(DeclarationName(fieldDef.Name)).WriteTypeDecl(fieldDef.Type)
                         .Write(Delimiter(";"));
 
                 case FunctionSymbol function:
                     return Write(function);
                     
                 case FunctionResultSymbol functionResult:
-                    return Write(functionResult.Function).Write(Delimiter("("))
-                        .WriteCommaList(functionResult.Args).Write(Delimiter(")"));
+                    return
+                        functionResult.Args.Count > 0
+                            ? Write(functionResult.Args[0]).Write(Operator("."))
+                                .Write(functionResult.Function).WriteFunctionArgs(functionResult.Args.Skip(1))
+                            : Write(functionResult.Function); 
 
                 case LiteralSymbol literal:
                     return Write(Literal(literal.Value.ToString()));
