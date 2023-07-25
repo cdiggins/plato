@@ -8,16 +8,16 @@ class P_Vector
     static P_Count_1412 = function (P_v) 
     // ParameterSymbol=v$1411:Vector Declared:Vector
     // Candidates = Vector
-    // Called function: RefSymbol=Count$26: candidates = Vector_13.Count_143, Array_24.Count_210
-    // Called function: RefSymbol=FieldTypes$187: candidates = Value_22.FieldTypes_186
+    // Called function: Ref=>TypeDefSymbol=Count$26: candidates = Vector_13.Count_143, Array_24.Count_210
+    // Called function: Ref=>FunctionGroupSymbol=FieldTypes$187: candidates = Value_22.FieldTypes_186
     { return P_Count(P_FieldTypes(P_Self)); };
     static P_At_1415 = function (P_v, P_n) 
-    // ParameterSymbol=v$1413:Vector Declared:Vector, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=v$1413:Vector Declared:Vector, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Vector
-    // ParameterSymbol=n$1414:Index Declared:Index, Argument:RefSymbol=At$213:(1/2)
+    // ParameterSymbol=n$1414:Index Declared:Index, Argument:Ref=>FunctionGroupSymbol=At$213:(1/2)
     // Candidates = Index
-    // Called function: RefSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
     { return P_At(P_FieldValues(P_v), P_n); };
 }
 class P_Measure
@@ -28,10 +28,10 @@ class P_Measure
     // field accessors
     // functions 
     static P_Value_1417 = function (P_x) 
-    // ParameterSymbol=x$1416:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=x$1416:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // Called function: RefSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
     { return P_At(P_FieldValues(P_x), 0); };
 }
 class P_Numerical
@@ -50,12 +50,12 @@ class P_Magnitude
     // field accessors
     // functions 
     static P_Magnitude_1419 = function (P_x) 
-    // ParameterSymbol=x$1418:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=x$1418:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // Called function: RefSymbol=SquareRoot$1205: candidates = Numerical_135.SquareRoot_1204
-    // Called function: RefSymbol=Sum$1163: candidates = Vector_134.Sum_1162
-    // Called function: RefSymbol=Square$1209: candidates = Numerical_135.Square_1208
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=SquareRoot$1205: candidates = Numerical_135.SquareRoot_1204
+    // Called function: Ref=>FunctionGroupSymbol=Sum$1163: candidates = Vector_134.Sum_1162
+    // Called function: Ref=>FunctionGroupSymbol=Square$1209: candidates = Numerical_135.Square_1208
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
     { return P_SquareRoot(P_Sum(P_Square(P_FieldValues(P_x)))); };
 }
 class P_Comparable
@@ -66,17 +66,17 @@ class P_Comparable
     // field accessors
     // functions 
     static P_Compare_1422 = function (P_a, P_b) 
-    // ParameterSymbol=a$1420:Self Declared:Self, Argument:RefSymbol=Magnitude$150:(0/1), Argument:RefSymbol=Magnitude$150:(0/1)
+    // ParameterSymbol=a$1420:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=Magnitude$150:(0/1), Argument:Ref=>FunctionGroupSymbol=Magnitude$150:(0/1)
     // Candidates = Self
-    // ParameterSymbol=b$1421:Self Declared:Self, Argument:RefSymbol=Magnitude$150:(0/1), Argument:RefSymbol=Magnitude$150:(0/1)
+    // ParameterSymbol=b$1421:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=Magnitude$150:(0/1), Argument:Ref=>FunctionGroupSymbol=Magnitude$150:(0/1)
     // Candidates = Self
-    // Called function: RefSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
-    // Called function: RefSymbol=Magnitude$150: candidates = Magnitude_16.Magnitude_149
-    // Called function: RefSymbol=Magnitude$150: candidates = Magnitude_16.Magnitude_149
-    // Called function: RefSymbol=Negative$158: candidates = Arithmetic_19.Negative_157
-    // Called function: RefSymbol=GreaterThan$1291: candidates = Comparable_136.GreaterThan_1290
-    // Called function: RefSymbol=Magnitude$150: candidates = Magnitude_16.Magnitude_149
-    // Called function: RefSymbol=Magnitude$150: candidates = Magnitude_16.Magnitude_149
+    // Called function: Ref=>FunctionGroupSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
+    // Called function: Ref=>FunctionGroupSymbol=Magnitude$150: candidates = Magnitude_16.Magnitude_149
+    // Called function: Ref=>FunctionGroupSymbol=Magnitude$150: candidates = Magnitude_16.Magnitude_149
+    // Called function: Ref=>FunctionGroupSymbol=Negative$158: candidates = Arithmetic_19.Negative_157
+    // Called function: Ref=>FunctionGroupSymbol=GreaterThan$1291: candidates = Comparable_136.GreaterThan_1290
+    // Called function: Ref=>FunctionGroupSymbol=Magnitude$150: candidates = Magnitude_16.Magnitude_149
+    // Called function: Ref=>FunctionGroupSymbol=Magnitude$150: candidates = Magnitude_16.Magnitude_149
     { return P_LessThan(P_Magnitude(P_a), P_Magnitude(P_b)
         ? P_Negative(1)
         : P_GreaterThan(P_Magnitude(P_a), P_Magnitude(P_b)
@@ -93,14 +93,14 @@ class P_Equatable
     // field accessors
     // functions 
     static P_Equals_1425 = function (P_a, P_b) 
-    // ParameterSymbol=a$1423:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=a$1423:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // ParameterSymbol=b$1424:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=b$1424:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // Called function: RefSymbol=All$1333: candidates = Array_139.All_1332
-    // Called function: RefSymbol=Equals$1281: candidates = Equatable_18.Equals_153, Comparable_136.Equals_1280
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=All$1333: candidates = Array_139.All_1332
+    // Called function: Ref=>FunctionGroupSymbol=Equals$1281: candidates = Equatable_18.Equals_153, Comparable_136.Equals_1280
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
     { return P_All(P_Equals(P_FieldValues(P_a), P_FieldValues(P_b))); };
 }
 class P_Arithmetic
@@ -111,52 +111,52 @@ class P_Arithmetic
     // field accessors
     // functions 
     static P_Add_1428 = function (P_self, P_other) 
-    // ParameterSymbol=self$1426:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=self$1426:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // ParameterSymbol=other$1427:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=other$1427:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // Called function: RefSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
     { return P_Add(P_FieldValues(P_self), P_FieldValues(P_other)); };
     static P_Negative_1430 = function (P_self) 
-    // ParameterSymbol=self$1429:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=self$1429:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // Called function: RefSymbol=Negative$158: candidates = Arithmetic_19.Negative_157
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=Negative$158: candidates = Arithmetic_19.Negative_157
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
     { return P_Negative(P_FieldValues(P_self)); };
     static P_Reciprocal_1432 = function (P_self) 
-    // ParameterSymbol=self$1431:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=self$1431:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // Called function: RefSymbol=Reciprocal$160: candidates = Arithmetic_19.Reciprocal_159
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=Reciprocal$160: candidates = Arithmetic_19.Reciprocal_159
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
     { return P_Reciprocal(P_FieldValues(P_self)); };
     static P_Multiply_1435 = function (P_self, P_other) 
-    // ParameterSymbol=self$1433:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=self$1433:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // ParameterSymbol=other$1434:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=other$1434:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // Called function: RefSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
     { return P_Add(P_FieldValues(P_self), P_FieldValues(P_other)); };
     static P_Divide_1438 = function (P_self, P_other) 
-    // ParameterSymbol=self$1436:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=self$1436:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // ParameterSymbol=other$1437:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=other$1437:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
     { return P_Divide(P_FieldValues(P_self), P_FieldValues(P_other)); };
     static P_Modulo_1441 = function (P_self, P_other) 
-    // ParameterSymbol=self$1439:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=self$1439:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // ParameterSymbol=other$1440:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=other$1440:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // Called function: RefSymbol=Modulo$177: candidates = Arithmetic_19.Modulo_165, ScalarArithmetic_20.Modulo_176
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=Modulo$177: candidates = Arithmetic_19.Modulo_165, ScalarArithmetic_20.Modulo_176
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
     { return P_Modulo(P_FieldValues(P_self), P_FieldValues(P_other)); };
 }
 class P_ScalarArithmetic
@@ -167,44 +167,44 @@ class P_ScalarArithmetic
     // field accessors
     // functions 
     static P_Add_1445 = function (P_self, P_scalar) 
-    // ParameterSymbol=self$1443:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=self$1443:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // ParameterSymbol=scalar$1444:T Declared:T, Argument:RefSymbol=Add$169:(1/2)
+    // ParameterSymbol=scalar$1444:T Declared:T, Argument:Ref=>FunctionGroupSymbol=Add$169:(1/2)
     // Candidates = T
-    // Called function: RefSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
     { return P_Add(P_FieldValues(P_self), P_scalar); };
     static P_Subtract_1448 = function (P_self, P_scalar) 
-    // ParameterSymbol=self$1446:Self Declared:Self, Argument:RefSymbol=Add$169:(0/2)
+    // ParameterSymbol=self$1446:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=Add$169:(0/2)
     // Candidates = Self
-    // ParameterSymbol=scalar$1447:T Declared:T, Argument:RefSymbol=Negative$158:(0/1)
+    // ParameterSymbol=scalar$1447:T Declared:T, Argument:Ref=>FunctionGroupSymbol=Negative$158:(0/1)
     // Candidates = T
-    // Called function: RefSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
-    // Called function: RefSymbol=Negative$158: candidates = Arithmetic_19.Negative_157
+    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
+    // Called function: Ref=>FunctionGroupSymbol=Negative$158: candidates = Arithmetic_19.Negative_157
     { return P_Add(P_self, P_Negative(P_scalar)); };
     static P_Multiply_1451 = function (P_self, P_scalar) 
-    // ParameterSymbol=self$1449:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=self$1449:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // ParameterSymbol=scalar$1450:T Declared:T, Argument:RefSymbol=Multiply$173:(1/2)
+    // ParameterSymbol=scalar$1450:T Declared:T, Argument:Ref=>FunctionGroupSymbol=Multiply$173:(1/2)
     // Candidates = T
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
     { return P_Multiply(P_FieldValues(P_self), P_scalar); };
     static P_Divide_1454 = function (P_self, P_scalar) 
-    // ParameterSymbol=self$1452:Self Declared:Self, Argument:RefSymbol=Multiply$173:(0/2)
+    // ParameterSymbol=self$1452:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2)
     // Candidates = Self
-    // ParameterSymbol=scalar$1453:T Declared:T, Argument:RefSymbol=Reciprocal$160:(0/1)
+    // ParameterSymbol=scalar$1453:T Declared:T, Argument:Ref=>FunctionGroupSymbol=Reciprocal$160:(0/1)
     // Candidates = T
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Reciprocal$160: candidates = Arithmetic_19.Reciprocal_159
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Reciprocal$160: candidates = Arithmetic_19.Reciprocal_159
     { return P_Multiply(P_self, P_Reciprocal(P_scalar)); };
     static P_Modulo_1457 = function (P_self, P_scalar) 
-    // ParameterSymbol=self$1455:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=self$1455:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // ParameterSymbol=scalar$1456:T Declared:T, Argument:RefSymbol=Modulo$177:(1/2)
+    // ParameterSymbol=scalar$1456:T Declared:T, Argument:Ref=>FunctionGroupSymbol=Modulo$177:(1/2)
     // Candidates = T
-    // Called function: RefSymbol=Modulo$177: candidates = Arithmetic_19.Modulo_165, ScalarArithmetic_20.Modulo_176
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=Modulo$177: candidates = Arithmetic_19.Modulo_165, ScalarArithmetic_20.Modulo_176
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
     { return P_Modulo(P_FieldValues(P_self), P_scalar); };
 }
 class P_Boolean
@@ -215,28 +215,28 @@ class P_Boolean
     // field accessors
     // functions 
     static P_And_1460 = function (P_a, P_b) 
-    // ParameterSymbol=a$1458:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=a$1458:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // ParameterSymbol=b$1459:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=b$1459:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // Called function: RefSymbol=And$179: candidates = Boolean_21.And_178
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=And$179: candidates = Boolean_21.And_178
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
     { return P_And(P_FieldValues(P_a), P_FieldValues(P_b)); };
     static P_Or_1463 = function (P_a, P_b) 
-    // ParameterSymbol=a$1461:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=a$1461:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // ParameterSymbol=b$1462:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=b$1462:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // Called function: RefSymbol=Or$181: candidates = Boolean_21.Or_180
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=Or$181: candidates = Boolean_21.Or_180
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
     { return P_Or(P_FieldValues(P_a), P_FieldValues(P_b)); };
     static P_Not_1465 = function (P_a) 
-    // ParameterSymbol=a$1464:Self Declared:Self, Argument:RefSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=a$1464:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // Called function: RefSymbol=Not$183: candidates = Boolean_21.Not_182
-    // Called function: RefSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=Not$183: candidates = Boolean_21.Not_182
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
     { return P_Not(P_FieldValues(P_a)); };
 }
 class P_Value
@@ -257,24 +257,24 @@ class P_Value
     // Candidates = Self
     { return P_intrinsic; };
     static P_Zero_1471 = function () 
-    // Called function: RefSymbol=Zero$193: candidates = Value_22.Zero_192
+    // Called function: Ref=>FunctionGroupSymbol=Zero$193: candidates = Value_22.Zero_192
     { return P_Zero(P_FieldTypes); };
     static P_One_1472 = function () 
-    // Called function: RefSymbol=One$195: candidates = Value_22.One_194
+    // Called function: Ref=>FunctionGroupSymbol=One$195: candidates = Value_22.One_194
     { return P_One(P_FieldTypes); };
     static P_Default_1473 = function () 
-    // Called function: RefSymbol=Default$197: candidates = Value_22.Default_196
+    // Called function: Ref=>FunctionGroupSymbol=Default$197: candidates = Value_22.Default_196
     { return P_Default(P_FieldTypes); };
     static P_MinValue_1474 = function () 
-    // Called function: RefSymbol=MinValue$199: candidates = Value_22.MinValue_198
+    // Called function: Ref=>FunctionGroupSymbol=MinValue$199: candidates = Value_22.MinValue_198
     { return P_MinValue(P_FieldTypes); };
     static P_MaxValue_1475 = function () 
-    // Called function: RefSymbol=MaxValue$201: candidates = Value_22.MaxValue_200
+    // Called function: Ref=>FunctionGroupSymbol=MaxValue$201: candidates = Value_22.MaxValue_200
     { return P_MaxValue(P_FieldTypes); };
     static P_ToString_1477 = function (P_x) 
     // ParameterSymbol=x$1476:Self Declared:Self
     // Candidates = Self
-    // Called function: RefSymbol=JoinStrings$1335: candidates = Array_139.JoinStrings_1334
+    // Called function: Ref=>FunctionGroupSymbol=JoinStrings$1335: candidates = Array_139.JoinStrings_1334
     { return P_JoinStrings(P_FieldValues, ","); };
 }
 class P_Interval
@@ -1633,193 +1633,193 @@ class P_Interval
     // field accessors
     // functions 
     static P_Size_1490 = function (P_x) 
-    // ParameterSymbol=x$1489: Argument:RefSymbol=Max$1297:(0/1), Argument:RefSymbol=Min$1295:(0/1)
+    // ParameterSymbol=x$1489: Argument:Ref=>FunctionGroupSymbol=Max$1297:(0/1), Argument:Ref=>FunctionGroupSymbol=Min$1295:(0/1)
     // Candidates = Interval,Comparable
-    // Called function: RefSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
-    // Called function: RefSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
-    // Called function: RefSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
+    // Called function: Ref=>FunctionGroupSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
+    // Called function: Ref=>FunctionGroupSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
+    // Called function: Ref=>FunctionGroupSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
     { return P_Subtract(P_Max(P_x), P_Min(P_x)); };
     static P_IsEmpty_1492 = function (P_x) 
-    // ParameterSymbol=x$1491: Argument:RefSymbol=Min$1295:(0/1), Argument:RefSymbol=Max$1297:(0/1)
+    // ParameterSymbol=x$1491: Argument:Ref=>FunctionGroupSymbol=Min$1295:(0/1), Argument:Ref=>FunctionGroupSymbol=Max$1297:(0/1)
     // Candidates = Interval,Comparable
-    // Called function: RefSymbol=GreaterThanOrEquals$1293: candidates = Comparable_136.GreaterThanOrEquals_1292
-    // Called function: RefSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
-    // Called function: RefSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
+    // Called function: Ref=>FunctionGroupSymbol=GreaterThanOrEquals$1293: candidates = Comparable_136.GreaterThanOrEquals_1292
+    // Called function: Ref=>FunctionGroupSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
+    // Called function: Ref=>FunctionGroupSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
     { return P_GreaterThanOrEquals(P_Min(P_x), P_Max(P_x)); };
     static P_Lerp_1495 = function (P_x, P_amount) 
-    // ParameterSymbol=x$1493: Argument:RefSymbol=Min$1295:(0/1), Argument:RefSymbol=Max$1297:(0/1)
+    // ParameterSymbol=x$1493: Argument:Ref=>FunctionGroupSymbol=Min$1295:(0/1), Argument:Ref=>FunctionGroupSymbol=Max$1297:(0/1)
     // Candidates = Interval,Comparable
-    // ParameterSymbol=amount$1494: Argument:RefSymbol=Subtract$171:(1/2), Argument:RefSymbol=Multiply$173:(1/2)
+    // ParameterSymbol=amount$1494: Argument:Ref=>FunctionGroupSymbol=Subtract$171:(1/2), Argument:Ref=>FunctionGroupSymbol=Multiply$173:(1/2)
     // Candidates = ScalarArithmetic,Arithmetic
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
-    // Called function: RefSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
-    // Called function: RefSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
+    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
+    // Called function: Ref=>FunctionGroupSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
     { return P_Multiply(P_Min(P_x), P_Add(P_Subtract(1, P_amount), P_Multiply(P_Max(P_x), P_amount))); };
     static P_InverseLerp_1498 = function (P_x, P_value) 
-    // ParameterSymbol=x$1496: Argument:RefSymbol=Min$1295:(0/1), Argument:RefSymbol=Size$1115:(0/1)
+    // ParameterSymbol=x$1496: Argument:Ref=>FunctionGroupSymbol=Min$1295:(0/1), Argument:Ref=>FunctionGroupSymbol=Size$1115:(0/1)
     // Candidates = Interval,Comparable,Interval
-    // ParameterSymbol=value$1497: Argument:RefSymbol=Subtract$171:(0/2)
+    // ParameterSymbol=value$1497: Argument:Ref=>FunctionGroupSymbol=Subtract$171:(0/2)
     // Candidates = ScalarArithmetic
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
-    // Called function: RefSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
-    // Called function: RefSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
-    // Called function: RefSymbol=Size$1115: candidates = Rectangle2D_79.Size_710, Interval_133.Size_1114
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
+    // Called function: Ref=>FunctionGroupSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
+    // Called function: Ref=>FunctionGroupSymbol=Size$1115: candidates = Rectangle2D_79.Size_710, Interval_133.Size_1114
     { return P_Divide(P_Subtract(P_value, P_Min(P_x)), P_Size(P_x)); };
     static P_Negate_1500 = function (P_x) 
-    // ParameterSymbol=x$1499: Argument:RefSymbol=Max$1297:(0/1), Argument:RefSymbol=Min$1295:(0/1)
+    // ParameterSymbol=x$1499: Argument:Ref=>FunctionGroupSymbol=Max$1297:(0/1), Argument:Ref=>FunctionGroupSymbol=Min$1295:(0/1)
     // Candidates = Interval,Comparable
-    // Called function: RefSymbol=Tuple$1: candidates = 
-    // Called function: RefSymbol=Negative$158: candidates = Arithmetic_19.Negative_157
-    // Called function: RefSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
-    // Called function: RefSymbol=Negative$158: candidates = Arithmetic_19.Negative_157
-    // Called function: RefSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
+    // Called function: Ref=>PredefinedSymbol=Tuple$1: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=Negative$158: candidates = Arithmetic_19.Negative_157
+    // Called function: Ref=>FunctionGroupSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
+    // Called function: Ref=>FunctionGroupSymbol=Negative$158: candidates = Arithmetic_19.Negative_157
+    // Called function: Ref=>FunctionGroupSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
     { return P_Tuple(P_Negative(P_Max(P_x)), P_Negative(P_Min(P_x))); };
     static P_Reverse_1502 = function (P_x) 
-    // ParameterSymbol=x$1501: Argument:RefSymbol=Max$1297:(0/1), Argument:RefSymbol=Min$1295:(0/1)
+    // ParameterSymbol=x$1501: Argument:Ref=>FunctionGroupSymbol=Max$1297:(0/1), Argument:Ref=>FunctionGroupSymbol=Min$1295:(0/1)
     // Candidates = Interval,Comparable
-    // Called function: RefSymbol=Tuple$1: candidates = 
-    // Called function: RefSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
-    // Called function: RefSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
+    // Called function: Ref=>PredefinedSymbol=Tuple$1: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
+    // Called function: Ref=>FunctionGroupSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
     { return P_Tuple(P_Max(P_x), P_Min(P_x)); };
     static P_Resize_1505 = function (P_x, P_size) 
-    // ParameterSymbol=x$1503: Argument:RefSymbol=Min$1295:(0/1), Argument:RefSymbol=Min$1295:(0/1)
+    // ParameterSymbol=x$1503: Argument:Ref=>FunctionGroupSymbol=Min$1295:(0/1), Argument:Ref=>FunctionGroupSymbol=Min$1295:(0/1)
     // Candidates = Interval,Comparable
-    // ParameterSymbol=size$1504: Argument:RefSymbol=Add$169:(1/2)
+    // ParameterSymbol=size$1504: Argument:Ref=>FunctionGroupSymbol=Add$169:(1/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Tuple$1: candidates = 
-    // Called function: RefSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
-    // Called function: RefSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
-    // Called function: RefSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
+    // Called function: Ref=>PredefinedSymbol=Tuple$1: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
+    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
+    // Called function: Ref=>FunctionGroupSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
     { return P_Tuple(P_Min(P_x), P_Add(P_Min(P_x), P_size)); };
     static P_Center_1507 = function (P_x) 
-    // ParameterSymbol=x$1506: Argument:RefSymbol=Lerp$1119:(0/2)
+    // ParameterSymbol=x$1506: Argument:Ref=>FunctionGroupSymbol=Lerp$1119:(0/2)
     // Candidates = Interval
-    // Called function: RefSymbol=Lerp$1119: candidates = Interval_133.Lerp_1118
+    // Called function: Ref=>FunctionGroupSymbol=Lerp$1119: candidates = Interval_133.Lerp_1118
     { return P_Lerp(P_x, 0.5); };
     static P_Contains_1510 = function (P_x, P_value) 
-    // ParameterSymbol=x$1508: Argument:RefSymbol=Min$1295:(0/1), Argument:RefSymbol=Max$1297:(0/1)
+    // ParameterSymbol=x$1508: Argument:Ref=>FunctionGroupSymbol=Min$1295:(0/1), Argument:Ref=>FunctionGroupSymbol=Max$1297:(0/1)
     // Candidates = Interval,Comparable
-    // ParameterSymbol=value$1509: Argument:RefSymbol=And$179:(0/2), Argument:RefSymbol=LessThanOrEquals$1289:(0/2)
+    // ParameterSymbol=value$1509: Argument:Ref=>FunctionGroupSymbol=And$179:(0/2), Argument:Ref=>FunctionGroupSymbol=LessThanOrEquals$1289:(0/2)
     // Candidates = Boolean,Comparable
-    // Called function: RefSymbol=LessThanOrEquals$1289: candidates = Comparable_136.LessThanOrEquals_1288
-    // Called function: RefSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
-    // Called function: RefSymbol=And$179: candidates = Boolean_21.And_178
-    // Called function: RefSymbol=LessThanOrEquals$1289: candidates = Comparable_136.LessThanOrEquals_1288
-    // Called function: RefSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
+    // Called function: Ref=>FunctionGroupSymbol=LessThanOrEquals$1289: candidates = Comparable_136.LessThanOrEquals_1288
+    // Called function: Ref=>FunctionGroupSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
+    // Called function: Ref=>FunctionGroupSymbol=And$179: candidates = Boolean_21.And_178
+    // Called function: Ref=>FunctionGroupSymbol=LessThanOrEquals$1289: candidates = Comparable_136.LessThanOrEquals_1288
+    // Called function: Ref=>FunctionGroupSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
     { return P_LessThanOrEquals(P_Min(P_x), P_And(P_value, P_LessThanOrEquals(P_value, P_Max(P_x)))); };
     static P_Contains_1513 = function (P_x, P_other) 
-    // ParameterSymbol=x$1511: Argument:RefSymbol=Min$1295:(0/1)
+    // ParameterSymbol=x$1511: Argument:Ref=>FunctionGroupSymbol=Min$1295:(0/1)
     // Candidates = Interval,Comparable
-    // ParameterSymbol=other$1512: Argument:RefSymbol=Min$1295:(0/1), Argument:RefSymbol=Max$1297:(0/1)
+    // ParameterSymbol=other$1512: Argument:Ref=>FunctionGroupSymbol=Min$1295:(0/1), Argument:Ref=>FunctionGroupSymbol=Max$1297:(0/1)
     // Candidates = Interval,Comparable
-    // Called function: RefSymbol=LessThanOrEquals$1289: candidates = Comparable_136.LessThanOrEquals_1288
-    // Called function: RefSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
-    // Called function: RefSymbol=And$179: candidates = Boolean_21.And_178
-    // Called function: RefSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
-    // Called function: RefSymbol=GreaterThanOrEquals$1293: candidates = Comparable_136.GreaterThanOrEquals_1292
-    // Called function: RefSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
+    // Called function: Ref=>FunctionGroupSymbol=LessThanOrEquals$1289: candidates = Comparable_136.LessThanOrEquals_1288
+    // Called function: Ref=>FunctionGroupSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
+    // Called function: Ref=>FunctionGroupSymbol=And$179: candidates = Boolean_21.And_178
+    // Called function: Ref=>FunctionGroupSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
+    // Called function: Ref=>FunctionGroupSymbol=GreaterThanOrEquals$1293: candidates = Comparable_136.GreaterThanOrEquals_1292
+    // Called function: Ref=>FunctionGroupSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
     { return P_LessThanOrEquals(P_Min(P_x), P_And(P_Min(P_other), P_GreaterThanOrEquals(P_Max, P_Max(P_other)))); };
     static P_Overlaps_1516 = function (P_x, P_y) 
-    // ParameterSymbol=x$1514: Argument:RefSymbol=Clamp$1215:(0/2)
+    // ParameterSymbol=x$1514: Argument:Ref=>FunctionGroupSymbol=Clamp$1215:(0/2)
     // Candidates = Interval,Numerical
-    // ParameterSymbol=y$1515: Argument:RefSymbol=Clamp$1215:(1/2)
+    // ParameterSymbol=y$1515: Argument:Ref=>FunctionGroupSymbol=Clamp$1215:(1/2)
     // Candidates = Interval,Numerical
-    // Called function: RefSymbol=Not$183: candidates = Boolean_21.Not_182
-    // Called function: RefSymbol=IsEmpty$1323: candidates = Interval_133.IsEmpty_1116, Array_139.IsEmpty_1322
-    // Called function: RefSymbol=Clamp$1215: candidates = Interval_133.Clamp_1154, Interval_133.Clamp_1156, Numerical_135.Clamp_1210, Numerical_135.Clamp_1212, Numerical_135.Clamp_1214
+    // Called function: Ref=>FunctionGroupSymbol=Not$183: candidates = Boolean_21.Not_182
+    // Called function: Ref=>FunctionGroupSymbol=IsEmpty$1323: candidates = Interval_133.IsEmpty_1116, Array_139.IsEmpty_1322
+    // Called function: Ref=>FunctionGroupSymbol=Clamp$1215: candidates = Interval_133.Clamp_1154, Interval_133.Clamp_1156, Numerical_135.Clamp_1210, Numerical_135.Clamp_1212, Numerical_135.Clamp_1214
     { return P_Not(P_IsEmpty(P_Clamp(P_x, P_y))); };
     static P_Split_1519 = function (P_x, P_t) 
-    // ParameterSymbol=x$1517: Argument:RefSymbol=Left$1141:(0/2), Argument:RefSymbol=Right$1143:(0/2)
+    // ParameterSymbol=x$1517: Argument:Ref=>FunctionGroupSymbol=Left$1141:(0/2), Argument:Ref=>FunctionGroupSymbol=Right$1143:(0/2)
     // Candidates = Interval
-    // ParameterSymbol=t$1518: Argument:RefSymbol=Left$1141:(1/2), Argument:RefSymbol=Right$1143:(1/2)
+    // ParameterSymbol=t$1518: Argument:Ref=>FunctionGroupSymbol=Left$1141:(1/2), Argument:Ref=>FunctionGroupSymbol=Right$1143:(1/2)
     // Candidates = Interval
-    // Called function: RefSymbol=Tuple$1: candidates = 
-    // Called function: RefSymbol=Left$1141: candidates = Interval_133.Left_1140
-    // Called function: RefSymbol=Right$1143: candidates = Interval_133.Right_1142
+    // Called function: Ref=>PredefinedSymbol=Tuple$1: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=Left$1141: candidates = Interval_133.Left_1140
+    // Called function: Ref=>FunctionGroupSymbol=Right$1143: candidates = Interval_133.Right_1142
     { return P_Tuple(P_Left(P_x, P_t), P_Right(P_x, P_t)); };
     static P_Split_1521 = function (P_x) 
-    // ParameterSymbol=x$1520: Argument:RefSymbol=Split$1139:(0/2)
+    // ParameterSymbol=x$1520: Argument:Ref=>FunctionGroupSymbol=Split$1139:(0/2)
     // Candidates = Interval
-    // Called function: RefSymbol=Split$1139: candidates = Interval_133.Split_1136, Interval_133.Split_1138
+    // Called function: Ref=>FunctionGroupSymbol=Split$1139: candidates = Interval_133.Split_1136, Interval_133.Split_1138
     { return P_Split(P_x, 0.5); };
     static P_Left_1524 = function (P_x, P_t) 
-    // ParameterSymbol=x$1522: Argument:RefSymbol=Lerp$1119:(0/2)
+    // ParameterSymbol=x$1522: Argument:Ref=>FunctionGroupSymbol=Lerp$1119:(0/2)
     // Candidates = Interval
-    // ParameterSymbol=t$1523: Argument:RefSymbol=Lerp$1119:(1/2)
+    // ParameterSymbol=t$1523: Argument:Ref=>FunctionGroupSymbol=Lerp$1119:(1/2)
     // Candidates = Interval
-    // Called function: RefSymbol=Tuple$1: candidates = 
-    // Called function: RefSymbol=Lerp$1119: candidates = Interval_133.Lerp_1118
+    // Called function: Ref=>PredefinedSymbol=Tuple$1: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=Lerp$1119: candidates = Interval_133.Lerp_1118
     { return P_Tuple(P_Min, P_Lerp(P_x, P_t)); };
     static P_Right_1527 = function (P_x, P_t) 
-    // ParameterSymbol=x$1525: Argument:RefSymbol=Lerp$1119:(0/2), Argument:RefSymbol=Max$1297:(0/1)
+    // ParameterSymbol=x$1525: Argument:Ref=>FunctionGroupSymbol=Lerp$1119:(0/2), Argument:Ref=>FunctionGroupSymbol=Max$1297:(0/1)
     // Candidates = Interval,Interval,Comparable
-    // ParameterSymbol=t$1526: Argument:RefSymbol=Lerp$1119:(1/2)
+    // ParameterSymbol=t$1526: Argument:Ref=>FunctionGroupSymbol=Lerp$1119:(1/2)
     // Candidates = Interval
-    // Called function: RefSymbol=Tuple$1: candidates = 
-    // Called function: RefSymbol=Lerp$1119: candidates = Interval_133.Lerp_1118
-    // Called function: RefSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
+    // Called function: Ref=>PredefinedSymbol=Tuple$1: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=Lerp$1119: candidates = Interval_133.Lerp_1118
+    // Called function: Ref=>FunctionGroupSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
     { return P_Tuple(P_Lerp(P_x, P_t), P_Max(P_x)); };
     static P_MoveTo_1530 = function (P_x, P_t) 
-    // ParameterSymbol=x$1528: Argument:RefSymbol=Size$1115:(0/1)
+    // ParameterSymbol=x$1528: Argument:Ref=>FunctionGroupSymbol=Size$1115:(0/1)
     // Candidates = Interval
-    // ParameterSymbol=t$1529: Argument:RefSymbol=Tuple$1:(0/2), Argument:RefSymbol=Add$169:(0/2)
+    // ParameterSymbol=t$1529: Argument:Ref=>PredefinedSymbol=Tuple$1:(0/2), Argument:Ref=>FunctionGroupSymbol=Add$169:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Tuple$1: candidates = 
-    // Called function: RefSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
-    // Called function: RefSymbol=Size$1115: candidates = Rectangle2D_79.Size_710, Interval_133.Size_1114
+    // Called function: Ref=>PredefinedSymbol=Tuple$1: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
+    // Called function: Ref=>FunctionGroupSymbol=Size$1115: candidates = Rectangle2D_79.Size_710, Interval_133.Size_1114
     { return P_Tuple(P_t, P_Add(P_t, P_Size(P_x))); };
     static P_LeftHalf_1532 = function (P_x) 
-    // ParameterSymbol=x$1531: Argument:RefSymbol=Left$1141:(0/2)
+    // ParameterSymbol=x$1531: Argument:Ref=>FunctionGroupSymbol=Left$1141:(0/2)
     // Candidates = Interval
-    // Called function: RefSymbol=Left$1141: candidates = Interval_133.Left_1140
+    // Called function: Ref=>FunctionGroupSymbol=Left$1141: candidates = Interval_133.Left_1140
     { return P_Left(P_x, 0.5); };
     static P_RightHalf_1534 = function (P_x) 
-    // ParameterSymbol=x$1533: Argument:RefSymbol=Right$1143:(0/2)
+    // ParameterSymbol=x$1533: Argument:Ref=>FunctionGroupSymbol=Right$1143:(0/2)
     // Candidates = Interval
-    // Called function: RefSymbol=Right$1143: candidates = Interval_133.Right_1142
+    // Called function: Ref=>FunctionGroupSymbol=Right$1143: candidates = Interval_133.Right_1142
     { return P_Right(P_x, 0.5); };
     static P_HalfSize_1536 = function (P_x) 
-    // ParameterSymbol=x$1535: Argument:RefSymbol=Size$1115:(0/1)
+    // ParameterSymbol=x$1535: Argument:Ref=>FunctionGroupSymbol=Size$1115:(0/1)
     // Candidates = Interval
-    // Called function: RefSymbol=Half$1227: candidates = Numerical_135.Half_1226
-    // Called function: RefSymbol=Size$1115: candidates = Rectangle2D_79.Size_710, Interval_133.Size_1114
+    // Called function: Ref=>FunctionGroupSymbol=Half$1227: candidates = Numerical_135.Half_1226
+    // Called function: Ref=>FunctionGroupSymbol=Size$1115: candidates = Rectangle2D_79.Size_710, Interval_133.Size_1114
     { return P_Half(P_Size(P_x)); };
     static P_Recenter_1539 = function (P_x, P_c) 
-    // ParameterSymbol=x$1537: Argument:RefSymbol=HalfSize$1151:(0/1), Argument:RefSymbol=HalfSize$1151:(0/1)
+    // ParameterSymbol=x$1537: Argument:Ref=>FunctionGroupSymbol=HalfSize$1151:(0/1), Argument:Ref=>FunctionGroupSymbol=HalfSize$1151:(0/1)
     // Candidates = Interval
-    // ParameterSymbol=c$1538: Argument:RefSymbol=Subtract$171:(0/2), Argument:RefSymbol=Add$169:(0/2)
+    // ParameterSymbol=c$1538: Argument:Ref=>FunctionGroupSymbol=Subtract$171:(0/2), Argument:Ref=>FunctionGroupSymbol=Add$169:(0/2)
     // Candidates = ScalarArithmetic,Arithmetic
-    // Called function: RefSymbol=Tuple$1: candidates = 
-    // Called function: RefSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
-    // Called function: RefSymbol=HalfSize$1151: candidates = Interval_133.HalfSize_1150
-    // Called function: RefSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
-    // Called function: RefSymbol=HalfSize$1151: candidates = Interval_133.HalfSize_1150
+    // Called function: Ref=>PredefinedSymbol=Tuple$1: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
+    // Called function: Ref=>FunctionGroupSymbol=HalfSize$1151: candidates = Interval_133.HalfSize_1150
+    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
+    // Called function: Ref=>FunctionGroupSymbol=HalfSize$1151: candidates = Interval_133.HalfSize_1150
     { return P_Tuple(P_Subtract(P_c, P_HalfSize(P_x)), P_Add(P_c, P_HalfSize(P_x))); };
     static P_Clamp_1542 = function (P_x, P_y) 
-    // ParameterSymbol=x$1540: Argument:RefSymbol=Clamp$1215:(0/2), Argument:RefSymbol=Clamp$1215:(0/2)
+    // ParameterSymbol=x$1540: Argument:Ref=>FunctionGroupSymbol=Clamp$1215:(0/2), Argument:Ref=>FunctionGroupSymbol=Clamp$1215:(0/2)
     // Candidates = Interval,Numerical
-    // ParameterSymbol=y$1541: Argument:RefSymbol=Min$1295:(0/1), Argument:RefSymbol=Max$1297:(0/1)
+    // ParameterSymbol=y$1541: Argument:Ref=>FunctionGroupSymbol=Min$1295:(0/1), Argument:Ref=>FunctionGroupSymbol=Max$1297:(0/1)
     // Candidates = Interval,Comparable
-    // Called function: RefSymbol=Tuple$1: candidates = 
-    // Called function: RefSymbol=Clamp$1215: candidates = Interval_133.Clamp_1154, Interval_133.Clamp_1156, Numerical_135.Clamp_1210, Numerical_135.Clamp_1212, Numerical_135.Clamp_1214
-    // Called function: RefSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
-    // Called function: RefSymbol=Clamp$1215: candidates = Interval_133.Clamp_1154, Interval_133.Clamp_1156, Numerical_135.Clamp_1210, Numerical_135.Clamp_1212, Numerical_135.Clamp_1214
-    // Called function: RefSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
+    // Called function: Ref=>PredefinedSymbol=Tuple$1: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=Clamp$1215: candidates = Interval_133.Clamp_1154, Interval_133.Clamp_1156, Numerical_135.Clamp_1210, Numerical_135.Clamp_1212, Numerical_135.Clamp_1214
+    // Called function: Ref=>FunctionGroupSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
+    // Called function: Ref=>FunctionGroupSymbol=Clamp$1215: candidates = Interval_133.Clamp_1154, Interval_133.Clamp_1156, Numerical_135.Clamp_1210, Numerical_135.Clamp_1212, Numerical_135.Clamp_1214
+    // Called function: Ref=>FunctionGroupSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
     { return P_Tuple(P_Clamp(P_x, P_Min(P_y)), P_Clamp(P_x, P_Max(P_y))); };
     static P_Clamp_1545 = function (P_x, P_value) 
-    // ParameterSymbol=x$1543: Argument:RefSymbol=Min$1295:(0/1), Argument:RefSymbol=Min$1295:(0/1), Argument:RefSymbol=Max$1297:(0/1), Argument:RefSymbol=Max$1297:(0/1)
+    // ParameterSymbol=x$1543: Argument:Ref=>FunctionGroupSymbol=Min$1295:(0/1), Argument:Ref=>FunctionGroupSymbol=Min$1295:(0/1), Argument:Ref=>FunctionGroupSymbol=Max$1297:(0/1), Argument:Ref=>FunctionGroupSymbol=Max$1297:(0/1)
     // Candidates = Interval,Comparable
-    // ParameterSymbol=value$1544: Argument:RefSymbol=LessThan$1283:(0/2), Argument:RefSymbol=GreaterThan$1291:(0/2)
+    // ParameterSymbol=value$1544: Argument:Ref=>FunctionGroupSymbol=LessThan$1283:(0/2), Argument:Ref=>FunctionGroupSymbol=GreaterThan$1291:(0/2)
     // Candidates = Comparable
-    // Called function: RefSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
-    // Called function: RefSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
-    // Called function: RefSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
-    // Called function: RefSymbol=GreaterThan$1291: candidates = Comparable_136.GreaterThan_1290
-    // Called function: RefSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
-    // Called function: RefSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
+    // Called function: Ref=>FunctionGroupSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
+    // Called function: Ref=>FunctionGroupSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
+    // Called function: Ref=>FunctionGroupSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
+    // Called function: Ref=>FunctionGroupSymbol=GreaterThan$1291: candidates = Comparable_136.GreaterThan_1290
+    // Called function: Ref=>FunctionGroupSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
+    // Called function: Ref=>FunctionGroupSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
     { return P_LessThan(P_value, P_Min(P_x)
         ? P_Min(P_x)
         : P_GreaterThan(P_value, P_Max(P_x)
@@ -1828,18 +1828,18 @@ class P_Interval
         )
     ); };
     static P_Between_1548 = function (P_x, P_value) 
-    // ParameterSymbol=x$1546: Argument:RefSymbol=Min$1295:(0/1), Argument:RefSymbol=Max$1297:(0/1)
+    // ParameterSymbol=x$1546: Argument:Ref=>FunctionGroupSymbol=Min$1295:(0/1), Argument:Ref=>FunctionGroupSymbol=Max$1297:(0/1)
     // Candidates = Interval,Comparable
-    // ParameterSymbol=value$1547: Argument:RefSymbol=GreaterThanOrEquals$1293:(0/2), Argument:RefSymbol=LessThanOrEquals$1289:(0/2)
+    // ParameterSymbol=value$1547: Argument:Ref=>FunctionGroupSymbol=GreaterThanOrEquals$1293:(0/2), Argument:Ref=>FunctionGroupSymbol=LessThanOrEquals$1289:(0/2)
     // Candidates = Comparable
-    // Called function: RefSymbol=GreaterThanOrEquals$1293: candidates = Comparable_136.GreaterThanOrEquals_1292
-    // Called function: RefSymbol=And$179: candidates = Boolean_21.And_178
-    // Called function: RefSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
-    // Called function: RefSymbol=LessThanOrEquals$1289: candidates = Comparable_136.LessThanOrEquals_1288
-    // Called function: RefSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
+    // Called function: Ref=>FunctionGroupSymbol=GreaterThanOrEquals$1293: candidates = Comparable_136.GreaterThanOrEquals_1292
+    // Called function: Ref=>FunctionGroupSymbol=And$179: candidates = Boolean_21.And_178
+    // Called function: Ref=>FunctionGroupSymbol=Min$1295: candidates = Interval_23.Min_205, TimeRange_87.Min_746, Comparable_136.Min_1294
+    // Called function: Ref=>FunctionGroupSymbol=LessThanOrEquals$1289: candidates = Comparable_136.LessThanOrEquals_1288
+    // Called function: Ref=>FunctionGroupSymbol=Max$1297: candidates = Interval_23.Max_207, TimeRange_87.Max_750, Comparable_136.Max_1296
     { return P_GreaterThanOrEquals(P_value, P_And(P_Min(P_x), P_LessThanOrEquals(P_value, P_Max(P_x)))); };
     static P_Unit_1549 = function () 
-    // Called function: RefSymbol=Tuple$1: candidates = 
+    // Called function: Ref=>PredefinedSymbol=Tuple$1: candidates = 
     { return P_Tuple(0, 1); };
 }
 class P_Vector
@@ -1850,34 +1850,34 @@ class P_Vector
     // field accessors
     // functions 
     static P_Sum_1551 = function (P_v) 
-    // ParameterSymbol=v$1550: Argument:RefSymbol=Aggregate$1319:(0/3)
+    // ParameterSymbol=v$1550: Argument:Ref=>FunctionGroupSymbol=Aggregate$1319:(0/3)
     // Candidates = Array
-    // Called function: RefSymbol=Aggregate$1319: candidates = Array_139.Aggregate_1318
+    // Called function: Ref=>FunctionGroupSymbol=Aggregate$1319: candidates = Array_139.Aggregate_1318
     { return P_Aggregate(P_v, 0, P_Add); };
     static P_SumSquares_1553 = function (P_v) 
-    // ParameterSymbol=v$1552: Argument:RefSymbol=Square$1209:(0/1)
+    // ParameterSymbol=v$1552: Argument:Ref=>FunctionGroupSymbol=Square$1209:(0/1)
     // Candidates = Numerical
-    // Called function: RefSymbol=Aggregate$1319: candidates = Array_139.Aggregate_1318
-    // Called function: RefSymbol=Square$1209: candidates = Numerical_135.Square_1208
+    // Called function: Ref=>FunctionGroupSymbol=Aggregate$1319: candidates = Array_139.Aggregate_1318
+    // Called function: Ref=>FunctionGroupSymbol=Square$1209: candidates = Numerical_135.Square_1208
     { return P_Aggregate(P_Square(P_v), 0, P_Add); };
     static P_LengthSquared_1555 = function (P_v) 
-    // ParameterSymbol=v$1554: Argument:RefSymbol=SumSquares$1165:(0/1)
+    // ParameterSymbol=v$1554: Argument:Ref=>FunctionGroupSymbol=SumSquares$1165:(0/1)
     // Candidates = Vector
-    // Called function: RefSymbol=SumSquares$1165: candidates = Vector_134.SumSquares_1164
+    // Called function: Ref=>FunctionGroupSymbol=SumSquares$1165: candidates = Vector_134.SumSquares_1164
     { return P_SumSquares(P_v); };
     static P_Length_1557 = function (P_v) 
-    // ParameterSymbol=v$1556: Argument:RefSymbol=LengthSquared$1167:(0/1)
+    // ParameterSymbol=v$1556: Argument:Ref=>FunctionGroupSymbol=LengthSquared$1167:(0/1)
     // Candidates = Vector
-    // Called function: RefSymbol=SquareRoot$1205: candidates = Numerical_135.SquareRoot_1204
-    // Called function: RefSymbol=LengthSquared$1167: candidates = Vector_134.LengthSquared_1166
+    // Called function: Ref=>FunctionGroupSymbol=SquareRoot$1205: candidates = Numerical_135.SquareRoot_1204
+    // Called function: Ref=>FunctionGroupSymbol=LengthSquared$1167: candidates = Vector_134.LengthSquared_1166
     { return P_SquareRoot(P_LengthSquared(P_v)); };
     static P_Dot_1560 = function (P_v1, P_v2) 
-    // ParameterSymbol=v1$1558: Argument:RefSymbol=Multiply$173:(0/2)
+    // ParameterSymbol=v1$1558: Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // ParameterSymbol=v2$1559: Argument:RefSymbol=Multiply$173:(1/2)
+    // ParameterSymbol=v2$1559: Argument:Ref=>FunctionGroupSymbol=Multiply$173:(1/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Sum$1163: candidates = Vector_134.Sum_1162
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Sum$1163: candidates = Vector_134.Sum_1162
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
     { return P_Sum(P_Multiply(P_v1, P_v2)); };
 }
 class P_Numerical
@@ -1956,63 +1956,63 @@ class P_Numerical
     // Candidates = Any
     { return P_intrinsic; };
     static P_SquareRoot_1596 = function (P_x) 
-    // ParameterSymbol=x$1595: Argument:RefSymbol=Pow$1197:(0/2)
+    // ParameterSymbol=x$1595: Argument:Ref=>FunctionGroupSymbol=Pow$1197:(0/2)
     // Candidates = Numerical
-    // Called function: RefSymbol=Pow$1197: candidates = Numerical_135.Pow_1196
+    // Called function: Ref=>FunctionGroupSymbol=Pow$1197: candidates = Numerical_135.Pow_1196
     { return P_Pow(P_x, 0.5); };
     static P_CubeRoot_1598 = function (P_x) 
-    // ParameterSymbol=x$1597: Argument:RefSymbol=Pow$1197:(0/2)
+    // ParameterSymbol=x$1597: Argument:Ref=>FunctionGroupSymbol=Pow$1197:(0/2)
     // Candidates = Numerical
-    // Called function: RefSymbol=Pow$1197: candidates = Numerical_135.Pow_1196
+    // Called function: Ref=>FunctionGroupSymbol=Pow$1197: candidates = Numerical_135.Pow_1196
     { return P_Pow(P_x, 0.5); };
     static P_Square_1600 = function (P_x) 
     // ParameterSymbol=x$1599: 
     // Candidates = Any
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
     { return P_Multiply(P_Value, P_Value); };
     static P_Clamp_1604 = function (P_x, P_min, P_max) 
-    // ParameterSymbol=x$1601: Argument:RefSymbol=Clamp$1215:(0/2)
+    // ParameterSymbol=x$1601: Argument:Ref=>FunctionGroupSymbol=Clamp$1215:(0/2)
     // Candidates = Interval,Numerical
-    // ParameterSymbol=min$1602: Argument:RefSymbol=Interval$133:(0/2)
+    // ParameterSymbol=min$1602: Argument:Ref=>TypeDefSymbol=Interval$133:(0/2)
     // Candidates = Any
-    // ParameterSymbol=max$1603: Argument:RefSymbol=Interval$133:(1/2)
+    // ParameterSymbol=max$1603: Argument:Ref=>TypeDefSymbol=Interval$133:(1/2)
     // Candidates = Any
-    // Called function: RefSymbol=Clamp$1215: candidates = Interval_133.Clamp_1154, Interval_133.Clamp_1156, Numerical_135.Clamp_1210, Numerical_135.Clamp_1212, Numerical_135.Clamp_1214
-    // Called function: RefSymbol=Interval$133: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=Clamp$1215: candidates = Interval_133.Clamp_1154, Interval_133.Clamp_1156, Numerical_135.Clamp_1210, Numerical_135.Clamp_1212, Numerical_135.Clamp_1214
+    // Called function: Ref=>TypeDefSymbol=Interval$133: candidates = 
     { return P_Clamp(P_x, P_Interval(P_min, P_max)); };
     static P_Clamp_1607 = function (P_x, P_i) 
-    // ParameterSymbol=x$1605: Argument:RefSymbol=Clamp$1215:(1/2)
+    // ParameterSymbol=x$1605: Argument:Ref=>FunctionGroupSymbol=Clamp$1215:(1/2)
     // Candidates = Interval,Numerical
-    // ParameterSymbol=i$1606: Argument:RefSymbol=Clamp$1215:(0/2)
+    // ParameterSymbol=i$1606: Argument:Ref=>FunctionGroupSymbol=Clamp$1215:(0/2)
     // Candidates = Interval,Numerical
-    // Called function: RefSymbol=Clamp$1215: candidates = Interval_133.Clamp_1154, Interval_133.Clamp_1156, Numerical_135.Clamp_1210, Numerical_135.Clamp_1212, Numerical_135.Clamp_1214
+    // Called function: Ref=>FunctionGroupSymbol=Clamp$1215: candidates = Interval_133.Clamp_1154, Interval_133.Clamp_1156, Numerical_135.Clamp_1210, Numerical_135.Clamp_1212, Numerical_135.Clamp_1214
     { return P_Clamp(P_i, P_x); };
     static P_Clamp_1609 = function (P_x) 
-    // ParameterSymbol=x$1608: Argument:RefSymbol=Clamp$1215:(0/3)
+    // ParameterSymbol=x$1608: Argument:Ref=>FunctionGroupSymbol=Clamp$1215:(0/3)
     // Candidates = Interval,Numerical
-    // Called function: RefSymbol=Clamp$1215: candidates = Interval_133.Clamp_1154, Interval_133.Clamp_1156, Numerical_135.Clamp_1210, Numerical_135.Clamp_1212, Numerical_135.Clamp_1214
+    // Called function: Ref=>FunctionGroupSymbol=Clamp$1215: candidates = Interval_133.Clamp_1154, Interval_133.Clamp_1156, Numerical_135.Clamp_1210, Numerical_135.Clamp_1212, Numerical_135.Clamp_1214
     { return P_Clamp(P_x, 0, 1); };
     static P_PlusOne_1611 = function (P_x) 
-    // ParameterSymbol=x$1610: Argument:RefSymbol=Add$169:(0/2)
+    // ParameterSymbol=x$1610: Argument:Ref=>FunctionGroupSymbol=Add$169:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
+    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
     { return P_Add(P_x, 1); };
     static P_MinusOne_1613 = function (P_x) 
-    // ParameterSymbol=x$1612: Argument:RefSymbol=Subtract$171:(0/2)
+    // ParameterSymbol=x$1612: Argument:Ref=>FunctionGroupSymbol=Subtract$171:(0/2)
     // Candidates = ScalarArithmetic
-    // Called function: RefSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
+    // Called function: Ref=>FunctionGroupSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
     { return P_Subtract(P_x, 1); };
     static P_FromOne_1615 = function (P_x) 
-    // ParameterSymbol=x$1614: Argument:RefSymbol=Subtract$171:(1/2)
+    // ParameterSymbol=x$1614: Argument:Ref=>FunctionGroupSymbol=Subtract$171:(1/2)
     // Candidates = ScalarArithmetic
-    // Called function: RefSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
+    // Called function: Ref=>FunctionGroupSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
     { return P_Subtract(1, P_x); };
     static P_Sign_1617 = function (P_x) 
-    // ParameterSymbol=x$1616: Argument:RefSymbol=LessThan$1283:(0/2), Argument:RefSymbol=GreaterThan$1291:(0/2)
+    // ParameterSymbol=x$1616: Argument:Ref=>FunctionGroupSymbol=LessThan$1283:(0/2), Argument:Ref=>FunctionGroupSymbol=GreaterThan$1291:(0/2)
     // Candidates = Comparable
-    // Called function: RefSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
-    // Called function: RefSymbol=Negative$158: candidates = Arithmetic_19.Negative_157
-    // Called function: RefSymbol=GreaterThan$1291: candidates = Comparable_136.GreaterThan_1290
+    // Called function: Ref=>FunctionGroupSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
+    // Called function: Ref=>FunctionGroupSymbol=Negative$158: candidates = Arithmetic_19.Negative_157
+    // Called function: Ref=>FunctionGroupSymbol=GreaterThan$1291: candidates = Comparable_136.GreaterThan_1290
     { return P_LessThan(P_x, 0
         ? P_Negative(1)
         : P_GreaterThan(P_x, 0
@@ -2023,160 +2023,160 @@ class P_Numerical
     static P_Abs_1619 = function (P_x) 
     // ParameterSymbol=x$1618: 
     // Candidates = Any
-    // Called function: RefSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
-    // Called function: RefSymbol=Negative$158: candidates = Arithmetic_19.Negative_157
+    // Called function: Ref=>FunctionGroupSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
+    // Called function: Ref=>FunctionGroupSymbol=Negative$158: candidates = Arithmetic_19.Negative_157
     { return P_LessThan(P_Value, 0
         ? P_Negative(P_Value)
         : P_Value
     ); };
     static P_Half_1621 = function (P_x) 
-    // ParameterSymbol=x$1620: Argument:RefSymbol=Divide$175:(0/2)
+    // ParameterSymbol=x$1620: Argument:Ref=>FunctionGroupSymbol=Divide$175:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
     { return P_Divide(P_x, 2); };
     static P_Third_1623 = function (P_x) 
-    // ParameterSymbol=x$1622: Argument:RefSymbol=Divide$175:(0/2)
+    // ParameterSymbol=x$1622: Argument:Ref=>FunctionGroupSymbol=Divide$175:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
     { return P_Divide(P_x, 3); };
     static P_Quarter_1625 = function (P_x) 
-    // ParameterSymbol=x$1624: Argument:RefSymbol=Divide$175:(0/2)
+    // ParameterSymbol=x$1624: Argument:Ref=>FunctionGroupSymbol=Divide$175:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
     { return P_Divide(P_x, 4); };
     static P_Fifth_1627 = function (P_x) 
-    // ParameterSymbol=x$1626: Argument:RefSymbol=Divide$175:(0/2)
+    // ParameterSymbol=x$1626: Argument:Ref=>FunctionGroupSymbol=Divide$175:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
     { return P_Divide(P_x, 5); };
     static P_Sixth_1629 = function (P_x) 
-    // ParameterSymbol=x$1628: Argument:RefSymbol=Divide$175:(0/2)
+    // ParameterSymbol=x$1628: Argument:Ref=>FunctionGroupSymbol=Divide$175:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
     { return P_Divide(P_x, 6); };
     static P_Seventh_1631 = function (P_x) 
-    // ParameterSymbol=x$1630: Argument:RefSymbol=Divide$175:(0/2)
+    // ParameterSymbol=x$1630: Argument:Ref=>FunctionGroupSymbol=Divide$175:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
     { return P_Divide(P_x, 7); };
     static P_Eighth_1633 = function (P_x) 
-    // ParameterSymbol=x$1632: Argument:RefSymbol=Divide$175:(0/2)
+    // ParameterSymbol=x$1632: Argument:Ref=>FunctionGroupSymbol=Divide$175:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
     { return P_Divide(P_x, 8); };
     static P_Ninth_1635 = function (P_x) 
-    // ParameterSymbol=x$1634: Argument:RefSymbol=Divide$175:(0/2)
+    // ParameterSymbol=x$1634: Argument:Ref=>FunctionGroupSymbol=Divide$175:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
     { return P_Divide(P_x, 9); };
     static P_Tenth_1637 = function (P_x) 
-    // ParameterSymbol=x$1636: Argument:RefSymbol=Divide$175:(0/2)
+    // ParameterSymbol=x$1636: Argument:Ref=>FunctionGroupSymbol=Divide$175:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
     { return P_Divide(P_x, 10); };
     static P_Sixteenth_1639 = function (P_x) 
-    // ParameterSymbol=x$1638: Argument:RefSymbol=Divide$175:(0/2)
+    // ParameterSymbol=x$1638: Argument:Ref=>FunctionGroupSymbol=Divide$175:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
     { return P_Divide(P_x, 16); };
     static P_Hundredth_1641 = function (P_x) 
-    // ParameterSymbol=x$1640: Argument:RefSymbol=Divide$175:(0/2)
+    // ParameterSymbol=x$1640: Argument:Ref=>FunctionGroupSymbol=Divide$175:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
     { return P_Divide(P_x, 100); };
     static P_Thousandth_1643 = function (P_x) 
-    // ParameterSymbol=x$1642: Argument:RefSymbol=Divide$175:(0/2)
+    // ParameterSymbol=x$1642: Argument:Ref=>FunctionGroupSymbol=Divide$175:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
     { return P_Divide(P_x, 1000); };
     static P_Millionth_1645 = function (P_x) 
-    // ParameterSymbol=x$1644: Argument:RefSymbol=Divide$175:(0/2)
+    // ParameterSymbol=x$1644: Argument:Ref=>FunctionGroupSymbol=Divide$175:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
     { return P_Divide(P_x, P_Divide(1000, 1000)); };
     static P_Billionth_1647 = function (P_x) 
-    // ParameterSymbol=x$1646: Argument:RefSymbol=Divide$175:(0/2)
+    // ParameterSymbol=x$1646: Argument:Ref=>FunctionGroupSymbol=Divide$175:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
     { return P_Divide(P_x, P_Divide(1000, P_Divide(1000, 1000))); };
     static P_Hundred_1649 = function (P_x) 
-    // ParameterSymbol=x$1648: Argument:RefSymbol=Multiply$173:(0/2)
+    // ParameterSymbol=x$1648: Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
     { return P_Multiply(P_x, 100); };
     static P_Thousand_1651 = function (P_x) 
-    // ParameterSymbol=x$1650: Argument:RefSymbol=Multiply$173:(0/2)
+    // ParameterSymbol=x$1650: Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
     { return P_Multiply(P_x, 1000); };
     static P_Million_1653 = function (P_x) 
-    // ParameterSymbol=x$1652: Argument:RefSymbol=Multiply$173:(0/2)
+    // ParameterSymbol=x$1652: Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
     { return P_Multiply(P_x, P_Multiply(1000, 1000)); };
     static P_Billion_1655 = function (P_x) 
-    // ParameterSymbol=x$1654: Argument:RefSymbol=Multiply$173:(0/2)
+    // ParameterSymbol=x$1654: Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
     { return P_Multiply(P_x, P_Multiply(1000, P_Multiply(1000, 1000))); };
     static P_Twice_1657 = function (P_x) 
-    // ParameterSymbol=x$1656: Argument:RefSymbol=Multiply$173:(0/2)
+    // ParameterSymbol=x$1656: Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
     { return P_Multiply(P_x, 2); };
     static P_Thrice_1659 = function (P_x) 
-    // ParameterSymbol=x$1658: Argument:RefSymbol=Multiply$173:(0/2)
+    // ParameterSymbol=x$1658: Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
     { return P_Multiply(P_x, 3); };
     static P_SmoothStep_1661 = function (P_x) 
-    // ParameterSymbol=x$1660: Argument:RefSymbol=Square$1209:(0/1), Argument:RefSymbol=Twice$1263:(0/1)
+    // ParameterSymbol=x$1660: Argument:Ref=>FunctionGroupSymbol=Square$1209:(0/1), Argument:Ref=>FunctionGroupSymbol=Twice$1263:(0/1)
     // Candidates = Numerical
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Square$1209: candidates = Numerical_135.Square_1208
-    // Called function: RefSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
-    // Called function: RefSymbol=Twice$1263: candidates = Numerical_135.Twice_1262
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Square$1209: candidates = Numerical_135.Square_1208
+    // Called function: Ref=>FunctionGroupSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
+    // Called function: Ref=>FunctionGroupSymbol=Twice$1263: candidates = Numerical_135.Twice_1262
     { return P_Multiply(P_Square(P_x), P_Subtract(3, P_Twice(P_x))); };
     static P_Pow2_1663 = function (P_x) 
-    // ParameterSymbol=x$1662: Argument:RefSymbol=Multiply$173:(0/2), Argument:RefSymbol=Multiply$173:(1/2)
+    // ParameterSymbol=x$1662: Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2), Argument:Ref=>FunctionGroupSymbol=Multiply$173:(1/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
     { return P_Multiply(P_x, P_x); };
     static P_Pow3_1665 = function (P_x) 
-    // ParameterSymbol=x$1664: Argument:RefSymbol=Multiply$173:(1/2), Argument:RefSymbol=Pow2$1269:(0/1)
+    // ParameterSymbol=x$1664: Argument:Ref=>FunctionGroupSymbol=Multiply$173:(1/2), Argument:Ref=>FunctionGroupSymbol=Pow2$1269:(0/1)
     // Candidates = Arithmetic,ScalarArithmetic,Numerical
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Pow2$1269: candidates = Numerical_135.Pow2_1268
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Pow2$1269: candidates = Numerical_135.Pow2_1268
     { return P_Multiply(P_Pow2(P_x), P_x); };
     static P_Pow4_1667 = function (P_x) 
-    // ParameterSymbol=x$1666: Argument:RefSymbol=Multiply$173:(1/2), Argument:RefSymbol=Pow3$1271:(0/1)
+    // ParameterSymbol=x$1666: Argument:Ref=>FunctionGroupSymbol=Multiply$173:(1/2), Argument:Ref=>FunctionGroupSymbol=Pow3$1271:(0/1)
     // Candidates = Arithmetic,ScalarArithmetic,Numerical
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Pow3$1271: candidates = Numerical_135.Pow3_1270
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Pow3$1271: candidates = Numerical_135.Pow3_1270
     { return P_Multiply(P_Pow3(P_x), P_x); };
     static P_Pow5_1669 = function (P_x) 
-    // ParameterSymbol=x$1668: Argument:RefSymbol=Multiply$173:(1/2), Argument:RefSymbol=Pow4$1273:(0/1)
+    // ParameterSymbol=x$1668: Argument:Ref=>FunctionGroupSymbol=Multiply$173:(1/2), Argument:Ref=>FunctionGroupSymbol=Pow4$1273:(0/1)
     // Candidates = Arithmetic,ScalarArithmetic,Numerical
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Pow4$1273: candidates = Numerical_135.Pow4_1272
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Pow4$1273: candidates = Numerical_135.Pow4_1272
     { return P_Multiply(P_Pow4(P_x), P_x); };
     static P_Turns_1671 = function (P_x) 
-    // ParameterSymbol=x$1670: Argument:RefSymbol=Multiply$173:(0/2)
+    // ParameterSymbol=x$1670: Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2)
     // Candidates = Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
     { return P_Multiply(P_x, P_Multiply(3.1415926535897, 2)); };
     static P_AlmostZero_1673 = function (P_x) 
-    // ParameterSymbol=x$1672: Argument:RefSymbol=Abs$1225:(0/1)
+    // ParameterSymbol=x$1672: Argument:Ref=>FunctionGroupSymbol=Abs$1225:(0/1)
     // Candidates = Numerical
-    // Called function: RefSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
-    // Called function: RefSymbol=Abs$1225: candidates = Numerical_135.Abs_1224
+    // Called function: Ref=>FunctionGroupSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
+    // Called function: Ref=>FunctionGroupSymbol=Abs$1225: candidates = Numerical_135.Abs_1224
     { return P_LessThan(P_Abs(P_x), 1E-08); };
 }
 class P_Comparable
@@ -2187,100 +2187,100 @@ class P_Comparable
     // field accessors
     // functions 
     static P_Equals_1676 = function (P_a, P_b) 
-    // ParameterSymbol=a$1674: Argument:RefSymbol=Compare$152:(0/2)
+    // ParameterSymbol=a$1674: Argument:Ref=>FunctionGroupSymbol=Compare$152:(0/2)
     // Candidates = Comparable
-    // ParameterSymbol=b$1675: Argument:RefSymbol=Compare$152:(1/2)
+    // ParameterSymbol=b$1675: Argument:Ref=>FunctionGroupSymbol=Compare$152:(1/2)
     // Candidates = Comparable
-    // Called function: RefSymbol=Compare$152: candidates = Comparable_17.Compare_151
+    // Called function: Ref=>FunctionGroupSymbol=Compare$152: candidates = Comparable_17.Compare_151
     { return P_Compare(P_a, P_b); };
     static P_LessThan_1679 = function (P_a, P_b) 
-    // ParameterSymbol=a$1677: Argument:RefSymbol=Compare$152:(0/2)
+    // ParameterSymbol=a$1677: Argument:Ref=>FunctionGroupSymbol=Compare$152:(0/2)
     // Candidates = Comparable
-    // ParameterSymbol=b$1678: Argument:RefSymbol=Compare$152:(1/2)
+    // ParameterSymbol=b$1678: Argument:Ref=>FunctionGroupSymbol=Compare$152:(1/2)
     // Candidates = Comparable
-    // Called function: RefSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
-    // Called function: RefSymbol=Compare$152: candidates = Comparable_17.Compare_151
+    // Called function: Ref=>FunctionGroupSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
+    // Called function: Ref=>FunctionGroupSymbol=Compare$152: candidates = Comparable_17.Compare_151
     { return P_LessThan(P_Compare(P_a, P_b), 0); };
     static P_Lesser_1682 = function (P_a, P_b) 
-    // ParameterSymbol=a$1680: Argument:RefSymbol=LessThanOrEquals$1289:(0/2)
+    // ParameterSymbol=a$1680: Argument:Ref=>FunctionGroupSymbol=LessThanOrEquals$1289:(0/2)
     // Candidates = Comparable
-    // ParameterSymbol=b$1681: Argument:RefSymbol=LessThanOrEquals$1289:(1/2)
+    // ParameterSymbol=b$1681: Argument:Ref=>FunctionGroupSymbol=LessThanOrEquals$1289:(1/2)
     // Candidates = Comparable
-    // Called function: RefSymbol=LessThanOrEquals$1289: candidates = Comparable_136.LessThanOrEquals_1288
+    // Called function: Ref=>FunctionGroupSymbol=LessThanOrEquals$1289: candidates = Comparable_136.LessThanOrEquals_1288
     { return P_LessThanOrEquals(P_a, P_b)
         ? P_a
         : P_b
     ; };
     static P_Greater_1685 = function (P_a, P_b) 
-    // ParameterSymbol=a$1683: Argument:RefSymbol=GreaterThanOrEquals$1293:(0/2)
+    // ParameterSymbol=a$1683: Argument:Ref=>FunctionGroupSymbol=GreaterThanOrEquals$1293:(0/2)
     // Candidates = Comparable
-    // ParameterSymbol=b$1684: Argument:RefSymbol=GreaterThanOrEquals$1293:(1/2)
+    // ParameterSymbol=b$1684: Argument:Ref=>FunctionGroupSymbol=GreaterThanOrEquals$1293:(1/2)
     // Candidates = Comparable
-    // Called function: RefSymbol=GreaterThanOrEquals$1293: candidates = Comparable_136.GreaterThanOrEquals_1292
+    // Called function: Ref=>FunctionGroupSymbol=GreaterThanOrEquals$1293: candidates = Comparable_136.GreaterThanOrEquals_1292
     { return P_GreaterThanOrEquals(P_a, P_b)
         ? P_a
         : P_b
     ; };
     static P_LessThanOrEquals_1688 = function (P_a, P_b) 
-    // ParameterSymbol=a$1686: Argument:RefSymbol=Compare$152:(0/2)
+    // ParameterSymbol=a$1686: Argument:Ref=>FunctionGroupSymbol=Compare$152:(0/2)
     // Candidates = Comparable
-    // ParameterSymbol=b$1687: Argument:RefSymbol=Compare$152:(1/2)
+    // ParameterSymbol=b$1687: Argument:Ref=>FunctionGroupSymbol=Compare$152:(1/2)
     // Candidates = Comparable
-    // Called function: RefSymbol=LessThanOrEquals$1289: candidates = Comparable_136.LessThanOrEquals_1288
-    // Called function: RefSymbol=Compare$152: candidates = Comparable_17.Compare_151
+    // Called function: Ref=>FunctionGroupSymbol=LessThanOrEquals$1289: candidates = Comparable_136.LessThanOrEquals_1288
+    // Called function: Ref=>FunctionGroupSymbol=Compare$152: candidates = Comparable_17.Compare_151
     { return P_LessThanOrEquals(P_Compare(P_a, P_b), 0); };
     static P_GreaterThan_1691 = function (P_a, P_b) 
-    // ParameterSymbol=a$1689: Argument:RefSymbol=Compare$152:(0/2)
+    // ParameterSymbol=a$1689: Argument:Ref=>FunctionGroupSymbol=Compare$152:(0/2)
     // Candidates = Comparable
-    // ParameterSymbol=b$1690: Argument:RefSymbol=Compare$152:(1/2)
+    // ParameterSymbol=b$1690: Argument:Ref=>FunctionGroupSymbol=Compare$152:(1/2)
     // Candidates = Comparable
-    // Called function: RefSymbol=GreaterThan$1291: candidates = Comparable_136.GreaterThan_1290
-    // Called function: RefSymbol=Compare$152: candidates = Comparable_17.Compare_151
+    // Called function: Ref=>FunctionGroupSymbol=GreaterThan$1291: candidates = Comparable_136.GreaterThan_1290
+    // Called function: Ref=>FunctionGroupSymbol=Compare$152: candidates = Comparable_17.Compare_151
     { return P_GreaterThan(P_Compare(P_a, P_b), 0); };
     static P_GreaterThanOrEquals_1694 = function (P_a, P_b) 
-    // ParameterSymbol=a$1692: Argument:RefSymbol=Compare$152:(0/2)
+    // ParameterSymbol=a$1692: Argument:Ref=>FunctionGroupSymbol=Compare$152:(0/2)
     // Candidates = Comparable
-    // ParameterSymbol=b$1693: Argument:RefSymbol=Compare$152:(1/2)
+    // ParameterSymbol=b$1693: Argument:Ref=>FunctionGroupSymbol=Compare$152:(1/2)
     // Candidates = Comparable
-    // Called function: RefSymbol=GreaterThanOrEquals$1293: candidates = Comparable_136.GreaterThanOrEquals_1292
-    // Called function: RefSymbol=Compare$152: candidates = Comparable_17.Compare_151
+    // Called function: Ref=>FunctionGroupSymbol=GreaterThanOrEquals$1293: candidates = Comparable_136.GreaterThanOrEquals_1292
+    // Called function: Ref=>FunctionGroupSymbol=Compare$152: candidates = Comparable_17.Compare_151
     { return P_GreaterThanOrEquals(P_Compare(P_a, P_b), 0); };
     static P_Min_1697 = function (P_a, P_b) 
-    // ParameterSymbol=a$1695: Argument:RefSymbol=LessThan$1283:(0/2)
+    // ParameterSymbol=a$1695: Argument:Ref=>FunctionGroupSymbol=LessThan$1283:(0/2)
     // Candidates = Comparable
-    // ParameterSymbol=b$1696: Argument:RefSymbol=LessThan$1283:(1/2)
+    // ParameterSymbol=b$1696: Argument:Ref=>FunctionGroupSymbol=LessThan$1283:(1/2)
     // Candidates = Comparable
-    // Called function: RefSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
+    // Called function: Ref=>FunctionGroupSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
     { return P_LessThan(P_a, P_b)
         ? P_a
         : P_b
     ; };
     static P_Max_1700 = function (P_a, P_b) 
-    // ParameterSymbol=a$1698: Argument:RefSymbol=GreaterThan$1291:(0/2)
+    // ParameterSymbol=a$1698: Argument:Ref=>FunctionGroupSymbol=GreaterThan$1291:(0/2)
     // Candidates = Comparable
-    // ParameterSymbol=b$1699: Argument:RefSymbol=GreaterThan$1291:(1/2)
+    // ParameterSymbol=b$1699: Argument:Ref=>FunctionGroupSymbol=GreaterThan$1291:(1/2)
     // Candidates = Comparable
-    // Called function: RefSymbol=GreaterThan$1291: candidates = Comparable_136.GreaterThan_1290
+    // Called function: Ref=>FunctionGroupSymbol=GreaterThan$1291: candidates = Comparable_136.GreaterThan_1290
     { return P_GreaterThan(P_a, P_b)
         ? P_a
         : P_b
     ; };
     static P_Between_1704 = function (P_v, P_a, P_b) 
-    // ParameterSymbol=v$1701: Argument:RefSymbol=Between$1301:(0/2)
+    // ParameterSymbol=v$1701: Argument:Ref=>FunctionGroupSymbol=Between$1301:(0/2)
     // Candidates = Interval,Comparable
-    // ParameterSymbol=a$1702: Argument:RefSymbol=Interval$133:(0/2)
+    // ParameterSymbol=a$1702: Argument:Ref=>TypeDefSymbol=Interval$133:(0/2)
     // Candidates = Any
-    // ParameterSymbol=b$1703: Argument:RefSymbol=Interval$133:(1/2)
+    // ParameterSymbol=b$1703: Argument:Ref=>TypeDefSymbol=Interval$133:(1/2)
     // Candidates = Any
-    // Called function: RefSymbol=Between$1301: candidates = Interval_133.Between_1158, Comparable_136.Between_1298, Comparable_136.Between_1300
-    // Called function: RefSymbol=Interval$133: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=Between$1301: candidates = Interval_133.Between_1158, Comparable_136.Between_1298, Comparable_136.Between_1300
+    // Called function: Ref=>TypeDefSymbol=Interval$133: candidates = 
     { return P_Between(P_v, P_Interval(P_a, P_b)); };
     static P_Between_1707 = function (P_v, P_i) 
-    // ParameterSymbol=v$1705: Argument:RefSymbol=Contains$1133:(1/2)
+    // ParameterSymbol=v$1705: Argument:Ref=>FunctionGroupSymbol=Contains$1133:(1/2)
     // Candidates = Interval
-    // ParameterSymbol=i$1706: Argument:RefSymbol=Contains$1133:(0/2)
+    // ParameterSymbol=i$1706: Argument:Ref=>FunctionGroupSymbol=Contains$1133:(0/2)
     // Candidates = Interval
-    // Called function: RefSymbol=Contains$1133: candidates = Interval_133.Contains_1130, Interval_133.Contains_1132
+    // Called function: Ref=>FunctionGroupSymbol=Contains$1133: candidates = Interval_133.Contains_1130, Interval_133.Contains_1132
     { return P_Contains(P_i, P_v); };
 }
 class P_Boolean
@@ -2293,28 +2293,28 @@ class P_Boolean
     static P_XOr_1710 = function (P_a, P_b) 
     // ParameterSymbol=a$1708: 
     // Candidates = Any
-    // ParameterSymbol=b$1709: Argument:RefSymbol=Not$183:(0/1)
+    // ParameterSymbol=b$1709: Argument:Ref=>FunctionGroupSymbol=Not$183:(0/1)
     // Candidates = Boolean
-    // Called function: RefSymbol=Not$183: candidates = Boolean_21.Not_182
+    // Called function: Ref=>FunctionGroupSymbol=Not$183: candidates = Boolean_21.Not_182
     { return P_a
         ? P_Not(P_b)
         : P_b
     ; };
     static P_NAnd_1713 = function (P_a, P_b) 
-    // ParameterSymbol=a$1711: Argument:RefSymbol=And$179:(0/2)
+    // ParameterSymbol=a$1711: Argument:Ref=>FunctionGroupSymbol=And$179:(0/2)
     // Candidates = Boolean
-    // ParameterSymbol=b$1712: Argument:RefSymbol=And$179:(1/2)
+    // ParameterSymbol=b$1712: Argument:Ref=>FunctionGroupSymbol=And$179:(1/2)
     // Candidates = Boolean
-    // Called function: RefSymbol=Not$183: candidates = Boolean_21.Not_182
-    // Called function: RefSymbol=And$179: candidates = Boolean_21.And_178
+    // Called function: Ref=>FunctionGroupSymbol=Not$183: candidates = Boolean_21.Not_182
+    // Called function: Ref=>FunctionGroupSymbol=And$179: candidates = Boolean_21.And_178
     { return P_Not(P_And(P_a, P_b)); };
     static P_NOr_1716 = function (P_a, P_b) 
-    // ParameterSymbol=a$1714: Argument:RefSymbol=Or$181:(0/2)
+    // ParameterSymbol=a$1714: Argument:Ref=>FunctionGroupSymbol=Or$181:(0/2)
     // Candidates = Boolean
-    // ParameterSymbol=b$1715: Argument:RefSymbol=Or$181:(1/2)
+    // ParameterSymbol=b$1715: Argument:Ref=>FunctionGroupSymbol=Or$181:(1/2)
     // Candidates = Boolean
-    // Called function: RefSymbol=Not$183: candidates = Boolean_21.Not_182
-    // Called function: RefSymbol=Or$181: candidates = Boolean_21.Or_180
+    // Called function: Ref=>FunctionGroupSymbol=Not$183: candidates = Boolean_21.Not_182
+    // Called function: Ref=>FunctionGroupSymbol=Or$181: candidates = Boolean_21.Or_180
     { return P_Not(P_Or(P_a, P_b)); };
 }
 class P_Equatable
@@ -2325,10 +2325,10 @@ class P_Equatable
     // field accessors
     // functions 
     static P_NotEquals_1718 = function (P_x) 
-    // ParameterSymbol=x$1717: Argument:RefSymbol=Equals$1281:(0/1)
+    // ParameterSymbol=x$1717: Argument:Ref=>FunctionGroupSymbol=Equals$1281:(0/1)
     // Candidates = Equatable,Comparable
-    // Called function: RefSymbol=Not$183: candidates = Boolean_21.Not_182
-    // Called function: RefSymbol=Equals$1281: candidates = Equatable_18.Equals_153, Comparable_136.Equals_1280
+    // Called function: Ref=>FunctionGroupSymbol=Not$183: candidates = Boolean_21.Not_182
+    // Called function: Ref=>FunctionGroupSymbol=Equals$1281: candidates = Equatable_18.Equals_153, Comparable_136.Equals_1280
     { return P_Not(P_Equals(P_x)); };
 }
 class P_Array
@@ -2339,75 +2339,75 @@ class P_Array
     // field accessors
     // functions 
     static P_Map_1723 = function (P_xs, P_f) 
-    // ParameterSymbol=xs$1719: Argument:RefSymbol=Count$26:(0/1), Argument:RefSymbol=At$213:(0/2)
+    // ParameterSymbol=xs$1719: Argument:Ref=>TypeDefSymbol=Count$26:(0/1), Argument:Ref=>FunctionGroupSymbol=At$213:(0/2)
     // Candidates = Vector,Array
     // ParameterSymbol=f$1720: Invoked:(ArgumentSymbol)
     // Candidates = Function
-    // Called function: RefSymbol=Map$1311: candidates = Array_139.Map_1310
-    // Called function: RefSymbol=Count$26: candidates = Vector_13.Count_143, Array_24.Count_210
-    // Called function: RefSymbol=f$1720: candidates = 
-    // Called function: RefSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
+    // Called function: Ref=>FunctionGroupSymbol=Map$1311: candidates = Array_139.Map_1310
+    // Called function: Ref=>TypeDefSymbol=Count$26: candidates = Vector_13.Count_143, Array_24.Count_210
+    // Called function: Ref=>ParameterSymbol=f$1720: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
     { return P_Map(P_Count(P_xs), function (P_i) 
-    // ParameterSymbol=i$1721: Argument:RefSymbol=At$213:(1/2)
+    // ParameterSymbol=i$1721: Argument:Ref=>FunctionGroupSymbol=At$213:(1/2)
     // Candidates = Vector,Array
-    // Called function: RefSymbol=f$1720: candidates = 
-    // Called function: RefSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
+    // Called function: Ref=>ParameterSymbol=f$1720: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
     { return P_f(P_At(P_xs, P_i)); }); };
     static P_Zip_1729 = function (P_xs, P_ys, P_f) 
-    // ParameterSymbol=xs$1724: Argument:RefSymbol=Count$26:(0/1)
+    // ParameterSymbol=xs$1724: Argument:Ref=>TypeDefSymbol=Count$26:(0/1)
     // Candidates = Vector,Array
-    // ParameterSymbol=ys$1725: Argument:RefSymbol=At$213:(0/2)
+    // ParameterSymbol=ys$1725: Argument:Ref=>FunctionGroupSymbol=At$213:(0/2)
     // Candidates = Vector,Array
     // ParameterSymbol=f$1726: Invoked:(ArgumentSymbol,ArgumentSymbol)
     // Candidates = Function
-    // Called function: RefSymbol=Array$139: candidates = 
-    // Called function: RefSymbol=Count$26: candidates = Vector_13.Count_143, Array_24.Count_210
-    // Called function: RefSymbol=f$1726: candidates = 
-    // Called function: RefSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
-    // Called function: RefSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
+    // Called function: Ref=>TypeDefSymbol=Array$139: candidates = 
+    // Called function: Ref=>TypeDefSymbol=Count$26: candidates = Vector_13.Count_143, Array_24.Count_210
+    // Called function: Ref=>ParameterSymbol=f$1726: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
+    // Called function: Ref=>FunctionGroupSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
     { return P_Array(P_Count(P_xs), function (P_i) 
-    // ParameterSymbol=i$1727: Argument:RefSymbol=At$213:(0/1), Argument:RefSymbol=At$213:(1/2)
+    // ParameterSymbol=i$1727: Argument:Ref=>FunctionGroupSymbol=At$213:(0/1), Argument:Ref=>FunctionGroupSymbol=At$213:(1/2)
     // Candidates = Vector,Array
-    // Called function: RefSymbol=f$1726: candidates = 
-    // Called function: RefSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
-    // Called function: RefSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
+    // Called function: Ref=>ParameterSymbol=f$1726: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
+    // Called function: Ref=>FunctionGroupSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
     { return P_f(P_At(P_i), P_At(P_ys, P_i)); }); };
     static P_Skip_1734 = function (P_xs, P_n) 
     // ParameterSymbol=xs$1730: 
     // Candidates = Any
-    // ParameterSymbol=n$1731: Argument:RefSymbol=Subtract$171:(1/2), Argument:RefSymbol=Subtract$171:(1/2)
+    // ParameterSymbol=n$1731: Argument:Ref=>FunctionGroupSymbol=Subtract$171:(1/2), Argument:Ref=>FunctionGroupSymbol=Subtract$171:(1/2)
     // Candidates = ScalarArithmetic
-    // Called function: RefSymbol=Array$139: candidates = 
-    // Called function: RefSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
-    // Called function: RefSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
-    // Called function: RefSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
+    // Called function: Ref=>TypeDefSymbol=Array$139: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
+    // Called function: Ref=>FunctionGroupSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
+    // Called function: Ref=>FunctionGroupSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
     { return P_Array(P_Subtract(P_Count, P_n), function (P_i) 
-    // ParameterSymbol=i$1732: Argument:RefSymbol=Subtract$171:(0/2)
+    // ParameterSymbol=i$1732: Argument:Ref=>FunctionGroupSymbol=Subtract$171:(0/2)
     // Candidates = ScalarArithmetic
-    // Called function: RefSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
-    // Called function: RefSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
+    // Called function: Ref=>FunctionGroupSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
+    // Called function: Ref=>FunctionGroupSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
     { return P_At(P_Subtract(P_i, P_n)); }); };
     static P_Take_1739 = function (P_xs, P_n) 
     // ParameterSymbol=xs$1735: 
     // Candidates = Any
-    // ParameterSymbol=n$1736: Argument:RefSymbol=Array$139:(0/2)
+    // ParameterSymbol=n$1736: Argument:Ref=>TypeDefSymbol=Array$139:(0/2)
     // Candidates = Any
-    // Called function: RefSymbol=Array$139: candidates = 
+    // Called function: Ref=>TypeDefSymbol=Array$139: candidates = 
     { return P_Array(P_n, function (P_i) 
     // ParameterSymbol=i$1737: 
     // Candidates = Any
     { return P_At; }); };
     static P_Aggregate_1743 = function (P_xs, P_init, P_f) 
-    // ParameterSymbol=xs$1740: Argument:RefSymbol=IsEmpty$1323:(0/1), Argument:RefSymbol=Rest$1321:(0/1)
+    // ParameterSymbol=xs$1740: Argument:Ref=>FunctionGroupSymbol=IsEmpty$1323:(0/1), Argument:Ref=>FunctionGroupSymbol=Rest$1321:(0/1)
     // Candidates = Interval,Array
-    // ParameterSymbol=init$1741: Argument:RefSymbol=f$1742:(0/2)
+    // ParameterSymbol=init$1741: Argument:Ref=>ParameterSymbol=f$1742:(0/2)
     // Candidates = Any
     // ParameterSymbol=f$1742: Invoked:(ArgumentSymbol,ArgumentSymbol), Invoked:(ArgumentSymbol)
     // Candidates = Function
-    // Called function: RefSymbol=IsEmpty$1323: candidates = Interval_133.IsEmpty_1116, Array_139.IsEmpty_1322
-    // Called function: RefSymbol=f$1742: candidates = 
-    // Called function: RefSymbol=f$1742: candidates = 
-    // Called function: RefSymbol=Rest$1321: candidates = Array_139.Rest_1320
+    // Called function: Ref=>FunctionGroupSymbol=IsEmpty$1323: candidates = Interval_133.IsEmpty_1116, Array_139.IsEmpty_1322
+    // Called function: Ref=>ParameterSymbol=f$1742: candidates = 
+    // Called function: Ref=>ParameterSymbol=f$1742: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=Rest$1321: candidates = Array_139.Rest_1320
     { return P_IsEmpty(P_xs)
         ? P_init
         : P_f(P_init, P_f(P_Rest(P_xs)))
@@ -2415,76 +2415,76 @@ class P_Array
     static P_Rest_1745 = function (P_xs) 
     // ParameterSymbol=xs$1744: 
     // Candidates = Any
-    // Called function: RefSymbol=Skip$1315: candidates = Array_139.Skip_1314
+    // Called function: Ref=>FunctionGroupSymbol=Skip$1315: candidates = Array_139.Skip_1314
     { return P_Skip(1); };
     static P_IsEmpty_1747 = function (P_xs) 
-    // ParameterSymbol=xs$1746: Argument:RefSymbol=Count$26:(0/1)
+    // ParameterSymbol=xs$1746: Argument:Ref=>TypeDefSymbol=Count$26:(0/1)
     // Candidates = Vector,Array
-    // Called function: RefSymbol=Equals$1281: candidates = Equatable_18.Equals_153, Comparable_136.Equals_1280
-    // Called function: RefSymbol=Count$26: candidates = Vector_13.Count_143, Array_24.Count_210
+    // Called function: Ref=>FunctionGroupSymbol=Equals$1281: candidates = Equatable_18.Equals_153, Comparable_136.Equals_1280
+    // Called function: Ref=>TypeDefSymbol=Count$26: candidates = Vector_13.Count_143, Array_24.Count_210
     { return P_Equals(P_Count(P_xs), 0); };
     static P_First_1749 = function (P_xs) 
-    // ParameterSymbol=xs$1748: Argument:RefSymbol=At$213:(0/2)
+    // ParameterSymbol=xs$1748: Argument:Ref=>FunctionGroupSymbol=At$213:(0/2)
     // Candidates = Vector,Array
-    // Called function: RefSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
+    // Called function: Ref=>FunctionGroupSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
     { return P_At(P_xs, 0); };
     static P_Last_1751 = function (P_xs) 
-    // ParameterSymbol=xs$1750: Argument:RefSymbol=At$213:(0/2), Argument:RefSymbol=Count$26:(0/1)
+    // ParameterSymbol=xs$1750: Argument:Ref=>FunctionGroupSymbol=At$213:(0/2), Argument:Ref=>TypeDefSymbol=Count$26:(0/1)
     // Candidates = Vector,Array
-    // Called function: RefSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
-    // Called function: RefSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
-    // Called function: RefSymbol=Count$26: candidates = Vector_13.Count_143, Array_24.Count_210
+    // Called function: Ref=>FunctionGroupSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
+    // Called function: Ref=>FunctionGroupSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
+    // Called function: Ref=>TypeDefSymbol=Count$26: candidates = Vector_13.Count_143, Array_24.Count_210
     { return P_At(P_xs, P_Subtract(P_Count(P_xs), 1)); };
     static P_Slice_1755 = function (P_xs, P_from, P_count) 
-    // ParameterSymbol=xs$1752: Argument:RefSymbol=Skip$1315:(0/2)
+    // ParameterSymbol=xs$1752: Argument:Ref=>FunctionGroupSymbol=Skip$1315:(0/2)
     // Candidates = Array
-    // ParameterSymbol=from$1753: Argument:RefSymbol=Skip$1315:(1/2)
+    // ParameterSymbol=from$1753: Argument:Ref=>FunctionGroupSymbol=Skip$1315:(1/2)
     // Candidates = Array
-    // ParameterSymbol=count$1754: Argument:RefSymbol=Take$1317:(1/2)
+    // ParameterSymbol=count$1754: Argument:Ref=>FunctionGroupSymbol=Take$1317:(1/2)
     // Candidates = Array
-    // Called function: RefSymbol=Take$1317: candidates = Array_139.Take_1316
-    // Called function: RefSymbol=Skip$1315: candidates = Array_139.Skip_1314
+    // Called function: Ref=>FunctionGroupSymbol=Take$1317: candidates = Array_139.Take_1316
+    // Called function: Ref=>FunctionGroupSymbol=Skip$1315: candidates = Array_139.Skip_1314
     { return P_Take(P_Skip(P_xs, P_from), P_count); };
     static P_Join_1758 = function (P_xs, P_sep) 
-    // ParameterSymbol=xs$1756: Argument:RefSymbol=IsEmpty$1323:(0/1), Argument:RefSymbol=First$1325:(0/1), Argument:RefSymbol=Skip$1315:(0/2)
+    // ParameterSymbol=xs$1756: Argument:Ref=>FunctionGroupSymbol=IsEmpty$1323:(0/1), Argument:Ref=>FunctionGroupSymbol=First$1325:(0/1), Argument:Ref=>FunctionGroupSymbol=Skip$1315:(0/2)
     // Candidates = Interval,Array
     // ParameterSymbol=sep$1757: 
     // Candidates = Any
-    // Called function: RefSymbol=IsEmpty$1323: candidates = Interval_133.IsEmpty_1116, Array_139.IsEmpty_1322
-    // Called function: RefSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
-    // Called function: RefSymbol=ToString$203: candidates = Value_22.ToString_202
-    // Called function: RefSymbol=First$1325: candidates = Array_139.First_1324
-    // Called function: RefSymbol=Aggregate$1319: candidates = Array_139.Aggregate_1318
-    // Called function: RefSymbol=Skip$1315: candidates = Array_139.Skip_1314
+    // Called function: Ref=>FunctionGroupSymbol=IsEmpty$1323: candidates = Interval_133.IsEmpty_1116, Array_139.IsEmpty_1322
+    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
+    // Called function: Ref=>FunctionGroupSymbol=ToString$203: candidates = Value_22.ToString_202
+    // Called function: Ref=>FunctionGroupSymbol=First$1325: candidates = Array_139.First_1324
+    // Called function: Ref=>FunctionGroupSymbol=Aggregate$1319: candidates = Array_139.Aggregate_1318
+    // Called function: Ref=>FunctionGroupSymbol=Skip$1315: candidates = Array_139.Skip_1314
     { return P_IsEmpty(P_xs)
         ? ""
         : P_Add(P_ToString(P_First(P_xs)), P_Aggregate(P_Skip(P_xs, 1)))
     ; };
     static P_All_1761 = function (P_xs, P_f) 
-    // ParameterSymbol=xs$1759: Argument:RefSymbol=IsEmpty$1323:(0/1), Argument:RefSymbol=First$1325:(0/1), Argument:RefSymbol=Rest$1321:(0/1)
+    // ParameterSymbol=xs$1759: Argument:Ref=>FunctionGroupSymbol=IsEmpty$1323:(0/1), Argument:Ref=>FunctionGroupSymbol=First$1325:(0/1), Argument:Ref=>FunctionGroupSymbol=Rest$1321:(0/1)
     // Candidates = Interval,Array
     // ParameterSymbol=f$1760: Invoked:(ArgumentSymbol), Invoked:(ArgumentSymbol)
     // Candidates = Function
-    // Called function: RefSymbol=IsEmpty$1323: candidates = Interval_133.IsEmpty_1116, Array_139.IsEmpty_1322
-    // Called function: RefSymbol=And$179: candidates = Boolean_21.And_178
-    // Called function: RefSymbol=f$1760: candidates = 
-    // Called function: RefSymbol=First$1325: candidates = Array_139.First_1324
-    // Called function: RefSymbol=f$1760: candidates = 
-    // Called function: RefSymbol=Rest$1321: candidates = Array_139.Rest_1320
+    // Called function: Ref=>FunctionGroupSymbol=IsEmpty$1323: candidates = Interval_133.IsEmpty_1116, Array_139.IsEmpty_1322
+    // Called function: Ref=>FunctionGroupSymbol=And$179: candidates = Boolean_21.And_178
+    // Called function: Ref=>ParameterSymbol=f$1760: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=First$1325: candidates = Array_139.First_1324
+    // Called function: Ref=>ParameterSymbol=f$1760: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=Rest$1321: candidates = Array_139.Rest_1320
     { return P_IsEmpty(P_xs)
         ? True
         : P_And(P_f(P_First(P_xs)), P_f(P_Rest(P_xs)))
     ; };
     static P_JoinStrings_1764 = function (P_xs, P_sep) 
-    // ParameterSymbol=xs$1762: Argument:RefSymbol=IsEmpty$1323:(0/1), Argument:RefSymbol=First$1325:(0/1), Argument:RefSymbol=Rest$1321:(0/1)
+    // ParameterSymbol=xs$1762: Argument:Ref=>FunctionGroupSymbol=IsEmpty$1323:(0/1), Argument:Ref=>FunctionGroupSymbol=First$1325:(0/1), Argument:Ref=>FunctionGroupSymbol=Rest$1321:(0/1)
     // Candidates = Interval,Array
     // ParameterSymbol=sep$1763: 
     // Candidates = Any
-    // Called function: RefSymbol=IsEmpty$1323: candidates = Interval_133.IsEmpty_1116, Array_139.IsEmpty_1322
-    // Called function: RefSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
-    // Called function: RefSymbol=First$1325: candidates = Array_139.First_1324
-    // Called function: RefSymbol=Aggregate$1319: candidates = Array_139.Aggregate_1318
-    // Called function: RefSymbol=Rest$1321: candidates = Array_139.Rest_1320
+    // Called function: Ref=>FunctionGroupSymbol=IsEmpty$1323: candidates = Interval_133.IsEmpty_1116, Array_139.IsEmpty_1322
+    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
+    // Called function: Ref=>FunctionGroupSymbol=First$1325: candidates = Array_139.First_1324
+    // Called function: Ref=>FunctionGroupSymbol=Aggregate$1319: candidates = Array_139.Aggregate_1318
+    // Called function: Ref=>FunctionGroupSymbol=Rest$1321: candidates = Array_139.Rest_1320
     { return P_IsEmpty(P_xs)
         ? ""
         : P_Add(P_First(P_xs), P_Aggregate(P_Rest(P_xs)))
@@ -2498,238 +2498,238 @@ class P_Easings
     // field accessors
     // functions 
     static P_BlendEaseFunc_1768 = function (P_p, P_easeIn, P_easeOut) 
-    // ParameterSymbol=p$1765: Argument:RefSymbol=LessThan$1283:(0/2), Argument:RefSymbol=Multiply$173:(0/2), Argument:RefSymbol=Multiply$173:(0/2)
+    // ParameterSymbol=p$1765: Argument:Ref=>FunctionGroupSymbol=LessThan$1283:(0/2), Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2), Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2)
     // Candidates = Comparable,Arithmetic,ScalarArithmetic
     // ParameterSymbol=easeIn$1766: Invoked:(ArgumentSymbol)
     // Candidates = Function
     // ParameterSymbol=easeOut$1767: Invoked:(ArgumentSymbol)
     // Candidates = Function
-    // Called function: RefSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=easeIn$1766: candidates = 
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
-    // Called function: RefSymbol=easeOut$1767: candidates = 
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
+    // Called function: Ref=>FunctionGroupSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>ParameterSymbol=easeIn$1766: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
+    // Called function: Ref=>ParameterSymbol=easeOut$1767: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
     { return P_LessThan(P_p, 0.5
         ? P_Multiply(0.5, P_easeIn(P_Multiply(P_p, 2)))
         : P_Multiply(0.5, P_Add(P_easeOut(P_Multiply(P_p, P_Subtract(2, 1))), 0.5))
     ); };
     static P_InvertEaseFunc_1771 = function (P_p, P_easeIn) 
-    // ParameterSymbol=p$1769: Argument:RefSymbol=Subtract$171:(1/2)
+    // ParameterSymbol=p$1769: Argument:Ref=>FunctionGroupSymbol=Subtract$171:(1/2)
     // Candidates = ScalarArithmetic
     // ParameterSymbol=easeIn$1770: Invoked:(ArgumentSymbol)
     // Candidates = Function
-    // Called function: RefSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
-    // Called function: RefSymbol=easeIn$1770: candidates = 
-    // Called function: RefSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
+    // Called function: Ref=>FunctionGroupSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
+    // Called function: Ref=>ParameterSymbol=easeIn$1770: candidates = 
+    // Called function: Ref=>FunctionGroupSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
     { return P_Subtract(1, P_easeIn(P_Subtract(1, P_p))); };
     static P_Linear_1773 = function (P_p) 
     // ParameterSymbol=p$1772: 
     // Candidates = Any
     { return P_p; };
     static P_QuadraticEaseIn_1775 = function (P_p) 
-    // ParameterSymbol=p$1774: Argument:RefSymbol=Pow2$1269:(0/1)
+    // ParameterSymbol=p$1774: Argument:Ref=>FunctionGroupSymbol=Pow2$1269:(0/1)
     // Candidates = Numerical
-    // Called function: RefSymbol=Pow2$1269: candidates = Numerical_135.Pow2_1268
+    // Called function: Ref=>FunctionGroupSymbol=Pow2$1269: candidates = Numerical_135.Pow2_1268
     { return P_Pow2(P_p); };
     static P_QuadraticEaseOut_1777 = function (P_p) 
-    // ParameterSymbol=p$1776: Argument:RefSymbol=InvertEaseFunc$1339:(0/2)
+    // ParameterSymbol=p$1776: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
     // Candidates = Easings
-    // Called function: RefSymbol=InvertEaseFunc$1339: candidates = Easings_140.InvertEaseFunc_1338
+    // Called function: Ref=>FunctionGroupSymbol=InvertEaseFunc$1339: candidates = Easings_140.InvertEaseFunc_1338
     { return P_InvertEaseFunc(P_p, P_QuadraticEaseIn); };
     static P_QuadraticEaseInOut_1779 = function (P_p) 
-    // ParameterSymbol=p$1778: Argument:RefSymbol=BlendEaseFunc$1337:(0/3)
+    // ParameterSymbol=p$1778: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
     // Candidates = Easings
-    // Called function: RefSymbol=BlendEaseFunc$1337: candidates = Easings_140.BlendEaseFunc_1336
+    // Called function: Ref=>FunctionGroupSymbol=BlendEaseFunc$1337: candidates = Easings_140.BlendEaseFunc_1336
     { return P_BlendEaseFunc(P_p, P_QuadraticEaseIn, P_QuadraticEaseOut); };
     static P_CubicEaseIn_1781 = function (P_p) 
-    // ParameterSymbol=p$1780: Argument:RefSymbol=Pow3$1271:(0/1)
+    // ParameterSymbol=p$1780: Argument:Ref=>FunctionGroupSymbol=Pow3$1271:(0/1)
     // Candidates = Numerical
-    // Called function: RefSymbol=Pow3$1271: candidates = Numerical_135.Pow3_1270
+    // Called function: Ref=>FunctionGroupSymbol=Pow3$1271: candidates = Numerical_135.Pow3_1270
     { return P_Pow3(P_p); };
     static P_CubicEaseOut_1783 = function (P_p) 
-    // ParameterSymbol=p$1782: Argument:RefSymbol=InvertEaseFunc$1339:(0/2)
+    // ParameterSymbol=p$1782: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
     // Candidates = Easings
-    // Called function: RefSymbol=InvertEaseFunc$1339: candidates = Easings_140.InvertEaseFunc_1338
+    // Called function: Ref=>FunctionGroupSymbol=InvertEaseFunc$1339: candidates = Easings_140.InvertEaseFunc_1338
     { return P_InvertEaseFunc(P_p, P_CubicEaseIn); };
     static P_CubicEaseInOut_1785 = function (P_p) 
-    // ParameterSymbol=p$1784: Argument:RefSymbol=BlendEaseFunc$1337:(0/3)
+    // ParameterSymbol=p$1784: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
     // Candidates = Easings
-    // Called function: RefSymbol=BlendEaseFunc$1337: candidates = Easings_140.BlendEaseFunc_1336
+    // Called function: Ref=>FunctionGroupSymbol=BlendEaseFunc$1337: candidates = Easings_140.BlendEaseFunc_1336
     { return P_BlendEaseFunc(P_p, P_CubicEaseIn, P_CubicEaseOut); };
     static P_QuarticEaseIn_1787 = function (P_p) 
-    // ParameterSymbol=p$1786: Argument:RefSymbol=Pow4$1273:(0/1)
+    // ParameterSymbol=p$1786: Argument:Ref=>FunctionGroupSymbol=Pow4$1273:(0/1)
     // Candidates = Numerical
-    // Called function: RefSymbol=Pow4$1273: candidates = Numerical_135.Pow4_1272
+    // Called function: Ref=>FunctionGroupSymbol=Pow4$1273: candidates = Numerical_135.Pow4_1272
     { return P_Pow4(P_p); };
     static P_QuarticEaseOut_1789 = function (P_p) 
-    // ParameterSymbol=p$1788: Argument:RefSymbol=InvertEaseFunc$1339:(0/2)
+    // ParameterSymbol=p$1788: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
     // Candidates = Easings
-    // Called function: RefSymbol=InvertEaseFunc$1339: candidates = Easings_140.InvertEaseFunc_1338
+    // Called function: Ref=>FunctionGroupSymbol=InvertEaseFunc$1339: candidates = Easings_140.InvertEaseFunc_1338
     { return P_InvertEaseFunc(P_p, P_QuarticEaseIn); };
     static P_QuarticEaseInOut_1791 = function (P_p) 
-    // ParameterSymbol=p$1790: Argument:RefSymbol=BlendEaseFunc$1337:(0/3)
+    // ParameterSymbol=p$1790: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
     // Candidates = Easings
-    // Called function: RefSymbol=BlendEaseFunc$1337: candidates = Easings_140.BlendEaseFunc_1336
+    // Called function: Ref=>FunctionGroupSymbol=BlendEaseFunc$1337: candidates = Easings_140.BlendEaseFunc_1336
     { return P_BlendEaseFunc(P_p, P_QuarticEaseIn, P_QuarticEaseOut); };
     static P_QuinticEaseIn_1793 = function (P_p) 
-    // ParameterSymbol=p$1792: Argument:RefSymbol=Pow5$1275:(0/1)
+    // ParameterSymbol=p$1792: Argument:Ref=>FunctionGroupSymbol=Pow5$1275:(0/1)
     // Candidates = Numerical
-    // Called function: RefSymbol=Pow5$1275: candidates = Numerical_135.Pow5_1274
+    // Called function: Ref=>FunctionGroupSymbol=Pow5$1275: candidates = Numerical_135.Pow5_1274
     { return P_Pow5(P_p); };
     static P_QuinticEaseOut_1795 = function (P_p) 
-    // ParameterSymbol=p$1794: Argument:RefSymbol=InvertEaseFunc$1339:(0/2)
+    // ParameterSymbol=p$1794: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
     // Candidates = Easings
-    // Called function: RefSymbol=InvertEaseFunc$1339: candidates = Easings_140.InvertEaseFunc_1338
+    // Called function: Ref=>FunctionGroupSymbol=InvertEaseFunc$1339: candidates = Easings_140.InvertEaseFunc_1338
     { return P_InvertEaseFunc(P_p, P_QuinticEaseIn); };
     static P_QuinticEaseInOut_1797 = function (P_p) 
-    // ParameterSymbol=p$1796: Argument:RefSymbol=BlendEaseFunc$1337:(0/3)
+    // ParameterSymbol=p$1796: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
     // Candidates = Easings
-    // Called function: RefSymbol=BlendEaseFunc$1337: candidates = Easings_140.BlendEaseFunc_1336
+    // Called function: Ref=>FunctionGroupSymbol=BlendEaseFunc$1337: candidates = Easings_140.BlendEaseFunc_1336
     { return P_BlendEaseFunc(P_p, P_QuinticEaseIn, P_QuinticEaseOut); };
     static P_SineEaseIn_1799 = function (P_p) 
-    // ParameterSymbol=p$1798: Argument:RefSymbol=InvertEaseFunc$1339:(0/2)
+    // ParameterSymbol=p$1798: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
     // Candidates = Easings
-    // Called function: RefSymbol=InvertEaseFunc$1339: candidates = Easings_140.InvertEaseFunc_1338
+    // Called function: Ref=>FunctionGroupSymbol=InvertEaseFunc$1339: candidates = Easings_140.InvertEaseFunc_1338
     { return P_InvertEaseFunc(P_p, P_SineEaseOut); };
     static P_SineEaseOut_1801 = function (P_p) 
-    // ParameterSymbol=p$1800: Argument:RefSymbol=Quarter$1231:(0/1)
+    // ParameterSymbol=p$1800: Argument:Ref=>FunctionGroupSymbol=Quarter$1231:(0/1)
     // Candidates = Numerical
-    // Called function: RefSymbol=Sin$1175: candidates = Numerical_135.Sin_1174
-    // Called function: RefSymbol=Turns$1277: candidates = Numerical_135.Turns_1276
-    // Called function: RefSymbol=Quarter$1231: candidates = Numerical_135.Quarter_1230
+    // Called function: Ref=>FunctionGroupSymbol=Sin$1175: candidates = Numerical_135.Sin_1174
+    // Called function: Ref=>FunctionGroupSymbol=Turns$1277: candidates = Numerical_135.Turns_1276
+    // Called function: Ref=>FunctionGroupSymbol=Quarter$1231: candidates = Numerical_135.Quarter_1230
     { return P_Sin(P_Turns(P_Quarter(P_p))); };
     static P_SineEaseInOut_1803 = function (P_p) 
-    // ParameterSymbol=p$1802: Argument:RefSymbol=BlendEaseFunc$1337:(0/3)
+    // ParameterSymbol=p$1802: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
     // Candidates = Easings
-    // Called function: RefSymbol=BlendEaseFunc$1337: candidates = Easings_140.BlendEaseFunc_1336
+    // Called function: Ref=>FunctionGroupSymbol=BlendEaseFunc$1337: candidates = Easings_140.BlendEaseFunc_1336
     { return P_BlendEaseFunc(P_p, P_SineEaseIn, P_SineEaseOut); };
     static P_CircularEaseIn_1805 = function (P_p) 
-    // ParameterSymbol=p$1804: Argument:RefSymbol=Pow2$1269:(0/1)
+    // ParameterSymbol=p$1804: Argument:Ref=>FunctionGroupSymbol=Pow2$1269:(0/1)
     // Candidates = Numerical
-    // Called function: RefSymbol=FromOne$1221: candidates = Numerical_135.FromOne_1220
-    // Called function: RefSymbol=SquareRoot$1205: candidates = Numerical_135.SquareRoot_1204
-    // Called function: RefSymbol=FromOne$1221: candidates = Numerical_135.FromOne_1220
-    // Called function: RefSymbol=Pow2$1269: candidates = Numerical_135.Pow2_1268
+    // Called function: Ref=>FunctionGroupSymbol=FromOne$1221: candidates = Numerical_135.FromOne_1220
+    // Called function: Ref=>FunctionGroupSymbol=SquareRoot$1205: candidates = Numerical_135.SquareRoot_1204
+    // Called function: Ref=>FunctionGroupSymbol=FromOne$1221: candidates = Numerical_135.FromOne_1220
+    // Called function: Ref=>FunctionGroupSymbol=Pow2$1269: candidates = Numerical_135.Pow2_1268
     { return P_FromOne(P_SquareRoot(P_FromOne(P_Pow2(P_p)))); };
     static P_CircularEaseOut_1807 = function (P_p) 
-    // ParameterSymbol=p$1806: Argument:RefSymbol=InvertEaseFunc$1339:(0/2)
+    // ParameterSymbol=p$1806: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
     // Candidates = Easings
-    // Called function: RefSymbol=InvertEaseFunc$1339: candidates = Easings_140.InvertEaseFunc_1338
+    // Called function: Ref=>FunctionGroupSymbol=InvertEaseFunc$1339: candidates = Easings_140.InvertEaseFunc_1338
     { return P_InvertEaseFunc(P_p, P_CircularEaseIn); };
     static P_CircularEaseInOut_1809 = function (P_p) 
-    // ParameterSymbol=p$1808: Argument:RefSymbol=BlendEaseFunc$1337:(0/3)
+    // ParameterSymbol=p$1808: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
     // Candidates = Easings
-    // Called function: RefSymbol=BlendEaseFunc$1337: candidates = Easings_140.BlendEaseFunc_1336
+    // Called function: Ref=>FunctionGroupSymbol=BlendEaseFunc$1337: candidates = Easings_140.BlendEaseFunc_1336
     { return P_BlendEaseFunc(P_p, P_CircularEaseIn, P_CircularEaseOut); };
     static P_ExponentialEaseIn_1811 = function (P_p) 
-    // ParameterSymbol=p$1810: Argument:RefSymbol=AlmostZero$1279:(0/1), Argument:RefSymbol=MinusOne$1219:(0/1)
+    // ParameterSymbol=p$1810: Argument:Ref=>FunctionGroupSymbol=AlmostZero$1279:(0/1), Argument:Ref=>FunctionGroupSymbol=MinusOne$1219:(0/1)
     // Candidates = Numerical
-    // Called function: RefSymbol=AlmostZero$1279: candidates = Numerical_135.AlmostZero_1278
-    // Called function: RefSymbol=Pow$1197: candidates = Numerical_135.Pow_1196
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=MinusOne$1219: candidates = Numerical_135.MinusOne_1218
+    // Called function: Ref=>FunctionGroupSymbol=AlmostZero$1279: candidates = Numerical_135.AlmostZero_1278
+    // Called function: Ref=>FunctionGroupSymbol=Pow$1197: candidates = Numerical_135.Pow_1196
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=MinusOne$1219: candidates = Numerical_135.MinusOne_1218
     { return P_AlmostZero(P_p)
         ? P_p
         : P_Pow(2, P_Multiply(10, P_MinusOne(P_p)))
     ; };
     static P_ExponentialEaseOut_1813 = function (P_p) 
-    // ParameterSymbol=p$1812: Argument:RefSymbol=InvertEaseFunc$1339:(0/2)
+    // ParameterSymbol=p$1812: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
     // Candidates = Easings
-    // Called function: RefSymbol=InvertEaseFunc$1339: candidates = Easings_140.InvertEaseFunc_1338
+    // Called function: Ref=>FunctionGroupSymbol=InvertEaseFunc$1339: candidates = Easings_140.InvertEaseFunc_1338
     { return P_InvertEaseFunc(P_p, P_ExponentialEaseIn); };
     static P_ExponentialEaseInOut_1815 = function (P_p) 
-    // ParameterSymbol=p$1814: Argument:RefSymbol=BlendEaseFunc$1337:(0/3)
+    // ParameterSymbol=p$1814: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
     // Candidates = Easings
-    // Called function: RefSymbol=BlendEaseFunc$1337: candidates = Easings_140.BlendEaseFunc_1336
+    // Called function: Ref=>FunctionGroupSymbol=BlendEaseFunc$1337: candidates = Easings_140.BlendEaseFunc_1336
     { return P_BlendEaseFunc(P_p, P_ExponentialEaseIn, P_ExponentialEaseOut); };
     static P_ElasticEaseIn_1817 = function (P_p) 
-    // ParameterSymbol=p$1816: Argument:RefSymbol=Quarter$1231:(0/1), Argument:RefSymbol=MinusOne$1219:(0/1)
+    // ParameterSymbol=p$1816: Argument:Ref=>FunctionGroupSymbol=Quarter$1231:(0/1), Argument:Ref=>FunctionGroupSymbol=MinusOne$1219:(0/1)
     // Candidates = Numerical
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Turns$1277: candidates = Numerical_135.Turns_1276
-    // Called function: RefSymbol=Quarter$1231: candidates = Numerical_135.Quarter_1230
-    // Called function: RefSymbol=Sin$1175: candidates = Numerical_135.Sin_1174
-    // Called function: RefSymbol=Radians$729: candidates = Angle_82.Radians_726
-    // Called function: RefSymbol=Pow$1197: candidates = Numerical_135.Pow_1196
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=MinusOne$1219: candidates = Numerical_135.MinusOne_1218
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Turns$1277: candidates = Numerical_135.Turns_1276
+    // Called function: Ref=>FunctionGroupSymbol=Quarter$1231: candidates = Numerical_135.Quarter_1230
+    // Called function: Ref=>FunctionGroupSymbol=Sin$1175: candidates = Numerical_135.Sin_1174
+    // Called function: Ref=>FunctionGroupSymbol=Radians$729: candidates = Angle_82.Radians_726
+    // Called function: Ref=>FunctionGroupSymbol=Pow$1197: candidates = Numerical_135.Pow_1196
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=MinusOne$1219: candidates = Numerical_135.MinusOne_1218
     { return P_Multiply(13, P_Multiply(P_Turns(P_Quarter(P_p)), P_Sin(P_Radians(P_Pow(2, P_Multiply(10, P_MinusOne(P_p))))))); };
     static P_ElasticEaseOut_1819 = function (P_p) 
-    // ParameterSymbol=p$1818: Argument:RefSymbol=InvertEaseFunc$1339:(0/2)
+    // ParameterSymbol=p$1818: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
     // Candidates = Easings
-    // Called function: RefSymbol=InvertEaseFunc$1339: candidates = Easings_140.InvertEaseFunc_1338
+    // Called function: Ref=>FunctionGroupSymbol=InvertEaseFunc$1339: candidates = Easings_140.InvertEaseFunc_1338
     { return P_InvertEaseFunc(P_p, P_ElasticEaseIn); };
     static P_ElasticEaseInOut_1821 = function (P_p) 
-    // ParameterSymbol=p$1820: Argument:RefSymbol=BlendEaseFunc$1337:(0/3)
+    // ParameterSymbol=p$1820: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
     // Candidates = Easings
-    // Called function: RefSymbol=BlendEaseFunc$1337: candidates = Easings_140.BlendEaseFunc_1336
+    // Called function: Ref=>FunctionGroupSymbol=BlendEaseFunc$1337: candidates = Easings_140.BlendEaseFunc_1336
     { return P_BlendEaseFunc(P_p, P_ElasticEaseIn, P_ElasticEaseOut); };
     static P_BackEaseIn_1823 = function (P_p) 
-    // ParameterSymbol=p$1822: Argument:RefSymbol=Pow3$1271:(0/1), Argument:RefSymbol=Multiply$173:(0/2), Argument:RefSymbol=Half$1227:(0/1)
+    // ParameterSymbol=p$1822: Argument:Ref=>FunctionGroupSymbol=Pow3$1271:(0/1), Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2), Argument:Ref=>FunctionGroupSymbol=Half$1227:(0/1)
     // Candidates = Numerical,Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
-    // Called function: RefSymbol=Pow3$1271: candidates = Numerical_135.Pow3_1270
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Sin$1175: candidates = Numerical_135.Sin_1174
-    // Called function: RefSymbol=Turns$1277: candidates = Numerical_135.Turns_1276
-    // Called function: RefSymbol=Half$1227: candidates = Numerical_135.Half_1226
+    // Called function: Ref=>FunctionGroupSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
+    // Called function: Ref=>FunctionGroupSymbol=Pow3$1271: candidates = Numerical_135.Pow3_1270
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Sin$1175: candidates = Numerical_135.Sin_1174
+    // Called function: Ref=>FunctionGroupSymbol=Turns$1277: candidates = Numerical_135.Turns_1276
+    // Called function: Ref=>FunctionGroupSymbol=Half$1227: candidates = Numerical_135.Half_1226
     { return P_Subtract(P_Pow3(P_p), P_Multiply(P_p, P_Sin(P_Turns(P_Half(P_p))))); };
     static P_BackEaseOut_1825 = function (P_p) 
-    // ParameterSymbol=p$1824: Argument:RefSymbol=InvertEaseFunc$1339:(0/2)
+    // ParameterSymbol=p$1824: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
     // Candidates = Easings
-    // Called function: RefSymbol=InvertEaseFunc$1339: candidates = Easings_140.InvertEaseFunc_1338
+    // Called function: Ref=>FunctionGroupSymbol=InvertEaseFunc$1339: candidates = Easings_140.InvertEaseFunc_1338
     { return P_InvertEaseFunc(P_p, P_BackEaseIn); };
     static P_BackEaseInOut_1827 = function (P_p) 
-    // ParameterSymbol=p$1826: Argument:RefSymbol=BlendEaseFunc$1337:(0/3)
+    // ParameterSymbol=p$1826: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
     // Candidates = Easings
-    // Called function: RefSymbol=BlendEaseFunc$1337: candidates = Easings_140.BlendEaseFunc_1336
+    // Called function: Ref=>FunctionGroupSymbol=BlendEaseFunc$1337: candidates = Easings_140.BlendEaseFunc_1336
     { return P_BlendEaseFunc(P_p, P_BackEaseIn, P_BackEaseOut); };
     static P_BounceEaseIn_1829 = function (P_p) 
-    // ParameterSymbol=p$1828: Argument:RefSymbol=InvertEaseFunc$1339:(0/2)
+    // ParameterSymbol=p$1828: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
     // Candidates = Easings
-    // Called function: RefSymbol=InvertEaseFunc$1339: candidates = Easings_140.InvertEaseFunc_1338
+    // Called function: Ref=>FunctionGroupSymbol=InvertEaseFunc$1339: candidates = Easings_140.InvertEaseFunc_1338
     { return P_InvertEaseFunc(P_p, P_BounceEaseOut); };
     static P_BounceEaseOut_1831 = function (P_p) 
-    // ParameterSymbol=p$1830: Argument:RefSymbol=LessThan$1283:(0/2), Argument:RefSymbol=Pow2$1269:(0/1), Argument:RefSymbol=LessThan$1283:(0/2), Argument:RefSymbol=Pow2$1269:(0/1), Argument:RefSymbol=Add$169:(0/2), Argument:RefSymbol=LessThan$1283:(0/2), Argument:RefSymbol=Pow2$1269:(0/1), Argument:RefSymbol=Add$169:(0/2), Argument:RefSymbol=Pow2$1269:(0/1), Argument:RefSymbol=Add$169:(0/2)
+    // ParameterSymbol=p$1830: Argument:Ref=>FunctionGroupSymbol=LessThan$1283:(0/2), Argument:Ref=>FunctionGroupSymbol=Pow2$1269:(0/1), Argument:Ref=>FunctionGroupSymbol=LessThan$1283:(0/2), Argument:Ref=>FunctionGroupSymbol=Pow2$1269:(0/1), Argument:Ref=>FunctionGroupSymbol=Add$169:(0/2), Argument:Ref=>FunctionGroupSymbol=LessThan$1283:(0/2), Argument:Ref=>FunctionGroupSymbol=Pow2$1269:(0/1), Argument:Ref=>FunctionGroupSymbol=Add$169:(0/2), Argument:Ref=>FunctionGroupSymbol=Pow2$1269:(0/1), Argument:Ref=>FunctionGroupSymbol=Add$169:(0/2)
     // Candidates = Comparable,Numerical,Arithmetic,ScalarArithmetic
-    // Called function: RefSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
-    // Called function: RefSymbol=Pow2$1269: candidates = Numerical_135.Pow2_1268
-    // Called function: RefSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
-    // Called function: RefSymbol=Pow2$1269: candidates = Numerical_135.Pow2_1268
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
-    // Called function: RefSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
-    // Called function: RefSymbol=Pow2$1269: candidates = Numerical_135.Pow2_1268
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
-    // Called function: RefSymbol=Pow2$1269: candidates = Numerical_135.Pow2_1268
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
-    // Called function: RefSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: RefSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
-    // Called function: RefSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Pow2$1269: candidates = Numerical_135.Pow2_1268
+    // Called function: Ref=>FunctionGroupSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
+    // Called function: Ref=>FunctionGroupSymbol=Pow2$1269: candidates = Numerical_135.Pow2_1268
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
+    // Called function: Ref=>FunctionGroupSymbol=Pow2$1269: candidates = Numerical_135.Pow2_1268
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Subtract$171: candidates = ScalarArithmetic_20.Subtract_170
+    // Called function: Ref=>FunctionGroupSymbol=Pow2$1269: candidates = Numerical_135.Pow2_1268
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
     { return P_LessThan(P_p, P_Divide(4, 11))
         ? P_Multiply(121, P_Divide(P_Pow2(P_p), 16))
         : P_LessThan(P_p, P_Divide(8, 11))
@@ -2741,9 +2741,9 @@ class P_Easings
 
     ; };
     static P_BounceEaseInOut_1833 = function (P_p) 
-    // ParameterSymbol=p$1832: Argument:RefSymbol=BlendEaseFunc$1337:(0/3)
+    // ParameterSymbol=p$1832: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
     // Candidates = Easings
-    // Called function: RefSymbol=BlendEaseFunc$1337: candidates = Easings_140.BlendEaseFunc_1336
+    // Called function: Ref=>FunctionGroupSymbol=BlendEaseFunc$1337: candidates = Easings_140.BlendEaseFunc_1336
     { return P_BlendEaseFunc(P_p, P_BounceEaseIn, P_BounceEaseOut); };
 }
 class P_Intrinsics

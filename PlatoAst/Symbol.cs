@@ -65,7 +65,7 @@ namespace PlatoAst
                   throw new Exception("No definition provided");
         }
 
-        public override string ToString() => $"{GetType().Name}={Name}${Id}:{Type}";
+        public override string ToString() => $"Ref=>{Def}";
 
         // References have no children 
         public override IReadOnlyList<Symbol> Children => Array.Empty<Symbol>();
