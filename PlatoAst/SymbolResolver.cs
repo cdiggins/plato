@@ -27,7 +27,7 @@ namespace PlatoAst
         {
             BindPredefined("intrinsic");
             BindPredefined("Tuple");
-            BindType("Self", Primitives.Self);
+            BindType("Self", PrimitiveTypes.Self);
         }
 
         public void BindPredefined(string name)
@@ -44,6 +44,7 @@ namespace PlatoAst
         public T BindType<T>(string name, T value) where T : Symbol
         {
             TypeBindingsScope = TypeBindingsScope.Bind(name, value);
+            BindValue(name, value);
             return value;
         }
 
@@ -60,7 +61,7 @@ namespace PlatoAst
             return BindValue(name, fgs);
         }
 
-        public RefSymbol GetValue(AstNode location, Scope scope, string name)
+        public RefSymbol GetValue(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new Exception("Invalid variable name");
@@ -112,7 +113,7 @@ namespace PlatoAst
                 case AstAssign astAssign:
                     return BindValue(astAssign.Var,
                         new AssignmentSymbol(
-                            GetValue(node, ValueBindingsScope, astAssign.Var),
+                            GetValue(astAssign.Var),
                             Resolve(astAssign.Value)));
 
                 case AstBlock astBlock:
@@ -158,7 +159,7 @@ namespace PlatoAst
                     return Scoped(() => Resolve(astExpressionStatement.Expression));
                     
                 case AstIdentifier astIdentifier:
-                    return GetValue(node, ValueBindingsScope, astIdentifier.Text);
+                    return GetValue(astIdentifier.Text);
 
                 case AstInvoke astInvoke:
                 {
@@ -177,7 +178,7 @@ namespace PlatoAst
                     var ps = astLambda.Parameters.Select(Resolve).ToArray();
                     var body = Resolve(astLambda.Body);
                     var r = new FunctionSymbol("__lambda__",
-                        Primitives.Lambda.ToRef, body, ps);
+                        PrimitiveTypes.Lambda.ToRef, body, ps);
                     return r;
                 }
 

@@ -7,6 +7,8 @@ namespace PlatoAst
 {
     public class SymbolWriterPlatoHtml: CodeBuilder<SymbolWriterPlatoHtml>
     {
+        public const bool UseOperators = true;
+
         public TypeGuesser TypeGuesser { get; }
 
         public SymbolWriterPlatoHtml(TypeGuesser tg)
@@ -67,6 +69,31 @@ namespace PlatoAst
                 return this;
 
             return Write(" " + Delimiter(":") + " " + Type(typeRef.Name));
+        }
+
+        public SymbolWriterPlatoHtml Write(FunctionCallSymbol functionCall)
+        {
+            if (UseOperators && functionCall.Function is RefSymbol rs)
+            {
+                if (OperatorNameLookup.NamesToBinaryOperators.ContainsKey(rs.Name)
+                    && functionCall.Args.Count > 1)
+                {
+                    var op = OperatorNameLookup.NamesToBinaryOperators[rs.Name];
+                    return Write(Delimiter("("))
+                        .Write(functionCall.Args[0]).Write(op.Pad()).Write(functionCall.Args[1])
+                        .Write(Delimiter(")"));
+                }
+                if (OperatorNameLookup.NamesToUnaryOperators.ContainsKey(rs.Name))
+                {
+                    var op = OperatorNameLookup.NamesToUnaryOperators[rs.Name];
+                    return Write(op).Write(functionCall.Args[0]);
+                }
+            }
+
+            return functionCall.Args.Count > 0
+                ? Write(functionCall.Args[0]).Write(Operator("."))
+                    .Write(functionCall.Function).WriteFunctionArgs(functionCall.Args.Skip(1))
+                : Write(functionCall.Function);
         }
 
         public SymbolWriterPlatoHtml Write(FunctionSymbol function)
@@ -196,11 +223,7 @@ namespace PlatoAst
                     return Write(function);
                     
                 case FunctionCallSymbol functionResult:
-                    return
-                        functionResult.Args.Count > 0
-                            ? Write(functionResult.Args[0]).Write(Operator("."))
-                                .Write(functionResult.Function).WriteFunctionArgs(functionResult.Args.Skip(1))
-                            : Write(functionResult.Function); 
+                    return Write(functionResult);
 
                 case LiteralSymbol literal:
                     return Write(Literal(literal.Value.ToString()));

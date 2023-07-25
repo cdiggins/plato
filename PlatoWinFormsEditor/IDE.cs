@@ -24,7 +24,7 @@ public class IDE
     {
         var inputFile1 = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato";
         var inputFile2 = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\types.plato";
-        var inputFile3 = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\modules.plato";
+        var inputFile3 = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato";
         var input1 = File.ReadAllText(inputFile1);
         var input2 = File.ReadAllText(inputFile2);
         var input3 = File.ReadAllText(inputFile3);

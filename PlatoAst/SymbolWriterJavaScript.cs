@@ -168,7 +168,7 @@ namespace PlatoAst
                         .WriteCommaList(functionCall.Args).Write(Delimiter(")"));
 
                 case LiteralSymbol literal:
-                    return Write(Literal(literal.Value.ToString()));
+                    return Write(Literal(literal.Value.ToLiteralString()));
 
                 case MethodDefSymbol methodDef:
                     throw new Exception("Not implemented");

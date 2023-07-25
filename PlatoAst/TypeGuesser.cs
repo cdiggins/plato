@@ -94,7 +94,7 @@ namespace PlatoAst
             if (constraints.Any(c => c is FunctionCallConstraint))
             {
                 // TODO: create the correct function 
-                return new[] { Primitives.Function };
+                return new[] { PrimitiveTypes.Function };
             }
 
             var decls = constraints.OfType<DeclaredConstraint>().ToList();
@@ -121,7 +121,7 @@ namespace PlatoAst
             // TODO: remove duplicates 
 
             if (candidates.Count == 0)
-                candidates.Add(Primitives.Any);
+                candidates.Add(PrimitiveTypes.Any);
 
             candidates = candidates.Distinct().ToList();
 

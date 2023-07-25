@@ -85,7 +85,7 @@ namespace PlatoAst
         public override IReadOnlyList<Symbol> Children => Array.Empty<Symbol>();
     }
 
-    public static class Primitives
+    public static class PrimitiveTypes
     {
         public static TypeDefSymbol Kind = Create("Kind");
 
@@ -260,7 +260,7 @@ namespace PlatoAst
         }
 
         public static TypeRefSymbol CreateFunction(params TypeRefSymbol[] types)
-            => new TypeRefSymbol(Primitives.Function, types);
+            => new TypeRefSymbol(PrimitiveTypes.Function, types);
     }
 
     public abstract class MemberDefSymbol : DefSymbol

@@ -3,7 +3,7 @@
     public static class WriterExtensions
     {
         public static string Pad(this string s)
-            => s + " ";
+            => " " + s + " ";
         
         public static string PadRight(this string s)
             => s + " ";
@@ -43,6 +43,11 @@
             return r.ToString();
         }
 
-
+        public static string ToLiteralString(this object obj)
+        {
+            if (obj is string s)
+                return $"\"{s}\"";
+            return $"{obj}";
+        }
     }
 }

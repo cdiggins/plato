@@ -10,4 +10,4 @@
 }
 
 let v = new P_Vector2D(3, 4);
-console.log('%o', v.P_X(v));
+console.log('%o', P_Vector2D.P_X(v));
