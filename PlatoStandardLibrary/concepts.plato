@@ -1,138 +1,143 @@
 
-concept Interval<T: Numerical>
-    inherits Vector<T>
-{
-    field Min: T;
-    field Max: T;  
-}
 
 concept Vector<T: Numerical> 
     inherits Array<T>, Value, Numerical, Arithmetic<T>
 {
+    Count(v: Vector): Count
+        => Self.FieldTypes.Count;
+        
+    At(v: Vector, n: Index): T
+        => v.FieldValues[n];
 }
 
 concept Measure
     inherits Value, ScalarArithemetic<Number>, Equatable, Comparable, Magnitude
 { 
-    field Value: Number;
+    Value(x: Self): Number
+        => x.FieldValues[0];
 }
 
 concept Numerical 
     inherits Value, Arithmetic, Equatable, Comparable, Magnitude
 {
-    function FromNumber(x: Number): Self
-        = x.FieldValues.FromNumber(x);
 }
 
 concept Magnitude
     inherits Value
 {
-    function Magnitude(x: Self): Number
-        = x.FieldValues.Square.Sum.SquareRoot;
+    Magnitude(x: Self): Number
+        => x.FieldValues.Square.Sum.SquareRoot;
 }
 
 concept Comparable
     inherits Value
 {
-    function Compare(a: Self, b: Self): Integer
-        = a.Magnitude < b.Magnitude ? -1 : a.Magnitude > b.Magnitude ? 1 : 0;
+    Compare(a: Self, b: Self): Integer
+        => a.Magnitude < b.Magnitude ? -1 : a.Magnitude > b.Magnitude ? 1 : 0;
 }
 
 concept Equatable
     inherits Value
 {
-    function Equals(a: Self, b: Self): Boolean
-        = a.FieldValues.Equals(b.FieldValues).All;
+    Equals(a: Self, b: Self): Boolean
+        => a.FieldValues.Equals(b.FieldValues).All;
 }
 
 concept Arithmetic
     inherits Value
 { 
-    function Add(self: Self, other: Self): Self
-        = self.FieldValues.Add(other.FieldValues);
+    Add(self: Self, other: Self): Self
+        => self.FieldValues.Add(other.FieldValues);
 
-    function Negative(self: Self): Self
-        = self.FieldValues.Negative;
+    Negative(self: Self): Self
+        => self.FieldValues.Negative;
 
-    function Reciprocal(self: Self): Self
-        = self.FieldValues.Reciprocal;
+    Reciprocal(self: Self): Self
+        => self.FieldValues.Reciprocal;
     
-    function Multiply(self: Self, other: Self): Self
-        = self.FieldValues.Add(other.FieldValues);
+    Multiply(self: Self, other: Self): Self
+        => self.FieldValues.Add(other.FieldValues);
 
-    function Divide(self: Self, other: Self): Self
-        = self.FieldValues.Divide(other.FieldValues);
+    Divide(self: Self, other: Self): Self
+        => self.FieldValues.Divide(other.FieldValues);
 
-    function Modulo(self: Self, other: Self): Self
-        = self.FieldValues.Modulo(other.FieldValues);
+    Modulo(self: Self, other: Self): Self
+        => self.FieldValues.Modulo(other.FieldValues);
 }
 
 concept ScalarArithmetic<T>
     inherits Value
 {
-    function Add(self: Self, scalar: T): Self
-        = self.FieldValues.Add(scalar);
+    Add(self: Self, scalar: T): Self
+        => self.FieldValues.Add(scalar);
     
-    function Subtract(self: Self, scalar: T): Self
-        = self.Add(scalar.Negative);
+    Subtract(self: Self, scalar: T): Self
+        => self.Add(scalar.Negative);
 
-    function Multiply(self: Self, scalar: T): Self
-        = self.FieldValues.Multiply(scalar);
+    Multiply(self: Self, scalar: T): Self
+        => self.FieldValues.Multiply(scalar);
     
-    function Divide(self: Self, scalar: T): Self
-        = self.Multiply(scalar.Reciprocal);
+    Divide(self: Self, scalar: T): Self
+        => self.Multiply(scalar.Reciprocal);
 
-    function Modulo(self: Self, scalar: T): Self
-        = self.FieldValues.Modulo(scalar);
+    Modulo(self: Self, scalar: T): Self
+        => self.FieldValues.Modulo(scalar);
 }
 
 concept Boolean
 {
-    function And(a: Self, b: Self): Self 
-        = intrinsic;
+    And(a: Self, b: Self): Self 
+        => a.FieldValues.And(b.FieldValues);
 
-    function Or(a: Self, b: Self) 
-        = intrinsic;
+    Or(a: Self, b: Self) 
+        => a.FieldValues.Or(b.FieldValues);
     
-    function Not(a: Self): Self 
-        = intrinsic;
+    Not(a: Self): Self 
+        => a.FieldValues.Not;
 }
 
 concept Value 
 {
-    function Type(): Type
-        = intrinsic;
+    Type(): Type
+        => intrinsic;
 
-    function FieldTypes(): Array<Type>
-        = intrinsic;
+    FieldTypes(): Array<Type>
+        => intrinsic;
 
-    function FieldNames(): Array<String>
-        = intrinsic;
+    FieldNames(): Array<String>
+        => intrinsic;
 
-    function FieldValues(self: Self): Array<Value>
-        = intrinsic;
+    FieldValues(self: Self): Array<Value>
+        => intrinsic;
 
-    function Zero(): Self
-        = FieldTypes.Zero;
+    Zero(): Self
+        => FieldTypes.Zero;
 
-    function One(): Self
-        = FieldTypes.One;
+    One(): Self
+        => FieldTypes.One;
 
-    function Default(): Self
-        = FieldTypes.Default;
+    Default(): Self
+        => FieldTypes.Default;
 
-    function MinValue(): Self
-        = FieldTypes.MinValue;
+    MinValue(): Self
+        => FieldTypes.MinValue;
 
-    function MaxValue(): Self
-        = FieldTypes.MaxValue;
+    MaxValue(): Self
+        => FieldTypes.MaxValue;
 
-    function ToString(x: Self): String
-        = FieldValues.JoinStrings(",");
+    ToString(x: Self): String
+        => FieldValues.JoinStrings(",");
+}
+
+concept Interval<T: Numerical>
+    inherits Vector<T>
+{
+    Min(x: Self): T;
+    Max(x: Self): T;
 }
 
 concept Array<T: Any>
 {
-    field Count: Count;    
-    function At(n: Index): T;
+    Count(xs: Self): Count;
+    At(xs: Self, n: Index): T;
 }

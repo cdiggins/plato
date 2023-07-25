@@ -1,808 +1,809 @@
 type Integer
-  implements Numerical
+    implements Numerical
 {
-    field Value: Integer;
+    Value: Integer;
 }
 
 type Count
-  implements Numerical
+    implements Numerical
 {
-    field Value: Integer;
+    Value: Integer;
 }
 
 type Index
-  implements Value
+    implements Value
 {
-    field Value: Integer;
+    Value: Integer;
 }
 
 type Number
-  implements Numerical
+    implements Numerical
 {
-    field Value: Float64;
+    Value: Float64;
 }
 
 type Unit
-  implements Numerical
+    implements Numerical
 {
-    field Value: Number;
+    Value: Number;
 }
 
 type Percent
-  implements Numerical
+    implements Numerical
 {
-    field Value: Number;
+    Value: Number;
 }
 
 type Quaternion
-  implements Value
+    implements Value
 {
-    field X: Number;
-    field Y: Number;
-    field Z: Number;
-    field W: Number;
+    X: Number;
+    Y: Number;
+    Z: Number;
+    W: Number;
 }
 
 type Unit2D
-  implements Value
+    implements Value
 {
-    field X: Unit;
-    field Y: Unit;
+    X: Unit;
+    Y: Unit;
 }
 
 type Unit3D
-  implements Value
+    implements Value
 {
-    field X: Unit;
-    field Y: Unit;
-    field Z: Unit;
+    X: Unit;
+    Y: Unit;
+    Z: Unit;
 }
 
 type Direction3D
-  implements Value
+    implements Value
 {
-    field Value: Unit3D;
+    Value: Unit3D;
 }
 
 type AxisAngle
-  implements Value
+    implements Value
 {
-    field Axis: Unit3D;
-    field Angle: Angle;
+    Axis: Unit3D;
+    Angle: Angle;
 }
 
 type EulerAngles
-  implements Value
+    implements Value
 {
-    field Yaw: Angle;
-    field Pitch: Angle;
-    field Roll: Angle;
+    Yaw: Angle;
+    Pitch: Angle;
+    Roll: Angle;
 }
 
 type Rotation3D
-  implements Value
+    implements Value
 {
-    field Quaternion: Quaternion;
+    Quaternion: Quaternion;
 }
 
 type Vector2D
-  implements Vector
+    implements Vector
 {
-    field X: Number;
-    field Y: Number;
+    X: Number;
+    Y: Number;
 }
 
 type Vector3D
-  implements Vector
+    implements Vector
 {
-    field X: Number;
-    field Y: Number;
-    field Z: Number;
+    X: Number;
+    Y: Number;
+    Z: Number;
 }
 
 type Vector4D
-  implements Vector
+    implements Vector
 {
-    field X: Number;
-    field Y: Number;
-    field Z: Number;
-    field W: Number;
+    X: Number;
+    Y: Number;
+    Z: Number;
+    W: Number;
 }
 
 type Orientation3D
-  implements Value
+    implements Value
 {
-    field Value: Rotation3D;
+    Value: Rotation3D;
 }
 
 type Pose2D
-  implements Value
+    implements Value
 {
-    field Position: Vector3D;
-    field Orientation: Orientation3D;
+    Position: Vector3D;
+    Orientation: Orientation3D;
 }
 
 type Pose3D
-  implements Value
+    implements Value
 {
-    field Position: Vector3D;
-    field Orientation: Orientation3D;
+    Position: Vector3D;
+    Orientation: Orientation3D;
 }
 
 type Transform3D
-  implements Value
+    implements Value
 {
-    field Translation: Vector3D;
-    field Rotation: Rotation3D;
-    field Scale: Vector3D;
+    Translation: Vector3D;
+    Rotation: Rotation3D;
+    Scale: Vector3D;
 }
 
 type Transform2D
-  implements Value
+    implements Value
 {
-    field Translation: Vector2D;
-    field Rotation: Angle;
-    field Scale: Vector2D;
+    Translation: Vector2D;
+    Rotation: Angle;
+    Scale: Vector2D;
 }
 
 type AlignedBox2D
-  implements Interval
+    implements Interval
 {
-    field A: Vector2D;
-    field B: Vector2D;
+    A: Vector2D;
+    B: Vector2D;
 }
 
 type AlignedBox3D
-  implements Interval
+    implements Interval
 {
-    field A: Vector3D;
-    field B: Vector3D;
+    A: Vector3D;
+    B: Vector3D;
 }
 
 type Complex
-  implements Vector
+    implements Vector
 {
-    field Real: Number;
-    field Imaginary: Number;
+    Real: Number;
+    Imaginary: Number;
 }
 
 type Ray3D
-  implements Value
+    implements Value
 {
-    field Direction: Vector3D;
-    field Position: Point3D;
+    Direction: Vector3D;
+    Position: Point3D;
 }
 
 type Ray2D
-  implements Value
+    implements Value
 {
-    field Direction: Vector2D;
-    field Position: Point2D;
+    Direction: Vector2D;
+    Position: Point2D;
 }
 
 type Sphere
-  implements Value
+    implements Value
 {
-    field Center: Point3D;
-    field Radius: Number;
+    Center: Point3D;
+    Radius: Number;
 }
 
 type Plane
-  implements Value
+    implements Value
 {
-    field Normal: Unit3D;
-    field D: Number;
+    Normal: Unit3D;
+    D: Number;
 }
 
 type Triangle3D
-  implements Value
+    implements Value
 {
-    field A: Point3D;
-    field B: Point3D;
-    field C: Point3D;
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
 }
 
 type Triangle2D
-  implements Value
+    implements Value
 {
-    field A: Point2D;
-    field B: Point2D;
-    field C: Point2D;
+    A: Point2D;
+    B: Point2D;
+    C: Point2D;
 }
 
 type Quad3D
-  implements Value
+    implements Value
 {
-    field A: Point3D;
-    field B: Point3D;
-    field C: Point3D;
-    field D: Point3D;
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
+    D: Point3D;
 }
 
 type Quad2D
-  implements Value
+    implements Value
 {
-    field A: Point2D;
-    field B: Point2D;
-    field C: Point2D;
-    field D: Point2D;
+    A: Point2D;
+    B: Point2D;
+    C: Point2D;
+    D: Point2D;
 }
 
 type Point3D
-  implements Value
+    implements Value
 {
-    field Value: Vector3D;
+    Value: Vector3D;
 }
 
 type Point2D
-  implements Value
+    implements Value
 {
-    field Value: Vector2D;
+    Value: Vector2D;
 }
 
 type Line3D
-  implements Interval
+    implements Interval
 {
-    field A: Point3D;
-    field B: Point3D;
+    A: Point3D;
+    B: Point3D;
 }
 
 type Line2D
-  implements Interval
+    implements Interval
 {
-    field A: Point2D;
-    field B: Point2D;
+    A: Point2D;
+    B: Point2D;
 }
 
 // https://en.wikipedia.org/wiki/RGB_color_spaces
 type Color
-  implements Value
+    implements Value
 {
-    field R: Unit;
-    field G: Unit;
-    field B: Unit;
-    field A: Unit;
+    R: Unit;
+    G: Unit;
+    B: Unit;
+    A: Unit;
 }
 
 // https://en.wikipedia.org/wiki/CIELUV
 type ColorLUV
-  implements Value
+    implements Value
 {
-    field Lightness: Percent;
-    field U: Unit;
-    field V: Unit;
+    Lightness: Percent;
+    U: Unit;
+    V: Unit;
 }
 
 // https://en.wikipedia.org/wiki/CIELAB_color_space
 type ColorLAB
-  implements Value
+    implements Value
 {
-    field Lightness: Percent;
-    field A: Integer;
-    field B: Integer;
+    Lightness: Percent;
+    A: Integer;
+    B: Integer;
 }
 
 // https://en.wikipedia.org/wiki/CIELAB_color_space#Cylindrical_model
 type ColorLCh
-  implements Value
+    implements Value
 {
-    field Lightness: Percent;
-    field ChromaHue: PolarCoordinate;
+    Lightness: Percent;
+    ChromaHue: PolarCoordinate;
 }
 
 // https://en.wikipedia.org/wiki/HSL_and_HSV
 type ColorHSV
-  implements Value
+    implements Value
 {
-    field Hue: Angle;
-    field S: Unit;
-    field V: Unit;
+    Hue: Angle;
+    S: Unit;
+    V: Unit;
 }
 
 // https://en.wikipedia.org/wiki/HSL_and_HSV
 type ColorHSL
-  implements Value
+    implements Value
 {
-    field Hue: Angle;
-    field Saturation: Unit;
-    field Luminance: Unit;
+    Hue: Angle;
+    Saturation: Unit;
+    Luminance: Unit;
 }
 
 // https://en.wikipedia.org/wiki/YCbCr   
 type ColorYCbCr
-  implements Value
+    implements Value
 {
-    field Y: Unit;
-    field Cb: Unit;
-    field Cr: Unit;
+    Y: Unit;
+    Cb: Unit;
+    Cr: Unit;
 }
 
 // https://en.wikipedia.org/wiki/Spherical_coordinate_system    
 type SphericalCoordinate
-  implements Value
+    implements Value
 {
-    field Radius: Number;
-    field Azimuth: Angle;
-    field Polar: Angle;
+    Radius: Number;
+    Azimuth: Angle;
+    Polar: Angle;
 }
 
 // https://en.wikipedia.org/wiki/Polar_coordinate_system   
 type PolarCoordinate
-  implements Value
+    implements Value
 {
-    field Radius: Number;
-    field Angle: Angle;
+    Radius: Number;
+    Angle: Angle;
 }
 
 // https://en.wikipedia.org/wiki/Log-polar_coordinates    
 type LogPolarCoordinate
-  implements Value
+    implements Value
 {
-    field Rho: Number;
-    field Azimuth: Angle;
+    Rho: Number;
+    Azimuth: Angle;
 }
 
 // https://en.wikipedia.org/wiki/Cylindrical_coordinate_system    
 type CylindricalCoordinate
-  implements Value
+    implements Value
 {
-    field RadialDistance: Number;
-    field Azimuth: Angle;
-    field Height: Number;
+    RadialDistance: Number;
+    Azimuth: Angle;
+    Height: Number;
 }
 
 // https://en.wikipedia.org/wiki/Horizontal_coordinate_system    
 type HorizontalCoordinate
-  implements Value
+    implements Value
 {
-    field Radius: Number;
-    field Azimuth: Angle;
-    field Height: Number;
+    Radius: Number;
+    Azimuth: Angle;
+    Height: Number;
 }
 
 // https://en.wikipedia.org/wiki/Geographic_coordinate_system    
 type GeoCoordinate
-  implements Value
+    implements Value
 {
-    field Latitude: Angle;
-    field Longitude: Angle;
+    Latitude: Angle;
+    Longitude: Angle;
 }
 
 // https://en.wikipedia.org/wiki/Geographic_coordinate_system    
 type GeoCoordinateWithAltitude
-  implements Value
+    implements Value
 {
-    field Coordinate: GeoCoordinate;
-    field Altitude: Number;
+    Coordinate: GeoCoordinate;
+    Altitude: Number;
 }
 
 type Circle
-  implements Value
+    implements Value
 {
-    field Center: Point2D;
-    field Radius: Number;
+    Center: Point2D;
+    Radius: Number;
 }
 
 type Chord
-  implements Value
+    implements Value
 {
-    field Circle: Circle;
-    field Arc: Arc;
+    Circle: Circle;
+    Arc: Arc;
 }
 
 type Size2D
-  implements Value
+    implements Value
 {
-    field Width: Number;
-    field Height: Number;
+    Width: Number;
+    Height: Number;
 }
 
 type Size3D
-  implements Value
+    implements Value
 {
-    field Width: Number;
-    field Height: Number;
-    field Depth: Number;
+    Width: Number;
+    Height: Number;
+    Depth: Number;
 }
 
 type Rectangle2D
-  implements Value
+    implements Value
 {
-    field Center: Point2D;
-    field Size: Size2D;
+    Center: Point2D;
+    Size: Size2D;
 }
 
 type Proportion
-  implements Numerical
+    implements Numerical
 {
-    field Value: Number;
+    Value: Number;
 }
 
 type Fraction
-  implements Value
+    implements Value
 {
-    field Numerator: Number;
-    field Denominator: Number;
+    Numerator: Number;
+    Denominator: Number;
 }
 
 type Angle
-  implements Measure
+    implements Measure
 {
-    field Radians: Number;
+    Radians: Number;
 }
 
 type Length
-  implements Measure
+    implements Measure
 {
-    field Meters: Number;
+    Meters: Number;
 }
 
 type Mass
-  implements Measure
+    implements Measure
 {
-    field Kilograms: Number;
+    Kilograms: Number;
 }
 
 type Temperature
-  implements Measure
+    implements Measure
 {
-    field Celsius: Number;
+    Celsius: Number;
 }
 
 type TimeSpan
-  implements Measure
+    implements Measure
 {
-    field Seconds: Number;
+    Seconds: Number;
 }
 
 type TimeRange
-  implements Interval
+    implements Interval
 {
-    field Min: DateTime;
-    field Max: DateTime;
+    Min: DateTime;
+    Max: DateTime;
 }
 
 type DateTime
-  implements Value
+    implements Value
 {
 }
 
 type AnglePair
-  implements Interval
+    implements Interval
 {
-    field Start: Angle;
-    field End: Angle;
+    Start: Angle;
+    End: Angle;
 }
 
 type Ring
-  implements Number
+    implements Number
 {
-    field Circle: Circle;
-    field InnerRadius: Number;
+    Circle: Circle;
+    InnerRadius: Number;
 }
 
 type Arc
-  implements Value
+    implements Value
 {
-    field Angles: AnglePair;
-    field Cirlce: Circle;
+    Angles: AnglePair;
+    Cirlce: Circle;
 }
 
 type TimeInterval
-  implements Interval
+    implements Interval
 {
-    field Start: TimeSpan;
-    field End: TimeSpan;
+    Start: TimeSpan;
+    End: TimeSpan;
 }
 
 type RealInterval
-  implements Interval
+    implements Interval
 {
-    field A: Number;
-    field B: Number;
+    A: Number;
+    B: Number;
 }
 
 type Interval2D
-  implements Interval
+    implements Interval
 {
-    field A: Vector2D;
-    field B: Vector2D;
+    A: Vector2D;
+    B: Vector2D;
 }
 
 type Interval3D
-  implements Interval
+    implements Interval
 {
-    field A: Vector3D;
-    field B: Vector3D;
+    A: Vector3D;
+    B: Vector3D;
 }
 
 type Capsule
-  implements Value
+    implements Value
 {
-    field Line: Line3D;
-    field Radius: Number;
+    Line: Line3D;
+    Radius: Number;
 }
 
 // https://mindcontrol.org/~hplus/graphics/matrix-layout.html
 // Column major layout in memory 
 // Translation component is in Column4.XYZ    
 type Matrix3D
-  implements Value
+    implements Value
 {
-    field Column1: Vector4D;
-    field Column2: Vector4D;
-    field Column3: Vector4D;
-    field Column4: Vector4D;
+    Column1: Vector4D;
+    Column2: Vector4D;
+    Column3: Vector4D;
+    Column4: Vector4D;
 }
 
 type Cylinder
-  implements Value
+    implements Value
 {
-    field Line: Line3D;
-    field Radius: Number;
+    Line: Line3D;
+    Radius: Number;
 }
 
 type Cone
-  implements Value
+    implements Value
 {
-    field Line: Line3D;
-    field Radius: Number;
+    Line: Line3D;
+    Radius: Number;
 }
 
 type Tube
-  implements Value
+    implements Value
 {
-    field Line: Line3D;
-    field InnerRadius: Number;
-    field OuterRadius: Number;
+    Line: Line3D;
+    InnerRadius: Number;
+    OuterRadius: Number;
 }
 
 type ConeSegment
-  implements Value
+    implements Value
 {
-    field Line: Line3D;
-    field Radius1: Number;
-    field Radius2: Number;
+    Line: Line3D;
+    Radius1: Number;
+    Radius2: Number;
 }
 
 type Box2D
-  implements Value
+    implements Value
 {
-    field Center: Point2D;
-    field Rotation: Angle;
-    field Extent: Size2D;
+    Center: Point2D;
+    Rotation: Angle;
+    Extent: Size2D;
 }
 
 type Box3D
-  implements Value
+    implements Value
 {
-    field Center: Point3D;
-    field Rotation: Rotation3D;
-    field Extent: Size3D;
+    Center: Point3D;
+    Rotation: Rotation3D;
+    Extent: Size3D;
 }
 
  // https://en.wikipedia.org/wiki/B%C3%A9zier_triangle    
 type CubicBezierTriangle3D
-  implements Value
+    implements Value
 {
-    field A: Point3D;
-    field B: Point3D;
-    field C: Point3D;
-    field A2B: Point3D;
-    field AB2: Point3D;
-    field B2C: Point3D;
-    field BC2: Point3D;
-    field AC2: Point3D;
-    field A2C: Point3D;
-    field ABC: Point3D;
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
+    A2B: Point3D;
+    AB2: Point3D;
+    B2C: Point3D;
+    BC2: Point3D;
+    AC2: Point3D;
+    A2C: Point3D;
+    ABC: Point3D;
 }
 
 // https://en.wikipedia.org/wiki/B%C3%A9zier_curve    
 type CubicBezier2D
-  implements Value
+    implements Value
 {
-    field A: Point2D;
-    field B: Point2D;
-    field C: Point2D;
-    field D: Point2D;
+    A: Point2D;
+    B: Point2D;
+    C: Point2D;
+    D: Point2D;
 }
 
 // https://en.wikipedia.org/wiki/UV_mapping    
 type UV
-  implements Vector
+    implements Vector
 {
-    field U: Unit;
-    field V: Unit;
+    U: Unit;
+    V: Unit;
 }
 
 type UVW
-  implements Vector
+    implements Vector
 {
-    field U: Unit;
-    field V: Unit;
-    field W: Unit;
+    U: Unit;
+    V: Unit;
+    W: Unit;
 }
 
 // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
 type CubicBezier3D
-  implements Value
+    implements Value
 {
-    field A: Point3D;
-    field B: Point3D;
-    field C: Point3D;
-    field D: Point3D;
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
+    D: Point3D;
 }
 
 // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
 type QuadraticBezier2D
-  implements Value
+    implements Value
 {
-    field A: Point2D;
-    field B: Point2D;
-    field C: Point2D;
+    A: Point2D;
+    B: Point2D;
+    C: Point2D;
 }
 
 // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
 type QuadraticBezier3D
-  implements Value
+    implements Value
 {
-    field A: Point3D;
-    field B: Point3D;
-    field C: Point3D;
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
 }
 
 // https://en.wikipedia.org/wiki/Area
 type Area
-  implements Measure
+    implements Measure
 {
-    field MetersSquared: Number;
+    MetersSquared: Number;
 }
 
 // https://en.wikipedia.org/wiki/Volume
 type Volume
-  implements Measure
+    implements Measure
 {
-    field MetersCubed: Number;
+    MetersCubed: Number;
 }
 
 // https://en.wikipedia.org/wiki/Velocity   
 type Velocity
-  implements Measure
+    implements Measure
 {
-    field MetersPerSecond: Number;
+    MetersPerSecond: Number;
 }
 
 // https://en.wikipedia.org/wiki/Acceleration
 type Acceleration
-  implements Measure
+    implements Measure
 {
-    field MetersPerSecondSquared: Number;
+    MetersPerSecondSquared: Number;
 }
 
 // https://en.wikipedia.org/wiki/Force
 type Force
-  implements Measure
+    implements Measure
 {
-    field Newtons: Number;
+    Newtons: Number;
 }
 
 // https://en.wikipedia.org/wiki/Pressure  
 type Pressure
-  implements Measure
+    implements Measure
 {
-    field Pascals: Number;
+    Pascals: Number;
 }
 
 // https://en.wikipedia.org/wiki/Energy   
 type Energy
-  implements Measure
+    implements Measure
 {
-    field Joules: Number;
+    Joules: Number;
 }
 
 // https://en.wikipedia.org/wiki/Byte    
 type Memory
-  implements Measure
+    implements Measure
 {
-    field Bytes: Count;
+    Bytes: Count;
 }
 
 // https://en.wikipedia.org/wiki/Frequency    
 type Frequency
-  implements Measure
+    implements Measure
 {
-    field Hertz: Number;
+    Hertz: Number;
 }
 
 // https://en.wikipedia.org/wiki/Loudness
 type Loudness
-  implements Measure
+    implements Measure
 {
-    field Decibels: Number;
+    Decibels: Number;
 }
 
 // https://en.wikipedia.org/wiki/Luminous_intensity    
 type LuminousIntensity
-  implements Measure
+    implements Measure
 {
-    field Candelas: Number;
+    Candelas: Number;
 }
 
 // https://en.wikipedia.org/wiki/Electric_potential    
 type ElectricPotential
-  implements Measure
+    implements Measure
 {
-    field Volts: Number;
+    Volts: Number;
 }
 
 // https://en.wikipedia.org/wiki/Electric_charge
 type ElectricCharge
-  implements Measure
+    implements Measure
 {
-    field Columbs: Number;
+    Columbs: Number;
 }
 
 // https://en.wikipedia.org/wiki/Electric_current   
 type ElectricCurrent
-  implements Measure
+    implements Measure
 {
-    field Amperes: Number;
+    Amperes: Number;
 }
 
 // https://en.wikipedia.org/wiki/Electrical_resistance_and_conductance    
 type ElectricResistance
-  implements Measure
+    implements Measure
 {
-    field Ohms: Number;
+    Ohms: Number;
 }
 
 // https://en.wikipedia.org/wiki/Power_(physics)    
 type Power
-  implements Measure
+    implements Measure
 {
-    field Watts: Number;
+    Watts: Number;
 }
 
 // https://en.wikipedia.org/wiki/Density    
 type Density
-  implements Measure
+    implements Measure
 {
-    field KilogramsPerMeterCubed: Number;
+    KilogramsPerMeterCubed: Number;
 }
 
 // https://en.wikipedia.org/wiki/Normal_distribution    
 type NormalDistribution
-  implements Value
+    implements Value
 {
-    field Mean: Number;
-    field StandardDeviation: Number;
+    Mean: Number;
+    StandardDeviation: Number;
 }
 
 // https://en.wikipedia.org/wiki/Poisson_distribution    
 type PoissonDistribution
-  implements Value
+    implements Value
 {
-    field Expected: Number;
-    field Occurrences: Count;
+    Expected: Number;
+    Occurrences: Count;
 }
 
 // https://en.wikipedia.org/wiki/Bernoulli_distribution    
 type BernoulliDistribution
-  implements Value
+    implements Value
 {
-    field P: Probability;
+    P: Probability;
 }
 
 type Probability
-  implements Numerical
+    implements Numerical
 {
-    field Value: Number;
+    Value: Number;
 }
 
 // https://en.wikipedia.org/wiki/Binomial_distribution    
 type BinomialDistribution
-  implements Value
+    implements Value
 {
-    field Trials: Count;
-    field P: Probability;
+    Trials: Count;
+    P: Probability;
 }
+

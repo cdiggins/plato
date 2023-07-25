@@ -1,25 +1,24 @@
 <html><head><link rel="stylesheet" href="style.css"></head><body><pre>
-<span class='keyword'>concept</span> <span class='type'>Interval</span>
-    <span class='keyword'>inherits</span> <span class='type'>Vector</span>
-<span class='delimiter'>{</span>
-    <span class='declname'>Min</span> <span class='delimiter'>:</span> <span class='type'>T</span><span class='delimiter'>;</span>
-    <span class='declname'>Max</span> <span class='delimiter'>:</span> <span class='type'>T</span><span class='delimiter'>;</span>
-<span class='delimiter'>}</span>
 <span class='keyword'>concept</span> <span class='type'>Vector</span>
     <span class='keyword'>inherits</span> <span class='type'>Array</span><span class='delimiter'>,</span> <span class='type'>Value</span><span class='delimiter'>,</span> <span class='type'>Numerical</span><span class='delimiter'>,</span> <span class='type'>Arithmetic</span>
 <span class='delimiter'>{</span>
+    <span class='declname'>Count</span><span class='delimiter'>(</span><span class='variable'>v</span> <span class='delimiter'>:</span> <span class='type'>Vector</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Count</span> <span class='delimiter'>=></span> 
+        <span class='variable'>Self</span><span class='operator'>.</span><span class='variable'>FieldTypes</span><span class='operator'>.</span><span class='variable'>Count</span><span class='delimiter'>;</span>
+
+    <span class='declname'>At</span><span class='delimiter'>(</span><span class='variable'>v</span> <span class='delimiter'>:</span> <span class='type'>Vector</span><span class='delimiter'>,</span> <span class='variable'>n</span> <span class='delimiter'>:</span> <span class='type'>Index</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>T</span> <span class='delimiter'>=></span> 
+        <span class='variable'>v</span><span class='operator'>.</span><span class='variable'>FieldValues</span><span class='operator'>.</span><span class='variable'>At</span><span class='delimiter'>(</span><span class='variable'>n</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
+
 <span class='delimiter'>}</span>
 <span class='keyword'>concept</span> <span class='type'>Measure</span>
     <span class='keyword'>inherits</span> <span class='type'>Value</span><span class='delimiter'>,</span> <span class='type'>unknown</span><span class='delimiter'>,</span> <span class='type'>Equatable</span><span class='delimiter'>,</span> <span class='type'>Comparable</span><span class='delimiter'>,</span> <span class='type'>Magnitude</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Value</span><span class='delimiter'>(</span><span class='variable'>x</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Number</span> <span class='delimiter'>=></span> 
+        <span class='variable'>x</span><span class='operator'>.</span><span class='variable'>FieldValues</span><span class='operator'>.</span><span class='variable'>At</span><span class='delimiter'>(</span><span class='literal'>0</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
+
 <span class='delimiter'>}</span>
 <span class='keyword'>concept</span> <span class='type'>Numerical</span>
     <span class='keyword'>inherits</span> <span class='type'>Value</span><span class='delimiter'>,</span> <span class='type'>Arithmetic</span><span class='delimiter'>,</span> <span class='type'>Equatable</span><span class='delimiter'>,</span> <span class='type'>Comparable</span><span class='delimiter'>,</span> <span class='type'>Magnitude</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>FromNumber</span><span class='delimiter'>(</span><span class='variable'>x</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
-        <span class='variable'>x</span><span class='operator'>.</span><span class='variable'>FieldValues</span><span class='operator'>.</span><span class='variable'>FromNumber</span><span class='delimiter'>(</span><span class='variable'>x</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
-
 <span class='delimiter'>}</span>
 <span class='keyword'>concept</span> <span class='type'>Magnitude</span>
     <span class='keyword'>inherits</span> <span class='type'>Value</span>
@@ -90,13 +89,13 @@
 <span class='keyword'>concept</span> <span class='type'>Boolean</span>
 <span class='delimiter'>{</span>
     <span class='declname'>And</span><span class='delimiter'>(</span><span class='variable'>a</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>,</span> <span class='variable'>b</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
-        <span class='variable'>intrinsic</span><span class='delimiter'>;</span>
+        <span class='variable'>a</span><span class='operator'>.</span><span class='variable'>FieldValues</span><span class='operator'>.</span><span class='variable'>And</span><span class='delimiter'>(</span><span class='variable'>b</span><span class='operator'>.</span><span class='variable'>FieldValues</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
     <span class='declname'>Or</span><span class='delimiter'>(</span><span class='variable'>a</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>,</span> <span class='variable'>b</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>=></span> 
-        <span class='variable'>intrinsic</span><span class='delimiter'>;</span>
+        <span class='variable'>a</span><span class='operator'>.</span><span class='variable'>FieldValues</span><span class='operator'>.</span><span class='variable'>Or</span><span class='delimiter'>(</span><span class='variable'>b</span><span class='operator'>.</span><span class='variable'>FieldValues</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
     <span class='declname'>Not</span><span class='delimiter'>(</span><span class='variable'>a</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
-        <span class='variable'>intrinsic</span><span class='delimiter'>;</span>
+        <span class='variable'>a</span><span class='operator'>.</span><span class='variable'>FieldValues</span><span class='operator'>.</span><span class='variable'>Not</span><span class='delimiter'>;</span>
 
 <span class='delimiter'>}</span>
 <span class='keyword'>concept</span> <span class='type'>Value</span>
@@ -132,12 +131,24 @@
         <span class='variable'>FieldValues</span><span class='operator'>.</span><span class='variable'>JoinStrings</span><span class='delimiter'>(</span><span class='literal'>,</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
 <span class='delimiter'>}</span>
-<span class='keyword'>concept</span> <span class='type'>Array</span>
+<span class='keyword'>concept</span> <span class='type'>Interval</span>
+    <span class='keyword'>inherits</span> <span class='type'>Vector</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>At</span><span class='delimiter'>(</span><span class='variable'>n</span> <span class='delimiter'>:</span> <span class='type'>Index</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>T</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Min</span><span class='delimiter'>(</span><span class='variable'>x</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>T</span> <span class='delimiter'>=></span> 
         <span class='keyword'>null</span><span class='delimiter'>;</span>
 
-    <span class='declname'>Count</span> <span class='delimiter'>:</span> <span class='type'>Count</span><span class='delimiter'>;</span>
+    <span class='declname'>Max</span><span class='delimiter'>(</span><span class='variable'>x</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>T</span> <span class='delimiter'>=></span> 
+        <span class='keyword'>null</span><span class='delimiter'>;</span>
+
+<span class='delimiter'>}</span>
+<span class='keyword'>concept</span> <span class='type'>Array</span>
+<span class='delimiter'>{</span>
+    <span class='declname'>Count</span><span class='delimiter'>(</span><span class='variable'>xs</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Count</span> <span class='delimiter'>=></span> 
+        <span class='keyword'>null</span><span class='delimiter'>;</span>
+
+    <span class='declname'>At</span><span class='delimiter'>(</span><span class='variable'>xs</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>,</span> <span class='variable'>n</span> <span class='delimiter'>:</span> <span class='type'>Index</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>T</span> <span class='delimiter'>=></span> 
+        <span class='keyword'>null</span><span class='delimiter'>;</span>
+
 <span class='delimiter'>}</span>
 <span class='keyword'>type</span> <span class='type'>Integer</span>
     <span class='keyword'>inherits</span> <span class='type'>Numerical</span>
@@ -1067,7 +1078,7 @@
 <span class='keyword'>module</span> <span class='type'>Comparable</span>
 <span class='delimiter'>{</span>
     <span class='declname'>Equals</span><span class='delimiter'>(</span><span class='variable'>a</span><span class='delimiter'>,</span> <span class='variable'>b</span><span class='delimiter'>)</span> <span class='delimiter'>=></span> 
-        <span class='variable'>a</span><span class='operator'>.</span><span class='variable'>Compare</span><span class='delimiter'>(</span><span class='variable'>b</span><span class='delimiter'>)</span><span class='operator'>.</span><span class='variable'>Equals</span><span class='delimiter'>(</span><span class='literal'>0</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
+        <span class='variable'>a</span><span class='operator'>.</span><span class='variable'>Compare</span><span class='delimiter'>(</span><span class='variable'>b</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
     <span class='declname'>LessThan</span><span class='delimiter'>(</span><span class='variable'>a</span><span class='delimiter'>,</span> <span class='variable'>b</span><span class='delimiter'>)</span> <span class='delimiter'>=></span> 
         <span class='variable'>a</span><span class='operator'>.</span><span class='variable'>Compare</span><span class='delimiter'>(</span><span class='variable'>b</span><span class='delimiter'>)</span><span class='operator'>.</span><span class='variable'>LessThan</span><span class='delimiter'>(</span><span class='literal'>0</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
@@ -1169,8 +1180,7 @@
     <span class='declname'>Join</span><span class='delimiter'>(</span><span class='variable'>xs</span><span class='delimiter'>,</span> <span class='variable'>sep</span><span class='delimiter'>)</span> <span class='delimiter'>=></span> 
         <span class='variable'>xs</span><span class='operator'>.</span><span class='variable'>IsEmpty</span>
             <span class='operator'>?</span> <span class='literal'></span>
-            <span class='operator'>:</span> <span class='variable'>xs</span><span class='operator'>.</span><span class='variable'>First</span><span class='operator'>.</span><span class='variable'>ToString</span><span class='operator'>.</span><span class='variable'>Add</span><span class='delimiter'>(</span><span class='variable'>xs</span><span class='operator'>.</span><span class='variable'>Skip</span><span class='delimiter'>(</span><span class='literal'>1</span><span class='delimiter'>)</span><span class='operator'>.</span><span class='variable'>Aggregate</span><span class='delimiter'>(</span><span class='literal'></span><span class='delimiter'>,</span> <span class='delimiter'>(</span>acc<span class='delimiter'>,</span> cur<span class='delimiter'>)</span> <span class='delimiter'>=></span> 
-                <span class='variable'>acc</span><span class='operator'>.</span><span class='variable'>Interpolate</span><span class='delimiter'>(</span><span class='variable'>sep</span><span class='delimiter'>,</span> <span class='variable'>cur</span><span class='delimiter'>)</span><span class='delimiter'>)</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
+            <span class='operator'>:</span> <span class='variable'>xs</span><span class='operator'>.</span><span class='variable'>First</span><span class='operator'>.</span><span class='variable'>ToString</span><span class='operator'>.</span><span class='variable'>Add</span><span class='delimiter'>(</span><span class='variable'>xs</span><span class='operator'>.</span><span class='variable'>Skip</span><span class='delimiter'>(</span><span class='literal'>1</span><span class='delimiter'>)</span><span class='operator'>.</span><span class='variable'>Aggregate</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
     <span class='declname'>All</span><span class='delimiter'>(</span><span class='variable'>xs</span><span class='delimiter'>,</span> <span class='variable'>f</span><span class='delimiter'>)</span> <span class='delimiter'>=></span> 
         <span class='variable'>xs</span><span class='operator'>.</span><span class='variable'>IsEmpty</span>
@@ -1180,8 +1190,7 @@
     <span class='declname'>JoinStrings</span><span class='delimiter'>(</span><span class='variable'>xs</span><span class='delimiter'>,</span> <span class='variable'>sep</span><span class='delimiter'>)</span> <span class='delimiter'>=></span> 
         <span class='variable'>xs</span><span class='operator'>.</span><span class='variable'>IsEmpty</span>
             <span class='operator'>?</span> <span class='literal'></span>
-            <span class='operator'>:</span> <span class='variable'>xs</span><span class='operator'>.</span><span class='variable'>First</span><span class='operator'>.</span><span class='variable'>Add</span><span class='delimiter'>(</span><span class='variable'>xs</span><span class='operator'>.</span><span class='variable'>Rest</span><span class='operator'>.</span><span class='variable'>Aggregate</span><span class='delimiter'>(</span><span class='literal'></span><span class='delimiter'>,</span> <span class='delimiter'>(</span>x<span class='delimiter'>,</span> acc<span class='delimiter'>)</span> <span class='delimiter'>=></span> 
-                <span class='variable'>acc</span><span class='operator'>.</span><span class='variable'>Add</span><span class='delimiter'>(</span><span class='literal'>, </span><span class='operator'>.</span><span class='variable'>Add</span><span class='delimiter'>(</span><span class='variable'>x</span><span class='operator'>.</span><span class='variable'>ToString</span><span class='delimiter'>)</span><span class='delimiter'>)</span><span class='delimiter'>)</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
+            <span class='operator'>:</span> <span class='variable'>xs</span><span class='operator'>.</span><span class='variable'>First</span><span class='operator'>.</span><span class='variable'>Add</span><span class='delimiter'>(</span><span class='variable'>xs</span><span class='operator'>.</span><span class='variable'>Rest</span><span class='operator'>.</span><span class='variable'>Aggregate</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
 <span class='delimiter'>}</span>
 <span class='keyword'>module</span> <span class='type'>Easings</span>

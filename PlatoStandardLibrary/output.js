@@ -1,15 +1,3 @@
-class P_Interval
-{
-    constructor(P_Min, P_Max)
-    {
-        this._field_Min = P_Min;
-        this._field_Max = P_Max;
-    }
-    // field accessors
-    static P_Min = function(self) { return self._field_Min; }
-    static P_Max = function(self) { return self._field_Max; }
-    // functions 
-}
 class P_Vector
 {
     constructor()
@@ -17,16 +5,17 @@ class P_Vector
     }
     // field accessors
     // functions 
+    static P_Count = function (P_v) { return P_Count(P_FieldTypes(P_Self)); };
+    static P_At = function (P_v, P_n) { return P_At(P_FieldValues(P_v), P_n); };
 }
 class P_Measure
 {
-    constructor(P_Value)
+    constructor()
     {
-        this._field_Value = P_Value;
     }
     // field accessors
-    static P_Value = function(self) { return self._field_Value; }
     // functions 
+    static P_Value = function (P_x) { return P_At(P_FieldValues(P_x), 0); };
 }
 class P_Numerical
 {
@@ -35,7 +24,6 @@ class P_Numerical
     }
     // field accessors
     // functions 
-    static P_FromNumber = function (P_x) { return P_FromNumber(P_FieldValues(P_x), P_x); };
 }
 class P_Magnitude
 {
@@ -104,9 +92,9 @@ class P_Boolean
     }
     // field accessors
     // functions 
-    static P_And = function (P_a, P_b) { return P_intrinsic; };
-    static P_Or = function (P_a, P_b) { return P_intrinsic; };
-    static P_Not = function (P_a) { return P_intrinsic; };
+    static P_And = function (P_a, P_b) { return P_And(P_FieldValues(P_a), P_FieldValues(P_b)); };
+    static P_Or = function (P_a, P_b) { return P_Or(P_FieldValues(P_a), P_FieldValues(P_b)); };
+    static P_Not = function (P_a) { return P_Not(P_FieldValues(P_a)); };
 }
 class P_Value
 {
@@ -124,18 +112,27 @@ class P_Value
     static P_Default = function () { return P_Default(P_FieldTypes); };
     static P_MinValue = function () { return P_MinValue(P_FieldTypes); };
     static P_MaxValue = function () { return P_MaxValue(P_FieldTypes); };
-    static P_ToString = function (P_x) { return P_JoinStrings(P_FieldValues, ,); };
+    static P_ToString = function (P_x) { return P_JoinStrings(P_FieldValues, ","); };
+}
+class P_Interval
+{
+    constructor()
+    {
+    }
+    // field accessors
+    // functions 
+    static P_Min = function (P_x) { return null; };
+    static P_Max = function (P_x) { return null; };
 }
 class P_Array
 {
-    constructor(P_Count)
+    constructor()
     {
-        this._field_Count = P_Count;
     }
     // field accessors
-    static P_Count = function(self) { return self._field_Count; }
     // functions 
-    static P_At = function (P_n) { return null; };
+    static P_Count = function (P_xs) { return null; };
+    static P_At = function (P_xs, P_n) { return null; };
 }
 class P_Integer
 {
@@ -1580,7 +1577,7 @@ class P_Comparable
     }
     // field accessors
     // functions 
-    static P_Equals = function (P_a, P_b) { return P_Equals(P_Compare(P_a, P_b), 0); };
+    static P_Equals = function (P_a, P_b) { return P_Compare(P_a, P_b); };
     static P_LessThan = function (P_a, P_b) { return P_LessThan(P_Compare(P_a, P_b), 0); };
     static P_Lesser = function (P_a, P_b) { return P_LessThanOrEquals(P_a, P_b)
         ? P_a
@@ -1648,16 +1645,16 @@ class P_Array
     static P_Last = function (P_xs) { return P_At(P_xs, P_Subtract(P_Count(P_xs), 1)); };
     static P_Slice = function (P_xs, P_from, P_count) { return P_Take(P_Skip(P_xs, P_from), P_count); };
     static P_Join = function (P_xs, P_sep) { return P_IsEmpty(P_xs)
-        ? 
-        : P_Add(P_ToString(P_First(P_xs)), P_Aggregate(P_Skip(P_xs, 1), , function (P_acc, P_cur) { return P_Interpolate(P_acc, P_sep, P_cur); }))
+        ? ""
+        : P_Add(P_ToString(P_First(P_xs)), P_Aggregate(P_Skip(P_xs, 1)))
     ; };
     static P_All = function (P_xs, P_f) { return P_IsEmpty(P_xs)
         ? True
         : P_And(P_f(P_First(P_xs)), P_f(P_Rest(P_xs)))
     ; };
     static P_JoinStrings = function (P_xs, P_sep) { return P_IsEmpty(P_xs)
-        ? 
-        : P_Add(P_First(P_xs), P_Aggregate(P_Rest(P_xs), , function (P_x, P_acc) { return P_Add(P_acc, P_Add(, , P_ToString(P_x))); }))
+        ? ""
+        : P_Add(P_First(P_xs), P_Aggregate(P_Rest(P_xs)))
     ; };
 }
 class P_Easings
