@@ -1,12 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using PlatoAst;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PlatoAst
 {
+    public class MemberCandidate
+    {
+        public TypeDefSymbol Type { get; }
+        public MemberDefSymbol Member { get; }
+        public override string ToString()
+        {
+            return $"{Type.UniqueName}.{Member.UniqueName}";
+        }
+
+        public MemberCandidate(TypeDefSymbol type, MemberDefSymbol member)
+            => (Type, Member) = (type, member);
+    }
+
     public class Operations
     {
-        public Dictionary<string, List<(TypeDefSymbol, MemberDefSymbol)>> Lookup { get; } 
-            = new Dictionary<string, List<(TypeDefSymbol, MemberDefSymbol)>>();
+        public Dictionary<string, List<MemberCandidate>> Lookup { get; } 
+            = new Dictionary<string, List<MemberCandidate>>();
 
         public IReadOnlyList<TypeDefSymbol> Types { get; }
         
@@ -17,31 +32,15 @@ namespace PlatoAst
                 AddMembers(typeDefSymbol);
         }
 
-        public IReadOnlyList<(TypeDefSymbol, MemberDefSymbol)> GetMembers(string name)
-            => Lookup[name];
+        public IReadOnlyList<MemberCandidate> GetMembers(string name)
+            => Lookup.ContainsKey(name) ? Lookup[name] : new List<MemberCandidate>();
 
-        public IReadOnlyList<(TypeDefSymbol, MemberDefSymbol)> GetMembers(string name, int parameterCount)
-            => Lookup.TryGetValue(LookupName(name, parameterCount), out var result) 
-                ? result 
-                : new List<(TypeDefSymbol, MemberDefSymbol)>();
-
-        public static string LookupName(string name, int parameterCount)
-            //=> $"{name}#{parameterCount}";
-            => $"{name}";
-
-        public static string LookupName(MemberDefSymbol member)
-        {
-            if (member is MethodDefSymbol mds)
-                return LookupName(mds.Name, mds.Function.Parameters.Count);
-            return LookupName(member.Name, 1);
-        }
 
         public void AddMember(TypeDefSymbol type, MemberDefSymbol member)
         {
-            var name = LookupName(member);
-            if (!Lookup.ContainsKey(name))
-                Lookup.Add(name, new List<(TypeDefSymbol, MemberDefSymbol)>());
-            Lookup[name].Add((type, member));
+            if (!Lookup.ContainsKey(member.Name))
+                Lookup.Add(member.Name, new List<MemberCandidate>());
+            Lookup[member.Name].Add(new MemberCandidate(type, member));
         }
 
         public void AddMembers(TypeDefSymbol type)

@@ -41,6 +41,7 @@ namespace PlatoAst
 
         public TypeRefSymbol Type { get; }
         public string Name { get; }
+        public string UniqueName => Name + "_" + Id;
         public int Id { get; } = NextId++;
 
         public static int NextId = 0;

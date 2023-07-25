@@ -87,7 +87,7 @@ public class IDE
     {
         var sb = new StringBuilder();
         sb.AppendLine().AppendLine("= Type Guesser =").AppendLine();
-        var tg = Compilation.TypeGuesser;
+        var tg = Compilation.TypeResolver;
         foreach (var kv in tg.CandidateTypes)
         {
             sb.AppendLine($"Candidates for parameter {kv.Key} are");

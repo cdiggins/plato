@@ -43,7 +43,7 @@ namespace PlatoAst
                 ModuleFunctions = TypeDefs.Where(td => td.Kind == "module")
                     .SelectMany(td => td.Methods.Select(m => m.Function));
 
-                TypeGuesser = new TypeGuesser(Operations);
+                TypeResolver = new TypeResolver(Operations);
 
                 Success = State.AtEnd();
                 if (!Success)
@@ -77,7 +77,7 @@ namespace PlatoAst
         public SymbolResolver SymbolResolver { get; } = new SymbolResolver();
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; }
         public Operations Operations { get; }
-        public TypeGuesser TypeGuesser { get; }
+        public TypeResolver TypeResolver { get; }
         public IEnumerable<FunctionSymbol> ModuleFunctions { get; }
         public IReadOnlyList<TypeDefSymbol> TypeDefs { get;}
     }

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace PlatoAst
 {
-    public class TypeGuesser
+    public class TypeResolver
     {
         public Dictionary<ParameterSymbol, List<TypeDefSymbol>> CandidateTypes
             = new Dictionary<ParameterSymbol, List<TypeDefSymbol>>();
@@ -20,7 +20,7 @@ namespace PlatoAst
         public IReadOnlyList<FunctionSymbol> Functions { get; }
         public IReadOnlyList<ParameterSymbol> Parameters { get; } 
 
-        public TypeGuesser(Operations ops)
+        public TypeResolver(Operations ops)
         {
             Ops = ops;
             Functions = Types.SelectMany(t => t.GetDescendantSymbols().OfType<FunctionSymbol>()).ToList();
@@ -138,20 +138,20 @@ namespace PlatoAst
         public string GetBestCandidate(FunctionArgConstraint fac)
         {
             var name = fac.Name;
-            var members = Ops.GetMembers(name, fac.ArgumentCount);
+            var members = Ops.GetMembers(name);
 
             // NOTE: this is not accurate. It has to do with the actual type based on
             // the position. 
             var position = fac.Position;
 
-            var tmp = members.Where(pair => pair.Item1.Kind == "concept").ToList();
+            var tmp = members.Where(pair => pair.Type.Kind == "concept").ToList();
             if (tmp.Count == 0)
                 tmp = members.ToList();
 
             if (tmp.Count > 0)
             {
-                var t = tmp[0].Item1;
-                var m = tmp[0].Item2;
+                var t = tmp[0].Type;
+                var m = tmp[0].Member;
                 if (m is FieldDefSymbol fds)
                 {
                     return fds.Type?.Name ?? "dynamic";

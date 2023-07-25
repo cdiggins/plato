@@ -12,10 +12,10 @@ namespace PlatoAst
             return "P_" + name;
         }
 
-        public TypeGuesser TypeGuesser { get; }
+        public TypeResolver TypeResolver { get; }
 
-        public SymbolWriterJavaScript(TypeGuesser tg)
-            => TypeGuesser = tg;
+        public SymbolWriterJavaScript(TypeResolver tg)
+            => TypeResolver = tg;
 
         public SymbolWriterJavaScript Write(IEnumerable<Symbol> symbols)
             => symbols.Aggregate(this, (writer, symbol) => writer.Write(symbol));
@@ -57,12 +57,52 @@ namespace PlatoAst
             => symbols.Aggregate(WriteStartBlock(),
                 (w, s) => w.Write(s)).WriteEndBlock();
 
+        public SymbolWriterJavaScript WriteParameterConstraints(FunctionSymbol function)
+        {
+            foreach (var p in function.Parameters)
+            {
+                // DEBUG: 
+                var constraints = TypeResolver.ParameterConstraints[p];
+                WriteLine($"// {p} {string.Join(", ", constraints)}");
+
+                var candidates = TypeResolver.GetCandidateTypes(p);
+                WriteLine($"// Candidates = {string.Join(",", candidates.Select(c => c.Name))}");
+            }
+            return this;
+        }
+
+        public SymbolWriterJavaScript WriteFunctionCallCandidates(FunctionSymbol function)
+        {
+            var calls = function.Body.GetDescendantSymbols().OfType<FunctionCallSymbol>();
+            foreach (var call in calls)
+            {
+                var f = call.Function;
+                if (f is RefSymbol rs)
+                {
+                    var candidates = TypeResolver.Ops.GetMembers(rs.Name);
+                    WriteLine($"// Called function: {call.Function} candidates = {string.Join(", ", candidates)}");
+                }
+                else
+                {
+                    throw new Exception("What else can be called?");
+                }
+
+            }
+            return this;
+        }
+
         public SymbolWriterJavaScript Write(FunctionSymbol function)
         {
             return Write(Keyword("function").PadRight())
                 .Write(Delimiter("("))
                 .WriteCommaList(function.Parameters)
                 .Write(Delimiter(")").PadRight())
+                
+                // TEMP: for debugging
+                .WriteLine()
+                .WriteParameterConstraints(function)
+                .WriteFunctionCallCandidates(function)
+
                 .Write(Delimiter("{").PadRight())
                 .Write(Keyword("return").PadRight())
                 .Write(function.Body)
@@ -117,14 +157,14 @@ namespace PlatoAst
             WriteLine(Comment("// field accessors"));
             foreach (var field in typeDef.Fields)
             {
-                WriteLine($"static {Rename(field.Name)} = function(self) {{ return self.{FieldName(field)}; }}");
+                WriteLine($"static {Rename(field.UniqueName)} = function(self) {{ return self.{FieldName(field)}; }}");
             }
 
             WriteLine(Comment("// functions "));
             foreach (var method in typeDef.Methods)
             {
                 var f = method.Function;
-                Write($"static {Rename(f.Name)} = ");
+                Write($"static {Rename(f.UniqueName)} = ");
                 Write(f);
                 WriteLine(";");
             }

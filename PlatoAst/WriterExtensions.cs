@@ -13,7 +13,7 @@
 
         public static string ToJavaScript(this Operations ops)
         {
-            var tg = new TypeGuesser(ops);
+            var tg = new TypeResolver(ops);
             var writer = new SymbolWriterJavaScript(tg);
             var r = writer.Write(ops.Types);
             return r.ToString();
@@ -24,7 +24,7 @@
 
         public static string ToPlatoHtml(this Operations ops)
         {
-            var tg = new TypeGuesser(ops);
+            var tg = new TypeResolver(ops);
             var r = new SymbolWriterPlatoHtml(tg);
             r.WriteLine("<html><head><link rel=\"stylesheet\" href=\"style.css\"></head><body><pre>");
             r.Write(ops.Types);
@@ -37,7 +37,7 @@
 
         public static string ToCSharp(this Operations ops)
         {
-            var tg = new TypeGuesser(ops);
+            var tg = new TypeResolver(ops);
             var writer = new SymbolWriterCSharp(tg);
             var r = writer.Write(ops.Types);
             return r.ToString();

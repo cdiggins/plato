@@ -7,10 +7,10 @@ namespace PlatoAst
 {
     public class SymbolWriterCSharp : CodeBuilder<SymbolWriterCSharp>
     {
-        public TypeGuesser TypeGuesser { get; }
+        public TypeResolver TypeResolver { get; }
 
-        public SymbolWriterCSharp(TypeGuesser tg)
-            => TypeGuesser = tg;
+        public SymbolWriterCSharp(TypeResolver tg)
+            => TypeResolver = tg;
 
         public SymbolWriterCSharp WriteBlock(params Symbol[] symbols)
             => WriteBlock((IEnumerable<Symbol>)symbols, false);
@@ -47,10 +47,10 @@ namespace PlatoAst
             foreach (var p in function.Parameters)
             {
                 // DEBUG: 
-                var constraints = TypeGuesser.ParameterConstraints[p];
+                var constraints = TypeResolver.ParameterConstraints[p];
                 WriteLine($"// {p} {string.Join(", ", constraints)}");
 
-                var candidates = TypeGuesser.GetCandidateTypes(p);
+                var candidates = TypeResolver.GetCandidateTypes(p);
                 WriteLine($"// Candidates = {string.Join(",", candidates.Select(c => c.Name))}");
             }
             return r;

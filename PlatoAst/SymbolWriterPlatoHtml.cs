@@ -9,10 +9,10 @@ namespace PlatoAst
     {
         public const bool UseOperators = true;
 
-        public TypeGuesser TypeGuesser { get; }
+        public TypeResolver TypeResolver { get; }
 
-        public SymbolWriterPlatoHtml(TypeGuesser tg)
-            => TypeGuesser = tg;
+        public SymbolWriterPlatoHtml(TypeResolver tg)
+            => TypeResolver = tg;
 
         public string Span(string s, string cls)
             => $"<span class='{cls}'>{s}</span>";
