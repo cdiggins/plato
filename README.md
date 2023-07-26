@@ -6,15 +6,8 @@ commercial coding, particularly in the realm of 3D graphics.
 
 # About Plato 
 
-Plato is a statically typed compiled functional language that looks and behavies like 
-an object-oriented scripting language. 
-
-Plato looks like an object oriented language in that you can use fluent (aka method chaining) syntax.
-In other words any defined function can be invoked by writing the first argument followed by a "." 
-then the rest of the arguments. `Clamp(x, min, max)` can be invoked as `x.Clamp(min, max)`.
-
-If a function does not require additional arguments then the `()` can be omitted. This means that any
-function with only one parameter (e.g. `Cos(x: Number)`) can be invoked as if it was a property: `x.Cos`.
+Plato is a statically typed functional language that looks and behaves like an object-oriented scripting language,
+but with a lot less complexity.  
 
 ## Functions 
 
@@ -52,6 +45,16 @@ Factorial(n: Integer): Integer =>
     return n * Factorial(n-1);
 }
 ```
+## Calling Functions
+
+Plato supports both prefix and method chaining syntax of functions. 
+
+In other words any function can be invoked by writing the first argument followed by a "." 
+then the rest of the arguments. For example the expression `Clamp(x, min, max)` can be written equivalently as `x.Clamp(min, max)`.
+
+If a function does not require additional arguments then the `()` can be omitted when called as if it is method. This means that any
+function with only one parameter (e.g. `Cos(x: Number)`) can be invoked as if it was a property: `x.Cos`.
+
 
 ## Libraries 
 
@@ -72,6 +75,7 @@ The following are some of the valid kinds of expressions in Plato:
 * Lambda expressions - anonymous functions
 * Binary operations 
 * Unary operations
+* Throw operations
 
 ## Statements
 
@@ -83,7 +87,7 @@ Plato supports the following statements:
 * Looping - `while` statements  
 * Conditional - `if` / `else` statements
 * Control flow - `return`, `break`, `continue` statements
-* Expression statements - assignment, function call, throw 
+* Expression statements - assignment, function call, throw
 * Variable declarations - `var` statement 
 * Statement blocks delimited by `{` and `}`
 
@@ -99,20 +103,19 @@ For some [examples of types see the standard library](https://github.com/cdiggin
 
 ## Concepts 
 
-A `concept` is a set of functions that describes a particular type. They are similar to 
-interfaces, traits, protocols, and mixins in other languages. In effect it is an
-abstract data type. 
+A `concept` is a set of functions that describes an
+abstract data type. They are similar to 
+interfaces, traits, protocols, and mixins in other languages. 
 
 A concept may have a mix of implemented (predefined) functions that are provided automatically 
 to any implemented 
 
-A type that "implements" a concept must provide implementations of any undefined functions 
-declared in the concept. Those functions can be declared in any library defined in a project.
-It is common practice to declare the required concept funcions in a library with the same name as the type. 
+A type that implements a concept must provide implementations of any undefined functions 
+declared in the concept. Those functions can be defined in any library defined in a project.
 
 For example the Plato array concept is:
 
-```
+```typescript
 concept Array<T: Any>
 {
     Count(xs: Self): Count;
@@ -147,7 +150,7 @@ This makes defining new operators quick and easy.
 * `And` -> `&&`
 * `Or` -> `||`
 * `XOr` -> `^`
-* 'Equals` -> `==`
+* `Equals` -> `==`
 * `NotEquals` -> `!=`
 * `At` -> `[]`
 
@@ -159,16 +162,17 @@ This makes defining new operators quick and easy.
 ## Features that Plato does not have
 
 Plato does not have many features found in common object-oriented languages.
-This is on purpose 
+This is by design, to keep the language simple
+and consistent.  
 
 The following are features that Plato will never have:
 
 * Visibility specifiers - `public`/`private`/`protected`/`internal`
-* Static specifiers 
-* Additional modifiers `sealed`/`abstract`/`virtual`
+* Additional modifiers `sealed`/`abstract`/`virtual`/`static`
 * Implicit `this` parameters 
 * `ref`/`in`/`out` parameters
 * unsafe mode 
+* Interfaces / traits / mixins / prototcols
 
 Features that we can exepct Plato to support in the near future:
 
