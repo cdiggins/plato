@@ -40,10 +40,8 @@ namespace PlatoAst
                 SymbolResolver.CreateTypeDefs(TypeDeclarations);
                 TypeDefs = SymbolResolver.TypeDefs.ToList();
                 Operations = new Operations(TypeDefs);
-                ModuleFunctions = TypeDefs.Where(td => td.Kind == "module")
-                    .SelectMany(td => td.Methods.Select(m => m.Function));
-
                 TypeResolver = new TypeResolver(Operations);
+                CheckSemantics();
 
                 Success = State.AtEnd();
                 if (!Success)
@@ -61,7 +59,26 @@ namespace PlatoAst
                 Exception = e;
                 Message = e.Message;
             }
+        }
 
+        public void CheckSemantics()
+        {
+            foreach (var f in Functions)
+            {
+                foreach (var p in f.Parameters)
+                {
+                    var refs = p.GetParameterReferences(f).ToList();
+                    if (refs.Count == 0)
+                        SemanticWarnings.Add($"No references found to {p}");
+                }
+
+                foreach (var r in f.Body.GetDescendantSymbols().OfType<RefSymbol>())
+                    if (r.Def == null)
+                        SemanticErrors.Add($"Could not resolve reference for {r}");
+
+                if (f.IsPartiallyTyped()) 
+                    SemanticErrors.Add($"{f} is partially typed");
+            }
         }
 
         public Rule Rule { get; }
@@ -78,7 +95,9 @@ namespace PlatoAst
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; }
         public Operations Operations { get; }
         public TypeResolver TypeResolver { get; }
-        public IEnumerable<FunctionSymbol> ModuleFunctions { get; }
+        public IReadOnlyList<FunctionSymbol> Functions => TypeResolver.Functions;
         public IReadOnlyList<TypeDefSymbol> TypeDefs { get;}
+        public List<string> SemanticErrors { get; } = new List<string>();
+        public List<string> SemanticWarnings { get; } = new List<string>();
     }
 }

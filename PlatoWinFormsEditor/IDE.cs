@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text;
 using Microsoft.VisualBasic.ApplicationServices;
 using Parakeet;
@@ -121,6 +122,7 @@ public class IDE
                 }
             }
         }
+
         return sb.ToString();
     }
 
@@ -133,12 +135,14 @@ public class IDE
         catch (Exception e)
         {
             return e.Message;
-        };
+        }
+
+        ;
     }
 
     public Compilation Compile(string input)
     {
-        var c = new Compilation(input, PlatoGrammar.Instance.File, 
+        var c = new Compilation(input, PlatoGrammar.Instance.File,
             CstNodeFactory.Create, AstFromPlatoCst.Convert);
 
         var outputBuilder = new StringBuilder();
@@ -152,7 +156,8 @@ public class IDE
             for (var e = state.LastError; e != null; e = e.Previous)
             {
                 outputBuilder.AppendLine($"Error {curError} at {e.LastState}");
-                outputBuilder.AppendLine($"failed expected rule {e.Expected}, parent state is {e.ParentState}, message is {e.Message}");
+                outputBuilder.AppendLine(
+                    $"failed expected rule {e.Expected}, parent state is {e.ParentState}, message is {e.Message}");
                 outputBuilder.AppendLine(e.LastState.CurrentLine);
                 outputBuilder.AppendLine(e.LastState.Indicator);
             }
@@ -169,7 +174,50 @@ public class IDE
             outputBuilder.AppendLine("Parsing failed");
         }
 
+        AnalyzeTypesAndFunctions(c, outputBuilder);
+
         Output = outputBuilder.ToString();
         return c;
+    }
+
+    public static StringBuilder AnalyzeTypesAndFunctions(Compilation c, StringBuilder sb = null)
+    {
+        sb ??= new StringBuilder();
+
+        var functions = c.Functions;
+        sb.AppendLine($"Number of functions = {functions.Count}");
+
+        var typedFunctions = functions.Where(f => f.IsExplicitlyTyped()).ToList(); // TODO: look for type annotations (e.g. concepts)
+        sb.AppendLine($"Number of explicitly type functions = {typedFunctions.Count}");
+
+        var funCalls = functions.SelectMany(f => f.Body.GetDescendantSymbols().OfType<FunctionCallSymbol>()).ToList();
+        sb.AppendLine($"Number of function calls = {funCalls.Count}");
+
+        var determinedFunctionTypes = 0;
+        //sb.AppendLine($"Number of known implicitly typed functions = {determinedFunctionTypes}");
+
+        var unambiguousFunCalls = 0;
+        //sb.AppendLine($"Number of unambiguous function calls = {unambiguousFunCalls}");
+
+        var ambiguousFunctions = new List<RefSymbol>();
+        //sb.AppendLine($"Number of ambiguous function calls");
+
+        var expressions = functions.SelectMany(f => f.GetDescendantSymbols()).Where(s => s.IsExpression()).ToList();
+        sb.AppendLine($"Number of expressions to process {expressions.Count}");
+
+        var referencedGroups = functions
+            .SelectMany(f => f.GetDescendantSymbols())
+            .OfType<RefSymbol>()
+            .Select(rs => rs.Def)
+            .OfType<FunctionGroupSymbol>()
+            .Distinct()
+            .ToList();
+
+        sb.AppendLine($"Number of referenced function groups {referencedGroups.Count}");
+
+        var referencedMultiGroups = referencedGroups.Where(g => g.Functions.Count > 1).ToList();
+        sb.AppendLine($"Number of those groups with multiple functions {referencedMultiGroups.Count}");
+
+        return sb;
     }
 }

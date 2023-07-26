@@ -5,6 +5,14 @@ using System.Linq;
 
 namespace PlatoAst
 {
+
+    /// <summary>
+    /// How to test. GEt the list of functions.I want to iterate on the types. Figure out the
+    /// types of the parameters, figure out the types of the variables, figure out the functions
+    /// called figure out the return values.
+    /// Get all possible functions. FIlter based on the types of the arguments, and the number of the
+    /// arguments.   
+    /// </summary>
     public class TypeResolver
     {
         public Dictionary<ParameterSymbol, List<TypeDefSymbol>> CandidateTypes

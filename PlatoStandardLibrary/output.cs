@@ -128,7 +128,7 @@ interface Boolean<Self> where Self : Boolean<Self>
     // ParameterSymbol=b$1459:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
     And(FieldValues(a), FieldValues(b))
-    public static void Or(Self a, Self b)
+    public static Self Or(Self a, Self b)
     // ParameterSymbol=a$1461:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
     // ParameterSymbol=b$1462:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)

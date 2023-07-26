@@ -241,10 +241,7 @@ namespace PlatoAst
 
         public TypeRefSymbol(TypeDefSymbol def, params TypeRefSymbol[] args)
         {
-            // TODO resinstate once type resolution is guaranteed. 
-            //if (def == null) throw new Exception("Type not found");
-
-            Def = def;
+            Def = def ?? throw new Exception("Type not found");
             TypeArgs = args;
         }
 
@@ -314,34 +311,5 @@ namespace PlatoAst
 
         public override IReadOnlyList<Symbol> Children
             => Array.Empty<Symbol>();
-    }
-
-
-    public static class SymbolExtensions
-    {
-        public static IEnumerable<FunctionSymbol> GetLambdas(this FunctionSymbol symbol)
-            => symbol.Body.GetDescendantSymbols().OfType<FunctionSymbol>();
-
-        public static IEnumerable<Symbol> GetDescendantSymbols(this Symbol symbol)
-        {
-            if (symbol == null)
-                yield break;
-            yield return symbol;
-            if (symbol is Symbol cs)
-                foreach (var child in cs.Children.SelectMany(GetDescendantSymbols))
-                    yield return child;
-        }
-
-        // NOTE: does not include lambdas
-        public static IEnumerable<FunctionSymbol> GetAllFunctions(this IEnumerable<TypeDefSymbol> typeDefs)
-        {
-            return typeDefs.SelectMany(t => t.Methods.Select(m => m.Function)).Where(f => f != null);
-        }
-
-        public static DefSymbol GetDef(this Symbol symbol)
-        {
-            return (symbol as RefSymbol)?.Def;
-        }
-
     }
 }

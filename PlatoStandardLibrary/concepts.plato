@@ -89,7 +89,7 @@ concept Boolean
     And(a: Self, b: Self): Self 
         => a.FieldValues.And(b.FieldValues);
 
-    Or(a: Self, b: Self) 
+    Or(a: Self, b: Self): Self
         => a.FieldValues.Or(b.FieldValues);
     
     Not(a: Self): Self 
