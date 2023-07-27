@@ -4,7 +4,29 @@ using System.Diagnostics;
 using System.Linq;
 
 namespace PlatoAst
-{
+{   
+    public class TypedFunction
+    {
+        public TypedFunction(TypeDefSymbol type, FunctionSymbol func)
+        {
+            ParentType = type;
+            Function = func;
+            for (var i=0; i < func.Parameters.Count; ++i)
+            {
+                var p = func.Parameters[i];
+                Parameters.Add(p.Type?.Def);
+            }
+        }
+        public TypeDefSymbol ParentType { get; }
+        public FunctionSymbol Function { get; }
+        public string Name => Function.Name;
+        public int ParameterCount => Function.Parameters.Count;
+        public List<TypeDefSymbol> Parameters { get; } = new List<TypeDefSymbol>();
+        public string ParameterListString => string.Join(", ", Parameters.Select(p => p?.Name ?? "?"));
+        public string Id => $"{Name}({ParameterListString})";
+        public override string ToString() => $"{ParentType.Type}.{Id}";
+    }
+
 
     /// <summary>
     /// How to test. GEt the list of functions.I want to iterate on the types. Figure out the
@@ -26,7 +48,10 @@ namespace PlatoAst
         public Operations Ops { get; }
         public IReadOnlyList<TypeDefSymbol> Types => Ops.Types;
         public IReadOnlyList<FunctionSymbol> Functions { get; }
-        public IReadOnlyList<ParameterSymbol> Parameters { get; } 
+        public IReadOnlyList<ParameterSymbol> Parameters { get; }
+
+        public Dictionary<int, TypedFunction> TypedFunctions { get; }
+            = new Dictionary<int, TypedFunction>();
 
         public TypeResolver(Operations ops)
         {
@@ -89,6 +114,32 @@ namespace PlatoAst
 
                 CandidateTypes.Add(p, GetCandidateTypes(p).ToList()); 
             }
+
+            var cnt = 0;
+            foreach (var type in Types)
+            {
+                foreach (var m in type.Methods)
+                {
+                    var tf = new TypedFunction(type, m.Function);
+                    TypedFunctions.Add(m.Function.Id, tf);
+                    if (tf.Parameters.Count > 0 && tf.Parameters[0] == null)
+                    {
+                        if (type.Kind == "library")
+                        {
+                            var other = Types.FirstOrDefault(
+                                t => t.Kind != "library" && t.Name == type.Name);
+
+                            if (other != null)
+                            {
+                                cnt++;
+                                tf.Parameters[0] = other;
+                            }
+                        }
+                    }
+                }
+            }
+
+            Debug.WriteLine($"Extension library types found {cnt}");
         }
 
         public IEnumerable<TypeDefSymbol> GetCandidateTypes(ParameterSymbol ps)

@@ -4,8 +4,6 @@ Plato is an efficient and fun programming language inspired by JavaScript, C#, a
 Plato is designed to be easy to teach and learn while being efficient and robust enough for 
 commercial coding, particularly in the realm of 3D graphics. 
 
-# About Plato 
-
 Plato is a statically typed functional language that looks and behaves like an object-oriented scripting language,
 but with a lot less complexity.  
 
@@ -107,10 +105,11 @@ A `concept` is a set of functions that describes an
 abstract data type. They are similar to 
 interfaces, traits, protocols, and mixins in other languages. 
 
-A concept may have a mix of implemented (predefined) functions that are provided automatically 
-to any implemented 
+A concept can contain a mix of defined functions and unimplemented functions, 
+i.e., function signatures with no bodies. All functions in a concept require
+explicit annotations. 
 
-A type that implements a concept must provide implementations of any undefined functions 
+A type that implements a concept must provide implementations of any unimplemented functions 
 declared in the concept. Those functions can be defined in any library defined in a project.
 
 For example the Plato array concept is:
@@ -123,10 +122,7 @@ concept Array<T: Any>
 }
 ```
 
-The functions within a concept are automatically implemented for the 
-types that declare that they implement the concept.  
-
-Within a concept the `Self` keyword refers to the type of the implementing type. 
+Within a concept the `Self` keyword refers to the implementing type. 
 
 For some [examples of concepts see the standard library](https://github.com/cdiggins/plato/blob/main/PlatoStandardLibrary/concepts.plato).
 
@@ -179,8 +175,10 @@ Features that we can exepct Plato to support in the near future:
 * Support for unique types - types which have only one reference and can be mutated. 
 * Inferred type of polymorphic types - for example have an implicitly type variable initialized with a lambda or array 
 * A visual syntax - a representation of Plato code as a dataflow graph. 
+* Default concept implementations - concepts have auto-generated default implementations
+that are a tuple of fields and functions. 
 
-Features that are unsure:
+Features that may be on the longer term roadmap:
 
 * asyncronous language support (`async`/`await`)
 * generators/iterator methods/coroutines (`yield`)

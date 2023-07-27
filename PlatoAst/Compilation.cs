@@ -75,7 +75,7 @@ namespace PlatoAst
                 foreach (var r in f.Body.GetDescendantSymbols().OfType<RefSymbol>())
                     if (r.Def == null)
                         SemanticErrors.Add($"Could not resolve reference for {r}");
-
+                    
                 if (f.IsPartiallyTyped()) 
                     SemanticErrors.Add($"{f} is partially typed");
             }

@@ -1140,7 +1140,7 @@ class Comparable
     // Candidates = Comparable
     // ParameterSymbol=b$1675: Argument:Ref=>FunctionGroupSymbol=Compare$152:(1/2)
     // Candidates = Comparable
-    Compare(a, b)
+    Equals(Compare(a, b), 0)
     public static void LessThan(var a, var b)
     // ParameterSymbol=a$1677: Argument:Ref=>FunctionGroupSymbol=Compare$152:(0/2)
     // Candidates = Comparable
@@ -1325,171 +1325,181 @@ class Array
     public static void Join(var xs, var sep)
     // ParameterSymbol=xs$1756: Argument:Ref=>FunctionGroupSymbol=IsEmpty$1323:(0/1), Argument:Ref=>FunctionGroupSymbol=First$1325:(0/1), Argument:Ref=>FunctionGroupSymbol=Skip$1315:(0/2)
     // Candidates = Interval,Array
-    // ParameterSymbol=sep$1757: 
-    // Candidates = Any
+    // ParameterSymbol=sep$1757: Argument:Ref=>FunctionGroupSymbol=Interpolate$1403:(1/3)
+    // Candidates = Intrinsics
     IsEmpty(xs)
         ? 
-        : Add(ToString(First(xs)), Aggregate(Skip(xs, 1)))
+        : Add(ToString(First(xs)), Aggregate(Skip(xs, 1), , (acc, cur) => 
+        // ParameterSymbol=acc$1758: Argument:Ref=>FunctionGroupSymbol=Interpolate$1403:(0/3)
+        // Candidates = Intrinsics
+        // ParameterSymbol=cur$1759: Argument:Ref=>FunctionGroupSymbol=Interpolate$1403:(2/3)
+        // Candidates = Intrinsics
+        Interpolate(acc, sep, cur)))
 
     public static void All(var xs, var f)
-    // ParameterSymbol=xs$1759: Argument:Ref=>FunctionGroupSymbol=IsEmpty$1323:(0/1), Argument:Ref=>FunctionGroupSymbol=First$1325:(0/1), Argument:Ref=>FunctionGroupSymbol=Rest$1321:(0/1)
+    // ParameterSymbol=xs$1762: Argument:Ref=>FunctionGroupSymbol=IsEmpty$1323:(0/1), Argument:Ref=>FunctionGroupSymbol=First$1325:(0/1), Argument:Ref=>FunctionGroupSymbol=Rest$1321:(0/1)
     // Candidates = Interval,Array
-    // ParameterSymbol=f$1760: Invoked:(ArgumentSymbol), Invoked:(ArgumentSymbol)
+    // ParameterSymbol=f$1763: Invoked:(ArgumentSymbol), Invoked:(ArgumentSymbol)
     // Candidates = Function
     IsEmpty(xs)
         ? True
         : And(f(First(xs)), f(Rest(xs)))
 
     public static void JoinStrings(var xs, var sep)
-    // ParameterSymbol=xs$1762: Argument:Ref=>FunctionGroupSymbol=IsEmpty$1323:(0/1), Argument:Ref=>FunctionGroupSymbol=First$1325:(0/1), Argument:Ref=>FunctionGroupSymbol=Rest$1321:(0/1)
+    // ParameterSymbol=xs$1765: Argument:Ref=>FunctionGroupSymbol=IsEmpty$1323:(0/1), Argument:Ref=>FunctionGroupSymbol=First$1325:(0/1), Argument:Ref=>FunctionGroupSymbol=Rest$1321:(0/1)
     // Candidates = Interval,Array
-    // ParameterSymbol=sep$1763: 
+    // ParameterSymbol=sep$1766: 
     // Candidates = Any
     IsEmpty(xs)
         ? 
-        : Add(First(xs), Aggregate(Rest(xs)))
+        : Add(First(xs), Aggregate(Rest(xs), , (x, acc) => 
+        // ParameterSymbol=x$1767: Argument:Ref=>FunctionGroupSymbol=ToString$203:(0/1)
+        // Candidates = Value
+        // ParameterSymbol=acc$1768: Argument:Ref=>FunctionGroupSymbol=Add$169:(0/2)
+        // Candidates = Arithmetic,ScalarArithmetic
+        Add(acc, Add(, , ToString(x)))))
 
 }
 class Easings
 {
     public static void BlendEaseFunc(var p, var easeIn, var easeOut)
-    // ParameterSymbol=p$1765: Argument:Ref=>FunctionGroupSymbol=LessThan$1283:(0/2), Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2), Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2)
+    // ParameterSymbol=p$1771: Argument:Ref=>FunctionGroupSymbol=LessThan$1283:(0/2), Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2), Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2)
     // Candidates = Comparable,Arithmetic,ScalarArithmetic
-    // ParameterSymbol=easeIn$1766: Invoked:(ArgumentSymbol)
+    // ParameterSymbol=easeIn$1772: Invoked:(ArgumentSymbol)
     // Candidates = Function
-    // ParameterSymbol=easeOut$1767: Invoked:(ArgumentSymbol)
+    // ParameterSymbol=easeOut$1773: Invoked:(ArgumentSymbol)
     // Candidates = Function
     LessThan(p, 0.5
         ? Multiply(0.5, easeIn(Multiply(p, 2)))
         : Multiply(0.5, Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5))
     )
     public static void InvertEaseFunc(var p, var easeIn)
-    // ParameterSymbol=p$1769: Argument:Ref=>FunctionGroupSymbol=Subtract$171:(1/2)
+    // ParameterSymbol=p$1775: Argument:Ref=>FunctionGroupSymbol=Subtract$171:(1/2)
     // Candidates = ScalarArithmetic
-    // ParameterSymbol=easeIn$1770: Invoked:(ArgumentSymbol)
+    // ParameterSymbol=easeIn$1776: Invoked:(ArgumentSymbol)
     // Candidates = Function
     Subtract(1, easeIn(Subtract(1, p)))
     public static void Linear(var p)
-    // ParameterSymbol=p$1772: 
+    // ParameterSymbol=p$1778: 
     // Candidates = Any
     p
     public static void QuadraticEaseIn(var p)
-    // ParameterSymbol=p$1774: Argument:Ref=>FunctionGroupSymbol=Pow2$1269:(0/1)
+    // ParameterSymbol=p$1780: Argument:Ref=>FunctionGroupSymbol=Pow2$1269:(0/1)
     // Candidates = Numerical
     Pow2(p)
     public static void QuadraticEaseOut(var p)
-    // ParameterSymbol=p$1776: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
+    // ParameterSymbol=p$1782: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
     // Candidates = Easings
     InvertEaseFunc(p, QuadraticEaseIn)
     public static void QuadraticEaseInOut(var p)
-    // ParameterSymbol=p$1778: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
+    // ParameterSymbol=p$1784: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
     // Candidates = Easings
     BlendEaseFunc(p, QuadraticEaseIn, QuadraticEaseOut)
     public static void CubicEaseIn(var p)
-    // ParameterSymbol=p$1780: Argument:Ref=>FunctionGroupSymbol=Pow3$1271:(0/1)
+    // ParameterSymbol=p$1786: Argument:Ref=>FunctionGroupSymbol=Pow3$1271:(0/1)
     // Candidates = Numerical
     Pow3(p)
     public static void CubicEaseOut(var p)
-    // ParameterSymbol=p$1782: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
+    // ParameterSymbol=p$1788: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
     // Candidates = Easings
     InvertEaseFunc(p, CubicEaseIn)
     public static void CubicEaseInOut(var p)
-    // ParameterSymbol=p$1784: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
+    // ParameterSymbol=p$1790: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
     // Candidates = Easings
     BlendEaseFunc(p, CubicEaseIn, CubicEaseOut)
     public static void QuarticEaseIn(var p)
-    // ParameterSymbol=p$1786: Argument:Ref=>FunctionGroupSymbol=Pow4$1273:(0/1)
+    // ParameterSymbol=p$1792: Argument:Ref=>FunctionGroupSymbol=Pow4$1273:(0/1)
     // Candidates = Numerical
     Pow4(p)
     public static void QuarticEaseOut(var p)
-    // ParameterSymbol=p$1788: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
+    // ParameterSymbol=p$1794: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
     // Candidates = Easings
     InvertEaseFunc(p, QuarticEaseIn)
     public static void QuarticEaseInOut(var p)
-    // ParameterSymbol=p$1790: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
+    // ParameterSymbol=p$1796: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
     // Candidates = Easings
     BlendEaseFunc(p, QuarticEaseIn, QuarticEaseOut)
     public static void QuinticEaseIn(var p)
-    // ParameterSymbol=p$1792: Argument:Ref=>FunctionGroupSymbol=Pow5$1275:(0/1)
+    // ParameterSymbol=p$1798: Argument:Ref=>FunctionGroupSymbol=Pow5$1275:(0/1)
     // Candidates = Numerical
     Pow5(p)
     public static void QuinticEaseOut(var p)
-    // ParameterSymbol=p$1794: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
+    // ParameterSymbol=p$1800: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
     // Candidates = Easings
     InvertEaseFunc(p, QuinticEaseIn)
     public static void QuinticEaseInOut(var p)
-    // ParameterSymbol=p$1796: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
+    // ParameterSymbol=p$1802: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
     // Candidates = Easings
     BlendEaseFunc(p, QuinticEaseIn, QuinticEaseOut)
     public static void SineEaseIn(var p)
-    // ParameterSymbol=p$1798: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
+    // ParameterSymbol=p$1804: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
     // Candidates = Easings
     InvertEaseFunc(p, SineEaseOut)
     public static void SineEaseOut(var p)
-    // ParameterSymbol=p$1800: Argument:Ref=>FunctionGroupSymbol=Quarter$1231:(0/1)
+    // ParameterSymbol=p$1806: Argument:Ref=>FunctionGroupSymbol=Quarter$1231:(0/1)
     // Candidates = Numerical
     Sin(Turns(Quarter(p)))
     public static void SineEaseInOut(var p)
-    // ParameterSymbol=p$1802: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
+    // ParameterSymbol=p$1808: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
     // Candidates = Easings
     BlendEaseFunc(p, SineEaseIn, SineEaseOut)
     public static void CircularEaseIn(var p)
-    // ParameterSymbol=p$1804: Argument:Ref=>FunctionGroupSymbol=Pow2$1269:(0/1)
+    // ParameterSymbol=p$1810: Argument:Ref=>FunctionGroupSymbol=Pow2$1269:(0/1)
     // Candidates = Numerical
     FromOne(SquareRoot(FromOne(Pow2(p))))
     public static void CircularEaseOut(var p)
-    // ParameterSymbol=p$1806: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
+    // ParameterSymbol=p$1812: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
     // Candidates = Easings
     InvertEaseFunc(p, CircularEaseIn)
     public static void CircularEaseInOut(var p)
-    // ParameterSymbol=p$1808: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
+    // ParameterSymbol=p$1814: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
     // Candidates = Easings
     BlendEaseFunc(p, CircularEaseIn, CircularEaseOut)
     public static void ExponentialEaseIn(var p)
-    // ParameterSymbol=p$1810: Argument:Ref=>FunctionGroupSymbol=AlmostZero$1279:(0/1), Argument:Ref=>FunctionGroupSymbol=MinusOne$1219:(0/1)
+    // ParameterSymbol=p$1816: Argument:Ref=>FunctionGroupSymbol=AlmostZero$1279:(0/1), Argument:Ref=>FunctionGroupSymbol=MinusOne$1219:(0/1)
     // Candidates = Numerical
     AlmostZero(p)
         ? p
         : Pow(2, Multiply(10, MinusOne(p)))
 
     public static void ExponentialEaseOut(var p)
-    // ParameterSymbol=p$1812: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
+    // ParameterSymbol=p$1818: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
     // Candidates = Easings
     InvertEaseFunc(p, ExponentialEaseIn)
     public static void ExponentialEaseInOut(var p)
-    // ParameterSymbol=p$1814: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
+    // ParameterSymbol=p$1820: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
     // Candidates = Easings
     BlendEaseFunc(p, ExponentialEaseIn, ExponentialEaseOut)
     public static void ElasticEaseIn(var p)
-    // ParameterSymbol=p$1816: Argument:Ref=>FunctionGroupSymbol=Quarter$1231:(0/1), Argument:Ref=>FunctionGroupSymbol=MinusOne$1219:(0/1)
+    // ParameterSymbol=p$1822: Argument:Ref=>FunctionGroupSymbol=Quarter$1231:(0/1), Argument:Ref=>FunctionGroupSymbol=MinusOne$1219:(0/1)
     // Candidates = Numerical
     Multiply(13, Multiply(Turns(Quarter(p)), Sin(Radians(Pow(2, Multiply(10, MinusOne(p)))))))
     public static void ElasticEaseOut(var p)
-    // ParameterSymbol=p$1818: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
+    // ParameterSymbol=p$1824: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
     // Candidates = Easings
     InvertEaseFunc(p, ElasticEaseIn)
     public static void ElasticEaseInOut(var p)
-    // ParameterSymbol=p$1820: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
+    // ParameterSymbol=p$1826: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
     // Candidates = Easings
     BlendEaseFunc(p, ElasticEaseIn, ElasticEaseOut)
     public static void BackEaseIn(var p)
-    // ParameterSymbol=p$1822: Argument:Ref=>FunctionGroupSymbol=Pow3$1271:(0/1), Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2), Argument:Ref=>FunctionGroupSymbol=Half$1227:(0/1)
+    // ParameterSymbol=p$1828: Argument:Ref=>FunctionGroupSymbol=Pow3$1271:(0/1), Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2), Argument:Ref=>FunctionGroupSymbol=Half$1227:(0/1)
     // Candidates = Numerical,Arithmetic,ScalarArithmetic
     Subtract(Pow3(p), Multiply(p, Sin(Turns(Half(p)))))
     public static void BackEaseOut(var p)
-    // ParameterSymbol=p$1824: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
+    // ParameterSymbol=p$1830: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
     // Candidates = Easings
     InvertEaseFunc(p, BackEaseIn)
     public static void BackEaseInOut(var p)
-    // ParameterSymbol=p$1826: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
+    // ParameterSymbol=p$1832: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
     // Candidates = Easings
     BlendEaseFunc(p, BackEaseIn, BackEaseOut)
     public static void BounceEaseIn(var p)
-    // ParameterSymbol=p$1828: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
+    // ParameterSymbol=p$1834: Argument:Ref=>FunctionGroupSymbol=InvertEaseFunc$1339:(0/2)
     // Candidates = Easings
     InvertEaseFunc(p, BounceEaseOut)
     public static void BounceEaseOut(var p)
-    // ParameterSymbol=p$1830: Argument:Ref=>FunctionGroupSymbol=LessThan$1283:(0/2), Argument:Ref=>FunctionGroupSymbol=Pow2$1269:(0/1), Argument:Ref=>FunctionGroupSymbol=LessThan$1283:(0/2), Argument:Ref=>FunctionGroupSymbol=Pow2$1269:(0/1), Argument:Ref=>FunctionGroupSymbol=Add$169:(0/2), Argument:Ref=>FunctionGroupSymbol=LessThan$1283:(0/2), Argument:Ref=>FunctionGroupSymbol=Pow2$1269:(0/1), Argument:Ref=>FunctionGroupSymbol=Add$169:(0/2), Argument:Ref=>FunctionGroupSymbol=Pow2$1269:(0/1), Argument:Ref=>FunctionGroupSymbol=Add$169:(0/2)
+    // ParameterSymbol=p$1836: Argument:Ref=>FunctionGroupSymbol=LessThan$1283:(0/2), Argument:Ref=>FunctionGroupSymbol=Pow2$1269:(0/1), Argument:Ref=>FunctionGroupSymbol=LessThan$1283:(0/2), Argument:Ref=>FunctionGroupSymbol=Pow2$1269:(0/1), Argument:Ref=>FunctionGroupSymbol=Add$169:(0/2), Argument:Ref=>FunctionGroupSymbol=LessThan$1283:(0/2), Argument:Ref=>FunctionGroupSymbol=Pow2$1269:(0/1), Argument:Ref=>FunctionGroupSymbol=Add$169:(0/2), Argument:Ref=>FunctionGroupSymbol=Pow2$1269:(0/1), Argument:Ref=>FunctionGroupSymbol=Add$169:(0/2)
     // Candidates = Comparable,Numerical,Arithmetic,ScalarArithmetic
     LessThan(p, Divide(4, 11))
         ? Multiply(121, Divide(Pow2(p), 16))
@@ -1502,26 +1512,26 @@ class Easings
 
 
     public static void BounceEaseInOut(var p)
-    // ParameterSymbol=p$1832: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
+    // ParameterSymbol=p$1838: Argument:Ref=>FunctionGroupSymbol=BlendEaseFunc$1337:(0/3)
     // Candidates = Easings
     BlendEaseFunc(p, BounceEaseIn, BounceEaseOut)
 }
 class Intrinsics
 {
     public static void Interpolate(var xs)
-    // ParameterSymbol=xs$1834: 
+    // ParameterSymbol=xs$1840: 
     // Candidates = Any
     intrinsic
     public static void Throw(var x)
-    // ParameterSymbol=x$1836: 
+    // ParameterSymbol=x$1842: 
     // Candidates = Any
     intrinsic
     public static void TypeOf(var x)
-    // ParameterSymbol=x$1838: 
+    // ParameterSymbol=x$1844: 
     // Candidates = Any
     intrinsic
     public static void New(var x)
-    // ParameterSymbol=x$1840: 
+    // ParameterSymbol=x$1846: 
     // Candidates = Any
     intrinsic
 }

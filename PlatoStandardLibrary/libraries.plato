@@ -99,7 +99,7 @@ library Numerical
 
 library Comparable
 {
-    Equals(a, b) => a.Compare(b) =>= 0;
+    Equals(a, b) => a.Compare(b) == 0;
     LessThan(a, b) => a.Compare(b) < 0;
     Lesser(a, b) => a.LessThanOrEquals(b) ? a : b;
     Greater(a, b) => a.GreaterThanOrEquals(b) ? a : b;
@@ -136,9 +136,9 @@ library Array
     First(xs) => xs.At(0);
     Last(xs) => xs.At(xs.Count - 1);
     Slice(xs, from, count) => xs.Skip(from).Take(count);
-    Join(xs, sep) => xs.IsEmpty ? "" : xs.First.ToString + xs.Skip(1).Aggregate("", (acc, cur) =>> $"{acc}{sep}{cur}");
+    Join(xs, sep) => xs.IsEmpty ? "" : xs.First.ToString + xs.Skip(1).Aggregate("", (acc, cur) => $"{acc}{sep}{cur}");
     All(xs, f) => xs.IsEmpty ? true : f(xs.First) && f(xs.Rest);
-    JoinStrings(xs, sep) => xs.IsEmpty ? "" : xs.First + xs.Rest.Aggregate("", (x, acc) =>> acc + ", " + x.ToString);
+    JoinStrings(xs, sep) => xs.IsEmpty ? "" : xs.First + xs.Rest.Aggregate("", (x, acc) => acc + ", " + x.ToString);
 }
 
 library Easings
