@@ -77,8 +77,10 @@ The following are some of the valid kinds of expressions in Plato:
 
 ## Statements
 
-In idiomatic Plato code (aka Platonic code) it is more common to use expressions than statements.
-Statements do not have a value. Statements are converted into expressions by the compiler. 
+In idiomatic Plato code (aka Platonic code) it is more common to use expressions than 
+statements. Statements do not have a value. 
+Functions with statement bodies are converted into expression bodies 
+by the compiler. 
 
 Plato supports the following statements:
 
@@ -107,7 +109,7 @@ interfaces, traits, protocols, and mixins in other languages.
 
 A concept can contain a mix of defined functions and unimplemented functions, 
 i.e., function signatures with no bodies. All functions in a concept require
-explicit annotations. 
+explicit type annotations. 
 
 A type that implements a concept must provide implementations of any unimplemented functions 
 declared in the concept. Those functions can be defined in any library defined in a project.
