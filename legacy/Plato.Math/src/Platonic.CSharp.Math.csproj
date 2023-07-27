@@ -44,7 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Plato.Collections\src\Plato.Collections.csproj" />
+    <ProjectReference Include="..\..\..\..\Plato.Collections\src\Platonic.CSharp.Collections.csproj" />
   </ItemGroup>
   
   <ItemGroup>
