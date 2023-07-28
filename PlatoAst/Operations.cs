@@ -1,9 +1,9 @@
-﻿using PlatoAst;
+﻿using Plato.Compiler;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PlatoAst
+namespace Plato.Compiler
 {
     public class MemberCandidate
     {

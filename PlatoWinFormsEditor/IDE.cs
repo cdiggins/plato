@@ -4,7 +4,7 @@ using Microsoft.VisualBasic.ApplicationServices;
 using Parakeet;
 using Parakeet.Demos;
 using Parakeet.Demos.Plato;
-using PlatoAst;
+using Plato.Compiler;
 
 namespace PlatoWinFormsEditor;
 
@@ -17,8 +17,6 @@ public class IDE
     public string ParseTree => Try(() => Compilation?.ParseTree?.ToString());
     public string CstXml => Try(() => Compilation?.CstTree?.ToXml().ToString());
     public string AstXml => Try(() => Compilation?.AstTree?.ToXml());
-    public string CSharpAst => Try(() => Compilation?.AstTree?.ToCSharp());
-    public string JavaScriptAst => Try(() => Compilation?.AstTree?.ToJavaScript());
     public string AbstractValuesXml => Compilation.SymbolResolver.TypeDefs.ToXml();
 
     public IDE()
@@ -37,30 +35,6 @@ public class IDE
         File.WriteAllText(Path.Combine(outputFolder, "output.cs"), Compilation.ToCSharp());
         File.WriteAllText(Path.Combine(outputFolder, "output.plato.html"), Compilation.ToPlatoHtml());
         File.WriteAllText(Path.Combine(outputFolder, "output.js"), Compilation.ToJavaScript());
-
-        /*
-    var types = IDE.Compilation.AstTree.GetAllTypes().ToList();
-
-    foreach (var type in types)
-    {
-        //richTextBoxOutput.AppendText($"{type.Kind} {type.Name.Text} {Environment.NewLine}");
-    }
-
-    var lookup = new TypeNames(types);
-    foreach (var kv in lookup.Dictionary)
-    {
-        richTextBoxOutput.AppendText($"{kv.Key}");
-        richTextBoxOutput.AppendText(Environment.NewLine);
-
-        var memberNames = kv.Value;
-
-        foreach (var kv2 in memberNames.Members)
-        {
-            richTextBoxOutput.AppendText($"{kv2.Key} = {kv2.Value.GetType().Name}");
-            richTextBoxOutput.AppendText(Environment.NewLine);
-        }
-    }
-    */
 
         //Output += GetConstraintsOutput();
         //Output += GetOperationsOutput();

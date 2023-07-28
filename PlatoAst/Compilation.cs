@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Parakeet;
 
-namespace PlatoAst
+namespace Plato.Compiler
 {
     public class Compilation
     {

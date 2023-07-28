@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using Parakeet;
 
-namespace PlatoAst
+namespace Plato.Compiler
 {
-    public class PlatoWriter : CodeBuilder<PlatoWriter>
+    public class AstWriterPlato : CodeBuilder<AstWriterPlato>
     {
-        public PlatoWriter WriteEol()
+        public AstWriterPlato WriteEol()
             => WriteLine(";");
 
-        public PlatoWriter WriteStatements(IEnumerable<AstNode> nodes)
+        public AstWriterPlato WriteStatements(IEnumerable<AstNode> nodes)
             => WriteList(nodes, (w, n) => w.Write(n));
 
-        public PlatoWriter Write(IEnumerable<AstNode> nodes, string sep = "")
+        public AstWriterPlato Write(IEnumerable<AstNode> nodes, string sep = "")
         {
             var first = true;
             var r = this;
@@ -28,7 +28,7 @@ namespace PlatoAst
             return r;
         }
 
-        public PlatoWriter ToCSharp(AstConstant c)
+        public AstWriterPlato ToCSharp(AstConstant c)
         {
             switch (c.Value)
             {
@@ -49,12 +49,12 @@ namespace PlatoAst
             }
         }
 
-        public PlatoWriter Write(AstVarDef def)
+        public AstWriterPlato Write(AstVarDef def)
         {
             return Write("var").Write(" ").Write(def.Name).Write(" = ").Write(def.Value).WriteEol();
         }
 
-        public PlatoWriter Write(AstConditional astConditional)
+        public AstWriterPlato Write(AstConditional astConditional)
         {
             return Write("if ")
                 .Write(astConditional.Condition)
@@ -66,7 +66,7 @@ namespace PlatoAst
                 .WriteLine();
         }
 
-        public PlatoWriter Write(AstLoop astLoop)
+        public AstWriterPlato Write(AstLoop astLoop)
         {
             return Write("while ")
                 .Write(astLoop.Condition)
@@ -75,7 +75,7 @@ namespace PlatoAst
                 .WriteLine();
         }
 
-        public PlatoWriter WriteTypedName(string ident, AstTypeNode type)
+        public AstWriterPlato WriteTypedName(string ident, AstTypeNode type)
         {
             return Write(ident).Write(": ").Write(type);
         }
@@ -112,13 +112,13 @@ namespace PlatoAst
                 : name;
         }
 
-        public static PlatoWriter Write<T>(PlatoWriter w, T x)
+        public static AstWriterPlato Write<T>(AstWriterPlato w, T x)
             where T : AstNode
         {
             return w.Write(x);
         }
 
-        public PlatoWriter Write(AstNode node)
+        public AstWriterPlato Write(AstNode node)
         {
             if (node == null)
                 return this;

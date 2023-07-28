@@ -1,4 +1,4 @@
-﻿namespace PlatoAst
+﻿namespace Plato.Compiler
 {
     public static class Helper
     {

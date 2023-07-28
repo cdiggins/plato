@@ -1,7 +1,7 @@
 ﻿using Parakeet;
 using Parakeet.Demos;
 using Parakeet.Demos.Plato;
-using PlatoAst;
+using Plato.Compiler;
 
 namespace PlatoTests;
 

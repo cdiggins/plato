@@ -1,6 +1,6 @@
-﻿namespace PlatoAst
+﻿namespace Plato.Compiler
 {
-    public static class WriterExtensions
+    public static class SymbolWriterExtensions
     {
         public static string Pad(this string s)
             => " " + s + " ";

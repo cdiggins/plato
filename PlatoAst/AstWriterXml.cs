@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using Parakeet;
 
-namespace PlatoAst
+namespace Plato.Compiler
 {
-    public class AstXmlBuilder : CodeBuilder<AstXmlBuilder>
+    public class AstWriterXml : CodeBuilder<AstWriterXml>
     {
         public string Encode(string s)
         {
@@ -13,7 +13,7 @@ namespace PlatoAst
                 .Replace("&", "&amp;");
         }
 
-        public AstXmlBuilder Write(AstNode node)
+        public AstWriterXml Write(AstNode node)
         {
             if (node == null)
                 return this;
@@ -26,5 +26,11 @@ namespace PlatoAst
             r = node.Children.Aggregate(r, (current, c) => current.Write(c));
             return r.Dedent().WriteLine($"</{type}>");
         }
+    }
+
+    public static class AstWriterExtensions
+    {
+        public static string ToXml(this AstNode node)
+            => new AstWriterXml().Write(node).ToString();
     }
 }

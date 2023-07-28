@@ -5,7 +5,7 @@ using System.Linq;
 using Parakeet;
 using Parakeet.Demos.Plato;
 
-namespace PlatoAst
+namespace Plato.Compiler
 {
     public class AstFromPlatoCst
     {

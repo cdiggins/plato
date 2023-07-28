@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using PlatoAst;
+using Plato.Compiler;
 
 namespace PlatoTests
 {
@@ -8,52 +8,6 @@ namespace PlatoTests
         public static string DllPath => typeof(AstTests).Assembly.Location;
         public static string ProjectFolder => Path.Combine(Path.GetDirectoryName(DllPath), "..", "..", "..");
         public static string SolutionFolder => Path.Combine(ProjectFolder, "..");
-
-        [Test]
-        [TestCase(AstCodeWriter.Language.CSharp)]
-        [TestCase(AstCodeWriter.Language.JavaScript)]
-        public void TestAstWriter(AstCodeWriter.Language lang)
-        {
-            // TODO: create nodes 
-            // TODO: create tests of the parser. 
-            // TODO: convert expressions trees into AST Node
-            // TODO: create AST Nodes.
-            // TODO: test the evaluator. 
-            // TODO: test the writer 
-
-            Console.WriteLine($"AST as {lang}");
-            foreach (var n in TestInputAstNodes())
-            {
-                Console.WriteLine(NodeToString(n, lang));
-            }
-        }
-
-        /*
-        [Test]
-        public void TestAstPrinterAndParser()
-        {
-            var testCount = 0;
-            var successCount = 0;
-
-            foreach (var n in TestInputAstNodes())
-            {
-                var text = NodeToString(n, AstCodeWriter.Language.CSharp);
-
-                testCount++;
-                var r = ParserTests.ParseTest(text, PailTests.Grammar.Expr);
-                successCount += r;
-                Console.WriteLine(text);
-            }
-
-            Assert.AreEqual(testCount, successCount);
-        }*/
-
-        public static string NodeToString(AstNode n, AstCodeWriter.Language lang = AstCodeWriter.Language.CSharp)
-        {
-            var w = new AstCodeWriter(lang);
-            w.Write(n);
-            return w.ToString();
-        }
 
         public static IEnumerable<AstNode> TestInputAstNodes()
         {

@@ -1,3 +1,5 @@
+using Plato.Compiler;
+
 namespace PlatoWinFormsEditor
 {
     public partial class Form1 : Form
@@ -12,7 +14,7 @@ namespace PlatoWinFormsEditor
             richTextBoxParseTree.Text = IDE.ParseTree;
             richTextBoxCst.Text = IDE.CstXml;
             richTextBoxAst.Text = IDE.AstXml;
-            richTextBoxJavaScript.Text = IDE.JavaScriptAst;
+            richTextBoxJavaScript.Text = IDE.Compilation.ToJavaScript();
             richTextBoxSymbols.Text = IDE.AbstractValuesXml;
         }
     }
