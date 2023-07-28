@@ -1,6 +1,7 @@
 ﻿using Parakeet;
 using System.Collections.Generic;
 using System;
+using System.Data;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 
@@ -8,11 +9,6 @@ namespace Plato.Compiler
 {
     public class SymbolWriterJavaScript : CodeBuilder<SymbolWriterJavaScript>
     {
-        public string Rename(string name)
-        {
-            return "P_" + name;
-        }
-
         public TypeResolver TypeResolver { get; }
 
         public SymbolWriterJavaScript(TypeResolver tg)
@@ -21,38 +17,11 @@ namespace Plato.Compiler
         public SymbolWriterJavaScript Write(IEnumerable<Symbol> symbols)
             => symbols.Aggregate(this, (writer, symbol) => writer.Write(symbol));
 
-        public string Span(string s, string cls)
-            => s;
-
-        public string Operator(string s)
-            => Span(s, "operator");
-
-        public string Comment(string s)
-            => Span(s, "comment");
-
-        public string Delimiter(string s)
-            => Span(s, "delimiter");
-
-        public string Keyword(string s)
-            => Span(s, "keyword");
-
-        public string Type(string s)
-            => Span(Rename(s), "type");
-
-        public string Variable(string s)
-            => Span(Rename(s), "variable");
-
-        public string Literal(string s)
-            => Span(s, "literal");
-
-        public string DeclarationName(string s)
-            => Span(Rename(s), "declname");
-
         public SymbolWriterJavaScript WriteStartBlock()
-            => WriteLine(Delimiter("{")).Indent();
+            => WriteLine("{").Indent();
 
         public SymbolWriterJavaScript WriteEndBlock()
-            => Dedent().WriteLine(Delimiter("}"));
+            => Dedent().WriteLine("}");
 
         public SymbolWriterJavaScript WriteBlock(IEnumerable<Symbol> symbols)
             => symbols.Aggregate(WriteStartBlock(),
@@ -94,21 +63,21 @@ namespace Plato.Compiler
 
         public SymbolWriterJavaScript Write(FunctionSymbol function)
         {
-            return Write(Keyword("function").PadRight())
-                .Write(Delimiter("("))
+            return Write("function".PadRight())
+                .Write("(")
                 .WriteCommaList(function.Parameters)
-                .Write(Delimiter(")").PadRight())
+                .Write(")".PadRight())
                 
                 // TEMP: for debugging
-                .WriteLine()
-                .WriteParameterConstraints(function)
-                .WriteFunctionCallCandidates(function)
+                //.WriteLine()
+                //.WriteParameterConstraints(function)
+                //.WriteFunctionCallCandidates(function)
 
-                .Write(Delimiter("{").PadRight())
-                .Write(Keyword("return").PadRight())
+                .Write("{".PadRight())
+                .Write("return".PadRight())
                 .Write(function.Body)
-                .Write(Delimiter(";").PadRight())
-                .Write(Delimiter("}"));
+                .Write(";".PadRight())
+                .Write("}");
         }
 
         public SymbolWriterJavaScript WriteCommaList(IEnumerable<Symbol> symbols)
@@ -118,7 +87,7 @@ namespace Plato.Compiler
             foreach (var s in symbols)
             {
                 if (!first)
-                    r = r.Write(Delimiter(",") + " ");
+                    r = r.Write(", ");
                 first = false;
                 r = r.Write(s);
             }
@@ -126,22 +95,19 @@ namespace Plato.Compiler
             return r;
         }
 
-        public static string FieldName(FieldDefSymbol fd)
-            => FieldName(fd.Name);
+        public string GetName(RefSymbol rs)
+            => GetName(rs.Def);
 
-        public static string FieldName(string name)
-            => "_field_" + name;
-
-        public string TypeName(TypeDefSymbol typeDef)
+        public string GetName(DefSymbol ds)
         {
-            return $"{typeDef.UniqueName}_{typeDef.Kind}";
+            if (ds is TypeDefSymbol ts) return $"{ts.UniqueName}_{ts.Kind}";
+            return $"{ds.UniqueName}";
         }
 
         public SymbolWriterJavaScript WriteConcept(TypeDefSymbol typeDef)
         {
             if (typeDef?.Kind != TypeKind.Concept) throw new Exception("Expected concept");
-            var name = TypeName(typeDef);
-            WriteLine($"class {name}");
+            WriteLine($"class {GetName(typeDef)}");
             WriteStartBlock();
             WriteLine("constructor(self) { this.Self = self; };");
             WriteMethods(typeDef);
@@ -154,7 +120,7 @@ namespace Plato.Compiler
             foreach (var method in typeDef.Methods)
             {
                 var f = method.Function;
-                Write($"static {Rename(f.UniqueName)} = ");
+                Write($"static {GetName(f)} = ");
                 Write(f);
                 WriteLine(";");
             }
@@ -165,36 +131,55 @@ namespace Plato.Compiler
         public SymbolWriterJavaScript WriteType(TypeDefSymbol typeDef)
         {
             if (typeDef?.Kind != TypeKind.Type) throw new Exception("Expected type");
-            var name = TypeName(typeDef);
+            var name = GetName(typeDef);
             WriteLine($"class {name}");
             WriteStartBlock();
 
             // TODO: the default implementation of concepts will require this as well. 
-            Write(Keyword("constructor"))
-                .Write(Delimiter("("))
-                .Write(string.Join(", ", typeDef.Fields.Select(f => Rename(f.Name))))
-                .Write(Delimiter(")"))
+            Write("constructor")
+                .Write("(")
+                .Write(string.Join(", ", typeDef.Fields.Select(GetName)))
+                .Write(")")
                 .WriteLine();
             WriteStartBlock();
+            WriteLine("// field initialization ");
             foreach (var field in typeDef.Fields)
             {
-                WriteLine($"this.{FieldName(field)} = {Rename(field.Name)};");
+                WriteLine($"this.{GetName(field)} = {GetName(field)};");
             }
+
+            var concepts = typeDef.GetAllImplementedConcepts();
+            foreach (var concept in concepts)
+            {
+                var cName = GetName(concept);
+                foreach (var m in concept.Methods)
+                {
+                    var f = m.Function;
+                    var fName = GetName(f);
+                    WriteLine($"this.{fName} = {name}.{cName}.{fName};");
+                }
+            }
+
             WriteEndBlock();
 
-            WriteLine(Comment("// field accessors"));
+            WriteLine("// field accessors");
             foreach (var field in typeDef.Fields)
             {
-                WriteLine($"static {Rename(field.UniqueName)} = function(self) {{ return self.{FieldName(field)}; }}");
+                Write($"static {GetName(field)} = function(self)");
+                WriteLine($" {{ return self.{GetName(field)}; }}");
             }
 
-            WriteLine(Comment("// implemented concepts "));
-            
-            foreach (var typeRef in typeDef.Implements)
+            WriteLine("// implemented concepts ");
+            var conceptNames = new List<string>();
+            foreach (var concept in concepts)
             {
-                if (typeRef.Def == null)
-                    throw new Exception("Unexpected missing type def");
+                if (concept.Kind != TypeKind.Concept) 
+                    throw new Exception("Expected concept");
+                var conceptName = GetName(concept);
+                conceptNames.Add(conceptName);
+                WriteLine($"static {conceptName} = new {conceptName}({name});");
             }
+            WriteLine($"static Implements = [{string.Join(",", conceptNames)}];");
 
             WriteEndBlock();
             return this;
@@ -203,13 +188,13 @@ namespace Plato.Compiler
         public SymbolWriterJavaScript WriteLibrary(TypeDefSymbol typeDef)
         {
             if (typeDef?.Kind != TypeKind.Library) throw new Exception("Expected library");
-            var name = TypeName(typeDef);
+            var name = GetName(typeDef);
             WriteLine($"class {name}");
             WriteStartBlock();
             foreach (var method in typeDef.Methods)
             {
                 var f = method.Function;
-                Write($"static {Rename(f.UniqueName)} = ");
+                Write($"static {GetName(f)} = ");
                 Write(f);
                 WriteLine(";");
             }
@@ -240,23 +225,23 @@ namespace Plato.Compiler
                     return Write("null");
 
                 case RefSymbol refSymbol:
-                    return Write(Variable(refSymbol.Name));
+                    return Write(GetName(refSymbol));
 
                 case ArgumentSymbol argument:
                     return Write(argument.Original);
 
                 case AssignmentSymbol assignment:
                     return Write(assignment.LValue)
-                        .Write(Operator("=").Pad())
+                        .Write(" = ")
                         .Write(assignment.RValue);
 
                 case ConditionalExpressionSymbol conditional:
                     return Write(conditional.Condition)
                         .Indent().WriteLine()
-                        .Write(Operator("?").PadRight())
+                        .Write("? ")
                         .Write(conditional.IfTrue)
                         .WriteLine()
-                        .Write(Operator(":").PadRight())
+                        .Write(": ")
                         .Write(conditional.IfFalse)
                         .Dedent().WriteLine();
 
@@ -264,11 +249,12 @@ namespace Plato.Compiler
                     return Write(function);
 
                 case FunctionCallSymbol functionCall:
-                    return Write(functionCall.Function).Write(Delimiter("("))
-                        .WriteCommaList(functionCall.Args).Write(Delimiter(")"));
+                    return Write(functionCall.Function).Write("(")
+                        .WriteCommaList(functionCall.Args).Write(")");
 
                 case LiteralSymbol literal:
-                    return Write(Literal(literal.Value.ToLiteralString()));
+                    // TODO: add a constructor 
+                    return Write(literal.Value.ToLiteralString());
 
                 case MethodDefSymbol methodDef:
                     throw new Exception("Not implemented");
@@ -283,7 +269,7 @@ namespace Plato.Compiler
                     return Write("_");
 
                 case ParameterSymbol parameter:
-                    return Write(DeclarationName(parameter.Name));
+                    return Write(GetName(parameter));
 
                 case TypeDefSymbol typeDef:
                     throw new NotImplementedException("Type definitions are supposed to be handled first ");
@@ -292,7 +278,7 @@ namespace Plato.Compiler
                     throw new NotImplementedException("Type references are supposed to be handled in a function");
 
                 case VariableSymbol variable:
-                    return Write(variable.Name);
+                    return Write(GetName(variable));
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(value));

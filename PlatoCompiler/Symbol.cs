@@ -102,7 +102,6 @@ namespace Plato.Compiler
         public static TypeDefSymbol Float64 = Create("Float64");
         public static TypeDefSymbol Type = Create("Type");
 
-
         public static TypeDefSymbol Create(string name)
             => new TypeDefSymbol(TypeKind.Primitive, name);
     }
@@ -127,6 +126,12 @@ namespace Plato.Compiler
         {
             Kind = kind;
         }
+
+        public IEnumerable<TypeDefSymbol> GetSelfAndAllInheritedTypes()
+            => Inherits.SelectMany(c => c.Def.GetSelfAndAllInheritedTypes()).Append(this);
+
+        public IEnumerable<TypeDefSymbol> GetAllImplementedConcepts()
+            => Implements.SelectMany(c => c.Def.GetSelfAndAllInheritedTypes()).Distinct();
 
         public override IReadOnlyList<Symbol> Children 
             => Array.Empty<Symbol>().Concat(Methods).Concat(Fields).Concat(TypeParameters).ToList();
