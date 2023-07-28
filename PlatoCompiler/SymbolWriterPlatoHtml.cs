@@ -154,7 +154,7 @@ namespace Plato.Compiler
 
         public SymbolWriterPlatoHtml Write(TypeDefSymbol typeDef)
         {
-            Write(Keyword(typeDef.Kind) + " ");
+            Write(Keyword(typeDef.Kind.ToString()) + " ");
             WriteLine(Type(typeDef.Name));
             if (typeDef.Implements.Count > 0)
             {

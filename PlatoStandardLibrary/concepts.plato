@@ -11,7 +11,7 @@ concept Vector<T: Numerical>
 }
 
 concept Measure
-    inherits Value, ScalarArithemetic<Number>, Equatable, Comparable, Magnitude
+    inherits Value, ScalarArithmetic<Number>, Equatable, Comparable, Magnitude
 { 
     Value(x: Self): Number
         => x.FieldValues[0];

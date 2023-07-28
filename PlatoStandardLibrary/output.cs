@@ -1,20 +1,20 @@
 interface Vector<Self> where Self : Vector<Self>
 {
-    public static Count Count(Vector v)
-    // ParameterSymbol=v$1411:Vector Declared:Vector
+    public static Count_26 Count(Vector_13 v)
+    // ParameterSymbol=v$1411:Concept:Vector_13 Declared:Concept:Vector_13
     // Candidates = Vector
     Count(FieldTypes(Self))
-    public static T At(Vector v, Index n)
-    // ParameterSymbol=v$1413:Vector Declared:Vector, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    public static T_142 At(Vector_13 v, Index_27 n)
+    // ParameterSymbol=v$1413:Concept:Vector_13 Declared:Concept:Vector_13, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Vector
-    // ParameterSymbol=n$1414:Index Declared:Index, Argument:Ref=>FunctionGroupSymbol=At$213:(1/2)
+    // ParameterSymbol=n$1414:Type:Index_27 Declared:Type:Index_27, Argument:Ref=>FunctionGroupSymbol=At$213:(1/2)
     // Candidates = Index
     At(FieldValues(v), n)
 }
 interface Measure<Self> where Self : Measure<Self>
 {
-    public static Number Value(Self x)
-    // ParameterSymbol=x$1416:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    public static Number_28 Value(Self_7 x)
+    // ParameterSymbol=x$1416:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
     At(FieldValues(x), 0)
 }
@@ -23,17 +23,17 @@ interface Numerical<Self> where Self : Numerical<Self>
 }
 interface Magnitude<Self> where Self : Magnitude<Self>
 {
-    public static Number Magnitude(Self x)
-    // ParameterSymbol=x$1418:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    public static Number_28 Magnitude(Self_7 x)
+    // ParameterSymbol=x$1418:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
     SquareRoot(Sum(Square(FieldValues(x))))
 }
 interface Comparable<Self> where Self : Comparable<Self>
 {
-    public static Integer Compare(Self a, Self b)
-    // ParameterSymbol=a$1420:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=Magnitude$150:(0/1), Argument:Ref=>FunctionGroupSymbol=Magnitude$150:(0/1)
+    public static Integer_25 Compare(Self_7 a, Self_7 b)
+    // ParameterSymbol=a$1420:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=Magnitude$150:(0/1), Argument:Ref=>FunctionGroupSymbol=Magnitude$150:(0/1)
     // Candidates = Self
-    // ParameterSymbol=b$1421:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=Magnitude$150:(0/1), Argument:Ref=>FunctionGroupSymbol=Magnitude$150:(0/1)
+    // ParameterSymbol=b$1421:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=Magnitude$150:(0/1), Argument:Ref=>FunctionGroupSymbol=Magnitude$150:(0/1)
     // Candidates = Self
     LessThan(Magnitude(a), Magnitude(b)
         ? Negative(1)
@@ -45,699 +45,699 @@ interface Comparable<Self> where Self : Comparable<Self>
 }
 interface Equatable<Self> where Self : Equatable<Self>
 {
-    public static Boolean Equals(Self a, Self b)
-    // ParameterSymbol=a$1423:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    public static Boolean_21 Equals(Self_7 a, Self_7 b)
+    // ParameterSymbol=a$1423:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // ParameterSymbol=b$1424:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=b$1424:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
     All(Equals(FieldValues(a), FieldValues(b)))
 }
 interface Arithmetic<Self> where Self : Arithmetic<Self>
 {
-    public static Self Add(Self self, Self other)
-    // ParameterSymbol=self$1426:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    public static Self_7 Add(Self_7 self, Self_7 other)
+    // ParameterSymbol=self$1426:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // ParameterSymbol=other$1427:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=other$1427:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
     Add(FieldValues(self), FieldValues(other))
-    public static Self Negative(Self self)
-    // ParameterSymbol=self$1429:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    public static Self_7 Negative(Self_7 self)
+    // ParameterSymbol=self$1429:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
     Negative(FieldValues(self))
-    public static Self Reciprocal(Self self)
-    // ParameterSymbol=self$1431:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    public static Self_7 Reciprocal(Self_7 self)
+    // ParameterSymbol=self$1431:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
     Reciprocal(FieldValues(self))
-    public static Self Multiply(Self self, Self other)
-    // ParameterSymbol=self$1433:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    public static Self_7 Multiply(Self_7 self, Self_7 other)
+    // ParameterSymbol=self$1433:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // ParameterSymbol=other$1434:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=other$1434:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
     Add(FieldValues(self), FieldValues(other))
-    public static Self Divide(Self self, Self other)
-    // ParameterSymbol=self$1436:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    public static Self_7 Divide(Self_7 self, Self_7 other)
+    // ParameterSymbol=self$1436:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // ParameterSymbol=other$1437:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=other$1437:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
     Divide(FieldValues(self), FieldValues(other))
-    public static Self Modulo(Self self, Self other)
-    // ParameterSymbol=self$1439:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    public static Self_7 Modulo(Self_7 self, Self_7 other)
+    // ParameterSymbol=self$1439:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // ParameterSymbol=other$1440:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=other$1440:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
     Modulo(FieldValues(self), FieldValues(other))
 }
 interface ScalarArithmetic<Self> where Self : ScalarArithmetic<Self>
 {
-    public static Self Add(Self self, T scalar)
-    // ParameterSymbol=self$1443:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    public static Self_7 Add(Self_7 self, T_1442 scalar)
+    // ParameterSymbol=self$1443:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // ParameterSymbol=scalar$1444:T Declared:T, Argument:Ref=>FunctionGroupSymbol=Add$169:(1/2)
+    // ParameterSymbol=scalar$1444:Variable:T_1442 Declared:Variable:T_1442, Argument:Ref=>FunctionGroupSymbol=Add$169:(1/2)
     // Candidates = T
     Add(FieldValues(self), scalar)
-    public static Self Subtract(Self self, T scalar)
-    // ParameterSymbol=self$1446:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=Add$169:(0/2)
+    public static Self_7 Subtract(Self_7 self, T_1442 scalar)
+    // ParameterSymbol=self$1446:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=Add$169:(0/2)
     // Candidates = Self
-    // ParameterSymbol=scalar$1447:T Declared:T, Argument:Ref=>FunctionGroupSymbol=Negative$158:(0/1)
+    // ParameterSymbol=scalar$1447:Variable:T_1442 Declared:Variable:T_1442, Argument:Ref=>FunctionGroupSymbol=Negative$158:(0/1)
     // Candidates = T
     Add(self, Negative(scalar))
-    public static Self Multiply(Self self, T scalar)
-    // ParameterSymbol=self$1449:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    public static Self_7 Multiply(Self_7 self, T_1442 scalar)
+    // ParameterSymbol=self$1449:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // ParameterSymbol=scalar$1450:T Declared:T, Argument:Ref=>FunctionGroupSymbol=Multiply$173:(1/2)
+    // ParameterSymbol=scalar$1450:Variable:T_1442 Declared:Variable:T_1442, Argument:Ref=>FunctionGroupSymbol=Multiply$173:(1/2)
     // Candidates = T
     Multiply(FieldValues(self), scalar)
-    public static Self Divide(Self self, T scalar)
-    // ParameterSymbol=self$1452:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2)
+    public static Self_7 Divide(Self_7 self, T_1442 scalar)
+    // ParameterSymbol=self$1452:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2)
     // Candidates = Self
-    // ParameterSymbol=scalar$1453:T Declared:T, Argument:Ref=>FunctionGroupSymbol=Reciprocal$160:(0/1)
+    // ParameterSymbol=scalar$1453:Variable:T_1442 Declared:Variable:T_1442, Argument:Ref=>FunctionGroupSymbol=Reciprocal$160:(0/1)
     // Candidates = T
     Multiply(self, Reciprocal(scalar))
-    public static Self Modulo(Self self, T scalar)
-    // ParameterSymbol=self$1455:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    public static Self_7 Modulo(Self_7 self, T_1442 scalar)
+    // ParameterSymbol=self$1455:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // ParameterSymbol=scalar$1456:T Declared:T, Argument:Ref=>FunctionGroupSymbol=Modulo$177:(1/2)
+    // ParameterSymbol=scalar$1456:Variable:T_1442 Declared:Variable:T_1442, Argument:Ref=>FunctionGroupSymbol=Modulo$177:(1/2)
     // Candidates = T
     Modulo(FieldValues(self), scalar)
 }
 interface Boolean<Self> where Self : Boolean<Self>
 {
-    public static Self And(Self a, Self b)
-    // ParameterSymbol=a$1458:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    public static Self_7 And(Self_7 a, Self_7 b)
+    // ParameterSymbol=a$1458:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // ParameterSymbol=b$1459:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=b$1459:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
     And(FieldValues(a), FieldValues(b))
-    public static Self Or(Self a, Self b)
-    // ParameterSymbol=a$1461:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    public static Self_7 Or(Self_7 a, Self_7 b)
+    // ParameterSymbol=a$1461:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
-    // ParameterSymbol=b$1462:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // ParameterSymbol=b$1462:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
     Or(FieldValues(a), FieldValues(b))
-    public static Self Not(Self a)
-    // ParameterSymbol=a$1464:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    public static Self_7 Not(Self_7 a)
+    // ParameterSymbol=a$1464:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
     // Candidates = Self
     Not(FieldValues(a))
 }
 interface Value<Self> where Self : Value<Self>
 {
-    public static void Type()
+    public static Type_12 Type()
     intrinsic
-    public static Array FieldTypes()
+    public static Array_24 FieldTypes()
     intrinsic
-    public static Array FieldNames()
+    public static Array_24 FieldNames()
     intrinsic
-    public static Array FieldValues(Self self)
-    // ParameterSymbol=self$1469:Self Declared:Self
+    public static Array_24 FieldValues(Self_7 self)
+    // ParameterSymbol=self$1469:Primitive:Self_7 Declared:Primitive:Self_7
     // Candidates = Self
     intrinsic
-    public static Self Zero()
+    public static Self_7 Zero()
     Zero(FieldTypes)
-    public static Self One()
+    public static Self_7 One()
     One(FieldTypes)
-    public static Self Default()
+    public static Self_7 Default()
     Default(FieldTypes)
-    public static Self MinValue()
+    public static Self_7 MinValue()
     MinValue(FieldTypes)
-    public static Self MaxValue()
+    public static Self_7 MaxValue()
     MaxValue(FieldTypes)
-    public static void ToString(Self x)
-    // ParameterSymbol=x$1476:Self Declared:Self
+    public static String_8 ToString(Self_7 x)
+    // ParameterSymbol=x$1476:Primitive:Self_7 Declared:Primitive:Self_7
     // Candidates = Self
     JoinStrings(FieldValues, ,)
 }
 interface Interval<Self> where Self : Interval<Self>
 {
-    public static T Min(Self x)
-    // ParameterSymbol=x$1479:Self Declared:Self
+    public static T_204 Min(Self_7 x)
+    // ParameterSymbol=x$1479:Primitive:Self_7 Declared:Primitive:Self_7
     // Candidates = Self
     null
-    public static T Max(Self x)
-    // ParameterSymbol=x$1481:Self Declared:Self
+    public static T_204 Max(Self_7 x)
+    // ParameterSymbol=x$1481:Primitive:Self_7 Declared:Primitive:Self_7
     // Candidates = Self
     null
 }
 interface Array<Self> where Self : Array<Self>
 {
-    public static Count Count(Self xs)
-    // ParameterSymbol=xs$1484:Self Declared:Self
+    public static Count_26 Count(Self_7 xs)
+    // ParameterSymbol=xs$1484:Primitive:Self_7 Declared:Primitive:Self_7
     // Candidates = Self
     null
-    public static T At(Self xs, Index n)
-    // ParameterSymbol=xs$1486:Self Declared:Self
+    public static T_209 At(Self_7 xs, Index_27 n)
+    // ParameterSymbol=xs$1486:Primitive:Self_7 Declared:Primitive:Self_7
     // Candidates = Self
-    // ParameterSymbol=n$1487:Index Declared:Index
+    // ParameterSymbol=n$1487:Type:Index_27 Declared:Type:Index_27
     // Candidates = Index
     null
 }
 class Integer
 {
-    Integer Value;
+    Integer_25 Value;
 }
 class Count
 {
-    Integer Value;
+    Integer_25 Value;
 }
 class Index
 {
-    Integer Value;
+    Integer_25 Value;
 }
 class Number
 {
-    var Value;
+    Float64_11 Value;
 }
 class Unit
 {
-    Number Value;
+    Number_28 Value;
 }
 class Percent
 {
-    Number Value;
+    Number_28 Value;
 }
 class Quaternion
 {
-    Number X;
-    Number Y;
-    Number Z;
-    Number W;
+    Number_28 X;
+    Number_28 Y;
+    Number_28 Z;
+    Number_28 W;
 }
 class Unit2D
 {
-    Unit X;
-    Unit Y;
+    Unit_29 X;
+    Unit_29 Y;
 }
 class Unit3D
 {
-    Unit X;
-    Unit Y;
-    Unit Z;
+    Unit_29 X;
+    Unit_29 Y;
+    Unit_29 Z;
 }
 class Direction3D
 {
-    Unit3D Value;
+    Unit3D_33 Value;
 }
 class AxisAngle
 {
-    Unit3D Axis;
-    Angle Angle;
+    Unit3D_33 Axis;
+    Angle_82 Angle;
 }
 class EulerAngles
 {
-    Angle Yaw;
-    Angle Pitch;
-    Angle Roll;
+    Angle_82 Yaw;
+    Angle_82 Pitch;
+    Angle_82 Roll;
 }
 class Rotation3D
 {
-    Quaternion Quaternion;
+    Quaternion_31 Quaternion;
 }
 class Vector2D
 {
-    Number X;
-    Number Y;
+    Number_28 X;
+    Number_28 Y;
 }
 class Vector3D
 {
-    Number X;
-    Number Y;
-    Number Z;
+    Number_28 X;
+    Number_28 Y;
+    Number_28 Z;
 }
 class Vector4D
 {
-    Number X;
-    Number Y;
-    Number Z;
-    Number W;
+    Number_28 X;
+    Number_28 Y;
+    Number_28 Z;
+    Number_28 W;
 }
 class Orientation3D
 {
-    Rotation3D Value;
+    Rotation3D_37 Value;
 }
 class Pose2D
 {
-    Vector3D Position;
-    Orientation3D Orientation;
+    Vector3D_39 Position;
+    Orientation3D_41 Orientation;
 }
 class Pose3D
 {
-    Vector3D Position;
-    Orientation3D Orientation;
+    Vector3D_39 Position;
+    Orientation3D_41 Orientation;
 }
 class Transform3D
 {
-    Vector3D Translation;
-    Rotation3D Rotation;
-    Vector3D Scale;
+    Vector3D_39 Translation;
+    Rotation3D_37 Rotation;
+    Vector3D_39 Scale;
 }
 class Transform2D
 {
-    Vector2D Translation;
-    Angle Rotation;
-    Vector2D Scale;
+    Vector2D_38 Translation;
+    Angle_82 Rotation;
+    Vector2D_38 Scale;
 }
 class AlignedBox2D
 {
-    Vector2D A;
-    Vector2D B;
+    Vector2D_38 A;
+    Vector2D_38 B;
 }
 class AlignedBox3D
 {
-    Vector3D A;
-    Vector3D B;
+    Vector3D_39 A;
+    Vector3D_39 B;
 }
 class Complex
 {
-    Number Real;
-    Number Imaginary;
+    Number_28 Real;
+    Number_28 Imaginary;
 }
 class Ray3D
 {
-    Vector3D Direction;
-    Point3D Position;
+    Vector3D_39 Direction;
+    Point3D_57 Position;
 }
 class Ray2D
 {
-    Vector2D Direction;
-    Point2D Position;
+    Vector2D_38 Direction;
+    Point2D_58 Position;
 }
 class Sphere
 {
-    Point3D Center;
-    Number Radius;
+    Point3D_57 Center;
+    Number_28 Radius;
 }
 class Plane
 {
-    Unit3D Normal;
-    Number D;
+    Unit3D_33 Normal;
+    Number_28 D;
 }
 class Triangle3D
 {
-    Point3D A;
-    Point3D B;
-    Point3D C;
+    Point3D_57 A;
+    Point3D_57 B;
+    Point3D_57 C;
 }
 class Triangle2D
 {
-    Point2D A;
-    Point2D B;
-    Point2D C;
+    Point2D_58 A;
+    Point2D_58 B;
+    Point2D_58 C;
 }
 class Quad3D
 {
-    Point3D A;
-    Point3D B;
-    Point3D C;
-    Point3D D;
+    Point3D_57 A;
+    Point3D_57 B;
+    Point3D_57 C;
+    Point3D_57 D;
 }
 class Quad2D
 {
-    Point2D A;
-    Point2D B;
-    Point2D C;
-    Point2D D;
+    Point2D_58 A;
+    Point2D_58 B;
+    Point2D_58 C;
+    Point2D_58 D;
 }
 class Point3D
 {
-    Vector3D Value;
+    Vector3D_39 Value;
 }
 class Point2D
 {
-    Vector2D Value;
+    Vector2D_38 Value;
 }
 class Line3D
 {
-    Point3D A;
-    Point3D B;
+    Point3D_57 A;
+    Point3D_57 B;
 }
 class Line2D
 {
-    Point2D A;
-    Point2D B;
+    Point2D_58 A;
+    Point2D_58 B;
 }
 class Color
 {
-    Unit R;
-    Unit G;
-    Unit B;
-    Unit A;
+    Unit_29 R;
+    Unit_29 G;
+    Unit_29 B;
+    Unit_29 A;
 }
 class ColorLUV
 {
-    Percent Lightness;
-    Unit U;
-    Unit V;
+    Percent_30 Lightness;
+    Unit_29 U;
+    Unit_29 V;
 }
 class ColorLAB
 {
-    Percent Lightness;
-    Integer A;
-    Integer B;
+    Percent_30 Lightness;
+    Integer_25 A;
+    Integer_25 B;
 }
 class ColorLCh
 {
-    Percent Lightness;
-    PolarCoordinate ChromaHue;
+    Percent_30 Lightness;
+    PolarCoordinate_69 ChromaHue;
 }
 class ColorHSV
 {
-    Angle Hue;
-    Unit S;
-    Unit V;
+    Angle_82 Hue;
+    Unit_29 S;
+    Unit_29 V;
 }
 class ColorHSL
 {
-    Angle Hue;
-    Unit Saturation;
-    Unit Luminance;
+    Angle_82 Hue;
+    Unit_29 Saturation;
+    Unit_29 Luminance;
 }
 class ColorYCbCr
 {
-    Unit Y;
-    Unit Cb;
-    Unit Cr;
+    Unit_29 Y;
+    Unit_29 Cb;
+    Unit_29 Cr;
 }
 class SphericalCoordinate
 {
-    Number Radius;
-    Angle Azimuth;
-    Angle Polar;
+    Number_28 Radius;
+    Angle_82 Azimuth;
+    Angle_82 Polar;
 }
 class PolarCoordinate
 {
-    Number Radius;
-    Angle Angle;
+    Number_28 Radius;
+    Angle_82 Angle;
 }
 class LogPolarCoordinate
 {
-    Number Rho;
-    Angle Azimuth;
+    Number_28 Rho;
+    Angle_82 Azimuth;
 }
 class CylindricalCoordinate
 {
-    Number RadialDistance;
-    Angle Azimuth;
-    Number Height;
+    Number_28 RadialDistance;
+    Angle_82 Azimuth;
+    Number_28 Height;
 }
 class HorizontalCoordinate
 {
-    Number Radius;
-    Angle Azimuth;
-    Number Height;
+    Number_28 Radius;
+    Angle_82 Azimuth;
+    Number_28 Height;
 }
 class GeoCoordinate
 {
-    Angle Latitude;
-    Angle Longitude;
+    Angle_82 Latitude;
+    Angle_82 Longitude;
 }
 class GeoCoordinateWithAltitude
 {
-    GeoCoordinate Coordinate;
-    Number Altitude;
+    GeoCoordinate_73 Coordinate;
+    Number_28 Altitude;
 }
 class Circle
 {
-    Point2D Center;
-    Number Radius;
+    Point2D_58 Center;
+    Number_28 Radius;
 }
 class Chord
 {
-    Circle Circle;
-    Arc Arc;
+    Circle_75 Circle;
+    Arc_91 Arc;
 }
 class Size2D
 {
-    Number Width;
-    Number Height;
+    Number_28 Width;
+    Number_28 Height;
 }
 class Size3D
 {
-    Number Width;
-    Number Height;
-    Number Depth;
+    Number_28 Width;
+    Number_28 Height;
+    Number_28 Depth;
 }
 class Rectangle2D
 {
-    Point2D Center;
-    Size2D Size;
+    Point2D_58 Center;
+    Size2D_77 Size;
 }
 class Proportion
 {
-    Number Value;
+    Number_28 Value;
 }
 class Fraction
 {
-    Number Numerator;
-    Number Denominator;
+    Number_28 Numerator;
+    Number_28 Denominator;
 }
 class Angle
 {
-    Number Radians;
+    Number_28 Radians;
 }
 class Length
 {
-    Number Meters;
+    Number_28 Meters;
 }
 class Mass
 {
-    Number Kilograms;
+    Number_28 Kilograms;
 }
 class Temperature
 {
-    Number Celsius;
+    Number_28 Celsius;
 }
 class TimeSpan
 {
-    Number Seconds;
+    Number_28 Seconds;
 }
 class TimeRange
 {
-    DateTime Min;
-    DateTime Max;
+    DateTime_88 Min;
+    DateTime_88 Max;
 }
 class DateTime
 {
 }
 class AnglePair
 {
-    Angle Start;
-    Angle End;
+    Angle_82 Start;
+    Angle_82 End;
 }
 class Ring
 {
-    Circle Circle;
-    Number InnerRadius;
+    Circle_75 Circle;
+    Number_28 InnerRadius;
 }
 class Arc
 {
-    AnglePair Angles;
-    Circle Cirlce;
+    AnglePair_89 Angles;
+    Circle_75 Cirlce;
 }
 class TimeInterval
 {
-    TimeSpan Start;
-    TimeSpan End;
+    TimeSpan_86 Start;
+    TimeSpan_86 End;
 }
 class RealInterval
 {
-    Number A;
-    Number B;
+    Number_28 A;
+    Number_28 B;
 }
 class Interval2D
 {
-    Vector2D A;
-    Vector2D B;
+    Vector2D_38 A;
+    Vector2D_38 B;
 }
 class Interval3D
 {
-    Vector3D A;
-    Vector3D B;
+    Vector3D_39 A;
+    Vector3D_39 B;
 }
 class Capsule
 {
-    Line3D Line;
-    Number Radius;
+    Line3D_59 Line;
+    Number_28 Radius;
 }
 class Matrix3D
 {
-    Vector4D Column1;
-    Vector4D Column2;
-    Vector4D Column3;
-    Vector4D Column4;
+    Vector4D_40 Column1;
+    Vector4D_40 Column2;
+    Vector4D_40 Column3;
+    Vector4D_40 Column4;
 }
 class Cylinder
 {
-    Line3D Line;
-    Number Radius;
+    Line3D_59 Line;
+    Number_28 Radius;
 }
 class Cone
 {
-    Line3D Line;
-    Number Radius;
+    Line3D_59 Line;
+    Number_28 Radius;
 }
 class Tube
 {
-    Line3D Line;
-    Number InnerRadius;
-    Number OuterRadius;
+    Line3D_59 Line;
+    Number_28 InnerRadius;
+    Number_28 OuterRadius;
 }
 class ConeSegment
 {
-    Line3D Line;
-    Number Radius1;
-    Number Radius2;
+    Line3D_59 Line;
+    Number_28 Radius1;
+    Number_28 Radius2;
 }
 class Box2D
 {
-    Point2D Center;
-    Angle Rotation;
-    Size2D Extent;
+    Point2D_58 Center;
+    Angle_82 Rotation;
+    Size2D_77 Extent;
 }
 class Box3D
 {
-    Point3D Center;
-    Rotation3D Rotation;
-    Size3D Extent;
+    Point3D_57 Center;
+    Rotation3D_37 Rotation;
+    Size3D_78 Extent;
 }
 class CubicBezierTriangle3D
 {
-    Point3D A;
-    Point3D B;
-    Point3D C;
-    Point3D A2B;
-    Point3D AB2;
-    Point3D B2C;
-    Point3D BC2;
-    Point3D AC2;
-    Point3D A2C;
-    Point3D ABC;
+    Point3D_57 A;
+    Point3D_57 B;
+    Point3D_57 C;
+    Point3D_57 A2B;
+    Point3D_57 AB2;
+    Point3D_57 B2C;
+    Point3D_57 BC2;
+    Point3D_57 AC2;
+    Point3D_57 A2C;
+    Point3D_57 ABC;
 }
 class CubicBezier2D
 {
-    Point2D A;
-    Point2D B;
-    Point2D C;
-    Point2D D;
+    Point2D_58 A;
+    Point2D_58 B;
+    Point2D_58 C;
+    Point2D_58 D;
 }
 class UV
 {
-    Unit U;
-    Unit V;
+    Unit_29 U;
+    Unit_29 V;
 }
 class UVW
 {
-    Unit U;
-    Unit V;
-    Unit W;
+    Unit_29 U;
+    Unit_29 V;
+    Unit_29 W;
 }
 class CubicBezier3D
 {
-    Point3D A;
-    Point3D B;
-    Point3D C;
-    Point3D D;
+    Point3D_57 A;
+    Point3D_57 B;
+    Point3D_57 C;
+    Point3D_57 D;
 }
 class QuadraticBezier2D
 {
-    Point2D A;
-    Point2D B;
-    Point2D C;
+    Point2D_58 A;
+    Point2D_58 B;
+    Point2D_58 C;
 }
 class QuadraticBezier3D
 {
-    Point3D A;
-    Point3D B;
-    Point3D C;
+    Point3D_57 A;
+    Point3D_57 B;
+    Point3D_57 C;
 }
 class Area
 {
-    Number MetersSquared;
+    Number_28 MetersSquared;
 }
 class Volume
 {
-    Number MetersCubed;
+    Number_28 MetersCubed;
 }
 class Velocity
 {
-    Number MetersPerSecond;
+    Number_28 MetersPerSecond;
 }
 class Acceleration
 {
-    Number MetersPerSecondSquared;
+    Number_28 MetersPerSecondSquared;
 }
 class Force
 {
-    Number Newtons;
+    Number_28 Newtons;
 }
 class Pressure
 {
-    Number Pascals;
+    Number_28 Pascals;
 }
 class Energy
 {
-    Number Joules;
+    Number_28 Joules;
 }
 class Memory
 {
-    Count Bytes;
+    Count_26 Bytes;
 }
 class Frequency
 {
-    Number Hertz;
+    Number_28 Hertz;
 }
 class Loudness
 {
-    Number Decibels;
+    Number_28 Decibels;
 }
 class LuminousIntensity
 {
-    Number Candelas;
+    Number_28 Candelas;
 }
 class ElectricPotential
 {
-    Number Volts;
+    Number_28 Volts;
 }
 class ElectricCharge
 {
-    Number Columbs;
+    Number_28 Columbs;
 }
 class ElectricCurrent
 {
-    Number Amperes;
+    Number_28 Amperes;
 }
 class ElectricResistance
 {
-    Number Ohms;
+    Number_28 Ohms;
 }
 class Power
 {
-    Number Watts;
+    Number_28 Watts;
 }
 class Density
 {
-    Number KilogramsPerMeterCubed;
+    Number_28 KilogramsPerMeterCubed;
 }
 class NormalDistribution
 {
-    Number Mean;
-    Number StandardDeviation;
+    Number_28 Mean;
+    Number_28 StandardDeviation;
 }
 class PoissonDistribution
 {
-    Number Expected;
-    Count Occurrences;
+    Number_28 Expected;
+    Count_26 Occurrences;
 }
 class BernoulliDistribution
 {
-    Probability P;
+    Probability_131 P;
 }
 class Probability
 {
-    Number Value;
+    Number_28 Value;
 }
 class BinomialDistribution
 {
-    Count Trials;
-    Probability P;
+    Count_26 Trials;
+    Probability_131 P;
 }
 class Interval
 {

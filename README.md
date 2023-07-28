@@ -179,6 +179,8 @@ Features that we can exepct Plato to support in the near future:
 * A visual syntax - a representation of Plato code as a dataflow graph. 
 * Default concept implementations - concepts have auto-generated default implementations
 that are a tuple of fields and functions. 
+* Implicit tuple conversions 
+* Partial generics - being able to just use "Func" or "Array" in annotation instead of requiring whole annotation.
 
 Features that may be on the longer term roadmap:
 

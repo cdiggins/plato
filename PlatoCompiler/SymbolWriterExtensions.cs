@@ -15,7 +15,7 @@
         {
             var tg = new TypeResolver(ops);
             var writer = new SymbolWriterJavaScript(tg);
-            var r = writer.Write(ops.Types);
+            var r = writer.WriteFile(ops.Types);
             return r.ToString();
         }
 

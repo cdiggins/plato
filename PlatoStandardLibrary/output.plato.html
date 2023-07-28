@@ -1,36 +1,36 @@
 <html><head><link rel="stylesheet" href="style.css"></head><body><pre>
-<span class='keyword'>concept</span> <span class='type'>Vector</span>
-    <span class='keyword'>inherits</span> <span class='type'>Array</span><span class='delimiter'>,</span> <span class='type'>Value</span><span class='delimiter'>,</span> <span class='type'>Numerical</span><span class='delimiter'>,</span> <span class='type'>Arithmetic</span>
+<span class='keyword'>Concept</span> <span class='type'>Vector</span>
+    <span class='keyword'>inherits</span> <span class='type'>Array_24</span><span class='delimiter'>,</span> <span class='type'>Value_22</span><span class='delimiter'>,</span> <span class='type'>Numerical_15</span><span class='delimiter'>,</span> <span class='type'>Arithmetic_19</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Count</span><span class='delimiter'>(</span><span class='variable'>v</span> <span class='delimiter'>:</span> <span class='type'>Vector</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Count</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Count</span><span class='delimiter'>(</span><span class='variable'>v</span> <span class='delimiter'>:</span> <span class='type'>Vector_13</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Count_26</span> <span class='delimiter'>=></span> 
         <span class='variable'>Self</span><span class='operator'>.</span><span class='variable'>FieldTypes</span><span class='operator'>.</span><span class='variable'>Count</span><span class='delimiter'>;</span>
 
-    <span class='declname'>At</span><span class='delimiter'>(</span><span class='variable'>v</span> <span class='delimiter'>:</span> <span class='type'>Vector</span><span class='delimiter'>,</span> <span class='variable'>n</span> <span class='delimiter'>:</span> <span class='type'>Index</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>T</span> <span class='delimiter'>=></span> 
+    <span class='declname'>At</span><span class='delimiter'>(</span><span class='variable'>v</span> <span class='delimiter'>:</span> <span class='type'>Vector_13</span><span class='delimiter'>,</span> <span class='variable'>n</span> <span class='delimiter'>:</span> <span class='type'>Index_27</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>T_142</span> <span class='delimiter'>=></span> 
         <span class='delimiter'>(</span><span class='variable'>v</span><span class='operator'>.</span><span class='variable'>FieldValues</span> [] <span class='variable'>n</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
 <span class='delimiter'>}</span>
-<span class='keyword'>concept</span> <span class='type'>Measure</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span><span class='delimiter'>,</span> <span class='type'>unknown</span><span class='delimiter'>,</span> <span class='type'>Equatable</span><span class='delimiter'>,</span> <span class='type'>Comparable</span><span class='delimiter'>,</span> <span class='type'>Magnitude</span>
+<span class='keyword'>Concept</span> <span class='type'>Measure</span>
+    <span class='keyword'>inherits</span> <span class='type'>Value_22</span><span class='delimiter'>,</span> <span class='type'>ScalarArithmetic_20</span><span class='delimiter'>,</span> <span class='type'>Equatable_18</span><span class='delimiter'>,</span> <span class='type'>Comparable_17</span><span class='delimiter'>,</span> <span class='type'>Magnitude_16</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Value</span><span class='delimiter'>(</span><span class='variable'>x</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Number</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Value</span><span class='delimiter'>(</span><span class='variable'>x</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span> <span class='delimiter'>=></span> 
         <span class='delimiter'>(</span><span class='variable'>x</span><span class='operator'>.</span><span class='variable'>FieldValues</span> [] <span class='literal'>0</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
 <span class='delimiter'>}</span>
-<span class='keyword'>concept</span> <span class='type'>Numerical</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span><span class='delimiter'>,</span> <span class='type'>Arithmetic</span><span class='delimiter'>,</span> <span class='type'>Equatable</span><span class='delimiter'>,</span> <span class='type'>Comparable</span><span class='delimiter'>,</span> <span class='type'>Magnitude</span>
+<span class='keyword'>Concept</span> <span class='type'>Numerical</span>
+    <span class='keyword'>inherits</span> <span class='type'>Value_22</span><span class='delimiter'>,</span> <span class='type'>Arithmetic_19</span><span class='delimiter'>,</span> <span class='type'>Equatable_18</span><span class='delimiter'>,</span> <span class='type'>Comparable_17</span><span class='delimiter'>,</span> <span class='type'>Magnitude_16</span>
 <span class='delimiter'>{</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>concept</span> <span class='type'>Magnitude</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Concept</span> <span class='type'>Magnitude</span>
+    <span class='keyword'>inherits</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Magnitude</span><span class='delimiter'>(</span><span class='variable'>x</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Number</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Magnitude</span><span class='delimiter'>(</span><span class='variable'>x</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span> <span class='delimiter'>=></span> 
         <span class='variable'>x</span><span class='operator'>.</span><span class='variable'>FieldValues</span><span class='operator'>.</span><span class='variable'>Square</span><span class='operator'>.</span><span class='variable'>Sum</span><span class='operator'>.</span><span class='variable'>SquareRoot</span><span class='delimiter'>;</span>
 
 <span class='delimiter'>}</span>
-<span class='keyword'>concept</span> <span class='type'>Comparable</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Concept</span> <span class='type'>Comparable</span>
+    <span class='keyword'>inherits</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Compare</span><span class='delimiter'>(</span><span class='variable'>a</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>,</span> <span class='variable'>b</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Integer</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Compare</span><span class='delimiter'>(</span><span class='variable'>a</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>,</span> <span class='variable'>b</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Integer_25</span> <span class='delimiter'>=></span> 
         <span class='delimiter'>(</span><span class='variable'>a</span><span class='operator'>.</span><span class='variable'>Magnitude</span> < <span class='variable'>b</span><span class='operator'>.</span><span class='variable'>Magnitude</span>
             <span class='operator'>?</span> -<span class='literal'>1</span>
             <span class='operator'>:</span> <span class='delimiter'>(</span><span class='variable'>a</span><span class='operator'>.</span><span class='variable'>Magnitude</span> > <span class='variable'>b</span><span class='operator'>.</span><span class='variable'>Magnitude</span>
@@ -38,776 +38,776 @@
                 <span class='operator'>:</span> <span class='literal'>0</span><span class='delimiter'>)</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
 <span class='delimiter'>}</span>
-<span class='keyword'>concept</span> <span class='type'>Equatable</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Concept</span> <span class='type'>Equatable</span>
+    <span class='keyword'>inherits</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Equals</span><span class='delimiter'>(</span><span class='variable'>a</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>,</span> <span class='variable'>b</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Boolean</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Equals</span><span class='delimiter'>(</span><span class='variable'>a</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>,</span> <span class='variable'>b</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Boolean_21</span> <span class='delimiter'>=></span> 
         <span class='delimiter'>(</span><span class='variable'>a</span><span class='operator'>.</span><span class='variable'>FieldValues</span> == <span class='variable'>b</span><span class='operator'>.</span><span class='variable'>FieldValues</span><span class='delimiter'>)</span><span class='operator'>.</span><span class='variable'>All</span><span class='delimiter'>;</span>
 
 <span class='delimiter'>}</span>
-<span class='keyword'>concept</span> <span class='type'>Arithmetic</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Concept</span> <span class='type'>Arithmetic</span>
+    <span class='keyword'>inherits</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Add</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>,</span> <span class='variable'>other</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Add</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>,</span> <span class='variable'>other</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span> <span class='delimiter'>=></span> 
         <span class='delimiter'>(</span><span class='variable'>self</span><span class='operator'>.</span><span class='variable'>FieldValues</span> + <span class='variable'>other</span><span class='operator'>.</span><span class='variable'>FieldValues</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
-    <span class='declname'>Negative</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Negative</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span> <span class='delimiter'>=></span> 
         -<span class='variable'>self</span><span class='operator'>.</span><span class='variable'>FieldValues</span><span class='delimiter'>;</span>
 
-    <span class='declname'>Reciprocal</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Reciprocal</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span> <span class='delimiter'>=></span> 
         <span class='variable'>self</span><span class='operator'>.</span><span class='variable'>FieldValues</span><span class='operator'>.</span><span class='variable'>Reciprocal</span><span class='delimiter'>;</span>
 
-    <span class='declname'>Multiply</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>,</span> <span class='variable'>other</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Multiply</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>,</span> <span class='variable'>other</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span> <span class='delimiter'>=></span> 
         <span class='delimiter'>(</span><span class='variable'>self</span><span class='operator'>.</span><span class='variable'>FieldValues</span> + <span class='variable'>other</span><span class='operator'>.</span><span class='variable'>FieldValues</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
-    <span class='declname'>Divide</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>,</span> <span class='variable'>other</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Divide</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>,</span> <span class='variable'>other</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span> <span class='delimiter'>=></span> 
         <span class='delimiter'>(</span><span class='variable'>self</span><span class='operator'>.</span><span class='variable'>FieldValues</span> / <span class='variable'>other</span><span class='operator'>.</span><span class='variable'>FieldValues</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
-    <span class='declname'>Modulo</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>,</span> <span class='variable'>other</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Modulo</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>,</span> <span class='variable'>other</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span> <span class='delimiter'>=></span> 
         <span class='delimiter'>(</span><span class='variable'>self</span><span class='operator'>.</span><span class='variable'>FieldValues</span> % <span class='variable'>other</span><span class='operator'>.</span><span class='variable'>FieldValues</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
 <span class='delimiter'>}</span>
-<span class='keyword'>concept</span> <span class='type'>ScalarArithmetic</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Concept</span> <span class='type'>ScalarArithmetic</span>
+    <span class='keyword'>inherits</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Add</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>,</span> <span class='variable'>scalar</span> <span class='delimiter'>:</span> <span class='type'>T</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Add</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>,</span> <span class='variable'>scalar</span> <span class='delimiter'>:</span> <span class='type'>T_1442</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span> <span class='delimiter'>=></span> 
         <span class='delimiter'>(</span><span class='variable'>self</span><span class='operator'>.</span><span class='variable'>FieldValues</span> + <span class='variable'>scalar</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
-    <span class='declname'>Subtract</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>,</span> <span class='variable'>scalar</span> <span class='delimiter'>:</span> <span class='type'>T</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Subtract</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>,</span> <span class='variable'>scalar</span> <span class='delimiter'>:</span> <span class='type'>T_1442</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span> <span class='delimiter'>=></span> 
         <span class='delimiter'>(</span><span class='variable'>self</span> + -<span class='variable'>scalar</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
-    <span class='declname'>Multiply</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>,</span> <span class='variable'>scalar</span> <span class='delimiter'>:</span> <span class='type'>T</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Multiply</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>,</span> <span class='variable'>scalar</span> <span class='delimiter'>:</span> <span class='type'>T_1442</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span> <span class='delimiter'>=></span> 
         <span class='delimiter'>(</span><span class='variable'>self</span><span class='operator'>.</span><span class='variable'>FieldValues</span> * <span class='variable'>scalar</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
-    <span class='declname'>Divide</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>,</span> <span class='variable'>scalar</span> <span class='delimiter'>:</span> <span class='type'>T</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Divide</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>,</span> <span class='variable'>scalar</span> <span class='delimiter'>:</span> <span class='type'>T_1442</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span> <span class='delimiter'>=></span> 
         <span class='delimiter'>(</span><span class='variable'>self</span> * <span class='variable'>scalar</span><span class='operator'>.</span><span class='variable'>Reciprocal</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
-    <span class='declname'>Modulo</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>,</span> <span class='variable'>scalar</span> <span class='delimiter'>:</span> <span class='type'>T</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Modulo</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>,</span> <span class='variable'>scalar</span> <span class='delimiter'>:</span> <span class='type'>T_1442</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span> <span class='delimiter'>=></span> 
         <span class='delimiter'>(</span><span class='variable'>self</span><span class='operator'>.</span><span class='variable'>FieldValues</span> % <span class='variable'>scalar</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
 <span class='delimiter'>}</span>
-<span class='keyword'>concept</span> <span class='type'>Boolean</span>
+<span class='keyword'>Concept</span> <span class='type'>Boolean</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>And</span><span class='delimiter'>(</span><span class='variable'>a</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>,</span> <span class='variable'>b</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
+    <span class='declname'>And</span><span class='delimiter'>(</span><span class='variable'>a</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>,</span> <span class='variable'>b</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span> <span class='delimiter'>=></span> 
         <span class='delimiter'>(</span><span class='variable'>a</span><span class='operator'>.</span><span class='variable'>FieldValues</span> && <span class='variable'>b</span><span class='operator'>.</span><span class='variable'>FieldValues</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
-    <span class='declname'>Or</span><span class='delimiter'>(</span><span class='variable'>a</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>,</span> <span class='variable'>b</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Or</span><span class='delimiter'>(</span><span class='variable'>a</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>,</span> <span class='variable'>b</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span> <span class='delimiter'>=></span> 
         <span class='delimiter'>(</span><span class='variable'>a</span><span class='operator'>.</span><span class='variable'>FieldValues</span> || <span class='variable'>b</span><span class='operator'>.</span><span class='variable'>FieldValues</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
-    <span class='declname'>Not</span><span class='delimiter'>(</span><span class='variable'>a</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Not</span><span class='delimiter'>(</span><span class='variable'>a</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span> <span class='delimiter'>=></span> 
         !<span class='variable'>a</span><span class='operator'>.</span><span class='variable'>FieldValues</span><span class='delimiter'>;</span>
 
 <span class='delimiter'>}</span>
-<span class='keyword'>concept</span> <span class='type'>Value</span>
+<span class='keyword'>Concept</span> <span class='type'>Value</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Type</span><span class='delimiter'>(</span><span class='delimiter'>)</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Type</span><span class='delimiter'>(</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Type_12</span> <span class='delimiter'>=></span> 
         <span class='variable'>intrinsic</span><span class='delimiter'>;</span>
 
-    <span class='declname'>FieldTypes</span><span class='delimiter'>(</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Array</span> <span class='delimiter'>=></span> 
+    <span class='declname'>FieldTypes</span><span class='delimiter'>(</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Array_24</span> <span class='delimiter'>=></span> 
         <span class='variable'>intrinsic</span><span class='delimiter'>;</span>
 
-    <span class='declname'>FieldNames</span><span class='delimiter'>(</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Array</span> <span class='delimiter'>=></span> 
+    <span class='declname'>FieldNames</span><span class='delimiter'>(</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Array_24</span> <span class='delimiter'>=></span> 
         <span class='variable'>intrinsic</span><span class='delimiter'>;</span>
 
-    <span class='declname'>FieldValues</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Array</span> <span class='delimiter'>=></span> 
+    <span class='declname'>FieldValues</span><span class='delimiter'>(</span><span class='variable'>self</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Array_24</span> <span class='delimiter'>=></span> 
         <span class='variable'>intrinsic</span><span class='delimiter'>;</span>
 
-    <span class='declname'>Zero</span><span class='delimiter'>(</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Zero</span><span class='delimiter'>(</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span> <span class='delimiter'>=></span> 
         <span class='variable'>FieldTypes</span><span class='operator'>.</span><span class='variable'>Zero</span><span class='delimiter'>;</span>
 
-    <span class='declname'>One</span><span class='delimiter'>(</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
+    <span class='declname'>One</span><span class='delimiter'>(</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span> <span class='delimiter'>=></span> 
         <span class='variable'>FieldTypes</span><span class='operator'>.</span><span class='variable'>One</span><span class='delimiter'>;</span>
 
-    <span class='declname'>Default</span><span class='delimiter'>(</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Default</span><span class='delimiter'>(</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span> <span class='delimiter'>=></span> 
         <span class='variable'>FieldTypes</span><span class='operator'>.</span><span class='variable'>Default</span><span class='delimiter'>;</span>
 
-    <span class='declname'>MinValue</span><span class='delimiter'>(</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
+    <span class='declname'>MinValue</span><span class='delimiter'>(</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span> <span class='delimiter'>=></span> 
         <span class='variable'>FieldTypes</span><span class='operator'>.</span><span class='variable'>MinValue</span><span class='delimiter'>;</span>
 
-    <span class='declname'>MaxValue</span><span class='delimiter'>(</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self</span> <span class='delimiter'>=></span> 
+    <span class='declname'>MaxValue</span><span class='delimiter'>(</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span> <span class='delimiter'>=></span> 
         <span class='variable'>FieldTypes</span><span class='operator'>.</span><span class='variable'>MaxValue</span><span class='delimiter'>;</span>
 
-    <span class='declname'>ToString</span><span class='delimiter'>(</span><span class='variable'>x</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>=></span> 
+    <span class='declname'>ToString</span><span class='delimiter'>(</span><span class='variable'>x</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>String_8</span> <span class='delimiter'>=></span> 
         <span class='variable'>FieldValues</span><span class='operator'>.</span><span class='variable'>JoinStrings</span><span class='delimiter'>(</span><span class='literal'>,</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
 <span class='delimiter'>}</span>
-<span class='keyword'>concept</span> <span class='type'>Interval</span>
-    <span class='keyword'>inherits</span> <span class='type'>Vector</span>
+<span class='keyword'>Concept</span> <span class='type'>Interval</span>
+    <span class='keyword'>inherits</span> <span class='type'>Vector_13</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Min</span><span class='delimiter'>(</span><span class='variable'>x</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>T</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Min</span><span class='delimiter'>(</span><span class='variable'>x</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>T_204</span> <span class='delimiter'>=></span> 
         <span class='keyword'>null</span><span class='delimiter'>;</span>
 
-    <span class='declname'>Max</span><span class='delimiter'>(</span><span class='variable'>x</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>T</span> <span class='delimiter'>=></span> 
-        <span class='keyword'>null</span><span class='delimiter'>;</span>
-
-<span class='delimiter'>}</span>
-<span class='keyword'>concept</span> <span class='type'>Array</span>
-<span class='delimiter'>{</span>
-    <span class='declname'>Count</span><span class='delimiter'>(</span><span class='variable'>xs</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Count</span> <span class='delimiter'>=></span> 
-        <span class='keyword'>null</span><span class='delimiter'>;</span>
-
-    <span class='declname'>At</span><span class='delimiter'>(</span><span class='variable'>xs</span> <span class='delimiter'>:</span> <span class='type'>Self</span><span class='delimiter'>,</span> <span class='variable'>n</span> <span class='delimiter'>:</span> <span class='type'>Index</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>T</span> <span class='delimiter'>=></span> 
+    <span class='declname'>Max</span><span class='delimiter'>(</span><span class='variable'>x</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>T_204</span> <span class='delimiter'>=></span> 
         <span class='keyword'>null</span><span class='delimiter'>;</span>
 
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Integer</span>
-    <span class='keyword'>inherits</span> <span class='type'>Numerical</span>
+<span class='keyword'>Concept</span> <span class='type'>Array</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Integer</span><span class='delimiter'>;</span>
+    <span class='declname'>Count</span><span class='delimiter'>(</span><span class='variable'>xs</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>Count_26</span> <span class='delimiter'>=></span> 
+        <span class='keyword'>null</span><span class='delimiter'>;</span>
+
+    <span class='declname'>At</span><span class='delimiter'>(</span><span class='variable'>xs</span> <span class='delimiter'>:</span> <span class='type'>Self_7</span><span class='delimiter'>,</span> <span class='variable'>n</span> <span class='delimiter'>:</span> <span class='type'>Index_27</span><span class='delimiter'>)</span> <span class='delimiter'>:</span> <span class='type'>T_209</span> <span class='delimiter'>=></span> 
+        <span class='keyword'>null</span><span class='delimiter'>;</span>
+
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Count</span>
-    <span class='keyword'>inherits</span> <span class='type'>Numerical</span>
+<span class='keyword'>Type</span> <span class='type'>Integer</span>
+    <span class='keyword'>implements</span> <span class='type'>Numerical_15</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Integer</span><span class='delimiter'>;</span>
+    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Integer_25</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Index</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Count</span>
+    <span class='keyword'>implements</span> <span class='type'>Numerical_15</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Integer</span><span class='delimiter'>;</span>
+    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Integer_25</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Number</span>
-    <span class='keyword'>inherits</span> <span class='type'>Numerical</span>
+<span class='keyword'>Type</span> <span class='type'>Index</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Value</span><span class='delimiter'>;</span>
+    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Integer_25</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Unit</span>
-    <span class='keyword'>inherits</span> <span class='type'>Numerical</span>
+<span class='keyword'>Type</span> <span class='type'>Number</span>
+    <span class='keyword'>implements</span> <span class='type'>Numerical_15</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Float64_11</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Percent</span>
-    <span class='keyword'>inherits</span> <span class='type'>Numerical</span>
+<span class='keyword'>Type</span> <span class='type'>Unit</span>
+    <span class='keyword'>implements</span> <span class='type'>Numerical_15</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Quaternion</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Percent</span>
+    <span class='keyword'>implements</span> <span class='type'>Numerical_15</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>X</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>Y</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>Z</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>W</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Unit2D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Quaternion</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>X</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
-    <span class='declname'>Y</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
+    <span class='declname'>X</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>Y</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>Z</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>W</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Unit3D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Unit2D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>X</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
-    <span class='declname'>Y</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
-    <span class='declname'>Z</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
+    <span class='declname'>X</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
+    <span class='declname'>Y</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Direction3D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Unit3D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Unit3D</span><span class='delimiter'>;</span>
+    <span class='declname'>X</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
+    <span class='declname'>Y</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
+    <span class='declname'>Z</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>AxisAngle</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Direction3D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Axis</span> <span class='delimiter'>:</span> <span class='type'>Unit3D</span><span class='delimiter'>;</span>
-    <span class='declname'>Angle</span> <span class='delimiter'>:</span> <span class='type'>Angle</span><span class='delimiter'>;</span>
+    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Unit3D_33</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>EulerAngles</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>AxisAngle</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Yaw</span> <span class='delimiter'>:</span> <span class='type'>Angle</span><span class='delimiter'>;</span>
-    <span class='declname'>Pitch</span> <span class='delimiter'>:</span> <span class='type'>Angle</span><span class='delimiter'>;</span>
-    <span class='declname'>Roll</span> <span class='delimiter'>:</span> <span class='type'>Angle</span><span class='delimiter'>;</span>
+    <span class='declname'>Axis</span> <span class='delimiter'>:</span> <span class='type'>Unit3D_33</span><span class='delimiter'>;</span>
+    <span class='declname'>Angle</span> <span class='delimiter'>:</span> <span class='type'>Angle_82</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Rotation3D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>EulerAngles</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Quaternion</span> <span class='delimiter'>:</span> <span class='type'>Quaternion</span><span class='delimiter'>;</span>
+    <span class='declname'>Yaw</span> <span class='delimiter'>:</span> <span class='type'>Angle_82</span><span class='delimiter'>;</span>
+    <span class='declname'>Pitch</span> <span class='delimiter'>:</span> <span class='type'>Angle_82</span><span class='delimiter'>;</span>
+    <span class='declname'>Roll</span> <span class='delimiter'>:</span> <span class='type'>Angle_82</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Vector2D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Vector</span>
+<span class='keyword'>Type</span> <span class='type'>Rotation3D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>X</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>Y</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Quaternion</span> <span class='delimiter'>:</span> <span class='type'>Quaternion_31</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Vector3D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Vector</span>
+<span class='keyword'>Type</span> <span class='type'>Vector2D</span>
+    <span class='keyword'>implements</span> <span class='type'>Vector_13</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>X</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>Y</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>Z</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>X</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>Y</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Vector4D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Vector</span>
+<span class='keyword'>Type</span> <span class='type'>Vector3D</span>
+    <span class='keyword'>implements</span> <span class='type'>Vector_13</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>X</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>Y</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>Z</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>W</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>X</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>Y</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>Z</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Orientation3D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Vector4D</span>
+    <span class='keyword'>implements</span> <span class='type'>Vector_13</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Rotation3D</span><span class='delimiter'>;</span>
+    <span class='declname'>X</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>Y</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>Z</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>W</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Pose2D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Orientation3D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Position</span> <span class='delimiter'>:</span> <span class='type'>Vector3D</span><span class='delimiter'>;</span>
-    <span class='declname'>Orientation</span> <span class='delimiter'>:</span> <span class='type'>Orientation3D</span><span class='delimiter'>;</span>
+    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Rotation3D_37</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Pose3D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Pose2D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Position</span> <span class='delimiter'>:</span> <span class='type'>Vector3D</span><span class='delimiter'>;</span>
-    <span class='declname'>Orientation</span> <span class='delimiter'>:</span> <span class='type'>Orientation3D</span><span class='delimiter'>;</span>
+    <span class='declname'>Position</span> <span class='delimiter'>:</span> <span class='type'>Vector3D_39</span><span class='delimiter'>;</span>
+    <span class='declname'>Orientation</span> <span class='delimiter'>:</span> <span class='type'>Orientation3D_41</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Transform3D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Pose3D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Translation</span> <span class='delimiter'>:</span> <span class='type'>Vector3D</span><span class='delimiter'>;</span>
-    <span class='declname'>Rotation</span> <span class='delimiter'>:</span> <span class='type'>Rotation3D</span><span class='delimiter'>;</span>
-    <span class='declname'>Scale</span> <span class='delimiter'>:</span> <span class='type'>Vector3D</span><span class='delimiter'>;</span>
+    <span class='declname'>Position</span> <span class='delimiter'>:</span> <span class='type'>Vector3D_39</span><span class='delimiter'>;</span>
+    <span class='declname'>Orientation</span> <span class='delimiter'>:</span> <span class='type'>Orientation3D_41</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Transform2D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Transform3D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Translation</span> <span class='delimiter'>:</span> <span class='type'>Vector2D</span><span class='delimiter'>;</span>
-    <span class='declname'>Rotation</span> <span class='delimiter'>:</span> <span class='type'>Angle</span><span class='delimiter'>;</span>
-    <span class='declname'>Scale</span> <span class='delimiter'>:</span> <span class='type'>Vector2D</span><span class='delimiter'>;</span>
+    <span class='declname'>Translation</span> <span class='delimiter'>:</span> <span class='type'>Vector3D_39</span><span class='delimiter'>;</span>
+    <span class='declname'>Rotation</span> <span class='delimiter'>:</span> <span class='type'>Rotation3D_37</span><span class='delimiter'>;</span>
+    <span class='declname'>Scale</span> <span class='delimiter'>:</span> <span class='type'>Vector3D_39</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>AlignedBox2D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Interval</span>
+<span class='keyword'>Type</span> <span class='type'>Transform2D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Vector2D</span><span class='delimiter'>;</span>
-    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Vector2D</span><span class='delimiter'>;</span>
+    <span class='declname'>Translation</span> <span class='delimiter'>:</span> <span class='type'>Vector2D_38</span><span class='delimiter'>;</span>
+    <span class='declname'>Rotation</span> <span class='delimiter'>:</span> <span class='type'>Angle_82</span><span class='delimiter'>;</span>
+    <span class='declname'>Scale</span> <span class='delimiter'>:</span> <span class='type'>Vector2D_38</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>AlignedBox3D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Interval</span>
+<span class='keyword'>Type</span> <span class='type'>AlignedBox2D</span>
+    <span class='keyword'>implements</span> <span class='type'>Interval_23</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Vector3D</span><span class='delimiter'>;</span>
-    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Vector3D</span><span class='delimiter'>;</span>
+    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Vector2D_38</span><span class='delimiter'>;</span>
+    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Vector2D_38</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Complex</span>
-    <span class='keyword'>inherits</span> <span class='type'>Vector</span>
+<span class='keyword'>Type</span> <span class='type'>AlignedBox3D</span>
+    <span class='keyword'>implements</span> <span class='type'>Interval_23</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Real</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>Imaginary</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Vector3D_39</span><span class='delimiter'>;</span>
+    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Vector3D_39</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Ray3D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Complex</span>
+    <span class='keyword'>implements</span> <span class='type'>Vector_13</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Direction</span> <span class='delimiter'>:</span> <span class='type'>Vector3D</span><span class='delimiter'>;</span>
-    <span class='declname'>Position</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
+    <span class='declname'>Real</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>Imaginary</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Ray2D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Ray3D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Direction</span> <span class='delimiter'>:</span> <span class='type'>Vector2D</span><span class='delimiter'>;</span>
-    <span class='declname'>Position</span> <span class='delimiter'>:</span> <span class='type'>Point2D</span><span class='delimiter'>;</span>
+    <span class='declname'>Direction</span> <span class='delimiter'>:</span> <span class='type'>Vector3D_39</span><span class='delimiter'>;</span>
+    <span class='declname'>Position</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Sphere</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Ray2D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Center</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>Radius</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Direction</span> <span class='delimiter'>:</span> <span class='type'>Vector2D_38</span><span class='delimiter'>;</span>
+    <span class='declname'>Position</span> <span class='delimiter'>:</span> <span class='type'>Point2D_58</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Plane</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Sphere</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Normal</span> <span class='delimiter'>:</span> <span class='type'>Unit3D</span><span class='delimiter'>;</span>
-    <span class='declname'>D</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Center</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>Radius</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Triangle3D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Plane</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>C</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
+    <span class='declname'>Normal</span> <span class='delimiter'>:</span> <span class='type'>Unit3D_33</span><span class='delimiter'>;</span>
+    <span class='declname'>D</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Triangle2D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Triangle3D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point2D</span><span class='delimiter'>;</span>
-    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point2D</span><span class='delimiter'>;</span>
-    <span class='declname'>C</span> <span class='delimiter'>:</span> <span class='type'>Point2D</span><span class='delimiter'>;</span>
+    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>C</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Quad3D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Triangle2D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>C</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>D</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
+    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point2D_58</span><span class='delimiter'>;</span>
+    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point2D_58</span><span class='delimiter'>;</span>
+    <span class='declname'>C</span> <span class='delimiter'>:</span> <span class='type'>Point2D_58</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Quad2D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Quad3D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point2D</span><span class='delimiter'>;</span>
-    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point2D</span><span class='delimiter'>;</span>
-    <span class='declname'>C</span> <span class='delimiter'>:</span> <span class='type'>Point2D</span><span class='delimiter'>;</span>
-    <span class='declname'>D</span> <span class='delimiter'>:</span> <span class='type'>Point2D</span><span class='delimiter'>;</span>
+    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>C</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>D</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Point3D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Quad2D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Vector3D</span><span class='delimiter'>;</span>
+    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point2D_58</span><span class='delimiter'>;</span>
+    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point2D_58</span><span class='delimiter'>;</span>
+    <span class='declname'>C</span> <span class='delimiter'>:</span> <span class='type'>Point2D_58</span><span class='delimiter'>;</span>
+    <span class='declname'>D</span> <span class='delimiter'>:</span> <span class='type'>Point2D_58</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Point2D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Point3D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Vector2D</span><span class='delimiter'>;</span>
+    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Vector3D_39</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Line3D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Interval</span>
+<span class='keyword'>Type</span> <span class='type'>Point2D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
+    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Vector2D_38</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Line2D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Interval</span>
+<span class='keyword'>Type</span> <span class='type'>Line3D</span>
+    <span class='keyword'>implements</span> <span class='type'>Interval_23</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point2D</span><span class='delimiter'>;</span>
-    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point2D</span><span class='delimiter'>;</span>
+    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Color</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Line2D</span>
+    <span class='keyword'>implements</span> <span class='type'>Interval_23</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>R</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
-    <span class='declname'>G</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
-    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
-    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
+    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point2D_58</span><span class='delimiter'>;</span>
+    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point2D_58</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>ColorLUV</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Color</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Lightness</span> <span class='delimiter'>:</span> <span class='type'>Percent</span><span class='delimiter'>;</span>
-    <span class='declname'>U</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
-    <span class='declname'>V</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
+    <span class='declname'>R</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
+    <span class='declname'>G</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
+    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
+    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>ColorLAB</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>ColorLUV</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Lightness</span> <span class='delimiter'>:</span> <span class='type'>Percent</span><span class='delimiter'>;</span>
-    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Integer</span><span class='delimiter'>;</span>
-    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Integer</span><span class='delimiter'>;</span>
+    <span class='declname'>Lightness</span> <span class='delimiter'>:</span> <span class='type'>Percent_30</span><span class='delimiter'>;</span>
+    <span class='declname'>U</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
+    <span class='declname'>V</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>ColorLCh</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>ColorLAB</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Lightness</span> <span class='delimiter'>:</span> <span class='type'>Percent</span><span class='delimiter'>;</span>
-    <span class='declname'>ChromaHue</span> <span class='delimiter'>:</span> <span class='type'>PolarCoordinate</span><span class='delimiter'>;</span>
+    <span class='declname'>Lightness</span> <span class='delimiter'>:</span> <span class='type'>Percent_30</span><span class='delimiter'>;</span>
+    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Integer_25</span><span class='delimiter'>;</span>
+    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Integer_25</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>ColorHSV</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>ColorLCh</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Hue</span> <span class='delimiter'>:</span> <span class='type'>Angle</span><span class='delimiter'>;</span>
-    <span class='declname'>S</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
-    <span class='declname'>V</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
+    <span class='declname'>Lightness</span> <span class='delimiter'>:</span> <span class='type'>Percent_30</span><span class='delimiter'>;</span>
+    <span class='declname'>ChromaHue</span> <span class='delimiter'>:</span> <span class='type'>PolarCoordinate_69</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>ColorHSL</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>ColorHSV</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Hue</span> <span class='delimiter'>:</span> <span class='type'>Angle</span><span class='delimiter'>;</span>
-    <span class='declname'>Saturation</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
-    <span class='declname'>Luminance</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
+    <span class='declname'>Hue</span> <span class='delimiter'>:</span> <span class='type'>Angle_82</span><span class='delimiter'>;</span>
+    <span class='declname'>S</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
+    <span class='declname'>V</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>ColorYCbCr</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>ColorHSL</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Y</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
-    <span class='declname'>Cb</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
-    <span class='declname'>Cr</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
+    <span class='declname'>Hue</span> <span class='delimiter'>:</span> <span class='type'>Angle_82</span><span class='delimiter'>;</span>
+    <span class='declname'>Saturation</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
+    <span class='declname'>Luminance</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>SphericalCoordinate</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>ColorYCbCr</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Radius</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>Azimuth</span> <span class='delimiter'>:</span> <span class='type'>Angle</span><span class='delimiter'>;</span>
-    <span class='declname'>Polar</span> <span class='delimiter'>:</span> <span class='type'>Angle</span><span class='delimiter'>;</span>
+    <span class='declname'>Y</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
+    <span class='declname'>Cb</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
+    <span class='declname'>Cr</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>PolarCoordinate</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>SphericalCoordinate</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Radius</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>Angle</span> <span class='delimiter'>:</span> <span class='type'>Angle</span><span class='delimiter'>;</span>
+    <span class='declname'>Radius</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>Azimuth</span> <span class='delimiter'>:</span> <span class='type'>Angle_82</span><span class='delimiter'>;</span>
+    <span class='declname'>Polar</span> <span class='delimiter'>:</span> <span class='type'>Angle_82</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>LogPolarCoordinate</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>PolarCoordinate</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Rho</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>Azimuth</span> <span class='delimiter'>:</span> <span class='type'>Angle</span><span class='delimiter'>;</span>
+    <span class='declname'>Radius</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>Angle</span> <span class='delimiter'>:</span> <span class='type'>Angle_82</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>CylindricalCoordinate</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>LogPolarCoordinate</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>RadialDistance</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>Azimuth</span> <span class='delimiter'>:</span> <span class='type'>Angle</span><span class='delimiter'>;</span>
-    <span class='declname'>Height</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Rho</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>Azimuth</span> <span class='delimiter'>:</span> <span class='type'>Angle_82</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>HorizontalCoordinate</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>CylindricalCoordinate</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Radius</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>Azimuth</span> <span class='delimiter'>:</span> <span class='type'>Angle</span><span class='delimiter'>;</span>
-    <span class='declname'>Height</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>RadialDistance</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>Azimuth</span> <span class='delimiter'>:</span> <span class='type'>Angle_82</span><span class='delimiter'>;</span>
+    <span class='declname'>Height</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>GeoCoordinate</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>HorizontalCoordinate</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Latitude</span> <span class='delimiter'>:</span> <span class='type'>Angle</span><span class='delimiter'>;</span>
-    <span class='declname'>Longitude</span> <span class='delimiter'>:</span> <span class='type'>Angle</span><span class='delimiter'>;</span>
+    <span class='declname'>Radius</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>Azimuth</span> <span class='delimiter'>:</span> <span class='type'>Angle_82</span><span class='delimiter'>;</span>
+    <span class='declname'>Height</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>GeoCoordinateWithAltitude</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>GeoCoordinate</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Coordinate</span> <span class='delimiter'>:</span> <span class='type'>GeoCoordinate</span><span class='delimiter'>;</span>
-    <span class='declname'>Altitude</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Latitude</span> <span class='delimiter'>:</span> <span class='type'>Angle_82</span><span class='delimiter'>;</span>
+    <span class='declname'>Longitude</span> <span class='delimiter'>:</span> <span class='type'>Angle_82</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Circle</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>GeoCoordinateWithAltitude</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Center</span> <span class='delimiter'>:</span> <span class='type'>Point2D</span><span class='delimiter'>;</span>
-    <span class='declname'>Radius</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Coordinate</span> <span class='delimiter'>:</span> <span class='type'>GeoCoordinate_73</span><span class='delimiter'>;</span>
+    <span class='declname'>Altitude</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Chord</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Circle</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Circle</span> <span class='delimiter'>:</span> <span class='type'>Circle</span><span class='delimiter'>;</span>
-    <span class='declname'>Arc</span> <span class='delimiter'>:</span> <span class='type'>Arc</span><span class='delimiter'>;</span>
+    <span class='declname'>Center</span> <span class='delimiter'>:</span> <span class='type'>Point2D_58</span><span class='delimiter'>;</span>
+    <span class='declname'>Radius</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Size2D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Chord</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Width</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>Height</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Circle</span> <span class='delimiter'>:</span> <span class='type'>Circle_75</span><span class='delimiter'>;</span>
+    <span class='declname'>Arc</span> <span class='delimiter'>:</span> <span class='type'>Arc_91</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Size3D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Size2D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Width</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>Height</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>Depth</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Width</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>Height</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Rectangle2D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Size3D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Center</span> <span class='delimiter'>:</span> <span class='type'>Point2D</span><span class='delimiter'>;</span>
-    <span class='declname'>Size</span> <span class='delimiter'>:</span> <span class='type'>Size2D</span><span class='delimiter'>;</span>
+    <span class='declname'>Width</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>Height</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>Depth</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Proportion</span>
-    <span class='keyword'>inherits</span> <span class='type'>Numerical</span>
+<span class='keyword'>Type</span> <span class='type'>Rectangle2D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Center</span> <span class='delimiter'>:</span> <span class='type'>Point2D_58</span><span class='delimiter'>;</span>
+    <span class='declname'>Size</span> <span class='delimiter'>:</span> <span class='type'>Size2D_77</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Fraction</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Proportion</span>
+    <span class='keyword'>implements</span> <span class='type'>Numerical_15</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Numerator</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>Denominator</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Angle</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>Fraction</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Radians</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Numerator</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>Denominator</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Length</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>Angle</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Meters</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Radians</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Mass</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>Length</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Kilograms</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Meters</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Temperature</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>Mass</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Celsius</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Kilograms</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>TimeSpan</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>Temperature</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Seconds</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Celsius</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>TimeRange</span>
-    <span class='keyword'>inherits</span> <span class='type'>Interval</span>
+<span class='keyword'>Type</span> <span class='type'>TimeSpan</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Min</span> <span class='delimiter'>:</span> <span class='type'>DateTime</span><span class='delimiter'>;</span>
-    <span class='declname'>Max</span> <span class='delimiter'>:</span> <span class='type'>DateTime</span><span class='delimiter'>;</span>
+    <span class='declname'>Seconds</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>DateTime</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>TimeRange</span>
+    <span class='keyword'>implements</span> <span class='type'>Interval_23</span>
 <span class='delimiter'>{</span>
+    <span class='declname'>Min</span> <span class='delimiter'>:</span> <span class='type'>DateTime_88</span><span class='delimiter'>;</span>
+    <span class='declname'>Max</span> <span class='delimiter'>:</span> <span class='type'>DateTime_88</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>AnglePair</span>
-    <span class='keyword'>inherits</span> <span class='type'>Interval</span>
+<span class='keyword'>Type</span> <span class='type'>DateTime</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Start</span> <span class='delimiter'>:</span> <span class='type'>Angle</span><span class='delimiter'>;</span>
-    <span class='declname'>End</span> <span class='delimiter'>:</span> <span class='type'>Angle</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Ring</span>
-    <span class='keyword'>inherits</span> <span class='type'>Number</span>
+<span class='keyword'>Type</span> <span class='type'>AnglePair</span>
+    <span class='keyword'>implements</span> <span class='type'>Interval_23</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Circle</span> <span class='delimiter'>:</span> <span class='type'>Circle</span><span class='delimiter'>;</span>
-    <span class='declname'>InnerRadius</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Start</span> <span class='delimiter'>:</span> <span class='type'>Angle_82</span><span class='delimiter'>;</span>
+    <span class='declname'>End</span> <span class='delimiter'>:</span> <span class='type'>Angle_82</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Arc</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Ring</span>
+    <span class='keyword'>implements</span> <span class='type'>Numerical_15</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Angles</span> <span class='delimiter'>:</span> <span class='type'>AnglePair</span><span class='delimiter'>;</span>
-    <span class='declname'>Cirlce</span> <span class='delimiter'>:</span> <span class='type'>Circle</span><span class='delimiter'>;</span>
+    <span class='declname'>Circle</span> <span class='delimiter'>:</span> <span class='type'>Circle_75</span><span class='delimiter'>;</span>
+    <span class='declname'>InnerRadius</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>TimeInterval</span>
-    <span class='keyword'>inherits</span> <span class='type'>Interval</span>
+<span class='keyword'>Type</span> <span class='type'>Arc</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Start</span> <span class='delimiter'>:</span> <span class='type'>TimeSpan</span><span class='delimiter'>;</span>
-    <span class='declname'>End</span> <span class='delimiter'>:</span> <span class='type'>TimeSpan</span><span class='delimiter'>;</span>
+    <span class='declname'>Angles</span> <span class='delimiter'>:</span> <span class='type'>AnglePair_89</span><span class='delimiter'>;</span>
+    <span class='declname'>Cirlce</span> <span class='delimiter'>:</span> <span class='type'>Circle_75</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>RealInterval</span>
-    <span class='keyword'>inherits</span> <span class='type'>Interval</span>
+<span class='keyword'>Type</span> <span class='type'>TimeInterval</span>
+    <span class='keyword'>implements</span> <span class='type'>Interval_23</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Start</span> <span class='delimiter'>:</span> <span class='type'>TimeSpan_86</span><span class='delimiter'>;</span>
+    <span class='declname'>End</span> <span class='delimiter'>:</span> <span class='type'>TimeSpan_86</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Interval2D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Interval</span>
+<span class='keyword'>Type</span> <span class='type'>RealInterval</span>
+    <span class='keyword'>implements</span> <span class='type'>Interval_23</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Vector2D</span><span class='delimiter'>;</span>
-    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Vector2D</span><span class='delimiter'>;</span>
+    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Interval3D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Interval</span>
+<span class='keyword'>Type</span> <span class='type'>Interval2D</span>
+    <span class='keyword'>implements</span> <span class='type'>Interval_23</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Vector3D</span><span class='delimiter'>;</span>
-    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Vector3D</span><span class='delimiter'>;</span>
+    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Vector2D_38</span><span class='delimiter'>;</span>
+    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Vector2D_38</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Capsule</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Interval3D</span>
+    <span class='keyword'>implements</span> <span class='type'>Interval_23</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Line</span> <span class='delimiter'>:</span> <span class='type'>Line3D</span><span class='delimiter'>;</span>
-    <span class='declname'>Radius</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Vector3D_39</span><span class='delimiter'>;</span>
+    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Vector3D_39</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Matrix3D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Capsule</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Column1</span> <span class='delimiter'>:</span> <span class='type'>Vector4D</span><span class='delimiter'>;</span>
-    <span class='declname'>Column2</span> <span class='delimiter'>:</span> <span class='type'>Vector4D</span><span class='delimiter'>;</span>
-    <span class='declname'>Column3</span> <span class='delimiter'>:</span> <span class='type'>Vector4D</span><span class='delimiter'>;</span>
-    <span class='declname'>Column4</span> <span class='delimiter'>:</span> <span class='type'>Vector4D</span><span class='delimiter'>;</span>
+    <span class='declname'>Line</span> <span class='delimiter'>:</span> <span class='type'>Line3D_59</span><span class='delimiter'>;</span>
+    <span class='declname'>Radius</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Cylinder</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Matrix3D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Line</span> <span class='delimiter'>:</span> <span class='type'>Line3D</span><span class='delimiter'>;</span>
-    <span class='declname'>Radius</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Column1</span> <span class='delimiter'>:</span> <span class='type'>Vector4D_40</span><span class='delimiter'>;</span>
+    <span class='declname'>Column2</span> <span class='delimiter'>:</span> <span class='type'>Vector4D_40</span><span class='delimiter'>;</span>
+    <span class='declname'>Column3</span> <span class='delimiter'>:</span> <span class='type'>Vector4D_40</span><span class='delimiter'>;</span>
+    <span class='declname'>Column4</span> <span class='delimiter'>:</span> <span class='type'>Vector4D_40</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Cone</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Cylinder</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Line</span> <span class='delimiter'>:</span> <span class='type'>Line3D</span><span class='delimiter'>;</span>
-    <span class='declname'>Radius</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Line</span> <span class='delimiter'>:</span> <span class='type'>Line3D_59</span><span class='delimiter'>;</span>
+    <span class='declname'>Radius</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Tube</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Cone</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Line</span> <span class='delimiter'>:</span> <span class='type'>Line3D</span><span class='delimiter'>;</span>
-    <span class='declname'>InnerRadius</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>OuterRadius</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Line</span> <span class='delimiter'>:</span> <span class='type'>Line3D_59</span><span class='delimiter'>;</span>
+    <span class='declname'>Radius</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>ConeSegment</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Tube</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Line</span> <span class='delimiter'>:</span> <span class='type'>Line3D</span><span class='delimiter'>;</span>
-    <span class='declname'>Radius1</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>Radius2</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Line</span> <span class='delimiter'>:</span> <span class='type'>Line3D_59</span><span class='delimiter'>;</span>
+    <span class='declname'>InnerRadius</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>OuterRadius</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Box2D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>ConeSegment</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Center</span> <span class='delimiter'>:</span> <span class='type'>Point2D</span><span class='delimiter'>;</span>
-    <span class='declname'>Rotation</span> <span class='delimiter'>:</span> <span class='type'>Angle</span><span class='delimiter'>;</span>
-    <span class='declname'>Extent</span> <span class='delimiter'>:</span> <span class='type'>Size2D</span><span class='delimiter'>;</span>
+    <span class='declname'>Line</span> <span class='delimiter'>:</span> <span class='type'>Line3D_59</span><span class='delimiter'>;</span>
+    <span class='declname'>Radius1</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>Radius2</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Box3D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Box2D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Center</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>Rotation</span> <span class='delimiter'>:</span> <span class='type'>Rotation3D</span><span class='delimiter'>;</span>
-    <span class='declname'>Extent</span> <span class='delimiter'>:</span> <span class='type'>Size3D</span><span class='delimiter'>;</span>
+    <span class='declname'>Center</span> <span class='delimiter'>:</span> <span class='type'>Point2D_58</span><span class='delimiter'>;</span>
+    <span class='declname'>Rotation</span> <span class='delimiter'>:</span> <span class='type'>Angle_82</span><span class='delimiter'>;</span>
+    <span class='declname'>Extent</span> <span class='delimiter'>:</span> <span class='type'>Size2D_77</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>CubicBezierTriangle3D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Box3D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>C</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>A2B</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>AB2</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>B2C</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>BC2</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>AC2</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>A2C</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>ABC</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
+    <span class='declname'>Center</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>Rotation</span> <span class='delimiter'>:</span> <span class='type'>Rotation3D_37</span><span class='delimiter'>;</span>
+    <span class='declname'>Extent</span> <span class='delimiter'>:</span> <span class='type'>Size3D_78</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>CubicBezier2D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>CubicBezierTriangle3D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point2D</span><span class='delimiter'>;</span>
-    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point2D</span><span class='delimiter'>;</span>
-    <span class='declname'>C</span> <span class='delimiter'>:</span> <span class='type'>Point2D</span><span class='delimiter'>;</span>
-    <span class='declname'>D</span> <span class='delimiter'>:</span> <span class='type'>Point2D</span><span class='delimiter'>;</span>
+    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>C</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>A2B</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>AB2</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>B2C</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>BC2</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>AC2</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>A2C</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>ABC</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>UV</span>
-    <span class='keyword'>inherits</span> <span class='type'>Vector</span>
+<span class='keyword'>Type</span> <span class='type'>CubicBezier2D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>U</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
-    <span class='declname'>V</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
+    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point2D_58</span><span class='delimiter'>;</span>
+    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point2D_58</span><span class='delimiter'>;</span>
+    <span class='declname'>C</span> <span class='delimiter'>:</span> <span class='type'>Point2D_58</span><span class='delimiter'>;</span>
+    <span class='declname'>D</span> <span class='delimiter'>:</span> <span class='type'>Point2D_58</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>UVW</span>
-    <span class='keyword'>inherits</span> <span class='type'>Vector</span>
+<span class='keyword'>Type</span> <span class='type'>UV</span>
+    <span class='keyword'>implements</span> <span class='type'>Vector_13</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>U</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
-    <span class='declname'>V</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
-    <span class='declname'>W</span> <span class='delimiter'>:</span> <span class='type'>Unit</span><span class='delimiter'>;</span>
+    <span class='declname'>U</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
+    <span class='declname'>V</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>CubicBezier3D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>UVW</span>
+    <span class='keyword'>implements</span> <span class='type'>Vector_13</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>C</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>D</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
+    <span class='declname'>U</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
+    <span class='declname'>V</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
+    <span class='declname'>W</span> <span class='delimiter'>:</span> <span class='type'>Unit_29</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>QuadraticBezier2D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>CubicBezier3D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point2D</span><span class='delimiter'>;</span>
-    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point2D</span><span class='delimiter'>;</span>
-    <span class='declname'>C</span> <span class='delimiter'>:</span> <span class='type'>Point2D</span><span class='delimiter'>;</span>
+    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>C</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>D</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>QuadraticBezier3D</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>QuadraticBezier2D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
-    <span class='declname'>C</span> <span class='delimiter'>:</span> <span class='type'>Point3D</span><span class='delimiter'>;</span>
+    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point2D_58</span><span class='delimiter'>;</span>
+    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point2D_58</span><span class='delimiter'>;</span>
+    <span class='declname'>C</span> <span class='delimiter'>:</span> <span class='type'>Point2D_58</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Area</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>QuadraticBezier3D</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>MetersSquared</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>A</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>B</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
+    <span class='declname'>C</span> <span class='delimiter'>:</span> <span class='type'>Point3D_57</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Volume</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>Area</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>MetersCubed</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>MetersSquared</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Velocity</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>Volume</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>MetersPerSecond</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>MetersCubed</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Acceleration</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>Velocity</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>MetersPerSecondSquared</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>MetersPerSecond</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Force</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>Acceleration</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Newtons</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>MetersPerSecondSquared</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Pressure</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>Force</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Pascals</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Newtons</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Energy</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>Pressure</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Joules</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Pascals</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Memory</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>Energy</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Bytes</span> <span class='delimiter'>:</span> <span class='type'>Count</span><span class='delimiter'>;</span>
+    <span class='declname'>Joules</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Frequency</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>Memory</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Hertz</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Bytes</span> <span class='delimiter'>:</span> <span class='type'>Count_26</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Loudness</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>Frequency</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Decibels</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Hertz</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>LuminousIntensity</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>Loudness</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Candelas</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Decibels</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>ElectricPotential</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>LuminousIntensity</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Volts</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Candelas</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>ElectricCharge</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>ElectricPotential</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Columbs</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Volts</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>ElectricCurrent</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>ElectricCharge</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Amperes</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Columbs</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>ElectricResistance</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>ElectricCurrent</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Ohms</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Amperes</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Power</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>ElectricResistance</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Watts</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Ohms</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Density</span>
-    <span class='keyword'>inherits</span> <span class='type'>Measure</span>
+<span class='keyword'>Type</span> <span class='type'>Power</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>KilogramsPerMeterCubed</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>Watts</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>NormalDistribution</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Density</span>
+    <span class='keyword'>implements</span> <span class='type'>Measure_14</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Mean</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>StandardDeviation</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>KilogramsPerMeterCubed</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>PoissonDistribution</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>NormalDistribution</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Expected</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
-    <span class='declname'>Occurrences</span> <span class='delimiter'>:</span> <span class='type'>Count</span><span class='delimiter'>;</span>
+    <span class='declname'>Mean</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>StandardDeviation</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>BernoulliDistribution</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>PoissonDistribution</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>P</span> <span class='delimiter'>:</span> <span class='type'>Probability</span><span class='delimiter'>;</span>
+    <span class='declname'>Expected</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
+    <span class='declname'>Occurrences</span> <span class='delimiter'>:</span> <span class='type'>Count_26</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>Probability</span>
-    <span class='keyword'>inherits</span> <span class='type'>Numerical</span>
+<span class='keyword'>Type</span> <span class='type'>BernoulliDistribution</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Number</span><span class='delimiter'>;</span>
+    <span class='declname'>P</span> <span class='delimiter'>:</span> <span class='type'>Probability_131</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>type</span> <span class='type'>BinomialDistribution</span>
-    <span class='keyword'>inherits</span> <span class='type'>Value</span>
+<span class='keyword'>Type</span> <span class='type'>Probability</span>
+    <span class='keyword'>implements</span> <span class='type'>Numerical_15</span>
 <span class='delimiter'>{</span>
-    <span class='declname'>Trials</span> <span class='delimiter'>:</span> <span class='type'>Count</span><span class='delimiter'>;</span>
-    <span class='declname'>P</span> <span class='delimiter'>:</span> <span class='type'>Probability</span><span class='delimiter'>;</span>
+    <span class='declname'>Value</span> <span class='delimiter'>:</span> <span class='type'>Number_28</span><span class='delimiter'>;</span>
 <span class='delimiter'>}</span>
-<span class='keyword'>library</span> <span class='type'>Interval</span>
+<span class='keyword'>Type</span> <span class='type'>BinomialDistribution</span>
+    <span class='keyword'>implements</span> <span class='type'>Value_22</span>
+<span class='delimiter'>{</span>
+    <span class='declname'>Trials</span> <span class='delimiter'>:</span> <span class='type'>Count_26</span><span class='delimiter'>;</span>
+    <span class='declname'>P</span> <span class='delimiter'>:</span> <span class='type'>Probability_131</span><span class='delimiter'>;</span>
+<span class='delimiter'>}</span>
+<span class='keyword'>Library</span> <span class='type'>Interval</span>
 <span class='delimiter'>{</span>
     <span class='declname'>Size</span><span class='delimiter'>(</span><span class='variable'>x</span><span class='delimiter'>)</span> <span class='delimiter'>=></span> 
         <span class='delimiter'>(</span><span class='variable'>x</span><span class='operator'>.</span><span class='variable'>Max</span> - <span class='variable'>x</span><span class='operator'>.</span><span class='variable'>Min</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
@@ -886,7 +886,7 @@
         <span class='literal'>0</span><span class='operator'>.</span><span class='variable'>Tuple</span><span class='delimiter'>(</span><span class='literal'>1</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
 <span class='delimiter'>}</span>
-<span class='keyword'>library</span> <span class='type'>Vector</span>
+<span class='keyword'>Library</span> <span class='type'>Vector</span>
 <span class='delimiter'>{</span>
     <span class='declname'>Sum</span><span class='delimiter'>(</span><span class='variable'>v</span><span class='delimiter'>)</span> <span class='delimiter'>=></span> 
         <span class='variable'>v</span><span class='operator'>.</span><span class='variable'>Aggregate</span><span class='delimiter'>(</span><span class='literal'>0</span><span class='delimiter'>,</span> <span class='variable'>Add</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
@@ -904,7 +904,7 @@
         <span class='delimiter'>(</span><span class='variable'>v1</span> * <span class='variable'>v2</span><span class='delimiter'>)</span><span class='operator'>.</span><span class='variable'>Sum</span><span class='delimiter'>;</span>
 
 <span class='delimiter'>}</span>
-<span class='keyword'>library</span> <span class='type'>Numerical</span>
+<span class='keyword'>Library</span> <span class='type'>Numerical</span>
 <span class='delimiter'>{</span>
     <span class='declname'>Cos</span><span class='delimiter'>(</span><span class='variable'>x</span><span class='delimiter'>)</span> <span class='delimiter'>=></span> 
         <span class='variable'>intrinsic</span><span class='delimiter'>;</span>
@@ -1075,7 +1075,7 @@
         <span class='delimiter'>(</span><span class='variable'>x</span><span class='operator'>.</span><span class='variable'>Abs</span> < <span class='literal'>1E-08</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
 <span class='delimiter'>}</span>
-<span class='keyword'>library</span> <span class='type'>Comparable</span>
+<span class='keyword'>Library</span> <span class='type'>Comparable</span>
 <span class='delimiter'>{</span>
     <span class='declname'>Equals</span><span class='delimiter'>(</span><span class='variable'>a</span><span class='delimiter'>,</span> <span class='variable'>b</span><span class='delimiter'>)</span> <span class='delimiter'>=></span> 
         <span class='delimiter'>(</span><span class='variable'>a</span><span class='operator'>.</span><span class='variable'>Compare</span><span class='delimiter'>(</span><span class='variable'>b</span><span class='delimiter'>)</span> == <span class='literal'>0</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
@@ -1119,7 +1119,7 @@
         <span class='variable'>i</span><span class='operator'>.</span><span class='variable'>Contains</span><span class='delimiter'>(</span><span class='variable'>v</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
 <span class='delimiter'>}</span>
-<span class='keyword'>library</span> <span class='type'>Boolean</span>
+<span class='keyword'>Library</span> <span class='type'>Boolean</span>
 <span class='delimiter'>{</span>
     <span class='declname'>XOr</span><span class='delimiter'>(</span><span class='variable'>a</span><span class='delimiter'>,</span> <span class='variable'>b</span><span class='delimiter'>)</span> <span class='delimiter'>=></span> 
         <span class='variable'>a</span>
@@ -1133,13 +1133,13 @@
         !<span class='delimiter'>(</span><span class='variable'>a</span> || <span class='variable'>b</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
 <span class='delimiter'>}</span>
-<span class='keyword'>library</span> <span class='type'>Equatable</span>
+<span class='keyword'>Library</span> <span class='type'>Equatable</span>
 <span class='delimiter'>{</span>
     <span class='declname'>NotEquals</span><span class='delimiter'>(</span><span class='variable'>x</span><span class='delimiter'>)</span> <span class='delimiter'>=></span> 
         !<span class='variable'>x</span><span class='operator'>.</span><span class='variable'>Equals</span><span class='delimiter'>;</span>
 
 <span class='delimiter'>}</span>
-<span class='keyword'>library</span> <span class='type'>Array</span>
+<span class='keyword'>Library</span> <span class='type'>Array</span>
 <span class='delimiter'>{</span>
     <span class='declname'>Map</span><span class='delimiter'>(</span><span class='variable'>xs</span><span class='delimiter'>,</span> <span class='variable'>f</span><span class='delimiter'>)</span> <span class='delimiter'>=></span> 
         <span class='variable'>xs</span><span class='operator'>.</span><span class='variable'>Count</span><span class='operator'>.</span><span class='variable'>Map</span><span class='delimiter'>(</span><span class='delimiter'>(</span>i<span class='delimiter'>)</span> <span class='delimiter'>=></span> 
@@ -1195,7 +1195,7 @@
                 <span class='delimiter'>(</span><span class='variable'>acc</span> + <span class='delimiter'>(</span><span class='literal'>, </span> + <span class='variable'>x</span><span class='operator'>.</span><span class='variable'>ToString</span><span class='delimiter'>)</span><span class='delimiter'>)</span><span class='delimiter'>)</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
 <span class='delimiter'>}</span>
-<span class='keyword'>library</span> <span class='type'>Easings</span>
+<span class='keyword'>Library</span> <span class='type'>Easings</span>
 <span class='delimiter'>{</span>
     <span class='declname'>BlendEaseFunc</span><span class='delimiter'>(</span><span class='variable'>p</span><span class='delimiter'>,</span> <span class='variable'>easeIn</span><span class='delimiter'>,</span> <span class='variable'>easeOut</span><span class='delimiter'>)</span> <span class='delimiter'>=></span> 
         <span class='delimiter'>(</span><span class='variable'>p</span> < <span class='literal'>0.5</span>
@@ -1307,7 +1307,7 @@
         <span class='variable'>p</span><span class='operator'>.</span><span class='variable'>BlendEaseFunc</span><span class='delimiter'>(</span><span class='variable'>BounceEaseIn</span><span class='delimiter'>,</span> <span class='variable'>BounceEaseOut</span><span class='delimiter'>)</span><span class='delimiter'>;</span>
 
 <span class='delimiter'>}</span>
-<span class='keyword'>library</span> <span class='type'>Intrinsics</span>
+<span class='keyword'>Library</span> <span class='type'>Intrinsics</span>
 <span class='delimiter'>{</span>
     <span class='declname'>Interpolate</span><span class='delimiter'>(</span><span class='variable'>xs</span><span class='delimiter'>)</span> <span class='delimiter'>=></span> 
         <span class='variable'>intrinsic</span><span class='delimiter'>;</span>

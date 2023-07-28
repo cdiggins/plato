@@ -390,7 +390,7 @@ namespace Plato.Compiler
                 var implements = type.ImplementsList.Node?.TypeExpr.Nodes.Select(ToAst).ToArray();
                 var members = type.FieldDeclaration.Nodes.Select(ToAst).Cast<AstMemberDeclaration>().ToArray();
                 
-                return new AstTypeDeclaration("type", name, typeParameters, inherits, implements, members);
+                return new AstTypeDeclaration(TypeKind.Type, name, typeParameters, inherits, implements, members);
             }
             else if (cstTopLevelDeclaration.Library.Present)
             {
@@ -399,7 +399,7 @@ namespace Plato.Compiler
                 var typeParameters = Enumerable.Empty<AstTypeParameter>();
                 var members = module.MethodDeclaration.Nodes.Select(ToAst).Cast<AstMemberDeclaration>().ToArray();
 
-                return new AstTypeDeclaration("library", name, typeParameters, Enumerable.Empty<AstTypeNode>(), 
+                return new AstTypeDeclaration(TypeKind.Library, name, typeParameters, Enumerable.Empty<AstTypeNode>(), 
                     Enumerable.Empty<AstTypeNode>(), members);
             }
             else if (cstTopLevelDeclaration.Concept.Present)
@@ -411,7 +411,7 @@ namespace Plato.Compiler
                 var inherits = concept.InheritsList.Node.TypeExpr.Nodes.Select(ToAst).ToArray();
                 var members = concept.MethodDeclaration.Nodes.Select(ToAst).ToArray();
 
-                return new AstTypeDeclaration("concept", name, typeParameters, inherits, Enumerable.Empty<AstTypeNode>(), members);
+                return new AstTypeDeclaration(TypeKind.Concept, name, typeParameters, inherits, Enumerable.Empty<AstTypeNode>(), members);
             }
 
             throw new Exception("Unhandled type declaration");

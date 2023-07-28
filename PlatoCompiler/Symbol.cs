@@ -91,23 +91,25 @@ namespace Plato.Compiler
         public static TypeDefSymbol Kind = Create("Kind");
 
         public static TypeDefSymbol Void = Create("void");
-        public static TypeDefSymbol Intrinsic = Create("intrinsic");
-        public static TypeDefSymbol NotImplemented = Create("Not implemented yet");
-        public static TypeDefSymbol TypeParameter = Create("TypeParameterDefSymbol");
-        public static TypeDefSymbol Member = Create("MemberDefSymbol");
-        public static TypeDefSymbol Inferred = Create("Infer");
         public static TypeDefSymbol Lambda = Create("Lambda");
         public static TypeDefSymbol Function = Create("Function");
         public static TypeDefSymbol Any = Create("Any");
         public static TypeDefSymbol Self = Create("Self");
 
+        public static TypeDefSymbol String = Create("String");
+        public static TypeDefSymbol Boolean = Create("Boolean");
+        public static TypeDefSymbol Integer = Create("Integer");
+        public static TypeDefSymbol Float64 = Create("Float64");
+        public static TypeDefSymbol Type = Create("Type");
+
+
         public static TypeDefSymbol Create(string name)
-            => new TypeDefSymbol("primitive", name);
+            => new TypeDefSymbol(TypeKind.Primitive, name);
     }
 
     public class TypeDefSymbol : DefSymbol
     {
-        public string Kind { get; }
+        public TypeKind Kind { get; }
 
         public IEnumerable<FunctionSymbol> Functions => Enumerable.Empty<FunctionSymbol>()
             .Concat(Methods.Select(m => m.Function))
@@ -120,7 +122,7 @@ namespace Plato.Compiler
         public List<TypeRefSymbol> Implements { get; } = new List<TypeRefSymbol>();
         public Dictionary<string, AstNode> Lookup { get; } = new Dictionary<string, AstNode>();
 
-        public TypeDefSymbol(string kind, string name)
+        public TypeDefSymbol(TypeKind kind, string name)
             : base(null, name)
         {
             Kind = kind;
@@ -235,7 +237,7 @@ namespace Plato.Compiler
 
     public class TypeRefSymbol : Symbol
     {
-        public string Name => Def?.Name ?? "unresolved";
+        public string Name => Def?.UniqueName ?? "unresolved";
         public TypeDefSymbol Def { get; }
         public IReadOnlyList<TypeRefSymbol> TypeArgs { get; }
 
@@ -252,9 +254,10 @@ namespace Plato.Compiler
 
         public override string ToString()
         {
+            var kind = Def?.Kind.ToString() ?? "";
             if (TypeArgs.Count > 0) 
-                return Name + $"<{string.Join(",", TypeArgs)}>";
-            return Name;
+                return kind + ":" + Name + $"<{string.Join(",", TypeArgs)}>";
+            return kind + ":" + Name;
         }
 
         public static TypeRefSymbol CreateFunction(params TypeRefSymbol[] types)
@@ -306,7 +309,7 @@ namespace Plato.Compiler
     public class TypeParameterDefSymbol : TypeDefSymbol
     {
         public TypeParameterDefSymbol(string name)
-            : base("typeparameter", name)
+            : base(TypeKind.Variable, name)
         { }
 
         public override IReadOnlyList<Symbol> Children

@@ -27,7 +27,12 @@ namespace Plato.Compiler
         {
             BindPredefined("intrinsic");
             BindPredefined("Tuple");
-            BindType("Self", PrimitiveTypes.Self);
+            BindType(PrimitiveTypes.Self);
+            BindType(PrimitiveTypes.String);
+            BindType(PrimitiveTypes.Float64);
+            BindType(PrimitiveTypes.Integer);
+            BindType(PrimitiveTypes.Type);
+            BindType(PrimitiveTypes.Boolean);
         }
 
         public void BindPredefined(string name)
@@ -41,10 +46,12 @@ namespace Plato.Compiler
             return value;
         }
 
-        public T BindType<T>(string name, T value) where T : Symbol
+        public TypeDefSymbol BindType(TypeDefSymbol value)
         {
-            TypeBindingsScope = TypeBindingsScope.Bind(name, value);
-            BindValue(name, value);
+            if (value.Kind == TypeKind.Library)
+                return null;
+            TypeBindingsScope = TypeBindingsScope.Bind(value.Name, value);
+            BindValue(value.Name, value);
             return value;
         }
 
@@ -73,6 +80,8 @@ namespace Plato.Compiler
             throw new NotImplementedException();
         }
 
+        // TODO: we might want to resolve types of a specific kind. 
+        // Concepts and Libraries can have the same name. 
         public TypeRefSymbol ResolveType(AstTypeNode astTypeNode)
         {
             if (astTypeNode == null)
@@ -82,7 +91,7 @@ namespace Plato.Compiler
                 throw new Exception("Invalid variable name");
             var sym = TypeBindingsScope.GetValue(name);
             if (sym == null)
-                return null;
+                throw new Exception($"Could not find type {name}");
 
             var tds = sym as TypeDefSymbol;
 
@@ -203,7 +212,7 @@ namespace Plato.Compiler
             {
                 var typeDef = new TypeDefSymbol(astTypeDeclaration.Kind, astTypeDeclaration.Name);
                 SymbolsToNames.Add(typeDef, astTypeDeclaration);
-                BindType(typeDef.Name, typeDef);
+                BindType(typeDef);
             }
 
             foreach (var typeDef in TypeDefs.ToList())
@@ -213,7 +222,7 @@ namespace Plato.Compiler
                 foreach (var tp in astTypeDeclaration.TypeParameters)
                 {
                     var tpd = new TypeParameterDefSymbol(tp.Name);
-                    BindType(tpd.Name, tpd);
+                    BindType(tpd);
                     typeDef.TypeParameters.Add(tpd);
                 }
 
@@ -260,7 +269,7 @@ namespace Plato.Compiler
                 foreach (var tp in typeDecl.TypeParameters)
                 {
                     var tpd = new TypeParameterDefSymbol(tp.Name);
-                    BindType(tpd.Name, tpd);
+                    BindType(tpd);
                     typeDef.TypeParameters.Add(tpd);
                 }
 
@@ -295,7 +304,7 @@ namespace Plato.Compiler
                     td.Inherits.Add(ResolveType(inheritedType));
 
                 foreach (var implementedType in astTypeDecl.Implements)
-                    td.Inherits.Add(ResolveType(implementedType));
+                    td.Implements.Add(ResolveType(implementedType));
             }
         }
 

@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "notes", "notes", "{239039FA
 	ProjectSection(SolutionItems) = preProject
 		notes\notes.txt = notes\notes.txt
 		README.md = README.md
+		roadmap.md = roadmap.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoStandardLibrary", "PlatoStandardLibrary\PlatoStandardLibrary.csproj", "{66402015-EB96-4A58-AFA1-BF2BD41DF14C}"
@@ -29,13 +30,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parakeet.Demos", "..\parake
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parakeet.Tests", "..\parakeet\Parakeet.Tests\Parakeet.Tests.csproj", "{E2AEC27F-F7A1-4DB3-84F1-02C59E8B19FE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Compiler", "PlatoAst\Plato.Compiler.csproj", "{ED345EE9-87F8-464B-B3A1-8B47DA3BBCC0}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoEditor", "PlatoEditor\PlatoEditor.csproj", "{E8B815E3-ED1A-47F5-9DE8-DE654B786B20}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoWinFormsEditor", "PlatoWinFormsEditor\PlatoWinFormsEditor.csproj", "{2F263E40-7453-40BD-B053-4FF301585652}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlgorithmsTestProject", "..\Algorithms\AlgorithmsTestProject\AlgorithmsTestProject.csproj", "{D58E013B-CD37-4949-80B2-17CBFBEF088A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plato.Compiler", "PlatoCompiler\Plato.Compiler.csproj", "{79D12AB6-D474-4869-A42E-D4C3A3FE435D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -155,18 +156,6 @@ Global
 		{E2AEC27F-F7A1-4DB3-84F1-02C59E8B19FE}.Release|x64.Build.0 = Release|Any CPU
 		{E2AEC27F-F7A1-4DB3-84F1-02C59E8B19FE}.Release|x86.ActiveCfg = Release|Any CPU
 		{E2AEC27F-F7A1-4DB3-84F1-02C59E8B19FE}.Release|x86.Build.0 = Release|Any CPU
-		{ED345EE9-87F8-464B-B3A1-8B47DA3BBCC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ED345EE9-87F8-464B-B3A1-8B47DA3BBCC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ED345EE9-87F8-464B-B3A1-8B47DA3BBCC0}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{ED345EE9-87F8-464B-B3A1-8B47DA3BBCC0}.Debug|x64.Build.0 = Debug|Any CPU
-		{ED345EE9-87F8-464B-B3A1-8B47DA3BBCC0}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{ED345EE9-87F8-464B-B3A1-8B47DA3BBCC0}.Debug|x86.Build.0 = Debug|Any CPU
-		{ED345EE9-87F8-464B-B3A1-8B47DA3BBCC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ED345EE9-87F8-464B-B3A1-8B47DA3BBCC0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ED345EE9-87F8-464B-B3A1-8B47DA3BBCC0}.Release|x64.ActiveCfg = Release|Any CPU
-		{ED345EE9-87F8-464B-B3A1-8B47DA3BBCC0}.Release|x64.Build.0 = Release|Any CPU
-		{ED345EE9-87F8-464B-B3A1-8B47DA3BBCC0}.Release|x86.ActiveCfg = Release|Any CPU
-		{ED345EE9-87F8-464B-B3A1-8B47DA3BBCC0}.Release|x86.Build.0 = Release|Any CPU
 		{E8B815E3-ED1A-47F5-9DE8-DE654B786B20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E8B815E3-ED1A-47F5-9DE8-DE654B786B20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8B815E3-ED1A-47F5-9DE8-DE654B786B20}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -203,6 +192,18 @@ Global
 		{D58E013B-CD37-4949-80B2-17CBFBEF088A}.Release|x64.Build.0 = Release|Any CPU
 		{D58E013B-CD37-4949-80B2-17CBFBEF088A}.Release|x86.ActiveCfg = Release|Any CPU
 		{D58E013B-CD37-4949-80B2-17CBFBEF088A}.Release|x86.Build.0 = Release|Any CPU
+		{79D12AB6-D474-4869-A42E-D4C3A3FE435D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79D12AB6-D474-4869-A42E-D4C3A3FE435D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79D12AB6-D474-4869-A42E-D4C3A3FE435D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{79D12AB6-D474-4869-A42E-D4C3A3FE435D}.Debug|x64.Build.0 = Debug|Any CPU
+		{79D12AB6-D474-4869-A42E-D4C3A3FE435D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{79D12AB6-D474-4869-A42E-D4C3A3FE435D}.Debug|x86.Build.0 = Debug|Any CPU
+		{79D12AB6-D474-4869-A42E-D4C3A3FE435D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79D12AB6-D474-4869-A42E-D4C3A3FE435D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79D12AB6-D474-4869-A42E-D4C3A3FE435D}.Release|x64.ActiveCfg = Release|Any CPU
+		{79D12AB6-D474-4869-A42E-D4C3A3FE435D}.Release|x64.Build.0 = Release|Any CPU
+		{79D12AB6-D474-4869-A42E-D4C3A3FE435D}.Release|x86.ActiveCfg = Release|Any CPU
+		{79D12AB6-D474-4869-A42E-D4C3A3FE435D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace Plato.Compiler
 {
@@ -268,15 +269,25 @@ namespace Plato.Compiler
         { }
     }
 
+    public enum TypeKind
+    {
+        Type,
+        Library,
+        Concept,
+        Primitive,
+        Variable,
+    }
+
+
     public class AstTypeDeclaration : AstDeclaration
     {
-        public string Kind { get; }
+        public TypeKind Kind { get; }
         public IReadOnlyList<AstTypeParameter> TypeParameters { get; }
         public IReadOnlyList<AstTypeNode> Inherits { get; }
         public IReadOnlyList<AstTypeNode> Implements { get; }
         public IReadOnlyList<AstMemberDeclaration> Members { get; }
 
-        public AstTypeDeclaration(string kind, string name, IEnumerable<AstTypeParameter> typeParameters,
+        public AstTypeDeclaration(TypeKind kind, string name, IEnumerable<AstTypeParameter> typeParameters,
             IEnumerable<AstTypeNode> inherits, IEnumerable<AstTypeNode> implements, params AstMemberDeclaration[] members) 
             : base(name)
         {

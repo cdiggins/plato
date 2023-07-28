@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\parakeet\Parakeet.Tests\Parakeet.Tests.csproj" />
     <ProjectReference Include="..\PlatoAst\Plato.Compiler.csproj" />
+    <ProjectReference Include="..\PlatoCompiler\Plato.Compiler.csproj" />
     <ProjectReference Include="..\PlatoTypeInference\PlatoTypeInference.csproj" />
   </ItemGroup>
 

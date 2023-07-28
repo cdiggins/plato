@@ -112,7 +112,7 @@ namespace Plato.Compiler
 
         public SymbolWriterCSharp Write(TypeDefSymbol typeDef)
         {
-            if (typeDef.Kind == "concept")
+            if (typeDef.Kind == TypeKind.Concept)
             {
                 var fullName = $"{typeDef.Name}<Self>";
                 return Write("interface ").Write(fullName).Write(" where ")
@@ -189,12 +189,9 @@ namespace Plato.Compiler
 
                 case VariableSymbol variable:
                     return Write(variable.Name);
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(value));
             }
 
-            return this;
+            throw new ArgumentOutOfRangeException(nameof(value));
         }
     }
 }

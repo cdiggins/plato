@@ -79,10 +79,10 @@ namespace Plato.Compiler
 
             foreach (var type in Types)
             {
-                if (type.Kind != "module")
+                if (type.Kind != TypeKind.Library)
                     continue;
 
-                var relatedType = Types.FirstOrDefault(t => t.Kind != "module" && t.Name == type.Name);
+                var relatedType = Types.FirstOrDefault(t => t.Kind != TypeKind.Library && t.Name == type.Name);
                 
                 if (relatedType == null)
                     continue;
@@ -124,10 +124,10 @@ namespace Plato.Compiler
                     TypedFunctions.Add(m.Function.Id, tf);
                     if (tf.Parameters.Count > 0 && tf.Parameters[0] == null)
                     {
-                        if (type.Kind == "library")
+                        if (type.Kind == TypeKind.Library)
                         {
                             var other = Types.FirstOrDefault(
-                                t => t.Kind != "library" && t.Name == type.Name);
+                                t => t.Kind != TypeKind.Library && t.Name == type.Name);
 
                             if (other != null)
                             {
@@ -203,7 +203,7 @@ namespace Plato.Compiler
             // the position. 
             var position = fac.Position;
 
-            var tmp = members.Where(pair => pair.Type.Kind == "concept").ToList();
+            var tmp = members.Where(pair => pair.Type.Kind == TypeKind.Concept).ToList();
             if (tmp.Count == 0)
                 tmp = members.ToList();
 

@@ -6,6 +6,12 @@
 	* Remove all Roslyn code. 
 * Type checker and inference engines
 	* Document it 
+	* Extensive tests
+* Port all math routines to Plato
+	* From https://github.com/vimaec/math3d
+	* From Unity mathematics 
+	* Anywhere else I can find ... Blender/Godot?
+	* System Numerics	
 * Plato standard library clean-up 
 	* Make it clear where to find it. 
 * Do something about the legacy code 

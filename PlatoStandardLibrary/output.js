@@ -1,1637 +1,5 @@
-class P_Vector
+class Interval_133_Library
 {
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
-    static P_Count_1412 = function (P_v) 
-    // ParameterSymbol=v$1411:Vector Declared:Vector
-    // Candidates = Vector
-    // Called function: Ref=>TypeDefSymbol=Count$26: candidates = Vector_13.Count_143, Array_24.Count_210
-    // Called function: Ref=>FunctionGroupSymbol=FieldTypes$187: candidates = Value_22.FieldTypes_186
-    { return P_Count(P_FieldTypes(P_Self)); };
-    static P_At_1415 = function (P_v, P_n) 
-    // ParameterSymbol=v$1413:Vector Declared:Vector, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Vector
-    // ParameterSymbol=n$1414:Index Declared:Index, Argument:Ref=>FunctionGroupSymbol=At$213:(1/2)
-    // Candidates = Index
-    // Called function: Ref=>FunctionGroupSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    { return P_At(P_FieldValues(P_v), P_n); };
-}
-class P_Measure
-{
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
-    static P_Value_1417 = function (P_x) 
-    // ParameterSymbol=x$1416:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // Called function: Ref=>FunctionGroupSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    { return P_At(P_FieldValues(P_x), 0); };
-}
-class P_Numerical
-{
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
-}
-class P_Magnitude
-{
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
-    static P_Magnitude_1419 = function (P_x) 
-    // ParameterSymbol=x$1418:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // Called function: Ref=>FunctionGroupSymbol=SquareRoot$1205: candidates = Numerical_135.SquareRoot_1204
-    // Called function: Ref=>FunctionGroupSymbol=Sum$1163: candidates = Vector_134.Sum_1162
-    // Called function: Ref=>FunctionGroupSymbol=Square$1209: candidates = Numerical_135.Square_1208
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    { return P_SquareRoot(P_Sum(P_Square(P_FieldValues(P_x)))); };
-}
-class P_Comparable
-{
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
-    static P_Compare_1422 = function (P_a, P_b) 
-    // ParameterSymbol=a$1420:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=Magnitude$150:(0/1), Argument:Ref=>FunctionGroupSymbol=Magnitude$150:(0/1)
-    // Candidates = Self
-    // ParameterSymbol=b$1421:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=Magnitude$150:(0/1), Argument:Ref=>FunctionGroupSymbol=Magnitude$150:(0/1)
-    // Candidates = Self
-    // Called function: Ref=>FunctionGroupSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
-    // Called function: Ref=>FunctionGroupSymbol=Magnitude$150: candidates = Magnitude_16.Magnitude_149
-    // Called function: Ref=>FunctionGroupSymbol=Magnitude$150: candidates = Magnitude_16.Magnitude_149
-    // Called function: Ref=>FunctionGroupSymbol=Negative$158: candidates = Arithmetic_19.Negative_157
-    // Called function: Ref=>FunctionGroupSymbol=GreaterThan$1291: candidates = Comparable_136.GreaterThan_1290
-    // Called function: Ref=>FunctionGroupSymbol=Magnitude$150: candidates = Magnitude_16.Magnitude_149
-    // Called function: Ref=>FunctionGroupSymbol=Magnitude$150: candidates = Magnitude_16.Magnitude_149
-    { return P_LessThan(P_Magnitude(P_a), P_Magnitude(P_b)
-        ? P_Negative(1)
-        : P_GreaterThan(P_Magnitude(P_a), P_Magnitude(P_b)
-            ? 1
-            : 0
-        )
-    ); };
-}
-class P_Equatable
-{
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
-    static P_Equals_1425 = function (P_a, P_b) 
-    // ParameterSymbol=a$1423:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // ParameterSymbol=b$1424:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // Called function: Ref=>FunctionGroupSymbol=All$1333: candidates = Array_139.All_1332
-    // Called function: Ref=>FunctionGroupSymbol=Equals$1281: candidates = Equatable_18.Equals_153, Comparable_136.Equals_1280
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    { return P_All(P_Equals(P_FieldValues(P_a), P_FieldValues(P_b))); };
-}
-class P_Arithmetic
-{
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
-    static P_Add_1428 = function (P_self, P_other) 
-    // ParameterSymbol=self$1426:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // ParameterSymbol=other$1427:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    { return P_Add(P_FieldValues(P_self), P_FieldValues(P_other)); };
-    static P_Negative_1430 = function (P_self) 
-    // ParameterSymbol=self$1429:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // Called function: Ref=>FunctionGroupSymbol=Negative$158: candidates = Arithmetic_19.Negative_157
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    { return P_Negative(P_FieldValues(P_self)); };
-    static P_Reciprocal_1432 = function (P_self) 
-    // ParameterSymbol=self$1431:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // Called function: Ref=>FunctionGroupSymbol=Reciprocal$160: candidates = Arithmetic_19.Reciprocal_159
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    { return P_Reciprocal(P_FieldValues(P_self)); };
-    static P_Multiply_1435 = function (P_self, P_other) 
-    // ParameterSymbol=self$1433:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // ParameterSymbol=other$1434:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    { return P_Add(P_FieldValues(P_self), P_FieldValues(P_other)); };
-    static P_Divide_1438 = function (P_self, P_other) 
-    // ParameterSymbol=self$1436:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // ParameterSymbol=other$1437:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    { return P_Divide(P_FieldValues(P_self), P_FieldValues(P_other)); };
-    static P_Modulo_1441 = function (P_self, P_other) 
-    // ParameterSymbol=self$1439:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // ParameterSymbol=other$1440:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // Called function: Ref=>FunctionGroupSymbol=Modulo$177: candidates = Arithmetic_19.Modulo_165, ScalarArithmetic_20.Modulo_176
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    { return P_Modulo(P_FieldValues(P_self), P_FieldValues(P_other)); };
-}
-class P_ScalarArithmetic
-{
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
-    static P_Add_1445 = function (P_self, P_scalar) 
-    // ParameterSymbol=self$1443:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // ParameterSymbol=scalar$1444:T Declared:T, Argument:Ref=>FunctionGroupSymbol=Add$169:(1/2)
-    // Candidates = T
-    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    { return P_Add(P_FieldValues(P_self), P_scalar); };
-    static P_Subtract_1448 = function (P_self, P_scalar) 
-    // ParameterSymbol=self$1446:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=Add$169:(0/2)
-    // Candidates = Self
-    // ParameterSymbol=scalar$1447:T Declared:T, Argument:Ref=>FunctionGroupSymbol=Negative$158:(0/1)
-    // Candidates = T
-    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
-    // Called function: Ref=>FunctionGroupSymbol=Negative$158: candidates = Arithmetic_19.Negative_157
-    { return P_Add(P_self, P_Negative(P_scalar)); };
-    static P_Multiply_1451 = function (P_self, P_scalar) 
-    // ParameterSymbol=self$1449:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // ParameterSymbol=scalar$1450:T Declared:T, Argument:Ref=>FunctionGroupSymbol=Multiply$173:(1/2)
-    // Candidates = T
-    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    { return P_Multiply(P_FieldValues(P_self), P_scalar); };
-    static P_Divide_1454 = function (P_self, P_scalar) 
-    // ParameterSymbol=self$1452:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2)
-    // Candidates = Self
-    // ParameterSymbol=scalar$1453:T Declared:T, Argument:Ref=>FunctionGroupSymbol=Reciprocal$160:(0/1)
-    // Candidates = T
-    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
-    // Called function: Ref=>FunctionGroupSymbol=Reciprocal$160: candidates = Arithmetic_19.Reciprocal_159
-    { return P_Multiply(P_self, P_Reciprocal(P_scalar)); };
-    static P_Modulo_1457 = function (P_self, P_scalar) 
-    // ParameterSymbol=self$1455:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // ParameterSymbol=scalar$1456:T Declared:T, Argument:Ref=>FunctionGroupSymbol=Modulo$177:(1/2)
-    // Candidates = T
-    // Called function: Ref=>FunctionGroupSymbol=Modulo$177: candidates = Arithmetic_19.Modulo_165, ScalarArithmetic_20.Modulo_176
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    { return P_Modulo(P_FieldValues(P_self), P_scalar); };
-}
-class P_Boolean
-{
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
-    static P_And_1460 = function (P_a, P_b) 
-    // ParameterSymbol=a$1458:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // ParameterSymbol=b$1459:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // Called function: Ref=>FunctionGroupSymbol=And$179: candidates = Boolean_21.And_178
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    { return P_And(P_FieldValues(P_a), P_FieldValues(P_b)); };
-    static P_Or_1463 = function (P_a, P_b) 
-    // ParameterSymbol=a$1461:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // ParameterSymbol=b$1462:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // Called function: Ref=>FunctionGroupSymbol=Or$181: candidates = Boolean_21.Or_180
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    { return P_Or(P_FieldValues(P_a), P_FieldValues(P_b)); };
-    static P_Not_1465 = function (P_a) 
-    // ParameterSymbol=a$1464:Self Declared:Self, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
-    // Candidates = Self
-    // Called function: Ref=>FunctionGroupSymbol=Not$183: candidates = Boolean_21.Not_182
-    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
-    { return P_Not(P_FieldValues(P_a)); };
-}
-class P_Value
-{
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
-    static P_Type_1466 = function () 
-    { return P_intrinsic; };
-    static P_FieldTypes_1467 = function () 
-    { return P_intrinsic; };
-    static P_FieldNames_1468 = function () 
-    { return P_intrinsic; };
-    static P_FieldValues_1470 = function (P_self) 
-    // ParameterSymbol=self$1469:Self Declared:Self
-    // Candidates = Self
-    { return P_intrinsic; };
-    static P_Zero_1471 = function () 
-    // Called function: Ref=>FunctionGroupSymbol=Zero$193: candidates = Value_22.Zero_192
-    { return P_Zero(P_FieldTypes); };
-    static P_One_1472 = function () 
-    // Called function: Ref=>FunctionGroupSymbol=One$195: candidates = Value_22.One_194
-    { return P_One(P_FieldTypes); };
-    static P_Default_1473 = function () 
-    // Called function: Ref=>FunctionGroupSymbol=Default$197: candidates = Value_22.Default_196
-    { return P_Default(P_FieldTypes); };
-    static P_MinValue_1474 = function () 
-    // Called function: Ref=>FunctionGroupSymbol=MinValue$199: candidates = Value_22.MinValue_198
-    { return P_MinValue(P_FieldTypes); };
-    static P_MaxValue_1475 = function () 
-    // Called function: Ref=>FunctionGroupSymbol=MaxValue$201: candidates = Value_22.MaxValue_200
-    { return P_MaxValue(P_FieldTypes); };
-    static P_ToString_1477 = function (P_x) 
-    // ParameterSymbol=x$1476:Self Declared:Self
-    // Candidates = Self
-    // Called function: Ref=>FunctionGroupSymbol=JoinStrings$1335: candidates = Array_139.JoinStrings_1334
-    { return P_JoinStrings(P_FieldValues, ","); };
-}
-class P_Interval
-{
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
-    static P_Min_1480 = function (P_x) 
-    // ParameterSymbol=x$1479:Self Declared:Self
-    // Candidates = Self
-    { return null; };
-    static P_Max_1482 = function (P_x) 
-    // ParameterSymbol=x$1481:Self Declared:Self
-    // Candidates = Self
-    { return null; };
-}
-class P_Array
-{
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
-    static P_Count_1485 = function (P_xs) 
-    // ParameterSymbol=xs$1484:Self Declared:Self
-    // Candidates = Self
-    { return null; };
-    static P_At_1488 = function (P_xs, P_n) 
-    // ParameterSymbol=xs$1486:Self Declared:Self
-    // Candidates = Self
-    // ParameterSymbol=n$1487:Index Declared:Index
-    // Candidates = Index
-    { return null; };
-}
-class P_Integer
-{
-    constructor(P_Value)
-    {
-        this._field_Value = P_Value;
-    }
-    // field accessors
-    static P_Value_214 = function(self) { return self._field_Value; }
-    // functions 
-}
-class P_Count
-{
-    constructor(P_Value)
-    {
-        this._field_Value = P_Value;
-    }
-    // field accessors
-    static P_Value_218 = function(self) { return self._field_Value; }
-    // functions 
-}
-class P_Index
-{
-    constructor(P_Value)
-    {
-        this._field_Value = P_Value;
-    }
-    // field accessors
-    static P_Value_222 = function(self) { return self._field_Value; }
-    // functions 
-}
-class P_Number
-{
-    constructor(P_Value)
-    {
-        this._field_Value = P_Value;
-    }
-    // field accessors
-    static P_Value_226 = function(self) { return self._field_Value; }
-    // functions 
-}
-class P_Unit
-{
-    constructor(P_Value)
-    {
-        this._field_Value = P_Value;
-    }
-    // field accessors
-    static P_Value_230 = function(self) { return self._field_Value; }
-    // functions 
-}
-class P_Percent
-{
-    constructor(P_Value)
-    {
-        this._field_Value = P_Value;
-    }
-    // field accessors
-    static P_Value_234 = function(self) { return self._field_Value; }
-    // functions 
-}
-class P_Quaternion
-{
-    constructor(P_X, P_Y, P_Z, P_W)
-    {
-        this._field_X = P_X;
-        this._field_Y = P_Y;
-        this._field_Z = P_Z;
-        this._field_W = P_W;
-    }
-    // field accessors
-    static P_X_238 = function(self) { return self._field_X; }
-    static P_Y_242 = function(self) { return self._field_Y; }
-    static P_Z_246 = function(self) { return self._field_Z; }
-    static P_W_250 = function(self) { return self._field_W; }
-    // functions 
-}
-class P_Unit2D
-{
-    constructor(P_X, P_Y)
-    {
-        this._field_X = P_X;
-        this._field_Y = P_Y;
-    }
-    // field accessors
-    static P_X_254 = function(self) { return self._field_X; }
-    static P_Y_258 = function(self) { return self._field_Y; }
-    // functions 
-}
-class P_Unit3D
-{
-    constructor(P_X, P_Y, P_Z)
-    {
-        this._field_X = P_X;
-        this._field_Y = P_Y;
-        this._field_Z = P_Z;
-    }
-    // field accessors
-    static P_X_262 = function(self) { return self._field_X; }
-    static P_Y_266 = function(self) { return self._field_Y; }
-    static P_Z_270 = function(self) { return self._field_Z; }
-    // functions 
-}
-class P_Direction3D
-{
-    constructor(P_Value)
-    {
-        this._field_Value = P_Value;
-    }
-    // field accessors
-    static P_Value_274 = function(self) { return self._field_Value; }
-    // functions 
-}
-class P_AxisAngle
-{
-    constructor(P_Axis, P_Angle)
-    {
-        this._field_Axis = P_Axis;
-        this._field_Angle = P_Angle;
-    }
-    // field accessors
-    static P_Axis_278 = function(self) { return self._field_Axis; }
-    static P_Angle_282 = function(self) { return self._field_Angle; }
-    // functions 
-}
-class P_EulerAngles
-{
-    constructor(P_Yaw, P_Pitch, P_Roll)
-    {
-        this._field_Yaw = P_Yaw;
-        this._field_Pitch = P_Pitch;
-        this._field_Roll = P_Roll;
-    }
-    // field accessors
-    static P_Yaw_286 = function(self) { return self._field_Yaw; }
-    static P_Pitch_290 = function(self) { return self._field_Pitch; }
-    static P_Roll_294 = function(self) { return self._field_Roll; }
-    // functions 
-}
-class P_Rotation3D
-{
-    constructor(P_Quaternion)
-    {
-        this._field_Quaternion = P_Quaternion;
-    }
-    // field accessors
-    static P_Quaternion_298 = function(self) { return self._field_Quaternion; }
-    // functions 
-}
-class P_Vector2D
-{
-    constructor(P_X, P_Y)
-    {
-        this._field_X = P_X;
-        this._field_Y = P_Y;
-    }
-    // field accessors
-    static P_X_302 = function(self) { return self._field_X; }
-    static P_Y_306 = function(self) { return self._field_Y; }
-    // functions 
-}
-class P_Vector3D
-{
-    constructor(P_X, P_Y, P_Z)
-    {
-        this._field_X = P_X;
-        this._field_Y = P_Y;
-        this._field_Z = P_Z;
-    }
-    // field accessors
-    static P_X_310 = function(self) { return self._field_X; }
-    static P_Y_314 = function(self) { return self._field_Y; }
-    static P_Z_318 = function(self) { return self._field_Z; }
-    // functions 
-}
-class P_Vector4D
-{
-    constructor(P_X, P_Y, P_Z, P_W)
-    {
-        this._field_X = P_X;
-        this._field_Y = P_Y;
-        this._field_Z = P_Z;
-        this._field_W = P_W;
-    }
-    // field accessors
-    static P_X_322 = function(self) { return self._field_X; }
-    static P_Y_326 = function(self) { return self._field_Y; }
-    static P_Z_330 = function(self) { return self._field_Z; }
-    static P_W_334 = function(self) { return self._field_W; }
-    // functions 
-}
-class P_Orientation3D
-{
-    constructor(P_Value)
-    {
-        this._field_Value = P_Value;
-    }
-    // field accessors
-    static P_Value_338 = function(self) { return self._field_Value; }
-    // functions 
-}
-class P_Pose2D
-{
-    constructor(P_Position, P_Orientation)
-    {
-        this._field_Position = P_Position;
-        this._field_Orientation = P_Orientation;
-    }
-    // field accessors
-    static P_Position_342 = function(self) { return self._field_Position; }
-    static P_Orientation_346 = function(self) { return self._field_Orientation; }
-    // functions 
-}
-class P_Pose3D
-{
-    constructor(P_Position, P_Orientation)
-    {
-        this._field_Position = P_Position;
-        this._field_Orientation = P_Orientation;
-    }
-    // field accessors
-    static P_Position_350 = function(self) { return self._field_Position; }
-    static P_Orientation_354 = function(self) { return self._field_Orientation; }
-    // functions 
-}
-class P_Transform3D
-{
-    constructor(P_Translation, P_Rotation, P_Scale)
-    {
-        this._field_Translation = P_Translation;
-        this._field_Rotation = P_Rotation;
-        this._field_Scale = P_Scale;
-    }
-    // field accessors
-    static P_Translation_358 = function(self) { return self._field_Translation; }
-    static P_Rotation_362 = function(self) { return self._field_Rotation; }
-    static P_Scale_366 = function(self) { return self._field_Scale; }
-    // functions 
-}
-class P_Transform2D
-{
-    constructor(P_Translation, P_Rotation, P_Scale)
-    {
-        this._field_Translation = P_Translation;
-        this._field_Rotation = P_Rotation;
-        this._field_Scale = P_Scale;
-    }
-    // field accessors
-    static P_Translation_370 = function(self) { return self._field_Translation; }
-    static P_Rotation_374 = function(self) { return self._field_Rotation; }
-    static P_Scale_378 = function(self) { return self._field_Scale; }
-    // functions 
-}
-class P_AlignedBox2D
-{
-    constructor(P_A, P_B)
-    {
-        this._field_A = P_A;
-        this._field_B = P_B;
-    }
-    // field accessors
-    static P_A_382 = function(self) { return self._field_A; }
-    static P_B_386 = function(self) { return self._field_B; }
-    // functions 
-}
-class P_AlignedBox3D
-{
-    constructor(P_A, P_B)
-    {
-        this._field_A = P_A;
-        this._field_B = P_B;
-    }
-    // field accessors
-    static P_A_390 = function(self) { return self._field_A; }
-    static P_B_394 = function(self) { return self._field_B; }
-    // functions 
-}
-class P_Complex
-{
-    constructor(P_Real, P_Imaginary)
-    {
-        this._field_Real = P_Real;
-        this._field_Imaginary = P_Imaginary;
-    }
-    // field accessors
-    static P_Real_398 = function(self) { return self._field_Real; }
-    static P_Imaginary_402 = function(self) { return self._field_Imaginary; }
-    // functions 
-}
-class P_Ray3D
-{
-    constructor(P_Direction, P_Position)
-    {
-        this._field_Direction = P_Direction;
-        this._field_Position = P_Position;
-    }
-    // field accessors
-    static P_Direction_406 = function(self) { return self._field_Direction; }
-    static P_Position_410 = function(self) { return self._field_Position; }
-    // functions 
-}
-class P_Ray2D
-{
-    constructor(P_Direction, P_Position)
-    {
-        this._field_Direction = P_Direction;
-        this._field_Position = P_Position;
-    }
-    // field accessors
-    static P_Direction_414 = function(self) { return self._field_Direction; }
-    static P_Position_418 = function(self) { return self._field_Position; }
-    // functions 
-}
-class P_Sphere
-{
-    constructor(P_Center, P_Radius)
-    {
-        this._field_Center = P_Center;
-        this._field_Radius = P_Radius;
-    }
-    // field accessors
-    static P_Center_422 = function(self) { return self._field_Center; }
-    static P_Radius_426 = function(self) { return self._field_Radius; }
-    // functions 
-}
-class P_Plane
-{
-    constructor(P_Normal, P_D)
-    {
-        this._field_Normal = P_Normal;
-        this._field_D = P_D;
-    }
-    // field accessors
-    static P_Normal_430 = function(self) { return self._field_Normal; }
-    static P_D_434 = function(self) { return self._field_D; }
-    // functions 
-}
-class P_Triangle3D
-{
-    constructor(P_A, P_B, P_C)
-    {
-        this._field_A = P_A;
-        this._field_B = P_B;
-        this._field_C = P_C;
-    }
-    // field accessors
-    static P_A_438 = function(self) { return self._field_A; }
-    static P_B_442 = function(self) { return self._field_B; }
-    static P_C_446 = function(self) { return self._field_C; }
-    // functions 
-}
-class P_Triangle2D
-{
-    constructor(P_A, P_B, P_C)
-    {
-        this._field_A = P_A;
-        this._field_B = P_B;
-        this._field_C = P_C;
-    }
-    // field accessors
-    static P_A_450 = function(self) { return self._field_A; }
-    static P_B_454 = function(self) { return self._field_B; }
-    static P_C_458 = function(self) { return self._field_C; }
-    // functions 
-}
-class P_Quad3D
-{
-    constructor(P_A, P_B, P_C, P_D)
-    {
-        this._field_A = P_A;
-        this._field_B = P_B;
-        this._field_C = P_C;
-        this._field_D = P_D;
-    }
-    // field accessors
-    static P_A_462 = function(self) { return self._field_A; }
-    static P_B_466 = function(self) { return self._field_B; }
-    static P_C_470 = function(self) { return self._field_C; }
-    static P_D_474 = function(self) { return self._field_D; }
-    // functions 
-}
-class P_Quad2D
-{
-    constructor(P_A, P_B, P_C, P_D)
-    {
-        this._field_A = P_A;
-        this._field_B = P_B;
-        this._field_C = P_C;
-        this._field_D = P_D;
-    }
-    // field accessors
-    static P_A_478 = function(self) { return self._field_A; }
-    static P_B_482 = function(self) { return self._field_B; }
-    static P_C_486 = function(self) { return self._field_C; }
-    static P_D_490 = function(self) { return self._field_D; }
-    // functions 
-}
-class P_Point3D
-{
-    constructor(P_Value)
-    {
-        this._field_Value = P_Value;
-    }
-    // field accessors
-    static P_Value_494 = function(self) { return self._field_Value; }
-    // functions 
-}
-class P_Point2D
-{
-    constructor(P_Value)
-    {
-        this._field_Value = P_Value;
-    }
-    // field accessors
-    static P_Value_498 = function(self) { return self._field_Value; }
-    // functions 
-}
-class P_Line3D
-{
-    constructor(P_A, P_B)
-    {
-        this._field_A = P_A;
-        this._field_B = P_B;
-    }
-    // field accessors
-    static P_A_502 = function(self) { return self._field_A; }
-    static P_B_506 = function(self) { return self._field_B; }
-    // functions 
-}
-class P_Line2D
-{
-    constructor(P_A, P_B)
-    {
-        this._field_A = P_A;
-        this._field_B = P_B;
-    }
-    // field accessors
-    static P_A_510 = function(self) { return self._field_A; }
-    static P_B_514 = function(self) { return self._field_B; }
-    // functions 
-}
-class P_Color
-{
-    constructor(P_R, P_G, P_B, P_A)
-    {
-        this._field_R = P_R;
-        this._field_G = P_G;
-        this._field_B = P_B;
-        this._field_A = P_A;
-    }
-    // field accessors
-    static P_R_518 = function(self) { return self._field_R; }
-    static P_G_522 = function(self) { return self._field_G; }
-    static P_B_526 = function(self) { return self._field_B; }
-    static P_A_530 = function(self) { return self._field_A; }
-    // functions 
-}
-class P_ColorLUV
-{
-    constructor(P_Lightness, P_U, P_V)
-    {
-        this._field_Lightness = P_Lightness;
-        this._field_U = P_U;
-        this._field_V = P_V;
-    }
-    // field accessors
-    static P_Lightness_534 = function(self) { return self._field_Lightness; }
-    static P_U_538 = function(self) { return self._field_U; }
-    static P_V_542 = function(self) { return self._field_V; }
-    // functions 
-}
-class P_ColorLAB
-{
-    constructor(P_Lightness, P_A, P_B)
-    {
-        this._field_Lightness = P_Lightness;
-        this._field_A = P_A;
-        this._field_B = P_B;
-    }
-    // field accessors
-    static P_Lightness_546 = function(self) { return self._field_Lightness; }
-    static P_A_550 = function(self) { return self._field_A; }
-    static P_B_554 = function(self) { return self._field_B; }
-    // functions 
-}
-class P_ColorLCh
-{
-    constructor(P_Lightness, P_ChromaHue)
-    {
-        this._field_Lightness = P_Lightness;
-        this._field_ChromaHue = P_ChromaHue;
-    }
-    // field accessors
-    static P_Lightness_558 = function(self) { return self._field_Lightness; }
-    static P_ChromaHue_562 = function(self) { return self._field_ChromaHue; }
-    // functions 
-}
-class P_ColorHSV
-{
-    constructor(P_Hue, P_S, P_V)
-    {
-        this._field_Hue = P_Hue;
-        this._field_S = P_S;
-        this._field_V = P_V;
-    }
-    // field accessors
-    static P_Hue_566 = function(self) { return self._field_Hue; }
-    static P_S_570 = function(self) { return self._field_S; }
-    static P_V_574 = function(self) { return self._field_V; }
-    // functions 
-}
-class P_ColorHSL
-{
-    constructor(P_Hue, P_Saturation, P_Luminance)
-    {
-        this._field_Hue = P_Hue;
-        this._field_Saturation = P_Saturation;
-        this._field_Luminance = P_Luminance;
-    }
-    // field accessors
-    static P_Hue_578 = function(self) { return self._field_Hue; }
-    static P_Saturation_582 = function(self) { return self._field_Saturation; }
-    static P_Luminance_586 = function(self) { return self._field_Luminance; }
-    // functions 
-}
-class P_ColorYCbCr
-{
-    constructor(P_Y, P_Cb, P_Cr)
-    {
-        this._field_Y = P_Y;
-        this._field_Cb = P_Cb;
-        this._field_Cr = P_Cr;
-    }
-    // field accessors
-    static P_Y_590 = function(self) { return self._field_Y; }
-    static P_Cb_594 = function(self) { return self._field_Cb; }
-    static P_Cr_598 = function(self) { return self._field_Cr; }
-    // functions 
-}
-class P_SphericalCoordinate
-{
-    constructor(P_Radius, P_Azimuth, P_Polar)
-    {
-        this._field_Radius = P_Radius;
-        this._field_Azimuth = P_Azimuth;
-        this._field_Polar = P_Polar;
-    }
-    // field accessors
-    static P_Radius_602 = function(self) { return self._field_Radius; }
-    static P_Azimuth_606 = function(self) { return self._field_Azimuth; }
-    static P_Polar_610 = function(self) { return self._field_Polar; }
-    // functions 
-}
-class P_PolarCoordinate
-{
-    constructor(P_Radius, P_Angle)
-    {
-        this._field_Radius = P_Radius;
-        this._field_Angle = P_Angle;
-    }
-    // field accessors
-    static P_Radius_614 = function(self) { return self._field_Radius; }
-    static P_Angle_618 = function(self) { return self._field_Angle; }
-    // functions 
-}
-class P_LogPolarCoordinate
-{
-    constructor(P_Rho, P_Azimuth)
-    {
-        this._field_Rho = P_Rho;
-        this._field_Azimuth = P_Azimuth;
-    }
-    // field accessors
-    static P_Rho_622 = function(self) { return self._field_Rho; }
-    static P_Azimuth_626 = function(self) { return self._field_Azimuth; }
-    // functions 
-}
-class P_CylindricalCoordinate
-{
-    constructor(P_RadialDistance, P_Azimuth, P_Height)
-    {
-        this._field_RadialDistance = P_RadialDistance;
-        this._field_Azimuth = P_Azimuth;
-        this._field_Height = P_Height;
-    }
-    // field accessors
-    static P_RadialDistance_630 = function(self) { return self._field_RadialDistance; }
-    static P_Azimuth_634 = function(self) { return self._field_Azimuth; }
-    static P_Height_638 = function(self) { return self._field_Height; }
-    // functions 
-}
-class P_HorizontalCoordinate
-{
-    constructor(P_Radius, P_Azimuth, P_Height)
-    {
-        this._field_Radius = P_Radius;
-        this._field_Azimuth = P_Azimuth;
-        this._field_Height = P_Height;
-    }
-    // field accessors
-    static P_Radius_642 = function(self) { return self._field_Radius; }
-    static P_Azimuth_646 = function(self) { return self._field_Azimuth; }
-    static P_Height_650 = function(self) { return self._field_Height; }
-    // functions 
-}
-class P_GeoCoordinate
-{
-    constructor(P_Latitude, P_Longitude)
-    {
-        this._field_Latitude = P_Latitude;
-        this._field_Longitude = P_Longitude;
-    }
-    // field accessors
-    static P_Latitude_654 = function(self) { return self._field_Latitude; }
-    static P_Longitude_658 = function(self) { return self._field_Longitude; }
-    // functions 
-}
-class P_GeoCoordinateWithAltitude
-{
-    constructor(P_Coordinate, P_Altitude)
-    {
-        this._field_Coordinate = P_Coordinate;
-        this._field_Altitude = P_Altitude;
-    }
-    // field accessors
-    static P_Coordinate_662 = function(self) { return self._field_Coordinate; }
-    static P_Altitude_666 = function(self) { return self._field_Altitude; }
-    // functions 
-}
-class P_Circle
-{
-    constructor(P_Center, P_Radius)
-    {
-        this._field_Center = P_Center;
-        this._field_Radius = P_Radius;
-    }
-    // field accessors
-    static P_Center_670 = function(self) { return self._field_Center; }
-    static P_Radius_674 = function(self) { return self._field_Radius; }
-    // functions 
-}
-class P_Chord
-{
-    constructor(P_Circle, P_Arc)
-    {
-        this._field_Circle = P_Circle;
-        this._field_Arc = P_Arc;
-    }
-    // field accessors
-    static P_Circle_678 = function(self) { return self._field_Circle; }
-    static P_Arc_682 = function(self) { return self._field_Arc; }
-    // functions 
-}
-class P_Size2D
-{
-    constructor(P_Width, P_Height)
-    {
-        this._field_Width = P_Width;
-        this._field_Height = P_Height;
-    }
-    // field accessors
-    static P_Width_686 = function(self) { return self._field_Width; }
-    static P_Height_690 = function(self) { return self._field_Height; }
-    // functions 
-}
-class P_Size3D
-{
-    constructor(P_Width, P_Height, P_Depth)
-    {
-        this._field_Width = P_Width;
-        this._field_Height = P_Height;
-        this._field_Depth = P_Depth;
-    }
-    // field accessors
-    static P_Width_694 = function(self) { return self._field_Width; }
-    static P_Height_698 = function(self) { return self._field_Height; }
-    static P_Depth_702 = function(self) { return self._field_Depth; }
-    // functions 
-}
-class P_Rectangle2D
-{
-    constructor(P_Center, P_Size)
-    {
-        this._field_Center = P_Center;
-        this._field_Size = P_Size;
-    }
-    // field accessors
-    static P_Center_706 = function(self) { return self._field_Center; }
-    static P_Size_710 = function(self) { return self._field_Size; }
-    // functions 
-}
-class P_Proportion
-{
-    constructor(P_Value)
-    {
-        this._field_Value = P_Value;
-    }
-    // field accessors
-    static P_Value_714 = function(self) { return self._field_Value; }
-    // functions 
-}
-class P_Fraction
-{
-    constructor(P_Numerator, P_Denominator)
-    {
-        this._field_Numerator = P_Numerator;
-        this._field_Denominator = P_Denominator;
-    }
-    // field accessors
-    static P_Numerator_718 = function(self) { return self._field_Numerator; }
-    static P_Denominator_722 = function(self) { return self._field_Denominator; }
-    // functions 
-}
-class P_Angle
-{
-    constructor(P_Radians)
-    {
-        this._field_Radians = P_Radians;
-    }
-    // field accessors
-    static P_Radians_726 = function(self) { return self._field_Radians; }
-    // functions 
-}
-class P_Length
-{
-    constructor(P_Meters)
-    {
-        this._field_Meters = P_Meters;
-    }
-    // field accessors
-    static P_Meters_730 = function(self) { return self._field_Meters; }
-    // functions 
-}
-class P_Mass
-{
-    constructor(P_Kilograms)
-    {
-        this._field_Kilograms = P_Kilograms;
-    }
-    // field accessors
-    static P_Kilograms_734 = function(self) { return self._field_Kilograms; }
-    // functions 
-}
-class P_Temperature
-{
-    constructor(P_Celsius)
-    {
-        this._field_Celsius = P_Celsius;
-    }
-    // field accessors
-    static P_Celsius_738 = function(self) { return self._field_Celsius; }
-    // functions 
-}
-class P_TimeSpan
-{
-    constructor(P_Seconds)
-    {
-        this._field_Seconds = P_Seconds;
-    }
-    // field accessors
-    static P_Seconds_742 = function(self) { return self._field_Seconds; }
-    // functions 
-}
-class P_TimeRange
-{
-    constructor(P_Min, P_Max)
-    {
-        this._field_Min = P_Min;
-        this._field_Max = P_Max;
-    }
-    // field accessors
-    static P_Min_746 = function(self) { return self._field_Min; }
-    static P_Max_750 = function(self) { return self._field_Max; }
-    // functions 
-}
-class P_DateTime
-{
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
-}
-class P_AnglePair
-{
-    constructor(P_Start, P_End)
-    {
-        this._field_Start = P_Start;
-        this._field_End = P_End;
-    }
-    // field accessors
-    static P_Start_754 = function(self) { return self._field_Start; }
-    static P_End_758 = function(self) { return self._field_End; }
-    // functions 
-}
-class P_Ring
-{
-    constructor(P_Circle, P_InnerRadius)
-    {
-        this._field_Circle = P_Circle;
-        this._field_InnerRadius = P_InnerRadius;
-    }
-    // field accessors
-    static P_Circle_762 = function(self) { return self._field_Circle; }
-    static P_InnerRadius_766 = function(self) { return self._field_InnerRadius; }
-    // functions 
-}
-class P_Arc
-{
-    constructor(P_Angles, P_Cirlce)
-    {
-        this._field_Angles = P_Angles;
-        this._field_Cirlce = P_Cirlce;
-    }
-    // field accessors
-    static P_Angles_770 = function(self) { return self._field_Angles; }
-    static P_Cirlce_774 = function(self) { return self._field_Cirlce; }
-    // functions 
-}
-class P_TimeInterval
-{
-    constructor(P_Start, P_End)
-    {
-        this._field_Start = P_Start;
-        this._field_End = P_End;
-    }
-    // field accessors
-    static P_Start_778 = function(self) { return self._field_Start; }
-    static P_End_782 = function(self) { return self._field_End; }
-    // functions 
-}
-class P_RealInterval
-{
-    constructor(P_A, P_B)
-    {
-        this._field_A = P_A;
-        this._field_B = P_B;
-    }
-    // field accessors
-    static P_A_786 = function(self) { return self._field_A; }
-    static P_B_790 = function(self) { return self._field_B; }
-    // functions 
-}
-class P_Interval2D
-{
-    constructor(P_A, P_B)
-    {
-        this._field_A = P_A;
-        this._field_B = P_B;
-    }
-    // field accessors
-    static P_A_794 = function(self) { return self._field_A; }
-    static P_B_798 = function(self) { return self._field_B; }
-    // functions 
-}
-class P_Interval3D
-{
-    constructor(P_A, P_B)
-    {
-        this._field_A = P_A;
-        this._field_B = P_B;
-    }
-    // field accessors
-    static P_A_802 = function(self) { return self._field_A; }
-    static P_B_806 = function(self) { return self._field_B; }
-    // functions 
-}
-class P_Capsule
-{
-    constructor(P_Line, P_Radius)
-    {
-        this._field_Line = P_Line;
-        this._field_Radius = P_Radius;
-    }
-    // field accessors
-    static P_Line_810 = function(self) { return self._field_Line; }
-    static P_Radius_814 = function(self) { return self._field_Radius; }
-    // functions 
-}
-class P_Matrix3D
-{
-    constructor(P_Column1, P_Column2, P_Column3, P_Column4)
-    {
-        this._field_Column1 = P_Column1;
-        this._field_Column2 = P_Column2;
-        this._field_Column3 = P_Column3;
-        this._field_Column4 = P_Column4;
-    }
-    // field accessors
-    static P_Column1_818 = function(self) { return self._field_Column1; }
-    static P_Column2_822 = function(self) { return self._field_Column2; }
-    static P_Column3_826 = function(self) { return self._field_Column3; }
-    static P_Column4_830 = function(self) { return self._field_Column4; }
-    // functions 
-}
-class P_Cylinder
-{
-    constructor(P_Line, P_Radius)
-    {
-        this._field_Line = P_Line;
-        this._field_Radius = P_Radius;
-    }
-    // field accessors
-    static P_Line_834 = function(self) { return self._field_Line; }
-    static P_Radius_838 = function(self) { return self._field_Radius; }
-    // functions 
-}
-class P_Cone
-{
-    constructor(P_Line, P_Radius)
-    {
-        this._field_Line = P_Line;
-        this._field_Radius = P_Radius;
-    }
-    // field accessors
-    static P_Line_842 = function(self) { return self._field_Line; }
-    static P_Radius_846 = function(self) { return self._field_Radius; }
-    // functions 
-}
-class P_Tube
-{
-    constructor(P_Line, P_InnerRadius, P_OuterRadius)
-    {
-        this._field_Line = P_Line;
-        this._field_InnerRadius = P_InnerRadius;
-        this._field_OuterRadius = P_OuterRadius;
-    }
-    // field accessors
-    static P_Line_850 = function(self) { return self._field_Line; }
-    static P_InnerRadius_854 = function(self) { return self._field_InnerRadius; }
-    static P_OuterRadius_858 = function(self) { return self._field_OuterRadius; }
-    // functions 
-}
-class P_ConeSegment
-{
-    constructor(P_Line, P_Radius1, P_Radius2)
-    {
-        this._field_Line = P_Line;
-        this._field_Radius1 = P_Radius1;
-        this._field_Radius2 = P_Radius2;
-    }
-    // field accessors
-    static P_Line_862 = function(self) { return self._field_Line; }
-    static P_Radius1_866 = function(self) { return self._field_Radius1; }
-    static P_Radius2_870 = function(self) { return self._field_Radius2; }
-    // functions 
-}
-class P_Box2D
-{
-    constructor(P_Center, P_Rotation, P_Extent)
-    {
-        this._field_Center = P_Center;
-        this._field_Rotation = P_Rotation;
-        this._field_Extent = P_Extent;
-    }
-    // field accessors
-    static P_Center_874 = function(self) { return self._field_Center; }
-    static P_Rotation_878 = function(self) { return self._field_Rotation; }
-    static P_Extent_882 = function(self) { return self._field_Extent; }
-    // functions 
-}
-class P_Box3D
-{
-    constructor(P_Center, P_Rotation, P_Extent)
-    {
-        this._field_Center = P_Center;
-        this._field_Rotation = P_Rotation;
-        this._field_Extent = P_Extent;
-    }
-    // field accessors
-    static P_Center_886 = function(self) { return self._field_Center; }
-    static P_Rotation_890 = function(self) { return self._field_Rotation; }
-    static P_Extent_894 = function(self) { return self._field_Extent; }
-    // functions 
-}
-class P_CubicBezierTriangle3D
-{
-    constructor(P_A, P_B, P_C, P_A2B, P_AB2, P_B2C, P_BC2, P_AC2, P_A2C, P_ABC)
-    {
-        this._field_A = P_A;
-        this._field_B = P_B;
-        this._field_C = P_C;
-        this._field_A2B = P_A2B;
-        this._field_AB2 = P_AB2;
-        this._field_B2C = P_B2C;
-        this._field_BC2 = P_BC2;
-        this._field_AC2 = P_AC2;
-        this._field_A2C = P_A2C;
-        this._field_ABC = P_ABC;
-    }
-    // field accessors
-    static P_A_898 = function(self) { return self._field_A; }
-    static P_B_902 = function(self) { return self._field_B; }
-    static P_C_906 = function(self) { return self._field_C; }
-    static P_A2B_910 = function(self) { return self._field_A2B; }
-    static P_AB2_914 = function(self) { return self._field_AB2; }
-    static P_B2C_918 = function(self) { return self._field_B2C; }
-    static P_BC2_922 = function(self) { return self._field_BC2; }
-    static P_AC2_926 = function(self) { return self._field_AC2; }
-    static P_A2C_930 = function(self) { return self._field_A2C; }
-    static P_ABC_934 = function(self) { return self._field_ABC; }
-    // functions 
-}
-class P_CubicBezier2D
-{
-    constructor(P_A, P_B, P_C, P_D)
-    {
-        this._field_A = P_A;
-        this._field_B = P_B;
-        this._field_C = P_C;
-        this._field_D = P_D;
-    }
-    // field accessors
-    static P_A_938 = function(self) { return self._field_A; }
-    static P_B_942 = function(self) { return self._field_B; }
-    static P_C_946 = function(self) { return self._field_C; }
-    static P_D_950 = function(self) { return self._field_D; }
-    // functions 
-}
-class P_UV
-{
-    constructor(P_U, P_V)
-    {
-        this._field_U = P_U;
-        this._field_V = P_V;
-    }
-    // field accessors
-    static P_U_954 = function(self) { return self._field_U; }
-    static P_V_958 = function(self) { return self._field_V; }
-    // functions 
-}
-class P_UVW
-{
-    constructor(P_U, P_V, P_W)
-    {
-        this._field_U = P_U;
-        this._field_V = P_V;
-        this._field_W = P_W;
-    }
-    // field accessors
-    static P_U_962 = function(self) { return self._field_U; }
-    static P_V_966 = function(self) { return self._field_V; }
-    static P_W_970 = function(self) { return self._field_W; }
-    // functions 
-}
-class P_CubicBezier3D
-{
-    constructor(P_A, P_B, P_C, P_D)
-    {
-        this._field_A = P_A;
-        this._field_B = P_B;
-        this._field_C = P_C;
-        this._field_D = P_D;
-    }
-    // field accessors
-    static P_A_974 = function(self) { return self._field_A; }
-    static P_B_978 = function(self) { return self._field_B; }
-    static P_C_982 = function(self) { return self._field_C; }
-    static P_D_986 = function(self) { return self._field_D; }
-    // functions 
-}
-class P_QuadraticBezier2D
-{
-    constructor(P_A, P_B, P_C)
-    {
-        this._field_A = P_A;
-        this._field_B = P_B;
-        this._field_C = P_C;
-    }
-    // field accessors
-    static P_A_990 = function(self) { return self._field_A; }
-    static P_B_994 = function(self) { return self._field_B; }
-    static P_C_998 = function(self) { return self._field_C; }
-    // functions 
-}
-class P_QuadraticBezier3D
-{
-    constructor(P_A, P_B, P_C)
-    {
-        this._field_A = P_A;
-        this._field_B = P_B;
-        this._field_C = P_C;
-    }
-    // field accessors
-    static P_A_1002 = function(self) { return self._field_A; }
-    static P_B_1006 = function(self) { return self._field_B; }
-    static P_C_1010 = function(self) { return self._field_C; }
-    // functions 
-}
-class P_Area
-{
-    constructor(P_MetersSquared)
-    {
-        this._field_MetersSquared = P_MetersSquared;
-    }
-    // field accessors
-    static P_MetersSquared_1014 = function(self) { return self._field_MetersSquared; }
-    // functions 
-}
-class P_Volume
-{
-    constructor(P_MetersCubed)
-    {
-        this._field_MetersCubed = P_MetersCubed;
-    }
-    // field accessors
-    static P_MetersCubed_1018 = function(self) { return self._field_MetersCubed; }
-    // functions 
-}
-class P_Velocity
-{
-    constructor(P_MetersPerSecond)
-    {
-        this._field_MetersPerSecond = P_MetersPerSecond;
-    }
-    // field accessors
-    static P_MetersPerSecond_1022 = function(self) { return self._field_MetersPerSecond; }
-    // functions 
-}
-class P_Acceleration
-{
-    constructor(P_MetersPerSecondSquared)
-    {
-        this._field_MetersPerSecondSquared = P_MetersPerSecondSquared;
-    }
-    // field accessors
-    static P_MetersPerSecondSquared_1026 = function(self) { return self._field_MetersPerSecondSquared; }
-    // functions 
-}
-class P_Force
-{
-    constructor(P_Newtons)
-    {
-        this._field_Newtons = P_Newtons;
-    }
-    // field accessors
-    static P_Newtons_1030 = function(self) { return self._field_Newtons; }
-    // functions 
-}
-class P_Pressure
-{
-    constructor(P_Pascals)
-    {
-        this._field_Pascals = P_Pascals;
-    }
-    // field accessors
-    static P_Pascals_1034 = function(self) { return self._field_Pascals; }
-    // functions 
-}
-class P_Energy
-{
-    constructor(P_Joules)
-    {
-        this._field_Joules = P_Joules;
-    }
-    // field accessors
-    static P_Joules_1038 = function(self) { return self._field_Joules; }
-    // functions 
-}
-class P_Memory
-{
-    constructor(P_Bytes)
-    {
-        this._field_Bytes = P_Bytes;
-    }
-    // field accessors
-    static P_Bytes_1042 = function(self) { return self._field_Bytes; }
-    // functions 
-}
-class P_Frequency
-{
-    constructor(P_Hertz)
-    {
-        this._field_Hertz = P_Hertz;
-    }
-    // field accessors
-    static P_Hertz_1046 = function(self) { return self._field_Hertz; }
-    // functions 
-}
-class P_Loudness
-{
-    constructor(P_Decibels)
-    {
-        this._field_Decibels = P_Decibels;
-    }
-    // field accessors
-    static P_Decibels_1050 = function(self) { return self._field_Decibels; }
-    // functions 
-}
-class P_LuminousIntensity
-{
-    constructor(P_Candelas)
-    {
-        this._field_Candelas = P_Candelas;
-    }
-    // field accessors
-    static P_Candelas_1054 = function(self) { return self._field_Candelas; }
-    // functions 
-}
-class P_ElectricPotential
-{
-    constructor(P_Volts)
-    {
-        this._field_Volts = P_Volts;
-    }
-    // field accessors
-    static P_Volts_1058 = function(self) { return self._field_Volts; }
-    // functions 
-}
-class P_ElectricCharge
-{
-    constructor(P_Columbs)
-    {
-        this._field_Columbs = P_Columbs;
-    }
-    // field accessors
-    static P_Columbs_1062 = function(self) { return self._field_Columbs; }
-    // functions 
-}
-class P_ElectricCurrent
-{
-    constructor(P_Amperes)
-    {
-        this._field_Amperes = P_Amperes;
-    }
-    // field accessors
-    static P_Amperes_1066 = function(self) { return self._field_Amperes; }
-    // functions 
-}
-class P_ElectricResistance
-{
-    constructor(P_Ohms)
-    {
-        this._field_Ohms = P_Ohms;
-    }
-    // field accessors
-    static P_Ohms_1070 = function(self) { return self._field_Ohms; }
-    // functions 
-}
-class P_Power
-{
-    constructor(P_Watts)
-    {
-        this._field_Watts = P_Watts;
-    }
-    // field accessors
-    static P_Watts_1074 = function(self) { return self._field_Watts; }
-    // functions 
-}
-class P_Density
-{
-    constructor(P_KilogramsPerMeterCubed)
-    {
-        this._field_KilogramsPerMeterCubed = P_KilogramsPerMeterCubed;
-    }
-    // field accessors
-    static P_KilogramsPerMeterCubed_1078 = function(self) { return self._field_KilogramsPerMeterCubed; }
-    // functions 
-}
-class P_NormalDistribution
-{
-    constructor(P_Mean, P_StandardDeviation)
-    {
-        this._field_Mean = P_Mean;
-        this._field_StandardDeviation = P_StandardDeviation;
-    }
-    // field accessors
-    static P_Mean_1082 = function(self) { return self._field_Mean; }
-    static P_StandardDeviation_1086 = function(self) { return self._field_StandardDeviation; }
-    // functions 
-}
-class P_PoissonDistribution
-{
-    constructor(P_Expected, P_Occurrences)
-    {
-        this._field_Expected = P_Expected;
-        this._field_Occurrences = P_Occurrences;
-    }
-    // field accessors
-    static P_Expected_1090 = function(self) { return self._field_Expected; }
-    static P_Occurrences_1094 = function(self) { return self._field_Occurrences; }
-    // functions 
-}
-class P_BernoulliDistribution
-{
-    constructor(P_P)
-    {
-        this._field_P = P_P;
-    }
-    // field accessors
-    static P_P_1098 = function(self) { return self._field_P; }
-    // functions 
-}
-class P_Probability
-{
-    constructor(P_Value)
-    {
-        this._field_Value = P_Value;
-    }
-    // field accessors
-    static P_Value_1102 = function(self) { return self._field_Value; }
-    // functions 
-}
-class P_BinomialDistribution
-{
-    constructor(P_Trials, P_P)
-    {
-        this._field_Trials = P_Trials;
-        this._field_P = P_P;
-    }
-    // field accessors
-    static P_Trials_1106 = function(self) { return self._field_Trials; }
-    static P_P_1110 = function(self) { return self._field_P; }
-    // functions 
-}
-class P_Interval
-{
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
     static P_Size_1490 = function (P_x) 
     // ParameterSymbol=x$1489: Argument:Ref=>FunctionGroupSymbol=Max$1297:(0/1), Argument:Ref=>FunctionGroupSymbol=Min$1295:(0/1)
     // Candidates = Interval,Comparable
@@ -1842,13 +210,8 @@ class P_Interval
     // Called function: Ref=>PredefinedSymbol=Tuple$1: candidates = 
     { return P_Tuple(0, 1); };
 }
-class P_Vector
+class Vector_134_Library
 {
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
     static P_Sum_1551 = function (P_v) 
     // ParameterSymbol=v$1550: Argument:Ref=>FunctionGroupSymbol=Aggregate$1319:(0/3)
     // Candidates = Array
@@ -1880,13 +243,8 @@ class P_Vector
     // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
     { return P_Sum(P_Multiply(P_v1, P_v2)); };
 }
-class P_Numerical
+class Numerical_135_Library
 {
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
     static P_Cos_1562 = function (P_x) 
     // ParameterSymbol=x$1561: 
     // Candidates = Any
@@ -2179,13 +537,8 @@ class P_Numerical
     // Called function: Ref=>FunctionGroupSymbol=Abs$1225: candidates = Numerical_135.Abs_1224
     { return P_LessThan(P_Abs(P_x), 1E-08); };
 }
-class P_Comparable
+class Comparable_136_Library
 {
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
     static P_Equals_1676 = function (P_a, P_b) 
     // ParameterSymbol=a$1674: Argument:Ref=>FunctionGroupSymbol=Compare$152:(0/2)
     // Candidates = Comparable
@@ -2284,13 +637,8 @@ class P_Comparable
     // Called function: Ref=>FunctionGroupSymbol=Contains$1133: candidates = Interval_133.Contains_1130, Interval_133.Contains_1132
     { return P_Contains(P_i, P_v); };
 }
-class P_Boolean
+class Boolean_137_Library
 {
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
     static P_XOr_1710 = function (P_a, P_b) 
     // ParameterSymbol=a$1708: 
     // Candidates = Any
@@ -2318,13 +666,8 @@ class P_Boolean
     // Called function: Ref=>FunctionGroupSymbol=Or$181: candidates = Boolean_21.Or_180
     { return P_Not(P_Or(P_a, P_b)); };
 }
-class P_Equatable
+class Equatable_138_Library
 {
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
     static P_NotEquals_1718 = function (P_x) 
     // ParameterSymbol=x$1717: Argument:Ref=>FunctionGroupSymbol=Equals$1281:(0/1)
     // Candidates = Equatable,Comparable
@@ -2332,13 +675,8 @@ class P_Equatable
     // Called function: Ref=>FunctionGroupSymbol=Equals$1281: candidates = Equatable_18.Equals_153, Comparable_136.Equals_1280
     { return P_Not(P_Equals(P_x)); };
 }
-class P_Array
+class Array_139_Library
 {
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
     static P_Map_1723 = function (P_xs, P_f) 
     // ParameterSymbol=xs$1719: Argument:Ref=>TypeDefSymbol=Count$26:(0/1), Argument:Ref=>FunctionGroupSymbol=At$213:(0/2)
     // Candidates = Vector,Array
@@ -2509,13 +847,8 @@ class P_Array
         { return P_Add(P_acc, P_Add(", ", P_ToString(P_x))); }))
     ; };
 }
-class P_Easings
+class Easings_140_Library
 {
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
     static P_BlendEaseFunc_1774 = function (P_p, P_easeIn, P_easeOut) 
     // ParameterSymbol=p$1771: Argument:Ref=>FunctionGroupSymbol=LessThan$1283:(0/2), Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2), Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2)
     // Candidates = Comparable,Arithmetic,ScalarArithmetic
@@ -2765,13 +1098,8 @@ class P_Easings
     // Called function: Ref=>FunctionGroupSymbol=BlendEaseFunc$1337: candidates = Easings_140.BlendEaseFunc_1336
     { return P_BlendEaseFunc(P_p, P_BounceEaseIn, P_BounceEaseOut); };
 }
-class P_Intrinsics
+class Intrinsics_141_Library
 {
-    constructor()
-    {
-    }
-    // field accessors
-    // functions 
     static P_Interpolate_1841 = function (P_xs) 
     // ParameterSymbol=xs$1840: 
     // Candidates = Any
@@ -2788,4 +1116,1583 @@ class P_Intrinsics
     // ParameterSymbol=x$1846: 
     // Candidates = Any
     { return P_intrinsic; };
+}
+class Vector_13_Concept
+{
+    constructor(self) { this.Self = self; };
+    static P_Count_1412 = function (P_v) 
+    // ParameterSymbol=v$1411:Concept:Vector_13 Declared:Concept:Vector_13
+    // Candidates = Vector
+    // Called function: Ref=>TypeDefSymbol=Count$26: candidates = Vector_13.Count_143, Array_24.Count_210
+    // Called function: Ref=>FunctionGroupSymbol=FieldTypes$187: candidates = Value_22.FieldTypes_186
+    { return P_Count(P_FieldTypes(P_Self)); };
+    static P_At_1415 = function (P_v, P_n) 
+    // ParameterSymbol=v$1413:Concept:Vector_13 Declared:Concept:Vector_13, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Vector
+    // ParameterSymbol=n$1414:Type:Index_27 Declared:Type:Index_27, Argument:Ref=>FunctionGroupSymbol=At$213:(1/2)
+    // Candidates = Index
+    // Called function: Ref=>FunctionGroupSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    { return P_At(P_FieldValues(P_v), P_n); };
+}
+class Measure_14_Concept
+{
+    constructor(self) { this.Self = self; };
+    static P_Value_1417 = function (P_x) 
+    // ParameterSymbol=x$1416:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // Called function: Ref=>FunctionGroupSymbol=At$213: candidates = Vector_13.At_145, Array_24.At_212
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    { return P_At(P_FieldValues(P_x), 0); };
+}
+class Numerical_15_Concept
+{
+    constructor(self) { this.Self = self; };
+}
+class Magnitude_16_Concept
+{
+    constructor(self) { this.Self = self; };
+    static P_Magnitude_1419 = function (P_x) 
+    // ParameterSymbol=x$1418:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // Called function: Ref=>FunctionGroupSymbol=SquareRoot$1205: candidates = Numerical_135.SquareRoot_1204
+    // Called function: Ref=>FunctionGroupSymbol=Sum$1163: candidates = Vector_134.Sum_1162
+    // Called function: Ref=>FunctionGroupSymbol=Square$1209: candidates = Numerical_135.Square_1208
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    { return P_SquareRoot(P_Sum(P_Square(P_FieldValues(P_x)))); };
+}
+class Comparable_17_Concept
+{
+    constructor(self) { this.Self = self; };
+    static P_Compare_1422 = function (P_a, P_b) 
+    // ParameterSymbol=a$1420:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=Magnitude$150:(0/1), Argument:Ref=>FunctionGroupSymbol=Magnitude$150:(0/1)
+    // Candidates = Self
+    // ParameterSymbol=b$1421:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=Magnitude$150:(0/1), Argument:Ref=>FunctionGroupSymbol=Magnitude$150:(0/1)
+    // Candidates = Self
+    // Called function: Ref=>FunctionGroupSymbol=LessThan$1283: candidates = Comparable_136.LessThan_1282
+    // Called function: Ref=>FunctionGroupSymbol=Magnitude$150: candidates = Magnitude_16.Magnitude_149
+    // Called function: Ref=>FunctionGroupSymbol=Magnitude$150: candidates = Magnitude_16.Magnitude_149
+    // Called function: Ref=>FunctionGroupSymbol=Negative$158: candidates = Arithmetic_19.Negative_157
+    // Called function: Ref=>FunctionGroupSymbol=GreaterThan$1291: candidates = Comparable_136.GreaterThan_1290
+    // Called function: Ref=>FunctionGroupSymbol=Magnitude$150: candidates = Magnitude_16.Magnitude_149
+    // Called function: Ref=>FunctionGroupSymbol=Magnitude$150: candidates = Magnitude_16.Magnitude_149
+    { return P_LessThan(P_Magnitude(P_a), P_Magnitude(P_b)
+        ? P_Negative(1)
+        : P_GreaterThan(P_Magnitude(P_a), P_Magnitude(P_b)
+            ? 1
+            : 0
+        )
+    ); };
+}
+class Equatable_18_Concept
+{
+    constructor(self) { this.Self = self; };
+    static P_Equals_1425 = function (P_a, P_b) 
+    // ParameterSymbol=a$1423:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // ParameterSymbol=b$1424:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // Called function: Ref=>FunctionGroupSymbol=All$1333: candidates = Array_139.All_1332
+    // Called function: Ref=>FunctionGroupSymbol=Equals$1281: candidates = Equatable_18.Equals_153, Comparable_136.Equals_1280
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    { return P_All(P_Equals(P_FieldValues(P_a), P_FieldValues(P_b))); };
+}
+class Arithmetic_19_Concept
+{
+    constructor(self) { this.Self = self; };
+    static P_Add_1428 = function (P_self, P_other) 
+    // ParameterSymbol=self$1426:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // ParameterSymbol=other$1427:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    { return P_Add(P_FieldValues(P_self), P_FieldValues(P_other)); };
+    static P_Negative_1430 = function (P_self) 
+    // ParameterSymbol=self$1429:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // Called function: Ref=>FunctionGroupSymbol=Negative$158: candidates = Arithmetic_19.Negative_157
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    { return P_Negative(P_FieldValues(P_self)); };
+    static P_Reciprocal_1432 = function (P_self) 
+    // ParameterSymbol=self$1431:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // Called function: Ref=>FunctionGroupSymbol=Reciprocal$160: candidates = Arithmetic_19.Reciprocal_159
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    { return P_Reciprocal(P_FieldValues(P_self)); };
+    static P_Multiply_1435 = function (P_self, P_other) 
+    // ParameterSymbol=self$1433:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // ParameterSymbol=other$1434:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    { return P_Add(P_FieldValues(P_self), P_FieldValues(P_other)); };
+    static P_Divide_1438 = function (P_self, P_other) 
+    // ParameterSymbol=self$1436:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // ParameterSymbol=other$1437:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // Called function: Ref=>FunctionGroupSymbol=Divide$175: candidates = Arithmetic_19.Divide_163, ScalarArithmetic_20.Divide_174
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    { return P_Divide(P_FieldValues(P_self), P_FieldValues(P_other)); };
+    static P_Modulo_1441 = function (P_self, P_other) 
+    // ParameterSymbol=self$1439:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // ParameterSymbol=other$1440:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // Called function: Ref=>FunctionGroupSymbol=Modulo$177: candidates = Arithmetic_19.Modulo_165, ScalarArithmetic_20.Modulo_176
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    { return P_Modulo(P_FieldValues(P_self), P_FieldValues(P_other)); };
+}
+class ScalarArithmetic_20_Concept
+{
+    constructor(self) { this.Self = self; };
+    static P_Add_1445 = function (P_self, P_scalar) 
+    // ParameterSymbol=self$1443:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // ParameterSymbol=scalar$1444:Variable:T_1442 Declared:Variable:T_1442, Argument:Ref=>FunctionGroupSymbol=Add$169:(1/2)
+    // Candidates = T
+    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    { return P_Add(P_FieldValues(P_self), P_scalar); };
+    static P_Subtract_1448 = function (P_self, P_scalar) 
+    // ParameterSymbol=self$1446:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=Add$169:(0/2)
+    // Candidates = Self
+    // ParameterSymbol=scalar$1447:Variable:T_1442 Declared:Variable:T_1442, Argument:Ref=>FunctionGroupSymbol=Negative$158:(0/1)
+    // Candidates = T
+    // Called function: Ref=>FunctionGroupSymbol=Add$169: candidates = Arithmetic_19.Add_155, ScalarArithmetic_20.Add_168
+    // Called function: Ref=>FunctionGroupSymbol=Negative$158: candidates = Arithmetic_19.Negative_157
+    { return P_Add(P_self, P_Negative(P_scalar)); };
+    static P_Multiply_1451 = function (P_self, P_scalar) 
+    // ParameterSymbol=self$1449:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // ParameterSymbol=scalar$1450:Variable:T_1442 Declared:Variable:T_1442, Argument:Ref=>FunctionGroupSymbol=Multiply$173:(1/2)
+    // Candidates = T
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    { return P_Multiply(P_FieldValues(P_self), P_scalar); };
+    static P_Divide_1454 = function (P_self, P_scalar) 
+    // ParameterSymbol=self$1452:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=Multiply$173:(0/2)
+    // Candidates = Self
+    // ParameterSymbol=scalar$1453:Variable:T_1442 Declared:Variable:T_1442, Argument:Ref=>FunctionGroupSymbol=Reciprocal$160:(0/1)
+    // Candidates = T
+    // Called function: Ref=>FunctionGroupSymbol=Multiply$173: candidates = Arithmetic_19.Multiply_161, ScalarArithmetic_20.Multiply_172
+    // Called function: Ref=>FunctionGroupSymbol=Reciprocal$160: candidates = Arithmetic_19.Reciprocal_159
+    { return P_Multiply(P_self, P_Reciprocal(P_scalar)); };
+    static P_Modulo_1457 = function (P_self, P_scalar) 
+    // ParameterSymbol=self$1455:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // ParameterSymbol=scalar$1456:Variable:T_1442 Declared:Variable:T_1442, Argument:Ref=>FunctionGroupSymbol=Modulo$177:(1/2)
+    // Candidates = T
+    // Called function: Ref=>FunctionGroupSymbol=Modulo$177: candidates = Arithmetic_19.Modulo_165, ScalarArithmetic_20.Modulo_176
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    { return P_Modulo(P_FieldValues(P_self), P_scalar); };
+}
+class Boolean_21_Concept
+{
+    constructor(self) { this.Self = self; };
+    static P_And_1460 = function (P_a, P_b) 
+    // ParameterSymbol=a$1458:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // ParameterSymbol=b$1459:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // Called function: Ref=>FunctionGroupSymbol=And$179: candidates = Boolean_21.And_178
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    { return P_And(P_FieldValues(P_a), P_FieldValues(P_b)); };
+    static P_Or_1463 = function (P_a, P_b) 
+    // ParameterSymbol=a$1461:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // ParameterSymbol=b$1462:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // Called function: Ref=>FunctionGroupSymbol=Or$181: candidates = Boolean_21.Or_180
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    { return P_Or(P_FieldValues(P_a), P_FieldValues(P_b)); };
+    static P_Not_1465 = function (P_a) 
+    // ParameterSymbol=a$1464:Primitive:Self_7 Declared:Primitive:Self_7, Argument:Ref=>FunctionGroupSymbol=FieldValues$191:(0/1)
+    // Candidates = Self
+    // Called function: Ref=>FunctionGroupSymbol=Not$183: candidates = Boolean_21.Not_182
+    // Called function: Ref=>FunctionGroupSymbol=FieldValues$191: candidates = Value_22.FieldValues_190
+    { return P_Not(P_FieldValues(P_a)); };
+}
+class Value_22_Concept
+{
+    constructor(self) { this.Self = self; };
+    static P_Type_1466 = function () 
+    { return P_intrinsic; };
+    static P_FieldTypes_1467 = function () 
+    { return P_intrinsic; };
+    static P_FieldNames_1468 = function () 
+    { return P_intrinsic; };
+    static P_FieldValues_1470 = function (P_self) 
+    // ParameterSymbol=self$1469:Primitive:Self_7 Declared:Primitive:Self_7
+    // Candidates = Self
+    { return P_intrinsic; };
+    static P_Zero_1471 = function () 
+    // Called function: Ref=>FunctionGroupSymbol=Zero$193: candidates = Value_22.Zero_192
+    { return P_Zero(P_FieldTypes); };
+    static P_One_1472 = function () 
+    // Called function: Ref=>FunctionGroupSymbol=One$195: candidates = Value_22.One_194
+    { return P_One(P_FieldTypes); };
+    static P_Default_1473 = function () 
+    // Called function: Ref=>FunctionGroupSymbol=Default$197: candidates = Value_22.Default_196
+    { return P_Default(P_FieldTypes); };
+    static P_MinValue_1474 = function () 
+    // Called function: Ref=>FunctionGroupSymbol=MinValue$199: candidates = Value_22.MinValue_198
+    { return P_MinValue(P_FieldTypes); };
+    static P_MaxValue_1475 = function () 
+    // Called function: Ref=>FunctionGroupSymbol=MaxValue$201: candidates = Value_22.MaxValue_200
+    { return P_MaxValue(P_FieldTypes); };
+    static P_ToString_1477 = function (P_x) 
+    // ParameterSymbol=x$1476:Primitive:Self_7 Declared:Primitive:Self_7
+    // Candidates = Self
+    // Called function: Ref=>FunctionGroupSymbol=JoinStrings$1335: candidates = Array_139.JoinStrings_1334
+    { return P_JoinStrings(P_FieldValues, ","); };
+}
+class Interval_23_Concept
+{
+    constructor(self) { this.Self = self; };
+    static P_Min_1480 = function (P_x) 
+    // ParameterSymbol=x$1479:Primitive:Self_7 Declared:Primitive:Self_7
+    // Candidates = Self
+    { return null; };
+    static P_Max_1482 = function (P_x) 
+    // ParameterSymbol=x$1481:Primitive:Self_7 Declared:Primitive:Self_7
+    // Candidates = Self
+    { return null; };
+}
+class Array_24_Concept
+{
+    constructor(self) { this.Self = self; };
+    static P_Count_1485 = function (P_xs) 
+    // ParameterSymbol=xs$1484:Primitive:Self_7 Declared:Primitive:Self_7
+    // Candidates = Self
+    { return null; };
+    static P_At_1488 = function (P_xs, P_n) 
+    // ParameterSymbol=xs$1486:Primitive:Self_7 Declared:Primitive:Self_7
+    // Candidates = Self
+    // ParameterSymbol=n$1487:Type:Index_27 Declared:Type:Index_27
+    // Candidates = Index
+    { return null; };
+}
+class Integer_25_Type
+{
+    constructor(P_Value)
+    {
+        this._field_Value = P_Value;
+    }
+    // field accessors
+    static P_Value_214 = function(self) { return self._field_Value; }
+    // implemented concepts 
+}
+class Count_26_Type
+{
+    constructor(P_Value)
+    {
+        this._field_Value = P_Value;
+    }
+    // field accessors
+    static P_Value_218 = function(self) { return self._field_Value; }
+    // implemented concepts 
+}
+class Index_27_Type
+{
+    constructor(P_Value)
+    {
+        this._field_Value = P_Value;
+    }
+    // field accessors
+    static P_Value_222 = function(self) { return self._field_Value; }
+    // implemented concepts 
+}
+class Number_28_Type
+{
+    constructor(P_Value)
+    {
+        this._field_Value = P_Value;
+    }
+    // field accessors
+    static P_Value_226 = function(self) { return self._field_Value; }
+    // implemented concepts 
+}
+class Unit_29_Type
+{
+    constructor(P_Value)
+    {
+        this._field_Value = P_Value;
+    }
+    // field accessors
+    static P_Value_230 = function(self) { return self._field_Value; }
+    // implemented concepts 
+}
+class Percent_30_Type
+{
+    constructor(P_Value)
+    {
+        this._field_Value = P_Value;
+    }
+    // field accessors
+    static P_Value_234 = function(self) { return self._field_Value; }
+    // implemented concepts 
+}
+class Quaternion_31_Type
+{
+    constructor(P_X, P_Y, P_Z, P_W)
+    {
+        this._field_X = P_X;
+        this._field_Y = P_Y;
+        this._field_Z = P_Z;
+        this._field_W = P_W;
+    }
+    // field accessors
+    static P_X_238 = function(self) { return self._field_X; }
+    static P_Y_242 = function(self) { return self._field_Y; }
+    static P_Z_246 = function(self) { return self._field_Z; }
+    static P_W_250 = function(self) { return self._field_W; }
+    // implemented concepts 
+}
+class Unit2D_32_Type
+{
+    constructor(P_X, P_Y)
+    {
+        this._field_X = P_X;
+        this._field_Y = P_Y;
+    }
+    // field accessors
+    static P_X_254 = function(self) { return self._field_X; }
+    static P_Y_258 = function(self) { return self._field_Y; }
+    // implemented concepts 
+}
+class Unit3D_33_Type
+{
+    constructor(P_X, P_Y, P_Z)
+    {
+        this._field_X = P_X;
+        this._field_Y = P_Y;
+        this._field_Z = P_Z;
+    }
+    // field accessors
+    static P_X_262 = function(self) { return self._field_X; }
+    static P_Y_266 = function(self) { return self._field_Y; }
+    static P_Z_270 = function(self) { return self._field_Z; }
+    // implemented concepts 
+}
+class Direction3D_34_Type
+{
+    constructor(P_Value)
+    {
+        this._field_Value = P_Value;
+    }
+    // field accessors
+    static P_Value_274 = function(self) { return self._field_Value; }
+    // implemented concepts 
+}
+class AxisAngle_35_Type
+{
+    constructor(P_Axis, P_Angle)
+    {
+        this._field_Axis = P_Axis;
+        this._field_Angle = P_Angle;
+    }
+    // field accessors
+    static P_Axis_278 = function(self) { return self._field_Axis; }
+    static P_Angle_282 = function(self) { return self._field_Angle; }
+    // implemented concepts 
+}
+class EulerAngles_36_Type
+{
+    constructor(P_Yaw, P_Pitch, P_Roll)
+    {
+        this._field_Yaw = P_Yaw;
+        this._field_Pitch = P_Pitch;
+        this._field_Roll = P_Roll;
+    }
+    // field accessors
+    static P_Yaw_286 = function(self) { return self._field_Yaw; }
+    static P_Pitch_290 = function(self) { return self._field_Pitch; }
+    static P_Roll_294 = function(self) { return self._field_Roll; }
+    // implemented concepts 
+}
+class Rotation3D_37_Type
+{
+    constructor(P_Quaternion)
+    {
+        this._field_Quaternion = P_Quaternion;
+    }
+    // field accessors
+    static P_Quaternion_298 = function(self) { return self._field_Quaternion; }
+    // implemented concepts 
+}
+class Vector2D_38_Type
+{
+    constructor(P_X, P_Y)
+    {
+        this._field_X = P_X;
+        this._field_Y = P_Y;
+    }
+    // field accessors
+    static P_X_302 = function(self) { return self._field_X; }
+    static P_Y_306 = function(self) { return self._field_Y; }
+    // implemented concepts 
+}
+class Vector3D_39_Type
+{
+    constructor(P_X, P_Y, P_Z)
+    {
+        this._field_X = P_X;
+        this._field_Y = P_Y;
+        this._field_Z = P_Z;
+    }
+    // field accessors
+    static P_X_310 = function(self) { return self._field_X; }
+    static P_Y_314 = function(self) { return self._field_Y; }
+    static P_Z_318 = function(self) { return self._field_Z; }
+    // implemented concepts 
+}
+class Vector4D_40_Type
+{
+    constructor(P_X, P_Y, P_Z, P_W)
+    {
+        this._field_X = P_X;
+        this._field_Y = P_Y;
+        this._field_Z = P_Z;
+        this._field_W = P_W;
+    }
+    // field accessors
+    static P_X_322 = function(self) { return self._field_X; }
+    static P_Y_326 = function(self) { return self._field_Y; }
+    static P_Z_330 = function(self) { return self._field_Z; }
+    static P_W_334 = function(self) { return self._field_W; }
+    // implemented concepts 
+}
+class Orientation3D_41_Type
+{
+    constructor(P_Value)
+    {
+        this._field_Value = P_Value;
+    }
+    // field accessors
+    static P_Value_338 = function(self) { return self._field_Value; }
+    // implemented concepts 
+}
+class Pose2D_42_Type
+{
+    constructor(P_Position, P_Orientation)
+    {
+        this._field_Position = P_Position;
+        this._field_Orientation = P_Orientation;
+    }
+    // field accessors
+    static P_Position_342 = function(self) { return self._field_Position; }
+    static P_Orientation_346 = function(self) { return self._field_Orientation; }
+    // implemented concepts 
+}
+class Pose3D_43_Type
+{
+    constructor(P_Position, P_Orientation)
+    {
+        this._field_Position = P_Position;
+        this._field_Orientation = P_Orientation;
+    }
+    // field accessors
+    static P_Position_350 = function(self) { return self._field_Position; }
+    static P_Orientation_354 = function(self) { return self._field_Orientation; }
+    // implemented concepts 
+}
+class Transform3D_44_Type
+{
+    constructor(P_Translation, P_Rotation, P_Scale)
+    {
+        this._field_Translation = P_Translation;
+        this._field_Rotation = P_Rotation;
+        this._field_Scale = P_Scale;
+    }
+    // field accessors
+    static P_Translation_358 = function(self) { return self._field_Translation; }
+    static P_Rotation_362 = function(self) { return self._field_Rotation; }
+    static P_Scale_366 = function(self) { return self._field_Scale; }
+    // implemented concepts 
+}
+class Transform2D_45_Type
+{
+    constructor(P_Translation, P_Rotation, P_Scale)
+    {
+        this._field_Translation = P_Translation;
+        this._field_Rotation = P_Rotation;
+        this._field_Scale = P_Scale;
+    }
+    // field accessors
+    static P_Translation_370 = function(self) { return self._field_Translation; }
+    static P_Rotation_374 = function(self) { return self._field_Rotation; }
+    static P_Scale_378 = function(self) { return self._field_Scale; }
+    // implemented concepts 
+}
+class AlignedBox2D_46_Type
+{
+    constructor(P_A, P_B)
+    {
+        this._field_A = P_A;
+        this._field_B = P_B;
+    }
+    // field accessors
+    static P_A_382 = function(self) { return self._field_A; }
+    static P_B_386 = function(self) { return self._field_B; }
+    // implemented concepts 
+}
+class AlignedBox3D_47_Type
+{
+    constructor(P_A, P_B)
+    {
+        this._field_A = P_A;
+        this._field_B = P_B;
+    }
+    // field accessors
+    static P_A_390 = function(self) { return self._field_A; }
+    static P_B_394 = function(self) { return self._field_B; }
+    // implemented concepts 
+}
+class Complex_48_Type
+{
+    constructor(P_Real, P_Imaginary)
+    {
+        this._field_Real = P_Real;
+        this._field_Imaginary = P_Imaginary;
+    }
+    // field accessors
+    static P_Real_398 = function(self) { return self._field_Real; }
+    static P_Imaginary_402 = function(self) { return self._field_Imaginary; }
+    // implemented concepts 
+}
+class Ray3D_49_Type
+{
+    constructor(P_Direction, P_Position)
+    {
+        this._field_Direction = P_Direction;
+        this._field_Position = P_Position;
+    }
+    // field accessors
+    static P_Direction_406 = function(self) { return self._field_Direction; }
+    static P_Position_410 = function(self) { return self._field_Position; }
+    // implemented concepts 
+}
+class Ray2D_50_Type
+{
+    constructor(P_Direction, P_Position)
+    {
+        this._field_Direction = P_Direction;
+        this._field_Position = P_Position;
+    }
+    // field accessors
+    static P_Direction_414 = function(self) { return self._field_Direction; }
+    static P_Position_418 = function(self) { return self._field_Position; }
+    // implemented concepts 
+}
+class Sphere_51_Type
+{
+    constructor(P_Center, P_Radius)
+    {
+        this._field_Center = P_Center;
+        this._field_Radius = P_Radius;
+    }
+    // field accessors
+    static P_Center_422 = function(self) { return self._field_Center; }
+    static P_Radius_426 = function(self) { return self._field_Radius; }
+    // implemented concepts 
+}
+class Plane_52_Type
+{
+    constructor(P_Normal, P_D)
+    {
+        this._field_Normal = P_Normal;
+        this._field_D = P_D;
+    }
+    // field accessors
+    static P_Normal_430 = function(self) { return self._field_Normal; }
+    static P_D_434 = function(self) { return self._field_D; }
+    // implemented concepts 
+}
+class Triangle3D_53_Type
+{
+    constructor(P_A, P_B, P_C)
+    {
+        this._field_A = P_A;
+        this._field_B = P_B;
+        this._field_C = P_C;
+    }
+    // field accessors
+    static P_A_438 = function(self) { return self._field_A; }
+    static P_B_442 = function(self) { return self._field_B; }
+    static P_C_446 = function(self) { return self._field_C; }
+    // implemented concepts 
+}
+class Triangle2D_54_Type
+{
+    constructor(P_A, P_B, P_C)
+    {
+        this._field_A = P_A;
+        this._field_B = P_B;
+        this._field_C = P_C;
+    }
+    // field accessors
+    static P_A_450 = function(self) { return self._field_A; }
+    static P_B_454 = function(self) { return self._field_B; }
+    static P_C_458 = function(self) { return self._field_C; }
+    // implemented concepts 
+}
+class Quad3D_55_Type
+{
+    constructor(P_A, P_B, P_C, P_D)
+    {
+        this._field_A = P_A;
+        this._field_B = P_B;
+        this._field_C = P_C;
+        this._field_D = P_D;
+    }
+    // field accessors
+    static P_A_462 = function(self) { return self._field_A; }
+    static P_B_466 = function(self) { return self._field_B; }
+    static P_C_470 = function(self) { return self._field_C; }
+    static P_D_474 = function(self) { return self._field_D; }
+    // implemented concepts 
+}
+class Quad2D_56_Type
+{
+    constructor(P_A, P_B, P_C, P_D)
+    {
+        this._field_A = P_A;
+        this._field_B = P_B;
+        this._field_C = P_C;
+        this._field_D = P_D;
+    }
+    // field accessors
+    static P_A_478 = function(self) { return self._field_A; }
+    static P_B_482 = function(self) { return self._field_B; }
+    static P_C_486 = function(self) { return self._field_C; }
+    static P_D_490 = function(self) { return self._field_D; }
+    // implemented concepts 
+}
+class Point3D_57_Type
+{
+    constructor(P_Value)
+    {
+        this._field_Value = P_Value;
+    }
+    // field accessors
+    static P_Value_494 = function(self) { return self._field_Value; }
+    // implemented concepts 
+}
+class Point2D_58_Type
+{
+    constructor(P_Value)
+    {
+        this._field_Value = P_Value;
+    }
+    // field accessors
+    static P_Value_498 = function(self) { return self._field_Value; }
+    // implemented concepts 
+}
+class Line3D_59_Type
+{
+    constructor(P_A, P_B)
+    {
+        this._field_A = P_A;
+        this._field_B = P_B;
+    }
+    // field accessors
+    static P_A_502 = function(self) { return self._field_A; }
+    static P_B_506 = function(self) { return self._field_B; }
+    // implemented concepts 
+}
+class Line2D_60_Type
+{
+    constructor(P_A, P_B)
+    {
+        this._field_A = P_A;
+        this._field_B = P_B;
+    }
+    // field accessors
+    static P_A_510 = function(self) { return self._field_A; }
+    static P_B_514 = function(self) { return self._field_B; }
+    // implemented concepts 
+}
+class Color_61_Type
+{
+    constructor(P_R, P_G, P_B, P_A)
+    {
+        this._field_R = P_R;
+        this._field_G = P_G;
+        this._field_B = P_B;
+        this._field_A = P_A;
+    }
+    // field accessors
+    static P_R_518 = function(self) { return self._field_R; }
+    static P_G_522 = function(self) { return self._field_G; }
+    static P_B_526 = function(self) { return self._field_B; }
+    static P_A_530 = function(self) { return self._field_A; }
+    // implemented concepts 
+}
+class ColorLUV_62_Type
+{
+    constructor(P_Lightness, P_U, P_V)
+    {
+        this._field_Lightness = P_Lightness;
+        this._field_U = P_U;
+        this._field_V = P_V;
+    }
+    // field accessors
+    static P_Lightness_534 = function(self) { return self._field_Lightness; }
+    static P_U_538 = function(self) { return self._field_U; }
+    static P_V_542 = function(self) { return self._field_V; }
+    // implemented concepts 
+}
+class ColorLAB_63_Type
+{
+    constructor(P_Lightness, P_A, P_B)
+    {
+        this._field_Lightness = P_Lightness;
+        this._field_A = P_A;
+        this._field_B = P_B;
+    }
+    // field accessors
+    static P_Lightness_546 = function(self) { return self._field_Lightness; }
+    static P_A_550 = function(self) { return self._field_A; }
+    static P_B_554 = function(self) { return self._field_B; }
+    // implemented concepts 
+}
+class ColorLCh_64_Type
+{
+    constructor(P_Lightness, P_ChromaHue)
+    {
+        this._field_Lightness = P_Lightness;
+        this._field_ChromaHue = P_ChromaHue;
+    }
+    // field accessors
+    static P_Lightness_558 = function(self) { return self._field_Lightness; }
+    static P_ChromaHue_562 = function(self) { return self._field_ChromaHue; }
+    // implemented concepts 
+}
+class ColorHSV_65_Type
+{
+    constructor(P_Hue, P_S, P_V)
+    {
+        this._field_Hue = P_Hue;
+        this._field_S = P_S;
+        this._field_V = P_V;
+    }
+    // field accessors
+    static P_Hue_566 = function(self) { return self._field_Hue; }
+    static P_S_570 = function(self) { return self._field_S; }
+    static P_V_574 = function(self) { return self._field_V; }
+    // implemented concepts 
+}
+class ColorHSL_66_Type
+{
+    constructor(P_Hue, P_Saturation, P_Luminance)
+    {
+        this._field_Hue = P_Hue;
+        this._field_Saturation = P_Saturation;
+        this._field_Luminance = P_Luminance;
+    }
+    // field accessors
+    static P_Hue_578 = function(self) { return self._field_Hue; }
+    static P_Saturation_582 = function(self) { return self._field_Saturation; }
+    static P_Luminance_586 = function(self) { return self._field_Luminance; }
+    // implemented concepts 
+}
+class ColorYCbCr_67_Type
+{
+    constructor(P_Y, P_Cb, P_Cr)
+    {
+        this._field_Y = P_Y;
+        this._field_Cb = P_Cb;
+        this._field_Cr = P_Cr;
+    }
+    // field accessors
+    static P_Y_590 = function(self) { return self._field_Y; }
+    static P_Cb_594 = function(self) { return self._field_Cb; }
+    static P_Cr_598 = function(self) { return self._field_Cr; }
+    // implemented concepts 
+}
+class SphericalCoordinate_68_Type
+{
+    constructor(P_Radius, P_Azimuth, P_Polar)
+    {
+        this._field_Radius = P_Radius;
+        this._field_Azimuth = P_Azimuth;
+        this._field_Polar = P_Polar;
+    }
+    // field accessors
+    static P_Radius_602 = function(self) { return self._field_Radius; }
+    static P_Azimuth_606 = function(self) { return self._field_Azimuth; }
+    static P_Polar_610 = function(self) { return self._field_Polar; }
+    // implemented concepts 
+}
+class PolarCoordinate_69_Type
+{
+    constructor(P_Radius, P_Angle)
+    {
+        this._field_Radius = P_Radius;
+        this._field_Angle = P_Angle;
+    }
+    // field accessors
+    static P_Radius_614 = function(self) { return self._field_Radius; }
+    static P_Angle_618 = function(self) { return self._field_Angle; }
+    // implemented concepts 
+}
+class LogPolarCoordinate_70_Type
+{
+    constructor(P_Rho, P_Azimuth)
+    {
+        this._field_Rho = P_Rho;
+        this._field_Azimuth = P_Azimuth;
+    }
+    // field accessors
+    static P_Rho_622 = function(self) { return self._field_Rho; }
+    static P_Azimuth_626 = function(self) { return self._field_Azimuth; }
+    // implemented concepts 
+}
+class CylindricalCoordinate_71_Type
+{
+    constructor(P_RadialDistance, P_Azimuth, P_Height)
+    {
+        this._field_RadialDistance = P_RadialDistance;
+        this._field_Azimuth = P_Azimuth;
+        this._field_Height = P_Height;
+    }
+    // field accessors
+    static P_RadialDistance_630 = function(self) { return self._field_RadialDistance; }
+    static P_Azimuth_634 = function(self) { return self._field_Azimuth; }
+    static P_Height_638 = function(self) { return self._field_Height; }
+    // implemented concepts 
+}
+class HorizontalCoordinate_72_Type
+{
+    constructor(P_Radius, P_Azimuth, P_Height)
+    {
+        this._field_Radius = P_Radius;
+        this._field_Azimuth = P_Azimuth;
+        this._field_Height = P_Height;
+    }
+    // field accessors
+    static P_Radius_642 = function(self) { return self._field_Radius; }
+    static P_Azimuth_646 = function(self) { return self._field_Azimuth; }
+    static P_Height_650 = function(self) { return self._field_Height; }
+    // implemented concepts 
+}
+class GeoCoordinate_73_Type
+{
+    constructor(P_Latitude, P_Longitude)
+    {
+        this._field_Latitude = P_Latitude;
+        this._field_Longitude = P_Longitude;
+    }
+    // field accessors
+    static P_Latitude_654 = function(self) { return self._field_Latitude; }
+    static P_Longitude_658 = function(self) { return self._field_Longitude; }
+    // implemented concepts 
+}
+class GeoCoordinateWithAltitude_74_Type
+{
+    constructor(P_Coordinate, P_Altitude)
+    {
+        this._field_Coordinate = P_Coordinate;
+        this._field_Altitude = P_Altitude;
+    }
+    // field accessors
+    static P_Coordinate_662 = function(self) { return self._field_Coordinate; }
+    static P_Altitude_666 = function(self) { return self._field_Altitude; }
+    // implemented concepts 
+}
+class Circle_75_Type
+{
+    constructor(P_Center, P_Radius)
+    {
+        this._field_Center = P_Center;
+        this._field_Radius = P_Radius;
+    }
+    // field accessors
+    static P_Center_670 = function(self) { return self._field_Center; }
+    static P_Radius_674 = function(self) { return self._field_Radius; }
+    // implemented concepts 
+}
+class Chord_76_Type
+{
+    constructor(P_Circle, P_Arc)
+    {
+        this._field_Circle = P_Circle;
+        this._field_Arc = P_Arc;
+    }
+    // field accessors
+    static P_Circle_678 = function(self) { return self._field_Circle; }
+    static P_Arc_682 = function(self) { return self._field_Arc; }
+    // implemented concepts 
+}
+class Size2D_77_Type
+{
+    constructor(P_Width, P_Height)
+    {
+        this._field_Width = P_Width;
+        this._field_Height = P_Height;
+    }
+    // field accessors
+    static P_Width_686 = function(self) { return self._field_Width; }
+    static P_Height_690 = function(self) { return self._field_Height; }
+    // implemented concepts 
+}
+class Size3D_78_Type
+{
+    constructor(P_Width, P_Height, P_Depth)
+    {
+        this._field_Width = P_Width;
+        this._field_Height = P_Height;
+        this._field_Depth = P_Depth;
+    }
+    // field accessors
+    static P_Width_694 = function(self) { return self._field_Width; }
+    static P_Height_698 = function(self) { return self._field_Height; }
+    static P_Depth_702 = function(self) { return self._field_Depth; }
+    // implemented concepts 
+}
+class Rectangle2D_79_Type
+{
+    constructor(P_Center, P_Size)
+    {
+        this._field_Center = P_Center;
+        this._field_Size = P_Size;
+    }
+    // field accessors
+    static P_Center_706 = function(self) { return self._field_Center; }
+    static P_Size_710 = function(self) { return self._field_Size; }
+    // implemented concepts 
+}
+class Proportion_80_Type
+{
+    constructor(P_Value)
+    {
+        this._field_Value = P_Value;
+    }
+    // field accessors
+    static P_Value_714 = function(self) { return self._field_Value; }
+    // implemented concepts 
+}
+class Fraction_81_Type
+{
+    constructor(P_Numerator, P_Denominator)
+    {
+        this._field_Numerator = P_Numerator;
+        this._field_Denominator = P_Denominator;
+    }
+    // field accessors
+    static P_Numerator_718 = function(self) { return self._field_Numerator; }
+    static P_Denominator_722 = function(self) { return self._field_Denominator; }
+    // implemented concepts 
+}
+class Angle_82_Type
+{
+    constructor(P_Radians)
+    {
+        this._field_Radians = P_Radians;
+    }
+    // field accessors
+    static P_Radians_726 = function(self) { return self._field_Radians; }
+    // implemented concepts 
+}
+class Length_83_Type
+{
+    constructor(P_Meters)
+    {
+        this._field_Meters = P_Meters;
+    }
+    // field accessors
+    static P_Meters_730 = function(self) { return self._field_Meters; }
+    // implemented concepts 
+}
+class Mass_84_Type
+{
+    constructor(P_Kilograms)
+    {
+        this._field_Kilograms = P_Kilograms;
+    }
+    // field accessors
+    static P_Kilograms_734 = function(self) { return self._field_Kilograms; }
+    // implemented concepts 
+}
+class Temperature_85_Type
+{
+    constructor(P_Celsius)
+    {
+        this._field_Celsius = P_Celsius;
+    }
+    // field accessors
+    static P_Celsius_738 = function(self) { return self._field_Celsius; }
+    // implemented concepts 
+}
+class TimeSpan_86_Type
+{
+    constructor(P_Seconds)
+    {
+        this._field_Seconds = P_Seconds;
+    }
+    // field accessors
+    static P_Seconds_742 = function(self) { return self._field_Seconds; }
+    // implemented concepts 
+}
+class TimeRange_87_Type
+{
+    constructor(P_Min, P_Max)
+    {
+        this._field_Min = P_Min;
+        this._field_Max = P_Max;
+    }
+    // field accessors
+    static P_Min_746 = function(self) { return self._field_Min; }
+    static P_Max_750 = function(self) { return self._field_Max; }
+    // implemented concepts 
+}
+class DateTime_88_Type
+{
+    constructor()
+    {
+    }
+    // field accessors
+    // implemented concepts 
+}
+class AnglePair_89_Type
+{
+    constructor(P_Start, P_End)
+    {
+        this._field_Start = P_Start;
+        this._field_End = P_End;
+    }
+    // field accessors
+    static P_Start_754 = function(self) { return self._field_Start; }
+    static P_End_758 = function(self) { return self._field_End; }
+    // implemented concepts 
+}
+class Ring_90_Type
+{
+    constructor(P_Circle, P_InnerRadius)
+    {
+        this._field_Circle = P_Circle;
+        this._field_InnerRadius = P_InnerRadius;
+    }
+    // field accessors
+    static P_Circle_762 = function(self) { return self._field_Circle; }
+    static P_InnerRadius_766 = function(self) { return self._field_InnerRadius; }
+    // implemented concepts 
+}
+class Arc_91_Type
+{
+    constructor(P_Angles, P_Cirlce)
+    {
+        this._field_Angles = P_Angles;
+        this._field_Cirlce = P_Cirlce;
+    }
+    // field accessors
+    static P_Angles_770 = function(self) { return self._field_Angles; }
+    static P_Cirlce_774 = function(self) { return self._field_Cirlce; }
+    // implemented concepts 
+}
+class TimeInterval_92_Type
+{
+    constructor(P_Start, P_End)
+    {
+        this._field_Start = P_Start;
+        this._field_End = P_End;
+    }
+    // field accessors
+    static P_Start_778 = function(self) { return self._field_Start; }
+    static P_End_782 = function(self) { return self._field_End; }
+    // implemented concepts 
+}
+class RealInterval_93_Type
+{
+    constructor(P_A, P_B)
+    {
+        this._field_A = P_A;
+        this._field_B = P_B;
+    }
+    // field accessors
+    static P_A_786 = function(self) { return self._field_A; }
+    static P_B_790 = function(self) { return self._field_B; }
+    // implemented concepts 
+}
+class Interval2D_94_Type
+{
+    constructor(P_A, P_B)
+    {
+        this._field_A = P_A;
+        this._field_B = P_B;
+    }
+    // field accessors
+    static P_A_794 = function(self) { return self._field_A; }
+    static P_B_798 = function(self) { return self._field_B; }
+    // implemented concepts 
+}
+class Interval3D_95_Type
+{
+    constructor(P_A, P_B)
+    {
+        this._field_A = P_A;
+        this._field_B = P_B;
+    }
+    // field accessors
+    static P_A_802 = function(self) { return self._field_A; }
+    static P_B_806 = function(self) { return self._field_B; }
+    // implemented concepts 
+}
+class Capsule_96_Type
+{
+    constructor(P_Line, P_Radius)
+    {
+        this._field_Line = P_Line;
+        this._field_Radius = P_Radius;
+    }
+    // field accessors
+    static P_Line_810 = function(self) { return self._field_Line; }
+    static P_Radius_814 = function(self) { return self._field_Radius; }
+    // implemented concepts 
+}
+class Matrix3D_97_Type
+{
+    constructor(P_Column1, P_Column2, P_Column3, P_Column4)
+    {
+        this._field_Column1 = P_Column1;
+        this._field_Column2 = P_Column2;
+        this._field_Column3 = P_Column3;
+        this._field_Column4 = P_Column4;
+    }
+    // field accessors
+    static P_Column1_818 = function(self) { return self._field_Column1; }
+    static P_Column2_822 = function(self) { return self._field_Column2; }
+    static P_Column3_826 = function(self) { return self._field_Column3; }
+    static P_Column4_830 = function(self) { return self._field_Column4; }
+    // implemented concepts 
+}
+class Cylinder_98_Type
+{
+    constructor(P_Line, P_Radius)
+    {
+        this._field_Line = P_Line;
+        this._field_Radius = P_Radius;
+    }
+    // field accessors
+    static P_Line_834 = function(self) { return self._field_Line; }
+    static P_Radius_838 = function(self) { return self._field_Radius; }
+    // implemented concepts 
+}
+class Cone_99_Type
+{
+    constructor(P_Line, P_Radius)
+    {
+        this._field_Line = P_Line;
+        this._field_Radius = P_Radius;
+    }
+    // field accessors
+    static P_Line_842 = function(self) { return self._field_Line; }
+    static P_Radius_846 = function(self) { return self._field_Radius; }
+    // implemented concepts 
+}
+class Tube_100_Type
+{
+    constructor(P_Line, P_InnerRadius, P_OuterRadius)
+    {
+        this._field_Line = P_Line;
+        this._field_InnerRadius = P_InnerRadius;
+        this._field_OuterRadius = P_OuterRadius;
+    }
+    // field accessors
+    static P_Line_850 = function(self) { return self._field_Line; }
+    static P_InnerRadius_854 = function(self) { return self._field_InnerRadius; }
+    static P_OuterRadius_858 = function(self) { return self._field_OuterRadius; }
+    // implemented concepts 
+}
+class ConeSegment_101_Type
+{
+    constructor(P_Line, P_Radius1, P_Radius2)
+    {
+        this._field_Line = P_Line;
+        this._field_Radius1 = P_Radius1;
+        this._field_Radius2 = P_Radius2;
+    }
+    // field accessors
+    static P_Line_862 = function(self) { return self._field_Line; }
+    static P_Radius1_866 = function(self) { return self._field_Radius1; }
+    static P_Radius2_870 = function(self) { return self._field_Radius2; }
+    // implemented concepts 
+}
+class Box2D_102_Type
+{
+    constructor(P_Center, P_Rotation, P_Extent)
+    {
+        this._field_Center = P_Center;
+        this._field_Rotation = P_Rotation;
+        this._field_Extent = P_Extent;
+    }
+    // field accessors
+    static P_Center_874 = function(self) { return self._field_Center; }
+    static P_Rotation_878 = function(self) { return self._field_Rotation; }
+    static P_Extent_882 = function(self) { return self._field_Extent; }
+    // implemented concepts 
+}
+class Box3D_103_Type
+{
+    constructor(P_Center, P_Rotation, P_Extent)
+    {
+        this._field_Center = P_Center;
+        this._field_Rotation = P_Rotation;
+        this._field_Extent = P_Extent;
+    }
+    // field accessors
+    static P_Center_886 = function(self) { return self._field_Center; }
+    static P_Rotation_890 = function(self) { return self._field_Rotation; }
+    static P_Extent_894 = function(self) { return self._field_Extent; }
+    // implemented concepts 
+}
+class CubicBezierTriangle3D_104_Type
+{
+    constructor(P_A, P_B, P_C, P_A2B, P_AB2, P_B2C, P_BC2, P_AC2, P_A2C, P_ABC)
+    {
+        this._field_A = P_A;
+        this._field_B = P_B;
+        this._field_C = P_C;
+        this._field_A2B = P_A2B;
+        this._field_AB2 = P_AB2;
+        this._field_B2C = P_B2C;
+        this._field_BC2 = P_BC2;
+        this._field_AC2 = P_AC2;
+        this._field_A2C = P_A2C;
+        this._field_ABC = P_ABC;
+    }
+    // field accessors
+    static P_A_898 = function(self) { return self._field_A; }
+    static P_B_902 = function(self) { return self._field_B; }
+    static P_C_906 = function(self) { return self._field_C; }
+    static P_A2B_910 = function(self) { return self._field_A2B; }
+    static P_AB2_914 = function(self) { return self._field_AB2; }
+    static P_B2C_918 = function(self) { return self._field_B2C; }
+    static P_BC2_922 = function(self) { return self._field_BC2; }
+    static P_AC2_926 = function(self) { return self._field_AC2; }
+    static P_A2C_930 = function(self) { return self._field_A2C; }
+    static P_ABC_934 = function(self) { return self._field_ABC; }
+    // implemented concepts 
+}
+class CubicBezier2D_105_Type
+{
+    constructor(P_A, P_B, P_C, P_D)
+    {
+        this._field_A = P_A;
+        this._field_B = P_B;
+        this._field_C = P_C;
+        this._field_D = P_D;
+    }
+    // field accessors
+    static P_A_938 = function(self) { return self._field_A; }
+    static P_B_942 = function(self) { return self._field_B; }
+    static P_C_946 = function(self) { return self._field_C; }
+    static P_D_950 = function(self) { return self._field_D; }
+    // implemented concepts 
+}
+class UV_106_Type
+{
+    constructor(P_U, P_V)
+    {
+        this._field_U = P_U;
+        this._field_V = P_V;
+    }
+    // field accessors
+    static P_U_954 = function(self) { return self._field_U; }
+    static P_V_958 = function(self) { return self._field_V; }
+    // implemented concepts 
+}
+class UVW_107_Type
+{
+    constructor(P_U, P_V, P_W)
+    {
+        this._field_U = P_U;
+        this._field_V = P_V;
+        this._field_W = P_W;
+    }
+    // field accessors
+    static P_U_962 = function(self) { return self._field_U; }
+    static P_V_966 = function(self) { return self._field_V; }
+    static P_W_970 = function(self) { return self._field_W; }
+    // implemented concepts 
+}
+class CubicBezier3D_108_Type
+{
+    constructor(P_A, P_B, P_C, P_D)
+    {
+        this._field_A = P_A;
+        this._field_B = P_B;
+        this._field_C = P_C;
+        this._field_D = P_D;
+    }
+    // field accessors
+    static P_A_974 = function(self) { return self._field_A; }
+    static P_B_978 = function(self) { return self._field_B; }
+    static P_C_982 = function(self) { return self._field_C; }
+    static P_D_986 = function(self) { return self._field_D; }
+    // implemented concepts 
+}
+class QuadraticBezier2D_109_Type
+{
+    constructor(P_A, P_B, P_C)
+    {
+        this._field_A = P_A;
+        this._field_B = P_B;
+        this._field_C = P_C;
+    }
+    // field accessors
+    static P_A_990 = function(self) { return self._field_A; }
+    static P_B_994 = function(self) { return self._field_B; }
+    static P_C_998 = function(self) { return self._field_C; }
+    // implemented concepts 
+}
+class QuadraticBezier3D_110_Type
+{
+    constructor(P_A, P_B, P_C)
+    {
+        this._field_A = P_A;
+        this._field_B = P_B;
+        this._field_C = P_C;
+    }
+    // field accessors
+    static P_A_1002 = function(self) { return self._field_A; }
+    static P_B_1006 = function(self) { return self._field_B; }
+    static P_C_1010 = function(self) { return self._field_C; }
+    // implemented concepts 
+}
+class Area_111_Type
+{
+    constructor(P_MetersSquared)
+    {
+        this._field_MetersSquared = P_MetersSquared;
+    }
+    // field accessors
+    static P_MetersSquared_1014 = function(self) { return self._field_MetersSquared; }
+    // implemented concepts 
+}
+class Volume_112_Type
+{
+    constructor(P_MetersCubed)
+    {
+        this._field_MetersCubed = P_MetersCubed;
+    }
+    // field accessors
+    static P_MetersCubed_1018 = function(self) { return self._field_MetersCubed; }
+    // implemented concepts 
+}
+class Velocity_113_Type
+{
+    constructor(P_MetersPerSecond)
+    {
+        this._field_MetersPerSecond = P_MetersPerSecond;
+    }
+    // field accessors
+    static P_MetersPerSecond_1022 = function(self) { return self._field_MetersPerSecond; }
+    // implemented concepts 
+}
+class Acceleration_114_Type
+{
+    constructor(P_MetersPerSecondSquared)
+    {
+        this._field_MetersPerSecondSquared = P_MetersPerSecondSquared;
+    }
+    // field accessors
+    static P_MetersPerSecondSquared_1026 = function(self) { return self._field_MetersPerSecondSquared; }
+    // implemented concepts 
+}
+class Force_115_Type
+{
+    constructor(P_Newtons)
+    {
+        this._field_Newtons = P_Newtons;
+    }
+    // field accessors
+    static P_Newtons_1030 = function(self) { return self._field_Newtons; }
+    // implemented concepts 
+}
+class Pressure_116_Type
+{
+    constructor(P_Pascals)
+    {
+        this._field_Pascals = P_Pascals;
+    }
+    // field accessors
+    static P_Pascals_1034 = function(self) { return self._field_Pascals; }
+    // implemented concepts 
+}
+class Energy_117_Type
+{
+    constructor(P_Joules)
+    {
+        this._field_Joules = P_Joules;
+    }
+    // field accessors
+    static P_Joules_1038 = function(self) { return self._field_Joules; }
+    // implemented concepts 
+}
+class Memory_118_Type
+{
+    constructor(P_Bytes)
+    {
+        this._field_Bytes = P_Bytes;
+    }
+    // field accessors
+    static P_Bytes_1042 = function(self) { return self._field_Bytes; }
+    // implemented concepts 
+}
+class Frequency_119_Type
+{
+    constructor(P_Hertz)
+    {
+        this._field_Hertz = P_Hertz;
+    }
+    // field accessors
+    static P_Hertz_1046 = function(self) { return self._field_Hertz; }
+    // implemented concepts 
+}
+class Loudness_120_Type
+{
+    constructor(P_Decibels)
+    {
+        this._field_Decibels = P_Decibels;
+    }
+    // field accessors
+    static P_Decibels_1050 = function(self) { return self._field_Decibels; }
+    // implemented concepts 
+}
+class LuminousIntensity_121_Type
+{
+    constructor(P_Candelas)
+    {
+        this._field_Candelas = P_Candelas;
+    }
+    // field accessors
+    static P_Candelas_1054 = function(self) { return self._field_Candelas; }
+    // implemented concepts 
+}
+class ElectricPotential_122_Type
+{
+    constructor(P_Volts)
+    {
+        this._field_Volts = P_Volts;
+    }
+    // field accessors
+    static P_Volts_1058 = function(self) { return self._field_Volts; }
+    // implemented concepts 
+}
+class ElectricCharge_123_Type
+{
+    constructor(P_Columbs)
+    {
+        this._field_Columbs = P_Columbs;
+    }
+    // field accessors
+    static P_Columbs_1062 = function(self) { return self._field_Columbs; }
+    // implemented concepts 
+}
+class ElectricCurrent_124_Type
+{
+    constructor(P_Amperes)
+    {
+        this._field_Amperes = P_Amperes;
+    }
+    // field accessors
+    static P_Amperes_1066 = function(self) { return self._field_Amperes; }
+    // implemented concepts 
+}
+class ElectricResistance_125_Type
+{
+    constructor(P_Ohms)
+    {
+        this._field_Ohms = P_Ohms;
+    }
+    // field accessors
+    static P_Ohms_1070 = function(self) { return self._field_Ohms; }
+    // implemented concepts 
+}
+class Power_126_Type
+{
+    constructor(P_Watts)
+    {
+        this._field_Watts = P_Watts;
+    }
+    // field accessors
+    static P_Watts_1074 = function(self) { return self._field_Watts; }
+    // implemented concepts 
+}
+class Density_127_Type
+{
+    constructor(P_KilogramsPerMeterCubed)
+    {
+        this._field_KilogramsPerMeterCubed = P_KilogramsPerMeterCubed;
+    }
+    // field accessors
+    static P_KilogramsPerMeterCubed_1078 = function(self) { return self._field_KilogramsPerMeterCubed; }
+    // implemented concepts 
+}
+class NormalDistribution_128_Type
+{
+    constructor(P_Mean, P_StandardDeviation)
+    {
+        this._field_Mean = P_Mean;
+        this._field_StandardDeviation = P_StandardDeviation;
+    }
+    // field accessors
+    static P_Mean_1082 = function(self) { return self._field_Mean; }
+    static P_StandardDeviation_1086 = function(self) { return self._field_StandardDeviation; }
+    // implemented concepts 
+}
+class PoissonDistribution_129_Type
+{
+    constructor(P_Expected, P_Occurrences)
+    {
+        this._field_Expected = P_Expected;
+        this._field_Occurrences = P_Occurrences;
+    }
+    // field accessors
+    static P_Expected_1090 = function(self) { return self._field_Expected; }
+    static P_Occurrences_1094 = function(self) { return self._field_Occurrences; }
+    // implemented concepts 
+}
+class BernoulliDistribution_130_Type
+{
+    constructor(P_P)
+    {
+        this._field_P = P_P;
+    }
+    // field accessors
+    static P_P_1098 = function(self) { return self._field_P; }
+    // implemented concepts 
+}
+class Probability_131_Type
+{
+    constructor(P_Value)
+    {
+        this._field_Value = P_Value;
+    }
+    // field accessors
+    static P_Value_1102 = function(self) { return self._field_Value; }
+    // implemented concepts 
+}
+class BinomialDistribution_132_Type
+{
+    constructor(P_Trials, P_P)
+    {
+        this._field_Trials = P_Trials;
+        this._field_P = P_P;
+    }
+    // field accessors
+    static P_Trials_1106 = function(self) { return self._field_Trials; }
+    static P_P_1110 = function(self) { return self._field_P; }
+    // implemented concepts 
 }

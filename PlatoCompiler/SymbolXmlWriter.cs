@@ -95,7 +95,7 @@ namespace Plato.Compiler
                         .WriteXml("Fields", typeDef.Fields)
                         .WriteXml("Parameters", typeDef.TypeParameters)
                         .WriteXml("Name", typeDef.Name)
-                        .WriteXml("Kind", typeDef.Kind));
+                        .WriteXml("Kind", typeDef.Kind.ToString()));
 
                 case TypeRefSymbol typeRef:
                     return WriteXml("Type", avw => 
