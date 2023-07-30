@@ -1,6 +1,4 @@
-using System.Diagnostics;
 using System.Text;
-using Microsoft.VisualBasic.ApplicationServices;
 using Parakeet;
 using Parakeet.Demos;
 using Parakeet.Demos.Plato;
@@ -34,7 +32,16 @@ public class IDE
 
         File.WriteAllText(Path.Combine(outputFolder, "output.cs"), Compilation.ToCSharp());
         File.WriteAllText(Path.Combine(outputFolder, "output.plato.html"), Compilation.ToPlatoHtml());
-        File.WriteAllText(Path.Combine(outputFolder, "output.js"), Compilation.ToJavaScript());
+
+        var inputFolder = outputFolder;
+        var prologue = File.ReadAllText(Path.Combine(inputFolder, "prologue.js"));
+        var epilogue = File.ReadAllText(Path.Combine(inputFolder, "epilogue.js"));
+        var output = prologue 
+                     + Environment.NewLine
+                     + Compilation.ToJavaScript() 
+                     + Environment.NewLine 
+                     + epilogue;
+        File.WriteAllText(Path.Combine(outputFolder, "output.js"), output);
 
         //Output += GetConstraintsOutput();
         //Output += GetOperationsOutput();

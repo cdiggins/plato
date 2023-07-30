@@ -21,36 +21,21 @@ namespace Plato.Compiler
 
         // NOTE: does not include lambdas
         public static IEnumerable<FunctionSymbol> GetAllFunctions(this IEnumerable<TypeDefSymbol> typeDefs)
-        {
-            return typeDefs.SelectMany(t => t.Methods.Select(m => m.Function)).Where(f => f != null);
-        }
+            => typeDefs.SelectMany(t => t.Methods.Select(m => m.Function)).Where(f => f != null);
 
         public static DefSymbol GetDef(this Symbol symbol)
-        {
-            return (symbol as RefSymbol)?.Def;
-        }
+            => symbol as DefSymbol ?? (symbol as RefSymbol)?.Def;
 
         public static bool IsExpression(this Symbol symbol)
-        {
-            return symbol is FunctionSymbol || symbol is RefSymbol || 
+            => symbol is FunctionSymbol || symbol is RefSymbol || 
                    symbol is FunctionCallSymbol || symbol is ConditionalExpressionSymbol;
-        }
 
         public static bool IsPartiallyTyped(this FunctionSymbol fs)
-        {
-            if (fs.IsExplicitlyTyped())
-                return false;
+            => !fs.IsExplicitlyTyped() && 
+               (fs.Parameters.Any(p => p.Type != null) || fs.Type != null);
 
-            return fs.Parameters.Any(p => p.Type != null) || fs.Type != null;
-        }
-
-        public static bool IsExplicitlyTyped(this FunctionSymbol fs)
-        {
-            if (fs.Parameters.All(p => p.Type != null) && fs.Type != null)
-                return true;
-
-            return false;
-        }
+        public static bool IsExplicitlyTyped(this FunctionSymbol fs) 
+            => fs.Parameters.All(p => p.Type != null) && fs.Type != null;
 
         public static IEnumerable<RefSymbol> GetParameterReferences(this ParameterSymbol symbol,
             FunctionSymbol function)
@@ -58,5 +43,23 @@ namespace Plato.Compiler
 
         public static IEnumerable<RefSymbol> GetReferencesTo(this DefSymbol def, Symbol within)
             =>  within.GetDescendantSymbols().OfType<RefSymbol>().Where(rs => rs.Def.Equals(def));
+
+        public static bool HasImplementation(FunctionSymbol fs)
+            => fs.Body != null;
+
+        public static bool IsFullyImplementedConcept(TypeDefSymbol ts)
+            => ts.IsConcept() && ts.Functions.All(HasImplementation);
+
+        public static bool IsConcept(this TypeDefSymbol ts)
+            => ts.Kind == TypeKind.Concept;
+
+        public static bool IsType(this TypeDefSymbol ts)
+            => ts.Kind == TypeKind.Type;
+
+        public static bool IsPrimitive(this TypeDefSymbol ts)
+            => ts.Kind == TypeKind.Primitive;
+
+        public static bool IsLibrary(this TypeDefSymbol ts)
+            => ts.Kind == TypeKind.Library;
     }
 }

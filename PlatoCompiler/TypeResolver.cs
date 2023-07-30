@@ -11,18 +11,22 @@ namespace Plato.Compiler
         {
             ParentType = type;
             Function = func;
+            ParameterTypes = new TypeDefSymbol[func.Parameters.Count];
             for (var i=0; i < func.Parameters.Count; ++i)
             {
                 var p = func.Parameters[i];
-                Parameters.Add(p.Type?.Def);
+                ParameterTypes[i]  = p.Type?.Def;
             }
+
+            ReturnType = func.Type?.Def;
         }
         public TypeDefSymbol ParentType { get; }
         public FunctionSymbol Function { get; }
         public string Name => Function.Name;
+        public TypeDefSymbol ReturnType { get; set; }
         public int ParameterCount => Function.Parameters.Count;
-        public List<TypeDefSymbol> Parameters { get; } = new List<TypeDefSymbol>();
-        public string ParameterListString => string.Join(", ", Parameters.Select(p => p?.Name ?? "?"));
+        public TypeDefSymbol[] ParameterTypes { get; }
+        public string ParameterListString => string.Join(", ", ParameterTypes.Select(p => p?.Name ?? "?"));
         public string Id => $"{Name}({ParameterListString})";
         public override string ToString() => $"{ParentType.Type}.{Id}";
     }
@@ -122,7 +126,7 @@ namespace Plato.Compiler
                 {
                     var tf = new TypedFunction(type, m.Function);
                     TypedFunctions.Add(m.Function.Id, tf);
-                    if (tf.Parameters.Count > 0 && tf.Parameters[0] == null)
+                    if (tf.ParameterTypes.Count > 0 && tf.ParameterTypes[0] == null)
                     {
                         if (type.Kind == TypeKind.Library)
                         {
@@ -132,7 +136,7 @@ namespace Plato.Compiler
                             if (other != null)
                             {
                                 cnt++;
-                                tf.Parameters[0] = other;
+                                tf.ParameterTypes[0] = other;
                             }
                         }
                     }
