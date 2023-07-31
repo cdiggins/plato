@@ -161,6 +161,69 @@ public class IDE
         return c;
     }
 
+    public static StringBuilder OutputTypeResolverDetails(TypeResolver tr, StringBuilder sb = null)
+    {
+        sb.AppendLine($"# of expressions total = {tr.ExpressionTypes.Count}");
+        sb.AppendLine($"# of expressions typed = {tr.ExpressionTypes.Count(kv => kv.Value != null)}");
+
+        var dontKnowType = 0;
+        var consideredFuncs = 0;
+        foreach (var f in tr.TypedFunctions.Values)
+        {
+            if (f.ReturnType == null && f.Function.Body != null)
+            {
+                var result = tr.ExpressionTypes[f.Function.Body];
+                dontKnowType += result == null ? 1: 0;
+                consideredFuncs++;
+            }
+        }
+
+        sb.AppendLine($"Don't know the type of {dontKnowType} funcs of {consideredFuncs} total");
+
+        return sb;
+    }
+
+    public static StringBuilder OutputConstraints(Compilation c, StringBuilder sb = null)
+    {
+        var tr = c.TypeResolver;
+        var groups = tr.TypedFunctions.Values.GroupBy(f => f.Id);
+
+        sb.AppendLine($"Total Typed functions = {tr.TypedFunctions.Count}");
+        sb.AppendLine($"Total Groups = {groups.Count()}");
+        sb.AppendLine($"Groups with multiple options = {groups.Count(g => g.Count() > 1)}");
+
+        /*
+        var i = 0;
+        foreach (var g in groups)
+        {
+            if (g.Count() > 1)
+            {
+                var str = string.Join(",", g);
+                sb.AppendLine($"{i++} = {str}");
+
+                foreach (var tf in g)
+                {
+                    sb.AppendLine($"  Considering Typed Function {tf}");
+                    var d = Constraints.GetParameterConstraints(tf.Function);
+
+                    foreach (var p in tf.Function.Parameters)
+                    {
+                        var constraints = d[p];
+                        sb.AppendLine($"    Constraints for {p}");
+
+                        foreach (var constraint in constraints)
+                        {
+                            sb.AppendLine(constraint.ToString());
+                        }
+                    }
+                }
+            }
+        }
+        */
+
+        return sb;
+    }
+
     public static StringBuilder AnalyzeTypesAndFunctions(Compilation c, StringBuilder sb = null)
     {
         sb ??= new StringBuilder();
@@ -206,32 +269,9 @@ public class IDE
         sb.AppendLine($"Total Groups = {groups.Count()}");
         sb.AppendLine($"Groups with multiple options = {groups.Count(g => g.Count() > 1)}");
 
-        var i = 0;
-        foreach (var g in groups)
-        {
-            if (g.Count() > 1)
-            {
-                var str = string.Join(",", g);
-                sb.AppendLine($"{i++} = {str}");
+        OutputConstraints(c, sb);
 
-                foreach (var tf in g)
-                {
-                    sb.AppendLine($"  Considering Typed Function {tf}");
-                    var d = Constraints.GetParameterConstraints(tf.Function);
-
-                    foreach (var p in tf.Function.Parameters)
-                    {
-                        var constraints = d[p];
-                        sb.AppendLine($"    Constraints for {p}");
-
-                        foreach (var constraint in constraints)
-                        {
-                            sb.AppendLine(constraint.ToString());
-                        }
-                    }
-                }
-            }
-        }
+        OutputTypeResolverDetails(tr, sb);
 
         return sb;
     }

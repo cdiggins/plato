@@ -249,7 +249,7 @@ namespace Plato.Compiler
         {
             if (literal.NullLiteral.Present)
             {
-                return AstConstant.Null;
+                throw new NotImplementedException();
             }
 
             if (literal.BinaryLiteral.Present)
@@ -335,7 +335,7 @@ namespace Plato.Compiler
             }
             else if (expr.NameOf.Present)
             {
-                return new AstConstant(expr.NameOf.Node.Expression.Text);  
+                return AstConstant.Create(expr.NameOf.Node.Expression.Text);  
             }
             else if (expr.NewOperation.Present)
             {
@@ -447,7 +447,7 @@ namespace Plato.Compiler
                     return AstConstant.Create(double.Parse(cstFloatLiteral.Text));
                 
                 case CstNullLiteral cstNullLiteral:
-                    return AstConstant.Null;
+                    throw new NotImplementedException("null");
                 
                 case CstIntegerLiteral cstIntegerLiteral:
                     return AstConstant.Create(int.Parse(cstIntegerLiteral.Text));

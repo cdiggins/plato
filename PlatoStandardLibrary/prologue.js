@@ -18,64 +18,68 @@ class PrimitiveValue {
     constructor(value, jsClass) {
         this.Value = value;
         this.Class = jsClass;
+        this.Create = function (x) {
+            return new jsClass(x);
+        }
     }
+
+    Add(a, b) { return this.Create(a.Value + b.Value); }
+    Subtract(a, b) { return this.Create(a.Value - b.Value); }
+    Multiply(a, b) { return this.Create(a.Value * b.Value); }
+    Divide(a, b) { return this.Create(a.Value / b.Value); }
+    Modulo(a, b) { return this.Create(a.Value % b.Value); }
+    And(a, b) { return this.Create(a.Value && b.Value); }
+    Or(a, b) { return this.Create(a.Value || b.Value); }
+    Negative(a) { return this.Create(-a.Value); }
+    Not(a) { return this.Create(!a.Value); }
+    Equals(a, b) { return this.Create(a.Value === b.Value); }
+    NotEquals(a, b) { return this.Create(a.Value !== b.Value); }
+    Compare(a, b) { return this.Create(a.Value < b.Value ? -1 : a.Value > b.Value ? +1 : 0); }
+    LessThan(a, b) { return this.Create(a.Value < b.Value); }
+    GreaterThan(a, b) { return this.Create(a.Value > b.Value); }
+    LessThanOrEquals(a, b) { return this.Create(a.Value <= b.Value); }
+    GreaterThanOrEquals(a, b) { return this.Create(a.Value >= b.Value); }
+    ToString(a) { return new PrimitiveString(a.Value); }
 }
 
 class PrimitiveType extends PrimitiveValue {
-    constructor(value) {
-        super(value, PrimitiveType);
-    }
+    constructor(value) { super(value, PrimitiveType); }
 }
 
 class PrimitiveInteger extends PrimitiveValue {
-    constructor(value) {
-        super(value, PrimitiveInteger);
-    }
+    constructor(value) { super(value, PrimitiveInteger); }
     static Zero() { return new PrimitiveInteger(0); }
     static One() { return new PrimitiveInteger(1); }
     static Default() { return new PrimitiveInteger(0); }
     static MinValue() { return new PrimitiveInteger(Number.MIN_SAFE_INTEGER); }
     static MaxValue() { return new PrimitiveInteger(Number.MAX_SAFE_INTEGER); }
-    static ToString(x) { return new PrimitiveString(x.Value.ToString); }
 }
 
 class PrimitiveBoolean extends PrimitiveValue {
-    constructor(value) {
-        super(value, PrimitiveBoolean);
-    }
+    constructor(value) { super(value, PrimitiveBoolean); }
     static Zero() { return new PrimitiveBoolean(false); }
     static One() { return new PrimitiveBoolean(true); }
     static Default() { return new PrimitiveBoolean(false); }
     static MinValue() { return new PrimitiveBoolean(false); }
     static MaxValue() { return new PrimitiveBoolean(true); }
-    static ToString(x) { return new PrimitiveString(x.Value.ToString); }
 }
 
 class PrimitiveNumber extends PrimitiveValue {
-    constructor(value) {
-        super(value, PrimitiveNumber);
-    }
-
+    constructor(value) { super(value, PrimitiveNumber); }
     static Zero() { return new PrimitiveNumber(0); }
     static One() { return new PrimitiveNumber(1); }
     static Default() { return new PrimitiveNumber(0); }
     static MinValue() { return new PrimitiveNumber(Number.MIN_VALUE); }
     static MaxValue() { return new PrimitiveNumber(Number.MAX_VALUE); }
-    static ToString(x) { return new PrimitiveString(x.Value.ToString); }
 }
 
 class PrimitiveString extends PrimitiveValue {
-    constructor(value) {
-        super(value, PrimitiveArray);
-    }
-
-    // NOTE: I don't think a string is a value.
+    constructor(value) { super(value, PrimitiveArray); }
     static Zero() { return new PrimitiveString(""); }
     static One() { return new PrimitiveString(""); }
     static Default() { return new PrimitiveString(""); }    
     static MinValue() { return new PrimitiveString(""); }    
     static MaxValue() { return new PrimitiveString(""); }    
-    static ToString(x) { return new PrimitiveString(x.Value); }
 }
 
 class TestClass {
@@ -106,7 +110,7 @@ function PrimitiveArray(ElementType) {
     r.T = ElementType;
 
     return r;
-}
+} 
 
 var t = PrimitiveArray(TestClass);
 console.log(t);
@@ -119,4 +123,10 @@ console.log(xs.at(0));
 console.log(xs.at(1));
 let ys = xs.f(3);
 console.log(ys);
+
+// TODO:
+// Implement an Array concept? What is interesting is that there are two parts to it.
+// There is an element type, and an "implementing type".
+
+
 

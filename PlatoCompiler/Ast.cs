@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 
@@ -56,22 +57,39 @@ namespace Plato.Compiler
         public override IEnumerable<AstNode> Children => base.Children.Append(Value);
     }
 
+    public enum LiteralTypes
+    {
+        Integer,
+        Float,
+        Boolean,
+        String
+    }
+
     public class AstConstant : AstNode
     {
         public object Value { get; }
+        public LiteralTypes Type { get; }
+        
+        public AstConstant(LiteralTypes type, object value) 
+            => (Type, Value) = (type, value);
 
-        public AstConstant(object value) => Value = value;
-        public static AstConstant Create(object value) => new AstConstant(value);
-        public static AstConstant<T> Create<T>(T value) => new AstConstant<T>(value);
-        public static AstConstant Null => new AstConstant(null);
+        public static AstConstant Create(object value)
+        {
+            if (value is string s)
+                return new AstConstant(LiteralTypes.String, s);
+            if (value is bool b)
+                return new AstConstant(LiteralTypes.Boolean, b);
+            if (value is double d)
+                return new AstConstant(LiteralTypes.Float, d);
+            if (value is float f)
+                return new AstConstant(LiteralTypes.Float, f);
+            if (value is int n)
+                return new AstConstant(LiteralTypes.Integer, n);
+            throw new Exception($"Not a recognized constant type {value}");
+        }
+
         public static AstConstant True => Create(true);
         public static AstConstant False => Create(false);
-    }
-
-    public class AstConstant<T> : AstConstant
-    {
-        public new T Value => base.Value != null ? (T)base.Value : default;
-        public AstConstant(T value) : base(value) { }
     }
 
     public class AstLambda : AstNode
@@ -277,7 +295,6 @@ namespace Plato.Compiler
         Primitive,
         Variable,
     }
-
 
     public class AstTypeDeclaration : AstDeclaration
     {

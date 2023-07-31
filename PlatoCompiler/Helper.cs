@@ -2,7 +2,7 @@
 {
     public static class Helper
     {
-        public static AstConstant<string> ToConstant(this string s)
+        public static AstConstant ToConstant(this string s)
             => AstConstant.Create(s);
     }
 }

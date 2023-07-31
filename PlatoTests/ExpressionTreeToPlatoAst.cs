@@ -242,7 +242,7 @@ public static class ExpressionTreeToPlatoAst
     {
         if (expr == null)
         {
-            return AstConstant.Null;
+            throw new NotImplementedException();
         }
 
         if (expr.CanReduce)

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace Plato.Compiler
 {
@@ -9,6 +8,10 @@ namespace Plato.Compiler
     {
         public override string ToString() => $"{GetType().Name}";
         public abstract IReadOnlyList<Symbol> Children { get; }
+        public int Id { get; } = NextId++;  
+        public static int NextId = 0;
+        public override bool Equals(object obj) => obj is Symbol s && s.Id == Id;
+        public override int GetHashCode() => Id.GetHashCode();
     }
 
     public class FunctionGroupSymbol : DefSymbol
@@ -42,12 +45,6 @@ namespace Plato.Compiler
         public TypeRefSymbol Type { get; }
         public string Name { get; }
         public string UniqueName => Name + "_" + Id;
-        public int Id { get; } = NextId++;
-
-        public static int NextId = 0;
-
-        public override bool Equals(object obj) => obj is DefSymbol ds && ds.Id == Id;
-        public override int GetHashCode() => Id.GetHashCode();
 
         public override string ToString() => $"{GetType().Name}={Name}${Id}:{Type}";
     }
@@ -57,7 +54,6 @@ namespace Plato.Compiler
         public DefSymbol Def { get; }
         public TypeRefSymbol Type => Def.Type;
         public string Name => Def.Name;
-        public int Id => Def.Id;
 
         public RefSymbol(DefSymbol def)
         {
@@ -95,6 +91,8 @@ namespace Plato.Compiler
         public static TypeDefSymbol Function = Create("Function");
         public static TypeDefSymbol Any = Create("Any");
         public static TypeDefSymbol Self = Create("Self");
+
+        public static TypeDefSymbol Tuple = Create("Tuple");
 
         public static TypeDefSymbol String = Create("String");
         public static TypeDefSymbol Boolean = Create("Boolean");
@@ -223,7 +221,8 @@ namespace Plato.Compiler
     public class LiteralSymbol : Symbol
     {
         public object Value { get; }
-        public LiteralSymbol(object value) => Value = value;
+        public LiteralTypes Type { get; }
+        public LiteralSymbol(LiteralTypes type, object value) => (Type, Value) = (type, value);
         public override IReadOnlyList<Symbol> Children => Array.Empty<Symbol>();
     }
 
@@ -251,9 +250,6 @@ namespace Plato.Compiler
             Def = def ?? throw new Exception("Type not found");
             TypeArgs = args;
         }
-
-        public static TypeRefSymbol Unify(TypeRefSymbol a, TypeRefSymbol b)
-            => a;
 
         public override IReadOnlyList<Symbol> Children => TypeArgs;
 

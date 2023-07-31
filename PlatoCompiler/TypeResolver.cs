@@ -4,34 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 
 namespace Plato.Compiler
-{   
-    public class TypedFunction
-    {
-        public TypedFunction(TypeDefSymbol type, FunctionSymbol func)
-        {
-            ParentType = type;
-            Function = func;
-            ParameterTypes = new TypeDefSymbol[func.Parameters.Count];
-            for (var i=0; i < func.Parameters.Count; ++i)
-            {
-                var p = func.Parameters[i];
-                ParameterTypes[i]  = p.Type?.Def;
-            }
-
-            ReturnType = func.Type?.Def;
-        }
-        public TypeDefSymbol ParentType { get; }
-        public FunctionSymbol Function { get; }
-        public string Name => Function.Name;
-        public TypeDefSymbol ReturnType { get; set; }
-        public int ParameterCount => Function.Parameters.Count;
-        public TypeDefSymbol[] ParameterTypes { get; }
-        public string ParameterListString => string.Join(", ", ParameterTypes.Select(p => p?.Name ?? "?"));
-        public string Id => $"{Name}({ParameterListString})";
-        public override string ToString() => $"{ParentType.Type}.{Id}";
-    }
-
-
+{
     /// <summary>
     /// How to test. GEt the list of functions.I want to iterate on the types. Figure out the
     /// types of the parameters, figure out the types of the variables, figure out the functions
@@ -56,6 +29,9 @@ namespace Plato.Compiler
 
         public Dictionary<int, TypedFunction> TypedFunctions { get; }
             = new Dictionary<int, TypedFunction>();
+
+        public Dictionary<Symbol, TypeDefSymbol> ExpressionTypes { get; }
+            = new Dictionary<Symbol, TypeDefSymbol>();
 
         public TypeResolver(Operations ops)
         {
@@ -126,12 +102,13 @@ namespace Plato.Compiler
                 {
                     var tf = new TypedFunction(type, m.Function);
                     TypedFunctions.Add(m.Function.Id, tf);
-                    if (tf.ParameterTypes.Count > 0 && tf.ParameterTypes[0] == null)
+                    if (tf.ParameterTypes.Length > 0 && tf.ParameterTypes[0] == null)
                     {
                         if (type.Kind == TypeKind.Library)
                         {
+                            // TODO: replace this with extends.
                             var other = Types.FirstOrDefault(
-                                t => t.Kind != TypeKind.Library && t.Name == type.Name);
+                                t => !t.IsLibrary() && t.Name == type.Name);
 
                             if (other != null)
                             {
@@ -144,6 +121,121 @@ namespace Plato.Compiler
             }
 
             Debug.WriteLine($"Extension library types found {cnt}");
+            
+            GatherInitialExpressionTypes();
+        }
+
+        public TypeDefSymbol Unify(TypeDefSymbol a, TypeDefSymbol b)
+        {
+            // TODO:
+            return a;
+        }
+
+        public TypeDefSymbol Choose(FunctionGroupSymbol fs)
+        {
+            return GetSymbolType(fs.Functions[0]);
+        }
+
+        public TypeDefSymbol GetSymbolType(LiteralSymbol literalSymbol)
+        {
+            switch (literalSymbol.Type)
+            {
+                case LiteralTypes.Integer:
+                    return PrimitiveTypes.Integer;
+                case LiteralTypes.Float:
+                    return PrimitiveTypes.Float64;
+                case LiteralTypes.Boolean:
+                    return PrimitiveTypes.Boolean;
+                case LiteralTypes.String:
+                    return PrimitiveTypes.String;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public TypeDefSymbol GetSymbolType(Symbol s)
+        {
+            // NOTE: the "Self" type is special. 
+
+            if (s == null)
+                return null;
+
+            switch (s)
+            {
+                case ArgumentSymbol argumentSymbol:
+                    // NOTE: the fact that we are calling a function, creates a constraint that might determine the function  
+                    return GetSymbolType(argumentSymbol.Original);
+
+                case AssignmentSymbol assignmentSymbol:
+                    // NOTE: this is not a true Unity.
+                    return Unify(
+                        GetSymbolType(assignmentSymbol.LValue),
+                        GetSymbolType(assignmentSymbol.RValue));
+                
+                case ConditionalExpressionSymbol conditionalExpressionSymbol:
+                    // NOTE: the condition component is guaranteed to be a boolean.
+                    // The fact that it must be a boolean, might affect what is called? 
+                    return Unify(
+                        GetSymbolType(conditionalExpressionSymbol.IfTrue),
+                        GetSymbolType(conditionalExpressionSymbol.IfFalse));
+
+                case FunctionGroupSymbol functionGroupSymbol:
+                    return Choose(functionGroupSymbol);
+
+                case FunctionCallSymbol functionCallSymbol:
+                    return GetSymbolType(functionCallSymbol.Function);
+
+                case LiteralSymbol literalSymbol:
+                    return GetSymbolType(literalSymbol);
+                
+                case NoValueSymbol noValueSymbol:
+                    throw new NotImplementedException("Not implemented yet?");
+
+                case RefSymbol refSymbol:
+                    return GetSymbolType(refSymbol.Def);
+                    
+                case TypeRefSymbol typeRefSymbol:
+                    return typeRefSymbol.Def;
+                
+                case FieldDefSymbol fieldDefSymbol:
+                    return fieldDefSymbol.Type?.Def;
+
+                case FunctionSymbol functionSymbol:
+                    return functionSymbol.Type?.Def;
+
+                case MethodDefSymbol methodDefSymbol:
+                    return GetSymbolType(methodDefSymbol.Function);
+
+                case ParameterSymbol parameterSymbol:
+                    return parameterSymbol.Type?.Def;
+
+                case PredefinedSymbol predefinedSymbol:
+                    // Intrinsic or Tuple
+                    return predefinedSymbol.Type?.Def;
+
+                case TypeParameterDefSymbol typeParameterDefSymbol:
+                    throw new NotImplementedException("What are the predefined symbols?");
+
+                case TypeDefSymbol typeDefSymbol:
+                    return typeDefSymbol; 
+
+                case VariableSymbol variableSymbol:
+                    throw new NotImplementedException("Not supported yet");
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(s));
+            }
+        }
+
+        public void GatherInitialExpressionTypes()
+        {
+            foreach (var tf in TypedFunctions.Values)
+            {
+                foreach (var s in tf.Function.Body.GetDescendantSymbols())
+                {
+                    ExpressionTypes.Add(s, GetSymbolType(s));
+                }
+            }
         }
 
         public IEnumerable<TypeDefSymbol> GetCandidateTypes(ParameterSymbol ps)
@@ -196,8 +288,6 @@ namespace Plato.Compiler
             return type.Methods.Any(m => m.Name == fac.Name);
         }
 
-
-        // TODO: this should be moved the type resolver. 
         public string GetBestCandidate(FunctionArgConstraint fac)
         {
             var name = fac.Name;

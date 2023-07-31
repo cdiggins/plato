@@ -14,16 +14,10 @@ namespace PlatoTests
             var k = AstConstant.Create(42);
             var k2 = AstConstant.True;
             var lambda = AstLambda.Create(k);
-            var f = AstConstant.Create<Func<int, int>>(x => x * 2);
-            var writeFunc = AstConstant.Create<Action<string>>(Console.WriteLine);
-            var toStr = AstConstant.Create<Func<object, string>>(x => x.ToString());
             var varDef = AstVarDef.Create("x", AstTypeNode.Create("int"));
             var varAss = AstAssign.Create("x", k);
-            var toStrIvk = AstInvoke.Create(toStr, varAss);
-            var writeIvk = AstInvoke.Create(writeFunc, toStrIvk);
-            var blk = AstBlock.Create(varDef, varAss, writeIvk);
+            var blk = AstBlock.Create(varDef, varAss);
             var loop = AstLoop.Create(AstConstant.True, blk);
-            var ivk = AstInvoke.Create(f, k);
             var cond = AstConditional.Create(k2, AstConstant.Create("Hello"), AstConstant.Create("Goodbyte"));
 
             return new AstNode[]
@@ -31,16 +25,10 @@ namespace PlatoTests
                 k,
                 k2,
                 lambda,
-                f,
-                writeFunc,
-                toStr,
                 varDef,
                 varAss,
-                toStrIvk,
-                writeIvk,
                 blk,
                 loop,
-                ivk,
                 cond,
             };
         }

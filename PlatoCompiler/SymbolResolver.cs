@@ -25,8 +25,8 @@ namespace Plato.Compiler
         
         public void BindPredefinedSymbols()
         {
-            BindPredefined("intrinsic");
-            BindPredefined("Tuple");
+            BindPredefined(null, "intrinsic");
+            BindPredefined(null, "Tuple");
             BindType(PrimitiveTypes.Self);
             BindType(PrimitiveTypes.String);
             BindType(PrimitiveTypes.Float64);
@@ -35,9 +35,9 @@ namespace Plato.Compiler
             BindType(PrimitiveTypes.Boolean);
         }
 
-        public void BindPredefined(string name)
+        public void BindPredefined(TypeRefSymbol type, string name)
         {
-            BindValue(name, new PredefinedSymbol(null, name));
+            BindValue(name, new PredefinedSymbol(type, name));
         }
 
         public T BindValue<T>(string name, T value) where T : Symbol
@@ -159,7 +159,7 @@ namespace Plato.Compiler
                         Resolve(astConditional.IfFalse)));
 
                 case AstConstant astConstant1:
-                    return new LiteralSymbol(astConstant1.Value);
+                    return new LiteralSymbol(astConstant1.Type, astConstant1.Value);
 
                 case AstContinue astContinue:
                     return NoValueSymbol;
