@@ -25,17 +25,6 @@ namespace Plato.Compiler
             => $"Argument:{Function}({Position}/{ArgumentCount})";
     }
 
-    public class DeclaredConstraint : Constraint
-    {
-        public TypeRefSymbol Type { get; }
-
-        public DeclaredConstraint(TypeRefSymbol type)
-            => Type = type;
-
-        public override string ToString()
-            => $"Declared:{Type}";
-    }
-
     public class FunctionCallConstraint : Constraint
     {
         public IReadOnlyList<Symbol> Args { get; }

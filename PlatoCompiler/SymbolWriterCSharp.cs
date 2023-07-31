@@ -47,6 +47,10 @@ namespace Plato.Compiler
             foreach (var p in function.Parameters)
             {
                 // DEBUG: 
+
+                if (!TypeResolver.ParameterConstraints.ContainsKey(p))
+                    continue;
+
                 var constraints = TypeResolver.ParameterConstraints[p];
                 WriteLine($"// {p} {string.Join(", ", constraints)}");
 
