@@ -59,9 +59,9 @@ namespace Plato.Compiler
 
     public enum LiteralTypes
     {
-        Integer,
+        Int,
         Float,
-        Boolean,
+        Bool,
         String
     }
 
@@ -78,13 +78,13 @@ namespace Plato.Compiler
             if (value is string s)
                 return new AstConstant(LiteralTypes.String, s);
             if (value is bool b)
-                return new AstConstant(LiteralTypes.Boolean, b);
+                return new AstConstant(LiteralTypes.Bool, b);
             if (value is double d)
                 return new AstConstant(LiteralTypes.Float, d);
             if (value is float f)
                 return new AstConstant(LiteralTypes.Float, f);
             if (value is int n)
-                return new AstConstant(LiteralTypes.Integer, n);
+                return new AstConstant(LiteralTypes.Int, n);
             throw new Exception($"Not a recognized constant type {value}");
         }
 

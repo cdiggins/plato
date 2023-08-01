@@ -86,7 +86,6 @@ namespace Plato.Compiler
     {
         public static TypeDefSymbol Kind = Create("Kind");
 
-        public static TypeDefSymbol Void = Create("void");
         public static TypeDefSymbol Lambda = Create("Lambda");
         public static TypeDefSymbol Function = Create("Function");
         public static TypeDefSymbol Any = Create("Any");
@@ -95,9 +94,9 @@ namespace Plato.Compiler
         public static TypeDefSymbol Tuple = Create("Tuple");
 
         public static TypeDefSymbol String = Create("String");
-        public static TypeDefSymbol Boolean = Create("Boolean");
-        public static TypeDefSymbol Integer = Create("Integer");
-        public static TypeDefSymbol Float64 = Create("Float64");
+        public static TypeDefSymbol Bool = Create("Bool");
+        public static TypeDefSymbol Int = Create("Int");
+        public static TypeDefSymbol Float = Create("Float");
         public static TypeDefSymbol Type = Create("Type");
 
         public static TypeDefSymbol Create(string name)

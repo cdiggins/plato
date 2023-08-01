@@ -91,6 +91,7 @@ namespace Plato.Compiler
                     ParameterConstraints.Add(kv.Key, kv.Value);
             }
 
+            // Prepare for the type 
             foreach (var p in Parameters)
             {
                 if (GetType(p) != null)
@@ -111,10 +112,73 @@ namespace Plato.Compiler
                 ExpressionTypes[symbol] = type;
         }
 
+        public bool InheritsFrom(TypeDefSymbol self, TypeDefSymbol other)
+        {
+             
+        }
+
+        public bool Implements(TypeDefSymbol self, TypeDefSymbol other)
+        {
+
+        }
+
+        public bool IsSuperType(TypeDefSymbol self, TypeDefSymbol other)
+        {
+            if (self.Equals(other))
+                return true;
+            if (InheritsFrom(self, other)) 
+                return true;
+            if (Implements(self, other))
+                return true;
+            return false;
+        }
+
+        public bool IsSuperType(TypeDefSymbol self, IEnumerable<TypeDefSymbol> others)
+        {
+
+        }
+
+        public TypeDefSymbol Unify(IEnumerable<TypeDefSymbol> conceptsA, IEnumerable<TypeDefSymbol> conceptsB)
+        {
+            // Which concepts in A supercede all of those in B? 
+            var superTypesA = conceptsA.Where(c => IsSuperType(conceptsB));
+
+            // Which concepts in B supercede all of those in B
+        }
+
         public TypeDefSymbol Unify(TypeDefSymbol a, TypeDefSymbol b)
         {
-            if (a != null)
+            // If one type inher
+            
+            if (a == null)
+                return b;
+
+            if (b == null)
                 return a;
+
+            if (a.Equals(b))
+                return a;
+
+            // If one type is a concept, and the other is a regular type, then choose the type. 
+            if (a.IsType() && b.IsConcept())
+                return a;
+
+            if (a.IsConcept() && a.IsType())
+                return a;
+
+            if (a.IsType() && b.IsType())
+            {
+                var aConcepts = a.Implements.Select(i => i.Def);
+                var bConcepts = b.Implements.Select(i => i.Def);
+                return Unify(aConcepts, bConcepts);
+            }
+
+            if (a.IsConcept() && b.IsConcept())
+            {
+                var aConcepts = a.GetSelfAndAllInheritedTypes();
+                var bConcepts = b.GetSelfAndAllInheritedTypes();
+                return Unify(aConcepts, bConcepts);
+            }
             return b;
         }
 
@@ -124,22 +188,6 @@ namespace Plato.Compiler
             return ComputeType(fs.Functions[0]);
         }
 
-        public TypeDefSymbol ComputeType(LiteralSymbol literalSymbol)
-        {
-            switch (literalSymbol.Type)
-            {
-                case LiteralTypes.Integer:
-                    return PrimitiveTypes.Integer;
-                case LiteralTypes.Float:
-                    return PrimitiveTypes.Float64;
-                case LiteralTypes.Boolean:
-                    return PrimitiveTypes.Boolean;
-                case LiteralTypes.String:
-                    return PrimitiveTypes.String;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
 
         TypeDefSymbol InternalComputeType(Symbol s)
         {
@@ -150,10 +198,7 @@ namespace Plato.Compiler
                     return ComputeType(argumentSymbol.Original);
 
                 case AssignmentSymbol assignmentSymbol:
-                    // NOTE: this is not a true Unify.
-                    return Unify(
-                        ComputeType(assignmentSymbol.LValue),
-                        ComputeType(assignmentSymbol.RValue));
+                    throw new NotImplementedException("Not implemented yet?");
 
                 case ConditionalExpressionSymbol conditionalExpressionSymbol:
                     // NOTE: the condition component is guaranteed to be a boolean.
@@ -169,7 +214,19 @@ namespace Plato.Compiler
                     return ComputeType(functionCallSymbol.Function);
 
                 case LiteralSymbol literalSymbol:
-                    return ComputeType(literalSymbol);
+                    switch (literalSymbol.Type)
+                    {
+                        case LiteralTypes.Int:
+                            return PrimitiveTypes.Int;
+                        case LiteralTypes.Float:
+                            return PrimitiveTypes.Float;
+                        case LiteralTypes.Bool:
+                            return PrimitiveTypes.Bool;
+                        case LiteralTypes.String:
+                            return PrimitiveTypes.String;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
 
                 case NoValueSymbol noValueSymbol:
                     throw new NotImplementedException("Not implemented yet?");
@@ -181,7 +238,7 @@ namespace Plato.Compiler
                     return typeRefSymbol.Def;
 
                 case FieldDefSymbol fieldDefSymbol:
-                    return fieldDefSymbol.Type?.Def;
+                    throw new NotImplementedException("Should not be called");
 
                 case FunctionSymbol functionSymbol:
                     return GetType(functionSymbol);
@@ -239,7 +296,6 @@ namespace Plato.Compiler
 
         public List<Constraint> GetParameterConstraints(ParameterSymbol ps)
             => ParameterConstraints.TryGetValue(ps, out var r) ? r : new List<Constraint>();
-
 
         public IEnumerable<TypeDefSymbol> GetCandidateTypes(ParameterSymbol ps)
         {
