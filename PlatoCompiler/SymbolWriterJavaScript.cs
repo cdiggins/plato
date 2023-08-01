@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 
@@ -10,6 +11,7 @@ namespace Plato.Compiler
     public class SymbolWriterJavaScript : CodeBuilder<SymbolWriterJavaScript>
     {
         public TypeResolver TypeResolver { get; }
+        public bool WriteTypes { get; } = true;
 
         public SymbolWriterJavaScript(TypeResolver tg)
             => TypeResolver = tg;
@@ -61,20 +63,36 @@ namespace Plato.Compiler
             return this;
         }
 
+        public SymbolWriterJavaScript AnnotateType(Symbol s)
+        {
+            return AnnotateType(TypeResolver.GetType(s));
+        }
+
+        public SymbolWriterJavaScript AnnotateType(TypeRefSymbol trs)
+        {
+            return AnnotateType(trs?.Def);
+        }
+
+        public SymbolWriterJavaScript AnnotateType(TypeDefSymbol tds)
+        {
+            if (WriteTypes)
+            {
+                var name = tds?.UniqueName ?? "UnknownType";
+                return Write($"/* : {name} */");
+            }
+
+            return this;
+        }
+
         public SymbolWriterJavaScript Write(FunctionSymbol function)
         {
             return Write("function".PadRight())
                 .Write("(")
                 .WriteCommaList(function.Parameters)
-                .Write(")".PadRight())
-                
-                // TEMP: for debugging
-                //.WriteLine()
-                //.WriteParameterConstraints(function)
-                //.WriteFunctionCallCandidates(function)
-
-                .Write("{".PadRight())
-                .Write("return".PadRight())
+                .Write(") ")
+                .AnnotateType(function.Type)
+                .Write("{ ")
+                .Write("return ")
                 .Write(function.Body)
                 .Write(";".PadRight())
                 .Write("}");
@@ -100,7 +118,15 @@ namespace Plato.Compiler
 
         public string GetName(DefSymbol ds)
         {
-            if (ds is TypeDefSymbol ts) return $"{ts.UniqueName}_{ts.Kind}";
+            if (ds is TypeDefSymbol ts) 
+                return $"{ts.UniqueName}_{ts.Kind}";
+            if (ds is FunctionGroupSymbol fgs)
+            {
+                if (fgs.Functions.Count > 1)
+                    Debug.WriteLine($"Multiple functions found");
+                return $"{fgs.Functions[0].UniqueName}";
+            }
+
             return $"{ds.UniqueName}";
         }
 
@@ -225,7 +251,8 @@ namespace Plato.Compiler
                     return Write("null");
 
                 case RefSymbol refSymbol:
-                    return Write(GetName(refSymbol));
+                    return Write(GetName(refSymbol))
+                        .AnnotateType(refSymbol);
 
                 case ArgumentSymbol argument:
                     return Write(argument.Original);
@@ -233,7 +260,8 @@ namespace Plato.Compiler
                 case AssignmentSymbol assignment:
                     return Write(assignment.LValue)
                         .Write(" = ")
-                        .Write(assignment.RValue);
+                        .Write(assignment.RValue)
+                        .AnnotateType(assignment);
 
                 case ConditionalExpressionSymbol conditional:
                     return Write(conditional.Condition)
@@ -243,18 +271,21 @@ namespace Plato.Compiler
                         .WriteLine()
                         .Write(": ")
                         .Write(conditional.IfFalse)
-                        .Dedent().WriteLine();
+                        .Dedent()
+                        .WriteLine();
 
                 case FunctionSymbol function:
                     return Write(function);
 
                 case FunctionCallSymbol functionCall:
                     return Write(functionCall.Function).Write("(")
-                        .WriteCommaList(functionCall.Args).Write(")");
+                        .WriteCommaList(functionCall.Args).Write(")")
+                        .AnnotateType(functionCall);
 
                 case LiteralSymbol literal:
                     // TODO: add a constructor 
-                    return Write(literal.Value.ToLiteralString());
+                    return Write(literal.Value.ToLiteralString())
+                        .AnnotateType(literal);
 
                 case MethodDefSymbol methodDef:
                     throw new Exception("Not implemented");
@@ -269,7 +300,8 @@ namespace Plato.Compiler
                     return Write("_");
 
                 case ParameterSymbol parameter:
-                    return Write(GetName(parameter));
+                    return Write(GetName(parameter))
+                        .AnnotateType(parameter);
 
                 case TypeDefSymbol typeDef:
                     throw new NotImplementedException("Type definitions are supposed to be handled first ");

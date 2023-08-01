@@ -22,7 +22,7 @@ namespace Plato.Compiler
         }
 
         public override string ToString()
-            => $"Argument:{Function}({Position}/{ArgumentCount})";
+            => $"Argument:{Function}({Position+1}/{ArgumentCount})";
     }
 
     public class FunctionCallConstraint : Constraint

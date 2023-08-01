@@ -13,7 +13,7 @@ namespace Plato.Compiler
     /// Get all possible functions. Filter based on the types of the arguments, and the number of the
     /// arguments.   
     /// </summary>
-    public class TypeResolver
+    public class TypeResolver   
     {
         public Dictionary<ParameterSymbol, List<Constraint>> ParameterConstraints { get; }
             = new Dictionary<ParameterSymbol, List<Constraint>>();
@@ -27,7 +27,11 @@ namespace Plato.Compiler
             = new Dictionary<Symbol, TypeDefSymbol>();
 
         public TypeDefSymbol GetType(Symbol s)
-            => s == null ? null : ExpressionTypes.TryGetValue(s, out var r) ? r : null;
+            => s == null 
+                ? null 
+                : ExpressionTypes.TryGetValue(s, out var r) 
+                    ? r 
+                    : null;
 
         public TypeResolver(Operations ops)
         {
@@ -46,6 +50,11 @@ namespace Plato.Compiler
             // Update the type associated with the parameter. 
             foreach (var p in Parameters)
                 AddType(p, p.Type?.Def);
+
+            // Update the type of all literals 
+            foreach (var ls in Functions.SelectMany(f => f.GetDescendantSymbols()).OfType<LiteralSymbol>())
+                AddType(ls, ComputeType(ls));
+                
 
             // Update the type of the first parameter of extension libraries 
             foreach (var type in Types)
@@ -80,6 +89,15 @@ namespace Plato.Compiler
 
                 foreach (var kv in lookup)
                     ParameterConstraints.Add(kv.Key, kv.Value);
+            }
+
+            foreach (var p in Parameters)
+            {
+                if (GetType(p) != null)
+                    continue;
+                var candidates = GetCandidateTypes(p).ToList();
+                if (candidates.Count == 1)
+                    AddType(p, candidates[0]);
             }
 
             ComputeExpressionTypes();
@@ -172,7 +190,7 @@ namespace Plato.Compiler
                     return ComputeType(methodDefSymbol.Function);
 
                 case ParameterSymbol parameterSymbol:
-                    return parameterSymbol.Type?.Def;
+                    return GetType(parameterSymbol);
 
                 case PredefinedSymbol predefinedSymbol:
                     // Intrinsic or Tuple
@@ -218,6 +236,10 @@ namespace Plato.Compiler
                 AddType(f, t);
             }
         }
+
+        public List<Constraint> GetParameterConstraints(ParameterSymbol ps)
+            => ParameterConstraints.TryGetValue(ps, out var r) ? r : new List<Constraint>();
+
 
         public IEnumerable<TypeDefSymbol> GetCandidateTypes(ParameterSymbol ps)
         {

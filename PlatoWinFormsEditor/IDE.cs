@@ -191,6 +191,37 @@ public class IDE
 
         var tr = c.TypeResolver;
         OutputTypeResolverDetails(tr, sb);
+        
+        c.TypeResolver.ComputeExpressionTypes();
+        OutputTypeResolverDetails(tr, sb);
+
+        c.TypeResolver.ComputeExpressionTypes();
+        OutputTypeResolverDetails(tr, sb);
+
+        c.TypeResolver.ComputeExpressionTypes();
+        OutputTypeResolverDetails(tr, sb);
+
+        OutputCandidates(tr, sb);
+
+        return sb;
+    }
+
+    public static StringBuilder OutputCandidates(TypeResolver tr, StringBuilder sb)
+    {
+        foreach (var p in tr.Parameters)
+        {
+            if (tr.GetType(p) != null)
+                continue;
+            
+            var candidates = tr.GetCandidateTypes(p).ToList();
+            sb.AppendLine($"Candidates for {p}");
+            foreach (var c in candidates)
+                sb.AppendLine($" {c}");
+            var constraints = tr.GetParameterConstraints(p).ToList();
+            sb.AppendLine($"Constraints for {p}");
+            foreach (var c in constraints)
+                sb.AppendLine($" {c}");
+        }
 
         return sb;
     }

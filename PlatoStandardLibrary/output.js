@@ -133,246 +133,246 @@ console.log(ys);
 
 class Interval_134_Library
 {
-    static Size_2509 = function (x_2496) { return Subtract_186(Max_2010(x_2496), Min_2008(x_2496)); };
-    static IsEmpty_2523 = function (x_2510) { return GreaterThanOrEquals_2006(Min_2008(x_2510), Max_2010(x_2510)); };
-    static Lerp_2553 = function (x_2524, amount_2525) { return Multiply_189(Min_2008(x_2524), Add_183(Subtract_186(1, amount_2525), Multiply_189(Max_2010(x_2524), amount_2525))); };
-    static InverseLerp_2573 = function (x_2554, value_2555) { return Divide_192(Subtract_186(value_2555, Min_2008(x_2554)), Size_1828(x_2554)); };
-    static Negate_2593 = function (x_2574) { return Tuple_1(Negative_167(Max_2010(x_2574)), Negative_167(Min_2008(x_2574))); };
-    static Reverse_2607 = function (x_2594) { return Tuple_1(Max_2010(x_2594), Min_2008(x_2594)); };
-    static Resize_2627 = function (x_2608, size_2609) { return Tuple_1(Min_2008(x_2608), Add_183(Min_2008(x_2608), size_2609)); };
-    static Center_2635 = function (x_2628) { return Lerp_1832(x_2628, 0.5); };
-    static Contains_2660 = function (x_2636, value_2637) { return LessThanOrEquals_2002(Min_2008(x_2636), And_198(value_2637, LessThanOrEquals_2002(value_2637, Max_2010(x_2636)))); };
-    static Contains_2688 = function (x_2661, other_2662) { return LessThanOrEquals_2002(Min_2008(x_2661), And_198(Min_2008(other_2662), GreaterThanOrEquals_2006(Max_2010, Max_2010(other_2662)))); };
-    static Overlaps_2703 = function (x_2689, y_2690) { return Not_204(IsEmpty_2036(Clamp_1928(x_2689, y_2690))); };
-    static Split_2722 = function (x_2704, t_2705) { return Tuple_1(Left_1854(x_2704, t_2705), Right_1856(x_2704, t_2705)); };
-    static Split_2730 = function (x_2723) { return Split_1852(x_2723, 0.5); };
-    static Left_2744 = function (x_2731, t_2732) { return Tuple_1(Min_2008, Lerp_1832(x_2731, t_2732)); };
-    static Right_2761 = function (x_2745, t_2746) { return Tuple_1(Lerp_1832(x_2745, t_2746), Max_2010(x_2745)); };
-    static MoveTo_2778 = function (x_2762, t_2763) { return Tuple_1(t_2763, Add_183(t_2763, Size_1828(x_2762))); };
-    static LeftHalf_2786 = function (x_2779) { return Left_1854(x_2779, 0.5); };
-    static RightHalf_2794 = function (x_2787) { return Right_1856(x_2787, 0.5); };
-    static HalfSize_2803 = function (x_2795) { return Half_1940(Size_1828(x_2795)); };
-    static Recenter_2828 = function (x_2804, c_2805) { return Tuple_1(Subtract_186(c_2805, HalfSize_1864(x_2804)), Add_183(c_2805, HalfSize_1864(x_2804))); };
-    static Clamp_2853 = function (x_2829, y_2830) { return Tuple_1(Clamp_1928(x_2829, Min_2008(y_2830)), Clamp_1928(x_2829, Max_2010(y_2830))); };
-    static Clamp_2885 = function (x_2854, value_2855) { return LessThan_1996(value_2855, Min_2008(x_2854)
-        ? Min_2008(x_2854)
-        : GreaterThan_2004(value_2855, Max_2010(x_2854)
-            ? Max_2010(x_2854)
-            : value_2855
-        )
-    ); };
-    static Between_2910 = function (x_2886, value_2887) { return GreaterThanOrEquals_2006(value_2887, And_198(Min_2008(x_2886), LessThanOrEquals_2002(value_2887, Max_2010(x_2886)))); };
-    static Unit_2917 = function () { return Tuple_1(0, 1); };
+    static Size_2509 = function (x_2496/* : Interval_24 */) /* : UnknownType */{ return Subtract_185/* : Self_7 */(Max_243/* : UnknownType */(x_2496/* : UnknownType */)/* : UnknownType */, Min_240/* : UnknownType */(x_2496/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
+    static IsEmpty_2523 = function (x_2510/* : Interval_24 */) /* : UnknownType */{ return GreaterThanOrEquals_2005/* : UnknownType */(Min_240/* : UnknownType */(x_2510/* : UnknownType */)/* : UnknownType */, Max_243/* : UnknownType */(x_2510/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; };
+    static Lerp_2553 = function (x_2524/* : Interval_24 */, amount_2525/* : UnknownType */) /* : UnknownType */{ return Multiply_172/* : Self_7 */(Min_240/* : UnknownType */(x_2524/* : UnknownType */)/* : UnknownType */, Add_163/* : UnknownType */(Subtract_185/* : UnknownType */(1/* : Float64_12 */, amount_2525/* : UnknownType */)/* : UnknownType */, Multiply_172/* : UnknownType */(Max_243/* : UnknownType */(x_2524/* : UnknownType */)/* : UnknownType */, amount_2525/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
+    static InverseLerp_2573 = function (x_2554/* : Interval_24 */, value_2555/* : ScalarArithmetic_21 */) /* : UnknownType */{ return Divide_175/* : Self_7 */(Subtract_185/* : UnknownType */(value_2555/* : UnknownType */, Min_240/* : UnknownType */(x_2554/* : UnknownType */)/* : UnknownType */)/* : UnknownType */, Size_1121/* : UnknownType */(x_2554/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
+    static Negate_2593 = function (x_2574/* : Interval_24 */) /* : UnknownType */{ return Tuple_1/* : UnknownType */(Negative_166/* : UnknownType */(Max_243/* : UnknownType */(x_2574/* : UnknownType */)/* : UnknownType */)/* : UnknownType */, Negative_166/* : UnknownType */(Min_240/* : UnknownType */(x_2574/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; };
+    static Reverse_2607 = function (x_2594/* : Interval_24 */) /* : UnknownType */{ return Tuple_1/* : UnknownType */(Max_243/* : UnknownType */(x_2594/* : UnknownType */)/* : UnknownType */, Min_240/* : UnknownType */(x_2594/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; };
+    static Resize_2627 = function (x_2608/* : Interval_24 */, size_2609/* : UnknownType */) /* : UnknownType */{ return Tuple_1/* : UnknownType */(Min_240/* : UnknownType */(x_2608/* : UnknownType */)/* : UnknownType */, Add_163/* : UnknownType */(Min_240/* : UnknownType */(x_2608/* : UnknownType */)/* : UnknownType */, size_2609/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; };
+    static Center_2635 = function (x_2628/* : Interval_24 */) /* : UnknownType */{ return Lerp_1831/* : Self_7 */(x_2628/* : UnknownType */, 0.5/* : Float64_12 */)/* : Self_7 */; };
+    static Contains_2660 = function (x_2636/* : Interval_24 */, value_2637/* : UnknownType */) /* : UnknownType */{ return LessThanOrEquals_2001/* : UnknownType */(Min_240/* : UnknownType */(x_2636/* : UnknownType */)/* : UnknownType */, And_197/* : UnknownType */(value_2637/* : UnknownType */, LessThanOrEquals_2001/* : UnknownType */(value_2637/* : UnknownType */, Max_243/* : UnknownType */(x_2636/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; };
+    static Contains_2688 = function (x_2661/* : Interval_24 */, other_2662/* : UnknownType */) /* : UnknownType */{ return LessThanOrEquals_2001/* : UnknownType */(Min_240/* : UnknownType */(x_2661/* : UnknownType */)/* : UnknownType */, And_197/* : UnknownType */(Min_240/* : UnknownType */(other_2662/* : UnknownType */)/* : UnknownType */, GreaterThanOrEquals_2005/* : UnknownType */(Max_243/* : UnknownType */, Max_243/* : UnknownType */(other_2662/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; };
+    static Overlaps_2703 = function (x_2689/* : Interval_24 */, y_2690/* : UnknownType */) /* : UnknownType */{ return Not_203/* : Self_7 */(IsEmpty_1829/* : UnknownType */(Clamp_1867/* : UnknownType */(x_2689/* : UnknownType */, y_2690/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
+    static Split_2722 = function (x_2704/* : Interval_24 */, t_2705/* : Interval_134 */) /* : UnknownType */{ return Tuple_1/* : UnknownType */(Left_1853/* : UnknownType */(x_2704/* : UnknownType */, t_2705/* : UnknownType */)/* : UnknownType */, Right_1855/* : UnknownType */(x_2704/* : UnknownType */, t_2705/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; };
+    static Split_2730 = function (x_2723/* : Interval_24 */) /* : UnknownType */{ return Split_1849/* : UnknownType */(x_2723/* : UnknownType */, 0.5/* : Float64_12 */)/* : UnknownType */; };
+    static Left_2744 = function (x_2731/* : Interval_24 */, t_2732/* : Interval_134 */) /* : UnknownType */{ return Tuple_1/* : UnknownType */(Min_240/* : UnknownType */, Lerp_1831/* : UnknownType */(x_2731/* : UnknownType */, t_2732/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; };
+    static Right_2761 = function (x_2745/* : Interval_24 */, t_2746/* : Interval_134 */) /* : UnknownType */{ return Tuple_1/* : UnknownType */(Lerp_1831/* : UnknownType */(x_2745/* : UnknownType */, t_2746/* : UnknownType */)/* : UnknownType */, Max_243/* : UnknownType */(x_2745/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; };
+    static MoveTo_2778 = function (x_2762/* : Interval_24 */, t_2763/* : UnknownType */) /* : UnknownType */{ return Tuple_1/* : UnknownType */(t_2763/* : UnknownType */, Add_163/* : UnknownType */(t_2763/* : UnknownType */, Size_1121/* : UnknownType */(x_2762/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; };
+    static LeftHalf_2786 = function (x_2779/* : Interval_24 */) /* : UnknownType */{ return Left_1853/* : UnknownType */(x_2779/* : UnknownType */, 0.5/* : Float64_12 */)/* : UnknownType */; };
+    static RightHalf_2794 = function (x_2787/* : Interval_24 */) /* : UnknownType */{ return Right_1855/* : UnknownType */(x_2787/* : UnknownType */, 0.5/* : Float64_12 */)/* : UnknownType */; };
+    static HalfSize_2803 = function (x_2795/* : Interval_24 */) /* : UnknownType */{ return Half_1939/* : UnknownType */(Size_1121/* : UnknownType */(x_2795/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; };
+    static Recenter_2828 = function (x_2804/* : Interval_24 */, c_2805/* : UnknownType */) /* : UnknownType */{ return Tuple_1/* : UnknownType */(Subtract_185/* : UnknownType */(c_2805/* : UnknownType */, HalfSize_1863/* : UnknownType */(x_2804/* : UnknownType */)/* : UnknownType */)/* : UnknownType */, Add_163/* : UnknownType */(c_2805/* : UnknownType */, HalfSize_1863/* : UnknownType */(x_2804/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; };
+    static Clamp_2853 = function (x_2829/* : Interval_24 */, y_2830/* : UnknownType */) /* : UnknownType */{ return Tuple_1/* : UnknownType */(Clamp_1867/* : UnknownType */(x_2829/* : UnknownType */, Min_240/* : UnknownType */(y_2830/* : UnknownType */)/* : UnknownType */)/* : UnknownType */, Clamp_1867/* : UnknownType */(x_2829/* : UnknownType */, Max_243/* : UnknownType */(y_2830/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; };
+    static Clamp_2885 = function (x_2854/* : Interval_24 */, value_2855/* : Comparable_137 */) /* : UnknownType */{ return LessThan_1995/* : UnknownType */(value_2855/* : UnknownType */, Min_240/* : UnknownType */(x_2854/* : UnknownType */)/* : UnknownType */
+        ? Min_240/* : UnknownType */(x_2854/* : UnknownType */)/* : UnknownType */
+        : GreaterThan_2003/* : UnknownType */(value_2855/* : UnknownType */, Max_243/* : UnknownType */(x_2854/* : UnknownType */)/* : UnknownType */
+            ? Max_243/* : UnknownType */(x_2854/* : UnknownType */)/* : UnknownType */
+            : value_2855/* : UnknownType */
+        )/* : UnknownType */
+    )/* : UnknownType */; };
+    static Between_2910 = function (x_2886/* : Interval_24 */, value_2887/* : Comparable_137 */) /* : UnknownType */{ return GreaterThanOrEquals_2005/* : UnknownType */(value_2887/* : UnknownType */, And_197/* : UnknownType */(Min_240/* : UnknownType */(x_2886/* : UnknownType */)/* : UnknownType */, LessThanOrEquals_2001/* : UnknownType */(value_2887/* : UnknownType */, Max_243/* : UnknownType */(x_2886/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; };
+    static Unit_2917 = function () /* : UnknownType */{ return Tuple_1/* : UnknownType */(0/* : Integer_11 */, 1/* : Integer_11 */)/* : UnknownType */; };
 }
 class Vector_135_Library
 {
-    static Sum_2927 = function (v_2918) { return Aggregate_2032(v_2918, 0, Add_183); };
-    static SumSquares_2940 = function (v_2928) { return Aggregate_2032(Square_1922(v_2928), 0, Add_183); };
-    static LengthSquared_2946 = function (v_2941) { return SumSquares_1878(v_2941); };
-    static Length_2955 = function (v_2947) { return SquareRoot_1918(LengthSquared_1880(v_2947)); };
-    static Dot_2967 = function (v1_2956, v2_2957) { return Sum_1876(Multiply_189(v1_2956, v2_2957)); };
+    static Sum_2927 = function (v_2918/* : Vector_14 */) /* : UnknownType */{ return Aggregate_2031/* : UnknownType */(v_2918/* : UnknownType */, 0/* : Integer_11 */, Add_163/* : UnknownType */)/* : UnknownType */; };
+    static SumSquares_2940 = function (v_2928/* : Vector_14 */) /* : UnknownType */{ return Aggregate_2031/* : UnknownType */(Square_1921/* : UnknownType */(v_2928/* : UnknownType */)/* : UnknownType */, 0/* : Integer_11 */, Add_163/* : UnknownType */)/* : UnknownType */; };
+    static LengthSquared_2946 = function (v_2941/* : Vector_14 */) /* : UnknownType */{ return SumSquares_1877/* : UnknownType */(v_2941/* : UnknownType */)/* : UnknownType */; };
+    static Length_2955 = function (v_2947/* : Vector_14 */) /* : UnknownType */{ return SquareRoot_1917/* : UnknownType */(LengthSquared_1879/* : UnknownType */(v_2947/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; };
+    static Dot_2967 = function (v1_2956/* : Vector_14 */, v2_2957/* : UnknownType */) /* : UnknownType */{ return Sum_1875/* : UnknownType */(Multiply_172/* : UnknownType */(v1_2956/* : UnknownType */, v2_2957/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; };
 }
 class Numerical_136_Library
 {
-    static Cos_2970 = function (x_2968) { return intrinsic_0; };
-    static Sin_2973 = function (x_2971) { return intrinsic_0; };
-    static Tan_2976 = function (x_2974) { return intrinsic_0; };
-    static Acos_2979 = function (x_2977) { return intrinsic_0; };
-    static Asin_2982 = function (x_2980) { return intrinsic_0; };
-    static Atan_2985 = function (x_2983) { return intrinsic_0; };
-    static Cosh_2988 = function (x_2986) { return intrinsic_0; };
-    static Sinh_2991 = function (x_2989) { return intrinsic_0; };
-    static Tanh_2994 = function (x_2992) { return intrinsic_0; };
-    static Acosh_2997 = function (x_2995) { return intrinsic_0; };
-    static Asinh_3000 = function (x_2998) { return intrinsic_0; };
-    static Atanh_3003 = function (x_3001) { return intrinsic_0; };
-    static Pow_3007 = function (x_3004, y_3005) { return intrinsic_0; };
-    static Log_3011 = function (x_3008, y_3009) { return intrinsic_0; };
-    static NaturalLog_3014 = function (x_3012) { return intrinsic_0; };
-    static NaturalPower_3017 = function (x_3015) { return intrinsic_0; };
-    static SquareRoot_3025 = function (x_3018) { return Pow_1910(x_3018, 0.5); };
-    static CubeRoot_3033 = function (x_3026) { return Pow_1910(x_3026, 0.5); };
-    static Square_3041 = function (x_3034) { return Multiply_189(Value_1812, Value_1812); };
-    static Clamp_3056 = function (x_3042, min_3043, max_3044) { return Clamp_1928(x_3042, Interval_134_Library(min_3043, max_3044)); };
-    static Clamp_3065 = function (x_3057, i_3058) { return Clamp_1928(i_3058, x_3057); };
-    static Clamp_3075 = function (x_3066) { return Clamp_1928(x_3066, 0, 1); };
-    static PlusOne_3083 = function (x_3076) { return Add_183(x_3076, 1); };
-    static MinusOne_3091 = function (x_3084) { return Subtract_186(x_3084, 1); };
-    static FromOne_3099 = function (x_3092) { return Subtract_186(1, x_3092); };
-    static Sign_3121 = function (x_3100) { return LessThan_1996(x_3100, 0
-        ? Negative_167(1)
-        : GreaterThan_2004(x_3100, 0
-            ? 1
-            : 0
-        )
-    ); };
-    static Abs_3135 = function (x_3122) { return LessThan_1996(Value_1812, 0
-        ? Negative_167(Value_1812)
-        : Value_1812
-    ); };
-    static Half_3143 = function (x_3136) { return Divide_192(x_3136, 2); };
-    static Third_3151 = function (x_3144) { return Divide_192(x_3144, 3); };
-    static Quarter_3159 = function (x_3152) { return Divide_192(x_3152, 4); };
-    static Fifth_3167 = function (x_3160) { return Divide_192(x_3160, 5); };
-    static Sixth_3175 = function (x_3168) { return Divide_192(x_3168, 6); };
-    static Seventh_3183 = function (x_3176) { return Divide_192(x_3176, 7); };
-    static Eighth_3191 = function (x_3184) { return Divide_192(x_3184, 8); };
-    static Ninth_3199 = function (x_3192) { return Divide_192(x_3192, 9); };
-    static Tenth_3207 = function (x_3200) { return Divide_192(x_3200, 10); };
-    static Sixteenth_3215 = function (x_3208) { return Divide_192(x_3208, 16); };
-    static Hundredth_3223 = function (x_3216) { return Divide_192(x_3216, 100); };
-    static Thousandth_3231 = function (x_3224) { return Divide_192(x_3224, 1000); };
-    static Millionth_3244 = function (x_3232) { return Divide_192(x_3232, Divide_192(1000, 1000)); };
-    static Billionth_3262 = function (x_3245) { return Divide_192(x_3245, Divide_192(1000, Divide_192(1000, 1000))); };
-    static Hundred_3270 = function (x_3263) { return Multiply_189(x_3263, 100); };
-    static Thousand_3278 = function (x_3271) { return Multiply_189(x_3271, 1000); };
-    static Million_3291 = function (x_3279) { return Multiply_189(x_3279, Multiply_189(1000, 1000)); };
-    static Billion_3309 = function (x_3292) { return Multiply_189(x_3292, Multiply_189(1000, Multiply_189(1000, 1000))); };
-    static Twice_3317 = function (x_3310) { return Multiply_189(x_3310, 2); };
-    static Thrice_3325 = function (x_3318) { return Multiply_189(x_3318, 3); };
-    static SmoothStep_3344 = function (x_3326) { return Multiply_189(Square_1922(x_3326), Subtract_186(3, Twice_1976(x_3326))); };
-    static Pow2_3352 = function (x_3345) { return Multiply_189(x_3345, x_3345); };
-    static Pow3_3363 = function (x_3353) { return Multiply_189(Pow2_1982(x_3353), x_3353); };
-    static Pow4_3374 = function (x_3364) { return Multiply_189(Pow3_1984(x_3364), x_3364); };
-    static Pow5_3385 = function (x_3375) { return Multiply_189(Pow4_1986(x_3375), x_3375); };
-    static Turns_3398 = function (x_3386) { return Multiply_189(x_3386, Multiply_189(3.1415926535897, 2)); };
-    static AlmostZero_3409 = function (x_3399) { return LessThan_1996(Abs_1938(x_3399), 1E-08); };
+    static Cos_2970 = function (x_2968/* : Numerical_16 */) /* : UnknownType */{ return intrinsic_0/* : UnknownType */; };
+    static Sin_2973 = function (x_2971/* : Numerical_16 */) /* : UnknownType */{ return intrinsic_0/* : UnknownType */; };
+    static Tan_2976 = function (x_2974/* : Numerical_16 */) /* : UnknownType */{ return intrinsic_0/* : UnknownType */; };
+    static Acos_2979 = function (x_2977/* : Numerical_16 */) /* : UnknownType */{ return intrinsic_0/* : UnknownType */; };
+    static Asin_2982 = function (x_2980/* : Numerical_16 */) /* : UnknownType */{ return intrinsic_0/* : UnknownType */; };
+    static Atan_2985 = function (x_2983/* : Numerical_16 */) /* : UnknownType */{ return intrinsic_0/* : UnknownType */; };
+    static Cosh_2988 = function (x_2986/* : Numerical_16 */) /* : UnknownType */{ return intrinsic_0/* : UnknownType */; };
+    static Sinh_2991 = function (x_2989/* : Numerical_16 */) /* : UnknownType */{ return intrinsic_0/* : UnknownType */; };
+    static Tanh_2994 = function (x_2992/* : Numerical_16 */) /* : UnknownType */{ return intrinsic_0/* : UnknownType */; };
+    static Acosh_2997 = function (x_2995/* : Numerical_16 */) /* : UnknownType */{ return intrinsic_0/* : UnknownType */; };
+    static Asinh_3000 = function (x_2998/* : Numerical_16 */) /* : UnknownType */{ return intrinsic_0/* : UnknownType */; };
+    static Atanh_3003 = function (x_3001/* : Numerical_16 */) /* : UnknownType */{ return intrinsic_0/* : UnknownType */; };
+    static Pow_3007 = function (x_3004/* : Numerical_16 */, y_3005/* : Any_6 */) /* : UnknownType */{ return intrinsic_0/* : UnknownType */; };
+    static Log_3011 = function (x_3008/* : Numerical_16 */, y_3009/* : Any_6 */) /* : UnknownType */{ return intrinsic_0/* : UnknownType */; };
+    static NaturalLog_3014 = function (x_3012/* : Numerical_16 */) /* : UnknownType */{ return intrinsic_0/* : UnknownType */; };
+    static NaturalPower_3017 = function (x_3015/* : Numerical_16 */) /* : UnknownType */{ return intrinsic_0/* : UnknownType */; };
+    static SquareRoot_3025 = function (x_3018/* : Numerical_16 */) /* : UnknownType */{ return Pow_1909/* : UnknownType */(x_3018/* : UnknownType */, 0.5/* : Float64_12 */)/* : UnknownType */; };
+    static CubeRoot_3033 = function (x_3026/* : Numerical_16 */) /* : UnknownType */{ return Pow_1909/* : UnknownType */(x_3026/* : UnknownType */, 0.5/* : Float64_12 */)/* : UnknownType */; };
+    static Square_3041 = function (x_3034/* : Numerical_16 */) /* : UnknownType */{ return Multiply_172/* : Self_7 */(Value_253/* : UnknownType */, Value_253/* : UnknownType */)/* : Self_7 */; };
+    static Clamp_3056 = function (x_3042/* : Numerical_16 */, min_3043/* : Any_6 */, max_3044/* : Any_6 */) /* : UnknownType */{ return Clamp_1867/* : UnknownType */(x_3042/* : UnknownType */, Interval_134_Library/* : UnknownType */(min_3043/* : UnknownType */, max_3044/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; };
+    static Clamp_3065 = function (x_3057/* : Numerical_16 */, i_3058/* : UnknownType */) /* : UnknownType */{ return Clamp_1867/* : UnknownType */(i_3058/* : UnknownType */, x_3057/* : UnknownType */)/* : UnknownType */; };
+    static Clamp_3075 = function (x_3066/* : Numerical_16 */) /* : UnknownType */{ return Clamp_1867/* : UnknownType */(x_3066/* : UnknownType */, 0/* : Integer_11 */, 1/* : Integer_11 */)/* : UnknownType */; };
+    static PlusOne_3083 = function (x_3076/* : Numerical_16 */) /* : UnknownType */{ return Add_163/* : Self_7 */(x_3076/* : UnknownType */, 1/* : Integer_11 */)/* : Self_7 */; };
+    static MinusOne_3091 = function (x_3084/* : Numerical_16 */) /* : UnknownType */{ return Subtract_185/* : Self_7 */(x_3084/* : UnknownType */, 1/* : Integer_11 */)/* : Self_7 */; };
+    static FromOne_3099 = function (x_3092/* : Numerical_16 */) /* : UnknownType */{ return Subtract_185/* : Self_7 */(1/* : Integer_11 */, x_3092/* : UnknownType */)/* : Self_7 */; };
+    static Sign_3121 = function (x_3100/* : Numerical_16 */) /* : UnknownType */{ return LessThan_1995/* : UnknownType */(x_3100/* : UnknownType */, 0/* : Integer_11 */
+        ? Negative_166/* : UnknownType */(1/* : Integer_11 */)/* : UnknownType */
+        : GreaterThan_2003/* : UnknownType */(x_3100/* : UnknownType */, 0/* : Integer_11 */
+            ? 1/* : Integer_11 */
+            : 0/* : Integer_11 */
+        )/* : UnknownType */
+    )/* : UnknownType */; };
+    static Abs_3135 = function (x_3122/* : Numerical_16 */) /* : UnknownType */{ return LessThan_1995/* : UnknownType */(Value_253/* : UnknownType */, 0/* : Integer_11 */
+        ? Negative_166/* : UnknownType */(Value_253/* : UnknownType */)/* : UnknownType */
+        : Value_253/* : UnknownType */
+    )/* : UnknownType */; };
+    static Half_3143 = function (x_3136/* : Numerical_16 */) /* : UnknownType */{ return Divide_175/* : Self_7 */(x_3136/* : UnknownType */, 2/* : Integer_11 */)/* : Self_7 */; };
+    static Third_3151 = function (x_3144/* : Numerical_16 */) /* : UnknownType */{ return Divide_175/* : Self_7 */(x_3144/* : UnknownType */, 3/* : Integer_11 */)/* : Self_7 */; };
+    static Quarter_3159 = function (x_3152/* : Numerical_16 */) /* : UnknownType */{ return Divide_175/* : Self_7 */(x_3152/* : UnknownType */, 4/* : Integer_11 */)/* : Self_7 */; };
+    static Fifth_3167 = function (x_3160/* : Numerical_16 */) /* : UnknownType */{ return Divide_175/* : Self_7 */(x_3160/* : UnknownType */, 5/* : Integer_11 */)/* : Self_7 */; };
+    static Sixth_3175 = function (x_3168/* : Numerical_16 */) /* : UnknownType */{ return Divide_175/* : Self_7 */(x_3168/* : UnknownType */, 6/* : Integer_11 */)/* : Self_7 */; };
+    static Seventh_3183 = function (x_3176/* : Numerical_16 */) /* : UnknownType */{ return Divide_175/* : Self_7 */(x_3176/* : UnknownType */, 7/* : Integer_11 */)/* : Self_7 */; };
+    static Eighth_3191 = function (x_3184/* : Numerical_16 */) /* : UnknownType */{ return Divide_175/* : Self_7 */(x_3184/* : UnknownType */, 8/* : Integer_11 */)/* : Self_7 */; };
+    static Ninth_3199 = function (x_3192/* : Numerical_16 */) /* : UnknownType */{ return Divide_175/* : Self_7 */(x_3192/* : UnknownType */, 9/* : Integer_11 */)/* : Self_7 */; };
+    static Tenth_3207 = function (x_3200/* : Numerical_16 */) /* : UnknownType */{ return Divide_175/* : Self_7 */(x_3200/* : UnknownType */, 10/* : Integer_11 */)/* : Self_7 */; };
+    static Sixteenth_3215 = function (x_3208/* : Numerical_16 */) /* : UnknownType */{ return Divide_175/* : Self_7 */(x_3208/* : UnknownType */, 16/* : Integer_11 */)/* : Self_7 */; };
+    static Hundredth_3223 = function (x_3216/* : Numerical_16 */) /* : UnknownType */{ return Divide_175/* : Self_7 */(x_3216/* : UnknownType */, 100/* : Integer_11 */)/* : Self_7 */; };
+    static Thousandth_3231 = function (x_3224/* : Numerical_16 */) /* : UnknownType */{ return Divide_175/* : Self_7 */(x_3224/* : UnknownType */, 1000/* : Integer_11 */)/* : Self_7 */; };
+    static Millionth_3244 = function (x_3232/* : Numerical_16 */) /* : UnknownType */{ return Divide_175/* : Self_7 */(x_3232/* : UnknownType */, Divide_175/* : UnknownType */(1000/* : Integer_11 */, 1000/* : Integer_11 */)/* : UnknownType */)/* : Self_7 */; };
+    static Billionth_3262 = function (x_3245/* : Numerical_16 */) /* : UnknownType */{ return Divide_175/* : Self_7 */(x_3245/* : UnknownType */, Divide_175/* : UnknownType */(1000/* : Integer_11 */, Divide_175/* : UnknownType */(1000/* : Integer_11 */, 1000/* : Integer_11 */)/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
+    static Hundred_3270 = function (x_3263/* : Numerical_16 */) /* : UnknownType */{ return Multiply_172/* : Self_7 */(x_3263/* : UnknownType */, 100/* : Integer_11 */)/* : Self_7 */; };
+    static Thousand_3278 = function (x_3271/* : Numerical_16 */) /* : UnknownType */{ return Multiply_172/* : Self_7 */(x_3271/* : UnknownType */, 1000/* : Integer_11 */)/* : Self_7 */; };
+    static Million_3291 = function (x_3279/* : Numerical_16 */) /* : UnknownType */{ return Multiply_172/* : Self_7 */(x_3279/* : UnknownType */, Multiply_172/* : UnknownType */(1000/* : Integer_11 */, 1000/* : Integer_11 */)/* : UnknownType */)/* : Self_7 */; };
+    static Billion_3309 = function (x_3292/* : Numerical_16 */) /* : UnknownType */{ return Multiply_172/* : Self_7 */(x_3292/* : UnknownType */, Multiply_172/* : UnknownType */(1000/* : Integer_11 */, Multiply_172/* : UnknownType */(1000/* : Integer_11 */, 1000/* : Integer_11 */)/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
+    static Twice_3317 = function (x_3310/* : Numerical_16 */) /* : UnknownType */{ return Multiply_172/* : Self_7 */(x_3310/* : UnknownType */, 2/* : Integer_11 */)/* : Self_7 */; };
+    static Thrice_3325 = function (x_3318/* : Numerical_16 */) /* : UnknownType */{ return Multiply_172/* : Self_7 */(x_3318/* : UnknownType */, 3/* : Integer_11 */)/* : Self_7 */; };
+    static SmoothStep_3344 = function (x_3326/* : Numerical_16 */) /* : UnknownType */{ return Multiply_172/* : Self_7 */(Square_1921/* : UnknownType */(x_3326/* : UnknownType */)/* : UnknownType */, Subtract_185/* : UnknownType */(3/* : Integer_11 */, Twice_1975/* : UnknownType */(x_3326/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
+    static Pow2_3352 = function (x_3345/* : Numerical_16 */) /* : UnknownType */{ return Multiply_172/* : Self_7 */(x_3345/* : UnknownType */, x_3345/* : UnknownType */)/* : Self_7 */; };
+    static Pow3_3363 = function (x_3353/* : Numerical_16 */) /* : UnknownType */{ return Multiply_172/* : Self_7 */(Pow2_1981/* : UnknownType */(x_3353/* : UnknownType */)/* : UnknownType */, x_3353/* : UnknownType */)/* : Self_7 */; };
+    static Pow4_3374 = function (x_3364/* : Numerical_16 */) /* : UnknownType */{ return Multiply_172/* : Self_7 */(Pow3_1983/* : UnknownType */(x_3364/* : UnknownType */)/* : UnknownType */, x_3364/* : UnknownType */)/* : Self_7 */; };
+    static Pow5_3385 = function (x_3375/* : Numerical_16 */) /* : UnknownType */{ return Multiply_172/* : Self_7 */(Pow4_1985/* : UnknownType */(x_3375/* : UnknownType */)/* : UnknownType */, x_3375/* : UnknownType */)/* : Self_7 */; };
+    static Turns_3398 = function (x_3386/* : Numerical_16 */) /* : UnknownType */{ return Multiply_172/* : Self_7 */(x_3386/* : UnknownType */, Multiply_172/* : UnknownType */(3.1415926535897/* : Float64_12 */, 2/* : Integer_11 */)/* : UnknownType */)/* : Self_7 */; };
+    static AlmostZero_3409 = function (x_3399/* : Numerical_16 */) /* : UnknownType */{ return LessThan_1995/* : UnknownType */(Abs_1937/* : UnknownType */(x_3399/* : UnknownType */)/* : UnknownType */, 1E-08/* : Float64_12 */)/* : UnknownType */; };
 }
 class Comparable_137_Library
 {
-    static Equals_3423 = function (a_3410, b_3411) { return Equals_1994(Compare_158(a_3410, b_3411), 0); };
-    static LessThan_3437 = function (a_3424, b_3425) { return LessThan_1996(Compare_158(a_3424, b_3425), 0); };
-    static Lesser_3449 = function (a_3438, b_3439) { return LessThanOrEquals_2002(a_3438, b_3439)
-        ? a_3438
-        : b_3439
+    static Equals_3423 = function (a_3410/* : Comparable_18 */, b_3411/* : Comparable_18 */) /* : UnknownType */{ return Equals_160/* : Boolean_22 */(Compare_157/* : UnknownType */(a_3410/* : UnknownType */, b_3411/* : UnknownType */)/* : UnknownType */, 0/* : Integer_11 */)/* : Boolean_22 */; };
+    static LessThan_3437 = function (a_3424/* : Comparable_18 */, b_3425/* : Comparable_18 */) /* : UnknownType */{ return LessThan_1995/* : UnknownType */(Compare_157/* : UnknownType */(a_3424/* : UnknownType */, b_3425/* : UnknownType */)/* : UnknownType */, 0/* : Integer_11 */)/* : UnknownType */; };
+    static Lesser_3449 = function (a_3438/* : Comparable_18 */, b_3439/* : Comparable_137 */) /* : UnknownType */{ return LessThanOrEquals_2001/* : UnknownType */(a_3438/* : UnknownType */, b_3439/* : UnknownType */)/* : UnknownType */
+        ? a_3438/* : Comparable_18 */
+        : b_3439/* : Comparable_137 */
     ; };
-    static Greater_3461 = function (a_3450, b_3451) { return GreaterThanOrEquals_2006(a_3450, b_3451)
-        ? a_3450
-        : b_3451
+    static Greater_3461 = function (a_3450/* : Comparable_18 */, b_3451/* : Comparable_137 */) /* : UnknownType */{ return GreaterThanOrEquals_2005/* : UnknownType */(a_3450/* : UnknownType */, b_3451/* : UnknownType */)/* : UnknownType */
+        ? a_3450/* : Comparable_18 */
+        : b_3451/* : Comparable_137 */
     ; };
-    static LessThanOrEquals_3475 = function (a_3462, b_3463) { return LessThanOrEquals_2002(Compare_158(a_3462, b_3463), 0); };
-    static GreaterThan_3489 = function (a_3476, b_3477) { return GreaterThan_2004(Compare_158(a_3476, b_3477), 0); };
-    static GreaterThanOrEquals_3503 = function (a_3490, b_3491) { return GreaterThanOrEquals_2006(Compare_158(a_3490, b_3491), 0); };
-    static Min_3515 = function (a_3504, b_3505) { return LessThan_1996(a_3504, b_3505)
-        ? a_3504
-        : b_3505
+    static LessThanOrEquals_3475 = function (a_3462/* : Comparable_18 */, b_3463/* : Comparable_18 */) /* : UnknownType */{ return LessThanOrEquals_2001/* : UnknownType */(Compare_157/* : UnknownType */(a_3462/* : UnknownType */, b_3463/* : UnknownType */)/* : UnknownType */, 0/* : Integer_11 */)/* : UnknownType */; };
+    static GreaterThan_3489 = function (a_3476/* : Comparable_18 */, b_3477/* : Comparable_18 */) /* : UnknownType */{ return GreaterThan_2003/* : UnknownType */(Compare_157/* : UnknownType */(a_3476/* : UnknownType */, b_3477/* : UnknownType */)/* : UnknownType */, 0/* : Integer_11 */)/* : UnknownType */; };
+    static GreaterThanOrEquals_3503 = function (a_3490/* : Comparable_18 */, b_3491/* : Comparable_18 */) /* : UnknownType */{ return GreaterThanOrEquals_2005/* : UnknownType */(Compare_157/* : UnknownType */(a_3490/* : UnknownType */, b_3491/* : UnknownType */)/* : UnknownType */, 0/* : Integer_11 */)/* : UnknownType */; };
+    static Min_3515 = function (a_3504/* : Comparable_18 */, b_3505/* : Comparable_137 */) /* : UnknownType */{ return LessThan_1995/* : UnknownType */(a_3504/* : UnknownType */, b_3505/* : UnknownType */)/* : UnknownType */
+        ? a_3504/* : Comparable_18 */
+        : b_3505/* : Comparable_137 */
     ; };
-    static Max_3527 = function (a_3516, b_3517) { return GreaterThan_2004(a_3516, b_3517)
-        ? a_3516
-        : b_3517
+    static Max_3527 = function (a_3516/* : Comparable_18 */, b_3517/* : Comparable_137 */) /* : UnknownType */{ return GreaterThan_2003/* : UnknownType */(a_3516/* : UnknownType */, b_3517/* : UnknownType */)/* : UnknownType */
+        ? a_3516/* : Comparable_18 */
+        : b_3517/* : Comparable_137 */
     ; };
-    static Between_3542 = function (v_3528, a_3529, b_3530) { return Between_2014(v_3528, Interval_134_Library(a_3529, b_3530)); };
-    static Between_3551 = function (v_3543, i_3544) { return Contains_1846(i_3544, v_3543); };
+    static Between_3542 = function (v_3528/* : Comparable_18 */, a_3529/* : Any_6 */, b_3530/* : Any_6 */) /* : UnknownType */{ return Between_1871/* : UnknownType */(v_3528/* : UnknownType */, Interval_134_Library/* : UnknownType */(a_3529/* : UnknownType */, b_3530/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; };
+    static Between_3551 = function (v_3543/* : Comparable_18 */, i_3544/* : Interval_134 */) /* : UnknownType */{ return Contains_1843/* : UnknownType */(i_3544/* : UnknownType */, v_3543/* : UnknownType */)/* : UnknownType */; };
 }
 class Boolean_138_Library
 {
-    static XOr_3561 = function (a_3552, b_3553) { return a_3552
-        ? Not_204(b_3553)
-        : b_3553
+    static XOr_3561 = function (a_3552/* : Boolean_22 */, b_3553/* : Boolean_22 */) /* : UnknownType */{ return a_3552/* : UnknownType */
+        ? Not_203/* : Self_7 */(b_3553/* : UnknownType */)/* : Self_7 */
+        : b_3553/* : Boolean_22 */
     ; };
-    static NAnd_3573 = function (a_3562, b_3563) { return Not_204(And_198(a_3562, b_3563)); };
-    static NOr_3585 = function (a_3574, b_3575) { return Not_204(Or_201(a_3574, b_3575)); };
+    static NAnd_3573 = function (a_3562/* : Boolean_22 */, b_3563/* : Boolean_22 */) /* : UnknownType */{ return Not_203/* : Self_7 */(And_197/* : UnknownType */(a_3562/* : UnknownType */, b_3563/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
+    static NOr_3585 = function (a_3574/* : Boolean_22 */, b_3575/* : Boolean_22 */) /* : UnknownType */{ return Not_203/* : Self_7 */(Or_200/* : UnknownType */(a_3574/* : UnknownType */, b_3575/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
 }
 class Equatable_139_Library
 {
-    static NotEquals_3594 = function (x_3586) { return Not_204(Equals_1994(x_3586)); };
+    static NotEquals_3594 = function (x_3586/* : Equatable_19 */) /* : UnknownType */{ return Not_203/* : Self_7 */(Equals_160/* : UnknownType */(x_3586/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
 }
 class Array_140_Library
 {
-    static Map_3617 = function (xs_3595, f_3596) { return Map_2024(Count_27_Type(xs_3595), function (i_3602) { return f_3596(At_251(xs_3595, i_3602)); }); };
-    static Zip_3646 = function (xs_3618, ys_3619, f_3620) { return Array_140_Library(Count_27_Type(xs_3618), function (i_3626) { return f_3620(At_251(i_3626), At_251(ys_3619, i_3626)); }); };
-    static Skip_3671 = function (xs_3647, n_3648) { return Array_140_Library(Subtract_186(Count_27_Type, n_3648), function (i_3656) { return At_251(Subtract_186(i_3656, n_3648)); }); };
-    static Take_3683 = function (xs_3672, n_3673) { return Array_140_Library(n_3673, function (i_3676) { return At_251; }); };
-    static Aggregate_3705 = function (xs_3684, init_3685, f_3686) { return IsEmpty_2036(xs_3684)
-        ? init_3685
-        : f_3686(init_3685, f_3686(Rest_2034(xs_3684)))
+    static Map_3617 = function (xs_3595/* : Array_25 */, f_3596/* : Function_5 */) /* : UnknownType */{ return Map_2023/* : UnknownType */(Count_27_Type/* : UnknownType */(xs_3595/* : UnknownType */)/* : UnknownType */, function (i_3602/* : UnknownType */) /* : Lambda_4 */{ return f_3596/* : UnknownType */(At_148/* : UnknownType */(xs_3595/* : UnknownType */, i_3602/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; })/* : UnknownType */; };
+    static Zip_3646 = function (xs_3618/* : Array_25 */, ys_3619/* : UnknownType */, f_3620/* : Function_5 */) /* : UnknownType */{ return Array_140_Library/* : Array_140 */(Count_27_Type/* : UnknownType */(xs_3618/* : UnknownType */)/* : UnknownType */, function (i_3626/* : UnknownType */) /* : Lambda_4 */{ return f_3620/* : UnknownType */(At_148/* : UnknownType */(i_3626/* : UnknownType */)/* : UnknownType */, At_148/* : UnknownType */(ys_3619/* : UnknownType */, i_3626/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; })/* : Array_140 */; };
+    static Skip_3671 = function (xs_3647/* : Array_25 */, n_3648/* : ScalarArithmetic_21 */) /* : UnknownType */{ return Array_140_Library/* : Array_140 */(Subtract_185/* : UnknownType */(Count_27_Type/* : UnknownType */, n_3648/* : UnknownType */)/* : UnknownType */, function (i_3656/* : UnknownType */) /* : Lambda_4 */{ return At_148/* : UnknownType */(Subtract_185/* : UnknownType */(i_3656/* : UnknownType */, n_3648/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; })/* : Array_140 */; };
+    static Take_3683 = function (xs_3672/* : Array_25 */, n_3673/* : Any_6 */) /* : UnknownType */{ return Array_140_Library/* : Array_140 */(n_3673/* : UnknownType */, function (i_3676/* : UnknownType */) /* : Lambda_4 */{ return At_148/* : UnknownType */; })/* : Array_140 */; };
+    static Aggregate_3705 = function (xs_3684/* : Array_25 */, init_3685/* : Any_6 */, f_3686/* : Function_5 */) /* : UnknownType */{ return IsEmpty_1829/* : UnknownType */(xs_3684/* : UnknownType */)/* : UnknownType */
+        ? init_3685/* : Any_6 */
+        : f_3686/* : Function_5 */(init_3685/* : UnknownType */, f_3686/* : UnknownType */(Rest_2033/* : UnknownType */(xs_3684/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : Function_5 */
     ; };
-    static Rest_3711 = function (xs_3706) { return Skip_2028(1); };
-    static IsEmpty_3722 = function (xs_3712) { return Equals_1994(Count_27_Type(xs_3712), 0); };
-    static First_3730 = function (xs_3723) { return At_251(xs_3723, 0); };
-    static Last_3746 = function (xs_3731) { return At_251(xs_3731, Subtract_186(Count_27_Type(xs_3731), 1)); };
-    static Slice_3761 = function (xs_3747, from_3748, count_3749) { return Take_2030(Skip_2028(xs_3747, from_3748), count_3749); };
-    static Join_3805 = function (xs_3762, sep_3763) { return IsEmpty_2036(xs_3762)
-        ? ""
-        : Add_183(ToString_237(First_2038(xs_3762)), Aggregate_2032(Skip_2028(xs_3762, 1), "", function (acc_3786, cur_3787) { return Interpolate_2116(acc_3786, sep_3763, cur_3787); }))
+    static Rest_3711 = function (xs_3706/* : Array_25 */) /* : UnknownType */{ return Skip_2027/* : Array_140 */(1/* : Integer_11 */)/* : Array_140 */; };
+    static IsEmpty_3722 = function (xs_3712/* : Array_25 */) /* : UnknownType */{ return Equals_160/* : Boolean_22 */(Count_27_Type/* : UnknownType */(xs_3712/* : UnknownType */)/* : UnknownType */, 0/* : Integer_11 */)/* : Boolean_22 */; };
+    static First_3730 = function (xs_3723/* : Array_25 */) /* : UnknownType */{ return At_148/* : T_143 */(xs_3723/* : UnknownType */, 0/* : Integer_11 */)/* : T_143 */; };
+    static Last_3746 = function (xs_3731/* : Array_25 */) /* : UnknownType */{ return At_148/* : T_143 */(xs_3731/* : UnknownType */, Subtract_185/* : UnknownType */(Count_27_Type/* : UnknownType */(xs_3731/* : UnknownType */)/* : UnknownType */, 1/* : Integer_11 */)/* : UnknownType */)/* : T_143 */; };
+    static Slice_3761 = function (xs_3747/* : Array_25 */, from_3748/* : Array_140 */, count_3749/* : Array_140 */) /* : UnknownType */{ return Take_2029/* : Array_140 */(Skip_2027/* : UnknownType */(xs_3747/* : UnknownType */, from_3748/* : UnknownType */)/* : UnknownType */, count_3749/* : UnknownType */)/* : Array_140 */; };
+    static Join_3805 = function (xs_3762/* : Array_25 */, sep_3763/* : Intrinsics_142 */) /* : UnknownType */{ return IsEmpty_1829/* : UnknownType */(xs_3762/* : UnknownType */)/* : UnknownType */
+        ? ""/* : String_9 */
+        : Add_163/* : Self_7 */(ToString_236/* : UnknownType */(First_2037/* : UnknownType */(xs_3762/* : UnknownType */)/* : UnknownType */)/* : UnknownType */, Aggregate_2031/* : UnknownType */(Skip_2027/* : UnknownType */(xs_3762/* : UnknownType */, 1/* : Integer_11 */)/* : UnknownType */, ""/* : String_9 */, function (acc_3786/* : UnknownType */, cur_3787/* : UnknownType */) /* : Lambda_4 */{ return Interpolate_2115/* : UnknownType */(acc_3786/* : UnknownType */, sep_3763/* : UnknownType */, cur_3787/* : UnknownType */)/* : UnknownType */; })/* : UnknownType */)/* : Self_7 */
     ; };
-    static All_3832 = function (xs_3806, f_3807) { return IsEmpty_2036(xs_3806)
-        ? True
-        : And_198(f_3807(First_2038(xs_3806)), f_3807(Rest_2034(xs_3806)))
+    static All_3832 = function (xs_3806/* : Array_25 */, f_3807/* : Function_5 */) /* : UnknownType */{ return IsEmpty_1829/* : UnknownType */(xs_3806/* : UnknownType */)/* : UnknownType */
+        ? True/* : Boolean_10 */
+        : And_197/* : Self_7 */(f_3807/* : UnknownType */(First_2037/* : UnknownType */(xs_3806/* : UnknownType */)/* : UnknownType */)/* : UnknownType */, f_3807/* : UnknownType */(Rest_2033/* : UnknownType */(xs_3806/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : Self_7 */
     ; };
-    static JoinStrings_3877 = function (xs_3833, sep_3834) { return IsEmpty_2036(xs_3833)
-        ? ""
-        : Add_183(First_2038(xs_3833), Aggregate_2032(Rest_2034(xs_3833), "", function (x_3852, acc_3853) { return Add_183(acc_3853, Add_183(", ", ToString_237(x_3852))); }))
+    static JoinStrings_3877 = function (xs_3833/* : Array_25 */, sep_3834/* : Any_6 */) /* : UnknownType */{ return IsEmpty_1829/* : UnknownType */(xs_3833/* : UnknownType */)/* : UnknownType */
+        ? ""/* : String_9 */
+        : Add_163/* : Self_7 */(First_2037/* : UnknownType */(xs_3833/* : UnknownType */)/* : UnknownType */, Aggregate_2031/* : UnknownType */(Rest_2033/* : UnknownType */(xs_3833/* : UnknownType */)/* : UnknownType */, ""/* : String_9 */, function (x_3852/* : UnknownType */, acc_3853/* : UnknownType */) /* : Lambda_4 */{ return Add_163/* : UnknownType */(acc_3853/* : UnknownType */, Add_163/* : UnknownType */(", "/* : String_9 */, ToString_236/* : UnknownType */(x_3852/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; })/* : UnknownType */)/* : Self_7 */
     ; };
 }
 class Easings_141_Library
 {
-    static BlendEaseFunc_3926 = function (p_3878, easeIn_3879, easeOut_3880) { return LessThan_1996(p_3878, 0.5
-        ? Multiply_189(0.5, easeIn_3879(Multiply_189(p_3878, 2)))
-        : Multiply_189(0.5, Add_183(easeOut_3880(Multiply_189(p_3878, Subtract_186(2, 1))), 0.5))
-    ); };
-    static InvertEaseFunc_3943 = function (p_3927, easeIn_3928) { return Subtract_186(1, easeIn_3928(Subtract_186(1, p_3927))); };
-    static Linear_3946 = function (p_3944) { return p_3944; };
-    static QuadraticEaseIn_3952 = function (p_3947) { return Pow2_1982(p_3947); };
-    static QuadraticEaseOut_3960 = function (p_3953) { return InvertEaseFunc_2052(p_3953, QuadraticEaseIn_2056); };
-    static QuadraticEaseInOut_3970 = function (p_3961) { return BlendEaseFunc_2050(p_3961, QuadraticEaseIn_2056, QuadraticEaseOut_2058); };
-    static CubicEaseIn_3976 = function (p_3971) { return Pow3_1984(p_3971); };
-    static CubicEaseOut_3984 = function (p_3977) { return InvertEaseFunc_2052(p_3977, CubicEaseIn_2062); };
-    static CubicEaseInOut_3994 = function (p_3985) { return BlendEaseFunc_2050(p_3985, CubicEaseIn_2062, CubicEaseOut_2064); };
-    static QuarticEaseIn_4000 = function (p_3995) { return Pow4_1986(p_3995); };
-    static QuarticEaseOut_4008 = function (p_4001) { return InvertEaseFunc_2052(p_4001, QuarticEaseIn_2068); };
-    static QuarticEaseInOut_4018 = function (p_4009) { return BlendEaseFunc_2050(p_4009, QuarticEaseIn_2068, QuarticEaseOut_2070); };
-    static QuinticEaseIn_4024 = function (p_4019) { return Pow5_1988(p_4019); };
-    static QuinticEaseOut_4032 = function (p_4025) { return InvertEaseFunc_2052(p_4025, QuinticEaseIn_2074); };
-    static QuinticEaseInOut_4042 = function (p_4033) { return BlendEaseFunc_2050(p_4033, QuinticEaseIn_2074, QuinticEaseOut_2076); };
-    static SineEaseIn_4050 = function (p_4043) { return InvertEaseFunc_2052(p_4043, SineEaseOut_2082); };
-    static SineEaseOut_4062 = function (p_4051) { return Sin_1888(Turns_1990(Quarter_1944(p_4051))); };
-    static SineEaseInOut_4072 = function (p_4063) { return BlendEaseFunc_2050(p_4063, SineEaseIn_2080, SineEaseOut_2082); };
-    static CircularEaseIn_4087 = function (p_4073) { return FromOne_1934(SquareRoot_1918(FromOne_1934(Pow2_1982(p_4073)))); };
-    static CircularEaseOut_4095 = function (p_4088) { return InvertEaseFunc_2052(p_4088, CircularEaseIn_2086); };
-    static CircularEaseInOut_4105 = function (p_4096) { return BlendEaseFunc_2050(p_4096, CircularEaseIn_2086, CircularEaseOut_2088); };
-    static ExponentialEaseIn_4127 = function (p_4106) { return AlmostZero_1992(p_4106)
-        ? p_4106
-        : Pow_1910(2, Multiply_189(10, MinusOne_1932(p_4106)))
+    static BlendEaseFunc_3926 = function (p_3878/* : UnknownType */, easeIn_3879/* : Function_5 */, easeOut_3880/* : Function_5 */) /* : UnknownType */{ return LessThan_1995/* : UnknownType */(p_3878/* : UnknownType */, 0.5/* : Float64_12 */
+        ? Multiply_172/* : UnknownType */(0.5/* : Float64_12 */, easeIn_3879/* : UnknownType */(Multiply_172/* : UnknownType */(p_3878/* : UnknownType */, 2/* : Integer_11 */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */
+        : Multiply_172/* : UnknownType */(0.5/* : Float64_12 */, Add_163/* : UnknownType */(easeOut_3880/* : UnknownType */(Multiply_172/* : UnknownType */(p_3878/* : UnknownType */, Subtract_185/* : UnknownType */(2/* : Integer_11 */, 1/* : Integer_11 */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */, 0.5/* : Float64_12 */)/* : UnknownType */)/* : UnknownType */
+    )/* : UnknownType */; };
+    static InvertEaseFunc_3943 = function (p_3927/* : ScalarArithmetic_21 */, easeIn_3928/* : Function_5 */) /* : UnknownType */{ return Subtract_185/* : Self_7 */(1/* : Integer_11 */, easeIn_3928/* : UnknownType */(Subtract_185/* : UnknownType */(1/* : Integer_11 */, p_3927/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
+    static Linear_3946 = function (p_3944/* : Any_6 */) /* : UnknownType */{ return p_3944/* : Any_6 */; };
+    static QuadraticEaseIn_3952 = function (p_3947/* : Numerical_136 */) /* : UnknownType */{ return Pow2_1981/* : Self_7 */(p_3947/* : UnknownType */)/* : Self_7 */; };
+    static QuadraticEaseOut_3960 = function (p_3953/* : Easings_141 */) /* : UnknownType */{ return InvertEaseFunc_2051/* : Self_7 */(p_3953/* : UnknownType */, QuadraticEaseIn_2055/* : UnknownType */)/* : Self_7 */; };
+    static QuadraticEaseInOut_3970 = function (p_3961/* : Easings_141 */) /* : UnknownType */{ return BlendEaseFunc_2049/* : UnknownType */(p_3961/* : UnknownType */, QuadraticEaseIn_2055/* : UnknownType */, QuadraticEaseOut_2057/* : UnknownType */)/* : UnknownType */; };
+    static CubicEaseIn_3976 = function (p_3971/* : Numerical_136 */) /* : UnknownType */{ return Pow3_1983/* : Self_7 */(p_3971/* : UnknownType */)/* : Self_7 */; };
+    static CubicEaseOut_3984 = function (p_3977/* : Easings_141 */) /* : UnknownType */{ return InvertEaseFunc_2051/* : Self_7 */(p_3977/* : UnknownType */, CubicEaseIn_2061/* : UnknownType */)/* : Self_7 */; };
+    static CubicEaseInOut_3994 = function (p_3985/* : Easings_141 */) /* : UnknownType */{ return BlendEaseFunc_2049/* : UnknownType */(p_3985/* : UnknownType */, CubicEaseIn_2061/* : UnknownType */, CubicEaseOut_2063/* : UnknownType */)/* : UnknownType */; };
+    static QuarticEaseIn_4000 = function (p_3995/* : Numerical_136 */) /* : UnknownType */{ return Pow4_1985/* : Self_7 */(p_3995/* : UnknownType */)/* : Self_7 */; };
+    static QuarticEaseOut_4008 = function (p_4001/* : Easings_141 */) /* : UnknownType */{ return InvertEaseFunc_2051/* : Self_7 */(p_4001/* : UnknownType */, QuarticEaseIn_2067/* : UnknownType */)/* : Self_7 */; };
+    static QuarticEaseInOut_4018 = function (p_4009/* : Easings_141 */) /* : UnknownType */{ return BlendEaseFunc_2049/* : UnknownType */(p_4009/* : UnknownType */, QuarticEaseIn_2067/* : UnknownType */, QuarticEaseOut_2069/* : UnknownType */)/* : UnknownType */; };
+    static QuinticEaseIn_4024 = function (p_4019/* : Numerical_136 */) /* : UnknownType */{ return Pow5_1987/* : Self_7 */(p_4019/* : UnknownType */)/* : Self_7 */; };
+    static QuinticEaseOut_4032 = function (p_4025/* : Easings_141 */) /* : UnknownType */{ return InvertEaseFunc_2051/* : Self_7 */(p_4025/* : UnknownType */, QuinticEaseIn_2073/* : UnknownType */)/* : Self_7 */; };
+    static QuinticEaseInOut_4042 = function (p_4033/* : Easings_141 */) /* : UnknownType */{ return BlendEaseFunc_2049/* : UnknownType */(p_4033/* : UnknownType */, QuinticEaseIn_2073/* : UnknownType */, QuinticEaseOut_2075/* : UnknownType */)/* : UnknownType */; };
+    static SineEaseIn_4050 = function (p_4043/* : Easings_141 */) /* : UnknownType */{ return InvertEaseFunc_2051/* : Self_7 */(p_4043/* : UnknownType */, SineEaseOut_2081/* : UnknownType */)/* : Self_7 */; };
+    static SineEaseOut_4062 = function (p_4051/* : Numerical_136 */) /* : UnknownType */{ return Sin_1887/* : UnknownType */(Turns_1989/* : UnknownType */(Quarter_1943/* : UnknownType */(p_4051/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; };
+    static SineEaseInOut_4072 = function (p_4063/* : Easings_141 */) /* : UnknownType */{ return BlendEaseFunc_2049/* : UnknownType */(p_4063/* : UnknownType */, SineEaseIn_2079/* : UnknownType */, SineEaseOut_2081/* : UnknownType */)/* : UnknownType */; };
+    static CircularEaseIn_4087 = function (p_4073/* : Numerical_136 */) /* : UnknownType */{ return FromOne_1933/* : Self_7 */(SquareRoot_1917/* : UnknownType */(FromOne_1933/* : UnknownType */(Pow2_1981/* : UnknownType */(p_4073/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
+    static CircularEaseOut_4095 = function (p_4088/* : Easings_141 */) /* : UnknownType */{ return InvertEaseFunc_2051/* : Self_7 */(p_4088/* : UnknownType */, CircularEaseIn_2085/* : UnknownType */)/* : Self_7 */; };
+    static CircularEaseInOut_4105 = function (p_4096/* : Easings_141 */) /* : UnknownType */{ return BlendEaseFunc_2049/* : UnknownType */(p_4096/* : UnknownType */, CircularEaseIn_2085/* : UnknownType */, CircularEaseOut_2087/* : UnknownType */)/* : UnknownType */; };
+    static ExponentialEaseIn_4127 = function (p_4106/* : Numerical_136 */) /* : UnknownType */{ return AlmostZero_1991/* : UnknownType */(p_4106/* : UnknownType */)/* : UnknownType */
+        ? p_4106/* : Numerical_136 */
+        : Pow_1909/* : UnknownType */(2/* : Integer_11 */, Multiply_172/* : UnknownType */(10/* : Integer_11 */, MinusOne_1931/* : UnknownType */(p_4106/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */
     ; };
-    static ExponentialEaseOut_4135 = function (p_4128) { return InvertEaseFunc_2052(p_4128, ExponentialEaseIn_2092); };
-    static ExponentialEaseInOut_4145 = function (p_4136) { return BlendEaseFunc_2050(p_4136, ExponentialEaseIn_2092, ExponentialEaseOut_2094); };
-    static ElasticEaseIn_4183 = function (p_4146) { return Multiply_189(13, Multiply_189(Turns_1990(Quarter_1944(p_4146)), Sin_1888(Radians_1154(Pow_1910(2, Multiply_189(10, MinusOne_1932(p_4146))))))); };
-    static ElasticEaseOut_4191 = function (p_4184) { return InvertEaseFunc_2052(p_4184, ElasticEaseIn_2098); };
-    static ElasticEaseInOut_4201 = function (p_4192) { return BlendEaseFunc_2050(p_4192, ElasticEaseIn_2098, ElasticEaseOut_2100); };
-    static BackEaseIn_4226 = function (p_4202) { return Subtract_186(Pow3_1984(p_4202), Multiply_189(p_4202, Sin_1888(Turns_1990(Half_1940(p_4202))))); };
-    static BackEaseOut_4234 = function (p_4227) { return InvertEaseFunc_2052(p_4227, BackEaseIn_2104); };
-    static BackEaseInOut_4244 = function (p_4235) { return BlendEaseFunc_2050(p_4235, BackEaseIn_2104, BackEaseOut_2106); };
-    static BounceEaseIn_4252 = function (p_4245) { return InvertEaseFunc_2052(p_4245, BounceEaseOut_2112); };
-    static BounceEaseOut_4421 = function (p_4253) { return LessThan_1996(p_4253, Divide_192(4, 11))
-        ? Multiply_189(121, Divide_192(Pow2_1982(p_4253), 16))
-        : LessThan_1996(p_4253, Divide_192(8, 11))
-            ? Divide_192(363, Multiply_189(40, Subtract_186(Pow2_1982(p_4253), Divide_192(99, Multiply_189(10, Add_183(p_4253, Divide_192(17, 5)))))))
-            : LessThan_1996(p_4253, Divide_192(9, 10))
-                ? Divide_192(4356, Multiply_189(361, Subtract_186(Pow2_1982(p_4253), Divide_192(35442, Multiply_189(1805, Add_183(p_4253, Divide_192(16061, 1805)))))))
-                : Divide_192(54, Multiply_189(5, Subtract_186(Pow2_1982(p_4253), Divide_192(513, Multiply_189(25, Add_183(p_4253, Divide_192(268, 25)))))))
+    static ExponentialEaseOut_4135 = function (p_4128/* : Easings_141 */) /* : UnknownType */{ return InvertEaseFunc_2051/* : Self_7 */(p_4128/* : UnknownType */, ExponentialEaseIn_2091/* : UnknownType */)/* : Self_7 */; };
+    static ExponentialEaseInOut_4145 = function (p_4136/* : Easings_141 */) /* : UnknownType */{ return BlendEaseFunc_2049/* : UnknownType */(p_4136/* : UnknownType */, ExponentialEaseIn_2091/* : UnknownType */, ExponentialEaseOut_2093/* : UnknownType */)/* : UnknownType */; };
+    static ElasticEaseIn_4183 = function (p_4146/* : Numerical_136 */) /* : UnknownType */{ return Multiply_172/* : Self_7 */(13/* : Integer_11 */, Multiply_172/* : UnknownType */(Turns_1989/* : UnknownType */(Quarter_1943/* : UnknownType */(p_4146/* : UnknownType */)/* : UnknownType */)/* : UnknownType */, Sin_1887/* : UnknownType */(Radians_1149/* : UnknownType */(Pow_1909/* : UnknownType */(2/* : Integer_11 */, Multiply_172/* : UnknownType */(10/* : Integer_11 */, MinusOne_1931/* : UnknownType */(p_4146/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
+    static ElasticEaseOut_4191 = function (p_4184/* : Easings_141 */) /* : UnknownType */{ return InvertEaseFunc_2051/* : Self_7 */(p_4184/* : UnknownType */, ElasticEaseIn_2097/* : UnknownType */)/* : Self_7 */; };
+    static ElasticEaseInOut_4201 = function (p_4192/* : Easings_141 */) /* : UnknownType */{ return BlendEaseFunc_2049/* : UnknownType */(p_4192/* : UnknownType */, ElasticEaseIn_2097/* : UnknownType */, ElasticEaseOut_2099/* : UnknownType */)/* : UnknownType */; };
+    static BackEaseIn_4226 = function (p_4202/* : UnknownType */) /* : UnknownType */{ return Subtract_185/* : Self_7 */(Pow3_1983/* : UnknownType */(p_4202/* : UnknownType */)/* : UnknownType */, Multiply_172/* : UnknownType */(p_4202/* : UnknownType */, Sin_1887/* : UnknownType */(Turns_1989/* : UnknownType */(Half_1939/* : UnknownType */(p_4202/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
+    static BackEaseOut_4234 = function (p_4227/* : Easings_141 */) /* : UnknownType */{ return InvertEaseFunc_2051/* : Self_7 */(p_4227/* : UnknownType */, BackEaseIn_2103/* : UnknownType */)/* : Self_7 */; };
+    static BackEaseInOut_4244 = function (p_4235/* : Easings_141 */) /* : UnknownType */{ return BlendEaseFunc_2049/* : UnknownType */(p_4235/* : UnknownType */, BackEaseIn_2103/* : UnknownType */, BackEaseOut_2105/* : UnknownType */)/* : UnknownType */; };
+    static BounceEaseIn_4252 = function (p_4245/* : Easings_141 */) /* : UnknownType */{ return InvertEaseFunc_2051/* : Self_7 */(p_4245/* : UnknownType */, BounceEaseOut_2111/* : UnknownType */)/* : Self_7 */; };
+    static BounceEaseOut_4421 = function (p_4253/* : UnknownType */) /* : UnknownType */{ return LessThan_1995/* : UnknownType */(p_4253/* : UnknownType */, Divide_175/* : UnknownType */(4/* : Integer_11 */, 11/* : Float64_12 */)/* : UnknownType */)/* : UnknownType */
+        ? Multiply_172/* : Self_7 */(121/* : Float64_12 */, Divide_175/* : UnknownType */(Pow2_1981/* : UnknownType */(p_4253/* : UnknownType */)/* : UnknownType */, 16/* : Float64_12 */)/* : UnknownType */)/* : Self_7 */
+        : LessThan_1995/* : UnknownType */(p_4253/* : UnknownType */, Divide_175/* : UnknownType */(8/* : Integer_11 */, 11/* : Float64_12 */)/* : UnknownType */)/* : UnknownType */
+            ? Divide_175/* : Self_7 */(363/* : Float64_12 */, Multiply_172/* : UnknownType */(40/* : Float64_12 */, Subtract_185/* : UnknownType */(Pow2_1981/* : UnknownType */(p_4253/* : UnknownType */)/* : UnknownType */, Divide_175/* : UnknownType */(99/* : Float64_12 */, Multiply_172/* : UnknownType */(10/* : Float64_12 */, Add_163/* : UnknownType */(p_4253/* : UnknownType */, Divide_175/* : UnknownType */(17/* : Float64_12 */, 5/* : Float64_12 */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : Self_7 */
+            : LessThan_1995/* : UnknownType */(p_4253/* : UnknownType */, Divide_175/* : UnknownType */(9/* : Integer_11 */, 10/* : Float64_12 */)/* : UnknownType */)/* : UnknownType */
+                ? Divide_175/* : Self_7 */(4356/* : Float64_12 */, Multiply_172/* : UnknownType */(361/* : Float64_12 */, Subtract_185/* : UnknownType */(Pow2_1981/* : UnknownType */(p_4253/* : UnknownType */)/* : UnknownType */, Divide_175/* : UnknownType */(35442/* : Float64_12 */, Multiply_172/* : UnknownType */(1805/* : Float64_12 */, Add_163/* : UnknownType */(p_4253/* : UnknownType */, Divide_175/* : UnknownType */(16061/* : Float64_12 */, 1805/* : Float64_12 */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : Self_7 */
+                : Divide_175/* : Self_7 */(54/* : Float64_12 */, Multiply_172/* : UnknownType */(5/* : Float64_12 */, Subtract_185/* : UnknownType */(Pow2_1981/* : UnknownType */(p_4253/* : UnknownType */)/* : UnknownType */, Divide_175/* : UnknownType */(513/* : Float64_12 */, Multiply_172/* : UnknownType */(25/* : Float64_12 */, Add_163/* : UnknownType */(p_4253/* : UnknownType */, Divide_175/* : UnknownType */(268/* : Float64_12 */, 25/* : Float64_12 */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : Self_7 */
 
 
     ; };
-    static BounceEaseInOut_4431 = function (p_4422) { return BlendEaseFunc_2050(p_4422, BounceEaseIn_2110, BounceEaseOut_2112); };
+    static BounceEaseInOut_4431 = function (p_4422/* : Easings_141 */) /* : UnknownType */{ return BlendEaseFunc_2049/* : UnknownType */(p_4422/* : UnknownType */, BounceEaseIn_2109/* : UnknownType */, BounceEaseOut_2111/* : UnknownType */)/* : UnknownType */; };
 }
 class Intrinsics_142_Library
 {
-    static Interpolate_4434 = function (xs_4432) { return intrinsic_0; };
-    static Throw_4437 = function (x_4435) { return intrinsic_0; };
-    static TypeOf_4440 = function (x_4438) { return intrinsic_0; };
-    static New_4443 = function (x_4441) { return intrinsic_0; };
+    static Interpolate_4434 = function (xs_4432/* : Any_6 */) /* : UnknownType */{ return intrinsic_0/* : UnknownType */; };
+    static Throw_4437 = function (x_4435/* : Any_6 */) /* : UnknownType */{ return intrinsic_0/* : UnknownType */; };
+    static TypeOf_4440 = function (x_4438/* : Any_6 */) /* : UnknownType */{ return intrinsic_0/* : UnknownType */; };
+    static New_4443 = function (x_4441/* : Any_6 */) /* : UnknownType */{ return intrinsic_0/* : UnknownType */; };
 }
 class Vector_14_Concept
 {
     constructor(self) { this.Self = self; };
-    static Count_2133 = function (v_2125) { return Count_27_Type(FieldTypes_211(Self_7_Primitive)); };
-    static At_2147 = function (v_2135, n_2137) { return At_251(FieldValues_219(v_2135), n_2137); };
+    static Count_2133 = function (v_2125/* : Vector_14 */) /* : Count_27 */{ return Count_27_Type/* : Count_27 */(FieldTypes_210/* : UnknownType */(Self_7_Primitive/* : UnknownType */)/* : UnknownType */)/* : Count_27 */; };
+    static At_2147 = function (v_2135/* : Vector_14 */, n_2137/* : Index_28 */) /* : T_143 */{ return At_148/* : T_143 */(FieldValues_218/* : UnknownType */(v_2135/* : UnknownType */)/* : UnknownType */, n_2137/* : UnknownType */)/* : T_143 */; };
 }
 class Measure_15_Concept
 {
     constructor(self) { this.Self = self; };
-    static Value_2159 = function (x_2149) { return At_251(FieldValues_219(x_2149), 0); };
+    static Value_2159 = function (x_2149/* : Self_7 */) /* : Number_29 */{ return At_148/* : T_143 */(FieldValues_218/* : UnknownType */(x_2149/* : UnknownType */)/* : UnknownType */, 0/* : Integer_11 */)/* : T_143 */; };
 }
 class Numerical_16_Concept
 {
@@ -381,75 +381,75 @@ class Numerical_16_Concept
 class Magnitude_17_Concept
 {
     constructor(self) { this.Self = self; };
-    static Magnitude_2175 = function (x_2161) { return SquareRoot_1918(Sum_1876(Square_1922(FieldValues_219(x_2161)))); };
+    static Magnitude_2175 = function (x_2161/* : Self_7 */) /* : Number_29 */{ return SquareRoot_1917/* : UnknownType */(Sum_1875/* : UnknownType */(Square_1921/* : UnknownType */(FieldValues_218/* : UnknownType */(x_2161/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; };
 }
 class Comparable_18_Concept
 {
     constructor(self) { this.Self = self; };
-    static Compare_2212 = function (a_2177, b_2179) { return LessThan_1996(Magnitude_155(a_2177), Magnitude_155(b_2179)
-        ? Negative_167(1)
-        : GreaterThan_2004(Magnitude_155(a_2177), Magnitude_155(b_2179)
-            ? 1
-            : 0
-        )
-    ); };
+    static Compare_2212 = function (a_2177/* : Self_7 */, b_2179/* : Self_7 */) /* : Integer_26 */{ return LessThan_1995/* : UnknownType */(Magnitude_154/* : UnknownType */(a_2177/* : UnknownType */)/* : UnknownType */, Magnitude_154/* : UnknownType */(b_2179/* : UnknownType */)/* : UnknownType */
+        ? Negative_166/* : UnknownType */(1/* : Integer_11 */)/* : UnknownType */
+        : GreaterThan_2003/* : UnknownType */(Magnitude_154/* : UnknownType */(a_2177/* : UnknownType */)/* : UnknownType */, Magnitude_154/* : UnknownType */(b_2179/* : UnknownType */)/* : UnknownType */
+            ? 1/* : Integer_11 */
+            : 0/* : Integer_11 */
+        )/* : UnknownType */
+    )/* : UnknownType */; };
 }
 class Equatable_19_Concept
 {
     constructor(self) { this.Self = self; };
-    static Equals_2232 = function (a_2214, b_2216) { return All_2046(Equals_1994(FieldValues_219(a_2214), FieldValues_219(b_2216))); };
+    static Equals_2232 = function (a_2214/* : Self_7 */, b_2216/* : Self_7 */) /* : Boolean_22 */{ return All_2045/* : UnknownType */(Equals_160/* : UnknownType */(FieldValues_218/* : UnknownType */(a_2214/* : UnknownType */)/* : UnknownType */, FieldValues_218/* : UnknownType */(b_2216/* : UnknownType */)/* : UnknownType */)/* : UnknownType */)/* : UnknownType */; };
 }
 class Arithmetic_20_Concept
 {
     constructor(self) { this.Self = self; };
-    static Add_2249 = function (self_2234, other_2236) { return Add_183(FieldValues_219(self_2234), FieldValues_219(other_2236)); };
-    static Negative_2259 = function (self_2251) { return Negative_167(FieldValues_219(self_2251)); };
-    static Reciprocal_2269 = function (self_2261) { return Reciprocal_170(FieldValues_219(self_2261)); };
-    static Multiply_2286 = function (self_2271, other_2273) { return Add_183(FieldValues_219(self_2271), FieldValues_219(other_2273)); };
-    static Divide_2303 = function (self_2288, other_2290) { return Divide_192(FieldValues_219(self_2288), FieldValues_219(other_2290)); };
-    static Modulo_2320 = function (self_2305, other_2307) { return Modulo_195(FieldValues_219(self_2305), FieldValues_219(other_2307)); };
+    static Add_2249 = function (self_2234/* : Self_7 */, other_2236/* : Self_7 */) /* : Self_7 */{ return Add_163/* : Self_7 */(FieldValues_218/* : UnknownType */(self_2234/* : UnknownType */)/* : UnknownType */, FieldValues_218/* : UnknownType */(other_2236/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
+    static Negative_2259 = function (self_2251/* : Self_7 */) /* : Self_7 */{ return Negative_166/* : Self_7 */(FieldValues_218/* : UnknownType */(self_2251/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
+    static Reciprocal_2269 = function (self_2261/* : Self_7 */) /* : Self_7 */{ return Reciprocal_169/* : Self_7 */(FieldValues_218/* : UnknownType */(self_2261/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
+    static Multiply_2286 = function (self_2271/* : Self_7 */, other_2273/* : Self_7 */) /* : Self_7 */{ return Add_163/* : Self_7 */(FieldValues_218/* : UnknownType */(self_2271/* : UnknownType */)/* : UnknownType */, FieldValues_218/* : UnknownType */(other_2273/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
+    static Divide_2303 = function (self_2288/* : Self_7 */, other_2290/* : Self_7 */) /* : Self_7 */{ return Divide_175/* : Self_7 */(FieldValues_218/* : UnknownType */(self_2288/* : UnknownType */)/* : UnknownType */, FieldValues_218/* : UnknownType */(other_2290/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
+    static Modulo_2320 = function (self_2305/* : Self_7 */, other_2307/* : Self_7 */) /* : Self_7 */{ return Modulo_178/* : Self_7 */(FieldValues_218/* : UnknownType */(self_2305/* : UnknownType */)/* : UnknownType */, FieldValues_218/* : UnknownType */(other_2307/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
 }
 class ScalarArithmetic_21_Concept
 {
     constructor(self) { this.Self = self; };
-    static Add_2335 = function (self_2323, scalar_2325) { return Add_183(FieldValues_219(self_2323), scalar_2325); };
-    static Subtract_2349 = function (self_2337, scalar_2339) { return Add_183(self_2337, Negative_167(scalar_2339)); };
-    static Multiply_2363 = function (self_2351, scalar_2353) { return Multiply_189(FieldValues_219(self_2351), scalar_2353); };
-    static Divide_2377 = function (self_2365, scalar_2367) { return Multiply_189(self_2365, Reciprocal_170(scalar_2367)); };
-    static Modulo_2391 = function (self_2379, scalar_2381) { return Modulo_195(FieldValues_219(self_2379), scalar_2381); };
+    static Add_2335 = function (self_2323/* : Self_7 */, scalar_2325/* : T_2321 */) /* : Self_7 */{ return Add_163/* : Self_7 */(FieldValues_218/* : UnknownType */(self_2323/* : UnknownType */)/* : UnknownType */, scalar_2325/* : UnknownType */)/* : Self_7 */; };
+    static Subtract_2349 = function (self_2337/* : Self_7 */, scalar_2339/* : T_2321 */) /* : Self_7 */{ return Add_163/* : Self_7 */(self_2337/* : UnknownType */, Negative_166/* : UnknownType */(scalar_2339/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
+    static Multiply_2363 = function (self_2351/* : Self_7 */, scalar_2353/* : T_2321 */) /* : Self_7 */{ return Multiply_172/* : Self_7 */(FieldValues_218/* : UnknownType */(self_2351/* : UnknownType */)/* : UnknownType */, scalar_2353/* : UnknownType */)/* : Self_7 */; };
+    static Divide_2377 = function (self_2365/* : Self_7 */, scalar_2367/* : T_2321 */) /* : Self_7 */{ return Multiply_172/* : Self_7 */(self_2365/* : UnknownType */, Reciprocal_169/* : UnknownType */(scalar_2367/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
+    static Modulo_2391 = function (self_2379/* : Self_7 */, scalar_2381/* : T_2321 */) /* : Self_7 */{ return Modulo_178/* : Self_7 */(FieldValues_218/* : UnknownType */(self_2379/* : UnknownType */)/* : UnknownType */, scalar_2381/* : UnknownType */)/* : Self_7 */; };
 }
 class Boolean_22_Concept
 {
     constructor(self) { this.Self = self; };
-    static And_2408 = function (a_2393, b_2395) { return And_198(FieldValues_219(a_2393), FieldValues_219(b_2395)); };
-    static Or_2425 = function (a_2410, b_2412) { return Or_201(FieldValues_219(a_2410), FieldValues_219(b_2412)); };
-    static Not_2435 = function (a_2427) { return Not_204(FieldValues_219(a_2427)); };
+    static And_2408 = function (a_2393/* : Self_7 */, b_2395/* : Self_7 */) /* : Self_7 */{ return And_197/* : Self_7 */(FieldValues_218/* : UnknownType */(a_2393/* : UnknownType */)/* : UnknownType */, FieldValues_218/* : UnknownType */(b_2395/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
+    static Or_2425 = function (a_2410/* : Self_7 */, b_2412/* : Self_7 */) /* : Self_7 */{ return Or_200/* : Self_7 */(FieldValues_218/* : UnknownType */(a_2410/* : UnknownType */)/* : UnknownType */, FieldValues_218/* : UnknownType */(b_2412/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
+    static Not_2435 = function (a_2427/* : Self_7 */) /* : Self_7 */{ return Not_203/* : Self_7 */(FieldValues_218/* : UnknownType */(a_2427/* : UnknownType */)/* : UnknownType */)/* : Self_7 */; };
 }
 class Value_23_Concept
 {
     constructor(self) { this.Self = self; };
-    static Type_2437 = function () { return intrinsic_0; };
-    static FieldTypes_2439 = function () { return intrinsic_0; };
-    static FieldNames_2441 = function () { return intrinsic_0; };
-    static FieldValues_2445 = function (self_2443) { return intrinsic_0; };
-    static Zero_2450 = function () { return Zero_222(FieldTypes_211); };
-    static One_2455 = function () { return One_225(FieldTypes_211); };
-    static Default_2460 = function () { return Default_228(FieldTypes_211); };
-    static MinValue_2465 = function () { return MinValue_231(FieldTypes_211); };
-    static MaxValue_2470 = function () { return MaxValue_234(FieldTypes_211); };
-    static ToString_2479 = function (x_2472) { return JoinStrings_2048(FieldValues_219, ","); };
+    static Type_2437 = function () /* : Type_13 */{ return intrinsic_0/* : UnknownType */; };
+    static FieldTypes_2439 = function () /* : Array_25 */{ return intrinsic_0/* : UnknownType */; };
+    static FieldNames_2441 = function () /* : Array_25 */{ return intrinsic_0/* : UnknownType */; };
+    static FieldValues_2445 = function (self_2443/* : Self_7 */) /* : Array_25 */{ return intrinsic_0/* : UnknownType */; };
+    static Zero_2450 = function () /* : Self_7 */{ return Zero_221/* : Self_7 */(FieldTypes_210/* : UnknownType */)/* : Self_7 */; };
+    static One_2455 = function () /* : Self_7 */{ return One_224/* : Self_7 */(FieldTypes_210/* : UnknownType */)/* : Self_7 */; };
+    static Default_2460 = function () /* : Self_7 */{ return Default_227/* : Self_7 */(FieldTypes_210/* : UnknownType */)/* : Self_7 */; };
+    static MinValue_2465 = function () /* : Self_7 */{ return MinValue_230/* : Self_7 */(FieldTypes_210/* : UnknownType */)/* : Self_7 */; };
+    static MaxValue_2470 = function () /* : Self_7 */{ return MaxValue_233/* : Self_7 */(FieldTypes_210/* : UnknownType */)/* : Self_7 */; };
+    static ToString_2479 = function (x_2472/* : Self_7 */) /* : String_9 */{ return JoinStrings_2047/* : UnknownType */(FieldValues_218/* : UnknownType */, ","/* : String_9 */)/* : UnknownType */; };
 }
 class Interval_24_Concept
 {
     constructor(self) { this.Self = self; };
-    static Min_2483 = function (x_2482) { return null; };
-    static Max_2486 = function (x_2485) { return null; };
+    static Min_2483 = function (x_2482/* : Self_7 */) /* : T_238 */{ return null; };
+    static Max_2486 = function (x_2485/* : Self_7 */) /* : T_238 */{ return null; };
 }
 class Array_25_Concept
 {
     constructor(self) { this.Self = self; };
-    static Count_2490 = function (xs_2489) { return null; };
-    static At_2495 = function (xs_2492, n_2494) { return null; };
+    static Count_2490 = function (xs_2489/* : Self_7 */) /* : Count_27 */{ return null; };
+    static At_2495 = function (xs_2492/* : Self_7 */, n_2494/* : Index_28 */) /* : T_245 */{ return null; };
 }
 class Integer_26_Type
 {
