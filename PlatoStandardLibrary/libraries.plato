@@ -1,19 +1,35 @@
 library Interval
 {
-    Size(x) => x.Max - x.Min;
-    IsEmpty(x) => x.Min >= x.Max;
-    Lerp(x, amount) => x.Min * (1.0 - amount) + x.Max * amount;
-    InverseLerp(x, value) => (value - x.Min) / x.Size;
-    Negate(x) => (-x.Max, -x.Min);
-    Reverse(x) => (x.Max, x.Min);
-    Resize(x, size) => (x.Min, x.Min + size);
-    Center(x) => x.Lerp(0.5);    
+    Size(x: Interval): Value 
+        => x.Max - x.Min;
+    
+    IsEmpty(x: Interval): Bool 
+        => x.Min >= x.Max;
+    
+    Lerp(x: Interval, amount: Unit): Value 
+        => x.Min * (1.0 - amount) + x.Max * amount;
+    
+    InverseLerp(x: Interval, value: Numerical): Unit 
+        => (value - x.Min) / x.Size;
+    
+    Negate(x: Interval): Interval 
+        => (-x.Max, -x.Min);
+    
+    Reverse(x: Interval): Interval 
+        => (x.Max, x.Min);
+    
+    Resize(x: Interval, size: Size): Interval 
+        => (x.Min, x.Min + size);
+    
+    Center(x: Interval): Value 
+        => x.Lerp(0.5);    
+    
     Contains(x, value) => x.Min <= value && value <= x.Max;
     Contains(x, other) => x.Min <= other.Min && Max >= other.Max;
     Overlaps(x, y) => !x.Clamp(y).IsEmpty;
     Split(x, t) => (x.Left(t), x.Right(t));
     Split(x) => x.Split(0.5);
-    Left(x, t) => (Min, x.Lerp(t));
+    Left(x, t) => (x.Min, x.Lerp(t));
     Right(x, t) => (x.Lerp(t), x.Max);
     MoveTo(x, t) => (t, t + x.Size);
     LeftHalf(x) => x.Left(0.5);
@@ -23,42 +39,34 @@ library Interval
     Clamp(x, y) => (x.Clamp(y.Min), x.Clamp(y.Max));
     Clamp(x, value) => value < x.Min ? x.Min : value > x.Max ? x.Max : value;
     Between(x, value) => value >= x.Min && value <= x.Max;
-    Unit() => (0, 1);
 }
 
 library Vector
 {
-    Sum(v) => v.Aggregate(0, Add); 
-    SumSquares(v) => v.Square.Aggregate(0, Add); 
-    LengthSquared(v) => v.SumSquares;
-    Length(v) => v.LengthSquared.SquareRoot;
-    Dot(v1, v2) => (v1 * v2).Sum;
+    Sum(v: Vector): Number 
+        => v.Aggregate(0, Add); 
+    
+    SumSquares(v: Vector): Number
+        => v.Square.Aggregate(0, Add); 
+    
+    LengthSquared(v: Vector): Number 
+        => v.SumSquares;
+    
+    Length(v: Vector): Number 
+        => v.LengthSquared.SquareRoot;
+    
+    Dot(v1: Vector, v2: Vector): Number 
+        => (v1 * v2).Sum;
+
+    Normal(v: Vector): Vector
+        => v / v.Length;
 }
 
 library Numerical
 {
-    Cos(x) => intrinsic;
-    Sin(x) => intrinsic;
-    Tan(x) => intrinsic;
-    Acos(x) => intrinsic;
-    Asin(x) => intrinsic;
-    Atan(x) => intrinsic;
-    Cosh(x) => intrinsic;
-    Sinh(x) => intrinsic;
-    Tanh(x) => intrinsic;
-    Acosh(x) => intrinsic;
-    Asinh(x) => intrinsic;
-    Atanh(x) => intrinsic;
-
-    Pow(x, y) => intrinsic;
-    Log(x, y) => intrinsic;
-    NaturalLog(x) => intrinsic;
-    NaturalPower(x) => intrinsic;
-
     SquareRoot(x) => Pow(x, 0.5);
-    CubeRoot(x) => Pow(x, 0.5);
     Square(x) => Value * Value;
-    Clamp(x, min, max) => x.Clamp(Interval(min, max));
+    Clamp(x, min, max) => x.Clamp((min, max));
     Clamp(x, i) => i.Clamp(x);
     Clamp(x) => Clamp(x, 0, 1);
     PlusOne(x) => x + 1;
@@ -92,54 +100,91 @@ library Numerical
     Pow4(x) => x.Pow3 * x;
     Pow5(x) => x.Pow4 * x;
 
-    // TODO: Improve these
-    Turns(x) => x * 3.1415926535897 * 2;
-    AlmostZero(x) => x.Abs < 0.00000001; 
+    Degrees(x: Number): Angle
+        
+    Turns(x: Number): Angle 
+        => x * 3.1415926535897 * 2;
+    
+    AlmostZero(x: Numerical): Bool
+        => x.Abs < 0.00000001; 
 }
 
 library Comparable
 {
-    Equals(a, b) => a.Compare(b) == 0;
-    LessThan(a, b) => a.Compare(b) < 0;
-    Lesser(a, b) => a.LessThanOrEquals(b) ? a : b;
-    Greater(a, b) => a.GreaterThanOrEquals(b) ? a : b;
-    LessThanOrEquals(a, b) => a.Compare(b) <= 0;
-    GreaterThan(a, b) => a.Compare(b) > 0;
-    GreaterThanOrEquals(a, b) => a.Compare(b) >= 0;
-    Min(a, b) => a.LessThan(b) ? a : b;
-    Max(a, b) => a.GreaterThan(b) ? a : b;
-    Between(v, a, b) => v.Between(Interval(a, b));
-    Between(v, i) => i.Contains(v);
-}
-
-library Boolean
-{
-    XOr(a, b) => a ? !b : b;
-    NAnd(a, b) => !And(a, b);
-    NOr(a, b) => !Or(a, b);
+    Equals(a: Comparable, b: Comparable): Bool 
+        => a.Compare(b) == 0;
+    
+    LessThan(a: Comparable, b: Comparable): Bool 
+        => a.Compare(b) < 0;
+    
+    LessThanOrEquals(a: Comparable, b: Comparable) 
+        => a.Compare(b) <= 0;
+    
+    GreaterThan(a: Comparable, b: Comparable): Bool 
+        => a.Compare(b) > 0;
+    
+    GreaterThanOrEquals(a: Comparable, b: Comparable): Bool 
+        => a.Compare(b) >= 0;
+    
+    Between(v: Value, a: Value, b: Value): Value 
+        => v.Between((a, b));
+    
+    Between(v: Value, i: Interval): Interval 
+        => i.Contains(v);
+    
+    Min(a: Comparable, b: Comparable): Comparable 
+        => a.LessThanOrEquals(b) ? a : b;
+    
+    Max(a: Comparable, b: Comparable): Comparable 
+        => a.GreaterThanOrEquals(b) ? a : b;
 }
 
 library Equatable
 {
-    NotEquals(x) => !Equals(x);
+    NotEquals(x: Equatable, y: Equatable): Bool
+        => !x.Equals(y);
 }
 
 library Array
 {
-    Map(xs, f) => Map(xs.Count, i => f(xs.At(i)));
-    Zip(xs, ys, f) => Array(xs.Count, i => f(At(i), ys.At(i)));
-    Skip(xs, n) => Array(Count - n, i => At(i - n));
-    Take(xs, n) => Array(n, i => At);
-    Aggregate(xs, init, f) => xs.IsEmpty ? init : f(init, f(xs.Rest));
-    Rest(xs) => Skip(1);
-    IsEmpty(xs) => xs.Count == 0;
-    First(xs) => xs.At(0);
-    Last(xs) => xs.At(xs.Count - 1);
-    Slice(xs, from, count) => xs.Skip(from).Take(count);
-    Join(xs, sep) => xs.IsEmpty ? "" : xs.First.ToString + xs.Skip(1).Aggregate("", (acc, cur) => $"{acc}{sep}{cur}");
-    All(xs, f) => xs.IsEmpty ? true : f(xs.First) && f(xs.Rest);
-    JoinStrings(xs, sep) => xs.IsEmpty ? "" : xs.First + xs.Rest.Aggregate("", (x, acc) => acc + ", " + x.ToString);
-}
+    Map(xs: Array, f: Function1): Array 
+        => Map(xs.Count, i => f(xs.At(i)));
+
+    Zip(xs: Array, ys: Array, f: Function2): Array 
+        => (xs.Count, i => f(At(i), ys.At(i)));
+    
+    Skip(xs: Array, n: Count): Array
+        => (Count - n, i => At(i - n));
+    
+    Take(xs: Array, n: Count): Array
+        => Array(n, i => At);   
+    
+    Aggregate(xs: Array, init: Any, f: Function): Any 
+        => xs.IsEmpty ? init : f(init, f(xs.Rest));
+
+    Rest(xs: Array): Array 
+        => xs.Skip(1);
+    
+    IsEmpty(xs: Array): Bool
+        => xs.Count == 0;
+    
+    First(xs: Array): Any 
+        => xs.At(0);
+    
+    Last(xs: Array): Any
+        => xs.At(xs.Count - 1);
+    
+    Slice(xs: Array, from: Index, count: Count): Array 
+        => xs.Skip(from).Take(count);
+    
+    Join(xs: Array, sep: String): String 
+        => xs.IsEmpty 
+                ? "" 
+                : xs.First.ToString + xs.Rest.Aggregate("", (acc, cur) => $"{acc}{sep}{cur}");
+    
+    All(xs: Array, f: Function1): Bool 
+        => xs.IsEmpty ? true : f(xs.First) && f(xs.Rest);
+ 
 
 library Easings
 {
@@ -151,52 +196,105 @@ library Easings
     // This is an extremely good example of why Plato matters as a language. 
     // When we look at the source code of the two other implementations. 
 
-    BlendEaseFunc(p, easeIn, easeOut) => p < 0.5 ? 0.5 * easeIn(p * 2) : 0.5 * easeOut(p * 2 - 1) + 0.5;
-    InvertEaseFunc(p, easeIn) => 1 - easeIn(1 - p);
-
-    Linear(p) => p;
-    QuadraticEaseIn(p) => p.Pow2;
-    QuadraticEaseOut(p) => InvertEaseFunc(p, QuadraticEaseIn);
-    QuadraticEaseInOut(p) => BlendEaseFunc(p, QuadraticEaseIn, QuadraticEaseOut);
-    CubicEaseIn(p) => p.Pow3;
-    CubicEaseOut(p) => InvertEaseFunc(p, CubicEaseIn);
-    CubicEaseInOut(p) => BlendEaseFunc(p, CubicEaseIn, CubicEaseOut);
-    QuarticEaseIn(p) => p.Pow4;
-    QuarticEaseOut(p) => InvertEaseFunc(p, QuarticEaseIn);
-    QuarticEaseInOut(p) => BlendEaseFunc(p, QuarticEaseIn, QuarticEaseOut);
-    QuinticEaseIn(p) => p.Pow5;
-    QuinticEaseOut(p) => InvertEaseFunc(p, QuinticEaseIn);
-    QuinticEaseInOut(p) => BlendEaseFunc(p, QuinticEaseIn, QuinticEaseOut);
-    SineEaseIn(p) => InvertEaseFunc(p, SineEaseOut);
-    SineEaseOut(p) => p.Quarter.Turns.Sin;
-    SineEaseInOut(p) => BlendEaseFunc(p, SineEaseIn, SineEaseOut);
-    CircularEaseIn(p) => p.Pow2.FromOne.SquareRoot.FromOne;
-    CircularEaseOut(p) => InvertEaseFunc(p, CircularEaseIn);
-    CircularEaseInOut(p) => BlendEaseFunc(p, CircularEaseIn, CircularEaseOut);
-    ExponentialEaseIn(p) => p.AlmostZero ? p : 2.Pow(10 * p.MinusOne);
-    ExponentialEaseOut(p) => InvertEaseFunc(p, ExponentialEaseIn);
-    ExponentialEaseInOut(p) => BlendEaseFunc(p, ExponentialEaseIn, ExponentialEaseOut);
-    ElasticEaseIn(p) => 13 * p.Quarter.Turns * 2.Pow(10 * p.MinusOne).Radians.Sin;
-    ElasticEaseOut(p) => InvertEaseFunc(p, ElasticEaseIn);
-    ElasticEaseInOut(p) => BlendEaseFunc(p, ElasticEaseIn, ElasticEaseOut);
-    BackEaseIn(p) => p.Pow3 - p * p.Half.Turns.Sin;
-    BackEaseOut(p) => InvertEaseFunc(p, BackEaseIn);
-    BackEaseInOut(p) => BlendEaseFunc(p, BackEaseIn, BackEaseOut);
-    BounceEaseIn(p) => InvertEaseFunc(p, BounceEaseOut);
+    BlendEaseFunc(p: Number, easeIn: Function1, easeOut: Function1): Number 
+        => p < 0.5 ? 0.5 * easeIn(p * 2) : 0.5 * easeOut(p * 2 - 1) + 0.5;
     
-    BounceEaseOut(p) => 
+    InvertEaseFunc(p: Number, easeIn: Function1): Number 
+        => 1 - easeIn(1 - p);
+
+    Linear(p: Number): Number 
+        => p;
+
+    QuadraticEaseIn(p: Number): Number 
+        => p.Pow2;
+    
+    QuadraticEaseOut(p: Number): Number
+        => InvertEaseFunc(p, QuadraticEaseIn);
+    
+    QuadraticEaseInOut(p: Number): Number
+        => BlendEaseFunc(p, QuadraticEaseIn, QuadraticEaseOut);
+    
+    CubicEaseIn(p: Number): Number 
+        => p.Pow3;
+    
+    CubicEaseOut(p: Number): Number
+        => InvertEaseFunc(p, CubicEaseIn);
+    
+    CubicEaseInOut(p: Number): Number 
+        => BlendEaseFunc(p, CubicEaseIn, CubicEaseOut);
+    
+    QuarticEaseIn(p: Number): Number
+        => p.Pow4;
+    
+    QuarticEaseOut(p: Number): Number 
+        => InvertEaseFunc(p, QuarticEaseIn);
+    
+    QuarticEaseInOut(p: Number): Number 
+        => BlendEaseFunc(p, QuarticEaseIn, QuarticEaseOut);
+    
+    QuinticEaseIn(p: Number): Number 
+        => p.Pow5;
+    
+    QuinticEaseOut(p: Number): Number 
+        => InvertEaseFunc(p, QuinticEaseIn);
+    
+    QuinticEaseInOut(p: Number): Number
+        => BlendEaseFunc(p, QuinticEaseIn, QuinticEaseOut);
+    
+    SineEaseIn(p: Number): Number
+        => InvertEaseFunc(p, SineEaseOut);
+
+    SineEaseOut(p: Number): Number 
+        => p.Quarter.Turns.Sin;
+    
+    SineEaseInOut(p: Number): Number
+        => BlendEaseFunc(p, SineEaseIn, SineEaseOut);
+    
+    CircularEaseIn(p: Number): Number 
+        => p.Pow2.FromOne.SquareRoot.FromOne;
+    
+    CircularEaseOut(p: Number): Number 
+        => InvertEaseFunc(p, CircularEaseIn);
+    
+    CircularEaseInOut(p: Number): Number 
+        => BlendEaseFunc(p, CircularEaseIn, CircularEaseOut);
+    
+    ExponentialEaseIn(p: Number): Number 
+        => p.AlmostZero ? p : 2.Pow(10 * p.MinusOne);
+    
+    ExponentialEaseOut(p: Number): Number 
+        => InvertEaseFunc(p, ExponentialEaseIn);
+    
+    ExponentialEaseInOut(p: Number): Number 
+        => BlendEaseFunc(p, ExponentialEaseIn, ExponentialEaseOut);
+    
+    ElasticEaseIn(p: Number): Number 
+        => 13 * p.Quarter.Turns * 2.Pow(10 * p.MinusOne).Radians.Sin;
+    
+    ElasticEaseOut(p: Number): Number 
+        => InvertEaseFunc(p, ElasticEaseIn);
+    
+    ElasticEaseInOut(p: Number): Number 
+        => BlendEaseFunc(p, ElasticEaseIn, ElasticEaseOut);
+    
+    BackEaseIn(p: Number): Number 
+        => p.Pow3 - p * p.Half.Turns.Sin;
+    
+    BackEaseOut(p: Number): Number 
+        => InvertEaseFunc(p, BackEaseIn);
+    
+    BackEaseInOut(p: Number): Number 
+        => BlendEaseFunc(p, BackEaseIn, BackEaseOut);
+    
+    BounceEaseIn(p: Number): Number 
+        => InvertEaseFunc(p, BounceEaseOut);
+    
+    BounceEaseOut(p: Number): Number => 
         (p < 4 / 11.0) ? 121.0 * p.Pow2 / 16.0
         : (p < 8 / 11.0) ? 363.0 / 40.0 * p.Pow2 - 99.0 / 10.0 * p + 17.0 / 5.0
         : (p < 9 / 10.0) ? 4356.0 / 361.0 * p.Pow2 - 35442.0 / 1805.0 * p + 16061.0 / 1805.0
         : 54.0 / 5.0 * p.Pow2 - 513.0 / 25.0 * p + 268.0 / 25.0;
     
-    BounceEaseInOut(p) => BlendEaseFunc(p, BounceEaseIn, BounceEaseOut);
-}
-
-library Intrinsics
-{
-    Interpolate(xs) => intrinsic;
-    Throw(x) => intrinsic;
-    TypeOf(x) => intrinsic;
-    New(x) => intrinsic;
+    BounceEaseInOut(p: Number) 
+        => BlendEaseFunc(p: Number, BounceEaseIn, BounceEaseOut);
 }

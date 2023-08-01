@@ -1,0 +1,42 @@
+﻿library Intrinsics
+{
+    Cos(x: Float): Float;
+    Sin(x: Float): Float;
+    Tan(x: Float): Float;
+    Acos(x: Float): Float;
+    Asin(x: Float): Float;
+    Atan(x: Float): Float;
+    Cosh(x: Float): Float;
+    Sinh(x: Float): Float;
+    Tanh(x: Float): Float; 
+    Acosh(x: Float): Float;
+    Asinh(x: Float): Float;
+    Atanh(x: Float): Float;
+
+    Pow(x: Float, y: Float): Float;
+    Log(x: Float, y: Float): Float;
+    NaturalLog(x: Float): Float;
+    NaturalPower(x: Float): Float;
+
+    Interpolate(xs: Array<String>): String;
+    Throw(x: Any): Any;
+    TypeOf(x: Any): Type;
+
+    Add(x: Float, y: Float): Float;
+    Subtract(x: Float, y: Float): Float;
+    Divide(x: Float, y: Float): Float;
+    Multiply(x: Float, y: Float): Float;
+    Modulo(x: Float, y: Float): Float;
+    Negative(x: Float): Float;
+
+    Add(x: Int, y: Int): Int;
+    Subtract(x: Int, y: Int): Int;
+    Divide(x: Int, y: Int): Int;
+    Multiply(x: Int, y: Int): Int;
+    Modulo(x: Int, y: Int): Int;
+    Negative(x: Int): Int;
+
+    And(x: Bool, y: Bool): Bool;
+    Or(x: Bool, y: Bool): Bool;
+    Not(x: Bool): Bool;
+}

@@ -1,5 +1,3 @@
-
-
 concept Vector<T: Numerical> 
     inherits Array<T>, Value, Numerical, Arithmetic<T>
 {
