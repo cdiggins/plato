@@ -1,42 +1,40 @@
 ﻿library Intrinsics
 {
-    Cos(x: Float): Float;
-    Sin(x: Float): Float;
-    Tan(x: Float): Float;
-    Acos(x: Float): Float;
-    Asin(x: Float): Float;
-    Atan(x: Float): Float;
-    Cosh(x: Float): Float;
-    Sinh(x: Float): Float;
-    Tanh(x: Float): Float; 
-    Acosh(x: Float): Float;
-    Asinh(x: Float): Float;
-    Atanh(x: Float): Float;
+    Cos(x: Angle): Number;
+    Sin(x: Angle): Number;
+    Tan(x: Angle): Number;
+    Acos(x: Number): Angle;
+    Asin(x: Number): Angle;
+    Atan(x: Number): Angle;    
 
-    Pow(x: Float, y: Float): Float;
-    Log(x: Float, y: Float): Float;
-    NaturalLog(x: Float): Float;
-    NaturalPower(x: Float): Float;
+    Pow(x: Number, y: Number): Number;
+    Log(x: Number, y: Number): Number;
+    NaturalLog(x: Number): Number;
+    NaturalPower(x: Number): Number;
 
-    Interpolate(xs: Array<String>): String;
+    Interpolate(xs: Array): String;
     Throw(x: Any): Any;
     TypeOf(x: Any): Type;
 
-    Add(x: Float, y: Float): Float;
-    Subtract(x: Float, y: Float): Float;
-    Divide(x: Float, y: Float): Float;
-    Multiply(x: Float, y: Float): Float;
-    Modulo(x: Float, y: Float): Float;
-    Negative(x: Float): Float;
+    Add(x: Number, y: Number): Number;
+    Subtract(x: Number, y: Number): Number;
+    Divide(x: Number, y: Number): Number;
+    Multiply(x: Number, y: Number): Number;
+    Modulo(x: Number, y: Number): Number;
+    Negative(x: Number): Number;
 
-    Add(x: Int, y: Int): Int;
-    Subtract(x: Int, y: Int): Int;
-    Divide(x: Int, y: Int): Int;
-    Multiply(x: Int, y: Int): Int;
-    Modulo(x: Int, y: Int): Int;
-    Negative(x: Int): Int;
+    Add(x: Integer, y: Integer): Integer;
+    Subtract(x: Integer, y: Integer): Integer;
+    Divide(x: Integer, y: Integer): Integer;
+    Multiply(x: Integer, y: Integer): Integer;
+    Modulo(x: Integer, y: Integer): Integer;
+    Negative(x: Integer): Integer;
 
-    And(x: Bool, y: Bool): Bool;
-    Or(x: Bool, y: Bool): Bool;
-    Not(x: Bool): Bool;
+    And(x: Boolean, y: Boolean): Boolean;
+    Or(x: Boolean, y: Boolean): Boolean;
+    Not(x: Boolean): Boolean;
+
+    FieldTypes(x: Any): Array<Type>;
+    FieldNames(x: Any): Array<String>;
+    FieldValues(x: Any): Array<Any>;
 }

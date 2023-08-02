@@ -27,6 +27,8 @@ namespace Plato.Compiler
         {
             BindPredefined(null, "intrinsic");
             BindPredefined(null, "Tuple");
+            BindType(PrimitiveTypes.Tuple);
+            BindType(PrimitiveTypes.Function);
             BindType(PrimitiveTypes.Any);
             BindType(PrimitiveTypes.Self);
             BindType(PrimitiveTypes.String);
@@ -96,7 +98,7 @@ namespace Plato.Compiler
 
             var tds = sym as TypeDefSymbol;
 
-            // TODO: Won't resolve if the type is a parimitive. Will al nameso potneitally conflict with values.
+            // TODO: Won't resolve if the type is a parimitive. Will all names potneitally conflict with values.
             // I think I need to have type versus value scopes (or name binding). 
 
             return new TypeRefSymbol(tds, astTypeNode.TypeArguments.Select(ResolveType).ToArray());

@@ -11,11 +11,6 @@ namespace PlatoWinFormsEditor
             InitializeComponent();
             richTextBoxInput.Text = IDE.Input;
             richTextBoxOutput.Text = IDE.Output;
-            richTextBoxParseTree.Text = IDE.ParseTree;
-            richTextBoxCst.Text = IDE.CstXml;
-            richTextBoxAst.Text = IDE.AstXml;
-            richTextBoxJavaScript.Text = IDE.Compilation.ToJavaScript();
-            richTextBoxSymbols.Text = IDE.AbstractValuesXml;
         }
     }
 }

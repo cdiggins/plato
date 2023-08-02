@@ -19,12 +19,6 @@ namespace Plato.Compiler
         public SymbolWriterJavaScript Write(IEnumerable<Symbol> symbols)
             => symbols.Aggregate(this, (writer, symbol) => writer.Write(symbol));
 
-        public SymbolWriterJavaScript WriteStartBlock()
-            => WriteLine("{").Indent();
-
-        public SymbolWriterJavaScript WriteEndBlock()
-            => Dedent().WriteLine("}");
-
         public SymbolWriterJavaScript WriteBlock(IEnumerable<Symbol> symbols)
             => symbols.Aggregate(WriteStartBlock(),
                 (w, s) => w.Write(s)).WriteEndBlock();

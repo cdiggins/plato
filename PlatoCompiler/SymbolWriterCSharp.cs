@@ -1,6 +1,7 @@
 ﻿using Parakeet;
 using System.Collections.Generic;
 using System;
+using System.Data;
 using System.Linq;
 
 namespace Plato.Compiler
@@ -11,28 +12,9 @@ namespace Plato.Compiler
 
         public SymbolWriterCSharp(TypeResolver tg)
             => TypeResolver = tg;
-
-        public SymbolWriterCSharp WriteBlock(params Symbol[] symbols)
-            => WriteBlock((IEnumerable<Symbol>)symbols, false);
-
+        
         public SymbolWriterCSharp Write(IEnumerable<Symbol> symbols)
             => symbols.Aggregate(this, (writer, symbol) => writer.Write(symbol));
-
-        public SymbolWriterCSharp WriteBlock(IEnumerable<Symbol> symbols, bool semiColons)
-        {
-            var r = WriteLine("{").Indent();
-            foreach (var symbol in symbols)
-            {
-                r = r.Write(symbol);
-                
-                if (semiColons)
-                    r = r.WriteLine(";");
-                else
-                    r = r.WriteLine("");
-            }
-            r = r.Dedent().WriteLine("}");
-            return r;
-        }
 
         public SymbolWriterCSharp WriteTypeDecl(TypeRefSymbol typeRef, string defaultType = "var")
         {
@@ -67,21 +49,25 @@ namespace Plato.Compiler
                 return Write("(")
                     .WriteCommaList(function.Parameters.Select(p => p.Name))
                     .WriteLine(") => ")
-                    .WriteConstraints(function)
+                    //.WriteConstraints(function)
                     .Write(function.Body);
             }
 
-            // TODO: 
-            // var node = function.Location;
+            // Functions with no bodies are intrinsics
+            if (function.Body == null)
+                return this;
 
-            // function.T
             return WriteTypeDecl(function.Type, "void")
                 .Write(function.Name)
                 .Write("(")
                 .WriteCommaList(function.Parameters)
                 .WriteLine(")")
-                .WriteConstraints(function)
-                .Write(function.Body);
+                //.WriteConstraints(function)
+                .WriteStartBlock()
+                .Write("return ")
+                .Write(function.Body)
+                .WriteLine(";")
+                .WriteEndBlock();
         }
 
         public SymbolWriterCSharp WriteCommaList(IEnumerable<Symbol> symbols)
@@ -114,20 +100,143 @@ namespace Plato.Compiler
             return r;
         }
 
+        public SymbolWriterCSharp WriteMembersAsExtensionMethods(IEnumerable<MemberDefSymbol> members)
+        {
+            foreach (var member in members )
+            {
+                if (!(member is MethodDefSymbol mds))
+                    throw new Exception("Only methods supported as extension methods");
+
+                Write("public static ")
+                    .WriteTypeDecl(mds.Type, "void")
+                    .Write(mds.Name)
+                    .Write("(")
+                    .Write(mds.Function.Parameters.Count > 0 ? "this " : "")
+                    .WriteCommaList(mds.Function.Parameters)
+                    .WriteLine(")")
+                    //.WriteConstraints(function)
+                    .WriteStartBlock()
+                    .Write("return ")
+                    .Write(mds.Function.Body)
+                    .WriteLine(";")
+                    .WriteEndBlock();
+            }
+
+            return this;
+        }
+
+        public string GetName(TypeRefSymbol tr)
+        {
+            // TODO: slightly more complicated when actually passing arguments and stuff. 
+            return tr.Name;
+        }
+
+        public SymbolWriterCSharp WriteConstructor(TypeDefSymbol t)
+        {
+            if (!t.IsType()) throw new NotSupportedException();
+            var name = t.Name;
+            var fieldTypes = t.Fields.Select(f => GetName(f.Type)).ToList();
+            var fieldNames = t.Fields.Select(f => $"{f.Name}").ToList();
+            var parameterList = string.Join(", ", t.Fields.Select(f => $"{GetName(f.Type)} _{f.Name}"));
+            var parameterNamesString = string.Join(", ", t.Fields.Select(f => $"_{f.Name}"));
+            var fieldTypesString = string.Join(", ", fieldTypes);
+            var fieldNamesString = string.Join(", ", fieldNames);
+
+            WriteLine($"public {name}({parameterList}) => ({fieldNamesString}) = ({parameterNamesString});");
+            WriteLine($"public static New({parameterList}) => new({parameterNamesString});");
+            if (t.Fields.Count > 1)
+            {
+                var qualifiedFieldNames = string.Join(", ", fieldNames.Select(f => $"self.{f}"));
+                var tupleNames = string.Join(", ", Enumerable.Range(1, t.Fields.Count).Select(i => $"value.Item{i}"));
+                WriteLine($"public static implicit operator ({fieldTypesString})({name} self) => ({qualifiedFieldNames});");
+                WriteLine($"public static implicit operator {name}(({fieldTypesString}) value) => new {name}({tupleNames});");
+            }
+            else if (t.Fields.Count == 1)
+            {
+                var fieldName = t.Fields[0].Name;
+                var fieldType = GetName(t.Fields[0].Type);
+                WriteLine($"public static implicit operator {fieldType}({name} self) => self.{fieldName};");
+                WriteLine($"public static implicit operator {name}({fieldType} value) => new {fieldType}(value);");
+            }
+
+            var fieldNamesAsStrings = string.Join(", ", fieldNames.Select(f => $"\"{f}\""));
+            WriteLine($"public string[] FieldNames() => new[] {{ {fieldNamesAsStrings} }};");
+            WriteLine($"public object[] FieldValues() => new[] {{ {fieldNamesString} }};");
+
+            // TODO: output the static methods. 
+            // TODO: add all appropriate operators 
+            // TODO: output all zero parameter methods as properties 
+
+            // TODO: add all appropriate functions as extension methods
+
+            return this;
+        }
+
+        public static bool IsSelfType(TypeRefSymbol rs)
+            => rs.Def.Equals(PrimitiveTypes.Self);
+
+        public static bool IsTypePreservingConcept(TypeDefSymbol typeDef)
+        {
+            if (!typeDef.IsConcept()) return false;
+            foreach (var m in typeDef.Methods)
+            {
+                if (IsSelfType(m.Function.Type))
+                    return true;
+                for (var i=1; i < m.Function.Parameters.Count; ++i)
+                    if (IsSelfType(m.Function.Parameters[i].Type))
+                        return true;
+            }
+
+            return typeDef.Inherits.Any(tr => IsTypePreservingConcept(tr.Def));
+        }
+
         public SymbolWriterCSharp Write(TypeDefSymbol typeDef)
         {
-            if (typeDef.Kind == TypeKind.Concept)
+            if (typeDef.IsConcept())
             {
                 var fullName = $"{typeDef.Name}<Self>";
-                return Write("interface ").Write(fullName).Write(" where ")
+                var inherited = typeDef.Inherits.Count > 0
+                    ? ": " + string.Join(", ", typeDef.Inherits.Select(td => $"{td.Name}<Self>"))
+                    : "";
+
+                return Write("public interface ").Write(fullName)
+                    .WriteLine(inherited)   
+                    .Write(" where ")
                     .WriteLine($"Self : {fullName}")
-                    .WriteBlock(typeDef.Members, false);
+                    .WriteStartBlock()
+                    .Write(typeDef.Members)
+                    .WriteEndBlock();
             }
-            else 
-            //if (typeDef.Kind == "type")
+            
+            if (typeDef.IsType())
             {
-                return Write("class ").WriteLine(typeDef.Name).WriteBlock(typeDef.Members, false);
+                var implements = typeDef.Implements.Count > 0
+                    ? ": " + string.Join(", ", typeDef.Implements.Select(td => $"{td.Name}<{typeDef.Name}>"))
+                    : "";
+                return Write("public class ")
+                    .Write(typeDef.Name)
+                    .WriteLine(implements)
+                    .WriteStartBlock()
+                    .WriteConstructor(typeDef)
+                    .Write(typeDef.Members)
+                    .WriteEndBlock();
+
+                // TODO: write properties
+                // TODO: write "With" functions
+                // TODO: write implicit casts 
+                // TODO: write operator overloads 
             }
+
+            if (typeDef.IsLibrary())
+            {
+                return Write("public static class ")
+                    .Write(typeDef.Name)
+                    .WriteStartBlock()
+                    .WriteMembersAsExtensionMethods(typeDef.Members)
+                    .WriteEndBlock();
+            }
+
+            throw new Exception($"Unrecognized kind of type {typeDef.Kind}");
         }
 
         public SymbolWriterCSharp Write(Symbol value)
@@ -158,7 +267,7 @@ namespace Plato.Compiler
                         .Dedent().WriteLine();
 
                 case FieldDefSymbol fieldDef:
-                    return WriteTypeDecl(fieldDef.Type).Write(fieldDef.Name).Write(";");
+                    return Write("public ").WriteTypeDecl(fieldDef.Type).Write(fieldDef.Name).Write(" { get; }").WriteLine();
 
                 case FunctionSymbol function:
                     return Write(function);

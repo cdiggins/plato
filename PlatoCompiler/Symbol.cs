@@ -90,7 +90,6 @@ namespace Plato.Compiler
         public static TypeDefSymbol Function = Create("Function");
         public static TypeDefSymbol Any = Create("Any");
         public static TypeDefSymbol Self = Create("Self");
-
         public static TypeDefSymbol Tuple = Create("Tuple");
 
         public static TypeDefSymbol String = Create("String");
@@ -240,7 +239,7 @@ namespace Plato.Compiler
 
     public class TypeRefSymbol : Symbol
     {
-        public string Name => Def?.UniqueName ?? "unresolved";
+        public string Name => Def?.Name ?? "unresolved";
         public TypeDefSymbol Def { get; }
         public IReadOnlyList<TypeRefSymbol> TypeArgs { get; }
 

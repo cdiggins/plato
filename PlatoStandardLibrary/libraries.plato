@@ -3,10 +3,10 @@ library Interval
     Size(x: Interval): Value 
         => x.Max - x.Min;
     
-    IsEmpty(x: Interval): Bool 
+    IsEmpty(x: Interval): Boolean 
         => x.Min >= x.Max;
     
-    Lerp(x: Interval, amount: Unit): Value 
+    Lerp(x: Interval, amount: Unit): Numerical 
         => x.Min * (1.0 - amount) + x.Max * amount;
     
     InverseLerp(x: Interval, value: Numerical): Unit 
@@ -18,27 +18,56 @@ library Interval
     Reverse(x: Interval): Interval 
         => (x.Max, x.Min);
     
-    Resize(x: Interval, size: Size): Interval 
+    Resize(x: Interval, size: Numerical): Interval 
         => (x.Min, x.Min + size);
     
-    Center(x: Interval): Value 
+    Center(x: Interval): Numerical
         => x.Lerp(0.5);    
     
-    Contains(x, value) => x.Min <= value && value <= x.Max;
-    Contains(x, other) => x.Min <= other.Min && Max >= other.Max;
-    Overlaps(x, y) => !x.Clamp(y).IsEmpty;
-    Split(x, t) => (x.Left(t), x.Right(t));
-    Split(x) => x.Split(0.5);
-    Left(x, t) => (x.Min, x.Lerp(t));
-    Right(x, t) => (x.Lerp(t), x.Max);
-    MoveTo(x, t) => (t, t + x.Size);
-    LeftHalf(x) => x.Left(0.5);
-    RightHalf(x) => x.Right(0.5);
-    HalfSize(x) => x.Size.Half;
-    Recenter(x, c) => (c - x.HalfSize, c + x.HalfSize);
-    Clamp(x, y) => (x.Clamp(y.Min), x.Clamp(y.Max));
-    Clamp(x, value) => value < x.Min ? x.Min : value > x.Max ? x.Max : value;
-    Between(x, value) => value >= x.Min && value <= x.Max;
+    Contains(x: Interval, value: Numerical): Boolean 
+        => x.Min <= value && value <= x.Max;
+    
+    Contains(x: Interval, other: Interval): Boolean 
+        => x.Min <= other.Min && Max >= other.Max;
+    
+    Overlaps(x: Interval, y: Interval): Boolean 
+        => !x.Clamp(y).IsEmpty;
+    
+    Split(x: Interval, t: Unit): Tuple 
+        => (x.Left(t), x.Right(t));
+    
+    Split(x: Interval): Tuple
+        => x.Split(0.5);
+
+    Left(x: Interval, t: Unit): Interval
+        => (x.Min, x.Lerp(t));
+    
+    Right(x: Interval, t: Unit): Interval
+        => (x.Lerp(t), x.Max);
+
+    MoveTo(x: Interval, v: Numerical): Interval
+        => (v, v + x.Size);
+    
+    LeftHalf(x: Interval): Interval 
+        => x.Left(0.5);
+    
+    RightHalf(x: Interval): Interval 
+        => x.Right(0.5);
+    
+    HalfSize(x: Interval): Numerical 
+        => x.Size.Half;
+    
+    Recenter(x: Interval, c: Numerical): Interval 
+        => (c - x.HalfSize, c + x.HalfSize);
+    
+    Clamp(x: Interval, y: Interval): Interval
+        => (x.Clamp(y.Min), x.Clamp(y.Max));
+    
+    Clamp(x: Interval, value: Numerical): Numerical 
+        => value < x.Min ? x.Min : value > x.Max ? x.Max : value;
+    
+    Within(x: Interval, value: Numerical): Boolean
+        => value >= x.Min && value <= x.Max;
 }
 
 library Vector
@@ -64,66 +93,160 @@ library Vector
 
 library Numerical
 {
-    SquareRoot(x) => Pow(x, 0.5);
-    Square(x) => Value * Value;
-    Clamp(x, min, max) => x.Clamp((min, max));
-    Clamp(x, i) => i.Clamp(x);
-    Clamp(x) => Clamp(x, 0, 1);
-    PlusOne(x) => x + 1;
-    MinusOne(x) => x - 1;
-    FromOne(x) => 1 - x;
-    Sign(x) => x < 0 ? -1 : x > 0 ? 1 : 0;
-    Abs(x) => Value < 0 ? -Value : Value;
-    Half(x) => x / 2;
-    Third(x) => x / 3;
-    Quarter(x) => x / 4;
-    Fifth(x) => x / 5;
-    Sixth(x) => x / 6;
-    Seventh(x) => x / 7;
-    Eighth(x) => x / 8;
-    Ninth(x) => x / 9;
-    Tenth(x) => x / 10;
-    Sixteenth(x) => x / 16;
-    Hundredth(x) => x / 100;
-    Thousandth(x) => x / 1000;
-    Millionth(x) => x / 1000 / 1000;
-    Billionth(x) => x / 1000 / 1000 / 1000;
-    Hundred(x) => x * 100;
-    Thousand(x) => x * 1000;
-    Million(x) => x * 1000 * 1000;
-    Billion(x) => x * 1000 * 1000 * 1000;
-    Twice(x) => x * 2;
-    Thrice(x) => x * 3;
-    SmoothStep(x) => x.Square * (3 - x.Twice);
-    Pow2(x) => x * x;
-    Pow3(x) => x.Pow2 * x;
-    Pow4(x) => x.Pow3 * x;
-    Pow5(x) => x.Pow4 * x;
+    SquareRoot(x: Numerical): Numerical 
+        => x.Pow(0.5);
+
+    Square(x: Numerical): Numerical 
+        => x * x;
+
+    Clamp(x: Numerical, i: Interval): Numerical 
+        => i.Clamp(x);
+
+    Clamp(x: Numerical): Numerical 
+        => Clamp(x, (0, 1));
+
+    PlusOne(x: Numerical): Numerical 
+        => x + x.One;
+
+    MinusOne(x: Numerical) 
+        => x - x.One;
+    
+    FromOne(x: Numerical): Numerical 
+        => x.One - x;
+
+    IsPositive(x: Numerical): Boolean
+        => x >= 0;
+
+    GtZ(x : Numerical): Boolean
+        => x > 0;
+
+    LtZ(x : Numerical): Boolean
+        => x < 0;
+
+    GtEqZ(x : Numerical): Boolean
+        => x >= 0;
+
+    LtEqZ(x : Numerical): Boolean
+        => x <= 0;
+
+    IsNegative(x: Numerical): Boolean
+        => x < 0;
+
+    Sign(x: Numerical): Numerical 
+        => x.LtZ ? -x.One : x.GtZ ? x.One : x.Zero;
+    
+    Abs(x: Numerical): Numerical 
+        => x.LtZ ? -x: x;
+    
+    Half(x: Numerical): Numerical 
+        => x / 2;
+    
+    Third(x: Numerical): Numerical 
+        => x / 3;
+    
+    Quarter(x: Numerical): Numerical 
+        => x / 4;
+
+    Fifth(x: Numerical): Numerical 
+        => x / 5;
+    
+    Sixth(x: Numerical): Numerical 
+        => x / 6;
+    
+    Seventh(x: Numerical): Numerical 
+        => x / 7;
+    
+    Eighth(x: Numerical): Numerical 
+        => x / 8;
+    
+    Ninth(x: Numerical): Numerical 
+        => x / 9;
+    
+    Tenth(x: Numerical): Numerical 
+        => x / 10;
+    
+    Sixteenth(x: Numerical): Numerical 
+        => x / 16;
+    
+    Hundredth(x: Numerical): Numerical 
+        => x / 100;
+    
+    Thousandth(x: Numerical): Numerical 
+        => x / 1000;
+    
+    Millionth(x: Numerical): Numerical 
+        => x / 1000 / 1000;
+    
+    Billionth(x: Numerical): Numerical 
+        => x / 1000 / 1000 / 1000;
+    
+    Hundred(x: Numerical): Numerical 
+        => x * 100;
+    
+    Thousand(x: Numerical): Numerical
+        => x * 1000;
+    
+    Million(x: Numerical): Numerical
+        => x * 1000 * 1000;
+    
+    Billion(x: Numerical): Numerical 
+        => x * 1000 * 1000 * 1000;
+    
+    Twice(x: Numerical): Numerical 
+        => x * 2;
+    
+    Thrice(x: Numerical): Numerical 
+        => x * 3;
+    
+    SmoothStep(x: Numerical): Numerical 
+        => x.Square * (3 - x.Twice);
+    
+    Pow2(x: Numerical): Numerical 
+        => x * x;
+    
+    Pow3(x: Numerical): Numerical 
+        => x.Pow2 * x;
+
+    Pow4(x: Numerical): Numerical 
+        => x.Pow3 * x;
+
+    Pow5(x: Numerical): Numerical 
+        => x.Pow4 * x;
+
+    Pi(): Number 
+        => 3.1415926535897;
+    
+    AlmostZero(x: Numerical): Boolean
+        => x.Abs < 0.00000001; 
+}
+
+library Angles 
+{
+    Radians(x : Number): Angle
+        => x;
 
     Degrees(x: Number): Angle
+        => x * Pi / 180; 
         
     Turns(x: Number): Angle 
-        => x * 3.1415926535897 * 2;
-    
-    AlmostZero(x: Numerical): Bool
-        => x.Abs < 0.00000001; 
+        => x * 2 * Pi;    
 }
 
 library Comparable
 {
-    Equals(a: Comparable, b: Comparable): Bool 
+    Equals(a: Comparable, b: Comparable): Boolean 
         => a.Compare(b) == 0;
     
-    LessThan(a: Comparable, b: Comparable): Bool 
+    LessThan(a: Comparable, b: Comparable): Boolean 
         => a.Compare(b) < 0;
     
     LessThanOrEquals(a: Comparable, b: Comparable) 
         => a.Compare(b) <= 0;
     
-    GreaterThan(a: Comparable, b: Comparable): Bool 
+    GreaterThan(a: Comparable, b: Comparable): Boolean 
         => a.Compare(b) > 0;
     
-    GreaterThanOrEquals(a: Comparable, b: Comparable): Bool 
+    GreaterThanOrEquals(a: Comparable, b: Comparable): Boolean 
         => a.Compare(b) >= 0;
     
     Between(v: Value, a: Value, b: Value): Value 
@@ -141,16 +264,16 @@ library Comparable
 
 library Equatable
 {
-    NotEquals(x: Equatable, y: Equatable): Bool
+    NotEquals(x: Equatable, y: Equatable): Boolean
         => !x.Equals(y);
 }
 
 library Array
 {
-    Map(xs: Array, f: Function1): Array 
+    Map(xs: Array, f: Function): Array 
         => Map(xs.Count, i => f(xs.At(i)));
 
-    Zip(xs: Array, ys: Array, f: Function2): Array 
+    Zip(xs: Array, ys: Array, f: Function): Array 
         => (xs.Count, i => f(At(i), ys.At(i)));
     
     Skip(xs: Array, n: Count): Array
@@ -165,7 +288,7 @@ library Array
     Rest(xs: Array): Array 
         => xs.Skip(1);
     
-    IsEmpty(xs: Array): Bool
+    IsEmpty(xs: Array): Boolean
         => xs.Count == 0;
     
     First(xs: Array): Any 
@@ -178,13 +301,13 @@ library Array
         => xs.Skip(from).Take(count);
     
     Join(xs: Array, sep: String): String 
-        => xs.IsEmpty 
-                ? "" 
-                : xs.First.ToString + xs.Rest.Aggregate("", (acc, cur) => $"{acc}{sep}{cur}");
+        => xs.IsEmpty ? "" 
+            : xs.First.ToString 
+            + xs.Rest.Aggregate("", (acc, cur) => $"{acc}{sep}{cur}");
     
-    All(xs: Array, f: Function1): Bool 
+    All(xs: Array, f: Function): Boolean 
         => xs.IsEmpty ? true : f(xs.First) && f(xs.Rest);
- 
+} 
 
 library Easings
 {
@@ -196,10 +319,12 @@ library Easings
     // This is an extremely good example of why Plato matters as a language. 
     // When we look at the source code of the two other implementations. 
 
-    BlendEaseFunc(p: Number, easeIn: Function1, easeOut: Function1): Number 
-        => p < 0.5 ? 0.5 * easeIn(p * 2) : 0.5 * easeOut(p * 2 - 1) + 0.5;
+    BlendEaseFunc(p: Number, easeIn: Function, easeOut: Function): Number 
+        => p < 0.5 
+            ? 0.5 * easeIn(p * 2) 
+            : 0.5 * easeOut(p * 2 - 1) + 0.5;
     
-    InvertEaseFunc(p: Number, easeIn: Function1): Number 
+    InvertEaseFunc(p: Number, easeIn: Function): Number 
         => 1 - easeIn(1 - p);
 
     Linear(p: Number): Number 
@@ -289,12 +414,12 @@ library Easings
     BounceEaseIn(p: Number): Number 
         => InvertEaseFunc(p, BounceEaseOut);
     
-    BounceEaseOut(p: Number): Number => 
-        (p < 4 / 11.0) ? 121.0 * p.Pow2 / 16.0
+    BounceEaseOut(p: Number): Number 
+        => (p < 4 / 11.0) ? 121.0 * p.Pow2 / 16.0
         : (p < 8 / 11.0) ? 363.0 / 40.0 * p.Pow2 - 99.0 / 10.0 * p + 17.0 / 5.0
         : (p < 9 / 10.0) ? 4356.0 / 361.0 * p.Pow2 - 35442.0 / 1805.0 * p + 16061.0 / 1805.0
         : 54.0 / 5.0 * p.Pow2 - 513.0 / 25.0 * p + 268.0 / 25.0;
     
-    BounceEaseInOut(p: Number) 
-        => BlendEaseFunc(p: Number, BounceEaseIn, BounceEaseOut);
+    BounceEaseInOut(p: Number): Number
+        => BlendEaseFunc(p, BounceEaseIn, BounceEaseOut);
 }

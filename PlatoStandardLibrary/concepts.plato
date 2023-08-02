@@ -31,7 +31,10 @@ concept Comparable
     inherits Value
 {
     Compare(a: Self, b: Self): Integer
-        => a.Magnitude < b.Magnitude ? -1 : a.Magnitude > b.Magnitude ? 1 : 0;
+        => a.Magnitude < b.Magnitude 
+            ? -1 
+            : a.Magnitude > b.Magnitude 
+                ? 1 : 0;
 }
 
 concept Equatable
@@ -96,35 +99,23 @@ concept Boolean
 
 concept Value 
 {
-    Type(): Type
-        => intrinsic;
-
-    FieldTypes(): Array<Type>
-        => intrinsic;
-
-    FieldNames(): Array<String>
-        => intrinsic;
-
-    FieldValues(self: Self): Array<Value>
-        => intrinsic;
-
     Zero(): Self
-        => FieldTypes.Zero;
+        => Self.FieldTypes.Zero;
 
     One(): Self
-        => FieldTypes.One;
+        => Self.FieldTypes.One;
 
     Default(): Self
-        => FieldTypes.Default;
+        => Self.FieldTypes.Default;
 
     MinValue(): Self
-        => FieldTypes.MinValue;
+        => Self.FieldTypes.MinValue;
 
     MaxValue(): Self
-        => FieldTypes.MaxValue;
+        => Self.FieldTypes.MaxValue;
 
     ToString(x: Self): String
-        => FieldValues.JoinStrings(",");
+        => x.FieldValues.Join(",");
 }
 
 concept Interval<T: Numerical>

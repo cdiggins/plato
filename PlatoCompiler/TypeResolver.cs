@@ -113,14 +113,10 @@ namespace Plato.Compiler
         }
 
         public bool InheritsFrom(TypeDefSymbol self, TypeDefSymbol other)
-        {
-             
-        }
+            => self.GetSelfAndAllInheritedTypes().Contains(other);
 
         public bool Implements(TypeDefSymbol self, TypeDefSymbol other)
-        {
-
-        }
+            => self.GetAllImplementedConcepts().Contains(other);
 
         public bool IsSuperType(TypeDefSymbol self, TypeDefSymbol other)
         {
@@ -134,16 +130,17 @@ namespace Plato.Compiler
         }
 
         public bool IsSuperType(TypeDefSymbol self, IEnumerable<TypeDefSymbol> others)
-        {
-
-        }
+            => others.All(x => IsSuperType(self, x));
 
         public TypeDefSymbol Unify(IEnumerable<TypeDefSymbol> conceptsA, IEnumerable<TypeDefSymbol> conceptsB)
         {
             // Which concepts in A supercede all of those in B? 
-            var superTypesA = conceptsA.Where(c => IsSuperType(conceptsB));
+            var superTypesA = conceptsA.Where(c => IsSuperType(c, conceptsB));
 
             // Which concepts in B supercede all of those in B
+            var superTypesB = conceptsB.Where(c => IsSuperType(c, conceptsA));
+
+            throw new NotImplementedException();
         }
 
         public TypeDefSymbol Unify(TypeDefSymbol a, TypeDefSymbol b)
