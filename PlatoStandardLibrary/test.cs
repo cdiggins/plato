@@ -47,9 +47,34 @@ namespace PlatoStandardLibrary
         string[] FieldNames { get; }
     }
 
-    public class Number : Value<Number>
+    public interface Numerical<Self>
+    {
+        Self Add(Self other);
+        Self Negate();
+    }
+
+    public static partial class Extensions
+    {
+        public static Self Subtract<Self>(this Self a, Self b) where Self : Numerical<Self>
+            => a.Add(b.Negate());
+
+        public static void Test()
+        {
+            Number a = 3;
+            Number b = 4;
+            a.Subtract(b);
+        }
+    }
+
+    public class Number : Numerical<Number>
     {
         public double Value { get; }
+
+        public Number Add(Number other)
+            => Value + other.Value;
+
+        public Number Negate()
+            => -Value;
 
         public static StaticValue<Number> StaticData = new StaticValue<Number>()
         {

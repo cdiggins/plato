@@ -42,6 +42,15 @@ namespace Plato.Compiler
             return r;
         }
 
+        public SymbolWriterCSharp WriteSignature(FunctionSymbol function)
+        {
+            return WriteTypeDecl(function.Type, "void")
+                .Write(function.Name)
+                .Write("(")
+                .WriteCommaList(function.Parameters)
+                .Write(")");
+        }
+
         public SymbolWriterCSharp Write(FunctionSymbol function)
         {
             if (function.Name == "__lambda__")
@@ -57,12 +66,7 @@ namespace Plato.Compiler
             if (function.Body == null)
                 return this;
 
-            return WriteTypeDecl(function.Type, "void")
-                .Write(function.Name)
-                .Write("(")
-                .WriteCommaList(function.Parameters)
-                .WriteLine(")")
-                //.WriteConstraints(function)
+            return WriteSignature(function)                //.WriteConstraints(function)
                 .WriteStartBlock()
                 .Write("return ")
                 .Write(function.Body)
@@ -100,21 +104,37 @@ namespace Plato.Compiler
             return r;
         }
 
-        public SymbolWriterCSharp WriteMembersAsExtensionMethods(IEnumerable<MemberDefSymbol> members)
+        public static string ParameterizedTypeName(string name, IEnumerable<string> args)
+            => name + GenericArgs(args);
+
+        public static string GenericArgs(IEnumerable<string> args)
+            => args.Any() ? "<" + string.Join(", ", args) + ">" : "";
+
+        public SymbolWriterCSharp WriteMembersAsExtensionMethods(TypeDefSymbol typeDef)
         {
-            foreach (var member in members )
+            var typeParameterNames = typeDef.TypeParameters.Select(tp => tp.Name).ToList();
+            var typeArgs = GenericArgs(typeParameterNames.Prepend("Self"));
+
+            var parameterizedTypeName = ParameterizedTypeName(typeDef.Name, typeParameterNames.Prepend("Self"));
+            var constraint = $"where Self: {parameterizedTypeName}";
+
+            foreach (var member in typeDef.Members)
             {
                 if (!(member is MethodDefSymbol mds))
-                    throw new Exception("Only methods supported as extension methods");
+                    continue;
+
+                if (mds.Function.Body == null)
+                    continue;
 
                 Write("public static ")
                     .WriteTypeDecl(mds.Type, "void")
                     .Write(mds.Name)
+                    .Write(typeArgs)
                     .Write("(")
                     .Write(mds.Function.Parameters.Count > 0 ? "this " : "")
                     .WriteCommaList(mds.Function.Parameters)
-                    .WriteLine(")")
-                    //.WriteConstraints(function)
+                    .Write(") ")
+                    .WriteLine(constraint)
                     .WriteStartBlock()
                     .Write("return ")
                     .Write(mds.Function.Body)
@@ -125,25 +145,34 @@ namespace Plato.Compiler
             return this;
         }
 
-        public string GetName(TypeRefSymbol tr)
+        public static string GetTypeName(TypeRefSymbol tr, TypeDefSymbol parent)
         {
             // TODO: slightly more complicated when actually passing arguments and stuff. 
-            return tr.Name;
+            var r = tr.Name;
+            if (r == "Self")
+                return parent.Name;
+            return r;
         }
+
+        public static string GetParameterNamesJoined(FunctionSymbol f)
+            => string.Join(", ", f.Parameters.Select(p => p.Name));
+
+        public static string GetParameterNamesAndTypesJoined(FunctionSymbol f, TypeDefSymbol t)
+            => string.Join(", ", f.Parameters.Select(p => $"{GetTypeName(p.Type, t)} {p.Name}"));
 
         public SymbolWriterCSharp WriteConstructor(TypeDefSymbol t)
         {
             if (!t.IsType()) throw new NotSupportedException();
             var name = t.Name;
-            var fieldTypes = t.Fields.Select(f => GetName(f.Type)).ToList();
+            var fieldTypes = t.Fields.Select(f => GetTypeName(f.Type, t)).ToList();
             var fieldNames = t.Fields.Select(f => $"{f.Name}").ToList();
-            var parameterList = string.Join(", ", t.Fields.Select(f => $"{GetName(f.Type)} _{f.Name}"));
+            var parameterList = string.Join(", ", t.Fields.Select(f => $"{GetTypeName(f.Type, t)} _{f.Name}"));
             var parameterNamesString = string.Join(", ", t.Fields.Select(f => $"_{f.Name}"));
             var fieldTypesString = string.Join(", ", fieldTypes);
             var fieldNamesString = string.Join(", ", fieldNames);
 
             WriteLine($"public {name}({parameterList}) => ({fieldNamesString}) = ({parameterNamesString});");
-            WriteLine($"public static New({parameterList}) => new({parameterNamesString});");
+            WriteLine($"public static {name} New({parameterList}) => new({parameterNamesString});");
             if (t.Fields.Count > 1)
             {
                 var qualifiedFieldNames = string.Join(", ", fieldNames.Select(f => $"self.{f}"));
@@ -154,7 +183,7 @@ namespace Plato.Compiler
             else if (t.Fields.Count == 1)
             {
                 var fieldName = t.Fields[0].Name;
-                var fieldType = GetName(t.Fields[0].Type);
+                var fieldType = GetTypeName(t.Fields[0].Type, t);
                 WriteLine($"public static implicit operator {fieldType}({name} self) => self.{fieldName};");
                 WriteLine($"public static implicit operator {name}({fieldType} value) => new {fieldType}(value);");
             }
@@ -166,8 +195,34 @@ namespace Plato.Compiler
             // TODO: output the static methods. 
             // TODO: add all appropriate operators 
             // TODO: output all zero parameter methods as properties 
-
             // TODO: add all appropriate functions as extension methods
+
+            foreach (var m in t.GetConceptMethods())
+            {
+                var f = m.Function;
+                var ret = GetTypeName(f.Type, t);
+                var paramList = GetParameterNamesAndTypesJoined(f, t);
+                var argList = GetParameterNamesJoined(f);
+
+                if (f.Body == null)
+                {
+                    WriteLine($"public static {ret} {f.Name}({paramList}) => Extensions.{f.Name}({argList});");
+                }
+
+                if (f.Parameters.Count == 2)
+                {
+                    var op = OperatorNameLookup.NameToBinaryOperator(f.Name);
+                    if (op != null)
+                        WriteLine($"public static {ret} operator {op}({paramList}) => Extensions.{f.Name}({argList});");
+                }
+
+                if (f.Parameters.Count == 1)
+                {
+                    var op = OperatorNameLookup.NameToUnaryOperator(f.Name);
+                    if (op != null)
+                        WriteLine($"public static {ret} operator {op}({paramList}) => Extensions.{f.Name}({argList});");
+                }
+            }
 
             return this;
         }
@@ -190,6 +245,18 @@ namespace Plato.Compiler
             return typeDef.Inherits.Any(tr => IsTypePreservingConcept(tr.Def));
         }
 
+        public SymbolWriterCSharp WriteUnimplementedMethods(TypeDefSymbol typeDef)
+        {
+            foreach (var f in typeDef.Methods.Select(m => m.Function))
+            {
+                if (f.Body != null) 
+                    continue;
+                WriteSignature(f).WriteLine(";");
+            }
+
+            return this;
+        }
+
         public SymbolWriterCSharp Write(TypeDefSymbol typeDef)
         {
             if (typeDef.IsConcept())
@@ -199,13 +266,20 @@ namespace Plato.Compiler
                     ? ": " + string.Join(", ", typeDef.Inherits.Select(td => $"{td.Name}<Self>"))
                     : "";
 
-                return Write("public interface ").Write(fullName)
+                Write("public interface ").Write(fullName)
                     .WriteLine(inherited)   
                     .Write(" where ")
                     .WriteLine($"Self : {fullName}")
                     .WriteStartBlock()
-                    .Write(typeDef.Members)
+                    .WriteUnimplementedMethods(typeDef)
                     .WriteEndBlock();
+
+                WriteLine("public static partial class Extensions")
+                    .WriteStartBlock()
+                    .WriteMembersAsExtensionMethods(typeDef)
+                    .WriteEndBlock();
+
+                return this;
             }
             
             if (typeDef.IsType())
@@ -229,10 +303,9 @@ namespace Plato.Compiler
 
             if (typeDef.IsLibrary())
             {
-                return Write("public static class ")
-                    .Write(typeDef.Name)
+                return WriteLine("public static partial class Extensions")
                     .WriteStartBlock()
-                    .WriteMembersAsExtensionMethods(typeDef.Members)
+                    .WriteMembersAsExtensionMethods(typeDef)
                     .WriteEndBlock();
             }
 

@@ -42,6 +42,9 @@ namespace Plato.Compiler
         public static string BinaryOperatorToName(string op)
             => BinaryOperatorToNames.ContainsKey(op) ? BinaryOperatorToNames[op] : op;
 
+        public static string NameToBinaryOperator(string name)
+            => NamesToBinaryOperators.ContainsKey(name) ? NamesToBinaryOperators[name] : null;
+
         public static Dictionary<string, string> UnaryOperatorToNames
             = UnaryOperators.ToDictionary(op => op.Item1, op => op.Item2);
 
@@ -51,5 +54,7 @@ namespace Plato.Compiler
         public static string UnaryOperatorToName(string op)
             => UnaryOperatorToNames.ContainsKey(op) ? UnaryOperatorToNames[op] : op;
 
+        public static string NameToUnaryOperator(string name)
+            => NamesToUnaryOperators.ContainsKey(name) ? NamesToUnaryOperators[name] : null;
     }
 }

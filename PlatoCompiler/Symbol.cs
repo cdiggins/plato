@@ -135,6 +135,9 @@ namespace Plato.Compiler
         public IEnumerable<MemberDefSymbol> Members => Enumerable.Empty<MemberDefSymbol>()
             .Concat(Methods).Concat(Fields);
 
+        public IEnumerable<MethodDefSymbol> GetConceptMethods()
+            => GetAllImplementedConcepts().SelectMany(c => c.Methods);
+
         public TypeRefSymbol ToRef => new TypeRefSymbol(this);
     }
 

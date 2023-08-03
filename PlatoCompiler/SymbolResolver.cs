@@ -268,14 +268,6 @@ namespace Plato.Compiler
                 ValueBindingsScope = ValueBindingsScope.Push();
                 TypeBindingsScope = TypeBindingsScope.Push();
 
-                // TODO: should go into the type scope.
-                foreach (var tp in typeDecl.TypeParameters)
-                {
-                    var tpd = new TypeParameterDefSymbol(tp.Name);
-                    BindType(tpd);
-                    typeDef.TypeParameters.Add(tpd);
-                }
-
                 // For each method in the type 
                 foreach (var method in typeDef.Methods)
                 {
