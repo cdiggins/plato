@@ -2,7 +2,7 @@ public static partial class Extensions
 {
 }
 public interface Vector<Self>: Array<Self>, Value<Self>, Numerical<Self>, Arithmetic<Self>
- where Self : Vector<Self>
+    where Self : Vector<Self>
 {
 }
 public static partial class Extensions
@@ -17,7 +17,7 @@ public static partial class Extensions
     }
 }
 public interface Measure<Self>: Value<Self>, ScalarArithmetic<Self>, Equatable<Self>, Comparable<Self>, Magnitude<Self>
- where Self : Measure<Self>
+    where Self : Measure<Self>
 {
 }
 public static partial class Extensions
@@ -28,14 +28,14 @@ public static partial class Extensions
     }
 }
 public interface Numerical<Self>: Value<Self>, Arithmetic<Self>, Equatable<Self>, Comparable<Self>, Magnitude<Self>
- where Self : Numerical<Self>
+    where Self : Numerical<Self>
 {
 }
 public static partial class Extensions
 {
 }
 public interface Magnitude<Self>: Value<Self>
- where Self : Magnitude<Self>
+    where Self : Magnitude<Self>
 {
 }
 public static partial class Extensions
@@ -46,7 +46,7 @@ public static partial class Extensions
     }
 }
 public interface Comparable<Self>: Value<Self>
- where Self : Comparable<Self>
+    where Self : Comparable<Self>
 {
 }
 public static partial class Extensions
@@ -63,7 +63,7 @@ public static partial class Extensions
     }
 }
 public interface Equatable<Self>: Value<Self>
- where Self : Equatable<Self>
+    where Self : Equatable<Self>
 {
 }
 public static partial class Extensions
@@ -74,7 +74,7 @@ public static partial class Extensions
     }
 }
 public interface Arithmetic<Self>: Value<Self>
- where Self : Arithmetic<Self>
+    where Self : Arithmetic<Self>
 {
 }
 public static partial class Extensions
@@ -105,7 +105,7 @@ public static partial class Extensions
     }
 }
 public interface ScalarArithmetic<Self>: Value<Self>
- where Self : ScalarArithmetic<Self>
+    where Self : ScalarArithmetic<Self>
 {
 }
 public static partial class Extensions
@@ -132,7 +132,7 @@ public static partial class Extensions
     }
 }
 public interface Boolean<Self>
- where Self : Boolean<Self>
+    where Self : Boolean<Self>
 {
 }
 public static partial class Extensions
@@ -151,7 +151,7 @@ public static partial class Extensions
     }
 }
 public interface Value<Self>
- where Self : Value<Self>
+    where Self : Value<Self>
 {
 }
 public static partial class Extensions
@@ -182,7 +182,7 @@ public static partial class Extensions
     }
 }
 public interface Interval<Self>: Vector<Self>
- where Self : Interval<Self>
+    where Self : Interval<Self>
 {
     T Min(Self x);
     T Max(Self x);
@@ -191,7 +191,7 @@ public static partial class Extensions
 {
 }
 public interface Array<Self>
- where Self : Array<Self>
+    where Self : Array<Self>
 {
     Count Count(Self xs);
     T At(Self xs, Index n);
@@ -378,14 +378,16 @@ public class Vector2D: Vector<Vector2D>
     public object[] FieldValues() => new[] { X, Y };
     public static Count Count(Vector2D xs) => Extensions.Count(xs);
     public static T At(Vector2D xs, Index n) => Extensions.At(xs, n);
-    public static T operator [](Vector2D xs, Index n) => Extensions.At(xs, n);
+    public T this[Index n]
+        => null;
     public static Vector2D operator +(Vector2D self, Vector2D other) => Extensions.Add(self, other);
     public static Vector2D operator -(Vector2D self) => Extensions.Negative(self);
     public static Vector2D operator *(Vector2D self, Vector2D other) => Extensions.Multiply(self, other);
     public static Vector2D operator /(Vector2D self, Vector2D other) => Extensions.Divide(self, other);
     public static Vector2D operator %(Vector2D self, Vector2D other) => Extensions.Modulo(self, other);
     public static Boolean operator ==(Vector2D a, Vector2D b) => Extensions.Equals(a, b);
-    public static T operator [](Vector v, Index n) => Extensions.At(v, n);
+    public T this[Index n]
+        => At(FieldValues(v), n);
     public Number X { get; }
     public Number Y { get; }
 }
@@ -399,14 +401,16 @@ public class Vector3D: Vector<Vector3D>
     public object[] FieldValues() => new[] { X, Y, Z };
     public static Count Count(Vector3D xs) => Extensions.Count(xs);
     public static T At(Vector3D xs, Index n) => Extensions.At(xs, n);
-    public static T operator [](Vector3D xs, Index n) => Extensions.At(xs, n);
+    public T this[Index n]
+        => null;
     public static Vector3D operator +(Vector3D self, Vector3D other) => Extensions.Add(self, other);
     public static Vector3D operator -(Vector3D self) => Extensions.Negative(self);
     public static Vector3D operator *(Vector3D self, Vector3D other) => Extensions.Multiply(self, other);
     public static Vector3D operator /(Vector3D self, Vector3D other) => Extensions.Divide(self, other);
     public static Vector3D operator %(Vector3D self, Vector3D other) => Extensions.Modulo(self, other);
     public static Boolean operator ==(Vector3D a, Vector3D b) => Extensions.Equals(a, b);
-    public static T operator [](Vector v, Index n) => Extensions.At(v, n);
+    public T this[Index n]
+        => At(FieldValues(v), n);
     public Number X { get; }
     public Number Y { get; }
     public Number Z { get; }
@@ -421,14 +425,16 @@ public class Vector4D: Vector<Vector4D>
     public object[] FieldValues() => new[] { X, Y, Z, W };
     public static Count Count(Vector4D xs) => Extensions.Count(xs);
     public static T At(Vector4D xs, Index n) => Extensions.At(xs, n);
-    public static T operator [](Vector4D xs, Index n) => Extensions.At(xs, n);
+    public T this[Index n]
+        => null;
     public static Vector4D operator +(Vector4D self, Vector4D other) => Extensions.Add(self, other);
     public static Vector4D operator -(Vector4D self) => Extensions.Negative(self);
     public static Vector4D operator *(Vector4D self, Vector4D other) => Extensions.Multiply(self, other);
     public static Vector4D operator /(Vector4D self, Vector4D other) => Extensions.Divide(self, other);
     public static Vector4D operator %(Vector4D self, Vector4D other) => Extensions.Modulo(self, other);
     public static Boolean operator ==(Vector4D a, Vector4D b) => Extensions.Equals(a, b);
-    public static T operator [](Vector v, Index n) => Extensions.At(v, n);
+    public T this[Index n]
+        => At(FieldValues(v), n);
     public Number X { get; }
     public Number Y { get; }
     public Number Z { get; }
@@ -500,14 +506,16 @@ public class AlignedBox2D: Interval<AlignedBox2D>
     public object[] FieldValues() => new[] { A, B };
     public static Count Count(AlignedBox2D xs) => Extensions.Count(xs);
     public static T At(AlignedBox2D xs, Index n) => Extensions.At(xs, n);
-    public static T operator [](AlignedBox2D xs, Index n) => Extensions.At(xs, n);
+    public T this[Index n]
+        => null;
     public static AlignedBox2D operator +(AlignedBox2D self, AlignedBox2D other) => Extensions.Add(self, other);
     public static AlignedBox2D operator -(AlignedBox2D self) => Extensions.Negative(self);
     public static AlignedBox2D operator *(AlignedBox2D self, AlignedBox2D other) => Extensions.Multiply(self, other);
     public static AlignedBox2D operator /(AlignedBox2D self, AlignedBox2D other) => Extensions.Divide(self, other);
     public static AlignedBox2D operator %(AlignedBox2D self, AlignedBox2D other) => Extensions.Modulo(self, other);
     public static Boolean operator ==(AlignedBox2D a, AlignedBox2D b) => Extensions.Equals(a, b);
-    public static T operator [](Vector v, Index n) => Extensions.At(v, n);
+    public T this[Index n]
+        => At(FieldValues(v), n);
     public static T Min(AlignedBox2D x) => Extensions.Min(x);
     public static T Max(AlignedBox2D x) => Extensions.Max(x);
     public Vector2D A { get; }
@@ -523,14 +531,16 @@ public class AlignedBox3D: Interval<AlignedBox3D>
     public object[] FieldValues() => new[] { A, B };
     public static Count Count(AlignedBox3D xs) => Extensions.Count(xs);
     public static T At(AlignedBox3D xs, Index n) => Extensions.At(xs, n);
-    public static T operator [](AlignedBox3D xs, Index n) => Extensions.At(xs, n);
+    public T this[Index n]
+        => null;
     public static AlignedBox3D operator +(AlignedBox3D self, AlignedBox3D other) => Extensions.Add(self, other);
     public static AlignedBox3D operator -(AlignedBox3D self) => Extensions.Negative(self);
     public static AlignedBox3D operator *(AlignedBox3D self, AlignedBox3D other) => Extensions.Multiply(self, other);
     public static AlignedBox3D operator /(AlignedBox3D self, AlignedBox3D other) => Extensions.Divide(self, other);
     public static AlignedBox3D operator %(AlignedBox3D self, AlignedBox3D other) => Extensions.Modulo(self, other);
     public static Boolean operator ==(AlignedBox3D a, AlignedBox3D b) => Extensions.Equals(a, b);
-    public static T operator [](Vector v, Index n) => Extensions.At(v, n);
+    public T this[Index n]
+        => At(FieldValues(v), n);
     public static T Min(AlignedBox3D x) => Extensions.Min(x);
     public static T Max(AlignedBox3D x) => Extensions.Max(x);
     public Vector3D A { get; }
@@ -546,14 +556,16 @@ public class Complex: Vector<Complex>
     public object[] FieldValues() => new[] { Real, Imaginary };
     public static Count Count(Complex xs) => Extensions.Count(xs);
     public static T At(Complex xs, Index n) => Extensions.At(xs, n);
-    public static T operator [](Complex xs, Index n) => Extensions.At(xs, n);
+    public T this[Index n]
+        => null;
     public static Complex operator +(Complex self, Complex other) => Extensions.Add(self, other);
     public static Complex operator -(Complex self) => Extensions.Negative(self);
     public static Complex operator *(Complex self, Complex other) => Extensions.Multiply(self, other);
     public static Complex operator /(Complex self, Complex other) => Extensions.Divide(self, other);
     public static Complex operator %(Complex self, Complex other) => Extensions.Modulo(self, other);
     public static Boolean operator ==(Complex a, Complex b) => Extensions.Equals(a, b);
-    public static T operator [](Vector v, Index n) => Extensions.At(v, n);
+    public T this[Index n]
+        => At(FieldValues(v), n);
     public Number Real { get; }
     public Number Imaginary { get; }
 }
@@ -681,14 +693,16 @@ public class Line3D: Interval<Line3D>
     public object[] FieldValues() => new[] { A, B };
     public static Count Count(Line3D xs) => Extensions.Count(xs);
     public static T At(Line3D xs, Index n) => Extensions.At(xs, n);
-    public static T operator [](Line3D xs, Index n) => Extensions.At(xs, n);
+    public T this[Index n]
+        => null;
     public static Line3D operator +(Line3D self, Line3D other) => Extensions.Add(self, other);
     public static Line3D operator -(Line3D self) => Extensions.Negative(self);
     public static Line3D operator *(Line3D self, Line3D other) => Extensions.Multiply(self, other);
     public static Line3D operator /(Line3D self, Line3D other) => Extensions.Divide(self, other);
     public static Line3D operator %(Line3D self, Line3D other) => Extensions.Modulo(self, other);
     public static Boolean operator ==(Line3D a, Line3D b) => Extensions.Equals(a, b);
-    public static T operator [](Vector v, Index n) => Extensions.At(v, n);
+    public T this[Index n]
+        => At(FieldValues(v), n);
     public static T Min(Line3D x) => Extensions.Min(x);
     public static T Max(Line3D x) => Extensions.Max(x);
     public Point3D A { get; }
@@ -704,14 +718,16 @@ public class Line2D: Interval<Line2D>
     public object[] FieldValues() => new[] { A, B };
     public static Count Count(Line2D xs) => Extensions.Count(xs);
     public static T At(Line2D xs, Index n) => Extensions.At(xs, n);
-    public static T operator [](Line2D xs, Index n) => Extensions.At(xs, n);
+    public T this[Index n]
+        => null;
     public static Line2D operator +(Line2D self, Line2D other) => Extensions.Add(self, other);
     public static Line2D operator -(Line2D self) => Extensions.Negative(self);
     public static Line2D operator *(Line2D self, Line2D other) => Extensions.Multiply(self, other);
     public static Line2D operator /(Line2D self, Line2D other) => Extensions.Divide(self, other);
     public static Line2D operator %(Line2D self, Line2D other) => Extensions.Modulo(self, other);
     public static Boolean operator ==(Line2D a, Line2D b) => Extensions.Equals(a, b);
-    public static T operator [](Vector v, Index n) => Extensions.At(v, n);
+    public T this[Index n]
+        => At(FieldValues(v), n);
     public static T Min(Line2D x) => Extensions.Min(x);
     public static T Max(Line2D x) => Extensions.Max(x);
     public Point2D A { get; }
@@ -1054,14 +1070,16 @@ public class TimeRange: Interval<TimeRange>
     public object[] FieldValues() => new[] { Min, Max };
     public static Count Count(TimeRange xs) => Extensions.Count(xs);
     public static T At(TimeRange xs, Index n) => Extensions.At(xs, n);
-    public static T operator [](TimeRange xs, Index n) => Extensions.At(xs, n);
+    public T this[Index n]
+        => null;
     public static TimeRange operator +(TimeRange self, TimeRange other) => Extensions.Add(self, other);
     public static TimeRange operator -(TimeRange self) => Extensions.Negative(self);
     public static TimeRange operator *(TimeRange self, TimeRange other) => Extensions.Multiply(self, other);
     public static TimeRange operator /(TimeRange self, TimeRange other) => Extensions.Divide(self, other);
     public static TimeRange operator %(TimeRange self, TimeRange other) => Extensions.Modulo(self, other);
     public static Boolean operator ==(TimeRange a, TimeRange b) => Extensions.Equals(a, b);
-    public static T operator [](Vector v, Index n) => Extensions.At(v, n);
+    public T this[Index n]
+        => At(FieldValues(v), n);
     public static T Min(TimeRange x) => Extensions.Min(x);
     public static T Max(TimeRange x) => Extensions.Max(x);
     public DateTime Min { get; }
@@ -1084,14 +1102,16 @@ public class AnglePair: Interval<AnglePair>
     public object[] FieldValues() => new[] { Start, End };
     public static Count Count(AnglePair xs) => Extensions.Count(xs);
     public static T At(AnglePair xs, Index n) => Extensions.At(xs, n);
-    public static T operator [](AnglePair xs, Index n) => Extensions.At(xs, n);
+    public T this[Index n]
+        => null;
     public static AnglePair operator +(AnglePair self, AnglePair other) => Extensions.Add(self, other);
     public static AnglePair operator -(AnglePair self) => Extensions.Negative(self);
     public static AnglePair operator *(AnglePair self, AnglePair other) => Extensions.Multiply(self, other);
     public static AnglePair operator /(AnglePair self, AnglePair other) => Extensions.Divide(self, other);
     public static AnglePair operator %(AnglePair self, AnglePair other) => Extensions.Modulo(self, other);
     public static Boolean operator ==(AnglePair a, AnglePair b) => Extensions.Equals(a, b);
-    public static T operator [](Vector v, Index n) => Extensions.At(v, n);
+    public T this[Index n]
+        => At(FieldValues(v), n);
     public static T Min(AnglePair x) => Extensions.Min(x);
     public static T Max(AnglePair x) => Extensions.Max(x);
     public Angle Start { get; }
@@ -1135,14 +1155,16 @@ public class TimeInterval: Interval<TimeInterval>
     public object[] FieldValues() => new[] { Start, End };
     public static Count Count(TimeInterval xs) => Extensions.Count(xs);
     public static T At(TimeInterval xs, Index n) => Extensions.At(xs, n);
-    public static T operator [](TimeInterval xs, Index n) => Extensions.At(xs, n);
+    public T this[Index n]
+        => null;
     public static TimeInterval operator +(TimeInterval self, TimeInterval other) => Extensions.Add(self, other);
     public static TimeInterval operator -(TimeInterval self) => Extensions.Negative(self);
     public static TimeInterval operator *(TimeInterval self, TimeInterval other) => Extensions.Multiply(self, other);
     public static TimeInterval operator /(TimeInterval self, TimeInterval other) => Extensions.Divide(self, other);
     public static TimeInterval operator %(TimeInterval self, TimeInterval other) => Extensions.Modulo(self, other);
     public static Boolean operator ==(TimeInterval a, TimeInterval b) => Extensions.Equals(a, b);
-    public static T operator [](Vector v, Index n) => Extensions.At(v, n);
+    public T this[Index n]
+        => At(FieldValues(v), n);
     public static T Min(TimeInterval x) => Extensions.Min(x);
     public static T Max(TimeInterval x) => Extensions.Max(x);
     public TimeSpan Start { get; }
@@ -1158,14 +1180,16 @@ public class RealInterval: Interval<RealInterval>
     public object[] FieldValues() => new[] { A, B };
     public static Count Count(RealInterval xs) => Extensions.Count(xs);
     public static T At(RealInterval xs, Index n) => Extensions.At(xs, n);
-    public static T operator [](RealInterval xs, Index n) => Extensions.At(xs, n);
+    public T this[Index n]
+        => null;
     public static RealInterval operator +(RealInterval self, RealInterval other) => Extensions.Add(self, other);
     public static RealInterval operator -(RealInterval self) => Extensions.Negative(self);
     public static RealInterval operator *(RealInterval self, RealInterval other) => Extensions.Multiply(self, other);
     public static RealInterval operator /(RealInterval self, RealInterval other) => Extensions.Divide(self, other);
     public static RealInterval operator %(RealInterval self, RealInterval other) => Extensions.Modulo(self, other);
     public static Boolean operator ==(RealInterval a, RealInterval b) => Extensions.Equals(a, b);
-    public static T operator [](Vector v, Index n) => Extensions.At(v, n);
+    public T this[Index n]
+        => At(FieldValues(v), n);
     public static T Min(RealInterval x) => Extensions.Min(x);
     public static T Max(RealInterval x) => Extensions.Max(x);
     public Number A { get; }
@@ -1181,14 +1205,16 @@ public class Interval2D: Interval<Interval2D>
     public object[] FieldValues() => new[] { A, B };
     public static Count Count(Interval2D xs) => Extensions.Count(xs);
     public static T At(Interval2D xs, Index n) => Extensions.At(xs, n);
-    public static T operator [](Interval2D xs, Index n) => Extensions.At(xs, n);
+    public T this[Index n]
+        => null;
     public static Interval2D operator +(Interval2D self, Interval2D other) => Extensions.Add(self, other);
     public static Interval2D operator -(Interval2D self) => Extensions.Negative(self);
     public static Interval2D operator *(Interval2D self, Interval2D other) => Extensions.Multiply(self, other);
     public static Interval2D operator /(Interval2D self, Interval2D other) => Extensions.Divide(self, other);
     public static Interval2D operator %(Interval2D self, Interval2D other) => Extensions.Modulo(self, other);
     public static Boolean operator ==(Interval2D a, Interval2D b) => Extensions.Equals(a, b);
-    public static T operator [](Vector v, Index n) => Extensions.At(v, n);
+    public T this[Index n]
+        => At(FieldValues(v), n);
     public static T Min(Interval2D x) => Extensions.Min(x);
     public static T Max(Interval2D x) => Extensions.Max(x);
     public Vector2D A { get; }
@@ -1204,14 +1230,16 @@ public class Interval3D: Interval<Interval3D>
     public object[] FieldValues() => new[] { A, B };
     public static Count Count(Interval3D xs) => Extensions.Count(xs);
     public static T At(Interval3D xs, Index n) => Extensions.At(xs, n);
-    public static T operator [](Interval3D xs, Index n) => Extensions.At(xs, n);
+    public T this[Index n]
+        => null;
     public static Interval3D operator +(Interval3D self, Interval3D other) => Extensions.Add(self, other);
     public static Interval3D operator -(Interval3D self) => Extensions.Negative(self);
     public static Interval3D operator *(Interval3D self, Interval3D other) => Extensions.Multiply(self, other);
     public static Interval3D operator /(Interval3D self, Interval3D other) => Extensions.Divide(self, other);
     public static Interval3D operator %(Interval3D self, Interval3D other) => Extensions.Modulo(self, other);
     public static Boolean operator ==(Interval3D a, Interval3D b) => Extensions.Equals(a, b);
-    public static T operator [](Vector v, Index n) => Extensions.At(v, n);
+    public T this[Index n]
+        => At(FieldValues(v), n);
     public static T Min(Interval3D x) => Extensions.Min(x);
     public static T Max(Interval3D x) => Extensions.Max(x);
     public Vector3D A { get; }
@@ -1353,14 +1381,16 @@ public class UV: Vector<UV>
     public object[] FieldValues() => new[] { U, V };
     public static Count Count(UV xs) => Extensions.Count(xs);
     public static T At(UV xs, Index n) => Extensions.At(xs, n);
-    public static T operator [](UV xs, Index n) => Extensions.At(xs, n);
+    public T this[Index n]
+        => null;
     public static UV operator +(UV self, UV other) => Extensions.Add(self, other);
     public static UV operator -(UV self) => Extensions.Negative(self);
     public static UV operator *(UV self, UV other) => Extensions.Multiply(self, other);
     public static UV operator /(UV self, UV other) => Extensions.Divide(self, other);
     public static UV operator %(UV self, UV other) => Extensions.Modulo(self, other);
     public static Boolean operator ==(UV a, UV b) => Extensions.Equals(a, b);
-    public static T operator [](Vector v, Index n) => Extensions.At(v, n);
+    public T this[Index n]
+        => At(FieldValues(v), n);
     public Unit U { get; }
     public Unit V { get; }
 }
@@ -1374,14 +1404,16 @@ public class UVW: Vector<UVW>
     public object[] FieldValues() => new[] { U, V, W };
     public static Count Count(UVW xs) => Extensions.Count(xs);
     public static T At(UVW xs, Index n) => Extensions.At(xs, n);
-    public static T operator [](UVW xs, Index n) => Extensions.At(xs, n);
+    public T this[Index n]
+        => null;
     public static UVW operator +(UVW self, UVW other) => Extensions.Add(self, other);
     public static UVW operator -(UVW self) => Extensions.Negative(self);
     public static UVW operator *(UVW self, UVW other) => Extensions.Multiply(self, other);
     public static UVW operator /(UVW self, UVW other) => Extensions.Divide(self, other);
     public static UVW operator %(UVW self, UVW other) => Extensions.Modulo(self, other);
     public static Boolean operator ==(UVW a, UVW b) => Extensions.Equals(a, b);
-    public static T operator [](Vector v, Index n) => Extensions.At(v, n);
+    public T this[Index n]
+        => At(FieldValues(v), n);
     public Unit U { get; }
     public Unit V { get; }
     public Unit W { get; }
@@ -1756,92 +1788,70 @@ public class BinomialDistribution: Value<BinomialDistribution>
 }
 public static partial class Extensions
 {
-    public static Value Size<Self>(this Interval x) where Self: Interval<Self>
-    {
+    public static Value Size<T>(Interval x) {
         return Subtract(Max(x), Min(x));
     }
-    public static Boolean IsEmpty<Self>(this Interval x) where Self: Interval<Self>
-    {
+    public static Boolean IsEmpty<T>(Interval x) {
         return GreaterThanOrEquals(Min(x), Max(x));
     }
-    public static Numerical Lerp<Self>(this Interval x, Unit amount) where Self: Interval<Self>
-    {
+    public static Numerical Lerp<T>(Interval x, Unit amount) {
         return Multiply(Min(x), Add(Subtract(1, amount), Multiply(Max(x), amount)));
     }
-    public static Unit InverseLerp<Self>(this Interval x, Numerical value) where Self: Interval<Self>
-    {
+    public static Unit InverseLerp<T>(Interval x, Numerical value) {
         return Divide(Subtract(value, Min(x)), Size(x));
     }
-    public static Interval Negate<Self>(this Interval x) where Self: Interval<Self>
-    {
+    public static Interval Negate<T>(Interval x) {
         return Tuple(Negative(Max(x)), Negative(Min(x)));
     }
-    public static Interval Reverse<Self>(this Interval x) where Self: Interval<Self>
-    {
+    public static Interval Reverse<T>(Interval x) {
         return Tuple(Max(x), Min(x));
     }
-    public static Interval Resize<Self>(this Interval x, Numerical size) where Self: Interval<Self>
-    {
+    public static Interval Resize<T>(Interval x, Numerical size) {
         return Tuple(Min(x), Add(Min(x), size));
     }
-    public static Numerical Center<Self>(this Interval x) where Self: Interval<Self>
-    {
+    public static Numerical Center<T>(Interval x) {
         return Lerp(x, 0.5);
     }
-    public static Boolean Contains<Self>(this Interval x, Numerical value) where Self: Interval<Self>
-    {
+    public static Boolean Contains<T>(Interval x, Numerical value) {
         return LessThanOrEquals(Min(x), And(value, LessThanOrEquals(value, Max(x))));
     }
-    public static Boolean Contains<Self>(this Interval x, Interval other) where Self: Interval<Self>
-    {
+    public static Boolean Contains<T>(Interval x, Interval other) {
         return LessThanOrEquals(Min(x), And(Min(other), GreaterThanOrEquals(Max, Max(other))));
     }
-    public static Boolean Overlaps<Self>(this Interval x, Interval y) where Self: Interval<Self>
-    {
+    public static Boolean Overlaps<T>(Interval x, Interval y) {
         return Not(IsEmpty(Clamp(x, y)));
     }
-    public static Tuple Split<Self>(this Interval x, Unit t) where Self: Interval<Self>
-    {
+    public static Tuple Split<T>(Interval x, Unit t) {
         return Tuple(Left(x, t), Right(x, t));
     }
-    public static Tuple Split<Self>(this Interval x) where Self: Interval<Self>
-    {
+    public static Tuple Split<T>(Interval x) {
         return Split(x, 0.5);
     }
-    public static Interval Left<Self>(this Interval x, Unit t) where Self: Interval<Self>
-    {
+    public static Interval Left<T>(Interval x, Unit t) {
         return Tuple(Min(x), Lerp(x, t));
     }
-    public static Interval Right<Self>(this Interval x, Unit t) where Self: Interval<Self>
-    {
+    public static Interval Right<T>(Interval x, Unit t) {
         return Tuple(Lerp(x, t), Max(x));
     }
-    public static Interval MoveTo<Self>(this Interval x, Numerical v) where Self: Interval<Self>
-    {
+    public static Interval MoveTo<T>(Interval x, Numerical v) {
         return Tuple(v, Add(v, Size(x)));
     }
-    public static Interval LeftHalf<Self>(this Interval x) where Self: Interval<Self>
-    {
+    public static Interval LeftHalf<T>(Interval x) {
         return Left(x, 0.5);
     }
-    public static Interval RightHalf<Self>(this Interval x) where Self: Interval<Self>
-    {
+    public static Interval RightHalf<T>(Interval x) {
         return Right(x, 0.5);
     }
-    public static Numerical HalfSize<Self>(this Interval x) where Self: Interval<Self>
-    {
+    public static Numerical HalfSize<T>(Interval x) {
         return Half(Size(x));
     }
-    public static Interval Recenter<Self>(this Interval x, Numerical c) where Self: Interval<Self>
-    {
+    public static Interval Recenter<T>(Interval x, Numerical c) {
         return Tuple(Subtract(c, HalfSize(x)), Add(c, HalfSize(x)));
     }
-    public static Interval Clamp<Self>(this Interval x, Interval y) where Self: Interval<Self>
-    {
+    public static Interval Clamp<T>(Interval x, Interval y) {
         return Tuple(Clamp(x, Min(y)), Clamp(x, Max(y)));
     }
-    public static Numerical Clamp<Self>(this Interval x, Numerical value) where Self: Interval<Self>
-    {
+    public static Numerical Clamp<T>(Interval x, Numerical value) {
         return LessThan(value, Min(x)
             ? Min(x)
             : GreaterThan(value, Max(x)
@@ -1850,94 +1860,73 @@ public static partial class Extensions
             )
         );
     }
-    public static Boolean Within<Self>(this Interval x, Numerical value) where Self: Interval<Self>
-    {
+    public static Boolean Within<T>(Interval x, Numerical value) {
         return GreaterThanOrEquals(value, And(Min(x), LessThanOrEquals(value, Max(x))));
     }
 }
 public static partial class Extensions
 {
-    public static Number Sum<Self>(this Vector v) where Self: Vector<Self>
-    {
+    public static Number Sum<T>(Vector v) {
         return Aggregate(v, 0, Add);
     }
-    public static Number SumSquares<Self>(this Vector v) where Self: Vector<Self>
-    {
+    public static Number SumSquares<T>(Vector v) {
         return Aggregate(Square(v), 0, Add);
     }
-    public static Number LengthSquared<Self>(this Vector v) where Self: Vector<Self>
-    {
+    public static Number LengthSquared<T>(Vector v) {
         return SumSquares(v);
     }
-    public static Number Length<Self>(this Vector v) where Self: Vector<Self>
-    {
+    public static Number Length<T>(Vector v) {
         return SquareRoot(LengthSquared(v));
     }
-    public static Number Dot<Self>(this Vector v1, Vector v2) where Self: Vector<Self>
-    {
+    public static Number Dot<T>(Vector v1, Vector v2) {
         return Sum(Multiply(v1, v2));
     }
-    public static Vector Normal<Self>(this Vector v) where Self: Vector<Self>
-    {
+    public static Vector Normal<T>(Vector v) {
         return Divide(v, Length(v));
     }
 }
 public static partial class Extensions
 {
-    public static Numerical SquareRoot<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical SquareRoot(Numerical x) {
         return Pow(x, 0.5);
     }
-    public static Numerical Square<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Square(Numerical x) {
         return Multiply(x, x);
     }
-    public static Numerical Clamp<Self>(this Numerical x, Interval i) where Self: Numerical<Self>
-    {
+    public static Numerical Clamp(Numerical x, Interval i) {
         return Clamp(i, x);
     }
-    public static Numerical Clamp<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Clamp(Numerical x) {
         return Clamp(x, Tuple(0, 1));
     }
-    public static Numerical PlusOne<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical PlusOne(Numerical x) {
         return Add(x, One(x));
     }
-    public static void MinusOne<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static void MinusOne(Numerical x) {
         return Subtract(x, One(x));
     }
-    public static Numerical FromOne<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical FromOne(Numerical x) {
         return Subtract(One(x), x);
     }
-    public static Boolean IsPositive<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Boolean IsPositive(Numerical x) {
         return GreaterThanOrEquals(x, 0);
     }
-    public static Boolean GtZ<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Boolean GtZ(Numerical x) {
         return GreaterThan(x, 0);
     }
-    public static Boolean LtZ<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Boolean LtZ(Numerical x) {
         return LessThan(x, 0);
     }
-    public static Boolean GtEqZ<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Boolean GtEqZ(Numerical x) {
         return GreaterThanOrEquals(x, 0);
     }
-    public static Boolean LtEqZ<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Boolean LtEqZ(Numerical x) {
         return LessThanOrEquals(x, 0);
     }
-    public static Boolean IsNegative<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Boolean IsNegative(Numerical x) {
         return LessThan(x, 0);
     }
-    public static Numerical Sign<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Sign(Numerical x) {
         return LtZ(x)
             ? Negative(One(x))
             : GtZ(x)
@@ -1946,176 +1935,136 @@ public static partial class Extensions
 
         ;
     }
-    public static Numerical Abs<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Abs(Numerical x) {
         return LtZ(x)
             ? Negative(x)
             : x
         ;
     }
-    public static Numerical Half<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Half(Numerical x) {
         return Divide(x, 2);
     }
-    public static Numerical Third<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Third(Numerical x) {
         return Divide(x, 3);
     }
-    public static Numerical Quarter<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Quarter(Numerical x) {
         return Divide(x, 4);
     }
-    public static Numerical Fifth<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Fifth(Numerical x) {
         return Divide(x, 5);
     }
-    public static Numerical Sixth<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Sixth(Numerical x) {
         return Divide(x, 6);
     }
-    public static Numerical Seventh<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Seventh(Numerical x) {
         return Divide(x, 7);
     }
-    public static Numerical Eighth<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Eighth(Numerical x) {
         return Divide(x, 8);
     }
-    public static Numerical Ninth<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Ninth(Numerical x) {
         return Divide(x, 9);
     }
-    public static Numerical Tenth<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Tenth(Numerical x) {
         return Divide(x, 10);
     }
-    public static Numerical Sixteenth<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Sixteenth(Numerical x) {
         return Divide(x, 16);
     }
-    public static Numerical Hundredth<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Hundredth(Numerical x) {
         return Divide(x, 100);
     }
-    public static Numerical Thousandth<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Thousandth(Numerical x) {
         return Divide(x, 1000);
     }
-    public static Numerical Millionth<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Millionth(Numerical x) {
         return Divide(x, Divide(1000, 1000));
     }
-    public static Numerical Billionth<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Billionth(Numerical x) {
         return Divide(x, Divide(1000, Divide(1000, 1000)));
     }
-    public static Numerical Hundred<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Hundred(Numerical x) {
         return Multiply(x, 100);
     }
-    public static Numerical Thousand<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Thousand(Numerical x) {
         return Multiply(x, 1000);
     }
-    public static Numerical Million<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Million(Numerical x) {
         return Multiply(x, Multiply(1000, 1000));
     }
-    public static Numerical Billion<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Billion(Numerical x) {
         return Multiply(x, Multiply(1000, Multiply(1000, 1000)));
     }
-    public static Numerical Twice<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Twice(Numerical x) {
         return Multiply(x, 2);
     }
-    public static Numerical Thrice<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Thrice(Numerical x) {
         return Multiply(x, 3);
     }
-    public static Numerical SmoothStep<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical SmoothStep(Numerical x) {
         return Multiply(Square(x), Subtract(3, Twice(x)));
     }
-    public static Numerical Pow2<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Pow2(Numerical x) {
         return Multiply(x, x);
     }
-    public static Numerical Pow3<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Pow3(Numerical x) {
         return Multiply(Pow2(x), x);
     }
-    public static Numerical Pow4<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Pow4(Numerical x) {
         return Multiply(Pow3(x), x);
     }
-    public static Numerical Pow5<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Numerical Pow5(Numerical x) {
         return Multiply(Pow4(x), x);
     }
-    public static Number Pi<Self>() where Self: Numerical<Self>
-    {
+    public static Number Pi() {
         return 3.1415926535897;
     }
-    public static Boolean AlmostZero<Self>(this Numerical x) where Self: Numerical<Self>
-    {
+    public static Boolean AlmostZero(Numerical x) {
         return LessThan(Abs(x), 1E-08);
     }
 }
 public static partial class Extensions
 {
-    public static Angle Radians<Self>(this Number x) where Self: Angles<Self>
-    {
+    public static Angle Radians(Number x) {
         return x;
     }
-    public static Angle Degrees<Self>(this Number x) where Self: Angles<Self>
-    {
+    public static Angle Degrees(Number x) {
         return Multiply(x, Divide(Pi, 180));
     }
-    public static Angle Turns<Self>(this Number x) where Self: Angles<Self>
-    {
+    public static Angle Turns(Number x) {
         return Multiply(x, Multiply(2, Pi));
     }
 }
 public static partial class Extensions
 {
-    public static Boolean Equals<Self>(this Comparable a, Comparable b) where Self: Comparable<Self>
-    {
+    public static Boolean Equals(Comparable a, Comparable b) {
         return Equals(Compare(a, b), 0);
     }
-    public static Boolean LessThan<Self>(this Comparable a, Comparable b) where Self: Comparable<Self>
-    {
+    public static Boolean LessThan(Comparable a, Comparable b) {
         return LessThan(Compare(a, b), 0);
     }
-    public static void LessThanOrEquals<Self>(this Comparable a, Comparable b) where Self: Comparable<Self>
-    {
+    public static void LessThanOrEquals(Comparable a, Comparable b) {
         return LessThanOrEquals(Compare(a, b), 0);
     }
-    public static Boolean GreaterThan<Self>(this Comparable a, Comparable b) where Self: Comparable<Self>
-    {
+    public static Boolean GreaterThan(Comparable a, Comparable b) {
         return GreaterThan(Compare(a, b), 0);
     }
-    public static Boolean GreaterThanOrEquals<Self>(this Comparable a, Comparable b) where Self: Comparable<Self>
-    {
+    public static Boolean GreaterThanOrEquals(Comparable a, Comparable b) {
         return GreaterThanOrEquals(Compare(a, b), 0);
     }
-    public static Value Between<Self>(this Value v, Value a, Value b) where Self: Comparable<Self>
-    {
+    public static Value Between(Value v, Value a, Value b) {
         return Between(v, Tuple(a, b));
     }
-    public static Interval Between<Self>(this Value v, Interval i) where Self: Comparable<Self>
-    {
+    public static Interval Between(Value v, Interval i) {
         return Contains(i, v);
     }
-    public static Comparable Min<Self>(this Comparable a, Comparable b) where Self: Comparable<Self>
-    {
+    public static Comparable Min(Comparable a, Comparable b) {
         return LessThanOrEquals(a, b)
             ? a
             : b
         ;
     }
-    public static Comparable Max<Self>(this Comparable a, Comparable b) where Self: Comparable<Self>
-    {
+    public static Comparable Max(Comparable a, Comparable b) {
         return GreaterThanOrEquals(a, b)
             ? a
             : b
@@ -2124,70 +2073,57 @@ public static partial class Extensions
 }
 public static partial class Extensions
 {
-    public static Boolean NotEquals<Self>(this Equatable x, Equatable y) where Self: Equatable<Self>
-    {
+    public static Boolean NotEquals(Equatable x, Equatable y) {
         return Not(Equals(x, y));
     }
 }
 public static partial class Extensions
 {
-    public static Array Map<Self>(this Array xs, Function f) where Self: Array<Self>
-    {
+    public static Array Map<T>(Array xs, Function f) {
         return Map(Count(xs), (i) => 
         f(At(xs, i)));
     }
-    public static Array Zip<Self>(this Array xs, Array ys, Function f) where Self: Array<Self>
-    {
+    public static Array Zip<T>(Array xs, Array ys, Function f) {
         return Tuple(Count(xs), (i) => 
         f(At(i), At(ys, i)));
     }
-    public static Array Skip<Self>(this Array xs, Count n) where Self: Array<Self>
-    {
+    public static Array Skip<T>(Array xs, Count n) {
         return Tuple(Subtract(Count, n), (i) => 
         At(Subtract(i, n)));
     }
-    public static Array Take<Self>(this Array xs, Count n) where Self: Array<Self>
-    {
+    public static Array Take<T>(Array xs, Count n) {
         return Array(n, (i) => 
         At);
     }
-    public static Any Aggregate<Self>(this Array xs, Any init, Function f) where Self: Array<Self>
-    {
+    public static Any Aggregate<T>(Array xs, Any init, Function f) {
         return IsEmpty(xs)
             ? init
             : f(init, f(Rest(xs)))
         ;
     }
-    public static Array Rest<Self>(this Array xs) where Self: Array<Self>
-    {
+    public static Array Rest<T>(Array xs) {
         return Skip(xs, 1);
     }
-    public static Boolean IsEmpty<Self>(this Array xs) where Self: Array<Self>
-    {
+    public static Boolean IsEmpty<T>(Array xs) {
         return Equals(Count(xs), 0);
     }
-    public static Any First<Self>(this Array xs) where Self: Array<Self>
-    {
+    public static Any First<T>(Array xs) {
         return At(xs, 0);
     }
-    public static Any Last<Self>(this Array xs) where Self: Array<Self>
-    {
+    public static Any Last<T>(Array xs) {
         return At(xs, Subtract(Count(xs), 1));
     }
-    public static Array Slice<Self>(this Array xs, Index from, Count count) where Self: Array<Self>
-    {
+    public static Array Slice<T>(Array xs, Index from, Count count) {
         return Take(Skip(xs, from), count);
     }
-    public static String Join<Self>(this Array xs, String sep) where Self: Array<Self>
-    {
+    public static String Join<T>(Array xs, String sep) {
         return IsEmpty(xs)
             ? 
             : Add(ToString(First(xs)), Aggregate(Rest(xs), , (acc, cur) => 
             Interpolate(acc, sep, cur)))
         ;
     }
-    public static Boolean All<Self>(this Array xs, Function f) where Self: Array<Self>
-    {
+    public static Boolean All<T>(Array xs, Function f) {
         return IsEmpty(xs)
             ? True
             : And(f(First(xs)), f(Rest(xs)))
@@ -2196,138 +2132,106 @@ public static partial class Extensions
 }
 public static partial class Extensions
 {
-    public static Number BlendEaseFunc<Self>(this Number p, Function easeIn, Function easeOut) where Self: Easings<Self>
-    {
+    public static Number BlendEaseFunc(Number p, Function easeIn, Function easeOut) {
         return LessThan(p, 0.5
             ? Multiply(0.5, easeIn(Multiply(p, 2)))
             : Multiply(0.5, Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5))
         );
     }
-    public static Number InvertEaseFunc<Self>(this Number p, Function easeIn) where Self: Easings<Self>
-    {
+    public static Number InvertEaseFunc(Number p, Function easeIn) {
         return Subtract(1, easeIn(Subtract(1, p)));
     }
-    public static Number Linear<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number Linear(Number p) {
         return p;
     }
-    public static Number QuadraticEaseIn<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number QuadraticEaseIn(Number p) {
         return Pow2(p);
     }
-    public static Number QuadraticEaseOut<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number QuadraticEaseOut(Number p) {
         return InvertEaseFunc(p, QuadraticEaseIn);
     }
-    public static Number QuadraticEaseInOut<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number QuadraticEaseInOut(Number p) {
         return BlendEaseFunc(p, QuadraticEaseIn, QuadraticEaseOut);
     }
-    public static Number CubicEaseIn<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number CubicEaseIn(Number p) {
         return Pow3(p);
     }
-    public static Number CubicEaseOut<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number CubicEaseOut(Number p) {
         return InvertEaseFunc(p, CubicEaseIn);
     }
-    public static Number CubicEaseInOut<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number CubicEaseInOut(Number p) {
         return BlendEaseFunc(p, CubicEaseIn, CubicEaseOut);
     }
-    public static Number QuarticEaseIn<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number QuarticEaseIn(Number p) {
         return Pow4(p);
     }
-    public static Number QuarticEaseOut<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number QuarticEaseOut(Number p) {
         return InvertEaseFunc(p, QuarticEaseIn);
     }
-    public static Number QuarticEaseInOut<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number QuarticEaseInOut(Number p) {
         return BlendEaseFunc(p, QuarticEaseIn, QuarticEaseOut);
     }
-    public static Number QuinticEaseIn<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number QuinticEaseIn(Number p) {
         return Pow5(p);
     }
-    public static Number QuinticEaseOut<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number QuinticEaseOut(Number p) {
         return InvertEaseFunc(p, QuinticEaseIn);
     }
-    public static Number QuinticEaseInOut<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number QuinticEaseInOut(Number p) {
         return BlendEaseFunc(p, QuinticEaseIn, QuinticEaseOut);
     }
-    public static Number SineEaseIn<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number SineEaseIn(Number p) {
         return InvertEaseFunc(p, SineEaseOut);
     }
-    public static Number SineEaseOut<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number SineEaseOut(Number p) {
         return Sin(Turns(Quarter(p)));
     }
-    public static Number SineEaseInOut<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number SineEaseInOut(Number p) {
         return BlendEaseFunc(p, SineEaseIn, SineEaseOut);
     }
-    public static Number CircularEaseIn<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number CircularEaseIn(Number p) {
         return FromOne(SquareRoot(FromOne(Pow2(p))));
     }
-    public static Number CircularEaseOut<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number CircularEaseOut(Number p) {
         return InvertEaseFunc(p, CircularEaseIn);
     }
-    public static Number CircularEaseInOut<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number CircularEaseInOut(Number p) {
         return BlendEaseFunc(p, CircularEaseIn, CircularEaseOut);
     }
-    public static Number ExponentialEaseIn<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number ExponentialEaseIn(Number p) {
         return AlmostZero(p)
             ? p
             : Pow(2, Multiply(10, MinusOne(p)))
         ;
     }
-    public static Number ExponentialEaseOut<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number ExponentialEaseOut(Number p) {
         return InvertEaseFunc(p, ExponentialEaseIn);
     }
-    public static Number ExponentialEaseInOut<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number ExponentialEaseInOut(Number p) {
         return BlendEaseFunc(p, ExponentialEaseIn, ExponentialEaseOut);
     }
-    public static Number ElasticEaseIn<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number ElasticEaseIn(Number p) {
         return Multiply(13, Multiply(Turns(Quarter(p)), Sin(Radians(Pow(2, Multiply(10, MinusOne(p)))))));
     }
-    public static Number ElasticEaseOut<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number ElasticEaseOut(Number p) {
         return InvertEaseFunc(p, ElasticEaseIn);
     }
-    public static Number ElasticEaseInOut<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number ElasticEaseInOut(Number p) {
         return BlendEaseFunc(p, ElasticEaseIn, ElasticEaseOut);
     }
-    public static Number BackEaseIn<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number BackEaseIn(Number p) {
         return Subtract(Pow3(p), Multiply(p, Sin(Turns(Half(p)))));
     }
-    public static Number BackEaseOut<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number BackEaseOut(Number p) {
         return InvertEaseFunc(p, BackEaseIn);
     }
-    public static Number BackEaseInOut<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number BackEaseInOut(Number p) {
         return BlendEaseFunc(p, BackEaseIn, BackEaseOut);
     }
-    public static Number BounceEaseIn<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number BounceEaseIn(Number p) {
         return InvertEaseFunc(p, BounceEaseOut);
     }
-    public static Number BounceEaseOut<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number BounceEaseOut(Number p) {
         return LessThan(p, Divide(4, 11))
             ? Multiply(121, Divide(Pow2(p), 16))
             : LessThan(p, Divide(8, 11))
@@ -2339,8 +2243,7 @@ public static partial class Extensions
 
         ;
     }
-    public static Number BounceEaseInOut<Self>(this Number p) where Self: Easings<Self>
-    {
+    public static Number BounceEaseInOut(Number p) {
         return BlendEaseFunc(p, BounceEaseIn, BounceEaseOut);
     }
 }

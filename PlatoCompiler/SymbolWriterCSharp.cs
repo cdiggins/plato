@@ -105,15 +105,61 @@ namespace Plato.Compiler
         }
 
         public static string ParameterizedTypeName(string name, IEnumerable<string> args)
-            => name + GenericArgs(args);
+            => name + TypeArgsString(args);
 
-        public static string GenericArgs(IEnumerable<string> args)
+        public static string TypeArgsString(IEnumerable<string> args)
             => args.Any() ? "<" + string.Join(", ", args) + ">" : "";
 
-        public SymbolWriterCSharp WriteMembersAsExtensionMethods(TypeDefSymbol typeDef)
+        public SymbolWriterCSharp WriteLibraryMethods(TypeDefSymbol typeDef)
+        {
+            foreach (var mds in typeDef.Methods)
+            {
+                if (mds.Function.Body == null)
+                    // Intrinsic 
+                    continue;
+
+                var f = mds.Function;
+
+                if (f.Body == null)
+                    // Intrinsic 
+                    continue;
+
+
+                var typeParameterNames =
+                    f.Parameters.Count > 0
+                        ? f.Parameters[0].Type.Def.TypeParameters.Select(tp => tp.Name).ToList()
+                        : new List<string>();
+                var typeArgsString = TypeArgsString(typeParameterNames);
+
+                // TODO: the type parameters are going to be a lot more complicated than this. 
+                // We will need constraints.
+                // We will need to look at all of the parameters.
+                // By default every "Any", will actually be a type argument. 
+                // I will also need to figure out how many parameters each thing has (e.g., function, tuple). 
+                // NOTE: I should be able to infer the number of parameter of things, based on how they are called. 
+                // 
+
+                Write("public static ")
+                    .WriteTypeDecl(f.Type, "void")
+                    .Write(mds.Name)
+                    .Write(typeArgsString)
+                    .Write("(")
+                    .WriteCommaList(mds.Function.Parameters)
+                    .Write(") ")
+                    .WriteStartBlock()
+                    .Write("return ")
+                    .Write(mds.Function.Body)
+                    .WriteLine(";")
+                    .WriteEndBlock();
+            }
+
+            return this;
+        }
+
+        public SymbolWriterCSharp WriteConceptMembersAsExtensionMethods(TypeDefSymbol typeDef)
         {
             var typeParameterNames = typeDef.TypeParameters.Select(tp => tp.Name).ToList();
-            var typeArgs = GenericArgs(typeParameterNames.Prepend("Self"));
+            var typeArgsString = TypeArgsString(typeParameterNames.Prepend("Self"));
 
             var parameterizedTypeName = ParameterizedTypeName(typeDef.Name, typeParameterNames.Prepend("Self"));
             var constraint = $"where Self: {parameterizedTypeName}";
@@ -124,12 +170,13 @@ namespace Plato.Compiler
                     continue;
 
                 if (mds.Function.Body == null)
+                    // Interface method
                     continue;
 
                 Write("public static ")
                     .WriteTypeDecl(mds.Type, "void")
                     .Write(mds.Name)
-                    .Write(typeArgs)
+                    .Write(typeArgsString)
                     .Write("(")
                     .Write(mds.Function.Parameters.Count > 0 ? "this " : "")
                     .WriteCommaList(mds.Function.Parameters)
@@ -213,7 +260,24 @@ namespace Plato.Compiler
                 {
                     var op = OperatorNameLookup.NameToBinaryOperator(f.Name);
                     if (op != null)
-                        WriteLine($"public static {ret} operator {op}({paramList}) => Extensions.{f.Name}({argList});");
+                    {
+                        if (op != "[]")
+                        {
+                            WriteLine($"public static {ret} operator {op}({paramList}) => Extensions.{f.Name}({argList});");
+                        }
+                        else
+                        {
+                            var index = f.Parameters[1];
+                            Write($"public ")
+                                .Write(ret)
+                                .Write(" this[").Write(index).Write("]")
+                                .WriteLine()
+                                .Indent().Write("=> ")
+                                .Write(f.Body)
+                                .WriteLine(";")
+                                .Dedent();
+                        }
+                    }
                 }
 
                 if (f.Parameters.Count == 1)
@@ -261,6 +325,8 @@ namespace Plato.Compiler
         {
             if (typeDef.IsConcept())
             {
+                // TODO: get and append the type parameters 
+
                 var fullName = $"{typeDef.Name}<Self>";
                 var inherited = typeDef.Inherits.Count > 0
                     ? ": " + string.Join(", ", typeDef.Inherits.Select(td => $"{td.Name}<Self>"))
@@ -268,15 +334,16 @@ namespace Plato.Compiler
 
                 Write("public interface ").Write(fullName)
                     .WriteLine(inherited)   
-                    .Write(" where ")
-                    .WriteLine($"Self : {fullName}")
+                    .Indent()
+                    .WriteLine($"where Self : {fullName}")
+                    .Dedent()
                     .WriteStartBlock()
                     .WriteUnimplementedMethods(typeDef)
                     .WriteEndBlock();
 
                 WriteLine("public static partial class Extensions")
                     .WriteStartBlock()
-                    .WriteMembersAsExtensionMethods(typeDef)
+                    .WriteConceptMembersAsExtensionMethods(typeDef)
                     .WriteEndBlock();
 
                 return this;
@@ -305,7 +372,7 @@ namespace Plato.Compiler
             {
                 return WriteLine("public static partial class Extensions")
                     .WriteStartBlock()
-                    .WriteMembersAsExtensionMethods(typeDef)
+                    .WriteLibraryMethods(typeDef)
                     .WriteEndBlock();
             }
 

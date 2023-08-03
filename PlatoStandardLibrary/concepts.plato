@@ -1,3 +1,23 @@
+concept Any
+{ 
+    FieldNames(): Array<String>;
+     
+    FieldValues(x: Self): Array<Any>;
+    TypeOf(): Type;
+}
+
+concept Array<T: Any>
+{
+    Count(xs: Self): Count;
+    At(xs: Self, n: Index): T;
+}
+
+concept Value 
+{
+    Default(): Self
+        => Self.FieldTypes.Default;
+}
+
 concept Vector<T: Numerical> 
     inherits Array<T>, Value, Numerical, Arithmetic<T>
 {
@@ -9,18 +29,31 @@ concept Vector<T: Numerical>
 }
 
 concept Measure
-    inherits Value, ScalarArithmetic<Number>, Equatable, Comparable, Magnitude
+    inherits Value, ScalarArithmetic, Equatable, Comparable, Magnitudinal
 { 
     Value(x: Self): Number
         => x.FieldValues[0];
 }
 
 concept Numerical 
-    inherits Value, Arithmetic, Equatable, Comparable, Magnitude
+    inherits Value, Arithmetic, Equatable, Comparable, Magnitudinal, ScalarArithmetic
 {
+    FieldTypes(): Array<Numerical.Type>;
+
+    Zero(): Self
+        => Self.FieldTypes.Zero;
+
+    One(): Self
+        => Self.FieldTypes.One;
+
+    MinValue(): Self
+        => Self.FieldTypes.MinValue;
+
+    MaxValue(): Self
+        => Self.FieldTypes.MaxValue;
 }
 
-concept Magnitude
+concept Magnitudinal
     inherits Value
 {
     Magnitude(x: Self): Number
@@ -30,11 +63,6 @@ concept Magnitude
 concept Comparable
     inherits Value
 {
-    Compare(a: Self, b: Self): Integer
-        => a.Magnitude < b.Magnitude 
-            ? -1 
-            : a.Magnitude > b.Magnitude 
-                ? 1 : 0;
 }
 
 concept Equatable
@@ -66,22 +94,22 @@ concept Arithmetic
         => self.FieldValues.Modulo(other.FieldValues);
 }
 
-concept ScalarArithmetic<T>
+concept ScalarArithmetic
     inherits Value
 {
-    Add(self: Self, scalar: T): Self
+    Add(self: Self, scalar: Number): Self
         => self.FieldValues.Add(scalar);
     
-    Subtract(self: Self, scalar: T): Self
+    Subtract(self: Self, scalar: Number): Self
         => self.Add(scalar.Negative);
 
-    Multiply(self: Self, scalar: T): Self
+    Multiply(self: Self, scalar: Number): Self
         => self.FieldValues.Multiply(scalar);
     
-    Divide(self: Self, scalar: T): Self
+    Divide(self: Self, scalar: Number): Self
         => self.Multiply(scalar.Reciprocal);
 
-    Modulo(self: Self, scalar: T): Self
+    Modulo(self: Self, scalar: Number): Self
         => self.FieldValues.Modulo(scalar);
 }
 
@@ -97,36 +125,10 @@ concept Boolean
         => a.FieldValues.Not;
 }
 
-concept Value 
-{
-    Zero(): Self
-        => Self.FieldTypes.Zero;
-
-    One(): Self
-        => Self.FieldTypes.One;
-
-    Default(): Self
-        => Self.FieldTypes.Default;
-
-    MinValue(): Self
-        => Self.FieldTypes.MinValue;
-
-    MaxValue(): Self
-        => Self.FieldTypes.MaxValue;
-
-    ToString(x: Self): String
-        => x.FieldValues.Join(",");
-}
 
 concept Interval<T: Numerical>
     inherits Vector<T>
 {
     Min(x: Self): T;
     Max(x: Self): T;
-}
-
-concept Array<T: Any>
-{
-    Count(xs: Self): Count;
-    At(xs: Self, n: Index): T;
 }

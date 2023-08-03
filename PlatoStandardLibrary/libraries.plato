@@ -1,6 +1,53 @@
+library Array
+{
+    Map(xs: Array, f: Function): Array 
+        => (xs.Count, (i: Index) => f(xs.At(i)));
+
+    Reverse(xs: Array): Array
+        => (xs.Count, (i: Index) => f(xs.At(xs.Count - 1 - i));
+
+    Zip(xs: Array, ys: Array, f: Function): Array 
+        => (xs.Count, (i: Index) => f(At(i), ys.At(i)));
+    
+    Zip(xs: Array, ys: Array, zs: Array, f: Function): Array 
+        => (xs.Count, (i: Index) => f(At(i), ys.At(i), zs.At(i));
+    
+    Skip(xs: Array, n: Count): Array
+        => (Count - n, (i: Index) => At(i - n));
+    
+    Take(xs: Array, n: Count): Array
+        => (n, (i: Index) => At(i));   
+    
+    Aggregate(xs: Array, init: Any, f: Function): Any 
+        => xs.IsEmpty ? init : f(init, f(xs.Rest));
+
+    Rest(xs: Array): Array 
+        => xs.Skip(1);
+    
+    IsEmpty(xs: Array): Boolean
+        => xs.Count == 0;
+    
+    First(xs: Array): Any 
+        => xs.At(0);
+    
+    Last(xs: Array): Any
+        => xs.At(xs.Count - 1);
+    
+    Slice(xs: Array, from: Index, count: Count): Array 
+        => xs.Skip(from).Take(count);
+    
+    Join(xs: Array, sep: String): String 
+        => xs.IsEmpty ? "" 
+            : xs.First.ToString 
+            + xs.Rest.Aggregate("", (acc: String, cur: Any) => $"{acc}{sep}{cur}");
+    
+    All(xs: Array, f: Function): Boolean 
+        => xs.IsEmpty ? true : f(xs.First) && f(xs.Rest);
+} 
+
 library Interval
 {
-    Size(x: Interval): Value 
+    Size(x: Interval): Numerical 
         => x.Max - x.Min;
     
     IsEmpty(x: Interval): Boolean 
@@ -17,10 +64,7 @@ library Interval
     
     Reverse(x: Interval): Interval 
         => (x.Max, x.Min);
-    
-    Resize(x: Interval, size: Numerical): Interval 
-        => (x.Min, x.Min + size);
-    
+        
     Center(x: Interval): Numerical
         => x.Lerp(0.5);    
     
@@ -218,6 +262,13 @@ library Numerical
     
     AlmostZero(x: Numerical): Boolean
         => x.Abs < 0.00000001; 
+
+    Lerp(x: Numerical, y: Numerical, t: Unit): Numerical
+        => (1 - t) * v0 + t * v1;
+        
+    Between(self: Numerical, min: Numerical, max: Numerical): Boolean
+        => self.FieldValues.Zip(min.FieldValues, max.FieldValues, 
+            (x: Numerical, y: Numerical, z: Numerical) => Between(x, y, z));
 }
 
 library Angles 
@@ -249,17 +300,17 @@ library Comparable
     GreaterThanOrEquals(a: Comparable, b: Comparable): Boolean 
         => a.Compare(b) >= 0;
     
-    Between(v: Value, a: Value, b: Value): Value 
-        => v.Between((a, b));
+    Between(v: Comparable, a: Comparable, b: Comparable): Value 
+        => v >= a && v <= b;
     
     Between(v: Value, i: Interval): Interval 
         => i.Contains(v);
     
     Min(a: Comparable, b: Comparable): Comparable 
-        => a.LessThanOrEquals(b) ? a : b;
+        => a <= b ? a : b;
     
     Max(a: Comparable, b: Comparable): Comparable 
-        => a.GreaterThanOrEquals(b) ? a : b;
+        => a >= b ? a : b;
 }
 
 library Equatable
@@ -267,47 +318,6 @@ library Equatable
     NotEquals(x: Equatable, y: Equatable): Boolean
         => !x.Equals(y);
 }
-
-library Array
-{
-    Map(xs: Array, f: Function): Array 
-        => Map(xs.Count, i => f(xs.At(i)));
-
-    Zip(xs: Array, ys: Array, f: Function): Array 
-        => (xs.Count, i => f(At(i), ys.At(i)));
-    
-    Skip(xs: Array, n: Count): Array
-        => (Count - n, i => At(i - n));
-    
-    Take(xs: Array, n: Count): Array
-        => Array(n, i => At);   
-    
-    Aggregate(xs: Array, init: Any, f: Function): Any 
-        => xs.IsEmpty ? init : f(init, f(xs.Rest));
-
-    Rest(xs: Array): Array 
-        => xs.Skip(1);
-    
-    IsEmpty(xs: Array): Boolean
-        => xs.Count == 0;
-    
-    First(xs: Array): Any 
-        => xs.At(0);
-    
-    Last(xs: Array): Any
-        => xs.At(xs.Count - 1);
-    
-    Slice(xs: Array, from: Index, count: Count): Array 
-        => xs.Skip(from).Take(count);
-    
-    Join(xs: Array, sep: String): String 
-        => xs.IsEmpty ? "" 
-            : xs.First.ToString 
-            + xs.Rest.Aggregate("", (acc, cur) => $"{acc}{sep}{cur}");
-    
-    All(xs: Array, f: Function): Boolean 
-        => xs.IsEmpty ? true : f(xs.First) && f(xs.Rest);
-} 
 
 library Easings
 {
