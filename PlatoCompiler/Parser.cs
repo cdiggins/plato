@@ -1,47 +1,61 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Parakeet;
 
 namespace Plato.Compiler
 {
-    public class Compilation
+    public class Parser
     {
-        public Compilation(
-            string input,
-            Rule rule,
-            Func<ParserTree, CstNode> cstGenerator,
-            Func<CstNode, AstNode> astBuilder)
-            : this(new ParserInput(input), rule, cstGenerator, astBuilder)
-        {
-        }
-
-        public Compilation(
+        public Parser(
             ParserInput input,
             Rule rule,
             Func<ParserTree, CstNode> cstGenerator,
             Func<CstNode, AstNode> astBuilder)
         {
+            StopWatch = Stopwatch.StartNew();
+            Log($"Starting compiling at {DateTime.Now}");
             Input = input;
             Rule = rule;
             try
             {
+                Log($"Starting to parse {Input.LineToChar.Count} lines containing {Input.Text.Length} characters");
                 State = Input.Parse(Rule);
-                if (State == null)
-                {
-                    Message = "Compilation failed";
-                    return;
-                }
+                if (!State.AtEnd())
+                    Log($"Partially completed parsing {State.Position}/{State.Input.Length}");
+                else 
+                    Log($"Completed parsing");
 
-                ParseTree = State.Node.ToParseTree();
+                if (State == null)
+                    throw new Exception("Unrecoverable parser failure");
+
+                Log($"Gathering parse errors");
+                foreach (var error in State.AllErrors())
+                    ParsingErrors.Add(error.Message);
+                Log($"Found {ParsingErrors.Count} errors");
+
+                Log($"Gathering parse nodes");
+                Nodes = State.Node?.AllNodesReversed().ToList() ?? new List<ParserNode>();
+                Log($"Found {Nodes.Count} nodes");
+
+                Log($"Creating parse tree");
+                ParseTree = State.Node?.ToParseTree();
+                
+                Log($"Creating Concrete Syntax Tree (CST)");
                 CstTree = cstGenerator(ParseTree);
+
+                Log($"Creating Abstract Syntax Tree (AST)");
                 AstTree = astBuilder(CstTree);
+                
+                /* TODO: this needs to move into a separate compiler class.
                 TypeDeclarations = AstTree.GetAllTypes().ToList();
                 SymbolResolver.CreateTypeDefs(TypeDeclarations);
                 TypeDefs = SymbolResolver.TypeDefs.ToList();
                 Operations = new Operations(TypeDefs);
                 TypeResolver = new TypeResolver(Operations);
                 CheckSemantics();
+                */
 
                 // TODO: having parsing errors in the same format would be nice!
 
@@ -60,19 +74,27 @@ namespace Plato.Compiler
                 if (!State.AtEnd())
                     Message += Environment.NewLine + "Error: Only partially completed parse";
 
-                Success = State.AtEnd() && SemanticErrors.Count == 0 && InternalErrors.Count == 0;
-
+                Success = State.AtEnd() && ParsingErrors.Count == 0 && SemanticErrors.Count == 0 && InternalErrors.Count == 0;
+                Log($"Completed all steps, result is successful: {Success}");
             }
             catch (ParserException pe)
             {
                 Exception = pe;
-                Message = $"Parsing exception {pe.Message} occurred at {pe.LastValidState}";
+                Log($"Parsing exception {pe.Message} occurred at {pe.LastValidState}");
             }
             catch (Exception e)
             {
                 Exception = e;
-                Message = e.Message;
+                Log($"Exception: {e}");
             }
+        }
+        public static string PrettyPrintTimeElapsed(Stopwatch sw)
+            => $"{Math.Floor(sw.Elapsed.TotalMinutes)}:{sw.Elapsed.Seconds:##}.{sw.Elapsed.Milliseconds:###}";
+
+        public void Log(string message)
+        {
+            var timeStr = PrettyPrintTimeElapsed(StopWatch);
+            Diagnostics.Add($"[{timeStr}] {message}");
         }
 
         public void CheckSemantics()
@@ -139,8 +161,10 @@ namespace Plato.Compiler
         public ParserState State { get; }
         public ParserInput Input { get; }
         public ParserTree ParseTree { get; }
+        public IReadOnlyList<ParserNode> Nodes { get; }
         public CstNode CstTree { get; }
         public AstNode AstTree { get; }
+        public Stopwatch StopWatch { get; }
 
         public SymbolResolver SymbolResolver { get; } = new SymbolResolver();
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; }
@@ -149,6 +173,8 @@ namespace Plato.Compiler
         public IReadOnlyList<FunctionSymbol> Functions => TypeResolver.Functions;
         public IReadOnlyList<TypeDefSymbol> TypeDefs { get;}
 
+        public List<string> Diagnostics { get; } = new List<string>();
+        public List<string> ParsingErrors { get; } = new List<string>();
         public List<string> SemanticErrors { get; } = new List<string>();
         public List<string> SemanticWarnings { get; } = new List<string>();
         public List<string> InternalErrors { get; } = new List<string>();

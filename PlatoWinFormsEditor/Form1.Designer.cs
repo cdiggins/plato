@@ -30,19 +30,15 @@
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.richTextBoxInput = new System.Windows.Forms.RichTextBox();
             this.tabControl2 = new System.Windows.Forms.TabControl();
-            this.tabPageError = new System.Windows.Forms.TabPage();
+            this.tabPageOutput = new System.Windows.Forms.TabPage();
             this.richTextBoxOutput = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
             this.tabControl2.SuspendLayout();
-            this.tabPageError.SuspendLayout();
+            this.tabPageOutput.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -64,7 +60,6 @@
             // 
             // tabControl1
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -72,31 +67,9 @@
             this.tabControl1.Size = new System.Drawing.Size(400, 450);
             this.tabControl1.TabIndex = 0;
             // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.richTextBoxInput);
-            this.tabPage1.Location = new System.Drawing.Point(4, 29);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(392, 417);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Source";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // richTextBoxInput
-            // 
-            this.richTextBoxInput.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBoxInput.Font = new System.Drawing.Font("Lucida Console", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.richTextBoxInput.Location = new System.Drawing.Point(3, 3);
-            this.richTextBoxInput.Name = "richTextBoxInput";
-            this.richTextBoxInput.Size = new System.Drawing.Size(386, 411);
-            this.richTextBoxInput.TabIndex = 0;
-            this.richTextBoxInput.Text = "";
-            this.richTextBoxInput.WordWrap = false;
-            // 
             // tabControl2
             // 
-            this.tabControl2.Controls.Add(this.tabPageError);
+            this.tabControl2.Controls.Add(this.tabPageOutput);
             this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl2.Location = new System.Drawing.Point(0, 0);
             this.tabControl2.Name = "tabControl2";
@@ -104,16 +77,16 @@
             this.tabControl2.Size = new System.Drawing.Size(396, 450);
             this.tabControl2.TabIndex = 0;
             // 
-            // tabPageError
+            // tabPageOutput
             // 
-            this.tabPageError.Controls.Add(this.richTextBoxOutput);
-            this.tabPageError.Location = new System.Drawing.Point(4, 29);
-            this.tabPageError.Name = "tabPageError";
-            this.tabPageError.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageError.Size = new System.Drawing.Size(388, 417);
-            this.tabPageError.TabIndex = 0;
-            this.tabPageError.Text = "Errors";
-            this.tabPageError.UseVisualStyleBackColor = true;
+            this.tabPageOutput.Controls.Add(this.richTextBoxOutput);
+            this.tabPageOutput.Location = new System.Drawing.Point(4, 29);
+            this.tabPageOutput.Name = "tabPageOutput";
+            this.tabPageOutput.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageOutput.Size = new System.Drawing.Size(388, 417);
+            this.tabPageOutput.TabIndex = 0;
+            this.tabPageOutput.Text = "Output";
+            this.tabPageOutput.UseVisualStyleBackColor = true;
             // 
             // richTextBoxOutput
             // 
@@ -138,10 +111,8 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
-            this.tabPageError.ResumeLayout(false);
+            this.tabPageOutput.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -150,10 +121,8 @@
 
         private SplitContainer splitContainer1;
         private TabControl tabControl1;
-        private TabPage tabPage1;
         private TabControl tabControl2;
-        private RichTextBox richTextBoxInput;
-        private TabPage tabPageError;
+        private TabPage tabPageOutput;
         private RichTextBox richTextBoxOutput;
     }
 }

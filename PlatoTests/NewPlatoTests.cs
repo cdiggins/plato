@@ -15,7 +15,7 @@ public class NewPlatoTests
     {
         var pi = ParserInput.FromFile(file);
         var rule = PlatoGrammar.Instance.File;
-        var c = new Compilation(pi, rule, pt =>
+        var c = new Parser(pi, rule, pt =>
             CstNodeFactory.Create(pt), AstFromPlatoCst.Convert);
         Console.WriteLine($"Success = {c.Success}");
         Console.WriteLine($"Message = {c.Message}");

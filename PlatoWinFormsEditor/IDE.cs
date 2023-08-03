@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text;
 using Parakeet;
 using Parakeet.Demos;
@@ -10,40 +11,59 @@ public class IDE
 {
     public string Input { get; set; }
     public string Output { get; set; }
-    public Compilation Compilation { get; set; }
+    public Parser Parser { get; set; }
 
-    public string ParseTree => Try(() => Compilation?.ParseTree?.ToString());
-    public string CstXml => Try(() => Compilation?.CstTree?.ToXml().ToString());
-    public string AstXml => Try(() => Compilation?.AstTree?.ToXml());
-    public string AbstractValuesXml => Compilation.SymbolResolver.TypeDefs.ToXml();
+    public string ParseTree => Try(() => Parser?.ParseTree?.ToString());
+    public string CstXml => Try(() => Parser?.CstTree?.ToXml().ToString());
+    public string AstXml => Try(() => Parser?.AstTree?.ToXml());
+    public string AbstractValuesXml => Parser.SymbolResolver.TypeDefs.ToXml();
 
-    public IDE()
+    public TabControl TabControl { get; }
+    public RichTextBox OutputTextBox { get; }
+
+    public List<Editor> Editors { get; } = new();
+
+    public void OpenFile(string fileName)
     {
-        var inputFile0 = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\intrinsics.plato";
-        var inputFile1 = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato";
-        var inputFile2 = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\types.plato";
-        var inputFile3 = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato";
-        var input0 = File.ReadAllText(inputFile0);
-        var input1 = File.ReadAllText(inputFile1);
-        var input2 = File.ReadAllText(inputFile2);
-        var input3 = File.ReadAllText(inputFile3);
-        Input = input0 + Environment.NewLine 
-           + input1 + Environment.NewLine 
-           + input2 + Environment.NewLine 
-           + input3;
-        Compilation = Compile(Input);
+        var tabPage = new TabPage(Path.GetFileName(fileName));
+        TabControl.TabPages.Add(tabPage);
+        var edit = new RichTextBox();
+        edit.Font = new Font(new FontFamily("Lucida Console"), 8);
+        edit.WordWrap = false;
+        edit.Dock = DockStyle.Fill;
+        tabPage.Controls.Add(edit);
+        var editor = new Editor(fileName, edit, OutputTextBox);
+        Editors.Add(editor);
+    }
 
+    public IDE(TabControl tabControl, RichTextBox outputTextBox)
+    {
+        TabControl = tabControl;
+        OutputTextBox = outputTextBox;
+
+        OutputTextBox.WordWrap = false;
+        OutputTextBox.MouseDoubleClick += (sender, args) => Debug.WriteLine($"Double clicked output. Mouse args = {args}. Selected text = {outputTextBox.SelectedText}");
+
+        var inputPath = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\";
+        OpenFile(Path.Combine(inputPath, "intrinsics.plato"));
+        OpenFile(Path.Combine(inputPath, "concepts.plato"));
+        OpenFile(Path.Combine(inputPath, "types.plato"));
+        OpenFile(Path.Combine(inputPath, "libraries.plato"));
+
+        /*
+        Parser = Compile(Input);
+        
         var outputFolder = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\";
 
-        File.WriteAllText(Path.Combine(outputFolder, "output.cs"), Compilation.ToCSharp());
-        File.WriteAllText(Path.Combine(outputFolder, "output.plato.html"), Compilation.ToPlatoHtml());
+        File.WriteAllText(Path.Combine(outputFolder, "output.cs"), Parser.ToCSharp());
+        File.WriteAllText(Path.Combine(outputFolder, "output.plato.html"), Parser.ToPlatoHtml());
 
         var inputFolder = outputFolder;
         var prologue = File.ReadAllText(Path.Combine(inputFolder, "prologue.js"));
         var epilogue = File.ReadAllText(Path.Combine(inputFolder, "epilogue.js"));
         var output = prologue 
                      + Environment.NewLine
-                     + Compilation.ToJavaScript() 
+                     + Parser.ToJavaScript() 
                      + Environment.NewLine 
                      + epilogue;
         File.WriteAllText(Path.Combine(outputFolder, "output.js"), output);
@@ -51,13 +71,14 @@ public class IDE
         //Output += GetConstraintsOutput();
         //Output += GetOperationsOutput();
         //Output += GetTypeGuesserOutput();
+        */
     }
 
     public string GetOperationsOutput()
     {
         var sb = new StringBuilder();
         sb.AppendLine().AppendLine("= Operations =").AppendLine();
-        var ops = Compilation.Operations;
+        var ops = Parser.Operations;
         foreach (var kv in ops.Lookup)
         {
             sb.AppendLine(kv.Key);
@@ -76,7 +97,7 @@ public class IDE
 
         var sb = new StringBuilder();
         sb.AppendLine().AppendLine("= Constraints =").AppendLine();
-        foreach (var t in Compilation.TypeDefs)
+        foreach (var t in Parser.TypeDefs)
         {
             sb.AppendLine($"{t.Kind} {t.Name}");
             foreach (var m in t.Methods)
@@ -108,9 +129,9 @@ public class IDE
         ;
     }
 
-    public Compilation Compile(string input)
+    public Parser Compile(string input)
     {
-        var c = new Compilation(input, PlatoGrammar.Instance.File,
+        var c = new Parser(input, PlatoGrammar.Instance.File,
             CstNodeFactory.Create, AstFromPlatoCst.Convert);
 
         var outputBuilder = new StringBuilder();
@@ -156,7 +177,7 @@ public class IDE
         return sb;
     }
 
-    public static StringBuilder AnalyzeTypesAndFunctions(Compilation c, StringBuilder sb = null)
+    public static StringBuilder AnalyzeTypesAndFunctions(Parser c, StringBuilder sb = null)
     {
         sb ??= new StringBuilder();
 
