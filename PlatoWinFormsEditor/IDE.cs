@@ -20,7 +20,7 @@ public class IDE
 
     public TabControl TabControl { get; }
     public RichTextBox OutputTextBox { get; }
-
+    public Stopwatch Stopwatch { get; }
     public List<Editor> Editors { get; } = new();
 
     public void OpenFile(string fileName)
@@ -36,6 +36,13 @@ public class IDE
         Editors.Add(editor);
     }
 
+    public void Parse()
+    {
+        var sw = Stopwatch.StartNew();
+        foreach (var editor in Editors)
+            editor.Parse(sw);
+    }
+
     public IDE(TabControl tabControl, RichTextBox outputTextBox)
     {
         TabControl = tabControl;
@@ -45,11 +52,13 @@ public class IDE
         OutputTextBox.MouseDoubleClick += (sender, args) => Debug.WriteLine($"Double clicked output. Mouse args = {args}. Selected text = {outputTextBox.SelectedText}");
 
         var inputPath = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\";
+
         OpenFile(Path.Combine(inputPath, "intrinsics.plato"));
         OpenFile(Path.Combine(inputPath, "concepts.plato"));
         OpenFile(Path.Combine(inputPath, "types.plato"));
         OpenFile(Path.Combine(inputPath, "libraries.plato"));
 
+        Parse();
         /*
         Parser = Compile(Input);
         
@@ -125,48 +134,6 @@ public class IDE
         {
             return e.Message;
         }
-
-        ;
-    }
-
-    public Parser Compile(string input)
-    {
-        var c = new Parser(input, PlatoGrammar.Instance.File,
-            CstNodeFactory.Create, AstFromPlatoCst.Convert);
-
-        var outputBuilder = new StringBuilder();
-
-        outputBuilder.AppendLine(c.Success ? "Compilation Success" : "Compilation Failure");
-
-        var state = c.State;
-        if (state != null)
-        {
-            var curError = 0;
-            for (var e = state.LastError; e != null; e = e.Previous)
-            {
-                outputBuilder.AppendLine($"Error {curError} at {e.LastState}");
-                outputBuilder.AppendLine(
-                    $"failed expected rule {e.Expected}, parent state is {e.ParentState}, message is {e.Message}");
-                outputBuilder.AppendLine(e.LastState.CurrentLine);
-                outputBuilder.AppendLine(e.LastState.Indicator);
-            }
-
-            outputBuilder.AppendLine(c.Message);
-
-            if (!state.AtEnd())
-            {
-                outputBuilder.AppendLine("Parsing did not reach the end");
-            }
-        }
-        else
-        {
-            outputBuilder.AppendLine("Parsing failed");
-        }
-
-        AnalyzeTypesAndFunctions(c, outputBuilder);
-
-        Output = outputBuilder.ToString();
-        return c;
     }
 
     public static StringBuilder OutputTypeResolverDetails(TypeResolver tr, StringBuilder sb = null)

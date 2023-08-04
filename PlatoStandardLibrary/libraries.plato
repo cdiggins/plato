@@ -4,13 +4,13 @@ library Array
         => (xs.Count, (i: Index) => f(xs.At(i)));
 
     Reverse(xs: Array): Array
-        => (xs.Count, (i: Index) => f(xs.At(xs.Count - 1 - i));
+        => (xs.Count, (i: Index) => f(xs.At(xs.Count - 1 - i)));
 
     Zip(xs: Array, ys: Array, f: Function): Array 
         => (xs.Count, (i: Index) => f(At(i), ys.At(i)));
     
     Zip(xs: Array, ys: Array, zs: Array, f: Function): Array 
-        => (xs.Count, (i: Index) => f(At(i), ys.At(i), zs.At(i));
+        => (xs.Count, (i: Index) => f(At(i), ys.At(i), zs.At(i)));
     
     Skip(xs: Array, n: Count): Array
         => (Count - n, (i: Index) => At(i - n));

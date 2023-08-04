@@ -9,18 +9,32 @@ namespace Plato.Compiler
     public class Parser
     {
         public Parser(
+            string fileName,
             ParserInput input,
             Rule rule,
+            Rule tokenizerRule,
             Func<ParserTree, CstNode> cstGenerator,
-            Func<CstNode, AstNode> astBuilder)
+            Func<CstNode, AstNode> astBuilder,
+            Stopwatch stopWatch)
         {
-            StopWatch = Stopwatch.StartNew();
-            Log($"Starting compiling at {DateTime.Now}");
+            StopWatch = stopWatch;
+            Log($"Starting compiling {fileName} at {DateTime.Now}");
             Input = input;
+            TokenizerRule = tokenizerRule;
             Rule = rule;
             try
             {
                 Log($"Starting to parse {Input.LineToChar.Count} lines containing {Input.Text.Length} characters");
+
+                Log($"Tokenization phase");
+                TokenizerState = Input.Parse(TokenizerRule);
+                if (!TokenizerState.AtEnd())
+                    Log($"Partially completed tokenize {State.Position}/{State.Input.Length}");
+                else
+                    Log($"Completed tokenization");
+                TokenNodes = TokenizerState.AllNodes().ToList();
+
+                Log($"Starting main parse");
                 State = Input.Parse(Rule);
                 if (!State.AtEnd())
                     Log($"Partially completed parsing {State.Position}/{State.Input.Length}");
@@ -32,7 +46,7 @@ namespace Plato.Compiler
 
                 Log($"Gathering parse errors");
                 foreach (var error in State.AllErrors())
-                    ParsingErrors.Add(error.Message);
+                    Log(error);
                 Log($"Found {ParsingErrors.Count} errors");
 
                 Log($"Gathering parse nodes");
@@ -88,8 +102,18 @@ namespace Plato.Compiler
                 Log($"Exception: {e}");
             }
         }
+
+        public void Log(ParserError e)
+        {
+            var msg = $"Parsing Error at {e.State}. Expected rule {e.Expected}, parent state is {e.ParentState}, message is {e.Message}";
+            Log(msg);
+            Log(e.State.CurrentLine);
+            Log(e.State.Indicator);
+            ParsingErrors.Add(e);
+        }
+
         public static string PrettyPrintTimeElapsed(Stopwatch sw)
-            => $"{Math.Floor(sw.Elapsed.TotalMinutes)}:{sw.Elapsed.Seconds:##}.{sw.Elapsed.Milliseconds:###}";
+            => $"{(int)(Math.Floor(sw.Elapsed.TotalMinutes))}:{sw.Elapsed.Seconds:00}.{sw.Elapsed.Milliseconds:000}";
 
         public void Log(string message)
         {
@@ -155,12 +179,15 @@ namespace Plato.Compiler
         }
 
         public Rule Rule { get; }
+        public Rule TokenizerRule { get; }
         public string Message { get; }
         public bool Success { get; }
         public Exception Exception { get; }
         public ParserState State { get; }
+        public ParserState TokenizerState { get; }
         public ParserInput Input { get; }
         public ParserTree ParseTree { get; }
+        public IReadOnlyList<ParserNode> TokenNodes { get; }
         public IReadOnlyList<ParserNode> Nodes { get; }
         public CstNode CstTree { get; }
         public AstNode AstTree { get; }
@@ -174,7 +201,7 @@ namespace Plato.Compiler
         public IReadOnlyList<TypeDefSymbol> TypeDefs { get;}
 
         public List<string> Diagnostics { get; } = new List<string>();
-        public List<string> ParsingErrors { get; } = new List<string>();
+        public List<ParserError> ParsingErrors { get; } = new List<ParserError>();
         public List<string> SemanticErrors { get; } = new List<string>();
         public List<string> SemanticWarnings { get; } = new List<string>();
         public List<string> InternalErrors { get; } = new List<string>();

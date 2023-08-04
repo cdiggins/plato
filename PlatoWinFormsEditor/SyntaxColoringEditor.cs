@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -85,15 +86,48 @@ namespace PlatoWinFormsEditor
             Italic = italic;
             Underline = underline;
         }
+
+        public FontStyle ToFontStyle()
+        {
+            var r = FontStyle.Regular;
+            if (Bold) r |= FontStyle.Bold;
+            if (Italic) r |= FontStyle.Italic;
+            if (Underline) r |= FontStyle.Underline;
+            return r;
+        }
+
+        public bool IsRegular()
+            => ToFontStyle() == FontStyle.Regular;
+
+        public Font ToFont(Font font)
+            => new(font, ToFontStyle());
     }
 
     public class Styling
     {
         public Dictionary<string, Style> Styles = new()
         {
-            { "Identifier", new(Color.Blue) },
+            //{ "Identifier", new(Color.Blue) },
             { "Literal", new(Color.Green) },
-            { "BinaryOperator", new(Color.BlueViolet) },
+            { "Separator", new(Color.BlueViolet) },
+            { "Comment", new(Color.DarkGray, false, true) },
+            { "HexLiteral", new(Color.Chocolate) },
+            { "BinaryLiteral", new(Color.Chocolate) },
+            { "FloatLiteral", new(Color.Chocolate) },
+            { "Operator", new(Color.CornflowerBlue) },
+            { "IntegerLiteral", new(Color.DarkRed) },
+            { "StringLiteral", new(Color.GreenYellow) },
+            { "CharLiteral", new(Color.GreenYellow) },
+            { "BooleanLiteral", new(Color.DodgerBlue) },
+            { "NullLiteral", new(Color.DodgerBlue) },
+            { "Unknown", new(Color.DarkOrange) },
+            { "TypeKeyword", new(Color.MediumVioletRed, true) },
+            { "StatementKeyword", new(Color.MediumAquamarine, true) },
+            { "ParameterName", new(Color.BlueViolet) },
+            { "TypeName", new(Color.DarkOliveGreen)},
+            { "FunctionName", new(Color.DarkCyan) },
+            { "FieldName", new(Color.DarkSeaGreen) },
+            { "ERROR", new (Color.Crimson, true, false, true )}
         };
     }
 
@@ -106,37 +140,77 @@ namespace PlatoWinFormsEditor
         public Parser Parser { get; set; }
         public string Text => Input.Text;
         public Styling Styling = new();
+        public Dictionary<string, Font> Fonts { get; }
 
         public Editor(string filePath, RichTextBox input, RichTextBox output)
         {
             FilePath = filePath;
             Output = output;
             Input = input;
+
+            // This strange sequence of calls is required to force the editor to do what it does
+            // Replace the newlines (usually /r/n) with a single character (/n).
+            // Without creating control, and making a small change, the character position offsets will be wrong. 
+            // https://stackoverflow.com/a/7070915/184528
+            Input.CreateControl();
             Input.Text = File.ReadAllText(filePath);
-            Parse();
+            Input.AppendText(Environment.NewLine);
+
+            Fonts = Styling.Styles.ToDictionary(kv => kv.Key,
+                kv => kv.Value.ToFont(Input.Font));
         }
 
-        public void Parse()
+        public void ApplyStyle(string kind, int start, int length)
         {
-            Parser = new Parser(Text, PlatoGrammar.Instance.File,
-                CstNodeFactory.Create, AstFromPlatoCst.Convert);
+            var style = Styling.Styles[kind];
+            var selectionStart = Input.SelectionStart;
+            var selectionLength = Input.SelectionLength;
+            Input.Select(start, length);
+            Input.SelectionColor = style.Color;
+            if (!style.IsRegular())
+            {
+                Input.SelectionFont = Fonts[kind];
+            }
+            Input.Select(selectionStart, selectionLength);
+        }
 
-            foreach (var node in Parser.Nodes)
+        public void Parse(Stopwatch stopWatch)
+        {
+            Parser = new Parser(
+                FileName, 
+                Text, 
+                PlatoGrammar.Instance.File, 
+                PlatoTokenGrammar.Instance.Tokenizer,
+                CstNodeFactory.Create, 
+                AstFromPlatoCst.Convert,
+                stopWatch);
+
+            foreach (var node in Parser.TokenNodes)
             {
                 if (Styling.Styles.ContainsKey(node.Name))
                 {
-                    var style = Styling.Styles[node.Name];
-                    Input.Select(node.Start, node.Length);
-                    Input.SelectionColor = style.Color;
-                    Input.Select(0,0);
+                    ApplyStyle(node.Name, node.Start, node.Length);
                 }
             }
 
             foreach (var message in Parser.Diagnostics)
                 Output.AppendText(message + Environment.NewLine);
-            
+
             foreach (var error in Parser.ParsingErrors)
+            {
                 Output.AppendText(error + Environment.NewLine);
+
+                var pos1 = error.ParentState.Position;
+                var pos2 = error.State.Position;
+                var cnt = pos2 - pos1;
+                if (cnt > 5)
+                {
+                    cnt = 5;
+                    pos1 = pos2 - cnt;
+                }
+
+                ApplyStyle("ERROR", pos1, cnt);
+            }
 
             // TODO: set the properties. 
             // TODO: set the events. 
