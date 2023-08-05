@@ -28,7 +28,7 @@ public class IDE
         var tabPage = new TabPage(Path.GetFileName(fileName));
         TabControl.TabPages.Add(tabPage);
         var edit = new RichTextBox();
-        edit.Font = new Font(new FontFamily("Lucida Console"), 8);
+        edit.Font = OutputTextBox.Font;
         edit.WordWrap = false;
         edit.Dock = DockStyle.Fill;
         tabPage.Controls.Add(edit);

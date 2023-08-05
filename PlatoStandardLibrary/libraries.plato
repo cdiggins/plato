@@ -152,7 +152,7 @@ library Numerical
     PlusOne(x: Numerical): Numerical 
         => x + x.One;
 
-    MinusOne(x: Numerical) 
+    MinusOne(x: Numerical): Numerical
         => x - x.One;
     
     FromOne(x: Numerical): Numerical 
@@ -291,7 +291,7 @@ library Comparable
     LessThan(a: Comparable, b: Comparable): Boolean 
         => a.Compare(b) < 0;
     
-    LessThanOrEquals(a: Comparable, b: Comparable) 
+    LessThanOrEquals(a: Comparable, b: Comparable): Boolean
         => a.Compare(b) <= 0;
     
     GreaterThan(a: Comparable, b: Comparable): Boolean 
