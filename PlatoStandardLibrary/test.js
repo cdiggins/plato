@@ -30,7 +30,6 @@ class Array_Concept {
     }
 }
 
-
 class Vector2D
 {
     constructor(X, Y) {

@@ -15,7 +15,7 @@ concept Array<T: Any>
 concept Value 
 {
     Default(): Self
-        => Self.FieldTypes.Default;
+        => Self.FieldValues.Default;
 }
 
 concept Vector<T: Numerical> 
@@ -38,7 +38,7 @@ concept Measure
 concept Numerical 
     inherits Value, Arithmetic, Equatable, Comparable, Magnitudinal, ScalarArithmetic
 {
-    FieldTypes(): Array<Numerical.Type>;
+    FieldTypes(): Array<Type>;
 
     Zero(): Self
         => Self.FieldTypes.Zero;

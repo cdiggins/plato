@@ -4,7 +4,6 @@ using System.Linq;
 
 namespace Plato.Compiler
 {
-
     /// <summary>
     /// Used primarily to figure out what each name means, and what the type of each expression is.
     /// This allows us to figure out which methods will get called at run-time.
@@ -94,7 +93,7 @@ namespace Plato.Compiler
                 throw new Exception("Invalid variable name");
             var sym = TypeBindingsScope.GetValue(name);
             if (sym == null)
-                throw new Exception($"Could not find type {name}");
+                throw new AstException(astTypeNode, $"Could not find type {name}");
 
             var tds = sym as TypeDefSymbol;
 
@@ -114,98 +113,107 @@ namespace Plato.Compiler
         // This is not a pure function. It updates the scope every time a new value is bound
         public Symbol Resolve(AstNode node)
         {
-            if (node == null)
-                return null;
-
-            switch (node)
+            try
             {
-                case AstTypeNode astTypeNode:
-                    return ResolveType(astTypeNode);
+                if (node == null)
+                    return null;
 
-                case AstAssign astAssign:
-                    return BindValue(astAssign.Var,
-                        new AssignmentSymbol(
-                            GetValue(astAssign.Var),
-                            Resolve(astAssign.Value)));
-
-                case AstBlock astBlock:
+                switch (node)
                 {
-                    if (astBlock.Statements.Count == 0)
-                        return null;
-                    if (astBlock.Statements.Count == 1)
-                        return Resolve(astBlock.Statements[0]);
-                    throw new Exception("Cannot handle AstBlock with multiple children");
+                    case AstTypeNode astTypeNode:
+                        return ResolveType(astTypeNode);
+
+                    case AstAssign astAssign:
+                        return BindValue(astAssign.Var,
+                            new AssignmentSymbol(
+                                GetValue(astAssign.Var),
+                                Resolve(astAssign.Value)));
+
+                    case AstBlock astBlock:
+                    {
+                        if (astBlock.Statements.Count == 0)
+                            return null;
+                        if (astBlock.Statements.Count == 1)
+                            return Resolve(astBlock.Statements[0]);
+                        throw new Exception("Cannot handle AstBlock with multiple children");
+                    }
+
+                    case AstBreak astBreak:
+                        return NoValueSymbol;
+
+                    case AstMulti astMulti:
+                    {
+                        if (astMulti.Nodes.Count == 0)
+                            return null;
+                        if (astMulti.Nodes.Count == 1)
+                            return Resolve(astMulti.Nodes[0]);
+                        throw new Exception("Cannot handle AstMulti with multiple children");
+                    }
+
+                    case AstParenthesized astParenthesized:
+                        return Resolve(astParenthesized.Inner);
+
+                    case AstReturn astReturn:
+                        return Resolve(astReturn.Value);
+
+                    case AstConditional astConditional:
+                        return Scoped(() => new ConditionalExpressionSymbol(
+                            Resolve(astConditional.Condition),
+                            Resolve(astConditional.IfTrue),
+                            Resolve(astConditional.IfFalse)));
+
+                    case AstConstant astConstant1:
+                        return new LiteralSymbol(astConstant1.Type, astConstant1.Value);
+
+                    case AstContinue astContinue:
+                        return NoValueSymbol;
+
+                    case AstExpressionStatement astExpressionStatement:
+                        return Scoped(() => Resolve(astExpressionStatement.Expression));
+
+                    case AstIdentifier astIdentifier:
+                        return GetValue(astIdentifier.Text);
+
+                    case AstInvoke astInvoke:
+                    {
+                        var args = astInvoke.AstArguments.Select((a, i) =>
+                            new ArgumentSymbol(Resolve(a), i)).ToArray();
+                        var func = Resolve(astInvoke.Function);
+
+                        // TODO: we need to figure out what function it is because really 
+                        // evaluating a name will gives us a method group!
+                        return new FunctionCallSymbol(func, args);
+                    }
+
+                    case AstLambda astLambda:
+                    {
+                        ValueBindingsScope = ValueBindingsScope.Push();
+                        var ps = astLambda.Parameters.Select(Resolve).ToArray();
+                        var body = Resolve(astLambda.Body);
+                        var r = new FunctionSymbol("__lambda__",
+                            PrimitiveTypes.Lambda.ToRef, body, ps);
+                        return r;
+                    }
+
+                    case AstNoop astNoop:
+                        return NoValueSymbol;
+
+                    case AstVarDef astVarDef:
+                        return BindValue(astVarDef.Name,
+                            new VariableSymbol(astVarDef.Name, ResolveType(astVarDef.Type)));
+
+                    case AstLoop astLoop:
+                        throw new NotImplementedException();
                 }
 
-                case AstBreak astBreak:
-                    return NoValueSymbol;
-
-                case AstMulti astMulti:
-                {
-                    if (astMulti.Nodes.Count == 0)
-                        return null;
-                    if (astMulti.Nodes.Count == 1)
-                        return Resolve(astMulti.Nodes[0]);
-                    throw new Exception("Cannot handle AstMulti with multiple children");
-                }
-
-                case AstParenthesized astParenthesized:
-                    return Resolve(astParenthesized.Inner);
-                
-                case AstReturn astReturn:
-                    return Resolve(astReturn.Value);
-
-                case AstConditional astConditional:
-                    return Scoped(() => new ConditionalExpressionSymbol(
-                        Resolve(astConditional.Condition),
-                        Resolve(astConditional.IfTrue),
-                        Resolve(astConditional.IfFalse)));
-
-                case AstConstant astConstant1:
-                    return new LiteralSymbol(astConstant1.Type, astConstant1.Value);
-
-                case AstContinue astContinue:
-                    return NoValueSymbol;
-
-                case AstExpressionStatement astExpressionStatement:
-                    return Scoped(() => Resolve(astExpressionStatement.Expression));
-                    
-                case AstIdentifier astIdentifier:
-                    return GetValue(astIdentifier.Text);
-
-                case AstInvoke astInvoke:
-                {
-                    var args = astInvoke.AstArguments.Select((a,i) => 
-                        new ArgumentSymbol(Resolve(a), i)).ToArray();
-                    var func = Resolve(astInvoke.Function);
-
-                    // TODO: we need to figure out what function it is because really 
-                    // evaluating a name will gives us a method group!
-                    return new FunctionCallSymbol(func, args);
-                }
-
-                case AstLambda astLambda:
-                {
-                    ValueBindingsScope = ValueBindingsScope.Push();
-                    var ps = astLambda.Parameters.Select(Resolve).ToArray();
-                    var body = Resolve(astLambda.Body);
-                    var r = new FunctionSymbol("__lambda__",
-                        PrimitiveTypes.Lambda.ToRef, body, ps);
-                    return r;
-                }
-
-                case AstNoop astNoop:
-                    return NoValueSymbol;
-
-                case AstVarDef astVarDef:
-                    return BindValue(astVarDef.Name, 
-                        new VariableSymbol(astVarDef.Name, ResolveType(astVarDef.Type)));
-
-                case AstLoop astLoop:
-                    throw new NotImplementedException();
+                throw new Exception($"Node can't be evaluated : {node}");
             }
-
-            throw new Exception($"Node can't be evaluated : {node}");
+            catch (Exception e)
+            {
+                if (e is AstException ae)
+                    throw ae;
+                throw new AstException(node, e.Message);
+            }
         }
 
         public void CreateTypeDefs(IEnumerable<AstTypeDeclaration> types)

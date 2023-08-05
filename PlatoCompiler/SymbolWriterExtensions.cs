@@ -8,8 +8,8 @@
         public static string PadRight(this string s)
             => s + " ";
 
-        public static string ToJavaScript(this Parser parser)
-            => parser.Operations.ToJavaScript();
+        public static string ToJavaScript(this Compiler compiler)
+            => compiler.Operations.ToJavaScript();
 
         public static string ToJavaScript(this Operations ops)
         {
@@ -19,8 +19,8 @@
             return r.ToString();
         }
 
-        public static string ToPlatoHtml(this Parser parser)
-            => parser.Operations.ToPlatoHtml();
+        public static string ToPlatoHtml(this Compiler compiler)
+            => compiler.Operations.ToPlatoHtml();
 
         public static string ToPlatoHtml(this Operations ops)
         {
@@ -32,8 +32,8 @@
             return r.ToString();
         }
 
-        public static string ToCSharp(this Parser parser)
-            => parser.Operations.ToCSharp();
+        public static string ToCSharp(this Compiler compiler) 
+            => compiler.Operations.ToCSharp();
 
         public static string ToCSharp(this Operations ops)
         {

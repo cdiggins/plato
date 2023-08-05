@@ -114,6 +114,12 @@ library Interval
         => value >= x.Min && value <= x.Max;
 }
 
+library Value
+{ 
+    ToString(x: Value): String
+        => self.FieldValues.Join(", ")
+}
+
 library Vector
 {
     Sum(v: Vector): Number 

@@ -174,7 +174,7 @@ namespace PlatoWinFormsEditor
             Input.Select(selectionStart, selectionLength);
         }
 
-        public void Parse(Stopwatch stopWatch)
+        public void Parse(Logger logger)
         {
             Parser = new Parser(
                 FileName, 
@@ -183,7 +183,7 @@ namespace PlatoWinFormsEditor
                 PlatoTokenGrammar.Instance.Tokenizer,
                 CstNodeFactory.Create, 
                 AstFromPlatoCst.Convert,
-                stopWatch);
+                logger);
 
             foreach (var node in Parser.TokenNodes)
             {

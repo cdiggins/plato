@@ -13,15 +13,11 @@ public class IDE
     public string Output { get; set; }
     public Parser Parser { get; set; }
 
-    public string ParseTree => Try(() => Parser?.ParseTree?.ToString());
-    public string CstXml => Try(() => Parser?.CstTree?.ToXml().ToString());
-    public string AstXml => Try(() => Parser?.AstTree?.ToXml());
-    public string AbstractValuesXml => Parser.SymbolResolver.TypeDefs.ToXml();
-
     public TabControl TabControl { get; }
     public RichTextBox OutputTextBox { get; }
-    public Stopwatch Stopwatch { get; }
     public List<Editor> Editors { get; } = new();
+    public Compiler Compiler { get; set;  }
+    public Logger Logger { get; } = new Logger();
 
     public void OpenFile(string fileName)
     {
@@ -38,9 +34,8 @@ public class IDE
 
     public void Parse()
     {
-        var sw = Stopwatch.StartNew();
         foreach (var editor in Editors)
-            editor.Parse(sw);
+            editor.Parse(Logger);
     }
 
     public IDE(TabControl tabControl, RichTextBox outputTextBox)
@@ -57,8 +52,12 @@ public class IDE
         OpenFile(Path.Combine(inputPath, "concepts.plato"));
         OpenFile(Path.Combine(inputPath, "types.plato"));
         OpenFile(Path.Combine(inputPath, "libraries.plato"));
-
+        
         Parse();
+
+        Compiler = new Compiler(Editors.Select(e => e.Parser), Logger);
+
+        OutputTextBox.Lines = Logger.Messages.ToArray();
         /*
         Parser = Compile(Input);
         
@@ -87,7 +86,7 @@ public class IDE
     {
         var sb = new StringBuilder();
         sb.AppendLine().AppendLine("= Operations =").AppendLine();
-        var ops = Parser.Operations;
+        var ops = Compiler.Operations;
         foreach (var kv in ops.Lookup)
         {
             sb.AppendLine(kv.Key);
@@ -106,7 +105,7 @@ public class IDE
 
         var sb = new StringBuilder();
         sb.AppendLine().AppendLine("= Constraints =").AppendLine();
-        foreach (var t in Parser.TypeDefs)
+        foreach (var t in Compiler.TypeDefs)
         {
             sb.AppendLine($"{t.Kind} {t.Name}");
             foreach (var m in t.Methods)
@@ -144,7 +143,8 @@ public class IDE
         return sb;
     }
 
-    public static StringBuilder AnalyzeTypesAndFunctions(Parser c, StringBuilder sb = null)
+    /*
+    public static StringBuilder AnalyzeTypesAndFunctions(Parser c, StringBuilder sb = null)     
     {
         sb ??= new StringBuilder();
 
@@ -198,6 +198,7 @@ public class IDE
 
         return sb;
     }
+    */
 
     public static StringBuilder OutputCandidates(TypeResolver tr, StringBuilder sb)
     {
