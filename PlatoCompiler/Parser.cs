@@ -12,7 +12,7 @@ namespace Plato.Compiler
             ParserInput input,
             Rule rule,
             Rule tokenizerRule,
-            Func<ParserTree, CstNode> cstGenerator,
+            Func<ParserTreeNode, CstNode> cstGenerator,
             Func<CstNode, AstNode> astBuilder,
             Logger logger)
         {
@@ -53,10 +53,10 @@ namespace Plato.Compiler
                 Log($"Found {Nodes.Count} nodes");
 
                 Log($"Creating parse tree");
-                ParseTree = State.Node?.ToParseTree();
+                ParseTreeNode = State.Node?.ToParseTree();
                 
                 Log($"Creating Concrete Syntax Tree (CST)");
-                CstTree = cstGenerator(ParseTree);
+                CstTree = cstGenerator(ParseTreeNode);
 
                 Log($"Creating Abstract Syntax Tree (AST)");
                 AstTree = astBuilder(CstTree);
@@ -99,7 +99,7 @@ namespace Plato.Compiler
         public ParserState State { get; }
         public ParserState TokenizerState { get; }
         public ParserInput Input { get; }
-        public ParserTree ParseTree { get; }
+        public ParserTreeNode ParseTreeNode { get; }
         public IReadOnlyList<ParserNode> TokenNodes { get; }
         public IReadOnlyList<ParserNode> Nodes { get; }
         public CstNode CstTree { get; }

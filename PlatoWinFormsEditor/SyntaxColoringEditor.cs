@@ -141,7 +141,8 @@ namespace PlatoWinFormsEditor
         public string Text => Input.Text;
         public Styling Styling = new();
         public Dictionary<string, Font> Fonts { get; }
-
+        public CstNodeFactory CstNodeFactory = new CstNodeFactory();
+        
         public Editor(string filePath, RichTextBox input, RichTextBox output)
         {
             FilePath = filePath;
@@ -176,6 +177,8 @@ namespace PlatoWinFormsEditor
 
         public void Parse(Logger logger)
         {
+            
+
             Parser = new Parser(
                 FileName, 
                 Text, 

@@ -35,7 +35,7 @@ namespace Plato.Compiler
                 TypeDefs = SymbolResolver.CreateTypeDefs(TypeDeclarations).ToList();
 
                 foreach (var error in SymbolResolver.Errors)
-                    Log($"Symbol resolution error: {error}");
+                    Log($"Symbol resolution error: {error.Message} at ");
 
                 Log("Creating operations");
                 Operations = new Operations(TypeDefs);

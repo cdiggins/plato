@@ -69,7 +69,7 @@ namespace PlatoTests
             Console.WriteLine($"Tree {tree}");
             Console.WriteLine($"Tree {tree.Contents}");
 
-            var cst = Parakeet.Demos.CSharp.CstNodeFactory.Create(tree);
+            var cst = new Parakeet.Demos.CSharp.CstNodeFactory().Create(tree);
             var cstXml = new CstXmlBuilder().Write(cst).ToString();
 
             var cstXmlFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".cst.xml");
