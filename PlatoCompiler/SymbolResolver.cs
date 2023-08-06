@@ -11,11 +11,26 @@ namespace Plato.Compiler
     /// </summary>
     public class SymbolResolver
     {
-        public SymbolResolver()
+        public class ResolutionError
         {
-            BindPredefinedSymbols();
+            public AstNode Node { get; }
+            public string Message { get; }
+
+            public ResolutionError(string message, AstNode node)
+            {
+                Node = node;
+                Message = message;
+            }
         }
 
+        public SymbolResolver(Logger logger)
+        {
+            BindPredefinedSymbols();
+            Logger = logger;
+        }
+
+        public Logger Logger { get; }
+        public List<ResolutionError> Errors { get; } = new List<ResolutionError>();
         public Scope ValueBindingsScope { get; set; } = new Scope(null, null);
         public Scope TypeBindingsScope { get; set; } = new Scope(null, null);
         public Dictionary<Symbol, AstNode> SymbolsToNames = new Dictionary<Symbol, AstNode>();
@@ -73,13 +88,28 @@ namespace Plato.Compiler
         public RefSymbol GetValue(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new Exception("Invalid variable name");
+            {
+                LogError("Invalid variable name");
+                return null;
+            }
+
             var sym = ValueBindingsScope.GetValue(name);
             if (sym == null)
-                throw new Exception($"Could not find symbol {name}");
+            {
+                LogError($"Could not find symbol {name}");
+                return null;
+            }
+
             if (sym is DefSymbol ds)
                 return new RefSymbol(ds);
-            throw new NotImplementedException();
+
+            LogError($"Could not properly resolve symbol {name}");
+            return null;
+        }
+
+        public void LogError(string message, AstNode node = null)
+        {
+            Errors.Add(new ResolutionError(message, node));
         }
 
         // TODO: we might want to resolve types of a specific kind. 
@@ -87,14 +117,22 @@ namespace Plato.Compiler
         public TypeRefSymbol ResolveType(AstTypeNode astTypeNode)
         {
             if (astTypeNode == null)
+            {
+                LogError("Missing type");
                 return null;
+            }
             var name = astTypeNode.Name.Trim();
             if (string.IsNullOrWhiteSpace(name))
-                throw new Exception("Invalid variable name");
+            {
+                LogError("Invalid variable name", astTypeNode);
+                return null;
+            }
             var sym = TypeBindingsScope.GetValue(name);
             if (sym == null)
-                throw new AstException(astTypeNode, $"Could not find type {name}");
-
+            {
+                LogError($"Could not find type {name}", astTypeNode);
+                return null;
+            }
             var tds = sym as TypeDefSymbol;
 
             // TODO: Won't resolve if the type is a parimitive. Will all names potneitally conflict with values.
@@ -133,9 +171,9 @@ namespace Plato.Compiler
                     {
                         if (astBlock.Statements.Count == 0)
                             return null;
-                        if (astBlock.Statements.Count == 1)
-                            return Resolve(astBlock.Statements[0]);
-                        throw new Exception("Cannot handle AstBlock with multiple children");
+                        if (astBlock.Statements.Count > 1)
+                            LogError("Cannot handle AstBlock with multiple children", astBlock);
+                        return Resolve(astBlock.Statements[0]);
                     }
 
                     case AstBreak astBreak:
@@ -145,9 +183,9 @@ namespace Plato.Compiler
                     {
                         if (astMulti.Nodes.Count == 0)
                             return null;
-                        if (astMulti.Nodes.Count == 1)
-                            return Resolve(astMulti.Nodes[0]);
-                        throw new Exception("Cannot handle AstMulti with multiple children");
+                        if (astMulti.Nodes.Count > 1)
+                            LogError("Cannot handle AstMulti with multiple children", astMulti);
+                        return Resolve(astMulti.Nodes[0]);
                     }
 
                     case AstParenthesized astParenthesized:
@@ -203,20 +241,21 @@ namespace Plato.Compiler
                             new VariableSymbol(astVarDef.Name, ResolveType(astVarDef.Type)));
 
                     case AstLoop astLoop:
-                        throw new NotImplementedException();
+                        LogError("NotImplementedException", node);
+                        return null;
                 }
 
-                throw new Exception($"Node can't be evaluated : {node}");
+                LogError($"Node can't be evaluated", node);
+                return null;
             }
-            catch (Exception e)
+            catch (Exception e) 
             {
-                if (e is AstException ae)
-                    throw ae;
-                throw new AstException(node, e.Message);
+                LogError($"Exception occurred {e}", node);
+                return null;
             }
         }
 
-        public void CreateTypeDefs(IEnumerable<AstTypeDeclaration> types)
+        public IEnumerable<TypeDefSymbol> CreateTypeDefs(IEnumerable<AstTypeDeclaration> types)
         {
             // Typedefs and their methods are all at the top-level
             foreach (var astTypeDeclaration in types)
@@ -258,7 +297,8 @@ namespace Plato.Compiler
                     }
                     else
                     {
-                        throw new NotSupportedException($"MemberDefSymbol not recognized {m}");
+                        LogError($"MemberDefSymbol not recognized", m);
+                        return null;
                     }
                 }
 
@@ -309,6 +349,8 @@ namespace Plato.Compiler
                 foreach (var implementedType in astTypeDecl.Implements)
                     td.Implements.Add(ResolveType(implementedType));
             }
+
+            return TypeDefs;
         }
 
         public T Scoped<T>(Func<T> f) where T : Symbol

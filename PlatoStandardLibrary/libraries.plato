@@ -117,7 +117,7 @@ library Interval
 library Value
 { 
     ToString(x: Value): String
-        => self.FieldValues.Join(", ")
+        => self.FieldValues.Join(", ");
 }
 
 library Vector

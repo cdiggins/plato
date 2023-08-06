@@ -11,6 +11,8 @@ namespace Plato.Compiler
             Logger = logger;
 
             Log("Creating compiler");
+
+            Log("Gathering parsers");
             Parsers = parsers.ToList();
             ParsingSuccess = Parsers.All(p => p?.Success == true);
             if (!ParsingSuccess)
@@ -24,11 +26,16 @@ namespace Plato.Compiler
             Log("Gathering type declarations");
             TypeDeclarations = Trees.SelectMany(tree => tree.GetAllTypes()).ToList();
 
-            Log("Creating type definitions");
             try
             {
-                SymbolResolver.CreateTypeDefs(TypeDeclarations);
-                TypeDefs = SymbolResolver.TypeDefs.ToList();
+                Log("Creating symbol resolver");
+                SymbolResolver = new SymbolResolver(logger);
+
+                Log("Creating type definitions");
+                TypeDefs = SymbolResolver.CreateTypeDefs(TypeDeclarations).ToList();
+
+                foreach (var error in SymbolResolver.Errors)
+                    Log($"Symbol resolution error: {error}");
 
                 Log("Creating operations");
                 Operations = new Operations(TypeDefs);
@@ -63,7 +70,7 @@ namespace Plato.Compiler
         public bool ParsingSuccess { get; }
         public IReadOnlyList<Parser> Parsers { get; }
         public IReadOnlyList<AstNode> Trees { get; }
-        public SymbolResolver SymbolResolver { get; } = new SymbolResolver();
+        public SymbolResolver SymbolResolver { get; } 
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; }
         public Operations Operations { get; }
         public TypeResolver TypeResolver { get; }
