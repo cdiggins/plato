@@ -1,0 +1,153 @@
+{
+  "Name": "SineEaseInOut",
+  "Connections": {
+    "24020ae5-1667-451c-9ab6-1755f84ec8f2": {
+      "Id": "24020ae5-1667-451c-9ab6-1755f84ec8f2",
+      "Source": "23098d76-b391-46e7-82ed-4c09de8a905d",
+      "Destination": "ad044b11-0be8-4d6e-b376-bc438a48bdd9",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "c8f3e872-da2d-4506-ab79-9856ce36a2c5": {
+      "Id": "c8f3e872-da2d-4506-ab79-9856ce36a2c5",
+      "Source": "2cede7b3-128a-4650-966e-363c2bcf11af",
+      "Destination": "c36186ac-a5af-4278-85c1-429de39de156",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "b872998e-f589-450a-a48e-39e8d66bf4ea": {
+      "Id": "b872998e-f589-450a-a48e-39e8d66bf4ea",
+      "Source": "dec094c9-d7bc-4ad9-bdc6-3c8623806153",
+      "Destination": "a5c86a26-c81f-47e7-9ebb-22875fcb60ac",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "ef93d252-f88c-4cdf-a207-1936ebfa568c": {
+      "Id": "ef93d252-f88c-4cdf-a207-1936ebfa568c",
+      "Source": "f58eddd2-0640-4ea4-a284-f2d57a72c108",
+      "Destination": "f19b1e71-cc34-4197-9437-10e66ed33cf3",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "fb224f24-4b53-4542-a4a5-07365716ff5d": {
+      "Id": "fb224f24-4b53-4542-a4a5-07365716ff5d",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "23098d76-b391-46e7-82ed-4c09de8a905d",
+          "Label": "p",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "23098d76-b391-46e7-82ed-4c09de8a905d",
+        "Label": "p",
+        "Type": "Number"
+      }
+    },
+    "49e4d075-f294-4b89-963d-09d94c1bcd73": {
+      "Id": "49e4d075-f294-4b89-963d-09d94c1bcd73",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "f19b1e71-cc34-4197-9437-10e66ed33cf3",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "f0f7dfea-e891-4a81-b9f3-ba588ea1bd48": {
+      "Id": "f0f7dfea-e891-4a81-b9f3-ba588ea1bd48",
+      "Label": "BlendEaseFunc",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "ad044b11-0be8-4d6e-b376-bc438a48bdd9",
+          "Label": "p",
+          "Type": "Any"
+        },
+        {
+          "Id": "c36186ac-a5af-4278-85c1-429de39de156",
+          "Label": "easeIn",
+          "Type": "Any"
+        },
+        {
+          "Id": "a5c86a26-c81f-47e7-9ebb-22875fcb60ac",
+          "Label": "easeOut",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "f58eddd2-0640-4ea4-a284-f2d57a72c108",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "f58eddd2-0640-4ea4-a284-f2d57a72c108",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "1efa9b30-41aa-4210-b641-99cdc2aa12ba": {
+      "Id": "1efa9b30-41aa-4210-b641-99cdc2aa12ba",
+      "Label": "SineEaseIn",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "f366810d-2614-4156-ade8-f84886e5479b",
+          "Label": "p",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "2cede7b3-128a-4650-966e-363c2bcf11af",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "2cede7b3-128a-4650-966e-363c2bcf11af",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "d9ce8455-b518-4621-9d5a-1546e8b27c90": {
+      "Id": "d9ce8455-b518-4621-9d5a-1546e8b27c90",
+      "Label": "SineEaseOut",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "698fad77-50e8-469f-a1a2-a7731baf5d6a",
+          "Label": "p",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "dec094c9-d7bc-4ad9-bdc6-3c8623806153",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "dec094c9-d7bc-4ad9-bdc6-3c8623806153",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

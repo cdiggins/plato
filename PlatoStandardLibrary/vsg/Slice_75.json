@@ -1,0 +1,147 @@
+{
+  "Name": "Slice",
+  "Connections": {
+    "f01bd60e-2f6f-4982-b03e-4f0cf38fd539": {
+      "Id": "f01bd60e-2f6f-4982-b03e-4f0cf38fd539",
+      "Source": "bea46d3f-bef1-4865-8d1a-ade961753e6c",
+      "Destination": "493a3971-7f24-4e19-9e5e-4bc0bf8dd6f3",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "ec98a53a-8293-4b90-a3b2-51d5074559ad": {
+      "Id": "ec98a53a-8293-4b90-a3b2-51d5074559ad",
+      "Source": "a6075aef-0fe9-49f1-bdf7-9ff080fba689",
+      "Destination": "bd63b44c-8cd0-44af-b5b3-94b35726c44e",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "9f9c64b2-35f0-4856-9611-7cdbb4ad4389": {
+      "Id": "9f9c64b2-35f0-4856-9611-7cdbb4ad4389",
+      "Source": "f4d8f229-5d13-472c-b4a6-0820f4b92157",
+      "Destination": "bc92778f-aafc-447f-8dc0-71839cd553cb",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "667154ce-e971-4cb3-bfbb-3b9455d360aa": {
+      "Id": "667154ce-e971-4cb3-bfbb-3b9455d360aa",
+      "Source": "87f6dffa-daf9-47fd-9b17-d014abf83628",
+      "Destination": "f68aee9f-9987-4f20-ac72-2ba405f06d1c",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "ea5022c5-04b4-481e-899c-41bbe99a4df0": {
+      "Id": "ea5022c5-04b4-481e-899c-41bbe99a4df0",
+      "Source": "6140cc4e-529b-4334-888e-8ea099839721",
+      "Destination": "cc7445e7-a0dc-4298-b153-24f8a170e824",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "e12f6fe1-14eb-4896-a1eb-35915db10433": {
+      "Id": "e12f6fe1-14eb-4896-a1eb-35915db10433",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "bea46d3f-bef1-4865-8d1a-ade961753e6c",
+          "Label": "xs",
+          "Type": "Array"
+        },
+        {
+          "Id": "a6075aef-0fe9-49f1-bdf7-9ff080fba689",
+          "Label": "from",
+          "Type": "Index"
+        },
+        {
+          "Id": "87f6dffa-daf9-47fd-9b17-d014abf83628",
+          "Label": "count",
+          "Type": "Count"
+        }
+      ],
+      "MainOutput": {
+        "Id": "bea46d3f-bef1-4865-8d1a-ade961753e6c",
+        "Label": "xs",
+        "Type": "Array"
+      }
+    },
+    "9d37bf2c-fc67-4a5d-a286-0fae27465b18": {
+      "Id": "9d37bf2c-fc67-4a5d-a286-0fae27465b18",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "cc7445e7-a0dc-4298-b153-24f8a170e824",
+          "Label": "Result",
+          "Type": "Array"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "fc990ed1-1e2b-452e-bb08-e51f42baa156": {
+      "Id": "fc990ed1-1e2b-452e-bb08-e51f42baa156",
+      "Label": "Take",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "bc92778f-aafc-447f-8dc0-71839cd553cb",
+          "Label": "xs",
+          "Type": "Any"
+        },
+        {
+          "Id": "f68aee9f-9987-4f20-ac72-2ba405f06d1c",
+          "Label": "n",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "6140cc4e-529b-4334-888e-8ea099839721",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "6140cc4e-529b-4334-888e-8ea099839721",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "57964b3b-2f8a-4f6b-8c7f-39cea8762b20": {
+      "Id": "57964b3b-2f8a-4f6b-8c7f-39cea8762b20",
+      "Label": "Skip",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "493a3971-7f24-4e19-9e5e-4bc0bf8dd6f3",
+          "Label": "xs",
+          "Type": "Any"
+        },
+        {
+          "Id": "bd63b44c-8cd0-44af-b5b3-94b35726c44e",
+          "Label": "n",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "f4d8f229-5d13-472c-b4a6-0820f4b92157",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "f4d8f229-5d13-472c-b4a6-0820f4b92157",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "Name": "Divide",
+  "Connections": {
+    "6d2c7dce-486f-4f1c-8a71-f8b3ee223b51": {
+      "Id": "6d2c7dce-486f-4f1c-8a71-f8b3ee223b51",
+      "Source": "96cb6bc6-5867-482c-95e6-926fb1d317ec",
+      "Destination": "a44b2195-2c15-49b5-aa62-62a67acf747c",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "2ee9d04a-2763-4b5b-9b9a-6af911996c97": {
+      "Id": "2ee9d04a-2763-4b5b-9b9a-6af911996c97",
+      "Source": "553d1abb-5067-431e-ba63-2988543709d1",
+      "Destination": "c88ad519-7470-4ce1-a8fb-a6c345768f38",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "1b2794fb-2afc-4547-b145-9b30b3b742b2": {
+      "Id": "1b2794fb-2afc-4547-b145-9b30b3b742b2",
+      "Source": "97b743f0-0641-40b7-8f15-dfd79a98baab",
+      "Destination": "8c3022b2-1ebe-4cfa-9c29-f11accf6175e",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "32fa2d44-481f-482e-9721-e2299ec8c7c0": {
+      "Id": "32fa2d44-481f-482e-9721-e2299ec8c7c0",
+      "Source": "71057016-7103-45ed-b2b1-84319257f4fa",
+      "Destination": "d8cc22a7-2c38-4721-8b49-58d516fe00e5",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "a4d0766d-152f-4920-bc79-4e4fb724a006": {
+      "Id": "a4d0766d-152f-4920-bc79-4e4fb724a006",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "553d1abb-5067-431e-ba63-2988543709d1",
+          "Label": "self",
+          "Type": "Self"
+        },
+        {
+          "Id": "96cb6bc6-5867-482c-95e6-926fb1d317ec",
+          "Label": "scalar",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "553d1abb-5067-431e-ba63-2988543709d1",
+        "Label": "self",
+        "Type": "Self"
+      }
+    },
+    "ea281e06-ef55-40a7-a3e1-f50ddd5b6992": {
+      "Id": "ea281e06-ef55-40a7-a3e1-f50ddd5b6992",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "d8cc22a7-2c38-4721-8b49-58d516fe00e5",
+          "Label": "Result",
+          "Type": "Self"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "770b88e5-8bfc-4481-b1fa-afc47ee144fd": {
+      "Id": "770b88e5-8bfc-4481-b1fa-afc47ee144fd",
+      "Label": "Multiply",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "c88ad519-7470-4ce1-a8fb-a6c345768f38",
+          "Label": "x",
+          "Type": "Any"
+        },
+        {
+          "Id": "8c3022b2-1ebe-4cfa-9c29-f11accf6175e",
+          "Label": "y",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "71057016-7103-45ed-b2b1-84319257f4fa",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "71057016-7103-45ed-b2b1-84319257f4fa",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "9395ef90-4079-4395-b036-c011f9a5f706": {
+      "Id": "9395ef90-4079-4395-b036-c011f9a5f706",
+      "Label": "Reciprocal",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "a44b2195-2c15-49b5-aa62-62a67acf747c",
+          "Label": "self",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "97b743f0-0641-40b7-8f15-dfd79a98baab",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "97b743f0-0641-40b7-8f15-dfd79a98baab",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

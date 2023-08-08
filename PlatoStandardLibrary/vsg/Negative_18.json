@@ -1,0 +1,38 @@
+{
+  "Name": "Negative",
+  "Connections": {},
+  "Nodes": {
+    "680a50b3-b408-474e-818a-7466347e08fa": {
+      "Id": "680a50b3-b408-474e-818a-7466347e08fa",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "632ecd87-2e4a-4d28-a29f-6498d28ee506",
+          "Label": "x",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "632ecd87-2e4a-4d28-a29f-6498d28ee506",
+        "Label": "x",
+        "Type": "Number"
+      }
+    },
+    "f7234496-0831-42ff-b810-7b6012d4ae8c": {
+      "Id": "f7234496-0831-42ff-b810-7b6012d4ae8c",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "482c9e34-9742-470a-88bb-5725af87304a",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

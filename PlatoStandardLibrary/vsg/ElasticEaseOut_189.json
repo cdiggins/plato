@@ -1,0 +1,116 @@
+{
+  "Name": "ElasticEaseOut",
+  "Connections": {
+    "5bb7107e-e7f4-4d5a-be33-3a85bb134f24": {
+      "Id": "5bb7107e-e7f4-4d5a-be33-3a85bb134f24",
+      "Source": "414d668d-3a4a-4a06-896c-ed568edee895",
+      "Destination": "56e3de5f-eb36-4fe8-9107-8b6774ead82a",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "549e0650-9819-412c-ac2f-e94604af8134": {
+      "Id": "549e0650-9819-412c-ac2f-e94604af8134",
+      "Source": "61c477da-2384-4b52-9d9e-5371340452c9",
+      "Destination": "f451277a-2007-48ea-892e-26b6710d61e6",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "7cc46707-3c7f-475c-9fcf-3b3404f6fba9": {
+      "Id": "7cc46707-3c7f-475c-9fcf-3b3404f6fba9",
+      "Source": "1f496a9b-911c-48ba-9ce7-3057fd95ff51",
+      "Destination": "71e20233-6fd5-4672-9a48-99a0abc192af",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "f1028d85-56f1-47c5-9cff-faae82f8dddd": {
+      "Id": "f1028d85-56f1-47c5-9cff-faae82f8dddd",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "414d668d-3a4a-4a06-896c-ed568edee895",
+          "Label": "p",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "414d668d-3a4a-4a06-896c-ed568edee895",
+        "Label": "p",
+        "Type": "Number"
+      }
+    },
+    "2b1f1efa-9658-4bed-8349-251249009d85": {
+      "Id": "2b1f1efa-9658-4bed-8349-251249009d85",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "71e20233-6fd5-4672-9a48-99a0abc192af",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "6c1189e3-fb0b-4f2d-b6ce-d1907393e8ba": {
+      "Id": "6c1189e3-fb0b-4f2d-b6ce-d1907393e8ba",
+      "Label": "InvertEaseFunc",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "56e3de5f-eb36-4fe8-9107-8b6774ead82a",
+          "Label": "p",
+          "Type": "Any"
+        },
+        {
+          "Id": "f451277a-2007-48ea-892e-26b6710d61e6",
+          "Label": "easeIn",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "1f496a9b-911c-48ba-9ce7-3057fd95ff51",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "1f496a9b-911c-48ba-9ce7-3057fd95ff51",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "97441fb5-3a0f-4faf-8efe-634307148143": {
+      "Id": "97441fb5-3a0f-4faf-8efe-634307148143",
+      "Label": "ElasticEaseIn",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "eb65de5b-031a-4b18-89e9-52edeebb0645",
+          "Label": "p",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "61c477da-2384-4b52-9d9e-5371340452c9",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "61c477da-2384-4b52-9d9e-5371340452c9",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "Name": "QuinticEaseOut",
+  "Connections": {
+    "245eca63-677a-4f00-86b0-584b1d783ed3": {
+      "Id": "245eca63-677a-4f00-86b0-584b1d783ed3",
+      "Source": "bd54d556-3836-408e-8c8f-a2dd88046893",
+      "Destination": "217be454-f4d2-4b27-a3d1-fce742b50108",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "ff872e11-77e9-434e-9088-8f929f67721b": {
+      "Id": "ff872e11-77e9-434e-9088-8f929f67721b",
+      "Source": "9e1c7ee3-4659-4273-9691-ddbf7af75c43",
+      "Destination": "938603b3-faa0-4999-a053-fed91575bce1",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "e480f79c-da2e-42ad-ac3a-0432f9ac3623": {
+      "Id": "e480f79c-da2e-42ad-ac3a-0432f9ac3623",
+      "Source": "830b248a-466c-479b-b47d-fc4737f9ba93",
+      "Destination": "2a5cd509-46b5-4918-97d6-ed574f31998a",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "fb797b24-20fe-4383-9f25-bf1dcca28d3a": {
+      "Id": "fb797b24-20fe-4383-9f25-bf1dcca28d3a",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "bd54d556-3836-408e-8c8f-a2dd88046893",
+          "Label": "p",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "bd54d556-3836-408e-8c8f-a2dd88046893",
+        "Label": "p",
+        "Type": "Number"
+      }
+    },
+    "6d11e4f6-6ba5-452c-839b-a903f923658e": {
+      "Id": "6d11e4f6-6ba5-452c-839b-a903f923658e",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "2a5cd509-46b5-4918-97d6-ed574f31998a",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "f66e4f30-9edf-4671-a5ec-49ebbcfb068a": {
+      "Id": "f66e4f30-9edf-4671-a5ec-49ebbcfb068a",
+      "Label": "InvertEaseFunc",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "217be454-f4d2-4b27-a3d1-fce742b50108",
+          "Label": "p",
+          "Type": "Any"
+        },
+        {
+          "Id": "938603b3-faa0-4999-a053-fed91575bce1",
+          "Label": "easeIn",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "830b248a-466c-479b-b47d-fc4737f9ba93",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "830b248a-466c-479b-b47d-fc4737f9ba93",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "e70ccb5a-cdf2-4df4-b20a-7c4deaac3502": {
+      "Id": "e70ccb5a-cdf2-4df4-b20a-7c4deaac3502",
+      "Label": "QuinticEaseIn",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "3a0dbe5e-bbb0-456f-acdd-629dada6745c",
+          "Label": "p",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "9e1c7ee3-4659-4273-9691-ddbf7af75c43",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "9e1c7ee3-4659-4273-9691-ddbf7af75c43",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

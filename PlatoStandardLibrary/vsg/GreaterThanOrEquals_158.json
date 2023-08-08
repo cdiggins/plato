@@ -1,0 +1,147 @@
+{
+  "Name": "GreaterThanOrEquals",
+  "Connections": {
+    "eb38b706-52ac-4e53-9333-16e04b1811b3": {
+      "Id": "eb38b706-52ac-4e53-9333-16e04b1811b3",
+      "Source": "76bff905-d1a0-4c74-bbb1-6e24ea1f1614",
+      "Destination": "e5eb5859-a80d-4975-8e73-70e4eb863585",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "b65e71af-80d4-4ebf-9626-24818f69b689": {
+      "Id": "b65e71af-80d4-4ebf-9626-24818f69b689",
+      "Source": "1a823222-a776-494b-9c9b-19e01231505a",
+      "Destination": "80b9ba0f-2c33-4d94-ac8f-7296546cc6d7",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "873eded0-f517-4afe-ab55-7905a05d7d78": {
+      "Id": "873eded0-f517-4afe-ab55-7905a05d7d78",
+      "Source": "4d68f784-bda0-482c-889d-248e3bce55df",
+      "Destination": "bcbd4a38-3e0a-4284-9ebc-eda3e1be41b1",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "68ee9b35-5b7f-4ecd-819e-61cf5db46d29": {
+      "Id": "68ee9b35-5b7f-4ecd-819e-61cf5db46d29",
+      "Source": "9510f3c6-c7cd-46f8-85f4-75f1e49be74b",
+      "Destination": "6c183511-b3c4-4d75-841d-65ea31be8c38",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "d42d42e6-fe71-481b-968d-c2af6a4381ec": {
+      "Id": "d42d42e6-fe71-481b-968d-c2af6a4381ec",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "76bff905-d1a0-4c74-bbb1-6e24ea1f1614",
+          "Label": "a",
+          "Type": "Comparable"
+        },
+        {
+          "Id": "941e3710-76c8-4d00-8525-61ed08a8d500",
+          "Label": "b",
+          "Type": "Comparable"
+        }
+      ],
+      "MainOutput": {
+        "Id": "76bff905-d1a0-4c74-bbb1-6e24ea1f1614",
+        "Label": "a",
+        "Type": "Comparable"
+      }
+    },
+    "bf41b15e-559d-4e8f-8697-426bbbad2da0": {
+      "Id": "bf41b15e-559d-4e8f-8697-426bbbad2da0",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "6c183511-b3c4-4d75-841d-65ea31be8c38",
+          "Label": "Result",
+          "Type": "Boolean"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "d5e24c29-0403-45b9-b2a9-fe7f4c6cb35f": {
+      "Id": "d5e24c29-0403-45b9-b2a9-fe7f4c6cb35f",
+      "Label": "GreaterThanOrEquals",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "80b9ba0f-2c33-4d94-ac8f-7296546cc6d7",
+          "Label": "a",
+          "Type": "Any"
+        },
+        {
+          "Id": "bcbd4a38-3e0a-4284-9ebc-eda3e1be41b1",
+          "Label": "b",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "9510f3c6-c7cd-46f8-85f4-75f1e49be74b",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "9510f3c6-c7cd-46f8-85f4-75f1e49be74b",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "fbd03b8c-7b05-4834-b1ed-5ea09bc00e2a": {
+      "Id": "fbd03b8c-7b05-4834-b1ed-5ea09bc00e2a",
+      "Label": "Compare",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "e5eb5859-a80d-4975-8e73-70e4eb863585",
+          "Label": "x",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "1a823222-a776-494b-9c9b-19e01231505a",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "1a823222-a776-494b-9c9b-19e01231505a",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "2dd54e59-fa9c-4938-818b-429242ef7cb8": {
+      "Id": "2dd54e59-fa9c-4938-818b-429242ef7cb8",
+      "Label": "0",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "4d68f784-bda0-482c-889d-248e3bce55df",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "4d68f784-bda0-482c-889d-248e3bce55df",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

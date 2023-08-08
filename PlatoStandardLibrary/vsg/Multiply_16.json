@@ -1,0 +1,43 @@
+{
+  "Name": "Multiply",
+  "Connections": {},
+  "Nodes": {
+    "7e0982a2-d614-4da4-9683-719393810ce4": {
+      "Id": "7e0982a2-d614-4da4-9683-719393810ce4",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "512bf1c0-91bb-4f0d-b15b-d0daf1a990da",
+          "Label": "x",
+          "Type": "Number"
+        },
+        {
+          "Id": "a697eb42-af59-4e08-92dc-cb044b7bd580",
+          "Label": "y",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "512bf1c0-91bb-4f0d-b15b-d0daf1a990da",
+        "Label": "x",
+        "Type": "Number"
+      }
+    },
+    "866ef311-1ede-4230-9477-d4af8bdd9d15": {
+      "Id": "866ef311-1ede-4230-9477-d4af8bdd9d15",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "6ee4c3c1-bd4c-4f65-9e91-4f6b5f4a194f",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

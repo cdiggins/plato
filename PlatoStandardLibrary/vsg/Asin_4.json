@@ -1,0 +1,38 @@
+{
+  "Name": "Asin",
+  "Connections": {},
+  "Nodes": {
+    "676ede3b-71d0-446a-af89-19d8c85b89e2": {
+      "Id": "676ede3b-71d0-446a-af89-19d8c85b89e2",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "5c3f4815-b943-45eb-b455-7193a9429ed3",
+          "Label": "x",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "5c3f4815-b943-45eb-b455-7193a9429ed3",
+        "Label": "x",
+        "Type": "Number"
+      }
+    },
+    "9c8b8295-5d7f-49df-9b1e-df4b8d5f17c0": {
+      "Id": "9c8b8295-5d7f-49df-9b1e-df4b8d5f17c0",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "5c3e8768-85c5-4905-8069-ebcd437ebbfb",
+          "Label": "Result",
+          "Type": "Angle"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

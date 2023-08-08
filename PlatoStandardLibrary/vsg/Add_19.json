@@ -1,0 +1,43 @@
+{
+  "Name": "Add",
+  "Connections": {},
+  "Nodes": {
+    "fa27fa79-693f-4231-94f9-6aebd780052c": {
+      "Id": "fa27fa79-693f-4231-94f9-6aebd780052c",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "961f0f0a-3e82-4b52-b5df-c3355b10e4a1",
+          "Label": "x",
+          "Type": "Integer"
+        },
+        {
+          "Id": "f9360b5c-22a9-4851-9b28-5a764a7da372",
+          "Label": "y",
+          "Type": "Integer"
+        }
+      ],
+      "MainOutput": {
+        "Id": "961f0f0a-3e82-4b52-b5df-c3355b10e4a1",
+        "Label": "x",
+        "Type": "Integer"
+      }
+    },
+    "a021d85d-620b-49e2-8ab0-2be70f38f817": {
+      "Id": "a021d85d-620b-49e2-8ab0-2be70f38f817",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "c2c1d04f-d817-4ae9-a97c-587325f1df66",
+          "Label": "Result",
+          "Type": "Integer"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

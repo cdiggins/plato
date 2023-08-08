@@ -1,0 +1,152 @@
+{
+  "Name": "Sum",
+  "Connections": {
+    "bbcc0e52-cf98-401f-8930-6020c137b95e": {
+      "Id": "bbcc0e52-cf98-401f-8930-6020c137b95e",
+      "Source": "050020fe-cbf9-4345-b2c9-5332d890791e",
+      "Destination": "304c54f1-db91-48f8-b480-13bffe6f1dd7",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "d2546fcd-f9fb-4b8e-9cbc-7bbd44264d0c": {
+      "Id": "d2546fcd-f9fb-4b8e-9cbc-7bbd44264d0c",
+      "Source": "61e7424d-1ae9-4a7b-b7c2-b00d7cce3ff3",
+      "Destination": "997a9fb0-fd9e-461b-85dd-c72a7d2bfbd0",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "c2838112-5ccb-450c-b411-68ae5b218205": {
+      "Id": "c2838112-5ccb-450c-b411-68ae5b218205",
+      "Source": "00252b9c-a32e-429c-bada-b219a042f8be",
+      "Destination": "5f14abe3-b198-4cc6-8668-32c43a2afb32",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "6b17bd25-a9d4-4185-b6e4-133adcaecaa4": {
+      "Id": "6b17bd25-a9d4-4185-b6e4-133adcaecaa4",
+      "Source": "0a0430d9-7594-446f-b2ea-1fb9e4b040c1",
+      "Destination": "5a74aeca-3743-4611-aef2-b16b326554c2",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "adad810f-d4d2-47d9-b8a7-a64017d21c6e": {
+      "Id": "adad810f-d4d2-47d9-b8a7-a64017d21c6e",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "050020fe-cbf9-4345-b2c9-5332d890791e",
+          "Label": "v",
+          "Type": "Vector"
+        }
+      ],
+      "MainOutput": {
+        "Id": "050020fe-cbf9-4345-b2c9-5332d890791e",
+        "Label": "v",
+        "Type": "Vector"
+      }
+    },
+    "fa5a6a12-a625-4601-8f5a-03540f06e242": {
+      "Id": "fa5a6a12-a625-4601-8f5a-03540f06e242",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "5a74aeca-3743-4611-aef2-b16b326554c2",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "20e91610-dfe3-4a24-badf-d518955b8622": {
+      "Id": "20e91610-dfe3-4a24-badf-d518955b8622",
+      "Label": "Aggregate",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "304c54f1-db91-48f8-b480-13bffe6f1dd7",
+          "Label": "xs",
+          "Type": "Any"
+        },
+        {
+          "Id": "997a9fb0-fd9e-461b-85dd-c72a7d2bfbd0",
+          "Label": "init",
+          "Type": "Any"
+        },
+        {
+          "Id": "5f14abe3-b198-4cc6-8668-32c43a2afb32",
+          "Label": "f",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "0a0430d9-7594-446f-b2ea-1fb9e4b040c1",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "0a0430d9-7594-446f-b2ea-1fb9e4b040c1",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "3b7d7629-dc2b-44e1-a59c-dd0183aa69bf": {
+      "Id": "3b7d7629-dc2b-44e1-a59c-dd0183aa69bf",
+      "Label": "0",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "61e7424d-1ae9-4a7b-b7c2-b00d7cce3ff3",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "61e7424d-1ae9-4a7b-b7c2-b00d7cce3ff3",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "f340c69b-af72-4815-8ebc-b8194a7fe9fb": {
+      "Id": "f340c69b-af72-4815-8ebc-b8194a7fe9fb",
+      "Label": "Add",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "d134f55d-0523-4d5a-a7b9-2b014294f335",
+          "Label": "x",
+          "Type": "Any"
+        },
+        {
+          "Id": "b8e2f34e-7a5b-4abd-9274-e0d07c703eca",
+          "Label": "y",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "00252b9c-a32e-429c-bada-b219a042f8be",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "00252b9c-a32e-429c-bada-b219a042f8be",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

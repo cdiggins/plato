@@ -1,0 +1,79 @@
+{
+  "Name": "CubicEaseIn",
+  "Connections": {
+    "36e5be2d-6a16-4232-8070-08571b55d0ee": {
+      "Id": "36e5be2d-6a16-4232-8070-08571b55d0ee",
+      "Source": "7bb0166b-6790-46f4-b8f1-90e6c2754b33",
+      "Destination": "a6947bd5-8343-47b4-8c70-e5f9794851b3",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "092728bb-aacb-4697-8350-7b2365245761": {
+      "Id": "092728bb-aacb-4697-8350-7b2365245761",
+      "Source": "3bad50fc-2bae-4b01-8891-32b6da7223c4",
+      "Destination": "30edd729-f097-4bf5-83d0-e4612933936f",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "cb8edc89-e816-4284-8e3f-0ff099ad1ad8": {
+      "Id": "cb8edc89-e816-4284-8e3f-0ff099ad1ad8",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "7bb0166b-6790-46f4-b8f1-90e6c2754b33",
+          "Label": "p",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "7bb0166b-6790-46f4-b8f1-90e6c2754b33",
+        "Label": "p",
+        "Type": "Number"
+      }
+    },
+    "1fcc7989-1d75-4ae0-9972-e37e6feb8638": {
+      "Id": "1fcc7989-1d75-4ae0-9972-e37e6feb8638",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "30edd729-f097-4bf5-83d0-e4612933936f",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "e7134515-0fab-4424-8517-0abee83ef2f7": {
+      "Id": "e7134515-0fab-4424-8517-0abee83ef2f7",
+      "Label": "Pow3",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "a6947bd5-8343-47b4-8c70-e5f9794851b3",
+          "Label": "x",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "3bad50fc-2bae-4b01-8891-32b6da7223c4",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "3bad50fc-2bae-4b01-8891-32b6da7223c4",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

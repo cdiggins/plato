@@ -1,0 +1,116 @@
+{
+  "Name": "BounceEaseIn",
+  "Connections": {
+    "b2957b8e-484a-487a-9f34-fbe3981e7a2e": {
+      "Id": "b2957b8e-484a-487a-9f34-fbe3981e7a2e",
+      "Source": "a1990b63-9a0d-4083-b607-2654f4a7968e",
+      "Destination": "6dcd270d-58d3-4687-b4ad-bf7a3b3392d6",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "1d220949-1691-4579-a8fb-d612eb57a529": {
+      "Id": "1d220949-1691-4579-a8fb-d612eb57a529",
+      "Source": "3f510f9a-6850-4046-9407-2724f39bf9e4",
+      "Destination": "719b1fd3-0992-4576-b3ce-25ebd6e8620c",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "dfb20bb0-d0b0-481f-9218-043929c109bd": {
+      "Id": "dfb20bb0-d0b0-481f-9218-043929c109bd",
+      "Source": "5a96531d-f46f-4220-a601-d6d41532ae45",
+      "Destination": "1f5825ee-2b4b-4d75-83c8-f3bbd8965370",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "8b346b9e-ebda-4402-aa2a-9ba3a49028f2": {
+      "Id": "8b346b9e-ebda-4402-aa2a-9ba3a49028f2",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a1990b63-9a0d-4083-b607-2654f4a7968e",
+          "Label": "p",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "a1990b63-9a0d-4083-b607-2654f4a7968e",
+        "Label": "p",
+        "Type": "Number"
+      }
+    },
+    "0e85dc99-3319-4f2f-802e-016cffabb1e1": {
+      "Id": "0e85dc99-3319-4f2f-802e-016cffabb1e1",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "1f5825ee-2b4b-4d75-83c8-f3bbd8965370",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "3c07d3c9-5e79-4aae-8462-dc1cee349909": {
+      "Id": "3c07d3c9-5e79-4aae-8462-dc1cee349909",
+      "Label": "InvertEaseFunc",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "6dcd270d-58d3-4687-b4ad-bf7a3b3392d6",
+          "Label": "p",
+          "Type": "Any"
+        },
+        {
+          "Id": "719b1fd3-0992-4576-b3ce-25ebd6e8620c",
+          "Label": "easeIn",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "5a96531d-f46f-4220-a601-d6d41532ae45",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "5a96531d-f46f-4220-a601-d6d41532ae45",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "45cf0b3c-142a-469c-a808-e203b7e5c8a6": {
+      "Id": "45cf0b3c-142a-469c-a808-e203b7e5c8a6",
+      "Label": "BounceEaseOut",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "2010a8c0-b7df-485d-b61c-c7061efd3164",
+          "Label": "p",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "3f510f9a-6850-4046-9407-2724f39bf9e4",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "3f510f9a-6850-4046-9407-2724f39bf9e4",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

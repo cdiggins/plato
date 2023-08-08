@@ -1,0 +1,245 @@
+{
+  "Name": "Between",
+  "Connections": {
+    "c5d4872d-a47a-4d96-b043-341704d8059e": {
+      "Id": "c5d4872d-a47a-4d96-b043-341704d8059e",
+      "Source": "25bf0f3a-5db5-492d-9d08-91a89d92d12c",
+      "Destination": "d8d6f9ed-36df-4bf6-b3f5-c99d73aaf0ad",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "602672a9-17a4-49ef-b174-1ea3663ece32": {
+      "Id": "602672a9-17a4-49ef-b174-1ea3663ece32",
+      "Source": "ca85daab-929d-4096-90ca-3b47009ec037",
+      "Destination": "170b8a50-f126-4581-b900-244ac1da882f",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "50ccc973-c871-429c-bd35-29013fa6e09f": {
+      "Id": "50ccc973-c871-429c-bd35-29013fa6e09f",
+      "Source": "abfc5569-7100-4149-a9d3-6f83bd02e6d1",
+      "Destination": "a04e07e1-1c0e-4722-91dd-b421f01b06d7",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "513d9189-3ee4-4005-bc23-b312ff4cdca7": {
+      "Id": "513d9189-3ee4-4005-bc23-b312ff4cdca7",
+      "Source": "dac011c6-b675-49ae-8dd1-badde11a987d",
+      "Destination": "c953543f-7bc7-4843-8463-bd6619bd90c5",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "b7162d7b-7d5c-4b4c-9681-18a52e82cb3f": {
+      "Id": "b7162d7b-7d5c-4b4c-9681-18a52e82cb3f",
+      "Source": "93cf0a9c-d24f-47af-98fa-420755fed623",
+      "Destination": "0e99ff23-5240-4d49-8d4f-316a7dbf450b",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "70ff1e49-23bc-4e5d-bd15-640b9c1f2fc0": {
+      "Id": "70ff1e49-23bc-4e5d-bd15-640b9c1f2fc0",
+      "Source": "223e8952-6ec1-4f9e-9442-545bd2c42a0f",
+      "Destination": "9ed06c7d-801f-48aa-b72d-39389f9ba503",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "6bcf121d-5077-4dde-92b1-38412be61124": {
+      "Id": "6bcf121d-5077-4dde-92b1-38412be61124",
+      "Source": "ac2a046c-1061-467c-949e-1c569a4a2d5b",
+      "Destination": "70701e04-34c6-40c8-8f31-b716ab195801",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "f26e4d4c-6d13-47cc-b4a4-0d7ef27f5912": {
+      "Id": "f26e4d4c-6d13-47cc-b4a4-0d7ef27f5912",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "25bf0f3a-5db5-492d-9d08-91a89d92d12c",
+          "Label": "self",
+          "Type": "Numerical"
+        },
+        {
+          "Id": "ca85daab-929d-4096-90ca-3b47009ec037",
+          "Label": "min",
+          "Type": "Numerical"
+        },
+        {
+          "Id": "abfc5569-7100-4149-a9d3-6f83bd02e6d1",
+          "Label": "max",
+          "Type": "Numerical"
+        }
+      ],
+      "MainOutput": {
+        "Id": "25bf0f3a-5db5-492d-9d08-91a89d92d12c",
+        "Label": "self",
+        "Type": "Numerical"
+      }
+    },
+    "2173036e-fa03-4260-a27d-9fee5e056bda": {
+      "Id": "2173036e-fa03-4260-a27d-9fee5e056bda",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "70701e04-34c6-40c8-8f31-b716ab195801",
+          "Label": "Result",
+          "Type": "Boolean"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "4b177565-266d-4b8c-9192-15cfd777e4f5": {
+      "Id": "4b177565-266d-4b8c-9192-15cfd777e4f5",
+      "Label": "Zip",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "c953543f-7bc7-4843-8463-bd6619bd90c5",
+          "Label": "xs",
+          "Type": "Any"
+        },
+        {
+          "Id": "0e99ff23-5240-4d49-8d4f-316a7dbf450b",
+          "Label": "ys",
+          "Type": "Any"
+        },
+        {
+          "Id": "9ed06c7d-801f-48aa-b72d-39389f9ba503",
+          "Label": "f",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "ac2a046c-1061-467c-949e-1c569a4a2d5b",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "ac2a046c-1061-467c-949e-1c569a4a2d5b",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "07bb11d8-6a28-4d6c-b812-eeb26b410a80": {
+      "Id": "07bb11d8-6a28-4d6c-b812-eeb26b410a80",
+      "Label": "FieldValues",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "d8d6f9ed-36df-4bf6-b3f5-c99d73aaf0ad",
+          "Label": "x",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "dac011c6-b675-49ae-8dd1-badde11a987d",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "dac011c6-b675-49ae-8dd1-badde11a987d",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "266228e9-339b-4957-bf2f-f2d08fb571bf": {
+      "Id": "266228e9-339b-4957-bf2f-f2d08fb571bf",
+      "Label": "FieldValues",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "170b8a50-f126-4581-b900-244ac1da882f",
+          "Label": "x",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "93cf0a9c-d24f-47af-98fa-420755fed623",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "93cf0a9c-d24f-47af-98fa-420755fed623",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "c8b4e77f-d8a2-4660-9f2e-68adc4180138": {
+      "Id": "c8b4e77f-d8a2-4660-9f2e-68adc4180138",
+      "Label": "FieldValues",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "a04e07e1-1c0e-4722-91dd-b421f01b06d7",
+          "Label": "x",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "223e8952-6ec1-4f9e-9442-545bd2c42a0f",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "223e8952-6ec1-4f9e-9442-545bd2c42a0f",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "e77eb3ab-1516-4d33-9935-7c1915b8ab19": {
+      "Id": "e77eb3ab-1516-4d33-9935-7c1915b8ab19",
+      "Label": "__lambda__",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "3475e99b-7bfe-4108-b79a-e645cff01762",
+          "Label": "x",
+          "Type": "Any"
+        },
+        {
+          "Id": "6c4c099c-e417-48a2-bde2-fd953ed06046",
+          "Label": "y",
+          "Type": "Any"
+        },
+        {
+          "Id": "da46185a-490d-4aa5-a980-eb26e73edbbc",
+          "Label": "z",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "7917e03a-96c9-4b25-aade-22790e3cd370",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "7917e03a-96c9-4b25-aade-22790e3cd370",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

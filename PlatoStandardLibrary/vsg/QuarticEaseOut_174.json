@@ -1,0 +1,116 @@
+{
+  "Name": "QuarticEaseOut",
+  "Connections": {
+    "bb630768-5f20-4513-8cfc-6c4093334d05": {
+      "Id": "bb630768-5f20-4513-8cfc-6c4093334d05",
+      "Source": "459433d1-916f-4a57-ab2a-231ed96920d5",
+      "Destination": "9f539ee5-d83b-4d49-9095-1c5d492f44fc",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "5d67ed7a-a06d-40a3-b808-223ea84b6978": {
+      "Id": "5d67ed7a-a06d-40a3-b808-223ea84b6978",
+      "Source": "2e5e5325-3c33-42e8-a260-383f7bfb5821",
+      "Destination": "cb381036-2358-4c8e-81e3-81ad06e5cabe",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "57bf4ce8-373d-4eff-ac79-e420de18ee87": {
+      "Id": "57bf4ce8-373d-4eff-ac79-e420de18ee87",
+      "Source": "d53e48f3-efca-43a4-b7c5-4042c1162c9c",
+      "Destination": "3b7ab31b-d777-41f1-af75-9b73046a0fd8",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "42ac4fc4-dcb8-4088-befe-6591a20da3a2": {
+      "Id": "42ac4fc4-dcb8-4088-befe-6591a20da3a2",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "459433d1-916f-4a57-ab2a-231ed96920d5",
+          "Label": "p",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "459433d1-916f-4a57-ab2a-231ed96920d5",
+        "Label": "p",
+        "Type": "Number"
+      }
+    },
+    "671c15a2-ae4a-4508-a4e4-6a83e7446589": {
+      "Id": "671c15a2-ae4a-4508-a4e4-6a83e7446589",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "3b7ab31b-d777-41f1-af75-9b73046a0fd8",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "fe120565-ff4d-4b0f-9edd-cb7e4800e42c": {
+      "Id": "fe120565-ff4d-4b0f-9edd-cb7e4800e42c",
+      "Label": "InvertEaseFunc",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "9f539ee5-d83b-4d49-9095-1c5d492f44fc",
+          "Label": "p",
+          "Type": "Any"
+        },
+        {
+          "Id": "cb381036-2358-4c8e-81e3-81ad06e5cabe",
+          "Label": "easeIn",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "d53e48f3-efca-43a4-b7c5-4042c1162c9c",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "d53e48f3-efca-43a4-b7c5-4042c1162c9c",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "99fe2a71-8282-4b63-bd5c-dbafdc3fc286": {
+      "Id": "99fe2a71-8282-4b63-bd5c-dbafdc3fc286",
+      "Label": "QuarticEaseIn",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "9f24a762-3c00-4910-b2c3-fbbb2ae98dba",
+          "Label": "p",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "2e5e5325-3c33-42e8-a260-383f7bfb5821",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "2e5e5325-3c33-42e8-a260-383f7bfb5821",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

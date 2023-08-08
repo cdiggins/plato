@@ -1,9 +1,11 @@
 using System.Diagnostics;
 using System.Text;
+using System.Text.Json;
 using Parakeet;
 using Parakeet.Demos;
 using Parakeet.Demos.Plato;
 using Plato.Compiler;
+using Ptarmigan.Utils;
 
 namespace PlatoWinFormsEditor;
 
@@ -77,28 +79,37 @@ public class IDE
         Compiler.Compile(parsers);
 
         OutputTextBox.Lines = Logger.Messages.ToArray();
-        /*
-        Parser = Compile(Input);
-        
+
         var outputFolder = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\";
 
-        File.WriteAllText(Path.Combine(outputFolder, "output.cs"), Parser.ToCSharp());
-        File.WriteAllText(Path.Combine(outputFolder, "output.plato.html"), Parser.ToPlatoHtml());
+        File.WriteAllText(Path.Combine(outputFolder, "output.cs"), Compiler.ToCSharp());
+        File.WriteAllText(Path.Combine(outputFolder, "output.plato.html"), Compiler.ToPlatoHtml());
 
         var inputFolder = outputFolder;
         var prologue = File.ReadAllText(Path.Combine(inputFolder, "prologue.js"));
         var epilogue = File.ReadAllText(Path.Combine(inputFolder, "epilogue.js"));
         var output = prologue 
                      + Environment.NewLine
-                     + Parser.ToJavaScript() 
+                     + Compiler.ToJavaScript() 
                      + Environment.NewLine 
                      + epilogue;
         File.WriteAllText(Path.Combine(outputFolder, "output.js"), output);
 
+        var vsgFolder = Path.Combine(outputFolder, "vsg");
+        // TODO: clear the directory
+        
+        FileUtil.CreateAndClearDirectory(vsgFolder);
+        var i = 0;
+        foreach (var f in Compiler.Graphs)
+        {
+            var text = JsonSerializer.Serialize(f, new JsonSerializerOptions() { WriteIndented = true });
+            var filePath = Path.Combine(vsgFolder, $"{f.Name}_{i++}.json");
+            File.WriteAllText(filePath, text);
+        }
+
         //Output += GetConstraintsOutput();
         //Output += GetOperationsOutput();
         //Output += GetTypeGuesserOutput();
-        */
     }
 
     public string GetOperationsOutput()

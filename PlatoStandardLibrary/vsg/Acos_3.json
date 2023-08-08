@@ -1,0 +1,38 @@
+{
+  "Name": "Acos",
+  "Connections": {},
+  "Nodes": {
+    "4f97aaba-6007-4588-8e50-cd5d9757af69": {
+      "Id": "4f97aaba-6007-4588-8e50-cd5d9757af69",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b39ed884-c414-48ee-927e-042813ce9104",
+          "Label": "x",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "b39ed884-c414-48ee-927e-042813ce9104",
+        "Label": "x",
+        "Type": "Number"
+      }
+    },
+    "030d2a52-9bd2-42bd-951c-5e665fb18be7": {
+      "Id": "030d2a52-9bd2-42bd-951c-5e665fb18be7",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "ce66015a-8689-4c3c-9a60-c1ee75162ccb",
+          "Label": "Result",
+          "Type": "Angle"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "Name": "SineEaseOut",
+  "Connections": {
+    "7db9b972-3a32-453d-a924-827d4b75fa3a": {
+      "Id": "7db9b972-3a32-453d-a924-827d4b75fa3a",
+      "Source": "8beff448-d3de-460e-bfa5-20e4879df52e",
+      "Destination": "ddc18a5e-db0d-495d-9662-09cfe79c8c2a",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "aff171a6-cb39-4584-9d86-88be4e7667c2": {
+      "Id": "aff171a6-cb39-4584-9d86-88be4e7667c2",
+      "Source": "237f1529-3742-4dce-8920-7c990913cb55",
+      "Destination": "458a0390-0752-4f85-bda3-e43450c10e03",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "b282922e-2022-4475-8f1a-71c65aef0cd2": {
+      "Id": "b282922e-2022-4475-8f1a-71c65aef0cd2",
+      "Source": "d5e6cd62-81e6-4fa4-a797-fd148c8c75e1",
+      "Destination": "53aea87a-f02b-4af2-8506-202ea40a2d86",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "9c6d33be-dfd0-4721-9557-7bf53741468f": {
+      "Id": "9c6d33be-dfd0-4721-9557-7bf53741468f",
+      "Source": "e2c99a89-d35f-4c21-ba66-e26b8001dbb8",
+      "Destination": "a08e68ec-3707-46d5-87b8-05954111d46b",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "dad93cb1-b0da-45bc-9c18-6b225c74eccb": {
+      "Id": "dad93cb1-b0da-45bc-9c18-6b225c74eccb",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "8beff448-d3de-460e-bfa5-20e4879df52e",
+          "Label": "p",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "8beff448-d3de-460e-bfa5-20e4879df52e",
+        "Label": "p",
+        "Type": "Number"
+      }
+    },
+    "db650f5b-51b6-4e84-ad13-f6ef31c15c24": {
+      "Id": "db650f5b-51b6-4e84-ad13-f6ef31c15c24",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "a08e68ec-3707-46d5-87b8-05954111d46b",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "e4d25636-2029-4d48-a62a-4e83a7c1a9cc": {
+      "Id": "e4d25636-2029-4d48-a62a-4e83a7c1a9cc",
+      "Label": "Sin",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "53aea87a-f02b-4af2-8506-202ea40a2d86",
+          "Label": "x",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "e2c99a89-d35f-4c21-ba66-e26b8001dbb8",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "e2c99a89-d35f-4c21-ba66-e26b8001dbb8",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "d52e9b25-9dfa-4847-b7c1-c17cf99b0836": {
+      "Id": "d52e9b25-9dfa-4847-b7c1-c17cf99b0836",
+      "Label": "Turns",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "458a0390-0752-4f85-bda3-e43450c10e03",
+          "Label": "x",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "d5e6cd62-81e6-4fa4-a797-fd148c8c75e1",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "d5e6cd62-81e6-4fa4-a797-fd148c8c75e1",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "2f09330a-02b0-4c01-8f06-276b1a50ba30": {
+      "Id": "2f09330a-02b0-4c01-8f06-276b1a50ba30",
+      "Label": "Quarter",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "ddc18a5e-db0d-495d-9662-09cfe79c8c2a",
+          "Label": "x",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "237f1529-3742-4dce-8920-7c990913cb55",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "237f1529-3742-4dce-8920-7c990913cb55",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

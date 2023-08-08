@@ -1,0 +1,38 @@
+{
+  "Name": "Negative",
+  "Connections": {},
+  "Nodes": {
+    "b7dda97f-7572-4444-9c2f-96b327037148": {
+      "Id": "b7dda97f-7572-4444-9c2f-96b327037148",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "14a606f1-de4b-42f9-922b-4a2190578f3a",
+          "Label": "x",
+          "Type": "Integer"
+        }
+      ],
+      "MainOutput": {
+        "Id": "14a606f1-de4b-42f9-922b-4a2190578f3a",
+        "Label": "x",
+        "Type": "Integer"
+      }
+    },
+    "9d353cde-9454-4cbe-87f1-a28897eeee0c": {
+      "Id": "9d353cde-9454-4cbe-87f1-a28897eeee0c",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "03286a46-69a6-4da5-af21-a1eb3ba5a022",
+          "Label": "Result",
+          "Type": "Integer"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

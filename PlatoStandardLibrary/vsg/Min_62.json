@@ -1,0 +1,38 @@
+{
+  "Name": "Min",
+  "Connections": {},
+  "Nodes": {
+    "178f7f6f-6cd3-4733-9ad3-0b302b7fd6df": {
+      "Id": "178f7f6f-6cd3-4733-9ad3-0b302b7fd6df",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "60873393-b6a8-4a20-8af8-551234f273c9",
+          "Label": "x",
+          "Type": "Self"
+        }
+      ],
+      "MainOutput": {
+        "Id": "60873393-b6a8-4a20-8af8-551234f273c9",
+        "Label": "x",
+        "Type": "Self"
+      }
+    },
+    "2e7a6bf5-befb-476a-8c58-dfe549b6e546": {
+      "Id": "2e7a6bf5-befb-476a-8c58-dfe549b6e546",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "f1cbb88a-e1a1-41cb-a32e-493117b97879",
+          "Label": "Result",
+          "Type": "T"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

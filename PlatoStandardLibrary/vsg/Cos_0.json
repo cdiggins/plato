@@ -1,0 +1,38 @@
+{
+  "Name": "Cos",
+  "Connections": {},
+  "Nodes": {
+    "ee737913-0fd3-49b1-a9d5-ac47e946e98c": {
+      "Id": "ee737913-0fd3-49b1-a9d5-ac47e946e98c",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "1b506a70-f572-447d-894f-18d3e5cd1c54",
+          "Label": "x",
+          "Type": "Angle"
+        }
+      ],
+      "MainOutput": {
+        "Id": "1b506a70-f572-447d-894f-18d3e5cd1c54",
+        "Label": "x",
+        "Type": "Angle"
+      }
+    },
+    "726dff27-d81a-44b3-ab24-a1cc414af08b": {
+      "Id": "726dff27-d81a-44b3-ab24-a1cc414af08b",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "2dbf7dbe-a696-4ced-beb2-dd50cc9fdd52",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

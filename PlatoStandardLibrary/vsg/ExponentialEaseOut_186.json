@@ -1,0 +1,116 @@
+{
+  "Name": "ExponentialEaseOut",
+  "Connections": {
+    "40f9f312-256c-4fb3-a3b1-86b829ebe30d": {
+      "Id": "40f9f312-256c-4fb3-a3b1-86b829ebe30d",
+      "Source": "05b29be9-7111-48ea-bba0-6eb2d653dbd8",
+      "Destination": "4036bc5c-83df-4806-89a7-0dd7656486e8",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "c66b59af-62fa-432f-b8e9-514144e42148": {
+      "Id": "c66b59af-62fa-432f-b8e9-514144e42148",
+      "Source": "fa951d2f-c629-40ba-ad33-5daa6527aff6",
+      "Destination": "e2064614-9061-4b9b-a0f3-ba78620181a2",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "2d8a3fa5-2171-4353-bd3b-ac414739d2f5": {
+      "Id": "2d8a3fa5-2171-4353-bd3b-ac414739d2f5",
+      "Source": "21cc1f07-e678-4e49-995d-955bc74386bd",
+      "Destination": "2b8530c7-f9d2-4b1f-8e2e-2140b071574c",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "329ff78f-50cb-4f64-a40a-60db2424765c": {
+      "Id": "329ff78f-50cb-4f64-a40a-60db2424765c",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "05b29be9-7111-48ea-bba0-6eb2d653dbd8",
+          "Label": "p",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "05b29be9-7111-48ea-bba0-6eb2d653dbd8",
+        "Label": "p",
+        "Type": "Number"
+      }
+    },
+    "34320b26-e0bd-4da6-b438-a7823eb082c0": {
+      "Id": "34320b26-e0bd-4da6-b438-a7823eb082c0",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "2b8530c7-f9d2-4b1f-8e2e-2140b071574c",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "129abb23-67bf-4291-b7a4-abc7c79bf90c": {
+      "Id": "129abb23-67bf-4291-b7a4-abc7c79bf90c",
+      "Label": "InvertEaseFunc",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "4036bc5c-83df-4806-89a7-0dd7656486e8",
+          "Label": "p",
+          "Type": "Any"
+        },
+        {
+          "Id": "e2064614-9061-4b9b-a0f3-ba78620181a2",
+          "Label": "easeIn",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "21cc1f07-e678-4e49-995d-955bc74386bd",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "21cc1f07-e678-4e49-995d-955bc74386bd",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "3b2a1593-971b-4238-96de-440b49e9bc36": {
+      "Id": "3b2a1593-971b-4238-96de-440b49e9bc36",
+      "Label": "ExponentialEaseIn",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "a90254dc-51ee-472a-b905-e7c63c293618",
+          "Label": "p",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "fa951d2f-c629-40ba-ad33-5daa6527aff6",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "fa951d2f-c629-40ba-ad33-5daa6527aff6",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

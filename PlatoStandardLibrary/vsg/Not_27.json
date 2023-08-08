@@ -1,0 +1,38 @@
+{
+  "Name": "Not",
+  "Connections": {},
+  "Nodes": {
+    "43d0d0ec-5cc6-45bf-b273-e508e9596d7a": {
+      "Id": "43d0d0ec-5cc6-45bf-b273-e508e9596d7a",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d507631c-34e7-4f08-89a4-84e24bb72ef7",
+          "Label": "x",
+          "Type": "Boolean"
+        }
+      ],
+      "MainOutput": {
+        "Id": "d507631c-34e7-4f08-89a4-84e24bb72ef7",
+        "Label": "x",
+        "Type": "Boolean"
+      }
+    },
+    "c5519e1a-87f2-4eb8-adab-3bb7efe6d9be": {
+      "Id": "c5519e1a-87f2-4eb8-adab-3bb7efe6d9be",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "b60ac874-d556-40ba-ac9e-2bcd2c457cd4",
+          "Label": "Result",
+          "Type": "Boolean"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

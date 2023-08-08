@@ -1,0 +1,38 @@
+{
+  "Name": "Sin",
+  "Connections": {},
+  "Nodes": {
+    "006bf19d-be97-447a-b51f-ecefa2a282a6": {
+      "Id": "006bf19d-be97-447a-b51f-ecefa2a282a6",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "feea2188-4e6b-4047-982a-1eb2988ee0ce",
+          "Label": "x",
+          "Type": "Angle"
+        }
+      ],
+      "MainOutput": {
+        "Id": "feea2188-4e6b-4047-982a-1eb2988ee0ce",
+        "Label": "x",
+        "Type": "Angle"
+      }
+    },
+    "5e3c9a83-bbe2-48b2-857f-e8de11faa2c4": {
+      "Id": "5e3c9a83-bbe2-48b2-857f-e8de11faa2c4",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "fa2c7796-1c3c-4f94-9e1f-1a8185e1dee0",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

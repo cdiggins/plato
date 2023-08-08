@@ -1,0 +1,38 @@
+{
+  "Name": "FieldNames",
+  "Connections": {},
+  "Nodes": {
+    "eaf4130e-ab7f-4dfd-aa16-b2cc87a28002": {
+      "Id": "eaf4130e-ab7f-4dfd-aa16-b2cc87a28002",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "4c8ac3ca-cea6-4511-aa7c-abba39ece5bf",
+          "Label": "x",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "4c8ac3ca-cea6-4511-aa7c-abba39ece5bf",
+        "Label": "x",
+        "Type": "Any"
+      }
+    },
+    "e8707b69-228c-4031-b8ee-e5d99658bdb1": {
+      "Id": "e8707b69-228c-4031-b8ee-e5d99658bdb1",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "270b6685-5a15-432f-85e5-0595c9de5bd3",
+          "Label": "Result",
+          "Type": "Array"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

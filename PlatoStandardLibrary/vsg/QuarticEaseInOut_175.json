@@ -1,0 +1,153 @@
+{
+  "Name": "QuarticEaseInOut",
+  "Connections": {
+    "d3ab9b9e-8eaa-4773-8849-9889e3c3436a": {
+      "Id": "d3ab9b9e-8eaa-4773-8849-9889e3c3436a",
+      "Source": "d5dde7c7-dd21-4000-b46e-25159f12fc7e",
+      "Destination": "3addf2a9-97ca-4790-b1d0-4c89a3c5a9b0",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "c80e615b-aca4-4fdb-a6c9-424dccb1b9fa": {
+      "Id": "c80e615b-aca4-4fdb-a6c9-424dccb1b9fa",
+      "Source": "195f5070-2756-432d-aaf0-72d17b1156b2",
+      "Destination": "b6fd3553-4159-4eb2-a3a8-c56d0baa18c1",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "3ebb2199-9d9f-4be4-ade5-ed5ae77177c4": {
+      "Id": "3ebb2199-9d9f-4be4-ade5-ed5ae77177c4",
+      "Source": "4b153800-a54e-4f38-aca4-ff9d991b7f3d",
+      "Destination": "63442079-f51b-45f7-8481-dc1b9287a1f8",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "3d845e39-a3b0-4e60-982d-106e35e8551d": {
+      "Id": "3d845e39-a3b0-4e60-982d-106e35e8551d",
+      "Source": "35965211-d0ff-411e-8a68-861b7e90a5bb",
+      "Destination": "f294ae72-8179-4650-ac19-2b71a3d68f4e",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "983e570d-28cf-4288-bac2-5bf8ae39c876": {
+      "Id": "983e570d-28cf-4288-bac2-5bf8ae39c876",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d5dde7c7-dd21-4000-b46e-25159f12fc7e",
+          "Label": "p",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "d5dde7c7-dd21-4000-b46e-25159f12fc7e",
+        "Label": "p",
+        "Type": "Number"
+      }
+    },
+    "02ad5380-cf92-4767-835e-ec2e308f97b5": {
+      "Id": "02ad5380-cf92-4767-835e-ec2e308f97b5",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "f294ae72-8179-4650-ac19-2b71a3d68f4e",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "54015a3a-5740-45c5-9a8b-fa4648990a3e": {
+      "Id": "54015a3a-5740-45c5-9a8b-fa4648990a3e",
+      "Label": "BlendEaseFunc",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "3addf2a9-97ca-4790-b1d0-4c89a3c5a9b0",
+          "Label": "p",
+          "Type": "Any"
+        },
+        {
+          "Id": "b6fd3553-4159-4eb2-a3a8-c56d0baa18c1",
+          "Label": "easeIn",
+          "Type": "Any"
+        },
+        {
+          "Id": "63442079-f51b-45f7-8481-dc1b9287a1f8",
+          "Label": "easeOut",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "35965211-d0ff-411e-8a68-861b7e90a5bb",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "35965211-d0ff-411e-8a68-861b7e90a5bb",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "99b2b84e-5522-48ca-b4d9-1bc0c3575245": {
+      "Id": "99b2b84e-5522-48ca-b4d9-1bc0c3575245",
+      "Label": "QuarticEaseIn",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "4e58c5f6-6e95-4975-a229-a62e3bce8cd5",
+          "Label": "p",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "195f5070-2756-432d-aaf0-72d17b1156b2",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "195f5070-2756-432d-aaf0-72d17b1156b2",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "f320de5c-0a80-4705-aeef-1987d34bf1af": {
+      "Id": "f320de5c-0a80-4705-aeef-1987d34bf1af",
+      "Label": "QuarticEaseOut",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "c130acfa-bd94-4705-ab13-fd8350073101",
+          "Label": "p",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "4b153800-a54e-4f38-aca4-ff9d991b7f3d",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "4b153800-a54e-4f38-aca4-ff9d991b7f3d",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

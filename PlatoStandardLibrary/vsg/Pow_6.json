@@ -1,0 +1,43 @@
+{
+  "Name": "Pow",
+  "Connections": {},
+  "Nodes": {
+    "5d9b3ab9-4a47-420a-a6a8-f6a67bd78f6b": {
+      "Id": "5d9b3ab9-4a47-420a-a6a8-f6a67bd78f6b",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "3838be92-157d-4036-94c0-840f50756fc3",
+          "Label": "x",
+          "Type": "Number"
+        },
+        {
+          "Id": "1cbce19c-6cb6-4738-b3c5-4101d71b8ca2",
+          "Label": "y",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "3838be92-157d-4036-94c0-840f50756fc3",
+        "Label": "x",
+        "Type": "Number"
+      }
+    },
+    "9fef09c0-6e35-43ca-9e61-fa27948e2764": {
+      "Id": "9fef09c0-6e35-43ca-9e61-fa27948e2764",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "7f9c378f-5b23-4956-b759-1ab50ef6fc5a",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

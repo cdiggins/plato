@@ -1,0 +1,47 @@
+{
+  "Name": "Radians",
+  "Connections": {
+    "88ccb012-ac2d-405c-b1be-5a8ef270ba36": {
+      "Id": "88ccb012-ac2d-405c-b1be-5a8ef270ba36",
+      "Source": "6394ce70-dc95-43ad-a0a0-06501caa5881",
+      "Destination": "6c8a75c8-44e6-47cd-9e2e-d7d537d515dc",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "680e1a0b-d91d-437c-829d-d72422ea6edf": {
+      "Id": "680e1a0b-d91d-437c-829d-d72422ea6edf",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "6394ce70-dc95-43ad-a0a0-06501caa5881",
+          "Label": "x",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "6394ce70-dc95-43ad-a0a0-06501caa5881",
+        "Label": "x",
+        "Type": "Number"
+      }
+    },
+    "b9defb87-d842-49ac-981f-1824840b15ec": {
+      "Id": "b9defb87-d842-49ac-981f-1824840b15ec",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "6c8a75c8-44e6-47cd-9e2e-d7d537d515dc",
+          "Label": "Result",
+          "Type": "Angle"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

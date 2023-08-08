@@ -1,0 +1,43 @@
+{
+  "Name": "Or",
+  "Connections": {},
+  "Nodes": {
+    "dbb9c929-0f58-4647-b018-800d69d1dc26": {
+      "Id": "dbb9c929-0f58-4647-b018-800d69d1dc26",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "49c986b6-5ff1-4587-80d2-f41da369663a",
+          "Label": "x",
+          "Type": "Boolean"
+        },
+        {
+          "Id": "1a0fd6d2-70f3-42b8-b1f9-70613d07f83d",
+          "Label": "y",
+          "Type": "Boolean"
+        }
+      ],
+      "MainOutput": {
+        "Id": "49c986b6-5ff1-4587-80d2-f41da369663a",
+        "Label": "x",
+        "Type": "Boolean"
+      }
+    },
+    "0e26763e-7819-4d18-8f7b-8cff0c1426c9": {
+      "Id": "0e26763e-7819-4d18-8f7b-8cff0c1426c9",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "bc6e0352-12f4-4d49-905b-c8d63b40a2db",
+          "Label": "Result",
+          "Type": "Boolean"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

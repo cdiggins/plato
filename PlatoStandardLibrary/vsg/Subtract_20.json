@@ -1,0 +1,43 @@
+{
+  "Name": "Subtract",
+  "Connections": {},
+  "Nodes": {
+    "867ca6bb-1203-47ab-9342-70433998a11d": {
+      "Id": "867ca6bb-1203-47ab-9342-70433998a11d",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "32d5e89f-de75-4e44-8431-5a7c28e5c19d",
+          "Label": "x",
+          "Type": "Integer"
+        },
+        {
+          "Id": "a30225a5-f33e-4477-8a8f-4faa27d82c64",
+          "Label": "y",
+          "Type": "Integer"
+        }
+      ],
+      "MainOutput": {
+        "Id": "32d5e89f-de75-4e44-8431-5a7c28e5c19d",
+        "Label": "x",
+        "Type": "Integer"
+      }
+    },
+    "6226379e-ecd6-4f78-bb41-df1604d0be44": {
+      "Id": "6226379e-ecd6-4f78-bb41-df1604d0be44",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "74352924-5392-4a93-a79c-e158a6741b7e",
+          "Label": "Result",
+          "Type": "Integer"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

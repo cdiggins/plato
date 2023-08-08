@@ -1,0 +1,38 @@
+{
+  "Name": "Count",
+  "Connections": {},
+  "Nodes": {
+    "6c2995c7-2420-43f7-87de-5a82c7eebb92": {
+      "Id": "6c2995c7-2420-43f7-87de-5a82c7eebb92",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "3793e1c2-7cee-48f0-9c57-c0f4fbd2abdd",
+          "Label": "xs",
+          "Type": "Self"
+        }
+      ],
+      "MainOutput": {
+        "Id": "3793e1c2-7cee-48f0-9c57-c0f4fbd2abdd",
+        "Label": "xs",
+        "Type": "Self"
+      }
+    },
+    "66aa2371-93a5-430a-a37d-b3ed4832c8a1": {
+      "Id": "66aa2371-93a5-430a-a37d-b3ed4832c8a1",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "c682f039-5696-4afe-a011-260f2bef69cf",
+          "Label": "Result",
+          "Type": "Count"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

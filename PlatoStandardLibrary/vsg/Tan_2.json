@@ -1,0 +1,38 @@
+{
+  "Name": "Tan",
+  "Connections": {},
+  "Nodes": {
+    "59cbb228-a76e-4986-afc8-6189edad5edf": {
+      "Id": "59cbb228-a76e-4986-afc8-6189edad5edf",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c953e633-42cf-4856-ab35-fa8f2d66d502",
+          "Label": "x",
+          "Type": "Angle"
+        }
+      ],
+      "MainOutput": {
+        "Id": "c953e633-42cf-4856-ab35-fa8f2d66d502",
+        "Label": "x",
+        "Type": "Angle"
+      }
+    },
+    "3d764d27-5939-4f00-9e0c-18f005152f61": {
+      "Id": "3d764d27-5939-4f00-9e0c-18f005152f61",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "e3453eea-5ea1-49bd-aea4-9f8b3a052a2b",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

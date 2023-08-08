@@ -8,8 +8,6 @@ namespace Plato.Compiler
 {
     public class Compiler
     {
-        public bool DisplayWarnings = false;
-
         public Compiler(
             CstNodeFactory cstNodeFactory,
             AstNodeFactory astNodeFactory,
@@ -22,8 +20,34 @@ namespace Plato.Compiler
             Log("Creating compiler");
         }
 
+        public bool DisplayWarnings = false;
+        public AstNodeFactory AstNodeFactory { get; }
+        public CstNodeFactory CstNodeFactory { get; }
+        public Logger Logger { get; }
+
+        public bool ParsingSuccess { get; set; }
+        public IReadOnlyList<Parser> Parsers { get; set; }
+        public IReadOnlyList<AstNode> Trees { get; set; }
+        public SymbolResolver SymbolResolver { get; set; }
+        public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; set; }
+        public Operations Operations { get; set; }
+        public TypeResolver TypeResolver { get; set; }
+        public IReadOnlyList<FunctionSymbol> Functions => TypeResolver.Functions;
+        public IReadOnlyList<TypeDefSymbol> TypeDefs { get; set; }
+
+        public List<string> SemanticErrors { get; } = new List<string>();
+        public List<string> SemanticWarnings { get; } = new List<string>();
+        public List<string> InternalErrors { get; } = new List<string>();
+
+        public List<VisualSyntaxGraph> Graphs { get; } = new List<VisualSyntaxGraph>();
+
         public void Compile(IReadOnlyList<Parser> parsers) 
         {
+            Log("Initializing");
+            SemanticErrors.Clear();
+            SemanticWarnings.Clear();
+            InternalErrors.Clear();
+
             Log("Gathering parsers");
             Parsers = parsers.ToList();
          
@@ -72,6 +96,11 @@ namespace Plato.Compiler
                 Log("Checking semantics");
                 CheckSemantics();
 
+                Log("Generating Visual Syntax Graphs");
+                Graphs.Clear();
+                foreach (var f in Functions)
+                    Graphs.Add(new VsgBuilder().ToVsg(f));
+
                 foreach (var se in SemanticErrors)
                     Log("Semantic Error   : " + se);
                 foreach (var ie in InternalErrors)
@@ -92,24 +121,6 @@ namespace Plato.Compiler
 
         public void Log(string message)
             => Logger.Log(message);
-
-        public AstNodeFactory AstNodeFactory { get; }
-        public CstNodeFactory CstNodeFactory { get; }
-        public Logger Logger { get; }
-
-        public bool ParsingSuccess { get; set; }
-        public IReadOnlyList<Parser> Parsers { get; set; }
-        public IReadOnlyList<AstNode> Trees { get; set; }
-        public SymbolResolver SymbolResolver { get; set; } 
-        public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; set; }
-        public Operations Operations { get; set; }
-        public TypeResolver TypeResolver { get; set; }
-        public IReadOnlyList<FunctionSymbol> Functions => TypeResolver.Functions;
-        public IReadOnlyList<TypeDefSymbol> TypeDefs { get; set; }
-
-        public List<string> SemanticErrors { get; } = new List<string>();
-        public List<string> SemanticWarnings { get; } = new List<string>();
-        public List<string> InternalErrors { get; } = new List<string>();
 
         public CstNode GetCstNode(AstNode node)
         {

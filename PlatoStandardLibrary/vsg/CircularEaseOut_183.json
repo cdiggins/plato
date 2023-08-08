@@ -1,0 +1,116 @@
+{
+  "Name": "CircularEaseOut",
+  "Connections": {
+    "a62f4e5e-4e08-4dfa-b524-56ef7d47b632": {
+      "Id": "a62f4e5e-4e08-4dfa-b524-56ef7d47b632",
+      "Source": "1bad6665-6cf0-4aa8-b092-fd5dd7677a6a",
+      "Destination": "3ebd273c-f58b-4593-a882-3f24093c29a7",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "a8e9a16b-42e3-4728-ab2f-c14a142de210": {
+      "Id": "a8e9a16b-42e3-4728-ab2f-c14a142de210",
+      "Source": "3e44eac2-02e5-493e-a235-c42c7c6b0d7b",
+      "Destination": "6d19d7a4-3f72-4cb5-9acc-624ee3ec8ff4",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "2a1ab1fe-cabf-46c2-884c-865214cbc034": {
+      "Id": "2a1ab1fe-cabf-46c2-884c-865214cbc034",
+      "Source": "af3cef62-c1b6-427c-8783-0eea94b60aa8",
+      "Destination": "78c18031-c367-4775-b536-2ed83a9cb900",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "eff84865-0e41-42f6-b4a9-95c4cc97faef": {
+      "Id": "eff84865-0e41-42f6-b4a9-95c4cc97faef",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "1bad6665-6cf0-4aa8-b092-fd5dd7677a6a",
+          "Label": "p",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "1bad6665-6cf0-4aa8-b092-fd5dd7677a6a",
+        "Label": "p",
+        "Type": "Number"
+      }
+    },
+    "8baf4838-d6c9-4f99-9005-8ac21ed62bdc": {
+      "Id": "8baf4838-d6c9-4f99-9005-8ac21ed62bdc",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "78c18031-c367-4775-b536-2ed83a9cb900",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "5f5f3125-9dc5-4203-ab29-00605d1b5706": {
+      "Id": "5f5f3125-9dc5-4203-ab29-00605d1b5706",
+      "Label": "InvertEaseFunc",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "3ebd273c-f58b-4593-a882-3f24093c29a7",
+          "Label": "p",
+          "Type": "Any"
+        },
+        {
+          "Id": "6d19d7a4-3f72-4cb5-9acc-624ee3ec8ff4",
+          "Label": "easeIn",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "af3cef62-c1b6-427c-8783-0eea94b60aa8",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "af3cef62-c1b6-427c-8783-0eea94b60aa8",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "5df0dbb3-ebba-498d-ba65-34bead1b377b": {
+      "Id": "5df0dbb3-ebba-498d-ba65-34bead1b377b",
+      "Label": "CircularEaseIn",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "a6d725c1-d76d-4401-91c1-99b695750848",
+          "Label": "p",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "3e44eac2-02e5-493e-a235-c42c7c6b0d7b",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "3e44eac2-02e5-493e-a235-c42c7c6b0d7b",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

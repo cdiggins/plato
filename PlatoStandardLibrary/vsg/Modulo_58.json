@@ -1,0 +1,129 @@
+{
+  "Name": "Modulo",
+  "Connections": {
+    "7cb5237a-626d-4a3c-9aef-f80ef794f51c": {
+      "Id": "7cb5237a-626d-4a3c-9aef-f80ef794f51c",
+      "Source": "dc57dfdf-83b2-433f-9172-51da1b540049",
+      "Destination": "4fbdaf82-e446-468f-a9f1-c771baf0301a",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "2f9f27a8-23d6-490c-8759-0f0e64a530c5": {
+      "Id": "2f9f27a8-23d6-490c-8759-0f0e64a530c5",
+      "Source": "74896af6-f115-4846-aba6-e7f89ea8e8e3",
+      "Destination": "5ba55c53-9ee3-4952-9910-2bf968b84303",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "710375dd-9e61-4a44-afb2-976f265cbf89": {
+      "Id": "710375dd-9e61-4a44-afb2-976f265cbf89",
+      "Source": "cac4e530-af7b-4bad-aa13-61c0307d0e3d",
+      "Destination": "ca95bb5c-2d59-481f-ac5e-d4c4724f7ec7",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "89c927ee-292b-422c-b0a6-5e2bc5c60e30": {
+      "Id": "89c927ee-292b-422c-b0a6-5e2bc5c60e30",
+      "Source": "13408453-35f0-4343-a926-e81b54868f74",
+      "Destination": "d9ec3cfb-5418-487a-a4bf-dd652c448759",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "7245574b-0d1b-4fa3-acb2-fff7a1dd0fde": {
+      "Id": "7245574b-0d1b-4fa3-acb2-fff7a1dd0fde",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "dc57dfdf-83b2-433f-9172-51da1b540049",
+          "Label": "self",
+          "Type": "Self"
+        },
+        {
+          "Id": "cac4e530-af7b-4bad-aa13-61c0307d0e3d",
+          "Label": "scalar",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "dc57dfdf-83b2-433f-9172-51da1b540049",
+        "Label": "self",
+        "Type": "Self"
+      }
+    },
+    "0c963ee7-a6fb-4430-ac06-bcc8931b6284": {
+      "Id": "0c963ee7-a6fb-4430-ac06-bcc8931b6284",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "d9ec3cfb-5418-487a-a4bf-dd652c448759",
+          "Label": "Result",
+          "Type": "Self"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "d36ec73a-65f8-4649-ba48-f05d38a1ae00": {
+      "Id": "d36ec73a-65f8-4649-ba48-f05d38a1ae00",
+      "Label": "Modulo",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "5ba55c53-9ee3-4952-9910-2bf968b84303",
+          "Label": "x",
+          "Type": "Any"
+        },
+        {
+          "Id": "ca95bb5c-2d59-481f-ac5e-d4c4724f7ec7",
+          "Label": "y",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "13408453-35f0-4343-a926-e81b54868f74",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "13408453-35f0-4343-a926-e81b54868f74",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "a56a4c4c-251b-4fa7-b8d6-acddd004f242": {
+      "Id": "a56a4c4c-251b-4fa7-b8d6-acddd004f242",
+      "Label": "FieldValues",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "4fbdaf82-e446-468f-a9f1-c771baf0301a",
+          "Label": "x",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "74896af6-f115-4846-aba6-e7f89ea8e8e3",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "74896af6-f115-4846-aba6-e7f89ea8e8e3",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

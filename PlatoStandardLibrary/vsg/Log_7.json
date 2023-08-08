@@ -1,0 +1,43 @@
+{
+  "Name": "Log",
+  "Connections": {},
+  "Nodes": {
+    "af86f346-bd6e-4b3a-938f-af216ad0b138": {
+      "Id": "af86f346-bd6e-4b3a-938f-af216ad0b138",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "38669e87-27a4-48e9-844f-c1267591e505",
+          "Label": "x",
+          "Type": "Number"
+        },
+        {
+          "Id": "391f7b42-ae65-41d9-ab6c-27fa4332b4ee",
+          "Label": "y",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "38669e87-27a4-48e9-844f-c1267591e505",
+        "Label": "x",
+        "Type": "Number"
+      }
+    },
+    "7e6f3f26-7f48-425e-a9e6-4cd97da57ecb": {
+      "Id": "7e6f3f26-7f48-425e-a9e6-4cd97da57ecb",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "b6192594-e432-4aa8-b451-58673ff27ff0",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

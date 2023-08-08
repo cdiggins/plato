@@ -1,0 +1,97 @@
+{
+  "Name": "Between",
+  "Connections": {
+    "d07e08a2-9b31-4987-af0f-d3b5e3f50b8f": {
+      "Id": "d07e08a2-9b31-4987-af0f-d3b5e3f50b8f",
+      "Source": "d41c6a58-7bd5-4e8e-acd8-6b64549bdb23",
+      "Destination": "30f1ae59-6b27-43a4-8834-22121239fef8",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "bfe499a8-85b6-4640-840d-ba5eedc841c6": {
+      "Id": "bfe499a8-85b6-4640-840d-ba5eedc841c6",
+      "Source": "210adf78-6d52-4006-b3f5-2b3bc4abf031",
+      "Destination": "dac46b8d-7020-44ee-9efc-c777780c6998",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "77f5f9ce-a376-4c50-b240-4f7185341cfc": {
+      "Id": "77f5f9ce-a376-4c50-b240-4f7185341cfc",
+      "Source": "60fbc225-6cec-470e-9874-501d7df6b8b0",
+      "Destination": "328cf25b-7e32-46c6-96c0-e64d9a780e02",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "a880fa10-d367-4f72-9ff6-b39af22c2338": {
+      "Id": "a880fa10-d367-4f72-9ff6-b39af22c2338",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "210adf78-6d52-4006-b3f5-2b3bc4abf031",
+          "Label": "v",
+          "Type": "Value"
+        },
+        {
+          "Id": "d41c6a58-7bd5-4e8e-acd8-6b64549bdb23",
+          "Label": "i",
+          "Type": "Interval"
+        }
+      ],
+      "MainOutput": {
+        "Id": "210adf78-6d52-4006-b3f5-2b3bc4abf031",
+        "Label": "v",
+        "Type": "Value"
+      }
+    },
+    "41195f90-4caa-467d-b866-bca19b824184": {
+      "Id": "41195f90-4caa-467d-b866-bca19b824184",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "328cf25b-7e32-46c6-96c0-e64d9a780e02",
+          "Label": "Result",
+          "Type": "Interval"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "6b89b68e-acfc-4943-a377-d5bd1b602345": {
+      "Id": "6b89b68e-acfc-4943-a377-d5bd1b602345",
+      "Label": "Contains",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "30f1ae59-6b27-43a4-8834-22121239fef8",
+          "Label": "x",
+          "Type": "Any"
+        },
+        {
+          "Id": "dac46b8d-7020-44ee-9efc-c777780c6998",
+          "Label": "value",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "60fbc225-6cec-470e-9874-501d7df6b8b0",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "60fbc225-6cec-470e-9874-501d7df6b8b0",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

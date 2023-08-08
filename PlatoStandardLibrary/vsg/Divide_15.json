@@ -1,0 +1,43 @@
+{
+  "Name": "Divide",
+  "Connections": {},
+  "Nodes": {
+    "73d37e14-4b0a-4e40-98a3-1a0df8f8ea0b": {
+      "Id": "73d37e14-4b0a-4e40-98a3-1a0df8f8ea0b",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "f3f8a17f-ecdb-4a26-8675-349a8f05072b",
+          "Label": "x",
+          "Type": "Number"
+        },
+        {
+          "Id": "8b7eb50d-81a2-4d44-bfdf-333abb04ad1b",
+          "Label": "y",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "f3f8a17f-ecdb-4a26-8675-349a8f05072b",
+        "Label": "x",
+        "Type": "Number"
+      }
+    },
+    "a5e611d2-6f9a-4aa1-bdb3-99373a1f9988": {
+      "Id": "a5e611d2-6f9a-4aa1-bdb3-99373a1f9988",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "bb39da50-4d1f-4115-a891-83d01d66c3af",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

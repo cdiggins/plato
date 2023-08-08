@@ -1,0 +1,38 @@
+{
+  "Name": "NaturalLog",
+  "Connections": {},
+  "Nodes": {
+    "0c333635-cdbd-4b23-b7d6-89d347ba0918": {
+      "Id": "0c333635-cdbd-4b23-b7d6-89d347ba0918",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "49c850f1-266d-4bff-8703-925293ae026d",
+          "Label": "x",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "49c850f1-266d-4bff-8703-925293ae026d",
+        "Label": "x",
+        "Type": "Number"
+      }
+    },
+    "930199c2-28d5-483f-bb20-e7b4c6e495f0": {
+      "Id": "930199c2-28d5-483f-bb20-e7b4c6e495f0",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "252359b2-be49-48f7-a90b-f76456618ef1",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

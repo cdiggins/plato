@@ -1,0 +1,38 @@
+{
+  "Name": "Compare",
+  "Connections": {},
+  "Nodes": {
+    "86a57790-f7d4-4631-b0ad-be8d9dfb99ee": {
+      "Id": "86a57790-f7d4-4631-b0ad-be8d9dfb99ee",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "2f4a9da2-b028-48ae-a1af-daf4e353c2e2",
+          "Label": "x",
+          "Type": "Self"
+        }
+      ],
+      "MainOutput": {
+        "Id": "2f4a9da2-b028-48ae-a1af-daf4e353c2e2",
+        "Label": "x",
+        "Type": "Self"
+      }
+    },
+    "0fcf4b3b-627c-4f89-a11c-1fd4352c7ed2": {
+      "Id": "0fcf4b3b-627c-4f89-a11c-1fd4352c7ed2",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "f3f1c884-7745-4e01-9ee3-6b8063935593",
+          "Label": "Result",
+          "Type": "Integer"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

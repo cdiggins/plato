@@ -1,0 +1,122 @@
+{
+  "Name": "Zip",
+  "Connections": {
+    "922cc7f2-7470-463c-b6fa-182542bb4f7a": {
+      "Id": "922cc7f2-7470-463c-b6fa-182542bb4f7a",
+      "Source": "042a9b37-64c8-4b21-bc8c-7e45823702c5",
+      "Destination": "9b93a0af-f0eb-4cdd-a96c-583f5f166954",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "92c452a8-4d92-4a1d-99e2-bee3a27390f7": {
+      "Id": "92c452a8-4d92-4a1d-99e2-bee3a27390f7",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "8a11b87e-7090-4445-9969-2f5c47e3bbcb",
+          "Label": "xs",
+          "Type": "Array"
+        },
+        {
+          "Id": "bf8ec54e-4fef-443e-ab79-7cefdf0f6117",
+          "Label": "ys",
+          "Type": "Array"
+        },
+        {
+          "Id": "f42aaf6e-8e59-4eb5-a011-4750442589c9",
+          "Label": "zs",
+          "Type": "Array"
+        },
+        {
+          "Id": "74511325-fab8-491f-b88c-3c870a354ce5",
+          "Label": "f",
+          "Type": "Function"
+        }
+      ],
+      "MainOutput": {
+        "Id": "8a11b87e-7090-4445-9969-2f5c47e3bbcb",
+        "Label": "xs",
+        "Type": "Array"
+      }
+    },
+    "fdf10436-5c7a-4bc5-9bbb-f05df87bfb91": {
+      "Id": "fdf10436-5c7a-4bc5-9bbb-f05df87bfb91",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "9b93a0af-f0eb-4cdd-a96c-583f5f166954",
+          "Label": "Result",
+          "Type": "Array"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "8662850a-c655-4860-bca3-dc7f961dbc56": {
+      "Id": "8662850a-c655-4860-bca3-dc7f961dbc56",
+      "Label": "Tuple",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "042a9b37-64c8-4b21-bc8c-7e45823702c5",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "042a9b37-64c8-4b21-bc8c-7e45823702c5",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "b49b05a9-37b9-4d34-9c5a-4971452f51d3": {
+      "Id": "b49b05a9-37b9-4d34-9c5a-4971452f51d3",
+      "Label": "Count",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b77315b9-c5e3-4b7a-812e-3ebfad148913",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "b77315b9-c5e3-4b7a-812e-3ebfad148913",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "9d25789b-a7c4-4d44-a2a9-16bf88ccfa17": {
+      "Id": "9d25789b-a7c4-4d44-a2a9-16bf88ccfa17",
+      "Label": "__lambda__",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "964339d3-35c2-4cc3-9a07-749b98560b8e",
+          "Label": "i",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "d5587ff5-4ba3-4878-95a8-b83402178f33",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "d5587ff5-4ba3-4878-95a8-b83402178f33",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

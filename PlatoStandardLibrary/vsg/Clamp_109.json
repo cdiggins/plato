@@ -1,0 +1,97 @@
+{
+  "Name": "Clamp",
+  "Connections": {
+    "8a70adcd-c9cc-47b7-9ede-74ee8d443ea9": {
+      "Id": "8a70adcd-c9cc-47b7-9ede-74ee8d443ea9",
+      "Source": "cdd05d51-f039-45c4-a366-28cc49e81689",
+      "Destination": "bf9819c4-5c9e-4cbc-be0d-37009ea816f0",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "0fcd070c-5f65-457e-a15c-bfe6bffa71aa": {
+      "Id": "0fcd070c-5f65-457e-a15c-bfe6bffa71aa",
+      "Source": "d3d43b88-b79b-47d6-ab4a-39c3aa71b05d",
+      "Destination": "034ede35-6cb3-483d-b541-95381b8901e3",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "a771ee60-9241-4c3e-a0ff-086143efbe10": {
+      "Id": "a771ee60-9241-4c3e-a0ff-086143efbe10",
+      "Source": "7d7b0656-ea31-4606-994e-5c6110cc05f2",
+      "Destination": "f1d5c688-5734-4e05-804c-8d67d8170111",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "1f673c55-f3cb-44b9-8774-e1b45d756c6d": {
+      "Id": "1f673c55-f3cb-44b9-8774-e1b45d756c6d",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d3d43b88-b79b-47d6-ab4a-39c3aa71b05d",
+          "Label": "x",
+          "Type": "Numerical"
+        },
+        {
+          "Id": "cdd05d51-f039-45c4-a366-28cc49e81689",
+          "Label": "i",
+          "Type": "Interval"
+        }
+      ],
+      "MainOutput": {
+        "Id": "d3d43b88-b79b-47d6-ab4a-39c3aa71b05d",
+        "Label": "x",
+        "Type": "Numerical"
+      }
+    },
+    "d611d499-ed47-448e-bb69-3399b06b3f53": {
+      "Id": "d611d499-ed47-448e-bb69-3399b06b3f53",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "f1d5c688-5734-4e05-804c-8d67d8170111",
+          "Label": "Result",
+          "Type": "Numerical"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "b491f2d5-f437-4d38-b326-eb81fed8f602": {
+      "Id": "b491f2d5-f437-4d38-b326-eb81fed8f602",
+      "Label": "Clamp",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "bf9819c4-5c9e-4cbc-be0d-37009ea816f0",
+          "Label": "x",
+          "Type": "Any"
+        },
+        {
+          "Id": "034ede35-6cb3-483d-b541-95381b8901e3",
+          "Label": "y",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "7d7b0656-ea31-4606-994e-5c6110cc05f2",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "7d7b0656-ea31-4606-994e-5c6110cc05f2",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "Name": "LengthSquared",
+  "Connections": {
+    "18465a11-162c-4063-a0c8-15ac2e407787": {
+      "Id": "18465a11-162c-4063-a0c8-15ac2e407787",
+      "Source": "047778d5-5010-4be7-90d2-a1fbbf26a172",
+      "Destination": "23b8dbf9-737e-49ba-9ef1-9c7fab3a83f5",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "5629b28c-715b-4b79-b8d6-6c1d6668074d": {
+      "Id": "5629b28c-715b-4b79-b8d6-6c1d6668074d",
+      "Source": "210fd021-a81c-4937-a67d-c61778158963",
+      "Destination": "db8c9e83-5cd3-476e-ab9a-7c3f8c94ef7a",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "91033ac5-f199-466c-9e43-006d218bad04": {
+      "Id": "91033ac5-f199-466c-9e43-006d218bad04",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "047778d5-5010-4be7-90d2-a1fbbf26a172",
+          "Label": "v",
+          "Type": "Vector"
+        }
+      ],
+      "MainOutput": {
+        "Id": "047778d5-5010-4be7-90d2-a1fbbf26a172",
+        "Label": "v",
+        "Type": "Vector"
+      }
+    },
+    "b1af3a0e-89f4-4e81-80ac-d4ffe38ad46f": {
+      "Id": "b1af3a0e-89f4-4e81-80ac-d4ffe38ad46f",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "db8c9e83-5cd3-476e-ab9a-7c3f8c94ef7a",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "5eaf39dd-43e7-4e7d-a8e4-aea6fcf9c890": {
+      "Id": "5eaf39dd-43e7-4e7d-a8e4-aea6fcf9c890",
+      "Label": "SumSquares",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "23b8dbf9-737e-49ba-9ef1-9c7fab3a83f5",
+          "Label": "v",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "210fd021-a81c-4937-a67d-c61778158963",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "210fd021-a81c-4937-a67d-c61778158963",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

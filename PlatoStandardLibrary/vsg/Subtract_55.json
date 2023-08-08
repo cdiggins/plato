@@ -1,0 +1,129 @@
+{
+  "Name": "Subtract",
+  "Connections": {
+    "77ec6c37-e08f-4d10-bf0c-f4ed83972cbf": {
+      "Id": "77ec6c37-e08f-4d10-bf0c-f4ed83972cbf",
+      "Source": "21935612-b56c-4ab6-8735-89937f40cde9",
+      "Destination": "4133a2c8-ab08-49e5-a25d-bc36f8c6f94c",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "5943dba6-8601-4f3b-af72-d42dfbb42a56": {
+      "Id": "5943dba6-8601-4f3b-af72-d42dfbb42a56",
+      "Source": "fd39cc1d-fa59-4e59-8b25-459b4863f919",
+      "Destination": "52c8acd7-10f7-464f-a3b1-978af9fd871f",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "bb01d4fa-a0a1-474b-af78-9e10a5218449": {
+      "Id": "bb01d4fa-a0a1-474b-af78-9e10a5218449",
+      "Source": "0f6164d1-28a7-4be6-a807-d7313a22f3f6",
+      "Destination": "8c37909e-0c1c-46e0-8b34-e060475e559b",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "b70998f3-cb11-4ca5-822b-872b098bdbe1": {
+      "Id": "b70998f3-cb11-4ca5-822b-872b098bdbe1",
+      "Source": "b2155318-662b-4bee-8d52-36947983ff23",
+      "Destination": "339aac09-97ce-4ffd-a578-60efa6446bc7",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "cca583b5-b546-44bd-a22a-161864d37680": {
+      "Id": "cca583b5-b546-44bd-a22a-161864d37680",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "fd39cc1d-fa59-4e59-8b25-459b4863f919",
+          "Label": "self",
+          "Type": "Self"
+        },
+        {
+          "Id": "21935612-b56c-4ab6-8735-89937f40cde9",
+          "Label": "scalar",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "fd39cc1d-fa59-4e59-8b25-459b4863f919",
+        "Label": "self",
+        "Type": "Self"
+      }
+    },
+    "bc794e2f-9eaf-4588-bb2a-f8f16a4b7884": {
+      "Id": "bc794e2f-9eaf-4588-bb2a-f8f16a4b7884",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "339aac09-97ce-4ffd-a578-60efa6446bc7",
+          "Label": "Result",
+          "Type": "Self"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "e8018918-5c20-4522-ac48-c06dd699fca8": {
+      "Id": "e8018918-5c20-4522-ac48-c06dd699fca8",
+      "Label": "Add",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "52c8acd7-10f7-464f-a3b1-978af9fd871f",
+          "Label": "x",
+          "Type": "Any"
+        },
+        {
+          "Id": "8c37909e-0c1c-46e0-8b34-e060475e559b",
+          "Label": "y",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b2155318-662b-4bee-8d52-36947983ff23",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "b2155318-662b-4bee-8d52-36947983ff23",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "2c3e7906-6b66-4f15-9c9b-c142c6f3da1f": {
+      "Id": "2c3e7906-6b66-4f15-9c9b-c142c6f3da1f",
+      "Label": "Negative",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "4133a2c8-ab08-49e5-a25d-bc36f8c6f94c",
+          "Label": "x",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "0f6164d1-28a7-4be6-a807-d7313a22f3f6",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "0f6164d1-28a7-4be6-a807-d7313a22f3f6",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

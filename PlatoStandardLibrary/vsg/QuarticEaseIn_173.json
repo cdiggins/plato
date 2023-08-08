@@ -1,0 +1,79 @@
+{
+  "Name": "QuarticEaseIn",
+  "Connections": {
+    "d365f726-aafc-49f4-af03-c0b8be6f2eec": {
+      "Id": "d365f726-aafc-49f4-af03-c0b8be6f2eec",
+      "Source": "0c9d4464-11a3-453a-b33c-239532c85e1d",
+      "Destination": "bdb0af4c-b87c-4ebf-92af-5b6d3d7f7a2f",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "0758dee2-71d1-4b3e-8b8f-6e8f15f0d144": {
+      "Id": "0758dee2-71d1-4b3e-8b8f-6e8f15f0d144",
+      "Source": "abc77829-1853-4cf6-85ba-6cfa25eedb1e",
+      "Destination": "a657e482-3a5f-4148-9ed3-dd8a381c5950",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "8614c37e-f7d6-4281-924e-6f50d32aaf40": {
+      "Id": "8614c37e-f7d6-4281-924e-6f50d32aaf40",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "0c9d4464-11a3-453a-b33c-239532c85e1d",
+          "Label": "p",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "0c9d4464-11a3-453a-b33c-239532c85e1d",
+        "Label": "p",
+        "Type": "Number"
+      }
+    },
+    "96a67aa4-2102-4074-8611-8fcb22a0fa27": {
+      "Id": "96a67aa4-2102-4074-8611-8fcb22a0fa27",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "a657e482-3a5f-4148-9ed3-dd8a381c5950",
+          "Label": "Result",
+          "Type": "Number"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "3766e802-0fa8-4bce-a564-f251c8f03bfa": {
+      "Id": "3766e802-0fa8-4bce-a564-f251c8f03bfa",
+      "Label": "Pow4",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "bdb0af4c-b87c-4ebf-92af-5b6d3d7f7a2f",
+          "Label": "x",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "abc77829-1853-4cf6-85ba-6cfa25eedb1e",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "abc77829-1853-4cf6-85ba-6cfa25eedb1e",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "Name": "Throw",
+  "Connections": {},
+  "Nodes": {
+    "af3abb90-8544-40ae-863f-0a4513d96577": {
+      "Id": "af3abb90-8544-40ae-863f-0a4513d96577",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "2275a2d2-a75f-46c0-acde-701a5581b551",
+          "Label": "x",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "2275a2d2-a75f-46c0-acde-701a5581b551",
+        "Label": "x",
+        "Type": "Any"
+      }
+    },
+    "e8e982ee-6273-458d-9603-7a6234e1b813": {
+      "Id": "e8e982ee-6273-458d-9603-7a6234e1b813",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "dd8316d0-edde-4682-8319-5fbb39c22f7c",
+          "Label": "Result",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

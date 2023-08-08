@@ -1,0 +1,38 @@
+{
+  "Name": "Atan",
+  "Connections": {},
+  "Nodes": {
+    "4cd84291-630e-4339-85ce-dadf06a76572": {
+      "Id": "4cd84291-630e-4339-85ce-dadf06a76572",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e83c1a24-25a2-486a-9f6e-4a86c62bcd08",
+          "Label": "x",
+          "Type": "Number"
+        }
+      ],
+      "MainOutput": {
+        "Id": "e83c1a24-25a2-486a-9f6e-4a86c62bcd08",
+        "Label": "x",
+        "Type": "Number"
+      }
+    },
+    "88e361a9-e7f0-4a09-9130-d8ab532efade": {
+      "Id": "88e361a9-e7f0-4a09-9130-d8ab532efade",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "59e17265-be9f-4f6c-ba31-bc2fa94a459d",
+          "Label": "Result",
+          "Type": "Angle"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    }
+  }
+}

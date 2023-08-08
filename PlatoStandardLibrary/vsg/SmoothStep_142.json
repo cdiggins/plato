@@ -1,0 +1,219 @@
+{
+  "Name": "SmoothStep",
+  "Connections": {
+    "0d451c13-7cad-453e-865b-a1e6962d4bbd": {
+      "Id": "0d451c13-7cad-453e-865b-a1e6962d4bbd",
+      "Source": "ab343906-2799-447f-8fee-b461fc03c94d",
+      "Destination": "59ae1263-51f2-4ff8-9feb-fd102e3971db",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "eade8d81-5b47-4f4d-b1c8-77c011216deb": {
+      "Id": "eade8d81-5b47-4f4d-b1c8-77c011216deb",
+      "Source": "ab343906-2799-447f-8fee-b461fc03c94d",
+      "Destination": "4fc71466-411b-45a4-b68c-e9676d1ce1cf",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "2518d5ff-aea6-4813-9eb3-ba16dd0c63f1": {
+      "Id": "2518d5ff-aea6-4813-9eb3-ba16dd0c63f1",
+      "Source": "2eb90910-8925-4b7f-9b16-e53ad73afb9d",
+      "Destination": "9ddd587a-3fcd-4b13-bb9d-e56dc94662e7",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "89ebf95d-6371-4a26-a835-75e98635a752": {
+      "Id": "89ebf95d-6371-4a26-a835-75e98635a752",
+      "Source": "93bc0736-9c13-4ff2-b618-72304b20c53b",
+      "Destination": "3b2965b6-0b60-4eca-870e-b7867166185e",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "dfb1b80c-9831-4357-9c6f-e9413af605f8": {
+      "Id": "dfb1b80c-9831-4357-9c6f-e9413af605f8",
+      "Source": "9b81f825-1f1b-475c-a523-a5f7cf7095ab",
+      "Destination": "3b80a26b-0d58-47d7-9077-2c7ee2db60cd",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "633e352e-9f5b-47a3-a5ca-96d3fe64bd67": {
+      "Id": "633e352e-9f5b-47a3-a5ca-96d3fe64bd67",
+      "Source": "42db4f2f-3e84-4332-9471-d70be0e57e1b",
+      "Destination": "bbc4cf91-1c2a-4efa-8dd1-fd081a80199f",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    },
+    "8e61223e-d6ff-4778-9372-77d96975d445": {
+      "Id": "8e61223e-d6ff-4778-9372-77d96975d445",
+      "Source": "e9618e7a-7f62-454b-a8ff-f0f8e9c2aaaf",
+      "Destination": "bf9197d9-8b19-45e6-88f7-132836a1e145",
+      "Type": null,
+      "Kind": null,
+      "Label": null
+    }
+  },
+  "Nodes": {
+    "1fcf077f-21b3-4a17-8087-fca7d4b3fd99": {
+      "Id": "1fcf077f-21b3-4a17-8087-fca7d4b3fd99",
+      "Label": "Inputs",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "ab343906-2799-447f-8fee-b461fc03c94d",
+          "Label": "x",
+          "Type": "Numerical"
+        }
+      ],
+      "MainOutput": {
+        "Id": "ab343906-2799-447f-8fee-b461fc03c94d",
+        "Label": "x",
+        "Type": "Numerical"
+      }
+    },
+    "d57b7bd7-b43a-410b-adf8-9f227bfb18b4": {
+      "Id": "d57b7bd7-b43a-410b-adf8-9f227bfb18b4",
+      "Label": "Output",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "bf9197d9-8b19-45e6-88f7-132836a1e145",
+          "Label": "Result",
+          "Type": "Numerical"
+        }
+      ],
+      "Outputs": [],
+      "MainOutput": null
+    },
+    "f70224f3-9a70-4109-b9fd-ecb7101a3cd8": {
+      "Id": "f70224f3-9a70-4109-b9fd-ecb7101a3cd8",
+      "Label": "Multiply",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "3b80a26b-0d58-47d7-9077-2c7ee2db60cd",
+          "Label": "x",
+          "Type": "Any"
+        },
+        {
+          "Id": "bbc4cf91-1c2a-4efa-8dd1-fd081a80199f",
+          "Label": "y",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "e9618e7a-7f62-454b-a8ff-f0f8e9c2aaaf",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "e9618e7a-7f62-454b-a8ff-f0f8e9c2aaaf",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "61d947e3-23b2-4656-88d1-04023cc3ac4f": {
+      "Id": "61d947e3-23b2-4656-88d1-04023cc3ac4f",
+      "Label": "Square",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "59ae1263-51f2-4ff8-9feb-fd102e3971db",
+          "Label": "x",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "9b81f825-1f1b-475c-a523-a5f7cf7095ab",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "9b81f825-1f1b-475c-a523-a5f7cf7095ab",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "ae35d156-2275-4dc6-bad2-9023808a5cdf": {
+      "Id": "ae35d156-2275-4dc6-bad2-9023808a5cdf",
+      "Label": "Subtract",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "9ddd587a-3fcd-4b13-bb9d-e56dc94662e7",
+          "Label": "x",
+          "Type": "Any"
+        },
+        {
+          "Id": "3b2965b6-0b60-4eca-870e-b7867166185e",
+          "Label": "y",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "42db4f2f-3e84-4332-9471-d70be0e57e1b",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "42db4f2f-3e84-4332-9471-d70be0e57e1b",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "30b45865-96b6-43e3-bafa-94fd63db3340": {
+      "Id": "30b45865-96b6-43e3-bafa-94fd63db3340",
+      "Label": "3",
+      "Kind": "Function",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "2eb90910-8925-4b7f-9b16-e53ad73afb9d",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "2eb90910-8925-4b7f-9b16-e53ad73afb9d",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    },
+    "2d5d053b-d3a2-44ea-b70b-a6b2c9a5c441": {
+      "Id": "2d5d053b-d3a2-44ea-b70b-a6b2c9a5c441",
+      "Label": "Twice",
+      "Kind": "Function",
+      "Inputs": [
+        {
+          "Id": "4fc71466-411b-45a4-b68c-e9676d1ce1cf",
+          "Label": "x",
+          "Type": "Any"
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "93bc0736-9c13-4ff2-b618-72304b20c53b",
+          "Label": "Out",
+          "Type": "Any"
+        }
+      ],
+      "MainOutput": {
+        "Id": "93bc0736-9c13-4ff2-b618-72304b20c53b",
+        "Label": "Out",
+        "Type": "Any"
+      }
+    }
+  }
+}
