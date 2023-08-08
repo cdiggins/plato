@@ -13,12 +13,12 @@ namespace PlatoTests
         {
             var k = AstConstant.Create(42);
             var k2 = AstConstant.True;
-            var lambda = AstLambda.Create(k);
-            var varDef = AstVarDef.Create("x", AstTypeNode.Create("int"));
-            var varAss = AstAssign.Create("x", k);
-            var blk = AstBlock.Create(varDef, varAss);
-            var loop = AstLoop.Create(AstConstant.True, blk);
-            var cond = AstConditional.Create(k2, AstConstant.Create("Hello"), AstConstant.Create("Goodbyte"));
+            var lambda = new AstLambda(k);
+            var varDef = new AstVarDef("x", null, new AstTypeNode("int"));
+            var varAss = new AstAssign("x", k);
+            var blk = new AstBlock(varDef, varAss);
+            var loop = new AstLoop(AstConstant.True, blk);
+            var cond = new AstConditional(k2, AstConstant.Create("Hello"), AstConstant.Create("Goodbyte"));
 
             return new AstNode[]
             {

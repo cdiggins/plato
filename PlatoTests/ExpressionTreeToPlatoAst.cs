@@ -150,16 +150,14 @@ public static class ExpressionTreeToPlatoAst
     {
         if (member.Member is PropertyInfo pi)
         {
-            return AstInvoke.Create(
+            return new AstInvoke(
                 pi.PropertyGetter().ToAst(), 
                 member.Expression.ToAst());
         }
 
         if (member.Member is FieldInfo fi)
         {
-            return AstInvoke.Create(
-                fi.FieldGetter().ToAst(), 
-                member.Expression.ToAst());
+            return new AstInvoke(fi.FieldGetter().ToAst(), member.Expression.ToAst());
         }
 
         throw new NotSupportedException($"Unsupported member type {member.Member}");
@@ -171,11 +169,11 @@ public static class ExpressionTreeToPlatoAst
 
         if (unaryExpression.Method != null)
         {
-            return AstInvoke.Create(unaryExpression.Method.ToAst(), operand);
+            return new AstInvoke(unaryExpression.Method.ToAst(), operand);
         }
 
         var func = unaryExpression.NodeType.ToUnaryFunc();
-        return AstInvoke.Create(func.ToAst(), operand);
+        return new AstInvoke(func.ToAst(), operand);
     }
 
     public static AstNode ToAst(this BinaryExpression binaryExpression)
@@ -193,7 +191,7 @@ public static class ExpressionTreeToPlatoAst
 
         if (binaryExpression.Method != null)
         {
-            return AstInvoke.Create(binaryExpression.Method.ToAst(), args);
+            return new AstInvoke(binaryExpression.Method.ToAst(), args);
         }
 
         if (binaryExpression.NodeType == ExpressionType.Assign)
@@ -206,7 +204,7 @@ public static class ExpressionTreeToPlatoAst
                 throw new Exception(
                     $"Could not determine lvalue from {binaryExpression.Left} converted to {args[0]}");
 
-            return AstAssign.Create(lValue.Text, args[1]);
+            return new AstAssign(lValue.Text, args[1]);
         }
 
         var func = binaryExpression.NodeType.ToBinaryFunc();
@@ -214,7 +212,7 @@ public static class ExpressionTreeToPlatoAst
         // TODO: I have a concern that the same function would create different nodes. 
         // This is fine for now, but should be fixed later. Same for unary expressions
 
-        return AstInvoke.Create(func.ToAst(), args);
+        return new AstInvoke(func.ToAst(), args);
     }
 
     public static AstNode ToAst(this NewExpression expr)
@@ -225,7 +223,7 @@ public static class ExpressionTreeToPlatoAst
         if (ci != null)
         {
             var f = ci.ToAst();
-            return AstInvoke.Create(f, args);
+            return new AstInvoke(f, args);
         }
 
         if (args.Length != 0)
@@ -234,7 +232,7 @@ public static class ExpressionTreeToPlatoAst
         }
 
         Func<dynamic> r = () => Activator.CreateInstance(expr.Type);
-        return AstInvoke.Create(r.ToAst());
+        return new AstInvoke(r.ToAst());
     }
 
     // TODO: this will require a proper type system support 
@@ -257,14 +255,10 @@ public static class ExpressionTreeToPlatoAst
                 return binaryExpression.ToAst();
                     
             case BlockExpression blockExpression:
-                return AstBlock.Create(
-                    blockExpression.Variables.Concat(blockExpression.Expressions).ToAst().ToArray());
+                return new AstBlock(blockExpression.Variables.Concat(blockExpression.Expressions).ToAst().ToArray());
                 
             case ConditionalExpression conditionalExpression:
-                return AstConditional.Create(
-                    conditionalExpression.Test.ToAst(),
-                    conditionalExpression.IfTrue.ToAst(),
-                    conditionalExpression.IfFalse.ToAst());
+                return new AstConditional(conditionalExpression.Test.ToAst(), conditionalExpression.IfTrue.ToAst(), conditionalExpression.IfFalse.ToAst());
 
             case ConstantExpression constantExpression:
                 return AstConstant.Create(constantExpression.Value);
@@ -303,9 +297,7 @@ public static class ExpressionTreeToPlatoAst
                 return indexExpression.ToAst();
 
             case InvocationExpression invocationExpression:
-                return AstInvoke.Create(
-                    invocationExpression.Expression.ToAst(),
-                    invocationExpression.Arguments.ToAst().ToArray());
+                return new AstInvoke(invocationExpression.Expression.ToAst(), invocationExpression.Arguments.ToAst().ToArray());
                 
             case LabelExpression labelExpression:
                 throw new Exception($"Labels should be removed");
@@ -318,7 +310,7 @@ public static class ExpressionTreeToPlatoAst
                 throw new NotSupportedException();
                 
             case LoopExpression loopExpression:
-                return AstLoop.Create(AstConstant.Create(true), loopExpression.Body.ToAst());
+                return new AstLoop(AstConstant.Create(true), loopExpression.Body.ToAst());
                 
             case MemberExpression memberExpression:
                 return memberExpression.ToAst();
@@ -327,9 +319,7 @@ public static class ExpressionTreeToPlatoAst
                 throw new NotSupportedException();
 
             case MethodCallExpression methodCallExpression:
-                return AstInvoke.Create(
-                    methodCallExpression.Method.ToAst(),
-                    methodCallExpression.Arguments.ToAst().ToArray());
+                return new AstInvoke(methodCallExpression.Method.ToAst(), methodCallExpression.Arguments.ToAst().ToArray());
 
             case NewArrayExpression newArrayExpression:
                 throw new NotSupportedException();
@@ -338,7 +328,7 @@ public static class ExpressionTreeToPlatoAst
                 return newExpression.ToAst();
 
             case ParameterExpression parameterExpression:
-                return AstVarDef.Create(parameterExpression.Name, AstTypeNode.Create("object"));
+                return new AstVarDef(parameterExpression.Name, null, new AstTypeNode("object"));
                     
             case RuntimeVariablesExpression runtimeVariablesExpression:
                 throw new NotSupportedException();

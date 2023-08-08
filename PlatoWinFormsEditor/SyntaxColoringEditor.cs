@@ -142,20 +142,14 @@ namespace PlatoWinFormsEditor
         public Styling Styling = new();
         public Dictionary<string, Font> Fonts { get; }
         public CstNodeFactory CstNodeFactory = new CstNodeFactory();
-        
-        public Editor(string filePath, RichTextBox input, RichTextBox output)
+        public AstNodeFactory AstNodeFactory = new AstNodeFactory();
+
+        public Editor(string filePath, RichTextBox input, RichTextBox output, Parser parser)
         {
+            Parser = parser;
             FilePath = filePath;
             Output = output;
             Input = input;
-
-            // This strange sequence of calls is required to force the editor to do what it does
-            // Replace the newlines (usually /r/n) with a single character (/n).
-            // Without creating control, and making a small change, the character position offsets will be wrong. 
-            // https://stackoverflow.com/a/7070915/184528
-            Input.CreateControl();
-            Input.Text = File.ReadAllText(filePath);
-            Input.AppendText(Environment.NewLine);
 
             Fonts = Styling.Styles.ToDictionary(kv => kv.Key,
                 kv => kv.Value.ToFont(Input.Font));
@@ -175,19 +169,8 @@ namespace PlatoWinFormsEditor
             Input.Select(selectionStart, selectionLength);
         }
 
-        public void Parse(Logger logger)
+        public void Parse()
         {
-            
-
-            Parser = new Parser(
-                FileName, 
-                Text, 
-                PlatoGrammar.Instance.File, 
-                PlatoTokenGrammar.Instance.Tokenizer,
-                CstNodeFactory.Create, 
-                AstFromPlatoCst.Convert,
-                logger);
-
             foreach (var node in Parser.TokenNodes)
             {
                 if (Styling.Styles.ContainsKey(node.Name))

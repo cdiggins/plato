@@ -1,19 +1,32 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Parakeet;
+using Parakeet.Demos.Plato;
 
 namespace Plato.Compiler
 {
     public class Compiler
     {
-        public Compiler(IEnumerable<Parser> parsers, Logger logger)
+        public bool DisplayWarnings = false;
+
+        public Compiler(
+            CstNodeFactory cstNodeFactory,
+            AstNodeFactory astNodeFactory,
+            Logger logger)
         {
+            CstNodeFactory = cstNodeFactory;
+            AstNodeFactory = astNodeFactory;
+
             Logger = logger;
-
             Log("Creating compiler");
+        }
 
+        public void Compile(IReadOnlyList<Parser> parsers) 
+        {
             Log("Gathering parsers");
             Parsers = parsers.ToList();
+         
             ParsingSuccess = Parsers.All(p => p?.Success == true);
             if (!ParsingSuccess)
             {
@@ -29,13 +42,26 @@ namespace Plato.Compiler
             try
             {
                 Log("Creating symbol resolver");
-                SymbolResolver = new SymbolResolver(logger);
+                SymbolResolver = new SymbolResolver(Logger);
 
                 Log("Creating type definitions");
                 TypeDefs = SymbolResolver.CreateTypeDefs(TypeDeclarations).ToList();
 
                 foreach (var error in SymbolResolver.Errors)
-                    Log($"Symbol resolution error: {error.Message} at ");
+                {
+                    var pos = GetParserTreeNode(error.Node);
+                    Log($"Symbol resolution error: {error.Message}");
+                    if (pos?.Node != null)
+                    {
+                        Log(pos.Node.Range.End.Input.File);
+                        Log(pos.Node.Range.End.CurrentLine);
+                        Log(pos.Node.Range.End.Indicator);
+                    }
+                    else
+                    {
+                        Log("Unknown location.");
+                    }
+                }
 
                 Log("Creating operations");
                 Operations = new Operations(TypeDefs);
@@ -48,10 +74,11 @@ namespace Plato.Compiler
 
                 foreach (var se in SemanticErrors)
                     Log("Semantic Error   : " + se);
-                foreach (var sw in SemanticWarnings)
-                    Log("Semantic Warning : " + sw);
                 foreach (var ie in InternalErrors)
                     Log("Internal Errors  : " + ie);
+                if (DisplayWarnings)
+                    foreach (var sw in SemanticWarnings)
+                        Log("Semantic Warning : " + sw);
             }
             catch (AstException ae)
             {
@@ -66,20 +93,45 @@ namespace Plato.Compiler
         public void Log(string message)
             => Logger.Log(message);
 
+        public AstNodeFactory AstNodeFactory { get; }
+        public CstNodeFactory CstNodeFactory { get; }
         public Logger Logger { get; }
-        public bool ParsingSuccess { get; }
-        public IReadOnlyList<Parser> Parsers { get; }
-        public IReadOnlyList<AstNode> Trees { get; }
-        public SymbolResolver SymbolResolver { get; } 
-        public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; }
-        public Operations Operations { get; }
-        public TypeResolver TypeResolver { get; }
+
+        public bool ParsingSuccess { get; set; }
+        public IReadOnlyList<Parser> Parsers { get; set; }
+        public IReadOnlyList<AstNode> Trees { get; set; }
+        public SymbolResolver SymbolResolver { get; set; } 
+        public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; set; }
+        public Operations Operations { get; set; }
+        public TypeResolver TypeResolver { get; set; }
         public IReadOnlyList<FunctionSymbol> Functions => TypeResolver.Functions;
-        public IReadOnlyList<TypeDefSymbol> TypeDefs { get; }
+        public IReadOnlyList<TypeDefSymbol> TypeDefs { get; set; }
 
         public List<string> SemanticErrors { get; } = new List<string>();
         public List<string> SemanticWarnings { get; } = new List<string>();
         public List<string> InternalErrors { get; } = new List<string>();
+
+        public CstNode GetCstNode(AstNode node)
+        {
+            if (node == null) return null;
+            if (AstNodeFactory.Lookup.ContainsKey(node))
+                return AstNodeFactory.Lookup[node];
+            return null;
+        }
+
+        public ParserTreeNode GetParserTreeNode(AstNode node)
+        {
+            if (node == null) return null;
+            return GetParserTreeNode(GetCstNode(node));
+        }
+
+        public ParserTreeNode GetParserTreeNode(CstNode node)
+        {
+            if (node == null) return null;
+            if (CstNodeFactory.Lookup.ContainsKey(node))
+                return CstNodeFactory.Lookup[node];
+            return null;
+        }
 
         public void CheckSemantics()
         {

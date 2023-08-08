@@ -85,29 +85,29 @@ namespace Plato.Compiler
             return BindValue(name, fgs);
         }
 
-        public RefSymbol GetValue(string name)
+        public RefSymbol GetValue(string name, AstNode node)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                LogError("Invalid variable name");
+                LogError("Invalid variable name", node);
                 return null;
             }
 
             var sym = ValueBindingsScope.GetValue(name);
             if (sym == null)
             {
-                LogError($"Could not find symbol {name}");
+                LogError($"Could not find symbol {name}", node);
                 return null;
             }
 
             if (sym is DefSymbol ds)
                 return new RefSymbol(ds);
 
-            LogError($"Could not properly resolve symbol {name}");
+            LogError($"Could not properly resolve symbol {name}", node);
             return null;
         }
 
-        public void LogError(string message, AstNode node = null)
+        public void LogError(string message, AstNode node)
         {
             Errors.Add(new ResolutionError(message, node));
         }
@@ -118,7 +118,7 @@ namespace Plato.Compiler
         {
             if (astTypeNode == null)
             {
-                LogError("Missing type");
+                LogError("Missing type", astTypeNode);
                 return null;
             }
             var name = astTypeNode.Name.Trim();
@@ -164,7 +164,7 @@ namespace Plato.Compiler
                     case AstAssign astAssign:
                         return BindValue(astAssign.Var,
                             new AssignmentSymbol(
-                                GetValue(astAssign.Var),
+                                GetValue(astAssign.Var, astAssign),
                                 Resolve(astAssign.Value)));
 
                     case AstBlock astBlock:
@@ -210,7 +210,7 @@ namespace Plato.Compiler
                         return Scoped(() => Resolve(astExpressionStatement.Expression));
 
                     case AstIdentifier astIdentifier:
-                        return GetValue(astIdentifier.Text);
+                        return GetValue(astIdentifier.Text, astIdentifier);
 
                     case AstInvoke astInvoke:
                     {

@@ -53,7 +53,6 @@ namespace Plato.Compiler
         public AstNode Value { get; }
 
         public AstReturn(AstNode value) => Value = value;
-        public static AstReturn Create(AstNode value) => new AstReturn(value);
         public override IEnumerable<AstNode> Children => base.Children.Append(Value);
     }
 
@@ -96,27 +95,21 @@ namespace Plato.Compiler
     {
         public IReadOnlyList<AstParameterDeclaration> Parameters { get; }
         public AstNode Body { get; }
-
         public AstLambda(AstNode body, params AstParameterDeclaration[] parameters) => (Parameters, Body) = (parameters, body);
-        public static AstLambda Create(AstNode body, params AstParameterDeclaration[] parameters) => new AstLambda(body, parameters);
         public override IEnumerable<AstNode> Children => base.Children.Concat(Parameters).Append(Body);
     }
 
     public class AstMulti : AstNode
     {
         public IReadOnlyList<AstNode> Nodes { get; }
-
         public AstMulti(params AstNode[] nodes) => Nodes = nodes;
-        public static AstMulti Create(params AstNode[] nodes) => new AstMulti(nodes);
         public override IEnumerable<AstNode> Children => base.Children.Concat(Nodes);
     }
 
     public class AstBlock : AstNode
     {
         public IReadOnlyList<AstNode> Statements { get; }
-
         public AstBlock(params AstNode[] statements) => Statements = statements;
-        public static AstBlock Create(params AstNode[] statements) => new AstBlock(statements);
         public override IEnumerable<AstNode> Children => Statements;
     }
 
@@ -124,9 +117,7 @@ namespace Plato.Compiler
     {
         public AstNode Condition { get; }
         public AstNode Body { get; }
-
         public AstLoop(AstNode condition, AstNode body) => (Condition, Body) = (condition, body);
-        public static AstLoop Create(AstNode condition, AstNode body) => new AstLoop(condition, body);
         public override IEnumerable<AstNode> Children => base.Children.Append(Condition).Append(Body);
     }
 
@@ -135,9 +126,7 @@ namespace Plato.Compiler
         public AstNode Condition { get; }
         public AstNode IfTrue { get; }
         public AstNode IfFalse { get; }
-
         public AstConditional(AstNode condition, AstNode ifTrue, AstNode ifFalse) => (Condition, IfTrue, IfFalse) = (condition, ifTrue, ifFalse);
-        public static AstConditional Create(AstNode condition, AstNode ifTrue, AstNode ifFalse) => new AstConditional(condition, ifTrue, ifFalse);
         public override IEnumerable<AstNode> Children => base.Children.Append(Condition).Append(IfTrue).Append(IfFalse);
     }
 
@@ -146,10 +135,7 @@ namespace Plato.Compiler
         public string Name { get; }
         public AstNode Value { get; }
         public AstTypeNode Type { get; }
-
         public AstVarDef(string name, AstNode value, AstTypeNode type) => (Name, Value, Type) = (name, value, type);
-        public static AstVarDef Create(string name, AstNode value, AstTypeNode type) =>  new AstVarDef(name, value, type);
-        public static AstVarDef Create(string name, AstTypeNode type) => Create(name, AstNoop.Default, type);
         public override IEnumerable<AstNode> Children => base.Children.Append(Value).Append(Type);
     }
 
@@ -157,9 +143,7 @@ namespace Plato.Compiler
     {
         public string Var { get; }
         public AstNode Value { get; }
-
         public AstAssign(string var, AstNode value) => (Var, Value) = (var, value);
-        public static AstAssign Create(string var, AstNode value) => new AstAssign(var, value);
         public override IEnumerable<AstNode> Children => new [] { Value };
     }
 
@@ -167,9 +151,7 @@ namespace Plato.Compiler
     {
         public AstNode Function { get; }
         public IReadOnlyList<AstNode> AstArguments { get; }
-
         public AstInvoke(AstNode function, params AstNode[] arguments) => (Function, AstArguments) = (function, arguments);
-        public static AstInvoke Create(AstNode function, params AstNode[] arguments) => new AstInvoke(function, arguments);
         public override IEnumerable<AstNode> Children => new[] { Function };
     }
 
@@ -177,27 +159,20 @@ namespace Plato.Compiler
     {
         public string Name { get; }
         public IReadOnlyList<AstTypeNode> TypeArguments { get; }
-
         public AstTypeNode(string name, params AstTypeNode[] args) => (Name, TypeArguments) = (name, args);
-        public static AstTypeNode Create(string name, params AstTypeNode[] args) => new AstTypeNode(name, args);
         public override IEnumerable<AstNode> Children => TypeArguments;
     }
 
     public abstract class AstDeclaration : AstNode
     {
         public string Name { get; }
-        
-        protected AstDeclaration(string name)
-        {
-            Name = name;
-        }
+        protected AstDeclaration(string name) => Name = name;
     }
 
     public abstract class AstMemberDeclaration : AstDeclaration
     {
         public AstTypeNode Type { get; }
-        protected AstMemberDeclaration(string name, AstTypeNode type) : base(name) 
-            => (Type) = (type);
+        protected AstMemberDeclaration(string name, AstTypeNode type) : base(name) => (Type) = (type);
         public override IEnumerable<AstNode> Children => base.Children.Append(Type);
     }
 
@@ -205,10 +180,7 @@ namespace Plato.Compiler
     {
         public string Directive;
         public string Argument;
-        public static AstDirective Create(string directive, string argument)
-            => new AstDirective(directive, argument);
-        public AstDirective(string directive, string argument)
-            => (Directive, Argument) = (directive, argument);
+        public AstDirective(string directive, string argument) => (Directive, Argument) = (directive, argument);
     }
 
     public class AstNamespace : AstDeclaration
@@ -229,19 +201,13 @@ namespace Plato.Compiler
         public AstNode Node { get; }
         public AstFieldDeclaration(string name, AstTypeNode type, AstNode node) : base(name, type) => Node = node;
         public override IEnumerable<AstNode> Children => base.Children.Append(Node);
-        public static AstFieldDeclaration Create(string name, AstTypeNode type, AstNode node)
-            => new AstFieldDeclaration(name, type, node);
     }
 
     public class AstParameterDeclaration : AstDeclaration
     {
         public AstTypeNode Type { get; }
-
         public AstParameterDeclaration(string name, AstTypeNode type) : base(name) => Type = type;
         public override IEnumerable<AstNode> Children => base.Children.Append(Type);
-
-        public static AstParameterDeclaration Create(string name, AstTypeNode type)
-            =>  new AstParameterDeclaration(name, type);
     }
 
     public class AstMethodDeclaration : AstMemberDeclaration
@@ -261,12 +227,6 @@ namespace Plato.Compiler
             TypeParameters = typeParameters.ToList();
         }
 
-        public static AstMethodDeclaration Create(string name,
-            AstTypeNode type,
-            IEnumerable<AstParameterDeclaration> parameters,
-            IEnumerable<AstTypeParameter> typeParameters, AstNode body)
-            => new AstMethodDeclaration(name, type, parameters, typeParameters, body);
-
         public override IEnumerable<AstNode> Children =>
             base.Children.Append(Body).Concat(TypeParameters);
     }
@@ -275,8 +235,6 @@ namespace Plato.Compiler
     {
         public AstNode Expression { get; }
         public AstExpressionStatement(AstNode expression) => Expression = expression;
-        public static AstExpressionStatement Create(AstNode expression)
-            => new AstExpressionStatement(expression);
         public override IEnumerable<AstNode> Children => base.Children.Append(Expression);
     }
 
@@ -322,21 +280,13 @@ namespace Plato.Compiler
     public class AstProject : AstDeclaration
     {
         public IReadOnlyList<AstFile> Files { get; }
-
-        public AstProject(string name, IReadOnlyList<AstFile> files) : base(name)
-        {
-            Files = files;
-        }
+        public AstProject(string name, IReadOnlyList<AstFile> files) : base(name) => Files = files;
     }
 
     public class AstFile : AstDeclaration
     {
         public AstNamespace Namespace { get; }
-
-        public AstFile(string name, AstNamespace ns) : base(name)
-        {
-            Namespace = ns;
-        }
+        public AstFile(string name, AstNamespace ns) : base(name) => Namespace = ns;
     }
 
     public static class AstNodeExtensions

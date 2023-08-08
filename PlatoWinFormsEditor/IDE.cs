@@ -16,30 +16,49 @@ public class IDE
     public TabControl TabControl { get; }
     public RichTextBox OutputTextBox { get; }
     public List<Editor> Editors { get; } = new();
-    public Compiler Compiler { get; set;  }
+    public Compiler Compiler { get; }
     public Logger Logger { get; } = new Logger();
 
-    public void OpenFile(string fileName)
+    public void OpenFile(string filePath)
     {
-        var tabPage = new TabPage(Path.GetFileName(fileName));
+        var tabPage = new TabPage(Path.GetFileName(filePath));
         TabControl.TabPages.Add(tabPage);
         var edit = new RichTextBox();
         edit.Font = OutputTextBox.Font;
         edit.WordWrap = false;
         edit.Dock = DockStyle.Fill;
         tabPage.Controls.Add(edit);
-        var editor = new Editor(fileName, edit, OutputTextBox);
+
+        // This strange sequence of calls is required to force the editor to do what it does
+        // Replace the newlines (usually /r/n) with a single character (/n).
+        // Without creating control, and making a small change, the character position offsets will be wrong. 
+        // https://stackoverflow.com/a/7070915/184528
+        edit.CreateControl();
+        edit.Text = File.ReadAllText(filePath);
+        edit.AppendText(Environment.NewLine);
+
+        var input = new ParserInput(edit.Text, filePath);
+        var parser = new Parser(
+            filePath,
+            input,
+            PlatoGrammar.Instance.File,
+            PlatoTokenGrammar.Instance.Tokenizer,
+            Compiler);
+
+        var editor = new Editor(filePath, edit, OutputTextBox, parser);
         Editors.Add(editor);
     }
 
     public void Parse()
     {
         foreach (var editor in Editors)
-            editor.Parse(Logger);
+            editor.Parse();
     }
 
     public IDE(TabControl tabControl, RichTextBox outputTextBox)
     {
+        Compiler = new Compiler(new CstNodeFactory(), new AstNodeFactory(), Logger);
+
         TabControl = tabControl;
         OutputTextBox = outputTextBox;
 
@@ -54,8 +73,8 @@ public class IDE
         OpenFile(Path.Combine(inputPath, "libraries.plato"));
         
         Parse();
-
-        Compiler = new Compiler(Editors.Select(e => e.Parser), Logger);
+        var parsers = Editors.Select(p => p.Parser).ToList();
+        Compiler.Compile(parsers);
 
         OutputTextBox.Lines = Logger.Messages.ToArray();
         /*

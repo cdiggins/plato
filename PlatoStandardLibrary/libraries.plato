@@ -117,7 +117,7 @@ library Interval
 library Value
 { 
     ToString(x: Value): String
-        => self.FieldValues.Join(", ");
+        => x.FieldValues.Join(", ");
 }
 
 library Vector
@@ -269,8 +269,8 @@ library Numerical
     AlmostZero(x: Numerical): Boolean
         => x.Abs < 0.00000001; 
 
-    Lerp(x: Numerical, y: Numerical, t: Unit): Numerical
-        => (1 - t) * v0 + t * v1;
+    Lerp(a: Numerical, b: Numerical, t: Unit): Numerical
+        => (1 - t) * a + t * b;
         
     Between(self: Numerical, min: Numerical, max: Numerical): Boolean
         => self.FieldValues.Zip(min.FieldValues, max.FieldValues, 
