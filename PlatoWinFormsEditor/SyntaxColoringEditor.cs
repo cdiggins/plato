@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Parakeet;
-using Parakeet.Demos;
-using Parakeet.Demos.Plato;
+﻿using Parakeet.Demos.Plato;
 using Plato.Compiler;
 
 namespace PlatoWinFormsEditor

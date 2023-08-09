@@ -1,10 +1,8 @@
 ﻿using Parakeet;
 using System.Collections.Generic;
 using System;
-using System.Data;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 
 namespace Plato.Compiler
 {

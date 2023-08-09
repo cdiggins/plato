@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Plato.Compiler
 {
     public class VisualSyntaxGraph
     {
-        public string Name { get; }
-        public Dictionary<Guid, VsgConnection> Connections { get; }
-        public Dictionary<Guid, VsgNode> Nodes { get; }
+        public string Name { get; set; }
+        public Dictionary<Guid, VsgConnection> Connections { get; set; }
+        public Dictionary<Guid, VsgNode> Nodes { get; set; }
 
+        public VisualSyntaxGraph() { }
         public VisualSyntaxGraph(string name, IEnumerable<VsgNode> nodes, IEnumerable<VsgConnection> connections)
         {
             Name = name;
@@ -40,6 +40,10 @@ namespace Plato.Compiler
         public string Type { get; set; }
         public string Kind { get; set; }
         public string Label { get; set; }
+
+        public VsgConnection()
+        {
+        } 
 
         public VsgConnection(Guid src, Guid dest)
         {

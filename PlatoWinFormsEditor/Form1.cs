@@ -1,5 +1,3 @@
-using Plato.Compiler;
-
 namespace PlatoWinFormsEditor
 {
     public partial class Form1 : Form
