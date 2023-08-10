@@ -1,57 +1,57 @@
 {
   "Name": "BounceEaseIn",
   "Connections": {
-    "b2957b8e-484a-487a-9f34-fbe3981e7a2e": {
-      "Id": "b2957b8e-484a-487a-9f34-fbe3981e7a2e",
-      "Source": "a1990b63-9a0d-4083-b607-2654f4a7968e",
-      "Destination": "6dcd270d-58d3-4687-b4ad-bf7a3b3392d6",
+    "af9adbfe-d721-47f8-8544-a2772061fbc4": {
+      "Id": "af9adbfe-d721-47f8-8544-a2772061fbc4",
+      "Source": "30c7877e-35e5-4a3e-a8a7-9c723c414000",
+      "Destination": "fd2eccc4-5d5b-439a-9ab3-7deb728439ee",
       "Type": null,
       "Kind": null,
       "Label": null
     },
-    "1d220949-1691-4579-a8fb-d612eb57a529": {
-      "Id": "1d220949-1691-4579-a8fb-d612eb57a529",
-      "Source": "3f510f9a-6850-4046-9407-2724f39bf9e4",
-      "Destination": "719b1fd3-0992-4576-b3ce-25ebd6e8620c",
+    "15070050-4cfd-4c31-a97b-d840a4be31d7": {
+      "Id": "15070050-4cfd-4c31-a97b-d840a4be31d7",
+      "Source": "4ecbc64b-deb6-421f-b7e0-de049c6119e1",
+      "Destination": "0e599a34-b32a-472a-9c52-387ec344d6b9",
       "Type": null,
       "Kind": null,
       "Label": null
     },
-    "dfb20bb0-d0b0-481f-9218-043929c109bd": {
-      "Id": "dfb20bb0-d0b0-481f-9218-043929c109bd",
-      "Source": "5a96531d-f46f-4220-a601-d6d41532ae45",
-      "Destination": "1f5825ee-2b4b-4d75-83c8-f3bbd8965370",
+    "58a9bdcb-7eac-413d-b4e5-6f716c4625c7": {
+      "Id": "58a9bdcb-7eac-413d-b4e5-6f716c4625c7",
+      "Source": "abbbff6e-fe48-4190-94df-279bedc96ccf",
+      "Destination": "4425df44-65fb-422b-8b08-a82d5cfa0459",
       "Type": null,
       "Kind": null,
       "Label": null
     }
   },
   "Nodes": {
-    "8b346b9e-ebda-4402-aa2a-9ba3a49028f2": {
-      "Id": "8b346b9e-ebda-4402-aa2a-9ba3a49028f2",
+    "1c8035fd-39b2-4ab5-99c1-095914008aac": {
+      "Id": "1c8035fd-39b2-4ab5-99c1-095914008aac",
       "Label": "Inputs",
       "Kind": "Function",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "a1990b63-9a0d-4083-b607-2654f4a7968e",
+          "Id": "30c7877e-35e5-4a3e-a8a7-9c723c414000",
           "Label": "p",
           "Type": "Number"
         }
       ],
       "MainOutput": {
-        "Id": "a1990b63-9a0d-4083-b607-2654f4a7968e",
+        "Id": "30c7877e-35e5-4a3e-a8a7-9c723c414000",
         "Label": "p",
         "Type": "Number"
       }
     },
-    "0e85dc99-3319-4f2f-802e-016cffabb1e1": {
-      "Id": "0e85dc99-3319-4f2f-802e-016cffabb1e1",
+    "09b6cb1f-5ded-4e40-aca3-a13c228fcbc6": {
+      "Id": "09b6cb1f-5ded-4e40-aca3-a13c228fcbc6",
       "Label": "Output",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "1f5825ee-2b4b-4d75-83c8-f3bbd8965370",
+          "Id": "4425df44-65fb-422b-8b08-a82d5cfa0459",
           "Label": "Result",
           "Type": "Number"
         }
@@ -59,55 +59,55 @@
       "Outputs": [],
       "MainOutput": null
     },
-    "3c07d3c9-5e79-4aae-8462-dc1cee349909": {
-      "Id": "3c07d3c9-5e79-4aae-8462-dc1cee349909",
+    "120cf6c7-b17a-4623-bbd3-1097547afdce": {
+      "Id": "120cf6c7-b17a-4623-bbd3-1097547afdce",
       "Label": "InvertEaseFunc",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "6dcd270d-58d3-4687-b4ad-bf7a3b3392d6",
+          "Id": "fd2eccc4-5d5b-439a-9ab3-7deb728439ee",
           "Label": "p",
           "Type": "Any"
         },
         {
-          "Id": "719b1fd3-0992-4576-b3ce-25ebd6e8620c",
+          "Id": "0e599a34-b32a-472a-9c52-387ec344d6b9",
           "Label": "easeIn",
           "Type": "Any"
         }
       ],
       "Outputs": [
         {
-          "Id": "5a96531d-f46f-4220-a601-d6d41532ae45",
+          "Id": "abbbff6e-fe48-4190-94df-279bedc96ccf",
           "Label": "Out",
           "Type": "Any"
         }
       ],
       "MainOutput": {
-        "Id": "5a96531d-f46f-4220-a601-d6d41532ae45",
+        "Id": "abbbff6e-fe48-4190-94df-279bedc96ccf",
         "Label": "Out",
         "Type": "Any"
       }
     },
-    "45cf0b3c-142a-469c-a808-e203b7e5c8a6": {
-      "Id": "45cf0b3c-142a-469c-a808-e203b7e5c8a6",
+    "c9197b1b-eebb-45ac-8ebb-6da2740eb537": {
+      "Id": "c9197b1b-eebb-45ac-8ebb-6da2740eb537",
       "Label": "BounceEaseOut",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "2010a8c0-b7df-485d-b61c-c7061efd3164",
+          "Id": "3244d757-3c9c-4034-a940-05740c72640b",
           "Label": "p",
           "Type": "Any"
         }
       ],
       "Outputs": [
         {
-          "Id": "3f510f9a-6850-4046-9407-2724f39bf9e4",
+          "Id": "4ecbc64b-deb6-421f-b7e0-de049c6119e1",
           "Label": "Out",
           "Type": "Any"
         }
       ],
       "MainOutput": {
-        "Id": "3f510f9a-6850-4046-9407-2724f39bf9e4",
+        "Id": "4ecbc64b-deb6-421f-b7e0-de049c6119e1",
         "Label": "Out",
         "Type": "Any"
       }

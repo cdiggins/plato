@@ -2,31 +2,31 @@
   "Name": "Sin",
   "Connections": {},
   "Nodes": {
-    "006bf19d-be97-447a-b51f-ecefa2a282a6": {
-      "Id": "006bf19d-be97-447a-b51f-ecefa2a282a6",
+    "8fe35430-d78d-4e2b-a4d8-534b25fb8c5b": {
+      "Id": "8fe35430-d78d-4e2b-a4d8-534b25fb8c5b",
       "Label": "Inputs",
       "Kind": "Function",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "feea2188-4e6b-4047-982a-1eb2988ee0ce",
+          "Id": "85eaa413-290e-4cc4-8440-0105ff57daa0",
           "Label": "x",
           "Type": "Angle"
         }
       ],
       "MainOutput": {
-        "Id": "feea2188-4e6b-4047-982a-1eb2988ee0ce",
+        "Id": "85eaa413-290e-4cc4-8440-0105ff57daa0",
         "Label": "x",
         "Type": "Angle"
       }
     },
-    "5e3c9a83-bbe2-48b2-857f-e8de11faa2c4": {
-      "Id": "5e3c9a83-bbe2-48b2-857f-e8de11faa2c4",
+    "71cdf5bb-c2fd-440c-ae4a-7c5e55368a39": {
+      "Id": "71cdf5bb-c2fd-440c-ae4a-7c5e55368a39",
       "Label": "Output",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "fa2c7796-1c3c-4f94-9e1f-1a8185e1dee0",
+          "Id": "ccbe06aa-0b86-415a-9cf4-d984b570c584",
           "Label": "Result",
           "Type": "Number"
         }

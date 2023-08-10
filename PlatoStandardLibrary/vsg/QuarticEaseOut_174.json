@@ -1,57 +1,57 @@
 {
   "Name": "QuarticEaseOut",
   "Connections": {
-    "bb630768-5f20-4513-8cfc-6c4093334d05": {
-      "Id": "bb630768-5f20-4513-8cfc-6c4093334d05",
-      "Source": "459433d1-916f-4a57-ab2a-231ed96920d5",
-      "Destination": "9f539ee5-d83b-4d49-9095-1c5d492f44fc",
+    "50fd23ab-2f8b-447a-8bf5-a259005e1210": {
+      "Id": "50fd23ab-2f8b-447a-8bf5-a259005e1210",
+      "Source": "a30788bb-34e2-4396-964f-f6ff9945d0cb",
+      "Destination": "d347d85a-9fe2-43ed-a0fd-344308f02620",
       "Type": null,
       "Kind": null,
       "Label": null
     },
-    "5d67ed7a-a06d-40a3-b808-223ea84b6978": {
-      "Id": "5d67ed7a-a06d-40a3-b808-223ea84b6978",
-      "Source": "2e5e5325-3c33-42e8-a260-383f7bfb5821",
-      "Destination": "cb381036-2358-4c8e-81e3-81ad06e5cabe",
+    "d7f95d1a-9e6f-406f-ab05-b096dc06c7e2": {
+      "Id": "d7f95d1a-9e6f-406f-ab05-b096dc06c7e2",
+      "Source": "a68934c8-574f-4b0e-bc07-b7449bba845f",
+      "Destination": "62ce3f0c-8b7c-4167-80f8-a4efac78fd36",
       "Type": null,
       "Kind": null,
       "Label": null
     },
-    "57bf4ce8-373d-4eff-ac79-e420de18ee87": {
-      "Id": "57bf4ce8-373d-4eff-ac79-e420de18ee87",
-      "Source": "d53e48f3-efca-43a4-b7c5-4042c1162c9c",
-      "Destination": "3b7ab31b-d777-41f1-af75-9b73046a0fd8",
+    "7475c614-23f9-4079-8624-22a3f2ae35db": {
+      "Id": "7475c614-23f9-4079-8624-22a3f2ae35db",
+      "Source": "d6f57de6-640a-4513-a5e9-4eee75c57114",
+      "Destination": "cbc2bb96-c1bb-4c2f-975e-25a2086450dd",
       "Type": null,
       "Kind": null,
       "Label": null
     }
   },
   "Nodes": {
-    "42ac4fc4-dcb8-4088-befe-6591a20da3a2": {
-      "Id": "42ac4fc4-dcb8-4088-befe-6591a20da3a2",
+    "6d3fdbb3-7e69-4ec6-9b62-d7bc330a8aa5": {
+      "Id": "6d3fdbb3-7e69-4ec6-9b62-d7bc330a8aa5",
       "Label": "Inputs",
       "Kind": "Function",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "459433d1-916f-4a57-ab2a-231ed96920d5",
+          "Id": "a30788bb-34e2-4396-964f-f6ff9945d0cb",
           "Label": "p",
           "Type": "Number"
         }
       ],
       "MainOutput": {
-        "Id": "459433d1-916f-4a57-ab2a-231ed96920d5",
+        "Id": "a30788bb-34e2-4396-964f-f6ff9945d0cb",
         "Label": "p",
         "Type": "Number"
       }
     },
-    "671c15a2-ae4a-4508-a4e4-6a83e7446589": {
-      "Id": "671c15a2-ae4a-4508-a4e4-6a83e7446589",
+    "058a63ef-5c8f-4e5a-b1d1-42dff4ae480d": {
+      "Id": "058a63ef-5c8f-4e5a-b1d1-42dff4ae480d",
       "Label": "Output",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "3b7ab31b-d777-41f1-af75-9b73046a0fd8",
+          "Id": "cbc2bb96-c1bb-4c2f-975e-25a2086450dd",
           "Label": "Result",
           "Type": "Number"
         }
@@ -59,55 +59,55 @@
       "Outputs": [],
       "MainOutput": null
     },
-    "fe120565-ff4d-4b0f-9edd-cb7e4800e42c": {
-      "Id": "fe120565-ff4d-4b0f-9edd-cb7e4800e42c",
+    "330d9d60-6921-43be-86e2-823d09722713": {
+      "Id": "330d9d60-6921-43be-86e2-823d09722713",
       "Label": "InvertEaseFunc",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "9f539ee5-d83b-4d49-9095-1c5d492f44fc",
+          "Id": "d347d85a-9fe2-43ed-a0fd-344308f02620",
           "Label": "p",
           "Type": "Any"
         },
         {
-          "Id": "cb381036-2358-4c8e-81e3-81ad06e5cabe",
+          "Id": "62ce3f0c-8b7c-4167-80f8-a4efac78fd36",
           "Label": "easeIn",
           "Type": "Any"
         }
       ],
       "Outputs": [
         {
-          "Id": "d53e48f3-efca-43a4-b7c5-4042c1162c9c",
+          "Id": "d6f57de6-640a-4513-a5e9-4eee75c57114",
           "Label": "Out",
           "Type": "Any"
         }
       ],
       "MainOutput": {
-        "Id": "d53e48f3-efca-43a4-b7c5-4042c1162c9c",
+        "Id": "d6f57de6-640a-4513-a5e9-4eee75c57114",
         "Label": "Out",
         "Type": "Any"
       }
     },
-    "99fe2a71-8282-4b63-bd5c-dbafdc3fc286": {
-      "Id": "99fe2a71-8282-4b63-bd5c-dbafdc3fc286",
+    "3505272c-59ee-40ad-add5-7054274f40f3": {
+      "Id": "3505272c-59ee-40ad-add5-7054274f40f3",
       "Label": "QuarticEaseIn",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "9f24a762-3c00-4910-b2c3-fbbb2ae98dba",
+          "Id": "3a460168-6f32-44d3-8550-b051e21b1886",
           "Label": "p",
           "Type": "Any"
         }
       ],
       "Outputs": [
         {
-          "Id": "2e5e5325-3c33-42e8-a260-383f7bfb5821",
+          "Id": "a68934c8-574f-4b0e-bc07-b7449bba845f",
           "Label": "Out",
           "Type": "Any"
         }
       ],
       "MainOutput": {
-        "Id": "2e5e5325-3c33-42e8-a260-383f7bfb5821",
+        "Id": "a68934c8-574f-4b0e-bc07-b7449bba845f",
         "Label": "Out",
         "Type": "Any"
       }

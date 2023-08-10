@@ -2,36 +2,36 @@
   "Name": "Divide",
   "Connections": {},
   "Nodes": {
-    "3c7a39d2-124a-412d-aea0-4d79f5d498df": {
-      "Id": "3c7a39d2-124a-412d-aea0-4d79f5d498df",
+    "e02acb64-ba27-496e-97f6-bc64a880fc4f": {
+      "Id": "e02acb64-ba27-496e-97f6-bc64a880fc4f",
       "Label": "Inputs",
       "Kind": "Function",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "21c1fb9d-409c-45b3-aa38-59ac2aef5002",
+          "Id": "ee4a04ac-43f2-4096-936a-3cf73c613dcc",
           "Label": "x",
           "Type": "Integer"
         },
         {
-          "Id": "01d410fa-844f-478a-81d0-20a678736e5b",
+          "Id": "688ac9a8-6aa9-424c-9443-dc53d0d482ee",
           "Label": "y",
           "Type": "Integer"
         }
       ],
       "MainOutput": {
-        "Id": "21c1fb9d-409c-45b3-aa38-59ac2aef5002",
+        "Id": "ee4a04ac-43f2-4096-936a-3cf73c613dcc",
         "Label": "x",
         "Type": "Integer"
       }
     },
-    "6da19f66-ff85-43b4-9d40-48cb35f906c2": {
-      "Id": "6da19f66-ff85-43b4-9d40-48cb35f906c2",
+    "60ce11fe-e950-4e75-a2c7-447be56a4a3d": {
+      "Id": "60ce11fe-e950-4e75-a2c7-447be56a4a3d",
       "Label": "Output",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "b32116e3-7cb7-43af-ad1c-e2f74c0f9cfc",
+          "Id": "54cfa53d-d61e-4780-a9af-06b14b0cf496",
           "Label": "Result",
           "Type": "Integer"
         }

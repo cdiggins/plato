@@ -2,31 +2,31 @@
   "Name": "Not",
   "Connections": {},
   "Nodes": {
-    "43d0d0ec-5cc6-45bf-b273-e508e9596d7a": {
-      "Id": "43d0d0ec-5cc6-45bf-b273-e508e9596d7a",
+    "050b0c51-5efa-40e6-b475-527493790506": {
+      "Id": "050b0c51-5efa-40e6-b475-527493790506",
       "Label": "Inputs",
       "Kind": "Function",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "d507631c-34e7-4f08-89a4-84e24bb72ef7",
+          "Id": "280abbd2-e41a-4f83-a1c2-5eda010de50b",
           "Label": "x",
           "Type": "Boolean"
         }
       ],
       "MainOutput": {
-        "Id": "d507631c-34e7-4f08-89a4-84e24bb72ef7",
+        "Id": "280abbd2-e41a-4f83-a1c2-5eda010de50b",
         "Label": "x",
         "Type": "Boolean"
       }
     },
-    "c5519e1a-87f2-4eb8-adab-3bb7efe6d9be": {
-      "Id": "c5519e1a-87f2-4eb8-adab-3bb7efe6d9be",
+    "90a8108d-295b-4f49-8f6e-2336b7c45cf5": {
+      "Id": "90a8108d-295b-4f49-8f6e-2336b7c45cf5",
       "Label": "Output",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "b60ac874-d556-40ba-ac9e-2bcd2c457cd4",
+          "Id": "7a3e6c24-2ae1-446d-a6c8-f7cdfffc6287",
           "Label": "Result",
           "Type": "Boolean"
         }

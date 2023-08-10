@@ -2,31 +2,31 @@
   "Name": "Acos",
   "Connections": {},
   "Nodes": {
-    "4f97aaba-6007-4588-8e50-cd5d9757af69": {
-      "Id": "4f97aaba-6007-4588-8e50-cd5d9757af69",
+    "70e42f73-8c65-42f1-9805-324f97c45cd4": {
+      "Id": "70e42f73-8c65-42f1-9805-324f97c45cd4",
       "Label": "Inputs",
       "Kind": "Function",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "b39ed884-c414-48ee-927e-042813ce9104",
+          "Id": "76e22b80-3f26-49f0-b13f-121889404678",
           "Label": "x",
           "Type": "Number"
         }
       ],
       "MainOutput": {
-        "Id": "b39ed884-c414-48ee-927e-042813ce9104",
+        "Id": "76e22b80-3f26-49f0-b13f-121889404678",
         "Label": "x",
         "Type": "Number"
       }
     },
-    "030d2a52-9bd2-42bd-951c-5e665fb18be7": {
-      "Id": "030d2a52-9bd2-42bd-951c-5e665fb18be7",
+    "48b7ce7d-0408-4d91-87da-e9715ce89cc1": {
+      "Id": "48b7ce7d-0408-4d91-87da-e9715ce89cc1",
       "Label": "Output",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "ce66015a-8689-4c3c-9a60-c1ee75162ccb",
+          "Id": "fd12a5fd-cfe6-40f3-9ae6-305026389dbc",
           "Label": "Result",
           "Type": "Angle"
         }

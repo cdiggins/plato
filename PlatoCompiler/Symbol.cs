@@ -8,30 +8,45 @@ namespace Plato.Compiler
     {
         public override string ToString() => $"{GetType().Name}";
         public abstract IReadOnlyList<Symbol> Children { get; }
+        public abstract TypeRefSymbol Type { get; }
         public int Id { get; } = NextId++;  
         public static int NextId = 0;
         public override bool Equals(object obj) => obj is Symbol s && s.Id == Id;
         public override int GetHashCode() => Id.GetHashCode();
     }
 
-    public class FunctionGroupSymbol : DefSymbol
+    public class MemberGroupSymbol : DefSymbol
     {
-        public IReadOnlyList<MemberDefSymbol> Functions { get;  }
+        public IReadOnlyList<MemberDefSymbol> Members { get;  }
         
-        public FunctionGroupSymbol(IEnumerable<MemberDefSymbol> functions, string name)
+        public MemberGroupSymbol(IReadOnlyList<MemberDefSymbol> members, string name)
             : base(null, name)
         {
-            Functions = functions.ToList();
-            foreach (var f in Functions)
-                if (f.Name != name)
-                    throw new Exception($"All functions in group must have same name: {name}");
+            if (members.Count == 0) throw new Exception("Expected at least one function in group");
+            Members = members;
+
+            foreach (var m in Members)
+            {
+                if (m == null)
+                    throw new Exception("Null member");
+                if (m.Function == null)
+                    throw new Exception("Member without function");
+                if (m.Name != name)
+                    throw new Exception($"All members in group must have the name \"{name}\" not \"{m.Name}\"");
+                var sig = m.Function.Signature;
+                if (Members.Count(m2 => m2.Function.Signature == sig) > 1)
+                    throw new Exception($"More than one member has signature {sig}");
+            }
         }
 
-        public FunctionGroupSymbol Add(MemberDefSymbol method)
-            => new FunctionGroupSymbol(Functions.Append(method), Name);
+        public MemberGroupSymbol Add(MemberDefSymbol function)
+            => new MemberGroupSymbol(Members.Append(function).ToList(), Name);
 
         public override IReadOnlyList<Symbol> Children 
-            => Functions;
+            => Members;
+
+        public string DebugString => 
+            string.Join(";", Members.Select(m => m?.Function?.Signature));
     }
 
     public abstract class DefSymbol : Symbol
@@ -42,7 +57,7 @@ namespace Plato.Compiler
             Name = name;
         }
 
-        public TypeRefSymbol Type { get; }
+        public override TypeRefSymbol Type { get; }
         public string Name { get; }
         public string UniqueName => Name + "_" + Id;
 
@@ -52,11 +67,13 @@ namespace Plato.Compiler
     public class RefSymbol : Symbol
     {
         public DefSymbol Def { get; }
-        public TypeRefSymbol Type => Def.Type;
+        public override TypeRefSymbol Type => Def.Type;
         public string Name => Def.Name;
 
         public RefSymbol(DefSymbol def)
         {
+            if (def is TypeDefSymbol tds)
+                throw new Exception("Unexpected type definition reference");
             Def = def ?? 
                   throw new Exception("No definition provided");
         }
@@ -67,12 +84,6 @@ namespace Plato.Compiler
         public override IReadOnlyList<Symbol> Children => Array.Empty<Symbol>();
     }
 
-    public class NoValueSymbol : Symbol
-    {
-        public static NoValueSymbol Instance = new NoValueSymbol();
-        public override IReadOnlyList<Symbol> Children => Array.Empty<Symbol>();
-    }
-    
     public class PredefinedSymbol : DefSymbol
     {
         public PredefinedSymbol(TypeRefSymbol typeRef, string name)
@@ -93,13 +104,23 @@ namespace Plato.Compiler
         public static TypeDefSymbol Tuple = Create("Tuple");
 
         public static TypeDefSymbol String = Create("String");
-        public static TypeDefSymbol Bool = Create("Bool");
-        public static TypeDefSymbol Int = Create("Int");
+        public static TypeDefSymbol Boolean = Create("Boolean");
+        public static TypeDefSymbol Integer = Create("Integer");
         public static TypeDefSymbol Float = Create("Float");
         public static TypeDefSymbol Type = Create("Type");
 
         public static TypeDefSymbol Create(string name)
             => new TypeDefSymbol(TypeKind.Primitive, name);
+
+        public static TypeDefSymbol FromType(Type type)
+        {
+            if (type == null) return Any;
+            if (type.Equals(typeof(int))) return Integer;
+            if (type.Equals(typeof(float))) return Float;
+            if (type.Equals(typeof(bool))) return Boolean;
+            if (type.Equals(typeof(string))) return String;
+            return Any;
+        }
     }
 
     public class TypeDefSymbol : DefSymbol
@@ -126,8 +147,22 @@ namespace Plato.Compiler
         public IEnumerable<TypeDefSymbol> GetSelfAndAllInheritedTypes()
             => Inherits.SelectMany(c => c.Def.GetSelfAndAllInheritedTypes()).Append(this);
 
-        public IEnumerable<TypeDefSymbol> GetAllImplementedConcepts()
-            => Implements.SelectMany(c => c.Def.GetSelfAndAllInheritedTypes()).Distinct();
+        public IEnumerable<TypeRefSymbol> GetAllImplementedConcepts()
+        {
+            foreach (var tmp in Implements)
+            {
+                yield return tmp;
+                foreach (var tmp2 in tmp.Def.GetAllImplementedConcepts())
+                    yield return tmp2;
+            }
+
+            foreach (var tmp in Inherits)
+            {
+                yield return tmp;
+                foreach (var tmp2 in tmp.Def.GetAllImplementedConcepts())
+                    yield return tmp2;
+            }
+        }
 
         public override IReadOnlyList<Symbol> Children 
             => Array.Empty<Symbol>().Concat(Methods).Concat(Fields).Concat(TypeParameters).ToList();
@@ -136,9 +171,9 @@ namespace Plato.Compiler
             .Concat(Methods).Concat(Fields);
 
         public IEnumerable<MethodDefSymbol> GetConceptMethods()
-            => GetAllImplementedConcepts().SelectMany(c => c.Methods);
+            => GetAllImplementedConcepts().SelectMany(c => c.Def.Methods);
 
-        public TypeRefSymbol ToRef => new TypeRefSymbol(this);
+        public TypeRefSymbol ToRef() => new TypeRefSymbol(this);
     }
 
     public class ConditionalExpressionSymbol : Symbol
@@ -153,7 +188,12 @@ namespace Plato.Compiler
             Condition = condition;
             IfTrue = ifTrue;
             IfFalse = ifFalse;
+            
+            // TODO: choose the better type between it and IfFalse
+            Type = IfTrue.Type;
         }
+
+        public override TypeRefSymbol Type { get; }
 
         public override IReadOnlyList<Symbol> Children => new []{ Condition, IfTrue, IfFalse};
     }
@@ -172,6 +212,12 @@ namespace Plato.Compiler
         
         public override IReadOnlyList<Symbol> Children
             => Array.Empty<Symbol>().Concat(Parameters).Append(Body).ToList();
+
+        public string Signature => 
+            $"{Name}(" 
+            + string.Join(",", Parameters.Select(p => $"{p.Name}:{p.Type}")) 
+            + $"):{Type};";
+
     }
 
     public class ParameterSymbol : DefSymbol
@@ -203,6 +249,8 @@ namespace Plato.Compiler
             => (LValue, RValue) = (lvalue, rvalue);
 
         public override IReadOnlyList<Symbol> Children => new [] { LValue, RValue };
+
+        public override TypeRefSymbol Type => LValue.Type;
     }
 
     public class ArgumentSymbol : Symbol
@@ -216,14 +264,17 @@ namespace Plato.Compiler
             Position = position;
         }
 
+        public override TypeRefSymbol Type => Original?.Type;
+
         public override IReadOnlyList<Symbol> Children => new[] { Original };
     }
 
     public class LiteralSymbol : Symbol
     {
         public object Value { get; }
-        public LiteralTypes Type { get; }
-        public LiteralSymbol(LiteralTypes type, object value) => (Type, Value) = (type, value);
+        public override TypeRefSymbol Type => PrimitiveTypes.FromType(Value?.GetType()).ToRef();
+        public LiteralTypes LiteralType { get; }
+        public LiteralSymbol(LiteralTypes type, object value) => (LiteralType, Value) = (type, value);
         public override IReadOnlyList<Symbol> Children => Array.Empty<Symbol>();
     }
 
@@ -233,11 +284,15 @@ namespace Plato.Compiler
         public IReadOnlyList<ArgumentSymbol> Args { get; }
         public FunctionCallSymbol(Symbol function, params ArgumentSymbol[] args)
         {
+            if (function == null)
+                throw new Exception("Unexpected empty function");
             Function = function;
             Args = args;
         }
 
         public override IReadOnlyList<Symbol> Children => Args.Append(Function).ToList();
+
+        public override TypeRefSymbol Type => Function?.Type;
     }
 
     public class TypeRefSymbol : Symbol
@@ -264,6 +319,8 @@ namespace Plato.Compiler
 
         public static TypeRefSymbol CreateFunction(params TypeRefSymbol[] types)
             => new TypeRefSymbol(PrimitiveTypes.Function, types);
+
+        public override TypeRefSymbol Type => null;
     }
 
     public abstract class MemberDefSymbol : DefSymbol
@@ -275,6 +332,12 @@ namespace Plato.Compiler
         }
 
         public TypeDefSymbol ParentType { get; }
+
+        public override IReadOnlyList<Symbol> Children
+            => new[] { Function };
+
+        public FunctionSymbol Function { get; set; }
+
     }
 
     public class FieldDefSymbol : MemberDefSymbol
@@ -283,36 +346,29 @@ namespace Plato.Compiler
             : base(parentType, type, name)
         {
             Function = new FunctionSymbol(Name, Type, ToRefSymbol(),
-                new ParameterSymbol("self", parentType.ToRef));
+                new ParameterSymbol("self", parentType.ToRef()));
         }
-
-        public override IReadOnlyList<Symbol> Children
-            => new [] { Function };
 
         public RefSymbol ToRefSymbol()
             => new RefSymbol(this);
-
-        public FunctionSymbol Function { get; }
     }
 
     public class MethodDefSymbol : MemberDefSymbol
     {
-        // TODO: find a better way to deal with this. Don't make it mutable.
-        public FunctionSymbol Function { get; set; }
-
         public MethodDefSymbol(TypeDefSymbol parentType, TypeRefSymbol type, string name) 
             : base(parentType, type, name)
         { }
-
-        public override IReadOnlyList<Symbol> Children
-            => new [] { Function };
     }
 
     public class TypeParameterDefSymbol : TypeDefSymbol
     {
-        public TypeParameterDefSymbol(string name)
+        public TypeParameterDefSymbol(string name, TypeRefSymbol constraint)
             : base(TypeKind.Variable, name)
-        { }
+        {
+            Constraint = constraint;
+        }
+
+        public TypeRefSymbol Constraint { get; }
 
         public override IReadOnlyList<Symbol> Children
             => Array.Empty<Symbol>();

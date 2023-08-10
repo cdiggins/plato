@@ -2,36 +2,36 @@
   "Name": "Modulo",
   "Connections": {},
   "Nodes": {
-    "e96ca629-10f7-4c34-9330-d7b0071c2dbb": {
-      "Id": "e96ca629-10f7-4c34-9330-d7b0071c2dbb",
+    "9c8749fc-e8ad-473a-ae83-4b9ec175f5f4": {
+      "Id": "9c8749fc-e8ad-473a-ae83-4b9ec175f5f4",
       "Label": "Inputs",
       "Kind": "Function",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "ee0396eb-096a-4337-a1c2-db51033ea2b8",
+          "Id": "2b689171-052a-4679-b67d-8635d10b6d91",
           "Label": "x",
           "Type": "Integer"
         },
         {
-          "Id": "5f0428c1-7dab-4207-90a9-ed2dbfbdd777",
+          "Id": "5eba5c1c-1712-4ea0-99c6-740935a2e68a",
           "Label": "y",
           "Type": "Integer"
         }
       ],
       "MainOutput": {
-        "Id": "ee0396eb-096a-4337-a1c2-db51033ea2b8",
+        "Id": "2b689171-052a-4679-b67d-8635d10b6d91",
         "Label": "x",
         "Type": "Integer"
       }
     },
-    "0c5ea22e-acb9-4580-856d-5e0b13d8da45": {
-      "Id": "0c5ea22e-acb9-4580-856d-5e0b13d8da45",
+    "cd3f2871-f36a-4e42-ad77-0ebfce1c2b84": {
+      "Id": "cd3f2871-f36a-4e42-ad77-0ebfce1c2b84",
       "Label": "Output",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "42f869fa-9cd9-410f-91b2-b7d326c31f65",
+          "Id": "d8f4d880-e02d-4d7e-8d77-ccf13951e28b",
           "Label": "Result",
           "Type": "Integer"
         }

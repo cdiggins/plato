@@ -212,22 +212,20 @@ namespace Plato.Compiler
     public class AstMethodDeclaration : AstMemberDeclaration
     {
         public AstNode Body { get; }
-        public IReadOnlyList<AstTypeParameter> TypeParameters { get; }
         public IReadOnlyList<AstParameterDeclaration> Parameters { get; }
 
         public AstMethodDeclaration(string name,
             AstTypeNode type,
             IEnumerable<AstParameterDeclaration> parameters,
-            IEnumerable<AstTypeParameter> typeParameters, AstNode body) :
+            AstNode body) :
             base(name, type)
         {
             Body = body;
             Parameters = parameters.ToList();
-            TypeParameters = typeParameters.ToList();
         }
 
         public override IEnumerable<AstNode> Children =>
-            base.Children.Append(Body).Concat(TypeParameters);
+            base.Children.Append(Body);
     }
 
     public class AstExpressionStatement : AstNode
@@ -239,9 +237,10 @@ namespace Plato.Compiler
 
     public class AstTypeParameter : AstDeclaration
     {
-        public AstTypeParameter(string name)
-            : base(name) 
-        { }
+        public AstTypeNode Constraint { get; }
+        public AstTypeParameter(string name, AstTypeNode constraint)
+            : base(name)
+            => Constraint = constraint;
     }
 
     public enum TypeKind

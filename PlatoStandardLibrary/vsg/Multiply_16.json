@@ -2,36 +2,36 @@
   "Name": "Multiply",
   "Connections": {},
   "Nodes": {
-    "7e0982a2-d614-4da4-9683-719393810ce4": {
-      "Id": "7e0982a2-d614-4da4-9683-719393810ce4",
+    "79b6f64e-8be0-4c31-9ea5-ba592c7e7b34": {
+      "Id": "79b6f64e-8be0-4c31-9ea5-ba592c7e7b34",
       "Label": "Inputs",
       "Kind": "Function",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "512bf1c0-91bb-4f0d-b15b-d0daf1a990da",
+          "Id": "4e16797e-8b82-4a54-8ad9-487fd2a716fa",
           "Label": "x",
           "Type": "Number"
         },
         {
-          "Id": "a697eb42-af59-4e08-92dc-cb044b7bd580",
+          "Id": "00e399cd-8c10-4eba-9b4f-c7f3de7fe44e",
           "Label": "y",
           "Type": "Number"
         }
       ],
       "MainOutput": {
-        "Id": "512bf1c0-91bb-4f0d-b15b-d0daf1a990da",
+        "Id": "4e16797e-8b82-4a54-8ad9-487fd2a716fa",
         "Label": "x",
         "Type": "Number"
       }
     },
-    "866ef311-1ede-4230-9477-d4af8bdd9d15": {
-      "Id": "866ef311-1ede-4230-9477-d4af8bdd9d15",
+    "b1c838c5-3a61-4fb9-882d-4d2c06ed78a9": {
+      "Id": "b1c838c5-3a61-4fb9-882d-4d2c06ed78a9",
       "Label": "Output",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "6ee4c3c1-bd4c-4f65-9e91-4f6b5f4a194f",
+          "Id": "52af68f0-0b2f-4308-aa4b-4bc6a5227236",
           "Label": "Result",
           "Type": "Number"
         }

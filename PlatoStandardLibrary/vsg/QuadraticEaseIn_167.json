@@ -1,49 +1,49 @@
 {
   "Name": "QuadraticEaseIn",
   "Connections": {
-    "f331a4f5-ba61-41d1-bae8-3ee4bff05ac3": {
-      "Id": "f331a4f5-ba61-41d1-bae8-3ee4bff05ac3",
-      "Source": "5ca6ef62-81e6-4d3e-863a-0260981e06d1",
-      "Destination": "7d8023d6-b33f-47bb-9fff-ad678723ecaf",
+    "09837409-99a1-4f3c-b9d9-b84a9fc739ea": {
+      "Id": "09837409-99a1-4f3c-b9d9-b84a9fc739ea",
+      "Source": "d350931c-b239-4baf-aa83-f284160eb28f",
+      "Destination": "3386a62c-7eb4-4027-bd63-4efccdb3e9fd",
       "Type": null,
       "Kind": null,
       "Label": null
     },
-    "93248875-d7d9-4f32-850c-051dc500c183": {
-      "Id": "93248875-d7d9-4f32-850c-051dc500c183",
-      "Source": "45b3129f-07b7-4e0b-8e19-0aae469aec2a",
-      "Destination": "67114dd9-1ef3-4f67-ad30-4ee388c47d51",
+    "cf90cd7d-de68-4b2f-9d94-93a0a5820865": {
+      "Id": "cf90cd7d-de68-4b2f-9d94-93a0a5820865",
+      "Source": "0a04450b-4e21-47e7-a8dc-42aefc3d7224",
+      "Destination": "3dbd1fec-5687-4ecd-8a7f-1b12e083f1db",
       "Type": null,
       "Kind": null,
       "Label": null
     }
   },
   "Nodes": {
-    "e8934485-e5db-41f1-b5ee-41edd3d70ac3": {
-      "Id": "e8934485-e5db-41f1-b5ee-41edd3d70ac3",
+    "daafc645-1327-42b8-8ac2-a946023da824": {
+      "Id": "daafc645-1327-42b8-8ac2-a946023da824",
       "Label": "Inputs",
       "Kind": "Function",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "5ca6ef62-81e6-4d3e-863a-0260981e06d1",
+          "Id": "d350931c-b239-4baf-aa83-f284160eb28f",
           "Label": "p",
           "Type": "Number"
         }
       ],
       "MainOutput": {
-        "Id": "5ca6ef62-81e6-4d3e-863a-0260981e06d1",
+        "Id": "d350931c-b239-4baf-aa83-f284160eb28f",
         "Label": "p",
         "Type": "Number"
       }
     },
-    "192c5241-14b2-44e4-a773-a0191539dfca": {
-      "Id": "192c5241-14b2-44e4-a773-a0191539dfca",
+    "441d49d4-3fbe-4af5-b886-819a31a880e3": {
+      "Id": "441d49d4-3fbe-4af5-b886-819a31a880e3",
       "Label": "Output",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "67114dd9-1ef3-4f67-ad30-4ee388c47d51",
+          "Id": "3dbd1fec-5687-4ecd-8a7f-1b12e083f1db",
           "Label": "Result",
           "Type": "Number"
         }
@@ -51,26 +51,26 @@
       "Outputs": [],
       "MainOutput": null
     },
-    "e26925ff-61ba-4965-b2bc-f7495a704920": {
-      "Id": "e26925ff-61ba-4965-b2bc-f7495a704920",
+    "b3df444d-01f4-49ea-acd9-e454d6cc3407": {
+      "Id": "b3df444d-01f4-49ea-acd9-e454d6cc3407",
       "Label": "Pow2",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "7d8023d6-b33f-47bb-9fff-ad678723ecaf",
+          "Id": "3386a62c-7eb4-4027-bd63-4efccdb3e9fd",
           "Label": "x",
           "Type": "Any"
         }
       ],
       "Outputs": [
         {
-          "Id": "45b3129f-07b7-4e0b-8e19-0aae469aec2a",
+          "Id": "0a04450b-4e21-47e7-a8dc-42aefc3d7224",
           "Label": "Out",
           "Type": "Any"
         }
       ],
       "MainOutput": {
-        "Id": "45b3129f-07b7-4e0b-8e19-0aae469aec2a",
+        "Id": "0a04450b-4e21-47e7-a8dc-42aefc3d7224",
         "Label": "Out",
         "Type": "Any"
       }

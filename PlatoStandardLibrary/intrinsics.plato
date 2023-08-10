@@ -33,8 +33,4 @@
     And(x: Boolean, y: Boolean): Boolean;
     Or(x: Boolean, y: Boolean): Boolean;
     Not(x: Boolean): Boolean;
-
-    FieldTypes(x: Any): Array<Type>;
-    FieldNames(x: Any): Array<String>;
-    FieldValues(x: Any): Array<Any>;
 }

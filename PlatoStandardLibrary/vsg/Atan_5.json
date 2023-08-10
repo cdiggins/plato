@@ -2,31 +2,31 @@
   "Name": "Atan",
   "Connections": {},
   "Nodes": {
-    "4cd84291-630e-4339-85ce-dadf06a76572": {
-      "Id": "4cd84291-630e-4339-85ce-dadf06a76572",
+    "7235c870-8387-4a70-9641-5411cc415b5f": {
+      "Id": "7235c870-8387-4a70-9641-5411cc415b5f",
       "Label": "Inputs",
       "Kind": "Function",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "e83c1a24-25a2-486a-9f6e-4a86c62bcd08",
+          "Id": "1c3c9a69-87d4-4487-8518-c77fa532412c",
           "Label": "x",
           "Type": "Number"
         }
       ],
       "MainOutput": {
-        "Id": "e83c1a24-25a2-486a-9f6e-4a86c62bcd08",
+        "Id": "1c3c9a69-87d4-4487-8518-c77fa532412c",
         "Label": "x",
         "Type": "Number"
       }
     },
-    "88e361a9-e7f0-4a09-9130-d8ab532efade": {
-      "Id": "88e361a9-e7f0-4a09-9130-d8ab532efade",
+    "e183265b-7267-427f-a8c7-f15a25517470": {
+      "Id": "e183265b-7267-427f-a8c7-f15a25517470",
       "Label": "Output",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "59e17265-be9f-4f6c-ba31-bc2fa94a459d",
+          "Id": "1472a66e-a324-4624-9397-ada434455ecd",
           "Label": "Result",
           "Type": "Angle"
         }

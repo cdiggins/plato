@@ -96,8 +96,8 @@ public class IDE
         File.WriteAllText(Path.Combine(outputFolder, "output.js"), output);
 
         var vsgFolder = Path.Combine(outputFolder, "vsg");
-        // TODO: clear the directory
         
+        /*
         FileUtil.CreateAndClearDirectory(vsgFolder);
         var i = 0;
         foreach (var f in Compiler.Graphs)
@@ -106,6 +106,7 @@ public class IDE
             var filePath = Path.Combine(vsgFolder, $"{f.Name}_{i++}.json");
             File.WriteAllText(filePath, text);
         }
+        */
 
         //Output += GetConstraintsOutput();
         //Output += GetOperationsOutput();

@@ -2,31 +2,31 @@
   "Name": "NaturalLog",
   "Connections": {},
   "Nodes": {
-    "0c333635-cdbd-4b23-b7d6-89d347ba0918": {
-      "Id": "0c333635-cdbd-4b23-b7d6-89d347ba0918",
+    "4c7be3ac-97ac-44cd-b5e4-e50ac450824e": {
+      "Id": "4c7be3ac-97ac-44cd-b5e4-e50ac450824e",
       "Label": "Inputs",
       "Kind": "Function",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "49c850f1-266d-4bff-8703-925293ae026d",
+          "Id": "2b9fc9e6-0550-4cf5-910b-eb105c4c21aa",
           "Label": "x",
           "Type": "Number"
         }
       ],
       "MainOutput": {
-        "Id": "49c850f1-266d-4bff-8703-925293ae026d",
+        "Id": "2b9fc9e6-0550-4cf5-910b-eb105c4c21aa",
         "Label": "x",
         "Type": "Number"
       }
     },
-    "930199c2-28d5-483f-bb20-e7b4c6e495f0": {
-      "Id": "930199c2-28d5-483f-bb20-e7b4c6e495f0",
+    "ed2cfe4b-0adf-4646-8281-4f9e8f36c1d8": {
+      "Id": "ed2cfe4b-0adf-4646-8281-4f9e8f36c1d8",
       "Label": "Output",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "252359b2-be49-48f7-a90b-f76456618ef1",
+          "Id": "37ffc53a-793f-4c02-a2d3-8a27b269aefb",
           "Label": "Result",
           "Type": "Number"
         }

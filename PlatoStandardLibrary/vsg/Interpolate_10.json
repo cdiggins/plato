@@ -2,31 +2,31 @@
   "Name": "Interpolate",
   "Connections": {},
   "Nodes": {
-    "36af768f-cee6-4980-9c65-a0c227918189": {
-      "Id": "36af768f-cee6-4980-9c65-a0c227918189",
+    "d73251b6-7146-4a26-8cd8-da13b7fc484a": {
+      "Id": "d73251b6-7146-4a26-8cd8-da13b7fc484a",
       "Label": "Inputs",
       "Kind": "Function",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "5c4ede8e-0672-4b9d-99c1-df0df46205a3",
+          "Id": "5b7b0a72-0221-44d9-9910-4cbb740e527f",
           "Label": "xs",
           "Type": "Array"
         }
       ],
       "MainOutput": {
-        "Id": "5c4ede8e-0672-4b9d-99c1-df0df46205a3",
+        "Id": "5b7b0a72-0221-44d9-9910-4cbb740e527f",
         "Label": "xs",
         "Type": "Array"
       }
     },
-    "3cb1989c-0351-4f0b-98e0-0f49d6aad9f9": {
-      "Id": "3cb1989c-0351-4f0b-98e0-0f49d6aad9f9",
+    "1c21e3ff-d161-45e4-9572-19fe2f775e2b": {
+      "Id": "1c21e3ff-d161-45e4-9572-19fe2f775e2b",
       "Label": "Output",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "6b580164-c457-42be-bbd3-6209441adf65",
+          "Id": "7d14afdd-955b-4073-a969-bec662203f6f",
           "Label": "Result",
           "Type": "String"
         }

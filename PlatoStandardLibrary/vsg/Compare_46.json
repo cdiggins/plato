@@ -2,31 +2,31 @@
   "Name": "Compare",
   "Connections": {},
   "Nodes": {
-    "86a57790-f7d4-4631-b0ad-be8d9dfb99ee": {
-      "Id": "86a57790-f7d4-4631-b0ad-be8d9dfb99ee",
+    "cbf325fe-5994-4a80-9580-ee2c15ffb8e8": {
+      "Id": "cbf325fe-5994-4a80-9580-ee2c15ffb8e8",
       "Label": "Inputs",
       "Kind": "Function",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "2f4a9da2-b028-48ae-a1af-daf4e353c2e2",
+          "Id": "f3a716ba-f369-4650-9276-638a9e6d84fc",
           "Label": "x",
           "Type": "Self"
         }
       ],
       "MainOutput": {
-        "Id": "2f4a9da2-b028-48ae-a1af-daf4e353c2e2",
+        "Id": "f3a716ba-f369-4650-9276-638a9e6d84fc",
         "Label": "x",
         "Type": "Self"
       }
     },
-    "0fcf4b3b-627c-4f89-a11c-1fd4352c7ed2": {
-      "Id": "0fcf4b3b-627c-4f89-a11c-1fd4352c7ed2",
+    "11c5015d-11cb-4743-81ba-2db04e08bb76": {
+      "Id": "11c5015d-11cb-4743-81ba-2db04e08bb76",
       "Label": "Output",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "f3f1c884-7745-4e01-9ee3-6b8063935593",
+          "Id": "0b4e7739-0df2-49c4-b1dd-ad3ab9727427",
           "Label": "Result",
           "Type": "Integer"
         }

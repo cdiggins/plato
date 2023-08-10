@@ -136,9 +136,9 @@ namespace Plato.Compiler
                 case FieldDefSymbol fieldDefSymbol:
                     return CreateNode(fieldDefSymbol.Function);
 
-                case FunctionGroupSymbol functionGroupSymbol:
+                case MemberGroupSymbol functionGroupSymbol:
                     // TODO: remove function groups 
-                    return CreateNode(functionGroupSymbol.Functions[0]);
+                    return CreateNode(functionGroupSymbol.Members[0]);
                 
                 case FunctionSymbol functionSymbol:
                     return CreateNode(functionSymbol);
@@ -147,10 +147,10 @@ namespace Plato.Compiler
                     return CreateNode(methodDefSymbol.Function);
 
                 case ParameterSymbol parameterSymbol:
-                    throw new Exception("Internal error: should have been created by the function");
+                    return CreateNode($"{parameterSymbol.Name} as Function");
                 
                 case PredefinedSymbol predefinedSymbol:
-                    break;
+                    return CreateNode(predefinedSymbol);
 
                 case TypeParameterDefSymbol typeParameterDefSymbol:
                     break;
@@ -169,9 +169,6 @@ namespace Plato.Compiler
 
                 case LiteralSymbol literalSymbol:
                     return CreateNode(literalSymbol);
-
-                case NoValueSymbol noValueSymbol:
-                    break;
                 
                 case RefSymbol refSymbol:
                     return CreateNode(refSymbol.Def);
@@ -209,6 +206,9 @@ namespace Plato.Compiler
             return CreateNode(symbol)?.MainOutput;
         }
 
+        public VsgNode CreateNode(PredefinedSymbol pds)
+            => CreateNode(pds.Name);
+
         public VsgNode CreateNode(LiteralSymbol lit)
             => CreateNode(lit.Value.ToLiteralString());
 
@@ -240,16 +240,17 @@ namespace Plato.Compiler
             }
             else
             {
-
                 var f = CreateNode(symbol.Function);
-                var inputs = symbol.Args.Select(GetSocket).ToList();
-                
-                // TODO: this should not happen when the symbol resolver is working properly
-                //Debug.Assert(inputs.Count == f.Inputs.Count);
-                
-                for (var i = 0; i < Math.Min(inputs.Count, f.Inputs.Count); ++i)
+                if (f == null)
+                    f = CreateNode("Unknown");
+                var inputSockets = symbol.Args.Select(GetSocket).ToList();
+
+                while (f.Inputs.Count < inputSockets.Count)
+                    f.Inputs.Add(new VsgSocket($"Input {f.Inputs.Count}"));
+
+                for (var i = 0; i < inputSockets.Count; ++i)
                 {
-                    Connect(inputs[i], f.Inputs[i]);
+                    Connect(inputSockets[i], f.Inputs[i]);
                 }
 
                 return f;

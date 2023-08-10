@@ -2,36 +2,36 @@
   "Name": "Subtract",
   "Connections": {},
   "Nodes": {
-    "867ca6bb-1203-47ab-9342-70433998a11d": {
-      "Id": "867ca6bb-1203-47ab-9342-70433998a11d",
+    "44d127b9-65a6-4f2f-a3ba-8e25d1c0deac": {
+      "Id": "44d127b9-65a6-4f2f-a3ba-8e25d1c0deac",
       "Label": "Inputs",
       "Kind": "Function",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "32d5e89f-de75-4e44-8431-5a7c28e5c19d",
+          "Id": "a33769bd-7d2b-41fa-bbb1-24f3059f77dc",
           "Label": "x",
           "Type": "Integer"
         },
         {
-          "Id": "a30225a5-f33e-4477-8a8f-4faa27d82c64",
+          "Id": "8b089d22-052e-4e8a-a427-85e3532c6cfa",
           "Label": "y",
           "Type": "Integer"
         }
       ],
       "MainOutput": {
-        "Id": "32d5e89f-de75-4e44-8431-5a7c28e5c19d",
+        "Id": "a33769bd-7d2b-41fa-bbb1-24f3059f77dc",
         "Label": "x",
         "Type": "Integer"
       }
     },
-    "6226379e-ecd6-4f78-bb41-df1604d0be44": {
-      "Id": "6226379e-ecd6-4f78-bb41-df1604d0be44",
+    "e6f49b5a-e927-4ef1-87f9-316094b93623": {
+      "Id": "e6f49b5a-e927-4ef1-87f9-316094b93623",
       "Label": "Output",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "74352924-5392-4a93-a79c-e158a6741b7e",
+          "Id": "650eb572-23cf-4202-a071-0e9027ffd735",
           "Label": "Result",
           "Type": "Integer"
         }

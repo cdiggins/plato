@@ -1,7 +1,6 @@
 concept Any
 { 
-    FieldNames(): Array<String>;
-     
+    FieldNames(): Array<String>;     
     FieldValues(x: Self): Array<Any>;
     TypeOf(): Type;
 }

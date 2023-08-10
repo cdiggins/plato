@@ -1,62 +1,62 @@
 {
   "Name": "Clamp",
   "Connections": {
-    "8a70adcd-c9cc-47b7-9ede-74ee8d443ea9": {
-      "Id": "8a70adcd-c9cc-47b7-9ede-74ee8d443ea9",
-      "Source": "cdd05d51-f039-45c4-a366-28cc49e81689",
-      "Destination": "bf9819c4-5c9e-4cbc-be0d-37009ea816f0",
+    "9a981a22-e2cf-4a32-ab1e-4682c96a8e48": {
+      "Id": "9a981a22-e2cf-4a32-ab1e-4682c96a8e48",
+      "Source": "c3f1b2d0-be3f-45b9-8aba-86b6cae86961",
+      "Destination": "0e345917-37b9-4c9e-891b-807354d9d263",
       "Type": null,
       "Kind": null,
       "Label": null
     },
-    "0fcd070c-5f65-457e-a15c-bfe6bffa71aa": {
-      "Id": "0fcd070c-5f65-457e-a15c-bfe6bffa71aa",
-      "Source": "d3d43b88-b79b-47d6-ab4a-39c3aa71b05d",
-      "Destination": "034ede35-6cb3-483d-b541-95381b8901e3",
+    "f6c67f04-d695-4104-a9d7-734193b93db1": {
+      "Id": "f6c67f04-d695-4104-a9d7-734193b93db1",
+      "Source": "c8b1a54e-997d-4c73-92e7-4021d12e2ff3",
+      "Destination": "2e7eff56-afc0-4bdb-a70e-f78821551932",
       "Type": null,
       "Kind": null,
       "Label": null
     },
-    "a771ee60-9241-4c3e-a0ff-086143efbe10": {
-      "Id": "a771ee60-9241-4c3e-a0ff-086143efbe10",
-      "Source": "7d7b0656-ea31-4606-994e-5c6110cc05f2",
-      "Destination": "f1d5c688-5734-4e05-804c-8d67d8170111",
+    "80bc7459-1504-48f6-8cc3-6187b5fc037c": {
+      "Id": "80bc7459-1504-48f6-8cc3-6187b5fc037c",
+      "Source": "5550a76e-b425-445b-8321-93818b209267",
+      "Destination": "c9ac61b0-332e-425c-bae8-fac688e4e5bc",
       "Type": null,
       "Kind": null,
       "Label": null
     }
   },
   "Nodes": {
-    "1f673c55-f3cb-44b9-8774-e1b45d756c6d": {
-      "Id": "1f673c55-f3cb-44b9-8774-e1b45d756c6d",
+    "64fabf08-1726-459b-b811-a12be1c09407": {
+      "Id": "64fabf08-1726-459b-b811-a12be1c09407",
       "Label": "Inputs",
       "Kind": "Function",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "d3d43b88-b79b-47d6-ab4a-39c3aa71b05d",
+          "Id": "c8b1a54e-997d-4c73-92e7-4021d12e2ff3",
           "Label": "x",
           "Type": "Numerical"
         },
         {
-          "Id": "cdd05d51-f039-45c4-a366-28cc49e81689",
+          "Id": "c3f1b2d0-be3f-45b9-8aba-86b6cae86961",
           "Label": "i",
           "Type": "Interval"
         }
       ],
       "MainOutput": {
-        "Id": "d3d43b88-b79b-47d6-ab4a-39c3aa71b05d",
+        "Id": "c8b1a54e-997d-4c73-92e7-4021d12e2ff3",
         "Label": "x",
         "Type": "Numerical"
       }
     },
-    "d611d499-ed47-448e-bb69-3399b06b3f53": {
-      "Id": "d611d499-ed47-448e-bb69-3399b06b3f53",
+    "14f168a5-f6b5-44f1-80a4-d9b21305d246": {
+      "Id": "14f168a5-f6b5-44f1-80a4-d9b21305d246",
       "Label": "Output",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "f1d5c688-5734-4e05-804c-8d67d8170111",
+          "Id": "c9ac61b0-332e-425c-bae8-fac688e4e5bc",
           "Label": "Result",
           "Type": "Numerical"
         }
@@ -64,31 +64,31 @@
       "Outputs": [],
       "MainOutput": null
     },
-    "b491f2d5-f437-4d38-b326-eb81fed8f602": {
-      "Id": "b491f2d5-f437-4d38-b326-eb81fed8f602",
-      "Label": "Clamp",
+    "cac90662-81ae-4c01-b838-f250f86b39cb": {
+      "Id": "cac90662-81ae-4c01-b838-f250f86b39cb",
+      "Label": "Unknown",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "bf9819c4-5c9e-4cbc-be0d-37009ea816f0",
-          "Label": "x",
+          "Id": "0e345917-37b9-4c9e-891b-807354d9d263",
+          "Label": "Input 0",
           "Type": "Any"
         },
         {
-          "Id": "034ede35-6cb3-483d-b541-95381b8901e3",
-          "Label": "y",
+          "Id": "2e7eff56-afc0-4bdb-a70e-f78821551932",
+          "Label": "Input 1",
           "Type": "Any"
         }
       ],
       "Outputs": [
         {
-          "Id": "7d7b0656-ea31-4606-994e-5c6110cc05f2",
+          "Id": "5550a76e-b425-445b-8321-93818b209267",
           "Label": "Out",
           "Type": "Any"
         }
       ],
       "MainOutput": {
-        "Id": "7d7b0656-ea31-4606-994e-5c6110cc05f2",
+        "Id": "5550a76e-b425-445b-8321-93818b209267",
         "Label": "Out",
         "Type": "Any"
       }

@@ -427,9 +427,6 @@ namespace Plato.Compiler
                 case MemberDefSymbol member:
                     throw new Exception("Not implemented");
 
-                case NoValueSymbol noValue:
-                    return Write("_");
-
                 case ParameterSymbol parameter:
                     return WriteTypeDecl(parameter.Type).Write(parameter.Name);
 
@@ -441,6 +438,9 @@ namespace Plato.Compiler
 
                 case VariableSymbol variable:
                     return Write(variable.Name);
+
+                case PredefinedSymbol predefined:
+                    return Write(predefined.Name);
             }
 
             throw new ArgumentOutOfRangeException(nameof(value));

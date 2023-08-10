@@ -82,9 +82,6 @@ namespace Plato.Compiler
                 case MemberDefSymbol member:
                     throw new Exception("Not implemented");
                 
-                case NoValueSymbol noValue:
-                    return WriteXml("NoValueSymbol", "");
-
                 case ParameterSymbol parameter:
                     return WriteXml("ParameterSymbol", avw =>
                         avw.WriteXml("Name", parameter.Name).Write(parameter.Type));

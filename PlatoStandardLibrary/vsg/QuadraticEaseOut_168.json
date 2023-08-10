@@ -1,57 +1,57 @@
 {
   "Name": "QuadraticEaseOut",
   "Connections": {
-    "b07bad13-b733-44ec-ac71-e157c2ab117d": {
-      "Id": "b07bad13-b733-44ec-ac71-e157c2ab117d",
-      "Source": "0caf6c7e-00a2-4aa4-bdff-87bccd7329e7",
-      "Destination": "a53ed2ca-a397-4d9a-b8c6-23637e587bc7",
+    "fa8ea658-71c9-4dab-bee6-c11d2d1a6535": {
+      "Id": "fa8ea658-71c9-4dab-bee6-c11d2d1a6535",
+      "Source": "1fad6995-124a-4acf-b232-d60464661542",
+      "Destination": "a89bbd57-4f6b-4966-b868-5ffb59bc6192",
       "Type": null,
       "Kind": null,
       "Label": null
     },
-    "48915726-9d72-4206-969a-8c8538d45dad": {
-      "Id": "48915726-9d72-4206-969a-8c8538d45dad",
-      "Source": "fb3f6881-4a71-4063-be08-12040c2a0833",
-      "Destination": "9be454db-13cb-4c8f-8740-2529f9476498",
+    "5522f248-28c0-4ff2-8034-4a96074f7196": {
+      "Id": "5522f248-28c0-4ff2-8034-4a96074f7196",
+      "Source": "9aef5498-0e42-487b-adef-b83dbeeaf0eb",
+      "Destination": "c6bb153f-067e-4fe2-a162-1e6ada2293c5",
       "Type": null,
       "Kind": null,
       "Label": null
     },
-    "2f46311d-a243-4951-9815-14495b56df72": {
-      "Id": "2f46311d-a243-4951-9815-14495b56df72",
-      "Source": "400db2f3-b9fa-419f-bca5-6fa7f16eb780",
-      "Destination": "75f628c6-e9b6-4341-a4a4-75d0dd649023",
+    "8b3bffda-9ea9-41ee-bb5a-818e12073116": {
+      "Id": "8b3bffda-9ea9-41ee-bb5a-818e12073116",
+      "Source": "e8a3988d-6434-4463-9017-ef34e88cc31e",
+      "Destination": "9e9bdc73-afe8-416b-aa4d-bc5cfbd6315d",
       "Type": null,
       "Kind": null,
       "Label": null
     }
   },
   "Nodes": {
-    "42c7869b-b8ee-47aa-9285-e89eaa26e553": {
-      "Id": "42c7869b-b8ee-47aa-9285-e89eaa26e553",
+    "d9ea02eb-9869-493d-afc5-37eeb4540217": {
+      "Id": "d9ea02eb-9869-493d-afc5-37eeb4540217",
       "Label": "Inputs",
       "Kind": "Function",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "0caf6c7e-00a2-4aa4-bdff-87bccd7329e7",
+          "Id": "1fad6995-124a-4acf-b232-d60464661542",
           "Label": "p",
           "Type": "Number"
         }
       ],
       "MainOutput": {
-        "Id": "0caf6c7e-00a2-4aa4-bdff-87bccd7329e7",
+        "Id": "1fad6995-124a-4acf-b232-d60464661542",
         "Label": "p",
         "Type": "Number"
       }
     },
-    "e03d4f1c-6ad2-4262-8d9f-5e42e4f4b332": {
-      "Id": "e03d4f1c-6ad2-4262-8d9f-5e42e4f4b332",
+    "845ba1a0-25e5-4978-9a1c-f6d1303c10b2": {
+      "Id": "845ba1a0-25e5-4978-9a1c-f6d1303c10b2",
       "Label": "Output",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "75f628c6-e9b6-4341-a4a4-75d0dd649023",
+          "Id": "9e9bdc73-afe8-416b-aa4d-bc5cfbd6315d",
           "Label": "Result",
           "Type": "Number"
         }
@@ -59,55 +59,55 @@
       "Outputs": [],
       "MainOutput": null
     },
-    "7b5d1165-d1b6-4091-807b-08001f29cb57": {
-      "Id": "7b5d1165-d1b6-4091-807b-08001f29cb57",
+    "e5a08dd8-109c-41b5-b9df-0be8b4747a08": {
+      "Id": "e5a08dd8-109c-41b5-b9df-0be8b4747a08",
       "Label": "InvertEaseFunc",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "a53ed2ca-a397-4d9a-b8c6-23637e587bc7",
+          "Id": "a89bbd57-4f6b-4966-b868-5ffb59bc6192",
           "Label": "p",
           "Type": "Any"
         },
         {
-          "Id": "9be454db-13cb-4c8f-8740-2529f9476498",
+          "Id": "c6bb153f-067e-4fe2-a162-1e6ada2293c5",
           "Label": "easeIn",
           "Type": "Any"
         }
       ],
       "Outputs": [
         {
-          "Id": "400db2f3-b9fa-419f-bca5-6fa7f16eb780",
+          "Id": "e8a3988d-6434-4463-9017-ef34e88cc31e",
           "Label": "Out",
           "Type": "Any"
         }
       ],
       "MainOutput": {
-        "Id": "400db2f3-b9fa-419f-bca5-6fa7f16eb780",
+        "Id": "e8a3988d-6434-4463-9017-ef34e88cc31e",
         "Label": "Out",
         "Type": "Any"
       }
     },
-    "883d4b9a-8ac0-461f-a039-0924a4240e87": {
-      "Id": "883d4b9a-8ac0-461f-a039-0924a4240e87",
+    "352217c7-6e62-47bd-a057-38600a97ac72": {
+      "Id": "352217c7-6e62-47bd-a057-38600a97ac72",
       "Label": "QuadraticEaseIn",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "8f151a89-4307-4c85-8ca2-9337fb65f135",
+          "Id": "704f681a-c162-40f4-95fc-31a2cef5b8e8",
           "Label": "p",
           "Type": "Any"
         }
       ],
       "Outputs": [
         {
-          "Id": "fb3f6881-4a71-4063-be08-12040c2a0833",
+          "Id": "9aef5498-0e42-487b-adef-b83dbeeaf0eb",
           "Label": "Out",
           "Type": "Any"
         }
       ],
       "MainOutput": {
-        "Id": "fb3f6881-4a71-4063-be08-12040c2a0833",
+        "Id": "9aef5498-0e42-487b-adef-b83dbeeaf0eb",
         "Label": "Out",
         "Type": "Any"
       }

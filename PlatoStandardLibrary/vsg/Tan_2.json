@@ -2,31 +2,31 @@
   "Name": "Tan",
   "Connections": {},
   "Nodes": {
-    "59cbb228-a76e-4986-afc8-6189edad5edf": {
-      "Id": "59cbb228-a76e-4986-afc8-6189edad5edf",
+    "1c60b733-9e77-4c2a-8204-c750a6599d9a": {
+      "Id": "1c60b733-9e77-4c2a-8204-c750a6599d9a",
       "Label": "Inputs",
       "Kind": "Function",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "c953e633-42cf-4856-ab35-fa8f2d66d502",
+          "Id": "3b6b50a2-7001-410c-805f-a2673bccf9e8",
           "Label": "x",
           "Type": "Angle"
         }
       ],
       "MainOutput": {
-        "Id": "c953e633-42cf-4856-ab35-fa8f2d66d502",
+        "Id": "3b6b50a2-7001-410c-805f-a2673bccf9e8",
         "Label": "x",
         "Type": "Angle"
       }
     },
-    "3d764d27-5939-4f00-9e0c-18f005152f61": {
-      "Id": "3d764d27-5939-4f00-9e0c-18f005152f61",
+    "4795e79f-589f-45db-8e06-595d2dc616f0": {
+      "Id": "4795e79f-589f-45db-8e06-595d2dc616f0",
       "Label": "Output",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "e3453eea-5ea1-49bd-aea4-9f8b3a052a2b",
+          "Id": "59db5b07-008f-431c-82a0-66a3bade0944",
           "Label": "Result",
           "Type": "Number"
         }

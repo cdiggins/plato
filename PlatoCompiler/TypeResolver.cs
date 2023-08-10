@@ -111,13 +111,13 @@ namespace Plato.Compiler
                 ExpressionTypes[symbol] = type;
         }
 
-        public bool InheritsFrom(TypeDefSymbol self, TypeDefSymbol other)
+        public static bool InheritsFrom(TypeDefSymbol self, TypeDefSymbol other)
             => self.GetSelfAndAllInheritedTypes().Contains(other);
 
-        public bool Implements(TypeDefSymbol self, TypeDefSymbol other)
-            => self.GetAllImplementedConcepts().Contains(other);
+        public static bool Implements(TypeDefSymbol self, TypeDefSymbol other)
+            => self.GetAllImplementedConcepts().Select(c => c.Def).Contains(other);
 
-        public bool IsSuperType(TypeDefSymbol self, TypeDefSymbol other)
+        public static bool IsSubType(TypeDefSymbol self, TypeDefSymbol other)
         {
             if (self.Equals(other))
                 return true;
@@ -128,21 +128,21 @@ namespace Plato.Compiler
             return false;
         }
 
-        public bool IsSuperType(TypeDefSymbol self, IEnumerable<TypeDefSymbol> others)
-            => others.All(x => IsSuperType(self, x));
+        public static bool IsSubType(TypeDefSymbol self, IEnumerable<TypeDefSymbol> others)
+            => others.All(x => IsSubType(self, x));
 
-        public TypeDefSymbol Unify(IEnumerable<TypeDefSymbol> conceptsA, IEnumerable<TypeDefSymbol> conceptsB)
+        public static TypeDefSymbol Unify(IEnumerable<TypeDefSymbol> conceptsA, IEnumerable<TypeDefSymbol> conceptsB)
         {
             // Which concepts in A supercede all of those in B? 
-            var superTypesA = conceptsA.Where(c => IsSuperType(c, conceptsB));
+            var superTypesA = conceptsA.Where(c => IsSubType(c, conceptsB));
 
             // Which concepts in B supercede all of those in B
-            var superTypesB = conceptsB.Where(c => IsSuperType(c, conceptsA));
+            var superTypesB = conceptsB.Where(c => IsSubType(c, conceptsA));
 
             throw new NotImplementedException();
         }
 
-        public TypeDefSymbol Unify(TypeDefSymbol a, TypeDefSymbol b)
+        public static TypeDefSymbol Unify(TypeDefSymbol a, TypeDefSymbol b)
         {
             // If one type inher
             
@@ -178,13 +178,6 @@ namespace Plato.Compiler
             return b;
         }
 
-        public TypeDefSymbol Choose(FunctionGroupSymbol fs)
-        {
-            Debug.WriteLine($"TODO: function group choosing");
-            return ComputeType(fs.Functions[0]);
-        }
-
-
         TypeDefSymbol InternalComputeType(Symbol s)
         {
             switch (s)
@@ -203,29 +196,26 @@ namespace Plato.Compiler
                         ComputeType(conditionalExpressionSymbol.IfTrue),
                         ComputeType(conditionalExpressionSymbol.IfFalse));
 
-                case FunctionGroupSymbol functionGroupSymbol:
-                    return Choose(functionGroupSymbol);
+                case MemberGroupSymbol functionGroupSymbol:
+                    return ComputeType(functionGroupSymbol.Type);
 
                 case FunctionCallSymbol functionCallSymbol:
                     return ComputeType(functionCallSymbol.Function);
 
                 case LiteralSymbol literalSymbol:
-                    switch (literalSymbol.Type)
+                    switch (literalSymbol.LiteralType)
                     {
                         case LiteralTypes.Int:
-                            return PrimitiveTypes.Int;
+                            return PrimitiveTypes.Integer;
                         case LiteralTypes.Float:
                             return PrimitiveTypes.Float;
                         case LiteralTypes.Bool:
-                            return PrimitiveTypes.Bool;
+                            return PrimitiveTypes.Boolean;
                         case LiteralTypes.String:
                             return PrimitiveTypes.String;
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
-
-                case NoValueSymbol noValueSymbol:
-                    throw new NotImplementedException("Not implemented yet?");
 
                 case RefSymbol refSymbol:
                     return ComputeType(refSymbol.Def);

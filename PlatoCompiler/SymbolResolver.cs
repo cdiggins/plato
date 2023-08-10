@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Parakeet.Demos.CSharp;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Plato.Compiler
 {
     /// <summary>
     /// Used primarily to figure out what each name means, and what the type of each expression is.
-    /// This allows us to figure out which methods will get called at run-time.
+    /// This allows us to figure out which methods will get cal led at run-time.
     /// An abstract evaluator returns abstract values which have types, scopes, and locations 
     /// </summary>
     public class SymbolResolver
@@ -47,9 +49,9 @@ namespace Plato.Compiler
             BindType(PrimitiveTypes.Self);
             BindType(PrimitiveTypes.String);
             BindType(PrimitiveTypes.Float);
-            BindType(PrimitiveTypes.Int);
+            BindType(PrimitiveTypes.Integer);
             BindType(PrimitiveTypes.Type);
-            BindType(PrimitiveTypes.Bool);
+            BindType(PrimitiveTypes.Boolean);
         }
 
         public void BindPredefined(TypeRefSymbol type, string name)
@@ -67,21 +69,26 @@ namespace Plato.Compiler
         {
             if (value.Kind == TypeKind.Library)
                 return null;
-            TypeBindingsScope = TypeBindingsScope.Bind(value.Name, value);
-            BindValue(value.Name, value);
+            return BindType(value.Name, value);
+        }
+
+        public TypeDefSymbol BindType(string name, TypeDefSymbol value)
+        {
+            TypeBindingsScope = TypeBindingsScope.Bind(name, value);
             return value;
         }
 
-        public FunctionGroupSymbol BindFunctionToGroup(string name, MemberDefSymbol method)
+        public MemberGroupSymbol BindMemberToGroup(MemberDefSymbol member)
         {
+            var name = member.Name;
             var val = ValueBindingsScope.GetValue(name);
 
-            if (val is FunctionGroupSymbol group)
+            if (val is MemberGroupSymbol group)
             {
-                return BindValue(name, group.Add(method));
+                return BindValue(name, group.Add(member));
             }
 
-            var fgs = new FunctionGroupSymbol(new[] { method }, method.Name);
+            var fgs = new MemberGroupSymbol(new[] { member }, name);
             return BindValue(name, fgs);
         }
 
@@ -148,6 +155,158 @@ namespace Plato.Compiler
                     ResolveType(astParameterDeclaration.Type)));
         }
 
+        public static bool CanCastTo(TypeRefSymbol fromType, TypeRefSymbol toType, bool allowConversions = true)
+        {
+            var fromDef = fromType.Def;
+            var toDef = toType.Def;
+            if (fromDef == null || toDef == null) 
+                return true;
+            if (toDef.Name == "Any")
+                return true;
+            if (fromDef.Name == "Any")
+                return true;
+            if (fromDef.Name == toDef.Name)
+                return true;
+            if (TypeResolver.IsSubType(fromDef, toDef))
+                return true;
+
+            if (allowConversions)
+            {
+                // We look for the implicit operators.
+                // TODO: look for functions of the name "ToX" and "FromX" when allowing more than just the default. 
+
+                if (toType.Def.IsType())
+                {
+                    // TODO: check that the type of each argument matches 
+                    if (fromType.Name == "Tuple")
+                        return fromType.TypeArgs.Count == toType.Def.Fields.Count;
+                    
+                    // All types have a constructor that acts as an implicit cast 
+                    if (toType.Def.Fields.Count == 1)
+                    {
+                        var fieldType = toType.Def.Fields[0].Type;
+                        return CanCastTo(fromType, fieldType, false);
+                    }
+                }
+
+                if (fromType.Def.IsType())
+                {
+                    // TODO: check that the type of each argument matches 
+                    if (toType.Name == "Tuple")
+                        return toType.TypeArgs.Count == fromType.Def.Fields.Count;
+
+                    // All types with one field can implicit cast to that field. 
+                    if (fromType.Def.Fields.Count == 1)
+                    {
+                        var fieldType = fromType.Def.Fields[0].Type;
+                        return CanCastTo(fieldType, toType, false);
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public static int DistanceFromAny(TypeRefSymbol parameterType)
+        {
+            if (parameterType == null || parameterType.Name == "Any")
+                return 1;
+            if (parameterType.Def.IsConcept())
+                return 2;
+            return 3;
+        }
+
+
+        public static int MatchScore(TypeRefSymbol argType, TypeRefSymbol parameterType)
+        {
+            if (argType == null || argType.Name == "Any")
+                return DistanceFromAny(parameterType);
+            if (parameterType == null || parameterType.Name == "Any")
+                return DistanceFromAny(argType);
+            var argDef = argType.Def;
+            var paramDef = parameterType.Def;
+            if (argDef.Name == paramDef.Name)
+                return 1;
+            return 1;
+        }
+
+        public IReadOnlyList<FunctionSymbol> FindMatchingFunctions(IReadOnlyList<FunctionSymbol> funcs,
+            IReadOnlyList<TypeRefSymbol> argumentTypes)
+        {
+            var candidates = funcs.Where(f => f.Parameters.Count == argumentTypes.Count).ToList();
+
+            for (var i = 0; i < argumentTypes.Count; ++i)
+            {
+                candidates = candidates.Where(c => Matches(argumentTypes[i], c.Parameters[i].Type)).ToList();
+            }
+
+            return candidates;
+        }
+
+        public static bool Matches(TypeRefSymbol argType, TypeRefSymbol parameterType)
+        {
+            if (argType == null) return true;
+            if (parameterType == null) return true;
+            return CanCastTo(argType, parameterType);
+        }
+
+        public static TypeRefSymbol GetArrayParameter(TypeRefSymbol trs)
+        {
+            if (trs.Name == "Array")
+            {
+                if (trs.TypeArgs.Count != 1)
+                    throw new Exception("Arrays must have one type parameter");
+                return trs.TypeArgs[0];
+            }
+
+            foreach (var tmp in trs.Def.GetAllImplementedConcepts())
+            {
+                if (tmp.Name == "Array")
+                    return GetArrayParameter(tmp);
+            }
+
+            return trs;
+        }
+
+        public FunctionSymbol FindBestFunction(AstNode location, MemberGroupSymbol mgs, IReadOnlyList<ArgumentSymbol> arguments)
+        {
+            var functions = mgs.Members.Select(m => m.Function).Where(f => f.Parameters.Count == arguments.Count).ToList();
+
+            if (functions.Count == 0)
+            {
+                LogError($"Found no functions in group {mgs} that matched number of arguments {arguments.Count}", location);
+                return null;
+            }
+
+            var argTypes = arguments.Select(a => a.Type).ToList();
+            var candidates = FindMatchingFunctions(functions, argTypes);
+            var argsStr = string.Join(", ", arguments.Select(arg => $"{arg.Type}"));
+
+            if (candidates.Count == 0)
+            {
+                var argTypes2 = argTypes.Select(GetArrayParameter).ToList();
+                candidates = FindMatchingFunctions(functions, argTypes2);
+
+                if (candidates.Count == 0)
+                {
+                    LogError($"Found no functions in group {mgs} that matched arguments ({argsStr})", location);
+                    var argTypes3 = argTypes.Select(GetArrayParameter).ToList();
+                    return null;
+                }
+            }
+
+            if (candidates.Count == 1)
+            {
+                return candidates[0];
+            }
+
+            Debug.Assert(candidates.Count > 1);
+
+            var candidateStr = string.Join(",", candidates.Select(c => c.Signature));
+            LogError($"Found too many matches ({candidates.Count}) for {mgs} with argument types ({argsStr}) : {candidateStr}", location);
+            return candidates[0];
+        }
+            
         // This is not a pure function. It updates the scope every time a new value is bound
         public Symbol Resolve(AstNode node)
         {
@@ -176,9 +335,6 @@ namespace Plato.Compiler
                         return Resolve(astBlock.Statements[0]);
                     }
 
-                    case AstBreak astBreak:
-                        return NoValueSymbol;
-
                     case AstMulti astMulti:
                     {
                         if (astMulti.Nodes.Count == 0)
@@ -203,9 +359,6 @@ namespace Plato.Compiler
                     case AstConstant astConstant1:
                         return new LiteralSymbol(astConstant1.Type, astConstant1.Value);
 
-                    case AstContinue astContinue:
-                        return NoValueSymbol;
-
                     case AstExpressionStatement astExpressionStatement:
                         return Scoped(() => Resolve(astExpressionStatement.Expression));
 
@@ -216,11 +369,32 @@ namespace Plato.Compiler
                     {
                         var args = astInvoke.AstArguments.Select((a, i) =>
                             new ArgumentSymbol(Resolve(a), i)).ToArray();
-                        var func = Resolve(astInvoke.Function);
+                        foreach (var a in args)
+                            if (a.Type == null)
+                                throw new Exception("Could not determine argument type");
+                        var funcRef = Resolve(astInvoke.Function);
 
-                        // TODO: we need to figure out what function it is because really 
-                        // evaluating a name will gives us a method group!
-                        return new FunctionCallSymbol(func, args);
+                        if (!(funcRef is RefSymbol rs))
+                            throw new Exception("Can only call references");
+
+                        var func = rs.Def; 
+
+                        if (func is FunctionSymbol fs)
+                            return new FunctionCallSymbol(fs, args);
+                        if (func is MemberGroupSymbol fgs)
+                        {
+                            var bestFunc = FindBestFunction(astInvoke, fgs, args);
+                            return new FunctionCallSymbol(bestFunc, args);
+                        }
+
+                        if (func is ParameterSymbol ps)
+                            return new FunctionCallSymbol(ps, args);
+
+                        // TODO: Do I really need predefined symbols? Why not have them just as intrinsics.
+                        if (func is PredefinedSymbol pds)
+                            return new FunctionCallSymbol(pds, args);
+
+                        throw new Exception($"Can't invoke symbol {func}");
                     }
 
                     case AstLambda astLambda:
@@ -229,12 +403,9 @@ namespace Plato.Compiler
                         var ps = astLambda.Parameters.Select(Resolve).ToArray();
                         var body = Resolve(astLambda.Body);
                         var r = new FunctionSymbol("__lambda__",
-                            PrimitiveTypes.Lambda.ToRef, body, ps);
+                            PrimitiveTypes.Lambda.ToRef(), body, ps);
                         return r;
                     }
-
-                    case AstNoop astNoop:
-                        return NoValueSymbol;
 
                     case AstVarDef astVarDef:
                         return BindValue(astVarDef.Name,
@@ -268,16 +439,18 @@ namespace Plato.Compiler
             foreach (var typeDef in TypeDefs.ToList())
             {
                 var astTypeDeclaration = SymbolsToNames[typeDef] as AstTypeDeclaration;
+                TypeBindingsScope = TypeBindingsScope.Push();
+
+                // TODO: all of the type bindings have to be done again when resolving functions! 
 
                 foreach (var tp in astTypeDeclaration.TypeParameters)
                 {
-                    var tpd = new TypeParameterDefSymbol(tp.Name);
-                    BindType(tpd);
+                    var tpd = new TypeParameterDefSymbol(tp.Name, ResolveType(tp.Constraint));
+                    BindType(tpd.Name, tpd.Constraint.Def);
                     typeDef.TypeParameters.Add(tpd);
                 }
 
-                // TODO: I'm not sure about this. It exists because I use the name a s a cosntructor and function.  
-                BindValue(typeDef.Name, typeDef);
+                BindType("Self", typeDef);
 
                 foreach (var m in astTypeDeclaration.Members)
                 {
@@ -286,14 +459,22 @@ namespace Plato.Compiler
                         var fDef = new FieldDefSymbol(typeDef, ResolveType(fd.Type), fd.Name);
                         typeDef.Fields.Add(fDef);
                         SymbolsToNames.Add(fDef, fd);
-                        BindFunctionToGroup(fDef.Name, fDef);
+                        BindMemberToGroup(fDef);
                     }
                     else if (m is AstMethodDeclaration md)
                     {
                         var mDef = new MethodDefSymbol(typeDef, ResolveType(md.Type), md.Name);
+
+                        // Create an empty body function first. It will be replaced in a separate step.  
+                        var list = new List<ParameterSymbol>();
+                        foreach (var p in md.Parameters)
+                            list.Add(new ParameterSymbol(p.Name, ResolveType(p.Type)));
+                        var f = new FunctionSymbol(md.Name, mDef.Type, null, list.ToArray());
+                        mDef.Function = f;
+
                         typeDef.Methods.Add(mDef);
                         SymbolsToNames.Add(mDef, md);
-                        BindFunctionToGroup(mDef.Name, mDef);
+                        BindMemberToGroup(mDef);
                     }
                     else
                     {
@@ -302,6 +483,19 @@ namespace Plato.Compiler
                     }
                 }
 
+                TypeBindingsScope = TypeBindingsScope.Pop();
+            }
+
+            // Foreach type add the inherited and the implemented type.
+            foreach (var td in TypeDefs)
+            {
+                var astTypeDecl = SymbolsToNames[td] as AstTypeDeclaration;
+
+                foreach (var inheritedType in astTypeDecl.Inherits)
+                    td.Inherits.Add(ResolveType(inheritedType));
+
+                foreach (var implementedType in astTypeDecl.Implements)
+                    td.Implements.Add(ResolveType(implementedType));
             }
 
             // Foreach type def create the members 
@@ -315,6 +509,14 @@ namespace Plato.Compiler
 
                 ValueBindingsScope = ValueBindingsScope.Push();
                 TypeBindingsScope = TypeBindingsScope.Push();
+
+                foreach (var tpd in typeDef.TypeParameters)
+                    BindType(tpd.Name, tpd.Constraint.Def);
+
+                BindType("Self", typeDef);
+
+                if (typeDef.IsConcept() || typeDef.IsType())
+                    BindValue("Self", new PredefinedSymbol(typeDef.ToRef(), "Self"));
 
                 // For each method in the type 
                 foreach (var method in typeDef.Methods)
@@ -338,18 +540,6 @@ namespace Plato.Compiler
                 TypeBindingsScope = TypeBindingsScope.Pop();
             }
 
-            // Foreach type add the inherited and the implemented type.
-            foreach (var td in TypeDefs)
-            {
-                var astTypeDecl = SymbolsToNames[td] as AstTypeDeclaration;
-                
-                foreach (var inheritedType in astTypeDecl.Inherits)
-                    td.Inherits.Add(ResolveType(inheritedType));
-
-                foreach (var implementedType in astTypeDecl.Implements)
-                    td.Implements.Add(ResolveType(implementedType));
-            }
-
             return TypeDefs;
         }
 
@@ -360,8 +550,5 @@ namespace Plato.Compiler
             ValueBindingsScope = ValueBindingsScope.Pop();
             return r;
         }
-
-        public static NoValueSymbol NoValueSymbol 
-            = NoValueSymbol.Instance;
     }
 }

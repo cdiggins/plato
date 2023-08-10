@@ -112,11 +112,11 @@ namespace Plato.Compiler
         {
             if (ds is TypeDefSymbol ts) 
                 return $"{ts.UniqueName}_{ts.Kind}";
-            if (ds is FunctionGroupSymbol fgs)
+            if (ds is MemberGroupSymbol fgs)
             {
-                if (fgs.Functions.Count > 1)
+                if (fgs.Members.Count > 1)
                     Debug.WriteLine($"Multiple functions found");
-                return $"{fgs.Functions[0].UniqueName}";
+                return $"{fgs.Members[0].UniqueName}";
             }
 
             return $"{ds.UniqueName}";
@@ -169,8 +169,8 @@ namespace Plato.Compiler
             var concepts = typeDef.GetAllImplementedConcepts();
             foreach (var concept in concepts)
             {
-                var cName = GetName(concept);
-                foreach (var m in concept.Methods)
+                var cName = GetName(concept.Def);
+                foreach (var m in concept.Def.Methods)
                 {
                     var f = m.Function;
                     var fName = GetName(f);
@@ -191,9 +191,9 @@ namespace Plato.Compiler
             var conceptNames = new List<string>();
             foreach (var concept in concepts)
             {
-                if (concept.Kind != TypeKind.Concept) 
+                if (concept.Def.Kind != TypeKind.Concept) 
                     throw new Exception("Expected concept");
-                var conceptName = GetName(concept);
+                var conceptName = GetName(concept.Def);
                 conceptNames.Add(conceptName);
                 WriteLine($"static {conceptName} = new {conceptName}({name});");
             }
@@ -288,9 +288,6 @@ namespace Plato.Compiler
                 case MemberDefSymbol member:
                     throw new Exception("Not implemented");
 
-                case NoValueSymbol noValue:
-                    return Write("_");
-
                 case ParameterSymbol parameter:
                     return Write(GetName(parameter))
                         .AnnotateType(parameter);
@@ -303,6 +300,9 @@ namespace Plato.Compiler
 
                 case VariableSymbol variable:
                     return Write(GetName(variable));
+
+                case PredefinedSymbol predefined:
+                    return Write(predefined.Name);
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(value));

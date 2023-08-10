@@ -189,7 +189,8 @@ namespace Plato.Compiler
         }
 
         public AstTypeParameter ToAst(CstTypeParameter typeParameter)
-            => Create(typeParameter, new AstTypeParameter(typeParameter.Identifier.Node.Text));
+            => Create(typeParameter, new AstTypeParameter(typeParameter.Identifier.Node.Text, 
+                ToAst(typeParameter.TypeAnnotation.Node)));
 
         public AstTypeNode ToAst(CstTypeAnnotation typeAnnotation) 
             => ToAst(typeAnnotation?.TypeExpr?.Node?.InnerTypeExpr?.Node);
@@ -208,19 +209,15 @@ namespace Plato.Compiler
 
         public AstMethodDeclaration ToAst(CstMethodDeclaration md)
         {
-            var name = md.Identifier.Node.Text;
             var ps = md.FunctionParameterList.Node.FunctionParameter.Nodes.Select(ToAst).ToList();
-            Debug.WriteLine($"TODO: need to properly handle parameterized functions. I don't thing they parse.");
-            var ts = Enumerable.Empty<AstTypeParameter>();
+            // Methods with no arguments have an implicit "Self" argument. 
+            if (ps.Count == 0)
+                ps.Add(new AstParameterDeclaration("self", new AstTypeNode("Self")));
             return Create(md, new AstMethodDeclaration(
                 ToAst(md.Identifier.Node),
                 ToAst(md.TypeAnnotation.Node),
                 ps,
-                ts,
                 ToAst(md.FunctionBody.Node)));
-            // parameters
-            // type parameters
-            // body
         }
 
         public AstMemberDeclaration ToAst(CstMemberDeclaration memberDeclaration)

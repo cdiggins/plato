@@ -1,57 +1,57 @@
 {
   "Name": "SineEaseIn",
   "Connections": {
-    "24c775f0-1b7e-4c10-8458-698920b18d0a": {
-      "Id": "24c775f0-1b7e-4c10-8458-698920b18d0a",
-      "Source": "1e799615-41f3-47d8-b2ef-956713c33576",
-      "Destination": "b32c06b2-3bcf-494b-816e-3c9a7b50bc5d",
+    "89574ee2-4401-4070-8cbd-5f549b5f5a45": {
+      "Id": "89574ee2-4401-4070-8cbd-5f549b5f5a45",
+      "Source": "86e7f73d-b34d-4c53-b76c-0e0fc359b8d3",
+      "Destination": "25d3eba1-ba69-47e2-a475-9754358b81eb",
       "Type": null,
       "Kind": null,
       "Label": null
     },
-    "946f4456-75e6-4146-ad57-86666ecfd4a4": {
-      "Id": "946f4456-75e6-4146-ad57-86666ecfd4a4",
-      "Source": "c6ca535c-bbc3-438a-82fa-b663fb08a89a",
-      "Destination": "30aaa11f-bbca-42aa-9f1b-3128fbfbe1b9",
+    "2ac12114-1a93-428e-a524-e507d97c0df0": {
+      "Id": "2ac12114-1a93-428e-a524-e507d97c0df0",
+      "Source": "91a0358e-b42b-4170-83bf-df5ed293989a",
+      "Destination": "71bb1620-8a6a-4fc3-bd5e-ed862c64fe73",
       "Type": null,
       "Kind": null,
       "Label": null
     },
-    "de058597-c8f9-49e7-931c-99a0aa020bc2": {
-      "Id": "de058597-c8f9-49e7-931c-99a0aa020bc2",
-      "Source": "e7b167b2-fa5a-4d20-8b9a-15e0ce2c55d5",
-      "Destination": "7da6d926-fa36-4cc5-bbdb-17209c7a7f09",
+    "59f3339e-dad3-46ec-a11e-94133e2ae21b": {
+      "Id": "59f3339e-dad3-46ec-a11e-94133e2ae21b",
+      "Source": "9d5f70e2-5888-49d5-b310-31e49a866c94",
+      "Destination": "b0bad309-9056-4e91-bb83-2a46de28be70",
       "Type": null,
       "Kind": null,
       "Label": null
     }
   },
   "Nodes": {
-    "ea30f120-5375-49fb-b5bf-904e5ceb7126": {
-      "Id": "ea30f120-5375-49fb-b5bf-904e5ceb7126",
+    "250ce1d8-6a79-4b5b-bb78-2b369b9070be": {
+      "Id": "250ce1d8-6a79-4b5b-bb78-2b369b9070be",
       "Label": "Inputs",
       "Kind": "Function",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "1e799615-41f3-47d8-b2ef-956713c33576",
+          "Id": "86e7f73d-b34d-4c53-b76c-0e0fc359b8d3",
           "Label": "p",
           "Type": "Number"
         }
       ],
       "MainOutput": {
-        "Id": "1e799615-41f3-47d8-b2ef-956713c33576",
+        "Id": "86e7f73d-b34d-4c53-b76c-0e0fc359b8d3",
         "Label": "p",
         "Type": "Number"
       }
     },
-    "9d450319-8b8f-45ca-ae2c-a2a5f1963e42": {
-      "Id": "9d450319-8b8f-45ca-ae2c-a2a5f1963e42",
+    "df722489-8bc9-46c7-b0c1-21dea42c580b": {
+      "Id": "df722489-8bc9-46c7-b0c1-21dea42c580b",
       "Label": "Output",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "7da6d926-fa36-4cc5-bbdb-17209c7a7f09",
+          "Id": "b0bad309-9056-4e91-bb83-2a46de28be70",
           "Label": "Result",
           "Type": "Number"
         }
@@ -59,55 +59,55 @@
       "Outputs": [],
       "MainOutput": null
     },
-    "65061cb3-8ccc-4af3-ab56-6542d11b0678": {
-      "Id": "65061cb3-8ccc-4af3-ab56-6542d11b0678",
+    "ed52b688-07b4-4c2e-8138-22febd0e70cc": {
+      "Id": "ed52b688-07b4-4c2e-8138-22febd0e70cc",
       "Label": "InvertEaseFunc",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "b32c06b2-3bcf-494b-816e-3c9a7b50bc5d",
+          "Id": "25d3eba1-ba69-47e2-a475-9754358b81eb",
           "Label": "p",
           "Type": "Any"
         },
         {
-          "Id": "30aaa11f-bbca-42aa-9f1b-3128fbfbe1b9",
+          "Id": "71bb1620-8a6a-4fc3-bd5e-ed862c64fe73",
           "Label": "easeIn",
           "Type": "Any"
         }
       ],
       "Outputs": [
         {
-          "Id": "e7b167b2-fa5a-4d20-8b9a-15e0ce2c55d5",
+          "Id": "9d5f70e2-5888-49d5-b310-31e49a866c94",
           "Label": "Out",
           "Type": "Any"
         }
       ],
       "MainOutput": {
-        "Id": "e7b167b2-fa5a-4d20-8b9a-15e0ce2c55d5",
+        "Id": "9d5f70e2-5888-49d5-b310-31e49a866c94",
         "Label": "Out",
         "Type": "Any"
       }
     },
-    "7550b8bd-1b76-48b5-9c73-343a1d88a840": {
-      "Id": "7550b8bd-1b76-48b5-9c73-343a1d88a840",
+    "2b5d1cf4-76d2-4a8a-a02c-85e08deefaba": {
+      "Id": "2b5d1cf4-76d2-4a8a-a02c-85e08deefaba",
       "Label": "SineEaseOut",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "f870c93d-cbd3-42e7-b70a-500da2aa72f5",
+          "Id": "60b8f07c-c5d3-4954-ad3a-c4ff283dd8ea",
           "Label": "p",
           "Type": "Any"
         }
       ],
       "Outputs": [
         {
-          "Id": "c6ca535c-bbc3-438a-82fa-b663fb08a89a",
+          "Id": "91a0358e-b42b-4170-83bf-df5ed293989a",
           "Label": "Out",
           "Type": "Any"
         }
       ],
       "MainOutput": {
-        "Id": "c6ca535c-bbc3-438a-82fa-b663fb08a89a",
+        "Id": "91a0358e-b42b-4170-83bf-df5ed293989a",
         "Label": "Out",
         "Type": "Any"
       }

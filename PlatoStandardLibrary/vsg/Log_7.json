@@ -2,36 +2,36 @@
   "Name": "Log",
   "Connections": {},
   "Nodes": {
-    "af86f346-bd6e-4b3a-938f-af216ad0b138": {
-      "Id": "af86f346-bd6e-4b3a-938f-af216ad0b138",
+    "574cac50-06a0-4d08-84bb-18c8c518ad8e": {
+      "Id": "574cac50-06a0-4d08-84bb-18c8c518ad8e",
       "Label": "Inputs",
       "Kind": "Function",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "38669e87-27a4-48e9-844f-c1267591e505",
+          "Id": "c1b51f85-f425-43e7-965c-6064f657da57",
           "Label": "x",
           "Type": "Number"
         },
         {
-          "Id": "391f7b42-ae65-41d9-ab6c-27fa4332b4ee",
+          "Id": "1f357a2b-3778-4def-9977-79eeaf04bb25",
           "Label": "y",
           "Type": "Number"
         }
       ],
       "MainOutput": {
-        "Id": "38669e87-27a4-48e9-844f-c1267591e505",
+        "Id": "c1b51f85-f425-43e7-965c-6064f657da57",
         "Label": "x",
         "Type": "Number"
       }
     },
-    "7e6f3f26-7f48-425e-a9e6-4cd97da57ecb": {
-      "Id": "7e6f3f26-7f48-425e-a9e6-4cd97da57ecb",
+    "bca617f3-5784-4bbe-8efb-ac2af27506ea": {
+      "Id": "bca617f3-5784-4bbe-8efb-ac2af27506ea",
       "Label": "Output",
       "Kind": "Function",
       "Inputs": [
         {
-          "Id": "b6192594-e432-4aa8-b451-58673ff27ff0",
+          "Id": "d68f05f7-3f4e-4fe2-9afb-15e9087eeb62",
           "Label": "Result",
           "Type": "Number"
         }
