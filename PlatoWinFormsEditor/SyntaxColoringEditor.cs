@@ -161,7 +161,7 @@ namespace PlatoWinFormsEditor
             Input.Select(selectionStart, selectionLength);
         }
 
-        public void Parse()
+        public void ApplyStylesAndOutputErrors()
         {
             foreach (var node in Parser.TokenNodes)
             {

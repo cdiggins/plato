@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using System.Resources;
 
 namespace Plato.Compiler
 {
@@ -251,6 +252,9 @@ namespace Plato.Compiler
 
                 case PredefinedSymbol predefined:
                     return Write(predefined.Name);
+
+                case MemberGroupSymbol memberGroup:
+                    return Write(memberGroup.Name);
             }
 
             throw new ArgumentOutOfRangeException(nameof(value));

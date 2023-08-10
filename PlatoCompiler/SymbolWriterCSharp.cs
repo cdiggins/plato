@@ -411,6 +411,9 @@ namespace Plato.Compiler
                 case FunctionSymbol function:
                     return Write(function);
                     
+                case MemberGroupSymbol memberGroup:
+                    return Write(memberGroup.Name);
+
                 case FunctionCallSymbol functionResult:
                     return Write(functionResult.Function).Write("(")
                         .WriteCommaList(functionResult.Args).Write(")");

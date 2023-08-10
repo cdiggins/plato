@@ -28,7 +28,7 @@ public static partial class Extensions
 {
     public static Value Default<Self>(this Value self) where Self: Value<Self>
     {
-        return ((Self));
+        return Default(FieldValues(Self));
     }
 }
 public interface Vector<Self>: Array<Self>, Value<Self>, Numerical<Self>, Arithmetic<Self>
@@ -39,11 +39,11 @@ public static partial class Extensions
 {
     public static Count Count<Self, T>(this Vector v) where Self: Vector<Self, T>
     {
-        return ((Self));
+        return Count(FieldTypes(Self));
     }
     public static Numerical At<Self, T>(this Vector v, Index n) where Self: Vector<Self, T>
     {
-        return ((v), n);
+        return At(FieldValues(v), n);
     }
 }
 public interface Measure<Self>: Value<Self>, ScalarArithmetic<Self>, Equatable<Self>, Comparable<Self>, Magnitudinal<Self>
@@ -54,7 +54,7 @@ public static partial class Extensions
 {
     public static Number Value<Self>(this Measure x) where Self: Measure<Self>
     {
-        return ((x), 0);
+        return At(FieldValues(x), 0);
     }
 }
 public interface Numerical<Self>: Value<Self>, Arithmetic<Self>, Equatable<Self>, Comparable<Self>, Magnitudinal<Self>, ScalarArithmetic<Self>
@@ -66,19 +66,19 @@ public static partial class Extensions
 {
     public static Numerical Zero<Self>(this Numerical self) where Self: Numerical<Self>
     {
-        return ((Self));
+        return Zero(FieldTypes(Self));
     }
     public static Numerical One<Self>(this Numerical self) where Self: Numerical<Self>
     {
-        return ((Self));
+        return One(FieldTypes(Self));
     }
     public static Numerical MinValue<Self>(this Numerical self) where Self: Numerical<Self>
     {
-        return ((Self));
+        return MinValue(FieldTypes(Self));
     }
     public static Numerical MaxValue<Self>(this Numerical self) where Self: Numerical<Self>
     {
-        return ((Self));
+        return MaxValue(FieldTypes(Self));
     }
 }
 public interface Magnitudinal<Self>: Value<Self>
@@ -89,7 +89,7 @@ public static partial class Extensions
 {
     public static Number Magnitude<Self>(this Magnitudinal x) where Self: Magnitudinal<Self>
     {
-        return ((((x))));
+        return SquareRoot(Sum(Square(FieldValues(x))));
     }
 }
 public interface Comparable<Self>: Value<Self>
@@ -103,57 +103,90 @@ public static partial class Extensions
 public interface Equatable<Self>: Value<Self>
     where Self : Equatable<Self>
 {
-    Boolean Equals(Equatable a, Equatable b);
 }
 public static partial class Extensions
 {
+    public static Boolean Equals<Self>(this Equatable a, Equatable b) where Self: Equatable<Self>
+    {
+        return All(Equals(FieldValues(a), FieldValues(b)));
+    }
 }
 public interface Arithmetic<Self>: Value<Self>
     where Self : Arithmetic<Self>
 {
-    Arithmetic Add(Arithmetic self, Arithmetic other);
-    Arithmetic Negative(Arithmetic self);
-    Arithmetic Multiply(Arithmetic self, Arithmetic other);
-    Arithmetic Divide(Arithmetic self, Arithmetic other);
-    Arithmetic Modulo(Arithmetic self, Arithmetic other);
 }
 public static partial class Extensions
 {
+    public static Arithmetic Add<Self>(this Arithmetic self, Arithmetic other) where Self: Arithmetic<Self>
+    {
+        return Add(FieldValues(self), FieldValues(other));
+    }
+    public static Arithmetic Negative<Self>(this Arithmetic self) where Self: Arithmetic<Self>
+    {
+        return Negative(FieldValues(self));
+    }
     public static Arithmetic Reciprocal<Self>(this Arithmetic self) where Self: Arithmetic<Self>
     {
-        return ((self));
+        return Reciprocal(FieldValues(self));
+    }
+    public static Arithmetic Multiply<Self>(this Arithmetic self, Arithmetic other) where Self: Arithmetic<Self>
+    {
+        return Add(FieldValues(self), FieldValues(other));
+    }
+    public static Arithmetic Divide<Self>(this Arithmetic self, Arithmetic other) where Self: Arithmetic<Self>
+    {
+        return Divide(FieldValues(self), FieldValues(other));
+    }
+    public static Arithmetic Modulo<Self>(this Arithmetic self, Arithmetic other) where Self: Arithmetic<Self>
+    {
+        return Modulo(FieldValues(self), FieldValues(other));
     }
 }
 public interface ScalarArithmetic<Self>: Value<Self>
     where Self : ScalarArithmetic<Self>
 {
-    ScalarArithmetic Add(ScalarArithmetic self, Number scalar);
-    ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar);
-    ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar);
 }
 public static partial class Extensions
 {
+    public static ScalarArithmetic Add<Self>(this ScalarArithmetic self, Number scalar) where Self: ScalarArithmetic<Self>
+    {
+        return Add(FieldValues(self), scalar);
+    }
     public static ScalarArithmetic Subtract<Self>(this ScalarArithmetic self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return (self, (scalar));
+        return Add(self, Negative(scalar));
+    }
+    public static ScalarArithmetic Multiply<Self>(this ScalarArithmetic self, Number scalar) where Self: ScalarArithmetic<Self>
+    {
+        return Multiply(FieldValues(self), scalar);
     }
     public static ScalarArithmetic Divide<Self>(this ScalarArithmetic self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return (self, Arithmetic Reciprocal(Arithmetic self){
-            return ((self));
-        }
-        (scalar));
+        return Multiply(self, Reciprocal(scalar));
+    }
+    public static ScalarArithmetic Modulo<Self>(this ScalarArithmetic self, Number scalar) where Self: ScalarArithmetic<Self>
+    {
+        return Modulo(FieldValues(self), scalar);
     }
 }
 public interface Boolean<Self>
     where Self : Boolean<Self>
 {
-    Boolean And(Boolean a, Boolean b);
-    Boolean Or(Boolean a, Boolean b);
-    Boolean Not(Boolean a);
 }
 public static partial class Extensions
 {
+    public static Boolean And<Self>(this Boolean a, Boolean b) where Self: Boolean<Self>
+    {
+        return And(FieldValues(a), FieldValues(b));
+    }
+    public static Boolean Or<Self>(this Boolean a, Boolean b) where Self: Boolean<Self>
+    {
+        return Or(FieldValues(a), FieldValues(b));
+    }
+    public static Boolean Not<Self>(this Boolean a) where Self: Boolean<Self>
+    {
+        return Not(FieldValues(a));
+    }
 }
 public interface Interval<Self>: Vector<Self>
     where Self : Interval<Self>
@@ -172,28 +205,19 @@ public class Integer: Numerical<Integer>
     public static implicit operator Integer(Integer value) => new Integer(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public Integer Value { get; }
 }
 public class Count: Numerical<Count>
@@ -204,28 +228,19 @@ public class Count: Numerical<Count>
     public static implicit operator Count(Integer value) => new Integer(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public Integer Value { get; }
 }
 public class Index: Value<Index>
@@ -246,28 +261,19 @@ public class Number: Numerical<Number>
     public static implicit operator Number(Float value) => new Float(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public Float Value { get; }
 }
 public class Unit: Numerical<Unit>
@@ -278,28 +284,19 @@ public class Unit: Numerical<Unit>
     public static implicit operator Unit(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public Number Value { get; }
 }
 public class Percent: Numerical<Percent>
@@ -310,28 +307,19 @@ public class Percent: Numerical<Percent>
     public static implicit operator Percent(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public Number Value { get; }
 }
 public class Quaternion: Value<Quaternion>
@@ -421,34 +409,30 @@ public class Vector2D: Vector<Vector2D>
     public static implicit operator Vector2D((Number, Number) value) => new Vector2D(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "X", "Y" };
     public object[] FieldValues() => new[] { X, Y };
+    public Numerical this[Index n]
+        => At(FieldValues(v), n);
     public static Count Count(Array xs) => Extensions.Count(xs);
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
-    public Numerical this[Index n]
-        => ((v), n);
+    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
+    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
+    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
+    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public Number X { get; }
     public Number Y { get; }
 }
@@ -460,34 +444,30 @@ public class Vector3D: Vector<Vector3D>
     public static implicit operator Vector3D((Number, Number, Number) value) => new Vector3D(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "X", "Y", "Z" };
     public object[] FieldValues() => new[] { X, Y, Z };
+    public Numerical this[Index n]
+        => At(FieldValues(v), n);
     public static Count Count(Array xs) => Extensions.Count(xs);
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
-    public Numerical this[Index n]
-        => ((v), n);
+    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
+    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
+    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
+    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public Number X { get; }
     public Number Y { get; }
     public Number Z { get; }
@@ -500,34 +480,30 @@ public class Vector4D: Vector<Vector4D>
     public static implicit operator Vector4D((Number, Number, Number, Number) value) => new Vector4D(value.Item1, value.Item2, value.Item3, value.Item4);
     public string[] FieldNames() => new[] { "X", "Y", "Z", "W" };
     public object[] FieldValues() => new[] { X, Y, Z, W };
+    public Numerical this[Index n]
+        => At(FieldValues(v), n);
     public static Count Count(Array xs) => Extensions.Count(xs);
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
-    public Numerical this[Index n]
-        => ((v), n);
+    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
+    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
+    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
+    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public Number X { get; }
     public Number Y { get; }
     public Number Z { get; }
@@ -597,36 +573,32 @@ public class AlignedBox2D: Interval<AlignedBox2D>
     public static implicit operator AlignedBox2D((Vector2D, Vector2D) value) => new AlignedBox2D(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "A", "B" };
     public object[] FieldValues() => new[] { A, B };
+    public static Numerical Min(Interval x) => Extensions.Min(x);
+    public static Numerical Max(Interval x) => Extensions.Max(x);
+    public Numerical this[Index n]
+        => At(FieldValues(v), n);
     public static Count Count(Array xs) => Extensions.Count(xs);
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
-    public Numerical this[Index n]
-        => ((v), n);
-    public static Numerical Min(Interval x) => Extensions.Min(x);
-    public static Numerical Max(Interval x) => Extensions.Max(x);
+    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
+    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
+    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
+    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public Vector2D A { get; }
     public Vector2D B { get; }
 }
@@ -638,36 +610,32 @@ public class AlignedBox3D: Interval<AlignedBox3D>
     public static implicit operator AlignedBox3D((Vector3D, Vector3D) value) => new AlignedBox3D(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "A", "B" };
     public object[] FieldValues() => new[] { A, B };
+    public static Numerical Min(Interval x) => Extensions.Min(x);
+    public static Numerical Max(Interval x) => Extensions.Max(x);
+    public Numerical this[Index n]
+        => At(FieldValues(v), n);
     public static Count Count(Array xs) => Extensions.Count(xs);
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
-    public Numerical this[Index n]
-        => ((v), n);
-    public static Numerical Min(Interval x) => Extensions.Min(x);
-    public static Numerical Max(Interval x) => Extensions.Max(x);
+    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
+    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
+    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
+    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public Vector3D A { get; }
     public Vector3D B { get; }
 }
@@ -679,34 +647,30 @@ public class Complex: Vector<Complex>
     public static implicit operator Complex((Number, Number) value) => new Complex(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Real", "Imaginary" };
     public object[] FieldValues() => new[] { Real, Imaginary };
+    public Numerical this[Index n]
+        => At(FieldValues(v), n);
     public static Count Count(Array xs) => Extensions.Count(xs);
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
-    public Numerical this[Index n]
-        => ((v), n);
+    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
+    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
+    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
+    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public Number Real { get; }
     public Number Imaginary { get; }
 }
@@ -832,36 +796,32 @@ public class Line3D: Interval<Line3D>
     public static implicit operator Line3D((Point3D, Point3D) value) => new Line3D(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "A", "B" };
     public object[] FieldValues() => new[] { A, B };
+    public static Numerical Min(Interval x) => Extensions.Min(x);
+    public static Numerical Max(Interval x) => Extensions.Max(x);
+    public Numerical this[Index n]
+        => At(FieldValues(v), n);
     public static Count Count(Array xs) => Extensions.Count(xs);
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
-    public Numerical this[Index n]
-        => ((v), n);
-    public static Numerical Min(Interval x) => Extensions.Min(x);
-    public static Numerical Max(Interval x) => Extensions.Max(x);
+    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
+    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
+    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
+    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public Point3D A { get; }
     public Point3D B { get; }
 }
@@ -873,36 +833,32 @@ public class Line2D: Interval<Line2D>
     public static implicit operator Line2D((Point2D, Point2D) value) => new Line2D(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "A", "B" };
     public object[] FieldValues() => new[] { A, B };
+    public static Numerical Min(Interval x) => Extensions.Min(x);
+    public static Numerical Max(Interval x) => Extensions.Max(x);
+    public Numerical this[Index n]
+        => At(FieldValues(v), n);
     public static Count Count(Array xs) => Extensions.Count(xs);
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
-    public Numerical this[Index n]
-        => ((v), n);
-    public static Numerical Min(Interval x) => Extensions.Min(x);
-    public static Numerical Max(Interval x) => Extensions.Max(x);
+    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
+    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
+    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
+    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public Point2D A { get; }
     public Point2D B { get; }
 }
@@ -1134,28 +1090,19 @@ public class Proportion: Numerical<Proportion>
     public static implicit operator Proportion(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public Number Value { get; }
 }
 public class Fraction: Value<Fraction>
@@ -1177,15 +1124,11 @@ public class Angle: Measure<Angle>
     public static implicit operator Angle(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Radians" };
     public object[] FieldValues() => new[] { Radians };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Number Radians { get; }
@@ -1198,15 +1141,11 @@ public class Length: Measure<Length>
     public static implicit operator Length(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Meters" };
     public object[] FieldValues() => new[] { Meters };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Number Meters { get; }
@@ -1219,15 +1158,11 @@ public class Mass: Measure<Mass>
     public static implicit operator Mass(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Kilograms" };
     public object[] FieldValues() => new[] { Kilograms };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Number Kilograms { get; }
@@ -1240,15 +1175,11 @@ public class Temperature: Measure<Temperature>
     public static implicit operator Temperature(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Celsius" };
     public object[] FieldValues() => new[] { Celsius };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Number Celsius { get; }
@@ -1261,15 +1192,11 @@ public class TimeSpan: Measure<TimeSpan>
     public static implicit operator TimeSpan(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Seconds" };
     public object[] FieldValues() => new[] { Seconds };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Number Seconds { get; }
@@ -1282,36 +1209,32 @@ public class TimeRange: Interval<TimeRange>
     public static implicit operator TimeRange((DateTime, DateTime) value) => new TimeRange(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Min", "Max" };
     public object[] FieldValues() => new[] { Min, Max };
+    public static Numerical Min(Interval x) => Extensions.Min(x);
+    public static Numerical Max(Interval x) => Extensions.Max(x);
+    public Numerical this[Index n]
+        => At(FieldValues(v), n);
     public static Count Count(Array xs) => Extensions.Count(xs);
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
-    public Numerical this[Index n]
-        => ((v), n);
-    public static Numerical Min(Interval x) => Extensions.Min(x);
-    public static Numerical Max(Interval x) => Extensions.Max(x);
+    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
+    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
+    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
+    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public DateTime Min { get; }
     public DateTime Max { get; }
 }
@@ -1330,36 +1253,32 @@ public class AnglePair: Interval<AnglePair>
     public static implicit operator AnglePair((Angle, Angle) value) => new AnglePair(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Start", "End" };
     public object[] FieldValues() => new[] { Start, End };
+    public static Numerical Min(Interval x) => Extensions.Min(x);
+    public static Numerical Max(Interval x) => Extensions.Max(x);
+    public Numerical this[Index n]
+        => At(FieldValues(v), n);
     public static Count Count(Array xs) => Extensions.Count(xs);
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
-    public Numerical this[Index n]
-        => ((v), n);
-    public static Numerical Min(Interval x) => Extensions.Min(x);
-    public static Numerical Max(Interval x) => Extensions.Max(x);
+    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
+    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
+    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
+    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public Angle Start { get; }
     public Angle End { get; }
 }
@@ -1371,28 +1290,19 @@ public class Ring: Numerical<Ring>
     public static implicit operator Ring((Circle, Number) value) => new Ring(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Circle", "InnerRadius" };
     public object[] FieldValues() => new[] { Circle, InnerRadius };
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public Circle Circle { get; }
     public Number InnerRadius { get; }
 }
@@ -1415,36 +1325,32 @@ public class TimeInterval: Interval<TimeInterval>
     public static implicit operator TimeInterval((TimeSpan, TimeSpan) value) => new TimeInterval(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Start", "End" };
     public object[] FieldValues() => new[] { Start, End };
+    public static Numerical Min(Interval x) => Extensions.Min(x);
+    public static Numerical Max(Interval x) => Extensions.Max(x);
+    public Numerical this[Index n]
+        => At(FieldValues(v), n);
     public static Count Count(Array xs) => Extensions.Count(xs);
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
-    public Numerical this[Index n]
-        => ((v), n);
-    public static Numerical Min(Interval x) => Extensions.Min(x);
-    public static Numerical Max(Interval x) => Extensions.Max(x);
+    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
+    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
+    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
+    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public TimeSpan Start { get; }
     public TimeSpan End { get; }
 }
@@ -1456,36 +1362,32 @@ public class RealInterval: Interval<RealInterval>
     public static implicit operator RealInterval((Number, Number) value) => new RealInterval(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "A", "B" };
     public object[] FieldValues() => new[] { A, B };
+    public static Numerical Min(Interval x) => Extensions.Min(x);
+    public static Numerical Max(Interval x) => Extensions.Max(x);
+    public Numerical this[Index n]
+        => At(FieldValues(v), n);
     public static Count Count(Array xs) => Extensions.Count(xs);
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
-    public Numerical this[Index n]
-        => ((v), n);
-    public static Numerical Min(Interval x) => Extensions.Min(x);
-    public static Numerical Max(Interval x) => Extensions.Max(x);
+    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
+    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
+    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
+    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public Number A { get; }
     public Number B { get; }
 }
@@ -1497,36 +1399,32 @@ public class Interval2D: Interval<Interval2D>
     public static implicit operator Interval2D((Vector2D, Vector2D) value) => new Interval2D(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "A", "B" };
     public object[] FieldValues() => new[] { A, B };
+    public static Numerical Min(Interval x) => Extensions.Min(x);
+    public static Numerical Max(Interval x) => Extensions.Max(x);
+    public Numerical this[Index n]
+        => At(FieldValues(v), n);
     public static Count Count(Array xs) => Extensions.Count(xs);
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
-    public Numerical this[Index n]
-        => ((v), n);
-    public static Numerical Min(Interval x) => Extensions.Min(x);
-    public static Numerical Max(Interval x) => Extensions.Max(x);
+    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
+    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
+    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
+    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public Vector2D A { get; }
     public Vector2D B { get; }
 }
@@ -1538,36 +1436,32 @@ public class Interval3D: Interval<Interval3D>
     public static implicit operator Interval3D((Vector3D, Vector3D) value) => new Interval3D(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "A", "B" };
     public object[] FieldValues() => new[] { A, B };
+    public static Numerical Min(Interval x) => Extensions.Min(x);
+    public static Numerical Max(Interval x) => Extensions.Max(x);
+    public Numerical this[Index n]
+        => At(FieldValues(v), n);
     public static Count Count(Array xs) => Extensions.Count(xs);
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
-    public Numerical this[Index n]
-        => ((v), n);
-    public static Numerical Min(Interval x) => Extensions.Min(x);
-    public static Numerical Max(Interval x) => Extensions.Max(x);
+    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
+    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
+    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
+    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public Vector3D A { get; }
     public Vector3D B { get; }
 }
@@ -1705,34 +1599,30 @@ public class UV: Vector<UV>
     public static implicit operator UV((Unit, Unit) value) => new UV(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "U", "V" };
     public object[] FieldValues() => new[] { U, V };
+    public Numerical this[Index n]
+        => At(FieldValues(v), n);
     public static Count Count(Array xs) => Extensions.Count(xs);
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
-    public Numerical this[Index n]
-        => ((v), n);
+    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
+    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
+    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
+    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public Unit U { get; }
     public Unit V { get; }
 }
@@ -1744,34 +1634,30 @@ public class UVW: Vector<UVW>
     public static implicit operator UVW((Unit, Unit, Unit) value) => new UVW(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "U", "V", "W" };
     public object[] FieldValues() => new[] { U, V, W };
+    public Numerical this[Index n]
+        => At(FieldValues(v), n);
     public static Count Count(Array xs) => Extensions.Count(xs);
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
-    public Numerical this[Index n]
-        => ((v), n);
+    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
+    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
+    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
+    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public Unit U { get; }
     public Unit V { get; }
     public Unit W { get; }
@@ -1821,15 +1707,11 @@ public class Area: Measure<Area>
     public static implicit operator Area(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "MetersSquared" };
     public object[] FieldValues() => new[] { MetersSquared };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Number MetersSquared { get; }
@@ -1842,15 +1724,11 @@ public class Volume: Measure<Volume>
     public static implicit operator Volume(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "MetersCubed" };
     public object[] FieldValues() => new[] { MetersCubed };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Number MetersCubed { get; }
@@ -1863,15 +1741,11 @@ public class Velocity: Measure<Velocity>
     public static implicit operator Velocity(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "MetersPerSecond" };
     public object[] FieldValues() => new[] { MetersPerSecond };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Number MetersPerSecond { get; }
@@ -1884,15 +1758,11 @@ public class Acceleration: Measure<Acceleration>
     public static implicit operator Acceleration(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "MetersPerSecondSquared" };
     public object[] FieldValues() => new[] { MetersPerSecondSquared };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Number MetersPerSecondSquared { get; }
@@ -1905,15 +1775,11 @@ public class Force: Measure<Force>
     public static implicit operator Force(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Newtons" };
     public object[] FieldValues() => new[] { Newtons };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Number Newtons { get; }
@@ -1926,15 +1792,11 @@ public class Pressure: Measure<Pressure>
     public static implicit operator Pressure(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Pascals" };
     public object[] FieldValues() => new[] { Pascals };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Number Pascals { get; }
@@ -1947,15 +1809,11 @@ public class Energy: Measure<Energy>
     public static implicit operator Energy(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Joules" };
     public object[] FieldValues() => new[] { Joules };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Number Joules { get; }
@@ -1968,15 +1826,11 @@ public class Memory: Measure<Memory>
     public static implicit operator Memory(Count value) => new Count(value);
     public string[] FieldNames() => new[] { "Bytes" };
     public object[] FieldValues() => new[] { Bytes };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Count Bytes { get; }
@@ -1989,15 +1843,11 @@ public class Frequency: Measure<Frequency>
     public static implicit operator Frequency(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Hertz" };
     public object[] FieldValues() => new[] { Hertz };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Number Hertz { get; }
@@ -2010,15 +1860,11 @@ public class Loudness: Measure<Loudness>
     public static implicit operator Loudness(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Decibels" };
     public object[] FieldValues() => new[] { Decibels };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Number Decibels { get; }
@@ -2031,15 +1877,11 @@ public class LuminousIntensity: Measure<LuminousIntensity>
     public static implicit operator LuminousIntensity(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Candelas" };
     public object[] FieldValues() => new[] { Candelas };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Number Candelas { get; }
@@ -2052,15 +1894,11 @@ public class ElectricPotential: Measure<ElectricPotential>
     public static implicit operator ElectricPotential(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Volts" };
     public object[] FieldValues() => new[] { Volts };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Number Volts { get; }
@@ -2073,15 +1911,11 @@ public class ElectricCharge: Measure<ElectricCharge>
     public static implicit operator ElectricCharge(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Columbs" };
     public object[] FieldValues() => new[] { Columbs };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Number Columbs { get; }
@@ -2094,15 +1928,11 @@ public class ElectricCurrent: Measure<ElectricCurrent>
     public static implicit operator ElectricCurrent(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Amperes" };
     public object[] FieldValues() => new[] { Amperes };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Number Amperes { get; }
@@ -2115,15 +1945,11 @@ public class ElectricResistance: Measure<ElectricResistance>
     public static implicit operator ElectricResistance(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Ohms" };
     public object[] FieldValues() => new[] { Ohms };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Number Ohms { get; }
@@ -2136,15 +1962,11 @@ public class Power: Measure<Power>
     public static implicit operator Power(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Watts" };
     public object[] FieldValues() => new[] { Watts };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Number Watts { get; }
@@ -2157,15 +1979,11 @@ public class Density: Measure<Density>
     public static implicit operator Density(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "KilogramsPerMeterCubed" };
     public object[] FieldValues() => new[] { KilogramsPerMeterCubed };
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
     public Number KilogramsPerMeterCubed { get; }
@@ -2210,28 +2028,19 @@ public class Probability: Numerical<Probability>
     public static implicit operator Probability(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
-    public static Arithmetic Add(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic Negative(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic Multiply(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic Divide(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic Modulo(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Boolean Equals(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic Add(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic Multiply(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic Modulo(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
     public Number Value { get; }
 }
 public class BinomialDistribution: Value<BinomialDistribution>
@@ -2248,183 +2057,309 @@ public class BinomialDistribution: Value<BinomialDistribution>
 public static partial class Extensions
 {
     public static Array Map<T>(Array xs, Function f) {
-        return Tuple((xs), (i) => 
-        Function f((xs, i)));
+        return Tuple(Count(xs), (i) => 
+        f(At(xs, i)));
     }
     public static Array Reverse<T>(Array xs) {
-        return Tuple((xs), (i) => 
-        null);
+        return Tuple(Count(xs), (i) => 
+        f(At(xs, Subtract(Count(xs), Subtract(1, i)))));
     }
     public static Array Zip<T>(Array xs, Array ys, Function f) {
-        return Tuple((xs), (i) => 
-        null);
+        return Tuple(Count(xs), (i) => 
+        f(At(i), At(ys, i)));
     }
     public static Array Zip<T>(Array xs, Array ys, Array zs, Function f) {
-        return Tuple((xs), (i) => 
-        null);
+        return Tuple(Count(xs), (i) => 
+        f(At(i), At(ys, i), At(zs, i)));
+    }
+    public static Array Skip<T>(Array xs, Count n) {
+        return Tuple(Subtract(Count, n), (i) => 
+        At(Subtract(i, n)));
     }
     public static Array Take<T>(Array xs, Count n) {
         return Tuple(n, (i) => 
-        null);
+        At(i));
     }
     public static Any Aggregate<T>(Array xs, Any init, Function f) {
-        return (xs)
+        return IsEmpty(xs)
             ? init
-            : Function f(init, Function f((xs)))
+            : f(init, f(Rest(xs)))
         ;
     }
     public static Array Rest<T>(Array xs) {
-        return (xs, 1);
+        return Skip(xs, 1);
+    }
+    public static Boolean IsEmpty<T>(Array xs) {
+        return Equals(Count(xs), 0);
     }
     public static Any First<T>(Array xs) {
-        return (xs, 0);
+        return At(xs, 0);
+    }
+    public static Any Last<T>(Array xs) {
+        return At(xs, Subtract(Count(xs), 1));
     }
     public static Array Slice<T>(Array xs, Index from, Count count) {
-        return Array Take(Array xs, Count n){
-            return Tuple(n, (i) => 
-            null);
-        }
-        ((xs, from), count);
+        return Take(Skip(xs, from), count);
     }
     public static String Join<T>(Array xs, String sep) {
-        return (xs)
+        return IsEmpty(xs)
             ? 
-            : null
+            : Add(ToString(First(xs)), Aggregate(Rest(xs), , (acc, cur) => 
+            Interpolate(acc, sep, cur)))
         ;
     }
     public static Boolean All<T>(Array xs, Function f) {
-        return (xs)
+        return IsEmpty(xs)
             ? True
-            : null
+            : And(f(First(xs)), f(Rest(xs)))
         ;
     }
 }
 public static partial class Extensions
 {
+    public static Numerical Size<T>(Interval x) {
+        return Subtract(Max(x), Min(x));
+    }
     public static Boolean IsEmpty<T>(Interval x) {
-        return ((x), (x));
+        return GreaterThanOrEquals(Min(x), Max(x));
+    }
+    public static Numerical Lerp<T>(Interval x, Unit amount) {
+        return Multiply(Min(x), Add(Subtract(1, amount), Multiply(Max(x), amount)));
+    }
+    public static Unit InverseLerp<T>(Interval x, Numerical value) {
+        return Divide(Subtract(value, Min(x)), Size(x));
+    }
+    public static Interval Negate<T>(Interval x) {
+        return Tuple(Negative(Max(x)), Negative(Min(x)));
     }
     public static Interval Reverse<T>(Interval x) {
-        return Tuple((x), (x));
+        return Tuple(Max(x), Min(x));
     }
     public static Numerical Center<T>(Interval x) {
-        return (x, 0.5);
+        return Lerp(x, 0.5);
+    }
+    public static Boolean Contains<T>(Interval x, Numerical value) {
+        return LessThanOrEquals(Min(x), And(value, LessThanOrEquals(value, Max(x))));
+    }
+    public static Boolean Contains<T>(Interval x, Interval other) {
+        return LessThanOrEquals(Min(x), And(Min(other), GreaterThanOrEquals(Max, Max(other))));
+    }
+    public static Boolean Overlaps<T>(Interval x, Interval y) {
+        return Not(IsEmpty(Clamp(x, y)));
     }
     public static Tuple Split<T>(Interval x, Unit t) {
-        return Tuple((x, t), (x, t));
+        return Tuple(Left(x, t), Right(x, t));
     }
     public static Tuple Split<T>(Interval x) {
-        return Tuple Split(Interval x, Unit t){
-            return Tuple((x, t), (x, t));
-        }
-        (x, 0.5);
+        return Split(x, 0.5);
     }
     public static Interval Left<T>(Interval x, Unit t) {
-        return Tuple((x), (x, t));
+        return Tuple(Min(x), Lerp(x, t));
     }
     public static Interval Right<T>(Interval x, Unit t) {
-        return Tuple((x, t), (x));
+        return Tuple(Lerp(x, t), Max(x));
+    }
+    public static Interval MoveTo<T>(Interval x, Numerical v) {
+        return Tuple(v, Add(v, Size(x)));
     }
     public static Interval LeftHalf<T>(Interval x) {
-        return Interval Left(Interval x, Unit t){
-            return Tuple((x), (x, t));
-        }
-        (x, 0.5);
+        return Left(x, 0.5);
     }
     public static Interval RightHalf<T>(Interval x) {
-        return Interval Right(Interval x, Unit t){
-            return Tuple((x, t), (x));
-        }
-        (x, 0.5);
+        return Right(x, 0.5);
     }
     public static Numerical HalfSize<T>(Interval x) {
-        return ((x));
+        return Half(Size(x));
+    }
+    public static Interval Recenter<T>(Interval x, Numerical c) {
+        return Tuple(Subtract(c, HalfSize(x)), Add(c, HalfSize(x)));
     }
     public static Interval Clamp<T>(Interval x, Interval y) {
-        return Tuple((x, (y)), (x, (y)));
+        return Tuple(Clamp(x, Min(y)), Clamp(x, Max(y)));
     }
     public static Numerical Clamp<T>(Interval x, Numerical value) {
-        return (value, (x)
-            ? (x)
-            : (value, (x)
-                ? (x)
+        return LessThan(value, Min(x)
+            ? Min(x)
+            : GreaterThan(value, Max(x)
+                ? Max(x)
                 : value
             )
         );
+    }
+    public static Boolean Within<T>(Interval x, Numerical value) {
+        return GreaterThanOrEquals(value, And(Min(x), LessThanOrEquals(value, Max(x))));
     }
 }
 public static partial class Extensions
 {
     public static String ToString(Value x) {
-        return String Join(Array xs, String sep){
-            return (xs)
-                ? 
-                : null
-            ;
-        }
-        ((x), , );
+        return Join(FieldValues(x), , );
     }
 }
 public static partial class Extensions
 {
+    public static Number Sum<T>(Vector v) {
+        return Aggregate(v, 0, Add);
+    }
+    public static Number SumSquares<T>(Vector v) {
+        return Aggregate(Square(v), 0, Add);
+    }
     public static Number LengthSquared<T>(Vector v) {
-        return (v);
+        return SumSquares(v);
     }
     public static Number Length<T>(Vector v) {
-        return (Number LengthSquared(Vector v){
-            return (v);
-        }
-        (v));
+        return SquareRoot(LengthSquared(v));
+    }
+    public static Number Dot<T>(Vector v1, Vector v2) {
+        return Sum(Multiply(v1, v2));
+    }
+    public static Vector Normal<T>(Vector v) {
+        return Divide(v, Length(v));
     }
 }
 public static partial class Extensions
 {
     public static Numerical SquareRoot(Numerical x) {
-        return (x, 0.5);
+        return Pow(x, 0.5);
+    }
+    public static Numerical Square(Numerical x) {
+        return Multiply(x, x);
     }
     public static Numerical Clamp(Numerical x, Interval i) {
-        return Numerical Clamp(Interval x, Numerical value){
-            return (value, (x)
-                ? (x)
-                : (value, (x)
-                    ? (x)
-                    : value
-                )
-            );
-        }
-        (i, x);
+        return Clamp(i, x);
+    }
+    public static Numerical Clamp(Numerical x) {
+        return Clamp(x, Tuple(0, 1));
+    }
+    public static Numerical PlusOne(Numerical x) {
+        return Add(x, One(x));
+    }
+    public static Numerical MinusOne(Numerical x) {
+        return Subtract(x, One(x));
+    }
+    public static Numerical FromOne(Numerical x) {
+        return Subtract(One(x), x);
     }
     public static Boolean IsPositive(Numerical x) {
-        return (x, 0);
+        return GreaterThanOrEquals(x, 0);
     }
     public static Boolean GtZ(Numerical x) {
-        return (x, 0);
+        return GreaterThan(x, 0);
     }
     public static Boolean LtZ(Numerical x) {
-        return (x, 0);
+        return LessThan(x, 0);
     }
     public static Boolean GtEqZ(Numerical x) {
-        return (x, 0);
+        return GreaterThanOrEquals(x, 0);
     }
     public static Boolean LtEqZ(Numerical x) {
-        return (x, 0);
+        return LessThanOrEquals(x, 0);
     }
     public static Boolean IsNegative(Numerical x) {
-        return (x, 0);
+        return LessThan(x, 0);
+    }
+    public static Numerical Sign(Numerical x) {
+        return LtZ(x)
+            ? Negative(One(x))
+            : GtZ(x)
+                ? One(x)
+                : Zero(x)
+
+        ;
+    }
+    public static Numerical Abs(Numerical x) {
+        return LtZ(x)
+            ? Negative(x)
+            : x
+        ;
+    }
+    public static Numerical Half(Numerical x) {
+        return Divide(x, 2);
+    }
+    public static Numerical Third(Numerical x) {
+        return Divide(x, 3);
+    }
+    public static Numerical Quarter(Numerical x) {
+        return Divide(x, 4);
+    }
+    public static Numerical Fifth(Numerical x) {
+        return Divide(x, 5);
+    }
+    public static Numerical Sixth(Numerical x) {
+        return Divide(x, 6);
+    }
+    public static Numerical Seventh(Numerical x) {
+        return Divide(x, 7);
+    }
+    public static Numerical Eighth(Numerical x) {
+        return Divide(x, 8);
+    }
+    public static Numerical Ninth(Numerical x) {
+        return Divide(x, 9);
+    }
+    public static Numerical Tenth(Numerical x) {
+        return Divide(x, 10);
+    }
+    public static Numerical Sixteenth(Numerical x) {
+        return Divide(x, 16);
+    }
+    public static Numerical Hundredth(Numerical x) {
+        return Divide(x, 100);
+    }
+    public static Numerical Thousandth(Numerical x) {
+        return Divide(x, 1000);
+    }
+    public static Numerical Millionth(Numerical x) {
+        return Divide(x, Divide(1000, 1000));
+    }
+    public static Numerical Billionth(Numerical x) {
+        return Divide(x, Divide(1000, Divide(1000, 1000)));
+    }
+    public static Numerical Hundred(Numerical x) {
+        return Multiply(x, 100);
+    }
+    public static Numerical Thousand(Numerical x) {
+        return Multiply(x, 1000);
+    }
+    public static Numerical Million(Numerical x) {
+        return Multiply(x, Multiply(1000, 1000));
+    }
+    public static Numerical Billion(Numerical x) {
+        return Multiply(x, Multiply(1000, Multiply(1000, 1000)));
+    }
+    public static Numerical Twice(Numerical x) {
+        return Multiply(x, 2);
+    }
+    public static Numerical Thrice(Numerical x) {
+        return Multiply(x, 3);
+    }
+    public static Numerical SmoothStep(Numerical x) {
+        return Multiply(Square(x), Subtract(3, Twice(x)));
+    }
+    public static Numerical Pow2(Numerical x) {
+        return Multiply(x, x);
+    }
+    public static Numerical Pow3(Numerical x) {
+        return Multiply(Pow2(x), x);
+    }
+    public static Numerical Pow4(Numerical x) {
+        return Multiply(Pow3(x), x);
+    }
+    public static Numerical Pow5(Numerical x) {
+        return Multiply(Pow4(x), x);
     }
     public static Number Pi(Numerical self) {
         return 3.1415926535897;
     }
     public static Boolean AlmostZero(Numerical x) {
-        return ((x), 1E-08);
+        return LessThan(Abs(x), 1E-08);
+    }
+    public static Numerical Lerp(Numerical a, Numerical b, Unit t) {
+        return Multiply(Subtract(1, t), Add(a, Multiply(t, b)));
     }
     public static Boolean Between(Numerical self, Numerical min, Numerical max) {
-        return Array Zip(Array xs, Array ys, Array zs, Function f){
-            return Tuple((xs), (i) => 
-            null);
-        }
-        ((self), (min), (max), (x, y, z) => 
-        (x, y, z));
+        return Zip(FieldValues(self), FieldValues(min), FieldValues(max), (x, y, z) => 
+        Between(x, y, z));
     }
 }
 public static partial class Extensions
@@ -2432,17 +2367,44 @@ public static partial class Extensions
     public static Angle Radians(Number x) {
         return x;
     }
+    public static Angle Degrees(Number x) {
+        return Multiply(x, Divide(Pi, 180));
+    }
+    public static Angle Turns(Number x) {
+        return Multiply(x, Multiply(2, Pi));
+    }
 }
 public static partial class Extensions
 {
+    public static Boolean Equals(Comparable a, Comparable b) {
+        return Equals(Compare(a, b), 0);
+    }
+    public static Boolean LessThan(Comparable a, Comparable b) {
+        return LessThan(Compare(a, b), 0);
+    }
+    public static Boolean LessThanOrEquals(Comparable a, Comparable b) {
+        return LessThanOrEquals(Compare(a, b), 0);
+    }
+    public static Boolean GreaterThan(Comparable a, Comparable b) {
+        return GreaterThan(Compare(a, b), 0);
+    }
+    public static Boolean GreaterThanOrEquals(Comparable a, Comparable b) {
+        return GreaterThanOrEquals(Compare(a, b), 0);
+    }
+    public static Value Between(Comparable v, Comparable a, Comparable b) {
+        return GreaterThanOrEquals(v, And(a, LessThanOrEquals(v, b)));
+    }
+    public static Interval Between(Value v, Interval i) {
+        return Contains(i, v);
+    }
     public static Comparable Min(Comparable a, Comparable b) {
-        return (a, b
+        return LessThanOrEquals(a, b
             ? a
             : b
         );
     }
     public static Comparable Max(Comparable a, Comparable b) {
-        return (a, b
+        return GreaterThanOrEquals(a, b
             ? a
             : b
         );
@@ -2450,40 +2412,124 @@ public static partial class Extensions
 }
 public static partial class Extensions
 {
+    public static Boolean NotEquals(Equatable x, Equatable y) {
+        return Not(Equals(x, y));
+    }
 }
 public static partial class Extensions
 {
+    public static Number BlendEaseFunc(Number p, Function easeIn, Function easeOut) {
+        return LessThan(p, 0.5
+            ? Multiply(0.5, easeIn(Multiply(p, 2)))
+            : Multiply(0.5, Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5))
+        );
+    }
+    public static Number InvertEaseFunc(Number p, Function easeIn) {
+        return Subtract(1, easeIn(Subtract(1, p)));
+    }
     public static Number Linear(Number p) {
         return p;
     }
     public static Number QuadraticEaseIn(Number p) {
-        return (p);
+        return Pow2(p);
+    }
+    public static Number QuadraticEaseOut(Number p) {
+        return InvertEaseFunc(p, QuadraticEaseIn);
+    }
+    public static Number QuadraticEaseInOut(Number p) {
+        return BlendEaseFunc(p, QuadraticEaseIn, QuadraticEaseOut);
     }
     public static Number CubicEaseIn(Number p) {
-        return (p);
+        return Pow3(p);
+    }
+    public static Number CubicEaseOut(Number p) {
+        return InvertEaseFunc(p, CubicEaseIn);
+    }
+    public static Number CubicEaseInOut(Number p) {
+        return BlendEaseFunc(p, CubicEaseIn, CubicEaseOut);
     }
     public static Number QuarticEaseIn(Number p) {
-        return (p);
+        return Pow4(p);
+    }
+    public static Number QuarticEaseOut(Number p) {
+        return InvertEaseFunc(p, QuarticEaseIn);
+    }
+    public static Number QuarticEaseInOut(Number p) {
+        return BlendEaseFunc(p, QuarticEaseIn, QuarticEaseOut);
     }
     public static Number QuinticEaseIn(Number p) {
-        return (p);
+        return Pow5(p);
+    }
+    public static Number QuinticEaseOut(Number p) {
+        return InvertEaseFunc(p, QuinticEaseIn);
+    }
+    public static Number QuinticEaseInOut(Number p) {
+        return BlendEaseFunc(p, QuinticEaseIn, QuinticEaseOut);
+    }
+    public static Number SineEaseIn(Number p) {
+        return InvertEaseFunc(p, SineEaseOut);
     }
     public static Number SineEaseOut(Number p) {
-        return (((p)));
+        return Sin(Turns(Quarter(p)));
+    }
+    public static Number SineEaseInOut(Number p) {
+        return BlendEaseFunc(p, SineEaseIn, SineEaseOut);
     }
     public static Number CircularEaseIn(Number p) {
-        return (Numerical SquareRoot(Numerical x){
-            return (x, 0.5);
-        }
-        (((p))));
+        return FromOne(SquareRoot(FromOne(Pow2(p))));
+    }
+    public static Number CircularEaseOut(Number p) {
+        return InvertEaseFunc(p, CircularEaseIn);
+    }
+    public static Number CircularEaseInOut(Number p) {
+        return BlendEaseFunc(p, CircularEaseIn, CircularEaseOut);
     }
     public static Number ExponentialEaseIn(Number p) {
-        return Boolean AlmostZero(Numerical x){
-            return ((x), 1E-08);
-        }
-        (p)
+        return AlmostZero(p)
             ? p
-            : null
+            : Pow(2, Multiply(10, MinusOne(p)))
         ;
+    }
+    public static Number ExponentialEaseOut(Number p) {
+        return InvertEaseFunc(p, ExponentialEaseIn);
+    }
+    public static Number ExponentialEaseInOut(Number p) {
+        return BlendEaseFunc(p, ExponentialEaseIn, ExponentialEaseOut);
+    }
+    public static Number ElasticEaseIn(Number p) {
+        return Multiply(13, Multiply(Turns(Quarter(p)), Sin(Radians(Pow(2, Multiply(10, MinusOne(p)))))));
+    }
+    public static Number ElasticEaseOut(Number p) {
+        return InvertEaseFunc(p, ElasticEaseIn);
+    }
+    public static Number ElasticEaseInOut(Number p) {
+        return BlendEaseFunc(p, ElasticEaseIn, ElasticEaseOut);
+    }
+    public static Number BackEaseIn(Number p) {
+        return Subtract(Pow3(p), Multiply(p, Sin(Turns(Half(p)))));
+    }
+    public static Number BackEaseOut(Number p) {
+        return InvertEaseFunc(p, BackEaseIn);
+    }
+    public static Number BackEaseInOut(Number p) {
+        return BlendEaseFunc(p, BackEaseIn, BackEaseOut);
+    }
+    public static Number BounceEaseIn(Number p) {
+        return InvertEaseFunc(p, BounceEaseOut);
+    }
+    public static Number BounceEaseOut(Number p) {
+        return LessThan(p, Divide(4, 11))
+            ? Multiply(121, Divide(Pow2(p), 16))
+            : LessThan(p, Divide(8, 11))
+                ? Divide(363, Multiply(40, Subtract(Pow2(p), Divide(99, Multiply(10, Add(p, Divide(17, 5)))))))
+                : LessThan(p, Divide(9, 10))
+                    ? Divide(4356, Multiply(361, Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805)))))))
+                    : Divide(54, Multiply(5, Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25)))))))
+
+
+        ;
+    }
+    public static Number BounceEaseInOut(Number p) {
+        return BlendEaseFunc(p, BounceEaseIn, BounceEaseOut);
     }
 }

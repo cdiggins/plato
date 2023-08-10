@@ -43,7 +43,7 @@ namespace Plato.Compiler
 
         public void Compile(IReadOnlyList<Parser> parsers) 
         {
-            Log("Initializing");
+            Log("Initializing Compiler");
             SemanticErrors.Clear();
             SemanticWarnings.Clear();
             InternalErrors.Clear();
@@ -71,34 +71,25 @@ namespace Plato.Compiler
                 Log("Creating type definitions");
                 TypeDefs = SymbolResolver.CreateTypeDefs(TypeDeclarations).ToList();
 
-                foreach (var error in SymbolResolver.Errors)
-                {
-                    var pos = GetParserTreeNode(error.Node);
-                    Log($"Symbol resolution error: {error.Message}");
-                    if (pos?.Node != null)
-                    {
-                        Log(pos.Node.Range.End.Input.File);
-                        Log(pos.Node.Range.End.CurrentLine);
-                        Log(pos.Node.Range.End.Indicator);
-                    }
-                    else
-                    {
-                        Log("Unknown location.");
-                    }
-                }
+                Log($"Found {SymbolResolver.Errors.Count} symbol resolution errors");
+                LogResolutionErrors(SymbolResolver.Errors);
 
                 Log("Creating operations");
+                // TODO: this can be removed I think.
                 Operations = new Operations(TypeDefs);
 
                 Log("Type resolution");
-                TypeResolver = new TypeResolver(Operations);
+                TypeResolver = new TypeResolver(Operations, Logger);
+
+                Log($"Found {TypeResolver.Errors.Count} type resolution errors");
+                LogResolutionErrors(TypeResolver.Errors);
 
                 Log("Checking semantics");
                 CheckSemantics();
 
                 Log("Generating Visual Syntax Graphs");
                 Graphs.Clear();
-                foreach (var f in Functions)
+                foreach (var f in Functions) 
                     Graphs.Add(new VsgBuilder().ToVsg(f));
 
                 foreach (var se in SemanticErrors)
@@ -116,6 +107,25 @@ namespace Plato.Compiler
             catch (Exception e)
             {
                 Log("Exception caught: " + e.Message);
+            }
+        }
+
+        public void LogResolutionErrors(IEnumerable<SymbolResolver.ResolutionError> resolutionErrors)
+        {
+            foreach (var error in resolutionErrors)
+            {
+                var pos = GetParserTreeNode(error.Node);
+                Log($"Symbol resolution error: {error.Message}");
+                if (pos?.Node != null)
+                {
+                    Log(pos.Node.Range.End.Input.File);
+                    Log(pos.Node.Range.End.CurrentLine);
+                    Log(pos.Node.Range.End.Indicator);
+                }
+                else
+                {
+                    Log("Unknown location.");
+                }
             }
         }
 

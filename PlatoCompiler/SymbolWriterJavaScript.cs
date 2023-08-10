@@ -304,6 +304,9 @@ namespace Plato.Compiler
                 case PredefinedSymbol predefined:
                     return Write(predefined.Name);
 
+                case MemberGroupSymbol memberGroup:
+                    return Write(memberGroup.Name);
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(value));
             }

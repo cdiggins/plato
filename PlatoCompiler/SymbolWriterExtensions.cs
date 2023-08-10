@@ -9,37 +9,35 @@
             => s + " ";
 
         public static string ToJavaScript(this Compiler compiler)
-            => compiler.Operations.ToJavaScript();
-
-        public static string ToJavaScript(this Operations ops)
         {
-            var tg = new TypeResolver(ops);
-            var writer = new SymbolWriterJavaScript(tg);
-            var r = writer.WriteFile(ops.Types);
+            var tr = compiler.TypeResolver;
+            var r = new SymbolWriterJavaScript(tr);
+            if (tr == null)
+                r.WriteLine("Compilation was not successful");
+            else
+                r.WriteFile(compiler.TypeDefs);
             return r.ToString();
         }
 
         public static string ToPlatoHtml(this Compiler compiler)
-            => compiler.Operations.ToPlatoHtml();
-
-        public static string ToPlatoHtml(this Operations ops)
         {
-            var tg = new TypeResolver(ops);
-            var r = new SymbolWriterPlatoHtml(tg);
+            var tr = compiler.TypeResolver;
+            var r = new SymbolWriterPlatoHtml(tr);
             r.WriteLine("<html><head><link rel=\"stylesheet\" href=\"style.css\"></head><body><pre>");
-            r.Write(ops.Types);
+
+            if (tr == null)
+                r.WriteLine("Compilation was not successful");
+            else
+                r.Write(compiler.TypeDefs);
+            
             r.WriteLine("</pre></body></html>");
             return r.ToString();
         }
 
         public static string ToCSharp(this Compiler compiler) 
-            => compiler.Operations.ToCSharp();
-
-        public static string ToCSharp(this Operations ops)
         {
-            var tg = new TypeResolver(ops);
-            var writer = new SymbolWriterCSharp(tg);
-            var r = writer.Write(ops.Types);
+            var writer = new SymbolWriterCSharp(compiler.TypeResolver);
+            var r = writer.Write(compiler.TypeDefs);
             return r.ToString();
         }
 

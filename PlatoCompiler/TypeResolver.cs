@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using static Plato.Compiler.SymbolResolver;
 
 namespace Plato.Compiler
 {
@@ -12,7 +13,7 @@ namespace Plato.Compiler
     /// Get all possible functions. Filter based on the types of the arguments, and the number of the
     /// arguments.   
     /// </summary>
-    public class TypeResolver   
+    public class TypeResolver
     {
         public Dictionary<ParameterSymbol, List<Constraint>> ParameterConstraints { get; }
             = new Dictionary<ParameterSymbol, List<Constraint>>();
@@ -21,23 +22,21 @@ namespace Plato.Compiler
         public IReadOnlyList<TypeDefSymbol> Types => Ops.Types;
         public IReadOnlyList<FunctionSymbol> Functions { get; }
         public IReadOnlyList<ParameterSymbol> Parameters { get; }
+        public Logger Logger { get; }
+        public List<ResolutionError> Errors { get; } = new List<ResolutionError>();
 
         public Dictionary<Symbol, TypeDefSymbol> ExpressionTypes { get; }
             = new Dictionary<Symbol, TypeDefSymbol>();
 
-        public TypeDefSymbol GetType(Symbol s)
-            => s == null 
-                ? null 
-                : ExpressionTypes.TryGetValue(s, out var r) 
-                    ? r 
-                    : null;
 
-        public TypeResolver(Operations ops)
+        public TypeResolver(Operations ops, Logger logger)
         {
+            Logger = logger;
             Ops = ops;
 
             // Get the functions declared as methods
-            Functions = Types.SelectMany(t => t.GetDescendantSymbols().OfType<MethodDefSymbol>().Select(md => md.Function)).ToList();
+            Functions = Types
+                .SelectMany(t => t.GetDescendantSymbols().OfType<MethodDefSymbol>().Select(md => md.Function)).ToList();
 
             // Update the type associated with each function. 
             foreach (var f in Functions)
@@ -53,7 +52,6 @@ namespace Plato.Compiler
             // Update the type of all literals 
             foreach (var ls in Functions.SelectMany(f => f.GetDescendantSymbols()).OfType<LiteralSymbol>())
                 AddType(ls, ComputeType(ls));
-                
 
             // Update the type of the first parameter of extension libraries 
             foreach (var type in Types)
@@ -62,7 +60,7 @@ namespace Plato.Compiler
                     continue;
 
                 var relatedType = Types.FirstOrDefault(t => t.Kind != TypeKind.Library && t.Name == type.Name);
-                
+
                 if (relatedType == null)
                     continue;
 
@@ -121,7 +119,7 @@ namespace Plato.Compiler
         {
             if (self.Equals(other))
                 return true;
-            if (InheritsFrom(self, other)) 
+            if (InheritsFrom(self, other))
                 return true;
             if (Implements(self, other))
                 return true;
@@ -145,7 +143,7 @@ namespace Plato.Compiler
         public static TypeDefSymbol Unify(TypeDefSymbol a, TypeDefSymbol b)
         {
             // If one type inher
-            
+
             if (a == null)
                 return b;
 
@@ -175,6 +173,7 @@ namespace Plato.Compiler
                 var bConcepts = b.GetSelfAndAllInheritedTypes();
                 return Unify(aConcepts, bConcepts);
             }
+
             return b;
         }
 
@@ -270,6 +269,12 @@ namespace Plato.Compiler
             return tmp;
         }
 
+        public TypeDefSymbol GetType(Symbol s)
+            => s == null
+                ? null
+                : ExpressionTypes.TryGetValue(s, out var r)
+                    ? r
+                    : null;
 
         public void ComputeExpressionTypes()
         {
@@ -322,7 +327,170 @@ namespace Plato.Compiler
             return candidates;
         }
 
-        public bool Satisfies(TypeDefSymbol type, FunctionArgConstraint fac) 
+        public bool Satisfies(TypeDefSymbol type, FunctionArgConstraint fac)
             => type.Methods.Any(m => m.Name == fac.Name);
+
+
+        public static bool CanCastTo(TypeRefSymbol fromType, TypeRefSymbol toType, bool allowConversions = true)
+        {
+            var fromDef = fromType.Def;
+            var toDef = toType.Def;
+            if (fromDef == null || toDef == null)
+                return true;
+            if (toDef.Name == "Any")
+                return true;
+            if (fromDef.Name == "Any")
+                return true;
+            if (fromDef.Name == toDef.Name)
+                return true;
+            if (TypeResolver.IsSubType(fromDef, toDef))
+                return true;
+
+            if (allowConversions)
+            {
+                // We look for the implicit operators.
+                // TODO: look for functions of the name "ToX" and "FromX" when allowing more than just the default. 
+
+                if (toType.Def.IsType())
+                {
+                    // TODO: check that the type of each argument matches 
+                    if (fromType.Name == "Tuple")
+                        return fromType.TypeArgs.Count == toType.Def.Fields.Count;
+
+                    // All types have a constructor that acts as an implicit cast 
+                    if (toType.Def.Fields.Count == 1)
+                    {
+                        var fieldType = toType.Def.Fields[0].Type;
+                        return CanCastTo(fromType, fieldType, false);
+                    }
+                }
+
+                if (fromType.Def.IsType())
+                {
+                    // TODO: check that the type of each argument matches 
+                    if (toType.Name == "Tuple")
+                        return toType.TypeArgs.Count == fromType.Def.Fields.Count;
+
+                    // All types with one field can implicit cast to that field. 
+                    if (fromType.Def.Fields.Count == 1)
+                    {
+                        var fieldType = fromType.Def.Fields[0].Type;
+                        return CanCastTo(fieldType, toType, false);
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public static int DistanceFromAny(TypeRefSymbol parameterType)
+        {
+            if (parameterType == null || parameterType.Name == "Any")
+                return 1;
+            if (parameterType.Def.IsConcept())
+                return 2;
+            return 3;
+        }
+
+
+        public static int MatchScore(TypeRefSymbol argType, TypeRefSymbol parameterType)
+        {
+            if (argType == null || argType.Name == "Any")
+                return DistanceFromAny(parameterType);
+            if (parameterType == null || parameterType.Name == "Any")
+                return DistanceFromAny(argType);
+            var argDef = argType.Def;
+            var paramDef = parameterType.Def;
+            if (argDef.Name == paramDef.Name)
+                return 1;
+            return 1;
+        }
+
+        public IReadOnlyList<FunctionSymbol> FindMatchingFunctions(IReadOnlyList<FunctionSymbol> funcs,
+            IReadOnlyList<TypeRefSymbol> argumentTypes)
+        {
+            var candidates = funcs.Where(f => f.Parameters.Count == argumentTypes.Count).ToList();
+
+            for (var i = 0; i < argumentTypes.Count; ++i)
+            {
+                candidates = candidates.Where(c => Matches(argumentTypes[i], c.Parameters[i].Type)).ToList();
+            }
+
+            return candidates;
+        }
+
+        public static bool Matches(TypeRefSymbol argType, TypeRefSymbol parameterType)
+        {
+            if (argType == null) return true;
+            if (parameterType == null) return true;
+            return CanCastTo(argType, parameterType);
+        }
+
+        public static TypeRefSymbol GetArrayParameter(TypeRefSymbol trs)
+        {
+            if (trs.Name == "Array")
+            {
+                if (trs.TypeArgs.Count != 1)
+                    throw new Exception("Arrays must have one type parameter");
+                return trs.TypeArgs[0];
+            }
+
+            foreach (var tmp in trs.Def.GetAllImplementedConcepts())
+            {
+                if (tmp.Name == "Array")
+                    return GetArrayParameter(tmp);
+            }
+
+            return trs;
+        }
+
+        public FunctionSymbol FindBestFunction(AstNode location, MemberGroupSymbol mgs,
+            IReadOnlyList<ArgumentSymbol> arguments)
+        {
+            var functions = mgs.Members.Select(m => m.Function).Where(f => f.Parameters.Count == arguments.Count)
+                .ToList();
+
+            if (functions.Count == 0)
+            {
+                LogError($"Found no functions in group {mgs} that matched number of arguments {arguments.Count}",
+                    location);
+                return null;
+            }
+
+            var argTypes = arguments.Select(GetType).Select(x => x.ToRef()).ToList();
+            var candidates = FindMatchingFunctions(functions, argTypes);
+            var argsStr = string.Join(", ", argTypes.Select(arg => $"{arg}"));
+
+            if (candidates.Count == 0)
+            {
+                var argTypes2 = argTypes.Select(GetArrayParameter).ToList();
+                candidates = FindMatchingFunctions(functions, argTypes2);
+
+                if (candidates.Count == 0)
+                {
+                    LogError($"Found no functions in group {mgs} that matched arguments ({argsStr})", location);
+                    var argTypes3 = argTypes.Select(GetArrayParameter).ToList();
+                    return null;
+                }
+            }
+
+            if (candidates.Count == 1)
+            {
+                return candidates[0];
+            }
+
+            Debug.Assert(candidates.Count > 1);
+
+            var candidateStr = string.Join(",", candidates.Select(c => c.Signature));
+            LogError(
+                $"Found too many matches ({candidates.Count}) for {mgs} with argument types ({argsStr}) : {candidateStr}",
+                location);
+            return candidates[0];
+        }
+
+        public void LogError(string message, AstNode node)
+        {
+            Errors.Add(new ResolutionError(message, node));
+        }
     }
 }

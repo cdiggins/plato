@@ -51,10 +51,10 @@ public class IDE
         Editors.Add(editor);
     }
 
-    public void Parse()
+    public void ApplyStylesAndOutputErrors()
     {
         foreach (var editor in Editors)
-            editor.Parse();
+            editor.ApplyStylesAndOutputErrors();
     }
 
     public IDE(TabControl tabControl, RichTextBox outputTextBox)
@@ -69,12 +69,16 @@ public class IDE
 
         var inputPath = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\";
 
+        Logger.Log("Opening files");
+
         OpenFile(Path.Combine(inputPath, "intrinsics.plato"));
         OpenFile(Path.Combine(inputPath, "concepts.plato"));
         OpenFile(Path.Combine(inputPath, "types.plato"));
         OpenFile(Path.Combine(inputPath, "libraries.plato"));
-        
-        Parse();
+
+        Logger.Log("Applying syntax coloring");
+        ApplyStylesAndOutputErrors();
+        Logger.Log("Completed syntax coloring");
         var parsers = Editors.Select(p => p.Parser).ToList();
         Compiler.Compile(parsers);
 
@@ -82,9 +86,13 @@ public class IDE
 
         var outputFolder = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\";
 
+        Logger.Log("Writing C#");
         File.WriteAllText(Path.Combine(outputFolder, "output.cs"), Compiler.ToCSharp());
+
+        Logger.Log("Writing HTML");
         File.WriteAllText(Path.Combine(outputFolder, "output.plato.html"), Compiler.ToPlatoHtml());
 
+        Logger.Log("Writing JavaScript");
         var inputFolder = outputFolder;
         var prologue = File.ReadAllText(Path.Combine(inputFolder, "prologue.js"));
         var epilogue = File.ReadAllText(Path.Combine(inputFolder, "epilogue.js"));

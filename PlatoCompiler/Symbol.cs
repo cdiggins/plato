@@ -8,7 +8,6 @@ namespace Plato.Compiler
     {
         public override string ToString() => $"{GetType().Name}";
         public abstract IReadOnlyList<Symbol> Children { get; }
-        public abstract TypeRefSymbol Type { get; }
         public int Id { get; } = NextId++;  
         public static int NextId = 0;
         public override bool Equals(object obj) => obj is Symbol s && s.Id == Id;
@@ -43,7 +42,7 @@ namespace Plato.Compiler
             => new MemberGroupSymbol(Members.Append(function).ToList(), Name);
 
         public override IReadOnlyList<Symbol> Children 
-            => Members;
+            => Array.Empty<Symbol>();
 
         public string DebugString => 
             string.Join(";", Members.Select(m => m?.Function?.Signature));
@@ -57,7 +56,7 @@ namespace Plato.Compiler
             Name = name;
         }
 
-        public override TypeRefSymbol Type { get; }
+        public TypeRefSymbol Type { get; }
         public string Name { get; }
         public string UniqueName => Name + "_" + Id;
 
@@ -67,20 +66,17 @@ namespace Plato.Compiler
     public class RefSymbol : Symbol
     {
         public DefSymbol Def { get; }
-        public override TypeRefSymbol Type => Def.Type;
+        public TypeRefSymbol Type => Def.Type;
         public string Name => Def.Name;
 
         public RefSymbol(DefSymbol def)
         {
             if (def is TypeDefSymbol tds)
                 throw new Exception("Unexpected type definition reference");
-            Def = def ?? 
-                  throw new Exception("No definition provided");
+            Def = def ?? throw new Exception("No definition provided");
         }
 
-        public override string ToString() => $"Ref=>{Def}";
-
-        // References have no children 
+        public override string ToString() => $"Ref->{Def}";
         public override IReadOnlyList<Symbol> Children => Array.Empty<Symbol>();
     }
 
@@ -95,8 +91,6 @@ namespace Plato.Compiler
 
     public static class PrimitiveTypes
     {
-        public static TypeDefSymbol Kind = Create("Kind");
-
         public static TypeDefSymbol Lambda = Create("Lambda");
         public static TypeDefSymbol Function = Create("Function");
         public static TypeDefSymbol Any = Create("Any");
@@ -119,7 +113,7 @@ namespace Plato.Compiler
             if (type.Equals(typeof(float))) return Float;
             if (type.Equals(typeof(bool))) return Boolean;
             if (type.Equals(typeof(string))) return String;
-            return Any;
+            throw new NotSupportedException(type.Name);
         }
     }
 
@@ -184,16 +178,10 @@ namespace Plato.Compiler
 
         public ConditionalExpressionSymbol(Symbol condition, Symbol ifTrue, Symbol ifFalse)
         {
-            // TODO: unify the types of ifTrue and ifFalse
             Condition = condition;
             IfTrue = ifTrue;
             IfFalse = ifFalse;
-            
-            // TODO: choose the better type between it and IfFalse
-            Type = IfTrue.Type;
         }
-
-        public override TypeRefSymbol Type { get; }
 
         public override IReadOnlyList<Symbol> Children => new []{ Condition, IfTrue, IfFalse};
     }
@@ -209,9 +197,12 @@ namespace Plato.Compiler
             Parameters = parameters;
             Body = body;
         }
-        
+
         public override IReadOnlyList<Symbol> Children
-            => Array.Empty<Symbol>().Concat(Parameters).Append(Body).ToList();
+            => Body != null
+                ? Array.Empty<Symbol>().Concat(Parameters).Append(Body).ToList()
+                : Parameters.Cast<Symbol>().ToList();
+
 
         public string Signature => 
             $"{Name}(" 
@@ -233,10 +224,9 @@ namespace Plato.Compiler
     public class VariableSymbol : DefSymbol
     {
         public VariableSymbol(string name, TypeRefSymbol type)
-            : base(type, name)
-        { }
+            : base(type, name) { }
 
-        public override IReadOnlyList<Symbol> Children
+        public override IReadOnlyList<Symbol> Children 
             => Array.Empty<Symbol>();
     }
 
@@ -248,9 +238,8 @@ namespace Plato.Compiler
         public AssignmentSymbol(Symbol lvalue, Symbol rvalue)
             => (LValue, RValue) = (lvalue, rvalue);
 
-        public override IReadOnlyList<Symbol> Children => new [] { LValue, RValue };
-
-        public override TypeRefSymbol Type => LValue.Type;
+        public override IReadOnlyList<Symbol> Children 
+            => new [] { LValue, RValue };
     }
 
     public class ArgumentSymbol : Symbol
@@ -264,15 +253,13 @@ namespace Plato.Compiler
             Position = position;
         }
 
-        public override TypeRefSymbol Type => Original?.Type;
-
         public override IReadOnlyList<Symbol> Children => new[] { Original };
     }
 
     public class LiteralSymbol : Symbol
     {
         public object Value { get; }
-        public override TypeRefSymbol Type => PrimitiveTypes.FromType(Value?.GetType()).ToRef();
+        public TypeRefSymbol Type => PrimitiveTypes.FromType(Value?.GetType()).ToRef();
         public LiteralTypes LiteralType { get; }
         public LiteralSymbol(LiteralTypes type, object value) => (LiteralType, Value) = (type, value);
         public override IReadOnlyList<Symbol> Children => Array.Empty<Symbol>();
@@ -284,15 +271,11 @@ namespace Plato.Compiler
         public IReadOnlyList<ArgumentSymbol> Args { get; }
         public FunctionCallSymbol(Symbol function, params ArgumentSymbol[] args)
         {
-            if (function == null)
-                throw new Exception("Unexpected empty function");
-            Function = function;
+            Function = function ?? throw new Exception("Unexpected empty function");
             Args = args;
         }
 
         public override IReadOnlyList<Symbol> Children => Args.Append(Function).ToList();
-
-        public override TypeRefSymbol Type => Function?.Type;
     }
 
     public class TypeRefSymbol : Symbol
@@ -319,8 +302,6 @@ namespace Plato.Compiler
 
         public static TypeRefSymbol CreateFunction(params TypeRefSymbol[] types)
             => new TypeRefSymbol(PrimitiveTypes.Function, types);
-
-        public override TypeRefSymbol Type => null;
     }
 
     public abstract class MemberDefSymbol : DefSymbol
@@ -337,7 +318,6 @@ namespace Plato.Compiler
             => new[] { Function };
 
         public FunctionSymbol Function { get; set; }
-
     }
 
     public class FieldDefSymbol : MemberDefSymbol
@@ -364,12 +344,8 @@ namespace Plato.Compiler
     {
         public TypeParameterDefSymbol(string name, TypeRefSymbol constraint)
             : base(TypeKind.Variable, name)
-        {
-            Constraint = constraint;
-        }
-
+            => Constraint = constraint;
         public TypeRefSymbol Constraint { get; }
-
         public override IReadOnlyList<Symbol> Children
             => Array.Empty<Symbol>();
     }
