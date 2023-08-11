@@ -1,41 +1,35 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Plato.Compiler
 {
     public class Scope
     {
         public Scope Parent { get; }
-        public Binding Bindings { get; }
+        public Dictionary<string, Symbol> Bindings { get; } = new Dictionary<string, Symbol>();
 
-        public Scope(Scope parent, Binding bindings)
-            => (Parent, Bindings) = (parent, bindings);
-    }
+        public Scope(Scope parent)
+            => Parent = parent;
 
-    public static class ScopeExtensions
-    {
-        public static Scope Bind(this Scope scope, string name, Symbol value)
-            => new Scope(scope.Parent, scope.Bindings.Add(name, value));
-
-        public static Binding Find(this Scope scope, string name)
-            => scope.EnumerateBindings().FirstOrDefault(x => x.Name == name);
-       
-        public static Symbol GetValue(this Scope scope, string name)
-            => scope.Find(name)?.Value;
-
-        public static Scope Push(this Scope scope)
-            => new Scope(scope, null);
-
-        public static Scope Pop(this Scope scope)
-            => scope.Parent;
-
-        public static IEnumerable<Scope> Enumerate(this Scope scope)
+        public Scope Bind(string name, Symbol value)
         {
-            for (;scope != null; scope = scope.Parent)
-                yield return scope;
+            Bindings[name] =value;
+            return this;
         }
 
-        public static IEnumerable<Binding> EnumerateBindings(this Scope scope) 
-            => scope.Enumerate().SelectMany(scp => scp.Bindings.Enumerate());
+        public Binding Find(string name)
+        {
+            if (Bindings.ContainsKey(name))
+                return new Binding(name, Bindings[name]);
+            return Parent?.Find(name);
+        }
+       
+        public Symbol GetValue(string name)
+            => Find(name)?.Value;
+
+        public Scope Push()
+            => new Scope(this);
+
+        public Scope Pop()
+            => Parent;
     }
 }

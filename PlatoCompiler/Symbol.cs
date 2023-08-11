@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Plato.Compiler
@@ -19,7 +20,7 @@ namespace Plato.Compiler
         public IReadOnlyList<MemberDefSymbol> Members { get;  }
         
         public MemberGroupSymbol(IReadOnlyList<MemberDefSymbol> members, string name)
-            : base(null, name)
+            : base(PrimitiveTypes.Union.ToRef(), name)
         {
             if (members.Count == 0) throw new Exception("Expected at least one function in group");
             Members = members;
@@ -92,6 +93,7 @@ namespace Plato.Compiler
     public static class PrimitiveTypes
     {
         public static TypeDefSymbol Lambda = Create("Lambda");
+        public static TypeDefSymbol Union = Create("Union");
         public static TypeDefSymbol Function = Create("Function");
         public static TypeDefSymbol Any = Create("Any");
         public static TypeDefSymbol Self = Create("Self");
@@ -100,7 +102,7 @@ namespace Plato.Compiler
         public static TypeDefSymbol String = Create("String");
         public static TypeDefSymbol Boolean = Create("Boolean");
         public static TypeDefSymbol Integer = Create("Integer");
-        public static TypeDefSymbol Float = Create("Float");
+        public static TypeDefSymbol Number = Create("Number");
         public static TypeDefSymbol Type = Create("Type");
 
         public static TypeDefSymbol Create(string name)
@@ -110,7 +112,8 @@ namespace Plato.Compiler
         {
             if (type == null) return Any;
             if (type.Equals(typeof(int))) return Integer;
-            if (type.Equals(typeof(float))) return Float;
+            if (type.Equals(typeof(float))) return Number;
+            if (type.Equals(typeof(double))) return Number;
             if (type.Equals(typeof(bool))) return Boolean;
             if (type.Equals(typeof(string))) return String;
             throw new NotSupportedException(type.Name);
@@ -271,7 +274,9 @@ namespace Plato.Compiler
         public IReadOnlyList<ArgumentSymbol> Args { get; }
         public FunctionCallSymbol(Symbol function, params ArgumentSymbol[] args)
         {
-            Function = function ?? throw new Exception("Unexpected empty function");
+            Function = function; 
+            if (Function == null)
+                Debug.WriteLine("Unexpected empty function");
             Args = args;
         }
 

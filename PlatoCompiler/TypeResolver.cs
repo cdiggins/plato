@@ -28,7 +28,6 @@ namespace Plato.Compiler
         public Dictionary<Symbol, TypeDefSymbol> ExpressionTypes { get; }
             = new Dictionary<Symbol, TypeDefSymbol>();
 
-
         public TypeResolver(Operations ops, Logger logger)
         {
             Logger = logger;
@@ -51,58 +50,16 @@ namespace Plato.Compiler
 
             // Update the type of all literals 
             foreach (var ls in Functions.SelectMany(f => f.GetDescendantSymbols()).OfType<LiteralSymbol>())
-                AddType(ls, ComputeType(ls));
-
-            // Update the type of the first parameter of extension libraries 
-            foreach (var type in Types)
-            {
-                if (type.Kind != TypeKind.Library)
-                    continue;
-
-                var relatedType = Types.FirstOrDefault(t => t.Kind != TypeKind.Library && t.Name == type.Name);
-
-                if (relatedType == null)
-                    continue;
-
-                Debug.Assert(relatedType != null);
-
-                foreach (var m in type.Methods)
-                {
-                    if (m.Function.Parameters.Count == 0)
-                        continue;
-
-                    var p = m.Function.Parameters[0];
-
-                    // If there was no type declared, we are using the related type
-                    if (p.Type?.Def == null)
-                        AddType(p, relatedType);
-                }
-            }
-
-            // Compute and store all of the parameter constraints. 
-            foreach (var f in Functions)
-            {
-                var lookup = Constraints.GetParameterConstraints(f);
-
-                foreach (var kv in lookup)
-                    ParameterConstraints.Add(kv.Key, kv.Value);
-            }
-
-            // Prepare for the type 
-            foreach (var p in Parameters)
-            {
-                if (GetType(p) != null)
-                    continue;
-                var candidates = GetCandidateTypes(p).ToList();
-                if (candidates.Count == 1)
-                    AddType(p, candidates[0]);
-            }
+                AddType(ls, ls.Type?.Def);
 
             ComputeExpressionTypes();
         }
 
         public void AddType(Symbol symbol, TypeDefSymbol type)
         {
+            if (type == null)
+                throw new Exception("Unexpected null symbol");
+
             if (!ExpressionTypes.ContainsKey(symbol))
                 ExpressionTypes.Add(symbol, type);
             else if (ExpressionTypes[symbol] == null)
@@ -132,12 +89,18 @@ namespace Plato.Compiler
         public static TypeDefSymbol Unify(IEnumerable<TypeDefSymbol> conceptsA, IEnumerable<TypeDefSymbol> conceptsB)
         {
             // Which concepts in A supercede all of those in B? 
-            var superTypesA = conceptsA.Where(c => IsSubType(c, conceptsB));
+            var superTypesA = conceptsA.Where(c => IsSubType(c, conceptsB)).ToList();
 
             // Which concepts in B supercede all of those in B
-            var superTypesB = conceptsB.Where(c => IsSubType(c, conceptsA));
+            var superTypesB = conceptsB.Where(c => IsSubType(c, conceptsA)).ToList();
 
-            throw new NotImplementedException();
+            if (superTypesA.Count > 0)
+                return superTypesA[0];
+
+            if (superTypesB.Count > 0)
+                return superTypesB[0];
+
+            throw new Exception("Unable to unify type");
         }
 
         public static TypeDefSymbol Unify(TypeDefSymbol a, TypeDefSymbol b)
@@ -182,7 +145,6 @@ namespace Plato.Compiler
             switch (s)
             {
                 case ArgumentSymbol argumentSymbol:
-                    // NOTE: the fact that we are calling a function, creates a constraint that might determine the function  
                     return ComputeType(argumentSymbol.Original);
 
                 case AssignmentSymbol assignmentSymbol:
@@ -196,10 +158,19 @@ namespace Plato.Compiler
                         ComputeType(conditionalExpressionSymbol.IfFalse));
 
                 case MemberGroupSymbol functionGroupSymbol:
-                    return ComputeType(functionGroupSymbol.Type);
+                    throw new Exception("For now this is supposed to be unreachable code. This occurs when a method group is used as a symbol, and not invoked.");
 
                 case FunctionCallSymbol functionCallSymbol:
-                    return ComputeType(functionCallSymbol.Function);
+                {
+                    if (!(functionCallSymbol.Function is RefSymbol rs))
+                        throw new Exception("Can only call references");
+                        
+                    if (rs.Def is MemberGroupSymbol mgs)
+                    {
+                        return ComputeTypeOfMemberGroup(mgs, functionCallSymbol.Args);
+                    }
+                    return ComputeType(rs);
+                }
 
                 case LiteralSymbol literalSymbol:
                     switch (literalSymbol.LiteralType)
@@ -207,7 +178,7 @@ namespace Plato.Compiler
                         case LiteralTypes.Int:
                             return PrimitiveTypes.Integer;
                         case LiteralTypes.Float:
-                            return PrimitiveTypes.Float;
+                            return PrimitiveTypes.Number;
                         case LiteralTypes.Bool:
                             return PrimitiveTypes.Boolean;
                         case LiteralTypes.String:
@@ -265,6 +236,8 @@ namespace Plato.Compiler
                 return r;
 
             var tmp = InternalComputeType(s);
+            if (tmp == null)
+                throw new Exception("WTF?!");
             AddType(s, tmp);
             return tmp;
         }
@@ -280,71 +253,30 @@ namespace Plato.Compiler
         {
             foreach (var f in Functions)
             {
+                if (f?.Body == null ) 
+                    continue;
                 var t = ComputeType(f.Body);
-                AddType(f, t);
+                if (t?.Name != f.Type.Name)
+                {
+                    LogError($"Function type declared as {f.Type.Name} but computed type is {t?.Name}");
+                }
             }
         }
 
-        public List<Constraint> GetParameterConstraints(ParameterSymbol ps)
-            => ParameterConstraints.TryGetValue(ps, out var r) ? r : new List<Constraint>();
-
-        public IEnumerable<TypeDefSymbol> GetCandidateTypes(ParameterSymbol ps)
-        {
-            var r = GetType(ps);
-            if (r != null) return new[] { r };
-
-            // Get the constraints 
-            var constraints = ParameterConstraints.TryGetValue(ps, out var v) ? v : Enumerable.Empty<Constraint>();
-
-            // First look to see if the parameter is invoked. If so, then we are going to treat it as a function 
-            if (constraints.Any(c => c is FunctionCallConstraint))
-            {
-                // TODO: create the correct function 
-                return new[] { PrimitiveTypes.Function };
-            }
-
-            // Get type candidates 
-            var candidates = new List<TypeDefSymbol>();
-            foreach (var c in constraints)
-                if (c is FunctionArgConstraint fac)
-                    candidates.AddRange(Types.Where(t => Satisfies(t, fac)));
-
-            if (candidates.Count == 0)
-                candidates.Add(PrimitiveTypes.Any);
-
-            candidates = candidates.Distinct().ToList();
-
-            // TODO: find concepts and merge candidates where appropriate. 
-            // Maybe I need a "t => Satisfies(x)" where x is all constraints ?
-            // Right now, the problem is that a type only satisfies the predicate if IT satisfies. 
-            // In some cases, the question is whether something it implements the predicate, or a function satisfies it, or something.
-            // And this gets super vague, because the more we know about functions the better we can answer that questions, 
-            // but the list gets really huge of all of the things we have to consider. 
-            // This idea of "does type X satisfy some predicate, or set of predicates" needs to be able to be answered quickly. 
-            // But we also know that the answer will change over time. 
-            // Is it possible to just put all of the constraints together ... maybe answering them as a group would be faster. 
-
-            return candidates;
-        }
-
-        public bool Satisfies(TypeDefSymbol type, FunctionArgConstraint fac)
-            => type.Methods.Any(m => m.Name == fac.Name);
-
-
-        public static bool CanCastTo(TypeRefSymbol fromType, TypeRefSymbol toType, bool allowConversions = true)
+        public static int CanCastTo(TypeRefSymbol fromType, TypeRefSymbol toType, bool allowConversions = true)
         {
             var fromDef = fromType.Def;
             var toDef = toType.Def;
             if (fromDef == null || toDef == null)
-                return true;
+                return 1;
             if (toDef.Name == "Any")
-                return true;
+                return 2;
             if (fromDef.Name == "Any")
-                return true;
+                return 2;
             if (fromDef.Name == toDef.Name)
-                return true;
-            if (TypeResolver.IsSubType(fromDef, toDef))
-                return true;
+                return 3;
+            if (IsSubType(fromDef, toDef))
+                return 3;
 
             if (allowConversions)
             {
@@ -355,13 +287,13 @@ namespace Plato.Compiler
                 {
                     // TODO: check that the type of each argument matches 
                     if (fromType.Name == "Tuple")
-                        return fromType.TypeArgs.Count == toType.Def.Fields.Count;
+                        return fromType.TypeArgs.Count == toType.Def.Fields.Count ? 4 : 0;
 
                     // All types have a constructor that acts as an implicit cast 
                     if (toType.Def.Fields.Count == 1)
                     {
                         var fieldType = toType.Def.Fields[0].Type;
-                        return CanCastTo(fromType, fieldType, false);
+                        return CanCastTo(fromType, fieldType, false) > 0 ? 4 : 0;
                     }
                 }
 
@@ -369,18 +301,18 @@ namespace Plato.Compiler
                 {
                     // TODO: check that the type of each argument matches 
                     if (toType.Name == "Tuple")
-                        return toType.TypeArgs.Count == fromType.Def.Fields.Count;
+                        return toType.TypeArgs.Count == fromType.Def.Fields.Count ? 4 : 0;
 
                     // All types with one field can implicit cast to that field. 
                     if (fromType.Def.Fields.Count == 1)
                     {
                         var fieldType = fromType.Def.Fields[0].Type;
-                        return CanCastTo(fieldType, toType, false);
+                        return CanCastTo(fieldType, toType, false) > 0 ? 4 : 0;
                     }
                 }
             }
 
-            return false;
+            return 0;
         }
 
         public static int DistanceFromAny(TypeRefSymbol parameterType)
@@ -391,7 +323,6 @@ namespace Plato.Compiler
                 return 2;
             return 3;
         }
-
 
         public static int MatchScore(TypeRefSymbol argType, TypeRefSymbol parameterType)
         {
@@ -413,16 +344,16 @@ namespace Plato.Compiler
 
             for (var i = 0; i < argumentTypes.Count; ++i)
             {
-                candidates = candidates.Where(c => Matches(argumentTypes[i], c.Parameters[i].Type)).ToList();
+                candidates = candidates.Where(c => Matches(argumentTypes[i], c.Parameters[i].Type) > 0).ToList();
             }
 
             return candidates;
         }
 
-        public static bool Matches(TypeRefSymbol argType, TypeRefSymbol parameterType)
+        public static int Matches(TypeRefSymbol argType, TypeRefSymbol parameterType)
         {
-            if (argType == null) return true;
-            if (parameterType == null) return true;
+            if (argType == null) return 1;
+            if (parameterType == null) return 1;
             return CanCastTo(argType, parameterType);
         }
 
@@ -431,7 +362,9 @@ namespace Plato.Compiler
             if (trs.Name == "Array")
             {
                 if (trs.TypeArgs.Count != 1)
-                    throw new Exception("Arrays must have one type parameter");
+                    // TODO: Fix this HACK! 
+                    return PrimitiveTypes.Any.ToRef();
+                    //throw new Exception("Arrays must have one type parameter");
                 return trs.TypeArgs[0];
             }
 
@@ -444,7 +377,13 @@ namespace Plato.Compiler
             return trs;
         }
 
-        public FunctionSymbol FindBestFunction(AstNode location, MemberGroupSymbol mgs,
+        public TypeDefSymbol ComputeTypeOfMemberGroup(MemberGroupSymbol mgs, IReadOnlyList<ArgumentSymbol> arguments)
+        {
+            var f = FindBestFunction(mgs, arguments);
+            return f.Type?.Def;
+        }
+
+        public FunctionSymbol FindBestFunction(MemberGroupSymbol mgs,
             IReadOnlyList<ArgumentSymbol> arguments)
         {
             var functions = mgs.Members.Select(m => m.Function).Where(f => f.Parameters.Count == arguments.Count)
@@ -452,12 +391,11 @@ namespace Plato.Compiler
 
             if (functions.Count == 0)
             {
-                LogError($"Found no functions in group {mgs} that matched number of arguments {arguments.Count}",
-                    location);
+                LogError($"Found no functions in group {mgs} that matched number of arguments {arguments.Count}");
                 return null;
             }
 
-            var argTypes = arguments.Select(GetType).Select(x => x.ToRef()).ToList();
+            var argTypes = arguments.Select(ComputeType).Select(x => x.ToRef()).ToList();
             var candidates = FindMatchingFunctions(functions, argTypes);
             var argsStr = string.Join(", ", argTypes.Select(arg => $"{arg}"));
 
@@ -468,7 +406,8 @@ namespace Plato.Compiler
 
                 if (candidates.Count == 0)
                 {
-                    LogError($"Found no functions in group {mgs} that matched arguments ({argsStr})", location);
+                    LogError($"Found no functions in group {mgs} that matched arguments ({argsStr})");
+                    // The following is just for debugging purposes. 
                     var argTypes3 = argTypes.Select(GetArrayParameter).ToList();
                     return null;
                 }
@@ -482,15 +421,14 @@ namespace Plato.Compiler
             Debug.Assert(candidates.Count > 1);
 
             var candidateStr = string.Join(",", candidates.Select(c => c.Signature));
-            LogError(
-                $"Found too many matches ({candidates.Count}) for {mgs} with argument types ({argsStr}) : {candidateStr}",
-                location);
+            LogError($"Found too many matches ({candidates.Count}) for {mgs} with argument types ({argsStr}) : {candidateStr}");
             return candidates[0];
         }
 
-        public void LogError(string message, AstNode node)
+        public void LogError(string message)
         {
-            Errors.Add(new ResolutionError(message, node));
+            // TODO: get an AstNode from a symbol. Pass a symbol to this function.
+            Errors.Add(new ResolutionError(message, null));
         }
     }
 }

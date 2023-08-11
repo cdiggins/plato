@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace Plato.Compiler
 {
     public abstract class AstNode
     {
         public virtual IEnumerable<AstNode> Children => Enumerable.Empty<AstNode>();
-        public override string ToString() => "(" + string.Join(" ", Children) + ")";
+        public override string ToString() => $"({GetType().Name})";
     }
 
     public class AstLeaf : AstNode
     {
         public string Text { get; }
         public AstLeaf(string text = "") => Text = text;
-        public override string ToString() => Text;
+        public override string ToString() => $"({GetType().Name}={Text})";
     }
 
     public class AstIdentifier : AstLeaf
@@ -26,6 +27,7 @@ namespace Plato.Compiler
     {
         public AstNode Inner;
         public AstParenthesized(AstNode inner) => Inner = inner;
+        public override string ToString() => $"({Inner})";
     }
 
     public class AstNoop : AstLeaf
@@ -88,6 +90,8 @@ namespace Plato.Compiler
 
         public static AstConstant True => Create(true);
         public static AstConstant False => Create(false);
+            public override string ToString() => $"({GetType().Name}:{Type} {Value})";
+
     }
 
     public class AstLambda : AstNode
@@ -127,6 +131,7 @@ namespace Plato.Compiler
         public AstNode IfFalse { get; }
         public AstConditional(AstNode condition, AstNode ifTrue, AstNode ifFalse) => (Condition, IfTrue, IfFalse) = (condition, ifTrue, ifFalse);
         public override IEnumerable<AstNode> Children => base.Children.Append(Condition).Append(IfTrue).Append(IfFalse);
+        public override string ToString() => $"({Condition} ? {IfTrue} : {IfFalse})";
     }
 
     public class AstVarDef : AstNode
@@ -149,9 +154,10 @@ namespace Plato.Compiler
     public class AstInvoke : AstNode
     {
         public AstNode Function { get; }
-        public IReadOnlyList<AstNode> AstArguments { get; }
-        public AstInvoke(AstNode function, params AstNode[] arguments) => (Function, AstArguments) = (function, arguments);
+        public IReadOnlyList<AstNode> Arguments { get; }
+        public AstInvoke(AstNode function, params AstNode[] arguments) => (Function, Arguments) = (function, arguments);
         public override IEnumerable<AstNode> Children => new[] { Function };
+        public override string ToString() => $"{Function}({string.Join(",", Arguments)})";
     }
 
     public class AstTypeNode : AstNode
@@ -160,12 +166,14 @@ namespace Plato.Compiler
         public IReadOnlyList<AstTypeNode> TypeArguments { get; }
         public AstTypeNode(string name, params AstTypeNode[] args) => (Name, TypeArguments) = (name, args);
         public override IEnumerable<AstNode> Children => TypeArguments;
+        public override string ToString() => $"({GetType().Name} {Name}<{string.Join(",", TypeArguments)}>)";
     }
 
     public abstract class AstDeclaration : AstNode
     {
         public string Name { get; }
         protected AstDeclaration(string name) => Name = name;
+        public override string ToString() => $"({GetType().Name} {Name})";
     }
 
     public abstract class AstMemberDeclaration : AstDeclaration
@@ -175,24 +183,12 @@ namespace Plato.Compiler
         public override IEnumerable<AstNode> Children => base.Children.Append(Type);
     }
 
-    public class AstDirective : AstNode
-    {
-        public string Directive;
-        public string Argument;
-        public AstDirective(string directive, string argument) => (Directive, Argument) = (directive, argument);
-    }
-
     public class AstNamespace : AstDeclaration
     {
         public IReadOnlyList<AstTypeDeclaration> Types { get; }
-        public IReadOnlyList<AstDirective> Directives { get; }
-        public IReadOnlyList<AstNamespace> Namespaces { get; }
-        public override IEnumerable<AstNode> Children => 
-            Types.Cast<AstNode>().Concat(Namespaces).Concat(Directives);
-        public AstNamespace(string name, IEnumerable<AstDirective> directives, IEnumerable<AstTypeDeclaration> types, IEnumerable<AstNamespace> namespaces)
-        : base(name)
-            => (Types, Directives, Namespaces) = (
-                types.ToListOrEmpty(), directives.ToListOrEmpty(), namespaces.ToListOrEmpty());
+        public override IEnumerable<AstNode> Children => Types;
+        public AstNamespace(string name, IEnumerable<AstTypeDeclaration> types) : base(name) 
+            => Types = types.ToListOrEmpty();
     }
 
     public class AstFieldDeclaration : AstMemberDeclaration
@@ -273,18 +269,11 @@ namespace Plato.Compiler
 
         public override IEnumerable<AstNode> Children =>
             base.Children.Concat(TypeParameters).Concat(Inherits).Concat(Implements).Concat(Members);
-    }
 
-    public class AstProject : AstDeclaration
-    {
-        public IReadOnlyList<AstFile> Files { get; }
-        public AstProject(string name, IReadOnlyList<AstFile> files) : base(name) => Files = files;
-    }
-
-    public class AstFile : AstDeclaration
-    {
-        public AstNamespace Namespace { get; }
-        public AstFile(string name, AstNamespace ns) : base(name) => Namespace = ns;
+        public override string ToString()
+        {
+            return $"({Kind} {Name}<{string.Join(",",TypeParameters)}> ({string.Join(";", Members)}))";
+        }
     }
 
     public static class AstNodeExtensions

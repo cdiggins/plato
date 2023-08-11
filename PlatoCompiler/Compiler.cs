@@ -66,7 +66,7 @@ namespace Plato.Compiler
             try
             {
                 Log("Creating symbol resolver");
-                SymbolResolver = new SymbolResolver(Logger);
+                SymbolResolver = new SymbolResolver(Operations, Logger);
 
                 Log("Creating type definitions");
                 TypeDefs = SymbolResolver.CreateTypeDefs(TypeDeclarations).ToList();

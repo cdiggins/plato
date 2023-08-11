@@ -1,40 +1,33 @@
-type Integer
-    implements Numerical
-{
-    Value: Integer;
-}
-
+// An integer type in the range of 0 to N is used to return the number of items in a collection or set. 
 type Count
     implements Numerical
 {
     Value: Integer;
 }
 
+// An integer type in the range of -1 to N and is used for indexing arrays and collections 
 type Index
     implements Value
 {
     Value: Integer;
 }
 
-type Number
-    implements Numerical
-{
-    Value: Float;
-}
-
-// A Unit is a numerical type that is normally in the range of 0 to 1. 
+// A numerical type that is normally in the range of 0 to 1. 
 type Unit
     implements Numerical
 {
     Value: Number;
 }
 
+// A numerical type normally in the range of 0 to 100 
 type Percent
     implements Numerical
 {
     Value: Number;
 }
 
+// A numerical type used to accurately represent rotations in 3D space
+// https://en.wikipedia.org/wiki/Quaternion
 type Quaternion
     implements Value
 {
@@ -44,6 +37,7 @@ type Quaternion
     W: Number;
 }
 
+//
 type Unit2D
     implements Value
 {

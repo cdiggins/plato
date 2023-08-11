@@ -11,15 +11,11 @@ namespace PlatoWinFormsEditor;
 
 public class IDE
 {
-    public string Input { get; set; }
-    public string Output { get; set; }
-    public Parser Parser { get; set; }
-
     public TabControl TabControl { get; }
     public RichTextBox OutputTextBox { get; }
     public List<Editor> Editors { get; } = new();
     public Compiler Compiler { get; }
-    public Logger Logger { get; } = new Logger();
+    public Logger Logger { get; } = new();
 
     public void OpenFile(string filePath)
     {
@@ -179,83 +175,6 @@ public class IDE
         sb ??= new StringBuilder();
         var dontKnowType = tr.Functions.Count(f => tr.GetType(f.Body) == null);
         sb.AppendLine($"Don't know the type of {dontKnowType} funcs of {tr.Functions.Count} total");
-        return sb;
-    }
-
-    /*
-    public static StringBuilder AnalyzeTypesAndFunctions(Parser c, StringBuilder sb = null)     
-    {
-        sb ??= new StringBuilder();
-
-        var functions = c.Functions;
-        sb.AppendLine($"Number of functions = {functions.Count}");
-
-        var typedFunctions = functions.Where(f => f.IsExplicitlyTyped()).ToList(); // TODO: look for type annotations (e.g. concepts)
-        sb.AppendLine($"Number of explicitly type functions = {typedFunctions.Count}");
-
-        var funCalls = functions.SelectMany(f => f.Body.GetDescendantSymbols().OfType<FunctionCallSymbol>()).ToList();
-        sb.AppendLine($"Number of function calls = {funCalls.Count}");
-
-        var determinedFunctionTypes = 0;
-        //sb.AppendLine($"Number of known implicitly typed functions = {determinedFunctionTypes}");
-
-        var unambiguousFunCalls = 0;
-        //sb.AppendLine($"Number of unambiguous function calls = {unambiguousFunCalls}");
-
-        var ambiguousFunctions = new List<RefSymbol>();
-        //sb.AppendLine($"Number of ambiguous function calls");
-
-        var expressions = functions.SelectMany(f => f.GetDescendantSymbols()).Where(s => s.IsExpression()).ToList();
-        sb.AppendLine($"Number of expressions to process {expressions.Count}");
-
-        var referencedGroups = functions
-            .SelectMany(f => f.GetDescendantSymbols())
-            .OfType<RefSymbol>()
-            .Select(rs => rs.Def)
-            .OfType<FunctionGroupSymbol>()
-            .Distinct()
-            .ToList();
-
-        sb.AppendLine($"Number of referenced function groups {referencedGroups.Count}");
-
-        var referencedMultiGroups = referencedGroups.Where(g => g.Functions.Count > 1).ToList();
-        sb.AppendLine($"Number of those groups with multiple functions {referencedMultiGroups.Count}");
-
-        var tr = c.TypeResolver;
-        OutputTypeResolverDetails(tr, sb);
-        
-        c.TypeResolver.ComputeExpressionTypes();
-        OutputTypeResolverDetails(tr, sb);
-
-        c.TypeResolver.ComputeExpressionTypes();
-        OutputTypeResolverDetails(tr, sb);
-
-        c.TypeResolver.ComputeExpressionTypes();
-        OutputTypeResolverDetails(tr, sb);
-
-        OutputCandidates(tr, sb);
-
-        return sb;
-    }
-    */
-
-    public static StringBuilder OutputCandidates(TypeResolver tr, StringBuilder sb)
-    {
-        foreach (var p in tr.Parameters)
-        {
-            if (tr.GetType(p) != null)
-                continue;
-            
-            var candidates = tr.GetCandidateTypes(p).ToList();
-            sb.AppendLine($"Candidates for {p}");
-            foreach (var c in candidates)
-                sb.AppendLine($" {c}");
-            var constraints = tr.GetParameterConstraints(p).ToList();
-            sb.AppendLine($"Constraints for {p}");
-            foreach (var c in constraints)
-                sb.AppendLine($" {c}");
-        }
-
         return sb;
     }
 }

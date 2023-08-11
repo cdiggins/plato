@@ -22,25 +22,6 @@ namespace Plato.Compiler
             return Write(typeRef.Name).Write(" ");
         }
 
-        public SymbolWriterCSharp WriteConstraints(FunctionSymbol function)
-        {
-            var r = this;
-            foreach (var p in function.Parameters)
-            {
-                // DEBUG: 
-
-                if (!TypeResolver.ParameterConstraints.ContainsKey(p))
-                    continue;
-
-                var constraints = TypeResolver.ParameterConstraints[p];
-                WriteLine($"// {p} {string.Join(", ", constraints)}");
-
-                var candidates = TypeResolver.GetCandidateTypes(p);
-                WriteLine($"// Candidates = {string.Join(",", candidates.Select(c => c.Name))}");
-            }
-            return r;
-        }
-
         public SymbolWriterCSharp WriteSignature(FunctionSymbol function)
         {
             return WriteTypeDecl(function.Type, "void")

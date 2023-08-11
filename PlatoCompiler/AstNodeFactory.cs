@@ -508,11 +508,7 @@ namespace Plato.Compiler
                     return ToAst(cstExpressionStatement.Expression);
 
                 case CstFile cstFile:
-                    return Create(node, new AstNamespace(
-                        null,
-                        null,
-                        cstFile.TopLevelDeclaration.Nodes.Select(ToAst),
-                        null));
+                    return Create(node, new AstNamespace("", cstFile.TopLevelDeclaration.Nodes.Select(ToAst)));
 
                 case CstFinallyClause cstFinallyClause:
                     throw new NotImplementedException();

@@ -24,19 +24,21 @@ namespace Plato.Compiler
             }
         }
 
-        public SymbolResolver(Logger logger)
+        public SymbolResolver(Operations ops, Logger logger)
         {
+            Operations = ops;
             BindPredefinedSymbols();
             Logger = logger;
         }
 
+        public Operations Operations { get; }
         public Logger Logger { get; }
         public List<ResolutionError> Errors { get; } = new List<ResolutionError>();
-        public Scope ValueBindingsScope { get; set; } = new Scope(null, null);
-        public Scope TypeBindingsScope { get; set; } = new Scope(null, null);
+        public Scope ValueBindingsScope { get; set; } = new Scope(null);
+        public Scope TypeBindingsScope { get; set; } = new Scope(null);
         public Dictionary<Symbol, AstNode> SymbolsToNames = new Dictionary<Symbol, AstNode>();
 
-        public IEnumerable<TypeDefSymbol> TypeDefs => SymbolsToNames.Keys.OfType<TypeDefSymbol>();
+        public List<TypeDefSymbol> TypeDefs { get; } = new List<TypeDefSymbol>();
         
         public void BindPredefinedSymbols()
         {
@@ -47,7 +49,7 @@ namespace Plato.Compiler
             BindType(PrimitiveTypes.Any);
             BindType(PrimitiveTypes.Self);
             BindType(PrimitiveTypes.String);
-            BindType(PrimitiveTypes.Float);
+            BindType(PrimitiveTypes.Number);
             BindType(PrimitiveTypes.Integer);
             BindType(PrimitiveTypes.Type);
             BindType(PrimitiveTypes.Boolean);
@@ -213,9 +215,15 @@ namespace Plato.Compiler
 
                     case AstInvoke astInvoke:
                     {
-                        var args = astInvoke.AstArguments.Select((a, i) =>
+                        var args = astInvoke.Arguments.Select((a, i) =>
                             new ArgumentSymbol(Resolve(a), i)).ToArray();
                         var funcRef = Resolve(astInvoke.Function);
+                        if (funcRef == null)
+                        {
+                            var tmp = Resolve(astInvoke.Function);
+                            LogError($"Could not find function {astInvoke.Function}", astInvoke);
+                        }
+
                         return new FunctionCallSymbol(funcRef, args);
                     }
 
@@ -256,9 +264,10 @@ namespace Plato.Compiler
                 var typeDef = new TypeDefSymbol(astTypeDeclaration.Kind, astTypeDeclaration.Name);
                 SymbolsToNames.Add(typeDef, astTypeDeclaration);
                 BindType(typeDef);
+                TypeDefs.Add(typeDef);
             }
 
-            foreach (var typeDef in TypeDefs.ToList())
+            foreach (var typeDef in TypeDefs)
             {
                 var astTypeDeclaration = SymbolsToNames[typeDef] as AstTypeDeclaration;
                 TypeBindingsScope = TypeBindingsScope.Push();

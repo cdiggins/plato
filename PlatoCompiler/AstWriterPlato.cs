@@ -151,7 +151,7 @@ namespace Plato.Compiler
                 case AstInvoke astInvoke:
                     return Write(astInvoke.Function)
                         .Write("( ")
-                        .WriteCommaList(astInvoke.AstArguments, Write)
+                        .WriteCommaList(astInvoke.Arguments, Write)
                         .Write(")");
 
                 case AstLambda astLambda:
@@ -215,9 +215,6 @@ namespace Plato.Compiler
                     }
                     return r;
                 }
-
-                case AstDirective directive:
-                    return WriteLine($"#directive {directive.Argument}");
 
                 case AstFieldDeclaration fieldDeclaration:
                     return Write("field ")

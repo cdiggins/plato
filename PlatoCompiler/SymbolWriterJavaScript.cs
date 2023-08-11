@@ -19,51 +19,13 @@ namespace Plato.Compiler
 
         public SymbolWriterJavaScript WriteBlock(IEnumerable<Symbol> symbols)
             => symbols.Aggregate(WriteStartBlock(),
-                (w, s) => w.Write(s)).WriteEndBlock();
-
-        public SymbolWriterJavaScript WriteParameterConstraints(FunctionSymbol function)
-        {
-            foreach (var p in function.Parameters)
-            {
-                // DEBUG: 
-                var constraints = TypeResolver.ParameterConstraints[p];
-                WriteLine($"// {p} {string.Join(", ", constraints)}");
-
-                var candidates = TypeResolver.GetCandidateTypes(p);
-                WriteLine($"// Candidates = {string.Join(",", candidates.Select(c => c.Name))}");
-            }
-            return this;
-        }
-
-        public SymbolWriterJavaScript WriteFunctionCallCandidates(FunctionSymbol function)
-        {
-            var calls = function.Body.GetDescendantSymbols().OfType<FunctionCallSymbol>();
-            foreach (var call in calls)
-            {
-                var f = call.Function;
-                if (f is RefSymbol rs)
-                {
-                    var candidates = TypeResolver.Ops.GetMembers(rs.Name);
-                    WriteLine($"// Called function: {call.Function} candidates = {string.Join(", ", candidates)}");
-                }
-                else
-                {
-                    throw new Exception("What else can be called?");
-                }
-
-            }
-            return this;
-        }
+                (w, s) => w.Write(s)).WriteEndBlock(); 
 
         public SymbolWriterJavaScript AnnotateType(Symbol s)
-        {
-            return AnnotateType(TypeResolver.GetType(s));
-        }
+            => AnnotateType(TypeResolver.GetType(s));
 
         public SymbolWriterJavaScript AnnotateType(TypeRefSymbol trs)
-        {
-            return AnnotateType(trs?.Def);
-        }
+            => AnnotateType(trs?.Def);
 
         public SymbolWriterJavaScript AnnotateType(TypeDefSymbol tds)
         {
