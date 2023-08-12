@@ -1,3 +1,28 @@
+// Built-in type that represents a real number 
+type Number 
+    implements Numerical
+{ }
+
+// Built-in type that represent a positive or negative whole number 
+type Integer   
+    implements 
+{ }
+
+// Built-in type that represents text
+type String
+    implements Value, Array<Character>
+{ }
+
+// Built-in type that represents a truth value 
+type Boolean 
+    implements Value, BooleanOperations
+{ }
+
+// Built-in type that represents a character of text 
+type Character
+    implements Value
+{ }
+
 // An integer type in the range of 0 to N is used to return the number of items in a collection or set. 
 type Count
     implements Numerical
