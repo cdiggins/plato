@@ -46,13 +46,7 @@ namespace Plato.Compiler
             BindPredefined(null, "Tuple");
             BindType(PrimitiveTypes.Tuple);
             BindType(PrimitiveTypes.Function);
-            BindType(PrimitiveTypes.Any);
             BindType(PrimitiveTypes.Self);
-            BindType(PrimitiveTypes.String);
-            BindType(PrimitiveTypes.Number);
-            BindType(PrimitiveTypes.Integer);
-            BindType(PrimitiveTypes.Type);
-            BindType(PrimitiveTypes.Boolean);
         }
 
         public void BindPredefined(TypeRefSymbol type, string name)

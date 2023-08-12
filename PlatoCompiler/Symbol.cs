@@ -95,27 +95,20 @@ namespace Plato.Compiler
         public static TypeDefSymbol Lambda = Create("Lambda");
         public static TypeDefSymbol Union = Create("Union");
         public static TypeDefSymbol Function = Create("Function");
-        public static TypeDefSymbol Any = Create("Any");
         public static TypeDefSymbol Self = Create("Self");
         public static TypeDefSymbol Tuple = Create("Tuple");
-
-        public static TypeDefSymbol String = Create("String");
-        public static TypeDefSymbol Boolean = Create("Boolean");
-        public static TypeDefSymbol Integer = Create("Integer");
-        public static TypeDefSymbol Number = Create("Number");
-        public static TypeDefSymbol Type = Create("Type");
 
         public static TypeDefSymbol Create(string name)
             => new TypeDefSymbol(TypeKind.Primitive, name);
 
-        public static TypeDefSymbol FromType(Type type)
+        public static string GetPrimNameFromType(Type type)
         {
-            if (type == null) return Any;
-            if (type.Equals(typeof(int))) return Integer;
-            if (type.Equals(typeof(float))) return Number;
-            if (type.Equals(typeof(double))) return Number;
-            if (type.Equals(typeof(bool))) return Boolean;
-            if (type.Equals(typeof(string))) return String;
+            if (type == null) return "Any";
+            if (type.Equals(typeof(int))) return "Integer";
+            if (type.Equals(typeof(float))) return "Number";
+            if (type.Equals(typeof(double))) return "Number";
+            if (type.Equals(typeof(bool))) return "Boolean";
+            if (type.Equals(typeof(string))) return "String";
             throw new NotSupportedException(type.Name);
         }
     }
@@ -262,7 +255,6 @@ namespace Plato.Compiler
     public class LiteralSymbol : Symbol
     {
         public object Value { get; }
-        public TypeRefSymbol Type => PrimitiveTypes.FromType(Value?.GetType()).ToRef();
         public LiteralTypes LiteralType { get; }
         public LiteralSymbol(LiteralTypes type, object value) => (LiteralType, Value) = (type, value);
         public override IReadOnlyList<Symbol> Children => Array.Empty<Symbol>();

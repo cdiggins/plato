@@ -5,7 +5,7 @@ type Number
 
 // Built-in type that represent a positive or negative whole number 
 type Integer   
-    implements 
+    implements Numerical
 { }
 
 // Built-in type that represents text
@@ -17,6 +17,13 @@ type String
 type Boolean 
     implements Value, BooleanOperations
 { }
+
+// Built-in type that represents the type of a run-time value. 
+type Type
+    implements Value
+{ 
+    Name: String;
+}
 
 // Built-in type that represents a character of text 
 type Character
@@ -813,6 +820,7 @@ type BernoulliDistribution
     P: Probability;
 }
 
+// A value in the range of 0 to 1, 
 type Probability
     implements Numerical
 {

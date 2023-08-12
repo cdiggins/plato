@@ -25,6 +25,8 @@ namespace Plato.Compiler
         public Logger Logger { get; }
         public List<ResolutionError> Errors { get; } = new List<ResolutionError>();
 
+        public Dictionary<string, TypeDefSymbol> TypesFromNames { get; }
+
         public Dictionary<Symbol, TypeDefSymbol> ExpressionTypes { get; }
             = new Dictionary<Symbol, TypeDefSymbol>();
 
@@ -32,6 +34,8 @@ namespace Plato.Compiler
         {
             Logger = logger;
             Ops = ops;
+
+            TypesFromNames = Types.Where(t => t.IsType() || t.IsConcept()).ToDictionary(t => t.Name, t => t);
 
             // Get the functions declared as methods
             Functions = Types
@@ -47,11 +51,7 @@ namespace Plato.Compiler
             // Update the type associated with the parameter. 
             foreach (var p in Parameters)
                 AddType(p, p.Type?.Def);
-
-            // Update the type of all literals 
-            foreach (var ls in Functions.SelectMany(f => f.GetDescendantSymbols()).OfType<LiteralSymbol>())
-                AddType(ls, ls.Type?.Def);
-
+            
             ComputeExpressionTypes();
         }
 
@@ -176,13 +176,13 @@ namespace Plato.Compiler
                     switch (literalSymbol.LiteralType)
                     {
                         case LiteralTypes.Int:
-                            return PrimitiveTypes.Integer;
+                            return FindType("Integer");
                         case LiteralTypes.Float:
-                            return PrimitiveTypes.Number;
+                            return FindType("Number");
                         case LiteralTypes.Bool:
-                            return PrimitiveTypes.Boolean;
+                            return FindType("Boolean");
                         case LiteralTypes.String:
-                            return PrimitiveTypes.String;
+                            return FindType("String");
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
@@ -240,6 +240,11 @@ namespace Plato.Compiler
                 throw new Exception("WTF?!");
             AddType(s, tmp);
             return tmp;
+        }
+
+        public TypeDefSymbol FindType(string name)
+        {
+            return TypesFromNames[name];
         }
 
         public TypeDefSymbol GetType(Symbol s)
@@ -357,13 +362,13 @@ namespace Plato.Compiler
             return CanCastTo(argType, parameterType);
         }
 
-        public static TypeRefSymbol GetArrayParameter(TypeRefSymbol trs)
+        public TypeRefSymbol GetArrayParameter(TypeRefSymbol trs)
         {
             if (trs.Name == "Array")
             {
                 if (trs.TypeArgs.Count != 1)
                     // TODO: Fix this HACK! 
-                    return PrimitiveTypes.Any.ToRef();
+                    return FindType("Any").ToRef();
                     //throw new Exception("Arrays must have one type parameter");
                 return trs.TypeArgs[0];
             }
