@@ -6,8 +6,16 @@ Plato is an efficient and fun programming language inspired by JavaScript, C#, a
 Plato is designed to be easy to teach and learn while being efficient and robust enough for 
 commercial coding, particularly in the realm of 3D graphics. 
 
-Plato is a statically typed functional language that looks and behaves like an object-oriented scripting language,
-but with a lot less complexity.  
+Plato is a statically typed functional language that looks and behaves like an object-oriented scripting 
+language, but with a lot less complexity.  
+
+## A Text Language with a Visual Representation 
+
+Plato is being developed as a regular text-based coding language that has an equivalent visual 
+representation as a data-flow graph. This UI for data-flow graphs is in its early stages, but here is a preview:
+
+![DataFlowEx1](https://github.com/cdiggins/plato/assets/1759994/c8d4d6e4-a138-42d1-99c9-6fa891254ede)
+
 
 ## Functions 
 
@@ -17,23 +25,11 @@ languages Plato functions are never instance methods. They have no implicit "thi
 An example of a Factorial function is :
 
 ```Typescript
-Factorial(n) => 
-   n <= 1 
-      ? 1 
-      : n * Factorial(n-1);
-```
-
-Functions are allowed to have explicit type annotations. A type annotation specifies 
-the type or concept that any input or output to a function must have.
-
-```Typescript
 Factorial(n: Integer): Integer => 
    n <= 1 
       ? 1 
       : n * Factorial(n-1);
 ```
-
-When type annotations are absent the type is inferred by the compiler based on the operations performed. 
 
 Functions can equivalently be written in a statement form:
 
@@ -54,7 +50,6 @@ then the rest of the arguments. For example the expression `Clamp(x, min, max)` 
 
 If a function does not require additional arguments then the `()` can be omitted when called as if it is method. This means that any
 function with only one parameter (e.g. `Cos(x: Number)`) can be invoked as if it was a property: `x.Cos`.
-
 
 ## Libraries 
 
@@ -159,6 +154,11 @@ This makes defining new operators quick and easy.
 * `Negative` -> `-`
 * `Not` -> `!`
 
+## Type Inference 
+
+Plato supports a limited form of type inference. 
+Plato supports generics (types with parameters), but type parameters are not specified explicitly: they are inferred based on the function definition.   
+
 ## Features that Plato does not have
 
 Plato does not have many features found in common object-oriented languages.
@@ -177,7 +177,6 @@ The following are features that Plato will never have:
 Features that we can exepct Plato to support in the near future:
 
 * Support for unique types - types which have only one reference and can be mutated. 
-* Inferred type of polymorphic types - for example have an implicitly type variable initialized with a lambda or array 
 * A visual syntax - a representation of Plato code as a dataflow graph. 
 * Default concept implementations - concepts have auto-generated default implementations
 that are a tuple of fields and functions. 
