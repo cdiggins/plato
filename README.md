@@ -1,3 +1,5 @@
+![Plato-logo-edit](https://github.com/cdiggins/plato/assets/1759994/378437d5-9ddb-4028-812b-02be2c71279e)
+
 # Plato
 
 Plato is an efficient and fun programming language inspired by JavaScript, C#, and Haskell. 
