@@ -325,10 +325,18 @@ namespace Plato.Compiler
                 // Resolve the inherits and implemented type declarations
 
                 foreach (var inheritedType in astTypeDecl.Inherits)
+                {
+                    if (inheritedType == null)
+                        throw new Exception($"Null inherited type declaration in {typeDef}");
                     typeDef.Inherits.Add(ResolveType(inheritedType));
+                }
 
                 foreach (var implementedType in astTypeDecl.Implements)
+                {
+                    if (implementedType == null)
+                        throw new Exception($"Null implemented type declaration in {typeDef}");
                     typeDef.Implements.Add(ResolveType(implementedType));
+                }
 
                 if (typeDef.IsConcept() || typeDef.IsType())
                     BindValue("Self", new PredefinedSymbol(typeDef.ToRef(), "Self"));

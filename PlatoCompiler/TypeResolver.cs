@@ -51,8 +51,42 @@ namespace Plato.Compiler
             // Update the type associated with the parameter. 
             foreach (var p in Parameters)
                 AddType(p, p.Type?.Def);
-            
+
+            TestCasts();
+
             ComputeExpressionTypes();
+        }
+
+        public void TestCasts()
+        {
+            var tAny = FindType("Any");
+            var tNumber = FindType("Number");
+            var tUnit = FindType("Unit");
+            var tString = FindType("String");
+            var tArray = FindType("Array");
+            var tNumerical = FindType("Numerical");
+            var tValue = FindType("Value");
+            var tBool = FindType("Boolean");
+
+            var typeDefs = new TypeDefSymbol[] { tAny, tNumber, tUnit, tString, tArray, tNumerical, tValue, tBool };
+            foreach (var td in typeDefs)
+            {
+                Debug.Assert(td != null);
+                Debug.Assert(td.CanCastTo(tAny) > 0);
+            }
+
+            Debug.Assert(tNumber.CanCastTo(tNumerical) > 0);
+            Debug.Assert(tNumber.CanCastTo(tValue) > 0);
+            Debug.Assert(tUnit.CanCastTo(tNumber) > 0);
+            Debug.Assert(tString != null);
+            Debug.Assert(tString.CanCastTo(tArray) > 0);
+            Debug.Assert(tString.CanCastTo(tNumber) == 0);
+
+
+            Debug.Assert(tArray != null);
+            Debug.Assert(tNumerical != null);
+            Debug.Assert(tValue != null);
+            Debug.Assert(tBool != null);
         }
 
         public void AddType(Symbol symbol, TypeDefSymbol type)
@@ -66,79 +100,7 @@ namespace Plato.Compiler
                 ExpressionTypes[symbol] = type;
         }
 
-        public static bool InheritsFrom(TypeDefSymbol self, TypeDefSymbol other)
-            => self.GetSelfAndAllInheritedTypes().Contains(other);
-
-        public static bool Implements(TypeDefSymbol self, TypeDefSymbol other)
-            => self.GetAllImplementedConcepts().Select(c => c.Def).Contains(other);
-
-        public static bool IsSubType(TypeDefSymbol self, TypeDefSymbol other)
-        {
-            if (self.Equals(other))
-                return true;
-            if (InheritsFrom(self, other))
-                return true;
-            if (Implements(self, other))
-                return true;
-            return false;
-        }
-
-        public static bool IsSubType(TypeDefSymbol self, IEnumerable<TypeDefSymbol> others)
-            => others.All(x => IsSubType(self, x));
-
-        public static TypeDefSymbol Unify(IEnumerable<TypeDefSymbol> conceptsA, IEnumerable<TypeDefSymbol> conceptsB)
-        {
-            // Which concepts in A supercede all of those in B? 
-            var superTypesA = conceptsA.Where(c => IsSubType(c, conceptsB)).ToList();
-
-            // Which concepts in B supercede all of those in B
-            var superTypesB = conceptsB.Where(c => IsSubType(c, conceptsA)).ToList();
-
-            if (superTypesA.Count > 0)
-                return superTypesA[0];
-
-            if (superTypesB.Count > 0)
-                return superTypesB[0];
-
-            throw new Exception("Unable to unify type");
-        }
-
-        public static TypeDefSymbol Unify(TypeDefSymbol a, TypeDefSymbol b)
-        {
-            // If one type inher
-
-            if (a == null)
-                return b;
-
-            if (b == null)
-                return a;
-
-            if (a.Equals(b))
-                return a;
-
-            // If one type is a concept, and the other is a regular type, then choose the type. 
-            if (a.IsType() && b.IsConcept())
-                return a;
-
-            if (a.IsConcept() && a.IsType())
-                return a;
-
-            if (a.IsType() && b.IsType())
-            {
-                var aConcepts = a.Implements.Select(i => i.Def);
-                var bConcepts = b.Implements.Select(i => i.Def);
-                return Unify(aConcepts, bConcepts);
-            }
-
-            if (a.IsConcept() && b.IsConcept())
-            {
-                var aConcepts = a.GetSelfAndAllInheritedTypes();
-                var bConcepts = b.GetSelfAndAllInheritedTypes();
-                return Unify(aConcepts, bConcepts);
-            }
-
-            return b;
-        }
+       
 
         TypeDefSymbol InternalComputeType(Symbol s)
         {
@@ -153,12 +115,14 @@ namespace Plato.Compiler
                 case ConditionalExpressionSymbol conditionalExpressionSymbol:
                     // NOTE: the condition component is guaranteed to be a boolean.
                     // The fact that it must be a boolean, might affect what is called? 
-                    return Unify(
-                        ComputeType(conditionalExpressionSymbol.IfTrue),
+                    return ComputeType(
+                        conditionalExpressionSymbol.IfTrue).Unify(
                         ComputeType(conditionalExpressionSymbol.IfFalse));
 
                 case MemberGroupSymbol functionGroupSymbol:
-                    throw new Exception("For now this is supposed to be unreachable code. This occurs when a method group is used as a symbol, and not invoked.");
+                    // TODO: figure out a good type for the method group. 
+                    return PrimitiveTypes.Error;
+                    //throw new Exception("For now this is supposed to be unreachable code. This occurs when a method group is used as a symbol, and not invoked.");
 
                 case FunctionCallSymbol functionCallSymbol:
                 {
@@ -237,7 +201,11 @@ namespace Plato.Compiler
 
             var tmp = InternalComputeType(s);
             if (tmp == null)
-                throw new Exception("WTF?!");
+            {
+                // TODO: we know this can be triggered by trying to get the type of a tuple. 
+                return PrimitiveTypes.Error;
+            }
+
             AddType(s, tmp);
             return tmp;
         }
@@ -261,105 +229,11 @@ namespace Plato.Compiler
                 if (f?.Body == null ) 
                     continue;
                 var t = ComputeType(f.Body);
-                if (t?.Name != f.Type.Name)
+                if (t.CanCastTo(f.Type.Def) == 0)
                 {
-                    LogError($"Function type declared as {f.Type.Name} but computed type is {t?.Name}");
+                    LogError($"Function type declared as {f.Type.Name} but computed type is {t?.Name}. No conversion was found.");
                 }
             }
-        }
-
-        public static int CanCastTo(TypeRefSymbol fromType, TypeRefSymbol toType, bool allowConversions = true)
-        {
-            var fromDef = fromType.Def;
-            var toDef = toType.Def;
-            if (fromDef == null || toDef == null)
-                return 1;
-            if (toDef.Name == "Any")
-                return 2;
-            if (fromDef.Name == "Any")
-                return 2;
-            if (fromDef.Name == toDef.Name)
-                return 3;
-            if (IsSubType(fromDef, toDef))
-                return 3;
-
-            if (allowConversions)
-            {
-                // We look for the implicit operators.
-                // TODO: look for functions of the name "ToX" and "FromX" when allowing more than just the default. 
-
-                if (toType.Def.IsType())
-                {
-                    // TODO: check that the type of each argument matches 
-                    if (fromType.Name == "Tuple")
-                        return fromType.TypeArgs.Count == toType.Def.Fields.Count ? 4 : 0;
-
-                    // All types have a constructor that acts as an implicit cast 
-                    if (toType.Def.Fields.Count == 1)
-                    {
-                        var fieldType = toType.Def.Fields[0].Type;
-                        return CanCastTo(fromType, fieldType, false) > 0 ? 4 : 0;
-                    }
-                }
-
-                if (fromType.Def.IsType())
-                {
-                    // TODO: check that the type of each argument matches 
-                    if (toType.Name == "Tuple")
-                        return toType.TypeArgs.Count == fromType.Def.Fields.Count ? 4 : 0;
-
-                    // All types with one field can implicit cast to that field. 
-                    if (fromType.Def.Fields.Count == 1)
-                    {
-                        var fieldType = fromType.Def.Fields[0].Type;
-                        return CanCastTo(fieldType, toType, false) > 0 ? 4 : 0;
-                    }
-                }
-            }
-
-            return 0;
-        }
-
-        public static int DistanceFromAny(TypeRefSymbol parameterType)
-        {
-            if (parameterType == null || parameterType.Name == "Any")
-                return 1;
-            if (parameterType.Def.IsConcept())
-                return 2;
-            return 3;
-        }
-
-        public static int MatchScore(TypeRefSymbol argType, TypeRefSymbol parameterType)
-        {
-            if (argType == null || argType.Name == "Any")
-                return DistanceFromAny(parameterType);
-            if (parameterType == null || parameterType.Name == "Any")
-                return DistanceFromAny(argType);
-            var argDef = argType.Def;
-            var paramDef = parameterType.Def;
-            if (argDef.Name == paramDef.Name)
-                return 1;
-            return 1;
-        }
-
-        public IReadOnlyList<FunctionSymbol> FindMatchingFunctions(IReadOnlyList<FunctionSymbol> funcs,
-            IReadOnlyList<TypeRefSymbol> argumentTypes)
-        {
-            var candidates = funcs.Where(f => f.Parameters.Count == argumentTypes.Count).ToList();
-
-            for (var i = 0; i < argumentTypes.Count; ++i)
-            {
-                candidates = candidates.Where(c => Matches(argumentTypes[i], c.Parameters[i].Type) > 0).ToList();
-            }
-
-            return candidates;
-        }
-
-        public static int Matches(TypeRefSymbol argType, TypeRefSymbol parameterType)
-        {
-            if (argType == null) return 1;
-            if (parameterType == null) return 1;
-            return CanCastTo(argType, parameterType);
         }
 
         public TypeRefSymbol GetArrayParameter(TypeRefSymbol trs)
@@ -384,50 +258,69 @@ namespace Plato.Compiler
 
         public TypeDefSymbol ComputeTypeOfMemberGroup(MemberGroupSymbol mgs, IReadOnlyList<ArgumentSymbol> arguments)
         {
-            var f = FindBestFunction(mgs, arguments);
-            return f.Type?.Def;
+            var funcs = FindBestFunctions(mgs, arguments);
+            if (funcs.Count == 0)
+            {
+                LogError($"No function found for {mgs.Name}");
+                return PrimitiveTypes.Error;
+            }
+            if (funcs.Count > 1)
+            {
+                LogError($"Multiple best functions found for {mgs.Name}");
+            }
+            var f = funcs[0];
+            return f?.Type?.Def ?? PrimitiveTypes.Error;
         }
 
-        public FunctionSymbol FindBestFunction(MemberGroupSymbol mgs,
+        public IReadOnlyList<FunctionSymbol> FindBestFunctions(MemberGroupSymbol mgs,
             IReadOnlyList<ArgumentSymbol> arguments)
         {
-            var functions = mgs.Members.Select(m => m.Function).Where(f => f.Parameters.Count == arguments.Count)
+            var functions = mgs.Members.Select(m => m.Function).Where(f  => f.Parameters.Count == arguments.Count)
                 .ToList();
 
             if (functions.Count == 0)
             {
                 LogError($"Found no functions in group {mgs} that matched number of arguments {arguments.Count}");
-                return null;
+                return functions;
             }
 
             var argTypes = arguments.Select(ComputeType).Select(x => x.ToRef()).ToList();
-            var candidates = FindMatchingFunctions(functions, argTypes);
+            var candidates = functions.FindMatchingFunctions(argTypes);
             var argsStr = string.Join(", ", argTypes.Select(arg => $"{arg}"));
 
             if (candidates.Count == 0)
             {
-                var argTypes2 = argTypes.Select(GetArrayParameter).ToList();
-                candidates = FindMatchingFunctions(functions, argTypes2);
+                // If no candidates are found we are going to look to see if anything is an array, and 
+                // resort to using the array types. Note: somehow I have to add a special map call here. 
 
-                if (candidates.Count == 0)
-                {
-                    LogError($"Found no functions in group {mgs} that matched arguments ({argsStr})");
-                    // The following is just for debugging purposes. 
-                    var argTypes3 = argTypes.Select(GetArrayParameter).ToList();
-                    return null;
-                }
+                var argTypes2 = argTypes.Select(GetArrayParameter).ToList();
+                candidates = functions.FindMatchingFunctions(argTypes2);
+            }
+
+            if (candidates.Count == 0)
+            {
+                LogError($"No candidates found for {mgs} even after mapping");
+                return functions;
             }
 
             if (candidates.Count == 1)
             {
-                return candidates[0];
+                return candidates;
             }
 
-            Debug.Assert(candidates.Count > 1);
+            for (var i = 0; i < argTypes.Count; ++i)
+            {
+                var groups = candidates.GroupBy(c => argTypes[i].MatchesScore(c.Parameters[i].Type)).OrderBy(grp => grp.Key);
+                candidates = groups.First().ToList();
+                if (candidates.Count == 1)
+                    return candidates;
+                if (candidates.Count == 0)
+                    throw new Exception("Unexepected 0 candidates");
+            }
 
             var candidateStr = string.Join(",", candidates.Select(c => c.Signature));
             LogError($"Found too many matches ({candidates.Count}) for {mgs} with argument types ({argsStr}) : {candidateStr}");
-            return candidates[0];
+            return candidates;
         }
 
         public void LogError(string message)

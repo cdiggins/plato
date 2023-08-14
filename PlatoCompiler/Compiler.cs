@@ -24,7 +24,7 @@ namespace Plato.Compiler
         public AstNodeFactory AstNodeFactory { get; }
         public CstNodeFactory CstNodeFactory { get; }
         public Logger Logger { get; }
-
+        public bool CompletedCompilation { get; set; }
         public bool ParsingSuccess { get; set; }
         public IReadOnlyList<Parser> Parsers { get; set; }
         public IReadOnlyList<AstNode> Trees { get; set; }
@@ -44,6 +44,7 @@ namespace Plato.Compiler
         public void Compile(IReadOnlyList<Parser> parsers) 
         {
             Log("Initializing Compiler");
+            CompletedCompilation = false;
             SemanticErrors.Clear();
             SemanticWarnings.Clear();
             InternalErrors.Clear();
@@ -74,6 +75,12 @@ namespace Plato.Compiler
                 Log($"Found {SymbolResolver.Errors.Count} symbol resolution errors");
                 LogResolutionErrors(SymbolResolver.Errors);
 
+                if (SymbolResolver.Errors.Count > 0)
+                {
+                    Log("Halting further computation");
+                    return;
+                }
+
                 Log("Creating operations");
                 // TODO: this can be removed I think.
                 Operations = new Operations(TypeDefs);
@@ -99,6 +106,8 @@ namespace Plato.Compiler
                 if (DisplayWarnings)
                     foreach (var sw in SemanticWarnings)
                         Log("Semantic Warning : " + sw);
+
+                CompletedCompilation = true;
             }
             catch (AstException ae)
             {
@@ -173,13 +182,21 @@ namespace Plato.Compiler
             foreach (var t in TypeDefs)
             {
                 foreach (var t2 in t.Implements)
-                    if (t2.Def?.Kind != TypeKind.Concept)
-                        InternalErrors.Add($"Only concepts can be implemented. Instead {t} implements {t2}");
+                {
+                    if (t2 == null)
+                        SemanticErrors.Add($"One of the implemented types of {t} was not resolved");
+                    else if (t2.Def?.Kind != TypeKind.Concept)
+                        SemanticErrors.Add($"Only concepts can be implemented. Instead {t} implements {t2}");
+                }
 
                 foreach (var t2 in t.Inherits)
-                    if (t2.Def?.Kind != TypeKind.Concept)
+                {
+                    if (t2 == null)
+                        SemanticErrors.Add($"One of the inherited types of {t} was not resolved");
+                    else if (t2.Def?.Kind != TypeKind.Concept)
                         InternalErrors.Add($"Only concepts can be inherited. Instead {t} inherits {t2}");
-
+                }
+                    
                 if (t.Kind == TypeKind.Concept)
                 {
                     if (t.Implements.Count > 0)

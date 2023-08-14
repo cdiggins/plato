@@ -6,12 +6,21 @@ public interface Any<Self>
 {
     Array FieldNames(Any self);
     Array FieldValues(Any x);
+    Array FieldTypes(Any x);
     Type TypeOf(Any self);
 }
 public static partial class Extensions
 {
 }
-public interface Array<Self>
+public interface Value<Self>: Any<Self>
+    where Self : Value<Self>
+{
+    Value Default(Value self);
+}
+public static partial class Extensions
+{
+}
+public interface Array<Self>: Any<Self>
     where Self : Array<Self>
 {
     Count Count(Array xs);
@@ -20,18 +29,7 @@ public interface Array<Self>
 public static partial class Extensions
 {
 }
-public interface Value<Self>
-    where Self : Value<Self>
-{
-}
-public static partial class Extensions
-{
-    public static Value Default<Self>(this Value self) where Self: Value<Self>
-    {
-        return Default(FieldValues(Self));
-    }
-}
-public interface Vector<Self>: Array<Self>, Value<Self>, Numerical<Self>, Arithmetic<Self>
+public interface Vector<Self>: Array<Self>, Numerical<Self>, ScalarArithmetic<Self>
     where Self : Vector<Self>
 {
 }
@@ -57,29 +55,16 @@ public static partial class Extensions
         return At(FieldValues(x), 0);
     }
 }
-public interface Numerical<Self>: Value<Self>, Arithmetic<Self>, Equatable<Self>, Comparable<Self>, Magnitudinal<Self>, ScalarArithmetic<Self>
+public interface Numerical<Self>: Value<Self>, Arithmetic<Self>, Equatable<Self>, Comparable<Self>, Magnitudinal<Self>
     where Self : Numerical<Self>
 {
-    Array FieldTypes(Numerical self);
+    Numerical Zero(Numerical x);
+    Numerical One(Numerical x);
+    Numerical MinValue(Numerical x);
+    Numerical MaxValue(Numerical x);
 }
 public static partial class Extensions
 {
-    public static Numerical Zero<Self>(this Numerical self) where Self: Numerical<Self>
-    {
-        return Zero(FieldTypes(Self));
-    }
-    public static Numerical One<Self>(this Numerical self) where Self: Numerical<Self>
-    {
-        return One(FieldTypes(Self));
-    }
-    public static Numerical MinValue<Self>(this Numerical self) where Self: Numerical<Self>
-    {
-        return MinValue(FieldTypes(Self));
-    }
-    public static Numerical MaxValue<Self>(this Numerical self) where Self: Numerical<Self>
-    {
-        return MaxValue(FieldTypes(Self));
-    }
 }
 public interface Magnitudinal<Self>: Value<Self>
     where Self : Magnitudinal<Self>
@@ -89,7 +74,7 @@ public static partial class Extensions
 {
     public static Number Magnitude<Self>(this Magnitudinal x) where Self: Magnitudinal<Self>
     {
-        return null(null(null(FieldValues(x))));
+        return SquareRoot(Sum(Square(FieldValues(x))));
     }
 }
 public interface Comparable<Self>: Value<Self>
@@ -108,7 +93,7 @@ public static partial class Extensions
 {
     public static Boolean Equals<Self>(this Equatable a, Equatable b) where Self: Equatable<Self>
     {
-        return null(Equals(FieldValues(a), FieldValues(b)));
+        return All(Equals(FieldValues(a), FieldValues(b)));
     }
 }
 public interface Arithmetic<Self>: Value<Self>
@@ -169,21 +154,21 @@ public static partial class Extensions
         return Modulo(FieldValues(self), scalar);
     }
 }
-public interface Boolean<Self>
-    where Self : Boolean<Self>
+public interface BooleanOperations<Self>
+    where Self : BooleanOperations<Self>
 {
 }
 public static partial class Extensions
 {
-    public static Boolean And<Self>(this Boolean a, Boolean b) where Self: Boolean<Self>
+    public static BooleanOperations And<Self>(this BooleanOperations a, BooleanOperations b) where Self: BooleanOperations<Self>
     {
         return And(FieldValues(a), FieldValues(b));
     }
-    public static Boolean Or<Self>(this Boolean a, Boolean b) where Self: Boolean<Self>
+    public static BooleanOperations Or<Self>(this BooleanOperations a, BooleanOperations b) where Self: BooleanOperations<Self>
     {
         return Or(FieldValues(a), FieldValues(b));
     }
-    public static Boolean Not<Self>(this Boolean a) where Self: Boolean<Self>
+    public static BooleanOperations Not<Self>(this BooleanOperations a) where Self: BooleanOperations<Self>
     {
         return Not(FieldValues(a));
     }
@@ -197,6 +182,154 @@ public interface Interval<Self>: Vector<Self>
 public static partial class Extensions
 {
 }
+public class Number: Numerical<Number>
+{
+    public Number() => () = ();
+    public static Number New() => new();
+    public string[] FieldNames() => new[] {  };
+    public object[] FieldValues() => new[] {  };
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
+    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
+    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
+    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+}
+public class Integer: Numerical<Integer>
+{
+    public Integer() => () = ();
+    public static Integer New() => new();
+    public string[] FieldNames() => new[] {  };
+    public object[] FieldValues() => new[] {  };
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
+    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
+    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
+    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
+    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+}
+public class String: Value<String>, Array<String>
+{
+    public String() => () = ();
+    public static String New() => new();
+    public string[] FieldNames() => new[] {  };
+    public object[] FieldValues() => new[] {  };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Count Count(Array xs) => Extensions.Count(xs);
+    public static Any At(Array xs, Index n) => Extensions.At(xs, n);
+    public Any this[Index n]
+        => null;
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+}
+public class Boolean: Value<Boolean>, BooleanOperations<Boolean>
+{
+    public Boolean() => () = ();
+    public static Boolean New() => new();
+    public string[] FieldNames() => new[] {  };
+    public object[] FieldValues() => new[] {  };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static BooleanOperations operator &&(BooleanOperations a, BooleanOperations b) => Extensions.And(a, b);
+    public static BooleanOperations operator ||(BooleanOperations a, BooleanOperations b) => Extensions.Or(a, b);
+    public static BooleanOperations operator !(BooleanOperations a) => Extensions.Not(a);
+}
+public class Type: Value<Type>
+{
+    public Type(String _Name) => (Name) = (_Name);
+    public static Type New(String _Name) => new(_Name);
+    public static implicit operator String(Type self) => self.Name;
+    public static implicit operator Type(String value) => new String(value);
+    public string[] FieldNames() => new[] { "Name" };
+    public object[] FieldValues() => new[] { Name };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public String Name { get; }
+}
+public class Character: Value<Character>
+{
+    public Character() => () = ();
+    public static Character New() => new();
+    public string[] FieldNames() => new[] {  };
+    public object[] FieldValues() => new[] {  };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+}
 public class Count: Numerical<Count>
 {
     public Count(Integer _Value) => (Value) = (_Value);
@@ -205,19 +338,42 @@ public class Count: Numerical<Count>
     public static implicit operator Count(Integer value) => new Integer(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
-    public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
-    public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Integer Value { get; }
 }
 public class Index: Value<Index>
@@ -228,6 +384,11 @@ public class Index: Value<Index>
     public static implicit operator Index(Integer value) => new Integer(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Integer Value { get; }
 }
 public class Unit: Numerical<Unit>
@@ -238,19 +399,42 @@ public class Unit: Numerical<Unit>
     public static implicit operator Unit(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
-    public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
-    public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Value { get; }
 }
 public class Percent: Numerical<Percent>
@@ -261,19 +445,42 @@ public class Percent: Numerical<Percent>
     public static implicit operator Percent(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
-    public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
-    public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Value { get; }
 }
 public class Quaternion: Value<Quaternion>
@@ -284,6 +491,11 @@ public class Quaternion: Value<Quaternion>
     public static implicit operator Quaternion((Number, Number, Number, Number) value) => new Quaternion(value.Item1, value.Item2, value.Item3, value.Item4);
     public string[] FieldNames() => new[] { "X", "Y", "Z", "W" };
     public object[] FieldValues() => new[] { X, Y, Z, W };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number X { get; }
     public Number Y { get; }
     public Number Z { get; }
@@ -297,6 +509,11 @@ public class Unit2D: Value<Unit2D>
     public static implicit operator Unit2D((Unit, Unit) value) => new Unit2D(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "X", "Y" };
     public object[] FieldValues() => new[] { X, Y };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Unit X { get; }
     public Unit Y { get; }
 }
@@ -308,6 +525,11 @@ public class Unit3D: Value<Unit3D>
     public static implicit operator Unit3D((Unit, Unit, Unit) value) => new Unit3D(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "X", "Y", "Z" };
     public object[] FieldValues() => new[] { X, Y, Z };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Unit X { get; }
     public Unit Y { get; }
     public Unit Z { get; }
@@ -320,6 +542,11 @@ public class Direction3D: Value<Direction3D>
     public static implicit operator Direction3D(Unit3D value) => new Unit3D(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Unit3D Value { get; }
 }
 public class AxisAngle: Value<AxisAngle>
@@ -330,6 +557,11 @@ public class AxisAngle: Value<AxisAngle>
     public static implicit operator AxisAngle((Unit3D, Angle) value) => new AxisAngle(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Axis", "Angle" };
     public object[] FieldValues() => new[] { Axis, Angle };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Unit3D Axis { get; }
     public Angle Angle { get; }
 }
@@ -341,6 +573,11 @@ public class EulerAngles: Value<EulerAngles>
     public static implicit operator EulerAngles((Angle, Angle, Angle) value) => new EulerAngles(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "Yaw", "Pitch", "Roll" };
     public object[] FieldValues() => new[] { Yaw, Pitch, Roll };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Angle Yaw { get; }
     public Angle Pitch { get; }
     public Angle Roll { get; }
@@ -353,6 +590,11 @@ public class Rotation3D: Value<Rotation3D>
     public static implicit operator Rotation3D(Quaternion value) => new Quaternion(value);
     public string[] FieldNames() => new[] { "Quaternion" };
     public object[] FieldValues() => new[] { Quaternion };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Quaternion Quaternion { get; }
 }
 public class Vector2D: Vector<Vector2D>
@@ -369,24 +611,56 @@ public class Vector2D: Vector<Vector2D>
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number X { get; }
     public Number Y { get; }
 }
@@ -404,24 +678,56 @@ public class Vector3D: Vector<Vector3D>
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number X { get; }
     public Number Y { get; }
     public Number Z { get; }
@@ -440,24 +746,56 @@ public class Vector4D: Vector<Vector4D>
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number X { get; }
     public Number Y { get; }
     public Number Z { get; }
@@ -471,6 +809,11 @@ public class Orientation3D: Value<Orientation3D>
     public static implicit operator Orientation3D(Rotation3D value) => new Rotation3D(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Rotation3D Value { get; }
 }
 public class Pose2D: Value<Pose2D>
@@ -481,6 +824,11 @@ public class Pose2D: Value<Pose2D>
     public static implicit operator Pose2D((Vector3D, Orientation3D) value) => new Pose2D(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Position", "Orientation" };
     public object[] FieldValues() => new[] { Position, Orientation };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Vector3D Position { get; }
     public Orientation3D Orientation { get; }
 }
@@ -492,6 +840,11 @@ public class Pose3D: Value<Pose3D>
     public static implicit operator Pose3D((Vector3D, Orientation3D) value) => new Pose3D(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Position", "Orientation" };
     public object[] FieldValues() => new[] { Position, Orientation };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Vector3D Position { get; }
     public Orientation3D Orientation { get; }
 }
@@ -503,6 +856,11 @@ public class Transform3D: Value<Transform3D>
     public static implicit operator Transform3D((Vector3D, Rotation3D, Vector3D) value) => new Transform3D(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "Translation", "Rotation", "Scale" };
     public object[] FieldValues() => new[] { Translation, Rotation, Scale };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Vector3D Translation { get; }
     public Rotation3D Rotation { get; }
     public Vector3D Scale { get; }
@@ -515,6 +873,11 @@ public class Transform2D: Value<Transform2D>
     public static implicit operator Transform2D((Vector2D, Angle, Vector2D) value) => new Transform2D(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "Translation", "Rotation", "Scale" };
     public object[] FieldValues() => new[] { Translation, Rotation, Scale };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Vector2D Translation { get; }
     public Angle Rotation { get; }
     public Vector2D Scale { get; }
@@ -535,24 +898,56 @@ public class AlignedBox2D: Interval<AlignedBox2D>
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Vector2D A { get; }
     public Vector2D B { get; }
 }
@@ -572,24 +967,56 @@ public class AlignedBox3D: Interval<AlignedBox3D>
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Vector3D A { get; }
     public Vector3D B { get; }
 }
@@ -607,24 +1034,56 @@ public class Complex: Vector<Complex>
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Real { get; }
     public Number Imaginary { get; }
 }
@@ -636,6 +1095,11 @@ public class Ray3D: Value<Ray3D>
     public static implicit operator Ray3D((Vector3D, Point3D) value) => new Ray3D(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Direction", "Position" };
     public object[] FieldValues() => new[] { Direction, Position };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Vector3D Direction { get; }
     public Point3D Position { get; }
 }
@@ -647,6 +1111,11 @@ public class Ray2D: Value<Ray2D>
     public static implicit operator Ray2D((Vector2D, Point2D) value) => new Ray2D(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Direction", "Position" };
     public object[] FieldValues() => new[] { Direction, Position };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Vector2D Direction { get; }
     public Point2D Position { get; }
 }
@@ -658,6 +1127,11 @@ public class Sphere: Value<Sphere>
     public static implicit operator Sphere((Point3D, Number) value) => new Sphere(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Center", "Radius" };
     public object[] FieldValues() => new[] { Center, Radius };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Point3D Center { get; }
     public Number Radius { get; }
 }
@@ -669,6 +1143,11 @@ public class Plane: Value<Plane>
     public static implicit operator Plane((Unit3D, Number) value) => new Plane(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Normal", "D" };
     public object[] FieldValues() => new[] { Normal, D };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Unit3D Normal { get; }
     public Number D { get; }
 }
@@ -680,6 +1159,11 @@ public class Triangle3D: Value<Triangle3D>
     public static implicit operator Triangle3D((Point3D, Point3D, Point3D) value) => new Triangle3D(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "A", "B", "C" };
     public object[] FieldValues() => new[] { A, B, C };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Point3D A { get; }
     public Point3D B { get; }
     public Point3D C { get; }
@@ -692,6 +1176,11 @@ public class Triangle2D: Value<Triangle2D>
     public static implicit operator Triangle2D((Point2D, Point2D, Point2D) value) => new Triangle2D(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "A", "B", "C" };
     public object[] FieldValues() => new[] { A, B, C };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Point2D A { get; }
     public Point2D B { get; }
     public Point2D C { get; }
@@ -704,6 +1193,11 @@ public class Quad3D: Value<Quad3D>
     public static implicit operator Quad3D((Point3D, Point3D, Point3D, Point3D) value) => new Quad3D(value.Item1, value.Item2, value.Item3, value.Item4);
     public string[] FieldNames() => new[] { "A", "B", "C", "D" };
     public object[] FieldValues() => new[] { A, B, C, D };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Point3D A { get; }
     public Point3D B { get; }
     public Point3D C { get; }
@@ -717,6 +1211,11 @@ public class Quad2D: Value<Quad2D>
     public static implicit operator Quad2D((Point2D, Point2D, Point2D, Point2D) value) => new Quad2D(value.Item1, value.Item2, value.Item3, value.Item4);
     public string[] FieldNames() => new[] { "A", "B", "C", "D" };
     public object[] FieldValues() => new[] { A, B, C, D };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Point2D A { get; }
     public Point2D B { get; }
     public Point2D C { get; }
@@ -730,6 +1229,11 @@ public class Point3D: Value<Point3D>
     public static implicit operator Point3D(Vector3D value) => new Vector3D(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Vector3D Value { get; }
 }
 public class Point2D: Value<Point2D>
@@ -740,6 +1244,11 @@ public class Point2D: Value<Point2D>
     public static implicit operator Point2D(Vector2D value) => new Vector2D(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Vector2D Value { get; }
 }
 public class Line3D: Interval<Line3D>
@@ -758,24 +1267,56 @@ public class Line3D: Interval<Line3D>
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Point3D A { get; }
     public Point3D B { get; }
 }
@@ -795,24 +1336,56 @@ public class Line2D: Interval<Line2D>
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Point2D A { get; }
     public Point2D B { get; }
 }
@@ -824,6 +1397,11 @@ public class Color: Value<Color>
     public static implicit operator Color((Unit, Unit, Unit, Unit) value) => new Color(value.Item1, value.Item2, value.Item3, value.Item4);
     public string[] FieldNames() => new[] { "R", "G", "B", "A" };
     public object[] FieldValues() => new[] { R, G, B, A };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Unit R { get; }
     public Unit G { get; }
     public Unit B { get; }
@@ -837,6 +1415,11 @@ public class ColorLUV: Value<ColorLUV>
     public static implicit operator ColorLUV((Percent, Unit, Unit) value) => new ColorLUV(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "Lightness", "U", "V" };
     public object[] FieldValues() => new[] { Lightness, U, V };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Percent Lightness { get; }
     public Unit U { get; }
     public Unit V { get; }
@@ -849,6 +1432,11 @@ public class ColorLAB: Value<ColorLAB>
     public static implicit operator ColorLAB((Percent, Integer, Integer) value) => new ColorLAB(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "Lightness", "A", "B" };
     public object[] FieldValues() => new[] { Lightness, A, B };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Percent Lightness { get; }
     public Integer A { get; }
     public Integer B { get; }
@@ -861,6 +1449,11 @@ public class ColorLCh: Value<ColorLCh>
     public static implicit operator ColorLCh((Percent, PolarCoordinate) value) => new ColorLCh(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Lightness", "ChromaHue" };
     public object[] FieldValues() => new[] { Lightness, ChromaHue };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Percent Lightness { get; }
     public PolarCoordinate ChromaHue { get; }
 }
@@ -872,6 +1465,11 @@ public class ColorHSV: Value<ColorHSV>
     public static implicit operator ColorHSV((Angle, Unit, Unit) value) => new ColorHSV(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "Hue", "S", "V" };
     public object[] FieldValues() => new[] { Hue, S, V };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Angle Hue { get; }
     public Unit S { get; }
     public Unit V { get; }
@@ -884,6 +1482,11 @@ public class ColorHSL: Value<ColorHSL>
     public static implicit operator ColorHSL((Angle, Unit, Unit) value) => new ColorHSL(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "Hue", "Saturation", "Luminance" };
     public object[] FieldValues() => new[] { Hue, Saturation, Luminance };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Angle Hue { get; }
     public Unit Saturation { get; }
     public Unit Luminance { get; }
@@ -896,6 +1499,11 @@ public class ColorYCbCr: Value<ColorYCbCr>
     public static implicit operator ColorYCbCr((Unit, Unit, Unit) value) => new ColorYCbCr(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "Y", "Cb", "Cr" };
     public object[] FieldValues() => new[] { Y, Cb, Cr };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Unit Y { get; }
     public Unit Cb { get; }
     public Unit Cr { get; }
@@ -908,6 +1516,11 @@ public class SphericalCoordinate: Value<SphericalCoordinate>
     public static implicit operator SphericalCoordinate((Number, Angle, Angle) value) => new SphericalCoordinate(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "Radius", "Azimuth", "Polar" };
     public object[] FieldValues() => new[] { Radius, Azimuth, Polar };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Radius { get; }
     public Angle Azimuth { get; }
     public Angle Polar { get; }
@@ -920,6 +1533,11 @@ public class PolarCoordinate: Value<PolarCoordinate>
     public static implicit operator PolarCoordinate((Number, Angle) value) => new PolarCoordinate(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Radius", "Angle" };
     public object[] FieldValues() => new[] { Radius, Angle };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Radius { get; }
     public Angle Angle { get; }
 }
@@ -931,6 +1549,11 @@ public class LogPolarCoordinate: Value<LogPolarCoordinate>
     public static implicit operator LogPolarCoordinate((Number, Angle) value) => new LogPolarCoordinate(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Rho", "Azimuth" };
     public object[] FieldValues() => new[] { Rho, Azimuth };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Rho { get; }
     public Angle Azimuth { get; }
 }
@@ -942,6 +1565,11 @@ public class CylindricalCoordinate: Value<CylindricalCoordinate>
     public static implicit operator CylindricalCoordinate((Number, Angle, Number) value) => new CylindricalCoordinate(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "RadialDistance", "Azimuth", "Height" };
     public object[] FieldValues() => new[] { RadialDistance, Azimuth, Height };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number RadialDistance { get; }
     public Angle Azimuth { get; }
     public Number Height { get; }
@@ -954,6 +1582,11 @@ public class HorizontalCoordinate: Value<HorizontalCoordinate>
     public static implicit operator HorizontalCoordinate((Number, Angle, Number) value) => new HorizontalCoordinate(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "Radius", "Azimuth", "Height" };
     public object[] FieldValues() => new[] { Radius, Azimuth, Height };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Radius { get; }
     public Angle Azimuth { get; }
     public Number Height { get; }
@@ -966,6 +1599,11 @@ public class GeoCoordinate: Value<GeoCoordinate>
     public static implicit operator GeoCoordinate((Angle, Angle) value) => new GeoCoordinate(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Latitude", "Longitude" };
     public object[] FieldValues() => new[] { Latitude, Longitude };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Angle Latitude { get; }
     public Angle Longitude { get; }
 }
@@ -977,6 +1615,11 @@ public class GeoCoordinateWithAltitude: Value<GeoCoordinateWithAltitude>
     public static implicit operator GeoCoordinateWithAltitude((GeoCoordinate, Number) value) => new GeoCoordinateWithAltitude(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Coordinate", "Altitude" };
     public object[] FieldValues() => new[] { Coordinate, Altitude };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public GeoCoordinate Coordinate { get; }
     public Number Altitude { get; }
 }
@@ -988,6 +1631,11 @@ public class Circle: Value<Circle>
     public static implicit operator Circle((Point2D, Number) value) => new Circle(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Center", "Radius" };
     public object[] FieldValues() => new[] { Center, Radius };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Point2D Center { get; }
     public Number Radius { get; }
 }
@@ -999,6 +1647,11 @@ public class Chord: Value<Chord>
     public static implicit operator Chord((Circle, Arc) value) => new Chord(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Circle", "Arc" };
     public object[] FieldValues() => new[] { Circle, Arc };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Circle Circle { get; }
     public Arc Arc { get; }
 }
@@ -1010,6 +1663,11 @@ public class Size2D: Value<Size2D>
     public static implicit operator Size2D((Number, Number) value) => new Size2D(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Width", "Height" };
     public object[] FieldValues() => new[] { Width, Height };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Width { get; }
     public Number Height { get; }
 }
@@ -1021,6 +1679,11 @@ public class Size3D: Value<Size3D>
     public static implicit operator Size3D((Number, Number, Number) value) => new Size3D(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "Width", "Height", "Depth" };
     public object[] FieldValues() => new[] { Width, Height, Depth };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Width { get; }
     public Number Height { get; }
     public Number Depth { get; }
@@ -1033,6 +1696,11 @@ public class Rectangle2D: Value<Rectangle2D>
     public static implicit operator Rectangle2D((Point2D, Size2D) value) => new Rectangle2D(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Center", "Size" };
     public object[] FieldValues() => new[] { Center, Size };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Point2D Center { get; }
     public Size2D Size { get; }
 }
@@ -1044,19 +1712,42 @@ public class Proportion: Numerical<Proportion>
     public static implicit operator Proportion(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
-    public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
-    public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Value { get; }
 }
 public class Fraction: Value<Fraction>
@@ -1067,6 +1758,11 @@ public class Fraction: Value<Fraction>
     public static implicit operator Fraction((Number, Number) value) => new Fraction(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Numerator", "Denominator" };
     public object[] FieldValues() => new[] { Numerator, Denominator };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Numerator { get; }
     public Number Denominator { get; }
 }
@@ -1078,13 +1774,38 @@ public class Angle: Measure<Angle>
     public static implicit operator Angle(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Radians" };
     public object[] FieldValues() => new[] { Radians };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Radians { get; }
 }
 public class Length: Measure<Length>
@@ -1095,13 +1816,38 @@ public class Length: Measure<Length>
     public static implicit operator Length(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Meters" };
     public object[] FieldValues() => new[] { Meters };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Meters { get; }
 }
 public class Mass: Measure<Mass>
@@ -1112,13 +1858,38 @@ public class Mass: Measure<Mass>
     public static implicit operator Mass(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Kilograms" };
     public object[] FieldValues() => new[] { Kilograms };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Kilograms { get; }
 }
 public class Temperature: Measure<Temperature>
@@ -1129,13 +1900,38 @@ public class Temperature: Measure<Temperature>
     public static implicit operator Temperature(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Celsius" };
     public object[] FieldValues() => new[] { Celsius };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Celsius { get; }
 }
 public class TimeSpan: Measure<TimeSpan>
@@ -1146,13 +1942,38 @@ public class TimeSpan: Measure<TimeSpan>
     public static implicit operator TimeSpan(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Seconds" };
     public object[] FieldValues() => new[] { Seconds };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Seconds { get; }
 }
 public class TimeRange: Interval<TimeRange>
@@ -1171,24 +1992,56 @@ public class TimeRange: Interval<TimeRange>
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public DateTime Min { get; }
     public DateTime Max { get; }
 }
@@ -1198,6 +2051,11 @@ public class DateTime: Value<DateTime>
     public static DateTime New() => new();
     public string[] FieldNames() => new[] {  };
     public object[] FieldValues() => new[] {  };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
 }
 public class AnglePair: Interval<AnglePair>
 {
@@ -1215,24 +2073,56 @@ public class AnglePair: Interval<AnglePair>
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Angle Start { get; }
     public Angle End { get; }
 }
@@ -1244,19 +2134,42 @@ public class Ring: Numerical<Ring>
     public static implicit operator Ring((Circle, Number) value) => new Ring(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Circle", "InnerRadius" };
     public object[] FieldValues() => new[] { Circle, InnerRadius };
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
-    public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
-    public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Circle Circle { get; }
     public Number InnerRadius { get; }
 }
@@ -1268,6 +2181,11 @@ public class Arc: Value<Arc>
     public static implicit operator Arc((AnglePair, Circle) value) => new Arc(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Angles", "Cirlce" };
     public object[] FieldValues() => new[] { Angles, Cirlce };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public AnglePair Angles { get; }
     public Circle Cirlce { get; }
 }
@@ -1287,24 +2205,56 @@ public class TimeInterval: Interval<TimeInterval>
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public TimeSpan Start { get; }
     public TimeSpan End { get; }
 }
@@ -1324,24 +2274,56 @@ public class RealInterval: Interval<RealInterval>
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number A { get; }
     public Number B { get; }
 }
@@ -1361,24 +2343,56 @@ public class Interval2D: Interval<Interval2D>
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Vector2D A { get; }
     public Vector2D B { get; }
 }
@@ -1398,24 +2412,56 @@ public class Interval3D: Interval<Interval3D>
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Vector3D A { get; }
     public Vector3D B { get; }
 }
@@ -1427,6 +2473,11 @@ public class Capsule: Value<Capsule>
     public static implicit operator Capsule((Line3D, Number) value) => new Capsule(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Line", "Radius" };
     public object[] FieldValues() => new[] { Line, Radius };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Line3D Line { get; }
     public Number Radius { get; }
 }
@@ -1438,6 +2489,11 @@ public class Matrix3D: Value<Matrix3D>
     public static implicit operator Matrix3D((Vector4D, Vector4D, Vector4D, Vector4D) value) => new Matrix3D(value.Item1, value.Item2, value.Item3, value.Item4);
     public string[] FieldNames() => new[] { "Column1", "Column2", "Column3", "Column4" };
     public object[] FieldValues() => new[] { Column1, Column2, Column3, Column4 };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Vector4D Column1 { get; }
     public Vector4D Column2 { get; }
     public Vector4D Column3 { get; }
@@ -1451,6 +2507,11 @@ public class Cylinder: Value<Cylinder>
     public static implicit operator Cylinder((Line3D, Number) value) => new Cylinder(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Line", "Radius" };
     public object[] FieldValues() => new[] { Line, Radius };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Line3D Line { get; }
     public Number Radius { get; }
 }
@@ -1462,6 +2523,11 @@ public class Cone: Value<Cone>
     public static implicit operator Cone((Line3D, Number) value) => new Cone(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Line", "Radius" };
     public object[] FieldValues() => new[] { Line, Radius };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Line3D Line { get; }
     public Number Radius { get; }
 }
@@ -1473,6 +2539,11 @@ public class Tube: Value<Tube>
     public static implicit operator Tube((Line3D, Number, Number) value) => new Tube(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "Line", "InnerRadius", "OuterRadius" };
     public object[] FieldValues() => new[] { Line, InnerRadius, OuterRadius };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Line3D Line { get; }
     public Number InnerRadius { get; }
     public Number OuterRadius { get; }
@@ -1485,6 +2556,11 @@ public class ConeSegment: Value<ConeSegment>
     public static implicit operator ConeSegment((Line3D, Number, Number) value) => new ConeSegment(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "Line", "Radius1", "Radius2" };
     public object[] FieldValues() => new[] { Line, Radius1, Radius2 };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Line3D Line { get; }
     public Number Radius1 { get; }
     public Number Radius2 { get; }
@@ -1497,6 +2573,11 @@ public class Box2D: Value<Box2D>
     public static implicit operator Box2D((Point2D, Angle, Size2D) value) => new Box2D(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "Center", "Rotation", "Extent" };
     public object[] FieldValues() => new[] { Center, Rotation, Extent };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Point2D Center { get; }
     public Angle Rotation { get; }
     public Size2D Extent { get; }
@@ -1509,6 +2590,11 @@ public class Box3D: Value<Box3D>
     public static implicit operator Box3D((Point3D, Rotation3D, Size3D) value) => new Box3D(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "Center", "Rotation", "Extent" };
     public object[] FieldValues() => new[] { Center, Rotation, Extent };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Point3D Center { get; }
     public Rotation3D Rotation { get; }
     public Size3D Extent { get; }
@@ -1521,6 +2607,11 @@ public class CubicBezierTriangle3D: Value<CubicBezierTriangle3D>
     public static implicit operator CubicBezierTriangle3D((Point3D, Point3D, Point3D, Point3D, Point3D, Point3D, Point3D, Point3D, Point3D, Point3D) value) => new CubicBezierTriangle3D(value.Item1, value.Item2, value.Item3, value.Item4, value.Item5, value.Item6, value.Item7, value.Item8, value.Item9, value.Item10);
     public string[] FieldNames() => new[] { "A", "B", "C", "A2B", "AB2", "B2C", "BC2", "AC2", "A2C", "ABC" };
     public object[] FieldValues() => new[] { A, B, C, A2B, AB2, B2C, BC2, AC2, A2C, ABC };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Point3D A { get; }
     public Point3D B { get; }
     public Point3D C { get; }
@@ -1540,6 +2631,11 @@ public class CubicBezier2D: Value<CubicBezier2D>
     public static implicit operator CubicBezier2D((Point2D, Point2D, Point2D, Point2D) value) => new CubicBezier2D(value.Item1, value.Item2, value.Item3, value.Item4);
     public string[] FieldNames() => new[] { "A", "B", "C", "D" };
     public object[] FieldValues() => new[] { A, B, C, D };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Point2D A { get; }
     public Point2D B { get; }
     public Point2D C { get; }
@@ -1559,24 +2655,56 @@ public class UV: Vector<UV>
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Unit U { get; }
     public Unit V { get; }
 }
@@ -1594,24 +2722,56 @@ public class UVW: Vector<UVW>
     public static Any At(Array xs, Index n) => Extensions.At(xs, n);
     public Any this[Index n]
         => null;
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Unit U { get; }
     public Unit V { get; }
     public Unit W { get; }
@@ -1624,6 +2784,11 @@ public class CubicBezier3D: Value<CubicBezier3D>
     public static implicit operator CubicBezier3D((Point3D, Point3D, Point3D, Point3D) value) => new CubicBezier3D(value.Item1, value.Item2, value.Item3, value.Item4);
     public string[] FieldNames() => new[] { "A", "B", "C", "D" };
     public object[] FieldValues() => new[] { A, B, C, D };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Point3D A { get; }
     public Point3D B { get; }
     public Point3D C { get; }
@@ -1637,6 +2802,11 @@ public class QuadraticBezier2D: Value<QuadraticBezier2D>
     public static implicit operator QuadraticBezier2D((Point2D, Point2D, Point2D) value) => new QuadraticBezier2D(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "A", "B", "C" };
     public object[] FieldValues() => new[] { A, B, C };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Point2D A { get; }
     public Point2D B { get; }
     public Point2D C { get; }
@@ -1649,6 +2819,11 @@ public class QuadraticBezier3D: Value<QuadraticBezier3D>
     public static implicit operator QuadraticBezier3D((Point3D, Point3D, Point3D) value) => new QuadraticBezier3D(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "A", "B", "C" };
     public object[] FieldValues() => new[] { A, B, C };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Point3D A { get; }
     public Point3D B { get; }
     public Point3D C { get; }
@@ -1661,13 +2836,38 @@ public class Area: Measure<Area>
     public static implicit operator Area(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "MetersSquared" };
     public object[] FieldValues() => new[] { MetersSquared };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number MetersSquared { get; }
 }
 public class Volume: Measure<Volume>
@@ -1678,13 +2878,38 @@ public class Volume: Measure<Volume>
     public static implicit operator Volume(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "MetersCubed" };
     public object[] FieldValues() => new[] { MetersCubed };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number MetersCubed { get; }
 }
 public class Velocity: Measure<Velocity>
@@ -1695,13 +2920,38 @@ public class Velocity: Measure<Velocity>
     public static implicit operator Velocity(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "MetersPerSecond" };
     public object[] FieldValues() => new[] { MetersPerSecond };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number MetersPerSecond { get; }
 }
 public class Acceleration: Measure<Acceleration>
@@ -1712,13 +2962,38 @@ public class Acceleration: Measure<Acceleration>
     public static implicit operator Acceleration(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "MetersPerSecondSquared" };
     public object[] FieldValues() => new[] { MetersPerSecondSquared };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number MetersPerSecondSquared { get; }
 }
 public class Force: Measure<Force>
@@ -1729,13 +3004,38 @@ public class Force: Measure<Force>
     public static implicit operator Force(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Newtons" };
     public object[] FieldValues() => new[] { Newtons };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Newtons { get; }
 }
 public class Pressure: Measure<Pressure>
@@ -1746,13 +3046,38 @@ public class Pressure: Measure<Pressure>
     public static implicit operator Pressure(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Pascals" };
     public object[] FieldValues() => new[] { Pascals };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Pascals { get; }
 }
 public class Energy: Measure<Energy>
@@ -1763,13 +3088,38 @@ public class Energy: Measure<Energy>
     public static implicit operator Energy(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Joules" };
     public object[] FieldValues() => new[] { Joules };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Joules { get; }
 }
 public class Memory: Measure<Memory>
@@ -1780,13 +3130,38 @@ public class Memory: Measure<Memory>
     public static implicit operator Memory(Count value) => new Count(value);
     public string[] FieldNames() => new[] { "Bytes" };
     public object[] FieldValues() => new[] { Bytes };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Count Bytes { get; }
 }
 public class Frequency: Measure<Frequency>
@@ -1797,13 +3172,38 @@ public class Frequency: Measure<Frequency>
     public static implicit operator Frequency(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Hertz" };
     public object[] FieldValues() => new[] { Hertz };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Hertz { get; }
 }
 public class Loudness: Measure<Loudness>
@@ -1814,13 +3214,38 @@ public class Loudness: Measure<Loudness>
     public static implicit operator Loudness(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Decibels" };
     public object[] FieldValues() => new[] { Decibels };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Decibels { get; }
 }
 public class LuminousIntensity: Measure<LuminousIntensity>
@@ -1831,13 +3256,38 @@ public class LuminousIntensity: Measure<LuminousIntensity>
     public static implicit operator LuminousIntensity(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Candelas" };
     public object[] FieldValues() => new[] { Candelas };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Candelas { get; }
 }
 public class ElectricPotential: Measure<ElectricPotential>
@@ -1848,13 +3298,38 @@ public class ElectricPotential: Measure<ElectricPotential>
     public static implicit operator ElectricPotential(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Volts" };
     public object[] FieldValues() => new[] { Volts };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Volts { get; }
 }
 public class ElectricCharge: Measure<ElectricCharge>
@@ -1865,13 +3340,38 @@ public class ElectricCharge: Measure<ElectricCharge>
     public static implicit operator ElectricCharge(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Columbs" };
     public object[] FieldValues() => new[] { Columbs };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Columbs { get; }
 }
 public class ElectricCurrent: Measure<ElectricCurrent>
@@ -1882,13 +3382,38 @@ public class ElectricCurrent: Measure<ElectricCurrent>
     public static implicit operator ElectricCurrent(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Amperes" };
     public object[] FieldValues() => new[] { Amperes };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Amperes { get; }
 }
 public class ElectricResistance: Measure<ElectricResistance>
@@ -1899,13 +3424,38 @@ public class ElectricResistance: Measure<ElectricResistance>
     public static implicit operator ElectricResistance(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Ohms" };
     public object[] FieldValues() => new[] { Ohms };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Ohms { get; }
 }
 public class Power: Measure<Power>
@@ -1916,13 +3466,38 @@ public class Power: Measure<Power>
     public static implicit operator Power(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Watts" };
     public object[] FieldValues() => new[] { Watts };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Watts { get; }
 }
 public class Density: Measure<Density>
@@ -1933,13 +3508,38 @@ public class Density: Measure<Density>
     public static implicit operator Density(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "KilogramsPerMeterCubed" };
     public object[] FieldValues() => new[] { KilogramsPerMeterCubed };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
     public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
     public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
     public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number KilogramsPerMeterCubed { get; }
 }
 public class NormalDistribution: Value<NormalDistribution>
@@ -1950,6 +3550,11 @@ public class NormalDistribution: Value<NormalDistribution>
     public static implicit operator NormalDistribution((Number, Number) value) => new NormalDistribution(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Mean", "StandardDeviation" };
     public object[] FieldValues() => new[] { Mean, StandardDeviation };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Mean { get; }
     public Number StandardDeviation { get; }
 }
@@ -1961,6 +3566,11 @@ public class PoissonDistribution: Value<PoissonDistribution>
     public static implicit operator PoissonDistribution((Number, Count) value) => new PoissonDistribution(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Expected", "Occurrences" };
     public object[] FieldValues() => new[] { Expected, Occurrences };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Expected { get; }
     public Count Occurrences { get; }
 }
@@ -1972,6 +3582,11 @@ public class BernoulliDistribution: Value<BernoulliDistribution>
     public static implicit operator BernoulliDistribution(Probability value) => new Probability(value);
     public string[] FieldNames() => new[] { "P" };
     public object[] FieldValues() => new[] { P };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Probability P { get; }
 }
 public class Probability: Numerical<Probability>
@@ -1982,19 +3597,42 @@ public class Probability: Numerical<Probability>
     public static implicit operator Probability(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
-    public static Array FieldTypes(Numerical self) => Extensions.FieldTypes(self);
+    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
+    public static Numerical One(Numerical x) => Extensions.One(x);
+    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
+    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
     public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
     public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
     public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
     public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
-    public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
-    public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number Value { get; }
 }
 public class BinomialDistribution: Value<BinomialDistribution>
@@ -2005,6 +3643,11 @@ public class BinomialDistribution: Value<BinomialDistribution>
     public static implicit operator BinomialDistribution((Count, Probability) value) => new BinomialDistribution(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Trials", "P" };
     public object[] FieldValues() => new[] { Trials, P };
+    public static Value Default(Value self) => Extensions.Default(self);
+    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
+    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
+    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
+    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Count Trials { get; }
     public Probability P { get; }
 }
@@ -2029,5 +3672,465 @@ public static partial class Extensions
     public static Array Skip<T>(Array xs, Count n) {
         return Tuple(Subtract(Count, n), (i) => 
         At(Subtract(i, n)));
+    }
+    public static Array Take<T>(Array xs, Count n) {
+        return Tuple(n, (i) => 
+        At(i));
+    }
+    public static Any Aggregate<T>(Array xs, Any init, Function f) {
+        return IsEmpty(xs)
+            ? init
+            : f(init, f(Rest(xs)))
+        ;
+    }
+    public static Array Rest<T>(Array xs) {
+        return Skip(xs, 1);
+    }
+    public static Boolean IsEmpty<T>(Array xs) {
+        return Equals(Count(xs), 0);
+    }
+    public static Any First<T>(Array xs) {
+        return At(xs, 0);
+    }
+    public static Any Last<T>(Array xs) {
+        return At(xs, Subtract(Count(xs), 1));
+    }
+    public static Array Slice<T>(Array xs, Index from, Count count) {
+        return Take(Skip(xs, from), count);
+    }
+    public static String Join<T>(Array xs, String sep) {
+        return IsEmpty(xs)
+            ? 
+            : Add(ToString(First(xs)), Aggregate(Rest(xs), , (acc, cur) => 
+            Interpolate(acc, sep, cur)))
+        ;
+    }
+    public static Boolean All<T>(Array xs, Function f) {
+        return IsEmpty(xs)
+            ? True
+            : And(f(First(xs)), f(Rest(xs)))
+        ;
+    }
+    public static Boolean All<T>(Array xs) {
+        return All(xs, (b) => 
+        b);
+    }
+}
+public static partial class Extensions
+{
+    public static Numerical Size<T>(Interval x) {
+        return Subtract(Max(x), Min(x));
+    }
+    public static Boolean IsEmpty<T>(Interval x) {
+        return GreaterThanOrEquals(Min(x), Max(x));
+    }
+    public static Numerical Lerp<T>(Interval x, Unit amount) {
+        return Multiply(Min(x), Add(Subtract(1, amount), Multiply(Max(x), amount)));
+    }
+    public static Unit InverseLerp<T>(Interval x, Numerical value) {
+        return Divide(Subtract(value, Min(x)), Size(x));
+    }
+    public static Interval Negate<T>(Interval x) {
+        return Tuple(Negative(Max(x)), Negative(Min(x)));
+    }
+    public static Interval Reverse<T>(Interval x) {
+        return Tuple(Max(x), Min(x));
+    }
+    public static Numerical Center<T>(Interval x) {
+        return Lerp(x, 0.5);
+    }
+    public static Boolean Contains<T>(Interval x, Numerical value) {
+        return LessThanOrEquals(Min(x), And(value, LessThanOrEquals(value, Max(x))));
+    }
+    public static Boolean Contains<T>(Interval x, Interval other) {
+        return LessThanOrEquals(Min(x), And(Min(other), GreaterThanOrEquals(Max, Max(other))));
+    }
+    public static Boolean Overlaps<T>(Interval x, Interval y) {
+        return Not(IsEmpty(Clamp(x, y)));
+    }
+    public static Tuple Split<T>(Interval x, Unit t) {
+        return Tuple(Left(x, t), Right(x, t));
+    }
+    public static Tuple Split<T>(Interval x) {
+        return Split(x, 0.5);
+    }
+    public static Interval Left<T>(Interval x, Unit t) {
+        return Tuple(Min(x), Lerp(x, t));
+    }
+    public static Interval Right<T>(Interval x, Unit t) {
+        return Tuple(Lerp(x, t), Max(x));
+    }
+    public static Interval MoveTo<T>(Interval x, Numerical v) {
+        return Tuple(v, Add(v, Size(x)));
+    }
+    public static Interval LeftHalf<T>(Interval x) {
+        return Left(x, 0.5);
+    }
+    public static Interval RightHalf<T>(Interval x) {
+        return Right(x, 0.5);
+    }
+    public static Numerical HalfSize<T>(Interval x) {
+        return Half(Size(x));
+    }
+    public static Interval Recenter<T>(Interval x, Numerical c) {
+        return Tuple(Subtract(c, HalfSize(x)), Add(c, HalfSize(x)));
+    }
+    public static Interval Clamp<T>(Interval x, Interval y) {
+        return Tuple(Clamp(x, Min(y)), Clamp(x, Max(y)));
+    }
+    public static Numerical Clamp<T>(Interval x, Numerical value) {
+        return LessThan(value, Min(x)
+            ? Min(x)
+            : GreaterThan(value, Max(x)
+                ? Max(x)
+                : value
+            )
+        );
+    }
+    public static Boolean Within<T>(Interval x, Numerical value) {
+        return GreaterThanOrEquals(value, And(Min(x), LessThanOrEquals(value, Max(x))));
+    }
+}
+public static partial class Extensions
+{
+    public static String ToString(Value x) {
+        return Join(FieldValues(x), , );
+    }
+}
+public static partial class Extensions
+{
+    public static Numerical Sum<T>(Array v) {
+        return Aggregate(v, 0, Add);
+    }
+    public static Numerical SumSquares<T>(Array v) {
+        return Aggregate(Square(v), 0, Add);
+    }
+    public static Numerical LengthSquared<T>(Array v) {
+        return SumSquares(v);
+    }
+    public static Numerical Length<T>(Array v) {
+        return SquareRoot(LengthSquared(v));
+    }
+    public static Numerical Dot<T>(Vector v1, Vector v2) {
+        return Sum(Multiply(v1, v2));
+    }
+    public static Vector Normal<T>(Vector v) {
+        return Divide(v, Length(v));
+    }
+}
+public static partial class Extensions
+{
+    public static Numerical SquareRoot(Numerical x) {
+        return Pow(x, 0.5);
+    }
+    public static Numerical Square(Numerical x) {
+        return Multiply(x, x);
+    }
+    public static Numerical Clamp(Numerical x, Interval i) {
+        return Clamp(i, x);
+    }
+    public static Numerical Clamp(Numerical x) {
+        return Clamp(x, Tuple(0, 1));
+    }
+    public static Numerical PlusOne(Numerical x) {
+        return Add(x, One(x));
+    }
+    public static Numerical MinusOne(Numerical x) {
+        return Subtract(x, One(x));
+    }
+    public static Numerical FromOne(Numerical x) {
+        return Subtract(One(x), x);
+    }
+    public static Boolean IsPositive(Numerical x) {
+        return GreaterThanOrEquals(x, 0);
+    }
+    public static Boolean GtZ(Numerical x) {
+        return GreaterThan(x, 0);
+    }
+    public static Boolean LtZ(Numerical x) {
+        return LessThan(x, 0);
+    }
+    public static Boolean GtEqZ(Numerical x) {
+        return GreaterThanOrEquals(x, 0);
+    }
+    public static Boolean LtEqZ(Numerical x) {
+        return LessThanOrEquals(x, 0);
+    }
+    public static Boolean IsNegative(Numerical x) {
+        return LessThan(x, 0);
+    }
+    public static Numerical Sign(Numerical x) {
+        return LtZ(x)
+            ? Negative(One(x))
+            : GtZ(x)
+                ? One(x)
+                : Zero(x)
+
+        ;
+    }
+    public static Numerical Abs(Numerical x) {
+        return LtZ(x)
+            ? Negative(x)
+            : x
+        ;
+    }
+    public static Numerical Half(Numerical x) {
+        return Divide(x, 2);
+    }
+    public static Numerical Third(Numerical x) {
+        return Divide(x, 3);
+    }
+    public static Numerical Quarter(Numerical x) {
+        return Divide(x, 4);
+    }
+    public static Numerical Fifth(Numerical x) {
+        return Divide(x, 5);
+    }
+    public static Numerical Sixth(Numerical x) {
+        return Divide(x, 6);
+    }
+    public static Numerical Seventh(Numerical x) {
+        return Divide(x, 7);
+    }
+    public static Numerical Eighth(Numerical x) {
+        return Divide(x, 8);
+    }
+    public static Numerical Ninth(Numerical x) {
+        return Divide(x, 9);
+    }
+    public static Numerical Tenth(Numerical x) {
+        return Divide(x, 10);
+    }
+    public static Numerical Sixteenth(Numerical x) {
+        return Divide(x, 16);
+    }
+    public static Numerical Hundredth(Numerical x) {
+        return Divide(x, 100);
+    }
+    public static Numerical Thousandth(Numerical x) {
+        return Divide(x, 1000);
+    }
+    public static Numerical Millionth(Numerical x) {
+        return Divide(x, Divide(1000, 1000));
+    }
+    public static Numerical Billionth(Numerical x) {
+        return Divide(x, Divide(1000, Divide(1000, 1000)));
+    }
+    public static Numerical Hundred(Numerical x) {
+        return Multiply(x, 100);
+    }
+    public static Numerical Thousand(Numerical x) {
+        return Multiply(x, 1000);
+    }
+    public static Numerical Million(Numerical x) {
+        return Multiply(x, Multiply(1000, 1000));
+    }
+    public static Numerical Billion(Numerical x) {
+        return Multiply(x, Multiply(1000, Multiply(1000, 1000)));
+    }
+    public static Numerical Twice(Numerical x) {
+        return Multiply(x, 2);
+    }
+    public static Numerical Thrice(Numerical x) {
+        return Multiply(x, 3);
+    }
+    public static Numerical SmoothStep(Numerical x) {
+        return Multiply(Square(x), Subtract(3, Twice(x)));
+    }
+    public static Numerical Pow2(Numerical x) {
+        return Multiply(x, x);
+    }
+    public static Numerical Pow3(Numerical x) {
+        return Multiply(Pow2(x), x);
+    }
+    public static Numerical Pow4(Numerical x) {
+        return Multiply(Pow3(x), x);
+    }
+    public static Numerical Pow5(Numerical x) {
+        return Multiply(Pow4(x), x);
+    }
+    public static Number Pi(Numerical self) {
+        return 3.1415926535897;
+    }
+    public static Boolean AlmostZero(Numerical x) {
+        return LessThan(Abs(x), 1E-08);
+    }
+    public static Numerical Lerp(Numerical a, Numerical b, Unit t) {
+        return Multiply(Subtract(1, t), Add(a, Multiply(t, b)));
+    }
+    public static Boolean Between(Numerical self, Numerical min, Numerical max) {
+        return Zip(FieldValues(self), FieldValues(min), FieldValues(max), (x, y, z) => 
+        Between(x, y, z));
+    }
+}
+public static partial class Extensions
+{
+    public static Angle Radians(Number x) {
+        return x;
+    }
+    public static Angle Degrees(Number x) {
+        return Multiply(x, Divide(Pi, 180));
+    }
+    public static Angle Turns(Number x) {
+        return Multiply(x, Multiply(2, Pi));
+    }
+}
+public static partial class Extensions
+{
+    public static Boolean Equals(Comparable a, Comparable b) {
+        return Equals(Compare(a, b), 0);
+    }
+    public static Boolean LessThan(Comparable a, Comparable b) {
+        return LessThan(Compare(a, b), 0);
+    }
+    public static Boolean LessThanOrEquals(Comparable a, Comparable b) {
+        return LessThanOrEquals(Compare(a, b), 0);
+    }
+    public static Boolean GreaterThan(Comparable a, Comparable b) {
+        return GreaterThan(Compare(a, b), 0);
+    }
+    public static Boolean GreaterThanOrEquals(Comparable a, Comparable b) {
+        return GreaterThanOrEquals(Compare(a, b), 0);
+    }
+    public static Value Between(Comparable v, Comparable a, Comparable b) {
+        return GreaterThanOrEquals(v, And(a, LessThanOrEquals(v, b)));
+    }
+    public static Interval Between(Value v, Interval i) {
+        return Contains(i, v);
+    }
+    public static Comparable Min(Comparable a, Comparable b) {
+        return LessThanOrEquals(a, b
+            ? a
+            : b
+        );
+    }
+    public static Comparable Max(Comparable a, Comparable b) {
+        return GreaterThanOrEquals(a, b
+            ? a
+            : b
+        );
+    }
+}
+public static partial class Extensions
+{
+    public static Boolean NotEquals(Equatable x, Equatable y) {
+        return Not(Equals(x, y));
+    }
+}
+public static partial class Extensions
+{
+    public static Number BlendEaseFunc(Number p, Function easeIn, Function easeOut) {
+        return LessThan(p, 0.5
+            ? Multiply(0.5, easeIn(Multiply(p, 2)))
+            : Multiply(0.5, Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5))
+        );
+    }
+    public static Number InvertEaseFunc(Number p, Function easeIn) {
+        return Subtract(1, easeIn(Subtract(1, p)));
+    }
+    public static Number Linear(Number p) {
+        return p;
+    }
+    public static Number QuadraticEaseIn(Number p) {
+        return Pow2(p);
+    }
+    public static Number QuadraticEaseOut(Number p) {
+        return InvertEaseFunc(p, QuadraticEaseIn);
+    }
+    public static Number QuadraticEaseInOut(Number p) {
+        return BlendEaseFunc(p, QuadraticEaseIn, QuadraticEaseOut);
+    }
+    public static Number CubicEaseIn(Number p) {
+        return Pow3(p);
+    }
+    public static Number CubicEaseOut(Number p) {
+        return InvertEaseFunc(p, CubicEaseIn);
+    }
+    public static Number CubicEaseInOut(Number p) {
+        return BlendEaseFunc(p, CubicEaseIn, CubicEaseOut);
+    }
+    public static Number QuarticEaseIn(Number p) {
+        return Pow4(p);
+    }
+    public static Number QuarticEaseOut(Number p) {
+        return InvertEaseFunc(p, QuarticEaseIn);
+    }
+    public static Number QuarticEaseInOut(Number p) {
+        return BlendEaseFunc(p, QuarticEaseIn, QuarticEaseOut);
+    }
+    public static Number QuinticEaseIn(Number p) {
+        return Pow5(p);
+    }
+    public static Number QuinticEaseOut(Number p) {
+        return InvertEaseFunc(p, QuinticEaseIn);
+    }
+    public static Number QuinticEaseInOut(Number p) {
+        return BlendEaseFunc(p, QuinticEaseIn, QuinticEaseOut);
+    }
+    public static Number SineEaseIn(Number p) {
+        return InvertEaseFunc(p, SineEaseOut);
+    }
+    public static Number SineEaseOut(Number p) {
+        return Sin(Turns(Quarter(p)));
+    }
+    public static Number SineEaseInOut(Number p) {
+        return BlendEaseFunc(p, SineEaseIn, SineEaseOut);
+    }
+    public static Number CircularEaseIn(Number p) {
+        return FromOne(SquareRoot(FromOne(Pow2(p))));
+    }
+    public static Number CircularEaseOut(Number p) {
+        return InvertEaseFunc(p, CircularEaseIn);
+    }
+    public static Number CircularEaseInOut(Number p) {
+        return BlendEaseFunc(p, CircularEaseIn, CircularEaseOut);
+    }
+    public static Number ExponentialEaseIn(Number p) {
+        return AlmostZero(p)
+            ? p
+            : Pow(2, Multiply(10, MinusOne(p)))
+        ;
+    }
+    public static Number ExponentialEaseOut(Number p) {
+        return InvertEaseFunc(p, ExponentialEaseIn);
+    }
+    public static Number ExponentialEaseInOut(Number p) {
+        return BlendEaseFunc(p, ExponentialEaseIn, ExponentialEaseOut);
+    }
+    public static Number ElasticEaseIn(Number p) {
+        return Multiply(13, Multiply(Turns(Quarter(p)), Sin(Radians(Pow(2, Multiply(10, MinusOne(p)))))));
+    }
+    public static Number ElasticEaseOut(Number p) {
+        return InvertEaseFunc(p, ElasticEaseIn);
+    }
+    public static Number ElasticEaseInOut(Number p) {
+        return BlendEaseFunc(p, ElasticEaseIn, ElasticEaseOut);
+    }
+    public static Number BackEaseIn(Number p) {
+        return Subtract(Pow3(p), Multiply(p, Sin(Turns(Half(p)))));
+    }
+    public static Number BackEaseOut(Number p) {
+        return InvertEaseFunc(p, BackEaseIn);
+    }
+    public static Number BackEaseInOut(Number p) {
+        return BlendEaseFunc(p, BackEaseIn, BackEaseOut);
+    }
+    public static Number BounceEaseIn(Number p) {
+        return InvertEaseFunc(p, BounceEaseOut);
+    }
+    public static Number BounceEaseOut(Number p) {
+        return LessThan(p, Divide(4, 11))
+            ? Multiply(121, Divide(Pow2(p), 16))
+            : LessThan(p, Divide(8, 11))
+                ? Divide(363, Multiply(40, Subtract(Pow2(p), Divide(99, Multiply(10, Add(p, Divide(17, 5)))))))
+                : LessThan(p, Divide(9, 10))
+                    ? Divide(4356, Multiply(361, Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805)))))))
+                    : Divide(54, Multiply(5, Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25)))))))
+
+
+        ;
+    }
+    public static Number BounceEaseInOut(Number p) {
+        return BlendEaseFunc(p, BounceEaseIn, BounceEaseOut);
     }
 }

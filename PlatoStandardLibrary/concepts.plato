@@ -2,7 +2,14 @@ concept Any
 { 
     FieldNames(): Array<String>;     
     FieldValues(x: Self): Array<Any>;
+    FieldTypes(x: Self): Array<Type>;
     TypeOf(): Type;
+}
+
+concept Value 
+    inherits Any
+{
+    Default(): Self;
 }
 
 concept Array<T: Any>
@@ -12,15 +19,8 @@ concept Array<T: Any>
     At(xs: Self, n: Index): T;
 }
 
-concept Value 
-    inherits Any
-{
-    Default(): Self
-        => Self.FieldValues.Default;
-}
-
-concept Vector<T: Numerical> 
-    inherits Array<T>, Numerical, ScalarArithmetic, 
+concept Vector<T: Numerical>
+    inherits Array<T>, Numerical, ScalarArithmetic
 {
     Count(v: Vector): Count
         => Self.FieldTypes.Count;
@@ -39,19 +39,10 @@ concept Measure
 concept Numerical 
     inherits Value, Arithmetic, Equatable, Comparable, Magnitudinal
 {
-    FieldTypes(): Array<Type>;
-
-    Zero(): Self
-        => Self.FieldTypes.Zero;
-
-    One(): Self
-        => Self.FieldTypes.One;
-
-    MinValue(): Self
-        => Self.FieldTypes.MinValue;
-
-    MaxValue(): Self
-        => Self.FieldTypes.MaxValue;
+    Zero(x: Numerical): Self;
+    One(x: Numerical): Self;
+    MinValue(x: Numerical): Self;
+    MaxValue(x: Numerical): Self;
 }
 
 concept Magnitudinal

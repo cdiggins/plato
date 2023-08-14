@@ -80,6 +80,16 @@ public class IDE
 
         OutputTextBox.Lines = Logger.Messages.ToArray();
 
+
+        if (!Compiler.CompletedCompilation)
+        {
+            // No files will be output
+            return;
+        }
+
+        // NOTE: even if CompletedCompilation is true, there might still be errors. 
+        // The goal is to still be able to partially generate output. 
+
         var outputFolder = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\";
 
         Logger.Log("Writing C#");

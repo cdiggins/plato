@@ -43,6 +43,9 @@ library Array
     
     All(xs: Array, f: Function): Boolean 
         => xs.IsEmpty ? true : f(xs.First) && f(xs.Rest);
+
+    All(xs: Array): Boolean 
+        => xs.All((b: Boolean) => b);
 } 
 
 library Interval
@@ -122,19 +125,19 @@ library Value
 
 library Vector
 {
-    Sum(v: Array): Number 
+    Sum(v: Array): Numerical 
         => v.Aggregate(0, Add); 
     
-    SumSquares(v: Array): Number
+    SumSquares(v: Array): Numerical
         => v.Square.Aggregate(0, Add); 
     
-    LengthSquared(v: Array): Number 
+    LengthSquared(v: Array): Numerical 
         => v.SumSquares;
     
-    Length(v: Array): Number 
+    Length(v: Array): Numerical 
         => v.LengthSquared.SquareRoot;
     
-    Dot(v1: Vector, v2: Vector): Number 
+    Dot(v1: Vector, v2: Vector): Numerical
         => (v1 * v2).Sum;
 
     Normal(v: Vector): Vector

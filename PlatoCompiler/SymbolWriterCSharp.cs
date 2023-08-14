@@ -104,7 +104,6 @@ namespace Plato.Compiler
                     // Intrinsic 
                     continue;
 
-
                 var typeParameterNames =
                     f.Parameters.Count > 0
                         ? f.Parameters[0].Type.Def.TypeParameters.Select(tp => tp.Name).ToList()
@@ -309,7 +308,7 @@ namespace Plato.Compiler
 
                 var fullName = $"{typeDef.Name}<Self>";
                 var inherited = typeDef.Inherits.Count > 0
-                    ? ": " + string.Join(", ", typeDef.Inherits.Select(td => $"{td.Name}<Self>"))
+                    ? ": " + string.Join(", ", typeDef.Inherits.Select(td => $"{td?.Name}<Self>"))
                     : "";
 
                 Write("public interface ").Write(fullName)
@@ -332,7 +331,7 @@ namespace Plato.Compiler
             if (typeDef.IsType())
             {
                 var implements = typeDef.Implements.Count > 0
-                    ? ": " + string.Join(", ", typeDef.Implements.Select(td => $"{td.Name}<{typeDef.Name}>"))
+                    ? ": " + string.Join(", ", typeDef.Implements.Select(td => $"{td?.Name}<{typeDef.Name}>"))
                     : "";
                 return Write("public class ")
                     .Write(typeDef.Name)

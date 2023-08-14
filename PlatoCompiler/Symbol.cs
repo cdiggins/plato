@@ -20,7 +20,7 @@ namespace Plato.Compiler
         public IReadOnlyList<MemberDefSymbol> Members { get;  }
         
         public MemberGroupSymbol(IReadOnlyList<MemberDefSymbol> members, string name)
-            : base(PrimitiveTypes.Union.ToRef(), name)
+            : base(null, name)
         {
             if (members.Count == 0) throw new Exception("Expected at least one function in group");
             Members = members;
@@ -93,10 +93,10 @@ namespace Plato.Compiler
     public static class PrimitiveTypes
     {
         public static TypeDefSymbol Lambda = Create("Lambda");
-        public static TypeDefSymbol Union = Create("Union");
         public static TypeDefSymbol Function = Create("Function");
         public static TypeDefSymbol Self = Create("Self");
         public static TypeDefSymbol Tuple = Create("Tuple");
+        public static TypeDefSymbol Error = Create("Error");
 
         public static TypeDefSymbol Create(string name)
             => new TypeDefSymbol(TypeKind.Primitive, name);
@@ -141,16 +141,33 @@ namespace Plato.Compiler
         {
             foreach (var tmp in Implements)
             {
+                if (tmp == null)
+                {
+                    // TODO: move to semantic checker 
+                    Debug.WriteLine("TODO: Implements should not have null types");
+                    continue;
+                }
+
                 yield return tmp;
-                foreach (var tmp2 in tmp.Def.GetAllImplementedConcepts())
-                    yield return tmp2;
+
+                if (tmp.Def != null)
+                    foreach (var tmp2 in tmp.Def.GetAllImplementedConcepts())
+                        yield return tmp2;
             }
 
             foreach (var tmp in Inherits)
             {
+                if (tmp == null)
+                {
+                    // TODO: move to semantic checker 
+                    Debug.WriteLine("TODO: Inherits should not have null types");
+                    continue;
+                }
+
                 yield return tmp;
-                foreach (var tmp2 in tmp.Def.GetAllImplementedConcepts())
-                    yield return tmp2;
+                if (tmp.Def != null)
+                    foreach (var tmp2 in tmp.Def.GetAllImplementedConcepts())
+                        yield return tmp2;
             }
         }
 
@@ -161,7 +178,7 @@ namespace Plato.Compiler
             .Concat(Methods).Concat(Fields);
 
         public IEnumerable<MethodDefSymbol> GetConceptMethods()
-            => GetAllImplementedConcepts().SelectMany(c => c.Def.Methods);
+            => GetAllImplementedConcepts().SelectMany(c => c?.Def?.Methods ?? Enumerable.Empty<MethodDefSymbol>());
 
         public TypeRefSymbol ToRef() => new TypeRefSymbol(this);
     }
