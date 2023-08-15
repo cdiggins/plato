@@ -86,7 +86,7 @@ namespace Plato.Compiler
                 Operations = new Operations(TypeDefs);
 
                 Log("Type resolution");
-                TypeResolver = new TypeResolver(Operations, Logger);
+                TypeResolver = new TypeResolver(Operations, SymbolResolver);
 
                 Log($"Found {TypeResolver.Errors.Count} type resolution errors");
                 LogResolutionErrors(TypeResolver.Errors);

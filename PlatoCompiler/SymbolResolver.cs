@@ -36,7 +36,7 @@ namespace Plato.Compiler
         public List<ResolutionError> Errors { get; } = new List<ResolutionError>();
         public Scope ValueBindingsScope { get; set; } = new Scope(null);
         public Scope TypeBindingsScope { get; set; } = new Scope(null);
-        public Dictionary<Symbol, AstNode> SymbolsToNames = new Dictionary<Symbol, AstNode>();
+        public Dictionary<Symbol, AstNode> SymbolsToNodes = new Dictionary<Symbol, AstNode>();
 
         public List<TypeDefSymbol> TypeDefs { get; } = new List<TypeDefSymbol>();
         
@@ -152,6 +152,14 @@ namespace Plato.Compiler
         // This is not a pure function. It updates the scope every time a new value is bound
         public Symbol Resolve(AstNode node)
         {
+            var r = InternalResolve(node);
+            if (r != null)
+                SymbolsToNodes[r] = node;
+            return r;
+        }
+
+        public Symbol InternalResolve(AstNode node)
+        {
             try
             {
                 if (node == null)
@@ -214,7 +222,6 @@ namespace Plato.Compiler
                         var funcRef = Resolve(astInvoke.Function);
                         if (funcRef == null)
                         {
-                            var tmp = Resolve(astInvoke.Function);
                             LogError($"Could not find function {astInvoke.Function}", astInvoke);
                         }
 
@@ -256,14 +263,14 @@ namespace Plato.Compiler
             foreach (var astTypeDeclaration in types)
             {
                 var typeDef = new TypeDefSymbol(astTypeDeclaration.Kind, astTypeDeclaration.Name);
-                SymbolsToNames.Add(typeDef, astTypeDeclaration);
+                SymbolsToNodes.Add(typeDef, astTypeDeclaration);
                 BindType(typeDef);
                 TypeDefs.Add(typeDef);
             }
 
             foreach (var typeDef in TypeDefs)
             {
-                var astTypeDeclaration = SymbolsToNames[typeDef] as AstTypeDeclaration;
+                var astTypeDeclaration = SymbolsToNodes[typeDef] as AstTypeDeclaration;
                 TypeBindingsScope = TypeBindingsScope.Push();
 
                 foreach (var tp in astTypeDeclaration.TypeParameters)
@@ -281,7 +288,7 @@ namespace Plato.Compiler
                     {
                         var fDef = new FieldDefSymbol(typeDef, ResolveType(fd.Type), fd.Name);
                         typeDef.Fields.Add(fDef);
-                        SymbolsToNames.Add(fDef, fd);
+                        SymbolsToNodes.Add(fDef, fd);
                         BindMemberToGroup(fDef);
                     }
                     else if (m is AstMethodDeclaration md)
@@ -296,7 +303,7 @@ namespace Plato.Compiler
                         mDef.Function = f;
 
                         typeDef.Methods.Add(mDef);
-                        SymbolsToNames.Add(mDef, md);
+                        SymbolsToNodes.Add(mDef, md);
                         BindMemberToGroup(mDef);
                     }
                     else
@@ -320,7 +327,7 @@ namespace Plato.Compiler
 
                 BindType("Self", typeDef);
 
-                var astTypeDecl = SymbolsToNames[typeDef] as AstTypeDeclaration;
+                var astTypeDecl = SymbolsToNodes[typeDef] as AstTypeDeclaration;
 
                 // Resolve the inherits and implemented type declarations
 
@@ -347,7 +354,7 @@ namespace Plato.Compiler
                 foreach (var method in typeDef.Methods)
                 {
                     ValueBindingsScope = ValueBindingsScope.Push();
-                    var location = SymbolsToNames[method] as AstMethodDeclaration;
+                    var location = SymbolsToNodes[method] as AstMethodDeclaration;
                     var list = new List<ParameterSymbol>();
                     foreach (var p in location.Parameters)
                     {

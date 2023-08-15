@@ -22,17 +22,19 @@ namespace Plato.Compiler
         public IReadOnlyList<TypeDefSymbol> Types => Ops.Types;
         public IReadOnlyList<FunctionSymbol> Functions { get; }
         public IReadOnlyList<ParameterSymbol> Parameters { get; }
-        public Logger Logger { get; }
+        public SymbolResolver SymbolResolver { get; }
+        public Logger Logger => SymbolResolver.Logger;
         public List<ResolutionError> Errors { get; } = new List<ResolutionError>();
 
+        public Dictionary<string, FunctionSymbol> ImplicitConversions { get; }
         public Dictionary<string, TypeDefSymbol> TypesFromNames { get; }
 
         public Dictionary<Symbol, TypeDefSymbol> ExpressionTypes { get; }
             = new Dictionary<Symbol, TypeDefSymbol>();
 
-        public TypeResolver(Operations ops, Logger logger)
+        public TypeResolver(Operations ops, SymbolResolver symbols)
         {
-            Logger = logger;
+            SymbolResolver = symbols;
             Ops = ops;
 
             TypesFromNames = Types.Where(t => t.IsType() || t.IsConcept()).ToDictionary(t => t.Name, t => t);
@@ -52,6 +54,10 @@ namespace Plato.Compiler
             foreach (var p in Parameters)
                 AddType(p, p.Type?.Def);
 
+            ImplicitConversions = Functions
+                .Where(f => f.Name == $"To{f.Type.Name}")
+                .ToDictionary(f => f.Name, f => f);
+
             TestCasts();
 
             ComputeExpressionTypes();
@@ -68,19 +74,19 @@ namespace Plato.Compiler
             var tValue = FindType("Value");
             var tBool = FindType("Boolean");
 
-            var typeDefs = new TypeDefSymbol[] { tAny, tNumber, tUnit, tString, tArray, tNumerical, tValue, tBool };
+            var typeDefs = new [] { tAny, tNumber, tUnit, tString, tArray, tNumerical, tValue, tBool };
             foreach (var td in typeDefs)
             {
                 Debug.Assert(td != null);
-                Debug.Assert(td.CanCastTo(tAny) > 0);
+                Debug.Assert(CanCastTo(td, tAny) > 0);
             }
 
-            Debug.Assert(tNumber.CanCastTo(tNumerical) > 0);
-            Debug.Assert(tNumber.CanCastTo(tValue) > 0);
-            Debug.Assert(tUnit.CanCastTo(tNumber) > 0);
+            Debug.Assert(CanCastTo(tNumber, tNumerical) > 0);
+            Debug.Assert(CanCastTo(tNumber, tValue) > 0);
+            Debug.Assert(CanCastTo(tUnit, tNumber) > 0);
             Debug.Assert(tString != null);
-            Debug.Assert(tString.CanCastTo(tArray) > 0);
-            Debug.Assert(tString.CanCastTo(tNumber) == 0);
+            Debug.Assert(CanCastTo(tString, tArray) > 0);
+            Debug.Assert(CanCastTo(tString, tNumber) == 0);
 
 
             Debug.Assert(tArray != null);
@@ -121,8 +127,7 @@ namespace Plato.Compiler
 
                 case MemberGroupSymbol functionGroupSymbol:
                     // TODO: figure out a good type for the method group. 
-                    return PrimitiveTypes.Error;
-                    //throw new Exception("For now this is supposed to be unreachable code. This occurs when a method group is used as a symbol, and not invoked.");
+                    return PrimitiveTypes.Function;
 
                 case FunctionCallSymbol functionCallSymbol:
                 {
@@ -131,7 +136,7 @@ namespace Plato.Compiler
                         
                     if (rs.Def is MemberGroupSymbol mgs)
                     {
-                        return ComputeTypeOfMemberGroup(mgs, functionCallSymbol.Args);
+                        return ComputeTypeOfMemberGroup(mgs, functionCallSymbol);
                     }
                     return ComputeType(rs);
                 }
@@ -229,9 +234,12 @@ namespace Plato.Compiler
                 if (f?.Body == null ) 
                     continue;
                 var t = ComputeType(f.Body);
-                if (t.CanCastTo(f.Type.Def) == 0)
+                if (CanCastTo(t, f.Type.Def) <= 0)
                 {
-                    LogError($"Function type declared as {f.Type.Name} but computed type is {t?.Name}. No conversion was found.");
+                    // TODO: temp. We really need proper constraint resolution. Remember that based on what is passed in, 
+                    // will affect what the concepts in a function actually are. They are actually a form of function generic. 
+                    if (!t.IsConcept() || CanCastTo(f.Type.Def, t) <= 0)
+                        LogError($"Function type declared as {f.Type.Name} but computed type is {t?.Name}. No conversion was found.", f);
                 }
             }
         }
@@ -256,23 +264,25 @@ namespace Plato.Compiler
             return trs;
         }
 
-        public TypeDefSymbol ComputeTypeOfMemberGroup(MemberGroupSymbol mgs, IReadOnlyList<ArgumentSymbol> arguments)
+        public TypeDefSymbol ComputeTypeOfMemberGroup(MemberGroupSymbol mgs, FunctionCallSymbol fcs)
         {
-            var funcs = FindBestFunctions(mgs, arguments);
+            var arguments = fcs.Args;
+            var funcs = FindBestFunctions(mgs, fcs,arguments);
             if (funcs.Count == 0)
             {
-                LogError($"No function found for {mgs.Name}");
+                LogError($"No function found for {mgs.Name}", fcs);
                 return PrimitiveTypes.Error;
             }
             if (funcs.Count > 1)
             {
-                LogError($"Multiple best functions found for {mgs.Name}");
+                LogError($"Multiple best functions found for {mgs.Name}", fcs);
             }
             var f = funcs[0];
+            // TODO: I'm not crazy about this. Ideally I would unify the type.
             return f?.Type?.Def ?? PrimitiveTypes.Error;
         }
 
-        public IReadOnlyList<FunctionSymbol> FindBestFunctions(MemberGroupSymbol mgs,
+        public IReadOnlyList<FunctionSymbol> FindBestFunctions(MemberGroupSymbol mgs, FunctionCallSymbol fcs,
             IReadOnlyList<ArgumentSymbol> arguments)
         {
             var functions = mgs.Members.Select(m => m.Function).Where(f  => f.Parameters.Count == arguments.Count)
@@ -280,12 +290,12 @@ namespace Plato.Compiler
 
             if (functions.Count == 0)
             {
-                LogError($"Found no functions in group {mgs} that matched number of arguments {arguments.Count}");
+                LogError($"Found no functions in group {mgs} that matched number of arguments {arguments.Count}", fcs);
                 return functions;
             }
 
             var argTypes = arguments.Select(ComputeType).Select(x => x.ToRef()).ToList();
-            var candidates = functions.FindMatchingFunctions(argTypes);
+            var candidates = FindMatchingFunctions(functions, argTypes);
             var argsStr = string.Join(", ", argTypes.Select(arg => $"{arg}"));
 
             if (candidates.Count == 0)
@@ -294,12 +304,12 @@ namespace Plato.Compiler
                 // resort to using the array types. Note: somehow I have to add a special map call here. 
 
                 var argTypes2 = argTypes.Select(GetArrayParameter).ToList();
-                candidates = functions.FindMatchingFunctions(argTypes2);
+                candidates = FindMatchingFunctions(functions, argTypes2);
             }
 
             if (candidates.Count == 0)
             {
-                LogError($"No candidates found for {mgs} even after mapping");
+                LogError($"No candidates found for {mgs} even after mapping. Arg types are {argsStr}", fcs);
                 return functions;
             }
 
@@ -310,23 +320,103 @@ namespace Plato.Compiler
 
             for (var i = 0; i < argTypes.Count; ++i)
             {
-                var groups = candidates.GroupBy(c => argTypes[i].MatchesScore(c.Parameters[i].Type)).OrderBy(grp => grp.Key);
+                var groups = candidates.GroupBy(c => MatchesScore(argTypes[i], c.Parameters[i].Type)).OrderBy(grp => grp.Key);
                 candidates = groups.First().ToList();
                 if (candidates.Count == 1)
                     return candidates;
                 if (candidates.Count == 0)
-                    throw new Exception("Unexepected 0 candidates");
+                    throw new Exception("Unexpected 0 candidates");
             }
 
+            // Functions with a body are preferred. 
+            var tmp = candidates.Where(f => f.Body != null).ToList();
+            if (tmp.Count == 1)
+                return tmp;
+
             var candidateStr = string.Join(",", candidates.Select(c => c.Signature));
-            LogError($"Found too many matches ({candidates.Count}) for {mgs} with argument types ({argsStr}) : {candidateStr}");
+            LogError($"Found too many matches ({candidates.Count}) for {mgs} with argument types ({argsStr}) : {candidateStr}", fcs);
             return candidates;
         }
 
-        public void LogError(string message)
+        public void LogError(string message, Symbol symbol)
         {
-            // TODO: get an AstNode from a symbol. Pass a symbol to this function.
-            Errors.Add(new ResolutionError(message, null));
+            var node = SymbolResolver.SymbolsToNodes.TryGetValue(symbol, out var n) ? n : null;
+            Errors.Add(new ResolutionError(message, node));
+        }
+        public static double CanCastTo(TypeRefSymbol fromType, TypeRefSymbol toType, bool allowConversions = true)
+        {
+            return CanCastTo(fromType?.Def, toType?.Def, allowConversions);
+        }
+
+        public static double CanCastTo(TypeDefSymbol fromDef, TypeDefSymbol toDef, bool allowConversions = true)
+        {
+            if (fromDef == null || toDef == null)
+                throw new Exception("Could not find type definitions");
+
+            if (fromDef.Equals(toDef))
+                return 1;
+
+            if (fromDef.IsSubType(toDef))
+                return 2;
+
+            if (fromDef.Name == "Any")
+                return 3;
+
+            if (allowConversions)
+            {
+                // We look for the implicit operators.
+                // TODO: look for functions of the name "ToX" and "FromX" when allowing more than just the default. 
+
+                if (toDef.IsType())
+                {
+                    // TODO: check that the type of each argument matches 
+                    // TODO: add tuple support 
+                    //if (fromType.Name == "Tuple") return fromType.TypeArgs.Count == toType.Def.Fields.Count ? 4 : 0;
+
+                    // All types have a constructor that acts as an implicit cast 
+                    if (toDef.Fields.Count == 1)
+                    {
+                        var fieldType = toDef.Fields[0].Type?.Def;
+                        return CanCastTo(fromDef, fieldType, false) > 0 ? 4 : 0;
+                    }
+                }
+
+                if (fromDef.IsType())
+                {
+                    // TODO: check that the type of each argument matches 
+                    // TODO: add tuple support 
+                    //if (toType.Name == "Tuple") return toType.TypeArgs.Count == fromType.Def.Fields.Count ? 4 : 0;
+
+                    // All types with one field can implicit cast to that field. 
+                    if (fromDef.Fields.Count == 1)
+                    {
+                        var fieldType = fromDef.Fields[0].Type?.Def;
+                        return CanCastTo(fieldType, toDef, false) > 0 ? 5 : 0;
+                    }
+                }
+            }
+
+            return 0;
+        }
+
+        public static double MatchesScore(TypeRefSymbol argType, TypeRefSymbol parameterType)
+        {
+            if (argType == null) return 1;
+            if (parameterType == null) return 1;
+            return CanCastTo(argType, parameterType);
+        }
+
+        public static IReadOnlyList<FunctionSymbol> FindMatchingFunctions(IReadOnlyList<FunctionSymbol> funcs,
+            IReadOnlyList<TypeRefSymbol> argumentTypes)
+        {
+            var candidates = funcs.Where(f => f.Parameters.Count == argumentTypes.Count).ToList();
+
+            for (var i = 0; i < argumentTypes.Count; ++i)
+            {
+                candidates = candidates.Where(c => MatchesScore(argumentTypes[i], c.Parameters[i].Type) > 0).ToList();
+            }
+
+            return candidates;
         }
     }
 }

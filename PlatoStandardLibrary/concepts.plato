@@ -15,17 +15,17 @@ concept Value
 concept Array<T: Any>
     inherits Any
 {
-    Count(xs: Self): Count;
-    At(xs: Self, n: Index): T;
+    Count(xs: Self): Integer;
+    At(xs: Self, n: Integer): T;
 }
 
 concept Vector<T: Numerical>
     inherits Array<T>, Numerical, ScalarArithmetic
 {
-    Count(v: Vector): Count
+    Count(v: Vector): Integer
         => Self.FieldTypes.Count;
         
-    At(v: Vector, n: Index): T
+    At(v: Vector, n: Integer): T
         => v.FieldValues[n];
 }
 

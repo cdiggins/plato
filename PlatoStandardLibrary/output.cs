@@ -23,8 +23,8 @@ public static partial class Extensions
 public interface Array<Self>: Any<Self>
     where Self : Array<Self>
 {
-    Count Count(Array xs);
-    Any At(Array xs, Index n);
+    Integer Count(Array xs);
+    Any At(Array xs, Integer n);
 }
 public static partial class Extensions
 {
@@ -35,11 +35,11 @@ public interface Vector<Self>: Array<Self>, Numerical<Self>, ScalarArithmetic<Se
 }
 public static partial class Extensions
 {
-    public static Count Count<Self, T>(this Vector v) where Self: Vector<Self, T>
+    public static Integer Count<Self, T>(this Vector v) where Self: Vector<Self, T>
     {
         return Count(FieldTypes(Self));
     }
-    public static Numerical At<Self, T>(this Vector v, Index n) where Self: Vector<Self, T>
+    public static Numerical At<Self, T>(this Vector v, Integer n) where Self: Vector<Self, T>
     {
         return At(FieldValues(v), n);
     }
@@ -279,9 +279,9 @@ public class String: Value<String>, Array<String>
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
     public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
     public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Count Count(Array xs) => Extensions.Count(xs);
-    public static Any At(Array xs, Index n) => Extensions.At(xs, n);
-    public Any this[Index n]
+    public static Integer Count(Array xs) => Extensions.Count(xs);
+    public static Any At(Array xs, Integer n) => Extensions.At(xs, n);
+    public Any this[Integer n]
         => null;
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -605,11 +605,11 @@ public class Vector2D: Vector<Vector2D>
     public static implicit operator Vector2D((Number, Number) value) => new Vector2D(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "X", "Y" };
     public object[] FieldValues() => new[] { X, Y };
-    public Numerical this[Index n]
+    public Numerical this[Integer n]
         => At(FieldValues(v), n);
-    public static Count Count(Array xs) => Extensions.Count(xs);
-    public static Any At(Array xs, Index n) => Extensions.At(xs, n);
-    public Any this[Index n]
+    public static Integer Count(Array xs) => Extensions.Count(xs);
+    public static Any At(Array xs, Integer n) => Extensions.At(xs, n);
+    public Any this[Integer n]
         => null;
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -672,11 +672,11 @@ public class Vector3D: Vector<Vector3D>
     public static implicit operator Vector3D((Number, Number, Number) value) => new Vector3D(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "X", "Y", "Z" };
     public object[] FieldValues() => new[] { X, Y, Z };
-    public Numerical this[Index n]
+    public Numerical this[Integer n]
         => At(FieldValues(v), n);
-    public static Count Count(Array xs) => Extensions.Count(xs);
-    public static Any At(Array xs, Index n) => Extensions.At(xs, n);
-    public Any this[Index n]
+    public static Integer Count(Array xs) => Extensions.Count(xs);
+    public static Any At(Array xs, Integer n) => Extensions.At(xs, n);
+    public Any this[Integer n]
         => null;
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -740,11 +740,11 @@ public class Vector4D: Vector<Vector4D>
     public static implicit operator Vector4D((Number, Number, Number, Number) value) => new Vector4D(value.Item1, value.Item2, value.Item3, value.Item4);
     public string[] FieldNames() => new[] { "X", "Y", "Z", "W" };
     public object[] FieldValues() => new[] { X, Y, Z, W };
-    public Numerical this[Index n]
+    public Numerical this[Integer n]
         => At(FieldValues(v), n);
-    public static Count Count(Array xs) => Extensions.Count(xs);
-    public static Any At(Array xs, Index n) => Extensions.At(xs, n);
-    public Any this[Index n]
+    public static Integer Count(Array xs) => Extensions.Count(xs);
+    public static Any At(Array xs, Integer n) => Extensions.At(xs, n);
+    public Any this[Integer n]
         => null;
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -892,11 +892,11 @@ public class AlignedBox2D: Interval<AlignedBox2D>
     public object[] FieldValues() => new[] { A, B };
     public static Numerical Min(Interval x) => Extensions.Min(x);
     public static Numerical Max(Interval x) => Extensions.Max(x);
-    public Numerical this[Index n]
+    public Numerical this[Integer n]
         => At(FieldValues(v), n);
-    public static Count Count(Array xs) => Extensions.Count(xs);
-    public static Any At(Array xs, Index n) => Extensions.At(xs, n);
-    public Any this[Index n]
+    public static Integer Count(Array xs) => Extensions.Count(xs);
+    public static Any At(Array xs, Integer n) => Extensions.At(xs, n);
+    public Any this[Integer n]
         => null;
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -961,11 +961,11 @@ public class AlignedBox3D: Interval<AlignedBox3D>
     public object[] FieldValues() => new[] { A, B };
     public static Numerical Min(Interval x) => Extensions.Min(x);
     public static Numerical Max(Interval x) => Extensions.Max(x);
-    public Numerical this[Index n]
+    public Numerical this[Integer n]
         => At(FieldValues(v), n);
-    public static Count Count(Array xs) => Extensions.Count(xs);
-    public static Any At(Array xs, Index n) => Extensions.At(xs, n);
-    public Any this[Index n]
+    public static Integer Count(Array xs) => Extensions.Count(xs);
+    public static Any At(Array xs, Integer n) => Extensions.At(xs, n);
+    public Any this[Integer n]
         => null;
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -1028,11 +1028,11 @@ public class Complex: Vector<Complex>
     public static implicit operator Complex((Number, Number) value) => new Complex(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Real", "Imaginary" };
     public object[] FieldValues() => new[] { Real, Imaginary };
-    public Numerical this[Index n]
+    public Numerical this[Integer n]
         => At(FieldValues(v), n);
-    public static Count Count(Array xs) => Extensions.Count(xs);
-    public static Any At(Array xs, Index n) => Extensions.At(xs, n);
-    public Any this[Index n]
+    public static Integer Count(Array xs) => Extensions.Count(xs);
+    public static Any At(Array xs, Integer n) => Extensions.At(xs, n);
+    public Any this[Integer n]
         => null;
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -1261,11 +1261,11 @@ public class Line3D: Interval<Line3D>
     public object[] FieldValues() => new[] { A, B };
     public static Numerical Min(Interval x) => Extensions.Min(x);
     public static Numerical Max(Interval x) => Extensions.Max(x);
-    public Numerical this[Index n]
+    public Numerical this[Integer n]
         => At(FieldValues(v), n);
-    public static Count Count(Array xs) => Extensions.Count(xs);
-    public static Any At(Array xs, Index n) => Extensions.At(xs, n);
-    public Any this[Index n]
+    public static Integer Count(Array xs) => Extensions.Count(xs);
+    public static Any At(Array xs, Integer n) => Extensions.At(xs, n);
+    public Any this[Integer n]
         => null;
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -1330,11 +1330,11 @@ public class Line2D: Interval<Line2D>
     public object[] FieldValues() => new[] { A, B };
     public static Numerical Min(Interval x) => Extensions.Min(x);
     public static Numerical Max(Interval x) => Extensions.Max(x);
-    public Numerical this[Index n]
+    public Numerical this[Integer n]
         => At(FieldValues(v), n);
-    public static Count Count(Array xs) => Extensions.Count(xs);
-    public static Any At(Array xs, Index n) => Extensions.At(xs, n);
-    public Any this[Index n]
+    public static Integer Count(Array xs) => Extensions.Count(xs);
+    public static Any At(Array xs, Integer n) => Extensions.At(xs, n);
+    public Any this[Integer n]
         => null;
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -1986,11 +1986,11 @@ public class TimeRange: Interval<TimeRange>
     public object[] FieldValues() => new[] { Min, Max };
     public static Numerical Min(Interval x) => Extensions.Min(x);
     public static Numerical Max(Interval x) => Extensions.Max(x);
-    public Numerical this[Index n]
+    public Numerical this[Integer n]
         => At(FieldValues(v), n);
-    public static Count Count(Array xs) => Extensions.Count(xs);
-    public static Any At(Array xs, Index n) => Extensions.At(xs, n);
-    public Any this[Index n]
+    public static Integer Count(Array xs) => Extensions.Count(xs);
+    public static Any At(Array xs, Integer n) => Extensions.At(xs, n);
+    public Any this[Integer n]
         => null;
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -2067,11 +2067,11 @@ public class AnglePair: Interval<AnglePair>
     public object[] FieldValues() => new[] { Start, End };
     public static Numerical Min(Interval x) => Extensions.Min(x);
     public static Numerical Max(Interval x) => Extensions.Max(x);
-    public Numerical this[Index n]
+    public Numerical this[Integer n]
         => At(FieldValues(v), n);
-    public static Count Count(Array xs) => Extensions.Count(xs);
-    public static Any At(Array xs, Index n) => Extensions.At(xs, n);
-    public Any this[Index n]
+    public static Integer Count(Array xs) => Extensions.Count(xs);
+    public static Any At(Array xs, Integer n) => Extensions.At(xs, n);
+    public Any this[Integer n]
         => null;
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -2199,11 +2199,11 @@ public class TimeInterval: Interval<TimeInterval>
     public object[] FieldValues() => new[] { Start, End };
     public static Numerical Min(Interval x) => Extensions.Min(x);
     public static Numerical Max(Interval x) => Extensions.Max(x);
-    public Numerical this[Index n]
+    public Numerical this[Integer n]
         => At(FieldValues(v), n);
-    public static Count Count(Array xs) => Extensions.Count(xs);
-    public static Any At(Array xs, Index n) => Extensions.At(xs, n);
-    public Any this[Index n]
+    public static Integer Count(Array xs) => Extensions.Count(xs);
+    public static Any At(Array xs, Integer n) => Extensions.At(xs, n);
+    public Any this[Integer n]
         => null;
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -2268,11 +2268,11 @@ public class RealInterval: Interval<RealInterval>
     public object[] FieldValues() => new[] { A, B };
     public static Numerical Min(Interval x) => Extensions.Min(x);
     public static Numerical Max(Interval x) => Extensions.Max(x);
-    public Numerical this[Index n]
+    public Numerical this[Integer n]
         => At(FieldValues(v), n);
-    public static Count Count(Array xs) => Extensions.Count(xs);
-    public static Any At(Array xs, Index n) => Extensions.At(xs, n);
-    public Any this[Index n]
+    public static Integer Count(Array xs) => Extensions.Count(xs);
+    public static Any At(Array xs, Integer n) => Extensions.At(xs, n);
+    public Any this[Integer n]
         => null;
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -2337,11 +2337,11 @@ public class Interval2D: Interval<Interval2D>
     public object[] FieldValues() => new[] { A, B };
     public static Numerical Min(Interval x) => Extensions.Min(x);
     public static Numerical Max(Interval x) => Extensions.Max(x);
-    public Numerical this[Index n]
+    public Numerical this[Integer n]
         => At(FieldValues(v), n);
-    public static Count Count(Array xs) => Extensions.Count(xs);
-    public static Any At(Array xs, Index n) => Extensions.At(xs, n);
-    public Any this[Index n]
+    public static Integer Count(Array xs) => Extensions.Count(xs);
+    public static Any At(Array xs, Integer n) => Extensions.At(xs, n);
+    public Any this[Integer n]
         => null;
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -2406,11 +2406,11 @@ public class Interval3D: Interval<Interval3D>
     public object[] FieldValues() => new[] { A, B };
     public static Numerical Min(Interval x) => Extensions.Min(x);
     public static Numerical Max(Interval x) => Extensions.Max(x);
-    public Numerical this[Index n]
+    public Numerical this[Integer n]
         => At(FieldValues(v), n);
-    public static Count Count(Array xs) => Extensions.Count(xs);
-    public static Any At(Array xs, Index n) => Extensions.At(xs, n);
-    public Any this[Index n]
+    public static Integer Count(Array xs) => Extensions.Count(xs);
+    public static Any At(Array xs, Integer n) => Extensions.At(xs, n);
+    public Any this[Integer n]
         => null;
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -2649,11 +2649,11 @@ public class UV: Vector<UV>
     public static implicit operator UV((Unit, Unit) value) => new UV(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "U", "V" };
     public object[] FieldValues() => new[] { U, V };
-    public Numerical this[Index n]
+    public Numerical this[Integer n]
         => At(FieldValues(v), n);
-    public static Count Count(Array xs) => Extensions.Count(xs);
-    public static Any At(Array xs, Index n) => Extensions.At(xs, n);
-    public Any this[Index n]
+    public static Integer Count(Array xs) => Extensions.Count(xs);
+    public static Any At(Array xs, Integer n) => Extensions.At(xs, n);
+    public Any this[Integer n]
         => null;
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -2716,11 +2716,11 @@ public class UVW: Vector<UVW>
     public static implicit operator UVW((Unit, Unit, Unit) value) => new UVW(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "U", "V", "W" };
     public object[] FieldValues() => new[] { U, V, W };
-    public Numerical this[Index n]
+    public Numerical this[Integer n]
         => At(FieldValues(v), n);
-    public static Count Count(Array xs) => Extensions.Count(xs);
-    public static Any At(Array xs, Index n) => Extensions.At(xs, n);
-    public Any this[Index n]
+    public static Integer Count(Array xs) => Extensions.Count(xs);
+    public static Any At(Array xs, Integer n) => Extensions.At(xs, n);
+    public Any this[Integer n]
         => null;
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -3669,11 +3669,11 @@ public static partial class Extensions
         return Tuple(Count(xs), (i) => 
         f(At(i), At(ys, i), At(zs, i)));
     }
-    public static Array Skip<T>(Array xs, Count n) {
+    public static Array Skip<T>(Array xs, Integer n) {
         return Tuple(Subtract(Count, n), (i) => 
         At(Subtract(i, n)));
     }
-    public static Array Take<T>(Array xs, Count n) {
+    public static Array Take<T>(Array xs, Integer n) {
         return Tuple(n, (i) => 
         At(i));
     }
@@ -3695,7 +3695,7 @@ public static partial class Extensions
     public static Any Last<T>(Array xs) {
         return At(xs, Subtract(Count(xs), 1));
     }
-    public static Array Slice<T>(Array xs, Index from, Count count) {
+    public static Array Slice<T>(Array xs, Integer from, Integer count) {
         return Take(Skip(xs, from), count);
     }
     public static String Join<T>(Array xs, String sep) {
@@ -3799,19 +3799,19 @@ public static partial class Extensions
 }
 public static partial class Extensions
 {
-    public static Numerical Sum<T>(Array v) {
+    public static Number Sum<T>(Array v) {
         return Aggregate(v, 0, Add);
     }
-    public static Numerical SumSquares<T>(Array v) {
+    public static Number SumSquares<T>(Array v) {
         return Aggregate(Square(v), 0, Add);
     }
-    public static Numerical LengthSquared<T>(Array v) {
+    public static Number LengthSquared<T>(Array v) {
         return SumSquares(v);
     }
-    public static Numerical Length<T>(Array v) {
+    public static Number Length<T>(Array v) {
         return SquareRoot(LengthSquared(v));
     }
-    public static Numerical Dot<T>(Vector v1, Vector v2) {
+    public static Number Dot<T>(Vector v1, Vector v2) {
         return Sum(Multiply(v1, v2));
     }
     public static Vector Normal<T>(Vector v) {
@@ -3820,46 +3820,43 @@ public static partial class Extensions
 }
 public static partial class Extensions
 {
-    public static Numerical SquareRoot(Numerical x) {
+    public static Number SquareRoot(Number x) {
         return Pow(x, 0.5);
     }
-    public static Numerical Square(Numerical x) {
+    public static Number Square(Number x) {
         return Multiply(x, x);
     }
-    public static Numerical Clamp(Numerical x, Interval i) {
-        return Clamp(i, x);
-    }
-    public static Numerical Clamp(Numerical x) {
+    public static Number Clamp(Number x) {
         return Clamp(x, Tuple(0, 1));
     }
-    public static Numerical PlusOne(Numerical x) {
+    public static Number PlusOne(Number x) {
         return Add(x, One(x));
     }
-    public static Numerical MinusOne(Numerical x) {
+    public static Number MinusOne(Number x) {
         return Subtract(x, One(x));
     }
-    public static Numerical FromOne(Numerical x) {
+    public static Number FromOne(Number x) {
         return Subtract(One(x), x);
     }
-    public static Boolean IsPositive(Numerical x) {
+    public static Boolean IsPositive(Number x) {
         return GreaterThanOrEquals(x, 0);
     }
-    public static Boolean GtZ(Numerical x) {
+    public static Boolean GtZ(Number x) {
         return GreaterThan(x, 0);
     }
-    public static Boolean LtZ(Numerical x) {
+    public static Boolean LtZ(Number x) {
         return LessThan(x, 0);
     }
-    public static Boolean GtEqZ(Numerical x) {
+    public static Boolean GtEqZ(Number x) {
         return GreaterThanOrEquals(x, 0);
     }
-    public static Boolean LtEqZ(Numerical x) {
+    public static Boolean LtEqZ(Number x) {
         return LessThanOrEquals(x, 0);
     }
-    public static Boolean IsNegative(Numerical x) {
+    public static Boolean IsNegative(Number x) {
         return LessThan(x, 0);
     }
-    public static Numerical Sign(Numerical x) {
+    public static Number Sign(Number x) {
         return LtZ(x)
             ? Negative(One(x))
             : GtZ(x)
@@ -3868,97 +3865,97 @@ public static partial class Extensions
 
         ;
     }
-    public static Numerical Abs(Numerical x) {
+    public static Number Abs(Number x) {
         return LtZ(x)
             ? Negative(x)
             : x
         ;
     }
-    public static Numerical Half(Numerical x) {
+    public static Number Half(Number x) {
         return Divide(x, 2);
     }
-    public static Numerical Third(Numerical x) {
+    public static Number Third(Number x) {
         return Divide(x, 3);
     }
-    public static Numerical Quarter(Numerical x) {
+    public static Number Quarter(Number x) {
         return Divide(x, 4);
     }
-    public static Numerical Fifth(Numerical x) {
+    public static Number Fifth(Number x) {
         return Divide(x, 5);
     }
-    public static Numerical Sixth(Numerical x) {
+    public static Number Sixth(Number x) {
         return Divide(x, 6);
     }
-    public static Numerical Seventh(Numerical x) {
+    public static Number Seventh(Number x) {
         return Divide(x, 7);
     }
-    public static Numerical Eighth(Numerical x) {
+    public static Number Eighth(Number x) {
         return Divide(x, 8);
     }
-    public static Numerical Ninth(Numerical x) {
+    public static Number Ninth(Number x) {
         return Divide(x, 9);
     }
-    public static Numerical Tenth(Numerical x) {
+    public static Number Tenth(Number x) {
         return Divide(x, 10);
     }
-    public static Numerical Sixteenth(Numerical x) {
+    public static Number Sixteenth(Number x) {
         return Divide(x, 16);
     }
-    public static Numerical Hundredth(Numerical x) {
+    public static Number Hundredth(Number x) {
         return Divide(x, 100);
     }
-    public static Numerical Thousandth(Numerical x) {
+    public static Number Thousandth(Number x) {
         return Divide(x, 1000);
     }
-    public static Numerical Millionth(Numerical x) {
+    public static Number Millionth(Number x) {
         return Divide(x, Divide(1000, 1000));
     }
-    public static Numerical Billionth(Numerical x) {
+    public static Number Billionth(Number x) {
         return Divide(x, Divide(1000, Divide(1000, 1000)));
     }
-    public static Numerical Hundred(Numerical x) {
+    public static Number Hundred(Number x) {
         return Multiply(x, 100);
     }
-    public static Numerical Thousand(Numerical x) {
+    public static Number Thousand(Number x) {
         return Multiply(x, 1000);
     }
-    public static Numerical Million(Numerical x) {
+    public static Number Million(Number x) {
         return Multiply(x, Multiply(1000, 1000));
     }
-    public static Numerical Billion(Numerical x) {
+    public static Number Billion(Number x) {
         return Multiply(x, Multiply(1000, Multiply(1000, 1000)));
     }
-    public static Numerical Twice(Numerical x) {
+    public static Number Twice(Number x) {
         return Multiply(x, 2);
     }
-    public static Numerical Thrice(Numerical x) {
+    public static Number Thrice(Number x) {
         return Multiply(x, 3);
     }
-    public static Numerical SmoothStep(Numerical x) {
+    public static Number SmoothStep(Number x) {
         return Multiply(Square(x), Subtract(3, Twice(x)));
     }
-    public static Numerical Pow2(Numerical x) {
+    public static Number Pow2(Number x) {
         return Multiply(x, x);
     }
-    public static Numerical Pow3(Numerical x) {
+    public static Number Pow3(Number x) {
         return Multiply(Pow2(x), x);
     }
-    public static Numerical Pow4(Numerical x) {
+    public static Number Pow4(Number x) {
         return Multiply(Pow3(x), x);
     }
-    public static Numerical Pow5(Numerical x) {
+    public static Number Pow5(Number x) {
         return Multiply(Pow4(x), x);
     }
     public static Number Pi(Numerical self) {
         return 3.1415926535897;
     }
-    public static Boolean AlmostZero(Numerical x) {
+    public static Boolean AlmostZero(Number x) {
         return LessThan(Abs(x), 1E-08);
     }
-    public static Numerical Lerp(Numerical a, Numerical b, Unit t) {
+    public static Number Lerp(Number a, Number b, Unit t) {
         return Multiply(Subtract(1, t), Add(a, Multiply(t, b)));
     }
-    public static Boolean Between(Numerical self, Numerical min, Numerical max) {
+    public static Boolean Between(Number self, Number min, Number max) {
         return Zip(FieldValues(self), FieldValues(min), FieldValues(max), (x, y, z) => 
         Between(x, y, z));
     }

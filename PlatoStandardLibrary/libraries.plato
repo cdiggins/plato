@@ -1,22 +1,22 @@
 library Array
 {
     Map(xs: Array, f: Function): Array 
-        => (xs.Count, (i: Index) => f(xs.At(i)));
+        => (xs.Count, (i: Integer) => f(xs.At(i)));
 
     Reverse(xs: Array): Array
-        => (xs.Count, (i: Index) => f(xs.At(xs.Count - 1 - i)));
+        => (xs.Count, (i: Integer) => f(xs.At(xs.Count - 1 - i)));
 
     Zip(xs: Array, ys: Array, f: Function): Array 
-        => (xs.Count, (i: Index) => f(At(i), ys.At(i)));
+        => (xs.Count, (i: Integer) => f(At(i), ys.At(i)));
     
     Zip(xs: Array, ys: Array, zs: Array, f: Function): Array 
-        => (xs.Count, (i: Index) => f(At(i), ys.At(i), zs.At(i)));
+        => (xs.Count, (i: Integer) => f(At(i), ys.At(i), zs.At(i)));
     
-    Skip(xs: Array, n: Count): Array
-        => (Count - n, (i: Index) => At(i - n));
+    Skip(xs: Array, n: Integer): Array
+        => (Count - n, (i: Integer) => At(i - n));
     
-    Take(xs: Array, n: Count): Array
-        => (n, (i: Index) => At(i));   
+    Take(xs: Array, n: Integer): Array
+        => (n, (i: Integer) => At(i));   
     
     Aggregate(xs: Array, init: Any, f: Function): Any 
         => xs.IsEmpty ? init : f(init, f(xs.Rest));
@@ -33,7 +33,7 @@ library Array
     Last(xs: Array): Any
         => xs.At(xs.Count - 1);
     
-    Slice(xs: Array, from: Index, count: Count): Array 
+    Slice(xs: Array, from: Integer, count: Integer): Array 
         => xs.Skip(from).Take(count);
     
     Join(xs: Array, sep: String): String 
@@ -125,19 +125,19 @@ library Value
 
 library Vector
 {
-    Sum(v: Array): Numerical 
+    Sum(v: Array): Number 
         => v.Aggregate(0, Add); 
     
-    SumSquares(v: Array): Numerical
+    SumSquares(v: Array): Number
         => v.Square.Aggregate(0, Add); 
     
-    LengthSquared(v: Array): Numerical 
+    LengthSquared(v: Array): Number
         => v.SumSquares;
     
-    Length(v: Array): Numerical 
+    Length(v: Array): Number
         => v.LengthSquared.SquareRoot;
     
-    Dot(v1: Vector, v2: Vector): Numerical
+    Dot(v1: Vector, v2: Vector): Number
         => (v1 * v2).Sum;
 
     Normal(v: Vector): Vector
@@ -146,138 +146,135 @@ library Vector
 
 library Numerical
 {
-    SquareRoot(x: Numerical): Numerical 
+    SquareRoot(x: Number): Number 
         => x.Pow(0.5);
 
-    Square(x: Numerical): Numerical 
+    Square(x: Number): Number 
         => x * x;
 
-    Clamp(x: Numerical, i: Interval): Numerical 
-        => i.Clamp(x);
-
-    Clamp(x: Numerical): Numerical 
+    Clamp(x: Number): Number 
         => Clamp(x, (0, 1));
 
-    PlusOne(x: Numerical): Numerical 
+    PlusOne(x: Number): Number 
         => x + x.One;
 
-    MinusOne(x: Numerical): Numerical
+    MinusOne(x: Number): Number
         => x - x.One;
     
-    FromOne(x: Numerical): Numerical 
+    FromOne(x: Number): Number 
         => x.One - x;
 
-    IsPositive(x: Numerical): Boolean
+    IsPositive(x: Number): Boolean
         => x >= 0;
 
-    GtZ(x : Numerical): Boolean
+    GtZ(x : Number): Boolean
         => x > 0;
 
-    LtZ(x : Numerical): Boolean
+    LtZ(x : Number): Boolean
         => x < 0;
 
-    GtEqZ(x : Numerical): Boolean
+    GtEqZ(x : Number): Boolean
         => x >= 0;
 
-    LtEqZ(x : Numerical): Boolean
+    LtEqZ(x : Number): Boolean
         => x <= 0;
 
-    IsNegative(x: Numerical): Boolean
+    IsNegative(x: Number): Boolean
         => x < 0;
 
-    Sign(x: Numerical): Numerical 
+    Sign(x: Number): Number 
         => x.LtZ ? -x.One : x.GtZ ? x.One : x.Zero;
     
-    Abs(x: Numerical): Numerical 
+    Abs(x: Number): Number 
         => x.LtZ ? -x: x;
     
-    Half(x: Numerical): Numerical 
+    Half(x: Number): Number 
         => x / 2;
     
-    Third(x: Numerical): Numerical 
+    Third(x: Number): Number 
         => x / 3;
     
-    Quarter(x: Numerical): Numerical 
+    Quarter(x: Number): Number 
         => x / 4;
 
-    Fifth(x: Numerical): Numerical 
+    Fifth(x: Number): Number 
         => x / 5;
     
-    Sixth(x: Numerical): Numerical 
+    Sixth(x: Number): Number 
         => x / 6;
     
-    Seventh(x: Numerical): Numerical 
+    Seventh(x: Number): Number 
         => x / 7;
     
-    Eighth(x: Numerical): Numerical 
+    Eighth(x: Number): Number 
         => x / 8;
     
-    Ninth(x: Numerical): Numerical 
+    Ninth(x: Number): Number 
         => x / 9;
     
-    Tenth(x: Numerical): Numerical 
+    Tenth(x: Number): Number 
         => x / 10;
     
-    Sixteenth(x: Numerical): Numerical 
+    Sixteenth(x: Number): Number 
         => x / 16;
     
-    Hundredth(x: Numerical): Numerical 
+    Hundredth(x: Number): Number 
         => x / 100;
     
-    Thousandth(x: Numerical): Numerical 
+    Thousandth(x: Number): Number 
         => x / 1000;
     
-    Millionth(x: Numerical): Numerical 
+    Millionth(x: Number): Number 
         => x / 1000 / 1000;
     
-    Billionth(x: Numerical): Numerical 
+    Billionth(x: Number): Number 
         => x / 1000 / 1000 / 1000;
     
-    Hundred(x: Numerical): Numerical 
+    Hundred(x: Number): Number 
         => x * 100;
     
-    Thousand(x: Numerical): Numerical
+    Thousand(x: Number): Number
         => x * 1000;
     
-    Million(x: Numerical): Numerical
+    Million(x: Number): Number
         => x * 1000 * 1000;
     
-    Billion(x: Numerical): Numerical 
+    Billion(x: Number): Number 
         => x * 1000 * 1000 * 1000;
     
-    Twice(x: Numerical): Numerical 
+    Twice(x: Number): Number 
         => x * 2;
     
-    Thrice(x: Numerical): Numerical 
+    Thrice(x: Number): Number 
         => x * 3;
     
-    SmoothStep(x: Numerical): Numerical 
+    SmoothStep(x: Number): Number 
         => x.Square * (3 - x.Twice);
     
-    Pow2(x: Numerical): Numerical 
+    Pow2(x: Number): Number 
         => x * x;
     
-    Pow3(x: Numerical): Numerical 
+    Pow3(x: Number): Number 
         => x.Pow2 * x;
 
-    Pow4(x: Numerical): Numerical 
+    Pow4(x: Number): Number 
         => x.Pow3 * x;
 
-    Pow5(x: Numerical): Numerical 
+    Pow5(x: Number): Number 
         => x.Pow4 * x;
 
     Pi(): Number 
         => 3.1415926535897;
     
-    AlmostZero(x: Numerical): Boolean
+    AlmostZero(x: Number): Boolean
         => x.Abs < 0.00000001; 
 
-    Lerp(a: Numerical, b: Numerical, t: Unit): Numerical
+    Lerp(a: Number, b: Number, t: Unit): Number
         => (1 - t) * a + t * b;
         
-    Between(self: Numerical, min: Numerical, max: Numerical): Boolean
+    Between(self: Number, min: Number, max: Number): Boolean
         => self.FieldValues.Zip(min.FieldValues, max.FieldValues, 
-            (x: Numerical, y: Numerical, z: Numerical) => Between(x, y, z));
+            (x: Number, y: Number, z: Number) => Between(x, y, z));
 }
 
 library Angles 
