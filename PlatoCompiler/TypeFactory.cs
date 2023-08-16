@@ -31,7 +31,7 @@ namespace Plato.Compiler
             => Combine(objects.Select(x => GetHashCode(x)));
     }
 
-    public abstract class Type : IEquatable<Type>
+    public abstract class Type 
     {
         public string Name { get; }
         public Symbol Declaration { get; }
@@ -46,17 +46,17 @@ namespace Plato.Compiler
         public override string ToString() 
             => $"{Name}";
 
-        public bool Equals(Type other)
-            => other != null && Name == other.Name;
-
         public override bool Equals(object obj)
-            => obj is Type t && Equals(t);
+            => obj != null 
+               && GetType() == obj.GetType() 
+               && obj is Type other 
+               && Name == other.Name;
 
         public override int GetHashCode()
             => Hasher.Hash(Name);
     }
 
-    public class TypeVariable : Type, IEquatable<TypeVariable>
+    public class TypeVariable : Type
     {
         public int Id { get; } = Symbol.NextId++;
 
@@ -65,39 +65,51 @@ namespace Plato.Compiler
         { }
 
         public override string ToString()
-            => $"{Name}_{Id}";
-
-        public bool Equals(TypeVariable other)
-            => other != null && base.Equals(other) && Id == other.Id;
+            => $"`{Name}_{Id}";
 
         public override bool Equals(object obj)
-            => obj is TypeVariable tv && Equals(tv);
+            => base.Equals(obj)
+               && obj is TypeVariable other
+               && Id == other.Id;
 
         public override int GetHashCode()
             => Hasher.Hash(base.GetHashCode(), Id);
     }
 
-    public class AnyType : TypeVariable, IEquatable<AnyType>
+    public class AnyType : TypeVariable
     {
         public AnyType(TypeFactory factory)
             : base("Any", null, factory)
         { }
-
-        public bool Equals(AnyType other)
-            => base.Equals(other);
     }
 
-    public class SelfType : TypeVariable, IEquatable<SelfType>
+    public class ConstrainedVariable : TypeVariable
+    {
+        public TypeReference Concept { get; }
+
+        public ConstrainedVariable(TypeReference concept, Symbol declaration, TypeFactory factory)
+            : base(concept.Name, declaration, factory)
+        {
+            Concept = concept;
+        }
+
+        public override bool Equals(object obj)
+            => base.Equals(obj)
+               && obj is ConstrainedVariable other
+               && Equals(Concept, other.Concept);
+
+        public override int GetHashCode()
+            => Hasher.Combine(base.GetHashCode(), Concept.GetHashCode());
+    }
+
+    public class SelfType : TypeVariable
     {
         public SelfType(TypeFactory factory)
             : base("Self", null, factory)
         { }
-
-        public bool Equals(SelfType other)
-            => base.Equals(other);
     }
 
-    public class TypeReference : Type, IEquatable<TypeReference>
+    public class TypeReference : Type
     {
         public IReadOnlyList<Type> TypeArguments { get; }
         public int DefId => TypeDef.Id;
@@ -121,7 +133,7 @@ namespace Plato.Compiler
                 if (arg != null)
                     list.Add(arg);
                 else if (p.Constraint != null)
-                    list.Add(factory.CreateReference(p.Constraint));
+                    list.Add(factory.CreateConstrainedVariable(p.Constraint, p));
                 else
                     list.Add(factory.CreateAny());
             }
@@ -135,11 +147,11 @@ namespace Plato.Compiler
             return $"{Name}_{DefId}<{tps}>";
         }
 
-        public bool Equals(TypeReference other)
-            => other != null && base.Equals(other) && DefId == other.DefId && TypeArguments.SequenceEqual(other.TypeArguments);
-
         public override bool Equals(object obj)
-            => obj is TypeReference tr && Equals(tr);
+            => base.Equals(obj)
+               && obj is TypeReference other
+               && DefId == other.DefId
+               && TypeArguments.SequenceEqual(other.TypeArguments);
 
         public override int GetHashCode()
             => Hasher.Combine(base.GetHashCode(), DefId, Hasher.Hash(TypeArguments));
@@ -147,7 +159,7 @@ namespace Plato.Compiler
 
     // A function signature generates types (and constraints)
     // It is like a function. 
-    public class FunctionSignature : IEquatable<FunctionSignature>
+    public class FunctionSignature 
     {
         public IReadOnlyList<Type> Parameters { get; }
         public Type ReturnType { get; }
@@ -163,14 +175,13 @@ namespace Plato.Compiler
         public override string ToString()
             => $"{Name}({string.Join(", ", Parameters)}): {ReturnType}";
 
-        public bool Equals(FunctionSignature other)
-            => other != null
+        public override bool Equals(object obj)
+            => obj != null
+               && obj is FunctionSignature other
+               && GetType() == other.GetType()
                && Name == other.Name
                && Equals(ReturnType, other.ReturnType)
                && Parameters.SequenceEqual(other.Parameters);
-
-        public override bool Equals(object obj)
-            => obj is FunctionSignature fs && Equals(fs);
 
         public override int GetHashCode()
             => Hasher.Hash(Parameters.Cast<object>().Append(Name).Append(ReturnType).ToArray());
@@ -255,7 +266,10 @@ namespace Plato.Compiler
         
         public TypeReference CreateReference(ParameterSymbol symbol) 
             => CreateReference(symbol.Type);
-        
+
+        public ConstrainedVariable CreateConstrainedVariable(TypeRefSymbol concept, Symbol declaration)
+            => Register(new ConstrainedVariable(CreateReference(concept), declaration, this));
+
         public AnyType CreateAny() 
             => Register(new AnyType(this));
         
