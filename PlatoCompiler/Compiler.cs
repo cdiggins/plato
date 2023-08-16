@@ -81,7 +81,7 @@ namespace Plato.Compiler
                     return;
                 }
 
-                var atr = new AbstractTypeResolver(TypeDefs);
+                var atr = new TypeFactory(TypeDefs);
                 Log(atr);
                 /*
                 Log("Creating operations");
@@ -123,7 +123,7 @@ namespace Plato.Compiler
             }
         }
 
-        public void Log(AbstractTypeResolver atr)
+        public void Log(TypeFactory atr)
         {
             Log($"Abstract Type Resolver");
             Log($"Found {atr.Concepts.Count} Concepts");
