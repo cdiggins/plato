@@ -129,19 +129,25 @@ namespace Plato.Compiler
             Log($"Found {atr.Concepts.Count} Concepts");
             foreach (var c in atr.Concepts)
             {
-                Log($"Concept {c.Name}");
-
-                Log($"= Type Parameters =");
-                foreach (var tp in c.TypeParameters)
-                {
-                    Log($"{tp}");
-                }
+                Log($"== Concept {c.Name} ==");
 
                 Log($"= Functions =");
                 foreach (var f in c.Functions)
                 {
                     Log($"{f}");
                 }
+            }
+
+            Log($"= Type Variables =");
+            foreach (var tv in atr.TypeVariables)
+            {
+                Log($"{tv}");
+            }
+
+            Log($"= Type References =");
+            foreach (var tr in atr.TypeReferences)
+            {
+                Log($"{tr}");
             }
         }
 

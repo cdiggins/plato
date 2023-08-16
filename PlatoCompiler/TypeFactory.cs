@@ -26,6 +26,9 @@ namespace Plato.Compiler
 
         public static int Hash(params object[] objects)
             => Combine(objects.Select(GetHashCode));
+
+        public static int Hash<T>(IEnumerable<T> objects)
+            => Combine(objects.Select(x => GetHashCode(x)));
     }
 
     public abstract class Type : IEquatable<Type>
@@ -44,22 +47,22 @@ namespace Plato.Compiler
             => $"{Name}";
 
         public bool Equals(Type other)
-            => other != null && Name == other.Name && Equals(Declaration, other.Declaration);
+            => other != null && Name == other.Name;
 
         public override bool Equals(object obj)
             => obj is Type t && Equals(t);
 
         public override int GetHashCode()
-            => Hasher.Hash(Name, Declaration);
+            => Hasher.Hash(Name);
     }
 
     public class TypeVariable : Type, IEquatable<TypeVariable>
     {
-        public int Id { get; }
+        public int Id { get; } = Symbol.NextId++;
 
         public TypeVariable(string name, Symbol declaration, TypeFactory factory)
             : base(name,declaration, factory)
-            => Id = factory.NumTypeVars;
+        { }
 
         public override string ToString()
             => $"{Name}_{Id}";
@@ -139,7 +142,7 @@ namespace Plato.Compiler
             => obj is TypeReference tr && Equals(tr);
 
         public override int GetHashCode()
-            => Hasher.Combine(base.GetHashCode(), DefId, Hasher.Combine(TypeArguments.GetHashCode()));
+            => Hasher.Combine(base.GetHashCode(), DefId, Hasher.Hash(TypeArguments));
     }
 
     // A function signature generates types (and constraints)
@@ -182,23 +185,10 @@ namespace Plato.Compiler
             => Signature.ToString();
     }
 
-    public class TypeParameter : Type
-    {
-        public int Index { get; }
-
-        public TypeParameter(int index, TypeParameterDefSymbol symbol, TypeFactory factory)
-            : base(symbol.Name, symbol, factory) 
-            => Index = index;
-
-        public override string ToString() 
-            => $"{Name}{Index}";
-    }
-
     public class Concept
     {
         public IReadOnlyList<TypeReference> InheritedTypes { get; }
         public IReadOnlyList<Function> Functions { get; }
-        public IReadOnlyList<TypeParameter> TypeParameters { get; }
         public SelfType Self { get; } 
         public TypeDefSymbol Symbol { get; }
         public string Name => Symbol.Name;
@@ -209,7 +199,6 @@ namespace Plato.Compiler
                 throw new Exception("Expected a concept");
             Self = factory.CreateSelf(this);
             Symbol = symbol;
-            TypeParameters = symbol.TypeParameters.Select(factory.CreateTypeParameter).ToList();
             InheritedTypes = symbol.Inherits.Select(factory.CreateReference).ToList();
             Functions = symbol.Functions.Select(factory.CreateFunction).ToList();
         }
@@ -222,8 +211,13 @@ namespace Plato.Compiler
         public IEnumerable<TypeReference> TypeReferences => AllTypes.OfType<TypeReference>();
         public HashSet<Type> AllTypes { get; } = new HashSet<Type>();
         public IReadOnlyList<Concept> Concepts { get; }
+        public List<Function> Functions { get; } = new List<Function>();
 
-        public int NumTypeVars => TypeVariables.Count;
+        public Function Register(Function f)
+        {
+            Functions.Add(f);
+            return f;
+        }
 
         public T Register<T>(T self) where T : Type
         {
@@ -257,23 +251,43 @@ namespace Plato.Compiler
             => Register(new SelfType(this));
 
         public TypeReference CreateReference(TypeRefSymbol symbol)
-            => new TypeReference(symbol, this);
-
-        public TypeParameter CreateTypeParameter(TypeParameterDefSymbol symbol, int index) 
-            => new TypeParameter(index, symbol, this);
+            => Register(new TypeReference(symbol, this));
         
         public TypeReference CreateReference(ParameterSymbol symbol) 
             => CreateReference(symbol.Type);
         
         public AnyType CreateAny() 
-            => new AnyType(this);
+            => Register(new AnyType(this));
         
         public Function CreateFunction(FunctionSymbol symbol) 
-            => new Function(symbol, this);
+            => Register(new Function(symbol, this));
 
         public TypeFactory(IReadOnlyList<TypeDefSymbol> types)
         {
             Concepts = types.Where(t => t.IsConcept()).Select(t => new Concept(t, this)).ToList();
+
+            // Note: interesting exercise in assuring that your hash-code/equals are implemented correctly. 
+            foreach (var tr1 in TypeReferences)
+            {
+                foreach (var tr2 in TypeReferences)
+                {
+                    var refEquals = ReferenceEquals(tr1, tr2);
+                    Debug.Assert(refEquals == ReferenceEquals(tr2, tr1), "Reference equals should be equivalent regardless of order");
+
+                    var equals = tr1.Equals(tr2);
+                    Debug.Assert(equals == tr2.Equals(tr1), "Equals should be equivalent regardless of order");
+                    
+                    var s1 = tr1.ToString();
+                    var s2 = tr2.ToString();
+                    var strEquals = s1.Equals(s2);
+                    Debug.Assert(equals == strEquals, "Value and string equivalency should be the same");
+                    
+                    var h1 = s1.GetHashCode();
+                    var h2 = s2.GetHashCode();
+                    Debug.Assert(!equals || h1 == h2, "When two values are equal, they should have the same hash code");
+                    
+                }
+            }
         }
     }
 }
