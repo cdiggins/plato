@@ -9,10 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Array_Extra.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\Plato.Collections\src\Platonic.CSharp.Collections.csproj" />
     <ProjectReference Include="..\..\ptarmigan\src\Ptarmigan.Utils\Ptarmigan.Utils.csproj" />
   </ItemGroup>

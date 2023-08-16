@@ -101,7 +101,7 @@ namespace Plato.Compiler
         public static TypeDefSymbol Create(string name)
             => new TypeDefSymbol(TypeKind.Primitive, name);
 
-        public static string GetPrimNameFromType(Type type)
+        public static string GetPrimNameFromType(System.Type type)
         {
             if (type == null) return "Any";
             if (type.Equals(typeof(int))) return "Integer";

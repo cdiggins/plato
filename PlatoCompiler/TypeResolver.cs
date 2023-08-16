@@ -343,6 +343,7 @@ namespace Plato.Compiler
             var node = SymbolResolver.SymbolsToNodes.TryGetValue(symbol, out var n) ? n : null;
             Errors.Add(new ResolutionError(message, node));
         }
+
         public static double CanCastTo(TypeRefSymbol fromType, TypeRefSymbol toType, bool allowConversions = true)
         {
             return CanCastTo(fromType?.Def, toType?.Def, allowConversions);

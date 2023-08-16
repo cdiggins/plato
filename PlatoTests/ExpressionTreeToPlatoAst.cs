@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 using Plato.Compiler;
+using Type = System.Type;
 
 namespace PlatoTests;
 

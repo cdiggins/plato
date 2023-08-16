@@ -113,14 +113,14 @@ type Rotation3D
 }
 
 type Vector2D
-    implements Vector
+    implements Vector<Number>
 {
     X: Number;
     Y: Number;
 }
 
 type Vector3D
-    implements Vector
+    implements Vector<Number>
 {
     X: Number;
     Y: Number;
@@ -128,7 +128,7 @@ type Vector3D
 }
 
 type Vector4D
-    implements Vector
+    implements Vector<Number>
 {
     X: Number;
     Y: Number;
@@ -173,21 +173,21 @@ type Transform2D
 }
 
 type AlignedBox2D
-    implements Interval
+    implements Interval<Vector2D>
 {
     A: Vector2D;
     B: Vector2D;
 }
 
 type AlignedBox3D
-    implements Interval
+    implements Interval<Vector3D>
 {
     A: Vector3D;
     B: Vector3D;
 }
 
 type Complex
-    implements Vector
+    implements Vector<Number>
 {
     Real: Number;
     Imaginary: Number;
@@ -268,14 +268,14 @@ type Point2D
 }
 
 type Line3D
-    implements Interval
+    implements Interval<Point3D>
 {
     A: Point3D;
     B: Point3D;
 }
 
 type Line2D
-    implements Interval
+    implements Interval<Point2D>
 {
     A: Point2D;
     B: Point2D;
@@ -483,15 +483,25 @@ type TimeSpan
 }
 
 type TimeRange
-    implements Interval
+    implements Interval<DateTime>
 {
     Min: DateTime;
     Max: DateTime;
 }
 
+// TODO: a naive gregorian calendar date representation.
+// Ideally we would be more compact and enable comparisons. 
+// Possibly some alternative types like "CalendarDateTime" 
 type DateTime
     implements Value
 {
+    Year: Integer;
+    Month: Integer;
+    TimeZoneOffset: Integer;
+    Day: Integer;
+    Minute: Integer;
+    Second: Integer;
+    Milliseconds: Number;
 }
 
 type AnglePair
@@ -523,24 +533,10 @@ type TimeInterval
 }
 
 type RealInterval
-    implements Interval
+    implements Interval<Number>
 {
     A: Number;
     B: Number;
-}
-
-type Interval2D
-    implements Interval
-{
-    A: Vector2D;
-    B: Vector2D;
-}
-
-type Interval3D
-    implements Interval
-{
-    A: Vector3D;
-    B: Vector3D;
 }
 
 type Capsule
@@ -636,14 +632,14 @@ type CubicBezier2D
 
 // https://en.wikipedia.org/wiki/UV_mapping    
 type UV
-    implements Vector
+    implements Vector<Unit>
 {
     U: Unit;
     V: Unit;
 }
 
 type UVW
-    implements Vector
+    implements Vector<Unit>
 {
     U: Unit;
     V: Unit;
@@ -820,7 +816,7 @@ type BernoulliDistribution
     P: Probability;
 }
 
-// A value in the range of 0 to 1, 
+// A value in the range of 0 to 1 representing a chance of probability
 type Probability
     implements Numerical
 {

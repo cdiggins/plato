@@ -81,6 +81,9 @@ namespace Plato.Compiler
                     return;
                 }
 
+                var atr = new AbstractTypeResolver(TypeDefs);
+                Log(atr);
+                /*
                 Log("Creating operations");
                 // TODO: this can be removed I think.
                 Operations = new Operations(TypeDefs);
@@ -106,6 +109,7 @@ namespace Plato.Compiler
                 if (DisplayWarnings)
                     foreach (var sw in SemanticWarnings)
                         Log("Semantic Warning : " + sw);
+                */
 
                 CompletedCompilation = true;
             }
@@ -118,6 +122,29 @@ namespace Plato.Compiler
                 Log("Exception caught: " + e.Message);
             }
         }
+
+        public void Log(AbstractTypeResolver atr)
+        {
+            Log($"Abstract Type Resolver");
+            Log($"Found {atr.Concepts.Count} Concepts");
+            foreach (var c in atr.Concepts)
+            {
+                Log($"Concept {c.Name}");
+
+                Log($"= Type Parameters =");
+                foreach (var tp in c.TypeParameters)
+                {
+                    Log($"{tp}");
+                }
+
+                Log($"= Functions =");
+                foreach (var f in c.Functions)
+                {
+                    Log($"{f}");
+                }
+            }
+        }
+
 
         public void LogResolutionErrors(IEnumerable<SymbolResolver.ResolutionError> resolutionErrors)
         {

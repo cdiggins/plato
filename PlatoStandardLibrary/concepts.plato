@@ -39,10 +39,10 @@ concept Measure
 concept Numerical 
     inherits Value, Arithmetic, Equatable, Comparable, Magnitudinal
 {
-    Zero(x: Numerical): Self;
-    One(x: Numerical): Self;
-    MinValue(x: Numerical): Self;
-    MaxValue(x: Numerical): Self;
+    Zero(): Self;
+    One(): Self;
+    MinValue(): Self;
+    MaxValue(): Self;
 }
 
 concept Magnitudinal
@@ -117,7 +117,6 @@ concept BooleanOperations
     Not(a: Self): Self 
         => a.FieldValues.Not;
 }
-
 
 concept Interval<T: Numerical>
     inherits Vector<T>

@@ -58,10 +58,10 @@ public static partial class Extensions
 public interface Numerical<Self>: Value<Self>, Arithmetic<Self>, Equatable<Self>, Comparable<Self>, Magnitudinal<Self>
     where Self : Numerical<Self>
 {
-    Numerical Zero(Numerical x);
-    Numerical One(Numerical x);
-    Numerical MinValue(Numerical x);
-    Numerical MaxValue(Numerical x);
+    Numerical Zero(Numerical self);
+    Numerical One(Numerical self);
+    Numerical MinValue(Numerical self);
+    Numerical MaxValue(Numerical self);
 }
 public static partial class Extensions
 {
@@ -188,10 +188,10 @@ public class Number: Numerical<Number>
     public static Number New() => new();
     public string[] FieldNames() => new[] {  };
     public object[] FieldValues() => new[] {  };
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -231,10 +231,10 @@ public class Integer: Numerical<Integer>
     public static Integer New() => new();
     public string[] FieldNames() => new[] {  };
     public object[] FieldValues() => new[] {  };
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -338,10 +338,10 @@ public class Count: Numerical<Count>
     public static implicit operator Count(Integer value) => new Integer(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -399,10 +399,10 @@ public class Unit: Numerical<Unit>
     public static implicit operator Unit(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -445,10 +445,10 @@ public class Percent: Numerical<Percent>
     public static implicit operator Percent(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -615,10 +615,10 @@ public class Vector2D: Vector<Vector2D>
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
     public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
     public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -682,10 +682,10 @@ public class Vector3D: Vector<Vector3D>
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
     public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
     public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -750,10 +750,10 @@ public class Vector4D: Vector<Vector4D>
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
     public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
     public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -902,10 +902,10 @@ public class AlignedBox2D: Interval<AlignedBox2D>
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
     public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
     public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -971,10 +971,10 @@ public class AlignedBox3D: Interval<AlignedBox3D>
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
     public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
     public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -1038,10 +1038,10 @@ public class Complex: Vector<Complex>
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
     public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
     public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -1271,10 +1271,10 @@ public class Line3D: Interval<Line3D>
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
     public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
     public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -1340,10 +1340,10 @@ public class Line2D: Interval<Line2D>
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
     public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
     public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -1712,10 +1712,10 @@ public class Proportion: Numerical<Proportion>
     public static implicit operator Proportion(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -1996,10 +1996,10 @@ public class TimeRange: Interval<TimeRange>
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
     public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
     public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -2047,15 +2047,24 @@ public class TimeRange: Interval<TimeRange>
 }
 public class DateTime: Value<DateTime>
 {
-    public DateTime() => () = ();
-    public static DateTime New() => new();
-    public string[] FieldNames() => new[] {  };
-    public object[] FieldValues() => new[] {  };
+    public DateTime(Integer _Year, Integer _Month, Integer _TimeZoneOffset, Integer _Day, Integer _Minute, Integer _Second, Number _Milliseconds) => (Year, Month, TimeZoneOffset, Day, Minute, Second, Milliseconds) = (_Year, _Month, _TimeZoneOffset, _Day, _Minute, _Second, _Milliseconds);
+    public static DateTime New(Integer _Year, Integer _Month, Integer _TimeZoneOffset, Integer _Day, Integer _Minute, Integer _Second, Number _Milliseconds) => new(_Year, _Month, _TimeZoneOffset, _Day, _Minute, _Second, _Milliseconds);
+    public static implicit operator (Integer, Integer, Integer, Integer, Integer, Integer, Number)(DateTime self) => (self.Year, self.Month, self.TimeZoneOffset, self.Day, self.Minute, self.Second, self.Milliseconds);
+    public static implicit operator DateTime((Integer, Integer, Integer, Integer, Integer, Integer, Number) value) => new DateTime(value.Item1, value.Item2, value.Item3, value.Item4, value.Item5, value.Item6, value.Item7);
+    public string[] FieldNames() => new[] { "Year", "Month", "TimeZoneOffset", "Day", "Minute", "Second", "Milliseconds" };
+    public object[] FieldValues() => new[] { Year, Month, TimeZoneOffset, Day, Minute, Second, Milliseconds };
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
     public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
     public static Type TypeOf(Any self) => Extensions.TypeOf(self);
+    public Integer Year { get; }
+    public Integer Month { get; }
+    public Integer TimeZoneOffset { get; }
+    public Integer Day { get; }
+    public Integer Minute { get; }
+    public Integer Second { get; }
+    public Number Milliseconds { get; }
 }
 public class AnglePair: Interval<AnglePair>
 {
@@ -2077,10 +2086,10 @@ public class AnglePair: Interval<AnglePair>
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
     public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
     public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -2134,10 +2143,10 @@ public class Ring: Numerical<Ring>
     public static implicit operator Ring((Circle, Number) value) => new Ring(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Circle", "InnerRadius" };
     public object[] FieldValues() => new[] { Circle, InnerRadius };
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -2209,10 +2218,10 @@ public class TimeInterval: Interval<TimeInterval>
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
     public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
     public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -2278,10 +2287,10 @@ public class RealInterval: Interval<RealInterval>
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
     public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
     public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -2326,144 +2335,6 @@ public class RealInterval: Interval<RealInterval>
     public static Type TypeOf(Any self) => Extensions.TypeOf(self);
     public Number A { get; }
     public Number B { get; }
-}
-public class Interval2D: Interval<Interval2D>
-{
-    public Interval2D(Vector2D _A, Vector2D _B) => (A, B) = (_A, _B);
-    public static Interval2D New(Vector2D _A, Vector2D _B) => new(_A, _B);
-    public static implicit operator (Vector2D, Vector2D)(Interval2D self) => (self.A, self.B);
-    public static implicit operator Interval2D((Vector2D, Vector2D) value) => new Interval2D(value.Item1, value.Item2);
-    public string[] FieldNames() => new[] { "A", "B" };
-    public object[] FieldValues() => new[] { A, B };
-    public static Numerical Min(Interval x) => Extensions.Min(x);
-    public static Numerical Max(Interval x) => Extensions.Max(x);
-    public Numerical this[Integer n]
-        => At(FieldValues(v), n);
-    public static Integer Count(Array xs) => Extensions.Count(xs);
-    public static Any At(Array xs, Integer n) => Extensions.At(xs, n);
-    public Any this[Integer n]
-        => null;
-    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
-    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
-    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
-    public static Value Default(Value self) => Extensions.Default(self);
-    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
-    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
-    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Value Default(Value self) => Extensions.Default(self);
-    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
-    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
-    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
-    public static Value Default(Value self) => Extensions.Default(self);
-    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
-    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
-    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static Value Default(Value self) => Extensions.Default(self);
-    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
-    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
-    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Value Default(Value self) => Extensions.Default(self);
-    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
-    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
-    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
-    public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
-    public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Value Default(Value self) => Extensions.Default(self);
-    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
-    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
-    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public Vector2D A { get; }
-    public Vector2D B { get; }
-}
-public class Interval3D: Interval<Interval3D>
-{
-    public Interval3D(Vector3D _A, Vector3D _B) => (A, B) = (_A, _B);
-    public static Interval3D New(Vector3D _A, Vector3D _B) => new(_A, _B);
-    public static implicit operator (Vector3D, Vector3D)(Interval3D self) => (self.A, self.B);
-    public static implicit operator Interval3D((Vector3D, Vector3D) value) => new Interval3D(value.Item1, value.Item2);
-    public string[] FieldNames() => new[] { "A", "B" };
-    public object[] FieldValues() => new[] { A, B };
-    public static Numerical Min(Interval x) => Extensions.Min(x);
-    public static Numerical Max(Interval x) => Extensions.Max(x);
-    public Numerical this[Integer n]
-        => At(FieldValues(v), n);
-    public static Integer Count(Array xs) => Extensions.Count(xs);
-    public static Any At(Array xs, Integer n) => Extensions.At(xs, n);
-    public Any this[Integer n]
-        => null;
-    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
-    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
-    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
-    public static Value Default(Value self) => Extensions.Default(self);
-    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
-    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
-    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Arithmetic operator +(Arithmetic self, Arithmetic other) => Extensions.Add(self, other);
-    public static Arithmetic operator -(Arithmetic self) => Extensions.Negative(self);
-    public static Arithmetic operator *(Arithmetic self, Arithmetic other) => Extensions.Multiply(self, other);
-    public static Arithmetic operator /(Arithmetic self, Arithmetic other) => Extensions.Divide(self, other);
-    public static Arithmetic operator %(Arithmetic self, Arithmetic other) => Extensions.Modulo(self, other);
-    public static Value Default(Value self) => Extensions.Default(self);
-    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
-    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
-    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Boolean operator ==(Equatable a, Equatable b) => Extensions.Equals(a, b);
-    public static Value Default(Value self) => Extensions.Default(self);
-    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
-    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
-    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Integer Compare(Comparable x) => Extensions.Compare(x);
-    public static Value Default(Value self) => Extensions.Default(self);
-    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
-    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
-    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Value Default(Value self) => Extensions.Default(self);
-    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
-    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
-    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static ScalarArithmetic operator +(ScalarArithmetic self, Number scalar) => Extensions.Add(self, scalar);
-    public static ScalarArithmetic operator -(ScalarArithmetic self, Number scalar) => Extensions.Subtract(self, scalar);
-    public static ScalarArithmetic operator *(ScalarArithmetic self, Number scalar) => Extensions.Multiply(self, scalar);
-    public static ScalarArithmetic operator /(ScalarArithmetic self, Number scalar) => Extensions.Divide(self, scalar);
-    public static ScalarArithmetic operator %(ScalarArithmetic self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Value Default(Value self) => Extensions.Default(self);
-    public static Array FieldNames(Any self) => Extensions.FieldNames(self);
-    public static Array FieldValues(Any x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
-    public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public Vector3D A { get; }
-    public Vector3D B { get; }
 }
 public class Capsule: Value<Capsule>
 {
@@ -2659,10 +2530,10 @@ public class UV: Vector<UV>
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
     public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
     public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -2726,10 +2597,10 @@ public class UVW: Vector<UVW>
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
     public static Array FieldTypes(Any x) => Extensions.FieldTypes(x);
     public static Type TypeOf(Any self) => Extensions.TypeOf(self);
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -3597,10 +3468,10 @@ public class Probability: Numerical<Probability>
     public static implicit operator Probability(Number value) => new Number(value);
     public string[] FieldNames() => new[] { "Value" };
     public object[] FieldValues() => new[] { Value };
-    public static Numerical Zero(Numerical x) => Extensions.Zero(x);
-    public static Numerical One(Numerical x) => Extensions.One(x);
-    public static Numerical MinValue(Numerical x) => Extensions.MinValue(x);
-    public static Numerical MaxValue(Numerical x) => Extensions.MaxValue(x);
+    public static Numerical Zero(Numerical self) => Extensions.Zero(self);
+    public static Numerical One(Numerical self) => Extensions.One(self);
+    public static Numerical MinValue(Numerical self) => Extensions.MinValue(self);
+    public static Numerical MaxValue(Numerical self) => Extensions.MaxValue(self);
     public static Value Default(Value self) => Extensions.Default(self);
     public static Array FieldNames(Any self) => Extensions.FieldNames(self);
     public static Array FieldValues(Any x) => Extensions.FieldValues(x);
@@ -3799,11 +3670,11 @@ public static partial class Extensions
 }
 public static partial class Extensions
 {
-    public static Number Sum<T>(Array v) {
+    public static Numerical Sum<T>(Array v) {
         return Aggregate(v, 0, Add);
     }
     public static Number SumSquares<T>(Array v) {
-        return Aggregate(Square(v), 0, Add);
+        return Sum(Square(v));
     }
     public static Number LengthSquared<T>(Array v) {
         return SumSquares(v);
