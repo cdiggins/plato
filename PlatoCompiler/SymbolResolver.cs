@@ -1,7 +1,5 @@
-﻿using Parakeet.Demos.CSharp;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Plato.Compiler
@@ -276,11 +274,9 @@ namespace Plato.Compiler
                 foreach (var tp in astTypeDeclaration.TypeParameters)
                 {
                     var tpd = new TypeParameterDefSymbol(tp.Name, ResolveType(tp.Constraint));
-                    BindType(tpd.Name, tpd.Constraint.Def);
+                    BindType(tpd.Name, tpd);
                     typeDef.TypeParameters.Add(tpd);
                 }
-
-                BindType("Self", typeDef);
 
                 foreach (var m in astTypeDeclaration.Members)
                 {
@@ -324,8 +320,6 @@ namespace Plato.Compiler
 
                 foreach (var tpd in typeDef.TypeParameters)
                     BindType(tpd.Name, tpd.Constraint.Def);
-
-                BindType("Self", typeDef);
 
                 var astTypeDecl = SymbolsToNodes[typeDef] as AstTypeDeclaration;
 

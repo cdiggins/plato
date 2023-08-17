@@ -22,10 +22,10 @@ concept Array<T: Any>
 concept Vector<T: Numerical>
     inherits Array<T>, Numerical, ScalarArithmetic
 {
-    Count(v: Vector): Integer
+    Count(v: Self): Integer
         => Self.FieldTypes.Count;
         
-    At(v: Vector, n: Integer): T
+    At(v: Self, n: Integer): T
         => v.FieldValues[n];
 }
 

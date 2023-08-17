@@ -294,7 +294,7 @@ namespace Plato.Compiler
 
     public class TypeRefSymbol : Symbol
     {
-        public string Name => Def?.Name ?? "unresolved";
+        public string Name => Def?.Name ?? throw new Exception("Unresolved");
         public TypeDefSymbol Def { get; }
         public IReadOnlyList<TypeRefSymbol> TypeArgs { get; }
 

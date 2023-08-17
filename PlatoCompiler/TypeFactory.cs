@@ -76,6 +76,13 @@ namespace Plato.Compiler
             => Hasher.Hash(base.GetHashCode(), Id);
     }
 
+    public class SelfType : TypeVariable
+    {
+        public SelfType(TypeFactory factory)
+            : base("Self", null, factory)
+        { }
+    }
+
     public class AnyType : TypeVariable
     {
         public AnyType(TypeFactory factory)
@@ -85,41 +92,39 @@ namespace Plato.Compiler
 
     public class ConstrainedVariable : TypeVariable
     {
-        public TypeReference Concept { get; }
+        public Type Constraint { get; }
 
-        public ConstrainedVariable(TypeReference concept, Symbol declaration, TypeFactory factory)
-            : base(concept.Name, declaration, factory)
+        public ConstrainedVariable(Type constraint, Symbol declaration, TypeFactory factory)
+            : base(constraint.Name, declaration, factory)
         {
-            Concept = concept;
+            Constraint = constraint;
         }
 
         public override bool Equals(object obj)
             => base.Equals(obj)
                && obj is ConstrainedVariable other
-               && Equals(Concept, other.Concept);
+               && Equals(Constraint, other.Constraint);
 
         public override int GetHashCode()
-            => Hasher.Combine(base.GetHashCode(), Concept.GetHashCode());
-    }
-
-    public class SelfType : TypeVariable
-    {
-        public SelfType(TypeFactory factory)
-            : base("Self", null, factory)
-        { }
+            => Hasher.Combine(base.GetHashCode(), Constraint.GetHashCode());
     }
 
     public class TypeReference : Type
     {
         public IReadOnlyList<Type> TypeArguments { get; }
         public int DefId => TypeDef.Id;
-        public TypeDefSymbol TypeDef { get; }
+        public TypeDefSymbol TypeDef => (TypeDefSymbol)Declaration;
 
-        public TypeReference(TypeRefSymbol symbol, TypeFactory factory)
-            : base(symbol.Name, symbol, factory)
+        public TypeReference(string name, TypeDefSymbol symbol, IReadOnlyList<Type> args, TypeFactory factory)
+            : base(name, symbol, factory)
         {
-            TypeDef = symbol.Def;
-            if (TypeDef == null)
+            TypeArguments = args;
+        }
+
+        public static TypeReference CreateFromRef(TypeRefSymbol symbol, TypeFactory factory)
+        {
+            var def = symbol.Def;
+            if (def == null)
                 throw new Exception("Missing type definition");
             var nArgs = symbol.TypeArgs.Count;
             var nParams = symbol.Def.TypeParameters.Count;
@@ -127,9 +132,11 @@ namespace Plato.Compiler
                 throw new Exception($"Passed too many type arguments {nArgs} expected {nParams}");
             var list = new List<Type>();
             for (var i = 0; i < nParams; ++i)
-            {
+            {   
                 var p = symbol.Def.TypeParameters[i];
-                var arg = i < nArgs ? factory.CreateReference(symbol.TypeArgs[i]) : null;
+                var arg = i < nArgs 
+                    ? factory.CreateType(symbol.TypeArgs[i]) 
+                    : null;
                 if (arg != null)
                     list.Add(arg);
                 else if (p.Constraint != null)
@@ -138,7 +145,7 @@ namespace Plato.Compiler
                     list.Add(factory.CreateAny());
             }
 
-            TypeArguments = list;
+            return new TypeReference(def.Name, def, list, factory);
         }
 
         public override string ToString()
@@ -168,8 +175,8 @@ namespace Plato.Compiler
         public FunctionSignature(FunctionSymbol f, TypeFactory factory)
         {
             Name = f.Name;
-            Parameters = f.Parameters.Select(factory.CreateReference).ToList();
-            ReturnType = factory.CreateReference(f.Type);
+            Parameters = f.Parameters.Select(factory.CreateType).ToList();
+            ReturnType = factory.CreateType(f.Type);
         }
 
         public override string ToString()
@@ -198,8 +205,8 @@ namespace Plato.Compiler
 
     public class Concept
     {
-        public IReadOnlyList<TypeReference> InheritedTypes { get; }
-        public IReadOnlyList<Function> Functions { get; }
+        public IReadOnlyList<Type> InheritedTypes { get; }
+        public List<Function> Functions { get; } = new List<Function>();
         public SelfType Self { get; } 
         public TypeDefSymbol Symbol { get; }
         public string Name => Symbol.Name;
@@ -208,10 +215,9 @@ namespace Plato.Compiler
         {
             if (!symbol.IsConcept())
                 throw new Exception("Expected a concept");
-            Self = factory.CreateSelf(this);
             Symbol = symbol;
-            InheritedTypes = symbol.Inherits.Select(factory.CreateReference).ToList();
-            Functions = symbol.Functions.Select(factory.CreateFunction).ToList();
+            Self = factory.CreateSelf(this);
+            InheritedTypes = symbol.Inherits.Select(factory.CreateType).ToList();
         }
     }
 
@@ -223,6 +229,8 @@ namespace Plato.Compiler
         public HashSet<Type> AllTypes { get; } = new HashSet<Type>();
         public IReadOnlyList<Concept> Concepts { get; }
         public List<Function> Functions { get; } = new List<Function>();
+        public Dictionary<string, Concept> LookupConcepts { get; } = new Dictionary<string, Concept>();
+        public SelfType CurrentSelf { get; set; }
 
         public Function Register(Function f)
         {
@@ -258,17 +266,28 @@ namespace Plato.Compiler
             throw new Exception($"{self} is neither a type reference or a type variable");
         }
 
-        public SelfType CreateSelf(Concept concept) 
+        public SelfType CreateSelf(Concept concept)
             => Register(new SelfType(this));
 
-        public TypeReference CreateReference(TypeRefSymbol symbol)
-            => Register(new TypeReference(symbol, this));
-        
-        public TypeReference CreateReference(ParameterSymbol symbol) 
-            => CreateReference(symbol.Type);
+        public Type CreateType(TypeRefSymbol symbol)
+        {
+            if (symbol.Name == "Self")
+            {
+                Debug.Assert(CurrentSelf != null);
+                return CurrentSelf;
+            }
+            var r = TypeReference.CreateFromRef(symbol, this);
+            return Register(r);
+        }
+
+        public Type CreateType(TypeDefSymbol symbol)
+            => CreateType(symbol.ToRef());
+
+        public Type CreateType(ParameterSymbol symbol) 
+            => CreateType(symbol.Type);
 
         public ConstrainedVariable CreateConstrainedVariable(TypeRefSymbol concept, Symbol declaration)
-            => Register(new ConstrainedVariable(CreateReference(concept), declaration, this));
+            => Register(new ConstrainedVariable(CreateType(concept), declaration, this));
 
         public AnyType CreateAny() 
             => Register(new AnyType(this));
@@ -276,9 +295,27 @@ namespace Plato.Compiler
         public Function CreateFunction(FunctionSymbol symbol) 
             => Register(new Function(symbol, this));
 
+        public void ComputeFunctions(Concept c)
+        {
+            CurrentSelf = c.Self;
+            foreach (var f in c.Symbol.Functions)
+            {
+                var f2 = CreateFunction(f);
+                c.Functions.Add(f2);
+            }
+        }
+
         public TypeFactory(IReadOnlyList<TypeDefSymbol> types)
         {
-            Concepts = types.Where(t => t.IsConcept()).Select(t => new Concept(t, this)).ToList();
+            Concepts = types
+                .Where(t => t.IsConcept())
+                .Select(t => new Concept(t, this))
+                .ToList();
+
+            foreach (var c in Concepts)
+            {
+                ComputeFunctions(c);
+            }
 
             // Note: interesting exercise in assuring that your hash-code/equals are implemented correctly. 
             foreach (var tr1 in TypeReferences)
