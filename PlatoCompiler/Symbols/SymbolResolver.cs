@@ -241,8 +241,8 @@ namespace Plato.Compiler.Symbols
                             ValueBindingsScope = ValueBindingsScope.Push();
                             var ps = astLambda.Parameters.Select(Resolve).ToArray();
                             var body = ResolveExpr(astLambda.Body);
-                            var r = new FunctionDefinition("__lambda__",
-                                PrimitiveTypeDefinitions.Lambda.ToTypeExpression(), body, ps);
+                            var r = new Lambda(new FunctionDefinition("_lambda_", 
+                                PrimitiveTypeDefinitions.Lambda.ToTypeExpression(), body, ps));
                             return r;
                         }
 

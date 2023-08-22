@@ -44,7 +44,7 @@ namespace Plato.Compiler.Symbols
 
         public static string ToCSharp(this Compiler compiler)
         {
-            throw new NotImplementedException();
+            return "Not implemented yet";
             /*
             var writer = new SymbolWriterCSharp(compiler.TypeResolver);
             var r = writer.Write(compiler.TypeDefs);

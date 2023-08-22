@@ -27,6 +27,15 @@ namespace Plato.Compiler.Symbols
         public override string ToString() => $"Ref->{Definition}";
     }
 
+    public class PredefinedReference : Reference
+    {
+        public PredefinedReference(PredefinedDefinition def)
+            : base(def)
+        { }
+
+        public new PredefinedDefinition Definition => base.Definition as PredefinedDefinition;
+    }
+
     public class ParameterReference : Reference
     {
         public ParameterReference(ParameterDefinition def)
@@ -116,7 +125,6 @@ namespace Plato.Compiler.Symbols
         }
     }
 
-    // TODO: figure out where the captured variables will go. 
     public class Lambda : Expression
     {
         public FunctionDefinition Function { get; }

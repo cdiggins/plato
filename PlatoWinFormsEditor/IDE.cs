@@ -97,9 +97,10 @@ public class IDE
         Logger.Log("Writing C#");
         File.WriteAllText(Path.Combine(outputFolder, "output.cs"), Compiler.ToCSharp());
 
-        Logger.Log("Writing HTML");
-        File.WriteAllText(Path.Combine(outputFolder, "output.plato.html"), Compiler.ToPlatoHtml());
+        //Logger.Log("Writing HTML");
+        //File.WriteAllText(Path.Combine(outputFolder, "output.plato.html"), Compiler.ToPlatoHtml());
 
+        /*
         Logger.Log("Writing JavaScript");
         var inputFolder = outputFolder;
         var prologue = File.ReadAllText(Path.Combine(inputFolder, "prologue.js"));
@@ -111,9 +112,10 @@ public class IDE
                      + epilogue;
         File.WriteAllText(Path.Combine(outputFolder, "output.js"), output);
 
-        var vsgFolder = Path.Combine(outputFolder, "vsg");
-        
+        */
+
         /*
+        var vsgFolder = Path.Combine(outputFolder, "vsg");
         FileUtil.CreateAndClearDirectory(vsgFolder);
         var i = 0;
         foreach (var f in Compiler.Graphs)
@@ -127,23 +129,6 @@ public class IDE
         //Output += GetConstraintsOutput();
         //Output += GetOperationsOutput();
         //Output += GetTypeGuesserOutput();
-    }
-
-    public string GetOperationsOutput()
-    {
-        var sb = new StringBuilder();
-        sb.AppendLine().AppendLine("= Operations =").AppendLine();
-        var ops = Compiler.Operations;
-        foreach (var kv in ops.Lookup)
-        {
-            sb.AppendLine(kv.Key);
-            foreach (var v in kv.Value)
-            {
-                sb.AppendLine(v.ToString());
-            }
-        }
-
-        return sb.ToString();
     }
 
     public string Try(Func<string?> f)

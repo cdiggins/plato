@@ -32,7 +32,7 @@ namespace Plato.Compiler.Symbols
         { }
 
         public override Reference ToReference()
-            => throw new NotSupportedException();
+            => new PredefinedReference(this);
     }
 
     public class FunctionDefinition : Definition
@@ -150,6 +150,11 @@ namespace Plato.Compiler.Symbols
 
         public TypeExpression ToTypeExpression()
             => new TypeExpression(this);
+
+        public override string ToString()
+        {
+            return $"{Name}_{Id}:{Kind}";
+        }
     }
 
     public abstract class MemberDefinition : Definition
@@ -195,8 +200,8 @@ namespace Plato.Compiler.Symbols
         public FunctionGroupDefinition(IReadOnlyList<FunctionDefinition> functions, string name)
             : base(PrimitiveTypeDefinitions.Function.ToTypeExpression() as TypeExpression, name)
         {
+            Functions = functions;
             if (Functions.Count == 0) throw new Exception("Expected at least one function in group");
-            Functions = Functions;
 
             foreach (var f in Functions)
             {
