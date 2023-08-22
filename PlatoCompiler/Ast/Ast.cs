@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Plato.Compiler
+namespace Plato.Compiler.Ast
 {
     public abstract class AstNode
     {
@@ -56,7 +56,7 @@ namespace Plato.Compiler
         public override IEnumerable<AstNode> Children => base.Children.Append(Value);
     }
 
-    public enum LiteralTypes
+    public enum LiteralTypesEnum
     {
         Int,
         Float,
@@ -67,29 +67,29 @@ namespace Plato.Compiler
     public class AstConstant : AstNode
     {
         public object Value { get; }
-        public LiteralTypes Type { get; }
-        
-        public AstConstant(LiteralTypes type, object value) 
-            => (Type, Value) = (type, value);
+        public LiteralTypesEnum TypeEnum { get; }
+
+        public AstConstant(LiteralTypesEnum typeEnum, object value)
+            => (TypeEnum, Value) = (typeEnum, value);
 
         public static AstConstant Create(object value)
         {
             if (value is string s)
-                return new AstConstant(LiteralTypes.String, s);
+                return new AstConstant(LiteralTypesEnum.String, s);
             if (value is bool b)
-                return new AstConstant(LiteralTypes.Bool, b);
+                return new AstConstant(LiteralTypesEnum.Bool, b);
             if (value is double d)
-                return new AstConstant(LiteralTypes.Float, d);
+                return new AstConstant(LiteralTypesEnum.Float, d);
             if (value is float f)
-                return new AstConstant(LiteralTypes.Float, f);
+                return new AstConstant(LiteralTypesEnum.Float, f);
             if (value is int n)
-                return new AstConstant(LiteralTypes.Int, n);
+                return new AstConstant(LiteralTypesEnum.Int, n);
             throw new Exception($"Not a recognized constant type {value}");
         }
 
         public static AstConstant True => Create(true);
         public static AstConstant False => Create(false);
-            public override string ToString() => $"({GetType().Name}:{Type} {Value})";
+        public override string ToString() => $"({GetType().Name}:{TypeEnum} {Value})";
 
     }
 
@@ -147,7 +147,7 @@ namespace Plato.Compiler
         public string Var { get; }
         public AstNode Value { get; }
         public AstAssign(string var, AstNode value) => (Var, Value) = (var, value);
-        public override IEnumerable<AstNode> Children => new [] { Value };
+        public override IEnumerable<AstNode> Children => new[] { Value };
     }
 
     public class AstInvoke : AstNode
@@ -178,7 +178,7 @@ namespace Plato.Compiler
     public abstract class AstMemberDeclaration : AstDeclaration
     {
         public AstTypeNode Type { get; }
-        protected AstMemberDeclaration(string name, AstTypeNode type) : base(name) => (Type) = (type);
+        protected AstMemberDeclaration(string name, AstTypeNode type) : base(name) => Type = type;
         public override IEnumerable<AstNode> Children => base.Children.Append(Type);
     }
 
@@ -186,7 +186,7 @@ namespace Plato.Compiler
     {
         public IReadOnlyList<AstTypeDeclaration> Types { get; }
         public override IEnumerable<AstNode> Children => Types;
-        public AstNamespace(string name, IEnumerable<AstTypeDeclaration> types) : base(name) 
+        public AstNamespace(string name, IEnumerable<AstTypeDeclaration> types) : base(name)
             => Types = types.ToListOrEmpty();
     }
 
@@ -256,7 +256,7 @@ namespace Plato.Compiler
         public IReadOnlyList<AstMemberDeclaration> Members { get; }
 
         public AstTypeDeclaration(TypeKind kind, string name, IEnumerable<AstTypeParameter> typeParameters,
-            IEnumerable<AstTypeNode> inherits, IEnumerable<AstTypeNode> implements, params AstMemberDeclaration[] members) 
+            IEnumerable<AstTypeNode> inherits, IEnumerable<AstTypeNode> implements, params AstMemberDeclaration[] members)
             : base(name)
         {
             Kind = kind;
@@ -271,7 +271,7 @@ namespace Plato.Compiler
 
         public override string ToString()
         {
-            return $"({Kind} {Name}<{string.Join(",",TypeParameters)}> ({string.Join(";", Members)}))";
+            return $"({Kind} {Name}<{string.Join(",", TypeParameters)}> ({string.Join(";", Members)}))";
         }
     }
 

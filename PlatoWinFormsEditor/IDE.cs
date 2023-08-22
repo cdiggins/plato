@@ -5,6 +5,8 @@ using Parakeet;
 using Parakeet.Demos;
 using Parakeet.Demos.Plato;
 using Plato.Compiler;
+using Plato.Compiler.Ast;
+using Plato.Compiler.Symbols;
 using Ptarmigan.Utils;
 
 namespace PlatoWinFormsEditor;
@@ -144,30 +146,6 @@ public class IDE
         return sb.ToString();
     }
 
-    public string GetConstraintsOutput()
-    {
-        // Get the type
-
-        var sb = new StringBuilder();
-        sb.AppendLine().AppendLine("= Constraints =").AppendLine();
-        foreach (var t in Compiler.TypeDefs)
-        {
-            sb.AppendLine($"{t.Kind} {t.Name}");
-            foreach (var m in t.Methods)
-            {
-                sb.AppendLine($"Method {m.Name}");
-                var lookup = Constraints.GetParameterConstraints(m.Function);
-                foreach (var kv in lookup)
-                {
-                    var refs = string.Join(", ", kv.Value);
-                    sb.AppendLine($"{kv.Key} = {refs}");
-                }
-            }
-        }
-
-        return sb.ToString();
-    }
-
     public string Try(Func<string?> f)
     {
         try
@@ -178,13 +156,5 @@ public class IDE
         {
             return e.Message;
         }
-    }
-
-    public static StringBuilder OutputTypeResolverDetails(TypeResolver tr, StringBuilder sb = null)
-    {
-        sb ??= new StringBuilder();
-        var dontKnowType = tr.Functions.Count(f => tr.GetType(f.Body) == null);
-        sb.AppendLine($"Don't know the type of {dontKnowType} funcs of {tr.Functions.Count} total");
-        return sb;
     }
 }

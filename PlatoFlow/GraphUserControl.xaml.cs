@@ -13,6 +13,7 @@ using System.Windows.Threading;
 using Peacock;
 using Peacock.Wpf;
 using Plato.Compiler;
+using Plato.Compiler.Vsg;
 
 namespace Emu;
 

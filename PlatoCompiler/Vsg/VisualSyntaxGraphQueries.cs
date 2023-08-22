@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Plato.Compiler
+namespace Plato.Compiler.Vsg
 {
     public class VisualSyntaxGraphQueries
     {

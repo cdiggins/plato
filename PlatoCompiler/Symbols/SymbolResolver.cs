@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Plato.Compiler.Ast;
+using Plato.Compiler.Symbols;
 
-namespace Plato.Compiler
+namespace Plato.Compiler.Symbols
 {
     /// <summary>
     /// Used primarily to figure out what each name means, and what the type of each expression is.
@@ -34,22 +36,23 @@ namespace Plato.Compiler
         public List<ResolutionError> Errors { get; } = new List<ResolutionError>();
         public Scope ValueBindingsScope { get; set; } = new Scope(null);
         public Scope TypeBindingsScope { get; set; } = new Scope(null);
+
         public Dictionary<Symbol, AstNode> SymbolsToNodes = new Dictionary<Symbol, AstNode>();
 
-        public List<TypeDefSymbol> TypeDefs { get; } = new List<TypeDefSymbol>();
-        
+        public List<TypeDefinition> TypeDefs { get; } = new List<TypeDefinition>();
+
         public void BindPredefinedSymbols()
         {
             BindPredefined(null, "intrinsic");
             BindPredefined(null, "Tuple");
-            BindType(PrimitiveTypes.Tuple);
-            BindType(PrimitiveTypes.Function);
-            BindType(PrimitiveTypes.Self);
+            BindType(PrimitiveTypeDefinitions.Tuple);
+            BindType(PrimitiveTypeDefinitions.Function);
+            BindType(PrimitiveTypeDefinitions.Self);
         }
 
-        public void BindPredefined(TypeRefSymbol type, string name)
+        public void BindPredefined(TypeExpression type, string name)
         {
-            BindValue(name, new PredefinedSymbol(type, name));
+            BindValue(name, new PredefinedDefinition(type, name));
         }
 
         public T BindValue<T>(string name, T value) where T : Symbol
@@ -58,34 +61,34 @@ namespace Plato.Compiler
             return value;
         }
 
-        public TypeDefSymbol BindType(TypeDefSymbol value)
+        public TypeDefinition BindType(TypeDefinition value)
         {
             if (value.Kind == TypeKind.Library)
                 return null;
             return BindType(value.Name, value);
         }
 
-        public TypeDefSymbol BindType(string name, TypeDefSymbol value)
+        public TypeDefinition BindType(string name, TypeDefinition value)
         {
             TypeBindingsScope = TypeBindingsScope.Bind(name, value);
             return value;
         }
 
-        public MemberGroupSymbol BindMemberToGroup(MemberDefSymbol member)
+        public FunctionGroupDefinition BindMemberToGroup(MemberDefinition member)
         {
             var name = member.Name;
             var val = ValueBindingsScope.GetValue(name);
 
-            if (val is MemberGroupSymbol group)
+            if (val is FunctionGroupDefinition group)
             {
-                return BindValue(name, group.Add(member));
+                return BindValue(name, group.Add(member.Function));
             }
 
-            var fgs = new MemberGroupSymbol(new[] { member }, name);
+            var fgs = new FunctionGroupDefinition(new[] { member.Function }, name);
             return BindValue(name, fgs);
         }
 
-        public RefSymbol GetValue(string name, AstNode node)
+        public Reference GetValue(string name, AstNode node)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -100,8 +103,8 @@ namespace Plato.Compiler
                 return null;
             }
 
-            if (sym is DefSymbol ds)
-                return new RefSymbol(ds);
+            if (sym is Definition def)
+                return def.ToReference();
 
             LogError($"Could not properly resolve symbol {name}", node);
             return null;
@@ -112,7 +115,7 @@ namespace Plato.Compiler
             Errors.Add(new ResolutionError(message, node));
         }
 
-        public TypeRefSymbol ResolveType(AstTypeNode astTypeNode)
+        public TypeExpression ResolveType(AstTypeNode astTypeNode)
         {
             if (astTypeNode == null)
             {
@@ -131,23 +134,30 @@ namespace Plato.Compiler
                 LogError($"Could not find type {name}", astTypeNode);
                 return null;
             }
-            var tds = sym as TypeDefSymbol;
+            var tds = sym as TypeDefinition;
             if (tds == null)
             {
                 LogError($"Could not resolve type {name} instead got {sym}", astTypeNode);
                 return null;
             }
-            return new TypeRefSymbol(tds, astTypeNode.TypeArguments.Select(ResolveType).ToArray());
+            return new TypeExpression(tds, astTypeNode.TypeArguments.Select(ResolveType).ToArray());
         }
 
-        public ParameterSymbol Resolve(AstParameterDeclaration astParameterDeclaration)
+        public ParameterDefinition Resolve(AstParameterDeclaration astParameterDeclaration)
         {
             return BindValue(astParameterDeclaration.Name,
-                new ParameterSymbol(astParameterDeclaration.Name, 
+                new ParameterDefinition(astParameterDeclaration.Name,
                     ResolveType(astParameterDeclaration.Type)));
         }
 
-        // This is not a pure function. It updates the scope every time a new value is bound
+        public Expression ResolveExpr(AstNode node)
+        {
+            var r = Resolve(node);
+            if (r == null) return null;
+            if (r is Expression x) return x;
+            throw new Exception($"Expected an expression not {r}");
+        }
+
         public Symbol Resolve(AstNode node)
         {
             var r = InternalResolve(node);
@@ -170,27 +180,27 @@ namespace Plato.Compiler
 
                     case AstAssign astAssign:
                         return BindValue(astAssign.Var,
-                            new AssignmentSymbol(
+                            new Assignment(
                                 GetValue(astAssign.Var, astAssign),
-                                Resolve(astAssign.Value)));
+                                ResolveExpr(astAssign.Value)));
 
                     case AstBlock astBlock:
-                    {
-                        if (astBlock.Statements.Count == 0)
-                            return null;
-                        if (astBlock.Statements.Count > 1)
-                            LogError("Cannot handle AstBlock with multiple children", astBlock);
-                        return Resolve(astBlock.Statements[0]);
-                    }
+                        {
+                            if (astBlock.Statements.Count == 0)
+                                return null;
+                            if (astBlock.Statements.Count > 1)
+                                LogError("Cannot handle AstBlock with multiple children", astBlock);
+                            return Resolve(astBlock.Statements[0]);
+                        }
 
                     case AstMulti astMulti:
-                    {
-                        if (astMulti.Nodes.Count == 0)
-                            return null;
-                        if (astMulti.Nodes.Count > 1)
-                            LogError("Cannot handle AstMulti with multiple children", astMulti);
-                        return Resolve(astMulti.Nodes[0]);
-                    }
+                        {
+                            if (astMulti.Nodes.Count == 0)
+                                return null;
+                            if (astMulti.Nodes.Count > 1)
+                                LogError("Cannot handle AstMulti with multiple children", astMulti);
+                            return Resolve(astMulti.Nodes[0]);
+                        }
 
                     case AstParenthesized astParenthesized:
                         return Resolve(astParenthesized.Inner);
@@ -199,13 +209,13 @@ namespace Plato.Compiler
                         return Resolve(astReturn.Value);
 
                     case AstConditional astConditional:
-                        return Scoped(() => new ConditionalExpressionSymbol(
-                            Resolve(astConditional.Condition),
-                            Resolve(astConditional.IfTrue),
-                            Resolve(astConditional.IfFalse)));
+                        return Scoped(() => new ConditionalExpression(
+                            ResolveExpr(astConditional.Condition),
+                            ResolveExpr(astConditional.IfTrue),
+                            ResolveExpr(astConditional.IfFalse)));
 
                     case AstConstant astConstant1:
-                        return new LiteralSymbol(astConstant1.Type, astConstant1.Value);
+                        return new Literal(astConstant1.TypeEnum, astConstant1.Value);
 
                     case AstExpressionStatement astExpressionStatement:
                         return Scoped(() => Resolve(astExpressionStatement.Expression));
@@ -214,31 +224,31 @@ namespace Plato.Compiler
                         return GetValue(astIdentifier.Text, astIdentifier);
 
                     case AstInvoke astInvoke:
-                    {
-                        var args = astInvoke.Arguments.Select((a, i) =>
-                            new ArgumentSymbol(Resolve(a), i)).ToArray();
-                        var funcRef = Resolve(astInvoke.Function);
-                        if (funcRef == null)
                         {
-                            LogError($"Could not find function {astInvoke.Function}", astInvoke);
+                            var args = astInvoke.Arguments.Select((a, i) =>
+                                new Argument(ResolveExpr(a), i)).ToArray();
+                            var funcRef = ResolveExpr(astInvoke.Function);
+                            if (funcRef == null)
+                            {
+                                LogError($"Could not find function {astInvoke.Function}", astInvoke);
+                            }
+
+                            return new FunctionCall(funcRef, args);
                         }
 
-                        return new FunctionCallSymbol(funcRef, args);
-                    }
-
                     case AstLambda astLambda:
-                    {
-                        ValueBindingsScope = ValueBindingsScope.Push();
-                        var ps = astLambda.Parameters.Select(Resolve).ToArray();
-                        var body = Resolve(astLambda.Body);
-                        var r = new FunctionSymbol("__lambda__",
-                            PrimitiveTypes.Lambda.ToRef(), body, ps);
-                        return r;
-                    }
+                        {
+                            ValueBindingsScope = ValueBindingsScope.Push();
+                            var ps = astLambda.Parameters.Select(Resolve).ToArray();
+                            var body = ResolveExpr(astLambda.Body);
+                            var r = new FunctionDefinition("__lambda__",
+                                PrimitiveTypeDefinitions.Lambda.ToTypeExpression(), body, ps);
+                            return r;
+                        }
 
                     case AstVarDef astVarDef:
                         return BindValue(astVarDef.Name,
-                            new VariableSymbol(astVarDef.Name, ResolveType(astVarDef.Type)));
+                            new VariableDefinition(astVarDef.Name, ResolveType(astVarDef.Type)));
 
                     case AstLoop astLoop:
                         LogError("NotImplementedException", node);
@@ -248,19 +258,19 @@ namespace Plato.Compiler
                 LogError($"Node can't be evaluated", node);
                 return null;
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                 LogError($"Exception occurred {e}", node);
                 return null;
             }
         }
 
-        public IEnumerable<TypeDefSymbol> CreateTypeDefs(IEnumerable<AstTypeDeclaration> types)
+        public IEnumerable<TypeDefinition> CreateTypeDefs(IEnumerable<AstTypeDeclaration> types)
         {
             // Typedefs and their methods are all at the top-level
             foreach (var astTypeDeclaration in types)
             {
-                var typeDef = new TypeDefSymbol(astTypeDeclaration.Kind, astTypeDeclaration.Name);
+                var typeDef = new TypeDefinition(astTypeDeclaration.Kind, astTypeDeclaration.Name);
                 SymbolsToNodes.Add(typeDef, astTypeDeclaration);
                 BindType(typeDef);
                 TypeDefs.Add(typeDef);
@@ -273,7 +283,7 @@ namespace Plato.Compiler
 
                 foreach (var tp in astTypeDeclaration.TypeParameters)
                 {
-                    var tpd = new TypeParameterDefSymbol(tp.Name, ResolveType(tp.Constraint));
+                    var tpd = new TypeParameterDefinition(tp.Name, ResolveType(tp.Constraint));
                     BindType(tpd.Name, tpd);
                     typeDef.TypeParameters.Add(tpd);
                 }
@@ -282,20 +292,20 @@ namespace Plato.Compiler
                 {
                     if (m is AstFieldDeclaration fd)
                     {
-                        var fDef = new FieldDefSymbol(typeDef, ResolveType(fd.Type), fd.Name);
+                        var fDef = new FieldDefinition(typeDef, ResolveType(fd.Type), fd.Name);
                         typeDef.Fields.Add(fDef);
                         SymbolsToNodes.Add(fDef, fd);
                         BindMemberToGroup(fDef);
                     }
                     else if (m is AstMethodDeclaration md)
                     {
-                        var mDef = new MethodDefSymbol(typeDef, ResolveType(md.Type), md.Name);
+                        var mDef = new MethodDefinition(typeDef, ResolveType(md.Type), md.Name);
 
                         // Create an empty body function first. It will be replaced in a separate step.  
-                        var list = new List<ParameterSymbol>();
+                        var list = new List<ParameterDefinition>();
                         foreach (var p in md.Parameters)
-                            list.Add(new ParameterSymbol(p.Name, ResolveType(p.Type)));
-                        var f = new FunctionSymbol(md.Name, mDef.Type, null, list.ToArray());
+                            list.Add(new ParameterDefinition(p.Name, ResolveType(p.Type)));
+                        var f = new FunctionDefinition(md.Name, mDef.Type, null, list.ToArray());
                         mDef.Function = f;
 
                         typeDef.Methods.Add(mDef);
@@ -319,7 +329,7 @@ namespace Plato.Compiler
                 TypeBindingsScope = TypeBindingsScope.Push();
 
                 foreach (var tpd in typeDef.TypeParameters)
-                    BindType(tpd.Name, tpd.Constraint.Def);
+                    BindType(tpd.Name, tpd.Constraint.Definition);
 
                 var astTypeDecl = SymbolsToNodes[typeDef] as AstTypeDeclaration;
 
@@ -340,7 +350,7 @@ namespace Plato.Compiler
                 }
 
                 if (typeDef.IsConcept() || typeDef.IsType())
-                    BindValue("Self", new PredefinedSymbol(typeDef.ToRef(), "Self"));
+                    BindValue("Self", new PredefinedDefinition(typeDef.ToTypeExpression(), "Self"));
 
                 // TODO: why is only the "self" type bound? Why can't I refer to other names?
 
@@ -349,15 +359,15 @@ namespace Plato.Compiler
                 {
                     ValueBindingsScope = ValueBindingsScope.Push();
                     var location = SymbolsToNodes[method] as AstMethodDeclaration;
-                    var list = new List<ParameterSymbol>();
+                    var list = new List<ParameterDefinition>();
                     foreach (var p in location.Parameters)
                     {
                         var pValue = Resolve(p);
                         list.Add(pValue);
                     }
 
-                    var body = Resolve(location.Body);
-                    var f = new FunctionSymbol(method.Name, method.Type, body, list.ToArray());
+                    var body = ResolveExpr(location.Body);
+                    var f = new FunctionDefinition(method.Name, method.Type, body, list.ToArray());
                     method.Function = f;
                     ValueBindingsScope = ValueBindingsScope.Pop();
                 }

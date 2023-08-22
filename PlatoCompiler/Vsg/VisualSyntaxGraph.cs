@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Plato.Compiler.Symbols;
 
-namespace Plato.Compiler
+namespace Plato.Compiler.Vsg
 {
     public class VisualSyntaxGraph
     {
@@ -43,7 +44,7 @@ namespace Plato.Compiler
 
         public VsgConnection()
         {
-        } 
+        }
 
         public VsgConnection(Guid src, Guid dest)
         {
@@ -56,7 +57,7 @@ namespace Plato.Compiler
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Label { get; set; }
-        public string Type { get; set; } 
+        public string Type { get; set; }
         public VsgSocket() : this("") { }
         public VsgSocket(string label, string type = "Any")
         {
@@ -93,17 +94,17 @@ namespace Plato.Compiler
 
     public class VsgBuilder
     {
-        public Dictionary<ParameterSymbol, VsgSocket> Parameters { get; } 
-            = new Dictionary<ParameterSymbol, VsgSocket>();
+        public Dictionary<ParameterDefinition, VsgSocket> Parameters { get; }
+            = new Dictionary<ParameterDefinition, VsgSocket>();
 
         public List<VsgNode> Nodes { get; } = new List<VsgNode>();
         public List<VsgConnection> Connections { get; } = new List<VsgConnection>();
 
-        public VisualSyntaxGraph ToVsg(FunctionSymbol symbol)
+        public VisualSyntaxGraph ToVsg(FunctionDefinition definition)
         {
             // Input nodes.
             var input = CreateNode("Inputs", false);
-            foreach (var p in symbol.Parameters)
+            foreach (var p in definition.Parameters)
             {
                 var socket = new VsgSocket(p.Name, p.Type.Name);
                 input.Outputs.Add(socket);
@@ -111,70 +112,69 @@ namespace Plato.Compiler
             }
 
             var output = CreateNode("Output", false);
-            var finalSocket = new VsgSocket("Result", symbol.Type.Name);
+            var finalSocket = new VsgSocket("Result", definition.Type.Name);
             output.Inputs.Add(finalSocket);
-            Connect(GetSocket(symbol.Body), finalSocket);
-            return new VisualSyntaxGraph(symbol.Name, Nodes, Connections);
+            Connect(GetSocket(definition.Body), finalSocket);
+            return new VisualSyntaxGraph(definition.Name, Nodes, Connections);
         }
 
-        public VsgNode CreateNode(Symbol symbol)
+        public VsgNode CreateNode(Definition symbol)
         {
             if (symbol == null)
                 return null;
 
             switch (symbol)
             {
-                case ArgumentSymbol argumentSymbol:
-                    return CreateNode(argumentSymbol.Original);
-
-                case AssignmentSymbol assignmentSymbol:
-                    break;
-
-                case ConditionalExpressionSymbol conditionalExpressionSymbol:
-                    return CreateNode(conditionalExpressionSymbol);
-                
-                case FieldDefSymbol fieldDefSymbol:
+                case FieldDefinition fieldDefSymbol:
                     return CreateNode(fieldDefSymbol.Function);
 
-                case MemberGroupSymbol functionGroupSymbol:
+                case FunctionGroupDefinition functionGroupSymbol:
                     // TODO: remove function groups 
-                    return CreateNode(functionGroupSymbol.Members[0]);
-                
-                case FunctionSymbol functionSymbol:
+                    return CreateNode(functionGroupSymbol.Functions[0]);
+
+                case FunctionDefinition functionSymbol:
                     return CreateNode(functionSymbol);
-                
-                case MethodDefSymbol methodDefSymbol:
+
+                case MethodDefinition methodDefSymbol:
                     return CreateNode(methodDefSymbol.Function);
 
-                case ParameterSymbol parameterSymbol:
+                case ParameterDefinition parameterSymbol:
                     return CreateNode($"{parameterSymbol.Name} as Function");
-                
-                case PredefinedSymbol predefinedSymbol:
+
+                case PredefinedDefinition predefinedSymbol:
                     return CreateNode(predefinedSymbol);
 
-                case TypeParameterDefSymbol typeParameterDefSymbol:
+                case VariableDefinition variableSymbol:
                     break;
-                
-                case TypeDefSymbol typeDefSymbol:
-                    return CreateNode(typeDefSymbol.Name);
-                
-                case VariableSymbol variableSymbol:
-                    break;
-                
-                case DefSymbol defSymbol:
+            }
+
+            throw new NotImplementedException();
+        }
+
+        public VsgNode CreateNode(Expression symbol)
+        {
+            if (symbol == null)
+                return null;
+
+            switch (symbol)
+            {
+                case Argument argumentSymbol:
+                    return CreateNode(argumentSymbol.Expression);
+
+                case Assignment assignmentSymbol:
                     break;
 
-                case FunctionCallSymbol functionCallSymbol:
+                case ConditionalExpression conditionalExpressionSymbol:
+                    return CreateNode(conditionalExpressionSymbol);
+
+                case FunctionCall functionCallSymbol:
                     return CreateNode(functionCallSymbol);
 
-                case LiteralSymbol literalSymbol:
+                case Literal literalSymbol:
                     return CreateNode(literalSymbol);
-                
-                case RefSymbol refSymbol:
-                    return CreateNode(refSymbol.Def);
 
-                case TypeRefSymbol typeRefSymbol:
-                    break;
+                case Reference refSymbol:
+                    return CreateNode(refSymbol.Definition);
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(symbol));
@@ -192,27 +192,36 @@ namespace Plato.Compiler
             return node;
         }
 
-        public VsgSocket GetSocket(Symbol symbol)
+        public VsgSocket GetSocket(Definition def)
         {
-            switch (symbol)
+            switch (def)
             {
-                case ArgumentSymbol argumentSymbol:
-                    return GetSocket(argumentSymbol.Original);
-                case RefSymbol refSymbol:
-                    return GetSocket(refSymbol?.Def);
-                case ParameterSymbol parameterSymbol:
+                case ParameterDefinition parameterSymbol:
                     return Parameters[parameterSymbol];
             }
-            return CreateNode(symbol)?.MainOutput;
+            return CreateNode(def)?.MainOutput;
         }
 
-        public VsgNode CreateNode(PredefinedSymbol pds)
+
+        public VsgSocket GetSocket(Expression expr)
+        {
+            switch (expr)
+            {
+                case Argument argumentSymbol:
+                    return GetSocket(argumentSymbol.Expression);
+                case Reference refSymbol:
+                    return GetSocket(refSymbol?.Definition);
+            }
+            return CreateNode(expr)?.MainOutput;
+        }
+
+        public VsgNode CreateNode(PredefinedDefinition pds)
             => CreateNode(pds.Name);
 
-        public VsgNode CreateNode(LiteralSymbol lit)
+        public VsgNode CreateNode(Literal lit)
             => CreateNode(lit.Value.ToLiteralString());
 
-        public VsgNode CreateNode(ConditionalExpressionSymbol symbol)
+        public VsgNode CreateNode(ConditionalExpression symbol)
         {
             var r = CreateNode("If");
             var conditionSocket = r.CreateInputSocket("Condition");
@@ -224,9 +233,9 @@ namespace Plato.Compiler
             return r;
         }
 
-        public VsgNode CreateNode(FunctionCallSymbol symbol)
+        public VsgNode CreateNode(FunctionCall symbol)
         {
-            if (symbol.Function is RefSymbol rs && rs.Def is ParameterSymbol ps)
+            if (symbol.Function is Reference rs && rs.Definition is ParameterDefinition ps)
             {
                 var f = CreateNode("Lambda");
                 var inputs = symbol.Args.Select(GetSocket).ToList();
@@ -266,10 +275,10 @@ namespace Plato.Compiler
             return r;
         }
 
-        public VsgNode CreateNode(FunctionSymbol symbol)
+        public VsgNode CreateNode(FunctionDefinition definition)
         {
-            var r = CreateNode(symbol.Name);
-            foreach (var p in symbol.Parameters)
+            var r = CreateNode(definition.Name);
+            foreach (var p in definition.Parameters)
             {
                 r.CreateInputSocket(p.Name);
             }

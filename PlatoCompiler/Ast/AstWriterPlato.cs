@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Parakeet;
 
-namespace Plato.Compiler
+namespace Plato.Compiler.Ast
 {
     public class AstWriterPlato : CodeBuilder<AstWriterPlato>
     {
@@ -131,10 +131,10 @@ namespace Plato.Compiler
                         .Write(astAssign.Value);
 
                 case AstBlock astBlock:
-                {
-                    return Brace(cb =>
-                        cb.WriteStatements(astBlock.Statements));
-                }
+                    {
+                        return Brace(cb =>
+                            cb.WriteStatements(astBlock.Statements));
+                    }
 
                 case AstBreak astBreak:
                     return WriteLine("break");
@@ -182,39 +182,39 @@ namespace Plato.Compiler
                     return Write(ConvertIntrinsicName(astIdent.Text));
 
                 case AstTypeDeclaration typeDeclaration:
-                {
-                    var r = Write($"{typeDeclaration.Kind} ").WriteLine(typeDeclaration.Name);
-
-                    // TODO: this needs to convert from attributes to implements list 
-                    if (typeDeclaration.Implements.Count > 0)
                     {
-                        r = r.Write("  implements ").WriteCommaList(typeDeclaration.Implements, 
-                            Write).WriteLine();
-                    }
-                    else if (typeDeclaration.Inherits.Count > 0)
-                    {
-                        r = r.Write("  inherits ").WriteCommaList(typeDeclaration.Inherits,
-                            Write).WriteLine();
-                    }
+                        var r = Write($"{typeDeclaration.Kind} ").WriteLine(typeDeclaration.Name);
 
-                    r = r.WriteLine("{").Indent();
-                    r = typeDeclaration.Members.Aggregate(r, (w, n) => w.Write(n));
-                    r = r.Dedent().WriteLine("}");
-                    r = r.WriteLine();
-                    return r;
-                }
+                        // TODO: this needs to convert from attributes to implements list 
+                        if (typeDeclaration.Implements.Count > 0)
+                        {
+                            r = r.Write("  implements ").WriteCommaList(typeDeclaration.Implements,
+                                Write).WriteLine();
+                        }
+                        else if (typeDeclaration.Inherits.Count > 0)
+                        {
+                            r = r.Write("  inherits ").WriteCommaList(typeDeclaration.Inherits,
+                                Write).WriteLine();
+                        }
+
+                        r = r.WriteLine("{").Indent();
+                        r = typeDeclaration.Members.Aggregate(r, (w, n) => w.Write(n));
+                        r = r.Dedent().WriteLine("}");
+                        r = r.WriteLine();
+                        return r;
+                    }
 
                 case AstTypeNode typeNode:
-                {
-                    var r = Write(typeNode.Name);
-                    if (typeNode.TypeArguments.Count > 0)
                     {
-                        r = r.Write("<");
-                        r = r.Write(typeNode.TypeArguments, ",");
-                        r = r.Write(">");
+                        var r = Write(typeNode.Name);
+                        if (typeNode.TypeArguments.Count > 0)
+                        {
+                            r = r.Write("<");
+                            r = r.Write(typeNode.TypeArguments, ",");
+                            r = r.Write(">");
+                        }
+                        return r;
                     }
-                    return r;
-                }
 
                 case AstFieldDeclaration fieldDeclaration:
                     return Write("field ")

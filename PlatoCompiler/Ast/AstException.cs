@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Plato.Compiler
+namespace Plato.Compiler.Ast
 {
     public class AstException : Exception
     {

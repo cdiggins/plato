@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Parakeet;
 using Parakeet.Demos.Plato;
+using Plato.Compiler.Ast;
+using Plato.Compiler.Symbols;
+using Plato.Compiler.Types;
+using Plato.Compiler.Vsg;
 
 namespace Plato.Compiler
 {
@@ -31,9 +35,8 @@ namespace Plato.Compiler
         public SymbolResolver SymbolResolver { get; set; }
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; set; }
         public Operations Operations { get; set; }
-        public TypeResolver TypeResolver { get; set; }
-        public IReadOnlyList<FunctionSymbol> Functions => TypeResolver.Functions;
-        public IReadOnlyList<TypeDefSymbol> TypeDefs { get; set; }
+        public IReadOnlyList<FunctionDefinition> Functions { get; } 
+        public IReadOnlyList<TypeDefinition> TypeDefs { get; set; }
 
         public List<string> SemanticErrors { get; } = new List<string>();
         public List<string> SemanticWarnings { get; } = new List<string>();
@@ -83,6 +86,9 @@ namespace Plato.Compiler
 
                 var atr = new TypeFactory(TypeDefs);
                 Log(atr);
+                
+                // TODO: get the functions 
+
                 /*
                 Log("Creating operations");
                 // TODO: this can be removed I think.
@@ -125,7 +131,7 @@ namespace Plato.Compiler
 
         public void Log(TypeFactory atr)
         {
-            Log($"Abstract Type Resolver");
+            Log($"Type Factory");
             Log($"Found {atr.Concepts.Count} Concepts");
             foreach (var c in atr.Concepts)
             {
@@ -150,7 +156,6 @@ namespace Plato.Compiler
                 Log($"{tr}");
             }
         }
-
 
         public void LogResolutionErrors(IEnumerable<SymbolResolver.ResolutionError> resolutionErrors)
         {
@@ -204,8 +209,8 @@ namespace Plato.Compiler
                     if (!p.GetParameterReferences(f).Any())
                         SemanticWarnings.Add($"No references found to {p}");
 
-                foreach (var r in f.Body.GetDescendantSymbols().OfType<RefSymbol>())
-                    if (r.Def == null)
+                foreach (var r in f.Body.GetExpressionTree().OfType<Reference>())
+                    if (r.Definition == null)
                         SemanticErrors.Add($"Could not resolve reference for {r}");
 
                 if (f.IsPartiallyTyped())
@@ -218,7 +223,7 @@ namespace Plato.Compiler
                 {
                     if (t2 == null)
                         SemanticErrors.Add($"One of the implemented types of {t} was not resolved");
-                    else if (t2.Def?.Kind != TypeKind.Concept)
+                    else if (t2.Definition?.Kind != TypeKind.Concept)
                         SemanticErrors.Add($"Only concepts can be implemented. Instead {t} implements {t2}");
                 }
 
@@ -226,7 +231,7 @@ namespace Plato.Compiler
                 {
                     if (t2 == null)
                         SemanticErrors.Add($"One of the inherited types of {t} was not resolved");
-                    else if (t2.Def?.Kind != TypeKind.Concept)
+                    else if (t2.Definition?.Kind != TypeKind.Concept)
                         InternalErrors.Add($"Only concepts can be inherited. Instead {t} inherits {t2}");
                 }
                     

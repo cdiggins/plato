@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Parakeet;
 
-namespace Plato.Compiler
+namespace Plato.Compiler.Ast
 {
     public class AstWriterXml : CodeBuilder<AstWriterXml>
     {

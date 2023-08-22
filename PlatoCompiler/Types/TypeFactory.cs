@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Plato.Compiler.Symbols;
 
-namespace Plato.Compiler
+namespace Plato.Compiler.Types
 {
     public static class Hasher
     {
@@ -15,7 +16,7 @@ namespace Plato.Compiler
             }
         }
 
-        public static int Combine(params int[] codes) 
+        public static int Combine(params int[] codes)
             => codes.Aggregate(0, Combine);
 
         public static int Combine(IEnumerable<int> codes)
@@ -31,25 +32,25 @@ namespace Plato.Compiler
             => Combine(objects.Select(x => GetHashCode(x)));
     }
 
-    public abstract class Type 
+    public abstract class Type
     {
         public string Name { get; }
-        public Symbol Declaration { get; }
+        public TypeDefinition Definition { get; }
 
         // ReSharper disable once UnusedParameter.Local
-        protected Type(string name, Symbol declaration, TypeFactory _)
+        protected Type(string name, TypeDefinition definition, TypeFactory _)
         {
             Name = name;
-            Declaration = declaration;
+            Definition = definition;
         }
 
-        public override string ToString() 
+        public override string ToString()
             => $"{Name}";
 
         public override bool Equals(object obj)
-            => obj != null 
-               && GetType() == obj.GetType() 
-               && obj is Type other 
+            => obj != null
+               && GetType() == obj.GetType()
+               && obj is Type other
                && Name == other.Name;
 
         public override int GetHashCode()
@@ -60,8 +61,8 @@ namespace Plato.Compiler
     {
         public int Id { get; } = Symbol.NextId++;
 
-        public TypeVariable(string name, Symbol declaration, TypeFactory factory)
-            : base(name,declaration, factory)
+        public TypeVariable(string name, TypeDefinition definition, TypeFactory factory)
+            : base(name, definition, factory)
         { }
 
         public override string ToString()
@@ -94,8 +95,8 @@ namespace Plato.Compiler
     {
         public Type Constraint { get; }
 
-        public ConstrainedVariable(Type constraint, Symbol declaration, TypeFactory factory)
-            : base(constraint.Name, declaration, factory)
+        public ConstrainedVariable(Type constraint, TypeDefinition definition, TypeFactory factory)
+            : base(constraint.Name, definition, factory)
         {
             Constraint = constraint;
         }
@@ -112,30 +113,30 @@ namespace Plato.Compiler
     public class TypeReference : Type
     {
         public IReadOnlyList<Type> TypeArguments { get; }
-        public int DefId => TypeDef.Id;
-        public TypeDefSymbol TypeDef => (TypeDefSymbol)Declaration;
+        public int DefId => Type.Id;
+        public TypeDefinition Type => (TypeDefinition)Definition;
 
-        public TypeReference(string name, TypeDefSymbol symbol, IReadOnlyList<Type> args, TypeFactory factory)
-            : base(name, symbol, factory)
+        public TypeReference(string name, TypeDefinition definition, IReadOnlyList<Type> args, TypeFactory factory)
+            : base(name, definition, factory)
         {
             TypeArguments = args;
         }
 
-        public static TypeReference CreateFromRef(TypeRefSymbol symbol, TypeFactory factory)
+        public static TypeReference CreateFromRef(TypeExpression symbol, TypeFactory factory)
         {
-            var def = symbol.Def;
+            var def = symbol.Definition;
             if (def == null)
                 throw new Exception("Missing type definition");
             var nArgs = symbol.TypeArgs.Count;
-            var nParams = symbol.Def.TypeParameters.Count;
+            var nParams = symbol.Definition.TypeParameters.Count;
             if (nArgs > nParams)
                 throw new Exception($"Passed too many type arguments {nArgs} expected {nParams}");
             var list = new List<Type>();
             for (var i = 0; i < nParams; ++i)
-            {   
-                var p = symbol.Def.TypeParameters[i];
-                var arg = i < nArgs 
-                    ? factory.CreateType(symbol.TypeArgs[i]) 
+            {
+                var p = symbol.Definition.TypeParameters[i];
+                var arg = i < nArgs
+                    ? factory.CreateType(symbol.TypeArgs[i])
                     : null;
                 if (arg != null)
                     list.Add(arg);
@@ -166,13 +167,13 @@ namespace Plato.Compiler
 
     // A function signature generates types (and constraints)
     // It is like a function. 
-    public class FunctionSignature 
+    public class TypedFunctionSignature
     {
         public IReadOnlyList<Type> Parameters { get; }
         public Type ReturnType { get; }
         public string Name { get; }
 
-        public FunctionSignature(FunctionSymbol f, TypeFactory factory)
+        public TypedFunctionSignature(FunctionDefinition f, TypeFactory factory)
         {
             Name = f.Name;
             Parameters = f.Parameters.Select(factory.CreateType).ToList();
@@ -184,7 +185,7 @@ namespace Plato.Compiler
 
         public override bool Equals(object obj)
             => obj != null
-               && obj is FunctionSignature other
+               && obj is TypedFunctionSignature other
                && GetType() == other.GetType()
                && Name == other.Name
                && Equals(ReturnType, other.ReturnType)
@@ -194,58 +195,62 @@ namespace Plato.Compiler
             => Hasher.Hash(Parameters.Cast<object>().Append(Name).Append(ReturnType).ToArray());
     }
 
-    public class Function
+    public class TypedFunction
     {
-        public FunctionSignature Signature { get; }
-        public Function(FunctionSymbol f, TypeFactory factory)
-            => Signature = new FunctionSignature(f, factory);
-        public override string ToString() 
+        public TypedFunctionSignature Signature { get; }
+        public TypedFunction(FunctionDefinition f, TypeFactory factory)
+            => Signature = new TypedFunctionSignature(f, factory);
+        public override string ToString()
             => Signature.ToString();
     }
 
     public class Concept
     {
         public IReadOnlyList<Type> InheritedTypes { get; }
-        public List<Function> Functions { get; } = new List<Function>();
-        public SelfType Self { get; } 
-        public TypeDefSymbol Symbol { get; }
-        public string Name => Symbol.Name;
+        public List<TypedFunction> Functions { get; } = new List<TypedFunction>();
+        public SelfType Self { get; }
+        public TypeDefinition Definition { get; }
+        public string Name => Definition.Name;
 
-        public Concept(TypeDefSymbol symbol, TypeFactory factory)
+        public Concept(TypeDefinition definition, TypeFactory factory)
         {
-            if (!symbol.IsConcept())
+            if (!definition.IsConcept())
                 throw new Exception("Expected a concept");
-            Symbol = symbol;
+            Definition = definition;
             Self = factory.CreateSelf(this);
-            InheritedTypes = symbol.Inherits.Select(factory.CreateType).ToList();
+            InheritedTypes = definition.Inherits.Select(factory.CreateType).ToList();
         }
     }
 
+    // TODO: this doesn't seem very convincing. 
     public class TypeFactory
     {
-        public Dictionary<Symbol, Type> TypesFromSymbolDeclarations { get; } = new Dictionary<Symbol, Type>();
+        public Dictionary<TypeDefinition, Type> DefinitionTypes { get; } = new Dictionary<TypeDefinition, Type>();
+
         public List<TypeVariable> TypeVariables { get; } = new List<TypeVariable>();
         public IEnumerable<TypeReference> TypeReferences => AllTypes.OfType<TypeReference>();
         public HashSet<Type> AllTypes { get; } = new HashSet<Type>();
         public IReadOnlyList<Concept> Concepts { get; }
-        public List<Function> Functions { get; } = new List<Function>();
-        public Dictionary<string, Concept> LookupConcepts { get; } = new Dictionary<string, Concept>();
+        public Dictionary<FunctionDefinition, TypedFunction> Functions { get; } = new Dictionary<FunctionDefinition, TypedFunction>();
         public SelfType CurrentSelf { get; set; }
 
-        public Function Register(Function f)
+        //public Dictionary<Expression, TypeDefinition> ExpressionTypes { get; } = new Dictionary<Expression, TypeDefinition>();
+        //public Dictionary<Definition, TypeDefinition> DefinitionTypes { get; } = new Dictionary<Definition, TypeDefinition>();
+
+        public TypedFunction Register(FunctionDefinition fs, TypedFunction tf)
         {
-            Functions.Add(f);
-            return f;
+            Functions.Add(fs, tf);
+            return tf;
         }
 
         public T Register<T>(T self) where T : Type
         {
             var typeVar = self as TypeVariable;
             var typeRef = self as TypeReference;
-            var sym = self.Declaration;
+            var sym = self.Definition;
             if (sym != null)
             {
-                TypesFromSymbolDeclarations[sym] = self;
+                DefinitionTypes[sym] = self;
             }
 
             if (typeVar != null)
@@ -269,7 +274,7 @@ namespace Plato.Compiler
         public SelfType CreateSelf(Concept concept)
             => Register(new SelfType(this));
 
-        public Type CreateType(TypeRefSymbol symbol)
+        public Type CreateType(TypeExpression symbol)
         {
             if (symbol.Name == "Self")
             {
@@ -280,32 +285,32 @@ namespace Plato.Compiler
             return Register(r);
         }
 
-        public Type CreateType(TypeDefSymbol symbol)
-            => CreateType(symbol.ToRef());
+        public Type CreateType(TypeDefinition definition)
+            => CreateType(definition.ToTypeExpression());
 
-        public Type CreateType(ParameterSymbol symbol) 
-            => CreateType(symbol.Type);
+        public Type CreateType(ParameterDefinition definition)
+            => CreateType(definition.Type);
 
-        public ConstrainedVariable CreateConstrainedVariable(TypeRefSymbol concept, Symbol declaration)
-            => Register(new ConstrainedVariable(CreateType(concept), declaration, this));
+        public ConstrainedVariable CreateConstrainedVariable(TypeExpression concept, TypeDefinition definition)
+            => Register(new ConstrainedVariable(CreateType(concept), definition, this));
 
-        public AnyType CreateAny() 
+        public AnyType CreateAny()
             => Register(new AnyType(this));
-        
-        public Function CreateFunction(FunctionSymbol symbol) 
-            => Register(new Function(symbol, this));
+
+        public TypedFunction CreateFunction(FunctionDefinition definition)
+            => Register(definition, new TypedFunction(definition, this));
 
         public void ComputeFunctions(Concept c)
         {
             CurrentSelf = c.Self;
-            foreach (var f in c.Symbol.Functions)
+            foreach (var f in c.Definition.Functions)
             {
                 var f2 = CreateFunction(f);
                 c.Functions.Add(f2);
             }
         }
 
-        public TypeFactory(IReadOnlyList<TypeDefSymbol> types)
+        public TypeFactory(IReadOnlyList<TypeDefinition> types)
         {
             Concepts = types
                 .Where(t => t.IsConcept())
@@ -327,16 +332,16 @@ namespace Plato.Compiler
 
                     var equals = tr1.Equals(tr2);
                     Debug.Assert(equals == tr2.Equals(tr1), "Equals should be equivalent regardless of order");
-                    
+
                     var s1 = tr1.ToString();
                     var s2 = tr2.ToString();
                     var strEquals = s1.Equals(s2);
                     Debug.Assert(equals == strEquals, "Value and string equivalency should be the same");
-                    
+
                     var h1 = s1.GetHashCode();
                     var h2 = s2.GetHashCode();
                     Debug.Assert(!equals || h1 == h2, "When two values are equal, they should have the same hash code");
-                    
+
                 }
             }
         }

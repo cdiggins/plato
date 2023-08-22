@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using Plato.Compiler;
+using Plato.Compiler.Ast;
 
 namespace PlatoTests
 {

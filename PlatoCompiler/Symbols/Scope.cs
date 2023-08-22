@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Plato.Compiler
+namespace Plato.Compiler.Symbols
 {
     public class Scope
     {
@@ -12,7 +12,7 @@ namespace Plato.Compiler
 
         public Scope Bind(string name, Symbol value)
         {
-            Bindings[name] =value;
+            Bindings[name] = value;
             return this;
         }
 
@@ -22,7 +22,7 @@ namespace Plato.Compiler
                 return new Binding(name, Bindings[name]);
             return Parent?.Find(name);
         }
-       
+
         public Symbol GetValue(string name)
             => Find(name)?.Value;
 

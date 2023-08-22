@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Plato.Compiler
+namespace Plato.Compiler.Symbols
 {
     public class Binding
     {
@@ -23,7 +23,7 @@ namespace Plato.Compiler
         public static Binding Find(this Binding binding, string name)
             => binding.Enumerate().FirstOrDefault(x => x.Name == name);
 
-        public static Binding Add(this Binding binding, string name, Symbol value)
+        public static Binding Add(this Binding binding, string name, Definition value)
             => new Binding(name, value, binding);
     }
 }
