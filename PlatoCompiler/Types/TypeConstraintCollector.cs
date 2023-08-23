@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using Plato.Compiler.Ast;
 using Plato.Compiler.Symbols;
-using Tuple = Plato.Compiler.Symbols.Tuple;
 
 namespace Plato.Compiler.Types
 {
@@ -18,9 +15,9 @@ namespace Plato.Compiler.Types
         {
             FunctionDefinition = function;
             TypeFactory = typeFactory;
-            if (!TypeFactory.Functions.ContainsKey(FunctionDefinition))
+            if (!TypeFactory.TypedFunctionLookup.ContainsKey(FunctionDefinition))
                 throw new Exception($"No typed function was found for the function {FunctionDefinition}");
-            TypedFunction = TypeFactory.Functions[FunctionDefinition];
+            TypedFunction = TypeFactory.TypedFunctionLookup[FunctionDefinition];
             GatherConstraints(FunctionDefinition.Body);
         }
 

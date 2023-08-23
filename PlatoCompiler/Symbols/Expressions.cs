@@ -9,8 +9,13 @@ namespace Plato.Compiler.Symbols
     public abstract class Expression : Symbol
     {
         public IReadOnlyList<Expression> Children { get; }
+
         protected Expression(params Expression[] children)
-            => Children = children;
+        {
+            if (children.Contains(this))
+                throw new Exception("Circular expression");
+            Children = children;
+        }
     }
 
     public abstract class Reference : Expression
@@ -146,6 +151,8 @@ namespace Plato.Compiler.Symbols
     {
         public static IEnumerable<Expression> GetExpressionTree(this Expression expr)
         {
+            if (expr == null)
+                yield break;
             yield return expr;
             foreach (var c in expr.Children)
                 foreach (var x in c.GetExpressionTree())

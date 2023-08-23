@@ -1,10 +1,4 @@
-﻿using Parakeet;
-using System.Collections.Generic;
-using System;
-using System.Diagnostics;
-using System.Linq;
-
-namespace Plato.Compiler.Symbols
+﻿namespace Plato.Compiler.Symbols
 {
     //public class SymbolWriterJavaScript : CodeBuilder<SymbolWriterJavaScript>
     //{

@@ -7,6 +7,7 @@ using Parakeet.Demos.Plato;
 using Plato.Compiler;
 using Plato.Compiler.Ast;
 using Plato.Compiler.Symbols;
+using Plato.Compiler.Utilities;
 using Ptarmigan.Utils;
 
 namespace PlatoWinFormsEditor;

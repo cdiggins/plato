@@ -2,224 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Security.Cryptography;
 using Plato.Compiler.Ast;
 using Plato.Compiler.Symbols;
 using Tuple = Plato.Compiler.Symbols.Tuple;
 
 namespace Plato.Compiler.Types
 {
-    public static class Hasher
-    {
-        public static int Combine(int a, int b)
-        {
-            unchecked
-            {
-                return a * 397 ^ b;
-            }
-        }
-
-        public static int Combine(params int[] codes)
-            => codes.Aggregate(0, Combine);
-
-        public static int Combine(IEnumerable<int> codes)
-            => codes.Aggregate(0, Combine);
-
-        public static int GetHashCode(object o)
-            => o?.GetHashCode() ?? 0;
-
-        public static int Hash(params object[] objects)
-            => Combine(objects.Select(GetHashCode));
-
-        public static int Hash<T>(IEnumerable<T> objects)
-            => Combine(objects.Select(x => GetHashCode(x)));
-    }
-
-    public abstract class Type
-    {
-        public string Name { get; }
-        public TypeDefinition Definition { get; }
-
-        // ReSharper disable once UnusedParameter.Local
-        protected Type(string name, TypeDefinition definition, TypeFactory _)
-        {
-            Name = name;
-            Definition = definition;
-        }
-
-        public override string ToString()
-            => $"{Name}";
-
-        public override bool Equals(object obj)
-            => obj != null
-               && GetType() == obj.GetType()
-               && obj is Type other
-               && Name == other.Name;
-
-        public override int GetHashCode()
-            => Hasher.Hash(Name);
-    }
-
-    public class TypeVariable : Type
-    {
-        public int Id { get; } = Symbol.NextId++;
-
-        public TypeVariable(string name, TypeDefinition definition, TypeFactory factory)
-            : base(name, definition, factory)
-        { }
-
-        public override string ToString()
-            => $"`{Name}_{Id}";
-
-        public override bool Equals(object obj)
-            => base.Equals(obj)
-               && obj is TypeVariable other
-               && Id == other.Id;
-
-        public override int GetHashCode()
-            => Hasher.Hash(base.GetHashCode(), Id);
-    }
-
-    public class SelfType : TypeVariable
-    {
-        public SelfType(TypeFactory factory)
-            : base("Self", null, factory)
-        { }
-    }
-
-    public class AnyType : TypeVariable
-    {
-        public AnyType(TypeFactory factory)
-            : base("Any", null, factory)
-        { }
-    }
-
-    public class ConstrainedVariable : TypeVariable
-    {
-        public Type Constraint { get; }
-
-        public ConstrainedVariable(Type constraint, TypeDefinition definition, TypeFactory factory)
-            : base(constraint.Name, definition, factory)
-        {
-            Constraint = constraint;
-        }
-
-        public override bool Equals(object obj)
-            => base.Equals(obj)
-               && obj is ConstrainedVariable other
-               && Equals(Constraint, other.Constraint);
-
-        public override int GetHashCode()
-            => Hasher.Combine(base.GetHashCode(), Constraint.GetHashCode());
-    }
-
-    public class TypeReference : Type
-    {
-        public IReadOnlyList<Type> TypeArguments { get; }
-        public int DefId => Type.Id;
-        public TypeDefinition Type => (TypeDefinition)Definition;
-
-        public TypeReference(TypeDefinition definition, IReadOnlyList<Type> args, TypeFactory factory)
-            : base(definition.Name, definition, factory)
-        {
-            TypeArguments = args;
-        }
-
-        public override string ToString()
-        {
-            var tps = string.Join(", ", TypeArguments);
-            return $"{Name}_{DefId}<{tps}>";
-        }
-
-        public override bool Equals(object obj)
-            => base.Equals(obj)
-               && obj is TypeReference other
-               && DefId == other.DefId
-               && TypeArguments.SequenceEqual(other.TypeArguments);
-
-        public override int GetHashCode()
-            => Hasher.Combine(base.GetHashCode(), DefId, Hasher.Hash(TypeArguments));
-    }
-
-    // A function signature generates types (and constraints)
-    // It is like a function. 
-    public class TypedFunctionSignature
-    {
-        public IReadOnlyList<Type> Parameters { get; }
-        public Type ReturnType { get; }
-        public string Name { get; }
-
-        public TypedFunctionSignature(FunctionDefinition f, TypeFactory factory)
-        {
-            Name = f.Name;
-            Parameters = f.Parameters.Select(factory.CreateType).ToList();
-            ReturnType = factory.CreateType(f.Type);
-        }
-
-        public override string ToString()
-            => $"{Name}({string.Join(", ", Parameters)}): {ReturnType}";
-
-        public override bool Equals(object obj)
-            => obj != null
-               && obj is TypedFunctionSignature other
-               && GetType() == other.GetType()
-               && Name == other.Name
-               && Equals(ReturnType, other.ReturnType)
-               && Parameters.SequenceEqual(other.Parameters);
-
-        public override int GetHashCode()
-            => Hasher.Hash(Parameters.Cast<object>().Append(Name).Append(ReturnType).ToArray());
-    }
-
-    public class UnifiedType : Type
-    {
-        public Type TypeA { get; }
-        public Type TypeB { get; }
-        public UnifiedType(Type typeA, Type typeB, TypeFactory factory)
-            : base("$unified_type", null, factory)
-        {
-            TypeA = typeA;
-            TypeB = typeB;
-        }   
-    }
-
-    public class TypeUnion : Type
-    {
-        public IReadOnlyList<Type> Options { get; }
-        public TypeUnion(IReadOnlyList<Type> options, TypeFactory factory)
-            : base("$one_of", null, null)
-        {
-            Options = options;
-        }
-    }
-
-    public class TypedFunction
-    {
-        public TypedFunctionSignature Signature { get; }
-        public TypedFunction(FunctionDefinition f, TypeFactory factory)
-            => Signature = new TypedFunctionSignature(f, factory);
-        public override string ToString()
-            => Signature.ToString();
-    }
-
-    public class Concept
-    {
-        public IReadOnlyList<Type> InheritedTypes { get; }
-        public List<TypedFunction> Functions { get; } = new List<TypedFunction>();
-        public SelfType Self { get; }
-        public TypeDefinition Definition { get; }
-        public string Name => Definition.Name;
-
-        public Concept(TypeDefinition definition, TypeFactory factory)
-        {
-            if (!definition.IsConcept())
-                throw new Exception("Expected a concept");
-            Definition = definition;
-            Self = factory.CreateSelf();
-            InheritedTypes = definition.Inherits.Select(factory.CreateType).ToList();
-        }
-    }
-
     public class TypeFactory
     {
         public Dictionary<TypeDefinition, Type> DefinitionTypes { get; } = new Dictionary<TypeDefinition, Type>();
@@ -229,9 +17,13 @@ namespace Plato.Compiler.Types
         public IEnumerable<TypeReference> TypeReferences => AllTypes.OfType<TypeReference>();
         public HashSet<Type> AllTypes { get; } = new HashSet<Type>();
         public IReadOnlyList<Concept> Concepts { get; }
-        public Dictionary<FunctionDefinition, TypedFunction> Functions { get; } = new Dictionary<FunctionDefinition, TypedFunction>();
+        public Dictionary<FunctionDefinition, TypedFunction> TypedFunctionLookup { get; } = new Dictionary<FunctionDefinition, TypedFunction>();
         public SelfType CurrentSelf { get; set; }
         public Dictionary<string, Type> TypeLookup { get; }
+
+        public IEnumerable<FunctionDefinition> FunctionDefinitions => TypedFunctionLookup.Keys;
+        public IEnumerable<TypedFunction> TypedFunctions => TypedFunctionLookup.Values;
+
         public TypeFactory(IReadOnlyList<TypeDefinition> types)
         {
             Concepts = types
@@ -239,15 +31,21 @@ namespace Plato.Compiler.Types
                 .Select(t => new Concept(t, this))
                 .ToList();
 
-            TypeLookup = types.ToDictionary(t => t.Name, t => CreateType(t));
+            TypeLookup = types.Where(t => t.IsType() || t.IsConcept())
+                .ToDictionary(t => t.Name, t => CreateType(t));
 
             foreach (var c in Concepts)
             {
                 ComputeFunctions(c);
             }
 
-            // TODO:
-            // Foreach function work out the expression types. 
+            foreach (var f in FunctionDefinitions)
+            {
+                Resolve(f.Body);
+                foreach (var x in f.Body.GetExpressionTree())
+                    if (GetType(x) == null)
+                        throw new Exception($"Could not find type for expression {x}");
+            }
 
             // Note: interesting exercise in assuring that your hash-code/equals are implemented correctly. 
             foreach (var tr1 in TypeReferences)
@@ -274,14 +72,19 @@ namespace Plato.Compiler.Types
 
         public TypedFunction Register(FunctionDefinition fs, TypedFunction tf)
         {
-            Functions.Add(fs, tf);
+            TypedFunctionLookup.Add(fs, tf);
             return tf;
         }
+
+        public TypedFunction GetTypedFunction(FunctionDefinition fd)
+            => TypedFunctionLookup[fd];
+
+        public Type GetType(Expression expression)
+            => ExpressionTypes[expression];
 
         public T Register<T>(T self) where T : Type
         {
             var typeVar = self as TypeVariable;
-            var typeRef = self as TypeReference;
             var sym = self.Definition;
             if (sym != null)
             {
@@ -297,13 +100,8 @@ namespace Plato.Compiler.Types
                 return self;
             }
 
-            if (typeRef != null)
-            {
-                AllTypes.Add(self);
-                return self;
-            }
-
-            throw new Exception($"{self} is neither a type reference or a type variable");
+            AllTypes.Add(self);
+            return self;
         }
 
         public SelfType CreateSelf()
@@ -331,10 +129,41 @@ namespace Plato.Compiler.Types
             }
         }
 
+        public Type GetReturnType(Type t)
+        {
+            if (t is TypeReference tr)
+            {
+                if (!tr.Type.Equals(PrimitiveTypeDefinitions.Function))
+                {
+                    throw new Exception($"Not a reference to a Function instead {tr.Type}");
+                }
+
+                if (tr.TypeArguments.Count > 0)
+                {
+                    return tr.TypeArguments[tr.TypeArguments.Count - 1];
+                }
+
+                // Note: this is a reference to an unbound type. It should never happen 
+                // return CreateAny();
+                throw new Exception("Unexpected number of type arguments");
+            }
+
+            if (t is TypeUnion tu)
+            {
+                var options = tu.Options.Select(GetReturnType).ToList();
+                return new TypeUnion(options, this);
+            }
+
+            throw new Exception("Can only get return type of unions or functions");
+        }
+
         public Type ResolveReturnType(Expression func)
         {
-            // TODO: note, I think this could generate a new type variable in some cases. If we don't know what the thing  is. 
-            throw new NotImplementedException();
+            var t = GetType(func);
+            if (t == null)
+                throw new Exception($"Invoked expression {func} was not assigned a type");
+
+            return GetReturnType(t);
         }
 
         public Type CreateType(Lambda lambda)
@@ -351,6 +180,10 @@ namespace Plato.Compiler.Types
         public Type CreateType(FunctionGroupReference functionGroup)
         {
             var options = functionGroup.Definition.Functions.Select(CreateType).ToArray();
+            if (options.Length == 0)
+                throw new Exception("Internal error");
+            if (options.Length == 1)
+                return options[0];
             return Register(new TypeUnion(options, this));
         }
 
@@ -368,6 +201,9 @@ namespace Plato.Compiler.Types
 
         public Type Resolve(Expression expression)
         {
+            if (expression == null)
+                return null;
+
             Type r;
             if (ExpressionTypes.ContainsKey(expression))
                 return ExpressionTypes[expression];
@@ -378,7 +214,7 @@ namespace Plato.Compiler.Types
             switch (expression)
             {
                 case Argument argument:
-                    r = Resolve(argument);
+                    r = Resolve(argument.Expression);
                     break;
 
                 case Assignment assignment:
@@ -393,7 +229,7 @@ namespace Plato.Compiler.Types
                     break;
 
                 case FunctionCall functionCall:
-                    r = ResolveReturnType(functionCall);
+                    r = ResolveReturnType(functionCall.Function);
                     break;
 
                 case FunctionGroupReference functionGroupReference:

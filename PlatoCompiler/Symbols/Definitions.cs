@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Plato.Compiler.Ast;
-using Plato.Compiler.Types;
 
 namespace Plato.Compiler.Symbols
 {
