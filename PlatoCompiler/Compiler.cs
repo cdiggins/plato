@@ -34,7 +34,6 @@ namespace Plato.Compiler
         public IReadOnlyList<AstNode> Trees { get; set; }
         public SymbolResolver SymbolResolver { get; set; }
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; set; }
-        public Operations Operations { get; set; }
         public IReadOnlyList<FunctionDefinition> Functions { get; } 
         public IReadOnlyList<TypeDefinition> TypeDefs { get; set; }
 
@@ -70,7 +69,7 @@ namespace Plato.Compiler
             try
             {
                 Log("Creating symbol resolver");
-                SymbolResolver = new SymbolResolver(Operations, Logger);
+                SymbolResolver = new SymbolResolver(Logger);
 
                 Log("Creating type definitions");
                 TypeDefs = SymbolResolver.CreateTypeDefs(TypeDeclarations).ToList();

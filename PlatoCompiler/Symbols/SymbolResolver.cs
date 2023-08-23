@@ -24,14 +24,12 @@ namespace Plato.Compiler.Symbols
             }
         }
 
-        public SymbolResolver(Operations ops, Logger logger)
+        public SymbolResolver(Logger logger)
         {
-            Operations = ops;
             BindPredefinedSymbols();
             Logger = logger;
         }
 
-        public Operations Operations { get; }
         public Logger Logger { get; }
         public List<ResolutionError> Errors { get; } = new List<ResolutionError>();
         public Scope ValueBindingsScope { get; set; } = new Scope(null);

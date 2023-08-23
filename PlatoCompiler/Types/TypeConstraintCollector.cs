@@ -1,25 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Plato.Compiler.Ast;
 using Plato.Compiler.Symbols;
+using Tuple = Plato.Compiler.Symbols.Tuple;
 
 namespace Plato.Compiler.Types
 {
-    // TODO:
-    // I think having a constraint tree is too complex.
-    // I can just create a bunch of constraints. 
-    // Afterwards ... I can have a separate system for choosing functions. 
-    // We basically walk the tree ... and if there is a function ... we can add new constraints. 
-    // If one of those constraints don't work. 
-    // Or another way of looking at it, is create a literal graph outside of this thing. 
-    // This thing creates additional constraints ... based on the chosen function. 
-    // If a function chosen violates the constraint chain, we throw it out. 
-    // See the first thing to do is create constraints. 
-    // The next thing is to identify conflicts 
-    // And just before that identifying "options" is a good thing.
-    // Remember that options might not change anything. 
-    // Also we need to realize that in some cases the options might not change anything.
-    // At the same time, there is almost no code here. 
-
     public class TypeConstraintCollector
     {
         public FunctionDefinition FunctionDefinition { get; }

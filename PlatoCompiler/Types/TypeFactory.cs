@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography;
+using Plato.Compiler.Ast;
 using Plato.Compiler.Symbols;
+using Tuple = Plato.Compiler.Symbols.Tuple;
 
 namespace Plato.Compiler.Types
 {
@@ -116,37 +119,10 @@ namespace Plato.Compiler.Types
         public int DefId => Type.Id;
         public TypeDefinition Type => (TypeDefinition)Definition;
 
-        public TypeReference(string name, TypeDefinition definition, IReadOnlyList<Type> args, TypeFactory factory)
-            : base(name, definition, factory)
+        public TypeReference(TypeDefinition definition, IReadOnlyList<Type> args, TypeFactory factory)
+            : base(definition.Name, definition, factory)
         {
             TypeArguments = args;
-        }
-
-        public static TypeReference CreateFromRef(TypeExpression symbol, TypeFactory factory)
-        {
-            var def = symbol.Definition;
-            if (def == null)
-                throw new Exception("Missing type definition");
-            var nArgs = symbol.TypeArgs.Count;
-            var nParams = symbol.Definition.TypeParameters.Count;
-            if (nArgs > nParams)
-                throw new Exception($"Passed too many type arguments {nArgs} expected {nParams}");
-            var list = new List<Type>();
-            for (var i = 0; i < nParams; ++i)
-            {
-                var p = symbol.Definition.TypeParameters[i];
-                var arg = i < nArgs
-                    ? factory.CreateType(symbol.TypeArgs[i])
-                    : null;
-                if (arg != null)
-                    list.Add(arg);
-                else if (p.Constraint != null)
-                    list.Add(factory.CreateConstrainedVariable(p.Constraint, p));
-                else
-                    list.Add(factory.CreateAny());
-            }
-
-            return new TypeReference(def.Name, def, list, factory);
         }
 
         public override string ToString()
@@ -195,6 +171,28 @@ namespace Plato.Compiler.Types
             => Hasher.Hash(Parameters.Cast<object>().Append(Name).Append(ReturnType).ToArray());
     }
 
+    public class UnifiedType : Type
+    {
+        public Type TypeA { get; }
+        public Type TypeB { get; }
+        public UnifiedType(Type typeA, Type typeB, TypeFactory factory)
+            : base("$unified_type", null, factory)
+        {
+            TypeA = typeA;
+            TypeB = typeB;
+        }   
+    }
+
+    public class TypeUnion : Type
+    {
+        public IReadOnlyList<Type> Options { get; }
+        public TypeUnion(IReadOnlyList<Type> options, TypeFactory factory)
+            : base("$one_of", null, null)
+        {
+            Options = options;
+        }
+    }
+
     public class TypedFunction
     {
         public TypedFunctionSignature Signature { get; }
@@ -217,15 +215,15 @@ namespace Plato.Compiler.Types
             if (!definition.IsConcept())
                 throw new Exception("Expected a concept");
             Definition = definition;
-            Self = factory.CreateSelf(this);
+            Self = factory.CreateSelf();
             InheritedTypes = definition.Inherits.Select(factory.CreateType).ToList();
         }
     }
 
-    // TODO: this doesn't seem very convincing. 
     public class TypeFactory
     {
         public Dictionary<TypeDefinition, Type> DefinitionTypes { get; } = new Dictionary<TypeDefinition, Type>();
+        public Dictionary<Expression, Type> ExpressionTypes { get; } = new Dictionary<Expression, Type>();
 
         public List<TypeVariable> TypeVariables { get; } = new List<TypeVariable>();
         public IEnumerable<TypeReference> TypeReferences => AllTypes.OfType<TypeReference>();
@@ -233,9 +231,46 @@ namespace Plato.Compiler.Types
         public IReadOnlyList<Concept> Concepts { get; }
         public Dictionary<FunctionDefinition, TypedFunction> Functions { get; } = new Dictionary<FunctionDefinition, TypedFunction>();
         public SelfType CurrentSelf { get; set; }
+        public Dictionary<string, Type> TypeLookup { get; }
+        public TypeFactory(IReadOnlyList<TypeDefinition> types)
+        {
+            Concepts = types
+                .Where(t => t.IsConcept())
+                .Select(t => new Concept(t, this))
+                .ToList();
 
-        //public Dictionary<Expression, TypeDefinition> ExpressionTypes { get; } = new Dictionary<Expression, TypeDefinition>();
-        //public Dictionary<Definition, TypeDefinition> DefinitionTypes { get; } = new Dictionary<Definition, TypeDefinition>();
+            TypeLookup = types.ToDictionary(t => t.Name, t => CreateType(t));
+
+            foreach (var c in Concepts)
+            {
+                ComputeFunctions(c);
+            }
+
+            // TODO:
+            // Foreach function work out the expression types. 
+
+            // Note: interesting exercise in assuring that your hash-code/equals are implemented correctly. 
+            foreach (var tr1 in TypeReferences)
+            {
+                foreach (var tr2 in TypeReferences)
+                {
+                    var refEquals = ReferenceEquals(tr1, tr2);
+                    Debug.Assert(refEquals == ReferenceEquals(tr2, tr1), "Reference equals should be equivalent regardless of order");
+
+                    var equals = tr1.Equals(tr2);
+                    Debug.Assert(equals == tr2.Equals(tr1), "Equals should be equivalent regardless of order");
+
+                    var s1 = tr1.ToString();
+                    var s2 = tr2.ToString();
+                    var strEquals = s1.Equals(s2);
+                    Debug.Assert(equals == strEquals, "Value and string equivalency should be the same");
+
+                    var h1 = s1.GetHashCode();
+                    var h2 = s2.GetHashCode();
+                    Debug.Assert(!equals || h1 == h2, "When two values are equal, they should have the same hash code");
+                }
+            }
+        }
 
         public TypedFunction Register(FunctionDefinition fs, TypedFunction tf)
         {
@@ -271,22 +306,8 @@ namespace Plato.Compiler.Types
             throw new Exception($"{self} is neither a type reference or a type variable");
         }
 
-        public SelfType CreateSelf(Concept concept)
+        public SelfType CreateSelf()
             => Register(new SelfType(this));
-
-        public Type CreateType(TypeExpression symbol)
-        {
-            if (symbol.Name == "Self")
-            {
-                Debug.Assert(CurrentSelf != null);
-                return CurrentSelf;
-            }
-            var r = TypeReference.CreateFromRef(symbol, this);
-            return Register(r);
-        }
-
-        public Type CreateType(TypeDefinition definition)
-            => CreateType(definition.ToTypeExpression());
 
         public Type CreateType(ParameterDefinition definition)
             => CreateType(definition.Type);
@@ -310,40 +331,165 @@ namespace Plato.Compiler.Types
             }
         }
 
-        public TypeFactory(IReadOnlyList<TypeDefinition> types)
+        public Type ResolveReturnType(Expression func)
         {
-            Concepts = types
-                .Where(t => t.IsConcept())
-                .Select(t => new Concept(t, this))
-                .ToList();
+            // TODO: note, I think this could generate a new type variable in some cases. If we don't know what the thing  is. 
+            throw new NotImplementedException();
+        }
 
-            foreach (var c in Concepts)
-            {
-                ComputeFunctions(c);
-            }
+        public Type CreateType(Lambda lambda)
+        {
+            return CreateType(lambda.Function);
+        }
 
-            // Note: interesting exercise in assuring that your hash-code/equals are implemented correctly. 
-            foreach (var tr1 in TypeReferences)
+        public Type CreateType(Tuple tuple)
+        {
+            var args = tuple.Children.Select(Resolve).ToArray();
+            return CreateType(PrimitiveTypeDefinitions.Tuple, args);
+        }
+
+        public Type CreateType(FunctionGroupReference functionGroup)
+        {
+            var options = functionGroup.Definition.Functions.Select(CreateType).ToArray();
+            return Register(new TypeUnion(options, this));
+        }
+
+        public Type CreateType(FunctionDefinition function)
+        {
+            var ret = function.Type;
+            var args = function.Parameters.Select(p => p.Type).Append(ret).Select(CreateType).ToArray();
+            return CreateType(PrimitiveTypeDefinitions.Function, args);
+        }
+
+        public Type FindType(string name)
+        {
+            return TypeLookup[name];
+        }
+
+        public Type Resolve(Expression expression)
+        {
+            Type r;
+            if (ExpressionTypes.ContainsKey(expression))
+                return ExpressionTypes[expression];
+
+            foreach (var child in expression.Children)
+                Resolve(child);
+
+            switch (expression)
             {
-                foreach (var tr2 in TypeReferences)
+                case Argument argument:
+                    r = Resolve(argument);
+                    break;
+
+                case Assignment assignment:
+                    r = Resolve(assignment.LValue);
+                    break;
+
+                case ConditionalExpression conditionalExpression:
+                    r = new UnifiedType(
+                        Resolve(conditionalExpression.IfTrue),
+                        Resolve(conditionalExpression.IfFalse),
+                        this);
+                    break;
+
+                case FunctionCall functionCall:
+                    r = ResolveReturnType(functionCall);
+                    break;
+
+                case FunctionGroupReference functionGroupReference:
+                    r = CreateType(functionGroupReference);
+                    break;
+
+                case Lambda lambda:
+                    r = CreateType(lambda);
+                    break;
+
+                case Literal literal:
                 {
-                    var refEquals = ReferenceEquals(tr1, tr2);
-                    Debug.Assert(refEquals == ReferenceEquals(tr2, tr1), "Reference equals should be equivalent regardless of order");
+                    switch (literal.TypeEnum)
+                    {
+                        case LiteralTypesEnum.Integer:
+                            r = FindType("Integer");
+                            break;
+                        case LiteralTypesEnum.Number:
+                            r = FindType("Number");
+                            break;
+                        case LiteralTypesEnum.Boolean:
+                            r = FindType("Boolean");
+                            break;
+                        case LiteralTypesEnum.String:
+                            r = FindType("String");
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
 
-                    var equals = tr1.Equals(tr2);
-                    Debug.Assert(equals == tr2.Equals(tr1), "Equals should be equivalent regardless of order");
-
-                    var s1 = tr1.ToString();
-                    var s2 = tr2.ToString();
-                    var strEquals = s1.Equals(s2);
-                    Debug.Assert(equals == strEquals, "Value and string equivalency should be the same");
-
-                    var h1 = s1.GetHashCode();
-                    var h2 = s2.GetHashCode();
-                    Debug.Assert(!equals || h1 == h2, "When two values are equal, they should have the same hash code");
-
+                    break;
                 }
+
+                case ParameterReference parameterReference:
+                    r = CreateType(parameterReference.Type);
+                    break;
+
+                case Parenthesized parenthesized:
+                    r = Resolve(parenthesized.Expression);
+                    break;
+
+                case PredefinedReference predefinedReference:
+                    r = CreateType(predefinedReference.Definition.Type);
+                    break;
+
+                case Reference reference:
+                    r = CreateType(reference.Definition.Type);
+                    break;
+
+                case Tuple tuple:
+                    r = CreateType(tuple);
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(expression));
             }
+
+            ExpressionTypes.Add(expression, r);
+            return r;
+        }
+
+        public Type CreateType(TypeDefinition definition, params Type[] ps)
+            => Register(new TypeReference(definition, ps, this));
+
+        public Type CreateType(TypeExpression symbol)
+        {
+            if (symbol.Name == "Self")
+            {
+                Debug.Assert(CurrentSelf != null);
+                Debug.Assert(symbol.TypeArgs.Count == 0);
+                return CurrentSelf;
+            }
+
+            var def = symbol.Definition;
+            if (def == null)
+                throw new Exception("Missing type definition");
+            var nArgs = symbol.TypeArgs.Count;
+            var nParams = symbol.Definition.TypeParameters.Count;
+            if (nArgs > nParams)
+                throw new Exception($"Passed too many type arguments {nArgs} expected {nParams}");
+            var list = new List<Type>();
+            for (var i = 0; i < nParams; ++i)
+            {
+                var p = symbol.Definition.TypeParameters[i];
+                var arg = i < nArgs
+                    ? CreateType(symbol.TypeArgs[i])
+                    : null;
+                if (arg != null)
+                    list.Add(arg);
+                else if (p.Constraint != null)
+                    list.Add(CreateConstrainedVariable(p.Constraint, p));
+                else
+                    list.Add(CreateAny());
+            }
+
+            return CreateType(def, list.ToArray());
         }
     }
 }
