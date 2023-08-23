@@ -366,7 +366,10 @@ namespace Plato.Compiler.Symbols
                 return this;
 
             var t = Factory.GetType(expr);
-            WriteLine($"/* {t} */");
+
+            // Don't put types in front of an argument (it is the same as the other)
+            if (!(expr is Argument))
+                WriteLine($"/* {t} */");
 
             switch (expr)
             {

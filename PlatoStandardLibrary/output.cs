@@ -37,13 +37,11 @@ public static partial class Extensions
 {
     public static Integer Count<Self, T>(this Self v) where Self: Vector<Self, T>
     {
-        return /* Union(Integer_23<>, Integer_23<>) */
-        /* Union(Function_1<`Self_6262, Integer_23<>>, Function_1<`Self_6262, Integer_23<>>) */
+        return /* Integer_23<> */
+        /* Function_1<`Self_6262, Integer_23<>> */
         Count(/* Array_11<Type_26<>> */
-        /* Array_11<Type_26<>> */
         /* Function_1<`Self_6262, Array_11<Type_26<>>> */
         FieldTypes(/* Vector_12<`Numerical_6334::Numerical_14<>> */
-        /* Vector_12<`Numerical_6334::Numerical_14<>> */
         Self));
     }
     public static T At<Self, T>(this Self v, Integer n) where Self: Vector<Self, T>
@@ -51,12 +49,9 @@ public static partial class Extensions
         return /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         v), /* Integer_23<> */
-        /* Integer_23<> */
         n);
     }
 }
@@ -71,12 +66,9 @@ public static partial class Extensions
         return /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         x), /* Integer_23<> */
-        /* Integer_23<> */
         0);
     }
 }
@@ -102,16 +94,12 @@ public static partial class Extensions
         return /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         SquareRoot(/* Numerical_14<> */
-        /* Numerical_14<> */
         /* Function_1<Array_11<`Any_6335::Any_9<>>, Numerical_14<>> */
         Sum(/* Number_22<> */
-        /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         Square(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         x))));
     }
 }
@@ -131,21 +119,16 @@ public static partial class Extensions
 {
     public static Boolean Equals<Self>(this Self a, Self b) where Self: Equatable<Self>
     {
-        return /* Union(Boolean_25<>, Boolean_25<>) */
+        return /* Boolean_25<> */
         /* Union(Function_1<Array_11<`Any_6336::Any_9<>>, Function_1<>, Boolean_25<>>, Function_1<Array_11<`Any_6337::Any_9<>>, Boolean_25<>>) */
-        All(/* Union(Boolean_25<>, Boolean_25<>) */
-        /* Union(Boolean_25<>, Boolean_25<>) */
+        All(/* Boolean_25<> */
         /* Union(Function_1<`Self_6262, `Self_6262, Boolean_25<>>, Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>>) */
         Equals(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         a), /* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         b)));
     }
 }
@@ -157,18 +140,14 @@ public static partial class Extensions
 {
     public static Self Add<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Add(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         self), /* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         other));
     }
     public static Self Negative<Self>(this Self self) where Self: Arithmetic<Self>
@@ -176,10 +155,8 @@ public static partial class Extensions
         return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262>) */
         Negative(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         self));
     }
     public static Self Reciprocal<Self>(this Self self) where Self: Arithmetic<Self>
@@ -187,58 +164,44 @@ public static partial class Extensions
         return /* `Self_6262 */
         /* Function_1<`Self_6262, `Self_6262> */
         Reciprocal(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         self));
     }
     public static Self Multiply<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Add(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         self), /* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         other));
     }
     public static Self Divide<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         self), /* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         other));
     }
     public static Self Modulo<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Modulo(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         self), /* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         other));
     }
 }
@@ -250,67 +213,52 @@ public static partial class Extensions
 {
     public static Self Add<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Add(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         self), /* Number_22<> */
-        /* Number_22<> */
         scalar);
     }
     public static Self Subtract<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Add(/* `Self_6262 */
-        /* `Self_6262 */
         self, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262>) */
         Negative(/* Number_22<> */
-        /* Number_22<> */
         scalar));
     }
     public static Self Multiply<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         self), /* Number_22<> */
-        /* Number_22<> */
         scalar);
     }
     public static Self Divide<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* `Self_6262 */
-        /* `Self_6262 */
         self, /* `Self_6262 */
-        /* `Self_6262 */
         /* Function_1<`Self_6262, `Self_6262> */
         Reciprocal(/* Number_22<> */
-        /* Number_22<> */
         scalar));
     }
     public static Self Modulo<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Modulo(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         self), /* Number_22<> */
-        /* Number_22<> */
         scalar);
     }
 }
@@ -325,15 +273,11 @@ public static partial class Extensions
         return /* Union(Boolean_25<>, `Self_6262) */
         /* Union(Function_1<Boolean_25<>, Boolean_25<>, Boolean_25<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>) */
         And(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         a), /* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         b));
     }
     public static Self Or<Self>(this Self a, Self b) where Self: BooleanOperations<Self>
@@ -341,15 +285,11 @@ public static partial class Extensions
         return /* Union(Boolean_25<>, `Self_6262) */
         /* Union(Function_1<Boolean_25<>, Boolean_25<>, Boolean_25<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>) */
         Or(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         a), /* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         b));
     }
     public static Self Not<Self>(this Self a) where Self: BooleanOperations<Self>
@@ -357,10 +297,8 @@ public static partial class Extensions
         return /* Union(Boolean_25<>, `Self_6262) */
         /* Union(Function_1<Boolean_25<>, Boolean_25<>>, Function_1<`Self_6262, `Self_6262>) */
         Not(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         a));
     }
 }
@@ -800,12 +738,9 @@ public class Vector2D: Vector<Vector2D>
         => /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         v), /* Integer_23<> */
-        /* Integer_23<> */
         n);
     public static Integer Count(Vector2D xs) => Extensions.Count(xs);
     public static T At(Vector2D xs, Integer n) => Extensions.At(xs, n);
@@ -876,12 +811,9 @@ public class Vector3D: Vector<Vector3D>
         => /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         v), /* Integer_23<> */
-        /* Integer_23<> */
         n);
     public static Integer Count(Vector3D xs) => Extensions.Count(xs);
     public static T At(Vector3D xs, Integer n) => Extensions.At(xs, n);
@@ -953,12 +885,9 @@ public class Vector4D: Vector<Vector4D>
         => /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         v), /* Integer_23<> */
-        /* Integer_23<> */
         n);
     public static Integer Count(Vector4D xs) => Extensions.Count(xs);
     public static T At(Vector4D xs, Integer n) => Extensions.At(xs, n);
@@ -1114,12 +1043,9 @@ public class AlignedBox2D: Interval<AlignedBox2D>
         => /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         v), /* Integer_23<> */
-        /* Integer_23<> */
         n);
     public static Integer Count(AlignedBox2D xs) => Extensions.Count(xs);
     public static T At(AlignedBox2D xs, Integer n) => Extensions.At(xs, n);
@@ -1192,12 +1118,9 @@ public class AlignedBox3D: Interval<AlignedBox3D>
         => /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         v), /* Integer_23<> */
-        /* Integer_23<> */
         n);
     public static Integer Count(AlignedBox3D xs) => Extensions.Count(xs);
     public static T At(AlignedBox3D xs, Integer n) => Extensions.At(xs, n);
@@ -1268,12 +1191,9 @@ public class Complex: Vector<Complex>
         => /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         v), /* Integer_23<> */
-        /* Integer_23<> */
         n);
     public static Integer Count(Complex xs) => Extensions.Count(xs);
     public static T At(Complex xs, Integer n) => Extensions.At(xs, n);
@@ -1510,12 +1430,9 @@ public class Line3D: Interval<Line3D>
         => /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         v), /* Integer_23<> */
-        /* Integer_23<> */
         n);
     public static Integer Count(Line3D xs) => Extensions.Count(xs);
     public static T At(Line3D xs, Integer n) => Extensions.At(xs, n);
@@ -1588,12 +1505,9 @@ public class Line2D: Interval<Line2D>
         => /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         v), /* Integer_23<> */
-        /* Integer_23<> */
         n);
     public static Integer Count(Line2D xs) => Extensions.Count(xs);
     public static T At(Line2D xs, Integer n) => Extensions.At(xs, n);
@@ -2253,12 +2167,9 @@ public class TimeRange: Interval<TimeRange>
         => /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         v), /* Integer_23<> */
-        /* Integer_23<> */
         n);
     public static Integer Count(TimeRange xs) => Extensions.Count(xs);
     public static T At(TimeRange xs, Integer n) => Extensions.At(xs, n);
@@ -2352,12 +2263,9 @@ public class AnglePair: Interval<AnglePair>
         => /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         v), /* Integer_23<> */
-        /* Integer_23<> */
         n);
     public static Integer Count(AnglePair xs) => Extensions.Count(xs);
     public static T At(AnglePair xs, Integer n) => Extensions.At(xs, n);
@@ -2493,12 +2401,9 @@ public class TimeInterval: Interval<TimeInterval>
         => /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         v), /* Integer_23<> */
-        /* Integer_23<> */
         n);
     public static Integer Count(TimeInterval xs) => Extensions.Count(xs);
     public static T At(TimeInterval xs, Integer n) => Extensions.At(xs, n);
@@ -2571,12 +2476,9 @@ public class RealInterval: Interval<RealInterval>
         => /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         v), /* Integer_23<> */
-        /* Integer_23<> */
         n);
     public static Integer Count(RealInterval xs) => Extensions.Count(xs);
     public static T At(RealInterval xs, Integer n) => Extensions.At(xs, n);
@@ -2823,12 +2725,9 @@ public class UV: Vector<UV>
         => /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         v), /* Integer_23<> */
-        /* Integer_23<> */
         n);
     public static Integer Count(UV xs) => Extensions.Count(xs);
     public static T At(UV xs, Integer n) => Extensions.At(xs, n);
@@ -2899,12 +2798,9 @@ public class UVW: Vector<UVW>
         => /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* `Self_6262 */
-        /* `Self_6262 */
         v), /* Integer_23<> */
-        /* Integer_23<> */
         n);
     public static Integer Count(UVW xs) => Extensions.Count(xs);
     public static T At(UVW xs, Integer n) => Extensions.At(xs, n);
@@ -3844,180 +3740,129 @@ public static partial class Extensions
     public static Array Map<T>(Array xs, Function f) {
         return /* Tuple_3<> */
         /* Tuple_3<> */
-        Tuple(/* Union(Integer_23<>, Integer_23<>) */
-        /* Union(Integer_23<>, Integer_23<>) */
-        /* Union(Function_1<`Self_6262, Integer_23<>>, Function_1<`Self_6262, Integer_23<>>) */
+        Tuple(/* Integer_23<> */
+        /* Function_1<`Self_6262, Integer_23<>> */
         Count(/* Array_11<`Any_6338::Any_9<>> */
-        /* Array_11<`Any_6338::Any_9<>> */
         xs), /* Function_1<Integer_23<>, Lambda_0<>> */
-        /* Function_1<Integer_23<>, Lambda_0<>> */
         (Integer i) => 
         /* `Any_6340 */
         /* Function_1<> */
         f(/* Union(T_404<>, T_422<>) */
-        /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<`Any_6339::Any_9<>> */
-        /* Array_11<`Any_6339::Any_9<>> */
         xs, /* Integer_23<> */
-        /* Integer_23<> */
         i)));
     }
     public static Array Reverse<T>(Array xs) {
         return /* Tuple_3<> */
         /* Tuple_3<> */
-        Tuple(/* Union(Integer_23<>, Integer_23<>) */
-        /* Union(Integer_23<>, Integer_23<>) */
-        /* Union(Function_1<`Self_6262, Integer_23<>>, Function_1<`Self_6262, Integer_23<>>) */
+        Tuple(/* Integer_23<> */
+        /* Function_1<`Self_6262, Integer_23<>> */
         Count(/* Array_11<`Any_6341::Any_9<>> */
-        /* Array_11<`Any_6341::Any_9<>> */
         xs), /* Function_1<Integer_23<>, Lambda_0<>> */
-        /* Function_1<Integer_23<>, Lambda_0<>> */
         (Integer i) => 
         /* `Any_6344 */
         /* Function_1<> */
         f(/* Union(T_404<>, T_422<>) */
-        /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<`Any_6342::Any_9<>> */
-        /* Array_11<`Any_6342::Any_9<>> */
         xs, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262) */
-        /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
-        Subtract(/* Union(Integer_23<>, Integer_23<>) */
-        /* Union(Integer_23<>, Integer_23<>) */
-        /* Union(Function_1<`Self_6262, Integer_23<>>, Function_1<`Self_6262, Integer_23<>>) */
-        Count(/* Array_11<`Any_6343::Any_9<>> */
-        /* Array_11<`Any_6343::Any_9<>> */
-        xs), /* Union(Number_22<>, Integer_23<>, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Subtract(/* Integer_23<> */
-        /* Integer_23<> */
+        /* Function_1<`Self_6262, Integer_23<>> */
+        Count(/* Array_11<`Any_6343::Any_9<>> */
+        xs), /* Union(Number_22<>, Integer_23<>, `Self_6262) */
+        /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
+        Subtract(/* Integer_23<> */
         1, /* Integer_23<> */
-        /* Integer_23<> */
         i)))));
     }
     public static Array Zip<T>(Array xs, Array ys, Function f) {
         return /* Tuple_3<> */
         /* Tuple_3<> */
-        Tuple(/* Union(Integer_23<>, Integer_23<>) */
-        /* Union(Integer_23<>, Integer_23<>) */
-        /* Union(Function_1<`Self_6262, Integer_23<>>, Function_1<`Self_6262, Integer_23<>>) */
+        Tuple(/* Integer_23<> */
+        /* Function_1<`Self_6262, Integer_23<>> */
         Count(/* Array_11<`Any_6345::Any_9<>> */
-        /* Array_11<`Any_6345::Any_9<>> */
         xs), /* Function_1<Integer_23<>, Lambda_0<>> */
-        /* Function_1<Integer_23<>, Lambda_0<>> */
         (Integer i) => 
         /* `Any_6347 */
         /* Function_1<> */
         f(/* Union(T_404<>, T_422<>) */
-        /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Integer_23<> */
-        /* Integer_23<> */
         i), /* Union(T_404<>, T_422<>) */
-        /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<`Any_6346::Any_9<>> */
-        /* Array_11<`Any_6346::Any_9<>> */
         ys, /* Integer_23<> */
-        /* Integer_23<> */
         i)));
     }
     public static Array Zip<T>(Array xs, Array ys, Array zs, Function f) {
         return /* Tuple_3<> */
         /* Tuple_3<> */
-        Tuple(/* Union(Integer_23<>, Integer_23<>) */
-        /* Union(Integer_23<>, Integer_23<>) */
-        /* Union(Function_1<`Self_6262, Integer_23<>>, Function_1<`Self_6262, Integer_23<>>) */
+        Tuple(/* Integer_23<> */
+        /* Function_1<`Self_6262, Integer_23<>> */
         Count(/* Array_11<`Any_6348::Any_9<>> */
-        /* Array_11<`Any_6348::Any_9<>> */
         xs), /* Function_1<Integer_23<>, Lambda_0<>> */
-        /* Function_1<Integer_23<>, Lambda_0<>> */
         (Integer i) => 
         /* `Any_6351 */
         /* Function_1<> */
         f(/* Union(T_404<>, T_422<>) */
-        /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Integer_23<> */
-        /* Integer_23<> */
         i), /* Union(T_404<>, T_422<>) */
-        /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<`Any_6349::Any_9<>> */
-        /* Array_11<`Any_6349::Any_9<>> */
         ys, /* Integer_23<> */
-        /* Integer_23<> */
         i), /* Union(T_404<>, T_422<>) */
-        /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<`Any_6350::Any_9<>> */
-        /* Array_11<`Any_6350::Any_9<>> */
         zs, /* Integer_23<> */
-        /* Integer_23<> */
         i)));
     }
     public static Array Skip<T>(Array xs, Integer n) {
         return /* Tuple_3<> */
         /* Tuple_3<> */
         Tuple(/* Union(Number_22<>, Integer_23<>, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
-        Subtract(/* Union(Function_1<`Self_6262, Integer_23<>>, Function_1<`Self_6262, Integer_23<>>) */
-        /* Union(Function_1<`Self_6262, Integer_23<>>, Function_1<`Self_6262, Integer_23<>>) */
+        Subtract(/* Function_1<`Self_6262, Integer_23<>> */
         Count, /* Integer_23<> */
-        /* Integer_23<> */
         n), /* Function_1<Integer_23<>, Lambda_0<>> */
-        /* Function_1<Integer_23<>, Lambda_0<>> */
         (Integer i) => 
         /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Union(Number_22<>, Integer_23<>, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Subtract(/* Integer_23<> */
-        /* Integer_23<> */
         i, /* Integer_23<> */
-        /* Integer_23<> */
         n)));
     }
     public static Array Take<T>(Array xs, Integer n) {
         return /* Tuple_3<> */
         /* Tuple_3<> */
         Tuple(/* Integer_23<> */
-        /* Integer_23<> */
         n, /* Function_1<Integer_23<>, Lambda_0<>> */
-        /* Function_1<Integer_23<>, Lambda_0<>> */
         (Integer i) => 
         /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Integer_23<> */
-        /* Integer_23<> */
         i));
     }
     public static Any Aggregate<T>(Array xs, Any init, Function f) {
         return /* Unified(Any_9<>, `Any_6359) */
-        /* Union(Boolean_25<>, Boolean_25<>) */
+        /* Boolean_25<> */
         /* Union(Function_1<Array_11<`Any_6352::Any_9<>>, Boolean_25<>>, Function_1<Interval_21<`Numerical_6353::Numerical_14<>>, Boolean_25<>>) */
         IsEmpty(/* Array_11<`Any_6354::Any_9<>> */
-        /* Array_11<`Any_6354::Any_9<>> */
         xs)
             ? /* Any_9<> */
             init
             : /* `Any_6359 */
             /* Function_1<> */
             f(/* Any_9<> */
-            /* Any_9<> */
             init, /* `Any_6358 */
-            /* `Any_6358 */
             /* Function_1<> */
             f(/* Array_11<`Any_6356::Any_9<>> */
-            /* Array_11<`Any_6356::Any_9<>> */
             /* Function_1<Array_11<`Any_6355::Any_9<>>, Array_11<`Any_6356::Any_9<>>> */
             Rest(/* Array_11<`Any_6357::Any_9<>> */
-            /* Array_11<`Any_6357::Any_9<>> */
             xs)))
         ;
     }
@@ -4025,143 +3870,106 @@ public static partial class Extensions
         return /* Array_11<`Any_6361::Any_9<>> */
         /* Function_1<Array_11<`Any_6360::Any_9<>>, Integer_23<>, Array_11<`Any_6361::Any_9<>>> */
         Skip(/* Array_11<`Any_6362::Any_9<>> */
-        /* Array_11<`Any_6362::Any_9<>> */
         xs, /* Integer_23<> */
-        /* Integer_23<> */
         1);
     }
     public static Boolean IsEmpty<T>(Array xs) {
-        return /* Union(Boolean_25<>, Boolean_25<>) */
+        return /* Boolean_25<> */
         /* Union(Function_1<`Self_6262, `Self_6262, Boolean_25<>>, Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>>) */
-        Equals(/* Union(Integer_23<>, Integer_23<>) */
-        /* Union(Integer_23<>, Integer_23<>) */
-        /* Union(Function_1<`Self_6262, Integer_23<>>, Function_1<`Self_6262, Integer_23<>>) */
+        Equals(/* Integer_23<> */
+        /* Function_1<`Self_6262, Integer_23<>> */
         Count(/* Array_11<`Any_6363::Any_9<>> */
-        /* Array_11<`Any_6363::Any_9<>> */
         xs), /* Integer_23<> */
-        /* Integer_23<> */
         0);
     }
     public static Any First<T>(Array xs) {
         return /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<`Any_6364::Any_9<>> */
-        /* Array_11<`Any_6364::Any_9<>> */
         xs, /* Integer_23<> */
-        /* Integer_23<> */
         0);
     }
     public static Any Last<T>(Array xs) {
         return /* Union(T_404<>, T_422<>) */
         /* Union(Function_1<`Self_6262, Integer_23<>, T_404<>>, Function_1<`Self_6262, Integer_23<>, T_422<>>) */
         At(/* Array_11<`Any_6365::Any_9<>> */
-        /* Array_11<`Any_6365::Any_9<>> */
         xs, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
-        Subtract(/* Union(Integer_23<>, Integer_23<>) */
-        /* Union(Integer_23<>, Integer_23<>) */
-        /* Union(Function_1<`Self_6262, Integer_23<>>, Function_1<`Self_6262, Integer_23<>>) */
+        Subtract(/* Integer_23<> */
+        /* Function_1<`Self_6262, Integer_23<>> */
         Count(/* Array_11<`Any_6366::Any_9<>> */
-        /* Array_11<`Any_6366::Any_9<>> */
         xs), /* Integer_23<> */
-        /* Integer_23<> */
         1));
     }
     public static Array Slice<T>(Array xs, Integer from, Integer count) {
         return /* Array_11<`Any_6368::Any_9<>> */
         /* Function_1<Array_11<`Any_6367::Any_9<>>, Integer_23<>, Array_11<`Any_6368::Any_9<>>> */
         Take(/* Array_11<`Any_6370::Any_9<>> */
-        /* Array_11<`Any_6370::Any_9<>> */
         /* Function_1<Array_11<`Any_6369::Any_9<>>, Integer_23<>, Array_11<`Any_6370::Any_9<>>> */
         Skip(/* Array_11<`Any_6371::Any_9<>> */
-        /* Array_11<`Any_6371::Any_9<>> */
         xs, /* Integer_23<> */
-        /* Integer_23<> */
         from), /* Integer_23<> */
-        /* Integer_23<> */
         count);
     }
     public static String Join<T>(Array xs, String sep) {
-        return /* Unified(String_24<>, Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262)) */
-        /* Union(Boolean_25<>, Boolean_25<>) */
+        return /* Unified(String_24<>, Union(Number_22<>, Integer_23<>, `Self_6262)) */
+        /* Boolean_25<> */
         /* Union(Function_1<Array_11<`Any_6372::Any_9<>>, Boolean_25<>>, Function_1<Interval_21<`Numerical_6373::Numerical_14<>>, Boolean_25<>>) */
         IsEmpty(/* Array_11<`Any_6374::Any_9<>> */
-        /* Array_11<`Any_6374::Any_9<>> */
         xs)
             ? /* String_24<> */
 
-            : /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+            : /* Union(Number_22<>, Integer_23<>, `Self_6262) */
             /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
             Add(/* String_24<> */
-            /* String_24<> */
             /* Function_1<Value_10<>, String_24<>> */
             ToString(/* Any_9<> */
-            /* Any_9<> */
             /* Function_1<Array_11<`Any_6375::Any_9<>>, Any_9<>> */
             First(/* Array_11<`Any_6376::Any_9<>> */
-            /* Array_11<`Any_6376::Any_9<>> */
             xs)), /* Any_9<> */
-            /* Any_9<> */
             /* Function_1<Array_11<`Any_6377::Any_9<>>, Any_9<>, Function_1<>, Any_9<>> */
             Aggregate(/* Array_11<`Any_6379::Any_9<>> */
-            /* Array_11<`Any_6379::Any_9<>> */
             /* Function_1<Array_11<`Any_6378::Any_9<>>, Array_11<`Any_6379::Any_9<>>> */
             Rest(/* Array_11<`Any_6380::Any_9<>> */
-            /* Array_11<`Any_6380::Any_9<>> */
             xs), /* String_24<> */
-            /* String_24<> */
             , /* Function_1<String_24<>, Any_9<>, Lambda_0<>> */
-            /* Function_1<String_24<>, Any_9<>, Lambda_0<>> */
             (String acc, Any cur) => 
             /* String_24<> */
             /* Function_1<Array_11<`Any_6381::Any_9<>>, String_24<>> */
             Interpolate(/* String_24<> */
-            /* String_24<> */
             acc, /* String_24<> */
-            /* String_24<> */
             sep, /* Any_9<> */
-            /* Any_9<> */
             cur)))
         ;
     }
     public static Boolean All<T>(Array xs, Function f) {
         return /* Unified(Boolean_25<>, Union(Boolean_25<>, `Self_6262)) */
-        /* Union(Boolean_25<>, Boolean_25<>) */
+        /* Boolean_25<> */
         /* Union(Function_1<Array_11<`Any_6382::Any_9<>>, Boolean_25<>>, Function_1<Interval_21<`Numerical_6383::Numerical_14<>>, Boolean_25<>>) */
         IsEmpty(/* Array_11<`Any_6384::Any_9<>> */
-        /* Array_11<`Any_6384::Any_9<>> */
         xs)
             ? /* Boolean_25<> */
             True
             : /* Union(Boolean_25<>, `Self_6262) */
             /* Union(Function_1<Boolean_25<>, Boolean_25<>, Boolean_25<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>) */
             And(/* `Any_6387 */
-            /* `Any_6387 */
             /* Function_1<> */
             f(/* Any_9<> */
-            /* Any_9<> */
             /* Function_1<Array_11<`Any_6385::Any_9<>>, Any_9<>> */
             First(/* Array_11<`Any_6386::Any_9<>> */
-            /* Array_11<`Any_6386::Any_9<>> */
             xs)), /* `Any_6391 */
-            /* `Any_6391 */
             /* Function_1<> */
             f(/* Array_11<`Any_6389::Any_9<>> */
-            /* Array_11<`Any_6389::Any_9<>> */
             /* Function_1<Array_11<`Any_6388::Any_9<>>, Array_11<`Any_6389::Any_9<>>> */
             Rest(/* Array_11<`Any_6390::Any_9<>> */
-            /* Array_11<`Any_6390::Any_9<>> */
             xs)))
         ;
     }
     public static Boolean All<T>(Array xs) {
-        return /* Union(Boolean_25<>, Boolean_25<>) */
+        return /* Boolean_25<> */
         /* Union(Function_1<Array_11<`Any_6392::Any_9<>>, Function_1<>, Boolean_25<>>, Function_1<Array_11<`Any_6393::Any_9<>>, Boolean_25<>>) */
         All(/* Array_11<`Any_6394::Any_9<>> */
-        /* Array_11<`Any_6394::Any_9<>> */
         xs, /* Function_1<Boolean_25<>, Lambda_0<>> */
-        /* Function_1<Boolean_25<>, Lambda_0<>> */
         (Boolean b) => 
         /* Boolean_25<> */
         b);
@@ -4173,384 +3981,274 @@ public static partial class Extensions
         return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Subtract(/* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Max(/* Interval_21<`Numerical_6395::Numerical_14<>> */
-        /* Interval_21<`Numerical_6395::Numerical_14<>> */
         x), /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Min(/* Interval_21<`Numerical_6396::Numerical_14<>> */
-        /* Interval_21<`Numerical_6396::Numerical_14<>> */
         x));
     }
     public static Boolean IsEmpty<T>(Interval x) {
         return /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         GreaterThanOrEquals(/* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Min(/* Interval_21<`Numerical_6397::Numerical_14<>> */
-        /* Interval_21<`Numerical_6397::Numerical_14<>> */
         x), /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Max(/* Interval_21<`Numerical_6398::Numerical_14<>> */
-        /* Interval_21<`Numerical_6398::Numerical_14<>> */
         x));
     }
     public static Numerical Lerp<T>(Interval x, Unit amount) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Min(/* Interval_21<`Numerical_6399::Numerical_14<>> */
-        /* Interval_21<`Numerical_6399::Numerical_14<>> */
-        x), /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        x), /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Add(/* Union(Number_22<>, Integer_23<>, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Subtract(/* Number_22<> */
-        /* Number_22<> */
         1, /* Unit_30<> */
-        /* Unit_30<> */
-        amount), /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        amount), /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Max(/* Interval_21<`Numerical_6400::Numerical_14<>> */
-        /* Interval_21<`Numerical_6400::Numerical_14<>> */
         x), /* Unit_30<> */
-        /* Unit_30<> */
         amount)));
     }
     public static Unit InverseLerp<T>(Interval x, Numerical value) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Union(Number_22<>, Integer_23<>, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Subtract(/* Numerical_14<> */
-        /* Numerical_14<> */
         value, /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Min(/* Interval_21<`Numerical_6401::Numerical_14<>> */
-        /* Interval_21<`Numerical_6401::Numerical_14<>> */
         x)), /* Union(Size2D_78<>, Numerical_14<>) */
-        /* Union(Size2D_78<>, Numerical_14<>) */
         /* Union(Function_1<Rectangle2D_80<>, Size2D_78<>>, Function_1<Interval_21<`Numerical_6402::Numerical_14<>>, Numerical_14<>>) */
         Size(/* Interval_21<`Numerical_6403::Numerical_14<>> */
-        /* Interval_21<`Numerical_6403::Numerical_14<>> */
         x));
     }
     public static Interval Negate<T>(Interval x) {
         return /* Tuple_3<> */
         /* Tuple_3<> */
         Tuple(/* Union(Number_22<>, Integer_23<>, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262>) */
         Negative(/* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Max(/* Interval_21<`Numerical_6404::Numerical_14<>> */
-        /* Interval_21<`Numerical_6404::Numerical_14<>> */
         x)), /* Union(Number_22<>, Integer_23<>, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262>) */
         Negative(/* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Min(/* Interval_21<`Numerical_6405::Numerical_14<>> */
-        /* Interval_21<`Numerical_6405::Numerical_14<>> */
         x)));
     }
     public static Interval Reverse<T>(Interval x) {
         return /* Tuple_3<> */
         /* Tuple_3<> */
         Tuple(/* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Max(/* Interval_21<`Numerical_6406::Numerical_14<>> */
-        /* Interval_21<`Numerical_6406::Numerical_14<>> */
         x), /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Min(/* Interval_21<`Numerical_6407::Numerical_14<>> */
-        /* Interval_21<`Numerical_6407::Numerical_14<>> */
         x));
     }
     public static Numerical Center<T>(Interval x) {
         return /* Union(Numerical_14<>, Number_22<>) */
         /* Union(Function_1<Interval_21<`Numerical_6408::Numerical_14<>>, Unit_30<>, Numerical_14<>>, Function_1<Number_22<>, Number_22<>, Unit_30<>, Number_22<>>) */
         Lerp(/* Interval_21<`Numerical_6409::Numerical_14<>> */
-        /* Interval_21<`Numerical_6409::Numerical_14<>> */
         x, /* Number_22<> */
-        /* Number_22<> */
         0.5);
     }
     public static Boolean Contains<T>(Interval x, Numerical value) {
         return /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         LessThanOrEquals(/* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Min(/* Interval_21<`Numerical_6410::Numerical_14<>> */
-        /* Interval_21<`Numerical_6410::Numerical_14<>> */
         x), /* Union(Boolean_25<>, `Self_6262) */
-        /* Union(Boolean_25<>, `Self_6262) */
         /* Union(Function_1<Boolean_25<>, Boolean_25<>, Boolean_25<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>) */
         And(/* Numerical_14<> */
-        /* Numerical_14<> */
         value, /* Boolean_25<> */
-        /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         LessThanOrEquals(/* Numerical_14<> */
-        /* Numerical_14<> */
         value, /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Max(/* Interval_21<`Numerical_6411::Numerical_14<>> */
-        /* Interval_21<`Numerical_6411::Numerical_14<>> */
         x))));
     }
     public static Boolean Contains<T>(Interval x, Interval other) {
         return /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         LessThanOrEquals(/* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Min(/* Interval_21<`Numerical_6412::Numerical_14<>> */
-        /* Interval_21<`Numerical_6412::Numerical_14<>> */
         x), /* Union(Boolean_25<>, `Self_6262) */
-        /* Union(Boolean_25<>, `Self_6262) */
         /* Union(Function_1<Boolean_25<>, Boolean_25<>, Boolean_25<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>) */
         And(/* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Min(/* Interval_21<`Numerical_6413::Numerical_14<>> */
-        /* Interval_21<`Numerical_6413::Numerical_14<>> */
         other), /* Boolean_25<> */
-        /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         GreaterThanOrEquals(/* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
-        /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Max, /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Max(/* Interval_21<`Numerical_6414::Numerical_14<>> */
-        /* Interval_21<`Numerical_6414::Numerical_14<>> */
         other))));
     }
     public static Boolean Overlaps<T>(Interval x, Interval y) {
         return /* Union(Boolean_25<>, `Self_6262) */
         /* Union(Function_1<Boolean_25<>, Boolean_25<>>, Function_1<`Self_6262, `Self_6262>) */
-        Not(/* Union(Boolean_25<>, Boolean_25<>) */
-        /* Union(Boolean_25<>, Boolean_25<>) */
+        Not(/* Boolean_25<> */
         /* Union(Function_1<Array_11<`Any_6415::Any_9<>>, Boolean_25<>>, Function_1<Interval_21<`Numerical_6416::Numerical_14<>>, Boolean_25<>>) */
         IsEmpty(/* Union(Interval_21<`Numerical_6419::Numerical_14<>>, Numerical_14<>, Number_22<>) */
-        /* Union(Interval_21<`Numerical_6419::Numerical_14<>>, Numerical_14<>, Number_22<>) */
         /* Union(Function_1<Interval_21<`Numerical_6417::Numerical_14<>>, Interval_21<`Numerical_6418::Numerical_14<>>, Interval_21<`Numerical_6419::Numerical_14<>>>, Function_1<Interval_21<`Numerical_6420::Numerical_14<>>, Numerical_14<>, Numerical_14<>>, Function_1<Number_22<>, Number_22<>>) */
         Clamp(/* Interval_21<`Numerical_6421::Numerical_14<>> */
-        /* Interval_21<`Numerical_6421::Numerical_14<>> */
         x, /* Interval_21<`Numerical_6422::Numerical_14<>> */
-        /* Interval_21<`Numerical_6422::Numerical_14<>> */
         y)));
     }
     public static Tuple Split<T>(Interval x, Unit t) {
         return /* Tuple_3<> */
         /* Tuple_3<> */
         Tuple(/* Interval_21<`Numerical_6424::Numerical_14<>> */
-        /* Interval_21<`Numerical_6424::Numerical_14<>> */
         /* Function_1<Interval_21<`Numerical_6423::Numerical_14<>>, Unit_30<>, Interval_21<`Numerical_6424::Numerical_14<>>> */
         Left(/* Interval_21<`Numerical_6425::Numerical_14<>> */
-        /* Interval_21<`Numerical_6425::Numerical_14<>> */
         x, /* Unit_30<> */
-        /* Unit_30<> */
         t), /* Interval_21<`Numerical_6427::Numerical_14<>> */
-        /* Interval_21<`Numerical_6427::Numerical_14<>> */
         /* Function_1<Interval_21<`Numerical_6426::Numerical_14<>>, Unit_30<>, Interval_21<`Numerical_6427::Numerical_14<>>> */
         Right(/* Interval_21<`Numerical_6428::Numerical_14<>> */
-        /* Interval_21<`Numerical_6428::Numerical_14<>> */
         x, /* Unit_30<> */
-        /* Unit_30<> */
         t));
     }
     public static Tuple Split<T>(Interval x) {
-        return /* Union(Tuple_3<>, Tuple_3<>) */
+        return /* Tuple_3<> */
         /* Union(Function_1<Interval_21<`Numerical_6429::Numerical_14<>>, Unit_30<>, Tuple_3<>>, Function_1<Interval_21<`Numerical_6430::Numerical_14<>>, Tuple_3<>>) */
         Split(/* Interval_21<`Numerical_6431::Numerical_14<>> */
-        /* Interval_21<`Numerical_6431::Numerical_14<>> */
         x, /* Number_22<> */
-        /* Number_22<> */
         0.5);
     }
     public static Interval Left<T>(Interval x, Unit t) {
         return /* Tuple_3<> */
         /* Tuple_3<> */
         Tuple(/* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Min(/* Interval_21<`Numerical_6432::Numerical_14<>> */
-        /* Interval_21<`Numerical_6432::Numerical_14<>> */
         x), /* Union(Numerical_14<>, Number_22<>) */
-        /* Union(Numerical_14<>, Number_22<>) */
         /* Union(Function_1<Interval_21<`Numerical_6433::Numerical_14<>>, Unit_30<>, Numerical_14<>>, Function_1<Number_22<>, Number_22<>, Unit_30<>, Number_22<>>) */
         Lerp(/* Interval_21<`Numerical_6434::Numerical_14<>> */
-        /* Interval_21<`Numerical_6434::Numerical_14<>> */
         x, /* Unit_30<> */
-        /* Unit_30<> */
         t));
     }
     public static Interval Right<T>(Interval x, Unit t) {
         return /* Tuple_3<> */
         /* Tuple_3<> */
         Tuple(/* Union(Numerical_14<>, Number_22<>) */
-        /* Union(Numerical_14<>, Number_22<>) */
         /* Union(Function_1<Interval_21<`Numerical_6435::Numerical_14<>>, Unit_30<>, Numerical_14<>>, Function_1<Number_22<>, Number_22<>, Unit_30<>, Number_22<>>) */
         Lerp(/* Interval_21<`Numerical_6436::Numerical_14<>> */
-        /* Interval_21<`Numerical_6436::Numerical_14<>> */
         x, /* Unit_30<> */
-        /* Unit_30<> */
         t), /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Max(/* Interval_21<`Numerical_6437::Numerical_14<>> */
-        /* Interval_21<`Numerical_6437::Numerical_14<>> */
         x));
     }
     public static Interval MoveTo<T>(Interval x, Numerical v) {
         return /* Tuple_3<> */
         /* Tuple_3<> */
         Tuple(/* Numerical_14<> */
-        /* Numerical_14<> */
-        v, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        v, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Add(/* Numerical_14<> */
-        /* Numerical_14<> */
         v, /* Union(Size2D_78<>, Numerical_14<>) */
-        /* Union(Size2D_78<>, Numerical_14<>) */
         /* Union(Function_1<Rectangle2D_80<>, Size2D_78<>>, Function_1<Interval_21<`Numerical_6438::Numerical_14<>>, Numerical_14<>>) */
         Size(/* Interval_21<`Numerical_6439::Numerical_14<>> */
-        /* Interval_21<`Numerical_6439::Numerical_14<>> */
         x)));
     }
     public static Interval LeftHalf<T>(Interval x) {
         return /* Interval_21<`Numerical_6441::Numerical_14<>> */
         /* Function_1<Interval_21<`Numerical_6440::Numerical_14<>>, Unit_30<>, Interval_21<`Numerical_6441::Numerical_14<>>> */
         Left(/* Interval_21<`Numerical_6442::Numerical_14<>> */
-        /* Interval_21<`Numerical_6442::Numerical_14<>> */
         x, /* Number_22<> */
-        /* Number_22<> */
         0.5);
     }
     public static Interval RightHalf<T>(Interval x) {
         return /* Interval_21<`Numerical_6444::Numerical_14<>> */
         /* Function_1<Interval_21<`Numerical_6443::Numerical_14<>>, Unit_30<>, Interval_21<`Numerical_6444::Numerical_14<>>> */
         Right(/* Interval_21<`Numerical_6445::Numerical_14<>> */
-        /* Interval_21<`Numerical_6445::Numerical_14<>> */
         x, /* Number_22<> */
-        /* Number_22<> */
         0.5);
     }
     public static Numerical HalfSize<T>(Interval x) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         Half(/* Union(Size2D_78<>, Numerical_14<>) */
-        /* Union(Size2D_78<>, Numerical_14<>) */
         /* Union(Function_1<Rectangle2D_80<>, Size2D_78<>>, Function_1<Interval_21<`Numerical_6446::Numerical_14<>>, Numerical_14<>>) */
         Size(/* Interval_21<`Numerical_6447::Numerical_14<>> */
-        /* Interval_21<`Numerical_6447::Numerical_14<>> */
         x));
     }
     public static Interval Recenter<T>(Interval x, Numerical c) {
         return /* Tuple_3<> */
         /* Tuple_3<> */
         Tuple(/* Union(Number_22<>, Integer_23<>, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Subtract(/* Numerical_14<> */
-        /* Numerical_14<> */
         c, /* Numerical_14<> */
-        /* Numerical_14<> */
         /* Function_1<Interval_21<`Numerical_6448::Numerical_14<>>, Numerical_14<>> */
         HalfSize(/* Interval_21<`Numerical_6449::Numerical_14<>> */
-        /* Interval_21<`Numerical_6449::Numerical_14<>> */
-        x)), /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        x)), /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Add(/* Numerical_14<> */
-        /* Numerical_14<> */
         c, /* Numerical_14<> */
-        /* Numerical_14<> */
         /* Function_1<Interval_21<`Numerical_6450::Numerical_14<>>, Numerical_14<>> */
         HalfSize(/* Interval_21<`Numerical_6451::Numerical_14<>> */
-        /* Interval_21<`Numerical_6451::Numerical_14<>> */
         x)));
     }
     public static Interval Clamp<T>(Interval x, Interval y) {
         return /* Tuple_3<> */
         /* Tuple_3<> */
         Tuple(/* Union(Interval_21<`Numerical_6454::Numerical_14<>>, Numerical_14<>, Number_22<>) */
-        /* Union(Interval_21<`Numerical_6454::Numerical_14<>>, Numerical_14<>, Number_22<>) */
         /* Union(Function_1<Interval_21<`Numerical_6452::Numerical_14<>>, Interval_21<`Numerical_6453::Numerical_14<>>, Interval_21<`Numerical_6454::Numerical_14<>>>, Function_1<Interval_21<`Numerical_6455::Numerical_14<>>, Numerical_14<>, Numerical_14<>>, Function_1<Number_22<>, Number_22<>>) */
         Clamp(/* Interval_21<`Numerical_6456::Numerical_14<>> */
-        /* Interval_21<`Numerical_6456::Numerical_14<>> */
         x, /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Min(/* Interval_21<`Numerical_6457::Numerical_14<>> */
-        /* Interval_21<`Numerical_6457::Numerical_14<>> */
         y)), /* Union(Interval_21<`Numerical_6460::Numerical_14<>>, Numerical_14<>, Number_22<>) */
-        /* Union(Interval_21<`Numerical_6460::Numerical_14<>>, Numerical_14<>, Number_22<>) */
         /* Union(Function_1<Interval_21<`Numerical_6458::Numerical_14<>>, Interval_21<`Numerical_6459::Numerical_14<>>, Interval_21<`Numerical_6460::Numerical_14<>>>, Function_1<Interval_21<`Numerical_6461::Numerical_14<>>, Numerical_14<>, Numerical_14<>>, Function_1<Number_22<>, Number_22<>>) */
         Clamp(/* Interval_21<`Numerical_6462::Numerical_14<>> */
-        /* Interval_21<`Numerical_6462::Numerical_14<>> */
         x, /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Max(/* Interval_21<`Numerical_6463::Numerical_14<>> */
-        /* Interval_21<`Numerical_6463::Numerical_14<>> */
         y)));
     }
     public static Numerical Clamp<T>(Interval x, Numerical value) {
         return /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         LessThan(/* Numerical_14<> */
-        /* Numerical_14<> */
         value, /* Unified(Union(T_618<>, DateTime_89<>, Comparable_16<>), Boolean_25<>) */
-        /* Unified(Union(T_618<>, DateTime_89<>, Comparable_16<>), Boolean_25<>) */
         /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Min(/* Interval_21<`Numerical_6464::Numerical_14<>> */
-        /* Interval_21<`Numerical_6464::Numerical_14<>> */
         x)
             ? /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
             /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
             Min(/* Interval_21<`Numerical_6465::Numerical_14<>> */
-            /* Interval_21<`Numerical_6465::Numerical_14<>> */
             x)
             : /* Boolean_25<> */
             /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
             GreaterThan(/* Numerical_14<> */
-            /* Numerical_14<> */
             value, /* Unified(Union(T_618<>, DateTime_89<>, Comparable_16<>), Numerical_14<>) */
-            /* Unified(Union(T_618<>, DateTime_89<>, Comparable_16<>), Numerical_14<>) */
             /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
             /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
             Max(/* Interval_21<`Numerical_6466::Numerical_14<>> */
-            /* Interval_21<`Numerical_6466::Numerical_14<>> */
             x)
                 ? /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
                 /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
                 Max(/* Interval_21<`Numerical_6467::Numerical_14<>> */
-                /* Interval_21<`Numerical_6467::Numerical_14<>> */
                 x)
                 : /* Numerical_14<> */
                 value
@@ -4561,25 +4259,17 @@ public static partial class Extensions
         return /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         GreaterThanOrEquals(/* Numerical_14<> */
-        /* Numerical_14<> */
         value, /* Union(Boolean_25<>, `Self_6262) */
-        /* Union(Boolean_25<>, `Self_6262) */
         /* Union(Function_1<Boolean_25<>, Boolean_25<>, Boolean_25<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>) */
         And(/* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Min(/* Interval_21<`Numerical_6468::Numerical_14<>> */
-        /* Interval_21<`Numerical_6468::Numerical_14<>> */
         x), /* Boolean_25<> */
-        /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         LessThanOrEquals(/* Numerical_14<> */
-        /* Numerical_14<> */
         value, /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
-        /* Union(T_618<>, DateTime_89<>, Comparable_16<>) */
         /* Union(Function_1<`Self_6262, T_618<>>, Function_1<TimeRange_88<>, DateTime_89<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>>) */
         Max(/* Interval_21<`Numerical_6469::Numerical_14<>> */
-        /* Interval_21<`Numerical_6469::Numerical_14<>> */
         x))));
     }
 }
@@ -4589,12 +4279,9 @@ public static partial class Extensions
         return /* String_24<> */
         /* Function_1<Array_11<`Any_6470::Any_9<>>, String_24<>, String_24<>> */
         Join(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* Value_10<> */
-        /* Value_10<> */
         x), /* String_24<> */
-        /* String_24<> */
         , );
     }
 }
@@ -4604,62 +4291,48 @@ public static partial class Extensions
         return /* Any_9<> */
         /* Function_1<Array_11<`Any_6471::Any_9<>>, Any_9<>, Function_1<>, Any_9<>> */
         Aggregate(/* Array_11<`Any_6472::Any_9<>> */
-        /* Array_11<`Any_6472::Any_9<>> */
         v, /* Integer_23<> */
-        /* Integer_23<> */
         0, /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
-        /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Add);
     }
     public static Number SumSquares<T>(Array v) {
         return /* Numerical_14<> */
         /* Function_1<Array_11<`Any_6473::Any_9<>>, Numerical_14<>> */
         Sum(/* Number_22<> */
-        /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         Square(/* Array_11<`Any_6474::Any_9<>> */
-        /* Array_11<`Any_6474::Any_9<>> */
         v));
     }
     public static Number LengthSquared<T>(Array v) {
         return /* Number_22<> */
         /* Function_1<Array_11<`Any_6475::Any_9<>>, Number_22<>> */
         SumSquares(/* Array_11<`Any_6476::Any_9<>> */
-        /* Array_11<`Any_6476::Any_9<>> */
         v);
     }
     public static Number Length<T>(Array v) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         SquareRoot(/* Number_22<> */
-        /* Number_22<> */
         /* Function_1<Array_11<`Any_6477::Any_9<>>, Number_22<>> */
         LengthSquared(/* Array_11<`Any_6478::Any_9<>> */
-        /* Array_11<`Any_6478::Any_9<>> */
         v));
     }
     public static Number Dot<T>(Vector v1, Vector v2) {
         return /* Numerical_14<> */
         /* Function_1<Array_11<`Any_6479::Any_9<>>, Numerical_14<>> */
-        Sum(/* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        Sum(/* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Vector_12<`Numerical_6480::Numerical_14<>> */
-        /* Vector_12<`Numerical_6480::Numerical_14<>> */
         v1, /* Vector_12<`Numerical_6481::Numerical_14<>> */
-        /* Vector_12<`Numerical_6481::Numerical_14<>> */
         v2));
     }
     public static Vector Normal<T>(Vector v) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Vector_12<`Numerical_6482::Numerical_14<>> */
-        /* Vector_12<`Numerical_6482::Numerical_14<>> */
         v, /* Number_22<> */
-        /* Number_22<> */
         /* Function_1<Array_11<`Any_6483::Any_9<>>, Number_22<>> */
         Length(/* Vector_12<`Numerical_6484::Numerical_14<>> */
-        /* Vector_12<`Numerical_6484::Numerical_14<>> */
         v));
     }
 }
@@ -4669,122 +4342,93 @@ public static partial class Extensions
         return /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>, Number_22<>> */
         Pow(/* Number_22<> */
-        /* Number_22<> */
         x, /* Number_22<> */
-        /* Number_22<> */
         0.5);
     }
     public static Number Square(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Number_22<> */
-        /* Number_22<> */
         x, /* Number_22<> */
-        /* Number_22<> */
         x);
     }
     public static Number Clamp(Number x) {
         return /* Union(Interval_21<`Numerical_6487::Numerical_14<>>, Numerical_14<>, Number_22<>) */
         /* Union(Function_1<Interval_21<`Numerical_6485::Numerical_14<>>, Interval_21<`Numerical_6486::Numerical_14<>>, Interval_21<`Numerical_6487::Numerical_14<>>>, Function_1<Interval_21<`Numerical_6488::Numerical_14<>>, Numerical_14<>, Numerical_14<>>, Function_1<Number_22<>, Number_22<>>) */
         Clamp(/* Number_22<> */
-        /* Number_22<> */
         x, /* Tuple_3<> */
         /* Tuple_3<> */
-        /* Tuple_3<> */
         Tuple(/* Integer_23<> */
-        /* Integer_23<> */
         0, /* Integer_23<> */
-        /* Integer_23<> */
         1));
     }
     public static Number PlusOne(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Add(/* Number_22<> */
-        /* Number_22<> */
         x, /* `Self_6262 */
-        /* `Self_6262 */
         /* Function_1<`Self_6262, `Self_6262> */
         One(/* Number_22<> */
-        /* Number_22<> */
         x));
     }
     public static Number MinusOne(Number x) {
         return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Subtract(/* Number_22<> */
-        /* Number_22<> */
         x, /* `Self_6262 */
-        /* `Self_6262 */
         /* Function_1<`Self_6262, `Self_6262> */
         One(/* Number_22<> */
-        /* Number_22<> */
         x));
     }
     public static Number FromOne(Number x) {
         return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Subtract(/* `Self_6262 */
-        /* `Self_6262 */
         /* Function_1<`Self_6262, `Self_6262> */
         One(/* Number_22<> */
-        /* Number_22<> */
         x), /* Number_22<> */
-        /* Number_22<> */
         x);
     }
     public static Boolean IsPositive(Number x) {
         return /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         GreaterThanOrEquals(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         0);
     }
     public static Boolean GtZ(Number x) {
         return /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         GreaterThan(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         0);
     }
     public static Boolean LtZ(Number x) {
         return /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         LessThan(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         0);
     }
     public static Boolean GtEqZ(Number x) {
         return /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         GreaterThanOrEquals(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         0);
     }
     public static Boolean LtEqZ(Number x) {
         return /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         LessThanOrEquals(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         0);
     }
     public static Boolean IsNegative(Number x) {
         return /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         LessThan(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         0);
     }
     public static Number Sign(Number x) {
@@ -4792,31 +4436,25 @@ public static partial class Extensions
         /* Boolean_25<> */
         /* Function_1<Number_22<>, Boolean_25<>> */
         LtZ(/* Number_22<> */
-        /* Number_22<> */
         x)
             ? /* Union(Number_22<>, Integer_23<>, `Self_6262) */
             /* Union(Function_1<Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262>) */
             Negative(/* `Self_6262 */
-            /* `Self_6262 */
             /* Function_1<`Self_6262, `Self_6262> */
             One(/* Number_22<> */
-            /* Number_22<> */
             x))
             : /* Unified(`Self_6262, `Self_6262) */
             /* Boolean_25<> */
             /* Function_1<Number_22<>, Boolean_25<>> */
             GtZ(/* Number_22<> */
-            /* Number_22<> */
             x)
                 ? /* `Self_6262 */
                 /* Function_1<`Self_6262, `Self_6262> */
                 One(/* Number_22<> */
-                /* Number_22<> */
                 x)
                 : /* `Self_6262 */
                 /* Function_1<`Self_6262, `Self_6262> */
                 Zero(/* Number_22<> */
-                /* Number_22<> */
                 x)
 
         ;
@@ -4826,290 +4464,219 @@ public static partial class Extensions
         /* Boolean_25<> */
         /* Function_1<Number_22<>, Boolean_25<>> */
         LtZ(/* Number_22<> */
-        /* Number_22<> */
         x)
             ? /* Union(Number_22<>, Integer_23<>, `Self_6262) */
             /* Union(Function_1<Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262>) */
             Negative(/* Number_22<> */
-            /* Number_22<> */
             x)
             : /* Number_22<> */
             x
         ;
     }
     public static Number Half(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         2);
     }
     public static Number Third(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         3);
     }
     public static Number Quarter(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         4);
     }
     public static Number Fifth(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         5);
     }
     public static Number Sixth(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         6);
     }
     public static Number Seventh(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         7);
     }
     public static Number Eighth(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         8);
     }
     public static Number Ninth(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         9);
     }
     public static Number Tenth(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         10);
     }
     public static Number Sixteenth(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         16);
     }
     public static Number Hundredth(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         100);
     }
     public static Number Thousandth(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         1000);
     }
     public static Number Millionth(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Number_22<> */
-        /* Number_22<> */
-        x, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        x, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Integer_23<> */
-        /* Integer_23<> */
         1000, /* Integer_23<> */
-        /* Integer_23<> */
         1000));
     }
     public static Number Billionth(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Number_22<> */
-        /* Number_22<> */
-        x, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        x, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Integer_23<> */
-        /* Integer_23<> */
-        1000, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        1000, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Integer_23<> */
-        /* Integer_23<> */
         1000, /* Integer_23<> */
-        /* Integer_23<> */
         1000)));
     }
     public static Number Hundred(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         100);
     }
     public static Number Thousand(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         1000);
     }
     public static Number Million(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Number_22<> */
-        /* Number_22<> */
-        x, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        x, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Integer_23<> */
-        /* Integer_23<> */
         1000, /* Integer_23<> */
-        /* Integer_23<> */
         1000));
     }
     public static Number Billion(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Number_22<> */
-        /* Number_22<> */
-        x, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        x, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Integer_23<> */
-        /* Integer_23<> */
-        1000, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        1000, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Integer_23<> */
-        /* Integer_23<> */
         1000, /* Integer_23<> */
-        /* Integer_23<> */
         1000)));
     }
     public static Number Twice(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         2);
     }
     public static Number Thrice(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Number_22<> */
-        /* Number_22<> */
         x, /* Integer_23<> */
-        /* Integer_23<> */
         3);
     }
     public static Number SmoothStep(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Number_22<> */
-        /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         Square(/* Number_22<> */
-        /* Number_22<> */
         x), /* Union(Number_22<>, Integer_23<>, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Subtract(/* Integer_23<> */
-        /* Integer_23<> */
         3, /* Number_22<> */
-        /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         Twice(/* Number_22<> */
-        /* Number_22<> */
         x)));
     }
     public static Number Pow2(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Number_22<> */
-        /* Number_22<> */
         x, /* Number_22<> */
-        /* Number_22<> */
         x);
     }
     public static Number Pow3(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Number_22<> */
-        /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         Pow2(/* Number_22<> */
-        /* Number_22<> */
         x), /* Number_22<> */
-        /* Number_22<> */
         x);
     }
     public static Number Pow4(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Number_22<> */
-        /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         Pow3(/* Number_22<> */
-        /* Number_22<> */
         x), /* Number_22<> */
-        /* Number_22<> */
         x);
     }
     public static Number Pow5(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Number_22<> */
-        /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         Pow4(/* Number_22<> */
-        /* Number_22<> */
         x), /* Number_22<> */
-        /* Number_22<> */
         x);
     }
     public static Number Pi(Self self) {
@@ -5120,67 +4687,46 @@ public static partial class Extensions
         return /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         LessThan(/* Number_22<> */
-        /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         Abs(/* Number_22<> */
-        /* Number_22<> */
         x), /* Number_22<> */
-        /* Number_22<> */
         1E-08);
     }
     public static Number Lerp(Number a, Number b, Unit t) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Union(Number_22<>, Integer_23<>, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Subtract(/* Integer_23<> */
-        /* Integer_23<> */
         1, /* Unit_30<> */
-        /* Unit_30<> */
-        t), /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        t), /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Add(/* Number_22<> */
-        /* Number_22<> */
-        a, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        a, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Unit_30<> */
-        /* Unit_30<> */
         t, /* Number_22<> */
-        /* Number_22<> */
         b)));
     }
     public static Boolean Between(Number self, Number min, Number max) {
         return /* Union(Array_11<`Any_6491::Any_9<>>, Array_11<`Any_6495::Any_9<>>) */
         /* Union(Function_1<Array_11<`Any_6489::Any_9<>>, Array_11<`Any_6490::Any_9<>>, Function_1<>, Array_11<`Any_6491::Any_9<>>>, Function_1<Array_11<`Any_6492::Any_9<>>, Array_11<`Any_6493::Any_9<>>, Array_11<`Any_6494::Any_9<>>, Function_1<>, Array_11<`Any_6495::Any_9<>>>) */
         Zip(/* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* Number_22<> */
-        /* Number_22<> */
         self), /* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* Number_22<> */
-        /* Number_22<> */
         min), /* Array_11<Any_9<>> */
-        /* Array_11<Any_9<>> */
         /* Function_1<`Self_6262, Array_11<Any_9<>>> */
         FieldValues(/* Number_22<> */
-        /* Number_22<> */
         max), /* Function_1<Number_22<>, Number_22<>, Number_22<>, Lambda_0<>> */
-        /* Function_1<Number_22<>, Number_22<>, Number_22<>, Lambda_0<>> */
         (Number x, Number y, Number z) => 
         /* Union(Boolean_25<>, Value_10<>, Interval_21<`Numerical_6497::Numerical_14<>>) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>, Boolean_25<>>, Function_1<Comparable_16<>, Comparable_16<>, Comparable_16<>, Value_10<>>, Function_1<Value_10<>, Interval_21<`Numerical_6496::Numerical_14<>>, Interval_21<`Numerical_6497::Numerical_14<>>>) */
         Between(/* Number_22<> */
-        /* Number_22<> */
         x, /* Number_22<> */
-        /* Number_22<> */
         y, /* Number_22<> */
-        /* Number_22<> */
         z));
     }
 }
@@ -5191,141 +4737,103 @@ public static partial class Extensions
         x;
     }
     public static Angle Degrees(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Number_22<> */
-        /* Number_22<> */
-        x, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        x, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Function_1<`Self_6262, Number_22<>> */
-        /* Function_1<`Self_6262, Number_22<>> */
         Pi, /* Integer_23<> */
-        /* Integer_23<> */
         180));
     }
     public static Angle Turns(Number x) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Number_22<> */
-        /* Number_22<> */
-        x, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        x, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Integer_23<> */
-        /* Integer_23<> */
         2, /* Function_1<`Self_6262, Number_22<>> */
-        /* Function_1<`Self_6262, Number_22<>> */
         Pi));
     }
 }
 public static partial class Extensions
 {
     public static Boolean Equals(Comparable a, Comparable b) {
-        return /* Union(Boolean_25<>, Boolean_25<>) */
+        return /* Boolean_25<> */
         /* Union(Function_1<`Self_6262, `Self_6262, Boolean_25<>>, Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>>) */
         Equals(/* Integer_23<> */
-        /* Integer_23<> */
         /* Function_1<`Self_6262, Integer_23<>> */
         Compare(/* Comparable_16<> */
-        /* Comparable_16<> */
         a, /* Comparable_16<> */
-        /* Comparable_16<> */
         b), /* Integer_23<> */
-        /* Integer_23<> */
         0);
     }
     public static Boolean LessThan(Comparable a, Comparable b) {
         return /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         LessThan(/* Integer_23<> */
-        /* Integer_23<> */
         /* Function_1<`Self_6262, Integer_23<>> */
         Compare(/* Comparable_16<> */
-        /* Comparable_16<> */
         a, /* Comparable_16<> */
-        /* Comparable_16<> */
         b), /* Integer_23<> */
-        /* Integer_23<> */
         0);
     }
     public static Boolean LessThanOrEquals(Comparable a, Comparable b) {
         return /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         LessThanOrEquals(/* Integer_23<> */
-        /* Integer_23<> */
         /* Function_1<`Self_6262, Integer_23<>> */
         Compare(/* Comparable_16<> */
-        /* Comparable_16<> */
         a, /* Comparable_16<> */
-        /* Comparable_16<> */
         b), /* Integer_23<> */
-        /* Integer_23<> */
         0);
     }
     public static Boolean GreaterThan(Comparable a, Comparable b) {
         return /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         GreaterThan(/* Integer_23<> */
-        /* Integer_23<> */
         /* Function_1<`Self_6262, Integer_23<>> */
         Compare(/* Comparable_16<> */
-        /* Comparable_16<> */
         a, /* Comparable_16<> */
-        /* Comparable_16<> */
         b), /* Integer_23<> */
-        /* Integer_23<> */
         0);
     }
     public static Boolean GreaterThanOrEquals(Comparable a, Comparable b) {
         return /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         GreaterThanOrEquals(/* Integer_23<> */
-        /* Integer_23<> */
         /* Function_1<`Self_6262, Integer_23<>> */
         Compare(/* Comparable_16<> */
-        /* Comparable_16<> */
         a, /* Comparable_16<> */
-        /* Comparable_16<> */
         b), /* Integer_23<> */
-        /* Integer_23<> */
         0);
     }
     public static Value Between(Comparable v, Comparable a, Comparable b) {
         return /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         GreaterThanOrEquals(/* Comparable_16<> */
-        /* Comparable_16<> */
         v, /* Union(Boolean_25<>, `Self_6262) */
-        /* Union(Boolean_25<>, `Self_6262) */
         /* Union(Function_1<Boolean_25<>, Boolean_25<>, Boolean_25<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>) */
         And(/* Comparable_16<> */
-        /* Comparable_16<> */
         a, /* Boolean_25<> */
-        /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         LessThanOrEquals(/* Comparable_16<> */
-        /* Comparable_16<> */
         v, /* Comparable_16<> */
-        /* Comparable_16<> */
         b)));
     }
     public static Interval Between(Value v, Interval i) {
-        return /* Union(Boolean_25<>, Boolean_25<>) */
+        return /* Boolean_25<> */
         /* Union(Function_1<Interval_21<`Numerical_6498::Numerical_14<>>, Numerical_14<>, Boolean_25<>>, Function_1<Interval_21<`Numerical_6499::Numerical_14<>>, Interval_21<`Numerical_6500::Numerical_14<>>, Boolean_25<>>) */
         Contains(/* Interval_21<`Numerical_6501::Numerical_14<>> */
-        /* Interval_21<`Numerical_6501::Numerical_14<>> */
         i, /* Value_10<> */
-        /* Value_10<> */
         v);
     }
     public static Comparable Min(Comparable a, Comparable b) {
         return /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         LessThanOrEquals(/* Comparable_16<> */
-        /* Comparable_16<> */
         a, /* Unified(Comparable_16<>, Comparable_16<>) */
-        /* Unified(Comparable_16<>, Comparable_16<>) */
         /* Comparable_16<> */
         b
             ? /* Comparable_16<> */
@@ -5338,9 +4846,7 @@ public static partial class Extensions
         return /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         GreaterThanOrEquals(/* Comparable_16<> */
-        /* Comparable_16<> */
         a, /* Unified(Comparable_16<>, Comparable_16<>) */
-        /* Unified(Comparable_16<>, Comparable_16<>) */
         /* Comparable_16<> */
         b
             ? /* Comparable_16<> */
@@ -5355,13 +4861,10 @@ public static partial class Extensions
     public static Boolean NotEquals(Equatable x, Equatable y) {
         return /* Union(Boolean_25<>, `Self_6262) */
         /* Union(Function_1<Boolean_25<>, Boolean_25<>>, Function_1<`Self_6262, `Self_6262>) */
-        Not(/* Union(Boolean_25<>, Boolean_25<>) */
-        /* Union(Boolean_25<>, Boolean_25<>) */
+        Not(/* Boolean_25<> */
         /* Union(Function_1<`Self_6262, `Self_6262, Boolean_25<>>, Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>>) */
         Equals(/* Equatable_17<> */
-        /* Equatable_17<> */
         x, /* Equatable_17<> */
-        /* Equatable_17<> */
         y));
     }
 }
@@ -5371,50 +4874,34 @@ public static partial class Extensions
         return /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         LessThan(/* Number_22<> */
-        /* Number_22<> */
-        p, /* Unified(Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262), Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262)) */
-        /* Unified(Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262), Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262)) */
+        p, /* Unified(Union(Number_22<>, Integer_23<>, `Self_6262), Union(Number_22<>, Integer_23<>, `Self_6262)) */
         /* Number_22<> */
         0.5
-            ? /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+            ? /* Union(Number_22<>, Integer_23<>, `Self_6262) */
             /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
             Multiply(/* Number_22<> */
-            /* Number_22<> */
             0.5, /* `Any_6502 */
-            /* `Any_6502 */
             /* Function_1<> */
-            easeIn(/* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-            /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+            easeIn(/* Union(Number_22<>, Integer_23<>, `Self_6262) */
             /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
             Multiply(/* Number_22<> */
-            /* Number_22<> */
             p, /* Integer_23<> */
-            /* Integer_23<> */
             2)))
-            : /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+            : /* Union(Number_22<>, Integer_23<>, `Self_6262) */
             /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
             Multiply(/* Number_22<> */
-            /* Number_22<> */
-            0.5, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-            /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+            0.5, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
             /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
             Add(/* `Any_6503 */
-            /* `Any_6503 */
             /* Function_1<> */
-            easeOut(/* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-            /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+            easeOut(/* Union(Number_22<>, Integer_23<>, `Self_6262) */
             /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
             Multiply(/* Number_22<> */
-            /* Number_22<> */
             p, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
-            /* Union(Number_22<>, Integer_23<>, `Self_6262) */
             /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
             Subtract(/* Integer_23<> */
-            /* Integer_23<> */
             2, /* Integer_23<> */
-            /* Integer_23<> */
             1))), /* Number_22<> */
-            /* Number_22<> */
             0.5))
         );
     }
@@ -5422,17 +4909,12 @@ public static partial class Extensions
         return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Subtract(/* Integer_23<> */
-        /* Integer_23<> */
         1, /* `Any_6504 */
-        /* `Any_6504 */
         /* Function_1<> */
         easeIn(/* Union(Number_22<>, Integer_23<>, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Subtract(/* Integer_23<> */
-        /* Integer_23<> */
         1, /* Number_22<> */
-        /* Number_22<> */
         p)));
     }
     public static Number Linear(Number p) {
@@ -5443,177 +4925,136 @@ public static partial class Extensions
         return /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         Pow2(/* Number_22<> */
-        /* Number_22<> */
         p);
     }
     public static Number QuadraticEaseOut(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Function_1<>, Number_22<>> */
         InvertEaseFunc(/* Number_22<> */
-        /* Number_22<> */
         p, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         QuadraticEaseIn);
     }
     public static Number QuadraticEaseInOut(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Function_1<>, Function_1<>, Number_22<>> */
         BlendEaseFunc(/* Number_22<> */
-        /* Number_22<> */
         p, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         QuadraticEaseIn, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         QuadraticEaseOut);
     }
     public static Number CubicEaseIn(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         Pow3(/* Number_22<> */
-        /* Number_22<> */
         p);
     }
     public static Number CubicEaseOut(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Function_1<>, Number_22<>> */
         InvertEaseFunc(/* Number_22<> */
-        /* Number_22<> */
         p, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         CubicEaseIn);
     }
     public static Number CubicEaseInOut(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Function_1<>, Function_1<>, Number_22<>> */
         BlendEaseFunc(/* Number_22<> */
-        /* Number_22<> */
         p, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         CubicEaseIn, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         CubicEaseOut);
     }
     public static Number QuarticEaseIn(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         Pow4(/* Number_22<> */
-        /* Number_22<> */
         p);
     }
     public static Number QuarticEaseOut(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Function_1<>, Number_22<>> */
         InvertEaseFunc(/* Number_22<> */
-        /* Number_22<> */
         p, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         QuarticEaseIn);
     }
     public static Number QuarticEaseInOut(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Function_1<>, Function_1<>, Number_22<>> */
         BlendEaseFunc(/* Number_22<> */
-        /* Number_22<> */
         p, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         QuarticEaseIn, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         QuarticEaseOut);
     }
     public static Number QuinticEaseIn(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         Pow5(/* Number_22<> */
-        /* Number_22<> */
         p);
     }
     public static Number QuinticEaseOut(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Function_1<>, Number_22<>> */
         InvertEaseFunc(/* Number_22<> */
-        /* Number_22<> */
         p, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         QuinticEaseIn);
     }
     public static Number QuinticEaseInOut(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Function_1<>, Function_1<>, Number_22<>> */
         BlendEaseFunc(/* Number_22<> */
-        /* Number_22<> */
         p, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         QuinticEaseIn, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         QuinticEaseOut);
     }
     public static Number SineEaseIn(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Function_1<>, Number_22<>> */
         InvertEaseFunc(/* Number_22<> */
-        /* Number_22<> */
         p, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         SineEaseOut);
     }
     public static Number SineEaseOut(Number p) {
         return /* Number_22<> */
         /* Function_1<Angle_83<>, Number_22<>> */
         Sin(/* Angle_83<> */
-        /* Angle_83<> */
         /* Function_1<Number_22<>, Angle_83<>> */
         Turns(/* Number_22<> */
-        /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         Quarter(/* Number_22<> */
-        /* Number_22<> */
         p)));
     }
     public static Number SineEaseInOut(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Function_1<>, Function_1<>, Number_22<>> */
         BlendEaseFunc(/* Number_22<> */
-        /* Number_22<> */
         p, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         SineEaseIn, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         SineEaseOut);
     }
     public static Number CircularEaseIn(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         FromOne(/* Number_22<> */
-        /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         SquareRoot(/* Number_22<> */
-        /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         FromOne(/* Number_22<> */
-        /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         Pow2(/* Number_22<> */
-        /* Number_22<> */
         p))));
     }
     public static Number CircularEaseOut(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Function_1<>, Number_22<>> */
         InvertEaseFunc(/* Number_22<> */
-        /* Number_22<> */
         p, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         CircularEaseIn);
     }
     public static Number CircularEaseInOut(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Function_1<>, Function_1<>, Number_22<>> */
         BlendEaseFunc(/* Number_22<> */
-        /* Number_22<> */
         p, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         CircularEaseIn, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         CircularEaseOut);
     }
     public static Number ExponentialEaseIn(Number p) {
@@ -5621,24 +5062,18 @@ public static partial class Extensions
         /* Boolean_25<> */
         /* Function_1<Number_22<>, Boolean_25<>> */
         AlmostZero(/* Number_22<> */
-        /* Number_22<> */
         p)
             ? /* Number_22<> */
             p
             : /* Number_22<> */
             /* Function_1<Number_22<>, Number_22<>, Number_22<>> */
             Pow(/* Integer_23<> */
-            /* Integer_23<> */
-            2, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-            /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+            2, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
             /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
             Multiply(/* Integer_23<> */
-            /* Integer_23<> */
             10, /* Number_22<> */
-            /* Number_22<> */
             /* Function_1<Number_22<>, Number_22<>> */
             MinusOne(/* Number_22<> */
-            /* Number_22<> */
             p)))
         ;
     }
@@ -5646,310 +5081,210 @@ public static partial class Extensions
         return /* Number_22<> */
         /* Function_1<Number_22<>, Function_1<>, Number_22<>> */
         InvertEaseFunc(/* Number_22<> */
-        /* Number_22<> */
         p, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         ExponentialEaseIn);
     }
     public static Number ExponentialEaseInOut(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Function_1<>, Function_1<>, Number_22<>> */
         BlendEaseFunc(/* Number_22<> */
-        /* Number_22<> */
         p, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         ExponentialEaseIn, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         ExponentialEaseOut);
     }
     public static Number ElasticEaseIn(Number p) {
-        return /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Integer_23<> */
-        /* Integer_23<> */
-        13, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        13, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Angle_83<> */
-        /* Angle_83<> */
         /* Function_1<Number_22<>, Angle_83<>> */
         Turns(/* Number_22<> */
-        /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         Quarter(/* Number_22<> */
-        /* Number_22<> */
         p)), /* Number_22<> */
-        /* Number_22<> */
         /* Function_1<Angle_83<>, Number_22<>> */
         Sin(/* Union(Number_22<>, Angle_83<>) */
-        /* Union(Number_22<>, Angle_83<>) */
         /* Union(Function_1<Angle_83<>, Number_22<>>, Function_1<Number_22<>, Angle_83<>>) */
         Radians(/* Number_22<> */
-        /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>, Number_22<>> */
         Pow(/* Integer_23<> */
-        /* Integer_23<> */
-        2, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        2, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Integer_23<> */
-        /* Integer_23<> */
         10, /* Number_22<> */
-        /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         MinusOne(/* Number_22<> */
-        /* Number_22<> */
         p)))))));
     }
     public static Number ElasticEaseOut(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Function_1<>, Number_22<>> */
         InvertEaseFunc(/* Number_22<> */
-        /* Number_22<> */
         p, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         ElasticEaseIn);
     }
     public static Number ElasticEaseInOut(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Function_1<>, Function_1<>, Number_22<>> */
         BlendEaseFunc(/* Number_22<> */
-        /* Number_22<> */
         p, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         ElasticEaseIn, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         ElasticEaseOut);
     }
     public static Number BackEaseIn(Number p) {
         return /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Subtract(/* Number_22<> */
-        /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         Pow3(/* Number_22<> */
-        /* Number_22<> */
-        p), /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        p), /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Multiply(/* Number_22<> */
-        /* Number_22<> */
         p, /* Number_22<> */
-        /* Number_22<> */
         /* Function_1<Angle_83<>, Number_22<>> */
         Sin(/* Angle_83<> */
-        /* Angle_83<> */
         /* Function_1<Number_22<>, Angle_83<>> */
         Turns(/* Number_22<> */
-        /* Number_22<> */
         /* Function_1<Number_22<>, Number_22<>> */
         Half(/* Number_22<> */
-        /* Number_22<> */
         p)))));
     }
     public static Number BackEaseOut(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Function_1<>, Number_22<>> */
         InvertEaseFunc(/* Number_22<> */
-        /* Number_22<> */
         p, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         BackEaseIn);
     }
     public static Number BackEaseInOut(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Function_1<>, Function_1<>, Number_22<>> */
         BlendEaseFunc(/* Number_22<> */
-        /* Number_22<> */
         p, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         BackEaseIn, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         BackEaseOut);
     }
     public static Number BounceEaseIn(Number p) {
         return /* Number_22<> */
         /* Function_1<Number_22<>, Function_1<>, Number_22<>> */
         InvertEaseFunc(/* Number_22<> */
-        /* Number_22<> */
         p, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         BounceEaseOut);
     }
     public static Number BounceEaseOut(Number p) {
-        return /* Unified(Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262), Unified(Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262), Unified(Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262), Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262)))) */
+        return /* Unified(Union(Number_22<>, Integer_23<>, `Self_6262), Unified(Union(Number_22<>, Integer_23<>, `Self_6262), Unified(Union(Number_22<>, Integer_23<>, `Self_6262), Union(Number_22<>, Integer_23<>, `Self_6262)))) */
         /* Boolean_25<> */
         /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
         LessThan(/* Number_22<> */
-        /* Number_22<> */
-        p, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-        /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+        p, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
         /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
         Divide(/* Integer_23<> */
-        /* Integer_23<> */
         4, /* Number_22<> */
-        /* Number_22<> */
         11))
-            ? /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+            ? /* Union(Number_22<>, Integer_23<>, `Self_6262) */
             /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
             Multiply(/* Number_22<> */
-            /* Number_22<> */
-            121, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-            /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+            121, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
             /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
             Divide(/* Number_22<> */
-            /* Number_22<> */
             /* Function_1<Number_22<>, Number_22<>> */
             Pow2(/* Number_22<> */
-            /* Number_22<> */
             p), /* Number_22<> */
-            /* Number_22<> */
             16))
-            : /* Unified(Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262), Unified(Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262), Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262))) */
+            : /* Unified(Union(Number_22<>, Integer_23<>, `Self_6262), Unified(Union(Number_22<>, Integer_23<>, `Self_6262), Union(Number_22<>, Integer_23<>, `Self_6262))) */
             /* Boolean_25<> */
             /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
             LessThan(/* Number_22<> */
-            /* Number_22<> */
-            p, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-            /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+            p, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
             /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
             Divide(/* Integer_23<> */
-            /* Integer_23<> */
             8, /* Number_22<> */
-            /* Number_22<> */
             11))
-                ? /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+                ? /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                 /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                 Divide(/* Number_22<> */
-                /* Number_22<> */
-                363, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-                /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+                363, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                 /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                 Multiply(/* Number_22<> */
-                /* Number_22<> */
                 40, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
-                /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                 /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                 Subtract(/* Number_22<> */
-                /* Number_22<> */
                 /* Function_1<Number_22<>, Number_22<>> */
                 Pow2(/* Number_22<> */
-                /* Number_22<> */
-                p), /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-                /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+                p), /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                 /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                 Divide(/* Number_22<> */
-                /* Number_22<> */
-                99, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-                /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+                99, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                 /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                 Multiply(/* Number_22<> */
-                /* Number_22<> */
-                10, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-                /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+                10, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                 /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                 Add(/* Number_22<> */
-                /* Number_22<> */
-                p, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-                /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+                p, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                 /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                 Divide(/* Number_22<> */
-                /* Number_22<> */
                 17, /* Number_22<> */
-                /* Number_22<> */
                 5)))))))
-                : /* Unified(Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262), Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262)) */
+                : /* Unified(Union(Number_22<>, Integer_23<>, `Self_6262), Union(Number_22<>, Integer_23<>, `Self_6262)) */
                 /* Boolean_25<> */
                 /* Function_1<Comparable_16<>, Comparable_16<>, Boolean_25<>> */
                 LessThan(/* Number_22<> */
-                /* Number_22<> */
-                p, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-                /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+                p, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                 /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                 Divide(/* Integer_23<> */
-                /* Integer_23<> */
                 9, /* Number_22<> */
-                /* Number_22<> */
                 10))
-                    ? /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+                    ? /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                     /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                     Divide(/* Number_22<> */
-                    /* Number_22<> */
-                    4356, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-                    /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+                    4356, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                     /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                     Multiply(/* Number_22<> */
-                    /* Number_22<> */
                     361, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
-                    /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                     /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                     Subtract(/* Number_22<> */
-                    /* Number_22<> */
                     /* Function_1<Number_22<>, Number_22<>> */
                     Pow2(/* Number_22<> */
-                    /* Number_22<> */
-                    p), /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-                    /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+                    p), /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                     /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                     Divide(/* Number_22<> */
-                    /* Number_22<> */
-                    35442, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-                    /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+                    35442, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                     /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                     Multiply(/* Number_22<> */
-                    /* Number_22<> */
-                    1805, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-                    /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+                    1805, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                     /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                     Add(/* Number_22<> */
-                    /* Number_22<> */
-                    p, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-                    /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+                    p, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                     /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                     Divide(/* Number_22<> */
-                    /* Number_22<> */
                     16061, /* Number_22<> */
-                    /* Number_22<> */
                     1805)))))))
-                    : /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+                    : /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                     /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                     Divide(/* Number_22<> */
-                    /* Number_22<> */
-                    54, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-                    /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+                    54, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                     /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                     Multiply(/* Number_22<> */
-                    /* Number_22<> */
                     5, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
-                    /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                     /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                     Subtract(/* Number_22<> */
-                    /* Number_22<> */
                     /* Function_1<Number_22<>, Number_22<>> */
                     Pow2(/* Number_22<> */
-                    /* Number_22<> */
-                    p), /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-                    /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+                    p), /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                     /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                     Divide(/* Number_22<> */
-                    /* Number_22<> */
-                    513, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-                    /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+                    513, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                     /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                     Multiply(/* Number_22<> */
-                    /* Number_22<> */
-                    25, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-                    /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+                    25, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                     /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                     Add(/* Number_22<> */
-                    /* Number_22<> */
-                    p, /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
-                    /* Union(Number_22<>, Integer_23<>, `Self_6262, `Self_6262) */
+                    p, /* Union(Number_22<>, Integer_23<>, `Self_6262) */
                     /* Union(Function_1<Number_22<>, Number_22<>, Number_22<>>, Function_1<Integer_23<>, Integer_23<>, Integer_23<>>, Function_1<`Self_6262, `Self_6262, `Self_6262>, Function_1<`Self_6262, Number_22<>, `Self_6262>) */
                     Divide(/* Number_22<> */
-                    /* Number_22<> */
                     268, /* Number_22<> */
-                    /* Number_22<> */
                     25)))))))
 
 
@@ -5959,11 +5294,8 @@ public static partial class Extensions
         return /* Number_22<> */
         /* Function_1<Number_22<>, Function_1<>, Function_1<>, Number_22<>> */
         BlendEaseFunc(/* Number_22<> */
-        /* Number_22<> */
         p, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         BounceEaseIn, /* Function_1<Number_22<>, Number_22<>> */
-        /* Function_1<Number_22<>, Number_22<>> */
         BounceEaseOut);
     }
 }

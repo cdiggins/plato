@@ -169,8 +169,7 @@ namespace Plato.Compiler.Types
 
             if (t is TypeUnion tu)
             {
-                var options = tu.Options.Select(GetReturnType).ToList();
-                return new TypeUnion(options, this);
+                return CreateTypeUnion(tu.Options.Select(GetReturnType));
             }
 
             throw new Exception("Can only get return type of unions or functions");
@@ -200,12 +199,17 @@ namespace Plato.Compiler.Types
 
         public Type CreateType(FunctionGroupReference functionGroup)
         {
-            var options = functionGroup.Definition.Functions.Select(CreateType).ToArray();
-            if (options.Length == 0)
-                throw new Exception("Internal error");
-            if (options.Length == 1)
-                return options[0];
-            return Register(new TypeUnion(options, this));
+            return CreateTypeUnion(functionGroup.Definition.Functions.Select(CreateType));
+        }
+
+        public Type CreateTypeUnion(IEnumerable<Type> options)
+        {
+            var tmp = options.Distinct().ToList();
+            if (tmp.Count == 0)
+                throw new Exception("Internal error: can't create type union with no options");
+            if (tmp.Count == 1)
+                return tmp[0];
+            return Register(new TypeUnion(tmp, this));
         }
 
         public Type CreateType(FunctionDefinition function)

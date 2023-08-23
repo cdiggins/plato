@@ -179,6 +179,8 @@ namespace Plato.Compiler.Types
         {
             if (options.Count < 2)
                 throw new Exception("Expected at least two options");
+            if (options.Distinct().Count() != options.Count)
+                throw new Exception("Some of the types are the same");
             Options = options;
         }
 
