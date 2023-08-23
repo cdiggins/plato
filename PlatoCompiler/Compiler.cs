@@ -27,6 +27,7 @@ namespace Plato.Compiler
         public bool DisplayWarnings = false;
         public AstNodeFactory AstNodeFactory { get; }
         public CstNodeFactory CstNodeFactory { get; }
+        public TypeFactory TypeFactory { get; set; }
         public Logger Logger { get; }
         public bool CompletedCompilation { get; set; }
         public bool ParsingSuccess { get; set; }
@@ -83,8 +84,8 @@ namespace Plato.Compiler
                     return;
                 }
 
-                var atr = new TypeFactory(TypeDefs);
-                Log(atr);
+                TypeFactory = new TypeFactory(TypeDefs);
+                Log(TypeFactory);
                 
                 // TODO: get the functions 
 

@@ -31,12 +31,24 @@ namespace Plato.Compiler.Types
                 .Select(t => new Concept(t, this))
                 .ToList();
 
-            TypeLookup = types.Where(t => t.IsType() || t.IsConcept())
+            TypeLookup = types
+                .Where(t => t.IsType() || t.IsConcept())
                 .ToDictionary(t => t.Name, t => CreateType(t));
 
             foreach (var c in Concepts)
             {
                 ComputeFunctions(c);
+            }
+
+            foreach (var t in types)
+            {
+                if (!t.IsLibrary())
+                    continue;
+
+                foreach (var f in t.Functions)
+                {
+                    CreateFunction(f);
+                }
             }
 
             foreach (var f in FunctionDefinitions)
@@ -133,6 +145,13 @@ namespace Plato.Compiler.Types
         {
             if (t is TypeReference tr)
             {
+                // TEMP: 
+                if (tr.Type.Equals(PrimitiveTypeDefinitions.Tuple))
+                {
+                    Debug.WriteLine("Not sure how a tuple is being called");
+                    return tr;
+                }
+
                 if (!tr.Type.Equals(PrimitiveTypeDefinitions.Function))
                 {
                     throw new Exception($"Not a reference to a Function instead {tr.Type}");
@@ -143,9 +162,9 @@ namespace Plato.Compiler.Types
                     return tr.TypeArguments[tr.TypeArguments.Count - 1];
                 }
 
-                // Note: this is a reference to an unbound type. It should never happen 
-                // return CreateAny();
-                throw new Exception("Unexpected number of type arguments");
+                // 
+                Debug.WriteLine($"This is a function with an unknown number of arguments");
+                return CreateAny();
             }
 
             if (t is TypeUnion tu)
@@ -168,7 +187,9 @@ namespace Plato.Compiler.Types
 
         public Type CreateType(Lambda lambda)
         {
-            return CreateType(lambda.Function);
+            var r = CreateType(lambda.Function);
+            Resolve(lambda.Function.Body);
+            return r;
         }
 
         public Type CreateType(Tuple tuple)

@@ -40,11 +40,11 @@ namespace Plato.Compiler.Symbols
 
         public void BindPredefinedSymbols()
         {
-            BindPredefined(null, "intrinsic");
-            BindPredefined(null, "Tuple");
             BindType(PrimitiveTypeDefinitions.Tuple);
             BindType(PrimitiveTypeDefinitions.Function);
             BindType(PrimitiveTypeDefinitions.Self);
+            BindPredefined(null, "intrinsic");
+            BindPredefined(PrimitiveTypeDefinitions.Tuple.ToTypeExpression(), "Tuple");
         }
 
         public void BindPredefined(TypeExpression type, string name)

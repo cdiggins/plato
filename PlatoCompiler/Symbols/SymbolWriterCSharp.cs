@@ -3,22 +3,21 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using Plato.Compiler.Ast;
+using Plato.Compiler.Types;
 
 namespace Plato.Compiler.Symbols
 {
-    public class SymbolWriterCSharp : CodeBuilder<SymbolWriterCSharp>
+    public class SymbolWriterCSharp : SymbolWriter<SymbolWriterCSharp>
     {
-        public SymbolWriterCSharp Write(IEnumerable<Definition> symbols)
-            => symbols.Aggregate(this, (writer, symbol) => writer.Write(symbol));
+        public SymbolWriterCSharp(TypeFactory factory)
+            : base(factory) 
+        { }
 
-        public SymbolWriterCSharp Write(IEnumerable<Expression> symbols)
-            => symbols.Aggregate(this, (writer, symbol) => writer.Write(symbol));
-
-        public SymbolWriterCSharp WriteTypeDecl(TypeExpression typeRef, string defaultType = "var")
+        public SymbolWriterCSharp WriteTypeDecl(TypeExpression type, string defaultType = "var")
         {
-            if (typeRef == null)
+            if (type == null)
                 return Write($"{defaultType} ");
-            return Write(typeRef.Name).Write(" ");
+            return Write(type.Name).Write(" ");
         }
 
         public SymbolWriterCSharp WriteSignature(FunctionDefinition function)
@@ -32,15 +31,6 @@ namespace Plato.Compiler.Symbols
 
         public SymbolWriterCSharp Write(FunctionDefinition function)
         {
-            if (function.Name == "__lambda__")
-            {
-                return Write("(")
-                    .WriteCommaList(function.Parameters.Select(p => p.Name))
-                    .WriteLine(") => ")
-                    //.WriteConstraints(function)
-                    .Write(function.Body);
-            }
-
             // Functions with no bodies are intrinsics
             if (function.Body == null)
                 return this;
@@ -52,51 +42,6 @@ namespace Plato.Compiler.Symbols
                 .Write(function.Body)
                 .WriteLine(";")
                 .WriteEndBlock();
-        }
-
-        public SymbolWriterCSharp WriteCommaList(IEnumerable<Expression> symbols)
-        {
-            var r = this;
-            var first = true;
-            foreach (var s in symbols)
-            {
-                if (!first)
-                    r = r.Write(", ");
-                first = false;
-                r = r.Write(s);
-            }
-
-            return r;
-        }
-
-        public SymbolWriterCSharp WriteCommaList(IEnumerable<Definition> symbols)
-        {
-            var r = this;
-            var first = true;
-            foreach (var s in symbols)
-            {
-                if (!first)
-                    r = r.Write(", ");
-                first = false;
-                r = r.Write(s);
-            }
-
-            return r;
-        }
-
-        public SymbolWriterCSharp WriteCommaList(IEnumerable<string> symbols)
-        {
-            var r = this;
-            var first = true;
-            foreach (var s in symbols)
-            {
-                if (!first)
-                    r = r.Write(", ");
-                first = false;
-                r = r.Write(s);
-            }
-
-            return r;
         }
 
         public static string ParameterizedTypeName(string name, IEnumerable<string> args)
@@ -315,7 +260,7 @@ namespace Plato.Compiler.Symbols
             return this;
         }
 
-        public SymbolWriterCSharp Write(TypeDefinition type)
+        public override SymbolWriterCSharp Write(TypeDefinition type)
         {
             if (type.IsConcept())
             {
@@ -373,7 +318,7 @@ namespace Plato.Compiler.Symbols
             throw new Exception($"Unrecognized kind of type {type.Kind}");
         }
 
-        public SymbolWriterCSharp Write(Definition value)
+        public override SymbolWriterCSharp Write(Definition value)
         {
             switch (value)
             {
@@ -389,7 +334,6 @@ namespace Plato.Compiler.Symbols
 
                 case FunctionGroupDefinition memberGroup:
                     return Write(memberGroup.Name);
-
 
                 case MethodDefinition methodDef:
                     return Write("public static ").Write(methodDef.Function);
@@ -409,15 +353,23 @@ namespace Plato.Compiler.Symbols
 
             return this;
         }
-        
 
-        public SymbolWriterCSharp Write(Expression value)
+
+        public override SymbolWriterCSharp Write(TypeExpression typeExpression)
         {
-            switch (value)
-            {
-                case null:
-                    return Write("null");
+            return WriteTypeDecl(typeExpression);
+        }
 
+        public override SymbolWriterCSharp Write(Expression expr)
+        {
+            if (expr == null)
+                return this;
+
+            var t = Factory.GetType(expr);
+            WriteLine($"/* {t} */");
+
+            switch (expr)
+            {
                 case Reference refSymbol:
                     return Write(refSymbol.Name);
 
@@ -445,9 +397,16 @@ namespace Plato.Compiler.Symbols
                 case Literal literal:
                     return Write(literal.Value.ToString());
 
+                case Lambda lambda:
+                    return Write("(")
+                        .WriteCommaList(lambda.Function.Parameters)
+                        .WriteLine(") => ")
+                        //.WriteConstraints(function)
+                        .Write(lambda.Function.Body);
+
             }
 
-            throw new ArgumentOutOfRangeException(nameof(value));
+            throw new ArgumentOutOfRangeException(nameof(expr));
         }
     }
 }
