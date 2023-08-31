@@ -4,6 +4,7 @@ using System.Diagnostics;
 
 namespace Plato.Compiler
 {
+    // TODO: switch to a proper Ptarmigan logger. 
     public class Logger
     {
         public Stopwatch Stopwatch = Stopwatch.StartNew();

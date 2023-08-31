@@ -8,8 +8,17 @@ namespace Plato.Compiler.Types
 
     public class ArgumentConstraint : TypeConstraint
     {
-        public Type Type { get; }
+        public Type ParameterType { get; }
         public Type ArgumentType { get; }
+
+        public ArgumentConstraint(Type argumentType, Type parameterType)
+        {
+            ParameterType = parameterType;
+            ArgumentType = argumentType;
+        }
+
+        public override string ToString()
+            => $"ArgumentConstraint(arg={ArgumentType}, param={ParameterType})";
     }
 
     public class InvokedConstraint : TypeConstraint
@@ -21,6 +30,9 @@ namespace Plato.Compiler.Types
             Type = type;
             Arguments = arguments;
         }
+
+        public override string ToString()
+            => $"InvokedConstraint(type={Type}, args=({string.Join(",", Arguments)}))";
     }
 
     public class IsBoolConstraint : TypeConstraint
@@ -29,6 +41,9 @@ namespace Plato.Compiler.Types
 
         public IsBoolConstraint(Type t)
             => Type = t;
+
+        public override string ToString()
+            => $"IsBoolConstraint(type={Type})";
     }
 
     public class UnifiesConstraint : TypeConstraint
@@ -41,6 +56,9 @@ namespace Plato.Compiler.Types
             Type1 = type1;
             Type2 = type2;
         }
+
+        public override string ToString()
+            => $"UnifiesConstraint({Type1}, {Type2})";
     }
 
     public class CastsToConstraint : TypeConstraint
@@ -53,13 +71,8 @@ namespace Plato.Compiler.Types
             From = from;
             To = to;
         }
-    }
 
-    public class HasTypeArgs : TypeConstraint
-    {
-        public Type Type;
-        public IReadOnlyList<Type> Arguments;
+        public override string ToString()
+            => $"CastsTo(from={From}, to={To})";
     }
-
-    // Creates constraints. Easy-ish 
 }

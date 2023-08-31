@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Plato.Compiler.Ast;
 using Plato.Compiler.Symbols;
-using Tuple = Plato.Compiler.Symbols.Tuple;
 
 namespace Plato.Compiler.Types
 {
     public class TypeFactory
     {
         public Dictionary<TypeDefinition, Type> DefinitionTypes { get; } = new Dictionary<TypeDefinition, Type>();
-        public Dictionary<Expression, Type> ExpressionTypes { get; } = new Dictionary<Expression, Type>();
+        public Dictionary<TypeExpression, Type> TypeExpressionTypes { get; } = new Dictionary<TypeExpression, Type>();
 
         public List<TypeVariable> TypeVariables { get; } = new List<TypeVariable>();
         public IEnumerable<TypeReference> TypeReferences => AllTypes.OfType<TypeReference>();
@@ -46,17 +44,7 @@ namespace Plato.Compiler.Types
                     continue;
 
                 foreach (var f in t.Functions)
-                {
                     CreateFunction(f);
-                }
-            }
-
-            foreach (var f in FunctionDefinitions)
-            {
-                Resolve(f.Body);
-                foreach (var x in f.Body.GetExpressionTree())
-                    if (GetType(x) == null)
-                        throw new Exception($"Could not find type for expression {x}");
             }
 
             // Note: interesting exercise in assuring that your hash-code/equals are implemented correctly. 
@@ -91,8 +79,8 @@ namespace Plato.Compiler.Types
         public TypedFunction GetTypedFunction(FunctionDefinition fd)
             => TypedFunctionLookup[fd];
 
-        public Type GetType(Expression expression)
-            => ExpressionTypes[expression];
+        public Type GetType(TypeExpression typeExpression)
+            => TypeExpressionTypes[typeExpression];
 
         public T Register<T>(T self) where T : Type
         {
@@ -141,186 +129,32 @@ namespace Plato.Compiler.Types
             }
         }
 
-        public Type GetReturnType(Type t)
-        {
-            if (t is TypeReference tr)
-            {
-                // TEMP: 
-                if (tr.Type.Equals(PrimitiveTypeDefinitions.Tuple))
-                {
-                    Debug.WriteLine("Not sure how a tuple is being called");
-                    return tr;
-                }
-
-                if (!tr.Type.Equals(PrimitiveTypeDefinitions.Function))
-                {
-                    throw new Exception($"Not a reference to a Function instead {tr.Type}");
-                }
-
-                if (tr.TypeArguments.Count > 0)
-                {
-                    return tr.TypeArguments[tr.TypeArguments.Count - 1];
-                }
-
-                // 
-                Debug.WriteLine($"This is a function with an unknown number of arguments");
-                return CreateAny();
-            }
-
-            if (t is TypeUnion tu)
-            {
-                return CreateTypeUnion(tu.Options.Select(GetReturnType));
-            }
-
-            throw new Exception("Can only get return type of unions or functions");
-        }
-
-        public Type ResolveReturnType(Expression func)
-        {
-            var t = GetType(func);
-            if (t == null)
-                throw new Exception($"Invoked expression {func} was not assigned a type");
-
-            return GetReturnType(t);
-        }
-
-        public Type CreateType(Lambda lambda)
-        {
-            var r = CreateType(lambda.Function);
-            Resolve(lambda.Function.Body);
-            return r;
-        }
-
-        public Type CreateType(Tuple tuple)
-        {
-            var args = tuple.Children.Select(Resolve).ToArray();
-            return CreateType(PrimitiveTypeDefinitions.Tuple, args);
-        }
-
-        public Type CreateType(FunctionGroupReference functionGroup)
-        {
-            return CreateTypeUnion(functionGroup.Definition.Functions.Select(CreateType));
-        }
-
-        public Type CreateTypeUnion(IEnumerable<Type> options)
-        {
-            var tmp = options.Distinct().ToList();
-            if (tmp.Count == 0)
-                throw new Exception("Internal error: can't create type union with no options");
-            if (tmp.Count == 1)
-                return tmp[0];
-            return Register(new TypeUnion(tmp, this));
-        }
+        public Type CreateFunctionType(IReadOnlyList<Type> paramTypes, Type returnType)
+            => CreateType(PrimitiveTypeDefinitions.Function, paramTypes.Append(returnType).ToArray());
 
         public Type CreateType(FunctionDefinition function)
-        {
-            var ret = function.Type;
-            var args = function.Parameters.Select(p => p.Type).Append(ret).Select(CreateType).ToArray();
-            return CreateType(PrimitiveTypeDefinitions.Function, args);
-        }
+            => CreateFunctionType(function.Parameters.Select(p => CreateType(p.Type)).ToArray(),
+                CreateType(function.Type));
 
         public Type FindType(string name)
-        {
-            return TypeLookup[name];
-        }
+            => TypeLookup[name];
 
-        public Type Resolve(Expression expression)
-        {
-            if (expression == null)
-                return null;
-
-            Type r;
-            if (ExpressionTypes.ContainsKey(expression))
-                return ExpressionTypes[expression];
-
-            foreach (var child in expression.Children)
-                Resolve(child);
-
-            switch (expression)
-            {
-                case Argument argument:
-                    r = Resolve(argument.Expression);
-                    break;
-
-                case Assignment assignment:
-                    r = Resolve(assignment.LValue);
-                    break;
-
-                case ConditionalExpression conditionalExpression:
-                    r = new UnifiedType(
-                        Resolve(conditionalExpression.IfTrue),
-                        Resolve(conditionalExpression.IfFalse),
-                        this);
-                    break;
-
-                case FunctionCall functionCall:
-                    r = ResolveReturnType(functionCall.Function);
-                    break;
-
-                case FunctionGroupReference functionGroupReference:
-                    r = CreateType(functionGroupReference);
-                    break;
-
-                case Lambda lambda:
-                    r = CreateType(lambda);
-                    break;
-
-                case Literal literal:
-                {
-                    switch (literal.TypeEnum)
-                    {
-                        case LiteralTypesEnum.Integer:
-                            r = FindType("Integer");
-                            break;
-                        case LiteralTypesEnum.Number:
-                            r = FindType("Number");
-                            break;
-                        case LiteralTypesEnum.Boolean:
-                            r = FindType("Boolean");
-                            break;
-                        case LiteralTypesEnum.String:
-                            r = FindType("String");
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-
-                    break;
-                }
-
-                case ParameterReference parameterReference:
-                    r = CreateType(parameterReference.Type);
-                    break;
-
-                case Parenthesized parenthesized:
-                    r = Resolve(parenthesized.Expression);
-                    break;
-
-                case PredefinedReference predefinedReference:
-                    r = CreateType(predefinedReference.Definition.Type);
-                    break;
-
-                case Reference reference:
-                    r = CreateType(reference.Definition.Type);
-                    break;
-
-                case Tuple tuple:
-                    r = CreateType(tuple);
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(expression));
-            }
-
-            ExpressionTypes.Add(expression, r);
-            return r;
-        }
+        // TODO: this doesn't make sense: Why not look it up first? 
 
         public Type CreateType(TypeDefinition definition, params Type[] ps)
             => Register(new TypeReference(definition, ps, this));
 
         public Type CreateType(TypeExpression symbol)
         {
+            if (TypeExpressionTypes.ContainsKey(symbol))
+                return TypeExpressionTypes[symbol];
+            var r = InternalCreateType(symbol);
+            TypeExpressionTypes.Add(symbol, r);
+            return r;
+        }
+
+        public Type InternalCreateType(TypeExpression symbol) 
+        { 
             if (symbol.Name == "Self")
             {
                 Debug.Assert(CurrentSelf != null);

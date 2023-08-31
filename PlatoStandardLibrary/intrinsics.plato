@@ -33,4 +33,6 @@
     And(x: Boolean, y: Boolean): Boolean;
     Or(x: Boolean, y: Boolean): Boolean;
     Not(x: Boolean): Boolean;
+
+    ToNumber(x: Integer): Number;
 }

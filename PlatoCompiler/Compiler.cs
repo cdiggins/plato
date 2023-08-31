@@ -7,6 +7,7 @@ using Plato.Compiler.Ast;
 using Plato.Compiler.Symbols;
 using Plato.Compiler.Types;
 using Plato.Compiler.Vsg;
+using Type = Plato.Compiler.Types.Type;
 
 namespace Plato.Compiler
 {
@@ -37,6 +38,8 @@ namespace Plato.Compiler
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; set; }
         public IReadOnlyList<FunctionDefinition> Functions { get; } 
         public IReadOnlyList<TypeDefinition> TypeDefs { get; set; }
+        public Dictionary<FunctionDefinition, TypeResolver> Resolvers { get; } = new Dictionary<FunctionDefinition, TypeResolver>();
+        public Dictionary<Expression, Type> Types { get; } = new Dictionary<Expression, Type>();
 
         public List<string> SemanticErrors { get; } = new List<string>();
         public List<string> SemanticWarnings { get; } = new List<string>();
@@ -84,9 +87,26 @@ namespace Plato.Compiler
                     return;
                 }
 
+                Log("Creating type factory");
                 TypeFactory = new TypeFactory(TypeDefs);
                 Log(TypeFactory);
-                
+
+                foreach (var f in TypeFactory.FunctionDefinitions)
+                {
+                    Log($"Creating type resolver for {f}");
+                    var tr = new TypeResolver(TypeFactory, null, null, null, f);
+                    Resolvers.Add(f, tr);
+
+                    Log($"Gathering expressions types for {f}");
+                    var et = tr.ExpressionTypes;
+
+                    while (et != null)
+                    {
+                        Types.Add(et.Expression, et.Type);
+                        et = et.Parent;
+                    }
+                }
+
                 // TODO: get the functions 
 
                 /*
@@ -128,6 +148,9 @@ namespace Plato.Compiler
                 Log("Exception caught: " + e.Message);
             }
         }
+
+        public Type GetType(Expression expr)
+            => Types.TryGetValue(expr, out var r) ? r : null;
 
         public void Log(TypeFactory atr)
         {

@@ -9,6 +9,7 @@ using Plato.Compiler.Ast;
 using Plato.Compiler.Symbols;
 using Plato.Compiler.Utilities;
 using Ptarmigan.Utils;
+using Logger = Plato.Compiler.Logger;
 
 namespace PlatoWinFormsEditor;
 
@@ -17,7 +18,7 @@ public class IDE
     public TabControl TabControl { get; }
     public RichTextBox OutputTextBox { get; }
     public List<Editor> Editors { get; } = new();
-    public Compiler Compiler { get; }
+    public Compiler Compiler { get; }   
     public Logger Logger { get; } = new();
 
     public void OpenFile(string filePath)

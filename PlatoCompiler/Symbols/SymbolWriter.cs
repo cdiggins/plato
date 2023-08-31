@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using Parakeet;
-using Plato.Compiler.Types;
 
 namespace Plato.Compiler.Symbols
 {
     public abstract class SymbolWriter<T> : CodeBuilder<T> where T : SymbolWriter<T>
     {
-        public TypeFactory Factory { get; }
+        public Compiler Compiler { get; }
 
-        protected SymbolWriter(TypeFactory factory)
+        protected SymbolWriter(Compiler compiler)
         {
-            Factory = factory;
+            Compiler = compiler;
         }
 
         public T Write(IEnumerable<Symbol> symbols)

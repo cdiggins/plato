@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using Plato.Compiler.Symbols;
 
 namespace Plato.Compiler.Types
 {
+    // TODO: I think this probably needs to be removed. 
     public class TypeConstraintCollector
     {
         public FunctionDefinition FunctionDefinition { get; }
@@ -18,7 +20,14 @@ namespace Plato.Compiler.Types
             if (!TypeFactory.TypedFunctionLookup.ContainsKey(FunctionDefinition))
                 throw new Exception($"No typed function was found for the function {FunctionDefinition}");
             TypedFunction = TypeFactory.TypedFunctionLookup[FunctionDefinition];
-            GatherConstraints(FunctionDefinition.Body);
+            var body = FunctionDefinition.Body;
+
+            if (body == null)
+                return;
+            GatherConstraints(body);
+            //var exprType = TypeFactory.GetType(body);
+            //var returnType = TypedFunction.Signature.ReturnType;
+            //Constraints.Add(new CastsToConstraint(exprType, returnType));
         }
 
         public void RegisterConstraint(TypeConstraint constraint)
@@ -27,15 +36,17 @@ namespace Plato.Compiler.Types
         }
 
         public Type GetType(Expression expression)
-        {
-            // 
-            throw new NotImplementedException();
-        }
+            => throw new NotImplementedException();
 
         public void GatherConstraints(Expression expression)
         {
             // This is a recursive function. 
+            if (expression == null) 
+                return;
 
+            foreach (var child in expression.Children)
+                GatherConstraints(child);
+            
             switch (expression)
             {
                 case Argument argumentSymbol:
@@ -61,27 +72,43 @@ namespace Plato.Compiler.Types
 
                     if (functionCallSymbol.Function is FunctionGroupReference fgr)
                     {
-                        // We are going to be in an interesting situiation. 
-                        // Depending one which one is chosen, we have to fork the constraint tree.
-                        // We in theory have a list of type arguments for each possibility. 
-                        // Those types 
+                        foreach (var f in fgr.Definition.Functions)
+                        {
+                            var options = Constraints.AddOptions();
+
+                            for (var i = 0; i < f.Parameters.Count; ++i)
+                            {
+                                var paramType = TypeFactory.GetType(f.Parameters[i].Type);
+
+                                if (i < argTypes.Count)
+                                {
+                                    var argType = argTypes[i];
+                                    var constraint = new ArgumentConstraint(argType, paramType);
+                                    options.Add(constraint);
+                                }
+                            }
+                        }
                     }
                     else
                     {
+                        Debug.WriteLine($"function {functionCallSymbol.Function} is not a function group reference");
                     }
 
                     break;
+
                 case Literal literalSymbol:
                     break;
+
                 case Reference refSymbol:
+                    break;
+
+                case Lambda lambda:
+                    GatherConstraints(lambda.Function.Body);
                     break;
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(expression));
             }
-
-            foreach (var c in expression.Children)
-                GatherConstraints(c);
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using Parakeet;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
+using System.Data;
 using System.Linq;
 using Plato.Compiler.Ast;
 using Plato.Compiler.Types;
@@ -9,8 +9,8 @@ namespace Plato.Compiler.Symbols
 {
     public class SymbolWriterCSharp : SymbolWriter<SymbolWriterCSharp>
     {
-        public SymbolWriterCSharp(TypeFactory factory)
-            : base(factory) 
+        public SymbolWriterCSharp(Compiler compiler)
+            : base(compiler) 
         { }
 
         public SymbolWriterCSharp WriteTypeDecl(TypeExpression type, string defaultType = "var")
@@ -29,6 +29,61 @@ namespace Plato.Compiler.Symbols
                 .Write(")");
         }
 
+        public SymbolWriterCSharp WriteConstraints(TypeConstraintCollection constraints)
+        {
+            foreach (var c in constraints.Constraints)
+                WriteLine($"// {c}");
+            var optionIndex = 0;
+            foreach (var options in constraints.Options)
+            {
+                WriteLine($"// Option {optionIndex++}");
+                Indent();
+                WriteConstraints(options);
+                Dedent();
+            }
+
+            return this;
+        }
+
+        public void WriteResolver(TypeResolver resolver)
+        {
+            if (resolver.Function == null)
+                WriteLine($"// Type resolver");
+            else
+                WriteLine($"// Type resolver associated with {resolver.Function.Signature}");
+            WriteLine($"// Success={resolver.Success} Message={resolver.Message}");
+            var option = 0;
+            foreach (var child in resolver.Children)
+            {
+                Indent();
+                WriteLine($"// Option {option++}");
+                WriteResolver(child);
+                Dedent();
+            }
+        }
+
+        public SymbolWriterCSharp WriteConstraints(FunctionDefinition function)
+        {
+            WriteLine("// Type Resolver");
+            var resolver = Compiler.Resolvers[function];
+            WriteResolver(resolver);
+            WriteLine("// Expression types");
+            foreach (var et in resolver.GetExpressionTypes())
+                WriteLine($"// Expression {et.Expression} has type {et.Type}");
+            return this;
+        }
+
+        public SymbolWriterCSharp WriteFunctionBody(FunctionDefinition function)
+        {
+            return 
+                WriteConstraints(function)
+                .WriteStartBlock()
+                .Write("return ")
+                .Write(function.Body)
+                .WriteLine(";")
+                .WriteEndBlock();
+        }
+
         public SymbolWriterCSharp Write(FunctionDefinition function)
         {
             // Functions with no bodies are intrinsics
@@ -36,12 +91,7 @@ namespace Plato.Compiler.Symbols
                 return this;
 
             return WriteSignature(function)
-                //.WriteConstraints(function)
-                .WriteStartBlock()
-                .Write("return ")
-                .Write(function.Body)
-                .WriteLine(";")
-                .WriteEndBlock();
+                .WriteFunctionBody(function);
         }
 
         public static string ParameterizedTypeName(string name, IEnumerable<string> args)
@@ -85,11 +135,7 @@ namespace Plato.Compiler.Symbols
                     .Write("(")
                     .WriteCommaList(mds.Function.Parameters)
                     .Write(") ")
-                    .WriteStartBlock()
-                    .Write("return ")
-                    .Write(mds.Function.Body)
-                    .WriteLine(";")
-                    .WriteEndBlock();
+                    .WriteFunctionBody(mds.Function);
             }
 
             return this;
@@ -121,11 +167,7 @@ namespace Plato.Compiler.Symbols
                     .WriteCommaList(mds.Function.Parameters)
                     .Write(") ")
                     .WriteLine(constraint)
-                    .WriteStartBlock()
-                    .Write("return ")
-                    .Write(mds.Function.Body)
-                    .WriteLine(";")
-                    .WriteEndBlock();
+                    .WriteFunctionBody(mds.Function);
             }
 
             return this;
@@ -211,10 +253,10 @@ namespace Plato.Compiler.Symbols
                                 .Write(ret)
                                 .Write(" this[").Write(index).Write("]")
                                 .WriteLine()
-                                .Indent().Write("=> ")
-                                .Write(f.Body)
-                                .WriteLine(";")
-                                .Dedent();
+                                .WriteStartBlock()
+                                .Write("get")
+                                .WriteFunctionBody(f)
+                                .WriteEndBlock();
                         }
                     }
                 }
@@ -365,7 +407,7 @@ namespace Plato.Compiler.Symbols
             if (expr == null)
                 return this;
 
-            var t = Factory.GetType(expr);
+            var t = Compiler.GetType(expr);
 
             // Don't put types in front of an argument (it is the same as the other)
             if (!(expr is Argument))

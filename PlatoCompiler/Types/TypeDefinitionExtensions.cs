@@ -96,19 +96,19 @@ namespace Plato.Compiler.Types
             return candidates;
         }
 
-        public static double MatchesScore(TypeExpression argType, TypeExpression parameterType)
+        public static double MatchesScore(this TypeExpression argType, TypeExpression parameterType)
         {
             if (argType == null) return 1;
             if (parameterType == null) return 1;
             return CanCastTo(argType, parameterType);
         }
 
-        public static double CanCastTo(TypeExpression fromType, TypeExpression toType, bool allowConversions = true)
+        public static double CanCastTo(this TypeExpression fromType, TypeExpression toType, bool allowConversions = true)
         {
             return CanCastTo(fromType?.Definition, toType?.Definition, allowConversions);
         }
 
-        public static double CanCastTo(TypeDefinition from, TypeDefinition to, bool allowConversions = true)
+        public static double CanCastTo(this TypeDefinition from, TypeDefinition to, bool allowConversions = true)
         {
             if (from == null || to == null)
                 throw new Exception("Could not find type definitions");
