@@ -23,7 +23,7 @@ concept Vector<T: Numerical>
     inherits Array<T>, Numerical, ScalarArithmetic
 {
     Count(v: Self): Integer
-        => Self.FieldTypes.Count;
+        => v.FieldTypes.Count;
         
     At(v: Self, n: Integer): T
         => v.FieldValues[n];

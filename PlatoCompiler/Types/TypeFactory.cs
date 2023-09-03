@@ -6,45 +6,61 @@ using Plato.Compiler.Symbols;
 
 namespace Plato.Compiler.Types
 {
+    /// <summary>
+    /// The type factory creates types from type definition and expression symbols.
+    /// It also creates Typed Functions from all function definition symbols.
+    /// </summary>
     public class TypeFactory
     {
-        public Dictionary<TypeDefinition, Type> DefinitionTypes { get; } = new Dictionary<TypeDefinition, Type>();
-        public Dictionary<TypeExpression, Type> TypeExpressionTypes { get; } = new Dictionary<TypeExpression, Type>();
+        public Dictionary<TypeExpressionSymbol, Type> TypeExpressionTypes { get; } = new Dictionary<TypeExpressionSymbol, Type>();
+        public Dictionary<TypeDefinitionSymbol, Type> TypeDefinitionTypes { get; } = new Dictionary<TypeDefinitionSymbol, Type>();
+        public Dictionary<FunctionDefinition, TypedFunction> TypedFunctions { get; } = new Dictionary<FunctionDefinition, TypedFunction>();
 
-        public List<TypeVariable> TypeVariables { get; } = new List<TypeVariable>();
-        public IEnumerable<TypeReference> TypeReferences => AllTypes.OfType<TypeReference>();
-        public HashSet<Type> AllTypes { get; } = new HashSet<Type>();
-        public IReadOnlyList<Concept> Concepts { get; }
-        public Dictionary<FunctionDefinition, TypedFunction> TypedFunctionLookup { get; } = new Dictionary<FunctionDefinition, TypedFunction>();
+        public Dictionary<TypeDefinitionSymbol, Concept> Concepts { get; }
+        public Dictionary<string, TypeReference> NamesToTypes { get; }
         public SelfType CurrentSelf { get; set; }
-        public Dictionary<string, Type> TypeLookup { get; }
 
-        public IEnumerable<FunctionDefinition> FunctionDefinitions => TypedFunctionLookup.Keys;
-        public IEnumerable<TypedFunction> TypedFunctions => TypedFunctionLookup.Values;
+        public HashSet<Type> AllTypes { get; } = new HashSet<Type>();
+        public IEnumerable<TypeReference> TypeReferences => AllTypes.OfType<TypeReference>();
+        public IEnumerable<TypeVariable> TypeVariables => AllTypes.OfType<TypeVariable>();
 
-        public TypeFactory(IReadOnlyList<TypeDefinition> types)
+        public TypeFactory(IReadOnlyList<TypeDefinitionSymbol> typeDefinitions)
         {
-            Concepts = types
+            // Create the concept wrapper classes 
+            Concepts = typeDefinitions
                 .Where(t => t.IsConcept())
-                .Select(t => new Concept(t, this))
-                .ToList();
+                .ToDictionary(t => t, CreateConcept);
 
-            TypeLookup = types
+            // Create type reference from type names
+            NamesToTypes = typeDefinitions
                 .Where(t => t.IsType() || t.IsConcept())
-                .ToDictionary(t => t.Name, t => CreateType(t));
+                .ToDictionary(t => t.Name, t => CreateTypeFromDefinition(t));
 
-            foreach (var c in Concepts)
+            // Create a lookup, so that we can find a type from just a definition
+            TypeDefinitionTypes = NamesToTypes.Values
+                .ToDictionary(tr => tr.Definition, tr => tr as Type);
+
+            // Resolve all type expression and functions 
+            foreach (var t in typeDefinitions)
             {
-                ComputeFunctions(c);
-            }
+                // Set the current definition of self 
+                if (t.IsConcept())
+                {
+                    var concept = Concepts[t];
+                    CurrentSelf = concept.Self;
+                }
 
-            foreach (var t in types)
-            {
-                if (!t.IsLibrary())
-                    continue;
+                // Create all of the type expressions
+                foreach (var symbol in t.GetSymbolTree().OfType<TypeExpressionSymbol>())
+                {
+                    CreateType(symbol);
+                }
 
-                foreach (var f in t.Functions)
-                    CreateFunction(f);
+                // Create all of the typed functions
+                foreach (var symbol in t.GetSymbolTree().OfType<FunctionDefinition>())
+                {
+                    CreateTypedFunction(symbol);
+                }
             }
 
             // Note: interesting exercise in assuring that your hash-code/equals are implemented correctly. 
@@ -70,90 +86,81 @@ namespace Plato.Compiler.Types
             }
         }
 
-        public TypedFunction Register(FunctionDefinition fs, TypedFunction tf)
+        private Concept CreateConcept(TypeDefinitionSymbol td)
         {
-            TypedFunctionLookup.Add(fs, tf);
-            return tf;
+            if (!td.IsConcept())
+                throw new Exception("Expected concept type definition");
+            var inherits = td.Inherits.Select(CreateType).ToList();
+            var selfType = CreateSelf();
+            return new Concept(td, selfType, inherits, this);
         }
 
         public TypedFunction GetTypedFunction(FunctionDefinition fd)
-            => TypedFunctionLookup[fd];
+            => TypedFunctions[fd];
 
-        public Type GetType(TypeExpression typeExpression)
-            => TypeExpressionTypes[typeExpression];
-
-        public T Register<T>(T self) where T : Type
+        public Type GetType(TypeExpressionSymbol typeExpression)
         {
-            var typeVar = self as TypeVariable;
-            var sym = self.Definition;
-            if (sym != null)
-            {
-                DefinitionTypes[sym] = self;
-            }
+            if (TypeExpressionTypes.ContainsKey(typeExpression))
+                return TypeExpressionTypes[typeExpression];
 
-            if (typeVar != null)
-            {
-                Debug.Assert(!TypeVariables.Contains(typeVar));
-                TypeVariables.Add(typeVar);
-                Debug.Assert(!AllTypes.Contains(self));
-                AllTypes.Add(self);
-                return self;
-            }
+            if (typeExpression.TypeArgs.Count == 0)
+                return TypeDefinitionTypes[typeExpression.Definition];
 
-            AllTypes.Add(self);
-            return self;
+            throw new Exception($"Unrecognized type expression {typeExpression}");
         }
 
-        public SelfType CreateSelf()
-            => Register(new SelfType(this));
 
-        public Type CreateType(ParameterDefinition definition)
-            => CreateType(definition.Type);
-
-        public ConstrainedVariable CreateConstrainedVariable(TypeExpression concept, TypeDefinition definition)
-            => Register(new ConstrainedVariable(CreateType(concept), definition, this));
+        public Type FindType(string name)
+            => NamesToTypes[name];
 
         public AnyType CreateAny()
             => Register(new AnyType(this));
 
-        public TypedFunction CreateFunction(FunctionDefinition definition)
-            => Register(definition, new TypedFunction(definition, this));
+        public Type CreateTuple(IReadOnlyList<Type> args)
+            => Register(new TypeReference(PrimitiveTypeDefinitions.Tuple, args, this));
+        
+        // Private methods
 
-        public void ComputeFunctions(Concept c)
-        {
-            CurrentSelf = c.Self;
-            foreach (var f in c.Definition.Functions)
-            {
-                var f2 = CreateFunction(f);
-                c.Functions.Add(f2);
-            }
+        private T Register<T>(T self) where T : Type
+        {   
+            AllTypes.Add(self);
+            return self;
         }
 
-        public Type CreateFunctionType(IReadOnlyList<Type> paramTypes, Type returnType)
-            => CreateType(PrimitiveTypeDefinitions.Function, paramTypes.Append(returnType).ToArray());
+        private SelfType CreateSelf()
+            => Register(new SelfType(this));
 
-        public Type CreateType(FunctionDefinition function)
-            => CreateFunctionType(function.Parameters.Select(p => CreateType(p.Type)).ToArray(),
-                CreateType(function.Type));
+        private ConstrainedVariable CreateConstrainedVariable(TypeExpressionSymbol concept, TypeDefinitionSymbol definition)
+            => Register(new ConstrainedVariable(CreateType(concept), definition, this));
 
-        public Type FindType(string name)
-            => TypeLookup[name];
+        private TypeReference CreateFunctionType(FunctionDefinition fd)
+            => CreateFunctionType(fd.Parameters.Select(p => GetType(p.Type)).ToList(),
+                GetType(fd.ReturnType));
 
-        // TODO: this doesn't make sense: Why not look it up first? 
+        private TypeReference CreateFunctionType(IReadOnlyList<Type> paramTypes, Type returnType)
+            => CreateTypeFromDefinition(PrimitiveTypeDefinitions.Function, paramTypes.Append(returnType).ToArray());
 
-        public Type CreateType(TypeDefinition definition, params Type[] ps)
+        private TypeReference CreateTypeFromDefinition(TypeDefinitionSymbol definition, params Type[] ps)
             => Register(new TypeReference(definition, ps, this));
 
-        public Type CreateType(TypeExpression symbol)
+        private TypedFunction CreateTypedFunction(FunctionDefinition fd)
+        {
+            var t = CreateFunctionType(fd);
+            var tf = new TypedFunction(fd, t);
+            TypedFunctions.Add(fd, tf);
+            return tf;
+        }
+
+        private Type CreateType(TypeExpressionSymbol symbol)
         {
             if (TypeExpressionTypes.ContainsKey(symbol))
                 return TypeExpressionTypes[symbol];
             var r = InternalCreateType(symbol);
             TypeExpressionTypes.Add(symbol, r);
-            return r;
+            return Register(r);
         }
 
-        public Type InternalCreateType(TypeExpression symbol) 
+        private Type InternalCreateType(TypeExpressionSymbol symbol) 
         { 
             if (symbol.Name == "Self")
             {
@@ -184,7 +191,7 @@ namespace Plato.Compiler.Types
                     list.Add(CreateAny());
             }
 
-            return CreateType(def, list.ToArray());
+            return CreateTypeFromDefinition(def, list.ToArray());
         }
     }
 }

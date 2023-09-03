@@ -7,13 +7,13 @@ namespace Plato.Compiler.Types
 {
     public static class TypeDefinitionExtensions
     {
-        public static bool InheritsFrom(this TypeDefinition self, TypeDefinition other)
+        public static bool InheritsFrom(this TypeDefinitionSymbol self, TypeDefinitionSymbol other)
             => self.IsConcept() && other.IsConcept() && self.GetSelfAndAllInheritedTypes().Contains(other);
 
-        public static bool Implements(this TypeDefinition self, TypeDefinition other)
+        public static bool Implements(this TypeDefinitionSymbol self, TypeDefinitionSymbol other)
             => other.IsConcept() && self.GetAllImplementedConcepts().Select(c => c.Definition).Contains(other);
 
-        public static bool IsSubType(this TypeDefinition self, TypeDefinition other)
+        public static bool IsSubType(this TypeDefinitionSymbol self, TypeDefinitionSymbol other)
         {
             if (self.IsLibrary() || other.IsLibrary())
                 return false;
@@ -26,10 +26,10 @@ namespace Plato.Compiler.Types
             return false;
         }
 
-        public static bool IsSubType(this TypeDefinition self, IEnumerable<TypeDefinition> others)
+        public static bool IsSubType(this TypeDefinitionSymbol self, IEnumerable<TypeDefinitionSymbol> others)
             => others.All(x => self.IsSubType(x));
 
-        public static TypeDefinition Unify(this IEnumerable<TypeDefinition> conceptsA, IEnumerable<TypeDefinition> conceptsB)
+        public static TypeDefinitionSymbol Unify(this IEnumerable<TypeDefinitionSymbol> conceptsA, IEnumerable<TypeDefinitionSymbol> conceptsB)
         {
             // Which concepts in A supercede all of those in B? 
             var superTypesA = conceptsA.Where(c => c.IsSubType(conceptsB)).ToList();
@@ -46,7 +46,7 @@ namespace Plato.Compiler.Types
             return PrimitiveTypeDefinitions.Error;
         }
 
-        public static TypeDefinition Unify(this TypeDefinition a, TypeDefinition b)
+        public static TypeDefinitionSymbol Unify(this TypeDefinitionSymbol a, TypeDefinitionSymbol b)
         {
             // If one type inher
 
@@ -84,7 +84,7 @@ namespace Plato.Compiler.Types
         }
 
         public static IReadOnlyList<FunctionDefinition> FindMatchingFunctions(IReadOnlyList<FunctionDefinition> funcs,
-            IReadOnlyList<TypeExpression> argumentTypes)
+            IReadOnlyList<TypeExpressionSymbol> argumentTypes)
         {
             var candidates = funcs.Where(f => f.Parameters.Count == argumentTypes.Count).ToList();
 
@@ -96,19 +96,23 @@ namespace Plato.Compiler.Types
             return candidates;
         }
 
-        public static double MatchesScore(this TypeExpression argType, TypeExpression parameterType)
+        public static double MatchesScore(this TypeExpressionSymbol argType, TypeExpressionSymbol parameterType)
         {
             if (argType == null) return 1;
             if (parameterType == null) return 1;
-            return CanCastTo(argType, parameterType);
+            return CastingScore(argType, parameterType);
         }
 
-        public static double CanCastTo(this TypeExpression fromType, TypeExpression toType, bool allowConversions = true)
+        public static double CastingScore(this TypeExpressionSymbol fromType, TypeExpressionSymbol toType, bool allowConversions = true)
         {
-            return CanCastTo(fromType?.Definition, toType?.Definition, allowConversions);
+            return CastingScore(fromType?.Definition, toType?.Definition, allowConversions);
         }
 
-        public static double CanCastTo(this TypeDefinition from, TypeDefinition to, bool allowConversions = true)
+        public static bool CanCastTo(this TypeDefinitionSymbol from, TypeDefinitionSymbol to,
+            bool allowConversions = true)
+            => CastingScore(from, to, allowConversions) > 0;
+
+        public static double CastingScore(this TypeDefinitionSymbol from, TypeDefinitionSymbol to, bool allowConversions = true)
         {
             if (from == null || to == null)
                 throw new Exception("Could not find type definitions");
@@ -137,7 +141,7 @@ namespace Plato.Compiler.Types
                     if (to.Fields.Count == 1)
                     {
                         var fieldType = to.Fields[0].Type?.Definition;
-                        return CanCastTo(from, fieldType, false) > 0 ? 4 : 0;
+                        return CastingScore(from, fieldType, false) > 0 ? 4 : 0;
                     }
                 }
 
@@ -151,7 +155,7 @@ namespace Plato.Compiler.Types
                     if (from.Fields.Count == 1)
                     {
                         var fieldType = from.Fields[0].Type?.Definition;
-                        return CanCastTo(fieldType, to, false) > 0 ? 5 : 0;
+                        return CastingScore(fieldType, to, false) > 0 ? 5 : 0;
                     }
                 }
             }

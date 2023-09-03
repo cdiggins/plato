@@ -6,14 +6,14 @@ using Plato.Compiler.Ast;
 
 namespace Plato.Compiler.Symbols
 {
-    public abstract class Definition : Symbol
+    public abstract class DefinitionSymbol : Symbol
     {
-        public TypeExpression Type { get; }
+        public TypeExpressionSymbol Type { get; }
 
         public string Name { get; }
         public string UniqueName => Name + "_" + Id;
 
-        protected Definition(TypeExpression type, string name)
+        protected DefinitionSymbol(TypeExpressionSymbol type, string name)
         {
             Type = type;
             Name = name;
@@ -24,22 +24,26 @@ namespace Plato.Compiler.Symbols
         public abstract Reference ToReference();
     }
 
-    public class PredefinedDefinition : Definition
+    public class PredefinedDefinition : DefinitionSymbol
     {
-        public PredefinedDefinition(TypeExpression typeRef, string name)
+        public PredefinedDefinition(TypeExpressionSymbol typeRef, string name)
             : base(typeRef, name)
         { }
 
         public override Reference ToReference()
             => new PredefinedReference(this);
+
+        public override IEnumerable<Symbol> GetChildSymbols()
+            => Enumerable.Empty<Symbol>();
     }
 
-    public class FunctionDefinition : Definition
+    public class FunctionDefinition : DefinitionSymbol
     {
         public IReadOnlyList<ParameterDefinition> Parameters { get; }
-        public Expression Body { get; }
+        public ExpressionSymbol Body { get; }
+        public TypeExpressionSymbol ReturnType => Type;
 
-        public FunctionDefinition(string name, TypeExpression returnType, Expression body, params ParameterDefinition[] parameters)
+        public FunctionDefinition(string name, TypeExpressionSymbol returnType, ExpressionSymbol body, params ParameterDefinition[] parameters)
             : base(returnType, name)
         {
             Parameters = parameters;
@@ -53,36 +57,48 @@ namespace Plato.Compiler.Symbols
 
         public override Reference ToReference()
             => throw new NotSupportedException();
+
+        public override IEnumerable<Symbol> GetChildSymbols()
+            => Parameters.Cast<Symbol>().Append(ReturnType).Append(Body);
     }
 
-    public class ParameterDefinition : Definition
+    public class ParameterDefinition : DefinitionSymbol
     {
-        public ParameterDefinition(string name, TypeExpression type)
+        public ParameterDefinition(string name, TypeExpressionSymbol type)
             : base(type, name)
         { }
 
         public override Reference ToReference()
             => new ParameterReference(this);
+
+        public override IEnumerable<Symbol> GetChildSymbols()
+            => new [] { Type };
     }
 
-    public class VariableDefinition : Definition
+    public class VariableDefinition : DefinitionSymbol
     {
-        public VariableDefinition(string name, TypeExpression type)
+        public VariableDefinition(string name, TypeExpressionSymbol type)
             : base(type, name) { }
 
         public override Reference ToReference()
             => throw new NotSupportedException();
+
+        public override IEnumerable<Symbol> GetChildSymbols()
+            => new[] { Type };
     }
 
-    public class TypeParameterDefinition : TypeDefinition
+    public class TypeParameterDefinition : TypeDefinitionSymbol
     {
-        public TypeParameterDefinition(string name, TypeExpression constraint)
+        public TypeParameterDefinition(string name, TypeExpressionSymbol constraint)
             : base(TypeKind.Variable, name)
             => Constraint = constraint;
-        public TypeExpression Constraint { get; }
+        public TypeExpressionSymbol Constraint { get; }
+
+        public override IEnumerable<Symbol> GetChildSymbols()
+            => new[] { Constraint };
     }
 
-    public class TypeDefinition : Symbol
+    public class TypeDefinitionSymbol : Symbol
     {
         public TypeKind Kind { get; }
 
@@ -93,21 +109,21 @@ namespace Plato.Compiler.Symbols
         public List<MethodDefinition> Methods { get; } = new List<MethodDefinition>();
         public List<FieldDefinition> Fields { get; } = new List<FieldDefinition>();
         public List<TypeParameterDefinition> TypeParameters { get; } = new List<TypeParameterDefinition>();
-        public List<TypeExpression> Inherits { get; } = new List<TypeExpression>();
-        public List<TypeExpression> Implements { get; } = new List<TypeExpression>();
+        public List<TypeExpressionSymbol> Inherits { get; } = new List<TypeExpressionSymbol>();
+        public List<TypeExpressionSymbol> Implements { get; } = new List<TypeExpressionSymbol>();
         public Dictionary<string, AstNode> Lookup { get; } = new Dictionary<string, AstNode>();
         public string Name { get; }
 
-        public TypeDefinition(TypeKind kind, string name)
+        public TypeDefinitionSymbol(TypeKind kind, string name)
         {
             Name = name;
             Kind = kind;
         }
 
-        public IEnumerable<TypeDefinition> GetSelfAndAllInheritedTypes()
+        public IEnumerable<TypeDefinitionSymbol> GetSelfAndAllInheritedTypes()
             => Inherits.SelectMany(c => c.Definition.GetSelfAndAllInheritedTypes()).Append(this);
 
-        public IEnumerable<TypeExpression> GetAllImplementedConcepts()
+        public IEnumerable<TypeExpressionSymbol> GetAllImplementedConcepts()
         {
             foreach (var tmp in Implements)
             {
@@ -147,30 +163,34 @@ namespace Plato.Compiler.Symbols
         public IEnumerable<MethodDefinition> GetConceptMethods()
             => GetAllImplementedConcepts().SelectMany(c => c?.Definition?.Methods ?? Enumerable.Empty<MethodDefinition>());
 
-        public TypeExpression ToTypeExpression()
-            => new TypeExpression(this);
+        public TypeExpressionSymbol ToTypeExpression()
+            => new TypeExpressionSymbol(this);
 
         public override string ToString()
-        {
-            return $"{Name}_{Id}:{Kind}";
-        }
+            => $"{Name}_{Id}:{Kind}";
+
+        public override IEnumerable<Symbol> GetChildSymbols()
+            => Methods.Cast<Symbol>().Concat(Fields).Concat(TypeParameters).Concat(Inherits).Concat(Implements);
     }
 
-    public abstract class MemberDefinition : Definition
+    public abstract class MemberDefinition : DefinitionSymbol
     {
-        protected MemberDefinition(TypeDefinition parentType, TypeExpression type, string name)
+        protected MemberDefinition(TypeDefinitionSymbol parentType, TypeExpressionSymbol type, string name)
             : base(type, name)
         {
             ParentType = parentType;
         }
 
-        public TypeDefinition ParentType { get; }
+        public TypeDefinitionSymbol ParentType { get; }
         public FunctionDefinition Function { get; set; }
+
+        public override IEnumerable<Symbol> GetChildSymbols()
+            => new Symbol[] { Function, Type };
     }
 
     public class MethodDefinition : MemberDefinition
     {
-        public MethodDefinition(TypeDefinition parentType, TypeExpression type, string name)
+        public MethodDefinition(TypeDefinitionSymbol parentType, TypeExpressionSymbol type, string name)
             : base(parentType, type, name)
         { }
 
@@ -180,47 +200,51 @@ namespace Plato.Compiler.Symbols
 
     public class FieldDefinition : MemberDefinition
     {
-        public FieldDefinition(TypeDefinition parentType, TypeExpression type, string name)
+        public FieldDefinition(TypeDefinitionSymbol parentType, TypeExpressionSymbol type, string name)
             : base(parentType, type, name)
         {
-            // TODO: the implementation of field methods will be extra work. 
             Function = new FunctionDefinition(Name, Type, null,
-                new ParameterDefinition("self", parentType.ToTypeExpression() as TypeExpression));
+                new ParameterDefinition("self", parentType.ToTypeExpression()));
         }
 
         public override Reference ToReference()
             => throw new NotSupportedException();
     }
 
-    public class FunctionGroupDefinition : Definition
+    public class FunctionGroupDefinition : DefinitionSymbol
     {
-        public IReadOnlyList<FunctionDefinition> Functions { get; }
+        public List<FunctionDefinition> Functions { get; } = new List<FunctionDefinition>();
 
-        public FunctionGroupDefinition(IReadOnlyList<FunctionDefinition> functions, string name)
-            : base(PrimitiveTypeDefinitions.Function.ToTypeExpression() as TypeExpression, name)
+        public FunctionGroupDefinition(IEnumerable<FunctionDefinition> functions, string name)
+            : base(PrimitiveTypeDefinitions.Function.ToTypeExpression(), name)
         {
-            Functions = functions;
-            if (Functions.Count == 0) throw new Exception("Expected at least one function in group");
+            Functions = functions.ToList();
+        }
 
+        public void Validate()
+        {
             foreach (var f in Functions)
             {
                 if (f == null)
                     throw new Exception("Null function");
-                if (f.Name != name)
-                    throw new Exception($"All members in group must have the name \"{name}\" not \"{f.Name}\"");
+                if (f.Name != Name)
+                    throw new Exception($"All members in group must have the name \"{Name}\" not \"{f.Name}\"");
                 var sig = f.Signature;
                 if (Functions.Count(f2 => f2.Signature.Equals(sig)) > 1)
                     throw new Exception($"More than one function has signature {sig}");
             }
         }
 
-        public FunctionGroupDefinition Add(FunctionDefinition function)
-            => new FunctionGroupDefinition(Functions.Append(function).ToList(), Name);
+        public void Add(FunctionDefinition function)
+            => Functions.Add(function);
 
         public string DebugString =>
             string.Join(";", Functions.Select(f => f?.Signature));
 
         public override Reference ToReference()
             => new FunctionGroupReference(this);
+
+        public override IEnumerable<Symbol> GetChildSymbols()
+            => Functions;
     }
 }

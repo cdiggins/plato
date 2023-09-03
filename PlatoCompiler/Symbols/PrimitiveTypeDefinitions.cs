@@ -5,14 +5,14 @@ namespace Plato.Compiler.Symbols
 {
     public static class PrimitiveTypeDefinitions
     {
-        public static TypeDefinition Lambda = Create("Lambda");
-        public static TypeDefinition Function = Create("Function");
-        public static TypeDefinition Self = Create("Self");
-        public static TypeDefinition Tuple = Create("Tuple");
-        public static TypeDefinition Error = Create("Error");
+        public static TypeDefinitionSymbol Lambda = Create("Lambda");
+        public static TypeDefinitionSymbol Function = Create("Function");
+        public static TypeDefinitionSymbol Self = Create("Self");
+        public static TypeDefinitionSymbol Tuple = Create("Tuple");
+        public static TypeDefinitionSymbol Error = Create("Error");
 
-        public static TypeDefinition Create(string name)
-            => new TypeDefinition(TypeKind.Primitive, name);
+        public static TypeDefinitionSymbol Create(string name)
+            => new TypeDefinitionSymbol(TypeKind.Primitive, name);
 
         public static string GetPrimNameFromType(Type type)
         {

@@ -118,7 +118,7 @@ namespace Plato.Compiler.Vsg
             return new VisualSyntaxGraph(definition.Name, Nodes, Connections);
         }
 
-        public VsgNode CreateNode(Definition symbol)
+        public VsgNode CreateNode(DefinitionSymbol symbol)
         {
             if (symbol == null)
                 return null;
@@ -151,7 +151,7 @@ namespace Plato.Compiler.Vsg
             throw new NotImplementedException();
         }
 
-        public VsgNode CreateNode(Expression symbol)
+        public VsgNode CreateNode(ExpressionSymbol symbol)
         {
             if (symbol == null)
                 return null;
@@ -192,7 +192,7 @@ namespace Plato.Compiler.Vsg
             return node;
         }
 
-        public VsgSocket GetSocket(Definition def)
+        public VsgSocket GetSocket(DefinitionSymbol def)
         {
             switch (def)
             {
@@ -203,7 +203,7 @@ namespace Plato.Compiler.Vsg
         }
 
 
-        public VsgSocket GetSocket(Expression expr)
+        public VsgSocket GetSocket(ExpressionSymbol expr)
         {
             switch (expr)
             {

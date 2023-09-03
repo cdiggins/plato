@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Plato.Compiler.Ast;
 
@@ -6,9 +7,16 @@ namespace Plato.Compiler.Symbols
 {
     public static class SymbolExtensions
     {
-        // NOTE: does not include lambdas
-        public static IEnumerable<FunctionDefinition> GetAllFunctions(this IEnumerable<TypeDefinition> typeDefs)
-            => typeDefs.SelectMany(t => t.Methods.Select(m => m.Function)).Where(f => f != null);
+        public static IEnumerable<Symbol> GetSymbolTree(this Symbol symbol)
+        {
+            if (symbol == null)
+                yield break;
+
+            yield return symbol;
+            foreach (var child in symbol.GetChildSymbols())
+            foreach (var x in child.GetSymbolTree())
+                yield return x;
+        }
 
         public static bool IsPartiallyTyped(this FunctionDefinition fs)
             => !fs.IsExplicitlyTyped() &&
@@ -21,25 +29,25 @@ namespace Plato.Compiler.Symbols
             FunctionDefinition function)
             => definition.GetReferencesTo(function.Body);
 
-        public static IEnumerable<Reference> GetReferencesTo(this Definition def, Expression within)
+        public static IEnumerable<Reference> GetReferencesTo(this DefinitionSymbol def, ExpressionSymbol within)
             => within.GetExpressionTree().OfType<Reference>().Where(rs => rs.Definition.Equals(def));
 
         public static bool HasImplementation(FunctionDefinition fs)
             => fs.Body != null;
 
-        public static bool IsFullyImplementedConcept(TypeDefinition ts)
+        public static bool IsFullyImplementedConcept(TypeDefinitionSymbol ts)
             => ts.IsConcept() && ts.Functions.All(HasImplementation);
 
-        public static bool IsConcept(this TypeDefinition ts)
+        public static bool IsConcept(this TypeDefinitionSymbol ts)
             => ts.Kind == TypeKind.Concept;
 
-        public static bool IsType(this TypeDefinition ts)
+        public static bool IsType(this TypeDefinitionSymbol ts)
             => ts.Kind == TypeKind.Type;
 
-        public static bool IsPrimitive(this TypeDefinition ts)
+        public static bool IsPrimitive(this TypeDefinitionSymbol ts)
             => ts.Kind == TypeKind.Primitive;
 
-        public static bool IsLibrary(this TypeDefinition ts)
+        public static bool IsLibrary(this TypeDefinitionSymbol ts)
             => ts.Kind == TypeKind.Library;
     }
 }

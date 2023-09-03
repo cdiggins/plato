@@ -31,5 +31,15 @@ namespace Plato.Compiler.Symbols
 
         public Scope Pop()
             => Parent;
+
+        public static Binding CreateBinding(string name, Symbol symbol)
+            => new Binding(name, symbol);
+
+        public IEnumerable<Binding> GetAllBindings()
+        {
+            for (var curScope = this; curScope != null; curScope = curScope.Parent)
+                foreach (var kv in curScope.Bindings)
+                    yield return CreateBinding(kv.Key, kv.Value);
+        }
     }
 }

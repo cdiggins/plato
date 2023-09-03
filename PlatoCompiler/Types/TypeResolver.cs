@@ -17,10 +17,10 @@ namespace Plato.Compiler.Types
     public class ResolverInput
     {
         public ResolverInput Previous { get; }
-        public Expression Expression { get; }
+        public ExpressionSymbol Expression { get; }
         public IReadOnlyList<Type> Choices { get; }
         
-        public ResolverInput(ResolverInput previous, Expression expression, IReadOnlyList<Type> choices)
+        public ResolverInput(ResolverInput previous, ExpressionSymbol expression, IReadOnlyList<Type> choices)
         {
             Expression = expression;
             Previous = previous;
@@ -57,7 +57,7 @@ namespace Plato.Compiler.Types
         public ResolverOutput Output { get; }
         public int Choice { get; }
         public int MaxChoice => Input.Choices.Count;
-        public Expression Expression => Input.Expression;
+        public ExpressionSymbol Expression => Input.Expression;
         public Type Type => Input.Choices[Choice];
         public IReadOnlyList<TypeConstraint> Constraints => Output.Constraints[Choice];
 
@@ -194,7 +194,7 @@ namespace Plato.Compiler.Types
                 if (function != null)
                 {
                     var tf = Factory.GetTypedFunction(function);
-                    ReturnType = tf.Signature.ReturnType;
+                    ReturnType = tf.ReturnType;
                     BodyType = Resolve(Function.Body);
 
                     if (BodyType != null && ReturnType != null)
@@ -244,7 +244,7 @@ namespace Plato.Compiler.Types
         {
             AddConstraint(new CastsToConstraint(from, to));
             
-            if (from.CanCastTo(to) > 0)
+            if (from.CanCastTo(to))
                 return true;
 
             Fail($"Can't cast from {from} to {to}");
@@ -277,14 +277,16 @@ namespace Plato.Compiler.Types
 
         public bool IsFunctionCallable(FunctionDefinition f, IReadOnlyList<Type> argTypes)
         {
-            if (f.Parameters.Count != argTypes.Count)
+            var ft = Factory.GetTypedFunction(f);
+
+            if (ft.Parameters.Count != argTypes.Count)
                 return false;
 
-            for (var i = 0; i < f.Parameters.Count; ++i)
+            for (var i = 0; i < ft.Parameters.Count; ++i)
             {
-                var paramType = f.Parameters[i].Type;
+                var paramType = ft.Parameters[i];
                 var argType = argTypes[i];
-                if (argType.CanCastTo(Factory.GetType(paramType)) <= 0)
+                if (!argType.CanCastTo(paramType))
                     return false;
             }
 
@@ -293,8 +295,10 @@ namespace Plato.Compiler.Types
 
         public FunctionGroupReference Reduce(FunctionGroupReference fgr, IReadOnlyList<Type> argTypes)
         {
+            if (fgr.Definition.Functions.Count == 0)
+                throw new Exception("Function group found with no functions");
             var funcs = fgr
-                .Definition
+                .Definition 
                 .Functions
                 .Where(f => IsFunctionCallable(f, argTypes))
                 .ToList();
@@ -313,8 +317,8 @@ namespace Plato.Compiler.Types
                 var fx2 = Reduce(fgr, argTypes); 
                 foreach (var f in fx2.Definition.Functions)
                 {
-                    var paramTypes = f.Parameters.Select(p => Factory.CreateType(p.Type)).ToList();
-                    var constraints = GatherConstraints(argTypes, paramTypes);
+                    var tf = Factory.GetTypedFunction(f);
+                    var constraints = GatherConstraints(argTypes, tf.Parameters);
                     Children.Add(new TypeResolver(Factory, this, constraints, fgr, f));
                 }
 
@@ -342,11 +346,11 @@ namespace Plato.Compiler.Types
                 var paramTypes = Enumerable.Range(0, nArgs).Select(_ => Factory.CreateAny()).ToList();
                 var returnType = Factory.CreateAny();
                 Constraints = GatherConstraints(argTypes, paramTypes);
-                return Factory.CreateFunctionType(paramTypes, returnType);
+                return returnType;
             }
         }
 
-        public Type Resolve(Expression expression)
+        public Type Resolve(ExpressionSymbol expression)
         {
             if (expression == null)
                 return null;
@@ -374,7 +378,7 @@ namespace Plato.Compiler.Types
                     break;
 
                 case FunctionGroupReference functionGroupReference:
-                    r = Factory.CreateType(PrimitiveTypeDefinitions.Function);
+                    r = Factory.FindType(PrimitiveTypeDefinitions.Function.Name);
                     break;
 
                 case Lambda lambda:
@@ -403,7 +407,7 @@ namespace Plato.Compiler.Types
                     break;
 
                 case ParameterReference parameterReference:
-                    r = Factory.CreateType(parameterReference.Type);
+                    r = Factory.GetType(parameterReference.Type);
                     break;
 
                 case Parenthesized parenthesized:
@@ -411,11 +415,11 @@ namespace Plato.Compiler.Types
                     break;
 
                 case PredefinedReference predefinedReference:
-                    r = Factory.CreateType(predefinedReference.Definition.Type);
+                    r = Factory.GetType(predefinedReference.Definition.Type);
                     break;
 
                 case Reference reference:
-                    r = Factory.CreateType(reference.Definition.Type);
+                    r = Factory.GetType(reference.Definition.Type);
                     break;
 
                 case Tuple tuple:
@@ -432,23 +436,15 @@ namespace Plato.Compiler.Types
 
         public Type CreateType(Lambda lambda)
         {
-            var r = Factory.CreateType(lambda.Function);
+            var r = Factory.GetTypedFunction(lambda.Function);
             Resolve(lambda.Function.Body);
-            return r;
+            return r.FunctionType;
         }
 
         public Type CreateType(Tuple tuple)
         {
             var args = tuple.Children.Select(Resolve).ToArray();
-            return Factory.CreateType(PrimitiveTypeDefinitions.Tuple, args);
+            return Factory.CreateTuple(args);
         }
-
-        public Type CreateType(FunctionDefinition function)
-        {
-            var ret = function.Type;
-            var args = function.Parameters.Select(p => p.Type).Append(ret).Select(Factory.CreateType).ToArray();
-            return Factory.CreateType(PrimitiveTypeDefinitions.Function, args);
-        }
-
     }
 }

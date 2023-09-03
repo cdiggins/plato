@@ -37,9 +37,9 @@ namespace Plato.Compiler
         public SymbolResolver SymbolResolver { get; set; }
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; set; }
         public IReadOnlyList<FunctionDefinition> Functions { get; } 
-        public IReadOnlyList<TypeDefinition> TypeDefs { get; set; }
+        public IReadOnlyList<TypeDefinitionSymbol> TypeDefs { get; set; }
         public Dictionary<FunctionDefinition, TypeResolver> Resolvers { get; } = new Dictionary<FunctionDefinition, TypeResolver>();
-        public Dictionary<Expression, Type> Types { get; } = new Dictionary<Expression, Type>();
+        public Dictionary<ExpressionSymbol, Type> Types { get; } = new Dictionary<ExpressionSymbol, Type>();
 
         public List<string> SemanticErrors { get; } = new List<string>();
         public List<string> SemanticWarnings { get; } = new List<string>();
@@ -91,13 +91,17 @@ namespace Plato.Compiler
                 TypeFactory = new TypeFactory(TypeDefs);
                 Log(TypeFactory);
 
-                foreach (var f in TypeFactory.FunctionDefinitions)
+                foreach (var kv in TypeFactory.TypedFunctions)
                 {
-                    Log($"Creating type resolver for {f}");
+                    var f = kv.Key;
+                    var tf = kv.Value;
+                    Log($"Typed function for {f} is {tf}");
+
+                    Log($"Creating type resolver");
                     var tr = new TypeResolver(TypeFactory, null, null, null, f);
                     Resolvers.Add(f, tr);
 
-                    Log($"Gathering expressions types for {f}");
+                    Log($"Gathering expressions types");
                     var et = tr.ExpressionTypes;
 
                     while (et != null)
@@ -149,14 +153,14 @@ namespace Plato.Compiler
             }
         }
 
-        public Type GetType(Expression expr)
+        public Type GetType(ExpressionSymbol expr)
             => Types.TryGetValue(expr, out var r) ? r : null;
 
         public void Log(TypeFactory atr)
         {
             Log($"Type Factory");
             Log($"Found {atr.Concepts.Count} Concepts");
-            foreach (var c in atr.Concepts)
+            foreach (var c in atr.Concepts.Values)
             {
                 Log($"== Concept {c.Name} ==");
 
