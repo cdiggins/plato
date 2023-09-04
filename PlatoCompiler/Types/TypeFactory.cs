@@ -109,7 +109,6 @@ namespace Plato.Compiler.Types
             throw new Exception($"Unrecognized type expression {typeExpression}");
         }
 
-
         public Type FindType(string name)
             => NamesToTypes[name];
 

@@ -98,7 +98,7 @@ namespace Plato.Compiler
                     Log($"Typed function for {f} is {tf}");
 
                     Log($"Creating type resolver");
-                    var tr = new TypeResolver(TypeFactory, null, null, null, f);
+                    var tr = new TypeResolver(TypeFactory, f);
                     Resolvers.Add(f, tr);
 
                     Log($"Gathering expressions types");

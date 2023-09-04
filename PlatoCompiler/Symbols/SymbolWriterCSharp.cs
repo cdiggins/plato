@@ -45,32 +45,24 @@ namespace Plato.Compiler.Symbols
             return this;
         }
 
-        public void WriteResolver(TypeResolver resolver)
+        public SymbolWriterCSharp WriteResolver(TypeResolver resolver)
         {
             if (resolver.Function == null)
                 WriteLine($"// Type resolver");
             else
                 WriteLine($"// Type resolver associated with {resolver.Function.Signature}");
             WriteLine($"// Success={resolver.Success} Message={resolver.Message}");
-            var option = 0;
-            foreach (var child in resolver.Children)
-            {
-                Indent();
-                WriteLine($"// Option {option++}");
-                WriteResolver(child);
-                Dedent();
-            }
+            WriteLine("// Expression types");
+            foreach (var et in resolver.GetExpressionTypes())
+                WriteLine($"// Expression {et.Expression} has type {et.Type}");
+            return this;
         }
 
         public SymbolWriterCSharp WriteConstraints(FunctionDefinition function)
         {
             WriteLine("// Type Resolver");
             var resolver = Compiler.Resolvers[function];
-            WriteResolver(resolver);
-            WriteLine("// Expression types");
-            foreach (var et in resolver.GetExpressionTypes())
-                WriteLine($"// Expression {et.Expression} has type {et.Type}");
-            return this;
+            return WriteResolver(resolver);
         }
 
         public SymbolWriterCSharp WriteFunctionBody(FunctionDefinition function)
