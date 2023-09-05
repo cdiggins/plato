@@ -172,6 +172,8 @@ namespace Plato.Compiler.Types
             }
 
             ExpressionTypes = new ExpressionTypes(ExpressionTypes, expression, r);
+            if (r == null)
+                throw new Exception($"No type determined for {expression}");
             return r;
         }
 

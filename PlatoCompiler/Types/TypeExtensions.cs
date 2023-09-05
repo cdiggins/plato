@@ -5,24 +5,24 @@ namespace Plato.Compiler.Types
     public static class TypeExtensions
     {
         public static bool IsConcept(this Type type)
-            => type.Definition.IsConcept();
+            => type.Definition?.IsConcept() == true;
 
         public static bool IsConcreteType(this Type type)
-            => type.Definition.IsConcreteType();
+            => type.Definition?.IsConcreteType() == true;
 
         public static bool IsTypeVar(this Type type)
             => type is TypeVariable;
 
         public static bool InheritsFrom(this Type from, Type to)
-            => from.Definition.InheritsFrom(to.Definition);
+            => from.Definition?.InheritsFrom(to.Definition) == true;
 
         public static bool Implements(this Type self, Type other)
-            => self.Definition.Implements(other.Definition);
+            => self.Definition?.Implements(other.Definition) == true;
 
         public static bool IsSubType(this Type self, Type other)
-            => self.Definition.IsSubType(other.Definition);
+            => self.Definition?.IsSubType(other.Definition) == true;
 
         public static bool CanCastTo(this Type from, Type to, bool allowConversions = true)
-            => from.IsTypeVar() || to.IsTypeVar() || from.Definition.CanCastTo(to.Definition, allowConversions);
+            => from.IsTypeVar() || to.IsTypeVar() || from.Definition?.CanCastTo(to.Definition, allowConversions) == true;
     }
 }

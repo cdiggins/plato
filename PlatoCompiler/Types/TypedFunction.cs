@@ -15,6 +15,7 @@ namespace Plato.Compiler.Types
         public FunctionDefinition Definition { get; }
         public string Name => Definition.Name;
 
+        // TEMP:  
         public HashSet<TypeVariable> TypeVariables { get; } = new HashSet<TypeVariable>();
 
         public TypedFunction(FunctionDefinition definition, TypeReference functionType)
@@ -27,9 +28,10 @@ namespace Plato.Compiler.Types
             ReturnType = functionType.TypeArguments[nArgs - 1];
             Parameters = functionType.TypeArguments.Take(nArgs - 1).ToList();
             
+            // TEMP: this might not be appropriate now. 
             // NOTE: all the type variables appearing in return type, must first appear on the left.
-            CollectTypeVariables(Parameters);
-            ValidateReturnTypeVariables(ReturnType);
+            //CollectTypeVariables(Parameters);
+            //ValidateReturnTypeVariables(ReturnType);
         }
 
         public override string ToString()
@@ -128,6 +130,8 @@ namespace Plato.Compiler.Types
 
         public Type GetReturnType(TypeFactory factory, IReadOnlyList<Type> argTypes)
         {
+            return ReturnType;
+            /*
             if (argTypes.Count != Parameters.Count)
                 throw new Exception(
                     $"Number of arguments {argTypes.Count} does not match number of parameters {Parameters.Count}");
@@ -139,6 +143,7 @@ namespace Plato.Compiler.Types
             }
 
             return ApplySubstitutions(factory, ReturnType, substitutions);
+            */
         }
     }
 }

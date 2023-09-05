@@ -192,5 +192,12 @@ namespace Plato.Compiler.Types
 
             return CreateTypeFromDefinition(def, list.ToArray());
         }
+
+        public Type CreateArray(Type elementType)
+        {
+            if (!(FindType("Array") is TypeReference array))
+                throw new Exception("Could not find array type");
+            return Register(new TypeReference(array.Definition, new[] { elementType }, this));
+        }
     }
 }

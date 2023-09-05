@@ -20,8 +20,9 @@ namespace Plato.Compiler.Types
         // Derived values 
         public bool IsMapped { get; }
         public Type BestReturnType { get; }
-        public TypedFunction BestFunction => BestFunctions.FirstOrDefault();
-        public bool Ambiguous => BestFunctions.Count > 1;
+        public bool Ambiguous => ReturnTypes.Count > 1;
+
+        public IReadOnlyList<Type> ReturnTypes { get; }
         public bool FoundResult => BestFunctions.Count > 0;
 
         // Intermediate values for the process 
@@ -37,6 +38,9 @@ namespace Plato.Compiler.Types
             Factory = factory;
             Fgr = fgr;
             ArgTypes = argTypes;
+
+            if (argTypes.Any(t => t == null))
+                throw new Exception("Null argument type");
 
             AllFunctions = fgr.Definition.Functions.Select(Factory.GetTypedFunction).ToList();
             
@@ -87,7 +91,17 @@ namespace Plato.Compiler.Types
                 }
             }
 
-            BestReturnType = BestFunction?.GetReturnType(Factory, ArgTypes);
+            ReturnTypes = BestFunctions.Select(tf => tf.ReturnType).Distinct().ToList();
+            BestReturnType = ReturnTypes.FirstOrDefault();
+
+            if (BestReturnType == null)
+                throw new Exception("Failed to resolve function call");
+
+            if (Ambiguous)
+                throw new Exception("Found multiple return types");
+
+            if (IsMapped)
+                BestReturnType = Factory.CreateArray(BestReturnType);
         }
 
         public int GetScoreForOverload(TypedFunction tf, int pos)
@@ -115,7 +129,7 @@ namespace Plato.Compiler.Types
                 return 3;
 
             // 4. Are we casting from a concept to one of the concepts it inherits 
-            if (at.IsConcept() && pt.InheritsFrom(at))
+            if (at.IsConcept() && pt.IsConcept() && pt.InheritsFrom(at))
                 return 4;
 
             // 5. Are we casting from a type variable to a non-type-variable
