@@ -60,13 +60,13 @@ namespace Plato.Compiler.Types
                 return a;
 
             // If one type is a concept, and the other is a regular type, then choose the type. 
-            if (a.IsType() && b.IsConcept())
+            if (a.IsConcreteType() && b.IsConcept())
                 return a;
 
-            if (a.IsConcept() && a.IsType())
+            if (a.IsConcept() && a.IsConcreteType())
                 return a;
 
-            if (a.IsType() && b.IsType())
+            if (a.IsConcreteType() && b.IsConcreteType())
             {
                 var aConcepts = a.Implements.Select(i => i.Definition);
                 var bConcepts = b.Implements.Select(i => i.Definition);
@@ -131,7 +131,7 @@ namespace Plato.Compiler.Types
                 // We look for the implicit operators.
                 // TODO: look for functions of the name "ToX" and "FromX" when allowing more than just the default. 
 
-                if (to.IsType())
+                if (to.IsConcreteType())
                 {
                     // TODO: check that the type of each argument matches 
                     // TODO: add tuple support 
@@ -145,7 +145,7 @@ namespace Plato.Compiler.Types
                     }
                 }
 
-                if (from.IsType())
+                if (from.IsConcreteType())
                 {
                     // TODO: check that the type of each argument matches 
                     // TODO: add tuple support 

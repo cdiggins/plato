@@ -7,6 +7,9 @@ namespace Plato.Compiler.Types
         public static bool IsConcept(this Type type)
             => type.Definition.IsConcept();
 
+        public static bool IsConcreteType(this Type type)
+            => type.Definition.IsConcreteType();
+
         public static bool IsTypeVar(this Type type)
             => type is TypeVariable;
 

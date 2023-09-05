@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Plato.Compiler.Ast;
 using Plato.Compiler.Symbols;
@@ -49,6 +48,7 @@ namespace Plato.Compiler.Types
         public ExpressionTypes ExpressionTypes { get; private set;  }
         public Type ReturnType { get; }
         public Type BodyType { get; }
+        public List<FunctionCallResolver> FunctionCalls { get; } = new List<FunctionCallResolver>();
 
         public void Fail(string reason)
             => Message = reason;
@@ -74,68 +74,16 @@ namespace Plato.Compiler.Types
             return typeA; 
         }
 
-        public bool IsFunctionCallable(FunctionDefinition f, IReadOnlyList<Type> argTypes)
-        {
-            var ft = Factory.GetTypedFunction(f);
-
-            if (ft.Parameters.Count != argTypes.Count)
-                return false;
-
-            for (var i = 0; i < ft.Parameters.Count; ++i)
-            {
-                var paramType = ft.Parameters[i];
-                var argType = argTypes[i];
-                if (!argType.CanCastTo(paramType))
-                    return false;
-            }
-
-            return true;
-        }
-
-        public FunctionGroupReference Reduce(FunctionGroupReference fgr, IReadOnlyList<Type> argTypes)
-        {
-            if (fgr.Definition.Functions.Count == 0)
-                throw new Exception("Function group found with no functions");
-            var funcs = fgr
-                .Definition 
-                .Functions
-                .Where(f => IsFunctionCallable(f, argTypes))
-                .ToList();
-            var fgd = new FunctionGroupDefinition(funcs, fgr.Name);
-            return new FunctionGroupReference(fgd);
-        }
-
         public Type ResolveFunctionCall(FunctionCall fc)
         {
             var fx = fc.Function;
-            var nArgs = fc.Args.Count;
             var argTypes = fc.Args.Select(Resolve).ToList();
 
             if (fx is FunctionGroupReference fgr)
             {
-                if (fgr.Definition.Functions.Count == 0)
-                    throw new Exception("No functions");
-
-                var fx2 = Reduce(fgr, argTypes);
-
-                var typedFunctions = fx2.Definition.Functions.Select(Factory.GetTypedFunction).ToList();
-
-                if (typedFunctions.Count == 0)
-                {
-                    throw new Exception("No viable child");
-                }
-
-                if (typedFunctions.Count == 1)
-                {
-                    return typedFunctions[0].ReturnType;
-                }
-
-                // TODO: write an algorithm to choose the best child
-                // TODO: assure that the functions have the same type. 
-
-                Debug.WriteLine("Multiple viable children: should choose the best");
-
-                return typedFunctions[0].ReturnType;
+                var fcr = new FunctionCallResolver(Factory, fgr, argTypes);
+                FunctionCalls.Add(fcr);
+                return fcr.BestReturnType;
             }
             else
             {

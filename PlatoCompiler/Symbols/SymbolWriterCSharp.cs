@@ -182,7 +182,7 @@ namespace Plato.Compiler.Symbols
 
         public SymbolWriterCSharp WriteConstructor(TypeDefinitionSymbol t)
         {
-            if (!t.IsType()) throw new NotSupportedException();
+            if (!t.IsConcreteType()) throw new NotSupportedException();
             var name = t.Name;
             var fieldTypes = t.Fields.Select(f => GetTypeName(f.Type, t)).ToList();
             var fieldNames = t.Fields.Select(f => $"{f.Name}").ToList();
@@ -322,7 +322,7 @@ namespace Plato.Compiler.Symbols
                 return this;
             }
 
-            if (type.IsType())
+            if (type.IsConcreteType())
             {
                 var implements = type.Implements.Count > 0
                     ? ": " + string.Join(", ", type.Implements.Select(td => $"{td?.Name}<{type.Name}>"))

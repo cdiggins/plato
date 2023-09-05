@@ -33,7 +33,7 @@ namespace Plato.Compiler.Types
 
             // Create type reference from type names
             NamesToTypes = typeDefinitions
-                .Where(t => t.IsType() || t.IsConcept())
+                .Where(t => t.IsConcreteType() || t.IsConcept())
                 .ToDictionary(t => t.Name, t => CreateTypeFromDefinition(t));
 
             // Create a lookup, so that we can find a type from just a definition

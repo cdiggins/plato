@@ -41,7 +41,7 @@ namespace Plato.Compiler.Symbols
         public static bool IsConcept(this TypeDefinitionSymbol ts)
             => ts.Kind == TypeKind.Concept;
 
-        public static bool IsType(this TypeDefinitionSymbol ts)
+        public static bool IsConcreteType(this TypeDefinitionSymbol ts)
             => ts.Kind == TypeKind.Type;
 
         public static bool IsPrimitive(this TypeDefinitionSymbol ts)
