@@ -159,28 +159,17 @@ namespace Plato.Compiler
         public void Log(TypeFactory atr)
         {
             Log($"Type Factory");
-            Log($"Found {atr.Concepts.Count} Concepts");
-            foreach (var c in atr.Concepts.Values)
-            {
-                Log($"== Concept {c.Name} ==");
 
-                Log($"= Functions =");
-                foreach (var f in c.Functions)
-                {
-                    Log($"{f}");
-                }
-            }
-
-            Log($"= Type Variables =");
-            foreach (var tv in atr.TypeVariables)
+            Log($"= Type Definitions =");
+            foreach (var kv in atr.TypeDefinitions)
             {
-                Log($"{tv}");
+                Log($"{kv.Key} = {kv.Value}");
             }
 
             Log($"= Type References =");
-            foreach (var tr in atr.TypeReferences)
+            foreach (var kv in atr.TypeReferences)
             {
-                Log($"{tr}");
+                Log($"{kv.Key} = {kv.Value}");
             }
         }
 

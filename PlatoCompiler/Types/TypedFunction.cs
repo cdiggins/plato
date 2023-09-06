@@ -7,6 +7,35 @@ using System.Linq;
 
 namespace Plato.Compiler.Types
 {
+    public class TypedFunctionVariation
+    {
+        public TypedFunction Original { get; }
+        public TypedFunction Current { get; }
+
+        public static IEnumerable<TypedFunctionVariation> CreateVariations(TypedFunction original, IReadOnlyList<Type> types)
+        {
+            Dictionary<Type, Type> lookup;
+
+            // TODO:
+            // All functions that take a number as the first argument are extended to support all types that implement Numerical.
+            // In that function all instances of "number" are replaced with the type. This gives us "addition", "subtraction", etc.
+            // Where this fails is that it doesn't give us ScalarArithmetic. 
+
+            // All functions on a type T are extended to accept all types that implement Array<T> 
+
+            // This isn't true "mapping", there are two types of mapping:
+            // Square(x: Number) => mapping Square(x: Array<Number>) => mapped types Square(x: Vector), Square(x: Interval), Square(x ...)
+            
+            // but here is the thing. Why don't I just write Square(x: Numerical) => x * x; 
+            // Then the Square function works on all Numerical types! 
+
+            // 
+
+
+            throw new NotImplementedException();
+        }
+    }
+
     public class TypedFunction
     {
         public IReadOnlyList<Type> Parameters { get; }
@@ -14,9 +43,6 @@ namespace Plato.Compiler.Types
         public Type FunctionType { get; }
         public FunctionDefinition Definition { get; }
         public string Name => Definition.Name;
-
-        // TEMP:  
-        public HashSet<TypeVariable> TypeVariables { get; } = new HashSet<TypeVariable>();
 
         public TypedFunction(FunctionDefinition definition, TypeReference functionType)
         {
@@ -27,7 +53,7 @@ namespace Plato.Compiler.Types
             FunctionType = functionType;
             ReturnType = functionType.TypeArguments[nArgs - 1];
             Parameters = functionType.TypeArguments.Take(nArgs - 1).ToList();
-            
+
             // TEMP: this might not be appropriate now. 
             // NOTE: all the type variables appearing in return type, must first appear on the left.
             //CollectTypeVariables(Parameters);
@@ -47,103 +73,5 @@ namespace Plato.Compiler.Types
 
         public override int GetHashCode()
             => Hasher.Hash(Parameters.Cast<object>().Append(Name).Append(ReturnType).ToArray());
-
-        private void CollectTypeVariables(IEnumerable<Type> types)
-        {
-            foreach (var t in types)
-            { 
-                if (t is TypeVariable tv)
-                    TypeVariables.Add(tv);
-                if (t is TypeReference tr)
-                    CollectTypeVariables(tr.TypeArguments);
-            }
-        }
-
-        private void ValidateReturnTypeVariables(Type t)
-        {
-            if (t is TypeVariable tv)
-                if (!TypeVariables.Contains(tv))
-                    throw new Exception($"Type variable {tv} occurs for the first time in return type.");
-            if (t is TypeReference tr)
-                foreach (var ta in tr.TypeArguments)
-                    ValidateReturnTypeVariables(ta);
-        }
-
-        public void GatherSubstitutions(Type argType, Type paramType, Dictionary<TypeVariable, List<Type>> subs)
-        {
-            if (paramType is TypeVariable tv)
-            {
-                // TEMP: catching things early. 
-                if (subs.ContainsKey(tv))
-                    throw new Exception("Type unification not supported yet");
-
-                if (!subs.ContainsKey(tv))
-                    subs.Add(tv, new List<Type>());
-
-                subs[tv].Add(argType);
-            }
-
-            if (paramType is TypeReference trDest)
-            {
-                if (argType is TypeReference trSrc)
-                {
-                    if (trDest.TypeArguments.Count != trSrc.TypeArguments.Count)
-                    {
-                        throw new Exception(
-                            $"Number of type argument in source {trSrc.TypeArguments.Count} does not match destination {trDest.TypeArguments.Count}");
-                    }
-
-                    for (var i = 0; i < trSrc.TypeArguments.Count; ++i)
-                    {
-                        GatherSubstitutions(trSrc.TypeArguments[i], trDest.TypeArguments[i], subs);
-                    }
-                }
-            }
-        }
-
-        public Type ApplySubstitutions(TypeFactory factory, Type src, Dictionary<TypeVariable, List<Type>> subs)
-        {
-            if (src is TypeVariable tv)
-            {
-                if (!subs.ContainsKey(tv))
-                    return tv;
-                var list = subs[tv];
-                if (list.Count > 1)
-                    throw new Exception("Type unification not supported yet");
-                return list[0];
-            }
-             
-            if (src.IsConcreteType())
-                return src;
-
-            if (src.IsConcept())
-                return src;
-            
-            if (src is TypeReference tr)
-            {
-                var args = tr.TypeArguments.Select(arg => ApplySubstitutions(factory, arg, subs)).ToList();
-                return new TypeReference(src.Definition, args, factory);
-            }
-
-            throw new Exception("Unexpected control flow within apply substitutions algorithm");
-        }
-
-        public Type GetReturnType(TypeFactory factory, IReadOnlyList<Type> argTypes)
-        {
-            return ReturnType;
-            /*
-            if (argTypes.Count != Parameters.Count)
-                throw new Exception(
-                    $"Number of arguments {argTypes.Count} does not match number of parameters {Parameters.Count}");
-
-            var substitutions = new Dictionary<TypeVariable, List<Type>>();
-            for (var i = 0; i < argTypes.Count; ++i)
-            {
-                GatherSubstitutions(argTypes[i], Parameters[i], substitutions);
-            }
-
-            return ApplySubstitutions(factory, ReturnType, substitutions);
-            */
-        }
     }
 }

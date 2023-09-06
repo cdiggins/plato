@@ -18,7 +18,6 @@ namespace Plato.Compiler.Types
         public IReadOnlyList<Type> ArgTypes { get; }
 
         // Derived values 
-        public bool IsMapped { get; }
         public Type BestReturnType { get; }
         public bool Ambiguous => ReturnTypes.Count > 1;
 
@@ -31,7 +30,7 @@ namespace Plato.Compiler.Types
         public IReadOnlyList<TypedFunction> BestFunctions { get; }
 
         public string DebugString =>
-            $"Success = {FoundResult && !Ambiguous}, Mapped = {IsMapped}, Best type = {BestReturnType}, Function was {Fgr.Definition.DebugString}, Args were {string.Join(",", ArgTypes)}";
+            $"Success = {FoundResult && !Ambiguous}, Best type = {BestReturnType}, Function was {Fgr.Definition.DebugString}, Args were {string.Join(",", ArgTypes)}";
 
         public FunctionCallResolver(TypeFactory factory, FunctionGroupReference fgr, IReadOnlyList<Type> argTypes)
         {
@@ -50,18 +49,7 @@ namespace Plato.Compiler.Types
 
             ValidFunctions = AllFunctions.Where(IsFunctionCallable).ToList();
 
-            // If there are no valid functions, then we might require a mapped function . 
-            if (ValidFunctions.Count == 0)
-            {
-                ValidFunctions = AllFunctions.Where(IsFunctionMappable).ToList();
-                if (ValidFunctions.Count > 0)
-                {
-                    IsMapped = true;
-                }
-            }
-
             BestFunctions = ValidFunctions;
-
             if (BestFunctions.Count > 1)
             {
                 // Reduce the best functions list.
@@ -99,9 +87,6 @@ namespace Plato.Compiler.Types
 
             if (Ambiguous)
                 throw new Exception("Found multiple return types");
-
-            if (IsMapped)
-                BestReturnType = Factory.CreateArray(BestReturnType);
         }
 
         public int GetScoreForOverload(TypedFunction tf, int pos)
@@ -110,7 +95,7 @@ namespace Plato.Compiler.Types
             var pt = tf.Parameters[pos];
 
             // Get the type of the second parameter 
-            var at = IsMapped ? RemoveArrayType(ArgTypes[pos]) : ArgTypes[pos];
+            var at = ArgTypes[pos];
 
             // 0. Are they both the same concrete type and exactly the same?
             if (at.IsConcreteType() && at.Equals(pt))
@@ -155,43 +140,5 @@ namespace Plato.Compiler.Types
 
             return true;
         }
-
-        public bool IsFunctionMappable(TypedFunction ft)
-        {
-            if (ft.Parameters.Count != ArgTypes.Count)
-                return false;
-
-            for (var i = 0; i < ft.Parameters.Count; ++i)
-            {
-                var paramType = ft.Parameters[i];
-                var argType = RemoveArrayType(ArgTypes[i]);
-                
-                if (!argType.CanCastTo(paramType))
-                    return false;
-            }
-
-            return true;
-        }
-
-        public static Type RemoveArrayType(Type t)
-        {
-            // If t is an array, get the parameter. 
-            if (t is TypeReference tr)
-            {
-                if (tr.Definition.Name == "Array")
-                {
-                    if (tr.TypeArguments.Count == 1)
-                        return tr.TypeArguments[0];
-                    if (tr.TypeArguments.Count > 1)
-                        throw new Exception("Too many type arguments for an array!");
-
-                    // NOTE: if we get here, it suggest that the type factory really should have created a single type variable for us 
-                    throw new Exception("Arrays should have exactly one type argument");
-                }
-            }
-
-            return t;
-        }
-
     }
 }

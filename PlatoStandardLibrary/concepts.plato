@@ -20,7 +20,7 @@ concept Array<T: Any>
 }
 
 concept Vector<T: Numerical>
-    inherits Array<T>, Numerical, ScalarArithmetic
+    inherits Array<T>, Numerical
 {
     Count(v: Self): Integer
         => v.FieldTypes.Count;
@@ -37,7 +37,7 @@ concept Measure
 }
 
 concept Numerical 
-    inherits Value, Arithmetic, Equatable, Comparable, Magnitudinal
+    inherits Value, Arithmetic, ScalarArithmetic, Equatable, Comparable, Magnitudinal
 {
     Zero(): Self;
     One(): Self;
