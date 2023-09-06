@@ -18,7 +18,7 @@ namespace Plato.Compiler.Types
 
         public Dictionary<TypeDefinitionSymbol, Concept> Concepts { get; }
         public Dictionary<string, TypeReference> NamesToTypes { get; }
-        public SelfType CurrentSelf { get; set; }
+        public Type CurrentSelf { get; set; }
 
         public HashSet<Type> AllTypes { get; } = new HashSet<Type>();
         public IEnumerable<TypeReference> TypeReferences => AllTypes.OfType<TypeReference>();
@@ -47,7 +47,7 @@ namespace Plato.Compiler.Types
                 if (t.IsConcept())
                 {
                     var concept = Concepts[t];
-                    CurrentSelf = concept.Self;
+                    CurrentSelf = NamesToTypes[concept.Name];
                 }
 
                 // Create all of the type expressions
@@ -91,8 +91,7 @@ namespace Plato.Compiler.Types
             if (!td.IsConcept())
                 throw new Exception("Expected concept type definition");
             var inherits = td.Inherits.Select(CreateType).ToList();
-            var selfType = CreateSelf();
-            return new Concept(td, selfType, inherits, this);
+            return new Concept(td, inherits, this);
         }
 
         public TypedFunction GetTypedFunction(FunctionDefinition fd)
@@ -125,9 +124,6 @@ namespace Plato.Compiler.Types
             AllTypes.Add(self);
             return self;
         }
-
-        private SelfType CreateSelf()
-            => Register(new SelfType(this));
 
         private ConstrainedVariable CreateConstrainedVariable(TypeExpressionSymbol concept, TypeDefinitionSymbol definition)
             => Register(new ConstrainedVariable(CreateType(concept), definition, this));

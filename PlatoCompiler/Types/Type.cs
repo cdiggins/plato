@@ -50,13 +50,6 @@ namespace Plato.Compiler.Types
             => Hasher.Hash(base.GetHashCode(), Id);
     }
 
-    public class SelfType : TypeVariable
-    {
-        public SelfType(TypeFactory factory)
-            : base("Self", null, factory)
-        { }
-    }
-
     public class AnyType : TypeVariable
     {
         public AnyType(TypeFactory factory)
