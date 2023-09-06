@@ -2,20 +2,27 @@
 
 # Plato
 
-Plato is an efficient and fun programming language inspired by JavaScript, C#, and Haskell. 
+Plato is an efficient and (hopefully!) fun programming language inspired by JavaScript, TypeScript, C#, and Haskell. 
 Plato is designed to be easy to teach and learn while being efficient and robust enough for 
-commercial coding, particularly in the realm of 3D graphics. 
+professional coding, particularly in the realm of 3D graphics. 
 
-Plato is a statically typed functional language that looks and behaves like an object-oriented scripting 
-language, but with a lot less complexity.  
+Plato is a statically typed functional language that looks and behaves in many ways like an 
+object-oriented scripting language, but with a lot less complexity.  
 
-## A Text Language with a Visual Representation 
+## Plato Use Case 
 
-Plato is being developed as a regular text-based coding language that has an equivalent visual 
-representation as a data-flow graph. This UI for data-flow graphs is in its early stages, but here is a preview:
+The first use case for Plato is as the basis for cross-platform 3D math and geometry libraries that form the basis
+for software we are developing at [Ara 3D](https://ara3d.com). We do a lot of computational geometry work in different langauges
+and recreating and maintaining the same code for multuple platforms and languages is too costly and burdensome for a
+small company. 
 
-![DataFlowEx1](https://github.com/cdiggins/plato/assets/1759994/c8d4d6e4-a138-42d1-99c9-6fa891254ede)
+## Status
 
+As of today, September 6th, some of the final touches are being put on the type system to be able to properly deal with
+function overload resolution and start generating some code. We hope to be able to start publishing the first .NET 2.0 
+compatible math and geometry libraries authored in Plato by October 1st. 
+
+# Language Details
 
 ## Functions 
 
@@ -188,6 +195,17 @@ Features that may be on the longer term roadmap:
 * asyncronous language support (`async`/`await`)
 * generators/iterator methods/coroutines (`yield`)
 * covariance and contravariance of generic type parameters 
+
+## In Development: A Text Language with a Visual Representation 
+
+Plato is being developed with a regular text-based syntax, with an alternative visual 
+representation as a data-flow graph. The goal is to be able to switch seamlessly between visual and 
+textual representations with no change in semantics or layout.   
+
+This UI for data-flow graphs is in its early stages, but here is a preview:
+![DataFlowEx1](https://github.com/cdiggins/plato/assets/1759994/c8d4d6e4-a138-42d1-99c9-6fa891254ede)
+
+The data flow representation is inspired by the [MCG visual programming language](https://help.autodesk.com/view/MAXDEV/2023/ENU/?guid=MAXDEV_MCG_getting_started_creating_a_tool_html) I helped design for 3ds Max. 
 
 # Backstory 
 
