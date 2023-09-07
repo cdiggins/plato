@@ -46,7 +46,6 @@ namespace Plato.Compiler.Types
 
         public TypedFunction(FunctionDefinition definition, TypeReference functionType)
         {
-            Debug.Assert(functionType.Definition.Equals(PrimitiveTypeDefinitions.Function));
             var nArgs = functionType.TypeArguments.Count;
             Debug.Assert(nArgs >= 1);
             Definition = definition;

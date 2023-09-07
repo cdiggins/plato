@@ -113,17 +113,6 @@ namespace Plato.Compiler
 
                 // TODO: get the functions 
 
-                /*
-                Log("Creating operations");
-                // TODO: this can be removed I think.
-                Operations = new Operations(TypeDefs);
-
-                Log("Type resolution");
-                TypeResolver = new TypeResolver(Operations, SymbolResolver);
-
-                Log($"Found {TypeResolver.Errors.Count} type resolution errors");
-                LogResolutionErrors(TypeResolver.Errors);
-
                 Log("Checking semantics");
                 CheckSemantics();
 
@@ -132,6 +121,7 @@ namespace Plato.Compiler
                 foreach (var f in Functions) 
                     Graphs.Add(new VsgBuilder().ToVsg(f));
 
+                Log("Outputting errors and warnings");
                 foreach (var se in SemanticErrors)
                     Log("Semantic Error   : " + se);
                 foreach (var ie in InternalErrors)
@@ -139,7 +129,6 @@ namespace Plato.Compiler
                 if (DisplayWarnings)
                     foreach (var sw in SemanticWarnings)
                         Log("Semantic Warning : " + sw);
-                */
 
                 CompletedCompilation = true;
             }

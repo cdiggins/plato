@@ -20,13 +20,18 @@ namespace Plato.Compiler.Types
 
         public TypeFactory(IReadOnlyList<TypeDefinitionSymbol> typeDefinitions)
         {
+            // Create type definitions for the built-in primitives 
+            foreach (var prim in PrimitiveTypeDefinitions.AllPrimitives)
+                CreateAndRegisterDefinition(prim);
+
             // Create type definitions from all the provided symbols (includes type parameters)
             foreach (var td in typeDefinitions)
                 CreateAndRegisterDefinition(td);
 
             // Create a name lookup for the provided symbols 
             foreach (var td in typeDefinitions)
-                TopLevelNamesToTypes.Add(td.Name, GetDefinition(td));
+                if (!td.IsLibrary())
+                    TopLevelNamesToTypes.Add(td.Name, GetDefinition(td));
 
             // Resolve all type expression and functions 
             foreach (var t in typeDefinitions)
@@ -67,7 +72,7 @@ namespace Plato.Compiler.Types
             var r = new List<Type>();
             for (var i = 0; i < def.TypeParameters.Count; i++)
             {
-                if (i > typeArgs.Count)
+                if (i >= typeArgs.Count)
                 {
                     // Create extra variables as required. 
                     var arg = new TypeVar(def.TypeParameters[i]);
@@ -86,12 +91,14 @@ namespace Plato.Compiler.Types
 
         public TypeReference CreateAndRegisterReference(TypeExpressionSymbol tes)
         {
-            if (TypeReferences.ContainsKey(tes)) return TypeReferences[tes];
+            if (TypeReferences.ContainsKey(tes)) 
+                return TypeReferences[tes];
             
             if (tes.Name == "Self")
             {
                 Debug.Assert(CurrentSelf != null);
                 Debug.Assert(tes.TypeArgs.Count == 0);
+                TypeReferences.Add(tes, CurrentSelf);
                 return CurrentSelf;
             }
             
@@ -113,6 +120,9 @@ namespace Plato.Compiler.Types
         {
             if (TypeReferences.ContainsKey(typeExpression))
                 return TypeReferences[typeExpression];
+
+            if (typeExpression.Name == "Self")
+                return CurrentSelf ?? throw new Exception("Self type has not been assigned in current context");
 
             throw new Exception($"Unrecognized type expression {typeExpression}");
         }
@@ -136,14 +146,14 @@ namespace Plato.Compiler.Types
             => TopLevelNamesToTypes[name];
 
         public Type CreateTuple(IReadOnlyList<Type> args)
-            => CreateReference(PrimitiveTypeDefinitions.Tuple, args);
+            => CreateReference(PrimitiveTypeDefinitions.Tuples[args.Count], args);
         
         public TypeReference CreateFunctionType(FunctionDefinition fd)
             => CreateFunctionType(fd.Parameters.Select(p => GetType(p.Type)).ToList(),
                 GetType(fd.ReturnType));
 
         private TypeReference CreateFunctionType(IReadOnlyList<Type> paramTypes, Type returnType)
-            => CreateReference(PrimitiveTypeDefinitions.Function, paramTypes.Append(returnType).ToArray());
+            => CreateReference(PrimitiveTypeDefinitions.Functions[paramTypes.Count], paramTypes.Append(returnType).ToArray());
 
         private TypedFunction CreateAndRegisterTypedFunction(FunctionDefinition fd)
         {

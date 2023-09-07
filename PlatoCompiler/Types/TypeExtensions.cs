@@ -26,6 +26,6 @@ namespace Plato.Compiler.Types
             => self.Definition()?.IsSubType(other.Definition()) == true;
 
         public static bool CanCastTo(this Type from, Type to, bool allowConversions = true)
-            => from.IsTypeVar() || to.IsTypeVar() || from.Definition()?.CanCastTo(to.Definition(), allowConversions) == true;
+            => from.IsTypeVar() || to.IsTypeVar() || from.Definition()?.Symbol.CanCastTo(to.Definition()?.Symbol, allowConversions) == true;
     }
 }

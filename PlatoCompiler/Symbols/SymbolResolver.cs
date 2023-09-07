@@ -253,7 +253,7 @@ namespace Plato.Compiler.Symbols
                             var ps = astLambda.Parameters.Select(Resolve).ToArray();
                             var body = ResolveExpr(astLambda.Body);
                             var r = new Lambda(new FunctionDefinition("_lambda_", 
-                                PrimitiveTypeDefinitions.Lambda.ToTypeExpression(), body, ps));
+                                PrimitiveTypeDefinitions.Function.ToTypeExpression(), body, ps));
                             return r;
                         }
 
