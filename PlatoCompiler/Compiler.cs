@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Parakeet;
 using Parakeet.Demos.Plato;
@@ -36,8 +37,12 @@ namespace Plato.Compiler
         public IReadOnlyList<AstNode> Trees { get; set; }
         public SymbolResolver SymbolResolver { get; set; }
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; set; }
-        public IReadOnlyList<FunctionDefinition> Functions { get; } 
         public IReadOnlyList<TypeDefinitionSymbol> TypeDefs { get; set; }
+
+        // TODO: maybe change this to a TypedFunction, and figure out when to declare it. 
+        // Maybe it can be retrieved from the TypeResolvers? 
+        public IReadOnlyList<FunctionDefinition> Functions { get; } = new List<FunctionDefinition>();
+
         public Dictionary<FunctionDefinition, TypeResolver> Resolvers { get; } = new Dictionary<FunctionDefinition, TypeResolver>();
         public Dictionary<ExpressionSymbol, Type> Types { get; } = new Dictionary<ExpressionSymbol, Type>();
 
@@ -106,7 +111,21 @@ namespace Plato.Compiler
 
                     while (et != null)
                     {
-                        Types.Add(et.Expression, et.Type);
+                        if (Types.ContainsKey(et.Expression))
+                        {
+                            var tmp = Types[et.Expression];
+                            if (!tmp.Equals(et.Type))
+                            {
+                                // TODO: constrain the two types or something
+                                //throw new Exception($"Unexpected type {tmp}, expected {et.Type}");
+                                Debug.WriteLine($"Unexpected type {tmp}, expected {et.Type}");
+                            }
+                        }
+                        else
+                        {
+                            Types.Add(et.Expression, et.Type);
+                        }
+
                         et = et.Parent;
                     }
                 }
@@ -116,6 +135,7 @@ namespace Plato.Compiler
                 Log("Checking semantics");
                 CheckSemantics();
 
+                // TODO: I need to figure out what Functions are supposed to be and what they were
                 Log("Generating Visual Syntax Graphs");
                 Graphs.Clear();
                 foreach (var f in Functions) 
@@ -208,6 +228,7 @@ namespace Plato.Compiler
 
         public void CheckSemantics()
         {
+            /*
             foreach (var f in Functions)
             {
                 foreach (var p in f.Parameters)
@@ -264,6 +285,7 @@ namespace Plato.Compiler
                         InternalErrors.Add("Types should not have methods");
                 }
             }
+            */
         }
     }
 }

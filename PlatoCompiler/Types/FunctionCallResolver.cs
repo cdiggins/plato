@@ -83,10 +83,17 @@ namespace Plato.Compiler.Types
             BestReturnType = ReturnTypes.FirstOrDefault();
 
             if (BestReturnType == null)
-                throw new Exception("Failed to resolve function call");
+            {
+                Debug.WriteLine("Failed to resolved function call");
+                //throw new Exception("Failed to resolve function call");
+                BestReturnType = AllFunctions[0].ReturnType;
+            }
 
             if (Ambiguous)
-                throw new Exception("Found multiple return types");
+            {
+                //throw new Exception("Found multiple return types");
+                Debug.WriteLine("Found multiple return types");
+            }
         }
 
         public int GetScoreForOverload(TypedFunction tf, int pos)

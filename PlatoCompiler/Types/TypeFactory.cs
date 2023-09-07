@@ -28,11 +28,6 @@ namespace Plato.Compiler.Types
             foreach (var td in typeDefinitions)
                 CreateAndRegisterDefinition(td);
 
-            // Create a name lookup for the provided symbols 
-            foreach (var td in typeDefinitions)
-                if (!td.IsLibrary())
-                    TopLevelNamesToTypes.Add(td.Name, GetDefinition(td));
-
             // Resolve all type expression and functions 
             foreach (var t in typeDefinitions)
             {
@@ -57,6 +52,8 @@ namespace Plato.Compiler.Types
             var tps = tds.TypeParameters.Select(CreateAndRegisterDefinition).ToList();
             var r = new TypeDefinition(tds, tps);
             TypeDefinitions.Add(tds, r);
+            if (tds.IsConcreteType() || tds.IsConcept() || tds.IsPrimitive())
+                TopLevelNamesToTypes.Add(tds.Name, r);
             return r;
         }
 

@@ -8,22 +8,22 @@ namespace Plato.Compiler.Types
             => type is TypeDefinition td ? td : type is TypeReference tr ? tr.Definition : null;
 
         public static bool IsConcept(this Type type)
-            => type.Definition()?.IsConcept() == true;
+            => type.Definition()?.Symbol?.IsConcept() == true;
 
         public static bool IsConcreteType(this Type type)
-            => type.Definition()?.IsConcreteType() == true;
+            => type.Definition()?.Symbol?.IsConcreteType() == true;
 
         public static bool IsTypeVar(this Type type)
             => type is TypeVar;
 
         public static bool InheritsFrom(this Type from, Type to)
-            => from.Definition()?.InheritsFrom(to.Definition()) == true;
+            => from.Definition()?.Symbol?.InheritsFrom(to.Definition()?.Symbol) == true;
 
         public static bool Implements(this Type self, Type other)
-            => self.Definition()?.Implements(other.Definition()) == true;
+            => self.Definition()?.Symbol?.Implements(other.Definition()?.Symbol) == true;
 
         public static bool IsSubType(this Type self, Type other)
-            => self.Definition()?.IsSubType(other.Definition()) == true;
+            => self.Definition()?.Symbol?.IsSubType(other.Definition()?.Symbol) == true;
 
         public static bool CanCastTo(this Type from, Type to, bool allowConversions = true)
             => from.IsTypeVar() || to.IsTypeVar() || from.Definition()?.Symbol.CanCastTo(to.Definition()?.Symbol, allowConversions) == true;
