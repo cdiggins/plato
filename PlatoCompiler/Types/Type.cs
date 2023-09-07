@@ -64,7 +64,7 @@ namespace Plato.Compiler.Types
         public override string ToString()
         {
             var tps = string.Join(", ", TypeArguments);
-            return $"{Name}_{Definition}<{tps}>";
+            return $"{Name}<{tps}>";
         }
 
         public override bool Equals(object obj)

@@ -50,7 +50,7 @@ namespace Plato.Compiler.Symbols
             if (resolver.Function == null)
                 WriteLine($"// Type resolver");
             else
-                WriteLine($"// Type resolver associated with {resolver.Function.Signature}");
+                WriteLine($"// Type resolver associated with {resolver.Function.Definition.Signature}");
             WriteLine($"// Success={resolver.Success} Message={resolver.Message}");
             WriteLine("// Expression types");
             foreach (var et in resolver.GetExpressionTypes())

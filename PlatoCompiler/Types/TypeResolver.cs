@@ -17,19 +17,17 @@ namespace Plato.Compiler.Types
             FunctionDefinition function)
         {
             Factory = factory;
-            Function = function;
 
             try
             {
                 if (function != null)
                 {
-                    var tf = Factory.GetTypedFunction(function);
-                    ReturnType = tf.ReturnType;
-                    BodyType = Resolve(Function.Body);
+                    Function = Factory.GetTypedFunction(function);
+                    BodyType = Resolve(FunctionDefinition.Body);
 
                     if (BodyType != null && ReturnType != null)
                         if (!CheckCast(BodyType, ReturnType))
-                            return;
+                             return;
                 }
 
                 Success = true;
@@ -44,9 +42,10 @@ namespace Plato.Compiler.Types
         public bool Success { get; }
         public string Message { get; private set; }
         public TypeFactory Factory { get; }
-        public FunctionDefinition Function { get; }
+        public TypedFunction Function { get; }
         public ExpressionTypes ExpressionTypes { get; private set;  }
-        public Type ReturnType { get; }
+        public Type ReturnType => Function.ReturnType;
+        public FunctionDefinition FunctionDefinition => Function.Definition;
         public Type BodyType { get; }
         public List<FunctionCallResolver> FunctionCalls { get; } = new List<FunctionCallResolver>();
 

@@ -77,13 +77,13 @@ public class IDE
         OpenFile(Path.Combine(inputPath, "libraries.plato"));
 
         Logger.Log("Applying syntax coloring");
-        ApplyStylesAndOutputErrors();
+        //ApplyStylesAndOutputErrors();
         Logger.Log("Completed syntax coloring");
+        
         var parsers = Editors.Select(p => p.Parser).ToList();
         Compiler.Compile(parsers);
 
         OutputTextBox.Lines = Logger.Messages.ToArray();
-
 
         if (!Compiler.CompletedCompilation)
         {

@@ -176,11 +176,20 @@ namespace Plato.Compiler.Vsg
                 case Reference refSymbol:
                     return CreateNode(refSymbol.Definition);
 
+                case Lambda lambdaSymbol:
+                    return CreateNode(lambdaSymbol);
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(symbol));
             }
 
             throw new NotImplementedException();
+        }
+
+        public VsgNode CreateNode(Lambda lambda)
+        {
+            // TODO: implement lambdas
+            return null;
         }
 
         public VsgNode CreateNode(string name, bool hasOutput = true)
@@ -201,7 +210,6 @@ namespace Plato.Compiler.Vsg
             }
             return CreateNode(def)?.MainOutput;
         }
-
 
         public VsgSocket GetSocket(ExpressionSymbol expr)
         {

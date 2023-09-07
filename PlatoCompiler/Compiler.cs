@@ -38,11 +38,8 @@ namespace Plato.Compiler
         public SymbolResolver SymbolResolver { get; set; }
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; set; }
         public IReadOnlyList<TypeDefinitionSymbol> TypeDefs { get; set; }
-
-        // TODO: maybe change this to a TypedFunction, and figure out when to declare it. 
-        // Maybe it can be retrieved from the TypeResolvers? 
-        public IReadOnlyList<FunctionDefinition> Functions { get; } = new List<FunctionDefinition>();
-
+        public IEnumerable<FunctionDefinition> Functions => Resolvers.Keys;
+        public IEnumerable<TypedFunction> TypedFunctions => Resolvers.Values.Select(r => r.Function);
         public Dictionary<FunctionDefinition, TypeResolver> Resolvers { get; } = new Dictionary<FunctionDefinition, TypeResolver>();
         public Dictionary<ExpressionSymbol, Type> Types { get; } = new Dictionary<ExpressionSymbol, Type>();
 
@@ -94,7 +91,8 @@ namespace Plato.Compiler
 
                 Log("Creating type factory");
                 TypeFactory = new TypeFactory(TypeDefs);
-                Log(TypeFactory);
+                
+                //Log(TypeFactory);
 
                 foreach (var kv in TypeFactory.TypedFunctions)
                 {
@@ -130,16 +128,18 @@ namespace Plato.Compiler
                     }
                 }
 
+                OutputPossibleFunctions();
                 // TODO: get the functions 
 
                 Log("Checking semantics");
                 CheckSemantics();
 
-                // TODO: I need to figure out what Functions are supposed to be and what they were
+                /*
                 Log("Generating Visual Syntax Graphs");
                 Graphs.Clear();
                 foreach (var f in Functions) 
                     Graphs.Add(new VsgBuilder().ToVsg(f));
+                */
 
                 Log("Outputting errors and warnings");
                 foreach (var se in SemanticErrors)
@@ -159,6 +159,18 @@ namespace Plato.Compiler
             catch (Exception e)
             {
                 Log("Exception caught: " + e.Message);
+            }
+        }
+
+        public void OutputPossibleFunctions()
+        {
+            var vars = TypedFunctions.SelectMany(tf => TypedFunctionVariation.CreateVariations(tf, TypeFactory))
+                .ToList();
+            Log($"Found {vars.Count} variations among {TypedFunctions.Count()} total functions");
+
+            foreach (var v in vars)
+            {
+                Log($"Typed function {v.Original.FunctionType} => {v.NewType}");
             }
         }
 
@@ -228,7 +240,6 @@ namespace Plato.Compiler
 
         public void CheckSemantics()
         {
-            /*
             foreach (var f in Functions)
             {
                 foreach (var p in f.Parameters)
@@ -285,7 +296,6 @@ namespace Plato.Compiler
                         InternalErrors.Add("Types should not have methods");
                 }
             }
-            */
         }
     }
 }

@@ -40,38 +40,38 @@ public static partial class Extensions
     // Type resolver associated with Count(v:Primitive:Self):Type:Integer;
     // Success=True Message=
     // Expression types
-    // Expression Count(FieldTypes(v)) has type Integer_Integer_121<><>
-    // Expression FieldTypes(v) has type Array_Array_109<T_365<>><Type_Type_124<><>>
-    // Expression FieldTypes(v) has type Array_Array_109<T_365<>><Type_Type_124<><>>
-    // Expression v has type Vector_Vector_110<T_375<>><`2>
-    // Expression v has type Vector_Vector_110<T_375<>><`2>
+    // Expression Count(FieldTypes(v)) has type Integer<>
+    // Expression FieldTypes(v) has type Array<Type<>>
+    // Expression FieldTypes(v) has type Array<Type<>>
+    // Expression v has type Vector<`2>
+    // Expression v has type Vector<`2>
     {
-        return /* Integer_Integer_121<><> */
+        return /* Integer<> */
         /*  */
-        Count(/* Array_Array_109<T_365<>><Type_Type_124<><>> */
+        Count(/* Array<Type<>> */
         /*  */
-        FieldTypes(/* Vector_Vector_110<T_375<>><`2> */
+        FieldTypes(/* Vector<`2> */
         v));
     }
     public static T At<Self, T>(this Self v, Integer n) where Self: Vector<Self, T>
     // Type Resolver
     // Type resolver associated with At(v:Primitive:Self,n:Type:Integer):Variable:T;
-    // Success=False Message=Can't cast from T_T_365<><> to T_T_375<><>
+    // Success=False Message=Can't cast from T<> to T<>
     // Expression types
-    // Expression At(FieldValues(v), n) has type T_T_365<><>
-    // Expression n has type Integer_Integer_121<><>
-    // Expression n has type Integer_Integer_121<><>
-    // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression v has type Vector_Vector_110<T_375<>><`2>
-    // Expression v has type Vector_Vector_110<T_375<>><`2>
+    // Expression At(FieldValues(v), n) has type T<>
+    // Expression n has type Integer<>
+    // Expression n has type Integer<>
+    // Expression FieldValues(v) has type Array<Any<>>
+    // Expression FieldValues(v) has type Array<Any<>>
+    // Expression v has type Vector<`2>
+    // Expression v has type Vector<`2>
     {
-        return /* T_T_365<><> */
+        return /* T<> */
         /*  */
-        At(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        At(/* Array<Any<>> */
         /*  */
-        FieldValues(/* Vector_Vector_110<T_375<>><`2> */
-        v), /* Integer_Integer_121<><> */
+        FieldValues(/* Vector<`2> */
+        v), /* Integer<> */
         n);
     }
 }
@@ -84,21 +84,21 @@ public static partial class Extensions
     public static Number Value<Self>(this Self x) where Self: Measure<Self>
     // Type Resolver
     // Type resolver associated with Value(x:Primitive:Self):Type:Number;
-    // Success=False Message=Can't cast from T_T_365<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from T<> to Number<>
     // Expression types
-    // Expression At(FieldValues(x), 0) has type T_T_365<><>
+    // Expression At(FieldValues(x), 0) has type T<>
     // Expression 0 has type Integer_121<>
     // Expression 0 has type Integer_121<>
-    // Expression FieldValues(x) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(x) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression x has type Measure_Measure_111<><>
-    // Expression x has type Measure_Measure_111<><>
+    // Expression FieldValues(x) has type Array<Any<>>
+    // Expression FieldValues(x) has type Array<Any<>>
+    // Expression x has type Measure<>
+    // Expression x has type Measure<>
     {
-        return /* T_T_365<><> */
+        return /* T<> */
         /*  */
-        At(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        At(/* Array<Any<>> */
         /*  */
-        FieldValues(/* Measure_Measure_111<><> */
+        FieldValues(/* Measure<> */
         x), /* Integer_121<> */
         0);
     }
@@ -125,25 +125,25 @@ public static partial class Extensions
     // Type resolver associated with Magnitude(x:Primitive:Self):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression SquareRoot(Sum(Square(FieldValues(x)))) has type Number_Number_120<><>
-    // Expression Sum(Square(FieldValues(x))) has type Numerical_Numerical_112<><>
-    // Expression Sum(Square(FieldValues(x))) has type Numerical_Numerical_112<><>
-    // Expression Square(FieldValues(x)) has type Number_Number_120<><>
-    // Expression Square(FieldValues(x)) has type Number_Number_120<><>
-    // Expression FieldValues(x) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(x) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression x has type Magnitudinal_Magnitudinal_113<><>
-    // Expression x has type Magnitudinal_Magnitudinal_113<><>
+    // Expression SquareRoot(Sum(Square(FieldValues(x)))) has type Number<>
+    // Expression Sum(Square(FieldValues(x))) has type Numerical<>
+    // Expression Sum(Square(FieldValues(x))) has type Numerical<>
+    // Expression Square(FieldValues(x)) has type Number<>
+    // Expression Square(FieldValues(x)) has type Number<>
+    // Expression FieldValues(x) has type Array<Any<>>
+    // Expression FieldValues(x) has type Array<Any<>>
+    // Expression x has type Magnitudinal<>
+    // Expression x has type Magnitudinal<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        SquareRoot(/* Numerical_Numerical_112<><> */
+        SquareRoot(/* Numerical<> */
         /*  */
-        Sum(/* Number_Number_120<><> */
+        Sum(/* Number<> */
         /*  */
-        Square(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        Square(/* Array<Any<>> */
         /*  */
-        FieldValues(/* Magnitudinal_Magnitudinal_113<><> */
+        FieldValues(/* Magnitudinal<> */
         x))));
     }
 }
@@ -166,28 +166,28 @@ public static partial class Extensions
     // Type resolver associated with Equals(a:Primitive:Self,b:Primitive:Self):Type:Boolean;
     // Success=True Message=
     // Expression types
-    // Expression All(Equals(FieldValues(a), FieldValues(b))) has type Boolean_Boolean_123<><>
-    // Expression Equals(FieldValues(a), FieldValues(b)) has type Boolean_Boolean_123<><>
-    // Expression Equals(FieldValues(a), FieldValues(b)) has type Boolean_Boolean_123<><>
-    // Expression FieldValues(b) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(b) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression b has type Equatable_Equatable_115<><>
-    // Expression b has type Equatable_Equatable_115<><>
-    // Expression FieldValues(a) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(a) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression a has type Equatable_Equatable_115<><>
-    // Expression a has type Equatable_Equatable_115<><>
+    // Expression All(Equals(FieldValues(a), FieldValues(b))) has type Boolean<>
+    // Expression Equals(FieldValues(a), FieldValues(b)) has type Boolean<>
+    // Expression Equals(FieldValues(a), FieldValues(b)) has type Boolean<>
+    // Expression FieldValues(b) has type Array<Any<>>
+    // Expression FieldValues(b) has type Array<Any<>>
+    // Expression b has type Equatable<>
+    // Expression b has type Equatable<>
+    // Expression FieldValues(a) has type Array<Any<>>
+    // Expression FieldValues(a) has type Array<Any<>>
+    // Expression a has type Equatable<>
+    // Expression a has type Equatable<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        All(/* Boolean_Boolean_123<><> */
+        All(/* Boolean<> */
         /*  */
-        Equals(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        Equals(/* Array<Any<>> */
         /*  */
-        FieldValues(/* Equatable_Equatable_115<><> */
-        a), /* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        FieldValues(/* Equatable<> */
+        a), /* Array<Any<>> */
         /*  */
-        FieldValues(/* Equatable_Equatable_115<><> */
+        FieldValues(/* Equatable<> */
         b)));
     }
 }
@@ -202,24 +202,24 @@ public static partial class Extensions
     // Type resolver associated with Add(self:Primitive:Self,other:Primitive:Self):Primitive:Self;
     // Success=True Message=
     // Expression types
-    // Expression Add(FieldValues(self), FieldValues(other)) has type Number_Number_120<><>
-    // Expression FieldValues(other) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(other) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression other has type Arithmetic_Arithmetic_116<><>
-    // Expression other has type Arithmetic_Arithmetic_116<><>
-    // Expression FieldValues(self) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(self) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression self has type Arithmetic_Arithmetic_116<><>
-    // Expression self has type Arithmetic_Arithmetic_116<><>
+    // Expression Add(FieldValues(self), FieldValues(other)) has type Number<>
+    // Expression FieldValues(other) has type Array<Any<>>
+    // Expression FieldValues(other) has type Array<Any<>>
+    // Expression other has type Arithmetic<>
+    // Expression other has type Arithmetic<>
+    // Expression FieldValues(self) has type Array<Any<>>
+    // Expression FieldValues(self) has type Array<Any<>>
+    // Expression self has type Arithmetic<>
+    // Expression self has type Arithmetic<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Add(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        Add(/* Array<Any<>> */
         /*  */
-        FieldValues(/* Arithmetic_Arithmetic_116<><> */
-        self), /* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        FieldValues(/* Arithmetic<> */
+        self), /* Array<Any<>> */
         /*  */
-        FieldValues(/* Arithmetic_Arithmetic_116<><> */
+        FieldValues(/* Arithmetic<> */
         other));
     }
     public static Self Negative<Self>(this Self self) where Self: Arithmetic<Self>
@@ -227,17 +227,17 @@ public static partial class Extensions
     // Type resolver associated with Negative(self:Primitive:Self):Primitive:Self;
     // Success=True Message=
     // Expression types
-    // Expression Negative(FieldValues(self)) has type Number_Number_120<><>
-    // Expression FieldValues(self) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(self) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression self has type Arithmetic_Arithmetic_116<><>
-    // Expression self has type Arithmetic_Arithmetic_116<><>
+    // Expression Negative(FieldValues(self)) has type Number<>
+    // Expression FieldValues(self) has type Array<Any<>>
+    // Expression FieldValues(self) has type Array<Any<>>
+    // Expression self has type Arithmetic<>
+    // Expression self has type Arithmetic<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Negative(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        Negative(/* Array<Any<>> */
         /*  */
-        FieldValues(/* Arithmetic_Arithmetic_116<><> */
+        FieldValues(/* Arithmetic<> */
         self));
     }
     public static Self Reciprocal<Self>(this Self self) where Self: Arithmetic<Self>
@@ -245,17 +245,17 @@ public static partial class Extensions
     // Type resolver associated with Reciprocal(self:Primitive:Self):Primitive:Self;
     // Success=True Message=
     // Expression types
-    // Expression Reciprocal(FieldValues(self)) has type Arithmetic_Arithmetic_116<><>
-    // Expression FieldValues(self) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(self) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression self has type Arithmetic_Arithmetic_116<><>
-    // Expression self has type Arithmetic_Arithmetic_116<><>
+    // Expression Reciprocal(FieldValues(self)) has type Arithmetic<>
+    // Expression FieldValues(self) has type Array<Any<>>
+    // Expression FieldValues(self) has type Array<Any<>>
+    // Expression self has type Arithmetic<>
+    // Expression self has type Arithmetic<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Reciprocal(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        Reciprocal(/* Array<Any<>> */
         /*  */
-        FieldValues(/* Arithmetic_Arithmetic_116<><> */
+        FieldValues(/* Arithmetic<> */
         self));
     }
     public static Self Multiply<Self>(this Self self, Self other) where Self: Arithmetic<Self>
@@ -263,24 +263,24 @@ public static partial class Extensions
     // Type resolver associated with Multiply(self:Primitive:Self,other:Primitive:Self):Primitive:Self;
     // Success=True Message=
     // Expression types
-    // Expression Add(FieldValues(self), FieldValues(other)) has type Number_Number_120<><>
-    // Expression FieldValues(other) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(other) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression other has type Arithmetic_Arithmetic_116<><>
-    // Expression other has type Arithmetic_Arithmetic_116<><>
-    // Expression FieldValues(self) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(self) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression self has type Arithmetic_Arithmetic_116<><>
-    // Expression self has type Arithmetic_Arithmetic_116<><>
+    // Expression Add(FieldValues(self), FieldValues(other)) has type Number<>
+    // Expression FieldValues(other) has type Array<Any<>>
+    // Expression FieldValues(other) has type Array<Any<>>
+    // Expression other has type Arithmetic<>
+    // Expression other has type Arithmetic<>
+    // Expression FieldValues(self) has type Array<Any<>>
+    // Expression FieldValues(self) has type Array<Any<>>
+    // Expression self has type Arithmetic<>
+    // Expression self has type Arithmetic<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Add(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        Add(/* Array<Any<>> */
         /*  */
-        FieldValues(/* Arithmetic_Arithmetic_116<><> */
-        self), /* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        FieldValues(/* Arithmetic<> */
+        self), /* Array<Any<>> */
         /*  */
-        FieldValues(/* Arithmetic_Arithmetic_116<><> */
+        FieldValues(/* Arithmetic<> */
         other));
     }
     public static Self Divide<Self>(this Self self, Self other) where Self: Arithmetic<Self>
@@ -288,24 +288,24 @@ public static partial class Extensions
     // Type resolver associated with Divide(self:Primitive:Self,other:Primitive:Self):Primitive:Self;
     // Success=True Message=
     // Expression types
-    // Expression Divide(FieldValues(self), FieldValues(other)) has type Number_Number_120<><>
-    // Expression FieldValues(other) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(other) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression other has type Arithmetic_Arithmetic_116<><>
-    // Expression other has type Arithmetic_Arithmetic_116<><>
-    // Expression FieldValues(self) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(self) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression self has type Arithmetic_Arithmetic_116<><>
-    // Expression self has type Arithmetic_Arithmetic_116<><>
+    // Expression Divide(FieldValues(self), FieldValues(other)) has type Number<>
+    // Expression FieldValues(other) has type Array<Any<>>
+    // Expression FieldValues(other) has type Array<Any<>>
+    // Expression other has type Arithmetic<>
+    // Expression other has type Arithmetic<>
+    // Expression FieldValues(self) has type Array<Any<>>
+    // Expression FieldValues(self) has type Array<Any<>>
+    // Expression self has type Arithmetic<>
+    // Expression self has type Arithmetic<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Divide(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        Divide(/* Array<Any<>> */
         /*  */
-        FieldValues(/* Arithmetic_Arithmetic_116<><> */
-        self), /* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        FieldValues(/* Arithmetic<> */
+        self), /* Array<Any<>> */
         /*  */
-        FieldValues(/* Arithmetic_Arithmetic_116<><> */
+        FieldValues(/* Arithmetic<> */
         other));
     }
     public static Self Modulo<Self>(this Self self, Self other) where Self: Arithmetic<Self>
@@ -313,24 +313,24 @@ public static partial class Extensions
     // Type resolver associated with Modulo(self:Primitive:Self,other:Primitive:Self):Primitive:Self;
     // Success=True Message=
     // Expression types
-    // Expression Modulo(FieldValues(self), FieldValues(other)) has type Number_Number_120<><>
-    // Expression FieldValues(other) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(other) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression other has type Arithmetic_Arithmetic_116<><>
-    // Expression other has type Arithmetic_Arithmetic_116<><>
-    // Expression FieldValues(self) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(self) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression self has type Arithmetic_Arithmetic_116<><>
-    // Expression self has type Arithmetic_Arithmetic_116<><>
+    // Expression Modulo(FieldValues(self), FieldValues(other)) has type Number<>
+    // Expression FieldValues(other) has type Array<Any<>>
+    // Expression FieldValues(other) has type Array<Any<>>
+    // Expression other has type Arithmetic<>
+    // Expression other has type Arithmetic<>
+    // Expression FieldValues(self) has type Array<Any<>>
+    // Expression FieldValues(self) has type Array<Any<>>
+    // Expression self has type Arithmetic<>
+    // Expression self has type Arithmetic<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Modulo(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        Modulo(/* Array<Any<>> */
         /*  */
-        FieldValues(/* Arithmetic_Arithmetic_116<><> */
-        self), /* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        FieldValues(/* Arithmetic<> */
+        self), /* Array<Any<>> */
         /*  */
-        FieldValues(/* Arithmetic_Arithmetic_116<><> */
+        FieldValues(/* Arithmetic<> */
         other));
     }
 }
@@ -345,20 +345,20 @@ public static partial class Extensions
     // Type resolver associated with Add(self:Primitive:Self,scalar:Type:Number):Primitive:Self;
     // Success=True Message=
     // Expression types
-    // Expression Add(FieldValues(self), scalar) has type Number_Number_120<><>
-    // Expression scalar has type Number_Number_120<><>
-    // Expression scalar has type Number_Number_120<><>
-    // Expression FieldValues(self) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(self) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression self has type ScalarArithmetic_ScalarArithmetic_117<><>
-    // Expression self has type ScalarArithmetic_ScalarArithmetic_117<><>
+    // Expression Add(FieldValues(self), scalar) has type Number<>
+    // Expression scalar has type Number<>
+    // Expression scalar has type Number<>
+    // Expression FieldValues(self) has type Array<Any<>>
+    // Expression FieldValues(self) has type Array<Any<>>
+    // Expression self has type ScalarArithmetic<>
+    // Expression self has type ScalarArithmetic<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Add(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        Add(/* Array<Any<>> */
         /*  */
-        FieldValues(/* ScalarArithmetic_ScalarArithmetic_117<><> */
-        self), /* Number_Number_120<><> */
+        FieldValues(/* ScalarArithmetic<> */
+        self), /* Number<> */
         scalar);
     }
     public static Self Subtract<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
@@ -366,20 +366,20 @@ public static partial class Extensions
     // Type resolver associated with Subtract(self:Primitive:Self,scalar:Type:Number):Primitive:Self;
     // Success=True Message=
     // Expression types
-    // Expression Add(self, Negative(scalar)) has type ScalarArithmetic_ScalarArithmetic_117<><>
-    // Expression Negative(scalar) has type Number_Number_120<><>
-    // Expression Negative(scalar) has type Number_Number_120<><>
-    // Expression scalar has type Number_Number_120<><>
-    // Expression scalar has type Number_Number_120<><>
-    // Expression self has type ScalarArithmetic_ScalarArithmetic_117<><>
-    // Expression self has type ScalarArithmetic_ScalarArithmetic_117<><>
+    // Expression Add(self, Negative(scalar)) has type ScalarArithmetic<>
+    // Expression Negative(scalar) has type Number<>
+    // Expression Negative(scalar) has type Number<>
+    // Expression scalar has type Number<>
+    // Expression scalar has type Number<>
+    // Expression self has type ScalarArithmetic<>
+    // Expression self has type ScalarArithmetic<>
     {
-        return /* ScalarArithmetic_ScalarArithmetic_117<><> */
+        return /* ScalarArithmetic<> */
         /*  */
-        Add(/* ScalarArithmetic_ScalarArithmetic_117<><> */
-        self, /* Number_Number_120<><> */
+        Add(/* ScalarArithmetic<> */
+        self, /* Number<> */
         /*  */
-        Negative(/* Number_Number_120<><> */
+        Negative(/* Number<> */
         scalar));
     }
     public static Self Multiply<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
@@ -387,20 +387,20 @@ public static partial class Extensions
     // Type resolver associated with Multiply(self:Primitive:Self,scalar:Type:Number):Primitive:Self;
     // Success=True Message=
     // Expression types
-    // Expression Multiply(FieldValues(self), scalar) has type Number_Number_120<><>
-    // Expression scalar has type Number_Number_120<><>
-    // Expression scalar has type Number_Number_120<><>
-    // Expression FieldValues(self) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(self) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression self has type ScalarArithmetic_ScalarArithmetic_117<><>
-    // Expression self has type ScalarArithmetic_ScalarArithmetic_117<><>
+    // Expression Multiply(FieldValues(self), scalar) has type Number<>
+    // Expression scalar has type Number<>
+    // Expression scalar has type Number<>
+    // Expression FieldValues(self) has type Array<Any<>>
+    // Expression FieldValues(self) has type Array<Any<>>
+    // Expression self has type ScalarArithmetic<>
+    // Expression self has type ScalarArithmetic<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Multiply(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        Multiply(/* Array<Any<>> */
         /*  */
-        FieldValues(/* ScalarArithmetic_ScalarArithmetic_117<><> */
-        self), /* Number_Number_120<><> */
+        FieldValues(/* ScalarArithmetic<> */
+        self), /* Number<> */
         scalar);
     }
     public static Self Divide<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
@@ -408,20 +408,20 @@ public static partial class Extensions
     // Type resolver associated with Divide(self:Primitive:Self,scalar:Type:Number):Primitive:Self;
     // Success=True Message=
     // Expression types
-    // Expression Multiply(self, Reciprocal(scalar)) has type Number_Number_120<><>
-    // Expression Reciprocal(scalar) has type Arithmetic_Arithmetic_116<><>
-    // Expression Reciprocal(scalar) has type Arithmetic_Arithmetic_116<><>
-    // Expression scalar has type Number_Number_120<><>
-    // Expression scalar has type Number_Number_120<><>
-    // Expression self has type ScalarArithmetic_ScalarArithmetic_117<><>
-    // Expression self has type ScalarArithmetic_ScalarArithmetic_117<><>
+    // Expression Multiply(self, Reciprocal(scalar)) has type Number<>
+    // Expression Reciprocal(scalar) has type Arithmetic<>
+    // Expression Reciprocal(scalar) has type Arithmetic<>
+    // Expression scalar has type Number<>
+    // Expression scalar has type Number<>
+    // Expression self has type ScalarArithmetic<>
+    // Expression self has type ScalarArithmetic<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Multiply(/* ScalarArithmetic_ScalarArithmetic_117<><> */
-        self, /* Arithmetic_Arithmetic_116<><> */
+        Multiply(/* ScalarArithmetic<> */
+        self, /* Arithmetic<> */
         /*  */
-        Reciprocal(/* Number_Number_120<><> */
+        Reciprocal(/* Number<> */
         scalar));
     }
     public static Self Modulo<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
@@ -429,20 +429,20 @@ public static partial class Extensions
     // Type resolver associated with Modulo(self:Primitive:Self,scalar:Type:Number):Primitive:Self;
     // Success=True Message=
     // Expression types
-    // Expression Modulo(FieldValues(self), scalar) has type Number_Number_120<><>
-    // Expression scalar has type Number_Number_120<><>
-    // Expression scalar has type Number_Number_120<><>
-    // Expression FieldValues(self) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(self) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression self has type ScalarArithmetic_ScalarArithmetic_117<><>
-    // Expression self has type ScalarArithmetic_ScalarArithmetic_117<><>
+    // Expression Modulo(FieldValues(self), scalar) has type Number<>
+    // Expression scalar has type Number<>
+    // Expression scalar has type Number<>
+    // Expression FieldValues(self) has type Array<Any<>>
+    // Expression FieldValues(self) has type Array<Any<>>
+    // Expression self has type ScalarArithmetic<>
+    // Expression self has type ScalarArithmetic<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Modulo(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        Modulo(/* Array<Any<>> */
         /*  */
-        FieldValues(/* ScalarArithmetic_ScalarArithmetic_117<><> */
-        self), /* Number_Number_120<><> */
+        FieldValues(/* ScalarArithmetic<> */
+        self), /* Number<> */
         scalar);
     }
 }
@@ -457,24 +457,24 @@ public static partial class Extensions
     // Type resolver associated with And(a:Primitive:Self,b:Primitive:Self):Primitive:Self;
     // Success=True Message=
     // Expression types
-    // Expression And(FieldValues(a), FieldValues(b)) has type Boolean_Boolean_123<><>
-    // Expression FieldValues(b) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(b) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression b has type BooleanOperations_BooleanOperations_118<><>
-    // Expression b has type BooleanOperations_BooleanOperations_118<><>
-    // Expression FieldValues(a) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(a) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression a has type BooleanOperations_BooleanOperations_118<><>
-    // Expression a has type BooleanOperations_BooleanOperations_118<><>
+    // Expression And(FieldValues(a), FieldValues(b)) has type Boolean<>
+    // Expression FieldValues(b) has type Array<Any<>>
+    // Expression FieldValues(b) has type Array<Any<>>
+    // Expression b has type BooleanOperations<>
+    // Expression b has type BooleanOperations<>
+    // Expression FieldValues(a) has type Array<Any<>>
+    // Expression FieldValues(a) has type Array<Any<>>
+    // Expression a has type BooleanOperations<>
+    // Expression a has type BooleanOperations<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        And(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        And(/* Array<Any<>> */
         /*  */
-        FieldValues(/* BooleanOperations_BooleanOperations_118<><> */
-        a), /* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        FieldValues(/* BooleanOperations<> */
+        a), /* Array<Any<>> */
         /*  */
-        FieldValues(/* BooleanOperations_BooleanOperations_118<><> */
+        FieldValues(/* BooleanOperations<> */
         b));
     }
     public static Self Or<Self>(this Self a, Self b) where Self: BooleanOperations<Self>
@@ -482,24 +482,24 @@ public static partial class Extensions
     // Type resolver associated with Or(a:Primitive:Self,b:Primitive:Self):Primitive:Self;
     // Success=True Message=
     // Expression types
-    // Expression Or(FieldValues(a), FieldValues(b)) has type Boolean_Boolean_123<><>
-    // Expression FieldValues(b) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(b) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression b has type BooleanOperations_BooleanOperations_118<><>
-    // Expression b has type BooleanOperations_BooleanOperations_118<><>
-    // Expression FieldValues(a) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(a) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression a has type BooleanOperations_BooleanOperations_118<><>
-    // Expression a has type BooleanOperations_BooleanOperations_118<><>
+    // Expression Or(FieldValues(a), FieldValues(b)) has type Boolean<>
+    // Expression FieldValues(b) has type Array<Any<>>
+    // Expression FieldValues(b) has type Array<Any<>>
+    // Expression b has type BooleanOperations<>
+    // Expression b has type BooleanOperations<>
+    // Expression FieldValues(a) has type Array<Any<>>
+    // Expression FieldValues(a) has type Array<Any<>>
+    // Expression a has type BooleanOperations<>
+    // Expression a has type BooleanOperations<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        Or(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        Or(/* Array<Any<>> */
         /*  */
-        FieldValues(/* BooleanOperations_BooleanOperations_118<><> */
-        a), /* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        FieldValues(/* BooleanOperations<> */
+        a), /* Array<Any<>> */
         /*  */
-        FieldValues(/* BooleanOperations_BooleanOperations_118<><> */
+        FieldValues(/* BooleanOperations<> */
         b));
     }
     public static Self Not<Self>(this Self a) where Self: BooleanOperations<Self>
@@ -507,17 +507,17 @@ public static partial class Extensions
     // Type resolver associated with Not(a:Primitive:Self):Primitive:Self;
     // Success=True Message=
     // Expression types
-    // Expression Not(FieldValues(a)) has type Boolean_Boolean_123<><>
-    // Expression FieldValues(a) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(a) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression a has type BooleanOperations_BooleanOperations_118<><>
-    // Expression a has type BooleanOperations_BooleanOperations_118<><>
+    // Expression Not(FieldValues(a)) has type Boolean<>
+    // Expression FieldValues(a) has type Array<Any<>>
+    // Expression FieldValues(a) has type Array<Any<>>
+    // Expression a has type BooleanOperations<>
+    // Expression a has type BooleanOperations<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        Not(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        Not(/* Array<Any<>> */
         /*  */
-        FieldValues(/* BooleanOperations_BooleanOperations_118<><> */
+        FieldValues(/* BooleanOperations<> */
         a));
     }
 }
@@ -1015,22 +1015,22 @@ public class Vector2D: Vector<Vector2D>
     {
         get// Type Resolver
         // Type resolver associated with At(v:Primitive:Self,n:Type:Integer):Variable:T;
-        // Success=False Message=Can't cast from T_T_365<><> to T_T_375<><>
+        // Success=False Message=Can't cast from T<> to T<>
         // Expression types
-        // Expression At(FieldValues(v), n) has type T_T_365<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
+        // Expression At(FieldValues(v), n) has type T<>
+        // Expression n has type Integer<>
+        // Expression n has type Integer<>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression v has type Vector<`2>
+        // Expression v has type Vector<`2>
         {
-            return /* T_T_365<><> */
+            return /* T<> */
             /*  */
-            At(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+            At(/* Array<Any<>> */
             /*  */
-            FieldValues(/* Vector_Vector_110<T_375<>><`2> */
-            v), /* Integer_Integer_121<><> */
+            FieldValues(/* Vector<`2> */
+            v), /* Integer<> */
             n);
         }
     }
@@ -1111,22 +1111,22 @@ public class Vector3D: Vector<Vector3D>
     {
         get// Type Resolver
         // Type resolver associated with At(v:Primitive:Self,n:Type:Integer):Variable:T;
-        // Success=False Message=Can't cast from T_T_365<><> to T_T_375<><>
+        // Success=False Message=Can't cast from T<> to T<>
         // Expression types
-        // Expression At(FieldValues(v), n) has type T_T_365<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
+        // Expression At(FieldValues(v), n) has type T<>
+        // Expression n has type Integer<>
+        // Expression n has type Integer<>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression v has type Vector<`2>
+        // Expression v has type Vector<`2>
         {
-            return /* T_T_365<><> */
+            return /* T<> */
             /*  */
-            At(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+            At(/* Array<Any<>> */
             /*  */
-            FieldValues(/* Vector_Vector_110<T_375<>><`2> */
-            v), /* Integer_Integer_121<><> */
+            FieldValues(/* Vector<`2> */
+            v), /* Integer<> */
             n);
         }
     }
@@ -1208,22 +1208,22 @@ public class Vector4D: Vector<Vector4D>
     {
         get// Type Resolver
         // Type resolver associated with At(v:Primitive:Self,n:Type:Integer):Variable:T;
-        // Success=False Message=Can't cast from T_T_365<><> to T_T_375<><>
+        // Success=False Message=Can't cast from T<> to T<>
         // Expression types
-        // Expression At(FieldValues(v), n) has type T_T_365<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
+        // Expression At(FieldValues(v), n) has type T<>
+        // Expression n has type Integer<>
+        // Expression n has type Integer<>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression v has type Vector<`2>
+        // Expression v has type Vector<`2>
         {
-            return /* T_T_365<><> */
+            return /* T<> */
             /*  */
-            At(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+            At(/* Array<Any<>> */
             /*  */
-            FieldValues(/* Vector_Vector_110<T_375<>><`2> */
-            v), /* Integer_Integer_121<><> */
+            FieldValues(/* Vector<`2> */
+            v), /* Integer<> */
             n);
         }
     }
@@ -1389,22 +1389,22 @@ public class AlignedBox2D: Interval<AlignedBox2D>
     {
         get// Type Resolver
         // Type resolver associated with At(v:Primitive:Self,n:Type:Integer):Variable:T;
-        // Success=False Message=Can't cast from T_T_365<><> to T_T_375<><>
+        // Success=False Message=Can't cast from T<> to T<>
         // Expression types
-        // Expression At(FieldValues(v), n) has type T_T_365<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
+        // Expression At(FieldValues(v), n) has type T<>
+        // Expression n has type Integer<>
+        // Expression n has type Integer<>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression v has type Vector<`2>
+        // Expression v has type Vector<`2>
         {
-            return /* T_T_365<><> */
+            return /* T<> */
             /*  */
-            At(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+            At(/* Array<Any<>> */
             /*  */
-            FieldValues(/* Vector_Vector_110<T_375<>><`2> */
-            v), /* Integer_Integer_121<><> */
+            FieldValues(/* Vector<`2> */
+            v), /* Integer<> */
             n);
         }
     }
@@ -1487,22 +1487,22 @@ public class AlignedBox3D: Interval<AlignedBox3D>
     {
         get// Type Resolver
         // Type resolver associated with At(v:Primitive:Self,n:Type:Integer):Variable:T;
-        // Success=False Message=Can't cast from T_T_365<><> to T_T_375<><>
+        // Success=False Message=Can't cast from T<> to T<>
         // Expression types
-        // Expression At(FieldValues(v), n) has type T_T_365<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
+        // Expression At(FieldValues(v), n) has type T<>
+        // Expression n has type Integer<>
+        // Expression n has type Integer<>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression v has type Vector<`2>
+        // Expression v has type Vector<`2>
         {
-            return /* T_T_365<><> */
+            return /* T<> */
             /*  */
-            At(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+            At(/* Array<Any<>> */
             /*  */
-            FieldValues(/* Vector_Vector_110<T_375<>><`2> */
-            v), /* Integer_Integer_121<><> */
+            FieldValues(/* Vector<`2> */
+            v), /* Integer<> */
             n);
         }
     }
@@ -1583,22 +1583,22 @@ public class Complex: Vector<Complex>
     {
         get// Type Resolver
         // Type resolver associated with At(v:Primitive:Self,n:Type:Integer):Variable:T;
-        // Success=False Message=Can't cast from T_T_365<><> to T_T_375<><>
+        // Success=False Message=Can't cast from T<> to T<>
         // Expression types
-        // Expression At(FieldValues(v), n) has type T_T_365<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
+        // Expression At(FieldValues(v), n) has type T<>
+        // Expression n has type Integer<>
+        // Expression n has type Integer<>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression v has type Vector<`2>
+        // Expression v has type Vector<`2>
         {
-            return /* T_T_365<><> */
+            return /* T<> */
             /*  */
-            At(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+            At(/* Array<Any<>> */
             /*  */
-            FieldValues(/* Vector_Vector_110<T_375<>><`2> */
-            v), /* Integer_Integer_121<><> */
+            FieldValues(/* Vector<`2> */
+            v), /* Integer<> */
             n);
         }
     }
@@ -1845,22 +1845,22 @@ public class Line3D: Interval<Line3D>
     {
         get// Type Resolver
         // Type resolver associated with At(v:Primitive:Self,n:Type:Integer):Variable:T;
-        // Success=False Message=Can't cast from T_T_365<><> to T_T_375<><>
+        // Success=False Message=Can't cast from T<> to T<>
         // Expression types
-        // Expression At(FieldValues(v), n) has type T_T_365<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
+        // Expression At(FieldValues(v), n) has type T<>
+        // Expression n has type Integer<>
+        // Expression n has type Integer<>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression v has type Vector<`2>
+        // Expression v has type Vector<`2>
         {
-            return /* T_T_365<><> */
+            return /* T<> */
             /*  */
-            At(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+            At(/* Array<Any<>> */
             /*  */
-            FieldValues(/* Vector_Vector_110<T_375<>><`2> */
-            v), /* Integer_Integer_121<><> */
+            FieldValues(/* Vector<`2> */
+            v), /* Integer<> */
             n);
         }
     }
@@ -1943,22 +1943,22 @@ public class Line2D: Interval<Line2D>
     {
         get// Type Resolver
         // Type resolver associated with At(v:Primitive:Self,n:Type:Integer):Variable:T;
-        // Success=False Message=Can't cast from T_T_365<><> to T_T_375<><>
+        // Success=False Message=Can't cast from T<> to T<>
         // Expression types
-        // Expression At(FieldValues(v), n) has type T_T_365<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
+        // Expression At(FieldValues(v), n) has type T<>
+        // Expression n has type Integer<>
+        // Expression n has type Integer<>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression v has type Vector<`2>
+        // Expression v has type Vector<`2>
         {
-            return /* T_T_365<><> */
+            return /* T<> */
             /*  */
-            At(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+            At(/* Array<Any<>> */
             /*  */
-            FieldValues(/* Vector_Vector_110<T_375<>><`2> */
-            v), /* Integer_Integer_121<><> */
+            FieldValues(/* Vector<`2> */
+            v), /* Integer<> */
             n);
         }
     }
@@ -2638,22 +2638,22 @@ public class TimeRange: Interval<TimeRange>
     {
         get// Type Resolver
         // Type resolver associated with At(v:Primitive:Self,n:Type:Integer):Variable:T;
-        // Success=False Message=Can't cast from T_T_365<><> to T_T_375<><>
+        // Success=False Message=Can't cast from T<> to T<>
         // Expression types
-        // Expression At(FieldValues(v), n) has type T_T_365<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
+        // Expression At(FieldValues(v), n) has type T<>
+        // Expression n has type Integer<>
+        // Expression n has type Integer<>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression v has type Vector<`2>
+        // Expression v has type Vector<`2>
         {
-            return /* T_T_365<><> */
+            return /* T<> */
             /*  */
-            At(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+            At(/* Array<Any<>> */
             /*  */
-            FieldValues(/* Vector_Vector_110<T_375<>><`2> */
-            v), /* Integer_Integer_121<><> */
+            FieldValues(/* Vector<`2> */
+            v), /* Integer<> */
             n);
         }
     }
@@ -2757,22 +2757,22 @@ public class AnglePair: Interval<AnglePair>
     {
         get// Type Resolver
         // Type resolver associated with At(v:Primitive:Self,n:Type:Integer):Variable:T;
-        // Success=False Message=Can't cast from T_T_365<><> to T_T_375<><>
+        // Success=False Message=Can't cast from T<> to T<>
         // Expression types
-        // Expression At(FieldValues(v), n) has type T_T_365<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
+        // Expression At(FieldValues(v), n) has type T<>
+        // Expression n has type Integer<>
+        // Expression n has type Integer<>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression v has type Vector<`2>
+        // Expression v has type Vector<`2>
         {
-            return /* T_T_365<><> */
+            return /* T<> */
             /*  */
-            At(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+            At(/* Array<Any<>> */
             /*  */
-            FieldValues(/* Vector_Vector_110<T_375<>><`2> */
-            v), /* Integer_Integer_121<><> */
+            FieldValues(/* Vector<`2> */
+            v), /* Integer<> */
             n);
         }
     }
@@ -2928,22 +2928,22 @@ public class TimeInterval: Interval<TimeInterval>
     {
         get// Type Resolver
         // Type resolver associated with At(v:Primitive:Self,n:Type:Integer):Variable:T;
-        // Success=False Message=Can't cast from T_T_365<><> to T_T_375<><>
+        // Success=False Message=Can't cast from T<> to T<>
         // Expression types
-        // Expression At(FieldValues(v), n) has type T_T_365<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
+        // Expression At(FieldValues(v), n) has type T<>
+        // Expression n has type Integer<>
+        // Expression n has type Integer<>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression v has type Vector<`2>
+        // Expression v has type Vector<`2>
         {
-            return /* T_T_365<><> */
+            return /* T<> */
             /*  */
-            At(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+            At(/* Array<Any<>> */
             /*  */
-            FieldValues(/* Vector_Vector_110<T_375<>><`2> */
-            v), /* Integer_Integer_121<><> */
+            FieldValues(/* Vector<`2> */
+            v), /* Integer<> */
             n);
         }
     }
@@ -3026,22 +3026,22 @@ public class RealInterval: Interval<RealInterval>
     {
         get// Type Resolver
         // Type resolver associated with At(v:Primitive:Self,n:Type:Integer):Variable:T;
-        // Success=False Message=Can't cast from T_T_365<><> to T_T_375<><>
+        // Success=False Message=Can't cast from T<> to T<>
         // Expression types
-        // Expression At(FieldValues(v), n) has type T_T_365<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
+        // Expression At(FieldValues(v), n) has type T<>
+        // Expression n has type Integer<>
+        // Expression n has type Integer<>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression v has type Vector<`2>
+        // Expression v has type Vector<`2>
         {
-            return /* T_T_365<><> */
+            return /* T<> */
             /*  */
-            At(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+            At(/* Array<Any<>> */
             /*  */
-            FieldValues(/* Vector_Vector_110<T_375<>><`2> */
-            v), /* Integer_Integer_121<><> */
+            FieldValues(/* Vector<`2> */
+            v), /* Integer<> */
             n);
         }
     }
@@ -3298,22 +3298,22 @@ public class UV: Vector<UV>
     {
         get// Type Resolver
         // Type resolver associated with At(v:Primitive:Self,n:Type:Integer):Variable:T;
-        // Success=False Message=Can't cast from T_T_365<><> to T_T_375<><>
+        // Success=False Message=Can't cast from T<> to T<>
         // Expression types
-        // Expression At(FieldValues(v), n) has type T_T_365<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
+        // Expression At(FieldValues(v), n) has type T<>
+        // Expression n has type Integer<>
+        // Expression n has type Integer<>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression v has type Vector<`2>
+        // Expression v has type Vector<`2>
         {
-            return /* T_T_365<><> */
+            return /* T<> */
             /*  */
-            At(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+            At(/* Array<Any<>> */
             /*  */
-            FieldValues(/* Vector_Vector_110<T_375<>><`2> */
-            v), /* Integer_Integer_121<><> */
+            FieldValues(/* Vector<`2> */
+            v), /* Integer<> */
             n);
         }
     }
@@ -3394,22 +3394,22 @@ public class UVW: Vector<UVW>
     {
         get// Type Resolver
         // Type resolver associated with At(v:Primitive:Self,n:Type:Integer):Variable:T;
-        // Success=False Message=Can't cast from T_T_365<><> to T_T_375<><>
+        // Success=False Message=Can't cast from T<> to T<>
         // Expression types
-        // Expression At(FieldValues(v), n) has type T_T_365<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression n has type Integer_Integer_121<><>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression FieldValues(v) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
-        // Expression v has type Vector_Vector_110<T_375<>><`2>
+        // Expression At(FieldValues(v), n) has type T<>
+        // Expression n has type Integer<>
+        // Expression n has type Integer<>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression FieldValues(v) has type Array<Any<>>
+        // Expression v has type Vector<`2>
+        // Expression v has type Vector<`2>
         {
-            return /* T_T_365<><> */
+            return /* T<> */
             /*  */
-            At(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+            At(/* Array<Any<>> */
             /*  */
-            FieldValues(/* Vector_Vector_110<T_375<>><`2> */
-            v), /* Integer_Integer_121<><> */
+            FieldValues(/* Vector<`2> */
+            v), /* Integer<> */
             n);
         }
     }
@@ -4371,33 +4371,33 @@ public static partial class Extensions
     // Success=True Message=
     // Expression types
     // Expression Tuple(Count(xs), (\(ParameterDefinition=i$2894:Type:Integer) -> Primitive:Function) has type `77
-    // Expression (\(ParameterDefinition=i$2894:Type:Integer) -> Primitive:Function has type Function1_Function1_51<T0_52<>, T1_53<>><Integer_Integer_121<><>, Function_Function_3<><>>
-    // Expression (\(ParameterDefinition=i$2894:Type:Integer) -> Primitive:Function has type Function1_Function1_51<T0_52<>, T1_53<>><Integer_Integer_121<><>, Function_Function_3<><>>
+    // Expression (\(ParameterDefinition=i$2894:Type:Integer) -> Primitive:Function has type Function1<Integer<>, Function<>>
+    // Expression (\(ParameterDefinition=i$2894:Type:Integer) -> Primitive:Function has type Function1<Integer<>, Function<>>
     // Expression f(At(xs, i)) has type `76
-    // Expression At(xs, i) has type T_T_365<><>
-    // Expression At(xs, i) has type T_T_365<><>
-    // Expression i has type Integer_Integer_121<><>
-    // Expression i has type Integer_Integer_121<><>
-    // Expression xs has type Array_Array_109<T_365<>><`6>
-    // Expression xs has type Array_Array_109<T_365<>><`6>
-    // Expression Count(xs) has type Integer_Integer_121<><>
-    // Expression Count(xs) has type Integer_Integer_121<><>
-    // Expression xs has type Array_Array_109<T_365<>><`6>
-    // Expression xs has type Array_Array_109<T_365<>><`6>
+    // Expression At(xs, i) has type T<>
+    // Expression At(xs, i) has type T<>
+    // Expression i has type Integer<>
+    // Expression i has type Integer<>
+    // Expression xs has type Array<`6>
+    // Expression xs has type Array<`6>
+    // Expression Count(xs) has type Integer<>
+    // Expression Count(xs) has type Integer<>
+    // Expression xs has type Array<`6>
+    // Expression xs has type Array<`6>
     {
         return /* `77 */
         /*  */
-        Tuple(/* Integer_Integer_121<><> */
+        Tuple(/* Integer<> */
         /*  */
-        Count(/* Array_Array_109<T_365<>><`6> */
-        xs), /* Function1_Function1_51<T0_52<>, T1_53<>><Integer_Integer_121<><>, Function_Function_3<><>> */
+        Count(/* Array<`6> */
+        xs), /* Function1<Integer<>, Function<>> */
         (Integer i) => 
         /* `76 */
         /*  */
-        f(/* T_T_365<><> */
+        f(/* T<> */
         /*  */
-        At(/* Array_Array_109<T_365<>><`6> */
-        xs, /* Integer_Integer_121<><> */
+        At(/* Array<`6> */
+        xs, /* Integer<> */
         i)));
     }
     public static Array Reverse<T>(Array xs) // Type Resolver
@@ -4405,51 +4405,51 @@ public static partial class Extensions
     // Success=True Message=
     // Expression types
     // Expression Tuple(Count(xs), (\(ParameterDefinition=i$2919:Type:Integer) -> Primitive:Function) has type `80
-    // Expression (\(ParameterDefinition=i$2919:Type:Integer) -> Primitive:Function has type Function1_Function1_51<T0_52<>, T1_53<>><Integer_Integer_121<><>, Function_Function_3<><>>
-    // Expression (\(ParameterDefinition=i$2919:Type:Integer) -> Primitive:Function has type Function1_Function1_51<T0_52<>, T1_53<>><Integer_Integer_121<><>, Function_Function_3<><>>
+    // Expression (\(ParameterDefinition=i$2919:Type:Integer) -> Primitive:Function has type Function1<Integer<>, Function<>>
+    // Expression (\(ParameterDefinition=i$2919:Type:Integer) -> Primitive:Function has type Function1<Integer<>, Function<>>
     // Expression f(At(xs, Subtract(Count(xs), Subtract(1, i)))) has type `79
-    // Expression At(xs, Subtract(Count(xs), Subtract(1, i))) has type T_T_365<><>
-    // Expression At(xs, Subtract(Count(xs), Subtract(1, i))) has type T_T_365<><>
-    // Expression Subtract(Count(xs), Subtract(1, i)) has type Integer_Integer_121<><>
-    // Expression Subtract(Count(xs), Subtract(1, i)) has type Integer_Integer_121<><>
-    // Expression Subtract(1, i) has type Integer_Integer_121<><>
-    // Expression Subtract(1, i) has type Integer_Integer_121<><>
-    // Expression i has type Integer_Integer_121<><>
-    // Expression i has type Integer_Integer_121<><>
+    // Expression At(xs, Subtract(Count(xs), Subtract(1, i))) has type T<>
+    // Expression At(xs, Subtract(Count(xs), Subtract(1, i))) has type T<>
+    // Expression Subtract(Count(xs), Subtract(1, i)) has type Integer<>
+    // Expression Subtract(Count(xs), Subtract(1, i)) has type Integer<>
+    // Expression Subtract(1, i) has type Integer<>
+    // Expression Subtract(1, i) has type Integer<>
+    // Expression i has type Integer<>
+    // Expression i has type Integer<>
     // Expression 1 has type Integer_121<>
     // Expression 1 has type Integer_121<>
-    // Expression Count(xs) has type Integer_Integer_121<><>
-    // Expression Count(xs) has type Integer_Integer_121<><>
-    // Expression xs has type Array_Array_109<T_365<>><`8>
-    // Expression xs has type Array_Array_109<T_365<>><`8>
-    // Expression xs has type Array_Array_109<T_365<>><`8>
-    // Expression xs has type Array_Array_109<T_365<>><`8>
-    // Expression Count(xs) has type Integer_Integer_121<><>
-    // Expression Count(xs) has type Integer_Integer_121<><>
-    // Expression xs has type Array_Array_109<T_365<>><`8>
-    // Expression xs has type Array_Array_109<T_365<>><`8>
+    // Expression Count(xs) has type Integer<>
+    // Expression Count(xs) has type Integer<>
+    // Expression xs has type Array<`8>
+    // Expression xs has type Array<`8>
+    // Expression xs has type Array<`8>
+    // Expression xs has type Array<`8>
+    // Expression Count(xs) has type Integer<>
+    // Expression Count(xs) has type Integer<>
+    // Expression xs has type Array<`8>
+    // Expression xs has type Array<`8>
     {
         return /* `80 */
         /*  */
-        Tuple(/* Integer_Integer_121<><> */
+        Tuple(/* Integer<> */
         /*  */
-        Count(/* Array_Array_109<T_365<>><`8> */
-        xs), /* Function1_Function1_51<T0_52<>, T1_53<>><Integer_Integer_121<><>, Function_Function_3<><>> */
+        Count(/* Array<`8> */
+        xs), /* Function1<Integer<>, Function<>> */
         (Integer i) => 
         /* `79 */
         /*  */
-        f(/* T_T_365<><> */
+        f(/* T<> */
         /*  */
-        At(/* Array_Array_109<T_365<>><`8> */
-        xs, /* Integer_Integer_121<><> */
+        At(/* Array<`8> */
+        xs, /* Integer<> */
         /*  */
-        Subtract(/* Integer_Integer_121<><> */
+        Subtract(/* Integer<> */
         /*  */
-        Count(/* Array_Array_109<T_365<>><`8> */
-        xs), /* Integer_Integer_121<><> */
+        Count(/* Array<`8> */
+        xs), /* Integer<> */
         /*  */
         Subtract(/* Integer_121<> */
-        1, /* Integer_Integer_121<><> */
+        1, /* Integer<> */
         i)))));
     }
     public static Array Zip<T>(Array xs, Array ys, Function f) // Type Resolver
@@ -4457,40 +4457,40 @@ public static partial class Extensions
     // Success=True Message=
     // Expression types
     // Expression Tuple(Count(xs), (\(ParameterDefinition=i$2961:Type:Integer) -> Primitive:Function) has type `83
-    // Expression (\(ParameterDefinition=i$2961:Type:Integer) -> Primitive:Function has type Function1_Function1_51<T0_52<>, T1_53<>><Integer_Integer_121<><>, Function_Function_3<><>>
-    // Expression (\(ParameterDefinition=i$2961:Type:Integer) -> Primitive:Function has type Function1_Function1_51<T0_52<>, T1_53<>><Integer_Integer_121<><>, Function_Function_3<><>>
+    // Expression (\(ParameterDefinition=i$2961:Type:Integer) -> Primitive:Function has type Function1<Integer<>, Function<>>
+    // Expression (\(ParameterDefinition=i$2961:Type:Integer) -> Primitive:Function has type Function1<Integer<>, Function<>>
     // Expression f(At(i), At(ys, i)) has type `82
-    // Expression At(ys, i) has type T_T_365<><>
-    // Expression At(ys, i) has type T_T_365<><>
-    // Expression i has type Integer_Integer_121<><>
-    // Expression i has type Integer_Integer_121<><>
-    // Expression ys has type Array_Array_109<T_365<>><`11>
-    // Expression ys has type Array_Array_109<T_365<>><`11>
-    // Expression At(i) has type T_T_365<><>
-    // Expression At(i) has type T_T_365<><>
-    // Expression i has type Integer_Integer_121<><>
-    // Expression i has type Integer_Integer_121<><>
-    // Expression Count(xs) has type Integer_Integer_121<><>
-    // Expression Count(xs) has type Integer_Integer_121<><>
-    // Expression xs has type Array_Array_109<T_365<>><`10>
-    // Expression xs has type Array_Array_109<T_365<>><`10>
+    // Expression At(ys, i) has type T<>
+    // Expression At(ys, i) has type T<>
+    // Expression i has type Integer<>
+    // Expression i has type Integer<>
+    // Expression ys has type Array<`11>
+    // Expression ys has type Array<`11>
+    // Expression At(i) has type T<>
+    // Expression At(i) has type T<>
+    // Expression i has type Integer<>
+    // Expression i has type Integer<>
+    // Expression Count(xs) has type Integer<>
+    // Expression Count(xs) has type Integer<>
+    // Expression xs has type Array<`10>
+    // Expression xs has type Array<`10>
     {
         return /* `83 */
         /*  */
-        Tuple(/* Integer_Integer_121<><> */
+        Tuple(/* Integer<> */
         /*  */
-        Count(/* Array_Array_109<T_365<>><`10> */
-        xs), /* Function1_Function1_51<T0_52<>, T1_53<>><Integer_Integer_121<><>, Function_Function_3<><>> */
+        Count(/* Array<`10> */
+        xs), /* Function1<Integer<>, Function<>> */
         (Integer i) => 
         /* `82 */
         /*  */
-        f(/* T_T_365<><> */
+        f(/* T<> */
         /*  */
-        At(/* Integer_Integer_121<><> */
-        i), /* T_T_365<><> */
+        At(/* Integer<> */
+        i), /* T<> */
         /*  */
-        At(/* Array_Array_109<T_365<>><`11> */
-        ys, /* Integer_Integer_121<><> */
+        At(/* Array<`11> */
+        ys, /* Integer<> */
         i)));
     }
     public static Array Zip<T>(Array xs, Array ys, Array zs, Function f) // Type Resolver
@@ -4498,50 +4498,50 @@ public static partial class Extensions
     // Success=True Message=
     // Expression types
     // Expression Tuple(Count(xs), (\(ParameterDefinition=i$2997:Type:Integer) -> Primitive:Function) has type `86
-    // Expression (\(ParameterDefinition=i$2997:Type:Integer) -> Primitive:Function has type Function1_Function1_51<T0_52<>, T1_53<>><Integer_Integer_121<><>, Function_Function_3<><>>
-    // Expression (\(ParameterDefinition=i$2997:Type:Integer) -> Primitive:Function has type Function1_Function1_51<T0_52<>, T1_53<>><Integer_Integer_121<><>, Function_Function_3<><>>
+    // Expression (\(ParameterDefinition=i$2997:Type:Integer) -> Primitive:Function has type Function1<Integer<>, Function<>>
+    // Expression (\(ParameterDefinition=i$2997:Type:Integer) -> Primitive:Function has type Function1<Integer<>, Function<>>
     // Expression f(At(i), At(ys, i), At(zs, i)) has type `85
-    // Expression At(zs, i) has type T_T_365<><>
-    // Expression At(zs, i) has type T_T_365<><>
-    // Expression i has type Integer_Integer_121<><>
-    // Expression i has type Integer_Integer_121<><>
-    // Expression zs has type Array_Array_109<T_365<>><`15>
-    // Expression zs has type Array_Array_109<T_365<>><`15>
-    // Expression At(ys, i) has type T_T_365<><>
-    // Expression At(ys, i) has type T_T_365<><>
-    // Expression i has type Integer_Integer_121<><>
-    // Expression i has type Integer_Integer_121<><>
-    // Expression ys has type Array_Array_109<T_365<>><`14>
-    // Expression ys has type Array_Array_109<T_365<>><`14>
-    // Expression At(i) has type T_T_365<><>
-    // Expression At(i) has type T_T_365<><>
-    // Expression i has type Integer_Integer_121<><>
-    // Expression i has type Integer_Integer_121<><>
-    // Expression Count(xs) has type Integer_Integer_121<><>
-    // Expression Count(xs) has type Integer_Integer_121<><>
-    // Expression xs has type Array_Array_109<T_365<>><`13>
-    // Expression xs has type Array_Array_109<T_365<>><`13>
+    // Expression At(zs, i) has type T<>
+    // Expression At(zs, i) has type T<>
+    // Expression i has type Integer<>
+    // Expression i has type Integer<>
+    // Expression zs has type Array<`15>
+    // Expression zs has type Array<`15>
+    // Expression At(ys, i) has type T<>
+    // Expression At(ys, i) has type T<>
+    // Expression i has type Integer<>
+    // Expression i has type Integer<>
+    // Expression ys has type Array<`14>
+    // Expression ys has type Array<`14>
+    // Expression At(i) has type T<>
+    // Expression At(i) has type T<>
+    // Expression i has type Integer<>
+    // Expression i has type Integer<>
+    // Expression Count(xs) has type Integer<>
+    // Expression Count(xs) has type Integer<>
+    // Expression xs has type Array<`13>
+    // Expression xs has type Array<`13>
     {
         return /* `86 */
         /*  */
-        Tuple(/* Integer_Integer_121<><> */
+        Tuple(/* Integer<> */
         /*  */
-        Count(/* Array_Array_109<T_365<>><`13> */
-        xs), /* Function1_Function1_51<T0_52<>, T1_53<>><Integer_Integer_121<><>, Function_Function_3<><>> */
+        Count(/* Array<`13> */
+        xs), /* Function1<Integer<>, Function<>> */
         (Integer i) => 
         /* `85 */
         /*  */
-        f(/* T_T_365<><> */
+        f(/* T<> */
         /*  */
-        At(/* Integer_Integer_121<><> */
-        i), /* T_T_365<><> */
+        At(/* Integer<> */
+        i), /* T<> */
         /*  */
-        At(/* Array_Array_109<T_365<>><`14> */
-        ys, /* Integer_Integer_121<><> */
-        i), /* T_T_365<><> */
+        At(/* Array<`14> */
+        ys, /* Integer<> */
+        i), /* T<> */
         /*  */
-        At(/* Array_Array_109<T_365<>><`15> */
-        zs, /* Integer_Integer_121<><> */
+        At(/* Array<`15> */
+        zs, /* Integer<> */
         i)));
     }
     public static Array Skip<T>(Array xs, Integer n) // Type Resolver
@@ -4549,36 +4549,36 @@ public static partial class Extensions
     // Success=True Message=
     // Expression types
     // Expression Tuple(Subtract(Count, n), (\(ParameterDefinition=i$3038:Type:Integer) -> Primitive:Function) has type `88
-    // Expression (\(ParameterDefinition=i$3038:Type:Integer) -> Primitive:Function has type Function1_Function1_51<T0_52<>, T1_53<>><Integer_Integer_121<><>, Function_Function_3<><>>
-    // Expression (\(ParameterDefinition=i$3038:Type:Integer) -> Primitive:Function has type Function1_Function1_51<T0_52<>, T1_53<>><Integer_Integer_121<><>, Function_Function_3<><>>
-    // Expression At(Subtract(i, n)) has type T_T_365<><>
-    // Expression Subtract(i, n) has type Integer_Integer_121<><>
-    // Expression Subtract(i, n) has type Integer_Integer_121<><>
-    // Expression n has type Integer_Integer_121<><>
-    // Expression n has type Integer_Integer_121<><>
-    // Expression i has type Integer_Integer_121<><>
-    // Expression i has type Integer_Integer_121<><>
-    // Expression Subtract(Count, n) has type Number_Number_120<><>
-    // Expression Subtract(Count, n) has type Number_Number_120<><>
-    // Expression n has type Integer_Integer_121<><>
-    // Expression n has type Integer_Integer_121<><>
+    // Expression (\(ParameterDefinition=i$3038:Type:Integer) -> Primitive:Function has type Function1<Integer<>, Function<>>
+    // Expression (\(ParameterDefinition=i$3038:Type:Integer) -> Primitive:Function has type Function1<Integer<>, Function<>>
+    // Expression At(Subtract(i, n)) has type T<>
+    // Expression Subtract(i, n) has type Integer<>
+    // Expression Subtract(i, n) has type Integer<>
+    // Expression n has type Integer<>
+    // Expression n has type Integer<>
+    // Expression i has type Integer<>
+    // Expression i has type Integer<>
+    // Expression Subtract(Count, n) has type Number<>
+    // Expression Subtract(Count, n) has type Number<>
+    // Expression n has type Integer<>
+    // Expression n has type Integer<>
     // Expression Count has type Function_3<>
     // Expression Count has type Function_3<>
     {
         return /* `88 */
         /*  */
-        Tuple(/* Number_Number_120<><> */
+        Tuple(/* Number<> */
         /*  */
         Subtract(/* Function_3<> */
-        Count, /* Integer_Integer_121<><> */
-        n), /* Function1_Function1_51<T0_52<>, T1_53<>><Integer_Integer_121<><>, Function_Function_3<><>> */
+        Count, /* Integer<> */
+        n), /* Function1<Integer<>, Function<>> */
         (Integer i) => 
-        /* T_T_365<><> */
+        /* T<> */
         /*  */
-        At(/* Integer_Integer_121<><> */
+        At(/* Integer<> */
         /*  */
-        Subtract(/* Integer_Integer_121<><> */
-        i, /* Integer_Integer_121<><> */
+        Subtract(/* Integer<> */
+        i, /* Integer<> */
         n)));
     }
     public static Array Take<T>(Array xs, Integer n) // Type Resolver
@@ -4586,55 +4586,55 @@ public static partial class Extensions
     // Success=True Message=
     // Expression types
     // Expression Tuple(n, (\(ParameterDefinition=i$3062:Type:Integer) -> Primitive:Function) has type `89
-    // Expression (\(ParameterDefinition=i$3062:Type:Integer) -> Primitive:Function has type Function1_Function1_51<T0_52<>, T1_53<>><Integer_Integer_121<><>, Function_Function_3<><>>
-    // Expression (\(ParameterDefinition=i$3062:Type:Integer) -> Primitive:Function has type Function1_Function1_51<T0_52<>, T1_53<>><Integer_Integer_121<><>, Function_Function_3<><>>
-    // Expression At(i) has type T_T_365<><>
-    // Expression i has type Integer_Integer_121<><>
-    // Expression i has type Integer_Integer_121<><>
-    // Expression n has type Integer_Integer_121<><>
-    // Expression n has type Integer_Integer_121<><>
+    // Expression (\(ParameterDefinition=i$3062:Type:Integer) -> Primitive:Function has type Function1<Integer<>, Function<>>
+    // Expression (\(ParameterDefinition=i$3062:Type:Integer) -> Primitive:Function has type Function1<Integer<>, Function<>>
+    // Expression At(i) has type T<>
+    // Expression i has type Integer<>
+    // Expression i has type Integer<>
+    // Expression n has type Integer<>
+    // Expression n has type Integer<>
     {
         return /* `89 */
         /*  */
-        Tuple(/* Integer_Integer_121<><> */
-        n, /* Function1_Function1_51<T0_52<>, T1_53<>><Integer_Integer_121<><>, Function_Function_3<><>> */
+        Tuple(/* Integer<> */
+        n, /* Function1<Integer<>, Function<>> */
         (Integer i) => 
-        /* T_T_365<><> */
+        /* T<> */
         /*  */
-        At(/* Integer_Integer_121<><> */
+        At(/* Integer<> */
         i));
     }
     public static Any Aggregate<T>(Array xs, Any init, Function f) // Type Resolver
     // Type resolver associated with Aggregate(xs:Concept:Array,init:Concept:Any,f:Primitive:Function):Concept:Any;
     // Success=True Message=
     // Expression types
-    // Expression (IsEmpty(xs)?init:f(init, f(Rest(xs)))) has type Any_Any_107<><>
+    // Expression (IsEmpty(xs)?init:f(init, f(Rest(xs)))) has type Any<>
     // Expression f(init, f(Rest(xs))) has type `91
     // Expression f(Rest(xs)) has type `90
     // Expression f(Rest(xs)) has type `90
-    // Expression Rest(xs) has type Array_Array_109<T_365<>><`23>
-    // Expression Rest(xs) has type Array_Array_109<T_365<>><`23>
-    // Expression xs has type Array_Array_109<T_365<>><`21>
-    // Expression xs has type Array_Array_109<T_365<>><`21>
-    // Expression init has type Any_Any_107<><>
-    // Expression init has type Any_Any_107<><>
-    // Expression init has type Any_Any_107<><>
+    // Expression Rest(xs) has type Array<`23>
+    // Expression Rest(xs) has type Array<`23>
+    // Expression xs has type Array<`21>
+    // Expression xs has type Array<`21>
+    // Expression init has type Any<>
+    // Expression init has type Any<>
+    // Expression init has type Any<>
     {
-        return /* Any_Any_107<><> */
+        return /* Any<> */
         /*  */
         /*  */
         IsEmpty(/*  */
         xs)
-            ? /* Any_Any_107<><> */
+            ? /* Any<> */
             init
             : /* `91 */
             /*  */
-            f(/* Any_Any_107<><> */
+            f(/* Any<> */
             init, /* `90 */
             /*  */
-            f(/* Array_Array_109<T_365<>><`23> */
+            f(/* Array<`23> */
             /*  */
-            Rest(/* Array_Array_109<T_365<>><`21> */
+            Rest(/* Array<`21> */
             xs)))
         ;
     }
@@ -4642,15 +4642,15 @@ public static partial class Extensions
     // Type resolver associated with Rest(xs:Concept:Array):Concept:Array;
     // Success=True Message=
     // Expression types
-    // Expression Skip(xs, 1) has type Array_Array_109<T_365<>><`18>
+    // Expression Skip(xs, 1) has type Array<`18>
     // Expression 1 has type Integer_121<>
     // Expression 1 has type Integer_121<>
-    // Expression xs has type Array_Array_109<T_365<>><`22>
-    // Expression xs has type Array_Array_109<T_365<>><`22>
+    // Expression xs has type Array<`22>
+    // Expression xs has type Array<`22>
     {
-        return /* Array_Array_109<T_365<>><`18> */
+        return /* Array<`18> */
         /*  */
-        Skip(/* Array_Array_109<T_365<>><`22> */
+        Skip(/* Array<`22> */
         xs, /* Integer_121<> */
         1);
     }
@@ -4658,62 +4658,62 @@ public static partial class Extensions
     // Type resolver associated with IsEmpty(xs:Concept:Array):Type:Boolean;
     // Success=True Message=
     // Expression types
-    // Expression Equals(Count(xs), 0) has type Boolean_Boolean_123<><>
+    // Expression Equals(Count(xs), 0) has type Boolean<>
     // Expression 0 has type Integer_121<>
     // Expression 0 has type Integer_121<>
-    // Expression Count(xs) has type Integer_Integer_121<><>
-    // Expression Count(xs) has type Integer_Integer_121<><>
-    // Expression xs has type Array_Array_109<T_365<>><`24>
-    // Expression xs has type Array_Array_109<T_365<>><`24>
+    // Expression Count(xs) has type Integer<>
+    // Expression Count(xs) has type Integer<>
+    // Expression xs has type Array<`24>
+    // Expression xs has type Array<`24>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        Equals(/* Integer_Integer_121<><> */
+        Equals(/* Integer<> */
         /*  */
-        Count(/* Array_Array_109<T_365<>><`24> */
+        Count(/* Array<`24> */
         xs), /* Integer_121<> */
         0);
     }
     public static Any First<T>(Array xs) // Type Resolver
     // Type resolver associated with First(xs:Concept:Array):Concept:Any;
-    // Success=False Message=Can't cast from T_T_365<><> to Any_Any_107<><>
+    // Success=False Message=Can't cast from T<> to Any<>
     // Expression types
-    // Expression At(xs, 0) has type T_T_365<><>
+    // Expression At(xs, 0) has type T<>
     // Expression 0 has type Integer_121<>
     // Expression 0 has type Integer_121<>
-    // Expression xs has type Array_Array_109<T_365<>><`25>
-    // Expression xs has type Array_Array_109<T_365<>><`25>
+    // Expression xs has type Array<`25>
+    // Expression xs has type Array<`25>
     {
-        return /* T_T_365<><> */
+        return /* T<> */
         /*  */
-        At(/* Array_Array_109<T_365<>><`25> */
+        At(/* Array<`25> */
         xs, /* Integer_121<> */
         0);
     }
     public static Any Last<T>(Array xs) // Type Resolver
     // Type resolver associated with Last(xs:Concept:Array):Concept:Any;
-    // Success=False Message=Can't cast from T_T_365<><> to Any_Any_107<><>
+    // Success=False Message=Can't cast from T<> to Any<>
     // Expression types
-    // Expression At(xs, Subtract(Count(xs), 1)) has type T_T_365<><>
-    // Expression Subtract(Count(xs), 1) has type Integer_Integer_121<><>
-    // Expression Subtract(Count(xs), 1) has type Integer_Integer_121<><>
+    // Expression At(xs, Subtract(Count(xs), 1)) has type T<>
+    // Expression Subtract(Count(xs), 1) has type Integer<>
+    // Expression Subtract(Count(xs), 1) has type Integer<>
     // Expression 1 has type Integer_121<>
     // Expression 1 has type Integer_121<>
-    // Expression Count(xs) has type Integer_Integer_121<><>
-    // Expression Count(xs) has type Integer_Integer_121<><>
-    // Expression xs has type Array_Array_109<T_365<>><`26>
-    // Expression xs has type Array_Array_109<T_365<>><`26>
-    // Expression xs has type Array_Array_109<T_365<>><`26>
-    // Expression xs has type Array_Array_109<T_365<>><`26>
+    // Expression Count(xs) has type Integer<>
+    // Expression Count(xs) has type Integer<>
+    // Expression xs has type Array<`26>
+    // Expression xs has type Array<`26>
+    // Expression xs has type Array<`26>
+    // Expression xs has type Array<`26>
     {
-        return /* T_T_365<><> */
+        return /* T<> */
         /*  */
-        At(/* Array_Array_109<T_365<>><`26> */
-        xs, /* Integer_Integer_121<><> */
+        At(/* Array<`26> */
+        xs, /* Integer<> */
         /*  */
-        Subtract(/* Integer_Integer_121<><> */
+        Subtract(/* Integer<> */
         /*  */
-        Count(/* Array_Array_109<T_365<>><`26> */
+        Count(/* Array<`26> */
         xs), /* Integer_121<> */
         1));
     }
@@ -4721,23 +4721,23 @@ public static partial class Extensions
     // Type resolver associated with Slice(xs:Concept:Array,from:Type:Integer,count:Type:Integer):Concept:Array;
     // Success=True Message=
     // Expression types
-    // Expression Take(Skip(xs, from), count) has type Array_Array_109<T_365<>><`20>
-    // Expression count has type Integer_Integer_121<><>
-    // Expression count has type Integer_Integer_121<><>
-    // Expression Skip(xs, from) has type Array_Array_109<T_365<>><`18>
-    // Expression Skip(xs, from) has type Array_Array_109<T_365<>><`18>
-    // Expression from has type Integer_Integer_121<><>
-    // Expression from has type Integer_Integer_121<><>
-    // Expression xs has type Array_Array_109<T_365<>><`27>
-    // Expression xs has type Array_Array_109<T_365<>><`27>
+    // Expression Take(Skip(xs, from), count) has type Array<`20>
+    // Expression count has type Integer<>
+    // Expression count has type Integer<>
+    // Expression Skip(xs, from) has type Array<`18>
+    // Expression Skip(xs, from) has type Array<`18>
+    // Expression from has type Integer<>
+    // Expression from has type Integer<>
+    // Expression xs has type Array<`27>
+    // Expression xs has type Array<`27>
     {
-        return /* Array_Array_109<T_365<>><`20> */
+        return /* Array<`20> */
         /*  */
-        Take(/* Array_Array_109<T_365<>><`18> */
+        Take(/* Array<`18> */
         /*  */
-        Skip(/* Array_Array_109<T_365<>><`27> */
-        xs, /* Integer_Integer_121<><> */
-        from), /* Integer_Integer_121<><> */
+        Skip(/* Array<`27> */
+        xs, /* Integer<> */
+        from), /* Integer<> */
         count);
     }
     public static String Join<T>(Array xs, String sep) // Type Resolver
@@ -4745,30 +4745,30 @@ public static partial class Extensions
     // Success=True Message=
     // Expression types
     // Expression (IsEmpty(xs)?:Add(ToString(First(xs)), Aggregate(Rest(xs), , (\(ParameterDefinition=acc$3189:Type:String, ParameterDefinition=cur$3191:Concept:Any) -> Primitive:Function))) has type String_122<>
-    // Expression Add(ToString(First(xs)), Aggregate(Rest(xs), , (\(ParameterDefinition=acc$3189:Type:String, ParameterDefinition=cur$3191:Concept:Any) -> Primitive:Function)) has type Number_Number_120<><>
-    // Expression Aggregate(Rest(xs), , (\(ParameterDefinition=acc$3189:Type:String, ParameterDefinition=cur$3191:Concept:Any) -> Primitive:Function) has type Any_Any_107<><>
-    // Expression Aggregate(Rest(xs), , (\(ParameterDefinition=acc$3189:Type:String, ParameterDefinition=cur$3191:Concept:Any) -> Primitive:Function) has type Any_Any_107<><>
-    // Expression (\(ParameterDefinition=acc$3189:Type:String, ParameterDefinition=cur$3191:Concept:Any) -> Primitive:Function has type Function2_Function2_54<T0_55<>, T1_56<>, T2_57<>><String_String_122<><>, Any_Any_107<><>, Function_Function_3<><>>
-    // Expression (\(ParameterDefinition=acc$3189:Type:String, ParameterDefinition=cur$3191:Concept:Any) -> Primitive:Function has type Function2_Function2_54<T0_55<>, T1_56<>, T2_57<>><String_String_122<><>, Any_Any_107<><>, Function_Function_3<><>>
-    // Expression Interpolate(acc, sep, cur) has type String_String_122<><>
-    // Expression cur has type Any_Any_107<><>
-    // Expression cur has type Any_Any_107<><>
-    // Expression sep has type String_String_122<><>
-    // Expression sep has type String_String_122<><>
-    // Expression acc has type String_String_122<><>
-    // Expression acc has type String_String_122<><>
+    // Expression Add(ToString(First(xs)), Aggregate(Rest(xs), , (\(ParameterDefinition=acc$3189:Type:String, ParameterDefinition=cur$3191:Concept:Any) -> Primitive:Function)) has type Number<>
+    // Expression Aggregate(Rest(xs), , (\(ParameterDefinition=acc$3189:Type:String, ParameterDefinition=cur$3191:Concept:Any) -> Primitive:Function) has type Any<>
+    // Expression Aggregate(Rest(xs), , (\(ParameterDefinition=acc$3189:Type:String, ParameterDefinition=cur$3191:Concept:Any) -> Primitive:Function) has type Any<>
+    // Expression (\(ParameterDefinition=acc$3189:Type:String, ParameterDefinition=cur$3191:Concept:Any) -> Primitive:Function has type Function2<String<>, Any<>, Function<>>
+    // Expression (\(ParameterDefinition=acc$3189:Type:String, ParameterDefinition=cur$3191:Concept:Any) -> Primitive:Function has type Function2<String<>, Any<>, Function<>>
+    // Expression Interpolate(acc, sep, cur) has type String<>
+    // Expression cur has type Any<>
+    // Expression cur has type Any<>
+    // Expression sep has type String<>
+    // Expression sep has type String<>
+    // Expression acc has type String<>
+    // Expression acc has type String<>
     // Expression  has type String_122<>
     // Expression  has type String_122<>
-    // Expression Rest(xs) has type Array_Array_109<T_365<>><`23>
-    // Expression Rest(xs) has type Array_Array_109<T_365<>><`23>
-    // Expression xs has type Array_Array_109<T_365<>><`29>
-    // Expression xs has type Array_Array_109<T_365<>><`29>
-    // Expression ToString(First(xs)) has type String_String_122<><>
-    // Expression ToString(First(xs)) has type String_String_122<><>
-    // Expression First(xs) has type Any_Any_107<><>
-    // Expression First(xs) has type Any_Any_107<><>
-    // Expression xs has type Array_Array_109<T_365<>><`29>
-    // Expression xs has type Array_Array_109<T_365<>><`29>
+    // Expression Rest(xs) has type Array<`23>
+    // Expression Rest(xs) has type Array<`23>
+    // Expression xs has type Array<`29>
+    // Expression xs has type Array<`29>
+    // Expression ToString(First(xs)) has type String<>
+    // Expression ToString(First(xs)) has type String<>
+    // Expression First(xs) has type Any<>
+    // Expression First(xs) has type Any<>
+    // Expression xs has type Array<`29>
+    // Expression xs has type Array<`29>
     // Expression  has type String_122<>
     {
         return /* String_122<> */
@@ -4778,26 +4778,26 @@ public static partial class Extensions
         xs)
             ? /* String_122<> */
 
-            : /* Number_Number_120<><> */
+            : /* Number<> */
             /*  */
-            Add(/* String_String_122<><> */
+            Add(/* String<> */
             /*  */
-            ToString(/* Any_Any_107<><> */
+            ToString(/* Any<> */
             /*  */
-            First(/* Array_Array_109<T_365<>><`29> */
-            xs)), /* Any_Any_107<><> */
+            First(/* Array<`29> */
+            xs)), /* Any<> */
             /*  */
-            Aggregate(/* Array_Array_109<T_365<>><`23> */
+            Aggregate(/* Array<`23> */
             /*  */
-            Rest(/* Array_Array_109<T_365<>><`29> */
+            Rest(/* Array<`29> */
             xs), /* String_122<> */
-            , /* Function2_Function2_54<T0_55<>, T1_56<>, T2_57<>><String_String_122<><>, Any_Any_107<><>, Function_Function_3<><>> */
+            , /* Function2<String<>, Any<>, Function<>> */
             (String acc, Any cur) => 
-            /* String_String_122<><> */
+            /* String<> */
             /*  */
-            Interpolate(/* String_String_122<><> */
-            acc, /* String_String_122<><> */
-            sep, /* Any_Any_107<><> */
+            Interpolate(/* String<> */
+            acc, /* String<> */
+            sep, /* Any<> */
             cur)))
         ;
     }
@@ -4806,19 +4806,19 @@ public static partial class Extensions
     // Success=True Message=
     // Expression types
     // Expression (IsEmpty(xs)?True:And(f(First(xs)), f(Rest(xs)))) has type Boolean_123<>
-    // Expression And(f(First(xs)), f(Rest(xs))) has type Boolean_Boolean_123<><>
+    // Expression And(f(First(xs)), f(Rest(xs))) has type Boolean<>
     // Expression f(Rest(xs)) has type `93
     // Expression f(Rest(xs)) has type `93
-    // Expression Rest(xs) has type Array_Array_109<T_365<>><`23>
-    // Expression Rest(xs) has type Array_Array_109<T_365<>><`23>
-    // Expression xs has type Array_Array_109<T_365<>><`30>
-    // Expression xs has type Array_Array_109<T_365<>><`30>
+    // Expression Rest(xs) has type Array<`23>
+    // Expression Rest(xs) has type Array<`23>
+    // Expression xs has type Array<`30>
+    // Expression xs has type Array<`30>
     // Expression f(First(xs)) has type `92
     // Expression f(First(xs)) has type `92
-    // Expression First(xs) has type Any_Any_107<><>
-    // Expression First(xs) has type Any_Any_107<><>
-    // Expression xs has type Array_Array_109<T_365<>><`30>
-    // Expression xs has type Array_Array_109<T_365<>><`30>
+    // Expression First(xs) has type Any<>
+    // Expression First(xs) has type Any<>
+    // Expression xs has type Array<`30>
+    // Expression xs has type Array<`30>
     // Expression True has type Boolean_123<>
     {
         return /* Boolean_123<> */
@@ -4828,18 +4828,18 @@ public static partial class Extensions
         xs)
             ? /* Boolean_123<> */
             True
-            : /* Boolean_Boolean_123<><> */
+            : /* Boolean<> */
             /*  */
             And(/* `92 */
             /*  */
-            f(/* Any_Any_107<><> */
+            f(/* Any<> */
             /*  */
-            First(/* Array_Array_109<T_365<>><`30> */
+            First(/* Array<`30> */
             xs)), /* `93 */
             /*  */
-            f(/* Array_Array_109<T_365<>><`23> */
+            f(/* Array<`23> */
             /*  */
-            Rest(/* Array_Array_109<T_365<>><`30> */
+            Rest(/* Array<`30> */
             xs)))
         ;
     }
@@ -4847,19 +4847,19 @@ public static partial class Extensions
     // Type resolver associated with All(xs:Concept:Array):Type:Boolean;
     // Success=True Message=
     // Expression types
-    // Expression All(xs, (\(ParameterDefinition=b$3245:Type:Boolean) -> Primitive:Function) has type Boolean_Boolean_123<><>
-    // Expression (\(ParameterDefinition=b$3245:Type:Boolean) -> Primitive:Function has type Function1_Function1_51<T0_52<>, T1_53<>><Boolean_Boolean_123<><>, Function_Function_3<><>>
-    // Expression (\(ParameterDefinition=b$3245:Type:Boolean) -> Primitive:Function has type Function1_Function1_51<T0_52<>, T1_53<>><Boolean_Boolean_123<><>, Function_Function_3<><>>
-    // Expression b has type Boolean_Boolean_123<><>
-    // Expression xs has type Array_Array_109<T_365<>><`31>
-    // Expression xs has type Array_Array_109<T_365<>><`31>
+    // Expression All(xs, (\(ParameterDefinition=b$3245:Type:Boolean) -> Primitive:Function) has type Boolean<>
+    // Expression (\(ParameterDefinition=b$3245:Type:Boolean) -> Primitive:Function has type Function1<Boolean<>, Function<>>
+    // Expression (\(ParameterDefinition=b$3245:Type:Boolean) -> Primitive:Function has type Function1<Boolean<>, Function<>>
+    // Expression b has type Boolean<>
+    // Expression xs has type Array<`31>
+    // Expression xs has type Array<`31>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        All(/* Array_Array_109<T_365<>><`31> */
-        xs, /* Function1_Function1_51<T0_52<>, T1_53<>><Boolean_Boolean_123<><>, Function_Function_3<><>> */
+        All(/* Array<`31> */
+        xs, /* Function1<Boolean<>, Function<>> */
         (Boolean b) => 
-        /* Boolean_Boolean_123<><> */
+        /* Boolean<> */
         b);
     }
 }
@@ -4869,124 +4869,124 @@ public static partial class Extensions
     // Type resolver associated with Size(x:Concept:Interval):Concept:Numerical;
     // Success=True Message=
     // Expression types
-    // Expression Subtract(Max(x), Min(x)) has type Number_Number_120<><>
-    // Expression Min(x) has type T_T_443<><>
-    // Expression Min(x) has type T_T_443<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`32>
-    // Expression x has type Interval_Interval_119<T_443<>><`32>
-    // Expression Max(x) has type T_T_443<><>
-    // Expression Max(x) has type T_T_443<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`32>
-    // Expression x has type Interval_Interval_119<T_443<>><`32>
+    // Expression Subtract(Max(x), Min(x)) has type Number<>
+    // Expression Min(x) has type T<>
+    // Expression Min(x) has type T<>
+    // Expression x has type Interval<`32>
+    // Expression x has type Interval<`32>
+    // Expression Max(x) has type T<>
+    // Expression Max(x) has type T<>
+    // Expression x has type Interval<`32>
+    // Expression x has type Interval<`32>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Subtract(/* T_T_443<><> */
+        Subtract(/* T<> */
         /*  */
-        Max(/* Interval_Interval_119<T_443<>><`32> */
-        x), /* T_T_443<><> */
+        Max(/* Interval<`32> */
+        x), /* T<> */
         /*  */
-        Min(/* Interval_Interval_119<T_443<>><`32> */
+        Min(/* Interval<`32> */
         x));
     }
     public static Boolean IsEmpty<T>(Interval x) // Type Resolver
     // Type resolver associated with IsEmpty(x:Concept:Interval):Type:Boolean;
     // Success=True Message=
     // Expression types
-    // Expression GreaterThanOrEquals(Min(x), Max(x)) has type Boolean_Boolean_123<><>
-    // Expression Max(x) has type T_T_443<><>
-    // Expression Max(x) has type T_T_443<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`33>
-    // Expression x has type Interval_Interval_119<T_443<>><`33>
-    // Expression Min(x) has type T_T_443<><>
-    // Expression Min(x) has type T_T_443<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`33>
-    // Expression x has type Interval_Interval_119<T_443<>><`33>
+    // Expression GreaterThanOrEquals(Min(x), Max(x)) has type Boolean<>
+    // Expression Max(x) has type T<>
+    // Expression Max(x) has type T<>
+    // Expression x has type Interval<`33>
+    // Expression x has type Interval<`33>
+    // Expression Min(x) has type T<>
+    // Expression Min(x) has type T<>
+    // Expression x has type Interval<`33>
+    // Expression x has type Interval<`33>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        GreaterThanOrEquals(/* T_T_443<><> */
+        GreaterThanOrEquals(/* T<> */
         /*  */
-        Min(/* Interval_Interval_119<T_443<>><`33> */
-        x), /* T_T_443<><> */
+        Min(/* Interval<`33> */
+        x), /* T<> */
         /*  */
-        Max(/* Interval_Interval_119<T_443<>><`33> */
+        Max(/* Interval<`33> */
         x));
     }
     public static Numerical Lerp<T>(Interval x, Unit amount) // Type Resolver
     // Type resolver associated with Lerp(x:Concept:Interval,amount:Type:Unit):Concept:Numerical;
     // Success=True Message=
     // Expression types
-    // Expression Multiply(Min(x), Add(Subtract(1, amount), Multiply(Max(x), amount))) has type Number_Number_120<><>
-    // Expression Add(Subtract(1, amount), Multiply(Max(x), amount)) has type Number_Number_120<><>
-    // Expression Add(Subtract(1, amount), Multiply(Max(x), amount)) has type Number_Number_120<><>
-    // Expression Multiply(Max(x), amount) has type Number_Number_120<><>
-    // Expression Multiply(Max(x), amount) has type Number_Number_120<><>
-    // Expression amount has type Unit_Unit_128<><>
-    // Expression amount has type Unit_Unit_128<><>
-    // Expression Max(x) has type T_T_443<><>
-    // Expression Max(x) has type T_T_443<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`34>
-    // Expression x has type Interval_Interval_119<T_443<>><`34>
-    // Expression Subtract(1, amount) has type Number_Number_120<><>
-    // Expression Subtract(1, amount) has type Number_Number_120<><>
-    // Expression amount has type Unit_Unit_128<><>
-    // Expression amount has type Unit_Unit_128<><>
+    // Expression Multiply(Min(x), Add(Subtract(1, amount), Multiply(Max(x), amount))) has type Number<>
+    // Expression Add(Subtract(1, amount), Multiply(Max(x), amount)) has type Number<>
+    // Expression Add(Subtract(1, amount), Multiply(Max(x), amount)) has type Number<>
+    // Expression Multiply(Max(x), amount) has type Number<>
+    // Expression Multiply(Max(x), amount) has type Number<>
+    // Expression amount has type Unit<>
+    // Expression amount has type Unit<>
+    // Expression Max(x) has type T<>
+    // Expression Max(x) has type T<>
+    // Expression x has type Interval<`34>
+    // Expression x has type Interval<`34>
+    // Expression Subtract(1, amount) has type Number<>
+    // Expression Subtract(1, amount) has type Number<>
+    // Expression amount has type Unit<>
+    // Expression amount has type Unit<>
     // Expression 1 has type Number_120<>
     // Expression 1 has type Number_120<>
-    // Expression Min(x) has type T_T_443<><>
-    // Expression Min(x) has type T_T_443<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`34>
-    // Expression x has type Interval_Interval_119<T_443<>><`34>
+    // Expression Min(x) has type T<>
+    // Expression Min(x) has type T<>
+    // Expression x has type Interval<`34>
+    // Expression x has type Interval<`34>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Multiply(/* T_T_443<><> */
+        Multiply(/* T<> */
         /*  */
-        Min(/* Interval_Interval_119<T_443<>><`34> */
-        x), /* Number_Number_120<><> */
+        Min(/* Interval<`34> */
+        x), /* Number<> */
         /*  */
-        Add(/* Number_Number_120<><> */
+        Add(/* Number<> */
         /*  */
         Subtract(/* Number_120<> */
-        1, /* Unit_Unit_128<><> */
-        amount), /* Number_Number_120<><> */
+        1, /* Unit<> */
+        amount), /* Number<> */
         /*  */
-        Multiply(/* T_T_443<><> */
+        Multiply(/* T<> */
         /*  */
-        Max(/* Interval_Interval_119<T_443<>><`34> */
-        x), /* Unit_Unit_128<><> */
+        Max(/* Interval<`34> */
+        x), /* Unit<> */
         amount)));
     }
     public static Unit InverseLerp<T>(Interval x, Numerical value) // Type Resolver
     // Type resolver associated with InverseLerp(x:Concept:Interval,value:Concept:Numerical):Type:Unit;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Unit_Unit_128<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Unit<>
     // Expression types
-    // Expression Divide(Subtract(value, Min(x)), Size(x)) has type Arithmetic_Arithmetic_116<><>
-    // Expression Size(x) has type Numerical_Numerical_112<><>
-    // Expression Size(x) has type Numerical_Numerical_112<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`35>
-    // Expression x has type Interval_Interval_119<T_443<>><`35>
-    // Expression Subtract(value, Min(x)) has type Number_Number_120<><>
-    // Expression Subtract(value, Min(x)) has type Number_Number_120<><>
-    // Expression Min(x) has type T_T_443<><>
-    // Expression Min(x) has type T_T_443<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`35>
-    // Expression x has type Interval_Interval_119<T_443<>><`35>
-    // Expression value has type Numerical_Numerical_112<><>
-    // Expression value has type Numerical_Numerical_112<><>
+    // Expression Divide(Subtract(value, Min(x)), Size(x)) has type Arithmetic<>
+    // Expression Size(x) has type Numerical<>
+    // Expression Size(x) has type Numerical<>
+    // Expression x has type Interval<`35>
+    // Expression x has type Interval<`35>
+    // Expression Subtract(value, Min(x)) has type Number<>
+    // Expression Subtract(value, Min(x)) has type Number<>
+    // Expression Min(x) has type T<>
+    // Expression Min(x) has type T<>
+    // Expression x has type Interval<`35>
+    // Expression x has type Interval<`35>
+    // Expression value has type Numerical<>
+    // Expression value has type Numerical<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Divide(/* Number_Number_120<><> */
+        Divide(/* Number<> */
         /*  */
-        Subtract(/* Numerical_Numerical_112<><> */
-        value, /* T_T_443<><> */
+        Subtract(/* Numerical<> */
+        value, /* T<> */
         /*  */
-        Min(/* Interval_Interval_119<T_443<>><`35> */
-        x)), /* Numerical_Numerical_112<><> */
+        Min(/* Interval<`35> */
+        x)), /* Numerical<> */
         /*  */
-        Size(/* Interval_Interval_119<T_443<>><`35> */
+        Size(/* Interval<`35> */
         x));
     }
     public static Interval Negate<T>(Interval x) // Type Resolver
@@ -4994,31 +4994,31 @@ public static partial class Extensions
     // Success=True Message=
     // Expression types
     // Expression Tuple(Negative(Max(x)), Negative(Min(x))) has type `94
-    // Expression Negative(Min(x)) has type Number_Number_120<><>
-    // Expression Negative(Min(x)) has type Number_Number_120<><>
-    // Expression Min(x) has type T_T_443<><>
-    // Expression Min(x) has type T_T_443<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`36>
-    // Expression x has type Interval_Interval_119<T_443<>><`36>
-    // Expression Negative(Max(x)) has type Number_Number_120<><>
-    // Expression Negative(Max(x)) has type Number_Number_120<><>
-    // Expression Max(x) has type T_T_443<><>
-    // Expression Max(x) has type T_T_443<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`36>
-    // Expression x has type Interval_Interval_119<T_443<>><`36>
+    // Expression Negative(Min(x)) has type Number<>
+    // Expression Negative(Min(x)) has type Number<>
+    // Expression Min(x) has type T<>
+    // Expression Min(x) has type T<>
+    // Expression x has type Interval<`36>
+    // Expression x has type Interval<`36>
+    // Expression Negative(Max(x)) has type Number<>
+    // Expression Negative(Max(x)) has type Number<>
+    // Expression Max(x) has type T<>
+    // Expression Max(x) has type T<>
+    // Expression x has type Interval<`36>
+    // Expression x has type Interval<`36>
     {
         return /* `94 */
         /*  */
-        Tuple(/* Number_Number_120<><> */
+        Tuple(/* Number<> */
         /*  */
-        Negative(/* T_T_443<><> */
+        Negative(/* T<> */
         /*  */
-        Max(/* Interval_Interval_119<T_443<>><`36> */
-        x)), /* Number_Number_120<><> */
+        Max(/* Interval<`36> */
+        x)), /* Number<> */
         /*  */
-        Negative(/* T_T_443<><> */
+        Negative(/* T<> */
         /*  */
-        Min(/* Interval_Interval_119<T_443<>><`36> */
+        Min(/* Interval<`36> */
         x)));
     }
     public static Interval Reverse<T>(Interval x) // Type Resolver
@@ -5026,38 +5026,38 @@ public static partial class Extensions
     // Success=True Message=
     // Expression types
     // Expression Tuple(Max(x), Min(x)) has type `95
-    // Expression Min(x) has type T_T_443<><>
-    // Expression Min(x) has type T_T_443<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`38>
-    // Expression x has type Interval_Interval_119<T_443<>><`38>
-    // Expression Max(x) has type T_T_443<><>
-    // Expression Max(x) has type T_T_443<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`38>
-    // Expression x has type Interval_Interval_119<T_443<>><`38>
+    // Expression Min(x) has type T<>
+    // Expression Min(x) has type T<>
+    // Expression x has type Interval<`38>
+    // Expression x has type Interval<`38>
+    // Expression Max(x) has type T<>
+    // Expression Max(x) has type T<>
+    // Expression x has type Interval<`38>
+    // Expression x has type Interval<`38>
     {
         return /* `95 */
         /*  */
-        Tuple(/* T_T_443<><> */
+        Tuple(/* T<> */
         /*  */
-        Max(/* Interval_Interval_119<T_443<>><`38> */
-        x), /* T_T_443<><> */
+        Max(/* Interval<`38> */
+        x), /* T<> */
         /*  */
-        Min(/* Interval_Interval_119<T_443<>><`38> */
+        Min(/* Interval<`38> */
         x));
     }
     public static Numerical Center<T>(Interval x) // Type Resolver
     // Type resolver associated with Center(x:Concept:Interval):Concept:Numerical;
     // Success=True Message=
     // Expression types
-    // Expression Lerp(x, 0.5) has type Numerical_Numerical_112<><>
+    // Expression Lerp(x, 0.5) has type Numerical<>
     // Expression 0.5 has type Number_120<>
     // Expression 0.5 has type Number_120<>
-    // Expression x has type Interval_Interval_119<T_443<>><`40>
-    // Expression x has type Interval_Interval_119<T_443<>><`40>
+    // Expression x has type Interval<`40>
+    // Expression x has type Interval<`40>
     {
-        return /* Numerical_Numerical_112<><> */
+        return /* Numerical<> */
         /*  */
-        Lerp(/* Interval_Interval_119<T_443<>><`40> */
+        Lerp(/* Interval<`40> */
         x, /* Number_120<> */
         0.5);
     }
@@ -5065,104 +5065,104 @@ public static partial class Extensions
     // Type resolver associated with Contains(x:Concept:Interval,value:Concept:Numerical):Type:Boolean;
     // Success=True Message=
     // Expression types
-    // Expression LessThanOrEquals(Min(x), And(value, LessThanOrEquals(value, Max(x)))) has type Boolean_Boolean_123<><>
-    // Expression And(value, LessThanOrEquals(value, Max(x))) has type Boolean_Boolean_123<><>
-    // Expression And(value, LessThanOrEquals(value, Max(x))) has type Boolean_Boolean_123<><>
-    // Expression LessThanOrEquals(value, Max(x)) has type Boolean_Boolean_123<><>
-    // Expression LessThanOrEquals(value, Max(x)) has type Boolean_Boolean_123<><>
-    // Expression Max(x) has type T_T_443<><>
-    // Expression Max(x) has type T_T_443<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`41>
-    // Expression x has type Interval_Interval_119<T_443<>><`41>
-    // Expression value has type Numerical_Numerical_112<><>
-    // Expression value has type Numerical_Numerical_112<><>
-    // Expression value has type Numerical_Numerical_112<><>
-    // Expression value has type Numerical_Numerical_112<><>
-    // Expression Min(x) has type T_T_443<><>
-    // Expression Min(x) has type T_T_443<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`41>
-    // Expression x has type Interval_Interval_119<T_443<>><`41>
+    // Expression LessThanOrEquals(Min(x), And(value, LessThanOrEquals(value, Max(x)))) has type Boolean<>
+    // Expression And(value, LessThanOrEquals(value, Max(x))) has type Boolean<>
+    // Expression And(value, LessThanOrEquals(value, Max(x))) has type Boolean<>
+    // Expression LessThanOrEquals(value, Max(x)) has type Boolean<>
+    // Expression LessThanOrEquals(value, Max(x)) has type Boolean<>
+    // Expression Max(x) has type T<>
+    // Expression Max(x) has type T<>
+    // Expression x has type Interval<`41>
+    // Expression x has type Interval<`41>
+    // Expression value has type Numerical<>
+    // Expression value has type Numerical<>
+    // Expression value has type Numerical<>
+    // Expression value has type Numerical<>
+    // Expression Min(x) has type T<>
+    // Expression Min(x) has type T<>
+    // Expression x has type Interval<`41>
+    // Expression x has type Interval<`41>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        LessThanOrEquals(/* T_T_443<><> */
+        LessThanOrEquals(/* T<> */
         /*  */
-        Min(/* Interval_Interval_119<T_443<>><`41> */
-        x), /* Boolean_Boolean_123<><> */
+        Min(/* Interval<`41> */
+        x), /* Boolean<> */
         /*  */
-        And(/* Numerical_Numerical_112<><> */
-        value, /* Boolean_Boolean_123<><> */
+        And(/* Numerical<> */
+        value, /* Boolean<> */
         /*  */
-        LessThanOrEquals(/* Numerical_Numerical_112<><> */
-        value, /* T_T_443<><> */
+        LessThanOrEquals(/* Numerical<> */
+        value, /* T<> */
         /*  */
-        Max(/* Interval_Interval_119<T_443<>><`41> */
+        Max(/* Interval<`41> */
         x))));
     }
     public static Boolean Contains<T>(Interval x, Interval other) // Type Resolver
     // Type resolver associated with Contains(x:Concept:Interval,other:Concept:Interval):Type:Boolean;
     // Success=True Message=
     // Expression types
-    // Expression LessThanOrEquals(Min(x), And(Min(other), GreaterThanOrEquals(Max, Max(other)))) has type Boolean_Boolean_123<><>
-    // Expression And(Min(other), GreaterThanOrEquals(Max, Max(other))) has type Boolean_Boolean_123<><>
-    // Expression And(Min(other), GreaterThanOrEquals(Max, Max(other))) has type Boolean_Boolean_123<><>
-    // Expression GreaterThanOrEquals(Max, Max(other)) has type Boolean_Boolean_123<><>
-    // Expression GreaterThanOrEquals(Max, Max(other)) has type Boolean_Boolean_123<><>
-    // Expression Max(other) has type T_T_443<><>
-    // Expression Max(other) has type T_T_443<><>
-    // Expression other has type Interval_Interval_119<T_443<>><`43>
-    // Expression other has type Interval_Interval_119<T_443<>><`43>
+    // Expression LessThanOrEquals(Min(x), And(Min(other), GreaterThanOrEquals(Max, Max(other)))) has type Boolean<>
+    // Expression And(Min(other), GreaterThanOrEquals(Max, Max(other))) has type Boolean<>
+    // Expression And(Min(other), GreaterThanOrEquals(Max, Max(other))) has type Boolean<>
+    // Expression GreaterThanOrEquals(Max, Max(other)) has type Boolean<>
+    // Expression GreaterThanOrEquals(Max, Max(other)) has type Boolean<>
+    // Expression Max(other) has type T<>
+    // Expression Max(other) has type T<>
+    // Expression other has type Interval<`43>
+    // Expression other has type Interval<`43>
     // Expression Max has type Function_3<>
     // Expression Max has type Function_3<>
-    // Expression Min(other) has type T_T_443<><>
-    // Expression Min(other) has type T_T_443<><>
-    // Expression other has type Interval_Interval_119<T_443<>><`43>
-    // Expression other has type Interval_Interval_119<T_443<>><`43>
-    // Expression Min(x) has type T_T_443<><>
-    // Expression Min(x) has type T_T_443<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`42>
-    // Expression x has type Interval_Interval_119<T_443<>><`42>
+    // Expression Min(other) has type T<>
+    // Expression Min(other) has type T<>
+    // Expression other has type Interval<`43>
+    // Expression other has type Interval<`43>
+    // Expression Min(x) has type T<>
+    // Expression Min(x) has type T<>
+    // Expression x has type Interval<`42>
+    // Expression x has type Interval<`42>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        LessThanOrEquals(/* T_T_443<><> */
+        LessThanOrEquals(/* T<> */
         /*  */
-        Min(/* Interval_Interval_119<T_443<>><`42> */
-        x), /* Boolean_Boolean_123<><> */
+        Min(/* Interval<`42> */
+        x), /* Boolean<> */
         /*  */
-        And(/* T_T_443<><> */
+        And(/* T<> */
         /*  */
-        Min(/* Interval_Interval_119<T_443<>><`43> */
-        other), /* Boolean_Boolean_123<><> */
+        Min(/* Interval<`43> */
+        other), /* Boolean<> */
         /*  */
         GreaterThanOrEquals(/* Function_3<> */
-        Max, /* T_T_443<><> */
+        Max, /* T<> */
         /*  */
-        Max(/* Interval_Interval_119<T_443<>><`43> */
+        Max(/* Interval<`43> */
         other))));
     }
     public static Boolean Overlaps<T>(Interval x, Interval y) // Type Resolver
     // Type resolver associated with Overlaps(x:Concept:Interval,y:Concept:Interval):Type:Boolean;
     // Success=True Message=
     // Expression types
-    // Expression Not(IsEmpty(Clamp(x, y))) has type Boolean_Boolean_123<><>
-    // Expression IsEmpty(Clamp(x, y)) has type Boolean_Boolean_123<><>
-    // Expression IsEmpty(Clamp(x, y)) has type Boolean_Boolean_123<><>
-    // Expression Clamp(x, y) has type Interval_Interval_119<T_443<>><`63>
-    // Expression Clamp(x, y) has type Interval_Interval_119<T_443<>><`63>
-    // Expression y has type Interval_Interval_119<T_443<>><`45>
-    // Expression y has type Interval_Interval_119<T_443<>><`45>
-    // Expression x has type Interval_Interval_119<T_443<>><`44>
-    // Expression x has type Interval_Interval_119<T_443<>><`44>
+    // Expression Not(IsEmpty(Clamp(x, y))) has type Boolean<>
+    // Expression IsEmpty(Clamp(x, y)) has type Boolean<>
+    // Expression IsEmpty(Clamp(x, y)) has type Boolean<>
+    // Expression Clamp(x, y) has type Interval<`63>
+    // Expression Clamp(x, y) has type Interval<`63>
+    // Expression y has type Interval<`45>
+    // Expression y has type Interval<`45>
+    // Expression x has type Interval<`44>
+    // Expression x has type Interval<`44>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        Not(/* Boolean_Boolean_123<><> */
+        Not(/* Boolean<> */
         /*  */
-        IsEmpty(/* Interval_Interval_119<T_443<>><`63> */
+        IsEmpty(/* Interval<`63> */
         /*  */
-        Clamp(/* Interval_Interval_119<T_443<>><`44> */
-        x, /* Interval_Interval_119<T_443<>><`45> */
+        Clamp(/* Interval<`44> */
+        x, /* Interval<`45> */
         y)));
     }
     public static Tuple Split<T>(Interval x, Unit t) // Type Resolver
@@ -5170,44 +5170,44 @@ public static partial class Extensions
     // Success=True Message=
     // Expression types
     // Expression Tuple(Left(x, t), Right(x, t)) has type `96
-    // Expression Right(x, t) has type Interval_Interval_119<T_443<>><`51>
-    // Expression Right(x, t) has type Interval_Interval_119<T_443<>><`51>
-    // Expression t has type Unit_Unit_128<><>
-    // Expression t has type Unit_Unit_128<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`46>
-    // Expression x has type Interval_Interval_119<T_443<>><`46>
-    // Expression Left(x, t) has type Interval_Interval_119<T_443<>><`49>
-    // Expression Left(x, t) has type Interval_Interval_119<T_443<>><`49>
-    // Expression t has type Unit_Unit_128<><>
-    // Expression t has type Unit_Unit_128<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`46>
-    // Expression x has type Interval_Interval_119<T_443<>><`46>
+    // Expression Right(x, t) has type Interval<`51>
+    // Expression Right(x, t) has type Interval<`51>
+    // Expression t has type Unit<>
+    // Expression t has type Unit<>
+    // Expression x has type Interval<`46>
+    // Expression x has type Interval<`46>
+    // Expression Left(x, t) has type Interval<`49>
+    // Expression Left(x, t) has type Interval<`49>
+    // Expression t has type Unit<>
+    // Expression t has type Unit<>
+    // Expression x has type Interval<`46>
+    // Expression x has type Interval<`46>
     {
         return /* `96 */
         /*  */
-        Tuple(/* Interval_Interval_119<T_443<>><`49> */
+        Tuple(/* Interval<`49> */
         /*  */
-        Left(/* Interval_Interval_119<T_443<>><`46> */
-        x, /* Unit_Unit_128<><> */
-        t), /* Interval_Interval_119<T_443<>><`51> */
+        Left(/* Interval<`46> */
+        x, /* Unit<> */
+        t), /* Interval<`51> */
         /*  */
-        Right(/* Interval_Interval_119<T_443<>><`46> */
-        x, /* Unit_Unit_128<><> */
+        Right(/* Interval<`46> */
+        x, /* Unit<> */
         t));
     }
     public static Tuple Split<T>(Interval x) // Type Resolver
     // Type resolver associated with Split(x:Concept:Interval):Primitive:Tuple;
     // Success=True Message=
     // Expression types
-    // Expression Split(x, 0.5) has type Tuple_Tuple_2<><>
+    // Expression Split(x, 0.5) has type Tuple<>
     // Expression 0.5 has type Number_120<>
     // Expression 0.5 has type Number_120<>
-    // Expression x has type Interval_Interval_119<T_443<>><`47>
-    // Expression x has type Interval_Interval_119<T_443<>><`47>
+    // Expression x has type Interval<`47>
+    // Expression x has type Interval<`47>
     {
-        return /* Tuple_Tuple_2<><> */
+        return /* Tuple<> */
         /*  */
-        Split(/* Interval_Interval_119<T_443<>><`47> */
+        Split(/* Interval<`47> */
         x, /* Number_120<> */
         0.5);
     }
@@ -5216,26 +5216,26 @@ public static partial class Extensions
     // Success=True Message=
     // Expression types
     // Expression Tuple(Min(x), Lerp(x, t)) has type `97
-    // Expression Lerp(x, t) has type Numerical_Numerical_112<><>
-    // Expression Lerp(x, t) has type Numerical_Numerical_112<><>
-    // Expression t has type Unit_Unit_128<><>
-    // Expression t has type Unit_Unit_128<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`48>
-    // Expression x has type Interval_Interval_119<T_443<>><`48>
-    // Expression Min(x) has type T_T_443<><>
-    // Expression Min(x) has type T_T_443<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`48>
-    // Expression x has type Interval_Interval_119<T_443<>><`48>
+    // Expression Lerp(x, t) has type Numerical<>
+    // Expression Lerp(x, t) has type Numerical<>
+    // Expression t has type Unit<>
+    // Expression t has type Unit<>
+    // Expression x has type Interval<`48>
+    // Expression x has type Interval<`48>
+    // Expression Min(x) has type T<>
+    // Expression Min(x) has type T<>
+    // Expression x has type Interval<`48>
+    // Expression x has type Interval<`48>
     {
         return /* `97 */
         /*  */
-        Tuple(/* T_T_443<><> */
+        Tuple(/* T<> */
         /*  */
-        Min(/* Interval_Interval_119<T_443<>><`48> */
-        x), /* Numerical_Numerical_112<><> */
+        Min(/* Interval<`48> */
+        x), /* Numerical<> */
         /*  */
-        Lerp(/* Interval_Interval_119<T_443<>><`48> */
-        x, /* Unit_Unit_128<><> */
+        Lerp(/* Interval<`48> */
+        x, /* Unit<> */
         t));
     }
     public static Interval Right<T>(Interval x, Unit t) // Type Resolver
@@ -5243,26 +5243,26 @@ public static partial class Extensions
     // Success=True Message=
     // Expression types
     // Expression Tuple(Lerp(x, t), Max(x)) has type `98
-    // Expression Max(x) has type T_T_443<><>
-    // Expression Max(x) has type T_T_443<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`50>
-    // Expression x has type Interval_Interval_119<T_443<>><`50>
-    // Expression Lerp(x, t) has type Numerical_Numerical_112<><>
-    // Expression Lerp(x, t) has type Numerical_Numerical_112<><>
-    // Expression t has type Unit_Unit_128<><>
-    // Expression t has type Unit_Unit_128<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`50>
-    // Expression x has type Interval_Interval_119<T_443<>><`50>
+    // Expression Max(x) has type T<>
+    // Expression Max(x) has type T<>
+    // Expression x has type Interval<`50>
+    // Expression x has type Interval<`50>
+    // Expression Lerp(x, t) has type Numerical<>
+    // Expression Lerp(x, t) has type Numerical<>
+    // Expression t has type Unit<>
+    // Expression t has type Unit<>
+    // Expression x has type Interval<`50>
+    // Expression x has type Interval<`50>
     {
         return /* `98 */
         /*  */
-        Tuple(/* Numerical_Numerical_112<><> */
+        Tuple(/* Numerical<> */
         /*  */
-        Lerp(/* Interval_Interval_119<T_443<>><`50> */
-        x, /* Unit_Unit_128<><> */
-        t), /* T_T_443<><> */
+        Lerp(/* Interval<`50> */
+        x, /* Unit<> */
+        t), /* T<> */
         /*  */
-        Max(/* Interval_Interval_119<T_443<>><`50> */
+        Max(/* Interval<`50> */
         x));
     }
     public static Interval MoveTo<T>(Interval x, Numerical v) // Type Resolver
@@ -5270,41 +5270,41 @@ public static partial class Extensions
     // Success=True Message=
     // Expression types
     // Expression Tuple(v, Add(v, Size(x))) has type `99
-    // Expression Add(v, Size(x)) has type Arithmetic_Arithmetic_116<><>
-    // Expression Add(v, Size(x)) has type Arithmetic_Arithmetic_116<><>
-    // Expression Size(x) has type Numerical_Numerical_112<><>
-    // Expression Size(x) has type Numerical_Numerical_112<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`52>
-    // Expression x has type Interval_Interval_119<T_443<>><`52>
-    // Expression v has type Numerical_Numerical_112<><>
-    // Expression v has type Numerical_Numerical_112<><>
-    // Expression v has type Numerical_Numerical_112<><>
-    // Expression v has type Numerical_Numerical_112<><>
+    // Expression Add(v, Size(x)) has type Arithmetic<>
+    // Expression Add(v, Size(x)) has type Arithmetic<>
+    // Expression Size(x) has type Numerical<>
+    // Expression Size(x) has type Numerical<>
+    // Expression x has type Interval<`52>
+    // Expression x has type Interval<`52>
+    // Expression v has type Numerical<>
+    // Expression v has type Numerical<>
+    // Expression v has type Numerical<>
+    // Expression v has type Numerical<>
     {
         return /* `99 */
         /*  */
-        Tuple(/* Numerical_Numerical_112<><> */
-        v, /* Arithmetic_Arithmetic_116<><> */
+        Tuple(/* Numerical<> */
+        v, /* Arithmetic<> */
         /*  */
-        Add(/* Numerical_Numerical_112<><> */
-        v, /* Numerical_Numerical_112<><> */
+        Add(/* Numerical<> */
+        v, /* Numerical<> */
         /*  */
-        Size(/* Interval_Interval_119<T_443<>><`52> */
+        Size(/* Interval<`52> */
         x)));
     }
     public static Interval LeftHalf<T>(Interval x) // Type Resolver
     // Type resolver associated with LeftHalf(x:Concept:Interval):Concept:Interval;
     // Success=True Message=
     // Expression types
-    // Expression Left(x, 0.5) has type Interval_Interval_119<T_443<>><`49>
+    // Expression Left(x, 0.5) has type Interval<`49>
     // Expression 0.5 has type Number_120<>
     // Expression 0.5 has type Number_120<>
-    // Expression x has type Interval_Interval_119<T_443<>><`54>
-    // Expression x has type Interval_Interval_119<T_443<>><`54>
+    // Expression x has type Interval<`54>
+    // Expression x has type Interval<`54>
     {
-        return /* Interval_Interval_119<T_443<>><`49> */
+        return /* Interval<`49> */
         /*  */
-        Left(/* Interval_Interval_119<T_443<>><`54> */
+        Left(/* Interval<`54> */
         x, /* Number_120<> */
         0.5);
     }
@@ -5312,15 +5312,15 @@ public static partial class Extensions
     // Type resolver associated with RightHalf(x:Concept:Interval):Concept:Interval;
     // Success=True Message=
     // Expression types
-    // Expression Right(x, 0.5) has type Interval_Interval_119<T_443<>><`51>
+    // Expression Right(x, 0.5) has type Interval<`51>
     // Expression 0.5 has type Number_120<>
     // Expression 0.5 has type Number_120<>
-    // Expression x has type Interval_Interval_119<T_443<>><`56>
-    // Expression x has type Interval_Interval_119<T_443<>><`56>
+    // Expression x has type Interval<`56>
+    // Expression x has type Interval<`56>
     {
-        return /* Interval_Interval_119<T_443<>><`51> */
+        return /* Interval<`51> */
         /*  */
-        Right(/* Interval_Interval_119<T_443<>><`56> */
+        Right(/* Interval<`56> */
         x, /* Number_120<> */
         0.5);
     }
@@ -5328,17 +5328,17 @@ public static partial class Extensions
     // Type resolver associated with HalfSize(x:Concept:Interval):Concept:Numerical;
     // Success=True Message=
     // Expression types
-    // Expression Half(Size(x)) has type Number_Number_120<><>
-    // Expression Size(x) has type Numerical_Numerical_112<><>
-    // Expression Size(x) has type Numerical_Numerical_112<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`58>
-    // Expression x has type Interval_Interval_119<T_443<>><`58>
+    // Expression Half(Size(x)) has type Number<>
+    // Expression Size(x) has type Numerical<>
+    // Expression Size(x) has type Numerical<>
+    // Expression x has type Interval<`58>
+    // Expression x has type Interval<`58>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Half(/* Numerical_Numerical_112<><> */
+        Half(/* Numerical<> */
         /*  */
-        Size(/* Interval_Interval_119<T_443<>><`58> */
+        Size(/* Interval<`58> */
         x));
     }
     public static Interval Recenter<T>(Interval x, Numerical c) // Type Resolver
@@ -5346,37 +5346,37 @@ public static partial class Extensions
     // Success=True Message=
     // Expression types
     // Expression Tuple(Subtract(c, HalfSize(x)), Add(c, HalfSize(x))) has type `100
-    // Expression Add(c, HalfSize(x)) has type Arithmetic_Arithmetic_116<><>
-    // Expression Add(c, HalfSize(x)) has type Arithmetic_Arithmetic_116<><>
-    // Expression HalfSize(x) has type Numerical_Numerical_112<><>
-    // Expression HalfSize(x) has type Numerical_Numerical_112<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`59>
-    // Expression x has type Interval_Interval_119<T_443<>><`59>
-    // Expression c has type Numerical_Numerical_112<><>
-    // Expression c has type Numerical_Numerical_112<><>
-    // Expression Subtract(c, HalfSize(x)) has type Number_Number_120<><>
-    // Expression Subtract(c, HalfSize(x)) has type Number_Number_120<><>
-    // Expression HalfSize(x) has type Numerical_Numerical_112<><>
-    // Expression HalfSize(x) has type Numerical_Numerical_112<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`59>
-    // Expression x has type Interval_Interval_119<T_443<>><`59>
-    // Expression c has type Numerical_Numerical_112<><>
-    // Expression c has type Numerical_Numerical_112<><>
+    // Expression Add(c, HalfSize(x)) has type Arithmetic<>
+    // Expression Add(c, HalfSize(x)) has type Arithmetic<>
+    // Expression HalfSize(x) has type Numerical<>
+    // Expression HalfSize(x) has type Numerical<>
+    // Expression x has type Interval<`59>
+    // Expression x has type Interval<`59>
+    // Expression c has type Numerical<>
+    // Expression c has type Numerical<>
+    // Expression Subtract(c, HalfSize(x)) has type Number<>
+    // Expression Subtract(c, HalfSize(x)) has type Number<>
+    // Expression HalfSize(x) has type Numerical<>
+    // Expression HalfSize(x) has type Numerical<>
+    // Expression x has type Interval<`59>
+    // Expression x has type Interval<`59>
+    // Expression c has type Numerical<>
+    // Expression c has type Numerical<>
     {
         return /* `100 */
         /*  */
-        Tuple(/* Number_Number_120<><> */
+        Tuple(/* Number<> */
         /*  */
-        Subtract(/* Numerical_Numerical_112<><> */
-        c, /* Numerical_Numerical_112<><> */
+        Subtract(/* Numerical<> */
+        c, /* Numerical<> */
         /*  */
-        HalfSize(/* Interval_Interval_119<T_443<>><`59> */
-        x)), /* Arithmetic_Arithmetic_116<><> */
+        HalfSize(/* Interval<`59> */
+        x)), /* Arithmetic<> */
         /*  */
-        Add(/* Numerical_Numerical_112<><> */
-        c, /* Numerical_Numerical_112<><> */
+        Add(/* Numerical<> */
+        c, /* Numerical<> */
         /*  */
-        HalfSize(/* Interval_Interval_119<T_443<>><`59> */
+        HalfSize(/* Interval<`59> */
         x)));
     }
     public static Interval Clamp<T>(Interval x, Interval y) // Type Resolver
@@ -5384,86 +5384,86 @@ public static partial class Extensions
     // Success=True Message=
     // Expression types
     // Expression Tuple(Clamp(x, Min(y)), Clamp(x, Max(y))) has type `101
-    // Expression Clamp(x, Max(y)) has type Interval_Interval_119<T_443<>><`63>
-    // Expression Clamp(x, Max(y)) has type Interval_Interval_119<T_443<>><`63>
-    // Expression Max(y) has type T_T_443<><>
-    // Expression Max(y) has type T_T_443<><>
-    // Expression y has type Interval_Interval_119<T_443<>><`62>
-    // Expression y has type Interval_Interval_119<T_443<>><`62>
-    // Expression x has type Interval_Interval_119<T_443<>><`61>
-    // Expression x has type Interval_Interval_119<T_443<>><`61>
-    // Expression Clamp(x, Min(y)) has type Interval_Interval_119<T_443<>><`63>
-    // Expression Clamp(x, Min(y)) has type Interval_Interval_119<T_443<>><`63>
-    // Expression Min(y) has type T_T_443<><>
-    // Expression Min(y) has type T_T_443<><>
-    // Expression y has type Interval_Interval_119<T_443<>><`62>
-    // Expression y has type Interval_Interval_119<T_443<>><`62>
-    // Expression x has type Interval_Interval_119<T_443<>><`61>
-    // Expression x has type Interval_Interval_119<T_443<>><`61>
+    // Expression Clamp(x, Max(y)) has type Interval<`63>
+    // Expression Clamp(x, Max(y)) has type Interval<`63>
+    // Expression Max(y) has type T<>
+    // Expression Max(y) has type T<>
+    // Expression y has type Interval<`62>
+    // Expression y has type Interval<`62>
+    // Expression x has type Interval<`61>
+    // Expression x has type Interval<`61>
+    // Expression Clamp(x, Min(y)) has type Interval<`63>
+    // Expression Clamp(x, Min(y)) has type Interval<`63>
+    // Expression Min(y) has type T<>
+    // Expression Min(y) has type T<>
+    // Expression y has type Interval<`62>
+    // Expression y has type Interval<`62>
+    // Expression x has type Interval<`61>
+    // Expression x has type Interval<`61>
     {
         return /* `101 */
         /*  */
-        Tuple(/* Interval_Interval_119<T_443<>><`63> */
+        Tuple(/* Interval<`63> */
         /*  */
-        Clamp(/* Interval_Interval_119<T_443<>><`61> */
-        x, /* T_T_443<><> */
+        Clamp(/* Interval<`61> */
+        x, /* T<> */
         /*  */
-        Min(/* Interval_Interval_119<T_443<>><`62> */
-        y)), /* Interval_Interval_119<T_443<>><`63> */
+        Min(/* Interval<`62> */
+        y)), /* Interval<`63> */
         /*  */
-        Clamp(/* Interval_Interval_119<T_443<>><`61> */
-        x, /* T_T_443<><> */
+        Clamp(/* Interval<`61> */
+        x, /* T<> */
         /*  */
-        Max(/* Interval_Interval_119<T_443<>><`62> */
+        Max(/* Interval<`62> */
         y)));
     }
     public static Numerical Clamp<T>(Interval x, Numerical value) // Type Resolver
     // Type resolver associated with Clamp(x:Concept:Interval,value:Concept:Numerical):Concept:Numerical;
-    // Success=False Message=Can't cast from Boolean_Boolean_123<><> to Numerical_Numerical_112<><>
+    // Success=False Message=Can't cast from Boolean<> to Numerical<>
     // Expression types
-    // Expression LessThan(value, (Min(x)?Min(x):GreaterThan(value, (Max(x)?Max(x):value)))) has type Boolean_Boolean_123<><>
-    // Expression (Min(x)?Min(x):GreaterThan(value, (Max(x)?Max(x):value))) has type T_T_443<><>
-    // Expression (Min(x)?Min(x):GreaterThan(value, (Max(x)?Max(x):value))) has type T_T_443<><>
-    // Expression GreaterThan(value, (Max(x)?Max(x):value)) has type Boolean_Boolean_123<><>
-    // Expression (Max(x)?Max(x):value) has type T_T_443<><>
-    // Expression (Max(x)?Max(x):value) has type T_T_443<><>
-    // Expression value has type Numerical_Numerical_112<><>
-    // Expression Max(x) has type T_T_443<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`64>
-    // Expression x has type Interval_Interval_119<T_443<>><`64>
-    // Expression value has type Numerical_Numerical_112<><>
-    // Expression value has type Numerical_Numerical_112<><>
-    // Expression Min(x) has type T_T_443<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`64>
-    // Expression x has type Interval_Interval_119<T_443<>><`64>
-    // Expression value has type Numerical_Numerical_112<><>
-    // Expression value has type Numerical_Numerical_112<><>
+    // Expression LessThan(value, (Min(x)?Min(x):GreaterThan(value, (Max(x)?Max(x):value)))) has type Boolean<>
+    // Expression (Min(x)?Min(x):GreaterThan(value, (Max(x)?Max(x):value))) has type T<>
+    // Expression (Min(x)?Min(x):GreaterThan(value, (Max(x)?Max(x):value))) has type T<>
+    // Expression GreaterThan(value, (Max(x)?Max(x):value)) has type Boolean<>
+    // Expression (Max(x)?Max(x):value) has type T<>
+    // Expression (Max(x)?Max(x):value) has type T<>
+    // Expression value has type Numerical<>
+    // Expression Max(x) has type T<>
+    // Expression x has type Interval<`64>
+    // Expression x has type Interval<`64>
+    // Expression value has type Numerical<>
+    // Expression value has type Numerical<>
+    // Expression Min(x) has type T<>
+    // Expression x has type Interval<`64>
+    // Expression x has type Interval<`64>
+    // Expression value has type Numerical<>
+    // Expression value has type Numerical<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        LessThan(/* Numerical_Numerical_112<><> */
-        value, /* T_T_443<><> */
+        LessThan(/* Numerical<> */
+        value, /* T<> */
         /*  */
         /*  */
         Min(/*  */
         x)
-            ? /* T_T_443<><> */
+            ? /* T<> */
             /*  */
-            Min(/* Interval_Interval_119<T_443<>><`64> */
+            Min(/* Interval<`64> */
             x)
-            : /* Boolean_Boolean_123<><> */
+            : /* Boolean<> */
             /*  */
-            GreaterThan(/* Numerical_Numerical_112<><> */
-            value, /* T_T_443<><> */
+            GreaterThan(/* Numerical<> */
+            value, /* T<> */
             /*  */
             /*  */
             Max(/*  */
             x)
-                ? /* T_T_443<><> */
+                ? /* T<> */
                 /*  */
-                Max(/* Interval_Interval_119<T_443<>><`64> */
+                Max(/* Interval<`64> */
                 x)
-                : /* Numerical_Numerical_112<><> */
+                : /* Numerical<> */
                 value
             )
         );
@@ -5472,38 +5472,38 @@ public static partial class Extensions
     // Type resolver associated with Within(x:Concept:Interval,value:Concept:Numerical):Type:Boolean;
     // Success=True Message=
     // Expression types
-    // Expression GreaterThanOrEquals(value, And(Min(x), LessThanOrEquals(value, Max(x)))) has type Boolean_Boolean_123<><>
-    // Expression And(Min(x), LessThanOrEquals(value, Max(x))) has type Boolean_Boolean_123<><>
-    // Expression And(Min(x), LessThanOrEquals(value, Max(x))) has type Boolean_Boolean_123<><>
-    // Expression LessThanOrEquals(value, Max(x)) has type Boolean_Boolean_123<><>
-    // Expression LessThanOrEquals(value, Max(x)) has type Boolean_Boolean_123<><>
-    // Expression Max(x) has type T_T_443<><>
-    // Expression Max(x) has type T_T_443<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`65>
-    // Expression x has type Interval_Interval_119<T_443<>><`65>
-    // Expression value has type Numerical_Numerical_112<><>
-    // Expression value has type Numerical_Numerical_112<><>
-    // Expression Min(x) has type T_T_443<><>
-    // Expression Min(x) has type T_T_443<><>
-    // Expression x has type Interval_Interval_119<T_443<>><`65>
-    // Expression x has type Interval_Interval_119<T_443<>><`65>
-    // Expression value has type Numerical_Numerical_112<><>
-    // Expression value has type Numerical_Numerical_112<><>
+    // Expression GreaterThanOrEquals(value, And(Min(x), LessThanOrEquals(value, Max(x)))) has type Boolean<>
+    // Expression And(Min(x), LessThanOrEquals(value, Max(x))) has type Boolean<>
+    // Expression And(Min(x), LessThanOrEquals(value, Max(x))) has type Boolean<>
+    // Expression LessThanOrEquals(value, Max(x)) has type Boolean<>
+    // Expression LessThanOrEquals(value, Max(x)) has type Boolean<>
+    // Expression Max(x) has type T<>
+    // Expression Max(x) has type T<>
+    // Expression x has type Interval<`65>
+    // Expression x has type Interval<`65>
+    // Expression value has type Numerical<>
+    // Expression value has type Numerical<>
+    // Expression Min(x) has type T<>
+    // Expression Min(x) has type T<>
+    // Expression x has type Interval<`65>
+    // Expression x has type Interval<`65>
+    // Expression value has type Numerical<>
+    // Expression value has type Numerical<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        GreaterThanOrEquals(/* Numerical_Numerical_112<><> */
-        value, /* Boolean_Boolean_123<><> */
+        GreaterThanOrEquals(/* Numerical<> */
+        value, /* Boolean<> */
         /*  */
-        And(/* T_T_443<><> */
+        And(/* T<> */
         /*  */
-        Min(/* Interval_Interval_119<T_443<>><`65> */
-        x), /* Boolean_Boolean_123<><> */
+        Min(/* Interval<`65> */
+        x), /* Boolean<> */
         /*  */
-        LessThanOrEquals(/* Numerical_Numerical_112<><> */
-        value, /* T_T_443<><> */
+        LessThanOrEquals(/* Numerical<> */
+        value, /* T<> */
         /*  */
-        Max(/* Interval_Interval_119<T_443<>><`65> */
+        Max(/* Interval<`65> */
         x))));
     }
 }
@@ -5513,19 +5513,19 @@ public static partial class Extensions
     // Type resolver associated with ToString(x:Concept:Value):Type:String;
     // Success=True Message=
     // Expression types
-    // Expression Join(FieldValues(x), , ) has type String_String_122<><>
+    // Expression Join(FieldValues(x), , ) has type String<>
     // Expression ,  has type String_122<>
     // Expression ,  has type String_122<>
-    // Expression FieldValues(x) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(x) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression x has type Value_Value_108<><>
-    // Expression x has type Value_Value_108<><>
+    // Expression FieldValues(x) has type Array<Any<>>
+    // Expression FieldValues(x) has type Array<Any<>>
+    // Expression x has type Value<>
+    // Expression x has type Value<>
     {
-        return /* String_String_122<><> */
+        return /* String<> */
         /*  */
-        Join(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        Join(/* Array<Any<>> */
         /*  */
-        FieldValues(/* Value_Value_108<><> */
+        FieldValues(/* Value<> */
         x), /* String_122<> */
         , );
     }
@@ -5536,106 +5536,106 @@ public static partial class Extensions
     // Type resolver associated with Sum(v:Concept:Array):Concept:Numerical;
     // Success=True Message=
     // Expression types
-    // Expression Aggregate(v, 0, Add) has type Any_Any_107<><>
+    // Expression Aggregate(v, 0, Add) has type Any<>
     // Expression Add has type Function_3<>
     // Expression Add has type Function_3<>
     // Expression 0 has type Integer_121<>
     // Expression 0 has type Integer_121<>
-    // Expression v has type Array_Array_109<T_365<>><`66>
-    // Expression v has type Array_Array_109<T_365<>><`66>
+    // Expression v has type Array<`66>
+    // Expression v has type Array<`66>
     {
-        return /* Any_Any_107<><> */
+        return /* Any<> */
         /*  */
-        Aggregate(/* Array_Array_109<T_365<>><`66> */
+        Aggregate(/* Array<`66> */
         v, /* Integer_121<> */
         0, /* Function_3<> */
         Add);
     }
     public static Number SumSquares<T>(Array v) // Type Resolver
     // Type resolver associated with SumSquares(v:Concept:Array):Type:Number;
-    // Success=False Message=Can't cast from Numerical_Numerical_112<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Numerical<> to Number<>
     // Expression types
-    // Expression Sum(Square(v)) has type Numerical_Numerical_112<><>
-    // Expression Square(v) has type Number_Number_120<><>
-    // Expression Square(v) has type Number_Number_120<><>
-    // Expression v has type Array_Array_109<T_365<>><`67>
-    // Expression v has type Array_Array_109<T_365<>><`67>
+    // Expression Sum(Square(v)) has type Numerical<>
+    // Expression Square(v) has type Number<>
+    // Expression Square(v) has type Number<>
+    // Expression v has type Array<`67>
+    // Expression v has type Array<`67>
     {
-        return /* Numerical_Numerical_112<><> */
+        return /* Numerical<> */
         /*  */
-        Sum(/* Number_Number_120<><> */
+        Sum(/* Number<> */
         /*  */
-        Square(/* Array_Array_109<T_365<>><`67> */
+        Square(/* Array<`67> */
         v));
     }
     public static Number LengthSquared<T>(Array v) // Type Resolver
     // Type resolver associated with LengthSquared(v:Concept:Array):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression SumSquares(v) has type Number_Number_120<><>
-    // Expression v has type Array_Array_109<T_365<>><`68>
-    // Expression v has type Array_Array_109<T_365<>><`68>
+    // Expression SumSquares(v) has type Number<>
+    // Expression v has type Array<`68>
+    // Expression v has type Array<`68>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        SumSquares(/* Array_Array_109<T_365<>><`68> */
+        SumSquares(/* Array<`68> */
         v);
     }
     public static Number Length<T>(Array v) // Type Resolver
     // Type resolver associated with Length(v:Concept:Array):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression SquareRoot(LengthSquared(v)) has type Number_Number_120<><>
-    // Expression LengthSquared(v) has type Number_Number_120<><>
-    // Expression LengthSquared(v) has type Number_Number_120<><>
-    // Expression v has type Array_Array_109<T_365<>><`69>
-    // Expression v has type Array_Array_109<T_365<>><`69>
+    // Expression SquareRoot(LengthSquared(v)) has type Number<>
+    // Expression LengthSquared(v) has type Number<>
+    // Expression LengthSquared(v) has type Number<>
+    // Expression v has type Array<`69>
+    // Expression v has type Array<`69>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        SquareRoot(/* Number_Number_120<><> */
+        SquareRoot(/* Number<> */
         /*  */
-        LengthSquared(/* Array_Array_109<T_365<>><`69> */
+        LengthSquared(/* Array<`69> */
         v));
     }
     public static Number Dot<T>(Vector v1, Vector v2) // Type Resolver
     // Type resolver associated with Dot(v1:Concept:Vector,v2:Concept:Vector):Type:Number;
-    // Success=False Message=Can't cast from Numerical_Numerical_112<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Numerical<> to Number<>
     // Expression types
-    // Expression Sum(Multiply(v1, v2)) has type Numerical_Numerical_112<><>
-    // Expression Multiply(v1, v2) has type Arithmetic_Arithmetic_116<><>
-    // Expression Multiply(v1, v2) has type Arithmetic_Arithmetic_116<><>
-    // Expression v2 has type Vector_Vector_110<T_375<>><`71>
-    // Expression v2 has type Vector_Vector_110<T_375<>><`71>
-    // Expression v1 has type Vector_Vector_110<T_375<>><`70>
-    // Expression v1 has type Vector_Vector_110<T_375<>><`70>
+    // Expression Sum(Multiply(v1, v2)) has type Numerical<>
+    // Expression Multiply(v1, v2) has type Arithmetic<>
+    // Expression Multiply(v1, v2) has type Arithmetic<>
+    // Expression v2 has type Vector<`71>
+    // Expression v2 has type Vector<`71>
+    // Expression v1 has type Vector<`70>
+    // Expression v1 has type Vector<`70>
     {
-        return /* Numerical_Numerical_112<><> */
+        return /* Numerical<> */
         /*  */
-        Sum(/* Arithmetic_Arithmetic_116<><> */
+        Sum(/* Arithmetic<> */
         /*  */
-        Multiply(/* Vector_Vector_110<T_375<>><`70> */
-        v1, /* Vector_Vector_110<T_375<>><`71> */
+        Multiply(/* Vector<`70> */
+        v1, /* Vector<`71> */
         v2));
     }
     public static Vector Normal<T>(Vector v) // Type Resolver
     // Type resolver associated with Normal(v:Concept:Vector):Concept:Vector;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Vector_Vector_110<T_375<>><`73>
+    // Success=False Message=Can't cast from Arithmetic<> to Vector<`73>
     // Expression types
-    // Expression Divide(v, Length(v)) has type Arithmetic_Arithmetic_116<><>
-    // Expression Length(v) has type Number_Number_120<><>
-    // Expression Length(v) has type Number_Number_120<><>
-    // Expression v has type Vector_Vector_110<T_375<>><`72>
-    // Expression v has type Vector_Vector_110<T_375<>><`72>
-    // Expression v has type Vector_Vector_110<T_375<>><`72>
-    // Expression v has type Vector_Vector_110<T_375<>><`72>
+    // Expression Divide(v, Length(v)) has type Arithmetic<>
+    // Expression Length(v) has type Number<>
+    // Expression Length(v) has type Number<>
+    // Expression v has type Vector<`72>
+    // Expression v has type Vector<`72>
+    // Expression v has type Vector<`72>
+    // Expression v has type Vector<`72>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Divide(/* Vector_Vector_110<T_375<>><`72> */
-        v, /* Number_Number_120<><> */
+        Divide(/* Vector<`72> */
+        v, /* Number<> */
         /*  */
-        Length(/* Vector_Vector_110<T_375<>><`72> */
+        Length(/* Vector<`72> */
         v));
     }
 }
@@ -5645,15 +5645,15 @@ public static partial class Extensions
     // Type resolver associated with SquareRoot(x:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression Pow(x, 0.5) has type Number_Number_120<><>
+    // Expression Pow(x, 0.5) has type Number<>
     // Expression 0.5 has type Number_120<>
     // Expression 0.5 has type Number_120<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Pow(/* Number_Number_120<><> */
+        Pow(/* Number<> */
         x, /* Number_120<> */
         0.5);
     }
@@ -5661,35 +5661,35 @@ public static partial class Extensions
     // Type resolver associated with Square(x:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression Multiply(x, x) has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression Multiply(x, x) has type Number<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Multiply(/* Number_Number_120<><> */
-        x, /* Number_Number_120<><> */
+        Multiply(/* Number<> */
+        x, /* Number<> */
         x);
     }
     public static Number Clamp(Number x) // Type Resolver
     // Type resolver associated with Clamp(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Interval_Interval_119<T_443<>><`63> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Interval<`63> to Number<>
     // Expression types
-    // Expression Clamp(x, Tuple(0, 1)) has type Interval_Interval_119<T_443<>><`63>
+    // Expression Clamp(x, Tuple(0, 1)) has type Interval<`63>
     // Expression Tuple(0, 1) has type `102
     // Expression Tuple(0, 1) has type `102
     // Expression 1 has type Integer_121<>
     // Expression 1 has type Integer_121<>
     // Expression 0 has type Integer_121<>
     // Expression 0 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Interval_Interval_119<T_443<>><`63> */
+        return /* Interval<`63> */
         /*  */
-        Clamp(/* Number_Number_120<><> */
+        Clamp(/* Number<> */
         x, /* `102 */
         /*  */
         Tuple(/* Integer_121<> */
@@ -5698,77 +5698,77 @@ public static partial class Extensions
     }
     public static Number PlusOne(Number x) // Type Resolver
     // Type resolver associated with PlusOne(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Add(x, One(x)) has type Arithmetic_Arithmetic_116<><>
-    // Expression One(x) has type Numerical_Numerical_112<><>
-    // Expression One(x) has type Numerical_Numerical_112<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression Add(x, One(x)) has type Arithmetic<>
+    // Expression One(x) has type Numerical<>
+    // Expression One(x) has type Numerical<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Add(/* Number_Number_120<><> */
-        x, /* Numerical_Numerical_112<><> */
+        Add(/* Number<> */
+        x, /* Numerical<> */
         /*  */
-        One(/* Number_Number_120<><> */
+        One(/* Number<> */
         x));
     }
     public static Number MinusOne(Number x) // Type Resolver
     // Type resolver associated with MinusOne(x:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression Subtract(x, One(x)) has type Number_Number_120<><>
-    // Expression One(x) has type Numerical_Numerical_112<><>
-    // Expression One(x) has type Numerical_Numerical_112<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression Subtract(x, One(x)) has type Number<>
+    // Expression One(x) has type Numerical<>
+    // Expression One(x) has type Numerical<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Subtract(/* Number_Number_120<><> */
-        x, /* Numerical_Numerical_112<><> */
+        Subtract(/* Number<> */
+        x, /* Numerical<> */
         /*  */
-        One(/* Number_Number_120<><> */
+        One(/* Number<> */
         x));
     }
     public static Number FromOne(Number x) // Type Resolver
     // Type resolver associated with FromOne(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from ScalarArithmetic_ScalarArithmetic_117<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from ScalarArithmetic<> to Number<>
     // Expression types
-    // Expression Subtract(One(x), x) has type ScalarArithmetic_ScalarArithmetic_117<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression One(x) has type Numerical_Numerical_112<><>
-    // Expression One(x) has type Numerical_Numerical_112<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression Subtract(One(x), x) has type ScalarArithmetic<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
+    // Expression One(x) has type Numerical<>
+    // Expression One(x) has type Numerical<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* ScalarArithmetic_ScalarArithmetic_117<><> */
+        return /* ScalarArithmetic<> */
         /*  */
-        Subtract(/* Numerical_Numerical_112<><> */
+        Subtract(/* Numerical<> */
         /*  */
-        One(/* Number_Number_120<><> */
-        x), /* Number_Number_120<><> */
+        One(/* Number<> */
+        x), /* Number<> */
         x);
     }
     public static Boolean IsPositive(Number x) // Type Resolver
     // Type resolver associated with IsPositive(x:Type:Number):Type:Boolean;
     // Success=True Message=
     // Expression types
-    // Expression GreaterThanOrEquals(x, 0) has type Boolean_Boolean_123<><>
+    // Expression GreaterThanOrEquals(x, 0) has type Boolean<>
     // Expression 0 has type Integer_121<>
     // Expression 0 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        GreaterThanOrEquals(/* Number_Number_120<><> */
+        GreaterThanOrEquals(/* Number<> */
         x, /* Integer_121<> */
         0);
     }
@@ -5776,15 +5776,15 @@ public static partial class Extensions
     // Type resolver associated with GtZ(x:Type:Number):Type:Boolean;
     // Success=True Message=
     // Expression types
-    // Expression GreaterThan(x, 0) has type Boolean_Boolean_123<><>
+    // Expression GreaterThan(x, 0) has type Boolean<>
     // Expression 0 has type Integer_121<>
     // Expression 0 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        GreaterThan(/* Number_Number_120<><> */
+        GreaterThan(/* Number<> */
         x, /* Integer_121<> */
         0);
     }
@@ -5792,15 +5792,15 @@ public static partial class Extensions
     // Type resolver associated with LtZ(x:Type:Number):Type:Boolean;
     // Success=True Message=
     // Expression types
-    // Expression LessThan(x, 0) has type Boolean_Boolean_123<><>
+    // Expression LessThan(x, 0) has type Boolean<>
     // Expression 0 has type Integer_121<>
     // Expression 0 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        LessThan(/* Number_Number_120<><> */
+        LessThan(/* Number<> */
         x, /* Integer_121<> */
         0);
     }
@@ -5808,15 +5808,15 @@ public static partial class Extensions
     // Type resolver associated with GtEqZ(x:Type:Number):Type:Boolean;
     // Success=True Message=
     // Expression types
-    // Expression GreaterThanOrEquals(x, 0) has type Boolean_Boolean_123<><>
+    // Expression GreaterThanOrEquals(x, 0) has type Boolean<>
     // Expression 0 has type Integer_121<>
     // Expression 0 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        GreaterThanOrEquals(/* Number_Number_120<><> */
+        GreaterThanOrEquals(/* Number<> */
         x, /* Integer_121<> */
         0);
     }
@@ -5824,15 +5824,15 @@ public static partial class Extensions
     // Type resolver associated with LtEqZ(x:Type:Number):Type:Boolean;
     // Success=True Message=
     // Expression types
-    // Expression LessThanOrEquals(x, 0) has type Boolean_Boolean_123<><>
+    // Expression LessThanOrEquals(x, 0) has type Boolean<>
     // Expression 0 has type Integer_121<>
     // Expression 0 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        LessThanOrEquals(/* Number_Number_120<><> */
+        LessThanOrEquals(/* Number<> */
         x, /* Integer_121<> */
         0);
     }
@@ -5840,59 +5840,59 @@ public static partial class Extensions
     // Type resolver associated with IsNegative(x:Type:Number):Type:Boolean;
     // Success=True Message=
     // Expression types
-    // Expression LessThan(x, 0) has type Boolean_Boolean_123<><>
+    // Expression LessThan(x, 0) has type Boolean<>
     // Expression 0 has type Integer_121<>
     // Expression 0 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        LessThan(/* Number_Number_120<><> */
+        LessThan(/* Number<> */
         x, /* Integer_121<> */
         0);
     }
     public static Number Sign(Number x) // Type Resolver
     // Type resolver associated with Sign(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression (LtZ(x)?Negative(One(x)):(GtZ(x)?One(x):Zero(x))) has type Arithmetic_Arithmetic_116<><>
-    // Expression (GtZ(x)?One(x):Zero(x)) has type Numerical_Numerical_112<><>
-    // Expression Zero(x) has type Numerical_Numerical_112<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression One(x) has type Numerical_Numerical_112<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression Negative(One(x)) has type Arithmetic_Arithmetic_116<><>
-    // Expression One(x) has type Numerical_Numerical_112<><>
-    // Expression One(x) has type Numerical_Numerical_112<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression (LtZ(x)?Negative(One(x)):(GtZ(x)?One(x):Zero(x))) has type Arithmetic<>
+    // Expression (GtZ(x)?One(x):Zero(x)) has type Numerical<>
+    // Expression Zero(x) has type Numerical<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
+    // Expression One(x) has type Numerical<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
+    // Expression Negative(One(x)) has type Arithmetic<>
+    // Expression One(x) has type Numerical<>
+    // Expression One(x) has type Numerical<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
         /*  */
         LtZ(/*  */
         x)
-            ? /* Arithmetic_Arithmetic_116<><> */
+            ? /* Arithmetic<> */
             /*  */
-            Negative(/* Numerical_Numerical_112<><> */
+            Negative(/* Numerical<> */
             /*  */
-            One(/* Number_Number_120<><> */
+            One(/* Number<> */
             x))
-            : /* Numerical_Numerical_112<><> */
+            : /* Numerical<> */
             /*  */
             /*  */
             GtZ(/*  */
             x)
-                ? /* Numerical_Numerical_112<><> */
+                ? /* Numerical<> */
                 /*  */
-                One(/* Number_Number_120<><> */
+                One(/* Number<> */
                 x)
-                : /* Numerical_Numerical_112<><> */
+                : /* Numerical<> */
                 /*  */
-                Zero(/* Number_Number_120<><> */
+                Zero(/* Number<> */
                 x)
 
         ;
@@ -5901,235 +5901,235 @@ public static partial class Extensions
     // Type resolver associated with Abs(x:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression (LtZ(x)?Negative(x):x) has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression Negative(x) has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression (LtZ(x)?Negative(x):x) has type Number<>
+    // Expression x has type Number<>
+    // Expression Negative(x) has type Number<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
         /*  */
         LtZ(/*  */
         x)
-            ? /* Number_Number_120<><> */
+            ? /* Number<> */
             /*  */
-            Negative(/* Number_Number_120<><> */
+            Negative(/* Number<> */
             x)
-            : /* Number_Number_120<><> */
+            : /* Number<> */
             x
         ;
     }
     public static Number Half(Number x) // Type Resolver
     // Type resolver associated with Half(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Divide(x, 2) has type Arithmetic_Arithmetic_116<><>
+    // Expression Divide(x, 2) has type Arithmetic<>
     // Expression 2 has type Integer_121<>
     // Expression 2 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Divide(/* Number_Number_120<><> */
+        Divide(/* Number<> */
         x, /* Integer_121<> */
         2);
     }
     public static Number Third(Number x) // Type Resolver
     // Type resolver associated with Third(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Divide(x, 3) has type Arithmetic_Arithmetic_116<><>
+    // Expression Divide(x, 3) has type Arithmetic<>
     // Expression 3 has type Integer_121<>
     // Expression 3 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Divide(/* Number_Number_120<><> */
+        Divide(/* Number<> */
         x, /* Integer_121<> */
         3);
     }
     public static Number Quarter(Number x) // Type Resolver
     // Type resolver associated with Quarter(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Divide(x, 4) has type Arithmetic_Arithmetic_116<><>
+    // Expression Divide(x, 4) has type Arithmetic<>
     // Expression 4 has type Integer_121<>
     // Expression 4 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Divide(/* Number_Number_120<><> */
+        Divide(/* Number<> */
         x, /* Integer_121<> */
         4);
     }
     public static Number Fifth(Number x) // Type Resolver
     // Type resolver associated with Fifth(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Divide(x, 5) has type Arithmetic_Arithmetic_116<><>
+    // Expression Divide(x, 5) has type Arithmetic<>
     // Expression 5 has type Integer_121<>
     // Expression 5 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Divide(/* Number_Number_120<><> */
+        Divide(/* Number<> */
         x, /* Integer_121<> */
         5);
     }
     public static Number Sixth(Number x) // Type Resolver
     // Type resolver associated with Sixth(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Divide(x, 6) has type Arithmetic_Arithmetic_116<><>
+    // Expression Divide(x, 6) has type Arithmetic<>
     // Expression 6 has type Integer_121<>
     // Expression 6 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Divide(/* Number_Number_120<><> */
+        Divide(/* Number<> */
         x, /* Integer_121<> */
         6);
     }
     public static Number Seventh(Number x) // Type Resolver
     // Type resolver associated with Seventh(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Divide(x, 7) has type Arithmetic_Arithmetic_116<><>
+    // Expression Divide(x, 7) has type Arithmetic<>
     // Expression 7 has type Integer_121<>
     // Expression 7 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Divide(/* Number_Number_120<><> */
+        Divide(/* Number<> */
         x, /* Integer_121<> */
         7);
     }
     public static Number Eighth(Number x) // Type Resolver
     // Type resolver associated with Eighth(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Divide(x, 8) has type Arithmetic_Arithmetic_116<><>
+    // Expression Divide(x, 8) has type Arithmetic<>
     // Expression 8 has type Integer_121<>
     // Expression 8 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Divide(/* Number_Number_120<><> */
+        Divide(/* Number<> */
         x, /* Integer_121<> */
         8);
     }
     public static Number Ninth(Number x) // Type Resolver
     // Type resolver associated with Ninth(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Divide(x, 9) has type Arithmetic_Arithmetic_116<><>
+    // Expression Divide(x, 9) has type Arithmetic<>
     // Expression 9 has type Integer_121<>
     // Expression 9 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Divide(/* Number_Number_120<><> */
+        Divide(/* Number<> */
         x, /* Integer_121<> */
         9);
     }
     public static Number Tenth(Number x) // Type Resolver
     // Type resolver associated with Tenth(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Divide(x, 10) has type Arithmetic_Arithmetic_116<><>
+    // Expression Divide(x, 10) has type Arithmetic<>
     // Expression 10 has type Integer_121<>
     // Expression 10 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Divide(/* Number_Number_120<><> */
+        Divide(/* Number<> */
         x, /* Integer_121<> */
         10);
     }
     public static Number Sixteenth(Number x) // Type Resolver
     // Type resolver associated with Sixteenth(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Divide(x, 16) has type Arithmetic_Arithmetic_116<><>
+    // Expression Divide(x, 16) has type Arithmetic<>
     // Expression 16 has type Integer_121<>
     // Expression 16 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Divide(/* Number_Number_120<><> */
+        Divide(/* Number<> */
         x, /* Integer_121<> */
         16);
     }
     public static Number Hundredth(Number x) // Type Resolver
     // Type resolver associated with Hundredth(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Divide(x, 100) has type Arithmetic_Arithmetic_116<><>
+    // Expression Divide(x, 100) has type Arithmetic<>
     // Expression 100 has type Integer_121<>
     // Expression 100 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Divide(/* Number_Number_120<><> */
+        Divide(/* Number<> */
         x, /* Integer_121<> */
         100);
     }
     public static Number Thousandth(Number x) // Type Resolver
     // Type resolver associated with Thousandth(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Divide(x, 1000) has type Arithmetic_Arithmetic_116<><>
+    // Expression Divide(x, 1000) has type Arithmetic<>
     // Expression 1000 has type Integer_121<>
     // Expression 1000 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Divide(/* Number_Number_120<><> */
+        Divide(/* Number<> */
         x, /* Integer_121<> */
         1000);
     }
     public static Number Millionth(Number x) // Type Resolver
     // Type resolver associated with Millionth(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Divide(x, Divide(1000, 1000)) has type Arithmetic_Arithmetic_116<><>
-    // Expression Divide(1000, 1000) has type Integer_Integer_121<><>
-    // Expression Divide(1000, 1000) has type Integer_Integer_121<><>
+    // Expression Divide(x, Divide(1000, 1000)) has type Arithmetic<>
+    // Expression Divide(1000, 1000) has type Integer<>
+    // Expression Divide(1000, 1000) has type Integer<>
     // Expression 1000 has type Integer_121<>
     // Expression 1000 has type Integer_121<>
     // Expression 1000 has type Integer_121<>
     // Expression 1000 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Divide(/* Number_Number_120<><> */
-        x, /* Integer_Integer_121<><> */
+        Divide(/* Number<> */
+        x, /* Integer<> */
         /*  */
         Divide(/* Integer_121<> */
         1000, /* Integer_121<> */
@@ -6137,29 +6137,29 @@ public static partial class Extensions
     }
     public static Number Billionth(Number x) // Type Resolver
     // Type resolver associated with Billionth(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Divide(x, Divide(1000, Divide(1000, 1000))) has type Arithmetic_Arithmetic_116<><>
-    // Expression Divide(1000, Divide(1000, 1000)) has type Integer_Integer_121<><>
-    // Expression Divide(1000, Divide(1000, 1000)) has type Integer_Integer_121<><>
-    // Expression Divide(1000, 1000) has type Integer_Integer_121<><>
-    // Expression Divide(1000, 1000) has type Integer_Integer_121<><>
+    // Expression Divide(x, Divide(1000, Divide(1000, 1000))) has type Arithmetic<>
+    // Expression Divide(1000, Divide(1000, 1000)) has type Integer<>
+    // Expression Divide(1000, Divide(1000, 1000)) has type Integer<>
+    // Expression Divide(1000, 1000) has type Integer<>
+    // Expression Divide(1000, 1000) has type Integer<>
     // Expression 1000 has type Integer_121<>
     // Expression 1000 has type Integer_121<>
     // Expression 1000 has type Integer_121<>
     // Expression 1000 has type Integer_121<>
     // Expression 1000 has type Integer_121<>
     // Expression 1000 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Divide(/* Number_Number_120<><> */
-        x, /* Integer_Integer_121<><> */
+        Divide(/* Number<> */
+        x, /* Integer<> */
         /*  */
         Divide(/* Integer_121<> */
-        1000, /* Integer_Integer_121<><> */
+        1000, /* Integer<> */
         /*  */
         Divide(/* Integer_121<> */
         1000, /* Integer_121<> */
@@ -6167,54 +6167,54 @@ public static partial class Extensions
     }
     public static Number Hundred(Number x) // Type Resolver
     // Type resolver associated with Hundred(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Multiply(x, 100) has type Arithmetic_Arithmetic_116<><>
+    // Expression Multiply(x, 100) has type Arithmetic<>
     // Expression 100 has type Integer_121<>
     // Expression 100 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Multiply(/* Number_Number_120<><> */
+        Multiply(/* Number<> */
         x, /* Integer_121<> */
         100);
     }
     public static Number Thousand(Number x) // Type Resolver
     // Type resolver associated with Thousand(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Multiply(x, 1000) has type Arithmetic_Arithmetic_116<><>
+    // Expression Multiply(x, 1000) has type Arithmetic<>
     // Expression 1000 has type Integer_121<>
     // Expression 1000 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Multiply(/* Number_Number_120<><> */
+        Multiply(/* Number<> */
         x, /* Integer_121<> */
         1000);
     }
     public static Number Million(Number x) // Type Resolver
     // Type resolver associated with Million(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Multiply(x, Multiply(1000, 1000)) has type Arithmetic_Arithmetic_116<><>
-    // Expression Multiply(1000, 1000) has type Integer_Integer_121<><>
-    // Expression Multiply(1000, 1000) has type Integer_Integer_121<><>
+    // Expression Multiply(x, Multiply(1000, 1000)) has type Arithmetic<>
+    // Expression Multiply(1000, 1000) has type Integer<>
+    // Expression Multiply(1000, 1000) has type Integer<>
     // Expression 1000 has type Integer_121<>
     // Expression 1000 has type Integer_121<>
     // Expression 1000 has type Integer_121<>
     // Expression 1000 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Multiply(/* Number_Number_120<><> */
-        x, /* Integer_Integer_121<><> */
+        Multiply(/* Number<> */
+        x, /* Integer<> */
         /*  */
         Multiply(/* Integer_121<> */
         1000, /* Integer_121<> */
@@ -6222,29 +6222,29 @@ public static partial class Extensions
     }
     public static Number Billion(Number x) // Type Resolver
     // Type resolver associated with Billion(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Multiply(x, Multiply(1000, Multiply(1000, 1000))) has type Arithmetic_Arithmetic_116<><>
-    // Expression Multiply(1000, Multiply(1000, 1000)) has type Integer_Integer_121<><>
-    // Expression Multiply(1000, Multiply(1000, 1000)) has type Integer_Integer_121<><>
-    // Expression Multiply(1000, 1000) has type Integer_Integer_121<><>
-    // Expression Multiply(1000, 1000) has type Integer_Integer_121<><>
+    // Expression Multiply(x, Multiply(1000, Multiply(1000, 1000))) has type Arithmetic<>
+    // Expression Multiply(1000, Multiply(1000, 1000)) has type Integer<>
+    // Expression Multiply(1000, Multiply(1000, 1000)) has type Integer<>
+    // Expression Multiply(1000, 1000) has type Integer<>
+    // Expression Multiply(1000, 1000) has type Integer<>
     // Expression 1000 has type Integer_121<>
     // Expression 1000 has type Integer_121<>
     // Expression 1000 has type Integer_121<>
     // Expression 1000 has type Integer_121<>
     // Expression 1000 has type Integer_121<>
     // Expression 1000 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Multiply(/* Number_Number_120<><> */
-        x, /* Integer_Integer_121<><> */
+        Multiply(/* Number<> */
+        x, /* Integer<> */
         /*  */
         Multiply(/* Integer_121<> */
-        1000, /* Integer_Integer_121<><> */
+        1000, /* Integer<> */
         /*  */
         Multiply(/* Integer_121<> */
         1000, /* Integer_121<> */
@@ -6252,33 +6252,33 @@ public static partial class Extensions
     }
     public static Number Twice(Number x) // Type Resolver
     // Type resolver associated with Twice(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Multiply(x, 2) has type Arithmetic_Arithmetic_116<><>
+    // Expression Multiply(x, 2) has type Arithmetic<>
     // Expression 2 has type Integer_121<>
     // Expression 2 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Multiply(/* Number_Number_120<><> */
+        Multiply(/* Number<> */
         x, /* Integer_121<> */
         2);
     }
     public static Number Thrice(Number x) // Type Resolver
     // Type resolver associated with Thrice(x:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Multiply(x, 3) has type Arithmetic_Arithmetic_116<><>
+    // Expression Multiply(x, 3) has type Arithmetic<>
     // Expression 3 has type Integer_121<>
     // Expression 3 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
-        Multiply(/* Number_Number_120<><> */
+        Multiply(/* Number<> */
         x, /* Integer_121<> */
         3);
     }
@@ -6286,107 +6286,107 @@ public static partial class Extensions
     // Type resolver associated with SmoothStep(x:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression Multiply(Square(x), Subtract(3, Twice(x))) has type Number_Number_120<><>
-    // Expression Subtract(3, Twice(x)) has type ScalarArithmetic_ScalarArithmetic_117<><>
-    // Expression Subtract(3, Twice(x)) has type ScalarArithmetic_ScalarArithmetic_117<><>
-    // Expression Twice(x) has type Number_Number_120<><>
-    // Expression Twice(x) has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression Multiply(Square(x), Subtract(3, Twice(x))) has type Number<>
+    // Expression Subtract(3, Twice(x)) has type ScalarArithmetic<>
+    // Expression Subtract(3, Twice(x)) has type ScalarArithmetic<>
+    // Expression Twice(x) has type Number<>
+    // Expression Twice(x) has type Number<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     // Expression 3 has type Integer_121<>
     // Expression 3 has type Integer_121<>
-    // Expression Square(x) has type Number_Number_120<><>
-    // Expression Square(x) has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression Square(x) has type Number<>
+    // Expression Square(x) has type Number<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Multiply(/* Number_Number_120<><> */
+        Multiply(/* Number<> */
         /*  */
-        Square(/* Number_Number_120<><> */
-        x), /* ScalarArithmetic_ScalarArithmetic_117<><> */
+        Square(/* Number<> */
+        x), /* ScalarArithmetic<> */
         /*  */
         Subtract(/* Integer_121<> */
-        3, /* Number_Number_120<><> */
+        3, /* Number<> */
         /*  */
-        Twice(/* Number_Number_120<><> */
+        Twice(/* Number<> */
         x)));
     }
     public static Number Pow2(Number x) // Type Resolver
     // Type resolver associated with Pow2(x:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression Multiply(x, x) has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression Multiply(x, x) has type Number<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Multiply(/* Number_Number_120<><> */
-        x, /* Number_Number_120<><> */
+        Multiply(/* Number<> */
+        x, /* Number<> */
         x);
     }
     public static Number Pow3(Number x) // Type Resolver
     // Type resolver associated with Pow3(x:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression Multiply(Pow2(x), x) has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression Pow2(x) has type Number_Number_120<><>
-    // Expression Pow2(x) has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression Multiply(Pow2(x), x) has type Number<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
+    // Expression Pow2(x) has type Number<>
+    // Expression Pow2(x) has type Number<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Multiply(/* Number_Number_120<><> */
+        Multiply(/* Number<> */
         /*  */
-        Pow2(/* Number_Number_120<><> */
-        x), /* Number_Number_120<><> */
+        Pow2(/* Number<> */
+        x), /* Number<> */
         x);
     }
     public static Number Pow4(Number x) // Type Resolver
     // Type resolver associated with Pow4(x:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression Multiply(Pow3(x), x) has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression Pow3(x) has type Number_Number_120<><>
-    // Expression Pow3(x) has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression Multiply(Pow3(x), x) has type Number<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
+    // Expression Pow3(x) has type Number<>
+    // Expression Pow3(x) has type Number<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Multiply(/* Number_Number_120<><> */
+        Multiply(/* Number<> */
         /*  */
-        Pow3(/* Number_Number_120<><> */
-        x), /* Number_Number_120<><> */
+        Pow3(/* Number<> */
+        x), /* Number<> */
         x);
     }
     public static Number Pow5(Number x) // Type Resolver
     // Type resolver associated with Pow5(x:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression Multiply(Pow4(x), x) has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression Pow4(x) has type Number_Number_120<><>
-    // Expression Pow4(x) has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression Multiply(Pow4(x), x) has type Number<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
+    // Expression Pow4(x) has type Number<>
+    // Expression Pow4(x) has type Number<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Multiply(/* Number_Number_120<><> */
+        Multiply(/* Number<> */
         /*  */
-        Pow4(/* Number_Number_120<><> */
-        x), /* Number_Number_120<><> */
+        Pow4(/* Number<> */
+        x), /* Number<> */
         x);
     }
     public static Number Pi(Self self) // Type Resolver
@@ -6402,104 +6402,104 @@ public static partial class Extensions
     // Type resolver associated with AlmostZero(x:Type:Number):Type:Boolean;
     // Success=True Message=
     // Expression types
-    // Expression LessThan(Abs(x), 1E-08) has type Boolean_Boolean_123<><>
+    // Expression LessThan(Abs(x), 1E-08) has type Boolean<>
     // Expression 1E-08 has type Number_120<>
     // Expression 1E-08 has type Number_120<>
-    // Expression Abs(x) has type Number_Number_120<><>
-    // Expression Abs(x) has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression Abs(x) has type Number<>
+    // Expression Abs(x) has type Number<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        LessThan(/* Number_Number_120<><> */
+        LessThan(/* Number<> */
         /*  */
-        Abs(/* Number_Number_120<><> */
+        Abs(/* Number<> */
         x), /* Number_120<> */
         1E-08);
     }
     public static Number Lerp(Number a, Number b, Unit t) // Type Resolver
     // Type resolver associated with Lerp(a:Type:Number,b:Type:Number,t:Type:Unit):Type:Number;
-    // Success=False Message=Can't cast from ScalarArithmetic_ScalarArithmetic_117<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from ScalarArithmetic<> to Number<>
     // Expression types
-    // Expression Multiply(Subtract(1, t), Add(a, Multiply(t, b))) has type ScalarArithmetic_ScalarArithmetic_117<><>
-    // Expression Add(a, Multiply(t, b)) has type Number_Number_120<><>
-    // Expression Add(a, Multiply(t, b)) has type Number_Number_120<><>
-    // Expression Multiply(t, b) has type Number_Number_120<><>
-    // Expression Multiply(t, b) has type Number_Number_120<><>
-    // Expression b has type Number_Number_120<><>
-    // Expression b has type Number_Number_120<><>
-    // Expression t has type Unit_Unit_128<><>
-    // Expression t has type Unit_Unit_128<><>
-    // Expression a has type Number_Number_120<><>
-    // Expression a has type Number_Number_120<><>
-    // Expression Subtract(1, t) has type ScalarArithmetic_ScalarArithmetic_117<><>
-    // Expression Subtract(1, t) has type ScalarArithmetic_ScalarArithmetic_117<><>
-    // Expression t has type Unit_Unit_128<><>
-    // Expression t has type Unit_Unit_128<><>
+    // Expression Multiply(Subtract(1, t), Add(a, Multiply(t, b))) has type ScalarArithmetic<>
+    // Expression Add(a, Multiply(t, b)) has type Number<>
+    // Expression Add(a, Multiply(t, b)) has type Number<>
+    // Expression Multiply(t, b) has type Number<>
+    // Expression Multiply(t, b) has type Number<>
+    // Expression b has type Number<>
+    // Expression b has type Number<>
+    // Expression t has type Unit<>
+    // Expression t has type Unit<>
+    // Expression a has type Number<>
+    // Expression a has type Number<>
+    // Expression Subtract(1, t) has type ScalarArithmetic<>
+    // Expression Subtract(1, t) has type ScalarArithmetic<>
+    // Expression t has type Unit<>
+    // Expression t has type Unit<>
     // Expression 1 has type Integer_121<>
     // Expression 1 has type Integer_121<>
     {
-        return /* ScalarArithmetic_ScalarArithmetic_117<><> */
+        return /* ScalarArithmetic<> */
         /*  */
-        Multiply(/* ScalarArithmetic_ScalarArithmetic_117<><> */
+        Multiply(/* ScalarArithmetic<> */
         /*  */
         Subtract(/* Integer_121<> */
-        1, /* Unit_Unit_128<><> */
-        t), /* Number_Number_120<><> */
+        1, /* Unit<> */
+        t), /* Number<> */
         /*  */
-        Add(/* Number_Number_120<><> */
-        a, /* Number_Number_120<><> */
+        Add(/* Number<> */
+        a, /* Number<> */
         /*  */
-        Multiply(/* Unit_Unit_128<><> */
-        t, /* Number_Number_120<><> */
+        Multiply(/* Unit<> */
+        t, /* Number<> */
         b)));
     }
     public static Boolean Between(Number self, Number min, Number max) // Type Resolver
     // Type resolver associated with Between(self:Type:Number,min:Type:Number,max:Type:Number):Type:Boolean;
-    // Success=False Message=Can't cast from Array_Array_109<T_365<>><`12> to Boolean_Boolean_123<><>
+    // Success=False Message=Can't cast from Array<`12> to Boolean<>
     // Expression types
-    // Expression Zip(FieldValues(self), FieldValues(min), FieldValues(max), (\(ParameterDefinition=x$4267:Type:Number, ParameterDefinition=y$4269:Type:Number, ParameterDefinition=z$4271:Type:Number) -> Primitive:Function) has type Array_Array_109<T_365<>><`12>
-    // Expression (\(ParameterDefinition=x$4267:Type:Number, ParameterDefinition=y$4269:Type:Number, ParameterDefinition=z$4271:Type:Number) -> Primitive:Function has type Function3_Function3_58<T0_59<>, T1_60<>, T2_61<>, T3_62<>><Number_Number_120<><>, Number_Number_120<><>, Number_Number_120<><>, Function_Function_3<><>>
-    // Expression (\(ParameterDefinition=x$4267:Type:Number, ParameterDefinition=y$4269:Type:Number, ParameterDefinition=z$4271:Type:Number) -> Primitive:Function has type Function3_Function3_58<T0_59<>, T1_60<>, T2_61<>, T3_62<>><Number_Number_120<><>, Number_Number_120<><>, Number_Number_120<><>, Function_Function_3<><>>
-    // Expression Between(x, y, z) has type Boolean_Boolean_123<><>
-    // Expression z has type Number_Number_120<><>
-    // Expression z has type Number_Number_120<><>
-    // Expression y has type Number_Number_120<><>
-    // Expression y has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
-    // Expression FieldValues(max) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(max) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression max has type Number_Number_120<><>
-    // Expression max has type Number_Number_120<><>
-    // Expression FieldValues(min) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(min) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression min has type Number_Number_120<><>
-    // Expression min has type Number_Number_120<><>
-    // Expression FieldValues(self) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression FieldValues(self) has type Array_Array_109<T_365<>><Any_Any_107<><>>
-    // Expression self has type Number_Number_120<><>
-    // Expression self has type Number_Number_120<><>
+    // Expression Zip(FieldValues(self), FieldValues(min), FieldValues(max), (\(ParameterDefinition=x$4267:Type:Number, ParameterDefinition=y$4269:Type:Number, ParameterDefinition=z$4271:Type:Number) -> Primitive:Function) has type Array<`12>
+    // Expression (\(ParameterDefinition=x$4267:Type:Number, ParameterDefinition=y$4269:Type:Number, ParameterDefinition=z$4271:Type:Number) -> Primitive:Function has type Function3<Number<>, Number<>, Number<>, Function<>>
+    // Expression (\(ParameterDefinition=x$4267:Type:Number, ParameterDefinition=y$4269:Type:Number, ParameterDefinition=z$4271:Type:Number) -> Primitive:Function has type Function3<Number<>, Number<>, Number<>, Function<>>
+    // Expression Between(x, y, z) has type Boolean<>
+    // Expression z has type Number<>
+    // Expression z has type Number<>
+    // Expression y has type Number<>
+    // Expression y has type Number<>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
+    // Expression FieldValues(max) has type Array<Any<>>
+    // Expression FieldValues(max) has type Array<Any<>>
+    // Expression max has type Number<>
+    // Expression max has type Number<>
+    // Expression FieldValues(min) has type Array<Any<>>
+    // Expression FieldValues(min) has type Array<Any<>>
+    // Expression min has type Number<>
+    // Expression min has type Number<>
+    // Expression FieldValues(self) has type Array<Any<>>
+    // Expression FieldValues(self) has type Array<Any<>>
+    // Expression self has type Number<>
+    // Expression self has type Number<>
     {
-        return /* Array_Array_109<T_365<>><`12> */
+        return /* Array<`12> */
         /*  */
-        Zip(/* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        Zip(/* Array<Any<>> */
         /*  */
-        FieldValues(/* Number_Number_120<><> */
-        self), /* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        FieldValues(/* Number<> */
+        self), /* Array<Any<>> */
         /*  */
-        FieldValues(/* Number_Number_120<><> */
-        min), /* Array_Array_109<T_365<>><Any_Any_107<><>> */
+        FieldValues(/* Number<> */
+        min), /* Array<Any<>> */
         /*  */
-        FieldValues(/* Number_Number_120<><> */
-        max), /* Function3_Function3_58<T0_59<>, T1_60<>, T2_61<>, T3_62<>><Number_Number_120<><>, Number_Number_120<><>, Number_Number_120<><>, Function_Function_3<><>> */
+        FieldValues(/* Number<> */
+        max), /* Function3<Number<>, Number<>, Number<>, Function<>> */
         (Number x, Number y, Number z) => 
-        /* Boolean_Boolean_123<><> */
+        /* Boolean<> */
         /*  */
-        Between(/* Number_Number_120<><> */
-        x, /* Number_Number_120<><> */
-        y, /* Number_Number_120<><> */
+        Between(/* Number<> */
+        x, /* Number<> */
+        y, /* Number<> */
         z));
     }
 }
@@ -6509,29 +6509,29 @@ public static partial class Extensions
     // Type resolver associated with Radians(x:Type:Number):Type:Angle;
     // Success=True Message=
     // Expression types
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         x;
     }
     public static Angle Degrees(Number x) // Type Resolver
     // Type resolver associated with Degrees(x:Type:Number):Type:Angle;
     // Success=True Message=
     // Expression types
-    // Expression Multiply(x, Divide(Pi, 180)) has type Number_Number_120<><>
-    // Expression Divide(Pi, 180) has type Number_Number_120<><>
-    // Expression Divide(Pi, 180) has type Number_Number_120<><>
+    // Expression Multiply(x, Divide(Pi, 180)) has type Number<>
+    // Expression Divide(Pi, 180) has type Number<>
+    // Expression Divide(Pi, 180) has type Number<>
     // Expression 180 has type Integer_121<>
     // Expression 180 has type Integer_121<>
     // Expression Pi has type Function_3<>
     // Expression Pi has type Function_3<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Multiply(/* Number_Number_120<><> */
-        x, /* Number_Number_120<><> */
+        Multiply(/* Number<> */
+        x, /* Number<> */
         /*  */
         Divide(/* Function_3<> */
         Pi, /* Integer_121<> */
@@ -6541,20 +6541,20 @@ public static partial class Extensions
     // Type resolver associated with Turns(x:Type:Number):Type:Angle;
     // Success=True Message=
     // Expression types
-    // Expression Multiply(x, Multiply(2, Pi)) has type Number_Number_120<><>
-    // Expression Multiply(2, Pi) has type Number_Number_120<><>
-    // Expression Multiply(2, Pi) has type Number_Number_120<><>
+    // Expression Multiply(x, Multiply(2, Pi)) has type Number<>
+    // Expression Multiply(2, Pi) has type Number<>
+    // Expression Multiply(2, Pi) has type Number<>
     // Expression Pi has type Function_3<>
     // Expression Pi has type Function_3<>
     // Expression 2 has type Integer_121<>
     // Expression 2 has type Integer_121<>
-    // Expression x has type Number_Number_120<><>
-    // Expression x has type Number_Number_120<><>
+    // Expression x has type Number<>
+    // Expression x has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Multiply(/* Number_Number_120<><> */
-        x, /* Number_Number_120<><> */
+        Multiply(/* Number<> */
+        x, /* Number<> */
         /*  */
         Multiply(/* Integer_121<> */
         2, /* Function_3<> */
@@ -6567,22 +6567,22 @@ public static partial class Extensions
     // Type resolver associated with Equals(a:Concept:Comparable,b:Concept:Comparable):Type:Boolean;
     // Success=True Message=
     // Expression types
-    // Expression Equals(Compare(a, b), 0) has type Boolean_Boolean_123<><>
+    // Expression Equals(Compare(a, b), 0) has type Boolean<>
     // Expression 0 has type Integer_121<>
     // Expression 0 has type Integer_121<>
-    // Expression Compare(a, b) has type Integer_Integer_121<><>
-    // Expression Compare(a, b) has type Integer_Integer_121<><>
-    // Expression b has type Comparable_Comparable_114<><>
-    // Expression b has type Comparable_Comparable_114<><>
-    // Expression a has type Comparable_Comparable_114<><>
-    // Expression a has type Comparable_Comparable_114<><>
+    // Expression Compare(a, b) has type Integer<>
+    // Expression Compare(a, b) has type Integer<>
+    // Expression b has type Comparable<>
+    // Expression b has type Comparable<>
+    // Expression a has type Comparable<>
+    // Expression a has type Comparable<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        Equals(/* Integer_Integer_121<><> */
+        Equals(/* Integer<> */
         /*  */
-        Compare(/* Comparable_Comparable_114<><> */
-        a, /* Comparable_Comparable_114<><> */
+        Compare(/* Comparable<> */
+        a, /* Comparable<> */
         b), /* Integer_121<> */
         0);
     }
@@ -6590,22 +6590,22 @@ public static partial class Extensions
     // Type resolver associated with LessThan(a:Concept:Comparable,b:Concept:Comparable):Type:Boolean;
     // Success=True Message=
     // Expression types
-    // Expression LessThan(Compare(a, b), 0) has type Boolean_Boolean_123<><>
+    // Expression LessThan(Compare(a, b), 0) has type Boolean<>
     // Expression 0 has type Integer_121<>
     // Expression 0 has type Integer_121<>
-    // Expression Compare(a, b) has type Integer_Integer_121<><>
-    // Expression Compare(a, b) has type Integer_Integer_121<><>
-    // Expression b has type Comparable_Comparable_114<><>
-    // Expression b has type Comparable_Comparable_114<><>
-    // Expression a has type Comparable_Comparable_114<><>
-    // Expression a has type Comparable_Comparable_114<><>
+    // Expression Compare(a, b) has type Integer<>
+    // Expression Compare(a, b) has type Integer<>
+    // Expression b has type Comparable<>
+    // Expression b has type Comparable<>
+    // Expression a has type Comparable<>
+    // Expression a has type Comparable<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        LessThan(/* Integer_Integer_121<><> */
+        LessThan(/* Integer<> */
         /*  */
-        Compare(/* Comparable_Comparable_114<><> */
-        a, /* Comparable_Comparable_114<><> */
+        Compare(/* Comparable<> */
+        a, /* Comparable<> */
         b), /* Integer_121<> */
         0);
     }
@@ -6613,22 +6613,22 @@ public static partial class Extensions
     // Type resolver associated with LessThanOrEquals(a:Concept:Comparable,b:Concept:Comparable):Type:Boolean;
     // Success=True Message=
     // Expression types
-    // Expression LessThanOrEquals(Compare(a, b), 0) has type Boolean_Boolean_123<><>
+    // Expression LessThanOrEquals(Compare(a, b), 0) has type Boolean<>
     // Expression 0 has type Integer_121<>
     // Expression 0 has type Integer_121<>
-    // Expression Compare(a, b) has type Integer_Integer_121<><>
-    // Expression Compare(a, b) has type Integer_Integer_121<><>
-    // Expression b has type Comparable_Comparable_114<><>
-    // Expression b has type Comparable_Comparable_114<><>
-    // Expression a has type Comparable_Comparable_114<><>
-    // Expression a has type Comparable_Comparable_114<><>
+    // Expression Compare(a, b) has type Integer<>
+    // Expression Compare(a, b) has type Integer<>
+    // Expression b has type Comparable<>
+    // Expression b has type Comparable<>
+    // Expression a has type Comparable<>
+    // Expression a has type Comparable<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        LessThanOrEquals(/* Integer_Integer_121<><> */
+        LessThanOrEquals(/* Integer<> */
         /*  */
-        Compare(/* Comparable_Comparable_114<><> */
-        a, /* Comparable_Comparable_114<><> */
+        Compare(/* Comparable<> */
+        a, /* Comparable<> */
         b), /* Integer_121<> */
         0);
     }
@@ -6636,22 +6636,22 @@ public static partial class Extensions
     // Type resolver associated with GreaterThan(a:Concept:Comparable,b:Concept:Comparable):Type:Boolean;
     // Success=True Message=
     // Expression types
-    // Expression GreaterThan(Compare(a, b), 0) has type Boolean_Boolean_123<><>
+    // Expression GreaterThan(Compare(a, b), 0) has type Boolean<>
     // Expression 0 has type Integer_121<>
     // Expression 0 has type Integer_121<>
-    // Expression Compare(a, b) has type Integer_Integer_121<><>
-    // Expression Compare(a, b) has type Integer_Integer_121<><>
-    // Expression b has type Comparable_Comparable_114<><>
-    // Expression b has type Comparable_Comparable_114<><>
-    // Expression a has type Comparable_Comparable_114<><>
-    // Expression a has type Comparable_Comparable_114<><>
+    // Expression Compare(a, b) has type Integer<>
+    // Expression Compare(a, b) has type Integer<>
+    // Expression b has type Comparable<>
+    // Expression b has type Comparable<>
+    // Expression a has type Comparable<>
+    // Expression a has type Comparable<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        GreaterThan(/* Integer_Integer_121<><> */
+        GreaterThan(/* Integer<> */
         /*  */
-        Compare(/* Comparable_Comparable_114<><> */
-        a, /* Comparable_Comparable_114<><> */
+        Compare(/* Comparable<> */
+        a, /* Comparable<> */
         b), /* Integer_121<> */
         0);
     }
@@ -6659,22 +6659,22 @@ public static partial class Extensions
     // Type resolver associated with GreaterThanOrEquals(a:Concept:Comparable,b:Concept:Comparable):Type:Boolean;
     // Success=True Message=
     // Expression types
-    // Expression GreaterThanOrEquals(Compare(a, b), 0) has type Boolean_Boolean_123<><>
+    // Expression GreaterThanOrEquals(Compare(a, b), 0) has type Boolean<>
     // Expression 0 has type Integer_121<>
     // Expression 0 has type Integer_121<>
-    // Expression Compare(a, b) has type Integer_Integer_121<><>
-    // Expression Compare(a, b) has type Integer_Integer_121<><>
-    // Expression b has type Comparable_Comparable_114<><>
-    // Expression b has type Comparable_Comparable_114<><>
-    // Expression a has type Comparable_Comparable_114<><>
-    // Expression a has type Comparable_Comparable_114<><>
+    // Expression Compare(a, b) has type Integer<>
+    // Expression Compare(a, b) has type Integer<>
+    // Expression b has type Comparable<>
+    // Expression b has type Comparable<>
+    // Expression a has type Comparable<>
+    // Expression a has type Comparable<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        GreaterThanOrEquals(/* Integer_Integer_121<><> */
+        GreaterThanOrEquals(/* Integer<> */
         /*  */
-        Compare(/* Comparable_Comparable_114<><> */
-        a, /* Comparable_Comparable_114<><> */
+        Compare(/* Comparable<> */
+        a, /* Comparable<> */
         b), /* Integer_121<> */
         0);
     }
@@ -6682,93 +6682,93 @@ public static partial class Extensions
     // Type resolver associated with Between(v:Concept:Comparable,a:Concept:Comparable,b:Concept:Comparable):Concept:Value;
     // Success=True Message=
     // Expression types
-    // Expression GreaterThanOrEquals(v, And(a, LessThanOrEquals(v, b))) has type Boolean_Boolean_123<><>
-    // Expression And(a, LessThanOrEquals(v, b)) has type Boolean_Boolean_123<><>
-    // Expression And(a, LessThanOrEquals(v, b)) has type Boolean_Boolean_123<><>
-    // Expression LessThanOrEquals(v, b) has type Boolean_Boolean_123<><>
-    // Expression LessThanOrEquals(v, b) has type Boolean_Boolean_123<><>
-    // Expression b has type Comparable_Comparable_114<><>
-    // Expression b has type Comparable_Comparable_114<><>
-    // Expression v has type Comparable_Comparable_114<><>
-    // Expression v has type Comparable_Comparable_114<><>
-    // Expression a has type Comparable_Comparable_114<><>
-    // Expression a has type Comparable_Comparable_114<><>
-    // Expression v has type Comparable_Comparable_114<><>
-    // Expression v has type Comparable_Comparable_114<><>
+    // Expression GreaterThanOrEquals(v, And(a, LessThanOrEquals(v, b))) has type Boolean<>
+    // Expression And(a, LessThanOrEquals(v, b)) has type Boolean<>
+    // Expression And(a, LessThanOrEquals(v, b)) has type Boolean<>
+    // Expression LessThanOrEquals(v, b) has type Boolean<>
+    // Expression LessThanOrEquals(v, b) has type Boolean<>
+    // Expression b has type Comparable<>
+    // Expression b has type Comparable<>
+    // Expression v has type Comparable<>
+    // Expression v has type Comparable<>
+    // Expression a has type Comparable<>
+    // Expression a has type Comparable<>
+    // Expression v has type Comparable<>
+    // Expression v has type Comparable<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        GreaterThanOrEquals(/* Comparable_Comparable_114<><> */
-        v, /* Boolean_Boolean_123<><> */
+        GreaterThanOrEquals(/* Comparable<> */
+        v, /* Boolean<> */
         /*  */
-        And(/* Comparable_Comparable_114<><> */
-        a, /* Boolean_Boolean_123<><> */
+        And(/* Comparable<> */
+        a, /* Boolean<> */
         /*  */
-        LessThanOrEquals(/* Comparable_Comparable_114<><> */
-        v, /* Comparable_Comparable_114<><> */
+        LessThanOrEquals(/* Comparable<> */
+        v, /* Comparable<> */
         b)));
     }
     public static Interval Between(Value v, Interval i) // Type Resolver
     // Type resolver associated with Between(v:Concept:Value,i:Concept:Interval):Concept:Interval;
-    // Success=False Message=Can't cast from Boolean_Boolean_123<><> to Interval_Interval_119<T_443<>><`75>
+    // Success=False Message=Can't cast from Boolean<> to Interval<`75>
     // Expression types
-    // Expression Contains(i, v) has type Boolean_Boolean_123<><>
-    // Expression v has type Value_Value_108<><>
-    // Expression v has type Value_Value_108<><>
-    // Expression i has type Interval_Interval_119<T_443<>><`74>
-    // Expression i has type Interval_Interval_119<T_443<>><`74>
+    // Expression Contains(i, v) has type Boolean<>
+    // Expression v has type Value<>
+    // Expression v has type Value<>
+    // Expression i has type Interval<`74>
+    // Expression i has type Interval<`74>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        Contains(/* Interval_Interval_119<T_443<>><`74> */
-        i, /* Value_Value_108<><> */
+        Contains(/* Interval<`74> */
+        i, /* Value<> */
         v);
     }
     public static Comparable Min(Comparable a, Comparable b) // Type Resolver
     // Type resolver associated with Min(a:Concept:Comparable,b:Concept:Comparable):Concept:Comparable;
-    // Success=False Message=Can't cast from Boolean_Boolean_123<><> to Comparable_Comparable_114<><>
+    // Success=False Message=Can't cast from Boolean<> to Comparable<>
     // Expression types
-    // Expression LessThanOrEquals(a, (b?a:b)) has type Boolean_Boolean_123<><>
-    // Expression (b?a:b) has type Comparable_Comparable_114<><>
-    // Expression (b?a:b) has type Comparable_Comparable_114<><>
-    // Expression b has type Comparable_Comparable_114<><>
-    // Expression a has type Comparable_Comparable_114<><>
-    // Expression a has type Comparable_Comparable_114<><>
-    // Expression a has type Comparable_Comparable_114<><>
+    // Expression LessThanOrEquals(a, (b?a:b)) has type Boolean<>
+    // Expression (b?a:b) has type Comparable<>
+    // Expression (b?a:b) has type Comparable<>
+    // Expression b has type Comparable<>
+    // Expression a has type Comparable<>
+    // Expression a has type Comparable<>
+    // Expression a has type Comparable<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        LessThanOrEquals(/* Comparable_Comparable_114<><> */
-        a, /* Comparable_Comparable_114<><> */
+        LessThanOrEquals(/* Comparable<> */
+        a, /* Comparable<> */
         /*  */
         b
-            ? /* Comparable_Comparable_114<><> */
+            ? /* Comparable<> */
             a
-            : /* Comparable_Comparable_114<><> */
+            : /* Comparable<> */
             b
         );
     }
     public static Comparable Max(Comparable a, Comparable b) // Type Resolver
     // Type resolver associated with Max(a:Concept:Comparable,b:Concept:Comparable):Concept:Comparable;
-    // Success=False Message=Can't cast from Boolean_Boolean_123<><> to Comparable_Comparable_114<><>
+    // Success=False Message=Can't cast from Boolean<> to Comparable<>
     // Expression types
-    // Expression GreaterThanOrEquals(a, (b?a:b)) has type Boolean_Boolean_123<><>
-    // Expression (b?a:b) has type Comparable_Comparable_114<><>
-    // Expression (b?a:b) has type Comparable_Comparable_114<><>
-    // Expression b has type Comparable_Comparable_114<><>
-    // Expression a has type Comparable_Comparable_114<><>
-    // Expression a has type Comparable_Comparable_114<><>
-    // Expression a has type Comparable_Comparable_114<><>
+    // Expression GreaterThanOrEquals(a, (b?a:b)) has type Boolean<>
+    // Expression (b?a:b) has type Comparable<>
+    // Expression (b?a:b) has type Comparable<>
+    // Expression b has type Comparable<>
+    // Expression a has type Comparable<>
+    // Expression a has type Comparable<>
+    // Expression a has type Comparable<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        GreaterThanOrEquals(/* Comparable_Comparable_114<><> */
-        a, /* Comparable_Comparable_114<><> */
+        GreaterThanOrEquals(/* Comparable<> */
+        a, /* Comparable<> */
         /*  */
         b
-            ? /* Comparable_Comparable_114<><> */
+            ? /* Comparable<> */
             a
-            : /* Comparable_Comparable_114<><> */
+            : /* Comparable<> */
             b
         );
     }
@@ -6779,20 +6779,20 @@ public static partial class Extensions
     // Type resolver associated with NotEquals(x:Concept:Equatable,y:Concept:Equatable):Type:Boolean;
     // Success=True Message=
     // Expression types
-    // Expression Not(Equals(x, y)) has type Boolean_Boolean_123<><>
-    // Expression Equals(x, y) has type Boolean_Boolean_123<><>
-    // Expression Equals(x, y) has type Boolean_Boolean_123<><>
-    // Expression y has type Equatable_Equatable_115<><>
-    // Expression y has type Equatable_Equatable_115<><>
-    // Expression x has type Equatable_Equatable_115<><>
-    // Expression x has type Equatable_Equatable_115<><>
+    // Expression Not(Equals(x, y)) has type Boolean<>
+    // Expression Equals(x, y) has type Boolean<>
+    // Expression Equals(x, y) has type Boolean<>
+    // Expression y has type Equatable<>
+    // Expression y has type Equatable<>
+    // Expression x has type Equatable<>
+    // Expression x has type Equatable<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        Not(/* Boolean_Boolean_123<><> */
+        Not(/* Boolean<> */
         /*  */
-        Equals(/* Equatable_Equatable_115<><> */
-        x, /* Equatable_Equatable_115<><> */
+        Equals(/* Equatable<> */
+        x, /* Equatable<> */
         y));
     }
 }
@@ -6800,71 +6800,71 @@ public static partial class Extensions
 {
     public static Number BlendEaseFunc(Number p, Function easeIn, Function easeOut) // Type Resolver
     // Type resolver associated with BlendEaseFunc(p:Type:Number,easeIn:Primitive:Function,easeOut:Primitive:Function):Type:Number;
-    // Success=False Message=Can't cast from Boolean_Boolean_123<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Boolean<> to Number<>
     // Expression types
-    // Expression LessThan(p, (0.5?Multiply(0.5, easeIn(Multiply(p, 2))):Multiply(0.5, Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5)))) has type Boolean_Boolean_123<><>
-    // Expression (0.5?Multiply(0.5, easeIn(Multiply(p, 2))):Multiply(0.5, Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5))) has type Number_Number_120<><>
-    // Expression (0.5?Multiply(0.5, easeIn(Multiply(p, 2))):Multiply(0.5, Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5))) has type Number_Number_120<><>
-    // Expression Multiply(0.5, Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5)) has type Number_Number_120<><>
-    // Expression Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5) has type Number_Number_120<><>
-    // Expression Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5) has type Number_Number_120<><>
+    // Expression LessThan(p, (0.5?Multiply(0.5, easeIn(Multiply(p, 2))):Multiply(0.5, Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5)))) has type Boolean<>
+    // Expression (0.5?Multiply(0.5, easeIn(Multiply(p, 2))):Multiply(0.5, Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5))) has type Number<>
+    // Expression (0.5?Multiply(0.5, easeIn(Multiply(p, 2))):Multiply(0.5, Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5))) has type Number<>
+    // Expression Multiply(0.5, Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5)) has type Number<>
+    // Expression Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5) has type Number<>
+    // Expression Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5) has type Number<>
     // Expression 0.5 has type Number_120<>
     // Expression 0.5 has type Number_120<>
     // Expression easeOut(Multiply(p, Subtract(2, 1))) has type `104
     // Expression easeOut(Multiply(p, Subtract(2, 1))) has type `104
-    // Expression Multiply(p, Subtract(2, 1)) has type Arithmetic_Arithmetic_116<><>
-    // Expression Multiply(p, Subtract(2, 1)) has type Arithmetic_Arithmetic_116<><>
-    // Expression Subtract(2, 1) has type Integer_Integer_121<><>
-    // Expression Subtract(2, 1) has type Integer_Integer_121<><>
+    // Expression Multiply(p, Subtract(2, 1)) has type Arithmetic<>
+    // Expression Multiply(p, Subtract(2, 1)) has type Arithmetic<>
+    // Expression Subtract(2, 1) has type Integer<>
+    // Expression Subtract(2, 1) has type Integer<>
     // Expression 1 has type Integer_121<>
     // Expression 1 has type Integer_121<>
     // Expression 2 has type Integer_121<>
     // Expression 2 has type Integer_121<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     // Expression 0.5 has type Number_120<>
     // Expression 0.5 has type Number_120<>
-    // Expression Multiply(0.5, easeIn(Multiply(p, 2))) has type Number_Number_120<><>
+    // Expression Multiply(0.5, easeIn(Multiply(p, 2))) has type Number<>
     // Expression easeIn(Multiply(p, 2)) has type `103
     // Expression easeIn(Multiply(p, 2)) has type `103
-    // Expression Multiply(p, 2) has type Arithmetic_Arithmetic_116<><>
-    // Expression Multiply(p, 2) has type Arithmetic_Arithmetic_116<><>
+    // Expression Multiply(p, 2) has type Arithmetic<>
+    // Expression Multiply(p, 2) has type Arithmetic<>
     // Expression 2 has type Integer_121<>
     // Expression 2 has type Integer_121<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     // Expression 0.5 has type Number_120<>
     // Expression 0.5 has type Number_120<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Boolean_Boolean_123<><> */
+        return /* Boolean<> */
         /*  */
-        LessThan(/* Number_Number_120<><> */
-        p, /* Number_Number_120<><> */
+        LessThan(/* Number<> */
+        p, /* Number<> */
         /*  */
         0.5
-            ? /* Number_Number_120<><> */
+            ? /* Number<> */
             /*  */
             Multiply(/* Number_120<> */
             0.5, /* `103 */
             /*  */
-            easeIn(/* Arithmetic_Arithmetic_116<><> */
+            easeIn(/* Arithmetic<> */
             /*  */
-            Multiply(/* Number_Number_120<><> */
+            Multiply(/* Number<> */
             p, /* Integer_121<> */
             2)))
-            : /* Number_Number_120<><> */
+            : /* Number<> */
             /*  */
             Multiply(/* Number_120<> */
-            0.5, /* Number_Number_120<><> */
+            0.5, /* Number<> */
             /*  */
             Add(/* `104 */
             /*  */
-            easeOut(/* Arithmetic_Arithmetic_116<><> */
+            easeOut(/* Arithmetic<> */
             /*  */
-            Multiply(/* Number_Number_120<><> */
-            p, /* Integer_Integer_121<><> */
+            Multiply(/* Number<> */
+            p, /* Integer<> */
             /*  */
             Subtract(/* Integer_121<> */
             2, /* Integer_121<> */
@@ -6874,66 +6874,66 @@ public static partial class Extensions
     }
     public static Number InvertEaseFunc(Number p, Function easeIn) // Type Resolver
     // Type resolver associated with InvertEaseFunc(p:Type:Number,easeIn:Primitive:Function):Type:Number;
-    // Success=False Message=Can't cast from Integer_Integer_121<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Integer<> to Number<>
     // Expression types
-    // Expression Subtract(1, easeIn(Subtract(1, p))) has type Integer_Integer_121<><>
+    // Expression Subtract(1, easeIn(Subtract(1, p))) has type Integer<>
     // Expression easeIn(Subtract(1, p)) has type `105
     // Expression easeIn(Subtract(1, p)) has type `105
-    // Expression Subtract(1, p) has type ScalarArithmetic_ScalarArithmetic_117<><>
-    // Expression Subtract(1, p) has type ScalarArithmetic_ScalarArithmetic_117<><>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression Subtract(1, p) has type ScalarArithmetic<>
+    // Expression Subtract(1, p) has type ScalarArithmetic<>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     // Expression 1 has type Integer_121<>
     // Expression 1 has type Integer_121<>
     // Expression 1 has type Integer_121<>
     // Expression 1 has type Integer_121<>
     {
-        return /* Integer_Integer_121<><> */
+        return /* Integer<> */
         /*  */
         Subtract(/* Integer_121<> */
         1, /* `105 */
         /*  */
-        easeIn(/* ScalarArithmetic_ScalarArithmetic_117<><> */
+        easeIn(/* ScalarArithmetic<> */
         /*  */
         Subtract(/* Integer_121<> */
-        1, /* Number_Number_120<><> */
+        1, /* Number<> */
         p)));
     }
     public static Number Linear(Number p) // Type Resolver
     // Type resolver associated with Linear(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         p;
     }
     public static Number QuadraticEaseIn(Number p) // Type Resolver
     // Type resolver associated with QuadraticEaseIn(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression Pow2(p) has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression Pow2(p) has type Number<>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Pow2(/* Number_Number_120<><> */
+        Pow2(/* Number<> */
         p);
     }
     public static Number QuadraticEaseOut(Number p) // Type Resolver
     // Type resolver associated with QuadraticEaseOut(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression InvertEaseFunc(p, QuadraticEaseIn) has type Number_Number_120<><>
+    // Expression InvertEaseFunc(p, QuadraticEaseIn) has type Number<>
     // Expression QuadraticEaseIn has type Function_3<>
     // Expression QuadraticEaseIn has type Function_3<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        InvertEaseFunc(/* Number_Number_120<><> */
+        InvertEaseFunc(/* Number<> */
         p, /* Function_3<> */
         QuadraticEaseIn);
     }
@@ -6941,17 +6941,17 @@ public static partial class Extensions
     // Type resolver associated with QuadraticEaseInOut(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression BlendEaseFunc(p, QuadraticEaseIn, QuadraticEaseOut) has type Number_Number_120<><>
+    // Expression BlendEaseFunc(p, QuadraticEaseIn, QuadraticEaseOut) has type Number<>
     // Expression QuadraticEaseOut has type Function_3<>
     // Expression QuadraticEaseOut has type Function_3<>
     // Expression QuadraticEaseIn has type Function_3<>
     // Expression QuadraticEaseIn has type Function_3<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        BlendEaseFunc(/* Number_Number_120<><> */
+        BlendEaseFunc(/* Number<> */
         p, /* Function_3<> */
         QuadraticEaseIn, /* Function_3<> */
         QuadraticEaseOut);
@@ -6960,28 +6960,28 @@ public static partial class Extensions
     // Type resolver associated with CubicEaseIn(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression Pow3(p) has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression Pow3(p) has type Number<>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Pow3(/* Number_Number_120<><> */
+        Pow3(/* Number<> */
         p);
     }
     public static Number CubicEaseOut(Number p) // Type Resolver
     // Type resolver associated with CubicEaseOut(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression InvertEaseFunc(p, CubicEaseIn) has type Number_Number_120<><>
+    // Expression InvertEaseFunc(p, CubicEaseIn) has type Number<>
     // Expression CubicEaseIn has type Function_3<>
     // Expression CubicEaseIn has type Function_3<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        InvertEaseFunc(/* Number_Number_120<><> */
+        InvertEaseFunc(/* Number<> */
         p, /* Function_3<> */
         CubicEaseIn);
     }
@@ -6989,17 +6989,17 @@ public static partial class Extensions
     // Type resolver associated with CubicEaseInOut(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression BlendEaseFunc(p, CubicEaseIn, CubicEaseOut) has type Number_Number_120<><>
+    // Expression BlendEaseFunc(p, CubicEaseIn, CubicEaseOut) has type Number<>
     // Expression CubicEaseOut has type Function_3<>
     // Expression CubicEaseOut has type Function_3<>
     // Expression CubicEaseIn has type Function_3<>
     // Expression CubicEaseIn has type Function_3<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        BlendEaseFunc(/* Number_Number_120<><> */
+        BlendEaseFunc(/* Number<> */
         p, /* Function_3<> */
         CubicEaseIn, /* Function_3<> */
         CubicEaseOut);
@@ -7008,28 +7008,28 @@ public static partial class Extensions
     // Type resolver associated with QuarticEaseIn(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression Pow4(p) has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression Pow4(p) has type Number<>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Pow4(/* Number_Number_120<><> */
+        Pow4(/* Number<> */
         p);
     }
     public static Number QuarticEaseOut(Number p) // Type Resolver
     // Type resolver associated with QuarticEaseOut(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression InvertEaseFunc(p, QuarticEaseIn) has type Number_Number_120<><>
+    // Expression InvertEaseFunc(p, QuarticEaseIn) has type Number<>
     // Expression QuarticEaseIn has type Function_3<>
     // Expression QuarticEaseIn has type Function_3<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        InvertEaseFunc(/* Number_Number_120<><> */
+        InvertEaseFunc(/* Number<> */
         p, /* Function_3<> */
         QuarticEaseIn);
     }
@@ -7037,17 +7037,17 @@ public static partial class Extensions
     // Type resolver associated with QuarticEaseInOut(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression BlendEaseFunc(p, QuarticEaseIn, QuarticEaseOut) has type Number_Number_120<><>
+    // Expression BlendEaseFunc(p, QuarticEaseIn, QuarticEaseOut) has type Number<>
     // Expression QuarticEaseOut has type Function_3<>
     // Expression QuarticEaseOut has type Function_3<>
     // Expression QuarticEaseIn has type Function_3<>
     // Expression QuarticEaseIn has type Function_3<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        BlendEaseFunc(/* Number_Number_120<><> */
+        BlendEaseFunc(/* Number<> */
         p, /* Function_3<> */
         QuarticEaseIn, /* Function_3<> */
         QuarticEaseOut);
@@ -7056,28 +7056,28 @@ public static partial class Extensions
     // Type resolver associated with QuinticEaseIn(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression Pow5(p) has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression Pow5(p) has type Number<>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Pow5(/* Number_Number_120<><> */
+        Pow5(/* Number<> */
         p);
     }
     public static Number QuinticEaseOut(Number p) // Type Resolver
     // Type resolver associated with QuinticEaseOut(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression InvertEaseFunc(p, QuinticEaseIn) has type Number_Number_120<><>
+    // Expression InvertEaseFunc(p, QuinticEaseIn) has type Number<>
     // Expression QuinticEaseIn has type Function_3<>
     // Expression QuinticEaseIn has type Function_3<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        InvertEaseFunc(/* Number_Number_120<><> */
+        InvertEaseFunc(/* Number<> */
         p, /* Function_3<> */
         QuinticEaseIn);
     }
@@ -7085,17 +7085,17 @@ public static partial class Extensions
     // Type resolver associated with QuinticEaseInOut(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression BlendEaseFunc(p, QuinticEaseIn, QuinticEaseOut) has type Number_Number_120<><>
+    // Expression BlendEaseFunc(p, QuinticEaseIn, QuinticEaseOut) has type Number<>
     // Expression QuinticEaseOut has type Function_3<>
     // Expression QuinticEaseOut has type Function_3<>
     // Expression QuinticEaseIn has type Function_3<>
     // Expression QuinticEaseIn has type Function_3<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        BlendEaseFunc(/* Number_Number_120<><> */
+        BlendEaseFunc(/* Number<> */
         p, /* Function_3<> */
         QuinticEaseIn, /* Function_3<> */
         QuinticEaseOut);
@@ -7104,15 +7104,15 @@ public static partial class Extensions
     // Type resolver associated with SineEaseIn(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression InvertEaseFunc(p, SineEaseOut) has type Number_Number_120<><>
+    // Expression InvertEaseFunc(p, SineEaseOut) has type Number<>
     // Expression SineEaseOut has type Function_3<>
     // Expression SineEaseOut has type Function_3<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        InvertEaseFunc(/* Number_Number_120<><> */
+        InvertEaseFunc(/* Number<> */
         p, /* Function_3<> */
         SineEaseOut);
     }
@@ -7120,38 +7120,38 @@ public static partial class Extensions
     // Type resolver associated with SineEaseOut(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression Sin(Turns(Quarter(p))) has type Number_Number_120<><>
-    // Expression Turns(Quarter(p)) has type Angle_Angle_181<><>
-    // Expression Turns(Quarter(p)) has type Angle_Angle_181<><>
-    // Expression Quarter(p) has type Number_Number_120<><>
-    // Expression Quarter(p) has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression Sin(Turns(Quarter(p))) has type Number<>
+    // Expression Turns(Quarter(p)) has type Angle<>
+    // Expression Turns(Quarter(p)) has type Angle<>
+    // Expression Quarter(p) has type Number<>
+    // Expression Quarter(p) has type Number<>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Sin(/* Angle_Angle_181<><> */
+        Sin(/* Angle<> */
         /*  */
-        Turns(/* Number_Number_120<><> */
+        Turns(/* Number<> */
         /*  */
-        Quarter(/* Number_Number_120<><> */
+        Quarter(/* Number<> */
         p)));
     }
     public static Number SineEaseInOut(Number p) // Type Resolver
     // Type resolver associated with SineEaseInOut(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression BlendEaseFunc(p, SineEaseIn, SineEaseOut) has type Number_Number_120<><>
+    // Expression BlendEaseFunc(p, SineEaseIn, SineEaseOut) has type Number<>
     // Expression SineEaseOut has type Function_3<>
     // Expression SineEaseOut has type Function_3<>
     // Expression SineEaseIn has type Function_3<>
     // Expression SineEaseIn has type Function_3<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        BlendEaseFunc(/* Number_Number_120<><> */
+        BlendEaseFunc(/* Number<> */
         p, /* Function_3<> */
         SineEaseIn, /* Function_3<> */
         SineEaseOut);
@@ -7160,40 +7160,40 @@ public static partial class Extensions
     // Type resolver associated with CircularEaseIn(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression FromOne(SquareRoot(FromOne(Pow2(p)))) has type Number_Number_120<><>
-    // Expression SquareRoot(FromOne(Pow2(p))) has type Number_Number_120<><>
-    // Expression SquareRoot(FromOne(Pow2(p))) has type Number_Number_120<><>
-    // Expression FromOne(Pow2(p)) has type Number_Number_120<><>
-    // Expression FromOne(Pow2(p)) has type Number_Number_120<><>
-    // Expression Pow2(p) has type Number_Number_120<><>
-    // Expression Pow2(p) has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression FromOne(SquareRoot(FromOne(Pow2(p)))) has type Number<>
+    // Expression SquareRoot(FromOne(Pow2(p))) has type Number<>
+    // Expression SquareRoot(FromOne(Pow2(p))) has type Number<>
+    // Expression FromOne(Pow2(p)) has type Number<>
+    // Expression FromOne(Pow2(p)) has type Number<>
+    // Expression Pow2(p) has type Number<>
+    // Expression Pow2(p) has type Number<>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        FromOne(/* Number_Number_120<><> */
+        FromOne(/* Number<> */
         /*  */
-        SquareRoot(/* Number_Number_120<><> */
+        SquareRoot(/* Number<> */
         /*  */
-        FromOne(/* Number_Number_120<><> */
+        FromOne(/* Number<> */
         /*  */
-        Pow2(/* Number_Number_120<><> */
+        Pow2(/* Number<> */
         p))));
     }
     public static Number CircularEaseOut(Number p) // Type Resolver
     // Type resolver associated with CircularEaseOut(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression InvertEaseFunc(p, CircularEaseIn) has type Number_Number_120<><>
+    // Expression InvertEaseFunc(p, CircularEaseIn) has type Number<>
     // Expression CircularEaseIn has type Function_3<>
     // Expression CircularEaseIn has type Function_3<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        InvertEaseFunc(/* Number_Number_120<><> */
+        InvertEaseFunc(/* Number<> */
         p, /* Function_3<> */
         CircularEaseIn);
     }
@@ -7201,17 +7201,17 @@ public static partial class Extensions
     // Type resolver associated with CircularEaseInOut(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression BlendEaseFunc(p, CircularEaseIn, CircularEaseOut) has type Number_Number_120<><>
+    // Expression BlendEaseFunc(p, CircularEaseIn, CircularEaseOut) has type Number<>
     // Expression CircularEaseOut has type Function_3<>
     // Expression CircularEaseOut has type Function_3<>
     // Expression CircularEaseIn has type Function_3<>
     // Expression CircularEaseIn has type Function_3<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        BlendEaseFunc(/* Number_Number_120<><> */
+        BlendEaseFunc(/* Number<> */
         p, /* Function_3<> */
         CircularEaseIn, /* Function_3<> */
         CircularEaseOut);
@@ -7220,36 +7220,36 @@ public static partial class Extensions
     // Type resolver associated with ExponentialEaseIn(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression (AlmostZero(p)?p:Pow(2, Multiply(10, MinusOne(p)))) has type Number_Number_120<><>
-    // Expression Pow(2, Multiply(10, MinusOne(p))) has type Number_Number_120<><>
-    // Expression Multiply(10, MinusOne(p)) has type Arithmetic_Arithmetic_116<><>
-    // Expression Multiply(10, MinusOne(p)) has type Arithmetic_Arithmetic_116<><>
-    // Expression MinusOne(p) has type Number_Number_120<><>
-    // Expression MinusOne(p) has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression (AlmostZero(p)?p:Pow(2, Multiply(10, MinusOne(p)))) has type Number<>
+    // Expression Pow(2, Multiply(10, MinusOne(p))) has type Number<>
+    // Expression Multiply(10, MinusOne(p)) has type Arithmetic<>
+    // Expression Multiply(10, MinusOne(p)) has type Arithmetic<>
+    // Expression MinusOne(p) has type Number<>
+    // Expression MinusOne(p) has type Number<>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     // Expression 10 has type Integer_121<>
     // Expression 10 has type Integer_121<>
     // Expression 2 has type Integer_121<>
     // Expression 2 has type Integer_121<>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
         /*  */
         AlmostZero(/*  */
         p)
-            ? /* Number_Number_120<><> */
+            ? /* Number<> */
             p
-            : /* Number_Number_120<><> */
+            : /* Number<> */
             /*  */
             Pow(/* Integer_121<> */
-            2, /* Arithmetic_Arithmetic_116<><> */
+            2, /* Arithmetic<> */
             /*  */
             Multiply(/* Integer_121<> */
-            10, /* Number_Number_120<><> */
+            10, /* Number<> */
             /*  */
-            MinusOne(/* Number_Number_120<><> */
+            MinusOne(/* Number<> */
             p)))
         ;
     }
@@ -7257,15 +7257,15 @@ public static partial class Extensions
     // Type resolver associated with ExponentialEaseOut(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression InvertEaseFunc(p, ExponentialEaseIn) has type Number_Number_120<><>
+    // Expression InvertEaseFunc(p, ExponentialEaseIn) has type Number<>
     // Expression ExponentialEaseIn has type Function_3<>
     // Expression ExponentialEaseIn has type Function_3<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        InvertEaseFunc(/* Number_Number_120<><> */
+        InvertEaseFunc(/* Number<> */
         p, /* Function_3<> */
         ExponentialEaseIn);
     }
@@ -7273,91 +7273,91 @@ public static partial class Extensions
     // Type resolver associated with ExponentialEaseInOut(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression BlendEaseFunc(p, ExponentialEaseIn, ExponentialEaseOut) has type Number_Number_120<><>
+    // Expression BlendEaseFunc(p, ExponentialEaseIn, ExponentialEaseOut) has type Number<>
     // Expression ExponentialEaseOut has type Function_3<>
     // Expression ExponentialEaseOut has type Function_3<>
     // Expression ExponentialEaseIn has type Function_3<>
     // Expression ExponentialEaseIn has type Function_3<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        BlendEaseFunc(/* Number_Number_120<><> */
+        BlendEaseFunc(/* Number<> */
         p, /* Function_3<> */
         ExponentialEaseIn, /* Function_3<> */
         ExponentialEaseOut);
     }
     public static Number ElasticEaseIn(Number p) // Type Resolver
     // Type resolver associated with ElasticEaseIn(p:Type:Number):Type:Number;
-    // Success=False Message=Can't cast from Arithmetic_Arithmetic_116<><> to Number_Number_120<><>
+    // Success=False Message=Can't cast from Arithmetic<> to Number<>
     // Expression types
-    // Expression Multiply(13, Multiply(Turns(Quarter(p)), Sin(Radians(Pow(2, Multiply(10, MinusOne(p))))))) has type Arithmetic_Arithmetic_116<><>
-    // Expression Multiply(Turns(Quarter(p)), Sin(Radians(Pow(2, Multiply(10, MinusOne(p)))))) has type Number_Number_120<><>
-    // Expression Multiply(Turns(Quarter(p)), Sin(Radians(Pow(2, Multiply(10, MinusOne(p)))))) has type Number_Number_120<><>
-    // Expression Sin(Radians(Pow(2, Multiply(10, MinusOne(p))))) has type Number_Number_120<><>
-    // Expression Sin(Radians(Pow(2, Multiply(10, MinusOne(p))))) has type Number_Number_120<><>
-    // Expression Radians(Pow(2, Multiply(10, MinusOne(p)))) has type Angle_Angle_181<><>
-    // Expression Radians(Pow(2, Multiply(10, MinusOne(p)))) has type Angle_Angle_181<><>
-    // Expression Pow(2, Multiply(10, MinusOne(p))) has type Number_Number_120<><>
-    // Expression Pow(2, Multiply(10, MinusOne(p))) has type Number_Number_120<><>
-    // Expression Multiply(10, MinusOne(p)) has type Arithmetic_Arithmetic_116<><>
-    // Expression Multiply(10, MinusOne(p)) has type Arithmetic_Arithmetic_116<><>
-    // Expression MinusOne(p) has type Number_Number_120<><>
-    // Expression MinusOne(p) has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression Multiply(13, Multiply(Turns(Quarter(p)), Sin(Radians(Pow(2, Multiply(10, MinusOne(p))))))) has type Arithmetic<>
+    // Expression Multiply(Turns(Quarter(p)), Sin(Radians(Pow(2, Multiply(10, MinusOne(p)))))) has type Number<>
+    // Expression Multiply(Turns(Quarter(p)), Sin(Radians(Pow(2, Multiply(10, MinusOne(p)))))) has type Number<>
+    // Expression Sin(Radians(Pow(2, Multiply(10, MinusOne(p))))) has type Number<>
+    // Expression Sin(Radians(Pow(2, Multiply(10, MinusOne(p))))) has type Number<>
+    // Expression Radians(Pow(2, Multiply(10, MinusOne(p)))) has type Angle<>
+    // Expression Radians(Pow(2, Multiply(10, MinusOne(p)))) has type Angle<>
+    // Expression Pow(2, Multiply(10, MinusOne(p))) has type Number<>
+    // Expression Pow(2, Multiply(10, MinusOne(p))) has type Number<>
+    // Expression Multiply(10, MinusOne(p)) has type Arithmetic<>
+    // Expression Multiply(10, MinusOne(p)) has type Arithmetic<>
+    // Expression MinusOne(p) has type Number<>
+    // Expression MinusOne(p) has type Number<>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     // Expression 10 has type Integer_121<>
     // Expression 10 has type Integer_121<>
     // Expression 2 has type Integer_121<>
     // Expression 2 has type Integer_121<>
-    // Expression Turns(Quarter(p)) has type Angle_Angle_181<><>
-    // Expression Turns(Quarter(p)) has type Angle_Angle_181<><>
-    // Expression Quarter(p) has type Number_Number_120<><>
-    // Expression Quarter(p) has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression Turns(Quarter(p)) has type Angle<>
+    // Expression Turns(Quarter(p)) has type Angle<>
+    // Expression Quarter(p) has type Number<>
+    // Expression Quarter(p) has type Number<>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     // Expression 13 has type Integer_121<>
     // Expression 13 has type Integer_121<>
     {
-        return /* Arithmetic_Arithmetic_116<><> */
+        return /* Arithmetic<> */
         /*  */
         Multiply(/* Integer_121<> */
-        13, /* Number_Number_120<><> */
+        13, /* Number<> */
         /*  */
-        Multiply(/* Angle_Angle_181<><> */
+        Multiply(/* Angle<> */
         /*  */
-        Turns(/* Number_Number_120<><> */
+        Turns(/* Number<> */
         /*  */
-        Quarter(/* Number_Number_120<><> */
-        p)), /* Number_Number_120<><> */
+        Quarter(/* Number<> */
+        p)), /* Number<> */
         /*  */
-        Sin(/* Angle_Angle_181<><> */
+        Sin(/* Angle<> */
         /*  */
-        Radians(/* Number_Number_120<><> */
+        Radians(/* Number<> */
         /*  */
         Pow(/* Integer_121<> */
-        2, /* Arithmetic_Arithmetic_116<><> */
+        2, /* Arithmetic<> */
         /*  */
         Multiply(/* Integer_121<> */
-        10, /* Number_Number_120<><> */
+        10, /* Number<> */
         /*  */
-        MinusOne(/* Number_Number_120<><> */
+        MinusOne(/* Number<> */
         p)))))));
     }
     public static Number ElasticEaseOut(Number p) // Type Resolver
     // Type resolver associated with ElasticEaseOut(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression InvertEaseFunc(p, ElasticEaseIn) has type Number_Number_120<><>
+    // Expression InvertEaseFunc(p, ElasticEaseIn) has type Number<>
     // Expression ElasticEaseIn has type Function_3<>
     // Expression ElasticEaseIn has type Function_3<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        InvertEaseFunc(/* Number_Number_120<><> */
+        InvertEaseFunc(/* Number<> */
         p, /* Function_3<> */
         ElasticEaseIn);
     }
@@ -7365,17 +7365,17 @@ public static partial class Extensions
     // Type resolver associated with ElasticEaseInOut(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression BlendEaseFunc(p, ElasticEaseIn, ElasticEaseOut) has type Number_Number_120<><>
+    // Expression BlendEaseFunc(p, ElasticEaseIn, ElasticEaseOut) has type Number<>
     // Expression ElasticEaseOut has type Function_3<>
     // Expression ElasticEaseOut has type Function_3<>
     // Expression ElasticEaseIn has type Function_3<>
     // Expression ElasticEaseIn has type Function_3<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        BlendEaseFunc(/* Number_Number_120<><> */
+        BlendEaseFunc(/* Number<> */
         p, /* Function_3<> */
         ElasticEaseIn, /* Function_3<> */
         ElasticEaseOut);
@@ -7384,54 +7384,54 @@ public static partial class Extensions
     // Type resolver associated with BackEaseIn(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression Subtract(Pow3(p), Multiply(p, Sin(Turns(Half(p))))) has type Number_Number_120<><>
-    // Expression Multiply(p, Sin(Turns(Half(p)))) has type Number_Number_120<><>
-    // Expression Multiply(p, Sin(Turns(Half(p)))) has type Number_Number_120<><>
-    // Expression Sin(Turns(Half(p))) has type Number_Number_120<><>
-    // Expression Sin(Turns(Half(p))) has type Number_Number_120<><>
-    // Expression Turns(Half(p)) has type Angle_Angle_181<><>
-    // Expression Turns(Half(p)) has type Angle_Angle_181<><>
-    // Expression Half(p) has type Number_Number_120<><>
-    // Expression Half(p) has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
-    // Expression Pow3(p) has type Number_Number_120<><>
-    // Expression Pow3(p) has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression Subtract(Pow3(p), Multiply(p, Sin(Turns(Half(p))))) has type Number<>
+    // Expression Multiply(p, Sin(Turns(Half(p)))) has type Number<>
+    // Expression Multiply(p, Sin(Turns(Half(p)))) has type Number<>
+    // Expression Sin(Turns(Half(p))) has type Number<>
+    // Expression Sin(Turns(Half(p))) has type Number<>
+    // Expression Turns(Half(p)) has type Angle<>
+    // Expression Turns(Half(p)) has type Angle<>
+    // Expression Half(p) has type Number<>
+    // Expression Half(p) has type Number<>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
+    // Expression Pow3(p) has type Number<>
+    // Expression Pow3(p) has type Number<>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        Subtract(/* Number_Number_120<><> */
+        Subtract(/* Number<> */
         /*  */
-        Pow3(/* Number_Number_120<><> */
-        p), /* Number_Number_120<><> */
+        Pow3(/* Number<> */
+        p), /* Number<> */
         /*  */
-        Multiply(/* Number_Number_120<><> */
-        p, /* Number_Number_120<><> */
+        Multiply(/* Number<> */
+        p, /* Number<> */
         /*  */
-        Sin(/* Angle_Angle_181<><> */
+        Sin(/* Angle<> */
         /*  */
-        Turns(/* Number_Number_120<><> */
+        Turns(/* Number<> */
         /*  */
-        Half(/* Number_Number_120<><> */
+        Half(/* Number<> */
         p)))));
     }
     public static Number BackEaseOut(Number p) // Type Resolver
     // Type resolver associated with BackEaseOut(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression InvertEaseFunc(p, BackEaseIn) has type Number_Number_120<><>
+    // Expression InvertEaseFunc(p, BackEaseIn) has type Number<>
     // Expression BackEaseIn has type Function_3<>
     // Expression BackEaseIn has type Function_3<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        InvertEaseFunc(/* Number_Number_120<><> */
+        InvertEaseFunc(/* Number<> */
         p, /* Function_3<> */
         BackEaseIn);
     }
@@ -7439,17 +7439,17 @@ public static partial class Extensions
     // Type resolver associated with BackEaseInOut(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression BlendEaseFunc(p, BackEaseIn, BackEaseOut) has type Number_Number_120<><>
+    // Expression BlendEaseFunc(p, BackEaseIn, BackEaseOut) has type Number<>
     // Expression BackEaseOut has type Function_3<>
     // Expression BackEaseOut has type Function_3<>
     // Expression BackEaseIn has type Function_3<>
     // Expression BackEaseIn has type Function_3<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        BlendEaseFunc(/* Number_Number_120<><> */
+        BlendEaseFunc(/* Number<> */
         p, /* Function_3<> */
         BackEaseIn, /* Function_3<> */
         BackEaseOut);
@@ -7458,15 +7458,15 @@ public static partial class Extensions
     // Type resolver associated with BounceEaseIn(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression InvertEaseFunc(p, BounceEaseOut) has type Number_Number_120<><>
+    // Expression InvertEaseFunc(p, BounceEaseOut) has type Number<>
     // Expression BounceEaseOut has type Function_3<>
     // Expression BounceEaseOut has type Function_3<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        InvertEaseFunc(/* Number_Number_120<><> */
+        InvertEaseFunc(/* Number<> */
         p, /* Function_3<> */
         BounceEaseOut);
     }
@@ -7474,115 +7474,115 @@ public static partial class Extensions
     // Type resolver associated with BounceEaseOut(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression (LessThan(p, Divide(4, 11))?Multiply(121, Divide(Pow2(p), 16)):(LessThan(p, Divide(8, 11))?Divide(363, Multiply(40, Subtract(Pow2(p), Divide(99, Multiply(10, Add(p, Divide(17, 5))))))):(LessThan(p, Divide(9, 10))?Divide(4356, Multiply(361, Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805))))))):Divide(54, Multiply(5, Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25)))))))))) has type Number_Number_120<><>
-    // Expression (LessThan(p, Divide(8, 11))?Divide(363, Multiply(40, Subtract(Pow2(p), Divide(99, Multiply(10, Add(p, Divide(17, 5))))))):(LessThan(p, Divide(9, 10))?Divide(4356, Multiply(361, Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805))))))):Divide(54, Multiply(5, Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25))))))))) has type Number_Number_120<><>
-    // Expression (LessThan(p, Divide(9, 10))?Divide(4356, Multiply(361, Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805))))))):Divide(54, Multiply(5, Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25)))))))) has type Number_Number_120<><>
-    // Expression Divide(54, Multiply(5, Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25))))))) has type Number_Number_120<><>
-    // Expression Multiply(5, Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25)))))) has type Number_Number_120<><>
-    // Expression Multiply(5, Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25)))))) has type Number_Number_120<><>
-    // Expression Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25))))) has type Number_Number_120<><>
-    // Expression Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25))))) has type Number_Number_120<><>
-    // Expression Divide(513, Multiply(25, Add(p, Divide(268, 25)))) has type Number_Number_120<><>
-    // Expression Divide(513, Multiply(25, Add(p, Divide(268, 25)))) has type Number_Number_120<><>
-    // Expression Multiply(25, Add(p, Divide(268, 25))) has type Number_Number_120<><>
-    // Expression Multiply(25, Add(p, Divide(268, 25))) has type Number_Number_120<><>
-    // Expression Add(p, Divide(268, 25)) has type Number_Number_120<><>
-    // Expression Add(p, Divide(268, 25)) has type Number_Number_120<><>
-    // Expression Divide(268, 25) has type Number_Number_120<><>
-    // Expression Divide(268, 25) has type Number_Number_120<><>
+    // Expression (LessThan(p, Divide(4, 11))?Multiply(121, Divide(Pow2(p), 16)):(LessThan(p, Divide(8, 11))?Divide(363, Multiply(40, Subtract(Pow2(p), Divide(99, Multiply(10, Add(p, Divide(17, 5))))))):(LessThan(p, Divide(9, 10))?Divide(4356, Multiply(361, Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805))))))):Divide(54, Multiply(5, Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25)))))))))) has type Number<>
+    // Expression (LessThan(p, Divide(8, 11))?Divide(363, Multiply(40, Subtract(Pow2(p), Divide(99, Multiply(10, Add(p, Divide(17, 5))))))):(LessThan(p, Divide(9, 10))?Divide(4356, Multiply(361, Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805))))))):Divide(54, Multiply(5, Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25))))))))) has type Number<>
+    // Expression (LessThan(p, Divide(9, 10))?Divide(4356, Multiply(361, Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805))))))):Divide(54, Multiply(5, Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25)))))))) has type Number<>
+    // Expression Divide(54, Multiply(5, Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25))))))) has type Number<>
+    // Expression Multiply(5, Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25)))))) has type Number<>
+    // Expression Multiply(5, Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25)))))) has type Number<>
+    // Expression Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25))))) has type Number<>
+    // Expression Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25))))) has type Number<>
+    // Expression Divide(513, Multiply(25, Add(p, Divide(268, 25)))) has type Number<>
+    // Expression Divide(513, Multiply(25, Add(p, Divide(268, 25)))) has type Number<>
+    // Expression Multiply(25, Add(p, Divide(268, 25))) has type Number<>
+    // Expression Multiply(25, Add(p, Divide(268, 25))) has type Number<>
+    // Expression Add(p, Divide(268, 25)) has type Number<>
+    // Expression Add(p, Divide(268, 25)) has type Number<>
+    // Expression Divide(268, 25) has type Number<>
+    // Expression Divide(268, 25) has type Number<>
     // Expression 25 has type Number_120<>
     // Expression 25 has type Number_120<>
     // Expression 268 has type Number_120<>
     // Expression 268 has type Number_120<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     // Expression 25 has type Number_120<>
     // Expression 25 has type Number_120<>
     // Expression 513 has type Number_120<>
     // Expression 513 has type Number_120<>
-    // Expression Pow2(p) has type Number_Number_120<><>
-    // Expression Pow2(p) has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression Pow2(p) has type Number<>
+    // Expression Pow2(p) has type Number<>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     // Expression 5 has type Number_120<>
     // Expression 5 has type Number_120<>
     // Expression 54 has type Number_120<>
     // Expression 54 has type Number_120<>
-    // Expression Divide(4356, Multiply(361, Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805))))))) has type Number_Number_120<><>
-    // Expression Multiply(361, Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805)))))) has type Number_Number_120<><>
-    // Expression Multiply(361, Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805)))))) has type Number_Number_120<><>
-    // Expression Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805))))) has type Number_Number_120<><>
-    // Expression Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805))))) has type Number_Number_120<><>
-    // Expression Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805)))) has type Number_Number_120<><>
-    // Expression Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805)))) has type Number_Number_120<><>
-    // Expression Multiply(1805, Add(p, Divide(16061, 1805))) has type Number_Number_120<><>
-    // Expression Multiply(1805, Add(p, Divide(16061, 1805))) has type Number_Number_120<><>
-    // Expression Add(p, Divide(16061, 1805)) has type Number_Number_120<><>
-    // Expression Add(p, Divide(16061, 1805)) has type Number_Number_120<><>
-    // Expression Divide(16061, 1805) has type Number_Number_120<><>
-    // Expression Divide(16061, 1805) has type Number_Number_120<><>
+    // Expression Divide(4356, Multiply(361, Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805))))))) has type Number<>
+    // Expression Multiply(361, Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805)))))) has type Number<>
+    // Expression Multiply(361, Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805)))))) has type Number<>
+    // Expression Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805))))) has type Number<>
+    // Expression Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805))))) has type Number<>
+    // Expression Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805)))) has type Number<>
+    // Expression Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805)))) has type Number<>
+    // Expression Multiply(1805, Add(p, Divide(16061, 1805))) has type Number<>
+    // Expression Multiply(1805, Add(p, Divide(16061, 1805))) has type Number<>
+    // Expression Add(p, Divide(16061, 1805)) has type Number<>
+    // Expression Add(p, Divide(16061, 1805)) has type Number<>
+    // Expression Divide(16061, 1805) has type Number<>
+    // Expression Divide(16061, 1805) has type Number<>
     // Expression 1805 has type Number_120<>
     // Expression 1805 has type Number_120<>
     // Expression 16061 has type Number_120<>
     // Expression 16061 has type Number_120<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     // Expression 1805 has type Number_120<>
     // Expression 1805 has type Number_120<>
     // Expression 35442 has type Number_120<>
     // Expression 35442 has type Number_120<>
-    // Expression Pow2(p) has type Number_Number_120<><>
-    // Expression Pow2(p) has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression Pow2(p) has type Number<>
+    // Expression Pow2(p) has type Number<>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     // Expression 361 has type Number_120<>
     // Expression 361 has type Number_120<>
     // Expression 4356 has type Number_120<>
     // Expression 4356 has type Number_120<>
-    // Expression Divide(363, Multiply(40, Subtract(Pow2(p), Divide(99, Multiply(10, Add(p, Divide(17, 5))))))) has type Number_Number_120<><>
-    // Expression Multiply(40, Subtract(Pow2(p), Divide(99, Multiply(10, Add(p, Divide(17, 5)))))) has type Number_Number_120<><>
-    // Expression Multiply(40, Subtract(Pow2(p), Divide(99, Multiply(10, Add(p, Divide(17, 5)))))) has type Number_Number_120<><>
-    // Expression Subtract(Pow2(p), Divide(99, Multiply(10, Add(p, Divide(17, 5))))) has type Number_Number_120<><>
-    // Expression Subtract(Pow2(p), Divide(99, Multiply(10, Add(p, Divide(17, 5))))) has type Number_Number_120<><>
-    // Expression Divide(99, Multiply(10, Add(p, Divide(17, 5)))) has type Number_Number_120<><>
-    // Expression Divide(99, Multiply(10, Add(p, Divide(17, 5)))) has type Number_Number_120<><>
-    // Expression Multiply(10, Add(p, Divide(17, 5))) has type Number_Number_120<><>
-    // Expression Multiply(10, Add(p, Divide(17, 5))) has type Number_Number_120<><>
-    // Expression Add(p, Divide(17, 5)) has type Number_Number_120<><>
-    // Expression Add(p, Divide(17, 5)) has type Number_Number_120<><>
-    // Expression Divide(17, 5) has type Number_Number_120<><>
-    // Expression Divide(17, 5) has type Number_Number_120<><>
+    // Expression Divide(363, Multiply(40, Subtract(Pow2(p), Divide(99, Multiply(10, Add(p, Divide(17, 5))))))) has type Number<>
+    // Expression Multiply(40, Subtract(Pow2(p), Divide(99, Multiply(10, Add(p, Divide(17, 5)))))) has type Number<>
+    // Expression Multiply(40, Subtract(Pow2(p), Divide(99, Multiply(10, Add(p, Divide(17, 5)))))) has type Number<>
+    // Expression Subtract(Pow2(p), Divide(99, Multiply(10, Add(p, Divide(17, 5))))) has type Number<>
+    // Expression Subtract(Pow2(p), Divide(99, Multiply(10, Add(p, Divide(17, 5))))) has type Number<>
+    // Expression Divide(99, Multiply(10, Add(p, Divide(17, 5)))) has type Number<>
+    // Expression Divide(99, Multiply(10, Add(p, Divide(17, 5)))) has type Number<>
+    // Expression Multiply(10, Add(p, Divide(17, 5))) has type Number<>
+    // Expression Multiply(10, Add(p, Divide(17, 5))) has type Number<>
+    // Expression Add(p, Divide(17, 5)) has type Number<>
+    // Expression Add(p, Divide(17, 5)) has type Number<>
+    // Expression Divide(17, 5) has type Number<>
+    // Expression Divide(17, 5) has type Number<>
     // Expression 5 has type Number_120<>
     // Expression 5 has type Number_120<>
     // Expression 17 has type Number_120<>
     // Expression 17 has type Number_120<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     // Expression 10 has type Number_120<>
     // Expression 10 has type Number_120<>
     // Expression 99 has type Number_120<>
     // Expression 99 has type Number_120<>
-    // Expression Pow2(p) has type Number_Number_120<><>
-    // Expression Pow2(p) has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression Pow2(p) has type Number<>
+    // Expression Pow2(p) has type Number<>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     // Expression 40 has type Number_120<>
     // Expression 40 has type Number_120<>
     // Expression 363 has type Number_120<>
     // Expression 363 has type Number_120<>
-    // Expression Multiply(121, Divide(Pow2(p), 16)) has type Number_Number_120<><>
-    // Expression Divide(Pow2(p), 16) has type Number_Number_120<><>
-    // Expression Divide(Pow2(p), 16) has type Number_Number_120<><>
+    // Expression Multiply(121, Divide(Pow2(p), 16)) has type Number<>
+    // Expression Divide(Pow2(p), 16) has type Number<>
+    // Expression Divide(Pow2(p), 16) has type Number<>
     // Expression 16 has type Number_120<>
     // Expression 16 has type Number_120<>
-    // Expression Pow2(p) has type Number_Number_120<><>
-    // Expression Pow2(p) has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression Pow2(p) has type Number<>
+    // Expression Pow2(p) has type Number<>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     // Expression 121 has type Number_120<>
     // Expression 121 has type Number_120<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
         /*  */
         LessThan(/*  */
@@ -7591,17 +7591,17 @@ public static partial class Extensions
         Divide(/*  */
         4, /*  */
         11))
-            ? /* Number_Number_120<><> */
+            ? /* Number<> */
             /*  */
             Multiply(/* Number_120<> */
-            121, /* Number_Number_120<><> */
+            121, /* Number<> */
             /*  */
-            Divide(/* Number_Number_120<><> */
+            Divide(/* Number<> */
             /*  */
-            Pow2(/* Number_Number_120<><> */
+            Pow2(/* Number<> */
             p), /* Number_120<> */
             16))
-            : /* Number_Number_120<><> */
+            : /* Number<> */
             /*  */
             /*  */
             LessThan(/*  */
@@ -7610,32 +7610,32 @@ public static partial class Extensions
             Divide(/*  */
             8, /*  */
             11))
-                ? /* Number_Number_120<><> */
+                ? /* Number<> */
                 /*  */
                 Divide(/* Number_120<> */
-                363, /* Number_Number_120<><> */
+                363, /* Number<> */
                 /*  */
                 Multiply(/* Number_120<> */
-                40, /* Number_Number_120<><> */
+                40, /* Number<> */
                 /*  */
-                Subtract(/* Number_Number_120<><> */
+                Subtract(/* Number<> */
                 /*  */
-                Pow2(/* Number_Number_120<><> */
-                p), /* Number_Number_120<><> */
+                Pow2(/* Number<> */
+                p), /* Number<> */
                 /*  */
                 Divide(/* Number_120<> */
-                99, /* Number_Number_120<><> */
+                99, /* Number<> */
                 /*  */
                 Multiply(/* Number_120<> */
-                10, /* Number_Number_120<><> */
+                10, /* Number<> */
                 /*  */
-                Add(/* Number_Number_120<><> */
-                p, /* Number_Number_120<><> */
+                Add(/* Number<> */
+                p, /* Number<> */
                 /*  */
                 Divide(/* Number_120<> */
                 17, /* Number_120<> */
                 5)))))))
-                : /* Number_Number_120<><> */
+                : /* Number<> */
                 /*  */
                 /*  */
                 LessThan(/*  */
@@ -7644,52 +7644,52 @@ public static partial class Extensions
                 Divide(/*  */
                 9, /*  */
                 10))
-                    ? /* Number_Number_120<><> */
+                    ? /* Number<> */
                     /*  */
                     Divide(/* Number_120<> */
-                    4356, /* Number_Number_120<><> */
+                    4356, /* Number<> */
                     /*  */
                     Multiply(/* Number_120<> */
-                    361, /* Number_Number_120<><> */
+                    361, /* Number<> */
                     /*  */
-                    Subtract(/* Number_Number_120<><> */
+                    Subtract(/* Number<> */
                     /*  */
-                    Pow2(/* Number_Number_120<><> */
-                    p), /* Number_Number_120<><> */
+                    Pow2(/* Number<> */
+                    p), /* Number<> */
                     /*  */
                     Divide(/* Number_120<> */
-                    35442, /* Number_Number_120<><> */
+                    35442, /* Number<> */
                     /*  */
                     Multiply(/* Number_120<> */
-                    1805, /* Number_Number_120<><> */
+                    1805, /* Number<> */
                     /*  */
-                    Add(/* Number_Number_120<><> */
-                    p, /* Number_Number_120<><> */
+                    Add(/* Number<> */
+                    p, /* Number<> */
                     /*  */
                     Divide(/* Number_120<> */
                     16061, /* Number_120<> */
                     1805)))))))
-                    : /* Number_Number_120<><> */
+                    : /* Number<> */
                     /*  */
                     Divide(/* Number_120<> */
-                    54, /* Number_Number_120<><> */
+                    54, /* Number<> */
                     /*  */
                     Multiply(/* Number_120<> */
-                    5, /* Number_Number_120<><> */
+                    5, /* Number<> */
                     /*  */
-                    Subtract(/* Number_Number_120<><> */
+                    Subtract(/* Number<> */
                     /*  */
-                    Pow2(/* Number_Number_120<><> */
-                    p), /* Number_Number_120<><> */
+                    Pow2(/* Number<> */
+                    p), /* Number<> */
                     /*  */
                     Divide(/* Number_120<> */
-                    513, /* Number_Number_120<><> */
+                    513, /* Number<> */
                     /*  */
                     Multiply(/* Number_120<> */
-                    25, /* Number_Number_120<><> */
+                    25, /* Number<> */
                     /*  */
-                    Add(/* Number_Number_120<><> */
-                    p, /* Number_Number_120<><> */
+                    Add(/* Number<> */
+                    p, /* Number<> */
                     /*  */
                     Divide(/* Number_120<> */
                     268, /* Number_120<> */
@@ -7702,17 +7702,17 @@ public static partial class Extensions
     // Type resolver associated with BounceEaseInOut(p:Type:Number):Type:Number;
     // Success=True Message=
     // Expression types
-    // Expression BlendEaseFunc(p, BounceEaseIn, BounceEaseOut) has type Number_Number_120<><>
+    // Expression BlendEaseFunc(p, BounceEaseIn, BounceEaseOut) has type Number<>
     // Expression BounceEaseOut has type Function_3<>
     // Expression BounceEaseOut has type Function_3<>
     // Expression BounceEaseIn has type Function_3<>
     // Expression BounceEaseIn has type Function_3<>
-    // Expression p has type Number_Number_120<><>
-    // Expression p has type Number_Number_120<><>
+    // Expression p has type Number<>
+    // Expression p has type Number<>
     {
-        return /* Number_Number_120<><> */
+        return /* Number<> */
         /*  */
-        BlendEaseFunc(/* Number_Number_120<><> */
+        BlendEaseFunc(/* Number<> */
         p, /* Function_3<> */
         BounceEaseIn, /* Function_3<> */
         BounceEaseOut);

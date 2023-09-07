@@ -7,35 +7,6 @@ using System.Linq;
 
 namespace Plato.Compiler.Types
 {
-    public class TypedFunctionVariation
-    {
-        public TypedFunction Original { get; }
-        public TypedFunction Current { get; }
-
-        public static IEnumerable<TypedFunctionVariation> CreateVariations(TypedFunction original, IReadOnlyList<Type> types)
-        {
-            Dictionary<Type, Type> lookup;
-
-            // TODO:
-            // All functions that take a number as the first argument are extended to support all types that implement Numerical.
-            // In that function all instances of "number" are replaced with the type. This gives us "addition", "subtraction", etc.
-            // Where this fails is that it doesn't give us ScalarArithmetic. 
-
-            // All functions on a type T are extended to accept all types that implement Array<T> 
-
-            // This isn't true "mapping", there are two types of mapping:
-            // Square(x: Number) => mapping Square(x: Array<Number>) => mapped types Square(x: Vector), Square(x: Interval), Square(x ...)
-            
-            // but here is the thing. Why don't I just write Square(x: Numerical) => x * x; 
-            // Then the Square function works on all Numerical types! 
-
-            // 
-
-
-            throw new NotImplementedException();
-        }
-    }
-
     public class TypedFunction
     {
         public IReadOnlyList<Type> Parameters { get; }

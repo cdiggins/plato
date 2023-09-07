@@ -159,5 +159,29 @@ namespace Plato.Compiler.Types
             TypedFunctions.Add(fd, tf);
             return tf;
         }
+
+        public IEnumerable<TypeDefinition> GetTypesImplementing(TypeDefinition concept)
+            => GetConcreteTypes().Where(td => td.Implements(concept));
+
+        public IEnumerable<TypeDefinition> GetConcreteTypes()
+            => TypeDefinitions.Values.Where(td => td.IsConcreteType());
+
+        public Type Substitute(Type within, Type original, Type replacement)
+        {
+            if (within.Equals(original))
+                return replacement;
+            if (within is TypeReference tr)
+                return Substitute(tr, original, replacement);
+            if (within is TypeDefinition td)
+                return Substitute(td, original, replacement);
+            return original;
+        }
+
+        public TypeDefinition Substitute(TypeDefinition td, Type original, Type replacement)
+            => td.Equals(original) ? (TypeDefinition)replacement : td;
+
+        public TypeReference Substitute(TypeReference tr, Type original, Type replacement)
+            => new TypeReference(Substitute(tr.Definition, original, replacement),
+                tr.TypeArguments.Select(ta => Substitute(ta, original, replacement)).ToList());
     }
 }
