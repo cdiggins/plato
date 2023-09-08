@@ -89,6 +89,7 @@ namespace Plato.Compiler
                     return;
                 }
 
+                /*
                 Log("Creating type factory");
                 TypeFactory = new TypeFactory(TypeDefs);
                 
@@ -127,8 +128,8 @@ namespace Plato.Compiler
                         et = et.Parent;
                     }
                 }
-
-                OutputPossibleFunctions();
+                */
+                
                 // TODO: get the functions 
 
                 Log("Checking semantics");
@@ -159,18 +160,6 @@ namespace Plato.Compiler
             catch (Exception e)
             {
                 Log("Exception caught: " + e.Message);
-            }
-        }
-
-        public void OutputPossibleFunctions()
-        {
-            var vars = TypedFunctions.SelectMany(tf => TypedFunctionVariation.CreateVariations(tf, TypeFactory))
-                .ToList();
-            Log($"Found {vars.Count} variations among {TypedFunctions.Count()} total functions");
-
-            foreach (var v in vars)
-            {
-                Log($"Typed function {v.Original.FunctionType} => {v.NewType}");
             }
         }
 

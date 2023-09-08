@@ -831,23 +831,23 @@ type BinomialDistribution
     P: Probability;
 }
 
-// Generic types
+// Generic types. These are not usually used. 
 
-type Array<T: Any>
+type Array1<T: Any>
     implements Array<T>
 {
     Count: Integer;
-    Map: Function<Integer, T>;
+    Map: Function1<Integer, T>;
 }
 
-type Tuple<T0: Any, T1: Any>
+type Tuple2<T0: Any, T1: Any>
     implements Value
 {
     Item0: T0;
     Item1: T1;
 }
 
-type Tuple<T0: Any, T1: Any, T2: Any>
+type Tuple3<T0: Any, T1: Any, T2: Any>
     implements Value
 {
     Item0: T0;
@@ -855,18 +855,18 @@ type Tuple<T0: Any, T1: Any, T2: Any>
     Item2: T2;
 }
 
-type Function<TR: Any>
+type Function0<TR: Any>
 {
 }
 
-type Function<T0: Any, TR: Any>
+type Function1<T0: Any, TR: Any>
 {
 }
 
-type Function<T0: Any, T1: Any, TR: Any>
+type Function2<T0: Any, T1: Any, TR: Any>
 {
 }
 
-type Function<T0: Any, T1: Any, T2: Any, TR: Any>
+type Function3<T0: Any, T1: Any, T2: Any, TR: Any>
 {
 }

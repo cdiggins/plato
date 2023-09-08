@@ -68,8 +68,8 @@ namespace Plato.Compiler.Symbols
         public SymbolWriterCSharp WriteFunctionBody(FunctionDefinition function)
         {
             return 
-                WriteConstraints(function)
-                .WriteStartBlock()
+                // WriteConstraints(function)
+                WriteStartBlock()
                 .Write("return ")
                 .Write(function.Body)
                 .WriteLine(";")
