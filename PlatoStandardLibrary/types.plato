@@ -526,7 +526,7 @@ type Arc
 }
 
 type TimeInterval
-    implements Interval
+    implements Interval<TimeSpan>
 {
     Start: TimeSpan;
     End: TimeSpan;
@@ -831,3 +831,42 @@ type BinomialDistribution
     P: Probability;
 }
 
+// Generic types
+
+type Array<T: Any>
+    implements Array<T>
+{
+    Count: Integer;
+    Map: Function<Integer, T>;
+}
+
+type Tuple<T0: Any, T1: Any>
+    implements Value
+{
+    Item0: T0;
+    Item1: T1;
+}
+
+type Tuple<T0: Any, T1: Any, T2: Any>
+    implements Value
+{
+    Item0: T0;
+    Item1: T1;
+    Item2: T2;
+}
+
+type Function<TR: Any>
+{
+}
+
+type Function<T0: Any, TR: Any>
+{
+}
+
+type Function<T0: Any, T1: Any, TR: Any>
+{
+}
+
+type Function<T0: Any, T1: Any, T2: Any, TR: Any>
+{
+}

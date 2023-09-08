@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Plato.Compiler.Utilities;
+﻿using Plato.Compiler.Utilities;
 
 namespace Plato.Compiler.Types
 {
@@ -22,30 +20,5 @@ namespace Plato.Compiler.Types
 
         public override int GetHashCode()
             => Hasher.Combine(Original.GetHashCode(), NewType.GetHashCode());
-
-        public static IEnumerable<TypedFunctionVariation> CreateVariations(TypedFunction original, TypeFactory factory)
-        {
-            var typeParams = original.Parameters;
-            var r = new HashSet<TypedFunctionVariation>()
-            {
-                new TypedFunctionVariation(original, original.FunctionType)
-            };
-            
-            foreach (var p in typeParams)
-            {
-                if (p.IsConcept())
-                {
-                    var subs = factory.GetTypesImplementing(p.Definition()).ToList();
-                    foreach (var sub in subs)
-                    {
-                        var newType = factory.Substitute(original.FunctionType, p, sub);
-                        var variation = new TypedFunctionVariation(original, newType);
-                        r.Add(variation);
-                    }
-                }
-            }
-
-            return r;
-        }
     }
 }

@@ -164,7 +164,7 @@ namespace Plato.Compiler.Symbols
             => GetAllImplementedConcepts().SelectMany(c => c?.Definition?.Methods ?? Enumerable.Empty<MethodDefinition>());
 
         public TypeExpressionSymbol ToTypeExpression()
-            => new TypeExpressionSymbol(this);
+            => new TypeExpressionSymbol(this, TypeParameters.Select(tp => tp.ToTypeExpression()).ToArray());
 
         public override string ToString()
             => $"{Name}_{Id}:{Kind}";

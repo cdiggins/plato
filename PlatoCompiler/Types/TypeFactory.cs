@@ -110,6 +110,7 @@ namespace Plato.Compiler.Types
             TypeReferences.Add(tes, r);
             return r;
         }
+
         public TypedFunction GetTypedFunction(FunctionDefinition fd)
             => TypedFunctions[fd];
 
@@ -183,6 +184,7 @@ namespace Plato.Compiler.Types
         public TypeReference Substitute(TypeReference tr, Type original, Type replacement)
             => new TypeReference(Substitute(tr.Definition, original, replacement),
                 tr.TypeArguments.Select(ta => Substitute(ta, original, replacement)).ToList());
+
         public IEnumerable<TypedFunctionVariation> CreateVariations(TypedFunction original, TypeFactory factory)
         {
             var typeParams = original.Parameters;
@@ -206,6 +208,27 @@ namespace Plato.Compiler.Types
             }
 
             return r;
+        }
+
+        public IEnumerable<TypeDefinition> GetAllImplementedConcepts(TypeDefinition concreteType)
+        {
+            return concreteType.Symbol.GetAllImplementedConcepts().Select(te => GetType(te).Definition);
+        }
+
+        public IEnumerable<TypedFunction> GetAllTypedFunctions(TypeDefinition type)
+            => type.Definition().Symbol.Functions.Select(GetTypedFunction);
+
+        public TypedFunctionVariation CreateVariation(TypedFunction function, Type newFuncType)
+        {
+            return new TypedFunctionVariation(function, newFuncType);
+        }
+
+        public IEnumerable<TypedFunctionVariation> GetAllConceptFunctionVariations(TypeDefinition concreteType, TypeDefinition concept)
+        {
+            foreach (var tf in GetAllTypedFunctions(concept))
+            {
+                yield return CreateVariation(tf, Substitute(tf.FunctionType, concept, concreteType));
+            }
         }
     }
 }
