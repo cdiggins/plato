@@ -183,5 +183,29 @@ namespace Plato.Compiler.Types
         public TypeReference Substitute(TypeReference tr, Type original, Type replacement)
             => new TypeReference(Substitute(tr.Definition, original, replacement),
                 tr.TypeArguments.Select(ta => Substitute(ta, original, replacement)).ToList());
+        public IEnumerable<TypedFunctionVariation> CreateVariations(TypedFunction original, TypeFactory factory)
+        {
+            var typeParams = original.Parameters;
+            var r = new HashSet<TypedFunctionVariation>()
+            {
+                new TypedFunctionVariation(original, original.FunctionType)
+            };
+
+            foreach (var p in typeParams)
+            {
+                if (p.IsConcept())
+                {
+                    var subs = factory.GetTypesImplementing(p.Definition()).ToList();
+                    foreach (var sub in subs)
+                    {
+                        var newType = factory.Substitute(original.FunctionType, p, sub);
+                        var variation = new TypedFunctionVariation(original, newType);
+                        r.Add(variation);
+                    }
+                }
+            }
+
+            return r;
+        }
     }
 }
