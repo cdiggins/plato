@@ -8,6 +8,7 @@ using Plato.Compiler.Ast;
 using Plato.Compiler.Symbols;
 using Plato.Compiler.Types;
 using Plato.Compiler.Vsg;
+using Ptarmigan.Utils;
 using Type = Plato.Compiler.Types.Type;
 
 namespace Plato.Compiler
@@ -42,6 +43,7 @@ namespace Plato.Compiler
         public IEnumerable<TypedFunction> TypedFunctions => Resolvers.Values.Select(r => r.Function);
         public Dictionary<FunctionDefinition, TypeResolver> Resolvers { get; } = new Dictionary<FunctionDefinition, TypeResolver>();
         public Dictionary<ExpressionSymbol, Type> Types { get; } = new Dictionary<ExpressionSymbol, Type>();
+        public Dictionary<string, ReifiedType> ReifiedTypes { get; set; } 
 
         public List<string> SemanticErrors { get; } = new List<string>();
         public List<string> SemanticWarnings { get; } = new List<string>();
@@ -130,10 +132,18 @@ namespace Plato.Compiler
                 }
                 */
                 
-                // TODO: get the functions 
-
                 Log("Checking semantics");
                 CheckSemantics();
+
+                Log("Creating Reified Types");
+                ReifiedTypes = TypeDefs.Where(td => td.IsConcreteType())
+                    .ToDictionary(td => td.Name, td => new ReifiedType(td));
+
+                Log("Adding library functions to reified types");
+                AddLibraryFunctionsToReifiedTypes();
+
+                Log("Reified types");
+                WriteReifiedTypes();
 
                 /*
                 Log("Generating Visual Syntax Graphs");
@@ -160,6 +170,67 @@ namespace Plato.Compiler
             catch (Exception e)
             {
                 Log("Exception caught: " + e.Message);
+            }
+        }
+
+        public void AddLibraryFunctionsToReifiedTypes()
+        {
+
+            foreach (var library in TypeDefs)
+            {
+                if (!library.IsLibrary())
+                    continue;
+
+                foreach (var f in library.Functions)
+                {
+                    if (f.Parameters.Count == 0)
+                        continue;
+
+                    var firstParamType = f.Parameters[0].Type?.Definition;
+
+                    Verifier.AssertNotNull(firstParamType, $"First parameter type of {f}");
+
+                    if (firstParamType.IsConcreteType())
+                    {
+                        var rt = ReifiedTypes[firstParamType.Name];
+
+                        rt.AddConcreteTypeLibraryFunction(library, f);
+                    }
+                    else if (firstParamType.IsConcept())
+                    {
+                        foreach (var rt in ReifiedTypes.Values)
+                        {
+                            if (rt.TypeSymbol.Implements(firstParamType))
+                            {
+                                rt.AddConceptLibraryFunction(library, f);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception($"First parameter type in function {f} not a concrete type or concept");
+                    }
+                }
+            }
+
+
+        }
+
+        public void WriteReifiedTypes()
+        {
+            foreach (var kv in ReifiedTypes)
+            {
+                var rt = kv.Value;
+                Log($"= Reified type {rt.Name}");
+                var funcGroups = rt.Functions.GroupBy(f => f.OwnerTypeSymbol);
+                foreach (var group in funcGroups)
+                {
+                    Log($" = Reified functions for group {group.Key}");
+                    foreach (var f in group)
+                    {
+                        Log($"    {f}");
+                    }
+                }
             }
         }
 

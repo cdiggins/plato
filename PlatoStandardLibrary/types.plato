@@ -505,7 +505,7 @@ type DateTime
 }
 
 type AnglePair
-    implements Interval
+    implements Interval<Angle>
 {
     Start: Angle;
     End: Angle;

@@ -125,16 +125,16 @@ library Value
 
 library Vector
 {
-    Sum(v: Array): Numerical 
+    Sum(v: Vector): Number
         => v.Aggregate(0, Add); 
     
-    SumSquares(v: Array): Number
+    SumSquares(v: Vector): Number
         => v.Square.Sum; 
     
-    LengthSquared(v: Array): Number
+    LengthSquared(v: Vector): Number
         => v.SumSquares;
     
-    Length(v: Array): Number
+    Length(v: Vector): Number
         => v.LengthSquared.SquareRoot;
     
     Dot(v1: Vector, v2: Vector): Number

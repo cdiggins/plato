@@ -125,6 +125,8 @@ namespace Plato.Compiler.Symbols
 
         public IEnumerable<TypeExpressionSymbol> GetAllImplementedConcepts()
         {
+            var r = new HashSet<TypeExpressionSymbol>(); 
+
             foreach (var tmp in Implements)
             {
                 if (tmp == null)
@@ -134,27 +136,21 @@ namespace Plato.Compiler.Symbols
                     continue;
                 }
 
-                yield return tmp;
-
+                r.Add(tmp);
                 if (tmp.Definition != null)
                     foreach (var tmp2 in tmp.Definition.GetAllImplementedConcepts())
-                        yield return tmp2;
+                        r.Add(tmp2);
             }
 
             foreach (var tmp in Inherits)
             {
-                if (tmp == null)
-                {
-                    // TODO: move to semantic checker 
-                    Debug.WriteLine("TODO: Inherits should not have null types");
-                    continue;
-                }
-
-                yield return tmp;
+                r.Add(tmp);
                 if (tmp.Definition != null)
                     foreach (var tmp2 in tmp.Definition.GetAllImplementedConcepts())
-                        yield return tmp2;
+                        r.Add(tmp2);
             }
+
+            return r;
         }
 
         public IEnumerable<MemberDefinition> Members => Enumerable.Empty<MemberDefinition>()

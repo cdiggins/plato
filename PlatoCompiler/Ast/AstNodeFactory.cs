@@ -208,14 +208,10 @@ namespace Plato.Compiler.Ast
 
         public AstMethodDeclaration ToAst(CstMethodDeclaration md)
         {
-            var ps = md.FunctionParameterList.Node.FunctionParameter.Nodes.Select(ToAst).ToList();
-            // Methods with no arguments have an implicit "Self" argument. 
-            if (ps.Count == 0)
-                ps.Add(new AstParameterDeclaration("self", new AstTypeNode("Self")));
             return Create(md, new AstMethodDeclaration(
                 ToAst(md.Identifier.Node),
                 ToAst(md.TypeAnnotation.Node),
-                ps,
+                md.FunctionParameterList.Node.FunctionParameter.Nodes.Select(ToAst).ToList(),
                 ToAst(md.FunctionBody.Node)));
         }
 

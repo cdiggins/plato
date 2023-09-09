@@ -84,6 +84,8 @@ public class IDE
         Compiler.Compile(parsers);
 
         OutputTextBox.Lines = Logger.Messages.ToArray();
+        var logFile = Path.Combine(inputPath, "log.txt");
+        File.WriteAllLines(logFile, Logger.Messages);
 
         if (!Compiler.CompletedCompilation)
         {
