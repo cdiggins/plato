@@ -13,26 +13,26 @@ namespace Plato.Compiler.Types
     public class FunctionCallResolver
     {
         // Passed as arguments
-        public TypeFactory Factory { get; }
+        public Compiler Factory { get; }
         public FunctionGroupReference Fgr { get; }
-        public IReadOnlyList<Type> ArgTypes { get; }
+        public IReadOnlyList<TypeExpressionSymbol> ArgTypes { get; }
 
         // Derived values 
-        public Type BestReturnType { get; }
+        public TypeExpressionSymbol BestReturnType { get; }
         public bool Ambiguous => ReturnTypes.Count > 1;
 
-        public IReadOnlyList<Type> ReturnTypes { get; }
+        public IReadOnlyList<TypeExpressionSymbol> ReturnTypes { get; }
         public bool FoundResult => BestFunctions.Count > 0;
 
         // Intermediate values for the process 
-        public IReadOnlyList<TypedFunction> AllFunctions { get; }
-        public IReadOnlyList<TypedFunction> ValidFunctions { get; }
-        public IReadOnlyList<TypedFunction> BestFunctions { get; }
+        public IReadOnlyList<ReifiedFunction> AllFunctions { get; }
+        public IReadOnlyList<ReifiedFunction> ValidFunctions { get; }
+        public IReadOnlyList<ReifiedFunction> BestFunctions { get; }
 
         public string DebugString =>
             $"Success = {FoundResult && !Ambiguous}, Best type = {BestReturnType}, Function was {Fgr.Definition.DebugString}, Args were {string.Join(",", ArgTypes)}";
 
-        public FunctionCallResolver(TypeFactory factory, FunctionGroupReference fgr, IReadOnlyList<Type> argTypes)
+        public FunctionCallResolver(Compiler factory, FunctionGroupReference fgr, IReadOnlyList<TypeExpressionSymbol> argTypes)
         {
             Factory = factory;
             Fgr = fgr;
@@ -41,7 +41,9 @@ namespace Plato.Compiler.Types
             if (argTypes.Any(t => t == null))
                 throw new Exception("Null argument type");
 
-            AllFunctions = fgr.Definition.Functions.Select(Factory.GetTypedFunction).ToList();
+            // TODO: get all functions matching the functions in the function group. 
+            // TODO: look at 
+            //AllFunctions = fgr.Definition.Functions.Select(Factory.GetTypedFunction).ToList();
             
             // This should never happen
             if (AllFunctions.Count == 0)
@@ -96,52 +98,52 @@ namespace Plato.Compiler.Types
             }
         }
 
-        public int GetScoreForOverload(TypedFunction tf, int pos)
+        public int GetScoreForOverload(ReifiedFunction tf, int pos)
         {
             // Get the type of the first parameter 
-            var pt = tf.Parameters[pos];
+            var pt = tf.ParameterTypes[pos];
 
             // Get the type of the second parameter 
             var at = ArgTypes[pos];
 
             // 0. Are they both the same concrete type and exactly the same?
-            if (at.IsConcreteType() && at.Equals(pt))
+            if (at.Definition.IsConcreteType() && at.Equals(pt))
                 return 0;
             
             // 1. Are we passing a concrete type to another concrete type and it has an implicit "cast"?
-            if (at.IsConcreteType() && pt.IsConcreteType() && at.CanCastTo(pt))
+            if (at.Definition.IsConcreteType() && pt.Definition.IsConcreteType() && at.Definition.CanCastTo(pt.Definition))
                 return 1;
 
             // 2. Are we casting from a concrete type to one of the concepts it implemented
-            if (at.IsConcreteType() && pt.IsConcept() && at.Implements(pt))
+            if (at.Definition.IsConcreteType() && pt.Definition.IsConcept() && at.Definition.Implements(pt.Definition))
                 return 2;
 
             // 3. Are they both the same concept
-            if (at.IsConcept() && pt.Equals(at)) 
+            if (at.Definition.IsConcept() && pt.Equals(at)) 
                 return 3;
 
             // 4. Are we casting from a concept to one of the concepts it inherits 
-            if (at.IsConcept() && pt.IsConcept() && pt.InheritsFrom(at))
+            if (at.Definition.IsConcept() && pt.Definition.IsConcept() && pt.Definition.InheritsFrom(at.Definition))
                 return 4;
 
             // 5. Are we casting from a type variable to a non-type-variable
-            if (at.IsTypeVar() && !pt.IsTypeVar())
+            //if (at.IsTypeVar() && !pt.IsTypeVar())
                 return 5;
 
             // 6. everything else
-            return 6;
+            //return 6;
         }
 
-        public bool IsFunctionCallable(TypedFunction ft)
+        public bool IsFunctionCallable(ReifiedFunction ft)
         {
-            if (ft.Parameters.Count != ArgTypes.Count)
+            if (ft.ParameterTypes.Count != ArgTypes.Count)
                 return false;
 
-            for (var i = 0; i < ft.Parameters.Count; ++i)
+            for (var i = 0; i < ft.ParameterTypes.Count; ++i)
             {
-                var paramType = ft.Parameters[i];
+                var paramType = ft.ParameterTypes[i];
                 var argType = ArgTypes[i];
-                if (!argType.CanCastTo(paramType))
+                if (!argType.Definition.CanCastTo(paramType.Definition))
                     return false;
             }
 

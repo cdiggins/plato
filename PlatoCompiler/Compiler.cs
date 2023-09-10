@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Parakeet;
 using Parakeet.Demos.Plato;
 using Plato.Compiler.Ast;
@@ -9,7 +9,6 @@ using Plato.Compiler.Symbols;
 using Plato.Compiler.Types;
 using Plato.Compiler.Vsg;
 using Ptarmigan.Utils;
-using Type = Plato.Compiler.Types.Type;
 
 namespace Plato.Compiler
 {
@@ -30,7 +29,6 @@ namespace Plato.Compiler
         public bool DisplayWarnings = false;
         public AstNodeFactory AstNodeFactory { get; }
         public CstNodeFactory CstNodeFactory { get; }
-        public TypeFactory TypeFactory { get; set; }
         public Logger Logger { get; }
         public bool CompletedCompilation { get; set; }
         public bool ParsingSuccess { get; set; }
@@ -38,11 +36,11 @@ namespace Plato.Compiler
         public IReadOnlyList<AstNode> Trees { get; set; }
         public SymbolResolver SymbolResolver { get; set; }
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; set; }
-        public IReadOnlyList<TypeDefinitionSymbol> TypeDefs { get; set; }
-        public IEnumerable<FunctionDefinition> Functions => Resolvers.Keys;
-        public IEnumerable<TypedFunction> TypedFunctions => Resolvers.Values.Select(r => r.Function);
-        public Dictionary<FunctionDefinition, TypeResolver> Resolvers { get; } = new Dictionary<FunctionDefinition, TypeResolver>();
-        public Dictionary<ExpressionSymbol, Type> Types { get; } = new Dictionary<ExpressionSymbol, Type>();
+
+        public Dictionary<string, TypeDefinitionSymbol> TypeDefinitions { get; } = new Dictionary<string, TypeDefinitionSymbol>();
+        public Dictionary<string, TypeDefinitionSymbol> LibraryDefinitions { get; } = new Dictionary<string, TypeDefinitionSymbol>();
+
+        public Dictionary<ExpressionSymbol, TypeExpressionSymbol> Types { get; } = new Dictionary<ExpressionSymbol, TypeExpressionSymbol>();
         public Dictionary<string, ReifiedType> ReifiedTypes { get; set; } 
 
         public List<string> SemanticErrors { get; } = new List<string>();
@@ -80,7 +78,18 @@ namespace Plato.Compiler
                 SymbolResolver = new SymbolResolver(Logger);
 
                 Log("Creating type definitions");
-                TypeDefs = SymbolResolver.CreateTypeDefs(TypeDeclarations).ToList();
+                var typeDefs = SymbolResolver.CreateTypeDefs(TypeDeclarations);
+                foreach (var td in typeDefs)
+                {
+                    if (td.IsLibrary())
+                    {
+                        LibraryDefinitions.Add(td.Name, td);
+                    }
+                    else
+                    {
+                        TypeDefinitions.Add(td.Name, td);
+                    }
+                }
 
                 Log($"Found {SymbolResolver.Errors.Count} symbol resolution errors");
                 LogResolutionErrors(SymbolResolver.Errors);
@@ -136,7 +145,7 @@ namespace Plato.Compiler
                 CheckSemantics();
 
                 Log("Creating Reified Types");
-                ReifiedTypes = TypeDefs.Where(td => td.IsConcreteType())
+                ReifiedTypes = TypeDefinitions.Values.Where(td => td.IsConcreteType())
                     .ToDictionary(td => td.Name, td => new ReifiedType(td));
 
                 Log("Adding library functions to reified types");
@@ -173,14 +182,31 @@ namespace Plato.Compiler
             }
         }
 
+        public void ResolveExpressionTypes()
+        {
+            foreach (var rt in ReifiedTypes.Values)
+            {
+                foreach (var rf in rt.Functions)
+                {
+                    //  So: do I process the type of every version of every expression?
+                    // That would be a lot expressions, and a lot of types. 
+                    // The thing is that the parameter references would be different for each one
+                    // I don't know what to do next. 
+                    // I mean: I think I have to make whole-sale copies of each function to properly 
+                    // I could. I just have to be efficient. 
+                    
+                    // I could find a way to
+                    // I don't actually have to type-check every variation.
+                    // The variations are simply useful for find ing the correct overload, and computing 
+                    // return types. 
+                }
+            }
+        }
+
         public void AddLibraryFunctionsToReifiedTypes()
         {
-
-            foreach (var library in TypeDefs)
+            foreach (var library in LibraryDefinitions.Values)
             {
-                if (!library.IsLibrary())
-                    continue;
-
                 foreach (var f in library.Functions)
                 {
                     if (f.Parameters.Count == 0)
@@ -212,8 +238,6 @@ namespace Plato.Compiler
                     }
                 }
             }
-
-
         }
 
         public void WriteReifiedTypes()
@@ -234,25 +258,8 @@ namespace Plato.Compiler
             }
         }
 
-        public Type GetType(ExpressionSymbol expr)
+        public TypeExpressionSymbol GetType(ExpressionSymbol expr)
             => Types.TryGetValue(expr, out var r) ? r : null;
-
-        public void Log(TypeFactory atr)
-        {
-            Log($"Type Factory");
-
-            Log($"= Type Definitions =");
-            foreach (var kv in atr.TypeDefinitions)
-            {
-                Log($"{kv.Key} = {kv.Value}");
-            }
-
-            Log($"= Type References =");
-            foreach (var kv in atr.TypeReferences)
-            {
-                Log($"{kv.Key} = {kv.Value}");
-            }
-        }
 
         public void LogResolutionErrors(IEnumerable<SymbolResolver.ResolutionError> resolutionErrors)
         {
@@ -300,6 +307,7 @@ namespace Plato.Compiler
 
         public void CheckSemantics()
         {
+            /*
             foreach (var f in Functions)
             {
                 foreach (var p in f.Parameters)
@@ -355,7 +363,18 @@ namespace Plato.Compiler
                     if (t.Methods.Count > 0)
                         InternalErrors.Add("Types should not have methods");
                 }
-            }
+            }*/
+
+        }
+
+        public static TypeDefinitionSymbol GetTypeDefinition(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static TypeExpressionSymbol GetTypeExpression(string name)
+        {
+            return GetTypeDefinition(name).ToTypeExpression();
         }
     }
 }

@@ -11,7 +11,6 @@ namespace Plato.Compiler.Symbols
         public TypeExpressionSymbol Type { get; }
 
         public string Name { get; }
-        public string UniqueName => Name + "_" + Id;
 
         protected DefinitionSymbol(TypeExpressionSymbol type, string name)
         {
@@ -111,7 +110,7 @@ namespace Plato.Compiler.Symbols
         public List<TypeParameterDefinition> TypeParameters { get; } = new List<TypeParameterDefinition>();
         public List<TypeExpressionSymbol> Inherits { get; } = new List<TypeExpressionSymbol>();
         public List<TypeExpressionSymbol> Implements { get; } = new List<TypeExpressionSymbol>();
-        public Dictionary<string, AstNode> Lookup { get; } = new Dictionary<string, AstNode>();
+
         public string Name { get; }
 
         public TypeDefinitionSymbol(TypeKind kind, string name)
@@ -209,7 +208,7 @@ namespace Plato.Compiler.Symbols
 
     public class FunctionGroupDefinition : DefinitionSymbol
     {
-        public List<FunctionDefinition> Functions { get; } = new List<FunctionDefinition>();
+        public List<FunctionDefinition> Functions { get; }
 
         public FunctionGroupDefinition(IEnumerable<FunctionDefinition> functions, string name)
             : base(PrimitiveTypeDefinitions.Function.ToTypeExpression(), name)

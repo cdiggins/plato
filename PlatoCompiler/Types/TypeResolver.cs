@@ -12,22 +12,26 @@ namespace Plato.Compiler.Types
     /// </summary>
     public class TypeResolver
     {
+        public bool Success { get; }
+        public string Message { get; private set; }
+        public Compiler Compiler { get; }
+        public Dictionary<ExpressionSymbol, TypeExpressionSymbol> Types => Compiler.Types;
+        public FunctionDefinition Function { get; }
+        public List<FunctionCallResolver> FunctionCalls { get; } = new List<FunctionCallResolver>();
+
         public TypeResolver(
-            TypeFactory factory,  
+            Compiler compiler,  
             FunctionDefinition function)
         {
-            Factory = factory;
+            Compiler = compiler;
+
+            Function = function;
 
             try
             {
                 if (function != null)
                 {
-                    Function = Factory.GetTypedFunction(function);
-                    BodyType = Resolve(FunctionDefinition.Body);
-
-                    if (BodyType != null && ReturnType != null)
-                        if (!CheckCast(BodyType, ReturnType))
-                             return;
+                    Resolve(Function.Body);
                 }
 
                 Success = true;
@@ -39,63 +43,47 @@ namespace Plato.Compiler.Types
             }
         }
 
-        public bool Success { get; }
-        public string Message { get; private set; }
-        public TypeFactory Factory { get; }
-        public TypedFunction Function { get; }
-        public ExpressionTypes ExpressionTypes { get; private set;  }
-        public Type ReturnType => Function.ReturnType;
-        public FunctionDefinition FunctionDefinition => Function.Definition;
-        public Type BodyType { get; }
-        public List<FunctionCallResolver> FunctionCalls { get; } = new List<FunctionCallResolver>();
-
         public void Fail(string reason)
             => Message = reason;
 
-        public IEnumerable<ExpressionTypes> GetExpressionTypes()
+        public bool CheckCast(TypeExpressionSymbol from, TypeExpressionSymbol to)
         {
-            for (var r = ExpressionTypes; r != null; r = r.Parent)
-                yield return r;
-        }
-
-        public bool CheckCast(Type from, Type to)
-        {
-            if (from.CanCastTo(to))
+            if (from.Definition.CanCastTo(to.Definition))
                 return true;
 
             Fail($"Can't cast from {from} to {to}");
             return false;
         }
 
-        public Type Unify(Type typeA, Type typeB)
+        public TypeExpressionSymbol Unify(TypeExpressionSymbol typeA, TypeExpressionSymbol typeB)
         {
             // TODO: Choose between the best, and if not successful, fail. 
             return typeA; 
         }
 
-        public Type ResolveFunctionCall(FunctionCall fc)
+        public TypeExpressionSymbol ResolveFunctionCall(FunctionCall fc)
         {
             var fx = fc.Function;
             var argTypes = fc.Args.Select(Resolve).ToList();
 
             if (fx is FunctionGroupReference fgr)
             {
-                var fcr = new FunctionCallResolver(Factory, fgr, argTypes);
+                var fcr = new FunctionCallResolver(Compiler, fgr, argTypes);
                 FunctionCalls.Add(fcr);
                 return fcr.BestReturnType;
             }
             else
             {
-                return Factory.CreateAny();
+                return CreateAny();
             }
         }
 
-        public Type Resolve(ExpressionSymbol expression)
+        public TypeExpressionSymbol Resolve(ExpressionSymbol expression)
         {
             if (expression == null)
                 return null;
 
-            Type r = null;
+            TypeExpressionSymbol r = null;
 
             switch (expression)
             {
@@ -118,7 +106,7 @@ namespace Plato.Compiler.Types
                     break;
 
                 case FunctionGroupReference functionGroupReference:
-                    r = Factory.FindType(PrimitiveTypeDefinitions.Function.Name);
+                    r = Compiler.GetTypeExpression(PrimitiveTypeDefinitions.Function.Name);
                     break;
 
                 case Lambda lambda:
@@ -129,16 +117,16 @@ namespace Plato.Compiler.Types
                     switch (literal.TypeEnum)
                     {
                         case LiteralTypesEnum.Integer:
-                            r = Factory.FindType("Integer");
+                            r = Compiler.GetTypeExpression("Integer");
                             break;
                         case LiteralTypesEnum.Number:
-                            r = Factory.FindType("Number");
+                            r = Compiler.GetTypeExpression("Number");
                             break;
                         case LiteralTypesEnum.Boolean:
-                            r = Factory.FindType("Boolean");
+                            r = Compiler.GetTypeExpression("Boolean");
                             break;
                         case LiteralTypesEnum.String:
-                            r = Factory.FindType("String");
+                            r = Compiler.GetTypeExpression("String");
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -147,7 +135,7 @@ namespace Plato.Compiler.Types
                     break;
 
                 case ParameterReference parameterReference:
-                    r = Factory.GetType(parameterReference.Type);
+                    r = parameterReference.Type;
                     break;
 
                 case Parenthesized parenthesized:
@@ -155,11 +143,11 @@ namespace Plato.Compiler.Types
                     break;
 
                 case PredefinedReference predefinedReference:
-                    r = Factory.GetType(predefinedReference.Definition.Type);
+                    r = predefinedReference.Definition.Type;
                     break;
 
                 case Reference reference:
-                    r = Factory.GetType(reference.Definition.Type);
+                    r = reference.Definition.Type;
                     break;
 
                 case Tuple tuple:
@@ -170,23 +158,34 @@ namespace Plato.Compiler.Types
                     throw new ArgumentOutOfRangeException(nameof(expression));
             }
 
-            ExpressionTypes = new ExpressionTypes(ExpressionTypes, expression, r);
             if (r == null)
                 throw new Exception($"No type determined for {expression}");
+            Types.Add(expression, r);
             return r;
         }
 
-        public Type CreateType(Lambda lambda)
+        public TypeExpressionSymbol CreateAny()
         {
-            var r = Factory.GetTypedFunction(lambda.Function);
-            Resolve(lambda.Function.Body);
-            return r.FunctionType;
+            return new TypeExpressionSymbol(Compiler.GetTypeDefinition("Any"));
         }
 
-        public Type CreateType(Tuple tuple)
+        public TypeExpressionSymbol CreateType(Lambda lambda)
+        {
+            return CreateType(lambda.Function);
+        }
+
+        public TypeExpressionSymbol CreateType(FunctionDefinition function)
+        {
+            var args = function.Parameters.Select(p => p.Type).Append(function.ReturnType).ToArray();
+            // TODO: maybe choose one of the numbered functions
+            return new TypeExpressionSymbol(Compiler.GetTypeDefinition("Function"), args);
+        }
+
+        public TypeExpressionSymbol CreateType(Tuple tuple)
         {
             var args = tuple.Children.Select(Resolve).ToArray();
-            return Factory.CreateTuple(args);
+            // TODO: maybe choose one of the numbered tuples
+            return new TypeExpressionSymbol(Compiler.GetTypeDefinition("Tuple"), args);
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Plato.Compiler.Symbols
+﻿namespace Plato.Compiler.Symbols
 {
     public class Binding
     {

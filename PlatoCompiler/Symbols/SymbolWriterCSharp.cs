@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
-using System.Data;
 using System.Linq;
 using Plato.Compiler.Ast;
-using Plato.Compiler.Types;
 
 namespace Plato.Compiler.Symbols
 {
@@ -29,46 +27,9 @@ namespace Plato.Compiler.Symbols
                 .Write(")");
         }
 
-        public SymbolWriterCSharp WriteConstraints(TypeConstraintCollection constraints)
-        {
-            foreach (var c in constraints.Constraints)
-                WriteLine($"// {c}");
-            var optionIndex = 0;
-            foreach (var options in constraints.Options)
-            {
-                WriteLine($"// Option {optionIndex++}");
-                Indent();
-                WriteConstraints(options);
-                Dedent();
-            }
-
-            return this;
-        }
-
-        public SymbolWriterCSharp WriteResolver(TypeResolver resolver)
-        {
-            if (resolver.Function == null)
-                WriteLine($"// Type resolver");
-            else
-                WriteLine($"// Type resolver associated with {resolver.Function.Definition.Signature}");
-            WriteLine($"// Success={resolver.Success} Message={resolver.Message}");
-            WriteLine("// Expression types");
-            foreach (var et in resolver.GetExpressionTypes())
-                WriteLine($"// Expression {et.Expression} has type {et.Type}");
-            return this;
-        }
-
-        public SymbolWriterCSharp WriteConstraints(FunctionDefinition function)
-        {
-            WriteLine("// Type Resolver");
-            var resolver = Compiler.Resolvers[function];
-            return WriteResolver(resolver);
-        }
-
         public SymbolWriterCSharp WriteFunctionBody(FunctionDefinition function)
         {
             return 
-                // WriteConstraints(function)
                 WriteStartBlock()
                 .Write("return ")
                 .Write(function.Body)
