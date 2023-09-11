@@ -15,7 +15,7 @@ namespace Plato.Compiler.Types
         public bool Success { get; }
         public string Message { get; private set; }
         public Compiler Compiler { get; }
-        public Dictionary<ExpressionSymbol, TypeExpressionSymbol> Types => Compiler.Types;
+        public Dictionary<ExpressionSymbol, TypeExpressionSymbol> Types => Compiler.ExpressionTypes;
         public FunctionDefinition Function { get; }
         public List<FunctionCallResolver> FunctionCalls { get; } = new List<FunctionCallResolver>();
 

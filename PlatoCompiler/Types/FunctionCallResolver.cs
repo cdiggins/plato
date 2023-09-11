@@ -13,7 +13,7 @@ namespace Plato.Compiler.Types
     public class FunctionCallResolver
     {
         // Passed as arguments
-        public Compiler Factory { get; }
+        public Compiler Compiler { get; }
         public FunctionGroupReference Fgr { get; }
         public IReadOnlyList<TypeExpressionSymbol> ArgTypes { get; }
 
@@ -32,18 +32,16 @@ namespace Plato.Compiler.Types
         public string DebugString =>
             $"Success = {FoundResult && !Ambiguous}, Best type = {BestReturnType}, Function was {Fgr.Definition.DebugString}, Args were {string.Join(",", ArgTypes)}";
 
-        public FunctionCallResolver(Compiler factory, FunctionGroupReference fgr, IReadOnlyList<TypeExpressionSymbol> argTypes)
+        public FunctionCallResolver(Compiler compiler, FunctionGroupReference fgr, IReadOnlyList<TypeExpressionSymbol> argTypes)
         {
-            Factory = factory;
+            Compiler = compiler;
             Fgr = fgr;
             ArgTypes = argTypes;
 
             if (argTypes.Any(t => t == null))
                 throw new Exception("Null argument type");
 
-            // TODO: get all functions matching the functions in the function group. 
-            // TODO: look at 
-            //AllFunctions = fgr.Definition.Functions.Select(Factory.GetTypedFunction).ToList();
+            AllFunctions = Compiler.ReifiedFunctionsByName[fgr.Name];
             
             // This should never happen
             if (AllFunctions.Count == 0)

@@ -34,21 +34,21 @@ public static partial class Extensions
 {
     public static Integer Count<Self, T>(this Self v) where Self: Vector<Self, T>
     {
-        return /*  */
+        return /* Type:Integer */
         /*  */
-        Count(/*  */
+        Count(/* Concept:Array<Type:Type> */
         /*  */
-        FieldTypes(/*  */
+        FieldTypes(/* Primitive:Self */
         v));
     }
     public static T At<Self, T>(this Self v, Integer n) where Self: Vector<Self, T>
     {
-        return /*  */
+        return /* Type:Character */
         /*  */
-        At(/*  */
+        At(/* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
-        v), /*  */
+        FieldValues(/* Primitive:Self */
+        v), /* Type:Integer */
         n);
     }
 }
@@ -60,12 +60,12 @@ public static partial class Extensions
 {
     public static Number Value<Self>(this Self x) where Self: Measure<Self>
     {
-        return /*  */
+        return /* Type:Character */
         /*  */
-        At(/*  */
+        At(/* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
-        x), /*  */
+        FieldValues(/* Primitive:Self */
+        x), /* Type:Integer */
         0);
     }
 }
@@ -88,15 +88,15 @@ public static partial class Extensions
 {
     public static Number Magnitude<Self>(this Self x) where Self: Magnitudinal<Self>
     {
-        return /*  */
+        return /* Type:Number */
         /*  */
-        SquareRoot(/*  */
+        SquareRoot(/* Type:Number */
         /*  */
-        Sum(/*  */
+        Sum(/* Type:Number */
         /*  */
-        Square(/*  */
+        Square(/* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
+        FieldValues(/* Primitive:Self */
         x))));
     }
 }
@@ -116,16 +116,16 @@ public static partial class Extensions
 {
     public static Boolean Equals<Self>(this Self a, Self b) where Self: Equatable<Self>
     {
-        return /*  */
+        return /* Type:Boolean */
         /*  */
-        All(/*  */
+        All(/* Type:Boolean */
         /*  */
-        Equals(/*  */
+        Equals(/* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
-        a), /*  */
+        FieldValues(/* Primitive:Self */
+        a), /* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
+        FieldValues(/* Primitive:Self */
         b)));
     }
 }
@@ -137,68 +137,68 @@ public static partial class Extensions
 {
     public static Self Add<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
-        return /*  */
+        return /* Type:Number */
         /*  */
-        Add(/*  */
+        Add(/* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
-        self), /*  */
+        FieldValues(/* Primitive:Self */
+        self), /* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
+        FieldValues(/* Primitive:Self */
         other));
     }
     public static Self Negative<Self>(this Self self) where Self: Arithmetic<Self>
     {
-        return /*  */
+        return /* Type:Number */
         /*  */
-        Negative(/*  */
+        Negative(/* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
+        FieldValues(/* Primitive:Self */
         self));
     }
     public static Self Reciprocal<Self>(this Self self) where Self: Arithmetic<Self>
     {
-        return /*  */
+        return /* Type:Number */
         /*  */
-        Reciprocal(/*  */
+        Reciprocal(/* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
+        FieldValues(/* Primitive:Self */
         self));
     }
     public static Self Multiply<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
-        return /*  */
+        return /* Type:Number */
         /*  */
-        Add(/*  */
+        Add(/* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
-        self), /*  */
+        FieldValues(/* Primitive:Self */
+        self), /* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
+        FieldValues(/* Primitive:Self */
         other));
     }
     public static Self Divide<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
-        return /*  */
+        return /* Type:Number */
         /*  */
-        Divide(/*  */
+        Divide(/* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
-        self), /*  */
+        FieldValues(/* Primitive:Self */
+        self), /* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
+        FieldValues(/* Primitive:Self */
         other));
     }
     public static Self Modulo<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
-        return /*  */
+        return /* Type:Number */
         /*  */
-        Modulo(/*  */
+        Modulo(/* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
-        self), /*  */
+        FieldValues(/* Primitive:Self */
+        self), /* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
+        FieldValues(/* Primitive:Self */
         other));
     }
 }
@@ -210,52 +210,52 @@ public static partial class Extensions
 {
     public static Self Add<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return /*  */
+        return /* Type:Number */
         /*  */
-        Add(/*  */
+        Add(/* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
-        self), /*  */
+        FieldValues(/* Primitive:Self */
+        self), /* Type:Number */
         scalar);
     }
     public static Self Subtract<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return /*  */
+        return /* Type:Number */
         /*  */
-        Add(/*  */
-        self, /*  */
+        Add(/* Primitive:Self */
+        self, /* Type:Number */
         /*  */
-        Negative(/*  */
+        Negative(/* Type:Number */
         scalar));
     }
     public static Self Multiply<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return /*  */
+        return /* Type:Number */
         /*  */
-        Multiply(/*  */
+        Multiply(/* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
-        self), /*  */
+        FieldValues(/* Primitive:Self */
+        self), /* Type:Number */
         scalar);
     }
     public static Self Divide<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return /*  */
+        return /* Type:Number */
         /*  */
-        Multiply(/*  */
-        self, /*  */
+        Multiply(/* Primitive:Self */
+        self, /* Type:Number */
         /*  */
-        Reciprocal(/*  */
+        Reciprocal(/* Type:Number */
         scalar));
     }
     public static Self Modulo<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return /*  */
+        return /* Type:Number */
         /*  */
-        Modulo(/*  */
+        Modulo(/* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
-        self), /*  */
+        FieldValues(/* Primitive:Self */
+        self), /* Type:Number */
         scalar);
     }
 }
@@ -267,35 +267,35 @@ public static partial class Extensions
 {
     public static Self And<Self>(this Self a, Self b) where Self: BooleanOperations<Self>
     {
-        return /*  */
+        return /* Type:Boolean */
         /*  */
-        And(/*  */
+        And(/* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
-        a), /*  */
+        FieldValues(/* Primitive:Self */
+        a), /* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
+        FieldValues(/* Primitive:Self */
         b));
     }
     public static Self Or<Self>(this Self a, Self b) where Self: BooleanOperations<Self>
     {
-        return /*  */
+        return /* Type:Boolean */
         /*  */
-        Or(/*  */
+        Or(/* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
-        a), /*  */
+        FieldValues(/* Primitive:Self */
+        a), /* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
+        FieldValues(/* Primitive:Self */
         b));
     }
     public static Self Not<Self>(this Self a) where Self: BooleanOperations<Self>
     {
-        return /*  */
+        return /* Type:Boolean */
         /*  */
-        Not(/*  */
+        Not(/* Concept:Array<Concept:Any> */
         /*  */
-        FieldValues(/*  */
+        FieldValues(/* Primitive:Self */
         a));
     }
 }
@@ -688,12 +688,12 @@ public class Vector2D: Vector<Vector2D>
     public T this[Integer n]
     {
         get{
-            return /*  */
+            return /* Type:Character */
             /*  */
-            At(/*  */
+            At(/* Concept:Array<Concept:Any> */
             /*  */
-            FieldValues(/*  */
-            v), /*  */
+            FieldValues(/* Primitive:Self */
+            v), /* Type:Integer */
             n);
         }
     }
@@ -749,12 +749,12 @@ public class Vector3D: Vector<Vector3D>
     public T this[Integer n]
     {
         get{
-            return /*  */
+            return /* Type:Character */
             /*  */
-            At(/*  */
+            At(/* Concept:Array<Concept:Any> */
             /*  */
-            FieldValues(/*  */
-            v), /*  */
+            FieldValues(/* Primitive:Self */
+            v), /* Type:Integer */
             n);
         }
     }
@@ -811,12 +811,12 @@ public class Vector4D: Vector<Vector4D>
     public T this[Integer n]
     {
         get{
-            return /*  */
+            return /* Type:Character */
             /*  */
-            At(/*  */
+            At(/* Concept:Array<Concept:Any> */
             /*  */
-            FieldValues(/*  */
-            v), /*  */
+            FieldValues(/* Primitive:Self */
+            v), /* Type:Integer */
             n);
         }
     }
@@ -957,12 +957,12 @@ public class AlignedBox2D: Interval<AlignedBox2D>
     public T this[Integer n]
     {
         get{
-            return /*  */
+            return /* Type:Character */
             /*  */
-            At(/*  */
+            At(/* Concept:Array<Concept:Any> */
             /*  */
-            FieldValues(/*  */
-            v), /*  */
+            FieldValues(/* Primitive:Self */
+            v), /* Type:Integer */
             n);
         }
     }
@@ -1020,12 +1020,12 @@ public class AlignedBox3D: Interval<AlignedBox3D>
     public T this[Integer n]
     {
         get{
-            return /*  */
+            return /* Type:Character */
             /*  */
-            At(/*  */
+            At(/* Concept:Array<Concept:Any> */
             /*  */
-            FieldValues(/*  */
-            v), /*  */
+            FieldValues(/* Primitive:Self */
+            v), /* Type:Integer */
             n);
         }
     }
@@ -1081,12 +1081,12 @@ public class Complex: Vector<Complex>
     public T this[Integer n]
     {
         get{
-            return /*  */
+            return /* Type:Character */
             /*  */
-            At(/*  */
+            At(/* Concept:Array<Concept:Any> */
             /*  */
-            FieldValues(/*  */
-            v), /*  */
+            FieldValues(/* Primitive:Self */
+            v), /* Type:Integer */
             n);
         }
     }
@@ -1308,12 +1308,12 @@ public class Line3D: Interval<Line3D>
     public T this[Integer n]
     {
         get{
-            return /*  */
+            return /* Type:Character */
             /*  */
-            At(/*  */
+            At(/* Concept:Array<Concept:Any> */
             /*  */
-            FieldValues(/*  */
-            v), /*  */
+            FieldValues(/* Primitive:Self */
+            v), /* Type:Integer */
             n);
         }
     }
@@ -1371,12 +1371,12 @@ public class Line2D: Interval<Line2D>
     public T this[Integer n]
     {
         get{
-            return /*  */
+            return /* Type:Character */
             /*  */
-            At(/*  */
+            At(/* Concept:Array<Concept:Any> */
             /*  */
-            FieldValues(/*  */
-            v), /*  */
+            FieldValues(/* Primitive:Self */
+            v), /* Type:Integer */
             n);
         }
     }
@@ -1931,12 +1931,12 @@ public class TimeRange: Interval<TimeRange>
     public T this[Integer n]
     {
         get{
-            return /*  */
+            return /* Type:Character */
             /*  */
-            At(/*  */
+            At(/* Concept:Array<Concept:Any> */
             /*  */
-            FieldValues(/*  */
-            v), /*  */
+            FieldValues(/* Primitive:Self */
+            v), /* Type:Integer */
             n);
         }
     }
@@ -2015,12 +2015,12 @@ public class AnglePair: Interval<AnglePair>
     public T this[Integer n]
     {
         get{
-            return /*  */
+            return /* Type:Character */
             /*  */
-            At(/*  */
+            At(/* Concept:Array<Concept:Any> */
             /*  */
-            FieldValues(/*  */
-            v), /*  */
+            FieldValues(/* Primitive:Self */
+            v), /* Type:Integer */
             n);
         }
     }
@@ -2131,12 +2131,12 @@ public class TimeInterval: Interval<TimeInterval>
     public T this[Integer n]
     {
         get{
-            return /*  */
+            return /* Type:Character */
             /*  */
-            At(/*  */
+            At(/* Concept:Array<Concept:Any> */
             /*  */
-            FieldValues(/*  */
-            v), /*  */
+            FieldValues(/* Primitive:Self */
+            v), /* Type:Integer */
             n);
         }
     }
@@ -2194,12 +2194,12 @@ public class RealInterval: Interval<RealInterval>
     public T this[Integer n]
     {
         get{
-            return /*  */
+            return /* Type:Character */
             /*  */
-            At(/*  */
+            At(/* Concept:Array<Concept:Any> */
             /*  */
-            FieldValues(/*  */
-            v), /*  */
+            FieldValues(/* Primitive:Self */
+            v), /* Type:Integer */
             n);
         }
     }
@@ -2431,12 +2431,12 @@ public class UV: Vector<UV>
     public T this[Integer n]
     {
         get{
-            return /*  */
+            return /* Type:Character */
             /*  */
-            At(/*  */
+            At(/* Concept:Array<Concept:Any> */
             /*  */
-            FieldValues(/*  */
-            v), /*  */
+            FieldValues(/* Primitive:Self */
+            v), /* Type:Integer */
             n);
         }
     }
@@ -2492,12 +2492,12 @@ public class UVW: Vector<UVW>
     public T this[Integer n]
     {
         get{
-            return /*  */
+            return /* Type:Character */
             /*  */
-            At(/*  */
+            At(/* Concept:Array<Concept:Any> */
             /*  */
-            FieldValues(/*  */
-            v), /*  */
+            FieldValues(/* Primitive:Self */
+            v), /* Type:Integer */
             n);
         }
     }

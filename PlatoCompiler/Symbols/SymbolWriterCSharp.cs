@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Plato.Compiler.Ast;
 
 namespace Plato.Compiler.Symbols
@@ -310,7 +311,13 @@ namespace Plato.Compiler.Symbols
                     .WriteEndBlock();
             }
 
-            throw new Exception($"Unrecognized kind of type {type.Kind}");
+            if (type.IsPrimitive())
+            {
+                // TODO: output the primitives 
+                return this;
+            }
+
+            return this;
         }
 
         public override SymbolWriterCSharp Write(DefinitionSymbol value)

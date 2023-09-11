@@ -37,11 +37,17 @@ namespace Plato.Compiler
         public SymbolResolver SymbolResolver { get; set; }
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; set; }
 
-        public Dictionary<string, TypeDefinitionSymbol> TypeDefinitions { get; } = new Dictionary<string, TypeDefinitionSymbol>();
-        public Dictionary<string, TypeDefinitionSymbol> LibraryDefinitions { get; } = new Dictionary<string, TypeDefinitionSymbol>();
+        public IEnumerable<TypeDefinitionSymbol> AllTypeAndLibraryDefinitions => TypeDefinitionsByName.Values
+            .Concat(LibraryDefinitionsByName.Values);
 
-        public Dictionary<ExpressionSymbol, TypeExpressionSymbol> Types { get; } = new Dictionary<ExpressionSymbol, TypeExpressionSymbol>();
-        public Dictionary<string, ReifiedType> ReifiedTypes { get; set; } 
+        public Dictionary<string, TypeDefinitionSymbol> TypeDefinitionsByName { get; } = new Dictionary<string, TypeDefinitionSymbol>();
+        public Dictionary<string, TypeDefinitionSymbol> LibraryDefinitionsByName { get; } = new Dictionary<string, TypeDefinitionSymbol>();
+        public IReadOnlyList<FunctionDefinition> FunctionDefinitions { get; set; } 
+        public IReadOnlyList<TypeResolver> TypeResolvers { get; set; }
+
+        public Dictionary<ExpressionSymbol, TypeExpressionSymbol> ExpressionTypes { get; } = new Dictionary<ExpressionSymbol, TypeExpressionSymbol>();
+        public Dictionary<string, ReifiedType> ReifiedTypes { get; set; }
+        public Dictionary<string, List<ReifiedFunction>> ReifiedFunctionsByName { get; set; }
 
         public List<string> SemanticErrors { get; } = new List<string>();
         public List<string> SemanticWarnings { get; } = new List<string>();
@@ -78,16 +84,19 @@ namespace Plato.Compiler
                 SymbolResolver = new SymbolResolver(Logger);
 
                 Log("Creating type definitions");
-                var typeDefs = SymbolResolver.CreateTypeDefs(TypeDeclarations);
+                
+                var typeDefs = SymbolResolver.CreateTypeDefs(TypeDeclarations)
+                    .Concat(PrimitiveTypeDefinitions.AllPrimitives);
+
                 foreach (var td in typeDefs)
                 {
                     if (td.IsLibrary())
                     {
-                        LibraryDefinitions.Add(td.Name, td);
+                        LibraryDefinitionsByName.Add(td.Name, td);
                     }
                     else
                     {
-                        TypeDefinitions.Add(td.Name, td);
+                        TypeDefinitionsByName.Add(td.Name, td);
                     }
                 }
 
@@ -100,66 +109,40 @@ namespace Plato.Compiler
                     return;
                 }
 
-                /*
-                Log("Creating type factory");
-                TypeFactory = new TypeFactory(TypeDefs);
-                
-                //Log(TypeFactory);
+                Log("Gathering function definitions");
+                FunctionDefinitions = TypeDefinitionsByName.Values.SelectMany(td => td.Functions)
+                    .Concat(LibraryDefinitionsByName.Values.SelectMany(ld => ld.Functions)).ToList();
+                Log($"Found {FunctionDefinitions.Count} functions");
 
-                foreach (var kv in TypeFactory.TypedFunctions)
-                {
-                    var f = kv.Key;
-                    var tf = kv.Value;
-                    Log($"Typed function for {f} is {tf}");
-
-                    Log($"Creating type resolver");
-                    var tr = new TypeResolver(TypeFactory, f);
-                    Resolvers.Add(f, tr);
-
-                    Log($"Gathering expressions types");
-                    var et = tr.ExpressionTypes;
-
-                    while (et != null)
-                    {
-                        if (Types.ContainsKey(et.Expression))
-                        {
-                            var tmp = Types[et.Expression];
-                            if (!tmp.Equals(et.Type))
-                            {
-                                // TODO: constrain the two types or something
-                                //throw new Exception($"Unexpected type {tmp}, expected {et.Type}");
-                                Debug.WriteLine($"Unexpected type {tmp}, expected {et.Type}");
-                            }
-                        }
-                        else
-                        {
-                            Types.Add(et.Expression, et.Type);
-                        }
-
-                        et = et.Parent;
-                    }
-                }
-                */
-                
                 Log("Checking semantics");
                 CheckSemantics();
 
                 Log("Creating Reified Types");
-                ReifiedTypes = TypeDefinitions.Values.Where(td => td.IsConcreteType())
+                ReifiedTypes = TypeDefinitionsByName.Values.Where(td => td.IsConcreteType())
                     .ToDictionary(td => td.Name, td => new ReifiedType(td));
+
+                Log($"Found {ReifiedTypes.Count} types");
+                Log($"Created a total of {ReifiedTypes.Values.Sum(rt => rt.Functions.Count)} reified functions");
 
                 Log("Adding library functions to reified types");
                 AddLibraryFunctionsToReifiedTypes();
 
-                Log("Reified types");
-                WriteReifiedTypes();
+                Log("Grouping Reified functions by name for faster type resolution");
+                ReifiedFunctionsByName = ReifiedTypes.Values.SelectMany(rt => rt.Functions)
+                    .ToDictionaryOfLists(rf => rf.Name);
 
-                /*
-                Log("Generating Visual Syntax Graphs");
-                Graphs.Clear();
-                foreach (var f in Functions) 
-                    Graphs.Add(new VsgBuilder().ToVsg(f));
-                */
+                //Log("Reified types");
+                //WriteReifiedTypes();
+
+                Log("Creating resolvers");
+                TypeResolvers = FunctionDefinitions.Select(fd => new TypeResolver(this, fd)).ToList();
+                Log($"Found {TypeResolvers.Count} resolvers");
+                Log($"Applied type to {ExpressionTypes.Count} expressions");
+
+                //Log("Generating Visual Syntax Graphs");
+                //Graphs.Clear();
+                //foreach (var f in Functions) 
+                //    Graphs.Add(new VsgBuilder().ToVsg(f));
 
                 Log("Outputting errors and warnings");
                 foreach (var se in SemanticErrors)
@@ -205,7 +188,7 @@ namespace Plato.Compiler
 
         public void AddLibraryFunctionsToReifiedTypes()
         {
-            foreach (var library in LibraryDefinitions.Values)
+            foreach (var library in LibraryDefinitionsByName.Values)
             {
                 foreach (var f in library.Functions)
                 {
@@ -259,7 +242,7 @@ namespace Plato.Compiler
         }
 
         public TypeExpressionSymbol GetType(ExpressionSymbol expr)
-            => Types.TryGetValue(expr, out var r) ? r : null;
+            => ExpressionTypes.TryGetValue(expr, out var r) ? r : null;
 
         public void LogResolutionErrors(IEnumerable<SymbolResolver.ResolutionError> resolutionErrors)
         {
@@ -367,12 +350,12 @@ namespace Plato.Compiler
 
         }
 
-        public static TypeDefinitionSymbol GetTypeDefinition(string name)
+        public TypeDefinitionSymbol GetTypeDefinition(string name)
         {
-            throw new NotImplementedException();
+            return TypeDefinitionsByName[name];
         }
 
-        public static TypeExpressionSymbol GetTypeExpression(string name)
+        public TypeExpressionSymbol GetTypeExpression(string name)
         {
             return GetTypeDefinition(name).ToTypeExpression();
         }

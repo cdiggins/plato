@@ -11,11 +11,9 @@ namespace Plato.Compiler.Symbols
         public static TypeDefinitionSymbol Error = Create("Error");
         public static TypeDefinitionSymbol Tuple = Create("Tuple");
         public static TypeDefinitionSymbol Function = Create("Function");
-        public static TypeDefinitionSymbol[] Tuples = Enumerable.Range(0, 9).Select(i => Create($"Tuple{i}", i)).ToArray();
-        public static TypeDefinitionSymbol[] Functions = Enumerable.Range(0, 9).Select(i => Create($"Function{i}", i + 1)).ToArray();
 
         public static IEnumerable<TypeDefinitionSymbol> AllPrimitives =>
-            Tuples.Concat(Functions).Concat(new[] { Self, Error, Tuple, Function });
+            new[] { Self, Error, Tuple, Function };
 
         public static TypeDefinitionSymbol Create(string name)
             => new TypeDefinitionSymbol(TypeKind.Primitive, name);

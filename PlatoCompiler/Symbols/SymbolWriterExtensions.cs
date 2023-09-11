@@ -45,7 +45,7 @@ namespace Plato.Compiler.Symbols
         public static string ToCSharp(this Compiler compiler)
         {
             var writer = new SymbolWriterCSharp(compiler);
-            var r = writer.Write(compiler.TypeDefinitions.Values);
+            var r = writer.Write(compiler.TypeDefinitionsByName.Values);
             return r.ToString();
         }
 
