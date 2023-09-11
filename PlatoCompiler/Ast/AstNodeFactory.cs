@@ -382,7 +382,7 @@ namespace Plato.Compiler.Ast
                 var implements = type.ImplementsList.Node?.TypeExpr.Nodes.Select(ToAst).ToArray();
                 var members = type.FieldDeclaration.Nodes.Select(ToAst).Cast<AstMemberDeclaration>().ToArray();
 
-                return Create(cstTopLevelDeclaration, new AstTypeDeclaration(TypeKind.Type, name, typeParameters, inherits, implements, members));
+                return Create(cstTopLevelDeclaration, new AstTypeDeclaration(TypeKind.ConcreteType, name, typeParameters, inherits, implements, members));
             }
             else if (cstTopLevelDeclaration.Library.Present)
             {

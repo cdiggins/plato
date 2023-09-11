@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using Plato.Compiler.Ast;
 
 namespace Plato.Compiler.Symbols
@@ -30,8 +29,7 @@ namespace Plato.Compiler.Symbols
 
         public SymbolWriterCSharp WriteFunctionBody(FunctionDefinition function)
         {
-            return 
-                WriteStartBlock()
+            return WriteStartBlock()
                 .Write("return ")
                 .Write(function.Body)
                 .WriteLine(";")
@@ -40,7 +38,7 @@ namespace Plato.Compiler.Symbols
 
         public SymbolWriterCSharp Write(FunctionDefinition function)
         {
-            // Functions with no bodies are intrinsics
+            // Functions with no bodies are probably intrinsics
             if (function.Body == null)
                 return this;
 
@@ -227,7 +225,7 @@ namespace Plato.Compiler.Symbols
         }
 
         public static bool IsSelfType(TypeExpressionSymbol rs)
-            => rs.Definition.Equals(PrimitiveTypeDefinitions.Self);
+            => rs.Definition is SelfType;
 
         public static bool IsTypePreservingConcept(TypeDefinitionSymbol type)
         {
@@ -289,6 +287,7 @@ namespace Plato.Compiler.Symbols
                 var implements = type.Implements.Count > 0
                     ? ": " + string.Join(", ", type.Implements.Select(td => $"{td?.Name}<{type.Name}>"))
                     : "";
+
                 return Write("public class ")
                     .Write(type.Name)
                     .WriteLine(implements)
@@ -355,7 +354,6 @@ namespace Plato.Compiler.Symbols
 
             return this;
         }
-
 
         public override SymbolWriterCSharp Write(TypeExpressionSymbol typeExpression)
         {

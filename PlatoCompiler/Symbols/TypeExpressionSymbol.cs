@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Plato.Compiler.Utilities;
 
 namespace Plato.Compiler.Symbols
 {
@@ -28,5 +30,16 @@ namespace Plato.Compiler.Symbols
 
         public override IEnumerable<Symbol> GetChildSymbols()
             => TypeArgs;
+
+        public override int GetHashCode()
+            => Hasher.Combine(TypeArgs.Select(ta => ta.GetHashCode()).Append(Definition.GetHashCode()));
+
+        public override bool Equals(object obj)
+        {
+            return obj is TypeExpressionSymbol tes
+                   && tes.Definition.Name == Definition.Name
+                   && tes.Definition.Id == Definition.Id
+                   && tes.TypeArgs.SequenceEqual(TypeArgs);
+        }
     }
 }

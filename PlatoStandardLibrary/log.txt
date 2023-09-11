@@ -1,79 +1,200 @@
-[0:00.003] Creating compiler
-[0:00.003] Opening files
-[0:00.259] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\intrinsics.plato at 2023-09-10 9:15:13 PM
-[0:00.260] Starting to parse 38 lines containing 1086 characters
-[0:00.260] Tokenization phase
-[0:00.266] Completed tokenization
-[0:00.268] Starting main parse
-[0:00.285] Completed parsing
-[0:00.285] Gathering parse errors
-[0:00.287] Found 0 errors
-[0:00.287] Gathering parse nodes
-[0:00.287] Found 782 nodes
-[0:00.287] Creating parse tree
-[0:00.291] Creating Concrete Syntax Tree (CST)
-[0:00.313] Creating Abstract Syntax Tree (AST)
-[0:00.355] Completed all steps, result is successful
-[0:00.424] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato at 2023-09-10 9:15:14 PM
-[0:00.424] Starting to parse 126 lines containing 2604 characters
-[0:00.424] Tokenization phase
-[0:00.429] Completed tokenization
-[0:00.429] Starting main parse
-[0:00.473] Completed parsing
-[0:00.473] Gathering parse errors
-[0:00.473] Found 0 errors
-[0:00.473] Gathering parse nodes
-[0:00.473] Found 1376 nodes
-[0:00.473] Creating parse tree
-[0:00.474] Creating Concrete Syntax Tree (CST)
-[0:00.477] Creating Abstract Syntax Tree (AST)
-[0:00.527] Completed all steps, result is successful
-[0:00.613] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\types.plato at 2023-09-10 9:15:14 PM
-[0:00.613] Starting to parse 872 lines containing 12978 characters
-[0:00.613] Tokenization phase
-[0:00.640] Completed tokenization
-[0:00.640] Starting main parse
-[0:00.656] Completed parsing
-[0:00.656] Gathering parse errors
-[0:00.656] Found 0 errors
-[0:00.656] Gathering parse nodes
-[0:00.656] Found 3800 nodes
-[0:00.656] Creating parse tree
-[0:00.658] Creating Concrete Syntax Tree (CST)
-[0:00.663] Creating Abstract Syntax Tree (AST)
-[0:00.671] Completed all steps, result is successful
-[0:00.724] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato at 2023-09-10 9:15:14 PM
-[0:00.724] Starting to parse 442 lines containing 11219 characters
-[0:00.724] Tokenization phase
-[0:00.751] Completed tokenization
-[0:00.751] Starting main parse
-[0:00.779] Completed parsing
-[0:00.779] Gathering parse errors
-[0:00.779] Found 0 errors
-[0:00.779] Gathering parse nodes
-[0:00.779] Found 6289 nodes
-[0:00.779] Creating parse tree
-[0:00.781] Creating Concrete Syntax Tree (CST)
-[0:00.793] Creating Abstract Syntax Tree (AST)
-[0:00.815] Completed all steps, result is successful
-[0:00.815] Applying syntax coloring
-[0:00.815] Completed syntax coloring
-[0:00.840] Initializing Compiler
-[0:00.841] Gathering parsers
-[0:00.842] Gathering AST trees
-[0:00.842] Gathering type declarations
-[0:00.868] Creating symbol resolver
-[0:00.872] Creating type definitions
-[0:00.887] Found 0 symbol resolution errors
-[0:00.888] Gathering function definitions
-[0:00.890] Found 429 functions
-[0:00.890] Checking semantics
-[0:00.890] Creating Reified Types
-[0:00.915] Found 117 types
-[0:00.916] Created a total of 1442 reified functions
-[0:00.916] Adding library functions to reified types
-[0:01.005] Grouping Reified functions by name for faster type resolution
-[0:01.014] Creating resolvers
-[0:02.701] Found 429 resolvers
-[0:02.701] Applied type to 1324 expressions
-[0:02.701] Outputting errors and warnings
+[0:00.001] Creating compiler
+[0:00.001] Opening files
+[0:00.254] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\intrinsics.plato at 2023-09-11 1:02:24 PM
+[0:00.254] Starting to parse 38 lines containing 1086 characters
+[0:00.254] Tokenization phase
+[0:00.263] Completed tokenization
+[0:00.265] Starting main parse
+[0:00.270] Completed parsing
+[0:00.270] Gathering parse errors
+[0:00.273] Found 0 errors
+[0:00.273] Gathering parse nodes
+[0:00.273] Found 782 nodes
+[0:00.273] Creating parse tree
+[0:00.277] Creating Concrete Syntax Tree (CST)
+[0:00.292] Creating Abstract Syntax Tree (AST)
+[0:00.309] Completed all steps, result is successful
+[0:00.364] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato at 2023-09-11 1:02:24 PM
+[0:00.364] Starting to parse 126 lines containing 2604 characters
+[0:00.364] Tokenization phase
+[0:00.367] Completed tokenization
+[0:00.367] Starting main parse
+[0:00.394] Completed parsing
+[0:00.394] Gathering parse errors
+[0:00.394] Found 0 errors
+[0:00.394] Gathering parse nodes
+[0:00.394] Found 1376 nodes
+[0:00.394] Creating parse tree
+[0:00.394] Creating Concrete Syntax Tree (CST)
+[0:00.397] Creating Abstract Syntax Tree (AST)
+[0:00.419] Completed all steps, result is successful
+[0:00.454] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\types.plato at 2023-09-11 1:02:24 PM
+[0:00.454] Starting to parse 872 lines containing 12978 characters
+[0:00.454] Tokenization phase
+[0:00.464] Completed tokenization
+[0:00.465] Starting main parse
+[0:00.475] Completed parsing
+[0:00.475] Gathering parse errors
+[0:00.475] Found 0 errors
+[0:00.475] Gathering parse nodes
+[0:00.475] Found 3800 nodes
+[0:00.475] Creating parse tree
+[0:00.476] Creating Concrete Syntax Tree (CST)
+[0:00.480] Creating Abstract Syntax Tree (AST)
+[0:00.485] Completed all steps, result is successful
+[0:00.542] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato at 2023-09-11 1:02:24 PM
+[0:00.542] Starting to parse 442 lines containing 11219 characters
+[0:00.542] Tokenization phase
+[0:00.562] Completed tokenization
+[0:00.563] Starting main parse
+[0:00.582] Completed parsing
+[0:00.582] Gathering parse errors
+[0:00.582] Found 0 errors
+[0:00.582] Gathering parse nodes
+[0:00.582] Found 6289 nodes
+[0:00.582] Creating parse tree
+[0:00.584] Creating Concrete Syntax Tree (CST)
+[0:00.596] Creating Abstract Syntax Tree (AST)
+[0:00.613] Completed all steps, result is successful
+[0:00.613] Applying syntax coloring
+[0:00.613] Completed syntax coloring
+[0:00.629] Initializing Compiler
+[0:00.629] Gathering parsers
+[0:00.629] Gathering AST trees
+[0:00.629] Gathering type declarations
+[0:00.649] Creating symbol resolver
+[0:00.653] Creating type definitions
+[0:00.667] Found 33 symbol resolution errors
+[0:00.668] Symbol resolution error: Could not find type Self
+[0:00.668] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     FieldValues(x: Self): Array<Any>;
+[0:00.669]                        ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     FieldTypes(x: Self): Array<Type>;
+[0:00.669]                       ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Count(xs: Self): Integer;
+[0:00.669]                   ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     At(xs: Self, n: Integer): T;
+[0:00.669]                ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Count(v: Self): Integer
+[0:00.669]                  ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     At(v: Self, n: Integer): T
+[0:00.669]               ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Value(x: Self): Number
+[0:00.669]                  ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Magnitude(x: Self): Number
+[0:00.669]                      ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Compare(x: Self): Integer;
+[0:00.669]                    ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Equals(a: Self, b: Self): Boolean
+[0:00.669]                   ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Equals(a: Self, b: Self): Boolean
+[0:00.669]                            ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Add(self: Self, other: Self): Self
+[0:00.669]                   ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Add(self: Self, other: Self): Self
+[0:00.669]                                ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Negative(self: Self): Self
+[0:00.669]                        ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Reciprocal(self: Self): Self
+[0:00.669]                          ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Multiply(self: Self, other: Self): Self
+[0:00.669]                        ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Multiply(self: Self, other: Self): Self
+[0:00.669]                                     ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Divide(self: Self, other: Self): Self
+[0:00.669]                      ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Divide(self: Self, other: Self): Self
+[0:00.669]                                   ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Modulo(self: Self, other: Self): Self
+[0:00.669]                      ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Modulo(self: Self, other: Self): Self
+[0:00.669]                                   ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Add(self: Self, scalar: Number): Self
+[0:00.669]                   ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Subtract(self: Self, scalar: Number): Self
+[0:00.669]                        ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Multiply(self: Self, scalar: Number): Self
+[0:00.669]                        ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Divide(self: Self, scalar: Number): Self
+[0:00.669]                      ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Modulo(self: Self, scalar: Number): Self
+[0:00.669]                      ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     And(a: Self, b: Self): Self 
+[0:00.669]                ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     And(a: Self, b: Self): Self 
+[0:00.669]                         ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Or(a: Self, b: Self): Self
+[0:00.669]               ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Or(a: Self, b: Self): Self
+[0:00.669]                        ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Not(a: Self): Self 
+[0:00.669]                ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Min(x: Self): T;
+[0:00.669]                ^
+[0:00.669] Symbol resolution error: Could not find type Self
+[0:00.669] C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato
+[0:00.669]     Max(x: Self): T;
+[0:00.669]                ^
+[0:00.669] Halting further computation

@@ -46,14 +46,6 @@ namespace Plato.Compiler.Types
         public void Fail(string reason)
             => Message = reason;
 
-        public bool CheckCast(TypeExpressionSymbol from, TypeExpressionSymbol to)
-        {
-            if (from.Definition.CanCastTo(to.Definition))
-                return true;
-
-            Fail($"Can't cast from {from} to {to}");
-            return false;
-        }
 
         public TypeExpressionSymbol Unify(TypeExpressionSymbol typeA, TypeExpressionSymbol typeB)
         {
@@ -70,12 +62,10 @@ namespace Plato.Compiler.Types
             {
                 var fcr = new FunctionCallResolver(Compiler, fgr, argTypes);
                 FunctionCalls.Add(fcr);
-                return fcr.BestReturnType;
+                return fcr.ResultType;
             }
-            else
-            {
-                return CreateAny();
-            }
+
+            return CreateAny();
         }
 
         public TypeExpressionSymbol Resolve(ExpressionSymbol expression)
@@ -131,7 +121,6 @@ namespace Plato.Compiler.Types
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
-
                     break;
 
                 case ParameterReference parameterReference:

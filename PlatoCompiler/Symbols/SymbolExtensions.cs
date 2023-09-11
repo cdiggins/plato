@@ -41,12 +41,15 @@ namespace Plato.Compiler.Symbols
             => ts.Kind == TypeKind.Concept;
 
         public static bool IsConcreteType(this TypeDefinitionSymbol ts)
-            => ts.Kind == TypeKind.Type;
+            => ts.Kind == TypeKind.ConcreteType;
 
         public static bool IsPrimitive(this TypeDefinitionSymbol ts)
             => ts.Kind == TypeKind.Primitive;
 
         public static bool IsLibrary(this TypeDefinitionSymbol ts)
             => ts.Kind == TypeKind.Library;
+
+        public static bool IsTypeVariable(this TypeDefinitionSymbol ts)
+            => ts.Kind == TypeKind.TypeVariable;
     }
 }

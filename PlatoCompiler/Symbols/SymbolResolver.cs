@@ -43,8 +43,9 @@ namespace Plato.Compiler.Symbols
         {
             BindType(PrimitiveTypeDefinitions.Tuple);
             BindType(PrimitiveTypeDefinitions.Function);
-            BindType(PrimitiveTypeDefinitions.Self);
+            // TODO: is this used? 
             BindPredefined(null, "intrinsic");
+            // TODO: what is this? 
             BindPredefined(PrimitiveTypeDefinitions.Tuple.ToTypeExpression(), "Tuple");
         }
 
@@ -291,7 +292,6 @@ namespace Plato.Compiler.Symbols
             {
                 var astTypeDeclaration = SymbolsToNodes[typeDef] as AstTypeDeclaration;
                 TypeBindingsScope = TypeBindingsScope.Push();
-
                 foreach (var tp in astTypeDeclaration.TypeParameters)
                 {
                     var tpd = new TypeParameterDefinition(tp.Name, ResolveType(tp.Constraint));
@@ -299,6 +299,10 @@ namespace Plato.Compiler.Symbols
                     typeDef.TypeParameters.Add(tpd);
                 }
 
+                // Add a Self type
+                if (typeDef.Self != null)
+                    BindType(typeDef.Self);
+                
                 foreach (var m in astTypeDeclaration.Members)
                 {
                     if (m is AstFieldDeclaration fd)
@@ -351,6 +355,10 @@ namespace Plato.Compiler.Symbols
                         throw new Exception($"Null implemented type declaration in {typeDef}");
                     typeDef.Implements.Add(ResolveType(implementedType));
                 }
+
+                // Add a Self type
+                if (typeDef.Self != null)
+                    BindType(typeDef.Self);
 
                 // For each method in the type create a function, and add it to a function group 
                 foreach (var m in typeDef.Methods)

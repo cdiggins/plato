@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Parakeet;
 using Parakeet.Demos.Plato;
 using Plato.Compiler.Ast;
@@ -84,7 +83,6 @@ namespace Plato.Compiler
                 SymbolResolver = new SymbolResolver(Logger);
 
                 Log("Creating type definitions");
-                
                 var typeDefs = SymbolResolver.CreateTypeDefs(TypeDeclarations)
                     .Concat(PrimitiveTypeDefinitions.AllPrimitives);
 

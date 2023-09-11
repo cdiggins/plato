@@ -86,17 +86,6 @@ namespace Plato.Compiler.Symbols
             => new[] { Type };
     }
 
-    public class TypeParameterDefinition : TypeDefinitionSymbol
-    {
-        public TypeParameterDefinition(string name, TypeExpressionSymbol constraint)
-            : base(TypeKind.Variable, name)
-            => Constraint = constraint;
-        public TypeExpressionSymbol Constraint { get; }
-
-        public override IEnumerable<Symbol> GetChildSymbols()
-            => new[] { Constraint };
-    }
-
     public class TypeDefinitionSymbol : Symbol
     {
         public TypeKind Kind { get; }
@@ -112,11 +101,18 @@ namespace Plato.Compiler.Symbols
         public List<TypeExpressionSymbol> Implements { get; } = new List<TypeExpressionSymbol>();
 
         public string Name { get; }
+        
+        public SelfType Self { get; }
 
         public TypeDefinitionSymbol(TypeKind kind, string name)
         {
             Name = name;
             Kind = kind;
+
+            if (Kind == TypeKind.Concept || Kind == TypeKind.Library)
+            {
+                Self = new SelfType(ToTypeExpression());
+            }
         }
 
         public IEnumerable<TypeDefinitionSymbol> GetSelfAndAllInheritedTypes()
@@ -166,6 +162,25 @@ namespace Plato.Compiler.Symbols
 
         public override IEnumerable<Symbol> GetChildSymbols()
             => Methods.Cast<Symbol>().Concat(Fields).Concat(TypeParameters).Concat(Inherits).Concat(Implements);
+    }
+
+    public class TypeParameterDefinition : TypeDefinitionSymbol
+    {
+        public TypeParameterDefinition(string name, TypeExpressionSymbol constraint)
+            : base(TypeKind.TypeVariable, name)
+            => Constraint = constraint;
+        
+        public TypeExpressionSymbol Constraint { get; }
+
+        public override IEnumerable<Symbol> GetChildSymbols()
+            => new[] { Constraint };
+    }
+
+    public class SelfType : TypeParameterDefinition
+    {
+        public SelfType(TypeExpressionSymbol constraint)
+            : base("Self", constraint)
+        { }
     }
 
     public abstract class MemberDefinition : DefinitionSymbol

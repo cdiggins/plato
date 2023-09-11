@@ -240,11 +240,11 @@ namespace Plato.Compiler.Ast
 
     public enum TypeKind
     {
-        Type,
+        ConcreteType,
         Library,
         Concept,
         Primitive,
-        Variable,
+        TypeVariable,
     }
 
     public class AstTypeDeclaration : AstDeclaration
