@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Plato.Compiler.Symbols;
 
@@ -16,7 +15,7 @@ namespace Plato.Compiler.Types
         public Compiler Compiler { get; }
         public FunctionGroupReference Fgr { get; }
         public IReadOnlyList<TypeExpressionSymbol> ArgTypes { get; }
-        public TypeExpressionSymbol ResultType { get; }
+        public TypeExpressionSymbol ResultType { get; set; }
 
         public FunctionCallResolver(Compiler compiler,
             FunctionGroupReference fgr,
@@ -30,92 +29,94 @@ namespace Plato.Compiler.Types
                 throw new Exception("Null argument type");
 
             // First we are going to look for a viable result from the function group 
-            var functions = fgr.Definition.Functions;
-            if (functions.Count == 0)
+            var funcs = fgr.Definition.Functions;
+            if (funcs.Count == 0)
                 throw new Exception($"No functions found in group {Fgr}");
-            functions = functions.Where(f => f.Parameters.Count == ArgTypes.Count).ToList();
-            if (functions.Count == 0)
-                throw new Exception($"No functions in group found with correct number of arguments {ArgTypes.Count}");
-            var returnTypes = functions.Select(f => f.ReturnType).Distinct().ToList();
-            if (returnTypes.Count == 1)
-            { 
-                ResultType = returnTypes[0];
-                return;
-            }
+            if (HasSingleReturnType(funcs)) return;
 
-            // There was no result so far
+            var funcs2 = GetCallableFunctions(funcs);
+            if (HasSingleReturnType(funcs2)) return; 
 
-            // TODO: I really don't think I should look at reified functions if the input is a Concept. 
+            var funcs3 = GetBestFunctions(funcs2);
+            if (HasSingleReturnType(funcs3)) return;
+
+            // TODO: I don't think I should look at reified functions if the input is a Concept. 
 
             // Now look at the reified functions 
-            var allFunctions = Compiler.ReifiedFunctionsByName[Fgr.Name];
+            var funcs4 = Compiler.ReifiedFunctionsByName[Fgr.Name];
             
             // This should never happen
-            if (allFunctions.Count == 0)
+            if (funcs4.Count == 0)
                 throw new Exception($"No functions associated with function group reference {Fgr}");
 
-            allFunctions = allFunctions.Where(f => f.ParameterTypes.Count == ArgTypes.Count).ToList();
-            if (allFunctions.Count == 0)
-                throw new Exception($"No available functions found matching number of arguments {ArgTypes.Count}");
+            var funcs5 = GetCallableFunctions(funcs4);
+            if (HasSingleReturnType(funcs5)) return;
 
-            var validFunctions = allFunctions.Where(IsFunctionCallable).ToList();
-            if (validFunctions.Count == 0)
-                throw new Exception($"Could find not callable functions");
+            var funcs6 = GetBestFunctions(funcs5);
+            if (HasSingleReturnType(funcs6)) return;
 
-            var bestFunctions = validFunctions;
-            if (bestFunctions.Count > 1)
+            throw new Exception("Could not find distinct return type");
+        }
+
+        public bool HasSingleReturnType(IEnumerable<IFunction> functions)
+        {
+            var results = functions.Select(f => f.ReturnType).Distinct().ToList();
+            if (results.Count != 1)
+                return false;
+            ResultType = results[0];
+            return true;
+        }
+
+        public List<IFunction> GetCallableFunctions(IEnumerable<IFunction> functions)
+        {
+            return functions
+                .Where(IsFunctionCallable)
+                .ToList();
+        }
+
+        public List<IFunction> GetBestFunctions(IEnumerable<IFunction> functions)
+        {
+            var r = GetCallableFunctions(functions);
+
+            if (r.Count > 1)
             {
                 // Reduce the best functions list.
-                
+
                 // starting at the first argument try to find the best overload. 
                 var pos = 0;
                 while (pos < ArgTypes.Count)
                 {
                     // Group possibilities according to score. 
-                    var groups = bestFunctions.GroupBy(tf => GetScoreForOverload(tf, 0)).OrderBy(g => g.Key);
-                    var tmp = groups.First().ToList();
+                    var tmp = r
+                        .GroupBy(tf => GetScoreForOverload(tf, pos))
+                        .OrderBy(g => g.Key)
+                        .First()
+                        .ToList();
 
                     // Groups are supposed to non empty according to definition
                     if (tmp.Count == 0)
-                        throw new Exception("Should be impossible!");
+                        throw new Exception("Should be impossible groups should never be empty");
 
                     // This is our new Best functions list 
-                    bestFunctions = tmp;
-                    
+                    r = tmp;
+
                     // Only one best function so we can leave early. 
-                    if (bestFunctions.Count == 1)
-                        break;
+                    if (r.Count == 1)
+                        return r;
 
                     // There are multiple best functions, so we are going to look at the next argument/parameter
                     pos++;
                 }
-            }
+            }            
 
-            if (bestFunctions.Count == 0)
-                throw new Exception("Should always have at least one Best function");
-
-            returnTypes = bestFunctions.Select(tf => tf.ReturnType).Distinct().ToList();
-
-            if (returnTypes.Count > 1)
-                throw new Exception("Found too many matching types");
-
-            ResultType = returnTypes.FirstOrDefault();
-
-            /* TODO: possible fall-back ... use the original function definitions?
-
-            var groupFuncs = Fgr.Definition.Functions;
-            if (groupFuncs.Count == 1)
-            {
-                ResultType = groupFuncs.F;
-            }
-            */
+            return r;
         }
 
-        public int GetScoreForOverload(ReifiedFunction tf, int pos)
-            => CastingScore(ArgTypes[pos], tf.ParameterTypes[pos]);
+        public int GetScoreForOverload(IFunction f, int pos)
+            => CastingScore(ArgTypes[pos], f.GetParameterType(pos));
 
-        public bool IsCastFunction(ReifiedFunction rf, TypeDefinitionSymbol td)
-            => rf.Name == $"To{td.Name}" && rf.ParameterTypes.Count == 0 && rf.ReturnType.Definition.Equals(td);
+        public bool IsCastFunction(IFunction f, TypeDefinitionSymbol td)
+            => f.Name == $"To{td.Name}" && f.NumParameters == 0 && f.ReturnType.Definition.Equals(td);
 
         public ReifiedFunction GetCastFunction(TypeDefinitionSymbol a, TypeDefinitionSymbol b)
         {
@@ -150,6 +151,10 @@ namespace Plato.Compiler.Types
             if (pt.Definition.IsLibrary())
                 throw new Exception($"Parameter types {pt} cannot be libraries");
 
+            // If they are the same type, done and done. 
+            if (at.Equals(pt))
+                return 1;
+
             // Are we passing to a concrete type? 
             // Always prefer to successfully pass to a concrete type 
             if (pt.Definition.IsConcreteType())
@@ -181,7 +186,10 @@ namespace Plato.Compiler.Types
                     return 20;
                 }
 
-                throw new Exception($"Expected argument to be concrete type, concept, or type variable");
+                if (at.Definition.IsPrimitive())
+                    return 0;
+
+                throw new Exception($"Expected argument to be concrete type, concept, primitive, or type variable");
             }
 
             if (pt.Definition.IsConcept())
@@ -220,17 +228,30 @@ namespace Plato.Compiler.Types
                 return 30; 
             }
 
+            // When expecting primitives, only a primitive will 
+            if (pt.Definition.IsPrimitive())
+            {
+                // They aren't exact types.
+                if (at.Definition.Equals(pt.Definition))
+                    return 50;
+
+                return 0;
+            }
+
             throw new Exception($"Unsupported parameter type {pt}");
         }
 
-        public bool IsFunctionCallable(ReifiedFunction ft)
+        public bool IsFunctionValid(IFunction f) 
+            => f.NumParameters == ArgTypes.Count;
+
+        public bool IsFunctionCallable(IFunction f)
         {
-            if (ft.ParameterTypes.Count != ArgTypes.Count)
+            if (!IsFunctionValid(f))
                 return false;
 
-            for (var i = 0; i < ft.ParameterTypes.Count; ++i)
+            for (var i = 0; i < f.NumParameters; ++i)
             {
-                var paramType = ft.ParameterTypes[i];
+                var paramType = f.GetParameterType(i);
                 var argType = ArgTypes[i];
                 if (!CanCast(argType, paramType))
                     return false;

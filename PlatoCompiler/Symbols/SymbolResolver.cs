@@ -253,7 +253,7 @@ namespace Plato.Compiler.Symbols
                             ValueBindingsScope = ValueBindingsScope.Push();
                             var ps = astLambda.Parameters.Select(Resolve).ToArray();
                             var body = ResolveExpr(astLambda.Body);
-                            var r = new Lambda(new FunctionDefinition("_lambda_", 
+                            var r = new Lambda(new FunctionDefinition("_lambda_", null, 
                                 PrimitiveTypeDefinitions.Function.ToTypeExpression(), body, ps));
                             return r;
                         }
@@ -375,7 +375,7 @@ namespace Plato.Compiler.Symbols
                     }
 
                     var body = ResolveExpr(location.Body);
-                    var f = new FunctionDefinition(m.Name, m.Type, body, list.ToArray());
+                    var f = new FunctionDefinition(m.Name, typeDef, m.Type, body, list.ToArray());
                     Debug.Assert(m.Function == null);
                     m.Function = f;
 

@@ -22,11 +22,6 @@ concept Array<T: Any>
 concept Vector<T: Numerical>
     inherits Array<T>, Numerical
 {
-    Count(v: Self): Integer
-        => v.FieldTypes.Count;
-        
-    At(v: Self, n: Integer): T
-        => v.FieldValues[n];
 }
 
 concept Measure
@@ -70,6 +65,9 @@ concept Arithmetic
 { 
     Add(self: Self, other: Self): Self
         => self.FieldValues.Add(other.FieldValues);
+
+    Subtract(self: Self, other: Self): Self
+        => self.Add(self.Negative);
 
     Negative(self: Self): Self
         => self.FieldValues.Negative;

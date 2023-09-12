@@ -71,14 +71,10 @@ namespace Plato.Compiler.Types
 
         public ReifiedFunction CreateFunction(TypeDefinitionSymbol ownerTypeSymbol, FunctionDefinition functionDefinition, Func<TypeExpressionSymbol, TypeExpressionSymbol> map)
         {
-            var r = new ReifiedFunction()
-            {
-                ReifiedType = this,
-                OwnerTypeSymbol = ownerTypeSymbol,
-                ParameterTypes = functionDefinition.Parameters.Select(p => p.Type.Replace(map)).ToList(),
-                ReturnType = functionDefinition.ReturnType.Replace(map),
-                Symbol = functionDefinition
-            };
+            var r = new ReifiedFunction(functionDefinition, this,
+                functionDefinition.Parameters.Select(p => p.Type.Replace(map)).ToList(),
+                functionDefinition.ReturnType.Replace(map));
+
             //r.Verify();
             return r;
         }

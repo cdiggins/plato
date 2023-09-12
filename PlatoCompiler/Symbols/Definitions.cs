@@ -36,23 +36,22 @@ namespace Plato.Compiler.Symbols
             => Enumerable.Empty<Symbol>();
     }
 
-    public class FunctionDefinition : DefinitionSymbol
+    public class FunctionDefinition : DefinitionSymbol, IFunction
     {
         public IReadOnlyList<ParameterDefinition> Parameters { get; }
+        public int NumParameters => Parameters.Count;
         public ExpressionSymbol Body { get; }
+        public string GetParameterName(int n) => Parameters[n].Name;
+        public TypeExpressionSymbol GetParameterType(int n) => Parameters[n].Type;
         public TypeExpressionSymbol ReturnType => Type;
-
-        public FunctionDefinition(string name, TypeExpressionSymbol returnType, ExpressionSymbol body, params ParameterDefinition[] parameters)
+        public TypeDefinitionSymbol OwnerType { get; }
+        public FunctionDefinition(string name, TypeDefinitionSymbol ownerType, TypeExpressionSymbol returnType, ExpressionSymbol body, params ParameterDefinition[] parameters)
             : base(returnType, name)
         {
+            OwnerType = ownerType;
             Parameters = parameters;
             Body = body;
         }
-
-        public string Signature =>
-            $"{Name}("
-            + string.Join(",", Parameters.Select(p => $"{p.Name}:{p.Type}"))
-            + $"):{Type};";
 
         public override Reference ToReference()
             => throw new NotSupportedException();
@@ -213,7 +212,7 @@ namespace Plato.Compiler.Symbols
         public FieldDefinition(TypeDefinitionSymbol parentType, TypeExpressionSymbol type, string name)
             : base(parentType, type, name)
         {
-            Function = new FunctionDefinition(Name, Type, null,
+            Function = new FunctionDefinition(Name, parentType, Type, null,
                 new ParameterDefinition("self", parentType.ToTypeExpression()));
         }
 
@@ -239,8 +238,8 @@ namespace Plato.Compiler.Symbols
                     throw new Exception("Null function");
                 if (f.Name != Name)
                     throw new Exception($"All members in group must have the name \"{Name}\" not \"{f.Name}\"");
-                var sig = f.Signature;
-                if (Functions.Count(f2 => f2.Signature.Equals(sig)) > 1)
+                var sig = f.GetSignature();
+                if (Functions.Count(f2 => f2.GetSignature().Equals(sig)) > 1)
                     throw new Exception($"More than one function has signature {sig}");
             }
         }
@@ -249,7 +248,7 @@ namespace Plato.Compiler.Symbols
             => Functions.Add(function);
 
         public string DebugString =>
-            string.Join(";", Functions.Select(f => f?.Signature));
+            string.Join(";", Functions.Select(f => f?.GetSignature()));
 
         public override Reference ToReference()
             => new FunctionGroupReference(this);

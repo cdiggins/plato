@@ -133,7 +133,11 @@ namespace Plato.Compiler
                 //WriteReifiedTypes();
 
                 Log("Creating resolvers");
-                TypeResolvers = FunctionDefinitions.Select(fd => new TypeResolver(this, fd)).ToList();
+                TypeResolvers = FunctionDefinitions
+                    // TODO: TEMP: skip concept function implementations for now.
+                    .Where(fd => !fd.OwnerType.IsConcept())
+                    .Select(fd => new TypeResolver(this, fd))
+                    .ToList();
                 Log($"Found {TypeResolvers.Count} resolvers");
                 Log($"Applied type to {ExpressionTypes.Count} expressions");
 
@@ -227,7 +231,7 @@ namespace Plato.Compiler
             {
                 var rt = kv.Value;
                 Log($"= Reified type {rt.Name}");
-                var funcGroups = rt.Functions.GroupBy(f => f.OwnerTypeSymbol);
+                var funcGroups = rt.Functions.GroupBy(f => f.OwnerType);
                 foreach (var group in funcGroups)
                 {
                     Log($" = Reified functions for group {group.Key}");

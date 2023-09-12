@@ -3,14 +3,35 @@ using Plato.Compiler.Symbols;
 
 namespace Plato.Compiler.Types
 {
-    public class ReifiedFunction
+    public class ReifiedFunction : IFunction
     {
-        public TypeDefinitionSymbol OwnerTypeSymbol { get; set; }
-        public IReadOnlyList<TypeExpressionSymbol> ParameterTypes { get; set; }
-        public TypeExpressionSymbol ReturnType { get; set; }
-        public FunctionDefinition Symbol { get; set; }
-        public ReifiedType ReifiedType { get; set; }
-        public string Name => Symbol.Name;
+        public IReadOnlyList<TypeExpressionSymbol> ParameterTypes { get; }
+        
+        public string GetParameterName(int n)
+            => Original.GetParameterName(n);
+
+        public TypeExpressionSymbol GetParameterType(int n)
+            => ParameterTypes[n];
+
+        public TypeExpressionSymbol ReturnType { get; }
+        public TypeDefinitionSymbol OwnerType => Original.OwnerType;
+        public FunctionDefinition Original { get; }
+        public ReifiedType ReifiedType { get; }
+        public string Name => Original.Name;
+        public int NumParameters => ParameterTypes.Count;
+
+        public ExpressionSymbol Body => Original.Body;
+
+        public ReifiedFunction(FunctionDefinition original, 
+            ReifiedType reifiedType, 
+            IReadOnlyList<TypeExpressionSymbol> parameterTypes, 
+            TypeExpressionSymbol returnType)
+        {
+            Original = original;
+            ReifiedType = reifiedType;
+            ParameterTypes = parameterTypes;
+            ReturnType = returnType;
+        }
 
         public void Verify()
         {
@@ -20,21 +41,14 @@ namespace Plato.Compiler.Types
         }
 
         public override string ToString()
-        {
-            var paramStr = string.Join(",", ParameterTypes);
-            return $"{Name}:({paramStr}) -> {ReturnType}";
-        }
+            => this.GetSignature();
 
-        public override bool Equals(object obj)
-        {
-            return obj is ReifiedFunction rf
-                   && ReferenceEquals(ReifiedType, rf.ReifiedType)
-                   && ToString() == rf.ToString();
-        }
+        public override bool Equals(object obj) 
+            => obj is ReifiedFunction rf
+            && ReferenceEquals(ReifiedType, rf.ReifiedType)
+            && ToString() == rf.ToString();
 
-        public override int GetHashCode()
-        {
-            return ToString().GetHashCode();
-        }
+        public override int GetHashCode() 
+            => ToString().GetHashCode();
     }
 }
