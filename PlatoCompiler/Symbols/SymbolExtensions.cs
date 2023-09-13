@@ -28,28 +28,28 @@ namespace Plato.Compiler.Symbols
             FunctionDefinition function)
             => definition.GetReferencesTo(function.Body);
 
-        public static IEnumerable<Reference> GetReferencesTo(this DefinitionSymbol def, ExpressionSymbol within)
+        public static IEnumerable<Reference> GetReferencesTo(this DefinitionSymbol def, Expression within)
             => within.GetExpressionTree().OfType<Reference>().Where(rs => rs.Definition.Equals(def));
 
         public static bool HasImplementation(FunctionDefinition fs)
             => fs.Body != null;
 
-        public static bool IsFullyImplementedConcept(TypeDefinitionSymbol ts)
+        public static bool IsFullyImplementedConcept(TypeDefinition ts)
             => ts.IsConcept() && ts.Functions.All(HasImplementation);
 
-        public static bool IsConcept(this TypeDefinitionSymbol ts)
+        public static bool IsConcept(this TypeDefinition ts)
             => ts.Kind == TypeKind.Concept;
 
-        public static bool IsConcreteType(this TypeDefinitionSymbol ts)
+        public static bool IsConcreteType(this TypeDefinition ts)
             => ts.Kind == TypeKind.ConcreteType;
 
-        public static bool IsPrimitive(this TypeDefinitionSymbol ts)
+        public static bool IsPrimitive(this TypeDefinition ts)
             => ts.Kind == TypeKind.Primitive;
 
-        public static bool IsLibrary(this TypeDefinitionSymbol ts)
+        public static bool IsLibrary(this TypeDefinition ts)
             => ts.Kind == TypeKind.Library;
 
-        public static bool IsTypeVariable(this TypeDefinitionSymbol ts)
+        public static bool IsTypeVariable(this TypeDefinition ts)
             => ts.Kind == TypeKind.TypeVariable;
     }
 }

@@ -7,13 +7,13 @@ namespace Plato.Compiler.Types
 {
     public static class TypeDefinitionExtensions
     {
-        public static bool InheritsFrom(this TypeDefinitionSymbol self, TypeDefinitionSymbol other)
+        public static bool InheritsFrom(this TypeDefinition self, TypeDefinition other)
             => self.IsConcept() && other.IsConcept() && self.GetSelfAndAllInheritedTypes().Contains(other);
 
-        public static bool Implements(this TypeDefinitionSymbol self, TypeDefinitionSymbol other)
+        public static bool Implements(this TypeDefinition self, TypeDefinition other)
             => other.IsConcept() && self.GetAllImplementedConcepts().Select(c => c.Definition).Contains(other);
 
-        public static bool IsSubType(this TypeDefinitionSymbol self, TypeDefinitionSymbol other)
+        public static bool IsSubType(this TypeDefinition self, TypeDefinition other)
         {
             if (self.IsLibrary() || other.IsLibrary())
                 return false;
@@ -26,10 +26,10 @@ namespace Plato.Compiler.Types
             return false;
         }
 
-        public static bool IsSubType(this TypeDefinitionSymbol self, IEnumerable<TypeDefinitionSymbol> others)
+        public static bool IsSubType(this TypeDefinition self, IEnumerable<TypeDefinition> others)
             => others.All(x => self.IsSubType(x));
 
-        public static TypeDefinitionSymbol Unify(this IEnumerable<TypeDefinitionSymbol> conceptsA, IEnumerable<TypeDefinitionSymbol> conceptsB)
+        public static TypeDefinition Unify(this IEnumerable<TypeDefinition> conceptsA, IEnumerable<TypeDefinition> conceptsB)
         {
             // Which concepts in A supercede all of those in B? 
             var superTypesA = conceptsA.Where(c => c.IsSubType(conceptsB)).ToList();
@@ -46,7 +46,7 @@ namespace Plato.Compiler.Types
             return PrimitiveTypeDefinitions.Error;
         }
 
-        public static TypeDefinitionSymbol Unify(this TypeDefinitionSymbol a, TypeDefinitionSymbol b)
+        public static TypeDefinition Unify(this TypeDefinition a, TypeDefinition b)
         {
             // If one type inher
 

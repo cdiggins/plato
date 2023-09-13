@@ -15,7 +15,7 @@ namespace Plato.Compiler.Types
         public bool Success { get; }
         public string Message { get; private set; }
         public Compiler Compiler { get; }
-        public Dictionary<ExpressionSymbol, TypeExpressionSymbol> Types => Compiler.ExpressionTypes;
+        public Dictionary<Expression, TypeExpression> Types => Compiler.ExpressionTypes;
         public FunctionDefinition Function { get; }
         public List<FunctionCallResolver> FunctionCalls { get; } = new List<FunctionCallResolver>();
 
@@ -47,13 +47,13 @@ namespace Plato.Compiler.Types
             => Message = reason;
 
 
-        public TypeExpressionSymbol Unify(TypeExpressionSymbol typeA, TypeExpressionSymbol typeB)
+        public TypeExpression Unify(TypeExpression typeA, TypeExpression typeB)
         {
             // TODO: Choose between the best, and if not successful, fail. 
             return typeA; 
         }
 
-        public TypeExpressionSymbol ResolveFunctionCall(FunctionCall fc)
+        public TypeExpression ResolveFunctionCall(FunctionCall fc)
         {
             var fx = fc.Function;
             var argTypes = fc.Args.Select(Resolve).ToList();
@@ -68,12 +68,12 @@ namespace Plato.Compiler.Types
             return CreateAny();
         }
 
-        public TypeExpressionSymbol Resolve(ExpressionSymbol expression)
+        public TypeExpression Resolve(Expression expression)
         {
             if (expression == null)
                 return null;
 
-            TypeExpressionSymbol r = null;
+            TypeExpression r = null;
 
             switch (expression)
             {
@@ -153,28 +153,28 @@ namespace Plato.Compiler.Types
             return r;
         }
 
-        public TypeExpressionSymbol CreateAny()
+        public TypeExpression CreateAny()
         {
-            return new TypeExpressionSymbol(Compiler.GetTypeDefinition("Any"));
+            return new TypeExpression(Compiler.GetTypeDefinition("Any"));
         }
 
-        public TypeExpressionSymbol CreateType(Lambda lambda)
+        public TypeExpression CreateType(Lambda lambda)
         {
             return CreateType(lambda.Function);
         }
 
-        public TypeExpressionSymbol CreateType(FunctionDefinition function)
+        public TypeExpression CreateType(FunctionDefinition function)
         {
             var args = function.Parameters.Select(p => p.Type).Append(function.ReturnType).ToArray();
             // TODO: maybe choose one of the numbered functions
-            return new TypeExpressionSymbol(Compiler.GetTypeDefinition("Function"), args);
+            return new TypeExpression(Compiler.GetTypeDefinition("Function"), args);
         }
 
-        public TypeExpressionSymbol CreateType(Tuple tuple)
+        public TypeExpression CreateType(Tuple tuple)
         {
             var args = tuple.Children.Select(Resolve).ToArray();
             // TODO: maybe choose one of the numbered tuples
-            return new TypeExpressionSymbol(Compiler.GetTypeDefinition("Tuple"), args);
+            return new TypeExpression(Compiler.GetTypeDefinition("Tuple"), args);
         }
     }
 }

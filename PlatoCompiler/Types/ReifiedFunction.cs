@@ -5,27 +5,27 @@ namespace Plato.Compiler.Types
 {
     public class ReifiedFunction : IFunction
     {
-        public IReadOnlyList<TypeExpressionSymbol> ParameterTypes { get; }
+        public IReadOnlyList<TypeExpression> ParameterTypes { get; }
         
         public string GetParameterName(int n)
             => Original.GetParameterName(n);
 
-        public TypeExpressionSymbol GetParameterType(int n)
+        public TypeExpression GetParameterType(int n)
             => ParameterTypes[n];
 
-        public TypeExpressionSymbol ReturnType { get; }
-        public TypeDefinitionSymbol OwnerType => Original.OwnerType;
+        public TypeExpression ReturnType { get; }
+        public TypeDefinition OwnerType => Original.OwnerType;
         public FunctionDefinition Original { get; }
         public ReifiedType ReifiedType { get; }
         public string Name => Original.Name;
         public int NumParameters => ParameterTypes.Count;
 
-        public ExpressionSymbol Body => Original.Body;
+        public Expression Body => Original.Body;
 
         public ReifiedFunction(FunctionDefinition original, 
             ReifiedType reifiedType, 
-            IReadOnlyList<TypeExpressionSymbol> parameterTypes, 
-            TypeExpressionSymbol returnType)
+            IReadOnlyList<TypeExpression> parameterTypes, 
+            TypeExpression returnType)
         {
             Original = original;
             ReifiedType = reifiedType;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Parakeet;
 using Parakeet.Demos.Plato;
 using Plato.Compiler.Ast;
@@ -36,15 +37,15 @@ namespace Plato.Compiler
         public SymbolResolver SymbolResolver { get; set; }
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; set; }
 
-        public IEnumerable<TypeDefinitionSymbol> AllTypeAndLibraryDefinitions => TypeDefinitionsByName.Values
+        public IEnumerable<TypeDefinition> AllTypeAndLibraryDefinitions => TypeDefinitionsByName.Values
             .Concat(LibraryDefinitionsByName.Values);
 
-        public Dictionary<string, TypeDefinitionSymbol> TypeDefinitionsByName { get; } = new Dictionary<string, TypeDefinitionSymbol>();
-        public Dictionary<string, TypeDefinitionSymbol> LibraryDefinitionsByName { get; } = new Dictionary<string, TypeDefinitionSymbol>();
+        public Dictionary<string, TypeDefinition> TypeDefinitionsByName { get; } = new Dictionary<string, TypeDefinition>();
+        public Dictionary<string, TypeDefinition> LibraryDefinitionsByName { get; } = new Dictionary<string, TypeDefinition>();
         public IReadOnlyList<FunctionDefinition> FunctionDefinitions { get; set; } 
         public IReadOnlyList<TypeResolver> TypeResolvers { get; set; }
 
-        public Dictionary<ExpressionSymbol, TypeExpressionSymbol> ExpressionTypes { get; } = new Dictionary<ExpressionSymbol, TypeExpressionSymbol>();
+        public Dictionary<Expression, TypeExpression> ExpressionTypes { get; } = new Dictionary<Expression, TypeExpression>();
         public Dictionary<string, ReifiedType> ReifiedTypes { get; set; }
         public Dictionary<string, List<ReifiedFunction>> ReifiedFunctionsByName { get; set; }
 
@@ -132,6 +133,17 @@ namespace Plato.Compiler
                 //Log("Reified types");
                 //WriteReifiedTypes();
 
+                Log("Creating function analysis");
+                var sb = new StringBuilder();
+                sb.Append("Function Analysis");
+                foreach (var f in FunctionDefinitions)
+                {
+                    var fa = new FunctionAnalysis(this, f);
+                    fa.BuildAnalysisOuput(sb);
+                }
+                Logger.Log(sb.ToString());                
+
+                /*
                 Log("Creating resolvers");
                 TypeResolvers = FunctionDefinitions
                     // TODO: TEMP: skip concept function implementations for now.
@@ -140,6 +152,7 @@ namespace Plato.Compiler
                     .ToList();
                 Log($"Found {TypeResolvers.Count} resolvers");
                 Log($"Applied type to {ExpressionTypes.Count} expressions");
+                */
 
                 //Log("Generating Visual Syntax Graphs");
                 //Graphs.Clear();
@@ -211,7 +224,7 @@ namespace Plato.Compiler
                     {
                         foreach (var rt in ReifiedTypes.Values)
                         {
-                            if (rt.TypeSymbol.Implements(firstParamType))
+                            if (rt.Type.Implements(firstParamType))
                             {
                                 rt.AddConceptLibraryFunction(library, f);
                             }
@@ -243,7 +256,7 @@ namespace Plato.Compiler
             }
         }
 
-        public TypeExpressionSymbol GetType(ExpressionSymbol expr)
+        public TypeExpression GetType(Expression expr)
             => ExpressionTypes.TryGetValue(expr, out var r) ? r : null;
 
         public void LogResolutionErrors(IEnumerable<SymbolResolver.ResolutionError> resolutionErrors)
@@ -352,12 +365,12 @@ namespace Plato.Compiler
 
         }
 
-        public TypeDefinitionSymbol GetTypeDefinition(string name)
+        public TypeDefinition GetTypeDefinition(string name)
         {
             return TypeDefinitionsByName[name];
         }
 
-        public TypeExpressionSymbol GetTypeExpression(string name)
+        public TypeExpression GetTypeExpression(string name)
         {
             return GetTypeDefinition(name).ToTypeExpression();
         }

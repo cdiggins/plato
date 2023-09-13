@@ -37,7 +37,7 @@ namespace Plato.Compiler.Symbols
 
         public Dictionary<Symbol, AstNode> SymbolsToNodes = new Dictionary<Symbol, AstNode>();
 
-        public List<TypeDefinitionSymbol> TypeDefs { get; } = new List<TypeDefinitionSymbol>();
+        public List<TypeDefinition> TypeDefs { get; } = new List<TypeDefinition>();
 
         public void BindPredefinedSymbols()
         {
@@ -49,7 +49,7 @@ namespace Plato.Compiler.Symbols
             BindPredefined(PrimitiveTypeDefinitions.Tuple.ToTypeExpression(), "Tuple");
         }
 
-        public void BindPredefined(TypeExpressionSymbol type, string name)
+        public void BindPredefined(TypeExpression type, string name)
         {
             BindValue(name, new PredefinedDefinition(type, name));
         }
@@ -60,14 +60,14 @@ namespace Plato.Compiler.Symbols
             return value;
         }
 
-        public TypeDefinitionSymbol BindType(TypeDefinitionSymbol value)
+        public TypeDefinition BindType(TypeDefinition value)
         {
             if (value.Kind == TypeKind.Library)
                 return null;
             return BindType(value.Name, value);
         }
 
-        public TypeDefinitionSymbol BindType(string name, TypeDefinitionSymbol value)
+        public TypeDefinition BindType(string name, TypeDefinition value)
         {
             TypeBindingsScope = TypeBindingsScope.Bind(name, value);
             return value;
@@ -127,7 +127,7 @@ namespace Plato.Compiler.Symbols
             Errors.Add(new ResolutionError(message, node));
         }
 
-        public TypeExpressionSymbol ResolveType(AstTypeNode astTypeNode)
+        public TypeExpression ResolveType(AstTypeNode astTypeNode)
         {
             if (astTypeNode == null)
             {
@@ -146,13 +146,13 @@ namespace Plato.Compiler.Symbols
                 LogError($"Could not find type {name}", astTypeNode);
                 return null;
             }
-            var tds = sym as TypeDefinitionSymbol;
+            var tds = sym as TypeDefinition;
             if (tds == null)
             {
                 LogError($"Could not resolve type {name} instead got {sym}", astTypeNode);
                 return null;
             }
-            return new TypeExpressionSymbol(tds, astTypeNode.TypeArguments.Select(ResolveType).ToArray());
+            return new TypeExpression(tds, astTypeNode.TypeArguments.Select(ResolveType).ToArray());
         }
 
         public ParameterDefinition Resolve(AstParameterDeclaration astParameterDeclaration)
@@ -162,11 +162,11 @@ namespace Plato.Compiler.Symbols
                     ResolveType(astParameterDeclaration.Type)));
         }
 
-        public ExpressionSymbol ResolveExpr(AstNode node)
+        public Expression ResolveExpr(AstNode node)
         {
             var r = Resolve(node);
             if (r == null) return null;
-            if (r is ExpressionSymbol x) return x;
+            if (r is Expression x) return x;
             throw new Exception($"Expected an expression not {r}");
         }
 
@@ -277,12 +277,12 @@ namespace Plato.Compiler.Symbols
             }
         }
 
-        public IEnumerable<TypeDefinitionSymbol> CreateTypeDefs(IEnumerable<AstTypeDeclaration> types)
+        public IEnumerable<TypeDefinition> CreateTypeDefs(IEnumerable<AstTypeDeclaration> types)
         {
             // Typedefs and their methods are all at the top-level
             foreach (var astTypeDeclaration in types)
             {
-                var typeDef = new TypeDefinitionSymbol(astTypeDeclaration.Kind, astTypeDeclaration.Name);
+                var typeDef = new TypeDefinition(astTypeDeclaration.Kind, astTypeDeclaration.Name);
                 SymbolsToNodes.Add(typeDef, astTypeDeclaration);
                 BindType(typeDef);
                 TypeDefs.Add(typeDef);

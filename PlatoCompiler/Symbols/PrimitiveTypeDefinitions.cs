@@ -7,17 +7,17 @@ namespace Plato.Compiler.Symbols
 {
     public static class PrimitiveTypeDefinitions
     {
-        public static TypeDefinitionSymbol Error = Create("Error");
-        public static TypeDefinitionSymbol Tuple = Create("Tuple");
-        public static TypeDefinitionSymbol Function = Create("Function");
+        public static TypeDefinition Error = Create("Error");
+        public static TypeDefinition Tuple = Create("Tuple");
+        public static TypeDefinition Function = Create("Function");
 
-        public static IEnumerable<TypeDefinitionSymbol> AllPrimitives =>
+        public static IEnumerable<TypeDefinition> AllPrimitives =>
             new[] { Error, Tuple, Function };
 
-        public static TypeDefinitionSymbol Create(string name)
-            => new TypeDefinitionSymbol(TypeKind.Primitive, name);
+        public static TypeDefinition Create(string name)
+            => new TypeDefinition(TypeKind.Primitive, name);
 
-        public static TypeDefinitionSymbol Create(string name, int numParams)
+        public static TypeDefinition Create(string name, int numParams)
         {
             var r = Create(name);
             r.TypeParameters.AddRange(Enumerable.Range(0, numParams)

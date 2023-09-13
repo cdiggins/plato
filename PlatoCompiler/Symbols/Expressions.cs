@@ -6,11 +6,11 @@ using Plato.Compiler.Ast;
 
 namespace Plato.Compiler.Symbols
 {
-    public abstract class ExpressionSymbol : Symbol
+    public abstract class Expression : Symbol
     {
-        public IReadOnlyList<ExpressionSymbol> Children { get; }
+        public IReadOnlyList<Expression> Children { get; }
 
-        protected ExpressionSymbol(params ExpressionSymbol[] children)
+        protected Expression(params Expression[] children)
         {
             if (children.Contains(this))
                 throw new Exception("Circular expression");
@@ -21,10 +21,10 @@ namespace Plato.Compiler.Symbols
             => Children;
     }
 
-    public abstract class Reference : ExpressionSymbol
+    public abstract class Reference : Expression
     {
         public DefinitionSymbol Definition { get; }
-        public TypeExpressionSymbol Type => Definition.Type;
+        public TypeExpression Type => Definition.Type;
         public string Name => Definition.Name;
 
         protected Reference(DefinitionSymbol def)
@@ -62,13 +62,13 @@ namespace Plato.Compiler.Symbols
         public new FunctionGroupDefinition Definition => base.Definition as FunctionGroupDefinition;
     }
 
-    public class ConditionalExpression : ExpressionSymbol
+    public class ConditionalExpression : Expression
     {
-        public ExpressionSymbol Condition { get; }
-        public ExpressionSymbol IfTrue { get; }
-        public ExpressionSymbol IfFalse { get; }
+        public Expression Condition { get; }
+        public Expression IfTrue { get; }
+        public Expression IfFalse { get; }
 
-        public ConditionalExpression(ExpressionSymbol condition, ExpressionSymbol ifTrue, ExpressionSymbol ifFalse)
+        public ConditionalExpression(Expression condition, Expression ifTrue, Expression ifFalse)
             : base(condition, ifTrue, ifFalse)
         {
             Condition = condition;
@@ -82,12 +82,12 @@ namespace Plato.Compiler.Symbols
 
     }
 
-    public class Assignment : ExpressionSymbol
+    public class Assignment : Expression
     {
-        public ExpressionSymbol LValue { get; }
-        public ExpressionSymbol RValue { get; }
+        public Expression LValue { get; }
+        public Expression RValue { get; }
 
-        public Assignment(ExpressionSymbol lvalue, ExpressionSymbol rvalue)
+        public Assignment(Expression lvalue, Expression rvalue)
             : base(lvalue, rvalue)
             => (LValue, RValue) = (lvalue, rvalue);
 
@@ -95,12 +95,12 @@ namespace Plato.Compiler.Symbols
             => $"({LValue} = {RValue})";
     }
 
-    public class Argument : ExpressionSymbol
+    public class Argument : Expression
     {
-        public ExpressionSymbol Expression { get; }
+        public Expression Expression { get; }
         public int Position { get; }
 
-        public Argument(ExpressionSymbol expression, int position)
+        public Argument(Expression expression, int position)
             : base(expression)
         {
             Expression = expression;
@@ -112,11 +112,11 @@ namespace Plato.Compiler.Symbols
             => Expression.ToString();
     }
 
-    public class Parenthesized : ExpressionSymbol
+    public class Parenthesized : Expression
     {
-        public ExpressionSymbol Expression { get; }
+        public Expression Expression { get; }
 
-        public Parenthesized(ExpressionSymbol expression)
+        public Parenthesized(Expression expression)
             : base(expression)
         {
             Expression = expression;
@@ -126,7 +126,7 @@ namespace Plato.Compiler.Symbols
             => $"({Expression}";
     }
 
-    public class Literal : ExpressionSymbol
+    public class Literal : Expression
     {
         public object Value { get; }
         public LiteralTypesEnum TypeEnum { get; }
@@ -137,11 +137,11 @@ namespace Plato.Compiler.Symbols
             => $"{Value}";
     }
 
-    public class FunctionCall : ExpressionSymbol
+    public class FunctionCall : Expression
     {
-        public ExpressionSymbol Function { get; }
+        public Expression Function { get; }
         public IReadOnlyList<Argument> Args { get; }
-        public FunctionCall(ExpressionSymbol function, params Argument[] args)
+        public FunctionCall(Expression function, params Argument[] args)
             : base(args.Prepend(function).ToArray())
         {
             Function = function;
@@ -154,7 +154,7 @@ namespace Plato.Compiler.Symbols
             => $"{Function}({string.Join(", ", Args)})";
     }
 
-    public class Lambda : ExpressionSymbol
+    public class Lambda : Expression
     {
         public FunctionDefinition Function { get; }
 
@@ -170,9 +170,9 @@ namespace Plato.Compiler.Symbols
             => $"(\\({string.Join(", ", Function.Parameters)}) -> {Function.ReturnType}";
     }
 
-    public class Tuple : ExpressionSymbol
+    public class Tuple : Expression
     {
-        public Tuple(params ExpressionSymbol[] children)
+        public Tuple(params Expression[] children)
             : base(children)
         { }
 
@@ -182,7 +182,7 @@ namespace Plato.Compiler.Symbols
 
     public static class ExpressionExtensions
     {
-        public static IEnumerable<ExpressionSymbol> GetExpressionTree(this ExpressionSymbol expr)
+        public static IEnumerable<Expression> GetExpressionTree(this Expression expr)
         {
             if (expr == null)
                 yield break;

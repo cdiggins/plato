@@ -8,31 +8,31 @@ namespace Plato.Compiler.Types
 {
     public class ReifiedType
     {
-        public TypeDefinitionSymbol TypeSymbol { get; }
-        public TypeExpressionSymbol Self => TypeSymbol.ToTypeExpression();
+        public TypeDefinition Type { get; }
+        public TypeExpression Self => Type.ToTypeExpression();
         public HashSet<ReifiedFunction> Functions { get; } = new HashSet<ReifiedFunction>();
-        public string Name => TypeSymbol.Name;
+        public string Name => Type.Name;
         
-        public ReifiedType(TypeDefinitionSymbol typeSymbol)
+        public ReifiedType(TypeDefinition type)
         {
-            Verifier.AssertNotNull(typeSymbol, nameof(typeSymbol));
-            Verifier.Assert(typeSymbol.IsConcreteType(), "Is concrete type");
-            TypeSymbol = typeSymbol;
+            Verifier.AssertNotNull(type, nameof(type));
+            Verifier.Assert(type.IsConcreteType(), "Is concrete type");
+            Type = type;
 
             // Add functions generated from field
-            foreach (var field in typeSymbol.Fields)
+            foreach (var field in type.Fields)
             {
-                Functions.Add(CreateFunction(TypeSymbol, field.Function, x => x.Name == "Self" ? Self : x));    
+                Functions.Add(CreateFunction(Type, field.Function, x => x.Name == "Self" ? Self : x));    
             }
 
-            Verifier.AssertEquals(typeSymbol.Methods.Count, 0);
+            Verifier.AssertEquals(type.Methods.Count, 0);
 
             // Add functions for each concept 
-            foreach (var concept in TypeSymbol.GetAllImplementedConcepts())
+            foreach (var concept in Type.GetAllImplementedConcepts())
             {
                 var conceptDef = concept.Definition;
 
-                var _typeArgs = new Dictionary<TypeParameterDefinition, TypeExpressionSymbol>();
+                var _typeArgs = new Dictionary<TypeParameterDefinition, TypeExpression>();
 
                 // TODO: this should be a compilation error. 
                 Verifier.AssertEquals(concept.TypeArgs.Count, conceptDef.TypeParameters.Count);
@@ -44,7 +44,7 @@ namespace Plato.Compiler.Types
                     _typeArgs.Add(typeParam, typeArg);
                 }
 
-                TypeExpressionSymbol LocalMapType(TypeExpressionSymbol tes)
+                TypeExpression LocalMapType(TypeExpression tes)
                 {
                     if (tes.Name == "Self")
                         return Self;
@@ -69,7 +69,7 @@ namespace Plato.Compiler.Types
             // Multiple passes. 
         }
 
-        public ReifiedFunction CreateFunction(TypeDefinitionSymbol ownerTypeSymbol, FunctionDefinition functionDefinition, Func<TypeExpressionSymbol, TypeExpressionSymbol> map)
+        public ReifiedFunction CreateFunction(TypeDefinition ownerType, FunctionDefinition functionDefinition, Func<TypeExpression, TypeExpression> map)
         {
             var r = new ReifiedFunction(functionDefinition, this,
                 functionDefinition.Parameters.Select(p => p.Type.Replace(map)).ToList(),
@@ -79,21 +79,21 @@ namespace Plato.Compiler.Types
             return r;
         }
 
-        public void AddConceptLibraryFunction(TypeDefinitionSymbol library, FunctionDefinition functionDefinition)
+        public void AddConceptLibraryFunction(TypeDefinition library, FunctionDefinition functionDefinition)
         {
             Verifier.Assert(functionDefinition.Parameters.Count > 0);
             var pt = functionDefinition.Parameters[0].Type;
             Verifier.Assert(pt.Definition.IsConcept());
             Verifier.Assert(library.IsLibrary());
 
-            TypeExpressionSymbol LocalMapType(TypeExpressionSymbol te)
-                => te.Equals(pt) ? TypeSymbol.ToTypeExpression() : te;
+            TypeExpression LocalMapType(TypeExpression te)
+                => te.Equals(pt) ? Type.ToTypeExpression() : te;
 
             var r = CreateFunction(library, functionDefinition, LocalMapType);
             Functions.Add(r);
         }
 
-        public void AddConcreteTypeLibraryFunction(TypeDefinitionSymbol library, FunctionDefinition functionDefinition)
+        public void AddConcreteTypeLibraryFunction(TypeDefinition library, FunctionDefinition functionDefinition)
         {
             Verifier.Assert(functionDefinition.Parameters.Count > 0);
             var pt = functionDefinition.Parameters[0].Type;
@@ -107,22 +107,22 @@ namespace Plato.Compiler.Types
 
     public static class ReificationExtensions
     {
-        public static void VerifyIsReified(this TypeExpressionSymbol tes)
+        public static void VerifyIsReified(this TypeExpression tes)
         {
             tes.Definition.VerifyIsReified();
             foreach (var ta in tes.TypeArgs)
                 ta.VerifyIsReified();
         }
 
-        public static void VerifyIsReified(this TypeDefinitionSymbol tds)
+        public static void VerifyIsReified(this TypeDefinition tds)
         {
             Verifier.AssertNotNull(tds, "Type definition");
             Verifier.Assert(tds, d => !(d is TypeParameterDefinition), "Not is type parameter definition");
             Verifier.Assert(tds, d => d.IsConcreteType(), "Is concrete type");
         }
 
-        public static TypeExpressionSymbol Replace(this TypeExpressionSymbol self,
-            Func<TypeExpressionSymbol, TypeExpressionSymbol> map)
+        public static TypeExpression Replace(this TypeExpression self,
+            Func<TypeExpression, TypeExpression> map)
         {
             var r = map(self);
 
@@ -140,7 +140,7 @@ namespace Plato.Compiler.Types
             // If nothing changed, just return the original type. 
             return args.Zip(self.TypeArgs, ReferenceEquals).All(b => b) 
                 ? self 
-                : new TypeExpressionSymbol(self.Definition, args);
+                : new TypeExpression(self.Definition, args);
         }
     }
 }

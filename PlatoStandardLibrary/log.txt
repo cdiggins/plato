@@ -1,72 +1,2060 @@
-[0:00.003] Creating compiler
-[0:00.004] Opening files
-[0:00.195] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\intrinsics.plato at 2023-09-11 3:56:28 PM
-[0:00.195] Starting to parse 38 lines containing 1086 characters
-[0:00.195] Tokenization phase
-[0:00.198] Completed tokenization
-[0:00.199] Starting main parse
-[0:00.201] Completed parsing
-[0:00.201] Gathering parse errors
-[0:00.201] Found 0 errors
-[0:00.201] Gathering parse nodes
-[0:00.202] Found 782 nodes
-[0:00.202] Creating parse tree
-[0:00.202] Creating Concrete Syntax Tree (CST)
-[0:00.212] Creating Abstract Syntax Tree (AST)
-[0:00.231] Completed all steps, result is successful
-[0:00.309] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato at 2023-09-11 3:56:28 PM
-[0:00.309] Starting to parse 121 lines containing 2476 characters
-[0:00.309] Tokenization phase
-[0:00.311] Completed tokenization
-[0:00.311] Starting main parse
-[0:00.330] Completed parsing
-[0:00.330] Gathering parse errors
-[0:00.330] Found 0 errors
-[0:00.330] Gathering parse nodes
-[0:00.330] Found 1300 nodes
-[0:00.330] Creating parse tree
-[0:00.331] Creating Concrete Syntax Tree (CST)
-[0:00.333] Creating Abstract Syntax Tree (AST)
-[0:00.366] Completed all steps, result is successful
-[0:00.399] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\types.plato at 2023-09-11 3:56:28 PM
-[0:00.399] Starting to parse 872 lines containing 12978 characters
-[0:00.399] Tokenization phase
-[0:00.407] Completed tokenization
-[0:00.408] Starting main parse
-[0:00.419] Completed parsing
-[0:00.419] Gathering parse errors
-[0:00.419] Found 0 errors
-[0:00.419] Gathering parse nodes
-[0:00.419] Found 3800 nodes
-[0:00.419] Creating parse tree
-[0:00.420] Creating Concrete Syntax Tree (CST)
-[0:00.426] Creating Abstract Syntax Tree (AST)
-[0:00.437] Completed all steps, result is successful
-[0:00.561] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato at 2023-09-11 3:56:28 PM
-[0:00.561] Starting to parse 448 lines containing 11355 characters
-[0:00.561] Tokenization phase
-[0:00.589] Completed tokenization
-[0:00.590] Starting main parse
-[0:00.604] Completed parsing
-[0:00.604] Gathering parse errors
-[0:00.604] Found 0 errors
-[0:00.604] Gathering parse nodes
-[0:00.604] Found 6368 nodes
-[0:00.604] Creating parse tree
-[0:00.606] Creating Concrete Syntax Tree (CST)
-[0:00.614] Creating Abstract Syntax Tree (AST)
-[0:00.632] Completed all steps, result is successful
-[0:00.632] Applying syntax coloring
-[0:00.632] Completed syntax coloring
-[0:00.650] Initializing Compiler
-[0:00.650] Gathering parsers
-[0:00.651] Gathering AST trees
-[0:00.652] Gathering type declarations
-[0:00.683] Creating symbol resolver
-[0:00.685] Creating type definitions
-[0:00.701] Found 1 symbol resolution errors
-[0:00.702] Symbol resolution error: Could not find type T
-[0:00.702] C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato
-[0:00.703]         => v.FieldValues[n];
-[0:00.703]         ^
-[0:00.703] Halting further computation
+[0:00.002] Creating compiler
+[0:00.003] Opening files
+[0:00.452] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\intrinsics.plato at 2023-09-12 9:25:24 PM
+[0:00.452] Starting to parse 38 lines containing 1086 characters
+[0:00.452] Tokenization phase
+[0:00.465] Completed tokenization
+[0:00.467] Starting main parse
+[0:00.472] Completed parsing
+[0:00.472] Gathering parse errors
+[0:00.473] Found 0 errors
+[0:00.473] Gathering parse nodes
+[0:00.474] Found 782 nodes
+[0:00.474] Creating parse tree
+[0:00.475] Creating Concrete Syntax Tree (CST)
+[0:00.497] Creating Abstract Syntax Tree (AST)
+[0:00.535] Completed all steps, result is successful
+[0:00.640] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato at 2023-09-12 9:25:24 PM
+[0:00.640] Starting to parse 124 lines containing 2557 characters
+[0:00.640] Tokenization phase
+[0:00.646] Completed tokenization
+[0:00.646] Starting main parse
+[0:00.704] Completed parsing
+[0:00.704] Gathering parse errors
+[0:00.704] Found 0 errors
+[0:00.704] Gathering parse nodes
+[0:00.705] Found 1348 nodes
+[0:00.705] Creating parse tree
+[0:00.705] Creating Concrete Syntax Tree (CST)
+[0:00.710] Creating Abstract Syntax Tree (AST)
+[0:00.744] Completed all steps, result is successful
+[0:00.814] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\types.plato at 2023-09-12 9:25:25 PM
+[0:00.815] Starting to parse 872 lines containing 12978 characters
+[0:00.815] Tokenization phase
+[0:00.827] Completed tokenization
+[0:00.827] Starting main parse
+[0:00.848] Completed parsing
+[0:00.848] Gathering parse errors
+[0:00.848] Found 0 errors
+[0:00.848] Gathering parse nodes
+[0:00.848] Found 3800 nodes
+[0:00.848] Creating parse tree
+[0:00.850] Creating Concrete Syntax Tree (CST)
+[0:00.858] Creating Abstract Syntax Tree (AST)
+[0:00.873] Completed all steps, result is successful
+[0:00.974] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato at 2023-09-12 9:25:25 PM
+[0:00.974] Starting to parse 442 lines containing 11219 characters
+[0:00.974] Tokenization phase
+[0:01.011] Completed tokenization
+[0:01.011] Starting main parse
+[0:01.048] Completed parsing
+[0:01.048] Gathering parse errors
+[0:01.048] Found 0 errors
+[0:01.048] Gathering parse nodes
+[0:01.049] Found 6289 nodes
+[0:01.049] Creating parse tree
+[0:01.052] Creating Concrete Syntax Tree (CST)
+[0:01.073] Creating Abstract Syntax Tree (AST)
+[0:01.105] Completed all steps, result is successful
+[0:01.105] Applying syntax coloring
+[0:01.105] Completed syntax coloring
+[0:01.127] Initializing Compiler
+[0:01.127] Gathering parsers
+[0:01.128] Gathering AST trees
+[0:01.129] Gathering type declarations
+[0:01.168] Creating symbol resolver
+[0:01.214] Creating type definitions
+[0:01.256] Found 0 symbol resolution errors
+[0:01.256] Gathering function definitions
+[0:01.261] Found 428 functions
+[0:01.261] Checking semantics
+[0:01.261] Creating Reified Types
+[0:01.346] Found 117 types
+[0:01.347] Created a total of 1465 reified functions
+[0:01.347] Adding library functions to reified types
+[0:01.667] Grouping Reified functions by name for faster type resolution
+[0:01.683] Creating function analysis
+[0:01.700] Function AnalysisOriginal function: FunctionDefinition=FieldNames$2459:Concept:Array<ConcreteType:String>
+New signature: () -> $0
+Variables: $0
+Constraints:
+   $0 implements (Array, String)
+Original function: FunctionDefinition=FieldValues$2462:Concept:Array<Concept:Any>
+New signature: ($1) -> $2
+Variables: $1, $2, $3
+Constraints:
+   $1 implements (Any)
+   $3 implements (Any)
+   $2 implements (Array, $3)
+Original function: FunctionDefinition=FieldTypes$2465:Concept:Array<ConcreteType:Type>
+New signature: ($4) -> $5
+Variables: $4, $5
+Constraints:
+   $4 implements (Any)
+   $5 implements (Array, Type)
+Original function: FunctionDefinition=TypeOf$2466:ConcreteType:Type
+New signature: () -> Type
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Default$2468:TypeVariable:Self
+New signature: () -> $6
+Variables: $6
+Constraints:
+   $6 implements (Value)
+Original function: FunctionDefinition=Count$2472:ConcreteType:Integer
+New signature: ($7) -> Integer
+Variables: $7, $8
+Constraints:
+   $8 implements (Any)
+   $7 implements (Array, $8)
+Original function: FunctionDefinition=At$2477:TypeVariable:T
+New signature: ($9, Integer) -> $11
+Variables: $9, $10, $11
+Constraints:
+   $10 implements (Any)
+   $9 implements (Array, $10)
+   $11 implements (Any)
+Original function: FunctionDefinition=Value$2497:ConcreteType:Number
+New signature: ($12) -> Number
+Variables: $12
+Constraints:
+   $12 implements (Measure)
+Original function: FunctionDefinition=Zero$2504:TypeVariable:Self
+New signature: () -> $13
+Variables: $13
+Constraints:
+   $13 implements (Numerical)
+Original function: FunctionDefinition=One$2505:TypeVariable:Self
+New signature: () -> $14
+Variables: $14
+Constraints:
+   $14 implements (Numerical)
+Original function: FunctionDefinition=MinValue$2506:TypeVariable:Self
+New signature: () -> $15
+Variables: $15
+Constraints:
+   $15 implements (Numerical)
+Original function: FunctionDefinition=MaxValue$2507:TypeVariable:Self
+New signature: () -> $16
+Variables: $16
+Constraints:
+   $16 implements (Numerical)
+Original function: FunctionDefinition=Magnitude$2524:ConcreteType:Number
+New signature: ($17) -> Number
+Variables: $17
+Constraints:
+   $17 implements (Magnitudinal)
+Original function: FunctionDefinition=Compare$2528:ConcreteType:Integer
+New signature: ($18) -> Integer
+Variables: $18
+Constraints:
+   $18 implements (Comparable)
+Original function: FunctionDefinition=Equals$2549:ConcreteType:Boolean
+New signature: ($19, $20) -> Boolean
+Variables: $19, $20
+Constraints:
+   $19 implements (Equatable)
+   $20 implements (Equatable)
+Original function: FunctionDefinition=Add$2567:TypeVariable:Self
+New signature: ($21, $22) -> $23
+Variables: $21, $22, $23
+Constraints:
+   $21 implements (Arithmetic)
+   $22 implements (Arithmetic)
+   $23 implements (Arithmetic)
+Original function: FunctionDefinition=Subtract$2581:TypeVariable:Self
+New signature: ($24, $25) -> $26
+Variables: $24, $25, $26
+Constraints:
+   $24 implements (Arithmetic)
+   $25 implements (Arithmetic)
+   $26 implements (Arithmetic)
+Original function: FunctionDefinition=Negative$2591:TypeVariable:Self
+New signature: ($27) -> $28
+Variables: $27, $28
+Constraints:
+   $27 implements (Arithmetic)
+   $28 implements (Arithmetic)
+Original function: FunctionDefinition=Reciprocal$2601:TypeVariable:Self
+New signature: ($29) -> $30
+Variables: $29, $30
+Constraints:
+   $29 implements (Arithmetic)
+   $30 implements (Arithmetic)
+Original function: FunctionDefinition=Multiply$2618:TypeVariable:Self
+New signature: ($31, $32) -> $33
+Variables: $31, $32, $33
+Constraints:
+   $31 implements (Arithmetic)
+   $32 implements (Arithmetic)
+   $33 implements (Arithmetic)
+Original function: FunctionDefinition=Divide$2635:TypeVariable:Self
+New signature: ($34, $35) -> $36
+Variables: $34, $35, $36
+Constraints:
+   $34 implements (Arithmetic)
+   $35 implements (Arithmetic)
+   $36 implements (Arithmetic)
+Original function: FunctionDefinition=Modulo$2652:TypeVariable:Self
+New signature: ($37, $38) -> $39
+Variables: $37, $38, $39
+Constraints:
+   $37 implements (Arithmetic)
+   $38 implements (Arithmetic)
+   $39 implements (Arithmetic)
+Original function: FunctionDefinition=Add$2667:TypeVariable:Self
+New signature: ($40, Number) -> $41
+Variables: $40, $41
+Constraints:
+   $40 implements (ScalarArithmetic)
+   $41 implements (ScalarArithmetic)
+Original function: FunctionDefinition=Subtract$2681:TypeVariable:Self
+New signature: ($42, Number) -> $43
+Variables: $42, $43
+Constraints:
+   $42 implements (ScalarArithmetic)
+   $43 implements (ScalarArithmetic)
+Original function: FunctionDefinition=Multiply$2695:TypeVariable:Self
+New signature: ($44, Number) -> $45
+Variables: $44, $45
+Constraints:
+   $44 implements (ScalarArithmetic)
+   $45 implements (ScalarArithmetic)
+Original function: FunctionDefinition=Divide$2709:TypeVariable:Self
+New signature: ($46, Number) -> $47
+Variables: $46, $47
+Constraints:
+   $46 implements (ScalarArithmetic)
+   $47 implements (ScalarArithmetic)
+Original function: FunctionDefinition=Modulo$2723:TypeVariable:Self
+New signature: ($48, Number) -> $49
+Variables: $48, $49
+Constraints:
+   $48 implements (ScalarArithmetic)
+   $49 implements (ScalarArithmetic)
+Original function: FunctionDefinition=And$2740:TypeVariable:Self
+New signature: ($50, $51) -> $52
+Variables: $50, $51, $52
+Constraints:
+   $50 implements (BooleanOperations)
+   $51 implements (BooleanOperations)
+   $52 implements (BooleanOperations)
+Original function: FunctionDefinition=Or$2757:TypeVariable:Self
+New signature: ($53, $54) -> $55
+Variables: $53, $54, $55
+Constraints:
+   $53 implements (BooleanOperations)
+   $54 implements (BooleanOperations)
+   $55 implements (BooleanOperations)
+Original function: FunctionDefinition=Not$2767:TypeVariable:Self
+New signature: ($56) -> $57
+Variables: $56, $57
+Constraints:
+   $56 implements (BooleanOperations)
+   $57 implements (BooleanOperations)
+Original function: FunctionDefinition=Min$2772:TypeVariable:T
+New signature: ($58) -> $60
+Variables: $58, $59, $60
+Constraints:
+   $59 implements (Numerical)
+   $58 implements (Interval, $59)
+   $60 implements (Numerical)
+Original function: FunctionDefinition=Max$2775:TypeVariable:T
+New signature: ($61) -> $63
+Variables: $61, $62, $63
+Constraints:
+   $62 implements (Numerical)
+   $61 implements (Interval, $62)
+   $63 implements (Numerical)
+Original function: FunctionDefinition=Name$407:ConcreteType:String
+New signature: (Type) -> String
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Value$414:ConcreteType:Integer
+New signature: (Count) -> Integer
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Value$419:ConcreteType:Integer
+New signature: (Index) -> Integer
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Value$424:ConcreteType:Number
+New signature: (Unit) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Value$429:ConcreteType:Number
+New signature: (Percent) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=X$434:ConcreteType:Number
+New signature: (Quaternion) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Y$441:ConcreteType:Number
+New signature: (Quaternion) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Z$448:ConcreteType:Number
+New signature: (Quaternion) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=W$455:ConcreteType:Number
+New signature: (Quaternion) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=X$462:ConcreteType:Unit
+New signature: (Unit2D) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Y$467:ConcreteType:Unit
+New signature: (Unit2D) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=X$472:ConcreteType:Unit
+New signature: (Unit3D) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Y$477:ConcreteType:Unit
+New signature: (Unit3D) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Z$482:ConcreteType:Unit
+New signature: (Unit3D) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Value$487:ConcreteType:Unit3D
+New signature: (Direction3D) -> Unit3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Axis$492:ConcreteType:Unit3D
+New signature: (AxisAngle) -> Unit3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Angle$499:ConcreteType:Angle
+New signature: (AxisAngle) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Yaw$506:ConcreteType:Angle
+New signature: (EulerAngles) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Pitch$513:ConcreteType:Angle
+New signature: (EulerAngles) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Roll$520:ConcreteType:Angle
+New signature: (EulerAngles) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Quaternion$527:ConcreteType:Quaternion
+New signature: (Rotation3D) -> Quaternion
+Variables: 
+Constraints:
+Original function: FunctionDefinition=X$534:ConcreteType:Number
+New signature: (Vector2D) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Y$539:ConcreteType:Number
+New signature: (Vector2D) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=X$544:ConcreteType:Number
+New signature: (Vector3D) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Y$549:ConcreteType:Number
+New signature: (Vector3D) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Z$554:ConcreteType:Number
+New signature: (Vector3D) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=X$559:ConcreteType:Number
+New signature: (Vector4D) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Y$564:ConcreteType:Number
+New signature: (Vector4D) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Z$569:ConcreteType:Number
+New signature: (Vector4D) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=W$574:ConcreteType:Number
+New signature: (Vector4D) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Value$579:ConcreteType:Rotation3D
+New signature: (Orientation3D) -> Rotation3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Position$584:ConcreteType:Vector3D
+New signature: (Pose2D) -> Vector3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Orientation$591:ConcreteType:Orientation3D
+New signature: (Pose2D) -> Orientation3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Position$598:ConcreteType:Vector3D
+New signature: (Pose3D) -> Vector3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Orientation$603:ConcreteType:Orientation3D
+New signature: (Pose3D) -> Orientation3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Translation$608:ConcreteType:Vector3D
+New signature: (Transform3D) -> Vector3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Rotation$615:ConcreteType:Rotation3D
+New signature: (Transform3D) -> Rotation3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Scale$622:ConcreteType:Vector3D
+New signature: (Transform3D) -> Vector3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Translation$629:ConcreteType:Vector2D
+New signature: (Transform2D) -> Vector2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Rotation$634:ConcreteType:Angle
+New signature: (Transform2D) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Scale$639:ConcreteType:Vector2D
+New signature: (Transform2D) -> Vector2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=A$644:ConcreteType:Vector2D
+New signature: (AlignedBox2D) -> Vector2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=B$651:ConcreteType:Vector2D
+New signature: (AlignedBox2D) -> Vector2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=A$658:ConcreteType:Vector3D
+New signature: (AlignedBox3D) -> Vector3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=B$663:ConcreteType:Vector3D
+New signature: (AlignedBox3D) -> Vector3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Real$668:ConcreteType:Number
+New signature: (Complex) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Imaginary$675:ConcreteType:Number
+New signature: (Complex) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Direction$682:ConcreteType:Vector3D
+New signature: (Ray3D) -> Vector3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Position$689:ConcreteType:Point3D
+New signature: (Ray3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Direction$694:ConcreteType:Vector2D
+New signature: (Ray2D) -> Vector2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Position$699:ConcreteType:Point2D
+New signature: (Ray2D) -> Point2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Center$704:ConcreteType:Point3D
+New signature: (Sphere) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Radius$711:ConcreteType:Number
+New signature: (Sphere) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Normal$718:ConcreteType:Unit3D
+New signature: (Plane) -> Unit3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=D$725:ConcreteType:Number
+New signature: (Plane) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=A$732:ConcreteType:Point3D
+New signature: (Triangle3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=B$737:ConcreteType:Point3D
+New signature: (Triangle3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=C$742:ConcreteType:Point3D
+New signature: (Triangle3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=A$749:ConcreteType:Point2D
+New signature: (Triangle2D) -> Point2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=B$754:ConcreteType:Point2D
+New signature: (Triangle2D) -> Point2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=C$759:ConcreteType:Point2D
+New signature: (Triangle2D) -> Point2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=A$764:ConcreteType:Point3D
+New signature: (Quad3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=B$769:ConcreteType:Point3D
+New signature: (Quad3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=C$774:ConcreteType:Point3D
+New signature: (Quad3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=D$779:ConcreteType:Point3D
+New signature: (Quad3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=A$784:ConcreteType:Point2D
+New signature: (Quad2D) -> Point2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=B$789:ConcreteType:Point2D
+New signature: (Quad2D) -> Point2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=C$794:ConcreteType:Point2D
+New signature: (Quad2D) -> Point2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=D$799:ConcreteType:Point2D
+New signature: (Quad2D) -> Point2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Value$804:ConcreteType:Vector3D
+New signature: (Point3D) -> Vector3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Value$809:ConcreteType:Vector2D
+New signature: (Point2D) -> Vector2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=A$814:ConcreteType:Point3D
+New signature: (Line3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=B$819:ConcreteType:Point3D
+New signature: (Line3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=A$824:ConcreteType:Point2D
+New signature: (Line2D) -> Point2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=B$829:ConcreteType:Point2D
+New signature: (Line2D) -> Point2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=R$834:ConcreteType:Unit
+New signature: (Color) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=G$841:ConcreteType:Unit
+New signature: (Color) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=B$848:ConcreteType:Unit
+New signature: (Color) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=A$853:ConcreteType:Unit
+New signature: (Color) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Lightness$858:ConcreteType:Percent
+New signature: (ColorLUV) -> Percent
+Variables: 
+Constraints:
+Original function: FunctionDefinition=U$865:ConcreteType:Unit
+New signature: (ColorLUV) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=V$872:ConcreteType:Unit
+New signature: (ColorLUV) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Lightness$879:ConcreteType:Percent
+New signature: (ColorLAB) -> Percent
+Variables: 
+Constraints:
+Original function: FunctionDefinition=A$884:ConcreteType:Integer
+New signature: (ColorLAB) -> Integer
+Variables: 
+Constraints:
+Original function: FunctionDefinition=B$889:ConcreteType:Integer
+New signature: (ColorLAB) -> Integer
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Lightness$894:ConcreteType:Percent
+New signature: (ColorLCh) -> Percent
+Variables: 
+Constraints:
+Original function: FunctionDefinition=ChromaHue$899:ConcreteType:PolarCoordinate
+New signature: (ColorLCh) -> PolarCoordinate
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Hue$906:ConcreteType:Angle
+New signature: (ColorHSV) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=S$913:ConcreteType:Unit
+New signature: (ColorHSV) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=V$920:ConcreteType:Unit
+New signature: (ColorHSV) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Hue$925:ConcreteType:Angle
+New signature: (ColorHSL) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Saturation$930:ConcreteType:Unit
+New signature: (ColorHSL) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Luminance$937:ConcreteType:Unit
+New signature: (ColorHSL) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Y$944:ConcreteType:Unit
+New signature: (ColorYCbCr) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Cb$949:ConcreteType:Unit
+New signature: (ColorYCbCr) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Cr$956:ConcreteType:Unit
+New signature: (ColorYCbCr) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Radius$963:ConcreteType:Number
+New signature: (SphericalCoordinate) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Azimuth$968:ConcreteType:Angle
+New signature: (SphericalCoordinate) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Polar$975:ConcreteType:Angle
+New signature: (SphericalCoordinate) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Radius$982:ConcreteType:Number
+New signature: (PolarCoordinate) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Angle$987:ConcreteType:Angle
+New signature: (PolarCoordinate) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Rho$992:ConcreteType:Number
+New signature: (LogPolarCoordinate) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Azimuth$999:ConcreteType:Angle
+New signature: (LogPolarCoordinate) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=RadialDistance$1004:ConcreteType:Number
+New signature: (CylindricalCoordinate) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Azimuth$1011:ConcreteType:Angle
+New signature: (CylindricalCoordinate) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Height$1016:ConcreteType:Number
+New signature: (CylindricalCoordinate) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Radius$1023:ConcreteType:Number
+New signature: (HorizontalCoordinate) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Azimuth$1028:ConcreteType:Angle
+New signature: (HorizontalCoordinate) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Height$1033:ConcreteType:Number
+New signature: (HorizontalCoordinate) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Latitude$1038:ConcreteType:Angle
+New signature: (GeoCoordinate) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Longitude$1045:ConcreteType:Angle
+New signature: (GeoCoordinate) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Coordinate$1052:ConcreteType:GeoCoordinate
+New signature: (GeoCoordinateWithAltitude) -> GeoCoordinate
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Altitude$1059:ConcreteType:Number
+New signature: (GeoCoordinateWithAltitude) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Center$1066:ConcreteType:Point2D
+New signature: (Circle) -> Point2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Radius$1071:ConcreteType:Number
+New signature: (Circle) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Circle$1076:ConcreteType:Circle
+New signature: (Chord) -> Circle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Arc$1083:ConcreteType:Arc
+New signature: (Chord) -> Arc
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Width$1090:ConcreteType:Number
+New signature: (Size2D) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Height$1097:ConcreteType:Number
+New signature: (Size2D) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Width$1102:ConcreteType:Number
+New signature: (Size3D) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Height$1107:ConcreteType:Number
+New signature: (Size3D) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Depth$1112:ConcreteType:Number
+New signature: (Size3D) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Center$1119:ConcreteType:Point2D
+New signature: (Rectangle2D) -> Point2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Size$1124:ConcreteType:Size2D
+New signature: (Rectangle2D) -> Size2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Value$1131:ConcreteType:Number
+New signature: (Proportion) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Numerator$1136:ConcreteType:Number
+New signature: (Fraction) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Denominator$1143:ConcreteType:Number
+New signature: (Fraction) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Radians$1150:ConcreteType:Number
+New signature: (Angle) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Meters$1157:ConcreteType:Number
+New signature: (Length) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Kilograms$1164:ConcreteType:Number
+New signature: (Mass) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Celsius$1171:ConcreteType:Number
+New signature: (Temperature) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Seconds$1178:ConcreteType:Number
+New signature: (TimeSpan) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Min$1185:ConcreteType:DateTime
+New signature: (TimeRange) -> DateTime
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Max$1190:ConcreteType:DateTime
+New signature: (TimeRange) -> DateTime
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Year$1195:ConcreteType:Integer
+New signature: (DateTime) -> Integer
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Month$1202:ConcreteType:Integer
+New signature: (DateTime) -> Integer
+Variables: 
+Constraints:
+Original function: FunctionDefinition=TimeZoneOffset$1209:ConcreteType:Integer
+New signature: (DateTime) -> Integer
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Day$1216:ConcreteType:Integer
+New signature: (DateTime) -> Integer
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Minute$1223:ConcreteType:Integer
+New signature: (DateTime) -> Integer
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Second$1230:ConcreteType:Integer
+New signature: (DateTime) -> Integer
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Milliseconds$1237:ConcreteType:Number
+New signature: (DateTime) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Start$1244:ConcreteType:Angle
+New signature: (AnglePair) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=End$1251:ConcreteType:Angle
+New signature: (AnglePair) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Circle$1258:ConcreteType:Circle
+New signature: (Ring) -> Circle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=InnerRadius$1263:ConcreteType:Number
+New signature: (Ring) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Angles$1270:ConcreteType:AnglePair
+New signature: (Arc) -> AnglePair
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Cirlce$1277:ConcreteType:Circle
+New signature: (Arc) -> Circle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Start$1284:ConcreteType:TimeSpan
+New signature: (TimeInterval) -> TimeSpan
+Variables: 
+Constraints:
+Original function: FunctionDefinition=End$1289:ConcreteType:TimeSpan
+New signature: (TimeInterval) -> TimeSpan
+Variables: 
+Constraints:
+Original function: FunctionDefinition=A$1294:ConcreteType:Number
+New signature: (RealInterval) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=B$1299:ConcreteType:Number
+New signature: (RealInterval) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Line$1304:ConcreteType:Line3D
+New signature: (Capsule) -> Line3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Radius$1311:ConcreteType:Number
+New signature: (Capsule) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Column1$1316:ConcreteType:Vector4D
+New signature: (Matrix3D) -> Vector4D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Column2$1323:ConcreteType:Vector4D
+New signature: (Matrix3D) -> Vector4D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Column3$1330:ConcreteType:Vector4D
+New signature: (Matrix3D) -> Vector4D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Column4$1337:ConcreteType:Vector4D
+New signature: (Matrix3D) -> Vector4D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Line$1344:ConcreteType:Line3D
+New signature: (Cylinder) -> Line3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Radius$1349:ConcreteType:Number
+New signature: (Cylinder) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Line$1354:ConcreteType:Line3D
+New signature: (Cone) -> Line3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Radius$1359:ConcreteType:Number
+New signature: (Cone) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Line$1364:ConcreteType:Line3D
+New signature: (Tube) -> Line3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=InnerRadius$1369:ConcreteType:Number
+New signature: (Tube) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=OuterRadius$1374:ConcreteType:Number
+New signature: (Tube) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Line$1381:ConcreteType:Line3D
+New signature: (ConeSegment) -> Line3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Radius1$1386:ConcreteType:Number
+New signature: (ConeSegment) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Radius2$1393:ConcreteType:Number
+New signature: (ConeSegment) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Center$1400:ConcreteType:Point2D
+New signature: (Box2D) -> Point2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Rotation$1405:ConcreteType:Angle
+New signature: (Box2D) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Extent$1410:ConcreteType:Size2D
+New signature: (Box2D) -> Size2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Center$1417:ConcreteType:Point3D
+New signature: (Box3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Rotation$1422:ConcreteType:Rotation3D
+New signature: (Box3D) -> Rotation3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Extent$1427:ConcreteType:Size3D
+New signature: (Box3D) -> Size3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=A$1432:ConcreteType:Point3D
+New signature: (CubicBezierTriangle3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=B$1437:ConcreteType:Point3D
+New signature: (CubicBezierTriangle3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=C$1442:ConcreteType:Point3D
+New signature: (CubicBezierTriangle3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=A2B$1447:ConcreteType:Point3D
+New signature: (CubicBezierTriangle3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=AB2$1454:ConcreteType:Point3D
+New signature: (CubicBezierTriangle3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=B2C$1461:ConcreteType:Point3D
+New signature: (CubicBezierTriangle3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=BC2$1468:ConcreteType:Point3D
+New signature: (CubicBezierTriangle3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=AC2$1475:ConcreteType:Point3D
+New signature: (CubicBezierTriangle3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=A2C$1482:ConcreteType:Point3D
+New signature: (CubicBezierTriangle3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=ABC$1489:ConcreteType:Point3D
+New signature: (CubicBezierTriangle3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=A$1496:ConcreteType:Point2D
+New signature: (CubicBezier2D) -> Point2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=B$1501:ConcreteType:Point2D
+New signature: (CubicBezier2D) -> Point2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=C$1506:ConcreteType:Point2D
+New signature: (CubicBezier2D) -> Point2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=D$1511:ConcreteType:Point2D
+New signature: (CubicBezier2D) -> Point2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=U$1516:ConcreteType:Unit
+New signature: (UV) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=V$1521:ConcreteType:Unit
+New signature: (UV) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=U$1526:ConcreteType:Unit
+New signature: (UVW) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=V$1531:ConcreteType:Unit
+New signature: (UVW) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=W$1536:ConcreteType:Unit
+New signature: (UVW) -> Unit
+Variables: 
+Constraints:
+Original function: FunctionDefinition=A$1541:ConcreteType:Point3D
+New signature: (CubicBezier3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=B$1546:ConcreteType:Point3D
+New signature: (CubicBezier3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=C$1551:ConcreteType:Point3D
+New signature: (CubicBezier3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=D$1556:ConcreteType:Point3D
+New signature: (CubicBezier3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=A$1561:ConcreteType:Point2D
+New signature: (QuadraticBezier2D) -> Point2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=B$1566:ConcreteType:Point2D
+New signature: (QuadraticBezier2D) -> Point2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=C$1571:ConcreteType:Point2D
+New signature: (QuadraticBezier2D) -> Point2D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=A$1576:ConcreteType:Point3D
+New signature: (QuadraticBezier3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=B$1581:ConcreteType:Point3D
+New signature: (QuadraticBezier3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=C$1586:ConcreteType:Point3D
+New signature: (QuadraticBezier3D) -> Point3D
+Variables: 
+Constraints:
+Original function: FunctionDefinition=MetersSquared$1591:ConcreteType:Number
+New signature: (Area) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=MetersCubed$1598:ConcreteType:Number
+New signature: (Volume) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=MetersPerSecond$1605:ConcreteType:Number
+New signature: (Velocity) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=MetersPerSecondSquared$1612:ConcreteType:Number
+New signature: (Acceleration) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Newtons$1619:ConcreteType:Number
+New signature: (Force) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Pascals$1626:ConcreteType:Number
+New signature: (Pressure) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Joules$1633:ConcreteType:Number
+New signature: (Energy) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Bytes$1640:ConcreteType:Count
+New signature: (Memory) -> Count
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Hertz$1647:ConcreteType:Number
+New signature: (Frequency) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Decibels$1654:ConcreteType:Number
+New signature: (Loudness) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Candelas$1661:ConcreteType:Number
+New signature: (LuminousIntensity) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Volts$1668:ConcreteType:Number
+New signature: (ElectricPotential) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Columbs$1675:ConcreteType:Number
+New signature: (ElectricCharge) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Amperes$1682:ConcreteType:Number
+New signature: (ElectricCurrent) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Ohms$1689:ConcreteType:Number
+New signature: (ElectricResistance) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Watts$1696:ConcreteType:Number
+New signature: (Power) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=KilogramsPerMeterCubed$1703:ConcreteType:Number
+New signature: (Density) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Mean$1710:ConcreteType:Number
+New signature: (NormalDistribution) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=StandardDeviation$1717:ConcreteType:Number
+New signature: (NormalDistribution) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Expected$1724:ConcreteType:Number
+New signature: (PoissonDistribution) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Occurrences$1731:ConcreteType:Count
+New signature: (PoissonDistribution) -> Count
+Variables: 
+Constraints:
+Original function: FunctionDefinition=P$1738:ConcreteType:Probability
+New signature: (BernoulliDistribution) -> Probability
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Value$1745:ConcreteType:Number
+New signature: (Probability) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Trials$1750:ConcreteType:Count
+New signature: (BinomialDistribution) -> Count
+Variables: 
+Constraints:
+Original function: FunctionDefinition=P$1757:ConcreteType:Probability
+New signature: (BinomialDistribution) -> Probability
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Count$1765:ConcreteType:Integer
+New signature: ((Array1, $64)) -> Integer
+Variables: $64
+Constraints:
+   $64 implements (Any)
+Original function: FunctionDefinition=Map$1773:ConcreteType:Function1<ConcreteType:Integer,TypeVariable:T>
+New signature: ((Array1, $65)) -> (Function1, Integer, $69)
+Variables: $65, $66, $67, $68, $69
+Constraints:
+   $65 implements (Any)
+   $69 implements (Any)
+Original function: FunctionDefinition=Item0$1786:TypeVariable:T0
+New signature: ((Tuple2, $70, $71)) -> $72
+Variables: $70, $71, $72
+Constraints:
+   $70 implements (Any)
+   $71 implements (Any)
+   $72 implements (Any)
+Original function: FunctionDefinition=Item1$1795:TypeVariable:T1
+New signature: ((Tuple2, $73, $74)) -> $75
+Variables: $73, $74, $75
+Constraints:
+   $73 implements (Any)
+   $74 implements (Any)
+   $75 implements (Any)
+Original function: FunctionDefinition=Item0$1811:TypeVariable:T0
+New signature: ((Tuple3, $76, $77, $78)) -> $79
+Variables: $76, $77, $78, $79
+Constraints:
+   $76 implements (Any)
+   $77 implements (Any)
+   $78 implements (Any)
+   $79 implements (Any)
+Original function: FunctionDefinition=Item1$1819:TypeVariable:T1
+New signature: ((Tuple3, $80, $81, $82)) -> $83
+Variables: $80, $81, $82, $83
+Constraints:
+   $80 implements (Any)
+   $81 implements (Any)
+   $82 implements (Any)
+   $83 implements (Any)
+Original function: FunctionDefinition=Item2$1827:TypeVariable:T2
+New signature: ((Tuple3, $84, $85, $86)) -> $87
+Variables: $84, $85, $86, $87
+Constraints:
+   $84 implements (Any)
+   $85 implements (Any)
+   $86 implements (Any)
+   $87 implements (Any)
+Original function: FunctionDefinition=Cos$2346:ConcreteType:Number
+New signature: (Angle) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Sin$2349:ConcreteType:Number
+New signature: (Angle) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Tan$2352:ConcreteType:Number
+New signature: (Angle) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Acos$2355:ConcreteType:Angle
+New signature: (Number) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Asin$2358:ConcreteType:Angle
+New signature: (Number) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Atan$2361:ConcreteType:Angle
+New signature: (Number) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Pow$2366:ConcreteType:Number
+New signature: (Number, Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Log$2371:ConcreteType:Number
+New signature: (Number, Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=NaturalLog$2374:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=NaturalPower$2377:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Interpolate$2380:ConcreteType:String
+New signature: ($88) -> String
+Variables: $88, $89
+Constraints:
+   $89 implements (Any)
+   $88 implements (Array, $89)
+Original function: FunctionDefinition=Throw$2383:Concept:Any
+New signature: ($90) -> $91
+Variables: $90, $91
+Constraints:
+   $90 implements (Any)
+   $91 implements (Any)
+Original function: FunctionDefinition=TypeOf$2386:ConcreteType:Type
+New signature: ($92) -> Type
+Variables: $92
+Constraints:
+   $92 implements (Any)
+Original function: FunctionDefinition=Add$2391:ConcreteType:Number
+New signature: (Number, Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Subtract$2396:ConcreteType:Number
+New signature: (Number, Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Divide$2401:ConcreteType:Number
+New signature: (Number, Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Multiply$2406:ConcreteType:Number
+New signature: (Number, Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Modulo$2411:ConcreteType:Number
+New signature: (Number, Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Negative$2414:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Add$2419:ConcreteType:Integer
+New signature: (Integer, Integer) -> Integer
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Subtract$2424:ConcreteType:Integer
+New signature: (Integer, Integer) -> Integer
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Divide$2429:ConcreteType:Integer
+New signature: (Integer, Integer) -> Integer
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Multiply$2434:ConcreteType:Integer
+New signature: (Integer, Integer) -> Integer
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Modulo$2439:ConcreteType:Integer
+New signature: (Integer, Integer) -> Integer
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Negative$2442:ConcreteType:Integer
+New signature: (Integer) -> Integer
+Variables: 
+Constraints:
+Original function: FunctionDefinition=And$2447:ConcreteType:Boolean
+New signature: (Boolean, Boolean) -> Boolean
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Or$2452:ConcreteType:Boolean
+New signature: (Boolean, Boolean) -> Boolean
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Not$2455:ConcreteType:Boolean
+New signature: (Boolean) -> Boolean
+Variables: 
+Constraints:
+Original function: FunctionDefinition=ToNumber$2458:ConcreteType:Number
+New signature: (Integer) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Map$2933:Concept:Array
+New signature: ($93, Function) -> $95
+Variables: $93, $94, $95, $96
+Constraints:
+   $94 implements (Any)
+   $93 implements (Array, $94)
+   $96 implements (Any)
+   $95 implements (Array, $96)
+Original function: FunctionDefinition=Reverse$2971:Concept:Array
+New signature: ($97) -> $99
+Variables: $97, $98, $99, $100
+Constraints:
+   $98 implements (Any)
+   $97 implements (Array, $98)
+   $100 implements (Any)
+   $99 implements (Array, $100)
+Original function: FunctionDefinition=Zip$3005:Concept:Array
+New signature: ($101, $103, Function) -> $105
+Variables: $101, $102, $103, $104, $105, $106
+Constraints:
+   $102 implements (Any)
+   $101 implements (Array, $102)
+   $104 implements (Any)
+   $103 implements (Array, $104)
+   $106 implements (Any)
+   $105 implements (Array, $106)
+Original function: FunctionDefinition=Zip$3048:Concept:Array
+New signature: ($107, $109, $111, Function) -> $113
+Variables: $107, $108, $109, $110, $111, $112, $113, $114
+Constraints:
+   $108 implements (Any)
+   $107 implements (Array, $108)
+   $110 implements (Any)
+   $109 implements (Array, $110)
+   $112 implements (Any)
+   $111 implements (Array, $112)
+   $114 implements (Any)
+   $113 implements (Array, $114)
+Original function: FunctionDefinition=Skip$3077:Concept:Array
+New signature: ($115, Integer) -> $117
+Variables: $115, $116, $117, $118
+Constraints:
+   $116 implements (Any)
+   $115 implements (Array, $116)
+   $118 implements (Any)
+   $117 implements (Array, $118)
+Original function: FunctionDefinition=Take$3096:Concept:Array
+New signature: ($119, Integer) -> $121
+Variables: $119, $120, $121, $122
+Constraints:
+   $120 implements (Any)
+   $119 implements (Array, $120)
+   $122 implements (Any)
+   $121 implements (Array, $122)
+Original function: FunctionDefinition=Aggregate$3121:Concept:Any
+New signature: ($123, $125, Function) -> $126
+Variables: $123, $124, $125, $126
+Constraints:
+   $124 implements (Any)
+   $123 implements (Array, $124)
+   $125 implements (Any)
+   $126 implements (Any)
+Original function: FunctionDefinition=Rest$3130:Concept:Array
+New signature: ($127) -> $129
+Variables: $127, $128, $129, $130
+Constraints:
+   $128 implements (Any)
+   $127 implements (Array, $128)
+   $130 implements (Any)
+   $129 implements (Array, $130)
+Original function: FunctionDefinition=IsEmpty$3142:ConcreteType:Boolean
+New signature: ($131) -> Boolean
+Variables: $131, $132
+Constraints:
+   $132 implements (Any)
+   $131 implements (Array, $132)
+Original function: FunctionDefinition=First$3151:Concept:Any
+New signature: ($133) -> $135
+Variables: $133, $134, $135
+Constraints:
+   $134 implements (Any)
+   $133 implements (Array, $134)
+   $135 implements (Any)
+Original function: FunctionDefinition=Last$3168:Concept:Any
+New signature: ($136) -> $138
+Variables: $136, $137, $138
+Constraints:
+   $137 implements (Any)
+   $136 implements (Array, $137)
+   $138 implements (Any)
+Original function: FunctionDefinition=Slice$3186:Concept:Array
+New signature: ($139, Integer, Integer) -> $141
+Variables: $139, $140, $141, $142
+Constraints:
+   $140 implements (Any)
+   $139 implements (Array, $140)
+   $142 implements (Any)
+   $141 implements (Array, $142)
+Original function: FunctionDefinition=Join$3233:ConcreteType:String
+New signature: ($143, String) -> String
+Variables: $143, $144
+Constraints:
+   $144 implements (Any)
+   $143 implements (Array, $144)
+Original function: FunctionDefinition=All$3262:ConcreteType:Boolean
+New signature: ($145, Function) -> Boolean
+Variables: $145, $146
+Constraints:
+   $146 implements (Any)
+   $145 implements (Array, $146)
+Original function: FunctionDefinition=All$3276:ConcreteType:Boolean
+New signature: ($147) -> Boolean
+Variables: $147, $148
+Constraints:
+   $148 implements (Any)
+   $147 implements (Array, $148)
+Original function: FunctionDefinition=Size$3291:Concept:Numerical
+New signature: ($149) -> $151
+Variables: $149, $150, $151
+Constraints:
+   $150 implements (Numerical)
+   $149 implements (Interval, $150)
+   $151 implements (Numerical)
+Original function: FunctionDefinition=IsEmpty$3306:ConcreteType:Boolean
+New signature: ($152) -> Boolean
+Variables: $152, $153
+Constraints:
+   $153 implements (Numerical)
+   $152 implements (Interval, $153)
+Original function: FunctionDefinition=Lerp$3338:Concept:Numerical
+New signature: ($154, Unit) -> $156
+Variables: $154, $155, $156
+Constraints:
+   $155 implements (Numerical)
+   $154 implements (Interval, $155)
+   $156 implements (Numerical)
+Original function: FunctionDefinition=InverseLerp$3360:ConcreteType:Unit
+New signature: ($157, $159) -> Unit
+Variables: $157, $158, $159
+Constraints:
+   $158 implements (Numerical)
+   $157 implements (Interval, $158)
+   $159 implements (Numerical)
+Original function: FunctionDefinition=Negate$3381:Concept:Interval
+New signature: ($160) -> $162
+Variables: $160, $161, $162, $163
+Constraints:
+   $161 implements (Numerical)
+   $160 implements (Interval, $161)
+   $163 implements (Numerical)
+   $162 implements (Interval, $163)
+Original function: FunctionDefinition=Reverse$3396:Concept:Interval
+New signature: ($164) -> $166
+Variables: $164, $165, $166, $167
+Constraints:
+   $165 implements (Numerical)
+   $164 implements (Interval, $165)
+   $167 implements (Numerical)
+   $166 implements (Interval, $167)
+Original function: FunctionDefinition=Center$3405:Concept:Numerical
+New signature: ($168) -> $170
+Variables: $168, $169, $170
+Constraints:
+   $169 implements (Numerical)
+   $168 implements (Interval, $169)
+   $170 implements (Numerical)
+Original function: FunctionDefinition=Contains$3432:ConcreteType:Boolean
+New signature: ($171, $173) -> Boolean
+Variables: $171, $172, $173
+Constraints:
+   $172 implements (Numerical)
+   $171 implements (Interval, $172)
+   $173 implements (Numerical)
+Original function: FunctionDefinition=Contains$3462:ConcreteType:Boolean
+New signature: ($174, $176) -> Boolean
+Variables: $174, $175, $176, $177
+Constraints:
+   $175 implements (Numerical)
+   $174 implements (Interval, $175)
+   $177 implements (Numerical)
+   $176 implements (Interval, $177)
+Original function: FunctionDefinition=Overlaps$3479:ConcreteType:Boolean
+New signature: ($178, $180) -> Boolean
+Variables: $178, $179, $180, $181
+Constraints:
+   $179 implements (Numerical)
+   $178 implements (Interval, $179)
+   $181 implements (Numerical)
+   $180 implements (Interval, $181)
+Original function: FunctionDefinition=Split$3500:Primitive:Tuple
+New signature: ($182, Unit) -> Tuple
+Variables: $182, $183
+Constraints:
+   $183 implements (Numerical)
+   $182 implements (Interval, $183)
+Original function: FunctionDefinition=Split$3509:Primitive:Tuple
+New signature: ($184) -> Tuple
+Variables: $184, $185
+Constraints:
+   $185 implements (Numerical)
+   $184 implements (Interval, $185)
+Original function: FunctionDefinition=Left$3528:Concept:Interval
+New signature: ($186, Unit) -> $188
+Variables: $186, $187, $188, $189
+Constraints:
+   $187 implements (Numerical)
+   $186 implements (Interval, $187)
+   $189 implements (Numerical)
+   $188 implements (Interval, $189)
+Original function: FunctionDefinition=Right$3547:Concept:Interval
+New signature: ($190, Unit) -> $192
+Variables: $190, $191, $192, $193
+Constraints:
+   $191 implements (Numerical)
+   $190 implements (Interval, $191)
+   $193 implements (Numerical)
+   $192 implements (Interval, $193)
+Original function: FunctionDefinition=MoveTo$3566:Concept:Interval
+New signature: ($194, $196) -> $197
+Variables: $194, $195, $196, $197, $198
+Constraints:
+   $195 implements (Numerical)
+   $194 implements (Interval, $195)
+   $196 implements (Numerical)
+   $198 implements (Numerical)
+   $197 implements (Interval, $198)
+Original function: FunctionDefinition=LeftHalf$3575:Concept:Interval
+New signature: ($199) -> $201
+Variables: $199, $200, $201, $202
+Constraints:
+   $200 implements (Numerical)
+   $199 implements (Interval, $200)
+   $202 implements (Numerical)
+   $201 implements (Interval, $202)
+Original function: FunctionDefinition=RightHalf$3584:Concept:Interval
+New signature: ($203) -> $205
+Variables: $203, $204, $205, $206
+Constraints:
+   $204 implements (Numerical)
+   $203 implements (Interval, $204)
+   $206 implements (Numerical)
+   $205 implements (Interval, $206)
+Original function: FunctionDefinition=HalfSize$3594:Concept:Numerical
+New signature: ($207) -> $209
+Variables: $207, $208, $209
+Constraints:
+   $208 implements (Numerical)
+   $207 implements (Interval, $208)
+   $209 implements (Numerical)
+Original function: FunctionDefinition=Recenter$3621:Concept:Interval
+New signature: ($210, $212) -> $213
+Variables: $210, $211, $212, $213, $214
+Constraints:
+   $211 implements (Numerical)
+   $210 implements (Interval, $211)
+   $212 implements (Numerical)
+   $214 implements (Numerical)
+   $213 implements (Interval, $214)
+Original function: FunctionDefinition=Clamp$3648:Concept:Interval
+New signature: ($215, $217) -> $219
+Variables: $215, $216, $217, $218, $219, $220
+Constraints:
+   $216 implements (Numerical)
+   $215 implements (Interval, $216)
+   $218 implements (Numerical)
+   $217 implements (Interval, $218)
+   $220 implements (Numerical)
+   $219 implements (Interval, $220)
+Original function: FunctionDefinition=Clamp$3682:Concept:Numerical
+New signature: ($221, $223) -> $224
+Variables: $221, $222, $223, $224
+Constraints:
+   $222 implements (Numerical)
+   $221 implements (Interval, $222)
+   $223 implements (Numerical)
+   $224 implements (Numerical)
+Original function: FunctionDefinition=Within$3709:ConcreteType:Boolean
+New signature: ($225, $227) -> Boolean
+Variables: $225, $226, $227
+Constraints:
+   $226 implements (Numerical)
+   $225 implements (Interval, $226)
+   $227 implements (Numerical)
+Original function: FunctionDefinition=ToString$3721:ConcreteType:String
+New signature: ($228) -> String
+Variables: $228
+Constraints:
+   $228 implements (Value)
+Original function: FunctionDefinition=Sum$3732:Concept:Numerical
+New signature: ($229) -> $231
+Variables: $229, $230, $231
+Constraints:
+   $230 implements (Any)
+   $229 implements (Array, $230)
+   $231 implements (Numerical)
+Original function: FunctionDefinition=SumSquares$3742:ConcreteType:Number
+New signature: ($232) -> Number
+Variables: $232, $233
+Constraints:
+   $233 implements (Any)
+   $232 implements (Array, $233)
+Original function: FunctionDefinition=LengthSquared$3749:ConcreteType:Number
+New signature: ($234) -> Number
+Variables: $234, $235
+Constraints:
+   $235 implements (Any)
+   $234 implements (Array, $235)
+Original function: FunctionDefinition=Length$3759:ConcreteType:Number
+New signature: ($236) -> Number
+Variables: $236, $237
+Constraints:
+   $237 implements (Any)
+   $236 implements (Array, $237)
+Original function: FunctionDefinition=Dot$3773:ConcreteType:Number
+New signature: ($238, $240) -> Number
+Variables: $238, $239, $240, $241
+Constraints:
+   $239 implements (Numerical)
+   $238 implements (Vector, $239)
+   $241 implements (Numerical)
+   $240 implements (Vector, $241)
+Original function: FunctionDefinition=Normal$3785:Concept:Vector
+New signature: ($242) -> $244
+Variables: $242, $243, $244, $245
+Constraints:
+   $243 implements (Numerical)
+   $242 implements (Vector, $243)
+   $245 implements (Numerical)
+   $244 implements (Vector, $245)
+Original function: FunctionDefinition=SquareRoot$3794:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Square$3803:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Clamp$3817:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=PlusOne$3829:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=MinusOne$3841:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=FromOne$3853:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=IsPositive$3862:ConcreteType:Boolean
+New signature: (Number) -> Boolean
+Variables: 
+Constraints:
+Original function: FunctionDefinition=GtZ$3871:ConcreteType:Boolean
+New signature: (Number) -> Boolean
+Variables: 
+Constraints:
+Original function: FunctionDefinition=LtZ$3880:ConcreteType:Boolean
+New signature: (Number) -> Boolean
+Variables: 
+Constraints:
+Original function: FunctionDefinition=GtEqZ$3889:ConcreteType:Boolean
+New signature: (Number) -> Boolean
+Variables: 
+Constraints:
+Original function: FunctionDefinition=LtEqZ$3898:ConcreteType:Boolean
+New signature: (Number) -> Boolean
+Variables: 
+Constraints:
+Original function: FunctionDefinition=IsNegative$3907:ConcreteType:Boolean
+New signature: (Number) -> Boolean
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Sign$3935:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Abs$3948:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Half$3957:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Third$3966:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Quarter$3975:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Fifth$3984:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Sixth$3993:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Seventh$4002:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Eighth$4011:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Ninth$4020:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Tenth$4029:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Sixteenth$4038:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Hundredth$4047:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Thousandth$4056:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Millionth$4070:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Billionth$4089:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Hundred$4098:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Thousand$4107:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Million$4121:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Billion$4140:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Twice$4149:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Thrice$4158:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=SmoothStep$4178:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Pow2$4187:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Pow3$4199:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Pow4$4211:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Pow5$4223:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Pi$4225:ConcreteType:Number
+New signature: () -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=AlmostZero$4237:ConcreteType:Boolean
+New signature: (Number) -> Boolean
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Lerp$4265:ConcreteType:Number
+New signature: (Number, Number, Unit) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Between$4307:ConcreteType:Boolean
+New signature: (Number, Number, Number) -> Boolean
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Radians$4311:ConcreteType:Angle
+New signature: (Number) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Degrees$4325:ConcreteType:Angle
+New signature: (Number) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Turns$4339:ConcreteType:Angle
+New signature: (Number) -> Angle
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Equals$4355:ConcreteType:Boolean
+New signature: ($246, $247) -> Boolean
+Variables: $246, $247
+Constraints:
+   $246 implements (Comparable)
+   $247 implements (Comparable)
+Original function: FunctionDefinition=LessThan$4371:ConcreteType:Boolean
+New signature: ($248, $249) -> Boolean
+Variables: $248, $249
+Constraints:
+   $248 implements (Comparable)
+   $249 implements (Comparable)
+Original function: FunctionDefinition=LessThanOrEquals$4387:ConcreteType:Boolean
+New signature: ($250, $251) -> Boolean
+Variables: $250, $251
+Constraints:
+   $250 implements (Comparable)
+   $251 implements (Comparable)
+Original function: FunctionDefinition=GreaterThan$4403:ConcreteType:Boolean
+New signature: ($252, $253) -> Boolean
+Variables: $252, $253
+Constraints:
+   $252 implements (Comparable)
+   $253 implements (Comparable)
+Original function: FunctionDefinition=GreaterThanOrEquals$4419:ConcreteType:Boolean
+New signature: ($254, $255) -> Boolean
+Variables: $254, $255
+Constraints:
+   $254 implements (Comparable)
+   $255 implements (Comparable)
+Original function: FunctionDefinition=Between$4442:Concept:Value
+New signature: ($256, $257, $258) -> $259
+Variables: $256, $257, $258, $259
+Constraints:
+   $256 implements (Comparable)
+   $257 implements (Comparable)
+   $258 implements (Comparable)
+   $259 implements (Value)
+Original function: FunctionDefinition=Between$4453:Concept:Interval
+New signature: ($260, $261) -> $263
+Variables: $260, $261, $262, $263, $264
+Constraints:
+   $260 implements (Value)
+   $262 implements (Numerical)
+   $261 implements (Interval, $262)
+   $264 implements (Numerical)
+   $263 implements (Interval, $264)
+Original function: FunctionDefinition=Min$4467:Concept:Comparable
+New signature: ($265, $266) -> $267
+Variables: $265, $266, $267
+Constraints:
+   $265 implements (Comparable)
+   $266 implements (Comparable)
+   $267 implements (Comparable)
+Original function: FunctionDefinition=Max$4481:Concept:Comparable
+New signature: ($268, $269) -> $270
+Variables: $268, $269, $270
+Constraints:
+   $268 implements (Comparable)
+   $269 implements (Comparable)
+   $270 implements (Comparable)
+Original function: FunctionDefinition=NotEquals$4495:ConcreteType:Boolean
+New signature: ($271, $272) -> Boolean
+Variables: $271, $272
+Constraints:
+   $271 implements (Equatable)
+   $272 implements (Equatable)
+Original function: FunctionDefinition=BlendEaseFunc$4547:ConcreteType:Number
+New signature: (Number, Function, Function) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=InvertEaseFunc$4566:ConcreteType:Number
+New signature: (Number, Function) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=Linear$4570:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=QuadraticEaseIn$4577:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=QuadraticEaseOut$4586:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=QuadraticEaseInOut$4597:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=CubicEaseIn$4604:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=CubicEaseOut$4613:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=CubicEaseInOut$4624:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=QuarticEaseIn$4631:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=QuarticEaseOut$4640:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=QuarticEaseInOut$4651:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=QuinticEaseIn$4658:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=QuinticEaseOut$4667:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=QuinticEaseInOut$4678:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=SineEaseIn$4687:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=SineEaseOut$4700:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=SineEaseInOut$4711:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=CircularEaseIn$4727:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=CircularEaseOut$4736:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=CircularEaseInOut$4747:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=ExponentialEaseIn$4770:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=ExponentialEaseOut$4779:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=ExponentialEaseInOut$4790:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=ElasticEaseIn$4829:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=ElasticEaseOut$4838:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=ElasticEaseInOut$4849:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=BackEaseIn$4875:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=BackEaseOut$4884:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=BackEaseInOut$4895:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=BounceEaseIn$4904:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=BounceEaseOut$5074:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+Original function: FunctionDefinition=BounceEaseInOut$5085:ConcreteType:Number
+New signature: (Number) -> Number
+Variables: 
+Constraints:
+
+[0:01.700] Outputtin errors and warnings

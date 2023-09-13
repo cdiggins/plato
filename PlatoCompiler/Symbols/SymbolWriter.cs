@@ -39,20 +39,20 @@ namespace Plato.Compiler.Symbols
             {
                 case DefinitionSymbol definition:
                     return Write(definition);
-                case ExpressionSymbol expression:
+                case Expression expression:
                     return Write(expression);
-                case TypeDefinitionSymbol typeDefinition:
+                case TypeDefinition typeDefinition:
                     return Write(typeDefinition);
-                case TypeExpressionSymbol typeExpression:
+                case TypeExpression typeExpression:
                     return Write(typeExpression);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(symbol));
             }
         }
 
-        public abstract T Write(TypeExpressionSymbol typeExpression);
-        public abstract T Write(ExpressionSymbol expr);
-        public abstract T Write(TypeDefinitionSymbol typeDefinition);
+        public abstract T Write(TypeExpression typeExpression);
+        public abstract T Write(Expression expr);
+        public abstract T Write(TypeDefinition typeDefinition);
         public abstract T Write(DefinitionSymbol definition);
     }
 }

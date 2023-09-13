@@ -32,25 +32,6 @@ public interface Vector<Self>: Array<Self>, Numerical<Self>
 }
 public static partial class Extensions
 {
-    public static Integer Count<Self, T>(this Self v) where Self: Vector<Self, T>
-    {
-        return /* Type:Integer */
-        /*  */
-        Count(/* Concept:Array<Type:Type> */
-        /*  */
-        FieldTypes(/* Primitive:Self */
-        v));
-    }
-    public static T At<Self, T>(this Self v, Integer n) where Self: Vector<Self, T>
-    {
-        return /* Type:Character */
-        /*  */
-        At(/* Concept:Array<Concept:Any> */
-        /*  */
-        FieldValues(/* Primitive:Self */
-        v), /* Type:Integer */
-        n);
-    }
 }
 public interface Measure<Self>: Value<Self>, ScalarArithmetic<Self>, Equatable<Self>, Comparable<Self>, Magnitudinal<Self>
     where Self : Measure<Self>
@@ -60,12 +41,12 @@ public static partial class Extensions
 {
     public static Number Value<Self>(this Self x) where Self: Measure<Self>
     {
-        return /* Type:Character */
+        return /*  */
         /*  */
-        At(/* Concept:Array<Concept:Any> */
+        At(/*  */
         /*  */
-        FieldValues(/* Primitive:Self */
-        x), /* Type:Integer */
+        FieldValues(/*  */
+        x), /*  */
         0);
     }
 }
@@ -88,15 +69,15 @@ public static partial class Extensions
 {
     public static Number Magnitude<Self>(this Self x) where Self: Magnitudinal<Self>
     {
-        return /* Type:Number */
+        return /*  */
         /*  */
-        SquareRoot(/* Type:Number */
+        SquareRoot(/*  */
         /*  */
-        Sum(/* Type:Number */
+        Sum(/*  */
         /*  */
-        Square(/* Concept:Array<Concept:Any> */
+        Square(/*  */
         /*  */
-        FieldValues(/* Primitive:Self */
+        FieldValues(/*  */
         x))));
     }
 }
@@ -116,16 +97,16 @@ public static partial class Extensions
 {
     public static Boolean Equals<Self>(this Self a, Self b) where Self: Equatable<Self>
     {
-        return /* Type:Boolean */
+        return /*  */
         /*  */
-        All(/* Type:Boolean */
+        All(/*  */
         /*  */
-        Equals(/* Concept:Array<Concept:Any> */
+        Equals(/*  */
         /*  */
-        FieldValues(/* Primitive:Self */
-        a), /* Concept:Array<Concept:Any> */
+        FieldValues(/*  */
+        a), /*  */
         /*  */
-        FieldValues(/* Primitive:Self */
+        FieldValues(/*  */
         b)));
     }
 }
@@ -137,68 +118,78 @@ public static partial class Extensions
 {
     public static Self Add<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
-        return /* Type:Number */
+        return /*  */
         /*  */
-        Add(/* Concept:Array<Concept:Any> */
+        Add(/*  */
         /*  */
-        FieldValues(/* Primitive:Self */
-        self), /* Concept:Array<Concept:Any> */
+        FieldValues(/*  */
+        self), /*  */
         /*  */
-        FieldValues(/* Primitive:Self */
+        FieldValues(/*  */
         other));
+    }
+    public static Self Subtract<Self>(this Self self, Self other) where Self: Arithmetic<Self>
+    {
+        return /*  */
+        /*  */
+        Add(/*  */
+        self, /*  */
+        /*  */
+        Negative(/*  */
+        self));
     }
     public static Self Negative<Self>(this Self self) where Self: Arithmetic<Self>
     {
-        return /* Type:Number */
+        return /*  */
         /*  */
-        Negative(/* Concept:Array<Concept:Any> */
+        Negative(/*  */
         /*  */
-        FieldValues(/* Primitive:Self */
+        FieldValues(/*  */
         self));
     }
     public static Self Reciprocal<Self>(this Self self) where Self: Arithmetic<Self>
     {
-        return /* Type:Number */
+        return /*  */
         /*  */
-        Reciprocal(/* Concept:Array<Concept:Any> */
+        Reciprocal(/*  */
         /*  */
-        FieldValues(/* Primitive:Self */
+        FieldValues(/*  */
         self));
     }
     public static Self Multiply<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
-        return /* Type:Number */
+        return /*  */
         /*  */
-        Add(/* Concept:Array<Concept:Any> */
+        Add(/*  */
         /*  */
-        FieldValues(/* Primitive:Self */
-        self), /* Concept:Array<Concept:Any> */
+        FieldValues(/*  */
+        self), /*  */
         /*  */
-        FieldValues(/* Primitive:Self */
+        FieldValues(/*  */
         other));
     }
     public static Self Divide<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
-        return /* Type:Number */
+        return /*  */
         /*  */
-        Divide(/* Concept:Array<Concept:Any> */
+        Divide(/*  */
         /*  */
-        FieldValues(/* Primitive:Self */
-        self), /* Concept:Array<Concept:Any> */
+        FieldValues(/*  */
+        self), /*  */
         /*  */
-        FieldValues(/* Primitive:Self */
+        FieldValues(/*  */
         other));
     }
     public static Self Modulo<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
-        return /* Type:Number */
+        return /*  */
         /*  */
-        Modulo(/* Concept:Array<Concept:Any> */
+        Modulo(/*  */
         /*  */
-        FieldValues(/* Primitive:Self */
-        self), /* Concept:Array<Concept:Any> */
+        FieldValues(/*  */
+        self), /*  */
         /*  */
-        FieldValues(/* Primitive:Self */
+        FieldValues(/*  */
         other));
     }
 }
@@ -210,52 +201,52 @@ public static partial class Extensions
 {
     public static Self Add<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return /* Type:Number */
+        return /*  */
         /*  */
-        Add(/* Concept:Array<Concept:Any> */
+        Add(/*  */
         /*  */
-        FieldValues(/* Primitive:Self */
-        self), /* Type:Number */
+        FieldValues(/*  */
+        self), /*  */
         scalar);
     }
     public static Self Subtract<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return /* Type:Number */
+        return /*  */
         /*  */
-        Add(/* Primitive:Self */
-        self, /* Type:Number */
+        Add(/*  */
+        self, /*  */
         /*  */
-        Negative(/* Type:Number */
+        Negative(/*  */
         scalar));
     }
     public static Self Multiply<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return /* Type:Number */
+        return /*  */
         /*  */
-        Multiply(/* Concept:Array<Concept:Any> */
+        Multiply(/*  */
         /*  */
-        FieldValues(/* Primitive:Self */
-        self), /* Type:Number */
+        FieldValues(/*  */
+        self), /*  */
         scalar);
     }
     public static Self Divide<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return /* Type:Number */
+        return /*  */
         /*  */
-        Multiply(/* Primitive:Self */
-        self, /* Type:Number */
+        Multiply(/*  */
+        self, /*  */
         /*  */
-        Reciprocal(/* Type:Number */
+        Reciprocal(/*  */
         scalar));
     }
     public static Self Modulo<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return /* Type:Number */
+        return /*  */
         /*  */
-        Modulo(/* Concept:Array<Concept:Any> */
+        Modulo(/*  */
         /*  */
-        FieldValues(/* Primitive:Self */
-        self), /* Type:Number */
+        FieldValues(/*  */
+        self), /*  */
         scalar);
     }
 }
@@ -267,35 +258,35 @@ public static partial class Extensions
 {
     public static Self And<Self>(this Self a, Self b) where Self: BooleanOperations<Self>
     {
-        return /* Type:Boolean */
+        return /*  */
         /*  */
-        And(/* Concept:Array<Concept:Any> */
+        And(/*  */
         /*  */
-        FieldValues(/* Primitive:Self */
-        a), /* Concept:Array<Concept:Any> */
+        FieldValues(/*  */
+        a), /*  */
         /*  */
-        FieldValues(/* Primitive:Self */
+        FieldValues(/*  */
         b));
     }
     public static Self Or<Self>(this Self a, Self b) where Self: BooleanOperations<Self>
     {
-        return /* Type:Boolean */
+        return /*  */
         /*  */
-        Or(/* Concept:Array<Concept:Any> */
+        Or(/*  */
         /*  */
-        FieldValues(/* Primitive:Self */
-        a), /* Concept:Array<Concept:Any> */
+        FieldValues(/*  */
+        a), /*  */
         /*  */
-        FieldValues(/* Primitive:Self */
+        FieldValues(/*  */
         b));
     }
     public static Self Not<Self>(this Self a) where Self: BooleanOperations<Self>
     {
-        return /* Type:Boolean */
+        return /*  */
         /*  */
-        Not(/* Concept:Array<Concept:Any> */
+        Not(/*  */
         /*  */
-        FieldValues(/* Primitive:Self */
+        FieldValues(/*  */
         a));
     }
 }
@@ -324,22 +315,18 @@ public class Number: Numerical<Number>
     public static Array FieldTypes(Number x) => Extensions.FieldTypes(x);
     public static Type TypeOf() => Extensions.TypeOf();
     public static Number operator +(Number self, Number other) => Extensions.Add(self, other);
+    public static Number operator -(Number self, Number other) => Extensions.Subtract(self, other);
     public static Number operator -(Number self) => Extensions.Negative(self);
     public static Number operator *(Number self, Number other) => Extensions.Multiply(self, other);
     public static Number operator /(Number self, Number other) => Extensions.Divide(self, other);
     public static Number operator %(Number self, Number other) => Extensions.Modulo(self, other);
-    public static Number Default() => Extensions.Default();
     public static Number operator +(Number self, Number scalar) => Extensions.Add(self, scalar);
     public static Number operator -(Number self, Number scalar) => Extensions.Subtract(self, scalar);
     public static Number operator *(Number self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Number operator /(Number self, Number scalar) => Extensions.Divide(self, scalar);
     public static Number operator %(Number self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Number Default() => Extensions.Default();
     public static Boolean operator ==(Number a, Number b) => Extensions.Equals(a, b);
-    public static Number Default() => Extensions.Default();
     public static Integer Compare(Number x) => Extensions.Compare(x);
-    public static Number Default() => Extensions.Default();
-    public static Number Default() => Extensions.Default();
 }
 public class Integer: Numerical<Integer>
 {
@@ -357,22 +344,18 @@ public class Integer: Numerical<Integer>
     public static Array FieldTypes(Integer x) => Extensions.FieldTypes(x);
     public static Type TypeOf() => Extensions.TypeOf();
     public static Integer operator +(Integer self, Integer other) => Extensions.Add(self, other);
+    public static Integer operator -(Integer self, Integer other) => Extensions.Subtract(self, other);
     public static Integer operator -(Integer self) => Extensions.Negative(self);
     public static Integer operator *(Integer self, Integer other) => Extensions.Multiply(self, other);
     public static Integer operator /(Integer self, Integer other) => Extensions.Divide(self, other);
     public static Integer operator %(Integer self, Integer other) => Extensions.Modulo(self, other);
-    public static Integer Default() => Extensions.Default();
     public static Integer operator +(Integer self, Number scalar) => Extensions.Add(self, scalar);
     public static Integer operator -(Integer self, Number scalar) => Extensions.Subtract(self, scalar);
     public static Integer operator *(Integer self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Integer operator /(Integer self, Number scalar) => Extensions.Divide(self, scalar);
     public static Integer operator %(Integer self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Integer Default() => Extensions.Default();
     public static Boolean operator ==(Integer a, Integer b) => Extensions.Equals(a, b);
-    public static Integer Default() => Extensions.Default();
     public static Integer Compare(Integer x) => Extensions.Compare(x);
-    public static Integer Default() => Extensions.Default();
-    public static Integer Default() => Extensions.Default();
 }
 public class String: Value<String>, Array<String>
 {
@@ -393,10 +376,6 @@ public class String: Value<String>, Array<String>
             return ;
         }
     }
-    public static Array FieldNames() => Extensions.FieldNames();
-    public static Array FieldValues(String x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(String x) => Extensions.FieldTypes(x);
-    public static Type TypeOf() => Extensions.TypeOf();
 }
 public class Boolean: Value<Boolean>, BooleanOperations<Boolean>
 {
@@ -458,22 +437,18 @@ public class Count: Numerical<Count>
     public static Array FieldTypes(Count x) => Extensions.FieldTypes(x);
     public static Type TypeOf() => Extensions.TypeOf();
     public static Count operator +(Count self, Count other) => Extensions.Add(self, other);
+    public static Count operator -(Count self, Count other) => Extensions.Subtract(self, other);
     public static Count operator -(Count self) => Extensions.Negative(self);
     public static Count operator *(Count self, Count other) => Extensions.Multiply(self, other);
     public static Count operator /(Count self, Count other) => Extensions.Divide(self, other);
     public static Count operator %(Count self, Count other) => Extensions.Modulo(self, other);
-    public static Count Default() => Extensions.Default();
     public static Count operator +(Count self, Number scalar) => Extensions.Add(self, scalar);
     public static Count operator -(Count self, Number scalar) => Extensions.Subtract(self, scalar);
     public static Count operator *(Count self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Count operator /(Count self, Number scalar) => Extensions.Divide(self, scalar);
     public static Count operator %(Count self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Count Default() => Extensions.Default();
     public static Boolean operator ==(Count a, Count b) => Extensions.Equals(a, b);
-    public static Count Default() => Extensions.Default();
     public static Integer Compare(Count x) => Extensions.Compare(x);
-    public static Count Default() => Extensions.Default();
-    public static Count Default() => Extensions.Default();
     public Integer Value { get; }
 }
 public class Index: Value<Index>
@@ -509,22 +484,18 @@ public class Unit: Numerical<Unit>
     public static Array FieldTypes(Unit x) => Extensions.FieldTypes(x);
     public static Type TypeOf() => Extensions.TypeOf();
     public static Unit operator +(Unit self, Unit other) => Extensions.Add(self, other);
+    public static Unit operator -(Unit self, Unit other) => Extensions.Subtract(self, other);
     public static Unit operator -(Unit self) => Extensions.Negative(self);
     public static Unit operator *(Unit self, Unit other) => Extensions.Multiply(self, other);
     public static Unit operator /(Unit self, Unit other) => Extensions.Divide(self, other);
     public static Unit operator %(Unit self, Unit other) => Extensions.Modulo(self, other);
-    public static Unit Default() => Extensions.Default();
     public static Unit operator +(Unit self, Number scalar) => Extensions.Add(self, scalar);
     public static Unit operator -(Unit self, Number scalar) => Extensions.Subtract(self, scalar);
     public static Unit operator *(Unit self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Unit operator /(Unit self, Number scalar) => Extensions.Divide(self, scalar);
     public static Unit operator %(Unit self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Unit Default() => Extensions.Default();
     public static Boolean operator ==(Unit a, Unit b) => Extensions.Equals(a, b);
-    public static Unit Default() => Extensions.Default();
     public static Integer Compare(Unit x) => Extensions.Compare(x);
-    public static Unit Default() => Extensions.Default();
-    public static Unit Default() => Extensions.Default();
     public Number Value { get; }
 }
 public class Percent: Numerical<Percent>
@@ -545,22 +516,18 @@ public class Percent: Numerical<Percent>
     public static Array FieldTypes(Percent x) => Extensions.FieldTypes(x);
     public static Type TypeOf() => Extensions.TypeOf();
     public static Percent operator +(Percent self, Percent other) => Extensions.Add(self, other);
+    public static Percent operator -(Percent self, Percent other) => Extensions.Subtract(self, other);
     public static Percent operator -(Percent self) => Extensions.Negative(self);
     public static Percent operator *(Percent self, Percent other) => Extensions.Multiply(self, other);
     public static Percent operator /(Percent self, Percent other) => Extensions.Divide(self, other);
     public static Percent operator %(Percent self, Percent other) => Extensions.Modulo(self, other);
-    public static Percent Default() => Extensions.Default();
     public static Percent operator +(Percent self, Number scalar) => Extensions.Add(self, scalar);
     public static Percent operator -(Percent self, Number scalar) => Extensions.Subtract(self, scalar);
     public static Percent operator *(Percent self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Percent operator /(Percent self, Number scalar) => Extensions.Divide(self, scalar);
     public static Percent operator %(Percent self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Percent Default() => Extensions.Default();
     public static Boolean operator ==(Percent a, Percent b) => Extensions.Equals(a, b);
-    public static Percent Default() => Extensions.Default();
     public static Integer Compare(Percent x) => Extensions.Compare(x);
-    public static Percent Default() => Extensions.Default();
-    public static Percent Default() => Extensions.Default();
     public Number Value { get; }
 }
 public class Quaternion: Value<Quaternion>
@@ -685,18 +652,6 @@ public class Vector2D: Vector<Vector2D>
     public static implicit operator Vector2D((Number, Number) value) => new Vector2D(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "X", "Y" };
     public object[] FieldValues() => new[] { X, Y };
-    public T this[Integer n]
-    {
-        get{
-            return /* Type:Character */
-            /*  */
-            At(/* Concept:Array<Concept:Any> */
-            /*  */
-            FieldValues(/* Primitive:Self */
-            v), /* Type:Integer */
-            n);
-        }
-    }
     public static Integer Count(Vector2D xs) => Extensions.Count(xs);
     public static T At(Vector2D xs, Integer n) => Extensions.At(xs, n);
     public T this[Integer n]
@@ -714,27 +669,19 @@ public class Vector2D: Vector<Vector2D>
     public static Vector2D MinValue() => Extensions.MinValue();
     public static Vector2D MaxValue() => Extensions.MaxValue();
     public static Vector2D Default() => Extensions.Default();
-    public static Array FieldNames() => Extensions.FieldNames();
-    public static Array FieldValues(Vector2D x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(Vector2D x) => Extensions.FieldTypes(x);
-    public static Type TypeOf() => Extensions.TypeOf();
     public static Vector2D operator +(Vector2D self, Vector2D other) => Extensions.Add(self, other);
+    public static Vector2D operator -(Vector2D self, Vector2D other) => Extensions.Subtract(self, other);
     public static Vector2D operator -(Vector2D self) => Extensions.Negative(self);
     public static Vector2D operator *(Vector2D self, Vector2D other) => Extensions.Multiply(self, other);
     public static Vector2D operator /(Vector2D self, Vector2D other) => Extensions.Divide(self, other);
     public static Vector2D operator %(Vector2D self, Vector2D other) => Extensions.Modulo(self, other);
-    public static Vector2D Default() => Extensions.Default();
     public static Vector2D operator +(Vector2D self, Number scalar) => Extensions.Add(self, scalar);
     public static Vector2D operator -(Vector2D self, Number scalar) => Extensions.Subtract(self, scalar);
     public static Vector2D operator *(Vector2D self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Vector2D operator /(Vector2D self, Number scalar) => Extensions.Divide(self, scalar);
     public static Vector2D operator %(Vector2D self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Vector2D Default() => Extensions.Default();
     public static Boolean operator ==(Vector2D a, Vector2D b) => Extensions.Equals(a, b);
-    public static Vector2D Default() => Extensions.Default();
     public static Integer Compare(Vector2D x) => Extensions.Compare(x);
-    public static Vector2D Default() => Extensions.Default();
-    public static Vector2D Default() => Extensions.Default();
     public Number X { get; }
     public Number Y { get; }
 }
@@ -746,18 +693,6 @@ public class Vector3D: Vector<Vector3D>
     public static implicit operator Vector3D((Number, Number, Number) value) => new Vector3D(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "X", "Y", "Z" };
     public object[] FieldValues() => new[] { X, Y, Z };
-    public T this[Integer n]
-    {
-        get{
-            return /* Type:Character */
-            /*  */
-            At(/* Concept:Array<Concept:Any> */
-            /*  */
-            FieldValues(/* Primitive:Self */
-            v), /* Type:Integer */
-            n);
-        }
-    }
     public static Integer Count(Vector3D xs) => Extensions.Count(xs);
     public static T At(Vector3D xs, Integer n) => Extensions.At(xs, n);
     public T this[Integer n]
@@ -775,27 +710,19 @@ public class Vector3D: Vector<Vector3D>
     public static Vector3D MinValue() => Extensions.MinValue();
     public static Vector3D MaxValue() => Extensions.MaxValue();
     public static Vector3D Default() => Extensions.Default();
-    public static Array FieldNames() => Extensions.FieldNames();
-    public static Array FieldValues(Vector3D x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(Vector3D x) => Extensions.FieldTypes(x);
-    public static Type TypeOf() => Extensions.TypeOf();
     public static Vector3D operator +(Vector3D self, Vector3D other) => Extensions.Add(self, other);
+    public static Vector3D operator -(Vector3D self, Vector3D other) => Extensions.Subtract(self, other);
     public static Vector3D operator -(Vector3D self) => Extensions.Negative(self);
     public static Vector3D operator *(Vector3D self, Vector3D other) => Extensions.Multiply(self, other);
     public static Vector3D operator /(Vector3D self, Vector3D other) => Extensions.Divide(self, other);
     public static Vector3D operator %(Vector3D self, Vector3D other) => Extensions.Modulo(self, other);
-    public static Vector3D Default() => Extensions.Default();
     public static Vector3D operator +(Vector3D self, Number scalar) => Extensions.Add(self, scalar);
     public static Vector3D operator -(Vector3D self, Number scalar) => Extensions.Subtract(self, scalar);
     public static Vector3D operator *(Vector3D self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Vector3D operator /(Vector3D self, Number scalar) => Extensions.Divide(self, scalar);
     public static Vector3D operator %(Vector3D self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Vector3D Default() => Extensions.Default();
     public static Boolean operator ==(Vector3D a, Vector3D b) => Extensions.Equals(a, b);
-    public static Vector3D Default() => Extensions.Default();
     public static Integer Compare(Vector3D x) => Extensions.Compare(x);
-    public static Vector3D Default() => Extensions.Default();
-    public static Vector3D Default() => Extensions.Default();
     public Number X { get; }
     public Number Y { get; }
     public Number Z { get; }
@@ -808,18 +735,6 @@ public class Vector4D: Vector<Vector4D>
     public static implicit operator Vector4D((Number, Number, Number, Number) value) => new Vector4D(value.Item1, value.Item2, value.Item3, value.Item4);
     public string[] FieldNames() => new[] { "X", "Y", "Z", "W" };
     public object[] FieldValues() => new[] { X, Y, Z, W };
-    public T this[Integer n]
-    {
-        get{
-            return /* Type:Character */
-            /*  */
-            At(/* Concept:Array<Concept:Any> */
-            /*  */
-            FieldValues(/* Primitive:Self */
-            v), /* Type:Integer */
-            n);
-        }
-    }
     public static Integer Count(Vector4D xs) => Extensions.Count(xs);
     public static T At(Vector4D xs, Integer n) => Extensions.At(xs, n);
     public T this[Integer n]
@@ -837,27 +752,19 @@ public class Vector4D: Vector<Vector4D>
     public static Vector4D MinValue() => Extensions.MinValue();
     public static Vector4D MaxValue() => Extensions.MaxValue();
     public static Vector4D Default() => Extensions.Default();
-    public static Array FieldNames() => Extensions.FieldNames();
-    public static Array FieldValues(Vector4D x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(Vector4D x) => Extensions.FieldTypes(x);
-    public static Type TypeOf() => Extensions.TypeOf();
     public static Vector4D operator +(Vector4D self, Vector4D other) => Extensions.Add(self, other);
+    public static Vector4D operator -(Vector4D self, Vector4D other) => Extensions.Subtract(self, other);
     public static Vector4D operator -(Vector4D self) => Extensions.Negative(self);
     public static Vector4D operator *(Vector4D self, Vector4D other) => Extensions.Multiply(self, other);
     public static Vector4D operator /(Vector4D self, Vector4D other) => Extensions.Divide(self, other);
     public static Vector4D operator %(Vector4D self, Vector4D other) => Extensions.Modulo(self, other);
-    public static Vector4D Default() => Extensions.Default();
     public static Vector4D operator +(Vector4D self, Number scalar) => Extensions.Add(self, scalar);
     public static Vector4D operator -(Vector4D self, Number scalar) => Extensions.Subtract(self, scalar);
     public static Vector4D operator *(Vector4D self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Vector4D operator /(Vector4D self, Number scalar) => Extensions.Divide(self, scalar);
     public static Vector4D operator %(Vector4D self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Vector4D Default() => Extensions.Default();
     public static Boolean operator ==(Vector4D a, Vector4D b) => Extensions.Equals(a, b);
-    public static Vector4D Default() => Extensions.Default();
     public static Integer Compare(Vector4D x) => Extensions.Compare(x);
-    public static Vector4D Default() => Extensions.Default();
-    public static Vector4D Default() => Extensions.Default();
     public Number X { get; }
     public Number Y { get; }
     public Number Z { get; }
@@ -954,18 +861,6 @@ public class AlignedBox2D: Interval<AlignedBox2D>
     public object[] FieldValues() => new[] { A, B };
     public static T Min(AlignedBox2D x) => Extensions.Min(x);
     public static T Max(AlignedBox2D x) => Extensions.Max(x);
-    public T this[Integer n]
-    {
-        get{
-            return /* Type:Character */
-            /*  */
-            At(/* Concept:Array<Concept:Any> */
-            /*  */
-            FieldValues(/* Primitive:Self */
-            v), /* Type:Integer */
-            n);
-        }
-    }
     public static Integer Count(AlignedBox2D xs) => Extensions.Count(xs);
     public static T At(AlignedBox2D xs, Integer n) => Extensions.At(xs, n);
     public T this[Integer n]
@@ -983,27 +878,19 @@ public class AlignedBox2D: Interval<AlignedBox2D>
     public static AlignedBox2D MinValue() => Extensions.MinValue();
     public static AlignedBox2D MaxValue() => Extensions.MaxValue();
     public static AlignedBox2D Default() => Extensions.Default();
-    public static Array FieldNames() => Extensions.FieldNames();
-    public static Array FieldValues(AlignedBox2D x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(AlignedBox2D x) => Extensions.FieldTypes(x);
-    public static Type TypeOf() => Extensions.TypeOf();
     public static AlignedBox2D operator +(AlignedBox2D self, AlignedBox2D other) => Extensions.Add(self, other);
+    public static AlignedBox2D operator -(AlignedBox2D self, AlignedBox2D other) => Extensions.Subtract(self, other);
     public static AlignedBox2D operator -(AlignedBox2D self) => Extensions.Negative(self);
     public static AlignedBox2D operator *(AlignedBox2D self, AlignedBox2D other) => Extensions.Multiply(self, other);
     public static AlignedBox2D operator /(AlignedBox2D self, AlignedBox2D other) => Extensions.Divide(self, other);
     public static AlignedBox2D operator %(AlignedBox2D self, AlignedBox2D other) => Extensions.Modulo(self, other);
-    public static AlignedBox2D Default() => Extensions.Default();
     public static AlignedBox2D operator +(AlignedBox2D self, Number scalar) => Extensions.Add(self, scalar);
     public static AlignedBox2D operator -(AlignedBox2D self, Number scalar) => Extensions.Subtract(self, scalar);
     public static AlignedBox2D operator *(AlignedBox2D self, Number scalar) => Extensions.Multiply(self, scalar);
     public static AlignedBox2D operator /(AlignedBox2D self, Number scalar) => Extensions.Divide(self, scalar);
     public static AlignedBox2D operator %(AlignedBox2D self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static AlignedBox2D Default() => Extensions.Default();
     public static Boolean operator ==(AlignedBox2D a, AlignedBox2D b) => Extensions.Equals(a, b);
-    public static AlignedBox2D Default() => Extensions.Default();
     public static Integer Compare(AlignedBox2D x) => Extensions.Compare(x);
-    public static AlignedBox2D Default() => Extensions.Default();
-    public static AlignedBox2D Default() => Extensions.Default();
     public Vector2D A { get; }
     public Vector2D B { get; }
 }
@@ -1017,18 +904,6 @@ public class AlignedBox3D: Interval<AlignedBox3D>
     public object[] FieldValues() => new[] { A, B };
     public static T Min(AlignedBox3D x) => Extensions.Min(x);
     public static T Max(AlignedBox3D x) => Extensions.Max(x);
-    public T this[Integer n]
-    {
-        get{
-            return /* Type:Character */
-            /*  */
-            At(/* Concept:Array<Concept:Any> */
-            /*  */
-            FieldValues(/* Primitive:Self */
-            v), /* Type:Integer */
-            n);
-        }
-    }
     public static Integer Count(AlignedBox3D xs) => Extensions.Count(xs);
     public static T At(AlignedBox3D xs, Integer n) => Extensions.At(xs, n);
     public T this[Integer n]
@@ -1046,27 +921,19 @@ public class AlignedBox3D: Interval<AlignedBox3D>
     public static AlignedBox3D MinValue() => Extensions.MinValue();
     public static AlignedBox3D MaxValue() => Extensions.MaxValue();
     public static AlignedBox3D Default() => Extensions.Default();
-    public static Array FieldNames() => Extensions.FieldNames();
-    public static Array FieldValues(AlignedBox3D x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(AlignedBox3D x) => Extensions.FieldTypes(x);
-    public static Type TypeOf() => Extensions.TypeOf();
     public static AlignedBox3D operator +(AlignedBox3D self, AlignedBox3D other) => Extensions.Add(self, other);
+    public static AlignedBox3D operator -(AlignedBox3D self, AlignedBox3D other) => Extensions.Subtract(self, other);
     public static AlignedBox3D operator -(AlignedBox3D self) => Extensions.Negative(self);
     public static AlignedBox3D operator *(AlignedBox3D self, AlignedBox3D other) => Extensions.Multiply(self, other);
     public static AlignedBox3D operator /(AlignedBox3D self, AlignedBox3D other) => Extensions.Divide(self, other);
     public static AlignedBox3D operator %(AlignedBox3D self, AlignedBox3D other) => Extensions.Modulo(self, other);
-    public static AlignedBox3D Default() => Extensions.Default();
     public static AlignedBox3D operator +(AlignedBox3D self, Number scalar) => Extensions.Add(self, scalar);
     public static AlignedBox3D operator -(AlignedBox3D self, Number scalar) => Extensions.Subtract(self, scalar);
     public static AlignedBox3D operator *(AlignedBox3D self, Number scalar) => Extensions.Multiply(self, scalar);
     public static AlignedBox3D operator /(AlignedBox3D self, Number scalar) => Extensions.Divide(self, scalar);
     public static AlignedBox3D operator %(AlignedBox3D self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static AlignedBox3D Default() => Extensions.Default();
     public static Boolean operator ==(AlignedBox3D a, AlignedBox3D b) => Extensions.Equals(a, b);
-    public static AlignedBox3D Default() => Extensions.Default();
     public static Integer Compare(AlignedBox3D x) => Extensions.Compare(x);
-    public static AlignedBox3D Default() => Extensions.Default();
-    public static AlignedBox3D Default() => Extensions.Default();
     public Vector3D A { get; }
     public Vector3D B { get; }
 }
@@ -1078,18 +945,6 @@ public class Complex: Vector<Complex>
     public static implicit operator Complex((Number, Number) value) => new Complex(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "Real", "Imaginary" };
     public object[] FieldValues() => new[] { Real, Imaginary };
-    public T this[Integer n]
-    {
-        get{
-            return /* Type:Character */
-            /*  */
-            At(/* Concept:Array<Concept:Any> */
-            /*  */
-            FieldValues(/* Primitive:Self */
-            v), /* Type:Integer */
-            n);
-        }
-    }
     public static Integer Count(Complex xs) => Extensions.Count(xs);
     public static T At(Complex xs, Integer n) => Extensions.At(xs, n);
     public T this[Integer n]
@@ -1107,27 +962,19 @@ public class Complex: Vector<Complex>
     public static Complex MinValue() => Extensions.MinValue();
     public static Complex MaxValue() => Extensions.MaxValue();
     public static Complex Default() => Extensions.Default();
-    public static Array FieldNames() => Extensions.FieldNames();
-    public static Array FieldValues(Complex x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(Complex x) => Extensions.FieldTypes(x);
-    public static Type TypeOf() => Extensions.TypeOf();
     public static Complex operator +(Complex self, Complex other) => Extensions.Add(self, other);
+    public static Complex operator -(Complex self, Complex other) => Extensions.Subtract(self, other);
     public static Complex operator -(Complex self) => Extensions.Negative(self);
     public static Complex operator *(Complex self, Complex other) => Extensions.Multiply(self, other);
     public static Complex operator /(Complex self, Complex other) => Extensions.Divide(self, other);
     public static Complex operator %(Complex self, Complex other) => Extensions.Modulo(self, other);
-    public static Complex Default() => Extensions.Default();
     public static Complex operator +(Complex self, Number scalar) => Extensions.Add(self, scalar);
     public static Complex operator -(Complex self, Number scalar) => Extensions.Subtract(self, scalar);
     public static Complex operator *(Complex self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Complex operator /(Complex self, Number scalar) => Extensions.Divide(self, scalar);
     public static Complex operator %(Complex self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Complex Default() => Extensions.Default();
     public static Boolean operator ==(Complex a, Complex b) => Extensions.Equals(a, b);
-    public static Complex Default() => Extensions.Default();
     public static Integer Compare(Complex x) => Extensions.Compare(x);
-    public static Complex Default() => Extensions.Default();
-    public static Complex Default() => Extensions.Default();
     public Number Real { get; }
     public Number Imaginary { get; }
 }
@@ -1305,18 +1152,6 @@ public class Line3D: Interval<Line3D>
     public object[] FieldValues() => new[] { A, B };
     public static T Min(Line3D x) => Extensions.Min(x);
     public static T Max(Line3D x) => Extensions.Max(x);
-    public T this[Integer n]
-    {
-        get{
-            return /* Type:Character */
-            /*  */
-            At(/* Concept:Array<Concept:Any> */
-            /*  */
-            FieldValues(/* Primitive:Self */
-            v), /* Type:Integer */
-            n);
-        }
-    }
     public static Integer Count(Line3D xs) => Extensions.Count(xs);
     public static T At(Line3D xs, Integer n) => Extensions.At(xs, n);
     public T this[Integer n]
@@ -1334,27 +1169,19 @@ public class Line3D: Interval<Line3D>
     public static Line3D MinValue() => Extensions.MinValue();
     public static Line3D MaxValue() => Extensions.MaxValue();
     public static Line3D Default() => Extensions.Default();
-    public static Array FieldNames() => Extensions.FieldNames();
-    public static Array FieldValues(Line3D x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(Line3D x) => Extensions.FieldTypes(x);
-    public static Type TypeOf() => Extensions.TypeOf();
     public static Line3D operator +(Line3D self, Line3D other) => Extensions.Add(self, other);
+    public static Line3D operator -(Line3D self, Line3D other) => Extensions.Subtract(self, other);
     public static Line3D operator -(Line3D self) => Extensions.Negative(self);
     public static Line3D operator *(Line3D self, Line3D other) => Extensions.Multiply(self, other);
     public static Line3D operator /(Line3D self, Line3D other) => Extensions.Divide(self, other);
     public static Line3D operator %(Line3D self, Line3D other) => Extensions.Modulo(self, other);
-    public static Line3D Default() => Extensions.Default();
     public static Line3D operator +(Line3D self, Number scalar) => Extensions.Add(self, scalar);
     public static Line3D operator -(Line3D self, Number scalar) => Extensions.Subtract(self, scalar);
     public static Line3D operator *(Line3D self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Line3D operator /(Line3D self, Number scalar) => Extensions.Divide(self, scalar);
     public static Line3D operator %(Line3D self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Line3D Default() => Extensions.Default();
     public static Boolean operator ==(Line3D a, Line3D b) => Extensions.Equals(a, b);
-    public static Line3D Default() => Extensions.Default();
     public static Integer Compare(Line3D x) => Extensions.Compare(x);
-    public static Line3D Default() => Extensions.Default();
-    public static Line3D Default() => Extensions.Default();
     public Point3D A { get; }
     public Point3D B { get; }
 }
@@ -1368,18 +1195,6 @@ public class Line2D: Interval<Line2D>
     public object[] FieldValues() => new[] { A, B };
     public static T Min(Line2D x) => Extensions.Min(x);
     public static T Max(Line2D x) => Extensions.Max(x);
-    public T this[Integer n]
-    {
-        get{
-            return /* Type:Character */
-            /*  */
-            At(/* Concept:Array<Concept:Any> */
-            /*  */
-            FieldValues(/* Primitive:Self */
-            v), /* Type:Integer */
-            n);
-        }
-    }
     public static Integer Count(Line2D xs) => Extensions.Count(xs);
     public static T At(Line2D xs, Integer n) => Extensions.At(xs, n);
     public T this[Integer n]
@@ -1397,27 +1212,19 @@ public class Line2D: Interval<Line2D>
     public static Line2D MinValue() => Extensions.MinValue();
     public static Line2D MaxValue() => Extensions.MaxValue();
     public static Line2D Default() => Extensions.Default();
-    public static Array FieldNames() => Extensions.FieldNames();
-    public static Array FieldValues(Line2D x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(Line2D x) => Extensions.FieldTypes(x);
-    public static Type TypeOf() => Extensions.TypeOf();
     public static Line2D operator +(Line2D self, Line2D other) => Extensions.Add(self, other);
+    public static Line2D operator -(Line2D self, Line2D other) => Extensions.Subtract(self, other);
     public static Line2D operator -(Line2D self) => Extensions.Negative(self);
     public static Line2D operator *(Line2D self, Line2D other) => Extensions.Multiply(self, other);
     public static Line2D operator /(Line2D self, Line2D other) => Extensions.Divide(self, other);
     public static Line2D operator %(Line2D self, Line2D other) => Extensions.Modulo(self, other);
-    public static Line2D Default() => Extensions.Default();
     public static Line2D operator +(Line2D self, Number scalar) => Extensions.Add(self, scalar);
     public static Line2D operator -(Line2D self, Number scalar) => Extensions.Subtract(self, scalar);
     public static Line2D operator *(Line2D self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Line2D operator /(Line2D self, Number scalar) => Extensions.Divide(self, scalar);
     public static Line2D operator %(Line2D self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Line2D Default() => Extensions.Default();
     public static Boolean operator ==(Line2D a, Line2D b) => Extensions.Equals(a, b);
-    public static Line2D Default() => Extensions.Default();
     public static Integer Compare(Line2D x) => Extensions.Compare(x);
-    public static Line2D Default() => Extensions.Default();
-    public static Line2D Default() => Extensions.Default();
     public Point2D A { get; }
     public Point2D B { get; }
 }
@@ -1754,22 +1561,18 @@ public class Proportion: Numerical<Proportion>
     public static Array FieldTypes(Proportion x) => Extensions.FieldTypes(x);
     public static Type TypeOf() => Extensions.TypeOf();
     public static Proportion operator +(Proportion self, Proportion other) => Extensions.Add(self, other);
+    public static Proportion operator -(Proportion self, Proportion other) => Extensions.Subtract(self, other);
     public static Proportion operator -(Proportion self) => Extensions.Negative(self);
     public static Proportion operator *(Proportion self, Proportion other) => Extensions.Multiply(self, other);
     public static Proportion operator /(Proportion self, Proportion other) => Extensions.Divide(self, other);
     public static Proportion operator %(Proportion self, Proportion other) => Extensions.Modulo(self, other);
-    public static Proportion Default() => Extensions.Default();
     public static Proportion operator +(Proportion self, Number scalar) => Extensions.Add(self, scalar);
     public static Proportion operator -(Proportion self, Number scalar) => Extensions.Subtract(self, scalar);
     public static Proportion operator *(Proportion self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Proportion operator /(Proportion self, Number scalar) => Extensions.Divide(self, scalar);
     public static Proportion operator %(Proportion self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Proportion Default() => Extensions.Default();
     public static Boolean operator ==(Proportion a, Proportion b) => Extensions.Equals(a, b);
-    public static Proportion Default() => Extensions.Default();
     public static Integer Compare(Proportion x) => Extensions.Compare(x);
-    public static Proportion Default() => Extensions.Default();
-    public static Proportion Default() => Extensions.Default();
     public Number Value { get; }
 }
 public class Fraction: Value<Fraction>
@@ -1806,12 +1609,8 @@ public class Angle: Measure<Angle>
     public static Angle operator *(Angle self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Angle operator /(Angle self, Number scalar) => Extensions.Divide(self, scalar);
     public static Angle operator %(Angle self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Angle Default() => Extensions.Default();
     public static Boolean operator ==(Angle a, Angle b) => Extensions.Equals(a, b);
-    public static Angle Default() => Extensions.Default();
     public static Integer Compare(Angle x) => Extensions.Compare(x);
-    public static Angle Default() => Extensions.Default();
-    public static Angle Default() => Extensions.Default();
     public Number Radians { get; }
 }
 public class Length: Measure<Length>
@@ -1832,12 +1631,8 @@ public class Length: Measure<Length>
     public static Length operator *(Length self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Length operator /(Length self, Number scalar) => Extensions.Divide(self, scalar);
     public static Length operator %(Length self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Length Default() => Extensions.Default();
     public static Boolean operator ==(Length a, Length b) => Extensions.Equals(a, b);
-    public static Length Default() => Extensions.Default();
     public static Integer Compare(Length x) => Extensions.Compare(x);
-    public static Length Default() => Extensions.Default();
-    public static Length Default() => Extensions.Default();
     public Number Meters { get; }
 }
 public class Mass: Measure<Mass>
@@ -1858,12 +1653,8 @@ public class Mass: Measure<Mass>
     public static Mass operator *(Mass self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Mass operator /(Mass self, Number scalar) => Extensions.Divide(self, scalar);
     public static Mass operator %(Mass self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Mass Default() => Extensions.Default();
     public static Boolean operator ==(Mass a, Mass b) => Extensions.Equals(a, b);
-    public static Mass Default() => Extensions.Default();
     public static Integer Compare(Mass x) => Extensions.Compare(x);
-    public static Mass Default() => Extensions.Default();
-    public static Mass Default() => Extensions.Default();
     public Number Kilograms { get; }
 }
 public class Temperature: Measure<Temperature>
@@ -1884,12 +1675,8 @@ public class Temperature: Measure<Temperature>
     public static Temperature operator *(Temperature self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Temperature operator /(Temperature self, Number scalar) => Extensions.Divide(self, scalar);
     public static Temperature operator %(Temperature self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Temperature Default() => Extensions.Default();
     public static Boolean operator ==(Temperature a, Temperature b) => Extensions.Equals(a, b);
-    public static Temperature Default() => Extensions.Default();
     public static Integer Compare(Temperature x) => Extensions.Compare(x);
-    public static Temperature Default() => Extensions.Default();
-    public static Temperature Default() => Extensions.Default();
     public Number Celsius { get; }
 }
 public class TimeSpan: Measure<TimeSpan>
@@ -1910,12 +1697,8 @@ public class TimeSpan: Measure<TimeSpan>
     public static TimeSpan operator *(TimeSpan self, Number scalar) => Extensions.Multiply(self, scalar);
     public static TimeSpan operator /(TimeSpan self, Number scalar) => Extensions.Divide(self, scalar);
     public static TimeSpan operator %(TimeSpan self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static TimeSpan Default() => Extensions.Default();
     public static Boolean operator ==(TimeSpan a, TimeSpan b) => Extensions.Equals(a, b);
-    public static TimeSpan Default() => Extensions.Default();
     public static Integer Compare(TimeSpan x) => Extensions.Compare(x);
-    public static TimeSpan Default() => Extensions.Default();
-    public static TimeSpan Default() => Extensions.Default();
     public Number Seconds { get; }
 }
 public class TimeRange: Interval<TimeRange>
@@ -1928,18 +1711,6 @@ public class TimeRange: Interval<TimeRange>
     public object[] FieldValues() => new[] { Min, Max };
     public static T Min(TimeRange x) => Extensions.Min(x);
     public static T Max(TimeRange x) => Extensions.Max(x);
-    public T this[Integer n]
-    {
-        get{
-            return /* Type:Character */
-            /*  */
-            At(/* Concept:Array<Concept:Any> */
-            /*  */
-            FieldValues(/* Primitive:Self */
-            v), /* Type:Integer */
-            n);
-        }
-    }
     public static Integer Count(TimeRange xs) => Extensions.Count(xs);
     public static T At(TimeRange xs, Integer n) => Extensions.At(xs, n);
     public T this[Integer n]
@@ -1957,27 +1728,19 @@ public class TimeRange: Interval<TimeRange>
     public static TimeRange MinValue() => Extensions.MinValue();
     public static TimeRange MaxValue() => Extensions.MaxValue();
     public static TimeRange Default() => Extensions.Default();
-    public static Array FieldNames() => Extensions.FieldNames();
-    public static Array FieldValues(TimeRange x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(TimeRange x) => Extensions.FieldTypes(x);
-    public static Type TypeOf() => Extensions.TypeOf();
     public static TimeRange operator +(TimeRange self, TimeRange other) => Extensions.Add(self, other);
+    public static TimeRange operator -(TimeRange self, TimeRange other) => Extensions.Subtract(self, other);
     public static TimeRange operator -(TimeRange self) => Extensions.Negative(self);
     public static TimeRange operator *(TimeRange self, TimeRange other) => Extensions.Multiply(self, other);
     public static TimeRange operator /(TimeRange self, TimeRange other) => Extensions.Divide(self, other);
     public static TimeRange operator %(TimeRange self, TimeRange other) => Extensions.Modulo(self, other);
-    public static TimeRange Default() => Extensions.Default();
     public static TimeRange operator +(TimeRange self, Number scalar) => Extensions.Add(self, scalar);
     public static TimeRange operator -(TimeRange self, Number scalar) => Extensions.Subtract(self, scalar);
     public static TimeRange operator *(TimeRange self, Number scalar) => Extensions.Multiply(self, scalar);
     public static TimeRange operator /(TimeRange self, Number scalar) => Extensions.Divide(self, scalar);
     public static TimeRange operator %(TimeRange self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static TimeRange Default() => Extensions.Default();
     public static Boolean operator ==(TimeRange a, TimeRange b) => Extensions.Equals(a, b);
-    public static TimeRange Default() => Extensions.Default();
     public static Integer Compare(TimeRange x) => Extensions.Compare(x);
-    public static TimeRange Default() => Extensions.Default();
-    public static TimeRange Default() => Extensions.Default();
     public DateTime Min { get; }
     public DateTime Max { get; }
 }
@@ -2012,18 +1775,6 @@ public class AnglePair: Interval<AnglePair>
     public object[] FieldValues() => new[] { Start, End };
     public static T Min(AnglePair x) => Extensions.Min(x);
     public static T Max(AnglePair x) => Extensions.Max(x);
-    public T this[Integer n]
-    {
-        get{
-            return /* Type:Character */
-            /*  */
-            At(/* Concept:Array<Concept:Any> */
-            /*  */
-            FieldValues(/* Primitive:Self */
-            v), /* Type:Integer */
-            n);
-        }
-    }
     public static Integer Count(AnglePair xs) => Extensions.Count(xs);
     public static T At(AnglePair xs, Integer n) => Extensions.At(xs, n);
     public T this[Integer n]
@@ -2041,27 +1792,19 @@ public class AnglePair: Interval<AnglePair>
     public static AnglePair MinValue() => Extensions.MinValue();
     public static AnglePair MaxValue() => Extensions.MaxValue();
     public static AnglePair Default() => Extensions.Default();
-    public static Array FieldNames() => Extensions.FieldNames();
-    public static Array FieldValues(AnglePair x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(AnglePair x) => Extensions.FieldTypes(x);
-    public static Type TypeOf() => Extensions.TypeOf();
     public static AnglePair operator +(AnglePair self, AnglePair other) => Extensions.Add(self, other);
+    public static AnglePair operator -(AnglePair self, AnglePair other) => Extensions.Subtract(self, other);
     public static AnglePair operator -(AnglePair self) => Extensions.Negative(self);
     public static AnglePair operator *(AnglePair self, AnglePair other) => Extensions.Multiply(self, other);
     public static AnglePair operator /(AnglePair self, AnglePair other) => Extensions.Divide(self, other);
     public static AnglePair operator %(AnglePair self, AnglePair other) => Extensions.Modulo(self, other);
-    public static AnglePair Default() => Extensions.Default();
     public static AnglePair operator +(AnglePair self, Number scalar) => Extensions.Add(self, scalar);
     public static AnglePair operator -(AnglePair self, Number scalar) => Extensions.Subtract(self, scalar);
     public static AnglePair operator *(AnglePair self, Number scalar) => Extensions.Multiply(self, scalar);
     public static AnglePair operator /(AnglePair self, Number scalar) => Extensions.Divide(self, scalar);
     public static AnglePair operator %(AnglePair self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static AnglePair Default() => Extensions.Default();
     public static Boolean operator ==(AnglePair a, AnglePair b) => Extensions.Equals(a, b);
-    public static AnglePair Default() => Extensions.Default();
     public static Integer Compare(AnglePair x) => Extensions.Compare(x);
-    public static AnglePair Default() => Extensions.Default();
-    public static AnglePair Default() => Extensions.Default();
     public Angle Start { get; }
     public Angle End { get; }
 }
@@ -2083,22 +1826,18 @@ public class Ring: Numerical<Ring>
     public static Array FieldTypes(Ring x) => Extensions.FieldTypes(x);
     public static Type TypeOf() => Extensions.TypeOf();
     public static Ring operator +(Ring self, Ring other) => Extensions.Add(self, other);
+    public static Ring operator -(Ring self, Ring other) => Extensions.Subtract(self, other);
     public static Ring operator -(Ring self) => Extensions.Negative(self);
     public static Ring operator *(Ring self, Ring other) => Extensions.Multiply(self, other);
     public static Ring operator /(Ring self, Ring other) => Extensions.Divide(self, other);
     public static Ring operator %(Ring self, Ring other) => Extensions.Modulo(self, other);
-    public static Ring Default() => Extensions.Default();
     public static Ring operator +(Ring self, Number scalar) => Extensions.Add(self, scalar);
     public static Ring operator -(Ring self, Number scalar) => Extensions.Subtract(self, scalar);
     public static Ring operator *(Ring self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Ring operator /(Ring self, Number scalar) => Extensions.Divide(self, scalar);
     public static Ring operator %(Ring self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Ring Default() => Extensions.Default();
     public static Boolean operator ==(Ring a, Ring b) => Extensions.Equals(a, b);
-    public static Ring Default() => Extensions.Default();
     public static Integer Compare(Ring x) => Extensions.Compare(x);
-    public static Ring Default() => Extensions.Default();
-    public static Ring Default() => Extensions.Default();
     public Circle Circle { get; }
     public Number InnerRadius { get; }
 }
@@ -2128,18 +1867,6 @@ public class TimeInterval: Interval<TimeInterval>
     public object[] FieldValues() => new[] { Start, End };
     public static T Min(TimeInterval x) => Extensions.Min(x);
     public static T Max(TimeInterval x) => Extensions.Max(x);
-    public T this[Integer n]
-    {
-        get{
-            return /* Type:Character */
-            /*  */
-            At(/* Concept:Array<Concept:Any> */
-            /*  */
-            FieldValues(/* Primitive:Self */
-            v), /* Type:Integer */
-            n);
-        }
-    }
     public static Integer Count(TimeInterval xs) => Extensions.Count(xs);
     public static T At(TimeInterval xs, Integer n) => Extensions.At(xs, n);
     public T this[Integer n]
@@ -2157,27 +1884,19 @@ public class TimeInterval: Interval<TimeInterval>
     public static TimeInterval MinValue() => Extensions.MinValue();
     public static TimeInterval MaxValue() => Extensions.MaxValue();
     public static TimeInterval Default() => Extensions.Default();
-    public static Array FieldNames() => Extensions.FieldNames();
-    public static Array FieldValues(TimeInterval x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(TimeInterval x) => Extensions.FieldTypes(x);
-    public static Type TypeOf() => Extensions.TypeOf();
     public static TimeInterval operator +(TimeInterval self, TimeInterval other) => Extensions.Add(self, other);
+    public static TimeInterval operator -(TimeInterval self, TimeInterval other) => Extensions.Subtract(self, other);
     public static TimeInterval operator -(TimeInterval self) => Extensions.Negative(self);
     public static TimeInterval operator *(TimeInterval self, TimeInterval other) => Extensions.Multiply(self, other);
     public static TimeInterval operator /(TimeInterval self, TimeInterval other) => Extensions.Divide(self, other);
     public static TimeInterval operator %(TimeInterval self, TimeInterval other) => Extensions.Modulo(self, other);
-    public static TimeInterval Default() => Extensions.Default();
     public static TimeInterval operator +(TimeInterval self, Number scalar) => Extensions.Add(self, scalar);
     public static TimeInterval operator -(TimeInterval self, Number scalar) => Extensions.Subtract(self, scalar);
     public static TimeInterval operator *(TimeInterval self, Number scalar) => Extensions.Multiply(self, scalar);
     public static TimeInterval operator /(TimeInterval self, Number scalar) => Extensions.Divide(self, scalar);
     public static TimeInterval operator %(TimeInterval self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static TimeInterval Default() => Extensions.Default();
     public static Boolean operator ==(TimeInterval a, TimeInterval b) => Extensions.Equals(a, b);
-    public static TimeInterval Default() => Extensions.Default();
     public static Integer Compare(TimeInterval x) => Extensions.Compare(x);
-    public static TimeInterval Default() => Extensions.Default();
-    public static TimeInterval Default() => Extensions.Default();
     public TimeSpan Start { get; }
     public TimeSpan End { get; }
 }
@@ -2191,18 +1910,6 @@ public class RealInterval: Interval<RealInterval>
     public object[] FieldValues() => new[] { A, B };
     public static T Min(RealInterval x) => Extensions.Min(x);
     public static T Max(RealInterval x) => Extensions.Max(x);
-    public T this[Integer n]
-    {
-        get{
-            return /* Type:Character */
-            /*  */
-            At(/* Concept:Array<Concept:Any> */
-            /*  */
-            FieldValues(/* Primitive:Self */
-            v), /* Type:Integer */
-            n);
-        }
-    }
     public static Integer Count(RealInterval xs) => Extensions.Count(xs);
     public static T At(RealInterval xs, Integer n) => Extensions.At(xs, n);
     public T this[Integer n]
@@ -2220,27 +1927,19 @@ public class RealInterval: Interval<RealInterval>
     public static RealInterval MinValue() => Extensions.MinValue();
     public static RealInterval MaxValue() => Extensions.MaxValue();
     public static RealInterval Default() => Extensions.Default();
-    public static Array FieldNames() => Extensions.FieldNames();
-    public static Array FieldValues(RealInterval x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(RealInterval x) => Extensions.FieldTypes(x);
-    public static Type TypeOf() => Extensions.TypeOf();
     public static RealInterval operator +(RealInterval self, RealInterval other) => Extensions.Add(self, other);
+    public static RealInterval operator -(RealInterval self, RealInterval other) => Extensions.Subtract(self, other);
     public static RealInterval operator -(RealInterval self) => Extensions.Negative(self);
     public static RealInterval operator *(RealInterval self, RealInterval other) => Extensions.Multiply(self, other);
     public static RealInterval operator /(RealInterval self, RealInterval other) => Extensions.Divide(self, other);
     public static RealInterval operator %(RealInterval self, RealInterval other) => Extensions.Modulo(self, other);
-    public static RealInterval Default() => Extensions.Default();
     public static RealInterval operator +(RealInterval self, Number scalar) => Extensions.Add(self, scalar);
     public static RealInterval operator -(RealInterval self, Number scalar) => Extensions.Subtract(self, scalar);
     public static RealInterval operator *(RealInterval self, Number scalar) => Extensions.Multiply(self, scalar);
     public static RealInterval operator /(RealInterval self, Number scalar) => Extensions.Divide(self, scalar);
     public static RealInterval operator %(RealInterval self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static RealInterval Default() => Extensions.Default();
     public static Boolean operator ==(RealInterval a, RealInterval b) => Extensions.Equals(a, b);
-    public static RealInterval Default() => Extensions.Default();
     public static Integer Compare(RealInterval x) => Extensions.Compare(x);
-    public static RealInterval Default() => Extensions.Default();
-    public static RealInterval Default() => Extensions.Default();
     public Number A { get; }
     public Number B { get; }
 }
@@ -2428,18 +2127,6 @@ public class UV: Vector<UV>
     public static implicit operator UV((Unit, Unit) value) => new UV(value.Item1, value.Item2);
     public string[] FieldNames() => new[] { "U", "V" };
     public object[] FieldValues() => new[] { U, V };
-    public T this[Integer n]
-    {
-        get{
-            return /* Type:Character */
-            /*  */
-            At(/* Concept:Array<Concept:Any> */
-            /*  */
-            FieldValues(/* Primitive:Self */
-            v), /* Type:Integer */
-            n);
-        }
-    }
     public static Integer Count(UV xs) => Extensions.Count(xs);
     public static T At(UV xs, Integer n) => Extensions.At(xs, n);
     public T this[Integer n]
@@ -2457,27 +2144,19 @@ public class UV: Vector<UV>
     public static UV MinValue() => Extensions.MinValue();
     public static UV MaxValue() => Extensions.MaxValue();
     public static UV Default() => Extensions.Default();
-    public static Array FieldNames() => Extensions.FieldNames();
-    public static Array FieldValues(UV x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(UV x) => Extensions.FieldTypes(x);
-    public static Type TypeOf() => Extensions.TypeOf();
     public static UV operator +(UV self, UV other) => Extensions.Add(self, other);
+    public static UV operator -(UV self, UV other) => Extensions.Subtract(self, other);
     public static UV operator -(UV self) => Extensions.Negative(self);
     public static UV operator *(UV self, UV other) => Extensions.Multiply(self, other);
     public static UV operator /(UV self, UV other) => Extensions.Divide(self, other);
     public static UV operator %(UV self, UV other) => Extensions.Modulo(self, other);
-    public static UV Default() => Extensions.Default();
     public static UV operator +(UV self, Number scalar) => Extensions.Add(self, scalar);
     public static UV operator -(UV self, Number scalar) => Extensions.Subtract(self, scalar);
     public static UV operator *(UV self, Number scalar) => Extensions.Multiply(self, scalar);
     public static UV operator /(UV self, Number scalar) => Extensions.Divide(self, scalar);
     public static UV operator %(UV self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static UV Default() => Extensions.Default();
     public static Boolean operator ==(UV a, UV b) => Extensions.Equals(a, b);
-    public static UV Default() => Extensions.Default();
     public static Integer Compare(UV x) => Extensions.Compare(x);
-    public static UV Default() => Extensions.Default();
-    public static UV Default() => Extensions.Default();
     public Unit U { get; }
     public Unit V { get; }
 }
@@ -2489,18 +2168,6 @@ public class UVW: Vector<UVW>
     public static implicit operator UVW((Unit, Unit, Unit) value) => new UVW(value.Item1, value.Item2, value.Item3);
     public string[] FieldNames() => new[] { "U", "V", "W" };
     public object[] FieldValues() => new[] { U, V, W };
-    public T this[Integer n]
-    {
-        get{
-            return /* Type:Character */
-            /*  */
-            At(/* Concept:Array<Concept:Any> */
-            /*  */
-            FieldValues(/* Primitive:Self */
-            v), /* Type:Integer */
-            n);
-        }
-    }
     public static Integer Count(UVW xs) => Extensions.Count(xs);
     public static T At(UVW xs, Integer n) => Extensions.At(xs, n);
     public T this[Integer n]
@@ -2518,27 +2185,19 @@ public class UVW: Vector<UVW>
     public static UVW MinValue() => Extensions.MinValue();
     public static UVW MaxValue() => Extensions.MaxValue();
     public static UVW Default() => Extensions.Default();
-    public static Array FieldNames() => Extensions.FieldNames();
-    public static Array FieldValues(UVW x) => Extensions.FieldValues(x);
-    public static Array FieldTypes(UVW x) => Extensions.FieldTypes(x);
-    public static Type TypeOf() => Extensions.TypeOf();
     public static UVW operator +(UVW self, UVW other) => Extensions.Add(self, other);
+    public static UVW operator -(UVW self, UVW other) => Extensions.Subtract(self, other);
     public static UVW operator -(UVW self) => Extensions.Negative(self);
     public static UVW operator *(UVW self, UVW other) => Extensions.Multiply(self, other);
     public static UVW operator /(UVW self, UVW other) => Extensions.Divide(self, other);
     public static UVW operator %(UVW self, UVW other) => Extensions.Modulo(self, other);
-    public static UVW Default() => Extensions.Default();
     public static UVW operator +(UVW self, Number scalar) => Extensions.Add(self, scalar);
     public static UVW operator -(UVW self, Number scalar) => Extensions.Subtract(self, scalar);
     public static UVW operator *(UVW self, Number scalar) => Extensions.Multiply(self, scalar);
     public static UVW operator /(UVW self, Number scalar) => Extensions.Divide(self, scalar);
     public static UVW operator %(UVW self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static UVW Default() => Extensions.Default();
     public static Boolean operator ==(UVW a, UVW b) => Extensions.Equals(a, b);
-    public static UVW Default() => Extensions.Default();
     public static Integer Compare(UVW x) => Extensions.Compare(x);
-    public static UVW Default() => Extensions.Default();
-    public static UVW Default() => Extensions.Default();
     public Unit U { get; }
     public Unit V { get; }
     public Unit W { get; }
@@ -2613,12 +2272,8 @@ public class Area: Measure<Area>
     public static Area operator *(Area self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Area operator /(Area self, Number scalar) => Extensions.Divide(self, scalar);
     public static Area operator %(Area self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Area Default() => Extensions.Default();
     public static Boolean operator ==(Area a, Area b) => Extensions.Equals(a, b);
-    public static Area Default() => Extensions.Default();
     public static Integer Compare(Area x) => Extensions.Compare(x);
-    public static Area Default() => Extensions.Default();
-    public static Area Default() => Extensions.Default();
     public Number MetersSquared { get; }
 }
 public class Volume: Measure<Volume>
@@ -2639,12 +2294,8 @@ public class Volume: Measure<Volume>
     public static Volume operator *(Volume self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Volume operator /(Volume self, Number scalar) => Extensions.Divide(self, scalar);
     public static Volume operator %(Volume self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Volume Default() => Extensions.Default();
     public static Boolean operator ==(Volume a, Volume b) => Extensions.Equals(a, b);
-    public static Volume Default() => Extensions.Default();
     public static Integer Compare(Volume x) => Extensions.Compare(x);
-    public static Volume Default() => Extensions.Default();
-    public static Volume Default() => Extensions.Default();
     public Number MetersCubed { get; }
 }
 public class Velocity: Measure<Velocity>
@@ -2665,12 +2316,8 @@ public class Velocity: Measure<Velocity>
     public static Velocity operator *(Velocity self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Velocity operator /(Velocity self, Number scalar) => Extensions.Divide(self, scalar);
     public static Velocity operator %(Velocity self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Velocity Default() => Extensions.Default();
     public static Boolean operator ==(Velocity a, Velocity b) => Extensions.Equals(a, b);
-    public static Velocity Default() => Extensions.Default();
     public static Integer Compare(Velocity x) => Extensions.Compare(x);
-    public static Velocity Default() => Extensions.Default();
-    public static Velocity Default() => Extensions.Default();
     public Number MetersPerSecond { get; }
 }
 public class Acceleration: Measure<Acceleration>
@@ -2691,12 +2338,8 @@ public class Acceleration: Measure<Acceleration>
     public static Acceleration operator *(Acceleration self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Acceleration operator /(Acceleration self, Number scalar) => Extensions.Divide(self, scalar);
     public static Acceleration operator %(Acceleration self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Acceleration Default() => Extensions.Default();
     public static Boolean operator ==(Acceleration a, Acceleration b) => Extensions.Equals(a, b);
-    public static Acceleration Default() => Extensions.Default();
     public static Integer Compare(Acceleration x) => Extensions.Compare(x);
-    public static Acceleration Default() => Extensions.Default();
-    public static Acceleration Default() => Extensions.Default();
     public Number MetersPerSecondSquared { get; }
 }
 public class Force: Measure<Force>
@@ -2717,12 +2360,8 @@ public class Force: Measure<Force>
     public static Force operator *(Force self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Force operator /(Force self, Number scalar) => Extensions.Divide(self, scalar);
     public static Force operator %(Force self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Force Default() => Extensions.Default();
     public static Boolean operator ==(Force a, Force b) => Extensions.Equals(a, b);
-    public static Force Default() => Extensions.Default();
     public static Integer Compare(Force x) => Extensions.Compare(x);
-    public static Force Default() => Extensions.Default();
-    public static Force Default() => Extensions.Default();
     public Number Newtons { get; }
 }
 public class Pressure: Measure<Pressure>
@@ -2743,12 +2382,8 @@ public class Pressure: Measure<Pressure>
     public static Pressure operator *(Pressure self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Pressure operator /(Pressure self, Number scalar) => Extensions.Divide(self, scalar);
     public static Pressure operator %(Pressure self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Pressure Default() => Extensions.Default();
     public static Boolean operator ==(Pressure a, Pressure b) => Extensions.Equals(a, b);
-    public static Pressure Default() => Extensions.Default();
     public static Integer Compare(Pressure x) => Extensions.Compare(x);
-    public static Pressure Default() => Extensions.Default();
-    public static Pressure Default() => Extensions.Default();
     public Number Pascals { get; }
 }
 public class Energy: Measure<Energy>
@@ -2769,12 +2404,8 @@ public class Energy: Measure<Energy>
     public static Energy operator *(Energy self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Energy operator /(Energy self, Number scalar) => Extensions.Divide(self, scalar);
     public static Energy operator %(Energy self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Energy Default() => Extensions.Default();
     public static Boolean operator ==(Energy a, Energy b) => Extensions.Equals(a, b);
-    public static Energy Default() => Extensions.Default();
     public static Integer Compare(Energy x) => Extensions.Compare(x);
-    public static Energy Default() => Extensions.Default();
-    public static Energy Default() => Extensions.Default();
     public Number Joules { get; }
 }
 public class Memory: Measure<Memory>
@@ -2795,12 +2426,8 @@ public class Memory: Measure<Memory>
     public static Memory operator *(Memory self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Memory operator /(Memory self, Number scalar) => Extensions.Divide(self, scalar);
     public static Memory operator %(Memory self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Memory Default() => Extensions.Default();
     public static Boolean operator ==(Memory a, Memory b) => Extensions.Equals(a, b);
-    public static Memory Default() => Extensions.Default();
     public static Integer Compare(Memory x) => Extensions.Compare(x);
-    public static Memory Default() => Extensions.Default();
-    public static Memory Default() => Extensions.Default();
     public Count Bytes { get; }
 }
 public class Frequency: Measure<Frequency>
@@ -2821,12 +2448,8 @@ public class Frequency: Measure<Frequency>
     public static Frequency operator *(Frequency self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Frequency operator /(Frequency self, Number scalar) => Extensions.Divide(self, scalar);
     public static Frequency operator %(Frequency self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Frequency Default() => Extensions.Default();
     public static Boolean operator ==(Frequency a, Frequency b) => Extensions.Equals(a, b);
-    public static Frequency Default() => Extensions.Default();
     public static Integer Compare(Frequency x) => Extensions.Compare(x);
-    public static Frequency Default() => Extensions.Default();
-    public static Frequency Default() => Extensions.Default();
     public Number Hertz { get; }
 }
 public class Loudness: Measure<Loudness>
@@ -2847,12 +2470,8 @@ public class Loudness: Measure<Loudness>
     public static Loudness operator *(Loudness self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Loudness operator /(Loudness self, Number scalar) => Extensions.Divide(self, scalar);
     public static Loudness operator %(Loudness self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Loudness Default() => Extensions.Default();
     public static Boolean operator ==(Loudness a, Loudness b) => Extensions.Equals(a, b);
-    public static Loudness Default() => Extensions.Default();
     public static Integer Compare(Loudness x) => Extensions.Compare(x);
-    public static Loudness Default() => Extensions.Default();
-    public static Loudness Default() => Extensions.Default();
     public Number Decibels { get; }
 }
 public class LuminousIntensity: Measure<LuminousIntensity>
@@ -2873,12 +2492,8 @@ public class LuminousIntensity: Measure<LuminousIntensity>
     public static LuminousIntensity operator *(LuminousIntensity self, Number scalar) => Extensions.Multiply(self, scalar);
     public static LuminousIntensity operator /(LuminousIntensity self, Number scalar) => Extensions.Divide(self, scalar);
     public static LuminousIntensity operator %(LuminousIntensity self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static LuminousIntensity Default() => Extensions.Default();
     public static Boolean operator ==(LuminousIntensity a, LuminousIntensity b) => Extensions.Equals(a, b);
-    public static LuminousIntensity Default() => Extensions.Default();
     public static Integer Compare(LuminousIntensity x) => Extensions.Compare(x);
-    public static LuminousIntensity Default() => Extensions.Default();
-    public static LuminousIntensity Default() => Extensions.Default();
     public Number Candelas { get; }
 }
 public class ElectricPotential: Measure<ElectricPotential>
@@ -2899,12 +2514,8 @@ public class ElectricPotential: Measure<ElectricPotential>
     public static ElectricPotential operator *(ElectricPotential self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ElectricPotential operator /(ElectricPotential self, Number scalar) => Extensions.Divide(self, scalar);
     public static ElectricPotential operator %(ElectricPotential self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static ElectricPotential Default() => Extensions.Default();
     public static Boolean operator ==(ElectricPotential a, ElectricPotential b) => Extensions.Equals(a, b);
-    public static ElectricPotential Default() => Extensions.Default();
     public static Integer Compare(ElectricPotential x) => Extensions.Compare(x);
-    public static ElectricPotential Default() => Extensions.Default();
-    public static ElectricPotential Default() => Extensions.Default();
     public Number Volts { get; }
 }
 public class ElectricCharge: Measure<ElectricCharge>
@@ -2925,12 +2536,8 @@ public class ElectricCharge: Measure<ElectricCharge>
     public static ElectricCharge operator *(ElectricCharge self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ElectricCharge operator /(ElectricCharge self, Number scalar) => Extensions.Divide(self, scalar);
     public static ElectricCharge operator %(ElectricCharge self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static ElectricCharge Default() => Extensions.Default();
     public static Boolean operator ==(ElectricCharge a, ElectricCharge b) => Extensions.Equals(a, b);
-    public static ElectricCharge Default() => Extensions.Default();
     public static Integer Compare(ElectricCharge x) => Extensions.Compare(x);
-    public static ElectricCharge Default() => Extensions.Default();
-    public static ElectricCharge Default() => Extensions.Default();
     public Number Columbs { get; }
 }
 public class ElectricCurrent: Measure<ElectricCurrent>
@@ -2951,12 +2558,8 @@ public class ElectricCurrent: Measure<ElectricCurrent>
     public static ElectricCurrent operator *(ElectricCurrent self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ElectricCurrent operator /(ElectricCurrent self, Number scalar) => Extensions.Divide(self, scalar);
     public static ElectricCurrent operator %(ElectricCurrent self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static ElectricCurrent Default() => Extensions.Default();
     public static Boolean operator ==(ElectricCurrent a, ElectricCurrent b) => Extensions.Equals(a, b);
-    public static ElectricCurrent Default() => Extensions.Default();
     public static Integer Compare(ElectricCurrent x) => Extensions.Compare(x);
-    public static ElectricCurrent Default() => Extensions.Default();
-    public static ElectricCurrent Default() => Extensions.Default();
     public Number Amperes { get; }
 }
 public class ElectricResistance: Measure<ElectricResistance>
@@ -2977,12 +2580,8 @@ public class ElectricResistance: Measure<ElectricResistance>
     public static ElectricResistance operator *(ElectricResistance self, Number scalar) => Extensions.Multiply(self, scalar);
     public static ElectricResistance operator /(ElectricResistance self, Number scalar) => Extensions.Divide(self, scalar);
     public static ElectricResistance operator %(ElectricResistance self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static ElectricResistance Default() => Extensions.Default();
     public static Boolean operator ==(ElectricResistance a, ElectricResistance b) => Extensions.Equals(a, b);
-    public static ElectricResistance Default() => Extensions.Default();
     public static Integer Compare(ElectricResistance x) => Extensions.Compare(x);
-    public static ElectricResistance Default() => Extensions.Default();
-    public static ElectricResistance Default() => Extensions.Default();
     public Number Ohms { get; }
 }
 public class Power: Measure<Power>
@@ -3003,12 +2602,8 @@ public class Power: Measure<Power>
     public static Power operator *(Power self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Power operator /(Power self, Number scalar) => Extensions.Divide(self, scalar);
     public static Power operator %(Power self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Power Default() => Extensions.Default();
     public static Boolean operator ==(Power a, Power b) => Extensions.Equals(a, b);
-    public static Power Default() => Extensions.Default();
     public static Integer Compare(Power x) => Extensions.Compare(x);
-    public static Power Default() => Extensions.Default();
-    public static Power Default() => Extensions.Default();
     public Number Watts { get; }
 }
 public class Density: Measure<Density>
@@ -3029,12 +2624,8 @@ public class Density: Measure<Density>
     public static Density operator *(Density self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Density operator /(Density self, Number scalar) => Extensions.Divide(self, scalar);
     public static Density operator %(Density self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Density Default() => Extensions.Default();
     public static Boolean operator ==(Density a, Density b) => Extensions.Equals(a, b);
-    public static Density Default() => Extensions.Default();
     public static Integer Compare(Density x) => Extensions.Compare(x);
-    public static Density Default() => Extensions.Default();
-    public static Density Default() => Extensions.Default();
     public Number KilogramsPerMeterCubed { get; }
 }
 public class NormalDistribution: Value<NormalDistribution>
@@ -3102,22 +2693,18 @@ public class Probability: Numerical<Probability>
     public static Array FieldTypes(Probability x) => Extensions.FieldTypes(x);
     public static Type TypeOf() => Extensions.TypeOf();
     public static Probability operator +(Probability self, Probability other) => Extensions.Add(self, other);
+    public static Probability operator -(Probability self, Probability other) => Extensions.Subtract(self, other);
     public static Probability operator -(Probability self) => Extensions.Negative(self);
     public static Probability operator *(Probability self, Probability other) => Extensions.Multiply(self, other);
     public static Probability operator /(Probability self, Probability other) => Extensions.Divide(self, other);
     public static Probability operator %(Probability self, Probability other) => Extensions.Modulo(self, other);
-    public static Probability Default() => Extensions.Default();
     public static Probability operator +(Probability self, Number scalar) => Extensions.Add(self, scalar);
     public static Probability operator -(Probability self, Number scalar) => Extensions.Subtract(self, scalar);
     public static Probability operator *(Probability self, Number scalar) => Extensions.Multiply(self, scalar);
     public static Probability operator /(Probability self, Number scalar) => Extensions.Divide(self, scalar);
     public static Probability operator %(Probability self, Number scalar) => Extensions.Modulo(self, scalar);
-    public static Probability Default() => Extensions.Default();
     public static Boolean operator ==(Probability a, Probability b) => Extensions.Equals(a, b);
-    public static Probability Default() => Extensions.Default();
     public static Integer Compare(Probability x) => Extensions.Compare(x);
-    public static Probability Default() => Extensions.Default();
-    public static Probability Default() => Extensions.Default();
     public Number Value { get; }
 }
 public class BinomialDistribution: Value<BinomialDistribution>

@@ -5,13 +5,13 @@ using Plato.Compiler.Utilities;
 
 namespace Plato.Compiler.Symbols
 {
-    public class TypeExpressionSymbol : Symbol
+    public class TypeExpression : Symbol
     {
         public string Name => Definition?.Name ?? throw new Exception("Unresolved");
-        public TypeDefinitionSymbol Definition { get; }
-        public IReadOnlyList<TypeExpressionSymbol> TypeArgs { get; }
+        public TypeDefinition Definition { get; }
+        public IReadOnlyList<TypeExpression> TypeArgs { get; }
 
-        public TypeExpressionSymbol(TypeDefinitionSymbol def, params TypeExpressionSymbol[] args)
+        public TypeExpression(TypeDefinition def, params TypeExpression[] args)
         {
             Definition = def;
             TypeArgs = args;
@@ -25,8 +25,8 @@ namespace Plato.Compiler.Symbols
             return kind + ":" + Name;
         }
 
-        public static TypeExpressionSymbol CreateFunction(params TypeExpressionSymbol[] types)
-            => new TypeExpressionSymbol(PrimitiveTypeDefinitions.Function, types);
+        public static TypeExpression CreateFunction(params TypeExpression[] types)
+            => new TypeExpression(PrimitiveTypeDefinitions.Function, types);
 
         public override IEnumerable<Symbol> GetChildSymbols()
             => TypeArgs;
@@ -36,7 +36,7 @@ namespace Plato.Compiler.Symbols
 
         public override bool Equals(object obj)
         {
-            return obj is TypeExpressionSymbol tes
+            return obj is TypeExpression tes
                    && tes.Definition.Name == Definition.Name
                    && tes.Definition.Id == Definition.Id
                    && tes.TypeArgs.SequenceEqual(TypeArgs);

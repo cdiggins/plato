@@ -11,7 +11,7 @@ namespace Plato.Compiler.Symbols
             : base(compiler) 
         { }
 
-        public SymbolWriterCSharp WriteTypeDecl(TypeExpressionSymbol type, string defaultType = "var")
+        public SymbolWriterCSharp WriteTypeDecl(TypeExpression type, string defaultType = "var")
         {
             if (type == null)
                 return Write($"{defaultType} ");
@@ -52,7 +52,7 @@ namespace Plato.Compiler.Symbols
         public static string TypeArgsString(IEnumerable<string> args)
             => args.Any() ? "<" + string.Join(", ", args) + ">" : "";
 
-        public SymbolWriterCSharp WriteLibraryMethods(TypeDefinitionSymbol type)
+        public SymbolWriterCSharp WriteLibraryMethods(TypeDefinition type)
         {
             foreach (var mds in type.Methods)
             {
@@ -93,7 +93,7 @@ namespace Plato.Compiler.Symbols
             return this;
         }
 
-        public SymbolWriterCSharp WriteConceptMembersAsExtensionMethods(TypeDefinitionSymbol type)
+        public SymbolWriterCSharp WriteConceptMembersAsExtensionMethods(TypeDefinition type)
         {
             var typeParameterNames = type.TypeParameters.Select(tp => tp.Name).ToList();
             var typeArgsString = TypeArgsString(typeParameterNames.Prepend("Self"));
@@ -125,7 +125,7 @@ namespace Plato.Compiler.Symbols
             return this;
         }
 
-        public static string GetTypeName(TypeExpressionSymbol tr, TypeDefinitionSymbol parent)
+        public static string GetTypeName(TypeExpression tr, TypeDefinition parent)
         {
             // TODO: slightly more complicated when actually passing arguments and stuff. 
             var r = tr.Name;
@@ -137,10 +137,10 @@ namespace Plato.Compiler.Symbols
         public static string GetParameterNamesJoined(FunctionDefinition f)
             => string.Join(", ", f.Parameters.Select(p => p.Name));
 
-        public static string GetParameterNamesAndTypesJoined(FunctionDefinition f, TypeDefinitionSymbol t)
+        public static string GetParameterNamesAndTypesJoined(FunctionDefinition f, TypeDefinition t)
             => string.Join(", ", f.Parameters.Select(p => $"{GetTypeName(p.Type, t)} {p.Name}"));
 
-        public SymbolWriterCSharp WriteConstructor(TypeDefinitionSymbol t)
+        public SymbolWriterCSharp WriteConstructor(TypeDefinition t)
         {
             if (!t.IsConcreteType()) throw new NotSupportedException();
             var name = t.Name;
@@ -224,10 +224,10 @@ namespace Plato.Compiler.Symbols
             return this;
         }
 
-        public static bool IsSelfType(TypeExpressionSymbol rs)
+        public static bool IsSelfType(TypeExpression rs)
             => rs.Definition is SelfType;
 
-        public static bool IsTypePreservingConcept(TypeDefinitionSymbol type)
+        public static bool IsTypePreservingConcept(TypeDefinition type)
         {
             if (!type.IsConcept()) return false;
             foreach (var m in type.Methods)
@@ -242,7 +242,7 @@ namespace Plato.Compiler.Symbols
             return type.Inherits.Any(tr => IsTypePreservingConcept(tr.Definition));
         }
 
-        public SymbolWriterCSharp WriteUnimplementedMethods(TypeDefinitionSymbol type)
+        public SymbolWriterCSharp WriteUnimplementedMethods(TypeDefinition type)
         {
             foreach (var f in type.Methods.Select(m => m.Function))
             {
@@ -254,7 +254,7 @@ namespace Plato.Compiler.Symbols
             return this;
         }
 
-        public override SymbolWriterCSharp Write(TypeDefinitionSymbol type)
+        public override SymbolWriterCSharp Write(TypeDefinition type)
         {
             if (type.IsConcept())
             {
@@ -355,12 +355,12 @@ namespace Plato.Compiler.Symbols
             return this;
         }
 
-        public override SymbolWriterCSharp Write(TypeExpressionSymbol typeExpression)
+        public override SymbolWriterCSharp Write(TypeExpression typeExpression)
         {
             return WriteTypeDecl(typeExpression);
         }
 
-        public override SymbolWriterCSharp Write(ExpressionSymbol expr)
+        public override SymbolWriterCSharp Write(Expression expr)
         {
             if (expr == null)
                 return this;

@@ -14,12 +14,12 @@ namespace Plato.Compiler.Types
         // Passed as arguments
         public Compiler Compiler { get; }
         public FunctionGroupReference Fgr { get; }
-        public IReadOnlyList<TypeExpressionSymbol> ArgTypes { get; }
-        public TypeExpressionSymbol ResultType { get; set; }
+        public IReadOnlyList<TypeExpression> ArgTypes { get; }
+        public TypeExpression ResultType { get; set; }
 
         public FunctionCallResolver(Compiler compiler,
             FunctionGroupReference fgr,
-            IReadOnlyList<TypeExpressionSymbol> argTypes)
+            IReadOnlyList<TypeExpression> argTypes)
         {
             Compiler = compiler;
             Fgr = fgr;
@@ -115,10 +115,10 @@ namespace Plato.Compiler.Types
         public int GetScoreForOverload(IFunction f, int pos)
             => CastingScore(ArgTypes[pos], f.GetParameterType(pos));
 
-        public bool IsCastFunction(IFunction f, TypeDefinitionSymbol td)
+        public bool IsCastFunction(IFunction f, TypeDefinition td)
             => f.Name == $"To{td.Name}" && f.NumParameters == 0 && f.ReturnType.Definition.Equals(td);
 
-        public ReifiedFunction GetCastFunction(TypeDefinitionSymbol a, TypeDefinitionSymbol b)
+        public ReifiedFunction GetCastFunction(TypeDefinition a, TypeDefinition b)
         {
             if (Compiler.ReifiedTypes.ContainsKey(a.Name))
             {
@@ -131,13 +131,13 @@ namespace Plato.Compiler.Types
             return null;
         }
 
-        public bool CastFunctionExists(TypeDefinitionSymbol a, TypeDefinitionSymbol b)
+        public bool CastFunctionExists(TypeDefinition a, TypeDefinition b)
             => GetCastFunction(a, b) != null;
 
-        public bool CanCast(TypeExpressionSymbol at, TypeExpressionSymbol pt)
+        public bool CanCast(TypeExpression at, TypeExpression pt)
             => CastingScore(at, pt) > 0;
         
-        public int CastingScore(TypeExpressionSymbol at, TypeExpressionSymbol pt)
+        public int CastingScore(TypeExpression at, TypeExpression pt)
         {
             if (at == null)
                 throw new ArgumentNullException($"Argument type");

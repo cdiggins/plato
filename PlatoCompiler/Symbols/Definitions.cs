@@ -8,11 +8,11 @@ namespace Plato.Compiler.Symbols
 {
     public abstract class DefinitionSymbol : Symbol
     {
-        public TypeExpressionSymbol Type { get; }
+        public TypeExpression Type { get; }
 
         public string Name { get; }
 
-        protected DefinitionSymbol(TypeExpressionSymbol type, string name)
+        protected DefinitionSymbol(TypeExpression type, string name)
         {
             Type = type;
             Name = name;
@@ -25,7 +25,7 @@ namespace Plato.Compiler.Symbols
 
     public class PredefinedDefinition : DefinitionSymbol
     {
-        public PredefinedDefinition(TypeExpressionSymbol typeRef, string name)
+        public PredefinedDefinition(TypeExpression typeRef, string name)
             : base(typeRef, name)
         { }
 
@@ -40,12 +40,12 @@ namespace Plato.Compiler.Symbols
     {
         public IReadOnlyList<ParameterDefinition> Parameters { get; }
         public int NumParameters => Parameters.Count;
-        public ExpressionSymbol Body { get; }
+        public Expression Body { get; }
         public string GetParameterName(int n) => Parameters[n].Name;
-        public TypeExpressionSymbol GetParameterType(int n) => Parameters[n].Type;
-        public TypeExpressionSymbol ReturnType => Type;
-        public TypeDefinitionSymbol OwnerType { get; }
-        public FunctionDefinition(string name, TypeDefinitionSymbol ownerType, TypeExpressionSymbol returnType, ExpressionSymbol body, params ParameterDefinition[] parameters)
+        public TypeExpression GetParameterType(int n) => Parameters[n].Type;
+        public TypeExpression ReturnType => Type;
+        public TypeDefinition OwnerType { get; }
+        public FunctionDefinition(string name, TypeDefinition ownerType, TypeExpression returnType, Expression body, params ParameterDefinition[] parameters)
             : base(returnType, name)
         {
             OwnerType = ownerType;
@@ -62,7 +62,7 @@ namespace Plato.Compiler.Symbols
 
     public class ParameterDefinition : DefinitionSymbol
     {
-        public ParameterDefinition(string name, TypeExpressionSymbol type)
+        public ParameterDefinition(string name, TypeExpression type)
             : base(type, name)
         { }
 
@@ -75,7 +75,7 @@ namespace Plato.Compiler.Symbols
 
     public class VariableDefinition : DefinitionSymbol
     {
-        public VariableDefinition(string name, TypeExpressionSymbol type)
+        public VariableDefinition(string name, TypeExpression type)
             : base(type, name) { }
 
         public override Reference ToReference()
@@ -85,7 +85,7 @@ namespace Plato.Compiler.Symbols
             => new[] { Type };
     }
 
-    public class TypeDefinitionSymbol : Symbol
+    public class TypeDefinition : Symbol
     {
         public TypeKind Kind { get; }
 
@@ -96,14 +96,14 @@ namespace Plato.Compiler.Symbols
         public List<MethodDefinition> Methods { get; } = new List<MethodDefinition>();
         public List<FieldDefinition> Fields { get; } = new List<FieldDefinition>();
         public List<TypeParameterDefinition> TypeParameters { get; } = new List<TypeParameterDefinition>();
-        public List<TypeExpressionSymbol> Inherits { get; } = new List<TypeExpressionSymbol>();
-        public List<TypeExpressionSymbol> Implements { get; } = new List<TypeExpressionSymbol>();
+        public List<TypeExpression> Inherits { get; } = new List<TypeExpression>();
+        public List<TypeExpression> Implements { get; } = new List<TypeExpression>();
 
         public string Name { get; }
         
         public SelfType Self { get; }
 
-        public TypeDefinitionSymbol(TypeKind kind, string name)
+        public TypeDefinition(TypeKind kind, string name)
         {
             Name = name;
             Kind = kind;
@@ -114,12 +114,12 @@ namespace Plato.Compiler.Symbols
             }
         }
 
-        public IEnumerable<TypeDefinitionSymbol> GetSelfAndAllInheritedTypes()
+        public IEnumerable<TypeDefinition> GetSelfAndAllInheritedTypes()
             => Inherits.SelectMany(c => c.Definition.GetSelfAndAllInheritedTypes()).Append(this);
 
-        public IEnumerable<TypeExpressionSymbol> GetAllImplementedConcepts()
+        public IEnumerable<TypeExpression> GetAllImplementedConcepts()
         {
-            var r = new HashSet<TypeExpressionSymbol>(); 
+            var r = new HashSet<TypeExpression>(); 
 
             foreach (var tmp in Implements)
             {
@@ -153,8 +153,8 @@ namespace Plato.Compiler.Symbols
         public IEnumerable<MethodDefinition> GetConceptMethods()
             => GetAllImplementedConcepts().SelectMany(c => c?.Definition?.Methods ?? Enumerable.Empty<MethodDefinition>());
 
-        public TypeExpressionSymbol ToTypeExpression()
-            => new TypeExpressionSymbol(this, TypeParameters.Select(tp => tp.ToTypeExpression()).ToArray());
+        public TypeExpression ToTypeExpression()
+            => new TypeExpression(this, TypeParameters.Select(tp => tp.ToTypeExpression()).ToArray());
 
         public override string ToString()
             => $"{Name}_{Id}:{Kind}";
@@ -163,13 +163,13 @@ namespace Plato.Compiler.Symbols
             => Methods.Cast<Symbol>().Concat(Fields).Concat(TypeParameters).Concat(Inherits).Concat(Implements);
     }
 
-    public class TypeParameterDefinition : TypeDefinitionSymbol
+    public class TypeParameterDefinition : TypeDefinition
     {
-        public TypeParameterDefinition(string name, TypeExpressionSymbol constraint)
+        public TypeParameterDefinition(string name, TypeExpression constraint)
             : base(TypeKind.TypeVariable, name)
             => Constraint = constraint;
         
-        public TypeExpressionSymbol Constraint { get; }
+        public TypeExpression Constraint { get; }
 
         public override IEnumerable<Symbol> GetChildSymbols()
             => new[] { Constraint };
@@ -177,20 +177,20 @@ namespace Plato.Compiler.Symbols
 
     public class SelfType : TypeParameterDefinition
     {
-        public SelfType(TypeExpressionSymbol constraint)
+        public SelfType(TypeExpression constraint)
             : base("Self", constraint)
         { }
     }
 
     public abstract class MemberDefinition : DefinitionSymbol
     {
-        protected MemberDefinition(TypeDefinitionSymbol parentType, TypeExpressionSymbol type, string name)
+        protected MemberDefinition(TypeDefinition parentType, TypeExpression type, string name)
             : base(type, name)
         {
             ParentType = parentType;
         }
 
-        public TypeDefinitionSymbol ParentType { get; }
+        public TypeDefinition ParentType { get; }
         public FunctionDefinition Function { get; set; }
 
         public override IEnumerable<Symbol> GetChildSymbols()
@@ -199,7 +199,7 @@ namespace Plato.Compiler.Symbols
 
     public class MethodDefinition : MemberDefinition
     {
-        public MethodDefinition(TypeDefinitionSymbol parentType, TypeExpressionSymbol type, string name)
+        public MethodDefinition(TypeDefinition parentType, TypeExpression type, string name)
             : base(parentType, type, name)
         { }
 
@@ -209,7 +209,7 @@ namespace Plato.Compiler.Symbols
 
     public class FieldDefinition : MemberDefinition
     {
-        public FieldDefinition(TypeDefinitionSymbol parentType, TypeExpressionSymbol type, string name)
+        public FieldDefinition(TypeDefinition parentType, TypeExpression type, string name)
             : base(parentType, type, name)
         {
             Function = new FunctionDefinition(Name, parentType, Type, null,

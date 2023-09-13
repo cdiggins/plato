@@ -7,16 +7,16 @@ namespace Plato.Compiler.Symbols
     {
         string Name { get; }
         int NumParameters { get; }
-        ExpressionSymbol Body { get; }
+        Expression Body { get; }
         string GetParameterName(int n);
-        TypeExpressionSymbol GetParameterType(int n);
-        TypeExpressionSymbol ReturnType { get; }
-        TypeDefinitionSymbol OwnerType { get; }
+        TypeExpression GetParameterType(int n);
+        TypeExpression ReturnType { get; }
+        TypeDefinition OwnerType { get; }
     }
 
     public static class FunctionExtensions
     {
-        public static IReadOnlyList<(string, TypeExpressionSymbol)> GetParameters(this IFunction self) 
+        public static IReadOnlyList<(string, TypeExpression)> GetParameters(this IFunction self) 
             => Enumerable
                 .Range(0, self.NumParameters)
                 .Select(i => (self.GetParameterName(i), self.GetParameterType(i)))
