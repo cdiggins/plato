@@ -50,6 +50,7 @@ Factorial(n: Integer): Integer =>
     return n * Factorial(n-1);
 }
 ```
+
 ## Calling Functions
 
 Plato supports both prefix and method chaining syntax of functions. 
@@ -163,10 +164,36 @@ This makes defining new operators quick and easy.
 * `Negative` -> `-`
 * `Not` -> `!`
 
-## Type Inference 
+## Type Inference of Generics 
 
 Plato supports a limited form of type inference. 
 Plato supports generics (types with parameters), but type parameters are not specified explicitly: they are inferred based on the function definition.   
+
+Here are some sample type signature for generic types in Plato  
+
+```typescript
+    Map(xs: Array, f: Function): Array 
+        => (xs.Count, (i: Integer) => f(xs.At(i)));
+
+    Reverse(xs: Array): Array
+        => (xs.Count, (i: Integer) => f(xs.At(xs.Count - 1 - i)));
+
+    Zip(xs: Array, ys: Array, f: Function): Array 
+        => (xs.Count, (i: Integer) => f(At(i), ys.At(i)));
+```
+
+Here is how we would write the same functions in a style more like TypeScript or C#: 
+
+```typescript
+    Map<T1, T2>(xs: Array<T1>, f: Function<T1, T2>): Array<T2> 
+        => (xs.Count, (i: Integer) => f(xs.At(i)));
+
+    Reverse<T>(xs: Array<T>): Array<T>
+        => (xs.Count, (i: Integer) => f(xs.At(xs.Count - 1 - i)));
+
+    Zip<T1, T2, T3>(xs: Array<T1>, ys: Array<T2>, f: Function<T1,T2,T3>): Array<T3>
+        => (xs.Count, (i: Integer) => f(At(i), ys.At(i)));
+```
 
 ## Features that Plato does not have
 
