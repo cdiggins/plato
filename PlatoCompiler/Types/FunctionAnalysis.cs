@@ -2,91 +2,55 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Plato.Compiler.Ast;
 using Plato.Compiler.Symbols;
 using Ptarmigan.Utils;
+using Tuple = Plato.Compiler.Symbols.Tuple;
 
 namespace Plato.Compiler.Types
 {
-    public interface IType
-    {
-    }
-
-    public class TypeVariable : IType
-    {
-        public int Id { get; } = NextId++;
-        public static int NextId;
-
-        public override string ToString()
-            => $"${Id}";
-    }
-
-    public class TypeConstant : IType
-    {
-        public TypeDefinition TypeDefinition { get; }
-
-        public TypeConstant(TypeDefinition tds)
-        {
-            Verifier.Assert(tds.IsConcept() || tds.IsPrimitive() || tds.IsConcreteType());
-            TypeDefinition = tds;
-        }
-
-        public override string ToString()
-            => TypeDefinition.Name;
-    }
-
-    public class TypeList : IType
-    {
-        public TypeList(IReadOnlyList<IType> children)
-            => Children = children;
-
-        public IReadOnlyList<IType> Children { get; }
-
-        public override string ToString()
-            => $"({string.Join(", ", Children)})"; 
-    }
-
-    public class Constraint
-    {
-        public TypeVariable Variable { get; }
-
-        public Constraint(TypeVariable tv)
-            => Variable = tv;
-    }
-    
-    public class ImplementsConstraint : Constraint
-    {
-        public ImplementsConstraint(TypeVariable tv, IType implemented)
-            : base(tv)
-        {
-            Implemented = implemented;
-        }
-
-        public IType Implemented { get; }
-
-        public override string ToString()
-        {
-            return $"{Variable} implements {Implemented}";
-        }
-    }
-
     public class FunctionAnalysis
     {
         public List<TypeVariable> Variables { get; } = new List<TypeVariable>();
-        public List<Constraint> Constraints { get; } = new List<Constraint>();
+        public List<IConstraint> Constraints { get; } = new List<IConstraint>();
 
         public Compiler Compiler { get; }
         public FunctionDefinition Function { get; }
-
-        public Dictionary<ParameterDefinition, IType> ParameterTypeLookup { get; } =
-            new Dictionary<ParameterDefinition, IType>();
         
+        public TypeDefinition OwnerType 
+            => Function.OwnerType;
+        
+        public bool IsConcept 
+            => OwnerType.IsConcept();
+        
+        public bool IsGenericLibraryFunction 
+            => OwnerType.IsLibrary() && Variables.Count > 0;
+
+        public Dictionary<ParameterDefinition, IType> ParameterToTypeLookup { get; } =
+            new Dictionary<ParameterDefinition, IType>();
+
+        public Dictionary<TypeParameterDefinition, IType> TypeParameterToTypeLookup { get; } =
+            new Dictionary<TypeParameterDefinition, IType>();
+
         public IType ReturnType { get; }
         public TypeList Parameters { get; }
+        public IType Self { get; }
 
         public FunctionAnalysis(Compiler compiler, FunctionDefinition function)
         {
             Compiler = compiler;
             Function = function;
+
+            foreach (var tp in OwnerType.TypeParameters)
+            {
+                TypeParameterToTypeLookup.Add(tp, ToIType(tp));
+            }
+
+            // NOTE: if there are Type Parameters, make sure they are used here. 
+            if (OwnerType.IsConcept())
+            {
+                Self = ToIType(OwnerType);
+            }
 
             var pTypes  = new List<IType>();
             foreach (var p in function.Parameters)
@@ -95,21 +59,21 @@ namespace Plato.Compiler.Types
                 // For now, we are only really worried about functions.
                 // And I think we can just look at how things are called. 
 
-                if (p.Name == "Function")
+                if (p.Type.Name == "Function")
                 {
                     var n = ComputeCardinalityOfFunction(p, function.Body);
                     var f = CreateFunctionType(n);
-                    ParameterTypeLookup.Add(p, f);
+                    ParameterToTypeLookup.Add(p, f);
                     pTypes.Add(f);
                 }
-                else if (p.Name == "Tuple")
+                else if (p.Type.Name == "Tuple")
                 {
                     throw new Exception("Tuples not supported");
                 }
                 else
                 {
                     var pt = ToIType(p.Type);
-                    ParameterTypeLookup.Add(p, pt);
+                    ParameterToTypeLookup.Add(p, pt);
                     pTypes.Add(pt);
                 }
             }
@@ -127,36 +91,32 @@ namespace Plato.Compiler.Types
             Parameters = new TypeList(pTypes);
         }
 
-        public IType CreateFunctionType(int n)
+        public IType CreateFunctionType(IEnumerable<IType> args)
         {
-            var args = Enumerable.Range(0, n + 1).Select(_ => GenerateTypeVariable());
             var funcDef = ToIType(Compiler.GetTypeDefinition("Function"));
             return new TypeList(args.Prepend(funcDef).ToList());
         }
 
-        // TODO: I am confident that this will fail. When referring to a type, there might be references to type parameters .
-        public bool IsTypeExpressionComplete(TypeExpression tes)
+        public IType CreateFunctionType(int n)
         {
-            return tes.TypeArgs.Count == tes.Definition.TypeParameters.Count
-                   && !tes.Definition.IsTypeVariable()
-                   && tes.TypeArgs.All(IsTypeExpressionComplete);
+            var args = Enumerable.Range(0, n + 1).Select(_ => GenerateTypeVariable());
+            return CreateFunctionType(args);
         }
 
-        public IType ToIType(TypeDefinition td)
-        {
-            if (td is TypeParameterDefinition tpd)
-            {
-                return GenerateConstrainedTypeVariable(tpd.Constraint);
-            }
-            else {
-                return new TypeConstant(td);
-            }
-        }
+        // TODO: I am confident that this will fail. When referring to a type, there might be references to type parameters .
+        public bool IsTypeExpressionComplete(TypeExpression tes) 
+            => tes.TypeArgs.Count == tes.Definition.TypeParameters.Count
+            && !tes.Definition.IsTypeVariable()
+            && tes.TypeArgs.All(IsTypeExpressionComplete);
+
+        public IType ToIType(TypeDefinition td) 
+            => td is TypeParameterDefinition tpd
+                ? (IType)GenerateConstrainedTypeVariable(tpd.Constraint)
+                : new TypeConstant(td);
 
         public IType ToTypeList(TypeExpression expr)
         {
-            var tmp = new List<IType>();
-            tmp.Add(ToIType(expr.Definition));
+            var tmp = new List<IType> { ToIType(expr.Definition) };
             for (var i = 0; i < expr.Definition.TypeParameters.Count; ++i)
             {
                 var tp = expr.Definition.TypeParameters[i];
@@ -177,10 +137,21 @@ namespace Plato.Compiler.Types
 
         public IType ToIType(TypeExpression tes)
         {
+            if (tes.IsSelfType())
+            {
+                Verifier.AssertNotNull(Self, "Self");
+                Verifier.Assert(tes.TypeArgs.Count == 0);
+                return Self;
+            }
+
             if (tes.Definition is TypeParameterDefinition tpd)
             {
                 Verifier.Assert(tes.TypeArgs.Count == 0);
                 Verifier.Assert(tpd.TypeParameters.Count == 0);
+
+                if (TypeParameterToTypeLookup.ContainsKey(tpd))
+                    return TypeParameterToTypeLookup[tpd];
+
                 var tv = GenerateConstrainedTypeVariable(tpd.Constraint);
                 return tv;
             }
@@ -188,15 +159,14 @@ namespace Plato.Compiler.Types
             {
                 var tv = GenerateTypeVariable();
                 var constraint = ToTypeList(tes);
-                Constraints.Add(new ImplementsConstraint(tv, constraint));
+                Constraints.Add(new CastTypeVariableConstraint(tv, constraint));
                 return tv; 
             }
             else if (tes.Definition.IsConcreteType() || tes.Definition.IsPrimitive())
             {
                 if (tes.Definition.TypeParameters.Count > 0)
                     return ToTypeList(tes);
-                else
-                    return new TypeConstant(tes.Definition);
+                return new TypeConstant(tes.Definition);
             }
             else if (tes.Definition.IsLibrary())
             {
@@ -222,7 +192,7 @@ namespace Plato.Compiler.Types
             {
                 Verifier.Assert(concept.Definition.IsConcept());
                 var newType = ToTypeList(concept);
-                Constraints.Add(new ImplementsConstraint(tv, newType));
+                Constraints.Add(new CastTypeVariableConstraint(tv, newType));
             }
 
             return tv;
@@ -257,10 +227,20 @@ namespace Plato.Compiler.Types
             return r;
         }
 
-        public string Signature
-            => $"{Parameters} -> {ReturnType}";
+        public string ParameterString(ParameterDefinition pd)
+        {
+            return $"{pd.Name}: {ParameterToTypeLookup[pd]}";
+        }
 
-        public StringBuilder BuildAnalysisOuput(StringBuilder sb = null)
+        public string ParametersString()
+        {
+            return string.Join(", ", Function.Parameters.Select(ParameterString));
+        }
+
+        public string Signature
+            => $"{Function.OwnerType}.{Function.Name}({ParametersString()}): {ReturnType}";
+
+        public StringBuilder BuildAnalysisOutput(StringBuilder sb = null)
         {
             sb = sb ?? new StringBuilder();
             sb.AppendLine($"Original function: {Function}");
@@ -270,6 +250,118 @@ namespace Plato.Compiler.Types
             foreach (var c in Constraints)
                 sb.AppendLine($"   {c}");
             return sb;
+        }
+
+        public void AddConstraint(Expression expr, TypeExpression type)
+        { }
+
+        public void AddConstraint(Expression expr, TypeDefinition type)
+        { }
+
+        public void AddConstraint(Expression expr, string name)
+        {
+            AddConstraint(expr, Compiler.GetTypeDefinition("Boolean"));
+        }
+
+        public IType GetIType(string name)
+        {
+            return ToIType(Compiler.GetTypeDefinition(name));
+        }
+
+        public IType Unify(Expression expr1, Expression expr2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IType CreateTuple(IReadOnlyList<IType> children)
+        {
+            return new TypeList(children.Prepend(GetIType("Tuple")).ToList());
+        }
+
+        public IType ToIType(LiteralTypesEnum typeEnum)
+        {
+            switch (typeEnum)
+            {
+                case LiteralTypesEnum.Integer:
+                    return GetIType("Integer");
+                case LiteralTypesEnum.Number:
+                    return GetIType("Number");
+                case LiteralTypesEnum.Boolean:
+                    return GetIType("Boolean");
+                case LiteralTypesEnum.String:
+                    return GetIType("String");
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public IType CreateTypeFromLambda(Lambda lambda)
+        {
+            return CreateFunctionType(lambda.Function.GetParameterTypes().Select(ToIType));
+        }
+
+        public IType ResolveType(Expression expr)
+        {
+            var t = Compiler.GetType(expr);
+            var r = t == null ? null : ToIType(t);
+            if (r != null)
+                return r;
+
+            foreach (var x in expr.GetChildSymbols().OfType<Expression>())
+                ResolveType(x);
+
+            switch (expr)
+            {
+                case Argument argument:
+                    r = ResolveType(argument.Expression);
+                    break;
+
+                case Assignment assignment:
+                    throw new Exception("Assignment not supported");
+
+                case ConditionalExpression conditionalExpression:
+                    AddConstraint(conditionalExpression.Condition, "Boolean");
+                    r = Unify(conditionalExpression.IfTrue, conditionalExpression.IfFalse);
+                    break;
+                
+                case FunctionCall functionCall:
+                    // TODO: 
+                    throw new NotImplementedException();
+
+                case FunctionGroupReference functionGroupReference:
+                    // TODO: this is a function. 
+                    throw new NotImplementedException();
+
+                case Lambda lambda:
+                    r = CreateTypeFromLambda(lambda);
+                    break;
+                
+                case Literal literal:
+                    r = ToIType(literal.TypeEnum);
+                    break;
+                
+                case ParameterReference parameterReference:
+                    r = ParameterToTypeLookup[parameterReference.Definition];
+                    break;
+
+                case Parenthesized parenthesized:
+                    r = ResolveType(parenthesized);
+                    break;
+
+                case PredefinedReference predefinedReference:
+                    throw new NotImplementedException();
+
+                case Reference reference:
+                    throw new NotImplementedException();
+
+                case Tuple tuple:
+                    throw new NotImplementedException();
+                
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(expr));
+            }
+
+            return r;
         }
     }
 }

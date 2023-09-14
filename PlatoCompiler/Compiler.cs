@@ -135,12 +135,18 @@ namespace Plato.Compiler
 
                 Log("Creating function analysis");
                 var sb = new StringBuilder();
+
                 sb.Append("Function Analysis");
-                foreach (var f in FunctionDefinitions)
-                {
-                    var fa = new FunctionAnalysis(this, f);
-                    fa.BuildAnalysisOuput(sb);
-                }
+                var fas = FunctionDefinitions.Select(fd => new FunctionAnalysis(this, fd)).ToList();
+
+                sb.AppendLine("Concept functions");
+                foreach (var fa in fas.Where(f => f.IsConcept)) 
+                    fa.BuildAnalysisOutput(sb);
+                
+                sb.AppendLine("Generic library functions");
+                foreach (var fa in fas.Where(f => f.IsGenericLibraryFunction))
+                    fa.BuildAnalysisOutput(sb);
+
                 Logger.Log(sb.ToString());                
 
                 /*

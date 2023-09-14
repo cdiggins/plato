@@ -10,7 +10,7 @@ namespace Plato.Compiler.Types
   
     public class ConstraintSolver
     {
-        public HashSet<Constraint> Constraints { get; }
+        public HashSet<TypeVariableConstraint> Constraints { get; }
 
         public IReadOnlyList<TypeExpression> Arguments { get; }
         public IReadOnlyList<TypeExpression> Parameters { get; }

@@ -45,6 +45,7 @@ namespace Plato.Compiler.Symbols
         public TypeExpression GetParameterType(int n) => Parameters[n].Type;
         public TypeExpression ReturnType => Type;
         public TypeDefinition OwnerType { get; }
+        
         public FunctionDefinition(string name, TypeDefinition ownerType, TypeExpression returnType, Expression body, params ParameterDefinition[] parameters)
             : base(returnType, name)
         {
@@ -58,6 +59,9 @@ namespace Plato.Compiler.Symbols
 
         public override IEnumerable<Symbol> GetChildSymbols()
             => Parameters.Cast<Symbol>().Append(ReturnType).Append(Body);
+
+        public override string ToString()
+            => this.GetSignature();
     }
 
     public class ParameterDefinition : DefinitionSymbol

@@ -35,11 +35,12 @@ namespace Plato.Compiler.Symbols
             => Hasher.Combine(TypeArgs.Select(ta => ta.GetHashCode()).Append(Definition.GetHashCode()));
 
         public override bool Equals(object obj)
-        {
-            return obj is TypeExpression tes
+            => obj is TypeExpression tes
                    && tes.Definition.Name == Definition.Name
                    && tes.Definition.Id == Definition.Id
                    && tes.TypeArgs.SequenceEqual(TypeArgs);
-        }
+
+        public bool IsSelfType()
+            => Name == "Self";
     }
 }

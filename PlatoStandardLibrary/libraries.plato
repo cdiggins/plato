@@ -7,8 +7,8 @@ library Array
         => (xs.Count, (i: Integer) => f(xs.At(xs.Count - 1 - i)));
 
     Zip(xs: Array, ys: Array, f: Function): Array 
-        => (xs.Count, (i: Integer) => f(At(i), ys.At(i)));
-    
+        => (xs.Count, (i: Integer) => f(At(i), ys.At(i)));  
+
     Zip(xs: Array, ys: Array, zs: Array, f: Function): Array 
         => (xs.Count, (i: Integer) => f(At(i), ys.At(i), zs.At(i)));
     
@@ -19,7 +19,7 @@ library Array
         => (n, (i: Integer) => At(i));   
     
     Aggregate(xs: Array, init: Any, f: Function): Any 
-        => xs.IsEmpty ? init : f(init, f(xs.Rest));
+        => xs.IsEmpty ? init : f(init, xs.Rest);
 
     Rest(xs: Array): Array 
         => xs.Skip(1);

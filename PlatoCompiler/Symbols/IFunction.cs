@@ -23,8 +23,11 @@ namespace Plato.Compiler.Symbols
                 .ToList();
 
         public static string GetSignature(this IFunction self) =>
-            $"{self.OwnerType}::{self.Name}("
-            + string.Join(",", self.GetParameters().Select(p => $"{p.Item1}:{p.Item2}"))
-            + $"):{self.ReturnType};";
+            $"{self.OwnerType}.{self.Name}("
+            + string.Join(",", self.GetParameters().Select(p => $"{p.Item1}: {p.Item2}"))
+            + $"): {self.ReturnType};";
+
+        public static IEnumerable<TypeExpression> GetParameterTypes(this IFunction self)
+            => GetParameters(self).Select(tuple => tuple.Item2);
     }
 }

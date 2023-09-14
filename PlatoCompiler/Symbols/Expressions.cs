@@ -183,13 +183,6 @@ namespace Plato.Compiler.Symbols
     public static class ExpressionExtensions
     {
         public static IEnumerable<Expression> GetExpressionTree(this Expression expr)
-        {
-            if (expr == null)
-                yield break;
-            yield return expr;
-            foreach (var c in expr.Children)
-                foreach (var x in c.GetExpressionTree())
-                    yield return x;
-        }
+            => expr.GetSymbolTree().OfType<Expression>();
     }
 }
