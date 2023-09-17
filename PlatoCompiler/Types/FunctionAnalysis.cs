@@ -34,7 +34,7 @@ namespace Plato.Compiler.Types
 
         public IType ReturnType { get; }
         public TypeList Parameters { get; }
-        public IType Self { get; }
+        public TypeList Self { get; }
 
         public FunctionAnalysis(Compiler compiler, FunctionDefinition function)
         {
@@ -43,13 +43,20 @@ namespace Plato.Compiler.Types
 
             foreach (var tp in OwnerType.TypeParameters)
             {
-                TypeParameterToTypeLookup.Add(tp, ToIType(tp));
+                TypeParameterToTypeLookup.Add(tp, ToTypeVariable(tp));
             }
 
-            // NOTE: if there are Type Parameters, make sure they are used here. 
             if (OwnerType.IsConcept())
             {
-                Self = ToIType(OwnerType);
+                Self = ToTypeList(OwnerType);
+
+                // Make sure that the type parameters lookup are used in the self type. 
+                Verifier.Assert(OwnerType.TypeParameters.Count + 1 == Self.Children.Count);
+                for (var i = 0; i < OwnerType.TypeParameters.Count; i++)
+                {
+                    var lookup = TypeParameterToTypeLookup[OwnerType.TypeParameters[i]];
+                    Verifier.Assert(Self.Children[i + 1].Equals(lookup));
+                }
             }
 
             var pTypes  = new List<IType>();
@@ -91,17 +98,14 @@ namespace Plato.Compiler.Types
             Parameters = new TypeList(pTypes);
         }
 
-        public IType CreateFunctionType(IEnumerable<IType> args)
-        {
-            var funcDef = ToIType(Compiler.GetTypeDefinition("Function"));
-            return new TypeList(args.Prepend(funcDef).ToList());
-        }
+        public TypeList ToTypeList(IType first, IEnumerable<IType> rest)
+            => new TypeList(rest.Prepend(first).ToList());
+
+        public TypeList CreateFunctionType(IEnumerable<IType> args)
+            => ToTypeList(ToSimpleType("Function"), args);
 
         public IType CreateFunctionType(int n)
-        {
-            var args = Enumerable.Range(0, n + 1).Select(_ => GenerateTypeVariable());
-            return CreateFunctionType(args);
-        }
+            => CreateFunctionType(Enumerable.Range(0, n + 1).Select(_ => GenerateTypeVariable()));
 
         // TODO: I am confident that this will fail. When referring to a type, there might be references to type parameters .
         public bool IsTypeExpressionComplete(TypeExpression tes) 
@@ -109,14 +113,24 @@ namespace Plato.Compiler.Types
             && !tes.Definition.IsTypeVariable()
             && tes.TypeArgs.All(IsTypeExpressionComplete);
 
-        public IType ToIType(TypeDefinition td) 
+        public IType ToSimpleType(string name)
+            => ToSimpleType(Compiler.GetTypeDefinition(name));
+
+        public IType ToSimpleType(TypeDefinition td) 
             => td is TypeParameterDefinition tpd
-                ? (IType)GenerateConstrainedTypeVariable(tpd.Constraint)
+                ? ToTypeVariable(tpd)
                 : new TypeConstant(td);
+
+        public IType ToTypeVariable(TypeParameterDefinition tpd)
+            => TypeParameterToTypeLookup.TryGetValue(tpd, out var r) 
+                    ? r : GenerateConstrainedTypeVariable(tpd.Constraint);
+
+        public TypeList ToTypeList(TypeDefinition td)
+            => ToTypeList(ToSimpleType(td), td.TypeParameters.Select(ToTypeVariable));
 
         public IType ToTypeList(TypeExpression expr)
         {
-            var tmp = new List<IType> { ToIType(expr.Definition) };
+            var tmp = new List<IType> { ToSimpleType(expr.Definition) };
             for (var i = 0; i < expr.Definition.TypeParameters.Count; ++i)
             {
                 var tp = expr.Definition.TypeParameters[i];
@@ -128,7 +142,7 @@ namespace Plato.Compiler.Types
                 }
                 else
                 {
-                    tmp.Add(ToIType(tp));
+                    tmp.Add(ToTypeVariable(tp));
                 }
             }
 
@@ -263,11 +277,6 @@ namespace Plato.Compiler.Types
             AddConstraint(expr, Compiler.GetTypeDefinition("Boolean"));
         }
 
-        public IType GetIType(string name)
-        {
-            return ToIType(Compiler.GetTypeDefinition(name));
-        }
-
         public IType Unify(Expression expr1, Expression expr2)
         {
             throw new NotImplementedException();
@@ -275,7 +284,7 @@ namespace Plato.Compiler.Types
 
         public IType CreateTuple(IReadOnlyList<IType> children)
         {
-            return new TypeList(children.Prepend(GetIType("Tuple")).ToList());
+            return new TypeList(children.Prepend(ToSimpleType("Tuple")).ToList());
         }
 
         public IType ToIType(LiteralTypesEnum typeEnum)
@@ -283,13 +292,13 @@ namespace Plato.Compiler.Types
             switch (typeEnum)
             {
                 case LiteralTypesEnum.Integer:
-                    return GetIType("Integer");
+                    return ToSimpleType("Integer");
                 case LiteralTypesEnum.Number:
-                    return GetIType("Number");
+                    return ToSimpleType("Number");
                 case LiteralTypesEnum.Boolean:
-                    return GetIType("Boolean");
+                    return ToSimpleType("Boolean");
                 case LiteralTypesEnum.String:
-                    return GetIType("String");
+                    return ToSimpleType("String");
                 default:
                     throw new ArgumentOutOfRangeException();
             }
