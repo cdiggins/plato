@@ -9,6 +9,9 @@ using Tuple = Plato.Compiler.Symbols.Tuple;
 
 namespace Plato.Compiler.Types
 {
+    /// <summary>
+    /// The function analysis is a place-holder for all of the information. 
+    /// </summary>
     public class FunctionAnalysis
     {
         public List<TypeVariable> Variables { get; } = new List<TypeVariable>();
@@ -265,16 +268,22 @@ namespace Plato.Compiler.Types
                 sb.AppendLine($"   {c}");
             return sb;
         }
+        
 
-        public void AddConstraint(Expression expr, TypeExpression type)
-        { }
-
-        public void AddConstraint(Expression expr, TypeDefinition type)
-        { }
-
-        public void AddConstraint(Expression expr, string name)
+        public void AddCastConstraint(Expression expr, IType target)
         {
-            AddConstraint(expr, Compiler.GetTypeDefinition("Boolean"));
+            var src = Process(expr);
+            AddConstraint(new CastToConstraint(src, target));
+        }
+
+        public void AddConstraint(IConstraint constraint)
+        {
+            Constraints.Add(constraint);
+        }
+
+        public void AddCastConstraint(Expression expr, string name)
+        {
+            AddCastConstraint(expr, ToSimpleType(name));
         }
 
         public IType Unify(Expression expr1, Expression expr2)
@@ -309,34 +318,57 @@ namespace Plato.Compiler.Types
             return CreateFunctionType(lambda.Function.GetParameterTypes().Select(ToIType));
         }
 
-        public IType ResolveType(Expression expr)
+        //==================================================================
+        // Code for gathering constraints and compute constraints
+
+        public bool IsProcessed { get; private set; }
+
+        public void Process()
         {
-            var t = Compiler.GetType(expr);
-            var r = t == null ? null : ToIType(t);
+            if (IsProcessed)
+                return;
+
+            if (Function.Body != null)
+            {
+                Process(Function.Body);
+            }
+
+            IsProcessed = true;
+        }
+
+        /// <summary>
+        /// Looks up the type of the expression. If it is found, returns it.
+        /// If not found computes the type of the child expressions,
+        /// then computes the type, then stores it, then returns the type.
+        /// If any constraints are found during the process, stores them. 
+        /// </summary>
+        public IType Process(Expression expr)
+        {
+            var r = Compiler.GetType(expr);
             if (r != null)
                 return r;
 
             foreach (var x in expr.GetChildSymbols().OfType<Expression>())
-                ResolveType(x);
+                Process(x);
 
             switch (expr)
             {
                 case Argument argument:
-                    r = ResolveType(argument.Expression);
+                    r = Process(argument.Expression);
                     break;
 
                 case Assignment assignment:
                     throw new Exception("Assignment not supported");
 
                 case ConditionalExpression conditionalExpression:
-                    AddConstraint(conditionalExpression.Condition, "Boolean");
+                    AddCastConstraint(conditionalExpression.Condition, "Boolean");
                     r = Unify(conditionalExpression.IfTrue, conditionalExpression.IfFalse);
                     break;
                 
                 case FunctionCall functionCall:
-                    // TODO: 
-                    throw new NotImplementedException();
-
+                    r = Process(functionCall);
+                    break;
+                    
                 case FunctionGroupReference functionGroupReference:
                     // TODO: this is a function. 
                     throw new NotImplementedException();
@@ -354,7 +386,7 @@ namespace Plato.Compiler.Types
                     break;
 
                 case Parenthesized parenthesized:
-                    r = ResolveType(parenthesized);
+                    r = Process(parenthesized);
                     break;
 
                 case PredefinedReference predefinedReference:
@@ -364,10 +396,37 @@ namespace Plato.Compiler.Types
                     throw new NotImplementedException();
 
                 case Tuple tuple:
-                    throw new NotImplementedException();
+                    r = CreateTuple(tuple.Children.Select(Process).ToList());
+                    break;
                 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(expr));
+            }
+
+            Compiler.ExpressionTypes.Add(expr, r);
+            return r;
+        }
+
+        public IType Process(FunctionCall fc)
+        {
+            var argTypes = fc.Args.Select(Process).ToList();
+
+            var r = new TypeVariable();
+
+            var ft = Process(fc.Function);
+
+            AddConstraint(new CallableConstraint(ft, argTypes));
+
+            if (fc.Function is FunctionGroupReference fgr)
+            {
+                // TODO: get the analysis of reach function 
+                // If not started, go into it. 
+                // TODO: deal with recursive loop. 
+
+            }
+            else
+            {
+                throw new NotImplementedException();
             }
 
             return r;

@@ -7,6 +7,7 @@ using Tuple = Plato.Compiler.Symbols.Tuple;
 
 namespace Plato.Compiler.Types
 {
+    /*
     /// <summary>
     /// This class is primarily responsible for assigning types to expressions.
     /// </summary>
@@ -15,7 +16,7 @@ namespace Plato.Compiler.Types
         public bool Success { get; }
         public string Message { get; private set; }
         public Compiler Compiler { get; }
-        public Dictionary<Expression, TypeExpression> Types => Compiler.ExpressionTypes;
+        public Dictionary<Expression, IType> Types => Compiler.ExpressionTypes;
         public FunctionDefinition Function { get; }
         public List<FunctionCallResolver> FunctionCalls { get; } = new List<FunctionCallResolver>();
 
@@ -177,4 +178,5 @@ namespace Plato.Compiler.Types
             return new TypeExpression(Compiler.GetTypeDefinition("Tuple"), args);
         }
     }
+    */
 }

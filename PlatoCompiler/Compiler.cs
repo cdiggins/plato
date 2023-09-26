@@ -36,6 +36,7 @@ namespace Plato.Compiler
         public IReadOnlyList<AstNode> Trees { get; set; }
         public SymbolResolver SymbolResolver { get; set; }
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; set; }
+        public IDictionary<FunctionDefinition, FunctionAnalysis> FunctionAnalyses { get; set; }
 
         public IEnumerable<TypeDefinition> AllTypeAndLibraryDefinitions => TypeDefinitionsByName.Values
             .Concat(LibraryDefinitionsByName.Values);
@@ -43,9 +44,8 @@ namespace Plato.Compiler
         public Dictionary<string, TypeDefinition> TypeDefinitionsByName { get; } = new Dictionary<string, TypeDefinition>();
         public Dictionary<string, TypeDefinition> LibraryDefinitionsByName { get; } = new Dictionary<string, TypeDefinition>();
         public IReadOnlyList<FunctionDefinition> FunctionDefinitions { get; set; } 
-        public IReadOnlyList<TypeResolver> TypeResolvers { get; set; }
 
-        public Dictionary<Expression, TypeExpression> ExpressionTypes { get; } = new Dictionary<Expression, TypeExpression>();
+        public Dictionary<Expression, IType> ExpressionTypes { get; } = new Dictionary<Expression, IType>();
         public Dictionary<string, ReifiedType> ReifiedTypes { get; set; }
         public Dictionary<string, List<ReifiedFunction>> ReifiedFunctionsByName { get; set; }
 
@@ -136,16 +136,22 @@ namespace Plato.Compiler
                 Log("Creating function analysis");
                 var sb = new StringBuilder();
 
-                sb.Append("Function Analysis");
-                var fas = FunctionDefinitions.Select(fd => new FunctionAnalysis(this, fd)).ToList();
+                sb.Append("Creating function analyses");
+                FunctionAnalyses = FunctionDefinitions.ToDictionary(fd => fd, fd => new FunctionAnalysis(this, fd));
 
-                sb.AppendLine("Concept functions");
-                foreach (var fa in fas.Where(f => f.IsConcept)) 
+                foreach (var fa in FunctionAnalyses.Values)
+                    fa.Process();
+
+                foreach (var fa in FunctionAnalyses.Values.Where(f => f.IsConcept)) 
                     fa.BuildAnalysisOutput(sb);
                 
                 sb.AppendLine("Generic library functions");
-                foreach (var fa in fas.Where(f => f.IsGenericLibraryFunction))
+                foreach (var fa in FunctionAnalyses.Values.Where(f => f.IsGenericLibraryFunction))
                     fa.BuildAnalysisOutput(sb);
+
+                sb.AppendLine("Gathering constraints for each function");
+                foreach (var fa in FunctionAnalyses.Values)
+                    fa.Process();
 
                 Logger.Log(sb.ToString());                
 
@@ -183,27 +189,6 @@ namespace Plato.Compiler
             catch (Exception e)
             {
                 Log("Exception caught: " + e.Message);
-            }
-        }
-
-        public void ResolveExpressionTypes()
-        {
-            foreach (var rt in ReifiedTypes.Values)
-            {
-                foreach (var rf in rt.Functions)
-                {
-                    //  So: do I process the type of every version of every expression?
-                    // That would be a lot expressions, and a lot of types. 
-                    // The thing is that the parameter references would be different for each one
-                    // I don't know what to do next. 
-                    // I mean: I think I have to make whole-sale copies of each function to properly 
-                    // I could. I just have to be efficient. 
-                    
-                    // I could find a way to
-                    // I don't actually have to type-check every variation.
-                    // The variations are simply useful for find ing the correct overload, and computing 
-                    // return types. 
-                }
             }
         }
 
@@ -262,7 +247,7 @@ namespace Plato.Compiler
             }
         }
 
-        public TypeExpression GetType(Expression expr)
+        public IType GetType(Expression expr)
             => ExpressionTypes.TryGetValue(expr, out var r) ? r : null;
 
         public void LogResolutionErrors(IEnumerable<SymbolResolver.ResolutionError> resolutionErrors)
