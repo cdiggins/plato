@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Plato.Compiler.Utilities;
 
@@ -79,5 +80,17 @@ namespace Plato.Compiler.Types
 
         public override int GetHashCode()
             => Hasher.Combine(Hasher.Combine(Args.Select(a => a.GetHashCode())), Source.GetHashCode());
+    }
+
+    public class GenericBaseConstraint : IConstraint
+    {
+        public IType Source { get; }
+        public TypeConstant Base { get; }
+
+        public GenericBaseConstraint(IType source, TypeConstant constant)
+        {
+            Source = source;
+            Base = constant;
+        }
     }
 }

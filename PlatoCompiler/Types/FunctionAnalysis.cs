@@ -288,7 +288,8 @@ namespace Plato.Compiler.Types
 
         public IType Unify(Expression expr1, Expression expr2)
         {
-            throw new NotImplementedException();
+            // TODO: perform a proper unification.
+            return Process(expr1);
         }
 
         public IType CreateTuple(IReadOnlyList<IType> children)
@@ -370,8 +371,9 @@ namespace Plato.Compiler.Types
                     break;
                     
                 case FunctionGroupReference functionGroupReference:
-                    // TODO: this is a function. 
-                    throw new NotImplementedException();
+                    r = new TypeVariable();
+                    // TODO: add the constraint the variable is one of .
+                    break;
 
                 case Lambda lambda:
                     r = CreateTypeFromLambda(lambda);
@@ -390,7 +392,8 @@ namespace Plato.Compiler.Types
                     break;
 
                 case PredefinedReference predefinedReference:
-                    throw new NotImplementedException();
+                    r = ToIType(predefinedReference.Definition.Type)    ;
+                    break;
 
                 case Reference reference:
                     throw new NotImplementedException();
@@ -423,6 +426,21 @@ namespace Plato.Compiler.Types
                 // If not started, go into it. 
                 // TODO: deal with recursive loop. 
 
+            }
+            else if (fc.Function is PredefinedReference pr)
+            {
+                if (pr.Definition.Name == "Tuple")
+                {
+                    // TODO: do something maybe?
+                }
+                else
+                {
+                    throw new Exception($"Unrecognized predefined definition {pr.Definition.Name}");
+                }
+            }
+            else if (fc.Function is ParameterReference paramRef)
+            { 
+                // This is fine. 
             }
             else
             {

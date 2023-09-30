@@ -1,81 +1,80 @@
-[0:00.002] Creating compiler
-[0:00.002] Opening files
-[0:00.117] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\intrinsics.plato at 2023-09-24 11:25:26 AM
-[0:00.117] Starting to parse 38 lines containing 1086 characters
-[0:00.117] Tokenization phase
-[0:00.120] Completed tokenization
-[0:00.121] Starting main parse
-[0:00.123] Completed parsing
-[0:00.123] Gathering parse errors
-[0:00.123] Found 0 errors
-[0:00.123] Gathering parse nodes
-[0:00.123] Found 782 nodes
-[0:00.123] Creating parse tree
-[0:00.124] Creating Concrete Syntax Tree (CST)
-[0:00.131] Creating Abstract Syntax Tree (AST)
-[0:00.140] Completed all steps, result is successful
-[0:00.166] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato at 2023-09-24 11:25:26 AM
-[0:00.166] Starting to parse 124 lines containing 2557 characters
-[0:00.166] Tokenization phase
-[0:00.167] Completed tokenization
-[0:00.167] Starting main parse
-[0:00.180] Completed parsing
-[0:00.180] Gathering parse errors
-[0:00.180] Found 0 errors
-[0:00.180] Gathering parse nodes
-[0:00.180] Found 1348 nodes
-[0:00.180] Creating parse tree
-[0:00.181] Creating Concrete Syntax Tree (CST)
-[0:00.182] Creating Abstract Syntax Tree (AST)
-[0:00.194] Completed all steps, result is successful
-[0:00.213] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\types.plato at 2023-09-24 11:25:26 AM
-[0:00.213] Starting to parse 872 lines containing 12978 characters
-[0:00.213] Tokenization phase
-[0:00.220] Completed tokenization
-[0:00.220] Starting main parse
-[0:00.227] Completed parsing
-[0:00.227] Gathering parse errors
-[0:00.227] Found 0 errors
-[0:00.227] Gathering parse nodes
-[0:00.227] Found 3800 nodes
-[0:00.227] Creating parse tree
-[0:00.228] Creating Concrete Syntax Tree (CST)
-[0:00.230] Creating Abstract Syntax Tree (AST)
-[0:00.233] Completed all steps, result is successful
-[0:00.256] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato at 2023-09-24 11:25:26 AM
-[0:00.256] Starting to parse 442 lines containing 11214 characters
-[0:00.256] Tokenization phase
-[0:00.266] Completed tokenization
-[0:00.267] Starting main parse
-[0:00.276] Completed parsing
-[0:00.276] Gathering parse errors
-[0:00.276] Found 0 errors
-[0:00.276] Gathering parse nodes
-[0:00.276] Found 6283 nodes
-[0:00.276] Creating parse tree
-[0:00.278] Creating Concrete Syntax Tree (CST)
-[0:00.282] Creating Abstract Syntax Tree (AST)
-[0:00.290] Completed all steps, result is successful
-[0:00.290] Applying syntax coloring
-[0:00.290] Completed syntax coloring
-[0:00.305] Initializing Compiler
-[0:00.306] Gathering parsers
-[0:00.306] Gathering AST trees
-[0:00.306] Gathering type declarations
-[0:00.324] Creating symbol resolver
-[0:00.328] Creating type definitions
-[0:00.339] Found 0 symbol resolution errors
-[0:00.339] Gathering function definitions
-[0:00.340] Found 428 functions
-[0:00.340] Checking semantics
-[0:00.340] Creating Reified Types
-[0:00.364] Found 117 types
-[0:00.365] Created a total of 1465 reified functions
-[0:00.365] Adding library functions to reified types
-[0:00.418] Grouping Reified functions by name for faster type resolution
-[0:00.422] Creating function analysis
-[0:00.430] Function AnalysisConcept functions
-Original function: Any_9:Concept.FieldNames(): Concept:Array<ConcreteType:String>;
+[0:00.003] Creating compiler
+[0:00.004] Opening files
+[0:00.520] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\intrinsics.plato at 2023-09-30 10:47:02 AM
+[0:00.520] Starting to parse 38 lines containing 1086 characters
+[0:00.520] Tokenization phase
+[0:00.529] Completed tokenization
+[0:00.532] Starting main parse
+[0:00.543] Completed parsing
+[0:00.543] Gathering parse errors
+[0:00.546] Found 0 errors
+[0:00.546] Gathering parse nodes
+[0:00.546] Found 782 nodes
+[0:00.546] Creating parse tree
+[0:00.550] Creating Concrete Syntax Tree (CST)
+[0:00.604] Creating Abstract Syntax Tree (AST)
+[0:00.686] Completed all steps, result is successful
+[0:00.814] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato at 2023-09-30 10:47:03 AM
+[0:00.814] Starting to parse 124 lines containing 2557 characters
+[0:00.814] Tokenization phase
+[0:00.820] Completed tokenization
+[0:00.820] Starting main parse
+[0:00.884] Completed parsing
+[0:00.884] Gathering parse errors
+[0:00.885] Found 0 errors
+[0:00.885] Gathering parse nodes
+[0:00.886] Found 1348 nodes
+[0:00.886] Creating parse tree
+[0:00.886] Creating Concrete Syntax Tree (CST)
+[0:00.889] Creating Abstract Syntax Tree (AST)
+[0:00.953] Completed all steps, result is successful
+[0:01.034] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\types.plato at 2023-09-30 10:47:03 AM
+[0:01.034] Starting to parse 872 lines containing 12978 characters
+[0:01.034] Tokenization phase
+[0:01.059] Completed tokenization
+[0:01.064] Starting main parse
+[0:01.086] Completed parsing
+[0:01.086] Gathering parse errors
+[0:01.086] Found 0 errors
+[0:01.086] Gathering parse nodes
+[0:01.086] Found 3800 nodes
+[0:01.086] Creating parse tree
+[0:01.088] Creating Concrete Syntax Tree (CST)
+[0:01.096] Creating Abstract Syntax Tree (AST)
+[0:01.116] Completed all steps, result is successful
+[0:01.217] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato at 2023-09-30 10:47:03 AM
+[0:01.217] Starting to parse 442 lines containing 11214 characters
+[0:01.217] Tokenization phase
+[0:01.248] Completed tokenization
+[0:01.249] Starting main parse
+[0:01.282] Completed parsing
+[0:01.282] Gathering parse errors
+[0:01.282] Found 0 errors
+[0:01.282] Gathering parse nodes
+[0:01.283] Found 6283 nodes
+[0:01.283] Creating parse tree
+[0:01.286] Creating Concrete Syntax Tree (CST)
+[0:01.296] Creating Abstract Syntax Tree (AST)
+[0:01.323] Completed all steps, result is successful
+[0:01.323] Applying syntax coloring
+[0:01.323] Completed syntax coloring
+[0:01.345] Initializing Compiler
+[0:01.346] Gathering parsers
+[0:01.346] Gathering AST trees
+[0:01.346] Gathering type declarations
+[0:01.368] Creating symbol resolver
+[0:01.372] Creating type definitions
+[0:01.389] Found 0 symbol resolution errors
+[0:01.389] Gathering function definitions
+[0:01.391] Found 428 functions
+[0:01.391] Checking semantics
+[0:01.391] Creating Reified Types
+[0:01.450] Found 117 types
+[0:01.450] Created a total of 1465 reified functions
+[0:01.450] Adding library functions to reified types
+[0:01.615] Grouping Reified functions by name for faster type resolution
+[0:01.624] Creating function analysis
+[0:01.672] Creating function analysesOriginal function: Any_9:Concept.FieldNames(): Concept:Array<ConcreteType:String>;
 New signature: Any_9:Concept.FieldNames(): $0
 Variables: $0
 Constraints:
@@ -113,6 +112,8 @@ Original function: Measure_21:Concept.Value(x: TypeVariable:Self): ConcreteType:
 New signature: Measure_21:Concept.Value(x: (Measure)): Number
 Variables: 
 Constraints:
+   $232 is callable with ((Measure))
+   $231 is callable with ($233,Integer)
 Original function: Numerical_24:Concept.Zero(): TypeVariable:Self;
 New signature: Numerical_24:Concept.Zero(): (Numerical)
 Variables: 
@@ -133,6 +134,10 @@ Original function: Magnitudinal_27:Concept.Magnitude(x: TypeVariable:Self): Conc
 New signature: Magnitudinal_27:Concept.Magnitude(x: (Magnitudinal)): Number
 Variables: 
 Constraints:
+   $238 is callable with ((Magnitudinal))
+   $237 is callable with ($239)
+   $236 is callable with ($240)
+   $235 is callable with ($241)
 Original function: Comparable_30:Concept.Compare(x: TypeVariable:Self): ConcreteType:Integer;
 New signature: Comparable_30:Concept.Compare(x: (Comparable)): Integer
 Variables: 
@@ -141,66 +146,106 @@ Original function: Equatable_33:Concept.Equals(a: TypeVariable:Self,b: TypeVaria
 New signature: Equatable_33:Concept.Equals(a: (Equatable), b: (Equatable)): Boolean
 Variables: 
 Constraints:
+   $245 is callable with ((Equatable))
+   $247 is callable with ((Equatable))
+   $244 is callable with ($246,$248)
+   $243 is callable with ($249)
 Original function: Arithmetic_36:Concept.Add(self: TypeVariable:Self,other: TypeVariable:Self): TypeVariable:Self;
 New signature: Arithmetic_36:Concept.Add(self: (Arithmetic), other: (Arithmetic)): (Arithmetic)
 Variables: 
 Constraints:
+   $252 is callable with ((Arithmetic))
+   $254 is callable with ((Arithmetic))
+   $251 is callable with ($253,$255)
 Original function: Arithmetic_36:Concept.Subtract(self: TypeVariable:Self,other: TypeVariable:Self): TypeVariable:Self;
 New signature: Arithmetic_36:Concept.Subtract(self: (Arithmetic), other: (Arithmetic)): (Arithmetic)
 Variables: 
 Constraints:
+   $258 is callable with ((Arithmetic))
+   $257 is callable with ((Arithmetic),$259)
 Original function: Arithmetic_36:Concept.Negative(self: TypeVariable:Self): TypeVariable:Self;
 New signature: Arithmetic_36:Concept.Negative(self: (Arithmetic)): (Arithmetic)
 Variables: 
 Constraints:
+   $262 is callable with ((Arithmetic))
+   $261 is callable with ($263)
 Original function: Arithmetic_36:Concept.Reciprocal(self: TypeVariable:Self): TypeVariable:Self;
 New signature: Arithmetic_36:Concept.Reciprocal(self: (Arithmetic)): (Arithmetic)
 Variables: 
 Constraints:
+   $266 is callable with ((Arithmetic))
+   $265 is callable with ($267)
 Original function: Arithmetic_36:Concept.Multiply(self: TypeVariable:Self,other: TypeVariable:Self): TypeVariable:Self;
 New signature: Arithmetic_36:Concept.Multiply(self: (Arithmetic), other: (Arithmetic)): (Arithmetic)
 Variables: 
 Constraints:
+   $270 is callable with ((Arithmetic))
+   $272 is callable with ((Arithmetic))
+   $269 is callable with ($271,$273)
 Original function: Arithmetic_36:Concept.Divide(self: TypeVariable:Self,other: TypeVariable:Self): TypeVariable:Self;
 New signature: Arithmetic_36:Concept.Divide(self: (Arithmetic), other: (Arithmetic)): (Arithmetic)
 Variables: 
 Constraints:
+   $276 is callable with ((Arithmetic))
+   $278 is callable with ((Arithmetic))
+   $275 is callable with ($277,$279)
 Original function: Arithmetic_36:Concept.Modulo(self: TypeVariable:Self,other: TypeVariable:Self): TypeVariable:Self;
 New signature: Arithmetic_36:Concept.Modulo(self: (Arithmetic), other: (Arithmetic)): (Arithmetic)
 Variables: 
 Constraints:
+   $282 is callable with ((Arithmetic))
+   $284 is callable with ((Arithmetic))
+   $281 is callable with ($283,$285)
 Original function: ScalarArithmetic_39:Concept.Add(self: TypeVariable:Self,scalar: ConcreteType:Number): TypeVariable:Self;
 New signature: ScalarArithmetic_39:Concept.Add(self: (ScalarArithmetic), scalar: Number): (ScalarArithmetic)
 Variables: 
 Constraints:
+   $288 is callable with ((ScalarArithmetic))
+   $287 is callable with ($289,Number)
 Original function: ScalarArithmetic_39:Concept.Subtract(self: TypeVariable:Self,scalar: ConcreteType:Number): TypeVariable:Self;
 New signature: ScalarArithmetic_39:Concept.Subtract(self: (ScalarArithmetic), scalar: Number): (ScalarArithmetic)
 Variables: 
 Constraints:
+   $292 is callable with (Number)
+   $291 is callable with ((ScalarArithmetic),$293)
 Original function: ScalarArithmetic_39:Concept.Multiply(self: TypeVariable:Self,scalar: ConcreteType:Number): TypeVariable:Self;
 New signature: ScalarArithmetic_39:Concept.Multiply(self: (ScalarArithmetic), scalar: Number): (ScalarArithmetic)
 Variables: 
 Constraints:
+   $296 is callable with ((ScalarArithmetic))
+   $295 is callable with ($297,Number)
 Original function: ScalarArithmetic_39:Concept.Divide(self: TypeVariable:Self,scalar: ConcreteType:Number): TypeVariable:Self;
 New signature: ScalarArithmetic_39:Concept.Divide(self: (ScalarArithmetic), scalar: Number): (ScalarArithmetic)
 Variables: 
 Constraints:
+   $300 is callable with (Number)
+   $299 is callable with ((ScalarArithmetic),$301)
 Original function: ScalarArithmetic_39:Concept.Modulo(self: TypeVariable:Self,scalar: ConcreteType:Number): TypeVariable:Self;
 New signature: ScalarArithmetic_39:Concept.Modulo(self: (ScalarArithmetic), scalar: Number): (ScalarArithmetic)
 Variables: 
 Constraints:
+   $304 is callable with ((ScalarArithmetic))
+   $303 is callable with ($305,Number)
 Original function: BooleanOperations_42:Concept.And(a: TypeVariable:Self,b: TypeVariable:Self): TypeVariable:Self;
 New signature: BooleanOperations_42:Concept.And(a: (BooleanOperations), b: (BooleanOperations)): (BooleanOperations)
 Variables: 
 Constraints:
+   $308 is callable with ((BooleanOperations))
+   $310 is callable with ((BooleanOperations))
+   $307 is callable with ($309,$311)
 Original function: BooleanOperations_42:Concept.Or(a: TypeVariable:Self,b: TypeVariable:Self): TypeVariable:Self;
 New signature: BooleanOperations_42:Concept.Or(a: (BooleanOperations), b: (BooleanOperations)): (BooleanOperations)
 Variables: 
 Constraints:
+   $314 is callable with ((BooleanOperations))
+   $316 is callable with ((BooleanOperations))
+   $313 is callable with ($315,$317)
 Original function: BooleanOperations_42:Concept.Not(a: TypeVariable:Self): TypeVariable:Self;
 New signature: BooleanOperations_42:Concept.Not(a: (BooleanOperations)): (BooleanOperations)
 Variables: 
 Constraints:
+   $320 is callable with ((BooleanOperations))
+   $319 is callable with ($321)
 Original function: Interval_45:Concept.Min(x: TypeVariable:Self): TypeVariable:T;
 New signature: Interval_45:Concept.Min(x: (Interval, $6)): $6
 Variables: $6
@@ -237,6 +282,8 @@ Constraints:
    $31 implements (Array, $32)
    $36 implements (Any)
    $35 implements (Array, $36)
+   $323 is callable with ($31)
+   Tuple is callable with ($324,(Function, Integer))
 Original function: Array_165:Library.Reverse(xs: Concept:Array): Concept:Array;
 New signature: Array_165:Library.Reverse(xs: $37): $39
 Variables: $37, $38, $39, $40
@@ -245,6 +292,8 @@ Constraints:
    $37 implements (Array, $38)
    $40 implements (Any)
    $39 implements (Array, $40)
+   $326 is callable with ($37)
+   Tuple is callable with ($327,(Function, Integer))
 Original function: Array_165:Library.Zip(xs: Concept:Array,ys: Concept:Array,f: Primitive:Function): Concept:Array;
 New signature: Array_165:Library.Zip(xs: $41, ys: $43, f: (Function, $45, $46, $47)): $48
 Variables: $41, $42, $43, $44, $45, $46, $47, $48, $49
@@ -255,6 +304,8 @@ Constraints:
    $43 implements (Array, $44)
    $49 implements (Any)
    $48 implements (Array, $49)
+   $329 is callable with ($41)
+   Tuple is callable with ($330,(Function, Integer))
 Original function: Array_165:Library.Zip(xs: Concept:Array,ys: Concept:Array,zs: Concept:Array,f: Primitive:Function): Concept:Array;
 New signature: Array_165:Library.Zip(xs: $50, ys: $52, zs: $54, f: (Function, $56, $57, $58, $59)): $60
 Variables: $50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $60, $61
@@ -267,6 +318,8 @@ Constraints:
    $54 implements (Array, $55)
    $61 implements (Any)
    $60 implements (Array, $61)
+   $332 is callable with ($50)
+   Tuple is callable with ($333,(Function, Integer))
 Original function: Array_165:Library.Skip(xs: Concept:Array,n: ConcreteType:Integer): Concept:Array;
 New signature: Array_165:Library.Skip(xs: $62, n: Integer): $64
 Variables: $62, $63, $64, $65
@@ -275,6 +328,8 @@ Constraints:
    $62 implements (Array, $63)
    $65 implements (Any)
    $64 implements (Array, $65)
+   $335 is callable with ($336,Integer)
+   Tuple is callable with ($337,(Function, Integer))
 Original function: Array_165:Library.Take(xs: Concept:Array,n: ConcreteType:Integer): Concept:Array;
 New signature: Array_165:Library.Take(xs: $66, n: Integer): $68
 Variables: $66, $67, $68, $69
@@ -283,6 +338,7 @@ Constraints:
    $66 implements (Array, $67)
    $69 implements (Any)
    $68 implements (Array, $69)
+   Tuple is callable with (Integer,(Function, Integer))
 Original function: Array_165:Library.Aggregate(xs: Concept:Array,init: Concept:Any,f: Primitive:Function): Concept:Any;
 New signature: Array_165:Library.Aggregate(xs: $70, init: $72, f: (Function, $73, $74, $75)): $76
 Variables: $70, $71, $72, $73, $74, $75, $76
@@ -291,6 +347,10 @@ Constraints:
    $70 implements (Array, $71)
    $72 implements (Any)
    $76 implements (Any)
+   $340 is callable with ($70)
+   $342 is callable with ($70)
+   (Function, $73, $74, $75) is callable with ($72,$343)
+   $341 casts to Boolean
 Original function: Array_165:Library.Rest(xs: Concept:Array): Concept:Array;
 New signature: Array_165:Library.Rest(xs: $77): $79
 Variables: $77, $78, $79, $80
@@ -299,12 +359,15 @@ Constraints:
    $77 implements (Array, $78)
    $80 implements (Any)
    $79 implements (Array, $80)
+   $345 is callable with ($77,Integer)
 Original function: Array_165:Library.IsEmpty(xs: Concept:Array): ConcreteType:Boolean;
 New signature: Array_165:Library.IsEmpty(xs: $81): Boolean
 Variables: $81, $82
 Constraints:
    $82 implements (Any)
    $81 implements (Array, $82)
+   $348 is callable with ($81)
+   $347 is callable with ($349,Integer)
 Original function: Array_165:Library.First(xs: Concept:Array): Concept:Any;
 New signature: Array_165:Library.First(xs: $83): $85
 Variables: $83, $84, $85
@@ -312,6 +375,7 @@ Constraints:
    $84 implements (Any)
    $83 implements (Array, $84)
    $85 implements (Any)
+   $351 is callable with ($83,Integer)
 Original function: Array_165:Library.Last(xs: Concept:Array): Concept:Any;
 New signature: Array_165:Library.Last(xs: $86): $88
 Variables: $86, $87, $88
@@ -319,6 +383,9 @@ Constraints:
    $87 implements (Any)
    $86 implements (Array, $87)
    $88 implements (Any)
+   $355 is callable with ($86)
+   $354 is callable with ($356,Integer)
+   $353 is callable with ($86,$357)
 Original function: Array_165:Library.Slice(xs: Concept:Array,from: ConcreteType:Integer,count: ConcreteType:Integer): Concept:Array;
 New signature: Array_165:Library.Slice(xs: $89, from: Integer, count: Integer): $91
 Variables: $89, $90, $91, $92
@@ -327,24 +394,42 @@ Constraints:
    $89 implements (Array, $90)
    $92 implements (Any)
    $91 implements (Array, $92)
+   $360 is callable with ($89,Integer)
+   $359 is callable with ($361,Integer)
 Original function: Array_165:Library.Join(xs: Concept:Array,sep: ConcreteType:String): ConcreteType:String;
 New signature: Array_165:Library.Join(xs: $93, sep: String): String
-Variables: $93, $94
+Variables: $93, $94, $373
 Constraints:
    $94 implements (Any)
    $93 implements (Array, $94)
+   $363 is callable with ($93)
+   $367 is callable with ($93)
+   $366 is callable with ($368)
+   $371 is callable with ($93)
+   $373 implements (Any)
+   $370 is callable with ($372,String,(Function, String, $373))
+   $365 is callable with ($369,$374)
+   $364 casts to Boolean
 Original function: Array_165:Library.All(xs: Concept:Array,f: Primitive:Function): ConcreteType:Boolean;
 New signature: Array_165:Library.All(xs: $95, f: (Function, $97, $98)): Boolean
 Variables: $95, $96, $97, $98
 Constraints:
    $96 implements (Any)
    $95 implements (Array, $96)
+   $376 is callable with ($95)
+   $379 is callable with ($95)
+   (Function, $97, $98) is callable with ($380)
+   $382 is callable with ($95)
+   (Function, $97, $98) is callable with ($383)
+   $378 is callable with ($381,$384)
+   $377 casts to Boolean
 Original function: Array_165:Library.All(xs: Concept:Array): ConcreteType:Boolean;
 New signature: Array_165:Library.All(xs: $99): Boolean
 Variables: $99, $100
 Constraints:
    $100 implements (Any)
    $99 implements (Array, $100)
+   $386 is callable with ($99,(Function, Boolean))
 Original function: Interval_168:Library.Size(x: Concept:Interval): Concept:Numerical;
 New signature: Interval_168:Library.Size(x: $101): $103
 Variables: $101, $102, $103
@@ -352,12 +437,18 @@ Constraints:
    $102 implements (Numerical)
    $101 implements (Interval, $102)
    $103 implements (Numerical)
+   $389 is callable with ($101)
+   $391 is callable with ($101)
+   $388 is callable with ($390,$392)
 Original function: Interval_168:Library.IsEmpty(x: Concept:Interval): ConcreteType:Boolean;
 New signature: Interval_168:Library.IsEmpty(x: $104): Boolean
 Variables: $104, $105
 Constraints:
    $105 implements (Numerical)
    $104 implements (Interval, $105)
+   $395 is callable with ($104)
+   $397 is callable with ($104)
+   $394 is callable with ($396,$398)
 Original function: Interval_168:Library.Lerp(x: Concept:Interval,amount: ConcreteType:Unit): Concept:Numerical;
 New signature: Interval_168:Library.Lerp(x: $106, amount: Unit): $108
 Variables: $106, $107, $108
@@ -365,6 +456,12 @@ Constraints:
    $107 implements (Numerical)
    $106 implements (Interval, $107)
    $108 implements (Numerical)
+   $401 is callable with ($106)
+   $404 is callable with (Number,Unit)
+   $407 is callable with ($106)
+   $406 is callable with ($408,Unit)
+   $403 is callable with ($405,$409)
+   $400 is callable with ($402,$410)
 Original function: Interval_168:Library.InverseLerp(x: Concept:Interval,value: Concept:Numerical): ConcreteType:Unit;
 New signature: Interval_168:Library.InverseLerp(x: $109, value: $111): Unit
 Variables: $109, $110, $111
@@ -372,6 +469,10 @@ Constraints:
    $110 implements (Numerical)
    $109 implements (Interval, $110)
    $111 implements (Numerical)
+   $414 is callable with ($109)
+   $413 is callable with ($111,$415)
+   $417 is callable with ($109)
+   $412 is callable with ($416,$418)
 Original function: Interval_168:Library.Negate(x: Concept:Interval): Concept:Interval;
 New signature: Interval_168:Library.Negate(x: $112): $114
 Variables: $112, $113, $114, $115
@@ -380,6 +481,11 @@ Constraints:
    $112 implements (Interval, $113)
    $115 implements (Numerical)
    $114 implements (Interval, $115)
+   $421 is callable with ($112)
+   $420 is callable with ($422)
+   $425 is callable with ($112)
+   $424 is callable with ($426)
+   Tuple is callable with ($423,$427)
 Original function: Interval_168:Library.Reverse(x: Concept:Interval): Concept:Interval;
 New signature: Interval_168:Library.Reverse(x: $116): $118
 Variables: $116, $117, $118, $119
@@ -388,6 +494,9 @@ Constraints:
    $116 implements (Interval, $117)
    $119 implements (Numerical)
    $118 implements (Interval, $119)
+   $429 is callable with ($116)
+   $431 is callable with ($116)
+   Tuple is callable with ($430,$432)
 Original function: Interval_168:Library.Center(x: Concept:Interval): Concept:Numerical;
 New signature: Interval_168:Library.Center(x: $120): $122
 Variables: $120, $121, $122
@@ -395,6 +504,7 @@ Constraints:
    $121 implements (Numerical)
    $120 implements (Interval, $121)
    $122 implements (Numerical)
+   $434 is callable with ($120,Number)
 Original function: Interval_168:Library.Contains(x: Concept:Interval,value: Concept:Numerical): ConcreteType:Boolean;
 New signature: Interval_168:Library.Contains(x: $123, value: $125): Boolean
 Variables: $123, $124, $125
@@ -402,6 +512,11 @@ Constraints:
    $124 implements (Numerical)
    $123 implements (Interval, $124)
    $125 implements (Numerical)
+   $437 is callable with ($123)
+   $441 is callable with ($123)
+   $440 is callable with ($125,$442)
+   $439 is callable with ($125,$443)
+   $436 is callable with ($438,$444)
 Original function: Interval_168:Library.Contains(x: Concept:Interval,other: Concept:Interval): ConcreteType:Boolean;
 New signature: Interval_168:Library.Contains(x: $126, other: $128): Boolean
 Variables: $126, $127, $128, $129
@@ -410,6 +525,12 @@ Constraints:
    $126 implements (Interval, $127)
    $129 implements (Numerical)
    $128 implements (Interval, $129)
+   $447 is callable with ($126)
+   $450 is callable with ($128)
+   $454 is callable with ($128)
+   $452 is callable with ($453,$455)
+   $449 is callable with ($451,$456)
+   $446 is callable with ($448,$457)
 Original function: Interval_168:Library.Overlaps(x: Concept:Interval,y: Concept:Interval): ConcreteType:Boolean;
 New signature: Interval_168:Library.Overlaps(x: $130, y: $132): Boolean
 Variables: $130, $131, $132, $133
@@ -418,18 +539,25 @@ Constraints:
    $130 implements (Interval, $131)
    $133 implements (Numerical)
    $132 implements (Interval, $133)
+   $461 is callable with ($130,$132)
+   $460 is callable with ($462)
+   $459 is callable with ($463)
 Original function: Interval_168:Library.Split(x: Concept:Interval,t: ConcreteType:Unit): Primitive:Tuple;
 New signature: Interval_168:Library.Split(x: $134, t: Unit): Tuple
 Variables: $134, $135
 Constraints:
    $135 implements (Numerical)
    $134 implements (Interval, $135)
+   $465 is callable with ($134,Unit)
+   $467 is callable with ($134,Unit)
+   Tuple is callable with ($466,$468)
 Original function: Interval_168:Library.Split(x: Concept:Interval): Primitive:Tuple;
 New signature: Interval_168:Library.Split(x: $136): Tuple
 Variables: $136, $137
 Constraints:
    $137 implements (Numerical)
    $136 implements (Interval, $137)
+   $470 is callable with ($136,Number)
 Original function: Interval_168:Library.Left(x: Concept:Interval,t: ConcreteType:Unit): Concept:Interval;
 New signature: Interval_168:Library.Left(x: $138, t: Unit): $140
 Variables: $138, $139, $140, $141
@@ -438,6 +566,9 @@ Constraints:
    $138 implements (Interval, $139)
    $141 implements (Numerical)
    $140 implements (Interval, $141)
+   $472 is callable with ($138)
+   $474 is callable with ($138,Unit)
+   Tuple is callable with ($473,$475)
 Original function: Interval_168:Library.Right(x: Concept:Interval,t: ConcreteType:Unit): Concept:Interval;
 New signature: Interval_168:Library.Right(x: $142, t: Unit): $144
 Variables: $142, $143, $144, $145
@@ -446,6 +577,9 @@ Constraints:
    $142 implements (Interval, $143)
    $145 implements (Numerical)
    $144 implements (Interval, $145)
+   $477 is callable with ($142,Unit)
+   $479 is callable with ($142)
+   Tuple is callable with ($478,$480)
 Original function: Interval_168:Library.MoveTo(x: Concept:Interval,v: Concept:Numerical): Concept:Interval;
 New signature: Interval_168:Library.MoveTo(x: $146, v: $148): $149
 Variables: $146, $147, $148, $149, $150
@@ -455,6 +589,9 @@ Constraints:
    $148 implements (Numerical)
    $150 implements (Numerical)
    $149 implements (Interval, $150)
+   $483 is callable with ($146)
+   $482 is callable with ($148,$484)
+   Tuple is callable with ($148,$485)
 Original function: Interval_168:Library.LeftHalf(x: Concept:Interval): Concept:Interval;
 New signature: Interval_168:Library.LeftHalf(x: $151): $153
 Variables: $151, $152, $153, $154
@@ -463,6 +600,7 @@ Constraints:
    $151 implements (Interval, $152)
    $154 implements (Numerical)
    $153 implements (Interval, $154)
+   $487 is callable with ($151,Number)
 Original function: Interval_168:Library.RightHalf(x: Concept:Interval): Concept:Interval;
 New signature: Interval_168:Library.RightHalf(x: $155): $157
 Variables: $155, $156, $157, $158
@@ -471,6 +609,7 @@ Constraints:
    $155 implements (Interval, $156)
    $158 implements (Numerical)
    $157 implements (Interval, $158)
+   $489 is callable with ($155,Number)
 Original function: Interval_168:Library.HalfSize(x: Concept:Interval): Concept:Numerical;
 New signature: Interval_168:Library.HalfSize(x: $159): $161
 Variables: $159, $160, $161
@@ -478,6 +617,8 @@ Constraints:
    $160 implements (Numerical)
    $159 implements (Interval, $160)
    $161 implements (Numerical)
+   $492 is callable with ($159)
+   $491 is callable with ($493)
 Original function: Interval_168:Library.Recenter(x: Concept:Interval,c: Concept:Numerical): Concept:Interval;
 New signature: Interval_168:Library.Recenter(x: $162, c: $164): $165
 Variables: $162, $163, $164, $165, $166
@@ -487,6 +628,11 @@ Constraints:
    $164 implements (Numerical)
    $166 implements (Numerical)
    $165 implements (Interval, $166)
+   $496 is callable with ($162)
+   $495 is callable with ($164,$497)
+   $500 is callable with ($162)
+   $499 is callable with ($164,$501)
+   Tuple is callable with ($498,$502)
 Original function: Interval_168:Library.Clamp(x: Concept:Interval,y: Concept:Interval): Concept:Interval;
 New signature: Interval_168:Library.Clamp(x: $167, y: $169): $171
 Variables: $167, $168, $169, $170, $171, $172
@@ -497,6 +643,11 @@ Constraints:
    $169 implements (Interval, $170)
    $172 implements (Numerical)
    $171 implements (Interval, $172)
+   $505 is callable with ($169)
+   $504 is callable with ($167,$506)
+   $509 is callable with ($169)
+   $508 is callable with ($167,$510)
+   Tuple is callable with ($507,$511)
 Original function: Interval_168:Library.Clamp(x: Concept:Interval,value: Concept:Numerical): Concept:Numerical;
 New signature: Interval_168:Library.Clamp(x: $173, value: $175): $176
 Variables: $173, $174, $175, $176
@@ -505,6 +656,14 @@ Constraints:
    $173 implements (Interval, $174)
    $175 implements (Numerical)
    $176 implements (Numerical)
+   $514 is callable with ($173)
+   $516 is callable with ($173)
+   $519 is callable with ($173)
+   $521 is callable with ($173)
+   $520 casts to Boolean
+   $518 is callable with ($175,$522)
+   $515 casts to Boolean
+   $513 is callable with ($175,$517)
 Original function: Interval_168:Library.Within(x: Concept:Interval,value: Concept:Numerical): ConcreteType:Boolean;
 New signature: Interval_168:Library.Within(x: $177, value: $179): Boolean
 Variables: $177, $178, $179
@@ -512,11 +671,18 @@ Constraints:
    $178 implements (Numerical)
    $177 implements (Interval, $178)
    $179 implements (Numerical)
+   $527 is callable with ($177)
+   $530 is callable with ($177)
+   $529 is callable with ($179,$531)
+   $526 is callable with ($528,$532)
+   $525 is callable with ($179,$533)
 Original function: Value_171:Library.ToString(x: Concept:Value): ConcreteType:String;
 New signature: Value_171:Library.ToString(x: $180): String
 Variables: $180
 Constraints:
    $180 implements (Value)
+   $536 is callable with ($180)
+   $535 is callable with ($537,String)
 Original function: Vector_174:Library.Sum(v: Concept:Array): Concept:Numerical;
 New signature: Vector_174:Library.Sum(v: $181): $183
 Variables: $181, $182, $183
@@ -524,24 +690,30 @@ Constraints:
    $182 implements (Any)
    $181 implements (Array, $182)
    $183 implements (Numerical)
+   $539 is callable with ($181,Integer,$540)
 Original function: Vector_174:Library.SumSquares(v: Concept:Array): ConcreteType:Number;
 New signature: Vector_174:Library.SumSquares(v: $184): Number
 Variables: $184, $185
 Constraints:
    $185 implements (Any)
    $184 implements (Array, $185)
+   $543 is callable with ($184)
+   $542 is callable with ($544)
 Original function: Vector_174:Library.LengthSquared(v: Concept:Array): ConcreteType:Number;
 New signature: Vector_174:Library.LengthSquared(v: $186): Number
 Variables: $186, $187
 Constraints:
    $187 implements (Any)
    $186 implements (Array, $187)
+   $546 is callable with ($186)
 Original function: Vector_174:Library.Length(v: Concept:Array): ConcreteType:Number;
 New signature: Vector_174:Library.Length(v: $188): Number
 Variables: $188, $189
 Constraints:
    $189 implements (Any)
    $188 implements (Array, $189)
+   $549 is callable with ($188)
+   $548 is callable with ($550)
 Original function: Vector_174:Library.Dot(v1: Concept:Vector,v2: Concept:Vector): ConcreteType:Number;
 New signature: Vector_174:Library.Dot(v1: $190, v2: $192): Number
 Variables: $190, $191, $192, $193
@@ -550,6 +722,8 @@ Constraints:
    $190 implements (Vector, $191)
    $193 implements (Numerical)
    $192 implements (Vector, $193)
+   $553 is callable with ($190,$192)
+   $552 is callable with ($554)
 Original function: Vector_174:Library.Normal(v: Concept:Vector): Concept:Vector;
 New signature: Vector_174:Library.Normal(v: $194): $196
 Variables: $194, $195, $196, $197
@@ -558,36 +732,48 @@ Constraints:
    $194 implements (Vector, $195)
    $197 implements (Numerical)
    $196 implements (Vector, $197)
+   $557 is callable with ($194)
+   $556 is callable with ($194,$558)
 Original function: Comparable_183:Library.Equals(a: Concept:Comparable,b: Concept:Comparable): ConcreteType:Boolean;
 New signature: Comparable_183:Library.Equals(a: $198, b: $199): Boolean
 Variables: $198, $199
 Constraints:
    $198 implements (Comparable)
    $199 implements (Comparable)
+   $712 is callable with ($198,$199)
+   $711 is callable with ($713,Integer)
 Original function: Comparable_183:Library.LessThan(a: Concept:Comparable,b: Concept:Comparable): ConcreteType:Boolean;
 New signature: Comparable_183:Library.LessThan(a: $200, b: $201): Boolean
 Variables: $200, $201
 Constraints:
    $200 implements (Comparable)
    $201 implements (Comparable)
+   $716 is callable with ($200,$201)
+   $715 is callable with ($717,Integer)
 Original function: Comparable_183:Library.LessThanOrEquals(a: Concept:Comparable,b: Concept:Comparable): ConcreteType:Boolean;
 New signature: Comparable_183:Library.LessThanOrEquals(a: $202, b: $203): Boolean
 Variables: $202, $203
 Constraints:
    $202 implements (Comparable)
    $203 implements (Comparable)
+   $720 is callable with ($202,$203)
+   $719 is callable with ($721,Integer)
 Original function: Comparable_183:Library.GreaterThan(a: Concept:Comparable,b: Concept:Comparable): ConcreteType:Boolean;
 New signature: Comparable_183:Library.GreaterThan(a: $204, b: $205): Boolean
 Variables: $204, $205
 Constraints:
    $204 implements (Comparable)
    $205 implements (Comparable)
+   $724 is callable with ($204,$205)
+   $723 is callable with ($725,Integer)
 Original function: Comparable_183:Library.GreaterThanOrEquals(a: Concept:Comparable,b: Concept:Comparable): ConcreteType:Boolean;
 New signature: Comparable_183:Library.GreaterThanOrEquals(a: $206, b: $207): Boolean
 Variables: $206, $207
 Constraints:
    $206 implements (Comparable)
    $207 implements (Comparable)
+   $728 is callable with ($206,$207)
+   $727 is callable with ($729,Integer)
 Original function: Comparable_183:Library.Between(v: Concept:Comparable,a: Concept:Comparable,b: Concept:Comparable): Concept:Value;
 New signature: Comparable_183:Library.Between(v: $208, a: $209, b: $210): $211
 Variables: $208, $209, $210, $211
@@ -596,6 +782,9 @@ Constraints:
    $209 implements (Comparable)
    $210 implements (Comparable)
    $211 implements (Value)
+   $733 is callable with ($208,$210)
+   $732 is callable with ($209,$734)
+   $731 is callable with ($208,$735)
 Original function: Comparable_183:Library.Between(v: Concept:Value,i: Concept:Interval): Concept:Interval;
 New signature: Comparable_183:Library.Between(v: $212, i: $213): $215
 Variables: $212, $213, $214, $215, $216
@@ -605,6 +794,7 @@ Constraints:
    $213 implements (Interval, $214)
    $216 implements (Numerical)
    $215 implements (Interval, $216)
+   $737 is callable with ($213,$212)
 Original function: Comparable_183:Library.Min(a: Concept:Comparable,b: Concept:Comparable): Concept:Comparable;
 New signature: Comparable_183:Library.Min(a: $217, b: $218): $219
 Variables: $217, $218, $219
@@ -612,6 +802,8 @@ Constraints:
    $217 implements (Comparable)
    $218 implements (Comparable)
    $219 implements (Comparable)
+   $218 casts to Boolean
+   $739 is callable with ($217,$217)
 Original function: Comparable_183:Library.Max(a: Concept:Comparable,b: Concept:Comparable): Concept:Comparable;
 New signature: Comparable_183:Library.Max(a: $220, b: $221): $222
 Variables: $220, $221, $222
@@ -619,19 +811,37 @@ Constraints:
    $220 implements (Comparable)
    $221 implements (Comparable)
    $222 implements (Comparable)
+   $221 casts to Boolean
+   $741 is callable with ($220,$220)
 Original function: Equatable_186:Library.NotEquals(x: Concept:Equatable,y: Concept:Equatable): ConcreteType:Boolean;
 New signature: Equatable_186:Library.NotEquals(x: $223, y: $224): Boolean
 Variables: $223, $224
 Constraints:
    $223 implements (Equatable)
    $224 implements (Equatable)
+   $744 is callable with ($223,$224)
+   $743 is callable with ($745)
 Original function: Easings_189:Library.BlendEaseFunc(p: ConcreteType:Number,easeIn: Primitive:Function,easeOut: Primitive:Function): ConcreteType:Number;
 New signature: Easings_189:Library.BlendEaseFunc(p: Number, easeIn: (Function, $225, $226), easeOut: (Function, $227, $228)): Number
 Variables: $225, $226, $227, $228
 Constraints:
+   $749 is callable with (Number,Integer)
+   (Function, $225, $226) is callable with ($750)
+   $748 is callable with (Number,$751)
+   $756 is callable with (Integer,Integer)
+   $755 is callable with (Number,$757)
+   (Function, $227, $228) is callable with ($758)
+   $754 is callable with ($759,Number)
+   $753 is callable with (Number,$760)
+   Number casts to Boolean
+   $747 is callable with (Number,$752)
 Original function: Easings_189:Library.InvertEaseFunc(p: ConcreteType:Number,easeIn: Primitive:Function): ConcreteType:Number;
 New signature: Easings_189:Library.InvertEaseFunc(p: Number, easeIn: (Function, $229, $230)): Number
 Variables: $229, $230
 Constraints:
+   $764 is callable with (Integer,Number)
+   (Function, $229, $230) is callable with ($765)
+   $763 is callable with (Integer,$766)
+Gathering constraints for each function
 
-[0:00.430] Outputting errors and warnings
+[0:01.672] Outputting errors and warnings
