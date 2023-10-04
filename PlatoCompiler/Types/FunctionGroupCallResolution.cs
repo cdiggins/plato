@@ -39,7 +39,7 @@ namespace Plato.Compiler.Types
 
         public IType BestReturnType()
         {
-            return DistinctReturnTypes[0];
+            return DistinctReturnTypes.FirstOrDefault();
         }
 
         public override string ToString()

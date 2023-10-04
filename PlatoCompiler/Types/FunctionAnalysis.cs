@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Plato.Compiler.Ast;
@@ -99,6 +100,8 @@ namespace Plato.Compiler.Types
 
             ReturnType = ToIType(Function.ReturnType);
             Parameters = new TypeList(pTypes);
+
+            Debug.Assert(Parameters.Children.Count == Function.Parameters.Count);
         }
 
         public TypeList ToTypeList(IType first, IEnumerable<IType> rest)
@@ -324,18 +327,27 @@ namespace Plato.Compiler.Types
         // Code for gathering constraints and compute constraints
 
         public bool IsProcessed { get; private set; }
+        public bool IsProcessing { get; private set; }
 
         public void Process()
         {
-            if (IsProcessed)
+            if (IsProcessed || IsProcessing)
                 return;
 
-            if (Function.Body != null)
+            try
             {
-                Process(Function.Body);
-            }
+                IsProcessing = true;
 
-            IsProcessed = true;
+                if (Function.Body != null)
+                {
+                    Process(Function.Body);
+                }
+            }
+            finally
+            {
+                IsProcessing = false;
+                IsProcessed = true;
+            }
         }
 
         /// <summary>

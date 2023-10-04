@@ -142,25 +142,28 @@ namespace Plato.Compiler
                 sb.Append("Creating function analyses");
                 FunctionAnalyses = FunctionDefinitions.ToDictionary(fd => fd, fd => new FunctionAnalysis(this, fd));
 
-                foreach (var fa in FunctionAnalyses.Values)
-                    fa.Process();
-
-                sb.AppendLine("Function group call resolutions");
-                foreach (var fgc in FunctionGroupCalls.Values)
-                {
-                    sb.AppendLine(fgc.ToString());
-                }
-
+                /*
                 foreach (var fa in FunctionAnalyses.Values.Where(f => f.IsConcept)) 
                     fa.BuildAnalysisOutput(sb);
                 
-                sb.AppendLine("Generic library functions");
+                sb.AppendLine("Generic library functions"); 
                 foreach (var fa in FunctionAnalyses.Values.Where(f => f.IsGenericLibraryFunction))
                     fa.BuildAnalysisOutput(sb);
+                */
 
                 sb.AppendLine("Gathering constraints for each function");
                 foreach (var fa in FunctionAnalyses.Values)
                     fa.Process();
+
+                sb.AppendLine("Function group call unresolved: no functions");
+                foreach (var fgc in FunctionGroupCalls.Values)
+                    if (fgc.DistinctReturnTypes.Count == 0)
+                        sb.AppendLine(fgc.ToString());
+
+                sb.AppendLine("Function group call unresolved: ambiguous");
+                foreach (var fgc in FunctionGroupCalls.Values)
+                    if (fgc.DistinctReturnTypes.Count > 1)
+                        sb.AppendLine(fgc.ToString());
 
                 Logger.Log(sb.ToString());                
 

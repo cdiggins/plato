@@ -50,7 +50,7 @@ concept Magnitudinal
 concept Comparable
     inherits Value
 {
-    Compare(x: Self): Integer;
+    Compare(x: Self, y: Self): Integer;
 }
 
 concept Equatable
