@@ -49,6 +49,9 @@ namespace Plato.Compiler
         public Dictionary<string, ReifiedType> ReifiedTypes { get; set; }
         public Dictionary<string, List<ReifiedFunction>> ReifiedFunctionsByName { get; set; }
 
+        public Dictionary<FunctionCall, FunctionGroupCallResolution> FunctionGroupCalls { get; } =
+            new Dictionary<FunctionCall, FunctionGroupCallResolution>();
+
         public List<string> SemanticErrors { get; } = new List<string>();
         public List<string> SemanticWarnings { get; } = new List<string>();
         public List<string> InternalErrors { get; } = new List<string>();
@@ -141,6 +144,12 @@ namespace Plato.Compiler
 
                 foreach (var fa in FunctionAnalyses.Values)
                     fa.Process();
+
+                sb.AppendLine("Function group call resolutions");
+                foreach (var fgc in FunctionGroupCalls.Values)
+                {
+                    sb.AppendLine(fgc.ToString());
+                }
 
                 foreach (var fa in FunctionAnalyses.Values.Where(f => f.IsConcept)) 
                     fa.BuildAnalysisOutput(sb);
@@ -364,6 +373,20 @@ namespace Plato.Compiler
         public TypeExpression GetTypeExpression(string name)
         {
             return GetTypeDefinition(name).ToTypeExpression();
+        }
+
+        public FunctionAnalysis GetProcessedFunctionAnalysis(FunctionDefinition fd)
+        {
+            var r = FunctionAnalyses[fd];
+            r.Process();
+            return r;
+        }
+
+        public IType ResolveFunctionGroup(FunctionAnalysis context, FunctionCall callSite, FunctionGroupReference fgr, List<IType> argTypes)
+        {
+            var tmp = new FunctionGroupCallResolution(callSite, context, fgr, argTypes);
+            FunctionGroupCalls.Add(callSite, tmp);
+            return tmp.BestReturnType();
         }
     }
 }

@@ -705,3 +705,74 @@ Can I infer reasonable types for every function?
 
 Every parameter is assigned an any type? And then it just works. 
 
+//==
+
+September 30th, 
+
+Some of the callable constraints are weird. 
+
+   (Function, $73, $74, $75) is callable with ($72,$343
+
+There needs to be more cast constraints. 
+In order to do that I would need to resolve
+functions and stuff. 
+
+There is a challenge, if anything can't 
+be resolved, almost nothing can be 
+resolvved 
+
+When it says: 
+   Tuple is callable with ($333,(Function, Integer))
+
+I want a type variable there.
+
+I think this is going to work ... soon. 
+
+//==
+
+October 2nd,
+
+* Do I need to resolve constraints first? 
+* Of course. 
+* It is all about that ultimately. 
+* There can be rules eventually to simplify, like saying once the first type  
+* Would it be easier if every constraint had a type variable? 
+* I could constraint things to an expression 
+* So resolving constraints: 
+	* you have a list of possibilities. 
+	* remove the impossible ones
+	* from ambiguous choices choose the "best"
+* Is there a case where choosing the best means another constraint is impossible? 
+	* I can't think of anything right now. 
+	* So I should assume the worst.
+* One rule of thumb is to find a solution that works, is simple, and is slow. 
+* I did want to separate out the choices ... so that I could determine what each 
+	function was from the groups, without looking at other things. 
+	Otherwise the logic becomes too complicated. 
+	I have N types, known, what is the function. 
+* The problem is that one of the input types might not be a known type, just a type
+	variable with a constraint. So what do I do then? I won't be able to resolve 
+	the function type until the type variable is resolved. 
+	With a type-variable we can usually determine a list of constraints though,
+	which come close to describing the type. 
+	This does confuse things a bit because there are two types of constraints. 
+	So we have known types, and we have type variables with implements constraints. 
+	Given that ... we should be able to resolve every function type.
+	Only one way to know. Experiment. 
+* So what does this experiment look like? 
+	* And by the way, shouldn't it just be a question: of all the types I can choose from 
+	does this work? 
+	* No not quite, we want to find the function that fits best. 
+	* A little ambiguity is okay. 
+* So find all constraints on a type-variable.
+* When calling a function we are going to get a number of possible functions. 
+	* Depending on which function is chosen, it creates a different set of constraints.
+	* So function calling, creates a constraint tree. 
+	* We want to at least narrow it down. 
+	* Once we get the result types 
+* Previously I had the idea of modeling the constraint tree directly. So what if it might get big?
+	* At least I can look at it, and debug it properly. 
+	* So we say "IConstraintSet", OneOf()
+
+//==
+

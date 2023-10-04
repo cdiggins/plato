@@ -289,6 +289,7 @@ namespace Plato.Compiler.Types
         public IType Unify(Expression expr1, Expression expr2)
         {
             // TODO: perform a proper unification.
+            // TODO: there are going to be some casts that are necessary. 
             return Process(expr1);
         }
 
@@ -425,7 +426,7 @@ namespace Plato.Compiler.Types
                 // TODO: get the analysis of reach function 
                 // If not started, go into it. 
                 // TODO: deal with recursive loop. 
-
+                Compiler.ResolveFunctionGroup(this, fc, fgr, argTypes);
             }
             else if (fc.Function is PredefinedReference pr)
             {
