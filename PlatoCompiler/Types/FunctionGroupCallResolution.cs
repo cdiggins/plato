@@ -42,9 +42,15 @@ namespace Plato.Compiler.Types
             return DistinctReturnTypes.FirstOrDefault();
         }
 
+        public string ArgString
+            => string.Join(", ", ArgTypes);
+
+        public string ReturnTypesString
+            => string.Join(", ", DistinctReturnTypes);
+
         public override string ToString()
         {
-            return $"{Callsite} has {DistinctReturnTypes.Count} possible return types {string.Join(", ", DistinctReturnTypes)}";
+            return $"{Callsite} with ({ArgString}) has {DistinctReturnTypes.Count} possible return types {ReturnTypesString}";
         }
     }
 }
