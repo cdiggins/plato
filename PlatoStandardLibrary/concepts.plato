@@ -1,4 +1,4 @@
-concept Any
+    Any
 { 
     FieldNames(): Array<String>;     
     FieldValues(x: Self): Array<Any>;

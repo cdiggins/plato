@@ -782,3 +782,76 @@ October 2nd,
 * Now facing lots of ambiguity. 
 * I want to remove the ambiguity.
 * I could address the fact 
+
+//==
+
+Negative(self) with ((Arithmetic)) has 3 possible return types Number, Integer, (Arithmetic)
+
+Max(x) with ($101) has 2 possible return types $7, DateTime
+
+concept Interval<T: Numerical>
+    inherits Vector<T>
+{
+    Min(x: Self): T;
+    Max(x: Self): T;
+}
+
+Actually, this is a problem: the whole (Min/Max) interval thing isn't particular well thought out. 
+Sometimes I have an A/B, sometimes Min/Max. 
+
+The thing about concept functions, is that they always have a concrete type when executed. 
+However, they might occur within a function that uses a concept type as a parameter. 
+
+Right now the other problem is $7, has an unclear meaning. What it means is that the type passed in has to be of
+form A<B> and $7 is the B. 
+
+So I need the Min(x: Self) to become: Min(A<B>) => B. 
+
+In other words every function need to become a type generator function. 
+
+//==
+
+Steps: rewrite the "Self" types in functions to become the concept itself. But ... that isn't one hundred percent accurate. 
+Becoming a type variable with a constraint: $6 :: Interval<$7> might make more sense. 
+
+Remember there seems to be a separate meaning of constraint. In the sense of what a type variable must implement. 
+
+An "implements" constraint. 
+
+Given the list of type-variables and stuff, it should be enought to determine the type. 
+
+//==
+
+IMPORTANT:
+
+* I need to solve the problem of giving a function, determine what its return type is given its inputs. 
+This is non-trivial, but it is possible. It is different from everything else. 
+
+* Next: what is the best fit function.
+
+* I believe that this involves unifying complex functions. 
+
+//==
+
+* I have observed that whatever you pass as the first type of an "Add" function, is going to be the output type. 
+* How can I determine that in a consistent way? 
+* There is a most general definition of the function ... 
+
+For every function I can try to figure out the list of possibilities that are of the same type. 
+
+Is there going to be a "most general"? Not necessarily. It would be the one that is lowest on the poll. 
+
+So let's say we have four possibilities. 
+
+Add(self, Negative(self)) with ((Arithmetic), $320) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
+
+We know it is going to be (Arithmetic)
+
+So Arithmetic and ScalarArithmetic are both valid options. Number supports both Arithmetic and ScalarArithmetic. 
+
+If passing a concept you choose first the ones that are the best fit. Closest
+
+//==
+
+I think Type variables need to have constraints stored in them: what. 
+

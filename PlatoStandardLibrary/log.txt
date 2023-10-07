@@ -1,80 +1,80 @@
-[0:00.002] Creating compiler
-[0:00.002] Opening files
-[0:00.120] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\intrinsics.plato at 2023-10-04 9:47:21 PM
-[0:00.120] Starting to parse 38 lines containing 1086 characters
-[0:00.120] Tokenization phase
-[0:00.122] Completed tokenization
-[0:00.123] Starting main parse
-[0:00.125] Completed parsing
-[0:00.125] Gathering parse errors
-[0:00.125] Found 0 errors
-[0:00.125] Gathering parse nodes
-[0:00.125] Found 782 nodes
-[0:00.125] Creating parse tree
-[0:00.126] Creating Concrete Syntax Tree (CST)
-[0:00.132] Creating Abstract Syntax Tree (AST)
-[0:00.139] Completed all steps, result is successful
-[0:00.161] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato at 2023-10-04 9:47:21 PM
-[0:00.161] Starting to parse 124 lines containing 2566 characters
-[0:00.161] Tokenization phase
-[0:00.162] Completed tokenization
-[0:00.162] Starting main parse
-[0:00.172] Completed parsing
-[0:00.172] Gathering parse errors
-[0:00.172] Found 0 errors
-[0:00.172] Gathering parse nodes
-[0:00.172] Found 1358 nodes
-[0:00.172] Creating parse tree
-[0:00.172] Creating Concrete Syntax Tree (CST)
-[0:00.173] Creating Abstract Syntax Tree (AST)
-[0:00.181] Completed all steps, result is successful
-[0:00.196] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\types.plato at 2023-10-04 9:47:21 PM
-[0:00.196] Starting to parse 872 lines containing 12978 characters
-[0:00.196] Tokenization phase
-[0:00.201] Completed tokenization
-[0:00.201] Starting main parse
-[0:00.205] Completed parsing
-[0:00.205] Gathering parse errors
-[0:00.205] Found 0 errors
-[0:00.205] Gathering parse nodes
-[0:00.205] Found 3800 nodes
-[0:00.205] Creating parse tree
-[0:00.205] Creating Concrete Syntax Tree (CST)
-[0:00.207] Creating Abstract Syntax Tree (AST)
-[0:00.209] Completed all steps, result is successful
-[0:00.229] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato at 2023-10-04 9:47:21 PM
-[0:00.229] Starting to parse 442 lines containing 11214 characters
-[0:00.229] Tokenization phase
-[0:00.236] Completed tokenization
-[0:00.236] Starting main parse
-[0:00.244] Completed parsing
-[0:00.244] Gathering parse errors
-[0:00.244] Found 0 errors
-[0:00.244] Gathering parse nodes
-[0:00.244] Found 6283 nodes
-[0:00.244] Creating parse tree
-[0:00.245] Creating Concrete Syntax Tree (CST)
-[0:00.248] Creating Abstract Syntax Tree (AST)
-[0:00.253] Completed all steps, result is successful
-[0:00.253] Applying syntax coloring
-[0:00.253] Completed syntax coloring
-[0:00.264] Initializing Compiler
-[0:00.264] Gathering parsers
-[0:00.264] Gathering AST trees
-[0:00.264] Gathering type declarations
-[0:00.271] Creating symbol resolver
-[0:00.272] Creating type definitions
-[0:00.280] Found 0 symbol resolution errors
-[0:00.281] Gathering function definitions
-[0:00.281] Found 428 functions
-[0:00.281] Checking semantics
-[0:00.281] Creating Reified Types
-[0:00.297] Found 117 types
-[0:00.297] Created a total of 1465 reified functions
-[0:00.297] Adding library functions to reified types
-[0:00.339] Grouping Reified functions by name for faster type resolution
-[0:00.342] Creating function analysis
-[0:00.355] Creating function analysesGathering constraints for each function
+[0:00.000] Creating compiler
+[0:00.000] Opening files
+[0:00.130] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\intrinsics.plato at 2023-10-06 8:31:24 PM
+[0:00.130] Starting to parse 38 lines containing 1086 characters
+[0:00.130] Tokenization phase
+[0:00.132] Completed tokenization
+[0:00.133] Starting main parse
+[0:00.135] Completed parsing
+[0:00.135] Gathering parse errors
+[0:00.135] Found 0 errors
+[0:00.135] Gathering parse nodes
+[0:00.135] Found 782 nodes
+[0:00.135] Creating parse tree
+[0:00.136] Creating Concrete Syntax Tree (CST)
+[0:00.142] Creating Abstract Syntax Tree (AST)
+[0:00.149] Completed all steps, result is successful
+[0:00.168] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato at 2023-10-06 8:31:24 PM
+[0:00.168] Starting to parse 124 lines containing 2566 characters
+[0:00.168] Tokenization phase
+[0:00.170] Completed tokenization
+[0:00.170] Starting main parse
+[0:00.182] Completed parsing
+[0:00.182] Gathering parse errors
+[0:00.182] Found 0 errors
+[0:00.182] Gathering parse nodes
+[0:00.182] Found 1358 nodes
+[0:00.182] Creating parse tree
+[0:00.182] Creating Concrete Syntax Tree (CST)
+[0:00.183] Creating Abstract Syntax Tree (AST)
+[0:00.192] Completed all steps, result is successful
+[0:00.224] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\types.plato at 2023-10-06 8:31:24 PM
+[0:00.224] Starting to parse 872 lines containing 12978 characters
+[0:00.224] Tokenization phase
+[0:00.230] Completed tokenization
+[0:00.230] Starting main parse
+[0:00.235] Completed parsing
+[0:00.235] Gathering parse errors
+[0:00.235] Found 0 errors
+[0:00.235] Gathering parse nodes
+[0:00.235] Found 3800 nodes
+[0:00.235] Creating parse tree
+[0:00.235] Creating Concrete Syntax Tree (CST)
+[0:00.237] Creating Abstract Syntax Tree (AST)
+[0:00.239] Completed all steps, result is successful
+[0:00.277] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato at 2023-10-06 8:31:24 PM
+[0:00.277] Starting to parse 442 lines containing 11214 characters
+[0:00.277] Tokenization phase
+[0:00.285] Completed tokenization
+[0:00.285] Starting main parse
+[0:00.293] Completed parsing
+[0:00.293] Gathering parse errors
+[0:00.293] Found 0 errors
+[0:00.293] Gathering parse nodes
+[0:00.293] Found 6283 nodes
+[0:00.293] Creating parse tree
+[0:00.294] Creating Concrete Syntax Tree (CST)
+[0:00.297] Creating Abstract Syntax Tree (AST)
+[0:00.303] Completed all steps, result is successful
+[0:00.303] Applying syntax coloring
+[0:00.303] Completed syntax coloring
+[0:00.460] Initializing Compiler
+[0:00.460] Gathering parsers
+[0:00.460] Gathering AST trees
+[0:00.461] Gathering type declarations
+[0:00.468] Creating symbol resolver
+[0:00.470] Creating type definitions
+[0:00.479] Found 0 symbol resolution errors
+[0:00.479] Gathering function definitions
+[0:00.480] Found 428 functions
+[0:00.480] Checking semantics
+[0:00.480] Creating Reified Types
+[0:00.497] Found 117 types
+[0:00.498] Created a total of 1465 reified functions
+[0:00.498] Adding library functions to reified types
+[0:00.544] Grouping Reified functions by name for faster type resolution
+[0:00.547] Creating function analysis
+[0:00.558] Creating function analysesGathering constraints for each function
 Function group call unresolved: no functions
 One(x) with (Number) has 0 possible return types 
 One(x) with (Number) has 0 possible return types 
@@ -244,4 +244,4 @@ Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25))))) with ($948
 Multiply(5, Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25)))))) with (Number, $957) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
 Divide(54, Multiply(5, Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25))))))) with (Number, $958) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
 
-[0:00.355] Outputting errors and warnings
+[0:00.558] Outputting errors and warnings
