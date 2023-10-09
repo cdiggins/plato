@@ -106,7 +106,7 @@ namespace Plato.Compiler.Types
                 AddImplementsConstraint(a, b.Definition);
             }
 
-            if (b.Definition.IsConcreteType())
+            if (b.Definition.IsConcrete())
             {
                 AddCastConstraint(a, b.Definition);
             }

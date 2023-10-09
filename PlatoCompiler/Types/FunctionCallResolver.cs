@@ -157,9 +157,9 @@ namespace Plato.Compiler.Types
 
             // Are we passing to a concrete type? 
             // Always prefer to successfully pass to a concrete type 
-            if (pt.Definition.IsConcreteType())
+            if (pt.Definition.IsConcrete())
             {
-                if (at.Definition.IsConcreteType())
+                if (at.Definition.IsConcrete())
                 {
                     if (at.Definition.Equals(pt.Definition))
                         return 1;
@@ -194,7 +194,7 @@ namespace Plato.Compiler.Types
 
             if (pt.Definition.IsConcept())
             {
-                if (at.Definition.IsConcreteType())
+                if (at.Definition.IsConcrete())
                 {
                     // The passed concrete type implements the expected concept
                     if (at.Definition.Implements(pt.Definition))

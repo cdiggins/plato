@@ -1,14 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Plato.Compiler.Ast;
 using Plato.Compiler.Symbols;
+using Ptarmigan.Utils;
 
 namespace Plato.Compiler.Types
 {
     public static class TypeDefinitionExtensions
     {
+        public static bool IsFullyImplementedConcept(TypeDefinition ts)
+            => ts.IsConcept() && ts.Functions.All(f => f.HasImplementation());
+
+        public static bool IsConcept(this TypeDefinition ts)
+            => ts.Kind == TypeKind.Concept;
+
+        public static bool IsConcrete(this TypeDefinition ts)
+            => ts.Kind == TypeKind.ConcreteType;
+
+        public static bool IsPrimitive(this TypeDefinition ts)
+            => ts.Kind == TypeKind.Primitive;
+
+        public static bool IsLibrary(this TypeDefinition ts)
+            => ts.Kind == TypeKind.Library;
+
+        public static bool IsTypeVariable(this TypeDefinition ts)
+            => ts.Kind == TypeKind.TypeVariable;
+
+        public static int InheritsDepth(this TypeDefinition self, TypeDefinition other)
+        {
+            if (self.Equals(other))
+                return 0;
+            var r = self.Inherits
+                .MinWhere(x => x.Definition?.InheritsDepth(other) ?? -1,
+                x => x >= 0, -1);
+            if (r >= 0)
+                return r + 1;
+            return -1;
+        }
+
+        public static int ImplementsDepth(this TypeDefinition self, TypeDefinition other)
+        {
+            return self.Implements
+                .MinWhere(x => x.Definition?.InheritsDepth(other) ?? -1,
+                    x => x >= 0, -1);
+        }
+
         public static bool InheritsFrom(this TypeDefinition self, TypeDefinition other)
-            => self.IsConcept() && other.IsConcept() && self.GetSelfAndAllInheritedTypes().Contains(other);
+            => self.InheritsDepth(other) >= 0;
 
         public static bool Implements(this TypeDefinition self, TypeDefinition other)
             => other.IsConcept() && self.GetAllImplementedConcepts().Select(c => c.Definition).Contains(other);
@@ -60,13 +99,13 @@ namespace Plato.Compiler.Types
                 return a;
 
             // If one type is a concept, and the other is a regular type, then choose the type. 
-            if (a.IsConcreteType() && b.IsConcept())
+            if (a.IsConcrete() && b.IsConcept())
                 return a;
 
-            if (a.IsConcept() && a.IsConcreteType())
+            if (a.IsConcept() && a.IsConcrete())
                 return a;
 
-            if (a.IsConcreteType() && b.IsConcreteType())
+            if (a.IsConcrete() && b.IsConcrete())
             {
                 var aConcepts = a.Implements.Select(i => i.Definition);
                 var bConcepts = b.Implements.Select(i => i.Definition);

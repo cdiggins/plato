@@ -2,11 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using Plato.Compiler.Symbols;
+using Ptarmigan.Utils;
 
 namespace Plato.Compiler.Types
 {
+    /// <summary>
+    /// TODO: I may need to update this so that it tells us more about the process.
+    /// And it might be useful to tell us about the kinds of casts that are required,
+    /// or the constraints that are created. For example: when passing a type-variable
+    /// to a concrete type. 
+    /// </summary>
     public class FunctionGroupCallResolution
     {
+        public const int CantPassGenericToConcreteFit = -6;
+        public const int DoesntImplementConceptFit = -5;
+        public const int MismatchedTypeFit = -4;
+        public const int CantPassConceptToConcreteFit = -3;
+        public const int DoesntMatchDeclaredConstraintFit = -2;
+        public const int NoFit = -1;
+        public const int PerfectFit = 0;
+        public const int GenericFit = 999; 
+        public const int AlmostNotAFit = 9999;
+
         public FunctionAnalysis Context { get; }
         public FunctionCall Callsite { get; }
         public FunctionGroupReference Reference { get; }
@@ -24,93 +41,131 @@ namespace Plato.Compiler.Types
                 .Select(Context.Compiler.GetProcessedFunctionAnalysis)
                 .Where(fa => CanCall(fa, ArgTypes))
                 .ToList();
+
+            // Find the best fit. 
+            if (CallableFunctions.Count > 0 && argTypes.Count > 0)
+            {
+                var arg0 = argTypes[0];
+                var groups = CallableFunctions.GroupBy(cf => ArgumentFit(arg0, cf.Parameters[0]));
+                var group0 = groups.First().ToList();
+                CallableFunctions = group0;
+            }
+
             DistinctReturnTypes = CallableFunctions
                 .Select(fa => fa.ReturnType)
                 .Distinct()
                 .ToList();
         }
 
-        public bool IsConcept(IType type)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsConcreteType(IType type) { throw new NotImplementedException(); }
-
-        public int InheritanceDepth(IType type, IType typeBase)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int ImplementsDepth(IType type, IType concept)
-        {
-            throw new NotImplementedException();
-        }
-
         /// <summary>
-        /// 0 is a perfect fit, below 0 is a non-fit, above 0 is an increasingly bad fit. 
+        /// below 0 is a non-fit, 0 is a perfect fit, above 0 is an increasingly bad fit. 
         /// </summary>
         public int ArgumentFit(IType typeArgument, IType typeParameter)
         {
-            if (typeArgument.Equals(typeParameter))
-                return 0;
+            if (typeArgument == null)
+                return NoFit; 
 
-            if (IsConcept(typeArgument))
+            if (typeArgument.Equals(typeParameter))
+                return PerfectFit;
+
+            if (typeParameter is TypeVariable tv)
             {
-                if (IsConcept(typeParameter))
+                if (typeArgument.IsConcrete())
                 {
-                    return InheritanceDepth(typeArgument, typeParameter);
+                    // Check that the type argument implements all of the constraints of the type variable
+                    foreach (var dc in tv.DeclaredConstraints)
+                    {
+                        if (!typeArgument.Implements(dc))
+                            return DoesntMatchDeclaredConstraintFit;
+                    }
+                    
+                    // All of the declared constraints are satisfied.
+                    // So we are a match, but anything else would match better 
+                    return GenericFit;
                 }
 
-                if (IsConcreteType(typeParameter))
+                if (typeArgument.IsConcept())
+                {
+                    // Check that the type argument inherits all of the constraints of the type variable
+                    foreach (var dc in tv.DeclaredConstraints)
+                    {
+                        if (!typeArgument.Inherits(dc))
+                            return DoesntMatchDeclaredConstraintFit;
+                    }
+
+                    // All of the declared constraints are satisfied.
+                    // So we are a match, but anything else would match better 
+                    return GenericFit;
+                }
+
+                if (typeArgument is TypeVariable tv2)
+                {
+                    foreach (var dc in tv.DeclaredConstraints)
+                        if (!tv2.DeclaredConstraints.Any(dc2 => dc2.Inherits(dc)))
+                            return DoesntMatchDeclaredConstraintFit;
+
+                    return GenericFit;
+                }
+
+                throw new InvalidOperationException("Should not be reachable");
+            }
+
+            if (typeParameter.IsConcept())
+            {
+                if (typeArgument.IsConcept())
+                {
+                    var r = typeArgument.InheritsDepth(typeParameter);
+                    return r >= 0 ? r : DoesntImplementConceptFit;
+                }
+
+                if (typeArgument.IsConcrete())
+                {
+                    var r = typeArgument.ImplementsDepth(typeParameter);
+                    return r >= 0 ? r : DoesntImplementConceptFit;
+                }
+
+                if (typeArgument is TypeVariable tv2)
+                {
+                    return tv2.DeclaredConstraints.MinWhere(dc => dc.ImplementsDepth(typeParameter), i => i >= 0, DoesntImplementConceptFit);
+                }
+
+                throw new InvalidOperationException("Should not be reachable");
+            }
+
+            if (typeParameter.IsConcrete())
+            {
+                if (typeArgument.IsConcept())
                 {
                     // Cannot pass a concept to a concrete type 
-                    return -1;
+                    return CantPassConceptToConcreteFit;
                 }
 
-                // TODO: could be a type-variable 
+                if (typeParameter.IsConcrete())
+                {
+                    // Already verified above that this is not true
+                    return MismatchedTypeFit;
+                }
 
-                throw new Exception("Neither concrete not interface");
+                // TODO: this should generate a constraint, or not be allowed. 
+                if (typeArgument is TypeVariable tv2)
+                {
+                    return AlmostNotAFit;
+                }
+
+                throw new InvalidOperationException("Should not be reachable");
             }
 
-            if (IsConcreteType(typeArgument))
-            {
-                if (IsConcept(typeParameter))
-                {
-                    return ImplementsDepth(typeArgument, typeParameter);
-                }
-
-                if (IsConcreteType(typeParameter))
-                {
-                    // Concrete types are different 
-                    // TODO: log this
-                    return -1;
-                }
-
-                // TODO: could be a type-variable 
-
-                throw new Exception("Neither concrete not interface");
-            }
-
-            // TODO: could be a type 
-
-            // Really don't know 
-            return 9999;
+            throw new InvalidOperationException("Should not be reachable");
         }
 
-        
         public bool CanCall(FunctionAnalysis fa, IReadOnlyList<IType> argTypes)
         {
-            if (fa.Parameters.Children.Count != argTypes.Count)
-                return false;
-            // TODO: check if the arguments satisfy the necessary constraints etc. 
-            return true;
+            return fa.Parameters.Count == argTypes.Count;
         }
 
         public IType BestReturnType()
-        {
-            return DistinctReturnTypes.FirstOrDefault();
-        }
+            => DistinctReturnTypes.FirstOrDefault();
+        
 
         public string ArgString
             => string.Join(", ", ArgTypes);

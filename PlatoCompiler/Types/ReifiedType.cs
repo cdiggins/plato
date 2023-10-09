@@ -16,7 +16,7 @@ namespace Plato.Compiler.Types
         public ReifiedType(TypeDefinition type)
         {
             Verifier.AssertNotNull(type, nameof(type));
-            Verifier.Assert(type.IsConcreteType(), "Is concrete type");
+            Verifier.Assert(type.IsConcrete(), "Is concrete type");
             Type = type;
 
             // Add functions generated from field
@@ -97,7 +97,7 @@ namespace Plato.Compiler.Types
         {
             Verifier.Assert(functionDefinition.Parameters.Count > 0);
             var pt = functionDefinition.Parameters[0].Type;
-            Verifier.Assert(pt.Definition.IsConcreteType());
+            Verifier.Assert(pt.Definition.IsConcrete());
             Verifier.Assert(library.IsLibrary());
 
             var r = CreateFunction(library, functionDefinition, x => x);
@@ -118,7 +118,7 @@ namespace Plato.Compiler.Types
         {
             Verifier.AssertNotNull(tds, "Type definition");
             Verifier.Assert(tds, d => !(d is TypeParameterDefinition), "Not is type parameter definition");
-            Verifier.Assert(tds, d => d.IsConcreteType(), "Is concrete type");
+            Verifier.Assert(tds, d => d.IsConcrete(), "Is concrete type");
         }
 
         public static TypeExpression Replace(this TypeExpression self,

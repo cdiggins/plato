@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using Plato.Compiler.Ast;
+using Plato.Compiler.Types;
 
 namespace Plato.Compiler.Symbols
 {
@@ -142,7 +143,7 @@ namespace Plato.Compiler.Symbols
 
         public SymbolWriterCSharp WriteConstructor(TypeDefinition t)
         {
-            if (!t.IsConcreteType()) throw new NotSupportedException();
+            if (!t.IsConcrete()) throw new NotSupportedException();
             var name = t.Name;
             var fieldTypes = t.Fields.Select(f => GetTypeName(f.Type, t)).ToList();
             var fieldNames = t.Fields.Select(f => $"{f.Name}").ToList();
@@ -282,7 +283,7 @@ namespace Plato.Compiler.Symbols
                 return this;
             }
 
-            if (type.IsConcreteType())
+            if (type.IsConcrete())
             {
                 var implements = type.Implements.Count > 0
                     ? ": " + string.Join(", ", type.Implements.Select(td => $"{td?.Name}<{type.Name}>"))

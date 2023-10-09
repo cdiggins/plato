@@ -120,7 +120,7 @@ namespace Plato.Compiler
                 CheckSemantics();
 
                 Log("Creating Reified Types");
-                ReifiedTypes = TypeDefinitionsByName.Values.Where(td => td.IsConcreteType())
+                ReifiedTypes = TypeDefinitionsByName.Values.Where(td => td.IsConcrete())
                     .ToDictionary(td => td.Name, td => new ReifiedType(td));
 
                 Log($"Found {ReifiedTypes.Count} types");
@@ -217,7 +217,7 @@ namespace Plato.Compiler
 
                     Verifier.AssertNotNull(firstParamType, $"First parameter type of {f}");
 
-                    if (firstParamType.IsConcreteType())
+                    if (firstParamType.IsConcrete())
                     {
                         var rt = ReifiedTypes[firstParamType.Name];
 
@@ -387,6 +387,8 @@ namespace Plato.Compiler
 
         public IType ResolveFunctionGroup(FunctionAnalysis context, FunctionCall callSite, FunctionGroupReference fgr, List<IType> argTypes)
         {
+            if (FunctionGroupCalls.ContainsKey(callSite))
+                return FunctionGroupCalls[callSite].BestReturnType();
             var tmp = new FunctionGroupCallResolution(callSite, context, fgr, argTypes);
             FunctionGroupCalls.Add(callSite, tmp);
             return tmp.BestReturnType();

@@ -1,80 +1,80 @@
-[0:00.000] Creating compiler
-[0:00.000] Opening files
-[0:00.130] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\intrinsics.plato at 2023-10-06 8:31:24 PM
-[0:00.130] Starting to parse 38 lines containing 1086 characters
-[0:00.130] Tokenization phase
-[0:00.132] Completed tokenization
-[0:00.133] Starting main parse
-[0:00.135] Completed parsing
-[0:00.135] Gathering parse errors
-[0:00.135] Found 0 errors
-[0:00.135] Gathering parse nodes
-[0:00.135] Found 782 nodes
-[0:00.135] Creating parse tree
-[0:00.136] Creating Concrete Syntax Tree (CST)
-[0:00.142] Creating Abstract Syntax Tree (AST)
-[0:00.149] Completed all steps, result is successful
-[0:00.168] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato at 2023-10-06 8:31:24 PM
-[0:00.168] Starting to parse 124 lines containing 2566 characters
-[0:00.168] Tokenization phase
-[0:00.170] Completed tokenization
-[0:00.170] Starting main parse
-[0:00.182] Completed parsing
-[0:00.182] Gathering parse errors
-[0:00.182] Found 0 errors
-[0:00.182] Gathering parse nodes
-[0:00.182] Found 1358 nodes
-[0:00.182] Creating parse tree
-[0:00.182] Creating Concrete Syntax Tree (CST)
-[0:00.183] Creating Abstract Syntax Tree (AST)
-[0:00.192] Completed all steps, result is successful
-[0:00.224] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\types.plato at 2023-10-06 8:31:24 PM
-[0:00.224] Starting to parse 872 lines containing 12978 characters
-[0:00.224] Tokenization phase
-[0:00.230] Completed tokenization
-[0:00.230] Starting main parse
-[0:00.235] Completed parsing
-[0:00.235] Gathering parse errors
-[0:00.235] Found 0 errors
-[0:00.235] Gathering parse nodes
-[0:00.235] Found 3800 nodes
-[0:00.235] Creating parse tree
-[0:00.235] Creating Concrete Syntax Tree (CST)
-[0:00.237] Creating Abstract Syntax Tree (AST)
-[0:00.239] Completed all steps, result is successful
-[0:00.277] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato at 2023-10-06 8:31:24 PM
-[0:00.277] Starting to parse 442 lines containing 11214 characters
-[0:00.277] Tokenization phase
-[0:00.285] Completed tokenization
-[0:00.285] Starting main parse
-[0:00.293] Completed parsing
-[0:00.293] Gathering parse errors
-[0:00.293] Found 0 errors
-[0:00.293] Gathering parse nodes
-[0:00.293] Found 6283 nodes
-[0:00.293] Creating parse tree
-[0:00.294] Creating Concrete Syntax Tree (CST)
-[0:00.297] Creating Abstract Syntax Tree (AST)
-[0:00.303] Completed all steps, result is successful
-[0:00.303] Applying syntax coloring
-[0:00.303] Completed syntax coloring
-[0:00.460] Initializing Compiler
-[0:00.460] Gathering parsers
-[0:00.460] Gathering AST trees
-[0:00.461] Gathering type declarations
-[0:00.468] Creating symbol resolver
-[0:00.470] Creating type definitions
-[0:00.479] Found 0 symbol resolution errors
-[0:00.479] Gathering function definitions
-[0:00.480] Found 428 functions
-[0:00.480] Checking semantics
-[0:00.480] Creating Reified Types
-[0:00.497] Found 117 types
-[0:00.498] Created a total of 1465 reified functions
-[0:00.498] Adding library functions to reified types
-[0:00.544] Grouping Reified functions by name for faster type resolution
-[0:00.547] Creating function analysis
-[0:00.558] Creating function analysesGathering constraints for each function
+[0:00.001] Creating compiler
+[0:00.001] Opening files
+[0:00.132] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\intrinsics.plato at 2023-10-08 8:39:02 PM
+[0:00.133] Starting to parse 38 lines containing 1086 characters
+[0:00.133] Tokenization phase
+[0:00.135] Completed tokenization
+[0:00.135] Starting main parse
+[0:00.137] Completed parsing
+[0:00.137] Gathering parse errors
+[0:00.137] Found 0 errors
+[0:00.137] Gathering parse nodes
+[0:00.137] Found 782 nodes
+[0:00.137] Creating parse tree
+[0:00.138] Creating Concrete Syntax Tree (CST)
+[0:00.144] Creating Abstract Syntax Tree (AST)
+[0:00.155] Completed all steps, result is successful
+[0:00.209] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato at 2023-10-08 8:39:02 PM
+[0:00.209] Starting to parse 124 lines containing 2566 characters
+[0:00.209] Tokenization phase
+[0:00.210] Completed tokenization
+[0:00.210] Starting main parse
+[0:00.221] Completed parsing
+[0:00.221] Gathering parse errors
+[0:00.221] Found 0 errors
+[0:00.221] Gathering parse nodes
+[0:00.221] Found 1358 nodes
+[0:00.221] Creating parse tree
+[0:00.221] Creating Concrete Syntax Tree (CST)
+[0:00.222] Creating Abstract Syntax Tree (AST)
+[0:00.230] Completed all steps, result is successful
+[0:00.274] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\types.plato at 2023-10-08 8:39:03 PM
+[0:00.275] Starting to parse 872 lines containing 12978 characters
+[0:00.275] Tokenization phase
+[0:00.279] Completed tokenization
+[0:00.279] Starting main parse
+[0:00.284] Completed parsing
+[0:00.284] Gathering parse errors
+[0:00.284] Found 0 errors
+[0:00.284] Gathering parse nodes
+[0:00.284] Found 3800 nodes
+[0:00.284] Creating parse tree
+[0:00.284] Creating Concrete Syntax Tree (CST)
+[0:00.286] Creating Abstract Syntax Tree (AST)
+[0:00.288] Completed all steps, result is successful
+[0:00.345] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato at 2023-10-08 8:39:03 PM
+[0:00.345] Starting to parse 442 lines containing 11214 characters
+[0:00.345] Tokenization phase
+[0:00.359] Completed tokenization
+[0:00.360] Starting main parse
+[0:00.372] Completed parsing
+[0:00.372] Gathering parse errors
+[0:00.372] Found 0 errors
+[0:00.372] Gathering parse nodes
+[0:00.372] Found 6283 nodes
+[0:00.372] Creating parse tree
+[0:00.373] Creating Concrete Syntax Tree (CST)
+[0:00.375] Creating Abstract Syntax Tree (AST)
+[0:00.380] Completed all steps, result is successful
+[0:00.380] Applying syntax coloring
+[0:00.380] Completed syntax coloring
+[0:00.525] Initializing Compiler
+[0:00.525] Gathering parsers
+[0:00.526] Gathering AST trees
+[0:00.527] Gathering type declarations
+[0:00.543] Creating symbol resolver
+[0:00.545] Creating type definitions
+[0:00.556] Found 0 symbol resolution errors
+[0:00.556] Gathering function definitions
+[0:00.557] Found 428 functions
+[0:00.557] Checking semantics
+[0:00.557] Creating Reified Types
+[0:00.593] Found 117 types
+[0:00.593] Created a total of 1465 reified functions
+[0:00.593] Adding library functions to reified types
+[0:00.689] Grouping Reified functions by name for faster type resolution
+[0:00.692] Creating function analysis
+[0:00.725] Creating function analysesGathering constraints for each function
 Function group call unresolved: no functions
 One(x) with (Number) has 0 possible return types 
 One(x) with (Number) has 0 possible return types 
@@ -83,165 +83,42 @@ One(x) with (Number) has 0 possible return types
 One(x) with (Number) has 0 possible return types 
 Zero(x) with (Number) has 0 possible return types 
 Function group call unresolved: ambiguous
-Add(FieldValues(self), scalar) with ($257, Number) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Add(FieldValues(self), FieldValues(other)) with ($251, $253) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Add(FieldValues(self), FieldValues(other)) with ($245, $247) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(FieldValues(self), scalar) with ($261, Number) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(x, x) with (Number, Number) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Min(x) with ($104) has 2 possible return types $6, DateTime
-Max(x) with ($104) has 2 possible return types $7, DateTime
-Negative(FieldValues(self)) with ($323) has 3 possible return types Number, Integer, (Arithmetic)
-Negative(self) with ((Arithmetic)) has 3 possible return types Number, Integer, (Arithmetic)
-Add(self, Negative(self)) with ((Arithmetic), $320) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Negative(scalar) with (Number) has 3 possible return types Number, Integer, (Arithmetic)
-Add(self, Negative(scalar)) with ((ScalarArithmetic), $328) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Subtract(Count, n) with ($316, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-And(FieldValues(a), FieldValues(b)) with ($335, $337) has 2 possible return types Boolean, (BooleanOperations)
-And(f(First(xs)), f(Rest(xs))) with ($310, $331) has 2 possible return types Boolean, (BooleanOperations)
-Multiply(self, Reciprocal(scalar)) with ((ScalarArithmetic), $359) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(FieldValues(self), FieldValues(other)) with ($353, $355) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Modulo(FieldValues(self), scalar) with ($369, Number) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Modulo(FieldValues(self), FieldValues(other)) with ($363, $365) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Or(FieldValues(a), FieldValues(b)) with ($373, $375) has 2 possible return types Boolean, (BooleanOperations)
-Not(FieldValues(a)) with ($379) has 2 possible return types Boolean, (BooleanOperations)
-Subtract(Count(xs), 1) with ($397, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Add(ToString(First(xs)), Aggregate(Rest(xs), , (\(ParameterDefinition=acc$3211:ConcreteType:String, ParameterDefinition=cur$3213:Concept:Any) -> Primitive:Function)) with ($410, $419) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Max(x) with ($101) has 2 possible return types $7, DateTime
-Min(x) with ($101) has 2 possible return types $6, DateTime
-Subtract(Max(x), Min(x)) with ($423, $425) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Min(x) with ($106) has 2 possible return types $6, DateTime
-Subtract(1, amount) with (Number, Unit) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Max(x) with ($106) has 2 possible return types $7, DateTime
-Multiply(Max(x), amount) with ($435, Unit) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Add(Subtract(1, amount), Multiply(Max(x), amount)) with ($432, $436) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(Min(x), Add(Subtract(1, amount), Multiply(Max(x), amount))) with ($429, $437) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Min(x) with ($109) has 2 possible return types $6, DateTime
-Subtract(value, Min(x)) with ($111, $442) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Size(x) with ($109) has 2 possible return types Size2D, $103
-Divide(Subtract(value, Min(x)), Size(x)) with ($443, $445) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Max(x) with ($112) has 2 possible return types $7, DateTime
-Negative(Max(x)) with ($449) has 3 possible return types Number, Integer, (Arithmetic)
-Min(x) with ($112) has 2 possible return types $6, DateTime
-Negative(Min(x)) with ($453) has 3 possible return types Number, Integer, (Arithmetic)
-Max(x) with ($116) has 2 possible return types $7, DateTime
-Min(x) with ($116) has 2 possible return types $6, DateTime
-Subtract(1, t) with (Integer, Unit) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(t, b) with (Unit, Number) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Add(a, Multiply(t, b)) with (Number, $468) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(Subtract(1, t), Add(a, Multiply(t, b))) with ($465, $469) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Min(x) with ($123) has 2 possible return types $6, DateTime
-Max(x) with ($123) has 2 possible return types $7, DateTime
-And(value, LessThanOrEquals(value, Max(x))) with ($125, $478) has 2 possible return types Boolean, (BooleanOperations)
-Min(x) with ($126) has 2 possible return types $6, DateTime
-Min(other) with ($128) has 2 possible return types $6, DateTime
-Max(other) with ($128) has 2 possible return types $7, DateTime
-And(Min(other), GreaterThanOrEquals(Max, Max(other))) with ($486, $491) has 2 possible return types Boolean, (BooleanOperations)
-Min(y) with ($169) has 2 possible return types $6, DateTime
-Min(x) with ($173) has 2 possible return types $6, DateTime
-Min(x) with ($173) has 2 possible return types $6, DateTime
-Max(x) with ($173) has 2 possible return types $7, DateTime
-Max(x) with ($173) has 2 possible return types $7, DateTime
-Clamp(x, Tuple(0, 1)) with (Number, $523) has 2 possible return types $171, $176
-Clamp(x, Min(y)) with ($167, $500) has 2 possible return types $171, $176
-Max(y) with ($169) has 2 possible return types $7, DateTime
-Clamp(x, Max(y)) with ($167, $527) has 2 possible return types $171, $176
-Clamp(x, y) with ($130, $132) has 2 possible return types $171, $176
-Not(IsEmpty(Clamp(x, y))) with ($530) has 2 possible return types Boolean, (BooleanOperations)
-Min(x) with ($138) has 2 possible return types $6, DateTime
-Max(x) with ($142) has 2 possible return types $7, DateTime
-Size(x) with ($146) has 2 possible return types Size2D, $103
-Add(v, Size(x)) with ($148, $551) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Size(x) with ($159) has 2 possible return types Size2D, $103
-Divide(x, 2) with (Number, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Subtract(c, HalfSize(x)) with ($164, $566) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Add(c, HalfSize(x)) with ($164, $570) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Min(x) with ($177) has 2 possible return types $6, DateTime
-Max(x) with ($177) has 2 possible return types $7, DateTime
-And(Min(x), LessThanOrEquals(value, Max(x))) with ($576, $580) has 2 possible return types Boolean, (BooleanOperations)
-Multiply(v1, v2) with ($190, $192) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(v, Length(v)) with ($194, $599) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Add(x, One(x)) with (Number, $603) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Subtract(x, One(x)) with (Number, $607) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Subtract(One(x), x) with ($611, Number) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Negative(One(x)) with ($629) has 3 possible return types Number, Integer, (Arithmetic)
-Negative(x) with (Number) has 3 possible return types Number, Integer, (Arithmetic)
-Divide(x, 3) with (Number, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(x, 4) with (Number, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(x, 5) with (Number, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(x, 6) with (Number, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(x, 7) with (Number, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(x, 8) with (Number, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(x, 9) with (Number, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(x, 10) with (Number, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(x, 16) with (Number, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(x, 100) with (Number, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(x, 1000) with (Number, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(1000, 1000) with (Integer, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(x, Divide(1000, 1000)) with (Number, $665) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(1000, 1000) with (Integer, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(1000, Divide(1000, 1000)) with (Integer, $670) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(x, Divide(1000, Divide(1000, 1000))) with (Number, $671) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(x, 100) with (Number, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(x, 1000) with (Number, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(1000, 1000) with (Integer, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(x, Multiply(1000, 1000)) with (Number, $679) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(1000, 1000) with (Integer, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(1000, Multiply(1000, 1000)) with (Integer, $684) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(x, Multiply(1000, Multiply(1000, 1000))) with (Number, $685) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(x, 2) with (Number, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(x, 3) with (Number, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Subtract(3, Twice(x)) with (Integer, $696) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(Square(x), Subtract(3, Twice(x))) with ($693, $697) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(x, x) with (Number, Number) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(Pow2(x), x) with ($703, Number) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(Pow3(x), x) with ($707, Number) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(Pow4(x), x) with ($711, Number) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(Pi, 180) with ($727, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(x, Divide(Pi, 180)) with (Number, $728) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(2, Pi) with (Integer, $732) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(x, Multiply(2, Pi)) with (Number, $733) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-And(a, LessThanOrEquals(v, b)) with ($209, $738) has 2 possible return types Boolean, (BooleanOperations)
-Not(Equals(x, y)) with ($745) has 2 possible return types Boolean, (BooleanOperations)
-Multiply(p, 2) with (Number, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(0.5, easeIn(Multiply(p, 2))) with (Number, $751) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Subtract(2, 1) with (Integer, Integer) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(p, Subtract(2, 1)) with (Number, $757) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5) with ($759, Number) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(0.5, Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5)) with (Number, $760) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Subtract(1, p) with (Integer, Number) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Subtract(1, easeIn(Subtract(1, p))) with (Integer, $766) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(10, MinusOne(p)) with (Integer, $837) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(10, MinusOne(p)) with (Integer, $858) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Radians(Pow(2, Multiply(10, MinusOne(p)))) with ($860) has 2 possible return types Number, Angle
-Multiply(Turns(Quarter(p)), Sin(Radians(Pow(2, Multiply(10, MinusOne(p)))))) with ($852, $862) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(13, Multiply(Turns(Quarter(p)), Sin(Radians(Pow(2, Multiply(10, MinusOne(p))))))) with (Integer, $863) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(p, Sin(Turns(Half(p)))) with (Number, $881) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Subtract(Pow3(p), Multiply(p, Sin(Turns(Half(p))))) with ($874, $882) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(4, 11) with (Integer, Number) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(Pow2(p), 16) with ($901, Number) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(121, Divide(Pow2(p), 16)) with (Number, $902) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(8, 11) with (Integer, Number) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(17, 5) with (Number, Number) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Add(p, Divide(17, 5)) with (Number, $917) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(10, Add(p, Divide(17, 5))) with (Number, $918) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(99, Multiply(10, Add(p, Divide(17, 5)))) with (Number, $919) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Subtract(Pow2(p), Divide(99, Multiply(10, Add(p, Divide(17, 5))))) with ($912, $920) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(40, Subtract(Pow2(p), Divide(99, Multiply(10, Add(p, Divide(17, 5)))))) with (Number, $921) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(363, Multiply(40, Subtract(Pow2(p), Divide(99, Multiply(10, Add(p, Divide(17, 5))))))) with (Number, $922) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(9, 10) with (Integer, Number) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(16061, 1805) with (Number, Number) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Add(p, Divide(16061, 1805)) with (Number, $937) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(1805, Add(p, Divide(16061, 1805))) with (Number, $938) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805)))) with (Number, $939) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805))))) with ($932, $940) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(361, Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805)))))) with (Number, $941) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(4356, Multiply(361, Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805))))))) with (Number, $942) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(268, 25) with (Number, Number) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Add(p, Divide(268, 25)) with (Number, $953) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(25, Add(p, Divide(268, 25))) with (Number, $954) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(513, Multiply(25, Add(p, Divide(268, 25)))) with (Number, $955) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25))))) with ($948, $956) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Multiply(5, Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25)))))) with (Number, $957) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
-Divide(54, Multiply(5, Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25))))))) with (Number, $958) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
+Add(FieldValues(self), scalar) with ((Array, Any), Number) has 2 possible return types Number, Integer
+Add(FieldValues(self), FieldValues(other)) with ((Array, Any), (Array, Any)) has 2 possible return types Number, Integer
+Add(FieldValues(self), FieldValues(other)) with ((Array, Any), (Array, Any)) has 2 possible return types Number, Integer
+Multiply(FieldValues(self), scalar) with ((Array, Any), Number) has 2 possible return types Number, Integer
+Negative(FieldValues(self)) with ((Array, Any)) has 2 possible return types Number, Integer
+Negative(self) with ((Arithmetic)) has 2 possible return types Number, Integer
+Add(self, Negative(self)) with ((Arithmetic), Number) has 2 possible return types Number, Integer
+Add(self, Negative(scalar)) with ((ScalarArithmetic), Number) has 2 possible return types Number, Integer
+Subtract(Count, n) with ($158, Integer) has 2 possible return types Number, Integer
+Multiply(self, Reciprocal(scalar)) with ((ScalarArithmetic), (Arithmetic)) has 2 possible return types Number, Integer
+Divide(FieldValues(self), FieldValues(other)) with ((Array, Any), (Array, Any)) has 2 possible return types Number, Integer
+Modulo(FieldValues(self), scalar) with ((Array, Any), Number) has 2 possible return types Number, Integer
+Modulo(FieldValues(self), FieldValues(other)) with ((Array, Any), (Array, Any)) has 2 possible return types Number, Integer
+Add(ToString(First(xs)), Aggregate(Rest(xs), , (\(ParameterDefinition=acc$3211:ConcreteType:String, ParameterDefinition=cur$3213:Concept:Any) -> Primitive:Function)) with (String, Any) has 2 possible return types Number, Integer
+Subtract(Max(x), Min(x)) with ($3, $2) has 2 possible return types Number, Integer
+Multiply(Max(x), amount) with ($3, Unit) has 2 possible return types Number, Integer
+Multiply(Min(x), Add(Subtract(1, amount), Multiply(Max(x), amount))) with ($2, Number) has 2 possible return types Number, Integer
+Subtract(value, Min(x)) with (Numerical, $2) has 2 possible return types Number, Integer
+Negative(Max(x)) with ($3) has 2 possible return types Number, Integer
+Negative(Min(x)) with ($2) has 2 possible return types Number, Integer
+Multiply(t, b) with (Unit, Number) has 2 possible return types Number, Integer
+Clamp(x, Tuple(0, 1)) with (Number, (Tuple, Integer, Integer)) has 2 possible return types (Interval, $94), Numerical
+Clamp(x, Min(y)) with ((Interval, $92), $2) has 2 possible return types (Interval, $94), Numerical
+Clamp(x, Max(y)) with ((Interval, $92), $3) has 2 possible return types (Interval, $94), Numerical
+Clamp(x, y) with ((Interval, $75), (Interval, $76)) has 2 possible return types (Interval, $94), Numerical
+Not(IsEmpty(Clamp(x, y))) with (Boolean) has 2 possible return types Boolean, (BooleanOperations)
+Add(v, Size(x)) with (Numerical, Size2D) has 2 possible return types Number, Integer
+Subtract(c, HalfSize(x)) with (Numerical, Numerical) has 2 possible return types Number, Integer
+Add(c, HalfSize(x)) with (Numerical, Numerical) has 2 possible return types Number, Integer
+Multiply(v1, v2) with ((Vector, $101), (Vector, $102)) has 2 possible return types Number, Integer
+Divide(v, Length(v)) with ((Vector, $103), Number) has 2 possible return types Number, Integer
+Subtract(One(x), x) with (, Number) has 4 possible return types Number, Integer, (Arithmetic), (ScalarArithmetic)
+Negative(One(x)) with () has 3 possible return types Number, Integer, (Arithmetic)
+Divide(Pi, 180) with ($357, Integer) has 2 possible return types Number, Integer
+Not(Equals(x, y)) with (Boolean) has 2 possible return types Boolean, (BooleanOperations)
+Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5) with ($375, Number) has 2 possible return types Number, Integer
+Multiply(Turns(Quarter(p)), Sin(Radians(Pow(2, Multiply(10, MinusOne(p)))))) with (Angle, Number) has 2 possible return types Number, Integer
 
-[0:00.558] Outputting errors and warnings
+[0:00.725] Outputting errors and warnings
