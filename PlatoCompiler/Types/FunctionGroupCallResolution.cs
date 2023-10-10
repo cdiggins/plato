@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Plato.Compiler.Symbols;
 using Ptarmigan.Utils;
 
@@ -23,6 +24,8 @@ namespace Plato.Compiler.Types
         public const int PerfectFit = 0;
         public const int GenericFit = 999; 
         public const int AlmostNotAFit = 9999;
+        public const int InheritsFitPenalty = 10;
+        public const int ImplementsFitPenalty = 100;
 
         public FunctionAnalysis Context { get; }
         public FunctionCall Callsite { get; }
@@ -114,13 +117,13 @@ namespace Plato.Compiler.Types
             {
                 if (typeArgument.IsConcept())
                 {
-                    var r = typeArgument.InheritsDepth(typeParameter);
+                    var r = typeArgument.InheritsDepth(typeParameter) + InheritsFitPenalty;
                     return r >= 0 ? r : DoesntImplementConceptFit;
                 }
 
                 if (typeArgument.IsConcrete())
                 {
-                    var r = typeArgument.ImplementsDepth(typeParameter);
+                    var r = typeArgument.ImplementsDepth(typeParameter) + ImplementsFitPenalty;
                     return r >= 0 ? r : DoesntImplementConceptFit;
                 }
 
