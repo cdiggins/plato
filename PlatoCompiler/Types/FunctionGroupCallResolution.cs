@@ -49,12 +49,15 @@ namespace Plato.Compiler.Types
                 .ToList();
 
             // Find the best fit. 
-            if (CallableFunctions.Count > 0 && argTypes.Count > 0)
+            for (var i = 0; i < argTypes.Count; ++i)
             {
-                var arg0 = argTypes[0];
-                var groups = CallableFunctions.GroupBy(cf => ArgumentFit(arg0, cf.Parameters[0]));
-                var group0 = groups.First().ToList();
-                CallableFunctions = group0;
+                if (CallableFunctions.Count > 1)
+                {
+                    var arg0 = argTypes[i];
+                    var groups = CallableFunctions.GroupBy(cf => ArgumentFit(arg0, cf.Parameters[0]));
+                    var group0 = groups.First().ToList();
+                    CallableFunctions = group0;
+                }
             }
 
             DistinctReturnTypes = CallableFunctions
@@ -114,7 +117,7 @@ namespace Plato.Compiler.Types
                     return r >= 0 ? r : DoesntImplementConceptFit;
                 }
 
-                if (typeArgument.IsConcrete())
+                if (typeArgument.IsConcrete() || typeArgument.IsPrimitive())
                 {
                     var r = typeArgument.ImplementsDepth(typeParameter) + ImplementsFitPenalty;
                     return r >= 0 ? r : DoesntImplementConceptFit;
@@ -123,7 +126,7 @@ namespace Plato.Compiler.Types
                 throw new InvalidOperationException("Should not be reachable");
             }
 
-            if (typeParameter.IsConcrete())
+            if (typeParameter.IsConcrete() || typeParameter.IsPrimitive())
             {
                 var cast = Context.Compiler.FindCast(typeArgument, typeParameter);
                 if (cast != null)
@@ -137,7 +140,7 @@ namespace Plato.Compiler.Types
                     return CantPassConceptToConcreteFit;
                 }
 
-                if (typeParameter.IsConcrete())
+                if (typeParameter.IsConcrete() || typeParameter.IsPrimitive())
                 {
                     // Already verified above that this is not true
                     return MismatchedTypeFit;
@@ -153,8 +156,9 @@ namespace Plato.Compiler.Types
         {
             if (fa.Parameters.Count != argTypes.Count) 
                 return false;
-            if (fa.Parameters.Count > 0)
-                return ArgumentFit(argTypes[0], fa.Parameters[0]) >= 0;
+            for (var i=0; i < argTypes.Count; ++i)
+                if (ArgumentFit(argTypes[i], fa.Parameters[i]) < 0)
+                    return false;
             return true;
         }
 

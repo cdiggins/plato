@@ -1,111 +1,128 @@
-[0:00.002] Creating compiler
-[0:00.002] Opening files
-[0:00.196] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\intrinsics.plato at 2023-10-10 6:46:30 PM
-[0:00.196] Starting to parse 38 lines containing 1086 characters
-[0:00.196] Tokenization phase
-[0:00.201] Completed tokenization
-[0:00.202] Starting main parse
-[0:00.204] Completed parsing
-[0:00.204] Gathering parse errors
-[0:00.204] Found 0 errors
-[0:00.204] Gathering parse nodes
-[0:00.204] Found 782 nodes
-[0:00.204] Creating parse tree
-[0:00.205] Creating Concrete Syntax Tree (CST)
-[0:00.218] Creating Abstract Syntax Tree (AST)
-[0:00.227] Completed all steps, result is successful
-[0:00.295] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato at 2023-10-10 6:46:30 PM
-[0:00.295] Starting to parse 124 lines containing 2566 characters
-[0:00.295] Tokenization phase
-[0:00.297] Completed tokenization
-[0:00.297] Starting main parse
-[0:00.312] Completed parsing
-[0:00.312] Gathering parse errors
-[0:00.313] Found 0 errors
-[0:00.313] Gathering parse nodes
-[0:00.313] Found 1358 nodes
-[0:00.313] Creating parse tree
-[0:00.313] Creating Concrete Syntax Tree (CST)
-[0:00.314] Creating Abstract Syntax Tree (AST)
-[0:00.326] Completed all steps, result is successful
-[0:00.385] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\types.plato at 2023-10-10 6:46:31 PM
-[0:00.386] Starting to parse 872 lines containing 12978 characters
-[0:00.386] Tokenization phase
-[0:00.394] Completed tokenization
-[0:00.394] Starting main parse
-[0:00.406] Completed parsing
-[0:00.406] Gathering parse errors
-[0:00.406] Found 0 errors
-[0:00.406] Gathering parse nodes
-[0:00.406] Found 3800 nodes
-[0:00.406] Creating parse tree
-[0:00.407] Creating Concrete Syntax Tree (CST)
-[0:00.409] Creating Abstract Syntax Tree (AST)
-[0:00.412] Completed all steps, result is successful
-[0:00.475] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato at 2023-10-10 6:46:31 PM
-[0:00.475] Starting to parse 442 lines containing 11214 characters
-[0:00.475] Tokenization phase
-[0:00.483] Completed tokenization
-[0:00.483] Starting main parse
-[0:00.493] Completed parsing
-[0:00.493] Gathering parse errors
-[0:00.493] Found 0 errors
-[0:00.493] Gathering parse nodes
-[0:00.494] Found 6283 nodes
-[0:00.494] Creating parse tree
-[0:00.494] Creating Concrete Syntax Tree (CST)
-[0:00.500] Creating Abstract Syntax Tree (AST)
-[0:00.512] Completed all steps, result is successful
-[0:00.512] Applying syntax coloring
-[0:00.512] Completed syntax coloring
-[0:00.655] Initializing Compiler
-[0:00.656] Gathering parsers
-[0:00.656] Gathering AST trees
-[0:00.656] Gathering type declarations
-[0:00.666] Creating symbol resolver
-[0:00.667] Creating type definitions
-[0:00.677] Found 0 symbol resolution errors
-[0:00.677] Gathering function definitions
-[0:00.678] Found 435 functions
-[0:00.678] Checking semantics
-[0:00.678] Creating Reified Types
-[0:00.703] Found 117 types
-[0:00.704] Created a total of 1465 reified functions
-[0:00.704] Adding library functions to reified types
-[0:00.763] Grouping Reified functions by name for faster type resolution
-[0:00.766] Creating function analysis
-[0:00.799] Creating function analysesGathering constraints for each function
-Function group call unresolved: no functions 6
+[0:00.000] Creating compiler
+[0:00.001] Opening files
+[0:00.120] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\intrinsics.plato at 2023-10-10 7:35:56 PM
+[0:00.121] Starting to parse 38 lines containing 1086 characters
+[0:00.121] Tokenization phase
+[0:00.126] Completed tokenization
+[0:00.127] Starting main parse
+[0:00.129] Completed parsing
+[0:00.129] Gathering parse errors
+[0:00.129] Found 0 errors
+[0:00.129] Gathering parse nodes
+[0:00.129] Found 782 nodes
+[0:00.129] Creating parse tree
+[0:00.130] Creating Concrete Syntax Tree (CST)
+[0:00.137] Creating Abstract Syntax Tree (AST)
+[0:00.145] Completed all steps, result is successful
+[0:00.184] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato at 2023-10-10 7:35:56 PM
+[0:00.184] Starting to parse 124 lines containing 2566 characters
+[0:00.184] Tokenization phase
+[0:00.187] Completed tokenization
+[0:00.187] Starting main parse
+[0:00.215] Completed parsing
+[0:00.215] Gathering parse errors
+[0:00.215] Found 0 errors
+[0:00.215] Gathering parse nodes
+[0:00.215] Found 1358 nodes
+[0:00.215] Creating parse tree
+[0:00.215] Creating Concrete Syntax Tree (CST)
+[0:00.217] Creating Abstract Syntax Tree (AST)
+[0:00.229] Completed all steps, result is successful
+[0:00.261] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\types.plato at 2023-10-10 7:35:56 PM
+[0:00.261] Starting to parse 872 lines containing 12978 characters
+[0:00.261] Tokenization phase
+[0:00.267] Completed tokenization
+[0:00.267] Starting main parse
+[0:00.272] Completed parsing
+[0:00.272] Gathering parse errors
+[0:00.272] Found 0 errors
+[0:00.272] Gathering parse nodes
+[0:00.272] Found 3800 nodes
+[0:00.272] Creating parse tree
+[0:00.273] Creating Concrete Syntax Tree (CST)
+[0:00.274] Creating Abstract Syntax Tree (AST)
+[0:00.277] Completed all steps, result is successful
+[0:00.307] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato at 2023-10-10 7:35:56 PM
+[0:00.307] Starting to parse 442 lines containing 11214 characters
+[0:00.307] Tokenization phase
+[0:00.316] Completed tokenization
+[0:00.317] Starting main parse
+[0:00.327] Completed parsing
+[0:00.327] Gathering parse errors
+[0:00.327] Found 0 errors
+[0:00.327] Gathering parse nodes
+[0:00.327] Found 6283 nodes
+[0:00.327] Creating parse tree
+[0:00.329] Creating Concrete Syntax Tree (CST)
+[0:00.337] Creating Abstract Syntax Tree (AST)
+[0:00.345] Completed all steps, result is successful
+[0:00.346] Applying syntax coloring
+[0:00.346] Completed syntax coloring
+[0:00.358] Initializing Compiler
+[0:00.358] Gathering parsers
+[0:00.359] Gathering AST trees
+[0:00.359] Gathering type declarations
+[0:00.375] Creating symbol resolver
+[0:00.379] Creating type definitions
+[0:00.399] Found 0 symbol resolution errors
+[0:00.400] Gathering function definitions
+[0:00.402] Found 435 functions
+[0:00.402] Checking semantics
+[0:00.402] Creating Reified Types
+[0:00.428] Found 117 types
+[0:00.428] Created a total of 1465 reified functions
+[0:00.428] Adding library functions to reified types
+[0:00.484] Grouping Reified functions by name for faster type resolution
+[0:00.487] Creating function analysis
+[0:00.515] Creating function analysesGathering constraints for each function
+Function group call unresolved: no functions 36
 Square(FieldValues(x)) with ((Array, Any)) has 0 possible return types 
+All(xs, (\(ParameterDefinition=b$3288:ConcreteType:Boolean) -> Primitive:Function) with ((Array, $62:Any), (Function, Boolean)) has 0 possible return types 
+Aggregate(v, 0, Add) with ((Array, $97:Any), Integer, $131:Any) has 0 possible return types 
 Sum(Square(FieldValues(x))) with () has 0 possible return types 
 SquareRoot(Sum(Square(FieldValues(x)))) with () has 0 possible return types 
+At(xs, Subtract(Count(xs), 1)) with ((Array, $55:Any), Number) has 0 possible return types 
+Aggregate(Rest(xs), , (\(ParameterDefinition=acc$3232:ConcreteType:String, ParameterDefinition=cur$3234:Concept:Any) -> Primitive:Function) with ((Array, $52:Any), String, (Function, String, Any)) has 0 possible return types 
+Add(ToString(First(xs)), Aggregate(Rest(xs), , (\(ParameterDefinition=acc$3232:ConcreteType:String, ParameterDefinition=cur$3234:Concept:Any) -> Primitive:Function)) with (String, ) has 0 possible return types 
+Lerp(x, 0.5) with ((Interval, $71:Numerical), Number) has 0 possible return types 
+Split(x, 0.5) with ((Interval, $78:Numerical), Number) has 0 possible return types 
+Left(x, 0.5) with ((Interval, $85:Numerical), Number) has 0 possible return types 
+Right(x, 0.5) with ((Interval, $87:Numerical), Number) has 0 possible return types 
 Half(Size(x)) with (Numerical) has 0 possible return types 
 Square(v) with ((Array, $98:Any)) has 0 possible return types 
 Sum(Square(v)) with () has 0 possible return types 
-Function group call unresolved: ambiguous 24
+Zip(FieldValues(self), FieldValues(min), FieldValues(max), (\(ParameterDefinition=x$4308:ConcreteType:Number, ParameterDefinition=y$4310:ConcreteType:Number, ParameterDefinition=z$4312:ConcreteType:Number) -> Primitive:Function) with ((Array, Any), (Array, Any), (Array, Any), (Function, Number, Number, Number)) has 0 possible return types 
+InvertEaseFunc(p, QuadraticEaseIn) with (Number, $381:Any) has 0 possible return types 
+BlendEaseFunc(p, QuadraticEaseIn, QuadraticEaseOut) with (Number, $383:Any, $384:Any) has 0 possible return types 
+InvertEaseFunc(p, CubicEaseIn) with (Number, $387:Any) has 0 possible return types 
+BlendEaseFunc(p, CubicEaseIn, CubicEaseOut) with (Number, $389:Any, $390:Any) has 0 possible return types 
+InvertEaseFunc(p, QuarticEaseIn) with (Number, $393:Any) has 0 possible return types 
+BlendEaseFunc(p, QuarticEaseIn, QuarticEaseOut) with (Number, $395:Any, $396:Any) has 0 possible return types 
+InvertEaseFunc(p, QuinticEaseIn) with (Number, $399:Any) has 0 possible return types 
+BlendEaseFunc(p, QuinticEaseIn, QuinticEaseOut) with (Number, $401:Any, $402:Any) has 0 possible return types 
+InvertEaseFunc(p, SineEaseOut) with (Number, $404:Any) has 0 possible return types 
+BlendEaseFunc(p, SineEaseIn, SineEaseOut) with (Number, $409:Any, $410:Any) has 0 possible return types 
+InvertEaseFunc(p, CircularEaseIn) with (Number, $416:Any) has 0 possible return types 
+BlendEaseFunc(p, CircularEaseIn, CircularEaseOut) with (Number, $418:Any, $419:Any) has 0 possible return types 
+InvertEaseFunc(p, ExponentialEaseIn) with (Number, $425:Any) has 0 possible return types 
+BlendEaseFunc(p, ExponentialEaseIn, ExponentialEaseOut) with (Number, $427:Any, $428:Any) has 0 possible return types 
+InvertEaseFunc(p, ElasticEaseIn) with (Number, $439:Any) has 0 possible return types 
+BlendEaseFunc(p, ElasticEaseIn, ElasticEaseOut) with (Number, $441:Any, $442:Any) has 0 possible return types 
+InvertEaseFunc(p, BackEaseIn) with (Number, $450:Any) has 0 possible return types 
+BlendEaseFunc(p, BackEaseIn, BackEaseOut) with (Number, $452:Any, $453:Any) has 0 possible return types 
+InvertEaseFunc(p, BounceEaseOut) with (Number, $455:Any) has 0 possible return types 
+BlendEaseFunc(p, BounceEaseIn, BounceEaseOut) with (Number, $490:Any, $491:Any) has 0 possible return types 
+Function group call unresolved: ambiguous 11
 Add(FieldValues(self), scalar) with ((Array, Any), Number) has 2 possible return types Arithmetic, ScalarArithmetic
-Add(FieldValues(self), FieldValues(other)) with ((Array, Any), (Array, Any)) has 2 possible return types Arithmetic, ScalarArithmetic
-Add(FieldValues(self), FieldValues(other)) with ((Array, Any), (Array, Any)) has 2 possible return types Arithmetic, ScalarArithmetic
 Multiply(FieldValues(self), scalar) with ((Array, Any), Number) has 2 possible return types Arithmetic, ScalarArithmetic
 Subtract(Count, n) with ($158:Any, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Divide(FieldValues(self), FieldValues(other)) with ((Array, Any), (Array, Any)) has 2 possible return types Arithmetic, ScalarArithmetic
 Modulo(FieldValues(self), scalar) with ((Array, Any), Number) has 2 possible return types Arithmetic, ScalarArithmetic
-Modulo(FieldValues(self), FieldValues(other)) with ((Array, Any), (Array, Any)) has 2 possible return types Arithmetic, ScalarArithmetic
-Add(ToString(First(xs)), Aggregate(Rest(xs), , (\(ParameterDefinition=acc$3232:ConcreteType:String, ParameterDefinition=cur$3234:Concept:Any) -> Primitive:Function)) with (String, Any) has 2 possible return types Arithmetic, ScalarArithmetic
-Subtract(Max(x), Min(x)) with ($3:Numerical, $2:Numerical) has 2 possible return types Arithmetic, ScalarArithmetic
-Multiply(Max(x), amount) with ($3:Numerical, Unit) has 2 possible return types Arithmetic, ScalarArithmetic
-Multiply(Min(x), Add(Subtract(1, amount), Multiply(Max(x), amount))) with ($2:Numerical, Number) has 2 possible return types Arithmetic, ScalarArithmetic
-Subtract(value, Min(x)) with (Numerical, $2:Numerical) has 2 possible return types Arithmetic, ScalarArithmetic
 Multiply(t, b) with (Unit, Number) has 2 possible return types Arithmetic, ScalarArithmetic
 Clamp(x, Tuple(0, 1)) with (Number, (Tuple, Integer, Integer)) has 2 possible return types (Interval, $94:Numerical), Numerical
 Clamp(x, y) with ((Interval, $75:Numerical), (Interval, $76:Numerical)) has 2 possible return types (Interval, $94:Numerical), Numerical
-Add(v, Size(x)) with (Numerical, Numerical) has 2 possible return types Arithmetic, ScalarArithmetic
-Subtract(c, HalfSize(x)) with (Numerical, Numerical) has 2 possible return types Arithmetic, ScalarArithmetic
-Add(c, HalfSize(x)) with (Numerical, Numerical) has 2 possible return types Arithmetic, ScalarArithmetic
-Multiply(v1, v2) with ((Vector, $101:Numerical), (Vector, $102:Numerical)) has 2 possible return types Arithmetic, ScalarArithmetic
 Divide(v, Length(v)) with ((Vector, $103:Numerical), Number) has 2 possible return types Arithmetic, ScalarArithmetic
 Subtract(One(x), x) with (Numerical, Number) has 2 possible return types Arithmetic, ScalarArithmetic
 Divide(Pi, 180) with ($357:Any, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
 Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5) with ($375:Any, Number) has 2 possible return types Arithmetic, ScalarArithmetic
 
-[0:00.799] Outputting errors and warnings
+[0:00.515] Outputting errors and warnings
