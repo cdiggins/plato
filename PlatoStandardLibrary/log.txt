@@ -1,80 +1,80 @@
-[0:00.001] Creating compiler
-[0:00.001] Opening files
-[0:00.210] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\intrinsics.plato at 2023-10-10 12:12:46 PM
-[0:00.210] Starting to parse 38 lines containing 1086 characters
-[0:00.210] Tokenization phase
-[0:00.213] Completed tokenization
-[0:00.214] Starting main parse
-[0:00.215] Completed parsing
-[0:00.215] Gathering parse errors
-[0:00.216] Found 0 errors
-[0:00.216] Gathering parse nodes
-[0:00.216] Found 782 nodes
-[0:00.216] Creating parse tree
-[0:00.216] Creating Concrete Syntax Tree (CST)
-[0:00.223] Creating Abstract Syntax Tree (AST)
-[0:00.231] Completed all steps, result is successful
-[0:00.253] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato at 2023-10-10 12:12:46 PM
-[0:00.253] Starting to parse 124 lines containing 2566 characters
-[0:00.253] Tokenization phase
-[0:00.255] Completed tokenization
-[0:00.255] Starting main parse
-[0:00.269] Completed parsing
-[0:00.269] Gathering parse errors
-[0:00.269] Found 0 errors
-[0:00.269] Gathering parse nodes
-[0:00.269] Found 1358 nodes
-[0:00.269] Creating parse tree
-[0:00.270] Creating Concrete Syntax Tree (CST)
-[0:00.271] Creating Abstract Syntax Tree (AST)
-[0:00.288] Completed all steps, result is successful
-[0:00.309] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\types.plato at 2023-10-10 12:12:46 PM
-[0:00.309] Starting to parse 872 lines containing 12978 characters
-[0:00.309] Tokenization phase
-[0:00.316] Completed tokenization
-[0:00.316] Starting main parse
-[0:00.321] Completed parsing
-[0:00.321] Gathering parse errors
-[0:00.321] Found 0 errors
-[0:00.321] Gathering parse nodes
-[0:00.322] Found 3800 nodes
-[0:00.322] Creating parse tree
-[0:00.322] Creating Concrete Syntax Tree (CST)
-[0:00.324] Creating Abstract Syntax Tree (AST)
-[0:00.326] Completed all steps, result is successful
-[0:00.349] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato at 2023-10-10 12:12:46 PM
-[0:00.349] Starting to parse 442 lines containing 11214 characters
-[0:00.349] Tokenization phase
-[0:00.358] Completed tokenization
-[0:00.358] Starting main parse
-[0:00.367] Completed parsing
-[0:00.367] Gathering parse errors
-[0:00.367] Found 0 errors
-[0:00.367] Gathering parse nodes
-[0:00.368] Found 6283 nodes
-[0:00.368] Creating parse tree
-[0:00.368] Creating Concrete Syntax Tree (CST)
-[0:00.372] Creating Abstract Syntax Tree (AST)
-[0:00.378] Completed all steps, result is successful
-[0:00.378] Applying syntax coloring
-[0:00.378] Completed syntax coloring
-[0:00.391] Initializing Compiler
-[0:00.392] Gathering parsers
-[0:00.392] Gathering AST trees
-[0:00.393] Gathering type declarations
-[0:00.404] Creating symbol resolver
-[0:00.406] Creating type definitions
-[0:00.420] Found 0 symbol resolution errors
-[0:00.421] Gathering function definitions
-[0:00.421] Found 435 functions
-[0:00.421] Checking semantics
-[0:00.421] Creating Reified Types
-[0:00.441] Found 117 types
-[0:00.441] Created a total of 1465 reified functions
-[0:00.441] Adding library functions to reified types
-[0:00.497] Grouping Reified functions by name for faster type resolution
-[0:00.501] Creating function analysis
-[0:22.356] Creating function analysesGathering constraints for each function
+[0:00.003] Creating compiler
+[0:00.004] Opening files
+[0:00.220] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\intrinsics.plato at 2023-10-10 12:56:49 PM
+[0:00.220] Starting to parse 38 lines containing 1086 characters
+[0:00.220] Tokenization phase
+[0:00.226] Completed tokenization
+[0:00.228] Starting main parse
+[0:00.231] Completed parsing
+[0:00.231] Gathering parse errors
+[0:00.232] Found 0 errors
+[0:00.232] Gathering parse nodes
+[0:00.232] Found 782 nodes
+[0:00.232] Creating parse tree
+[0:00.233] Creating Concrete Syntax Tree (CST)
+[0:00.240] Creating Abstract Syntax Tree (AST)
+[0:00.253] Completed all steps, result is successful
+[0:00.329] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato at 2023-10-10 12:56:49 PM
+[0:00.329] Starting to parse 124 lines containing 2566 characters
+[0:00.329] Tokenization phase
+[0:00.331] Completed tokenization
+[0:00.331] Starting main parse
+[0:00.379] Completed parsing
+[0:00.379] Gathering parse errors
+[0:00.379] Found 0 errors
+[0:00.379] Gathering parse nodes
+[0:00.380] Found 1358 nodes
+[0:00.380] Creating parse tree
+[0:00.380] Creating Concrete Syntax Tree (CST)
+[0:00.383] Creating Abstract Syntax Tree (AST)
+[0:00.430] Completed all steps, result is successful
+[0:00.487] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\types.plato at 2023-10-10 12:56:49 PM
+[0:00.487] Starting to parse 872 lines containing 12978 characters
+[0:00.487] Tokenization phase
+[0:00.515] Completed tokenization
+[0:00.516] Starting main parse
+[0:00.530] Completed parsing
+[0:00.530] Gathering parse errors
+[0:00.530] Found 0 errors
+[0:00.530] Gathering parse nodes
+[0:00.530] Found 3800 nodes
+[0:00.530] Creating parse tree
+[0:00.531] Creating Concrete Syntax Tree (CST)
+[0:00.535] Creating Abstract Syntax Tree (AST)
+[0:00.544] Completed all steps, result is successful
+[0:00.600] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato at 2023-10-10 12:56:49 PM
+[0:00.600] Starting to parse 442 lines containing 11214 characters
+[0:00.600] Tokenization phase
+[0:00.619] Completed tokenization
+[0:00.619] Starting main parse
+[0:00.632] Completed parsing
+[0:00.632] Gathering parse errors
+[0:00.632] Found 0 errors
+[0:00.632] Gathering parse nodes
+[0:00.632] Found 6283 nodes
+[0:00.632] Creating parse tree
+[0:00.633] Creating Concrete Syntax Tree (CST)
+[0:00.641] Creating Abstract Syntax Tree (AST)
+[0:00.652] Completed all steps, result is successful
+[0:00.652] Applying syntax coloring
+[0:00.652] Completed syntax coloring
+[0:00.669] Initializing Compiler
+[0:00.670] Gathering parsers
+[0:00.670] Gathering AST trees
+[0:00.671] Gathering type declarations
+[0:00.687] Creating symbol resolver
+[0:00.690] Creating type definitions
+[0:00.699] Found 0 symbol resolution errors
+[0:00.699] Gathering function definitions
+[0:00.700] Found 435 functions
+[0:00.700] Checking semantics
+[0:00.700] Creating Reified Types
+[0:00.725] Found 117 types
+[0:00.726] Created a total of 1465 reified functions
+[0:00.726] Adding library functions to reified types
+[0:00.793] Grouping Reified functions by name for faster type resolution
+[0:00.799] Creating function analysis
+[0:00.833] Creating function analysesGathering constraints for each function
 Function group call unresolved: no functions 0
 Function group call unresolved: ambiguous 33
 Add(FieldValues(self), scalar) with ((Array, Any), Number) has 2 possible return types Number, Integer
@@ -82,11 +82,11 @@ Add(FieldValues(self), FieldValues(other)) with ((Array, Any), (Array, Any)) has
 Add(FieldValues(self), FieldValues(other)) with ((Array, Any), (Array, Any)) has 2 possible return types Number, Integer
 Multiply(FieldValues(self), scalar) with ((Array, Any), Number) has 2 possible return types Number, Integer
 Negative(FieldValues(self)) with ((Array, Any)) has 2 possible return types Number, Integer
-Negative(self) with ((Arithmetic)) has 2 possible return types Number, Integer
-Add(self, Negative(self)) with ((Arithmetic), Number) has 2 possible return types Number, Integer
-Add(self, Negative(scalar)) with ((ScalarArithmetic), Number) has 2 possible return types Number, Integer
+Negative(self) with (Arithmetic) has 2 possible return types Number, Integer
+Add(self, Negative(self)) with (Arithmetic, Number) has 2 possible return types Number, Integer
+Add(self, Negative(scalar)) with (ScalarArithmetic, Number) has 2 possible return types Number, Integer
 Subtract(Count, n) with ($158, Integer) has 2 possible return types Number, Integer
-Multiply(self, Reciprocal(scalar)) with ((ScalarArithmetic), (Arithmetic)) has 2 possible return types Number, Integer
+Multiply(self, Reciprocal(scalar)) with (ScalarArithmetic, Arithmetic) has 2 possible return types Number, Integer
 Divide(FieldValues(self), FieldValues(other)) with ((Array, Any), (Array, Any)) has 2 possible return types Number, Integer
 Modulo(FieldValues(self), scalar) with ((Array, Any), Number) has 2 possible return types Number, Integer
 Modulo(FieldValues(self), FieldValues(other)) with ((Array, Any), (Array, Any)) has 2 possible return types Number, Integer
@@ -105,10 +105,10 @@ Subtract(c, HalfSize(x)) with (Numerical, Numerical) has 2 possible return types
 Add(c, HalfSize(x)) with (Numerical, Numerical) has 2 possible return types Number, Integer
 Multiply(v1, v2) with ((Vector, $101), (Vector, $102)) has 2 possible return types Number, Integer
 Divide(v, Length(v)) with ((Vector, $103), Number) has 2 possible return types Number, Integer
-Subtract(One(x), x) with ((Numerical), Number) has 2 possible return types Number, Integer
-Negative(One(x)) with ((Numerical)) has 2 possible return types Number, Integer
+Subtract(One(x), x) with (Numerical, Number) has 2 possible return types Number, Integer
+Negative(One(x)) with (Numerical) has 2 possible return types Number, Integer
 Divide(Pi, 180) with ($357, Integer) has 2 possible return types Number, Integer
 Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5) with ($375, Number) has 2 possible return types Number, Integer
 Multiply(Turns(Quarter(p)), Sin(Radians(Pow(2, Multiply(10, MinusOne(p)))))) with (Angle, Number) has 2 possible return types Number, Integer
 
-[0:22.356] Outputting errors and warnings
+[0:00.833] Outputting errors and warnings

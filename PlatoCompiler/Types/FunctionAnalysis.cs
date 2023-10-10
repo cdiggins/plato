@@ -38,7 +38,7 @@ namespace Plato.Compiler.Types
 
         public IType ReturnType { get; }
         public IReadOnlyList<IType> Parameters { get; }
-        public TypeList Self { get; }
+        public IType Self { get; }
 
         public FunctionAnalysis(Compiler compiler, FunctionDefinition function)
         {
@@ -52,15 +52,7 @@ namespace Plato.Compiler.Types
 
             if (OwnerType.IsConcept())
             {
-                Self = ToTypeList(OwnerType);
-
-                // Make sure that the type parameters lookup are used in the self type. 
-                Verifier.Assert(OwnerType.TypeParameters.Count + 1 == Self.Children.Count);
-                for (var i = 0; i < OwnerType.TypeParameters.Count; i++)
-                {
-                    var lookup = TypeParameterToTypeLookup[OwnerType.TypeParameters[i]];
-                    Verifier.Assert(Self.Children[i + 1].Equals(lookup));
-                }
+                Self = ToIType(OwnerType);
             }
 
             var pTypes  = new List<IType>();
@@ -131,9 +123,6 @@ namespace Plato.Compiler.Types
             => TypeParameterToTypeLookup.TryGetValue(tpd, out var r) 
                     ? r : GenerateConstrainedTypeVariable(tpd.Constraint);
 
-        public TypeList ToTypeList(TypeDefinition td)
-            => ToTypeList(ToSimpleType(td), td.TypeParameters.Select(ToTypeVariable));
-
         public IType ToTypeList(TypeExpression expr)
         {
             var tmp = new List<IType> { ToSimpleType(expr.Definition) };
@@ -153,6 +142,14 @@ namespace Plato.Compiler.Types
             }
 
             return new TypeList(tmp);
+        }
+
+        public IType ToIType(TypeDefinition td)
+        {
+            var tmp = ToSimpleType(td);
+            return td.TypeParameters.Count == 0 
+                ? tmp 
+                : ToTypeList(tmp, td.TypeParameters.Select(ToTypeVariable).ToList());
         }
 
         public IType ToIType(TypeExpression tes)

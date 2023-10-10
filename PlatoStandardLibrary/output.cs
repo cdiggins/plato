@@ -45,7 +45,7 @@ public static partial class Extensions
         /* $113 */
         At(/* (Array, Any) */
         /* $114 */
-        FieldValues(/* (Measure) */
+        FieldValues(/* Measure */
         x), /* Integer */
         0);
     }
@@ -77,7 +77,7 @@ public static partial class Extensions
         /* $117 */
         Square(/* (Array, Any) */
         /* $118 */
-        FieldValues(/* (Magnitudinal) */
+        FieldValues(/* Magnitudinal */
         x))));
     }
 }
@@ -103,10 +103,10 @@ public static partial class Extensions
         /* $136 */
         Equals(/* (Array, Any) */
         /* $137 */
-        FieldValues(/* (Equatable) */
+        FieldValues(/* Equatable */
         a), /* (Array, Any) */
         /* $138 */
-        FieldValues(/* (Equatable) */
+        FieldValues(/* Equatable */
         b)));
     }
 }
@@ -122,20 +122,20 @@ public static partial class Extensions
         /* $123 */
         Add(/* (Array, Any) */
         /* $124 */
-        FieldValues(/* (Arithmetic) */
+        FieldValues(/* Arithmetic */
         self), /* (Array, Any) */
         /* $125 */
-        FieldValues(/* (Arithmetic) */
+        FieldValues(/* Arithmetic */
         other));
     }
     public static Self Subtract<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
         return /* Number */
         /* $159 */
-        Add(/* (Arithmetic) */
+        Add(/* Arithmetic */
         self, /* Number */
         /* $160 */
-        Negative(/* (Arithmetic) */
+        Negative(/* Arithmetic */
         self));
     }
     public static Self Negative<Self>(this Self self) where Self: Arithmetic<Self>
@@ -144,16 +144,16 @@ public static partial class Extensions
         /* $161 */
         Negative(/* (Array, Any) */
         /* $162 */
-        FieldValues(/* (Arithmetic) */
+        FieldValues(/* Arithmetic */
         self));
     }
     public static Self Reciprocal<Self>(this Self self) where Self: Arithmetic<Self>
     {
-        return /* (Arithmetic) */
+        return /* Arithmetic */
         /* $173 */
         Reciprocal(/* (Array, Any) */
         /* $174 */
-        FieldValues(/* (Arithmetic) */
+        FieldValues(/* Arithmetic */
         self));
     }
     public static Self Multiply<Self>(this Self self, Self other) where Self: Arithmetic<Self>
@@ -162,10 +162,10 @@ public static partial class Extensions
         /* $120 */
         Add(/* (Array, Any) */
         /* $121 */
-        FieldValues(/* (Arithmetic) */
+        FieldValues(/* Arithmetic */
         self), /* (Array, Any) */
         /* $122 */
-        FieldValues(/* (Arithmetic) */
+        FieldValues(/* Arithmetic */
         other));
     }
     public static Self Divide<Self>(this Self self, Self other) where Self: Arithmetic<Self>
@@ -174,10 +174,10 @@ public static partial class Extensions
         /* $175 */
         Divide(/* (Array, Any) */
         /* $176 */
-        FieldValues(/* (Arithmetic) */
+        FieldValues(/* Arithmetic */
         self), /* (Array, Any) */
         /* $177 */
-        FieldValues(/* (Arithmetic) */
+        FieldValues(/* Arithmetic */
         other));
     }
     public static Self Modulo<Self>(this Self self, Self other) where Self: Arithmetic<Self>
@@ -186,10 +186,10 @@ public static partial class Extensions
         /* $180 */
         Modulo(/* (Array, Any) */
         /* $181 */
-        FieldValues(/* (Arithmetic) */
+        FieldValues(/* Arithmetic */
         self), /* (Array, Any) */
         /* $182 */
-        FieldValues(/* (Arithmetic) */
+        FieldValues(/* Arithmetic */
         other));
     }
 }
@@ -205,7 +205,7 @@ public static partial class Extensions
         /* $126 */
         Add(/* (Array, Any) */
         /* $127 */
-        FieldValues(/* (ScalarArithmetic) */
+        FieldValues(/* ScalarArithmetic */
         self), /* Number */
         scalar);
     }
@@ -213,7 +213,7 @@ public static partial class Extensions
     {
         return /* Number */
         /* $163 */
-        Add(/* (ScalarArithmetic) */
+        Add(/* ScalarArithmetic */
         self, /* Number */
         /* $164 */
         Negative(/* Number */
@@ -225,7 +225,7 @@ public static partial class Extensions
         /* $128 */
         Multiply(/* (Array, Any) */
         /* $129 */
-        FieldValues(/* (ScalarArithmetic) */
+        FieldValues(/* ScalarArithmetic */
         self), /* Number */
         scalar);
     }
@@ -233,8 +233,8 @@ public static partial class Extensions
     {
         return /* Number */
         /* $178 */
-        Multiply(/* (ScalarArithmetic) */
-        self, /* (Arithmetic) */
+        Multiply(/* ScalarArithmetic */
+        self, /* Arithmetic */
         /* $179 */
         Reciprocal(/* Number */
         scalar));
@@ -245,7 +245,7 @@ public static partial class Extensions
         /* $183 */
         Modulo(/* (Array, Any) */
         /* $184 */
-        FieldValues(/* (ScalarArithmetic) */
+        FieldValues(/* ScalarArithmetic */
         self), /* Number */
         scalar);
     }
@@ -262,10 +262,10 @@ public static partial class Extensions
         /* $166 */
         And(/* (Array, Any) */
         /* $167 */
-        FieldValues(/* (BooleanOperations) */
+        FieldValues(/* BooleanOperations */
         a), /* (Array, Any) */
         /* $168 */
-        FieldValues(/* (BooleanOperations) */
+        FieldValues(/* BooleanOperations */
         b));
     }
     public static Self Or<Self>(this Self a, Self b) where Self: BooleanOperations<Self>
@@ -274,10 +274,10 @@ public static partial class Extensions
         /* $185 */
         Or(/* (Array, Any) */
         /* $186 */
-        FieldValues(/* (BooleanOperations) */
+        FieldValues(/* BooleanOperations */
         a), /* (Array, Any) */
         /* $187 */
-        FieldValues(/* (BooleanOperations) */
+        FieldValues(/* BooleanOperations */
         b));
     }
     public static Self Not<Self>(this Self a) where Self: BooleanOperations<Self>
@@ -286,7 +286,7 @@ public static partial class Extensions
         /* $188 */
         Not(/* (Array, Any) */
         /* $189 */
-        FieldValues(/* (BooleanOperations) */
+        FieldValues(/* BooleanOperations */
         a));
     }
 }
