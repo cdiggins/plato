@@ -34,7 +34,7 @@ namespace Plato.Compiler
         public bool ParsingSuccess { get; set; }
         public IReadOnlyList<Parser> Parsers { get; set; }
         public IReadOnlyList<AstNode> Trees { get; set; }
-        public SymbolResolver SymbolResolver { get; set; }
+        public SymbolFactory SymbolFactory { get; set; }
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; set; }
         public IDictionary<FunctionDefinition, FunctionAnalysis> FunctionAnalyses { get; set; }
 
@@ -84,10 +84,10 @@ namespace Plato.Compiler
             try
             {
                 Log("Creating symbol resolver");
-                SymbolResolver = new SymbolResolver(Logger);
+                SymbolFactory = new SymbolFactory(Logger);
 
                 Log("Creating type definitions");
-                var typeDefs = SymbolResolver.CreateTypeDefs(TypeDeclarations)
+                var typeDefs = SymbolFactory.CreateTypeDefs(TypeDeclarations)
                     .Concat(PrimitiveTypeDefinitions.AllPrimitives);
 
                 foreach (var td in typeDefs)
@@ -102,10 +102,10 @@ namespace Plato.Compiler
                     }
                 }
 
-                Log($"Found {SymbolResolver.Errors.Count} symbol resolution errors");
-                LogResolutionErrors(SymbolResolver.Errors);
+                Log($"Found {SymbolFactory.Errors.Count} symbol resolution errors");
+                LogResolutionErrors(SymbolFactory.Errors);
 
-                if (SymbolResolver.Errors.Count > 0)
+                if (SymbolFactory.Errors.Count > 0)
                 {
                     Log("Halting further computation");
                     return;
@@ -155,15 +155,15 @@ namespace Plato.Compiler
                 foreach (var fa in FunctionAnalyses.Values)
                     fa.Process();
 
-                sb.AppendLine("Function group call unresolved: no functions");
-                foreach (var fgc in FunctionGroupCalls.Values)
-                    if (fgc.DistinctReturnTypes.Count == 0)
-                        sb.AppendLine(fgc.ToString());
+                var noResults = FunctionGroupCalls.Values.Where(fgc => fgc.DistinctReturnTypes.Count == 0).ToList();
+                sb.AppendLine($"Function group call unresolved: no functions {noResults.Count}");
+                foreach (var fgc in noResults)
+                    sb.AppendLine(fgc.ToString());
 
-                sb.AppendLine("Function group call unresolved: ambiguous");
-                foreach (var fgc in FunctionGroupCalls.Values)
-                    if (fgc.DistinctReturnTypes.Count > 1)
-                        sb.AppendLine(fgc.ToString());
+                var ambResults = FunctionGroupCalls.Values.Where(fgc => fgc.DistinctReturnTypes.Count > 1).ToList();
+                sb.AppendLine($"Function group call unresolved: ambiguous {ambResults.Count}");
+                foreach (var fgc in ambResults)
+                    sb.AppendLine(fgc.ToString());
 
                 Logger.Log(sb.ToString());                
 
@@ -262,7 +262,7 @@ namespace Plato.Compiler
         public IType GetType(Expression expr)
             => ExpressionTypes.TryGetValue(expr, out var r) ? r : null;
 
-        public void LogResolutionErrors(IEnumerable<SymbolResolver.ResolutionError> resolutionErrors)
+        public void LogResolutionErrors(IEnumerable<SymbolFactory.ResolutionError> resolutionErrors)
         {
             foreach (var error in resolutionErrors)
             {

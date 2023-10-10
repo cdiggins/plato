@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using Plato.Compiler.Ast;
 
 namespace Plato.Compiler.Symbols
@@ -95,13 +96,15 @@ namespace Plato.Compiler.Symbols
 
         public IEnumerable<FunctionDefinition> Functions => Enumerable.Empty<FunctionDefinition>()
             .Concat(Methods.Select(m => m.Function))
-            .Concat(Fields.Select(f => f.Function));
+            .Concat(Fields.Select(f => f.Function))
+            .Concat(CompilerGeneratedFunctions);
 
         public List<MethodDefinition> Methods { get; } = new List<MethodDefinition>();
         public List<FieldDefinition> Fields { get; } = new List<FieldDefinition>();
         public List<TypeParameterDefinition> TypeParameters { get; } = new List<TypeParameterDefinition>();
         public List<TypeExpression> Inherits { get; } = new List<TypeExpression>();
         public List<TypeExpression> Implements { get; } = new List<TypeExpression>();
+        public List<FunctionDefinition> CompilerGeneratedFunctions { get; } = new List<FunctionDefinition>();
 
         public string Name { get; }
         

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Plato.Compiler.Ast;
+using Plato.Compiler.Types;
+using Ptarmigan.Utils;
 
 namespace Plato.Compiler.Symbols
 {
@@ -10,7 +12,7 @@ namespace Plato.Compiler.Symbols
     /// Used primarily to figure out what each name means, and what the type of each expression is.
     /// This allows us to figure out which methods will get called at run-time.
     /// </summary>
-    public class SymbolResolver
+    public class SymbolFactory
     {
         public class ResolutionError
         {
@@ -24,7 +26,7 @@ namespace Plato.Compiler.Symbols
             }
         }
 
-        public SymbolResolver(Logger logger)
+        public SymbolFactory(Logger logger)
         {
             BindPredefinedSymbols();
             Logger = logger;
@@ -381,6 +383,18 @@ namespace Plato.Compiler.Symbols
                     m.Function = f;
 
                     AddToGroupDefinition(f);
+
+                    // Check if this is a static method, but not on a library. 
+                    if (!typeDef.IsLibrary() && f.Parameters.Count == 0)
+                    {
+                        Verifier.Assert(list.Count == 0);
+
+                        // We create a second version of the function that accepts a member of the given type
+                        // This is something that C# does not support, but is convenient in generic code. (e.g., x += x.One). 
+                        var f2 = new FunctionDefinition(m.Name, typeDef, m.Type, body, new ParameterDefinition("_", new TypeExpression(typeDef.Self)));
+                        AddToGroupDefinition(f2);
+                        typeDef.CompilerGeneratedFunctions.Add(f2);
+                    }
 
                     ValueBindingsScope = ValueBindingsScope.Pop();
                 }
