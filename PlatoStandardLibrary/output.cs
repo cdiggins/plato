@@ -69,11 +69,11 @@ public static partial class Extensions
 {
     public static Number Magnitude<Self>(this Self x) where Self: Magnitudinal<Self>
     {
-        return /* Number */
+        return /*  */
         /* $115 */
-        SquareRoot(/* Numerical */
+        SquareRoot(/*  */
         /* $116 */
-        Sum(/* Number */
+        Sum(/*  */
         /* $117 */
         Square(/* (Array, Any) */
         /* $118 */
@@ -118,7 +118,7 @@ public static partial class Extensions
 {
     public static Self Add<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
-        return /* Number */
+        return /* Arithmetic */
         /* $123 */
         Add(/* (Array, Any) */
         /* $124 */
@@ -130,17 +130,17 @@ public static partial class Extensions
     }
     public static Self Subtract<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
-        return /* Number */
+        return /* Arithmetic */
         /* $159 */
         Add(/* Arithmetic */
-        self, /* Number */
+        self, /* Arithmetic */
         /* $160 */
         Negative(/* Arithmetic */
         self));
     }
     public static Self Negative<Self>(this Self self) where Self: Arithmetic<Self>
     {
-        return /* Number */
+        return /* Arithmetic */
         /* $161 */
         Negative(/* (Array, Any) */
         /* $162 */
@@ -158,7 +158,7 @@ public static partial class Extensions
     }
     public static Self Multiply<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
-        return /* Number */
+        return /* Arithmetic */
         /* $120 */
         Add(/* (Array, Any) */
         /* $121 */
@@ -170,7 +170,7 @@ public static partial class Extensions
     }
     public static Self Divide<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
-        return /* Number */
+        return /* Arithmetic */
         /* $175 */
         Divide(/* (Array, Any) */
         /* $176 */
@@ -182,7 +182,7 @@ public static partial class Extensions
     }
     public static Self Modulo<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
-        return /* Number */
+        return /* Arithmetic */
         /* $180 */
         Modulo(/* (Array, Any) */
         /* $181 */
@@ -201,7 +201,7 @@ public static partial class Extensions
 {
     public static Self Add<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return /* Number */
+        return /* Arithmetic */
         /* $126 */
         Add(/* (Array, Any) */
         /* $127 */
@@ -211,7 +211,7 @@ public static partial class Extensions
     }
     public static Self Subtract<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return /* Number */
+        return /* Arithmetic */
         /* $163 */
         Add(/* ScalarArithmetic */
         self, /* Number */
@@ -221,7 +221,7 @@ public static partial class Extensions
     }
     public static Self Multiply<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return /* Number */
+        return /* Arithmetic */
         /* $128 */
         Multiply(/* (Array, Any) */
         /* $129 */
@@ -231,7 +231,7 @@ public static partial class Extensions
     }
     public static Self Divide<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return /* Number */
+        return /* Arithmetic */
         /* $178 */
         Multiply(/* ScalarArithmetic */
         self, /* Arithmetic */
@@ -241,7 +241,7 @@ public static partial class Extensions
     }
     public static Self Modulo<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return /* Number */
+        return /* Arithmetic */
         /* $183 */
         Modulo(/* (Array, Any) */
         /* $184 */
@@ -258,7 +258,7 @@ public static partial class Extensions
 {
     public static Self And<Self>(this Self a, Self b) where Self: BooleanOperations<Self>
     {
-        return /* Boolean */
+        return /* BooleanOperations */
         /* $166 */
         And(/* (Array, Any) */
         /* $167 */
@@ -270,7 +270,7 @@ public static partial class Extensions
     }
     public static Self Or<Self>(this Self a, Self b) where Self: BooleanOperations<Self>
     {
-        return /* Boolean */
+        return /* BooleanOperations */
         /* $185 */
         Or(/* (Array, Any) */
         /* $186 */
@@ -282,7 +282,7 @@ public static partial class Extensions
     }
     public static Self Not<Self>(this Self a) where Self: BooleanOperations<Self>
     {
-        return /* Boolean */
+        return /* BooleanOperations */
         /* $188 */
         Not(/* (Array, Any) */
         /* $189 */

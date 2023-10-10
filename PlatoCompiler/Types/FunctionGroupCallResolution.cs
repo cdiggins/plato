@@ -163,7 +163,11 @@ namespace Plato.Compiler.Types
 
         public bool CanCall(FunctionAnalysis fa, IReadOnlyList<IType> argTypes)
         {
-            return fa.Parameters.Count == argTypes.Count;
+            if (fa.Parameters.Count != argTypes.Count) 
+                return false;
+            if (fa.Parameters.Count > 0)
+                return ArgumentFit(argTypes[0], fa.Parameters[0]) >= 0;
+            return true;
         }
 
         public IType BestReturnType()
