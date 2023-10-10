@@ -372,7 +372,7 @@ namespace Plato.Compiler.Types
                     break;
                     
                 case FunctionGroupReference functionGroupReference:
-                    r = GenerateUnconstrainedTypeVariable();
+                    r = ToSimpleType("Function");
                     break;
 
                 case Lambda lambda:

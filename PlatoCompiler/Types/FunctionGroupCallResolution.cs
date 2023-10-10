@@ -23,7 +23,9 @@ namespace Plato.Compiler.Types
         public const int DoesntMatchDeclaredConstraintFit = -2;
         public const int NoFit = -1;
         public const int PerfectFit = 0;
-        public const int GenericFit = 10 * 1000; 
+        public const int GenericFit = 10 * 1000;
+        public const int GenericToSpecificFitPenalty = 200 * 1000;
+        public const int SpecificToGenericFitPenalty = 100 * 1000;
         public const int AlmostNotAFit = 1000 * 1000;
         public const int InheritsFitPenalty = 10;
         public const int ImplementsFitPenalty = 100;
@@ -82,9 +84,26 @@ namespace Plato.Compiler.Types
             if (typeArgument.Equals(typeParameter))
                 return PerfectFit;
 
+            // For example: are we going from a "(Function, int)" to "(Function)"
+            if (typeArgument is TypeList typeArgumentAsList && typeParameter is TypeConstant typeParameterAsConstant)
+            {
+                var tmp = ArgumentFit(typeArgumentAsList.Children[0], typeParameter);
+                if (tmp >= 0)
+                    return tmp + SpecificToGenericFitPenalty;
+                return tmp;
+            }
+
+            if (typeArgument is TypeConstant typeArgumentAsConstant && typeParameter is TypeList typeParameterAsList)
+            {
+                var tmp = ArgumentFit(typeArgumentAsConstant, typeParameterAsList.Children[0]);
+                if (tmp >= 0)
+                    return tmp + GenericToSpecificFitPenalty;
+                return tmp;
+            }
+
             if (typeParameter is TypeVariable tv)
             {
-                if (typeArgument.IsConcrete())
+                if (typeArgument.IsConcrete() || typeArgument.IsPrimitive()) 
                 {
                     // Check that the type argument implements all of the constraints of the type variable
                     if (!typeArgument.Implements(tv.Constraint))
