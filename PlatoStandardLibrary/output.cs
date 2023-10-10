@@ -41,10 +41,10 @@ public static partial class Extensions
 {
     public static Number Value<Self>(this Self x) where Self: Measure<Self>
     {
-        return /* $1 */
-        /* $113 */
+        return /* $1:Any */
+        /* $113:Any */
         At(/* (Array, Any) */
-        /* $114 */
+        /* $114:Any */
         FieldValues(/* Measure */
         x), /* Integer */
         0);
@@ -70,13 +70,13 @@ public static partial class Extensions
     public static Number Magnitude<Self>(this Self x) where Self: Magnitudinal<Self>
     {
         return /*  */
-        /* $115 */
+        /* $115:Any */
         SquareRoot(/*  */
-        /* $116 */
+        /* $116:Any */
         Sum(/*  */
-        /* $117 */
+        /* $117:Any */
         Square(/* (Array, Any) */
-        /* $118 */
+        /* $118:Any */
         FieldValues(/* Magnitudinal */
         x))));
     }
@@ -98,14 +98,14 @@ public static partial class Extensions
     public static Boolean Equals<Self>(this Self a, Self b) where Self: Equatable<Self>
     {
         return /* Boolean */
-        /* $135 */
+        /* $135:Any */
         All(/* Boolean */
-        /* $136 */
+        /* $136:Any */
         Equals(/* (Array, Any) */
-        /* $137 */
+        /* $137:Any */
         FieldValues(/* Equatable */
         a), /* (Array, Any) */
-        /* $138 */
+        /* $138:Any */
         FieldValues(/* Equatable */
         b)));
     }
@@ -119,76 +119,76 @@ public static partial class Extensions
     public static Self Add<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
         return /* Arithmetic */
-        /* $123 */
+        /* $123:Any */
         Add(/* (Array, Any) */
-        /* $124 */
+        /* $124:Any */
         FieldValues(/* Arithmetic */
         self), /* (Array, Any) */
-        /* $125 */
+        /* $125:Any */
         FieldValues(/* Arithmetic */
         other));
     }
     public static Self Subtract<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
         return /* Arithmetic */
-        /* $159 */
+        /* $159:Any */
         Add(/* Arithmetic */
         self, /* Arithmetic */
-        /* $160 */
+        /* $160:Any */
         Negative(/* Arithmetic */
         self));
     }
     public static Self Negative<Self>(this Self self) where Self: Arithmetic<Self>
     {
         return /* Arithmetic */
-        /* $161 */
+        /* $161:Any */
         Negative(/* (Array, Any) */
-        /* $162 */
+        /* $162:Any */
         FieldValues(/* Arithmetic */
         self));
     }
     public static Self Reciprocal<Self>(this Self self) where Self: Arithmetic<Self>
     {
         return /* Arithmetic */
-        /* $173 */
+        /* $173:Any */
         Reciprocal(/* (Array, Any) */
-        /* $174 */
+        /* $174:Any */
         FieldValues(/* Arithmetic */
         self));
     }
     public static Self Multiply<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
         return /* Arithmetic */
-        /* $120 */
+        /* $120:Any */
         Add(/* (Array, Any) */
-        /* $121 */
+        /* $121:Any */
         FieldValues(/* Arithmetic */
         self), /* (Array, Any) */
-        /* $122 */
+        /* $122:Any */
         FieldValues(/* Arithmetic */
         other));
     }
     public static Self Divide<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
         return /* Arithmetic */
-        /* $175 */
+        /* $175:Any */
         Divide(/* (Array, Any) */
-        /* $176 */
+        /* $176:Any */
         FieldValues(/* Arithmetic */
         self), /* (Array, Any) */
-        /* $177 */
+        /* $177:Any */
         FieldValues(/* Arithmetic */
         other));
     }
     public static Self Modulo<Self>(this Self self, Self other) where Self: Arithmetic<Self>
     {
         return /* Arithmetic */
-        /* $180 */
+        /* $180:Any */
         Modulo(/* (Array, Any) */
-        /* $181 */
+        /* $181:Any */
         FieldValues(/* Arithmetic */
         self), /* (Array, Any) */
-        /* $182 */
+        /* $182:Any */
         FieldValues(/* Arithmetic */
         other));
     }
@@ -202,9 +202,9 @@ public static partial class Extensions
     public static Self Add<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
         return /* Arithmetic */
-        /* $126 */
+        /* $126:Any */
         Add(/* (Array, Any) */
-        /* $127 */
+        /* $127:Any */
         FieldValues(/* ScalarArithmetic */
         self), /* Number */
         scalar);
@@ -212,19 +212,19 @@ public static partial class Extensions
     public static Self Subtract<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
         return /* Arithmetic */
-        /* $163 */
+        /* $163:Any */
         Add(/* ScalarArithmetic */
         self, /* Number */
-        /* $164 */
+        /* $164:Any */
         Negative(/* Number */
         scalar));
     }
     public static Self Multiply<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
         return /* Arithmetic */
-        /* $128 */
+        /* $128:Any */
         Multiply(/* (Array, Any) */
-        /* $129 */
+        /* $129:Any */
         FieldValues(/* ScalarArithmetic */
         self), /* Number */
         scalar);
@@ -232,19 +232,19 @@ public static partial class Extensions
     public static Self Divide<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
         return /* Arithmetic */
-        /* $178 */
+        /* $178:Any */
         Multiply(/* ScalarArithmetic */
         self, /* Arithmetic */
-        /* $179 */
+        /* $179:Any */
         Reciprocal(/* Number */
         scalar));
     }
     public static Self Modulo<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
         return /* Arithmetic */
-        /* $183 */
+        /* $183:Any */
         Modulo(/* (Array, Any) */
-        /* $184 */
+        /* $184:Any */
         FieldValues(/* ScalarArithmetic */
         self), /* Number */
         scalar);
@@ -259,33 +259,33 @@ public static partial class Extensions
     public static Self And<Self>(this Self a, Self b) where Self: BooleanOperations<Self>
     {
         return /* BooleanOperations */
-        /* $166 */
+        /* $166:Any */
         And(/* (Array, Any) */
-        /* $167 */
+        /* $167:Any */
         FieldValues(/* BooleanOperations */
         a), /* (Array, Any) */
-        /* $168 */
+        /* $168:Any */
         FieldValues(/* BooleanOperations */
         b));
     }
     public static Self Or<Self>(this Self a, Self b) where Self: BooleanOperations<Self>
     {
         return /* BooleanOperations */
-        /* $185 */
+        /* $185:Any */
         Or(/* (Array, Any) */
-        /* $186 */
+        /* $186:Any */
         FieldValues(/* BooleanOperations */
         a), /* (Array, Any) */
-        /* $187 */
+        /* $187:Any */
         FieldValues(/* BooleanOperations */
         b));
     }
     public static Self Not<Self>(this Self a) where Self: BooleanOperations<Self>
     {
         return /* BooleanOperations */
-        /* $188 */
+        /* $188:Any */
         Not(/* (Array, Any) */
-        /* $189 */
+        /* $189:Any */
         FieldValues(/* BooleanOperations */
         a));
     }

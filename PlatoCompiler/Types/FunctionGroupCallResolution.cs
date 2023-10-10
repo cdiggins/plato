@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime;
 using Plato.Compiler.Symbols;
 using Ptarmigan.Utils;
 
@@ -22,13 +23,15 @@ namespace Plato.Compiler.Types
         public const int DoesntMatchDeclaredConstraintFit = -2;
         public const int NoFit = -1;
         public const int PerfectFit = 0;
-        public const int GenericFit = 999; 
-        public const int AlmostNotAFit = 9999;
+        public const int GenericFit = 10 * 1000; 
+        public const int AlmostNotAFit = 1000 * 1000;
         public const int InheritsFitPenalty = 10;
         public const int ImplementsFitPenalty = 100;
+        public const int CastPenalty = 1000;
 
         public FunctionAnalysis Context { get; }
         public FunctionCall Callsite { get; }
+        public Compiler Compiler => Context.Compiler;
         public FunctionGroupReference Reference { get; }
         public IReadOnlyList<IType> ArgTypes { get; }
         public List<FunctionAnalysis> CallableFunctions { get; }
@@ -66,7 +69,12 @@ namespace Plato.Compiler.Types
         public int ArgumentFit(IType typeArgument, IType typeParameter)
         {
             if (typeArgument == null)
-                return NoFit; 
+                return NoFit;
+
+            if (typeArgument is TypeVariable tv0)
+            {
+                typeArgument = tv0.Constraint;
+            }
 
             if (typeArgument.Equals(typeParameter))
                 return PerfectFit;
@@ -76,12 +84,9 @@ namespace Plato.Compiler.Types
                 if (typeArgument.IsConcrete())
                 {
                     // Check that the type argument implements all of the constraints of the type variable
-                    foreach (var dc in tv.DeclaredConstraints)
-                    {
-                        if (!typeArgument.Implements(dc))
-                            return DoesntMatchDeclaredConstraintFit;
-                    }
-                    
+                    if (!typeArgument.Implements(tv.Constraint))
+                        return DoesntMatchDeclaredConstraintFit;
+
                     // All of the declared constraints are satisfied.
                     // So we are a match, but anything else would match better 
                     return GenericFit;
@@ -90,23 +95,11 @@ namespace Plato.Compiler.Types
                 if (typeArgument.IsConcept())
                 {
                     // Check that the type argument inherits all of the constraints of the type variable
-                    foreach (var dc in tv.DeclaredConstraints)
-                    {
-                        if (!typeArgument.Inherits(dc))
-                            return DoesntMatchDeclaredConstraintFit;
-                    }
+                    if (!typeArgument.Inherits(tv.Constraint))
+                        return DoesntMatchDeclaredConstraintFit;
 
                     // All of the declared constraints are satisfied.
                     // So we are a match, but anything else would match better 
-                    return GenericFit;
-                }
-
-                if (typeArgument is TypeVariable tv2)
-                {
-                    foreach (var dc in tv.DeclaredConstraints)
-                        if (!tv2.DeclaredConstraints.Any(dc2 => dc2.Inherits(dc)))
-                            return DoesntMatchDeclaredConstraintFit;
-
                     return GenericFit;
                 }
 
@@ -127,16 +120,17 @@ namespace Plato.Compiler.Types
                     return r >= 0 ? r : DoesntImplementConceptFit;
                 }
 
-                if (typeArgument is TypeVariable tv2)
-                {
-                    return tv2.DeclaredConstraints.MinWhere(dc => dc.ImplementsDepth(typeParameter), i => i >= 0, DoesntImplementConceptFit);
-                }
-
                 throw new InvalidOperationException("Should not be reachable");
             }
 
             if (typeParameter.IsConcrete())
             {
+                var cast = Context.Compiler.FindCast(typeArgument, typeParameter);
+                if (cast != null)
+                {
+                    return CastPenalty;
+                }
+
                 if (typeArgument.IsConcept())
                 {
                     // Cannot pass a concept to a concrete type 
@@ -147,12 +141,6 @@ namespace Plato.Compiler.Types
                 {
                     // Already verified above that this is not true
                     return MismatchedTypeFit;
-                }
-
-                // TODO: this should generate a constraint, or not be allowed. 
-                if (typeArgument is TypeVariable tv2)
-                {
-                    return AlmostNotAFit;
                 }
 
                 throw new InvalidOperationException("Should not be reachable");

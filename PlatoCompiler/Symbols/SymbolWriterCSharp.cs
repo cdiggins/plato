@@ -366,7 +366,7 @@ namespace Plato.Compiler.Symbols
             if (expr == null)
                 return this;
 
-            var t = Compiler.GetType(expr);
+            var t = Compiler.GetExpressionType(expr);
 
             // Don't put types in front of an argument (it is the same as the other)
             if (!(expr is Argument))

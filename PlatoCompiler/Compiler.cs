@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using Parakeet;
 using Parakeet.Demos.Plato;
@@ -259,7 +260,7 @@ namespace Plato.Compiler
             }
         }
 
-        public IType GetType(Expression expr)
+        public IType GetExpressionType(Expression expr)
             => ExpressionTypes.TryGetValue(expr, out var r) ? r : null;
 
         public void LogResolutionErrors(IEnumerable<SymbolFactory.ResolutionError> resolutionErrors)
@@ -392,6 +393,19 @@ namespace Plato.Compiler
             var tmp = new FunctionGroupCallResolution(callSite, context, fgr, argTypes);
             FunctionGroupCalls.Add(callSite, tmp);
             return tmp.BestReturnType();
+        }
+
+        public FunctionDefinition FindCast(IType from, IType to)
+        {
+            if (!to.IsConcrete() || !from.IsConcrete())
+                return null;
+            var name = to.GetTypeDefinition().Name;
+            var funcs = FunctionDefinitions.Where(fd => fd.Name == $"To{name}").Select(GetProcessedFunctionAnalysis).ToList();
+            funcs = funcs.Where(fd => fd?.ReturnType?.Equals(to) == true).ToList();
+            funcs = funcs.Where(fd => fd.Parameters.Count == 1 && fd.Parameters[0].Equals(from)).ToList();
+            if (funcs.Count == 0) return null;
+            if (funcs.Count > 1) throw new Exception("Ambiguous cast functions");
+            return funcs[0].Function;
         }
     }
 }

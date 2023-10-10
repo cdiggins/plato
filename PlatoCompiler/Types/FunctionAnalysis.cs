@@ -188,23 +188,22 @@ namespace Plato.Compiler.Types
             }
         }
 
-        public TypeVariable GenerateTypeVariable(IReadOnlyList<IType> constraints)
+        public TypeVariable GenerateTypeVariable(IType constraint)
         {
-            var r = new TypeVariable(constraints);
+            constraint = constraint ?? ToSimpleType("Any");
+            var r = new TypeVariable(constraint);
             Variables.Add(r);
             return r;
         }
 
         public TypeVariable GenerateUnconstrainedTypeVariable()
         {
-            return GenerateTypeVariable(Array.Empty<IType>());
+            return GenerateTypeVariable(null);
         }
 
         public TypeVariable GenerateConstrainedTypeVariable(TypeExpression concept)
         {
-            return concept == null 
-                ? GenerateUnconstrainedTypeVariable()                 
-                : GenerateTypeVariable(new [] { ToIType(concept) });
+            return GenerateTypeVariable(concept != null ? ToIType(concept) : null);
         }
 
         public int ComputeCardinalityOfFunction(ParameterDefinition pd, Expression body)
@@ -347,7 +346,7 @@ namespace Plato.Compiler.Types
         /// </summary>
         public IType Process(Expression expr)
         {
-            var r = Compiler.GetType(expr);
+            var r = Compiler.GetExpressionType(expr);
             if (r != null)
                 return r;
 

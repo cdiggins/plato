@@ -16,16 +16,17 @@ namespace Plato.Compiler.Types
     {
         public int Id { get; } = NextId++;
         public static int NextId;
-        public IReadOnlyList<IType> DeclaredConstraints { get; }
+        public IType Constraint { get; }
 
-        public TypeVariable(IReadOnlyList<IType> declaredConstraints)
+        public TypeVariable(IType constraint)
         {
-            DeclaredConstraints = declaredConstraints;
-            Verifier.AssertAll(DeclaredConstraints, i => i.IsConcept(), "TypeVariables can only have concepts as constraints");
+            Verifier.AssertNotNull(constraint, nameof(constraint));
+            Verifier.Assert(constraint.IsConcept(), "TypeVariables can only have concepts as constraints");
+            Constraint = constraint;
         }
 
         public override string ToString()
-            => $"${Id}";
+            => $"${Id}:{Constraint}";
 
         public override int GetHashCode()
             => Id;
