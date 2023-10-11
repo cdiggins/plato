@@ -29,7 +29,11 @@ namespace Plato.Compiler.Types
         public const int AlmostNotAFit = 1000 * 1000;
         public const int InheritsFitPenalty = 10;
         public const int ImplementsFitPenalty = 100;
-        public const int CastPenalty = 1000;
+
+        // TODO: I'm not sure which of these two should be considered a better fit.
+        // The chances of having both present seem slim, and should probably be treated as an error. 
+        public const int ImplicitCastPenalty = 1000;
+        public const int CastConstructorPenalty = 2000;
 
         public FunctionAnalysis Context { get; }
         public FunctionCall Callsite { get; }
@@ -45,8 +49,11 @@ namespace Plato.Compiler.Types
             Context = context;
             Reference = reference;
             ArgTypes = argTypes;
-            CallableFunctions = reference.Definition.Functions
-                .Select(Context.Compiler.GetProcessedFunctionAnalysis)
+
+            var functions = reference.Definition.Functions
+                .Select(Context.Compiler.GetProcessedFunctionAnalysis).ToList();
+            
+            CallableFunctions = functions
                 .Where(fa => CanCall(fa, ArgTypes))
                 .ToList();
 
@@ -56,7 +63,7 @@ namespace Plato.Compiler.Types
                 if (CallableFunctions.Count > 1)
                 {
                     var arg0 = argTypes[i];
-                    var groups = CallableFunctions.GroupBy(cf => ArgumentFit(arg0, cf.Parameters[0]));
+                    var groups = CallableFunctions.GroupBy(cf => ArgumentFit(arg0, cf.ParameterTypes[0]));
                     var group0 = groups.First().ToList();
                     CallableFunctions = group0;
                 }
@@ -147,10 +154,16 @@ namespace Plato.Compiler.Types
 
             if (typeParameter.IsConcrete() || typeParameter.IsPrimitive())
             {
-                var cast = Context.Compiler.FindCast(typeArgument, typeParameter);
+                var cast = Context.Compiler.FindImplicitCast(typeArgument, typeParameter);
                 if (cast != null)
                 {
-                    return CastPenalty;
+                    return ImplicitCastPenalty;
+                }
+
+                var ctor = Context.Compiler.FindCastConstructor(typeArgument, typeParameter);
+                if (ctor != null)
+                {
+                    return CastConstructorPenalty;
                 }
 
                 if (typeArgument.IsConcept())
@@ -173,17 +186,16 @@ namespace Plato.Compiler.Types
 
         public bool CanCall(FunctionAnalysis fa, IReadOnlyList<IType> argTypes)
         {
-            if (fa.Parameters.Count != argTypes.Count) 
+            if (fa.ParameterTypes.Count != argTypes.Count) 
                 return false;
             for (var i=0; i < argTypes.Count; ++i)
-                if (ArgumentFit(argTypes[i], fa.Parameters[i]) < 0)
+                if (ArgumentFit(argTypes[i], fa.ParameterTypes[i]) < 0)
                     return false;
             return true;
         }
 
         public IType BestReturnType()
             => DistinctReturnTypes.FirstOrDefault();
-        
 
         public string ArgString
             => string.Join(", ", ArgTypes);

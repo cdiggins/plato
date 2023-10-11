@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using Plato.Compiler.Ast;
 using Plato.Compiler.Types;
 using Ptarmigan.Utils;
@@ -76,15 +77,20 @@ namespace Plato.Compiler.Symbols
         }
 
         public FunctionGroupDefinition CreateOrLookupGroupDefinition(MemberDefinition member)
+            => CreateOrLookupGroupDefinition(member.Name);
+
+        public FunctionGroupDefinition CreateOrLookupGroupDefinition(string name)
         {
-            var name = member.Name;
             var val = ValueBindingsScope.GetValue(name);
             if (val is FunctionGroupDefinition group)
                 return group;
-            
+
             var fgs = new FunctionGroupDefinition(Array.Empty<FunctionDefinition>(), name);
             return BindValue(name, fgs);
         }
+
+        public void AddToGroupDefinitionAndCreateIfNeeded(FunctionDefinition function)
+            => CreateOrLookupGroupDefinition(function.Name).Add(function);
 
         public FunctionGroupDefinition AddToGroupDefinition(FunctionDefinition function)
         {
@@ -127,6 +133,11 @@ namespace Plato.Compiler.Symbols
         public void LogError(string message, AstNode node)
         {
             Errors.Add(new ResolutionError(message, node));
+        }
+
+        public TypeDefinition GetTypeDefinition(string name)
+        {
+            return TypeBindingsScope.GetValue(name) as TypeDefinition;
         }
 
         public TypeExpression ResolveType(AstTypeNode astTypeNode)
@@ -331,7 +342,7 @@ namespace Plato.Compiler.Symbols
                 TypeBindingsScope = TypeBindingsScope.Pop();
             }
 
-            // Foreach type add the inherited and the implemented type.
+            // For each type 
             foreach (var typeDef in TypeDefs)
             {
                 ValueBindingsScope = ValueBindingsScope.Push();
@@ -391,9 +402,8 @@ namespace Plato.Compiler.Symbols
 
                         // We create a second version of the function that accepts a member of the given type
                         // This is something that C# does not support, but is convenient in generic code. (e.g., x += x.One). 
-                        var f2 = new FunctionDefinition(m.Name, typeDef, m.Type, body, new ParameterDefinition("_", new TypeExpression(typeDef.Self)));
-                        AddToGroupDefinition(f2);
-                        typeDef.CompilerGeneratedFunctions.Add(f2);
+                        var f2 = new FunctionDefinition(m.Name, typeDef, m.Type, body, new ParameterDefinition("_", typeDef.SelfTypeExpression));
+                        AddCompilerGeneratedFunction(typeDef, f2);
                     }
 
                     ValueBindingsScope = ValueBindingsScope.Pop();
@@ -405,6 +415,36 @@ namespace Plato.Compiler.Symbols
                     AddToGroupDefinition(f.Function);
                 }
 
+                // If there is at least one field, add a constructor function
+                if (typeDef.Fields.Count > 0)
+                {
+                    var ctor = new FunctionDefinition(typeDef.Name, typeDef, typeDef.SelfTypeExpression, null,
+                        typeDef.Fields.Select(f => new ParameterDefinition(f.Name, f.Type)).ToArray());
+                    AddCompilerGeneratedFunction(typeDef, ctor);
+                }
+
+                // If there is exactly one field, add a "ToX" implicit cast function for that field 
+                if (typeDef.Fields.Count == 1)
+                {
+                    var field = typeDef.Fields[0];
+                    var cast = new FunctionDefinition($"To{field.Name}", typeDef, field.Type, null,
+                        new ParameterDefinition("arg", typeDef.SelfTypeExpression));
+                    AddCompilerGeneratedFunction(typeDef, cast);
+                }
+
+                // If there are more than one fields, Add a tuple constructor and a ToTuple implicit cast function 
+                if (typeDef.Fields.Count > 1)
+                {
+                    var tupleType = CreateTuple(typeDef.Fields.Select(f => f.Type).ToArray());
+                    var ctor = new FunctionDefinition(typeDef.Name, typeDef, typeDef.SelfTypeExpression, null,
+                        new ParameterDefinition("arg", tupleType));
+                    AddCompilerGeneratedFunction(typeDef, ctor);
+
+                    var tupleCast = new FunctionDefinition("ToTuple", typeDef, tupleType, null,
+                        new ParameterDefinition("self", typeDef.SelfTypeExpression));
+                    AddCompilerGeneratedFunction(typeDef, tupleCast);
+                }
+
                 ValueBindingsScope = ValueBindingsScope.Pop();
                 TypeBindingsScope = TypeBindingsScope.Pop();
             }
@@ -412,12 +452,28 @@ namespace Plato.Compiler.Symbols
             return TypeDefs;
         }
 
+        public void AddCompilerGeneratedFunction(TypeDefinition typeDef, FunctionDefinition f)
+        {
+            typeDef.CompilerGeneratedFunctions.Add(f);
+            AddToGroupDefinitionAndCreateIfNeeded(f);
+        }
+        
         public T Scoped<T>(Func<T> f) where T : Symbol
         {
             ValueBindingsScope = ValueBindingsScope.Push();
             var r = f();
             ValueBindingsScope = ValueBindingsScope.Pop();
             return r;
+        }
+
+        public TypeExpression GetTypeExpression(string name)
+        {
+            return GetTypeDefinition(name).ToTypeExpression();
+        }
+
+        public TypeExpression CreateTuple(params TypeExpression[] args)
+        {
+            return new TypeExpression(GetTypeDefinition("Tuple"), args);
         }
     }
 }

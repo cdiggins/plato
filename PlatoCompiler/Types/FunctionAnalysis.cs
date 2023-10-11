@@ -37,7 +37,7 @@ namespace Plato.Compiler.Types
             new Dictionary<TypeParameterDefinition, IType>();
 
         public IType ReturnType { get; }
-        public IReadOnlyList<IType> Parameters { get; }
+        public IReadOnlyList<IType> ParameterTypes { get; }
         public IType Self { get; }
 
         public FunctionAnalysis(Compiler compiler, FunctionDefinition function)
@@ -69,10 +69,12 @@ namespace Plato.Compiler.Types
                     ParameterToTypeLookup.Add(p, f);
                     pTypes.Add(f);
                 }
+                /* TODO: why did I say this? 
                 else if (p.Type.Name == "Tuple")
                 {
                     throw new Exception("Tuples not supported");
                 }
+                */
                 else
                 {
                     var pt = ToIType(p.Type);
@@ -91,9 +93,9 @@ namespace Plato.Compiler.Types
             }
 
             ReturnType = ToIType(Function.ReturnType);
-            Parameters = pTypes;
+            ParameterTypes = pTypes;
 
-            Debug.Assert(Parameters.Count == Function.Parameters.Count);
+            Debug.Assert(ParameterTypes.Count == Function.Parameters.Count);
         }
 
         public TypeList ToTypeList(IType first, IEnumerable<IType> rest)

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Security.Claims;
 using Plato.Compiler.Ast;
+using Plato.Compiler.Types;
 
 namespace Plato.Compiler.Symbols
 {
@@ -109,16 +111,14 @@ namespace Plato.Compiler.Symbols
         public string Name { get; }
         
         public SelfType Self { get; }
+        public TypeExpression SelfTypeExpression => Self.Constraint;
 
         public TypeDefinition(TypeKind kind, string name)
         {
             Name = name;
             Kind = kind;
-
-            if (Kind == TypeKind.Concept || Kind == TypeKind.Library)
-            {
+            if (!this.IsTypeVariable())
                 Self = new SelfType(ToTypeExpression());
-            }
         }
 
         public IEnumerable<TypeDefinition> GetSelfAndAllInheritedTypes()

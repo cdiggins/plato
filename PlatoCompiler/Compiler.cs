@@ -374,11 +374,6 @@ namespace Plato.Compiler
             return TypeDefinitionsByName[name];
         }
 
-        public TypeExpression GetTypeExpression(string name)
-        {
-            return GetTypeDefinition(name).ToTypeExpression();
-        }
-
         public FunctionAnalysis GetProcessedFunctionAnalysis(FunctionDefinition fd)
         {
             var r = FunctionAnalyses[fd];
@@ -395,16 +390,27 @@ namespace Plato.Compiler
             return tmp.BestReturnType();
         }
 
-        public FunctionDefinition FindCast(IType from, IType to)
+        public FunctionDefinition FindImplicitCast(IType from, IType to)
         {
-            if (!to.IsConcrete() || !from.IsConcrete())
-                return null;
-            var name = to.GetTypeDefinition().Name;
+            var name = to.GetTypeDefinition()?.Name;
+            if (string.IsNullOrEmpty(name)) return null;
             var funcs = FunctionDefinitions.Where(fd => fd.Name == $"To{name}").Select(GetProcessedFunctionAnalysis).ToList();
             funcs = funcs.Where(fd => fd?.ReturnType?.Equals(to) == true).ToList();
-            funcs = funcs.Where(fd => fd.Parameters.Count == 1 && fd.Parameters[0].Equals(from)).ToList();
+            funcs = funcs.Where(fd => fd.ParameterTypes.Count == 1 && fd.ParameterTypes[0].Equals(from)).ToList();
             if (funcs.Count == 0) return null;
             if (funcs.Count > 1) throw new Exception("Ambiguous cast functions");
+            return funcs[0].Function;
+        }
+
+        public FunctionDefinition FindCastConstructor(IType from, IType to)
+        {
+            var name = to.GetTypeDefinition()?.Name;
+            if (string.IsNullOrEmpty(name)) return null;
+            var funcs = FunctionDefinitions.Where(fd => fd.Name == $"{name}").Select(GetProcessedFunctionAnalysis).ToList();
+            funcs = funcs.Where(fd => fd?.ReturnType?.Equals(to) == true).ToList();
+            funcs = funcs.Where(fd => fd.ParameterTypes.Count == 1 && fd.ParameterTypes[0].Equals(from)).ToList();
+            if (funcs.Count == 0) return null;
+            if (funcs.Count > 1) throw new Exception("Ambiguous constructor functions");
             return funcs[0].Function;
         }
     }
