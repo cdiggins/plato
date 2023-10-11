@@ -211,7 +211,7 @@ public static partial class Extensions
     }
     public static Self Subtract<Self>(this Self self, Number scalar) where Self: ScalarArithmetic<Self>
     {
-        return /* Arithmetic */
+        return /* ScalarArithmetic */
         /* Function */
         Add(/* ScalarArithmetic */
         self, /* Number */

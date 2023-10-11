@@ -63,7 +63,9 @@ namespace Plato.Compiler.Types
                 if (CallableFunctions.Count > 1)
                 {
                     var arg0 = argTypes[i];
-                    var groups = CallableFunctions.GroupBy(cf => ArgumentFit(arg0, cf.ParameterTypes[0]));
+                    var groups = CallableFunctions
+                        .GroupBy(cf => ArgumentFit(arg0, cf.ParameterTypes[0]))
+                        .OrderBy(g => g.Key);
                     var group0 = groups.First().ToList();
                     CallableFunctions = group0;
                 }
