@@ -174,8 +174,10 @@ namespace Plato.Compiler.Types
 
                 if (typeParameter.IsConcrete() || typeParameter.IsPrimitive())
                 {
-                    // Already verified above that this is not true
-                    return MismatchedTypeFit;
+                    var td1 = typeParameter.GetTypeDefinition();
+                    var td2 = typeArgument.GetTypeDefinition();
+
+                    return td1.Equals(td2) ? 0 : MismatchedTypeFit;
                 }
 
                 throw new InvalidOperationException("Should not be reachable");
