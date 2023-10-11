@@ -1,80 +1,80 @@
 [0:00.001] Creating compiler
 [0:00.001] Opening files
-[0:00.117] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\intrinsics.plato at 2023-10-10 11:18:11 PM
-[0:00.117] Starting to parse 38 lines containing 1086 characters
-[0:00.117] Tokenization phase
-[0:00.119] Completed tokenization
-[0:00.120] Starting main parse
-[0:00.121] Completed parsing
-[0:00.121] Gathering parse errors
-[0:00.122] Found 0 errors
-[0:00.122] Gathering parse nodes
-[0:00.122] Found 782 nodes
-[0:00.122] Creating parse tree
-[0:00.122] Creating Concrete Syntax Tree (CST)
-[0:00.127] Creating Abstract Syntax Tree (AST)
-[0:00.134] Completed all steps, result is successful
-[0:00.155] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato at 2023-10-10 11:18:11 PM
-[0:00.155] Starting to parse 124 lines containing 2566 characters
-[0:00.155] Tokenization phase
-[0:00.157] Completed tokenization
-[0:00.157] Starting main parse
-[0:00.173] Completed parsing
-[0:00.173] Gathering parse errors
-[0:00.173] Found 0 errors
-[0:00.173] Gathering parse nodes
-[0:00.173] Found 1358 nodes
-[0:00.173] Creating parse tree
-[0:00.174] Creating Concrete Syntax Tree (CST)
-[0:00.175] Creating Abstract Syntax Tree (AST)
-[0:00.184] Completed all steps, result is successful
-[0:00.200] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\types.plato at 2023-10-10 11:18:11 PM
-[0:00.200] Starting to parse 872 lines containing 12978 characters
-[0:00.200] Tokenization phase
-[0:00.205] Completed tokenization
-[0:00.205] Starting main parse
-[0:00.212] Completed parsing
-[0:00.212] Gathering parse errors
-[0:00.212] Found 0 errors
-[0:00.212] Gathering parse nodes
-[0:00.212] Found 3800 nodes
-[0:00.212] Creating parse tree
-[0:00.213] Creating Concrete Syntax Tree (CST)
-[0:00.214] Creating Abstract Syntax Tree (AST)
-[0:00.216] Completed all steps, result is successful
-[0:00.245] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato at 2023-10-10 11:18:11 PM
-[0:00.245] Starting to parse 442 lines containing 11214 characters
-[0:00.245] Tokenization phase
-[0:00.254] Completed tokenization
-[0:00.254] Starting main parse
-[0:00.270] Completed parsing
-[0:00.270] Gathering parse errors
-[0:00.270] Found 0 errors
-[0:00.270] Gathering parse nodes
-[0:00.270] Found 6283 nodes
-[0:00.270] Creating parse tree
-[0:00.272] Creating Concrete Syntax Tree (CST)
-[0:00.280] Creating Abstract Syntax Tree (AST)
-[0:00.295] Completed all steps, result is successful
-[0:00.295] Applying syntax coloring
-[0:00.295] Completed syntax coloring
-[0:00.305] Initializing Compiler
-[0:00.305] Gathering parsers
-[0:00.306] Gathering AST trees
-[0:00.306] Gathering type declarations
-[0:00.320] Creating symbol resolver
-[0:00.323] Creating type definitions
-[0:00.344] Found 0 symbol resolution errors
-[0:00.345] Gathering function definitions
-[0:00.345] Found 724 functions
-[0:00.345] Checking semantics
-[0:00.345] Creating Reified Types
-[0:00.377] Found 117 types
-[0:00.378] Created a total of 1465 reified functions
-[0:00.378] Adding library functions to reified types
-[0:00.447] Grouping Reified functions by name for faster type resolution
-[0:00.460] Creating function analysis
-[0:46.400] Creating function analysesGathering constraints for each function
+[0:00.064] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\intrinsics.plato at 2023-10-10 11:25:29 PM
+[0:00.064] Starting to parse 38 lines containing 1086 characters
+[0:00.064] Tokenization phase
+[0:00.066] Completed tokenization
+[0:00.066] Starting main parse
+[0:00.068] Completed parsing
+[0:00.068] Gathering parse errors
+[0:00.068] Found 0 errors
+[0:00.068] Gathering parse nodes
+[0:00.068] Found 782 nodes
+[0:00.068] Creating parse tree
+[0:00.068] Creating Concrete Syntax Tree (CST)
+[0:00.074] Creating Abstract Syntax Tree (AST)
+[0:00.079] Completed all steps, result is successful
+[0:00.094] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato at 2023-10-10 11:25:29 PM
+[0:00.094] Starting to parse 124 lines containing 2566 characters
+[0:00.094] Tokenization phase
+[0:00.095] Completed tokenization
+[0:00.095] Starting main parse
+[0:00.105] Completed parsing
+[0:00.105] Gathering parse errors
+[0:00.105] Found 0 errors
+[0:00.105] Gathering parse nodes
+[0:00.105] Found 1358 nodes
+[0:00.105] Creating parse tree
+[0:00.105] Creating Concrete Syntax Tree (CST)
+[0:00.106] Creating Abstract Syntax Tree (AST)
+[0:00.118] Completed all steps, result is successful
+[0:00.134] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\types.plato at 2023-10-10 11:25:29 PM
+[0:00.134] Starting to parse 872 lines containing 12978 characters
+[0:00.134] Tokenization phase
+[0:00.140] Completed tokenization
+[0:00.141] Starting main parse
+[0:00.146] Completed parsing
+[0:00.146] Gathering parse errors
+[0:00.146] Found 0 errors
+[0:00.146] Gathering parse nodes
+[0:00.146] Found 3800 nodes
+[0:00.146] Creating parse tree
+[0:00.147] Creating Concrete Syntax Tree (CST)
+[0:00.148] Creating Abstract Syntax Tree (AST)
+[0:00.150] Completed all steps, result is successful
+[0:00.193] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato at 2023-10-10 11:25:29 PM
+[0:00.193] Starting to parse 442 lines containing 11217 characters
+[0:00.193] Tokenization phase
+[0:00.200] Completed tokenization
+[0:00.200] Starting main parse
+[0:00.207] Completed parsing
+[0:00.207] Gathering parse errors
+[0:00.207] Found 0 errors
+[0:00.207] Gathering parse nodes
+[0:00.207] Found 6286 nodes
+[0:00.207] Creating parse tree
+[0:00.207] Creating Concrete Syntax Tree (CST)
+[0:00.211] Creating Abstract Syntax Tree (AST)
+[0:00.224] Completed all steps, result is successful
+[0:00.224] Applying syntax coloring
+[0:00.224] Completed syntax coloring
+[0:00.237] Initializing Compiler
+[0:00.237] Gathering parsers
+[0:00.237] Gathering AST trees
+[0:00.238] Gathering type declarations
+[0:00.251] Creating symbol resolver
+[0:00.253] Creating type definitions
+[0:00.261] Found 0 symbol resolution errors
+[0:00.261] Gathering function definitions
+[0:00.263] Found 724 functions
+[0:00.263] Checking semantics
+[0:00.263] Creating Reified Types
+[0:00.285] Found 117 types
+[0:00.285] Created a total of 1465 reified functions
+[0:00.285] Adding library functions to reified types
+[0:00.340] Grouping Reified functions by name for faster type resolution
+[0:00.347] Creating function analysis
+[0:00.411] Creating function analysesGathering constraints for each function
 Function group call unresolved: no functions 7
 Square(FieldValues(x)) with ((Array, Any)) has 0 possible return types 
 Sum(Square(FieldValues(x))) with () has 0 possible return types 
@@ -83,10 +83,9 @@ At(xs, Subtract(Count(xs), 1)) with ((Array, $73:Any), Number) has 0 possible re
 Half(Size(x)) with (Numerical) has 0 possible return types 
 Square(v) with ((Array, $116:Any)) has 0 possible return types 
 Sum(Square(v)) with () has 0 possible return types 
-Function group call unresolved: ambiguous 11
+Function group call unresolved: ambiguous 10
 Add(FieldValues(self), scalar) with ((Array, Any), Number) has 2 possible return types Arithmetic, ScalarArithmetic
 Multiply(FieldValues(self), scalar) with ((Array, Any), Number) has 2 possible return types Arithmetic, ScalarArithmetic
-Subtract(Count, n) with (Function, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
 Modulo(FieldValues(self), scalar) with ((Array, Any), Number) has 2 possible return types Arithmetic, ScalarArithmetic
 Multiply(t, b) with (Unit, Number) has 2 possible return types Arithmetic, ScalarArithmetic
 Clamp(x, Tuple(0, 1)) with (Number, (Tuple, Integer, Integer)) has 2 possible return types (Interval, $112:Numerical), Numerical
@@ -96,4 +95,4 @@ Subtract(One(x), x) with (Numerical, Number) has 2 possible return types Arithme
 Divide(Pi, 180) with (Function, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
 Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5) with ($135:Any, Number) has 2 possible return types Arithmetic, ScalarArithmetic
 
-[0:46.400] Outputting errors and warnings
+[0:00.411] Outputting errors and warnings

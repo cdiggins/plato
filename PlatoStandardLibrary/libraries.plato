@@ -13,7 +13,7 @@ library Array
         => (xs.Count, (i: Integer) => f(At(i), ys.At(i), zs.At(i)));
     
     Skip(xs: Array, n: Integer): Array
-        => (Count - n, (i: Integer) => At(i - n));
+        => (xs.Count - n, (i: Integer) => At(i - n));
     
     Take(xs: Array, n: Integer): Array
         => (n, (i: Integer) => At(i));   
