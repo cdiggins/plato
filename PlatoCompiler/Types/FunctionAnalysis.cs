@@ -330,7 +330,8 @@ namespace Plato.Compiler.Types
 
                 if (Function.Body != null)
                 {
-                    Process(Function.Body);
+                    if (Function.OwnerType.IsConcrete() || Function.OwnerType.IsLibrary())
+                        Process(Function.Body);
                 }
             }
             finally

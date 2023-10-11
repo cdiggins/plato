@@ -149,118 +149,118 @@ library Numerical
     SquareRoot(x: Number): Number 
         => x.Pow(0.5);
 
-    Square(x: Number): Number 
+    Square(x: Numerical): Numerical 
         => x * x;
 
     Clamp(x: Number): Number 
         => Clamp(x, (0, 1));
 
-    PlusOne(x: Number): Number 
+    PlusOne(x: Numerical): Numerical 
         => x + x.One;
 
-    MinusOne(x: Number): Number
+    MinusOne(x: Numerical): Numerical
         => x - x.One;
     
-    FromOne(x: Number): Number 
+    FromOne(x: Numerical): Numerical 
         => x.One - x;
 
-    IsPositive(x: Number): Boolean
-        => x >= 0;
+    IsPositive(x: Numerical): Boolean
+        => x.GtEqZ;
 
-    GtZ(x : Number): Boolean
-        => x > 0;
+    GtZ(x : Numerical): Boolean
+        => x > x.Zero;
 
-    LtZ(x : Number): Boolean
-        => x < 0;
+    LtZ(x : Numerical): Boolean
+        => x < x.Zero;
 
-    GtEqZ(x : Number): Boolean
-        => x >= 0;
+    GtEqZ(x : Numerical): Boolean
+        => x >= x.Zero;
 
-    LtEqZ(x : Number): Boolean
-        => x <= 0;
+    LtEqZ(x : Numerical): Boolean
+        => x <= x.Zero;
 
-    IsNegative(x: Number): Boolean
-        => x < 0;
+    IsNegative(x: Numerical): Boolean
+        => x < x.Zero;
 
-    Sign(x: Number): Number 
+    Sign(x: Numerical): Numerical 
         => x.LtZ ? -x.One : x.GtZ ? x.One : x.Zero;
     
-    Abs(x: Number): Number 
+    Abs(x: Numerical): Numerical 
         => x.LtZ ? -x: x;
     
-    Half(x: Number): Number 
+    Half(x: Numerical): Numerical 
         => x / 2;
     
-    Third(x: Number): Number 
+    Third(x: Numerical): Numerical 
         => x / 3;
     
-    Quarter(x: Number): Number 
+    Quarter(x: Numerical): Numerical 
         => x / 4;
 
-    Fifth(x: Number): Number 
+    Fifth(x: Numerical): Numerical 
         => x / 5;
     
-    Sixth(x: Number): Number 
+    Sixth(x: Numerical): Numerical 
         => x / 6;
     
-    Seventh(x: Number): Number 
+    Seventh(x: Numerical): Numerical 
         => x / 7;
     
-    Eighth(x: Number): Number 
+    Eighth(x: Numerical): Numerical 
         => x / 8;
     
-    Ninth(x: Number): Number 
+    Ninth(x: Numerical): Numerical 
         => x / 9;
     
-    Tenth(x: Number): Number 
+    Tenth(x: Numerical): Numerical 
         => x / 10;
     
-    Sixteenth(x: Number): Number 
+    Sixteenth(x: Numerical): Numerical 
         => x / 16;
     
-    Hundredth(x: Number): Number 
+    Hundredth(x: Numerical): Numerical 
         => x / 100;
     
-    Thousandth(x: Number): Number 
+    Thousandth(x: Numerical): Numerical 
         => x / 1000;
     
-    Millionth(x: Number): Number 
+    Millionth(x: Numerical): Numerical 
         => x / 1000 / 1000;
     
-    Billionth(x: Number): Number 
+    Billionth(x: Numerical): Numerical 
         => x / 1000 / 1000 / 1000;
     
-    Hundred(x: Number): Number 
+    Hundred(x: Numerical): Numerical 
         => x * 100;
     
-    Thousand(x: Number): Number
+    Thousand(x: Numerical): Numerical
         => x * 1000;
     
-    Million(x: Number): Number
+    Million(x: Numerical): Numerical
         => x * 1000 * 1000;
     
-    Billion(x: Number): Number 
+    Billion(x: Numerical): Numerical 
         => x * 1000 * 1000 * 1000;
     
-    Twice(x: Number): Number 
+    Twice(x: Numerical): Numerical 
         => x * 2;
     
-    Thrice(x: Number): Number 
+    Thrice(x: Numerical): Numerical 
         => x * 3;
     
-    SmoothStep(x: Number): Number 
+    SmoothStep(x: Numerical): Numerical 
         => x.Square * (3 - x.Twice);
     
-    Pow2(x: Number): Number 
+    Pow2(x: Numerical): Numerical 
         => x * x;
     
-    Pow3(x: Number): Number 
+    Pow3(x: Numerical): Numerical 
         => x.Pow2 * x;
 
-    Pow4(x: Number): Number 
+    Pow4(x: Numerical): Numerical 
         => x.Pow3 * x;
 
-    Pow5(x: Number): Number 
+    Pow5(x: Numerical): Numerical 
         => x.Pow4 * x;
 
     Pi(): Number 

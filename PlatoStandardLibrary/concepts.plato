@@ -64,56 +64,56 @@ concept Arithmetic
     inherits Value
 { 
     Add(self: Self, other: Self): Self
-        => self.FieldValues.Add(other.FieldValues);
+        => self.FieldValues + other.FieldValues;
 
     Subtract(self: Self, other: Self): Self
-        => self.Add(self.Negative);
+        => self.FieldValues - other.FieldValues;
 
     Negative(self: Self): Self
-        => self.FieldValues.Negative;
+        => -self.FieldValues;
 
     Reciprocal(self: Self): Self
         => self.FieldValues.Reciprocal;
     
     Multiply(self: Self, other: Self): Self
-        => self.FieldValues.Add(other.FieldValues);
+        => self.FieldValues + other.FieldValues;
 
     Divide(self: Self, other: Self): Self
-        => self.FieldValues.Divide(other.FieldValues);
+        => self.FieldValues / other.FieldValues;
 
     Modulo(self: Self, other: Self): Self
-        => self.FieldValues.Modulo(other.FieldValues);
+        => self.FieldValues % other.FieldValues;
 }
 
 concept ScalarArithmetic
     inherits Value
 {
     Add(self: Self, scalar: Number): Self
-        => self.FieldValues.Add(scalar);
+        => self.FieldValues + scalar;
     
     Subtract(self: Self, scalar: Number): Self
-        => self.Add(scalar.Negative);
+        => self.FieldValues - scalar;
 
     Multiply(self: Self, scalar: Number): Self
-        => self.FieldValues.Multiply(scalar);
+        => self.FieldValues * scalar;
     
     Divide(self: Self, scalar: Number): Self
-        => self.Multiply(scalar.Reciprocal);
+        => self.FieldValues / scalar;
 
     Modulo(self: Self, scalar: Number): Self
-        => self.FieldValues.Modulo(scalar);
+        => self.FieldValues % scalar;
 }
 
 concept BooleanOperations
 {
     And(a: Self, b: Self): Self 
-        => a.FieldValues.And(b.FieldValues);
+        => a.FieldValues && b.FieldValues;
 
     Or(a: Self, b: Self): Self
-        => a.FieldValues.Or(b.FieldValues);
+        => a.FieldValues || b.FieldValues;
     
     Not(a: Self): Self 
-        => a.FieldValues.Not;
+        => a.FieldValues;
 }
 
 concept Interval<T: Numerical>

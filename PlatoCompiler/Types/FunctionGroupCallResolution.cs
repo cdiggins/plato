@@ -55,7 +55,7 @@ namespace Plato.Compiler.Types
             
             CallableFunctions = functions
                 .Where(fa => CanCall(fa, ArgTypes))
-                .ToList();
+                .ToList();  
 
             // Find the best fit. 
             for (var i = 0; i < argTypes.Count; ++i)
