@@ -395,7 +395,7 @@ namespace Plato.Compiler
             var name = to.GetTypeDefinition()?.Name;
             if (string.IsNullOrEmpty(name)) return null;
             var funcs = FunctionDefinitions.Where(fd => fd.Name == $"To{name}").Select(GetProcessedFunctionAnalysis).ToList();
-            funcs = funcs.Where(fd => fd?.ReturnType?.Equals(to) == true).ToList();
+            funcs = funcs.Where(fd => fd?.DeclaredReturnType?.Equals(to) == true).ToList();
             funcs = funcs.Where(fd => fd.ParameterTypes.Count == 1 && fd.ParameterTypes[0].Equals(from)).ToList();
             if (funcs.Count == 0) return null;
             if (funcs.Count > 1) throw new Exception("Ambiguous cast functions");
@@ -407,7 +407,7 @@ namespace Plato.Compiler
             var name = to.GetTypeDefinition()?.Name;
             if (string.IsNullOrEmpty(name)) return null;
             var funcs = FunctionDefinitions.Where(fd => fd.Name == $"{name}").Select(GetProcessedFunctionAnalysis).ToList();
-            funcs = funcs.Where(fd => fd?.ReturnType?.Equals(to) == true).ToList();
+            funcs = funcs.Where(fd => fd?.DeclaredReturnType?.Equals(to) == true).ToList();
             funcs = funcs.Where(fd => fd.ParameterTypes.Count == 1 && fd.ParameterTypes[0].Equals(from)).ToList();
             if (funcs.Count == 0) return null;
             if (funcs.Count > 1) throw new Exception("Ambiguous constructor functions");

@@ -91,6 +91,7 @@ Turns(Half(p)) with (Numerical) has 0 possible return types
 Sin(Turns(Half(p))) with () has 0 possible return types 
 Multiply(p, Sin(Turns(Half(p)))) with (Number, ) has 0 possible return types 
 Subtract(Pow3(p), Multiply(p, Sin(Turns(Half(p))))) with (Numerical, ) has 0 possible return types 
+
 Function group call unresolved: ambiguous 34
 Multiply(t, b) with (Unit, Number) has 2 possible return types Arithmetic, ScalarArithmetic
 Clamp(x, Tuple(0, 1)) with (Number, (Tuple, Integer, Integer)) has 2 possible return types (Interval, $112:Numerical), Numerical

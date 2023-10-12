@@ -36,7 +36,7 @@ namespace Plato.Compiler.Types
         public Dictionary<TypeParameterDefinition, IType> TypeParameterToTypeLookup { get; } =
             new Dictionary<TypeParameterDefinition, IType>();
 
-        public IType ReturnType { get; }
+        public IType DeclaredReturnType { get; }
         public IReadOnlyList<IType> ParameterTypes { get; }
         public IType Self { get; }
 
@@ -89,10 +89,10 @@ namespace Plato.Compiler.Types
                 if (n == 0)
                     throw new Exception("Functions returning functions are not supported yet because we can't easily determine their cardinality");
                 var f = CreateFunctionType(n);
-                ReturnType = f;
+                DeclaredReturnType = f;
             }
 
-            ReturnType = ToIType(Function.ReturnType);
+            DeclaredReturnType = ToIType(Function.ReturnType);
             ParameterTypes = pTypes;
 
             Debug.Assert(ParameterTypes.Count == Function.Parameters.Count);
@@ -248,7 +248,7 @@ namespace Plato.Compiler.Types
         }
 
         public string Signature
-            => $"{Function.OwnerType}.{Function.Name}({ParametersString()}): {ReturnType}";
+            => $"{Function.OwnerType}.{Function.Name}({ParametersString()}): {DeclaredReturnType}";
 
         public StringBuilder BuildAnalysisOutput(StringBuilder sb = null)
         {
@@ -458,5 +458,8 @@ namespace Plato.Compiler.Types
             
             throw new NotImplementedException();
         }
+
+        public FunctionCallAnalysis AnalyzeCall(IReadOnlyList<IType> argTypes)
+            => new FunctionCallAnalysis(this, argTypes);
     }
 }
