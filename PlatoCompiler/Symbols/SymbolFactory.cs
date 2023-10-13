@@ -144,8 +144,9 @@ namespace Plato.Compiler.Symbols
         {
             if (astTypeNode == null)
             {
-                LogError("Missing type", astTypeNode);
-                return null;
+                //LogError("Missing type", astTypeNode);
+                //return null;
+                return CreateAny();
             }
             var name = astTypeNode.Name.Trim();
             if (string.IsNullOrWhiteSpace(name))
@@ -171,7 +172,8 @@ namespace Plato.Compiler.Symbols
         public ParameterDefinition Resolve(AstParameterDeclaration astParameterDeclaration)
         {
             return BindValue(astParameterDeclaration.Name,
-                new ParameterDefinition(astParameterDeclaration.Name, CreateAny()));
+                new ParameterDefinition(astParameterDeclaration.Name, 
+                    ResolveType(astParameterDeclaration.Type)));
         }
 
         public Expression ResolveExpr(AstNode node)

@@ -18,6 +18,7 @@ namespace Plato.Compiler.Types
         public FunctionGroupReference Reference { get; }
         public IReadOnlyList<IType> ArgTypes { get; }
         public List<FunctionCallAnalysis> CallableFunctions { get; }
+        public List<FunctionCallAnalysis> BestFunctions { get; }
         public List<IType> DistinctReturnTypes { get; }
 
         public FunctionGroupCallResolution(FunctionCall callsite, FunctionAnalysis context, FunctionGroupReference reference, IReadOnlyList<IType> argTypes)
@@ -36,15 +37,12 @@ namespace Plato.Compiler.Types
                 .Where(fca => fca.Callable)
                 .ToList();  
 
-            // Find the best fit. 
-            var groups = CallableFunctions
-                .GroupBy(fca => fca.FinalScore)
-                .OrderBy(g => g.Key);
+            BestFunctions = CallableFunctions  
+                .OrderBy(fca => fca.FinalScore)
+                .ThenBy(fca => fca.FirstScore)
+                .ToList();
 
-            var group0 = groups.First().ToList();
-            CallableFunctions = group0;
-
-            DistinctReturnTypes = CallableFunctions
+            DistinctReturnTypes = BestFunctions
                 .Select(fca => fca.DeterminedReturnType)
                 .Distinct()
                 .ToList();

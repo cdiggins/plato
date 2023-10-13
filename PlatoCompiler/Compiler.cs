@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -156,6 +157,8 @@ namespace Plato.Compiler
                 sb.AppendLine("Gathering constraints for each function");
                 foreach (var fa in FunctionAnalyses.Values)
                     fa.Process();
+
+                AnalyzeFunctionCalls();
 
                 var noResults = FunctionGroupCalls.Values.Where(fgc => fgc.DistinctReturnTypes.Count == 0).ToList();
                 sb.AppendLine($"Function group call unresolved: no functions {noResults.Count}");
@@ -423,5 +426,43 @@ namespace Plato.Compiler
             if (funcs.Count > 1) throw new Exception("Ambiguous constructor functions");
             return funcs[0].Function;
         }
+
+        public void OutputFunctionCallAnalysis(StringBuilder sb, FunctionCallAnalysis fca)
+        {
+            sb.AppendLine($"    Function = {fca.Function.Signature}");
+            sb.AppendLine($"    Callable = {fca.Callable}");
+            sb.AppendLine($"    Message = {fca.Message}");
+            sb.AppendLine($"    First Score = {fca.FirstScore}");
+            sb.AppendLine($"    Final Score = {fca.FinalScore}");
+            sb.AppendLine($"    Scores = {string.Join(", ", fca.Scores)}");
+        }
+
+        public void AnalyzeFunctionCalls()
+        {
+            var results = FunctionGroupCalls.Values.Where(fgc => fgc.DistinctReturnTypes.Count != 1).ToList();
+            var sb = new StringBuilder();
+
+            var i = 0;
+            sb.AppendLine($"Function group call analysis");
+            foreach (var fgc in results)
+            {
+                sb.AppendLine($"{i++}.");
+                sb.AppendLine($"  Callsite: {fgc.Callsite}");
+                sb.AppendLine($"  Args: {fgc.ArgString}");
+                sb.AppendLine($"  results: {string.Join(", ", fgc.DistinctReturnTypes)}");
+
+                sb.AppendLine($"  Callable function count: {fgc.CallableFunctions.Count}");
+                foreach (var f in fgc.CallableFunctions)
+                    OutputFunctionCallAnalysis(sb, f);
+
+                sb.AppendLine($"  Best function count: {fgc.BestFunctions.Count}");
+                foreach (var f in fgc.BestFunctions)
+                    OutputFunctionCallAnalysis(sb, f);
+            }
+
+            var outputFille = Path.Combine(Path.GetTempPath(), "FunctionCallAnalysis.txt");
+            File.WriteAllText(outputFille, sb.ToString()); 
+        }
     }
+
 }

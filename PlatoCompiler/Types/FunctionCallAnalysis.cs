@@ -36,6 +36,7 @@ namespace Plato.Compiler.Types
         public List<FunctionDefinition> Casts { get; } = new List<FunctionDefinition>();
         public FunctionDefinition CurrentCast { get; private set; }
         public IReadOnlyList<int> Scores { get; }
+        public int FirstScore => Scores.FirstOrDefault();
         public int FinalScore => Scores.Sum();
         public string Message { get; private set; }
       
