@@ -101,11 +101,11 @@ namespace Plato.Compiler.Types
         public TypeList ToTypeList(IType first, IEnumerable<IType> rest)
             => new TypeList(rest.Prepend(first).ToList());
 
-        public TypeList CreateFunctionType(IEnumerable<IType> args)
-            => ToTypeList(ToSimpleType("Function"), args);
+        public TypeList CreateFunctionType(IEnumerable<IType> args, IType returnType)
+            => ToTypeList(ToSimpleType("Function"), args.Append(returnType));
 
         public IType CreateFunctionType(int n)
-            => CreateFunctionType(Enumerable.Range(0, n + 1).Select(_ => GenerateUnconstrainedTypeVariable()));
+            => CreateFunctionType(Enumerable.Range(0, n).Select(_ => GenerateUnconstrainedTypeVariable()), GenerateUnconstrainedTypeVariable());
 
         // TODO: I am confident that this will fail. When referring to a type, there might be references to type parameters .
         public bool IsTypeExpressionComplete(TypeExpression tes) 
@@ -310,7 +310,11 @@ namespace Plato.Compiler.Types
 
         public IType CreateTypeFromLambda(Lambda lambda)
         {
-            return CreateFunctionType(lambda.Function.GetParameterTypes().Select(ToIType));
+            if (Compiler.FunctionAnalyses.ContainsKey(lambda.Function))
+                throw new Exception("The lambdas are not in the list of function definitions");
+            
+            // TODO: infer the types of the functions 
+            return CreateFunctionType(lambda.Function.NumParameters);
         }
 
         //==================================================================

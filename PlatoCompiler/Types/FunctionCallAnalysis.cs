@@ -37,7 +37,7 @@ namespace Plato.Compiler.Types
         public FunctionDefinition CurrentCast { get; private set; }
         public IReadOnlyList<int> Scores { get; }
         public int FinalScore => Scores.Sum();
-        public string Message { get; }
+        public string Message { get; private set; }
       
         public FunctionCallAnalysis(FunctionAnalysis function, IReadOnlyList<IType> args)
         {
@@ -54,7 +54,9 @@ namespace Plato.Compiler.Types
             {
                 var argType = args[i];
                 var paramType = function.ParameterTypes[i];
-                BindTypeVariables(argType, paramType);
+                if (!BindTypeVariables(argType, paramType))
+                    return;
+
                 scores.Add(ArgumentFit(argType, paramType));
                 Casts.Add(CurrentCast);
             }
@@ -77,7 +79,7 @@ namespace Plato.Compiler.Types
             TypeVariableConstraints[tv].Add(constraint);
         }
 
-        public void BindTypeVariables(IType typeArg, IType typeParam)
+        public bool BindTypeVariables(IType typeArg, IType typeParam)
         {
             if (typeParam is TypeVariable tv)
             {
@@ -87,13 +89,19 @@ namespace Plato.Compiler.Types
             {
                 if (typeArg is TypeList argList)
                 {
-                    Verifier.AssertEquals(argList.Children.Count, paramList.Children.Count);
+                    if (argList.Children.Count != paramList.Children.Count)
+                    {
+                        Message = "Generic type arity mismatch";
+                        return false;
+                    }
                     for (var i = 0; i < argList.Children.Count; ++i)
                     {
                         BindTypeVariables(argList.Children[i], paramList.Children[i]);
                     }
                 }
             }
+
+            return true;
         }
 
         public IType Unify(IReadOnlyList<IType> types)
@@ -109,7 +117,12 @@ namespace Plato.Compiler.Types
             if (input is TypeVariable tv)
             {
                 if (!TypeVariableConstraints.ContainsKey(tv))
-                    throw new Exception($"Could not find type variable {tv}");
+                {
+                    // TODO: finish this. I would need to analyze the types for every function.
+                    return input;
+                    // throw new Exception($"Could not find type variable {tv}");
+                }
+
                 return Unify(TypeVariableConstraints[tv]);
             }
             

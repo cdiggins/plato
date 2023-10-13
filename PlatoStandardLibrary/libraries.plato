@@ -1,22 +1,22 @@
 library Array
 {
     Map(xs: Array, f: Function): Array 
-        => (xs.Count, (i: Integer) => f(xs.At(i)));
+        => (xs.Count, (i) => f(xs.At(i)));
 
     Reverse(xs: Array): Array
-        => (xs.Count, (i: Integer) => f(xs.At(xs.Count - 1 - i)));
+        => (xs.Count, (i) => f(xs.At(xs.Count - 1 - i)));
 
     Zip(xs: Array, ys: Array, f: Function): Array 
-        => (xs.Count, (i: Integer) => f(At(i), ys.At(i)));  
+        => (xs.Count, (i) => f(At(i), ys.At(i)));  
 
     Zip(xs: Array, ys: Array, zs: Array, f: Function): Array 
-        => (xs.Count, (i: Integer) => f(At(i), ys.At(i), zs.At(i)));
+        => (xs.Count, (i) => f(At(i), ys.At(i), zs.At(i)));
     
     Skip(xs: Array, n: Integer): Array
-        => (xs.Count - n, (i: Integer) => At(i - n));
+        => (xs.Count - n, (i) => At(i - n));
     
     Take(xs: Array, n: Integer): Array
-        => (n, (i: Integer) => At(i));   
+        => (n, (i) => At(i));   
     
     Aggregate(xs: Array, init: Any, f: Function): Any 
         => xs.IsEmpty ? init : f(init, xs.Rest);
@@ -39,7 +39,7 @@ library Array
     Join(xs: Array, sep: String): String 
         => xs.IsEmpty ? "" 
             : xs.First.ToString 
-            + xs.Rest.Aggregate("", (acc: String, cur: Any) => $"{acc}{sep}{cur}");
+            + xs.Rest.Aggregate("", (acc, cur) => $"{acc}{sep}{cur}");
     
     All(xs: Array, f: Function): Boolean 
         => xs.IsEmpty ? true : f(xs.First) && f(xs.Rest);
@@ -273,8 +273,7 @@ library Numerical
         => (1 - t) * a + t * b;
         
     Between(self: Number, min: Number, max: Number): Boolean
-        => self.FieldValues.Zip(min.FieldValues, max.FieldValues, 
-            (x: Number, y: Number, z: Number) => Between(x, y, z));
+        => self.FieldValues.Zip(min.FieldValues, max.FieldValues, Between);
 }
 
 library Angles 

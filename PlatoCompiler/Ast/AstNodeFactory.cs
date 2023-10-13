@@ -234,7 +234,7 @@ namespace Plato.Compiler.Ast
         public AstParameterDeclaration ToAst(CstLambdaParameter lp)
         {
             return Create(lp, new AstParameterDeclaration(
-                ToAst(lp.Identifier.Node), ToAst(lp.TypeAnnotation.Node)));
+                ToAst(lp.Identifier.Node), null));
         }
 
         public AstConstant ToAst(CstLiteral literal)
@@ -544,7 +544,7 @@ namespace Plato.Compiler.Ast
                     return Create(node, new AstVarDef(
                         cstLambdaParameter.Identifier.Node.Text,
                         null,
-                        ToAst(cstLambdaParameter.TypeAnnotation) as AstTypeNode));
+                        null));
 
                 case CstLeafExpression cstLeafExpression:
                     return ToAst(cstLeafExpression);

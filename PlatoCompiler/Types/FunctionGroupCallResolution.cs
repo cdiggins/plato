@@ -11,7 +11,7 @@ namespace Plato.Compiler.Types
     /// to a concrete type. 
     /// </summary>
     public class FunctionGroupCallResolution
-    {
+    {                                                                                                                                                                                                                                                                                                                                                                                                                                                   
         public FunctionAnalysis Context { get; }
         public FunctionCall Callsite { get; }
         public Compiler Compiler => Context.Compiler;

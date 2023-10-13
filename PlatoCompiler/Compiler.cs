@@ -37,7 +37,7 @@ namespace Plato.Compiler
         public IReadOnlyList<AstNode> Trees { get; set; }
         public SymbolFactory SymbolFactory { get; set; }
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; set; }
-        public IDictionary<FunctionDefinition, FunctionAnalysis> FunctionAnalyses { get; set; }
+        public IDictionary<FunctionDefinition, FunctionAnalysis> FunctionAnalyses { get; } = new Dictionary<FunctionDefinition, FunctionAnalysis>();
 
         public IEnumerable<TypeDefinition> AllTypeAndLibraryDefinitions => TypeDefinitionsByName.Values
             .Concat(LibraryDefinitionsByName.Values);
@@ -141,7 +141,8 @@ namespace Plato.Compiler
                 var sb = new StringBuilder();
 
                 sb.Append("Creating function analyses");
-                FunctionAnalyses = FunctionDefinitions.ToDictionary(fd => fd, fd => new FunctionAnalysis(this, fd));
+                foreach (var fd in FunctionDefinitions)
+                    GetOrComputeFunctionAnalysis(fd);
 
                 /*
                 foreach (var fa in FunctionAnalyses.Values.Where(f => f.IsConcept)) 
@@ -203,6 +204,15 @@ namespace Plato.Compiler
             {
                 Log("Exception caught: " + e.Message);
             }
+        }
+
+        public FunctionAnalysis GetOrComputeFunctionAnalysis(FunctionDefinition fd)
+        {
+            if (FunctionAnalyses.ContainsKey(fd))
+                return FunctionAnalyses[fd];
+            var fa = new FunctionAnalysis(this, fd);
+            FunctionAnalyses.Add(fd, fa);
+            return fa;
         }
 
         public void AddLibraryFunctionsToReifiedTypes()

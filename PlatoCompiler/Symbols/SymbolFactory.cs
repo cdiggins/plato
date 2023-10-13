@@ -171,8 +171,7 @@ namespace Plato.Compiler.Symbols
         public ParameterDefinition Resolve(AstParameterDeclaration astParameterDeclaration)
         {
             return BindValue(astParameterDeclaration.Name,
-                new ParameterDefinition(astParameterDeclaration.Name,
-                    ResolveType(astParameterDeclaration.Type)));
+                new ParameterDefinition(astParameterDeclaration.Name, CreateAny()));
         }
 
         public Expression ResolveExpr(AstNode node)
@@ -475,5 +474,8 @@ namespace Plato.Compiler.Symbols
         {
             return new TypeExpression(GetTypeDefinition("Tuple"), args);
         }
+
+        public TypeExpression CreateAny()
+            => GetTypeExpression("Any");
     }
 }
