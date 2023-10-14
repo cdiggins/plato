@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Plato.Compiler.Symbols;
-using Ptarmigan.Utils;
 
 namespace Plato.Compiler.Types
 {
@@ -43,7 +41,7 @@ namespace Plato.Compiler.Types
         public FunctionCallAnalysis(FunctionAnalysis function, IReadOnlyList<IType> args)
         {
             Function = function;
-
+                
             if (Function.ParameterTypes.Count != args.Count)
             {
                 Message = "Mismatched arity";

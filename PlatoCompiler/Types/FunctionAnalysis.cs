@@ -69,15 +69,15 @@ namespace Plato.Compiler.Types
                     ParameterToTypeLookup.Add(p, f);
                     pTypes.Add(f);
                 }
-                /* TODO: why did I say this? 
-                else if (p.Type.Name == "Tuple")
-                {
-                    throw new Exception("Tuples not supported");
-                }
-                */
                 else
                 {
                     var pt = ToIType(p.Type);
+
+                    if (p.Type.Definition.IsConcept())
+                    {
+                        pt = GenerateTypeVariable(pt);
+                    }
+                    
                     ParameterToTypeLookup.Add(p, pt);
                     pTypes.Add(pt);
                 }
@@ -174,20 +174,21 @@ namespace Plato.Compiler.Types
                 var tv = GenerateConstrainedTypeVariable(tpd.Constraint);
                 return tv;
             }
-            else if (tes.Definition.IsConcept() || tes.Definition.IsConcrete() || tes.Definition.IsPrimitive())
+            
+            if (tes.Definition.IsConcept() || tes.Definition.IsConcrete() || tes.Definition.IsPrimitive())
             {
                 if (tes.Definition.TypeParameters.Count > 0)
                     return ToTypeList(tes);
+
                 return new TypeConstant(tes.Definition);
             }
-            else if (tes.Definition.IsLibrary())
+            
+            if (tes.Definition.IsLibrary())
             {
                 throw new Exception("Libraries cannot be variables");
             }
-            else
-            {
-                throw new Exception($"Unrecognized type expression {tes}");
-            }
+            
+            throw new Exception($"Unrecognized type expression {tes}");
         }
 
         public TypeVariable GenerateTypeVariable(IType constraint)

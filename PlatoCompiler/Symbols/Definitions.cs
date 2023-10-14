@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using System.Security.Claims;
 using Plato.Compiler.Ast;
 using Plato.Compiler.Types;
 

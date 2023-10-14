@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using Plato.Compiler.Ast;
 using Plato.Compiler.Types;
 using Ptarmigan.Utils;

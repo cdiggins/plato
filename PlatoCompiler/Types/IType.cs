@@ -2,9 +2,7 @@
 using Plato.Compiler.Utilities;
 using Ptarmigan.Utils;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace Plato.Compiler.Types
 {

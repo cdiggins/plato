@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Plato.Compiler.Ast;
-using Plato.Compiler.Symbols;
-using Tuple = Plato.Compiler.Symbols.Tuple;
-
-namespace Plato.Compiler.Types
+﻿namespace Plato.Compiler.Types
 {
     /*
     /// <summary>
