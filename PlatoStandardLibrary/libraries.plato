@@ -119,7 +119,7 @@ library Interval
 
 library Value
 { 
-    ToString(x: Value): String
+    ToString(x: Any): String
         => x.FieldValues.Join(", ");
 }
 
