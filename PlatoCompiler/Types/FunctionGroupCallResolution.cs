@@ -35,12 +35,22 @@ namespace Plato.Compiler.Types
             
             CallableFunctions = functions
                 .Where(fca => fca.Callable)
-                .ToList();  
-
-            BestFunctions = CallableFunctions  
-                .OrderBy(fca => fca.FinalScore)
-                .ThenBy(fca => fca.FirstScore)
                 .ToList();
+
+            BestFunctions = CallableFunctions;
+
+            if (BestFunctions.Count > 0)
+            {
+                BestFunctions = CallableFunctions
+                    .GroupBy(fca => fca.FinalScore)
+                    .OrderBy(g => g.Key)
+                    .First().ToList();
+
+                BestFunctions = BestFunctions
+                    .GroupBy(fca => fca.FirstScore)
+                    .OrderBy(g => g.Key)
+                    .First().ToList();
+            }
 
             DistinctReturnTypes = BestFunctions
                 .Select(fca => fca.DeterminedReturnType)

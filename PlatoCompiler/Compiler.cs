@@ -430,8 +430,8 @@ namespace Plato.Compiler
         public void OutputFunctionCallAnalysis(StringBuilder sb, FunctionCallAnalysis fca)
         {
             sb.AppendLine($"    Function = {fca.Function.Signature}");
-            sb.AppendLine($"    Callable = {fca.Callable}");
-            sb.AppendLine($"    Message = {fca.Message}");
+            //sb.AppendLine($"    Callable = {fca.Callable}");
+            //sb.AppendLine($"    Message = {fca.Message}");
             sb.AppendLine($"    First Score = {fca.FirstScore}");
             sb.AppendLine($"    Final Score = {fca.FinalScore}");
             sb.AppendLine($"    Scores = {string.Join(", ", fca.Scores)}");
@@ -452,8 +452,8 @@ namespace Plato.Compiler
                 sb.AppendLine($"  results: {string.Join(", ", fgc.DistinctReturnTypes)}");
 
                 sb.AppendLine($"  Callable function count: {fgc.CallableFunctions.Count}");
-                foreach (var f in fgc.CallableFunctions)
-                    OutputFunctionCallAnalysis(sb, f);
+                //foreach (var f in fgc.CallableFunctions)
+                //    OutputFunctionCallAnalysis(sb, f);
 
                 sb.AppendLine($"  Best function count: {fgc.BestFunctions.Count}");
                 foreach (var f in fgc.BestFunctions)

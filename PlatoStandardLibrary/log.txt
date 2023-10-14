@@ -1,85 +1,85 @@
 [0:00.001] Creating compiler
-[0:00.002] Opening files
-[0:00.096] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\intrinsics.plato at 2023-10-13 7:23:25 PM
-[0:00.097] Starting to parse 38 lines containing 1086 characters
-[0:00.097] Tokenization phase
-[0:00.102] Completed tokenization
-[0:00.104] Starting main parse
-[0:00.107] Completed parsing
-[0:00.107] Gathering parse errors
-[0:00.107] Found 0 errors
-[0:00.107] Gathering parse nodes
-[0:00.107] Found 782 nodes
-[0:00.107] Creating parse tree
-[0:00.109] Creating Concrete Syntax Tree (CST)
-[0:00.129] Creating Abstract Syntax Tree (AST)
-[0:00.151] Completed all steps, result is successful
-[0:00.200] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato at 2023-10-13 7:23:25 PM
-[0:00.200] Starting to parse 124 lines containing 2522 characters
-[0:00.200] Tokenization phase
-[0:00.202] Completed tokenization
-[0:00.202] Starting main parse
-[0:00.219] Completed parsing
-[0:00.219] Gathering parse errors
-[0:00.219] Found 0 errors
-[0:00.219] Gathering parse nodes
-[0:00.219] Found 1320 nodes
-[0:00.219] Creating parse tree
-[0:00.220] Creating Concrete Syntax Tree (CST)
-[0:00.221] Creating Abstract Syntax Tree (AST)
-[0:00.231] Completed all steps, result is successful
-[0:00.276] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\types.plato at 2023-10-13 7:23:25 PM
-[0:00.276] Starting to parse 872 lines containing 12978 characters
-[0:00.276] Tokenization phase
-[0:00.287] Completed tokenization
-[0:00.287] Starting main parse
-[0:00.302] Completed parsing
-[0:00.302] Gathering parse errors
-[0:00.302] Found 0 errors
-[0:00.302] Gathering parse nodes
-[0:00.303] Found 3800 nodes
-[0:00.303] Creating parse tree
-[0:00.304] Creating Concrete Syntax Tree (CST)
-[0:00.307] Creating Abstract Syntax Tree (AST)
-[0:00.313] Completed all steps, result is successful
-[0:00.373] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato at 2023-10-13 7:23:25 PM
-[0:00.373] Starting to parse 441 lines containing 11321 characters
-[0:00.373] Tokenization phase
-[0:00.411] Completed tokenization
-[0:00.412] Starting main parse
-[0:00.438] Completed parsing
-[0:00.438] Gathering parse errors
-[0:00.442] Parsing Error at Parse state: line 47 column 17 position 1354/11321 node = Node Expression:1348-1354:xs.All. Expected rule EOS ::= (';'+WS), parent state is Parse state: line 47 column 8 position 1345/11321 node = Node TypeAnnotation:1326-1345:: Boolean 
+[0:00.001] Opening files
+[0:00.071] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\intrinsics.plato at 2023-10-13 10:12:40 PM
+[0:00.071] Starting to parse 38 lines containing 1086 characters
+[0:00.072] Tokenization phase
+[0:00.074] Completed tokenization
+[0:00.074] Starting main parse
+[0:00.076] Completed parsing
+[0:00.076] Gathering parse errors
+[0:00.077] Found 0 errors
+[0:00.077] Gathering parse nodes
+[0:00.077] Found 782 nodes
+[0:00.077] Creating parse tree
+[0:00.077] Creating Concrete Syntax Tree (CST)
+[0:00.082] Creating Abstract Syntax Tree (AST)
+[0:00.089] Completed all steps, result is successful
+[0:00.112] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato at 2023-10-13 10:12:41 PM
+[0:00.112] Starting to parse 124 lines containing 2522 characters
+[0:00.112] Tokenization phase
+[0:00.116] Completed tokenization
+[0:00.116] Starting main parse
+[0:00.138] Completed parsing
+[0:00.138] Gathering parse errors
+[0:00.138] Found 0 errors
+[0:00.138] Gathering parse nodes
+[0:00.138] Found 1320 nodes
+[0:00.138] Creating parse tree
+[0:00.138] Creating Concrete Syntax Tree (CST)
+[0:00.139] Creating Abstract Syntax Tree (AST)
+[0:00.146] Completed all steps, result is successful
+[0:00.169] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\types.plato at 2023-10-13 10:12:41 PM
+[0:00.169] Starting to parse 872 lines containing 12978 characters
+[0:00.169] Tokenization phase
+[0:00.173] Completed tokenization
+[0:00.174] Starting main parse
+[0:00.178] Completed parsing
+[0:00.178] Gathering parse errors
+[0:00.178] Found 0 errors
+[0:00.178] Gathering parse nodes
+[0:00.178] Found 3800 nodes
+[0:00.178] Creating parse tree
+[0:00.179] Creating Concrete Syntax Tree (CST)
+[0:00.180] Creating Abstract Syntax Tree (AST)
+[0:00.182] Completed all steps, result is successful
+[0:00.210] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato at 2023-10-13 10:12:41 PM
+[0:00.210] Starting to parse 441 lines containing 11321 characters
+[0:00.210] Tokenization phase
+[0:00.225] Completed tokenization
+[0:00.225] Starting main parse
+[0:00.247] Completed parsing
+[0:00.247] Gathering parse errors
+[0:00.250] Parsing Error at Parse state: line 47 column 17 position 1354/11321 node = Node Expression:1348-1354:xs.All. Expected rule EOS ::= (';'+WS), parent state is Parse state: line 47 column 8 position 1345/11321 node = Node TypeAnnotation:1326-1345:: Boolean 
         , message is 
-[0:00.442]         => xs.All((b: Boolean) => b);
-[0:00.442]                  ^
-[0:00.442] Found 1 errors
-[0:00.442] Gathering parse nodes
-[0:00.443] Found 6167 nodes
-[0:00.443] Creating parse tree
-[0:00.445] Creating Concrete Syntax Tree (CST)
-[0:00.459] Creating Abstract Syntax Tree (AST)
-[0:00.472] Completed all steps, result was not successful
-[0:00.472] Applying syntax coloring
-[0:00.472] Completed syntax coloring
-[0:00.485] Initializing Compiler
-[0:00.485] Gathering parsers
-[0:00.486] Parsing was not successful
-[0:00.486] Gathering AST trees
-[0:00.486] Gathering type declarations
-[0:00.502] Creating symbol resolver
-[0:00.508] Creating type definitions
-[0:00.551] Found 0 symbol resolution errors
-[0:00.552] Gathering function definitions
-[0:00.554] Found 724 functions
-[0:00.554] Checking semantics
-[0:00.554] Creating Reified Types
-[0:00.589] Found 117 types
-[0:00.590] Created a total of 1465 reified functions
-[0:00.590] Adding library functions to reified types
-[0:00.669] Grouping Reified functions by name for faster type resolution
-[0:00.677] Creating function analysis
-[0:00.771] Creating function analysesGathering constraints for each function
+[0:00.251]         => xs.All((b: Boolean) => b);
+[0:00.251]                  ^
+[0:00.251] Found 1 errors
+[0:00.251] Gathering parse nodes
+[0:00.251] Found 6167 nodes
+[0:00.251] Creating parse tree
+[0:00.252] Creating Concrete Syntax Tree (CST)
+[0:00.258] Creating Abstract Syntax Tree (AST)
+[0:00.272] Completed all steps, result was not successful
+[0:00.272] Applying syntax coloring
+[0:00.272] Completed syntax coloring
+[0:00.286] Initializing Compiler
+[0:00.286] Gathering parsers
+[0:00.287] Parsing was not successful
+[0:00.287] Gathering AST trees
+[0:00.288] Gathering type declarations
+[0:00.298] Creating symbol resolver
+[0:00.302] Creating type definitions
+[0:00.336] Found 0 symbol resolution errors
+[0:00.337] Gathering function definitions
+[0:00.338] Found 724 functions
+[0:00.338] Checking semantics
+[0:00.338] Creating Reified Types
+[0:00.368] Found 117 types
+[0:00.368] Created a total of 1465 reified functions
+[0:00.368] Adding library functions to reified types
+[0:00.479] Grouping Reified functions by name for faster type resolution
+[0:00.485] Creating function analysis
+[0:00.609] Creating function analysesGathering constraints for each function
 Function group call unresolved: no functions 15
 Turns(Quarter(p)) with (Numerical) has 0 possible return types 
 Sin(Turns(Quarter(p))) with () has 0 possible return types 
@@ -96,66 +96,6 @@ Turns(Half(p)) with (Numerical) has 0 possible return types
 Sin(Turns(Half(p))) with () has 0 possible return types 
 Multiply(p, Sin(Turns(Half(p)))) with (Number, ) has 0 possible return types 
 Subtract(Pow3(p), Multiply(p, Sin(Turns(Half(p))))) with (Numerical, ) has 0 possible return types 
-Function group call unresolved: ambiguous 60
-Subtract(Count(xs), n) with (Integer, Integer) has 4 possible return types Integer, Arithmetic, ScalarArithmetic, Number
-Subtract(Count(xs), 1) with (Integer, Integer) has 4 possible return types Integer, Arithmetic, ScalarArithmetic, Number
-Multiply(t, b) with (Unit, Number) has 2 possible return types ScalarArithmetic, Arithmetic
-Clamp(x, Min(y)) with ((Interval, $110:Numerical), $111:Numerical) has 2 possible return types Numerical, (Interval, $112:Numerical)
-Clamp(x, Max(y)) with ((Interval, $110:Numerical), $111:Numerical) has 2 possible return types Numerical, (Interval, $112:Numerical)
-Clamp(x, y) with ((Interval, $93:Numerical), (Interval, $94:Numerical)) has 2 possible return types (Interval, $112:Numerical), Numerical
-Not(IsEmpty(Clamp(x, y))) with (Boolean) has 2 possible return types Boolean, BooleanOperations
-Divide(x, 2) with (Numerical, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Divide(v, Length(v)) with ((Vector, $121:Numerical), Number) has 2 possible return types ScalarArithmetic, Arithmetic
-Divide(x, 3) with (Numerical, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Divide(x, 4) with (Numerical, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Divide(x, 5) with (Numerical, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Divide(x, 6) with (Numerical, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Divide(x, 7) with (Numerical, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Divide(x, 8) with (Numerical, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Divide(x, 9) with (Numerical, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Divide(x, 10) with (Numerical, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Divide(x, 16) with (Numerical, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Divide(x, 100) with (Numerical, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Divide(x, 1000) with (Numerical, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Divide(1000, 1000) with (Integer, Integer) has 4 possible return types Integer, Arithmetic, ScalarArithmetic, Number
-Divide(x, Divide(1000, 1000)) with (Numerical, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Divide(1000, 1000) with (Integer, Integer) has 4 possible return types Integer, Arithmetic, ScalarArithmetic, Number
-Divide(1000, Divide(1000, 1000)) with (Integer, Integer) has 4 possible return types Integer, Arithmetic, ScalarArithmetic, Number
-Divide(x, Divide(1000, Divide(1000, 1000))) with (Numerical, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Multiply(x, 100) with (Numerical, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Multiply(x, 1000) with (Numerical, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Multiply(1000, 1000) with (Integer, Integer) has 4 possible return types Integer, Arithmetic, ScalarArithmetic, Number
-Multiply(x, Multiply(1000, 1000)) with (Numerical, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Multiply(1000, 1000) with (Integer, Integer) has 4 possible return types Integer, Arithmetic, ScalarArithmetic, Number
-Multiply(1000, Multiply(1000, 1000)) with (Integer, Integer) has 4 possible return types Integer, Arithmetic, ScalarArithmetic, Number
-Multiply(x, Multiply(1000, Multiply(1000, 1000))) with (Numerical, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Multiply(x, 2) with (Numerical, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Multiply(x, 3) with (Numerical, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Divide(Pi, 180) with (Function, Integer) has 2 possible return types Arithmetic, ScalarArithmetic
-Not(Equals(x, y)) with (Boolean) has 2 possible return types Boolean, BooleanOperations
-Multiply(p, 2) with (Number, Integer) has 3 possible return types Arithmetic, Number, ScalarArithmetic
-Subtract(2, 1) with (Integer, Integer) has 4 possible return types Integer, Arithmetic, ScalarArithmetic, Number
-Multiply(p, Subtract(2, 1)) with (Number, Integer) has 3 possible return types Arithmetic, Number, ScalarArithmetic
-Add(easeOut(Multiply(p, Subtract(2, 1))), 0.5) with ($150:Any, Number) has 2 possible return types ScalarArithmetic, Arithmetic
-Subtract(1, p) with (Integer, Number) has 3 possible return types ScalarArithmetic, Arithmetic, Number
-Divide(4, 11) with (Integer, Number) has 3 possible return types ScalarArithmetic, Arithmetic, Number
-Divide(Pow2(p), 16) with (Numerical, Number) has 2 possible return types ScalarArithmetic, Arithmetic
-Divide(8, 11) with (Integer, Number) has 3 possible return types ScalarArithmetic, Arithmetic, Number
-Divide(17, 5) with (Number, Number) has 3 possible return types Number, ScalarArithmetic, Arithmetic
-Add(p, Divide(17, 5)) with (Number, Number) has 3 possible return types Number, ScalarArithmetic, Arithmetic
-Multiply(10, Add(p, Divide(17, 5))) with (Number, Number) has 3 possible return types Number, ScalarArithmetic, Arithmetic
-Divide(99, Multiply(10, Add(p, Divide(17, 5)))) with (Number, Number) has 3 possible return types Number, ScalarArithmetic, Arithmetic
-Subtract(Pow2(p), Divide(99, Multiply(10, Add(p, Divide(17, 5))))) with (Numerical, Number) has 2 possible return types ScalarArithmetic, Arithmetic
-Divide(9, 10) with (Integer, Number) has 3 possible return types ScalarArithmetic, Arithmetic, Number
-Divide(16061, 1805) with (Number, Number) has 3 possible return types Number, ScalarArithmetic, Arithmetic
-Add(p, Divide(16061, 1805)) with (Number, Number) has 3 possible return types Number, ScalarArithmetic, Arithmetic
-Multiply(1805, Add(p, Divide(16061, 1805))) with (Number, Number) has 3 possible return types Number, ScalarArithmetic, Arithmetic
-Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805)))) with (Number, Number) has 3 possible return types Number, ScalarArithmetic, Arithmetic
-Subtract(Pow2(p), Divide(35442, Multiply(1805, Add(p, Divide(16061, 1805))))) with (Numerical, Number) has 2 possible return types ScalarArithmetic, Arithmetic
-Divide(268, 25) with (Number, Number) has 3 possible return types Number, ScalarArithmetic, Arithmetic
-Add(p, Divide(268, 25)) with (Number, Number) has 3 possible return types Number, ScalarArithmetic, Arithmetic
-Multiply(25, Add(p, Divide(268, 25))) with (Number, Number) has 3 possible return types Number, ScalarArithmetic, Arithmetic
-Divide(513, Multiply(25, Add(p, Divide(268, 25)))) with (Number, Number) has 3 possible return types Number, ScalarArithmetic, Arithmetic
-Subtract(Pow2(p), Divide(513, Multiply(25, Add(p, Divide(268, 25))))) with (Numerical, Number) has 2 possible return types ScalarArithmetic, Arithmetic
+Function group call unresolved: ambiguous 0
 
-[0:00.771] Outputting errors and warnings
+[0:00.609] Outputting errors and warnings
