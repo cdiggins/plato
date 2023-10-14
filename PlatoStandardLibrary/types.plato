@@ -15,7 +15,7 @@ type String
 
 // Built-in type that represents a truth value 
 type Boolean 
-    implements Value, BooleanOperations
+    implements BooleanOperations
 { }
 
 // Built-in type that represents the type of a run-time value. 

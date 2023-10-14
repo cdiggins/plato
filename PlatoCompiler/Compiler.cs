@@ -449,13 +449,10 @@ namespace Plato.Compiler
                 sb.AppendLine($"  Callsite: {fgc.Callsite}");
                 sb.AppendLine($"  Args: {fgc.ArgString}");
                 sb.AppendLine($"  results: {string.Join(", ", fgc.DistinctReturnTypes)}");
-
+                sb.AppendLine($"  All functions count: {fgc.Functions.Count}");
                 sb.AppendLine($"  Callable function count: {fgc.CallableFunctions.Count}");
-                //foreach (var f in fgc.CallableFunctions)
-                //    OutputFunctionCallAnalysis(sb, f);
-
                 sb.AppendLine($"  Best function count: {fgc.BestFunctions.Count}");
-                foreach (var f in fgc.BestFunctions)
+                foreach (var f in fgc.Functions)
                     OutputFunctionCallAnalysis(sb, f);
             }
 

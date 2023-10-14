@@ -105,6 +105,7 @@ concept ScalarArithmetic
 }
 
 concept BooleanOperations
+    inherits Value
 {
     And(a: Self, b: Self): Self 
         => a.FieldValues && b.FieldValues;

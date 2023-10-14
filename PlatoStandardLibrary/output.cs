@@ -252,7 +252,7 @@ public static partial class Extensions
         scalar);
     }
 }
-public interface BooleanOperations<Self>
+public interface BooleanOperations<Self>: Value<Self>
     where Self : BooleanOperations<Self>
 {
 }
@@ -377,20 +377,20 @@ public class String: Value<String>, Array<String>
         }
     }
 }
-public class Boolean: Value<Boolean>, BooleanOperations<Boolean>
+public class Boolean: BooleanOperations<Boolean>
 {
     public Boolean() => () = ();
     public static Boolean New() => new();
     public string[] FieldNames() => new[] {  };
     public object[] FieldValues() => new[] {  };
+    public static Boolean operator &&(Boolean a, Boolean b) => Extensions.And(a, b);
+    public static Boolean operator ||(Boolean a, Boolean b) => Extensions.Or(a, b);
+    public static Boolean operator !(Boolean a) => Extensions.Not(a);
     public static Boolean Default() => Extensions.Default();
     public static Array FieldNames() => Extensions.FieldNames();
     public static Array FieldValues(Boolean x) => Extensions.FieldValues(x);
     public static Array FieldTypes(Boolean x) => Extensions.FieldTypes(x);
     public static Type TypeOf() => Extensions.TypeOf();
-    public static Boolean operator &&(Boolean a, Boolean b) => Extensions.And(a, b);
-    public static Boolean operator ||(Boolean a, Boolean b) => Extensions.Or(a, b);
-    public static Boolean operator !(Boolean a) => Extensions.Not(a);
 }
 public class Type: Value<Type>
 {

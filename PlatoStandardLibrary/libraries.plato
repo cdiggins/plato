@@ -75,7 +75,7 @@ library Interval
         => x.Min <= value && value <= x.Max;
     
     Contains(x: Interval, other: Interval): Boolean 
-        => x.Min <= other.Min && Max >= other.Max;
+        => x.Min <= other.Min && x.Max >= other.Max;
     
     Overlaps(x: Interval, y: Interval): Boolean 
         => !x.Clamp(y).IsEmpty;

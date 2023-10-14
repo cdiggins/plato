@@ -17,6 +17,7 @@ namespace Plato.Compiler.Types
         public Compiler Compiler => Context.Compiler;
         public FunctionGroupReference Reference { get; }
         public IReadOnlyList<IType> ArgTypes { get; }
+        public List<FunctionCallAnalysis> Functions { get; }
         public List<FunctionCallAnalysis> CallableFunctions { get; }
         public List<FunctionCallAnalysis> BestFunctions { get; }
         public List<IType> DistinctReturnTypes { get; }
@@ -28,12 +29,12 @@ namespace Plato.Compiler.Types
             Reference = reference;
             ArgTypes = argTypes;
 
-            var functions = reference.Definition.Functions
+            Functions = reference.Definition.Functions
                 .Select(Context.Compiler.GetProcessedFunctionAnalysis)
                 .Select(fa => fa.AnalyzeCall(argTypes))
                 .ToList();
             
-            CallableFunctions = functions
+            CallableFunctions = Functions
                 .Where(fca => fca.Callable)
                 .ToList();
 

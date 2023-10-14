@@ -33,7 +33,7 @@ namespace Plato.Compiler.Types
         public bool Callable { get; }
         public List<FunctionDefinition> Casts { get; } = new List<FunctionDefinition>();
         public FunctionDefinition CurrentCast { get; private set; }
-        public IReadOnlyList<int> Scores { get; }
+        public IReadOnlyList<int> Scores { get; } = new List<int>();
         public int FirstScore => Scores.FirstOrDefault();
         public int FinalScore => Scores.Sum();
         public string Message { get; private set; }
