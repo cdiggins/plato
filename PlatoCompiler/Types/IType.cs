@@ -120,5 +120,25 @@ namespace Plato.Compiler.Types
                tc.IsNamedType("Function")
                 ? tl.Children.Last()
                 : null;
+
+        public static IEnumerable<IType> GetSelfAndAllDescendants(this IType type)
+        {
+            yield return type;
+            if (type is TypeList typeList)
+            {
+                foreach (var child in typeList.Children)
+                {
+                    foreach (var d in child.GetSelfAndAllDescendants())
+                        yield return d;
+                }
+            }
+        }
+
+        public static IEnumerable<TypeVariable> GetAllTypeVariables(this IType type)
+            => type.GetSelfAndAllDescendants().OfType<TypeVariable>();
+
+        public static bool HasTypeVariable(this IType type)
+            => type.GetAllTypeVariables().Any();
+
     }
 }

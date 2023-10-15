@@ -393,13 +393,13 @@ namespace Plato.Compiler
             return r;
         }
 
-        public IType ResolveFunctionGroup(FunctionAnalysis context, FunctionCall callSite, FunctionGroupReference fgr, List<IType> argTypes)
+        public FunctionGroupCallResolution ResolveFunctionGroup(FunctionAnalysis context, FunctionCall callSite, FunctionGroupReference fgr, List<IType> argTypes)
         {
             if (FunctionGroupCalls.ContainsKey(callSite))
-                return FunctionGroupCalls[callSite].BestReturnType();
+                return FunctionGroupCalls[callSite];
             var tmp = new FunctionGroupCallResolution(callSite, context, fgr, argTypes);
             FunctionGroupCalls.Add(callSite, tmp);
-            return tmp.BestReturnType();
+            return tmp;
         }
 
         public FunctionDefinition FindImplicitCast(IType from, IType to)
@@ -434,6 +434,9 @@ namespace Plato.Compiler
             sb.AppendLine($"    First Score = {fca.FirstScore}");
             sb.AppendLine($"    Final Score = {fca.FinalScore}");
             sb.AppendLine($"    Scores = {string.Join(", ", fca.Scores)}");
+
+            var ca = new ConstraintAnalysis(fca.Function);
+            ca.Output(sb, "        ");
         }
 
         public void AnalyzeFunctionCalls()

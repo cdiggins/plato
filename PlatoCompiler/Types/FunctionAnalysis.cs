@@ -52,7 +52,7 @@ namespace Plato.Compiler.Types
 
             if (OwnerType.IsConcept())
             {
-                Self = ToIType(OwnerType);
+                Self = GenerateConstrainedTypeVariable(OwnerType.ToTypeExpression());  
             }
 
             var pTypes  = new List<IType>();
@@ -93,6 +93,12 @@ namespace Plato.Compiler.Types
             }
 
             DeclaredReturnType = ToIType(Function.ReturnType);
+
+            if (Function.ReturnType.Definition.IsConcept())
+            {
+                DeclaredReturnType = GenerateTypeVariable(DeclaredReturnType);
+            }
+
             ParameterTypes = pTypes;
 
             Debug.Assert(ParameterTypes.Count == Function.Parameters.Count);
@@ -262,7 +268,6 @@ namespace Plato.Compiler.Types
                 sb.AppendLine($"   {c}");
             return sb;
         }
-        
 
         public void AddCastConstraint(Expression expr, IType target)
         {
@@ -283,8 +288,10 @@ namespace Plato.Compiler.Types
         public IType Unify(Expression expr1, Expression expr2)
         {
             // TODO: perform a proper unification.
-            // TODO: there are going to be some casts that are necessary. 
-            return Process(expr1);
+            var t1 = Process(expr1);
+            var t2 = Process(expr2);
+            AddConstraint(new UnifyConstraint(t1, t2));
+            return t1;
         }
 
         public IType CreateTuple(IReadOnlyList<IType> children)
@@ -423,6 +430,33 @@ namespace Plato.Compiler.Types
             return r;
         }
 
+        public void GenerateArgConstraint(IType argType, IType paramType)
+        {
+            if (argType is TypeVariable argTv)
+            {
+                AddConstraint(new PassFromVariable(paramType, argTv));
+            }
+
+            if (paramType is TypeVariable paramTv)
+            {
+                AddConstraint(new PassToVariable(paramType, paramTv));
+            }
+
+            if (argType is TypeList typeListA && paramType is TypeList typeListB)
+            {
+                for (var i=0; i < Math.Min(typeListA.Children.Count, typeListB.Children.Count); ++i)
+                    GenerateArgConstraint(typeListA.Children[i], typeListB.Children[i]);
+            }
+        }
+
+        public void GenerateCallerConstraint(FunctionCallAnalysis fca, IReadOnlyList<IType> argTypes)
+        {
+            for (var i=0; i < argTypes.Count; ++i)
+            {
+                GenerateArgConstraint(argTypes[i], fca.Function.ParameterTypes[i]);
+            }
+        }
+
         public IType Process(FunctionCall fc)
         {
             var argTypes = fc.Args.Select(Process).ToList();
@@ -431,7 +465,17 @@ namespace Plato.Compiler.Types
             AddConstraint(new CallableConstraint(ft, argTypes));
 
             if (fc.Function is FunctionGroupReference fgr)
-                return Compiler.ResolveFunctionGroup(this, fc, fgr, argTypes);
+            {
+                var fca = Compiler.ResolveFunctionGroup(this, fc, fgr, argTypes);
+                var bestFunction = fca.BestFunctions.FirstOrDefault();
+
+                // TODO: log this
+                if (bestFunction == null)
+                    return GenerateUnconstrainedTypeVariable();
+
+                GenerateCallerConstraint(bestFunction, argTypes);
+                return bestFunction.DeterminedReturnType;
+            }
             
             if (fc.Function is PredefinedReference pr)
             {

@@ -92,4 +92,71 @@ namespace Plato.Compiler.Types
             Base = constant;
         }
     }
+
+    public class PassToVariable : TypeVariableConstraint
+    {
+        public IType Source { get; }
+
+        public PassToVariable(IType source, TypeVariable tv)
+            : base(tv)
+        {
+            Source = source;
+        }
+
+        public override string ToString()
+            => $"{Source} passes to {Variable}";
+
+        public override bool Equals(object obj)
+            => obj is PassToVariable pv
+               && Source.Equals(pv.Source)
+               && Variable.Equals(pv.Variable);
+
+        public override int GetHashCode()
+            => Hasher.Combine(Source.GetHashCode(), Variable.GetHashCode());
+    }
+
+    public class PassFromVariable : TypeVariableConstraint
+    {
+        public IType Source { get; }
+
+        public PassFromVariable(IType source, TypeVariable tv)
+            : base(tv)
+        {
+            Source = source;
+        }
+
+        public override string ToString()
+            => $"{Source} passes to {Variable}";
+
+        public override bool Equals(object obj)
+            => obj is PassFromVariable pv
+               && Source.Equals(pv.Source)
+               && Variable.Equals(pv.Variable);
+
+        public override int GetHashCode()
+            => Hasher.Combine(Source.GetHashCode(), Variable.GetHashCode());
+    }
+
+    public class UnifyConstraint : IConstraint
+    {
+        public IType TypeA {get; }
+        public IType TypeB { get; }
+        
+        public UnifyConstraint(IType typeA, IType typeB)
+        {
+            TypeA = typeA;
+            TypeB = typeB;
+        }
+
+        public override string ToString()
+            => $"{TypeA} unifies with {TypeB}";
+
+        public override bool Equals(object obj)
+            => obj is UnifyConstraint uc
+               && TypeA.Equals(uc.TypeA)
+               && TypeB.Equals(uc.TypeB);
+
+        public override int GetHashCode()
+            => Hasher.Combine(TypeA.GetHashCode(), TypeB.GetHashCode());
+    }
 }

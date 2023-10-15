@@ -106,8 +106,7 @@ namespace Plato.Compiler.Types
         public IType Unify(IReadOnlyList<IType> types)
         {
             var tmp = types.Distinct().ToList();
-            if (tmp.Count != 1)
-                throw new Exception($"Too many types found ({string.Join(", ", types)}");
+            //if (tmp.Count != 1) throw new Exception($"Too many types found ({string.Join(", ", types)}");
             return tmp[0];
         }
 
