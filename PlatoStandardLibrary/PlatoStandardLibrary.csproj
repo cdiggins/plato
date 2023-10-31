@@ -16,8 +16,4 @@
     <None Include="output.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Plato.Collections\src\Platonic.CSharp.Collections.csproj" />
-  </ItemGroup>
-
 </Project>

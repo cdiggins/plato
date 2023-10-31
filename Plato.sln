@@ -16,8 +16,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTypeInference", "Plato
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoTests", "PlatoTests\PlatoTests.csproj", "{8A4899BC-6E5E-4028-87DD-ADB53D430C9D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Platonic.CSharp.Collections", "..\Plato.Collections\src\Platonic.CSharp.Collections.csproj", "{93D04BD9-DE3A-41B1-A096-447C261E4559}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoEditor", "PlatoEditor\PlatoEditor.csproj", "{E8B815E3-ED1A-47F5-9DE8-DE654B786B20}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatoWinFormsEditor", "PlatoWinFormsEditor\PlatoWinFormsEditor.csproj", "{2F263E40-7453-40BD-B053-4FF301585652}"
@@ -80,14 +78,6 @@ Global
 		{8A4899BC-6E5E-4028-87DD-ADB53D430C9D}.Release|x64.Build.0 = Release|Any CPU
 		{8A4899BC-6E5E-4028-87DD-ADB53D430C9D}.Release|x86.ActiveCfg = Release|Any CPU
 		{8A4899BC-6E5E-4028-87DD-ADB53D430C9D}.Release|x86.Build.0 = Release|Any CPU
-		{93D04BD9-DE3A-41B1-A096-447C261E4559}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{93D04BD9-DE3A-41B1-A096-447C261E4559}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{93D04BD9-DE3A-41B1-A096-447C261E4559}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{93D04BD9-DE3A-41B1-A096-447C261E4559}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{93D04BD9-DE3A-41B1-A096-447C261E4559}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{93D04BD9-DE3A-41B1-A096-447C261E4559}.Release|Any CPU.Build.0 = Release|Any CPU
-		{93D04BD9-DE3A-41B1-A096-447C261E4559}.Release|x64.ActiveCfg = Release|Any CPU
-		{93D04BD9-DE3A-41B1-A096-447C261E4559}.Release|x86.ActiveCfg = Release|Any CPU
 		{E8B815E3-ED1A-47F5-9DE8-DE654B786B20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E8B815E3-ED1A-47F5-9DE8-DE654B786B20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8B815E3-ED1A-47F5-9DE8-DE654B786B20}.Debug|x64.ActiveCfg = Debug|Any CPU

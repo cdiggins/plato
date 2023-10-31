@@ -8,8 +8,4 @@
     <Compile Remove="Array_Extra.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Plato.Collections\src\Platonic.CSharp.Collections.csproj" />
-  </ItemGroup>
-
 </Project>
