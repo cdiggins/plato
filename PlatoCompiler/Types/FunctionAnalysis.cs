@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Ara3D.Utils;
 using Plato.Compiler.Ast;
 using Plato.Compiler.Symbols;
-using Ptarmigan.Utils;
 using Tuple = Plato.Compiler.Symbols.Tuple;
 
 namespace Plato.Compiler.Types

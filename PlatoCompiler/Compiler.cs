@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Ara3D.Utils;
 using Parakeet;
 using Parakeet.Demos.Plato;
 using Plato.Compiler.Ast;
 using Plato.Compiler.Symbols;
 using Plato.Compiler.Types;
 using Plato.Compiler.Vsg;
-using Ptarmigan.Utils;
 
 namespace Plato.Compiler
 {
@@ -157,7 +157,8 @@ namespace Plato.Compiler
                 foreach (var fa in FunctionAnalyses.Values)
                     fa.Process();
 
-                AnalyzeFunctionCalls();
+                OutputFunctionCallAnalysis();
+                OutputFunctionAnalysis();
 
                 var noResults = FunctionGroupCalls.Values.Where(fgc => fgc.DistinctReturnTypes.Count == 0).ToList();
                 sb.AppendLine($"Function group call unresolved: no functions {noResults.Count}");
@@ -439,7 +440,26 @@ namespace Plato.Compiler
             ca.Output(sb, "        ");
         }
 
-        public void AnalyzeFunctionCalls()
+
+        public void OutputFunctionAnalysis()
+        {
+            var sb = new StringBuilder();
+            var i = 0;
+            foreach (var fa in FunctionAnalyses.Values)
+            {
+                var typeSig = $"({string.Join(", ", fa.ParameterTypes)}) => {fa.DeclaredReturnType}";
+                sb.AppendLine($"{i++}. {fa.Function.Name}");
+                sb.AppendLine($"  Type sig: {typeSig}");
+                sb.AppendLine($"  Sig: {fa.Signature}");
+                sb.AppendLine($"  Body: {fa.Function.Body}");
+                //sb.AppendLine($"  Has {fa.TypeParameterToTypeLookup.Count} Type parameters ");
+                //sb.AppendLine($"  Has type parameter in return: {fa.DeclaredReturnType.HasTypeVariable()}");
+            }
+            var outputFille = Path.Combine(Path.GetTempPath(), "FunctionAnalysis.txt");
+            File.WriteAllText(outputFille, sb.ToString());
+        }
+
+        public void OutputFunctionCallAnalysis()
         {
             var results = FunctionGroupCalls.Values.Where(fgc => fgc.DistinctReturnTypes.Count != 1).ToList();
             var sb = new StringBuilder();

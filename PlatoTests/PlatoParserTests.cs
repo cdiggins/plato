@@ -1,7 +1,7 @@
-﻿using Parakeet;
+﻿using Ara3D.Utils;
+using Parakeet;
 using Parakeet.Demos;
 using Parakeet.Tests;
-using Ptarmigan.Utils;
 
 namespace PlatoTests
 {
@@ -19,8 +19,9 @@ namespace PlatoTests
         public static CSharpGrammar Grammar = new CSharpGrammar();
 
         [TestCaseSource(nameof(InputFiles))]
-        public static void TestParser(string inputFile)
+        public static void TestParser(string inputFilePath)
         {
+            var inputFile = new FilePath(inputFilePath);
             var input = ParserInput.FromFile(inputFile);
 
 			ParserState ps = null;
@@ -72,7 +73,7 @@ namespace PlatoTests
             var cst = new Parakeet.Demos.CSharp.CstNodeFactory().Create(tree);
             var cstXml = new CstXmlBuilder().Write(cst).ToString();
 
-            var cstXmlFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".cst.xml");
+            var cstXmlFile = inputFile.ChangeDirectoryAndExt(OutputFilesFolder, ".cst.xml");
             File.WriteAllText(cstXmlFile, cstXml);
 
             /*

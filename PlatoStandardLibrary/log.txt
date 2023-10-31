@@ -1,85 +1,85 @@
-[0:00.002] Creating compiler
-[0:00.002] Opening files
-[0:00.128] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\intrinsics.plato at 2023-10-15 9:55:40 AM
-[0:00.128] Starting to parse 38 lines containing 1086 characters
-[0:00.128] Tokenization phase
-[0:00.131] Completed tokenization
-[0:00.132] Starting main parse
-[0:00.134] Completed parsing
-[0:00.134] Gathering parse errors
-[0:00.134] Found 0 errors
-[0:00.134] Gathering parse nodes
-[0:00.134] Found 782 nodes
-[0:00.134] Creating parse tree
-[0:00.135] Creating Concrete Syntax Tree (CST)
-[0:00.142] Creating Abstract Syntax Tree (AST)
-[0:00.151] Completed all steps, result is successful
-[0:00.184] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\concepts.plato at 2023-10-15 9:55:41 AM
-[0:00.184] Starting to parse 125 lines containing 2541 characters
-[0:00.184] Tokenization phase
-[0:00.186] Completed tokenization
-[0:00.186] Starting main parse
-[0:00.199] Completed parsing
-[0:00.199] Gathering parse errors
-[0:00.199] Found 0 errors
-[0:00.199] Gathering parse nodes
-[0:00.199] Found 1327 nodes
-[0:00.199] Creating parse tree
-[0:00.199] Creating Concrete Syntax Tree (CST)
-[0:00.202] Creating Abstract Syntax Tree (AST)
-[0:00.219] Completed all steps, result is successful
-[0:00.272] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\types.plato at 2023-10-15 9:55:41 AM
-[0:00.272] Starting to parse 872 lines containing 12971 characters
-[0:00.272] Tokenization phase
-[0:00.280] Completed tokenization
-[0:00.280] Starting main parse
-[0:00.288] Completed parsing
-[0:00.288] Gathering parse errors
-[0:00.288] Found 0 errors
-[0:00.288] Gathering parse nodes
-[0:00.288] Found 3793 nodes
-[0:00.288] Creating parse tree
-[0:00.289] Creating Concrete Syntax Tree (CST)
-[0:00.290] Creating Abstract Syntax Tree (AST)
-[0:00.292] Completed all steps, result is successful
-[0:00.321] Starting compiling C:\Users\cdigg\git\plato\PlatoStandardLibrary\libraries.plato at 2023-10-15 9:55:41 AM
-[0:00.321] Starting to parse 441 lines containing 11321 characters
-[0:00.321] Tokenization phase
-[0:00.329] Completed tokenization
-[0:00.329] Starting main parse
-[0:00.341] Completed parsing
-[0:00.341] Gathering parse errors
-[0:00.343] Parsing Error at Parse state: line 47 column 17 position 1354/11321 node = Node Expression:1348-1354:xs.All. Expected rule EOS ::= (';'+WS), parent state is Parse state: line 47 column 8 position 1345/11321 node = Node TypeAnnotation:1326-1345:: Boolean 
+[0:00.001] Creating compiler
+[0:00.001] Opening files
+[0:00.091] Starting compiling C:\Users\cdigg\git\ara3d-dev\plato\PlatoWinFormsEditor\..\PlatoStandardLibrary\intrinsics.plato at 2023-10-30 11:38:01 PM
+[0:00.091] Starting to parse 38 lines containing 1086 characters
+[0:00.091] Tokenization phase
+[0:00.093] Completed tokenization
+[0:00.094] Starting main parse
+[0:00.095] Completed parsing
+[0:00.095] Gathering parse errors
+[0:00.095] Found 0 errors
+[0:00.095] Gathering parse nodes
+[0:00.095] Found 782 nodes
+[0:00.095] Creating parse tree
+[0:00.096] Creating Concrete Syntax Tree (CST)
+[0:00.101] Creating Abstract Syntax Tree (AST)
+[0:00.107] Completed all steps, result is successful
+[0:00.126] Starting compiling C:\Users\cdigg\git\ara3d-dev\plato\PlatoWinFormsEditor\..\PlatoStandardLibrary\concepts.plato at 2023-10-30 11:38:01 PM
+[0:00.126] Starting to parse 125 lines containing 2541 characters
+[0:00.126] Tokenization phase
+[0:00.128] Completed tokenization
+[0:00.128] Starting main parse
+[0:00.137] Completed parsing
+[0:00.137] Gathering parse errors
+[0:00.137] Found 0 errors
+[0:00.137] Gathering parse nodes
+[0:00.137] Found 1327 nodes
+[0:00.137] Creating parse tree
+[0:00.137] Creating Concrete Syntax Tree (CST)
+[0:00.138] Creating Abstract Syntax Tree (AST)
+[0:00.146] Completed all steps, result is successful
+[0:00.224] Starting compiling C:\Users\cdigg\git\ara3d-dev\plato\PlatoWinFormsEditor\..\PlatoStandardLibrary\types.plato at 2023-10-30 11:38:01 PM
+[0:00.224] Starting to parse 872 lines containing 12971 characters
+[0:00.224] Tokenization phase
+[0:00.228] Completed tokenization
+[0:00.228] Starting main parse
+[0:00.233] Completed parsing
+[0:00.233] Gathering parse errors
+[0:00.233] Found 0 errors
+[0:00.233] Gathering parse nodes
+[0:00.233] Found 3793 nodes
+[0:00.233] Creating parse tree
+[0:00.233] Creating Concrete Syntax Tree (CST)
+[0:00.235] Creating Abstract Syntax Tree (AST)
+[0:00.239] Completed all steps, result is successful
+[0:00.258] Starting compiling C:\Users\cdigg\git\ara3d-dev\plato\PlatoWinFormsEditor\..\PlatoStandardLibrary\libraries.plato at 2023-10-30 11:38:01 PM
+[0:00.258] Starting to parse 441 lines containing 11321 characters
+[0:00.258] Tokenization phase
+[0:00.263] Completed tokenization
+[0:00.263] Starting main parse
+[0:00.276] Completed parsing
+[0:00.276] Gathering parse errors
+[0:00.278] Parsing Error at Parse state: line 47 column 17 position 1354/11321 node = Node Expression:1348-1354:xs.All. Expected rule EOS ::= (';'+WS), parent state is Parse state: line 47 column 8 position 1345/11321 node = Node TypeAnnotation:1326-1345:: Boolean 
         , message is 
-[0:00.343]         => xs.All((b: Boolean) => b);
-[0:00.343]                  ^
-[0:00.343] Found 1 errors
-[0:00.343] Gathering parse nodes
-[0:00.343] Found 6170 nodes
-[0:00.343] Creating parse tree
-[0:00.344] Creating Concrete Syntax Tree (CST)
-[0:00.346] Creating Abstract Syntax Tree (AST)
-[0:00.352] Completed all steps, result was not successful
-[0:00.352] Applying syntax coloring
-[0:00.352] Completed syntax coloring
-[0:00.503] Initializing Compiler
-[0:00.504] Gathering parsers
-[0:00.505] Parsing was not successful
-[0:00.505] Gathering AST trees
-[0:00.505] Gathering type declarations
-[0:00.510] Creating symbol resolver
-[0:00.513] Creating type definitions
-[0:00.541] Found 0 symbol resolution errors
-[0:00.542] Gathering function definitions
-[0:00.543] Found 724 functions
-[0:00.543] Checking semantics
-[0:00.543] Creating Reified Types
-[0:00.581] Found 117 types
-[0:00.581] Created a total of 1465 reified functions
-[0:00.581] Adding library functions to reified types
-[0:00.733] Grouping Reified functions by name for faster type resolution
-[0:00.742] Creating function analysis
-[0:00.939] Creating function analysesGathering constraints for each function
+[0:00.279]         => xs.All((b: Boolean) => b);
+[0:00.279]                  ^
+[0:00.279] Found 1 errors
+[0:00.279] Gathering parse nodes
+[0:00.279] Found 6170 nodes
+[0:00.279] Creating parse tree
+[0:00.281] Creating Concrete Syntax Tree (CST)
+[0:00.288] Creating Abstract Syntax Tree (AST)
+[0:00.302] Completed all steps, result was not successful
+[0:00.302] Applying syntax coloring
+[0:00.302] Completed syntax coloring
+[0:00.324] Initializing Compiler
+[0:00.324] Gathering parsers
+[0:00.325] Parsing was not successful
+[0:00.325] Gathering AST trees
+[0:00.325] Gathering type declarations
+[0:00.333] Creating symbol resolver
+[0:00.337] Creating type definitions
+[0:00.361] Found 0 symbol resolution errors
+[0:00.361] Gathering function definitions
+[0:00.362] Found 724 functions
+[0:00.362] Checking semantics
+[0:00.362] Creating Reified Types
+[0:00.394] Found 117 types
+[0:00.395] Created a total of 1465 reified functions
+[0:00.395] Adding library functions to reified types
+[0:00.473] Grouping Reified functions by name for faster type resolution
+[0:00.476] Creating function analysis
+[0:00.565] Creating function analysesGathering constraints for each function
 Function group call unresolved: no functions 34
 Add(ToString(First(xs)), Aggregate(Rest(xs), , (\(ParameterDefinition=acc$4665:Concept:Any, ParameterDefinition=cur$4667:Concept:Any) -> Primitive:Function)) with (String, $140:Any) has 0 possible return types 
 And(f(First(xs)), f(Rest(xs))) with ($380:Any, $381:Any) has 0 possible return types 
@@ -118,4 +118,4 @@ Subtract(Pow3(p), Multiply(p, Sin(Turns(Half(p))))) with ($325:Numerical, $416:A
 Function group call unresolved: ambiguous 1
 Clamp(x, y) with ($195:(Interval, $194:Numerical), $197:(Interval, $196:Numerical)) has 2 possible return types $236:(Interval, $235:Numerical), $240:Numerical
 
-[0:00.939] Outputting errors and warnings
+[0:00.565] Outputting errors and warnings

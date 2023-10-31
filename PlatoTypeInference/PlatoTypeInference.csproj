@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Plato.Collections\src\Platonic.CSharp.Collections.csproj" />
-    <ProjectReference Include="..\..\ptarmigan\src\Ptarmigan.Utils\Ptarmigan.Utils.csproj" />
   </ItemGroup>
 
 </Project>

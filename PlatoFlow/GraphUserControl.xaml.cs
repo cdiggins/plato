@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 using System.Windows;
@@ -121,6 +122,9 @@ public partial class GraphUserControl : UserControl
         return r;
     }
 
+    public static string GetSourceFile([CallerFilePath] string thisFile = "")
+        => Path.GetDirectoryName(thisFile);
+
     public static Graph Convert(VisualSyntaxGraph vsg)
     {
         var rects = ComputeNodeRects(vsg);        
@@ -166,7 +170,8 @@ public partial class GraphUserControl : UserControl
         Focus();
 
         // TODO:
-        var fileName = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\vsg\Lerp_149.json";
+        var thisFolder = GetSourceFile();
+        var fileName = Path.Combine(thisFolder, "..", "PlatoStandardLibrary", "vsg", "Lerp_149.json");
         var text = File.ReadAllText(fileName);
         var vsg = JsonSerializer.Deserialize<VisualSyntaxGraph>(text);
         Graph = Convert(vsg);

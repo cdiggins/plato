@@ -9,8 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ptarmigan\src\Ptarmigan.Utils.Roslyn\Ptarmigan.Utils.Roslyn.csproj" />
-    <ProjectReference Include="..\..\ptarmigan\src\Ptarmigan.Utils\Ptarmigan.Utils.csproj" />
+    <ProjectReference Include="..\..\..\ara3d\src\Ara3D.Utils\Ara3D.Utils.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\parakeet\Parakeet.Demos\Parakeet.Demos.csproj" />
-    <ProjectReference Include="..\..\parakeet\Parakeet\Parakeet.csproj" />
-    <ProjectReference Include="..\..\ptarmigan\src\Ptarmigan.Utils\Ptarmigan.Utils.csproj" />
+    <ProjectReference Include="..\..\..\ara3d\src\Ara3D.Parsing.Grammars\Ara3D.Parsing.Grammars.csproj" />
+    <ProjectReference Include="..\..\..\ara3d\src\Ara3D.Parsing\Ara3D.Parsing.csproj" />
+    <ProjectReference Include="..\..\..\ara3d\src\Ara3D.Utils\Ara3D.Utils.csproj" />
   </ItemGroup>
 
 </Project>

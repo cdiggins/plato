@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Ara3D.Utils;
 using Plato.Compiler.Ast;
 using Plato.Compiler.Types;
-using Ptarmigan.Utils;
 
 namespace Plato.Compiler.Symbols
 {

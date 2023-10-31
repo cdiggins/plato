@@ -1,14 +1,11 @@
 using System.Diagnostics;
-using System.Text;
-using System.Text.Json;
+using System.Runtime.CompilerServices;
 using Parakeet;
 using Parakeet.Demos;
 using Parakeet.Demos.Plato;
 using Plato.Compiler;
 using Plato.Compiler.Ast;
 using Plato.Compiler.Symbols;
-using Plato.Compiler.Utilities;
-using Ptarmigan.Utils;
 using Logger = Plato.Compiler.Logger;
 
 namespace PlatoWinFormsEditor;
@@ -57,7 +54,7 @@ public class IDE
             editor.ApplyStylesAndOutputErrors();
     }
 
-    public IDE(TabControl tabControl, RichTextBox outputTextBox)
+    public IDE(TabControl tabControl, RichTextBox outputTextBox, [CallerFilePath]string filePath = null)
     {
         Compiler = new Compiler(new CstNodeFactory(), new AstNodeFactory(), Logger);
 
@@ -67,14 +64,16 @@ public class IDE
         OutputTextBox.WordWrap = false;
         OutputTextBox.MouseDoubleClick += (sender, args) => Debug.WriteLine($"Double clicked output. Mouse args = {args}. Selected text = {outputTextBox.SelectedText}");
 
-        var inputPath = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\";
+        var currentFolder = Path.GetDirectoryName(filePath);
+        var parentFolder = Path.Combine(currentFolder, ".."); 
+        var inputFolder = Path.Combine(parentFolder, "PlatoStandardLibrary");
 
         Logger.Log("Opening files");
 
-        OpenFile(Path.Combine(inputPath, "intrinsics.plato"));
-        OpenFile(Path.Combine(inputPath, "concepts.plato"));
-        OpenFile(Path.Combine(inputPath, "types.plato"));
-        OpenFile(Path.Combine(inputPath, "libraries.plato"));
+        OpenFile(Path.Combine(inputFolder, "intrinsics.plato"));
+        OpenFile(Path.Combine(inputFolder, "concepts.plato"));
+        OpenFile(Path.Combine(inputFolder, "types.plato"));
+        OpenFile(Path.Combine(inputFolder, "libraries.plato"));
 
         Logger.Log("Applying syntax coloring");
         //ApplyStylesAndOutputErrors();
@@ -84,7 +83,7 @@ public class IDE
         Compiler.Compile(parsers);
 
         OutputTextBox.Lines = Logger.Messages.ToArray();
-        var logFile = Path.Combine(inputPath, "log.txt");
+        var logFile = Path.Combine(inputFolder, "log.txt");
         File.WriteAllLines(logFile, Logger.Messages);
 
         if (!Compiler.CompletedCompilation)
@@ -96,8 +95,8 @@ public class IDE
         // NOTE: even if CompletedCompilation is true, there might still be errors. 
         // The goal is to still be able to partially generate output. 
 
-        var outputFolder = @"C:\Users\cdigg\git\plato\PlatoStandardLibrary\";
-
+        var outputFolder = inputFolder;
+        
         Logger.Log("Writing C#");
         File.WriteAllText(Path.Combine(outputFolder, "output.cs"), Compiler.ToCSharp());
 

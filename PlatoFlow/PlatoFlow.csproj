@@ -42,8 +42,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\peacock\Peacock.Wpf\Peacock.Wpf.csproj" />
-    <ProjectReference Include="..\..\peacock\Peacock\Peacock.csproj" />
+    <ProjectReference Include="..\..\..\ara3d\labs\Peacock.Wpf\Peacock.Wpf.csproj" />
+    <ProjectReference Include="..\..\..\ara3d\labs\Peacock\Peacock.csproj" />
     <ProjectReference Include="..\PlatoCompiler\Plato.Compiler.csproj" />
   </ItemGroup>
 

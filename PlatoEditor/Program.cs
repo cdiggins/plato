@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using Ptarmigan.Utils;
+using Ara3D.Utils;
 
 namespace PlatoEditor
 {

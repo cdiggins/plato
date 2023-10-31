@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using Ara3D.Utils;
 using Plato.Compiler.Symbols;
-using Ptarmigan.Utils;
 
 namespace Plato.Compiler.Types
 {

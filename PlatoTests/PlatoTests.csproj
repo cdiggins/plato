@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\parakeet\Parakeet.Tests\Parakeet.Tests.csproj" />
+    <ProjectReference Include="..\..\..\ara3d\tests\Ara3D.Parsing.Tests\Ara3D.Parsing.Tests.csproj" />
     <ProjectReference Include="..\PlatoCompiler\Plato.Compiler.csproj" />
     <ProjectReference Include="..\PlatoTypeInference\PlatoTypeInference.csproj" />
   </ItemGroup>
