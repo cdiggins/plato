@@ -5,15 +5,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="legacy\math.funcs.plato.cs" />
+    <Compile Remove="legacy\math.funcs.plato.g.cs" />
+    <Compile Remove="legacy\Preamble.cs" />
+    <Compile Remove="legacy\unused.cs" />
     <Compile Remove="math.funcs.plato.cs" />
     <Compile Remove="math.funcs.plato.g.cs" />
     <Compile Remove="output.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="math.funcs.plato.cs" />
-    <None Include="math.funcs.plato.g.cs" />
-    <None Include="output.cs" />
+    <None Include="legacy\math.funcs.plato.cs" />
+    <None Include="legacy\math.funcs.plato.g.cs" />
+    <None Include="legacy\Preamble.cs" />
+    <None Include="legacy\unused.cs" />
   </ItemGroup>
 
 </Project>

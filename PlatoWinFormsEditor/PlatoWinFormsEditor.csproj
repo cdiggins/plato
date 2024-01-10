@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Plato.CSharpWriter\Plato.CSharpWriter.csproj" />
     <ProjectReference Include="..\PlatoCompiler\Plato.Compiler.csproj" />
   </ItemGroup>
 

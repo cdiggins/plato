@@ -1,4 +1,4 @@
-namespace PlatoWinFormsEditor
+    namespace PlatoWinFormsEditor
 {
     internal static class Program
     {

@@ -1,38 +1,52 @@
+// https://en.wikipedia.org/wiki/Top_type
+// This is the Top Type in Plato. All types provide this. 
+// It enables more efficient reflection-type algorithms in C#. 
 concept Any
 { 
-    FieldNames(): Array<String>;     
+    FieldNames(x: Self): Array<String>;     
     FieldValues(x: Self): Array<Any>;
-    FieldTypes(x: Self): Array<Type>;
-    TypeOf(): Type;
 }
 
+// Values is a read-only type which has any only Values as members
 concept Value 
-    inherits Any
-{
-    Default(): Self;
+    inherits Any, Equatable
+{ 
 }
 
+// Arrays are immutable types which can be indexed. 
+// The "At" function maps to the indexing operator in C#. 
 concept Array<T: Any>
-    inherits Any
 {
     Count(xs: Self): Integer;
     At(xs: Self, n: Integer): T;
 }
 
+// Vectors are numerical types which are arrays of numberical types. 
 concept Vector<T: Numerical>
-    inherits Array<T>, Numerical
+    inherits Array<T>, Numerical, Magnitudinal, Equatable, Coordinate
 {
 }
 
-concept Measure
-    inherits Value, ScalarArithmetic, Equatable, Comparable, Magnitudinal
-{ 
-    Value(x: Self): Number
-        => x.FieldValues[0];
+// A coordinate is a point in some cartesian space. This also includes 
+// a time line, so a DateTime is considered a Coordinate. 
+concept Coordinate
+    inherits Interpolatable 
+{
 }
 
+// A measure is a numeric value with an intrinisic unit of measure 
+// which is implied by the implementing type. 
+// It resembles a numerical type except you cannot multiply two measures without 
+// getting a new type. It does however support ScalarArithmetic 
+concept Measure
+    inherits Value, ScalarArithmetic, Equatable, Comparable, Magnitudinal, Interpolatable
+{ 
+    Value(x: Self): Number;
+}
+
+// A numerical type represents things like floats, integers, complex numbers, and vectors. 
 concept Numerical 
-    inherits Value, Arithmetic, ScalarArithmetic, Equatable, Comparable, Magnitudinal
+    inherits Value, Arithmetic, Equatable, Comparable, Magnitudinal, Interpolatable
 {
     Zero(): Self;
     One(): Self;
@@ -40,86 +54,78 @@ concept Numerical
     MaxValue(): Self;
 }
 
+// Any type which has a numerical magnitude (like numbers, vectors, and measurements)
 concept Magnitudinal
-    inherits Value
+    inherits Comparable
 {
-    Magnitude(x: Self): Number
-        => x.FieldValues.Square.Sum.SquareRoot;
+    Magnitude(x: Self): Number;
 }
 
+// The compare function return a negative integer if x < y, a positive integer if x > y, or zero otherwise. 
 concept Comparable
-    inherits Value
 {
     Compare(x: Self, y: Self): Integer;
 }
 
+// Supported for when two values are equal 
 concept Equatable
-    inherits Value
 {
-    Equals(a: Self, b: Self): Boolean
-        => a.FieldValues.Equals(b.FieldValues).All;
+    Equals(a: Self, b: Self): Boolean;
+    NotEquals(a: Self, b: Self): Boolean;
 }
 
-concept Arithmetic
-    inherits Value
+concept Arithmetic 
+    inherits AdditiveArithmetic<Self>, MultiplicativeArithmetic<Self>, 
+        AdditiveInverse, MultiplicativeInverse
 { 
-    Add(self: Self, other: Self): Self
-        => self.FieldValues + other.FieldValues;
+}
 
-    Subtract(self: Self, other: Self): Self
-        => self.FieldValues - other.FieldValues;
+concept AdditiveInverse
+{
+    Negative(self: Self): Self;
+}
 
-    Negative(self: Self): Self
-        => -self.FieldValues;
+concept MultiplicativeInverse
+{
+    Reciprocal(self: Self): Self;
+}
 
-    Reciprocal(self: Self): Self
-        => self.FieldValues.Reciprocal;
-    
-    Multiply(self: Self, other: Self): Self
-        => self.FieldValues + other.FieldValues;
+concept AdditiveArithmetic<T: Any>
+{
+    Add(self: Self, other: T): Self;    
+    Subtract(self: Self, other: T): Self;
+}
 
-    Divide(self: Self, other: Self): Self
-        => self.FieldValues / other.FieldValues;
-
-    Modulo(self: Self, other: Self): Self
-        => self.FieldValues % other.FieldValues;
+concept MultiplicativeArithmetic<T: Any>
+{
+    Multiply(self: Self, other: Self): Self;
+    Divide(self: Self, other: Self): Self;    
+    Modulo(self: Self, other: Self): Self;
 }
 
 concept ScalarArithmetic
-    inherits Value
+    inherits AdditiveArithmetic<Number>, MultiplicativeArithmetic<Number>
 {
-    Add(self: Self, scalar: Number): Self
-        => self.FieldValues + scalar;
-    
-    Subtract(self: Self, scalar: Number): Self
-        => self.FieldValues - scalar;
-
-    Multiply(self: Self, scalar: Number): Self
-        => self.FieldValues * scalar;
-    
-    Divide(self: Self, scalar: Number): Self
-        => self.FieldValues / scalar;
-
-    Modulo(self: Self, scalar: Number): Self
-        => self.FieldValues % scalar;
 }
 
 concept BooleanOperations
-    inherits Value
 {
-    And(a: Self, b: Self): Self 
-        => a.FieldValues && b.FieldValues;
-
-    Or(a: Self, b: Self): Self
-        => a.FieldValues || b.FieldValues;
-    
-    Not(a: Self): Self 
-        => a.FieldValues;
+    And(a: Self, b: Self): Self;
+    Or(a: Self, b: Self): Self;    
+    Not(a: Self): Self;
 }
 
-concept Interval<T: Numerical>
-    inherits Vector<T>
+concept Interval<TValue: Interpolatable, TSize: Numerical>
+    where TValue: AdditiveArithmetic<Size>
+    where TSize: ScalarArithmetic 
 {
-    Min(x: Self): T;
-    Max(x: Self): T;
+    Min(x: Self): TValue;
+    Max(x: Self): TValue;
+    Size(x: Self): TSize;
+}
+    
+concept Interpolatable
+{
+    Lerp(a: Self, b: Self, amount: Number): Self;
+    Unlerp(v: Self, a: Self, b: Self): Number;
 }

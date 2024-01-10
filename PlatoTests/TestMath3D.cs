@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Ara3D.Utils;
+﻿using Ara3D.Utils;
 using Parakeet.Tests;
 using Parakeet;
 using Parakeet.Demos;
@@ -13,7 +12,7 @@ namespace PlatoTests
         [Test]
         public static void ParseFuncs()
         {
-            var file = FilePathUtil.GetCallerSourceFolder().RelativeFolder("..").RelativeFolder("PlatoStandardLibrary")
+            var file = PathUtil.GetCallerSourceFolder().RelativeFolder("..").RelativeFolder("PlatoStandardLibrary")
                 .RelativeFile("math.funcs.plato.cs");
             var input = ParserInput.FromFile(file);
             Assert.AreEqual(1, ParserTests.ParseTest(input, CSharpGrammar.File, false));

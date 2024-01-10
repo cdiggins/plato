@@ -1,0 +1,114 @@
+library Easings
+{
+    //===
+    // Easings.cs
+    // https://easings.net/
+    // https://github.com/acron0/Easings/blob/master/Easings.cs
+    // https://github.com/ai/easings.net/blob/master/src/easings/easingsFunctions.ts
+    // This is an extremely good example of why Plato matters as a language. 
+    // When we look at the source code of the two other implementations. 
+
+    BlendEaseFunc(p: Numerical, easeIn: Function1, easeOut: Function1): Number 
+        => p < 0.5 
+            ? 0.5 * easeIn(p * 2) 
+            : 0.5 * easeOut(p * 2 - 1) + 0.5;
+    
+    InvertEaseFunc(p: Numerical, easeIn: Function1): Numerical 
+        => 1 - easeIn(1 - p);
+
+    Linear(p: Numerical): Numerical 
+        => p;
+
+    QuadraticEaseIn(p: Numerical): Numerical 
+        => p.Pow2;
+    
+    QuadraticEaseOut(p: Numerical): Numerical
+        => InvertEaseFunc(p, QuadraticEaseIn);
+    
+    QuadraticEaseInOut(p: Numerical): Numerical
+        => BlendEaseFunc(p, QuadraticEaseIn, QuadraticEaseOut);
+    
+    CubicEaseIn(p: Numerical): Numerical 
+        => p.Pow3;
+    
+    CubicEaseOut(p: Numerical): Numerical
+        => InvertEaseFunc(p, CubicEaseIn);
+    
+    CubicEaseInOut(p: Numerical): Numerical 
+        => BlendEaseFunc(p, CubicEaseIn, CubicEaseOut);
+    
+    QuarticEaseIn(p: Numerical): Numerical
+        => p.Pow4;
+    
+    QuarticEaseOut(p: Numerical): Numerical 
+        => InvertEaseFunc(p, QuarticEaseIn);
+    
+    QuarticEaseInOut(p: Numerical): Numerical 
+        => BlendEaseFunc(p, QuarticEaseIn, QuarticEaseOut);
+    
+    QuinticEaseIn(p: Numerical): Numerical 
+        => p.Pow5;
+    
+    QuinticEaseOut(p: Numerical): Numerical 
+        => InvertEaseFunc(p, QuinticEaseIn);
+    
+    QuinticEaseInOut(p: Numerical): Numerical
+        => BlendEaseFunc(p, QuinticEaseIn, QuinticEaseOut);
+    
+    SineEaseIn(p: Numerical): Numerical
+        => InvertEaseFunc(p, SineEaseOut);
+
+    SineEaseOut(p: Numerical): Numerical 
+        => p.Quarter.Turns.Sin;
+    
+    SineEaseInOut(p: Numerical): Numerical
+        => BlendEaseFunc(p, SineEaseIn, SineEaseOut);
+    
+    CircularEaseIn(p: Numerical): Numerical 
+        => p.Pow2.FromOne.SquareRoot.FromOne;
+    
+    CircularEaseOut(p: Numerical): Numerical 
+        => InvertEaseFunc(p, CircularEaseIn);
+    
+    CircularEaseInOut(p: Numerical): Numerical 
+        => BlendEaseFunc(p, CircularEaseIn, CircularEaseOut);
+    
+    ExponentialEaseIn(p: Numerical): Numerical 
+        => p.AlmostZero ? p : 2.Pow(10 * p.MinusOne);
+    
+    ExponentialEaseOut(p: Numerical): Numerical 
+        => InvertEaseFunc(p, ExponentialEaseIn);
+    
+    ExponentialEaseInOut(p: Numerical): Numerical 
+        => BlendEaseFunc(p, ExponentialEaseIn, ExponentialEaseOut);
+    
+    ElasticEaseIn(p: Numerical): Numerical 
+        => 13 * p.Quarter.Turns * 2.Pow(10 * p.MinusOne).Radians.Sin;
+    
+    ElasticEaseOut(p: Numerical): Numerical 
+        => InvertEaseFunc(p, ElasticEaseIn);
+    
+    ElasticEaseInOut(p: Numerical): Numerical 
+        => BlendEaseFunc(p, ElasticEaseIn, ElasticEaseOut);
+    
+    BackEaseIn(p: Numerical): Numerical 
+        => p.Pow3 - p * p.Half.Turns.Sin;
+    
+    BackEaseOut(p: Numerical): Numerical 
+        => InvertEaseFunc(p, BackEaseIn);
+    
+    BackEaseInOut(p: Numerical): Numerical 
+        => BlendEaseFunc(p, BackEaseIn, BackEaseOut);
+    
+    BounceEaseIn(p: Numerical): Numerical 
+        => InvertEaseFunc(p, BounceEaseOut);
+    
+    BounceEaseOut(p: Numerical): Numerical 
+        => (p < 4 / 11.0) ? 121.0 * p.Pow2 / 16.0
+        : (p < 8 / 11.0) ? 363.0 / 40.0 * p.Pow2 - 99.0 / 10.0 * p + 17.0 / 5.0
+        : (p < 9 / 10.0) ? 4356.0 / 361.0 * p.Pow2 - 35442.0 / 1805.0 * p + 16061.0 / 1805.0
+        : 54.0 / 5.0 * p.Pow2 - 513.0 / 25.0 * p + 268.0 / 25.0;
+    
+    BounceEaseInOut(p: Numerical): Numerical
+        => BlendEaseFunc(p, BounceEaseIn, BounceEaseOut);
+}

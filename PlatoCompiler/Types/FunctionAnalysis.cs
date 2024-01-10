@@ -407,7 +407,11 @@ namespace Plato.Compiler.Types
                     break;
 
                 case PredefinedReference predefinedReference:
-                    r = ToIType(predefinedReference.Definition.Type)    ;
+                    r = ToIType(predefinedReference.Definition.Type);
+                    break;
+
+                case VariableReference variableReference:
+                    r = ToIType(variableReference.Definition.Type);
                     break;
 
                 case Reference reference:
@@ -416,7 +420,12 @@ namespace Plato.Compiler.Types
                 case Tuple tuple:
                     r = CreateTuple(tuple.Children.Select(Process).ToList());
                     break;
-                
+
+                case BlockExpression blockExpression:
+                    // TODO: it might make sense to have a statement or block type. 
+                    r = ToSimpleType("Any");
+                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(expr));
             }

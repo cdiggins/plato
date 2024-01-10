@@ -1,3 +1,53 @@
+library Array
+{
+    Map(xs: Array, f: Function1): Array 
+        => (xs.Count, (i) => f(xs.At(i)));
+
+    Reverse(xs: Array): Array
+        => (xs.Count, (i) => f(xs.At(xs.Count - 1 - i)));
+
+    Zip(xs: Array, ys: Array, f: Function2): Array 
+        => (xs.Count, (i) => f(At(i), ys.At(i)));  
+
+    Zip(xs: Array, ys: Array, zs: Array, f: Function3): Array 
+        => (xs.Count, (i) => f(At(i), ys.At(i), zs.At(i)));
+    
+    Skip(xs: Array, n: Integer): Array
+        => (xs.Count - n, (i) => At(i - n));
+    
+    Take(xs: Array, n: Integer): Array
+        => (n, (i) => At(i));   
+    
+    Aggregate(xs: Array, init: Any, f: Function2): Any 
+        => xs.IsEmpty ? init : f(init, xs.Rest);
+
+    Rest(xs: Array): Array 
+        => xs.Skip(1);
+    
+    IsEmpty(xs: Array): Boolean
+        => xs.Count == 0;
+    
+    First(xs: Array): Any 
+        => xs.At(0);    
+    
+    Last(xs: Array): Any
+        => xs.At(xs.Count - 1);
+    
+    Slice(xs: Array, from: Integer, count: Integer): Array 
+        => xs.Skip(from).Take(count);
+    
+    Join(xs: Array, sep: String): String 
+        => xs.IsEmpty ? "" 
+            : xs.First.ToString 
+            + xs.Rest.Aggregate("", (acc, cur) => $"{acc}{sep}{cur}");
+    
+    All(xs: Array, f: Function1): Boolean 
+        => xs.IsEmpty ? true : f(xs.First) && f(xs.Rest);
+
+    All(xs: Array): Boolean 
+        => xs.All((b) => b);
+} 
+
 library Interval
 {
     Size(x: Interval): Numerical 
@@ -7,7 +57,7 @@ library Interval
         => x.Min >= x.Max;
     
     Lerp(x: Interval, amount: Number): Numerical 
-        => x.Min.Lerp(x.Max, amount);
+        => x.Min * (1.0 - amount) + x.Max * amount;
     
     InverseLerp(x: Interval, value: Numerical): Unit 
         => (value - x.Min) / x.Size;
@@ -67,33 +117,31 @@ library Interval
         => value >= x.Min && value <= x.Max;
 }
 
+library Value
+{ 
+    ToString(x: Any): String
+        => x.FieldValues.Join(", ");
+}
+
 library Vector
 {
-    Aggregate(v: Vector, f: Function2): Numerical
-    {
-        var r = v[0];
-        for (var i=1; i < v.Count; ++i)
-            r = f(r, v[i]);
-        return r;
-    }    
-
     Sum(v: Vector): Numerical 
         => v.Aggregate(0, Add); 
     
     SumSquares(v: Vector): Numerical
         => v.Square.Sum; 
     
-    MagnitudeSquared(v: Vector): Numerical
+    LengthSquared(v: Vector): Numerical
         => v.SumSquares;
     
-    Magnitude(v: Vector): Numerical
-        => v.MagnitudeSquared.SquareRoot;
+    Length(v: Vector): Numerical
+        => v.LengthSquared.SquareRoot;
     
-    Dot(v1: Vector, v2: Vector): Numerical
+    Dot(v1: Vector, v2: Vector  ): Numerical
         => (v1 * v2).Sum;
 
     Normal(v: Vector): Vector
-        => v / v.Magnitude;
+        => v / v.Length;
 
     Average(v: Vector): Numerical
         => v.Sum / v.Count;
@@ -224,11 +272,11 @@ library Numerical
     AlmostZero(x: Number): Boolean
         => x.Abs < 0.00000001; 
 
-    Lerp(a: Numerical, b: Numerical, t: Number): Number
-        => (a.One - t) * a + t * b;
+    Lerp(a: Number, b: Number, t: Unit): Number
+        => (1 - t) * a + t * b;
         
-    Between(self: Comparable, min: Comparable, max: Comparable): Boolean
-        => self >= min && self <= max;
+    Between(self: Numerical, min: Numerical, max: Numerical): Boolean
+        => self.FieldValues.Zip(min.FieldValues, max.FieldValues, Between);
 }
 
 library Angles 
@@ -268,4 +316,119 @@ library Comparable
     
     Max(a: Comparable, b: Comparable): Comparable 
         => a >= b ? a : b;
+}
+
+library Easings
+{
+    //===
+    // Easings.cs
+    // https://easings.net/
+    // https://github.com/acron0/Easings/blob/master/Easings.cs
+    // https://github.com/ai/easings.net/blob/master/src/easings/easingsFunctions.ts
+    // This is an extremely good example of why Plato matters as a language. 
+    // When we look at the source code of the two other implementations. 
+
+    BlendEaseFunc(p: Number, easeIn: Function1, easeOut: Function1): Number 
+        => p < 0.5 
+            ? 0.5 * easeIn(p * 2) 
+            : 0.5 * easeOut(p * 2 - 1) + 0.5;
+    
+    InvertEaseFunc(p: Number, easeIn: Function1): Number 
+        => 1 - easeIn(1 - p);
+
+    Linear(p: Number): Number 
+        => p;
+
+    QuadraticEaseIn(p: Number): Number 
+        => p.Pow2;
+    
+    QuadraticEaseOut(p: Number): Number
+        => InvertEaseFunc(p, QuadraticEaseIn);
+    
+    QuadraticEaseInOut(p: Number): Number
+        => BlendEaseFunc(p, QuadraticEaseIn, QuadraticEaseOut);
+    
+    CubicEaseIn(p: Number): Number 
+        => p.Pow3;
+    
+    CubicEaseOut(p: Number): Number
+        => InvertEaseFunc(p, CubicEaseIn);
+    
+    CubicEaseInOut(p: Number): Number 
+        => BlendEaseFunc(p, CubicEaseIn, CubicEaseOut);
+    
+    QuarticEaseIn(p: Number): Number
+        => p.Pow4;
+    
+    QuarticEaseOut(p: Number): Number 
+        => InvertEaseFunc(p, QuarticEaseIn);
+    
+    QuarticEaseInOut(p: Number): Number 
+        => BlendEaseFunc(p, QuarticEaseIn, QuarticEaseOut);
+    
+    QuinticEaseIn(p: Number): Number 
+        => p.Pow5;
+    
+    QuinticEaseOut(p: Number): Number 
+        => InvertEaseFunc(p, QuinticEaseIn);
+    
+    QuinticEaseInOut(p: Number): Number
+        => BlendEaseFunc(p, QuinticEaseIn, QuinticEaseOut);
+    
+    SineEaseIn(p: Number): Number
+        => InvertEaseFunc(p, SineEaseOut);
+
+    SineEaseOut(p: Number): Number 
+        => p.Quarter.Turns.Sin;
+    
+    SineEaseInOut(p: Number): Number
+        => BlendEaseFunc(p, SineEaseIn, SineEaseOut);
+    
+    CircularEaseIn(p: Number): Number 
+        => p.Pow2.FromOne.SquareRoot.FromOne;
+    
+    CircularEaseOut(p: Number): Number 
+        => InvertEaseFunc(p, CircularEaseIn);
+    
+    CircularEaseInOut(p: Number): Number 
+        => BlendEaseFunc(p, CircularEaseIn, CircularEaseOut);
+    
+    ExponentialEaseIn(p: Number): Number 
+        => p.AlmostZero ? p : 2.Pow(10 * p.MinusOne);
+    
+    ExponentialEaseOut(p: Number): Number 
+        => InvertEaseFunc(p, ExponentialEaseIn);
+    
+    ExponentialEaseInOut(p: Number): Number 
+        => BlendEaseFunc(p, ExponentialEaseIn, ExponentialEaseOut);
+    
+    ElasticEaseIn(p: Number): Number 
+        => 13 * p.Quarter.Turns * 2.Pow(10 * p.MinusOne).Radians.Sin;
+    
+    ElasticEaseOut(p: Number): Number 
+        => InvertEaseFunc(p, ElasticEaseIn);
+    
+    ElasticEaseInOut(p: Number): Number 
+        => BlendEaseFunc(p, ElasticEaseIn, ElasticEaseOut);
+    
+    BackEaseIn(p: Number): Number 
+        => p.Pow3 - p * p.Half.Turns.Sin;
+    
+    BackEaseOut(p: Number): Number 
+        => InvertEaseFunc(p, BackEaseIn);
+    
+    BackEaseInOut(p: Number): Number 
+        => BlendEaseFunc(p, BackEaseIn, BackEaseOut);
+    
+    BounceEaseIn(p: Number): Number 
+        => InvertEaseFunc(p, BounceEaseOut);
+    
+    BounceEaseOut(p: Number): Number 
+        => (p < 4 / 11.0) ? 121.0 * p.Pow2 / 16.0
+        : (p < 8 / 11.0) ? 363.0 / 40.0 * p.Pow2 - 99.0 / 10.0 * p + 17.0 / 5.0
+        : (p < 9 / 10.0) ? 4356.0 / 361.0 * p.Pow2 - 35442.0 / 1805.0 * p + 16061.0 / 1805.0
+        : 54.0 / 5.0 * p.Pow2 - 513.0 / 25.0 * p + 268.0 / 25.0;
+    
+    BounceEaseInOut(p: Number): Number
+        => BlendEaseFunc(p, BounceEaseIn, BounceEaseOut);
 }

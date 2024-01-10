@@ -1,0 +1,49 @@
+library Array
+{
+    Map(xs: Array, f: Function1): Array 
+        => (xs.Count, (i) => f(xs.At(i)));
+
+    Reverse(xs: Array): Array
+        => (xs.Count, (i) => f(xs.At(xs.Count - 1 - i)));
+
+    Zip(xs: Array, ys: Array, f: Function2): Array 
+        => (xs.Count, (i) => f(At(i), ys.At(i)));  
+
+    Zip(xs: Array, ys: Array, zs: Array, f: Function3): Array 
+        => (xs.Count, (i) => f(At(i), ys.At(i), zs.At(i)));
+    
+    Skip(xs: Array, n: Integer): Array
+        => (xs.Count - n, (i) => At(i - n));
+    
+    Take(xs: Array, n: Integer): Array
+        => (n, (i) => At(i));   
+    
+    Aggregate(xs: Array, init: Any, f: Function2): Any 
+        => xs.IsEmpty ? init : f(init, xs.Rest);
+
+    Rest(xs: Array): Array 
+        => xs.Skip(1);
+    
+    IsEmpty(xs: Array): Boolean
+        => xs.Count == 0;
+    
+    First(xs: Array): Any 
+        => xs.At(0);    
+    
+    Last(xs: Array): Any
+        => xs.At(xs.Count - 1);
+    
+    Slice(xs: Array, from: Integer, count: Integer): Array 
+        => xs.Skip(from).Take(count);
+    
+    Join(xs: Array, sep: String): String 
+        => xs.IsEmpty ? "" 
+            : xs.First.ToString 
+            + xs.Rest.Aggregate("", (acc, cur) => $"{acc}{sep}{cur}");
+    
+    All(xs: Array, f: Function1): Boolean 
+        => xs.IsEmpty ? true : f(xs.First) && f(xs.Rest);
+
+    All(xs: Array): Boolean 
+        => xs.All((b) => b);
+} 

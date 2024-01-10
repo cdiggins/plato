@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using Ara3D.Utils;
 using Plato.Compiler.Ast;
 using Plato.Compiler.Types;
 
@@ -46,7 +48,8 @@ namespace Plato.Compiler.Symbols
         public TypeExpression GetParameterType(int n) => Parameters[n].Type;
         public TypeExpression ReturnType => Type;
         public TypeDefinition OwnerType { get; }
-        
+        public IEnumerable<TypeExpression> ParametersAndReturnType => Enumerable.Append(Parameters.Select(p => p.Type), ReturnType);
+
         public FunctionDefinition(string name, TypeDefinition ownerType, TypeExpression returnType, Expression body, params ParameterDefinition[] parameters)
             : base(returnType, name)
         {
@@ -84,7 +87,7 @@ namespace Plato.Compiler.Symbols
             : base(type, name) { }
 
         public override Reference ToReference()
-            => throw new NotSupportedException();
+            => new VariableReference(this);
 
         public override IEnumerable<Symbol> GetChildSymbols()
             => new[] { Type };
@@ -166,6 +169,15 @@ namespace Plato.Compiler.Symbols
 
         public override IEnumerable<Symbol> GetChildSymbols()
             => Methods.Cast<Symbol>().Concat(Fields).Concat(TypeParameters).Concat(Inherits).Concat(Implements);
+
+        public bool IsSelfConstrained()
+        {
+            if (Functions.Any(f => f.ParametersAndReturnType.Skip(1).Any(te => te.UsesSelfType()))) 
+                return true;
+            if (Inherits.Any(te => te.UsesSelfType()))
+                return true;
+            return Inherits.Any(i => i.Definition.IsSelfConstrained());
+        }
     }
 
     public class TypeParameterDefinition : TypeDefinition

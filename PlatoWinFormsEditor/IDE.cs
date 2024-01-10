@@ -1,11 +1,12 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Ara3D.Utils;
 using Parakeet;
 using Parakeet.Demos;
 using Parakeet.Demos.Plato;
 using Plato.Compiler;
 using Plato.Compiler.Ast;
-using Plato.Compiler.Symbols;
+using Plato.CSharpWriter;
 using Logger = Plato.Compiler.Logger;
 
 namespace PlatoWinFormsEditor;
@@ -95,10 +96,15 @@ public class IDE
         // NOTE: even if CompletedCompilation is true, there might still be errors. 
         // The goal is to still be able to partially generate output. 
 
-        var outputFolder = inputFolder;
+        var outputFolder = new DirectoryPath(@"C:\Users\cdigg\git\ara3d\plato\PlatoOutput\");
         
         Logger.Log("Writing C#");
-        File.WriteAllText(Path.Combine(outputFolder, "output.cs"), Compiler.ToCSharp());
+        var output = Compiler.ToCSharp(outputFolder);
+        foreach (var kv in output.Files)
+        {
+            var fp = new FilePath(kv.Key);
+            fp.WriteAllText(kv.Value.ToString());
+        }
 
         //Logger.Log("Writing HTML");
         //File.WriteAllText(Path.Combine(outputFolder, "output.plato.html"), Compiler.ToPlatoHtml());
@@ -133,16 +139,5 @@ public class IDE
         //Output += GetOperationsOutput();
         //Output += GetTypeGuesserOutput();
     }
-
-    public string Try(Func<string?> f)
-    {
-        try
-        {
-            return f() ?? "";
-        }
-        catch (Exception e)
-        {
-            return e.Message;
-        }
-    }
+    
 }

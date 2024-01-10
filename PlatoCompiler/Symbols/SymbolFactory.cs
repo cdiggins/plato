@@ -148,6 +148,11 @@ namespace Plato.Compiler.Symbols
                 return CreateAny();
             }
             var name = astTypeNode.Name.Trim();
+            if (name == "var")
+            {
+                // NOTE: maybe this might be 
+                return CreateAny();
+            }
             if (string.IsNullOrWhiteSpace(name))
             {
                 LogError("Invalid variable name", astTypeNode);
@@ -210,13 +215,8 @@ namespace Plato.Compiler.Symbols
                                 ResolveExpr(astAssign.Value)));
 
                     case AstBlock astBlock:
-                        {
-                            if (astBlock.Statements.Count == 0)
-                                return null;
-                            if (astBlock.Statements.Count > 1)
-                                LogError("Cannot handle AstBlock with multiple children", astBlock);
-                            return Resolve(astBlock.Statements[0]);
-                        }
+                        return new BlockExpression(
+                            astBlock.Statements.Select(Resolve).ToArray());
 
                     case AstMulti astMulti:
                         {
@@ -276,7 +276,7 @@ namespace Plato.Compiler.Symbols
                             new VariableDefinition(astVarDef.Name, ResolveType(astVarDef.Type)));
 
                     case AstLoop astLoop:
-                        LogError("NotImplementedException", node);
+                        return new LoopSymbol(node);
                         return null;
                 }
 
@@ -349,10 +349,13 @@ namespace Plato.Compiler.Symbols
                 TypeBindingsScope = TypeBindingsScope.Push();
 
                 foreach (var tpd in typeDef.TypeParameters)
-                    if (tpd.Constraint != null)
-                        BindType(tpd.Name, tpd.Constraint.Definition);
-
+                    BindType(tpd.Name, tpd);
+                
                 var astTypeDecl = SymbolsToNodes[typeDef] as AstTypeDeclaration;
+
+                // Add a Self type
+                if (typeDef.Self != null)
+                    BindType(typeDef.Self);
 
                 // Resolve the inherits and implemented type declarations
 
@@ -369,10 +372,6 @@ namespace Plato.Compiler.Symbols
                         throw new Exception($"Null implemented type declaration in {typeDef}");
                     typeDef.Implements.Add(ResolveType(implementedType));
                 }
-
-                // Add a Self type
-                if (typeDef.Self != null)
-                    BindType(typeDef.Self);
 
                 // For each method in the type create a function, and add it to a function group 
                 foreach (var m in typeDef.Methods)

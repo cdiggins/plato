@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Sockets;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,7 +11,6 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using Peacock;
 using Peacock.Wpf;
-using Plato.Compiler;
 using Plato.Compiler.Vsg;
 
 namespace Emu;

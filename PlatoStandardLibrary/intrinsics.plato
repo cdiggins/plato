@@ -14,7 +14,6 @@
 
     Interpolate(xs: Array): String;
     Throw(x: Any): Any;
-    TypeOf(x: Any): Type;
 
     Add(x: Number, y: Number): Number;
     Subtract(x: Number, y: Number): Number;

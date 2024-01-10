@@ -139,8 +139,6 @@ namespace Plato.Compiler
 
                 Log("Creating function analysis");
                 var sb = new StringBuilder();
-
-                sb.Append("Creating function analyses");
                 foreach (var fd in FunctionDefinitions)
                     GetOrComputeFunctionAnalysis(fd);
 
@@ -153,7 +151,7 @@ namespace Plato.Compiler
                     fa.BuildAnalysisOutput(sb);
                 */
 
-                sb.AppendLine("Gathering constraints for each function");
+                Log("Gathering constraints for each function");
                 foreach (var fa in FunctionAnalyses.Values)
                     fa.Process();
 

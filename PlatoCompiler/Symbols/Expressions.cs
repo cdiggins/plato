@@ -44,6 +44,15 @@ namespace Plato.Compiler.Symbols
         public new PredefinedDefinition Definition => base.Definition as PredefinedDefinition;
     }
 
+    public class VariableReference : Reference
+    {
+        public VariableReference(VariableDefinition def)
+            : base(def)
+        { }
+
+        public new VariableDefinition Definition => base.Definition as VariableDefinition;
+    }
+
     public class ParameterReference : Reference
     {
         public ParameterReference(ParameterDefinition def)
@@ -76,10 +85,8 @@ namespace Plato.Compiler.Symbols
             IfFalse = ifFalse;
         }
 
-
         public override string ToString()
             => $"({Condition}?{IfTrue}:{IfFalse})";
-
     }
 
     public class Assignment : Expression
@@ -178,6 +185,17 @@ namespace Plato.Compiler.Symbols
 
         public override string ToString()
             => $"({string.Join(", ", Children)})";
+    }
+
+    public class BlockExpression : Expression
+    {
+        public IReadOnlyList<Symbol> Symbols { get; }
+
+        public BlockExpression(params Symbol[] symbols)
+            => Symbols = symbols;
+
+        public override IEnumerable<Symbol> GetChildSymbols()
+            => Symbols;
     }
 
     public static class ExpressionExtensions

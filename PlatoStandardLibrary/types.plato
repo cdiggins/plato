@@ -18,13 +18,6 @@ type Boolean
     implements BooleanOperations
 { }
 
-// Built-in type that represents the type of a run-time value. 
-type Type
-    implements Value
-{ 
-    Name: String;
-}
-
 // Built-in type that represents a character of text 
 type Character
     implements Value
@@ -256,15 +249,18 @@ type Quad2D
 }
 
 type Point3D
-    implements Value
+    implements Coordinate
 {
-    Value: Vector3D;
+    X: Number;
+    Y: Number;
+    Z: Number;
 }
 
 type Point2D
-    implements Value
+    implements Coordinate
 {
-    Value: Vector2D;
+    X: Number;
+    Y: Number;
 }
 
 type Line3D
@@ -453,7 +449,7 @@ type Fraction
 }
 
 type Angle
-    implements Measure
+    implements Coordinate
 {
     Radians: Number;
 }
@@ -476,7 +472,7 @@ type Temperature
     Celsius: Number;
 }
 
-type TimeSpan
+type Time
     implements Measure
 {
     Seconds: Number;
@@ -485,15 +481,14 @@ type TimeSpan
 type TimeRange
     implements Interval<DateTime>
 {
-    Min: DateTime;
-    Max: DateTime;
+    Begin: DateTime;
+    End: DateTime;
 }
 
-// TODO: a naive gregorian calendar date representation.
-// Ideally we would be more compact and enable comparisons. 
+// A naive gregorian calendar date representation.
 // Possibly some alternative types like "CalendarDateTime" 
 type DateTime
-    implements Value
+    implements Coordinate
 {
     Year: Integer;
     Month: Integer;
@@ -526,10 +521,10 @@ type Arc
 }
 
 type TimeInterval
-    implements Interval<TimeSpan>
+    implements Interval<Time>
 {
-    Start: TimeSpan;
-    End: TimeSpan;
+    Start: Time;
+    End: Time;
 }
 
 type RealInterval
