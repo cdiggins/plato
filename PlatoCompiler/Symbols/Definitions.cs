@@ -110,16 +110,15 @@ namespace Plato.Compiler.Symbols
         public List<FunctionDefinition> CompilerGeneratedFunctions { get; } = new List<FunctionDefinition>();
 
         public string Name { get; }
-        
+       
         public SelfType Self { get; }
-        public TypeExpression SelfTypeExpression => Self.Constraint;
 
         public TypeDefinition(TypeKind kind, string name)
         {
             Name = name;
             Kind = kind;
             if (!this.IsTypeVariable())
-                Self = new SelfType(ToTypeExpression());
+                Self = new SelfType();
         }
 
         public IEnumerable<TypeDefinition> GetSelfAndAllInheritedTypes()
@@ -182,20 +181,19 @@ namespace Plato.Compiler.Symbols
 
     public class TypeParameterDefinition : TypeDefinition
     {
-        public TypeParameterDefinition(string name, TypeExpression constraint)
-            : base(TypeKind.TypeVariable, name)
-            => Constraint = constraint;
-        
-        public TypeExpression Constraint { get; }
+        public IReadOnlyList<TypeExpression> Constraints { get; }
 
-        public override IEnumerable<Symbol> GetChildSymbols()
-            => new[] { Constraint };
+        public TypeParameterDefinition(string name, IReadOnlyList<TypeExpression> constraints)
+            : base(TypeKind.TypeVariable, name)
+        {
+            Constraints = constraints ?? Array.Empty<TypeExpression>();
+        }
     }
 
     public class SelfType : TypeParameterDefinition
     {
-        public SelfType(TypeExpression constraint)
-            : base("Self", constraint)
+        public SelfType()
+            : base("Self", null)
         { }
     }
 

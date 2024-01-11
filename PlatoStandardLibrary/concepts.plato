@@ -15,15 +15,15 @@ concept Value
 
 // Arrays are immutable types which can be indexed. 
 // The "At" function maps to the indexing operator in C#. 
-concept Array<T: Any>
+concept Array<T>
 {
     Count(xs: Self): Integer;
     At(xs: Self, n: Integer): T;
 }
 
-// Vectors are numerical types which are arrays of numberical types. 
-concept Vector<T: Numerical>
-    inherits Array<T>, Numerical, Magnitudinal, Equatable, Coordinate
+// Vectors are numerical types which are arrays of numerical types. 
+concept Vector
+    inherits Array<Number>, Numerical, Magnitudinal, Equatable, Coordinate
 {
 }
 
@@ -90,13 +90,13 @@ concept MultiplicativeInverse
     Reciprocal(self: Self): Self;
 }
 
-concept AdditiveArithmetic<T: Any>
+concept AdditiveArithmetic<T>
 {
     Add(self: Self, other: T): Self;    
     Subtract(self: Self, other: T): Self;
 }
 
-concept MultiplicativeArithmetic<T: Any>
+concept MultiplicativeArithmetic<T>
 {
     Multiply(self: Self, other: Self): Self;
     Divide(self: Self, other: Self): Self;    
@@ -115,8 +115,9 @@ concept BooleanOperations
     Not(a: Self): Self;
 }
 
-concept Interval<TValue: Interpolatable, TSize: Numerical>
-    where TValue: AdditiveArithmetic<Size>
+concept Interval<TValue, TSize>
+    where TValue: Interpolatable
+    where TValue: AdditiveArithmetic<TSize>
     where TSize: ScalarArithmetic 
 {
     Min(x: Self): TValue;

@@ -232,10 +232,17 @@ namespace Plato.Compiler.Ast
 
     public class AstTypeParameter : AstDeclaration
     {
-        public AstTypeNode Constraint { get; }
-        public AstTypeParameter(string name, AstTypeNode constraint)
+        public AstTypeParameter(string name)
             : base(name)
-            => Constraint = constraint;
+        { }
+    }
+
+    public class AstConstraint : AstDeclaration
+    {
+        public AstTypeNode Constraint { get; }
+        public AstConstraint(string name, AstTypeNode type)
+            : base(name)
+            => Constraint = type;
     }
 
     public enum TypeKind
@@ -254,15 +261,22 @@ namespace Plato.Compiler.Ast
         public IReadOnlyList<AstTypeNode> Inherits { get; }
         public IReadOnlyList<AstTypeNode> Implements { get; }
         public IReadOnlyList<AstMemberDeclaration> Members { get; }
+        public IReadOnlyList<AstConstraint> Constraints { get; }
 
-        public AstTypeDeclaration(TypeKind kind, string name, IEnumerable<AstTypeParameter> typeParameters,
-            IEnumerable<AstTypeNode> inherits, IEnumerable<AstTypeNode> implements, params AstMemberDeclaration[] members)
+        public AstTypeDeclaration(TypeKind kind, 
+            string name, 
+            IEnumerable<AstTypeParameter> typeParameters,
+            IEnumerable<AstTypeNode> inherits, 
+            IEnumerable<AstTypeNode> implements, 
+            IEnumerable<AstConstraint> constraints, 
+            params AstMemberDeclaration[] members)
             : base(name)
         {
             Kind = kind;
             TypeParameters = typeParameters.ToList();
             Inherits = inherits.ToList();
             Implements = implements.ToList();
+            Constraints = constraints.ToList();
             Members = members;
         }
 

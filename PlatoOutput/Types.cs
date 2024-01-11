@@ -402,7 +402,7 @@ public class Rotation3D: Value<Rotation3D>
     public Boolean NotEquals(Rotation3D b) => throw new NotImplementedException();
     public static Boolean operator !=(Rotation3D a, Rotation3D b) => a.NotEquals(b);
 }
-public class Vector2D: Vector<Vector2D, Number>
+public class Vector2D: Vector<Vector2D>
 {
     public Number X { get; }
     public Number Y { get; }
@@ -446,7 +446,7 @@ public class Vector2D: Vector<Vector2D, Number>
     public Vector2D Lerp(Vector2D b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Vector2D a, Vector2D b) => throw new NotImplementedException();
 }
-public class Vector3D: Vector<Vector3D, Number>
+public class Vector3D: Vector<Vector3D>
 {
     public Number X { get; }
     public Number Y { get; }
@@ -492,7 +492,7 @@ public class Vector3D: Vector<Vector3D, Number>
     public Vector3D Lerp(Vector3D b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Vector3D a, Vector3D b) => throw new NotImplementedException();
 }
-public class Vector4D: Vector<Vector4D, Number>
+public class Vector4D: Vector<Vector4D>
 {
     public Number X { get; }
     public Number Y { get; }
@@ -641,39 +641,41 @@ public class Transform2D: Value<Transform2D>
     public Boolean NotEquals(Transform2D b) => throw new NotImplementedException();
     public static Boolean operator !=(Transform2D a, Transform2D b) => a.NotEquals(b);
 }
-public class AlignedBox2D: Interval<Vector2D>
+public class AlignedBox2D: Interval<Point2D, Vector2D>
 {
-    public Vector2D A { get; }
-    public Vector2D B { get; }
-    public AlignedBox2D WithA(Vector2D a) => (a, B);
-    public AlignedBox2D WithB(Vector2D b) => (A, b);
-    public AlignedBox2D(Vector2D a, Vector2D b) => (A, B) = (a, b);
+    public Point2D A { get; }
+    public Point2D B { get; }
+    public AlignedBox2D WithA(Point2D a) => (a, B);
+    public AlignedBox2D WithB(Point2D b) => (A, b);
+    public AlignedBox2D(Point2D a, Point2D b) => (A, B) = (a, b);
     public AlignedBox2D() { }
     public static AlignedBox2D Default = new AlignedBox2D();
-    public static AlignedBox2D New(Vector2D a, Vector2D b) => new AlignedBox2D(a, b);
-    public static implicit operator (Vector2D, Vector2D)(AlignedBox2D self) => (self.A, self.B);
-    public static implicit operator AlignedBox2D((Vector2D, Vector2D) value) => new AlignedBox2D(value.Item1, value.Item2);
-    public void Deconstruct(out Vector2D a, out Vector2D b) { a = A; b = B; }
-    public Vector2D Min => throw new NotImplementedException();
-    public Vector2D Max => throw new NotImplementedException();
+    public static AlignedBox2D New(Point2D a, Point2D b) => new AlignedBox2D(a, b);
+    public static implicit operator (Point2D, Point2D)(AlignedBox2D self) => (self.A, self.B);
+    public static implicit operator AlignedBox2D((Point2D, Point2D) value) => new AlignedBox2D(value.Item1, value.Item2);
+    public void Deconstruct(out Point2D a, out Point2D b) { a = A; b = B; }
+    public Point2D Min => throw new NotImplementedException();
+    public Point2D Max => throw new NotImplementedException();
+    public Vector2D Size => throw new NotImplementedException();
 }
-public class AlignedBox3D: Interval<Vector3D>
+public class AlignedBox3D: Interval<Point3D, Vector3D>
 {
-    public Vector3D A { get; }
-    public Vector3D B { get; }
-    public AlignedBox3D WithA(Vector3D a) => (a, B);
-    public AlignedBox3D WithB(Vector3D b) => (A, b);
-    public AlignedBox3D(Vector3D a, Vector3D b) => (A, B) = (a, b);
+    public Point3D A { get; }
+    public Point3D B { get; }
+    public AlignedBox3D WithA(Point3D a) => (a, B);
+    public AlignedBox3D WithB(Point3D b) => (A, b);
+    public AlignedBox3D(Point3D a, Point3D b) => (A, B) = (a, b);
     public AlignedBox3D() { }
     public static AlignedBox3D Default = new AlignedBox3D();
-    public static AlignedBox3D New(Vector3D a, Vector3D b) => new AlignedBox3D(a, b);
-    public static implicit operator (Vector3D, Vector3D)(AlignedBox3D self) => (self.A, self.B);
-    public static implicit operator AlignedBox3D((Vector3D, Vector3D) value) => new AlignedBox3D(value.Item1, value.Item2);
-    public void Deconstruct(out Vector3D a, out Vector3D b) { a = A; b = B; }
-    public Vector3D Min => throw new NotImplementedException();
-    public Vector3D Max => throw new NotImplementedException();
+    public static AlignedBox3D New(Point3D a, Point3D b) => new AlignedBox3D(a, b);
+    public static implicit operator (Point3D, Point3D)(AlignedBox3D self) => (self.A, self.B);
+    public static implicit operator AlignedBox3D((Point3D, Point3D) value) => new AlignedBox3D(value.Item1, value.Item2);
+    public void Deconstruct(out Point3D a, out Point3D b) { a = A; b = B; }
+    public Point3D Min => throw new NotImplementedException();
+    public Point3D Max => throw new NotImplementedException();
+    public Vector3D Size => throw new NotImplementedException();
 }
-public class Complex: Vector<Complex, Number>
+public class Complex: Vector<Complex>
 {
     public Number Real { get; }
     public Number Imaginary { get; }
@@ -797,28 +799,6 @@ public class Plane: Value<Plane>
     public Boolean NotEquals(Plane b) => throw new NotImplementedException();
     public static Boolean operator !=(Plane a, Plane b) => a.NotEquals(b);
 }
-public class Triangle3D: Value<Triangle3D>
-{
-    public Point3D A { get; }
-    public Point3D B { get; }
-    public Point3D C { get; }
-    public Triangle3D WithA(Point3D a) => (a, B, C);
-    public Triangle3D WithB(Point3D b) => (A, b, C);
-    public Triangle3D WithC(Point3D c) => (A, B, c);
-    public Triangle3D(Point3D a, Point3D b, Point3D c) => (A, B, C) = (a, b, c);
-    public Triangle3D() { }
-    public static Triangle3D Default = new Triangle3D();
-    public static Triangle3D New(Point3D a, Point3D b, Point3D c) => new Triangle3D(a, b, c);
-    public static implicit operator (Point3D, Point3D, Point3D)(Triangle3D self) => (self.A, self.B, self.C);
-    public static implicit operator Triangle3D((Point3D, Point3D, Point3D) value) => new Triangle3D(value.Item1, value.Item2, value.Item3);
-    public void Deconstruct(out Point3D a, out Point3D b, out Point3D c) { a = A; b = B; c = C; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Triangle3D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Triangle3D a, Triangle3D b) => a.Equals(b);
-    public Boolean NotEquals(Triangle3D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Triangle3D a, Triangle3D b) => a.NotEquals(b);
-}
 public class Triangle2D: Value<Triangle2D>
 {
     public Point2D A { get; }
@@ -841,29 +821,27 @@ public class Triangle2D: Value<Triangle2D>
     public Boolean NotEquals(Triangle2D b) => throw new NotImplementedException();
     public static Boolean operator !=(Triangle2D a, Triangle2D b) => a.NotEquals(b);
 }
-public class Quad3D: Value<Quad3D>
+public class Triangle3D: Value<Triangle3D>
 {
     public Point3D A { get; }
     public Point3D B { get; }
     public Point3D C { get; }
-    public Point3D D { get; }
-    public Quad3D WithA(Point3D a) => (a, B, C, D);
-    public Quad3D WithB(Point3D b) => (A, b, C, D);
-    public Quad3D WithC(Point3D c) => (A, B, c, D);
-    public Quad3D WithD(Point3D d) => (A, B, C, d);
-    public Quad3D(Point3D a, Point3D b, Point3D c, Point3D d) => (A, B, C, D) = (a, b, c, d);
-    public Quad3D() { }
-    public static Quad3D Default = new Quad3D();
-    public static Quad3D New(Point3D a, Point3D b, Point3D c, Point3D d) => new Quad3D(a, b, c, d);
-    public static implicit operator (Point3D, Point3D, Point3D, Point3D)(Quad3D self) => (self.A, self.B, self.C, self.D);
-    public static implicit operator Quad3D((Point3D, Point3D, Point3D, Point3D) value) => new Quad3D(value.Item1, value.Item2, value.Item3, value.Item4);
-    public void Deconstruct(out Point3D a, out Point3D b, out Point3D c, out Point3D d) { a = A; b = B; c = C; d = D; }
+    public Triangle3D WithA(Point3D a) => (a, B, C);
+    public Triangle3D WithB(Point3D b) => (A, b, C);
+    public Triangle3D WithC(Point3D c) => (A, B, c);
+    public Triangle3D(Point3D a, Point3D b, Point3D c) => (A, B, C) = (a, b, c);
+    public Triangle3D() { }
+    public static Triangle3D Default = new Triangle3D();
+    public static Triangle3D New(Point3D a, Point3D b, Point3D c) => new Triangle3D(a, b, c);
+    public static implicit operator (Point3D, Point3D, Point3D)(Triangle3D self) => (self.A, self.B, self.C);
+    public static implicit operator Triangle3D((Point3D, Point3D, Point3D) value) => new Triangle3D(value.Item1, value.Item2, value.Item3);
+    public void Deconstruct(out Point3D a, out Point3D b, out Point3D c) { a = A; b = B; c = C; }
     public Array<String> FieldNames => throw new NotImplementedException();
     public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Quad3D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Quad3D a, Quad3D b) => a.Equals(b);
-    public Boolean NotEquals(Quad3D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Quad3D a, Quad3D b) => a.NotEquals(b);
+    public Boolean Equals(Triangle3D b) => throw new NotImplementedException();
+    public static Boolean operator ==(Triangle3D a, Triangle3D b) => a.Equals(b);
+    public Boolean NotEquals(Triangle3D b) => throw new NotImplementedException();
+    public static Boolean operator !=(Triangle3D a, Triangle3D b) => a.NotEquals(b);
 }
 public class Quad2D: Value<Quad2D>
 {
@@ -889,6 +867,46 @@ public class Quad2D: Value<Quad2D>
     public Boolean NotEquals(Quad2D b) => throw new NotImplementedException();
     public static Boolean operator !=(Quad2D a, Quad2D b) => a.NotEquals(b);
 }
+public class Quad3D: Value<Quad3D>
+{
+    public Point3D A { get; }
+    public Point3D B { get; }
+    public Point3D C { get; }
+    public Point3D D { get; }
+    public Quad3D WithA(Point3D a) => (a, B, C, D);
+    public Quad3D WithB(Point3D b) => (A, b, C, D);
+    public Quad3D WithC(Point3D c) => (A, B, c, D);
+    public Quad3D WithD(Point3D d) => (A, B, C, d);
+    public Quad3D(Point3D a, Point3D b, Point3D c, Point3D d) => (A, B, C, D) = (a, b, c, d);
+    public Quad3D() { }
+    public static Quad3D Default = new Quad3D();
+    public static Quad3D New(Point3D a, Point3D b, Point3D c, Point3D d) => new Quad3D(a, b, c, d);
+    public static implicit operator (Point3D, Point3D, Point3D, Point3D)(Quad3D self) => (self.A, self.B, self.C, self.D);
+    public static implicit operator Quad3D((Point3D, Point3D, Point3D, Point3D) value) => new Quad3D(value.Item1, value.Item2, value.Item3, value.Item4);
+    public void Deconstruct(out Point3D a, out Point3D b, out Point3D c, out Point3D d) { a = A; b = B; c = C; d = D; }
+    public Array<String> FieldNames => throw new NotImplementedException();
+    public Array<Any> FieldValues => throw new NotImplementedException();
+    public Boolean Equals(Quad3D b) => throw new NotImplementedException();
+    public static Boolean operator ==(Quad3D a, Quad3D b) => a.Equals(b);
+    public Boolean NotEquals(Quad3D b) => throw new NotImplementedException();
+    public static Boolean operator !=(Quad3D a, Quad3D b) => a.NotEquals(b);
+}
+public class Point2D: Coordinate<Point2D>
+{
+    public Number X { get; }
+    public Number Y { get; }
+    public Point2D WithX(Number x) => (x, Y);
+    public Point2D WithY(Number y) => (X, y);
+    public Point2D(Number x, Number y) => (X, Y) = (x, y);
+    public Point2D() { }
+    public static Point2D Default = new Point2D();
+    public static Point2D New(Number x, Number y) => new Point2D(x, y);
+    public static implicit operator (Number, Number)(Point2D self) => (self.X, self.Y);
+    public static implicit operator Point2D((Number, Number) value) => new Point2D(value.Item1, value.Item2);
+    public void Deconstruct(out Number x, out Number y) { x = X; y = Y; }
+    public Point2D Lerp(Point2D b, Number amount) => throw new NotImplementedException();
+    public Number Unlerp(Point2D a, Point2D b) => throw new NotImplementedException();
+}
 public class Point3D: Coordinate<Point3D>
 {
     public Number X { get; }
@@ -907,39 +925,7 @@ public class Point3D: Coordinate<Point3D>
     public Point3D Lerp(Point3D b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Point3D a, Point3D b) => throw new NotImplementedException();
 }
-public class Point2D: Coordinate<Point2D>
-{
-    public Number X { get; }
-    public Number Y { get; }
-    public Point2D WithX(Number x) => (x, Y);
-    public Point2D WithY(Number y) => (X, y);
-    public Point2D(Number x, Number y) => (X, Y) = (x, y);
-    public Point2D() { }
-    public static Point2D Default = new Point2D();
-    public static Point2D New(Number x, Number y) => new Point2D(x, y);
-    public static implicit operator (Number, Number)(Point2D self) => (self.X, self.Y);
-    public static implicit operator Point2D((Number, Number) value) => new Point2D(value.Item1, value.Item2);
-    public void Deconstruct(out Number x, out Number y) { x = X; y = Y; }
-    public Point2D Lerp(Point2D b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Point2D a, Point2D b) => throw new NotImplementedException();
-}
-public class Line3D: Interval<Point3D>
-{
-    public Point3D A { get; }
-    public Point3D B { get; }
-    public Line3D WithA(Point3D a) => (a, B);
-    public Line3D WithB(Point3D b) => (A, b);
-    public Line3D(Point3D a, Point3D b) => (A, B) = (a, b);
-    public Line3D() { }
-    public static Line3D Default = new Line3D();
-    public static Line3D New(Point3D a, Point3D b) => new Line3D(a, b);
-    public static implicit operator (Point3D, Point3D)(Line3D self) => (self.A, self.B);
-    public static implicit operator Line3D((Point3D, Point3D) value) => new Line3D(value.Item1, value.Item2);
-    public void Deconstruct(out Point3D a, out Point3D b) { a = A; b = B; }
-    public Point3D Min => throw new NotImplementedException();
-    public Point3D Max => throw new NotImplementedException();
-}
-public class Line2D: Interval<Point2D>
+public class Line2D: Interval<Point2D, Vector3D>
 {
     public Point2D A { get; }
     public Point2D B { get; }
@@ -954,6 +940,24 @@ public class Line2D: Interval<Point2D>
     public void Deconstruct(out Point2D a, out Point2D b) { a = A; b = B; }
     public Point2D Min => throw new NotImplementedException();
     public Point2D Max => throw new NotImplementedException();
+    public Vector3D Size => throw new NotImplementedException();
+}
+public class Line3D: Interval<Point3D, Vector3D>
+{
+    public Point3D A { get; }
+    public Point3D B { get; }
+    public Line3D WithA(Point3D a) => (a, B);
+    public Line3D WithB(Point3D b) => (A, b);
+    public Line3D(Point3D a, Point3D b) => (A, B) = (a, b);
+    public Line3D() { }
+    public static Line3D Default = new Line3D();
+    public static Line3D New(Point3D a, Point3D b) => new Line3D(a, b);
+    public static implicit operator (Point3D, Point3D)(Line3D self) => (self.A, self.B);
+    public static implicit operator Line3D((Point3D, Point3D) value) => new Line3D(value.Item1, value.Item2);
+    public void Deconstruct(out Point3D a, out Point3D b) { a = A; b = B; }
+    public Point3D Min => throw new NotImplementedException();
+    public Point3D Max => throw new NotImplementedException();
+    public Vector3D Size => throw new NotImplementedException();
 }
 public class Color: Value<Color>
 {
@@ -1556,7 +1560,7 @@ public class Time: Measure<Time>
     public Time Lerp(Time b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Time a, Time b) => throw new NotImplementedException();
 }
-public class TimeRange: Interval<DateTime>
+public class TimeRange: Interval<DateTime, Time>
 {
     public DateTime Begin { get; }
     public DateTime End { get; }
@@ -1571,6 +1575,7 @@ public class TimeRange: Interval<DateTime>
     public void Deconstruct(out DateTime begin, out DateTime end) { begin = Begin; end = End; }
     public DateTime Min => throw new NotImplementedException();
     public DateTime Max => throw new NotImplementedException();
+    public Time Size => throw new NotImplementedException();
 }
 public class DateTime: Coordinate<DateTime>
 {
@@ -1598,7 +1603,7 @@ public class DateTime: Coordinate<DateTime>
     public DateTime Lerp(DateTime b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(DateTime a, DateTime b) => throw new NotImplementedException();
 }
-public class AnglePair: Interval<Angle>
+public class AnglePair: Interval<Angle, Angle>
 {
     public Angle Start { get; }
     public Angle End { get; }
@@ -1613,6 +1618,7 @@ public class AnglePair: Interval<Angle>
     public void Deconstruct(out Angle start, out Angle end) { start = Start; end = End; }
     public Angle Min => throw new NotImplementedException();
     public Angle Max => throw new NotImplementedException();
+    public Angle Size => throw new NotImplementedException();
 }
 public class Ring: Numerical<Ring>
 {
@@ -1675,23 +1681,7 @@ public class Arc: Value<Arc>
     public Boolean NotEquals(Arc b) => throw new NotImplementedException();
     public static Boolean operator !=(Arc a, Arc b) => a.NotEquals(b);
 }
-public class TimeInterval: Interval<Time>
-{
-    public Time Start { get; }
-    public Time End { get; }
-    public TimeInterval WithStart(Time start) => (start, End);
-    public TimeInterval WithEnd(Time end) => (Start, end);
-    public TimeInterval(Time start, Time end) => (Start, End) = (start, end);
-    public TimeInterval() { }
-    public static TimeInterval Default = new TimeInterval();
-    public static TimeInterval New(Time start, Time end) => new TimeInterval(start, end);
-    public static implicit operator (Time, Time)(TimeInterval self) => (self.Start, self.End);
-    public static implicit operator TimeInterval((Time, Time) value) => new TimeInterval(value.Item1, value.Item2);
-    public void Deconstruct(out Time start, out Time end) { start = Start; end = End; }
-    public Time Min => throw new NotImplementedException();
-    public Time Max => throw new NotImplementedException();
-}
-public class RealInterval: Interval<Number>
+public class RealInterval: Interval<Number, Number>
 {
     public Number A { get; }
     public Number B { get; }
@@ -1706,6 +1696,7 @@ public class RealInterval: Interval<Number>
     public void Deconstruct(out Number a, out Number b) { a = A; b = B; }
     public Number Min => throw new NotImplementedException();
     public Number Max => throw new NotImplementedException();
+    public Number Size => throw new NotImplementedException();
 }
 public class Capsule: Value<Capsule>
 {
@@ -1939,7 +1930,7 @@ public class CubicBezier2D: Value<CubicBezier2D>
     public Boolean NotEquals(CubicBezier2D b) => throw new NotImplementedException();
     public static Boolean operator !=(CubicBezier2D a, CubicBezier2D b) => a.NotEquals(b);
 }
-public class UV: Vector<UV, Unit>
+public class UV: Vector<UV>
 {
     public Unit U { get; }
     public Unit V { get; }
@@ -1953,8 +1944,8 @@ public class UV: Vector<UV, Unit>
     public static implicit operator UV((Unit, Unit) value) => new UV(value.Item1, value.Item2);
     public void Deconstruct(out Unit u, out Unit v) { u = U; v = V; }
     public Integer Count => throw new NotImplementedException();
-    public Unit At(Integer n) => throw new NotImplementedException();
-    public Unit this[Integer n] => At(n);
+    public Number At(Integer n) => throw new NotImplementedException();
+    public Number this[Integer n] => At(n);
     public UV Zero => throw new NotImplementedException();
     public UV One => throw new NotImplementedException();
     public UV MinValue => throw new NotImplementedException();
@@ -1983,7 +1974,7 @@ public class UV: Vector<UV, Unit>
     public UV Lerp(UV b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(UV a, UV b) => throw new NotImplementedException();
 }
-public class UVW: Vector<UVW, Unit>
+public class UVW: Vector<UVW>
 {
     public Unit U { get; }
     public Unit V { get; }
@@ -1999,8 +1990,8 @@ public class UVW: Vector<UVW, Unit>
     public static implicit operator UVW((Unit, Unit, Unit) value) => new UVW(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Unit u, out Unit v, out Unit w) { u = U; v = V; w = W; }
     public Integer Count => throw new NotImplementedException();
-    public Unit At(Integer n) => throw new NotImplementedException();
-    public Unit this[Integer n] => At(n);
+    public Number At(Integer n) => throw new NotImplementedException();
+    public Number this[Integer n] => At(n);
     public UVW Zero => throw new NotImplementedException();
     public UVW One => throw new NotImplementedException();
     public UVW MinValue => throw new NotImplementedException();

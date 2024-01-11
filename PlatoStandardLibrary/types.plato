@@ -106,14 +106,14 @@ type Rotation3D
 }
 
 type Vector2D
-    implements Vector<Number>
+    implements Vector
 {
     X: Number;
     Y: Number;
 }
 
 type Vector3D
-    implements Vector<Number>
+    implements Vector
 {
     X: Number;
     Y: Number;
@@ -121,7 +121,7 @@ type Vector3D
 }
 
 type Vector4D
-    implements Vector<Number>
+    implements Vector
 {
     X: Number;
     Y: Number;
@@ -166,21 +166,21 @@ type Transform2D
 }
 
 type AlignedBox2D
-    implements Interval<Vector2D>
+    implements Interval<Point2D, Vector2D>
 {
-    A: Vector2D;
-    B: Vector2D;
+    A: Point2D;
+    B: Point2D;
 }
 
 type AlignedBox3D
-    implements Interval<Vector3D>
+    implements Interval<Point3D, Vector3D>
 {
-    A: Vector3D;
-    B: Vector3D;
+    A: Point3D;
+    B: Point3D;
 }
 
 type Complex
-    implements Vector<Number>
+    implements Vector
 {
     Real: Number;
     Imaginary: Number;
@@ -214,14 +214,6 @@ type Plane
     D: Number;
 }
 
-type Triangle3D
-    implements Value
-{
-    A: Point3D;
-    B: Point3D;
-    C: Point3D;
-}
-
 type Triangle2D
     implements Value
 {
@@ -230,13 +222,12 @@ type Triangle2D
     C: Point2D;
 }
 
-type Quad3D
+type Triangle3D
     implements Value
 {
     A: Point3D;
     B: Point3D;
     C: Point3D;
-    D: Point3D;
 }
 
 type Quad2D
@@ -248,12 +239,14 @@ type Quad2D
     D: Point2D;
 }
 
-type Point3D
-    implements Coordinate
+
+type Quad3D
+    implements Value
 {
-    X: Number;
-    Y: Number;
-    Z: Number;
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
+    D: Point3D;
 }
 
 type Point2D
@@ -263,18 +256,26 @@ type Point2D
     Y: Number;
 }
 
-type Line3D
-    implements Interval<Point3D>
+type Point3D
+    implements Coordinate
 {
-    A: Point3D;
-    B: Point3D;
+    X: Number;
+    Y: Number;
+    Z: Number;
 }
 
 type Line2D
-    implements Interval<Point2D>
+    implements Interval<Point2D, Vector3D>
 {
     A: Point2D;
     B: Point2D;
+}
+
+type Line3D
+    implements Interval<Point3D, Vector3D>
+{
+    A: Point3D;
+    B: Point3D;
 }
 
 // https://en.wikipedia.org/wiki/RGB_color_spaces
@@ -479,7 +480,7 @@ type Time
 }
 
 type TimeRange
-    implements Interval<DateTime>
+    implements Interval<DateTime, Time>
 {
     Begin: DateTime;
     End: DateTime;
@@ -500,7 +501,7 @@ type DateTime
 }
 
 type AnglePair
-    implements Interval<Angle>
+    implements Interval<Angle, Angle>
 {
     Start: Angle;
     End: Angle;
@@ -520,15 +521,8 @@ type Arc
     Cirlce: Circle;
 }
 
-type TimeInterval
-    implements Interval<Time>
-{
-    Start: Time;
-    End: Time;
-}
-
 type RealInterval
-    implements Interval<Number>
+    implements Interval<Number, Number>
 {
     A: Number;
     B: Number;
@@ -627,14 +621,14 @@ type CubicBezier2D
 
 // https://en.wikipedia.org/wiki/UV_mapping    
 type UV
-    implements Vector<Unit>
+    implements Vector
 {
     U: Unit;
     V: Unit;
 }
 
 type UVW
-    implements Vector<Unit>
+    implements Vector
 {
     U: Unit;
     V: Unit;
@@ -828,21 +822,21 @@ type BinomialDistribution
 
 // Generic types. These are not usually used. 
 
-type Array1<T: Any>
+type Array1<T>
     implements Array<T>
 {
     Count: Integer;
     Map: Function1<Integer, T>;
 }
 
-type Tuple2<T0: Any, T1: Any>
+type Tuple2<T0, T1>
     implements Value
 {
     Item0: T0;
     Item1: T1;
 }
 
-type Tuple3<T0: Any, T1: Any, T2: Any>
+type Tuple3<T0, T1, T2>
     implements Value
 {
     Item0: T0;
@@ -850,18 +844,18 @@ type Tuple3<T0: Any, T1: Any, T2: Any>
     Item2: T2;
 }
 
-type Function0<TR: Any>
+type Function0<TR>
 {
 }
 
-type Function1<T0: Any, TR: Any>
+type Function1<T0, TR>
 {
 }
 
-type Function2<T0: Any, T1: Any, TR: Any>
+type Function2<T0, T1, TR>
 {
 }
 
-type Function3<T0: Any, T1: Any, T2: Any, TR: Any>
+type Function3<T0, T1, T2, TR>
 {
 }

@@ -188,8 +188,7 @@ namespace Plato.Compiler.Ast
         }
 
         public AstTypeParameter ToAst(CstTypeParameter typeParameter)
-            => Create(typeParameter, new AstTypeParameter(typeParameter.Identifier.Node.Text,
-                ToAst(typeParameter.TypeAnnotation.Node)));
+            => Create(typeParameter, new AstTypeParameter(typeParameter.Identifier.Node.Text));
 
         public AstTypeNode ToAst(CstTypeAnnotation typeAnnotation)
             => ToAst(typeAnnotation?.TypeExpr?.Node?.InnerTypeExpr?.Node);
@@ -204,6 +203,11 @@ namespace Plato.Compiler.Ast
             var name = ToAst(fieldDeclaration.Identifier.Node);
             var type = ToAst(fieldDeclaration.TypeExpr.Node);
             return Create(fieldDeclaration, new AstFieldDeclaration(name, type, null));
+        }
+
+        public AstConstraint ToAst(CstConstraint constraint)
+        {
+            return new AstConstraint(constraint.Identifier.Text, ToAst(constraint.TypeAnnotation.Node));
         }
 
         public AstMethodDeclaration ToAst(CstMethodDeclaration md)
@@ -379,10 +383,11 @@ namespace Plato.Compiler.Ast
                 var name = ToAst(type.Identifier.Node);
                 var typeParameters = type.TypeParameterList.Node?.TypeParameter.Nodes.Select(ToAst).ToArray() ?? Array.Empty<AstTypeParameter>();
                 var inherits = Enumerable.Empty<AstTypeNode>();
-                var implements = type.ImplementsList.Node?.TypeExpr.Nodes.Select(ToAst).ToArray();
+                var implements = type.ImplementsList.Node?.TypeExpr.Nodes.Select(ToAst).ToArray() ??
+                                 Array.Empty<AstTypeNode>();
                 var members = type.FieldDeclaration.Nodes.Select(ToAst).Cast<AstMemberDeclaration>().ToArray();
 
-                return Create(cstTopLevelDeclaration, new AstTypeDeclaration(TypeKind.ConcreteType, name, typeParameters, inherits, implements, members));
+                return Create(cstTopLevelDeclaration, new AstTypeDeclaration(TypeKind.ConcreteType, name, typeParameters, inherits, implements, Array.Empty<AstConstraint>(), members));
             }
             else if (cstTopLevelDeclaration.Library.Present)
             {
@@ -392,7 +397,7 @@ namespace Plato.Compiler.Ast
                 var members = module.MethodDeclaration.Nodes.Select(ToAst).Cast<AstMemberDeclaration>().ToArray();
 
                 return Create(cstTopLevelDeclaration, new AstTypeDeclaration(TypeKind.Library, name, typeParameters, Enumerable.Empty<AstTypeNode>(),
-                    Enumerable.Empty<AstTypeNode>(), members));
+                    Enumerable.Empty<AstTypeNode>(), Array.Empty<AstConstraint>(), members));
             }
             else if (cstTopLevelDeclaration.Concept.Present)
             {
@@ -400,10 +405,11 @@ namespace Plato.Compiler.Ast
 
                 var name = ToAst(concept.Identifier.Node);
                 var typeParameters = concept.TypeParameterList.Node?.TypeParameter.Nodes.Select(ToAst).ToArray() ?? Array.Empty<AstTypeParameter>();
-                var inherits = concept.InheritsList.Node.TypeExpr.Nodes.Select(ToAst).ToArray();
+                var inherits = concept.InheritsList.Node?.TypeExpr.Nodes.Select(ToAst).ToArray() ?? Array.Empty<AstTypeNode>();
                 var members = concept.MethodDeclaration.Nodes.Select(ToAst).ToArray();
+                var constraints = concept.ConstraintList.Node?.Constraint.Nodes.Select(ToAst).ToArray() ?? Array.Empty<AstConstraint>();
 
-                return Create(cstTopLevelDeclaration, new AstTypeDeclaration(TypeKind.Concept, name, typeParameters, inherits, Enumerable.Empty<AstTypeNode>(), members));
+                return Create(cstTopLevelDeclaration, new AstTypeDeclaration(TypeKind.Concept, name, typeParameters, inherits, Enumerable.Empty<AstTypeNode>(), constraints, members));
             }
 
             throw new Exception("Unhandled type declaration");

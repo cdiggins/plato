@@ -39,12 +39,13 @@ namespace Plato.Compiler
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; set; }
         public IDictionary<FunctionDefinition, FunctionAnalysis> FunctionAnalyses { get; } = new Dictionary<FunctionDefinition, FunctionAnalysis>();
 
-        public IEnumerable<TypeDefinition> AllTypeAndLibraryDefinitions => TypeDefinitionsByName.Values
+        public IEnumerable<TypeDefinition> AllTypeAndLibraryDefinitions => TypeDefinitions
             .Concat(LibraryDefinitionsByName.Values);
 
         public Dictionary<string, TypeDefinition> TypeDefinitionsByName { get; } = new Dictionary<string, TypeDefinition>();
         public Dictionary<string, TypeDefinition> LibraryDefinitionsByName { get; } = new Dictionary<string, TypeDefinition>();
-        public IReadOnlyList<FunctionDefinition> FunctionDefinitions { get; set; } 
+        public IReadOnlyList<FunctionDefinition> FunctionDefinitions { get; set; }
+        public IEnumerable<TypeDefinition> TypeDefinitions => TypeDefinitionsByName.Values;
 
         public Dictionary<Expression, IType> ExpressionTypes { get; } = new Dictionary<Expression, IType>();
         public Dictionary<string, ReifiedType> ReifiedTypes { get; set; }
@@ -113,7 +114,7 @@ namespace Plato.Compiler
                 }
 
                 Log("Gathering function definitions");
-                FunctionDefinitions = TypeDefinitionsByName.Values.SelectMany(td => td.Functions)
+                FunctionDefinitions = TypeDefinitions.SelectMany(td => td.Functions)
                     .Concat(LibraryDefinitionsByName.Values.SelectMany(ld => ld.Functions)).ToList();
                 Log($"Found {FunctionDefinitions.Count} functions");
 
@@ -121,7 +122,7 @@ namespace Plato.Compiler
                 CheckSemantics();
 
                 Log("Creating Reified Types");
-                ReifiedTypes = TypeDefinitionsByName.Values.Where(td => td.IsConcrete())
+                ReifiedTypes = TypeDefinitions.Where(td => td.IsConcrete())
                     .ToDictionary(td => td.Name, td => new ReifiedType(td));
 
                 Log($"Found {ReifiedTypes.Count} types");
@@ -136,20 +137,19 @@ namespace Plato.Compiler
 
                 //Log("Reified types");
                 //WriteReifiedTypes();
-
+                
+                /*
                 Log("Creating function analysis");
                 var sb = new StringBuilder();
                 foreach (var fd in FunctionDefinitions)
                     GetOrComputeFunctionAnalysis(fd);
 
-                /*
                 foreach (var fa in FunctionAnalyses.Values.Where(f => f.IsConcept)) 
                     fa.BuildAnalysisOutput(sb);
                 
                 sb.AppendLine("Generic library functions"); 
                 foreach (var fa in FunctionAnalyses.Values.Where(f => f.IsGenericLibraryFunction))
                     fa.BuildAnalysisOutput(sb);
-                */
 
                 Log("Gathering constraints for each function");
                 foreach (var fa in FunctionAnalyses.Values)
@@ -169,7 +169,7 @@ namespace Plato.Compiler
                     sb.AppendLine(fgc.ToString());
 
                 Logger.Log(sb.ToString());                
-
+                */
                 /*
                 Log("Creating resolvers");
                 TypeResolvers = FunctionDefinitions
@@ -320,8 +320,7 @@ namespace Plato.Compiler
 
         public void CheckSemantics()
         {
-            /*
-            foreach (var f in Functions)
+            foreach (var f in FunctionDefinitions)
             {
                 foreach (var p in f.Parameters)
                     if (!p.GetParameterReferences(f).Any())
@@ -335,7 +334,7 @@ namespace Plato.Compiler
                     SemanticWarnings.Add($"{f} is partially typed");
             }
 
-            foreach (var t in TypeDefs)
+            foreach (var t in TypeDefinitions)
             {
                 foreach (var t2 in t.Implements)
                 {
@@ -369,15 +368,14 @@ namespace Plato.Compiler
                     if (t.Fields.Count > 0)
                         InternalErrors.Add("Libraries should not have fields");
                 }
-                else if (t.Kind == TypeKind.Type)
+                else if (t.Kind == TypeKind.ConcreteType)
                 {
                     if (t.Inherits.Count > 0)
                         InternalErrors.Add("Types should not be able to inherit");
                     if (t.Methods.Count > 0)
                         InternalErrors.Add("Types should not have methods");
                 }
-            }*/
-
+            }
         }
 
         public TypeDefinition GetTypeDefinition(string name)

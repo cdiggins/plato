@@ -170,15 +170,16 @@ namespace Plato.CSharpWriter
 
             foreach (var tp in type.TypeParameters)
             {
-                if (tp.Constraint == null)
-                    continue;
-                // "Any" constraints aren't real constraints 
-                if (tp.Constraint.Name == "Any")
-                    continue;
-                var constraintArgs = JoinTypeParameters(tp.Constraint.Definition.IsSelfConstrained()
-                    ? tp.Constraint.TypeArgs.Select(t => ToString(t)).Prepend(tp.Name)
-                    : tp.Constraint.TypeArgs.Select(t => ToString(t)));                
-                WriteLine($"where {tp.Name} : {tp.Constraint.Name}{constraintArgs}");
+                foreach (var constraint in tp.Constraints)
+                {
+                    if (constraint.Name == "Any")
+                        continue;
+                    var constraintArgs = JoinTypeParameters(constraint.Definition.IsSelfConstrained()
+                        ? constraint.TypeArgs.Select(t => ToString(t)).Prepend(tp.Name)
+                        : constraint.TypeArgs.Select(t => ToString(t)));
+                    WriteLine($"where {tp.Name} : {constraint.Name}{constraintArgs}");
+
+                }
             }
 
             WriteStartBlock();

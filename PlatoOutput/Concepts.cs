@@ -11,8 +11,7 @@ public interface Array<T>
     Integer Count { get; }
     T At(Integer n);
 }
-public interface Vector<Self, T>: Array<T>, Numerical<Self>, Magnitudinal<Self>, Equatable<Self>, Coordinate<Self>
-where T : Numerical<T>
+public interface Vector<Self>: Array<Number>, Numerical<Self>, Magnitudinal<Self>, Equatable<Self>, Coordinate<Self>
 {
 }
 public interface Coordinate<Self>: Interpolatable<Self>
@@ -73,11 +72,11 @@ public interface BooleanOperations<Self>
     Self Or(Self b);
     Self Not { get; }
 }
-public interface Interval<T>
-where T : Interpolatable<T>
+public interface Interval<TValue, TSize>
 {
-    T Min { get; }
-    T Max { get; }
+    TValue Min { get; }
+    TValue Max { get; }
+    TSize Size { get; }
 }
 public interface Interpolatable<Self>
 {

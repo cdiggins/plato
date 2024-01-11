@@ -170,7 +170,24 @@ namespace Plato.Compiler.Symbols
                 LogError($"Could not resolve type {name} instead got {sym}", astTypeNode);
                 return null;
             }
-            return new TypeExpression(tds, astTypeNode.TypeArguments.Select(ResolveType).ToArray());
+
+            // TODO: maybe the symbols should contain the ast nodes instead of using dictionaries everywhere. 
+            var args = astTypeNode.TypeArguments.Select(ResolveType).ToArray();
+            if (args.Length > 0)
+            {
+                // NOTE: it looks like we could use the "tds" (TypeDefinition) type parameters list directly,
+                // however at this point in the code it hasn't be initialized yet.
+                // So instead what we do is look at the ast representation. 
+                var typeDefNode = SymbolsToNodes[sym] as AstTypeDeclaration;
+                if (args.Length != typeDefNode.TypeParameters.Count)
+                {
+                    LogError(
+                        $"Referring to a type with an incorrect number of arguments, {args.Length} instead of {typeDefNode.TypeParameters.Count}",
+                        astTypeNode);
+                }
+            }
+
+            return new TypeExpression(tds, args);
         }
 
         public ParameterDefinition Resolve(AstParameterDeclaration astParameterDeclaration)
@@ -305,9 +322,13 @@ namespace Plato.Compiler.Symbols
             {
                 var astTypeDeclaration = SymbolsToNodes[typeDef] as AstTypeDeclaration;
                 TypeBindingsScope = TypeBindingsScope.Push();
+                        
                 foreach (var tp in astTypeDeclaration.TypeParameters)
                 {
-                    var tpd = new TypeParameterDefinition(tp.Name, ResolveType(tp.Constraint));
+                    var constraints = astTypeDeclaration.Constraints
+                        .Where(c => c.Name == tp.Name)
+                        .Select(c => ResolveType(c.Constraint)).ToList();
+                    var tpd = new TypeParameterDefinition(tp.Name, constraints);
                     BindType(tpd.Name, tpd);
                     typeDef.TypeParameters.Add(tpd);
                 }
@@ -401,7 +422,7 @@ namespace Plato.Compiler.Symbols
 
                         // We create a second version of the function that accepts a member of the given type
                         // This is something that C# does not support, but is convenient in generic code. (e.g., x += x.One). 
-                        var f2 = new FunctionDefinition(m.Name, typeDef, m.Type, body, new ParameterDefinition("_", typeDef.SelfTypeExpression));
+                        var f2 = new FunctionDefinition(m.Name, typeDef, m.Type, body, new ParameterDefinition("_", typeDef.ToTypeExpression()));
                         AddCompilerGeneratedFunction(typeDef, f2);
                     }
 
@@ -417,7 +438,7 @@ namespace Plato.Compiler.Symbols
                 // If there is at least one field, add a constructor function
                 if (typeDef.Fields.Count > 0)
                 {
-                    var ctor = new FunctionDefinition(typeDef.Name, typeDef, typeDef.SelfTypeExpression, null,
+                    var ctor = new FunctionDefinition(typeDef.Name, typeDef, typeDef.ToTypeExpression(), null,
                         typeDef.Fields.Select(f => new ParameterDefinition(f.Name, f.Type)).ToArray());
                     AddCompilerGeneratedFunction(typeDef, ctor);
                 }
@@ -427,7 +448,7 @@ namespace Plato.Compiler.Symbols
                 {
                     var field = typeDef.Fields[0];
                     var cast = new FunctionDefinition($"To{field.Name}", typeDef, field.Type, null,
-                        new ParameterDefinition("arg", typeDef.SelfTypeExpression));
+                        new ParameterDefinition("arg", typeDef.ToTypeExpression()));
                     AddCompilerGeneratedFunction(typeDef, cast);
                 }
 
@@ -435,12 +456,12 @@ namespace Plato.Compiler.Symbols
                 if (typeDef.Fields.Count > 1)
                 {
                     var tupleType = CreateTuple(typeDef.Fields.Select(f => f.Type).ToArray());
-                    var ctor = new FunctionDefinition(typeDef.Name, typeDef, typeDef.SelfTypeExpression, null,
+                    var ctor = new FunctionDefinition(typeDef.Name, typeDef, typeDef.ToTypeExpression(), null,
                         new ParameterDefinition("arg", tupleType));
                     AddCompilerGeneratedFunction(typeDef, ctor);
 
                     var tupleCast = new FunctionDefinition("ToTuple", typeDef, tupleType, null,
-                        new ParameterDefinition("self", typeDef.SelfTypeExpression));
+                        new ParameterDefinition("self", typeDef.ToTypeExpression()));
                     AddCompilerGeneratedFunction(typeDef, tupleCast);
                 }
 

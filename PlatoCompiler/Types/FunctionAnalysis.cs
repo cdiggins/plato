@@ -128,8 +128,8 @@ namespace Plato.Compiler.Types
                 : new TypeConstant(td);
 
         public IType ToTypeVariable(TypeParameterDefinition tpd)
-            => TypeParameterToTypeLookup.TryGetValue(tpd, out var r) 
-                    ? r : GenerateConstrainedTypeVariable(tpd.Constraint);
+            => throw new NotImplementedException();
+        //=> TypeParameterToTypeLookup.TryGetValue(tpd, out var r)  ? r : GenerateTypeVariable(tpd.Constraint);
 
         public IType ToTypeList(TypeExpression expr)
         {
@@ -177,8 +177,9 @@ namespace Plato.Compiler.Types
                 if (TypeParameterToTypeLookup.ContainsKey(tpd))
                     return TypeParameterToTypeLookup[tpd];
 
-                var tv = GenerateConstrainedTypeVariable(tpd.Constraint);
-                return tv;
+                throw new NotImplementedException();
+                //var tv = GenerateConstrainedTypeVariable(tpd.Constraint);
+                //return tv;
             }
             
             if (tes.Definition.IsConcept() || tes.Definition.IsConcrete() || tes.Definition.IsPrimitive())
