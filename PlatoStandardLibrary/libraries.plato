@@ -1,75 +1,72 @@
 library Interval
 {
-    Size(x: Interval): Numerical 
-        => x.Max - x.Min;
-    
-    IsEmpty(x: Interval): Boolean 
+    IsEmpty(x: Interval<$Value, $Size>): Boolean 
         => x.Min >= x.Max;
     
-    Lerp(x: Interval, amount: Number): Numerical 
+    Lerp(x: Interval<$Value, $Size>, amount: Number): $Value
         => x.Min.Lerp(x.Max, amount);
     
-    InverseLerp(x: Interval, value: Numerical): Unit 
+    Unlerp(x: Interval<$Value, $Size>, value: $Value): Number
         => (value - x.Min) / x.Size;
     
-    Negate(x: Interval): Interval 
+    Negate(x: Interval<$Value, $Size>): Interval<$Value, $Size> 
         => (-x.Max, -x.Min);
     
-    Reverse(x: Interval): Interval 
+    Reverse(x: Interval<$Value, $Size>): Interval<$Value, $Size> 
         => (x.Max, x.Min);
         
-    Center(x: Interval): Numerical
+    Center(x: Interval<$Value, $Size>): $Value
         => x.Lerp(0.5);    
     
-    Contains(x: Interval, value: Numerical): Boolean 
+    Contains(x: Interval<$Value, $Size>, value: $Value): Boolean 
         => x.Min <= value && value <= x.Max;
     
-    Contains(x: Interval, other: Interval): Boolean 
+    Contains(x: Interval<$Value, $Size>, other: Interval<$Value, $Size>): Boolean 
         => x.Min <= other.Min && x.Max >= other.Max;
     
-    Overlaps(x: Interval, y: Interval): Boolean 
+    Overlaps(x: Interval<$Value, $Size>, y: Interval<$Value, $Size>): Boolean 
         => !x.Clamp(y).IsEmpty;
     
-    Split(x: Interval, t: Number): Tuple2 
+    Split(x: Interval<$Value, $Size>, t: Number): Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>> 
         => (x.Left(t), x.Right(t));
     
-    Split(x: Interval): Tuple2
+    Split(x: Interval<$Value, $Size>): Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>>
         => x.Split(0.5);
 
-    Left(x: Interval, t: Number): Interval
+    Left(x: Interval<$Value, $Size>, t: Number): Interval<$Value, $Size>
         => (x.Min, x.Lerp(t));
     
-    Right(x: Interval, t: Number): Interval
+    Right(x: Interval<$Value, $Size>, t: Number): Interval<$Value, $Size>
         => (x.Lerp(t), x.Max);
 
-    MoveTo(x: Interval, v: Numerical): Interval
+    MoveTo(x: Interval<$Value, $Size>, v: $Value): Interval<$Value, $Size>
         => (v, v + x.Size);
     
-    LeftHalf(x: Interval): Interval 
+    LeftHalf(x: Interval<$Value, $Size>): Interval<$Value, $Size> 
         => x.Left(0.5);
     
-    RightHalf(x: Interval): Interval 
+    RightHalf(x: Interval<$Value, $Size>): Interval<$Value, $Size> 
         => x.Right(0.5);
     
-    HalfSize(x: Interval): Numerical 
+    HalfSize(x: Interval<$Value, $Size>): $Size
         => x.Size.Half;
     
-    Recenter(x: Interval, c: Numerical): Interval 
+    Recenter(x: Interval<$Value, $Size>, c: $Value): Interval<$Value, $Size> 
         => (c - x.HalfSize, c + x.HalfSize);
     
-    Clamp(x: Interval, y: Interval): Interval
+    Clamp(x: Interval<$Value, $Size>, y: Interval<$Value, $Size>): Interval<$Value, $Size>
         => (x.Clamp(y.Min), x.Clamp(y.Max));
     
-    Clamp(x: Interval, value: Interpolatable): Interpolatable 
+    Clamp(x: Interval<$Value, $Size>, value: $Value): $Value
         => value.Lerp(x.Min, x.Max, value.Unlerp(x.Min, x.Max).Clamp(0, 1));
     
-    Within(x: Interval, value: Numerical): Boolean
+    Within(x: Interval<$Value, $Size>, value: $Value): Boolean
         => value >= x.Min && value <= x.Max;
 }
 
 library Vector
 {
-    Aggregate(v: Vector, f: Function2): Numerical
+    Aggregate(v: Vector, f: Function2<Number, $T, $T>): $T
     {
         var r = v[0];
         for (var i=1; i < v.Count; ++i)
@@ -77,25 +74,25 @@ library Vector
         return r;
     }    
 
-    Sum(v: Vector): Numerical 
+    Sum(v: Vector): Number 
         => v.Aggregate(0, Add); 
     
-    SumSquares(v: Vector): Numerical
+    SumSquares(v: Vector): Number
         => v.Square.Sum; 
     
-    MagnitudeSquared(v: Vector): Numerical
+    MagnitudeSquared(v: Vector): Number
         => v.SumSquares;
     
-    Magnitude(v: Vector): Numerical
+    Magnitude(v: Vector): Number
         => v.MagnitudeSquared.SquareRoot;
     
-    Dot(v1: Vector, v2: Vector): Numerical
+    Dot(v1: Vector, v2: Vector): Number
         => (v1 * v2).Sum;
 
     Normal(v: Vector): Vector
         => v / v.Magnitude;
 
-    Average(v: Vector): Numerical
+    Average(v: Vector): Number
         => v.Sum / v.Count;
 }
 

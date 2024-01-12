@@ -190,6 +190,13 @@ namespace Plato.Compiler.Symbols
         }
     }
 
+    public class TypeVariable : TypeDefinition
+    {
+        public TypeVariable(string name)
+            : base(TypeKind.TypeVariable, name)
+        { }
+    }
+
     public class SelfType : TypeParameterDefinition
     {
         public SelfType()

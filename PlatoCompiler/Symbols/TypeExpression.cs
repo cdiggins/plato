@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Plato.Compiler.Ast;
 using Plato.Compiler.Utilities;
 
 namespace Plato.Compiler.Symbols
@@ -12,7 +13,7 @@ namespace Plato.Compiler.Symbols
         public string Name => Definition?.Name ?? throw new Exception("Unresolved");
         public TypeDefinition Definition { get; }
         public IReadOnlyList<TypeExpression> TypeArgs { get; }
-
+            
         public TypeExpression(TypeDefinition def, params TypeExpression[] args)
         {
             Definition = def;
@@ -26,6 +27,11 @@ namespace Plato.Compiler.Symbols
                 return kind + ":" + Name + $"<{string.Join(",", TypeArgs)}>";
             return kind + ":" + Name;
         }
+
+        public static TypeExpression CreateTypeVar(string name)
+            => name.StartsWith("$")
+                ? new TypeExpression(new TypeDefinition(TypeKind.TypeVariable, name))
+                : throw new Exception("Type variable names must start with $ character");
 
         public static TypeExpression CreateFunction(params TypeExpression[] types)
             => new TypeExpression(PrimitiveTypeDefinitions.Function, types);

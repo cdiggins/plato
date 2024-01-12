@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Ara3D.Utils;
 using Plato.Compiler.Ast;
@@ -111,6 +112,7 @@ namespace Plato.CSharpWriter
         public SymbolWriterCSharp WriteLibraries()
         {
             StartNewFile(OutputFolder.RelativeFile("Library.cs"));
+            WriteLine("using System;");
 
             foreach (var c in Compiler.AllTypeAndLibraryDefinitions)
             {
@@ -534,47 +536,85 @@ namespace Plato.CSharpWriter
 
         public FilePath ToFileName(TypeDefinition type)
             => OutputFolder.RelativeFile($"{type.Kind}_{type.Name}.cs");
-
-        // Used in library functions only.
-        public IReadOnlyList<string> GetTypeParameterNames(TypeExpression expr)
+        
+        public SymbolWriterCSharp WriteTypeArgs(TypeExpression expr)
         {
-            Debug.Assert(expr.TypeArgs.Count == 0);
-            var r = expr.Definition.TypeParameters.Select(p => p.Name);
-            if (expr.Definition.IsSelfConstrained())
-                r = r.Prepend("Self");
-            return r.ToList();
-        }
+            if (!expr.Definition.IsSelfConstrained() && expr.TypeArgs.Count == 0)
+                return this;
 
-        public SymbolWriterCSharp WriteTypeParameters(TypeExpression expr)
-        {
-            var parameterNames = GetTypeParameterNames(expr);
-            if (parameterNames.Count == 0) return this;
             Write("<");
-            WriteCommaList(parameterNames);
+            var first = true;
+            if (expr.Definition.IsSelfConstrained())
+            {
+                Write("TSelf");
+                first = false;
+            }
+
+            foreach (var ta in expr.TypeArgs)
+            {
+                if (!first)
+                    Write(",");
+                first = false;
+                WriteTypeForLibraryFunc(ta);
+            }
+
             Write(">");
             return this;
         }
 
         public SymbolWriterCSharp WriteTypeForLibraryFunc(TypeExpression expr)
         {
-            return Write(expr.Name).WriteTypeParameters(expr);
+            var name = expr.Name.StartsWith("$") ? TypeVariableName(expr.Name) : expr.Name;
+            return Write(name).WriteTypeArgs(expr);
+        }
+
+        public static string TypeVariableName(string name)
+        {
+            if (!name.StartsWith("$"))
+                throw new NotImplementedException("Type variable names must start with a $ character");
+            return "T" + name.Substring(1);
+        }
+
+        public static void GatherTypeParameters(TypeExpression te, List<string> set)
+        {
+            if (te.Definition.IsSelfConstrained())
+                set.Add("TSelf");
+            if (te.Name.StartsWith("$"))
+                set.Add(TypeVariableName(te.Name));
+            foreach (var arg in te.TypeArgs)
+                GatherTypeParameters(arg, set);
+        }
+
+        public static List<string> GatherTypeParameters(FunctionDefinition fd)
+        {
+            var r = new List<string>();
+            foreach (var param in fd.Parameters)
+                GatherTypeParameters(param.Type, r);
+            return r;
         }
 
         public SymbolWriterCSharp WriteLibraryMethods(TypeDefinition type)
         {
             Debug.Assert(type.IsLibrary());
-
             WriteLine($"public static partial class {type.Name}Library");
             WriteStartBlock();
             foreach (var f in type.Functions)
             {
+                var typeParameters = GatherTypeParameters(f).Distinct().ToList();
+
                 Write("public static ");
                 WriteTypeForLibraryFunc(f.ReturnType);
                 Write(" ");
                 Write(f.Name);
                 if (f.Parameters.Count > 0)
                 {
-                    WriteTypeParameters(f.Parameters[0].Type);
+                    if (typeParameters.Count > 0)
+                    {
+                        Write("<");
+                        WriteCommaList(typeParameters);
+                        Write(">");
+                    }
+
                     Write("(");
                     Write("this ");
                     for (var i = 0; i < f.Parameters.Count; ++i)

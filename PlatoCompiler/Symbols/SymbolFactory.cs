@@ -158,6 +158,13 @@ namespace Plato.Compiler.Symbols
                 LogError("Invalid variable name", astTypeNode);
                 return null;
             }
+
+            // Is it a Type Variable 
+            if (name.StartsWith("$"))
+            {
+                return TypeExpression.CreateTypeVar(name);
+            }
+
             var sym = TypeBindingsScope.GetValue(name);
             if (sym == null)
             {

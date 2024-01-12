@@ -156,6 +156,16 @@ namespace Plato.Compiler.Ast
             return r;
         }
 
+        public AstTypeNode ToAst(CstSimpleTypeExpr type)
+        {
+            return Create(type, new AstTypeNode(type.Text));
+        }
+
+        public AstTypeNode ToAst(CstTypeVar type)
+        {
+            return Create(type, new AstTypeNode("$" + type.Text));
+        }
+
         public AstTypeNode ToAst(CstCompoundOrSimpleTypeExpr compOrSimple)
         {
             if (compOrSimple == null)
@@ -164,13 +174,13 @@ namespace Plato.Compiler.Ast
             if (compOrSimple.CompoundTypeExpr.Present)
                 return ToAst(compOrSimple.CompoundTypeExpr.Node);
 
-            var qi = compOrSimple.SimpleTypExpr.Node?.QualifiedIdentifier;
+            if (compOrSimple.SimpleTypeExpr.Present)
+                return ToAst(compOrSimple.SimpleTypeExpr.Node);
 
-            if (qi == null)
-                return null;
+            if (compOrSimple.TypeVar.Present)
+                return ToAst(compOrSimple.TypeVar.Node);
 
-            var name = string.Join(".", qi.Node.Identifier.Nodes.Select(n => n.Text));
-            return Create(compOrSimple, new AstTypeNode(name));
+            throw new Exception("Missing compound type, simple type, or type variable");
         }
 
         public AstNode ToAst(CstForEachStatement forEach)
@@ -222,17 +232,11 @@ namespace Plato.Compiler.Ast
         public AstMemberDeclaration ToAst(CstMemberDeclaration memberDeclaration)
         {
             if (memberDeclaration.MethodDeclaration.Present)
-            {
                 return ToAst(memberDeclaration.MethodDeclaration.Node);
-            }
-            else if (memberDeclaration.FieldDeclaration.Present)
-            {
+            if (memberDeclaration.FieldDeclaration.Present)
                 return ToAst(memberDeclaration.FieldDeclaration.Node);
-            }
-            else
-            {
-                throw new Exception("Unrecognized member type");
-            }
+            
+            throw new Exception($"Unrecognized member type {memberDeclaration.Text}");  
         }
 
         public AstParameterDeclaration ToAst(CstLambdaParameter lp)

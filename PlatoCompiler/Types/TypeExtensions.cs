@@ -24,7 +24,7 @@ namespace Plato.Compiler.Types
             => ts.Kind == TypeKind.Library;
 
         public static bool IsTypeVariable(this TypeDefinition ts)
-            => ts.Kind == TypeKind.TypeVariable;
+            => ts.Kind == TypeKind.TypeVariable;    
 
         public static int InheritsDepth(this TypeDefinition self, TypeDefinition other)
         {
