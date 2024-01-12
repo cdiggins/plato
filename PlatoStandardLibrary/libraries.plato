@@ -48,11 +48,8 @@ library Interval
     RightHalf(x: Interval<$Value, $Size>): Interval<$Value, $Size> 
         => x.Right(0.5);
     
-    HalfSize(x: Interval<$Value, $Size>): $Size
-        => x.Size.Half;
-    
     Recenter(x: Interval<$Value, $Size>, c: $Value): Interval<$Value, $Size> 
-        => (c - x.HalfSize, c + x.HalfSize);
+        => (c - x.Size.Half, c + x.Size.Half);
     
     Clamp(x: Interval<$Value, $Size>, y: Interval<$Value, $Size>): Interval<$Value, $Size>
         => (x.Clamp(y.Min), x.Clamp(y.Max));
@@ -104,7 +101,7 @@ library Numerical
     Square(x: Numerical): Numerical 
         => x * x;
 
-    Clamp(x: Number): Number 
+    ClampOne(x: Number): Number 
         => Clamp(x, (0, 1));
 
     PlusOne(x: Numerical): Numerical 
@@ -142,86 +139,38 @@ library Numerical
     
     Half(x: Numerical): Numerical 
         => x / 2;
-    
-    Third(x: Numerical): Numerical 
-        => x / 3;
-    
+        
     Quarter(x: Numerical): Numerical 
         => x / 4;
-
-    Fifth(x: Numerical): Numerical 
-        => x / 5;
-    
-    Sixth(x: Numerical): Numerical 
-        => x / 6;
-    
-    Seventh(x: Numerical): Numerical 
-        => x / 7;
     
     Eighth(x: Numerical): Numerical 
         => x / 8;
-    
-    Ninth(x: Numerical): Numerical 
-        => x / 9;
-    
+        
     Tenth(x: Numerical): Numerical 
         => x / 10;
     
-    Sixteenth(x: Numerical): Numerical 
-        => x / 16;
-    
-    Hundredth(x: Numerical): Numerical 
-        => x / 100;
-    
-    Thousandth(x: Numerical): Numerical 
-        => x / 1000;
-    
-    Millionth(x: Numerical): Numerical 
-        => x / 1000 / 1000;
-    
-    Billionth(x: Numerical): Numerical 
-        => x / 1000 / 1000 / 1000;
-    
-    Hundred(x: Numerical): Numerical 
-        => x * 100;
-    
-    Thousand(x: Numerical): Numerical
-        => x * 1000;
-    
-    Million(x: Numerical): Numerical
-        => x * 1000 * 1000;
-    
-    Billion(x: Numerical): Numerical 
-        => x * 1000 * 1000 * 1000;
-    
     Twice(x: Numerical): Numerical 
         => x * 2;
-    
-    Thrice(x: Numerical): Numerical 
-        => x * 3;
     
     SmoothStep(x: Numerical): Numerical 
         => x.Square * (3 - x.Twice);
     
     Pow2(x: Numerical): Numerical 
         => x * x;
+
+    TwoPi(): Number 
+        => Pi.Twice;
     
-    Pow3(x: Numerical): Numerical 
-        => x.Pow2 * x;
-
-    Pow4(x: Numerical): Numerical 
-        => x.Pow3 * x;
-
-    Pow5(x: Numerical): Numerical 
-        => x.Pow4 * x;
-
     Pi(): Number 
         => 3.1415926535897;
+
+    Epsilon(): Number
+        => 0.000000001;
     
     AlmostZero(x: Number): Boolean
-        => x.Abs < 0.00000001; 
+        => x.Abs < Epsilon; 
 
-    Lerp(a: Numerical, b: Numerical, t: Number): Number
+    Lerp(a: Numerical, b: Numerical, t: Number): Numerical
         => (a.One - t) * a + t * b;
         
     Between(self: Comparable, min: Comparable, max: Comparable): Boolean
@@ -234,16 +183,25 @@ library Angles
         => x;
 
     Degrees(x: Number): Angle
-        => x * Pi / 180; 
+        => (x / 360).Turns; 
         
     Turns(x: Number): Angle 
-        => x * 2 * Pi;    
+        => x * TwoPi;    
+
+    Degrees(x: Angle): Number
+        => x.Turns * 360;
+
+    Turns(x: Angle): Number
+        => x / TwoPi;    
 }
 
 library Comparable
 {
     Equals(a: Comparable, b: Comparable): Boolean 
         => a.Compare(b) == 0;
+    
+    NotEquals(a: Comparable, b: Comparable): Boolean 
+        => a.Compare(b) != 0;
     
     LessThan(a: Comparable, b: Comparable): Boolean 
         => a.Compare(b) < 0;
@@ -256,13 +214,10 @@ library Comparable
     
     GreaterThanOrEquals(a: Comparable, b: Comparable): Boolean 
         => a.Compare(b) >= 0;
-    
-    Between(v: Comparable, a: Comparable, b: Comparable): Value 
-        => v >= a && v <= b;
-    
-    Min(a: Comparable, b: Comparable): Comparable 
+       
+    Lesser(a: Comparable, b: Comparable): Comparable 
         => a <= b ? a : b;
     
-    Max(a: Comparable, b: Comparable): Comparable 
+    Greater(a: Comparable, b: Comparable): Comparable 
         => a >= b ? a : b;
 }

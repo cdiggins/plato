@@ -1,5 +1,5 @@
 using System;
-public class Number: Numerical<Number>
+public partial class Number: Numerical<Number>
 {
     public double Value { get; }
     public Number WithValue(double value) => (value);
@@ -37,7 +37,7 @@ public class Number: Numerical<Number>
     public Number Lerp(Number b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Number a, Number b) => throw new NotImplementedException();
 }
-public class Integer: Numerical<Integer>
+public partial class Integer: Numerical<Integer>
 {
     public int Value { get; }
     public Integer WithValue(int value) => (value);
@@ -75,7 +75,7 @@ public class Integer: Numerical<Integer>
     public Integer Lerp(Integer b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Integer a, Integer b) => throw new NotImplementedException();
 }
-public class String: Value<String>, Array<Character>
+public partial class String: Value<String>, Array<Character>
 {
     public string Value { get; }
     public String WithValue(string value) => (value);
@@ -95,7 +95,7 @@ public class String: Value<String>, Array<Character>
     public Character At(Integer n) => throw new NotImplementedException();
     public Character this[Integer n] => At(n);
 }
-public class Boolean: BooleanOperations<Boolean>
+public partial class Boolean: BooleanOperations<Boolean>
 {
     public bool Value { get; }
     public Boolean WithValue(bool value) => (value);
@@ -112,7 +112,7 @@ public class Boolean: BooleanOperations<Boolean>
     public Boolean Not => throw new NotImplementedException();
     public static Boolean operator !(Boolean a) => a.Not;
 }
-public class Character: Value<Character>
+public partial class Character: Value<Character>
 {
     public char Value { get; }
     public Character WithValue(char value) => (value);
@@ -129,7 +129,7 @@ public class Character: Value<Character>
     public Boolean NotEquals(Character b) => throw new NotImplementedException();
     public static Boolean operator !=(Character a, Character b) => a.NotEquals(b);
 }
-public class Count: Numerical<Count>
+public partial class Count: Numerical<Count>
 {
     public Integer Value { get; }
     public Count WithValue(Integer value) => (value);
@@ -167,7 +167,7 @@ public class Count: Numerical<Count>
     public Count Lerp(Count b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Count a, Count b) => throw new NotImplementedException();
 }
-public class Index: Value<Index>
+public partial class Index: Value<Index>
 {
     public Integer Value { get; }
     public Index WithValue(Integer value) => (value);
@@ -184,7 +184,7 @@ public class Index: Value<Index>
     public Boolean NotEquals(Index b) => throw new NotImplementedException();
     public static Boolean operator !=(Index a, Index b) => a.NotEquals(b);
 }
-public class Unit: Numerical<Unit>
+public partial class Unit: Numerical<Unit>
 {
     public Number Value { get; }
     public Unit WithValue(Number value) => (value);
@@ -222,7 +222,7 @@ public class Unit: Numerical<Unit>
     public Unit Lerp(Unit b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Unit a, Unit b) => throw new NotImplementedException();
 }
-public class Percent: Numerical<Percent>
+public partial class Percent: Numerical<Percent>
 {
     public Number Value { get; }
     public Percent WithValue(Number value) => (value);
@@ -260,7 +260,7 @@ public class Percent: Numerical<Percent>
     public Percent Lerp(Percent b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Percent a, Percent b) => throw new NotImplementedException();
 }
-public class Quaternion: Value<Quaternion>
+public partial class Quaternion: Value<Quaternion>
 {
     public Number X { get; }
     public Number Y { get; }
@@ -284,7 +284,7 @@ public class Quaternion: Value<Quaternion>
     public Boolean NotEquals(Quaternion b) => throw new NotImplementedException();
     public static Boolean operator !=(Quaternion a, Quaternion b) => a.NotEquals(b);
 }
-public class Unit2D: Value<Unit2D>
+public partial class Unit2D: Value<Unit2D>
 {
     public Unit X { get; }
     public Unit Y { get; }
@@ -304,7 +304,7 @@ public class Unit2D: Value<Unit2D>
     public Boolean NotEquals(Unit2D b) => throw new NotImplementedException();
     public static Boolean operator !=(Unit2D a, Unit2D b) => a.NotEquals(b);
 }
-public class Unit3D: Value<Unit3D>
+public partial class Unit3D: Value<Unit3D>
 {
     public Unit X { get; }
     public Unit Y { get; }
@@ -326,7 +326,7 @@ public class Unit3D: Value<Unit3D>
     public Boolean NotEquals(Unit3D b) => throw new NotImplementedException();
     public static Boolean operator !=(Unit3D a, Unit3D b) => a.NotEquals(b);
 }
-public class Direction3D: Value<Direction3D>
+public partial class Direction3D: Value<Direction3D>
 {
     public Unit3D Value { get; }
     public Direction3D WithValue(Unit3D value) => (value);
@@ -343,7 +343,7 @@ public class Direction3D: Value<Direction3D>
     public Boolean NotEquals(Direction3D b) => throw new NotImplementedException();
     public static Boolean operator !=(Direction3D a, Direction3D b) => a.NotEquals(b);
 }
-public class AxisAngle: Value<AxisAngle>
+public partial class AxisAngle: Value<AxisAngle>
 {
     public Unit3D Axis { get; }
     public Angle Angle { get; }
@@ -363,7 +363,7 @@ public class AxisAngle: Value<AxisAngle>
     public Boolean NotEquals(AxisAngle b) => throw new NotImplementedException();
     public static Boolean operator !=(AxisAngle a, AxisAngle b) => a.NotEquals(b);
 }
-public class EulerAngles: Value<EulerAngles>
+public partial class EulerAngles: Value<EulerAngles>
 {
     public Angle Yaw { get; }
     public Angle Pitch { get; }
@@ -385,7 +385,7 @@ public class EulerAngles: Value<EulerAngles>
     public Boolean NotEquals(EulerAngles b) => throw new NotImplementedException();
     public static Boolean operator !=(EulerAngles a, EulerAngles b) => a.NotEquals(b);
 }
-public class Rotation3D: Value<Rotation3D>
+public partial class Rotation3D: Value<Rotation3D>
 {
     public Quaternion Quaternion { get; }
     public Rotation3D WithQuaternion(Quaternion quaternion) => (quaternion);
@@ -402,7 +402,7 @@ public class Rotation3D: Value<Rotation3D>
     public Boolean NotEquals(Rotation3D b) => throw new NotImplementedException();
     public static Boolean operator !=(Rotation3D a, Rotation3D b) => a.NotEquals(b);
 }
-public class Vector2D: Vector<Vector2D>
+public partial class Vector2D: Vector<Vector2D>
 {
     public Number X { get; }
     public Number Y { get; }
@@ -446,7 +446,7 @@ public class Vector2D: Vector<Vector2D>
     public Vector2D Lerp(Vector2D b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Vector2D a, Vector2D b) => throw new NotImplementedException();
 }
-public class Vector3D: Vector<Vector3D>
+public partial class Vector3D: Vector<Vector3D>
 {
     public Number X { get; }
     public Number Y { get; }
@@ -492,7 +492,7 @@ public class Vector3D: Vector<Vector3D>
     public Vector3D Lerp(Vector3D b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Vector3D a, Vector3D b) => throw new NotImplementedException();
 }
-public class Vector4D: Vector<Vector4D>
+public partial class Vector4D: Vector<Vector4D>
 {
     public Number X { get; }
     public Number Y { get; }
@@ -540,7 +540,7 @@ public class Vector4D: Vector<Vector4D>
     public Vector4D Lerp(Vector4D b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Vector4D a, Vector4D b) => throw new NotImplementedException();
 }
-public class Orientation3D: Value<Orientation3D>
+public partial class Orientation3D: Value<Orientation3D>
 {
     public Rotation3D Value { get; }
     public Orientation3D WithValue(Rotation3D value) => (value);
@@ -557,7 +557,7 @@ public class Orientation3D: Value<Orientation3D>
     public Boolean NotEquals(Orientation3D b) => throw new NotImplementedException();
     public static Boolean operator !=(Orientation3D a, Orientation3D b) => a.NotEquals(b);
 }
-public class Pose2D: Value<Pose2D>
+public partial class Pose2D: Value<Pose2D>
 {
     public Vector3D Position { get; }
     public Orientation3D Orientation { get; }
@@ -577,7 +577,7 @@ public class Pose2D: Value<Pose2D>
     public Boolean NotEquals(Pose2D b) => throw new NotImplementedException();
     public static Boolean operator !=(Pose2D a, Pose2D b) => a.NotEquals(b);
 }
-public class Pose3D: Value<Pose3D>
+public partial class Pose3D: Value<Pose3D>
 {
     public Vector3D Position { get; }
     public Orientation3D Orientation { get; }
@@ -597,7 +597,7 @@ public class Pose3D: Value<Pose3D>
     public Boolean NotEquals(Pose3D b) => throw new NotImplementedException();
     public static Boolean operator !=(Pose3D a, Pose3D b) => a.NotEquals(b);
 }
-public class Transform3D: Value<Transform3D>
+public partial class Transform3D: Value<Transform3D>
 {
     public Vector3D Translation { get; }
     public Rotation3D Rotation { get; }
@@ -619,7 +619,7 @@ public class Transform3D: Value<Transform3D>
     public Boolean NotEquals(Transform3D b) => throw new NotImplementedException();
     public static Boolean operator !=(Transform3D a, Transform3D b) => a.NotEquals(b);
 }
-public class Transform2D: Value<Transform2D>
+public partial class Transform2D: Value<Transform2D>
 {
     public Vector2D Translation { get; }
     public Angle Rotation { get; }
@@ -641,7 +641,7 @@ public class Transform2D: Value<Transform2D>
     public Boolean NotEquals(Transform2D b) => throw new NotImplementedException();
     public static Boolean operator !=(Transform2D a, Transform2D b) => a.NotEquals(b);
 }
-public class AlignedBox2D: Interval<Point2D, Vector2D>
+public partial class AlignedBox2D: Interval<Point2D, Vector2D>
 {
     public Point2D A { get; }
     public Point2D B { get; }
@@ -658,7 +658,7 @@ public class AlignedBox2D: Interval<Point2D, Vector2D>
     public Point2D Max => throw new NotImplementedException();
     public Vector2D Size => throw new NotImplementedException();
 }
-public class AlignedBox3D: Interval<Point3D, Vector3D>
+public partial class AlignedBox3D: Interval<Point3D, Vector3D>
 {
     public Point3D A { get; }
     public Point3D B { get; }
@@ -675,7 +675,7 @@ public class AlignedBox3D: Interval<Point3D, Vector3D>
     public Point3D Max => throw new NotImplementedException();
     public Vector3D Size => throw new NotImplementedException();
 }
-public class Complex: Vector<Complex>
+public partial class Complex: Vector<Complex>
 {
     public Number Real { get; }
     public Number Imaginary { get; }
@@ -719,7 +719,7 @@ public class Complex: Vector<Complex>
     public Complex Lerp(Complex b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Complex a, Complex b) => throw new NotImplementedException();
 }
-public class Ray3D: Value<Ray3D>
+public partial class Ray3D: Value<Ray3D>
 {
     public Vector3D Direction { get; }
     public Point3D Position { get; }
@@ -739,7 +739,7 @@ public class Ray3D: Value<Ray3D>
     public Boolean NotEquals(Ray3D b) => throw new NotImplementedException();
     public static Boolean operator !=(Ray3D a, Ray3D b) => a.NotEquals(b);
 }
-public class Ray2D: Value<Ray2D>
+public partial class Ray2D: Value<Ray2D>
 {
     public Vector2D Direction { get; }
     public Point2D Position { get; }
@@ -759,7 +759,7 @@ public class Ray2D: Value<Ray2D>
     public Boolean NotEquals(Ray2D b) => throw new NotImplementedException();
     public static Boolean operator !=(Ray2D a, Ray2D b) => a.NotEquals(b);
 }
-public class Sphere: Value<Sphere>
+public partial class Sphere: Value<Sphere>
 {
     public Point3D Center { get; }
     public Number Radius { get; }
@@ -779,7 +779,7 @@ public class Sphere: Value<Sphere>
     public Boolean NotEquals(Sphere b) => throw new NotImplementedException();
     public static Boolean operator !=(Sphere a, Sphere b) => a.NotEquals(b);
 }
-public class Plane: Value<Plane>
+public partial class Plane: Value<Plane>
 {
     public Unit3D Normal { get; }
     public Number D { get; }
@@ -799,7 +799,7 @@ public class Plane: Value<Plane>
     public Boolean NotEquals(Plane b) => throw new NotImplementedException();
     public static Boolean operator !=(Plane a, Plane b) => a.NotEquals(b);
 }
-public class Triangle2D: Value<Triangle2D>
+public partial class Triangle2D: Value<Triangle2D>
 {
     public Point2D A { get; }
     public Point2D B { get; }
@@ -821,7 +821,7 @@ public class Triangle2D: Value<Triangle2D>
     public Boolean NotEquals(Triangle2D b) => throw new NotImplementedException();
     public static Boolean operator !=(Triangle2D a, Triangle2D b) => a.NotEquals(b);
 }
-public class Triangle3D: Value<Triangle3D>
+public partial class Triangle3D: Value<Triangle3D>
 {
     public Point3D A { get; }
     public Point3D B { get; }
@@ -843,7 +843,7 @@ public class Triangle3D: Value<Triangle3D>
     public Boolean NotEquals(Triangle3D b) => throw new NotImplementedException();
     public static Boolean operator !=(Triangle3D a, Triangle3D b) => a.NotEquals(b);
 }
-public class Quad2D: Value<Quad2D>
+public partial class Quad2D: Value<Quad2D>
 {
     public Point2D A { get; }
     public Point2D B { get; }
@@ -867,7 +867,7 @@ public class Quad2D: Value<Quad2D>
     public Boolean NotEquals(Quad2D b) => throw new NotImplementedException();
     public static Boolean operator !=(Quad2D a, Quad2D b) => a.NotEquals(b);
 }
-public class Quad3D: Value<Quad3D>
+public partial class Quad3D: Value<Quad3D>
 {
     public Point3D A { get; }
     public Point3D B { get; }
@@ -891,7 +891,7 @@ public class Quad3D: Value<Quad3D>
     public Boolean NotEquals(Quad3D b) => throw new NotImplementedException();
     public static Boolean operator !=(Quad3D a, Quad3D b) => a.NotEquals(b);
 }
-public class Point2D: Coordinate<Point2D>
+public partial class Point2D: Coordinate<Point2D>
 {
     public Number X { get; }
     public Number Y { get; }
@@ -907,7 +907,7 @@ public class Point2D: Coordinate<Point2D>
     public Point2D Lerp(Point2D b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Point2D a, Point2D b) => throw new NotImplementedException();
 }
-public class Point3D: Coordinate<Point3D>
+public partial class Point3D: Coordinate<Point3D>
 {
     public Number X { get; }
     public Number Y { get; }
@@ -925,7 +925,7 @@ public class Point3D: Coordinate<Point3D>
     public Point3D Lerp(Point3D b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Point3D a, Point3D b) => throw new NotImplementedException();
 }
-public class Line2D: Interval<Point2D, Vector3D>
+public partial class Line2D: Interval<Point2D, Vector3D>
 {
     public Point2D A { get; }
     public Point2D B { get; }
@@ -942,7 +942,7 @@ public class Line2D: Interval<Point2D, Vector3D>
     public Point2D Max => throw new NotImplementedException();
     public Vector3D Size => throw new NotImplementedException();
 }
-public class Line3D: Interval<Point3D, Vector3D>
+public partial class Line3D: Interval<Point3D, Vector3D>
 {
     public Point3D A { get; }
     public Point3D B { get; }
@@ -959,7 +959,7 @@ public class Line3D: Interval<Point3D, Vector3D>
     public Point3D Max => throw new NotImplementedException();
     public Vector3D Size => throw new NotImplementedException();
 }
-public class Color: Value<Color>
+public partial class Color: Value<Color>
 {
     public Unit R { get; }
     public Unit G { get; }
@@ -983,7 +983,7 @@ public class Color: Value<Color>
     public Boolean NotEquals(Color b) => throw new NotImplementedException();
     public static Boolean operator !=(Color a, Color b) => a.NotEquals(b);
 }
-public class ColorLUV: Value<ColorLUV>
+public partial class ColorLUV: Value<ColorLUV>
 {
     public Percent Lightness { get; }
     public Unit U { get; }
@@ -1005,7 +1005,7 @@ public class ColorLUV: Value<ColorLUV>
     public Boolean NotEquals(ColorLUV b) => throw new NotImplementedException();
     public static Boolean operator !=(ColorLUV a, ColorLUV b) => a.NotEquals(b);
 }
-public class ColorLAB: Value<ColorLAB>
+public partial class ColorLAB: Value<ColorLAB>
 {
     public Percent Lightness { get; }
     public Integer A { get; }
@@ -1027,7 +1027,7 @@ public class ColorLAB: Value<ColorLAB>
     public Boolean NotEquals(ColorLAB b) => throw new NotImplementedException();
     public static Boolean operator !=(ColorLAB a, ColorLAB b) => a.NotEquals(b);
 }
-public class ColorLCh: Value<ColorLCh>
+public partial class ColorLCh: Value<ColorLCh>
 {
     public Percent Lightness { get; }
     public PolarCoordinate ChromaHue { get; }
@@ -1047,7 +1047,7 @@ public class ColorLCh: Value<ColorLCh>
     public Boolean NotEquals(ColorLCh b) => throw new NotImplementedException();
     public static Boolean operator !=(ColorLCh a, ColorLCh b) => a.NotEquals(b);
 }
-public class ColorHSV: Value<ColorHSV>
+public partial class ColorHSV: Value<ColorHSV>
 {
     public Angle Hue { get; }
     public Unit S { get; }
@@ -1069,7 +1069,7 @@ public class ColorHSV: Value<ColorHSV>
     public Boolean NotEquals(ColorHSV b) => throw new NotImplementedException();
     public static Boolean operator !=(ColorHSV a, ColorHSV b) => a.NotEquals(b);
 }
-public class ColorHSL: Value<ColorHSL>
+public partial class ColorHSL: Value<ColorHSL>
 {
     public Angle Hue { get; }
     public Unit Saturation { get; }
@@ -1091,7 +1091,7 @@ public class ColorHSL: Value<ColorHSL>
     public Boolean NotEquals(ColorHSL b) => throw new NotImplementedException();
     public static Boolean operator !=(ColorHSL a, ColorHSL b) => a.NotEquals(b);
 }
-public class ColorYCbCr: Value<ColorYCbCr>
+public partial class ColorYCbCr: Value<ColorYCbCr>
 {
     public Unit Y { get; }
     public Unit Cb { get; }
@@ -1113,7 +1113,7 @@ public class ColorYCbCr: Value<ColorYCbCr>
     public Boolean NotEquals(ColorYCbCr b) => throw new NotImplementedException();
     public static Boolean operator !=(ColorYCbCr a, ColorYCbCr b) => a.NotEquals(b);
 }
-public class SphericalCoordinate: Value<SphericalCoordinate>
+public partial class SphericalCoordinate: Value<SphericalCoordinate>
 {
     public Number Radius { get; }
     public Angle Azimuth { get; }
@@ -1135,7 +1135,7 @@ public class SphericalCoordinate: Value<SphericalCoordinate>
     public Boolean NotEquals(SphericalCoordinate b) => throw new NotImplementedException();
     public static Boolean operator !=(SphericalCoordinate a, SphericalCoordinate b) => a.NotEquals(b);
 }
-public class PolarCoordinate: Value<PolarCoordinate>
+public partial class PolarCoordinate: Value<PolarCoordinate>
 {
     public Number Radius { get; }
     public Angle Angle { get; }
@@ -1155,7 +1155,7 @@ public class PolarCoordinate: Value<PolarCoordinate>
     public Boolean NotEquals(PolarCoordinate b) => throw new NotImplementedException();
     public static Boolean operator !=(PolarCoordinate a, PolarCoordinate b) => a.NotEquals(b);
 }
-public class LogPolarCoordinate: Value<LogPolarCoordinate>
+public partial class LogPolarCoordinate: Value<LogPolarCoordinate>
 {
     public Number Rho { get; }
     public Angle Azimuth { get; }
@@ -1175,7 +1175,7 @@ public class LogPolarCoordinate: Value<LogPolarCoordinate>
     public Boolean NotEquals(LogPolarCoordinate b) => throw new NotImplementedException();
     public static Boolean operator !=(LogPolarCoordinate a, LogPolarCoordinate b) => a.NotEquals(b);
 }
-public class CylindricalCoordinate: Value<CylindricalCoordinate>
+public partial class CylindricalCoordinate: Value<CylindricalCoordinate>
 {
     public Number RadialDistance { get; }
     public Angle Azimuth { get; }
@@ -1197,7 +1197,7 @@ public class CylindricalCoordinate: Value<CylindricalCoordinate>
     public Boolean NotEquals(CylindricalCoordinate b) => throw new NotImplementedException();
     public static Boolean operator !=(CylindricalCoordinate a, CylindricalCoordinate b) => a.NotEquals(b);
 }
-public class HorizontalCoordinate: Value<HorizontalCoordinate>
+public partial class HorizontalCoordinate: Value<HorizontalCoordinate>
 {
     public Number Radius { get; }
     public Angle Azimuth { get; }
@@ -1219,7 +1219,7 @@ public class HorizontalCoordinate: Value<HorizontalCoordinate>
     public Boolean NotEquals(HorizontalCoordinate b) => throw new NotImplementedException();
     public static Boolean operator !=(HorizontalCoordinate a, HorizontalCoordinate b) => a.NotEquals(b);
 }
-public class GeoCoordinate: Value<GeoCoordinate>
+public partial class GeoCoordinate: Value<GeoCoordinate>
 {
     public Angle Latitude { get; }
     public Angle Longitude { get; }
@@ -1239,7 +1239,7 @@ public class GeoCoordinate: Value<GeoCoordinate>
     public Boolean NotEquals(GeoCoordinate b) => throw new NotImplementedException();
     public static Boolean operator !=(GeoCoordinate a, GeoCoordinate b) => a.NotEquals(b);
 }
-public class GeoCoordinateWithAltitude: Value<GeoCoordinateWithAltitude>
+public partial class GeoCoordinateWithAltitude: Value<GeoCoordinateWithAltitude>
 {
     public GeoCoordinate Coordinate { get; }
     public Number Altitude { get; }
@@ -1259,7 +1259,7 @@ public class GeoCoordinateWithAltitude: Value<GeoCoordinateWithAltitude>
     public Boolean NotEquals(GeoCoordinateWithAltitude b) => throw new NotImplementedException();
     public static Boolean operator !=(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) => a.NotEquals(b);
 }
-public class Circle: Value<Circle>
+public partial class Circle: Value<Circle>
 {
     public Point2D Center { get; }
     public Number Radius { get; }
@@ -1279,7 +1279,7 @@ public class Circle: Value<Circle>
     public Boolean NotEquals(Circle b) => throw new NotImplementedException();
     public static Boolean operator !=(Circle a, Circle b) => a.NotEquals(b);
 }
-public class Chord: Value<Chord>
+public partial class Chord: Value<Chord>
 {
     public Circle Circle { get; }
     public Arc Arc { get; }
@@ -1299,7 +1299,7 @@ public class Chord: Value<Chord>
     public Boolean NotEquals(Chord b) => throw new NotImplementedException();
     public static Boolean operator !=(Chord a, Chord b) => a.NotEquals(b);
 }
-public class Size2D: Value<Size2D>
+public partial class Size2D: Value<Size2D>
 {
     public Number Width { get; }
     public Number Height { get; }
@@ -1319,7 +1319,7 @@ public class Size2D: Value<Size2D>
     public Boolean NotEquals(Size2D b) => throw new NotImplementedException();
     public static Boolean operator !=(Size2D a, Size2D b) => a.NotEquals(b);
 }
-public class Size3D: Value<Size3D>
+public partial class Size3D: Value<Size3D>
 {
     public Number Width { get; }
     public Number Height { get; }
@@ -1341,7 +1341,7 @@ public class Size3D: Value<Size3D>
     public Boolean NotEquals(Size3D b) => throw new NotImplementedException();
     public static Boolean operator !=(Size3D a, Size3D b) => a.NotEquals(b);
 }
-public class Rectangle2D: Value<Rectangle2D>
+public partial class Rectangle2D: Value<Rectangle2D>
 {
     public Point2D Center { get; }
     public Size2D Size { get; }
@@ -1361,7 +1361,7 @@ public class Rectangle2D: Value<Rectangle2D>
     public Boolean NotEquals(Rectangle2D b) => throw new NotImplementedException();
     public static Boolean operator !=(Rectangle2D a, Rectangle2D b) => a.NotEquals(b);
 }
-public class Proportion: Numerical<Proportion>
+public partial class Proportion: Numerical<Proportion>
 {
     public Number Value { get; }
     public Proportion WithValue(Number value) => (value);
@@ -1399,7 +1399,7 @@ public class Proportion: Numerical<Proportion>
     public Proportion Lerp(Proportion b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Proportion a, Proportion b) => throw new NotImplementedException();
 }
-public class Fraction: Value<Fraction>
+public partial class Fraction: Value<Fraction>
 {
     public Number Numerator { get; }
     public Number Denominator { get; }
@@ -1419,7 +1419,7 @@ public class Fraction: Value<Fraction>
     public Boolean NotEquals(Fraction b) => throw new NotImplementedException();
     public static Boolean operator !=(Fraction a, Fraction b) => a.NotEquals(b);
 }
-public class Angle: Coordinate<Angle>
+public partial class Angle: Coordinate<Angle>
 {
     public Number Radians { get; }
     public Angle WithRadians(Number radians) => (radians);
@@ -1432,7 +1432,7 @@ public class Angle: Coordinate<Angle>
     public Angle Lerp(Angle b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Angle a, Angle b) => throw new NotImplementedException();
 }
-public class Length: Measure<Length>
+public partial class Length: Measure<Length>
 {
     public Number Meters { get; }
     public Length WithMeters(Number meters) => (meters);
@@ -1464,7 +1464,7 @@ public class Length: Measure<Length>
     public Length Lerp(Length b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Length a, Length b) => throw new NotImplementedException();
 }
-public class Mass: Measure<Mass>
+public partial class Mass: Measure<Mass>
 {
     public Number Kilograms { get; }
     public Mass WithKilograms(Number kilograms) => (kilograms);
@@ -1496,7 +1496,7 @@ public class Mass: Measure<Mass>
     public Mass Lerp(Mass b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Mass a, Mass b) => throw new NotImplementedException();
 }
-public class Temperature: Measure<Temperature>
+public partial class Temperature: Measure<Temperature>
 {
     public Number Celsius { get; }
     public Temperature WithCelsius(Number celsius) => (celsius);
@@ -1528,7 +1528,7 @@ public class Temperature: Measure<Temperature>
     public Temperature Lerp(Temperature b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Temperature a, Temperature b) => throw new NotImplementedException();
 }
-public class Time: Measure<Time>
+public partial class Time: Measure<Time>
 {
     public Number Seconds { get; }
     public Time WithSeconds(Number seconds) => (seconds);
@@ -1560,7 +1560,7 @@ public class Time: Measure<Time>
     public Time Lerp(Time b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Time a, Time b) => throw new NotImplementedException();
 }
-public class TimeRange: Interval<DateTime, Time>
+public partial class TimeRange: Interval<DateTime, Time>
 {
     public DateTime Begin { get; }
     public DateTime End { get; }
@@ -1577,7 +1577,7 @@ public class TimeRange: Interval<DateTime, Time>
     public DateTime Max => throw new NotImplementedException();
     public Time Size => throw new NotImplementedException();
 }
-public class DateTime: Coordinate<DateTime>
+public partial class DateTime: Coordinate<DateTime>
 {
     public Integer Year { get; }
     public Integer Month { get; }
@@ -1603,7 +1603,7 @@ public class DateTime: Coordinate<DateTime>
     public DateTime Lerp(DateTime b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(DateTime a, DateTime b) => throw new NotImplementedException();
 }
-public class AnglePair: Interval<Angle, Angle>
+public partial class AnglePair: Interval<Angle, Angle>
 {
     public Angle Start { get; }
     public Angle End { get; }
@@ -1620,7 +1620,7 @@ public class AnglePair: Interval<Angle, Angle>
     public Angle Max => throw new NotImplementedException();
     public Angle Size => throw new NotImplementedException();
 }
-public class Ring: Numerical<Ring>
+public partial class Ring: Value<Ring>
 {
     public Circle Circle { get; }
     public Number InnerRadius { get; }
@@ -1633,35 +1633,14 @@ public class Ring: Numerical<Ring>
     public static implicit operator (Circle, Number)(Ring self) => (self.Circle, self.InnerRadius);
     public static implicit operator Ring((Circle, Number) value) => new Ring(value.Item1, value.Item2);
     public void Deconstruct(out Circle circle, out Number innerRadius) { circle = Circle; innerRadius = InnerRadius; }
-    public Ring Zero => throw new NotImplementedException();
-    public Ring One => throw new NotImplementedException();
-    public Ring MinValue => throw new NotImplementedException();
-    public Ring MaxValue => throw new NotImplementedException();
     public Array<String> FieldNames => throw new NotImplementedException();
     public Array<Any> FieldValues => throw new NotImplementedException();
     public Boolean Equals(Ring b) => throw new NotImplementedException();
     public static Boolean operator ==(Ring a, Ring b) => a.Equals(b);
     public Boolean NotEquals(Ring b) => throw new NotImplementedException();
     public static Boolean operator !=(Ring a, Ring b) => a.NotEquals(b);
-    public Ring Add(Ring other) => throw new NotImplementedException();
-    public static Ring operator +(Ring self, Ring other) => self.Add(other);
-    public Ring Subtract(Ring other) => throw new NotImplementedException();
-    public static Ring operator -(Ring self, Ring other) => self.Subtract(other);
-    public Ring Multiply(Ring other) => throw new NotImplementedException();
-    public static Ring operator *(Ring self, Ring other) => self.Multiply(other);
-    public Ring Divide(Ring other) => throw new NotImplementedException();
-    public static Ring operator /(Ring self, Ring other) => self.Divide(other);
-    public Ring Modulo(Ring other) => throw new NotImplementedException();
-    public static Ring operator %(Ring self, Ring other) => self.Modulo(other);
-    public Ring Negative => throw new NotImplementedException();
-    public static Ring operator -(Ring self) => self.Negative;
-    public Ring Reciprocal => throw new NotImplementedException();
-    public Integer Compare(Ring y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Ring Lerp(Ring b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Ring a, Ring b) => throw new NotImplementedException();
 }
-public class Arc: Value<Arc>
+public partial class Arc: Value<Arc>
 {
     public AnglePair Angles { get; }
     public Circle Cirlce { get; }
@@ -1681,7 +1660,7 @@ public class Arc: Value<Arc>
     public Boolean NotEquals(Arc b) => throw new NotImplementedException();
     public static Boolean operator !=(Arc a, Arc b) => a.NotEquals(b);
 }
-public class RealInterval: Interval<Number, Number>
+public partial class RealInterval: Interval<Number, Number>
 {
     public Number A { get; }
     public Number B { get; }
@@ -1698,7 +1677,7 @@ public class RealInterval: Interval<Number, Number>
     public Number Max => throw new NotImplementedException();
     public Number Size => throw new NotImplementedException();
 }
-public class Capsule: Value<Capsule>
+public partial class Capsule: Value<Capsule>
 {
     public Line3D Line { get; }
     public Number Radius { get; }
@@ -1718,7 +1697,7 @@ public class Capsule: Value<Capsule>
     public Boolean NotEquals(Capsule b) => throw new NotImplementedException();
     public static Boolean operator !=(Capsule a, Capsule b) => a.NotEquals(b);
 }
-public class Matrix3D: Value<Matrix3D>
+public partial class Matrix3D: Value<Matrix3D>
 {
     public Vector4D Column1 { get; }
     public Vector4D Column2 { get; }
@@ -1742,7 +1721,7 @@ public class Matrix3D: Value<Matrix3D>
     public Boolean NotEquals(Matrix3D b) => throw new NotImplementedException();
     public static Boolean operator !=(Matrix3D a, Matrix3D b) => a.NotEquals(b);
 }
-public class Cylinder: Value<Cylinder>
+public partial class Cylinder: Value<Cylinder>
 {
     public Line3D Line { get; }
     public Number Radius { get; }
@@ -1762,7 +1741,7 @@ public class Cylinder: Value<Cylinder>
     public Boolean NotEquals(Cylinder b) => throw new NotImplementedException();
     public static Boolean operator !=(Cylinder a, Cylinder b) => a.NotEquals(b);
 }
-public class Cone: Value<Cone>
+public partial class Cone: Value<Cone>
 {
     public Line3D Line { get; }
     public Number Radius { get; }
@@ -1782,7 +1761,7 @@ public class Cone: Value<Cone>
     public Boolean NotEquals(Cone b) => throw new NotImplementedException();
     public static Boolean operator !=(Cone a, Cone b) => a.NotEquals(b);
 }
-public class Tube: Value<Tube>
+public partial class Tube: Value<Tube>
 {
     public Line3D Line { get; }
     public Number InnerRadius { get; }
@@ -1804,7 +1783,7 @@ public class Tube: Value<Tube>
     public Boolean NotEquals(Tube b) => throw new NotImplementedException();
     public static Boolean operator !=(Tube a, Tube b) => a.NotEquals(b);
 }
-public class ConeSegment: Value<ConeSegment>
+public partial class ConeSegment: Value<ConeSegment>
 {
     public Line3D Line { get; }
     public Number Radius1 { get; }
@@ -1826,7 +1805,7 @@ public class ConeSegment: Value<ConeSegment>
     public Boolean NotEquals(ConeSegment b) => throw new NotImplementedException();
     public static Boolean operator !=(ConeSegment a, ConeSegment b) => a.NotEquals(b);
 }
-public class Box2D: Value<Box2D>
+public partial class Box2D: Value<Box2D>
 {
     public Point2D Center { get; }
     public Angle Rotation { get; }
@@ -1848,7 +1827,7 @@ public class Box2D: Value<Box2D>
     public Boolean NotEquals(Box2D b) => throw new NotImplementedException();
     public static Boolean operator !=(Box2D a, Box2D b) => a.NotEquals(b);
 }
-public class Box3D: Value<Box3D>
+public partial class Box3D: Value<Box3D>
 {
     public Point3D Center { get; }
     public Rotation3D Rotation { get; }
@@ -1870,67 +1849,7 @@ public class Box3D: Value<Box3D>
     public Boolean NotEquals(Box3D b) => throw new NotImplementedException();
     public static Boolean operator !=(Box3D a, Box3D b) => a.NotEquals(b);
 }
-public class CubicBezierTriangle3D: Value<CubicBezierTriangle3D>
-{
-    public Point3D A { get; }
-    public Point3D B { get; }
-    public Point3D C { get; }
-    public Point3D A2B { get; }
-    public Point3D AB2 { get; }
-    public Point3D B2C { get; }
-    public Point3D BC2 { get; }
-    public Point3D AC2 { get; }
-    public Point3D A2C { get; }
-    public Point3D ABC { get; }
-    public CubicBezierTriangle3D WithA(Point3D a) => (a, B, C, A2B, AB2, B2C, BC2, AC2, A2C, ABC);
-    public CubicBezierTriangle3D WithB(Point3D b) => (A, b, C, A2B, AB2, B2C, BC2, AC2, A2C, ABC);
-    public CubicBezierTriangle3D WithC(Point3D c) => (A, B, c, A2B, AB2, B2C, BC2, AC2, A2C, ABC);
-    public CubicBezierTriangle3D WithA2B(Point3D a2B) => (A, B, C, a2B, AB2, B2C, BC2, AC2, A2C, ABC);
-    public CubicBezierTriangle3D WithAB2(Point3D aB2) => (A, B, C, A2B, aB2, B2C, BC2, AC2, A2C, ABC);
-    public CubicBezierTriangle3D WithB2C(Point3D b2C) => (A, B, C, A2B, AB2, b2C, BC2, AC2, A2C, ABC);
-    public CubicBezierTriangle3D WithBC2(Point3D bC2) => (A, B, C, A2B, AB2, B2C, bC2, AC2, A2C, ABC);
-    public CubicBezierTriangle3D WithAC2(Point3D aC2) => (A, B, C, A2B, AB2, B2C, BC2, aC2, A2C, ABC);
-    public CubicBezierTriangle3D WithA2C(Point3D a2C) => (A, B, C, A2B, AB2, B2C, BC2, AC2, a2C, ABC);
-    public CubicBezierTriangle3D WithABC(Point3D aBC) => (A, B, C, A2B, AB2, B2C, BC2, AC2, A2C, aBC);
-    public CubicBezierTriangle3D(Point3D a, Point3D b, Point3D c, Point3D a2B, Point3D aB2, Point3D b2C, Point3D bC2, Point3D aC2, Point3D a2C, Point3D aBC) => (A, B, C, A2B, AB2, B2C, BC2, AC2, A2C, ABC) = (a, b, c, a2B, aB2, b2C, bC2, aC2, a2C, aBC);
-    public CubicBezierTriangle3D() { }
-    public static CubicBezierTriangle3D Default = new CubicBezierTriangle3D();
-    public static CubicBezierTriangle3D New(Point3D a, Point3D b, Point3D c, Point3D a2B, Point3D aB2, Point3D b2C, Point3D bC2, Point3D aC2, Point3D a2C, Point3D aBC) => new CubicBezierTriangle3D(a, b, c, a2B, aB2, b2C, bC2, aC2, a2C, aBC);
-    public static implicit operator (Point3D, Point3D, Point3D, Point3D, Point3D, Point3D, Point3D, Point3D, Point3D, Point3D)(CubicBezierTriangle3D self) => (self.A, self.B, self.C, self.A2B, self.AB2, self.B2C, self.BC2, self.AC2, self.A2C, self.ABC);
-    public static implicit operator CubicBezierTriangle3D((Point3D, Point3D, Point3D, Point3D, Point3D, Point3D, Point3D, Point3D, Point3D, Point3D) value) => new CubicBezierTriangle3D(value.Item1, value.Item2, value.Item3, value.Item4, value.Item5, value.Item6, value.Item7, value.Item8, value.Item9, value.Item10);
-    public void Deconstruct(out Point3D a, out Point3D b, out Point3D c, out Point3D a2B, out Point3D aB2, out Point3D b2C, out Point3D bC2, out Point3D aC2, out Point3D a2C, out Point3D aBC) { a = A; b = B; c = C; a2B = A2B; aB2 = AB2; b2C = B2C; bC2 = BC2; aC2 = AC2; a2C = A2C; aBC = ABC; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(CubicBezierTriangle3D b) => throw new NotImplementedException();
-    public static Boolean operator ==(CubicBezierTriangle3D a, CubicBezierTriangle3D b) => a.Equals(b);
-    public Boolean NotEquals(CubicBezierTriangle3D b) => throw new NotImplementedException();
-    public static Boolean operator !=(CubicBezierTriangle3D a, CubicBezierTriangle3D b) => a.NotEquals(b);
-}
-public class CubicBezier2D: Value<CubicBezier2D>
-{
-    public Point2D A { get; }
-    public Point2D B { get; }
-    public Point2D C { get; }
-    public Point2D D { get; }
-    public CubicBezier2D WithA(Point2D a) => (a, B, C, D);
-    public CubicBezier2D WithB(Point2D b) => (A, b, C, D);
-    public CubicBezier2D WithC(Point2D c) => (A, B, c, D);
-    public CubicBezier2D WithD(Point2D d) => (A, B, C, d);
-    public CubicBezier2D(Point2D a, Point2D b, Point2D c, Point2D d) => (A, B, C, D) = (a, b, c, d);
-    public CubicBezier2D() { }
-    public static CubicBezier2D Default = new CubicBezier2D();
-    public static CubicBezier2D New(Point2D a, Point2D b, Point2D c, Point2D d) => new CubicBezier2D(a, b, c, d);
-    public static implicit operator (Point2D, Point2D, Point2D, Point2D)(CubicBezier2D self) => (self.A, self.B, self.C, self.D);
-    public static implicit operator CubicBezier2D((Point2D, Point2D, Point2D, Point2D) value) => new CubicBezier2D(value.Item1, value.Item2, value.Item3, value.Item4);
-    public void Deconstruct(out Point2D a, out Point2D b, out Point2D c, out Point2D d) { a = A; b = B; c = C; d = D; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(CubicBezier2D b) => throw new NotImplementedException();
-    public static Boolean operator ==(CubicBezier2D a, CubicBezier2D b) => a.Equals(b);
-    public Boolean NotEquals(CubicBezier2D b) => throw new NotImplementedException();
-    public static Boolean operator !=(CubicBezier2D a, CubicBezier2D b) => a.NotEquals(b);
-}
-public class UV: Vector<UV>
+public partial class UV: Vector<UV>
 {
     public Unit U { get; }
     public Unit V { get; }
@@ -1974,7 +1893,7 @@ public class UV: Vector<UV>
     public UV Lerp(UV b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(UV a, UV b) => throw new NotImplementedException();
 }
-public class UVW: Vector<UVW>
+public partial class UVW: Vector<UVW>
 {
     public Unit U { get; }
     public Unit V { get; }
@@ -2020,7 +1939,31 @@ public class UVW: Vector<UVW>
     public UVW Lerp(UVW b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(UVW a, UVW b) => throw new NotImplementedException();
 }
-public class CubicBezier3D: Value<CubicBezier3D>
+public partial class CubicBezier2D: Value<CubicBezier2D>
+{
+    public Point2D A { get; }
+    public Point2D B { get; }
+    public Point2D C { get; }
+    public Point2D D { get; }
+    public CubicBezier2D WithA(Point2D a) => (a, B, C, D);
+    public CubicBezier2D WithB(Point2D b) => (A, b, C, D);
+    public CubicBezier2D WithC(Point2D c) => (A, B, c, D);
+    public CubicBezier2D WithD(Point2D d) => (A, B, C, d);
+    public CubicBezier2D(Point2D a, Point2D b, Point2D c, Point2D d) => (A, B, C, D) = (a, b, c, d);
+    public CubicBezier2D() { }
+    public static CubicBezier2D Default = new CubicBezier2D();
+    public static CubicBezier2D New(Point2D a, Point2D b, Point2D c, Point2D d) => new CubicBezier2D(a, b, c, d);
+    public static implicit operator (Point2D, Point2D, Point2D, Point2D)(CubicBezier2D self) => (self.A, self.B, self.C, self.D);
+    public static implicit operator CubicBezier2D((Point2D, Point2D, Point2D, Point2D) value) => new CubicBezier2D(value.Item1, value.Item2, value.Item3, value.Item4);
+    public void Deconstruct(out Point2D a, out Point2D b, out Point2D c, out Point2D d) { a = A; b = B; c = C; d = D; }
+    public Array<String> FieldNames => throw new NotImplementedException();
+    public Array<Any> FieldValues => throw new NotImplementedException();
+    public Boolean Equals(CubicBezier2D b) => throw new NotImplementedException();
+    public static Boolean operator ==(CubicBezier2D a, CubicBezier2D b) => a.Equals(b);
+    public Boolean NotEquals(CubicBezier2D b) => throw new NotImplementedException();
+    public static Boolean operator !=(CubicBezier2D a, CubicBezier2D b) => a.NotEquals(b);
+}
+public partial class CubicBezier3D: Value<CubicBezier3D>
 {
     public Point3D A { get; }
     public Point3D B { get; }
@@ -2044,7 +1987,7 @@ public class CubicBezier3D: Value<CubicBezier3D>
     public Boolean NotEquals(CubicBezier3D b) => throw new NotImplementedException();
     public static Boolean operator !=(CubicBezier3D a, CubicBezier3D b) => a.NotEquals(b);
 }
-public class QuadraticBezier2D: Value<QuadraticBezier2D>
+public partial class QuadraticBezier2D: Value<QuadraticBezier2D>
 {
     public Point2D A { get; }
     public Point2D B { get; }
@@ -2066,7 +2009,7 @@ public class QuadraticBezier2D: Value<QuadraticBezier2D>
     public Boolean NotEquals(QuadraticBezier2D b) => throw new NotImplementedException();
     public static Boolean operator !=(QuadraticBezier2D a, QuadraticBezier2D b) => a.NotEquals(b);
 }
-public class QuadraticBezier3D: Value<QuadraticBezier3D>
+public partial class QuadraticBezier3D: Value<QuadraticBezier3D>
 {
     public Point3D A { get; }
     public Point3D B { get; }
@@ -2088,7 +2031,7 @@ public class QuadraticBezier3D: Value<QuadraticBezier3D>
     public Boolean NotEquals(QuadraticBezier3D b) => throw new NotImplementedException();
     public static Boolean operator !=(QuadraticBezier3D a, QuadraticBezier3D b) => a.NotEquals(b);
 }
-public class Area: Measure<Area>
+public partial class Area: Measure<Area>
 {
     public Number MetersSquared { get; }
     public Area WithMetersSquared(Number metersSquared) => (metersSquared);
@@ -2120,7 +2063,7 @@ public class Area: Measure<Area>
     public Area Lerp(Area b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Area a, Area b) => throw new NotImplementedException();
 }
-public class Volume: Measure<Volume>
+public partial class Volume: Measure<Volume>
 {
     public Number MetersCubed { get; }
     public Volume WithMetersCubed(Number metersCubed) => (metersCubed);
@@ -2152,7 +2095,7 @@ public class Volume: Measure<Volume>
     public Volume Lerp(Volume b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Volume a, Volume b) => throw new NotImplementedException();
 }
-public class Velocity: Measure<Velocity>
+public partial class Velocity: Measure<Velocity>
 {
     public Number MetersPerSecond { get; }
     public Velocity WithMetersPerSecond(Number metersPerSecond) => (metersPerSecond);
@@ -2184,7 +2127,7 @@ public class Velocity: Measure<Velocity>
     public Velocity Lerp(Velocity b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Velocity a, Velocity b) => throw new NotImplementedException();
 }
-public class Acceleration: Measure<Acceleration>
+public partial class Acceleration: Measure<Acceleration>
 {
     public Number MetersPerSecondSquared { get; }
     public Acceleration WithMetersPerSecondSquared(Number metersPerSecondSquared) => (metersPerSecondSquared);
@@ -2216,7 +2159,7 @@ public class Acceleration: Measure<Acceleration>
     public Acceleration Lerp(Acceleration b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Acceleration a, Acceleration b) => throw new NotImplementedException();
 }
-public class Force: Measure<Force>
+public partial class Force: Measure<Force>
 {
     public Number Newtons { get; }
     public Force WithNewtons(Number newtons) => (newtons);
@@ -2248,7 +2191,7 @@ public class Force: Measure<Force>
     public Force Lerp(Force b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Force a, Force b) => throw new NotImplementedException();
 }
-public class Pressure: Measure<Pressure>
+public partial class Pressure: Measure<Pressure>
 {
     public Number Pascals { get; }
     public Pressure WithPascals(Number pascals) => (pascals);
@@ -2280,7 +2223,7 @@ public class Pressure: Measure<Pressure>
     public Pressure Lerp(Pressure b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Pressure a, Pressure b) => throw new NotImplementedException();
 }
-public class Energy: Measure<Energy>
+public partial class Energy: Measure<Energy>
 {
     public Number Joules { get; }
     public Energy WithJoules(Number joules) => (joules);
@@ -2312,7 +2255,7 @@ public class Energy: Measure<Energy>
     public Energy Lerp(Energy b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Energy a, Energy b) => throw new NotImplementedException();
 }
-public class Memory: Measure<Memory>
+public partial class Memory: Measure<Memory>
 {
     public Count Bytes { get; }
     public Memory WithBytes(Count bytes) => (bytes);
@@ -2344,7 +2287,7 @@ public class Memory: Measure<Memory>
     public Memory Lerp(Memory b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Memory a, Memory b) => throw new NotImplementedException();
 }
-public class Frequency: Measure<Frequency>
+public partial class Frequency: Measure<Frequency>
 {
     public Number Hertz { get; }
     public Frequency WithHertz(Number hertz) => (hertz);
@@ -2376,7 +2319,7 @@ public class Frequency: Measure<Frequency>
     public Frequency Lerp(Frequency b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Frequency a, Frequency b) => throw new NotImplementedException();
 }
-public class Loudness: Measure<Loudness>
+public partial class Loudness: Measure<Loudness>
 {
     public Number Decibels { get; }
     public Loudness WithDecibels(Number decibels) => (decibels);
@@ -2408,7 +2351,7 @@ public class Loudness: Measure<Loudness>
     public Loudness Lerp(Loudness b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Loudness a, Loudness b) => throw new NotImplementedException();
 }
-public class LuminousIntensity: Measure<LuminousIntensity>
+public partial class LuminousIntensity: Measure<LuminousIntensity>
 {
     public Number Candelas { get; }
     public LuminousIntensity WithCandelas(Number candelas) => (candelas);
@@ -2440,7 +2383,7 @@ public class LuminousIntensity: Measure<LuminousIntensity>
     public LuminousIntensity Lerp(LuminousIntensity b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(LuminousIntensity a, LuminousIntensity b) => throw new NotImplementedException();
 }
-public class ElectricPotential: Measure<ElectricPotential>
+public partial class ElectricPotential: Measure<ElectricPotential>
 {
     public Number Volts { get; }
     public ElectricPotential WithVolts(Number volts) => (volts);
@@ -2472,7 +2415,7 @@ public class ElectricPotential: Measure<ElectricPotential>
     public ElectricPotential Lerp(ElectricPotential b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(ElectricPotential a, ElectricPotential b) => throw new NotImplementedException();
 }
-public class ElectricCharge: Measure<ElectricCharge>
+public partial class ElectricCharge: Measure<ElectricCharge>
 {
     public Number Columbs { get; }
     public ElectricCharge WithColumbs(Number columbs) => (columbs);
@@ -2504,7 +2447,7 @@ public class ElectricCharge: Measure<ElectricCharge>
     public ElectricCharge Lerp(ElectricCharge b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(ElectricCharge a, ElectricCharge b) => throw new NotImplementedException();
 }
-public class ElectricCurrent: Measure<ElectricCurrent>
+public partial class ElectricCurrent: Measure<ElectricCurrent>
 {
     public Number Amperes { get; }
     public ElectricCurrent WithAmperes(Number amperes) => (amperes);
@@ -2536,7 +2479,7 @@ public class ElectricCurrent: Measure<ElectricCurrent>
     public ElectricCurrent Lerp(ElectricCurrent b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(ElectricCurrent a, ElectricCurrent b) => throw new NotImplementedException();
 }
-public class ElectricResistance: Measure<ElectricResistance>
+public partial class ElectricResistance: Measure<ElectricResistance>
 {
     public Number Ohms { get; }
     public ElectricResistance WithOhms(Number ohms) => (ohms);
@@ -2568,7 +2511,7 @@ public class ElectricResistance: Measure<ElectricResistance>
     public ElectricResistance Lerp(ElectricResistance b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(ElectricResistance a, ElectricResistance b) => throw new NotImplementedException();
 }
-public class Power: Measure<Power>
+public partial class Power: Measure<Power>
 {
     public Number Watts { get; }
     public Power WithWatts(Number watts) => (watts);
@@ -2600,7 +2543,7 @@ public class Power: Measure<Power>
     public Power Lerp(Power b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Power a, Power b) => throw new NotImplementedException();
 }
-public class Density: Measure<Density>
+public partial class Density: Measure<Density>
 {
     public Number KilogramsPerMeterCubed { get; }
     public Density WithKilogramsPerMeterCubed(Number kilogramsPerMeterCubed) => (kilogramsPerMeterCubed);
@@ -2632,7 +2575,7 @@ public class Density: Measure<Density>
     public Density Lerp(Density b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Density a, Density b) => throw new NotImplementedException();
 }
-public class NormalDistribution: Value<NormalDistribution>
+public partial class NormalDistribution: Value<NormalDistribution>
 {
     public Number Mean { get; }
     public Number StandardDeviation { get; }
@@ -2652,7 +2595,7 @@ public class NormalDistribution: Value<NormalDistribution>
     public Boolean NotEquals(NormalDistribution b) => throw new NotImplementedException();
     public static Boolean operator !=(NormalDistribution a, NormalDistribution b) => a.NotEquals(b);
 }
-public class PoissonDistribution: Value<PoissonDistribution>
+public partial class PoissonDistribution: Value<PoissonDistribution>
 {
     public Number Expected { get; }
     public Count Occurrences { get; }
@@ -2672,7 +2615,7 @@ public class PoissonDistribution: Value<PoissonDistribution>
     public Boolean NotEquals(PoissonDistribution b) => throw new NotImplementedException();
     public static Boolean operator !=(PoissonDistribution a, PoissonDistribution b) => a.NotEquals(b);
 }
-public class BernoulliDistribution: Value<BernoulliDistribution>
+public partial class BernoulliDistribution: Value<BernoulliDistribution>
 {
     public Probability P { get; }
     public BernoulliDistribution WithP(Probability p) => (p);
@@ -2689,7 +2632,7 @@ public class BernoulliDistribution: Value<BernoulliDistribution>
     public Boolean NotEquals(BernoulliDistribution b) => throw new NotImplementedException();
     public static Boolean operator !=(BernoulliDistribution a, BernoulliDistribution b) => a.NotEquals(b);
 }
-public class Probability: Numerical<Probability>
+public partial class Probability: Numerical<Probability>
 {
     public Number Value { get; }
     public Probability WithValue(Number value) => (value);
@@ -2727,7 +2670,7 @@ public class Probability: Numerical<Probability>
     public Probability Lerp(Probability b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Probability a, Probability b) => throw new NotImplementedException();
 }
-public class BinomialDistribution: Value<BinomialDistribution>
+public partial class BinomialDistribution: Value<BinomialDistribution>
 {
     public Count Trials { get; }
     public Probability P { get; }

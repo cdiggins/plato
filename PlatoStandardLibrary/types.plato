@@ -508,7 +508,7 @@ type AnglePair
 }
 
 type Ring
-    implements Numerical
+    implements Value
 {
     Circle: Circle;
     InnerRadius: Number;
@@ -593,32 +593,6 @@ type Box3D
     Extent: Size3D;
 }
 
- // https://en.wikipedia.org/wiki/B%C3%A9zier_triangle    
-type CubicBezierTriangle3D
-    implements Value
-{
-    A: Point3D;
-    B: Point3D;
-    C: Point3D;
-    A2B: Point3D;
-    AB2: Point3D;
-    B2C: Point3D;
-    BC2: Point3D;
-    AC2: Point3D;
-    A2C: Point3D;
-    ABC: Point3D;
-}
-
-// https://en.wikipedia.org/wiki/B%C3%A9zier_curve    
-type CubicBezier2D
-    implements Value
-{
-    A: Point2D;
-    B: Point2D;
-    C: Point2D;
-    D: Point2D;
-}
-
 // https://en.wikipedia.org/wiki/UV_mapping    
 type UV
     implements Vector
@@ -634,6 +608,16 @@ type UVW
     V: Unit;
     W: Unit;
 }
+
+// https://en.wikipedia.org/wiki/B%C3%A9zier_curve    
+type CubicBezier2D
+    implements Value
+{
+    A: Point2D;
+    B: Point2D;
+    C: Point2D;
+    D: Point2D;
+}   
 
 // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
 type CubicBezier3D
@@ -820,7 +804,7 @@ type BinomialDistribution
     P: Probability;
 }
 
-// Generic types. These are not usually used. 
+// Generic types. These are not used 
 
 type Array1<T>
     implements Array<T>

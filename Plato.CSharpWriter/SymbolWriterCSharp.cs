@@ -95,6 +95,8 @@ namespace Plato.CSharpWriter
                     return Write(typeDefinition);
                 case TypeExpression typeExpression:
                     return Write(typeExpression);
+                case LoopSymbol loopSymbol:
+                    return Write("throw new NotImplementedException(\"Loops not implemented yet!\");");
                 default:
                     throw new ArgumentOutOfRangeException(nameof(symbol));
             }
@@ -105,7 +107,56 @@ namespace Plato.CSharpWriter
             WriteConceptInterfaces();
             //WriteConceptExtensions();
             WriteTypeImplementations();
-            WriteLibraries();
+            //WriteLibraries();
+            WriteLibraryMethodsOnTypes();
+            return this;
+        }
+
+        public SymbolWriterCSharp WriteLibraryMethod(TypeDefinition td, TypeDefinition concept, FunctionDefinition fd)
+        {
+            // TODO: replace any references to the concept with the type name 
+            // TODO: replace the type variables with the name of the type paramer as appropriate. 
+            return Write("// ").Write(td.Name).Write(" ").WriteSignature(fd, true, true);
+        }
+
+        public SymbolWriterCSharp WriteLibraryMethodsOnTypes()
+        {
+            StartNewFile(OutputFolder.RelativeFile("Library.cs"));
+            WriteLine("using System;");
+
+            var allMethods = Compiler.AllTypeAndLibraryDefinitions.Where(c => c.IsLibrary()).SelectMany(t => t.Methods.Select(m => m.Function));
+            var groups = allMethods.GroupBy(f => f.Parameters.FirstOrDefault()?.Type.Definition);
+            var lookup = groups.Where(g => g.Key != null).ToDictionary(g => g.Key.Name, g => g.ToList());
+
+            foreach (var t in Compiler.AllTypeAndLibraryDefinitions)
+            {
+                if (!t.IsConcrete())
+                    continue;
+
+                WriteLine($"public partial class {t.Name}");
+                WriteStartBlock();
+                if (lookup.ContainsKey(t.Name))
+                {
+                    foreach (var f in lookup[t.Name])
+                    {
+                        WriteLibraryMethod(t, null, f);
+                    }
+                }
+
+                foreach (var c in t.GetAllImplementedConcepts())
+                {
+                    if (lookup.ContainsKey(c.Name))
+                    {
+                        foreach (var f in lookup[c.Name])
+                        {
+                            WriteLibraryMethod(t, c, f);
+                        }
+                    }
+                }
+
+                WriteEndBlock();
+            }
+
             return this;
         }
 
@@ -194,29 +245,7 @@ namespace Plato.CSharpWriter
             WriteEndBlock();
             return this;
         }
-
-        public SymbolWriterCSharp WriteConceptExtensions()
-        {
-            foreach (var c in Compiler.AllTypeAndLibraryDefinitions)
-            {
-                if (c.IsConcept())
-                {
-                    WriteConceptExtension(c);
-                }
-            }
-            return this;
-        }
-
-        public SymbolWriterCSharp WriteConceptExtension(TypeDefinition type)
-        {
-            Debug.Assert(type.IsConcept());
-            
-            return WriteLine("public static partial class Extensions")
-                .WriteStartBlock()
-                .WriteConceptMembersAsExtensionMethods(type)
-                .WriteEndBlock();
-        }
-
+        
         public SymbolWriterCSharp WriteTypeImplementations()
         {
             StartNewFile(OutputFolder.RelativeFile("Types.cs"));
@@ -254,7 +283,7 @@ namespace Plato.CSharpWriter
                 ? ": " + string.Join(", ", t.Implements.Select(te => ImplementedTypeString(te, t.Name)))
                 : "";
 
-            Write("public class ");
+            Write("public partial class ");
             Write(t.Name);
             WriteLine(implements);
             WriteStartBlock();
@@ -596,7 +625,9 @@ namespace Plato.CSharpWriter
         public SymbolWriterCSharp WriteLibraryMethods(TypeDefinition type)
         {
             Debug.Assert(type.IsLibrary());
-            WriteLine($"public static partial class {type.Name}Library");
+
+            // We put all methods 
+            WriteLine($"public static partial class Library");
             WriteStartBlock();
             foreach (var f in type.Functions)
             {
@@ -628,42 +659,23 @@ namespace Plato.CSharpWriter
                     Write(")");
                 }
 
-                Write(" => ");
-                WriteLine("throw new NotImplementedException();");
+                if (f.Body is BlockExpression expr && expr.Symbols.Count > 1)
+                {
+                    Write(expr).WriteLine();
+                }
+                else
+                {
+                    if (f.Body != null)
+                    {
+                        Write(" => ").Write(f.Body).WriteLine(";");
+                    }
+                    else
+                    {
+                        WriteLine("throw new NotImplementedException();");
+                    }
+                }
             }
             WriteEndBlock();
-            return this;
-        }
-
-        public SymbolWriterCSharp WriteConceptMembersAsExtensionMethods(TypeDefinition type)
-        {
-            var typeParameterNames = type.TypeParameters.Select(tp => tp.Name).ToList();
-            var typeArgsString = TypeArgsString(typeParameterNames.Prepend("Self"));
-
-            var parameterizedTypeName = ParameterizedTypeName(type.Name, typeParameterNames.Prepend("Self"));
-            var constraint = $"where Self: {parameterizedTypeName}";
-
-            foreach (var member in type.Members)
-            {
-                if (!(member is MethodDefinition mds))
-                    continue;
-
-                if (mds.Function.Body == null)
-                    // Interface method
-                    continue;
-
-                Write("public static ")
-                    .WriteTypeDecl(mds.Type, "void")
-                    .Write(mds.Name)
-                    .Write(typeArgsString)
-                    .Write("(")
-                    .Write(mds.Function.Parameters.Count > 0 ? "this " : "")
-                    .WriteCommaList(mds.Function.Parameters)
-                    .Write(") ")
-                    .WriteLine(constraint)
-                    .WriteFunctionBody(mds.Function);
-            }
-
             return this;
         }
 
@@ -769,10 +781,9 @@ namespace Plato.CSharpWriter
                 return this;
 
             var t = Compiler.GetExpressionType(expr);
-
+            
             // Don't put types in front of an argument (it is the same as the other)
-            if (!(expr is Argument))
-                WriteLine($"/* {t} */");
+            //if (!(expr is Argument)) WriteLine($"/* {t} */");
 
             switch (expr)
             {
@@ -796,9 +807,15 @@ namespace Plato.CSharpWriter
                         .Write(conditional.IfFalse)
                         .Dedent().WriteLine();
 
-                case FunctionCall functionResult:
-                    return Write(functionResult.Function).Write("(")
-                        .WriteCommaList(functionResult.Args).Write(")");
+                case FunctionCall functionCall:
+                    // Turn it into a "dot" call.
+                    // TODO: If this is a function argument then we can't do the "." call transformation. 
+                    if (functionCall.Args.Count == 0)
+                        return Write(functionCall.Function);
+                    Write(functionCall.Args[0]).Write(".").Write(functionCall.Function);
+                    if (functionCall.Args.Count == 1)
+                        return this;
+                    return Write("(").WriteCommaList(functionCall.Args.Skip(1)).Write(")");
 
                 case Literal literal:
                     return Write(literal.Value.ToString());
@@ -810,6 +827,23 @@ namespace Plato.CSharpWriter
                         //.WriteConstraints(function)
                         .Write(lambda.Function.Body);
 
+                case BlockExpression block:
+                {
+                    if (block.Symbols.Count == 1)
+                    {
+                        return Write(block.Symbols[0]);
+                    }
+                    else
+                    {
+                        WriteStartBlock();
+                        foreach (var x in block.Symbols)
+                        {
+                            Write(x);
+                            WriteLine(";");
+                        }
+                        return WriteEndBlock();
+                    }
+                }
             }
 
             throw new ArgumentOutOfRangeException(nameof(expr));
