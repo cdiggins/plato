@@ -1,4 +1,4 @@
-﻿using Ara3D.Parsing.CST;
+﻿using Parakeet.CST;
 using Ara3D.Utils;
 using Parakeet;
 using Parakeet.Grammars;

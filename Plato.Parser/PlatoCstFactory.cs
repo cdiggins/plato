@@ -3,11 +3,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ara3D.Parsing.CST;
 using Parakeet;
+using Parakeet.CST;
 using Parakeet.Grammars;
 
-namespace Plato.CST
+namespace Plato.Parser
 {
     public class CstNodeFactory
     {

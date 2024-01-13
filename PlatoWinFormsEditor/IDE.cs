@@ -6,7 +6,7 @@ using Parakeet.Grammars;
 using Plato.Compiler;
 using Plato.Compiler.Ast;
 using Plato.CSharpWriter;
-using Plato.CST;
+using Plato.Parser;
 using Logger = Plato.Compiler.Logger;
 
 namespace PlatoWinFormsEditor;

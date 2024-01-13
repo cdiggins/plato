@@ -4,13 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Ara3D.Parsing.CST;
+using Parakeet.CST;
 using Ara3D.Utils;
 using Parakeet;
 using Plato.Compiler.Ast;
 using Plato.Compiler.Symbols;
 using Plato.Compiler.Types;
 using Plato.Compiler.Vsg;
-using Plato.CST;
+using Plato.Parser;
 
 namespace Plato.Compiler
 {
