@@ -6,34 +6,38 @@ namespace Plato.CSharpWriter
 {
     public class TypeSubstitutions
     {
-        public TypeDefinition Self { get; }
-        public TypeExpression Type { get; }
+        public TypeParameterDefinition Parameter { get; }
+        public TypeExpression Replacement { get; }
+        public TypeSubstitutions Previous { get; }
+    
+        public TypeSubstitutions Add(TypeExpression expr)
+            => Add(expr.TypeArgs, expr.Definition);
 
-        public Dictionary<TypeParameterDefinition, TypeExpression> Lookup { get; } 
-
-        public void AddSubstitutions(TypeExpression expr)
-            => AddSubstitutions(expr.TypeArgs, expr.Definition);
-
-        public void AddSubstitutions(IReadOnlyList<TypeExpression> args, TypeDefinition def)
+        public TypeSubstitutions Add(IReadOnlyList<TypeExpression> args, TypeDefinition def)
         {
             if (args.Count != def.TypeParameters.Count)
                 throw new Exception($"Number of type arguments does not match number of type parameters");
+            var r = this;
             for (var i = 0; i < args.Count; i++)
             {
                 var tp = def.TypeParameters[i];
                 var arg = args[i];
-                if (!Lookup.ContainsKey(tp))
-                    Lookup.Add(tp, arg);
-                AddSubstitutions(arg);
+                r = r.Add(tp, arg);
             }
+            return r; 
         }
 
-        public TypeSubstitutions(TypeDefinition self, TypeExpression typeExpression, Dictionary<TypeParameterDefinition, TypeExpression> lookup = null)
+        public TypeSubstitutions Add(TypeParameterDefinition parameter, TypeExpression replace)
+            => new TypeSubstitutions(parameter, replace, this);
+
+        public static TypeSubstitutions Create(TypeExpression expr)
+            => new TypeSubstitutions().Add(expr);
+
+        public TypeSubstitutions(TypeParameterDefinition parameter = null, TypeExpression replace = null, TypeSubstitutions subs = null)
         {
-            Lookup = lookup ?? new Dictionary<TypeParameterDefinition, TypeExpression>();
-            Self = self;
-            Type = typeExpression;
-            AddSubstitutions(typeExpression);
+            Parameter = parameter;
+            Replacement = replace;
+            Previous = subs;
         }
     }
 }
