@@ -26,13 +26,13 @@ namespace Plato.Compiler.Symbols
             }
         }
 
-        public SymbolFactory(Logger logger)
+        public SymbolFactory(ILogger logger)
         {
             BindPredefinedSymbols();
             Logger = logger;
         }
 
-        public Logger Logger { get; }
+        public ILogger Logger { get; }
         public List<ResolutionError> Errors { get; } = new List<ResolutionError>();
         public Scope ValueBindingsScope { get; set; } = new Scope(null);
         public Scope TypeBindingsScope { get; set; } = new Scope(null);

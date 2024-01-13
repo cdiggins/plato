@@ -1,5 +1,6 @@
 ﻿using Plato.Compiler;
 using Plato.Compiler.Ast;
+using Plato.Parser;
 
 namespace PlatoWinFormsEditor
 {

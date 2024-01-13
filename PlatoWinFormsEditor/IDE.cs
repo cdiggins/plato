@@ -43,7 +43,7 @@ public class IDE
             input,
             PlatoGrammar.Instance.File,
             PlatoTokenGrammar.Instance.Tokenizer,
-            Compiler);
+            Compiler.Logger);
 
         var editor = new Editor(filePath, edit, OutputTextBox, parser);
         Editors.Add(editor);
@@ -57,7 +57,7 @@ public class IDE
 
     public IDE(TabControl tabControl, RichTextBox outputTextBox, [CallerFilePath]string filePath = null)
     {
-        Compiler = new Compiler(new CstNodeFactory(), Logger);
+        Compiler = new Compiler(Logger);
 
         TabControl = tabControl;
         OutputTextBox = outputTextBox;

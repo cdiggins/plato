@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Parakeet.CST;
+using Ara3D.Utils;
 using Parakeet;
-using Plato.Compiler.Ast;
+using Parakeet.CST;
 
-namespace Plato.Compiler
+namespace Plato.Parser
 {
     public class Parser
     {
@@ -14,9 +14,9 @@ namespace Plato.Compiler
             ParserInput input,
             Rule rule,
             Rule tokenizerRule,
-            Compiler compiler)
+            ILogger logger)
         {
-            Compiler = compiler;
+            Logger = logger;
             Log($"Starting compiling {fileName} at {DateTime.Now}");
             Input = input;
             TokenizerRule = tokenizerRule;
@@ -56,10 +56,7 @@ namespace Plato.Compiler
                 ParseTreeNode = State.Node?.ToParseTree();
                 
                 Log($"Creating Concrete Syntax Tree (CST)");
-                CstTree = Compiler.CstNodeFactory.Create(ParseTreeNode);
-
-                Log($"Creating Abstract Syntax Tree (AST)");
-                AstTree = CstTree.ToAst();
+                CstTree = ParseTreeNode.Create();
 
                 Success = State.AtEnd() && ParsingErrors.Count == 0;
                     
@@ -103,9 +100,7 @@ namespace Plato.Compiler
         public IReadOnlyList<ParserNode> TokenNodes { get; }
         public IReadOnlyList<ParserNode> Nodes { get; }
         public CstNode CstTree { get; }
-        public AstNode AstTree { get; }
-        public Compiler Compiler { get; }
-        public Logger Logger => Compiler.Logger;
+        public ILogger Logger { get; }
 
         public List<string> Diagnostics { get; } = new List<string>();
         public List<ParserError> ParsingErrors { get; } = new List<ParserError>();

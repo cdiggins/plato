@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Ara3D.Parsing.CST;
 using Parakeet.CST;
 using Ara3D.Utils;
 using Parakeet;
@@ -17,22 +16,17 @@ namespace Plato.Compiler
 {
     public class Compiler
     {
-        public Compiler(
-            CstNodeFactory cstNodeFactory,
-            Logger logger)
+        public Compiler(ILogger logger)
         {
-            CstNodeFactory = cstNodeFactory;
-
             Logger = logger;
             Log("Creating compiler");
         }
 
         public bool DisplayWarnings = false;
-        public CstNodeFactory CstNodeFactory { get; }
-        public Logger Logger { get; }
+        public ILogger Logger { get; }
         public bool CompletedCompilation { get; set; }
         public bool ParsingSuccess { get; set; }
-        public IReadOnlyList<Parser> Parsers { get; set; }
+        public IReadOnlyList<Parser.Parser> Parsers { get; set; }
         public IReadOnlyList<AstNode> Trees { get; set; }
         public SymbolFactory SymbolFactory { get; set; }
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; set; }
@@ -59,7 +53,7 @@ namespace Plato.Compiler
 
         public List<VisualSyntaxGraph> Graphs { get; } = new List<VisualSyntaxGraph>();
 
-        public void Compile(IReadOnlyList<Parser> parsers) 
+        public void Compile(IReadOnlyList<Parser.Parser> parsers) 
         {
             Log("Initializing Compiler");
             CompletedCompilation = false;
@@ -76,8 +70,8 @@ namespace Plato.Compiler
                 Log("Parsing was not successful");
             }
 
-            Log("Gathering AST trees");
-            Trees = Parsers.Select(p => p.AstTree).ToList();
+            Log("Creating AST trees");
+            Trees = Parsers.Select(p => p.CstTree.ToAst()).ToList();
 
             Log("Gathering type declarations");
             TypeDeclarations = Trees.SelectMany(tree => tree.GetAllTypes()).ToList();
@@ -296,21 +290,13 @@ namespace Plato.Compiler
             => Logger.Log(message);
 
         public CstNode GetCstNode(AstNode node)
-            => node.Location is CstLocation loc ? loc.Node : null;
+            => node?.Location as CstNode;
 
         public ParserTreeNode GetParserTreeNode(AstNode node)
-        {
-            if (node == null) return null;
-            return GetParserTreeNode(GetCstNode(node));
-        }
+            => GetParserTreeNode(GetCstNode(node));
 
         public ParserTreeNode GetParserTreeNode(CstNode node)
-        {
-            if (node == null) return null;
-            if (CstNodeFactory.Lookup.ContainsKey(node))
-                return CstNodeFactory.Lookup[node];
-            return null;
-        }
+            => node?.Location as ParserTreeNode;
 
         public void CheckSemantics()
         {

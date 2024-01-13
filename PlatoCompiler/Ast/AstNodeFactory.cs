@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ara3D.Parsing.CST;
 using Parakeet.CST;
 using Parakeet;
 using Plato.Parser;
@@ -10,11 +9,8 @@ namespace Plato.Compiler.Ast
 {
     public static class AstNodeFactory
     {
-        public static ILocation GetLocation(this CstNode node)
-            => new CstLocation(node);
-
         public static AstNode ToIntrinsicInvocation(this CstNode context, string name, params AstNode[] args)
-            => new AstInvoke(GetLocation(context), new AstIdentifier(GetLocation(context), name), args);
+            => new AstInvoke(context, new AstIdentifier(context, name), args);
 
         public static AstNode ToAst<T>(this CstFilter<T> filter) where T : CstNode
             => ToAst(filter.Node);
@@ -56,7 +52,7 @@ namespace Plato.Compiler.Ast
                 }
                 else if (postfix.FunctionArgs.Present)
                 {
-                    r = new AstInvoke(GetLocation(expr), r,
+                    r = new AstInvoke(expr, r,
                         postfix.FunctionArgs.Node.FunctionArg.Nodes.Select(n => ToAst(n.Expression)).ToArray());
                 }
                 else if (postfix.Indexer.Present)
@@ -82,12 +78,12 @@ namespace Plato.Compiler.Ast
                     }
 
                     var func = ToAst(postfix.MemberAccess.Node.Identifier.Node);
-                    r = new AstInvoke(GetLocation(expr), new AstIdentifier(GetLocation(expr), func), args.ToArray());
+                    r = new AstInvoke(expr, new AstIdentifier(expr, func), args.ToArray());
                 }
                 else if (postfix.TernaryOperation.Present)
                 {
                     r = new AstConditional(
-                        GetLocation(expr),
+                        expr,
                         r,
                         ToAst(postfix.TernaryOperation.Node[0]),
                         ToAst(postfix.TernaryOperation.Node[1]));
@@ -122,7 +118,7 @@ namespace Plato.Compiler.Ast
 
         public static AstTypeNode ToAst(this CstCompoundTypeExpr typeExpr)
         {
-            return new AstTypeNode(GetLocation(typeExpr), "ValueTuple", typeExpr.TypeExpr.Nodes.Select(ToAst).ToArray());
+            return new AstTypeNode(typeExpr, "ValueTuple", typeExpr.TypeExpr.Nodes.Select(ToAst).ToArray());
         }
 
         public static AstTypeNode ToAst(this CstInnerTypeExpr innerType)
@@ -147,14 +143,14 @@ namespace Plato.Compiler.Ast
             }
 
             if (ps.Count > 0)
-                return new AstTypeNode(GetLocation(innerType), r.Name, ps.ToArray());
+                return new AstTypeNode(innerType, r.Name, ps.ToArray());
 
             return r;
         }
 
-        public static AstTypeNode ToAst(this CstSimpleTypeExpr type) => new AstTypeNode(GetLocation(type), type.Text);
+        public static AstTypeNode ToAst(this CstSimpleTypeExpr type) => new AstTypeNode(type, type.Text);
 
-        public static AstTypeNode ToAst(this CstTypeVar type) => new AstTypeNode(GetLocation(type), "$" + type.Text);
+        public static AstTypeNode ToAst(this CstTypeVar type) => new AstTypeNode(type, "$" + type.Text);
 
         public static AstTypeNode ToAst(this CstCompoundOrSimpleTypeExpr compOrSimple)
         {
@@ -179,25 +175,25 @@ namespace Plato.Compiler.Ast
             var cstType = forEach.TypeExpr.Node;
             var name = ToAst(cstIdent);
             var astType = ToAst(cstType);
-            var vd = new AstVarDef(GetLocation(forEach.Identifier), name, null, astType);
+            var vd = new AstVarDef(forEach.Identifier, name, null, astType);
             return new AstBlock(
-                GetLocation(forEach.Statement),
+                forEach.Statement,
                 vd,
                 new AstLoop(
-                    GetLocation(forEach),
+                    forEach,
                     ToIntrinsicInvocation("MoveNext", null),
                     ToAst(forEach.Statement)));
         }
 
         public static AstTypeParameter ToAst(this CstTypeParameter typeParameter)
-            => new AstTypeParameter(GetLocation(typeParameter), typeParameter.Identifier.Node.Text);
+            => new AstTypeParameter(typeParameter, typeParameter.Identifier.Node.Text);
 
         public static AstTypeNode ToAst(this CstTypeAnnotation typeAnnotation)
             => ToAst(typeAnnotation?.TypeExpr?.Node?.InnerTypeExpr?.Node);
 
         public static AstParameterDeclaration ToAst(this CstFunctionParameter fp)
             => new AstParameterDeclaration(
-                GetLocation(fp),
+                fp,
                 ToAst(fp.Identifier.Node),
                 ToAst(fp.TypeAnnotation.Node));
 
@@ -205,18 +201,18 @@ namespace Plato.Compiler.Ast
         {
             var name = ToAst(fieldDeclaration.Identifier.Node);
             var type = ToAst(fieldDeclaration.TypeExpr.Node);
-            return new AstFieldDeclaration(GetLocation(fieldDeclaration), name, type, null);
+            return new AstFieldDeclaration(fieldDeclaration, name, type, null);
         }
 
         public static AstConstraint ToAst(this CstConstraint constraint)
         {
-            return new AstConstraint(GetLocation(constraint), constraint.Identifier.Text, ToAst(constraint.TypeAnnotation.Node));
+            return new AstConstraint(constraint, constraint.Identifier.Text, ToAst(constraint.TypeAnnotation.Node));
         }
 
         public static AstMethodDeclaration ToAst(this CstMethodDeclaration md)
         {
             return new AstMethodDeclaration(
-                GetLocation(md),
+                md,
                 ToAst(md.Identifier.Node),
                 ToAst(md.TypeAnnotation.Node),
                 md.FunctionParameterList.Node.FunctionParameter.Nodes.Select(ToAst).ToList(),
@@ -235,7 +231,7 @@ namespace Plato.Compiler.Ast
 
         public static AstParameterDeclaration ToAst(this CstLambdaParameter lp)
         {
-            return new AstParameterDeclaration(GetLocation(lp), 
+            return new AstParameterDeclaration(lp, 
                 ToAst(lp.Identifier.Node), null);
         }
 
@@ -291,7 +287,7 @@ namespace Plato.Compiler.Ast
                 throw new Exception("Expected at least one expression");
 
             if (expr.Expression.Nodes.Count == 1)
-                return new AstParenthesized(GetLocation(expr), ToAst(expr.Expression.Node));
+                return new AstParenthesized(expr, ToAst(expr.Expression.Node));
 
             return ToIntrinsicInvocation(expr, "Tuple", expr.Expression.Nodes.Select(ToAst).ToArray());
         }
@@ -300,7 +296,7 @@ namespace Plato.Compiler.Ast
         {
             if (expr.Identifier.Present)
             {
-                return new AstIdentifier(GetLocation(expr), expr.Identifier.Text);
+                return new AstIdentifier(expr, expr.Identifier.Text);
             }
 
             if (expr.Default.Present)
@@ -322,7 +318,7 @@ namespace Plato.Compiler.Ast
                 var body = ToAst(expr.LambdaExpr.Node.LambdaBody);
                 var parameters = expr.LambdaExpr.Node.LambdaParameters.Node.LambdaParameter.Nodes
                     .Select(ToAst).ToArray();
-                return new AstLambda(GetLocation(expr.LambdaExpr), body, parameters);
+                return new AstLambda(expr.LambdaExpr, body, parameters);
             }
             if (expr.Literal.Present)
             {
@@ -370,8 +366,8 @@ namespace Plato.Compiler.Ast
 
         public static AstNode ToAst(this CstExpressionBody body)
         {
-            return new AstBlock(GetLocation(body), 
-                new AstReturn(GetLocation(body.Expression), ToAst(body.Expression.Node)));
+            return new AstBlock(body, 
+                new AstReturn(body.Expression, ToAst(body.Expression.Node)));
         }
 
         public static AstTypeDeclaration ToAst(this CstTopLevelDeclaration cstTopLevelDeclaration)
@@ -386,7 +382,7 @@ namespace Plato.Compiler.Ast
                                  Array.Empty<AstTypeNode>();
                 var members = type.FieldDeclaration.Nodes.Select(ToAst).Cast<AstMemberDeclaration>().ToArray();
 
-                return new AstTypeDeclaration(GetLocation(cstTopLevelDeclaration), TypeKind.ConcreteType, name, typeParameters, inherits, implements, Array.Empty<AstConstraint>(), members);
+                return new AstTypeDeclaration(cstTopLevelDeclaration, TypeKind.ConcreteType, name, typeParameters, inherits, implements, Array.Empty<AstConstraint>(), members);
             }
 
             if (cstTopLevelDeclaration.Library.Present)
@@ -396,7 +392,7 @@ namespace Plato.Compiler.Ast
                 var typeParameters = Enumerable.Empty<AstTypeParameter>();
                 var members = module.MethodDeclaration.Nodes.Select(ToAst).Cast<AstMemberDeclaration>().ToArray();
 
-                return new AstTypeDeclaration(GetLocation(cstTopLevelDeclaration), TypeKind.Library, name, typeParameters, Enumerable.Empty<AstTypeNode>(),
+                return new AstTypeDeclaration(cstTopLevelDeclaration, TypeKind.Library, name, typeParameters, Enumerable.Empty<AstTypeNode>(),
                     Enumerable.Empty<AstTypeNode>(), Array.Empty<AstConstraint>(), members);
             }
             if (cstTopLevelDeclaration.Concept.Present)
@@ -409,7 +405,7 @@ namespace Plato.Compiler.Ast
                 var members = concept.MethodDeclaration.Nodes.Select(ToAst).ToArray();
                 var constraints = concept.ConstraintList.Node?.Constraint.Nodes.Select(ToAst).ToArray() ?? Array.Empty<AstConstraint>();
 
-                return new AstTypeDeclaration(GetLocation(cstTopLevelDeclaration), TypeKind.Concept, name, typeParameters, inherits, Enumerable.Empty<AstTypeNode>(), constraints, members);
+                return new AstTypeDeclaration(cstTopLevelDeclaration, TypeKind.Concept, name, typeParameters, inherits, Enumerable.Empty<AstTypeNode>(), constraints, members);
             }
 
             throw new Exception("Unhandled type declaration");
@@ -463,13 +459,13 @@ namespace Plato.Compiler.Ast
                     return AstBreak.Default;
 
                 case CstCompoundStatement cstCompoundStatement:
-                    return new AstBlock(GetLocation(cstCompoundStatement), cstCompoundStatement.Statement.Children.Select(ToAst).ToArray());
+                    return new AstBlock(cstCompoundStatement, cstCompoundStatement.Statement.Children.Select(ToAst).ToArray());
 
                 case CstDoWhileStatement cstDoWhileStatement:
-                    return new AstMulti(GetLocation(cstDoWhileStatement),
+                    return new AstMulti(cstDoWhileStatement,
                         ToAst(cstDoWhileStatement.Statement),
                         new AstLoop(
-                            GetLocation(cstDoWhileStatement),
+                            cstDoWhileStatement,
                             ToAst(cstDoWhileStatement.ParenthesizedExpression),
                             ToAst(cstDoWhileStatement.Statement)));
 
@@ -477,16 +473,16 @@ namespace Plato.Compiler.Ast
                     return ToAst(cstForEachStatement);
 
                 case CstForStatement cstForStatement:
-                    return new AstBlock(GetLocation(cstForStatement),
+                    return new AstBlock(cstForStatement,
                         ToAst(cstForStatement.ForLoopInit),
-                        new AstLoop(GetLocation(cstForStatement), ToAst(cstForStatement.ForLoopInvariant),
-                            new AstMulti(GetLocation(cstForStatement), ToAst(cstForStatement.Statement), ToAst(cstForStatement.ForLoopVariant))));
+                        new AstLoop(cstForStatement, ToAst(cstForStatement.ForLoopInvariant),
+                            new AstMulti(cstForStatement, ToAst(cstForStatement.Statement), ToAst(cstForStatement.ForLoopVariant))));
 
                 case CstReturnStatement cstReturnStatement:
-                    return new AstReturn(GetLocation(cstReturnStatement), ToAst(cstReturnStatement.Expression));
+                    return new AstReturn(cstReturnStatement, ToAst(cstReturnStatement.Expression));
 
                 case CstWhileStatement cstWhileStatement:
-                    return new AstLoop(GetLocation(cstWhileStatement), ToAst(cstWhileStatement.ParenthesizedExpression), ToAst(cstWhileStatement.Statement));
+                    return new AstLoop(cstWhileStatement, ToAst(cstWhileStatement.ParenthesizedExpression), ToAst(cstWhileStatement.Statement));
 
                 case CstContinueStatement _:
                     return AstContinue.Default;
@@ -510,16 +506,16 @@ namespace Plato.Compiler.Ast
                     return ToAst(cstExpressionStatement.Expression);
 
                 case CstFile cstFile:
-                    return new AstNamespace(GetLocation(cstFile), "", cstFile.TopLevelDeclaration.Nodes.Select(ToAst));
+                    return new AstNamespace(cstFile, "", cstFile.TopLevelDeclaration.Nodes.Select(ToAst));
 
                 case CstFinallyClause _:
                     throw new NotImplementedException();
 
                 case CstIdentifier cstIdentifier:
-                    return new AstIdentifier(GetLocation(cstIdentifier), cstIdentifier.Text);
+                    return new AstIdentifier(cstIdentifier, cstIdentifier.Text);
 
                 case CstIfStatement cstIfStatement:
-                    return new AstConditional(GetLocation(cstIfStatement), ToAst(cstIfStatement.ParenthesizedExpression),
+                    return new AstConditional(cstIfStatement, ToAst(cstIfStatement.ParenthesizedExpression),
                         ToAst(cstIfStatement.Statement),
                         ToAst(cstIfStatement.ElseClause));
 
@@ -544,11 +540,11 @@ namespace Plato.Compiler.Ast
                         : ToAst(cstLambdaBody.CompoundStatement);
 
                 case CstLambdaExpr cstLambdaExpr:
-                    return new AstLambda(GetLocation(cstLambdaExpr), ToAst(cstLambdaExpr.LambdaBody),
+                    return new AstLambda(cstLambdaExpr, ToAst(cstLambdaExpr.LambdaBody),
                         ToAstList(cstLambdaExpr.LambdaParameters.Node).ToArray());
 
                 case CstLambdaParameter cstLambdaParameter:
-                    return new AstVarDef(GetLocation(cstLambdaParameter),
+                    return new AstVarDef(cstLambdaParameter,
                         cstLambdaParameter.Identifier.Node.Text,
                         null,
                         null);
@@ -572,7 +568,7 @@ namespace Plato.Compiler.Ast
                     return ToAst(cstStatement.Node);
 
                 case CstStringInterpolation cstStringInterpolation:
-                    return new AstInvoke(GetLocation(cstStringInterpolation), new AstIdentifier(GetLocation(cstStringInterpolation), "Interpolate"),
+                    return new AstInvoke(cstStringInterpolation, new AstIdentifier(cstStringInterpolation, "Interpolate"),
                         cstStringInterpolation.StringInterpolationContent.Nodes.Select(ToAst).ToArray());
 
                 case CstStringInterpolationContent cstStringInterpolationContent:
@@ -601,7 +597,7 @@ namespace Plato.Compiler.Ast
 
                 case CstVarDecl cstVarDecl:
                     return new AstMulti(
-                        GetLocation(cstVarDecl),
+                        cstVarDecl,
                         CreateVarDefs(cstVarDecl).ToArray());
 
                 case CstVarDeclStatement cstVarDeclStatement:
@@ -674,7 +670,7 @@ namespace Plato.Compiler.Ast
         public static AstVarDef CreateVarDef(this CstVarDecl cstVarDecl, CstVarWithInitialization cstInit)
         {
             return new AstVarDef(
-                GetLocation(cstVarDecl),
+                cstVarDecl,
                 cstVarDecl.VarWithInitialization.Node.Identifier.Node?.Text ?? "_",
                 cstInit.Initialization.Present
                     ? ToAst(cstInit.Initialization.Node)

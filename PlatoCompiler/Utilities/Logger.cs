@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Ara3D.Utils;
 
 namespace Plato.Compiler
 {
-    // TODO: switch to a proper Ptarmigan logger. 
-    public class Logger
+    public class Logger : ILogger
     {
         public Stopwatch Stopwatch = Stopwatch.StartNew();
 
@@ -14,10 +14,13 @@ namespace Plato.Compiler
         public static string PrettyPrintTimeElapsed(Stopwatch sw)
             => $"{(int)(Math.Floor(sw.Elapsed.TotalMinutes))}:{sw.Elapsed.Seconds:00}.{sw.Elapsed.Milliseconds:000}";
 
-        public void Log(string message)
+        public ILogger Log(string message, LogLevel level)
         {
             var timeStr = PrettyPrintTimeElapsed(Stopwatch);
             Messages.Add($"[{timeStr}] {message}");
+            return this; 
         }
+
+        public string Category => "Compilation";
     }
 }
