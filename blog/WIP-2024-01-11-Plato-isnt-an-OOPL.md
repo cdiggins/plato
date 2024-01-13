@@ -1,19 +1,26 @@
-# Why Plato isn't an Object Oriented Language 
+# Why Plato isn't an Object Oriented Programming Language 
 
 Musings on the Plato language design. 
 
 ## 2024-01-11
 
-There are several properties that we associate with programming language 
+<!--
+# What is an OOPL? 
 
-* Abstraction
-* Polymorphism
-* Encapsulation
+In most OOPLs, most values are either primitive values or objects. 
+An object is an instance of a class that is bundled with methods and fields.    
+
+Three of the primary properties that we associate with object-oriented programming languages 
+
+* Polymorphism -   
 * Information Hiding
-* Composition
 * Inheritance
 
-The object oriented paradigm is useful in some contexts. 
+In other workds 
+
+# Polymorphism 
+
+These ideas  
 
 Putting state in an instance of a class.
 
@@ -49,3 +56,4 @@ And we save ourselves a lecture in the computer science text book.
 
 In Plato, data types can be easily to/from each other especially when they have a similar shape. 
 
+-->
