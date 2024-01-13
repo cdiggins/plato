@@ -5,10 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Ara3D.Parsing.CST\Ara3D.Parsing.CST.csproj" />
     <ProjectReference Include="..\..\src\Ara3D.Parsing.Grammars\Ara3D.Parsing.Grammars.csproj" />
     <ProjectReference Include="..\..\src\Ara3D.Parsing\Ara3D.Parsing.csproj" />
-    <ProjectReference Include="..\..\src\Ara3D.Utils\Ara3D.Utils.csproj" />
-    <ProjectReference Include="..\Plato.CST\Plato.CST.csproj" />
   </ItemGroup>
 
 </Project>

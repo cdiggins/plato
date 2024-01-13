@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Ara3D.Parsing.CST;
 using Ara3D.Utils;
 using Parakeet;
-using Parakeet.Demos.Plato;
 using Plato.Compiler.Ast;
 using Plato.Compiler.Symbols;
 using Plato.Compiler.Types;
 using Plato.Compiler.Vsg;
+using Plato.CST;
 
 namespace Plato.Compiler
 {

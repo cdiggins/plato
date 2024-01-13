@@ -1,5 +1,4 @@
-﻿using Parakeet.Demos.Plato;
-using Plato.Compiler;
+﻿using Plato.Compiler;
 using Plato.Compiler.Ast;
 
 namespace PlatoWinFormsEditor

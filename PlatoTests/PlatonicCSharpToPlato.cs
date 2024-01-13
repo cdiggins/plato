@@ -1,5 +1,5 @@
 ﻿using Parakeet;
-using Parakeet.Demos;
+using Parakeet.Grammars;
 
 namespace PlatoTests
 {

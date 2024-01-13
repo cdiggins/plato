@@ -1,6 +1,7 @@
-﻿using Ara3D.Utils;
+﻿using Ara3D.Parsing.CST;
+using Ara3D.Utils;
 using Parakeet;
-using Parakeet.Demos;
+using Parakeet.Grammars;
 using Parakeet.Tests;
 
 namespace PlatoTests
@@ -70,13 +71,13 @@ namespace PlatoTests
             Console.WriteLine($"Tree {tree}");
             Console.WriteLine($"Tree {tree.Contents}");
 
-            var cst = new Parakeet.Demos.CSharp.CstNodeFactory().Create(tree);
+            /*
+            var cst = new Ara3D.Grammars.CSharp.CstNodeFactory().Create(tree);
             var cstXml = new CstXmlBuilder().Write(cst).ToString();
 
             var cstXmlFile = inputFile.ChangeDirectoryAndExt(OutputFilesFolder, ".cst.xml");
             File.WriteAllText(cstXmlFile, cstXml);
 
-            /*
             var ast = new AstFromCSharpCst().ToAst(cst);
             
             var astXmlFile = FileUtil.ChangeDirectoryAndExt(inputFile, OutputFilesFolder, ".ast.xml");

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ara3D.Parsing.CST;
 using Parakeet;
-using Parakeet.Demos.Plato;
+using Plato.CST;
 
 namespace Plato.Compiler.Ast
 {
