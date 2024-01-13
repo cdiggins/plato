@@ -89,6 +89,14 @@ concept Vector
 }
 ```
 
+## Plato Examples
+
+The Plato standard library is the best place to start for Plato examples:
+
+* [libraries.plato](https://github.com/cdiggins/plato/blob/main/PlatoStandardLibrary/libraries.plato)
+* [types.plato](https://github.com/cdiggins/plato/blob/main/PlatoStandardLibrary/types.plato)
+* [concepts.plato](https://github.com/cdiggins/plato/blob/main/PlatoStandardLibrary/concepts.plato)
+
 ## Motivation 
 
 Plato is being used to develop cross-platform libraries that form the basis for software we are developing at 

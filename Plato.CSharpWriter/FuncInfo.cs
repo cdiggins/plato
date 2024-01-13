@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Ara3D.Utils;
@@ -87,7 +88,7 @@ namespace Plato.CSharpWriter
     /// <summary>
     /// Represents a library function. Used for analyzing library functions and generating code.
     /// </summary>
-    public class LibraryFuncInfo
+    public class FuncInfo
     {
         public string Name => Definition.Name;
         public string TypeSignature { get; }
@@ -111,21 +112,35 @@ namespace Plato.CSharpWriter
         // In this case, we are returning a or b. So it is a T where T: Comparable<T>
         // In Plato world, it is a T where T: Comparable. 
         
-        // 
+        // Is this originating from an implemented concept, or a library? 
+        // If it from a library, is it from a function with the type as a parameter, or from a function with a concept as a parameter. 
+        // What about default implementations? Where do they live? 
+        // When multiple FuncInfos exist with the same name, which one do we prefer? 
+        // The one with a body, and the one with a specific 
 
-        public LibraryFuncInfo(FunctionDefinition definition, TypeDefinition parentType)
+        // What if, I don't have interfaces declared on a type? Does it still work? 
+        // Does it become more efficient? 
+
+        // These things are all structs aren't they? Are they more efficient as structs? 
+
+        public FuncInfo(FunctionDefinition definition, TypeDefinition parentType, TypeSubstitutions substitutions = null)
         {
             Definition = definition;
             ParentType = parentType;
+            
             Debug.Assert(HasBody);
             Debug.Assert(ParentType.IsLibrary());
             Debug.Assert(definition.ReturnType != null);
             ReturnType = new TypeInfo(definition.ReturnType);
             ReturnsAConcept = ReturnType.Definition.IsConcept();
             Parameters = Definition.Parameters.Select(p => new ParamInfo(p)).ToList();
-
-           
         }
 
+        public static FuncInfo CreateLibraryFunction(TypeDefinition library, FunctionDefinition fd)
+        {
+            if (!library.IsLibrary())
+                throw new Exception("Not a library");
+            return new FuncInfo(fd, null, null);
+        }
     }
 }
