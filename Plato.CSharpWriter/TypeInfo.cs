@@ -20,9 +20,11 @@ namespace Plato.CSharpWriter
         public bool IsGeneric => TypeParameters.Count > 0;
         public bool IsConcept => OriginalDefinition.IsConcept();
         public bool IsConcrete => OriginalDefinition.IsConcrete();
-
-        public TypeInfo(TypeExpression original, TypeExpression actual)
+        public string Name { get; }
+        
+        public TypeInfo(string name, TypeExpression original, TypeExpression actual)
         {
+            Name = name;
             Debug.Assert(OriginalType != null);
             Debug.Assert(OriginalDefinition != null);
             Debug.Assert(OriginalType.TypeArgs.Count == 0);

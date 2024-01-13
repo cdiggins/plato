@@ -14,8 +14,8 @@ namespace Plato.CSharpWriter
     public class SymbolWriterCSharp : CodeBuilder<SymbolWriterCSharp>
     {
         public Compiler.Compiler Compiler { get; }
-
-        public TypeConverter Converter { get; private set; } = new TypeConverter(null, null);
+        public LibraryAnalysis Libraries { get; }
+        public IReadOnlyList<ConcreteTypeAnalysis> TypeAnalyses { get; }
 
         public Dictionary<string, StringBuilder> Files { get; } = new Dictionary<string, StringBuilder>();
 
@@ -32,24 +32,6 @@ namespace Plato.CSharpWriter
             "Function3",
         };
 
-        public void WithConverter(TypeConverter converter, Action action)
-        {
-            var oldConverter = Converter;
-            Converter = converter;
-            try
-            {
-                action();
-            }
-            finally
-            {
-                Converter = oldConverter;
-            }
-        }
-
-        public void WithCurrentType(TypeDefinition def, Action action)
-        {
-        }
-
         public static HashSet<string> IntrinsicTypes = new HashSet<string>()
         {
             "Number",
@@ -63,6 +45,8 @@ namespace Plato.CSharpWriter
         {
             Compiler = compiler;
             OutputFolder = outputFolder;
+            Libraries = new LibraryAnalysis(compiler);
+            
         }
 
         public void StartNewFile(string fileName)
@@ -74,20 +58,11 @@ namespace Plato.CSharpWriter
         public SymbolWriterCSharp Write(IEnumerable<Symbol> symbols)
             => symbols.Aggregate(this, (writer, symbol) => writer.Write(symbol));
 
-        public SymbolWriterCSharp WriteCommaList(IEnumerable<Symbol> symbols)
-        {
-            var r = this;
-            var first = true;
-            foreach (var s in symbols)
-            {
-                if (!first)
-                    r = r.Write(", ");
-                first = false;
-                r = r.Write(s);
-            }
+        public SymbolWriterCSharp WriteCommaList(IEnumerable<Symbol> symbols) 
+            => WriteCommaList(symbols, (w, s) => w.Write(s));
 
-            return r;
-        }
+        public SymbolWriterCSharp WriteCommaList(IEnumerable<string> symbols)
+            => WriteCommaList(symbols, (w, s) => w.Write(s));
 
         public SymbolWriterCSharp Write(Symbol symbol)
         {
@@ -141,23 +116,16 @@ namespace Plato.CSharpWriter
                 WriteStartBlock();
                 if (lookup.ContainsKey(t.Name))
                 {
-                    WithConverter(new TypeConverter(t, null), () =>
-                        {
-                            foreach (var f in lookup[t.Name])
-                                WriteLibraryMethod(f);
-                        }
-                    );
+                    foreach (var f in lookup[t.Name])
+                        WriteLibraryMethod(f);
                 }
 
                 foreach (var c in t.GetAllImplementedConcepts())
                 {
                     if (lookup.ContainsKey(c.Name))
                     {
-                        WithConverter(new TypeConverter(t, c), () =>
-                        {
-                            foreach (var f in lookup[c.Name])
-                                WriteLibraryMethod(f);
-                        });
+                        foreach (var f in lookup[c.Name])
+                            WriteLibraryMethod(f);
                     }
                 }
 
@@ -194,11 +162,15 @@ namespace Plato.CSharpWriter
             return $"<{r}>";
         }
 
+        // TODO: finish
+        public string TypeStr(TypeExpression type)
+        { return type.Name; }
+
         public string TypeAsInherited(TypeExpression type)
         {
             return type.Name + JoinTypeParameters(type.Definition.IsSelfConstrained() 
-                ? type.TypeArgs.Select(Converter.Convert).Prepend("Self") 
-                : type.TypeArgs.Select(Converter.Convert));
+                ? type.TypeArgs.Select(TypeStr).Prepend("Self") 
+                : type.TypeArgs.Select(TypeStr));
         }
 
         public SymbolWriterCSharp WriteConceptInterface(TypeDefinition type)
@@ -223,8 +195,8 @@ namespace Plato.CSharpWriter
                     if (constraint.Name == "Any")
                         continue;
                     var constraintArgs = JoinTypeParameters(constraint.Definition.IsSelfConstrained()
-                        ? constraint.TypeArgs.Select(Converter.Convert).Prepend(tp.Name)
-                        : constraint.TypeArgs.Select(Converter.Convert));
+                        ? constraint.TypeArgs.Select(TypeStr).Prepend(tp.Name)
+                        : constraint.TypeArgs.Select(TypeStr));
                     WriteLine($"where {tp.Name} : {constraint.Name}{constraintArgs}");
 
                 }
@@ -248,9 +220,9 @@ namespace Plato.CSharpWriter
             return this;
         }
 
-        public static string ImplementedTypeString(TypeExpression te, string typeName)
+        public string ImplementedTypeString(TypeExpression te, string typeName)
         {
-            var typeArgs = te.TypeArgs.Select(ta => ToString(ta));
+            var typeArgs = te.TypeArgs.Select(TypeStr);
             if (te.Definition.IsSelfConstrained())
                 typeArgs = typeArgs.Prepend(typeName);
             return $"{te.Name}{JoinTypeParameters(typeArgs)}";
@@ -260,14 +232,10 @@ namespace Plato.CSharpWriter
             => fieldName.Length == 0 || fieldName[0].IsLower() 
                 ? $"_{fieldName}" 
                 : fieldName.DecapitalizeFirst();
-
-        public IEnumerable<FuncInfo> GetAllFuncs(TypeDefinition t)
+        
+        public static IEnumerable<FunctionAnalysis> CreateFunctions(TypeDefinition t)
         {
-            // 
-        }
-
-        public static IEnumerable<FuncInfo> CreateFunctions(TypeDefinition t)
-        {
+            /*
             var concepts = t.GetAllImplementedConcepts();
             foreach (var sub in concepts)
             {
@@ -353,6 +321,8 @@ namespace Plato.CSharpWriter
                     }
                 }
             }
+            */
+            throw new NotImplementedException();
         }
 
         public SymbolWriterCSharp WriteTypeImplementation(TypeDefinition t)
@@ -363,15 +333,13 @@ namespace Plato.CSharpWriter
                 ? ": " + string.Join(", ", t.Implements.Select(te => ImplementedTypeString(te, t.Name)))
                 : "";
 
-            Converter.CurrentType = t;
-
             Write("public partial class ");
             Write(t.Name);
             WriteLine(implements);
             WriteStartBlock();
 
             var name = t.Name;
-            var fieldTypes = t.Fields.Select(f => Converter.Convert(f.Type)).ToList();
+            var fieldTypes = t.Fields.Select(f => TypeStr(f.Type)).ToList();
             var fieldNames = t.Fields.Select(f => f.Name).ToList();
             var parameterNames = fieldNames.Select(FieldNameToParameterName);
             Debug.Assert(fieldTypes.Count == fieldNames.Count);
@@ -531,7 +499,7 @@ namespace Plato.CSharpWriter
             if (te.Definition.IsSelfConstrained())
                 set.Add("Self");
             if (te.Name.StartsWith("$"))
-                set.Add(Converter.GetTypeVariableName(te.Name));
+                set.Add("T" + te.Name.Substring(1));
             foreach (var arg in te.TypeArgs)
                 GatherTypeParameters(arg, set);
         }
@@ -563,7 +531,7 @@ namespace Plato.CSharpWriter
                     if (typeParameters.Count > 0)
                     {
                         Write("<");
-                        WriteList(typeParameters);
+                        WriteCommaList(typeParameters);
                         Write(">");
                     }
 
@@ -637,7 +605,7 @@ namespace Plato.CSharpWriter
 
         public SymbolWriterCSharp Write(TypeExpression typeExpression)
         {
-            return Write(Converter.Convert(typeExpression)).Write(" ");
+            return Write(TypeStr(typeExpression)).Write(" ");
         }
 
         public SymbolWriterCSharp Write(Expression expr)
