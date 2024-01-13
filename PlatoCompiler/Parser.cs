@@ -58,7 +58,7 @@ namespace Plato.Compiler
                 CstTree = Compiler.CstNodeFactory.Create(ParseTreeNode);
 
                 Log($"Creating Abstract Syntax Tree (AST)");
-                AstTree = Compiler.AstNodeFactory.ToAst(CstTree);
+                AstTree = CstTree.ToAst();
 
                 Success = State.AtEnd() && ParsingErrors.Count == 0;
                     

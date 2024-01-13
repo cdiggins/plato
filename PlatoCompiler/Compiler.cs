@@ -17,18 +17,15 @@ namespace Plato.Compiler
     {
         public Compiler(
             CstNodeFactory cstNodeFactory,
-            AstNodeFactory astNodeFactory,
             Logger logger)
         {
             CstNodeFactory = cstNodeFactory;
-            AstNodeFactory = astNodeFactory;
 
             Logger = logger;
             Log("Creating compiler");
         }
 
         public bool DisplayWarnings = false;
-        public AstNodeFactory AstNodeFactory { get; }
         public CstNodeFactory CstNodeFactory { get; }
         public Logger Logger { get; }
         public bool CompletedCompilation { get; set; }
@@ -297,12 +294,7 @@ namespace Plato.Compiler
             => Logger.Log(message);
 
         public CstNode GetCstNode(AstNode node)
-        {
-            if (node == null) return null;
-            if (AstNodeFactory.Lookup.ContainsKey(node))
-                return AstNodeFactory.Lookup[node];
-            return null;
-        }
+            => node.Location is CstLocation loc ? loc.Node : null;
 
         public ParserTreeNode GetParserTreeNode(AstNode node)
         {

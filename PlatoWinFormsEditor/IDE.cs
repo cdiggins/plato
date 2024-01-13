@@ -57,7 +57,7 @@ public class IDE
 
     public IDE(TabControl tabControl, RichTextBox outputTextBox, [CallerFilePath]string filePath = null)
     {
-        Compiler = new Compiler(new CstNodeFactory(), new AstNodeFactory(), Logger);
+        Compiler = new Compiler(new CstNodeFactory(), Logger);
 
         TabControl = tabControl;
         OutputTextBox = outputTextBox;

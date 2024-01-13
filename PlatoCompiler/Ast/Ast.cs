@@ -6,53 +6,66 @@ namespace Plato.Compiler.Ast
 {
     public abstract class AstNode
     {
+        public ILocation Location { get; }
         public virtual IEnumerable<AstNode> Children => Enumerable.Empty<AstNode>();
         public override string ToString() => $"({GetType().Name})";
+        protected AstNode(ILocation location) => Location = location ?? NoLocation;
+        public static ILocation NoLocation = new Location();
     }
 
     public class AstLeaf : AstNode
     {
         public string Text { get; }
-        public AstLeaf(string text = "") => Text = text;
+        public AstLeaf(ILocation location, string text = "") : base(location) => Text = text;
         public override string ToString() => $"({GetType().Name}={Text})";
     }
 
     public class AstIdentifier : AstLeaf
     {
-        public AstIdentifier(string text) : base(text) { }
+        public AstIdentifier(ILocation location, string text) : base(location, text) { }
     }
 
     public class AstParenthesized : AstNode
     {
         public AstNode Inner;
-        public AstParenthesized(AstNode inner) => Inner = inner;
+        public AstParenthesized(ILocation location, AstNode inner) : base(location) => Inner = inner;
         public override string ToString() => $"({Inner})";
     }
 
     public class AstNoop : AstLeaf
     {
+        public AstNoop() : base(NoLocation) {}
         public static AstNoop Default { get; } = new AstNoop();
     }
 
     public abstract class AstReducible : AstNode
     {
+        protected AstReducible(ILocation location) : base(location)
+        { }
     }
 
     public class AstBreak : AstReducible
     {
-        public static AstBreak Default { get; } = new AstBreak();
+        public static AstBreak Default { get; } = new AstBreak(NoLocation);
+
+        public AstBreak(ILocation location) : base(location)
+        {
+        }
     }
 
     public class AstContinue : AstReducible
     {
-        public static AstContinue Default { get; } = new AstContinue();
+        public static AstContinue Default { get; } = new AstContinue(NoLocation);
+
+        public AstContinue(ILocation location) : base(location)
+        {
+        }
     }
 
     public class AstReturn : AstReducible
     {
         public AstNode Value { get; }
-
-        public AstReturn(AstNode value) => Value = value;
+        public AstReturn(ILocation location, AstNode value) : base(location) => Value = value;
         public override IEnumerable<AstNode> Children => base.Children.Append(Value);
     }
 
@@ -69,21 +82,20 @@ namespace Plato.Compiler.Ast
         public object Value { get; }
         public LiteralTypesEnum TypeEnum { get; }
 
-        public AstConstant(LiteralTypesEnum typeEnum, object value)
-            => (TypeEnum, Value) = (typeEnum, value);
+        public AstConstant(ILocation location, LiteralTypesEnum typeEnum, object value) : base(location) => (TypeEnum, Value) = (typeEnum, value);
 
         public static AstConstant Create(object value)
         {
             if (value is string s)
-                return new AstConstant(LiteralTypesEnum.String, s);
+                return new AstConstant(NoLocation, LiteralTypesEnum.String, s);
             if (value is bool b)
-                return new AstConstant(LiteralTypesEnum.Boolean, b);
+                return new AstConstant(NoLocation, LiteralTypesEnum.Boolean, b);
             if (value is double d)
-                return new AstConstant(LiteralTypesEnum.Number, d);
+                return new AstConstant(NoLocation, LiteralTypesEnum.Number, d);
             if (value is float f)
-                return new AstConstant(LiteralTypesEnum.Number, f);
+                return new AstConstant(NoLocation, LiteralTypesEnum.Number, f);
             if (value is int n)
-                return new AstConstant(LiteralTypesEnum.Integer, n);
+                return new AstConstant(NoLocation, LiteralTypesEnum.Integer, n);
             throw new Exception($"Not a recognized constant type {value}");
         }
 
@@ -97,21 +109,21 @@ namespace Plato.Compiler.Ast
     {
         public IReadOnlyList<AstParameterDeclaration> Parameters { get; }
         public AstNode Body { get; }
-        public AstLambda(AstNode body, params AstParameterDeclaration[] parameters) => (Parameters, Body) = (parameters, body);
+        public AstLambda(ILocation location, AstNode body, params AstParameterDeclaration[] parameters) : base(location) => (Parameters, Body) = (parameters, body);
         public override IEnumerable<AstNode> Children => base.Children.Concat(Parameters).Append(Body);
     }
 
     public class AstMulti : AstNode
     {
         public IReadOnlyList<AstNode> Nodes { get; }
-        public AstMulti(params AstNode[] nodes) => Nodes = nodes;
+        public AstMulti(ILocation location, params AstNode[] nodes) : base(location) => Nodes = nodes;
         public override IEnumerable<AstNode> Children => base.Children.Concat(Nodes);
     }
 
     public class AstBlock : AstNode
     {
         public IReadOnlyList<AstNode> Statements { get; }
-        public AstBlock(params AstNode[] statements) => Statements = statements;
+        public AstBlock(ILocation location, params AstNode[] statements) : base(location) => Statements = statements;
         public override IEnumerable<AstNode> Children => Statements;
     }
 
@@ -119,7 +131,7 @@ namespace Plato.Compiler.Ast
     {
         public AstNode Condition { get; }
         public AstNode Body { get; }
-        public AstLoop(AstNode condition, AstNode body) => (Condition, Body) = (condition, body);
+        public AstLoop(ILocation location, AstNode condition, AstNode body) : base(location) => (Condition, Body) = (condition, body);
         public override IEnumerable<AstNode> Children => base.Children.Append(Condition).Append(Body);
     }
 
@@ -128,7 +140,7 @@ namespace Plato.Compiler.Ast
         public AstNode Condition { get; }
         public AstNode IfTrue { get; }
         public AstNode IfFalse { get; }
-        public AstConditional(AstNode condition, AstNode ifTrue, AstNode ifFalse) => (Condition, IfTrue, IfFalse) = (condition, ifTrue, ifFalse);
+        public AstConditional(ILocation location, AstNode condition, AstNode ifTrue, AstNode ifFalse) : base(location) => (Condition, IfTrue, IfFalse) = (condition, ifTrue, ifFalse);
         public override IEnumerable<AstNode> Children => base.Children.Append(Condition).Append(IfTrue).Append(IfFalse);
         public override string ToString() => $"({Condition} ? {IfTrue} : {IfFalse})";
     }
@@ -138,7 +150,7 @@ namespace Plato.Compiler.Ast
         public string Name { get; }
         public AstNode Value { get; }
         public AstTypeNode Type { get; }
-        public AstVarDef(string name, AstNode value, AstTypeNode type) => (Name, Value, Type) = (name, value, type);
+        public AstVarDef(ILocation location, string name, AstNode value, AstTypeNode type) : base(location) => (Name, Value, Type) = (name, value, type);
         public override IEnumerable<AstNode> Children => base.Children.Append(Value).Append(Type);
     }
 
@@ -146,7 +158,7 @@ namespace Plato.Compiler.Ast
     {
         public string Var { get; }
         public AstNode Value { get; }
-        public AstAssign(string var, AstNode value) => (Var, Value) = (var, value);
+        public AstAssign(ILocation location, string var, AstNode value) : base(location) => (Var, Value) = (var, value);
         public override IEnumerable<AstNode> Children => new[] { Value };
     }
 
@@ -154,7 +166,7 @@ namespace Plato.Compiler.Ast
     {
         public AstNode Function { get; }
         public IReadOnlyList<AstNode> Arguments { get; }
-        public AstInvoke(AstNode function, params AstNode[] arguments) => (Function, Arguments) = (function, arguments);
+        public AstInvoke(ILocation location, AstNode function, params AstNode[] arguments) : base(location) => (Function, Arguments) = (function, arguments);
         public override IEnumerable<AstNode> Children => new[] { Function };
         public override string ToString() => $"{Function}({string.Join(",", Arguments)})";
     }
@@ -163,7 +175,7 @@ namespace Plato.Compiler.Ast
     {
         public string Name { get; }
         public IReadOnlyList<AstTypeNode> TypeArguments { get; }
-        public AstTypeNode(string name, params AstTypeNode[] args) => (Name, TypeArguments) = (name, args);
+        public AstTypeNode(ILocation location, string name, params AstTypeNode[] args) : base(location) => (Name, TypeArguments) = (name, args);
         public override IEnumerable<AstNode> Children => TypeArguments;
         public override string ToString() => $"({GetType().Name} {Name}<{string.Join(",", TypeArguments)}>)";
     }
@@ -171,14 +183,14 @@ namespace Plato.Compiler.Ast
     public abstract class AstDeclaration : AstNode
     {
         public string Name { get; }
-        protected AstDeclaration(string name) => Name = name;
+        protected AstDeclaration(ILocation location, string name) : base(location) => Name = name;
         public override string ToString() => $"({GetType().Name} {Name})";
     }
 
     public abstract class AstMemberDeclaration : AstDeclaration
     {
         public AstTypeNode Type { get; }
-        protected AstMemberDeclaration(string name, AstTypeNode type) : base(name) => Type = type;
+        protected AstMemberDeclaration(ILocation location, string name, AstTypeNode type) : base(location, name) => Type = type;
         public override IEnumerable<AstNode> Children => base.Children.Append(Type);
     }
 
@@ -186,21 +198,21 @@ namespace Plato.Compiler.Ast
     {
         public IReadOnlyList<AstTypeDeclaration> Types { get; }
         public override IEnumerable<AstNode> Children => Types;
-        public AstNamespace(string name, IEnumerable<AstTypeDeclaration> types) : base(name)
+        public AstNamespace(ILocation location, string name, IEnumerable<AstTypeDeclaration> types) : base(location, name)
             => Types = types.ToListOrEmpty();
     }
 
     public class AstFieldDeclaration : AstMemberDeclaration
     {
         public AstNode Node { get; }
-        public AstFieldDeclaration(string name, AstTypeNode type, AstNode node) : base(name, type) => Node = node;
+        public AstFieldDeclaration(ILocation location, string name, AstTypeNode type, AstNode node) : base(location, name, type) => Node = node;
         public override IEnumerable<AstNode> Children => base.Children.Append(Node);
     }
 
     public class AstParameterDeclaration : AstDeclaration
     {
         public AstTypeNode Type { get; }
-        public AstParameterDeclaration(string name, AstTypeNode type) : base(name) => Type = type;
+        public AstParameterDeclaration(ILocation location, string name, AstTypeNode type) : base(location, name) => Type = type;
         public override IEnumerable<AstNode> Children => base.Children.Append(Type);
     }
 
@@ -209,11 +221,11 @@ namespace Plato.Compiler.Ast
         public AstNode Body { get; }
         public IReadOnlyList<AstParameterDeclaration> Parameters { get; }
 
-        public AstMethodDeclaration(string name,
+        public AstMethodDeclaration(ILocation location, string name,
             AstTypeNode type,
             IEnumerable<AstParameterDeclaration> parameters,
             AstNode body) :
-            base(name, type)
+            base(location, name, type)
         {
             Body = body;
             Parameters = parameters.ToList();
@@ -226,22 +238,22 @@ namespace Plato.Compiler.Ast
     public class AstExpressionStatement : AstNode
     {
         public AstNode Expression { get; }
-        public AstExpressionStatement(AstNode expression) => Expression = expression;
+        public AstExpressionStatement(ILocation location, AstNode expression) : base(location) => Expression = expression;
         public override IEnumerable<AstNode> Children => base.Children.Append(Expression);
     }
 
     public class AstTypeParameter : AstDeclaration
     {
-        public AstTypeParameter(string name)
-            : base(name)
+        public AstTypeParameter(ILocation location, string name)
+            : base(location, name)
         { }
     }
 
     public class AstConstraint : AstDeclaration
     {
         public AstTypeNode Constraint { get; }
-        public AstConstraint(string name, AstTypeNode type)
-            : base(name)
+        public AstConstraint(ILocation location, string name, AstTypeNode type)
+            : base(location, name)
             => Constraint = type;
     }
 
@@ -263,14 +275,16 @@ namespace Plato.Compiler.Ast
         public IReadOnlyList<AstMemberDeclaration> Members { get; }
         public IReadOnlyList<AstConstraint> Constraints { get; }
 
-        public AstTypeDeclaration(TypeKind kind, 
+        public AstTypeDeclaration(
+            ILocation location,
+            TypeKind kind, 
             string name, 
             IEnumerable<AstTypeParameter> typeParameters,
             IEnumerable<AstTypeNode> inherits, 
             IEnumerable<AstTypeNode> implements, 
             IEnumerable<AstConstraint> constraints, 
             params AstMemberDeclaration[] members)
-            : base(name)
+            : base(location, name)
         {
             Kind = kind;
             TypeParameters = typeParameters.ToList();
