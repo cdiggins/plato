@@ -54,5 +54,8 @@ namespace Plato.Compiler.Analysis
 
         public FunctionInstance AnalyzeConceptFunction(FunctionDefinition function)
             => new FunctionInstance(ConcreteType, function, Substitutions);
+
+        public IEnumerable<FunctionInstance> AllFunctions()
+            => Functions.Concat(Inherited.SelectMany(i => i.AllFunctions()));
     }
 }

@@ -80,7 +80,7 @@ namespace Plato.Compiler
                     .ToDictionaryOfLists(rf => rf.Name);
 
                 Libraries = new LibrarySet(this);
-                TypeAnalyses = GetConcreteTypes()
+                ConcreteTypes = GetConcreteTypes()
                     .Select(c => new ConcreteType(c, Libraries))
                     .ToList();
 
@@ -186,7 +186,7 @@ namespace Plato.Compiler
         public List<VisualSyntaxGraph> Graphs { get; } = new List<VisualSyntaxGraph>();
 
         public LibrarySet Libraries { get; }
-        public IReadOnlyList<ConcreteType> TypeAnalyses { get; }
+        public IReadOnlyList<ConcreteType> ConcreteTypes { get; }
 
         public FunctionAnalysis GetOrComputeFunctionAnalysis(FunctionDefinition fd)
         {

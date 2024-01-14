@@ -39,6 +39,19 @@ namespace Plato.Compiler.Analysis
             return Previous != null ? s + Previous : s;
         }
 
+        // TODO: Self replacement, and $ replacement and other stuff.
+
+        public TypeExpression Replace(TypeExpression expr)
+        {
+            if (expr.Definition is TypeParameterDefinition tpd)
+                return tpd.Equals(Parameter) 
+                    ? Replacement 
+                    : Previous != null 
+                        ? Previous.Replace(expr) 
+                        : expr;
+            return expr;
+        }
+
         public TypeSubstitutions(TypeParameterDefinition parameter = null, TypeExpression replace = null, TypeSubstitutions subs = null)
         {
             Parameter = parameter;

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Ara3D.Utils;
+using Plato.AST;
 using Plato.Compiler.Analysis;
 using Plato.Compiler.Symbols;
 using Plato.Compiler.Types;
@@ -71,7 +72,7 @@ namespace Plato.CSharpWriter
         public void WriteAnalyses()
         {
             StartNewFile(OutputFolder.RelativeFile("analysis.txt"));
-            foreach (var ta in Compiler.TypeAnalyses)
+            foreach (var ta in Compiler.ConcreteTypes)
             {
                 WriteLine($"Type analysis for {ta.Type.Name}");
                 foreach (var ci in ta.Concepts)
@@ -119,9 +120,79 @@ namespace Plato.CSharpWriter
             }
         }
 
-        public SymbolWriterCSharp WriteLibraryMethod(FunctionDefinition fd)
+        public SymbolWriterCSharp WriteFunction(FunctionInstance f, ConcreteType t)
         {
-            return Write("// ").Write(" ").WriteSignature(fd, true, true);
+            var ret = f.GetTypeString(f.ReturnType);
+
+            var argList = f
+                .Parameters.Skip(1)
+                .Select(p => $"{p.Name}")
+                .JoinStringsWithComma();
+
+            var firstName = f.Parameters.Count > 0 ? f.Parameters[0].Name : "";
+
+            var paramList = f
+                .Parameters.Skip(1)
+                .Select(p => $"{f.GetTypeString(p.Type)} {p.Name}")
+                .JoinStringsWithComma();
+
+            var staticParamList = f
+                .Parameters
+                .Select(p => $"{f.GetTypeString(p.Type)} {p.Name}")
+                .JoinStringsWithComma();
+
+            var paramTypeList = f
+                .Parameters.Skip(1)
+                .Select(p => $"{f.GetTypeString(p.Type)}")
+                .JoinStringsWithComma();
+
+            var sig = $"{f.Name}({paramTypeList}):{ret}";
+            
+            if (paramList.Length > 0)
+            {
+                WriteLine($"public {ret} {f.Name}({paramList}) => throw new NotImplementedException();");
+            }
+            else
+            {
+                WriteLine($"public {ret} {f.Name} => throw new NotImplementedException();");
+            }
+
+            if (f.Parameters.Count == 2)
+            {
+                var op = OperatorNameLookup.NameToBinaryOperator(f.Name);
+
+                // NOTE: this is because in C#, the "||" and "&&" operators cannot be overridden.
+                if (op == "||") op = "|";
+                if (op == "&&") op = "&";
+
+                if (op != null)
+                {
+                    if (op != "[]")
+                    {
+                        WriteLine(
+                            $"public static {ret} operator {op}({staticParamList}) => {firstName}.{f.Name}({argList});");
+                    }
+                    else
+                    {
+                        var index = f.Parameters[1];
+                        Write($"public ")
+                            .Write(ret)
+                            .Write(" this[")
+                            .Write(index)
+                            .Write($"] => {f.Name}({index.Name});")
+                            .WriteLine();
+                    }
+                }
+            }
+
+            if (f.Parameters.Count == 1)
+            {
+                var op = OperatorNameLookup.NameToUnaryOperator(f.Name);
+                if (op != null)
+                    WriteLine($"public static {ret} operator {op}({staticParamList}) => {firstName}.{f.Name};");
+            }
+
+            return this;
         }
 
         public SymbolWriterCSharp WriteLibraryMethodsOnTypes()
@@ -129,30 +200,19 @@ namespace Plato.CSharpWriter
             StartNewFile(OutputFolder.RelativeFile("Library.cs"));
             WriteLine("using System;");
 
-            var allMethods = Compiler.AllTypeAndLibraryDefinitions.Where(c => c.IsLibrary()).SelectMany(t => t.Methods.Select(m => m.Function));
-            var groups = allMethods.GroupBy(f => f.Parameters.FirstOrDefault()?.Type.Definition);
-            var lookup = groups.Where(g => g.Key != null).ToDictionary(g => g.Key.Name, g => g.ToList());
-
-            foreach (var t in Compiler.AllTypeAndLibraryDefinitions)
+            foreach (var t in Compiler.ConcreteTypes)
             {
-                if (!t.IsConcrete())
-                    continue;
-
-                WriteLine($"public partial class {t.Name}");
+                WriteLine($"public partial class {t.Type.Name}");
                 WriteStartBlock();
-                if (lookup.ContainsKey(t.Name))
+
+                foreach (var f in t.ConcreteFunctions)
                 {
-                    foreach (var f in lookup[t.Name])
-                        WriteLibraryMethod(f);
+                    WriteFunction(f, t);
                 }
 
-                foreach (var c in t.GetAllImplementedConcepts())
+                foreach (var f in t.GetConceptFunctions())
                 {
-                    if (lookup.ContainsKey(c.Name))
-                    {
-                        foreach (var f in lookup[c.Name])
-                            WriteLibraryMethod(f);
-                    }
+                    WriteFunction(f, t);
                 }
 
                 WriteEndBlock();
@@ -258,98 +318,6 @@ namespace Plato.CSharpWriter
                 ? $"_{fieldName}" 
                 : fieldName.DecapitalizeFirst();
         
-        public static IEnumerable<FunctionInstance> CreateFunctions(TypeDefinition t)
-        {
-            /*
-            var concepts = t.GetAllImplementedConcepts();
-            foreach (var sub in concepts)
-            {
-                var c = sub.Type.Definition;
-                foreach (var m in c.Methods)
-                {
-                    var f = m.Function;
-
-                    // TODO: this needs to become a function.
-                    // Similarly, we need to 
-
-                    var ret = GetTypeName(f.Type, sub);
-
-                    var argList = f
-                        .Parameters.Skip(1)
-                        .Select(p => $"{p.Name}")
-                        .JoinStringsWithComma();
-
-                    var firstName = f.Parameters.Count > 0 ? f.Parameters[0].Name : "";
-
-                    var paramList = f
-                        .Parameters.Skip(1)
-                        .Select(p => $"{GetTypeName(p.Type, sub)} {p.Name}")
-                        .JoinStringsWithComma();
-
-                    var staticParamList = f
-                        .Parameters
-                        .Select(p => $"{GetTypeName(p.Type, sub)} {p.Name}")
-                        .JoinStringsWithComma();
-
-                    var paramTypeList = f
-                        .Parameters.Skip(1)
-                        .Select(p => $"{GetTypeName(p.Type, sub)}")
-                        .JoinStringsWithComma();
-
-                    var sig = $"{f.Name}({paramTypeList}):{ret}";
-                    if (funcs.Contains(sig))
-                        continue;
-                    funcs.Add(sig);
-
-                    if (paramList.Length > 0)
-                    {
-                        WriteLine($"public {ret} {f.Name}({paramList}) => throw new NotImplementedException();");
-                    }
-                    else
-                    {
-                        WriteLine($"public {ret} {f.Name} => throw new NotImplementedException();");
-                    }
-
-                    if (f.Parameters.Count == 2)
-                    {
-                        var op = OperatorNameLookup.NameToBinaryOperator(f.Name);
-
-                        // NOTE: this is because in C#, the "||" and "&&" operators cannot be overridden.
-                        if (op == "||") op = "|";
-                        if (op == "&&") op = "&";
-
-                        if (op != null)
-                        {
-                            if (op != "[]")
-                            {
-                                WriteLine(
-                                    $"public static {ret} operator {op}({staticParamList}) => {firstName}.{f.Name}({argList});");
-                            }
-                            else
-                            {
-                                var index = f.Parameters[1];
-                                Write($"public ")
-                                    .Write(ret)
-                                    .Write(" this[")
-                                    .Write(index)
-                                    .Write($"] => {f.Name}({index.Name});")
-                                    .WriteLine();
-                            }
-                        }
-                    }
-
-                    if (f.Parameters.Count == 1)
-                    {
-                        var op = OperatorNameLookup.NameToUnaryOperator(f.Name);
-                        if (op != null)
-                            WriteLine($"public static {ret} operator {op}({staticParamList}) => {firstName}.{f.Name};");
-                    }
-                }
-            }
-            */
-            throw new NotImplementedException();
-        }
-
         public SymbolWriterCSharp WriteTypeImplementation(TypeDefinition t)
         {
             Debug.Assert(t.IsConcrete());

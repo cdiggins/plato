@@ -33,5 +33,8 @@ namespace Plato.Compiler.Analysis
 
         public FunctionInstance AnalyzeConcreteFunction(FunctionDefinition function)
             => new FunctionInstance(Type, function, new TypeSubstitutions());
+
+        public IEnumerable<FunctionInstance> GetConceptFunctions()
+            => Concepts.SelectMany(c => c.AllFunctions());
     }
 }
