@@ -71,9 +71,9 @@ namespace Plato.CSharpWriter
         public void WriteAnalyses()
         {
             StartNewFile(OutputFolder.RelativeFile("analysis.txt"));
-            foreach (var ta in TypeAnalyses)
+            foreach (var ta in Compiler.TypeAnalyses)
             {
-                WriteLine($"Type analysis for {ta.ConcreteType.Name}");
+                WriteLine($"Type analysis for {ta.Type.Name}");
                 foreach (var ci in ta.Concepts)
                 {
                     WriteConceptImplementation(ci);

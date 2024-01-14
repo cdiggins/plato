@@ -57,8 +57,6 @@ public class IDE
 
     public IDE(TabControl tabControl, RichTextBox outputTextBox, [CallerFilePath]string filePath = null)
     {
-        Compiler = new Compiler(Logger);
-
         TabControl = tabControl;
         OutputTextBox = outputTextBox;
 
@@ -103,7 +101,7 @@ public class IDE
                 return;
             }
         }
-        Compiler.Compile(trees);
+        Compiler = new Compiler(Logger, trees);
 
         OutputTextBox.Lines = Logger.Messages.ToArray();
         var logFile = Path.Combine(inputFolder, "log.txt");
