@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,54 +12,18 @@ using Plato.Compiler.Symbols;
 using Plato.Compiler.Types;
 using Plato.Compiler.Vsg;
 using Plato.Parser;
+using Plato.Compiler.Analysis;
 
 namespace Plato.Compiler
 {
     public class Compiler
     {
-        public Compiler(ILogger logger)
+        public Compiler(ILogger logger, IEnumerable<AstNode> trees)
         {
             Logger = logger;
+
             Log("Creating compiler");
-        }
-
-        public bool DisplayWarnings = false;
-        public ILogger Logger { get; }
-        public bool CompletedCompilation { get; set; }
-        public bool ParsingSuccess { get; set; }
-        public IReadOnlyList<AstNode> Trees { get; set; }
-        public SymbolFactory SymbolFactory { get; set; }
-        public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; set; }
-        public IDictionary<FunctionDefinition, FunctionAnalysis> FunctionAnalyses { get; } = new Dictionary<FunctionDefinition, FunctionAnalysis>();
-
-        public IEnumerable<TypeDefinition> AllTypeAndLibraryDefinitions => TypeDefinitions
-            .Concat(LibraryDefinitionsByName.Values);
-
-        public Dictionary<string, TypeDefinition> TypeDefinitionsByName { get; } = new Dictionary<string, TypeDefinition>();
-        public Dictionary<string, TypeDefinition> LibraryDefinitionsByName { get; } = new Dictionary<string, TypeDefinition>();
-        public IReadOnlyList<FunctionDefinition> FunctionDefinitions { get; set; }
-        public IEnumerable<TypeDefinition> TypeDefinitions => TypeDefinitionsByName.Values;
-
-        public Dictionary<Expression, IType> ExpressionTypes { get; } = new Dictionary<Expression, IType>();
-        public Dictionary<string, ReifiedType> ReifiedTypes { get; set; }
-        public Dictionary<string, List<ReifiedFunction>> ReifiedFunctionsByName { get; set; }
-
-        public Dictionary<FunctionCall, FunctionGroupCallResolution> FunctionGroupCalls { get; } =
-            new Dictionary<FunctionCall, FunctionGroupCallResolution>();
-
-        public List<string> SemanticErrors { get; } = new List<string>();
-        public List<string> SemanticWarnings { get; } = new List<string>();
-        public List<string> InternalErrors { get; } = new List<string>();
-
-        public List<VisualSyntaxGraph> Graphs { get; } = new List<VisualSyntaxGraph>();
-
-        public void Compile(IEnumerable<AstNode> trees) 
-        {
-            Log("Initializing Compiler");
             CompletedCompilation = false;
-            SemanticErrors.Clear();
-            SemanticWarnings.Clear();
-            InternalErrors.Clear();
             Trees = trees.ToList();
 
             Log("Gathering type declarations");
@@ -116,9 +81,14 @@ namespace Plato.Compiler
                 ReifiedFunctionsByName = ReifiedTypes.Values.SelectMany(rt => rt.Functions)
                     .ToDictionaryOfLists(rf => rf.Name);
 
+                Libraries = new LibrarySet(this);
+                TypeAnalyses = GetConcreteTypes()
+                    .Select(c => new ConcreteType(c, Libraries))
+                    .ToList();
+
                 //Log("Reified types");
                 //WriteReifiedTypes();
-                
+
                 /*
                 Log("Creating function analysis");
                 var sb = new StringBuilder();
@@ -187,6 +157,38 @@ namespace Plato.Compiler
                 Log("Exception caught: " + e.Message);
             }
         }
+
+        public bool DisplayWarnings = false;
+        public ILogger Logger { get; }
+        public bool CompletedCompilation { get; }
+        public IReadOnlyList<AstNode> Trees { get; }
+        public SymbolFactory SymbolFactory { get; }
+        public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; }
+        public IDictionary<FunctionDefinition, FunctionAnalysis> FunctionAnalyses { get; } = new Dictionary<FunctionDefinition, FunctionAnalysis>();
+
+        public IEnumerable<TypeDefinition> AllTypeAndLibraryDefinitions => TypeDefinitions
+            .Concat(LibraryDefinitionsByName.Values);
+
+        public Dictionary<string, TypeDefinition> TypeDefinitionsByName { get; } = new Dictionary<string, TypeDefinition>();
+        public Dictionary<string, TypeDefinition> LibraryDefinitionsByName { get; } = new Dictionary<string, TypeDefinition>();
+        public IReadOnlyList<FunctionDefinition> FunctionDefinitions { get; }
+        public IEnumerable<TypeDefinition> TypeDefinitions => TypeDefinitionsByName.Values;
+
+        public Dictionary<Expression, IType> ExpressionTypes { get; } = new Dictionary<Expression, IType>();
+        public Dictionary<string, ReifiedType> ReifiedTypes { get; }
+        public Dictionary<string, List<ReifiedFunction>> ReifiedFunctionsByName { get; }
+
+        public Dictionary<FunctionCall, FunctionGroupCallResolution> FunctionGroupCalls { get; } =
+            new Dictionary<FunctionCall, FunctionGroupCallResolution>();
+
+        public List<string> SemanticErrors { get; } = new List<string>();
+        public List<string> SemanticWarnings { get; } = new List<string>();
+        public List<string> InternalErrors { get; } = new List<string>();
+
+        public List<VisualSyntaxGraph> Graphs { get; } = new List<VisualSyntaxGraph>();
+
+        public LibrarySet Libraries { get; }
+        public IReadOnlyList<ConcreteType> TypeAnalyses { get; }
 
         public FunctionAnalysis GetOrComputeFunctionAnalysis(FunctionDefinition fd)
         {
@@ -279,7 +281,6 @@ namespace Plato.Compiler
         public void Log(string message)
             => Logger.Log(message);
         
-
         public static ParserTreeNode GetParserTreeNode(AstNode node)
             => !(node.Location is CstNode cstNode) 
                 ? null : GetParserTreeNode(cstNode);
@@ -452,6 +453,11 @@ namespace Plato.Compiler
             var outputFille = Path.Combine(Path.GetTempPath(), "FunctionCallAnalysis.txt");
             File.WriteAllText(outputFille, sb.ToString()); 
         }
-    }
 
+        public IEnumerable<TypeDefinition> GetConcreteTypes()
+            => AllTypeAndLibraryDefinitions.Where(t => t.IsConcrete());
+
+        public IEnumerable<TypeDefinition> GetConcepts()
+            => AllTypeAndLibraryDefinitions.Where(t => t.IsConcept());
+    }
 }

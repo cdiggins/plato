@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using Ara3D.Utils;
+using Plato.Compiler.Analysis;
 using Plato.Compiler.Symbols;
 using Plato.Compiler.Types;
 
@@ -13,9 +13,7 @@ namespace Plato.CSharpWriter
     public class SymbolWriterCSharp : CodeBuilder<SymbolWriterCSharp>
     {
         public Compiler.Compiler Compiler { get; }
-        public LibraryAnalysis Libraries { get; }
-        public IReadOnlyList<ConcreteTypeAnalysis> TypeAnalyses { get; }
-
+        
         public Dictionary<string, StringBuilder> Files { get; } = new Dictionary<string, StringBuilder>();
 
         public DirectoryPath OutputFolder { get; }
@@ -44,8 +42,47 @@ namespace Plato.CSharpWriter
         {
             Compiler = compiler;
             OutputFolder = outputFolder;
-            Libraries = new LibraryAnalysis(compiler);
-            
+        }
+
+        public SymbolWriterCSharp WriteAll()
+        {
+            WriteConceptInterfaces();
+            WriteTypeImplementations();
+            WriteLibraryMethodsOnTypes();
+            WriteAnalyses();
+            return this;
+        }
+
+        public void WriteAnalysis(FunctionInstance fa, string indent = "  ")
+        {
+            var parameters = fa.Implementation.Parameters.Select(p => $"{p.Type} {p.Name}").JoinStringsWithComma();
+            WriteLine($"{indent}Function: {fa.Implementation.Name}({parameters})");
+        }
+
+        public void WriteConceptImplementation(ConceptImplementation ci, string indent = "  ")
+        {
+            WriteLine($"{indent}Concept={ci.Concept.Name} Expr={ci.Expression} Subs={ci.Substitutions}");
+            foreach (var fa in ci.Functions)
+                WriteAnalysis(fa, indent);
+            foreach (var ci2 in ci.Inherited)
+                WriteConceptImplementation(ci2, indent + "  ");
+        }
+
+        public void WriteAnalyses()
+        {
+            StartNewFile(OutputFolder.RelativeFile("analysis.txt"));
+            foreach (var ta in TypeAnalyses)
+            {
+                WriteLine($"Type analysis for {ta.ConcreteType.Name}");
+                foreach (var ci in ta.Concepts)
+                {
+                    WriteConceptImplementation(ci);
+                }
+                foreach (var fa in ta.ConcreteFunctions)
+                {
+                    WriteAnalysis(fa);
+                }
+            }
         }
 
         public void StartNewFile(string fileName)
@@ -80,16 +117,6 @@ namespace Plato.CSharpWriter
                 default:
                     throw new ArgumentOutOfRangeException(nameof(symbol));
             }
-        }
-
-        public SymbolWriterCSharp WriteAll()
-        {
-            WriteConceptInterfaces();
-            //WriteConceptExtensions();
-            WriteTypeImplementations();
-            //WriteLibraries();
-            WriteLibraryMethodsOnTypes();
-            return this;
         }
 
         public SymbolWriterCSharp WriteLibraryMethod(FunctionDefinition fd)
@@ -156,14 +183,13 @@ namespace Plato.CSharpWriter
         public static string JoinTypeParameters(IEnumerable<string> parameters)
         {
             var r = parameters.JoinStrings(", ");
-            if (r.Length == 0)
-                return r;
-            return $"<{r}>";
+            return r.Length == 0 ? r : $"<{r}>";
         }
 
-        // TODO: finish
         public string TypeStr(TypeExpression type)
-        { return type.Name; }
+        {
+            return type.Name + JoinTypeParameters(type.TypeArgs.Select(TypeStr));
+        }
 
         public string TypeAsInherited(TypeExpression type)
         {
@@ -232,7 +258,7 @@ namespace Plato.CSharpWriter
                 ? $"_{fieldName}" 
                 : fieldName.DecapitalizeFirst();
         
-        public static IEnumerable<FunctionAnalysis> CreateFunctions(TypeDefinition t)
+        public static IEnumerable<FunctionInstance> CreateFunctions(TypeDefinition t)
         {
             /*
             var concepts = t.GetAllImplementedConcepts();

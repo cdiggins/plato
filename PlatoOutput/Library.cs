@@ -239,7 +239,7 @@ public partial class Rotation3D
 }
 public partial class Vector2D
 {
-    //  $T  Aggregate(Function2 f);
+    //  $T  Aggregate(Function2<Number, $T, $T> f);
     //  Number  Sum { get; }
     //  Number  SumSquares { get; }
     //  Number  MagnitudeSquared { get; }
@@ -281,7 +281,7 @@ public partial class Vector2D
 }
 public partial class Vector3D
 {
-    //  $T  Aggregate(Function2 f);
+    //  $T  Aggregate(Function2<Number, $T, $T> f);
     //  Number  Sum { get; }
     //  Number  SumSquares { get; }
     //  Number  MagnitudeSquared { get; }
@@ -323,7 +323,7 @@ public partial class Vector3D
 }
 public partial class Vector4D
 {
-    //  $T  Aggregate(Function2 f);
+    //  $T  Aggregate(Function2<Number, $T, $T> f);
     //  Number  Sum { get; }
     //  Number  SumSquares { get; }
     //  Number  MagnitudeSquared { get; }
@@ -388,21 +388,21 @@ public partial class AlignedBox2D
     //  Boolean  IsEmpty { get; }
     //  $Value  Lerp(Number amount);
     //  Number  Unlerp($Value value);
-    //  Interval  Negate { get; }
-    //  Interval  Reverse { get; }
+    //  Interval<$Value, $Size>  Negate { get; }
+    //  Interval<$Value, $Size>  Reverse { get; }
     //  $Value  Center { get; }
     //  Boolean  Contains($Value value);
-    //  Boolean  Contains(Interval other);
-    //  Boolean  Overlaps(Interval y);
-    //  Tuple2  Split(Number t);
-    //  Tuple2  Split { get; }
-    //  Interval  Left(Number t);
-    //  Interval  Right(Number t);
-    //  Interval  MoveTo($Value v);
-    //  Interval  LeftHalf { get; }
-    //  Interval  RightHalf { get; }
-    //  Interval  Recenter($Value c);
-    //  Interval  Clamp(Interval y);
+    //  Boolean  Contains(Interval<$Value, $Size> other);
+    //  Boolean  Overlaps(Interval<$Value, $Size> y);
+    //  Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>>  Split(Number t);
+    //  Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>>  Split { get; }
+    //  Interval<$Value, $Size>  Left(Number t);
+    //  Interval<$Value, $Size>  Right(Number t);
+    //  Interval<$Value, $Size>  MoveTo($Value v);
+    //  Interval<$Value, $Size>  LeftHalf { get; }
+    //  Interval<$Value, $Size>  RightHalf { get; }
+    //  Interval<$Value, $Size>  Recenter($Value c);
+    //  Interval<$Value, $Size>  Clamp(Interval<$Value, $Size> y);
     //  $Value  Clamp($Value value);
     //  Boolean  Within($Value value);
 }
@@ -411,27 +411,27 @@ public partial class AlignedBox3D
     //  Boolean  IsEmpty { get; }
     //  $Value  Lerp(Number amount);
     //  Number  Unlerp($Value value);
-    //  Interval  Negate { get; }
-    //  Interval  Reverse { get; }
+    //  Interval<$Value, $Size>  Negate { get; }
+    //  Interval<$Value, $Size>  Reverse { get; }
     //  $Value  Center { get; }
     //  Boolean  Contains($Value value);
-    //  Boolean  Contains(Interval other);
-    //  Boolean  Overlaps(Interval y);
-    //  Tuple2  Split(Number t);
-    //  Tuple2  Split { get; }
-    //  Interval  Left(Number t);
-    //  Interval  Right(Number t);
-    //  Interval  MoveTo($Value v);
-    //  Interval  LeftHalf { get; }
-    //  Interval  RightHalf { get; }
-    //  Interval  Recenter($Value c);
-    //  Interval  Clamp(Interval y);
+    //  Boolean  Contains(Interval<$Value, $Size> other);
+    //  Boolean  Overlaps(Interval<$Value, $Size> y);
+    //  Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>>  Split(Number t);
+    //  Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>>  Split { get; }
+    //  Interval<$Value, $Size>  Left(Number t);
+    //  Interval<$Value, $Size>  Right(Number t);
+    //  Interval<$Value, $Size>  MoveTo($Value v);
+    //  Interval<$Value, $Size>  LeftHalf { get; }
+    //  Interval<$Value, $Size>  RightHalf { get; }
+    //  Interval<$Value, $Size>  Recenter($Value c);
+    //  Interval<$Value, $Size>  Clamp(Interval<$Value, $Size> y);
     //  $Value  Clamp($Value value);
     //  Boolean  Within($Value value);
 }
 public partial class Complex
 {
-    //  $T  Aggregate(Function2 f);
+    //  $T  Aggregate(Function2<Number, $T, $T> f);
     //  Number  Sum { get; }
     //  Number  SumSquares { get; }
     //  Number  MagnitudeSquared { get; }
@@ -514,21 +514,21 @@ public partial class Line2D
     //  Boolean  IsEmpty { get; }
     //  $Value  Lerp(Number amount);
     //  Number  Unlerp($Value value);
-    //  Interval  Negate { get; }
-    //  Interval  Reverse { get; }
+    //  Interval<$Value, $Size>  Negate { get; }
+    //  Interval<$Value, $Size>  Reverse { get; }
     //  $Value  Center { get; }
     //  Boolean  Contains($Value value);
-    //  Boolean  Contains(Interval other);
-    //  Boolean  Overlaps(Interval y);
-    //  Tuple2  Split(Number t);
-    //  Tuple2  Split { get; }
-    //  Interval  Left(Number t);
-    //  Interval  Right(Number t);
-    //  Interval  MoveTo($Value v);
-    //  Interval  LeftHalf { get; }
-    //  Interval  RightHalf { get; }
-    //  Interval  Recenter($Value c);
-    //  Interval  Clamp(Interval y);
+    //  Boolean  Contains(Interval<$Value, $Size> other);
+    //  Boolean  Overlaps(Interval<$Value, $Size> y);
+    //  Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>>  Split(Number t);
+    //  Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>>  Split { get; }
+    //  Interval<$Value, $Size>  Left(Number t);
+    //  Interval<$Value, $Size>  Right(Number t);
+    //  Interval<$Value, $Size>  MoveTo($Value v);
+    //  Interval<$Value, $Size>  LeftHalf { get; }
+    //  Interval<$Value, $Size>  RightHalf { get; }
+    //  Interval<$Value, $Size>  Recenter($Value c);
+    //  Interval<$Value, $Size>  Clamp(Interval<$Value, $Size> y);
     //  $Value  Clamp($Value value);
     //  Boolean  Within($Value value);
 }
@@ -537,21 +537,21 @@ public partial class Line3D
     //  Boolean  IsEmpty { get; }
     //  $Value  Lerp(Number amount);
     //  Number  Unlerp($Value value);
-    //  Interval  Negate { get; }
-    //  Interval  Reverse { get; }
+    //  Interval<$Value, $Size>  Negate { get; }
+    //  Interval<$Value, $Size>  Reverse { get; }
     //  $Value  Center { get; }
     //  Boolean  Contains($Value value);
-    //  Boolean  Contains(Interval other);
-    //  Boolean  Overlaps(Interval y);
-    //  Tuple2  Split(Number t);
-    //  Tuple2  Split { get; }
-    //  Interval  Left(Number t);
-    //  Interval  Right(Number t);
-    //  Interval  MoveTo($Value v);
-    //  Interval  LeftHalf { get; }
-    //  Interval  RightHalf { get; }
-    //  Interval  Recenter($Value c);
-    //  Interval  Clamp(Interval y);
+    //  Boolean  Contains(Interval<$Value, $Size> other);
+    //  Boolean  Overlaps(Interval<$Value, $Size> y);
+    //  Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>>  Split(Number t);
+    //  Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>>  Split { get; }
+    //  Interval<$Value, $Size>  Left(Number t);
+    //  Interval<$Value, $Size>  Right(Number t);
+    //  Interval<$Value, $Size>  MoveTo($Value v);
+    //  Interval<$Value, $Size>  LeftHalf { get; }
+    //  Interval<$Value, $Size>  RightHalf { get; }
+    //  Interval<$Value, $Size>  Recenter($Value c);
+    //  Interval<$Value, $Size>  Clamp(Interval<$Value, $Size> y);
     //  $Value  Clamp($Value value);
     //  Boolean  Within($Value value);
 }
@@ -733,21 +733,21 @@ public partial class TimeRange
     //  Boolean  IsEmpty { get; }
     //  $Value  Lerp(Number amount);
     //  Number  Unlerp($Value value);
-    //  Interval  Negate { get; }
-    //  Interval  Reverse { get; }
+    //  Interval<$Value, $Size>  Negate { get; }
+    //  Interval<$Value, $Size>  Reverse { get; }
     //  $Value  Center { get; }
     //  Boolean  Contains($Value value);
-    //  Boolean  Contains(Interval other);
-    //  Boolean  Overlaps(Interval y);
-    //  Tuple2  Split(Number t);
-    //  Tuple2  Split { get; }
-    //  Interval  Left(Number t);
-    //  Interval  Right(Number t);
-    //  Interval  MoveTo($Value v);
-    //  Interval  LeftHalf { get; }
-    //  Interval  RightHalf { get; }
-    //  Interval  Recenter($Value c);
-    //  Interval  Clamp(Interval y);
+    //  Boolean  Contains(Interval<$Value, $Size> other);
+    //  Boolean  Overlaps(Interval<$Value, $Size> y);
+    //  Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>>  Split(Number t);
+    //  Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>>  Split { get; }
+    //  Interval<$Value, $Size>  Left(Number t);
+    //  Interval<$Value, $Size>  Right(Number t);
+    //  Interval<$Value, $Size>  MoveTo($Value v);
+    //  Interval<$Value, $Size>  LeftHalf { get; }
+    //  Interval<$Value, $Size>  RightHalf { get; }
+    //  Interval<$Value, $Size>  Recenter($Value c);
+    //  Interval<$Value, $Size>  Clamp(Interval<$Value, $Size> y);
     //  $Value  Clamp($Value value);
     //  Boolean  Within($Value value);
 }
@@ -759,21 +759,21 @@ public partial class AnglePair
     //  Boolean  IsEmpty { get; }
     //  $Value  Lerp(Number amount);
     //  Number  Unlerp($Value value);
-    //  Interval  Negate { get; }
-    //  Interval  Reverse { get; }
+    //  Interval<$Value, $Size>  Negate { get; }
+    //  Interval<$Value, $Size>  Reverse { get; }
     //  $Value  Center { get; }
     //  Boolean  Contains($Value value);
-    //  Boolean  Contains(Interval other);
-    //  Boolean  Overlaps(Interval y);
-    //  Tuple2  Split(Number t);
-    //  Tuple2  Split { get; }
-    //  Interval  Left(Number t);
-    //  Interval  Right(Number t);
-    //  Interval  MoveTo($Value v);
-    //  Interval  LeftHalf { get; }
-    //  Interval  RightHalf { get; }
-    //  Interval  Recenter($Value c);
-    //  Interval  Clamp(Interval y);
+    //  Boolean  Contains(Interval<$Value, $Size> other);
+    //  Boolean  Overlaps(Interval<$Value, $Size> y);
+    //  Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>>  Split(Number t);
+    //  Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>>  Split { get; }
+    //  Interval<$Value, $Size>  Left(Number t);
+    //  Interval<$Value, $Size>  Right(Number t);
+    //  Interval<$Value, $Size>  MoveTo($Value v);
+    //  Interval<$Value, $Size>  LeftHalf { get; }
+    //  Interval<$Value, $Size>  RightHalf { get; }
+    //  Interval<$Value, $Size>  Recenter($Value c);
+    //  Interval<$Value, $Size>  Clamp(Interval<$Value, $Size> y);
     //  $Value  Clamp($Value value);
     //  Boolean  Within($Value value);
 }
@@ -790,21 +790,21 @@ public partial class RealInterval
     //  Boolean  IsEmpty { get; }
     //  $Value  Lerp(Number amount);
     //  Number  Unlerp($Value value);
-    //  Interval  Negate { get; }
-    //  Interval  Reverse { get; }
+    //  Interval<$Value, $Size>  Negate { get; }
+    //  Interval<$Value, $Size>  Reverse { get; }
     //  $Value  Center { get; }
     //  Boolean  Contains($Value value);
-    //  Boolean  Contains(Interval other);
-    //  Boolean  Overlaps(Interval y);
-    //  Tuple2  Split(Number t);
-    //  Tuple2  Split { get; }
-    //  Interval  Left(Number t);
-    //  Interval  Right(Number t);
-    //  Interval  MoveTo($Value v);
-    //  Interval  LeftHalf { get; }
-    //  Interval  RightHalf { get; }
-    //  Interval  Recenter($Value c);
-    //  Interval  Clamp(Interval y);
+    //  Boolean  Contains(Interval<$Value, $Size> other);
+    //  Boolean  Overlaps(Interval<$Value, $Size> y);
+    //  Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>>  Split(Number t);
+    //  Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>>  Split { get; }
+    //  Interval<$Value, $Size>  Left(Number t);
+    //  Interval<$Value, $Size>  Right(Number t);
+    //  Interval<$Value, $Size>  MoveTo($Value v);
+    //  Interval<$Value, $Size>  LeftHalf { get; }
+    //  Interval<$Value, $Size>  RightHalf { get; }
+    //  Interval<$Value, $Size>  Recenter($Value c);
+    //  Interval<$Value, $Size>  Clamp(Interval<$Value, $Size> y);
     //  $Value  Clamp($Value value);
     //  Boolean  Within($Value value);
 }
@@ -842,7 +842,7 @@ public partial class Box3D
 }
 public partial class UV
 {
-    //  $T  Aggregate(Function2 f);
+    //  $T  Aggregate(Function2<Number, $T, $T> f);
     //  Number  Sum { get; }
     //  Number  SumSquares { get; }
     //  Number  MagnitudeSquared { get; }
@@ -884,7 +884,7 @@ public partial class UV
 }
 public partial class UVW
 {
-    //  $T  Aggregate(Function2 f);
+    //  $T  Aggregate(Function2<Number, $T, $T> f);
     //  Number  Sum { get; }
     //  Number  SumSquares { get; }
     //  Number  MagnitudeSquared { get; }

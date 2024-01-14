@@ -35,9 +35,9 @@ namespace Plato.Compiler.Vsg
 
     public class VsgConnection
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public Guid Source { get; set; }
-        public Guid Destination { get; set; }
+        public Guid Id { get; } = Guid.NewGuid();
+        public Guid Source { get; }
+        public Guid Destination { get; }
         public string Type { get; set; }
         public string Kind { get; set; }
         public string Label { get; set; }
@@ -55,9 +55,9 @@ namespace Plato.Compiler.Vsg
 
     public class VsgSocket
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public string Label { get; set; }
-        public string Type { get; set; }
+        public Guid Id { get; } = Guid.NewGuid();
+        public string Label { get; }
+        public string Type { get; }
         public VsgSocket() : this("") { }
         public VsgSocket(string label, string type = "Any")
         {
@@ -75,12 +75,12 @@ namespace Plato.Compiler.Vsg
             Kind = kind;
         }
 
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public string Label { get; set; }
-        public string Kind { get; set; }
+        public Guid Id { get; } = Guid.NewGuid();
+        public string Label { get; }
+        public string Kind { get; }
 
-        public List<VsgSocket> Inputs { get; set; } = new List<VsgSocket>();
-        public List<VsgSocket> Outputs { get; set; } = new List<VsgSocket>();
+        public List<VsgSocket> Inputs { get; } = new List<VsgSocket>();
+        public List<VsgSocket> Outputs { get; } = new List<VsgSocket>();
 
         public VsgSocket MainOutput => Outputs.Count > 0 ? Outputs[0] : null;
 

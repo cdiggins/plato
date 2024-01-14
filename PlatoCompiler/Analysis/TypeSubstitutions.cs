@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Plato.Compiler.Symbols;
 
-namespace Plato.CSharpWriter
+namespace Plato.Compiler.Analysis
 {
     public class TypeSubstitutions
     {
@@ -32,6 +32,12 @@ namespace Plato.CSharpWriter
 
         public static TypeSubstitutions Create(TypeExpression expr)
             => new TypeSubstitutions().Add(expr);
+
+        public override string ToString()
+        {
+            var s = $"{Parameter}={Replacement}";
+            return Previous != null ? s + Previous : s;
+        }
 
         public TypeSubstitutions(TypeParameterDefinition parameter = null, TypeExpression replace = null, TypeSubstitutions subs = null)
         {

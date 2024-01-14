@@ -4,24 +4,24 @@ using Ara3D.Utils;
 using Plato.Compiler.Symbols;
 using Plato.Compiler.Types;
 
-namespace Plato.CSharpWriter
+namespace Plato.Compiler.Analysis
 {
     /// <summary>
     /// Represents a specific concept implementation in a type. 
     /// </summary>
     public class ConceptImplementation
     {
-        public LibraryAnalysis Libraries { get; }
+        public LibrarySet Libraries { get; }
         public ConceptImplementation InheritedFrom { get; }
         public IReadOnlyList<ConceptImplementation> Inherited { get; }
         public TypeExpression Expression { get; }
         public TypeDefinition Concept => Expression.Definition;
         public TypeDefinition ConcreteType { get;}
         public TypeSubstitutions Substitutions { get; }
-        public IReadOnlyList<FunctionAnalysis> Functions { get; }
+        public IReadOnlyList<FunctionInstance> Functions { get; }
 
         public ConceptImplementation(
-            LibraryAnalysis libraries,
+            LibrarySet libraries,
             TypeDefinition concreteType, 
             TypeSubstitutions substitutions, 
             TypeExpression expression,
@@ -52,7 +52,7 @@ namespace Plato.CSharpWriter
         public ConceptImplementation CreateInheritedConceptImplementation(TypeExpression inheritsType)
             => new ConceptImplementation(Libraries, ConcreteType, Substitutions.Add(inheritsType), inheritsType, this);
 
-        public FunctionAnalysis AnalyzeConceptFunction(FunctionDefinition function)
-            => new FunctionAnalysis(ConcreteType, function, Substitutions);
+        public FunctionInstance AnalyzeConceptFunction(FunctionDefinition function)
+            => new FunctionInstance(ConcreteType, function, Substitutions);
     }
 }

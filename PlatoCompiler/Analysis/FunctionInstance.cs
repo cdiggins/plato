@@ -1,19 +1,17 @@
-﻿using System;
-using System.Diagnostics;
-using Plato.Compiler.Symbols;
+﻿using Plato.Compiler.Symbols;
 
-namespace Plato.CSharpWriter
+namespace Plato.Compiler.Analysis
 {
     /// <summary>
     /// Represents an instance of a function. Used for analyzing library functions and generating code.
     /// </summary>
-    public class FunctionAnalysis
+    public class FunctionInstance
     {
         public TypeDefinition ConcreteType { get; }
         public FunctionDefinition Implementation { get; }
         public TypeSubstitutions Substitutions { get; }
 
-        public FunctionAnalysis(
+        public FunctionInstance(
             TypeDefinition concreteType,
             FunctionDefinition implementation,
             TypeSubstitutions substitutions)
