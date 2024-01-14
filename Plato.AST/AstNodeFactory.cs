@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Parakeet.CST;
-using Parakeet;
 using Plato.Parser;
 
-namespace Plato.Compiler.Ast
+namespace Plato.AST
 {
     public static class AstNodeFactory
     {
@@ -53,7 +52,7 @@ namespace Plato.Compiler.Ast
                 else if (postfix.FunctionArgs.Present)
                 {
                     r = new AstInvoke(expr, r,
-                        postfix.FunctionArgs.Node.FunctionArg.Nodes.Select(n => ToAst(n.Expression)).ToArray());
+                        postfix.FunctionArgs.Node.FunctionArg.Nodes.Select(n => ToAst<CstExpression>(n.Expression)).ToArray());
                 }
                 else if (postfix.Indexer.Present)
                 {

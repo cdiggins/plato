@@ -3,8 +3,8 @@ using System.Runtime.CompilerServices;
 using Ara3D.Utils;
 using Parakeet;
 using Parakeet.Grammars;
+using Plato.AST;
 using Plato.Compiler;
-using Plato.Compiler.Ast;
 using Plato.CSharpWriter;
 using Plato.Parser;
 using Logger = Plato.Compiler.Logger;
@@ -79,9 +79,31 @@ public class IDE
         Logger.Log("Applying syntax coloring");
         //ApplyStylesAndOutputErrors();
         Logger.Log("Completed syntax coloring");
-        
+
+        Logger.Log("Gathering parsers");
         var parsers = Editors.Select(p => p.Parser).ToList();
-        Compiler.Compile(parsers);
+        var parsingSuccess = parsers.All(p => p?.Success == true);
+        if (!parsingSuccess)
+        {
+            Logger.Log("Parsing was not successful");
+            return;
+        }
+
+        Logger.Log("Creating AST trees");
+        var trees = new List<AstNode>();
+        foreach (var p in parsers)
+        {
+            try
+            {
+                trees.Add(p.CstTree.ToAst());
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"Error occurred '{ex.Message}' when generating AST from CST for {p.Input.File}");
+                return;
+            }
+        }
+        Compiler.Compile(trees);
 
         OutputTextBox.Lines = Logger.Messages.ToArray();
         var logFile = Path.Combine(inputFolder, "log.txt");

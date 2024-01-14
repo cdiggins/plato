@@ -9,33 +9,6 @@ public partial class Number: Numerical<Number>
     public static Number New(double value) => new Number(value);
     public static implicit operator double(Number self) => self.Value;
     public static implicit operator Number(double value) => new Number(value);
-    public Number Zero => throw new NotImplementedException();
-    public Number One => throw new NotImplementedException();
-    public Number MinValue => throw new NotImplementedException();
-    public Number MaxValue => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Number b) => throw new NotImplementedException();
-    public static Boolean operator ==(Number a, Number b) => a.Equals(b);
-    public Boolean NotEquals(Number b) => throw new NotImplementedException();
-    public static Boolean operator !=(Number a, Number b) => a.NotEquals(b);
-    public Number Add(Number other) => throw new NotImplementedException();
-    public static Number operator +(Number self, Number other) => self.Add(other);
-    public Number Subtract(Number other) => throw new NotImplementedException();
-    public static Number operator -(Number self, Number other) => self.Subtract(other);
-    public Number Multiply(Number other) => throw new NotImplementedException();
-    public static Number operator *(Number self, Number other) => self.Multiply(other);
-    public Number Divide(Number other) => throw new NotImplementedException();
-    public static Number operator /(Number self, Number other) => self.Divide(other);
-    public Number Modulo(Number other) => throw new NotImplementedException();
-    public static Number operator %(Number self, Number other) => self.Modulo(other);
-    public Number Negative => throw new NotImplementedException();
-    public static Number operator -(Number self) => self.Negative;
-    public Number Reciprocal => throw new NotImplementedException();
-    public Integer Compare(Number y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Number Lerp(Number b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Number a, Number b) => throw new NotImplementedException();
 }
 public partial class Integer: Numerical<Integer>
 {
@@ -47,33 +20,6 @@ public partial class Integer: Numerical<Integer>
     public static Integer New(int value) => new Integer(value);
     public static implicit operator int(Integer self) => self.Value;
     public static implicit operator Integer(int value) => new Integer(value);
-    public Integer Zero => throw new NotImplementedException();
-    public Integer One => throw new NotImplementedException();
-    public Integer MinValue => throw new NotImplementedException();
-    public Integer MaxValue => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Integer b) => throw new NotImplementedException();
-    public static Boolean operator ==(Integer a, Integer b) => a.Equals(b);
-    public Boolean NotEquals(Integer b) => throw new NotImplementedException();
-    public static Boolean operator !=(Integer a, Integer b) => a.NotEquals(b);
-    public Integer Add(Integer other) => throw new NotImplementedException();
-    public static Integer operator +(Integer self, Integer other) => self.Add(other);
-    public Integer Subtract(Integer other) => throw new NotImplementedException();
-    public static Integer operator -(Integer self, Integer other) => self.Subtract(other);
-    public Integer Multiply(Integer other) => throw new NotImplementedException();
-    public static Integer operator *(Integer self, Integer other) => self.Multiply(other);
-    public Integer Divide(Integer other) => throw new NotImplementedException();
-    public static Integer operator /(Integer self, Integer other) => self.Divide(other);
-    public Integer Modulo(Integer other) => throw new NotImplementedException();
-    public static Integer operator %(Integer self, Integer other) => self.Modulo(other);
-    public Integer Negative => throw new NotImplementedException();
-    public static Integer operator -(Integer self) => self.Negative;
-    public Integer Reciprocal => throw new NotImplementedException();
-    public Integer Compare(Integer y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Integer Lerp(Integer b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Integer a, Integer b) => throw new NotImplementedException();
 }
 public partial class String: Value<String>, Array<Character>
 {
@@ -85,15 +31,6 @@ public partial class String: Value<String>, Array<Character>
     public static String New(string value) => new String(value);
     public static implicit operator string(String self) => self.Value;
     public static implicit operator String(string value) => new String(value);
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(String b) => throw new NotImplementedException();
-    public static Boolean operator ==(String a, String b) => a.Equals(b);
-    public Boolean NotEquals(String b) => throw new NotImplementedException();
-    public static Boolean operator !=(String a, String b) => a.NotEquals(b);
-    public Integer Count => throw new NotImplementedException();
-    public Character At(Integer n) => throw new NotImplementedException();
-    public Character this[Integer n] => At(n);
 }
 public partial class Boolean: BooleanOperations<Boolean>
 {
@@ -105,12 +42,6 @@ public partial class Boolean: BooleanOperations<Boolean>
     public static Boolean New(bool value) => new Boolean(value);
     public static implicit operator bool(Boolean self) => self.Value;
     public static implicit operator Boolean(bool value) => new Boolean(value);
-    public Boolean And(Boolean b) => throw new NotImplementedException();
-    public static Boolean operator &(Boolean a, Boolean b) => a.And(b);
-    public Boolean Or(Boolean b) => throw new NotImplementedException();
-    public static Boolean operator |(Boolean a, Boolean b) => a.Or(b);
-    public Boolean Not => throw new NotImplementedException();
-    public static Boolean operator !(Boolean a) => a.Not;
 }
 public partial class Character: Value<Character>
 {
@@ -122,12 +53,6 @@ public partial class Character: Value<Character>
     public static Character New(char value) => new Character(value);
     public static implicit operator char(Character self) => self.Value;
     public static implicit operator Character(char value) => new Character(value);
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Character b) => throw new NotImplementedException();
-    public static Boolean operator ==(Character a, Character b) => a.Equals(b);
-    public Boolean NotEquals(Character b) => throw new NotImplementedException();
-    public static Boolean operator !=(Character a, Character b) => a.NotEquals(b);
 }
 public partial class Count: Numerical<Count>
 {
@@ -139,33 +64,6 @@ public partial class Count: Numerical<Count>
     public static Count New(Integer value) => new Count(value);
     public static implicit operator Integer(Count self) => self.Value;
     public static implicit operator Count(Integer value) => new Count(value);
-    public Count Zero => throw new NotImplementedException();
-    public Count One => throw new NotImplementedException();
-    public Count MinValue => throw new NotImplementedException();
-    public Count MaxValue => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Count b) => throw new NotImplementedException();
-    public static Boolean operator ==(Count a, Count b) => a.Equals(b);
-    public Boolean NotEquals(Count b) => throw new NotImplementedException();
-    public static Boolean operator !=(Count a, Count b) => a.NotEquals(b);
-    public Count Add(Count other) => throw new NotImplementedException();
-    public static Count operator +(Count self, Count other) => self.Add(other);
-    public Count Subtract(Count other) => throw new NotImplementedException();
-    public static Count operator -(Count self, Count other) => self.Subtract(other);
-    public Count Multiply(Count other) => throw new NotImplementedException();
-    public static Count operator *(Count self, Count other) => self.Multiply(other);
-    public Count Divide(Count other) => throw new NotImplementedException();
-    public static Count operator /(Count self, Count other) => self.Divide(other);
-    public Count Modulo(Count other) => throw new NotImplementedException();
-    public static Count operator %(Count self, Count other) => self.Modulo(other);
-    public Count Negative => throw new NotImplementedException();
-    public static Count operator -(Count self) => self.Negative;
-    public Count Reciprocal => throw new NotImplementedException();
-    public Integer Compare(Count y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Count Lerp(Count b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Count a, Count b) => throw new NotImplementedException();
 }
 public partial class Index: Value<Index>
 {
@@ -177,12 +75,6 @@ public partial class Index: Value<Index>
     public static Index New(Integer value) => new Index(value);
     public static implicit operator Integer(Index self) => self.Value;
     public static implicit operator Index(Integer value) => new Index(value);
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Index b) => throw new NotImplementedException();
-    public static Boolean operator ==(Index a, Index b) => a.Equals(b);
-    public Boolean NotEquals(Index b) => throw new NotImplementedException();
-    public static Boolean operator !=(Index a, Index b) => a.NotEquals(b);
 }
 public partial class Unit: Numerical<Unit>
 {
@@ -194,33 +86,6 @@ public partial class Unit: Numerical<Unit>
     public static Unit New(Number value) => new Unit(value);
     public static implicit operator Number(Unit self) => self.Value;
     public static implicit operator Unit(Number value) => new Unit(value);
-    public Unit Zero => throw new NotImplementedException();
-    public Unit One => throw new NotImplementedException();
-    public Unit MinValue => throw new NotImplementedException();
-    public Unit MaxValue => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Unit b) => throw new NotImplementedException();
-    public static Boolean operator ==(Unit a, Unit b) => a.Equals(b);
-    public Boolean NotEquals(Unit b) => throw new NotImplementedException();
-    public static Boolean operator !=(Unit a, Unit b) => a.NotEquals(b);
-    public Unit Add(Unit other) => throw new NotImplementedException();
-    public static Unit operator +(Unit self, Unit other) => self.Add(other);
-    public Unit Subtract(Unit other) => throw new NotImplementedException();
-    public static Unit operator -(Unit self, Unit other) => self.Subtract(other);
-    public Unit Multiply(Unit other) => throw new NotImplementedException();
-    public static Unit operator *(Unit self, Unit other) => self.Multiply(other);
-    public Unit Divide(Unit other) => throw new NotImplementedException();
-    public static Unit operator /(Unit self, Unit other) => self.Divide(other);
-    public Unit Modulo(Unit other) => throw new NotImplementedException();
-    public static Unit operator %(Unit self, Unit other) => self.Modulo(other);
-    public Unit Negative => throw new NotImplementedException();
-    public static Unit operator -(Unit self) => self.Negative;
-    public Unit Reciprocal => throw new NotImplementedException();
-    public Integer Compare(Unit y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Unit Lerp(Unit b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Unit a, Unit b) => throw new NotImplementedException();
 }
 public partial class Percent: Numerical<Percent>
 {
@@ -232,33 +97,6 @@ public partial class Percent: Numerical<Percent>
     public static Percent New(Number value) => new Percent(value);
     public static implicit operator Number(Percent self) => self.Value;
     public static implicit operator Percent(Number value) => new Percent(value);
-    public Percent Zero => throw new NotImplementedException();
-    public Percent One => throw new NotImplementedException();
-    public Percent MinValue => throw new NotImplementedException();
-    public Percent MaxValue => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Percent b) => throw new NotImplementedException();
-    public static Boolean operator ==(Percent a, Percent b) => a.Equals(b);
-    public Boolean NotEquals(Percent b) => throw new NotImplementedException();
-    public static Boolean operator !=(Percent a, Percent b) => a.NotEquals(b);
-    public Percent Add(Percent other) => throw new NotImplementedException();
-    public static Percent operator +(Percent self, Percent other) => self.Add(other);
-    public Percent Subtract(Percent other) => throw new NotImplementedException();
-    public static Percent operator -(Percent self, Percent other) => self.Subtract(other);
-    public Percent Multiply(Percent other) => throw new NotImplementedException();
-    public static Percent operator *(Percent self, Percent other) => self.Multiply(other);
-    public Percent Divide(Percent other) => throw new NotImplementedException();
-    public static Percent operator /(Percent self, Percent other) => self.Divide(other);
-    public Percent Modulo(Percent other) => throw new NotImplementedException();
-    public static Percent operator %(Percent self, Percent other) => self.Modulo(other);
-    public Percent Negative => throw new NotImplementedException();
-    public static Percent operator -(Percent self) => self.Negative;
-    public Percent Reciprocal => throw new NotImplementedException();
-    public Integer Compare(Percent y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Percent Lerp(Percent b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Percent a, Percent b) => throw new NotImplementedException();
 }
 public partial class Quaternion: Value<Quaternion>
 {
@@ -277,12 +115,6 @@ public partial class Quaternion: Value<Quaternion>
     public static implicit operator (Number, Number, Number, Number)(Quaternion self) => (self.X, self.Y, self.Z, self.W);
     public static implicit operator Quaternion((Number, Number, Number, Number) value) => new Quaternion(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Number x, out Number y, out Number z, out Number w) { x = X; y = Y; z = Z; w = W; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Quaternion b) => throw new NotImplementedException();
-    public static Boolean operator ==(Quaternion a, Quaternion b) => a.Equals(b);
-    public Boolean NotEquals(Quaternion b) => throw new NotImplementedException();
-    public static Boolean operator !=(Quaternion a, Quaternion b) => a.NotEquals(b);
 }
 public partial class Unit2D: Value<Unit2D>
 {
@@ -297,12 +129,6 @@ public partial class Unit2D: Value<Unit2D>
     public static implicit operator (Unit, Unit)(Unit2D self) => (self.X, self.Y);
     public static implicit operator Unit2D((Unit, Unit) value) => new Unit2D(value.Item1, value.Item2);
     public void Deconstruct(out Unit x, out Unit y) { x = X; y = Y; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Unit2D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Unit2D a, Unit2D b) => a.Equals(b);
-    public Boolean NotEquals(Unit2D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Unit2D a, Unit2D b) => a.NotEquals(b);
 }
 public partial class Unit3D: Value<Unit3D>
 {
@@ -319,12 +145,6 @@ public partial class Unit3D: Value<Unit3D>
     public static implicit operator (Unit, Unit, Unit)(Unit3D self) => (self.X, self.Y, self.Z);
     public static implicit operator Unit3D((Unit, Unit, Unit) value) => new Unit3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Unit x, out Unit y, out Unit z) { x = X; y = Y; z = Z; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Unit3D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Unit3D a, Unit3D b) => a.Equals(b);
-    public Boolean NotEquals(Unit3D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Unit3D a, Unit3D b) => a.NotEquals(b);
 }
 public partial class Direction3D: Value<Direction3D>
 {
@@ -336,12 +156,6 @@ public partial class Direction3D: Value<Direction3D>
     public static Direction3D New(Unit3D value) => new Direction3D(value);
     public static implicit operator Unit3D(Direction3D self) => self.Value;
     public static implicit operator Direction3D(Unit3D value) => new Direction3D(value);
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Direction3D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Direction3D a, Direction3D b) => a.Equals(b);
-    public Boolean NotEquals(Direction3D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Direction3D a, Direction3D b) => a.NotEquals(b);
 }
 public partial class AxisAngle: Value<AxisAngle>
 {
@@ -356,12 +170,6 @@ public partial class AxisAngle: Value<AxisAngle>
     public static implicit operator (Unit3D, Angle)(AxisAngle self) => (self.Axis, self.Angle);
     public static implicit operator AxisAngle((Unit3D, Angle) value) => new AxisAngle(value.Item1, value.Item2);
     public void Deconstruct(out Unit3D axis, out Angle angle) { axis = Axis; angle = Angle; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(AxisAngle b) => throw new NotImplementedException();
-    public static Boolean operator ==(AxisAngle a, AxisAngle b) => a.Equals(b);
-    public Boolean NotEquals(AxisAngle b) => throw new NotImplementedException();
-    public static Boolean operator !=(AxisAngle a, AxisAngle b) => a.NotEquals(b);
 }
 public partial class EulerAngles: Value<EulerAngles>
 {
@@ -378,12 +186,6 @@ public partial class EulerAngles: Value<EulerAngles>
     public static implicit operator (Angle, Angle, Angle)(EulerAngles self) => (self.Yaw, self.Pitch, self.Roll);
     public static implicit operator EulerAngles((Angle, Angle, Angle) value) => new EulerAngles(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Angle yaw, out Angle pitch, out Angle roll) { yaw = Yaw; pitch = Pitch; roll = Roll; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(EulerAngles b) => throw new NotImplementedException();
-    public static Boolean operator ==(EulerAngles a, EulerAngles b) => a.Equals(b);
-    public Boolean NotEquals(EulerAngles b) => throw new NotImplementedException();
-    public static Boolean operator !=(EulerAngles a, EulerAngles b) => a.NotEquals(b);
 }
 public partial class Rotation3D: Value<Rotation3D>
 {
@@ -395,12 +197,6 @@ public partial class Rotation3D: Value<Rotation3D>
     public static Rotation3D New(Quaternion quaternion) => new Rotation3D(quaternion);
     public static implicit operator Quaternion(Rotation3D self) => self.Quaternion;
     public static implicit operator Rotation3D(Quaternion value) => new Rotation3D(value);
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Rotation3D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Rotation3D a, Rotation3D b) => a.Equals(b);
-    public Boolean NotEquals(Rotation3D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Rotation3D a, Rotation3D b) => a.NotEquals(b);
 }
 public partial class Vector2D: Vector<Vector2D>
 {
@@ -415,36 +211,6 @@ public partial class Vector2D: Vector<Vector2D>
     public static implicit operator (Number, Number)(Vector2D self) => (self.X, self.Y);
     public static implicit operator Vector2D((Number, Number) value) => new Vector2D(value.Item1, value.Item2);
     public void Deconstruct(out Number x, out Number y) { x = X; y = Y; }
-    public Integer Count => throw new NotImplementedException();
-    public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[Integer n] => At(n);
-    public Vector2D Zero => throw new NotImplementedException();
-    public Vector2D One => throw new NotImplementedException();
-    public Vector2D MinValue => throw new NotImplementedException();
-    public Vector2D MaxValue => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Vector2D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Vector2D a, Vector2D b) => a.Equals(b);
-    public Boolean NotEquals(Vector2D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Vector2D a, Vector2D b) => a.NotEquals(b);
-    public Vector2D Add(Vector2D other) => throw new NotImplementedException();
-    public static Vector2D operator +(Vector2D self, Vector2D other) => self.Add(other);
-    public Vector2D Subtract(Vector2D other) => throw new NotImplementedException();
-    public static Vector2D operator -(Vector2D self, Vector2D other) => self.Subtract(other);
-    public Vector2D Multiply(Vector2D other) => throw new NotImplementedException();
-    public static Vector2D operator *(Vector2D self, Vector2D other) => self.Multiply(other);
-    public Vector2D Divide(Vector2D other) => throw new NotImplementedException();
-    public static Vector2D operator /(Vector2D self, Vector2D other) => self.Divide(other);
-    public Vector2D Modulo(Vector2D other) => throw new NotImplementedException();
-    public static Vector2D operator %(Vector2D self, Vector2D other) => self.Modulo(other);
-    public Vector2D Negative => throw new NotImplementedException();
-    public static Vector2D operator -(Vector2D self) => self.Negative;
-    public Vector2D Reciprocal => throw new NotImplementedException();
-    public Integer Compare(Vector2D y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Vector2D Lerp(Vector2D b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Vector2D a, Vector2D b) => throw new NotImplementedException();
 }
 public partial class Vector3D: Vector<Vector3D>
 {
@@ -461,36 +227,6 @@ public partial class Vector3D: Vector<Vector3D>
     public static implicit operator (Number, Number, Number)(Vector3D self) => (self.X, self.Y, self.Z);
     public static implicit operator Vector3D((Number, Number, Number) value) => new Vector3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number x, out Number y, out Number z) { x = X; y = Y; z = Z; }
-    public Integer Count => throw new NotImplementedException();
-    public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[Integer n] => At(n);
-    public Vector3D Zero => throw new NotImplementedException();
-    public Vector3D One => throw new NotImplementedException();
-    public Vector3D MinValue => throw new NotImplementedException();
-    public Vector3D MaxValue => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Vector3D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Vector3D a, Vector3D b) => a.Equals(b);
-    public Boolean NotEquals(Vector3D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Vector3D a, Vector3D b) => a.NotEquals(b);
-    public Vector3D Add(Vector3D other) => throw new NotImplementedException();
-    public static Vector3D operator +(Vector3D self, Vector3D other) => self.Add(other);
-    public Vector3D Subtract(Vector3D other) => throw new NotImplementedException();
-    public static Vector3D operator -(Vector3D self, Vector3D other) => self.Subtract(other);
-    public Vector3D Multiply(Vector3D other) => throw new NotImplementedException();
-    public static Vector3D operator *(Vector3D self, Vector3D other) => self.Multiply(other);
-    public Vector3D Divide(Vector3D other) => throw new NotImplementedException();
-    public static Vector3D operator /(Vector3D self, Vector3D other) => self.Divide(other);
-    public Vector3D Modulo(Vector3D other) => throw new NotImplementedException();
-    public static Vector3D operator %(Vector3D self, Vector3D other) => self.Modulo(other);
-    public Vector3D Negative => throw new NotImplementedException();
-    public static Vector3D operator -(Vector3D self) => self.Negative;
-    public Vector3D Reciprocal => throw new NotImplementedException();
-    public Integer Compare(Vector3D y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Vector3D Lerp(Vector3D b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Vector3D a, Vector3D b) => throw new NotImplementedException();
 }
 public partial class Vector4D: Vector<Vector4D>
 {
@@ -509,36 +245,6 @@ public partial class Vector4D: Vector<Vector4D>
     public static implicit operator (Number, Number, Number, Number)(Vector4D self) => (self.X, self.Y, self.Z, self.W);
     public static implicit operator Vector4D((Number, Number, Number, Number) value) => new Vector4D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Number x, out Number y, out Number z, out Number w) { x = X; y = Y; z = Z; w = W; }
-    public Integer Count => throw new NotImplementedException();
-    public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[Integer n] => At(n);
-    public Vector4D Zero => throw new NotImplementedException();
-    public Vector4D One => throw new NotImplementedException();
-    public Vector4D MinValue => throw new NotImplementedException();
-    public Vector4D MaxValue => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Vector4D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Vector4D a, Vector4D b) => a.Equals(b);
-    public Boolean NotEquals(Vector4D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Vector4D a, Vector4D b) => a.NotEquals(b);
-    public Vector4D Add(Vector4D other) => throw new NotImplementedException();
-    public static Vector4D operator +(Vector4D self, Vector4D other) => self.Add(other);
-    public Vector4D Subtract(Vector4D other) => throw new NotImplementedException();
-    public static Vector4D operator -(Vector4D self, Vector4D other) => self.Subtract(other);
-    public Vector4D Multiply(Vector4D other) => throw new NotImplementedException();
-    public static Vector4D operator *(Vector4D self, Vector4D other) => self.Multiply(other);
-    public Vector4D Divide(Vector4D other) => throw new NotImplementedException();
-    public static Vector4D operator /(Vector4D self, Vector4D other) => self.Divide(other);
-    public Vector4D Modulo(Vector4D other) => throw new NotImplementedException();
-    public static Vector4D operator %(Vector4D self, Vector4D other) => self.Modulo(other);
-    public Vector4D Negative => throw new NotImplementedException();
-    public static Vector4D operator -(Vector4D self) => self.Negative;
-    public Vector4D Reciprocal => throw new NotImplementedException();
-    public Integer Compare(Vector4D y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Vector4D Lerp(Vector4D b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Vector4D a, Vector4D b) => throw new NotImplementedException();
 }
 public partial class Orientation3D: Value<Orientation3D>
 {
@@ -550,12 +256,6 @@ public partial class Orientation3D: Value<Orientation3D>
     public static Orientation3D New(Rotation3D value) => new Orientation3D(value);
     public static implicit operator Rotation3D(Orientation3D self) => self.Value;
     public static implicit operator Orientation3D(Rotation3D value) => new Orientation3D(value);
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Orientation3D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Orientation3D a, Orientation3D b) => a.Equals(b);
-    public Boolean NotEquals(Orientation3D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Orientation3D a, Orientation3D b) => a.NotEquals(b);
 }
 public partial class Pose2D: Value<Pose2D>
 {
@@ -570,12 +270,6 @@ public partial class Pose2D: Value<Pose2D>
     public static implicit operator (Vector3D, Orientation3D)(Pose2D self) => (self.Position, self.Orientation);
     public static implicit operator Pose2D((Vector3D, Orientation3D) value) => new Pose2D(value.Item1, value.Item2);
     public void Deconstruct(out Vector3D position, out Orientation3D orientation) { position = Position; orientation = Orientation; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Pose2D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Pose2D a, Pose2D b) => a.Equals(b);
-    public Boolean NotEquals(Pose2D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Pose2D a, Pose2D b) => a.NotEquals(b);
 }
 public partial class Pose3D: Value<Pose3D>
 {
@@ -590,12 +284,6 @@ public partial class Pose3D: Value<Pose3D>
     public static implicit operator (Vector3D, Orientation3D)(Pose3D self) => (self.Position, self.Orientation);
     public static implicit operator Pose3D((Vector3D, Orientation3D) value) => new Pose3D(value.Item1, value.Item2);
     public void Deconstruct(out Vector3D position, out Orientation3D orientation) { position = Position; orientation = Orientation; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Pose3D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Pose3D a, Pose3D b) => a.Equals(b);
-    public Boolean NotEquals(Pose3D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Pose3D a, Pose3D b) => a.NotEquals(b);
 }
 public partial class Transform3D: Value<Transform3D>
 {
@@ -612,12 +300,6 @@ public partial class Transform3D: Value<Transform3D>
     public static implicit operator (Vector3D, Rotation3D, Vector3D)(Transform3D self) => (self.Translation, self.Rotation, self.Scale);
     public static implicit operator Transform3D((Vector3D, Rotation3D, Vector3D) value) => new Transform3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Vector3D translation, out Rotation3D rotation, out Vector3D scale) { translation = Translation; rotation = Rotation; scale = Scale; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Transform3D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Transform3D a, Transform3D b) => a.Equals(b);
-    public Boolean NotEquals(Transform3D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Transform3D a, Transform3D b) => a.NotEquals(b);
 }
 public partial class Transform2D: Value<Transform2D>
 {
@@ -634,12 +316,6 @@ public partial class Transform2D: Value<Transform2D>
     public static implicit operator (Vector2D, Angle, Vector2D)(Transform2D self) => (self.Translation, self.Rotation, self.Scale);
     public static implicit operator Transform2D((Vector2D, Angle, Vector2D) value) => new Transform2D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Vector2D translation, out Angle rotation, out Vector2D scale) { translation = Translation; rotation = Rotation; scale = Scale; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Transform2D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Transform2D a, Transform2D b) => a.Equals(b);
-    public Boolean NotEquals(Transform2D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Transform2D a, Transform2D b) => a.NotEquals(b);
 }
 public partial class AlignedBox2D: Interval<Point2D, Vector2D>
 {
@@ -654,9 +330,6 @@ public partial class AlignedBox2D: Interval<Point2D, Vector2D>
     public static implicit operator (Point2D, Point2D)(AlignedBox2D self) => (self.A, self.B);
     public static implicit operator AlignedBox2D((Point2D, Point2D) value) => new AlignedBox2D(value.Item1, value.Item2);
     public void Deconstruct(out Point2D a, out Point2D b) { a = A; b = B; }
-    public Point2D Min => throw new NotImplementedException();
-    public Point2D Max => throw new NotImplementedException();
-    public Vector2D Size => throw new NotImplementedException();
 }
 public partial class AlignedBox3D: Interval<Point3D, Vector3D>
 {
@@ -671,9 +344,6 @@ public partial class AlignedBox3D: Interval<Point3D, Vector3D>
     public static implicit operator (Point3D, Point3D)(AlignedBox3D self) => (self.A, self.B);
     public static implicit operator AlignedBox3D((Point3D, Point3D) value) => new AlignedBox3D(value.Item1, value.Item2);
     public void Deconstruct(out Point3D a, out Point3D b) { a = A; b = B; }
-    public Point3D Min => throw new NotImplementedException();
-    public Point3D Max => throw new NotImplementedException();
-    public Vector3D Size => throw new NotImplementedException();
 }
 public partial class Complex: Vector<Complex>
 {
@@ -688,36 +358,6 @@ public partial class Complex: Vector<Complex>
     public static implicit operator (Number, Number)(Complex self) => (self.Real, self.Imaginary);
     public static implicit operator Complex((Number, Number) value) => new Complex(value.Item1, value.Item2);
     public void Deconstruct(out Number real, out Number imaginary) { real = Real; imaginary = Imaginary; }
-    public Integer Count => throw new NotImplementedException();
-    public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[Integer n] => At(n);
-    public Complex Zero => throw new NotImplementedException();
-    public Complex One => throw new NotImplementedException();
-    public Complex MinValue => throw new NotImplementedException();
-    public Complex MaxValue => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Complex b) => throw new NotImplementedException();
-    public static Boolean operator ==(Complex a, Complex b) => a.Equals(b);
-    public Boolean NotEquals(Complex b) => throw new NotImplementedException();
-    public static Boolean operator !=(Complex a, Complex b) => a.NotEquals(b);
-    public Complex Add(Complex other) => throw new NotImplementedException();
-    public static Complex operator +(Complex self, Complex other) => self.Add(other);
-    public Complex Subtract(Complex other) => throw new NotImplementedException();
-    public static Complex operator -(Complex self, Complex other) => self.Subtract(other);
-    public Complex Multiply(Complex other) => throw new NotImplementedException();
-    public static Complex operator *(Complex self, Complex other) => self.Multiply(other);
-    public Complex Divide(Complex other) => throw new NotImplementedException();
-    public static Complex operator /(Complex self, Complex other) => self.Divide(other);
-    public Complex Modulo(Complex other) => throw new NotImplementedException();
-    public static Complex operator %(Complex self, Complex other) => self.Modulo(other);
-    public Complex Negative => throw new NotImplementedException();
-    public static Complex operator -(Complex self) => self.Negative;
-    public Complex Reciprocal => throw new NotImplementedException();
-    public Integer Compare(Complex y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Complex Lerp(Complex b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Complex a, Complex b) => throw new NotImplementedException();
 }
 public partial class Ray3D: Value<Ray3D>
 {
@@ -732,12 +372,6 @@ public partial class Ray3D: Value<Ray3D>
     public static implicit operator (Vector3D, Point3D)(Ray3D self) => (self.Direction, self.Position);
     public static implicit operator Ray3D((Vector3D, Point3D) value) => new Ray3D(value.Item1, value.Item2);
     public void Deconstruct(out Vector3D direction, out Point3D position) { direction = Direction; position = Position; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Ray3D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Ray3D a, Ray3D b) => a.Equals(b);
-    public Boolean NotEquals(Ray3D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Ray3D a, Ray3D b) => a.NotEquals(b);
 }
 public partial class Ray2D: Value<Ray2D>
 {
@@ -752,12 +386,6 @@ public partial class Ray2D: Value<Ray2D>
     public static implicit operator (Vector2D, Point2D)(Ray2D self) => (self.Direction, self.Position);
     public static implicit operator Ray2D((Vector2D, Point2D) value) => new Ray2D(value.Item1, value.Item2);
     public void Deconstruct(out Vector2D direction, out Point2D position) { direction = Direction; position = Position; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Ray2D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Ray2D a, Ray2D b) => a.Equals(b);
-    public Boolean NotEquals(Ray2D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Ray2D a, Ray2D b) => a.NotEquals(b);
 }
 public partial class Sphere: Value<Sphere>
 {
@@ -772,12 +400,6 @@ public partial class Sphere: Value<Sphere>
     public static implicit operator (Point3D, Number)(Sphere self) => (self.Center, self.Radius);
     public static implicit operator Sphere((Point3D, Number) value) => new Sphere(value.Item1, value.Item2);
     public void Deconstruct(out Point3D center, out Number radius) { center = Center; radius = Radius; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Sphere b) => throw new NotImplementedException();
-    public static Boolean operator ==(Sphere a, Sphere b) => a.Equals(b);
-    public Boolean NotEquals(Sphere b) => throw new NotImplementedException();
-    public static Boolean operator !=(Sphere a, Sphere b) => a.NotEquals(b);
 }
 public partial class Plane: Value<Plane>
 {
@@ -792,12 +414,6 @@ public partial class Plane: Value<Plane>
     public static implicit operator (Unit3D, Number)(Plane self) => (self.Normal, self.D);
     public static implicit operator Plane((Unit3D, Number) value) => new Plane(value.Item1, value.Item2);
     public void Deconstruct(out Unit3D normal, out Number d) { normal = Normal; d = D; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Plane b) => throw new NotImplementedException();
-    public static Boolean operator ==(Plane a, Plane b) => a.Equals(b);
-    public Boolean NotEquals(Plane b) => throw new NotImplementedException();
-    public static Boolean operator !=(Plane a, Plane b) => a.NotEquals(b);
 }
 public partial class Triangle2D: Value<Triangle2D>
 {
@@ -814,12 +430,6 @@ public partial class Triangle2D: Value<Triangle2D>
     public static implicit operator (Point2D, Point2D, Point2D)(Triangle2D self) => (self.A, self.B, self.C);
     public static implicit operator Triangle2D((Point2D, Point2D, Point2D) value) => new Triangle2D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point2D a, out Point2D b, out Point2D c) { a = A; b = B; c = C; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Triangle2D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Triangle2D a, Triangle2D b) => a.Equals(b);
-    public Boolean NotEquals(Triangle2D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Triangle2D a, Triangle2D b) => a.NotEquals(b);
 }
 public partial class Triangle3D: Value<Triangle3D>
 {
@@ -836,12 +446,6 @@ public partial class Triangle3D: Value<Triangle3D>
     public static implicit operator (Point3D, Point3D, Point3D)(Triangle3D self) => (self.A, self.B, self.C);
     public static implicit operator Triangle3D((Point3D, Point3D, Point3D) value) => new Triangle3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point3D a, out Point3D b, out Point3D c) { a = A; b = B; c = C; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Triangle3D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Triangle3D a, Triangle3D b) => a.Equals(b);
-    public Boolean NotEquals(Triangle3D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Triangle3D a, Triangle3D b) => a.NotEquals(b);
 }
 public partial class Quad2D: Value<Quad2D>
 {
@@ -860,12 +464,6 @@ public partial class Quad2D: Value<Quad2D>
     public static implicit operator (Point2D, Point2D, Point2D, Point2D)(Quad2D self) => (self.A, self.B, self.C, self.D);
     public static implicit operator Quad2D((Point2D, Point2D, Point2D, Point2D) value) => new Quad2D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Point2D a, out Point2D b, out Point2D c, out Point2D d) { a = A; b = B; c = C; d = D; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Quad2D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Quad2D a, Quad2D b) => a.Equals(b);
-    public Boolean NotEquals(Quad2D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Quad2D a, Quad2D b) => a.NotEquals(b);
 }
 public partial class Quad3D: Value<Quad3D>
 {
@@ -884,12 +482,6 @@ public partial class Quad3D: Value<Quad3D>
     public static implicit operator (Point3D, Point3D, Point3D, Point3D)(Quad3D self) => (self.A, self.B, self.C, self.D);
     public static implicit operator Quad3D((Point3D, Point3D, Point3D, Point3D) value) => new Quad3D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Point3D a, out Point3D b, out Point3D c, out Point3D d) { a = A; b = B; c = C; d = D; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Quad3D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Quad3D a, Quad3D b) => a.Equals(b);
-    public Boolean NotEquals(Quad3D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Quad3D a, Quad3D b) => a.NotEquals(b);
 }
 public partial class Point2D: Coordinate<Point2D>
 {
@@ -904,8 +496,6 @@ public partial class Point2D: Coordinate<Point2D>
     public static implicit operator (Number, Number)(Point2D self) => (self.X, self.Y);
     public static implicit operator Point2D((Number, Number) value) => new Point2D(value.Item1, value.Item2);
     public void Deconstruct(out Number x, out Number y) { x = X; y = Y; }
-    public Point2D Lerp(Point2D b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Point2D a, Point2D b) => throw new NotImplementedException();
 }
 public partial class Point3D: Coordinate<Point3D>
 {
@@ -922,8 +512,6 @@ public partial class Point3D: Coordinate<Point3D>
     public static implicit operator (Number, Number, Number)(Point3D self) => (self.X, self.Y, self.Z);
     public static implicit operator Point3D((Number, Number, Number) value) => new Point3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number x, out Number y, out Number z) { x = X; y = Y; z = Z; }
-    public Point3D Lerp(Point3D b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Point3D a, Point3D b) => throw new NotImplementedException();
 }
 public partial class Line2D: Interval<Point2D, Vector3D>
 {
@@ -938,9 +526,6 @@ public partial class Line2D: Interval<Point2D, Vector3D>
     public static implicit operator (Point2D, Point2D)(Line2D self) => (self.A, self.B);
     public static implicit operator Line2D((Point2D, Point2D) value) => new Line2D(value.Item1, value.Item2);
     public void Deconstruct(out Point2D a, out Point2D b) { a = A; b = B; }
-    public Point2D Min => throw new NotImplementedException();
-    public Point2D Max => throw new NotImplementedException();
-    public Vector3D Size => throw new NotImplementedException();
 }
 public partial class Line3D: Interval<Point3D, Vector3D>
 {
@@ -955,9 +540,6 @@ public partial class Line3D: Interval<Point3D, Vector3D>
     public static implicit operator (Point3D, Point3D)(Line3D self) => (self.A, self.B);
     public static implicit operator Line3D((Point3D, Point3D) value) => new Line3D(value.Item1, value.Item2);
     public void Deconstruct(out Point3D a, out Point3D b) { a = A; b = B; }
-    public Point3D Min => throw new NotImplementedException();
-    public Point3D Max => throw new NotImplementedException();
-    public Vector3D Size => throw new NotImplementedException();
 }
 public partial class Color: Value<Color>
 {
@@ -976,12 +558,6 @@ public partial class Color: Value<Color>
     public static implicit operator (Unit, Unit, Unit, Unit)(Color self) => (self.R, self.G, self.B, self.A);
     public static implicit operator Color((Unit, Unit, Unit, Unit) value) => new Color(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Unit r, out Unit g, out Unit b, out Unit a) { r = R; g = G; b = B; a = A; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Color b) => throw new NotImplementedException();
-    public static Boolean operator ==(Color a, Color b) => a.Equals(b);
-    public Boolean NotEquals(Color b) => throw new NotImplementedException();
-    public static Boolean operator !=(Color a, Color b) => a.NotEquals(b);
 }
 public partial class ColorLUV: Value<ColorLUV>
 {
@@ -998,12 +574,6 @@ public partial class ColorLUV: Value<ColorLUV>
     public static implicit operator (Percent, Unit, Unit)(ColorLUV self) => (self.Lightness, self.U, self.V);
     public static implicit operator ColorLUV((Percent, Unit, Unit) value) => new ColorLUV(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Percent lightness, out Unit u, out Unit v) { lightness = Lightness; u = U; v = V; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(ColorLUV b) => throw new NotImplementedException();
-    public static Boolean operator ==(ColorLUV a, ColorLUV b) => a.Equals(b);
-    public Boolean NotEquals(ColorLUV b) => throw new NotImplementedException();
-    public static Boolean operator !=(ColorLUV a, ColorLUV b) => a.NotEquals(b);
 }
 public partial class ColorLAB: Value<ColorLAB>
 {
@@ -1020,12 +590,6 @@ public partial class ColorLAB: Value<ColorLAB>
     public static implicit operator (Percent, Integer, Integer)(ColorLAB self) => (self.Lightness, self.A, self.B);
     public static implicit operator ColorLAB((Percent, Integer, Integer) value) => new ColorLAB(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Percent lightness, out Integer a, out Integer b) { lightness = Lightness; a = A; b = B; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(ColorLAB b) => throw new NotImplementedException();
-    public static Boolean operator ==(ColorLAB a, ColorLAB b) => a.Equals(b);
-    public Boolean NotEquals(ColorLAB b) => throw new NotImplementedException();
-    public static Boolean operator !=(ColorLAB a, ColorLAB b) => a.NotEquals(b);
 }
 public partial class ColorLCh: Value<ColorLCh>
 {
@@ -1040,12 +604,6 @@ public partial class ColorLCh: Value<ColorLCh>
     public static implicit operator (Percent, PolarCoordinate)(ColorLCh self) => (self.Lightness, self.ChromaHue);
     public static implicit operator ColorLCh((Percent, PolarCoordinate) value) => new ColorLCh(value.Item1, value.Item2);
     public void Deconstruct(out Percent lightness, out PolarCoordinate chromaHue) { lightness = Lightness; chromaHue = ChromaHue; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(ColorLCh b) => throw new NotImplementedException();
-    public static Boolean operator ==(ColorLCh a, ColorLCh b) => a.Equals(b);
-    public Boolean NotEquals(ColorLCh b) => throw new NotImplementedException();
-    public static Boolean operator !=(ColorLCh a, ColorLCh b) => a.NotEquals(b);
 }
 public partial class ColorHSV: Value<ColorHSV>
 {
@@ -1062,12 +620,6 @@ public partial class ColorHSV: Value<ColorHSV>
     public static implicit operator (Angle, Unit, Unit)(ColorHSV self) => (self.Hue, self.S, self.V);
     public static implicit operator ColorHSV((Angle, Unit, Unit) value) => new ColorHSV(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Angle hue, out Unit s, out Unit v) { hue = Hue; s = S; v = V; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(ColorHSV b) => throw new NotImplementedException();
-    public static Boolean operator ==(ColorHSV a, ColorHSV b) => a.Equals(b);
-    public Boolean NotEquals(ColorHSV b) => throw new NotImplementedException();
-    public static Boolean operator !=(ColorHSV a, ColorHSV b) => a.NotEquals(b);
 }
 public partial class ColorHSL: Value<ColorHSL>
 {
@@ -1084,12 +636,6 @@ public partial class ColorHSL: Value<ColorHSL>
     public static implicit operator (Angle, Unit, Unit)(ColorHSL self) => (self.Hue, self.Saturation, self.Luminance);
     public static implicit operator ColorHSL((Angle, Unit, Unit) value) => new ColorHSL(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Angle hue, out Unit saturation, out Unit luminance) { hue = Hue; saturation = Saturation; luminance = Luminance; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(ColorHSL b) => throw new NotImplementedException();
-    public static Boolean operator ==(ColorHSL a, ColorHSL b) => a.Equals(b);
-    public Boolean NotEquals(ColorHSL b) => throw new NotImplementedException();
-    public static Boolean operator !=(ColorHSL a, ColorHSL b) => a.NotEquals(b);
 }
 public partial class ColorYCbCr: Value<ColorYCbCr>
 {
@@ -1106,12 +652,6 @@ public partial class ColorYCbCr: Value<ColorYCbCr>
     public static implicit operator (Unit, Unit, Unit)(ColorYCbCr self) => (self.Y, self.Cb, self.Cr);
     public static implicit operator ColorYCbCr((Unit, Unit, Unit) value) => new ColorYCbCr(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Unit y, out Unit cb, out Unit cr) { y = Y; cb = Cb; cr = Cr; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(ColorYCbCr b) => throw new NotImplementedException();
-    public static Boolean operator ==(ColorYCbCr a, ColorYCbCr b) => a.Equals(b);
-    public Boolean NotEquals(ColorYCbCr b) => throw new NotImplementedException();
-    public static Boolean operator !=(ColorYCbCr a, ColorYCbCr b) => a.NotEquals(b);
 }
 public partial class SphericalCoordinate: Value<SphericalCoordinate>
 {
@@ -1128,12 +668,6 @@ public partial class SphericalCoordinate: Value<SphericalCoordinate>
     public static implicit operator (Number, Angle, Angle)(SphericalCoordinate self) => (self.Radius, self.Azimuth, self.Polar);
     public static implicit operator SphericalCoordinate((Number, Angle, Angle) value) => new SphericalCoordinate(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number radius, out Angle azimuth, out Angle polar) { radius = Radius; azimuth = Azimuth; polar = Polar; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(SphericalCoordinate b) => throw new NotImplementedException();
-    public static Boolean operator ==(SphericalCoordinate a, SphericalCoordinate b) => a.Equals(b);
-    public Boolean NotEquals(SphericalCoordinate b) => throw new NotImplementedException();
-    public static Boolean operator !=(SphericalCoordinate a, SphericalCoordinate b) => a.NotEquals(b);
 }
 public partial class PolarCoordinate: Value<PolarCoordinate>
 {
@@ -1148,12 +682,6 @@ public partial class PolarCoordinate: Value<PolarCoordinate>
     public static implicit operator (Number, Angle)(PolarCoordinate self) => (self.Radius, self.Angle);
     public static implicit operator PolarCoordinate((Number, Angle) value) => new PolarCoordinate(value.Item1, value.Item2);
     public void Deconstruct(out Number radius, out Angle angle) { radius = Radius; angle = Angle; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(PolarCoordinate b) => throw new NotImplementedException();
-    public static Boolean operator ==(PolarCoordinate a, PolarCoordinate b) => a.Equals(b);
-    public Boolean NotEquals(PolarCoordinate b) => throw new NotImplementedException();
-    public static Boolean operator !=(PolarCoordinate a, PolarCoordinate b) => a.NotEquals(b);
 }
 public partial class LogPolarCoordinate: Value<LogPolarCoordinate>
 {
@@ -1168,12 +696,6 @@ public partial class LogPolarCoordinate: Value<LogPolarCoordinate>
     public static implicit operator (Number, Angle)(LogPolarCoordinate self) => (self.Rho, self.Azimuth);
     public static implicit operator LogPolarCoordinate((Number, Angle) value) => new LogPolarCoordinate(value.Item1, value.Item2);
     public void Deconstruct(out Number rho, out Angle azimuth) { rho = Rho; azimuth = Azimuth; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(LogPolarCoordinate b) => throw new NotImplementedException();
-    public static Boolean operator ==(LogPolarCoordinate a, LogPolarCoordinate b) => a.Equals(b);
-    public Boolean NotEquals(LogPolarCoordinate b) => throw new NotImplementedException();
-    public static Boolean operator !=(LogPolarCoordinate a, LogPolarCoordinate b) => a.NotEquals(b);
 }
 public partial class CylindricalCoordinate: Value<CylindricalCoordinate>
 {
@@ -1190,12 +712,6 @@ public partial class CylindricalCoordinate: Value<CylindricalCoordinate>
     public static implicit operator (Number, Angle, Number)(CylindricalCoordinate self) => (self.RadialDistance, self.Azimuth, self.Height);
     public static implicit operator CylindricalCoordinate((Number, Angle, Number) value) => new CylindricalCoordinate(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number radialDistance, out Angle azimuth, out Number height) { radialDistance = RadialDistance; azimuth = Azimuth; height = Height; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(CylindricalCoordinate b) => throw new NotImplementedException();
-    public static Boolean operator ==(CylindricalCoordinate a, CylindricalCoordinate b) => a.Equals(b);
-    public Boolean NotEquals(CylindricalCoordinate b) => throw new NotImplementedException();
-    public static Boolean operator !=(CylindricalCoordinate a, CylindricalCoordinate b) => a.NotEquals(b);
 }
 public partial class HorizontalCoordinate: Value<HorizontalCoordinate>
 {
@@ -1212,12 +728,6 @@ public partial class HorizontalCoordinate: Value<HorizontalCoordinate>
     public static implicit operator (Number, Angle, Number)(HorizontalCoordinate self) => (self.Radius, self.Azimuth, self.Height);
     public static implicit operator HorizontalCoordinate((Number, Angle, Number) value) => new HorizontalCoordinate(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number radius, out Angle azimuth, out Number height) { radius = Radius; azimuth = Azimuth; height = Height; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(HorizontalCoordinate b) => throw new NotImplementedException();
-    public static Boolean operator ==(HorizontalCoordinate a, HorizontalCoordinate b) => a.Equals(b);
-    public Boolean NotEquals(HorizontalCoordinate b) => throw new NotImplementedException();
-    public static Boolean operator !=(HorizontalCoordinate a, HorizontalCoordinate b) => a.NotEquals(b);
 }
 public partial class GeoCoordinate: Value<GeoCoordinate>
 {
@@ -1232,12 +742,6 @@ public partial class GeoCoordinate: Value<GeoCoordinate>
     public static implicit operator (Angle, Angle)(GeoCoordinate self) => (self.Latitude, self.Longitude);
     public static implicit operator GeoCoordinate((Angle, Angle) value) => new GeoCoordinate(value.Item1, value.Item2);
     public void Deconstruct(out Angle latitude, out Angle longitude) { latitude = Latitude; longitude = Longitude; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(GeoCoordinate b) => throw new NotImplementedException();
-    public static Boolean operator ==(GeoCoordinate a, GeoCoordinate b) => a.Equals(b);
-    public Boolean NotEquals(GeoCoordinate b) => throw new NotImplementedException();
-    public static Boolean operator !=(GeoCoordinate a, GeoCoordinate b) => a.NotEquals(b);
 }
 public partial class GeoCoordinateWithAltitude: Value<GeoCoordinateWithAltitude>
 {
@@ -1252,12 +756,6 @@ public partial class GeoCoordinateWithAltitude: Value<GeoCoordinateWithAltitude>
     public static implicit operator (GeoCoordinate, Number)(GeoCoordinateWithAltitude self) => (self.Coordinate, self.Altitude);
     public static implicit operator GeoCoordinateWithAltitude((GeoCoordinate, Number) value) => new GeoCoordinateWithAltitude(value.Item1, value.Item2);
     public void Deconstruct(out GeoCoordinate coordinate, out Number altitude) { coordinate = Coordinate; altitude = Altitude; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(GeoCoordinateWithAltitude b) => throw new NotImplementedException();
-    public static Boolean operator ==(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) => a.Equals(b);
-    public Boolean NotEquals(GeoCoordinateWithAltitude b) => throw new NotImplementedException();
-    public static Boolean operator !=(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) => a.NotEquals(b);
 }
 public partial class Circle: Value<Circle>
 {
@@ -1272,12 +770,6 @@ public partial class Circle: Value<Circle>
     public static implicit operator (Point2D, Number)(Circle self) => (self.Center, self.Radius);
     public static implicit operator Circle((Point2D, Number) value) => new Circle(value.Item1, value.Item2);
     public void Deconstruct(out Point2D center, out Number radius) { center = Center; radius = Radius; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Circle b) => throw new NotImplementedException();
-    public static Boolean operator ==(Circle a, Circle b) => a.Equals(b);
-    public Boolean NotEquals(Circle b) => throw new NotImplementedException();
-    public static Boolean operator !=(Circle a, Circle b) => a.NotEquals(b);
 }
 public partial class Chord: Value<Chord>
 {
@@ -1292,12 +784,6 @@ public partial class Chord: Value<Chord>
     public static implicit operator (Circle, Arc)(Chord self) => (self.Circle, self.Arc);
     public static implicit operator Chord((Circle, Arc) value) => new Chord(value.Item1, value.Item2);
     public void Deconstruct(out Circle circle, out Arc arc) { circle = Circle; arc = Arc; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Chord b) => throw new NotImplementedException();
-    public static Boolean operator ==(Chord a, Chord b) => a.Equals(b);
-    public Boolean NotEquals(Chord b) => throw new NotImplementedException();
-    public static Boolean operator !=(Chord a, Chord b) => a.NotEquals(b);
 }
 public partial class Size2D: Value<Size2D>
 {
@@ -1312,12 +798,6 @@ public partial class Size2D: Value<Size2D>
     public static implicit operator (Number, Number)(Size2D self) => (self.Width, self.Height);
     public static implicit operator Size2D((Number, Number) value) => new Size2D(value.Item1, value.Item2);
     public void Deconstruct(out Number width, out Number height) { width = Width; height = Height; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Size2D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Size2D a, Size2D b) => a.Equals(b);
-    public Boolean NotEquals(Size2D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Size2D a, Size2D b) => a.NotEquals(b);
 }
 public partial class Size3D: Value<Size3D>
 {
@@ -1334,12 +814,6 @@ public partial class Size3D: Value<Size3D>
     public static implicit operator (Number, Number, Number)(Size3D self) => (self.Width, self.Height, self.Depth);
     public static implicit operator Size3D((Number, Number, Number) value) => new Size3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number width, out Number height, out Number depth) { width = Width; height = Height; depth = Depth; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Size3D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Size3D a, Size3D b) => a.Equals(b);
-    public Boolean NotEquals(Size3D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Size3D a, Size3D b) => a.NotEquals(b);
 }
 public partial class Rectangle2D: Value<Rectangle2D>
 {
@@ -1354,12 +828,6 @@ public partial class Rectangle2D: Value<Rectangle2D>
     public static implicit operator (Point2D, Size2D)(Rectangle2D self) => (self.Center, self.Size);
     public static implicit operator Rectangle2D((Point2D, Size2D) value) => new Rectangle2D(value.Item1, value.Item2);
     public void Deconstruct(out Point2D center, out Size2D size) { center = Center; size = Size; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Rectangle2D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Rectangle2D a, Rectangle2D b) => a.Equals(b);
-    public Boolean NotEquals(Rectangle2D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Rectangle2D a, Rectangle2D b) => a.NotEquals(b);
 }
 public partial class Proportion: Numerical<Proportion>
 {
@@ -1371,33 +839,6 @@ public partial class Proportion: Numerical<Proportion>
     public static Proportion New(Number value) => new Proportion(value);
     public static implicit operator Number(Proportion self) => self.Value;
     public static implicit operator Proportion(Number value) => new Proportion(value);
-    public Proportion Zero => throw new NotImplementedException();
-    public Proportion One => throw new NotImplementedException();
-    public Proportion MinValue => throw new NotImplementedException();
-    public Proportion MaxValue => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Proportion b) => throw new NotImplementedException();
-    public static Boolean operator ==(Proportion a, Proportion b) => a.Equals(b);
-    public Boolean NotEquals(Proportion b) => throw new NotImplementedException();
-    public static Boolean operator !=(Proportion a, Proportion b) => a.NotEquals(b);
-    public Proportion Add(Proportion other) => throw new NotImplementedException();
-    public static Proportion operator +(Proportion self, Proportion other) => self.Add(other);
-    public Proportion Subtract(Proportion other) => throw new NotImplementedException();
-    public static Proportion operator -(Proportion self, Proportion other) => self.Subtract(other);
-    public Proportion Multiply(Proportion other) => throw new NotImplementedException();
-    public static Proportion operator *(Proportion self, Proportion other) => self.Multiply(other);
-    public Proportion Divide(Proportion other) => throw new NotImplementedException();
-    public static Proportion operator /(Proportion self, Proportion other) => self.Divide(other);
-    public Proportion Modulo(Proportion other) => throw new NotImplementedException();
-    public static Proportion operator %(Proportion self, Proportion other) => self.Modulo(other);
-    public Proportion Negative => throw new NotImplementedException();
-    public static Proportion operator -(Proportion self) => self.Negative;
-    public Proportion Reciprocal => throw new NotImplementedException();
-    public Integer Compare(Proportion y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Proportion Lerp(Proportion b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Proportion a, Proportion b) => throw new NotImplementedException();
 }
 public partial class Fraction: Value<Fraction>
 {
@@ -1412,12 +853,6 @@ public partial class Fraction: Value<Fraction>
     public static implicit operator (Number, Number)(Fraction self) => (self.Numerator, self.Denominator);
     public static implicit operator Fraction((Number, Number) value) => new Fraction(value.Item1, value.Item2);
     public void Deconstruct(out Number numerator, out Number denominator) { numerator = Numerator; denominator = Denominator; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Fraction b) => throw new NotImplementedException();
-    public static Boolean operator ==(Fraction a, Fraction b) => a.Equals(b);
-    public Boolean NotEquals(Fraction b) => throw new NotImplementedException();
-    public static Boolean operator !=(Fraction a, Fraction b) => a.NotEquals(b);
 }
 public partial class Angle: Coordinate<Angle>
 {
@@ -1429,8 +864,6 @@ public partial class Angle: Coordinate<Angle>
     public static Angle New(Number radians) => new Angle(radians);
     public static implicit operator Number(Angle self) => self.Radians;
     public static implicit operator Angle(Number value) => new Angle(value);
-    public Angle Lerp(Angle b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Angle a, Angle b) => throw new NotImplementedException();
 }
 public partial class Length: Measure<Length>
 {
@@ -1442,27 +875,6 @@ public partial class Length: Measure<Length>
     public static Length New(Number meters) => new Length(meters);
     public static implicit operator Number(Length self) => self.Meters;
     public static implicit operator Length(Number value) => new Length(value);
-    public Number Value => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Length b) => throw new NotImplementedException();
-    public static Boolean operator ==(Length a, Length b) => a.Equals(b);
-    public Boolean NotEquals(Length b) => throw new NotImplementedException();
-    public static Boolean operator !=(Length a, Length b) => a.NotEquals(b);
-    public Length Add(Number other) => throw new NotImplementedException();
-    public static Length operator +(Length self, Number other) => self.Add(other);
-    public Length Subtract(Number other) => throw new NotImplementedException();
-    public static Length operator -(Length self, Number other) => self.Subtract(other);
-    public Length Multiply(Length other) => throw new NotImplementedException();
-    public static Length operator *(Length self, Length other) => self.Multiply(other);
-    public Length Divide(Length other) => throw new NotImplementedException();
-    public static Length operator /(Length self, Length other) => self.Divide(other);
-    public Length Modulo(Length other) => throw new NotImplementedException();
-    public static Length operator %(Length self, Length other) => self.Modulo(other);
-    public Integer Compare(Length y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Length Lerp(Length b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Length a, Length b) => throw new NotImplementedException();
 }
 public partial class Mass: Measure<Mass>
 {
@@ -1474,27 +886,6 @@ public partial class Mass: Measure<Mass>
     public static Mass New(Number kilograms) => new Mass(kilograms);
     public static implicit operator Number(Mass self) => self.Kilograms;
     public static implicit operator Mass(Number value) => new Mass(value);
-    public Number Value => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Mass b) => throw new NotImplementedException();
-    public static Boolean operator ==(Mass a, Mass b) => a.Equals(b);
-    public Boolean NotEquals(Mass b) => throw new NotImplementedException();
-    public static Boolean operator !=(Mass a, Mass b) => a.NotEquals(b);
-    public Mass Add(Number other) => throw new NotImplementedException();
-    public static Mass operator +(Mass self, Number other) => self.Add(other);
-    public Mass Subtract(Number other) => throw new NotImplementedException();
-    public static Mass operator -(Mass self, Number other) => self.Subtract(other);
-    public Mass Multiply(Mass other) => throw new NotImplementedException();
-    public static Mass operator *(Mass self, Mass other) => self.Multiply(other);
-    public Mass Divide(Mass other) => throw new NotImplementedException();
-    public static Mass operator /(Mass self, Mass other) => self.Divide(other);
-    public Mass Modulo(Mass other) => throw new NotImplementedException();
-    public static Mass operator %(Mass self, Mass other) => self.Modulo(other);
-    public Integer Compare(Mass y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Mass Lerp(Mass b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Mass a, Mass b) => throw new NotImplementedException();
 }
 public partial class Temperature: Measure<Temperature>
 {
@@ -1506,27 +897,6 @@ public partial class Temperature: Measure<Temperature>
     public static Temperature New(Number celsius) => new Temperature(celsius);
     public static implicit operator Number(Temperature self) => self.Celsius;
     public static implicit operator Temperature(Number value) => new Temperature(value);
-    public Number Value => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Temperature b) => throw new NotImplementedException();
-    public static Boolean operator ==(Temperature a, Temperature b) => a.Equals(b);
-    public Boolean NotEquals(Temperature b) => throw new NotImplementedException();
-    public static Boolean operator !=(Temperature a, Temperature b) => a.NotEquals(b);
-    public Temperature Add(Number other) => throw new NotImplementedException();
-    public static Temperature operator +(Temperature self, Number other) => self.Add(other);
-    public Temperature Subtract(Number other) => throw new NotImplementedException();
-    public static Temperature operator -(Temperature self, Number other) => self.Subtract(other);
-    public Temperature Multiply(Temperature other) => throw new NotImplementedException();
-    public static Temperature operator *(Temperature self, Temperature other) => self.Multiply(other);
-    public Temperature Divide(Temperature other) => throw new NotImplementedException();
-    public static Temperature operator /(Temperature self, Temperature other) => self.Divide(other);
-    public Temperature Modulo(Temperature other) => throw new NotImplementedException();
-    public static Temperature operator %(Temperature self, Temperature other) => self.Modulo(other);
-    public Integer Compare(Temperature y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Temperature Lerp(Temperature b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Temperature a, Temperature b) => throw new NotImplementedException();
 }
 public partial class Time: Measure<Time>
 {
@@ -1538,27 +908,6 @@ public partial class Time: Measure<Time>
     public static Time New(Number seconds) => new Time(seconds);
     public static implicit operator Number(Time self) => self.Seconds;
     public static implicit operator Time(Number value) => new Time(value);
-    public Number Value => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Time b) => throw new NotImplementedException();
-    public static Boolean operator ==(Time a, Time b) => a.Equals(b);
-    public Boolean NotEquals(Time b) => throw new NotImplementedException();
-    public static Boolean operator !=(Time a, Time b) => a.NotEquals(b);
-    public Time Add(Number other) => throw new NotImplementedException();
-    public static Time operator +(Time self, Number other) => self.Add(other);
-    public Time Subtract(Number other) => throw new NotImplementedException();
-    public static Time operator -(Time self, Number other) => self.Subtract(other);
-    public Time Multiply(Time other) => throw new NotImplementedException();
-    public static Time operator *(Time self, Time other) => self.Multiply(other);
-    public Time Divide(Time other) => throw new NotImplementedException();
-    public static Time operator /(Time self, Time other) => self.Divide(other);
-    public Time Modulo(Time other) => throw new NotImplementedException();
-    public static Time operator %(Time self, Time other) => self.Modulo(other);
-    public Integer Compare(Time y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Time Lerp(Time b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Time a, Time b) => throw new NotImplementedException();
 }
 public partial class TimeRange: Interval<DateTime, Time>
 {
@@ -1573,9 +922,6 @@ public partial class TimeRange: Interval<DateTime, Time>
     public static implicit operator (DateTime, DateTime)(TimeRange self) => (self.Begin, self.End);
     public static implicit operator TimeRange((DateTime, DateTime) value) => new TimeRange(value.Item1, value.Item2);
     public void Deconstruct(out DateTime begin, out DateTime end) { begin = Begin; end = End; }
-    public DateTime Min => throw new NotImplementedException();
-    public DateTime Max => throw new NotImplementedException();
-    public Time Size => throw new NotImplementedException();
 }
 public partial class DateTime: Coordinate<DateTime>
 {
@@ -1600,8 +946,6 @@ public partial class DateTime: Coordinate<DateTime>
     public static implicit operator (Integer, Integer, Integer, Integer, Integer, Integer, Number)(DateTime self) => (self.Year, self.Month, self.TimeZoneOffset, self.Day, self.Minute, self.Second, self.Milliseconds);
     public static implicit operator DateTime((Integer, Integer, Integer, Integer, Integer, Integer, Number) value) => new DateTime(value.Item1, value.Item2, value.Item3, value.Item4, value.Item5, value.Item6, value.Item7);
     public void Deconstruct(out Integer year, out Integer month, out Integer timeZoneOffset, out Integer day, out Integer minute, out Integer second, out Number milliseconds) { year = Year; month = Month; timeZoneOffset = TimeZoneOffset; day = Day; minute = Minute; second = Second; milliseconds = Milliseconds; }
-    public DateTime Lerp(DateTime b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(DateTime a, DateTime b) => throw new NotImplementedException();
 }
 public partial class AnglePair: Interval<Angle, Angle>
 {
@@ -1616,9 +960,6 @@ public partial class AnglePair: Interval<Angle, Angle>
     public static implicit operator (Angle, Angle)(AnglePair self) => (self.Start, self.End);
     public static implicit operator AnglePair((Angle, Angle) value) => new AnglePair(value.Item1, value.Item2);
     public void Deconstruct(out Angle start, out Angle end) { start = Start; end = End; }
-    public Angle Min => throw new NotImplementedException();
-    public Angle Max => throw new NotImplementedException();
-    public Angle Size => throw new NotImplementedException();
 }
 public partial class Ring: Value<Ring>
 {
@@ -1633,12 +974,6 @@ public partial class Ring: Value<Ring>
     public static implicit operator (Circle, Number)(Ring self) => (self.Circle, self.InnerRadius);
     public static implicit operator Ring((Circle, Number) value) => new Ring(value.Item1, value.Item2);
     public void Deconstruct(out Circle circle, out Number innerRadius) { circle = Circle; innerRadius = InnerRadius; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Ring b) => throw new NotImplementedException();
-    public static Boolean operator ==(Ring a, Ring b) => a.Equals(b);
-    public Boolean NotEquals(Ring b) => throw new NotImplementedException();
-    public static Boolean operator !=(Ring a, Ring b) => a.NotEquals(b);
 }
 public partial class Arc: Value<Arc>
 {
@@ -1653,12 +988,6 @@ public partial class Arc: Value<Arc>
     public static implicit operator (AnglePair, Circle)(Arc self) => (self.Angles, self.Cirlce);
     public static implicit operator Arc((AnglePair, Circle) value) => new Arc(value.Item1, value.Item2);
     public void Deconstruct(out AnglePair angles, out Circle cirlce) { angles = Angles; cirlce = Cirlce; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Arc b) => throw new NotImplementedException();
-    public static Boolean operator ==(Arc a, Arc b) => a.Equals(b);
-    public Boolean NotEquals(Arc b) => throw new NotImplementedException();
-    public static Boolean operator !=(Arc a, Arc b) => a.NotEquals(b);
 }
 public partial class RealInterval: Interval<Number, Number>
 {
@@ -1673,9 +1002,6 @@ public partial class RealInterval: Interval<Number, Number>
     public static implicit operator (Number, Number)(RealInterval self) => (self.A, self.B);
     public static implicit operator RealInterval((Number, Number) value) => new RealInterval(value.Item1, value.Item2);
     public void Deconstruct(out Number a, out Number b) { a = A; b = B; }
-    public Number Min => throw new NotImplementedException();
-    public Number Max => throw new NotImplementedException();
-    public Number Size => throw new NotImplementedException();
 }
 public partial class Capsule: Value<Capsule>
 {
@@ -1690,12 +1016,6 @@ public partial class Capsule: Value<Capsule>
     public static implicit operator (Line3D, Number)(Capsule self) => (self.Line, self.Radius);
     public static implicit operator Capsule((Line3D, Number) value) => new Capsule(value.Item1, value.Item2);
     public void Deconstruct(out Line3D line, out Number radius) { line = Line; radius = Radius; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Capsule b) => throw new NotImplementedException();
-    public static Boolean operator ==(Capsule a, Capsule b) => a.Equals(b);
-    public Boolean NotEquals(Capsule b) => throw new NotImplementedException();
-    public static Boolean operator !=(Capsule a, Capsule b) => a.NotEquals(b);
 }
 public partial class Matrix3D: Value<Matrix3D>
 {
@@ -1714,12 +1034,6 @@ public partial class Matrix3D: Value<Matrix3D>
     public static implicit operator (Vector4D, Vector4D, Vector4D, Vector4D)(Matrix3D self) => (self.Column1, self.Column2, self.Column3, self.Column4);
     public static implicit operator Matrix3D((Vector4D, Vector4D, Vector4D, Vector4D) value) => new Matrix3D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Vector4D column1, out Vector4D column2, out Vector4D column3, out Vector4D column4) { column1 = Column1; column2 = Column2; column3 = Column3; column4 = Column4; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Matrix3D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Matrix3D a, Matrix3D b) => a.Equals(b);
-    public Boolean NotEquals(Matrix3D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Matrix3D a, Matrix3D b) => a.NotEquals(b);
 }
 public partial class Cylinder: Value<Cylinder>
 {
@@ -1734,12 +1048,6 @@ public partial class Cylinder: Value<Cylinder>
     public static implicit operator (Line3D, Number)(Cylinder self) => (self.Line, self.Radius);
     public static implicit operator Cylinder((Line3D, Number) value) => new Cylinder(value.Item1, value.Item2);
     public void Deconstruct(out Line3D line, out Number radius) { line = Line; radius = Radius; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Cylinder b) => throw new NotImplementedException();
-    public static Boolean operator ==(Cylinder a, Cylinder b) => a.Equals(b);
-    public Boolean NotEquals(Cylinder b) => throw new NotImplementedException();
-    public static Boolean operator !=(Cylinder a, Cylinder b) => a.NotEquals(b);
 }
 public partial class Cone: Value<Cone>
 {
@@ -1754,12 +1062,6 @@ public partial class Cone: Value<Cone>
     public static implicit operator (Line3D, Number)(Cone self) => (self.Line, self.Radius);
     public static implicit operator Cone((Line3D, Number) value) => new Cone(value.Item1, value.Item2);
     public void Deconstruct(out Line3D line, out Number radius) { line = Line; radius = Radius; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Cone b) => throw new NotImplementedException();
-    public static Boolean operator ==(Cone a, Cone b) => a.Equals(b);
-    public Boolean NotEquals(Cone b) => throw new NotImplementedException();
-    public static Boolean operator !=(Cone a, Cone b) => a.NotEquals(b);
 }
 public partial class Tube: Value<Tube>
 {
@@ -1776,12 +1078,6 @@ public partial class Tube: Value<Tube>
     public static implicit operator (Line3D, Number, Number)(Tube self) => (self.Line, self.InnerRadius, self.OuterRadius);
     public static implicit operator Tube((Line3D, Number, Number) value) => new Tube(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Line3D line, out Number innerRadius, out Number outerRadius) { line = Line; innerRadius = InnerRadius; outerRadius = OuterRadius; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Tube b) => throw new NotImplementedException();
-    public static Boolean operator ==(Tube a, Tube b) => a.Equals(b);
-    public Boolean NotEquals(Tube b) => throw new NotImplementedException();
-    public static Boolean operator !=(Tube a, Tube b) => a.NotEquals(b);
 }
 public partial class ConeSegment: Value<ConeSegment>
 {
@@ -1798,12 +1094,6 @@ public partial class ConeSegment: Value<ConeSegment>
     public static implicit operator (Line3D, Number, Number)(ConeSegment self) => (self.Line, self.Radius1, self.Radius2);
     public static implicit operator ConeSegment((Line3D, Number, Number) value) => new ConeSegment(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Line3D line, out Number radius1, out Number radius2) { line = Line; radius1 = Radius1; radius2 = Radius2; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(ConeSegment b) => throw new NotImplementedException();
-    public static Boolean operator ==(ConeSegment a, ConeSegment b) => a.Equals(b);
-    public Boolean NotEquals(ConeSegment b) => throw new NotImplementedException();
-    public static Boolean operator !=(ConeSegment a, ConeSegment b) => a.NotEquals(b);
 }
 public partial class Box2D: Value<Box2D>
 {
@@ -1820,12 +1110,6 @@ public partial class Box2D: Value<Box2D>
     public static implicit operator (Point2D, Angle, Size2D)(Box2D self) => (self.Center, self.Rotation, self.Extent);
     public static implicit operator Box2D((Point2D, Angle, Size2D) value) => new Box2D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point2D center, out Angle rotation, out Size2D extent) { center = Center; rotation = Rotation; extent = Extent; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Box2D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Box2D a, Box2D b) => a.Equals(b);
-    public Boolean NotEquals(Box2D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Box2D a, Box2D b) => a.NotEquals(b);
 }
 public partial class Box3D: Value<Box3D>
 {
@@ -1842,12 +1126,6 @@ public partial class Box3D: Value<Box3D>
     public static implicit operator (Point3D, Rotation3D, Size3D)(Box3D self) => (self.Center, self.Rotation, self.Extent);
     public static implicit operator Box3D((Point3D, Rotation3D, Size3D) value) => new Box3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point3D center, out Rotation3D rotation, out Size3D extent) { center = Center; rotation = Rotation; extent = Extent; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Box3D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Box3D a, Box3D b) => a.Equals(b);
-    public Boolean NotEquals(Box3D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Box3D a, Box3D b) => a.NotEquals(b);
 }
 public partial class UV: Vector<UV>
 {
@@ -1862,36 +1140,6 @@ public partial class UV: Vector<UV>
     public static implicit operator (Unit, Unit)(UV self) => (self.U, self.V);
     public static implicit operator UV((Unit, Unit) value) => new UV(value.Item1, value.Item2);
     public void Deconstruct(out Unit u, out Unit v) { u = U; v = V; }
-    public Integer Count => throw new NotImplementedException();
-    public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[Integer n] => At(n);
-    public UV Zero => throw new NotImplementedException();
-    public UV One => throw new NotImplementedException();
-    public UV MinValue => throw new NotImplementedException();
-    public UV MaxValue => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(UV b) => throw new NotImplementedException();
-    public static Boolean operator ==(UV a, UV b) => a.Equals(b);
-    public Boolean NotEquals(UV b) => throw new NotImplementedException();
-    public static Boolean operator !=(UV a, UV b) => a.NotEquals(b);
-    public UV Add(UV other) => throw new NotImplementedException();
-    public static UV operator +(UV self, UV other) => self.Add(other);
-    public UV Subtract(UV other) => throw new NotImplementedException();
-    public static UV operator -(UV self, UV other) => self.Subtract(other);
-    public UV Multiply(UV other) => throw new NotImplementedException();
-    public static UV operator *(UV self, UV other) => self.Multiply(other);
-    public UV Divide(UV other) => throw new NotImplementedException();
-    public static UV operator /(UV self, UV other) => self.Divide(other);
-    public UV Modulo(UV other) => throw new NotImplementedException();
-    public static UV operator %(UV self, UV other) => self.Modulo(other);
-    public UV Negative => throw new NotImplementedException();
-    public static UV operator -(UV self) => self.Negative;
-    public UV Reciprocal => throw new NotImplementedException();
-    public Integer Compare(UV y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public UV Lerp(UV b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(UV a, UV b) => throw new NotImplementedException();
 }
 public partial class UVW: Vector<UVW>
 {
@@ -1908,36 +1156,6 @@ public partial class UVW: Vector<UVW>
     public static implicit operator (Unit, Unit, Unit)(UVW self) => (self.U, self.V, self.W);
     public static implicit operator UVW((Unit, Unit, Unit) value) => new UVW(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Unit u, out Unit v, out Unit w) { u = U; v = V; w = W; }
-    public Integer Count => throw new NotImplementedException();
-    public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[Integer n] => At(n);
-    public UVW Zero => throw new NotImplementedException();
-    public UVW One => throw new NotImplementedException();
-    public UVW MinValue => throw new NotImplementedException();
-    public UVW MaxValue => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(UVW b) => throw new NotImplementedException();
-    public static Boolean operator ==(UVW a, UVW b) => a.Equals(b);
-    public Boolean NotEquals(UVW b) => throw new NotImplementedException();
-    public static Boolean operator !=(UVW a, UVW b) => a.NotEquals(b);
-    public UVW Add(UVW other) => throw new NotImplementedException();
-    public static UVW operator +(UVW self, UVW other) => self.Add(other);
-    public UVW Subtract(UVW other) => throw new NotImplementedException();
-    public static UVW operator -(UVW self, UVW other) => self.Subtract(other);
-    public UVW Multiply(UVW other) => throw new NotImplementedException();
-    public static UVW operator *(UVW self, UVW other) => self.Multiply(other);
-    public UVW Divide(UVW other) => throw new NotImplementedException();
-    public static UVW operator /(UVW self, UVW other) => self.Divide(other);
-    public UVW Modulo(UVW other) => throw new NotImplementedException();
-    public static UVW operator %(UVW self, UVW other) => self.Modulo(other);
-    public UVW Negative => throw new NotImplementedException();
-    public static UVW operator -(UVW self) => self.Negative;
-    public UVW Reciprocal => throw new NotImplementedException();
-    public Integer Compare(UVW y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public UVW Lerp(UVW b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(UVW a, UVW b) => throw new NotImplementedException();
 }
 public partial class CubicBezier2D: Value<CubicBezier2D>
 {
@@ -1956,12 +1174,6 @@ public partial class CubicBezier2D: Value<CubicBezier2D>
     public static implicit operator (Point2D, Point2D, Point2D, Point2D)(CubicBezier2D self) => (self.A, self.B, self.C, self.D);
     public static implicit operator CubicBezier2D((Point2D, Point2D, Point2D, Point2D) value) => new CubicBezier2D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Point2D a, out Point2D b, out Point2D c, out Point2D d) { a = A; b = B; c = C; d = D; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(CubicBezier2D b) => throw new NotImplementedException();
-    public static Boolean operator ==(CubicBezier2D a, CubicBezier2D b) => a.Equals(b);
-    public Boolean NotEquals(CubicBezier2D b) => throw new NotImplementedException();
-    public static Boolean operator !=(CubicBezier2D a, CubicBezier2D b) => a.NotEquals(b);
 }
 public partial class CubicBezier3D: Value<CubicBezier3D>
 {
@@ -1980,12 +1192,6 @@ public partial class CubicBezier3D: Value<CubicBezier3D>
     public static implicit operator (Point3D, Point3D, Point3D, Point3D)(CubicBezier3D self) => (self.A, self.B, self.C, self.D);
     public static implicit operator CubicBezier3D((Point3D, Point3D, Point3D, Point3D) value) => new CubicBezier3D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Point3D a, out Point3D b, out Point3D c, out Point3D d) { a = A; b = B; c = C; d = D; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(CubicBezier3D b) => throw new NotImplementedException();
-    public static Boolean operator ==(CubicBezier3D a, CubicBezier3D b) => a.Equals(b);
-    public Boolean NotEquals(CubicBezier3D b) => throw new NotImplementedException();
-    public static Boolean operator !=(CubicBezier3D a, CubicBezier3D b) => a.NotEquals(b);
 }
 public partial class QuadraticBezier2D: Value<QuadraticBezier2D>
 {
@@ -2002,12 +1208,6 @@ public partial class QuadraticBezier2D: Value<QuadraticBezier2D>
     public static implicit operator (Point2D, Point2D, Point2D)(QuadraticBezier2D self) => (self.A, self.B, self.C);
     public static implicit operator QuadraticBezier2D((Point2D, Point2D, Point2D) value) => new QuadraticBezier2D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point2D a, out Point2D b, out Point2D c) { a = A; b = B; c = C; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(QuadraticBezier2D b) => throw new NotImplementedException();
-    public static Boolean operator ==(QuadraticBezier2D a, QuadraticBezier2D b) => a.Equals(b);
-    public Boolean NotEquals(QuadraticBezier2D b) => throw new NotImplementedException();
-    public static Boolean operator !=(QuadraticBezier2D a, QuadraticBezier2D b) => a.NotEquals(b);
 }
 public partial class QuadraticBezier3D: Value<QuadraticBezier3D>
 {
@@ -2024,12 +1224,6 @@ public partial class QuadraticBezier3D: Value<QuadraticBezier3D>
     public static implicit operator (Point3D, Point3D, Point3D)(QuadraticBezier3D self) => (self.A, self.B, self.C);
     public static implicit operator QuadraticBezier3D((Point3D, Point3D, Point3D) value) => new QuadraticBezier3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point3D a, out Point3D b, out Point3D c) { a = A; b = B; c = C; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(QuadraticBezier3D b) => throw new NotImplementedException();
-    public static Boolean operator ==(QuadraticBezier3D a, QuadraticBezier3D b) => a.Equals(b);
-    public Boolean NotEquals(QuadraticBezier3D b) => throw new NotImplementedException();
-    public static Boolean operator !=(QuadraticBezier3D a, QuadraticBezier3D b) => a.NotEquals(b);
 }
 public partial class Area: Measure<Area>
 {
@@ -2041,27 +1235,6 @@ public partial class Area: Measure<Area>
     public static Area New(Number metersSquared) => new Area(metersSquared);
     public static implicit operator Number(Area self) => self.MetersSquared;
     public static implicit operator Area(Number value) => new Area(value);
-    public Number Value => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Area b) => throw new NotImplementedException();
-    public static Boolean operator ==(Area a, Area b) => a.Equals(b);
-    public Boolean NotEquals(Area b) => throw new NotImplementedException();
-    public static Boolean operator !=(Area a, Area b) => a.NotEquals(b);
-    public Area Add(Number other) => throw new NotImplementedException();
-    public static Area operator +(Area self, Number other) => self.Add(other);
-    public Area Subtract(Number other) => throw new NotImplementedException();
-    public static Area operator -(Area self, Number other) => self.Subtract(other);
-    public Area Multiply(Area other) => throw new NotImplementedException();
-    public static Area operator *(Area self, Area other) => self.Multiply(other);
-    public Area Divide(Area other) => throw new NotImplementedException();
-    public static Area operator /(Area self, Area other) => self.Divide(other);
-    public Area Modulo(Area other) => throw new NotImplementedException();
-    public static Area operator %(Area self, Area other) => self.Modulo(other);
-    public Integer Compare(Area y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Area Lerp(Area b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Area a, Area b) => throw new NotImplementedException();
 }
 public partial class Volume: Measure<Volume>
 {
@@ -2073,27 +1246,6 @@ public partial class Volume: Measure<Volume>
     public static Volume New(Number metersCubed) => new Volume(metersCubed);
     public static implicit operator Number(Volume self) => self.MetersCubed;
     public static implicit operator Volume(Number value) => new Volume(value);
-    public Number Value => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Volume b) => throw new NotImplementedException();
-    public static Boolean operator ==(Volume a, Volume b) => a.Equals(b);
-    public Boolean NotEquals(Volume b) => throw new NotImplementedException();
-    public static Boolean operator !=(Volume a, Volume b) => a.NotEquals(b);
-    public Volume Add(Number other) => throw new NotImplementedException();
-    public static Volume operator +(Volume self, Number other) => self.Add(other);
-    public Volume Subtract(Number other) => throw new NotImplementedException();
-    public static Volume operator -(Volume self, Number other) => self.Subtract(other);
-    public Volume Multiply(Volume other) => throw new NotImplementedException();
-    public static Volume operator *(Volume self, Volume other) => self.Multiply(other);
-    public Volume Divide(Volume other) => throw new NotImplementedException();
-    public static Volume operator /(Volume self, Volume other) => self.Divide(other);
-    public Volume Modulo(Volume other) => throw new NotImplementedException();
-    public static Volume operator %(Volume self, Volume other) => self.Modulo(other);
-    public Integer Compare(Volume y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Volume Lerp(Volume b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Volume a, Volume b) => throw new NotImplementedException();
 }
 public partial class Velocity: Measure<Velocity>
 {
@@ -2105,27 +1257,6 @@ public partial class Velocity: Measure<Velocity>
     public static Velocity New(Number metersPerSecond) => new Velocity(metersPerSecond);
     public static implicit operator Number(Velocity self) => self.MetersPerSecond;
     public static implicit operator Velocity(Number value) => new Velocity(value);
-    public Number Value => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Velocity b) => throw new NotImplementedException();
-    public static Boolean operator ==(Velocity a, Velocity b) => a.Equals(b);
-    public Boolean NotEquals(Velocity b) => throw new NotImplementedException();
-    public static Boolean operator !=(Velocity a, Velocity b) => a.NotEquals(b);
-    public Velocity Add(Number other) => throw new NotImplementedException();
-    public static Velocity operator +(Velocity self, Number other) => self.Add(other);
-    public Velocity Subtract(Number other) => throw new NotImplementedException();
-    public static Velocity operator -(Velocity self, Number other) => self.Subtract(other);
-    public Velocity Multiply(Velocity other) => throw new NotImplementedException();
-    public static Velocity operator *(Velocity self, Velocity other) => self.Multiply(other);
-    public Velocity Divide(Velocity other) => throw new NotImplementedException();
-    public static Velocity operator /(Velocity self, Velocity other) => self.Divide(other);
-    public Velocity Modulo(Velocity other) => throw new NotImplementedException();
-    public static Velocity operator %(Velocity self, Velocity other) => self.Modulo(other);
-    public Integer Compare(Velocity y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Velocity Lerp(Velocity b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Velocity a, Velocity b) => throw new NotImplementedException();
 }
 public partial class Acceleration: Measure<Acceleration>
 {
@@ -2137,27 +1268,6 @@ public partial class Acceleration: Measure<Acceleration>
     public static Acceleration New(Number metersPerSecondSquared) => new Acceleration(metersPerSecondSquared);
     public static implicit operator Number(Acceleration self) => self.MetersPerSecondSquared;
     public static implicit operator Acceleration(Number value) => new Acceleration(value);
-    public Number Value => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Acceleration b) => throw new NotImplementedException();
-    public static Boolean operator ==(Acceleration a, Acceleration b) => a.Equals(b);
-    public Boolean NotEquals(Acceleration b) => throw new NotImplementedException();
-    public static Boolean operator !=(Acceleration a, Acceleration b) => a.NotEquals(b);
-    public Acceleration Add(Number other) => throw new NotImplementedException();
-    public static Acceleration operator +(Acceleration self, Number other) => self.Add(other);
-    public Acceleration Subtract(Number other) => throw new NotImplementedException();
-    public static Acceleration operator -(Acceleration self, Number other) => self.Subtract(other);
-    public Acceleration Multiply(Acceleration other) => throw new NotImplementedException();
-    public static Acceleration operator *(Acceleration self, Acceleration other) => self.Multiply(other);
-    public Acceleration Divide(Acceleration other) => throw new NotImplementedException();
-    public static Acceleration operator /(Acceleration self, Acceleration other) => self.Divide(other);
-    public Acceleration Modulo(Acceleration other) => throw new NotImplementedException();
-    public static Acceleration operator %(Acceleration self, Acceleration other) => self.Modulo(other);
-    public Integer Compare(Acceleration y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Acceleration Lerp(Acceleration b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Acceleration a, Acceleration b) => throw new NotImplementedException();
 }
 public partial class Force: Measure<Force>
 {
@@ -2169,27 +1279,6 @@ public partial class Force: Measure<Force>
     public static Force New(Number newtons) => new Force(newtons);
     public static implicit operator Number(Force self) => self.Newtons;
     public static implicit operator Force(Number value) => new Force(value);
-    public Number Value => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Force b) => throw new NotImplementedException();
-    public static Boolean operator ==(Force a, Force b) => a.Equals(b);
-    public Boolean NotEquals(Force b) => throw new NotImplementedException();
-    public static Boolean operator !=(Force a, Force b) => a.NotEquals(b);
-    public Force Add(Number other) => throw new NotImplementedException();
-    public static Force operator +(Force self, Number other) => self.Add(other);
-    public Force Subtract(Number other) => throw new NotImplementedException();
-    public static Force operator -(Force self, Number other) => self.Subtract(other);
-    public Force Multiply(Force other) => throw new NotImplementedException();
-    public static Force operator *(Force self, Force other) => self.Multiply(other);
-    public Force Divide(Force other) => throw new NotImplementedException();
-    public static Force operator /(Force self, Force other) => self.Divide(other);
-    public Force Modulo(Force other) => throw new NotImplementedException();
-    public static Force operator %(Force self, Force other) => self.Modulo(other);
-    public Integer Compare(Force y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Force Lerp(Force b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Force a, Force b) => throw new NotImplementedException();
 }
 public partial class Pressure: Measure<Pressure>
 {
@@ -2201,27 +1290,6 @@ public partial class Pressure: Measure<Pressure>
     public static Pressure New(Number pascals) => new Pressure(pascals);
     public static implicit operator Number(Pressure self) => self.Pascals;
     public static implicit operator Pressure(Number value) => new Pressure(value);
-    public Number Value => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Pressure b) => throw new NotImplementedException();
-    public static Boolean operator ==(Pressure a, Pressure b) => a.Equals(b);
-    public Boolean NotEquals(Pressure b) => throw new NotImplementedException();
-    public static Boolean operator !=(Pressure a, Pressure b) => a.NotEquals(b);
-    public Pressure Add(Number other) => throw new NotImplementedException();
-    public static Pressure operator +(Pressure self, Number other) => self.Add(other);
-    public Pressure Subtract(Number other) => throw new NotImplementedException();
-    public static Pressure operator -(Pressure self, Number other) => self.Subtract(other);
-    public Pressure Multiply(Pressure other) => throw new NotImplementedException();
-    public static Pressure operator *(Pressure self, Pressure other) => self.Multiply(other);
-    public Pressure Divide(Pressure other) => throw new NotImplementedException();
-    public static Pressure operator /(Pressure self, Pressure other) => self.Divide(other);
-    public Pressure Modulo(Pressure other) => throw new NotImplementedException();
-    public static Pressure operator %(Pressure self, Pressure other) => self.Modulo(other);
-    public Integer Compare(Pressure y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Pressure Lerp(Pressure b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Pressure a, Pressure b) => throw new NotImplementedException();
 }
 public partial class Energy: Measure<Energy>
 {
@@ -2233,27 +1301,6 @@ public partial class Energy: Measure<Energy>
     public static Energy New(Number joules) => new Energy(joules);
     public static implicit operator Number(Energy self) => self.Joules;
     public static implicit operator Energy(Number value) => new Energy(value);
-    public Number Value => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Energy b) => throw new NotImplementedException();
-    public static Boolean operator ==(Energy a, Energy b) => a.Equals(b);
-    public Boolean NotEquals(Energy b) => throw new NotImplementedException();
-    public static Boolean operator !=(Energy a, Energy b) => a.NotEquals(b);
-    public Energy Add(Number other) => throw new NotImplementedException();
-    public static Energy operator +(Energy self, Number other) => self.Add(other);
-    public Energy Subtract(Number other) => throw new NotImplementedException();
-    public static Energy operator -(Energy self, Number other) => self.Subtract(other);
-    public Energy Multiply(Energy other) => throw new NotImplementedException();
-    public static Energy operator *(Energy self, Energy other) => self.Multiply(other);
-    public Energy Divide(Energy other) => throw new NotImplementedException();
-    public static Energy operator /(Energy self, Energy other) => self.Divide(other);
-    public Energy Modulo(Energy other) => throw new NotImplementedException();
-    public static Energy operator %(Energy self, Energy other) => self.Modulo(other);
-    public Integer Compare(Energy y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Energy Lerp(Energy b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Energy a, Energy b) => throw new NotImplementedException();
 }
 public partial class Memory: Measure<Memory>
 {
@@ -2265,27 +1312,6 @@ public partial class Memory: Measure<Memory>
     public static Memory New(Count bytes) => new Memory(bytes);
     public static implicit operator Count(Memory self) => self.Bytes;
     public static implicit operator Memory(Count value) => new Memory(value);
-    public Number Value => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Memory b) => throw new NotImplementedException();
-    public static Boolean operator ==(Memory a, Memory b) => a.Equals(b);
-    public Boolean NotEquals(Memory b) => throw new NotImplementedException();
-    public static Boolean operator !=(Memory a, Memory b) => a.NotEquals(b);
-    public Memory Add(Number other) => throw new NotImplementedException();
-    public static Memory operator +(Memory self, Number other) => self.Add(other);
-    public Memory Subtract(Number other) => throw new NotImplementedException();
-    public static Memory operator -(Memory self, Number other) => self.Subtract(other);
-    public Memory Multiply(Memory other) => throw new NotImplementedException();
-    public static Memory operator *(Memory self, Memory other) => self.Multiply(other);
-    public Memory Divide(Memory other) => throw new NotImplementedException();
-    public static Memory operator /(Memory self, Memory other) => self.Divide(other);
-    public Memory Modulo(Memory other) => throw new NotImplementedException();
-    public static Memory operator %(Memory self, Memory other) => self.Modulo(other);
-    public Integer Compare(Memory y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Memory Lerp(Memory b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Memory a, Memory b) => throw new NotImplementedException();
 }
 public partial class Frequency: Measure<Frequency>
 {
@@ -2297,27 +1323,6 @@ public partial class Frequency: Measure<Frequency>
     public static Frequency New(Number hertz) => new Frequency(hertz);
     public static implicit operator Number(Frequency self) => self.Hertz;
     public static implicit operator Frequency(Number value) => new Frequency(value);
-    public Number Value => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Frequency b) => throw new NotImplementedException();
-    public static Boolean operator ==(Frequency a, Frequency b) => a.Equals(b);
-    public Boolean NotEquals(Frequency b) => throw new NotImplementedException();
-    public static Boolean operator !=(Frequency a, Frequency b) => a.NotEquals(b);
-    public Frequency Add(Number other) => throw new NotImplementedException();
-    public static Frequency operator +(Frequency self, Number other) => self.Add(other);
-    public Frequency Subtract(Number other) => throw new NotImplementedException();
-    public static Frequency operator -(Frequency self, Number other) => self.Subtract(other);
-    public Frequency Multiply(Frequency other) => throw new NotImplementedException();
-    public static Frequency operator *(Frequency self, Frequency other) => self.Multiply(other);
-    public Frequency Divide(Frequency other) => throw new NotImplementedException();
-    public static Frequency operator /(Frequency self, Frequency other) => self.Divide(other);
-    public Frequency Modulo(Frequency other) => throw new NotImplementedException();
-    public static Frequency operator %(Frequency self, Frequency other) => self.Modulo(other);
-    public Integer Compare(Frequency y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Frequency Lerp(Frequency b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Frequency a, Frequency b) => throw new NotImplementedException();
 }
 public partial class Loudness: Measure<Loudness>
 {
@@ -2329,27 +1334,6 @@ public partial class Loudness: Measure<Loudness>
     public static Loudness New(Number decibels) => new Loudness(decibels);
     public static implicit operator Number(Loudness self) => self.Decibels;
     public static implicit operator Loudness(Number value) => new Loudness(value);
-    public Number Value => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Loudness b) => throw new NotImplementedException();
-    public static Boolean operator ==(Loudness a, Loudness b) => a.Equals(b);
-    public Boolean NotEquals(Loudness b) => throw new NotImplementedException();
-    public static Boolean operator !=(Loudness a, Loudness b) => a.NotEquals(b);
-    public Loudness Add(Number other) => throw new NotImplementedException();
-    public static Loudness operator +(Loudness self, Number other) => self.Add(other);
-    public Loudness Subtract(Number other) => throw new NotImplementedException();
-    public static Loudness operator -(Loudness self, Number other) => self.Subtract(other);
-    public Loudness Multiply(Loudness other) => throw new NotImplementedException();
-    public static Loudness operator *(Loudness self, Loudness other) => self.Multiply(other);
-    public Loudness Divide(Loudness other) => throw new NotImplementedException();
-    public static Loudness operator /(Loudness self, Loudness other) => self.Divide(other);
-    public Loudness Modulo(Loudness other) => throw new NotImplementedException();
-    public static Loudness operator %(Loudness self, Loudness other) => self.Modulo(other);
-    public Integer Compare(Loudness y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Loudness Lerp(Loudness b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Loudness a, Loudness b) => throw new NotImplementedException();
 }
 public partial class LuminousIntensity: Measure<LuminousIntensity>
 {
@@ -2361,27 +1345,6 @@ public partial class LuminousIntensity: Measure<LuminousIntensity>
     public static LuminousIntensity New(Number candelas) => new LuminousIntensity(candelas);
     public static implicit operator Number(LuminousIntensity self) => self.Candelas;
     public static implicit operator LuminousIntensity(Number value) => new LuminousIntensity(value);
-    public Number Value => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(LuminousIntensity b) => throw new NotImplementedException();
-    public static Boolean operator ==(LuminousIntensity a, LuminousIntensity b) => a.Equals(b);
-    public Boolean NotEquals(LuminousIntensity b) => throw new NotImplementedException();
-    public static Boolean operator !=(LuminousIntensity a, LuminousIntensity b) => a.NotEquals(b);
-    public LuminousIntensity Add(Number other) => throw new NotImplementedException();
-    public static LuminousIntensity operator +(LuminousIntensity self, Number other) => self.Add(other);
-    public LuminousIntensity Subtract(Number other) => throw new NotImplementedException();
-    public static LuminousIntensity operator -(LuminousIntensity self, Number other) => self.Subtract(other);
-    public LuminousIntensity Multiply(LuminousIntensity other) => throw new NotImplementedException();
-    public static LuminousIntensity operator *(LuminousIntensity self, LuminousIntensity other) => self.Multiply(other);
-    public LuminousIntensity Divide(LuminousIntensity other) => throw new NotImplementedException();
-    public static LuminousIntensity operator /(LuminousIntensity self, LuminousIntensity other) => self.Divide(other);
-    public LuminousIntensity Modulo(LuminousIntensity other) => throw new NotImplementedException();
-    public static LuminousIntensity operator %(LuminousIntensity self, LuminousIntensity other) => self.Modulo(other);
-    public Integer Compare(LuminousIntensity y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public LuminousIntensity Lerp(LuminousIntensity b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(LuminousIntensity a, LuminousIntensity b) => throw new NotImplementedException();
 }
 public partial class ElectricPotential: Measure<ElectricPotential>
 {
@@ -2393,27 +1356,6 @@ public partial class ElectricPotential: Measure<ElectricPotential>
     public static ElectricPotential New(Number volts) => new ElectricPotential(volts);
     public static implicit operator Number(ElectricPotential self) => self.Volts;
     public static implicit operator ElectricPotential(Number value) => new ElectricPotential(value);
-    public Number Value => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(ElectricPotential b) => throw new NotImplementedException();
-    public static Boolean operator ==(ElectricPotential a, ElectricPotential b) => a.Equals(b);
-    public Boolean NotEquals(ElectricPotential b) => throw new NotImplementedException();
-    public static Boolean operator !=(ElectricPotential a, ElectricPotential b) => a.NotEquals(b);
-    public ElectricPotential Add(Number other) => throw new NotImplementedException();
-    public static ElectricPotential operator +(ElectricPotential self, Number other) => self.Add(other);
-    public ElectricPotential Subtract(Number other) => throw new NotImplementedException();
-    public static ElectricPotential operator -(ElectricPotential self, Number other) => self.Subtract(other);
-    public ElectricPotential Multiply(ElectricPotential other) => throw new NotImplementedException();
-    public static ElectricPotential operator *(ElectricPotential self, ElectricPotential other) => self.Multiply(other);
-    public ElectricPotential Divide(ElectricPotential other) => throw new NotImplementedException();
-    public static ElectricPotential operator /(ElectricPotential self, ElectricPotential other) => self.Divide(other);
-    public ElectricPotential Modulo(ElectricPotential other) => throw new NotImplementedException();
-    public static ElectricPotential operator %(ElectricPotential self, ElectricPotential other) => self.Modulo(other);
-    public Integer Compare(ElectricPotential y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public ElectricPotential Lerp(ElectricPotential b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(ElectricPotential a, ElectricPotential b) => throw new NotImplementedException();
 }
 public partial class ElectricCharge: Measure<ElectricCharge>
 {
@@ -2425,27 +1367,6 @@ public partial class ElectricCharge: Measure<ElectricCharge>
     public static ElectricCharge New(Number columbs) => new ElectricCharge(columbs);
     public static implicit operator Number(ElectricCharge self) => self.Columbs;
     public static implicit operator ElectricCharge(Number value) => new ElectricCharge(value);
-    public Number Value => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(ElectricCharge b) => throw new NotImplementedException();
-    public static Boolean operator ==(ElectricCharge a, ElectricCharge b) => a.Equals(b);
-    public Boolean NotEquals(ElectricCharge b) => throw new NotImplementedException();
-    public static Boolean operator !=(ElectricCharge a, ElectricCharge b) => a.NotEquals(b);
-    public ElectricCharge Add(Number other) => throw new NotImplementedException();
-    public static ElectricCharge operator +(ElectricCharge self, Number other) => self.Add(other);
-    public ElectricCharge Subtract(Number other) => throw new NotImplementedException();
-    public static ElectricCharge operator -(ElectricCharge self, Number other) => self.Subtract(other);
-    public ElectricCharge Multiply(ElectricCharge other) => throw new NotImplementedException();
-    public static ElectricCharge operator *(ElectricCharge self, ElectricCharge other) => self.Multiply(other);
-    public ElectricCharge Divide(ElectricCharge other) => throw new NotImplementedException();
-    public static ElectricCharge operator /(ElectricCharge self, ElectricCharge other) => self.Divide(other);
-    public ElectricCharge Modulo(ElectricCharge other) => throw new NotImplementedException();
-    public static ElectricCharge operator %(ElectricCharge self, ElectricCharge other) => self.Modulo(other);
-    public Integer Compare(ElectricCharge y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public ElectricCharge Lerp(ElectricCharge b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(ElectricCharge a, ElectricCharge b) => throw new NotImplementedException();
 }
 public partial class ElectricCurrent: Measure<ElectricCurrent>
 {
@@ -2457,27 +1378,6 @@ public partial class ElectricCurrent: Measure<ElectricCurrent>
     public static ElectricCurrent New(Number amperes) => new ElectricCurrent(amperes);
     public static implicit operator Number(ElectricCurrent self) => self.Amperes;
     public static implicit operator ElectricCurrent(Number value) => new ElectricCurrent(value);
-    public Number Value => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(ElectricCurrent b) => throw new NotImplementedException();
-    public static Boolean operator ==(ElectricCurrent a, ElectricCurrent b) => a.Equals(b);
-    public Boolean NotEquals(ElectricCurrent b) => throw new NotImplementedException();
-    public static Boolean operator !=(ElectricCurrent a, ElectricCurrent b) => a.NotEquals(b);
-    public ElectricCurrent Add(Number other) => throw new NotImplementedException();
-    public static ElectricCurrent operator +(ElectricCurrent self, Number other) => self.Add(other);
-    public ElectricCurrent Subtract(Number other) => throw new NotImplementedException();
-    public static ElectricCurrent operator -(ElectricCurrent self, Number other) => self.Subtract(other);
-    public ElectricCurrent Multiply(ElectricCurrent other) => throw new NotImplementedException();
-    public static ElectricCurrent operator *(ElectricCurrent self, ElectricCurrent other) => self.Multiply(other);
-    public ElectricCurrent Divide(ElectricCurrent other) => throw new NotImplementedException();
-    public static ElectricCurrent operator /(ElectricCurrent self, ElectricCurrent other) => self.Divide(other);
-    public ElectricCurrent Modulo(ElectricCurrent other) => throw new NotImplementedException();
-    public static ElectricCurrent operator %(ElectricCurrent self, ElectricCurrent other) => self.Modulo(other);
-    public Integer Compare(ElectricCurrent y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public ElectricCurrent Lerp(ElectricCurrent b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(ElectricCurrent a, ElectricCurrent b) => throw new NotImplementedException();
 }
 public partial class ElectricResistance: Measure<ElectricResistance>
 {
@@ -2489,27 +1389,6 @@ public partial class ElectricResistance: Measure<ElectricResistance>
     public static ElectricResistance New(Number ohms) => new ElectricResistance(ohms);
     public static implicit operator Number(ElectricResistance self) => self.Ohms;
     public static implicit operator ElectricResistance(Number value) => new ElectricResistance(value);
-    public Number Value => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(ElectricResistance b) => throw new NotImplementedException();
-    public static Boolean operator ==(ElectricResistance a, ElectricResistance b) => a.Equals(b);
-    public Boolean NotEquals(ElectricResistance b) => throw new NotImplementedException();
-    public static Boolean operator !=(ElectricResistance a, ElectricResistance b) => a.NotEquals(b);
-    public ElectricResistance Add(Number other) => throw new NotImplementedException();
-    public static ElectricResistance operator +(ElectricResistance self, Number other) => self.Add(other);
-    public ElectricResistance Subtract(Number other) => throw new NotImplementedException();
-    public static ElectricResistance operator -(ElectricResistance self, Number other) => self.Subtract(other);
-    public ElectricResistance Multiply(ElectricResistance other) => throw new NotImplementedException();
-    public static ElectricResistance operator *(ElectricResistance self, ElectricResistance other) => self.Multiply(other);
-    public ElectricResistance Divide(ElectricResistance other) => throw new NotImplementedException();
-    public static ElectricResistance operator /(ElectricResistance self, ElectricResistance other) => self.Divide(other);
-    public ElectricResistance Modulo(ElectricResistance other) => throw new NotImplementedException();
-    public static ElectricResistance operator %(ElectricResistance self, ElectricResistance other) => self.Modulo(other);
-    public Integer Compare(ElectricResistance y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public ElectricResistance Lerp(ElectricResistance b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(ElectricResistance a, ElectricResistance b) => throw new NotImplementedException();
 }
 public partial class Power: Measure<Power>
 {
@@ -2521,27 +1400,6 @@ public partial class Power: Measure<Power>
     public static Power New(Number watts) => new Power(watts);
     public static implicit operator Number(Power self) => self.Watts;
     public static implicit operator Power(Number value) => new Power(value);
-    public Number Value => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Power b) => throw new NotImplementedException();
-    public static Boolean operator ==(Power a, Power b) => a.Equals(b);
-    public Boolean NotEquals(Power b) => throw new NotImplementedException();
-    public static Boolean operator !=(Power a, Power b) => a.NotEquals(b);
-    public Power Add(Number other) => throw new NotImplementedException();
-    public static Power operator +(Power self, Number other) => self.Add(other);
-    public Power Subtract(Number other) => throw new NotImplementedException();
-    public static Power operator -(Power self, Number other) => self.Subtract(other);
-    public Power Multiply(Power other) => throw new NotImplementedException();
-    public static Power operator *(Power self, Power other) => self.Multiply(other);
-    public Power Divide(Power other) => throw new NotImplementedException();
-    public static Power operator /(Power self, Power other) => self.Divide(other);
-    public Power Modulo(Power other) => throw new NotImplementedException();
-    public static Power operator %(Power self, Power other) => self.Modulo(other);
-    public Integer Compare(Power y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Power Lerp(Power b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Power a, Power b) => throw new NotImplementedException();
 }
 public partial class Density: Measure<Density>
 {
@@ -2553,27 +1411,6 @@ public partial class Density: Measure<Density>
     public static Density New(Number kilogramsPerMeterCubed) => new Density(kilogramsPerMeterCubed);
     public static implicit operator Number(Density self) => self.KilogramsPerMeterCubed;
     public static implicit operator Density(Number value) => new Density(value);
-    public Number Value => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Density b) => throw new NotImplementedException();
-    public static Boolean operator ==(Density a, Density b) => a.Equals(b);
-    public Boolean NotEquals(Density b) => throw new NotImplementedException();
-    public static Boolean operator !=(Density a, Density b) => a.NotEquals(b);
-    public Density Add(Number other) => throw new NotImplementedException();
-    public static Density operator +(Density self, Number other) => self.Add(other);
-    public Density Subtract(Number other) => throw new NotImplementedException();
-    public static Density operator -(Density self, Number other) => self.Subtract(other);
-    public Density Multiply(Density other) => throw new NotImplementedException();
-    public static Density operator *(Density self, Density other) => self.Multiply(other);
-    public Density Divide(Density other) => throw new NotImplementedException();
-    public static Density operator /(Density self, Density other) => self.Divide(other);
-    public Density Modulo(Density other) => throw new NotImplementedException();
-    public static Density operator %(Density self, Density other) => self.Modulo(other);
-    public Integer Compare(Density y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Density Lerp(Density b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Density a, Density b) => throw new NotImplementedException();
 }
 public partial class NormalDistribution: Value<NormalDistribution>
 {
@@ -2588,12 +1425,6 @@ public partial class NormalDistribution: Value<NormalDistribution>
     public static implicit operator (Number, Number)(NormalDistribution self) => (self.Mean, self.StandardDeviation);
     public static implicit operator NormalDistribution((Number, Number) value) => new NormalDistribution(value.Item1, value.Item2);
     public void Deconstruct(out Number mean, out Number standardDeviation) { mean = Mean; standardDeviation = StandardDeviation; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(NormalDistribution b) => throw new NotImplementedException();
-    public static Boolean operator ==(NormalDistribution a, NormalDistribution b) => a.Equals(b);
-    public Boolean NotEquals(NormalDistribution b) => throw new NotImplementedException();
-    public static Boolean operator !=(NormalDistribution a, NormalDistribution b) => a.NotEquals(b);
 }
 public partial class PoissonDistribution: Value<PoissonDistribution>
 {
@@ -2608,12 +1439,6 @@ public partial class PoissonDistribution: Value<PoissonDistribution>
     public static implicit operator (Number, Count)(PoissonDistribution self) => (self.Expected, self.Occurrences);
     public static implicit operator PoissonDistribution((Number, Count) value) => new PoissonDistribution(value.Item1, value.Item2);
     public void Deconstruct(out Number expected, out Count occurrences) { expected = Expected; occurrences = Occurrences; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(PoissonDistribution b) => throw new NotImplementedException();
-    public static Boolean operator ==(PoissonDistribution a, PoissonDistribution b) => a.Equals(b);
-    public Boolean NotEquals(PoissonDistribution b) => throw new NotImplementedException();
-    public static Boolean operator !=(PoissonDistribution a, PoissonDistribution b) => a.NotEquals(b);
 }
 public partial class BernoulliDistribution: Value<BernoulliDistribution>
 {
@@ -2625,12 +1450,6 @@ public partial class BernoulliDistribution: Value<BernoulliDistribution>
     public static BernoulliDistribution New(Probability p) => new BernoulliDistribution(p);
     public static implicit operator Probability(BernoulliDistribution self) => self.P;
     public static implicit operator BernoulliDistribution(Probability value) => new BernoulliDistribution(value);
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(BernoulliDistribution b) => throw new NotImplementedException();
-    public static Boolean operator ==(BernoulliDistribution a, BernoulliDistribution b) => a.Equals(b);
-    public Boolean NotEquals(BernoulliDistribution b) => throw new NotImplementedException();
-    public static Boolean operator !=(BernoulliDistribution a, BernoulliDistribution b) => a.NotEquals(b);
 }
 public partial class Probability: Numerical<Probability>
 {
@@ -2642,33 +1461,6 @@ public partial class Probability: Numerical<Probability>
     public static Probability New(Number value) => new Probability(value);
     public static implicit operator Number(Probability self) => self.Value;
     public static implicit operator Probability(Number value) => new Probability(value);
-    public Probability Zero => throw new NotImplementedException();
-    public Probability One => throw new NotImplementedException();
-    public Probability MinValue => throw new NotImplementedException();
-    public Probability MaxValue => throw new NotImplementedException();
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(Probability b) => throw new NotImplementedException();
-    public static Boolean operator ==(Probability a, Probability b) => a.Equals(b);
-    public Boolean NotEquals(Probability b) => throw new NotImplementedException();
-    public static Boolean operator !=(Probability a, Probability b) => a.NotEquals(b);
-    public Probability Add(Probability other) => throw new NotImplementedException();
-    public static Probability operator +(Probability self, Probability other) => self.Add(other);
-    public Probability Subtract(Probability other) => throw new NotImplementedException();
-    public static Probability operator -(Probability self, Probability other) => self.Subtract(other);
-    public Probability Multiply(Probability other) => throw new NotImplementedException();
-    public static Probability operator *(Probability self, Probability other) => self.Multiply(other);
-    public Probability Divide(Probability other) => throw new NotImplementedException();
-    public static Probability operator /(Probability self, Probability other) => self.Divide(other);
-    public Probability Modulo(Probability other) => throw new NotImplementedException();
-    public static Probability operator %(Probability self, Probability other) => self.Modulo(other);
-    public Probability Negative => throw new NotImplementedException();
-    public static Probability operator -(Probability self) => self.Negative;
-    public Probability Reciprocal => throw new NotImplementedException();
-    public Integer Compare(Probability y) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Probability Lerp(Probability b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Probability a, Probability b) => throw new NotImplementedException();
 }
 public partial class BinomialDistribution: Value<BinomialDistribution>
 {
@@ -2683,10 +1475,4 @@ public partial class BinomialDistribution: Value<BinomialDistribution>
     public static implicit operator (Count, Probability)(BinomialDistribution self) => (self.Trials, self.P);
     public static implicit operator BinomialDistribution((Count, Probability) value) => new BinomialDistribution(value.Item1, value.Item2);
     public void Deconstruct(out Count trials, out Probability p) { trials = Trials; p = P; }
-    public Array<String> FieldNames => throw new NotImplementedException();
-    public Array<Any> FieldValues => throw new NotImplementedException();
-    public Boolean Equals(BinomialDistribution b) => throw new NotImplementedException();
-    public static Boolean operator ==(BinomialDistribution a, BinomialDistribution b) => a.Equals(b);
-    public Boolean NotEquals(BinomialDistribution b) => throw new NotImplementedException();
-    public static Boolean operator !=(BinomialDistribution a, BinomialDistribution b) => a.NotEquals(b);
 }

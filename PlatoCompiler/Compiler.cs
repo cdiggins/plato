@@ -6,7 +6,7 @@ using System.Text;
 using Parakeet.CST;
 using Ara3D.Utils;
 using Parakeet;
-using Plato.Compiler.Ast;
+using Plato.AST;
 using Plato.Compiler.Symbols;
 using Plato.Compiler.Types;
 using Plato.Compiler.Vsg;
@@ -26,7 +26,6 @@ namespace Plato.Compiler
         public ILogger Logger { get; }
         public bool CompletedCompilation { get; set; }
         public bool ParsingSuccess { get; set; }
-        public IReadOnlyList<Parser.Parser> Parsers { get; set; }
         public IReadOnlyList<AstNode> Trees { get; set; }
         public SymbolFactory SymbolFactory { get; set; }
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; set; }
@@ -53,25 +52,14 @@ namespace Plato.Compiler
 
         public List<VisualSyntaxGraph> Graphs { get; } = new List<VisualSyntaxGraph>();
 
-        public void Compile(IReadOnlyList<Parser.Parser> parsers) 
+        public void Compile(IEnumerable<AstNode> trees) 
         {
             Log("Initializing Compiler");
             CompletedCompilation = false;
             SemanticErrors.Clear();
             SemanticWarnings.Clear();
             InternalErrors.Clear();
-
-            Log("Gathering parsers");
-            Parsers = parsers.ToList();
-         
-            ParsingSuccess = Parsers.All(p => p?.Success == true);
-            if (!ParsingSuccess)
-            {
-                Log("Parsing was not successful");
-            }
-
-            Log("Creating AST trees");
-            Trees = Parsers.Select(p => p.CstTree.ToAst()).ToList();
+            Trees = trees.ToList();
 
             Log("Gathering type declarations");
             TypeDeclarations = Trees.SelectMany(tree => tree.GetAllTypes()).ToList();
@@ -266,16 +254,18 @@ namespace Plato.Compiler
 
         public IType GetExpressionType(Expression expr)
             => ExpressionTypes.TryGetValue(expr, out var r) ? r : null;
-
+        
         public void LogResolutionErrors(IEnumerable<SymbolFactory.ResolutionError> resolutionErrors)
         {
             foreach (var error in resolutionErrors)
             {
                 var pos = GetParserTreeNode(error.Node);
                 Log($"Symbol resolution error: {error.Message}");
-                if (pos?.Node != null)
+                if (pos != null)
                 {
-                    Log(pos.Node.Range.End.Input.File);
+                    Log(pos.Node.Range.Begin.Input.File);
+                    Log(pos.Node.Range.Begin.CurrentLine);
+                    Log(pos.Node.Range.Begin.Indicator);
                     Log(pos.Node.Range.End.CurrentLine);
                     Log(pos.Node.Range.End.Indicator);
                 }
@@ -288,15 +278,19 @@ namespace Plato.Compiler
 
         public void Log(string message)
             => Logger.Log(message);
+        
 
-        public CstNode GetCstNode(AstNode node)
-            => node?.Location as CstNode;
+        public static ParserTreeNode GetParserTreeNode(AstNode node)
+            => !(node.Location is CstNode cstNode) 
+                ? null : GetParserTreeNode(cstNode);
 
-        public ParserTreeNode GetParserTreeNode(AstNode node)
-            => GetParserTreeNode(GetCstNode(node));
-
-        public ParserTreeNode GetParserTreeNode(CstNode node)
-            => node?.Location as ParserTreeNode;
+        public static ParserTreeNode GetParserTreeNode(CstNode node)
+        {
+            if (node == null) return null;
+            if (node.Location is ParserTreeNode ptn)
+                return ptn;
+            return node.Children.Select(GetParserTreeNode).FirstOrDefault();
+        }
 
         public void CheckSemantics()
         {

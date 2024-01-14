@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Ara3D.Utils;
-using Plato.Compiler.Ast;
+using Plato.AST;
 using Plato.Compiler.Symbols;
 using Tuple = Plato.Compiler.Symbols.Tuple;
 

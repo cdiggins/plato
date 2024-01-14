@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Plato.Compiler.Ast
+namespace Plato.AST
 {
     public static class OperatorNameLookup
     {

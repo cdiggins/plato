@@ -5,8 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Ara3D.Utils\Ara3D.Utils.csproj" />
-    <ProjectReference Include="..\Plato.AST\Plato.AST.csproj" />
+    <ProjectReference Include="..\Plato.Parser\Plato.Parser.csproj" />
   </ItemGroup>
 
 </Project>

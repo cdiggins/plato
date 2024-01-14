@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Ara3D.Utils;
-using Plato.Compiler.Ast;
+using Plato.AST;
 using Plato.Compiler.Types;
 
 namespace Plato.Compiler.Symbols

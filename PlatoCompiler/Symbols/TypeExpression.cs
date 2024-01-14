@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Plato.Compiler.Ast;
+using Plato.AST;
 using Plato.Compiler.Utilities;
 
 namespace Plato.Compiler.Symbols
