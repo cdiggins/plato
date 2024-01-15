@@ -128,6 +128,9 @@ public partial class Boolean
 public partial class Character
 {
 }
+public partial class Dynamic
+{
+}
 public partial class Count
 {
     public Count Square => throw new NotImplementedException();
@@ -1327,24 +1330,24 @@ public partial class Probability
 public partial class BinomialDistribution
 {
 }
-public partial class Array1
+public partial class Array1<T>
 {
 }
-public partial class Tuple2
+public partial class Tuple2<T0, T1>
 {
 }
-public partial class Tuple3
+public partial class Tuple3<T0, T1, T2>
 {
 }
-public partial class Function0
+public partial class Function0<TR>
 {
 }
-public partial class Function1
+public partial class Function1<T0, TR>
 {
 }
-public partial class Function2
+public partial class Function2<T0, T1, TR>
 {
 }
-public partial class Function3
+public partial class Function3<T0, T1, T2, TR>
 {
 }

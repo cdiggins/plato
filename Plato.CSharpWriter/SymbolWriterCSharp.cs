@@ -30,13 +30,14 @@ namespace Plato.CSharpWriter
             "Function3",
         };
 
-        public static HashSet<string> IntrinsicTypes = new HashSet<string>()
+        public static Dictionary<string, string> PrimitiveTypes = new Dictionary<string, string>()
         {
-            "Number",
-            "Boolean",
-            "Integer",
-            "Character",
-            "String",
+            { "Number", "double" },
+            { "Boolean", "bool" },
+            { "Integer", "int" },
+            { "Character", "char" },
+            { "String", "string" },
+            { "Dynamic", "object" },
         };
 
         public SymbolWriterCSharp(Compiler.Compiler compiler, DirectoryPath outputFolder)
@@ -201,7 +202,9 @@ namespace Plato.CSharpWriter
 
             foreach (var t in Compiler.ConcreteTypes)
             {
-                WriteLine($"public partial class {t.Type.Name}");
+                var typeParamsStr = JoinTypeParameters(t.Type.TypeParameters.Select(tp => tp.Name));
+
+                WriteLine($"public partial class {t.Type.Name}{typeParamsStr}");
                 WriteStartBlock();
 
                 var funcGroups = t.ConcreteFunctions.Concat(t.GetConceptFunctions()).GroupBy(f => f.SignatureId);
@@ -216,17 +219,7 @@ namespace Plato.CSharpWriter
 
             return this;
         }
-
-        public SymbolWriterCSharp WriteLibraries()
-        {
-            StartNewFile(OutputFolder.RelativeFile("Library.cs"));
-            WriteLine("using System;");
-            foreach (var c in Compiler.AllTypeAndLibraryDefinitions)
-                if (c.IsLibrary())
-                    WriteLibraryMethods(c);
-            return this;
-        }
-
+        
         public SymbolWriterCSharp WriteConceptInterfaces()
         {
             StartNewFile(OutputFolder.RelativeFile("Concepts.cs"));
@@ -279,7 +272,6 @@ namespace Plato.CSharpWriter
                         ? constraint.TypeArgs.Select(TypeStr).Prepend(tp.Name)
                         : constraint.TypeArgs.Select(TypeStr));
                     WriteLine($"where {tp.Name} : {constraint.Name}{constraintArgs}");
-
                 }
             }
 
@@ -295,8 +287,8 @@ namespace Plato.CSharpWriter
         {
             StartNewFile(OutputFolder.RelativeFile("Types.cs"));
             WriteLine("using System;");
-            foreach (var c in Compiler.AllTypeAndLibraryDefinitions)
-                if (c.IsConcrete() && !IgnoreTypes.Contains(c.Name))
+            foreach (var c in Compiler.ConcreteTypes)
+                if (!IgnoreTypes.Contains(c.Type.Name))
                     WriteTypeImplementation(c);
             return this;
         }
@@ -314,16 +306,19 @@ namespace Plato.CSharpWriter
                 ? $"_{fieldName}" 
                 : fieldName.DecapitalizeFirst();
         
-        public SymbolWriterCSharp WriteTypeImplementation(TypeDefinition t)
+        public SymbolWriterCSharp WriteTypeImplementation(ConcreteType concreteType)
         {
-            Debug.Assert(t.IsConcrete());
-
+            var t = concreteType.Type;
+            
             var implements = t.Implements.Count > 0
                 ? ": " + string.Join(", ", t.Implements.Select(te => ImplementedTypeString(te, t.Name)))
                 : "";
 
+            var typeParamsStr = JoinTypeParameters(t.TypeParameters.Select(tp => tp.Name));
+
             Write("public partial class ");
             Write(t.Name);
+            Write(typeParamsStr);
             WriteLine(implements);
             WriteStartBlock();
 
@@ -333,31 +328,16 @@ namespace Plato.CSharpWriter
             var parameterNames = fieldNames.Select(FieldNameToParameterName);
             Debug.Assert(fieldTypes.Count == fieldNames.Count);
 
-            var isIntrinsic = IntrinsicTypes.Contains(name);
-            if (fieldTypes.Count > 0)
-                if (isIntrinsic)
-                    throw new Exception($"Intrinsic {name} should not have fields");
+            var isPrimitive = PrimitiveTypes.ContainsKey(name);
+            if (fieldTypes.Count == 0 ^ isPrimitive)
+                throw new Exception($"Primitive {name} should not have fields");
 
             if (fieldTypes.Count == 0)
             {
-                if (!isIntrinsic)
-                    throw new Exception($"Only intrinsics can have no fields not {name}");
-
+                if (!isPrimitive)
+                    throw new Exception($"Only primitives can have no fields not {name}");
                 fieldNames.Add("Value");
-                if (name == "String")
-                    fieldTypes.Add("string");
-                else if (name == "Number")
-                    fieldTypes.Add("double");
-                else if (name == "Boolean")
-                    fieldTypes.Add("bool");
-                else if (name == "Integer")
-                    fieldTypes.Add("int");
-                else if (name == "Character")
-                    fieldTypes.Add("char");
-                else if (name == "String")
-                    fieldTypes.Add("string");
-                else
-                    throw new Exception($"Not a recognized intrinsic {name}");
+                fieldTypes.Add(PrimitiveTypes[name]);
             }
 
             for (var i = 0; i < fieldTypes.Count; ++i)
@@ -418,6 +398,13 @@ namespace Plato.CSharpWriter
                 WriteLine($"public static implicit operator {fieldType}({name} self) => self.{fieldName};");
                 WriteLine($"public static implicit operator {name}({fieldType} value) => new {name}(value);");
             }
+
+            WriteLine($"public String TypeName => {name.Quote()};");
+
+            var fieldNamesAsStringsStr = fieldNames.Select(n => $"(String){n.Quote()}").JoinStringsWithComma();
+            WriteLine($"public Array<String> FieldNames => (Array1<String>)new[] {{ {fieldNamesAsStringsStr} }};");
+            var fieldValuesAsDynamicsStr = fieldNames.Select(n => $"(Dynamic){n}").JoinStringsWithComma();
+            WriteLine($"public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] {{ {fieldValuesAsDynamicsStr} }};");
 
             /* TODO:
             var fieldNamesAsStrings = string.Join(", ", fieldNames.Select(f => $"\"{f}\""));
@@ -501,61 +488,6 @@ namespace Plato.CSharpWriter
             return r;
         }
 
-        public SymbolWriterCSharp WriteLibraryMethods(TypeDefinition type)
-        {
-            Debug.Assert(type.IsLibrary());
-
-            // We put all methods 
-            WriteLine($"public static partial class Library");
-            WriteStartBlock();
-            foreach (var f in type.Functions)
-            {
-                var typeParameters = GatherTypeParameters(f).Distinct().ToList();
-
-                Write("public static ");
-                Write(f.ReturnType);
-                Write(f.Name);
-                if (f.Parameters.Count > 0)
-                {
-                    if (typeParameters.Count > 0)
-                    {
-                        Write("<");
-                        WriteCommaList(typeParameters);
-                        Write(">");
-                    }
-
-                    Write("(");
-                    Write("this ");
-                    for (var i = 0; i < f.Parameters.Count; ++i)
-                    {
-                        if (i > 0) Write(", ");
-                        var p = f.Parameters[i];
-                        Write(p.Type);
-                        Write(p.Name);
-                    }
-                    Write(")");
-                }
-
-                if (f.Body is BlockExpression expr && expr.Symbols.Count > 1)
-                {
-                    Write(expr).WriteLine();
-                }
-                else
-                {
-                    if (f.Body != null)
-                    {
-                        Write(" => ").Write(f.Body).WriteLine(";");
-                    }
-                    else
-                    {
-                        WriteLine("throw new NotImplementedException();");
-                    }
-                }
-            }
-            WriteEndBlock();
-            return this;
-        }
-
         public SymbolWriterCSharp Write(DefinitionSymbol value)
         {
             switch (value)
@@ -602,9 +534,7 @@ namespace Plato.CSharpWriter
             if (expr == null)
                 return this;
 
-            var t = Compiler.GetExpressionType(expr);
-            
-            // Don't put types in front of an argument (it is the same as the other)
+            //var t = Compiler.GetExpressionType(expr);
             //if (!(expr is Argument)) WriteLine($"/* {t} */");
 
             switch (expr)
@@ -631,7 +561,7 @@ namespace Plato.CSharpWriter
 
                 case FunctionCall functionCall:
                     // Turn it into a "dot" call.
-                    // TODO: If this is a function argument then we can't do the "." call transformation. 
+                    // TODO: If this is a lambda then we can't do the "." call transformation. 
                     if (functionCall.Args.Count == 0)
                         return Write(functionCall.Function);
                     Write(functionCall.Args[0]).Write(".").Write(functionCall.Function);

@@ -9,6 +9,9 @@ public partial class Number: Numerical<Number>
     public static Number New(double value) => new Number(value);
     public static implicit operator double(Number self) => self.Value;
     public static implicit operator Number(double value) => new Number(value);
+    public String TypeName => (String)"Number";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Value };
 }
 public partial class Integer: Numerical<Integer>
 {
@@ -20,6 +23,9 @@ public partial class Integer: Numerical<Integer>
     public static Integer New(int value) => new Integer(value);
     public static implicit operator int(Integer self) => self.Value;
     public static implicit operator Integer(int value) => new Integer(value);
+    public String TypeName => (String)"Integer";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Value };
 }
 public partial class String: Value<String>, Array<Character>
 {
@@ -31,6 +37,9 @@ public partial class String: Value<String>, Array<Character>
     public static String New(string value) => new String(value);
     public static implicit operator string(String self) => self.Value;
     public static implicit operator String(string value) => new String(value);
+    public String TypeName => (String)"String";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Value };
 }
 public partial class Boolean: BooleanOperations<Boolean>
 {
@@ -42,6 +51,9 @@ public partial class Boolean: BooleanOperations<Boolean>
     public static Boolean New(bool value) => new Boolean(value);
     public static implicit operator bool(Boolean self) => self.Value;
     public static implicit operator Boolean(bool value) => new Boolean(value);
+    public String TypeName => (String)"Boolean";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Value };
 }
 public partial class Character: Value<Character>
 {
@@ -53,6 +65,23 @@ public partial class Character: Value<Character>
     public static Character New(char value) => new Character(value);
     public static implicit operator char(Character self) => self.Value;
     public static implicit operator Character(char value) => new Character(value);
+    public String TypeName => (String)"Character";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Value };
+}
+public partial class Dynamic
+{
+    public object Value { get; }
+    public Dynamic WithValue(object value) => (value);
+    public Dynamic(object value) => (Value) = (value);
+    public Dynamic() { }
+    public static Dynamic Default = new Dynamic();
+    public static Dynamic New(object value) => new Dynamic(value);
+    public static implicit operator object(Dynamic self) => self.Value;
+    public static implicit operator Dynamic(object value) => new Dynamic(value);
+    public String TypeName => (String)"Dynamic";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Value };
 }
 public partial class Count: Numerical<Count>
 {
@@ -64,6 +93,9 @@ public partial class Count: Numerical<Count>
     public static Count New(Integer value) => new Count(value);
     public static implicit operator Integer(Count self) => self.Value;
     public static implicit operator Count(Integer value) => new Count(value);
+    public String TypeName => (String)"Count";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Value };
 }
 public partial class Index: Value<Index>
 {
@@ -75,6 +107,9 @@ public partial class Index: Value<Index>
     public static Index New(Integer value) => new Index(value);
     public static implicit operator Integer(Index self) => self.Value;
     public static implicit operator Index(Integer value) => new Index(value);
+    public String TypeName => (String)"Index";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Value };
 }
 public partial class Unit: Numerical<Unit>
 {
@@ -86,6 +121,9 @@ public partial class Unit: Numerical<Unit>
     public static Unit New(Number value) => new Unit(value);
     public static implicit operator Number(Unit self) => self.Value;
     public static implicit operator Unit(Number value) => new Unit(value);
+    public String TypeName => (String)"Unit";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Value };
 }
 public partial class Percent: Numerical<Percent>
 {
@@ -97,6 +135,9 @@ public partial class Percent: Numerical<Percent>
     public static Percent New(Number value) => new Percent(value);
     public static implicit operator Number(Percent self) => self.Value;
     public static implicit operator Percent(Number value) => new Percent(value);
+    public String TypeName => (String)"Percent";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Value };
 }
 public partial class Quaternion: Value<Quaternion>
 {
@@ -115,6 +156,9 @@ public partial class Quaternion: Value<Quaternion>
     public static implicit operator (Number, Number, Number, Number)(Quaternion self) => (self.X, self.Y, self.Z, self.W);
     public static implicit operator Quaternion((Number, Number, Number, Number) value) => new Quaternion(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Number x, out Number y, out Number z, out Number w) { x = X; y = Y; z = Z; w = W; }
+    public String TypeName => (String)"Quaternion";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y", (String)"Z", (String)"W" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)X, (Dynamic)Y, (Dynamic)Z, (Dynamic)W };
 }
 public partial class Unit2D: Value<Unit2D>
 {
@@ -129,6 +173,9 @@ public partial class Unit2D: Value<Unit2D>
     public static implicit operator (Unit, Unit)(Unit2D self) => (self.X, self.Y);
     public static implicit operator Unit2D((Unit, Unit) value) => new Unit2D(value.Item1, value.Item2);
     public void Deconstruct(out Unit x, out Unit y) { x = X; y = Y; }
+    public String TypeName => (String)"Unit2D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)X, (Dynamic)Y };
 }
 public partial class Unit3D: Value<Unit3D>
 {
@@ -145,6 +192,9 @@ public partial class Unit3D: Value<Unit3D>
     public static implicit operator (Unit, Unit, Unit)(Unit3D self) => (self.X, self.Y, self.Z);
     public static implicit operator Unit3D((Unit, Unit, Unit) value) => new Unit3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Unit x, out Unit y, out Unit z) { x = X; y = Y; z = Z; }
+    public String TypeName => (String)"Unit3D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y", (String)"Z" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)X, (Dynamic)Y, (Dynamic)Z };
 }
 public partial class Direction3D: Value<Direction3D>
 {
@@ -156,6 +206,9 @@ public partial class Direction3D: Value<Direction3D>
     public static Direction3D New(Unit3D value) => new Direction3D(value);
     public static implicit operator Unit3D(Direction3D self) => self.Value;
     public static implicit operator Direction3D(Unit3D value) => new Direction3D(value);
+    public String TypeName => (String)"Direction3D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Value };
 }
 public partial class AxisAngle: Value<AxisAngle>
 {
@@ -170,6 +223,9 @@ public partial class AxisAngle: Value<AxisAngle>
     public static implicit operator (Unit3D, Angle)(AxisAngle self) => (self.Axis, self.Angle);
     public static implicit operator AxisAngle((Unit3D, Angle) value) => new AxisAngle(value.Item1, value.Item2);
     public void Deconstruct(out Unit3D axis, out Angle angle) { axis = Axis; angle = Angle; }
+    public String TypeName => (String)"AxisAngle";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Axis", (String)"Angle" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Axis, (Dynamic)Angle };
 }
 public partial class EulerAngles: Value<EulerAngles>
 {
@@ -186,6 +242,9 @@ public partial class EulerAngles: Value<EulerAngles>
     public static implicit operator (Angle, Angle, Angle)(EulerAngles self) => (self.Yaw, self.Pitch, self.Roll);
     public static implicit operator EulerAngles((Angle, Angle, Angle) value) => new EulerAngles(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Angle yaw, out Angle pitch, out Angle roll) { yaw = Yaw; pitch = Pitch; roll = Roll; }
+    public String TypeName => (String)"EulerAngles";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Yaw", (String)"Pitch", (String)"Roll" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Yaw, (Dynamic)Pitch, (Dynamic)Roll };
 }
 public partial class Rotation3D: Value<Rotation3D>
 {
@@ -197,6 +256,9 @@ public partial class Rotation3D: Value<Rotation3D>
     public static Rotation3D New(Quaternion quaternion) => new Rotation3D(quaternion);
     public static implicit operator Quaternion(Rotation3D self) => self.Quaternion;
     public static implicit operator Rotation3D(Quaternion value) => new Rotation3D(value);
+    public String TypeName => (String)"Rotation3D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Quaternion" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Quaternion };
 }
 public partial class Vector2D: Vector<Vector2D>
 {
@@ -211,6 +273,9 @@ public partial class Vector2D: Vector<Vector2D>
     public static implicit operator (Number, Number)(Vector2D self) => (self.X, self.Y);
     public static implicit operator Vector2D((Number, Number) value) => new Vector2D(value.Item1, value.Item2);
     public void Deconstruct(out Number x, out Number y) { x = X; y = Y; }
+    public String TypeName => (String)"Vector2D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)X, (Dynamic)Y };
 }
 public partial class Vector3D: Vector<Vector3D>
 {
@@ -227,6 +292,9 @@ public partial class Vector3D: Vector<Vector3D>
     public static implicit operator (Number, Number, Number)(Vector3D self) => (self.X, self.Y, self.Z);
     public static implicit operator Vector3D((Number, Number, Number) value) => new Vector3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number x, out Number y, out Number z) { x = X; y = Y; z = Z; }
+    public String TypeName => (String)"Vector3D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y", (String)"Z" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)X, (Dynamic)Y, (Dynamic)Z };
 }
 public partial class Vector4D: Vector<Vector4D>
 {
@@ -245,6 +313,9 @@ public partial class Vector4D: Vector<Vector4D>
     public static implicit operator (Number, Number, Number, Number)(Vector4D self) => (self.X, self.Y, self.Z, self.W);
     public static implicit operator Vector4D((Number, Number, Number, Number) value) => new Vector4D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Number x, out Number y, out Number z, out Number w) { x = X; y = Y; z = Z; w = W; }
+    public String TypeName => (String)"Vector4D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y", (String)"Z", (String)"W" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)X, (Dynamic)Y, (Dynamic)Z, (Dynamic)W };
 }
 public partial class Orientation3D: Value<Orientation3D>
 {
@@ -256,6 +327,9 @@ public partial class Orientation3D: Value<Orientation3D>
     public static Orientation3D New(Rotation3D value) => new Orientation3D(value);
     public static implicit operator Rotation3D(Orientation3D self) => self.Value;
     public static implicit operator Orientation3D(Rotation3D value) => new Orientation3D(value);
+    public String TypeName => (String)"Orientation3D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Value };
 }
 public partial class Pose2D: Value<Pose2D>
 {
@@ -270,6 +344,9 @@ public partial class Pose2D: Value<Pose2D>
     public static implicit operator (Vector3D, Orientation3D)(Pose2D self) => (self.Position, self.Orientation);
     public static implicit operator Pose2D((Vector3D, Orientation3D) value) => new Pose2D(value.Item1, value.Item2);
     public void Deconstruct(out Vector3D position, out Orientation3D orientation) { position = Position; orientation = Orientation; }
+    public String TypeName => (String)"Pose2D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Position", (String)"Orientation" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Position, (Dynamic)Orientation };
 }
 public partial class Pose3D: Value<Pose3D>
 {
@@ -284,6 +361,9 @@ public partial class Pose3D: Value<Pose3D>
     public static implicit operator (Vector3D, Orientation3D)(Pose3D self) => (self.Position, self.Orientation);
     public static implicit operator Pose3D((Vector3D, Orientation3D) value) => new Pose3D(value.Item1, value.Item2);
     public void Deconstruct(out Vector3D position, out Orientation3D orientation) { position = Position; orientation = Orientation; }
+    public String TypeName => (String)"Pose3D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Position", (String)"Orientation" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Position, (Dynamic)Orientation };
 }
 public partial class Transform3D: Value<Transform3D>
 {
@@ -300,6 +380,9 @@ public partial class Transform3D: Value<Transform3D>
     public static implicit operator (Vector3D, Rotation3D, Vector3D)(Transform3D self) => (self.Translation, self.Rotation, self.Scale);
     public static implicit operator Transform3D((Vector3D, Rotation3D, Vector3D) value) => new Transform3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Vector3D translation, out Rotation3D rotation, out Vector3D scale) { translation = Translation; rotation = Rotation; scale = Scale; }
+    public String TypeName => (String)"Transform3D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Translation", (String)"Rotation", (String)"Scale" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Translation, (Dynamic)Rotation, (Dynamic)Scale };
 }
 public partial class Transform2D: Value<Transform2D>
 {
@@ -316,6 +399,9 @@ public partial class Transform2D: Value<Transform2D>
     public static implicit operator (Vector2D, Angle, Vector2D)(Transform2D self) => (self.Translation, self.Rotation, self.Scale);
     public static implicit operator Transform2D((Vector2D, Angle, Vector2D) value) => new Transform2D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Vector2D translation, out Angle rotation, out Vector2D scale) { translation = Translation; rotation = Rotation; scale = Scale; }
+    public String TypeName => (String)"Transform2D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Translation", (String)"Rotation", (String)"Scale" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Translation, (Dynamic)Rotation, (Dynamic)Scale };
 }
 public partial class AlignedBox2D: Interval<Point2D, Vector2D>
 {
@@ -330,6 +416,9 @@ public partial class AlignedBox2D: Interval<Point2D, Vector2D>
     public static implicit operator (Point2D, Point2D)(AlignedBox2D self) => (self.A, self.B);
     public static implicit operator AlignedBox2D((Point2D, Point2D) value) => new AlignedBox2D(value.Item1, value.Item2);
     public void Deconstruct(out Point2D a, out Point2D b) { a = A; b = B; }
+    public String TypeName => (String)"AlignedBox2D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)A, (Dynamic)B };
 }
 public partial class AlignedBox3D: Interval<Point3D, Vector3D>
 {
@@ -344,6 +433,9 @@ public partial class AlignedBox3D: Interval<Point3D, Vector3D>
     public static implicit operator (Point3D, Point3D)(AlignedBox3D self) => (self.A, self.B);
     public static implicit operator AlignedBox3D((Point3D, Point3D) value) => new AlignedBox3D(value.Item1, value.Item2);
     public void Deconstruct(out Point3D a, out Point3D b) { a = A; b = B; }
+    public String TypeName => (String)"AlignedBox3D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)A, (Dynamic)B };
 }
 public partial class Complex: Vector<Complex>
 {
@@ -358,6 +450,9 @@ public partial class Complex: Vector<Complex>
     public static implicit operator (Number, Number)(Complex self) => (self.Real, self.Imaginary);
     public static implicit operator Complex((Number, Number) value) => new Complex(value.Item1, value.Item2);
     public void Deconstruct(out Number real, out Number imaginary) { real = Real; imaginary = Imaginary; }
+    public String TypeName => (String)"Complex";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Real", (String)"Imaginary" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Real, (Dynamic)Imaginary };
 }
 public partial class Ray3D: Value<Ray3D>
 {
@@ -372,6 +467,9 @@ public partial class Ray3D: Value<Ray3D>
     public static implicit operator (Vector3D, Point3D)(Ray3D self) => (self.Direction, self.Position);
     public static implicit operator Ray3D((Vector3D, Point3D) value) => new Ray3D(value.Item1, value.Item2);
     public void Deconstruct(out Vector3D direction, out Point3D position) { direction = Direction; position = Position; }
+    public String TypeName => (String)"Ray3D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Direction", (String)"Position" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Direction, (Dynamic)Position };
 }
 public partial class Ray2D: Value<Ray2D>
 {
@@ -386,6 +484,9 @@ public partial class Ray2D: Value<Ray2D>
     public static implicit operator (Vector2D, Point2D)(Ray2D self) => (self.Direction, self.Position);
     public static implicit operator Ray2D((Vector2D, Point2D) value) => new Ray2D(value.Item1, value.Item2);
     public void Deconstruct(out Vector2D direction, out Point2D position) { direction = Direction; position = Position; }
+    public String TypeName => (String)"Ray2D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Direction", (String)"Position" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Direction, (Dynamic)Position };
 }
 public partial class Sphere: Value<Sphere>
 {
@@ -400,6 +501,9 @@ public partial class Sphere: Value<Sphere>
     public static implicit operator (Point3D, Number)(Sphere self) => (self.Center, self.Radius);
     public static implicit operator Sphere((Point3D, Number) value) => new Sphere(value.Item1, value.Item2);
     public void Deconstruct(out Point3D center, out Number radius) { center = Center; radius = Radius; }
+    public String TypeName => (String)"Sphere";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Center", (String)"Radius" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Center, (Dynamic)Radius };
 }
 public partial class Plane: Value<Plane>
 {
@@ -414,6 +518,9 @@ public partial class Plane: Value<Plane>
     public static implicit operator (Unit3D, Number)(Plane self) => (self.Normal, self.D);
     public static implicit operator Plane((Unit3D, Number) value) => new Plane(value.Item1, value.Item2);
     public void Deconstruct(out Unit3D normal, out Number d) { normal = Normal; d = D; }
+    public String TypeName => (String)"Plane";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Normal", (String)"D" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Normal, (Dynamic)D };
 }
 public partial class Triangle2D: Value<Triangle2D>
 {
@@ -430,6 +537,9 @@ public partial class Triangle2D: Value<Triangle2D>
     public static implicit operator (Point2D, Point2D, Point2D)(Triangle2D self) => (self.A, self.B, self.C);
     public static implicit operator Triangle2D((Point2D, Point2D, Point2D) value) => new Triangle2D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point2D a, out Point2D b, out Point2D c) { a = A; b = B; c = C; }
+    public String TypeName => (String)"Triangle2D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)A, (Dynamic)B, (Dynamic)C };
 }
 public partial class Triangle3D: Value<Triangle3D>
 {
@@ -446,6 +556,9 @@ public partial class Triangle3D: Value<Triangle3D>
     public static implicit operator (Point3D, Point3D, Point3D)(Triangle3D self) => (self.A, self.B, self.C);
     public static implicit operator Triangle3D((Point3D, Point3D, Point3D) value) => new Triangle3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point3D a, out Point3D b, out Point3D c) { a = A; b = B; c = C; }
+    public String TypeName => (String)"Triangle3D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)A, (Dynamic)B, (Dynamic)C };
 }
 public partial class Quad2D: Value<Quad2D>
 {
@@ -464,6 +577,9 @@ public partial class Quad2D: Value<Quad2D>
     public static implicit operator (Point2D, Point2D, Point2D, Point2D)(Quad2D self) => (self.A, self.B, self.C, self.D);
     public static implicit operator Quad2D((Point2D, Point2D, Point2D, Point2D) value) => new Quad2D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Point2D a, out Point2D b, out Point2D c, out Point2D d) { a = A; b = B; c = C; d = D; }
+    public String TypeName => (String)"Quad2D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C", (String)"D" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)A, (Dynamic)B, (Dynamic)C, (Dynamic)D };
 }
 public partial class Quad3D: Value<Quad3D>
 {
@@ -482,6 +598,9 @@ public partial class Quad3D: Value<Quad3D>
     public static implicit operator (Point3D, Point3D, Point3D, Point3D)(Quad3D self) => (self.A, self.B, self.C, self.D);
     public static implicit operator Quad3D((Point3D, Point3D, Point3D, Point3D) value) => new Quad3D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Point3D a, out Point3D b, out Point3D c, out Point3D d) { a = A; b = B; c = C; d = D; }
+    public String TypeName => (String)"Quad3D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C", (String)"D" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)A, (Dynamic)B, (Dynamic)C, (Dynamic)D };
 }
 public partial class Point2D: Coordinate<Point2D>
 {
@@ -496,6 +615,9 @@ public partial class Point2D: Coordinate<Point2D>
     public static implicit operator (Number, Number)(Point2D self) => (self.X, self.Y);
     public static implicit operator Point2D((Number, Number) value) => new Point2D(value.Item1, value.Item2);
     public void Deconstruct(out Number x, out Number y) { x = X; y = Y; }
+    public String TypeName => (String)"Point2D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)X, (Dynamic)Y };
 }
 public partial class Point3D: Coordinate<Point3D>
 {
@@ -512,6 +634,9 @@ public partial class Point3D: Coordinate<Point3D>
     public static implicit operator (Number, Number, Number)(Point3D self) => (self.X, self.Y, self.Z);
     public static implicit operator Point3D((Number, Number, Number) value) => new Point3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number x, out Number y, out Number z) { x = X; y = Y; z = Z; }
+    public String TypeName => (String)"Point3D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y", (String)"Z" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)X, (Dynamic)Y, (Dynamic)Z };
 }
 public partial class Line2D: Interval<Point2D, Vector3D>
 {
@@ -526,6 +651,9 @@ public partial class Line2D: Interval<Point2D, Vector3D>
     public static implicit operator (Point2D, Point2D)(Line2D self) => (self.A, self.B);
     public static implicit operator Line2D((Point2D, Point2D) value) => new Line2D(value.Item1, value.Item2);
     public void Deconstruct(out Point2D a, out Point2D b) { a = A; b = B; }
+    public String TypeName => (String)"Line2D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)A, (Dynamic)B };
 }
 public partial class Line3D: Interval<Point3D, Vector3D>
 {
@@ -540,6 +668,9 @@ public partial class Line3D: Interval<Point3D, Vector3D>
     public static implicit operator (Point3D, Point3D)(Line3D self) => (self.A, self.B);
     public static implicit operator Line3D((Point3D, Point3D) value) => new Line3D(value.Item1, value.Item2);
     public void Deconstruct(out Point3D a, out Point3D b) { a = A; b = B; }
+    public String TypeName => (String)"Line3D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)A, (Dynamic)B };
 }
 public partial class Color: Value<Color>
 {
@@ -558,6 +689,9 @@ public partial class Color: Value<Color>
     public static implicit operator (Unit, Unit, Unit, Unit)(Color self) => (self.R, self.G, self.B, self.A);
     public static implicit operator Color((Unit, Unit, Unit, Unit) value) => new Color(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Unit r, out Unit g, out Unit b, out Unit a) { r = R; g = G; b = B; a = A; }
+    public String TypeName => (String)"Color";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"R", (String)"G", (String)"B", (String)"A" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)R, (Dynamic)G, (Dynamic)B, (Dynamic)A };
 }
 public partial class ColorLUV: Value<ColorLUV>
 {
@@ -574,6 +708,9 @@ public partial class ColorLUV: Value<ColorLUV>
     public static implicit operator (Percent, Unit, Unit)(ColorLUV self) => (self.Lightness, self.U, self.V);
     public static implicit operator ColorLUV((Percent, Unit, Unit) value) => new ColorLUV(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Percent lightness, out Unit u, out Unit v) { lightness = Lightness; u = U; v = V; }
+    public String TypeName => (String)"ColorLUV";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Lightness", (String)"U", (String)"V" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Lightness, (Dynamic)U, (Dynamic)V };
 }
 public partial class ColorLAB: Value<ColorLAB>
 {
@@ -590,6 +727,9 @@ public partial class ColorLAB: Value<ColorLAB>
     public static implicit operator (Percent, Integer, Integer)(ColorLAB self) => (self.Lightness, self.A, self.B);
     public static implicit operator ColorLAB((Percent, Integer, Integer) value) => new ColorLAB(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Percent lightness, out Integer a, out Integer b) { lightness = Lightness; a = A; b = B; }
+    public String TypeName => (String)"ColorLAB";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Lightness", (String)"A", (String)"B" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Lightness, (Dynamic)A, (Dynamic)B };
 }
 public partial class ColorLCh: Value<ColorLCh>
 {
@@ -604,6 +744,9 @@ public partial class ColorLCh: Value<ColorLCh>
     public static implicit operator (Percent, PolarCoordinate)(ColorLCh self) => (self.Lightness, self.ChromaHue);
     public static implicit operator ColorLCh((Percent, PolarCoordinate) value) => new ColorLCh(value.Item1, value.Item2);
     public void Deconstruct(out Percent lightness, out PolarCoordinate chromaHue) { lightness = Lightness; chromaHue = ChromaHue; }
+    public String TypeName => (String)"ColorLCh";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Lightness", (String)"ChromaHue" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Lightness, (Dynamic)ChromaHue };
 }
 public partial class ColorHSV: Value<ColorHSV>
 {
@@ -620,6 +763,9 @@ public partial class ColorHSV: Value<ColorHSV>
     public static implicit operator (Angle, Unit, Unit)(ColorHSV self) => (self.Hue, self.S, self.V);
     public static implicit operator ColorHSV((Angle, Unit, Unit) value) => new ColorHSV(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Angle hue, out Unit s, out Unit v) { hue = Hue; s = S; v = V; }
+    public String TypeName => (String)"ColorHSV";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Hue", (String)"S", (String)"V" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Hue, (Dynamic)S, (Dynamic)V };
 }
 public partial class ColorHSL: Value<ColorHSL>
 {
@@ -636,6 +782,9 @@ public partial class ColorHSL: Value<ColorHSL>
     public static implicit operator (Angle, Unit, Unit)(ColorHSL self) => (self.Hue, self.Saturation, self.Luminance);
     public static implicit operator ColorHSL((Angle, Unit, Unit) value) => new ColorHSL(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Angle hue, out Unit saturation, out Unit luminance) { hue = Hue; saturation = Saturation; luminance = Luminance; }
+    public String TypeName => (String)"ColorHSL";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Hue", (String)"Saturation", (String)"Luminance" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Hue, (Dynamic)Saturation, (Dynamic)Luminance };
 }
 public partial class ColorYCbCr: Value<ColorYCbCr>
 {
@@ -652,6 +801,9 @@ public partial class ColorYCbCr: Value<ColorYCbCr>
     public static implicit operator (Unit, Unit, Unit)(ColorYCbCr self) => (self.Y, self.Cb, self.Cr);
     public static implicit operator ColorYCbCr((Unit, Unit, Unit) value) => new ColorYCbCr(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Unit y, out Unit cb, out Unit cr) { y = Y; cb = Cb; cr = Cr; }
+    public String TypeName => (String)"ColorYCbCr";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Y", (String)"Cb", (String)"Cr" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Y, (Dynamic)Cb, (Dynamic)Cr };
 }
 public partial class SphericalCoordinate: Value<SphericalCoordinate>
 {
@@ -668,6 +820,9 @@ public partial class SphericalCoordinate: Value<SphericalCoordinate>
     public static implicit operator (Number, Angle, Angle)(SphericalCoordinate self) => (self.Radius, self.Azimuth, self.Polar);
     public static implicit operator SphericalCoordinate((Number, Angle, Angle) value) => new SphericalCoordinate(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number radius, out Angle azimuth, out Angle polar) { radius = Radius; azimuth = Azimuth; polar = Polar; }
+    public String TypeName => (String)"SphericalCoordinate";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Radius", (String)"Azimuth", (String)"Polar" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Radius, (Dynamic)Azimuth, (Dynamic)Polar };
 }
 public partial class PolarCoordinate: Value<PolarCoordinate>
 {
@@ -682,6 +837,9 @@ public partial class PolarCoordinate: Value<PolarCoordinate>
     public static implicit operator (Number, Angle)(PolarCoordinate self) => (self.Radius, self.Angle);
     public static implicit operator PolarCoordinate((Number, Angle) value) => new PolarCoordinate(value.Item1, value.Item2);
     public void Deconstruct(out Number radius, out Angle angle) { radius = Radius; angle = Angle; }
+    public String TypeName => (String)"PolarCoordinate";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Radius", (String)"Angle" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Radius, (Dynamic)Angle };
 }
 public partial class LogPolarCoordinate: Value<LogPolarCoordinate>
 {
@@ -696,6 +854,9 @@ public partial class LogPolarCoordinate: Value<LogPolarCoordinate>
     public static implicit operator (Number, Angle)(LogPolarCoordinate self) => (self.Rho, self.Azimuth);
     public static implicit operator LogPolarCoordinate((Number, Angle) value) => new LogPolarCoordinate(value.Item1, value.Item2);
     public void Deconstruct(out Number rho, out Angle azimuth) { rho = Rho; azimuth = Azimuth; }
+    public String TypeName => (String)"LogPolarCoordinate";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Rho", (String)"Azimuth" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Rho, (Dynamic)Azimuth };
 }
 public partial class CylindricalCoordinate: Value<CylindricalCoordinate>
 {
@@ -712,6 +873,9 @@ public partial class CylindricalCoordinate: Value<CylindricalCoordinate>
     public static implicit operator (Number, Angle, Number)(CylindricalCoordinate self) => (self.RadialDistance, self.Azimuth, self.Height);
     public static implicit operator CylindricalCoordinate((Number, Angle, Number) value) => new CylindricalCoordinate(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number radialDistance, out Angle azimuth, out Number height) { radialDistance = RadialDistance; azimuth = Azimuth; height = Height; }
+    public String TypeName => (String)"CylindricalCoordinate";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"RadialDistance", (String)"Azimuth", (String)"Height" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)RadialDistance, (Dynamic)Azimuth, (Dynamic)Height };
 }
 public partial class HorizontalCoordinate: Value<HorizontalCoordinate>
 {
@@ -728,6 +892,9 @@ public partial class HorizontalCoordinate: Value<HorizontalCoordinate>
     public static implicit operator (Number, Angle, Number)(HorizontalCoordinate self) => (self.Radius, self.Azimuth, self.Height);
     public static implicit operator HorizontalCoordinate((Number, Angle, Number) value) => new HorizontalCoordinate(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number radius, out Angle azimuth, out Number height) { radius = Radius; azimuth = Azimuth; height = Height; }
+    public String TypeName => (String)"HorizontalCoordinate";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Radius", (String)"Azimuth", (String)"Height" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Radius, (Dynamic)Azimuth, (Dynamic)Height };
 }
 public partial class GeoCoordinate: Value<GeoCoordinate>
 {
@@ -742,6 +909,9 @@ public partial class GeoCoordinate: Value<GeoCoordinate>
     public static implicit operator (Angle, Angle)(GeoCoordinate self) => (self.Latitude, self.Longitude);
     public static implicit operator GeoCoordinate((Angle, Angle) value) => new GeoCoordinate(value.Item1, value.Item2);
     public void Deconstruct(out Angle latitude, out Angle longitude) { latitude = Latitude; longitude = Longitude; }
+    public String TypeName => (String)"GeoCoordinate";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Latitude", (String)"Longitude" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Latitude, (Dynamic)Longitude };
 }
 public partial class GeoCoordinateWithAltitude: Value<GeoCoordinateWithAltitude>
 {
@@ -756,6 +926,9 @@ public partial class GeoCoordinateWithAltitude: Value<GeoCoordinateWithAltitude>
     public static implicit operator (GeoCoordinate, Number)(GeoCoordinateWithAltitude self) => (self.Coordinate, self.Altitude);
     public static implicit operator GeoCoordinateWithAltitude((GeoCoordinate, Number) value) => new GeoCoordinateWithAltitude(value.Item1, value.Item2);
     public void Deconstruct(out GeoCoordinate coordinate, out Number altitude) { coordinate = Coordinate; altitude = Altitude; }
+    public String TypeName => (String)"GeoCoordinateWithAltitude";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Coordinate", (String)"Altitude" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Coordinate, (Dynamic)Altitude };
 }
 public partial class Circle: Value<Circle>
 {
@@ -770,6 +943,9 @@ public partial class Circle: Value<Circle>
     public static implicit operator (Point2D, Number)(Circle self) => (self.Center, self.Radius);
     public static implicit operator Circle((Point2D, Number) value) => new Circle(value.Item1, value.Item2);
     public void Deconstruct(out Point2D center, out Number radius) { center = Center; radius = Radius; }
+    public String TypeName => (String)"Circle";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Center", (String)"Radius" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Center, (Dynamic)Radius };
 }
 public partial class Chord: Value<Chord>
 {
@@ -784,6 +960,9 @@ public partial class Chord: Value<Chord>
     public static implicit operator (Circle, Arc)(Chord self) => (self.Circle, self.Arc);
     public static implicit operator Chord((Circle, Arc) value) => new Chord(value.Item1, value.Item2);
     public void Deconstruct(out Circle circle, out Arc arc) { circle = Circle; arc = Arc; }
+    public String TypeName => (String)"Chord";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Circle", (String)"Arc" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Circle, (Dynamic)Arc };
 }
 public partial class Size2D: Value<Size2D>
 {
@@ -798,6 +977,9 @@ public partial class Size2D: Value<Size2D>
     public static implicit operator (Number, Number)(Size2D self) => (self.Width, self.Height);
     public static implicit operator Size2D((Number, Number) value) => new Size2D(value.Item1, value.Item2);
     public void Deconstruct(out Number width, out Number height) { width = Width; height = Height; }
+    public String TypeName => (String)"Size2D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Width", (String)"Height" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Width, (Dynamic)Height };
 }
 public partial class Size3D: Value<Size3D>
 {
@@ -814,6 +996,9 @@ public partial class Size3D: Value<Size3D>
     public static implicit operator (Number, Number, Number)(Size3D self) => (self.Width, self.Height, self.Depth);
     public static implicit operator Size3D((Number, Number, Number) value) => new Size3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number width, out Number height, out Number depth) { width = Width; height = Height; depth = Depth; }
+    public String TypeName => (String)"Size3D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Width", (String)"Height", (String)"Depth" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Width, (Dynamic)Height, (Dynamic)Depth };
 }
 public partial class Rectangle2D: Value<Rectangle2D>
 {
@@ -828,6 +1013,9 @@ public partial class Rectangle2D: Value<Rectangle2D>
     public static implicit operator (Point2D, Size2D)(Rectangle2D self) => (self.Center, self.Size);
     public static implicit operator Rectangle2D((Point2D, Size2D) value) => new Rectangle2D(value.Item1, value.Item2);
     public void Deconstruct(out Point2D center, out Size2D size) { center = Center; size = Size; }
+    public String TypeName => (String)"Rectangle2D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Center", (String)"Size" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Center, (Dynamic)Size };
 }
 public partial class Proportion: Numerical<Proportion>
 {
@@ -839,6 +1027,9 @@ public partial class Proportion: Numerical<Proportion>
     public static Proportion New(Number value) => new Proportion(value);
     public static implicit operator Number(Proportion self) => self.Value;
     public static implicit operator Proportion(Number value) => new Proportion(value);
+    public String TypeName => (String)"Proportion";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Value };
 }
 public partial class Fraction: Value<Fraction>
 {
@@ -853,6 +1044,9 @@ public partial class Fraction: Value<Fraction>
     public static implicit operator (Number, Number)(Fraction self) => (self.Numerator, self.Denominator);
     public static implicit operator Fraction((Number, Number) value) => new Fraction(value.Item1, value.Item2);
     public void Deconstruct(out Number numerator, out Number denominator) { numerator = Numerator; denominator = Denominator; }
+    public String TypeName => (String)"Fraction";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Numerator", (String)"Denominator" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Numerator, (Dynamic)Denominator };
 }
 public partial class Angle: Coordinate<Angle>
 {
@@ -864,6 +1058,9 @@ public partial class Angle: Coordinate<Angle>
     public static Angle New(Number radians) => new Angle(radians);
     public static implicit operator Number(Angle self) => self.Radians;
     public static implicit operator Angle(Number value) => new Angle(value);
+    public String TypeName => (String)"Angle";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Radians" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Radians };
 }
 public partial class Length: Measure<Length>
 {
@@ -875,6 +1072,9 @@ public partial class Length: Measure<Length>
     public static Length New(Number meters) => new Length(meters);
     public static implicit operator Number(Length self) => self.Meters;
     public static implicit operator Length(Number value) => new Length(value);
+    public String TypeName => (String)"Length";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Meters" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Meters };
 }
 public partial class Mass: Measure<Mass>
 {
@@ -886,6 +1086,9 @@ public partial class Mass: Measure<Mass>
     public static Mass New(Number kilograms) => new Mass(kilograms);
     public static implicit operator Number(Mass self) => self.Kilograms;
     public static implicit operator Mass(Number value) => new Mass(value);
+    public String TypeName => (String)"Mass";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Kilograms" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Kilograms };
 }
 public partial class Temperature: Measure<Temperature>
 {
@@ -897,6 +1100,9 @@ public partial class Temperature: Measure<Temperature>
     public static Temperature New(Number celsius) => new Temperature(celsius);
     public static implicit operator Number(Temperature self) => self.Celsius;
     public static implicit operator Temperature(Number value) => new Temperature(value);
+    public String TypeName => (String)"Temperature";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Celsius" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Celsius };
 }
 public partial class Time: Measure<Time>
 {
@@ -908,6 +1114,9 @@ public partial class Time: Measure<Time>
     public static Time New(Number seconds) => new Time(seconds);
     public static implicit operator Number(Time self) => self.Seconds;
     public static implicit operator Time(Number value) => new Time(value);
+    public String TypeName => (String)"Time";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Seconds" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Seconds };
 }
 public partial class TimeRange: Interval<DateTime, Time>
 {
@@ -922,6 +1131,9 @@ public partial class TimeRange: Interval<DateTime, Time>
     public static implicit operator (DateTime, DateTime)(TimeRange self) => (self.Begin, self.End);
     public static implicit operator TimeRange((DateTime, DateTime) value) => new TimeRange(value.Item1, value.Item2);
     public void Deconstruct(out DateTime begin, out DateTime end) { begin = Begin; end = End; }
+    public String TypeName => (String)"TimeRange";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Begin", (String)"End" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Begin, (Dynamic)End };
 }
 public partial class DateTime: Coordinate<DateTime>
 {
@@ -946,6 +1158,9 @@ public partial class DateTime: Coordinate<DateTime>
     public static implicit operator (Integer, Integer, Integer, Integer, Integer, Integer, Number)(DateTime self) => (self.Year, self.Month, self.TimeZoneOffset, self.Day, self.Minute, self.Second, self.Milliseconds);
     public static implicit operator DateTime((Integer, Integer, Integer, Integer, Integer, Integer, Number) value) => new DateTime(value.Item1, value.Item2, value.Item3, value.Item4, value.Item5, value.Item6, value.Item7);
     public void Deconstruct(out Integer year, out Integer month, out Integer timeZoneOffset, out Integer day, out Integer minute, out Integer second, out Number milliseconds) { year = Year; month = Month; timeZoneOffset = TimeZoneOffset; day = Day; minute = Minute; second = Second; milliseconds = Milliseconds; }
+    public String TypeName => (String)"DateTime";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Year", (String)"Month", (String)"TimeZoneOffset", (String)"Day", (String)"Minute", (String)"Second", (String)"Milliseconds" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Year, (Dynamic)Month, (Dynamic)TimeZoneOffset, (Dynamic)Day, (Dynamic)Minute, (Dynamic)Second, (Dynamic)Milliseconds };
 }
 public partial class AnglePair: Interval<Angle, Angle>
 {
@@ -960,6 +1175,9 @@ public partial class AnglePair: Interval<Angle, Angle>
     public static implicit operator (Angle, Angle)(AnglePair self) => (self.Start, self.End);
     public static implicit operator AnglePair((Angle, Angle) value) => new AnglePair(value.Item1, value.Item2);
     public void Deconstruct(out Angle start, out Angle end) { start = Start; end = End; }
+    public String TypeName => (String)"AnglePair";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Start", (String)"End" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Start, (Dynamic)End };
 }
 public partial class Ring: Value<Ring>
 {
@@ -974,6 +1192,9 @@ public partial class Ring: Value<Ring>
     public static implicit operator (Circle, Number)(Ring self) => (self.Circle, self.InnerRadius);
     public static implicit operator Ring((Circle, Number) value) => new Ring(value.Item1, value.Item2);
     public void Deconstruct(out Circle circle, out Number innerRadius) { circle = Circle; innerRadius = InnerRadius; }
+    public String TypeName => (String)"Ring";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Circle", (String)"InnerRadius" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Circle, (Dynamic)InnerRadius };
 }
 public partial class Arc: Value<Arc>
 {
@@ -988,6 +1209,9 @@ public partial class Arc: Value<Arc>
     public static implicit operator (AnglePair, Circle)(Arc self) => (self.Angles, self.Cirlce);
     public static implicit operator Arc((AnglePair, Circle) value) => new Arc(value.Item1, value.Item2);
     public void Deconstruct(out AnglePair angles, out Circle cirlce) { angles = Angles; cirlce = Cirlce; }
+    public String TypeName => (String)"Arc";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Angles", (String)"Cirlce" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Angles, (Dynamic)Cirlce };
 }
 public partial class RealInterval: Interval<Number, Number>
 {
@@ -1002,6 +1226,9 @@ public partial class RealInterval: Interval<Number, Number>
     public static implicit operator (Number, Number)(RealInterval self) => (self.A, self.B);
     public static implicit operator RealInterval((Number, Number) value) => new RealInterval(value.Item1, value.Item2);
     public void Deconstruct(out Number a, out Number b) { a = A; b = B; }
+    public String TypeName => (String)"RealInterval";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)A, (Dynamic)B };
 }
 public partial class Capsule: Value<Capsule>
 {
@@ -1016,6 +1243,9 @@ public partial class Capsule: Value<Capsule>
     public static implicit operator (Line3D, Number)(Capsule self) => (self.Line, self.Radius);
     public static implicit operator Capsule((Line3D, Number) value) => new Capsule(value.Item1, value.Item2);
     public void Deconstruct(out Line3D line, out Number radius) { line = Line; radius = Radius; }
+    public String TypeName => (String)"Capsule";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Line", (String)"Radius" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Line, (Dynamic)Radius };
 }
 public partial class Matrix3D: Value<Matrix3D>
 {
@@ -1034,6 +1264,9 @@ public partial class Matrix3D: Value<Matrix3D>
     public static implicit operator (Vector4D, Vector4D, Vector4D, Vector4D)(Matrix3D self) => (self.Column1, self.Column2, self.Column3, self.Column4);
     public static implicit operator Matrix3D((Vector4D, Vector4D, Vector4D, Vector4D) value) => new Matrix3D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Vector4D column1, out Vector4D column2, out Vector4D column3, out Vector4D column4) { column1 = Column1; column2 = Column2; column3 = Column3; column4 = Column4; }
+    public String TypeName => (String)"Matrix3D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Column1", (String)"Column2", (String)"Column3", (String)"Column4" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Column1, (Dynamic)Column2, (Dynamic)Column3, (Dynamic)Column4 };
 }
 public partial class Cylinder: Value<Cylinder>
 {
@@ -1048,6 +1281,9 @@ public partial class Cylinder: Value<Cylinder>
     public static implicit operator (Line3D, Number)(Cylinder self) => (self.Line, self.Radius);
     public static implicit operator Cylinder((Line3D, Number) value) => new Cylinder(value.Item1, value.Item2);
     public void Deconstruct(out Line3D line, out Number radius) { line = Line; radius = Radius; }
+    public String TypeName => (String)"Cylinder";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Line", (String)"Radius" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Line, (Dynamic)Radius };
 }
 public partial class Cone: Value<Cone>
 {
@@ -1062,6 +1298,9 @@ public partial class Cone: Value<Cone>
     public static implicit operator (Line3D, Number)(Cone self) => (self.Line, self.Radius);
     public static implicit operator Cone((Line3D, Number) value) => new Cone(value.Item1, value.Item2);
     public void Deconstruct(out Line3D line, out Number radius) { line = Line; radius = Radius; }
+    public String TypeName => (String)"Cone";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Line", (String)"Radius" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Line, (Dynamic)Radius };
 }
 public partial class Tube: Value<Tube>
 {
@@ -1078,6 +1317,9 @@ public partial class Tube: Value<Tube>
     public static implicit operator (Line3D, Number, Number)(Tube self) => (self.Line, self.InnerRadius, self.OuterRadius);
     public static implicit operator Tube((Line3D, Number, Number) value) => new Tube(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Line3D line, out Number innerRadius, out Number outerRadius) { line = Line; innerRadius = InnerRadius; outerRadius = OuterRadius; }
+    public String TypeName => (String)"Tube";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Line", (String)"InnerRadius", (String)"OuterRadius" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Line, (Dynamic)InnerRadius, (Dynamic)OuterRadius };
 }
 public partial class ConeSegment: Value<ConeSegment>
 {
@@ -1094,6 +1336,9 @@ public partial class ConeSegment: Value<ConeSegment>
     public static implicit operator (Line3D, Number, Number)(ConeSegment self) => (self.Line, self.Radius1, self.Radius2);
     public static implicit operator ConeSegment((Line3D, Number, Number) value) => new ConeSegment(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Line3D line, out Number radius1, out Number radius2) { line = Line; radius1 = Radius1; radius2 = Radius2; }
+    public String TypeName => (String)"ConeSegment";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Line", (String)"Radius1", (String)"Radius2" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Line, (Dynamic)Radius1, (Dynamic)Radius2 };
 }
 public partial class Box2D: Value<Box2D>
 {
@@ -1110,6 +1355,9 @@ public partial class Box2D: Value<Box2D>
     public static implicit operator (Point2D, Angle, Size2D)(Box2D self) => (self.Center, self.Rotation, self.Extent);
     public static implicit operator Box2D((Point2D, Angle, Size2D) value) => new Box2D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point2D center, out Angle rotation, out Size2D extent) { center = Center; rotation = Rotation; extent = Extent; }
+    public String TypeName => (String)"Box2D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Center", (String)"Rotation", (String)"Extent" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Center, (Dynamic)Rotation, (Dynamic)Extent };
 }
 public partial class Box3D: Value<Box3D>
 {
@@ -1126,6 +1374,9 @@ public partial class Box3D: Value<Box3D>
     public static implicit operator (Point3D, Rotation3D, Size3D)(Box3D self) => (self.Center, self.Rotation, self.Extent);
     public static implicit operator Box3D((Point3D, Rotation3D, Size3D) value) => new Box3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point3D center, out Rotation3D rotation, out Size3D extent) { center = Center; rotation = Rotation; extent = Extent; }
+    public String TypeName => (String)"Box3D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Center", (String)"Rotation", (String)"Extent" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Center, (Dynamic)Rotation, (Dynamic)Extent };
 }
 public partial class UV: Vector<UV>
 {
@@ -1140,6 +1391,9 @@ public partial class UV: Vector<UV>
     public static implicit operator (Unit, Unit)(UV self) => (self.U, self.V);
     public static implicit operator UV((Unit, Unit) value) => new UV(value.Item1, value.Item2);
     public void Deconstruct(out Unit u, out Unit v) { u = U; v = V; }
+    public String TypeName => (String)"UV";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"U", (String)"V" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)U, (Dynamic)V };
 }
 public partial class UVW: Vector<UVW>
 {
@@ -1156,6 +1410,9 @@ public partial class UVW: Vector<UVW>
     public static implicit operator (Unit, Unit, Unit)(UVW self) => (self.U, self.V, self.W);
     public static implicit operator UVW((Unit, Unit, Unit) value) => new UVW(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Unit u, out Unit v, out Unit w) { u = U; v = V; w = W; }
+    public String TypeName => (String)"UVW";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"U", (String)"V", (String)"W" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)U, (Dynamic)V, (Dynamic)W };
 }
 public partial class CubicBezier2D: Value<CubicBezier2D>
 {
@@ -1174,6 +1431,9 @@ public partial class CubicBezier2D: Value<CubicBezier2D>
     public static implicit operator (Point2D, Point2D, Point2D, Point2D)(CubicBezier2D self) => (self.A, self.B, self.C, self.D);
     public static implicit operator CubicBezier2D((Point2D, Point2D, Point2D, Point2D) value) => new CubicBezier2D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Point2D a, out Point2D b, out Point2D c, out Point2D d) { a = A; b = B; c = C; d = D; }
+    public String TypeName => (String)"CubicBezier2D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C", (String)"D" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)A, (Dynamic)B, (Dynamic)C, (Dynamic)D };
 }
 public partial class CubicBezier3D: Value<CubicBezier3D>
 {
@@ -1192,6 +1452,9 @@ public partial class CubicBezier3D: Value<CubicBezier3D>
     public static implicit operator (Point3D, Point3D, Point3D, Point3D)(CubicBezier3D self) => (self.A, self.B, self.C, self.D);
     public static implicit operator CubicBezier3D((Point3D, Point3D, Point3D, Point3D) value) => new CubicBezier3D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Point3D a, out Point3D b, out Point3D c, out Point3D d) { a = A; b = B; c = C; d = D; }
+    public String TypeName => (String)"CubicBezier3D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C", (String)"D" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)A, (Dynamic)B, (Dynamic)C, (Dynamic)D };
 }
 public partial class QuadraticBezier2D: Value<QuadraticBezier2D>
 {
@@ -1208,6 +1471,9 @@ public partial class QuadraticBezier2D: Value<QuadraticBezier2D>
     public static implicit operator (Point2D, Point2D, Point2D)(QuadraticBezier2D self) => (self.A, self.B, self.C);
     public static implicit operator QuadraticBezier2D((Point2D, Point2D, Point2D) value) => new QuadraticBezier2D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point2D a, out Point2D b, out Point2D c) { a = A; b = B; c = C; }
+    public String TypeName => (String)"QuadraticBezier2D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)A, (Dynamic)B, (Dynamic)C };
 }
 public partial class QuadraticBezier3D: Value<QuadraticBezier3D>
 {
@@ -1224,6 +1490,9 @@ public partial class QuadraticBezier3D: Value<QuadraticBezier3D>
     public static implicit operator (Point3D, Point3D, Point3D)(QuadraticBezier3D self) => (self.A, self.B, self.C);
     public static implicit operator QuadraticBezier3D((Point3D, Point3D, Point3D) value) => new QuadraticBezier3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point3D a, out Point3D b, out Point3D c) { a = A; b = B; c = C; }
+    public String TypeName => (String)"QuadraticBezier3D";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)A, (Dynamic)B, (Dynamic)C };
 }
 public partial class Area: Measure<Area>
 {
@@ -1235,6 +1504,9 @@ public partial class Area: Measure<Area>
     public static Area New(Number metersSquared) => new Area(metersSquared);
     public static implicit operator Number(Area self) => self.MetersSquared;
     public static implicit operator Area(Number value) => new Area(value);
+    public String TypeName => (String)"Area";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"MetersSquared" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)MetersSquared };
 }
 public partial class Volume: Measure<Volume>
 {
@@ -1246,6 +1518,9 @@ public partial class Volume: Measure<Volume>
     public static Volume New(Number metersCubed) => new Volume(metersCubed);
     public static implicit operator Number(Volume self) => self.MetersCubed;
     public static implicit operator Volume(Number value) => new Volume(value);
+    public String TypeName => (String)"Volume";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"MetersCubed" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)MetersCubed };
 }
 public partial class Velocity: Measure<Velocity>
 {
@@ -1257,6 +1532,9 @@ public partial class Velocity: Measure<Velocity>
     public static Velocity New(Number metersPerSecond) => new Velocity(metersPerSecond);
     public static implicit operator Number(Velocity self) => self.MetersPerSecond;
     public static implicit operator Velocity(Number value) => new Velocity(value);
+    public String TypeName => (String)"Velocity";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"MetersPerSecond" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)MetersPerSecond };
 }
 public partial class Acceleration: Measure<Acceleration>
 {
@@ -1268,6 +1546,9 @@ public partial class Acceleration: Measure<Acceleration>
     public static Acceleration New(Number metersPerSecondSquared) => new Acceleration(metersPerSecondSquared);
     public static implicit operator Number(Acceleration self) => self.MetersPerSecondSquared;
     public static implicit operator Acceleration(Number value) => new Acceleration(value);
+    public String TypeName => (String)"Acceleration";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"MetersPerSecondSquared" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)MetersPerSecondSquared };
 }
 public partial class Force: Measure<Force>
 {
@@ -1279,6 +1560,9 @@ public partial class Force: Measure<Force>
     public static Force New(Number newtons) => new Force(newtons);
     public static implicit operator Number(Force self) => self.Newtons;
     public static implicit operator Force(Number value) => new Force(value);
+    public String TypeName => (String)"Force";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Newtons" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Newtons };
 }
 public partial class Pressure: Measure<Pressure>
 {
@@ -1290,6 +1574,9 @@ public partial class Pressure: Measure<Pressure>
     public static Pressure New(Number pascals) => new Pressure(pascals);
     public static implicit operator Number(Pressure self) => self.Pascals;
     public static implicit operator Pressure(Number value) => new Pressure(value);
+    public String TypeName => (String)"Pressure";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Pascals" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Pascals };
 }
 public partial class Energy: Measure<Energy>
 {
@@ -1301,6 +1588,9 @@ public partial class Energy: Measure<Energy>
     public static Energy New(Number joules) => new Energy(joules);
     public static implicit operator Number(Energy self) => self.Joules;
     public static implicit operator Energy(Number value) => new Energy(value);
+    public String TypeName => (String)"Energy";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Joules" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Joules };
 }
 public partial class Memory: Measure<Memory>
 {
@@ -1312,6 +1602,9 @@ public partial class Memory: Measure<Memory>
     public static Memory New(Count bytes) => new Memory(bytes);
     public static implicit operator Count(Memory self) => self.Bytes;
     public static implicit operator Memory(Count value) => new Memory(value);
+    public String TypeName => (String)"Memory";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Bytes" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Bytes };
 }
 public partial class Frequency: Measure<Frequency>
 {
@@ -1323,6 +1616,9 @@ public partial class Frequency: Measure<Frequency>
     public static Frequency New(Number hertz) => new Frequency(hertz);
     public static implicit operator Number(Frequency self) => self.Hertz;
     public static implicit operator Frequency(Number value) => new Frequency(value);
+    public String TypeName => (String)"Frequency";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Hertz" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Hertz };
 }
 public partial class Loudness: Measure<Loudness>
 {
@@ -1334,6 +1630,9 @@ public partial class Loudness: Measure<Loudness>
     public static Loudness New(Number decibels) => new Loudness(decibels);
     public static implicit operator Number(Loudness self) => self.Decibels;
     public static implicit operator Loudness(Number value) => new Loudness(value);
+    public String TypeName => (String)"Loudness";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Decibels" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Decibels };
 }
 public partial class LuminousIntensity: Measure<LuminousIntensity>
 {
@@ -1345,6 +1644,9 @@ public partial class LuminousIntensity: Measure<LuminousIntensity>
     public static LuminousIntensity New(Number candelas) => new LuminousIntensity(candelas);
     public static implicit operator Number(LuminousIntensity self) => self.Candelas;
     public static implicit operator LuminousIntensity(Number value) => new LuminousIntensity(value);
+    public String TypeName => (String)"LuminousIntensity";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Candelas" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Candelas };
 }
 public partial class ElectricPotential: Measure<ElectricPotential>
 {
@@ -1356,6 +1658,9 @@ public partial class ElectricPotential: Measure<ElectricPotential>
     public static ElectricPotential New(Number volts) => new ElectricPotential(volts);
     public static implicit operator Number(ElectricPotential self) => self.Volts;
     public static implicit operator ElectricPotential(Number value) => new ElectricPotential(value);
+    public String TypeName => (String)"ElectricPotential";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Volts" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Volts };
 }
 public partial class ElectricCharge: Measure<ElectricCharge>
 {
@@ -1367,6 +1672,9 @@ public partial class ElectricCharge: Measure<ElectricCharge>
     public static ElectricCharge New(Number columbs) => new ElectricCharge(columbs);
     public static implicit operator Number(ElectricCharge self) => self.Columbs;
     public static implicit operator ElectricCharge(Number value) => new ElectricCharge(value);
+    public String TypeName => (String)"ElectricCharge";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Columbs" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Columbs };
 }
 public partial class ElectricCurrent: Measure<ElectricCurrent>
 {
@@ -1378,6 +1686,9 @@ public partial class ElectricCurrent: Measure<ElectricCurrent>
     public static ElectricCurrent New(Number amperes) => new ElectricCurrent(amperes);
     public static implicit operator Number(ElectricCurrent self) => self.Amperes;
     public static implicit operator ElectricCurrent(Number value) => new ElectricCurrent(value);
+    public String TypeName => (String)"ElectricCurrent";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Amperes" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Amperes };
 }
 public partial class ElectricResistance: Measure<ElectricResistance>
 {
@@ -1389,6 +1700,9 @@ public partial class ElectricResistance: Measure<ElectricResistance>
     public static ElectricResistance New(Number ohms) => new ElectricResistance(ohms);
     public static implicit operator Number(ElectricResistance self) => self.Ohms;
     public static implicit operator ElectricResistance(Number value) => new ElectricResistance(value);
+    public String TypeName => (String)"ElectricResistance";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Ohms" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Ohms };
 }
 public partial class Power: Measure<Power>
 {
@@ -1400,6 +1714,9 @@ public partial class Power: Measure<Power>
     public static Power New(Number watts) => new Power(watts);
     public static implicit operator Number(Power self) => self.Watts;
     public static implicit operator Power(Number value) => new Power(value);
+    public String TypeName => (String)"Power";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Watts" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Watts };
 }
 public partial class Density: Measure<Density>
 {
@@ -1411,6 +1728,9 @@ public partial class Density: Measure<Density>
     public static Density New(Number kilogramsPerMeterCubed) => new Density(kilogramsPerMeterCubed);
     public static implicit operator Number(Density self) => self.KilogramsPerMeterCubed;
     public static implicit operator Density(Number value) => new Density(value);
+    public String TypeName => (String)"Density";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"KilogramsPerMeterCubed" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)KilogramsPerMeterCubed };
 }
 public partial class NormalDistribution: Value<NormalDistribution>
 {
@@ -1425,6 +1745,9 @@ public partial class NormalDistribution: Value<NormalDistribution>
     public static implicit operator (Number, Number)(NormalDistribution self) => (self.Mean, self.StandardDeviation);
     public static implicit operator NormalDistribution((Number, Number) value) => new NormalDistribution(value.Item1, value.Item2);
     public void Deconstruct(out Number mean, out Number standardDeviation) { mean = Mean; standardDeviation = StandardDeviation; }
+    public String TypeName => (String)"NormalDistribution";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Mean", (String)"StandardDeviation" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Mean, (Dynamic)StandardDeviation };
 }
 public partial class PoissonDistribution: Value<PoissonDistribution>
 {
@@ -1439,6 +1762,9 @@ public partial class PoissonDistribution: Value<PoissonDistribution>
     public static implicit operator (Number, Count)(PoissonDistribution self) => (self.Expected, self.Occurrences);
     public static implicit operator PoissonDistribution((Number, Count) value) => new PoissonDistribution(value.Item1, value.Item2);
     public void Deconstruct(out Number expected, out Count occurrences) { expected = Expected; occurrences = Occurrences; }
+    public String TypeName => (String)"PoissonDistribution";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Expected", (String)"Occurrences" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Expected, (Dynamic)Occurrences };
 }
 public partial class BernoulliDistribution: Value<BernoulliDistribution>
 {
@@ -1450,6 +1776,9 @@ public partial class BernoulliDistribution: Value<BernoulliDistribution>
     public static BernoulliDistribution New(Probability p) => new BernoulliDistribution(p);
     public static implicit operator Probability(BernoulliDistribution self) => self.P;
     public static implicit operator BernoulliDistribution(Probability value) => new BernoulliDistribution(value);
+    public String TypeName => (String)"BernoulliDistribution";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"P" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)P };
 }
 public partial class Probability: Numerical<Probability>
 {
@@ -1461,6 +1790,9 @@ public partial class Probability: Numerical<Probability>
     public static Probability New(Number value) => new Probability(value);
     public static implicit operator Number(Probability self) => self.Value;
     public static implicit operator Probability(Number value) => new Probability(value);
+    public String TypeName => (String)"Probability";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Value };
 }
 public partial class BinomialDistribution: Value<BinomialDistribution>
 {
@@ -1475,4 +1807,7 @@ public partial class BinomialDistribution: Value<BinomialDistribution>
     public static implicit operator (Count, Probability)(BinomialDistribution self) => (self.Trials, self.P);
     public static implicit operator BinomialDistribution((Count, Probability) value) => new BinomialDistribution(value.Item1, value.Item2);
     public void Deconstruct(out Count trials, out Probability p) { trials = Trials; p = P; }
+    public String TypeName => (String)"BinomialDistribution";
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Trials", (String)"P" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Trials, (Dynamic)P };
 }

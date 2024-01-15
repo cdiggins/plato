@@ -1,3 +1,5 @@
+// Primitives 
+
 // Built-in type that represents a real number 
 type Number 
     implements Numerical
@@ -21,6 +23,10 @@ type Boolean
 // Built-in type that represents a character of text 
 type Character
     implements Value
+{ }
+
+// Built-in type that represents a run-time checked value. 
+type Dynamic
 { }
 
 // An integer type in the range of 0 to N is used to return the number of items in a collection or set. 

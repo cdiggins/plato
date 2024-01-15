@@ -1,7 +1,7 @@
 public interface Any
 {
     Array<String>  FieldNames { get; }
-    Array<Any>  FieldValues { get; }
+    Array<Dynamic>  FieldValues { get; }
 }
 public interface Value<Self>: Any, Equatable<Self>
 {

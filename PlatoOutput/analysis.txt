@@ -24,8 +24,8 @@ Type analysis for Number
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Arithmetic Expr=Concept:Arithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_440:TypeVariable=TypeVariable:Self=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_445:TypeVariable=TypeVariable:Self=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_442:TypeVariable=TypeVariable:Self=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_447:TypeVariable=TypeVariable:Self=
       Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs==
       Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs==
     Concept=Equatable Expr=Concept:Equatable Subs==
@@ -96,8 +96,8 @@ Type analysis for Integer
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Arithmetic Expr=Concept:Arithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_440:TypeVariable=TypeVariable:Self=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_445:TypeVariable=TypeVariable:Self=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_442:TypeVariable=TypeVariable:Self=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_447:TypeVariable=TypeVariable:Self=
       Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs==
       Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs==
     Concept=Equatable Expr=Concept:Equatable Subs==
@@ -134,7 +134,7 @@ Type analysis for String
   Concept=Value Expr=Concept:Value Subs==
     Concept=Any Expr=Concept:Any Subs==
     Concept=Equatable Expr=Concept:Equatable Subs==
-  Concept=Array Expr=Concept:Array<ConcreteType:Character> Subs=T_389:TypeVariable=ConcreteType:Character=
+  Concept=Array Expr=Concept:Array<ConcreteType:Character> Subs=T_391:TypeVariable=ConcreteType:Character=
 Type analysis for Boolean
   Concept=BooleanOperations Expr=Concept:BooleanOperations Subs==
   Function: And(ConcreteType:Boolean x, ConcreteType:Boolean y)
@@ -144,6 +144,7 @@ Type analysis for Character
   Concept=Value Expr=Concept:Value Subs==
     Concept=Any Expr=Concept:Any Subs==
     Concept=Equatable Expr=Concept:Equatable Subs==
+Type analysis for Dynamic
 Type analysis for Count
   Concept=Numerical Expr=Concept:Numerical Subs==
   Function: Square(Concept:Numerical x)
@@ -170,8 +171,8 @@ Type analysis for Count
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Arithmetic Expr=Concept:Arithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_440:TypeVariable=TypeVariable:Self=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_445:TypeVariable=TypeVariable:Self=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_442:TypeVariable=TypeVariable:Self=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_447:TypeVariable=TypeVariable:Self=
       Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs==
       Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs==
     Concept=Equatable Expr=Concept:Equatable Subs==
@@ -227,8 +228,8 @@ Type analysis for Unit
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Arithmetic Expr=Concept:Arithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_440:TypeVariable=TypeVariable:Self=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_445:TypeVariable=TypeVariable:Self=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_442:TypeVariable=TypeVariable:Self=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_447:TypeVariable=TypeVariable:Self=
       Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs==
       Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs==
     Concept=Equatable Expr=Concept:Equatable Subs==
@@ -280,8 +281,8 @@ Type analysis for Percent
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Arithmetic Expr=Concept:Arithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_440:TypeVariable=TypeVariable:Self=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_445:TypeVariable=TypeVariable:Self=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_442:TypeVariable=TypeVariable:Self=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_447:TypeVariable=TypeVariable:Self=
       Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs==
       Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs==
     Concept=Equatable Expr=Concept:Equatable Subs==
@@ -345,7 +346,7 @@ Type analysis for Vector2D
   Function: Dot(Concept:Vector v1, Concept:Vector v2)
   Function: Normal(Concept:Vector v)
   Function: Average(Concept:Vector v)
-    Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=T_389:TypeVariable=ConcreteType:Number=
+    Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=T_391:TypeVariable=ConcreteType:Number=
     Concept=Numerical Expr=Concept:Numerical Subs==
     Function: Square(Concept:Numerical x)
     Function: PlusOne(Concept:Numerical x)
@@ -371,8 +372,8 @@ Type analysis for Vector2D
         Concept=Any Expr=Concept:Any Subs==
         Concept=Equatable Expr=Concept:Equatable Subs==
       Concept=Arithmetic Expr=Concept:Arithmetic Subs==
-        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_440:TypeVariable=TypeVariable:Self=
-        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_445:TypeVariable=TypeVariable:Self=
+        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_442:TypeVariable=TypeVariable:Self=
+        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_447:TypeVariable=TypeVariable:Self=
         Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs==
         Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
@@ -422,7 +423,7 @@ Type analysis for Vector3D
   Function: Dot(Concept:Vector v1, Concept:Vector v2)
   Function: Normal(Concept:Vector v)
   Function: Average(Concept:Vector v)
-    Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=T_389:TypeVariable=ConcreteType:Number=
+    Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=T_391:TypeVariable=ConcreteType:Number=
     Concept=Numerical Expr=Concept:Numerical Subs==
     Function: Square(Concept:Numerical x)
     Function: PlusOne(Concept:Numerical x)
@@ -448,8 +449,8 @@ Type analysis for Vector3D
         Concept=Any Expr=Concept:Any Subs==
         Concept=Equatable Expr=Concept:Equatable Subs==
       Concept=Arithmetic Expr=Concept:Arithmetic Subs==
-        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_440:TypeVariable=TypeVariable:Self=
-        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_445:TypeVariable=TypeVariable:Self=
+        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_442:TypeVariable=TypeVariable:Self=
+        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_447:TypeVariable=TypeVariable:Self=
         Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs==
         Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
@@ -499,7 +500,7 @@ Type analysis for Vector4D
   Function: Dot(Concept:Vector v1, Concept:Vector v2)
   Function: Normal(Concept:Vector v)
   Function: Average(Concept:Vector v)
-    Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=T_389:TypeVariable=ConcreteType:Number=
+    Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=T_391:TypeVariable=ConcreteType:Number=
     Concept=Numerical Expr=Concept:Numerical Subs==
     Function: Square(Concept:Numerical x)
     Function: PlusOne(Concept:Numerical x)
@@ -525,8 +526,8 @@ Type analysis for Vector4D
         Concept=Any Expr=Concept:Any Subs==
         Concept=Equatable Expr=Concept:Equatable Subs==
       Concept=Arithmetic Expr=Concept:Arithmetic Subs==
-        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_440:TypeVariable=TypeVariable:Self=
-        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_445:TypeVariable=TypeVariable:Self=
+        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_442:TypeVariable=TypeVariable:Self=
+        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_447:TypeVariable=TypeVariable:Self=
         Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs==
         Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
@@ -587,7 +588,7 @@ Type analysis for Transform2D
     Concept=Any Expr=Concept:Any Subs==
     Concept=Equatable Expr=Concept:Equatable Subs==
 Type analysis for AlignedBox2D
-  Concept=Interval Expr=Concept:Interval<ConcreteType:Point2D,ConcreteType:Vector2D> Subs=TSize_459:TypeVariable=ConcreteType:Vector2DTValue_458:TypeVariable=ConcreteType:Point2D=
+  Concept=Interval Expr=Concept:Interval<ConcreteType:Point2D,ConcreteType:Vector2D> Subs=TSize_461:TypeVariable=ConcreteType:Vector2DTValue_460:TypeVariable=ConcreteType:Point2D=
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Lerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, ConcreteType:Number amount)
   Function: Unlerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
@@ -609,7 +610,7 @@ Type analysis for AlignedBox2D
   Function: Clamp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
   Function: Within(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
 Type analysis for AlignedBox3D
-  Concept=Interval Expr=Concept:Interval<ConcreteType:Point3D,ConcreteType:Vector3D> Subs=TSize_459:TypeVariable=ConcreteType:Vector3DTValue_458:TypeVariable=ConcreteType:Point3D=
+  Concept=Interval Expr=Concept:Interval<ConcreteType:Point3D,ConcreteType:Vector3D> Subs=TSize_461:TypeVariable=ConcreteType:Vector3DTValue_460:TypeVariable=ConcreteType:Point3D=
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Lerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, ConcreteType:Number amount)
   Function: Unlerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
@@ -640,7 +641,7 @@ Type analysis for Complex
   Function: Dot(Concept:Vector v1, Concept:Vector v2)
   Function: Normal(Concept:Vector v)
   Function: Average(Concept:Vector v)
-    Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=T_389:TypeVariable=ConcreteType:Number=
+    Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=T_391:TypeVariable=ConcreteType:Number=
     Concept=Numerical Expr=Concept:Numerical Subs==
     Function: Square(Concept:Numerical x)
     Function: PlusOne(Concept:Numerical x)
@@ -666,8 +667,8 @@ Type analysis for Complex
         Concept=Any Expr=Concept:Any Subs==
         Concept=Equatable Expr=Concept:Equatable Subs==
       Concept=Arithmetic Expr=Concept:Arithmetic Subs==
-        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_440:TypeVariable=TypeVariable:Self=
-        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_445:TypeVariable=TypeVariable:Self=
+        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_442:TypeVariable=TypeVariable:Self=
+        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_447:TypeVariable=TypeVariable:Self=
         Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs==
         Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
@@ -746,7 +747,7 @@ Type analysis for Point3D
   Concept=Coordinate Expr=Concept:Coordinate Subs==
     Concept=Interpolatable Expr=Concept:Interpolatable Subs==
 Type analysis for Line2D
-  Concept=Interval Expr=Concept:Interval<ConcreteType:Point2D,ConcreteType:Vector3D> Subs=TSize_459:TypeVariable=ConcreteType:Vector3DTValue_458:TypeVariable=ConcreteType:Point2D=
+  Concept=Interval Expr=Concept:Interval<ConcreteType:Point2D,ConcreteType:Vector3D> Subs=TSize_461:TypeVariable=ConcreteType:Vector3DTValue_460:TypeVariable=ConcreteType:Point2D=
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Lerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, ConcreteType:Number amount)
   Function: Unlerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
@@ -768,7 +769,7 @@ Type analysis for Line2D
   Function: Clamp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
   Function: Within(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
 Type analysis for Line3D
-  Concept=Interval Expr=Concept:Interval<ConcreteType:Point3D,ConcreteType:Vector3D> Subs=TSize_459:TypeVariable=ConcreteType:Vector3DTValue_458:TypeVariable=ConcreteType:Point3D=
+  Concept=Interval Expr=Concept:Interval<ConcreteType:Point3D,ConcreteType:Vector3D> Subs=TSize_461:TypeVariable=ConcreteType:Vector3DTValue_460:TypeVariable=ConcreteType:Point3D=
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Lerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, ConcreteType:Number amount)
   Function: Unlerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
@@ -891,8 +892,8 @@ Type analysis for Proportion
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Arithmetic Expr=Concept:Arithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_440:TypeVariable=TypeVariable:Self=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_445:TypeVariable=TypeVariable:Self=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_442:TypeVariable=TypeVariable:Self=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_447:TypeVariable=TypeVariable:Self=
       Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs==
       Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs==
     Concept=Equatable Expr=Concept:Equatable Subs==
@@ -936,8 +937,8 @@ Type analysis for Length
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_440:TypeVariable=ConcreteType:Number=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_445:TypeVariable=ConcreteType:Number=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_442:TypeVariable=ConcreteType:Number=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_447:TypeVariable=ConcreteType:Number=
     Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Comparable Expr=Concept:Comparable Subs==
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
@@ -967,8 +968,8 @@ Type analysis for Mass
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_440:TypeVariable=ConcreteType:Number=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_445:TypeVariable=ConcreteType:Number=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_442:TypeVariable=ConcreteType:Number=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_447:TypeVariable=ConcreteType:Number=
     Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Comparable Expr=Concept:Comparable Subs==
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
@@ -998,8 +999,8 @@ Type analysis for Temperature
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_440:TypeVariable=ConcreteType:Number=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_445:TypeVariable=ConcreteType:Number=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_442:TypeVariable=ConcreteType:Number=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_447:TypeVariable=ConcreteType:Number=
     Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Comparable Expr=Concept:Comparable Subs==
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
@@ -1029,8 +1030,8 @@ Type analysis for Time
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_440:TypeVariable=ConcreteType:Number=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_445:TypeVariable=ConcreteType:Number=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_442:TypeVariable=ConcreteType:Number=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_447:TypeVariable=ConcreteType:Number=
     Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Comparable Expr=Concept:Comparable Subs==
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
@@ -1055,7 +1056,7 @@ Type analysis for Time
       Function: Greater(Concept:Comparable a, Concept:Comparable b)
     Concept=Interpolatable Expr=Concept:Interpolatable Subs==
 Type analysis for TimeRange
-  Concept=Interval Expr=Concept:Interval<ConcreteType:DateTime,ConcreteType:Time> Subs=TSize_459:TypeVariable=ConcreteType:TimeTValue_458:TypeVariable=ConcreteType:DateTime=
+  Concept=Interval Expr=Concept:Interval<ConcreteType:DateTime,ConcreteType:Time> Subs=TSize_461:TypeVariable=ConcreteType:TimeTValue_460:TypeVariable=ConcreteType:DateTime=
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Lerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, ConcreteType:Number amount)
   Function: Unlerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
@@ -1080,7 +1081,7 @@ Type analysis for DateTime
   Concept=Coordinate Expr=Concept:Coordinate Subs==
     Concept=Interpolatable Expr=Concept:Interpolatable Subs==
 Type analysis for AnglePair
-  Concept=Interval Expr=Concept:Interval<ConcreteType:Angle,ConcreteType:Angle> Subs=TSize_459:TypeVariable=ConcreteType:AngleTValue_458:TypeVariable=ConcreteType:Angle=
+  Concept=Interval Expr=Concept:Interval<ConcreteType:Angle,ConcreteType:Angle> Subs=TSize_461:TypeVariable=ConcreteType:AngleTValue_460:TypeVariable=ConcreteType:Angle=
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Lerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, ConcreteType:Number amount)
   Function: Unlerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
@@ -1110,7 +1111,7 @@ Type analysis for Arc
     Concept=Any Expr=Concept:Any Subs==
     Concept=Equatable Expr=Concept:Equatable Subs==
 Type analysis for RealInterval
-  Concept=Interval Expr=Concept:Interval<ConcreteType:Number,ConcreteType:Number> Subs=TSize_459:TypeVariable=ConcreteType:NumberTValue_458:TypeVariable=ConcreteType:Number=
+  Concept=Interval Expr=Concept:Interval<ConcreteType:Number,ConcreteType:Number> Subs=TSize_461:TypeVariable=ConcreteType:NumberTValue_460:TypeVariable=ConcreteType:Number=
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Lerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, ConcreteType:Number amount)
   Function: Unlerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
@@ -1173,7 +1174,7 @@ Type analysis for UV
   Function: Dot(Concept:Vector v1, Concept:Vector v2)
   Function: Normal(Concept:Vector v)
   Function: Average(Concept:Vector v)
-    Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=T_389:TypeVariable=ConcreteType:Number=
+    Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=T_391:TypeVariable=ConcreteType:Number=
     Concept=Numerical Expr=Concept:Numerical Subs==
     Function: Square(Concept:Numerical x)
     Function: PlusOne(Concept:Numerical x)
@@ -1199,8 +1200,8 @@ Type analysis for UV
         Concept=Any Expr=Concept:Any Subs==
         Concept=Equatable Expr=Concept:Equatable Subs==
       Concept=Arithmetic Expr=Concept:Arithmetic Subs==
-        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_440:TypeVariable=TypeVariable:Self=
-        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_445:TypeVariable=TypeVariable:Self=
+        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_442:TypeVariable=TypeVariable:Self=
+        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_447:TypeVariable=TypeVariable:Self=
         Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs==
         Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
@@ -1250,7 +1251,7 @@ Type analysis for UVW
   Function: Dot(Concept:Vector v1, Concept:Vector v2)
   Function: Normal(Concept:Vector v)
   Function: Average(Concept:Vector v)
-    Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=T_389:TypeVariable=ConcreteType:Number=
+    Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=T_391:TypeVariable=ConcreteType:Number=
     Concept=Numerical Expr=Concept:Numerical Subs==
     Function: Square(Concept:Numerical x)
     Function: PlusOne(Concept:Numerical x)
@@ -1276,8 +1277,8 @@ Type analysis for UVW
         Concept=Any Expr=Concept:Any Subs==
         Concept=Equatable Expr=Concept:Equatable Subs==
       Concept=Arithmetic Expr=Concept:Arithmetic Subs==
-        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_440:TypeVariable=TypeVariable:Self=
-        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_445:TypeVariable=TypeVariable:Self=
+        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_442:TypeVariable=TypeVariable:Self=
+        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_447:TypeVariable=TypeVariable:Self=
         Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs==
         Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
@@ -1339,8 +1340,8 @@ Type analysis for Area
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_440:TypeVariable=ConcreteType:Number=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_445:TypeVariable=ConcreteType:Number=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_442:TypeVariable=ConcreteType:Number=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_447:TypeVariable=ConcreteType:Number=
     Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Comparable Expr=Concept:Comparable Subs==
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
@@ -1370,8 +1371,8 @@ Type analysis for Volume
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_440:TypeVariable=ConcreteType:Number=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_445:TypeVariable=ConcreteType:Number=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_442:TypeVariable=ConcreteType:Number=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_447:TypeVariable=ConcreteType:Number=
     Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Comparable Expr=Concept:Comparable Subs==
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
@@ -1401,8 +1402,8 @@ Type analysis for Velocity
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_440:TypeVariable=ConcreteType:Number=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_445:TypeVariable=ConcreteType:Number=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_442:TypeVariable=ConcreteType:Number=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_447:TypeVariable=ConcreteType:Number=
     Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Comparable Expr=Concept:Comparable Subs==
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
@@ -1432,8 +1433,8 @@ Type analysis for Acceleration
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_440:TypeVariable=ConcreteType:Number=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_445:TypeVariable=ConcreteType:Number=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_442:TypeVariable=ConcreteType:Number=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_447:TypeVariable=ConcreteType:Number=
     Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Comparable Expr=Concept:Comparable Subs==
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
@@ -1463,8 +1464,8 @@ Type analysis for Force
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_440:TypeVariable=ConcreteType:Number=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_445:TypeVariable=ConcreteType:Number=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_442:TypeVariable=ConcreteType:Number=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_447:TypeVariable=ConcreteType:Number=
     Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Comparable Expr=Concept:Comparable Subs==
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
@@ -1494,8 +1495,8 @@ Type analysis for Pressure
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_440:TypeVariable=ConcreteType:Number=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_445:TypeVariable=ConcreteType:Number=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_442:TypeVariable=ConcreteType:Number=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_447:TypeVariable=ConcreteType:Number=
     Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Comparable Expr=Concept:Comparable Subs==
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
@@ -1525,8 +1526,8 @@ Type analysis for Energy
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_440:TypeVariable=ConcreteType:Number=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_445:TypeVariable=ConcreteType:Number=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_442:TypeVariable=ConcreteType:Number=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_447:TypeVariable=ConcreteType:Number=
     Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Comparable Expr=Concept:Comparable Subs==
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
@@ -1556,8 +1557,8 @@ Type analysis for Memory
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_440:TypeVariable=ConcreteType:Number=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_445:TypeVariable=ConcreteType:Number=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_442:TypeVariable=ConcreteType:Number=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_447:TypeVariable=ConcreteType:Number=
     Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Comparable Expr=Concept:Comparable Subs==
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
@@ -1587,8 +1588,8 @@ Type analysis for Frequency
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_440:TypeVariable=ConcreteType:Number=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_445:TypeVariable=ConcreteType:Number=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_442:TypeVariable=ConcreteType:Number=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_447:TypeVariable=ConcreteType:Number=
     Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Comparable Expr=Concept:Comparable Subs==
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
@@ -1618,8 +1619,8 @@ Type analysis for Loudness
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_440:TypeVariable=ConcreteType:Number=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_445:TypeVariable=ConcreteType:Number=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_442:TypeVariable=ConcreteType:Number=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_447:TypeVariable=ConcreteType:Number=
     Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Comparable Expr=Concept:Comparable Subs==
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
@@ -1649,8 +1650,8 @@ Type analysis for LuminousIntensity
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_440:TypeVariable=ConcreteType:Number=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_445:TypeVariable=ConcreteType:Number=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_442:TypeVariable=ConcreteType:Number=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_447:TypeVariable=ConcreteType:Number=
     Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Comparable Expr=Concept:Comparable Subs==
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
@@ -1680,8 +1681,8 @@ Type analysis for ElectricPotential
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_440:TypeVariable=ConcreteType:Number=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_445:TypeVariable=ConcreteType:Number=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_442:TypeVariable=ConcreteType:Number=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_447:TypeVariable=ConcreteType:Number=
     Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Comparable Expr=Concept:Comparable Subs==
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
@@ -1711,8 +1712,8 @@ Type analysis for ElectricCharge
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_440:TypeVariable=ConcreteType:Number=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_445:TypeVariable=ConcreteType:Number=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_442:TypeVariable=ConcreteType:Number=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_447:TypeVariable=ConcreteType:Number=
     Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Comparable Expr=Concept:Comparable Subs==
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
@@ -1742,8 +1743,8 @@ Type analysis for ElectricCurrent
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_440:TypeVariable=ConcreteType:Number=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_445:TypeVariable=ConcreteType:Number=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_442:TypeVariable=ConcreteType:Number=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_447:TypeVariable=ConcreteType:Number=
     Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Comparable Expr=Concept:Comparable Subs==
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
@@ -1773,8 +1774,8 @@ Type analysis for ElectricResistance
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_440:TypeVariable=ConcreteType:Number=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_445:TypeVariable=ConcreteType:Number=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_442:TypeVariable=ConcreteType:Number=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_447:TypeVariable=ConcreteType:Number=
     Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Comparable Expr=Concept:Comparable Subs==
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
@@ -1804,8 +1805,8 @@ Type analysis for Power
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_440:TypeVariable=ConcreteType:Number=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_445:TypeVariable=ConcreteType:Number=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_442:TypeVariable=ConcreteType:Number=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_447:TypeVariable=ConcreteType:Number=
     Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Comparable Expr=Concept:Comparable Subs==
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
@@ -1835,8 +1836,8 @@ Type analysis for Density
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_440:TypeVariable=ConcreteType:Number=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_445:TypeVariable=ConcreteType:Number=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=T_442:TypeVariable=ConcreteType:Number=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=T_447:TypeVariable=ConcreteType:Number=
     Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Comparable Expr=Concept:Comparable Subs==
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
@@ -1898,8 +1899,8 @@ Type analysis for Probability
       Concept=Any Expr=Concept:Any Subs==
       Concept=Equatable Expr=Concept:Equatable Subs==
     Concept=Arithmetic Expr=Concept:Arithmetic Subs==
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_440:TypeVariable=TypeVariable:Self=
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_445:TypeVariable=TypeVariable:Self=
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=T_442:TypeVariable=TypeVariable:Self=
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=T_447:TypeVariable=TypeVariable:Self=
       Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs==
       Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs==
     Concept=Equatable Expr=Concept:Equatable Subs==
@@ -1930,7 +1931,7 @@ Type analysis for BinomialDistribution
     Concept=Any Expr=Concept:Any Subs==
     Concept=Equatable Expr=Concept:Equatable Subs==
 Type analysis for Array1
-  Concept=Array Expr=Concept:Array<TypeVariable:T> Subs=T_389:TypeVariable=TypeVariable:T=
+  Concept=Array Expr=Concept:Array<TypeVariable:T> Subs=T_391:TypeVariable=TypeVariable:T=
 Type analysis for Tuple2
   Concept=Value Expr=Concept:Value Subs==
     Concept=Any Expr=Concept:Any Subs==
