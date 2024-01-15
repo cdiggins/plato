@@ -77,10 +77,6 @@ public readonly partial struct Count
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Count Zero => (Value.Zero);
-    public Count One => (Value.One);
-    public Count MinValue => (Value.MinValue);
-    public Count MaxValue => (Value.MaxValue);
     public Number Unlerp(Count a, Count b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Count y) => throw new NotImplementedException();
@@ -129,10 +125,6 @@ public readonly partial struct Unit
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Unit Zero => (Value.Zero);
-    public Unit One => (Value.One);
-    public Unit MinValue => (Value.MinValue);
-    public Unit MaxValue => (Value.MaxValue);
     public Number Unlerp(Unit a, Unit b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Unit y) => throw new NotImplementedException();
@@ -163,10 +155,6 @@ public readonly partial struct Percent
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Percent Zero => (Value.Zero);
-    public Percent One => (Value.One);
-    public Percent MinValue => (Value.MinValue);
-    public Percent MaxValue => (Value.MaxValue);
     public Number Unlerp(Percent a, Percent b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Percent y) => throw new NotImplementedException();
@@ -351,10 +339,6 @@ public readonly partial struct Vector2D
     // Unimplemented concept functions
     public Number Unlerp(Vector2D a, Vector2D b) => throw new NotImplementedException();
     public Integer Compare(Vector2D y) => throw new NotImplementedException();
-    public Vector2D Zero => (X.Zero, Y.Zero);
-    public Vector2D One => (X.One, Y.One);
-    public Vector2D MinValue => (X.MinValue, Y.MinValue);
-    public Vector2D MaxValue => (X.MaxValue, Y.MaxValue);
     public Vector2D Reciprocal => (X.Reciprocal, Y.Reciprocal);
     public Vector2D Negative => (X.Negative, Y.Negative);
     public static Vector2D operator -(Vector2D self) => self.Negative;
@@ -370,7 +354,7 @@ public readonly partial struct Vector2D
     public static Vector2D operator -(Vector2D self, Vector2D other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[Integer n] => At(n);
+    public Number this[(Integer n)] => At(n);
 }
 public readonly partial struct Vector3D
 {
@@ -392,10 +376,6 @@ public readonly partial struct Vector3D
     // Unimplemented concept functions
     public Number Unlerp(Vector3D a, Vector3D b) => throw new NotImplementedException();
     public Integer Compare(Vector3D y) => throw new NotImplementedException();
-    public Vector3D Zero => (X.Zero, Y.Zero, Z.Zero);
-    public Vector3D One => (X.One, Y.One, Z.One);
-    public Vector3D MinValue => (X.MinValue, Y.MinValue, Z.MinValue);
-    public Vector3D MaxValue => (X.MaxValue, Y.MaxValue, Z.MaxValue);
     public Vector3D Reciprocal => (X.Reciprocal, Y.Reciprocal, Z.Reciprocal);
     public Vector3D Negative => (X.Negative, Y.Negative, Z.Negative);
     public static Vector3D operator -(Vector3D self) => self.Negative;
@@ -411,7 +391,7 @@ public readonly partial struct Vector3D
     public static Vector3D operator -(Vector3D self, Vector3D other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[Integer n] => At(n);
+    public Number this[(Integer n)] => At(n);
 }
 public readonly partial struct Vector4D
 {
@@ -435,10 +415,6 @@ public readonly partial struct Vector4D
     // Unimplemented concept functions
     public Number Unlerp(Vector4D a, Vector4D b) => throw new NotImplementedException();
     public Integer Compare(Vector4D y) => throw new NotImplementedException();
-    public Vector4D Zero => (X.Zero, Y.Zero, Z.Zero, W.Zero);
-    public Vector4D One => (X.One, Y.One, Z.One, W.One);
-    public Vector4D MinValue => (X.MinValue, Y.MinValue, Z.MinValue, W.MinValue);
-    public Vector4D MaxValue => (X.MaxValue, Y.MaxValue, Z.MaxValue, W.MaxValue);
     public Vector4D Reciprocal => (X.Reciprocal, Y.Reciprocal, Z.Reciprocal, W.Reciprocal);
     public Vector4D Negative => (X.Negative, Y.Negative, Z.Negative, W.Negative);
     public static Vector4D operator -(Vector4D self) => self.Negative;
@@ -454,7 +430,7 @@ public readonly partial struct Vector4D
     public static Vector4D operator -(Vector4D self, Vector4D other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[Integer n] => At(n);
+    public Number this[(Integer n)] => At(n);
 }
 public readonly partial struct Orientation3D
 {
@@ -628,10 +604,6 @@ public readonly partial struct Complex
     // Unimplemented concept functions
     public Number Unlerp(Complex a, Complex b) => throw new NotImplementedException();
     public Integer Compare(Complex y) => throw new NotImplementedException();
-    public Complex Zero => (Real.Zero, Imaginary.Zero);
-    public Complex One => (Real.One, Imaginary.One);
-    public Complex MinValue => (Real.MinValue, Imaginary.MinValue);
-    public Complex MaxValue => (Real.MaxValue, Imaginary.MaxValue);
     public Complex Reciprocal => (Real.Reciprocal, Imaginary.Reciprocal);
     public Complex Negative => (Real.Negative, Imaginary.Negative);
     public static Complex operator -(Complex self) => self.Negative;
@@ -647,7 +619,7 @@ public readonly partial struct Complex
     public static Complex operator -(Complex self, Complex other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[Integer n] => At(n);
+    public Number this[(Integer n)] => At(n);
 }
 public readonly partial struct Ray3D
 {
@@ -1353,10 +1325,6 @@ public readonly partial struct Proportion
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Proportion Zero => (Value.Zero);
-    public Proportion One => (Value.One);
-    public Proportion MinValue => (Value.MinValue);
-    public Proportion MaxValue => (Value.MaxValue);
     public Number Unlerp(Proportion a, Proportion b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Proportion y) => throw new NotImplementedException();
@@ -1870,10 +1838,6 @@ public readonly partial struct UV
     // Unimplemented concept functions
     public Number Unlerp(UV a, UV b) => throw new NotImplementedException();
     public Integer Compare(UV y) => throw new NotImplementedException();
-    public UV Zero => (U.Zero, V.Zero);
-    public UV One => (U.One, V.One);
-    public UV MinValue => (U.MinValue, V.MinValue);
-    public UV MaxValue => (U.MaxValue, V.MaxValue);
     public UV Reciprocal => (U.Reciprocal, V.Reciprocal);
     public UV Negative => (U.Negative, V.Negative);
     public static UV operator -(UV self) => self.Negative;
@@ -1889,7 +1853,7 @@ public readonly partial struct UV
     public static UV operator -(UV self, UV other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[Integer n] => At(n);
+    public Number this[(Integer n)] => At(n);
 }
 public readonly partial struct UVW
 {
@@ -1911,10 +1875,6 @@ public readonly partial struct UVW
     // Unimplemented concept functions
     public Number Unlerp(UVW a, UVW b) => throw new NotImplementedException();
     public Integer Compare(UVW y) => throw new NotImplementedException();
-    public UVW Zero => (U.Zero, V.Zero, W.Zero);
-    public UVW One => (U.One, V.One, W.One);
-    public UVW MinValue => (U.MinValue, V.MinValue, W.MinValue);
-    public UVW MaxValue => (U.MaxValue, V.MaxValue, W.MaxValue);
     public UVW Reciprocal => (U.Reciprocal, V.Reciprocal, W.Reciprocal);
     public UVW Negative => (U.Negative, V.Negative, W.Negative);
     public static UVW operator -(UVW self) => self.Negative;
@@ -1930,7 +1890,7 @@ public readonly partial struct UVW
     public static UVW operator -(UVW self, UVW other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[Integer n] => At(n);
+    public Number this[(Integer n)] => At(n);
 }
 public readonly partial struct CubicBezier2D
 {
@@ -2594,10 +2554,6 @@ public readonly partial struct Probability
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Probability Zero => (Value.Zero);
-    public Probability One => (Value.One);
-    public Probability MinValue => (Value.MinValue);
-    public Probability MaxValue => (Value.MaxValue);
     public Number Unlerp(Probability a, Probability b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Probability y) => throw new NotImplementedException();

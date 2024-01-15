@@ -68,9 +68,13 @@ namespace Plato.Compiler.Symbols
 
     public class ParameterDefinition : DefinitionSymbol
     {
-        public ParameterDefinition(string name, TypeExpression type)
+        public ParameterDefinition(string name, TypeExpression type, int index)
             : base(type, name)
-        { }
+        {
+            Index = index;
+        }
+
+        public int Index { get; }
 
         public override Reference ToReference()
             => new ParameterReference(this);
@@ -233,7 +237,7 @@ namespace Plato.Compiler.Symbols
             : base(parentType, type, name)
         {
             Function = new FunctionDefinition(Name, parentType, Type, null,
-                new ParameterDefinition("self", parentType.ToTypeExpression()));
+                new ParameterDefinition("self", parentType.ToTypeExpression(), 0));
         }
 
         public override Reference ToReference()

@@ -212,8 +212,10 @@ namespace Plato.AST
 
     public class AstParameterDeclaration : AstDeclaration
     {
+        public int Index { get; }
         public AstTypeNode Type { get; }
-        public AstParameterDeclaration(ILocation location, string name, AstTypeNode type) : base(location, name) => Type = type;
+        public AstParameterDeclaration(ILocation location, string name, AstTypeNode type, int index) : base(location, name) 
+            => (Type, Index) = (type, index);
         public override IEnumerable<AstNode> Children => base.Children.Append(Type);
     }
 

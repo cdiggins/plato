@@ -102,10 +102,10 @@ namespace Plato.AST
         {
             var list = new List<AstParameterDeclaration>();
             if (parameters.LambdaParameter != null)
-                list.Add(ToAst(parameters.LambdaParameter.Node));
+                list.Add(ToAst(parameters.LambdaParameter.Node, 0));
 
             foreach (var lp in parameters.LambdaParameter.Nodes)
-                list.Add(ToAst(lp));
+                list.Add(ToAst(lp, list.Count));
 
             return list;
         }
@@ -190,11 +190,12 @@ namespace Plato.AST
         public static AstTypeNode ToAst(this CstTypeAnnotation typeAnnotation)
             => ToAst(typeAnnotation?.TypeExpr?.Node?.InnerTypeExpr?.Node);
 
-        public static AstParameterDeclaration ToAst(this CstFunctionParameter fp)
+        public static AstParameterDeclaration ToAst(this CstFunctionParameter fp, int index)
             => new AstParameterDeclaration(
                 fp,
                 ToAst(fp.Identifier.Node),
-                ToAst(fp.TypeAnnotation.Node));
+                ToAst(fp.TypeAnnotation.Node), 
+                index);
 
         public static AstFieldDeclaration ToAst(this CstFieldDeclaration fieldDeclaration)
         {
@@ -228,10 +229,10 @@ namespace Plato.AST
             throw new Exception($"Unrecognized member type {memberDeclaration.Text}");  
         }
 
-        public static AstParameterDeclaration ToAst(this CstLambdaParameter lp)
+        public static AstParameterDeclaration ToAst(this CstLambdaParameter lp, int index)
         {
             return new AstParameterDeclaration(lp, 
-                ToAst(lp.Identifier.Node), null);
+                ToAst(lp.Identifier.Node), null, index);
         }
 
         public static AstConstant ToAst(this CstLiteral literal)

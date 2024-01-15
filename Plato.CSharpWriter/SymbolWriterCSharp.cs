@@ -139,8 +139,8 @@ namespace Plato.CSharpWriter
             var funcTypeParams = f.UsedTypeParameters
                 .Where(tp => !t.Type.TypeParameters.Contains(tp)).ToList();
 
-            var funcTypeParamsStr = funcTypeParams.Count == 0 
-                ? "" 
+            var funcTypeParamsStr = funcTypeParams.Count == 0
+                ? ""
                 : $"<{funcTypeParams.Select(tp => tp.Name).JoinStringsWithComma()}>";
 
             var argList = f
@@ -154,56 +154,68 @@ namespace Plato.CSharpWriter
                 .Zip(f.ParameterNames.Skip(1), (pt, pn) => $"{pt} {pn}")
                 .JoinStringsWithComma();
 
+            if (paramList.Length > 0)
+                paramList = $"({paramList})";
+
             var staticParamList = f
                 .ParameterTypes
                 .Zip(f.ParameterNames, (pt, pn) => $"{pt} {pn}")
                 .JoinStringsWithComma();
 
-            var fields = t.Type.Fields.Select(field => field.Name).ToList();
-            var sep = ret.Name == "Boolean" ? " & " : ", ";
-            if (f.ParameterNames.Count > 1)
+            if (f.Implementation.Body != null)
             {
-                var impl = "throw new NotImplementedException()";
-                if (generateImpl)
-                {
-                    if (f.ParameterNames.Count == 2)
-                    {
-                        var p0 = f.ParameterNames[1];
-                        var args = fields.Select(field => $"{field}.{f.Name}({p0}.{field})");
-                        
-                        impl = $"({args.JoinStrings(sep)})";
-                    }
-                    else if (f.ParameterNames.Count == 3)
-                    {
-                        var p0 = f.ParameterNames[1];
-                        var p1 = f.ParameterNames[2];
-                        var args = fields.Select(field => $"{field}.{f.Name}({p0}.{field}, {p1}.{field})");
-                        impl = $"({args.JoinStrings(sep)})";
-                    }
-                    else if (f.ParameterNames.Count == 4)
-                    {
-                        var p0 = f.ParameterNames[1];
-                        var p1 = f.ParameterNames[2];
-                        var p2 = f.ParameterNames[3];
-                        var args= fields.Select(field => $"{field}.{f.Name}({p0}.{field}, {p1}.{field}, {p2}.{field})");
-                        impl = $"({args.JoinStrings(sep)})";
-                    }
-                    else
-                    {
-                        throw new Exception(
-                            "Cannot generate default implementations for functions with more than 2 parameters");
-                    }
-                }
-
-                WriteLine($"public {ret} {f.Name}{funcTypeParamsStr}({paramList}) => {impl};");
+                WriteLine($"public {ret} {f.Name}{funcTypeParamsStr}{paramList} =>")
+                    .Indent()
+                    .Write(f.Implementation.Body)
+                    .WriteLine(";")
+                    .Dedent();
             }
             else
             {
-                var impl = generateImpl 
-                    ? "(" + fields.Select(field => $"{field}.{f.Name}").JoinStrings(sep) + ")"
-                    : "throw new NotImplementedException()";
+                var fields = t.Type.Fields.Select(field => field.Name).ToList();
+                var sep = ret.Name == "Boolean" ? " & " : ", ";
 
-                WriteLine($"public {ret} {f.Name} => {impl};");
+                if (f.ParameterNames.Count > 0)
+                {
+                    var impl = "throw new NotImplementedException()";
+                    if (generateImpl)
+                    {
+                        if (f.ParameterNames.Count == 1)
+                        {
+                            var args = fields.Select(field => $"{field}.{f.Name}");
+                            impl = $"({args.JoinStrings(sep)})";
+                        }
+                        else if (f.ParameterNames.Count == 2)
+                        {
+                            var p0 = f.ParameterNames[1];
+                            var args = fields.Select(field => $"{field}.{f.Name}({p0}.{field})");
+                            impl = $"({args.JoinStrings(sep)})";
+                        }
+                        else if (f.ParameterNames.Count == 3)
+                        {
+                            var p0 = f.ParameterNames[1];
+                            var p1 = f.ParameterNames[2];
+                            var args = fields.Select(field => $"{field}.{f.Name}({p0}.{field}, {p1}.{field})");
+                            impl = $"({args.JoinStrings(sep)})";
+                        }
+                        else if (f.ParameterNames.Count == 4)
+                        {
+                            var p0 = f.ParameterNames[1];
+                            var p1 = f.ParameterNames[2];
+                            var p2 = f.ParameterNames[3];
+                            var args = fields.Select(field =>
+                                $"{field}.{f.Name}({p0}.{field}, {p1}.{field}, {p2}.{field})");
+                            impl = $"({args.JoinStrings(sep)})";
+                        }
+                        else
+                        {
+                            throw new Exception(
+                                "Cannot generate default implementations for functions with more than 2 parameters");
+                        }
+                    }
+
+                    WriteLine($"public {ret} {f.Name}{funcTypeParamsStr}{paramList} => {impl};");
+                }
             }
 
             if (f.ParameterNames.Count == 2)
@@ -504,25 +516,6 @@ namespace Plato.CSharpWriter
             }
         }
 
-        public SymbolWriterCSharp WriteFunctionBody(FunctionDefinition function)
-        {
-            return WriteStartBlock()
-                .Write("return ")
-                .Write(function.Body)
-                .WriteLine(";")
-                .WriteEndBlock();
-        }
-
-        public SymbolWriterCSharp Write(FunctionDefinition function)
-        {
-            // Functions with no bodies are probably intrinsics
-            if (function.Body == null)
-                return this;
-
-            return WriteSignature(function, false, false)
-                .WriteFunctionBody(function);
-        }
-
         public static string ParameterizedTypeName(string name, IEnumerable<string> args)
             => name + TypeArgsString(args);
 
@@ -562,13 +555,13 @@ namespace Plato.CSharpWriter
                         .WriteLine();
 
                 case FunctionDefinition function:
-                    return Write(function);
+                    throw new Exception("Not implemented");
 
                 case FunctionGroupDefinition memberGroup:
                     return Write(memberGroup.Name);
 
                 case MethodDefinition methodDef:
-                    return Write("public static ").Write(methodDef.Function);
+                    throw new Exception("Not implemented");
 
                 case MemberDefinition member:
                     throw new Exception("Not implemented");
@@ -601,6 +594,11 @@ namespace Plato.CSharpWriter
 
             switch (expr)
             {
+                case ParameterReference pr:
+                    return pr.Definition.Index == 0 
+                        ? Write("this") 
+                        : Write(pr.Name);
+
                 case Reference refSymbol:
                     return Write(refSymbol.Name);
 

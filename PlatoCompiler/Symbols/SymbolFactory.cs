@@ -201,7 +201,7 @@ namespace Plato.Compiler.Symbols
         {
             return BindValue(astParameterDeclaration.Name,
                 new ParameterDefinition(astParameterDeclaration.Name, 
-                    ResolveType(astParameterDeclaration.Type)));
+                    ResolveType(astParameterDeclaration.Type), astParameterDeclaration.Index));
         }
 
         public Expression ResolveExpr(AstNode node)
@@ -448,7 +448,7 @@ namespace Plato.Compiler.Symbols
                 if (typeDef.Fields.Count > 0)
                 {
                     var ctor = new FunctionDefinition(typeDef.Name, typeDef, typeDef.ToTypeExpression(), null,
-                        typeDef.Fields.Select(f => new ParameterDefinition(f.Name, f.Type)).ToArray());
+                        typeDef.Fields.Select((f, i) => new ParameterDefinition(f.Name, f.Type, i)).ToArray());
                     AddCompilerGeneratedFunction(typeDef, ctor);
                 }
 
@@ -457,7 +457,7 @@ namespace Plato.Compiler.Symbols
                 {
                     var field = typeDef.Fields[0];
                     var cast = new FunctionDefinition($"To{field.Name}", typeDef, field.Type, null,
-                        new ParameterDefinition("arg", typeDef.ToTypeExpression()));
+                        new ParameterDefinition("arg", typeDef.ToTypeExpression(), 0));
                     AddCompilerGeneratedFunction(typeDef, cast);
                 }
 
@@ -466,11 +466,11 @@ namespace Plato.Compiler.Symbols
                 {
                     var tupleType = CreateTuple(typeDef.Fields.Select(f => f.Type).ToArray());
                     var ctor = new FunctionDefinition(typeDef.Name, typeDef, typeDef.ToTypeExpression(), null,
-                        new ParameterDefinition("arg", tupleType));
+                        new ParameterDefinition("arg", tupleType, 0));
                     AddCompilerGeneratedFunction(typeDef, ctor);
 
                     var tupleCast = new FunctionDefinition("ToTuple", typeDef, tupleType, null,
-                        new ParameterDefinition("self", typeDef.ToTypeExpression()));
+                        new ParameterDefinition("self", typeDef.ToTypeExpression(), 0));
                     AddCompilerGeneratedFunction(typeDef, tupleCast);
                 }
 
