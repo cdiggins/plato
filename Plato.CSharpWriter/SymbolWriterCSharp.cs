@@ -124,6 +124,13 @@ namespace Plato.CSharpWriter
         {
             var ret = f.ReturnType;
 
+            var funcTypeParams = f.UsedTypeParameters
+                .Where(tp => !t.Type.TypeParameters.Contains(tp)).ToList();
+
+            var funcTypeParamsStr = funcTypeParams.Count == 0 
+                ? "" 
+                : $"<{funcTypeParams.Select(tp => tp.Name).JoinStringsWithComma()}>";
+
             var argList = f
                 .ParameterNames.Skip(1)
                 .JoinStringsWithComma();
@@ -142,7 +149,7 @@ namespace Plato.CSharpWriter
 
             if (paramList.Length > 0)
             {
-                WriteLine($"public {ret} {f.Name}({paramList}) => throw new NotImplementedException();");
+                WriteLine($"public {ret} {f.Name}{funcTypeParamsStr}({paramList}) => throw new NotImplementedException();");
             }
             else
             {
@@ -162,14 +169,14 @@ namespace Plato.CSharpWriter
                     if (op != "[]")
                     {
                         WriteLine(
-                            $"public static {ret} operator {op}({staticParamList}) => {firstName}.{f.Name}({argList});");
+                            $"public static {ret} operator {op}{funcTypeParamsStr}({staticParamList}) => {firstName}.{f.Name}({argList});");
                     }
                     else
                     {
                         var index = f.ParameterNames[1];
                         Write($"public ")
                             .Write(ret.ToString())
-                            .Write(" this[")
+                            .Write($" this{funcTypeParamsStr}[")
                             .Write(index)
                             .Write($"] => {f.Name}({index});")
                             .WriteLine();

@@ -115,7 +115,6 @@ public partial class Integer
 }
 public partial class String
 {
-    public String Interpolate => throw new NotImplementedException();
 }
 public partial class Boolean
 {
@@ -269,7 +268,7 @@ public partial class Rotation3D
 }
 public partial class Vector2D
 {
-    public T1 Aggregate(Function2<Number, T1, T1> f) => throw new NotImplementedException();
+    public T1 Aggregate<T1>(Function2<Number, T1, T1> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
     public Number SumSquares => throw new NotImplementedException();
     public Number MagnitudeSquared => throw new NotImplementedException();
@@ -277,7 +276,6 @@ public partial class Vector2D
     public Number Dot(Vector2D v2) => throw new NotImplementedException();
     public Vector2D Normal => throw new NotImplementedException();
     public Number Average => throw new NotImplementedException();
-    public String Interpolate => throw new NotImplementedException();
     public Vector2D Square => throw new NotImplementedException();
     public Vector2D PlusOne => throw new NotImplementedException();
     public Vector2D MinusOne => throw new NotImplementedException();
@@ -316,7 +314,7 @@ public partial class Vector2D
 }
 public partial class Vector3D
 {
-    public T1 Aggregate(Function2<Number, T1, T1> f) => throw new NotImplementedException();
+    public T1 Aggregate<T1>(Function2<Number, T1, T1> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
     public Number SumSquares => throw new NotImplementedException();
     public Number MagnitudeSquared => throw new NotImplementedException();
@@ -324,7 +322,6 @@ public partial class Vector3D
     public Number Dot(Vector3D v2) => throw new NotImplementedException();
     public Vector3D Normal => throw new NotImplementedException();
     public Number Average => throw new NotImplementedException();
-    public String Interpolate => throw new NotImplementedException();
     public Vector3D Square => throw new NotImplementedException();
     public Vector3D PlusOne => throw new NotImplementedException();
     public Vector3D MinusOne => throw new NotImplementedException();
@@ -363,7 +360,7 @@ public partial class Vector3D
 }
 public partial class Vector4D
 {
-    public T1 Aggregate(Function2<Number, T1, T1> f) => throw new NotImplementedException();
+    public T1 Aggregate<T1>(Function2<Number, T1, T1> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
     public Number SumSquares => throw new NotImplementedException();
     public Number MagnitudeSquared => throw new NotImplementedException();
@@ -371,7 +368,6 @@ public partial class Vector4D
     public Number Dot(Vector4D v2) => throw new NotImplementedException();
     public Vector4D Normal => throw new NotImplementedException();
     public Number Average => throw new NotImplementedException();
-    public String Interpolate => throw new NotImplementedException();
     public Vector4D Square => throw new NotImplementedException();
     public Vector4D PlusOne => throw new NotImplementedException();
     public Vector4D MinusOne => throw new NotImplementedException();
@@ -471,7 +467,7 @@ public partial class AlignedBox3D
 }
 public partial class Complex
 {
-    public T1 Aggregate(Function2<Number, T1, T1> f) => throw new NotImplementedException();
+    public T1 Aggregate<T1>(Function2<Number, T1, T1> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
     public Number SumSquares => throw new NotImplementedException();
     public Number MagnitudeSquared => throw new NotImplementedException();
@@ -479,7 +475,6 @@ public partial class Complex
     public Number Dot(Complex v2) => throw new NotImplementedException();
     public Complex Normal => throw new NotImplementedException();
     public Number Average => throw new NotImplementedException();
-    public String Interpolate => throw new NotImplementedException();
     public Complex Square => throw new NotImplementedException();
     public Complex PlusOne => throw new NotImplementedException();
     public Complex MinusOne => throw new NotImplementedException();
@@ -874,7 +869,7 @@ public partial class Box3D
 }
 public partial class UV
 {
-    public T1 Aggregate(Function2<Number, T1, T1> f) => throw new NotImplementedException();
+    public T1 Aggregate<T1>(Function2<Number, T1, T1> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
     public Number SumSquares => throw new NotImplementedException();
     public Number MagnitudeSquared => throw new NotImplementedException();
@@ -882,7 +877,6 @@ public partial class UV
     public Number Dot(UV v2) => throw new NotImplementedException();
     public UV Normal => throw new NotImplementedException();
     public Number Average => throw new NotImplementedException();
-    public String Interpolate => throw new NotImplementedException();
     public UV Square => throw new NotImplementedException();
     public UV PlusOne => throw new NotImplementedException();
     public UV MinusOne => throw new NotImplementedException();
@@ -921,7 +915,7 @@ public partial class UV
 }
 public partial class UVW
 {
-    public T1 Aggregate(Function2<Number, T1, T1> f) => throw new NotImplementedException();
+    public T1 Aggregate<T1>(Function2<Number, T1, T1> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
     public Number SumSquares => throw new NotImplementedException();
     public Number MagnitudeSquared => throw new NotImplementedException();
@@ -929,7 +923,6 @@ public partial class UVW
     public Number Dot(UVW v2) => throw new NotImplementedException();
     public UVW Normal => throw new NotImplementedException();
     public Number Average => throw new NotImplementedException();
-    public String Interpolate => throw new NotImplementedException();
     public UVW Square => throw new NotImplementedException();
     public UVW PlusOne => throw new NotImplementedException();
     public UVW MinusOne => throw new NotImplementedException();
@@ -1336,7 +1329,6 @@ public partial class BinomialDistribution
 }
 public partial class Array1
 {
-    public String Interpolate => throw new NotImplementedException();
 }
 public partial class Tuple2
 {

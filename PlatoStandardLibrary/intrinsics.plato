@@ -12,8 +12,6 @@
     NaturalLog(x: Number): Number;
     NaturalPower(x: Number): Number;
 
-    Interpolate(xs: Array): String;
-
     Add(x: Number, y: Number): Number;
     Subtract(x: Number, y: Number): Number;
     Divide(x: Number, y: Number): Number;

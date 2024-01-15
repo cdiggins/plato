@@ -24,10 +24,11 @@ namespace Plato.Compiler.Analysis
         public IReadOnlyList<TypeInstance> ParameterTypes { get; }
         public Dictionary<string, List<TypeParameterDefinition>> TypeVarLookup { get; } 
             = new Dictionary<string, List<TypeParameterDefinition>>();
-        public IReadOnlyList<TypeParameterDefinition> TypeParameters { get; }
-        // TODO: 
-        public Dictionary<TypeParameterDefinition, TypeParameterDefinition> Unifiers { get; } =
-            new Dictionary<TypeParameterDefinition, TypeParameterDefinition>();
+        public IReadOnlyList<TypeParameterDefinition> UsedTypeParameters { get; }
+        
+        // TODO: this might be necessary in the future, when choosing the correct type parameter is difficult.
+        //public Dictionary<TypeParameterDefinition, TypeParameterDefinition> Unifiers { get; } =
+        //    new Dictionary<TypeParameterDefinition, TypeParameterDefinition>();
 
         public FunctionInstance(
             TypeDefinition concreteType,
@@ -46,11 +47,16 @@ namespace Plato.Compiler.Analysis
             foreach (var p in Implementation.Parameters)
                 GatherTypeVariables(p.Type);
 
+            // Sort the used type vars? 
+            foreach (var kv in TypeVarLookup)
+                kv.Value.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.Ordinal));
+
             ReturnType = ToInstance(Implementation.ReturnType);
             ParameterTypes = Implementation.Parameters.Select(p => ToInstance(p.Type)).ToList();
 
-            TypeParameters = ParameterTypes.SelectMany(t => t.SelfAndDescendants())
-                .Select(t => t.Definition).OfType<TypeParameterDefinition>().Distinct().
+            UsedTypeParameters = ParameterTypes.SelectMany(t => t.SelfAndDescendants())
+                .Select(t => t.Definition)
+                .OfType<TypeParameterDefinition>().Distinct().
                 ToList();
         }
 

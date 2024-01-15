@@ -1,71 +1,71 @@
-[0:00.002] Opening files
-[0:00.217] Starting compiling C:\Users\cdigg\git\ara3d\plato\PlatoWinFormsEditor\..\PlatoStandardLibrary\intrinsics.plato at 2024-01-14 10:47:45 PM
-[0:00.218] Starting to parse 36 lines containing 1036 characters
-[0:00.218] Tokenization phase
-[0:00.223] Completed tokenization
-[0:00.226] Starting main parse
-[0:00.230] Completed parsing
-[0:00.230] Gathering parse errors
-[0:00.231] Found 0 errors
-[0:00.231] Gathering parse nodes
-[0:00.231] Found 670 nodes
-[0:00.231] Creating parse tree
-[0:00.233] Creating Concrete Syntax Tree (CST)
-[0:00.245] Completed all steps, result is successful
-[0:00.277] Starting compiling C:\Users\cdigg\git\ara3d\plato\PlatoWinFormsEditor\..\PlatoStandardLibrary\concepts.plato at 2024-01-14 10:47:45 PM
-[0:00.277] Starting to parse 132 lines containing 3249 characters
-[0:00.277] Tokenization phase
-[0:00.280] Completed tokenization
-[0:00.280] Starting main parse
-[0:00.281] Completed parsing
-[0:00.281] Gathering parse errors
-[0:00.281] Found 0 errors
-[0:00.281] Gathering parse nodes
-[0:00.281] Found 1029 nodes
-[0:00.281] Creating parse tree
-[0:00.281] Creating Concrete Syntax Tree (CST)
-[0:00.282] Completed all steps, result is successful
-[0:00.303] Starting compiling C:\Users\cdigg\git\ara3d\plato\PlatoWinFormsEditor\..\PlatoStandardLibrary\types.plato at 2024-01-14 10:47:45 PM
-[0:00.303] Starting to parse 845 lines containing 12373 characters
-[0:00.303] Tokenization phase
-[0:00.310] Completed tokenization
-[0:00.310] Starting main parse
-[0:00.314] Completed parsing
-[0:00.314] Gathering parse errors
-[0:00.314] Found 0 errors
-[0:00.314] Gathering parse nodes
-[0:00.314] Found 3179 nodes
-[0:00.314] Creating parse tree
-[0:00.315] Creating Concrete Syntax Tree (CST)
-[0:00.316] Completed all steps, result is successful
-[0:00.353] Starting compiling C:\Users\cdigg\git\ara3d\plato\PlatoWinFormsEditor\..\PlatoStandardLibrary\libraries.plato at 2024-01-14 10:47:45 PM
-[0:00.353] Starting to parse 223 lines containing 5753 characters
-[0:00.353] Tokenization phase
-[0:00.372] Completed tokenization
-[0:00.372] Starting main parse
-[0:00.522] Completed parsing
-[0:00.522] Gathering parse errors
-[0:00.522] Found 0 errors
-[0:00.522] Gathering parse nodes
-[0:00.522] Found 3363 nodes
-[0:00.522] Creating parse tree
-[0:00.523] Creating Concrete Syntax Tree (CST)
-[0:00.533] Completed all steps, result is successful
-[0:00.533] Applying syntax coloring
-[0:00.533] Completed syntax coloring
-[0:00.533] Gathering parsers
-[0:00.536] Creating AST trees
-[0:00.599] Creating compiler
-[0:00.599] Gathering type declarations
-[0:00.602] Creating symbol resolver
-[0:00.603] Creating type definitions
-[0:00.614] Found 0 symbol resolution errors
-[0:00.615] Gathering function definitions
-[0:00.616] Found 634 functions
-[0:00.616] Checking semantics
-[0:00.623] Creating Reified Types
-[0:00.672] Found 114 types
-[0:00.672] Created a total of 1065 reified functions
-[0:00.672] Adding library functions to reified types
-[0:00.785] Grouping Reified functions by name for faster type resolution
-[0:00.874] Outputting errors and warnings
+[0:00.001] Opening files
+[0:00.253] Starting compiling C:\Users\cdigg\git\ara3d\plato\PlatoWinFormsEditor\..\PlatoStandardLibrary\intrinsics.plato at 2024-01-15 9:37:32 AM
+[0:00.253] Starting to parse 34 lines containing 999 characters
+[0:00.253] Tokenization phase
+[0:00.261] Completed tokenization
+[0:00.271] Starting main parse
+[0:00.275] Completed parsing
+[0:00.275] Gathering parse errors
+[0:00.278] Found 0 errors
+[0:00.278] Gathering parse nodes
+[0:00.278] Found 650 nodes
+[0:00.278] Creating parse tree
+[0:00.279] Creating Concrete Syntax Tree (CST)
+[0:00.297] Completed all steps, result is successful
+[0:00.399] Starting compiling C:\Users\cdigg\git\ara3d\plato\PlatoWinFormsEditor\..\PlatoStandardLibrary\concepts.plato at 2024-01-15 9:37:33 AM
+[0:00.399] Starting to parse 132 lines containing 3249 characters
+[0:00.399] Tokenization phase
+[0:00.404] Completed tokenization
+[0:00.404] Starting main parse
+[0:00.406] Completed parsing
+[0:00.406] Gathering parse errors
+[0:00.407] Found 0 errors
+[0:00.407] Gathering parse nodes
+[0:00.407] Found 1029 nodes
+[0:00.407] Creating parse tree
+[0:00.407] Creating Concrete Syntax Tree (CST)
+[0:00.408] Completed all steps, result is successful
+[0:00.513] Starting compiling C:\Users\cdigg\git\ara3d\plato\PlatoWinFormsEditor\..\PlatoStandardLibrary\types.plato at 2024-01-15 9:37:33 AM
+[0:00.513] Starting to parse 845 lines containing 12373 characters
+[0:00.513] Tokenization phase
+[0:00.553] Completed tokenization
+[0:00.553] Starting main parse
+[0:00.571] Completed parsing
+[0:00.571] Gathering parse errors
+[0:00.571] Found 0 errors
+[0:00.571] Gathering parse nodes
+[0:00.571] Found 3179 nodes
+[0:00.571] Creating parse tree
+[0:00.573] Creating Concrete Syntax Tree (CST)
+[0:00.579] Completed all steps, result is successful
+[0:00.667] Starting compiling C:\Users\cdigg\git\ara3d\plato\PlatoWinFormsEditor\..\PlatoStandardLibrary\libraries.plato at 2024-01-15 9:37:33 AM
+[0:00.667] Starting to parse 223 lines containing 5753 characters
+[0:00.667] Tokenization phase
+[0:00.689] Completed tokenization
+[0:00.689] Starting main parse
+[0:00.902] Completed parsing
+[0:00.902] Gathering parse errors
+[0:00.902] Found 0 errors
+[0:00.902] Gathering parse nodes
+[0:00.902] Found 3363 nodes
+[0:00.902] Creating parse tree
+[0:00.903] Creating Concrete Syntax Tree (CST)
+[0:00.908] Completed all steps, result is successful
+[0:00.908] Applying syntax coloring
+[0:00.908] Completed syntax coloring
+[0:00.908] Gathering parsers
+[0:00.910] Creating AST trees
+[0:01.092] Creating compiler
+[0:01.092] Gathering type declarations
+[0:01.109] Creating symbol resolver
+[0:01.120] Creating type definitions
+[0:01.162] Found 0 symbol resolution errors
+[0:01.162] Gathering function definitions
+[0:01.165] Found 633 functions
+[0:01.165] Checking semantics
+[0:01.174] Creating Reified Types
+[0:01.220] Found 114 types
+[0:01.220] Created a total of 1065 reified functions
+[0:01.220] Adding library functions to reified types
+[0:01.288] Grouping Reified functions by name for faster type resolution
+[0:01.338] Outputting errors and warnings
