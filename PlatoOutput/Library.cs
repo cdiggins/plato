@@ -540,9 +540,39 @@ public readonly partial struct Quad3D
 }
 public readonly partial struct Point2D
 {
+    public Boolean Between(Point2D min, Point2D max) => throw new NotImplementedException();
+    public Boolean Equals(Point2D b) => throw new NotImplementedException();
+    public static Boolean operator ==(Point2D a, Point2D b) => a.Equals(b);
+    public Boolean NotEquals(Point2D b) => throw new NotImplementedException();
+    public static Boolean operator !=(Point2D a, Point2D b) => a.NotEquals(b);
+    public Boolean LessThan(Point2D b) => throw new NotImplementedException();
+    public static Boolean operator <(Point2D a, Point2D b) => a.LessThan(b);
+    public Boolean LessThanOrEquals(Point2D b) => throw new NotImplementedException();
+    public static Boolean operator <=(Point2D a, Point2D b) => a.LessThanOrEquals(b);
+    public Boolean GreaterThan(Point2D b) => throw new NotImplementedException();
+    public static Boolean operator >(Point2D a, Point2D b) => a.GreaterThan(b);
+    public Boolean GreaterThanOrEquals(Point2D b) => throw new NotImplementedException();
+    public static Boolean operator >=(Point2D a, Point2D b) => a.GreaterThanOrEquals(b);
+    public Point2D Lesser(Point2D b) => throw new NotImplementedException();
+    public Point2D Greater(Point2D b) => throw new NotImplementedException();
 }
 public readonly partial struct Point3D
 {
+    public Boolean Between(Point3D min, Point3D max) => throw new NotImplementedException();
+    public Boolean Equals(Point3D b) => throw new NotImplementedException();
+    public static Boolean operator ==(Point3D a, Point3D b) => a.Equals(b);
+    public Boolean NotEquals(Point3D b) => throw new NotImplementedException();
+    public static Boolean operator !=(Point3D a, Point3D b) => a.NotEquals(b);
+    public Boolean LessThan(Point3D b) => throw new NotImplementedException();
+    public static Boolean operator <(Point3D a, Point3D b) => a.LessThan(b);
+    public Boolean LessThanOrEquals(Point3D b) => throw new NotImplementedException();
+    public static Boolean operator <=(Point3D a, Point3D b) => a.LessThanOrEquals(b);
+    public Boolean GreaterThan(Point3D b) => throw new NotImplementedException();
+    public static Boolean operator >(Point3D a, Point3D b) => a.GreaterThan(b);
+    public Boolean GreaterThanOrEquals(Point3D b) => throw new NotImplementedException();
+    public static Boolean operator >=(Point3D a, Point3D b) => a.GreaterThanOrEquals(b);
+    public Point3D Lesser(Point3D b) => throw new NotImplementedException();
+    public Point3D Greater(Point3D b) => throw new NotImplementedException();
 }
 public readonly partial struct Line2D
 {
@@ -695,6 +725,21 @@ public readonly partial struct Angle
     public Number Tan => throw new NotImplementedException();
     public Number Degrees => throw new NotImplementedException();
     public Number Turns => throw new NotImplementedException();
+    public Boolean Between(Angle min, Angle max) => throw new NotImplementedException();
+    public Boolean Equals(Angle b) => throw new NotImplementedException();
+    public static Boolean operator ==(Angle a, Angle b) => a.Equals(b);
+    public Boolean NotEquals(Angle b) => throw new NotImplementedException();
+    public static Boolean operator !=(Angle a, Angle b) => a.NotEquals(b);
+    public Boolean LessThan(Angle b) => throw new NotImplementedException();
+    public static Boolean operator <(Angle a, Angle b) => a.LessThan(b);
+    public Boolean LessThanOrEquals(Angle b) => throw new NotImplementedException();
+    public static Boolean operator <=(Angle a, Angle b) => a.LessThanOrEquals(b);
+    public Boolean GreaterThan(Angle b) => throw new NotImplementedException();
+    public static Boolean operator >(Angle a, Angle b) => a.GreaterThan(b);
+    public Boolean GreaterThanOrEquals(Angle b) => throw new NotImplementedException();
+    public static Boolean operator >=(Angle a, Angle b) => a.GreaterThanOrEquals(b);
+    public Angle Lesser(Angle b) => throw new NotImplementedException();
+    public Angle Greater(Angle b) => throw new NotImplementedException();
 }
 public readonly partial struct Length
 {
@@ -793,6 +838,21 @@ public readonly partial struct TimeRange
 }
 public readonly partial struct DateTime
 {
+    public Boolean Between(DateTime min, DateTime max) => throw new NotImplementedException();
+    public Boolean Equals(DateTime b) => throw new NotImplementedException();
+    public static Boolean operator ==(DateTime a, DateTime b) => a.Equals(b);
+    public Boolean NotEquals(DateTime b) => throw new NotImplementedException();
+    public static Boolean operator !=(DateTime a, DateTime b) => a.NotEquals(b);
+    public Boolean LessThan(DateTime b) => throw new NotImplementedException();
+    public static Boolean operator <(DateTime a, DateTime b) => a.LessThan(b);
+    public Boolean LessThanOrEquals(DateTime b) => throw new NotImplementedException();
+    public static Boolean operator <=(DateTime a, DateTime b) => a.LessThanOrEquals(b);
+    public Boolean GreaterThan(DateTime b) => throw new NotImplementedException();
+    public static Boolean operator >(DateTime a, DateTime b) => a.GreaterThan(b);
+    public Boolean GreaterThanOrEquals(DateTime b) => throw new NotImplementedException();
+    public static Boolean operator >=(DateTime a, DateTime b) => a.GreaterThanOrEquals(b);
+    public DateTime Lesser(DateTime b) => throw new NotImplementedException();
+    public DateTime Greater(DateTime b) => throw new NotImplementedException();
 }
 public readonly partial struct AnglePair
 {

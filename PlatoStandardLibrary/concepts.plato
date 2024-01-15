@@ -22,14 +22,14 @@ concept Array<T>
 
 // Vectors are numerical types which are arrays of numerical types. 
 concept Vector
-    inherits Array<Number>, Numerical, Magnitudinal, Equatable, Coordinate
+    inherits Array<Number>, Numerical, Magnitudinal, Equatable, Interpolatable
 {
 }
 
 // A coordinate is a point in some cartesian space. This also includes 
 // a time line, so a DateTime is considered a Coordinate. 
 concept Coordinate
-    inherits Interpolatable 
+    inherits Interpolatable, Comparable
 {
 }
 
@@ -38,7 +38,7 @@ concept Coordinate
 // It resembles a numerical type except you cannot multiply two measures without 
 // getting a new type. It does however support ScalarArithmetic 
 concept Measure
-    inherits Value, ScalarArithmetic, Equatable, Comparable, Magnitudinal, Interpolatable
+    inherits Value, ScalarArithmetic, Comparable, Magnitudinal, Interpolatable
 { 
     Value(x: Self): Number;
 }
@@ -62,6 +62,7 @@ concept Magnitudinal
 
 // The compare function return a negative integer if x < y, a positive integer if x > y, or zero otherwise. 
 concept Comparable
+    inherits Equatable
 {
     Compare(x: Self, y: Self): Integer;
 }
@@ -114,10 +115,11 @@ concept BooleanOperations
     Not(a: Self): Self;
 }
 
-concept Interval<TValue, TSize>
+concept Interval<TValue, TSize>    
     where TValue: Interpolatable
     where TValue: AdditiveArithmetic<TSize>
     where TSize: ScalarArithmetic 
+    inherits Equatable
 {
     Min(x: Self): TValue;
     Max(x: Self): TValue;

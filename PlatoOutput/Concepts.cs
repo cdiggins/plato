@@ -11,13 +11,13 @@ public interface Array<T>
     Integer  Count { get; }
     T  At(Integer n);
 }
-public interface Vector<Self>: Array<Number>, Numerical<Self>, Magnitudinal<Self>, Equatable<Self>, Coordinate<Self>
+public interface Vector<Self>: Array<Number>, Numerical<Self>, Magnitudinal<Self>, Equatable<Self>, Interpolatable<Self>
 {
 }
-public interface Coordinate<Self>: Interpolatable<Self>
+public interface Coordinate<Self>: Interpolatable<Self>, Comparable<Self>
 {
 }
-public interface Measure<Self>: Value<Self>, ScalarArithmetic<Self>, Equatable<Self>, Comparable<Self>, Magnitudinal<Self>, Interpolatable<Self>
+public interface Measure<Self>: Value<Self>, ScalarArithmetic<Self>, Comparable<Self>, Magnitudinal<Self>, Interpolatable<Self>
 {
     Number  Value { get; }
 }
@@ -32,7 +32,7 @@ public interface Magnitudinal<Self>: Comparable<Self>
 {
     Number  Magnitude { get; }
 }
-public interface Comparable<Self>
+public interface Comparable<Self>: Equatable<Self>
 {
     Integer  Compare(Self y);
 }
@@ -72,7 +72,7 @@ public interface BooleanOperations<Self>
     Self  Or(Self b);
     Self  Not { get; }
 }
-public interface Interval<TValue, TSize>
+public interface Interval<Self, TValue, TSize>: Equatable<Self>
 {
     TValue  Min { get; }
     TValue  Max { get; }

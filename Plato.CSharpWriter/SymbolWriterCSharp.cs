@@ -160,7 +160,7 @@ namespace Plato.CSharpWriter
                 .JoinStringsWithComma();
 
             var fields = t.Type.Fields.Select(field => field.Name).ToList();
-
+            var sep = ret.Name == "Boolean" ? " & " : ", ";
             if (f.ParameterNames.Count > 1)
             {
                 var impl = "throw new NotImplementedException()";
@@ -170,14 +170,15 @@ namespace Plato.CSharpWriter
                     {
                         var p0 = f.ParameterNames[1];
                         var args = fields.Select(field => $"{field}.{f.Name}({p0}.{field})");
-                        impl = $"({args.JoinStringsWithComma()})";
+                        
+                        impl = $"({args.JoinStrings(sep)})";
                     }
                     else if (f.ParameterNames.Count == 3)
                     {
                         var p0 = f.ParameterNames[1];
                         var p1 = f.ParameterNames[2];
                         var args = fields.Select(field => $"{field}.{f.Name}({p0}.{field}, {p1}.{field})");
-                        impl = $"({args.JoinStringsWithComma()})";
+                        impl = $"({args.JoinStrings(sep)})";
                     }
                     else if (f.ParameterNames.Count == 4)
                     {
@@ -185,7 +186,7 @@ namespace Plato.CSharpWriter
                         var p1 = f.ParameterNames[2];
                         var p2 = f.ParameterNames[3];
                         var args= fields.Select(field => $"{field}.{f.Name}({p0}.{field}, {p1}.{field}, {p2}.{field})");
-                        impl = $"({args.JoinStringsWithComma()})";
+                        impl = $"({args.JoinStrings(sep)})";
                     }
                     else
                     {
@@ -199,7 +200,7 @@ namespace Plato.CSharpWriter
             else
             {
                 var impl = generateImpl 
-                    ? "(" + fields.Select(field => $"{field}.{f.Name}").JoinStringsWithComma() + ")"
+                    ? "(" + fields.Select(field => $"{field}.{f.Name}").JoinStrings(sep) + ")"
                     : "throw new NotImplementedException()";
 
                 WriteLine($"public {ret} {f.Name} => {impl};");
@@ -467,17 +468,14 @@ namespace Plato.CSharpWriter
                     if (IgnoredFunctions.Contains(f.Name))
                         continue;
 
-
                     // Only generate implementations when the parameters and the return type are the same as this type
                     var genImpl = f.ParameterTypes.All(pt => pt.Name == concreteType.Name)
-                                  && f.ReturnType.Name == concreteType.Name;
+                                  && (f.ReturnType.Name == concreteType.Name || f.ReturnType.Name == "Boolean");
                     WriteFunction(f, concreteType, genImpl);
                 }
             }
 
-
             WriteEndBlock();
-            
             return this;
         }
         
