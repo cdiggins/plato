@@ -13,6 +13,7 @@ namespace Plato.Compiler.Analysis
     /// </summary>
     public class ConcreteType
     {
+        public string Name => Type.Name;
         public TypeDefinition Type { get; }
         public LibrarySet Libraries { get; }
         public TypeSubstitutions Substitutions { get; }

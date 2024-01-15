@@ -1,4 +1,25 @@
 ﻿
+using System;
+
+public readonly partial struct Number
+{
+    public Number Zero => 0;
+    public Number One => 1;
+    public Number MinValue => double.MinValue;
+    public Number MaxValue => double.MaxValue;
+    public Number Magnitude => Value;
+    public Number Reciprocal => 1.0 / Value;
+}
+
+public readonly partial struct Integer
+{
+    public Integer Zero => 0;
+    public Integer One => 1;
+    public Integer MinValue => int.MinValue;
+    public Integer MaxValue => int.MaxValue;
+    public Number Magnitude => Value;
+    public Integer Reciprocal => 1 / Value;
+}
 
 public readonly partial struct Array1<T> : Array<T>
 {

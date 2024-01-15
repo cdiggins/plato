@@ -8,6 +8,7 @@ namespace Plato.Compiler.Analysis
 {
     public class TypeInstance
     {
+        public string Name => Definition.Name;
         public TypeDefinition Definition { get; }
 
         public TypeInstance(TypeDefinition definition, IEnumerable<TypeInstance> args)

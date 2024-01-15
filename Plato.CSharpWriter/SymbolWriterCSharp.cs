@@ -132,7 +132,7 @@ namespace Plato.CSharpWriter
             }
         }
 
-        public SymbolWriterCSharp WriteFunction(FunctionInstance f, ConcreteType t)
+        public SymbolWriterCSharp WriteFunction(FunctionInstance f, ConcreteType t, bool generateImpl = false)
         {
             var ret = f.ReturnType;
 
@@ -159,13 +159,50 @@ namespace Plato.CSharpWriter
                 .Zip(f.ParameterNames, (pt, pn) => $"{pt} {pn}")
                 .JoinStringsWithComma();
 
-            if (paramList.Length > 0)
+            var fields = t.Type.Fields.Select(field => field.Name).ToList();
+
+            if (f.ParameterNames.Count > 1)
             {
-                WriteLine($"public {ret} {f.Name}{funcTypeParamsStr}({paramList}) => throw new NotImplementedException();");
+                var impl = "throw new NotImplementedException()";
+                if (generateImpl)
+                {
+                    if (f.ParameterNames.Count == 2)
+                    {
+                        var p0 = f.ParameterNames[1];
+                        var args = fields.Select(field => $"{field}.{f.Name}({p0}.{field})");
+                        impl = $"({args.JoinStringsWithComma()})";
+                    }
+                    else if (f.ParameterNames.Count == 3)
+                    {
+                        var p0 = f.ParameterNames[1];
+                        var p1 = f.ParameterNames[2];
+                        var args = fields.Select(field => $"{field}.{f.Name}({p0}.{field}, {p1}.{field})");
+                        impl = $"({args.JoinStringsWithComma()})";
+                    }
+                    else if (f.ParameterNames.Count == 4)
+                    {
+                        var p0 = f.ParameterNames[1];
+                        var p1 = f.ParameterNames[2];
+                        var p2 = f.ParameterNames[3];
+                        var args= fields.Select(field => $"{field}.{f.Name}({p0}.{field}, {p1}.{field}, {p2}.{field})");
+                        impl = $"({args.JoinStringsWithComma()})";
+                    }
+                    else
+                    {
+                        throw new Exception(
+                            "Cannot generate default implementations for functions with more than 2 parameters");
+                    }
+                }
+
+                WriteLine($"public {ret} {f.Name}{funcTypeParamsStr}({paramList}) => {impl};");
             }
             else
             {
-                WriteLine($"public {ret} {f.Name} => throw new NotImplementedException();");
+                var impl = generateImpl 
+                    ? "(" + fields.Select(field => $"{field}.{f.Name}").JoinStringsWithComma() + ")"
+                    : "throw new NotImplementedException()";
+
+                WriteLine($"public {ret} {f.Name} => {impl};");
             }
 
             if (f.ParameterNames.Count == 2)
@@ -421,13 +458,21 @@ namespace Plato.CSharpWriter
             WriteLine($"public object[] FieldValues() => new[] {{ {fieldNamesString} }};");
             */
 
-            WriteLine("// Unimplemented concept functions");
-            foreach (var f in concreteType.UnimplementedFunctions)
+            // For the primitives, we have predefined implementations of the standard concepts .
+            if (!isPrimitive)
             {
-                if (IgnoredFunctions.Contains(f.Name))
-                    continue;
-                // TODO: create actual implementations .
-                WriteFunction(f, concreteType);
+                WriteLine("// Unimplemented concept functions");
+                foreach (var f in concreteType.UnimplementedFunctions)
+                {
+                    if (IgnoredFunctions.Contains(f.Name))
+                        continue;
+
+
+                    // Only generate implementations when the parameters and the return type are the same as this type
+                    var genImpl = f.ParameterTypes.All(pt => pt.Name == concreteType.Name)
+                                  && f.ReturnType.Name == concreteType.Name;
+                    WriteFunction(f, concreteType, genImpl);
+                }
             }
 
 

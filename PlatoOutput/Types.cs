@@ -11,15 +11,6 @@ public readonly partial struct Number
     public String TypeName => "Number";
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
-    // Unimplemented concept functions
-    public Number Zero => throw new NotImplementedException();
-    public Number One => throw new NotImplementedException();
-    public Number MinValue => throw new NotImplementedException();
-    public Number MaxValue => throw new NotImplementedException();
-    public Number Unlerp(Number a, Number b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Integer Compare(Number y) => throw new NotImplementedException();
-    public Number Reciprocal => throw new NotImplementedException();
 }
 public readonly partial struct Integer
 {
@@ -33,15 +24,6 @@ public readonly partial struct Integer
     public String TypeName => "Integer";
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
-    // Unimplemented concept functions
-    public Integer Zero => throw new NotImplementedException();
-    public Integer One => throw new NotImplementedException();
-    public Integer MinValue => throw new NotImplementedException();
-    public Integer MaxValue => throw new NotImplementedException();
-    public Number Unlerp(Integer a, Integer b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Integer Compare(Integer y) => throw new NotImplementedException();
-    public Integer Reciprocal => throw new NotImplementedException();
 }
 public readonly partial struct String
 {
@@ -55,14 +37,6 @@ public readonly partial struct String
     public String TypeName => "String";
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
-    // Unimplemented concept functions
-    public Boolean Equals(String b) => throw new NotImplementedException();
-    public static Boolean operator ==(String a, String b) => a.Equals(b);
-    public Boolean NotEquals(String b) => throw new NotImplementedException();
-    public static Boolean operator !=(String a, String b) => a.NotEquals(b);
-    public Integer Count => throw new NotImplementedException();
-    public Character At(Integer n) => throw new NotImplementedException();
-    public Character this[Integer n] => At(n);
 }
 public readonly partial struct Boolean
 {
@@ -76,7 +50,6 @@ public readonly partial struct Boolean
     public String TypeName => "Boolean";
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
-    // Unimplemented concept functions
 }
 public readonly partial struct Character
 {
@@ -90,11 +63,6 @@ public readonly partial struct Character
     public String TypeName => "Character";
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
-    // Unimplemented concept functions
-    public Boolean Equals(Character b) => throw new NotImplementedException();
-    public static Boolean operator ==(Character a, Character b) => a.Equals(b);
-    public Boolean NotEquals(Character b) => throw new NotImplementedException();
-    public static Boolean operator !=(Character a, Character b) => a.NotEquals(b);
 }
 public readonly partial struct Count
 {
@@ -109,25 +77,25 @@ public readonly partial struct Count
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Count Zero => throw new NotImplementedException();
-    public Count One => throw new NotImplementedException();
-    public Count MinValue => throw new NotImplementedException();
-    public Count MaxValue => throw new NotImplementedException();
+    public Count Zero => (Value.Zero);
+    public Count One => (Value.One);
+    public Count MinValue => (Value.MinValue);
+    public Count MaxValue => (Value.MaxValue);
     public Number Unlerp(Count a, Count b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Count y) => throw new NotImplementedException();
-    public Count Reciprocal => throw new NotImplementedException();
-    public Count Negative => throw new NotImplementedException();
+    public Count Reciprocal => (Value.Reciprocal);
+    public Count Negative => (Value.Negative);
     public static Count operator -(Count self) => self.Negative;
-    public Count Multiply(Count other) => throw new NotImplementedException();
+    public Count Multiply(Count other) => (Value.Multiply(other.Value));
     public static Count operator *(Count self, Count other) => self.Multiply(other);
-    public Count Divide(Count other) => throw new NotImplementedException();
+    public Count Divide(Count other) => (Value.Divide(other.Value));
     public static Count operator /(Count self, Count other) => self.Divide(other);
-    public Count Modulo(Count other) => throw new NotImplementedException();
+    public Count Modulo(Count other) => (Value.Modulo(other.Value));
     public static Count operator %(Count self, Count other) => self.Modulo(other);
-    public Count Add(Count other) => throw new NotImplementedException();
+    public Count Add(Count other) => (Value.Add(other.Value));
     public static Count operator +(Count self, Count other) => self.Add(other);
-    public Count Subtract(Count other) => throw new NotImplementedException();
+    public Count Subtract(Count other) => (Value.Subtract(other.Value));
     public static Count operator -(Count self, Count other) => self.Subtract(other);
 }
 public readonly partial struct Index
@@ -161,25 +129,25 @@ public readonly partial struct Unit
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Unit Zero => throw new NotImplementedException();
-    public Unit One => throw new NotImplementedException();
-    public Unit MinValue => throw new NotImplementedException();
-    public Unit MaxValue => throw new NotImplementedException();
+    public Unit Zero => (Value.Zero);
+    public Unit One => (Value.One);
+    public Unit MinValue => (Value.MinValue);
+    public Unit MaxValue => (Value.MaxValue);
     public Number Unlerp(Unit a, Unit b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Unit y) => throw new NotImplementedException();
-    public Unit Reciprocal => throw new NotImplementedException();
-    public Unit Negative => throw new NotImplementedException();
+    public Unit Reciprocal => (Value.Reciprocal);
+    public Unit Negative => (Value.Negative);
     public static Unit operator -(Unit self) => self.Negative;
-    public Unit Multiply(Unit other) => throw new NotImplementedException();
+    public Unit Multiply(Unit other) => (Value.Multiply(other.Value));
     public static Unit operator *(Unit self, Unit other) => self.Multiply(other);
-    public Unit Divide(Unit other) => throw new NotImplementedException();
+    public Unit Divide(Unit other) => (Value.Divide(other.Value));
     public static Unit operator /(Unit self, Unit other) => self.Divide(other);
-    public Unit Modulo(Unit other) => throw new NotImplementedException();
+    public Unit Modulo(Unit other) => (Value.Modulo(other.Value));
     public static Unit operator %(Unit self, Unit other) => self.Modulo(other);
-    public Unit Add(Unit other) => throw new NotImplementedException();
+    public Unit Add(Unit other) => (Value.Add(other.Value));
     public static Unit operator +(Unit self, Unit other) => self.Add(other);
-    public Unit Subtract(Unit other) => throw new NotImplementedException();
+    public Unit Subtract(Unit other) => (Value.Subtract(other.Value));
     public static Unit operator -(Unit self, Unit other) => self.Subtract(other);
 }
 public readonly partial struct Percent
@@ -195,25 +163,25 @@ public readonly partial struct Percent
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Percent Zero => throw new NotImplementedException();
-    public Percent One => throw new NotImplementedException();
-    public Percent MinValue => throw new NotImplementedException();
-    public Percent MaxValue => throw new NotImplementedException();
+    public Percent Zero => (Value.Zero);
+    public Percent One => (Value.One);
+    public Percent MinValue => (Value.MinValue);
+    public Percent MaxValue => (Value.MaxValue);
     public Number Unlerp(Percent a, Percent b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Percent y) => throw new NotImplementedException();
-    public Percent Reciprocal => throw new NotImplementedException();
-    public Percent Negative => throw new NotImplementedException();
+    public Percent Reciprocal => (Value.Reciprocal);
+    public Percent Negative => (Value.Negative);
     public static Percent operator -(Percent self) => self.Negative;
-    public Percent Multiply(Percent other) => throw new NotImplementedException();
+    public Percent Multiply(Percent other) => (Value.Multiply(other.Value));
     public static Percent operator *(Percent self, Percent other) => self.Multiply(other);
-    public Percent Divide(Percent other) => throw new NotImplementedException();
+    public Percent Divide(Percent other) => (Value.Divide(other.Value));
     public static Percent operator /(Percent self, Percent other) => self.Divide(other);
-    public Percent Modulo(Percent other) => throw new NotImplementedException();
+    public Percent Modulo(Percent other) => (Value.Modulo(other.Value));
     public static Percent operator %(Percent self, Percent other) => self.Modulo(other);
-    public Percent Add(Percent other) => throw new NotImplementedException();
+    public Percent Add(Percent other) => (Value.Add(other.Value));
     public static Percent operator +(Percent self, Percent other) => self.Add(other);
-    public Percent Subtract(Percent other) => throw new NotImplementedException();
+    public Percent Subtract(Percent other) => (Value.Subtract(other.Value));
     public static Percent operator -(Percent self, Percent other) => self.Subtract(other);
 }
 public readonly partial struct Quaternion
@@ -383,22 +351,22 @@ public readonly partial struct Vector2D
     // Unimplemented concept functions
     public Number Unlerp(Vector2D a, Vector2D b) => throw new NotImplementedException();
     public Integer Compare(Vector2D y) => throw new NotImplementedException();
-    public Vector2D Zero => throw new NotImplementedException();
-    public Vector2D One => throw new NotImplementedException();
-    public Vector2D MinValue => throw new NotImplementedException();
-    public Vector2D MaxValue => throw new NotImplementedException();
-    public Vector2D Reciprocal => throw new NotImplementedException();
-    public Vector2D Negative => throw new NotImplementedException();
+    public Vector2D Zero => (X.Zero, Y.Zero);
+    public Vector2D One => (X.One, Y.One);
+    public Vector2D MinValue => (X.MinValue, Y.MinValue);
+    public Vector2D MaxValue => (X.MaxValue, Y.MaxValue);
+    public Vector2D Reciprocal => (X.Reciprocal, Y.Reciprocal);
+    public Vector2D Negative => (X.Negative, Y.Negative);
     public static Vector2D operator -(Vector2D self) => self.Negative;
-    public Vector2D Multiply(Vector2D other) => throw new NotImplementedException();
+    public Vector2D Multiply(Vector2D other) => (X.Multiply(other.X), Y.Multiply(other.Y));
     public static Vector2D operator *(Vector2D self, Vector2D other) => self.Multiply(other);
-    public Vector2D Divide(Vector2D other) => throw new NotImplementedException();
+    public Vector2D Divide(Vector2D other) => (X.Divide(other.X), Y.Divide(other.Y));
     public static Vector2D operator /(Vector2D self, Vector2D other) => self.Divide(other);
-    public Vector2D Modulo(Vector2D other) => throw new NotImplementedException();
+    public Vector2D Modulo(Vector2D other) => (X.Modulo(other.X), Y.Modulo(other.Y));
     public static Vector2D operator %(Vector2D self, Vector2D other) => self.Modulo(other);
-    public Vector2D Add(Vector2D other) => throw new NotImplementedException();
+    public Vector2D Add(Vector2D other) => (X.Add(other.X), Y.Add(other.Y));
     public static Vector2D operator +(Vector2D self, Vector2D other) => self.Add(other);
-    public Vector2D Subtract(Vector2D other) => throw new NotImplementedException();
+    public Vector2D Subtract(Vector2D other) => (X.Subtract(other.X), Y.Subtract(other.Y));
     public static Vector2D operator -(Vector2D self, Vector2D other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
@@ -424,22 +392,22 @@ public readonly partial struct Vector3D
     // Unimplemented concept functions
     public Number Unlerp(Vector3D a, Vector3D b) => throw new NotImplementedException();
     public Integer Compare(Vector3D y) => throw new NotImplementedException();
-    public Vector3D Zero => throw new NotImplementedException();
-    public Vector3D One => throw new NotImplementedException();
-    public Vector3D MinValue => throw new NotImplementedException();
-    public Vector3D MaxValue => throw new NotImplementedException();
-    public Vector3D Reciprocal => throw new NotImplementedException();
-    public Vector3D Negative => throw new NotImplementedException();
+    public Vector3D Zero => (X.Zero, Y.Zero, Z.Zero);
+    public Vector3D One => (X.One, Y.One, Z.One);
+    public Vector3D MinValue => (X.MinValue, Y.MinValue, Z.MinValue);
+    public Vector3D MaxValue => (X.MaxValue, Y.MaxValue, Z.MaxValue);
+    public Vector3D Reciprocal => (X.Reciprocal, Y.Reciprocal, Z.Reciprocal);
+    public Vector3D Negative => (X.Negative, Y.Negative, Z.Negative);
     public static Vector3D operator -(Vector3D self) => self.Negative;
-    public Vector3D Multiply(Vector3D other) => throw new NotImplementedException();
+    public Vector3D Multiply(Vector3D other) => (X.Multiply(other.X), Y.Multiply(other.Y), Z.Multiply(other.Z));
     public static Vector3D operator *(Vector3D self, Vector3D other) => self.Multiply(other);
-    public Vector3D Divide(Vector3D other) => throw new NotImplementedException();
+    public Vector3D Divide(Vector3D other) => (X.Divide(other.X), Y.Divide(other.Y), Z.Divide(other.Z));
     public static Vector3D operator /(Vector3D self, Vector3D other) => self.Divide(other);
-    public Vector3D Modulo(Vector3D other) => throw new NotImplementedException();
+    public Vector3D Modulo(Vector3D other) => (X.Modulo(other.X), Y.Modulo(other.Y), Z.Modulo(other.Z));
     public static Vector3D operator %(Vector3D self, Vector3D other) => self.Modulo(other);
-    public Vector3D Add(Vector3D other) => throw new NotImplementedException();
+    public Vector3D Add(Vector3D other) => (X.Add(other.X), Y.Add(other.Y), Z.Add(other.Z));
     public static Vector3D operator +(Vector3D self, Vector3D other) => self.Add(other);
-    public Vector3D Subtract(Vector3D other) => throw new NotImplementedException();
+    public Vector3D Subtract(Vector3D other) => (X.Subtract(other.X), Y.Subtract(other.Y), Z.Subtract(other.Z));
     public static Vector3D operator -(Vector3D self, Vector3D other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
@@ -467,22 +435,22 @@ public readonly partial struct Vector4D
     // Unimplemented concept functions
     public Number Unlerp(Vector4D a, Vector4D b) => throw new NotImplementedException();
     public Integer Compare(Vector4D y) => throw new NotImplementedException();
-    public Vector4D Zero => throw new NotImplementedException();
-    public Vector4D One => throw new NotImplementedException();
-    public Vector4D MinValue => throw new NotImplementedException();
-    public Vector4D MaxValue => throw new NotImplementedException();
-    public Vector4D Reciprocal => throw new NotImplementedException();
-    public Vector4D Negative => throw new NotImplementedException();
+    public Vector4D Zero => (X.Zero, Y.Zero, Z.Zero, W.Zero);
+    public Vector4D One => (X.One, Y.One, Z.One, W.One);
+    public Vector4D MinValue => (X.MinValue, Y.MinValue, Z.MinValue, W.MinValue);
+    public Vector4D MaxValue => (X.MaxValue, Y.MaxValue, Z.MaxValue, W.MaxValue);
+    public Vector4D Reciprocal => (X.Reciprocal, Y.Reciprocal, Z.Reciprocal, W.Reciprocal);
+    public Vector4D Negative => (X.Negative, Y.Negative, Z.Negative, W.Negative);
     public static Vector4D operator -(Vector4D self) => self.Negative;
-    public Vector4D Multiply(Vector4D other) => throw new NotImplementedException();
+    public Vector4D Multiply(Vector4D other) => (X.Multiply(other.X), Y.Multiply(other.Y), Z.Multiply(other.Z), W.Multiply(other.W));
     public static Vector4D operator *(Vector4D self, Vector4D other) => self.Multiply(other);
-    public Vector4D Divide(Vector4D other) => throw new NotImplementedException();
+    public Vector4D Divide(Vector4D other) => (X.Divide(other.X), Y.Divide(other.Y), Z.Divide(other.Z), W.Divide(other.W));
     public static Vector4D operator /(Vector4D self, Vector4D other) => self.Divide(other);
-    public Vector4D Modulo(Vector4D other) => throw new NotImplementedException();
+    public Vector4D Modulo(Vector4D other) => (X.Modulo(other.X), Y.Modulo(other.Y), Z.Modulo(other.Z), W.Modulo(other.W));
     public static Vector4D operator %(Vector4D self, Vector4D other) => self.Modulo(other);
-    public Vector4D Add(Vector4D other) => throw new NotImplementedException();
+    public Vector4D Add(Vector4D other) => (X.Add(other.X), Y.Add(other.Y), Z.Add(other.Z), W.Add(other.W));
     public static Vector4D operator +(Vector4D self, Vector4D other) => self.Add(other);
-    public Vector4D Subtract(Vector4D other) => throw new NotImplementedException();
+    public Vector4D Subtract(Vector4D other) => (X.Subtract(other.X), Y.Subtract(other.Y), Z.Subtract(other.Z), W.Subtract(other.W));
     public static Vector4D operator -(Vector4D self, Vector4D other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
@@ -652,22 +620,22 @@ public readonly partial struct Complex
     // Unimplemented concept functions
     public Number Unlerp(Complex a, Complex b) => throw new NotImplementedException();
     public Integer Compare(Complex y) => throw new NotImplementedException();
-    public Complex Zero => throw new NotImplementedException();
-    public Complex One => throw new NotImplementedException();
-    public Complex MinValue => throw new NotImplementedException();
-    public Complex MaxValue => throw new NotImplementedException();
-    public Complex Reciprocal => throw new NotImplementedException();
-    public Complex Negative => throw new NotImplementedException();
+    public Complex Zero => (Real.Zero, Imaginary.Zero);
+    public Complex One => (Real.One, Imaginary.One);
+    public Complex MinValue => (Real.MinValue, Imaginary.MinValue);
+    public Complex MaxValue => (Real.MaxValue, Imaginary.MaxValue);
+    public Complex Reciprocal => (Real.Reciprocal, Imaginary.Reciprocal);
+    public Complex Negative => (Real.Negative, Imaginary.Negative);
     public static Complex operator -(Complex self) => self.Negative;
-    public Complex Multiply(Complex other) => throw new NotImplementedException();
+    public Complex Multiply(Complex other) => (Real.Multiply(other.Real), Imaginary.Multiply(other.Imaginary));
     public static Complex operator *(Complex self, Complex other) => self.Multiply(other);
-    public Complex Divide(Complex other) => throw new NotImplementedException();
+    public Complex Divide(Complex other) => (Real.Divide(other.Real), Imaginary.Divide(other.Imaginary));
     public static Complex operator /(Complex self, Complex other) => self.Divide(other);
-    public Complex Modulo(Complex other) => throw new NotImplementedException();
+    public Complex Modulo(Complex other) => (Real.Modulo(other.Real), Imaginary.Modulo(other.Imaginary));
     public static Complex operator %(Complex self, Complex other) => self.Modulo(other);
-    public Complex Add(Complex other) => throw new NotImplementedException();
+    public Complex Add(Complex other) => (Real.Add(other.Real), Imaginary.Add(other.Imaginary));
     public static Complex operator +(Complex self, Complex other) => self.Add(other);
-    public Complex Subtract(Complex other) => throw new NotImplementedException();
+    public Complex Subtract(Complex other) => (Real.Subtract(other.Real), Imaginary.Subtract(other.Imaginary));
     public static Complex operator -(Complex self, Complex other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
@@ -1367,25 +1335,25 @@ public readonly partial struct Proportion
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Proportion Zero => throw new NotImplementedException();
-    public Proportion One => throw new NotImplementedException();
-    public Proportion MinValue => throw new NotImplementedException();
-    public Proportion MaxValue => throw new NotImplementedException();
+    public Proportion Zero => (Value.Zero);
+    public Proportion One => (Value.One);
+    public Proportion MinValue => (Value.MinValue);
+    public Proportion MaxValue => (Value.MaxValue);
     public Number Unlerp(Proportion a, Proportion b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Proportion y) => throw new NotImplementedException();
-    public Proportion Reciprocal => throw new NotImplementedException();
-    public Proportion Negative => throw new NotImplementedException();
+    public Proportion Reciprocal => (Value.Reciprocal);
+    public Proportion Negative => (Value.Negative);
     public static Proportion operator -(Proportion self) => self.Negative;
-    public Proportion Multiply(Proportion other) => throw new NotImplementedException();
+    public Proportion Multiply(Proportion other) => (Value.Multiply(other.Value));
     public static Proportion operator *(Proportion self, Proportion other) => self.Multiply(other);
-    public Proportion Divide(Proportion other) => throw new NotImplementedException();
+    public Proportion Divide(Proportion other) => (Value.Divide(other.Value));
     public static Proportion operator /(Proportion self, Proportion other) => self.Divide(other);
-    public Proportion Modulo(Proportion other) => throw new NotImplementedException();
+    public Proportion Modulo(Proportion other) => (Value.Modulo(other.Value));
     public static Proportion operator %(Proportion self, Proportion other) => self.Modulo(other);
-    public Proportion Add(Proportion other) => throw new NotImplementedException();
+    public Proportion Add(Proportion other) => (Value.Add(other.Value));
     public static Proportion operator +(Proportion self, Proportion other) => self.Add(other);
-    public Proportion Subtract(Proportion other) => throw new NotImplementedException();
+    public Proportion Subtract(Proportion other) => (Value.Subtract(other.Value));
     public static Proportion operator -(Proportion self, Proportion other) => self.Subtract(other);
 }
 public readonly partial struct Fraction
@@ -1443,11 +1411,11 @@ public readonly partial struct Length
     public Number Unlerp(Length a, Length b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Length y) => throw new NotImplementedException();
-    public Length Multiply(Length other) => throw new NotImplementedException();
+    public Length Multiply(Length other) => (Meters.Multiply(other.Meters));
     public static Length operator *(Length self, Length other) => self.Multiply(other);
-    public Length Divide(Length other) => throw new NotImplementedException();
+    public Length Divide(Length other) => (Meters.Divide(other.Meters));
     public static Length operator /(Length self, Length other) => self.Divide(other);
-    public Length Modulo(Length other) => throw new NotImplementedException();
+    public Length Modulo(Length other) => (Meters.Modulo(other.Meters));
     public static Length operator %(Length self, Length other) => self.Modulo(other);
     public Length Add(Number other) => throw new NotImplementedException();
     public static Length operator +(Length self, Number other) => self.Add(other);
@@ -1472,11 +1440,11 @@ public readonly partial struct Mass
     public Number Unlerp(Mass a, Mass b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Mass y) => throw new NotImplementedException();
-    public Mass Multiply(Mass other) => throw new NotImplementedException();
+    public Mass Multiply(Mass other) => (Kilograms.Multiply(other.Kilograms));
     public static Mass operator *(Mass self, Mass other) => self.Multiply(other);
-    public Mass Divide(Mass other) => throw new NotImplementedException();
+    public Mass Divide(Mass other) => (Kilograms.Divide(other.Kilograms));
     public static Mass operator /(Mass self, Mass other) => self.Divide(other);
-    public Mass Modulo(Mass other) => throw new NotImplementedException();
+    public Mass Modulo(Mass other) => (Kilograms.Modulo(other.Kilograms));
     public static Mass operator %(Mass self, Mass other) => self.Modulo(other);
     public Mass Add(Number other) => throw new NotImplementedException();
     public static Mass operator +(Mass self, Number other) => self.Add(other);
@@ -1501,11 +1469,11 @@ public readonly partial struct Temperature
     public Number Unlerp(Temperature a, Temperature b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Temperature y) => throw new NotImplementedException();
-    public Temperature Multiply(Temperature other) => throw new NotImplementedException();
+    public Temperature Multiply(Temperature other) => (Celsius.Multiply(other.Celsius));
     public static Temperature operator *(Temperature self, Temperature other) => self.Multiply(other);
-    public Temperature Divide(Temperature other) => throw new NotImplementedException();
+    public Temperature Divide(Temperature other) => (Celsius.Divide(other.Celsius));
     public static Temperature operator /(Temperature self, Temperature other) => self.Divide(other);
-    public Temperature Modulo(Temperature other) => throw new NotImplementedException();
+    public Temperature Modulo(Temperature other) => (Celsius.Modulo(other.Celsius));
     public static Temperature operator %(Temperature self, Temperature other) => self.Modulo(other);
     public Temperature Add(Number other) => throw new NotImplementedException();
     public static Temperature operator +(Temperature self, Number other) => self.Add(other);
@@ -1530,11 +1498,11 @@ public readonly partial struct Time
     public Number Unlerp(Time a, Time b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Time y) => throw new NotImplementedException();
-    public Time Multiply(Time other) => throw new NotImplementedException();
+    public Time Multiply(Time other) => (Seconds.Multiply(other.Seconds));
     public static Time operator *(Time self, Time other) => self.Multiply(other);
-    public Time Divide(Time other) => throw new NotImplementedException();
+    public Time Divide(Time other) => (Seconds.Divide(other.Seconds));
     public static Time operator /(Time self, Time other) => self.Divide(other);
-    public Time Modulo(Time other) => throw new NotImplementedException();
+    public Time Modulo(Time other) => (Seconds.Modulo(other.Seconds));
     public static Time operator %(Time self, Time other) => self.Modulo(other);
     public Time Add(Number other) => throw new NotImplementedException();
     public static Time operator +(Time self, Number other) => self.Add(other);
@@ -1870,22 +1838,22 @@ public readonly partial struct UV
     // Unimplemented concept functions
     public Number Unlerp(UV a, UV b) => throw new NotImplementedException();
     public Integer Compare(UV y) => throw new NotImplementedException();
-    public UV Zero => throw new NotImplementedException();
-    public UV One => throw new NotImplementedException();
-    public UV MinValue => throw new NotImplementedException();
-    public UV MaxValue => throw new NotImplementedException();
-    public UV Reciprocal => throw new NotImplementedException();
-    public UV Negative => throw new NotImplementedException();
+    public UV Zero => (U.Zero, V.Zero);
+    public UV One => (U.One, V.One);
+    public UV MinValue => (U.MinValue, V.MinValue);
+    public UV MaxValue => (U.MaxValue, V.MaxValue);
+    public UV Reciprocal => (U.Reciprocal, V.Reciprocal);
+    public UV Negative => (U.Negative, V.Negative);
     public static UV operator -(UV self) => self.Negative;
-    public UV Multiply(UV other) => throw new NotImplementedException();
+    public UV Multiply(UV other) => (U.Multiply(other.U), V.Multiply(other.V));
     public static UV operator *(UV self, UV other) => self.Multiply(other);
-    public UV Divide(UV other) => throw new NotImplementedException();
+    public UV Divide(UV other) => (U.Divide(other.U), V.Divide(other.V));
     public static UV operator /(UV self, UV other) => self.Divide(other);
-    public UV Modulo(UV other) => throw new NotImplementedException();
+    public UV Modulo(UV other) => (U.Modulo(other.U), V.Modulo(other.V));
     public static UV operator %(UV self, UV other) => self.Modulo(other);
-    public UV Add(UV other) => throw new NotImplementedException();
+    public UV Add(UV other) => (U.Add(other.U), V.Add(other.V));
     public static UV operator +(UV self, UV other) => self.Add(other);
-    public UV Subtract(UV other) => throw new NotImplementedException();
+    public UV Subtract(UV other) => (U.Subtract(other.U), V.Subtract(other.V));
     public static UV operator -(UV self, UV other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
@@ -1911,22 +1879,22 @@ public readonly partial struct UVW
     // Unimplemented concept functions
     public Number Unlerp(UVW a, UVW b) => throw new NotImplementedException();
     public Integer Compare(UVW y) => throw new NotImplementedException();
-    public UVW Zero => throw new NotImplementedException();
-    public UVW One => throw new NotImplementedException();
-    public UVW MinValue => throw new NotImplementedException();
-    public UVW MaxValue => throw new NotImplementedException();
-    public UVW Reciprocal => throw new NotImplementedException();
-    public UVW Negative => throw new NotImplementedException();
+    public UVW Zero => (U.Zero, V.Zero, W.Zero);
+    public UVW One => (U.One, V.One, W.One);
+    public UVW MinValue => (U.MinValue, V.MinValue, W.MinValue);
+    public UVW MaxValue => (U.MaxValue, V.MaxValue, W.MaxValue);
+    public UVW Reciprocal => (U.Reciprocal, V.Reciprocal, W.Reciprocal);
+    public UVW Negative => (U.Negative, V.Negative, W.Negative);
     public static UVW operator -(UVW self) => self.Negative;
-    public UVW Multiply(UVW other) => throw new NotImplementedException();
+    public UVW Multiply(UVW other) => (U.Multiply(other.U), V.Multiply(other.V), W.Multiply(other.W));
     public static UVW operator *(UVW self, UVW other) => self.Multiply(other);
-    public UVW Divide(UVW other) => throw new NotImplementedException();
+    public UVW Divide(UVW other) => (U.Divide(other.U), V.Divide(other.V), W.Divide(other.W));
     public static UVW operator /(UVW self, UVW other) => self.Divide(other);
-    public UVW Modulo(UVW other) => throw new NotImplementedException();
+    public UVW Modulo(UVW other) => (U.Modulo(other.U), V.Modulo(other.V), W.Modulo(other.W));
     public static UVW operator %(UVW self, UVW other) => self.Modulo(other);
-    public UVW Add(UVW other) => throw new NotImplementedException();
+    public UVW Add(UVW other) => (U.Add(other.U), V.Add(other.V), W.Add(other.W));
     public static UVW operator +(UVW self, UVW other) => self.Add(other);
-    public UVW Subtract(UVW other) => throw new NotImplementedException();
+    public UVW Subtract(UVW other) => (U.Subtract(other.U), V.Subtract(other.V), W.Subtract(other.W));
     public static UVW operator -(UVW self, UVW other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
@@ -2046,11 +2014,11 @@ public readonly partial struct Area
     public Number Unlerp(Area a, Area b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Area y) => throw new NotImplementedException();
-    public Area Multiply(Area other) => throw new NotImplementedException();
+    public Area Multiply(Area other) => (MetersSquared.Multiply(other.MetersSquared));
     public static Area operator *(Area self, Area other) => self.Multiply(other);
-    public Area Divide(Area other) => throw new NotImplementedException();
+    public Area Divide(Area other) => (MetersSquared.Divide(other.MetersSquared));
     public static Area operator /(Area self, Area other) => self.Divide(other);
-    public Area Modulo(Area other) => throw new NotImplementedException();
+    public Area Modulo(Area other) => (MetersSquared.Modulo(other.MetersSquared));
     public static Area operator %(Area self, Area other) => self.Modulo(other);
     public Area Add(Number other) => throw new NotImplementedException();
     public static Area operator +(Area self, Number other) => self.Add(other);
@@ -2075,11 +2043,11 @@ public readonly partial struct Volume
     public Number Unlerp(Volume a, Volume b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Volume y) => throw new NotImplementedException();
-    public Volume Multiply(Volume other) => throw new NotImplementedException();
+    public Volume Multiply(Volume other) => (MetersCubed.Multiply(other.MetersCubed));
     public static Volume operator *(Volume self, Volume other) => self.Multiply(other);
-    public Volume Divide(Volume other) => throw new NotImplementedException();
+    public Volume Divide(Volume other) => (MetersCubed.Divide(other.MetersCubed));
     public static Volume operator /(Volume self, Volume other) => self.Divide(other);
-    public Volume Modulo(Volume other) => throw new NotImplementedException();
+    public Volume Modulo(Volume other) => (MetersCubed.Modulo(other.MetersCubed));
     public static Volume operator %(Volume self, Volume other) => self.Modulo(other);
     public Volume Add(Number other) => throw new NotImplementedException();
     public static Volume operator +(Volume self, Number other) => self.Add(other);
@@ -2104,11 +2072,11 @@ public readonly partial struct Velocity
     public Number Unlerp(Velocity a, Velocity b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Velocity y) => throw new NotImplementedException();
-    public Velocity Multiply(Velocity other) => throw new NotImplementedException();
+    public Velocity Multiply(Velocity other) => (MetersPerSecond.Multiply(other.MetersPerSecond));
     public static Velocity operator *(Velocity self, Velocity other) => self.Multiply(other);
-    public Velocity Divide(Velocity other) => throw new NotImplementedException();
+    public Velocity Divide(Velocity other) => (MetersPerSecond.Divide(other.MetersPerSecond));
     public static Velocity operator /(Velocity self, Velocity other) => self.Divide(other);
-    public Velocity Modulo(Velocity other) => throw new NotImplementedException();
+    public Velocity Modulo(Velocity other) => (MetersPerSecond.Modulo(other.MetersPerSecond));
     public static Velocity operator %(Velocity self, Velocity other) => self.Modulo(other);
     public Velocity Add(Number other) => throw new NotImplementedException();
     public static Velocity operator +(Velocity self, Number other) => self.Add(other);
@@ -2133,11 +2101,11 @@ public readonly partial struct Acceleration
     public Number Unlerp(Acceleration a, Acceleration b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Acceleration y) => throw new NotImplementedException();
-    public Acceleration Multiply(Acceleration other) => throw new NotImplementedException();
+    public Acceleration Multiply(Acceleration other) => (MetersPerSecondSquared.Multiply(other.MetersPerSecondSquared));
     public static Acceleration operator *(Acceleration self, Acceleration other) => self.Multiply(other);
-    public Acceleration Divide(Acceleration other) => throw new NotImplementedException();
+    public Acceleration Divide(Acceleration other) => (MetersPerSecondSquared.Divide(other.MetersPerSecondSquared));
     public static Acceleration operator /(Acceleration self, Acceleration other) => self.Divide(other);
-    public Acceleration Modulo(Acceleration other) => throw new NotImplementedException();
+    public Acceleration Modulo(Acceleration other) => (MetersPerSecondSquared.Modulo(other.MetersPerSecondSquared));
     public static Acceleration operator %(Acceleration self, Acceleration other) => self.Modulo(other);
     public Acceleration Add(Number other) => throw new NotImplementedException();
     public static Acceleration operator +(Acceleration self, Number other) => self.Add(other);
@@ -2162,11 +2130,11 @@ public readonly partial struct Force
     public Number Unlerp(Force a, Force b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Force y) => throw new NotImplementedException();
-    public Force Multiply(Force other) => throw new NotImplementedException();
+    public Force Multiply(Force other) => (Newtons.Multiply(other.Newtons));
     public static Force operator *(Force self, Force other) => self.Multiply(other);
-    public Force Divide(Force other) => throw new NotImplementedException();
+    public Force Divide(Force other) => (Newtons.Divide(other.Newtons));
     public static Force operator /(Force self, Force other) => self.Divide(other);
-    public Force Modulo(Force other) => throw new NotImplementedException();
+    public Force Modulo(Force other) => (Newtons.Modulo(other.Newtons));
     public static Force operator %(Force self, Force other) => self.Modulo(other);
     public Force Add(Number other) => throw new NotImplementedException();
     public static Force operator +(Force self, Number other) => self.Add(other);
@@ -2191,11 +2159,11 @@ public readonly partial struct Pressure
     public Number Unlerp(Pressure a, Pressure b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Pressure y) => throw new NotImplementedException();
-    public Pressure Multiply(Pressure other) => throw new NotImplementedException();
+    public Pressure Multiply(Pressure other) => (Pascals.Multiply(other.Pascals));
     public static Pressure operator *(Pressure self, Pressure other) => self.Multiply(other);
-    public Pressure Divide(Pressure other) => throw new NotImplementedException();
+    public Pressure Divide(Pressure other) => (Pascals.Divide(other.Pascals));
     public static Pressure operator /(Pressure self, Pressure other) => self.Divide(other);
-    public Pressure Modulo(Pressure other) => throw new NotImplementedException();
+    public Pressure Modulo(Pressure other) => (Pascals.Modulo(other.Pascals));
     public static Pressure operator %(Pressure self, Pressure other) => self.Modulo(other);
     public Pressure Add(Number other) => throw new NotImplementedException();
     public static Pressure operator +(Pressure self, Number other) => self.Add(other);
@@ -2220,11 +2188,11 @@ public readonly partial struct Energy
     public Number Unlerp(Energy a, Energy b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Energy y) => throw new NotImplementedException();
-    public Energy Multiply(Energy other) => throw new NotImplementedException();
+    public Energy Multiply(Energy other) => (Joules.Multiply(other.Joules));
     public static Energy operator *(Energy self, Energy other) => self.Multiply(other);
-    public Energy Divide(Energy other) => throw new NotImplementedException();
+    public Energy Divide(Energy other) => (Joules.Divide(other.Joules));
     public static Energy operator /(Energy self, Energy other) => self.Divide(other);
-    public Energy Modulo(Energy other) => throw new NotImplementedException();
+    public Energy Modulo(Energy other) => (Joules.Modulo(other.Joules));
     public static Energy operator %(Energy self, Energy other) => self.Modulo(other);
     public Energy Add(Number other) => throw new NotImplementedException();
     public static Energy operator +(Energy self, Number other) => self.Add(other);
@@ -2249,11 +2217,11 @@ public readonly partial struct Memory
     public Number Unlerp(Memory a, Memory b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Memory y) => throw new NotImplementedException();
-    public Memory Multiply(Memory other) => throw new NotImplementedException();
+    public Memory Multiply(Memory other) => (Bytes.Multiply(other.Bytes));
     public static Memory operator *(Memory self, Memory other) => self.Multiply(other);
-    public Memory Divide(Memory other) => throw new NotImplementedException();
+    public Memory Divide(Memory other) => (Bytes.Divide(other.Bytes));
     public static Memory operator /(Memory self, Memory other) => self.Divide(other);
-    public Memory Modulo(Memory other) => throw new NotImplementedException();
+    public Memory Modulo(Memory other) => (Bytes.Modulo(other.Bytes));
     public static Memory operator %(Memory self, Memory other) => self.Modulo(other);
     public Memory Add(Number other) => throw new NotImplementedException();
     public static Memory operator +(Memory self, Number other) => self.Add(other);
@@ -2278,11 +2246,11 @@ public readonly partial struct Frequency
     public Number Unlerp(Frequency a, Frequency b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Frequency y) => throw new NotImplementedException();
-    public Frequency Multiply(Frequency other) => throw new NotImplementedException();
+    public Frequency Multiply(Frequency other) => (Hertz.Multiply(other.Hertz));
     public static Frequency operator *(Frequency self, Frequency other) => self.Multiply(other);
-    public Frequency Divide(Frequency other) => throw new NotImplementedException();
+    public Frequency Divide(Frequency other) => (Hertz.Divide(other.Hertz));
     public static Frequency operator /(Frequency self, Frequency other) => self.Divide(other);
-    public Frequency Modulo(Frequency other) => throw new NotImplementedException();
+    public Frequency Modulo(Frequency other) => (Hertz.Modulo(other.Hertz));
     public static Frequency operator %(Frequency self, Frequency other) => self.Modulo(other);
     public Frequency Add(Number other) => throw new NotImplementedException();
     public static Frequency operator +(Frequency self, Number other) => self.Add(other);
@@ -2307,11 +2275,11 @@ public readonly partial struct Loudness
     public Number Unlerp(Loudness a, Loudness b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Loudness y) => throw new NotImplementedException();
-    public Loudness Multiply(Loudness other) => throw new NotImplementedException();
+    public Loudness Multiply(Loudness other) => (Decibels.Multiply(other.Decibels));
     public static Loudness operator *(Loudness self, Loudness other) => self.Multiply(other);
-    public Loudness Divide(Loudness other) => throw new NotImplementedException();
+    public Loudness Divide(Loudness other) => (Decibels.Divide(other.Decibels));
     public static Loudness operator /(Loudness self, Loudness other) => self.Divide(other);
-    public Loudness Modulo(Loudness other) => throw new NotImplementedException();
+    public Loudness Modulo(Loudness other) => (Decibels.Modulo(other.Decibels));
     public static Loudness operator %(Loudness self, Loudness other) => self.Modulo(other);
     public Loudness Add(Number other) => throw new NotImplementedException();
     public static Loudness operator +(Loudness self, Number other) => self.Add(other);
@@ -2336,11 +2304,11 @@ public readonly partial struct LuminousIntensity
     public Number Unlerp(LuminousIntensity a, LuminousIntensity b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(LuminousIntensity y) => throw new NotImplementedException();
-    public LuminousIntensity Multiply(LuminousIntensity other) => throw new NotImplementedException();
+    public LuminousIntensity Multiply(LuminousIntensity other) => (Candelas.Multiply(other.Candelas));
     public static LuminousIntensity operator *(LuminousIntensity self, LuminousIntensity other) => self.Multiply(other);
-    public LuminousIntensity Divide(LuminousIntensity other) => throw new NotImplementedException();
+    public LuminousIntensity Divide(LuminousIntensity other) => (Candelas.Divide(other.Candelas));
     public static LuminousIntensity operator /(LuminousIntensity self, LuminousIntensity other) => self.Divide(other);
-    public LuminousIntensity Modulo(LuminousIntensity other) => throw new NotImplementedException();
+    public LuminousIntensity Modulo(LuminousIntensity other) => (Candelas.Modulo(other.Candelas));
     public static LuminousIntensity operator %(LuminousIntensity self, LuminousIntensity other) => self.Modulo(other);
     public LuminousIntensity Add(Number other) => throw new NotImplementedException();
     public static LuminousIntensity operator +(LuminousIntensity self, Number other) => self.Add(other);
@@ -2365,11 +2333,11 @@ public readonly partial struct ElectricPotential
     public Number Unlerp(ElectricPotential a, ElectricPotential b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(ElectricPotential y) => throw new NotImplementedException();
-    public ElectricPotential Multiply(ElectricPotential other) => throw new NotImplementedException();
+    public ElectricPotential Multiply(ElectricPotential other) => (Volts.Multiply(other.Volts));
     public static ElectricPotential operator *(ElectricPotential self, ElectricPotential other) => self.Multiply(other);
-    public ElectricPotential Divide(ElectricPotential other) => throw new NotImplementedException();
+    public ElectricPotential Divide(ElectricPotential other) => (Volts.Divide(other.Volts));
     public static ElectricPotential operator /(ElectricPotential self, ElectricPotential other) => self.Divide(other);
-    public ElectricPotential Modulo(ElectricPotential other) => throw new NotImplementedException();
+    public ElectricPotential Modulo(ElectricPotential other) => (Volts.Modulo(other.Volts));
     public static ElectricPotential operator %(ElectricPotential self, ElectricPotential other) => self.Modulo(other);
     public ElectricPotential Add(Number other) => throw new NotImplementedException();
     public static ElectricPotential operator +(ElectricPotential self, Number other) => self.Add(other);
@@ -2394,11 +2362,11 @@ public readonly partial struct ElectricCharge
     public Number Unlerp(ElectricCharge a, ElectricCharge b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(ElectricCharge y) => throw new NotImplementedException();
-    public ElectricCharge Multiply(ElectricCharge other) => throw new NotImplementedException();
+    public ElectricCharge Multiply(ElectricCharge other) => (Columbs.Multiply(other.Columbs));
     public static ElectricCharge operator *(ElectricCharge self, ElectricCharge other) => self.Multiply(other);
-    public ElectricCharge Divide(ElectricCharge other) => throw new NotImplementedException();
+    public ElectricCharge Divide(ElectricCharge other) => (Columbs.Divide(other.Columbs));
     public static ElectricCharge operator /(ElectricCharge self, ElectricCharge other) => self.Divide(other);
-    public ElectricCharge Modulo(ElectricCharge other) => throw new NotImplementedException();
+    public ElectricCharge Modulo(ElectricCharge other) => (Columbs.Modulo(other.Columbs));
     public static ElectricCharge operator %(ElectricCharge self, ElectricCharge other) => self.Modulo(other);
     public ElectricCharge Add(Number other) => throw new NotImplementedException();
     public static ElectricCharge operator +(ElectricCharge self, Number other) => self.Add(other);
@@ -2423,11 +2391,11 @@ public readonly partial struct ElectricCurrent
     public Number Unlerp(ElectricCurrent a, ElectricCurrent b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(ElectricCurrent y) => throw new NotImplementedException();
-    public ElectricCurrent Multiply(ElectricCurrent other) => throw new NotImplementedException();
+    public ElectricCurrent Multiply(ElectricCurrent other) => (Amperes.Multiply(other.Amperes));
     public static ElectricCurrent operator *(ElectricCurrent self, ElectricCurrent other) => self.Multiply(other);
-    public ElectricCurrent Divide(ElectricCurrent other) => throw new NotImplementedException();
+    public ElectricCurrent Divide(ElectricCurrent other) => (Amperes.Divide(other.Amperes));
     public static ElectricCurrent operator /(ElectricCurrent self, ElectricCurrent other) => self.Divide(other);
-    public ElectricCurrent Modulo(ElectricCurrent other) => throw new NotImplementedException();
+    public ElectricCurrent Modulo(ElectricCurrent other) => (Amperes.Modulo(other.Amperes));
     public static ElectricCurrent operator %(ElectricCurrent self, ElectricCurrent other) => self.Modulo(other);
     public ElectricCurrent Add(Number other) => throw new NotImplementedException();
     public static ElectricCurrent operator +(ElectricCurrent self, Number other) => self.Add(other);
@@ -2452,11 +2420,11 @@ public readonly partial struct ElectricResistance
     public Number Unlerp(ElectricResistance a, ElectricResistance b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(ElectricResistance y) => throw new NotImplementedException();
-    public ElectricResistance Multiply(ElectricResistance other) => throw new NotImplementedException();
+    public ElectricResistance Multiply(ElectricResistance other) => (Ohms.Multiply(other.Ohms));
     public static ElectricResistance operator *(ElectricResistance self, ElectricResistance other) => self.Multiply(other);
-    public ElectricResistance Divide(ElectricResistance other) => throw new NotImplementedException();
+    public ElectricResistance Divide(ElectricResistance other) => (Ohms.Divide(other.Ohms));
     public static ElectricResistance operator /(ElectricResistance self, ElectricResistance other) => self.Divide(other);
-    public ElectricResistance Modulo(ElectricResistance other) => throw new NotImplementedException();
+    public ElectricResistance Modulo(ElectricResistance other) => (Ohms.Modulo(other.Ohms));
     public static ElectricResistance operator %(ElectricResistance self, ElectricResistance other) => self.Modulo(other);
     public ElectricResistance Add(Number other) => throw new NotImplementedException();
     public static ElectricResistance operator +(ElectricResistance self, Number other) => self.Add(other);
@@ -2481,11 +2449,11 @@ public readonly partial struct Power
     public Number Unlerp(Power a, Power b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Power y) => throw new NotImplementedException();
-    public Power Multiply(Power other) => throw new NotImplementedException();
+    public Power Multiply(Power other) => (Watts.Multiply(other.Watts));
     public static Power operator *(Power self, Power other) => self.Multiply(other);
-    public Power Divide(Power other) => throw new NotImplementedException();
+    public Power Divide(Power other) => (Watts.Divide(other.Watts));
     public static Power operator /(Power self, Power other) => self.Divide(other);
-    public Power Modulo(Power other) => throw new NotImplementedException();
+    public Power Modulo(Power other) => (Watts.Modulo(other.Watts));
     public static Power operator %(Power self, Power other) => self.Modulo(other);
     public Power Add(Number other) => throw new NotImplementedException();
     public static Power operator +(Power self, Number other) => self.Add(other);
@@ -2510,11 +2478,11 @@ public readonly partial struct Density
     public Number Unlerp(Density a, Density b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Density y) => throw new NotImplementedException();
-    public Density Multiply(Density other) => throw new NotImplementedException();
+    public Density Multiply(Density other) => (KilogramsPerMeterCubed.Multiply(other.KilogramsPerMeterCubed));
     public static Density operator *(Density self, Density other) => self.Multiply(other);
-    public Density Divide(Density other) => throw new NotImplementedException();
+    public Density Divide(Density other) => (KilogramsPerMeterCubed.Divide(other.KilogramsPerMeterCubed));
     public static Density operator /(Density self, Density other) => self.Divide(other);
-    public Density Modulo(Density other) => throw new NotImplementedException();
+    public Density Modulo(Density other) => (KilogramsPerMeterCubed.Modulo(other.KilogramsPerMeterCubed));
     public static Density operator %(Density self, Density other) => self.Modulo(other);
     public Density Add(Number other) => throw new NotImplementedException();
     public static Density operator +(Density self, Number other) => self.Add(other);
@@ -2594,25 +2562,25 @@ public readonly partial struct Probability
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Probability Zero => throw new NotImplementedException();
-    public Probability One => throw new NotImplementedException();
-    public Probability MinValue => throw new NotImplementedException();
-    public Probability MaxValue => throw new NotImplementedException();
+    public Probability Zero => (Value.Zero);
+    public Probability One => (Value.One);
+    public Probability MinValue => (Value.MinValue);
+    public Probability MaxValue => (Value.MaxValue);
     public Number Unlerp(Probability a, Probability b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Probability y) => throw new NotImplementedException();
-    public Probability Reciprocal => throw new NotImplementedException();
-    public Probability Negative => throw new NotImplementedException();
+    public Probability Reciprocal => (Value.Reciprocal);
+    public Probability Negative => (Value.Negative);
     public static Probability operator -(Probability self) => self.Negative;
-    public Probability Multiply(Probability other) => throw new NotImplementedException();
+    public Probability Multiply(Probability other) => (Value.Multiply(other.Value));
     public static Probability operator *(Probability self, Probability other) => self.Multiply(other);
-    public Probability Divide(Probability other) => throw new NotImplementedException();
+    public Probability Divide(Probability other) => (Value.Divide(other.Value));
     public static Probability operator /(Probability self, Probability other) => self.Divide(other);
-    public Probability Modulo(Probability other) => throw new NotImplementedException();
+    public Probability Modulo(Probability other) => (Value.Modulo(other.Value));
     public static Probability operator %(Probability self, Probability other) => self.Modulo(other);
-    public Probability Add(Probability other) => throw new NotImplementedException();
+    public Probability Add(Probability other) => (Value.Add(other.Value));
     public static Probability operator +(Probability self, Probability other) => self.Add(other);
-    public Probability Subtract(Probability other) => throw new NotImplementedException();
+    public Probability Subtract(Probability other) => (Value.Subtract(other.Value));
     public static Probability operator -(Probability self, Probability other) => self.Subtract(other);
 }
 public readonly partial struct BinomialDistribution
