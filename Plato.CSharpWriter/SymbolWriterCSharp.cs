@@ -30,6 +30,13 @@ namespace Plato.CSharpWriter
             "Function3",
         };
 
+        public static HashSet<string> IgnoredFunctions = new HashSet<string>()
+        {
+            "FieldNames",
+            "FieldValues",
+            "TypeName",
+        };
+
         public static Dictionary<string, string> PrimitiveTypes = new Dictionary<string, string>()
         {
             { "Number", "double" },
@@ -64,9 +71,9 @@ namespace Plato.CSharpWriter
         public void WriteConceptImplementation(ConceptImplementation ci, string indent = "  ")
         {
             WriteLine($"{indent}Concept={ci.Concept.Name} Expr={ci.Expression} Subs={ci.Substitutions}");
-            foreach (var fa in ci.Functions)
+            foreach (var fa in ci.ImplementedFunctions)
                 WriteAnalysis(fa, indent);
-            foreach (var ci2 in ci.Inherited)
+            foreach (var ci2 in ci.Children)
                 WriteConceptImplementation(ci2, indent + "  ");
         }
 
@@ -406,11 +413,21 @@ namespace Plato.CSharpWriter
             var fieldValuesAsDynamicsStr = fieldNames.Select(n => $"(Dynamic){n}").JoinStringsWithComma();
             WriteLine($"public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] {{ {fieldValuesAsDynamicsStr} }};");
 
-            /* TODO:
+            /* TODO:    
             var fieldNamesAsStrings = string.Join(", ", fieldNames.Select(f => $"\"{f}\""));
             WriteLine($"public string[] FieldNames() => new[] {{ {fieldNamesAsStrings} }};");
             WriteLine($"public object[] FieldValues() => new[] {{ {fieldNamesString} }};");
             */
+
+            WriteLine("// Unimplemented concept functions");
+            foreach (var f in concreteType.UnimplementedFunctions)
+            {
+                if (IgnoredFunctions.Contains(f.Name))
+                    continue;
+                // TODO: create actual implementations .
+                WriteFunction(f, concreteType);
+            }
+
 
             WriteEndBlock();
             

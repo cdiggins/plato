@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Utils;
+using Parakeet.CST;
 using Plato.Compiler.Symbols;
 using Plato.Compiler.Types;
 
@@ -9,16 +11,17 @@ namespace Plato.Compiler.Analysis
     /// <summary>
     /// Represents a specific concept implementation in a type. 
     /// </summary>
-    public class ConceptImplementation
+    public class ConceptImplementation : ITree<ConceptImplementation>
     {
         public LibrarySet Libraries { get; }
         public ConceptImplementation InheritedFrom { get; }
-        public IReadOnlyList<ConceptImplementation> Inherited { get; }
+        public IEnumerable<ConceptImplementation> Children { get; }
         public TypeExpression Expression { get; }
         public TypeDefinition Concept => Expression.Definition;
         public TypeDefinition ConcreteType { get;}
         public TypeSubstitutions Substitutions { get; }
-        public IReadOnlyList<FunctionInstance> Functions { get; }
+        public IReadOnlyList<FunctionInstance> ImplementedFunctions { get; }
+        public IReadOnlyList<FunctionInstance> DeclaredFunctions { get; }
 
         public ConceptImplementation(
             LibrarySet libraries,
@@ -43,10 +46,12 @@ namespace Plato.Compiler.Analysis
 
             Verifier.Assert(Concept.IsConcept());
 
-            Inherited = Concept.Inherits.Select(CreateInheritedConceptImplementation).ToList();
+            Children = Concept.Inherits.Select(CreateInheritedConceptImplementation).ToList();
 
             var implementedFunctions = libraries.GetFunctionsForType(Concept.Name);
-            Functions = implementedFunctions.Select(AnalyzeConceptFunction).ToList();
+            ImplementedFunctions = implementedFunctions.Select(AnalyzeConceptFunction).ToList();
+
+            DeclaredFunctions = Concept.Functions.Select(AnalyzeConceptFunction).ToList();
         }
 
         public ConceptImplementation CreateInheritedConceptImplementation(TypeExpression inheritsType)
@@ -56,6 +61,6 @@ namespace Plato.Compiler.Analysis
             => new FunctionInstance(ConcreteType, function, Substitutions);
 
         public IEnumerable<FunctionInstance> AllFunctions()
-            => Functions.Concat(Inherited.SelectMany(i => i.AllFunctions()));
+            => ImplementedFunctions.Concat(Children.SelectMany(i => i.AllFunctions()));
     }
 }

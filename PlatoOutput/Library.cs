@@ -433,7 +433,7 @@ public partial class AlignedBox2D
     public Boolean Contains(Point2D value) => throw new NotImplementedException();
     public Boolean Contains(AlignedBox2D other) => throw new NotImplementedException();
     public Boolean Overlaps(AlignedBox2D y) => throw new NotImplementedException();
-    public Tuple2<AlignedBox2D, AlignedBox2D> Split(Number t) => throw new NotImplementedException();
+    public Tuple2<AlignedBox2D, AlignedBox2D> SplitAt(Number t) => throw new NotImplementedException();
     public Tuple2<AlignedBox2D, AlignedBox2D> Split => throw new NotImplementedException();
     public AlignedBox2D Left(Number t) => throw new NotImplementedException();
     public AlignedBox2D Right(Number t) => throw new NotImplementedException();
@@ -456,7 +456,7 @@ public partial class AlignedBox3D
     public Boolean Contains(Point3D value) => throw new NotImplementedException();
     public Boolean Contains(AlignedBox3D other) => throw new NotImplementedException();
     public Boolean Overlaps(AlignedBox3D y) => throw new NotImplementedException();
-    public Tuple2<AlignedBox3D, AlignedBox3D> Split(Number t) => throw new NotImplementedException();
+    public Tuple2<AlignedBox3D, AlignedBox3D> SplitAt(Number t) => throw new NotImplementedException();
     public Tuple2<AlignedBox3D, AlignedBox3D> Split => throw new NotImplementedException();
     public AlignedBox3D Left(Number t) => throw new NotImplementedException();
     public AlignedBox3D Right(Number t) => throw new NotImplementedException();
@@ -555,7 +555,7 @@ public partial class Line2D
     public Boolean Contains(Point2D value) => throw new NotImplementedException();
     public Boolean Contains(Line2D other) => throw new NotImplementedException();
     public Boolean Overlaps(Line2D y) => throw new NotImplementedException();
-    public Tuple2<Line2D, Line2D> Split(Number t) => throw new NotImplementedException();
+    public Tuple2<Line2D, Line2D> SplitAt(Number t) => throw new NotImplementedException();
     public Tuple2<Line2D, Line2D> Split => throw new NotImplementedException();
     public Line2D Left(Number t) => throw new NotImplementedException();
     public Line2D Right(Number t) => throw new NotImplementedException();
@@ -578,7 +578,7 @@ public partial class Line3D
     public Boolean Contains(Point3D value) => throw new NotImplementedException();
     public Boolean Contains(Line3D other) => throw new NotImplementedException();
     public Boolean Overlaps(Line3D y) => throw new NotImplementedException();
-    public Tuple2<Line3D, Line3D> Split(Number t) => throw new NotImplementedException();
+    public Tuple2<Line3D, Line3D> SplitAt(Number t) => throw new NotImplementedException();
     public Tuple2<Line3D, Line3D> Split => throw new NotImplementedException();
     public Line3D Left(Number t) => throw new NotImplementedException();
     public Line3D Right(Number t) => throw new NotImplementedException();
@@ -779,7 +779,7 @@ public partial class TimeRange
     public Boolean Contains(DateTime value) => throw new NotImplementedException();
     public Boolean Contains(TimeRange other) => throw new NotImplementedException();
     public Boolean Overlaps(TimeRange y) => throw new NotImplementedException();
-    public Tuple2<TimeRange, TimeRange> Split(Number t) => throw new NotImplementedException();
+    public Tuple2<TimeRange, TimeRange> SplitAt(Number t) => throw new NotImplementedException();
     public Tuple2<TimeRange, TimeRange> Split => throw new NotImplementedException();
     public TimeRange Left(Number t) => throw new NotImplementedException();
     public TimeRange Right(Number t) => throw new NotImplementedException();
@@ -805,7 +805,7 @@ public partial class AnglePair
     public Boolean Contains(Angle value) => throw new NotImplementedException();
     public Boolean Contains(AnglePair other) => throw new NotImplementedException();
     public Boolean Overlaps(AnglePair y) => throw new NotImplementedException();
-    public Tuple2<AnglePair, AnglePair> Split(Number t) => throw new NotImplementedException();
+    public Tuple2<AnglePair, AnglePair> SplitAt(Number t) => throw new NotImplementedException();
     public Tuple2<AnglePair, AnglePair> Split => throw new NotImplementedException();
     public AnglePair Left(Number t) => throw new NotImplementedException();
     public AnglePair Right(Number t) => throw new NotImplementedException();
@@ -834,7 +834,7 @@ public partial class RealInterval
     public Boolean Contains(Number value) => throw new NotImplementedException();
     public Boolean Contains(RealInterval other) => throw new NotImplementedException();
     public Boolean Overlaps(RealInterval y) => throw new NotImplementedException();
-    public Tuple2<RealInterval, RealInterval> Split(Number t) => throw new NotImplementedException();
+    public Tuple2<RealInterval, RealInterval> SplitAt(Number t) => throw new NotImplementedException();
     public Tuple2<RealInterval, RealInterval> Split => throw new NotImplementedException();
     public RealInterval Left(Number t) => throw new NotImplementedException();
     public RealInterval Right(Number t) => throw new NotImplementedException();

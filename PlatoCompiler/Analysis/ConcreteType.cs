@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Utils;
 using Plato.Compiler.Symbols;
@@ -15,7 +16,11 @@ namespace Plato.Compiler.Analysis
         public TypeDefinition Type { get; }
         public LibrarySet Libraries { get; }
         public IReadOnlyList<ConceptImplementation> Concepts { get; }
+        public IReadOnlyList<ConceptImplementation> AllConcepts { get; }
         public IReadOnlyList<FunctionInstance> ConcreteFunctions { get; }
+        public IReadOnlyList<FunctionInstance> DeclaredFunctions { get; }
+        public IReadOnlyList<FunctionInstance> ImplementedFunctions { get; }
+        public IReadOnlyList<FunctionInstance> UnimplementedFunctions { get; }
 
         public ConcreteType(TypeDefinition type, LibrarySet libraries)
         {
@@ -25,13 +30,20 @@ namespace Plato.Compiler.Analysis
             Type = type;
             Libraries = libraries;
             Concepts = type.Implements.Select(CreateConceptImplementation).ToList();
-            ConcreteFunctions = libraries.GetFunctionsForType(Type.Name).Select(AnalyzeConcreteFunction).ToList();
+            AllConcepts = Concepts.AllDescendants().ToList();
+            ConcreteFunctions = libraries.GetFunctionsForType(Type.Name).Select(AnalyzeFunction).ToList();
+
+            ImplementedFunctions = AllConcepts.SelectMany(c => c.ImplementedFunctions).ToList();
+            DeclaredFunctions = AllConcepts.SelectMany(c => c.DeclaredFunctions).Distinct(d => d.SignatureId).ToList();
+
+            var implementedSigs = new HashSet<string>(ImplementedFunctions.Select(f => f.SignatureId));
+            UnimplementedFunctions = DeclaredFunctions.Where(f => !implementedSigs.Contains(f.SignatureId)).ToList();
         }
 
         public ConceptImplementation CreateConceptImplementation(TypeExpression type)
             => new ConceptImplementation(Libraries, Type, TypeSubstitutions.Create(type), type);
 
-        public FunctionInstance AnalyzeConcreteFunction(FunctionDefinition function)
+        public FunctionInstance AnalyzeFunction(FunctionDefinition function)
             => new FunctionInstance(Type, function, new TypeSubstitutions());
 
         public IEnumerable<FunctionInstance> GetConceptFunctions()

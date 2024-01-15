@@ -27,11 +27,11 @@ library Interval
     Overlaps(x: Interval<$Value, $Size>, y: Interval<$Value, $Size>): Boolean 
         => !x.Clamp(y).IsEmpty;
     
-    Split(x: Interval<$Value, $Size>, t: Number): Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>> 
+    SplitAt(x: Interval<$Value, $Size>, t: Number): Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>> 
         => (x.Left(t), x.Right(t));
     
     Split(x: Interval<$Value, $Size>): Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>>
-        => x.Split(0.5);
+        => x.SplitAt(0.5);
 
     Left(x: Interval<$Value, $Size>, t: Number): Interval<$Value, $Size>
         => (x.Min, x.Lerp(t));

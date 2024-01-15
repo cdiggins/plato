@@ -85,14 +85,16 @@ namespace Plato.Compiler.Analysis
 
         public TypeInstance ToInstance(TypeExpression expr)
         {
+            if (expr.Name == ConceptName || expr.Name == "Self")
+                return ToInstance(ConcreteType.ToTypeExpression());
+
             // TODO: right now I just pick one type at random.
             // However, what if I choose the wrong one? 
             if (TypeVarLookup.ContainsKey(expr.Name))
                 return ToInstance(TypeVarLookup[expr.Name].First().ToTypeExpression());
-            if (expr.Name == ConceptName)
-                return ToInstance(ConcreteType.ToTypeExpression());
+
             var r = Substitutions.Replace(expr);
             return new TypeInstance(r.Definition, r.TypeArgs.Select(ToInstance));
-        }
+        }   
     }
 }
