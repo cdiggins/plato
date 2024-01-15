@@ -13,7 +13,6 @@
     NaturalPower(x: Number): Number;
 
     Interpolate(xs: Array): String;
-    Throw(x: Any): Any;
 
     Add(x: Number, y: Number): Number;
     Subtract(x: Number, y: Number): Number;

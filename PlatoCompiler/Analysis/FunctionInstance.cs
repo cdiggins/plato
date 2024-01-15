@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Ara3D.Utils;
 using System.Linq;
 using Plato.Compiler.Symbols;
-using System.Runtime.InteropServices.ComTypes;
 using Plato.Compiler.Types;
 
 namespace Plato.Compiler.Analysis
@@ -15,7 +15,19 @@ namespace Plato.Compiler.Analysis
         public TypeDefinition ConcreteType { get; }
         public FunctionDefinition Implementation { get; }
         public TypeSubstitutions Substitutions { get; }
-        public string ConceptName { get; }
+        public TypeDefinition Concept { get; }
+        public string ConceptName => Concept?.Name ?? "";
+        public IReadOnlyList<string> ParameterNames { get; }
+        public string Name => Implementation.Name;
+        public TypeInstance ReturnType { get; }
+        public string SignatureId => $"{Name}({ParameterTypes.JoinStringsWithComma()})";
+        public IReadOnlyList<TypeInstance> ParameterTypes { get; }
+        public Dictionary<string, List<TypeParameterDefinition>> TypeVarLookup { get; } 
+            = new Dictionary<string, List<TypeParameterDefinition>>();
+        public IReadOnlyList<TypeParameterDefinition> TypeParameters { get; }
+        // TODO: 
+        public Dictionary<TypeParameterDefinition, TypeParameterDefinition> Unifiers { get; } =
+            new Dictionary<TypeParameterDefinition, TypeParameterDefinition>();
 
         public FunctionInstance(
             TypeDefinition concreteType,
@@ -25,34 +37,56 @@ namespace Plato.Compiler.Analysis
             ConcreteType = concreteType;
             Implementation = implementation;
             Substitutions = substitutions;
-            ConceptName = Parameters.Count == 0
-                ? ""
-                : Parameters[0].Type.Definition.IsConcept()
-                    ? Parameters[0].Type.Name
-                    : "";
+            ParameterNames = Implementation.Parameters.Select(p => p.Name).ToList();
+            
+            var first = Implementation.Parameters.FirstOrDefault();
+            if (first?.Type.Definition.IsConcept() == true)
+                Concept = first.Type.Definition;
+
+            foreach (var p in Implementation.Parameters)
+                GatherTypeVariables(p.Type);
+
+            ReturnType = ToInstance(Implementation.ReturnType);
+            ParameterTypes = Implementation.Parameters.Select(p => ToInstance(p.Type)).ToList();
+
+            TypeParameters = ParameterTypes.SelectMany(t => t.SelfAndDescendants())
+                .Select(t => t.Definition).OfType<TypeParameterDefinition>().Distinct().
+                ToList();
         }
 
-        public string GetTypeString(TypeExpression te)
+        public void GatherTypeVariables(TypeExpression expr)
         {
-            te = Substitutions.Replace(te);
-            if (te.Name == ConceptName) 
-                return ConcreteType.Name;
-            return te.Name + JoinTypeParameters(te.TypeArgs.Select(GetTypeString));
+            for (var i = 0; i < expr.TypeArgs.Count; ++i)
+            {
+                var ta = expr.TypeArgs[i];
+                var tp = expr.Definition.TypeParameters[i];
+
+                if (ta.Name.StartsWith("$"))
+                {
+                    if (TypeVarLookup.ContainsKey(ta.Name))
+                    {
+                        TypeVarLookup[ta.Name].Add(tp);
+                    }
+                    else
+                    {
+                        TypeVarLookup.Add(ta.Name, new List<TypeParameterDefinition>() { tp });
+                    }
+                }
+
+                GatherTypeVariables(ta);
+            }
         }
 
-        public static string JoinTypeParameters(IEnumerable<string> parameters)
+        public TypeInstance ToInstance(TypeExpression expr)
         {
-            var r = parameters.JoinStrings(", ");
-            return r.Length == 0 ? r : $"<{r}>";
+            // TODO: right now I just pick one type at random.
+            // However, what if I choose the wrong one? 
+            if (TypeVarLookup.ContainsKey(expr.Name))
+                return ToInstance(TypeVarLookup[expr.Name].First().ToTypeExpression());
+            if (expr.Name == ConceptName)
+                return ToInstance(ConcreteType.ToTypeExpression());
+            var r = Substitutions.Replace(expr);
+            return new TypeInstance(r.Definition, r.TypeArgs.Select(ToInstance));
         }
-
-        public string Name 
-            => Implementation.Name;
-
-        public TypeExpression ReturnType
-            => Implementation.ReturnType;
-
-        public IReadOnlyList<ParameterDefinition> Parameters 
-            => Implementation.Parameters;
     }
 }

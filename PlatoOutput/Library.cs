@@ -46,22 +46,6 @@ public partial class Number
     public Number SmoothStep => throw new NotImplementedException();
     public Number Pow2 => throw new NotImplementedException();
     public Number Lerp(Number b, Number t) => throw new NotImplementedException();
-    public Number Throw => throw new NotImplementedException();
-    public Boolean Between(Number min, Number max) => throw new NotImplementedException();
-    public Boolean Equals(Number b) => throw new NotImplementedException();
-    public static Boolean operator ==(Number a, Number b) => a.Equals(b);
-    public Boolean NotEquals(Number b) => throw new NotImplementedException();
-    public static Boolean operator !=(Number a, Number b) => a.NotEquals(b);
-    public Boolean LessThan(Number b) => throw new NotImplementedException();
-    public static Boolean operator <(Number a, Number b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Number b) => throw new NotImplementedException();
-    public static Boolean operator <=(Number a, Number b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Number b) => throw new NotImplementedException();
-    public static Boolean operator >(Number a, Number b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Number b) => throw new NotImplementedException();
-    public static Boolean operator >=(Number a, Number b) => a.GreaterThanOrEquals(b);
-    public Number Lesser(Number b) => throw new NotImplementedException();
-    public Number Greater(Number b) => throw new NotImplementedException();
     public Boolean Between(Number min, Number max) => throw new NotImplementedException();
     public Boolean Equals(Number b) => throw new NotImplementedException();
     public static Boolean operator ==(Number a, Number b) => a.Equals(b);
@@ -113,22 +97,6 @@ public partial class Integer
     public Integer SmoothStep => throw new NotImplementedException();
     public Integer Pow2 => throw new NotImplementedException();
     public Integer Lerp(Integer b, Number t) => throw new NotImplementedException();
-    public Integer Throw => throw new NotImplementedException();
-    public Boolean Between(Integer min, Integer max) => throw new NotImplementedException();
-    public Boolean Equals(Integer b) => throw new NotImplementedException();
-    public static Boolean operator ==(Integer a, Integer b) => a.Equals(b);
-    public Boolean NotEquals(Integer b) => throw new NotImplementedException();
-    public static Boolean operator !=(Integer a, Integer b) => a.NotEquals(b);
-    public Boolean LessThan(Integer b) => throw new NotImplementedException();
-    public static Boolean operator <(Integer a, Integer b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Integer b) => throw new NotImplementedException();
-    public static Boolean operator <=(Integer a, Integer b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Integer b) => throw new NotImplementedException();
-    public static Boolean operator >(Integer a, Integer b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Integer b) => throw new NotImplementedException();
-    public static Boolean operator >=(Integer a, Integer b) => a.GreaterThanOrEquals(b);
-    public Integer Lesser(Integer b) => throw new NotImplementedException();
-    public Integer Greater(Integer b) => throw new NotImplementedException();
     public Boolean Between(Integer min, Integer max) => throw new NotImplementedException();
     public Boolean Equals(Integer b) => throw new NotImplementedException();
     public static Boolean operator ==(Integer a, Integer b) => a.Equals(b);
@@ -147,7 +115,6 @@ public partial class Integer
 }
 public partial class String
 {
-    public String Throw => throw new NotImplementedException();
     public String Interpolate => throw new NotImplementedException();
 }
 public partial class Boolean
@@ -161,7 +128,6 @@ public partial class Boolean
 }
 public partial class Character
 {
-    public Character Throw => throw new NotImplementedException();
 }
 public partial class Count
 {
@@ -185,22 +151,6 @@ public partial class Count
     public Count SmoothStep => throw new NotImplementedException();
     public Count Pow2 => throw new NotImplementedException();
     public Count Lerp(Count b, Number t) => throw new NotImplementedException();
-    public Count Throw => throw new NotImplementedException();
-    public Boolean Between(Count min, Count max) => throw new NotImplementedException();
-    public Boolean Equals(Count b) => throw new NotImplementedException();
-    public static Boolean operator ==(Count a, Count b) => a.Equals(b);
-    public Boolean NotEquals(Count b) => throw new NotImplementedException();
-    public static Boolean operator !=(Count a, Count b) => a.NotEquals(b);
-    public Boolean LessThan(Count b) => throw new NotImplementedException();
-    public static Boolean operator <(Count a, Count b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Count b) => throw new NotImplementedException();
-    public static Boolean operator <=(Count a, Count b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Count b) => throw new NotImplementedException();
-    public static Boolean operator >(Count a, Count b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Count b) => throw new NotImplementedException();
-    public static Boolean operator >=(Count a, Count b) => a.GreaterThanOrEquals(b);
-    public Count Lesser(Count b) => throw new NotImplementedException();
-    public Count Greater(Count b) => throw new NotImplementedException();
     public Boolean Between(Count min, Count max) => throw new NotImplementedException();
     public Boolean Equals(Count b) => throw new NotImplementedException();
     public static Boolean operator ==(Count a, Count b) => a.Equals(b);
@@ -219,7 +169,6 @@ public partial class Count
 }
 public partial class Index
 {
-    public Index Throw => throw new NotImplementedException();
 }
 public partial class Unit
 {
@@ -243,22 +192,6 @@ public partial class Unit
     public Unit SmoothStep => throw new NotImplementedException();
     public Unit Pow2 => throw new NotImplementedException();
     public Unit Lerp(Unit b, Number t) => throw new NotImplementedException();
-    public Unit Throw => throw new NotImplementedException();
-    public Boolean Between(Unit min, Unit max) => throw new NotImplementedException();
-    public Boolean Equals(Unit b) => throw new NotImplementedException();
-    public static Boolean operator ==(Unit a, Unit b) => a.Equals(b);
-    public Boolean NotEquals(Unit b) => throw new NotImplementedException();
-    public static Boolean operator !=(Unit a, Unit b) => a.NotEquals(b);
-    public Boolean LessThan(Unit b) => throw new NotImplementedException();
-    public static Boolean operator <(Unit a, Unit b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Unit b) => throw new NotImplementedException();
-    public static Boolean operator <=(Unit a, Unit b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Unit b) => throw new NotImplementedException();
-    public static Boolean operator >(Unit a, Unit b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Unit b) => throw new NotImplementedException();
-    public static Boolean operator >=(Unit a, Unit b) => a.GreaterThanOrEquals(b);
-    public Unit Lesser(Unit b) => throw new NotImplementedException();
-    public Unit Greater(Unit b) => throw new NotImplementedException();
     public Boolean Between(Unit min, Unit max) => throw new NotImplementedException();
     public Boolean Equals(Unit b) => throw new NotImplementedException();
     public static Boolean operator ==(Unit a, Unit b) => a.Equals(b);
@@ -297,22 +230,6 @@ public partial class Percent
     public Percent SmoothStep => throw new NotImplementedException();
     public Percent Pow2 => throw new NotImplementedException();
     public Percent Lerp(Percent b, Number t) => throw new NotImplementedException();
-    public Percent Throw => throw new NotImplementedException();
-    public Boolean Between(Percent min, Percent max) => throw new NotImplementedException();
-    public Boolean Equals(Percent b) => throw new NotImplementedException();
-    public static Boolean operator ==(Percent a, Percent b) => a.Equals(b);
-    public Boolean NotEquals(Percent b) => throw new NotImplementedException();
-    public static Boolean operator !=(Percent a, Percent b) => a.NotEquals(b);
-    public Boolean LessThan(Percent b) => throw new NotImplementedException();
-    public static Boolean operator <(Percent a, Percent b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Percent b) => throw new NotImplementedException();
-    public static Boolean operator <=(Percent a, Percent b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Percent b) => throw new NotImplementedException();
-    public static Boolean operator >(Percent a, Percent b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Percent b) => throw new NotImplementedException();
-    public static Boolean operator >=(Percent a, Percent b) => a.GreaterThanOrEquals(b);
-    public Percent Lesser(Percent b) => throw new NotImplementedException();
-    public Percent Greater(Percent b) => throw new NotImplementedException();
     public Boolean Between(Percent min, Percent max) => throw new NotImplementedException();
     public Boolean Equals(Percent b) => throw new NotImplementedException();
     public static Boolean operator ==(Percent a, Percent b) => a.Equals(b);
@@ -331,35 +248,28 @@ public partial class Percent
 }
 public partial class Quaternion
 {
-    public Quaternion Throw => throw new NotImplementedException();
 }
 public partial class Unit2D
 {
-    public Unit2D Throw => throw new NotImplementedException();
 }
 public partial class Unit3D
 {
-    public Unit3D Throw => throw new NotImplementedException();
 }
 public partial class Direction3D
 {
-    public Direction3D Throw => throw new NotImplementedException();
 }
 public partial class AxisAngle
 {
-    public AxisAngle Throw => throw new NotImplementedException();
 }
 public partial class EulerAngles
 {
-    public EulerAngles Throw => throw new NotImplementedException();
 }
 public partial class Rotation3D
 {
-    public Rotation3D Throw => throw new NotImplementedException();
 }
 public partial class Vector2D
 {
-    public $T Aggregate(Function2<Number, $T, $T> f) => throw new NotImplementedException();
+    public T1 Aggregate(Function2<Number, T1, T1> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
     public Number SumSquares => throw new NotImplementedException();
     public Number MagnitudeSquared => throw new NotImplementedException();
@@ -388,37 +298,6 @@ public partial class Vector2D
     public Vector2D SmoothStep => throw new NotImplementedException();
     public Vector2D Pow2 => throw new NotImplementedException();
     public Vector2D Lerp(Vector2D b, Number t) => throw new NotImplementedException();
-    public Vector2D Throw => throw new NotImplementedException();
-    public Boolean Between(Vector2D min, Vector2D max) => throw new NotImplementedException();
-    public Boolean Equals(Vector2D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Vector2D a, Vector2D b) => a.Equals(b);
-    public Boolean NotEquals(Vector2D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Vector2D a, Vector2D b) => a.NotEquals(b);
-    public Boolean LessThan(Vector2D b) => throw new NotImplementedException();
-    public static Boolean operator <(Vector2D a, Vector2D b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Vector2D b) => throw new NotImplementedException();
-    public static Boolean operator <=(Vector2D a, Vector2D b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Vector2D b) => throw new NotImplementedException();
-    public static Boolean operator >(Vector2D a, Vector2D b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Vector2D b) => throw new NotImplementedException();
-    public static Boolean operator >=(Vector2D a, Vector2D b) => a.GreaterThanOrEquals(b);
-    public Vector2D Lesser(Vector2D b) => throw new NotImplementedException();
-    public Vector2D Greater(Vector2D b) => throw new NotImplementedException();
-    public Boolean Between(Vector2D min, Vector2D max) => throw new NotImplementedException();
-    public Boolean Equals(Vector2D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Vector2D a, Vector2D b) => a.Equals(b);
-    public Boolean NotEquals(Vector2D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Vector2D a, Vector2D b) => a.NotEquals(b);
-    public Boolean LessThan(Vector2D b) => throw new NotImplementedException();
-    public static Boolean operator <(Vector2D a, Vector2D b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Vector2D b) => throw new NotImplementedException();
-    public static Boolean operator <=(Vector2D a, Vector2D b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Vector2D b) => throw new NotImplementedException();
-    public static Boolean operator >(Vector2D a, Vector2D b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Vector2D b) => throw new NotImplementedException();
-    public static Boolean operator >=(Vector2D a, Vector2D b) => a.GreaterThanOrEquals(b);
-    public Vector2D Lesser(Vector2D b) => throw new NotImplementedException();
-    public Vector2D Greater(Vector2D b) => throw new NotImplementedException();
     public Boolean Between(Vector2D min, Vector2D max) => throw new NotImplementedException();
     public Boolean Equals(Vector2D b) => throw new NotImplementedException();
     public static Boolean operator ==(Vector2D a, Vector2D b) => a.Equals(b);
@@ -437,7 +316,7 @@ public partial class Vector2D
 }
 public partial class Vector3D
 {
-    public $T Aggregate(Function2<Number, $T, $T> f) => throw new NotImplementedException();
+    public T1 Aggregate(Function2<Number, T1, T1> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
     public Number SumSquares => throw new NotImplementedException();
     public Number MagnitudeSquared => throw new NotImplementedException();
@@ -466,37 +345,6 @@ public partial class Vector3D
     public Vector3D SmoothStep => throw new NotImplementedException();
     public Vector3D Pow2 => throw new NotImplementedException();
     public Vector3D Lerp(Vector3D b, Number t) => throw new NotImplementedException();
-    public Vector3D Throw => throw new NotImplementedException();
-    public Boolean Between(Vector3D min, Vector3D max) => throw new NotImplementedException();
-    public Boolean Equals(Vector3D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Vector3D a, Vector3D b) => a.Equals(b);
-    public Boolean NotEquals(Vector3D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Vector3D a, Vector3D b) => a.NotEquals(b);
-    public Boolean LessThan(Vector3D b) => throw new NotImplementedException();
-    public static Boolean operator <(Vector3D a, Vector3D b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Vector3D b) => throw new NotImplementedException();
-    public static Boolean operator <=(Vector3D a, Vector3D b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Vector3D b) => throw new NotImplementedException();
-    public static Boolean operator >(Vector3D a, Vector3D b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Vector3D b) => throw new NotImplementedException();
-    public static Boolean operator >=(Vector3D a, Vector3D b) => a.GreaterThanOrEquals(b);
-    public Vector3D Lesser(Vector3D b) => throw new NotImplementedException();
-    public Vector3D Greater(Vector3D b) => throw new NotImplementedException();
-    public Boolean Between(Vector3D min, Vector3D max) => throw new NotImplementedException();
-    public Boolean Equals(Vector3D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Vector3D a, Vector3D b) => a.Equals(b);
-    public Boolean NotEquals(Vector3D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Vector3D a, Vector3D b) => a.NotEquals(b);
-    public Boolean LessThan(Vector3D b) => throw new NotImplementedException();
-    public static Boolean operator <(Vector3D a, Vector3D b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Vector3D b) => throw new NotImplementedException();
-    public static Boolean operator <=(Vector3D a, Vector3D b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Vector3D b) => throw new NotImplementedException();
-    public static Boolean operator >(Vector3D a, Vector3D b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Vector3D b) => throw new NotImplementedException();
-    public static Boolean operator >=(Vector3D a, Vector3D b) => a.GreaterThanOrEquals(b);
-    public Vector3D Lesser(Vector3D b) => throw new NotImplementedException();
-    public Vector3D Greater(Vector3D b) => throw new NotImplementedException();
     public Boolean Between(Vector3D min, Vector3D max) => throw new NotImplementedException();
     public Boolean Equals(Vector3D b) => throw new NotImplementedException();
     public static Boolean operator ==(Vector3D a, Vector3D b) => a.Equals(b);
@@ -515,7 +363,7 @@ public partial class Vector3D
 }
 public partial class Vector4D
 {
-    public $T Aggregate(Function2<Number, $T, $T> f) => throw new NotImplementedException();
+    public T1 Aggregate(Function2<Number, T1, T1> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
     public Number SumSquares => throw new NotImplementedException();
     public Number MagnitudeSquared => throw new NotImplementedException();
@@ -544,37 +392,6 @@ public partial class Vector4D
     public Vector4D SmoothStep => throw new NotImplementedException();
     public Vector4D Pow2 => throw new NotImplementedException();
     public Vector4D Lerp(Vector4D b, Number t) => throw new NotImplementedException();
-    public Vector4D Throw => throw new NotImplementedException();
-    public Boolean Between(Vector4D min, Vector4D max) => throw new NotImplementedException();
-    public Boolean Equals(Vector4D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Vector4D a, Vector4D b) => a.Equals(b);
-    public Boolean NotEquals(Vector4D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Vector4D a, Vector4D b) => a.NotEquals(b);
-    public Boolean LessThan(Vector4D b) => throw new NotImplementedException();
-    public static Boolean operator <(Vector4D a, Vector4D b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Vector4D b) => throw new NotImplementedException();
-    public static Boolean operator <=(Vector4D a, Vector4D b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Vector4D b) => throw new NotImplementedException();
-    public static Boolean operator >(Vector4D a, Vector4D b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Vector4D b) => throw new NotImplementedException();
-    public static Boolean operator >=(Vector4D a, Vector4D b) => a.GreaterThanOrEquals(b);
-    public Vector4D Lesser(Vector4D b) => throw new NotImplementedException();
-    public Vector4D Greater(Vector4D b) => throw new NotImplementedException();
-    public Boolean Between(Vector4D min, Vector4D max) => throw new NotImplementedException();
-    public Boolean Equals(Vector4D b) => throw new NotImplementedException();
-    public static Boolean operator ==(Vector4D a, Vector4D b) => a.Equals(b);
-    public Boolean NotEquals(Vector4D b) => throw new NotImplementedException();
-    public static Boolean operator !=(Vector4D a, Vector4D b) => a.NotEquals(b);
-    public Boolean LessThan(Vector4D b) => throw new NotImplementedException();
-    public static Boolean operator <(Vector4D a, Vector4D b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Vector4D b) => throw new NotImplementedException();
-    public static Boolean operator <=(Vector4D a, Vector4D b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Vector4D b) => throw new NotImplementedException();
-    public static Boolean operator >(Vector4D a, Vector4D b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Vector4D b) => throw new NotImplementedException();
-    public static Boolean operator >=(Vector4D a, Vector4D b) => a.GreaterThanOrEquals(b);
-    public Vector4D Lesser(Vector4D b) => throw new NotImplementedException();
-    public Vector4D Greater(Vector4D b) => throw new NotImplementedException();
     public Boolean Between(Vector4D min, Vector4D max) => throw new NotImplementedException();
     public Boolean Equals(Vector4D b) => throw new NotImplementedException();
     public static Boolean operator ==(Vector4D a, Vector4D b) => a.Equals(b);
@@ -593,73 +410,68 @@ public partial class Vector4D
 }
 public partial class Orientation3D
 {
-    public Orientation3D Throw => throw new NotImplementedException();
 }
 public partial class Pose2D
 {
-    public Pose2D Throw => throw new NotImplementedException();
 }
 public partial class Pose3D
 {
-    public Pose3D Throw => throw new NotImplementedException();
 }
 public partial class Transform3D
 {
-    public Transform3D Throw => throw new NotImplementedException();
 }
 public partial class Transform2D
 {
-    public Transform2D Throw => throw new NotImplementedException();
 }
 public partial class AlignedBox2D
 {
     public Boolean IsEmpty => throw new NotImplementedException();
-    public $Value Lerp(Number amount) => throw new NotImplementedException();
-    public Number Unlerp($Value value) => throw new NotImplementedException();
+    public Point2D Lerp(Number amount) => throw new NotImplementedException();
+    public Number Unlerp(Point2D value) => throw new NotImplementedException();
     public AlignedBox2D Negate => throw new NotImplementedException();
     public AlignedBox2D Reverse => throw new NotImplementedException();
-    public $Value Center => throw new NotImplementedException();
-    public Boolean Contains($Value value) => throw new NotImplementedException();
+    public Point2D Center => throw new NotImplementedException();
+    public Boolean Contains(Point2D value) => throw new NotImplementedException();
     public Boolean Contains(AlignedBox2D other) => throw new NotImplementedException();
     public Boolean Overlaps(AlignedBox2D y) => throw new NotImplementedException();
     public Tuple2<AlignedBox2D, AlignedBox2D> Split(Number t) => throw new NotImplementedException();
     public Tuple2<AlignedBox2D, AlignedBox2D> Split => throw new NotImplementedException();
     public AlignedBox2D Left(Number t) => throw new NotImplementedException();
     public AlignedBox2D Right(Number t) => throw new NotImplementedException();
-    public AlignedBox2D MoveTo($Value v) => throw new NotImplementedException();
+    public AlignedBox2D MoveTo(Point2D v) => throw new NotImplementedException();
     public AlignedBox2D LeftHalf => throw new NotImplementedException();
     public AlignedBox2D RightHalf => throw new NotImplementedException();
-    public AlignedBox2D Recenter($Value c) => throw new NotImplementedException();
+    public AlignedBox2D Recenter(Point2D c) => throw new NotImplementedException();
     public AlignedBox2D Clamp(AlignedBox2D y) => throw new NotImplementedException();
-    public $Value Clamp($Value value) => throw new NotImplementedException();
-    public Boolean Within($Value value) => throw new NotImplementedException();
+    public Point2D Clamp(Point2D value) => throw new NotImplementedException();
+    public Boolean Within(Point2D value) => throw new NotImplementedException();
 }
 public partial class AlignedBox3D
 {
     public Boolean IsEmpty => throw new NotImplementedException();
-    public $Value Lerp(Number amount) => throw new NotImplementedException();
-    public Number Unlerp($Value value) => throw new NotImplementedException();
+    public Point3D Lerp(Number amount) => throw new NotImplementedException();
+    public Number Unlerp(Point3D value) => throw new NotImplementedException();
     public AlignedBox3D Negate => throw new NotImplementedException();
     public AlignedBox3D Reverse => throw new NotImplementedException();
-    public $Value Center => throw new NotImplementedException();
-    public Boolean Contains($Value value) => throw new NotImplementedException();
+    public Point3D Center => throw new NotImplementedException();
+    public Boolean Contains(Point3D value) => throw new NotImplementedException();
     public Boolean Contains(AlignedBox3D other) => throw new NotImplementedException();
     public Boolean Overlaps(AlignedBox3D y) => throw new NotImplementedException();
     public Tuple2<AlignedBox3D, AlignedBox3D> Split(Number t) => throw new NotImplementedException();
     public Tuple2<AlignedBox3D, AlignedBox3D> Split => throw new NotImplementedException();
     public AlignedBox3D Left(Number t) => throw new NotImplementedException();
     public AlignedBox3D Right(Number t) => throw new NotImplementedException();
-    public AlignedBox3D MoveTo($Value v) => throw new NotImplementedException();
+    public AlignedBox3D MoveTo(Point3D v) => throw new NotImplementedException();
     public AlignedBox3D LeftHalf => throw new NotImplementedException();
     public AlignedBox3D RightHalf => throw new NotImplementedException();
-    public AlignedBox3D Recenter($Value c) => throw new NotImplementedException();
+    public AlignedBox3D Recenter(Point3D c) => throw new NotImplementedException();
     public AlignedBox3D Clamp(AlignedBox3D y) => throw new NotImplementedException();
-    public $Value Clamp($Value value) => throw new NotImplementedException();
-    public Boolean Within($Value value) => throw new NotImplementedException();
+    public Point3D Clamp(Point3D value) => throw new NotImplementedException();
+    public Boolean Within(Point3D value) => throw new NotImplementedException();
 }
 public partial class Complex
 {
-    public $T Aggregate(Function2<Number, $T, $T> f) => throw new NotImplementedException();
+    public T1 Aggregate(Function2<Number, T1, T1> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
     public Number SumSquares => throw new NotImplementedException();
     public Number MagnitudeSquared => throw new NotImplementedException();
@@ -688,37 +500,6 @@ public partial class Complex
     public Complex SmoothStep => throw new NotImplementedException();
     public Complex Pow2 => throw new NotImplementedException();
     public Complex Lerp(Complex b, Number t) => throw new NotImplementedException();
-    public Complex Throw => throw new NotImplementedException();
-    public Boolean Between(Complex min, Complex max) => throw new NotImplementedException();
-    public Boolean Equals(Complex b) => throw new NotImplementedException();
-    public static Boolean operator ==(Complex a, Complex b) => a.Equals(b);
-    public Boolean NotEquals(Complex b) => throw new NotImplementedException();
-    public static Boolean operator !=(Complex a, Complex b) => a.NotEquals(b);
-    public Boolean LessThan(Complex b) => throw new NotImplementedException();
-    public static Boolean operator <(Complex a, Complex b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Complex b) => throw new NotImplementedException();
-    public static Boolean operator <=(Complex a, Complex b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Complex b) => throw new NotImplementedException();
-    public static Boolean operator >(Complex a, Complex b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Complex b) => throw new NotImplementedException();
-    public static Boolean operator >=(Complex a, Complex b) => a.GreaterThanOrEquals(b);
-    public Complex Lesser(Complex b) => throw new NotImplementedException();
-    public Complex Greater(Complex b) => throw new NotImplementedException();
-    public Boolean Between(Complex min, Complex max) => throw new NotImplementedException();
-    public Boolean Equals(Complex b) => throw new NotImplementedException();
-    public static Boolean operator ==(Complex a, Complex b) => a.Equals(b);
-    public Boolean NotEquals(Complex b) => throw new NotImplementedException();
-    public static Boolean operator !=(Complex a, Complex b) => a.NotEquals(b);
-    public Boolean LessThan(Complex b) => throw new NotImplementedException();
-    public static Boolean operator <(Complex a, Complex b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Complex b) => throw new NotImplementedException();
-    public static Boolean operator <=(Complex a, Complex b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Complex b) => throw new NotImplementedException();
-    public static Boolean operator >(Complex a, Complex b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Complex b) => throw new NotImplementedException();
-    public static Boolean operator >=(Complex a, Complex b) => a.GreaterThanOrEquals(b);
-    public Complex Lesser(Complex b) => throw new NotImplementedException();
-    public Complex Greater(Complex b) => throw new NotImplementedException();
     public Boolean Between(Complex min, Complex max) => throw new NotImplementedException();
     public Boolean Equals(Complex b) => throw new NotImplementedException();
     public static Boolean operator ==(Complex a, Complex b) => a.Equals(b);
@@ -737,35 +518,27 @@ public partial class Complex
 }
 public partial class Ray3D
 {
-    public Ray3D Throw => throw new NotImplementedException();
 }
 public partial class Ray2D
 {
-    public Ray2D Throw => throw new NotImplementedException();
 }
 public partial class Sphere
 {
-    public Sphere Throw => throw new NotImplementedException();
 }
 public partial class Plane
 {
-    public Plane Throw => throw new NotImplementedException();
 }
 public partial class Triangle2D
 {
-    public Triangle2D Throw => throw new NotImplementedException();
 }
 public partial class Triangle3D
 {
-    public Triangle3D Throw => throw new NotImplementedException();
 }
 public partial class Quad2D
 {
-    public Quad2D Throw => throw new NotImplementedException();
 }
 public partial class Quad3D
 {
-    public Quad3D Throw => throw new NotImplementedException();
 }
 public partial class Point2D
 {
@@ -776,124 +549,105 @@ public partial class Point3D
 public partial class Line2D
 {
     public Boolean IsEmpty => throw new NotImplementedException();
-    public $Value Lerp(Number amount) => throw new NotImplementedException();
-    public Number Unlerp($Value value) => throw new NotImplementedException();
+    public Point2D Lerp(Number amount) => throw new NotImplementedException();
+    public Number Unlerp(Point2D value) => throw new NotImplementedException();
     public Line2D Negate => throw new NotImplementedException();
     public Line2D Reverse => throw new NotImplementedException();
-    public $Value Center => throw new NotImplementedException();
-    public Boolean Contains($Value value) => throw new NotImplementedException();
+    public Point2D Center => throw new NotImplementedException();
+    public Boolean Contains(Point2D value) => throw new NotImplementedException();
     public Boolean Contains(Line2D other) => throw new NotImplementedException();
     public Boolean Overlaps(Line2D y) => throw new NotImplementedException();
     public Tuple2<Line2D, Line2D> Split(Number t) => throw new NotImplementedException();
     public Tuple2<Line2D, Line2D> Split => throw new NotImplementedException();
     public Line2D Left(Number t) => throw new NotImplementedException();
     public Line2D Right(Number t) => throw new NotImplementedException();
-    public Line2D MoveTo($Value v) => throw new NotImplementedException();
+    public Line2D MoveTo(Point2D v) => throw new NotImplementedException();
     public Line2D LeftHalf => throw new NotImplementedException();
     public Line2D RightHalf => throw new NotImplementedException();
-    public Line2D Recenter($Value c) => throw new NotImplementedException();
+    public Line2D Recenter(Point2D c) => throw new NotImplementedException();
     public Line2D Clamp(Line2D y) => throw new NotImplementedException();
-    public $Value Clamp($Value value) => throw new NotImplementedException();
-    public Boolean Within($Value value) => throw new NotImplementedException();
+    public Point2D Clamp(Point2D value) => throw new NotImplementedException();
+    public Boolean Within(Point2D value) => throw new NotImplementedException();
 }
 public partial class Line3D
 {
     public Boolean IsEmpty => throw new NotImplementedException();
-    public $Value Lerp(Number amount) => throw new NotImplementedException();
-    public Number Unlerp($Value value) => throw new NotImplementedException();
+    public Point3D Lerp(Number amount) => throw new NotImplementedException();
+    public Number Unlerp(Point3D value) => throw new NotImplementedException();
     public Line3D Negate => throw new NotImplementedException();
     public Line3D Reverse => throw new NotImplementedException();
-    public $Value Center => throw new NotImplementedException();
-    public Boolean Contains($Value value) => throw new NotImplementedException();
+    public Point3D Center => throw new NotImplementedException();
+    public Boolean Contains(Point3D value) => throw new NotImplementedException();
     public Boolean Contains(Line3D other) => throw new NotImplementedException();
     public Boolean Overlaps(Line3D y) => throw new NotImplementedException();
     public Tuple2<Line3D, Line3D> Split(Number t) => throw new NotImplementedException();
     public Tuple2<Line3D, Line3D> Split => throw new NotImplementedException();
     public Line3D Left(Number t) => throw new NotImplementedException();
     public Line3D Right(Number t) => throw new NotImplementedException();
-    public Line3D MoveTo($Value v) => throw new NotImplementedException();
+    public Line3D MoveTo(Point3D v) => throw new NotImplementedException();
     public Line3D LeftHalf => throw new NotImplementedException();
     public Line3D RightHalf => throw new NotImplementedException();
-    public Line3D Recenter($Value c) => throw new NotImplementedException();
+    public Line3D Recenter(Point3D c) => throw new NotImplementedException();
     public Line3D Clamp(Line3D y) => throw new NotImplementedException();
-    public $Value Clamp($Value value) => throw new NotImplementedException();
-    public Boolean Within($Value value) => throw new NotImplementedException();
+    public Point3D Clamp(Point3D value) => throw new NotImplementedException();
+    public Boolean Within(Point3D value) => throw new NotImplementedException();
 }
 public partial class Color
 {
-    public Color Throw => throw new NotImplementedException();
 }
 public partial class ColorLUV
 {
-    public ColorLUV Throw => throw new NotImplementedException();
 }
 public partial class ColorLAB
 {
-    public ColorLAB Throw => throw new NotImplementedException();
 }
 public partial class ColorLCh
 {
-    public ColorLCh Throw => throw new NotImplementedException();
 }
 public partial class ColorHSV
 {
-    public ColorHSV Throw => throw new NotImplementedException();
 }
 public partial class ColorHSL
 {
-    public ColorHSL Throw => throw new NotImplementedException();
 }
 public partial class ColorYCbCr
 {
-    public ColorYCbCr Throw => throw new NotImplementedException();
 }
 public partial class SphericalCoordinate
 {
-    public SphericalCoordinate Throw => throw new NotImplementedException();
 }
 public partial class PolarCoordinate
 {
-    public PolarCoordinate Throw => throw new NotImplementedException();
 }
 public partial class LogPolarCoordinate
 {
-    public LogPolarCoordinate Throw => throw new NotImplementedException();
 }
 public partial class CylindricalCoordinate
 {
-    public CylindricalCoordinate Throw => throw new NotImplementedException();
 }
 public partial class HorizontalCoordinate
 {
-    public HorizontalCoordinate Throw => throw new NotImplementedException();
 }
 public partial class GeoCoordinate
 {
-    public GeoCoordinate Throw => throw new NotImplementedException();
 }
 public partial class GeoCoordinateWithAltitude
 {
-    public GeoCoordinateWithAltitude Throw => throw new NotImplementedException();
 }
 public partial class Circle
 {
-    public Circle Throw => throw new NotImplementedException();
 }
 public partial class Chord
 {
-    public Chord Throw => throw new NotImplementedException();
 }
 public partial class Size2D
 {
-    public Size2D Throw => throw new NotImplementedException();
 }
 public partial class Size3D
 {
-    public Size3D Throw => throw new NotImplementedException();
 }
 public partial class Rectangle2D
 {
-    public Rectangle2D Throw => throw new NotImplementedException();
 }
 public partial class Proportion
 {
@@ -917,22 +671,6 @@ public partial class Proportion
     public Proportion SmoothStep => throw new NotImplementedException();
     public Proportion Pow2 => throw new NotImplementedException();
     public Proportion Lerp(Proportion b, Number t) => throw new NotImplementedException();
-    public Proportion Throw => throw new NotImplementedException();
-    public Boolean Between(Proportion min, Proportion max) => throw new NotImplementedException();
-    public Boolean Equals(Proportion b) => throw new NotImplementedException();
-    public static Boolean operator ==(Proportion a, Proportion b) => a.Equals(b);
-    public Boolean NotEquals(Proportion b) => throw new NotImplementedException();
-    public static Boolean operator !=(Proportion a, Proportion b) => a.NotEquals(b);
-    public Boolean LessThan(Proportion b) => throw new NotImplementedException();
-    public static Boolean operator <(Proportion a, Proportion b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Proportion b) => throw new NotImplementedException();
-    public static Boolean operator <=(Proportion a, Proportion b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Proportion b) => throw new NotImplementedException();
-    public static Boolean operator >(Proportion a, Proportion b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Proportion b) => throw new NotImplementedException();
-    public static Boolean operator >=(Proportion a, Proportion b) => a.GreaterThanOrEquals(b);
-    public Proportion Lesser(Proportion b) => throw new NotImplementedException();
-    public Proportion Greater(Proportion b) => throw new NotImplementedException();
     public Boolean Between(Proportion min, Proportion max) => throw new NotImplementedException();
     public Boolean Equals(Proportion b) => throw new NotImplementedException();
     public static Boolean operator ==(Proportion a, Proportion b) => a.Equals(b);
@@ -951,7 +689,6 @@ public partial class Proportion
 }
 public partial class Fraction
 {
-    public Fraction Throw => throw new NotImplementedException();
 }
 public partial class Angle
 {
@@ -963,22 +700,6 @@ public partial class Angle
 }
 public partial class Length
 {
-    public Length Throw => throw new NotImplementedException();
-    public Boolean Between(Length min, Length max) => throw new NotImplementedException();
-    public Boolean Equals(Length b) => throw new NotImplementedException();
-    public static Boolean operator ==(Length a, Length b) => a.Equals(b);
-    public Boolean NotEquals(Length b) => throw new NotImplementedException();
-    public static Boolean operator !=(Length a, Length b) => a.NotEquals(b);
-    public Boolean LessThan(Length b) => throw new NotImplementedException();
-    public static Boolean operator <(Length a, Length b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Length b) => throw new NotImplementedException();
-    public static Boolean operator <=(Length a, Length b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Length b) => throw new NotImplementedException();
-    public static Boolean operator >(Length a, Length b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Length b) => throw new NotImplementedException();
-    public static Boolean operator >=(Length a, Length b) => a.GreaterThanOrEquals(b);
-    public Length Lesser(Length b) => throw new NotImplementedException();
-    public Length Greater(Length b) => throw new NotImplementedException();
     public Boolean Between(Length min, Length max) => throw new NotImplementedException();
     public Boolean Equals(Length b) => throw new NotImplementedException();
     public static Boolean operator ==(Length a, Length b) => a.Equals(b);
@@ -997,22 +718,6 @@ public partial class Length
 }
 public partial class Mass
 {
-    public Mass Throw => throw new NotImplementedException();
-    public Boolean Between(Mass min, Mass max) => throw new NotImplementedException();
-    public Boolean Equals(Mass b) => throw new NotImplementedException();
-    public static Boolean operator ==(Mass a, Mass b) => a.Equals(b);
-    public Boolean NotEquals(Mass b) => throw new NotImplementedException();
-    public static Boolean operator !=(Mass a, Mass b) => a.NotEquals(b);
-    public Boolean LessThan(Mass b) => throw new NotImplementedException();
-    public static Boolean operator <(Mass a, Mass b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Mass b) => throw new NotImplementedException();
-    public static Boolean operator <=(Mass a, Mass b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Mass b) => throw new NotImplementedException();
-    public static Boolean operator >(Mass a, Mass b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Mass b) => throw new NotImplementedException();
-    public static Boolean operator >=(Mass a, Mass b) => a.GreaterThanOrEquals(b);
-    public Mass Lesser(Mass b) => throw new NotImplementedException();
-    public Mass Greater(Mass b) => throw new NotImplementedException();
     public Boolean Between(Mass min, Mass max) => throw new NotImplementedException();
     public Boolean Equals(Mass b) => throw new NotImplementedException();
     public static Boolean operator ==(Mass a, Mass b) => a.Equals(b);
@@ -1031,22 +736,6 @@ public partial class Mass
 }
 public partial class Temperature
 {
-    public Temperature Throw => throw new NotImplementedException();
-    public Boolean Between(Temperature min, Temperature max) => throw new NotImplementedException();
-    public Boolean Equals(Temperature b) => throw new NotImplementedException();
-    public static Boolean operator ==(Temperature a, Temperature b) => a.Equals(b);
-    public Boolean NotEquals(Temperature b) => throw new NotImplementedException();
-    public static Boolean operator !=(Temperature a, Temperature b) => a.NotEquals(b);
-    public Boolean LessThan(Temperature b) => throw new NotImplementedException();
-    public static Boolean operator <(Temperature a, Temperature b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Temperature b) => throw new NotImplementedException();
-    public static Boolean operator <=(Temperature a, Temperature b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Temperature b) => throw new NotImplementedException();
-    public static Boolean operator >(Temperature a, Temperature b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Temperature b) => throw new NotImplementedException();
-    public static Boolean operator >=(Temperature a, Temperature b) => a.GreaterThanOrEquals(b);
-    public Temperature Lesser(Temperature b) => throw new NotImplementedException();
-    public Temperature Greater(Temperature b) => throw new NotImplementedException();
     public Boolean Between(Temperature min, Temperature max) => throw new NotImplementedException();
     public Boolean Equals(Temperature b) => throw new NotImplementedException();
     public static Boolean operator ==(Temperature a, Temperature b) => a.Equals(b);
@@ -1065,22 +754,6 @@ public partial class Temperature
 }
 public partial class Time
 {
-    public Time Throw => throw new NotImplementedException();
-    public Boolean Between(Time min, Time max) => throw new NotImplementedException();
-    public Boolean Equals(Time b) => throw new NotImplementedException();
-    public static Boolean operator ==(Time a, Time b) => a.Equals(b);
-    public Boolean NotEquals(Time b) => throw new NotImplementedException();
-    public static Boolean operator !=(Time a, Time b) => a.NotEquals(b);
-    public Boolean LessThan(Time b) => throw new NotImplementedException();
-    public static Boolean operator <(Time a, Time b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Time b) => throw new NotImplementedException();
-    public static Boolean operator <=(Time a, Time b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Time b) => throw new NotImplementedException();
-    public static Boolean operator >(Time a, Time b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Time b) => throw new NotImplementedException();
-    public static Boolean operator >=(Time a, Time b) => a.GreaterThanOrEquals(b);
-    public Time Lesser(Time b) => throw new NotImplementedException();
-    public Time Greater(Time b) => throw new NotImplementedException();
     public Boolean Between(Time min, Time max) => throw new NotImplementedException();
     public Boolean Equals(Time b) => throw new NotImplementedException();
     public static Boolean operator ==(Time a, Time b) => a.Equals(b);
@@ -1100,25 +773,25 @@ public partial class Time
 public partial class TimeRange
 {
     public Boolean IsEmpty => throw new NotImplementedException();
-    public $Value Lerp(Number amount) => throw new NotImplementedException();
-    public Number Unlerp($Value value) => throw new NotImplementedException();
+    public DateTime Lerp(Number amount) => throw new NotImplementedException();
+    public Number Unlerp(DateTime value) => throw new NotImplementedException();
     public TimeRange Negate => throw new NotImplementedException();
     public TimeRange Reverse => throw new NotImplementedException();
-    public $Value Center => throw new NotImplementedException();
-    public Boolean Contains($Value value) => throw new NotImplementedException();
+    public DateTime Center => throw new NotImplementedException();
+    public Boolean Contains(DateTime value) => throw new NotImplementedException();
     public Boolean Contains(TimeRange other) => throw new NotImplementedException();
     public Boolean Overlaps(TimeRange y) => throw new NotImplementedException();
     public Tuple2<TimeRange, TimeRange> Split(Number t) => throw new NotImplementedException();
     public Tuple2<TimeRange, TimeRange> Split => throw new NotImplementedException();
     public TimeRange Left(Number t) => throw new NotImplementedException();
     public TimeRange Right(Number t) => throw new NotImplementedException();
-    public TimeRange MoveTo($Value v) => throw new NotImplementedException();
+    public TimeRange MoveTo(DateTime v) => throw new NotImplementedException();
     public TimeRange LeftHalf => throw new NotImplementedException();
     public TimeRange RightHalf => throw new NotImplementedException();
-    public TimeRange Recenter($Value c) => throw new NotImplementedException();
+    public TimeRange Recenter(DateTime c) => throw new NotImplementedException();
     public TimeRange Clamp(TimeRange y) => throw new NotImplementedException();
-    public $Value Clamp($Value value) => throw new NotImplementedException();
-    public Boolean Within($Value value) => throw new NotImplementedException();
+    public DateTime Clamp(DateTime value) => throw new NotImplementedException();
+    public Boolean Within(DateTime value) => throw new NotImplementedException();
 }
 public partial class DateTime
 {
@@ -1126,92 +799,82 @@ public partial class DateTime
 public partial class AnglePair
 {
     public Boolean IsEmpty => throw new NotImplementedException();
-    public $Value Lerp(Number amount) => throw new NotImplementedException();
-    public Number Unlerp($Value value) => throw new NotImplementedException();
+    public Angle Lerp(Number amount) => throw new NotImplementedException();
+    public Number Unlerp(Angle value) => throw new NotImplementedException();
     public AnglePair Negate => throw new NotImplementedException();
     public AnglePair Reverse => throw new NotImplementedException();
-    public $Value Center => throw new NotImplementedException();
-    public Boolean Contains($Value value) => throw new NotImplementedException();
+    public Angle Center => throw new NotImplementedException();
+    public Boolean Contains(Angle value) => throw new NotImplementedException();
     public Boolean Contains(AnglePair other) => throw new NotImplementedException();
     public Boolean Overlaps(AnglePair y) => throw new NotImplementedException();
     public Tuple2<AnglePair, AnglePair> Split(Number t) => throw new NotImplementedException();
     public Tuple2<AnglePair, AnglePair> Split => throw new NotImplementedException();
     public AnglePair Left(Number t) => throw new NotImplementedException();
     public AnglePair Right(Number t) => throw new NotImplementedException();
-    public AnglePair MoveTo($Value v) => throw new NotImplementedException();
+    public AnglePair MoveTo(Angle v) => throw new NotImplementedException();
     public AnglePair LeftHalf => throw new NotImplementedException();
     public AnglePair RightHalf => throw new NotImplementedException();
-    public AnglePair Recenter($Value c) => throw new NotImplementedException();
+    public AnglePair Recenter(Angle c) => throw new NotImplementedException();
     public AnglePair Clamp(AnglePair y) => throw new NotImplementedException();
-    public $Value Clamp($Value value) => throw new NotImplementedException();
-    public Boolean Within($Value value) => throw new NotImplementedException();
+    public Angle Clamp(Angle value) => throw new NotImplementedException();
+    public Boolean Within(Angle value) => throw new NotImplementedException();
 }
 public partial class Ring
 {
-    public Ring Throw => throw new NotImplementedException();
 }
 public partial class Arc
 {
-    public Arc Throw => throw new NotImplementedException();
 }
 public partial class RealInterval
 {
     public Boolean IsEmpty => throw new NotImplementedException();
-    public $Value Lerp(Number amount) => throw new NotImplementedException();
-    public Number Unlerp($Value value) => throw new NotImplementedException();
+    public Number Lerp(Number amount) => throw new NotImplementedException();
+    public Number Unlerp(Number value) => throw new NotImplementedException();
     public RealInterval Negate => throw new NotImplementedException();
     public RealInterval Reverse => throw new NotImplementedException();
-    public $Value Center => throw new NotImplementedException();
-    public Boolean Contains($Value value) => throw new NotImplementedException();
+    public Number Center => throw new NotImplementedException();
+    public Boolean Contains(Number value) => throw new NotImplementedException();
     public Boolean Contains(RealInterval other) => throw new NotImplementedException();
     public Boolean Overlaps(RealInterval y) => throw new NotImplementedException();
     public Tuple2<RealInterval, RealInterval> Split(Number t) => throw new NotImplementedException();
     public Tuple2<RealInterval, RealInterval> Split => throw new NotImplementedException();
     public RealInterval Left(Number t) => throw new NotImplementedException();
     public RealInterval Right(Number t) => throw new NotImplementedException();
-    public RealInterval MoveTo($Value v) => throw new NotImplementedException();
+    public RealInterval MoveTo(Number v) => throw new NotImplementedException();
     public RealInterval LeftHalf => throw new NotImplementedException();
     public RealInterval RightHalf => throw new NotImplementedException();
-    public RealInterval Recenter($Value c) => throw new NotImplementedException();
+    public RealInterval Recenter(Number c) => throw new NotImplementedException();
     public RealInterval Clamp(RealInterval y) => throw new NotImplementedException();
-    public $Value Clamp($Value value) => throw new NotImplementedException();
-    public Boolean Within($Value value) => throw new NotImplementedException();
+    public Number Clamp(Number value) => throw new NotImplementedException();
+    public Boolean Within(Number value) => throw new NotImplementedException();
 }
 public partial class Capsule
 {
-    public Capsule Throw => throw new NotImplementedException();
 }
 public partial class Matrix3D
 {
-    public Matrix3D Throw => throw new NotImplementedException();
 }
 public partial class Cylinder
 {
-    public Cylinder Throw => throw new NotImplementedException();
 }
 public partial class Cone
 {
-    public Cone Throw => throw new NotImplementedException();
 }
 public partial class Tube
 {
-    public Tube Throw => throw new NotImplementedException();
 }
 public partial class ConeSegment
 {
-    public ConeSegment Throw => throw new NotImplementedException();
 }
 public partial class Box2D
 {
-    public Box2D Throw => throw new NotImplementedException();
 }
 public partial class Box3D
 {
-    public Box3D Throw => throw new NotImplementedException();
 }
 public partial class UV
 {
-    public $T Aggregate(Function2<Number, $T, $T> f) => throw new NotImplementedException();
+    public T1 Aggregate(Function2<Number, T1, T1> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
     public Number SumSquares => throw new NotImplementedException();
     public Number MagnitudeSquared => throw new NotImplementedException();
@@ -1240,37 +903,6 @@ public partial class UV
     public UV SmoothStep => throw new NotImplementedException();
     public UV Pow2 => throw new NotImplementedException();
     public UV Lerp(UV b, Number t) => throw new NotImplementedException();
-    public UV Throw => throw new NotImplementedException();
-    public Boolean Between(UV min, UV max) => throw new NotImplementedException();
-    public Boolean Equals(UV b) => throw new NotImplementedException();
-    public static Boolean operator ==(UV a, UV b) => a.Equals(b);
-    public Boolean NotEquals(UV b) => throw new NotImplementedException();
-    public static Boolean operator !=(UV a, UV b) => a.NotEquals(b);
-    public Boolean LessThan(UV b) => throw new NotImplementedException();
-    public static Boolean operator <(UV a, UV b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(UV b) => throw new NotImplementedException();
-    public static Boolean operator <=(UV a, UV b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(UV b) => throw new NotImplementedException();
-    public static Boolean operator >(UV a, UV b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(UV b) => throw new NotImplementedException();
-    public static Boolean operator >=(UV a, UV b) => a.GreaterThanOrEquals(b);
-    public UV Lesser(UV b) => throw new NotImplementedException();
-    public UV Greater(UV b) => throw new NotImplementedException();
-    public Boolean Between(UV min, UV max) => throw new NotImplementedException();
-    public Boolean Equals(UV b) => throw new NotImplementedException();
-    public static Boolean operator ==(UV a, UV b) => a.Equals(b);
-    public Boolean NotEquals(UV b) => throw new NotImplementedException();
-    public static Boolean operator !=(UV a, UV b) => a.NotEquals(b);
-    public Boolean LessThan(UV b) => throw new NotImplementedException();
-    public static Boolean operator <(UV a, UV b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(UV b) => throw new NotImplementedException();
-    public static Boolean operator <=(UV a, UV b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(UV b) => throw new NotImplementedException();
-    public static Boolean operator >(UV a, UV b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(UV b) => throw new NotImplementedException();
-    public static Boolean operator >=(UV a, UV b) => a.GreaterThanOrEquals(b);
-    public UV Lesser(UV b) => throw new NotImplementedException();
-    public UV Greater(UV b) => throw new NotImplementedException();
     public Boolean Between(UV min, UV max) => throw new NotImplementedException();
     public Boolean Equals(UV b) => throw new NotImplementedException();
     public static Boolean operator ==(UV a, UV b) => a.Equals(b);
@@ -1289,7 +921,7 @@ public partial class UV
 }
 public partial class UVW
 {
-    public $T Aggregate(Function2<Number, $T, $T> f) => throw new NotImplementedException();
+    public T1 Aggregate(Function2<Number, T1, T1> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
     public Number SumSquares => throw new NotImplementedException();
     public Number MagnitudeSquared => throw new NotImplementedException();
@@ -1318,37 +950,6 @@ public partial class UVW
     public UVW SmoothStep => throw new NotImplementedException();
     public UVW Pow2 => throw new NotImplementedException();
     public UVW Lerp(UVW b, Number t) => throw new NotImplementedException();
-    public UVW Throw => throw new NotImplementedException();
-    public Boolean Between(UVW min, UVW max) => throw new NotImplementedException();
-    public Boolean Equals(UVW b) => throw new NotImplementedException();
-    public static Boolean operator ==(UVW a, UVW b) => a.Equals(b);
-    public Boolean NotEquals(UVW b) => throw new NotImplementedException();
-    public static Boolean operator !=(UVW a, UVW b) => a.NotEquals(b);
-    public Boolean LessThan(UVW b) => throw new NotImplementedException();
-    public static Boolean operator <(UVW a, UVW b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(UVW b) => throw new NotImplementedException();
-    public static Boolean operator <=(UVW a, UVW b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(UVW b) => throw new NotImplementedException();
-    public static Boolean operator >(UVW a, UVW b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(UVW b) => throw new NotImplementedException();
-    public static Boolean operator >=(UVW a, UVW b) => a.GreaterThanOrEquals(b);
-    public UVW Lesser(UVW b) => throw new NotImplementedException();
-    public UVW Greater(UVW b) => throw new NotImplementedException();
-    public Boolean Between(UVW min, UVW max) => throw new NotImplementedException();
-    public Boolean Equals(UVW b) => throw new NotImplementedException();
-    public static Boolean operator ==(UVW a, UVW b) => a.Equals(b);
-    public Boolean NotEquals(UVW b) => throw new NotImplementedException();
-    public static Boolean operator !=(UVW a, UVW b) => a.NotEquals(b);
-    public Boolean LessThan(UVW b) => throw new NotImplementedException();
-    public static Boolean operator <(UVW a, UVW b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(UVW b) => throw new NotImplementedException();
-    public static Boolean operator <=(UVW a, UVW b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(UVW b) => throw new NotImplementedException();
-    public static Boolean operator >(UVW a, UVW b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(UVW b) => throw new NotImplementedException();
-    public static Boolean operator >=(UVW a, UVW b) => a.GreaterThanOrEquals(b);
-    public UVW Lesser(UVW b) => throw new NotImplementedException();
-    public UVW Greater(UVW b) => throw new NotImplementedException();
     public Boolean Between(UVW min, UVW max) => throw new NotImplementedException();
     public Boolean Equals(UVW b) => throw new NotImplementedException();
     public static Boolean operator ==(UVW a, UVW b) => a.Equals(b);
@@ -1367,38 +968,18 @@ public partial class UVW
 }
 public partial class CubicBezier2D
 {
-    public CubicBezier2D Throw => throw new NotImplementedException();
 }
 public partial class CubicBezier3D
 {
-    public CubicBezier3D Throw => throw new NotImplementedException();
 }
 public partial class QuadraticBezier2D
 {
-    public QuadraticBezier2D Throw => throw new NotImplementedException();
 }
 public partial class QuadraticBezier3D
 {
-    public QuadraticBezier3D Throw => throw new NotImplementedException();
 }
 public partial class Area
 {
-    public Area Throw => throw new NotImplementedException();
-    public Boolean Between(Area min, Area max) => throw new NotImplementedException();
-    public Boolean Equals(Area b) => throw new NotImplementedException();
-    public static Boolean operator ==(Area a, Area b) => a.Equals(b);
-    public Boolean NotEquals(Area b) => throw new NotImplementedException();
-    public static Boolean operator !=(Area a, Area b) => a.NotEquals(b);
-    public Boolean LessThan(Area b) => throw new NotImplementedException();
-    public static Boolean operator <(Area a, Area b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Area b) => throw new NotImplementedException();
-    public static Boolean operator <=(Area a, Area b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Area b) => throw new NotImplementedException();
-    public static Boolean operator >(Area a, Area b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Area b) => throw new NotImplementedException();
-    public static Boolean operator >=(Area a, Area b) => a.GreaterThanOrEquals(b);
-    public Area Lesser(Area b) => throw new NotImplementedException();
-    public Area Greater(Area b) => throw new NotImplementedException();
     public Boolean Between(Area min, Area max) => throw new NotImplementedException();
     public Boolean Equals(Area b) => throw new NotImplementedException();
     public static Boolean operator ==(Area a, Area b) => a.Equals(b);
@@ -1417,22 +998,6 @@ public partial class Area
 }
 public partial class Volume
 {
-    public Volume Throw => throw new NotImplementedException();
-    public Boolean Between(Volume min, Volume max) => throw new NotImplementedException();
-    public Boolean Equals(Volume b) => throw new NotImplementedException();
-    public static Boolean operator ==(Volume a, Volume b) => a.Equals(b);
-    public Boolean NotEquals(Volume b) => throw new NotImplementedException();
-    public static Boolean operator !=(Volume a, Volume b) => a.NotEquals(b);
-    public Boolean LessThan(Volume b) => throw new NotImplementedException();
-    public static Boolean operator <(Volume a, Volume b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Volume b) => throw new NotImplementedException();
-    public static Boolean operator <=(Volume a, Volume b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Volume b) => throw new NotImplementedException();
-    public static Boolean operator >(Volume a, Volume b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Volume b) => throw new NotImplementedException();
-    public static Boolean operator >=(Volume a, Volume b) => a.GreaterThanOrEquals(b);
-    public Volume Lesser(Volume b) => throw new NotImplementedException();
-    public Volume Greater(Volume b) => throw new NotImplementedException();
     public Boolean Between(Volume min, Volume max) => throw new NotImplementedException();
     public Boolean Equals(Volume b) => throw new NotImplementedException();
     public static Boolean operator ==(Volume a, Volume b) => a.Equals(b);
@@ -1451,22 +1016,6 @@ public partial class Volume
 }
 public partial class Velocity
 {
-    public Velocity Throw => throw new NotImplementedException();
-    public Boolean Between(Velocity min, Velocity max) => throw new NotImplementedException();
-    public Boolean Equals(Velocity b) => throw new NotImplementedException();
-    public static Boolean operator ==(Velocity a, Velocity b) => a.Equals(b);
-    public Boolean NotEquals(Velocity b) => throw new NotImplementedException();
-    public static Boolean operator !=(Velocity a, Velocity b) => a.NotEquals(b);
-    public Boolean LessThan(Velocity b) => throw new NotImplementedException();
-    public static Boolean operator <(Velocity a, Velocity b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Velocity b) => throw new NotImplementedException();
-    public static Boolean operator <=(Velocity a, Velocity b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Velocity b) => throw new NotImplementedException();
-    public static Boolean operator >(Velocity a, Velocity b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Velocity b) => throw new NotImplementedException();
-    public static Boolean operator >=(Velocity a, Velocity b) => a.GreaterThanOrEquals(b);
-    public Velocity Lesser(Velocity b) => throw new NotImplementedException();
-    public Velocity Greater(Velocity b) => throw new NotImplementedException();
     public Boolean Between(Velocity min, Velocity max) => throw new NotImplementedException();
     public Boolean Equals(Velocity b) => throw new NotImplementedException();
     public static Boolean operator ==(Velocity a, Velocity b) => a.Equals(b);
@@ -1485,22 +1034,6 @@ public partial class Velocity
 }
 public partial class Acceleration
 {
-    public Acceleration Throw => throw new NotImplementedException();
-    public Boolean Between(Acceleration min, Acceleration max) => throw new NotImplementedException();
-    public Boolean Equals(Acceleration b) => throw new NotImplementedException();
-    public static Boolean operator ==(Acceleration a, Acceleration b) => a.Equals(b);
-    public Boolean NotEquals(Acceleration b) => throw new NotImplementedException();
-    public static Boolean operator !=(Acceleration a, Acceleration b) => a.NotEquals(b);
-    public Boolean LessThan(Acceleration b) => throw new NotImplementedException();
-    public static Boolean operator <(Acceleration a, Acceleration b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Acceleration b) => throw new NotImplementedException();
-    public static Boolean operator <=(Acceleration a, Acceleration b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Acceleration b) => throw new NotImplementedException();
-    public static Boolean operator >(Acceleration a, Acceleration b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Acceleration b) => throw new NotImplementedException();
-    public static Boolean operator >=(Acceleration a, Acceleration b) => a.GreaterThanOrEquals(b);
-    public Acceleration Lesser(Acceleration b) => throw new NotImplementedException();
-    public Acceleration Greater(Acceleration b) => throw new NotImplementedException();
     public Boolean Between(Acceleration min, Acceleration max) => throw new NotImplementedException();
     public Boolean Equals(Acceleration b) => throw new NotImplementedException();
     public static Boolean operator ==(Acceleration a, Acceleration b) => a.Equals(b);
@@ -1519,22 +1052,6 @@ public partial class Acceleration
 }
 public partial class Force
 {
-    public Force Throw => throw new NotImplementedException();
-    public Boolean Between(Force min, Force max) => throw new NotImplementedException();
-    public Boolean Equals(Force b) => throw new NotImplementedException();
-    public static Boolean operator ==(Force a, Force b) => a.Equals(b);
-    public Boolean NotEquals(Force b) => throw new NotImplementedException();
-    public static Boolean operator !=(Force a, Force b) => a.NotEquals(b);
-    public Boolean LessThan(Force b) => throw new NotImplementedException();
-    public static Boolean operator <(Force a, Force b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Force b) => throw new NotImplementedException();
-    public static Boolean operator <=(Force a, Force b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Force b) => throw new NotImplementedException();
-    public static Boolean operator >(Force a, Force b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Force b) => throw new NotImplementedException();
-    public static Boolean operator >=(Force a, Force b) => a.GreaterThanOrEquals(b);
-    public Force Lesser(Force b) => throw new NotImplementedException();
-    public Force Greater(Force b) => throw new NotImplementedException();
     public Boolean Between(Force min, Force max) => throw new NotImplementedException();
     public Boolean Equals(Force b) => throw new NotImplementedException();
     public static Boolean operator ==(Force a, Force b) => a.Equals(b);
@@ -1553,22 +1070,6 @@ public partial class Force
 }
 public partial class Pressure
 {
-    public Pressure Throw => throw new NotImplementedException();
-    public Boolean Between(Pressure min, Pressure max) => throw new NotImplementedException();
-    public Boolean Equals(Pressure b) => throw new NotImplementedException();
-    public static Boolean operator ==(Pressure a, Pressure b) => a.Equals(b);
-    public Boolean NotEquals(Pressure b) => throw new NotImplementedException();
-    public static Boolean operator !=(Pressure a, Pressure b) => a.NotEquals(b);
-    public Boolean LessThan(Pressure b) => throw new NotImplementedException();
-    public static Boolean operator <(Pressure a, Pressure b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Pressure b) => throw new NotImplementedException();
-    public static Boolean operator <=(Pressure a, Pressure b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Pressure b) => throw new NotImplementedException();
-    public static Boolean operator >(Pressure a, Pressure b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Pressure b) => throw new NotImplementedException();
-    public static Boolean operator >=(Pressure a, Pressure b) => a.GreaterThanOrEquals(b);
-    public Pressure Lesser(Pressure b) => throw new NotImplementedException();
-    public Pressure Greater(Pressure b) => throw new NotImplementedException();
     public Boolean Between(Pressure min, Pressure max) => throw new NotImplementedException();
     public Boolean Equals(Pressure b) => throw new NotImplementedException();
     public static Boolean operator ==(Pressure a, Pressure b) => a.Equals(b);
@@ -1587,22 +1088,6 @@ public partial class Pressure
 }
 public partial class Energy
 {
-    public Energy Throw => throw new NotImplementedException();
-    public Boolean Between(Energy min, Energy max) => throw new NotImplementedException();
-    public Boolean Equals(Energy b) => throw new NotImplementedException();
-    public static Boolean operator ==(Energy a, Energy b) => a.Equals(b);
-    public Boolean NotEquals(Energy b) => throw new NotImplementedException();
-    public static Boolean operator !=(Energy a, Energy b) => a.NotEquals(b);
-    public Boolean LessThan(Energy b) => throw new NotImplementedException();
-    public static Boolean operator <(Energy a, Energy b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Energy b) => throw new NotImplementedException();
-    public static Boolean operator <=(Energy a, Energy b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Energy b) => throw new NotImplementedException();
-    public static Boolean operator >(Energy a, Energy b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Energy b) => throw new NotImplementedException();
-    public static Boolean operator >=(Energy a, Energy b) => a.GreaterThanOrEquals(b);
-    public Energy Lesser(Energy b) => throw new NotImplementedException();
-    public Energy Greater(Energy b) => throw new NotImplementedException();
     public Boolean Between(Energy min, Energy max) => throw new NotImplementedException();
     public Boolean Equals(Energy b) => throw new NotImplementedException();
     public static Boolean operator ==(Energy a, Energy b) => a.Equals(b);
@@ -1621,22 +1106,6 @@ public partial class Energy
 }
 public partial class Memory
 {
-    public Memory Throw => throw new NotImplementedException();
-    public Boolean Between(Memory min, Memory max) => throw new NotImplementedException();
-    public Boolean Equals(Memory b) => throw new NotImplementedException();
-    public static Boolean operator ==(Memory a, Memory b) => a.Equals(b);
-    public Boolean NotEquals(Memory b) => throw new NotImplementedException();
-    public static Boolean operator !=(Memory a, Memory b) => a.NotEquals(b);
-    public Boolean LessThan(Memory b) => throw new NotImplementedException();
-    public static Boolean operator <(Memory a, Memory b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Memory b) => throw new NotImplementedException();
-    public static Boolean operator <=(Memory a, Memory b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Memory b) => throw new NotImplementedException();
-    public static Boolean operator >(Memory a, Memory b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Memory b) => throw new NotImplementedException();
-    public static Boolean operator >=(Memory a, Memory b) => a.GreaterThanOrEquals(b);
-    public Memory Lesser(Memory b) => throw new NotImplementedException();
-    public Memory Greater(Memory b) => throw new NotImplementedException();
     public Boolean Between(Memory min, Memory max) => throw new NotImplementedException();
     public Boolean Equals(Memory b) => throw new NotImplementedException();
     public static Boolean operator ==(Memory a, Memory b) => a.Equals(b);
@@ -1655,22 +1124,6 @@ public partial class Memory
 }
 public partial class Frequency
 {
-    public Frequency Throw => throw new NotImplementedException();
-    public Boolean Between(Frequency min, Frequency max) => throw new NotImplementedException();
-    public Boolean Equals(Frequency b) => throw new NotImplementedException();
-    public static Boolean operator ==(Frequency a, Frequency b) => a.Equals(b);
-    public Boolean NotEquals(Frequency b) => throw new NotImplementedException();
-    public static Boolean operator !=(Frequency a, Frequency b) => a.NotEquals(b);
-    public Boolean LessThan(Frequency b) => throw new NotImplementedException();
-    public static Boolean operator <(Frequency a, Frequency b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Frequency b) => throw new NotImplementedException();
-    public static Boolean operator <=(Frequency a, Frequency b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Frequency b) => throw new NotImplementedException();
-    public static Boolean operator >(Frequency a, Frequency b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Frequency b) => throw new NotImplementedException();
-    public static Boolean operator >=(Frequency a, Frequency b) => a.GreaterThanOrEquals(b);
-    public Frequency Lesser(Frequency b) => throw new NotImplementedException();
-    public Frequency Greater(Frequency b) => throw new NotImplementedException();
     public Boolean Between(Frequency min, Frequency max) => throw new NotImplementedException();
     public Boolean Equals(Frequency b) => throw new NotImplementedException();
     public static Boolean operator ==(Frequency a, Frequency b) => a.Equals(b);
@@ -1689,22 +1142,6 @@ public partial class Frequency
 }
 public partial class Loudness
 {
-    public Loudness Throw => throw new NotImplementedException();
-    public Boolean Between(Loudness min, Loudness max) => throw new NotImplementedException();
-    public Boolean Equals(Loudness b) => throw new NotImplementedException();
-    public static Boolean operator ==(Loudness a, Loudness b) => a.Equals(b);
-    public Boolean NotEquals(Loudness b) => throw new NotImplementedException();
-    public static Boolean operator !=(Loudness a, Loudness b) => a.NotEquals(b);
-    public Boolean LessThan(Loudness b) => throw new NotImplementedException();
-    public static Boolean operator <(Loudness a, Loudness b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Loudness b) => throw new NotImplementedException();
-    public static Boolean operator <=(Loudness a, Loudness b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Loudness b) => throw new NotImplementedException();
-    public static Boolean operator >(Loudness a, Loudness b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Loudness b) => throw new NotImplementedException();
-    public static Boolean operator >=(Loudness a, Loudness b) => a.GreaterThanOrEquals(b);
-    public Loudness Lesser(Loudness b) => throw new NotImplementedException();
-    public Loudness Greater(Loudness b) => throw new NotImplementedException();
     public Boolean Between(Loudness min, Loudness max) => throw new NotImplementedException();
     public Boolean Equals(Loudness b) => throw new NotImplementedException();
     public static Boolean operator ==(Loudness a, Loudness b) => a.Equals(b);
@@ -1723,22 +1160,6 @@ public partial class Loudness
 }
 public partial class LuminousIntensity
 {
-    public LuminousIntensity Throw => throw new NotImplementedException();
-    public Boolean Between(LuminousIntensity min, LuminousIntensity max) => throw new NotImplementedException();
-    public Boolean Equals(LuminousIntensity b) => throw new NotImplementedException();
-    public static Boolean operator ==(LuminousIntensity a, LuminousIntensity b) => a.Equals(b);
-    public Boolean NotEquals(LuminousIntensity b) => throw new NotImplementedException();
-    public static Boolean operator !=(LuminousIntensity a, LuminousIntensity b) => a.NotEquals(b);
-    public Boolean LessThan(LuminousIntensity b) => throw new NotImplementedException();
-    public static Boolean operator <(LuminousIntensity a, LuminousIntensity b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(LuminousIntensity b) => throw new NotImplementedException();
-    public static Boolean operator <=(LuminousIntensity a, LuminousIntensity b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(LuminousIntensity b) => throw new NotImplementedException();
-    public static Boolean operator >(LuminousIntensity a, LuminousIntensity b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(LuminousIntensity b) => throw new NotImplementedException();
-    public static Boolean operator >=(LuminousIntensity a, LuminousIntensity b) => a.GreaterThanOrEquals(b);
-    public LuminousIntensity Lesser(LuminousIntensity b) => throw new NotImplementedException();
-    public LuminousIntensity Greater(LuminousIntensity b) => throw new NotImplementedException();
     public Boolean Between(LuminousIntensity min, LuminousIntensity max) => throw new NotImplementedException();
     public Boolean Equals(LuminousIntensity b) => throw new NotImplementedException();
     public static Boolean operator ==(LuminousIntensity a, LuminousIntensity b) => a.Equals(b);
@@ -1757,22 +1178,6 @@ public partial class LuminousIntensity
 }
 public partial class ElectricPotential
 {
-    public ElectricPotential Throw => throw new NotImplementedException();
-    public Boolean Between(ElectricPotential min, ElectricPotential max) => throw new NotImplementedException();
-    public Boolean Equals(ElectricPotential b) => throw new NotImplementedException();
-    public static Boolean operator ==(ElectricPotential a, ElectricPotential b) => a.Equals(b);
-    public Boolean NotEquals(ElectricPotential b) => throw new NotImplementedException();
-    public static Boolean operator !=(ElectricPotential a, ElectricPotential b) => a.NotEquals(b);
-    public Boolean LessThan(ElectricPotential b) => throw new NotImplementedException();
-    public static Boolean operator <(ElectricPotential a, ElectricPotential b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(ElectricPotential b) => throw new NotImplementedException();
-    public static Boolean operator <=(ElectricPotential a, ElectricPotential b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(ElectricPotential b) => throw new NotImplementedException();
-    public static Boolean operator >(ElectricPotential a, ElectricPotential b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(ElectricPotential b) => throw new NotImplementedException();
-    public static Boolean operator >=(ElectricPotential a, ElectricPotential b) => a.GreaterThanOrEquals(b);
-    public ElectricPotential Lesser(ElectricPotential b) => throw new NotImplementedException();
-    public ElectricPotential Greater(ElectricPotential b) => throw new NotImplementedException();
     public Boolean Between(ElectricPotential min, ElectricPotential max) => throw new NotImplementedException();
     public Boolean Equals(ElectricPotential b) => throw new NotImplementedException();
     public static Boolean operator ==(ElectricPotential a, ElectricPotential b) => a.Equals(b);
@@ -1791,22 +1196,6 @@ public partial class ElectricPotential
 }
 public partial class ElectricCharge
 {
-    public ElectricCharge Throw => throw new NotImplementedException();
-    public Boolean Between(ElectricCharge min, ElectricCharge max) => throw new NotImplementedException();
-    public Boolean Equals(ElectricCharge b) => throw new NotImplementedException();
-    public static Boolean operator ==(ElectricCharge a, ElectricCharge b) => a.Equals(b);
-    public Boolean NotEquals(ElectricCharge b) => throw new NotImplementedException();
-    public static Boolean operator !=(ElectricCharge a, ElectricCharge b) => a.NotEquals(b);
-    public Boolean LessThan(ElectricCharge b) => throw new NotImplementedException();
-    public static Boolean operator <(ElectricCharge a, ElectricCharge b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(ElectricCharge b) => throw new NotImplementedException();
-    public static Boolean operator <=(ElectricCharge a, ElectricCharge b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(ElectricCharge b) => throw new NotImplementedException();
-    public static Boolean operator >(ElectricCharge a, ElectricCharge b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(ElectricCharge b) => throw new NotImplementedException();
-    public static Boolean operator >=(ElectricCharge a, ElectricCharge b) => a.GreaterThanOrEquals(b);
-    public ElectricCharge Lesser(ElectricCharge b) => throw new NotImplementedException();
-    public ElectricCharge Greater(ElectricCharge b) => throw new NotImplementedException();
     public Boolean Between(ElectricCharge min, ElectricCharge max) => throw new NotImplementedException();
     public Boolean Equals(ElectricCharge b) => throw new NotImplementedException();
     public static Boolean operator ==(ElectricCharge a, ElectricCharge b) => a.Equals(b);
@@ -1825,22 +1214,6 @@ public partial class ElectricCharge
 }
 public partial class ElectricCurrent
 {
-    public ElectricCurrent Throw => throw new NotImplementedException();
-    public Boolean Between(ElectricCurrent min, ElectricCurrent max) => throw new NotImplementedException();
-    public Boolean Equals(ElectricCurrent b) => throw new NotImplementedException();
-    public static Boolean operator ==(ElectricCurrent a, ElectricCurrent b) => a.Equals(b);
-    public Boolean NotEquals(ElectricCurrent b) => throw new NotImplementedException();
-    public static Boolean operator !=(ElectricCurrent a, ElectricCurrent b) => a.NotEquals(b);
-    public Boolean LessThan(ElectricCurrent b) => throw new NotImplementedException();
-    public static Boolean operator <(ElectricCurrent a, ElectricCurrent b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(ElectricCurrent b) => throw new NotImplementedException();
-    public static Boolean operator <=(ElectricCurrent a, ElectricCurrent b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(ElectricCurrent b) => throw new NotImplementedException();
-    public static Boolean operator >(ElectricCurrent a, ElectricCurrent b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(ElectricCurrent b) => throw new NotImplementedException();
-    public static Boolean operator >=(ElectricCurrent a, ElectricCurrent b) => a.GreaterThanOrEquals(b);
-    public ElectricCurrent Lesser(ElectricCurrent b) => throw new NotImplementedException();
-    public ElectricCurrent Greater(ElectricCurrent b) => throw new NotImplementedException();
     public Boolean Between(ElectricCurrent min, ElectricCurrent max) => throw new NotImplementedException();
     public Boolean Equals(ElectricCurrent b) => throw new NotImplementedException();
     public static Boolean operator ==(ElectricCurrent a, ElectricCurrent b) => a.Equals(b);
@@ -1859,22 +1232,6 @@ public partial class ElectricCurrent
 }
 public partial class ElectricResistance
 {
-    public ElectricResistance Throw => throw new NotImplementedException();
-    public Boolean Between(ElectricResistance min, ElectricResistance max) => throw new NotImplementedException();
-    public Boolean Equals(ElectricResistance b) => throw new NotImplementedException();
-    public static Boolean operator ==(ElectricResistance a, ElectricResistance b) => a.Equals(b);
-    public Boolean NotEquals(ElectricResistance b) => throw new NotImplementedException();
-    public static Boolean operator !=(ElectricResistance a, ElectricResistance b) => a.NotEquals(b);
-    public Boolean LessThan(ElectricResistance b) => throw new NotImplementedException();
-    public static Boolean operator <(ElectricResistance a, ElectricResistance b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(ElectricResistance b) => throw new NotImplementedException();
-    public static Boolean operator <=(ElectricResistance a, ElectricResistance b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(ElectricResistance b) => throw new NotImplementedException();
-    public static Boolean operator >(ElectricResistance a, ElectricResistance b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(ElectricResistance b) => throw new NotImplementedException();
-    public static Boolean operator >=(ElectricResistance a, ElectricResistance b) => a.GreaterThanOrEquals(b);
-    public ElectricResistance Lesser(ElectricResistance b) => throw new NotImplementedException();
-    public ElectricResistance Greater(ElectricResistance b) => throw new NotImplementedException();
     public Boolean Between(ElectricResistance min, ElectricResistance max) => throw new NotImplementedException();
     public Boolean Equals(ElectricResistance b) => throw new NotImplementedException();
     public static Boolean operator ==(ElectricResistance a, ElectricResistance b) => a.Equals(b);
@@ -1893,22 +1250,6 @@ public partial class ElectricResistance
 }
 public partial class Power
 {
-    public Power Throw => throw new NotImplementedException();
-    public Boolean Between(Power min, Power max) => throw new NotImplementedException();
-    public Boolean Equals(Power b) => throw new NotImplementedException();
-    public static Boolean operator ==(Power a, Power b) => a.Equals(b);
-    public Boolean NotEquals(Power b) => throw new NotImplementedException();
-    public static Boolean operator !=(Power a, Power b) => a.NotEquals(b);
-    public Boolean LessThan(Power b) => throw new NotImplementedException();
-    public static Boolean operator <(Power a, Power b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Power b) => throw new NotImplementedException();
-    public static Boolean operator <=(Power a, Power b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Power b) => throw new NotImplementedException();
-    public static Boolean operator >(Power a, Power b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Power b) => throw new NotImplementedException();
-    public static Boolean operator >=(Power a, Power b) => a.GreaterThanOrEquals(b);
-    public Power Lesser(Power b) => throw new NotImplementedException();
-    public Power Greater(Power b) => throw new NotImplementedException();
     public Boolean Between(Power min, Power max) => throw new NotImplementedException();
     public Boolean Equals(Power b) => throw new NotImplementedException();
     public static Boolean operator ==(Power a, Power b) => a.Equals(b);
@@ -1927,22 +1268,6 @@ public partial class Power
 }
 public partial class Density
 {
-    public Density Throw => throw new NotImplementedException();
-    public Boolean Between(Density min, Density max) => throw new NotImplementedException();
-    public Boolean Equals(Density b) => throw new NotImplementedException();
-    public static Boolean operator ==(Density a, Density b) => a.Equals(b);
-    public Boolean NotEquals(Density b) => throw new NotImplementedException();
-    public static Boolean operator !=(Density a, Density b) => a.NotEquals(b);
-    public Boolean LessThan(Density b) => throw new NotImplementedException();
-    public static Boolean operator <(Density a, Density b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Density b) => throw new NotImplementedException();
-    public static Boolean operator <=(Density a, Density b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Density b) => throw new NotImplementedException();
-    public static Boolean operator >(Density a, Density b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Density b) => throw new NotImplementedException();
-    public static Boolean operator >=(Density a, Density b) => a.GreaterThanOrEquals(b);
-    public Density Lesser(Density b) => throw new NotImplementedException();
-    public Density Greater(Density b) => throw new NotImplementedException();
     public Boolean Between(Density min, Density max) => throw new NotImplementedException();
     public Boolean Equals(Density b) => throw new NotImplementedException();
     public static Boolean operator ==(Density a, Density b) => a.Equals(b);
@@ -1961,15 +1286,12 @@ public partial class Density
 }
 public partial class NormalDistribution
 {
-    public NormalDistribution Throw => throw new NotImplementedException();
 }
 public partial class PoissonDistribution
 {
-    public PoissonDistribution Throw => throw new NotImplementedException();
 }
 public partial class BernoulliDistribution
 {
-    public BernoulliDistribution Throw => throw new NotImplementedException();
 }
 public partial class Probability
 {
@@ -1993,22 +1315,6 @@ public partial class Probability
     public Probability SmoothStep => throw new NotImplementedException();
     public Probability Pow2 => throw new NotImplementedException();
     public Probability Lerp(Probability b, Number t) => throw new NotImplementedException();
-    public Probability Throw => throw new NotImplementedException();
-    public Boolean Between(Probability min, Probability max) => throw new NotImplementedException();
-    public Boolean Equals(Probability b) => throw new NotImplementedException();
-    public static Boolean operator ==(Probability a, Probability b) => a.Equals(b);
-    public Boolean NotEquals(Probability b) => throw new NotImplementedException();
-    public static Boolean operator !=(Probability a, Probability b) => a.NotEquals(b);
-    public Boolean LessThan(Probability b) => throw new NotImplementedException();
-    public static Boolean operator <(Probability a, Probability b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Probability b) => throw new NotImplementedException();
-    public static Boolean operator <=(Probability a, Probability b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Probability b) => throw new NotImplementedException();
-    public static Boolean operator >(Probability a, Probability b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Probability b) => throw new NotImplementedException();
-    public static Boolean operator >=(Probability a, Probability b) => a.GreaterThanOrEquals(b);
-    public Probability Lesser(Probability b) => throw new NotImplementedException();
-    public Probability Greater(Probability b) => throw new NotImplementedException();
     public Boolean Between(Probability min, Probability max) => throw new NotImplementedException();
     public Boolean Equals(Probability b) => throw new NotImplementedException();
     public static Boolean operator ==(Probability a, Probability b) => a.Equals(b);
@@ -2027,7 +1333,6 @@ public partial class Probability
 }
 public partial class BinomialDistribution
 {
-    public BinomialDistribution Throw => throw new NotImplementedException();
 }
 public partial class Array1
 {
@@ -2035,11 +1340,9 @@ public partial class Array1
 }
 public partial class Tuple2
 {
-    public Tuple2 Throw => throw new NotImplementedException();
 }
 public partial class Tuple3
 {
-    public Tuple3 Throw => throw new NotImplementedException();
 }
 public partial class Function0
 {

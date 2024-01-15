@@ -122,32 +122,24 @@ namespace Plato.CSharpWriter
 
         public SymbolWriterCSharp WriteFunction(FunctionInstance f, ConcreteType t)
         {
-            var ret = f.GetTypeString(f.ReturnType);
+            var ret = f.ReturnType;
 
             var argList = f
-                .Parameters.Skip(1)
-                .Select(p => $"{p.Name}")
+                .ParameterNames.Skip(1)
                 .JoinStringsWithComma();
 
-            var firstName = f.Parameters.Count > 0 ? f.Parameters[0].Name : "";
+            var firstName = f.ParameterNames.FirstOrDefault() ?? "";
 
             var paramList = f
-                .Parameters.Skip(1)
-                .Select(p => $"{f.GetTypeString(p.Type)} {p.Name}")
+                .ParameterTypes.Skip(1)
+                .Zip(f.ParameterNames.Skip(1), (pt, pn) => $"{pt} {pn}")
                 .JoinStringsWithComma();
 
             var staticParamList = f
-                .Parameters
-                .Select(p => $"{f.GetTypeString(p.Type)} {p.Name}")
+                .ParameterTypes
+                .Zip(f.ParameterNames, (pt, pn) => $"{pt} {pn}")
                 .JoinStringsWithComma();
 
-            var paramTypeList = f
-                .Parameters.Skip(1)
-                .Select(p => $"{f.GetTypeString(p.Type)}")
-                .JoinStringsWithComma();
-
-            var sig = $"{f.Name}({paramTypeList}):{ret}";
-            
             if (paramList.Length > 0)
             {
                 WriteLine($"public {ret} {f.Name}({paramList}) => throw new NotImplementedException();");
@@ -157,7 +149,7 @@ namespace Plato.CSharpWriter
                 WriteLine($"public {ret} {f.Name} => throw new NotImplementedException();");
             }
 
-            if (f.Parameters.Count == 2)
+            if (f.ParameterNames.Count == 2)
             {
                 var op = OperatorNameLookup.NameToBinaryOperator(f.Name);
 
@@ -174,18 +166,18 @@ namespace Plato.CSharpWriter
                     }
                     else
                     {
-                        var index = f.Parameters[1];
+                        var index = f.ParameterNames[1];
                         Write($"public ")
-                            .Write(ret)
+                            .Write(ret.ToString())
                             .Write(" this[")
                             .Write(index)
-                            .Write($"] => {f.Name}({index.Name});")
+                            .Write($"] => {f.Name}({index});")
                             .WriteLine();
                     }
                 }
             }
 
-            if (f.Parameters.Count == 1)
+            if (f.ParameterNames.Count == 1)
             {
                 var op = OperatorNameLookup.NameToUnaryOperator(f.Name);
                 if (op != null)
@@ -205,14 +197,11 @@ namespace Plato.CSharpWriter
                 WriteLine($"public partial class {t.Type.Name}");
                 WriteStartBlock();
 
-                foreach (var f in t.ConcreteFunctions)
-                {
-                    WriteFunction(f, t);
-                }
+                var funcGroups = t.ConcreteFunctions.Concat(t.GetConceptFunctions()).GroupBy(f => f.SignatureId);
 
-                foreach (var f in t.GetConceptFunctions())
+                foreach (var g in funcGroups)
                 {
-                    WriteFunction(f, t);
+                    WriteFunction(g.First(), t);
                 }
 
                 WriteEndBlock();
