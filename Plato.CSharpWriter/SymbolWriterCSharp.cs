@@ -181,13 +181,7 @@ namespace Plato.CSharpWriter
                     }
                     else
                     {
-                        var index = f.ParameterNames[1];
-                        Write($"public ")
-                            .Write(ret.ToString())
-                            .Write($" this{funcTypeParamsStr}[")
-                            .Write(index)
-                            .Write($"] => {f.Name}({index});")
-                            .WriteLine();
+                        WriteLine($"public {ret} this{funcTypeParamsStr}[{paramList}] => {f.Name}({argList});");
                     }
                 }
             }

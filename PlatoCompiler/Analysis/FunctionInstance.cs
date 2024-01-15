@@ -23,7 +23,8 @@ namespace Plato.Compiler.Analysis
         public string SignatureId => $"{Name}({ParameterTypes.JoinStringsWithComma()})";
         public IReadOnlyList<TypeInstance> ParameterTypes { get; }
         public IReadOnlyList<TypeParameterDefinition> UsedTypeParameters { get; }
-        
+        public override string ToString() => $"{SignatureId}:{ReturnType}";
+
         // TODO: this might be necessary in the future, when choosing the correct type parameter is difficult.
         //public Dictionary<TypeParameterDefinition, TypeParameterDefinition> Unifiers { get; } =
         //    new Dictionary<TypeParameterDefinition, TypeParameterDefinition>();

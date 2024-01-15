@@ -429,8 +429,10 @@ namespace Plato.Compiler.Symbols
 
                         // We create a second version of the function that accepts a member of the given type
                         // This is something that C# does not support, but is convenient in generic code. (e.g., x += x.One). 
-                        var f2 = new FunctionDefinition(m.Name, typeDef, m.Type, body, new ParameterDefinition("_", typeDef.ToTypeExpression()));
-                        AddCompilerGeneratedFunction(typeDef, f2);
+                        
+                        // TEMP:
+                        //var f2 = new FunctionDefinition(m.Name, typeDef, m.Type, body, new ParameterDefinition("_", typeDef.ToTypeExpression()));
+                        //AddCompilerGeneratedFunction(typeDef, f2);
                     }
 
                     ValueBindingsScope = ValueBindingsScope.Pop();

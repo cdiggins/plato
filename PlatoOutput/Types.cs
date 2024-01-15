@@ -17,10 +17,6 @@ public partial class Number: Numerical<Number>
     public Number One => throw new NotImplementedException();
     public Number MinValue => throw new NotImplementedException();
     public Number MaxValue => throw new NotImplementedException();
-    public Number Zero => throw new NotImplementedException();
-    public Number One => throw new NotImplementedException();
-    public Number MinValue => throw new NotImplementedException();
-    public Number MaxValue => throw new NotImplementedException();
     public Number Unlerp(Number a, Number b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Number y) => throw new NotImplementedException();
@@ -52,10 +48,6 @@ public partial class Integer: Numerical<Integer>
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Value };
     // Unimplemented concept functions
-    public Integer Zero => throw new NotImplementedException();
-    public Integer One => throw new NotImplementedException();
-    public Integer MinValue => throw new NotImplementedException();
-    public Integer MaxValue => throw new NotImplementedException();
     public Integer Zero => throw new NotImplementedException();
     public Integer One => throw new NotImplementedException();
     public Integer MinValue => throw new NotImplementedException();
@@ -97,7 +89,7 @@ public partial class String: Value<String>, Array<Character>
     public static Boolean operator !=(String a, String b) => a.NotEquals(b);
     public Integer Count => throw new NotImplementedException();
     public Character At(Integer n) => throw new NotImplementedException();
-    public Character this[n] => At(n);
+    public Character this[Integer n] => At(n);
 }
 public partial class Boolean: BooleanOperations<Boolean>
 {
@@ -172,10 +164,6 @@ public partial class Count: Numerical<Count>
     public Count One => throw new NotImplementedException();
     public Count MinValue => throw new NotImplementedException();
     public Count MaxValue => throw new NotImplementedException();
-    public Count Zero => throw new NotImplementedException();
-    public Count One => throw new NotImplementedException();
-    public Count MinValue => throw new NotImplementedException();
-    public Count MaxValue => throw new NotImplementedException();
     public Number Unlerp(Count a, Count b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Count y) => throw new NotImplementedException();
@@ -230,10 +218,6 @@ public partial class Unit: Numerical<Unit>
     public Unit One => throw new NotImplementedException();
     public Unit MinValue => throw new NotImplementedException();
     public Unit MaxValue => throw new NotImplementedException();
-    public Unit Zero => throw new NotImplementedException();
-    public Unit One => throw new NotImplementedException();
-    public Unit MinValue => throw new NotImplementedException();
-    public Unit MaxValue => throw new NotImplementedException();
     public Number Unlerp(Unit a, Unit b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Unit y) => throw new NotImplementedException();
@@ -265,10 +249,6 @@ public partial class Percent: Numerical<Percent>
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Value };
     // Unimplemented concept functions
-    public Percent Zero => throw new NotImplementedException();
-    public Percent One => throw new NotImplementedException();
-    public Percent MinValue => throw new NotImplementedException();
-    public Percent MaxValue => throw new NotImplementedException();
     public Percent Zero => throw new NotImplementedException();
     public Percent One => throw new NotImplementedException();
     public Percent MinValue => throw new NotImplementedException();
@@ -469,10 +449,6 @@ public partial class Vector2D: Vector<Vector2D>
     public Vector2D One => throw new NotImplementedException();
     public Vector2D MinValue => throw new NotImplementedException();
     public Vector2D MaxValue => throw new NotImplementedException();
-    public Vector2D Zero => throw new NotImplementedException();
-    public Vector2D One => throw new NotImplementedException();
-    public Vector2D MinValue => throw new NotImplementedException();
-    public Vector2D MaxValue => throw new NotImplementedException();
     public Vector2D Reciprocal => throw new NotImplementedException();
     public Vector2D Negative => throw new NotImplementedException();
     public static Vector2D operator -(Vector2D self) => self.Negative;
@@ -488,7 +464,7 @@ public partial class Vector2D: Vector<Vector2D>
     public static Vector2D operator -(Vector2D self, Vector2D other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[n] => At(n);
+    public Number this[Integer n] => At(n);
 }
 public partial class Vector3D: Vector<Vector3D>
 {
@@ -515,10 +491,6 @@ public partial class Vector3D: Vector<Vector3D>
     public Vector3D One => throw new NotImplementedException();
     public Vector3D MinValue => throw new NotImplementedException();
     public Vector3D MaxValue => throw new NotImplementedException();
-    public Vector3D Zero => throw new NotImplementedException();
-    public Vector3D One => throw new NotImplementedException();
-    public Vector3D MinValue => throw new NotImplementedException();
-    public Vector3D MaxValue => throw new NotImplementedException();
     public Vector3D Reciprocal => throw new NotImplementedException();
     public Vector3D Negative => throw new NotImplementedException();
     public static Vector3D operator -(Vector3D self) => self.Negative;
@@ -534,7 +506,7 @@ public partial class Vector3D: Vector<Vector3D>
     public static Vector3D operator -(Vector3D self, Vector3D other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[n] => At(n);
+    public Number this[Integer n] => At(n);
 }
 public partial class Vector4D: Vector<Vector4D>
 {
@@ -563,10 +535,6 @@ public partial class Vector4D: Vector<Vector4D>
     public Vector4D One => throw new NotImplementedException();
     public Vector4D MinValue => throw new NotImplementedException();
     public Vector4D MaxValue => throw new NotImplementedException();
-    public Vector4D Zero => throw new NotImplementedException();
-    public Vector4D One => throw new NotImplementedException();
-    public Vector4D MinValue => throw new NotImplementedException();
-    public Vector4D MaxValue => throw new NotImplementedException();
     public Vector4D Reciprocal => throw new NotImplementedException();
     public Vector4D Negative => throw new NotImplementedException();
     public static Vector4D operator -(Vector4D self) => self.Negative;
@@ -582,7 +550,7 @@ public partial class Vector4D: Vector<Vector4D>
     public static Vector4D operator -(Vector4D self, Vector4D other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[n] => At(n);
+    public Number this[Integer n] => At(n);
 }
 public partial class Orientation3D: Value<Orientation3D>
 {
@@ -760,10 +728,6 @@ public partial class Complex: Vector<Complex>
     public Complex One => throw new NotImplementedException();
     public Complex MinValue => throw new NotImplementedException();
     public Complex MaxValue => throw new NotImplementedException();
-    public Complex Zero => throw new NotImplementedException();
-    public Complex One => throw new NotImplementedException();
-    public Complex MinValue => throw new NotImplementedException();
-    public Complex MaxValue => throw new NotImplementedException();
     public Complex Reciprocal => throw new NotImplementedException();
     public Complex Negative => throw new NotImplementedException();
     public static Complex operator -(Complex self) => self.Negative;
@@ -779,7 +743,7 @@ public partial class Complex: Vector<Complex>
     public static Complex operator -(Complex self, Complex other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[n] => At(n);
+    public Number this[Integer n] => At(n);
 }
 public partial class Ray3D: Value<Ray3D>
 {
@@ -1511,10 +1475,6 @@ public partial class Proportion: Numerical<Proportion>
     public Proportion One => throw new NotImplementedException();
     public Proportion MinValue => throw new NotImplementedException();
     public Proportion MaxValue => throw new NotImplementedException();
-    public Proportion Zero => throw new NotImplementedException();
-    public Proportion One => throw new NotImplementedException();
-    public Proportion MinValue => throw new NotImplementedException();
-    public Proportion MaxValue => throw new NotImplementedException();
     public Number Unlerp(Proportion a, Proportion b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Proportion y) => throw new NotImplementedException();
@@ -2039,10 +1999,6 @@ public partial class UV: Vector<UV>
     public UV One => throw new NotImplementedException();
     public UV MinValue => throw new NotImplementedException();
     public UV MaxValue => throw new NotImplementedException();
-    public UV Zero => throw new NotImplementedException();
-    public UV One => throw new NotImplementedException();
-    public UV MinValue => throw new NotImplementedException();
-    public UV MaxValue => throw new NotImplementedException();
     public UV Reciprocal => throw new NotImplementedException();
     public UV Negative => throw new NotImplementedException();
     public static UV operator -(UV self) => self.Negative;
@@ -2058,7 +2014,7 @@ public partial class UV: Vector<UV>
     public static UV operator -(UV self, UV other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[n] => At(n);
+    public Number this[Integer n] => At(n);
 }
 public partial class UVW: Vector<UVW>
 {
@@ -2085,10 +2041,6 @@ public partial class UVW: Vector<UVW>
     public UVW One => throw new NotImplementedException();
     public UVW MinValue => throw new NotImplementedException();
     public UVW MaxValue => throw new NotImplementedException();
-    public UVW Zero => throw new NotImplementedException();
-    public UVW One => throw new NotImplementedException();
-    public UVW MinValue => throw new NotImplementedException();
-    public UVW MaxValue => throw new NotImplementedException();
     public UVW Reciprocal => throw new NotImplementedException();
     public UVW Negative => throw new NotImplementedException();
     public static UVW operator -(UVW self) => self.Negative;
@@ -2104,7 +2056,7 @@ public partial class UVW: Vector<UVW>
     public static UVW operator -(UVW self, UVW other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[n] => At(n);
+    public Number this[Integer n] => At(n);
 }
 public partial class CubicBezier2D: Value<CubicBezier2D>
 {
@@ -2793,10 +2745,6 @@ public partial class Probability: Numerical<Probability>
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Value };
     // Unimplemented concept functions
-    public Probability Zero => throw new NotImplementedException();
-    public Probability One => throw new NotImplementedException();
-    public Probability MinValue => throw new NotImplementedException();
-    public Probability MaxValue => throw new NotImplementedException();
     public Probability Zero => throw new NotImplementedException();
     public Probability One => throw new NotImplementedException();
     public Probability MinValue => throw new NotImplementedException();
