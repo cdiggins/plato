@@ -271,7 +271,7 @@ public partial class Rotation3D
 }
 public partial class Vector2D
 {
-    public T1 Aggregate<T1>(Function2<Number, T1, T1> f) => throw new NotImplementedException();
+    public TR Aggregate<TR>(Function2<Number, TR, TR> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
     public Number SumSquares => throw new NotImplementedException();
     public Number MagnitudeSquared => throw new NotImplementedException();
@@ -317,7 +317,7 @@ public partial class Vector2D
 }
 public partial class Vector3D
 {
-    public T1 Aggregate<T1>(Function2<Number, T1, T1> f) => throw new NotImplementedException();
+    public TR Aggregate<TR>(Function2<Number, TR, TR> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
     public Number SumSquares => throw new NotImplementedException();
     public Number MagnitudeSquared => throw new NotImplementedException();
@@ -363,7 +363,7 @@ public partial class Vector3D
 }
 public partial class Vector4D
 {
-    public T1 Aggregate<T1>(Function2<Number, T1, T1> f) => throw new NotImplementedException();
+    public TR Aggregate<TR>(Function2<Number, TR, TR> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
     public Number SumSquares => throw new NotImplementedException();
     public Number MagnitudeSquared => throw new NotImplementedException();
@@ -470,7 +470,7 @@ public partial class AlignedBox3D
 }
 public partial class Complex
 {
-    public T1 Aggregate<T1>(Function2<Number, T1, T1> f) => throw new NotImplementedException();
+    public TR Aggregate<TR>(Function2<Number, TR, TR> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
     public Number SumSquares => throw new NotImplementedException();
     public Number MagnitudeSquared => throw new NotImplementedException();
@@ -872,7 +872,7 @@ public partial class Box3D
 }
 public partial class UV
 {
-    public T1 Aggregate<T1>(Function2<Number, T1, T1> f) => throw new NotImplementedException();
+    public TR Aggregate<TR>(Function2<Number, TR, TR> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
     public Number SumSquares => throw new NotImplementedException();
     public Number MagnitudeSquared => throw new NotImplementedException();
@@ -918,7 +918,7 @@ public partial class UV
 }
 public partial class UVW
 {
-    public T1 Aggregate<T1>(Function2<Number, T1, T1> f) => throw new NotImplementedException();
+    public TR Aggregate<TR>(Function2<Number, TR, TR> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
     public Number SumSquares => throw new NotImplementedException();
     public Number MagnitudeSquared => throw new NotImplementedException();

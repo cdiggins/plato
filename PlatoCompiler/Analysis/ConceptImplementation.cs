@@ -41,8 +41,8 @@ namespace Plato.Compiler.Analysis
             Libraries = libraries;
             InheritedFrom = inheritedFrom;
             ConcreteType = concreteType;
-            Substitutions = substitutions;
             Expression = expression;
+            Substitutions = substitutions.Add(Concept.Name, ConcreteType.ToTypeExpression());
 
             Verifier.Assert(Concept.IsConcept());
 

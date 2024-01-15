@@ -6,7 +6,7 @@ namespace Plato.Compiler.Analysis
 {
     public class TypeSubstitutions
     {
-        public TypeParameterDefinition Parameter { get; }
+        public string Name { get; }
         public TypeExpression Replacement { get; }
         public TypeSubstitutions Previous { get; }
     
@@ -28,33 +28,27 @@ namespace Plato.Compiler.Analysis
         }
 
         public TypeSubstitutions Add(TypeParameterDefinition parameter, TypeExpression replace)
-            => new TypeSubstitutions(parameter, replace, this);
+            => Add(parameter.Name, replace);
 
-        public static TypeSubstitutions Create(TypeExpression expr)
-            => new TypeSubstitutions().Add(expr);
+        public TypeSubstitutions Add(string name, TypeExpression replace)
+            => new TypeSubstitutions(name, replace, this);
 
         public override string ToString()
         {
-            var s = $"{Parameter}={Replacement}";
+            var s = $"{Name}={Replacement}";
             return Previous != null ? s + Previous : s;
         }
 
-        // TODO: Self replacement, and $ replacement and other stuff.
-
         public TypeExpression Replace(TypeExpression expr)
-        {
-            if (expr.Definition is TypeParameterDefinition tpd)
-                return tpd.Equals(Parameter) 
-                    ? Replacement 
-                    : Previous != null 
-                        ? Previous.Replace(expr) 
-                        : expr;
-            return expr;
-        }
+            => expr.Name == Name
+                ? Replacement 
+                : Previous != null 
+                    ? Previous.Replace(expr) 
+                    : expr;
 
-        public TypeSubstitutions(TypeParameterDefinition parameter = null, TypeExpression replace = null, TypeSubstitutions subs = null)
+        public TypeSubstitutions(string name, TypeExpression replace, TypeSubstitutions subs = null)
         {
-            Parameter = parameter;
+            Name = name;
             Replacement = replace;
             Previous = subs;
         }

@@ -14,7 +14,7 @@ namespace Plato.Compiler.Analysis
     {
         public TypeDefinition ConcreteType { get; }
         public FunctionDefinition Implementation { get; }
-        public TypeSubstitutions Substitutions { get; }
+        public TypeSubstitutions Substitutions { get; private set; }
         public TypeDefinition Concept { get; }
         public string ConceptName => Concept?.Name ?? "";
         public IReadOnlyList<string> ParameterNames { get; }
@@ -22,8 +22,6 @@ namespace Plato.Compiler.Analysis
         public TypeInstance ReturnType { get; }
         public string SignatureId => $"{Name}({ParameterTypes.JoinStringsWithComma()})";
         public IReadOnlyList<TypeInstance> ParameterTypes { get; }
-        public Dictionary<string, List<TypeParameterDefinition>> TypeVarLookup { get; } 
-            = new Dictionary<string, List<TypeParameterDefinition>>();
         public IReadOnlyList<TypeParameterDefinition> UsedTypeParameters { get; }
         
         // TODO: this might be necessary in the future, when choosing the correct type parameter is difficult.
@@ -47,10 +45,6 @@ namespace Plato.Compiler.Analysis
             foreach (var p in Implementation.Parameters)
                 GatherTypeVariables(p.Type);
 
-            // Sort the used type vars? 
-            foreach (var kv in TypeVarLookup)
-                kv.Value.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.Ordinal));
-
             ReturnType = ToInstance(Implementation.ReturnType);
             ParameterTypes = Implementation.Parameters.Select(p => ToInstance(p.Type)).ToList();
 
@@ -69,14 +63,7 @@ namespace Plato.Compiler.Analysis
 
                 if (ta.Name.StartsWith("$"))
                 {
-                    if (TypeVarLookup.ContainsKey(ta.Name))
-                    {
-                        TypeVarLookup[ta.Name].Add(tp);
-                    }
-                    else
-                    {
-                        TypeVarLookup.Add(ta.Name, new List<TypeParameterDefinition>() { tp });
-                    }
+                    Substitutions = Substitutions.Add(ta.Name, tp.ToTypeExpression());
                 }
 
                 GatherTypeVariables(ta);
@@ -85,16 +72,16 @@ namespace Plato.Compiler.Analysis
 
         public TypeInstance ToInstance(TypeExpression expr)
         {
-            if (expr.Name == ConceptName || expr.Name == "Self")
-                return ToInstance(ConcreteType.ToTypeExpression());
+            // Repeat until we don't change anymore. 
+            while (true)
+            {
+                var r = Substitutions.Replace(expr);
 
-            // TODO: right now I just pick one type at random.
-            // However, what if I choose the wrong one? 
-            if (TypeVarLookup.ContainsKey(expr.Name))
-                return ToInstance(TypeVarLookup[expr.Name].First().ToTypeExpression());
+                if (ReferenceEquals(r, expr)) 
+                    return new TypeInstance(r.Definition, r.TypeArgs.Select(ToInstance));
 
-            var r = Substitutions.Replace(expr);
-            return new TypeInstance(r.Definition, r.TypeArgs.Select(ToInstance));
-        }   
+                expr = r;
+            }
+        }
     }
 }

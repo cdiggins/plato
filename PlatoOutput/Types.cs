@@ -33,10 +33,10 @@ public partial class Number: Numerical<Number>
     public static Number operator /(Number self, Number other) => self.Divide(other);
     public Number Modulo(Number other) => throw new NotImplementedException();
     public static Number operator %(Number self, Number other) => self.Modulo(other);
-    public Number Add<Self>(Self other) => throw new NotImplementedException();
-    public static Number operator +<Self>(Number self, Self other) => self.Add(other);
-    public Number Subtract<Self>(Self other) => throw new NotImplementedException();
-    public static Number operator -<Self>(Number self, Self other) => self.Subtract(other);
+    public Number Add(Number other) => throw new NotImplementedException();
+    public static Number operator +(Number self, Number other) => self.Add(other);
+    public Number Subtract(Number other) => throw new NotImplementedException();
+    public static Number operator -(Number self, Number other) => self.Subtract(other);
 }
 public partial class Integer: Numerical<Integer>
 {
@@ -72,10 +72,10 @@ public partial class Integer: Numerical<Integer>
     public static Integer operator /(Integer self, Integer other) => self.Divide(other);
     public Integer Modulo(Integer other) => throw new NotImplementedException();
     public static Integer operator %(Integer self, Integer other) => self.Modulo(other);
-    public Integer Add<Self>(Self other) => throw new NotImplementedException();
-    public static Integer operator +<Self>(Integer self, Self other) => self.Add(other);
-    public Integer Subtract<Self>(Self other) => throw new NotImplementedException();
-    public static Integer operator -<Self>(Integer self, Self other) => self.Subtract(other);
+    public Integer Add(Integer other) => throw new NotImplementedException();
+    public static Integer operator +(Integer self, Integer other) => self.Add(other);
+    public Integer Subtract(Integer other) => throw new NotImplementedException();
+    public static Integer operator -(Integer self, Integer other) => self.Subtract(other);
 }
 public partial class String: Value<String>, Array<Character>
 {
@@ -188,10 +188,10 @@ public partial class Count: Numerical<Count>
     public static Count operator /(Count self, Count other) => self.Divide(other);
     public Count Modulo(Count other) => throw new NotImplementedException();
     public static Count operator %(Count self, Count other) => self.Modulo(other);
-    public Count Add<Self>(Self other) => throw new NotImplementedException();
-    public static Count operator +<Self>(Count self, Self other) => self.Add(other);
-    public Count Subtract<Self>(Self other) => throw new NotImplementedException();
-    public static Count operator -<Self>(Count self, Self other) => self.Subtract(other);
+    public Count Add(Count other) => throw new NotImplementedException();
+    public static Count operator +(Count self, Count other) => self.Add(other);
+    public Count Subtract(Count other) => throw new NotImplementedException();
+    public static Count operator -(Count self, Count other) => self.Subtract(other);
 }
 public partial class Index: Value<Index>
 {
@@ -246,10 +246,10 @@ public partial class Unit: Numerical<Unit>
     public static Unit operator /(Unit self, Unit other) => self.Divide(other);
     public Unit Modulo(Unit other) => throw new NotImplementedException();
     public static Unit operator %(Unit self, Unit other) => self.Modulo(other);
-    public Unit Add<Self>(Self other) => throw new NotImplementedException();
-    public static Unit operator +<Self>(Unit self, Self other) => self.Add(other);
-    public Unit Subtract<Self>(Self other) => throw new NotImplementedException();
-    public static Unit operator -<Self>(Unit self, Self other) => self.Subtract(other);
+    public Unit Add(Unit other) => throw new NotImplementedException();
+    public static Unit operator +(Unit self, Unit other) => self.Add(other);
+    public Unit Subtract(Unit other) => throw new NotImplementedException();
+    public static Unit operator -(Unit self, Unit other) => self.Subtract(other);
 }
 public partial class Percent: Numerical<Percent>
 {
@@ -285,10 +285,10 @@ public partial class Percent: Numerical<Percent>
     public static Percent operator /(Percent self, Percent other) => self.Divide(other);
     public Percent Modulo(Percent other) => throw new NotImplementedException();
     public static Percent operator %(Percent self, Percent other) => self.Modulo(other);
-    public Percent Add<Self>(Self other) => throw new NotImplementedException();
-    public static Percent operator +<Self>(Percent self, Self other) => self.Add(other);
-    public Percent Subtract<Self>(Self other) => throw new NotImplementedException();
-    public static Percent operator -<Self>(Percent self, Self other) => self.Subtract(other);
+    public Percent Add(Percent other) => throw new NotImplementedException();
+    public static Percent operator +(Percent self, Percent other) => self.Add(other);
+    public Percent Subtract(Percent other) => throw new NotImplementedException();
+    public static Percent operator -(Percent self, Percent other) => self.Subtract(other);
 }
 public partial class Quaternion: Value<Quaternion>
 {
@@ -482,10 +482,10 @@ public partial class Vector2D: Vector<Vector2D>
     public static Vector2D operator /(Vector2D self, Vector2D other) => self.Divide(other);
     public Vector2D Modulo(Vector2D other) => throw new NotImplementedException();
     public static Vector2D operator %(Vector2D self, Vector2D other) => self.Modulo(other);
-    public Vector2D Add<Self>(Self other) => throw new NotImplementedException();
-    public static Vector2D operator +<Self>(Vector2D self, Self other) => self.Add(other);
-    public Vector2D Subtract<Self>(Self other) => throw new NotImplementedException();
-    public static Vector2D operator -<Self>(Vector2D self, Self other) => self.Subtract(other);
+    public Vector2D Add(Vector2D other) => throw new NotImplementedException();
+    public static Vector2D operator +(Vector2D self, Vector2D other) => self.Add(other);
+    public Vector2D Subtract(Vector2D other) => throw new NotImplementedException();
+    public static Vector2D operator -(Vector2D self, Vector2D other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
     public Number this[n] => At(n);
@@ -528,10 +528,10 @@ public partial class Vector3D: Vector<Vector3D>
     public static Vector3D operator /(Vector3D self, Vector3D other) => self.Divide(other);
     public Vector3D Modulo(Vector3D other) => throw new NotImplementedException();
     public static Vector3D operator %(Vector3D self, Vector3D other) => self.Modulo(other);
-    public Vector3D Add<Self>(Self other) => throw new NotImplementedException();
-    public static Vector3D operator +<Self>(Vector3D self, Self other) => self.Add(other);
-    public Vector3D Subtract<Self>(Self other) => throw new NotImplementedException();
-    public static Vector3D operator -<Self>(Vector3D self, Self other) => self.Subtract(other);
+    public Vector3D Add(Vector3D other) => throw new NotImplementedException();
+    public static Vector3D operator +(Vector3D self, Vector3D other) => self.Add(other);
+    public Vector3D Subtract(Vector3D other) => throw new NotImplementedException();
+    public static Vector3D operator -(Vector3D self, Vector3D other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
     public Number this[n] => At(n);
@@ -576,10 +576,10 @@ public partial class Vector4D: Vector<Vector4D>
     public static Vector4D operator /(Vector4D self, Vector4D other) => self.Divide(other);
     public Vector4D Modulo(Vector4D other) => throw new NotImplementedException();
     public static Vector4D operator %(Vector4D self, Vector4D other) => self.Modulo(other);
-    public Vector4D Add<Self>(Self other) => throw new NotImplementedException();
-    public static Vector4D operator +<Self>(Vector4D self, Self other) => self.Add(other);
-    public Vector4D Subtract<Self>(Self other) => throw new NotImplementedException();
-    public static Vector4D operator -<Self>(Vector4D self, Self other) => self.Subtract(other);
+    public Vector4D Add(Vector4D other) => throw new NotImplementedException();
+    public static Vector4D operator +(Vector4D self, Vector4D other) => self.Add(other);
+    public Vector4D Subtract(Vector4D other) => throw new NotImplementedException();
+    public static Vector4D operator -(Vector4D self, Vector4D other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
     public Number this[n] => At(n);
@@ -773,10 +773,10 @@ public partial class Complex: Vector<Complex>
     public static Complex operator /(Complex self, Complex other) => self.Divide(other);
     public Complex Modulo(Complex other) => throw new NotImplementedException();
     public static Complex operator %(Complex self, Complex other) => self.Modulo(other);
-    public Complex Add<Self>(Self other) => throw new NotImplementedException();
-    public static Complex operator +<Self>(Complex self, Self other) => self.Add(other);
-    public Complex Subtract<Self>(Self other) => throw new NotImplementedException();
-    public static Complex operator -<Self>(Complex self, Self other) => self.Subtract(other);
+    public Complex Add(Complex other) => throw new NotImplementedException();
+    public static Complex operator +(Complex self, Complex other) => self.Add(other);
+    public Complex Subtract(Complex other) => throw new NotImplementedException();
+    public static Complex operator -(Complex self, Complex other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
     public Number this[n] => At(n);
@@ -1527,10 +1527,10 @@ public partial class Proportion: Numerical<Proportion>
     public static Proportion operator /(Proportion self, Proportion other) => self.Divide(other);
     public Proportion Modulo(Proportion other) => throw new NotImplementedException();
     public static Proportion operator %(Proportion self, Proportion other) => self.Modulo(other);
-    public Proportion Add<Self>(Self other) => throw new NotImplementedException();
-    public static Proportion operator +<Self>(Proportion self, Self other) => self.Add(other);
-    public Proportion Subtract<Self>(Self other) => throw new NotImplementedException();
-    public static Proportion operator -<Self>(Proportion self, Self other) => self.Subtract(other);
+    public Proportion Add(Proportion other) => throw new NotImplementedException();
+    public static Proportion operator +(Proportion self, Proportion other) => self.Add(other);
+    public Proportion Subtract(Proportion other) => throw new NotImplementedException();
+    public static Proportion operator -(Proportion self, Proportion other) => self.Subtract(other);
 }
 public partial class Fraction: Value<Fraction>
 {
@@ -2052,10 +2052,10 @@ public partial class UV: Vector<UV>
     public static UV operator /(UV self, UV other) => self.Divide(other);
     public UV Modulo(UV other) => throw new NotImplementedException();
     public static UV operator %(UV self, UV other) => self.Modulo(other);
-    public UV Add<Self>(Self other) => throw new NotImplementedException();
-    public static UV operator +<Self>(UV self, Self other) => self.Add(other);
-    public UV Subtract<Self>(Self other) => throw new NotImplementedException();
-    public static UV operator -<Self>(UV self, Self other) => self.Subtract(other);
+    public UV Add(UV other) => throw new NotImplementedException();
+    public static UV operator +(UV self, UV other) => self.Add(other);
+    public UV Subtract(UV other) => throw new NotImplementedException();
+    public static UV operator -(UV self, UV other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
     public Number this[n] => At(n);
@@ -2098,10 +2098,10 @@ public partial class UVW: Vector<UVW>
     public static UVW operator /(UVW self, UVW other) => self.Divide(other);
     public UVW Modulo(UVW other) => throw new NotImplementedException();
     public static UVW operator %(UVW self, UVW other) => self.Modulo(other);
-    public UVW Add<Self>(Self other) => throw new NotImplementedException();
-    public static UVW operator +<Self>(UVW self, Self other) => self.Add(other);
-    public UVW Subtract<Self>(Self other) => throw new NotImplementedException();
-    public static UVW operator -<Self>(UVW self, Self other) => self.Subtract(other);
+    public UVW Add(UVW other) => throw new NotImplementedException();
+    public static UVW operator +(UVW self, UVW other) => self.Add(other);
+    public UVW Subtract(UVW other) => throw new NotImplementedException();
+    public static UVW operator -(UVW self, UVW other) => self.Subtract(other);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
     public Number this[n] => At(n);
@@ -2813,10 +2813,10 @@ public partial class Probability: Numerical<Probability>
     public static Probability operator /(Probability self, Probability other) => self.Divide(other);
     public Probability Modulo(Probability other) => throw new NotImplementedException();
     public static Probability operator %(Probability self, Probability other) => self.Modulo(other);
-    public Probability Add<Self>(Self other) => throw new NotImplementedException();
-    public static Probability operator +<Self>(Probability self, Self other) => self.Add(other);
-    public Probability Subtract<Self>(Self other) => throw new NotImplementedException();
-    public static Probability operator -<Self>(Probability self, Self other) => self.Subtract(other);
+    public Probability Add(Probability other) => throw new NotImplementedException();
+    public static Probability operator +(Probability self, Probability other) => self.Add(other);
+    public Probability Subtract(Probability other) => throw new NotImplementedException();
+    public static Probability operator -(Probability self, Probability other) => self.Subtract(other);
 }
 public partial class BinomialDistribution: Value<BinomialDistribution>
 {

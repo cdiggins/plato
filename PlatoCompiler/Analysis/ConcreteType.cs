@@ -15,6 +15,7 @@ namespace Plato.Compiler.Analysis
     {
         public TypeDefinition Type { get; }
         public LibrarySet Libraries { get; }
+        public TypeSubstitutions Substitutions { get; }
         public IReadOnlyList<ConceptImplementation> Concepts { get; }
         public IReadOnlyList<ConceptImplementation> AllConcepts { get; }
         public IReadOnlyList<FunctionInstance> ConcreteFunctions { get; }
@@ -29,6 +30,7 @@ namespace Plato.Compiler.Analysis
             Verifier.Assert(type.IsConcrete());
             Type = type;
             Libraries = libraries;
+            Substitutions = new TypeSubstitutions("Self", Type.ToTypeExpression());
             Concepts = type.Implements.Select(CreateConceptImplementation).ToList();
             AllConcepts = Concepts.AllDescendants().ToList();
             ConcreteFunctions = libraries.GetFunctionsForType(Type.Name).Select(AnalyzeFunction).ToList();
@@ -41,10 +43,10 @@ namespace Plato.Compiler.Analysis
         }
 
         public ConceptImplementation CreateConceptImplementation(TypeExpression type)
-            => new ConceptImplementation(Libraries, Type, TypeSubstitutions.Create(type), type);
+            => new ConceptImplementation(Libraries, Type, Substitutions.Add(type), type);
 
         public FunctionInstance AnalyzeFunction(FunctionDefinition function)
-            => new FunctionInstance(Type, function, new TypeSubstitutions());
+            => new FunctionInstance(Type, function, Substitutions);
 
         public IEnumerable<FunctionInstance> GetConceptFunctions()
             => Concepts.SelectMany(c => c.AllFunctions());
