@@ -1,5 +1,5 @@
 using System;
-public partial class Number
+public readonly partial struct Number
 {
     public Angle Acos => throw new NotImplementedException();
     public Angle Asin => throw new NotImplementedException();
@@ -62,7 +62,7 @@ public partial class Number
     public Number Lesser(Number b) => throw new NotImplementedException();
     public Number Greater(Number b) => throw new NotImplementedException();
 }
-public partial class Integer
+public readonly partial struct Integer
 {
     public Integer Add(Integer y) => throw new NotImplementedException();
     public static Integer operator +(Integer x, Integer y) => x.Add(y);
@@ -113,10 +113,10 @@ public partial class Integer
     public Integer Lesser(Integer b) => throw new NotImplementedException();
     public Integer Greater(Integer b) => throw new NotImplementedException();
 }
-public partial class String
+public readonly partial struct String
 {
 }
-public partial class Boolean
+public readonly partial struct Boolean
 {
     public Boolean And(Boolean y) => throw new NotImplementedException();
     public static Boolean operator &(Boolean x, Boolean y) => x.And(y);
@@ -125,13 +125,13 @@ public partial class Boolean
     public Boolean Not => throw new NotImplementedException();
     public static Boolean operator !(Boolean x) => x.Not;
 }
-public partial class Character
+public readonly partial struct Character
 {
 }
-public partial class Dynamic
+public readonly partial struct Dynamic
 {
 }
-public partial class Count
+public readonly partial struct Count
 {
     public Count Square => throw new NotImplementedException();
     public Count PlusOne => throw new NotImplementedException();
@@ -169,10 +169,10 @@ public partial class Count
     public Count Lesser(Count b) => throw new NotImplementedException();
     public Count Greater(Count b) => throw new NotImplementedException();
 }
-public partial class Index
+public readonly partial struct Index
 {
 }
-public partial class Unit
+public readonly partial struct Unit
 {
     public Unit Square => throw new NotImplementedException();
     public Unit PlusOne => throw new NotImplementedException();
@@ -210,7 +210,7 @@ public partial class Unit
     public Unit Lesser(Unit b) => throw new NotImplementedException();
     public Unit Greater(Unit b) => throw new NotImplementedException();
 }
-public partial class Percent
+public readonly partial struct Percent
 {
     public Percent Square => throw new NotImplementedException();
     public Percent PlusOne => throw new NotImplementedException();
@@ -248,28 +248,28 @@ public partial class Percent
     public Percent Lesser(Percent b) => throw new NotImplementedException();
     public Percent Greater(Percent b) => throw new NotImplementedException();
 }
-public partial class Quaternion
+public readonly partial struct Quaternion
 {
 }
-public partial class Unit2D
+public readonly partial struct Unit2D
 {
 }
-public partial class Unit3D
+public readonly partial struct Unit3D
 {
 }
-public partial class Direction3D
+public readonly partial struct Direction3D
 {
 }
-public partial class AxisAngle
+public readonly partial struct AxisAngle
 {
 }
-public partial class EulerAngles
+public readonly partial struct EulerAngles
 {
 }
-public partial class Rotation3D
+public readonly partial struct Rotation3D
 {
 }
-public partial class Vector2D
+public readonly partial struct Vector2D
 {
     public TR Aggregate<TR>(Function2<Number, TR, TR> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
@@ -315,7 +315,7 @@ public partial class Vector2D
     public Vector2D Lesser(Vector2D b) => throw new NotImplementedException();
     public Vector2D Greater(Vector2D b) => throw new NotImplementedException();
 }
-public partial class Vector3D
+public readonly partial struct Vector3D
 {
     public TR Aggregate<TR>(Function2<Number, TR, TR> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
@@ -361,7 +361,7 @@ public partial class Vector3D
     public Vector3D Lesser(Vector3D b) => throw new NotImplementedException();
     public Vector3D Greater(Vector3D b) => throw new NotImplementedException();
 }
-public partial class Vector4D
+public readonly partial struct Vector4D
 {
     public TR Aggregate<TR>(Function2<Number, TR, TR> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
@@ -407,22 +407,22 @@ public partial class Vector4D
     public Vector4D Lesser(Vector4D b) => throw new NotImplementedException();
     public Vector4D Greater(Vector4D b) => throw new NotImplementedException();
 }
-public partial class Orientation3D
+public readonly partial struct Orientation3D
 {
 }
-public partial class Pose2D
+public readonly partial struct Pose2D
 {
 }
-public partial class Pose3D
+public readonly partial struct Pose3D
 {
 }
-public partial class Transform3D
+public readonly partial struct Transform3D
 {
 }
-public partial class Transform2D
+public readonly partial struct Transform2D
 {
 }
-public partial class AlignedBox2D
+public readonly partial struct AlignedBox2D
 {
     public Boolean IsEmpty => throw new NotImplementedException();
     public Point2D Lerp(Number amount) => throw new NotImplementedException();
@@ -445,7 +445,7 @@ public partial class AlignedBox2D
     public Point2D Clamp(Point2D value) => throw new NotImplementedException();
     public Boolean Within(Point2D value) => throw new NotImplementedException();
 }
-public partial class AlignedBox3D
+public readonly partial struct AlignedBox3D
 {
     public Boolean IsEmpty => throw new NotImplementedException();
     public Point3D Lerp(Number amount) => throw new NotImplementedException();
@@ -468,7 +468,7 @@ public partial class AlignedBox3D
     public Point3D Clamp(Point3D value) => throw new NotImplementedException();
     public Boolean Within(Point3D value) => throw new NotImplementedException();
 }
-public partial class Complex
+public readonly partial struct Complex
 {
     public TR Aggregate<TR>(Function2<Number, TR, TR> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
@@ -514,37 +514,37 @@ public partial class Complex
     public Complex Lesser(Complex b) => throw new NotImplementedException();
     public Complex Greater(Complex b) => throw new NotImplementedException();
 }
-public partial class Ray3D
+public readonly partial struct Ray3D
 {
 }
-public partial class Ray2D
+public readonly partial struct Ray2D
 {
 }
-public partial class Sphere
+public readonly partial struct Sphere
 {
 }
-public partial class Plane
+public readonly partial struct Plane
 {
 }
-public partial class Triangle2D
+public readonly partial struct Triangle2D
 {
 }
-public partial class Triangle3D
+public readonly partial struct Triangle3D
 {
 }
-public partial class Quad2D
+public readonly partial struct Quad2D
 {
 }
-public partial class Quad3D
+public readonly partial struct Quad3D
 {
 }
-public partial class Point2D
+public readonly partial struct Point2D
 {
 }
-public partial class Point3D
+public readonly partial struct Point3D
 {
 }
-public partial class Line2D
+public readonly partial struct Line2D
 {
     public Boolean IsEmpty => throw new NotImplementedException();
     public Point2D Lerp(Number amount) => throw new NotImplementedException();
@@ -567,7 +567,7 @@ public partial class Line2D
     public Point2D Clamp(Point2D value) => throw new NotImplementedException();
     public Boolean Within(Point2D value) => throw new NotImplementedException();
 }
-public partial class Line3D
+public readonly partial struct Line3D
 {
     public Boolean IsEmpty => throw new NotImplementedException();
     public Point3D Lerp(Number amount) => throw new NotImplementedException();
@@ -590,64 +590,64 @@ public partial class Line3D
     public Point3D Clamp(Point3D value) => throw new NotImplementedException();
     public Boolean Within(Point3D value) => throw new NotImplementedException();
 }
-public partial class Color
+public readonly partial struct Color
 {
 }
-public partial class ColorLUV
+public readonly partial struct ColorLUV
 {
 }
-public partial class ColorLAB
+public readonly partial struct ColorLAB
 {
 }
-public partial class ColorLCh
+public readonly partial struct ColorLCh
 {
 }
-public partial class ColorHSV
+public readonly partial struct ColorHSV
 {
 }
-public partial class ColorHSL
+public readonly partial struct ColorHSL
 {
 }
-public partial class ColorYCbCr
+public readonly partial struct ColorYCbCr
 {
 }
-public partial class SphericalCoordinate
+public readonly partial struct SphericalCoordinate
 {
 }
-public partial class PolarCoordinate
+public readonly partial struct PolarCoordinate
 {
 }
-public partial class LogPolarCoordinate
+public readonly partial struct LogPolarCoordinate
 {
 }
-public partial class CylindricalCoordinate
+public readonly partial struct CylindricalCoordinate
 {
 }
-public partial class HorizontalCoordinate
+public readonly partial struct HorizontalCoordinate
 {
 }
-public partial class GeoCoordinate
+public readonly partial struct GeoCoordinate
 {
 }
-public partial class GeoCoordinateWithAltitude
+public readonly partial struct GeoCoordinateWithAltitude
 {
 }
-public partial class Circle
+public readonly partial struct Circle
 {
 }
-public partial class Chord
+public readonly partial struct Chord
 {
 }
-public partial class Size2D
+public readonly partial struct Size2D
 {
 }
-public partial class Size3D
+public readonly partial struct Size3D
 {
 }
-public partial class Rectangle2D
+public readonly partial struct Rectangle2D
 {
 }
-public partial class Proportion
+public readonly partial struct Proportion
 {
     public Proportion Square => throw new NotImplementedException();
     public Proportion PlusOne => throw new NotImplementedException();
@@ -685,10 +685,10 @@ public partial class Proportion
     public Proportion Lesser(Proportion b) => throw new NotImplementedException();
     public Proportion Greater(Proportion b) => throw new NotImplementedException();
 }
-public partial class Fraction
+public readonly partial struct Fraction
 {
 }
-public partial class Angle
+public readonly partial struct Angle
 {
     public Number Cos => throw new NotImplementedException();
     public Number Sin => throw new NotImplementedException();
@@ -696,7 +696,7 @@ public partial class Angle
     public Number Degrees => throw new NotImplementedException();
     public Number Turns => throw new NotImplementedException();
 }
-public partial class Length
+public readonly partial struct Length
 {
     public Boolean Between(Length min, Length max) => throw new NotImplementedException();
     public Boolean Equals(Length b) => throw new NotImplementedException();
@@ -714,7 +714,7 @@ public partial class Length
     public Length Lesser(Length b) => throw new NotImplementedException();
     public Length Greater(Length b) => throw new NotImplementedException();
 }
-public partial class Mass
+public readonly partial struct Mass
 {
     public Boolean Between(Mass min, Mass max) => throw new NotImplementedException();
     public Boolean Equals(Mass b) => throw new NotImplementedException();
@@ -732,7 +732,7 @@ public partial class Mass
     public Mass Lesser(Mass b) => throw new NotImplementedException();
     public Mass Greater(Mass b) => throw new NotImplementedException();
 }
-public partial class Temperature
+public readonly partial struct Temperature
 {
     public Boolean Between(Temperature min, Temperature max) => throw new NotImplementedException();
     public Boolean Equals(Temperature b) => throw new NotImplementedException();
@@ -750,7 +750,7 @@ public partial class Temperature
     public Temperature Lesser(Temperature b) => throw new NotImplementedException();
     public Temperature Greater(Temperature b) => throw new NotImplementedException();
 }
-public partial class Time
+public readonly partial struct Time
 {
     public Boolean Between(Time min, Time max) => throw new NotImplementedException();
     public Boolean Equals(Time b) => throw new NotImplementedException();
@@ -768,7 +768,7 @@ public partial class Time
     public Time Lesser(Time b) => throw new NotImplementedException();
     public Time Greater(Time b) => throw new NotImplementedException();
 }
-public partial class TimeRange
+public readonly partial struct TimeRange
 {
     public Boolean IsEmpty => throw new NotImplementedException();
     public DateTime Lerp(Number amount) => throw new NotImplementedException();
@@ -791,10 +791,10 @@ public partial class TimeRange
     public DateTime Clamp(DateTime value) => throw new NotImplementedException();
     public Boolean Within(DateTime value) => throw new NotImplementedException();
 }
-public partial class DateTime
+public readonly partial struct DateTime
 {
 }
-public partial class AnglePair
+public readonly partial struct AnglePair
 {
     public Boolean IsEmpty => throw new NotImplementedException();
     public Angle Lerp(Number amount) => throw new NotImplementedException();
@@ -817,13 +817,13 @@ public partial class AnglePair
     public Angle Clamp(Angle value) => throw new NotImplementedException();
     public Boolean Within(Angle value) => throw new NotImplementedException();
 }
-public partial class Ring
+public readonly partial struct Ring
 {
 }
-public partial class Arc
+public readonly partial struct Arc
 {
 }
-public partial class RealInterval
+public readonly partial struct RealInterval
 {
     public Boolean IsEmpty => throw new NotImplementedException();
     public Number Lerp(Number amount) => throw new NotImplementedException();
@@ -846,31 +846,31 @@ public partial class RealInterval
     public Number Clamp(Number value) => throw new NotImplementedException();
     public Boolean Within(Number value) => throw new NotImplementedException();
 }
-public partial class Capsule
+public readonly partial struct Capsule
 {
 }
-public partial class Matrix3D
+public readonly partial struct Matrix3D
 {
 }
-public partial class Cylinder
+public readonly partial struct Cylinder
 {
 }
-public partial class Cone
+public readonly partial struct Cone
 {
 }
-public partial class Tube
+public readonly partial struct Tube
 {
 }
-public partial class ConeSegment
+public readonly partial struct ConeSegment
 {
 }
-public partial class Box2D
+public readonly partial struct Box2D
 {
 }
-public partial class Box3D
+public readonly partial struct Box3D
 {
 }
-public partial class UV
+public readonly partial struct UV
 {
     public TR Aggregate<TR>(Function2<Number, TR, TR> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
@@ -916,7 +916,7 @@ public partial class UV
     public UV Lesser(UV b) => throw new NotImplementedException();
     public UV Greater(UV b) => throw new NotImplementedException();
 }
-public partial class UVW
+public readonly partial struct UVW
 {
     public TR Aggregate<TR>(Function2<Number, TR, TR> f) => throw new NotImplementedException();
     public Number Sum => throw new NotImplementedException();
@@ -962,19 +962,19 @@ public partial class UVW
     public UVW Lesser(UVW b) => throw new NotImplementedException();
     public UVW Greater(UVW b) => throw new NotImplementedException();
 }
-public partial class CubicBezier2D
+public readonly partial struct CubicBezier2D
 {
 }
-public partial class CubicBezier3D
+public readonly partial struct CubicBezier3D
 {
 }
-public partial class QuadraticBezier2D
+public readonly partial struct QuadraticBezier2D
 {
 }
-public partial class QuadraticBezier3D
+public readonly partial struct QuadraticBezier3D
 {
 }
-public partial class Area
+public readonly partial struct Area
 {
     public Boolean Between(Area min, Area max) => throw new NotImplementedException();
     public Boolean Equals(Area b) => throw new NotImplementedException();
@@ -992,7 +992,7 @@ public partial class Area
     public Area Lesser(Area b) => throw new NotImplementedException();
     public Area Greater(Area b) => throw new NotImplementedException();
 }
-public partial class Volume
+public readonly partial struct Volume
 {
     public Boolean Between(Volume min, Volume max) => throw new NotImplementedException();
     public Boolean Equals(Volume b) => throw new NotImplementedException();
@@ -1010,7 +1010,7 @@ public partial class Volume
     public Volume Lesser(Volume b) => throw new NotImplementedException();
     public Volume Greater(Volume b) => throw new NotImplementedException();
 }
-public partial class Velocity
+public readonly partial struct Velocity
 {
     public Boolean Between(Velocity min, Velocity max) => throw new NotImplementedException();
     public Boolean Equals(Velocity b) => throw new NotImplementedException();
@@ -1028,7 +1028,7 @@ public partial class Velocity
     public Velocity Lesser(Velocity b) => throw new NotImplementedException();
     public Velocity Greater(Velocity b) => throw new NotImplementedException();
 }
-public partial class Acceleration
+public readonly partial struct Acceleration
 {
     public Boolean Between(Acceleration min, Acceleration max) => throw new NotImplementedException();
     public Boolean Equals(Acceleration b) => throw new NotImplementedException();
@@ -1046,7 +1046,7 @@ public partial class Acceleration
     public Acceleration Lesser(Acceleration b) => throw new NotImplementedException();
     public Acceleration Greater(Acceleration b) => throw new NotImplementedException();
 }
-public partial class Force
+public readonly partial struct Force
 {
     public Boolean Between(Force min, Force max) => throw new NotImplementedException();
     public Boolean Equals(Force b) => throw new NotImplementedException();
@@ -1064,7 +1064,7 @@ public partial class Force
     public Force Lesser(Force b) => throw new NotImplementedException();
     public Force Greater(Force b) => throw new NotImplementedException();
 }
-public partial class Pressure
+public readonly partial struct Pressure
 {
     public Boolean Between(Pressure min, Pressure max) => throw new NotImplementedException();
     public Boolean Equals(Pressure b) => throw new NotImplementedException();
@@ -1082,7 +1082,7 @@ public partial class Pressure
     public Pressure Lesser(Pressure b) => throw new NotImplementedException();
     public Pressure Greater(Pressure b) => throw new NotImplementedException();
 }
-public partial class Energy
+public readonly partial struct Energy
 {
     public Boolean Between(Energy min, Energy max) => throw new NotImplementedException();
     public Boolean Equals(Energy b) => throw new NotImplementedException();
@@ -1100,7 +1100,7 @@ public partial class Energy
     public Energy Lesser(Energy b) => throw new NotImplementedException();
     public Energy Greater(Energy b) => throw new NotImplementedException();
 }
-public partial class Memory
+public readonly partial struct Memory
 {
     public Boolean Between(Memory min, Memory max) => throw new NotImplementedException();
     public Boolean Equals(Memory b) => throw new NotImplementedException();
@@ -1118,7 +1118,7 @@ public partial class Memory
     public Memory Lesser(Memory b) => throw new NotImplementedException();
     public Memory Greater(Memory b) => throw new NotImplementedException();
 }
-public partial class Frequency
+public readonly partial struct Frequency
 {
     public Boolean Between(Frequency min, Frequency max) => throw new NotImplementedException();
     public Boolean Equals(Frequency b) => throw new NotImplementedException();
@@ -1136,7 +1136,7 @@ public partial class Frequency
     public Frequency Lesser(Frequency b) => throw new NotImplementedException();
     public Frequency Greater(Frequency b) => throw new NotImplementedException();
 }
-public partial class Loudness
+public readonly partial struct Loudness
 {
     public Boolean Between(Loudness min, Loudness max) => throw new NotImplementedException();
     public Boolean Equals(Loudness b) => throw new NotImplementedException();
@@ -1154,7 +1154,7 @@ public partial class Loudness
     public Loudness Lesser(Loudness b) => throw new NotImplementedException();
     public Loudness Greater(Loudness b) => throw new NotImplementedException();
 }
-public partial class LuminousIntensity
+public readonly partial struct LuminousIntensity
 {
     public Boolean Between(LuminousIntensity min, LuminousIntensity max) => throw new NotImplementedException();
     public Boolean Equals(LuminousIntensity b) => throw new NotImplementedException();
@@ -1172,7 +1172,7 @@ public partial class LuminousIntensity
     public LuminousIntensity Lesser(LuminousIntensity b) => throw new NotImplementedException();
     public LuminousIntensity Greater(LuminousIntensity b) => throw new NotImplementedException();
 }
-public partial class ElectricPotential
+public readonly partial struct ElectricPotential
 {
     public Boolean Between(ElectricPotential min, ElectricPotential max) => throw new NotImplementedException();
     public Boolean Equals(ElectricPotential b) => throw new NotImplementedException();
@@ -1190,7 +1190,7 @@ public partial class ElectricPotential
     public ElectricPotential Lesser(ElectricPotential b) => throw new NotImplementedException();
     public ElectricPotential Greater(ElectricPotential b) => throw new NotImplementedException();
 }
-public partial class ElectricCharge
+public readonly partial struct ElectricCharge
 {
     public Boolean Between(ElectricCharge min, ElectricCharge max) => throw new NotImplementedException();
     public Boolean Equals(ElectricCharge b) => throw new NotImplementedException();
@@ -1208,7 +1208,7 @@ public partial class ElectricCharge
     public ElectricCharge Lesser(ElectricCharge b) => throw new NotImplementedException();
     public ElectricCharge Greater(ElectricCharge b) => throw new NotImplementedException();
 }
-public partial class ElectricCurrent
+public readonly partial struct ElectricCurrent
 {
     public Boolean Between(ElectricCurrent min, ElectricCurrent max) => throw new NotImplementedException();
     public Boolean Equals(ElectricCurrent b) => throw new NotImplementedException();
@@ -1226,7 +1226,7 @@ public partial class ElectricCurrent
     public ElectricCurrent Lesser(ElectricCurrent b) => throw new NotImplementedException();
     public ElectricCurrent Greater(ElectricCurrent b) => throw new NotImplementedException();
 }
-public partial class ElectricResistance
+public readonly partial struct ElectricResistance
 {
     public Boolean Between(ElectricResistance min, ElectricResistance max) => throw new NotImplementedException();
     public Boolean Equals(ElectricResistance b) => throw new NotImplementedException();
@@ -1244,7 +1244,7 @@ public partial class ElectricResistance
     public ElectricResistance Lesser(ElectricResistance b) => throw new NotImplementedException();
     public ElectricResistance Greater(ElectricResistance b) => throw new NotImplementedException();
 }
-public partial class Power
+public readonly partial struct Power
 {
     public Boolean Between(Power min, Power max) => throw new NotImplementedException();
     public Boolean Equals(Power b) => throw new NotImplementedException();
@@ -1262,7 +1262,7 @@ public partial class Power
     public Power Lesser(Power b) => throw new NotImplementedException();
     public Power Greater(Power b) => throw new NotImplementedException();
 }
-public partial class Density
+public readonly partial struct Density
 {
     public Boolean Between(Density min, Density max) => throw new NotImplementedException();
     public Boolean Equals(Density b) => throw new NotImplementedException();
@@ -1280,16 +1280,16 @@ public partial class Density
     public Density Lesser(Density b) => throw new NotImplementedException();
     public Density Greater(Density b) => throw new NotImplementedException();
 }
-public partial class NormalDistribution
+public readonly partial struct NormalDistribution
 {
 }
-public partial class PoissonDistribution
+public readonly partial struct PoissonDistribution
 {
 }
-public partial class BernoulliDistribution
+public readonly partial struct BernoulliDistribution
 {
 }
-public partial class Probability
+public readonly partial struct Probability
 {
     public Probability Square => throw new NotImplementedException();
     public Probability PlusOne => throw new NotImplementedException();
@@ -1327,27 +1327,27 @@ public partial class Probability
     public Probability Lesser(Probability b) => throw new NotImplementedException();
     public Probability Greater(Probability b) => throw new NotImplementedException();
 }
-public partial class BinomialDistribution
+public readonly partial struct BinomialDistribution
 {
 }
-public partial class Array1<T>
+public readonly partial struct Array1<T>
 {
 }
-public partial class Tuple2<T0, T1>
+public readonly partial struct Tuple2<T0, T1>
 {
 }
-public partial class Tuple3<T0, T1, T2>
+public readonly partial struct Tuple3<T0, T1, T2>
 {
 }
-public partial class Function0<TR>
+public readonly partial struct Function0<TR>
 {
 }
-public partial class Function1<T0, TR>
+public readonly partial struct Function1<T0, TR>
 {
 }
-public partial class Function2<T0, T1, TR>
+public readonly partial struct Function2<T0, T1, TR>
 {
 }
-public partial class Function3<T0, T1, T2, TR>
+public readonly partial struct Function3<T0, T1, T2, TR>
 {
 }

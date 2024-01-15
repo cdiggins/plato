@@ -13,14 +13,18 @@ namespace Plato.CSharpWriter
 {
     public class SymbolWriterCSharp : CodeBuilder<SymbolWriterCSharp>
     {
+        public const bool EmitInterfaces = false;
+        public const bool EmitStructsInsteadOfClasses = true;
+
         public Compiler.Compiler Compiler { get; }
         
         public Dictionary<string, StringBuilder> Files { get; } = new Dictionary<string, StringBuilder>();
 
         public DirectoryPath OutputFolder { get; }
 
-        public static HashSet<string> IgnoreTypes = new HashSet<string>()
+        public static HashSet<string> IgnoredTypes = new HashSet<string>()
         {
+            "Dynamic",
             "Array1",
             "Tuple2",
             "Tuple3",
@@ -205,7 +209,8 @@ namespace Plato.CSharpWriter
             {
                 var typeParamsStr = JoinTypeParameters(t.Type.TypeParameters.Select(tp => tp.Name));
 
-                WriteLine($"public partial class {t.Type.Name}{typeParamsStr}");
+                var kind = EmitStructsInsteadOfClasses ? "readonly partial struct" : "partial class";
+                WriteLine($"public {kind} {t.Type.Name}{typeParamsStr}");
                 WriteStartBlock();
 
                 var funcGroups = t.ConcreteFunctions.Concat(t.GetConceptFunctions()).GroupBy(f => f.SignatureId);
@@ -289,7 +294,7 @@ namespace Plato.CSharpWriter
             StartNewFile(OutputFolder.RelativeFile("Types.cs"));
             WriteLine("using System;");
             foreach (var c in Compiler.ConcreteTypes)
-                if (!IgnoreTypes.Contains(c.Type.Name))
+                if (!IgnoredTypes.Contains(c.Type.Name))
                     WriteTypeImplementation(c);
             return this;
         }
@@ -310,14 +315,15 @@ namespace Plato.CSharpWriter
         public SymbolWriterCSharp WriteTypeImplementation(ConcreteType concreteType)
         {
             var t = concreteType.Type;
-            
-            var implements = t.Implements.Count > 0
+            var implements = EmitInterfaces && t.Implements.Count > 0
                 ? ": " + string.Join(", ", t.Implements.Select(te => ImplementedTypeString(te, t.Name)))
                 : "";
 
             var typeParamsStr = JoinTypeParameters(t.TypeParameters.Select(tp => tp.Name));
 
-            Write("public partial class ");
+            var kind = EmitStructsInsteadOfClasses ? "readonly partial struct" : "partial class";
+            Write($"public {kind} ");
+            
             Write(t.Name);
             Write(typeParamsStr);
             WriteLine(implements);
@@ -345,7 +351,7 @@ namespace Plato.CSharpWriter
             {
                 var ft = fieldTypes[i];     
                 var fn = fieldNames[i];
-                WriteLine($"public {ft} {fn} {{ get; }}");
+                WriteLine($"public readonly {ft} {fn};");
             }
 
             for (var i = 0; i < fieldTypes.Count; ++i)
@@ -369,7 +375,8 @@ namespace Plato.CSharpWriter
             WriteLine($"public {name}({parametersStr}) => ({fieldNamesStr}) = ({parameterNamesStr});");
             
             // Parameterless constructor
-            WriteLine($"public {name}() {{ }}");
+            if (!EmitStructsInsteadOfClasses)
+                WriteLine($"public {name}() {{ }}");
 
             WriteLine($"public static {name} Default = new {name}();");
 
@@ -396,6 +403,7 @@ namespace Plato.CSharpWriter
                 // Implicit operator to/from the field 
                 var fieldName = fieldNames[0];
                 var fieldType = fieldTypes[0];
+
                 WriteLine($"public static implicit operator {fieldType}({name} self) => self.{fieldName};");
                 WriteLine($"public static implicit operator {name}({fieldType} value) => new {name}(value);");
             }
@@ -404,7 +412,7 @@ namespace Plato.CSharpWriter
 
             var fieldNamesAsStringsStr = fieldNames.Select(n => $"(String){n.Quote()}").JoinStringsWithComma();
             WriteLine($"public Array<String> FieldNames => (Array1<String>)new[] {{ {fieldNamesAsStringsStr} }};");
-            var fieldValuesAsDynamicsStr = fieldNames.Select(n => $"(Dynamic){n}").JoinStringsWithComma();
+            var fieldValuesAsDynamicsStr = fieldNames.Select(n => $"new Dynamic({n})").JoinStringsWithComma();
             WriteLine($"public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] {{ {fieldValuesAsDynamicsStr} }};");
 
             /* TODO:    

@@ -35,7 +35,7 @@ namespace Plato.Compiler.Analysis
             AllConcepts = Concepts.AllDescendants().ToList();
             ConcreteFunctions = libraries.GetFunctionsForType(Type.Name).Select(AnalyzeFunction).ToList();
 
-            ImplementedFunctions = AllConcepts.SelectMany(c => c.ImplementedFunctions).ToList();
+            ImplementedFunctions = AllConcepts.SelectMany(c => c.ImplementedFunctions).Concat(ConcreteFunctions).ToList();
             DeclaredFunctions = AllConcepts.SelectMany(c => c.DeclaredFunctions).Distinct(d => d.SignatureId).ToList();
 
             var implementedSigs = new HashSet<string>(ImplementedFunctions.Select(f => f.SignatureId));
