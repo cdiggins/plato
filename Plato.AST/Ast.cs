@@ -165,27 +165,13 @@ namespace Plato.AST
 
     public class AstBinaryOp : AstNode
     {
-        private AstBinaryOp(ILocation location, string op, AstNode left, AstNode right) : base(location)
+        public AstBinaryOp(ILocation location, string op, AstNode left, AstNode right) : base(location)
             => (Op, Left, Right) = (op, left, right);
         public string Op { get; }
         public string FuncName => Operators.BinaryOperatorToName(Op);
         public AstNode Left { get; }
         public AstNode Right { get; }
-
-        public static AstBinaryOp Create(ILocation location, string op, AstNode left, AstNode right)
-        {
-            if (!Operators.BinaryOperatorToNames.ContainsKey(op))
-                throw new Exception($"Operation `{op}` is not a valid operator name");
-
-            var precedence = Operators.BinaryOperatorPrecedence(op);
-            if (right is AstBinaryOp binRight && binRight.Precedence < precedence)
-                return Create(binRight.Location, binRight.Op, Create(location, op, left, binRight.Left), binRight.Right);
-            return new AstBinaryOp(location, op, left, right);
-        }
-
-        public AstInvoke ToInvocation()
-            => new AstInvoke(Location, new AstIdentifier(Location, Operators.BinaryOperatorToName(Op)), Left, Right);
-
+        public AstInvoke ToInvocation() => new AstInvoke(Location, new AstIdentifier(Location, Operators.BinaryOperatorToName(Op)), Left, Right);
         public int Precedence => Operators.BinaryOperatorPrecedence(Op);
     }
 

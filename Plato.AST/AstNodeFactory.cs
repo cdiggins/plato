@@ -16,6 +16,26 @@ namespace Plato.AST
         public static AstNode ToAst<T>(this CstFilter<T> filter) where T : CstNode
             => ToAst(filter.Node);
 
+        // Creates binary operations, adjusting for precedence 
+        public static AstNode CreateBinaryOp(ILocation location, string op, AstNode left, AstNode right)
+        {
+            if (!Operators.BinaryOperatorToNames.ContainsKey(op))
+                throw new Exception($"Operation `{op}` is not a valid operator name");
+
+            var precedence = Operators.BinaryOperatorPrecedence(op);
+            if (right is AstBinaryOp binRight && binRight.Precedence < precedence)
+                return CreateBinaryOp(binRight.Location, binRight.Op, CreateBinaryOp(location, op, left, binRight.Left), binRight.Right);
+
+            if (right is AstConditional conditional)
+                return new AstConditional(
+                    conditional.Location,
+                    CreateBinaryOp(location, op, left, conditional.Condition),
+                    conditional.IfTrue,
+                    conditional.IfFalse);
+
+            return new AstBinaryOp(location, op, left, right);
+        }
+
         public static AstNode ToAst(this CstExpression expr)
         {
             var r = ToAst(expr.LeafExpression.Node);
@@ -48,7 +68,7 @@ namespace Plato.AST
                         throw new Exception($"Can only assign to a variable not {r}");
                     }
 
-                    r = AstBinaryOp.Create(currentBinOp, op, r, right);
+                    r = CreateBinaryOp(currentBinOp, op, r, right);
                 }
                 else if (postfix.ConditionalMemberAccess.Present)
                 {

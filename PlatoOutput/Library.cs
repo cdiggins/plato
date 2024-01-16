@@ -53,18 +53,9 @@ public readonly partial struct Number
     public Boolean IsNegative =>
         this.LessThan(this.Zero);
     public Number Sign =>
-        this.LtZ
-            ? this.One.Negative
-            : this.GtZ
-                ? this.One
-                : this.Zero
-
-        ;
+        this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
     public Number Abs =>
-        this.LtZ
-            ? this.Negative
-            : this
-        ;
+        this.LtZ ? this.Negative : this;
     public Number Half =>
         this.Divide(((Integer)2));
     public Number Quarter =>
@@ -102,15 +93,9 @@ public readonly partial struct Number
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Number a, Number b) => a.GreaterThanOrEquals(b);
     public Number Lesser(Number b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Number Greater(Number b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Integer
 {
@@ -148,18 +133,9 @@ public readonly partial struct Integer
     public Boolean IsNegative =>
         this.LessThan(this.Zero);
     public Integer Sign =>
-        this.LtZ
-            ? this.One.Negative
-            : this.GtZ
-                ? this.One
-                : this.Zero
-
-        ;
+        this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
     public Integer Abs =>
-        this.LtZ
-            ? this.Negative
-            : this
-        ;
+        this.LtZ ? this.Negative : this;
     public Integer Half =>
         this.Divide(((Integer)2));
     public Integer Quarter =>
@@ -197,15 +173,9 @@ public readonly partial struct Integer
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Integer a, Integer b) => a.GreaterThanOrEquals(b);
     public Integer Lesser(Integer b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Integer Greater(Integer b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct String
 {
@@ -248,18 +218,9 @@ public readonly partial struct Count
     public Boolean IsNegative =>
         this.LessThan(this.Zero);
     public Count Sign =>
-        this.LtZ
-            ? this.One.Negative
-            : this.GtZ
-                ? this.One
-                : this.Zero
-
-        ;
+        this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
     public Count Abs =>
-        this.LtZ
-            ? this.Negative
-            : this
-        ;
+        this.LtZ ? this.Negative : this;
     public Count Half =>
         this.Divide(((Integer)2));
     public Count Quarter =>
@@ -297,15 +258,9 @@ public readonly partial struct Count
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Count a, Count b) => a.GreaterThanOrEquals(b);
     public Count Lesser(Count b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Count Greater(Count b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Index
 {
@@ -333,18 +288,9 @@ public readonly partial struct Unit
     public Boolean IsNegative =>
         this.LessThan(this.Zero);
     public Unit Sign =>
-        this.LtZ
-            ? this.One.Negative
-            : this.GtZ
-                ? this.One
-                : this.Zero
-
-        ;
+        this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
     public Unit Abs =>
-        this.LtZ
-            ? this.Negative
-            : this
-        ;
+        this.LtZ ? this.Negative : this;
     public Unit Half =>
         this.Divide(((Integer)2));
     public Unit Quarter =>
@@ -382,15 +328,9 @@ public readonly partial struct Unit
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Unit a, Unit b) => a.GreaterThanOrEquals(b);
     public Unit Lesser(Unit b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Unit Greater(Unit b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Percent
 {
@@ -415,18 +355,9 @@ public readonly partial struct Percent
     public Boolean IsNegative =>
         this.LessThan(this.Zero);
     public Percent Sign =>
-        this.LtZ
-            ? this.One.Negative
-            : this.GtZ
-                ? this.One
-                : this.Zero
-
-        ;
+        this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
     public Percent Abs =>
-        this.LtZ
-            ? this.Negative
-            : this
-        ;
+        this.LtZ ? this.Negative : this;
     public Percent Half =>
         this.Divide(((Integer)2));
     public Percent Quarter =>
@@ -464,15 +395,9 @@ public readonly partial struct Percent
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Percent a, Percent b) => a.GreaterThanOrEquals(b);
     public Percent Lesser(Percent b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Percent Greater(Percent b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Quaternion
 {
@@ -533,18 +458,9 @@ public readonly partial struct Vector2D
     public Boolean IsNegative =>
         this.LessThan(this.Zero);
     public Vector2D Sign =>
-        this.LtZ
-            ? this.One.Negative
-            : this.GtZ
-                ? this.One
-                : this.Zero
-
-        ;
+        this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
     public Vector2D Abs =>
-        this.LtZ
-            ? this.Negative
-            : this
-        ;
+        this.LtZ ? this.Negative : this;
     public Vector2D Half =>
         this.Divide(((Integer)2));
     public Vector2D Quarter =>
@@ -582,15 +498,9 @@ public readonly partial struct Vector2D
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Vector2D a, Vector2D b) => a.GreaterThanOrEquals(b);
     public Vector2D Lesser(Vector2D b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Vector2D Greater(Vector2D b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Vector3D
 {
@@ -630,18 +540,9 @@ public readonly partial struct Vector3D
     public Boolean IsNegative =>
         this.LessThan(this.Zero);
     public Vector3D Sign =>
-        this.LtZ
-            ? this.One.Negative
-            : this.GtZ
-                ? this.One
-                : this.Zero
-
-        ;
+        this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
     public Vector3D Abs =>
-        this.LtZ
-            ? this.Negative
-            : this
-        ;
+        this.LtZ ? this.Negative : this;
     public Vector3D Half =>
         this.Divide(((Integer)2));
     public Vector3D Quarter =>
@@ -679,15 +580,9 @@ public readonly partial struct Vector3D
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Vector3D a, Vector3D b) => a.GreaterThanOrEquals(b);
     public Vector3D Lesser(Vector3D b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Vector3D Greater(Vector3D b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Vector4D
 {
@@ -727,18 +622,9 @@ public readonly partial struct Vector4D
     public Boolean IsNegative =>
         this.LessThan(this.Zero);
     public Vector4D Sign =>
-        this.LtZ
-            ? this.One.Negative
-            : this.GtZ
-                ? this.One
-                : this.Zero
-
-        ;
+        this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
     public Vector4D Abs =>
-        this.LtZ
-            ? this.Negative
-            : this
-        ;
+        this.LtZ ? this.Negative : this;
     public Vector4D Half =>
         this.Divide(((Integer)2));
     public Vector4D Quarter =>
@@ -776,15 +662,9 @@ public readonly partial struct Vector4D
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Vector4D a, Vector4D b) => a.GreaterThanOrEquals(b);
     public Vector4D Lesser(Vector4D b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Vector4D Greater(Vector4D b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Orientation3D
 {
@@ -925,18 +805,9 @@ public readonly partial struct Complex
     public Boolean IsNegative =>
         this.LessThan(this.Zero);
     public Complex Sign =>
-        this.LtZ
-            ? this.One.Negative
-            : this.GtZ
-                ? this.One
-                : this.Zero
-
-        ;
+        this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
     public Complex Abs =>
-        this.LtZ
-            ? this.Negative
-            : this
-        ;
+        this.LtZ ? this.Negative : this;
     public Complex Half =>
         this.Divide(((Integer)2));
     public Complex Quarter =>
@@ -974,15 +845,9 @@ public readonly partial struct Complex
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Complex a, Complex b) => a.GreaterThanOrEquals(b);
     public Complex Lesser(Complex b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Complex Greater(Complex b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Ray3D
 {
@@ -1031,15 +896,9 @@ public readonly partial struct Point2D
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Point2D a, Point2D b) => a.GreaterThanOrEquals(b);
     public Point2D Lesser(Point2D b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Point2D Greater(Point2D b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Point3D
 {
@@ -1064,15 +923,9 @@ public readonly partial struct Point3D
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Point3D a, Point3D b) => a.GreaterThanOrEquals(b);
     public Point3D Lesser(Point3D b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Point3D Greater(Point3D b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Line2D
 {
@@ -1240,18 +1093,9 @@ public readonly partial struct Proportion
     public Boolean IsNegative =>
         this.LessThan(this.Zero);
     public Proportion Sign =>
-        this.LtZ
-            ? this.One.Negative
-            : this.GtZ
-                ? this.One
-                : this.Zero
-
-        ;
+        this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
     public Proportion Abs =>
-        this.LtZ
-            ? this.Negative
-            : this
-        ;
+        this.LtZ ? this.Negative : this;
     public Proportion Half =>
         this.Divide(((Integer)2));
     public Proportion Quarter =>
@@ -1289,15 +1133,9 @@ public readonly partial struct Proportion
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Proportion a, Proportion b) => a.GreaterThanOrEquals(b);
     public Proportion Lesser(Proportion b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Proportion Greater(Proportion b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Fraction
 {
@@ -1332,15 +1170,9 @@ public readonly partial struct Angle
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Angle a, Angle b) => a.GreaterThanOrEquals(b);
     public Angle Lesser(Angle b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Angle Greater(Angle b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Length
 {
@@ -1365,15 +1197,9 @@ public readonly partial struct Length
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Length a, Length b) => a.GreaterThanOrEquals(b);
     public Length Lesser(Length b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Length Greater(Length b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Mass
 {
@@ -1398,15 +1224,9 @@ public readonly partial struct Mass
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Mass a, Mass b) => a.GreaterThanOrEquals(b);
     public Mass Lesser(Mass b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Mass Greater(Mass b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Temperature
 {
@@ -1431,15 +1251,9 @@ public readonly partial struct Temperature
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Temperature a, Temperature b) => a.GreaterThanOrEquals(b);
     public Temperature Lesser(Temperature b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Temperature Greater(Temperature b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Time
 {
@@ -1464,15 +1278,9 @@ public readonly partial struct Time
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Time a, Time b) => a.GreaterThanOrEquals(b);
     public Time Lesser(Time b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Time Greater(Time b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct TimeRange
 {
@@ -1540,15 +1348,9 @@ public readonly partial struct DateTime
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(DateTime a, DateTime b) => a.GreaterThanOrEquals(b);
     public DateTime Lesser(DateTime b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public DateTime Greater(DateTime b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct AnglePair
 {
@@ -1704,18 +1506,9 @@ public readonly partial struct UV
     public Boolean IsNegative =>
         this.LessThan(this.Zero);
     public UV Sign =>
-        this.LtZ
-            ? this.One.Negative
-            : this.GtZ
-                ? this.One
-                : this.Zero
-
-        ;
+        this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
     public UV Abs =>
-        this.LtZ
-            ? this.Negative
-            : this
-        ;
+        this.LtZ ? this.Negative : this;
     public UV Half =>
         this.Divide(((Integer)2));
     public UV Quarter =>
@@ -1753,15 +1546,9 @@ public readonly partial struct UV
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(UV a, UV b) => a.GreaterThanOrEquals(b);
     public UV Lesser(UV b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public UV Greater(UV b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct UVW
 {
@@ -1801,18 +1588,9 @@ public readonly partial struct UVW
     public Boolean IsNegative =>
         this.LessThan(this.Zero);
     public UVW Sign =>
-        this.LtZ
-            ? this.One.Negative
-            : this.GtZ
-                ? this.One
-                : this.Zero
-
-        ;
+        this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
     public UVW Abs =>
-        this.LtZ
-            ? this.Negative
-            : this
-        ;
+        this.LtZ ? this.Negative : this;
     public UVW Half =>
         this.Divide(((Integer)2));
     public UVW Quarter =>
@@ -1850,15 +1628,9 @@ public readonly partial struct UVW
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(UVW a, UVW b) => a.GreaterThanOrEquals(b);
     public UVW Lesser(UVW b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public UVW Greater(UVW b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct CubicBezier2D
 {
@@ -1895,15 +1667,9 @@ public readonly partial struct Area
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Area a, Area b) => a.GreaterThanOrEquals(b);
     public Area Lesser(Area b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Area Greater(Area b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Volume
 {
@@ -1928,15 +1694,9 @@ public readonly partial struct Volume
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Volume a, Volume b) => a.GreaterThanOrEquals(b);
     public Volume Lesser(Volume b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Volume Greater(Volume b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Velocity
 {
@@ -1961,15 +1721,9 @@ public readonly partial struct Velocity
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Velocity a, Velocity b) => a.GreaterThanOrEquals(b);
     public Velocity Lesser(Velocity b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Velocity Greater(Velocity b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Acceleration
 {
@@ -1994,15 +1748,9 @@ public readonly partial struct Acceleration
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Acceleration a, Acceleration b) => a.GreaterThanOrEquals(b);
     public Acceleration Lesser(Acceleration b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Acceleration Greater(Acceleration b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Force
 {
@@ -2027,15 +1775,9 @@ public readonly partial struct Force
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Force a, Force b) => a.GreaterThanOrEquals(b);
     public Force Lesser(Force b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Force Greater(Force b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Pressure
 {
@@ -2060,15 +1802,9 @@ public readonly partial struct Pressure
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Pressure a, Pressure b) => a.GreaterThanOrEquals(b);
     public Pressure Lesser(Pressure b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Pressure Greater(Pressure b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Energy
 {
@@ -2093,15 +1829,9 @@ public readonly partial struct Energy
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Energy a, Energy b) => a.GreaterThanOrEquals(b);
     public Energy Lesser(Energy b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Energy Greater(Energy b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Memory
 {
@@ -2126,15 +1856,9 @@ public readonly partial struct Memory
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Memory a, Memory b) => a.GreaterThanOrEquals(b);
     public Memory Lesser(Memory b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Memory Greater(Memory b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Frequency
 {
@@ -2159,15 +1883,9 @@ public readonly partial struct Frequency
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Frequency a, Frequency b) => a.GreaterThanOrEquals(b);
     public Frequency Lesser(Frequency b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Frequency Greater(Frequency b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Loudness
 {
@@ -2192,15 +1910,9 @@ public readonly partial struct Loudness
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Loudness a, Loudness b) => a.GreaterThanOrEquals(b);
     public Loudness Lesser(Loudness b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Loudness Greater(Loudness b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct LuminousIntensity
 {
@@ -2225,15 +1937,9 @@ public readonly partial struct LuminousIntensity
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(LuminousIntensity a, LuminousIntensity b) => a.GreaterThanOrEquals(b);
     public LuminousIntensity Lesser(LuminousIntensity b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public LuminousIntensity Greater(LuminousIntensity b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct ElectricPotential
 {
@@ -2258,15 +1964,9 @@ public readonly partial struct ElectricPotential
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(ElectricPotential a, ElectricPotential b) => a.GreaterThanOrEquals(b);
     public ElectricPotential Lesser(ElectricPotential b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public ElectricPotential Greater(ElectricPotential b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct ElectricCharge
 {
@@ -2291,15 +1991,9 @@ public readonly partial struct ElectricCharge
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(ElectricCharge a, ElectricCharge b) => a.GreaterThanOrEquals(b);
     public ElectricCharge Lesser(ElectricCharge b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public ElectricCharge Greater(ElectricCharge b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct ElectricCurrent
 {
@@ -2324,15 +2018,9 @@ public readonly partial struct ElectricCurrent
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(ElectricCurrent a, ElectricCurrent b) => a.GreaterThanOrEquals(b);
     public ElectricCurrent Lesser(ElectricCurrent b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public ElectricCurrent Greater(ElectricCurrent b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct ElectricResistance
 {
@@ -2357,15 +2045,9 @@ public readonly partial struct ElectricResistance
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(ElectricResistance a, ElectricResistance b) => a.GreaterThanOrEquals(b);
     public ElectricResistance Lesser(ElectricResistance b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public ElectricResistance Greater(ElectricResistance b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Power
 {
@@ -2390,15 +2072,9 @@ public readonly partial struct Power
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Power a, Power b) => a.GreaterThanOrEquals(b);
     public Power Lesser(Power b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Power Greater(Power b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Density
 {
@@ -2423,15 +2099,9 @@ public readonly partial struct Density
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Density a, Density b) => a.GreaterThanOrEquals(b);
     public Density Lesser(Density b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Density Greater(Density b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct NormalDistribution
 {
@@ -2465,18 +2135,9 @@ public readonly partial struct Probability
     public Boolean IsNegative =>
         this.LessThan(this.Zero);
     public Probability Sign =>
-        this.LtZ
-            ? this.One.Negative
-            : this.GtZ
-                ? this.One
-                : this.Zero
-
-        ;
+        this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
     public Probability Abs =>
-        this.LtZ
-            ? this.Negative
-            : this
-        ;
+        this.LtZ ? this.Negative : this;
     public Probability Half =>
         this.Divide(((Integer)2));
     public Probability Quarter =>
@@ -2514,15 +2175,9 @@ public readonly partial struct Probability
         this.Compare(b).GreaterThanOrEquals(((Integer)0));
     public static Boolean operator >=(Probability a, Probability b) => a.GreaterThanOrEquals(b);
     public Probability Lesser(Probability b) =>
-        this.LessThanOrEquals(b
-            ? this
-            : b
-        );
+        this.LessThanOrEquals(b) ? this : b;
     public Probability Greater(Probability b) =>
-        this.GreaterThanOrEquals(b
-            ? this
-            : b
-        );
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct BinomialDistribution
 {

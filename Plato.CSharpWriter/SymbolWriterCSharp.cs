@@ -620,12 +620,10 @@ namespace Plato.CSharpWriter
 
                 case ConditionalExpression conditional:
                     return Write(conditional.Condition)
-                        .Indent().WriteLine().Write("? ")
+                        .Write(" ? ")
                         .Write(conditional.IfTrue)
-                        .WriteLine()
-                        .Write(": ")
-                        .Write(conditional.IfFalse)
-                        .Dedent().WriteLine();
+                        .Write(" : ")
+                        .Write(conditional.IfFalse);
 
                 case FunctionCall functionCall:
                     // Turn it into a "dot" call.

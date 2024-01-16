@@ -4,6 +4,7 @@ concept Any
 { 
     FieldNames(x: Self): Array<String>;     
     FieldValues(x: Self): Array<Dynamic>;
+    TypeName(x: Self): String;
 }
 
 // Values is a read-only type which has any only Values as members

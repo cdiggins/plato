@@ -63,16 +63,15 @@ library Interval
 
 library Vector
 {
-    Aggregate(v: Vector, f: Function2<Number, $T, $T>): $T
+    Aggregate(v: Vector, r: $T, f: Function2<$T, Number, $T>): $T
     {
-        var r = v[0];
-        for (var i=1; i < v.Count; ++i)
+        for (var i=0; i < v.Count; ++i)
             r = f(r, v[i]);
         return r;
     }    
 
     Sum(v: Vector): Number 
-        => v.Aggregate(0, Add); 
+        => v.Aggregate(Add); 
     
     SumSquares(v: Vector): Number
         => v.Square.Sum; 
