@@ -970,9 +970,14 @@ Type analysis for Fraction
     Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:FractionValue=ConcreteType:FractionSelf=ConcreteType:Fraction
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:FractionValue=ConcreteType:FractionSelf=ConcreteType:Fraction
 Type analysis for Angle
-  Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:AngleSelf=ConcreteType:Angle
-    Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:AngleCoordinate=ConcreteType:AngleSelf=ConcreteType:Angle
-    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:AngleCoordinate=ConcreteType:AngleSelf=ConcreteType:Angle
+  Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:AngleSelf=ConcreteType:Angle
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:AngleMeasure=ConcreteType:AngleSelf=ConcreteType:Angle
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:AngleValue=ConcreteType:AngleMeasure=ConcreteType:AngleSelf=ConcreteType:Angle
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:AngleValue=ConcreteType:AngleMeasure=ConcreteType:AngleSelf=ConcreteType:Angle
+    Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs=ScalarArithmetic=ConcreteType:AngleMeasure=ConcreteType:AngleSelf=ConcreteType:Angle
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:AngleT=ConcreteType:NumberScalarArithmetic=ConcreteType:AngleMeasure=ConcreteType:AngleSelf=ConcreteType:Angle
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:AngleT=ConcreteType:NumberScalarArithmetic=ConcreteType:AngleMeasure=ConcreteType:AngleSelf=ConcreteType:Angle
+    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:AngleMeasure=ConcreteType:AngleSelf=ConcreteType:Angle
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
     Function: Equals(Concept:Comparable a, Concept:Comparable b)
     Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
@@ -982,7 +987,20 @@ Type analysis for Angle
     Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
     Function: Lesser(Concept:Comparable a, Concept:Comparable b)
     Function: Greater(Concept:Comparable a, Concept:Comparable b)
-      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:AngleComparable=ConcreteType:AngleCoordinate=ConcreteType:AngleSelf=ConcreteType:Angle
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:AngleComparable=ConcreteType:AngleMeasure=ConcreteType:AngleSelf=ConcreteType:Angle
+    Concept=Magnitudinal Expr=Concept:Magnitudinal Subs=Magnitudinal=ConcreteType:AngleMeasure=ConcreteType:AngleSelf=ConcreteType:Angle
+      Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:AngleMagnitudinal=ConcreteType:AngleMeasure=ConcreteType:AngleSelf=ConcreteType:Angle
+      Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
+      Function: Equals(Concept:Comparable a, Concept:Comparable b)
+      Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
+      Function: LessThan(Concept:Comparable a, Concept:Comparable b)
+      Function: LessThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+      Function: GreaterThan(Concept:Comparable a, Concept:Comparable b)
+      Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+      Function: Lesser(Concept:Comparable a, Concept:Comparable b)
+      Function: Greater(Concept:Comparable a, Concept:Comparable b)
+        Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:AngleComparable=ConcreteType:AngleMagnitudinal=ConcreteType:AngleMeasure=ConcreteType:AngleSelf=ConcreteType:Angle
+    Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:AngleMeasure=ConcreteType:AngleSelf=ConcreteType:Angle
   Function: Cos(ConcreteType:Angle x)
   Function: Sin(ConcreteType:Angle x)
   Function: Tan(ConcreteType:Angle x)

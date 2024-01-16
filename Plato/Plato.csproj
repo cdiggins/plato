@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Ara3D.Utils\Ara3D.Utils.csproj" />
+    <ProjectReference Include="..\Plato.CSharpWriter\Plato.CSharpWriter.csproj" />
+    <ProjectReference Include="..\Plato.Parser\Plato.Parser.csproj" />
+    <ProjectReference Include="..\PlatoCompiler\Plato.Compiler.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -12,16 +12,16 @@ namespace Plato.Compiler.Types
     public class FunctionCallResolver
     {
         // Passed as arguments
-        public Compiler Compiler { get; }
+        public Compilation Compilation { get; }
         public FunctionGroupReference Fgr { get; }
         public IReadOnlyList<TypeExpression> ArgTypes { get; }
         public TypeExpression ResultType { get; set; }
 
-        public FunctionCallResolver(Compiler compiler,
+        public FunctionCallResolver(Compilation compilation,
             FunctionGroupReference fgr,
             IReadOnlyList<TypeExpression> argTypes)
         {
-            Compiler = compiler;
+            Compilation = compilation;
             Fgr = fgr;
             ArgTypes = argTypes;
 
@@ -43,7 +43,7 @@ namespace Plato.Compiler.Types
             // TODO: I don't think I should look at reified functions if the input is a Concept. 
 
             // Now look at the reified functions 
-            var funcs4 = Compiler.ReifiedFunctionsByName[Fgr.Name];
+            var funcs4 = Compilation.ReifiedFunctionsByName[Fgr.Name];
             
             // This should never happen
             if (funcs4.Count == 0)
@@ -120,9 +120,9 @@ namespace Plato.Compiler.Types
 
         public ReifiedFunction GetCastFunction(TypeDefinition a, TypeDefinition b)
         {
-            if (Compiler.ReifiedTypes.ContainsKey(a.Name))
+            if (Compilation.ReifiedTypes.ContainsKey(a.Name))
             {
-                var rt = Compiler.ReifiedTypes[a.Name];
+                var rt = Compilation.ReifiedTypes[a.Name];
                 return rt.Functions.FirstOrDefault(f => IsCastFunction(f, b));
             }
 

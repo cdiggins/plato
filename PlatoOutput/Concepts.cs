@@ -5,6 +5,10 @@ public interface Any
 }
 public interface Value<Self>: Any, Equatable<Self>
 {
+    Self  Zero { get; }
+    Self  One { get; }
+    Self  MinValue { get; }
+    Self  MaxValue { get; }
 }
 public interface Array<T>
 {
@@ -23,10 +27,6 @@ public interface Measure<Self>: Value<Self>, ScalarArithmetic<Self>, Comparable<
 }
 public interface Numerical<Self>: Value<Self>, Arithmetic<Self>, Equatable<Self>, Comparable<Self>, Magnitudinal<Self>, Interpolatable<Self>
 {
-    Self  Zero { get; }
-    Self  One { get; }
-    Self  MinValue { get; }
-    Self  MaxValue { get; }
 }
 public interface Magnitudinal<Self>: Comparable<Self>
 {

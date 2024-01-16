@@ -301,7 +301,9 @@ namespace Plato.Compiler.Symbols
 
                     case AstLoop astLoop:
                         return new LoopSymbol(node);
-                        return null;
+
+                    case AstBinaryOp astBinaryOp:
+                        return InternalResolve(astBinaryOp.ToInvocation());
                 }
 
                 LogError($"Node can't be evaluated", node);

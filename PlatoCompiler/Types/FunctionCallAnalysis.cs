@@ -27,7 +27,7 @@ namespace Plato.Compiler.Types
         public const int CastConstructorPenalty = 2000;
 
         public FunctionAnalysis Function { get; }
-        public Compiler Compiler => Function.Compiler;
+        public Compilation Compilation => Function.Compilation;
         public Dictionary<TypeVariable, List<IType>> TypeVariableConstraints { get; } = new Dictionary<TypeVariable, List<IType>>();
         public IType DeterminedReturnType { get; }
         public bool Callable { get; }
@@ -209,13 +209,13 @@ namespace Plato.Compiler.Types
 
             if (typeParameter.IsConcrete() || typeParameter.IsPrimitive())
             {
-                CurrentCast = Compiler.FindImplicitCast(typeArgument, typeParameter);
+                CurrentCast = Compilation.FindImplicitCast(typeArgument, typeParameter);
                 if (CurrentCast != null)
                 {
                     return ImplicitCastPenalty;
                 }
 
-                CurrentCast = Compiler.FindCastConstructor(typeArgument, typeParameter);
+                CurrentCast = Compilation.FindCastConstructor(typeArgument, typeParameter);
                 if (CurrentCast != null)
                 {
                     return CastConstructorPenalty;

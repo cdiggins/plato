@@ -14,9 +14,9 @@ using Plato.Compiler.Analysis;
 
 namespace Plato.Compiler
 {
-    public class Compiler
+    public class Compilation
     {
-        public Compiler(ILogger logger, IEnumerable<AstNode> trees)
+        public Compilation(ILogger logger, IEnumerable<AstNode> trees)
         {
             Logger = logger;
 

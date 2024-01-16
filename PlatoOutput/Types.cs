@@ -93,6 +93,10 @@ public readonly partial struct Count
     public static Count operator +(Count self, Count other) => self.Add(other);
     public Count Subtract(Count other) => (Value.Subtract(other.Value));
     public static Count operator -(Count self, Count other) => self.Subtract(other);
+    public Count Zero => (Value.Zero);
+    public Count One => (Value.One);
+    public Count MinValue => (Value.MinValue);
+    public Count MaxValue => (Value.MaxValue);
 }
 public readonly partial struct Index
 {
@@ -107,6 +111,10 @@ public readonly partial struct Index
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
     // Unimplemented concept functions
+    public Index Zero => (Value.Zero);
+    public Index One => (Value.One);
+    public Index MinValue => (Value.MinValue);
+    public Index MaxValue => (Value.MaxValue);
     public Boolean Equals(Index b) => (Value.Equals(b.Value));
     public static Boolean operator ==(Index a, Index b) => a.Equals(b);
     public Boolean NotEquals(Index b) => (Value.NotEquals(b.Value));
@@ -141,6 +149,10 @@ public readonly partial struct Unit
     public static Unit operator +(Unit self, Unit other) => self.Add(other);
     public Unit Subtract(Unit other) => (Value.Subtract(other.Value));
     public static Unit operator -(Unit self, Unit other) => self.Subtract(other);
+    public Unit Zero => (Value.Zero);
+    public Unit One => (Value.One);
+    public Unit MinValue => (Value.MinValue);
+    public Unit MaxValue => (Value.MaxValue);
 }
 public readonly partial struct Percent
 {
@@ -171,6 +183,10 @@ public readonly partial struct Percent
     public static Percent operator +(Percent self, Percent other) => self.Add(other);
     public Percent Subtract(Percent other) => (Value.Subtract(other.Value));
     public static Percent operator -(Percent self, Percent other) => self.Subtract(other);
+    public Percent Zero => (Value.Zero);
+    public Percent One => (Value.One);
+    public Percent MinValue => (Value.MinValue);
+    public Percent MaxValue => (Value.MaxValue);
 }
 public readonly partial struct Quaternion
 {
@@ -192,6 +208,10 @@ public readonly partial struct Quaternion
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y", (String)"Z", (String)"W" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z), new Dynamic(W) };
     // Unimplemented concept functions
+    public Quaternion Zero => (X.Zero, Y.Zero, Z.Zero, W.Zero);
+    public Quaternion One => (X.One, Y.One, Z.One, W.One);
+    public Quaternion MinValue => (X.MinValue, Y.MinValue, Z.MinValue, W.MinValue);
+    public Quaternion MaxValue => (X.MaxValue, Y.MaxValue, Z.MaxValue, W.MaxValue);
     public Boolean Equals(Quaternion b) => (X.Equals(b.X) & Y.Equals(b.Y) & Z.Equals(b.Z) & W.Equals(b.W));
     public static Boolean operator ==(Quaternion a, Quaternion b) => a.Equals(b);
     public Boolean NotEquals(Quaternion b) => (X.NotEquals(b.X) & Y.NotEquals(b.Y) & Z.NotEquals(b.Z) & W.NotEquals(b.W));
@@ -213,6 +233,10 @@ public readonly partial struct Unit2D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(X), new Dynamic(Y) };
     // Unimplemented concept functions
+    public Unit2D Zero => (X.Zero, Y.Zero);
+    public Unit2D One => (X.One, Y.One);
+    public Unit2D MinValue => (X.MinValue, Y.MinValue);
+    public Unit2D MaxValue => (X.MaxValue, Y.MaxValue);
     public Boolean Equals(Unit2D b) => (X.Equals(b.X) & Y.Equals(b.Y));
     public static Boolean operator ==(Unit2D a, Unit2D b) => a.Equals(b);
     public Boolean NotEquals(Unit2D b) => (X.NotEquals(b.X) & Y.NotEquals(b.Y));
@@ -236,6 +260,10 @@ public readonly partial struct Unit3D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y", (String)"Z" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z) };
     // Unimplemented concept functions
+    public Unit3D Zero => (X.Zero, Y.Zero, Z.Zero);
+    public Unit3D One => (X.One, Y.One, Z.One);
+    public Unit3D MinValue => (X.MinValue, Y.MinValue, Z.MinValue);
+    public Unit3D MaxValue => (X.MaxValue, Y.MaxValue, Z.MaxValue);
     public Boolean Equals(Unit3D b) => (X.Equals(b.X) & Y.Equals(b.Y) & Z.Equals(b.Z));
     public static Boolean operator ==(Unit3D a, Unit3D b) => a.Equals(b);
     public Boolean NotEquals(Unit3D b) => (X.NotEquals(b.X) & Y.NotEquals(b.Y) & Z.NotEquals(b.Z));
@@ -254,6 +282,10 @@ public readonly partial struct Direction3D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
     // Unimplemented concept functions
+    public Direction3D Zero => (Value.Zero);
+    public Direction3D One => (Value.One);
+    public Direction3D MinValue => (Value.MinValue);
+    public Direction3D MaxValue => (Value.MaxValue);
     public Boolean Equals(Direction3D b) => (Value.Equals(b.Value));
     public static Boolean operator ==(Direction3D a, Direction3D b) => a.Equals(b);
     public Boolean NotEquals(Direction3D b) => (Value.NotEquals(b.Value));
@@ -275,6 +307,10 @@ public readonly partial struct AxisAngle
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Axis", (String)"Angle" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Axis), new Dynamic(Angle) };
     // Unimplemented concept functions
+    public AxisAngle Zero => (Axis.Zero, Angle.Zero);
+    public AxisAngle One => (Axis.One, Angle.One);
+    public AxisAngle MinValue => (Axis.MinValue, Angle.MinValue);
+    public AxisAngle MaxValue => (Axis.MaxValue, Angle.MaxValue);
     public Boolean Equals(AxisAngle b) => (Axis.Equals(b.Axis) & Angle.Equals(b.Angle));
     public static Boolean operator ==(AxisAngle a, AxisAngle b) => a.Equals(b);
     public Boolean NotEquals(AxisAngle b) => (Axis.NotEquals(b.Axis) & Angle.NotEquals(b.Angle));
@@ -298,6 +334,10 @@ public readonly partial struct EulerAngles
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Yaw", (String)"Pitch", (String)"Roll" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Yaw), new Dynamic(Pitch), new Dynamic(Roll) };
     // Unimplemented concept functions
+    public EulerAngles Zero => (Yaw.Zero, Pitch.Zero, Roll.Zero);
+    public EulerAngles One => (Yaw.One, Pitch.One, Roll.One);
+    public EulerAngles MinValue => (Yaw.MinValue, Pitch.MinValue, Roll.MinValue);
+    public EulerAngles MaxValue => (Yaw.MaxValue, Pitch.MaxValue, Roll.MaxValue);
     public Boolean Equals(EulerAngles b) => (Yaw.Equals(b.Yaw) & Pitch.Equals(b.Pitch) & Roll.Equals(b.Roll));
     public static Boolean operator ==(EulerAngles a, EulerAngles b) => a.Equals(b);
     public Boolean NotEquals(EulerAngles b) => (Yaw.NotEquals(b.Yaw) & Pitch.NotEquals(b.Pitch) & Roll.NotEquals(b.Roll));
@@ -316,6 +356,10 @@ public readonly partial struct Rotation3D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Quaternion" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Quaternion) };
     // Unimplemented concept functions
+    public Rotation3D Zero => (Quaternion.Zero);
+    public Rotation3D One => (Quaternion.One);
+    public Rotation3D MinValue => (Quaternion.MinValue);
+    public Rotation3D MaxValue => (Quaternion.MaxValue);
     public Boolean Equals(Rotation3D b) => (Quaternion.Equals(b.Quaternion));
     public static Boolean operator ==(Rotation3D a, Rotation3D b) => a.Equals(b);
     public Boolean NotEquals(Rotation3D b) => (Quaternion.NotEquals(b.Quaternion));
@@ -352,9 +396,13 @@ public readonly partial struct Vector2D
     public static Vector2D operator +(Vector2D self, Vector2D other) => self.Add(other);
     public Vector2D Subtract(Vector2D other) => (X.Subtract(other.X), Y.Subtract(other.Y));
     public static Vector2D operator -(Vector2D self, Vector2D other) => self.Subtract(other);
+    public Vector2D Zero => (X.Zero, Y.Zero);
+    public Vector2D One => (X.One, Y.One);
+    public Vector2D MinValue => (X.MinValue, Y.MinValue);
+    public Vector2D MaxValue => (X.MaxValue, Y.MaxValue);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[(Integer n)] => At(n);
+    public Number this[Integer n] => At(n);
 }
 public readonly partial struct Vector3D
 {
@@ -389,9 +437,13 @@ public readonly partial struct Vector3D
     public static Vector3D operator +(Vector3D self, Vector3D other) => self.Add(other);
     public Vector3D Subtract(Vector3D other) => (X.Subtract(other.X), Y.Subtract(other.Y), Z.Subtract(other.Z));
     public static Vector3D operator -(Vector3D self, Vector3D other) => self.Subtract(other);
+    public Vector3D Zero => (X.Zero, Y.Zero, Z.Zero);
+    public Vector3D One => (X.One, Y.One, Z.One);
+    public Vector3D MinValue => (X.MinValue, Y.MinValue, Z.MinValue);
+    public Vector3D MaxValue => (X.MaxValue, Y.MaxValue, Z.MaxValue);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[(Integer n)] => At(n);
+    public Number this[Integer n] => At(n);
 }
 public readonly partial struct Vector4D
 {
@@ -428,9 +480,13 @@ public readonly partial struct Vector4D
     public static Vector4D operator +(Vector4D self, Vector4D other) => self.Add(other);
     public Vector4D Subtract(Vector4D other) => (X.Subtract(other.X), Y.Subtract(other.Y), Z.Subtract(other.Z), W.Subtract(other.W));
     public static Vector4D operator -(Vector4D self, Vector4D other) => self.Subtract(other);
+    public Vector4D Zero => (X.Zero, Y.Zero, Z.Zero, W.Zero);
+    public Vector4D One => (X.One, Y.One, Z.One, W.One);
+    public Vector4D MinValue => (X.MinValue, Y.MinValue, Z.MinValue, W.MinValue);
+    public Vector4D MaxValue => (X.MaxValue, Y.MaxValue, Z.MaxValue, W.MaxValue);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[(Integer n)] => At(n);
+    public Number this[Integer n] => At(n);
 }
 public readonly partial struct Orientation3D
 {
@@ -445,6 +501,10 @@ public readonly partial struct Orientation3D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
     // Unimplemented concept functions
+    public Orientation3D Zero => (Value.Zero);
+    public Orientation3D One => (Value.One);
+    public Orientation3D MinValue => (Value.MinValue);
+    public Orientation3D MaxValue => (Value.MaxValue);
     public Boolean Equals(Orientation3D b) => (Value.Equals(b.Value));
     public static Boolean operator ==(Orientation3D a, Orientation3D b) => a.Equals(b);
     public Boolean NotEquals(Orientation3D b) => (Value.NotEquals(b.Value));
@@ -466,6 +526,10 @@ public readonly partial struct Pose2D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Position", (String)"Orientation" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Position), new Dynamic(Orientation) };
     // Unimplemented concept functions
+    public Pose2D Zero => (Position.Zero, Orientation.Zero);
+    public Pose2D One => (Position.One, Orientation.One);
+    public Pose2D MinValue => (Position.MinValue, Orientation.MinValue);
+    public Pose2D MaxValue => (Position.MaxValue, Orientation.MaxValue);
     public Boolean Equals(Pose2D b) => (Position.Equals(b.Position) & Orientation.Equals(b.Orientation));
     public static Boolean operator ==(Pose2D a, Pose2D b) => a.Equals(b);
     public Boolean NotEquals(Pose2D b) => (Position.NotEquals(b.Position) & Orientation.NotEquals(b.Orientation));
@@ -487,6 +551,10 @@ public readonly partial struct Pose3D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Position", (String)"Orientation" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Position), new Dynamic(Orientation) };
     // Unimplemented concept functions
+    public Pose3D Zero => (Position.Zero, Orientation.Zero);
+    public Pose3D One => (Position.One, Orientation.One);
+    public Pose3D MinValue => (Position.MinValue, Orientation.MinValue);
+    public Pose3D MaxValue => (Position.MaxValue, Orientation.MaxValue);
     public Boolean Equals(Pose3D b) => (Position.Equals(b.Position) & Orientation.Equals(b.Orientation));
     public static Boolean operator ==(Pose3D a, Pose3D b) => a.Equals(b);
     public Boolean NotEquals(Pose3D b) => (Position.NotEquals(b.Position) & Orientation.NotEquals(b.Orientation));
@@ -510,6 +578,10 @@ public readonly partial struct Transform3D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Translation", (String)"Rotation", (String)"Scale" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Translation), new Dynamic(Rotation), new Dynamic(Scale) };
     // Unimplemented concept functions
+    public Transform3D Zero => (Translation.Zero, Rotation.Zero, Scale.Zero);
+    public Transform3D One => (Translation.One, Rotation.One, Scale.One);
+    public Transform3D MinValue => (Translation.MinValue, Rotation.MinValue, Scale.MinValue);
+    public Transform3D MaxValue => (Translation.MaxValue, Rotation.MaxValue, Scale.MaxValue);
     public Boolean Equals(Transform3D b) => (Translation.Equals(b.Translation) & Rotation.Equals(b.Rotation) & Scale.Equals(b.Scale));
     public static Boolean operator ==(Transform3D a, Transform3D b) => a.Equals(b);
     public Boolean NotEquals(Transform3D b) => (Translation.NotEquals(b.Translation) & Rotation.NotEquals(b.Rotation) & Scale.NotEquals(b.Scale));
@@ -533,6 +605,10 @@ public readonly partial struct Transform2D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Translation", (String)"Rotation", (String)"Scale" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Translation), new Dynamic(Rotation), new Dynamic(Scale) };
     // Unimplemented concept functions
+    public Transform2D Zero => (Translation.Zero, Rotation.Zero, Scale.Zero);
+    public Transform2D One => (Translation.One, Rotation.One, Scale.One);
+    public Transform2D MinValue => (Translation.MinValue, Rotation.MinValue, Scale.MinValue);
+    public Transform2D MaxValue => (Translation.MaxValue, Rotation.MaxValue, Scale.MaxValue);
     public Boolean Equals(Transform2D b) => (Translation.Equals(b.Translation) & Rotation.Equals(b.Rotation) & Scale.Equals(b.Scale));
     public static Boolean operator ==(Transform2D a, Transform2D b) => a.Equals(b);
     public Boolean NotEquals(Transform2D b) => (Translation.NotEquals(b.Translation) & Rotation.NotEquals(b.Rotation) & Scale.NotEquals(b.Scale));
@@ -617,9 +693,13 @@ public readonly partial struct Complex
     public static Complex operator +(Complex self, Complex other) => self.Add(other);
     public Complex Subtract(Complex other) => (Real.Subtract(other.Real), Imaginary.Subtract(other.Imaginary));
     public static Complex operator -(Complex self, Complex other) => self.Subtract(other);
+    public Complex Zero => (Real.Zero, Imaginary.Zero);
+    public Complex One => (Real.One, Imaginary.One);
+    public Complex MinValue => (Real.MinValue, Imaginary.MinValue);
+    public Complex MaxValue => (Real.MaxValue, Imaginary.MaxValue);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[(Integer n)] => At(n);
+    public Number this[Integer n] => At(n);
 }
 public readonly partial struct Ray3D
 {
@@ -637,6 +717,10 @@ public readonly partial struct Ray3D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Direction", (String)"Position" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Direction), new Dynamic(Position) };
     // Unimplemented concept functions
+    public Ray3D Zero => (Direction.Zero, Position.Zero);
+    public Ray3D One => (Direction.One, Position.One);
+    public Ray3D MinValue => (Direction.MinValue, Position.MinValue);
+    public Ray3D MaxValue => (Direction.MaxValue, Position.MaxValue);
     public Boolean Equals(Ray3D b) => (Direction.Equals(b.Direction) & Position.Equals(b.Position));
     public static Boolean operator ==(Ray3D a, Ray3D b) => a.Equals(b);
     public Boolean NotEquals(Ray3D b) => (Direction.NotEquals(b.Direction) & Position.NotEquals(b.Position));
@@ -658,6 +742,10 @@ public readonly partial struct Ray2D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Direction", (String)"Position" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Direction), new Dynamic(Position) };
     // Unimplemented concept functions
+    public Ray2D Zero => (Direction.Zero, Position.Zero);
+    public Ray2D One => (Direction.One, Position.One);
+    public Ray2D MinValue => (Direction.MinValue, Position.MinValue);
+    public Ray2D MaxValue => (Direction.MaxValue, Position.MaxValue);
     public Boolean Equals(Ray2D b) => (Direction.Equals(b.Direction) & Position.Equals(b.Position));
     public static Boolean operator ==(Ray2D a, Ray2D b) => a.Equals(b);
     public Boolean NotEquals(Ray2D b) => (Direction.NotEquals(b.Direction) & Position.NotEquals(b.Position));
@@ -679,6 +767,10 @@ public readonly partial struct Sphere
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Center", (String)"Radius" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Center), new Dynamic(Radius) };
     // Unimplemented concept functions
+    public Sphere Zero => (Center.Zero, Radius.Zero);
+    public Sphere One => (Center.One, Radius.One);
+    public Sphere MinValue => (Center.MinValue, Radius.MinValue);
+    public Sphere MaxValue => (Center.MaxValue, Radius.MaxValue);
     public Boolean Equals(Sphere b) => (Center.Equals(b.Center) & Radius.Equals(b.Radius));
     public static Boolean operator ==(Sphere a, Sphere b) => a.Equals(b);
     public Boolean NotEquals(Sphere b) => (Center.NotEquals(b.Center) & Radius.NotEquals(b.Radius));
@@ -700,6 +792,10 @@ public readonly partial struct Plane
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Normal", (String)"D" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Normal), new Dynamic(D) };
     // Unimplemented concept functions
+    public Plane Zero => (Normal.Zero, D.Zero);
+    public Plane One => (Normal.One, D.One);
+    public Plane MinValue => (Normal.MinValue, D.MinValue);
+    public Plane MaxValue => (Normal.MaxValue, D.MaxValue);
     public Boolean Equals(Plane b) => (Normal.Equals(b.Normal) & D.Equals(b.D));
     public static Boolean operator ==(Plane a, Plane b) => a.Equals(b);
     public Boolean NotEquals(Plane b) => (Normal.NotEquals(b.Normal) & D.NotEquals(b.D));
@@ -723,6 +819,10 @@ public readonly partial struct Triangle2D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C) };
     // Unimplemented concept functions
+    public Triangle2D Zero => (A.Zero, B.Zero, C.Zero);
+    public Triangle2D One => (A.One, B.One, C.One);
+    public Triangle2D MinValue => (A.MinValue, B.MinValue, C.MinValue);
+    public Triangle2D MaxValue => (A.MaxValue, B.MaxValue, C.MaxValue);
     public Boolean Equals(Triangle2D b) => (A.Equals(b.A) & B.Equals(b.B) & C.Equals(b.C));
     public static Boolean operator ==(Triangle2D a, Triangle2D b) => a.Equals(b);
     public Boolean NotEquals(Triangle2D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C));
@@ -746,6 +846,10 @@ public readonly partial struct Triangle3D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C) };
     // Unimplemented concept functions
+    public Triangle3D Zero => (A.Zero, B.Zero, C.Zero);
+    public Triangle3D One => (A.One, B.One, C.One);
+    public Triangle3D MinValue => (A.MinValue, B.MinValue, C.MinValue);
+    public Triangle3D MaxValue => (A.MaxValue, B.MaxValue, C.MaxValue);
     public Boolean Equals(Triangle3D b) => (A.Equals(b.A) & B.Equals(b.B) & C.Equals(b.C));
     public static Boolean operator ==(Triangle3D a, Triangle3D b) => a.Equals(b);
     public Boolean NotEquals(Triangle3D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C));
@@ -771,6 +875,10 @@ public readonly partial struct Quad2D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C", (String)"D" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C), new Dynamic(D) };
     // Unimplemented concept functions
+    public Quad2D Zero => (A.Zero, B.Zero, C.Zero, D.Zero);
+    public Quad2D One => (A.One, B.One, C.One, D.One);
+    public Quad2D MinValue => (A.MinValue, B.MinValue, C.MinValue, D.MinValue);
+    public Quad2D MaxValue => (A.MaxValue, B.MaxValue, C.MaxValue, D.MaxValue);
     public Boolean Equals(Quad2D b) => (A.Equals(b.A) & B.Equals(b.B) & C.Equals(b.C) & D.Equals(b.D));
     public static Boolean operator ==(Quad2D a, Quad2D b) => a.Equals(b);
     public Boolean NotEquals(Quad2D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C) & D.NotEquals(b.D));
@@ -796,6 +904,10 @@ public readonly partial struct Quad3D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C", (String)"D" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C), new Dynamic(D) };
     // Unimplemented concept functions
+    public Quad3D Zero => (A.Zero, B.Zero, C.Zero, D.Zero);
+    public Quad3D One => (A.One, B.One, C.One, D.One);
+    public Quad3D MinValue => (A.MinValue, B.MinValue, C.MinValue, D.MinValue);
+    public Quad3D MaxValue => (A.MaxValue, B.MaxValue, C.MaxValue, D.MaxValue);
     public Boolean Equals(Quad3D b) => (A.Equals(b.A) & B.Equals(b.B) & C.Equals(b.C) & D.Equals(b.D));
     public static Boolean operator ==(Quad3D a, Quad3D b) => a.Equals(b);
     public Boolean NotEquals(Quad3D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C) & D.NotEquals(b.D));
@@ -911,6 +1023,10 @@ public readonly partial struct Color
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"R", (String)"G", (String)"B", (String)"A" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(R), new Dynamic(G), new Dynamic(B), new Dynamic(A) };
     // Unimplemented concept functions
+    public Color Zero => (R.Zero, G.Zero, B.Zero, A.Zero);
+    public Color One => (R.One, G.One, B.One, A.One);
+    public Color MinValue => (R.MinValue, G.MinValue, B.MinValue, A.MinValue);
+    public Color MaxValue => (R.MaxValue, G.MaxValue, B.MaxValue, A.MaxValue);
     public Boolean Equals(Color b) => (R.Equals(b.R) & G.Equals(b.G) & B.Equals(b.B) & A.Equals(b.A));
     public static Boolean operator ==(Color a, Color b) => a.Equals(b);
     public Boolean NotEquals(Color b) => (R.NotEquals(b.R) & G.NotEquals(b.G) & B.NotEquals(b.B) & A.NotEquals(b.A));
@@ -934,6 +1050,10 @@ public readonly partial struct ColorLUV
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Lightness", (String)"U", (String)"V" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Lightness), new Dynamic(U), new Dynamic(V) };
     // Unimplemented concept functions
+    public ColorLUV Zero => (Lightness.Zero, U.Zero, V.Zero);
+    public ColorLUV One => (Lightness.One, U.One, V.One);
+    public ColorLUV MinValue => (Lightness.MinValue, U.MinValue, V.MinValue);
+    public ColorLUV MaxValue => (Lightness.MaxValue, U.MaxValue, V.MaxValue);
     public Boolean Equals(ColorLUV b) => (Lightness.Equals(b.Lightness) & U.Equals(b.U) & V.Equals(b.V));
     public static Boolean operator ==(ColorLUV a, ColorLUV b) => a.Equals(b);
     public Boolean NotEquals(ColorLUV b) => (Lightness.NotEquals(b.Lightness) & U.NotEquals(b.U) & V.NotEquals(b.V));
@@ -957,6 +1077,10 @@ public readonly partial struct ColorLAB
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Lightness", (String)"A", (String)"B" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Lightness), new Dynamic(A), new Dynamic(B) };
     // Unimplemented concept functions
+    public ColorLAB Zero => (Lightness.Zero, A.Zero, B.Zero);
+    public ColorLAB One => (Lightness.One, A.One, B.One);
+    public ColorLAB MinValue => (Lightness.MinValue, A.MinValue, B.MinValue);
+    public ColorLAB MaxValue => (Lightness.MaxValue, A.MaxValue, B.MaxValue);
     public Boolean Equals(ColorLAB b) => (Lightness.Equals(b.Lightness) & A.Equals(b.A) & B.Equals(b.B));
     public static Boolean operator ==(ColorLAB a, ColorLAB b) => a.Equals(b);
     public Boolean NotEquals(ColorLAB b) => (Lightness.NotEquals(b.Lightness) & A.NotEquals(b.A) & B.NotEquals(b.B));
@@ -978,6 +1102,10 @@ public readonly partial struct ColorLCh
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Lightness", (String)"ChromaHue" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Lightness), new Dynamic(ChromaHue) };
     // Unimplemented concept functions
+    public ColorLCh Zero => (Lightness.Zero, ChromaHue.Zero);
+    public ColorLCh One => (Lightness.One, ChromaHue.One);
+    public ColorLCh MinValue => (Lightness.MinValue, ChromaHue.MinValue);
+    public ColorLCh MaxValue => (Lightness.MaxValue, ChromaHue.MaxValue);
     public Boolean Equals(ColorLCh b) => (Lightness.Equals(b.Lightness) & ChromaHue.Equals(b.ChromaHue));
     public static Boolean operator ==(ColorLCh a, ColorLCh b) => a.Equals(b);
     public Boolean NotEquals(ColorLCh b) => (Lightness.NotEquals(b.Lightness) & ChromaHue.NotEquals(b.ChromaHue));
@@ -1001,6 +1129,10 @@ public readonly partial struct ColorHSV
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Hue", (String)"S", (String)"V" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Hue), new Dynamic(S), new Dynamic(V) };
     // Unimplemented concept functions
+    public ColorHSV Zero => (Hue.Zero, S.Zero, V.Zero);
+    public ColorHSV One => (Hue.One, S.One, V.One);
+    public ColorHSV MinValue => (Hue.MinValue, S.MinValue, V.MinValue);
+    public ColorHSV MaxValue => (Hue.MaxValue, S.MaxValue, V.MaxValue);
     public Boolean Equals(ColorHSV b) => (Hue.Equals(b.Hue) & S.Equals(b.S) & V.Equals(b.V));
     public static Boolean operator ==(ColorHSV a, ColorHSV b) => a.Equals(b);
     public Boolean NotEquals(ColorHSV b) => (Hue.NotEquals(b.Hue) & S.NotEquals(b.S) & V.NotEquals(b.V));
@@ -1024,6 +1156,10 @@ public readonly partial struct ColorHSL
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Hue", (String)"Saturation", (String)"Luminance" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Hue), new Dynamic(Saturation), new Dynamic(Luminance) };
     // Unimplemented concept functions
+    public ColorHSL Zero => (Hue.Zero, Saturation.Zero, Luminance.Zero);
+    public ColorHSL One => (Hue.One, Saturation.One, Luminance.One);
+    public ColorHSL MinValue => (Hue.MinValue, Saturation.MinValue, Luminance.MinValue);
+    public ColorHSL MaxValue => (Hue.MaxValue, Saturation.MaxValue, Luminance.MaxValue);
     public Boolean Equals(ColorHSL b) => (Hue.Equals(b.Hue) & Saturation.Equals(b.Saturation) & Luminance.Equals(b.Luminance));
     public static Boolean operator ==(ColorHSL a, ColorHSL b) => a.Equals(b);
     public Boolean NotEquals(ColorHSL b) => (Hue.NotEquals(b.Hue) & Saturation.NotEquals(b.Saturation) & Luminance.NotEquals(b.Luminance));
@@ -1047,6 +1183,10 @@ public readonly partial struct ColorYCbCr
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Y", (String)"Cb", (String)"Cr" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Y), new Dynamic(Cb), new Dynamic(Cr) };
     // Unimplemented concept functions
+    public ColorYCbCr Zero => (Y.Zero, Cb.Zero, Cr.Zero);
+    public ColorYCbCr One => (Y.One, Cb.One, Cr.One);
+    public ColorYCbCr MinValue => (Y.MinValue, Cb.MinValue, Cr.MinValue);
+    public ColorYCbCr MaxValue => (Y.MaxValue, Cb.MaxValue, Cr.MaxValue);
     public Boolean Equals(ColorYCbCr b) => (Y.Equals(b.Y) & Cb.Equals(b.Cb) & Cr.Equals(b.Cr));
     public static Boolean operator ==(ColorYCbCr a, ColorYCbCr b) => a.Equals(b);
     public Boolean NotEquals(ColorYCbCr b) => (Y.NotEquals(b.Y) & Cb.NotEquals(b.Cb) & Cr.NotEquals(b.Cr));
@@ -1070,6 +1210,10 @@ public readonly partial struct SphericalCoordinate
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Radius", (String)"Azimuth", (String)"Polar" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Radius), new Dynamic(Azimuth), new Dynamic(Polar) };
     // Unimplemented concept functions
+    public SphericalCoordinate Zero => (Radius.Zero, Azimuth.Zero, Polar.Zero);
+    public SphericalCoordinate One => (Radius.One, Azimuth.One, Polar.One);
+    public SphericalCoordinate MinValue => (Radius.MinValue, Azimuth.MinValue, Polar.MinValue);
+    public SphericalCoordinate MaxValue => (Radius.MaxValue, Azimuth.MaxValue, Polar.MaxValue);
     public Boolean Equals(SphericalCoordinate b) => (Radius.Equals(b.Radius) & Azimuth.Equals(b.Azimuth) & Polar.Equals(b.Polar));
     public static Boolean operator ==(SphericalCoordinate a, SphericalCoordinate b) => a.Equals(b);
     public Boolean NotEquals(SphericalCoordinate b) => (Radius.NotEquals(b.Radius) & Azimuth.NotEquals(b.Azimuth) & Polar.NotEquals(b.Polar));
@@ -1091,6 +1235,10 @@ public readonly partial struct PolarCoordinate
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Radius", (String)"Angle" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Radius), new Dynamic(Angle) };
     // Unimplemented concept functions
+    public PolarCoordinate Zero => (Radius.Zero, Angle.Zero);
+    public PolarCoordinate One => (Radius.One, Angle.One);
+    public PolarCoordinate MinValue => (Radius.MinValue, Angle.MinValue);
+    public PolarCoordinate MaxValue => (Radius.MaxValue, Angle.MaxValue);
     public Boolean Equals(PolarCoordinate b) => (Radius.Equals(b.Radius) & Angle.Equals(b.Angle));
     public static Boolean operator ==(PolarCoordinate a, PolarCoordinate b) => a.Equals(b);
     public Boolean NotEquals(PolarCoordinate b) => (Radius.NotEquals(b.Radius) & Angle.NotEquals(b.Angle));
@@ -1112,6 +1260,10 @@ public readonly partial struct LogPolarCoordinate
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Rho", (String)"Azimuth" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Rho), new Dynamic(Azimuth) };
     // Unimplemented concept functions
+    public LogPolarCoordinate Zero => (Rho.Zero, Azimuth.Zero);
+    public LogPolarCoordinate One => (Rho.One, Azimuth.One);
+    public LogPolarCoordinate MinValue => (Rho.MinValue, Azimuth.MinValue);
+    public LogPolarCoordinate MaxValue => (Rho.MaxValue, Azimuth.MaxValue);
     public Boolean Equals(LogPolarCoordinate b) => (Rho.Equals(b.Rho) & Azimuth.Equals(b.Azimuth));
     public static Boolean operator ==(LogPolarCoordinate a, LogPolarCoordinate b) => a.Equals(b);
     public Boolean NotEquals(LogPolarCoordinate b) => (Rho.NotEquals(b.Rho) & Azimuth.NotEquals(b.Azimuth));
@@ -1135,6 +1287,10 @@ public readonly partial struct CylindricalCoordinate
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"RadialDistance", (String)"Azimuth", (String)"Height" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(RadialDistance), new Dynamic(Azimuth), new Dynamic(Height) };
     // Unimplemented concept functions
+    public CylindricalCoordinate Zero => (RadialDistance.Zero, Azimuth.Zero, Height.Zero);
+    public CylindricalCoordinate One => (RadialDistance.One, Azimuth.One, Height.One);
+    public CylindricalCoordinate MinValue => (RadialDistance.MinValue, Azimuth.MinValue, Height.MinValue);
+    public CylindricalCoordinate MaxValue => (RadialDistance.MaxValue, Azimuth.MaxValue, Height.MaxValue);
     public Boolean Equals(CylindricalCoordinate b) => (RadialDistance.Equals(b.RadialDistance) & Azimuth.Equals(b.Azimuth) & Height.Equals(b.Height));
     public static Boolean operator ==(CylindricalCoordinate a, CylindricalCoordinate b) => a.Equals(b);
     public Boolean NotEquals(CylindricalCoordinate b) => (RadialDistance.NotEquals(b.RadialDistance) & Azimuth.NotEquals(b.Azimuth) & Height.NotEquals(b.Height));
@@ -1158,6 +1314,10 @@ public readonly partial struct HorizontalCoordinate
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Radius", (String)"Azimuth", (String)"Height" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Radius), new Dynamic(Azimuth), new Dynamic(Height) };
     // Unimplemented concept functions
+    public HorizontalCoordinate Zero => (Radius.Zero, Azimuth.Zero, Height.Zero);
+    public HorizontalCoordinate One => (Radius.One, Azimuth.One, Height.One);
+    public HorizontalCoordinate MinValue => (Radius.MinValue, Azimuth.MinValue, Height.MinValue);
+    public HorizontalCoordinate MaxValue => (Radius.MaxValue, Azimuth.MaxValue, Height.MaxValue);
     public Boolean Equals(HorizontalCoordinate b) => (Radius.Equals(b.Radius) & Azimuth.Equals(b.Azimuth) & Height.Equals(b.Height));
     public static Boolean operator ==(HorizontalCoordinate a, HorizontalCoordinate b) => a.Equals(b);
     public Boolean NotEquals(HorizontalCoordinate b) => (Radius.NotEquals(b.Radius) & Azimuth.NotEquals(b.Azimuth) & Height.NotEquals(b.Height));
@@ -1179,6 +1339,10 @@ public readonly partial struct GeoCoordinate
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Latitude", (String)"Longitude" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Latitude), new Dynamic(Longitude) };
     // Unimplemented concept functions
+    public GeoCoordinate Zero => (Latitude.Zero, Longitude.Zero);
+    public GeoCoordinate One => (Latitude.One, Longitude.One);
+    public GeoCoordinate MinValue => (Latitude.MinValue, Longitude.MinValue);
+    public GeoCoordinate MaxValue => (Latitude.MaxValue, Longitude.MaxValue);
     public Boolean Equals(GeoCoordinate b) => (Latitude.Equals(b.Latitude) & Longitude.Equals(b.Longitude));
     public static Boolean operator ==(GeoCoordinate a, GeoCoordinate b) => a.Equals(b);
     public Boolean NotEquals(GeoCoordinate b) => (Latitude.NotEquals(b.Latitude) & Longitude.NotEquals(b.Longitude));
@@ -1200,6 +1364,10 @@ public readonly partial struct GeoCoordinateWithAltitude
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Coordinate", (String)"Altitude" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Coordinate), new Dynamic(Altitude) };
     // Unimplemented concept functions
+    public GeoCoordinateWithAltitude Zero => (Coordinate.Zero, Altitude.Zero);
+    public GeoCoordinateWithAltitude One => (Coordinate.One, Altitude.One);
+    public GeoCoordinateWithAltitude MinValue => (Coordinate.MinValue, Altitude.MinValue);
+    public GeoCoordinateWithAltitude MaxValue => (Coordinate.MaxValue, Altitude.MaxValue);
     public Boolean Equals(GeoCoordinateWithAltitude b) => (Coordinate.Equals(b.Coordinate) & Altitude.Equals(b.Altitude));
     public static Boolean operator ==(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) => a.Equals(b);
     public Boolean NotEquals(GeoCoordinateWithAltitude b) => (Coordinate.NotEquals(b.Coordinate) & Altitude.NotEquals(b.Altitude));
@@ -1221,6 +1389,10 @@ public readonly partial struct Circle
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Center", (String)"Radius" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Center), new Dynamic(Radius) };
     // Unimplemented concept functions
+    public Circle Zero => (Center.Zero, Radius.Zero);
+    public Circle One => (Center.One, Radius.One);
+    public Circle MinValue => (Center.MinValue, Radius.MinValue);
+    public Circle MaxValue => (Center.MaxValue, Radius.MaxValue);
     public Boolean Equals(Circle b) => (Center.Equals(b.Center) & Radius.Equals(b.Radius));
     public static Boolean operator ==(Circle a, Circle b) => a.Equals(b);
     public Boolean NotEquals(Circle b) => (Center.NotEquals(b.Center) & Radius.NotEquals(b.Radius));
@@ -1242,6 +1414,10 @@ public readonly partial struct Chord
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Circle", (String)"Arc" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Circle), new Dynamic(Arc) };
     // Unimplemented concept functions
+    public Chord Zero => (Circle.Zero, Arc.Zero);
+    public Chord One => (Circle.One, Arc.One);
+    public Chord MinValue => (Circle.MinValue, Arc.MinValue);
+    public Chord MaxValue => (Circle.MaxValue, Arc.MaxValue);
     public Boolean Equals(Chord b) => (Circle.Equals(b.Circle) & Arc.Equals(b.Arc));
     public static Boolean operator ==(Chord a, Chord b) => a.Equals(b);
     public Boolean NotEquals(Chord b) => (Circle.NotEquals(b.Circle) & Arc.NotEquals(b.Arc));
@@ -1263,6 +1439,10 @@ public readonly partial struct Size2D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Width", (String)"Height" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Width), new Dynamic(Height) };
     // Unimplemented concept functions
+    public Size2D Zero => (Width.Zero, Height.Zero);
+    public Size2D One => (Width.One, Height.One);
+    public Size2D MinValue => (Width.MinValue, Height.MinValue);
+    public Size2D MaxValue => (Width.MaxValue, Height.MaxValue);
     public Boolean Equals(Size2D b) => (Width.Equals(b.Width) & Height.Equals(b.Height));
     public static Boolean operator ==(Size2D a, Size2D b) => a.Equals(b);
     public Boolean NotEquals(Size2D b) => (Width.NotEquals(b.Width) & Height.NotEquals(b.Height));
@@ -1286,6 +1466,10 @@ public readonly partial struct Size3D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Width", (String)"Height", (String)"Depth" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Width), new Dynamic(Height), new Dynamic(Depth) };
     // Unimplemented concept functions
+    public Size3D Zero => (Width.Zero, Height.Zero, Depth.Zero);
+    public Size3D One => (Width.One, Height.One, Depth.One);
+    public Size3D MinValue => (Width.MinValue, Height.MinValue, Depth.MinValue);
+    public Size3D MaxValue => (Width.MaxValue, Height.MaxValue, Depth.MaxValue);
     public Boolean Equals(Size3D b) => (Width.Equals(b.Width) & Height.Equals(b.Height) & Depth.Equals(b.Depth));
     public static Boolean operator ==(Size3D a, Size3D b) => a.Equals(b);
     public Boolean NotEquals(Size3D b) => (Width.NotEquals(b.Width) & Height.NotEquals(b.Height) & Depth.NotEquals(b.Depth));
@@ -1307,6 +1491,10 @@ public readonly partial struct Rectangle2D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Center", (String)"Size" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Center), new Dynamic(Size) };
     // Unimplemented concept functions
+    public Rectangle2D Zero => (Center.Zero, Size.Zero);
+    public Rectangle2D One => (Center.One, Size.One);
+    public Rectangle2D MinValue => (Center.MinValue, Size.MinValue);
+    public Rectangle2D MaxValue => (Center.MaxValue, Size.MaxValue);
     public Boolean Equals(Rectangle2D b) => (Center.Equals(b.Center) & Size.Equals(b.Size));
     public static Boolean operator ==(Rectangle2D a, Rectangle2D b) => a.Equals(b);
     public Boolean NotEquals(Rectangle2D b) => (Center.NotEquals(b.Center) & Size.NotEquals(b.Size));
@@ -1341,6 +1529,10 @@ public readonly partial struct Proportion
     public static Proportion operator +(Proportion self, Proportion other) => self.Add(other);
     public Proportion Subtract(Proportion other) => (Value.Subtract(other.Value));
     public static Proportion operator -(Proportion self, Proportion other) => self.Subtract(other);
+    public Proportion Zero => (Value.Zero);
+    public Proportion One => (Value.One);
+    public Proportion MinValue => (Value.MinValue);
+    public Proportion MaxValue => (Value.MaxValue);
 }
 public readonly partial struct Fraction
 {
@@ -1358,6 +1550,10 @@ public readonly partial struct Fraction
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Numerator", (String)"Denominator" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Numerator), new Dynamic(Denominator) };
     // Unimplemented concept functions
+    public Fraction Zero => (Numerator.Zero, Denominator.Zero);
+    public Fraction One => (Numerator.One, Denominator.One);
+    public Fraction MinValue => (Numerator.MinValue, Denominator.MinValue);
+    public Fraction MaxValue => (Numerator.MaxValue, Denominator.MaxValue);
     public Boolean Equals(Fraction b) => (Numerator.Equals(b.Numerator) & Denominator.Equals(b.Denominator));
     public static Boolean operator ==(Fraction a, Fraction b) => a.Equals(b);
     public Boolean NotEquals(Fraction b) => (Numerator.NotEquals(b.Numerator) & Denominator.NotEquals(b.Denominator));
@@ -1376,9 +1572,25 @@ public readonly partial struct Angle
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Radians" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Radians) };
     // Unimplemented concept functions
-    public Integer Compare(Angle y) => throw new NotImplementedException();
+    public Number Value => throw new NotImplementedException();
     public Angle Lerp(Angle b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Angle a, Angle b) => throw new NotImplementedException();
+    public Number Magnitude => throw new NotImplementedException();
+    public Integer Compare(Angle y) => throw new NotImplementedException();
+    public Angle Multiply(Angle other) => (Radians.Multiply(other.Radians));
+    public static Angle operator *(Angle self, Angle other) => self.Multiply(other);
+    public Angle Divide(Angle other) => (Radians.Divide(other.Radians));
+    public static Angle operator /(Angle self, Angle other) => self.Divide(other);
+    public Angle Modulo(Angle other) => (Radians.Modulo(other.Radians));
+    public static Angle operator %(Angle self, Angle other) => self.Modulo(other);
+    public Angle Add(Number other) => throw new NotImplementedException();
+    public static Angle operator +(Angle self, Number other) => self.Add(other);
+    public Angle Subtract(Number other) => throw new NotImplementedException();
+    public static Angle operator -(Angle self, Number other) => self.Subtract(other);
+    public Angle Zero => (Radians.Zero);
+    public Angle One => (Radians.One);
+    public Angle MinValue => (Radians.MinValue);
+    public Angle MaxValue => (Radians.MaxValue);
 }
 public readonly partial struct Length
 {
@@ -1408,6 +1620,10 @@ public readonly partial struct Length
     public static Length operator +(Length self, Number other) => self.Add(other);
     public Length Subtract(Number other) => throw new NotImplementedException();
     public static Length operator -(Length self, Number other) => self.Subtract(other);
+    public Length Zero => (Meters.Zero);
+    public Length One => (Meters.One);
+    public Length MinValue => (Meters.MinValue);
+    public Length MaxValue => (Meters.MaxValue);
 }
 public readonly partial struct Mass
 {
@@ -1437,6 +1653,10 @@ public readonly partial struct Mass
     public static Mass operator +(Mass self, Number other) => self.Add(other);
     public Mass Subtract(Number other) => throw new NotImplementedException();
     public static Mass operator -(Mass self, Number other) => self.Subtract(other);
+    public Mass Zero => (Kilograms.Zero);
+    public Mass One => (Kilograms.One);
+    public Mass MinValue => (Kilograms.MinValue);
+    public Mass MaxValue => (Kilograms.MaxValue);
 }
 public readonly partial struct Temperature
 {
@@ -1466,6 +1686,10 @@ public readonly partial struct Temperature
     public static Temperature operator +(Temperature self, Number other) => self.Add(other);
     public Temperature Subtract(Number other) => throw new NotImplementedException();
     public static Temperature operator -(Temperature self, Number other) => self.Subtract(other);
+    public Temperature Zero => (Celsius.Zero);
+    public Temperature One => (Celsius.One);
+    public Temperature MinValue => (Celsius.MinValue);
+    public Temperature MaxValue => (Celsius.MaxValue);
 }
 public readonly partial struct Time
 {
@@ -1495,6 +1719,10 @@ public readonly partial struct Time
     public static Time operator +(Time self, Number other) => self.Add(other);
     public Time Subtract(Number other) => throw new NotImplementedException();
     public static Time operator -(Time self, Number other) => self.Subtract(other);
+    public Time Zero => (Seconds.Zero);
+    public Time One => (Seconds.One);
+    public Time MinValue => (Seconds.MinValue);
+    public Time MaxValue => (Seconds.MaxValue);
 }
 public readonly partial struct TimeRange
 {
@@ -1590,6 +1818,10 @@ public readonly partial struct Ring
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Circle", (String)"InnerRadius" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Circle), new Dynamic(InnerRadius) };
     // Unimplemented concept functions
+    public Ring Zero => (Circle.Zero, InnerRadius.Zero);
+    public Ring One => (Circle.One, InnerRadius.One);
+    public Ring MinValue => (Circle.MinValue, InnerRadius.MinValue);
+    public Ring MaxValue => (Circle.MaxValue, InnerRadius.MaxValue);
     public Boolean Equals(Ring b) => (Circle.Equals(b.Circle) & InnerRadius.Equals(b.InnerRadius));
     public static Boolean operator ==(Ring a, Ring b) => a.Equals(b);
     public Boolean NotEquals(Ring b) => (Circle.NotEquals(b.Circle) & InnerRadius.NotEquals(b.InnerRadius));
@@ -1611,6 +1843,10 @@ public readonly partial struct Arc
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Angles", (String)"Cirlce" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Angles), new Dynamic(Cirlce) };
     // Unimplemented concept functions
+    public Arc Zero => (Angles.Zero, Cirlce.Zero);
+    public Arc One => (Angles.One, Cirlce.One);
+    public Arc MinValue => (Angles.MinValue, Cirlce.MinValue);
+    public Arc MaxValue => (Angles.MaxValue, Cirlce.MaxValue);
     public Boolean Equals(Arc b) => (Angles.Equals(b.Angles) & Cirlce.Equals(b.Cirlce));
     public static Boolean operator ==(Arc a, Arc b) => a.Equals(b);
     public Boolean NotEquals(Arc b) => (Angles.NotEquals(b.Angles) & Cirlce.NotEquals(b.Cirlce));
@@ -1656,6 +1892,10 @@ public readonly partial struct Capsule
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Line", (String)"Radius" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Line), new Dynamic(Radius) };
     // Unimplemented concept functions
+    public Capsule Zero => (Line.Zero, Radius.Zero);
+    public Capsule One => (Line.One, Radius.One);
+    public Capsule MinValue => (Line.MinValue, Radius.MinValue);
+    public Capsule MaxValue => (Line.MaxValue, Radius.MaxValue);
     public Boolean Equals(Capsule b) => (Line.Equals(b.Line) & Radius.Equals(b.Radius));
     public static Boolean operator ==(Capsule a, Capsule b) => a.Equals(b);
     public Boolean NotEquals(Capsule b) => (Line.NotEquals(b.Line) & Radius.NotEquals(b.Radius));
@@ -1681,6 +1921,10 @@ public readonly partial struct Matrix3D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Column1", (String)"Column2", (String)"Column3", (String)"Column4" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Column1), new Dynamic(Column2), new Dynamic(Column3), new Dynamic(Column4) };
     // Unimplemented concept functions
+    public Matrix3D Zero => (Column1.Zero, Column2.Zero, Column3.Zero, Column4.Zero);
+    public Matrix3D One => (Column1.One, Column2.One, Column3.One, Column4.One);
+    public Matrix3D MinValue => (Column1.MinValue, Column2.MinValue, Column3.MinValue, Column4.MinValue);
+    public Matrix3D MaxValue => (Column1.MaxValue, Column2.MaxValue, Column3.MaxValue, Column4.MaxValue);
     public Boolean Equals(Matrix3D b) => (Column1.Equals(b.Column1) & Column2.Equals(b.Column2) & Column3.Equals(b.Column3) & Column4.Equals(b.Column4));
     public static Boolean operator ==(Matrix3D a, Matrix3D b) => a.Equals(b);
     public Boolean NotEquals(Matrix3D b) => (Column1.NotEquals(b.Column1) & Column2.NotEquals(b.Column2) & Column3.NotEquals(b.Column3) & Column4.NotEquals(b.Column4));
@@ -1702,6 +1946,10 @@ public readonly partial struct Cylinder
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Line", (String)"Radius" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Line), new Dynamic(Radius) };
     // Unimplemented concept functions
+    public Cylinder Zero => (Line.Zero, Radius.Zero);
+    public Cylinder One => (Line.One, Radius.One);
+    public Cylinder MinValue => (Line.MinValue, Radius.MinValue);
+    public Cylinder MaxValue => (Line.MaxValue, Radius.MaxValue);
     public Boolean Equals(Cylinder b) => (Line.Equals(b.Line) & Radius.Equals(b.Radius));
     public static Boolean operator ==(Cylinder a, Cylinder b) => a.Equals(b);
     public Boolean NotEquals(Cylinder b) => (Line.NotEquals(b.Line) & Radius.NotEquals(b.Radius));
@@ -1723,6 +1971,10 @@ public readonly partial struct Cone
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Line", (String)"Radius" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Line), new Dynamic(Radius) };
     // Unimplemented concept functions
+    public Cone Zero => (Line.Zero, Radius.Zero);
+    public Cone One => (Line.One, Radius.One);
+    public Cone MinValue => (Line.MinValue, Radius.MinValue);
+    public Cone MaxValue => (Line.MaxValue, Radius.MaxValue);
     public Boolean Equals(Cone b) => (Line.Equals(b.Line) & Radius.Equals(b.Radius));
     public static Boolean operator ==(Cone a, Cone b) => a.Equals(b);
     public Boolean NotEquals(Cone b) => (Line.NotEquals(b.Line) & Radius.NotEquals(b.Radius));
@@ -1746,6 +1998,10 @@ public readonly partial struct Tube
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Line", (String)"InnerRadius", (String)"OuterRadius" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Line), new Dynamic(InnerRadius), new Dynamic(OuterRadius) };
     // Unimplemented concept functions
+    public Tube Zero => (Line.Zero, InnerRadius.Zero, OuterRadius.Zero);
+    public Tube One => (Line.One, InnerRadius.One, OuterRadius.One);
+    public Tube MinValue => (Line.MinValue, InnerRadius.MinValue, OuterRadius.MinValue);
+    public Tube MaxValue => (Line.MaxValue, InnerRadius.MaxValue, OuterRadius.MaxValue);
     public Boolean Equals(Tube b) => (Line.Equals(b.Line) & InnerRadius.Equals(b.InnerRadius) & OuterRadius.Equals(b.OuterRadius));
     public static Boolean operator ==(Tube a, Tube b) => a.Equals(b);
     public Boolean NotEquals(Tube b) => (Line.NotEquals(b.Line) & InnerRadius.NotEquals(b.InnerRadius) & OuterRadius.NotEquals(b.OuterRadius));
@@ -1769,6 +2025,10 @@ public readonly partial struct ConeSegment
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Line", (String)"Radius1", (String)"Radius2" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Line), new Dynamic(Radius1), new Dynamic(Radius2) };
     // Unimplemented concept functions
+    public ConeSegment Zero => (Line.Zero, Radius1.Zero, Radius2.Zero);
+    public ConeSegment One => (Line.One, Radius1.One, Radius2.One);
+    public ConeSegment MinValue => (Line.MinValue, Radius1.MinValue, Radius2.MinValue);
+    public ConeSegment MaxValue => (Line.MaxValue, Radius1.MaxValue, Radius2.MaxValue);
     public Boolean Equals(ConeSegment b) => (Line.Equals(b.Line) & Radius1.Equals(b.Radius1) & Radius2.Equals(b.Radius2));
     public static Boolean operator ==(ConeSegment a, ConeSegment b) => a.Equals(b);
     public Boolean NotEquals(ConeSegment b) => (Line.NotEquals(b.Line) & Radius1.NotEquals(b.Radius1) & Radius2.NotEquals(b.Radius2));
@@ -1792,6 +2052,10 @@ public readonly partial struct Box2D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Center", (String)"Rotation", (String)"Extent" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Center), new Dynamic(Rotation), new Dynamic(Extent) };
     // Unimplemented concept functions
+    public Box2D Zero => (Center.Zero, Rotation.Zero, Extent.Zero);
+    public Box2D One => (Center.One, Rotation.One, Extent.One);
+    public Box2D MinValue => (Center.MinValue, Rotation.MinValue, Extent.MinValue);
+    public Box2D MaxValue => (Center.MaxValue, Rotation.MaxValue, Extent.MaxValue);
     public Boolean Equals(Box2D b) => (Center.Equals(b.Center) & Rotation.Equals(b.Rotation) & Extent.Equals(b.Extent));
     public static Boolean operator ==(Box2D a, Box2D b) => a.Equals(b);
     public Boolean NotEquals(Box2D b) => (Center.NotEquals(b.Center) & Rotation.NotEquals(b.Rotation) & Extent.NotEquals(b.Extent));
@@ -1815,6 +2079,10 @@ public readonly partial struct Box3D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Center", (String)"Rotation", (String)"Extent" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Center), new Dynamic(Rotation), new Dynamic(Extent) };
     // Unimplemented concept functions
+    public Box3D Zero => (Center.Zero, Rotation.Zero, Extent.Zero);
+    public Box3D One => (Center.One, Rotation.One, Extent.One);
+    public Box3D MinValue => (Center.MinValue, Rotation.MinValue, Extent.MinValue);
+    public Box3D MaxValue => (Center.MaxValue, Rotation.MaxValue, Extent.MaxValue);
     public Boolean Equals(Box3D b) => (Center.Equals(b.Center) & Rotation.Equals(b.Rotation) & Extent.Equals(b.Extent));
     public static Boolean operator ==(Box3D a, Box3D b) => a.Equals(b);
     public Boolean NotEquals(Box3D b) => (Center.NotEquals(b.Center) & Rotation.NotEquals(b.Rotation) & Extent.NotEquals(b.Extent));
@@ -1851,9 +2119,13 @@ public readonly partial struct UV
     public static UV operator +(UV self, UV other) => self.Add(other);
     public UV Subtract(UV other) => (U.Subtract(other.U), V.Subtract(other.V));
     public static UV operator -(UV self, UV other) => self.Subtract(other);
+    public UV Zero => (U.Zero, V.Zero);
+    public UV One => (U.One, V.One);
+    public UV MinValue => (U.MinValue, V.MinValue);
+    public UV MaxValue => (U.MaxValue, V.MaxValue);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[(Integer n)] => At(n);
+    public Number this[Integer n] => At(n);
 }
 public readonly partial struct UVW
 {
@@ -1888,9 +2160,13 @@ public readonly partial struct UVW
     public static UVW operator +(UVW self, UVW other) => self.Add(other);
     public UVW Subtract(UVW other) => (U.Subtract(other.U), V.Subtract(other.V), W.Subtract(other.W));
     public static UVW operator -(UVW self, UVW other) => self.Subtract(other);
+    public UVW Zero => (U.Zero, V.Zero, W.Zero);
+    public UVW One => (U.One, V.One, W.One);
+    public UVW MinValue => (U.MinValue, V.MinValue, W.MinValue);
+    public UVW MaxValue => (U.MaxValue, V.MaxValue, W.MaxValue);
     public Integer Count => throw new NotImplementedException();
     public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[(Integer n)] => At(n);
+    public Number this[Integer n] => At(n);
 }
 public readonly partial struct CubicBezier2D
 {
@@ -1912,6 +2188,10 @@ public readonly partial struct CubicBezier2D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C", (String)"D" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C), new Dynamic(D) };
     // Unimplemented concept functions
+    public CubicBezier2D Zero => (A.Zero, B.Zero, C.Zero, D.Zero);
+    public CubicBezier2D One => (A.One, B.One, C.One, D.One);
+    public CubicBezier2D MinValue => (A.MinValue, B.MinValue, C.MinValue, D.MinValue);
+    public CubicBezier2D MaxValue => (A.MaxValue, B.MaxValue, C.MaxValue, D.MaxValue);
     public Boolean Equals(CubicBezier2D b) => (A.Equals(b.A) & B.Equals(b.B) & C.Equals(b.C) & D.Equals(b.D));
     public static Boolean operator ==(CubicBezier2D a, CubicBezier2D b) => a.Equals(b);
     public Boolean NotEquals(CubicBezier2D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C) & D.NotEquals(b.D));
@@ -1937,6 +2217,10 @@ public readonly partial struct CubicBezier3D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C", (String)"D" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C), new Dynamic(D) };
     // Unimplemented concept functions
+    public CubicBezier3D Zero => (A.Zero, B.Zero, C.Zero, D.Zero);
+    public CubicBezier3D One => (A.One, B.One, C.One, D.One);
+    public CubicBezier3D MinValue => (A.MinValue, B.MinValue, C.MinValue, D.MinValue);
+    public CubicBezier3D MaxValue => (A.MaxValue, B.MaxValue, C.MaxValue, D.MaxValue);
     public Boolean Equals(CubicBezier3D b) => (A.Equals(b.A) & B.Equals(b.B) & C.Equals(b.C) & D.Equals(b.D));
     public static Boolean operator ==(CubicBezier3D a, CubicBezier3D b) => a.Equals(b);
     public Boolean NotEquals(CubicBezier3D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C) & D.NotEquals(b.D));
@@ -1960,6 +2244,10 @@ public readonly partial struct QuadraticBezier2D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C) };
     // Unimplemented concept functions
+    public QuadraticBezier2D Zero => (A.Zero, B.Zero, C.Zero);
+    public QuadraticBezier2D One => (A.One, B.One, C.One);
+    public QuadraticBezier2D MinValue => (A.MinValue, B.MinValue, C.MinValue);
+    public QuadraticBezier2D MaxValue => (A.MaxValue, B.MaxValue, C.MaxValue);
     public Boolean Equals(QuadraticBezier2D b) => (A.Equals(b.A) & B.Equals(b.B) & C.Equals(b.C));
     public static Boolean operator ==(QuadraticBezier2D a, QuadraticBezier2D b) => a.Equals(b);
     public Boolean NotEquals(QuadraticBezier2D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C));
@@ -1983,6 +2271,10 @@ public readonly partial struct QuadraticBezier3D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C) };
     // Unimplemented concept functions
+    public QuadraticBezier3D Zero => (A.Zero, B.Zero, C.Zero);
+    public QuadraticBezier3D One => (A.One, B.One, C.One);
+    public QuadraticBezier3D MinValue => (A.MinValue, B.MinValue, C.MinValue);
+    public QuadraticBezier3D MaxValue => (A.MaxValue, B.MaxValue, C.MaxValue);
     public Boolean Equals(QuadraticBezier3D b) => (A.Equals(b.A) & B.Equals(b.B) & C.Equals(b.C));
     public static Boolean operator ==(QuadraticBezier3D a, QuadraticBezier3D b) => a.Equals(b);
     public Boolean NotEquals(QuadraticBezier3D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C));
@@ -2016,6 +2308,10 @@ public readonly partial struct Area
     public static Area operator +(Area self, Number other) => self.Add(other);
     public Area Subtract(Number other) => throw new NotImplementedException();
     public static Area operator -(Area self, Number other) => self.Subtract(other);
+    public Area Zero => (MetersSquared.Zero);
+    public Area One => (MetersSquared.One);
+    public Area MinValue => (MetersSquared.MinValue);
+    public Area MaxValue => (MetersSquared.MaxValue);
 }
 public readonly partial struct Volume
 {
@@ -2045,6 +2341,10 @@ public readonly partial struct Volume
     public static Volume operator +(Volume self, Number other) => self.Add(other);
     public Volume Subtract(Number other) => throw new NotImplementedException();
     public static Volume operator -(Volume self, Number other) => self.Subtract(other);
+    public Volume Zero => (MetersCubed.Zero);
+    public Volume One => (MetersCubed.One);
+    public Volume MinValue => (MetersCubed.MinValue);
+    public Volume MaxValue => (MetersCubed.MaxValue);
 }
 public readonly partial struct Velocity
 {
@@ -2074,6 +2374,10 @@ public readonly partial struct Velocity
     public static Velocity operator +(Velocity self, Number other) => self.Add(other);
     public Velocity Subtract(Number other) => throw new NotImplementedException();
     public static Velocity operator -(Velocity self, Number other) => self.Subtract(other);
+    public Velocity Zero => (MetersPerSecond.Zero);
+    public Velocity One => (MetersPerSecond.One);
+    public Velocity MinValue => (MetersPerSecond.MinValue);
+    public Velocity MaxValue => (MetersPerSecond.MaxValue);
 }
 public readonly partial struct Acceleration
 {
@@ -2103,6 +2407,10 @@ public readonly partial struct Acceleration
     public static Acceleration operator +(Acceleration self, Number other) => self.Add(other);
     public Acceleration Subtract(Number other) => throw new NotImplementedException();
     public static Acceleration operator -(Acceleration self, Number other) => self.Subtract(other);
+    public Acceleration Zero => (MetersPerSecondSquared.Zero);
+    public Acceleration One => (MetersPerSecondSquared.One);
+    public Acceleration MinValue => (MetersPerSecondSquared.MinValue);
+    public Acceleration MaxValue => (MetersPerSecondSquared.MaxValue);
 }
 public readonly partial struct Force
 {
@@ -2132,6 +2440,10 @@ public readonly partial struct Force
     public static Force operator +(Force self, Number other) => self.Add(other);
     public Force Subtract(Number other) => throw new NotImplementedException();
     public static Force operator -(Force self, Number other) => self.Subtract(other);
+    public Force Zero => (Newtons.Zero);
+    public Force One => (Newtons.One);
+    public Force MinValue => (Newtons.MinValue);
+    public Force MaxValue => (Newtons.MaxValue);
 }
 public readonly partial struct Pressure
 {
@@ -2161,6 +2473,10 @@ public readonly partial struct Pressure
     public static Pressure operator +(Pressure self, Number other) => self.Add(other);
     public Pressure Subtract(Number other) => throw new NotImplementedException();
     public static Pressure operator -(Pressure self, Number other) => self.Subtract(other);
+    public Pressure Zero => (Pascals.Zero);
+    public Pressure One => (Pascals.One);
+    public Pressure MinValue => (Pascals.MinValue);
+    public Pressure MaxValue => (Pascals.MaxValue);
 }
 public readonly partial struct Energy
 {
@@ -2190,6 +2506,10 @@ public readonly partial struct Energy
     public static Energy operator +(Energy self, Number other) => self.Add(other);
     public Energy Subtract(Number other) => throw new NotImplementedException();
     public static Energy operator -(Energy self, Number other) => self.Subtract(other);
+    public Energy Zero => (Joules.Zero);
+    public Energy One => (Joules.One);
+    public Energy MinValue => (Joules.MinValue);
+    public Energy MaxValue => (Joules.MaxValue);
 }
 public readonly partial struct Memory
 {
@@ -2219,6 +2539,10 @@ public readonly partial struct Memory
     public static Memory operator +(Memory self, Number other) => self.Add(other);
     public Memory Subtract(Number other) => throw new NotImplementedException();
     public static Memory operator -(Memory self, Number other) => self.Subtract(other);
+    public Memory Zero => (Bytes.Zero);
+    public Memory One => (Bytes.One);
+    public Memory MinValue => (Bytes.MinValue);
+    public Memory MaxValue => (Bytes.MaxValue);
 }
 public readonly partial struct Frequency
 {
@@ -2248,6 +2572,10 @@ public readonly partial struct Frequency
     public static Frequency operator +(Frequency self, Number other) => self.Add(other);
     public Frequency Subtract(Number other) => throw new NotImplementedException();
     public static Frequency operator -(Frequency self, Number other) => self.Subtract(other);
+    public Frequency Zero => (Hertz.Zero);
+    public Frequency One => (Hertz.One);
+    public Frequency MinValue => (Hertz.MinValue);
+    public Frequency MaxValue => (Hertz.MaxValue);
 }
 public readonly partial struct Loudness
 {
@@ -2277,6 +2605,10 @@ public readonly partial struct Loudness
     public static Loudness operator +(Loudness self, Number other) => self.Add(other);
     public Loudness Subtract(Number other) => throw new NotImplementedException();
     public static Loudness operator -(Loudness self, Number other) => self.Subtract(other);
+    public Loudness Zero => (Decibels.Zero);
+    public Loudness One => (Decibels.One);
+    public Loudness MinValue => (Decibels.MinValue);
+    public Loudness MaxValue => (Decibels.MaxValue);
 }
 public readonly partial struct LuminousIntensity
 {
@@ -2306,6 +2638,10 @@ public readonly partial struct LuminousIntensity
     public static LuminousIntensity operator +(LuminousIntensity self, Number other) => self.Add(other);
     public LuminousIntensity Subtract(Number other) => throw new NotImplementedException();
     public static LuminousIntensity operator -(LuminousIntensity self, Number other) => self.Subtract(other);
+    public LuminousIntensity Zero => (Candelas.Zero);
+    public LuminousIntensity One => (Candelas.One);
+    public LuminousIntensity MinValue => (Candelas.MinValue);
+    public LuminousIntensity MaxValue => (Candelas.MaxValue);
 }
 public readonly partial struct ElectricPotential
 {
@@ -2335,6 +2671,10 @@ public readonly partial struct ElectricPotential
     public static ElectricPotential operator +(ElectricPotential self, Number other) => self.Add(other);
     public ElectricPotential Subtract(Number other) => throw new NotImplementedException();
     public static ElectricPotential operator -(ElectricPotential self, Number other) => self.Subtract(other);
+    public ElectricPotential Zero => (Volts.Zero);
+    public ElectricPotential One => (Volts.One);
+    public ElectricPotential MinValue => (Volts.MinValue);
+    public ElectricPotential MaxValue => (Volts.MaxValue);
 }
 public readonly partial struct ElectricCharge
 {
@@ -2364,6 +2704,10 @@ public readonly partial struct ElectricCharge
     public static ElectricCharge operator +(ElectricCharge self, Number other) => self.Add(other);
     public ElectricCharge Subtract(Number other) => throw new NotImplementedException();
     public static ElectricCharge operator -(ElectricCharge self, Number other) => self.Subtract(other);
+    public ElectricCharge Zero => (Columbs.Zero);
+    public ElectricCharge One => (Columbs.One);
+    public ElectricCharge MinValue => (Columbs.MinValue);
+    public ElectricCharge MaxValue => (Columbs.MaxValue);
 }
 public readonly partial struct ElectricCurrent
 {
@@ -2393,6 +2737,10 @@ public readonly partial struct ElectricCurrent
     public static ElectricCurrent operator +(ElectricCurrent self, Number other) => self.Add(other);
     public ElectricCurrent Subtract(Number other) => throw new NotImplementedException();
     public static ElectricCurrent operator -(ElectricCurrent self, Number other) => self.Subtract(other);
+    public ElectricCurrent Zero => (Amperes.Zero);
+    public ElectricCurrent One => (Amperes.One);
+    public ElectricCurrent MinValue => (Amperes.MinValue);
+    public ElectricCurrent MaxValue => (Amperes.MaxValue);
 }
 public readonly partial struct ElectricResistance
 {
@@ -2422,6 +2770,10 @@ public readonly partial struct ElectricResistance
     public static ElectricResistance operator +(ElectricResistance self, Number other) => self.Add(other);
     public ElectricResistance Subtract(Number other) => throw new NotImplementedException();
     public static ElectricResistance operator -(ElectricResistance self, Number other) => self.Subtract(other);
+    public ElectricResistance Zero => (Ohms.Zero);
+    public ElectricResistance One => (Ohms.One);
+    public ElectricResistance MinValue => (Ohms.MinValue);
+    public ElectricResistance MaxValue => (Ohms.MaxValue);
 }
 public readonly partial struct Power
 {
@@ -2451,6 +2803,10 @@ public readonly partial struct Power
     public static Power operator +(Power self, Number other) => self.Add(other);
     public Power Subtract(Number other) => throw new NotImplementedException();
     public static Power operator -(Power self, Number other) => self.Subtract(other);
+    public Power Zero => (Watts.Zero);
+    public Power One => (Watts.One);
+    public Power MinValue => (Watts.MinValue);
+    public Power MaxValue => (Watts.MaxValue);
 }
 public readonly partial struct Density
 {
@@ -2480,6 +2836,10 @@ public readonly partial struct Density
     public static Density operator +(Density self, Number other) => self.Add(other);
     public Density Subtract(Number other) => throw new NotImplementedException();
     public static Density operator -(Density self, Number other) => self.Subtract(other);
+    public Density Zero => (KilogramsPerMeterCubed.Zero);
+    public Density One => (KilogramsPerMeterCubed.One);
+    public Density MinValue => (KilogramsPerMeterCubed.MinValue);
+    public Density MaxValue => (KilogramsPerMeterCubed.MaxValue);
 }
 public readonly partial struct NormalDistribution
 {
@@ -2497,6 +2857,10 @@ public readonly partial struct NormalDistribution
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Mean", (String)"StandardDeviation" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Mean), new Dynamic(StandardDeviation) };
     // Unimplemented concept functions
+    public NormalDistribution Zero => (Mean.Zero, StandardDeviation.Zero);
+    public NormalDistribution One => (Mean.One, StandardDeviation.One);
+    public NormalDistribution MinValue => (Mean.MinValue, StandardDeviation.MinValue);
+    public NormalDistribution MaxValue => (Mean.MaxValue, StandardDeviation.MaxValue);
     public Boolean Equals(NormalDistribution b) => (Mean.Equals(b.Mean) & StandardDeviation.Equals(b.StandardDeviation));
     public static Boolean operator ==(NormalDistribution a, NormalDistribution b) => a.Equals(b);
     public Boolean NotEquals(NormalDistribution b) => (Mean.NotEquals(b.Mean) & StandardDeviation.NotEquals(b.StandardDeviation));
@@ -2518,6 +2882,10 @@ public readonly partial struct PoissonDistribution
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Expected", (String)"Occurrences" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Expected), new Dynamic(Occurrences) };
     // Unimplemented concept functions
+    public PoissonDistribution Zero => (Expected.Zero, Occurrences.Zero);
+    public PoissonDistribution One => (Expected.One, Occurrences.One);
+    public PoissonDistribution MinValue => (Expected.MinValue, Occurrences.MinValue);
+    public PoissonDistribution MaxValue => (Expected.MaxValue, Occurrences.MaxValue);
     public Boolean Equals(PoissonDistribution b) => (Expected.Equals(b.Expected) & Occurrences.Equals(b.Occurrences));
     public static Boolean operator ==(PoissonDistribution a, PoissonDistribution b) => a.Equals(b);
     public Boolean NotEquals(PoissonDistribution b) => (Expected.NotEquals(b.Expected) & Occurrences.NotEquals(b.Occurrences));
@@ -2536,6 +2904,10 @@ public readonly partial struct BernoulliDistribution
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"P" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(P) };
     // Unimplemented concept functions
+    public BernoulliDistribution Zero => (P.Zero);
+    public BernoulliDistribution One => (P.One);
+    public BernoulliDistribution MinValue => (P.MinValue);
+    public BernoulliDistribution MaxValue => (P.MaxValue);
     public Boolean Equals(BernoulliDistribution b) => (P.Equals(b.P));
     public static Boolean operator ==(BernoulliDistribution a, BernoulliDistribution b) => a.Equals(b);
     public Boolean NotEquals(BernoulliDistribution b) => (P.NotEquals(b.P));
@@ -2570,6 +2942,10 @@ public readonly partial struct Probability
     public static Probability operator +(Probability self, Probability other) => self.Add(other);
     public Probability Subtract(Probability other) => (Value.Subtract(other.Value));
     public static Probability operator -(Probability self, Probability other) => self.Subtract(other);
+    public Probability Zero => (Value.Zero);
+    public Probability One => (Value.One);
+    public Probability MinValue => (Value.MinValue);
+    public Probability MaxValue => (Value.MaxValue);
 }
 public readonly partial struct BinomialDistribution
 {
@@ -2587,6 +2963,10 @@ public readonly partial struct BinomialDistribution
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Trials", (String)"P" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Trials), new Dynamic(P) };
     // Unimplemented concept functions
+    public BinomialDistribution Zero => (Trials.Zero, P.Zero);
+    public BinomialDistribution One => (Trials.One, P.One);
+    public BinomialDistribution MinValue => (Trials.MinValue, P.MinValue);
+    public BinomialDistribution MaxValue => (Trials.MaxValue, P.MaxValue);
     public Boolean Equals(BinomialDistribution b) => (Trials.Equals(b.Trials) & P.Equals(b.P));
     public static Boolean operator ==(BinomialDistribution a, BinomialDistribution b) => a.Equals(b);
     public Boolean NotEquals(BinomialDistribution b) => (Trials.NotEquals(b.Trials) & P.NotEquals(b.P));

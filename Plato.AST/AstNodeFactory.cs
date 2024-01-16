@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ara3D.Utils;
+using Parakeet;
 using Parakeet.CST;
 using Plato.Parser;
 
@@ -18,12 +20,12 @@ namespace Plato.AST
         {
             var r = ToAst(expr.LeafExpression.Node);
             var i = 0;
-            while (i < expr.PostfixOperator.Nodes.Count)
+
+            var nodes = expr.PostfixOperator.Nodes;
+            while (i < nodes.Count)
             {
-                var postfix = expr.PostfixOperator.Nodes[i++];
-                var nextPostfix = i < expr.PostfixOperator.Nodes.Count
-                    ? expr.PostfixOperator.Nodes[i]
-                    : null;
+                var postfix = nodes[i++];
+                var nextPostfix = i < nodes.Count ? nodes[i] : null;
                 if (postfix.AsOperation.Present)
                 {
                     if (postfix.AsOperation.Node.Identifier.Present)
@@ -33,15 +35,20 @@ namespace Plato.AST
 
                     throw new NotImplementedException();
                 }
-
-                if (postfix.BinaryOperation.Present)
+                else if (postfix.BinaryOperation.Present)
                 {
-                    var op = postfix.BinaryOperation.Node.BinaryOperator.Node.Text;
-                    r = ToIntrinsicInvocation(
-                        postfix.BinaryOperation,
-                        OperatorNameLookup.BinaryOperatorToName(op.Trim()),
-                        r,
-                        ToAst(postfix.BinaryOperation.Node.Expression));
+                    var currentBinOp = postfix.BinaryOperation.Node;
+                    var op = currentBinOp.BinaryOperator.Node.Text.Trim();
+                    var right = ToAst(currentBinOp.Expression);
+
+                    if (op == "=")
+                    {
+                        if (r is AstIdentifier ident)
+                            return new AstAssign(expr, ident.Text.Trim(), right);
+                        throw new Exception($"Can only assign to a variable not {r}");
+                    }
+
+                    r = AstBinaryOp.Create(currentBinOp, op, r, right);
                 }
                 else if (postfix.ConditionalMemberAccess.Present)
                 {
@@ -56,7 +63,7 @@ namespace Plato.AST
                 }
                 else if (postfix.Indexer.Present)
                 {
-                    r = ToIntrinsicInvocation(postfix.Indexer, OperatorNameLookup.BinaryOperatorToName("[]")
+                    r = ToIntrinsicInvocation(postfix.Indexer, Operators.BinaryOperatorToName("[]")
                         , r, ToAst(postfix.Indexer.Node.Expression));
                 }
                 else if (postfix.IsOperation.Present)
@@ -92,7 +99,7 @@ namespace Plato.AST
             foreach (var prefix in expr.PrefixOperator.Nodes)
             {
                 r = ToIntrinsicInvocation(prefix,
-                    OperatorNameLookup.UnaryOperatorToName(prefix.Text.Trim()), r);
+                    Operators.UnaryOperatorToName(prefix.Text.Trim()), r);
             }
 
             return r;

@@ -14,7 +14,7 @@ namespace Plato.Compiler.Types
     {                                                                                                                                                                                                                                                                                                                                                                                                                                                   
         public FunctionAnalysis Context { get; }
         public FunctionCall Callsite { get; }
-        public Compiler Compiler => Context.Compiler;
+        public Compilation Compilation => Context.Compilation;
         public FunctionGroupReference Reference { get; }
         public IReadOnlyList<IType> ArgTypes { get; }
         public List<FunctionCallAnalysis> Functions { get; }
@@ -30,7 +30,7 @@ namespace Plato.Compiler.Types
             ArgTypes = argTypes;
 
             Functions = reference.Definition.Functions
-                .Select(Context.Compiler.GetProcessedFunctionAnalysis)
+                .Select(Context.Compilation.GetProcessedFunctionAnalysis)
                 .Select(fa => fa.AnalyzeCall(argTypes))
                 .ToList();
             

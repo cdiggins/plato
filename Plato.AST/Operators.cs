@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Plato.AST
 {
-    public static class OperatorNameLookup
+    public static class Operators
     {
         public static (string, string)[] BinaryOperators => new[]
         {
@@ -56,5 +56,42 @@ namespace Plato.AST
 
         public static string NameToUnaryOperator(string name)
             => NamesToUnaryOperators.ContainsKey(name) ? NamesToUnaryOperators[name] : null;
+
+        public static int BinaryOperatorPrecedence(string op)
+        {
+            switch (op)
+            {
+                case "*":
+                case "/":
+                case "%":
+                    return 10;
+                case "+":
+                case "-":
+                    return 9;
+                case ">>":
+                case "<<":
+                    return 8;
+                case "<":
+                case ">":
+                case "<=":
+                case ">=":
+                    return 7;
+                case "==":
+                case "!=":
+                    return 6;
+                case "&":
+                    return 5;
+                case "^":
+                    return 4;
+                case "|":
+                    return 3;
+                case "&&":
+                    return 2;
+                case "||":
+                    return 1;
+                default:
+                    return 0;
+            }
+        }
     }
 }

@@ -19,6 +19,7 @@ public readonly partial struct Integer
     public Integer MaxValue => int.MaxValue;
     public Number Magnitude => Value;
     public Integer Reciprocal => 1 / Value;
+    public static implicit operator Number(Integer self) => self.Value;
 }
 
 public readonly partial struct Array1<T> : Array<T>

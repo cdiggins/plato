@@ -10,6 +10,10 @@ concept Any
 concept Value 
     inherits Any, Equatable
 { 
+    Zero(): Self;
+    One(): Self;
+    MinValue(): Self;
+    MaxValue(): Self;
 }
 
 // Arrays are immutable types which can be indexed. 
@@ -47,10 +51,6 @@ concept Measure
 concept Numerical 
     inherits Value, Arithmetic, Equatable, Comparable, Magnitudinal, Interpolatable
 {
-    Zero(): Self;
-    One(): Self;
-    MinValue(): Self;
-    MaxValue(): Self;
 }
 
 // Any type which has a numerical magnitude (like numbers, vectors, and measurements)

@@ -16,7 +16,7 @@ namespace Plato.CSharpWriter
         public const bool EmitInterfaces = false;
         public const bool EmitStructsInsteadOfClasses = true;
 
-        public Compiler.Compiler Compiler { get; }
+        public Compiler.Compilation Compilation { get; }
         
         public Dictionary<string, StringBuilder> Files { get; } = new Dictionary<string, StringBuilder>();
 
@@ -51,9 +51,9 @@ namespace Plato.CSharpWriter
             { "Dynamic", "object" },
         };
 
-        public SymbolWriterCSharp(Compiler.Compiler compiler, DirectoryPath outputFolder)
+        public SymbolWriterCSharp(Compiler.Compilation compilation, DirectoryPath outputFolder)
         {
-            Compiler = compiler;
+            Compilation = compilation;
             OutputFolder = outputFolder;
         }
 
@@ -84,7 +84,7 @@ namespace Plato.CSharpWriter
         public void WriteAnalyses()
         {
             StartNewFile(OutputFolder.RelativeFile("analysis.txt"));
-            foreach (var ta in Compiler.ConcreteTypes)
+            foreach (var ta in Compilation.ConcreteTypes)
             {
                 WriteLine($"Type analysis for {ta.Type.Name}");
                 foreach (var ci in ta.Concepts)
@@ -162,7 +162,7 @@ namespace Plato.CSharpWriter
                 .Zip(f.ParameterNames, (pt, pn) => $"{pt} {pn}")
                 .JoinStringsWithComma();
 
-            if (f.Implementation.Body != null)
+            if (f.Implementation.Body != null && f.Name != "Aggregate")
             {
                 WriteLine($"public {ret} {f.Name}{funcTypeParamsStr}{paramList} =>")
                     .Indent()
@@ -175,52 +175,49 @@ namespace Plato.CSharpWriter
                 var fields = t.Type.Fields.Select(field => field.Name).ToList();
                 var sep = ret.Name == "Boolean" ? " & " : ", ";
 
-                if (f.ParameterNames.Count > 0)
+                var impl = "throw new NotImplementedException()";
+                if (generateImpl)
                 {
-                    var impl = "throw new NotImplementedException()";
-                    if (generateImpl)
+                    if (f.ParameterNames.Count <= 1)
                     {
-                        if (f.ParameterNames.Count == 1)
-                        {
-                            var args = fields.Select(field => $"{field}.{f.Name}");
-                            impl = $"({args.JoinStrings(sep)})";
-                        }
-                        else if (f.ParameterNames.Count == 2)
-                        {
-                            var p0 = f.ParameterNames[1];
-                            var args = fields.Select(field => $"{field}.{f.Name}({p0}.{field})");
-                            impl = $"({args.JoinStrings(sep)})";
-                        }
-                        else if (f.ParameterNames.Count == 3)
-                        {
-                            var p0 = f.ParameterNames[1];
-                            var p1 = f.ParameterNames[2];
-                            var args = fields.Select(field => $"{field}.{f.Name}({p0}.{field}, {p1}.{field})");
-                            impl = $"({args.JoinStrings(sep)})";
-                        }
-                        else if (f.ParameterNames.Count == 4)
-                        {
-                            var p0 = f.ParameterNames[1];
-                            var p1 = f.ParameterNames[2];
-                            var p2 = f.ParameterNames[3];
-                            var args = fields.Select(field =>
-                                $"{field}.{f.Name}({p0}.{field}, {p1}.{field}, {p2}.{field})");
-                            impl = $"({args.JoinStrings(sep)})";
-                        }
-                        else
-                        {
-                            throw new Exception(
-                                "Cannot generate default implementations for functions with more than 2 parameters");
-                        }
+                        var args = fields.Select(field => $"{field}.{f.Name}");
+                        impl = $"({args.JoinStrings(sep)})";
                     }
-
-                    WriteLine($"public {ret} {f.Name}{funcTypeParamsStr}{paramList} => {impl};");
+                    else if (f.ParameterNames.Count == 2)
+                    {
+                        var p0 = f.ParameterNames[1];
+                        var args = fields.Select(field => $"{field}.{f.Name}({p0}.{field})");
+                        impl = $"({args.JoinStrings(sep)})";
+                    }
+                    else if (f.ParameterNames.Count == 3)
+                    {
+                        var p0 = f.ParameterNames[1];
+                        var p1 = f.ParameterNames[2];
+                        var args = fields.Select(field => $"{field}.{f.Name}({p0}.{field}, {p1}.{field})");
+                        impl = $"({args.JoinStrings(sep)})";
+                    }
+                    else if (f.ParameterNames.Count == 4)
+                    {
+                        var p0 = f.ParameterNames[1];
+                        var p1 = f.ParameterNames[2];
+                        var p2 = f.ParameterNames[3];
+                        var args = fields.Select(field =>
+                            $"{field}.{f.Name}({p0}.{field}, {p1}.{field}, {p2}.{field})");
+                        impl = $"({args.JoinStrings(sep)})";
+                    }
+                    else
+                    {
+                        throw new Exception(
+                            "Cannot generate default implementations for functions with more than 2 parameters");
+                    }
                 }
+
+                WriteLine($"public {ret} {f.Name}{funcTypeParamsStr}{paramList} => {impl};");
             }
 
             if (f.ParameterNames.Count == 2)
             {
-                var op = OperatorNameLookup.NameToBinaryOperator(f.Name);
+                var op = Operators.NameToBinaryOperator(f.Name);
 
                 // NOTE: this is because in C#, the "||" and "&&" operators cannot be overridden.
                 if (op == "||") op = "|";
@@ -235,14 +232,15 @@ namespace Plato.CSharpWriter
                     }
                     else
                     {
-                        WriteLine($"public {ret} this{funcTypeParamsStr}[{paramList}] => {f.Name}({argList});");
+                        var paramList2 = paramList.Replace('(', '[').Replace(')', ']');
+                        WriteLine($"public {ret} this{funcTypeParamsStr}{paramList2} => {f.Name}({argList});");
                     }
                 }
             }
 
             if (f.ParameterNames.Count == 1)
             {
-                var op = OperatorNameLookup.NameToUnaryOperator(f.Name);
+                var op = Operators.NameToUnaryOperator(f.Name);
                 if (op != null)
                     WriteLine($"public static {ret} operator {op}({staticParamList}) => {firstName}.{f.Name};");
             }
@@ -255,7 +253,7 @@ namespace Plato.CSharpWriter
             StartNewFile(OutputFolder.RelativeFile("Library.cs"));
             WriteLine("using System;");
 
-            foreach (var t in Compiler.ConcreteTypes)
+            foreach (var t in Compilation.ConcreteTypes)
             {
                 var typeParamsStr = JoinTypeParameters(t.Type.TypeParameters.Select(tp => tp.Name));
 
@@ -279,7 +277,7 @@ namespace Plato.CSharpWriter
         public SymbolWriterCSharp WriteConceptInterfaces()
         {
             StartNewFile(OutputFolder.RelativeFile("Concepts.cs"));
-            foreach (var c in Compiler.AllTypeAndLibraryDefinitions)
+            foreach (var c in Compilation.AllTypeAndLibraryDefinitions)
                 if (c.IsConcept())
                     WriteConceptInterface(c);
             return this;
@@ -343,7 +341,7 @@ namespace Plato.CSharpWriter
         {
             StartNewFile(OutputFolder.RelativeFile("Types.cs"));
             WriteLine("using System;");
-            foreach (var c in Compiler.ConcreteTypes)
+            foreach (var c in Compilation.ConcreteTypes)
                 if (!IgnoredTypes.Contains(c.Type.Name))
                     WriteTypeImplementation(c);
             return this;
@@ -584,6 +582,16 @@ namespace Plato.CSharpWriter
             return Write(TypeStr(typeExpression)).Write(" ");
         }
 
+        public static string GetLiteralType(Literal literal)
+        {
+            return literal.TypeEnum.ToString();
+        }
+
+        public static string GetLiteralValue(Literal literal)
+        {
+            return literal.Value.ToLiteralString();
+        }
+
         public SymbolWriterCSharp Write(Expression expr)
         {
             if (expr == null)
@@ -630,7 +638,7 @@ namespace Plato.CSharpWriter
                     return Write("(").WriteCommaList(functionCall.Args.Skip(1)).Write(")");
 
                 case Literal literal:
-                    return Write(literal.Value.ToString());
+                    return Write($"(({GetLiteralType(literal)}){GetLiteralValue(literal)})");
 
                 case Lambda lambda:
                     return Write("(")

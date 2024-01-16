@@ -16,7 +16,7 @@ public class IDE
     public TabControl TabControl { get; }
     public RichTextBox OutputTextBox { get; }
     public List<Editor> Editors { get; } = new();
-    public Compiler Compiler { get; }   
+    public Compilation Compilation { get; }   
     public Logger Logger { get; } = new();
 
     public void OpenFile(string filePath)
@@ -61,7 +61,8 @@ public class IDE
         OutputTextBox = outputTextBox;
 
         OutputTextBox.WordWrap = false;
-        OutputTextBox.MouseDoubleClick += (sender, args) => Debug.WriteLine($"Double clicked output. Mouse args = {args}. Selected text = {outputTextBox.SelectedText}");
+        OutputTextBox.MouseDoubleClick += (_, args) 
+            => Debug.WriteLine($"Double clicked output. Mouse args = {args}. Selected text = {outputTextBox.SelectedText}");
 
         var currentFolder = Path.GetDirectoryName(filePath);
         var parentFolder = Path.Combine(currentFolder, ".."); 
@@ -75,7 +76,7 @@ public class IDE
         OpenFile(Path.Combine(inputFolder, "libraries.plato"));
 
         Logger.Log("Applying syntax coloring");
-        //ApplyStylesAndOutputErrors();
+        ApplyStylesAndOutputErrors();
         Logger.Log("Completed syntax coloring");
 
         Logger.Log("Gathering parsers");
@@ -101,63 +102,16 @@ public class IDE
                 return;
             }
         }
-        Compiler = new Compiler(Logger, trees);
+        Compilation = new Compilation(Logger, trees);
 
         OutputTextBox.Lines = Logger.Messages.ToArray();
         var logFile = Path.Combine(inputFolder, "log.txt");
         File.WriteAllLines(logFile, Logger.Messages);
 
-        if (!Compiler.CompletedCompilation)
+        if (!Compilation.CompletedCompilation)
         {
-            // No files will be output
-            return;
+            Logger.Log("Compilation was not completed");
         }
-
-        // NOTE: even if CompletedCompilation is true, there might still be errors. 
-        // The goal is to still be able to partially generate output. 
-
-        var outputFolder = new DirectoryPath(@"C:\Users\cdigg\git\ara3d\plato\PlatoOutput\");
-        
-        Logger.Log("Writing C#");
-        var output = Compiler.ToCSharp(outputFolder);
-        foreach (var kv in output.Files)
-        {
-            var fp = new FilePath(kv.Key);
-            fp.WriteAllText(kv.Value.ToString());
-        }
-
-        //Logger.Log("Writing HTML");
-        //File.WriteAllText(Path.Combine(outputFolder, "output.plato.html"), Compiler.ToPlatoHtml());
-
-        /*
-        Logger.Log("Writing JavaScript");
-        var inputFolder = outputFolder;
-        var prologue = File.ReadAllText(Path.Combine(inputFolder, "prologue.js"));
-        var epilogue = File.ReadAllText(Path.Combine(inputFolder, "epilogue.js"));
-        var output = prologue 
-                     + Environment.NewLine
-                     + Compiler.ToJavaScript() 
-                     + Environment.NewLine 
-                     + epilogue;
-        File.WriteAllText(Path.Combine(outputFolder, "output.js"), output);
-
-        */
-
-        /*
-        var vsgFolder = Path.Combine(outputFolder, "vsg");
-        FileUtil.CreateAndClearDirectory(vsgFolder);
-        var i = 0;
-        foreach (var f in Compiler.Graphs)
-        {
-            var text = JsonSerializer.Serialize(f, new JsonSerializerOptions() { WriteIndented = true });
-            var filePath = Path.Combine(vsgFolder, $"{f.Name}_{i++}.json");
-            File.WriteAllText(filePath, text);
-        }
-        */
-
-        //Output += GetConstraintsOutput();
-        //Output += GetOperationsOutput();
-        //Output += GetTypeGuesserOutput();
     }
     
 }

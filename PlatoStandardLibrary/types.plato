@@ -456,7 +456,7 @@ type Fraction
 }
 
 type Angle
-    implements Coordinate
+    implements Measure
 {
     Radians: Number;
 }

@@ -18,7 +18,7 @@ namespace Plato.Compiler.Types
         public List<TypeVariable> Variables { get; } = new List<TypeVariable>();
         public List<IConstraint> Constraints { get; } = new List<IConstraint>();
 
-        public Compiler Compiler { get; }
+        public Compilation Compilation { get; }
         public FunctionDefinition Function { get; }
         
         public TypeDefinition OwnerType 
@@ -40,9 +40,9 @@ namespace Plato.Compiler.Types
         public IReadOnlyList<IType> ParameterTypes { get; }
         public IType Self { get; }
 
-        public FunctionAnalysis(Compiler compiler, FunctionDefinition function)
+        public FunctionAnalysis(Compilation compilation, FunctionDefinition function)
         {
-            Compiler = compiler;
+            Compilation = compilation;
             Function = function;
 
             foreach (var tp in OwnerType.TypeParameters)
@@ -120,7 +120,7 @@ namespace Plato.Compiler.Types
             && tes.TypeArgs.All(IsTypeExpressionComplete);
 
         public IType ToSimpleType(string name)
-            => ToSimpleType(Compiler.GetTypeDefinition(name));
+            => ToSimpleType(Compilation.GetTypeDefinition(name));
 
         public IType ToSimpleType(TypeDefinition td) 
             => td is TypeParameterDefinition tpd
@@ -319,7 +319,7 @@ namespace Plato.Compiler.Types
 
         public IType CreateTypeFromLambda(Lambda lambda)
         {
-            if (Compiler.FunctionAnalyses.ContainsKey(lambda.Function))
+            if (Compilation.FunctionAnalyses.ContainsKey(lambda.Function))
                 throw new Exception("The lambdas are not in the list of function definitions");
             
             // TODO: infer the types of the functions 
@@ -362,7 +362,7 @@ namespace Plato.Compiler.Types
         /// </summary>
         public IType Process(Expression expr)
         {
-            var r = Compiler.GetExpressionType(expr);
+            var r = Compilation.GetExpressionType(expr);
             if (r != null)
                 return r;
 
@@ -431,12 +431,12 @@ namespace Plato.Compiler.Types
                     throw new ArgumentOutOfRangeException(nameof(expr));
             }
 
-            if (Compiler.ExpressionTypes.TryGetValue(expr, out var tmp))
+            if (Compilation.ExpressionTypes.TryGetValue(expr, out var tmp))
             {
                 //Verifier.Assert(tmp.Equals(r));
                 return tmp;
             }
-            Compiler.ExpressionTypes.Add(expr, r);
+            Compilation.ExpressionTypes.Add(expr, r);
             return r;
         }
 
@@ -476,7 +476,7 @@ namespace Plato.Compiler.Types
 
             if (fc.Function is FunctionGroupReference fgr)
             {
-                var fca = Compiler.ResolveFunctionGroup(this, fc, fgr, argTypes);
+                var fca = Compilation.ResolveFunctionGroup(this, fc, fgr, argTypes);
                 var bestFunction = fca.BestFunctions.FirstOrDefault();
 
                 // TODO: log this

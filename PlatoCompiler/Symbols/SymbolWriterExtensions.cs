@@ -10,7 +10,7 @@ namespace Plato.Compiler.Symbols
         public static string PadRight(this string s)
             => s + " ";
 
-        public static string ToJavaScript(this Compiler compiler)
+        public static string ToJavaScript(this Compilation compilation)
         {
             /*
             var tr = compiler.TypeResolver;
@@ -24,7 +24,7 @@ namespace Plato.Compiler.Symbols
             throw new NotImplementedException();
         }
 
-        public static string ToPlatoHtml(this Compiler compiler)
+        public static string ToPlatoHtml(this Compilation compilation)
         {
             /*
             var tr = compiler.TypeResolver;
