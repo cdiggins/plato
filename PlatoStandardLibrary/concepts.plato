@@ -11,10 +11,10 @@ concept Any
 concept Value 
     inherits Any, Equatable
 { 
-    Zero(): Self;
-    One(): Self;
-    MinValue(): Self;
-    MaxValue(): Self;
+    Zero(x: Self): Self;
+    One(x: Self): Self;
+    MinValue(x: Self): Self;
+    MaxValue(x: Self): Self;
 }
 
 // Arrays are immutable types which can be indexed. 
@@ -34,7 +34,7 @@ concept Vector
 // A coordinate is a point in some cartesian space. This also includes 
 // a time line, so a DateTime is considered a Coordinate. 
 concept Coordinate
-    inherits Interpolatable, Comparable
+    inherits Interpolatable, Comparable, Value
 {
 }
 
@@ -85,6 +85,7 @@ concept AdditiveInverse
 {
     Negative(self: Self): Self;
 }
+
 
 concept MultiplicativeInverse
 {

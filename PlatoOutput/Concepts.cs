@@ -2,6 +2,7 @@ public interface Any
 {
     Array<String>  FieldNames { get; }
     Array<Dynamic>  FieldValues { get; }
+    String  TypeName { get; }
 }
 public interface Value<Self>: Any, Equatable<Self>
 {
@@ -18,7 +19,7 @@ public interface Array<T>
 public interface Vector<Self>: Array<Number>, Numerical<Self>, Magnitudinal<Self>, Equatable<Self>, Interpolatable<Self>
 {
 }
-public interface Coordinate<Self>: Interpolatable<Self>, Comparable<Self>
+public interface Coordinate<Self>: Interpolatable<Self>, Comparable<Self>, Value<Self>
 {
 }
 public interface Measure<Self>: Value<Self>, ScalarArithmetic<Self>, Comparable<Self>, Magnitudinal<Self>, Interpolatable<Self>

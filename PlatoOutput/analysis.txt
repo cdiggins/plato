@@ -348,7 +348,7 @@ Type analysis for Rotation3D
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Rotation3DValue=ConcreteType:Rotation3DSelf=ConcreteType:Rotation3D
 Type analysis for Vector2D
   Concept=Vector Expr=Concept:Vector Subs=Vector=ConcreteType:Vector2DSelf=ConcreteType:Vector2D
-  Function: Aggregate(Concept:Vector v, ConcreteType:Function2<ConcreteType:Number,TypeVariable:$T,TypeVariable:$T> f)
+  Function: Aggregate(Concept:Vector v, TypeVariable:$T r, ConcreteType:Function2<TypeVariable:$T,ConcreteType:Number,TypeVariable:$T> f)
   Function: Sum(Concept:Vector v)
   Function: SumSquares(Concept:Vector v)
   Function: MagnitudeSquared(Concept:Vector v)
@@ -427,7 +427,7 @@ Type analysis for Vector2D
     Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:Vector2DVector=ConcreteType:Vector2DSelf=ConcreteType:Vector2D
 Type analysis for Vector3D
   Concept=Vector Expr=Concept:Vector Subs=Vector=ConcreteType:Vector3DSelf=ConcreteType:Vector3D
-  Function: Aggregate(Concept:Vector v, ConcreteType:Function2<ConcreteType:Number,TypeVariable:$T,TypeVariable:$T> f)
+  Function: Aggregate(Concept:Vector v, TypeVariable:$T r, ConcreteType:Function2<TypeVariable:$T,ConcreteType:Number,TypeVariable:$T> f)
   Function: Sum(Concept:Vector v)
   Function: SumSquares(Concept:Vector v)
   Function: MagnitudeSquared(Concept:Vector v)
@@ -506,7 +506,7 @@ Type analysis for Vector3D
     Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:Vector3DVector=ConcreteType:Vector3DSelf=ConcreteType:Vector3D
 Type analysis for Vector4D
   Concept=Vector Expr=Concept:Vector Subs=Vector=ConcreteType:Vector4DSelf=ConcreteType:Vector4D
-  Function: Aggregate(Concept:Vector v, ConcreteType:Function2<ConcreteType:Number,TypeVariable:$T,TypeVariable:$T> f)
+  Function: Aggregate(Concept:Vector v, TypeVariable:$T r, ConcreteType:Function2<TypeVariable:$T,ConcreteType:Number,TypeVariable:$T> f)
   Function: Sum(Concept:Vector v)
   Function: SumSquares(Concept:Vector v)
   Function: MagnitudeSquared(Concept:Vector v)
@@ -651,7 +651,7 @@ Type analysis for AlignedBox3D
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:AlignedBox3DInterval=ConcreteType:AlignedBox3DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point3DSelf=ConcreteType:AlignedBox3D
 Type analysis for Complex
   Concept=Vector Expr=Concept:Vector Subs=Vector=ConcreteType:ComplexSelf=ConcreteType:Complex
-  Function: Aggregate(Concept:Vector v, ConcreteType:Function2<ConcreteType:Number,TypeVariable:$T,TypeVariable:$T> f)
+  Function: Aggregate(Concept:Vector v, TypeVariable:$T r, ConcreteType:Function2<TypeVariable:$T,ConcreteType:Number,TypeVariable:$T> f)
   Function: Sum(Concept:Vector v)
   Function: SumSquares(Concept:Vector v)
   Function: MagnitudeSquared(Concept:Vector v)
@@ -774,6 +774,9 @@ Type analysis for Point2D
     Function: Lesser(Concept:Comparable a, Concept:Comparable b)
     Function: Greater(Concept:Comparable a, Concept:Comparable b)
       Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Point2DComparable=ConcreteType:Point2DCoordinate=ConcreteType:Point2DSelf=ConcreteType:Point2D
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Point2DCoordinate=ConcreteType:Point2DSelf=ConcreteType:Point2D
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Point2DValue=ConcreteType:Point2DCoordinate=ConcreteType:Point2DSelf=ConcreteType:Point2D
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Point2DValue=ConcreteType:Point2DCoordinate=ConcreteType:Point2DSelf=ConcreteType:Point2D
 Type analysis for Point3D
   Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:Point3DSelf=ConcreteType:Point3D
     Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:Point3DCoordinate=ConcreteType:Point3DSelf=ConcreteType:Point3D
@@ -788,6 +791,9 @@ Type analysis for Point3D
     Function: Lesser(Concept:Comparable a, Concept:Comparable b)
     Function: Greater(Concept:Comparable a, Concept:Comparable b)
       Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Point3DComparable=ConcreteType:Point3DCoordinate=ConcreteType:Point3DSelf=ConcreteType:Point3D
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Point3DCoordinate=ConcreteType:Point3DSelf=ConcreteType:Point3D
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Point3DValue=ConcreteType:Point3DCoordinate=ConcreteType:Point3DSelf=ConcreteType:Point3D
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Point3DValue=ConcreteType:Point3DCoordinate=ConcreteType:Point3DSelf=ConcreteType:Point3D
 Type analysis for Line2D
   Concept=Interval Expr=Concept:Interval<ConcreteType:Point2D,ConcreteType:Vector3D> Subs=Interval=ConcreteType:Line2DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point2DSelf=ConcreteType:Line2D
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
@@ -835,61 +841,243 @@ Type analysis for Line3D
   Function: Within(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Line3DInterval=ConcreteType:Line3DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point3DSelf=ConcreteType:Line3D
 Type analysis for Color
-  Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ColorSelf=ConcreteType:Color
-    Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ColorValue=ConcreteType:ColorSelf=ConcreteType:Color
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ColorValue=ConcreteType:ColorSelf=ConcreteType:Color
+  Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:ColorSelf=ConcreteType:Color
+    Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:ColorCoordinate=ConcreteType:ColorSelf=ConcreteType:Color
+    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:ColorCoordinate=ConcreteType:ColorSelf=ConcreteType:Color
+    Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
+    Function: Equals(Concept:Comparable a, Concept:Comparable b)
+    Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThan(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThan(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: Lesser(Concept:Comparable a, Concept:Comparable b)
+    Function: Greater(Concept:Comparable a, Concept:Comparable b)
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ColorComparable=ConcreteType:ColorCoordinate=ConcreteType:ColorSelf=ConcreteType:Color
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ColorCoordinate=ConcreteType:ColorSelf=ConcreteType:Color
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ColorValue=ConcreteType:ColorCoordinate=ConcreteType:ColorSelf=ConcreteType:Color
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ColorValue=ConcreteType:ColorCoordinate=ConcreteType:ColorSelf=ConcreteType:Color
 Type analysis for ColorLUV
-  Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ColorLUVSelf=ConcreteType:ColorLUV
-    Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ColorLUVValue=ConcreteType:ColorLUVSelf=ConcreteType:ColorLUV
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ColorLUVValue=ConcreteType:ColorLUVSelf=ConcreteType:ColorLUV
+  Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:ColorLUVSelf=ConcreteType:ColorLUV
+    Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:ColorLUVCoordinate=ConcreteType:ColorLUVSelf=ConcreteType:ColorLUV
+    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:ColorLUVCoordinate=ConcreteType:ColorLUVSelf=ConcreteType:ColorLUV
+    Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
+    Function: Equals(Concept:Comparable a, Concept:Comparable b)
+    Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThan(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThan(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: Lesser(Concept:Comparable a, Concept:Comparable b)
+    Function: Greater(Concept:Comparable a, Concept:Comparable b)
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ColorLUVComparable=ConcreteType:ColorLUVCoordinate=ConcreteType:ColorLUVSelf=ConcreteType:ColorLUV
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ColorLUVCoordinate=ConcreteType:ColorLUVSelf=ConcreteType:ColorLUV
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ColorLUVValue=ConcreteType:ColorLUVCoordinate=ConcreteType:ColorLUVSelf=ConcreteType:ColorLUV
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ColorLUVValue=ConcreteType:ColorLUVCoordinate=ConcreteType:ColorLUVSelf=ConcreteType:ColorLUV
 Type analysis for ColorLAB
-  Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ColorLABSelf=ConcreteType:ColorLAB
-    Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ColorLABValue=ConcreteType:ColorLABSelf=ConcreteType:ColorLAB
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ColorLABValue=ConcreteType:ColorLABSelf=ConcreteType:ColorLAB
+  Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:ColorLABSelf=ConcreteType:ColorLAB
+    Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:ColorLABCoordinate=ConcreteType:ColorLABSelf=ConcreteType:ColorLAB
+    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:ColorLABCoordinate=ConcreteType:ColorLABSelf=ConcreteType:ColorLAB
+    Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
+    Function: Equals(Concept:Comparable a, Concept:Comparable b)
+    Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThan(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThan(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: Lesser(Concept:Comparable a, Concept:Comparable b)
+    Function: Greater(Concept:Comparable a, Concept:Comparable b)
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ColorLABComparable=ConcreteType:ColorLABCoordinate=ConcreteType:ColorLABSelf=ConcreteType:ColorLAB
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ColorLABCoordinate=ConcreteType:ColorLABSelf=ConcreteType:ColorLAB
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ColorLABValue=ConcreteType:ColorLABCoordinate=ConcreteType:ColorLABSelf=ConcreteType:ColorLAB
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ColorLABValue=ConcreteType:ColorLABCoordinate=ConcreteType:ColorLABSelf=ConcreteType:ColorLAB
 Type analysis for ColorLCh
-  Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ColorLChSelf=ConcreteType:ColorLCh
-    Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ColorLChValue=ConcreteType:ColorLChSelf=ConcreteType:ColorLCh
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ColorLChValue=ConcreteType:ColorLChSelf=ConcreteType:ColorLCh
+  Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:ColorLChSelf=ConcreteType:ColorLCh
+    Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:ColorLChCoordinate=ConcreteType:ColorLChSelf=ConcreteType:ColorLCh
+    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:ColorLChCoordinate=ConcreteType:ColorLChSelf=ConcreteType:ColorLCh
+    Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
+    Function: Equals(Concept:Comparable a, Concept:Comparable b)
+    Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThan(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThan(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: Lesser(Concept:Comparable a, Concept:Comparable b)
+    Function: Greater(Concept:Comparable a, Concept:Comparable b)
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ColorLChComparable=ConcreteType:ColorLChCoordinate=ConcreteType:ColorLChSelf=ConcreteType:ColorLCh
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ColorLChCoordinate=ConcreteType:ColorLChSelf=ConcreteType:ColorLCh
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ColorLChValue=ConcreteType:ColorLChCoordinate=ConcreteType:ColorLChSelf=ConcreteType:ColorLCh
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ColorLChValue=ConcreteType:ColorLChCoordinate=ConcreteType:ColorLChSelf=ConcreteType:ColorLCh
 Type analysis for ColorHSV
-  Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ColorHSVSelf=ConcreteType:ColorHSV
-    Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ColorHSVValue=ConcreteType:ColorHSVSelf=ConcreteType:ColorHSV
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ColorHSVValue=ConcreteType:ColorHSVSelf=ConcreteType:ColorHSV
+  Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:ColorHSVSelf=ConcreteType:ColorHSV
+    Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:ColorHSVCoordinate=ConcreteType:ColorHSVSelf=ConcreteType:ColorHSV
+    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:ColorHSVCoordinate=ConcreteType:ColorHSVSelf=ConcreteType:ColorHSV
+    Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
+    Function: Equals(Concept:Comparable a, Concept:Comparable b)
+    Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThan(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThan(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: Lesser(Concept:Comparable a, Concept:Comparable b)
+    Function: Greater(Concept:Comparable a, Concept:Comparable b)
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ColorHSVComparable=ConcreteType:ColorHSVCoordinate=ConcreteType:ColorHSVSelf=ConcreteType:ColorHSV
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ColorHSVCoordinate=ConcreteType:ColorHSVSelf=ConcreteType:ColorHSV
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ColorHSVValue=ConcreteType:ColorHSVCoordinate=ConcreteType:ColorHSVSelf=ConcreteType:ColorHSV
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ColorHSVValue=ConcreteType:ColorHSVCoordinate=ConcreteType:ColorHSVSelf=ConcreteType:ColorHSV
 Type analysis for ColorHSL
-  Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ColorHSLSelf=ConcreteType:ColorHSL
-    Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ColorHSLValue=ConcreteType:ColorHSLSelf=ConcreteType:ColorHSL
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ColorHSLValue=ConcreteType:ColorHSLSelf=ConcreteType:ColorHSL
+  Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:ColorHSLSelf=ConcreteType:ColorHSL
+    Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:ColorHSLCoordinate=ConcreteType:ColorHSLSelf=ConcreteType:ColorHSL
+    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:ColorHSLCoordinate=ConcreteType:ColorHSLSelf=ConcreteType:ColorHSL
+    Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
+    Function: Equals(Concept:Comparable a, Concept:Comparable b)
+    Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThan(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThan(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: Lesser(Concept:Comparable a, Concept:Comparable b)
+    Function: Greater(Concept:Comparable a, Concept:Comparable b)
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ColorHSLComparable=ConcreteType:ColorHSLCoordinate=ConcreteType:ColorHSLSelf=ConcreteType:ColorHSL
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ColorHSLCoordinate=ConcreteType:ColorHSLSelf=ConcreteType:ColorHSL
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ColorHSLValue=ConcreteType:ColorHSLCoordinate=ConcreteType:ColorHSLSelf=ConcreteType:ColorHSL
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ColorHSLValue=ConcreteType:ColorHSLCoordinate=ConcreteType:ColorHSLSelf=ConcreteType:ColorHSL
 Type analysis for ColorYCbCr
-  Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ColorYCbCrSelf=ConcreteType:ColorYCbCr
-    Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ColorYCbCrValue=ConcreteType:ColorYCbCrSelf=ConcreteType:ColorYCbCr
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ColorYCbCrValue=ConcreteType:ColorYCbCrSelf=ConcreteType:ColorYCbCr
+  Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:ColorYCbCrSelf=ConcreteType:ColorYCbCr
+    Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:ColorYCbCrCoordinate=ConcreteType:ColorYCbCrSelf=ConcreteType:ColorYCbCr
+    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:ColorYCbCrCoordinate=ConcreteType:ColorYCbCrSelf=ConcreteType:ColorYCbCr
+    Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
+    Function: Equals(Concept:Comparable a, Concept:Comparable b)
+    Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThan(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThan(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: Lesser(Concept:Comparable a, Concept:Comparable b)
+    Function: Greater(Concept:Comparable a, Concept:Comparable b)
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ColorYCbCrComparable=ConcreteType:ColorYCbCrCoordinate=ConcreteType:ColorYCbCrSelf=ConcreteType:ColorYCbCr
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ColorYCbCrCoordinate=ConcreteType:ColorYCbCrSelf=ConcreteType:ColorYCbCr
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ColorYCbCrValue=ConcreteType:ColorYCbCrCoordinate=ConcreteType:ColorYCbCrSelf=ConcreteType:ColorYCbCr
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ColorYCbCrValue=ConcreteType:ColorYCbCrCoordinate=ConcreteType:ColorYCbCrSelf=ConcreteType:ColorYCbCr
 Type analysis for SphericalCoordinate
-  Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:SphericalCoordinateSelf=ConcreteType:SphericalCoordinate
-    Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:SphericalCoordinateValue=ConcreteType:SphericalCoordinateSelf=ConcreteType:SphericalCoordinate
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:SphericalCoordinateValue=ConcreteType:SphericalCoordinateSelf=ConcreteType:SphericalCoordinate
+  Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:SphericalCoordinateSelf=ConcreteType:SphericalCoordinate
+    Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:SphericalCoordinateCoordinate=ConcreteType:SphericalCoordinateSelf=ConcreteType:SphericalCoordinate
+    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:SphericalCoordinateCoordinate=ConcreteType:SphericalCoordinateSelf=ConcreteType:SphericalCoordinate
+    Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
+    Function: Equals(Concept:Comparable a, Concept:Comparable b)
+    Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThan(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThan(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: Lesser(Concept:Comparable a, Concept:Comparable b)
+    Function: Greater(Concept:Comparable a, Concept:Comparable b)
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:SphericalCoordinateComparable=ConcreteType:SphericalCoordinateCoordinate=ConcreteType:SphericalCoordinateSelf=ConcreteType:SphericalCoordinate
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:SphericalCoordinateCoordinate=ConcreteType:SphericalCoordinateSelf=ConcreteType:SphericalCoordinate
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:SphericalCoordinateValue=ConcreteType:SphericalCoordinateCoordinate=ConcreteType:SphericalCoordinateSelf=ConcreteType:SphericalCoordinate
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:SphericalCoordinateValue=ConcreteType:SphericalCoordinateCoordinate=ConcreteType:SphericalCoordinateSelf=ConcreteType:SphericalCoordinate
 Type analysis for PolarCoordinate
-  Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:PolarCoordinateSelf=ConcreteType:PolarCoordinate
-    Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:PolarCoordinateValue=ConcreteType:PolarCoordinateSelf=ConcreteType:PolarCoordinate
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:PolarCoordinateValue=ConcreteType:PolarCoordinateSelf=ConcreteType:PolarCoordinate
+  Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:PolarCoordinateSelf=ConcreteType:PolarCoordinate
+    Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:PolarCoordinateCoordinate=ConcreteType:PolarCoordinateSelf=ConcreteType:PolarCoordinate
+    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:PolarCoordinateCoordinate=ConcreteType:PolarCoordinateSelf=ConcreteType:PolarCoordinate
+    Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
+    Function: Equals(Concept:Comparable a, Concept:Comparable b)
+    Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThan(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThan(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: Lesser(Concept:Comparable a, Concept:Comparable b)
+    Function: Greater(Concept:Comparable a, Concept:Comparable b)
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:PolarCoordinateComparable=ConcreteType:PolarCoordinateCoordinate=ConcreteType:PolarCoordinateSelf=ConcreteType:PolarCoordinate
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:PolarCoordinateCoordinate=ConcreteType:PolarCoordinateSelf=ConcreteType:PolarCoordinate
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:PolarCoordinateValue=ConcreteType:PolarCoordinateCoordinate=ConcreteType:PolarCoordinateSelf=ConcreteType:PolarCoordinate
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:PolarCoordinateValue=ConcreteType:PolarCoordinateCoordinate=ConcreteType:PolarCoordinateSelf=ConcreteType:PolarCoordinate
 Type analysis for LogPolarCoordinate
-  Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:LogPolarCoordinateSelf=ConcreteType:LogPolarCoordinate
-    Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:LogPolarCoordinateValue=ConcreteType:LogPolarCoordinateSelf=ConcreteType:LogPolarCoordinate
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:LogPolarCoordinateValue=ConcreteType:LogPolarCoordinateSelf=ConcreteType:LogPolarCoordinate
+  Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:LogPolarCoordinateSelf=ConcreteType:LogPolarCoordinate
+    Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:LogPolarCoordinateCoordinate=ConcreteType:LogPolarCoordinateSelf=ConcreteType:LogPolarCoordinate
+    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:LogPolarCoordinateCoordinate=ConcreteType:LogPolarCoordinateSelf=ConcreteType:LogPolarCoordinate
+    Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
+    Function: Equals(Concept:Comparable a, Concept:Comparable b)
+    Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThan(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThan(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: Lesser(Concept:Comparable a, Concept:Comparable b)
+    Function: Greater(Concept:Comparable a, Concept:Comparable b)
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:LogPolarCoordinateComparable=ConcreteType:LogPolarCoordinateCoordinate=ConcreteType:LogPolarCoordinateSelf=ConcreteType:LogPolarCoordinate
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:LogPolarCoordinateCoordinate=ConcreteType:LogPolarCoordinateSelf=ConcreteType:LogPolarCoordinate
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:LogPolarCoordinateValue=ConcreteType:LogPolarCoordinateCoordinate=ConcreteType:LogPolarCoordinateSelf=ConcreteType:LogPolarCoordinate
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:LogPolarCoordinateValue=ConcreteType:LogPolarCoordinateCoordinate=ConcreteType:LogPolarCoordinateSelf=ConcreteType:LogPolarCoordinate
 Type analysis for CylindricalCoordinate
-  Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:CylindricalCoordinateSelf=ConcreteType:CylindricalCoordinate
-    Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:CylindricalCoordinateValue=ConcreteType:CylindricalCoordinateSelf=ConcreteType:CylindricalCoordinate
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:CylindricalCoordinateValue=ConcreteType:CylindricalCoordinateSelf=ConcreteType:CylindricalCoordinate
+  Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:CylindricalCoordinateSelf=ConcreteType:CylindricalCoordinate
+    Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:CylindricalCoordinateCoordinate=ConcreteType:CylindricalCoordinateSelf=ConcreteType:CylindricalCoordinate
+    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:CylindricalCoordinateCoordinate=ConcreteType:CylindricalCoordinateSelf=ConcreteType:CylindricalCoordinate
+    Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
+    Function: Equals(Concept:Comparable a, Concept:Comparable b)
+    Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThan(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThan(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: Lesser(Concept:Comparable a, Concept:Comparable b)
+    Function: Greater(Concept:Comparable a, Concept:Comparable b)
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:CylindricalCoordinateComparable=ConcreteType:CylindricalCoordinateCoordinate=ConcreteType:CylindricalCoordinateSelf=ConcreteType:CylindricalCoordinate
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:CylindricalCoordinateCoordinate=ConcreteType:CylindricalCoordinateSelf=ConcreteType:CylindricalCoordinate
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:CylindricalCoordinateValue=ConcreteType:CylindricalCoordinateCoordinate=ConcreteType:CylindricalCoordinateSelf=ConcreteType:CylindricalCoordinate
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:CylindricalCoordinateValue=ConcreteType:CylindricalCoordinateCoordinate=ConcreteType:CylindricalCoordinateSelf=ConcreteType:CylindricalCoordinate
 Type analysis for HorizontalCoordinate
-  Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:HorizontalCoordinateSelf=ConcreteType:HorizontalCoordinate
-    Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:HorizontalCoordinateValue=ConcreteType:HorizontalCoordinateSelf=ConcreteType:HorizontalCoordinate
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:HorizontalCoordinateValue=ConcreteType:HorizontalCoordinateSelf=ConcreteType:HorizontalCoordinate
+  Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:HorizontalCoordinateSelf=ConcreteType:HorizontalCoordinate
+    Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:HorizontalCoordinateCoordinate=ConcreteType:HorizontalCoordinateSelf=ConcreteType:HorizontalCoordinate
+    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:HorizontalCoordinateCoordinate=ConcreteType:HorizontalCoordinateSelf=ConcreteType:HorizontalCoordinate
+    Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
+    Function: Equals(Concept:Comparable a, Concept:Comparable b)
+    Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThan(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThan(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: Lesser(Concept:Comparable a, Concept:Comparable b)
+    Function: Greater(Concept:Comparable a, Concept:Comparable b)
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:HorizontalCoordinateComparable=ConcreteType:HorizontalCoordinateCoordinate=ConcreteType:HorizontalCoordinateSelf=ConcreteType:HorizontalCoordinate
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:HorizontalCoordinateCoordinate=ConcreteType:HorizontalCoordinateSelf=ConcreteType:HorizontalCoordinate
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:HorizontalCoordinateValue=ConcreteType:HorizontalCoordinateCoordinate=ConcreteType:HorizontalCoordinateSelf=ConcreteType:HorizontalCoordinate
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:HorizontalCoordinateValue=ConcreteType:HorizontalCoordinateCoordinate=ConcreteType:HorizontalCoordinateSelf=ConcreteType:HorizontalCoordinate
 Type analysis for GeoCoordinate
-  Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:GeoCoordinateSelf=ConcreteType:GeoCoordinate
-    Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:GeoCoordinateValue=ConcreteType:GeoCoordinateSelf=ConcreteType:GeoCoordinate
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:GeoCoordinateValue=ConcreteType:GeoCoordinateSelf=ConcreteType:GeoCoordinate
+  Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:GeoCoordinateSelf=ConcreteType:GeoCoordinate
+    Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:GeoCoordinateCoordinate=ConcreteType:GeoCoordinateSelf=ConcreteType:GeoCoordinate
+    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:GeoCoordinateCoordinate=ConcreteType:GeoCoordinateSelf=ConcreteType:GeoCoordinate
+    Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
+    Function: Equals(Concept:Comparable a, Concept:Comparable b)
+    Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThan(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThan(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: Lesser(Concept:Comparable a, Concept:Comparable b)
+    Function: Greater(Concept:Comparable a, Concept:Comparable b)
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:GeoCoordinateComparable=ConcreteType:GeoCoordinateCoordinate=ConcreteType:GeoCoordinateSelf=ConcreteType:GeoCoordinate
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:GeoCoordinateCoordinate=ConcreteType:GeoCoordinateSelf=ConcreteType:GeoCoordinate
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:GeoCoordinateValue=ConcreteType:GeoCoordinateCoordinate=ConcreteType:GeoCoordinateSelf=ConcreteType:GeoCoordinate
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:GeoCoordinateValue=ConcreteType:GeoCoordinateCoordinate=ConcreteType:GeoCoordinateSelf=ConcreteType:GeoCoordinate
 Type analysis for GeoCoordinateWithAltitude
-  Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:GeoCoordinateWithAltitudeSelf=ConcreteType:GeoCoordinateWithAltitude
-    Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:GeoCoordinateWithAltitudeValue=ConcreteType:GeoCoordinateWithAltitudeSelf=ConcreteType:GeoCoordinateWithAltitude
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:GeoCoordinateWithAltitudeValue=ConcreteType:GeoCoordinateWithAltitudeSelf=ConcreteType:GeoCoordinateWithAltitude
+  Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:GeoCoordinateWithAltitudeSelf=ConcreteType:GeoCoordinateWithAltitude
+    Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:GeoCoordinateWithAltitudeCoordinate=ConcreteType:GeoCoordinateWithAltitudeSelf=ConcreteType:GeoCoordinateWithAltitude
+    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:GeoCoordinateWithAltitudeCoordinate=ConcreteType:GeoCoordinateWithAltitudeSelf=ConcreteType:GeoCoordinateWithAltitude
+    Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
+    Function: Equals(Concept:Comparable a, Concept:Comparable b)
+    Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThan(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThan(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: Lesser(Concept:Comparable a, Concept:Comparable b)
+    Function: Greater(Concept:Comparable a, Concept:Comparable b)
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:GeoCoordinateWithAltitudeComparable=ConcreteType:GeoCoordinateWithAltitudeCoordinate=ConcreteType:GeoCoordinateWithAltitudeSelf=ConcreteType:GeoCoordinateWithAltitude
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:GeoCoordinateWithAltitudeCoordinate=ConcreteType:GeoCoordinateWithAltitudeSelf=ConcreteType:GeoCoordinateWithAltitude
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:GeoCoordinateWithAltitudeValue=ConcreteType:GeoCoordinateWithAltitudeCoordinate=ConcreteType:GeoCoordinateWithAltitudeSelf=ConcreteType:GeoCoordinateWithAltitude
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:GeoCoordinateWithAltitudeValue=ConcreteType:GeoCoordinateWithAltitudeCoordinate=ConcreteType:GeoCoordinateWithAltitudeSelf=ConcreteType:GeoCoordinateWithAltitude
 Type analysis for Circle
   Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:CircleSelf=ConcreteType:Circle
     Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:CircleValue=ConcreteType:CircleSelf=ConcreteType:Circle
@@ -1171,6 +1359,9 @@ Type analysis for DateTime
     Function: Lesser(Concept:Comparable a, Concept:Comparable b)
     Function: Greater(Concept:Comparable a, Concept:Comparable b)
       Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:DateTimeComparable=ConcreteType:DateTimeCoordinate=ConcreteType:DateTimeSelf=ConcreteType:DateTime
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:DateTimeCoordinate=ConcreteType:DateTimeSelf=ConcreteType:DateTime
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:DateTimeValue=ConcreteType:DateTimeCoordinate=ConcreteType:DateTimeSelf=ConcreteType:DateTime
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:DateTimeValue=ConcreteType:DateTimeCoordinate=ConcreteType:DateTimeSelf=ConcreteType:DateTime
 Type analysis for AnglePair
   Concept=Interval Expr=Concept:Interval<ConcreteType:Angle,ConcreteType:Angle> Subs=Interval=ConcreteType:AnglePairTSize=ConcreteType:AngleTValue=ConcreteType:AngleSelf=ConcreteType:AnglePair
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
@@ -1259,7 +1450,7 @@ Type analysis for Box3D
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Box3DValue=ConcreteType:Box3DSelf=ConcreteType:Box3D
 Type analysis for UV
   Concept=Vector Expr=Concept:Vector Subs=Vector=ConcreteType:UVSelf=ConcreteType:UV
-  Function: Aggregate(Concept:Vector v, ConcreteType:Function2<ConcreteType:Number,TypeVariable:$T,TypeVariable:$T> f)
+  Function: Aggregate(Concept:Vector v, TypeVariable:$T r, ConcreteType:Function2<TypeVariable:$T,ConcreteType:Number,TypeVariable:$T> f)
   Function: Sum(Concept:Vector v)
   Function: SumSquares(Concept:Vector v)
   Function: MagnitudeSquared(Concept:Vector v)
@@ -1338,7 +1529,7 @@ Type analysis for UV
     Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:UVVector=ConcreteType:UVSelf=ConcreteType:UV
 Type analysis for UVW
   Concept=Vector Expr=Concept:Vector Subs=Vector=ConcreteType:UVWSelf=ConcreteType:UVW
-  Function: Aggregate(Concept:Vector v, ConcreteType:Function2<ConcreteType:Number,TypeVariable:$T,TypeVariable:$T> f)
+  Function: Aggregate(Concept:Vector v, TypeVariable:$T r, ConcreteType:Function2<TypeVariable:$T,ConcreteType:Number,TypeVariable:$T> f)
   Function: Sum(Concept:Vector v)
   Function: SumSquares(Concept:Vector v)
   Function: MagnitudeSquared(Concept:Vector v)

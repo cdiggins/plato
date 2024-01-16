@@ -13,7 +13,7 @@ namespace Plato.CSharpWriter
 {
     public class SymbolWriterCSharp : CodeBuilder<SymbolWriterCSharp>
     {
-        public const bool EmitInterfaces = false;
+        public const bool EmitInterfaces = true;
         public const bool EmitStructsInsteadOfClasses = true;
 
         public Compiler.Compilation Compilation { get; }

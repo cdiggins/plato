@@ -286,7 +286,7 @@ type Line3D
 
 // https://en.wikipedia.org/wiki/RGB_color_spaces
 type Color
-    implements Value
+    implements Coordinate
 {
     R: Unit;
     G: Unit;
@@ -296,7 +296,7 @@ type Color
 
 // https://en.wikipedia.org/wiki/CIELUV
 type ColorLUV
-    implements Value
+    implements Coordinate
 {
     Lightness: Percent;
     U: Unit;
@@ -305,7 +305,7 @@ type ColorLUV
 
 // https://en.wikipedia.org/wiki/CIELAB_color_space
 type ColorLAB
-    implements Value
+    implements Coordinate
 {
     Lightness: Percent;
     A: Integer;
@@ -314,7 +314,7 @@ type ColorLAB
 
 // https://en.wikipedia.org/wiki/CIELAB_color_space#Cylindrical_model
 type ColorLCh
-    implements Value
+    implements Coordinate
 {
     Lightness: Percent;
     ChromaHue: PolarCoordinate;
@@ -322,7 +322,7 @@ type ColorLCh
 
 // https://en.wikipedia.org/wiki/HSL_and_HSV
 type ColorHSV
-    implements Value
+    implements Coordinate
 {
     Hue: Angle;
     S: Unit;
@@ -331,7 +331,7 @@ type ColorHSV
 
 // https://en.wikipedia.org/wiki/HSL_and_HSV
 type ColorHSL
-    implements Value
+    implements Coordinate
 {
     Hue: Angle;
     Saturation: Unit;
@@ -340,7 +340,7 @@ type ColorHSL
 
 // https://en.wikipedia.org/wiki/YCbCr   
 type ColorYCbCr
-    implements Value
+    implements Coordinate
 {
     Y: Unit;
     Cb: Unit;
@@ -349,7 +349,7 @@ type ColorYCbCr
 
 // https://en.wikipedia.org/wiki/Spherical_coordinate_system    
 type SphericalCoordinate
-    implements Value
+    implements Coordinate
 {
     Radius: Number;
     Azimuth: Angle;
@@ -358,7 +358,7 @@ type SphericalCoordinate
 
 // https://en.wikipedia.org/wiki/Polar_coordinate_system   
 type PolarCoordinate
-    implements Value
+    implements Coordinate
 {
     Radius: Number;
     Angle: Angle;
@@ -366,7 +366,7 @@ type PolarCoordinate
 
 // https://en.wikipedia.org/wiki/Log-polar_coordinates    
 type LogPolarCoordinate
-    implements Value
+    implements Coordinate
 {
     Rho: Number;
     Azimuth: Angle;
@@ -374,7 +374,7 @@ type LogPolarCoordinate
 
 // https://en.wikipedia.org/wiki/Cylindrical_coordinate_system    
 type CylindricalCoordinate
-    implements Value
+    implements Coordinate
 {
     RadialDistance: Number;
     Azimuth: Angle;
@@ -383,7 +383,7 @@ type CylindricalCoordinate
 
 // https://en.wikipedia.org/wiki/Horizontal_coordinate_system    
 type HorizontalCoordinate
-    implements Value
+    implements Coordinate
 {
     Radius: Number;
     Azimuth: Angle;
@@ -392,7 +392,7 @@ type HorizontalCoordinate
 
 // https://en.wikipedia.org/wiki/Geographic_coordinate_system    
 type GeoCoordinate
-    implements Value
+    implements Coordinate
 {
     Latitude: Angle;
     Longitude: Angle;
@@ -400,7 +400,7 @@ type GeoCoordinate
 
 // https://en.wikipedia.org/wiki/Geographic_coordinate_system    
 type GeoCoordinateWithAltitude
-    implements Value
+    implements Coordinate
 {
     Coordinate: GeoCoordinate;
     Altitude: Number;

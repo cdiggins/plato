@@ -9,6 +9,7 @@ public readonly partial struct Number
     public Number MaxValue => double.MaxValue;
     public Number Magnitude => Value;
     public Number Reciprocal => 1.0 / Value;
+    public Integer Compare(Number other) => Value.CompareTo(other.Value);
 }
 
 public readonly partial struct Integer
@@ -20,6 +21,7 @@ public readonly partial struct Integer
     public Number Magnitude => Value;
     public Integer Reciprocal => 1 / Value;
     public static implicit operator Number(Integer self) => self.Value;
+    public Integer Compare(Integer other) => Value.CompareTo(other.Value);
 }
 
 public readonly partial struct Array1<T> : Array<T>

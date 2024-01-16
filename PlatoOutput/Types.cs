@@ -1,5 +1,5 @@
 using System;
-public readonly partial struct Number
+public readonly partial struct Number: Numerical<Number>
 {
     public readonly double Value;
     public Number WithValue(double value) => (value);
@@ -12,7 +12,7 @@ public readonly partial struct Number
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
 }
-public readonly partial struct Integer
+public readonly partial struct Integer: Numerical<Integer>
 {
     public readonly int Value;
     public Integer WithValue(int value) => (value);
@@ -25,7 +25,7 @@ public readonly partial struct Integer
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
 }
-public readonly partial struct String
+public readonly partial struct String: Value<String>, Array<Character>
 {
     public readonly string Value;
     public String WithValue(string value) => (value);
@@ -38,7 +38,7 @@ public readonly partial struct String
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
 }
-public readonly partial struct Boolean
+public readonly partial struct Boolean: BooleanOperations<Boolean>
 {
     public readonly bool Value;
     public Boolean WithValue(bool value) => (value);
@@ -51,7 +51,7 @@ public readonly partial struct Boolean
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
 }
-public readonly partial struct Character
+public readonly partial struct Character: Value<Character>
 {
     public readonly char Value;
     public Character WithValue(char value) => (value);
@@ -64,7 +64,7 @@ public readonly partial struct Character
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
 }
-public readonly partial struct Count
+public readonly partial struct Count: Numerical<Count>
 {
     public readonly Integer Value;
     public Count WithValue(Integer value) => (value);
@@ -98,7 +98,7 @@ public readonly partial struct Count
     public Count MinValue => (Value.MinValue);
     public Count MaxValue => (Value.MaxValue);
 }
-public readonly partial struct Index
+public readonly partial struct Index: Value<Index>
 {
     public readonly Integer Value;
     public Index WithValue(Integer value) => (value);
@@ -120,7 +120,7 @@ public readonly partial struct Index
     public Boolean NotEquals(Index b) => (Value.NotEquals(b.Value));
     public static Boolean operator !=(Index a, Index b) => a.NotEquals(b);
 }
-public readonly partial struct Unit
+public readonly partial struct Unit: Numerical<Unit>
 {
     public readonly Number Value;
     public Unit WithValue(Number value) => (value);
@@ -154,7 +154,7 @@ public readonly partial struct Unit
     public Unit MinValue => (Value.MinValue);
     public Unit MaxValue => (Value.MaxValue);
 }
-public readonly partial struct Percent
+public readonly partial struct Percent: Numerical<Percent>
 {
     public readonly Number Value;
     public Percent WithValue(Number value) => (value);
@@ -188,7 +188,7 @@ public readonly partial struct Percent
     public Percent MinValue => (Value.MinValue);
     public Percent MaxValue => (Value.MaxValue);
 }
-public readonly partial struct Quaternion
+public readonly partial struct Quaternion: Value<Quaternion>
 {
     public readonly Number X;
     public readonly Number Y;
@@ -217,7 +217,7 @@ public readonly partial struct Quaternion
     public Boolean NotEquals(Quaternion b) => (X.NotEquals(b.X) & Y.NotEquals(b.Y) & Z.NotEquals(b.Z) & W.NotEquals(b.W));
     public static Boolean operator !=(Quaternion a, Quaternion b) => a.NotEquals(b);
 }
-public readonly partial struct Unit2D
+public readonly partial struct Unit2D: Value<Unit2D>
 {
     public readonly Unit X;
     public readonly Unit Y;
@@ -242,7 +242,7 @@ public readonly partial struct Unit2D
     public Boolean NotEquals(Unit2D b) => (X.NotEquals(b.X) & Y.NotEquals(b.Y));
     public static Boolean operator !=(Unit2D a, Unit2D b) => a.NotEquals(b);
 }
-public readonly partial struct Unit3D
+public readonly partial struct Unit3D: Value<Unit3D>
 {
     public readonly Unit X;
     public readonly Unit Y;
@@ -269,7 +269,7 @@ public readonly partial struct Unit3D
     public Boolean NotEquals(Unit3D b) => (X.NotEquals(b.X) & Y.NotEquals(b.Y) & Z.NotEquals(b.Z));
     public static Boolean operator !=(Unit3D a, Unit3D b) => a.NotEquals(b);
 }
-public readonly partial struct Direction3D
+public readonly partial struct Direction3D: Value<Direction3D>
 {
     public readonly Unit3D Value;
     public Direction3D WithValue(Unit3D value) => (value);
@@ -291,7 +291,7 @@ public readonly partial struct Direction3D
     public Boolean NotEquals(Direction3D b) => (Value.NotEquals(b.Value));
     public static Boolean operator !=(Direction3D a, Direction3D b) => a.NotEquals(b);
 }
-public readonly partial struct AxisAngle
+public readonly partial struct AxisAngle: Value<AxisAngle>
 {
     public readonly Unit3D Axis;
     public readonly Angle Angle;
@@ -316,7 +316,7 @@ public readonly partial struct AxisAngle
     public Boolean NotEquals(AxisAngle b) => (Axis.NotEquals(b.Axis) & Angle.NotEquals(b.Angle));
     public static Boolean operator !=(AxisAngle a, AxisAngle b) => a.NotEquals(b);
 }
-public readonly partial struct EulerAngles
+public readonly partial struct EulerAngles: Value<EulerAngles>
 {
     public readonly Angle Yaw;
     public readonly Angle Pitch;
@@ -343,7 +343,7 @@ public readonly partial struct EulerAngles
     public Boolean NotEquals(EulerAngles b) => (Yaw.NotEquals(b.Yaw) & Pitch.NotEquals(b.Pitch) & Roll.NotEquals(b.Roll));
     public static Boolean operator !=(EulerAngles a, EulerAngles b) => a.NotEquals(b);
 }
-public readonly partial struct Rotation3D
+public readonly partial struct Rotation3D: Value<Rotation3D>
 {
     public readonly Quaternion Quaternion;
     public Rotation3D WithQuaternion(Quaternion quaternion) => (quaternion);
@@ -365,7 +365,7 @@ public readonly partial struct Rotation3D
     public Boolean NotEquals(Rotation3D b) => (Quaternion.NotEquals(b.Quaternion));
     public static Boolean operator !=(Rotation3D a, Rotation3D b) => a.NotEquals(b);
 }
-public readonly partial struct Vector2D
+public readonly partial struct Vector2D: Vector<Vector2D>
 {
     public readonly Number X;
     public readonly Number Y;
@@ -404,7 +404,7 @@ public readonly partial struct Vector2D
     public Number At(Integer n) => throw new NotImplementedException();
     public Number this[Integer n] => At(n);
 }
-public readonly partial struct Vector3D
+public readonly partial struct Vector3D: Vector<Vector3D>
 {
     public readonly Number X;
     public readonly Number Y;
@@ -445,7 +445,7 @@ public readonly partial struct Vector3D
     public Number At(Integer n) => throw new NotImplementedException();
     public Number this[Integer n] => At(n);
 }
-public readonly partial struct Vector4D
+public readonly partial struct Vector4D: Vector<Vector4D>
 {
     public readonly Number X;
     public readonly Number Y;
@@ -488,7 +488,7 @@ public readonly partial struct Vector4D
     public Number At(Integer n) => throw new NotImplementedException();
     public Number this[Integer n] => At(n);
 }
-public readonly partial struct Orientation3D
+public readonly partial struct Orientation3D: Value<Orientation3D>
 {
     public readonly Rotation3D Value;
     public Orientation3D WithValue(Rotation3D value) => (value);
@@ -510,7 +510,7 @@ public readonly partial struct Orientation3D
     public Boolean NotEquals(Orientation3D b) => (Value.NotEquals(b.Value));
     public static Boolean operator !=(Orientation3D a, Orientation3D b) => a.NotEquals(b);
 }
-public readonly partial struct Pose2D
+public readonly partial struct Pose2D: Value<Pose2D>
 {
     public readonly Vector3D Position;
     public readonly Orientation3D Orientation;
@@ -535,7 +535,7 @@ public readonly partial struct Pose2D
     public Boolean NotEquals(Pose2D b) => (Position.NotEquals(b.Position) & Orientation.NotEquals(b.Orientation));
     public static Boolean operator !=(Pose2D a, Pose2D b) => a.NotEquals(b);
 }
-public readonly partial struct Pose3D
+public readonly partial struct Pose3D: Value<Pose3D>
 {
     public readonly Vector3D Position;
     public readonly Orientation3D Orientation;
@@ -560,7 +560,7 @@ public readonly partial struct Pose3D
     public Boolean NotEquals(Pose3D b) => (Position.NotEquals(b.Position) & Orientation.NotEquals(b.Orientation));
     public static Boolean operator !=(Pose3D a, Pose3D b) => a.NotEquals(b);
 }
-public readonly partial struct Transform3D
+public readonly partial struct Transform3D: Value<Transform3D>
 {
     public readonly Vector3D Translation;
     public readonly Rotation3D Rotation;
@@ -587,7 +587,7 @@ public readonly partial struct Transform3D
     public Boolean NotEquals(Transform3D b) => (Translation.NotEquals(b.Translation) & Rotation.NotEquals(b.Rotation) & Scale.NotEquals(b.Scale));
     public static Boolean operator !=(Transform3D a, Transform3D b) => a.NotEquals(b);
 }
-public readonly partial struct Transform2D
+public readonly partial struct Transform2D: Value<Transform2D>
 {
     public readonly Vector2D Translation;
     public readonly Angle Rotation;
@@ -614,7 +614,7 @@ public readonly partial struct Transform2D
     public Boolean NotEquals(Transform2D b) => (Translation.NotEquals(b.Translation) & Rotation.NotEquals(b.Rotation) & Scale.NotEquals(b.Scale));
     public static Boolean operator !=(Transform2D a, Transform2D b) => a.NotEquals(b);
 }
-public readonly partial struct AlignedBox2D
+public readonly partial struct AlignedBox2D: Interval<AlignedBox2D, Point2D, Vector2D>
 {
     public readonly Point2D A;
     public readonly Point2D B;
@@ -638,7 +638,7 @@ public readonly partial struct AlignedBox2D
     public Boolean NotEquals(AlignedBox2D b) => (A.NotEquals(b.A) & B.NotEquals(b.B));
     public static Boolean operator !=(AlignedBox2D a, AlignedBox2D b) => a.NotEquals(b);
 }
-public readonly partial struct AlignedBox3D
+public readonly partial struct AlignedBox3D: Interval<AlignedBox3D, Point3D, Vector3D>
 {
     public readonly Point3D A;
     public readonly Point3D B;
@@ -662,7 +662,7 @@ public readonly partial struct AlignedBox3D
     public Boolean NotEquals(AlignedBox3D b) => (A.NotEquals(b.A) & B.NotEquals(b.B));
     public static Boolean operator !=(AlignedBox3D a, AlignedBox3D b) => a.NotEquals(b);
 }
-public readonly partial struct Complex
+public readonly partial struct Complex: Vector<Complex>
 {
     public readonly Number Real;
     public readonly Number Imaginary;
@@ -701,7 +701,7 @@ public readonly partial struct Complex
     public Number At(Integer n) => throw new NotImplementedException();
     public Number this[Integer n] => At(n);
 }
-public readonly partial struct Ray3D
+public readonly partial struct Ray3D: Value<Ray3D>
 {
     public readonly Vector3D Direction;
     public readonly Point3D Position;
@@ -726,7 +726,7 @@ public readonly partial struct Ray3D
     public Boolean NotEquals(Ray3D b) => (Direction.NotEquals(b.Direction) & Position.NotEquals(b.Position));
     public static Boolean operator !=(Ray3D a, Ray3D b) => a.NotEquals(b);
 }
-public readonly partial struct Ray2D
+public readonly partial struct Ray2D: Value<Ray2D>
 {
     public readonly Vector2D Direction;
     public readonly Point2D Position;
@@ -751,7 +751,7 @@ public readonly partial struct Ray2D
     public Boolean NotEquals(Ray2D b) => (Direction.NotEquals(b.Direction) & Position.NotEquals(b.Position));
     public static Boolean operator !=(Ray2D a, Ray2D b) => a.NotEquals(b);
 }
-public readonly partial struct Sphere
+public readonly partial struct Sphere: Value<Sphere>
 {
     public readonly Point3D Center;
     public readonly Number Radius;
@@ -776,7 +776,7 @@ public readonly partial struct Sphere
     public Boolean NotEquals(Sphere b) => (Center.NotEquals(b.Center) & Radius.NotEquals(b.Radius));
     public static Boolean operator !=(Sphere a, Sphere b) => a.NotEquals(b);
 }
-public readonly partial struct Plane
+public readonly partial struct Plane: Value<Plane>
 {
     public readonly Unit3D Normal;
     public readonly Number D;
@@ -801,7 +801,7 @@ public readonly partial struct Plane
     public Boolean NotEquals(Plane b) => (Normal.NotEquals(b.Normal) & D.NotEquals(b.D));
     public static Boolean operator !=(Plane a, Plane b) => a.NotEquals(b);
 }
-public readonly partial struct Triangle2D
+public readonly partial struct Triangle2D: Value<Triangle2D>
 {
     public readonly Point2D A;
     public readonly Point2D B;
@@ -828,7 +828,7 @@ public readonly partial struct Triangle2D
     public Boolean NotEquals(Triangle2D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C));
     public static Boolean operator !=(Triangle2D a, Triangle2D b) => a.NotEquals(b);
 }
-public readonly partial struct Triangle3D
+public readonly partial struct Triangle3D: Value<Triangle3D>
 {
     public readonly Point3D A;
     public readonly Point3D B;
@@ -855,7 +855,7 @@ public readonly partial struct Triangle3D
     public Boolean NotEquals(Triangle3D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C));
     public static Boolean operator !=(Triangle3D a, Triangle3D b) => a.NotEquals(b);
 }
-public readonly partial struct Quad2D
+public readonly partial struct Quad2D: Value<Quad2D>
 {
     public readonly Point2D A;
     public readonly Point2D B;
@@ -884,7 +884,7 @@ public readonly partial struct Quad2D
     public Boolean NotEquals(Quad2D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C) & D.NotEquals(b.D));
     public static Boolean operator !=(Quad2D a, Quad2D b) => a.NotEquals(b);
 }
-public readonly partial struct Quad3D
+public readonly partial struct Quad3D: Value<Quad3D>
 {
     public readonly Point3D A;
     public readonly Point3D B;
@@ -913,7 +913,7 @@ public readonly partial struct Quad3D
     public Boolean NotEquals(Quad3D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C) & D.NotEquals(b.D));
     public static Boolean operator !=(Quad3D a, Quad3D b) => a.NotEquals(b);
 }
-public readonly partial struct Point2D
+public readonly partial struct Point2D: Coordinate<Point2D>
 {
     public readonly Number X;
     public readonly Number Y;
@@ -929,11 +929,15 @@ public readonly partial struct Point2D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(X), new Dynamic(Y) };
     // Unimplemented concept functions
+    public Point2D Zero => (X.Zero, Y.Zero);
+    public Point2D One => (X.One, Y.One);
+    public Point2D MinValue => (X.MinValue, Y.MinValue);
+    public Point2D MaxValue => (X.MaxValue, Y.MaxValue);
     public Integer Compare(Point2D y) => throw new NotImplementedException();
     public Point2D Lerp(Point2D b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Point2D a, Point2D b) => throw new NotImplementedException();
 }
-public readonly partial struct Point3D
+public readonly partial struct Point3D: Coordinate<Point3D>
 {
     public readonly Number X;
     public readonly Number Y;
@@ -951,11 +955,15 @@ public readonly partial struct Point3D
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y", (String)"Z" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z) };
     // Unimplemented concept functions
+    public Point3D Zero => (X.Zero, Y.Zero, Z.Zero);
+    public Point3D One => (X.One, Y.One, Z.One);
+    public Point3D MinValue => (X.MinValue, Y.MinValue, Z.MinValue);
+    public Point3D MaxValue => (X.MaxValue, Y.MaxValue, Z.MaxValue);
     public Integer Compare(Point3D y) => throw new NotImplementedException();
     public Point3D Lerp(Point3D b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Point3D a, Point3D b) => throw new NotImplementedException();
 }
-public readonly partial struct Line2D
+public readonly partial struct Line2D: Interval<Line2D, Point2D, Vector3D>
 {
     public readonly Point2D A;
     public readonly Point2D B;
@@ -979,7 +987,7 @@ public readonly partial struct Line2D
     public Boolean NotEquals(Line2D b) => (A.NotEquals(b.A) & B.NotEquals(b.B));
     public static Boolean operator !=(Line2D a, Line2D b) => a.NotEquals(b);
 }
-public readonly partial struct Line3D
+public readonly partial struct Line3D: Interval<Line3D, Point3D, Vector3D>
 {
     public readonly Point3D A;
     public readonly Point3D B;
@@ -1003,7 +1011,7 @@ public readonly partial struct Line3D
     public Boolean NotEquals(Line3D b) => (A.NotEquals(b.A) & B.NotEquals(b.B));
     public static Boolean operator !=(Line3D a, Line3D b) => a.NotEquals(b);
 }
-public readonly partial struct Color
+public readonly partial struct Color: Coordinate<Color>
 {
     public readonly Unit R;
     public readonly Unit G;
@@ -1027,12 +1035,11 @@ public readonly partial struct Color
     public Color One => (R.One, G.One, B.One, A.One);
     public Color MinValue => (R.MinValue, G.MinValue, B.MinValue, A.MinValue);
     public Color MaxValue => (R.MaxValue, G.MaxValue, B.MaxValue, A.MaxValue);
-    public Boolean Equals(Color b) => (R.Equals(b.R) & G.Equals(b.G) & B.Equals(b.B) & A.Equals(b.A));
-    public static Boolean operator ==(Color a, Color b) => a.Equals(b);
-    public Boolean NotEquals(Color b) => (R.NotEquals(b.R) & G.NotEquals(b.G) & B.NotEquals(b.B) & A.NotEquals(b.A));
-    public static Boolean operator !=(Color a, Color b) => a.NotEquals(b);
+    public Integer Compare(Color y) => throw new NotImplementedException();
+    public Color Lerp(Color b, Number amount) => throw new NotImplementedException();
+    public Number Unlerp(Color a, Color b) => throw new NotImplementedException();
 }
-public readonly partial struct ColorLUV
+public readonly partial struct ColorLUV: Coordinate<ColorLUV>
 {
     public readonly Percent Lightness;
     public readonly Unit U;
@@ -1054,12 +1061,11 @@ public readonly partial struct ColorLUV
     public ColorLUV One => (Lightness.One, U.One, V.One);
     public ColorLUV MinValue => (Lightness.MinValue, U.MinValue, V.MinValue);
     public ColorLUV MaxValue => (Lightness.MaxValue, U.MaxValue, V.MaxValue);
-    public Boolean Equals(ColorLUV b) => (Lightness.Equals(b.Lightness) & U.Equals(b.U) & V.Equals(b.V));
-    public static Boolean operator ==(ColorLUV a, ColorLUV b) => a.Equals(b);
-    public Boolean NotEquals(ColorLUV b) => (Lightness.NotEquals(b.Lightness) & U.NotEquals(b.U) & V.NotEquals(b.V));
-    public static Boolean operator !=(ColorLUV a, ColorLUV b) => a.NotEquals(b);
+    public Integer Compare(ColorLUV y) => throw new NotImplementedException();
+    public ColorLUV Lerp(ColorLUV b, Number amount) => throw new NotImplementedException();
+    public Number Unlerp(ColorLUV a, ColorLUV b) => throw new NotImplementedException();
 }
-public readonly partial struct ColorLAB
+public readonly partial struct ColorLAB: Coordinate<ColorLAB>
 {
     public readonly Percent Lightness;
     public readonly Integer A;
@@ -1081,12 +1087,11 @@ public readonly partial struct ColorLAB
     public ColorLAB One => (Lightness.One, A.One, B.One);
     public ColorLAB MinValue => (Lightness.MinValue, A.MinValue, B.MinValue);
     public ColorLAB MaxValue => (Lightness.MaxValue, A.MaxValue, B.MaxValue);
-    public Boolean Equals(ColorLAB b) => (Lightness.Equals(b.Lightness) & A.Equals(b.A) & B.Equals(b.B));
-    public static Boolean operator ==(ColorLAB a, ColorLAB b) => a.Equals(b);
-    public Boolean NotEquals(ColorLAB b) => (Lightness.NotEquals(b.Lightness) & A.NotEquals(b.A) & B.NotEquals(b.B));
-    public static Boolean operator !=(ColorLAB a, ColorLAB b) => a.NotEquals(b);
+    public Integer Compare(ColorLAB y) => throw new NotImplementedException();
+    public ColorLAB Lerp(ColorLAB b, Number amount) => throw new NotImplementedException();
+    public Number Unlerp(ColorLAB a, ColorLAB b) => throw new NotImplementedException();
 }
-public readonly partial struct ColorLCh
+public readonly partial struct ColorLCh: Coordinate<ColorLCh>
 {
     public readonly Percent Lightness;
     public readonly PolarCoordinate ChromaHue;
@@ -1106,12 +1111,11 @@ public readonly partial struct ColorLCh
     public ColorLCh One => (Lightness.One, ChromaHue.One);
     public ColorLCh MinValue => (Lightness.MinValue, ChromaHue.MinValue);
     public ColorLCh MaxValue => (Lightness.MaxValue, ChromaHue.MaxValue);
-    public Boolean Equals(ColorLCh b) => (Lightness.Equals(b.Lightness) & ChromaHue.Equals(b.ChromaHue));
-    public static Boolean operator ==(ColorLCh a, ColorLCh b) => a.Equals(b);
-    public Boolean NotEquals(ColorLCh b) => (Lightness.NotEquals(b.Lightness) & ChromaHue.NotEquals(b.ChromaHue));
-    public static Boolean operator !=(ColorLCh a, ColorLCh b) => a.NotEquals(b);
+    public Integer Compare(ColorLCh y) => throw new NotImplementedException();
+    public ColorLCh Lerp(ColorLCh b, Number amount) => throw new NotImplementedException();
+    public Number Unlerp(ColorLCh a, ColorLCh b) => throw new NotImplementedException();
 }
-public readonly partial struct ColorHSV
+public readonly partial struct ColorHSV: Coordinate<ColorHSV>
 {
     public readonly Angle Hue;
     public readonly Unit S;
@@ -1133,12 +1137,11 @@ public readonly partial struct ColorHSV
     public ColorHSV One => (Hue.One, S.One, V.One);
     public ColorHSV MinValue => (Hue.MinValue, S.MinValue, V.MinValue);
     public ColorHSV MaxValue => (Hue.MaxValue, S.MaxValue, V.MaxValue);
-    public Boolean Equals(ColorHSV b) => (Hue.Equals(b.Hue) & S.Equals(b.S) & V.Equals(b.V));
-    public static Boolean operator ==(ColorHSV a, ColorHSV b) => a.Equals(b);
-    public Boolean NotEquals(ColorHSV b) => (Hue.NotEquals(b.Hue) & S.NotEquals(b.S) & V.NotEquals(b.V));
-    public static Boolean operator !=(ColorHSV a, ColorHSV b) => a.NotEquals(b);
+    public Integer Compare(ColorHSV y) => throw new NotImplementedException();
+    public ColorHSV Lerp(ColorHSV b, Number amount) => throw new NotImplementedException();
+    public Number Unlerp(ColorHSV a, ColorHSV b) => throw new NotImplementedException();
 }
-public readonly partial struct ColorHSL
+public readonly partial struct ColorHSL: Coordinate<ColorHSL>
 {
     public readonly Angle Hue;
     public readonly Unit Saturation;
@@ -1160,12 +1163,11 @@ public readonly partial struct ColorHSL
     public ColorHSL One => (Hue.One, Saturation.One, Luminance.One);
     public ColorHSL MinValue => (Hue.MinValue, Saturation.MinValue, Luminance.MinValue);
     public ColorHSL MaxValue => (Hue.MaxValue, Saturation.MaxValue, Luminance.MaxValue);
-    public Boolean Equals(ColorHSL b) => (Hue.Equals(b.Hue) & Saturation.Equals(b.Saturation) & Luminance.Equals(b.Luminance));
-    public static Boolean operator ==(ColorHSL a, ColorHSL b) => a.Equals(b);
-    public Boolean NotEquals(ColorHSL b) => (Hue.NotEquals(b.Hue) & Saturation.NotEquals(b.Saturation) & Luminance.NotEquals(b.Luminance));
-    public static Boolean operator !=(ColorHSL a, ColorHSL b) => a.NotEquals(b);
+    public Integer Compare(ColorHSL y) => throw new NotImplementedException();
+    public ColorHSL Lerp(ColorHSL b, Number amount) => throw new NotImplementedException();
+    public Number Unlerp(ColorHSL a, ColorHSL b) => throw new NotImplementedException();
 }
-public readonly partial struct ColorYCbCr
+public readonly partial struct ColorYCbCr: Coordinate<ColorYCbCr>
 {
     public readonly Unit Y;
     public readonly Unit Cb;
@@ -1187,12 +1189,11 @@ public readonly partial struct ColorYCbCr
     public ColorYCbCr One => (Y.One, Cb.One, Cr.One);
     public ColorYCbCr MinValue => (Y.MinValue, Cb.MinValue, Cr.MinValue);
     public ColorYCbCr MaxValue => (Y.MaxValue, Cb.MaxValue, Cr.MaxValue);
-    public Boolean Equals(ColorYCbCr b) => (Y.Equals(b.Y) & Cb.Equals(b.Cb) & Cr.Equals(b.Cr));
-    public static Boolean operator ==(ColorYCbCr a, ColorYCbCr b) => a.Equals(b);
-    public Boolean NotEquals(ColorYCbCr b) => (Y.NotEquals(b.Y) & Cb.NotEquals(b.Cb) & Cr.NotEquals(b.Cr));
-    public static Boolean operator !=(ColorYCbCr a, ColorYCbCr b) => a.NotEquals(b);
+    public Integer Compare(ColorYCbCr y) => throw new NotImplementedException();
+    public ColorYCbCr Lerp(ColorYCbCr b, Number amount) => throw new NotImplementedException();
+    public Number Unlerp(ColorYCbCr a, ColorYCbCr b) => throw new NotImplementedException();
 }
-public readonly partial struct SphericalCoordinate
+public readonly partial struct SphericalCoordinate: Coordinate<SphericalCoordinate>
 {
     public readonly Number Radius;
     public readonly Angle Azimuth;
@@ -1214,12 +1215,11 @@ public readonly partial struct SphericalCoordinate
     public SphericalCoordinate One => (Radius.One, Azimuth.One, Polar.One);
     public SphericalCoordinate MinValue => (Radius.MinValue, Azimuth.MinValue, Polar.MinValue);
     public SphericalCoordinate MaxValue => (Radius.MaxValue, Azimuth.MaxValue, Polar.MaxValue);
-    public Boolean Equals(SphericalCoordinate b) => (Radius.Equals(b.Radius) & Azimuth.Equals(b.Azimuth) & Polar.Equals(b.Polar));
-    public static Boolean operator ==(SphericalCoordinate a, SphericalCoordinate b) => a.Equals(b);
-    public Boolean NotEquals(SphericalCoordinate b) => (Radius.NotEquals(b.Radius) & Azimuth.NotEquals(b.Azimuth) & Polar.NotEquals(b.Polar));
-    public static Boolean operator !=(SphericalCoordinate a, SphericalCoordinate b) => a.NotEquals(b);
+    public Integer Compare(SphericalCoordinate y) => throw new NotImplementedException();
+    public SphericalCoordinate Lerp(SphericalCoordinate b, Number amount) => throw new NotImplementedException();
+    public Number Unlerp(SphericalCoordinate a, SphericalCoordinate b) => throw new NotImplementedException();
 }
-public readonly partial struct PolarCoordinate
+public readonly partial struct PolarCoordinate: Coordinate<PolarCoordinate>
 {
     public readonly Number Radius;
     public readonly Angle Angle;
@@ -1239,12 +1239,11 @@ public readonly partial struct PolarCoordinate
     public PolarCoordinate One => (Radius.One, Angle.One);
     public PolarCoordinate MinValue => (Radius.MinValue, Angle.MinValue);
     public PolarCoordinate MaxValue => (Radius.MaxValue, Angle.MaxValue);
-    public Boolean Equals(PolarCoordinate b) => (Radius.Equals(b.Radius) & Angle.Equals(b.Angle));
-    public static Boolean operator ==(PolarCoordinate a, PolarCoordinate b) => a.Equals(b);
-    public Boolean NotEquals(PolarCoordinate b) => (Radius.NotEquals(b.Radius) & Angle.NotEquals(b.Angle));
-    public static Boolean operator !=(PolarCoordinate a, PolarCoordinate b) => a.NotEquals(b);
+    public Integer Compare(PolarCoordinate y) => throw new NotImplementedException();
+    public PolarCoordinate Lerp(PolarCoordinate b, Number amount) => throw new NotImplementedException();
+    public Number Unlerp(PolarCoordinate a, PolarCoordinate b) => throw new NotImplementedException();
 }
-public readonly partial struct LogPolarCoordinate
+public readonly partial struct LogPolarCoordinate: Coordinate<LogPolarCoordinate>
 {
     public readonly Number Rho;
     public readonly Angle Azimuth;
@@ -1264,12 +1263,11 @@ public readonly partial struct LogPolarCoordinate
     public LogPolarCoordinate One => (Rho.One, Azimuth.One);
     public LogPolarCoordinate MinValue => (Rho.MinValue, Azimuth.MinValue);
     public LogPolarCoordinate MaxValue => (Rho.MaxValue, Azimuth.MaxValue);
-    public Boolean Equals(LogPolarCoordinate b) => (Rho.Equals(b.Rho) & Azimuth.Equals(b.Azimuth));
-    public static Boolean operator ==(LogPolarCoordinate a, LogPolarCoordinate b) => a.Equals(b);
-    public Boolean NotEquals(LogPolarCoordinate b) => (Rho.NotEquals(b.Rho) & Azimuth.NotEquals(b.Azimuth));
-    public static Boolean operator !=(LogPolarCoordinate a, LogPolarCoordinate b) => a.NotEquals(b);
+    public Integer Compare(LogPolarCoordinate y) => throw new NotImplementedException();
+    public LogPolarCoordinate Lerp(LogPolarCoordinate b, Number amount) => throw new NotImplementedException();
+    public Number Unlerp(LogPolarCoordinate a, LogPolarCoordinate b) => throw new NotImplementedException();
 }
-public readonly partial struct CylindricalCoordinate
+public readonly partial struct CylindricalCoordinate: Coordinate<CylindricalCoordinate>
 {
     public readonly Number RadialDistance;
     public readonly Angle Azimuth;
@@ -1291,12 +1289,11 @@ public readonly partial struct CylindricalCoordinate
     public CylindricalCoordinate One => (RadialDistance.One, Azimuth.One, Height.One);
     public CylindricalCoordinate MinValue => (RadialDistance.MinValue, Azimuth.MinValue, Height.MinValue);
     public CylindricalCoordinate MaxValue => (RadialDistance.MaxValue, Azimuth.MaxValue, Height.MaxValue);
-    public Boolean Equals(CylindricalCoordinate b) => (RadialDistance.Equals(b.RadialDistance) & Azimuth.Equals(b.Azimuth) & Height.Equals(b.Height));
-    public static Boolean operator ==(CylindricalCoordinate a, CylindricalCoordinate b) => a.Equals(b);
-    public Boolean NotEquals(CylindricalCoordinate b) => (RadialDistance.NotEquals(b.RadialDistance) & Azimuth.NotEquals(b.Azimuth) & Height.NotEquals(b.Height));
-    public static Boolean operator !=(CylindricalCoordinate a, CylindricalCoordinate b) => a.NotEquals(b);
+    public Integer Compare(CylindricalCoordinate y) => throw new NotImplementedException();
+    public CylindricalCoordinate Lerp(CylindricalCoordinate b, Number amount) => throw new NotImplementedException();
+    public Number Unlerp(CylindricalCoordinate a, CylindricalCoordinate b) => throw new NotImplementedException();
 }
-public readonly partial struct HorizontalCoordinate
+public readonly partial struct HorizontalCoordinate: Coordinate<HorizontalCoordinate>
 {
     public readonly Number Radius;
     public readonly Angle Azimuth;
@@ -1318,12 +1315,11 @@ public readonly partial struct HorizontalCoordinate
     public HorizontalCoordinate One => (Radius.One, Azimuth.One, Height.One);
     public HorizontalCoordinate MinValue => (Radius.MinValue, Azimuth.MinValue, Height.MinValue);
     public HorizontalCoordinate MaxValue => (Radius.MaxValue, Azimuth.MaxValue, Height.MaxValue);
-    public Boolean Equals(HorizontalCoordinate b) => (Radius.Equals(b.Radius) & Azimuth.Equals(b.Azimuth) & Height.Equals(b.Height));
-    public static Boolean operator ==(HorizontalCoordinate a, HorizontalCoordinate b) => a.Equals(b);
-    public Boolean NotEquals(HorizontalCoordinate b) => (Radius.NotEquals(b.Radius) & Azimuth.NotEquals(b.Azimuth) & Height.NotEquals(b.Height));
-    public static Boolean operator !=(HorizontalCoordinate a, HorizontalCoordinate b) => a.NotEquals(b);
+    public Integer Compare(HorizontalCoordinate y) => throw new NotImplementedException();
+    public HorizontalCoordinate Lerp(HorizontalCoordinate b, Number amount) => throw new NotImplementedException();
+    public Number Unlerp(HorizontalCoordinate a, HorizontalCoordinate b) => throw new NotImplementedException();
 }
-public readonly partial struct GeoCoordinate
+public readonly partial struct GeoCoordinate: Coordinate<GeoCoordinate>
 {
     public readonly Angle Latitude;
     public readonly Angle Longitude;
@@ -1343,12 +1339,11 @@ public readonly partial struct GeoCoordinate
     public GeoCoordinate One => (Latitude.One, Longitude.One);
     public GeoCoordinate MinValue => (Latitude.MinValue, Longitude.MinValue);
     public GeoCoordinate MaxValue => (Latitude.MaxValue, Longitude.MaxValue);
-    public Boolean Equals(GeoCoordinate b) => (Latitude.Equals(b.Latitude) & Longitude.Equals(b.Longitude));
-    public static Boolean operator ==(GeoCoordinate a, GeoCoordinate b) => a.Equals(b);
-    public Boolean NotEquals(GeoCoordinate b) => (Latitude.NotEquals(b.Latitude) & Longitude.NotEquals(b.Longitude));
-    public static Boolean operator !=(GeoCoordinate a, GeoCoordinate b) => a.NotEquals(b);
+    public Integer Compare(GeoCoordinate y) => throw new NotImplementedException();
+    public GeoCoordinate Lerp(GeoCoordinate b, Number amount) => throw new NotImplementedException();
+    public Number Unlerp(GeoCoordinate a, GeoCoordinate b) => throw new NotImplementedException();
 }
-public readonly partial struct GeoCoordinateWithAltitude
+public readonly partial struct GeoCoordinateWithAltitude: Coordinate<GeoCoordinateWithAltitude>
 {
     public readonly GeoCoordinate Coordinate;
     public readonly Number Altitude;
@@ -1368,12 +1363,11 @@ public readonly partial struct GeoCoordinateWithAltitude
     public GeoCoordinateWithAltitude One => (Coordinate.One, Altitude.One);
     public GeoCoordinateWithAltitude MinValue => (Coordinate.MinValue, Altitude.MinValue);
     public GeoCoordinateWithAltitude MaxValue => (Coordinate.MaxValue, Altitude.MaxValue);
-    public Boolean Equals(GeoCoordinateWithAltitude b) => (Coordinate.Equals(b.Coordinate) & Altitude.Equals(b.Altitude));
-    public static Boolean operator ==(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) => a.Equals(b);
-    public Boolean NotEquals(GeoCoordinateWithAltitude b) => (Coordinate.NotEquals(b.Coordinate) & Altitude.NotEquals(b.Altitude));
-    public static Boolean operator !=(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) => a.NotEquals(b);
+    public Integer Compare(GeoCoordinateWithAltitude y) => throw new NotImplementedException();
+    public GeoCoordinateWithAltitude Lerp(GeoCoordinateWithAltitude b, Number amount) => throw new NotImplementedException();
+    public Number Unlerp(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) => throw new NotImplementedException();
 }
-public readonly partial struct Circle
+public readonly partial struct Circle: Value<Circle>
 {
     public readonly Point2D Center;
     public readonly Number Radius;
@@ -1398,7 +1392,7 @@ public readonly partial struct Circle
     public Boolean NotEquals(Circle b) => (Center.NotEquals(b.Center) & Radius.NotEquals(b.Radius));
     public static Boolean operator !=(Circle a, Circle b) => a.NotEquals(b);
 }
-public readonly partial struct Chord
+public readonly partial struct Chord: Value<Chord>
 {
     public readonly Circle Circle;
     public readonly Arc Arc;
@@ -1423,7 +1417,7 @@ public readonly partial struct Chord
     public Boolean NotEquals(Chord b) => (Circle.NotEquals(b.Circle) & Arc.NotEquals(b.Arc));
     public static Boolean operator !=(Chord a, Chord b) => a.NotEquals(b);
 }
-public readonly partial struct Size2D
+public readonly partial struct Size2D: Value<Size2D>
 {
     public readonly Number Width;
     public readonly Number Height;
@@ -1448,7 +1442,7 @@ public readonly partial struct Size2D
     public Boolean NotEquals(Size2D b) => (Width.NotEquals(b.Width) & Height.NotEquals(b.Height));
     public static Boolean operator !=(Size2D a, Size2D b) => a.NotEquals(b);
 }
-public readonly partial struct Size3D
+public readonly partial struct Size3D: Value<Size3D>
 {
     public readonly Number Width;
     public readonly Number Height;
@@ -1475,7 +1469,7 @@ public readonly partial struct Size3D
     public Boolean NotEquals(Size3D b) => (Width.NotEquals(b.Width) & Height.NotEquals(b.Height) & Depth.NotEquals(b.Depth));
     public static Boolean operator !=(Size3D a, Size3D b) => a.NotEquals(b);
 }
-public readonly partial struct Rectangle2D
+public readonly partial struct Rectangle2D: Value<Rectangle2D>
 {
     public readonly Point2D Center;
     public readonly Size2D Size;
@@ -1500,7 +1494,7 @@ public readonly partial struct Rectangle2D
     public Boolean NotEquals(Rectangle2D b) => (Center.NotEquals(b.Center) & Size.NotEquals(b.Size));
     public static Boolean operator !=(Rectangle2D a, Rectangle2D b) => a.NotEquals(b);
 }
-public readonly partial struct Proportion
+public readonly partial struct Proportion: Numerical<Proportion>
 {
     public readonly Number Value;
     public Proportion WithValue(Number value) => (value);
@@ -1534,7 +1528,7 @@ public readonly partial struct Proportion
     public Proportion MinValue => (Value.MinValue);
     public Proportion MaxValue => (Value.MaxValue);
 }
-public readonly partial struct Fraction
+public readonly partial struct Fraction: Value<Fraction>
 {
     public readonly Number Numerator;
     public readonly Number Denominator;
@@ -1559,7 +1553,7 @@ public readonly partial struct Fraction
     public Boolean NotEquals(Fraction b) => (Numerator.NotEquals(b.Numerator) & Denominator.NotEquals(b.Denominator));
     public static Boolean operator !=(Fraction a, Fraction b) => a.NotEquals(b);
 }
-public readonly partial struct Angle
+public readonly partial struct Angle: Measure<Angle>
 {
     public readonly Number Radians;
     public Angle WithRadians(Number radians) => (radians);
@@ -1592,7 +1586,7 @@ public readonly partial struct Angle
     public Angle MinValue => (Radians.MinValue);
     public Angle MaxValue => (Radians.MaxValue);
 }
-public readonly partial struct Length
+public readonly partial struct Length: Measure<Length>
 {
     public readonly Number Meters;
     public Length WithMeters(Number meters) => (meters);
@@ -1625,7 +1619,7 @@ public readonly partial struct Length
     public Length MinValue => (Meters.MinValue);
     public Length MaxValue => (Meters.MaxValue);
 }
-public readonly partial struct Mass
+public readonly partial struct Mass: Measure<Mass>
 {
     public readonly Number Kilograms;
     public Mass WithKilograms(Number kilograms) => (kilograms);
@@ -1658,7 +1652,7 @@ public readonly partial struct Mass
     public Mass MinValue => (Kilograms.MinValue);
     public Mass MaxValue => (Kilograms.MaxValue);
 }
-public readonly partial struct Temperature
+public readonly partial struct Temperature: Measure<Temperature>
 {
     public readonly Number Celsius;
     public Temperature WithCelsius(Number celsius) => (celsius);
@@ -1691,7 +1685,7 @@ public readonly partial struct Temperature
     public Temperature MinValue => (Celsius.MinValue);
     public Temperature MaxValue => (Celsius.MaxValue);
 }
-public readonly partial struct Time
+public readonly partial struct Time: Measure<Time>
 {
     public readonly Number Seconds;
     public Time WithSeconds(Number seconds) => (seconds);
@@ -1724,7 +1718,7 @@ public readonly partial struct Time
     public Time MinValue => (Seconds.MinValue);
     public Time MaxValue => (Seconds.MaxValue);
 }
-public readonly partial struct TimeRange
+public readonly partial struct TimeRange: Interval<TimeRange, DateTime, Time>
 {
     public readonly DateTime Begin;
     public readonly DateTime End;
@@ -1748,7 +1742,7 @@ public readonly partial struct TimeRange
     public Boolean NotEquals(TimeRange b) => (Begin.NotEquals(b.Begin) & End.NotEquals(b.End));
     public static Boolean operator !=(TimeRange a, TimeRange b) => a.NotEquals(b);
 }
-public readonly partial struct DateTime
+public readonly partial struct DateTime: Coordinate<DateTime>
 {
     public readonly Integer Year;
     public readonly Integer Month;
@@ -1774,11 +1768,15 @@ public readonly partial struct DateTime
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Year", (String)"Month", (String)"TimeZoneOffset", (String)"Day", (String)"Minute", (String)"Second", (String)"Milliseconds" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Year), new Dynamic(Month), new Dynamic(TimeZoneOffset), new Dynamic(Day), new Dynamic(Minute), new Dynamic(Second), new Dynamic(Milliseconds) };
     // Unimplemented concept functions
+    public DateTime Zero => (Year.Zero, Month.Zero, TimeZoneOffset.Zero, Day.Zero, Minute.Zero, Second.Zero, Milliseconds.Zero);
+    public DateTime One => (Year.One, Month.One, TimeZoneOffset.One, Day.One, Minute.One, Second.One, Milliseconds.One);
+    public DateTime MinValue => (Year.MinValue, Month.MinValue, TimeZoneOffset.MinValue, Day.MinValue, Minute.MinValue, Second.MinValue, Milliseconds.MinValue);
+    public DateTime MaxValue => (Year.MaxValue, Month.MaxValue, TimeZoneOffset.MaxValue, Day.MaxValue, Minute.MaxValue, Second.MaxValue, Milliseconds.MaxValue);
     public Integer Compare(DateTime y) => throw new NotImplementedException();
     public DateTime Lerp(DateTime b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(DateTime a, DateTime b) => throw new NotImplementedException();
 }
-public readonly partial struct AnglePair
+public readonly partial struct AnglePair: Interval<AnglePair, Angle, Angle>
 {
     public readonly Angle Start;
     public readonly Angle End;
@@ -1802,7 +1800,7 @@ public readonly partial struct AnglePair
     public Boolean NotEquals(AnglePair b) => (Start.NotEquals(b.Start) & End.NotEquals(b.End));
     public static Boolean operator !=(AnglePair a, AnglePair b) => a.NotEquals(b);
 }
-public readonly partial struct Ring
+public readonly partial struct Ring: Value<Ring>
 {
     public readonly Circle Circle;
     public readonly Number InnerRadius;
@@ -1827,7 +1825,7 @@ public readonly partial struct Ring
     public Boolean NotEquals(Ring b) => (Circle.NotEquals(b.Circle) & InnerRadius.NotEquals(b.InnerRadius));
     public static Boolean operator !=(Ring a, Ring b) => a.NotEquals(b);
 }
-public readonly partial struct Arc
+public readonly partial struct Arc: Value<Arc>
 {
     public readonly AnglePair Angles;
     public readonly Circle Cirlce;
@@ -1852,7 +1850,7 @@ public readonly partial struct Arc
     public Boolean NotEquals(Arc b) => (Angles.NotEquals(b.Angles) & Cirlce.NotEquals(b.Cirlce));
     public static Boolean operator !=(Arc a, Arc b) => a.NotEquals(b);
 }
-public readonly partial struct RealInterval
+public readonly partial struct RealInterval: Interval<RealInterval, Number, Number>
 {
     public readonly Number A;
     public readonly Number B;
@@ -1876,7 +1874,7 @@ public readonly partial struct RealInterval
     public Boolean NotEquals(RealInterval b) => (A.NotEquals(b.A) & B.NotEquals(b.B));
     public static Boolean operator !=(RealInterval a, RealInterval b) => a.NotEquals(b);
 }
-public readonly partial struct Capsule
+public readonly partial struct Capsule: Value<Capsule>
 {
     public readonly Line3D Line;
     public readonly Number Radius;
@@ -1901,7 +1899,7 @@ public readonly partial struct Capsule
     public Boolean NotEquals(Capsule b) => (Line.NotEquals(b.Line) & Radius.NotEquals(b.Radius));
     public static Boolean operator !=(Capsule a, Capsule b) => a.NotEquals(b);
 }
-public readonly partial struct Matrix3D
+public readonly partial struct Matrix3D: Value<Matrix3D>
 {
     public readonly Vector4D Column1;
     public readonly Vector4D Column2;
@@ -1930,7 +1928,7 @@ public readonly partial struct Matrix3D
     public Boolean NotEquals(Matrix3D b) => (Column1.NotEquals(b.Column1) & Column2.NotEquals(b.Column2) & Column3.NotEquals(b.Column3) & Column4.NotEquals(b.Column4));
     public static Boolean operator !=(Matrix3D a, Matrix3D b) => a.NotEquals(b);
 }
-public readonly partial struct Cylinder
+public readonly partial struct Cylinder: Value<Cylinder>
 {
     public readonly Line3D Line;
     public readonly Number Radius;
@@ -1955,7 +1953,7 @@ public readonly partial struct Cylinder
     public Boolean NotEquals(Cylinder b) => (Line.NotEquals(b.Line) & Radius.NotEquals(b.Radius));
     public static Boolean operator !=(Cylinder a, Cylinder b) => a.NotEquals(b);
 }
-public readonly partial struct Cone
+public readonly partial struct Cone: Value<Cone>
 {
     public readonly Line3D Line;
     public readonly Number Radius;
@@ -1980,7 +1978,7 @@ public readonly partial struct Cone
     public Boolean NotEquals(Cone b) => (Line.NotEquals(b.Line) & Radius.NotEquals(b.Radius));
     public static Boolean operator !=(Cone a, Cone b) => a.NotEquals(b);
 }
-public readonly partial struct Tube
+public readonly partial struct Tube: Value<Tube>
 {
     public readonly Line3D Line;
     public readonly Number InnerRadius;
@@ -2007,7 +2005,7 @@ public readonly partial struct Tube
     public Boolean NotEquals(Tube b) => (Line.NotEquals(b.Line) & InnerRadius.NotEquals(b.InnerRadius) & OuterRadius.NotEquals(b.OuterRadius));
     public static Boolean operator !=(Tube a, Tube b) => a.NotEquals(b);
 }
-public readonly partial struct ConeSegment
+public readonly partial struct ConeSegment: Value<ConeSegment>
 {
     public readonly Line3D Line;
     public readonly Number Radius1;
@@ -2034,7 +2032,7 @@ public readonly partial struct ConeSegment
     public Boolean NotEquals(ConeSegment b) => (Line.NotEquals(b.Line) & Radius1.NotEquals(b.Radius1) & Radius2.NotEquals(b.Radius2));
     public static Boolean operator !=(ConeSegment a, ConeSegment b) => a.NotEquals(b);
 }
-public readonly partial struct Box2D
+public readonly partial struct Box2D: Value<Box2D>
 {
     public readonly Point2D Center;
     public readonly Angle Rotation;
@@ -2061,7 +2059,7 @@ public readonly partial struct Box2D
     public Boolean NotEquals(Box2D b) => (Center.NotEquals(b.Center) & Rotation.NotEquals(b.Rotation) & Extent.NotEquals(b.Extent));
     public static Boolean operator !=(Box2D a, Box2D b) => a.NotEquals(b);
 }
-public readonly partial struct Box3D
+public readonly partial struct Box3D: Value<Box3D>
 {
     public readonly Point3D Center;
     public readonly Rotation3D Rotation;
@@ -2088,7 +2086,7 @@ public readonly partial struct Box3D
     public Boolean NotEquals(Box3D b) => (Center.NotEquals(b.Center) & Rotation.NotEquals(b.Rotation) & Extent.NotEquals(b.Extent));
     public static Boolean operator !=(Box3D a, Box3D b) => a.NotEquals(b);
 }
-public readonly partial struct UV
+public readonly partial struct UV: Vector<UV>
 {
     public readonly Unit U;
     public readonly Unit V;
@@ -2127,7 +2125,7 @@ public readonly partial struct UV
     public Number At(Integer n) => throw new NotImplementedException();
     public Number this[Integer n] => At(n);
 }
-public readonly partial struct UVW
+public readonly partial struct UVW: Vector<UVW>
 {
     public readonly Unit U;
     public readonly Unit V;
@@ -2168,7 +2166,7 @@ public readonly partial struct UVW
     public Number At(Integer n) => throw new NotImplementedException();
     public Number this[Integer n] => At(n);
 }
-public readonly partial struct CubicBezier2D
+public readonly partial struct CubicBezier2D: Value<CubicBezier2D>
 {
     public readonly Point2D A;
     public readonly Point2D B;
@@ -2197,7 +2195,7 @@ public readonly partial struct CubicBezier2D
     public Boolean NotEquals(CubicBezier2D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C) & D.NotEquals(b.D));
     public static Boolean operator !=(CubicBezier2D a, CubicBezier2D b) => a.NotEquals(b);
 }
-public readonly partial struct CubicBezier3D
+public readonly partial struct CubicBezier3D: Value<CubicBezier3D>
 {
     public readonly Point3D A;
     public readonly Point3D B;
@@ -2226,7 +2224,7 @@ public readonly partial struct CubicBezier3D
     public Boolean NotEquals(CubicBezier3D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C) & D.NotEquals(b.D));
     public static Boolean operator !=(CubicBezier3D a, CubicBezier3D b) => a.NotEquals(b);
 }
-public readonly partial struct QuadraticBezier2D
+public readonly partial struct QuadraticBezier2D: Value<QuadraticBezier2D>
 {
     public readonly Point2D A;
     public readonly Point2D B;
@@ -2253,7 +2251,7 @@ public readonly partial struct QuadraticBezier2D
     public Boolean NotEquals(QuadraticBezier2D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C));
     public static Boolean operator !=(QuadraticBezier2D a, QuadraticBezier2D b) => a.NotEquals(b);
 }
-public readonly partial struct QuadraticBezier3D
+public readonly partial struct QuadraticBezier3D: Value<QuadraticBezier3D>
 {
     public readonly Point3D A;
     public readonly Point3D B;
@@ -2280,7 +2278,7 @@ public readonly partial struct QuadraticBezier3D
     public Boolean NotEquals(QuadraticBezier3D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C));
     public static Boolean operator !=(QuadraticBezier3D a, QuadraticBezier3D b) => a.NotEquals(b);
 }
-public readonly partial struct Area
+public readonly partial struct Area: Measure<Area>
 {
     public readonly Number MetersSquared;
     public Area WithMetersSquared(Number metersSquared) => (metersSquared);
@@ -2313,7 +2311,7 @@ public readonly partial struct Area
     public Area MinValue => (MetersSquared.MinValue);
     public Area MaxValue => (MetersSquared.MaxValue);
 }
-public readonly partial struct Volume
+public readonly partial struct Volume: Measure<Volume>
 {
     public readonly Number MetersCubed;
     public Volume WithMetersCubed(Number metersCubed) => (metersCubed);
@@ -2346,7 +2344,7 @@ public readonly partial struct Volume
     public Volume MinValue => (MetersCubed.MinValue);
     public Volume MaxValue => (MetersCubed.MaxValue);
 }
-public readonly partial struct Velocity
+public readonly partial struct Velocity: Measure<Velocity>
 {
     public readonly Number MetersPerSecond;
     public Velocity WithMetersPerSecond(Number metersPerSecond) => (metersPerSecond);
@@ -2379,7 +2377,7 @@ public readonly partial struct Velocity
     public Velocity MinValue => (MetersPerSecond.MinValue);
     public Velocity MaxValue => (MetersPerSecond.MaxValue);
 }
-public readonly partial struct Acceleration
+public readonly partial struct Acceleration: Measure<Acceleration>
 {
     public readonly Number MetersPerSecondSquared;
     public Acceleration WithMetersPerSecondSquared(Number metersPerSecondSquared) => (metersPerSecondSquared);
@@ -2412,7 +2410,7 @@ public readonly partial struct Acceleration
     public Acceleration MinValue => (MetersPerSecondSquared.MinValue);
     public Acceleration MaxValue => (MetersPerSecondSquared.MaxValue);
 }
-public readonly partial struct Force
+public readonly partial struct Force: Measure<Force>
 {
     public readonly Number Newtons;
     public Force WithNewtons(Number newtons) => (newtons);
@@ -2445,7 +2443,7 @@ public readonly partial struct Force
     public Force MinValue => (Newtons.MinValue);
     public Force MaxValue => (Newtons.MaxValue);
 }
-public readonly partial struct Pressure
+public readonly partial struct Pressure: Measure<Pressure>
 {
     public readonly Number Pascals;
     public Pressure WithPascals(Number pascals) => (pascals);
@@ -2478,7 +2476,7 @@ public readonly partial struct Pressure
     public Pressure MinValue => (Pascals.MinValue);
     public Pressure MaxValue => (Pascals.MaxValue);
 }
-public readonly partial struct Energy
+public readonly partial struct Energy: Measure<Energy>
 {
     public readonly Number Joules;
     public Energy WithJoules(Number joules) => (joules);
@@ -2511,7 +2509,7 @@ public readonly partial struct Energy
     public Energy MinValue => (Joules.MinValue);
     public Energy MaxValue => (Joules.MaxValue);
 }
-public readonly partial struct Memory
+public readonly partial struct Memory: Measure<Memory>
 {
     public readonly Count Bytes;
     public Memory WithBytes(Count bytes) => (bytes);
@@ -2544,7 +2542,7 @@ public readonly partial struct Memory
     public Memory MinValue => (Bytes.MinValue);
     public Memory MaxValue => (Bytes.MaxValue);
 }
-public readonly partial struct Frequency
+public readonly partial struct Frequency: Measure<Frequency>
 {
     public readonly Number Hertz;
     public Frequency WithHertz(Number hertz) => (hertz);
@@ -2577,7 +2575,7 @@ public readonly partial struct Frequency
     public Frequency MinValue => (Hertz.MinValue);
     public Frequency MaxValue => (Hertz.MaxValue);
 }
-public readonly partial struct Loudness
+public readonly partial struct Loudness: Measure<Loudness>
 {
     public readonly Number Decibels;
     public Loudness WithDecibels(Number decibels) => (decibels);
@@ -2610,7 +2608,7 @@ public readonly partial struct Loudness
     public Loudness MinValue => (Decibels.MinValue);
     public Loudness MaxValue => (Decibels.MaxValue);
 }
-public readonly partial struct LuminousIntensity
+public readonly partial struct LuminousIntensity: Measure<LuminousIntensity>
 {
     public readonly Number Candelas;
     public LuminousIntensity WithCandelas(Number candelas) => (candelas);
@@ -2643,7 +2641,7 @@ public readonly partial struct LuminousIntensity
     public LuminousIntensity MinValue => (Candelas.MinValue);
     public LuminousIntensity MaxValue => (Candelas.MaxValue);
 }
-public readonly partial struct ElectricPotential
+public readonly partial struct ElectricPotential: Measure<ElectricPotential>
 {
     public readonly Number Volts;
     public ElectricPotential WithVolts(Number volts) => (volts);
@@ -2676,7 +2674,7 @@ public readonly partial struct ElectricPotential
     public ElectricPotential MinValue => (Volts.MinValue);
     public ElectricPotential MaxValue => (Volts.MaxValue);
 }
-public readonly partial struct ElectricCharge
+public readonly partial struct ElectricCharge: Measure<ElectricCharge>
 {
     public readonly Number Columbs;
     public ElectricCharge WithColumbs(Number columbs) => (columbs);
@@ -2709,7 +2707,7 @@ public readonly partial struct ElectricCharge
     public ElectricCharge MinValue => (Columbs.MinValue);
     public ElectricCharge MaxValue => (Columbs.MaxValue);
 }
-public readonly partial struct ElectricCurrent
+public readonly partial struct ElectricCurrent: Measure<ElectricCurrent>
 {
     public readonly Number Amperes;
     public ElectricCurrent WithAmperes(Number amperes) => (amperes);
@@ -2742,7 +2740,7 @@ public readonly partial struct ElectricCurrent
     public ElectricCurrent MinValue => (Amperes.MinValue);
     public ElectricCurrent MaxValue => (Amperes.MaxValue);
 }
-public readonly partial struct ElectricResistance
+public readonly partial struct ElectricResistance: Measure<ElectricResistance>
 {
     public readonly Number Ohms;
     public ElectricResistance WithOhms(Number ohms) => (ohms);
@@ -2775,7 +2773,7 @@ public readonly partial struct ElectricResistance
     public ElectricResistance MinValue => (Ohms.MinValue);
     public ElectricResistance MaxValue => (Ohms.MaxValue);
 }
-public readonly partial struct Power
+public readonly partial struct Power: Measure<Power>
 {
     public readonly Number Watts;
     public Power WithWatts(Number watts) => (watts);
@@ -2808,7 +2806,7 @@ public readonly partial struct Power
     public Power MinValue => (Watts.MinValue);
     public Power MaxValue => (Watts.MaxValue);
 }
-public readonly partial struct Density
+public readonly partial struct Density: Measure<Density>
 {
     public readonly Number KilogramsPerMeterCubed;
     public Density WithKilogramsPerMeterCubed(Number kilogramsPerMeterCubed) => (kilogramsPerMeterCubed);
@@ -2841,7 +2839,7 @@ public readonly partial struct Density
     public Density MinValue => (KilogramsPerMeterCubed.MinValue);
     public Density MaxValue => (KilogramsPerMeterCubed.MaxValue);
 }
-public readonly partial struct NormalDistribution
+public readonly partial struct NormalDistribution: Value<NormalDistribution>
 {
     public readonly Number Mean;
     public readonly Number StandardDeviation;
@@ -2866,7 +2864,7 @@ public readonly partial struct NormalDistribution
     public Boolean NotEquals(NormalDistribution b) => (Mean.NotEquals(b.Mean) & StandardDeviation.NotEquals(b.StandardDeviation));
     public static Boolean operator !=(NormalDistribution a, NormalDistribution b) => a.NotEquals(b);
 }
-public readonly partial struct PoissonDistribution
+public readonly partial struct PoissonDistribution: Value<PoissonDistribution>
 {
     public readonly Number Expected;
     public readonly Count Occurrences;
@@ -2891,7 +2889,7 @@ public readonly partial struct PoissonDistribution
     public Boolean NotEquals(PoissonDistribution b) => (Expected.NotEquals(b.Expected) & Occurrences.NotEquals(b.Occurrences));
     public static Boolean operator !=(PoissonDistribution a, PoissonDistribution b) => a.NotEquals(b);
 }
-public readonly partial struct BernoulliDistribution
+public readonly partial struct BernoulliDistribution: Value<BernoulliDistribution>
 {
     public readonly Probability P;
     public BernoulliDistribution WithP(Probability p) => (p);
@@ -2913,7 +2911,7 @@ public readonly partial struct BernoulliDistribution
     public Boolean NotEquals(BernoulliDistribution b) => (P.NotEquals(b.P));
     public static Boolean operator !=(BernoulliDistribution a, BernoulliDistribution b) => a.NotEquals(b);
 }
-public readonly partial struct Probability
+public readonly partial struct Probability: Numerical<Probability>
 {
     public readonly Number Value;
     public Probability WithValue(Number value) => (value);
@@ -2947,7 +2945,7 @@ public readonly partial struct Probability
     public Probability MinValue => (Value.MinValue);
     public Probability MaxValue => (Value.MaxValue);
 }
-public readonly partial struct BinomialDistribution
+public readonly partial struct BinomialDistribution: Value<BinomialDistribution>
 {
     public readonly Count Trials;
     public readonly Probability P;
