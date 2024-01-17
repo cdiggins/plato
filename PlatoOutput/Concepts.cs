@@ -73,7 +73,7 @@ public interface BooleanOperations<Self>
     Self  Or(Self b);
     Self  Not { get; }
 }
-public interface Interval<Self, TValue, TSize>: Equatable<Self>
+public interface Interval<Self, TValue, TSize>: Equatable<Self>, Value<Self>
 {
     TValue  Min { get; }
     TValue  Max { get; }

@@ -135,10 +135,19 @@ Type analysis for Integer
   Function: Negative(ConcreteType:Integer x)
   Function: ToNumber(ConcreteType:Integer x)
 Type analysis for String
-  Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:StringSelf=ConcreteType:String
-    Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:StringValue=ConcreteType:StringSelf=ConcreteType:String
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:StringValue=ConcreteType:StringSelf=ConcreteType:String
   Concept=Array Expr=Concept:Array<ConcreteType:Character> Subs=Array=ConcreteType:StringT=ConcreteType:CharacterSelf=ConcreteType:String
+  Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:StringSelf=ConcreteType:String
+  Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
+  Function: Equals(Concept:Comparable a, Concept:Comparable b)
+  Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
+  Function: LessThan(Concept:Comparable a, Concept:Comparable b)
+  Function: LessThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+  Function: GreaterThan(Concept:Comparable a, Concept:Comparable b)
+  Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+  Function: Lesser(Concept:Comparable a, Concept:Comparable b)
+  Function: Greater(Concept:Comparable a, Concept:Comparable b)
+    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:StringComparable=ConcreteType:StringSelf=ConcreteType:String
+  Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:StringSelf=ConcreteType:String
 Type analysis for Boolean
   Concept=BooleanOperations Expr=Concept:BooleanOperations Subs=BooleanOperations=ConcreteType:BooleanSelf=ConcreteType:Boolean
   Function: And(ConcreteType:Boolean x, ConcreteType:Boolean y)
@@ -626,6 +635,9 @@ Type analysis for AlignedBox2D
   Function: Clamp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
   Function: Within(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:AlignedBox2DInterval=ConcreteType:AlignedBox2DTSize=ConcreteType:Vector2DTValue=ConcreteType:Point2DSelf=ConcreteType:AlignedBox2D
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:AlignedBox2DInterval=ConcreteType:AlignedBox2DTSize=ConcreteType:Vector2DTValue=ConcreteType:Point2DSelf=ConcreteType:AlignedBox2D
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:AlignedBox2DValue=ConcreteType:AlignedBox2DInterval=ConcreteType:AlignedBox2DTSize=ConcreteType:Vector2DTValue=ConcreteType:Point2DSelf=ConcreteType:AlignedBox2D
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:AlignedBox2DValue=ConcreteType:AlignedBox2DInterval=ConcreteType:AlignedBox2DTSize=ConcreteType:Vector2DTValue=ConcreteType:Point2DSelf=ConcreteType:AlignedBox2D
 Type analysis for AlignedBox3D
   Concept=Interval Expr=Concept:Interval<ConcreteType:Point3D,ConcreteType:Vector3D> Subs=Interval=ConcreteType:AlignedBox3DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point3DSelf=ConcreteType:AlignedBox3D
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
@@ -649,6 +661,9 @@ Type analysis for AlignedBox3D
   Function: Clamp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
   Function: Within(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:AlignedBox3DInterval=ConcreteType:AlignedBox3DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point3DSelf=ConcreteType:AlignedBox3D
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:AlignedBox3DInterval=ConcreteType:AlignedBox3DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point3DSelf=ConcreteType:AlignedBox3D
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:AlignedBox3DValue=ConcreteType:AlignedBox3DInterval=ConcreteType:AlignedBox3DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point3DSelf=ConcreteType:AlignedBox3D
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:AlignedBox3DValue=ConcreteType:AlignedBox3DInterval=ConcreteType:AlignedBox3DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point3DSelf=ConcreteType:AlignedBox3D
 Type analysis for Complex
   Concept=Vector Expr=Concept:Vector Subs=Vector=ConcreteType:ComplexSelf=ConcreteType:Complex
   Function: Aggregate(Concept:Vector v, TypeVariable:$T r, ConcreteType:Function2<TypeVariable:$T,ConcreteType:Number,TypeVariable:$T> f)
@@ -817,6 +832,9 @@ Type analysis for Line2D
   Function: Clamp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
   Function: Within(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Line2DInterval=ConcreteType:Line2DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point2DSelf=ConcreteType:Line2D
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Line2DInterval=ConcreteType:Line2DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point2DSelf=ConcreteType:Line2D
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Line2DValue=ConcreteType:Line2DInterval=ConcreteType:Line2DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point2DSelf=ConcreteType:Line2D
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Line2DValue=ConcreteType:Line2DInterval=ConcreteType:Line2DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point2DSelf=ConcreteType:Line2D
 Type analysis for Line3D
   Concept=Interval Expr=Concept:Interval<ConcreteType:Point3D,ConcreteType:Vector3D> Subs=Interval=ConcreteType:Line3DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point3DSelf=ConcreteType:Line3D
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
@@ -840,6 +858,9 @@ Type analysis for Line3D
   Function: Clamp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
   Function: Within(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Line3DInterval=ConcreteType:Line3DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point3DSelf=ConcreteType:Line3D
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Line3DInterval=ConcreteType:Line3DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point3DSelf=ConcreteType:Line3D
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Line3DValue=ConcreteType:Line3DInterval=ConcreteType:Line3DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point3DSelf=ConcreteType:Line3D
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Line3DValue=ConcreteType:Line3DInterval=ConcreteType:Line3DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point3DSelf=ConcreteType:Line3D
 Type analysis for Color
   Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:ColorSelf=ConcreteType:Color
     Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:ColorCoordinate=ConcreteType:ColorSelf=ConcreteType:Color
@@ -1345,6 +1366,9 @@ Type analysis for TimeRange
   Function: Clamp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
   Function: Within(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:TimeRangeInterval=ConcreteType:TimeRangeTSize=ConcreteType:TimeTValue=ConcreteType:DateTimeSelf=ConcreteType:TimeRange
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:TimeRangeInterval=ConcreteType:TimeRangeTSize=ConcreteType:TimeTValue=ConcreteType:DateTimeSelf=ConcreteType:TimeRange
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:TimeRangeValue=ConcreteType:TimeRangeInterval=ConcreteType:TimeRangeTSize=ConcreteType:TimeTValue=ConcreteType:DateTimeSelf=ConcreteType:TimeRange
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:TimeRangeValue=ConcreteType:TimeRangeInterval=ConcreteType:TimeRangeTSize=ConcreteType:TimeTValue=ConcreteType:DateTimeSelf=ConcreteType:TimeRange
 Type analysis for DateTime
   Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:DateTimeSelf=ConcreteType:DateTime
     Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:DateTimeCoordinate=ConcreteType:DateTimeSelf=ConcreteType:DateTime
@@ -1385,6 +1409,9 @@ Type analysis for AnglePair
   Function: Clamp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
   Function: Within(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:AnglePairInterval=ConcreteType:AnglePairTSize=ConcreteType:AngleTValue=ConcreteType:AngleSelf=ConcreteType:AnglePair
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:AnglePairInterval=ConcreteType:AnglePairTSize=ConcreteType:AngleTValue=ConcreteType:AngleSelf=ConcreteType:AnglePair
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:AnglePairValue=ConcreteType:AnglePairInterval=ConcreteType:AnglePairTSize=ConcreteType:AngleTValue=ConcreteType:AngleSelf=ConcreteType:AnglePair
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:AnglePairValue=ConcreteType:AnglePairInterval=ConcreteType:AnglePairTSize=ConcreteType:AngleTValue=ConcreteType:AngleSelf=ConcreteType:AnglePair
 Type analysis for Ring
   Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:RingSelf=ConcreteType:Ring
     Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:RingValue=ConcreteType:RingSelf=ConcreteType:Ring
@@ -1416,6 +1443,9 @@ Type analysis for RealInterval
   Function: Clamp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
   Function: Within(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:RealIntervalInterval=ConcreteType:RealIntervalTSize=ConcreteType:NumberTValue=ConcreteType:NumberSelf=ConcreteType:RealInterval
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:RealIntervalInterval=ConcreteType:RealIntervalTSize=ConcreteType:NumberTValue=ConcreteType:NumberSelf=ConcreteType:RealInterval
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:RealIntervalValue=ConcreteType:RealIntervalInterval=ConcreteType:RealIntervalTSize=ConcreteType:NumberTValue=ConcreteType:NumberSelf=ConcreteType:RealInterval
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:RealIntervalValue=ConcreteType:RealIntervalInterval=ConcreteType:RealIntervalTSize=ConcreteType:NumberTValue=ConcreteType:NumberSelf=ConcreteType:RealInterval
 Type analysis for Capsule
   Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:CapsuleSelf=ConcreteType:Capsule
     Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:CapsuleValue=ConcreteType:CapsuleSelf=ConcreteType:Capsule

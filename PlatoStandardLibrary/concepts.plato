@@ -118,10 +118,8 @@ concept BooleanOperations
 }
 
 concept Interval<TValue, TSize>    
-    where TValue: Interpolatable
-    where TValue: AdditiveArithmetic<TSize>
-    where TSize: ScalarArithmetic 
-    inherits Equatable
+    where TValue: Interpolatable, TValue: AdditiveArithmetic<TSize>, TSize: ScalarArithmetic 
+    inherits Equatable, Value
 {
     Min(x: Self): TValue;
     Max(x: Self): TValue;

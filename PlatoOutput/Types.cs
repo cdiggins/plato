@@ -25,7 +25,7 @@ public readonly partial struct Integer: Numerical<Integer>
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
 }
-public readonly partial struct String: Value<String>, Array<Character>
+public readonly partial struct String: Array<Character>, Comparable<String>, Equatable<String>
 {
     public readonly string Value;
     public String WithValue(string value) => (value);
@@ -633,6 +633,10 @@ public readonly partial struct AlignedBox2D: Interval<AlignedBox2D, Point2D, Vec
     public Point2D Min => throw new NotImplementedException();
     public Point2D Max => throw new NotImplementedException();
     public Vector2D Size => throw new NotImplementedException();
+    public AlignedBox2D Zero => (A.Zero, B.Zero);
+    public AlignedBox2D One => (A.One, B.One);
+    public AlignedBox2D MinValue => (A.MinValue, B.MinValue);
+    public AlignedBox2D MaxValue => (A.MaxValue, B.MaxValue);
     public Boolean Equals(AlignedBox2D b) => (A.Equals(b.A) & B.Equals(b.B));
     public static Boolean operator ==(AlignedBox2D a, AlignedBox2D b) => a.Equals(b);
     public Boolean NotEquals(AlignedBox2D b) => (A.NotEquals(b.A) & B.NotEquals(b.B));
@@ -657,6 +661,10 @@ public readonly partial struct AlignedBox3D: Interval<AlignedBox3D, Point3D, Vec
     public Point3D Min => throw new NotImplementedException();
     public Point3D Max => throw new NotImplementedException();
     public Vector3D Size => throw new NotImplementedException();
+    public AlignedBox3D Zero => (A.Zero, B.Zero);
+    public AlignedBox3D One => (A.One, B.One);
+    public AlignedBox3D MinValue => (A.MinValue, B.MinValue);
+    public AlignedBox3D MaxValue => (A.MaxValue, B.MaxValue);
     public Boolean Equals(AlignedBox3D b) => (A.Equals(b.A) & B.Equals(b.B));
     public static Boolean operator ==(AlignedBox3D a, AlignedBox3D b) => a.Equals(b);
     public Boolean NotEquals(AlignedBox3D b) => (A.NotEquals(b.A) & B.NotEquals(b.B));
@@ -982,6 +990,10 @@ public readonly partial struct Line2D: Interval<Line2D, Point2D, Vector3D>
     public Point2D Min => throw new NotImplementedException();
     public Point2D Max => throw new NotImplementedException();
     public Vector3D Size => throw new NotImplementedException();
+    public Line2D Zero => (A.Zero, B.Zero);
+    public Line2D One => (A.One, B.One);
+    public Line2D MinValue => (A.MinValue, B.MinValue);
+    public Line2D MaxValue => (A.MaxValue, B.MaxValue);
     public Boolean Equals(Line2D b) => (A.Equals(b.A) & B.Equals(b.B));
     public static Boolean operator ==(Line2D a, Line2D b) => a.Equals(b);
     public Boolean NotEquals(Line2D b) => (A.NotEquals(b.A) & B.NotEquals(b.B));
@@ -1006,6 +1018,10 @@ public readonly partial struct Line3D: Interval<Line3D, Point3D, Vector3D>
     public Point3D Min => throw new NotImplementedException();
     public Point3D Max => throw new NotImplementedException();
     public Vector3D Size => throw new NotImplementedException();
+    public Line3D Zero => (A.Zero, B.Zero);
+    public Line3D One => (A.One, B.One);
+    public Line3D MinValue => (A.MinValue, B.MinValue);
+    public Line3D MaxValue => (A.MaxValue, B.MaxValue);
     public Boolean Equals(Line3D b) => (A.Equals(b.A) & B.Equals(b.B));
     public static Boolean operator ==(Line3D a, Line3D b) => a.Equals(b);
     public Boolean NotEquals(Line3D b) => (A.NotEquals(b.A) & B.NotEquals(b.B));
@@ -1737,6 +1753,10 @@ public readonly partial struct TimeRange: Interval<TimeRange, DateTime, Time>
     public DateTime Min => throw new NotImplementedException();
     public DateTime Max => throw new NotImplementedException();
     public Time Size => throw new NotImplementedException();
+    public TimeRange Zero => (Begin.Zero, End.Zero);
+    public TimeRange One => (Begin.One, End.One);
+    public TimeRange MinValue => (Begin.MinValue, End.MinValue);
+    public TimeRange MaxValue => (Begin.MaxValue, End.MaxValue);
     public Boolean Equals(TimeRange b) => (Begin.Equals(b.Begin) & End.Equals(b.End));
     public static Boolean operator ==(TimeRange a, TimeRange b) => a.Equals(b);
     public Boolean NotEquals(TimeRange b) => (Begin.NotEquals(b.Begin) & End.NotEquals(b.End));
@@ -1795,6 +1815,10 @@ public readonly partial struct AnglePair: Interval<AnglePair, Angle, Angle>
     public Angle Min => throw new NotImplementedException();
     public Angle Max => throw new NotImplementedException();
     public Angle Size => throw new NotImplementedException();
+    public AnglePair Zero => (Start.Zero, End.Zero);
+    public AnglePair One => (Start.One, End.One);
+    public AnglePair MinValue => (Start.MinValue, End.MinValue);
+    public AnglePair MaxValue => (Start.MaxValue, End.MaxValue);
     public Boolean Equals(AnglePair b) => (Start.Equals(b.Start) & End.Equals(b.End));
     public static Boolean operator ==(AnglePair a, AnglePair b) => a.Equals(b);
     public Boolean NotEquals(AnglePair b) => (Start.NotEquals(b.Start) & End.NotEquals(b.End));
@@ -1869,6 +1893,10 @@ public readonly partial struct RealInterval: Interval<RealInterval, Number, Numb
     public Number Min => throw new NotImplementedException();
     public Number Max => throw new NotImplementedException();
     public Number Size => throw new NotImplementedException();
+    public RealInterval Zero => (A.Zero, B.Zero);
+    public RealInterval One => (A.One, B.One);
+    public RealInterval MinValue => (A.MinValue, B.MinValue);
+    public RealInterval MaxValue => (A.MaxValue, B.MaxValue);
     public Boolean Equals(RealInterval b) => (A.Equals(b.A) & B.Equals(b.B));
     public static Boolean operator ==(RealInterval a, RealInterval b) => a.Equals(b);
     public Boolean NotEquals(RealInterval b) => (A.NotEquals(b.A) & B.NotEquals(b.B));

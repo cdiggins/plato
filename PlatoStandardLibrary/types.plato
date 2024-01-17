@@ -12,7 +12,7 @@ type Integer
 
 // Built-in type that represents text
 type String
-    implements Value, Array<Character>
+    implements Array<Character>, Comparable, Equatable
 { }
 
 // Built-in type that represents a truth value 

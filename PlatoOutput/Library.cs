@@ -179,6 +179,30 @@ public readonly partial struct Integer
 }
 public readonly partial struct String
 {
+    public Boolean Between(String min, String max) =>
+        this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Boolean Equals(String b) =>
+        this.Compare(b).Equals(((Integer)0));
+    public static Boolean operator ==(String a, String b) => a.Equals(b);
+    public Boolean NotEquals(String b) =>
+        this.Compare(b).NotEquals(((Integer)0));
+    public static Boolean operator !=(String a, String b) => a.NotEquals(b);
+    public Boolean LessThan(String b) =>
+        this.Compare(b).LessThan(((Integer)0));
+    public static Boolean operator <(String a, String b) => a.LessThan(b);
+    public Boolean LessThanOrEquals(String b) =>
+        this.Compare(b).LessThanOrEquals(((Integer)0));
+    public static Boolean operator <=(String a, String b) => a.LessThanOrEquals(b);
+    public Boolean GreaterThan(String b) =>
+        this.Compare(b).GreaterThan(((Integer)0));
+    public static Boolean operator >(String a, String b) => a.GreaterThan(b);
+    public Boolean GreaterThanOrEquals(String b) =>
+        this.Compare(b).GreaterThanOrEquals(((Integer)0));
+    public static Boolean operator >=(String a, String b) => a.GreaterThanOrEquals(b);
+    public String Lesser(String b) =>
+        this.LessThanOrEquals(b) ? this : b;
+    public String Greater(String b) =>
+        this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Boolean
 {
