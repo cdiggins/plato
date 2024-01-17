@@ -26,8 +26,6 @@ namespace Plato.CSharpWriter
         {
             "Dynamic",
             "Array1",
-            "Tuple2",
-            "Tuple3",
             "Function0",
             "Function1",
             "Function2",
@@ -377,7 +375,7 @@ namespace Plato.CSharpWriter
             WriteLine(implements);
             WriteStartBlock();
 
-            var name = t.Name;
+            var name = t.Name + typeParamsStr;
             var fieldTypes = t.Fields.Select(f => TypeStr(f.Type)).ToList();
             var fieldNames = t.Fields.Select(f => f.Name).ToList();
             var parameterNames = fieldNames.Select(FieldNameToParameterName);
@@ -420,11 +418,11 @@ namespace Plato.CSharpWriter
             var fieldNamesStr = fieldNames.JoinStringsWithComma();
 
             // Regular Constructor 
-            WriteLine($"public {name}({parametersStr}) => ({fieldNamesStr}) = ({parameterNamesStr});");
+            WriteLine($"public {t.Name}({parametersStr}) => ({fieldNamesStr}) = ({parameterNamesStr});");
             
             // Parameterless constructor
             if (!EmitStructsInsteadOfClasses)
-                WriteLine($"public {name}() {{ }}");
+                WriteLine($"public {t.Name}() {{ }}");
 
             WriteLine($"public static {name} Default = new {name}();");
 

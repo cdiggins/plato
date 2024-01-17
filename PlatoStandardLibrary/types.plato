@@ -7,7 +7,7 @@ type Number
 
 // Built-in type that represent a positive or negative whole number 
 type Integer   
-    implements Numerical
+    implements WholeNumber
 { }
 
 // Built-in type that represents text
@@ -29,16 +29,18 @@ type Character
 type Dynamic
 { }
 
-// An integer type in the range of 0 to N is used to return the number of items in a collection or set. 
-type Count
-    implements Numerical
+// An integer type in the range of 0 to N is used to return the number of items 
+// https://en.wikipedia.org/wiki/Cardinal_number
+type Cardinal
+    implements WholeNumber
 {
     Value: Integer;
 }
 
 // An integer type in the range of -1 to N and is used for indexing arrays and collections 
+// The -1 value represent "not present". 
 type Index
-    implements Value
+    implements WholeNumber
 {
     Value: Integer;
 }
@@ -256,18 +258,27 @@ type Quad3D
 }
 
 type Point2D
-    implements Coordinate
+    implements Coordinate, AdditiveArithmetic<Vector2D>
 {
     X: Number;
     Y: Number;
 }
 
 type Point3D
-    implements Coordinate
+    implements Coordinate, AdditiveArithmetic<Vector3D>
 {
     X: Number;
     Y: Number;
     Z: Number;
+}
+
+type Point4D
+    implements Coordinate, AdditiveArithmetic<Vector4D>
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+    W: Number;
 }
 
 type Line2D
@@ -706,7 +717,7 @@ type Energy
 type Memory
     implements Measure
 {
-    Bytes: Count;
+    Bytes: Integer;
 }
 
 // https://en.wikipedia.org/wiki/Frequency    
@@ -785,7 +796,7 @@ type PoissonDistribution
     implements Value
 {
     Expected: Number;
-    Occurrences: Count;
+    Occurrences: Integer;
 }
 
 // https://en.wikipedia.org/wiki/Bernoulli_distribution    
@@ -806,7 +817,7 @@ type Probability
 type BinomialDistribution
     implements Value
 {
-    Trials: Count;
+    Trials: Integer;
     P: Probability;
 }
 
@@ -820,14 +831,12 @@ type Array1<T>
 }
 
 type Tuple2<T0, T1>
-    implements Value
 {
     Item0: T0;
     Item1: T1;
 }
 
 type Tuple3<T0, T1, T2>
-    implements Value
 {
     Item0: T0;
     Item1: T1;

@@ -48,9 +48,14 @@ concept Measure
     Value(x: Self): Number;
 }
 
-// A numerical type represents things like floats, integers, complex numbers, and vectors. 
+// Used for integer and cardinal types.
+concept WholeNumber 
+    inherits Arithmetic, Equatable, Comparable, Magnitudinal
+{ }
+
+// A numerical type represents things like floats and complex numbers
 concept Numerical 
-    inherits Value, Arithmetic, Equatable, Comparable, Magnitudinal, Interpolatable
+    inherits Value, ScalarArithmetic, Arithmetic, Equatable, Comparable, Magnitudinal, Interpolatable
 {
 }
 
@@ -86,7 +91,6 @@ concept AdditiveInverse
     Negative(self: Self): Self;
 }
 
-
 concept MultiplicativeInverse
 {
     Reciprocal(self: Self): Self;
@@ -100,9 +104,9 @@ concept AdditiveArithmetic<T>
 
 concept MultiplicativeArithmetic<T>
 {
-    Multiply(self: Self, other: Self): Self;
-    Divide(self: Self, other: Self): Self;    
-    Modulo(self: Self, other: Self): Self;
+    Multiply(self: Self, other: T): Self;
+    Divide(self: Self, other: T): Self;    
+    Modulo(self: Self, other: T): Self;
 }
 
 concept ScalarArithmetic

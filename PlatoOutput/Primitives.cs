@@ -68,3 +68,8 @@ public readonly partial struct Dynamic
     public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { (Dynamic)Value };
 }
+public static class PrimitiveExtensions
+{
+    public static Tuple2<T0, T1> Tuple<T0, T1>(this T0 self, T1 other)
+        => (self, other);
+}

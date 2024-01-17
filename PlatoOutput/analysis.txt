@@ -17,12 +17,16 @@ Type analysis for Number
   Function: Eighth(Concept:Numerical x)
   Function: Tenth(Concept:Numerical x)
   Function: Twice(Concept:Numerical x)
-  Function: SmoothStep(Concept:Numerical x)
   Function: Pow2(Concept:Numerical x)
+  Function: Epsilon(Concept:Numerical x, Concept:Numerical y)
+  Function: AlmostEqual(Concept:Numerical x, Concept:Numerical y)
   Function: Lerp(Concept:Numerical a, Concept:Numerical b, ConcreteType:Number t)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:NumberNumerical=ConcreteType:NumberSelf=ConcreteType:Number
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:NumberValue=ConcreteType:NumberNumerical=ConcreteType:NumberSelf=ConcreteType:Number
       Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:NumberValue=ConcreteType:NumberNumerical=ConcreteType:NumberSelf=ConcreteType:Number
+    Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs=ScalarArithmetic=ConcreteType:NumberNumerical=ConcreteType:NumberSelf=ConcreteType:Number
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:NumberT=ConcreteType:NumberScalarArithmetic=ConcreteType:NumberNumerical=ConcreteType:NumberSelf=ConcreteType:Number
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:NumberT=ConcreteType:NumberScalarArithmetic=ConcreteType:NumberNumerical=ConcreteType:NumberSelf=ConcreteType:Number
     Concept=Arithmetic Expr=Concept:Arithmetic Subs=Arithmetic=ConcreteType:NumberNumerical=ConcreteType:NumberSelf=ConcreteType:Number
       Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=AdditiveArithmetic=ConcreteType:NumberT=TypeVariable:SelfArithmetic=ConcreteType:NumberNumerical=ConcreteType:NumberSelf=ConcreteType:Number
       Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=MultiplicativeArithmetic=ConcreteType:NumberT=TypeVariable:SelfArithmetic=ConcreteType:NumberNumerical=ConcreteType:NumberSelf=ConcreteType:Number
@@ -67,43 +71,23 @@ Type analysis for Number
   Function: Modulo(ConcreteType:Number x, ConcreteType:Number y)
   Function: Negative(ConcreteType:Number x)
   Function: SquareRoot(ConcreteType:Number x)
+  Function: SmoothStep(ConcreteType:Number x)
   Function: ClampOne(ConcreteType:Number x)
   Function: AlmostZero(ConcreteType:Number x)
   Function: Radians(ConcreteType:Number x)
   Function: Degrees(ConcreteType:Number x)
   Function: Turns(ConcreteType:Number x)
+  Function: Fahrenheit(ConcreteType:Number x)
+  Function: Kelvin(ConcreteType:Number x)
 Type analysis for Integer
-  Concept=Numerical Expr=Concept:Numerical Subs=Numerical=ConcreteType:IntegerSelf=ConcreteType:Integer
-  Function: Square(Concept:Numerical x)
-  Function: PlusOne(Concept:Numerical x)
-  Function: MinusOne(Concept:Numerical x)
-  Function: FromOne(Concept:Numerical x)
-  Function: IsPositive(Concept:Numerical x)
-  Function: GtZ(Concept:Numerical x)
-  Function: LtZ(Concept:Numerical x)
-  Function: GtEqZ(Concept:Numerical x)
-  Function: LtEqZ(Concept:Numerical x)
-  Function: IsNegative(Concept:Numerical x)
-  Function: Sign(Concept:Numerical x)
-  Function: Abs(Concept:Numerical x)
-  Function: Half(Concept:Numerical x)
-  Function: Quarter(Concept:Numerical x)
-  Function: Eighth(Concept:Numerical x)
-  Function: Tenth(Concept:Numerical x)
-  Function: Twice(Concept:Numerical x)
-  Function: SmoothStep(Concept:Numerical x)
-  Function: Pow2(Concept:Numerical x)
-  Function: Lerp(Concept:Numerical a, Concept:Numerical b, ConcreteType:Number t)
-    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:IntegerNumerical=ConcreteType:IntegerSelf=ConcreteType:Integer
-      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:IntegerValue=ConcreteType:IntegerNumerical=ConcreteType:IntegerSelf=ConcreteType:Integer
-      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:IntegerValue=ConcreteType:IntegerNumerical=ConcreteType:IntegerSelf=ConcreteType:Integer
-    Concept=Arithmetic Expr=Concept:Arithmetic Subs=Arithmetic=ConcreteType:IntegerNumerical=ConcreteType:IntegerSelf=ConcreteType:Integer
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=AdditiveArithmetic=ConcreteType:IntegerT=TypeVariable:SelfArithmetic=ConcreteType:IntegerNumerical=ConcreteType:IntegerSelf=ConcreteType:Integer
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=MultiplicativeArithmetic=ConcreteType:IntegerT=TypeVariable:SelfArithmetic=ConcreteType:IntegerNumerical=ConcreteType:IntegerSelf=ConcreteType:Integer
-      Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:IntegerArithmetic=ConcreteType:IntegerNumerical=ConcreteType:IntegerSelf=ConcreteType:Integer
-      Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:IntegerArithmetic=ConcreteType:IntegerNumerical=ConcreteType:IntegerSelf=ConcreteType:Integer
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:IntegerNumerical=ConcreteType:IntegerSelf=ConcreteType:Integer
-    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:IntegerNumerical=ConcreteType:IntegerSelf=ConcreteType:Integer
+  Concept=WholeNumber Expr=Concept:WholeNumber Subs=WholeNumber=ConcreteType:IntegerSelf=ConcreteType:Integer
+    Concept=Arithmetic Expr=Concept:Arithmetic Subs=Arithmetic=ConcreteType:IntegerWholeNumber=ConcreteType:IntegerSelf=ConcreteType:Integer
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=AdditiveArithmetic=ConcreteType:IntegerT=TypeVariable:SelfArithmetic=ConcreteType:IntegerWholeNumber=ConcreteType:IntegerSelf=ConcreteType:Integer
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=MultiplicativeArithmetic=ConcreteType:IntegerT=TypeVariable:SelfArithmetic=ConcreteType:IntegerWholeNumber=ConcreteType:IntegerSelf=ConcreteType:Integer
+      Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:IntegerArithmetic=ConcreteType:IntegerWholeNumber=ConcreteType:IntegerSelf=ConcreteType:Integer
+      Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:IntegerArithmetic=ConcreteType:IntegerWholeNumber=ConcreteType:IntegerSelf=ConcreteType:Integer
+    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:IntegerWholeNumber=ConcreteType:IntegerSelf=ConcreteType:Integer
+    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:IntegerWholeNumber=ConcreteType:IntegerSelf=ConcreteType:Integer
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
     Function: Equals(Concept:Comparable a, Concept:Comparable b)
     Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
@@ -113,9 +97,9 @@ Type analysis for Integer
     Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
     Function: Lesser(Concept:Comparable a, Concept:Comparable b)
     Function: Greater(Concept:Comparable a, Concept:Comparable b)
-      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:IntegerComparable=ConcreteType:IntegerNumerical=ConcreteType:IntegerSelf=ConcreteType:Integer
-    Concept=Magnitudinal Expr=Concept:Magnitudinal Subs=Magnitudinal=ConcreteType:IntegerNumerical=ConcreteType:IntegerSelf=ConcreteType:Integer
-      Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:IntegerMagnitudinal=ConcreteType:IntegerNumerical=ConcreteType:IntegerSelf=ConcreteType:Integer
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:IntegerComparable=ConcreteType:IntegerWholeNumber=ConcreteType:IntegerSelf=ConcreteType:Integer
+    Concept=Magnitudinal Expr=Concept:Magnitudinal Subs=Magnitudinal=ConcreteType:IntegerWholeNumber=ConcreteType:IntegerSelf=ConcreteType:Integer
+      Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:IntegerMagnitudinal=ConcreteType:IntegerWholeNumber=ConcreteType:IntegerSelf=ConcreteType:Integer
       Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
       Function: Equals(Concept:Comparable a, Concept:Comparable b)
       Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
@@ -125,8 +109,7 @@ Type analysis for Integer
       Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
       Function: Lesser(Concept:Comparable a, Concept:Comparable b)
       Function: Greater(Concept:Comparable a, Concept:Comparable b)
-        Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:IntegerComparable=ConcreteType:IntegerMagnitudinal=ConcreteType:IntegerNumerical=ConcreteType:IntegerSelf=ConcreteType:Integer
-    Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:IntegerNumerical=ConcreteType:IntegerSelf=ConcreteType:Integer
+        Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:IntegerComparable=ConcreteType:IntegerMagnitudinal=ConcreteType:IntegerWholeNumber=ConcreteType:IntegerSelf=ConcreteType:Integer
   Function: Add(ConcreteType:Integer x, ConcreteType:Integer y)
   Function: Subtract(ConcreteType:Integer x, ConcreteType:Integer y)
   Function: Divide(ConcreteType:Integer x, ConcreteType:Integer y)
@@ -158,38 +141,15 @@ Type analysis for Character
     Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:CharacterValue=ConcreteType:CharacterSelf=ConcreteType:Character
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:CharacterValue=ConcreteType:CharacterSelf=ConcreteType:Character
 Type analysis for Dynamic
-Type analysis for Count
-  Concept=Numerical Expr=Concept:Numerical Subs=Numerical=ConcreteType:CountSelf=ConcreteType:Count
-  Function: Square(Concept:Numerical x)
-  Function: PlusOne(Concept:Numerical x)
-  Function: MinusOne(Concept:Numerical x)
-  Function: FromOne(Concept:Numerical x)
-  Function: IsPositive(Concept:Numerical x)
-  Function: GtZ(Concept:Numerical x)
-  Function: LtZ(Concept:Numerical x)
-  Function: GtEqZ(Concept:Numerical x)
-  Function: LtEqZ(Concept:Numerical x)
-  Function: IsNegative(Concept:Numerical x)
-  Function: Sign(Concept:Numerical x)
-  Function: Abs(Concept:Numerical x)
-  Function: Half(Concept:Numerical x)
-  Function: Quarter(Concept:Numerical x)
-  Function: Eighth(Concept:Numerical x)
-  Function: Tenth(Concept:Numerical x)
-  Function: Twice(Concept:Numerical x)
-  Function: SmoothStep(Concept:Numerical x)
-  Function: Pow2(Concept:Numerical x)
-  Function: Lerp(Concept:Numerical a, Concept:Numerical b, ConcreteType:Number t)
-    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:CountNumerical=ConcreteType:CountSelf=ConcreteType:Count
-      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:CountValue=ConcreteType:CountNumerical=ConcreteType:CountSelf=ConcreteType:Count
-      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:CountValue=ConcreteType:CountNumerical=ConcreteType:CountSelf=ConcreteType:Count
-    Concept=Arithmetic Expr=Concept:Arithmetic Subs=Arithmetic=ConcreteType:CountNumerical=ConcreteType:CountSelf=ConcreteType:Count
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=AdditiveArithmetic=ConcreteType:CountT=TypeVariable:SelfArithmetic=ConcreteType:CountNumerical=ConcreteType:CountSelf=ConcreteType:Count
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=MultiplicativeArithmetic=ConcreteType:CountT=TypeVariable:SelfArithmetic=ConcreteType:CountNumerical=ConcreteType:CountSelf=ConcreteType:Count
-      Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:CountArithmetic=ConcreteType:CountNumerical=ConcreteType:CountSelf=ConcreteType:Count
-      Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:CountArithmetic=ConcreteType:CountNumerical=ConcreteType:CountSelf=ConcreteType:Count
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:CountNumerical=ConcreteType:CountSelf=ConcreteType:Count
-    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:CountNumerical=ConcreteType:CountSelf=ConcreteType:Count
+Type analysis for Cardinal
+  Concept=WholeNumber Expr=Concept:WholeNumber Subs=WholeNumber=ConcreteType:CardinalSelf=ConcreteType:Cardinal
+    Concept=Arithmetic Expr=Concept:Arithmetic Subs=Arithmetic=ConcreteType:CardinalWholeNumber=ConcreteType:CardinalSelf=ConcreteType:Cardinal
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=AdditiveArithmetic=ConcreteType:CardinalT=TypeVariable:SelfArithmetic=ConcreteType:CardinalWholeNumber=ConcreteType:CardinalSelf=ConcreteType:Cardinal
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=MultiplicativeArithmetic=ConcreteType:CardinalT=TypeVariable:SelfArithmetic=ConcreteType:CardinalWholeNumber=ConcreteType:CardinalSelf=ConcreteType:Cardinal
+      Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:CardinalArithmetic=ConcreteType:CardinalWholeNumber=ConcreteType:CardinalSelf=ConcreteType:Cardinal
+      Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:CardinalArithmetic=ConcreteType:CardinalWholeNumber=ConcreteType:CardinalSelf=ConcreteType:Cardinal
+    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:CardinalWholeNumber=ConcreteType:CardinalSelf=ConcreteType:Cardinal
+    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:CardinalWholeNumber=ConcreteType:CardinalSelf=ConcreteType:Cardinal
     Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
     Function: Equals(Concept:Comparable a, Concept:Comparable b)
     Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
@@ -199,9 +159,9 @@ Type analysis for Count
     Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
     Function: Lesser(Concept:Comparable a, Concept:Comparable b)
     Function: Greater(Concept:Comparable a, Concept:Comparable b)
-      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:CountComparable=ConcreteType:CountNumerical=ConcreteType:CountSelf=ConcreteType:Count
-    Concept=Magnitudinal Expr=Concept:Magnitudinal Subs=Magnitudinal=ConcreteType:CountNumerical=ConcreteType:CountSelf=ConcreteType:Count
-      Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:CountMagnitudinal=ConcreteType:CountNumerical=ConcreteType:CountSelf=ConcreteType:Count
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:CardinalComparable=ConcreteType:CardinalWholeNumber=ConcreteType:CardinalSelf=ConcreteType:Cardinal
+    Concept=Magnitudinal Expr=Concept:Magnitudinal Subs=Magnitudinal=ConcreteType:CardinalWholeNumber=ConcreteType:CardinalSelf=ConcreteType:Cardinal
+      Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:CardinalMagnitudinal=ConcreteType:CardinalWholeNumber=ConcreteType:CardinalSelf=ConcreteType:Cardinal
       Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
       Function: Equals(Concept:Comparable a, Concept:Comparable b)
       Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
@@ -211,12 +171,38 @@ Type analysis for Count
       Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
       Function: Lesser(Concept:Comparable a, Concept:Comparable b)
       Function: Greater(Concept:Comparable a, Concept:Comparable b)
-        Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:CountComparable=ConcreteType:CountMagnitudinal=ConcreteType:CountNumerical=ConcreteType:CountSelf=ConcreteType:Count
-    Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:CountNumerical=ConcreteType:CountSelf=ConcreteType:Count
+        Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:CardinalComparable=ConcreteType:CardinalMagnitudinal=ConcreteType:CardinalWholeNumber=ConcreteType:CardinalSelf=ConcreteType:Cardinal
 Type analysis for Index
-  Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:IndexSelf=ConcreteType:Index
-    Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:IndexValue=ConcreteType:IndexSelf=ConcreteType:Index
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:IndexValue=ConcreteType:IndexSelf=ConcreteType:Index
+  Concept=WholeNumber Expr=Concept:WholeNumber Subs=WholeNumber=ConcreteType:IndexSelf=ConcreteType:Index
+    Concept=Arithmetic Expr=Concept:Arithmetic Subs=Arithmetic=ConcreteType:IndexWholeNumber=ConcreteType:IndexSelf=ConcreteType:Index
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=AdditiveArithmetic=ConcreteType:IndexT=TypeVariable:SelfArithmetic=ConcreteType:IndexWholeNumber=ConcreteType:IndexSelf=ConcreteType:Index
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=MultiplicativeArithmetic=ConcreteType:IndexT=TypeVariable:SelfArithmetic=ConcreteType:IndexWholeNumber=ConcreteType:IndexSelf=ConcreteType:Index
+      Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:IndexArithmetic=ConcreteType:IndexWholeNumber=ConcreteType:IndexSelf=ConcreteType:Index
+      Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:IndexArithmetic=ConcreteType:IndexWholeNumber=ConcreteType:IndexSelf=ConcreteType:Index
+    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:IndexWholeNumber=ConcreteType:IndexSelf=ConcreteType:Index
+    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:IndexWholeNumber=ConcreteType:IndexSelf=ConcreteType:Index
+    Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
+    Function: Equals(Concept:Comparable a, Concept:Comparable b)
+    Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThan(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThan(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: Lesser(Concept:Comparable a, Concept:Comparable b)
+    Function: Greater(Concept:Comparable a, Concept:Comparable b)
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:IndexComparable=ConcreteType:IndexWholeNumber=ConcreteType:IndexSelf=ConcreteType:Index
+    Concept=Magnitudinal Expr=Concept:Magnitudinal Subs=Magnitudinal=ConcreteType:IndexWholeNumber=ConcreteType:IndexSelf=ConcreteType:Index
+      Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:IndexMagnitudinal=ConcreteType:IndexWholeNumber=ConcreteType:IndexSelf=ConcreteType:Index
+      Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
+      Function: Equals(Concept:Comparable a, Concept:Comparable b)
+      Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
+      Function: LessThan(Concept:Comparable a, Concept:Comparable b)
+      Function: LessThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+      Function: GreaterThan(Concept:Comparable a, Concept:Comparable b)
+      Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+      Function: Lesser(Concept:Comparable a, Concept:Comparable b)
+      Function: Greater(Concept:Comparable a, Concept:Comparable b)
+        Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:IndexComparable=ConcreteType:IndexMagnitudinal=ConcreteType:IndexWholeNumber=ConcreteType:IndexSelf=ConcreteType:Index
 Type analysis for Unit
   Concept=Numerical Expr=Concept:Numerical Subs=Numerical=ConcreteType:UnitSelf=ConcreteType:Unit
   Function: Square(Concept:Numerical x)
@@ -236,12 +222,16 @@ Type analysis for Unit
   Function: Eighth(Concept:Numerical x)
   Function: Tenth(Concept:Numerical x)
   Function: Twice(Concept:Numerical x)
-  Function: SmoothStep(Concept:Numerical x)
   Function: Pow2(Concept:Numerical x)
+  Function: Epsilon(Concept:Numerical x, Concept:Numerical y)
+  Function: AlmostEqual(Concept:Numerical x, Concept:Numerical y)
   Function: Lerp(Concept:Numerical a, Concept:Numerical b, ConcreteType:Number t)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:UnitNumerical=ConcreteType:UnitSelf=ConcreteType:Unit
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:UnitValue=ConcreteType:UnitNumerical=ConcreteType:UnitSelf=ConcreteType:Unit
       Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:UnitValue=ConcreteType:UnitNumerical=ConcreteType:UnitSelf=ConcreteType:Unit
+    Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs=ScalarArithmetic=ConcreteType:UnitNumerical=ConcreteType:UnitSelf=ConcreteType:Unit
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:UnitT=ConcreteType:NumberScalarArithmetic=ConcreteType:UnitNumerical=ConcreteType:UnitSelf=ConcreteType:Unit
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:UnitT=ConcreteType:NumberScalarArithmetic=ConcreteType:UnitNumerical=ConcreteType:UnitSelf=ConcreteType:Unit
     Concept=Arithmetic Expr=Concept:Arithmetic Subs=Arithmetic=ConcreteType:UnitNumerical=ConcreteType:UnitSelf=ConcreteType:Unit
       Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=AdditiveArithmetic=ConcreteType:UnitT=TypeVariable:SelfArithmetic=ConcreteType:UnitNumerical=ConcreteType:UnitSelf=ConcreteType:Unit
       Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=MultiplicativeArithmetic=ConcreteType:UnitT=TypeVariable:SelfArithmetic=ConcreteType:UnitNumerical=ConcreteType:UnitSelf=ConcreteType:Unit
@@ -291,12 +281,16 @@ Type analysis for Percent
   Function: Eighth(Concept:Numerical x)
   Function: Tenth(Concept:Numerical x)
   Function: Twice(Concept:Numerical x)
-  Function: SmoothStep(Concept:Numerical x)
   Function: Pow2(Concept:Numerical x)
+  Function: Epsilon(Concept:Numerical x, Concept:Numerical y)
+  Function: AlmostEqual(Concept:Numerical x, Concept:Numerical y)
   Function: Lerp(Concept:Numerical a, Concept:Numerical b, ConcreteType:Number t)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:PercentValue=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
       Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:PercentValue=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
+    Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs=ScalarArithmetic=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:PercentT=ConcreteType:NumberScalarArithmetic=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:PercentT=ConcreteType:NumberScalarArithmetic=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
     Concept=Arithmetic Expr=Concept:Arithmetic Subs=Arithmetic=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
       Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=AdditiveArithmetic=ConcreteType:PercentT=TypeVariable:SelfArithmetic=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
       Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=MultiplicativeArithmetic=ConcreteType:PercentT=TypeVariable:SelfArithmetic=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
@@ -384,12 +378,16 @@ Type analysis for Vector2D
     Function: Eighth(Concept:Numerical x)
     Function: Tenth(Concept:Numerical x)
     Function: Twice(Concept:Numerical x)
-    Function: SmoothStep(Concept:Numerical x)
     Function: Pow2(Concept:Numerical x)
+    Function: Epsilon(Concept:Numerical x, Concept:Numerical y)
+    Function: AlmostEqual(Concept:Numerical x, Concept:Numerical y)
     Function: Lerp(Concept:Numerical a, Concept:Numerical b, ConcreteType:Number t)
       Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Vector2DNumerical=ConcreteType:Vector2DVector=ConcreteType:Vector2DSelf=ConcreteType:Vector2D
         Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Vector2DValue=ConcreteType:Vector2DNumerical=ConcreteType:Vector2DVector=ConcreteType:Vector2DSelf=ConcreteType:Vector2D
         Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Vector2DValue=ConcreteType:Vector2DNumerical=ConcreteType:Vector2DVector=ConcreteType:Vector2DSelf=ConcreteType:Vector2D
+      Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs=ScalarArithmetic=ConcreteType:Vector2DNumerical=ConcreteType:Vector2DVector=ConcreteType:Vector2DSelf=ConcreteType:Vector2D
+        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:Vector2DT=ConcreteType:NumberScalarArithmetic=ConcreteType:Vector2DNumerical=ConcreteType:Vector2DVector=ConcreteType:Vector2DSelf=ConcreteType:Vector2D
+        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:Vector2DT=ConcreteType:NumberScalarArithmetic=ConcreteType:Vector2DNumerical=ConcreteType:Vector2DVector=ConcreteType:Vector2DSelf=ConcreteType:Vector2D
       Concept=Arithmetic Expr=Concept:Arithmetic Subs=Arithmetic=ConcreteType:Vector2DNumerical=ConcreteType:Vector2DVector=ConcreteType:Vector2DSelf=ConcreteType:Vector2D
         Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=AdditiveArithmetic=ConcreteType:Vector2DT=TypeVariable:SelfArithmetic=ConcreteType:Vector2DNumerical=ConcreteType:Vector2DVector=ConcreteType:Vector2DSelf=ConcreteType:Vector2D
         Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=MultiplicativeArithmetic=ConcreteType:Vector2DT=TypeVariable:SelfArithmetic=ConcreteType:Vector2DNumerical=ConcreteType:Vector2DVector=ConcreteType:Vector2DSelf=ConcreteType:Vector2D
@@ -463,12 +461,16 @@ Type analysis for Vector3D
     Function: Eighth(Concept:Numerical x)
     Function: Tenth(Concept:Numerical x)
     Function: Twice(Concept:Numerical x)
-    Function: SmoothStep(Concept:Numerical x)
     Function: Pow2(Concept:Numerical x)
+    Function: Epsilon(Concept:Numerical x, Concept:Numerical y)
+    Function: AlmostEqual(Concept:Numerical x, Concept:Numerical y)
     Function: Lerp(Concept:Numerical a, Concept:Numerical b, ConcreteType:Number t)
       Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Vector3DNumerical=ConcreteType:Vector3DVector=ConcreteType:Vector3DSelf=ConcreteType:Vector3D
         Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Vector3DValue=ConcreteType:Vector3DNumerical=ConcreteType:Vector3DVector=ConcreteType:Vector3DSelf=ConcreteType:Vector3D
         Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Vector3DValue=ConcreteType:Vector3DNumerical=ConcreteType:Vector3DVector=ConcreteType:Vector3DSelf=ConcreteType:Vector3D
+      Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs=ScalarArithmetic=ConcreteType:Vector3DNumerical=ConcreteType:Vector3DVector=ConcreteType:Vector3DSelf=ConcreteType:Vector3D
+        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:Vector3DT=ConcreteType:NumberScalarArithmetic=ConcreteType:Vector3DNumerical=ConcreteType:Vector3DVector=ConcreteType:Vector3DSelf=ConcreteType:Vector3D
+        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:Vector3DT=ConcreteType:NumberScalarArithmetic=ConcreteType:Vector3DNumerical=ConcreteType:Vector3DVector=ConcreteType:Vector3DSelf=ConcreteType:Vector3D
       Concept=Arithmetic Expr=Concept:Arithmetic Subs=Arithmetic=ConcreteType:Vector3DNumerical=ConcreteType:Vector3DVector=ConcreteType:Vector3DSelf=ConcreteType:Vector3D
         Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=AdditiveArithmetic=ConcreteType:Vector3DT=TypeVariable:SelfArithmetic=ConcreteType:Vector3DNumerical=ConcreteType:Vector3DVector=ConcreteType:Vector3DSelf=ConcreteType:Vector3D
         Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=MultiplicativeArithmetic=ConcreteType:Vector3DT=TypeVariable:SelfArithmetic=ConcreteType:Vector3DNumerical=ConcreteType:Vector3DVector=ConcreteType:Vector3DSelf=ConcreteType:Vector3D
@@ -542,12 +544,16 @@ Type analysis for Vector4D
     Function: Eighth(Concept:Numerical x)
     Function: Tenth(Concept:Numerical x)
     Function: Twice(Concept:Numerical x)
-    Function: SmoothStep(Concept:Numerical x)
     Function: Pow2(Concept:Numerical x)
+    Function: Epsilon(Concept:Numerical x, Concept:Numerical y)
+    Function: AlmostEqual(Concept:Numerical x, Concept:Numerical y)
     Function: Lerp(Concept:Numerical a, Concept:Numerical b, ConcreteType:Number t)
       Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Vector4DNumerical=ConcreteType:Vector4DVector=ConcreteType:Vector4DSelf=ConcreteType:Vector4D
         Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Vector4DValue=ConcreteType:Vector4DNumerical=ConcreteType:Vector4DVector=ConcreteType:Vector4DSelf=ConcreteType:Vector4D
         Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Vector4DValue=ConcreteType:Vector4DNumerical=ConcreteType:Vector4DVector=ConcreteType:Vector4DSelf=ConcreteType:Vector4D
+      Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs=ScalarArithmetic=ConcreteType:Vector4DNumerical=ConcreteType:Vector4DVector=ConcreteType:Vector4DSelf=ConcreteType:Vector4D
+        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:Vector4DT=ConcreteType:NumberScalarArithmetic=ConcreteType:Vector4DNumerical=ConcreteType:Vector4DVector=ConcreteType:Vector4DSelf=ConcreteType:Vector4D
+        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:Vector4DT=ConcreteType:NumberScalarArithmetic=ConcreteType:Vector4DNumerical=ConcreteType:Vector4DVector=ConcreteType:Vector4DSelf=ConcreteType:Vector4D
       Concept=Arithmetic Expr=Concept:Arithmetic Subs=Arithmetic=ConcreteType:Vector4DNumerical=ConcreteType:Vector4DVector=ConcreteType:Vector4DSelf=ConcreteType:Vector4D
         Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=AdditiveArithmetic=ConcreteType:Vector4DT=TypeVariable:SelfArithmetic=ConcreteType:Vector4DNumerical=ConcreteType:Vector4DVector=ConcreteType:Vector4DSelf=ConcreteType:Vector4D
         Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=MultiplicativeArithmetic=ConcreteType:Vector4DT=TypeVariable:SelfArithmetic=ConcreteType:Vector4DNumerical=ConcreteType:Vector4DVector=ConcreteType:Vector4DSelf=ConcreteType:Vector4D
@@ -693,12 +699,16 @@ Type analysis for Complex
     Function: Eighth(Concept:Numerical x)
     Function: Tenth(Concept:Numerical x)
     Function: Twice(Concept:Numerical x)
-    Function: SmoothStep(Concept:Numerical x)
     Function: Pow2(Concept:Numerical x)
+    Function: Epsilon(Concept:Numerical x, Concept:Numerical y)
+    Function: AlmostEqual(Concept:Numerical x, Concept:Numerical y)
     Function: Lerp(Concept:Numerical a, Concept:Numerical b, ConcreteType:Number t)
       Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ComplexNumerical=ConcreteType:ComplexVector=ConcreteType:ComplexSelf=ConcreteType:Complex
         Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ComplexValue=ConcreteType:ComplexNumerical=ConcreteType:ComplexVector=ConcreteType:ComplexSelf=ConcreteType:Complex
         Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ComplexValue=ConcreteType:ComplexNumerical=ConcreteType:ComplexVector=ConcreteType:ComplexSelf=ConcreteType:Complex
+      Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs=ScalarArithmetic=ConcreteType:ComplexNumerical=ConcreteType:ComplexVector=ConcreteType:ComplexSelf=ConcreteType:Complex
+        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:ComplexT=ConcreteType:NumberScalarArithmetic=ConcreteType:ComplexNumerical=ConcreteType:ComplexVector=ConcreteType:ComplexSelf=ConcreteType:Complex
+        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:ComplexT=ConcreteType:NumberScalarArithmetic=ConcreteType:ComplexNumerical=ConcreteType:ComplexVector=ConcreteType:ComplexSelf=ConcreteType:Complex
       Concept=Arithmetic Expr=Concept:Arithmetic Subs=Arithmetic=ConcreteType:ComplexNumerical=ConcreteType:ComplexVector=ConcreteType:ComplexSelf=ConcreteType:Complex
         Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=AdditiveArithmetic=ConcreteType:ComplexT=TypeVariable:SelfArithmetic=ConcreteType:ComplexNumerical=ConcreteType:ComplexVector=ConcreteType:ComplexSelf=ConcreteType:Complex
         Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=MultiplicativeArithmetic=ConcreteType:ComplexT=TypeVariable:SelfArithmetic=ConcreteType:ComplexNumerical=ConcreteType:ComplexVector=ConcreteType:ComplexSelf=ConcreteType:Complex
@@ -792,6 +802,7 @@ Type analysis for Point2D
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Point2DCoordinate=ConcreteType:Point2DSelf=ConcreteType:Point2D
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Point2DValue=ConcreteType:Point2DCoordinate=ConcreteType:Point2DSelf=ConcreteType:Point2D
       Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Point2DValue=ConcreteType:Point2DCoordinate=ConcreteType:Point2DSelf=ConcreteType:Point2D
+  Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Vector2D> Subs=AdditiveArithmetic=ConcreteType:Point2DT=ConcreteType:Vector2DSelf=ConcreteType:Point2D
 Type analysis for Point3D
   Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:Point3DSelf=ConcreteType:Point3D
     Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:Point3DCoordinate=ConcreteType:Point3DSelf=ConcreteType:Point3D
@@ -809,6 +820,25 @@ Type analysis for Point3D
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Point3DCoordinate=ConcreteType:Point3DSelf=ConcreteType:Point3D
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Point3DValue=ConcreteType:Point3DCoordinate=ConcreteType:Point3DSelf=ConcreteType:Point3D
       Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Point3DValue=ConcreteType:Point3DCoordinate=ConcreteType:Point3DSelf=ConcreteType:Point3D
+  Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Vector3D> Subs=AdditiveArithmetic=ConcreteType:Point3DT=ConcreteType:Vector3DSelf=ConcreteType:Point3D
+Type analysis for Point4D
+  Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:Point4DSelf=ConcreteType:Point4D
+    Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:Point4DCoordinate=ConcreteType:Point4DSelf=ConcreteType:Point4D
+    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:Point4DCoordinate=ConcreteType:Point4DSelf=ConcreteType:Point4D
+    Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
+    Function: Equals(Concept:Comparable a, Concept:Comparable b)
+    Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThan(Concept:Comparable a, Concept:Comparable b)
+    Function: LessThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThan(Concept:Comparable a, Concept:Comparable b)
+    Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
+    Function: Lesser(Concept:Comparable a, Concept:Comparable b)
+    Function: Greater(Concept:Comparable a, Concept:Comparable b)
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Point4DComparable=ConcreteType:Point4DCoordinate=ConcreteType:Point4DSelf=ConcreteType:Point4D
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Point4DCoordinate=ConcreteType:Point4DSelf=ConcreteType:Point4D
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Point4DValue=ConcreteType:Point4DCoordinate=ConcreteType:Point4DSelf=ConcreteType:Point4D
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Point4DValue=ConcreteType:Point4DCoordinate=ConcreteType:Point4DSelf=ConcreteType:Point4D
+  Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Vector4D> Subs=AdditiveArithmetic=ConcreteType:Point4DT=ConcreteType:Vector4DSelf=ConcreteType:Point4D
 Type analysis for Line2D
   Concept=Interval Expr=Concept:Interval<ConcreteType:Point2D,ConcreteType:Vector3D> Subs=Interval=ConcreteType:Line2DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point2DSelf=ConcreteType:Line2D
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
@@ -1138,12 +1168,16 @@ Type analysis for Proportion
   Function: Eighth(Concept:Numerical x)
   Function: Tenth(Concept:Numerical x)
   Function: Twice(Concept:Numerical x)
-  Function: SmoothStep(Concept:Numerical x)
   Function: Pow2(Concept:Numerical x)
+  Function: Epsilon(Concept:Numerical x, Concept:Numerical y)
+  Function: AlmostEqual(Concept:Numerical x, Concept:Numerical y)
   Function: Lerp(Concept:Numerical a, Concept:Numerical b, ConcreteType:Number t)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ProportionNumerical=ConcreteType:ProportionSelf=ConcreteType:Proportion
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ProportionValue=ConcreteType:ProportionNumerical=ConcreteType:ProportionSelf=ConcreteType:Proportion
       Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ProportionValue=ConcreteType:ProportionNumerical=ConcreteType:ProportionSelf=ConcreteType:Proportion
+    Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs=ScalarArithmetic=ConcreteType:ProportionNumerical=ConcreteType:ProportionSelf=ConcreteType:Proportion
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:ProportionT=ConcreteType:NumberScalarArithmetic=ConcreteType:ProportionNumerical=ConcreteType:ProportionSelf=ConcreteType:Proportion
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:ProportionT=ConcreteType:NumberScalarArithmetic=ConcreteType:ProportionNumerical=ConcreteType:ProportionSelf=ConcreteType:Proportion
     Concept=Arithmetic Expr=Concept:Arithmetic Subs=Arithmetic=ConcreteType:ProportionNumerical=ConcreteType:ProportionSelf=ConcreteType:Proportion
       Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=AdditiveArithmetic=ConcreteType:ProportionT=TypeVariable:SelfArithmetic=ConcreteType:ProportionNumerical=ConcreteType:ProportionSelf=ConcreteType:Proportion
       Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=MultiplicativeArithmetic=ConcreteType:ProportionT=TypeVariable:SelfArithmetic=ConcreteType:ProportionNumerical=ConcreteType:ProportionSelf=ConcreteType:Proportion
@@ -1247,6 +1281,9 @@ Type analysis for Length
       Function: Greater(Concept:Comparable a, Concept:Comparable b)
         Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:LengthComparable=ConcreteType:LengthMagnitudinal=ConcreteType:LengthMeasure=ConcreteType:LengthSelf=ConcreteType:Length
     Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:LengthMeasure=ConcreteType:LengthSelf=ConcreteType:Length
+  Function: Multiply(ConcreteType:Length x, ConcreteType:Length y)
+  Function: Multiply(ConcreteType:Length x, ConcreteType:Area y)
+  Function: Multiply(ConcreteType:Length x, ConcreteType:Time y)
 Type analysis for Mass
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:MassSelf=ConcreteType:Mass
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:MassMeasure=ConcreteType:MassSelf=ConcreteType:Mass
@@ -1279,6 +1316,7 @@ Type analysis for Mass
       Function: Greater(Concept:Comparable a, Concept:Comparable b)
         Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:MassComparable=ConcreteType:MassMagnitudinal=ConcreteType:MassMeasure=ConcreteType:MassSelf=ConcreteType:Mass
     Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:MassMeasure=ConcreteType:MassSelf=ConcreteType:Mass
+  Function: Multiply(ConcreteType:Mass x, ConcreteType:Acceleration y)
 Type analysis for Temperature
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:TemperatureSelf=ConcreteType:Temperature
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:TemperatureMeasure=ConcreteType:TemperatureSelf=ConcreteType:Temperature
@@ -1311,6 +1349,8 @@ Type analysis for Temperature
       Function: Greater(Concept:Comparable a, Concept:Comparable b)
         Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:TemperatureComparable=ConcreteType:TemperatureMagnitudinal=ConcreteType:TemperatureMeasure=ConcreteType:TemperatureSelf=ConcreteType:Temperature
     Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:TemperatureMeasure=ConcreteType:TemperatureSelf=ConcreteType:Temperature
+  Function: Fahrenheit(ConcreteType:Temperature x)
+  Function: Kelvin(ConcreteType:Temperature x)
 Type analysis for Time
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:TimeSelf=ConcreteType:Time
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:TimeMeasure=ConcreteType:TimeSelf=ConcreteType:Time
@@ -1343,6 +1383,7 @@ Type analysis for Time
       Function: Greater(Concept:Comparable a, Concept:Comparable b)
         Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:TimeComparable=ConcreteType:TimeMagnitudinal=ConcreteType:TimeMeasure=ConcreteType:TimeSelf=ConcreteType:Time
     Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:TimeMeasure=ConcreteType:TimeSelf=ConcreteType:Time
+  Function: Multiply(ConcreteType:Time x, ConcreteType:Length y)
 Type analysis for TimeRange
   Concept=Interval Expr=Concept:Interval<ConcreteType:DateTime,ConcreteType:Time> Subs=Interval=ConcreteType:TimeRangeTSize=ConcreteType:TimeTValue=ConcreteType:DateTimeSelf=ConcreteType:TimeRange
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
@@ -1507,12 +1548,16 @@ Type analysis for UV
     Function: Eighth(Concept:Numerical x)
     Function: Tenth(Concept:Numerical x)
     Function: Twice(Concept:Numerical x)
-    Function: SmoothStep(Concept:Numerical x)
     Function: Pow2(Concept:Numerical x)
+    Function: Epsilon(Concept:Numerical x, Concept:Numerical y)
+    Function: AlmostEqual(Concept:Numerical x, Concept:Numerical y)
     Function: Lerp(Concept:Numerical a, Concept:Numerical b, ConcreteType:Number t)
       Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:UVNumerical=ConcreteType:UVVector=ConcreteType:UVSelf=ConcreteType:UV
         Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:UVValue=ConcreteType:UVNumerical=ConcreteType:UVVector=ConcreteType:UVSelf=ConcreteType:UV
         Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:UVValue=ConcreteType:UVNumerical=ConcreteType:UVVector=ConcreteType:UVSelf=ConcreteType:UV
+      Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs=ScalarArithmetic=ConcreteType:UVNumerical=ConcreteType:UVVector=ConcreteType:UVSelf=ConcreteType:UV
+        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:UVT=ConcreteType:NumberScalarArithmetic=ConcreteType:UVNumerical=ConcreteType:UVVector=ConcreteType:UVSelf=ConcreteType:UV
+        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:UVT=ConcreteType:NumberScalarArithmetic=ConcreteType:UVNumerical=ConcreteType:UVVector=ConcreteType:UVSelf=ConcreteType:UV
       Concept=Arithmetic Expr=Concept:Arithmetic Subs=Arithmetic=ConcreteType:UVNumerical=ConcreteType:UVVector=ConcreteType:UVSelf=ConcreteType:UV
         Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=AdditiveArithmetic=ConcreteType:UVT=TypeVariable:SelfArithmetic=ConcreteType:UVNumerical=ConcreteType:UVVector=ConcreteType:UVSelf=ConcreteType:UV
         Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=MultiplicativeArithmetic=ConcreteType:UVT=TypeVariable:SelfArithmetic=ConcreteType:UVNumerical=ConcreteType:UVVector=ConcreteType:UVSelf=ConcreteType:UV
@@ -1586,12 +1631,16 @@ Type analysis for UVW
     Function: Eighth(Concept:Numerical x)
     Function: Tenth(Concept:Numerical x)
     Function: Twice(Concept:Numerical x)
-    Function: SmoothStep(Concept:Numerical x)
     Function: Pow2(Concept:Numerical x)
+    Function: Epsilon(Concept:Numerical x, Concept:Numerical y)
+    Function: AlmostEqual(Concept:Numerical x, Concept:Numerical y)
     Function: Lerp(Concept:Numerical a, Concept:Numerical b, ConcreteType:Number t)
       Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:UVWNumerical=ConcreteType:UVWVector=ConcreteType:UVWSelf=ConcreteType:UVW
         Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:UVWValue=ConcreteType:UVWNumerical=ConcreteType:UVWVector=ConcreteType:UVWSelf=ConcreteType:UVW
         Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:UVWValue=ConcreteType:UVWNumerical=ConcreteType:UVWVector=ConcreteType:UVWSelf=ConcreteType:UVW
+      Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs=ScalarArithmetic=ConcreteType:UVWNumerical=ConcreteType:UVWVector=ConcreteType:UVWSelf=ConcreteType:UVW
+        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:UVWT=ConcreteType:NumberScalarArithmetic=ConcreteType:UVWNumerical=ConcreteType:UVWVector=ConcreteType:UVWSelf=ConcreteType:UVW
+        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:UVWT=ConcreteType:NumberScalarArithmetic=ConcreteType:UVWNumerical=ConcreteType:UVWVector=ConcreteType:UVWSelf=ConcreteType:UVW
       Concept=Arithmetic Expr=Concept:Arithmetic Subs=Arithmetic=ConcreteType:UVWNumerical=ConcreteType:UVWVector=ConcreteType:UVWSelf=ConcreteType:UVW
         Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=AdditiveArithmetic=ConcreteType:UVWT=TypeVariable:SelfArithmetic=ConcreteType:UVWNumerical=ConcreteType:UVWVector=ConcreteType:UVWSelf=ConcreteType:UVW
         Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=MultiplicativeArithmetic=ConcreteType:UVWT=TypeVariable:SelfArithmetic=ConcreteType:UVWNumerical=ConcreteType:UVWVector=ConcreteType:UVWSelf=ConcreteType:UVW
@@ -1684,6 +1733,8 @@ Type analysis for Area
       Function: Greater(Concept:Comparable a, Concept:Comparable b)
         Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:AreaComparable=ConcreteType:AreaMagnitudinal=ConcreteType:AreaMeasure=ConcreteType:AreaSelf=ConcreteType:Area
     Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:AreaMeasure=ConcreteType:AreaSelf=ConcreteType:Area
+  Function: Divide(ConcreteType:Area x, ConcreteType:Length y)
+  Function: Multiply(ConcreteType:Area x, ConcreteType:Length y)
 Type analysis for Volume
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:VolumeSelf=ConcreteType:Volume
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:VolumeMeasure=ConcreteType:VolumeSelf=ConcreteType:Volume
@@ -1716,6 +1767,8 @@ Type analysis for Volume
       Function: Greater(Concept:Comparable a, Concept:Comparable b)
         Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:VolumeComparable=ConcreteType:VolumeMagnitudinal=ConcreteType:VolumeMeasure=ConcreteType:VolumeSelf=ConcreteType:Volume
     Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:VolumeMeasure=ConcreteType:VolumeSelf=ConcreteType:Volume
+  Function: Divide(ConcreteType:Volume x, ConcreteType:Length y)
+  Function: Divide(ConcreteType:Volume x, ConcreteType:Area y)
 Type analysis for Velocity
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:VelocitySelf=ConcreteType:Velocity
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:VelocityMeasure=ConcreteType:VelocitySelf=ConcreteType:Velocity
@@ -1748,6 +1801,9 @@ Type analysis for Velocity
       Function: Greater(Concept:Comparable a, Concept:Comparable b)
         Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:VelocityComparable=ConcreteType:VelocityMagnitudinal=ConcreteType:VelocityMeasure=ConcreteType:VelocitySelf=ConcreteType:Velocity
     Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:VelocityMeasure=ConcreteType:VelocitySelf=ConcreteType:Velocity
+  Function: Divide(ConcreteType:Velocity x, ConcreteType:Time y)
+  Function: Divide(ConcreteType:Velocity x, ConcreteType:Length y)
+  Function: Multiply(ConcreteType:Velocity x, ConcreteType:Time y)
 Type analysis for Acceleration
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:AccelerationSelf=ConcreteType:Acceleration
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:AccelerationMeasure=ConcreteType:AccelerationSelf=ConcreteType:Acceleration
@@ -1780,6 +1836,8 @@ Type analysis for Acceleration
       Function: Greater(Concept:Comparable a, Concept:Comparable b)
         Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:AccelerationComparable=ConcreteType:AccelerationMagnitudinal=ConcreteType:AccelerationMeasure=ConcreteType:AccelerationSelf=ConcreteType:Acceleration
     Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:AccelerationMeasure=ConcreteType:AccelerationSelf=ConcreteType:Acceleration
+  Function: Divide(ConcreteType:Acceleration x, ConcreteType:Time y)
+  Function: Divide(ConcreteType:Acceleration x, ConcreteType:Velocity y)
 Type analysis for Force
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:ForceSelf=ConcreteType:Force
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ForceMeasure=ConcreteType:ForceSelf=ConcreteType:Force
@@ -2227,12 +2285,16 @@ Type analysis for Probability
   Function: Eighth(Concept:Numerical x)
   Function: Tenth(Concept:Numerical x)
   Function: Twice(Concept:Numerical x)
-  Function: SmoothStep(Concept:Numerical x)
   Function: Pow2(Concept:Numerical x)
+  Function: Epsilon(Concept:Numerical x, Concept:Numerical y)
+  Function: AlmostEqual(Concept:Numerical x, Concept:Numerical y)
   Function: Lerp(Concept:Numerical a, Concept:Numerical b, ConcreteType:Number t)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ProbabilityNumerical=ConcreteType:ProbabilitySelf=ConcreteType:Probability
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ProbabilityValue=ConcreteType:ProbabilityNumerical=ConcreteType:ProbabilitySelf=ConcreteType:Probability
       Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:ProbabilityValue=ConcreteType:ProbabilityNumerical=ConcreteType:ProbabilitySelf=ConcreteType:Probability
+    Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs=ScalarArithmetic=ConcreteType:ProbabilityNumerical=ConcreteType:ProbabilitySelf=ConcreteType:Probability
+      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:ProbabilityT=ConcreteType:NumberScalarArithmetic=ConcreteType:ProbabilityNumerical=ConcreteType:ProbabilitySelf=ConcreteType:Probability
+      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:ProbabilityT=ConcreteType:NumberScalarArithmetic=ConcreteType:ProbabilityNumerical=ConcreteType:ProbabilitySelf=ConcreteType:Probability
     Concept=Arithmetic Expr=Concept:Arithmetic Subs=Arithmetic=ConcreteType:ProbabilityNumerical=ConcreteType:ProbabilitySelf=ConcreteType:Probability
       Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=AdditiveArithmetic=ConcreteType:ProbabilityT=TypeVariable:SelfArithmetic=ConcreteType:ProbabilityNumerical=ConcreteType:ProbabilitySelf=ConcreteType:Probability
       Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=MultiplicativeArithmetic=ConcreteType:ProbabilityT=TypeVariable:SelfArithmetic=ConcreteType:ProbabilityNumerical=ConcreteType:ProbabilitySelf=ConcreteType:Probability
@@ -2270,13 +2332,7 @@ Type analysis for BinomialDistribution
 Type analysis for Array1
   Concept=Array Expr=Concept:Array<TypeVariable:T> Subs=Array=ConcreteType:Array1<TypeVariable:T>T=TypeVariable:TSelf=ConcreteType:Array1<TypeVariable:T>
 Type analysis for Tuple2
-  Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Tuple2<TypeVariable:T0,TypeVariable:T1>Self=ConcreteType:Tuple2<TypeVariable:T0,TypeVariable:T1>
-    Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Tuple2<TypeVariable:T0,TypeVariable:T1>Value=ConcreteType:Tuple2<TypeVariable:T0,TypeVariable:T1>Self=ConcreteType:Tuple2<TypeVariable:T0,TypeVariable:T1>
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Tuple2<TypeVariable:T0,TypeVariable:T1>Value=ConcreteType:Tuple2<TypeVariable:T0,TypeVariable:T1>Self=ConcreteType:Tuple2<TypeVariable:T0,TypeVariable:T1>
 Type analysis for Tuple3
-  Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Tuple3<TypeVariable:T0,TypeVariable:T1,TypeVariable:T2>Self=ConcreteType:Tuple3<TypeVariable:T0,TypeVariable:T1,TypeVariable:T2>
-    Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Tuple3<TypeVariable:T0,TypeVariable:T1,TypeVariable:T2>Value=ConcreteType:Tuple3<TypeVariable:T0,TypeVariable:T1,TypeVariable:T2>Self=ConcreteType:Tuple3<TypeVariable:T0,TypeVariable:T1,TypeVariable:T2>
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Tuple3<TypeVariable:T0,TypeVariable:T1,TypeVariable:T2>Value=ConcreteType:Tuple3<TypeVariable:T0,TypeVariable:T1,TypeVariable:T2>Self=ConcreteType:Tuple3<TypeVariable:T0,TypeVariable:T1,TypeVariable:T2>
 Type analysis for Function0
 Type analysis for Function1
 Type analysis for Function2

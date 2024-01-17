@@ -26,7 +26,10 @@ public interface Measure<Self>: Value<Self>, ScalarArithmetic<Self>, Comparable<
 {
     Number  Value { get; }
 }
-public interface Numerical<Self>: Value<Self>, Arithmetic<Self>, Equatable<Self>, Comparable<Self>, Magnitudinal<Self>, Interpolatable<Self>
+public interface WholeNumber<Self>: Arithmetic<Self>, Equatable<Self>, Comparable<Self>, Magnitudinal<Self>
+{
+}
+public interface Numerical<Self>: Value<Self>, ScalarArithmetic<Self>, Arithmetic<Self>, Equatable<Self>, Comparable<Self>, Magnitudinal<Self>, Interpolatable<Self>
 {
 }
 public interface Magnitudinal<Self>: Comparable<Self>
@@ -60,9 +63,9 @@ public interface AdditiveArithmetic<Self, T>
 }
 public interface MultiplicativeArithmetic<Self, T>
 {
-    Self  Multiply(Self other);
-    Self  Divide(Self other);
-    Self  Modulo(Self other);
+    Self  Multiply(T other);
+    Self  Divide(T other);
+    Self  Modulo(T other);
 }
 public interface ScalarArithmetic<Self>: AdditiveArithmetic<Self, Number>, MultiplicativeArithmetic<Self, Number>
 {

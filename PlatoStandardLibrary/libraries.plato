@@ -97,11 +97,14 @@ library Numerical
     SquareRoot(x: Number): Number 
         => x.Pow(0.5);
 
+    SmoothStep(x: Number): Number
+        => x.Square * (3.0 - x.Twice);    
+
     Square(x: Numerical): Numerical 
         => x * x;
 
     ClampOne(x: Number): Number 
-        => Clamp(x, (0, 1));
+        => Clamp(x, (0.0, 1.0));
 
     PlusOne(x: Numerical): Numerical 
         => x + x.One;
@@ -137,22 +140,19 @@ library Numerical
         => x.LtZ ? -x: x;
     
     Half(x: Numerical): Numerical 
-        => x / 2;
+        => x / 2.0;
         
     Quarter(x: Numerical): Numerical 
-        => x / 4;
+        => x / 4.0;
     
     Eighth(x: Numerical): Numerical 
-        => x / 8;
+        => x / 8.0;
         
     Tenth(x: Numerical): Numerical 
-        => x / 10;
+        => x / 10.0;
     
     Twice(x: Numerical): Numerical 
-        => x * 2;
-    
-    SmoothStep(x: Numerical): Numerical 
-        => x.Square * (3 - x.Twice);
+        => x * 2.0;
     
     Pow2(x: Numerical): Numerical 
         => x * x;
@@ -164,8 +164,15 @@ library Numerical
         => 3.1415926535897;
 
     Epsilon(): Number
-        => 0.000000001;
-    
+        => 1E-15;
+
+    Epsilon(x: Numerical, y: Numerical): Numerical
+        => x.Abs.Greater(y.Abs) * Epsilon;
+
+    // https://stackoverflow.com/a/2411661
+    AlmostEqual(x: Numerical, y: Numerical): Boolean
+        => (x-y).Abs <= x.Epsilon(y);
+
     AlmostZero(x: Number): Boolean
         => x.Abs < Epsilon; 
 
@@ -219,4 +226,61 @@ library Comparable
     
     Greater(a: Comparable, b: Comparable): Comparable 
         => a >= b ? a : b;
+}
+
+library Measures
+{
+    Fahrenheit(x: Temperature): Number
+        => (x.Celsius * 9.0 / 5.0) + 32.0;
+
+    Fahrenheit(x: Number): Temperature
+        => (x - 32.0) * 5.0 / 9.0;
+
+    Kelvin(x: Temperature): Number
+        => x.Celsius + 273.15;
+
+    Kelvin(x: Number): Temperature
+        => x - 273.15;
+
+    Multiply(x: Length, y: Length): Area
+        => x.Value * y.Value;
+
+    Divide(x: Area, y: Length): Length
+        => x.Value / y.Value;
+
+    Multiply(x: Area, y: Length): Volume
+        => x.Value * y.Value;
+
+    Multiply(x: Length, y: Area): Volume
+        => x.Value * y.Value;
+
+    Divide(x: Volume, y: Length): Area
+        => x.Value / y.Value;
+
+    Divide(x: Volume, y: Area): Length
+        => x.Value / y.Value;
+
+    Multiply(x: Length, y: Time): Velocity
+        => x.Value * y.Value;
+
+    Multiply(x: Time, y: Length): Velocity
+        => x.Value * y.Value;
+
+    Divide(x: Velocity, y: Time): Length
+        => x.Value / y.Value;
+
+    Divide(x: Velocity, y: Length): Time
+        => x.Value / y.Value;
+
+    Multiply(x: Velocity, y: Time): Acceleration
+        => x.Value * y.Value;
+
+    Divide(x: Acceleration, y: Time): Velocity
+        => x.Value / y.Value;
+
+    Divide(x: Acceleration, y: Velocity): Time
+        => x.Value / y.Value;
+
+    Multiply(x: Mass, y: Acceleration): Force
+        => x.Value * y.Value;
 }
