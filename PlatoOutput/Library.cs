@@ -700,9 +700,7 @@ public readonly partial struct AlignedBox2D
     public Point2D Lerp(Number amount) =>
         this.Min.Lerp(this.Max, amount);
     public Number Unlerp(Point2D value) =>
-        value.Subtract(this.Min).Divide(this.Size);
-    public AlignedBox2D Negate =>
-        this.Max.Negative.Tuple(this.Min.Negative);
+        value.Unlerp(this.Min, this.Max);
     public AlignedBox2D Reverse =>
         this.Max.Tuple(this.Min);
     public Point2D Center =>
@@ -743,9 +741,7 @@ public readonly partial struct AlignedBox3D
     public Point3D Lerp(Number amount) =>
         this.Min.Lerp(this.Max, amount);
     public Number Unlerp(Point3D value) =>
-        value.Subtract(this.Min).Divide(this.Size);
-    public AlignedBox3D Negate =>
-        this.Max.Negative.Tuple(this.Min.Negative);
+        value.Unlerp(this.Min, this.Max);
     public AlignedBox3D Reverse =>
         this.Max.Tuple(this.Min);
     public Point3D Center =>
@@ -983,9 +979,7 @@ public readonly partial struct Line2D
     public Point2D Lerp(Number amount) =>
         this.Min.Lerp(this.Max, amount);
     public Number Unlerp(Point2D value) =>
-        value.Subtract(this.Min).Divide(this.Size);
-    public Line2D Negate =>
-        this.Max.Negative.Tuple(this.Min.Negative);
+        value.Unlerp(this.Min, this.Max);
     public Line2D Reverse =>
         this.Max.Tuple(this.Min);
     public Point2D Center =>
@@ -1026,9 +1020,7 @@ public readonly partial struct Line3D
     public Point3D Lerp(Number amount) =>
         this.Min.Lerp(this.Max, amount);
     public Number Unlerp(Point3D value) =>
-        value.Subtract(this.Min).Divide(this.Size);
-    public Line3D Negate =>
-        this.Max.Negative.Tuple(this.Min.Negative);
+        value.Unlerp(this.Min, this.Max);
     public Line3D Reverse =>
         this.Max.Tuple(this.Min);
     public Point3D Center =>
@@ -1735,9 +1727,7 @@ public readonly partial struct TimeRange
     public DateTime Lerp(Number amount) =>
         this.Min.Lerp(this.Max, amount);
     public Number Unlerp(DateTime value) =>
-        value.Subtract(this.Min).Divide(this.Size);
-    public TimeRange Negate =>
-        this.Max.Negative.Tuple(this.Min.Negative);
+        value.Unlerp(this.Min, this.Max);
     public TimeRange Reverse =>
         this.Max.Tuple(this.Min);
     public DateTime Center =>
@@ -1807,9 +1797,7 @@ public readonly partial struct AnglePair
     public Angle Lerp(Number amount) =>
         this.Min.Lerp(this.Max, amount);
     public Number Unlerp(Angle value) =>
-        value.Subtract(this.Min).Divide(this.Size);
-    public AnglePair Negate =>
-        this.Max.Negative.Tuple(this.Min.Negative);
+        value.Unlerp(this.Min, this.Max);
     public AnglePair Reverse =>
         this.Max.Tuple(this.Min);
     public Angle Center =>
@@ -1856,9 +1844,7 @@ public readonly partial struct RealInterval
     public Number Lerp(Number amount) =>
         this.Min.Lerp(this.Max, amount);
     public Number Unlerp(Number value) =>
-        value.Subtract(this.Min).Divide(this.Size);
-    public RealInterval Negate =>
-        this.Max.Negative.Tuple(this.Min.Negative);
+        value.Unlerp(this.Min, this.Max);
     public RealInterval Reverse =>
         this.Max.Tuple(this.Min);
     public Number Center =>

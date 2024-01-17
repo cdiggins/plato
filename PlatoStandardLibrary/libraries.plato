@@ -7,10 +7,7 @@ library Interval
         => x.Min.Lerp(x.Max, amount);
     
     Unlerp(x: Interval<$Value, $Size>, value: $Value): Number
-        => (value - x.Min) / x.Size;
-    
-    Negate(x: Interval<$Value, $Size>): Interval<$Value, $Size> 
-        => (-x.Max, -x.Min);
+        => value.Unlerp(x.Min, x.Max);
     
     Reverse(x: Interval<$Value, $Size>): Interval<$Value, $Size> 
         => (x.Max, x.Min);
