@@ -20,7 +20,7 @@ namespace Plato.Compiler.Types
         public string Name => Original.Name;
         public int NumParameters => ParameterTypes.Count;
 
-        public Expression Body => Original.Body;
+        public Symbol Body => Original.Body;
 
         public ReifiedFunction(FunctionDefinition original, 
             ReifiedType reifiedType, 

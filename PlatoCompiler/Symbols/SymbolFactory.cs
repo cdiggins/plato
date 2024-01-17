@@ -239,15 +239,26 @@ namespace Plato.Compiler.Symbols
                                 ResolveExpr(astAssign.Value)));
 
                     case AstBlock astBlock:
-                        return new BlockExpression(
-                            astBlock.Statements.Select(Resolve).ToArray());
-
+                        {
+                            // TODO: the value bindings scope should be in a "using" block.
+                            ValueBindingsScope = ValueBindingsScope.Push();
+                            var r = new BlockStatement(
+                                astBlock.Statements.Select(Resolve).ToArray());
+                            ValueBindingsScope = ValueBindingsScope.Pop();
+                            return r;
+                        }
+                
                     case AstMulti astMulti:
                         {
                             if (astMulti.Nodes.Count == 0)
                                 return null;
                             if (astMulti.Nodes.Count > 1)
-                                LogError("Cannot handle AstMulti with multiple children", astMulti);
+                            {
+                                return new MultiStatement(
+                                    astMulti.Nodes.Select(Resolve).ToArray()
+                                );
+                            }
+
                             return Resolve(astMulti.Nodes[0]);
                         }
 
@@ -255,7 +266,7 @@ namespace Plato.Compiler.Symbols
                         return Resolve(astParenthesized.Inner);
 
                     case AstReturn astReturn:
-                        return Resolve(astReturn.Value);
+                        return new ReturnStatement(Resolve(astReturn.Value));
 
                     case AstConditional astConditional:
                         return Scoped(() => new ConditionalExpression(
@@ -292,15 +303,16 @@ namespace Plato.Compiler.Symbols
                             var body = ResolveExpr(astLambda.Body);
                             var r = new Lambda(new FunctionDefinition("_lambda_", null, 
                                 PrimitiveTypeDefinitions.Function.ToTypeExpression(), body, ps));
+                            ValueBindingsScope = ValueBindingsScope.Pop();
                             return r;
                         }
 
                     case AstVarDef astVarDef:
                         return BindValue(astVarDef.Name,
-                            new VariableDefinition(astVarDef.Name, ResolveType(astVarDef.Type)));
+                            new VariableDefinition(astVarDef.Name, ResolveType(astVarDef.Type), ResolveExpr(astVarDef.Value)));
 
                     case AstLoop astLoop:
-                        return new LoopSymbol(node);
+                        return new LoopStatement(Resolve(astLoop.Condition), Resolve(astLoop.Body));
 
                     case AstBinaryOp astBinaryOp:
                         return InternalResolve(astBinaryOp.ToInvocation());
@@ -417,13 +429,13 @@ namespace Plato.Compiler.Symbols
                         list.Add(pValue);
                     }
 
-                    var body = ResolveExpr(location.Body);
+                    var body = Resolve(location.Body);
                     var f = new FunctionDefinition(m.Name, typeDef, m.Type, body, list.ToArray());
                     Debug.Assert(m.Function == null);
                     m.Function = f;
 
                     AddToGroupDefinition(f);
-
+                        
                     // Check if this is a static method, but not on a library. 
                     if (!typeDef.IsLibrary() && f.Parameters.Count == 0)
                     {

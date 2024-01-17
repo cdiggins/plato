@@ -216,8 +216,10 @@ namespace Plato.Compiler.Types
             return GenerateTypeVariable(concept != null ? ToIType(concept) : null);
         }
 
-        public int ComputeCardinalityOfFunction(ParameterDefinition pd, Expression body)
+        public int ComputeCardinalityOfFunction(ParameterDefinition pd, Symbol body)
         {
+            throw new NotImplementedException();
+            /*
             Verifier.Assert(pd.Type.Name == "Function");
             var r = -1;
             foreach (var fc in body.GetExpressionTree().OfType<FunctionCall>())
@@ -243,6 +245,7 @@ namespace Plato.Compiler.Types
                 throw new Exception($"Unable to determine cardinality of function {pd}, it never appears to be called");
             
             return r;
+            */
         }
 
         public string ParameterString(ParameterDefinition pd)
@@ -343,8 +346,9 @@ namespace Plato.Compiler.Types
 
                 if (Function.Body != null)
                 {
-                    if (Function.OwnerType.IsConcrete() || Function.OwnerType.IsLibrary())
-                        Process(Function.Body);
+                    throw new NotImplementedException();
+                    //if (Function.OwnerType.IsConcrete() || Function.OwnerType.IsLibrary())
+                    //    Process(Function.Body);
                 }
             }
             finally
@@ -420,11 +424,6 @@ namespace Plato.Compiler.Types
 
                 case Tuple tuple:
                     r = CreateTuple(tuple.Children.Select(Process).ToList());
-                    break;
-
-                case BlockExpression blockExpression:
-                    // TODO: it might make sense to have a statement or block type. 
-                    r = ToSimpleType("Any");
                     break;
 
                 default:

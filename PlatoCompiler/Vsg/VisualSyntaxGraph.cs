@@ -151,7 +151,7 @@ namespace Plato.Compiler.Vsg
             throw new NotImplementedException();
         }
 
-        public VsgNode CreateNode(Expression symbol)
+        public VsgNode CreateNode(Symbol symbol)
         {
             if (symbol == null)
                 return null;
@@ -211,7 +211,7 @@ namespace Plato.Compiler.Vsg
             return CreateNode(def)?.MainOutput;
         }
 
-        public VsgSocket GetSocket(Expression expr)
+        public VsgSocket GetSocket(Symbol expr)
         {
             switch (expr)
             {

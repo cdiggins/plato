@@ -1874,39 +1874,30 @@ public readonly partial struct TimeRange: Interval<TimeRange, DateTime, Time>
     public Boolean NotEquals(TimeRange b) => (Begin.NotEquals(b.Begin) & End.NotEquals(b.End));
     public static Boolean operator !=(TimeRange a, TimeRange b) => a.NotEquals(b);
 }
-public readonly partial struct DateTime: Coordinate<DateTime>
+public readonly partial struct DateTime: Coordinate<DateTime>, AdditiveArithmetic<DateTime, Time>
 {
-    public readonly Integer Year;
-    public readonly Integer Month;
-    public readonly Integer TimeZoneOffset;
-    public readonly Integer Day;
-    public readonly Integer Minute;
-    public readonly Integer Second;
-    public readonly Number Milliseconds;
-    public DateTime WithYear(Integer year) => (year, Month, TimeZoneOffset, Day, Minute, Second, Milliseconds);
-    public DateTime WithMonth(Integer month) => (Year, month, TimeZoneOffset, Day, Minute, Second, Milliseconds);
-    public DateTime WithTimeZoneOffset(Integer timeZoneOffset) => (Year, Month, timeZoneOffset, Day, Minute, Second, Milliseconds);
-    public DateTime WithDay(Integer day) => (Year, Month, TimeZoneOffset, day, Minute, Second, Milliseconds);
-    public DateTime WithMinute(Integer minute) => (Year, Month, TimeZoneOffset, Day, minute, Second, Milliseconds);
-    public DateTime WithSecond(Integer second) => (Year, Month, TimeZoneOffset, Day, Minute, second, Milliseconds);
-    public DateTime WithMilliseconds(Number milliseconds) => (Year, Month, TimeZoneOffset, Day, Minute, Second, milliseconds);
-    public DateTime(Integer year, Integer month, Integer timeZoneOffset, Integer day, Integer minute, Integer second, Number milliseconds) => (Year, Month, TimeZoneOffset, Day, Minute, Second, Milliseconds) = (year, month, timeZoneOffset, day, minute, second, milliseconds);
+    public readonly Number Value;
+    public DateTime WithValue(Number value) => (value);
+    public DateTime(Number value) => (Value) = (value);
     public static DateTime Default = new DateTime();
-    public static DateTime New(Integer year, Integer month, Integer timeZoneOffset, Integer day, Integer minute, Integer second, Number milliseconds) => new DateTime(year, month, timeZoneOffset, day, minute, second, milliseconds);
-    public static implicit operator (Integer, Integer, Integer, Integer, Integer, Integer, Number)(DateTime self) => (self.Year, self.Month, self.TimeZoneOffset, self.Day, self.Minute, self.Second, self.Milliseconds);
-    public static implicit operator DateTime((Integer, Integer, Integer, Integer, Integer, Integer, Number) value) => new DateTime(value.Item1, value.Item2, value.Item3, value.Item4, value.Item5, value.Item6, value.Item7);
-    public void Deconstruct(out Integer year, out Integer month, out Integer timeZoneOffset, out Integer day, out Integer minute, out Integer second, out Number milliseconds) { year = Year; month = Month; timeZoneOffset = TimeZoneOffset; day = Day; minute = Minute; second = Second; milliseconds = Milliseconds; }
+    public static DateTime New(Number value) => new DateTime(value);
+    public static implicit operator Number(DateTime self) => self.Value;
+    public static implicit operator DateTime(Number value) => new DateTime(value);
     public String TypeName => "DateTime";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Year", (String)"Month", (String)"TimeZoneOffset", (String)"Day", (String)"Minute", (String)"Second", (String)"Milliseconds" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Year), new Dynamic(Month), new Dynamic(TimeZoneOffset), new Dynamic(Day), new Dynamic(Minute), new Dynamic(Second), new Dynamic(Milliseconds) };
+    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public DateTime Zero => (Year.Zero, Month.Zero, TimeZoneOffset.Zero, Day.Zero, Minute.Zero, Second.Zero, Milliseconds.Zero);
-    public DateTime One => (Year.One, Month.One, TimeZoneOffset.One, Day.One, Minute.One, Second.One, Milliseconds.One);
-    public DateTime MinValue => (Year.MinValue, Month.MinValue, TimeZoneOffset.MinValue, Day.MinValue, Minute.MinValue, Second.MinValue, Milliseconds.MinValue);
-    public DateTime MaxValue => (Year.MaxValue, Month.MaxValue, TimeZoneOffset.MaxValue, Day.MaxValue, Minute.MaxValue, Second.MaxValue, Milliseconds.MaxValue);
+    public DateTime Zero => (Value.Zero);
+    public DateTime One => (Value.One);
+    public DateTime MinValue => (Value.MinValue);
+    public DateTime MaxValue => (Value.MaxValue);
     public Integer Compare(DateTime y) => throw new NotImplementedException();
     public DateTime Lerp(DateTime b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(DateTime a, DateTime b) => throw new NotImplementedException();
+    public DateTime Add(Time other) => throw new NotImplementedException();
+    public static DateTime operator +(DateTime self, Time other) => self.Add(other);
+    public DateTime Subtract(Time other) => throw new NotImplementedException();
+    public static DateTime operator -(DateTime self, Time other) => self.Subtract(other);
 }
 public readonly partial struct AnglePair: Interval<AnglePair, Angle, Angle>
 {

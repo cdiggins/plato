@@ -81,6 +81,11 @@ Type analysis for Number
   Function: Turns(ConcreteType:Number x)
   Function: Fahrenheit(ConcreteType:Number x)
   Function: Kelvin(ConcreteType:Number x)
+  Function: Days(ConcreteType:Number x)
+  Function: Milliseconds(ConcreteType:Number x)
+  Function: Seconds(ConcreteType:Number x)
+  Function: Minutes(ConcreteType:Number x)
+  Function: Hours(ConcreteType:Number x)
 Type analysis for Integer
   Concept=WholeNumber Expr=Concept:WholeNumber Subs=WholeNumber=ConcreteType:IntegerSelf=ConcreteType:Integer
     Concept=Arithmetic Expr=Concept:Arithmetic Subs=Arithmetic=ConcreteType:IntegerWholeNumber=ConcreteType:IntegerSelf=ConcreteType:Integer
@@ -364,7 +369,6 @@ Type analysis for Rotation3D
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Rotation3DValue=ConcreteType:Rotation3DSelf=ConcreteType:Rotation3D
 Type analysis for Vector2D
   Concept=Vector Expr=Concept:Vector Subs=Vector=ConcreteType:Vector2DSelf=ConcreteType:Vector2D
-  Function: Aggregate(Concept:Vector v, TypeVariable:$T r, ConcreteType:Function2<TypeVariable:$T,ConcreteType:Number,TypeVariable:$T> f)
   Function: Sum(Concept:Vector v)
   Function: SumSquares(Concept:Vector v)
   Function: MagnitudeSquared(Concept:Vector v)
@@ -450,7 +454,6 @@ Type analysis for Vector2D
     Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:Vector2DVector=ConcreteType:Vector2DSelf=ConcreteType:Vector2D
 Type analysis for Vector3D
   Concept=Vector Expr=Concept:Vector Subs=Vector=ConcreteType:Vector3DSelf=ConcreteType:Vector3D
-  Function: Aggregate(Concept:Vector v, TypeVariable:$T r, ConcreteType:Function2<TypeVariable:$T,ConcreteType:Number,TypeVariable:$T> f)
   Function: Sum(Concept:Vector v)
   Function: SumSquares(Concept:Vector v)
   Function: MagnitudeSquared(Concept:Vector v)
@@ -536,7 +539,6 @@ Type analysis for Vector3D
     Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:Vector3DVector=ConcreteType:Vector3DSelf=ConcreteType:Vector3D
 Type analysis for Vector4D
   Concept=Vector Expr=Concept:Vector Subs=Vector=ConcreteType:Vector4DSelf=ConcreteType:Vector4D
-  Function: Aggregate(Concept:Vector v, TypeVariable:$T r, ConcreteType:Function2<TypeVariable:$T,ConcreteType:Number,TypeVariable:$T> f)
   Function: Sum(Concept:Vector v)
   Function: SumSquares(Concept:Vector v)
   Function: MagnitudeSquared(Concept:Vector v)
@@ -692,7 +694,6 @@ Type analysis for AlignedBox3D
       Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:AlignedBox3DValue=ConcreteType:AlignedBox3DInterval=ConcreteType:AlignedBox3DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point3DSelf=ConcreteType:AlignedBox3D
 Type analysis for Complex
   Concept=Vector Expr=Concept:Vector Subs=Vector=ConcreteType:ComplexSelf=ConcreteType:Complex
-  Function: Aggregate(Concept:Vector v, TypeVariable:$T r, ConcreteType:Function2<TypeVariable:$T,ConcreteType:Number,TypeVariable:$T> f)
   Function: Sum(Concept:Vector v)
   Function: SumSquares(Concept:Vector v)
   Function: MagnitudeSquared(Concept:Vector v)
@@ -1434,6 +1435,11 @@ Type analysis for Time
         Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:TimeComparable=ConcreteType:TimeMagnitudinal=ConcreteType:TimeMeasure=ConcreteType:TimeSelf=ConcreteType:Time
     Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:TimeMeasure=ConcreteType:TimeSelf=ConcreteType:Time
   Function: Multiply(ConcreteType:Time x, ConcreteType:Length y)
+  Function: Days(ConcreteType:Time x)
+  Function: Milliseconds(ConcreteType:Time x)
+  Function: Minutes(ConcreteType:Time x)
+  Function: Hours(ConcreteType:Time x)
+  Function: Days(ConcreteType:Time x)
 Type analysis for TimeRange
   Concept=Interval Expr=Concept:Interval<ConcreteType:DateTime,ConcreteType:Time> Subs=Interval=ConcreteType:TimeRangeTSize=ConcreteType:TimeTValue=ConcreteType:DateTimeSelf=ConcreteType:TimeRange
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
@@ -1477,6 +1483,7 @@ Type analysis for DateTime
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:DateTimeCoordinate=ConcreteType:DateTimeSelf=ConcreteType:DateTime
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:DateTimeValue=ConcreteType:DateTimeCoordinate=ConcreteType:DateTimeSelf=ConcreteType:DateTime
       Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:DateTimeValue=ConcreteType:DateTimeCoordinate=ConcreteType:DateTimeSelf=ConcreteType:DateTime
+  Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Time> Subs=AdditiveArithmetic=ConcreteType:DateTimeT=ConcreteType:TimeSelf=ConcreteType:DateTime
 Type analysis for AnglePair
   Concept=Interval Expr=Concept:Interval<ConcreteType:Angle,ConcreteType:Angle> Subs=Interval=ConcreteType:AnglePairTSize=ConcreteType:AngleTValue=ConcreteType:AngleSelf=ConcreteType:AnglePair
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
@@ -1569,7 +1576,6 @@ Type analysis for Box3D
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Box3DValue=ConcreteType:Box3DSelf=ConcreteType:Box3D
 Type analysis for UV
   Concept=Vector Expr=Concept:Vector Subs=Vector=ConcreteType:UVSelf=ConcreteType:UV
-  Function: Aggregate(Concept:Vector v, TypeVariable:$T r, ConcreteType:Function2<TypeVariable:$T,ConcreteType:Number,TypeVariable:$T> f)
   Function: Sum(Concept:Vector v)
   Function: SumSquares(Concept:Vector v)
   Function: MagnitudeSquared(Concept:Vector v)
@@ -1655,7 +1661,6 @@ Type analysis for UV
     Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:UVVector=ConcreteType:UVSelf=ConcreteType:UV
 Type analysis for UVW
   Concept=Vector Expr=Concept:Vector Subs=Vector=ConcreteType:UVWSelf=ConcreteType:UVW
-  Function: Aggregate(Concept:Vector v, TypeVariable:$T r, ConcreteType:Function2<TypeVariable:$T,ConcreteType:Number,TypeVariable:$T> f)
   Function: Sum(Concept:Vector v)
   Function: SumSquares(Concept:Vector v)
   Function: MagnitudeSquared(Concept:Vector v)

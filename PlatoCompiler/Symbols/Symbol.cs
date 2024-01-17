@@ -3,7 +3,8 @@
 namespace Plato.Compiler.Symbols
 {
     /// <summary>
-    /// A symbol is either a definition, an expression, a type definition, or a type expression. 
+    /// A symbol is either a definition, an expression, a statement, a type definition, or a type expression.
+    /// Symbols are different from AST in that they are resolved. 
     /// </summary>
     public abstract class Symbol
     {

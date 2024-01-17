@@ -301,7 +301,7 @@ namespace Plato.Compiler
                     if (!p.GetParameterReferences(f).Any())
                         SemanticWarnings.Add($"No references found to {p}");
 
-                foreach (var r in f.Body.GetExpressionTree().OfType<Reference>())
+                foreach (var r in f.Body.GetSymbolTree().OfType<Reference>())
                     if (r.Definition == null)
                         SemanticErrors.Add($"Could not resolve reference for {r}");
 

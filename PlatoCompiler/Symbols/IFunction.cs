@@ -7,7 +7,7 @@ namespace Plato.Compiler.Symbols
     {
         string Name { get; }
         int NumParameters { get; }
-        Expression Body { get; }
+        Symbol Body { get; }
         string GetParameterName(int n);
         TypeExpression GetParameterType(int n);
         TypeExpression ReturnType { get; }

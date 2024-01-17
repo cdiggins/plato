@@ -52,7 +52,7 @@ library Interval
         => (x.Clamp(y.Min), x.Clamp(y.Max));
     
     Clamp(x: Interval<$Value, $Size>, value: $Value): $Value
-        => value.Lerp(x.Min, x.Max, value.Unlerp(x.Min, x.Max).ClampOne);
+        => x.Min.Lerp(x.Max, value.Unlerp(x.Min, x.Max).ClampOne);
     
     Within(x: Interval<$Value, $Size>, value: $Value): Boolean
         => value >= x.Min && value <= x.Max;
@@ -60,15 +60,13 @@ library Interval
 
 library Vector
 {
-    Aggregate(v: Vector, r: $T, f: Function2<$T, Number, $T>): $T
+    Sum(v: Vector): Number 
     {
-        for (var i=0; i < v.Count; ++i)
-            r = f(r, v[i]);
+        var r = 0.0;
+        for (var i = 0; i < v.Count; i = i + 1)
+            r = r + v[i];
         return r;
     }    
-
-    Sum(v: Vector): Number 
-        => v.Aggregate(Add); 
     
     SumSquares(v: Vector): Number
         => v.Square.Sum; 
@@ -283,4 +281,34 @@ library Measures
 
     Multiply(x: Mass, y: Acceleration): Force
         => x.Value * y.Value;
+
+    Days(x: Number): Time
+        => x * 86400.0;
+
+    Milliseconds(x: Number): Time
+        => (x / 1000.0).Seconds;
+
+    Seconds(x: Number): Time
+        => x;
+
+    Minutes(x: Number): Time
+        => (x * 60.0).Seconds;
+
+    Hours(x: Number): Time
+        => (x * 60).Minutes;
+
+    Days(x: Time): Number
+        => (x * 24.0).Hours;
+
+    Milliseconds(x: Time): Number
+        => x.Seconds * 1000.0;
+
+    Minutes(x: Time): Number
+        => x.Seconds / 60.0;
+
+    Hours(x: Time): Number
+        => x.Minutes / 60.0;
+
+    Days(x: Time): Number
+        => x.Hours / 24.0;
 }

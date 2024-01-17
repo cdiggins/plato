@@ -119,12 +119,12 @@ namespace Plato.CSharpWriter
                     return Write(definition);
                 case Expression expression:
                     return Write(expression);
+                case Statement statement:
+                    return Write(statement);
                 case TypeDefinition typeDefinition:
                     return Write(typeDefinition);
                 case TypeExpression typeExpression:
                     return Write(typeExpression);
-                case LoopSymbol loopSymbol:
-                    return Write("throw new NotImplementedException(\"Loops not implemented yet!\");");
                 default:
                     throw new ArgumentOutOfRangeException(nameof(symbol));
             }
@@ -160,13 +160,29 @@ namespace Plato.CSharpWriter
                 .Zip(f.ParameterNames, (pt, pn) => $"{pt} {pn}")
                 .JoinStringsWithComma();
 
-            if (f.Implementation.Body != null && f.Name != "Aggregate")
+            if (f.Implementation.Body != null)
             {
-                WriteLine($"public {ret} {f.Name}{funcTypeParamsStr}{paramList} =>")
-                    .Indent()
-                    .Write(f.Implementation.Body)
-                    .WriteLine(";")
-                    .Dedent();
+                Write($"public {ret} {f.Name}{funcTypeParamsStr}{paramList}");
+                if (f.Implementation.Body is BlockStatement be && be.Symbols.Count != 1)
+                {
+                    WriteLine();
+                    if (paramList.IsNullOrWhiteSpace())
+                    {
+                        WriteStartBlock().WriteLine("get").Write(be).WriteEndBlock();
+                    }
+                    else
+                    {
+                        Write(be);
+                    }
+                }
+                else
+                {
+                    WriteLine(" =>")
+                        .Indent()
+                        .Write(f.Implementation.Body)
+                        .WriteLine(";")
+                        .Dedent();
+                }
             }
             else
             {
@@ -577,7 +593,7 @@ namespace Plato.CSharpWriter
                     return Write(parameter.Type).Write(parameter.Name);
 
                 case VariableDefinition variable:
-                    return Write(variable.Name);
+                    return Write("var ").Write(variable.Name).Write(" = ").Write(variable.Value).WriteLine(";");
 
                 case PredefinedDefinition predefined:
                     return Write(predefined.Name);
@@ -599,6 +615,48 @@ namespace Plato.CSharpWriter
         public static string GetLiteralValue(Literal literal)
         {
             return literal.Value.ToLiteralString();
+        }
+
+        public SymbolWriterCSharp Write(Statement st)
+        {
+            switch (st)
+            {
+                case ReturnStatement returnSymbol:
+                    Write("return ");
+                    if (returnSymbol.Expression != null)
+                        Write(returnSymbol.Expression);
+                    WriteLine(";");
+                    return this;
+                
+                case LoopStatement loopSymbol:
+                    WriteLine("while (").Write(loopSymbol.Condition).WriteLine(")");
+                    WriteStartBlock();
+                    Write(loopSymbol.Body);
+                    WriteEndBlock();
+                    WriteLine();
+                    return this;
+
+                case MultiStatement multiStatement:
+                    foreach (var child in multiStatement.Symbols)
+                        Write(child);
+                    return this;
+
+                case BlockStatement block:
+                {
+                    if (block.Symbols.Count == 1)
+                        return Write(block.Symbols[0]);
+                    WriteStartBlock();
+                    foreach (var x in block.Symbols)
+                    {
+                        Write(x);
+                        WriteLine(";");
+                    }
+
+                    return WriteEndBlock();
+                }
+            }
+
+            return this;
         }
 
         public SymbolWriterCSharp Write(Expression expr)
@@ -665,23 +723,7 @@ namespace Plato.CSharpWriter
                         //.WriteConstraints(function)
                         .Write(lambda.Function.Body);
 
-                case BlockExpression block:
-                {
-                    if (block.Symbols.Count == 1)
-                    {
-                        return Write(block.Symbols[0]);
-                    }
-                    else
-                    {
-                        WriteStartBlock();
-                        foreach (var x in block.Symbols)
-                        {
-                            Write(x);
-                            WriteLine(";");
-                        }
-                        return WriteEndBlock();
-                    }
-                }
+                
             }
 
             throw new ArgumentOutOfRangeException(nameof(expr));

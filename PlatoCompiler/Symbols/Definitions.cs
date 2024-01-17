@@ -41,14 +41,14 @@ namespace Plato.Compiler.Symbols
     {
         public IReadOnlyList<ParameterDefinition> Parameters { get; }
         public int NumParameters => Parameters.Count;
-        public Expression Body { get; }
+        public Symbol Body { get; }
         public string GetParameterName(int n) => Parameters[n].Name;
         public TypeExpression GetParameterType(int n) => Parameters[n].Type;
         public TypeExpression ReturnType => Type;
         public TypeDefinition OwnerType { get; }
         public IEnumerable<TypeExpression> ParametersAndReturnType => Enumerable.Append(Parameters.Select(p => p.Type), ReturnType);
 
-        public FunctionDefinition(string name, TypeDefinition ownerType, TypeExpression returnType, Expression body, params ParameterDefinition[] parameters)
+        public FunctionDefinition(string name, TypeDefinition ownerType, TypeExpression returnType, Symbol body, params ParameterDefinition[] parameters)
             : base(returnType, name)
         {
             OwnerType = ownerType;
@@ -85,8 +85,13 @@ namespace Plato.Compiler.Symbols
 
     public class VariableDefinition : DefinitionSymbol
     {
-        public VariableDefinition(string name, TypeExpression type)
-            : base(type, name) { }
+        public VariableDefinition(string name, TypeExpression type, Expression value)
+            : base(type, name)
+        {
+            Value = value;
+        }
+
+        public Expression Value { get; }
 
         public override Reference ToReference()
             => new VariableReference(this);

@@ -27,8 +27,8 @@ namespace Plato.Compiler.Symbols
             FunctionDefinition function)
             => definition.GetReferencesTo(function.Body);
 
-        public static IEnumerable<Reference> GetReferencesTo(this DefinitionSymbol def, Expression within)
-            => within.GetExpressionTree().OfType<Reference>().Where(rs => rs.Definition.Equals(def));
+        public static IEnumerable<Reference> GetReferencesTo(this DefinitionSymbol def, Symbol within)
+            => within.GetSymbolTree().OfType<Reference>().Where(rs => rs.Definition.Equals(def));
 
         public static bool HasImplementation(this FunctionDefinition fs)
             => fs.Body != null;

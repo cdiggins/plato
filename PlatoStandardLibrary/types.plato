@@ -503,18 +503,12 @@ type TimeRange
     End: DateTime;
 }
 
-// A naive gregorian calendar date representation.
-// Possibly some alternative types like "CalendarDateTime" 
+// Unix date-time representation: number of non-leap seconds elapsed since January 1st, 1970.
+// https://en.wikipedia.org/wiki/Unix_time
 type DateTime
-    implements Coordinate
+    implements Coordinate, AdditiveArithmetic<Time>
 {
-    Year: Integer;
-    Month: Integer;
-    TimeZoneOffset: Integer;
-    Day: Integer;
-    Minute: Integer;
-    Second: Integer;
-    Milliseconds: Number;
+    Value: Number; 
 }
 
 type AnglePair

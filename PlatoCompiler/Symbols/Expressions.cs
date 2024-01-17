@@ -187,17 +187,6 @@ namespace Plato.Compiler.Symbols
             => $"({string.Join(", ", Children)})";
     }
 
-    public class BlockExpression : Expression
-    {
-        public IReadOnlyList<Symbol> Symbols { get; }
-
-        public BlockExpression(params Symbol[] symbols)
-            => Symbols = symbols;
-
-        public override IEnumerable<Symbol> GetChildSymbols()
-            => Symbols;
-    }
-
     public static class ExpressionExtensions
     {
         public static IEnumerable<Expression> GetExpressionTree(this Expression expr)
