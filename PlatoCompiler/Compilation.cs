@@ -79,7 +79,7 @@ namespace Plato.Compiler
                 ReifiedFunctionsByName = ReifiedTypes.Values.SelectMany(rt => rt.Functions)
                     .ToDictionaryOfLists(rf => rf.Name);
 
-                Libraries = new LibrarySet(this);
+                Libraries = new LibraryFunctions(this);
                 ConcreteTypes = GetConcreteTypes()
                     .Select(c => new ConcreteType(c, Libraries))
                     .ToList();
@@ -185,7 +185,7 @@ namespace Plato.Compiler
 
         public List<VisualSyntaxGraph> Graphs { get; } = new List<VisualSyntaxGraph>();
 
-        public LibrarySet Libraries { get; }
+        public LibraryFunctions Libraries { get; }
         public IReadOnlyList<ConcreteType> ConcreteTypes { get; }
 
         public FunctionAnalysis GetOrComputeFunctionAnalysis(FunctionDefinition fd)

@@ -59,7 +59,7 @@ namespace Plato.CSharpWriter
         {
             WriteConceptInterfaces();
             WriteTypeImplementations();
-            WriteLibraryMethodsOnTypes();
+            WriteLibraryMethods();
             WriteAnalyses();
             return this;
         }
@@ -246,10 +246,21 @@ namespace Plato.CSharpWriter
             return this;
         }
 
-        public SymbolWriterCSharp WriteLibraryMethodsOnTypes()
+        public SymbolWriterCSharp WriteLibraryMethods()
         {
             StartNewFile(OutputFolder.RelativeFile("Library.cs"));
             WriteLine("using System;");
+
+            WriteLine($"public static class Constants");
+            WriteStartBlock();
+            foreach (var f in Compilation.Libraries.AllConstants())
+            {
+                var retType = f.ReturnType;
+                Write($"public static {retType.Name} {f.Name} => ")
+                    .Write(f.Body)
+                    .WriteLine(";");
+            }
+            WriteEndBlock();
 
             foreach (var t in Compilation.ConcreteTypes)
             {
@@ -605,6 +616,14 @@ namespace Plato.CSharpWriter
                         ? Write("this") 
                         : Write(pr.Name);
 
+                case FunctionGroupReference fgr:
+                    // HACK: check if it is a constant.
+                    // TODO: I need to have all function calls properly resolved to generate better quality code. 
+                    if (fgr.Definition.Functions.Count == 1 &&
+                        fgr.Definition.Functions[0].NumParameters == 0)
+                        return Write($"Constants.{fgr.Name}");
+                    return Write(fgr.Name);
+
                 case Reference refSymbol:
                     return Write(refSymbol.Name);
 
@@ -626,8 +645,11 @@ namespace Plato.CSharpWriter
                 case FunctionCall functionCall:
                     // Turn it into a "dot" call.
                     // TODO: If this is a lambda then we can't do the "." call transformation. 
+                    
+                    // If there are no arguments, it is a constant.
                     if (functionCall.Args.Count == 0)
-                        return Write(functionCall.Function);
+                        return Write("Constants.").Write(functionCall.Function);
+
                     Write(functionCall.Args[0]).Write(".").Write(functionCall.Function);
                     if (functionCall.Args.Count == 1)
                         return this;

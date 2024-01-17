@@ -13,7 +13,7 @@ namespace Plato.Compiler.Analysis
     /// </summary>
     public class ConceptImplementation : ITree<ConceptImplementation>
     {
-        public LibrarySet Libraries { get; }
+        public LibraryFunctions Libraries { get; }
         public ConceptImplementation InheritedFrom { get; }
         public IEnumerable<ConceptImplementation> Children { get; }
         public TypeExpression Expression { get; }
@@ -24,7 +24,7 @@ namespace Plato.Compiler.Analysis
         public IReadOnlyList<FunctionInstance> DeclaredFunctions { get; }
 
         public ConceptImplementation(
-            LibrarySet libraries,
+            LibraryFunctions libraries,
             TypeDefinition concreteType, 
             TypeSubstitutions substitutions, 
             TypeExpression expression,

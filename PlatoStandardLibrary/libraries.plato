@@ -104,7 +104,7 @@ library Numerical
         => x * x;
 
     ClampOne(x: Number): Number 
-        => Clamp(x, (0.0, 1.0));
+        => Clamp(x, 0.0, 1.0);
 
     PlusOne(x: Numerical): Numerical 
         => x + x.One;
@@ -166,12 +166,12 @@ library Numerical
     Epsilon(): Number
         => 1E-15;
 
-    Epsilon(x: Numerical, y: Numerical): Numerical
+    MultiplyEpsilon(x: Numerical, y: Numerical): Numerical
         => x.Abs.Greater(y.Abs) * Epsilon;
 
     // https://stackoverflow.com/a/2411661
     AlmostEqual(x: Numerical, y: Numerical): Boolean
-        => (x-y).Abs <= x.Epsilon(y);
+        => (x-y).Abs <= x.MultiplyEpsilon(y);
 
     AlmostZero(x: Number): Boolean
         => x.Abs < Epsilon; 
@@ -203,6 +203,9 @@ library Angles
 
 library Comparable
 {
+    Clamp(v: Comparable, a: Comparable, b: Comparable): Comparable
+        => v.Greater(a).Lesser(b);
+
     Equals(a: Comparable, b: Comparable): Boolean 
         => a.Compare(b) == 0;
     

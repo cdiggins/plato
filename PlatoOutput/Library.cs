@@ -1,4 +1,10 @@
 using System;
+public static class Constants
+{
+    public static Number TwoPi => Constants.Pi.Twice;
+    public static Number Pi => ((Number)3.1415926535897);
+    public static Number Epsilon => ((Number)1E-15);
+}
 public readonly partial struct Number
 {
     public Angle Acos => throw new NotImplementedException();
@@ -25,15 +31,15 @@ public readonly partial struct Number
     public Number SmoothStep =>
         this.Square.Multiply(((Number)3).Subtract(this.Twice));
     public Number ClampOne =>
-        this.Clamp(((Number)0).Tuple(((Number)1)));
+        this.Clamp(((Number)0), ((Number)1));
     public Boolean AlmostZero =>
-        this.Abs.LessThan(Epsilon);
+        this.Abs.LessThan(Constants.Epsilon);
     public Angle Radians =>
         this;
     public Angle Degrees =>
         this.Divide(((Integer)360)).Turns;
     public Angle Turns =>
-        this.Multiply(TwoPi);
+        this.Multiply(Constants.TwoPi);
     public Temperature Fahrenheit =>
         this.Subtract(((Number)32)).Multiply(((Number)5).Divide(((Number)9)));
     public Temperature Kelvin =>
@@ -74,14 +80,16 @@ public readonly partial struct Number
         this.Multiply(((Number)2));
     public Number Pow2 =>
         this.Multiply(this);
-    public Number Epsilon(Number y) =>
-        this.Abs.Greater(y.Abs).Multiply(Epsilon);
+    public Number MultiplyEpsilon(Number y) =>
+        this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
     public Boolean AlmostEqual(Number y) =>
-        this.Subtract(y).Abs.LessThanOrEquals(this.Epsilon(y));
+        this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
     public Number Lerp(Number b, Number t) =>
         this.One.Subtract(t).Multiply(this).Add(t.Multiply(b));
     public Boolean Between(Number min, Number max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Number Clamp(Number a, Number b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Number b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Number a, Number b) => a.Equals(b);
@@ -122,6 +130,8 @@ public readonly partial struct Integer
     public Number ToNumber => throw new NotImplementedException();
     public Boolean Between(Integer min, Integer max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Integer Clamp(Integer a, Integer b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Integer b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Integer a, Integer b) => a.Equals(b);
@@ -149,6 +159,8 @@ public readonly partial struct String
 {
     public Boolean Between(String min, String max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public String Clamp(String a, String b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(String b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(String a, String b) => a.Equals(b);
@@ -191,6 +203,8 @@ public readonly partial struct Cardinal
 {
     public Boolean Between(Cardinal min, Cardinal max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Cardinal Clamp(Cardinal a, Cardinal b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Cardinal b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Cardinal a, Cardinal b) => a.Equals(b);
@@ -218,6 +232,8 @@ public readonly partial struct Index
 {
     public Boolean Between(Index min, Index max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Index Clamp(Index a, Index b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Index b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Index a, Index b) => a.Equals(b);
@@ -279,14 +295,16 @@ public readonly partial struct Unit
         this.Multiply(((Number)2));
     public Unit Pow2 =>
         this.Multiply(this);
-    public Unit Epsilon(Unit y) =>
-        this.Abs.Greater(y.Abs).Multiply(Epsilon);
+    public Unit MultiplyEpsilon(Unit y) =>
+        this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
     public Boolean AlmostEqual(Unit y) =>
-        this.Subtract(y).Abs.LessThanOrEquals(this.Epsilon(y));
+        this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
     public Unit Lerp(Unit b, Number t) =>
         this.One.Subtract(t).Multiply(this).Add(t.Multiply(b));
     public Boolean Between(Unit min, Unit max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Unit Clamp(Unit a, Unit b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Unit b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Unit a, Unit b) => a.Equals(b);
@@ -348,14 +366,16 @@ public readonly partial struct Percent
         this.Multiply(((Number)2));
     public Percent Pow2 =>
         this.Multiply(this);
-    public Percent Epsilon(Percent y) =>
-        this.Abs.Greater(y.Abs).Multiply(Epsilon);
+    public Percent MultiplyEpsilon(Percent y) =>
+        this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
     public Boolean AlmostEqual(Percent y) =>
-        this.Subtract(y).Abs.LessThanOrEquals(this.Epsilon(y));
+        this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
     public Percent Lerp(Percent b, Number t) =>
         this.One.Subtract(t).Multiply(this).Add(t.Multiply(b));
     public Boolean Between(Percent min, Percent max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Percent Clamp(Percent a, Percent b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Percent b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Percent a, Percent b) => a.Equals(b);
@@ -453,14 +473,16 @@ public readonly partial struct Vector2D
         this.Multiply(((Number)2));
     public Vector2D Pow2 =>
         this.Multiply(this);
-    public Vector2D Epsilon(Vector2D y) =>
-        this.Abs.Greater(y.Abs).Multiply(Epsilon);
+    public Vector2D MultiplyEpsilon(Vector2D y) =>
+        this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
     public Boolean AlmostEqual(Vector2D y) =>
-        this.Subtract(y).Abs.LessThanOrEquals(this.Epsilon(y));
+        this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
     public Vector2D Lerp(Vector2D b, Number t) =>
         this.One.Subtract(t).Multiply(this).Add(t.Multiply(b));
     public Boolean Between(Vector2D min, Vector2D max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Vector2D Clamp(Vector2D a, Vector2D b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Vector2D b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Vector2D a, Vector2D b) => a.Equals(b);
@@ -537,14 +559,16 @@ public readonly partial struct Vector3D
         this.Multiply(((Number)2));
     public Vector3D Pow2 =>
         this.Multiply(this);
-    public Vector3D Epsilon(Vector3D y) =>
-        this.Abs.Greater(y.Abs).Multiply(Epsilon);
+    public Vector3D MultiplyEpsilon(Vector3D y) =>
+        this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
     public Boolean AlmostEqual(Vector3D y) =>
-        this.Subtract(y).Abs.LessThanOrEquals(this.Epsilon(y));
+        this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
     public Vector3D Lerp(Vector3D b, Number t) =>
         this.One.Subtract(t).Multiply(this).Add(t.Multiply(b));
     public Boolean Between(Vector3D min, Vector3D max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Vector3D Clamp(Vector3D a, Vector3D b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Vector3D b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Vector3D a, Vector3D b) => a.Equals(b);
@@ -621,14 +645,16 @@ public readonly partial struct Vector4D
         this.Multiply(((Number)2));
     public Vector4D Pow2 =>
         this.Multiply(this);
-    public Vector4D Epsilon(Vector4D y) =>
-        this.Abs.Greater(y.Abs).Multiply(Epsilon);
+    public Vector4D MultiplyEpsilon(Vector4D y) =>
+        this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
     public Boolean AlmostEqual(Vector4D y) =>
-        this.Subtract(y).Abs.LessThanOrEquals(this.Epsilon(y));
+        this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
     public Vector4D Lerp(Vector4D b, Number t) =>
         this.One.Subtract(t).Multiply(this).Add(t.Multiply(b));
     public Boolean Between(Vector4D min, Vector4D max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Vector4D Clamp(Vector4D a, Vector4D b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Vector4D b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Vector4D a, Vector4D b) => a.Equals(b);
@@ -806,14 +832,16 @@ public readonly partial struct Complex
         this.Multiply(((Number)2));
     public Complex Pow2 =>
         this.Multiply(this);
-    public Complex Epsilon(Complex y) =>
-        this.Abs.Greater(y.Abs).Multiply(Epsilon);
+    public Complex MultiplyEpsilon(Complex y) =>
+        this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
     public Boolean AlmostEqual(Complex y) =>
-        this.Subtract(y).Abs.LessThanOrEquals(this.Epsilon(y));
+        this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
     public Complex Lerp(Complex b, Number t) =>
         this.One.Subtract(t).Multiply(this).Add(t.Multiply(b));
     public Boolean Between(Complex min, Complex max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Complex Clamp(Complex a, Complex b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Complex b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Complex a, Complex b) => a.Equals(b);
@@ -865,6 +893,8 @@ public readonly partial struct Point2D
 {
     public Boolean Between(Point2D min, Point2D max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Point2D Clamp(Point2D a, Point2D b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Point2D b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Point2D a, Point2D b) => a.Equals(b);
@@ -892,6 +922,8 @@ public readonly partial struct Point3D
 {
     public Boolean Between(Point3D min, Point3D max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Point3D Clamp(Point3D a, Point3D b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Point3D b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Point3D a, Point3D b) => a.Equals(b);
@@ -919,6 +951,8 @@ public readonly partial struct Point4D
 {
     public Boolean Between(Point4D min, Point4D max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Point4D Clamp(Point4D a, Point4D b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Point4D b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Point4D a, Point4D b) => a.Equals(b);
@@ -1032,6 +1066,8 @@ public readonly partial struct Color
 {
     public Boolean Between(Color min, Color max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Color Clamp(Color a, Color b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Color b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Color a, Color b) => a.Equals(b);
@@ -1059,6 +1095,8 @@ public readonly partial struct ColorLUV
 {
     public Boolean Between(ColorLUV min, ColorLUV max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public ColorLUV Clamp(ColorLUV a, ColorLUV b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(ColorLUV b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(ColorLUV a, ColorLUV b) => a.Equals(b);
@@ -1086,6 +1124,8 @@ public readonly partial struct ColorLAB
 {
     public Boolean Between(ColorLAB min, ColorLAB max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public ColorLAB Clamp(ColorLAB a, ColorLAB b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(ColorLAB b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(ColorLAB a, ColorLAB b) => a.Equals(b);
@@ -1113,6 +1153,8 @@ public readonly partial struct ColorLCh
 {
     public Boolean Between(ColorLCh min, ColorLCh max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public ColorLCh Clamp(ColorLCh a, ColorLCh b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(ColorLCh b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(ColorLCh a, ColorLCh b) => a.Equals(b);
@@ -1140,6 +1182,8 @@ public readonly partial struct ColorHSV
 {
     public Boolean Between(ColorHSV min, ColorHSV max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public ColorHSV Clamp(ColorHSV a, ColorHSV b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(ColorHSV b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(ColorHSV a, ColorHSV b) => a.Equals(b);
@@ -1167,6 +1211,8 @@ public readonly partial struct ColorHSL
 {
     public Boolean Between(ColorHSL min, ColorHSL max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public ColorHSL Clamp(ColorHSL a, ColorHSL b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(ColorHSL b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(ColorHSL a, ColorHSL b) => a.Equals(b);
@@ -1194,6 +1240,8 @@ public readonly partial struct ColorYCbCr
 {
     public Boolean Between(ColorYCbCr min, ColorYCbCr max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public ColorYCbCr Clamp(ColorYCbCr a, ColorYCbCr b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(ColorYCbCr b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(ColorYCbCr a, ColorYCbCr b) => a.Equals(b);
@@ -1221,6 +1269,8 @@ public readonly partial struct SphericalCoordinate
 {
     public Boolean Between(SphericalCoordinate min, SphericalCoordinate max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public SphericalCoordinate Clamp(SphericalCoordinate a, SphericalCoordinate b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(SphericalCoordinate b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(SphericalCoordinate a, SphericalCoordinate b) => a.Equals(b);
@@ -1248,6 +1298,8 @@ public readonly partial struct PolarCoordinate
 {
     public Boolean Between(PolarCoordinate min, PolarCoordinate max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public PolarCoordinate Clamp(PolarCoordinate a, PolarCoordinate b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(PolarCoordinate b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(PolarCoordinate a, PolarCoordinate b) => a.Equals(b);
@@ -1275,6 +1327,8 @@ public readonly partial struct LogPolarCoordinate
 {
     public Boolean Between(LogPolarCoordinate min, LogPolarCoordinate max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public LogPolarCoordinate Clamp(LogPolarCoordinate a, LogPolarCoordinate b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(LogPolarCoordinate b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(LogPolarCoordinate a, LogPolarCoordinate b) => a.Equals(b);
@@ -1302,6 +1356,8 @@ public readonly partial struct CylindricalCoordinate
 {
     public Boolean Between(CylindricalCoordinate min, CylindricalCoordinate max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public CylindricalCoordinate Clamp(CylindricalCoordinate a, CylindricalCoordinate b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(CylindricalCoordinate b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(CylindricalCoordinate a, CylindricalCoordinate b) => a.Equals(b);
@@ -1329,6 +1385,8 @@ public readonly partial struct HorizontalCoordinate
 {
     public Boolean Between(HorizontalCoordinate min, HorizontalCoordinate max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public HorizontalCoordinate Clamp(HorizontalCoordinate a, HorizontalCoordinate b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(HorizontalCoordinate b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(HorizontalCoordinate a, HorizontalCoordinate b) => a.Equals(b);
@@ -1356,6 +1414,8 @@ public readonly partial struct GeoCoordinate
 {
     public Boolean Between(GeoCoordinate min, GeoCoordinate max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public GeoCoordinate Clamp(GeoCoordinate a, GeoCoordinate b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(GeoCoordinate b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(GeoCoordinate a, GeoCoordinate b) => a.Equals(b);
@@ -1383,6 +1443,8 @@ public readonly partial struct GeoCoordinateWithAltitude
 {
     public Boolean Between(GeoCoordinateWithAltitude min, GeoCoordinateWithAltitude max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public GeoCoordinateWithAltitude Clamp(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(GeoCoordinateWithAltitude b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) => a.Equals(b);
@@ -1459,14 +1521,16 @@ public readonly partial struct Proportion
         this.Multiply(((Number)2));
     public Proportion Pow2 =>
         this.Multiply(this);
-    public Proportion Epsilon(Proportion y) =>
-        this.Abs.Greater(y.Abs).Multiply(Epsilon);
+    public Proportion MultiplyEpsilon(Proportion y) =>
+        this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
     public Boolean AlmostEqual(Proportion y) =>
-        this.Subtract(y).Abs.LessThanOrEquals(this.Epsilon(y));
+        this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
     public Proportion Lerp(Proportion b, Number t) =>
         this.One.Subtract(t).Multiply(this).Add(t.Multiply(b));
     public Boolean Between(Proportion min, Proportion max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Proportion Clamp(Proportion a, Proportion b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Proportion b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Proportion a, Proportion b) => a.Equals(b);
@@ -1501,9 +1565,11 @@ public readonly partial struct Angle
     public Number Degrees =>
         this.Turns.Multiply(((Integer)360));
     public Number Turns =>
-        this.Divide(TwoPi);
+        this.Divide(Constants.TwoPi);
     public Boolean Between(Angle min, Angle max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Angle Clamp(Angle a, Angle b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Angle b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Angle a, Angle b) => a.Equals(b);
@@ -1540,6 +1606,8 @@ public readonly partial struct Length
     public static Velocity operator *(Length x, Time y) => x.Multiply(y);
     public Boolean Between(Length min, Length max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Length Clamp(Length a, Length b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Length b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Length a, Length b) => a.Equals(b);
@@ -1570,6 +1638,8 @@ public readonly partial struct Mass
     public static Force operator *(Mass x, Acceleration y) => x.Multiply(y);
     public Boolean Between(Mass min, Mass max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Mass Clamp(Mass a, Mass b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Mass b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Mass a, Mass b) => a.Equals(b);
@@ -1601,6 +1671,8 @@ public readonly partial struct Temperature
         this.Celsius.Add(((Number)273.15));
     public Boolean Between(Temperature min, Temperature max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Temperature Clamp(Temperature a, Temperature b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Temperature b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Temperature a, Temperature b) => a.Equals(b);
@@ -1631,6 +1703,8 @@ public readonly partial struct Time
     public static Velocity operator *(Time x, Length y) => x.Multiply(y);
     public Boolean Between(Time min, Time max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Time Clamp(Time a, Time b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Time b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Time a, Time b) => a.Equals(b);
@@ -1701,6 +1775,8 @@ public readonly partial struct DateTime
 {
     public Boolean Between(DateTime min, DateTime max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public DateTime Clamp(DateTime a, DateTime b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(DateTime b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(DateTime a, DateTime b) => a.Equals(b);
@@ -1893,14 +1969,16 @@ public readonly partial struct UV
         this.Multiply(((Number)2));
     public UV Pow2 =>
         this.Multiply(this);
-    public UV Epsilon(UV y) =>
-        this.Abs.Greater(y.Abs).Multiply(Epsilon);
+    public UV MultiplyEpsilon(UV y) =>
+        this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
     public Boolean AlmostEqual(UV y) =>
-        this.Subtract(y).Abs.LessThanOrEquals(this.Epsilon(y));
+        this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
     public UV Lerp(UV b, Number t) =>
         this.One.Subtract(t).Multiply(this).Add(t.Multiply(b));
     public Boolean Between(UV min, UV max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public UV Clamp(UV a, UV b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(UV b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(UV a, UV b) => a.Equals(b);
@@ -1977,14 +2055,16 @@ public readonly partial struct UVW
         this.Multiply(((Number)2));
     public UVW Pow2 =>
         this.Multiply(this);
-    public UVW Epsilon(UVW y) =>
-        this.Abs.Greater(y.Abs).Multiply(Epsilon);
+    public UVW MultiplyEpsilon(UVW y) =>
+        this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
     public Boolean AlmostEqual(UVW y) =>
-        this.Subtract(y).Abs.LessThanOrEquals(this.Epsilon(y));
+        this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
     public UVW Lerp(UVW b, Number t) =>
         this.One.Subtract(t).Multiply(this).Add(t.Multiply(b));
     public Boolean Between(UVW min, UVW max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public UVW Clamp(UVW a, UVW b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(UVW b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(UVW a, UVW b) => a.Equals(b);
@@ -2030,6 +2110,8 @@ public readonly partial struct Area
     public static Volume operator *(Area x, Length y) => x.Multiply(y);
     public Boolean Between(Area min, Area max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Area Clamp(Area a, Area b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Area b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Area a, Area b) => a.Equals(b);
@@ -2063,6 +2145,8 @@ public readonly partial struct Volume
     public static Length operator /(Volume x, Area y) => x.Divide(y);
     public Boolean Between(Volume min, Volume max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Volume Clamp(Volume a, Volume b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Volume b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Volume a, Volume b) => a.Equals(b);
@@ -2099,6 +2183,8 @@ public readonly partial struct Velocity
     public static Acceleration operator *(Velocity x, Time y) => x.Multiply(y);
     public Boolean Between(Velocity min, Velocity max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Velocity Clamp(Velocity a, Velocity b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Velocity b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Velocity a, Velocity b) => a.Equals(b);
@@ -2132,6 +2218,8 @@ public readonly partial struct Acceleration
     public static Time operator /(Acceleration x, Velocity y) => x.Divide(y);
     public Boolean Between(Acceleration min, Acceleration max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Acceleration Clamp(Acceleration a, Acceleration b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Acceleration b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Acceleration a, Acceleration b) => a.Equals(b);
@@ -2159,6 +2247,8 @@ public readonly partial struct Force
 {
     public Boolean Between(Force min, Force max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Force Clamp(Force a, Force b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Force b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Force a, Force b) => a.Equals(b);
@@ -2186,6 +2276,8 @@ public readonly partial struct Pressure
 {
     public Boolean Between(Pressure min, Pressure max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Pressure Clamp(Pressure a, Pressure b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Pressure b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Pressure a, Pressure b) => a.Equals(b);
@@ -2213,6 +2305,8 @@ public readonly partial struct Energy
 {
     public Boolean Between(Energy min, Energy max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Energy Clamp(Energy a, Energy b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Energy b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Energy a, Energy b) => a.Equals(b);
@@ -2240,6 +2334,8 @@ public readonly partial struct Memory
 {
     public Boolean Between(Memory min, Memory max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Memory Clamp(Memory a, Memory b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Memory b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Memory a, Memory b) => a.Equals(b);
@@ -2267,6 +2363,8 @@ public readonly partial struct Frequency
 {
     public Boolean Between(Frequency min, Frequency max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Frequency Clamp(Frequency a, Frequency b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Frequency b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Frequency a, Frequency b) => a.Equals(b);
@@ -2294,6 +2392,8 @@ public readonly partial struct Loudness
 {
     public Boolean Between(Loudness min, Loudness max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Loudness Clamp(Loudness a, Loudness b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Loudness b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Loudness a, Loudness b) => a.Equals(b);
@@ -2321,6 +2421,8 @@ public readonly partial struct LuminousIntensity
 {
     public Boolean Between(LuminousIntensity min, LuminousIntensity max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public LuminousIntensity Clamp(LuminousIntensity a, LuminousIntensity b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(LuminousIntensity b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(LuminousIntensity a, LuminousIntensity b) => a.Equals(b);
@@ -2348,6 +2450,8 @@ public readonly partial struct ElectricPotential
 {
     public Boolean Between(ElectricPotential min, ElectricPotential max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public ElectricPotential Clamp(ElectricPotential a, ElectricPotential b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(ElectricPotential b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(ElectricPotential a, ElectricPotential b) => a.Equals(b);
@@ -2375,6 +2479,8 @@ public readonly partial struct ElectricCharge
 {
     public Boolean Between(ElectricCharge min, ElectricCharge max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public ElectricCharge Clamp(ElectricCharge a, ElectricCharge b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(ElectricCharge b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(ElectricCharge a, ElectricCharge b) => a.Equals(b);
@@ -2402,6 +2508,8 @@ public readonly partial struct ElectricCurrent
 {
     public Boolean Between(ElectricCurrent min, ElectricCurrent max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public ElectricCurrent Clamp(ElectricCurrent a, ElectricCurrent b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(ElectricCurrent b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(ElectricCurrent a, ElectricCurrent b) => a.Equals(b);
@@ -2429,6 +2537,8 @@ public readonly partial struct ElectricResistance
 {
     public Boolean Between(ElectricResistance min, ElectricResistance max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public ElectricResistance Clamp(ElectricResistance a, ElectricResistance b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(ElectricResistance b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(ElectricResistance a, ElectricResistance b) => a.Equals(b);
@@ -2456,6 +2566,8 @@ public readonly partial struct Power
 {
     public Boolean Between(Power min, Power max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Power Clamp(Power a, Power b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Power b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Power a, Power b) => a.Equals(b);
@@ -2483,6 +2595,8 @@ public readonly partial struct Density
 {
     public Boolean Between(Density min, Density max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Density Clamp(Density a, Density b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Density b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Density a, Density b) => a.Equals(b);
@@ -2553,14 +2667,16 @@ public readonly partial struct Probability
         this.Multiply(((Number)2));
     public Probability Pow2 =>
         this.Multiply(this);
-    public Probability Epsilon(Probability y) =>
-        this.Abs.Greater(y.Abs).Multiply(Epsilon);
+    public Probability MultiplyEpsilon(Probability y) =>
+        this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
     public Boolean AlmostEqual(Probability y) =>
-        this.Subtract(y).Abs.LessThanOrEquals(this.Epsilon(y));
+        this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
     public Probability Lerp(Probability b, Number t) =>
         this.One.Subtract(t).Multiply(this).Add(t.Multiply(b));
     public Boolean Between(Probability min, Probability max) =>
         this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
+    public Probability Clamp(Probability a, Probability b) =>
+        this.Greater(a).Lesser(b);
     public Boolean Equals(Probability b) =>
         this.Compare(b).Equals(((Integer)0));
     public static Boolean operator ==(Probability a, Probability b) => a.Equals(b);
