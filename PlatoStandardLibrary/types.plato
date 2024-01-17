@@ -282,7 +282,7 @@ type Point4D
 }
 
 type Line2D
-    implements Interval<Point2D, Vector3D>
+    implements Interval<Point2D, Vector2D>
 {
     A: Point2D;
     B: Point2D;

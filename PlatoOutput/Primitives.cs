@@ -70,6 +70,6 @@ public readonly partial struct Dynamic
 }
 public static class PrimitiveExtensions
 {
-    public static Tuple2<T0, T1> Tuple<T0, T1>(this T0 self, T1 other)
+    public static (T0, T1) Tuple<T0, T1>(this T0 self, T1 other)
         => (self, other);
 }

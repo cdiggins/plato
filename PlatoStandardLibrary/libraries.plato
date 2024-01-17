@@ -52,7 +52,7 @@ library Interval
         => (x.Clamp(y.Min), x.Clamp(y.Max));
     
     Clamp(x: Interval<$Value, $Size>, value: $Value): $Value
-        => value.Lerp(x.Min, x.Max, value.Unlerp(x.Min, x.Max).Clamp(0, 1));
+        => value.Lerp(x.Min, x.Max, value.Unlerp(x.Min, x.Max).ClampOne);
     
     Within(x: Interval<$Value, $Size>, value: $Value): Boolean
         => value >= x.Min && value <= x.Max;

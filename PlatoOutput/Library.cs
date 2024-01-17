@@ -730,7 +730,7 @@ public readonly partial struct AlignedBox2D
     public AlignedBox2D Clamp(AlignedBox2D y) =>
         this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
     public Point2D Clamp(Point2D value) =>
-        value.Lerp(this.Min, this.Max, value.Unlerp(this.Min, this.Max).Clamp(((Integer)0), ((Integer)1)));
+        value.Lerp(this.Min, this.Max, value.Unlerp(this.Min, this.Max).ClampOne);
     public Boolean Within(Point2D value) =>
         value.GreaterThanOrEquals(this.Min).And(value.LessThanOrEquals(this.Max));
 }
@@ -771,7 +771,7 @@ public readonly partial struct AlignedBox3D
     public AlignedBox3D Clamp(AlignedBox3D y) =>
         this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
     public Point3D Clamp(Point3D value) =>
-        value.Lerp(this.Min, this.Max, value.Unlerp(this.Min, this.Max).Clamp(((Integer)0), ((Integer)1)));
+        value.Lerp(this.Min, this.Max, value.Unlerp(this.Min, this.Max).ClampOne);
     public Boolean Within(Point3D value) =>
         value.GreaterThanOrEquals(this.Min).And(value.LessThanOrEquals(this.Max));
 }
@@ -1009,7 +1009,7 @@ public readonly partial struct Line2D
     public Line2D Clamp(Line2D y) =>
         this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
     public Point2D Clamp(Point2D value) =>
-        value.Lerp(this.Min, this.Max, value.Unlerp(this.Min, this.Max).Clamp(((Integer)0), ((Integer)1)));
+        value.Lerp(this.Min, this.Max, value.Unlerp(this.Min, this.Max).ClampOne);
     public Boolean Within(Point2D value) =>
         value.GreaterThanOrEquals(this.Min).And(value.LessThanOrEquals(this.Max));
 }
@@ -1050,7 +1050,7 @@ public readonly partial struct Line3D
     public Line3D Clamp(Line3D y) =>
         this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
     public Point3D Clamp(Point3D value) =>
-        value.Lerp(this.Min, this.Max, value.Unlerp(this.Min, this.Max).Clamp(((Integer)0), ((Integer)1)));
+        value.Lerp(this.Min, this.Max, value.Unlerp(this.Min, this.Max).ClampOne);
     public Boolean Within(Point3D value) =>
         value.GreaterThanOrEquals(this.Min).And(value.LessThanOrEquals(this.Max));
 }
@@ -1757,7 +1757,7 @@ public readonly partial struct TimeRange
     public TimeRange Clamp(TimeRange y) =>
         this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
     public DateTime Clamp(DateTime value) =>
-        value.Lerp(this.Min, this.Max, value.Unlerp(this.Min, this.Max).Clamp(((Integer)0), ((Integer)1)));
+        value.Lerp(this.Min, this.Max, value.Unlerp(this.Min, this.Max).ClampOne);
     public Boolean Within(DateTime value) =>
         value.GreaterThanOrEquals(this.Min).And(value.LessThanOrEquals(this.Max));
 }
@@ -1827,7 +1827,7 @@ public readonly partial struct AnglePair
     public AnglePair Clamp(AnglePair y) =>
         this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
     public Angle Clamp(Angle value) =>
-        value.Lerp(this.Min, this.Max, value.Unlerp(this.Min, this.Max).Clamp(((Integer)0), ((Integer)1)));
+        value.Lerp(this.Min, this.Max, value.Unlerp(this.Min, this.Max).ClampOne);
     public Boolean Within(Angle value) =>
         value.GreaterThanOrEquals(this.Min).And(value.LessThanOrEquals(this.Max));
 }
@@ -1874,7 +1874,7 @@ public readonly partial struct RealInterval
     public RealInterval Clamp(RealInterval y) =>
         this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
     public Number Clamp(Number value) =>
-        value.Lerp(this.Min, this.Max, value.Unlerp(this.Min, this.Max).Clamp(((Integer)0), ((Integer)1)));
+        value.Lerp(this.Min, this.Max, value.Unlerp(this.Min, this.Max).ClampOne);
     public Boolean Within(Number value) =>
         value.GreaterThanOrEquals(this.Min).And(value.LessThanOrEquals(this.Max));
 }

@@ -1073,7 +1073,7 @@ public readonly partial struct Point4D: Coordinate<Point4D>, AdditiveArithmetic<
     public Point4D Subtract(Vector4D other) => throw new NotImplementedException();
     public static Point4D operator -(Point4D self, Vector4D other) => self.Subtract(other);
 }
-public readonly partial struct Line2D: Interval<Line2D, Point2D, Vector3D>
+public readonly partial struct Line2D: Interval<Line2D, Point2D, Vector2D>
 {
     public readonly Point2D A;
     public readonly Point2D B;
@@ -1091,7 +1091,7 @@ public readonly partial struct Line2D: Interval<Line2D, Point2D, Vector3D>
     // Unimplemented concept functions
     public Point2D Min => throw new NotImplementedException();
     public Point2D Max => throw new NotImplementedException();
-    public Vector3D Size => throw new NotImplementedException();
+    public Vector2D Size => throw new NotImplementedException();
     public Line2D Zero => (A.Zero, B.Zero);
     public Line2D One => (A.One, B.One);
     public Line2D MinValue => (A.MinValue, B.MinValue);

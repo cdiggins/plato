@@ -866,7 +866,7 @@ Type analysis for Point4D
       Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Point4DValue=ConcreteType:Point4DCoordinate=ConcreteType:Point4DSelf=ConcreteType:Point4D
   Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Vector4D> Subs=AdditiveArithmetic=ConcreteType:Point4DT=ConcreteType:Vector4DSelf=ConcreteType:Point4D
 Type analysis for Line2D
-  Concept=Interval Expr=Concept:Interval<ConcreteType:Point2D,ConcreteType:Vector3D> Subs=Interval=ConcreteType:Line2DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point2DSelf=ConcreteType:Line2D
+  Concept=Interval Expr=Concept:Interval<ConcreteType:Point2D,ConcreteType:Vector2D> Subs=Interval=ConcreteType:Line2DTSize=ConcreteType:Vector2DTValue=ConcreteType:Point2DSelf=ConcreteType:Line2D
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Lerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, ConcreteType:Number amount)
   Function: Unlerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
@@ -886,10 +886,10 @@ Type analysis for Line2D
   Function: Clamp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> y)
   Function: Clamp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
   Function: Within(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Line2DInterval=ConcreteType:Line2DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point2DSelf=ConcreteType:Line2D
-    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Line2DInterval=ConcreteType:Line2DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point2DSelf=ConcreteType:Line2D
-      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Line2DValue=ConcreteType:Line2DInterval=ConcreteType:Line2DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point2DSelf=ConcreteType:Line2D
-      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Line2DValue=ConcreteType:Line2DInterval=ConcreteType:Line2DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point2DSelf=ConcreteType:Line2D
+    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Line2DInterval=ConcreteType:Line2DTSize=ConcreteType:Vector2DTValue=ConcreteType:Point2DSelf=ConcreteType:Line2D
+    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Line2DInterval=ConcreteType:Line2DTSize=ConcreteType:Vector2DTValue=ConcreteType:Point2DSelf=ConcreteType:Line2D
+      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Line2DValue=ConcreteType:Line2DInterval=ConcreteType:Line2DTSize=ConcreteType:Vector2DTValue=ConcreteType:Point2DSelf=ConcreteType:Line2D
+      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Line2DValue=ConcreteType:Line2DInterval=ConcreteType:Line2DTSize=ConcreteType:Vector2DTValue=ConcreteType:Point2DSelf=ConcreteType:Line2D
 Type analysis for Line3D
   Concept=Interval Expr=Concept:Interval<ConcreteType:Point3D,ConcreteType:Vector3D> Subs=Interval=ConcreteType:Line3DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point3DSelf=ConcreteType:Line3D
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
