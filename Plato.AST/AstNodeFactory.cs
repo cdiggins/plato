@@ -393,8 +393,7 @@ namespace Plato.AST
 
         public static AstNode ToAst(this CstExpressionBody body)
         {
-            return new AstBlock(body, 
-                new AstReturn(body.Expression, ToAst(body.Expression.Node)));
+            return ToAst(body.Expression.Node);
         }
 
         public static AstTypeDeclaration ToAst(this CstTopLevelDeclaration cstTopLevelDeclaration)

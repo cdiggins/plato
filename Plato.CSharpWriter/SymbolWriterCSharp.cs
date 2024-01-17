@@ -163,25 +163,21 @@ namespace Plato.CSharpWriter
             if (f.Implementation.Body != null)
             {
                 Write($"public {ret} {f.Name}{funcTypeParamsStr}{paramList}");
-                if (f.Implementation.Body is BlockStatement be && be.Symbols.Count != 1)
+                if (f.Implementation.Body is BlockStatement bs)
                 {
                     WriteLine();
                     if (paramList.IsNullOrWhiteSpace())
                     {
-                        WriteStartBlock().WriteLine("get").Write(be).WriteEndBlock();
+                        WriteStartBlock().WriteLine("get").Write(bs).WriteEndBlock();
                     }
                     else
                     {
-                        Write(be);
+                        Write(bs);
                     }
                 }
                 else
                 {
-                    WriteLine(" =>")
-                        .Indent()
-                        .Write(f.Implementation.Body)
-                        .WriteLine(";")
-                        .Dedent();
+                    Write(" =>").Write(f.Implementation.Body).WriteLine(";");
                 }
             }
             else
@@ -629,7 +625,7 @@ namespace Plato.CSharpWriter
                     return this;
                 
                 case LoopStatement loopSymbol:
-                    WriteLine("while (").Write(loopSymbol.Condition).WriteLine(")");
+                    Write("while (").Write(loopSymbol.Condition).WriteLine(")");
                     WriteStartBlock();
                     Write(loopSymbol.Body);
                     WriteEndBlock();
@@ -638,7 +634,11 @@ namespace Plato.CSharpWriter
 
                 case MultiStatement multiStatement:
                     foreach (var child in multiStatement.Symbols)
+                    {
                         Write(child);
+                        if (child is Expression)
+                            WriteLine(";");
+                    }
                     return this;
 
                 case BlockStatement block:
@@ -649,7 +649,8 @@ namespace Plato.CSharpWriter
                     foreach (var x in block.Symbols)
                     {
                         Write(x);
-                        WriteLine(";");
+                        if (x is Expression)
+                            WriteLine(";");
                     }
 
                     return WriteEndBlock();
