@@ -452,6 +452,7 @@ public readonly partial struct Transform2D
 }
 public readonly partial struct AlignedBox2D
 {
+    public Vector2D Size => this.Max.Subtract(this.Min);
     public Point2D Lerp(Number amount) => this.Min.Lerp(this.Max, amount);
     public AlignedBox2D Reverse => this.Max.Tuple(this.Min);
     public Point2D Center => this.Lerp(((Number)0.5));
@@ -471,6 +472,7 @@ public readonly partial struct AlignedBox2D
 }
 public readonly partial struct AlignedBox3D
 {
+    public Vector3D Size => this.Max.Subtract(this.Min);
     public Point3D Lerp(Number amount) => this.Min.Lerp(this.Max, amount);
     public AlignedBox3D Reverse => this.Max.Tuple(this.Min);
     public Point3D Center => this.Lerp(((Number)0.5));
@@ -490,6 +492,9 @@ public readonly partial struct AlignedBox3D
 }
 public readonly partial struct Complex
 {
+    public Integer Count => ((Integer)2);
+    public Number At(Integer n) => n.Equals(((Integer)0)) ? this.Real : this.Imaginary;
+    public Number this[Integer n] => At(n);
     public Number Sum
     {
         get
@@ -550,50 +555,36 @@ public readonly partial struct Quad3D
 }
 public readonly partial struct Point2D
 {
+    public Vector2D Subtract(Point2D b) => this.X.Subtract(b.X).Tuple(this.Y.Subtract(b.Y));
+    public static Vector2D operator -(Point2D a, Point2D b) => a.Subtract(b);
+    public Point2D Subtract(Vector2D b) => this.X.Subtract(b.X).Tuple(this.Y.Subtract(b.Y));
+    public static Point2D operator -(Point2D a, Vector2D b) => a.Subtract(b);
+    public Point2D Add(Vector2D b) => this.X.Add(b.X).Tuple(this.Y.Add(b.Y));
+    public static Point2D operator +(Point2D a, Vector2D b) => a.Add(b);
 }
 public readonly partial struct Point3D
 {
+    public Vector3D Subtract(Point3D b) => this.X.Subtract(b.X).Tuple(this.Y.Subtract(b.Y), this.Z.Subtract(b.Z));
+    public static Vector3D operator -(Point3D a, Point3D b) => a.Subtract(b);
+    public Point3D Subtract(Vector3D b) => this.X.Subtract(b.X).Tuple(this.Y.Subtract(b.Y), this.Z.Subtract(b.Z));
+    public static Point3D operator -(Point3D a, Vector3D b) => a.Subtract(b);
+    public Point3D Add(Vector3D b) => this.X.Add(b.X).Tuple(this.Y.Add(b.Y), this.Z.Add(b.Z));
+    public static Point3D operator +(Point3D a, Vector3D b) => a.Add(b);
 }
 public readonly partial struct Point4D
 {
+    public Vector4D Subtract(Point4D b) => this.X.Subtract(b.X).Tuple(this.Y.Subtract(b.Y), this.Z.Subtract(b.Z), this.W.Subtract(b.W));
+    public static Vector4D operator -(Point4D a, Point4D b) => a.Subtract(b);
+    public Point4D Subtract(Vector4D b) => this.X.Subtract(b.X).Tuple(this.Y.Subtract(b.Y), this.Z.Subtract(b.Z), this.W.Subtract(b.W));
+    public static Point4D operator -(Point4D a, Vector4D b) => a.Subtract(b);
+    public Point4D Add(Vector4D b) => this.X.Add(b.X).Tuple(this.Y.Add(b.Y), this.Z.Add(b.Z), this.W.Add(b.W));
+    public static Point4D operator +(Point4D a, Vector4D b) => a.Add(b);
 }
 public readonly partial struct Line2D
 {
-    public Point2D Lerp(Number amount) => this.Min.Lerp(this.Max, amount);
-    public Line2D Reverse => this.Max.Tuple(this.Min);
-    public Point2D Center => this.Lerp(((Number)0.5));
-    public Boolean Contains(Point2D value) => value.Between(this.Min, this.Max);
-    public Boolean Contains(Line2D y) => this.Contains(y.Min).And(this.Contains(y.Max));
-    public Boolean Overlaps(Line2D y) => this.Contains(y.Min).Or(this.Contains(y.Max).Or(y.Contains(this.Min).Or(y.Contains(this.Max))));
-    public Tuple2<Line2D, Line2D> SplitAt(Number t) => this.Left(t).Tuple(this.Right(t));
-    public Tuple2<Line2D, Line2D> Split => this.SplitAt(((Number)0.5));
-    public Line2D Left(Number t) => this.Min.Tuple(this.Lerp(t));
-    public Line2D Right(Number t) => this.Lerp(t).Tuple(this.Max);
-    public Line2D MoveTo(Point2D v) => v.Tuple(v.Add(this.Size));
-    public Line2D LeftHalf => this.Left(((Number)0.5));
-    public Line2D RightHalf => this.Right(((Number)0.5));
-    public Line2D Recenter(Point2D c) => c.Subtract(this.Size.Half).Tuple(c.Add(this.Size.Half));
-    public Line2D Clamp(Line2D y) => this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
-    public Point2D Clamp(Point2D value) => value.Clamp(this.Min, this.Max);
 }
 public readonly partial struct Line3D
 {
-    public Point3D Lerp(Number amount) => this.Min.Lerp(this.Max, amount);
-    public Line3D Reverse => this.Max.Tuple(this.Min);
-    public Point3D Center => this.Lerp(((Number)0.5));
-    public Boolean Contains(Point3D value) => value.Between(this.Min, this.Max);
-    public Boolean Contains(Line3D y) => this.Contains(y.Min).And(this.Contains(y.Max));
-    public Boolean Overlaps(Line3D y) => this.Contains(y.Min).Or(this.Contains(y.Max).Or(y.Contains(this.Min).Or(y.Contains(this.Max))));
-    public Tuple2<Line3D, Line3D> SplitAt(Number t) => this.Left(t).Tuple(this.Right(t));
-    public Tuple2<Line3D, Line3D> Split => this.SplitAt(((Number)0.5));
-    public Line3D Left(Number t) => this.Min.Tuple(this.Lerp(t));
-    public Line3D Right(Number t) => this.Lerp(t).Tuple(this.Max);
-    public Line3D MoveTo(Point3D v) => v.Tuple(v.Add(this.Size));
-    public Line3D LeftHalf => this.Left(((Number)0.5));
-    public Line3D RightHalf => this.Right(((Number)0.5));
-    public Line3D Recenter(Point3D c) => c.Subtract(this.Size.Half).Tuple(c.Add(this.Size.Half));
-    public Line3D Clamp(Line3D y) => this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
-    public Point3D Clamp(Point3D value) => value.Clamp(this.Min, this.Max);
 }
 public readonly partial struct Color
 {
@@ -904,6 +895,7 @@ public readonly partial struct Time
 }
 public readonly partial struct TimeRange
 {
+    public Time Size => this.Max.Subtract(this.Min);
     public DateTime Lerp(Number amount) => this.Min.Lerp(this.Max, amount);
     public TimeRange Reverse => this.Max.Tuple(this.Min);
     public DateTime Center => this.Lerp(((Number)0.5));
@@ -923,9 +915,12 @@ public readonly partial struct TimeRange
 }
 public readonly partial struct DateTime
 {
+    public Time Subtract(DateTime b) => this.Value.Subtract(b.Value);
+    public static Time operator -(DateTime a, DateTime b) => a.Subtract(b);
 }
 public readonly partial struct AnglePair
 {
+    public Angle Size => this.Max.Subtract(this.Min);
     public Angle Lerp(Number amount) => this.Min.Lerp(this.Max, amount);
     public AnglePair Reverse => this.Max.Tuple(this.Min);
     public Angle Center => this.Lerp(((Number)0.5));
@@ -951,6 +946,7 @@ public readonly partial struct Arc
 }
 public readonly partial struct NumberInterval
 {
+    public Number Size => this.Max.Subtract(this.Min);
     public Number Lerp(Number amount) => this.Min.Lerp(this.Max, amount);
     public NumberInterval Reverse => this.Max.Tuple(this.Min);
     public Number Center => this.Lerp(((Number)0.5));

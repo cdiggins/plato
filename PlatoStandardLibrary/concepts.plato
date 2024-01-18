@@ -19,7 +19,7 @@ concept Value
 
 // A numerical type represents things like floats, vectors, complex numbers
 concept Numerical 
-    inherits Value, Arithmetic, Magnitudinal, Interpolatable, Betweenable, Equatable
+    inherits Value, Arithmetic, Magnitudinal, Betweenable, Equatable
 {
 }
 
@@ -43,7 +43,7 @@ concept Array<T>
 
 // Vectors are arrays of numerical types. 
 concept Vector
-    inherits Array<Number>, Numerical, ScalarArithmetic, 
+    inherits Array<Number>, Numerical, ScalarArithmetic, Interpolatable 
 {
 }
 

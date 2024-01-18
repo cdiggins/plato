@@ -175,15 +175,15 @@ type Transform2D
 type AlignedBox2D
     implements Interval<Point2D, Vector2D>
 {
-    A: Point2D;
-    B: Point2D;
+    Min: Point2D;
+    Max: Point2D;
 }
 
 type AlignedBox3D
     implements Interval<Point3D, Vector3D>
 {
-    A: Point3D;
-    B: Point3D;
+    Min: Point3D;
+    Max: Point3D;
 }
 
 type Complex
@@ -281,14 +281,14 @@ type Point4D
 }
 
 type Line2D
-    implements Interval<Point2D, Vector2D>
+    implements Value
 {
     A: Point2D;
     B: Point2D;
 }
 
 type Line3D
-    implements Interval<Point3D, Vector3D>
+    implements Value
 {
     A: Point3D;
     B: Point3D;
@@ -492,8 +492,8 @@ type Time
 type TimeRange
     implements Interval<DateTime, Time>
 {
-    Begin: DateTime;
-    End: DateTime;
+    Min: DateTime;
+    Max: DateTime;
 }
 
 // Unix date-time representation: number of non-leap seconds elapsed since January 1st, 1970.
@@ -507,8 +507,8 @@ type DateTime
 type AnglePair
     implements Interval<Angle, Angle>
 {
-    Start: Angle;
-    End: Angle;
+    Min: Angle;
+    Max: Angle;
 }
 
 type Ring
@@ -528,8 +528,8 @@ type Arc
 type NumberInterval
     implements Interval<Number, Number>
 {
-    A: Number;
-    B: Number;
+    Min: Number;
+    Max: Number;
 }
 
 type Capsule

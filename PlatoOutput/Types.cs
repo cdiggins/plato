@@ -112,7 +112,6 @@ public readonly partial struct Cardinal
     public Cardinal One => (Value.One);
     public Cardinal MinValue => (Value.MinValue);
     public Cardinal MaxValue => (Value.MaxValue);
-    public Cardinal Lerp(Cardinal b, Number amount) => throw new NotImplementedException();
     public Number Magnitude => (Value.Magnitude);
     public Cardinal Reciprocal => (Value.Reciprocal);
     public Cardinal Negative => (Value.Negative);
@@ -151,7 +150,6 @@ public readonly partial struct Index
     public Index One => (Value.One);
     public Index MinValue => (Value.MinValue);
     public Index MaxValue => (Value.MaxValue);
-    public Index Lerp(Index b, Number amount) => throw new NotImplementedException();
     public Number Magnitude => (Value.Magnitude);
     public Index Reciprocal => (Value.Reciprocal);
     public Index Negative => (Value.Negative);
@@ -797,68 +795,62 @@ public readonly partial struct Transform2D
 }
 public readonly partial struct AlignedBox2D
 {
-    public readonly Point2D A;
-    public readonly Point2D B;
-    public AlignedBox2D WithA(Point2D a) => (a, B);
-    public AlignedBox2D WithB(Point2D b) => (A, b);
-    public AlignedBox2D(Point2D a, Point2D b) => (A, B) = (a, b);
+    public readonly Point2D Min;
+    public readonly Point2D Max;
+    public AlignedBox2D WithMin(Point2D min) => (min, Max);
+    public AlignedBox2D WithMax(Point2D max) => (Min, max);
+    public AlignedBox2D(Point2D min, Point2D max) => (Min, Max) = (min, max);
     public static AlignedBox2D Default = new AlignedBox2D();
-    public static AlignedBox2D New(Point2D a, Point2D b) => new AlignedBox2D(a, b);
-    public static implicit operator (Point2D, Point2D)(AlignedBox2D self) => (self.A, self.B);
+    public static AlignedBox2D New(Point2D min, Point2D max) => new AlignedBox2D(min, max);
+    public static implicit operator (Point2D, Point2D)(AlignedBox2D self) => (self.Min, self.Max);
     public static implicit operator AlignedBox2D((Point2D, Point2D) value) => new AlignedBox2D(value.Item1, value.Item2);
-    public void Deconstruct(out Point2D a, out Point2D b) { a = A; b = B; }
-    public override bool Equals(object obj) { if (!(obj is AlignedBox2D)) return false; var other = (AlignedBox2D)obj; return A.Equals(other.A) && B.Equals(other.B); }
-    public override int GetHashCode() => Intrinsics.CombineHashCodes(A, B);
+    public void Deconstruct(out Point2D min, out Point2D max) { min = Min; max = Max; }
+    public override bool Equals(object obj) { if (!(obj is AlignedBox2D)) return false; var other = (AlignedBox2D)obj; return Min.Equals(other.Min) && Max.Equals(other.Max); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Min, Max);
     public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(AlignedBox2D self) => new Dynamic(self);
     public static implicit operator AlignedBox2D(Dynamic value) => value.As<AlignedBox2D>();
     public String TypeName => "AlignedBox2D";
-    public Array<String> FieldNames => new[] { (String)"A", (String)"B" };
-    public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B) };
+    public Array<String> FieldNames => new[] { (String)"Min", (String)"Max" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Min), new Dynamic(Max) };
     // Unimplemented concept functions
-    public Point2D Min => throw new NotImplementedException();
-    public Point2D Max => throw new NotImplementedException();
-    public Vector2D Size => throw new NotImplementedException();
-    public AlignedBox2D Zero => (A.Zero, B.Zero);
-    public AlignedBox2D One => (A.One, B.One);
-    public AlignedBox2D MinValue => (A.MinValue, B.MinValue);
-    public AlignedBox2D MaxValue => (A.MaxValue, B.MaxValue);
-    public Boolean Equals(AlignedBox2D b) => (A.Equals(b.A) & B.Equals(b.B));
+    public AlignedBox2D Zero => (Min.Zero, Max.Zero);
+    public AlignedBox2D One => (Min.One, Max.One);
+    public AlignedBox2D MinValue => (Min.MinValue, Max.MinValue);
+    public AlignedBox2D MaxValue => (Min.MaxValue, Max.MaxValue);
+    public Boolean Equals(AlignedBox2D b) => (Min.Equals(b.Min) & Max.Equals(b.Max));
     public static Boolean operator ==(AlignedBox2D a, AlignedBox2D b) => a.Equals(b);
-    public Boolean NotEquals(AlignedBox2D b) => (A.NotEquals(b.A) & B.NotEquals(b.B));
+    public Boolean NotEquals(AlignedBox2D b) => (Min.NotEquals(b.Min) & Max.NotEquals(b.Max));
     public static Boolean operator !=(AlignedBox2D a, AlignedBox2D b) => a.NotEquals(b);
 }
 public readonly partial struct AlignedBox3D
 {
-    public readonly Point3D A;
-    public readonly Point3D B;
-    public AlignedBox3D WithA(Point3D a) => (a, B);
-    public AlignedBox3D WithB(Point3D b) => (A, b);
-    public AlignedBox3D(Point3D a, Point3D b) => (A, B) = (a, b);
+    public readonly Point3D Min;
+    public readonly Point3D Max;
+    public AlignedBox3D WithMin(Point3D min) => (min, Max);
+    public AlignedBox3D WithMax(Point3D max) => (Min, max);
+    public AlignedBox3D(Point3D min, Point3D max) => (Min, Max) = (min, max);
     public static AlignedBox3D Default = new AlignedBox3D();
-    public static AlignedBox3D New(Point3D a, Point3D b) => new AlignedBox3D(a, b);
-    public static implicit operator (Point3D, Point3D)(AlignedBox3D self) => (self.A, self.B);
+    public static AlignedBox3D New(Point3D min, Point3D max) => new AlignedBox3D(min, max);
+    public static implicit operator (Point3D, Point3D)(AlignedBox3D self) => (self.Min, self.Max);
     public static implicit operator AlignedBox3D((Point3D, Point3D) value) => new AlignedBox3D(value.Item1, value.Item2);
-    public void Deconstruct(out Point3D a, out Point3D b) { a = A; b = B; }
-    public override bool Equals(object obj) { if (!(obj is AlignedBox3D)) return false; var other = (AlignedBox3D)obj; return A.Equals(other.A) && B.Equals(other.B); }
-    public override int GetHashCode() => Intrinsics.CombineHashCodes(A, B);
+    public void Deconstruct(out Point3D min, out Point3D max) { min = Min; max = Max; }
+    public override bool Equals(object obj) { if (!(obj is AlignedBox3D)) return false; var other = (AlignedBox3D)obj; return Min.Equals(other.Min) && Max.Equals(other.Max); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Min, Max);
     public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(AlignedBox3D self) => new Dynamic(self);
     public static implicit operator AlignedBox3D(Dynamic value) => value.As<AlignedBox3D>();
     public String TypeName => "AlignedBox3D";
-    public Array<String> FieldNames => new[] { (String)"A", (String)"B" };
-    public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B) };
+    public Array<String> FieldNames => new[] { (String)"Min", (String)"Max" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Min), new Dynamic(Max) };
     // Unimplemented concept functions
-    public Point3D Min => throw new NotImplementedException();
-    public Point3D Max => throw new NotImplementedException();
-    public Vector3D Size => throw new NotImplementedException();
-    public AlignedBox3D Zero => (A.Zero, B.Zero);
-    public AlignedBox3D One => (A.One, B.One);
-    public AlignedBox3D MinValue => (A.MinValue, B.MinValue);
-    public AlignedBox3D MaxValue => (A.MaxValue, B.MaxValue);
-    public Boolean Equals(AlignedBox3D b) => (A.Equals(b.A) & B.Equals(b.B));
+    public AlignedBox3D Zero => (Min.Zero, Max.Zero);
+    public AlignedBox3D One => (Min.One, Max.One);
+    public AlignedBox3D MinValue => (Min.MinValue, Max.MinValue);
+    public AlignedBox3D MaxValue => (Min.MaxValue, Max.MaxValue);
+    public Boolean Equals(AlignedBox3D b) => (Min.Equals(b.Min) & Max.Equals(b.Max));
     public static Boolean operator ==(AlignedBox3D a, AlignedBox3D b) => a.Equals(b);
-    public Boolean NotEquals(AlignedBox3D b) => (A.NotEquals(b.A) & B.NotEquals(b.B));
+    public Boolean NotEquals(AlignedBox3D b) => (Min.NotEquals(b.Min) & Max.NotEquals(b.Max));
     public static Boolean operator !=(AlignedBox3D a, AlignedBox3D b) => a.NotEquals(b);
 }
 public readonly partial struct Complex
@@ -915,9 +907,6 @@ public readonly partial struct Complex
     public Complex One => (Real.One, Imaginary.One);
     public Complex MinValue => (Real.MinValue, Imaginary.MinValue);
     public Complex MaxValue => (Real.MaxValue, Imaginary.MaxValue);
-    public Integer Count => throw new NotImplementedException();
-    public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[Integer n] => At(n);
 }
 public readonly partial struct Ray3D
 {
@@ -1203,10 +1192,6 @@ public readonly partial struct Point2D
     public static Boolean operator ==(Point2D a, Point2D b) => a.Equals(b);
     public Boolean NotEquals(Point2D b) => (X.NotEquals(b.X) & Y.NotEquals(b.Y));
     public static Boolean operator !=(Point2D a, Point2D b) => a.NotEquals(b);
-    public Point2D Add(Vector2D other) => throw new NotImplementedException();
-    public static Point2D operator +(Point2D self, Vector2D other) => self.Add(other);
-    public Point2D Subtract(Vector2D other) => throw new NotImplementedException();
-    public static Point2D operator -(Point2D self, Vector2D other) => self.Subtract(other);
 }
 public readonly partial struct Point3D
 {
@@ -1242,10 +1227,6 @@ public readonly partial struct Point3D
     public static Boolean operator ==(Point3D a, Point3D b) => a.Equals(b);
     public Boolean NotEquals(Point3D b) => (X.NotEquals(b.X) & Y.NotEquals(b.Y) & Z.NotEquals(b.Z));
     public static Boolean operator !=(Point3D a, Point3D b) => a.NotEquals(b);
-    public Point3D Add(Vector3D other) => throw new NotImplementedException();
-    public static Point3D operator +(Point3D self, Vector3D other) => self.Add(other);
-    public Point3D Subtract(Vector3D other) => throw new NotImplementedException();
-    public static Point3D operator -(Point3D self, Vector3D other) => self.Subtract(other);
 }
 public readonly partial struct Point4D
 {
@@ -1283,10 +1264,6 @@ public readonly partial struct Point4D
     public static Boolean operator ==(Point4D a, Point4D b) => a.Equals(b);
     public Boolean NotEquals(Point4D b) => (X.NotEquals(b.X) & Y.NotEquals(b.Y) & Z.NotEquals(b.Z) & W.NotEquals(b.W));
     public static Boolean operator !=(Point4D a, Point4D b) => a.NotEquals(b);
-    public Point4D Add(Vector4D other) => throw new NotImplementedException();
-    public static Point4D operator +(Point4D self, Vector4D other) => self.Add(other);
-    public Point4D Subtract(Vector4D other) => throw new NotImplementedException();
-    public static Point4D operator -(Point4D self, Vector4D other) => self.Subtract(other);
 }
 public readonly partial struct Line2D
 {
@@ -1309,9 +1286,6 @@ public readonly partial struct Line2D
     public Array<String> FieldNames => new[] { (String)"A", (String)"B" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B) };
     // Unimplemented concept functions
-    public Point2D Min => throw new NotImplementedException();
-    public Point2D Max => throw new NotImplementedException();
-    public Vector2D Size => throw new NotImplementedException();
     public Line2D Zero => (A.Zero, B.Zero);
     public Line2D One => (A.One, B.One);
     public Line2D MinValue => (A.MinValue, B.MinValue);
@@ -1342,9 +1316,6 @@ public readonly partial struct Line3D
     public Array<String> FieldNames => new[] { (String)"A", (String)"B" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B) };
     // Unimplemented concept functions
-    public Point3D Min => throw new NotImplementedException();
-    public Point3D Max => throw new NotImplementedException();
-    public Vector3D Size => throw new NotImplementedException();
     public Line3D Zero => (A.Zero, B.Zero);
     public Line3D One => (A.One, B.One);
     public Line3D MinValue => (A.MinValue, B.MinValue);
@@ -2140,35 +2111,32 @@ public readonly partial struct Time
 }
 public readonly partial struct TimeRange
 {
-    public readonly DateTime Begin;
-    public readonly DateTime End;
-    public TimeRange WithBegin(DateTime begin) => (begin, End);
-    public TimeRange WithEnd(DateTime end) => (Begin, end);
-    public TimeRange(DateTime begin, DateTime end) => (Begin, End) = (begin, end);
+    public readonly DateTime Min;
+    public readonly DateTime Max;
+    public TimeRange WithMin(DateTime min) => (min, Max);
+    public TimeRange WithMax(DateTime max) => (Min, max);
+    public TimeRange(DateTime min, DateTime max) => (Min, Max) = (min, max);
     public static TimeRange Default = new TimeRange();
-    public static TimeRange New(DateTime begin, DateTime end) => new TimeRange(begin, end);
-    public static implicit operator (DateTime, DateTime)(TimeRange self) => (self.Begin, self.End);
+    public static TimeRange New(DateTime min, DateTime max) => new TimeRange(min, max);
+    public static implicit operator (DateTime, DateTime)(TimeRange self) => (self.Min, self.Max);
     public static implicit operator TimeRange((DateTime, DateTime) value) => new TimeRange(value.Item1, value.Item2);
-    public void Deconstruct(out DateTime begin, out DateTime end) { begin = Begin; end = End; }
-    public override bool Equals(object obj) { if (!(obj is TimeRange)) return false; var other = (TimeRange)obj; return Begin.Equals(other.Begin) && End.Equals(other.End); }
-    public override int GetHashCode() => Intrinsics.CombineHashCodes(Begin, End);
+    public void Deconstruct(out DateTime min, out DateTime max) { min = Min; max = Max; }
+    public override bool Equals(object obj) { if (!(obj is TimeRange)) return false; var other = (TimeRange)obj; return Min.Equals(other.Min) && Max.Equals(other.Max); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Min, Max);
     public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(TimeRange self) => new Dynamic(self);
     public static implicit operator TimeRange(Dynamic value) => value.As<TimeRange>();
     public String TypeName => "TimeRange";
-    public Array<String> FieldNames => new[] { (String)"Begin", (String)"End" };
-    public Array<Dynamic> FieldValues => new[] { new Dynamic(Begin), new Dynamic(End) };
+    public Array<String> FieldNames => new[] { (String)"Min", (String)"Max" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Min), new Dynamic(Max) };
     // Unimplemented concept functions
-    public DateTime Min => throw new NotImplementedException();
-    public DateTime Max => throw new NotImplementedException();
-    public Time Size => throw new NotImplementedException();
-    public TimeRange Zero => (Begin.Zero, End.Zero);
-    public TimeRange One => (Begin.One, End.One);
-    public TimeRange MinValue => (Begin.MinValue, End.MinValue);
-    public TimeRange MaxValue => (Begin.MaxValue, End.MaxValue);
-    public Boolean Equals(TimeRange b) => (Begin.Equals(b.Begin) & End.Equals(b.End));
+    public TimeRange Zero => (Min.Zero, Max.Zero);
+    public TimeRange One => (Min.One, Max.One);
+    public TimeRange MinValue => (Min.MinValue, Max.MinValue);
+    public TimeRange MaxValue => (Min.MaxValue, Max.MaxValue);
+    public Boolean Equals(TimeRange b) => (Min.Equals(b.Min) & Max.Equals(b.Max));
     public static Boolean operator ==(TimeRange a, TimeRange b) => a.Equals(b);
-    public Boolean NotEquals(TimeRange b) => (Begin.NotEquals(b.Begin) & End.NotEquals(b.End));
+    public Boolean NotEquals(TimeRange b) => (Min.NotEquals(b.Min) & Max.NotEquals(b.Max));
     public static Boolean operator !=(TimeRange a, TimeRange b) => a.NotEquals(b);
 }
 public readonly partial struct DateTime
@@ -2207,35 +2175,32 @@ public readonly partial struct DateTime
 }
 public readonly partial struct AnglePair
 {
-    public readonly Angle Start;
-    public readonly Angle End;
-    public AnglePair WithStart(Angle start) => (start, End);
-    public AnglePair WithEnd(Angle end) => (Start, end);
-    public AnglePair(Angle start, Angle end) => (Start, End) = (start, end);
+    public readonly Angle Min;
+    public readonly Angle Max;
+    public AnglePair WithMin(Angle min) => (min, Max);
+    public AnglePair WithMax(Angle max) => (Min, max);
+    public AnglePair(Angle min, Angle max) => (Min, Max) = (min, max);
     public static AnglePair Default = new AnglePair();
-    public static AnglePair New(Angle start, Angle end) => new AnglePair(start, end);
-    public static implicit operator (Angle, Angle)(AnglePair self) => (self.Start, self.End);
+    public static AnglePair New(Angle min, Angle max) => new AnglePair(min, max);
+    public static implicit operator (Angle, Angle)(AnglePair self) => (self.Min, self.Max);
     public static implicit operator AnglePair((Angle, Angle) value) => new AnglePair(value.Item1, value.Item2);
-    public void Deconstruct(out Angle start, out Angle end) { start = Start; end = End; }
-    public override bool Equals(object obj) { if (!(obj is AnglePair)) return false; var other = (AnglePair)obj; return Start.Equals(other.Start) && End.Equals(other.End); }
-    public override int GetHashCode() => Intrinsics.CombineHashCodes(Start, End);
+    public void Deconstruct(out Angle min, out Angle max) { min = Min; max = Max; }
+    public override bool Equals(object obj) { if (!(obj is AnglePair)) return false; var other = (AnglePair)obj; return Min.Equals(other.Min) && Max.Equals(other.Max); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Min, Max);
     public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(AnglePair self) => new Dynamic(self);
     public static implicit operator AnglePair(Dynamic value) => value.As<AnglePair>();
     public String TypeName => "AnglePair";
-    public Array<String> FieldNames => new[] { (String)"Start", (String)"End" };
-    public Array<Dynamic> FieldValues => new[] { new Dynamic(Start), new Dynamic(End) };
+    public Array<String> FieldNames => new[] { (String)"Min", (String)"Max" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Min), new Dynamic(Max) };
     // Unimplemented concept functions
-    public Angle Min => throw new NotImplementedException();
-    public Angle Max => throw new NotImplementedException();
-    public Angle Size => throw new NotImplementedException();
-    public AnglePair Zero => (Start.Zero, End.Zero);
-    public AnglePair One => (Start.One, End.One);
-    public AnglePair MinValue => (Start.MinValue, End.MinValue);
-    public AnglePair MaxValue => (Start.MaxValue, End.MaxValue);
-    public Boolean Equals(AnglePair b) => (Start.Equals(b.Start) & End.Equals(b.End));
+    public AnglePair Zero => (Min.Zero, Max.Zero);
+    public AnglePair One => (Min.One, Max.One);
+    public AnglePair MinValue => (Min.MinValue, Max.MinValue);
+    public AnglePair MaxValue => (Min.MaxValue, Max.MaxValue);
+    public Boolean Equals(AnglePair b) => (Min.Equals(b.Min) & Max.Equals(b.Max));
     public static Boolean operator ==(AnglePair a, AnglePair b) => a.Equals(b);
-    public Boolean NotEquals(AnglePair b) => (Start.NotEquals(b.Start) & End.NotEquals(b.End));
+    public Boolean NotEquals(AnglePair b) => (Min.NotEquals(b.Min) & Max.NotEquals(b.Max));
     public static Boolean operator !=(AnglePair a, AnglePair b) => a.NotEquals(b);
 }
 public readonly partial struct Ring
@@ -2300,35 +2265,32 @@ public readonly partial struct Arc
 }
 public readonly partial struct NumberInterval
 {
-    public readonly Number A;
-    public readonly Number B;
-    public NumberInterval WithA(Number a) => (a, B);
-    public NumberInterval WithB(Number b) => (A, b);
-    public NumberInterval(Number a, Number b) => (A, B) = (a, b);
+    public readonly Number Min;
+    public readonly Number Max;
+    public NumberInterval WithMin(Number min) => (min, Max);
+    public NumberInterval WithMax(Number max) => (Min, max);
+    public NumberInterval(Number min, Number max) => (Min, Max) = (min, max);
     public static NumberInterval Default = new NumberInterval();
-    public static NumberInterval New(Number a, Number b) => new NumberInterval(a, b);
-    public static implicit operator (Number, Number)(NumberInterval self) => (self.A, self.B);
+    public static NumberInterval New(Number min, Number max) => new NumberInterval(min, max);
+    public static implicit operator (Number, Number)(NumberInterval self) => (self.Min, self.Max);
     public static implicit operator NumberInterval((Number, Number) value) => new NumberInterval(value.Item1, value.Item2);
-    public void Deconstruct(out Number a, out Number b) { a = A; b = B; }
-    public override bool Equals(object obj) { if (!(obj is NumberInterval)) return false; var other = (NumberInterval)obj; return A.Equals(other.A) && B.Equals(other.B); }
-    public override int GetHashCode() => Intrinsics.CombineHashCodes(A, B);
+    public void Deconstruct(out Number min, out Number max) { min = Min; max = Max; }
+    public override bool Equals(object obj) { if (!(obj is NumberInterval)) return false; var other = (NumberInterval)obj; return Min.Equals(other.Min) && Max.Equals(other.Max); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Min, Max);
     public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(NumberInterval self) => new Dynamic(self);
     public static implicit operator NumberInterval(Dynamic value) => value.As<NumberInterval>();
     public String TypeName => "NumberInterval";
-    public Array<String> FieldNames => new[] { (String)"A", (String)"B" };
-    public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B) };
+    public Array<String> FieldNames => new[] { (String)"Min", (String)"Max" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Min), new Dynamic(Max) };
     // Unimplemented concept functions
-    public Number Min => throw new NotImplementedException();
-    public Number Max => throw new NotImplementedException();
-    public Number Size => throw new NotImplementedException();
-    public NumberInterval Zero => (A.Zero, B.Zero);
-    public NumberInterval One => (A.One, B.One);
-    public NumberInterval MinValue => (A.MinValue, B.MinValue);
-    public NumberInterval MaxValue => (A.MaxValue, B.MaxValue);
-    public Boolean Equals(NumberInterval b) => (A.Equals(b.A) & B.Equals(b.B));
+    public NumberInterval Zero => (Min.Zero, Max.Zero);
+    public NumberInterval One => (Min.One, Max.One);
+    public NumberInterval MinValue => (Min.MinValue, Max.MinValue);
+    public NumberInterval MaxValue => (Min.MaxValue, Max.MaxValue);
+    public Boolean Equals(NumberInterval b) => (Min.Equals(b.Min) & Max.Equals(b.Max));
     public static Boolean operator ==(NumberInterval a, NumberInterval b) => a.Equals(b);
-    public Boolean NotEquals(NumberInterval b) => (A.NotEquals(b.A) & B.NotEquals(b.B));
+    public Boolean NotEquals(NumberInterval b) => (Min.NotEquals(b.Min) & Max.NotEquals(b.Max));
     public static Boolean operator !=(NumberInterval a, NumberInterval b) => a.NotEquals(b);
 }
 public readonly partial struct Capsule

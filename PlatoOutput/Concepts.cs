@@ -12,7 +12,7 @@ public interface Value<Self>: Any, Equatable<Self>
     Self  MinValue { get; }
     Self  MaxValue { get; }
 }
-public interface Numerical<Self>: Value<Self>, Arithmetic<Self>, Magnitudinal, Interpolatable<Self>, Betweenable<Self>, Equatable<Self>
+public interface Numerical<Self>: Value<Self>, Arithmetic<Self>, Magnitudinal, Betweenable<Self>, Equatable<Self>
 {
 }
 public interface Real<Self>: Magnitudinal, Interpolatable<Self>, Betweenable<Self>, Equatable<Self>, Comparable<Self>, ScalarArithmetic<Self>
@@ -24,7 +24,7 @@ public interface Array<T>
     Integer  Count { get; }
     T  At(Integer n);
 }
-public interface Vector<Self>: Array<Number>, Numerical<Self>, ScalarArithmetic<Self>
+public interface Vector<Self>: Array<Number>, Numerical<Self>, ScalarArithmetic<Self>, Interpolatable<Self>
 {
 }
 public interface Coordinate<Self>: Value<Self>, Interpolatable<Self>, Betweenable<Self>
