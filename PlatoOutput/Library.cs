@@ -7,24 +7,24 @@ public static class Constants
 }
 public readonly partial struct Number
 {
-    public Angle Acos => throw new NotImplementedException();
-    public Angle Asin => throw new NotImplementedException();
-    public Angle Atan => throw new NotImplementedException();
-    public Number Pow(Number y) => throw new NotImplementedException();
-    public Number Log(Number y) => throw new NotImplementedException();
-    public Number NaturalLog => throw new NotImplementedException();
-    public Number NaturalPower => throw new NotImplementedException();
-    public Number Add(Number y) => throw new NotImplementedException();
+    public Angle Acos => Intrinsics.Acos(this);
+    public Angle Asin => Intrinsics.Asin(this);
+    public Angle Atan => Intrinsics.Atan(this);
+    public Number Pow(Number y) => Intrinsics.Pow(this, y);
+    public Number Log(Number y) => Intrinsics.Log(this, y);
+    public Number NaturalLog => Intrinsics.NaturalLog(this);
+    public Number NaturalPower => Intrinsics.NaturalPower(this);
+    public Number Add(Number y) => Intrinsics.Add(this, y);
     public static Number operator +(Number x, Number y) => x.Add(y);
-    public Number Subtract(Number y) => throw new NotImplementedException();
+    public Number Subtract(Number y) => Intrinsics.Subtract(this, y);
     public static Number operator -(Number x, Number y) => x.Subtract(y);
-    public Number Divide(Number y) => throw new NotImplementedException();
+    public Number Divide(Number y) => Intrinsics.Divide(this, y);
     public static Number operator /(Number x, Number y) => x.Divide(y);
-    public Number Multiply(Number y) => throw new NotImplementedException();
+    public Number Multiply(Number y) => Intrinsics.Multiply(this, y);
     public static Number operator *(Number x, Number y) => x.Multiply(y);
-    public Number Modulo(Number y) => throw new NotImplementedException();
+    public Number Modulo(Number y) => Intrinsics.Modulo(this, y);
     public static Number operator %(Number x, Number y) => x.Modulo(y);
-    public Number Negative => throw new NotImplementedException();
+    public Number Negative => Intrinsics.Negative(this);
     public static Number operator -(Number x) => x.Negative;
     public Number SquareRoot => this.Pow(((Number)0.5));
     public Number SmoothStep => this.Square.Multiply(((Number)3).Subtract(this.Twice));
@@ -80,19 +80,19 @@ public readonly partial struct Number
 }
 public readonly partial struct Integer
 {
-    public Integer Add(Integer y) => throw new NotImplementedException();
+    public Integer Add(Integer y) => Intrinsics.Add(this, y);
     public static Integer operator +(Integer x, Integer y) => x.Add(y);
-    public Integer Subtract(Integer y) => throw new NotImplementedException();
+    public Integer Subtract(Integer y) => Intrinsics.Subtract(this, y);
     public static Integer operator -(Integer x, Integer y) => x.Subtract(y);
-    public Integer Divide(Integer y) => throw new NotImplementedException();
+    public Integer Divide(Integer y) => Intrinsics.Divide(this, y);
     public static Integer operator /(Integer x, Integer y) => x.Divide(y);
-    public Integer Multiply(Integer y) => throw new NotImplementedException();
+    public Integer Multiply(Integer y) => Intrinsics.Multiply(this, y);
     public static Integer operator *(Integer x, Integer y) => x.Multiply(y);
-    public Integer Modulo(Integer y) => throw new NotImplementedException();
+    public Integer Modulo(Integer y) => Intrinsics.Modulo(this, y);
     public static Integer operator %(Integer x, Integer y) => x.Modulo(y);
-    public Integer Negative => throw new NotImplementedException();
+    public Integer Negative => Intrinsics.Negative(this);
     public static Integer operator -(Integer x) => x.Negative;
-    public Number ToNumber => throw new NotImplementedException();
+    public Number ToNumber => Intrinsics.ToNumber(this);
     public Boolean Between(Integer min, Integer max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Integer Clamp(Integer a, Integer b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Integer b) => this.Compare(b).Equals(((Integer)0));
@@ -131,11 +131,11 @@ public readonly partial struct String
 }
 public readonly partial struct Boolean
 {
-    public Boolean And(Boolean y) => throw new NotImplementedException();
+    public Boolean And(Boolean y) => Intrinsics.And(this, y);
     public static Boolean operator &(Boolean x, Boolean y) => x.And(y);
-    public Boolean Or(Boolean y) => throw new NotImplementedException();
+    public Boolean Or(Boolean y) => Intrinsics.Or(this, y);
     public static Boolean operator |(Boolean x, Boolean y) => x.Or(y);
-    public Boolean Not => throw new NotImplementedException();
+    public Boolean Not => Intrinsics.Not(this);
     public static Boolean operator !(Boolean x) => x.Not;
 }
 public readonly partial struct Character
@@ -1045,11 +1045,12 @@ public readonly partial struct Fraction
 }
 public readonly partial struct Angle
 {
-    public Number Cos => throw new NotImplementedException();
-    public Number Sin => throw new NotImplementedException();
-    public Number Tan => throw new NotImplementedException();
+    public Number Cos => Intrinsics.Cos(this);
+    public Number Sin => Intrinsics.Sin(this);
+    public Number Tan => Intrinsics.Tan(this);
     public Number Degrees => this.Turns.Multiply(((Integer)360));
     public Number Turns => this.Divide(Constants.TwoPi);
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public Angle Half => this.Divide(((Number)2));
     public Angle Quarter => this.Divide(((Number)4));
@@ -1081,6 +1082,7 @@ public readonly partial struct Length
     public static Volume operator *(Length x, Area y) => x.Multiply(y);
     public Velocity Multiply(Time y) => this.Value.Multiply(y.Value);
     public static Velocity operator *(Length x, Time y) => x.Multiply(y);
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public Length Half => this.Divide(((Number)2));
     public Length Quarter => this.Divide(((Number)4));
@@ -1108,6 +1110,7 @@ public readonly partial struct Mass
 {
     public Force Multiply(Acceleration y) => this.Value.Multiply(y.Value);
     public static Force operator *(Mass x, Acceleration y) => x.Multiply(y);
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public Mass Half => this.Divide(((Number)2));
     public Mass Quarter => this.Divide(((Number)4));
@@ -1135,6 +1138,7 @@ public readonly partial struct Temperature
 {
     public Number Fahrenheit => this.Celsius.Multiply(((Number)9).Divide(((Number)5))).Add(((Number)32));
     public Number Kelvin => this.Celsius.Add(((Number)273.15));
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public Temperature Half => this.Divide(((Number)2));
     public Temperature Quarter => this.Divide(((Number)4));
@@ -1166,6 +1170,7 @@ public readonly partial struct Time
     public Number Milliseconds => this.Seconds.Multiply(((Number)1000));
     public Number Minutes => this.Seconds.Divide(((Number)60));
     public Number Hours => this.Minutes.Divide(((Number)60));
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public Time Half => this.Divide(((Number)2));
     public Time Quarter => this.Divide(((Number)4));
@@ -1448,6 +1453,7 @@ public readonly partial struct Area
     public static Length operator /(Area x, Length y) => x.Divide(y);
     public Volume Multiply(Length y) => this.Value.Multiply(y.Value);
     public static Volume operator *(Area x, Length y) => x.Multiply(y);
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public Area Half => this.Divide(((Number)2));
     public Area Quarter => this.Divide(((Number)4));
@@ -1477,6 +1483,7 @@ public readonly partial struct Volume
     public static Area operator /(Volume x, Length y) => x.Divide(y);
     public Length Divide(Area y) => this.Value.Divide(y.Value);
     public static Length operator /(Volume x, Area y) => x.Divide(y);
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public Volume Half => this.Divide(((Number)2));
     public Volume Quarter => this.Divide(((Number)4));
@@ -1508,6 +1515,7 @@ public readonly partial struct Velocity
     public static Time operator /(Velocity x, Length y) => x.Divide(y);
     public Acceleration Multiply(Time y) => this.Value.Multiply(y.Value);
     public static Acceleration operator *(Velocity x, Time y) => x.Multiply(y);
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public Velocity Half => this.Divide(((Number)2));
     public Velocity Quarter => this.Divide(((Number)4));
@@ -1537,6 +1545,7 @@ public readonly partial struct Acceleration
     public static Velocity operator /(Acceleration x, Time y) => x.Divide(y);
     public Time Divide(Velocity y) => this.Value.Divide(y.Value);
     public static Time operator /(Acceleration x, Velocity y) => x.Divide(y);
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public Acceleration Half => this.Divide(((Number)2));
     public Acceleration Quarter => this.Divide(((Number)4));
@@ -1562,6 +1571,7 @@ public readonly partial struct Acceleration
 }
 public readonly partial struct Force
 {
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public Force Half => this.Divide(((Number)2));
     public Force Quarter => this.Divide(((Number)4));
@@ -1587,6 +1597,7 @@ public readonly partial struct Force
 }
 public readonly partial struct Pressure
 {
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public Pressure Half => this.Divide(((Number)2));
     public Pressure Quarter => this.Divide(((Number)4));
@@ -1612,6 +1623,7 @@ public readonly partial struct Pressure
 }
 public readonly partial struct Energy
 {
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public Energy Half => this.Divide(((Number)2));
     public Energy Quarter => this.Divide(((Number)4));
@@ -1637,6 +1649,7 @@ public readonly partial struct Energy
 }
 public readonly partial struct Memory
 {
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public Memory Half => this.Divide(((Number)2));
     public Memory Quarter => this.Divide(((Number)4));
@@ -1662,6 +1675,7 @@ public readonly partial struct Memory
 }
 public readonly partial struct Frequency
 {
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public Frequency Half => this.Divide(((Number)2));
     public Frequency Quarter => this.Divide(((Number)4));
@@ -1687,6 +1701,7 @@ public readonly partial struct Frequency
 }
 public readonly partial struct Loudness
 {
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public Loudness Half => this.Divide(((Number)2));
     public Loudness Quarter => this.Divide(((Number)4));
@@ -1712,6 +1727,7 @@ public readonly partial struct Loudness
 }
 public readonly partial struct LuminousIntensity
 {
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public LuminousIntensity Half => this.Divide(((Number)2));
     public LuminousIntensity Quarter => this.Divide(((Number)4));
@@ -1737,6 +1753,7 @@ public readonly partial struct LuminousIntensity
 }
 public readonly partial struct ElectricPotential
 {
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public ElectricPotential Half => this.Divide(((Number)2));
     public ElectricPotential Quarter => this.Divide(((Number)4));
@@ -1762,6 +1779,7 @@ public readonly partial struct ElectricPotential
 }
 public readonly partial struct ElectricCharge
 {
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public ElectricCharge Half => this.Divide(((Number)2));
     public ElectricCharge Quarter => this.Divide(((Number)4));
@@ -1787,6 +1805,7 @@ public readonly partial struct ElectricCharge
 }
 public readonly partial struct ElectricCurrent
 {
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public ElectricCurrent Half => this.Divide(((Number)2));
     public ElectricCurrent Quarter => this.Divide(((Number)4));
@@ -1812,6 +1831,7 @@ public readonly partial struct ElectricCurrent
 }
 public readonly partial struct ElectricResistance
 {
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public ElectricResistance Half => this.Divide(((Number)2));
     public ElectricResistance Quarter => this.Divide(((Number)4));
@@ -1837,6 +1857,7 @@ public readonly partial struct ElectricResistance
 }
 public readonly partial struct Power
 {
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public Power Half => this.Divide(((Number)2));
     public Power Quarter => this.Divide(((Number)4));
@@ -1862,6 +1883,7 @@ public readonly partial struct Power
 }
 public readonly partial struct Density
 {
+    public Number Value => this.FieldValues.At(((Integer)0));
     public Number Magnitude => this.Value;
     public Density Half => this.Divide(((Number)2));
     public Density Quarter => this.Divide(((Number)4));

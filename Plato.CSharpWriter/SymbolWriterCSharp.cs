@@ -221,6 +221,11 @@ namespace Plato.CSharpWriter
                             "Cannot generate default implementations for functions with more than 2 parameters");
                     }
                 }
+                else if (f.Implementation.OwnerType.Name == "Intrinsics")
+                {
+                    var args = f.ParameterNames.Skip(1).Prepend("this").JoinStringsWithComma();
+                    impl = $"Intrinsics.{f.Name}({args})";
+                }
 
                 WriteLine($"public {ret} {f.Name}{funcTypeParamsStr}{paramList} => {impl};");
             }
@@ -282,7 +287,10 @@ namespace Plato.CSharpWriter
                 WriteLine($"public {kind} {t.Type.Name}{typeParamsStr}");
                 WriteStartBlock();
 
-                var funcGroups = t.ConcreteFunctions.Concat(t.GetConceptFunctions()).GroupBy(f => f.SignatureId);
+                var funcGroups = t
+                    .ConcreteFunctions
+                    .Concat(t.GetConceptFunctions())
+                    .GroupBy(f => f.SignatureId);
 
                 foreach (var g in funcGroups)
                 {

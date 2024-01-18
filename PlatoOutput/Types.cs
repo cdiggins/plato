@@ -1818,7 +1818,6 @@ public readonly partial struct Angle
     public Array<String> FieldNames => new[] { (String)"Radians" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Radians) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public Angle Lerp(Angle b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Angle a, Angle b) => throw new NotImplementedException();
     public Integer Compare(Angle y) => throw new NotImplementedException();
@@ -1852,7 +1851,6 @@ public readonly partial struct Length
     public Array<String> FieldNames => new[] { (String)"Meters" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Meters) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public Length Lerp(Length b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Length a, Length b) => throw new NotImplementedException();
     public Integer Compare(Length y) => throw new NotImplementedException();
@@ -1886,7 +1884,6 @@ public readonly partial struct Mass
     public Array<String> FieldNames => new[] { (String)"Kilograms" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Kilograms) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public Mass Lerp(Mass b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Mass a, Mass b) => throw new NotImplementedException();
     public Integer Compare(Mass y) => throw new NotImplementedException();
@@ -1920,7 +1917,6 @@ public readonly partial struct Temperature
     public Array<String> FieldNames => new[] { (String)"Celsius" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Celsius) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public Temperature Lerp(Temperature b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Temperature a, Temperature b) => throw new NotImplementedException();
     public Integer Compare(Temperature y) => throw new NotImplementedException();
@@ -1954,7 +1950,6 @@ public readonly partial struct Time
     public Array<String> FieldNames => new[] { (String)"Seconds" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Seconds) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public Time Lerp(Time b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Time a, Time b) => throw new NotImplementedException();
     public Integer Compare(Time y) => throw new NotImplementedException();
@@ -2611,7 +2606,6 @@ public readonly partial struct Area
     public Array<String> FieldNames => new[] { (String)"MetersSquared" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersSquared) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public Area Lerp(Area b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Area a, Area b) => throw new NotImplementedException();
     public Integer Compare(Area y) => throw new NotImplementedException();
@@ -2645,7 +2639,6 @@ public readonly partial struct Volume
     public Array<String> FieldNames => new[] { (String)"MetersCubed" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersCubed) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public Volume Lerp(Volume b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Volume a, Volume b) => throw new NotImplementedException();
     public Integer Compare(Volume y) => throw new NotImplementedException();
@@ -2679,7 +2672,6 @@ public readonly partial struct Velocity
     public Array<String> FieldNames => new[] { (String)"MetersPerSecond" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersPerSecond) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public Velocity Lerp(Velocity b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Velocity a, Velocity b) => throw new NotImplementedException();
     public Integer Compare(Velocity y) => throw new NotImplementedException();
@@ -2713,7 +2705,6 @@ public readonly partial struct Acceleration
     public Array<String> FieldNames => new[] { (String)"MetersPerSecondSquared" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersPerSecondSquared) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public Acceleration Lerp(Acceleration b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Acceleration a, Acceleration b) => throw new NotImplementedException();
     public Integer Compare(Acceleration y) => throw new NotImplementedException();
@@ -2747,7 +2738,6 @@ public readonly partial struct Force
     public Array<String> FieldNames => new[] { (String)"Newtons" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Newtons) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public Force Lerp(Force b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Force a, Force b) => throw new NotImplementedException();
     public Integer Compare(Force y) => throw new NotImplementedException();
@@ -2781,7 +2771,6 @@ public readonly partial struct Pressure
     public Array<String> FieldNames => new[] { (String)"Pascals" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Pascals) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public Pressure Lerp(Pressure b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Pressure a, Pressure b) => throw new NotImplementedException();
     public Integer Compare(Pressure y) => throw new NotImplementedException();
@@ -2815,7 +2804,6 @@ public readonly partial struct Energy
     public Array<String> FieldNames => new[] { (String)"Joules" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Joules) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public Energy Lerp(Energy b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Energy a, Energy b) => throw new NotImplementedException();
     public Integer Compare(Energy y) => throw new NotImplementedException();
@@ -2849,7 +2837,6 @@ public readonly partial struct Memory
     public Array<String> FieldNames => new[] { (String)"Bytes" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Bytes) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public Memory Lerp(Memory b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Memory a, Memory b) => throw new NotImplementedException();
     public Integer Compare(Memory y) => throw new NotImplementedException();
@@ -2883,7 +2870,6 @@ public readonly partial struct Frequency
     public Array<String> FieldNames => new[] { (String)"Hertz" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Hertz) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public Frequency Lerp(Frequency b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Frequency a, Frequency b) => throw new NotImplementedException();
     public Integer Compare(Frequency y) => throw new NotImplementedException();
@@ -2917,7 +2903,6 @@ public readonly partial struct Loudness
     public Array<String> FieldNames => new[] { (String)"Decibels" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Decibels) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public Loudness Lerp(Loudness b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Loudness a, Loudness b) => throw new NotImplementedException();
     public Integer Compare(Loudness y) => throw new NotImplementedException();
@@ -2951,7 +2936,6 @@ public readonly partial struct LuminousIntensity
     public Array<String> FieldNames => new[] { (String)"Candelas" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Candelas) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public LuminousIntensity Lerp(LuminousIntensity b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(LuminousIntensity a, LuminousIntensity b) => throw new NotImplementedException();
     public Integer Compare(LuminousIntensity y) => throw new NotImplementedException();
@@ -2985,7 +2969,6 @@ public readonly partial struct ElectricPotential
     public Array<String> FieldNames => new[] { (String)"Volts" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Volts) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public ElectricPotential Lerp(ElectricPotential b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(ElectricPotential a, ElectricPotential b) => throw new NotImplementedException();
     public Integer Compare(ElectricPotential y) => throw new NotImplementedException();
@@ -3019,7 +3002,6 @@ public readonly partial struct ElectricCharge
     public Array<String> FieldNames => new[] { (String)"Columbs" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Columbs) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public ElectricCharge Lerp(ElectricCharge b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(ElectricCharge a, ElectricCharge b) => throw new NotImplementedException();
     public Integer Compare(ElectricCharge y) => throw new NotImplementedException();
@@ -3053,7 +3035,6 @@ public readonly partial struct ElectricCurrent
     public Array<String> FieldNames => new[] { (String)"Amperes" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Amperes) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public ElectricCurrent Lerp(ElectricCurrent b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(ElectricCurrent a, ElectricCurrent b) => throw new NotImplementedException();
     public Integer Compare(ElectricCurrent y) => throw new NotImplementedException();
@@ -3087,7 +3068,6 @@ public readonly partial struct ElectricResistance
     public Array<String> FieldNames => new[] { (String)"Ohms" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Ohms) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public ElectricResistance Lerp(ElectricResistance b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(ElectricResistance a, ElectricResistance b) => throw new NotImplementedException();
     public Integer Compare(ElectricResistance y) => throw new NotImplementedException();
@@ -3121,7 +3101,6 @@ public readonly partial struct Power
     public Array<String> FieldNames => new[] { (String)"Watts" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Watts) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public Power Lerp(Power b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Power a, Power b) => throw new NotImplementedException();
     public Integer Compare(Power y) => throw new NotImplementedException();
@@ -3155,7 +3134,6 @@ public readonly partial struct Density
     public Array<String> FieldNames => new[] { (String)"KilogramsPerMeterCubed" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(KilogramsPerMeterCubed) };
     // Unimplemented concept functions
-    public Number Value => throw new NotImplementedException();
     public Density Lerp(Density b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Density a, Density b) => throw new NotImplementedException();
     public Integer Compare(Density y) => throw new NotImplementedException();

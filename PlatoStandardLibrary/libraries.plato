@@ -228,6 +228,9 @@ library Comparable
     
 library Measures
 {
+    Value(x: Measure): Number
+        => x.FieldValues[0];
+
     Magnitude(x: Measure): Number
         => x.Value; 
 
