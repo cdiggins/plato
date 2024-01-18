@@ -134,22 +134,22 @@ library Numerical
     Abs(x: Numerical): Numerical 
         => x.LtZ ? -x: x;
     
-    Half(x: Numerical): Numerical 
+    Half(x: ScalarArithmetic): ScalarArithmetic 
         => x / 2.0;
         
-    Quarter(x: Numerical): Numerical 
+    Quarter(x: ScalarArithmetic): ScalarArithmetic 
         => x / 4.0;
     
-    Eighth(x: Numerical): Numerical 
+    Eighth(x: ScalarArithmetic): ScalarArithmetic 
         => x / 8.0;
         
-    Tenth(x: Numerical): Numerical 
+    Tenth(x: ScalarArithmetic): ScalarArithmetic 
         => x / 10.0;
     
-    Twice(x: Numerical): Numerical 
+    Twice(x: ScalarArithmetic): ScalarArithmetic 
         => x * 2.0;
     
-    Pow2(x: Numerical): Numerical 
+    Pow2(x: Numerical): Numerical
         => x * x;
 
     TwoPi(): Number 
@@ -172,7 +172,7 @@ library Numerical
         => x.Abs < Epsilon; 
 
     Lerp(a: Numerical, b: Numerical, t: Number): Numerical
-        => (a.One - t) * a + t * b;
+        => a * t.FromOne + b * t;
         
     Between(self: Comparable, min: Comparable, max: Comparable): Boolean
         => self >= min && self <= max;

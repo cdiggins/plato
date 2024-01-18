@@ -177,7 +177,7 @@ namespace Plato.CSharpWriter
                 }
                 else
                 {
-                    Write(" =>").Write(f.Implementation.Body).WriteLine(";");
+                    Write(" => ").Write(f.Implementation.Body).WriteLine(";");
                 }
             }
             else
