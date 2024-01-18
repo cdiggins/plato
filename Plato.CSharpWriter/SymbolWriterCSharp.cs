@@ -212,7 +212,7 @@ namespace Plato.CSharpWriter
                             var args = fields.Select(field => $"{field}.{f.Name}({p0}.{field})");
                             impl = $"({args.JoinStrings(sep)})";
                         }
-                        else if (pt0.Name == elementType?.Name)
+                        else 
                         {
                             var args = fields.Select(field => $"{field}.{f.Name}({p0})");
                             impl = $"({args.JoinStrings(sep)})";
@@ -229,17 +229,17 @@ namespace Plato.CSharpWriter
                             var args = fields.Select(field => $"{field}.{f.Name}({p0}.{field}, {p1}.{field})");
                             impl = $"({args.JoinStrings(sep)})";
                         }
-                        else if (pt0.Name == t.Name && pt1.Name == elementType?.Name)
+                        else if (pt0.Name == t.Name)
                         {
                             var args = fields.Select(field => $"{field}.{f.Name}({p0}.{field}, {p1})");
                             impl = $"({args.JoinStrings(sep)})";
                         }
-                        else if (pt0.Name == elementType?.Name && pt1.Name == t.Name)
+                        else if (pt1.Name == t.Name)
                         {
                             var args = fields.Select(field => $"{field}.{f.Name}({p0}, {p1}.{field})");
                             impl = $"({args.JoinStrings(sep)})";
                         }
-                        else if (pt0.Name == elementType?.Name && pt1.Name == elementType?.Name)
+                        else 
                         {
                             var args = fields.Select(field => $"{field}.{f.Name}({p0}, {p1})");
                             impl = $"({args.JoinStrings(sep)})";

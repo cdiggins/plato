@@ -990,6 +990,9 @@ public readonly partial struct Box3D
 }
 public readonly partial struct UV
 {
+    public Integer Count => ((Integer)2);
+    public Unit At(Integer n) => n.Equals(((Integer)0)) ? this.U : this.V;
+    public Unit this[Integer n] => At(n);
     public Number Sum
     {
         get
@@ -1026,6 +1029,9 @@ public readonly partial struct UV
 }
 public readonly partial struct UVW
 {
+    public Integer Count => ((Integer)3);
+    public Unit At(Integer n) => n.Equals(((Integer)0)) ? this.U : n.Equals(((Integer)1)) ? this.V : this.W;
+    public Unit this[Integer n] => At(n);
     public Number Sum
     {
         get

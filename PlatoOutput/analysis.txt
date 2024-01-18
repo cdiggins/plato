@@ -1191,6 +1191,8 @@ Type analysis for UV
       Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:UVT=ConcreteType:NumberScalarArithmetic=ConcreteType:UVVector=ConcreteType:UVSelf=ConcreteType:UV
       Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:UVT=ConcreteType:NumberScalarArithmetic=ConcreteType:UVVector=ConcreteType:UVSelf=ConcreteType:UV
     Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:UVVector=ConcreteType:UVSelf=ConcreteType:UV
+  Function: Count(ConcreteType:UV v)
+  Function: At(ConcreteType:UV v, ConcreteType:Integer n)
 Type analysis for UVW
   Concept=Vector Expr=Concept:Vector Subs=Vector=ConcreteType:UVWSelf=ConcreteType:UVW
   Function: Sum(Concept:Vector v)
@@ -1227,6 +1229,8 @@ Type analysis for UVW
       Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:UVWT=ConcreteType:NumberScalarArithmetic=ConcreteType:UVWVector=ConcreteType:UVWSelf=ConcreteType:UVW
       Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:UVWT=ConcreteType:NumberScalarArithmetic=ConcreteType:UVWVector=ConcreteType:UVWSelf=ConcreteType:UVW
     Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:UVWVector=ConcreteType:UVWSelf=ConcreteType:UVW
+  Function: Count(ConcreteType:UVW v)
+  Function: At(ConcreteType:UVW v, ConcreteType:Integer n)
 Type analysis for CubicBezier2D
   Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:CubicBezier2DSelf=ConcreteType:CubicBezier2D
     Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:CubicBezier2DValue=ConcreteType:CubicBezier2DSelf=ConcreteType:CubicBezier2D
