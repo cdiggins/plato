@@ -1288,6 +1288,12 @@ Type analysis for Fraction
 Type analysis for Angle
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:AngleSelf=ConcreteType:Angle
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:AngleMeasure=ConcreteType:AngleSelf=ConcreteType:Angle
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:AngleValue=ConcreteType:AngleMeasure=ConcreteType:AngleSelf=ConcreteType:Angle
@@ -1334,6 +1340,12 @@ Type analysis for Angle
 Type analysis for Length
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:LengthSelf=ConcreteType:Length
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:LengthMeasure=ConcreteType:LengthSelf=ConcreteType:Length
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:LengthValue=ConcreteType:LengthMeasure=ConcreteType:LengthSelf=ConcreteType:Length
@@ -1378,6 +1390,12 @@ Type analysis for Length
 Type analysis for Mass
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:MassSelf=ConcreteType:Mass
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:MassMeasure=ConcreteType:MassSelf=ConcreteType:Mass
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:MassValue=ConcreteType:MassMeasure=ConcreteType:MassSelf=ConcreteType:Mass
@@ -1420,6 +1438,12 @@ Type analysis for Mass
 Type analysis for Temperature
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:TemperatureSelf=ConcreteType:Temperature
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:TemperatureMeasure=ConcreteType:TemperatureSelf=ConcreteType:Temperature
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:TemperatureValue=ConcreteType:TemperatureMeasure=ConcreteType:TemperatureSelf=ConcreteType:Temperature
@@ -1463,6 +1487,12 @@ Type analysis for Temperature
 Type analysis for Time
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:TimeSelf=ConcreteType:Time
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:TimeMeasure=ConcreteType:TimeSelf=ConcreteType:Time
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:TimeValue=ConcreteType:TimeMeasure=ConcreteType:TimeSelf=ConcreteType:Time
@@ -1846,6 +1876,12 @@ Type analysis for QuadraticBezier3D
 Type analysis for Area
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:AreaSelf=ConcreteType:Area
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:AreaMeasure=ConcreteType:AreaSelf=ConcreteType:Area
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:AreaValue=ConcreteType:AreaMeasure=ConcreteType:AreaSelf=ConcreteType:Area
@@ -1889,6 +1925,12 @@ Type analysis for Area
 Type analysis for Volume
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:VolumeSelf=ConcreteType:Volume
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:VolumeMeasure=ConcreteType:VolumeSelf=ConcreteType:Volume
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:VolumeValue=ConcreteType:VolumeMeasure=ConcreteType:VolumeSelf=ConcreteType:Volume
@@ -1932,6 +1974,12 @@ Type analysis for Volume
 Type analysis for Velocity
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:VelocitySelf=ConcreteType:Velocity
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:VelocityMeasure=ConcreteType:VelocitySelf=ConcreteType:Velocity
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:VelocityValue=ConcreteType:VelocityMeasure=ConcreteType:VelocitySelf=ConcreteType:Velocity
@@ -1976,6 +2024,12 @@ Type analysis for Velocity
 Type analysis for Acceleration
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:AccelerationSelf=ConcreteType:Acceleration
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:AccelerationMeasure=ConcreteType:AccelerationSelf=ConcreteType:Acceleration
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:AccelerationValue=ConcreteType:AccelerationMeasure=ConcreteType:AccelerationSelf=ConcreteType:Acceleration
@@ -2019,6 +2073,12 @@ Type analysis for Acceleration
 Type analysis for Force
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:ForceSelf=ConcreteType:Force
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ForceMeasure=ConcreteType:ForceSelf=ConcreteType:Force
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ForceValue=ConcreteType:ForceMeasure=ConcreteType:ForceSelf=ConcreteType:Force
@@ -2060,6 +2120,12 @@ Type analysis for Force
 Type analysis for Pressure
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:PressureSelf=ConcreteType:Pressure
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:PressureMeasure=ConcreteType:PressureSelf=ConcreteType:Pressure
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:PressureValue=ConcreteType:PressureMeasure=ConcreteType:PressureSelf=ConcreteType:Pressure
@@ -2101,6 +2167,12 @@ Type analysis for Pressure
 Type analysis for Energy
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:EnergySelf=ConcreteType:Energy
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:EnergyMeasure=ConcreteType:EnergySelf=ConcreteType:Energy
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:EnergyValue=ConcreteType:EnergyMeasure=ConcreteType:EnergySelf=ConcreteType:Energy
@@ -2142,6 +2214,12 @@ Type analysis for Energy
 Type analysis for Memory
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:MemorySelf=ConcreteType:Memory
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:MemoryMeasure=ConcreteType:MemorySelf=ConcreteType:Memory
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:MemoryValue=ConcreteType:MemoryMeasure=ConcreteType:MemorySelf=ConcreteType:Memory
@@ -2183,6 +2261,12 @@ Type analysis for Memory
 Type analysis for Frequency
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:FrequencySelf=ConcreteType:Frequency
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:FrequencyMeasure=ConcreteType:FrequencySelf=ConcreteType:Frequency
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:FrequencyValue=ConcreteType:FrequencyMeasure=ConcreteType:FrequencySelf=ConcreteType:Frequency
@@ -2224,6 +2308,12 @@ Type analysis for Frequency
 Type analysis for Loudness
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:LoudnessSelf=ConcreteType:Loudness
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:LoudnessMeasure=ConcreteType:LoudnessSelf=ConcreteType:Loudness
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:LoudnessValue=ConcreteType:LoudnessMeasure=ConcreteType:LoudnessSelf=ConcreteType:Loudness
@@ -2265,6 +2355,12 @@ Type analysis for Loudness
 Type analysis for LuminousIntensity
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:LuminousIntensitySelf=ConcreteType:LuminousIntensity
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:LuminousIntensityMeasure=ConcreteType:LuminousIntensitySelf=ConcreteType:LuminousIntensity
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:LuminousIntensityValue=ConcreteType:LuminousIntensityMeasure=ConcreteType:LuminousIntensitySelf=ConcreteType:LuminousIntensity
@@ -2306,6 +2402,12 @@ Type analysis for LuminousIntensity
 Type analysis for ElectricPotential
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:ElectricPotentialSelf=ConcreteType:ElectricPotential
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ElectricPotentialMeasure=ConcreteType:ElectricPotentialSelf=ConcreteType:ElectricPotential
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ElectricPotentialValue=ConcreteType:ElectricPotentialMeasure=ConcreteType:ElectricPotentialSelf=ConcreteType:ElectricPotential
@@ -2347,6 +2449,12 @@ Type analysis for ElectricPotential
 Type analysis for ElectricCharge
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:ElectricChargeSelf=ConcreteType:ElectricCharge
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ElectricChargeMeasure=ConcreteType:ElectricChargeSelf=ConcreteType:ElectricCharge
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ElectricChargeValue=ConcreteType:ElectricChargeMeasure=ConcreteType:ElectricChargeSelf=ConcreteType:ElectricCharge
@@ -2388,6 +2496,12 @@ Type analysis for ElectricCharge
 Type analysis for ElectricCurrent
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:ElectricCurrentSelf=ConcreteType:ElectricCurrent
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ElectricCurrentMeasure=ConcreteType:ElectricCurrentSelf=ConcreteType:ElectricCurrent
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ElectricCurrentValue=ConcreteType:ElectricCurrentMeasure=ConcreteType:ElectricCurrentSelf=ConcreteType:ElectricCurrent
@@ -2429,6 +2543,12 @@ Type analysis for ElectricCurrent
 Type analysis for ElectricResistance
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:ElectricResistanceSelf=ConcreteType:ElectricResistance
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:ElectricResistanceMeasure=ConcreteType:ElectricResistanceSelf=ConcreteType:ElectricResistance
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:ElectricResistanceValue=ConcreteType:ElectricResistanceMeasure=ConcreteType:ElectricResistanceSelf=ConcreteType:ElectricResistance
@@ -2470,6 +2590,12 @@ Type analysis for ElectricResistance
 Type analysis for Power
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:PowerSelf=ConcreteType:Power
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:PowerMeasure=ConcreteType:PowerSelf=ConcreteType:Power
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:PowerValue=ConcreteType:PowerMeasure=ConcreteType:PowerSelf=ConcreteType:Power
@@ -2511,6 +2637,12 @@ Type analysis for Power
 Type analysis for Density
   Concept=Measure Expr=Concept:Measure Subs=Measure=ConcreteType:DensitySelf=ConcreteType:Density
   Function: Value(Concept:Measure x)
+  Function: Add(Concept:Measure x, ConcreteType:Number y)
+  Function: Subtract(Concept:Measure x, ConcreteType:Number y)
+  Function: Multiply(Concept:Measure x, ConcreteType:Number y)
+  Function: Divide(Concept:Measure x, ConcreteType:Number y)
+  Function: Modulo(Concept:Measure x, ConcreteType:Number y)
+  Function: Negative(Concept:Measure x)
   Function: Magnitude(Concept:Measure x)
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:DensityMeasure=ConcreteType:DensitySelf=ConcreteType:Density
       Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:DensityValue=ConcreteType:DensityMeasure=ConcreteType:DensitySelf=ConcreteType:Density

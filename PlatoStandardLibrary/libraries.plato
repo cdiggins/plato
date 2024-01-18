@@ -134,19 +134,19 @@ library Numerical
     Abs(x: Numerical): Numerical 
         => x.LtZ ? -x: x;
     
-    Half(x: ScalarArithmetic):ScalarArithmetic
+    Half(x: ScalarArithmetic): ScalarArithmetic
         => x / 2.0;
         
-    Quarter(x:ScalarArithmetic):ScalarArithmetic
+    Quarter(x:ScalarArithmetic): ScalarArithmetic
         => x / 4.0;
     
-    Eighth(x:ScalarArithmetic):ScalarArithmetic
+    Eighth(x:ScalarArithmetic): ScalarArithmetic
         => x / 8.0;
         
-    Tenth(x:ScalarArithmetic):ScalarArithmetic 
+    Tenth(x:ScalarArithmetic): ScalarArithmetic 
         => x / 10.0;
     
-    Twice(x:ScalarArithmetic):ScalarArithmetic 
+    Twice(x:ScalarArithmetic): ScalarArithmetic 
         => x * 2.0;
     
     Pow2(x: Numerical): Numerical
@@ -230,6 +230,24 @@ library Measures
 {
     Value(x: Measure): Number
         => x.FieldValues[0];
+
+    Add(x: Measure, y: Number): Measure
+        => x.Value + y;
+
+    Subtract(x: Measure, y: Number): Measure
+        => x.Value - y;
+
+    Multiply(x: Measure, y: Number): Measure
+        => x.Value * y;
+
+    Divide(x: Measure, y: Number): Measure
+        => x.Value / y;
+
+    Modulo(x: Measure, y: Number): Measure
+        => x.Value % y;
+
+    Negative(x: Measure): Measure
+        => -x.Value;
 
     Magnitude(x: Measure): Number
         => x.Value; 
