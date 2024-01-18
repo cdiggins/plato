@@ -16,7 +16,7 @@ public interface Array<T>
     Integer  Count { get; }
     T  At(Integer n);
 }
-public interface Vector<Self>: Array<Number>, Numerical<Self>, Magnitudinal<Self>, Equatable<Self>, Interpolatable<Self>
+public interface Vector<Self>: Array<Number>, Numerical<Self>, Magnitudinal<Self>, Equatable<Self>, Interpolatable<Self>, ScalarArithmetic<Self>
 {
 }
 public interface Coordinate<Self>: Interpolatable<Self>, Comparable<Self>, Value<Self>
@@ -29,7 +29,7 @@ public interface Measure<Self>: Value<Self>, ScalarArithmetic<Self>, Comparable<
 public interface WholeNumber<Self>: Arithmetic<Self>, Equatable<Self>, Comparable<Self>, Magnitudinal<Self>
 {
 }
-public interface Numerical<Self>: Value<Self>, ScalarArithmetic<Self>, Arithmetic<Self>, Equatable<Self>, Comparable<Self>, Magnitudinal<Self>, Interpolatable<Self>
+public interface Numerical<Self>: Value<Self>, Arithmetic<Self>, Equatable<Self>, Comparable<Self>, Magnitudinal<Self>, Interpolatable<Self>
 {
 }
 public interface Magnitudinal<Self>: Comparable<Self>

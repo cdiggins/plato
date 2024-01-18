@@ -93,6 +93,11 @@ public readonly partial struct Integer
     public Integer Negative => throw new NotImplementedException();
     public static Integer operator -(Integer x) => x.Negative;
     public Number ToNumber => throw new NotImplementedException();
+    public Integer Half => this.Divide(((Number)2));
+    public Integer Quarter => this.Divide(((Number)4));
+    public Integer Eighth => this.Divide(((Number)8));
+    public Integer Tenth => this.Divide(((Number)10));
+    public Integer Twice => this.Multiply(((Number)2));
     public Boolean Between(Integer min, Integer max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Integer Clamp(Integer a, Integer b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Integer b) => this.Compare(b).Equals(((Integer)0));
@@ -146,6 +151,11 @@ public readonly partial struct Dynamic
 }
 public readonly partial struct Cardinal
 {
+    public Cardinal Half => this.Divide(((Number)2));
+    public Cardinal Quarter => this.Divide(((Number)4));
+    public Cardinal Eighth => this.Divide(((Number)8));
+    public Cardinal Tenth => this.Divide(((Number)10));
+    public Cardinal Twice => this.Multiply(((Number)2));
     public Boolean Between(Cardinal min, Cardinal max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Cardinal Clamp(Cardinal a, Cardinal b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Cardinal b) => this.Compare(b).Equals(((Integer)0));
@@ -165,6 +175,11 @@ public readonly partial struct Cardinal
 }
 public readonly partial struct Index
 {
+    public Index Half => this.Divide(((Number)2));
+    public Index Quarter => this.Divide(((Number)4));
+    public Index Eighth => this.Divide(((Number)8));
+    public Index Tenth => this.Divide(((Number)10));
+    public Index Twice => this.Multiply(((Number)2));
     public Boolean Between(Index min, Index max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Index Clamp(Index a, Index b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Index b) => this.Compare(b).Equals(((Integer)0));

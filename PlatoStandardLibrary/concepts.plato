@@ -27,7 +27,7 @@ concept Array<T>
 
 // Vectors are numerical types which are arrays of numerical types. 
 concept Vector
-    inherits Array<Number>, Numerical, Magnitudinal, Equatable, Interpolatable
+    inherits Array<Number>, Numerical, Magnitudinal, Equatable, Interpolatable, ScalarArithmetic
 {
 }
 
@@ -40,7 +40,7 @@ concept Coordinate
 
 // A measure is a numeric value with an intrinisic unit of measure 
 // which is implied by the implementing type. 
-// It resembles a numerical type except you cannot multiply two measures without 
+// It resembles a numerical type except you cannot multiply or divide two measures without 
 // getting a new type. It does however support ScalarArithmetic 
 concept Measure
     inherits Value, ScalarArithmetic, Comparable, Magnitudinal, Interpolatable
@@ -55,7 +55,7 @@ concept WholeNumber
 
 // A numerical type represents things like floats and complex numbers
 concept Numerical 
-    inherits Value, ScalarArithmetic, Arithmetic, Equatable, Comparable, Magnitudinal, Interpolatable
+    inherits Value, Arithmetic, Equatable, Comparable, Magnitudinal, Interpolatable
 {
 }
 

@@ -134,19 +134,19 @@ library Numerical
     Abs(x: Numerical): Numerical 
         => x.LtZ ? -x: x;
     
-    Half(x: ScalarArithmetic): ScalarArithmetic 
+    Half(x: MultiplicativeArithmetic<Number>): MultiplicativeArithmetic<Number>
         => x / 2.0;
         
-    Quarter(x: ScalarArithmetic): ScalarArithmetic 
+    Quarter(x: MultiplicativeArithmetic<Number>): MultiplicativeArithmetic<Number>
         => x / 4.0;
     
-    Eighth(x: ScalarArithmetic): ScalarArithmetic 
+    Eighth(x: MultiplicativeArithmetic<Number>): MultiplicativeArithmetic<Number>
         => x / 8.0;
         
-    Tenth(x: ScalarArithmetic): ScalarArithmetic 
+    Tenth(x: MultiplicativeArithmetic<Number>): MultiplicativeArithmetic<Number> 
         => x / 10.0;
     
-    Twice(x: ScalarArithmetic): ScalarArithmetic 
+    Twice(x: MultiplicativeArithmetic<Number>): MultiplicativeArithmetic<Number> 
         => x * 2.0;
     
     Pow2(x: Numerical): Numerical
