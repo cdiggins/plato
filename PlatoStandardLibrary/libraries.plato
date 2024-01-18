@@ -1,8 +1,5 @@
 library Interval
 {
-    IsEmpty(x: Interval<$Value, $Size>): Boolean 
-        => x.Min >= x.Max;
-    
     Lerp(x: Interval<$Value, $Size>, amount: Number): $Value
         => x.Min.Lerp(x.Max, amount);
     
@@ -13,13 +10,13 @@ library Interval
         => x.Lerp(0.5);    
     
     Contains(x: Interval<$Value, $Size>, value: $Value): Boolean 
-        => x.Min <= value && value <= x.Max;
+        => value.Between(x.Min, x.Max);
     
-    Contains(x: Interval<$Value, $Size>, other: Interval<$Value, $Size>): Boolean 
-        => x.Min <= other.Min && x.Max >= other.Max;
+    Contains(x: Interval<$Value, $Size>, y: Interval<$Value, $Size>): Boolean 
+        => x.Contains(y.Min) && x.Contains(y.Max);
     
     Overlaps(x: Interval<$Value, $Size>, y: Interval<$Value, $Size>): Boolean 
-        => !x.Clamp(y).IsEmpty;
+        => x.Contains(y.Min) || x.Contains(y.Max) || y.Contains(x.Min) || y.Contains(x.Max);
     
     SplitAt(x: Interval<$Value, $Size>, t: Number): Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>> 
         => (x.Left(t), x.Right(t));
@@ -50,9 +47,6 @@ library Interval
     
     Clamp(x: Interval<$Value, $Size>, value: $Value): $Value
         => value.Clamp(x.Min, x.Max);
-    
-    Within(x: Interval<$Value, $Size>, value: $Value): Boolean
-        => value >= x.Min && value <= x.Max;
 }
 
 library Vector
@@ -65,6 +59,24 @@ library Vector
         return r;
     }    
     
+    Count(v: Vector2D): Integer
+        => 2;
+
+    Count(v: Vector3D): Integer
+        => 3;
+    
+    Count(v: Vector4D): Integer
+        => 4;
+
+    At(v: Vector2D, n: Integer): Number
+        => n == 0 ? v.X : v.Y;
+
+    At(v: Vector3D, n: Integer): Number
+        => n == 0 ? v.X : n == 1 ? v.Y : v.Z;
+
+    At(v: Vector4D, n: Integer): Number
+        => n == 0 ? v.X : n == 1 ? v.Y : n == 2 ? v.Z : v.W;
+
     SumSquares(v: Vector): Number
         => v.Square.Sum; 
     

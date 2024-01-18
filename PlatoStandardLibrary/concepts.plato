@@ -21,7 +21,7 @@ concept Value
 // https://en.wikipedia.org/wiki/Real_number
 // Most things that are Real, are also Numerical except for Measures.
 concept Real
-    inherits Value, ScalarArithmetic, Comparable, Magnitudinal, Interpolatable
+    inherits Value, ScalarArithmetic, Comparable, Magnitudinal, Interpolatable, Betweenable
 {
     Value(x: Self): Number;
 }
@@ -43,7 +43,7 @@ concept Vector
 // A coordinate is a point in some cartesian space. This also includes 
 // a time line, so a DateTime is considered a Coordinate. 
 concept Coordinate
-    inherits Interpolatable, Comparable, Value
+    inherits Interpolatable, Value, Betweenable
 {
 }
 
@@ -58,12 +58,12 @@ concept Measure
 
 // Used for integer and cardinal types.
 concept WholeNumber 
-    inherits Arithmetic, Equatable, Comparable, Magnitudinal
+    inherits Arithmetic, Equatable, Comparable, Magnitudinal, Betweenable
 { }
 
 // A numerical type represents things like floats and complex numbers
 concept Numerical 
-    inherits Value, Arithmetic, Equatable, Comparable, Magnitudinal, Interpolatable, ScalarArithmetic
+    inherits Value, Arithmetic, Equatable, Comparable, Magnitudinal, Interpolatable, ScalarArithmetic, Betweenable
 {
 }
 
@@ -129,7 +129,10 @@ concept BooleanOperations
 }
 
 concept Interval<TValue, TSize>    
-    where TValue: Interpolatable, TValue: AdditiveArithmetic<TSize>, TSize: ScalarArithmetic 
+    where TValue: Interpolatable, 
+        TValue: Betweenable, 
+        TValue: AdditiveArithmetic<TSize>, 
+        TSize: ScalarArithmetic 
     inherits Equatable, Value
 {
     Min(x: Self): TValue;
@@ -140,4 +143,10 @@ concept Interval<TValue, TSize>
 concept Interpolatable
 {
     Lerp(a: Self, b: Self, amount: Number): Self;
+}
+
+concept Betweenable
+{
+    Between(x: Self, a: Self, b: Self): Boolean;
+    Clamp(x: Self, a: Self, b: Self): Self;
 }

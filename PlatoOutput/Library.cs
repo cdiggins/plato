@@ -296,6 +296,9 @@ public readonly partial struct Rotation3D
 }
 public readonly partial struct Vector2D
 {
+    public Integer Count => ((Integer)2);
+    public Number At(Integer n) => n.Equals(((Integer)0)) ? this.X : this.Y;
+    public Number this[Integer n] => At(n);
     public Number Sum
     {
         get
@@ -360,6 +363,9 @@ public readonly partial struct Vector2D
 }
 public readonly partial struct Vector3D
 {
+    public Integer Count => ((Integer)3);
+    public Number At(Integer n) => n.Equals(((Integer)0)) ? this.X : n.Equals(((Integer)1)) ? this.Y : this.Z;
+    public Number this[Integer n] => At(n);
     public Number Sum
     {
         get
@@ -424,6 +430,9 @@ public readonly partial struct Vector3D
 }
 public readonly partial struct Vector4D
 {
+    public Integer Count => ((Integer)4);
+    public Number At(Integer n) => n.Equals(((Integer)0)) ? this.X : n.Equals(((Integer)1)) ? this.Y : n.Equals(((Integer)2)) ? this.Z : this.W;
+    public Number this[Integer n] => At(n);
     public Number Sum
     {
         get
@@ -503,13 +512,12 @@ public readonly partial struct Transform2D
 }
 public readonly partial struct AlignedBox2D
 {
-    public Boolean IsEmpty => this.Min.GreaterThanOrEquals(this.Max);
     public Point2D Lerp(Number amount) => this.Min.Lerp(this.Max, amount);
     public AlignedBox2D Reverse => this.Max.Tuple(this.Min);
     public Point2D Center => this.Lerp(((Number)0.5));
-    public Boolean Contains(Point2D value) => this.Min.LessThanOrEquals(value).And(value.LessThanOrEquals(this.Max));
-    public Boolean Contains(AlignedBox2D other) => this.Min.LessThanOrEquals(other.Min).And(this.Max.GreaterThanOrEquals(other.Max));
-    public Boolean Overlaps(AlignedBox2D y) => this.Clamp(y).IsEmpty.Not;
+    public Boolean Contains(Point2D value) => value.Between(this.Min, this.Max);
+    public Boolean Contains(AlignedBox2D y) => this.Contains(y.Min).And(this.Contains(y.Max));
+    public Boolean Overlaps(AlignedBox2D y) => this.Contains(y.Min).Or(this.Contains(y.Max).Or(y.Contains(this.Min).Or(y.Contains(this.Max))));
     public Tuple2<AlignedBox2D, AlignedBox2D> SplitAt(Number t) => this.Left(t).Tuple(this.Right(t));
     public Tuple2<AlignedBox2D, AlignedBox2D> Split => this.SplitAt(((Number)0.5));
     public AlignedBox2D Left(Number t) => this.Min.Tuple(this.Lerp(t));
@@ -520,17 +528,15 @@ public readonly partial struct AlignedBox2D
     public AlignedBox2D Recenter(Point2D c) => c.Subtract(this.Size.Half).Tuple(c.Add(this.Size.Half));
     public AlignedBox2D Clamp(AlignedBox2D y) => this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
     public Point2D Clamp(Point2D value) => value.Clamp(this.Min, this.Max);
-    public Boolean Within(Point2D value) => value.GreaterThanOrEquals(this.Min).And(value.LessThanOrEquals(this.Max));
 }
 public readonly partial struct AlignedBox3D
 {
-    public Boolean IsEmpty => this.Min.GreaterThanOrEquals(this.Max);
     public Point3D Lerp(Number amount) => this.Min.Lerp(this.Max, amount);
     public AlignedBox3D Reverse => this.Max.Tuple(this.Min);
     public Point3D Center => this.Lerp(((Number)0.5));
-    public Boolean Contains(Point3D value) => this.Min.LessThanOrEquals(value).And(value.LessThanOrEquals(this.Max));
-    public Boolean Contains(AlignedBox3D other) => this.Min.LessThanOrEquals(other.Min).And(this.Max.GreaterThanOrEquals(other.Max));
-    public Boolean Overlaps(AlignedBox3D y) => this.Clamp(y).IsEmpty.Not;
+    public Boolean Contains(Point3D value) => value.Between(this.Min, this.Max);
+    public Boolean Contains(AlignedBox3D y) => this.Contains(y.Min).And(this.Contains(y.Max));
+    public Boolean Overlaps(AlignedBox3D y) => this.Contains(y.Min).Or(this.Contains(y.Max).Or(y.Contains(this.Min).Or(y.Contains(this.Max))));
     public Tuple2<AlignedBox3D, AlignedBox3D> SplitAt(Number t) => this.Left(t).Tuple(this.Right(t));
     public Tuple2<AlignedBox3D, AlignedBox3D> Split => this.SplitAt(((Number)0.5));
     public AlignedBox3D Left(Number t) => this.Min.Tuple(this.Lerp(t));
@@ -541,7 +547,6 @@ public readonly partial struct AlignedBox3D
     public AlignedBox3D Recenter(Point3D c) => c.Subtract(this.Size.Half).Tuple(c.Add(this.Size.Half));
     public AlignedBox3D Clamp(AlignedBox3D y) => this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
     public Point3D Clamp(Point3D value) => value.Clamp(this.Min, this.Max);
-    public Boolean Within(Point3D value) => value.GreaterThanOrEquals(this.Min).And(value.LessThanOrEquals(this.Max));
 }
 public readonly partial struct Complex
 {
@@ -633,70 +638,21 @@ public readonly partial struct Quad3D
 }
 public readonly partial struct Point2D
 {
-    public Boolean Between(Point2D min, Point2D max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public Point2D Clamp(Point2D a, Point2D b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(Point2D b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(Point2D a, Point2D b) => a.Equals(b);
-    public Boolean NotEquals(Point2D b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(Point2D a, Point2D b) => a.NotEquals(b);
-    public Boolean LessThan(Point2D b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(Point2D a, Point2D b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Point2D b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(Point2D a, Point2D b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Point2D b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(Point2D a, Point2D b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Point2D b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(Point2D a, Point2D b) => a.GreaterThanOrEquals(b);
-    public Point2D Lesser(Point2D b) => this.LessThanOrEquals(b) ? this : b;
-    public Point2D Greater(Point2D b) => this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Point3D
 {
-    public Boolean Between(Point3D min, Point3D max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public Point3D Clamp(Point3D a, Point3D b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(Point3D b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(Point3D a, Point3D b) => a.Equals(b);
-    public Boolean NotEquals(Point3D b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(Point3D a, Point3D b) => a.NotEquals(b);
-    public Boolean LessThan(Point3D b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(Point3D a, Point3D b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Point3D b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(Point3D a, Point3D b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Point3D b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(Point3D a, Point3D b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Point3D b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(Point3D a, Point3D b) => a.GreaterThanOrEquals(b);
-    public Point3D Lesser(Point3D b) => this.LessThanOrEquals(b) ? this : b;
-    public Point3D Greater(Point3D b) => this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Point4D
 {
-    public Boolean Between(Point4D min, Point4D max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public Point4D Clamp(Point4D a, Point4D b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(Point4D b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(Point4D a, Point4D b) => a.Equals(b);
-    public Boolean NotEquals(Point4D b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(Point4D a, Point4D b) => a.NotEquals(b);
-    public Boolean LessThan(Point4D b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(Point4D a, Point4D b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Point4D b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(Point4D a, Point4D b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Point4D b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(Point4D a, Point4D b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Point4D b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(Point4D a, Point4D b) => a.GreaterThanOrEquals(b);
-    public Point4D Lesser(Point4D b) => this.LessThanOrEquals(b) ? this : b;
-    public Point4D Greater(Point4D b) => this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Line2D
 {
-    public Boolean IsEmpty => this.Min.GreaterThanOrEquals(this.Max);
     public Point2D Lerp(Number amount) => this.Min.Lerp(this.Max, amount);
     public Line2D Reverse => this.Max.Tuple(this.Min);
     public Point2D Center => this.Lerp(((Number)0.5));
-    public Boolean Contains(Point2D value) => this.Min.LessThanOrEquals(value).And(value.LessThanOrEquals(this.Max));
-    public Boolean Contains(Line2D other) => this.Min.LessThanOrEquals(other.Min).And(this.Max.GreaterThanOrEquals(other.Max));
-    public Boolean Overlaps(Line2D y) => this.Clamp(y).IsEmpty.Not;
+    public Boolean Contains(Point2D value) => value.Between(this.Min, this.Max);
+    public Boolean Contains(Line2D y) => this.Contains(y.Min).And(this.Contains(y.Max));
+    public Boolean Overlaps(Line2D y) => this.Contains(y.Min).Or(this.Contains(y.Max).Or(y.Contains(this.Min).Or(y.Contains(this.Max))));
     public Tuple2<Line2D, Line2D> SplitAt(Number t) => this.Left(t).Tuple(this.Right(t));
     public Tuple2<Line2D, Line2D> Split => this.SplitAt(((Number)0.5));
     public Line2D Left(Number t) => this.Min.Tuple(this.Lerp(t));
@@ -707,17 +663,15 @@ public readonly partial struct Line2D
     public Line2D Recenter(Point2D c) => c.Subtract(this.Size.Half).Tuple(c.Add(this.Size.Half));
     public Line2D Clamp(Line2D y) => this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
     public Point2D Clamp(Point2D value) => value.Clamp(this.Min, this.Max);
-    public Boolean Within(Point2D value) => value.GreaterThanOrEquals(this.Min).And(value.LessThanOrEquals(this.Max));
 }
 public readonly partial struct Line3D
 {
-    public Boolean IsEmpty => this.Min.GreaterThanOrEquals(this.Max);
     public Point3D Lerp(Number amount) => this.Min.Lerp(this.Max, amount);
     public Line3D Reverse => this.Max.Tuple(this.Min);
     public Point3D Center => this.Lerp(((Number)0.5));
-    public Boolean Contains(Point3D value) => this.Min.LessThanOrEquals(value).And(value.LessThanOrEquals(this.Max));
-    public Boolean Contains(Line3D other) => this.Min.LessThanOrEquals(other.Min).And(this.Max.GreaterThanOrEquals(other.Max));
-    public Boolean Overlaps(Line3D y) => this.Clamp(y).IsEmpty.Not;
+    public Boolean Contains(Point3D value) => value.Between(this.Min, this.Max);
+    public Boolean Contains(Line3D y) => this.Contains(y.Min).And(this.Contains(y.Max));
+    public Boolean Overlaps(Line3D y) => this.Contains(y.Min).Or(this.Contains(y.Max).Or(y.Contains(this.Min).Or(y.Contains(this.Max))));
     public Tuple2<Line3D, Line3D> SplitAt(Number t) => this.Left(t).Tuple(this.Right(t));
     public Tuple2<Line3D, Line3D> Split => this.SplitAt(((Number)0.5));
     public Line3D Left(Number t) => this.Min.Tuple(this.Lerp(t));
@@ -728,273 +682,48 @@ public readonly partial struct Line3D
     public Line3D Recenter(Point3D c) => c.Subtract(this.Size.Half).Tuple(c.Add(this.Size.Half));
     public Line3D Clamp(Line3D y) => this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
     public Point3D Clamp(Point3D value) => value.Clamp(this.Min, this.Max);
-    public Boolean Within(Point3D value) => value.GreaterThanOrEquals(this.Min).And(value.LessThanOrEquals(this.Max));
 }
 public readonly partial struct Color
 {
-    public Boolean Between(Color min, Color max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public Color Clamp(Color a, Color b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(Color b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(Color a, Color b) => a.Equals(b);
-    public Boolean NotEquals(Color b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(Color a, Color b) => a.NotEquals(b);
-    public Boolean LessThan(Color b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(Color a, Color b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Color b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(Color a, Color b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Color b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(Color a, Color b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Color b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(Color a, Color b) => a.GreaterThanOrEquals(b);
-    public Color Lesser(Color b) => this.LessThanOrEquals(b) ? this : b;
-    public Color Greater(Color b) => this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct ColorLUV
 {
-    public Boolean Between(ColorLUV min, ColorLUV max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public ColorLUV Clamp(ColorLUV a, ColorLUV b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(ColorLUV b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(ColorLUV a, ColorLUV b) => a.Equals(b);
-    public Boolean NotEquals(ColorLUV b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(ColorLUV a, ColorLUV b) => a.NotEquals(b);
-    public Boolean LessThan(ColorLUV b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(ColorLUV a, ColorLUV b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(ColorLUV b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(ColorLUV a, ColorLUV b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(ColorLUV b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(ColorLUV a, ColorLUV b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(ColorLUV b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(ColorLUV a, ColorLUV b) => a.GreaterThanOrEquals(b);
-    public ColorLUV Lesser(ColorLUV b) => this.LessThanOrEquals(b) ? this : b;
-    public ColorLUV Greater(ColorLUV b) => this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct ColorLAB
 {
-    public Boolean Between(ColorLAB min, ColorLAB max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public ColorLAB Clamp(ColorLAB a, ColorLAB b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(ColorLAB b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(ColorLAB a, ColorLAB b) => a.Equals(b);
-    public Boolean NotEquals(ColorLAB b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(ColorLAB a, ColorLAB b) => a.NotEquals(b);
-    public Boolean LessThan(ColorLAB b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(ColorLAB a, ColorLAB b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(ColorLAB b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(ColorLAB a, ColorLAB b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(ColorLAB b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(ColorLAB a, ColorLAB b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(ColorLAB b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(ColorLAB a, ColorLAB b) => a.GreaterThanOrEquals(b);
-    public ColorLAB Lesser(ColorLAB b) => this.LessThanOrEquals(b) ? this : b;
-    public ColorLAB Greater(ColorLAB b) => this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct ColorLCh
 {
-    public Boolean Between(ColorLCh min, ColorLCh max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public ColorLCh Clamp(ColorLCh a, ColorLCh b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(ColorLCh b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(ColorLCh a, ColorLCh b) => a.Equals(b);
-    public Boolean NotEquals(ColorLCh b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(ColorLCh a, ColorLCh b) => a.NotEquals(b);
-    public Boolean LessThan(ColorLCh b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(ColorLCh a, ColorLCh b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(ColorLCh b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(ColorLCh a, ColorLCh b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(ColorLCh b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(ColorLCh a, ColorLCh b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(ColorLCh b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(ColorLCh a, ColorLCh b) => a.GreaterThanOrEquals(b);
-    public ColorLCh Lesser(ColorLCh b) => this.LessThanOrEquals(b) ? this : b;
-    public ColorLCh Greater(ColorLCh b) => this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct ColorHSV
 {
-    public Boolean Between(ColorHSV min, ColorHSV max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public ColorHSV Clamp(ColorHSV a, ColorHSV b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(ColorHSV b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(ColorHSV a, ColorHSV b) => a.Equals(b);
-    public Boolean NotEquals(ColorHSV b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(ColorHSV a, ColorHSV b) => a.NotEquals(b);
-    public Boolean LessThan(ColorHSV b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(ColorHSV a, ColorHSV b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(ColorHSV b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(ColorHSV a, ColorHSV b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(ColorHSV b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(ColorHSV a, ColorHSV b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(ColorHSV b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(ColorHSV a, ColorHSV b) => a.GreaterThanOrEquals(b);
-    public ColorHSV Lesser(ColorHSV b) => this.LessThanOrEquals(b) ? this : b;
-    public ColorHSV Greater(ColorHSV b) => this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct ColorHSL
 {
-    public Boolean Between(ColorHSL min, ColorHSL max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public ColorHSL Clamp(ColorHSL a, ColorHSL b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(ColorHSL b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(ColorHSL a, ColorHSL b) => a.Equals(b);
-    public Boolean NotEquals(ColorHSL b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(ColorHSL a, ColorHSL b) => a.NotEquals(b);
-    public Boolean LessThan(ColorHSL b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(ColorHSL a, ColorHSL b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(ColorHSL b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(ColorHSL a, ColorHSL b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(ColorHSL b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(ColorHSL a, ColorHSL b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(ColorHSL b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(ColorHSL a, ColorHSL b) => a.GreaterThanOrEquals(b);
-    public ColorHSL Lesser(ColorHSL b) => this.LessThanOrEquals(b) ? this : b;
-    public ColorHSL Greater(ColorHSL b) => this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct ColorYCbCr
 {
-    public Boolean Between(ColorYCbCr min, ColorYCbCr max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public ColorYCbCr Clamp(ColorYCbCr a, ColorYCbCr b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(ColorYCbCr b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(ColorYCbCr a, ColorYCbCr b) => a.Equals(b);
-    public Boolean NotEquals(ColorYCbCr b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(ColorYCbCr a, ColorYCbCr b) => a.NotEquals(b);
-    public Boolean LessThan(ColorYCbCr b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(ColorYCbCr a, ColorYCbCr b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(ColorYCbCr b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(ColorYCbCr a, ColorYCbCr b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(ColorYCbCr b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(ColorYCbCr a, ColorYCbCr b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(ColorYCbCr b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(ColorYCbCr a, ColorYCbCr b) => a.GreaterThanOrEquals(b);
-    public ColorYCbCr Lesser(ColorYCbCr b) => this.LessThanOrEquals(b) ? this : b;
-    public ColorYCbCr Greater(ColorYCbCr b) => this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct SphericalCoordinate
 {
-    public Boolean Between(SphericalCoordinate min, SphericalCoordinate max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public SphericalCoordinate Clamp(SphericalCoordinate a, SphericalCoordinate b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(SphericalCoordinate b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(SphericalCoordinate a, SphericalCoordinate b) => a.Equals(b);
-    public Boolean NotEquals(SphericalCoordinate b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(SphericalCoordinate a, SphericalCoordinate b) => a.NotEquals(b);
-    public Boolean LessThan(SphericalCoordinate b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(SphericalCoordinate a, SphericalCoordinate b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(SphericalCoordinate b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(SphericalCoordinate a, SphericalCoordinate b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(SphericalCoordinate b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(SphericalCoordinate a, SphericalCoordinate b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(SphericalCoordinate b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(SphericalCoordinate a, SphericalCoordinate b) => a.GreaterThanOrEquals(b);
-    public SphericalCoordinate Lesser(SphericalCoordinate b) => this.LessThanOrEquals(b) ? this : b;
-    public SphericalCoordinate Greater(SphericalCoordinate b) => this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct PolarCoordinate
 {
-    public Boolean Between(PolarCoordinate min, PolarCoordinate max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public PolarCoordinate Clamp(PolarCoordinate a, PolarCoordinate b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(PolarCoordinate b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(PolarCoordinate a, PolarCoordinate b) => a.Equals(b);
-    public Boolean NotEquals(PolarCoordinate b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(PolarCoordinate a, PolarCoordinate b) => a.NotEquals(b);
-    public Boolean LessThan(PolarCoordinate b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(PolarCoordinate a, PolarCoordinate b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(PolarCoordinate b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(PolarCoordinate a, PolarCoordinate b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(PolarCoordinate b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(PolarCoordinate a, PolarCoordinate b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(PolarCoordinate b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(PolarCoordinate a, PolarCoordinate b) => a.GreaterThanOrEquals(b);
-    public PolarCoordinate Lesser(PolarCoordinate b) => this.LessThanOrEquals(b) ? this : b;
-    public PolarCoordinate Greater(PolarCoordinate b) => this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct LogPolarCoordinate
 {
-    public Boolean Between(LogPolarCoordinate min, LogPolarCoordinate max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public LogPolarCoordinate Clamp(LogPolarCoordinate a, LogPolarCoordinate b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(LogPolarCoordinate b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(LogPolarCoordinate a, LogPolarCoordinate b) => a.Equals(b);
-    public Boolean NotEquals(LogPolarCoordinate b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(LogPolarCoordinate a, LogPolarCoordinate b) => a.NotEquals(b);
-    public Boolean LessThan(LogPolarCoordinate b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(LogPolarCoordinate a, LogPolarCoordinate b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(LogPolarCoordinate b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(LogPolarCoordinate a, LogPolarCoordinate b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(LogPolarCoordinate b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(LogPolarCoordinate a, LogPolarCoordinate b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(LogPolarCoordinate b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(LogPolarCoordinate a, LogPolarCoordinate b) => a.GreaterThanOrEquals(b);
-    public LogPolarCoordinate Lesser(LogPolarCoordinate b) => this.LessThanOrEquals(b) ? this : b;
-    public LogPolarCoordinate Greater(LogPolarCoordinate b) => this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct CylindricalCoordinate
 {
-    public Boolean Between(CylindricalCoordinate min, CylindricalCoordinate max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public CylindricalCoordinate Clamp(CylindricalCoordinate a, CylindricalCoordinate b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(CylindricalCoordinate b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(CylindricalCoordinate a, CylindricalCoordinate b) => a.Equals(b);
-    public Boolean NotEquals(CylindricalCoordinate b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(CylindricalCoordinate a, CylindricalCoordinate b) => a.NotEquals(b);
-    public Boolean LessThan(CylindricalCoordinate b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(CylindricalCoordinate a, CylindricalCoordinate b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(CylindricalCoordinate b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(CylindricalCoordinate a, CylindricalCoordinate b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(CylindricalCoordinate b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(CylindricalCoordinate a, CylindricalCoordinate b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(CylindricalCoordinate b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(CylindricalCoordinate a, CylindricalCoordinate b) => a.GreaterThanOrEquals(b);
-    public CylindricalCoordinate Lesser(CylindricalCoordinate b) => this.LessThanOrEquals(b) ? this : b;
-    public CylindricalCoordinate Greater(CylindricalCoordinate b) => this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct HorizontalCoordinate
 {
-    public Boolean Between(HorizontalCoordinate min, HorizontalCoordinate max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public HorizontalCoordinate Clamp(HorizontalCoordinate a, HorizontalCoordinate b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(HorizontalCoordinate b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(HorizontalCoordinate a, HorizontalCoordinate b) => a.Equals(b);
-    public Boolean NotEquals(HorizontalCoordinate b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(HorizontalCoordinate a, HorizontalCoordinate b) => a.NotEquals(b);
-    public Boolean LessThan(HorizontalCoordinate b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(HorizontalCoordinate a, HorizontalCoordinate b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(HorizontalCoordinate b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(HorizontalCoordinate a, HorizontalCoordinate b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(HorizontalCoordinate b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(HorizontalCoordinate a, HorizontalCoordinate b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(HorizontalCoordinate b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(HorizontalCoordinate a, HorizontalCoordinate b) => a.GreaterThanOrEquals(b);
-    public HorizontalCoordinate Lesser(HorizontalCoordinate b) => this.LessThanOrEquals(b) ? this : b;
-    public HorizontalCoordinate Greater(HorizontalCoordinate b) => this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct GeoCoordinate
 {
-    public Boolean Between(GeoCoordinate min, GeoCoordinate max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public GeoCoordinate Clamp(GeoCoordinate a, GeoCoordinate b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(GeoCoordinate b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(GeoCoordinate a, GeoCoordinate b) => a.Equals(b);
-    public Boolean NotEquals(GeoCoordinate b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(GeoCoordinate a, GeoCoordinate b) => a.NotEquals(b);
-    public Boolean LessThan(GeoCoordinate b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(GeoCoordinate a, GeoCoordinate b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(GeoCoordinate b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(GeoCoordinate a, GeoCoordinate b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(GeoCoordinate b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(GeoCoordinate a, GeoCoordinate b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(GeoCoordinate b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(GeoCoordinate a, GeoCoordinate b) => a.GreaterThanOrEquals(b);
-    public GeoCoordinate Lesser(GeoCoordinate b) => this.LessThanOrEquals(b) ? this : b;
-    public GeoCoordinate Greater(GeoCoordinate b) => this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct GeoCoordinateWithAltitude
 {
-    public Boolean Between(GeoCoordinateWithAltitude min, GeoCoordinateWithAltitude max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public GeoCoordinateWithAltitude Clamp(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(GeoCoordinateWithAltitude b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) => a.Equals(b);
-    public Boolean NotEquals(GeoCoordinateWithAltitude b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) => a.NotEquals(b);
-    public Boolean LessThan(GeoCoordinateWithAltitude b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(GeoCoordinateWithAltitude b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(GeoCoordinateWithAltitude b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(GeoCoordinateWithAltitude b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) => a.GreaterThanOrEquals(b);
-    public GeoCoordinateWithAltitude Lesser(GeoCoordinateWithAltitude b) => this.LessThanOrEquals(b) ? this : b;
-    public GeoCoordinateWithAltitude Greater(GeoCoordinateWithAltitude b) => this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct Circle
 {
@@ -1228,13 +957,12 @@ public readonly partial struct Time
 }
 public readonly partial struct TimeRange
 {
-    public Boolean IsEmpty => this.Min.GreaterThanOrEquals(this.Max);
     public DateTime Lerp(Number amount) => this.Min.Lerp(this.Max, amount);
     public TimeRange Reverse => this.Max.Tuple(this.Min);
     public DateTime Center => this.Lerp(((Number)0.5));
-    public Boolean Contains(DateTime value) => this.Min.LessThanOrEquals(value).And(value.LessThanOrEquals(this.Max));
-    public Boolean Contains(TimeRange other) => this.Min.LessThanOrEquals(other.Min).And(this.Max.GreaterThanOrEquals(other.Max));
-    public Boolean Overlaps(TimeRange y) => this.Clamp(y).IsEmpty.Not;
+    public Boolean Contains(DateTime value) => value.Between(this.Min, this.Max);
+    public Boolean Contains(TimeRange y) => this.Contains(y.Min).And(this.Contains(y.Max));
+    public Boolean Overlaps(TimeRange y) => this.Contains(y.Min).Or(this.Contains(y.Max).Or(y.Contains(this.Min).Or(y.Contains(this.Max))));
     public Tuple2<TimeRange, TimeRange> SplitAt(Number t) => this.Left(t).Tuple(this.Right(t));
     public Tuple2<TimeRange, TimeRange> Split => this.SplitAt(((Number)0.5));
     public TimeRange Left(Number t) => this.Min.Tuple(this.Lerp(t));
@@ -1245,36 +973,18 @@ public readonly partial struct TimeRange
     public TimeRange Recenter(DateTime c) => c.Subtract(this.Size.Half).Tuple(c.Add(this.Size.Half));
     public TimeRange Clamp(TimeRange y) => this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
     public DateTime Clamp(DateTime value) => value.Clamp(this.Min, this.Max);
-    public Boolean Within(DateTime value) => value.GreaterThanOrEquals(this.Min).And(value.LessThanOrEquals(this.Max));
 }
 public readonly partial struct DateTime
 {
-    public Boolean Between(DateTime min, DateTime max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public DateTime Clamp(DateTime a, DateTime b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(DateTime b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(DateTime a, DateTime b) => a.Equals(b);
-    public Boolean NotEquals(DateTime b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(DateTime a, DateTime b) => a.NotEquals(b);
-    public Boolean LessThan(DateTime b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(DateTime a, DateTime b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(DateTime b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(DateTime a, DateTime b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(DateTime b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(DateTime a, DateTime b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(DateTime b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(DateTime a, DateTime b) => a.GreaterThanOrEquals(b);
-    public DateTime Lesser(DateTime b) => this.LessThanOrEquals(b) ? this : b;
-    public DateTime Greater(DateTime b) => this.GreaterThanOrEquals(b) ? this : b;
 }
 public readonly partial struct AnglePair
 {
-    public Boolean IsEmpty => this.Min.GreaterThanOrEquals(this.Max);
     public Angle Lerp(Number amount) => this.Min.Lerp(this.Max, amount);
     public AnglePair Reverse => this.Max.Tuple(this.Min);
     public Angle Center => this.Lerp(((Number)0.5));
-    public Boolean Contains(Angle value) => this.Min.LessThanOrEquals(value).And(value.LessThanOrEquals(this.Max));
-    public Boolean Contains(AnglePair other) => this.Min.LessThanOrEquals(other.Min).And(this.Max.GreaterThanOrEquals(other.Max));
-    public Boolean Overlaps(AnglePair y) => this.Clamp(y).IsEmpty.Not;
+    public Boolean Contains(Angle value) => value.Between(this.Min, this.Max);
+    public Boolean Contains(AnglePair y) => this.Contains(y.Min).And(this.Contains(y.Max));
+    public Boolean Overlaps(AnglePair y) => this.Contains(y.Min).Or(this.Contains(y.Max).Or(y.Contains(this.Min).Or(y.Contains(this.Max))));
     public Tuple2<AnglePair, AnglePair> SplitAt(Number t) => this.Left(t).Tuple(this.Right(t));
     public Tuple2<AnglePair, AnglePair> Split => this.SplitAt(((Number)0.5));
     public AnglePair Left(Number t) => this.Min.Tuple(this.Lerp(t));
@@ -1285,7 +995,6 @@ public readonly partial struct AnglePair
     public AnglePair Recenter(Angle c) => c.Subtract(this.Size.Half).Tuple(c.Add(this.Size.Half));
     public AnglePair Clamp(AnglePair y) => this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
     public Angle Clamp(Angle value) => value.Clamp(this.Min, this.Max);
-    public Boolean Within(Angle value) => value.GreaterThanOrEquals(this.Min).And(value.LessThanOrEquals(this.Max));
 }
 public readonly partial struct Ring
 {
@@ -1295,13 +1004,12 @@ public readonly partial struct Arc
 }
 public readonly partial struct NumberInterval
 {
-    public Boolean IsEmpty => this.Min.GreaterThanOrEquals(this.Max);
     public Number Lerp(Number amount) => this.Min.Lerp(this.Max, amount);
     public NumberInterval Reverse => this.Max.Tuple(this.Min);
     public Number Center => this.Lerp(((Number)0.5));
-    public Boolean Contains(Number value) => this.Min.LessThanOrEquals(value).And(value.LessThanOrEquals(this.Max));
-    public Boolean Contains(NumberInterval other) => this.Min.LessThanOrEquals(other.Min).And(this.Max.GreaterThanOrEquals(other.Max));
-    public Boolean Overlaps(NumberInterval y) => this.Clamp(y).IsEmpty.Not;
+    public Boolean Contains(Number value) => value.Between(this.Min, this.Max);
+    public Boolean Contains(NumberInterval y) => this.Contains(y.Min).And(this.Contains(y.Max));
+    public Boolean Overlaps(NumberInterval y) => this.Contains(y.Min).Or(this.Contains(y.Max).Or(y.Contains(this.Min).Or(y.Contains(this.Max))));
     public Tuple2<NumberInterval, NumberInterval> SplitAt(Number t) => this.Left(t).Tuple(this.Right(t));
     public Tuple2<NumberInterval, NumberInterval> Split => this.SplitAt(((Number)0.5));
     public NumberInterval Left(Number t) => this.Min.Tuple(this.Lerp(t));
@@ -1312,7 +1020,6 @@ public readonly partial struct NumberInterval
     public NumberInterval Recenter(Number c) => c.Subtract(this.Size.Half).Tuple(c.Add(this.Size.Half));
     public NumberInterval Clamp(NumberInterval y) => this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
     public Number Clamp(Number value) => value.Clamp(this.Min, this.Max);
-    public Boolean Within(Number value) => value.GreaterThanOrEquals(this.Min).And(value.LessThanOrEquals(this.Max));
 }
 public readonly partial struct Capsule
 {
