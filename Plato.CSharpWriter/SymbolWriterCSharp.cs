@@ -186,7 +186,17 @@ namespace Plato.CSharpWriter
                 var sep = ret.Name == "Boolean" ? " & " : ", ";
 
                 var impl = "throw new NotImplementedException()";
-                if (generateImpl)
+
+                // Only generate implementations when the the return type is a Boolean or the same as this type
+                var canGenerateImpl = f.ReturnType.Name == t.Name || f.ReturnType.Name == "Boolean";
+
+                var fieldTypes = t.DistinctFieldTypes;
+
+                // If the underlying struct is "vector-like", all fields have the same type.
+                // Then we can auto-generate a "vectorized" type implementation.
+                var elementType = fieldTypes.Count == 1 ? fieldTypes[0] : null;
+
+                if (generateImpl && canGenerateImpl)
                 {
                     if (f.ParameterNames.Count <= 1)
                     {
@@ -196,29 +206,49 @@ namespace Plato.CSharpWriter
                     else if (f.ParameterNames.Count == 2)
                     {
                         var p0 = f.ParameterNames[1];
-                        var args = fields.Select(field => $"{field}.{f.Name}({p0}.{field})");
-                        impl = $"({args.JoinStrings(sep)})";
+                        var pt0 = f.ParameterTypes[1];
+                        if (pt0.Name == t.Name)
+                        {
+                            var args = fields.Select(field => $"{field}.{f.Name}({p0}.{field})");
+                            impl = $"({args.JoinStrings(sep)})";
+                        }
+                        else if (pt0.Name == elementType?.Name)
+                        {
+                            var args = fields.Select(field => $"{field}.{f.Name}({p0})");
+                            impl = $"({args.JoinStrings(sep)})";
+                        }
                     }
                     else if (f.ParameterNames.Count == 3)
                     {
                         var p0 = f.ParameterNames[1];
+                        var pt0 = f.ParameterTypes[1];
                         var p1 = f.ParameterNames[2];
-                        var args = fields.Select(field => $"{field}.{f.Name}({p0}.{field}, {p1}.{field})");
-                        impl = $"({args.JoinStrings(sep)})";
-                    }
-                    else if (f.ParameterNames.Count == 4)
-                    {
-                        var p0 = f.ParameterNames[1];
-                        var p1 = f.ParameterNames[2];
-                        var p2 = f.ParameterNames[3];
-                        var args = fields.Select(field =>
-                            $"{field}.{f.Name}({p0}.{field}, {p1}.{field}, {p2}.{field})");
-                        impl = $"({args.JoinStrings(sep)})";
+                        var pt1 = f.ParameterTypes[2];
+                        if (pt0.Name == t.Name && pt1.Name == t.Name)
+                        {
+                            var args = fields.Select(field => $"{field}.{f.Name}({p0}.{field}, {p1}.{field})");
+                            impl = $"({args.JoinStrings(sep)})";
+                        }
+                        else if (pt0.Name == t.Name && pt1.Name == elementType?.Name)
+                        {
+                            var args = fields.Select(field => $"{field}.{f.Name}({p0}.{field}, {p1})");
+                            impl = $"({args.JoinStrings(sep)})";
+                        }
+                        else if (pt0.Name == elementType?.Name && pt1.Name == t.Name)
+                        {
+                            var args = fields.Select(field => $"{field}.{f.Name}({p0}, {p1}.{field})");
+                            impl = $"({args.JoinStrings(sep)})";
+                        }
+                        else if (pt0.Name == elementType?.Name && pt1.Name == elementType?.Name)
+                        {
+                            var args = fields.Select(field => $"{field}.{f.Name}({p0}, {p1})");
+                            impl = $"({args.JoinStrings(sep)})";
+                        }
                     }
                     else
                     {
                         throw new Exception(
-                            "Cannot generate default implementations for functions with more than 2 parameters");
+                            "Cannot generate default implementations for functions with more than 3 parameters");
                     }
                 }
                 else if (f.Implementation.OwnerType.Name == "Intrinsics")
@@ -489,6 +519,18 @@ namespace Plato.CSharpWriter
                 WriteLine($"public static implicit operator {name}({fieldType} value) => new {name}(value);");
             }
 
+            // Object.Equals override
+            Write($"public override bool Equals(object obj) {{ if (!(obj is {name})) return false; var other = ({name})obj; return ")
+                .Write(fieldNames.Select(f => $"{f}.Equals(other.{f})").JoinStrings(" && "))
+                .WriteLine("; }");
+
+            // Object.GetHashCode override 
+            WriteLine($"public override int GetHashCode() => Intrinsics.CombineHashCodes({fieldNamesStr});");
+            
+            // Object.ToString() override 
+            WriteLine($"public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);");
+
+            // Implicit casting operators to/from Dynamic
             WriteLine($"public static implicit operator Dynamic({name} self) => new Dynamic(self);");
             WriteLine($"public static implicit operator {name}(Dynamic value) => value.As<{name}>();");
 
@@ -514,10 +556,7 @@ namespace Plato.CSharpWriter
                     if (IgnoredFunctions.Contains(f.Name))
                         continue;
 
-                    // Only generate implementations when the parameters and the return type are the same as this type
-                    var genImpl = f.ParameterTypes.All(pt => pt.Name == concreteType.Name)
-                                  && (f.ReturnType.Name == concreteType.Name || f.ReturnType.Name == "Boolean");
-                    WriteFunction(f, concreteType, genImpl);
+                    WriteFunction(f, concreteType, true);
                 }
             }
 

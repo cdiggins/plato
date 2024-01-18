@@ -89,6 +89,9 @@ library Vector
 
 library Numerical
 {
+    Magnitude(x: Real): Number
+        => x.Value;
+
     SquareRoot(x: Number): Number 
         => x.Pow(0.5);
 
@@ -130,7 +133,7 @@ library Numerical
 
     Sign(x: Numerical): Numerical 
         => x.LtZ ? -x.One : x.GtZ ? x.One : x.Zero;
-    
+
     Abs(x: Numerical): Numerical 
         => x.LtZ ? -x: x;
     
@@ -173,6 +176,9 @@ library Numerical
 
     Lerp(a: Numerical, b: Numerical, t: Number): Numerical
         => a * t.FromOne + b * t;
+
+    Nearest(a: Numerical, b: Numerical, t: Number): Numerical
+        => t <= 0.5 ? a : b;
         
     Between(self: Comparable, min: Comparable, max: Comparable): Boolean
         => self >= min && self <= max;
@@ -335,4 +341,19 @@ library Measures
 
     Days(x: Time): Number
         => x.Hours / 24.0;
+}
+
+library Signal 
+{    
+    // https://en.wikipedia.org/wiki/Sinc_function
+    Sinc(x: Angle): Number
+        => x.Radians.AlmostZero ? 1.0 : x.Sin / x;
+
+    // https://en.wikipedia.org/wiki/Heaviside_step_function
+    HeavisideStep(t: Number): Number
+        => t.LtZ ? 0.0 : 1.0;
+
+    // https://en.wikipedia.org/wiki/Rectangular_function
+    Rectangular(t: Number, width: Number): Number
+        => t.Abs >= width.Half ? 0.0 : 1.0; 
 }

@@ -20,6 +20,7 @@ namespace Plato.Compiler.Analysis
         public IReadOnlyList<ConceptImplementation> Concepts { get; }
         public IReadOnlyList<ConceptImplementation> AllConcepts { get; }
         public IReadOnlyList<FunctionInstance> ConcreteFunctions { get; }
+        public IReadOnlyList<FunctionInstance> FieldFunctions { get; }
         public IReadOnlyList<FunctionInstance> DeclaredFunctions { get; }
         public IReadOnlyList<FunctionInstance> ImplementedFunctions { get; }
         public IReadOnlyList<FunctionInstance> UnimplementedFunctions { get; }
@@ -35,8 +36,9 @@ namespace Plato.Compiler.Analysis
             Concepts = type.Implements.Select(CreateConceptImplementation).ToList();
             AllConcepts = Concepts.AllDescendants().ToList();
             ConcreteFunctions = libraries.GetFunctionsForType(Type.Name).Select(AnalyzeFunction).ToList();
+            FieldFunctions = Type.Fields.Select(f => AnalyzeFunction(f.Function)).ToList();
 
-            ImplementedFunctions = AllConcepts.SelectMany(c => c.ImplementedFunctions).Concat(ConcreteFunctions).ToList();
+            ImplementedFunctions = AllConcepts.SelectMany(c => c.ImplementedFunctions).Concat(ConcreteFunctions).Concat(FieldFunctions).ToList();
             DeclaredFunctions = AllConcepts.SelectMany(c => c.DeclaredFunctions).Distinct(d => d.SignatureId).ToList();
 
             var implementedSigs = new HashSet<string>(ImplementedFunctions.Select(f => f.SignatureId));
@@ -51,5 +53,8 @@ namespace Plato.Compiler.Analysis
 
         public IEnumerable<FunctionInstance> GetConceptFunctions()
             => Concepts.SelectMany(c => c.AllFunctions());
+
+        public IReadOnlyList<TypeExpression> DistinctFieldTypes
+            => Type.Fields.Select(f => f.Type).Distinct().ToList();
     }
 }

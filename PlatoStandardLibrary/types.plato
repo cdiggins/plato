@@ -47,14 +47,21 @@ type Index
 
 // A numerical type that is normally in the range of 0 to 1. 
 type Unit
-    implements Numerical
+    implements Real, Numerical
 {
     Value: Number;
 }
 
 // A numerical type normally in the range of 0 to 100 
 type Percent
-    implements Numerical
+    implements Real, Numerical
+{
+    Value: Number;
+}
+
+// A value in the range of 0 to 1 representing a chance of probability
+type Probability
+    implements Real, Numerical
 {
     Value: Number;
 }
@@ -70,7 +77,6 @@ type Quaternion
     W: Number;
 }
 
-//
 type Unit2D
     implements Value
 {
@@ -453,12 +459,6 @@ type Rectangle2D
     Size: Size2D;
 }
 
-type Proportion
-    implements Numerical
-{
-    Value: Number;
-}
-
 type Fraction
     implements Value
 {
@@ -532,7 +532,7 @@ type Arc
     Cirlce: Circle;
 }
 
-type RealInterval
+type NumberInterval
     implements Interval<Number, Number>
 {
     A: Number;
@@ -711,7 +711,7 @@ type Energy
 type Memory
     implements Measure
 {
-    Bytes: Integer;
+    Bytes: Number;
 }
 
 // https://en.wikipedia.org/wiki/Frequency    
@@ -798,13 +798,6 @@ type BernoulliDistribution
     implements Value
 {
     P: Probability;
-}
-
-// A value in the range of 0 to 1 representing a chance of probability
-type Probability
-    implements Numerical
-{
-    Value: Number;
 }
 
 // https://en.wikipedia.org/wiki/Binomial_distribution    

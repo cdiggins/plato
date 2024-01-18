@@ -8,6 +8,9 @@ public readonly partial struct Number
     public static Number New(double value) => new Number(value);
     public static implicit operator double(Number self) => self.Value;
     public static implicit operator Number(double value) => new Number(value);
+    public override bool Equals(object obj) { if (!(obj is Number)) return false; var other = (Number)obj; return Value.Equals(other.Value); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Value);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Number self) => new Dynamic(self);
     public static implicit operator Number(Dynamic value) => value.As<Number>();
     public String TypeName => "Number";
@@ -23,6 +26,9 @@ public readonly partial struct Integer
     public static Integer New(int value) => new Integer(value);
     public static implicit operator int(Integer self) => self.Value;
     public static implicit operator Integer(int value) => new Integer(value);
+    public override bool Equals(object obj) { if (!(obj is Integer)) return false; var other = (Integer)obj; return Value.Equals(other.Value); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Value);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Integer self) => new Dynamic(self);
     public static implicit operator Integer(Dynamic value) => value.As<Integer>();
     public String TypeName => "Integer";
@@ -38,6 +44,9 @@ public readonly partial struct String
     public static String New(string value) => new String(value);
     public static implicit operator string(String self) => self.Value;
     public static implicit operator String(string value) => new String(value);
+    public override bool Equals(object obj) { if (!(obj is String)) return false; var other = (String)obj; return Value.Equals(other.Value); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Value);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(String self) => new Dynamic(self);
     public static implicit operator String(Dynamic value) => value.As<String>();
     public String TypeName => "String";
@@ -53,6 +62,9 @@ public readonly partial struct Boolean
     public static Boolean New(bool value) => new Boolean(value);
     public static implicit operator bool(Boolean self) => self.Value;
     public static implicit operator Boolean(bool value) => new Boolean(value);
+    public override bool Equals(object obj) { if (!(obj is Boolean)) return false; var other = (Boolean)obj; return Value.Equals(other.Value); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Value);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Boolean self) => new Dynamic(self);
     public static implicit operator Boolean(Dynamic value) => value.As<Boolean>();
     public String TypeName => "Boolean";
@@ -68,6 +80,9 @@ public readonly partial struct Character
     public static Character New(char value) => new Character(value);
     public static implicit operator char(Character self) => self.Value;
     public static implicit operator Character(char value) => new Character(value);
+    public override bool Equals(object obj) { if (!(obj is Character)) return false; var other = (Character)obj; return Value.Equals(other.Value); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Value);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Character self) => new Dynamic(self);
     public static implicit operator Character(Dynamic value) => value.As<Character>();
     public String TypeName => "Character";
@@ -83,6 +98,9 @@ public readonly partial struct Cardinal
     public static Cardinal New(Integer value) => new Cardinal(value);
     public static implicit operator Integer(Cardinal self) => self.Value;
     public static implicit operator Cardinal(Integer value) => new Cardinal(value);
+    public override bool Equals(object obj) { if (!(obj is Cardinal)) return false; var other = (Cardinal)obj; return Value.Equals(other.Value); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Value);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Cardinal self) => new Dynamic(self);
     public static implicit operator Cardinal(Dynamic value) => value.As<Cardinal>();
     public String TypeName => "Cardinal";
@@ -114,6 +132,9 @@ public readonly partial struct Index
     public static Index New(Integer value) => new Index(value);
     public static implicit operator Integer(Index self) => self.Value;
     public static implicit operator Index(Integer value) => new Index(value);
+    public override bool Equals(object obj) { if (!(obj is Index)) return false; var other = (Index)obj; return Value.Equals(other.Value); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Value);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Index self) => new Dynamic(self);
     public static implicit operator Index(Dynamic value) => value.As<Index>();
     public String TypeName => "Index";
@@ -145,25 +166,31 @@ public readonly partial struct Unit
     public static Unit New(Number value) => new Unit(value);
     public static implicit operator Number(Unit self) => self.Value;
     public static implicit operator Unit(Number value) => new Unit(value);
+    public override bool Equals(object obj) { if (!(obj is Unit)) return false; var other = (Unit)obj; return Value.Equals(other.Value); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Value);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Unit self) => new Dynamic(self);
     public static implicit operator Unit(Dynamic value) => value.As<Unit>();
     public String TypeName => "Unit";
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Unit Multiply(Number other) => throw new NotImplementedException();
-    public static Unit operator *(Unit self, Number other) => self.Multiply(other);
-    public Unit Divide(Number other) => throw new NotImplementedException();
-    public static Unit operator /(Unit self, Number other) => self.Divide(other);
-    public Unit Modulo(Number other) => throw new NotImplementedException();
-    public static Unit operator %(Unit self, Number other) => self.Modulo(other);
-    public Unit Add(Number other) => throw new NotImplementedException();
-    public static Unit operator +(Unit self, Number other) => self.Add(other);
-    public Unit Subtract(Number other) => throw new NotImplementedException();
-    public static Unit operator -(Unit self, Number other) => self.Subtract(other);
     public Number Unlerp(Unit a, Unit b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Unit y) => throw new NotImplementedException();
+    public Unit Multiply(Number other) => (Value.Multiply(other));
+    public static Unit operator *(Unit self, Number other) => self.Multiply(other);
+    public Unit Divide(Number other) => (Value.Divide(other));
+    public static Unit operator /(Unit self, Number other) => self.Divide(other);
+    public Unit Modulo(Number other) => (Value.Modulo(other));
+    public static Unit operator %(Unit self, Number other) => self.Modulo(other);
+    public Unit Add(Number other) => (Value.Add(other));
+    public static Unit operator +(Unit self, Number other) => self.Add(other);
+    public Unit Subtract(Number other) => (Value.Subtract(other));
+    public static Unit operator -(Unit self, Number other) => self.Subtract(other);
+    public Unit Zero => (Value.Zero);
+    public Unit One => (Value.One);
+    public Unit MinValue => (Value.MinValue);
+    public Unit MaxValue => (Value.MaxValue);
     public Unit Reciprocal => (Value.Reciprocal);
     public Unit Negative => (Value.Negative);
     public static Unit operator -(Unit self) => self.Negative;
@@ -177,10 +204,6 @@ public readonly partial struct Unit
     public static Unit operator +(Unit self, Unit other) => self.Add(other);
     public Unit Subtract(Unit other) => (Value.Subtract(other.Value));
     public static Unit operator -(Unit self, Unit other) => self.Subtract(other);
-    public Unit Zero => (Value.Zero);
-    public Unit One => (Value.One);
-    public Unit MinValue => (Value.MinValue);
-    public Unit MaxValue => (Value.MaxValue);
 }
 public readonly partial struct Percent
 {
@@ -191,25 +214,31 @@ public readonly partial struct Percent
     public static Percent New(Number value) => new Percent(value);
     public static implicit operator Number(Percent self) => self.Value;
     public static implicit operator Percent(Number value) => new Percent(value);
+    public override bool Equals(object obj) { if (!(obj is Percent)) return false; var other = (Percent)obj; return Value.Equals(other.Value); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Value);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Percent self) => new Dynamic(self);
     public static implicit operator Percent(Dynamic value) => value.As<Percent>();
     public String TypeName => "Percent";
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Percent Multiply(Number other) => throw new NotImplementedException();
-    public static Percent operator *(Percent self, Number other) => self.Multiply(other);
-    public Percent Divide(Number other) => throw new NotImplementedException();
-    public static Percent operator /(Percent self, Number other) => self.Divide(other);
-    public Percent Modulo(Number other) => throw new NotImplementedException();
-    public static Percent operator %(Percent self, Number other) => self.Modulo(other);
-    public Percent Add(Number other) => throw new NotImplementedException();
-    public static Percent operator +(Percent self, Number other) => self.Add(other);
-    public Percent Subtract(Number other) => throw new NotImplementedException();
-    public static Percent operator -(Percent self, Number other) => self.Subtract(other);
     public Number Unlerp(Percent a, Percent b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Percent y) => throw new NotImplementedException();
+    public Percent Multiply(Number other) => (Value.Multiply(other));
+    public static Percent operator *(Percent self, Number other) => self.Multiply(other);
+    public Percent Divide(Number other) => (Value.Divide(other));
+    public static Percent operator /(Percent self, Number other) => self.Divide(other);
+    public Percent Modulo(Number other) => (Value.Modulo(other));
+    public static Percent operator %(Percent self, Number other) => self.Modulo(other);
+    public Percent Add(Number other) => (Value.Add(other));
+    public static Percent operator +(Percent self, Number other) => self.Add(other);
+    public Percent Subtract(Number other) => (Value.Subtract(other));
+    public static Percent operator -(Percent self, Number other) => self.Subtract(other);
+    public Percent Zero => (Value.Zero);
+    public Percent One => (Value.One);
+    public Percent MinValue => (Value.MinValue);
+    public Percent MaxValue => (Value.MaxValue);
     public Percent Reciprocal => (Value.Reciprocal);
     public Percent Negative => (Value.Negative);
     public static Percent operator -(Percent self) => self.Negative;
@@ -223,10 +252,54 @@ public readonly partial struct Percent
     public static Percent operator +(Percent self, Percent other) => self.Add(other);
     public Percent Subtract(Percent other) => (Value.Subtract(other.Value));
     public static Percent operator -(Percent self, Percent other) => self.Subtract(other);
-    public Percent Zero => (Value.Zero);
-    public Percent One => (Value.One);
-    public Percent MinValue => (Value.MinValue);
-    public Percent MaxValue => (Value.MaxValue);
+}
+public readonly partial struct Probability
+{
+    public readonly Number Value;
+    public Probability WithValue(Number value) => (value);
+    public Probability(Number value) => (Value) = (value);
+    public static Probability Default = new Probability();
+    public static Probability New(Number value) => new Probability(value);
+    public static implicit operator Number(Probability self) => self.Value;
+    public static implicit operator Probability(Number value) => new Probability(value);
+    public override bool Equals(object obj) { if (!(obj is Probability)) return false; var other = (Probability)obj; return Value.Equals(other.Value); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Value);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
+    public static implicit operator Dynamic(Probability self) => new Dynamic(self);
+    public static implicit operator Probability(Dynamic value) => value.As<Probability>();
+    public String TypeName => "Probability";
+    public Array<String> FieldNames => new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
+    // Unimplemented concept functions
+    public Number Unlerp(Probability a, Probability b) => throw new NotImplementedException();
+    public Integer Compare(Probability y) => throw new NotImplementedException();
+    public Probability Multiply(Number other) => (Value.Multiply(other));
+    public static Probability operator *(Probability self, Number other) => self.Multiply(other);
+    public Probability Divide(Number other) => (Value.Divide(other));
+    public static Probability operator /(Probability self, Number other) => self.Divide(other);
+    public Probability Modulo(Number other) => (Value.Modulo(other));
+    public static Probability operator %(Probability self, Number other) => self.Modulo(other);
+    public Probability Add(Number other) => (Value.Add(other));
+    public static Probability operator +(Probability self, Number other) => self.Add(other);
+    public Probability Subtract(Number other) => (Value.Subtract(other));
+    public static Probability operator -(Probability self, Number other) => self.Subtract(other);
+    public Probability Zero => (Value.Zero);
+    public Probability One => (Value.One);
+    public Probability MinValue => (Value.MinValue);
+    public Probability MaxValue => (Value.MaxValue);
+    public Probability Reciprocal => (Value.Reciprocal);
+    public Probability Negative => (Value.Negative);
+    public static Probability operator -(Probability self) => self.Negative;
+    public Probability Multiply(Probability other) => (Value.Multiply(other.Value));
+    public static Probability operator *(Probability self, Probability other) => self.Multiply(other);
+    public Probability Divide(Probability other) => (Value.Divide(other.Value));
+    public static Probability operator /(Probability self, Probability other) => self.Divide(other);
+    public Probability Modulo(Probability other) => (Value.Modulo(other.Value));
+    public static Probability operator %(Probability self, Probability other) => self.Modulo(other);
+    public Probability Add(Probability other) => (Value.Add(other.Value));
+    public static Probability operator +(Probability self, Probability other) => self.Add(other);
+    public Probability Subtract(Probability other) => (Value.Subtract(other.Value));
+    public static Probability operator -(Probability self, Probability other) => self.Subtract(other);
 }
 public readonly partial struct Quaternion
 {
@@ -244,6 +317,9 @@ public readonly partial struct Quaternion
     public static implicit operator (Number, Number, Number, Number)(Quaternion self) => (self.X, self.Y, self.Z, self.W);
     public static implicit operator Quaternion((Number, Number, Number, Number) value) => new Quaternion(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Number x, out Number y, out Number z, out Number w) { x = X; y = Y; z = Z; w = W; }
+    public override bool Equals(object obj) { if (!(obj is Quaternion)) return false; var other = (Quaternion)obj; return X.Equals(other.X) && Y.Equals(other.Y) && Z.Equals(other.Z) && W.Equals(other.W); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(X, Y, Z, W);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Quaternion self) => new Dynamic(self);
     public static implicit operator Quaternion(Dynamic value) => value.As<Quaternion>();
     public String TypeName => "Quaternion";
@@ -271,6 +347,9 @@ public readonly partial struct Unit2D
     public static implicit operator (Unit, Unit)(Unit2D self) => (self.X, self.Y);
     public static implicit operator Unit2D((Unit, Unit) value) => new Unit2D(value.Item1, value.Item2);
     public void Deconstruct(out Unit x, out Unit y) { x = X; y = Y; }
+    public override bool Equals(object obj) { if (!(obj is Unit2D)) return false; var other = (Unit2D)obj; return X.Equals(other.X) && Y.Equals(other.Y); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(X, Y);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Unit2D self) => new Dynamic(self);
     public static implicit operator Unit2D(Dynamic value) => value.As<Unit2D>();
     public String TypeName => "Unit2D";
@@ -300,6 +379,9 @@ public readonly partial struct Unit3D
     public static implicit operator (Unit, Unit, Unit)(Unit3D self) => (self.X, self.Y, self.Z);
     public static implicit operator Unit3D((Unit, Unit, Unit) value) => new Unit3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Unit x, out Unit y, out Unit z) { x = X; y = Y; z = Z; }
+    public override bool Equals(object obj) { if (!(obj is Unit3D)) return false; var other = (Unit3D)obj; return X.Equals(other.X) && Y.Equals(other.Y) && Z.Equals(other.Z); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(X, Y, Z);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Unit3D self) => new Dynamic(self);
     public static implicit operator Unit3D(Dynamic value) => value.As<Unit3D>();
     public String TypeName => "Unit3D";
@@ -324,6 +406,9 @@ public readonly partial struct Direction3D
     public static Direction3D New(Unit3D value) => new Direction3D(value);
     public static implicit operator Unit3D(Direction3D self) => self.Value;
     public static implicit operator Direction3D(Unit3D value) => new Direction3D(value);
+    public override bool Equals(object obj) { if (!(obj is Direction3D)) return false; var other = (Direction3D)obj; return Value.Equals(other.Value); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Value);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Direction3D self) => new Dynamic(self);
     public static implicit operator Direction3D(Dynamic value) => value.As<Direction3D>();
     public String TypeName => "Direction3D";
@@ -351,6 +436,9 @@ public readonly partial struct AxisAngle
     public static implicit operator (Unit3D, Angle)(AxisAngle self) => (self.Axis, self.Angle);
     public static implicit operator AxisAngle((Unit3D, Angle) value) => new AxisAngle(value.Item1, value.Item2);
     public void Deconstruct(out Unit3D axis, out Angle angle) { axis = Axis; angle = Angle; }
+    public override bool Equals(object obj) { if (!(obj is AxisAngle)) return false; var other = (AxisAngle)obj; return Axis.Equals(other.Axis) && Angle.Equals(other.Angle); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Axis, Angle);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(AxisAngle self) => new Dynamic(self);
     public static implicit operator AxisAngle(Dynamic value) => value.As<AxisAngle>();
     public String TypeName => "AxisAngle";
@@ -380,6 +468,9 @@ public readonly partial struct EulerAngles
     public static implicit operator (Angle, Angle, Angle)(EulerAngles self) => (self.Yaw, self.Pitch, self.Roll);
     public static implicit operator EulerAngles((Angle, Angle, Angle) value) => new EulerAngles(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Angle yaw, out Angle pitch, out Angle roll) { yaw = Yaw; pitch = Pitch; roll = Roll; }
+    public override bool Equals(object obj) { if (!(obj is EulerAngles)) return false; var other = (EulerAngles)obj; return Yaw.Equals(other.Yaw) && Pitch.Equals(other.Pitch) && Roll.Equals(other.Roll); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Yaw, Pitch, Roll);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(EulerAngles self) => new Dynamic(self);
     public static implicit operator EulerAngles(Dynamic value) => value.As<EulerAngles>();
     public String TypeName => "EulerAngles";
@@ -404,6 +495,9 @@ public readonly partial struct Rotation3D
     public static Rotation3D New(Quaternion quaternion) => new Rotation3D(quaternion);
     public static implicit operator Quaternion(Rotation3D self) => self.Quaternion;
     public static implicit operator Rotation3D(Quaternion value) => new Rotation3D(value);
+    public override bool Equals(object obj) { if (!(obj is Rotation3D)) return false; var other = (Rotation3D)obj; return Quaternion.Equals(other.Quaternion); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Quaternion);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Rotation3D self) => new Dynamic(self);
     public static implicit operator Rotation3D(Dynamic value) => value.As<Rotation3D>();
     public String TypeName => "Rotation3D";
@@ -431,21 +525,24 @@ public readonly partial struct Vector2D
     public static implicit operator (Number, Number)(Vector2D self) => (self.X, self.Y);
     public static implicit operator Vector2D((Number, Number) value) => new Vector2D(value.Item1, value.Item2);
     public void Deconstruct(out Number x, out Number y) { x = X; y = Y; }
+    public override bool Equals(object obj) { if (!(obj is Vector2D)) return false; var other = (Vector2D)obj; return X.Equals(other.X) && Y.Equals(other.Y); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(X, Y);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Vector2D self) => new Dynamic(self);
     public static implicit operator Vector2D(Dynamic value) => value.As<Vector2D>();
     public String TypeName => "Vector2D";
     public Array<String> FieldNames => new[] { (String)"X", (String)"Y" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(X), new Dynamic(Y) };
     // Unimplemented concept functions
-    public Vector2D Multiply(Number other) => throw new NotImplementedException();
+    public Vector2D Multiply(Number other) => (X.Multiply(other), Y.Multiply(other));
     public static Vector2D operator *(Vector2D self, Number other) => self.Multiply(other);
-    public Vector2D Divide(Number other) => throw new NotImplementedException();
+    public Vector2D Divide(Number other) => (X.Divide(other), Y.Divide(other));
     public static Vector2D operator /(Vector2D self, Number other) => self.Divide(other);
-    public Vector2D Modulo(Number other) => throw new NotImplementedException();
+    public Vector2D Modulo(Number other) => (X.Modulo(other), Y.Modulo(other));
     public static Vector2D operator %(Vector2D self, Number other) => self.Modulo(other);
-    public Vector2D Add(Number other) => throw new NotImplementedException();
+    public Vector2D Add(Number other) => (X.Add(other), Y.Add(other));
     public static Vector2D operator +(Vector2D self, Number other) => self.Add(other);
-    public Vector2D Subtract(Number other) => throw new NotImplementedException();
+    public Vector2D Subtract(Number other) => (X.Subtract(other), Y.Subtract(other));
     public static Vector2D operator -(Vector2D self, Number other) => self.Subtract(other);
     public Number Unlerp(Vector2D a, Vector2D b) => throw new NotImplementedException();
     public Integer Compare(Vector2D y) => throw new NotImplementedException();
@@ -484,21 +581,24 @@ public readonly partial struct Vector3D
     public static implicit operator (Number, Number, Number)(Vector3D self) => (self.X, self.Y, self.Z);
     public static implicit operator Vector3D((Number, Number, Number) value) => new Vector3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number x, out Number y, out Number z) { x = X; y = Y; z = Z; }
+    public override bool Equals(object obj) { if (!(obj is Vector3D)) return false; var other = (Vector3D)obj; return X.Equals(other.X) && Y.Equals(other.Y) && Z.Equals(other.Z); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(X, Y, Z);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Vector3D self) => new Dynamic(self);
     public static implicit operator Vector3D(Dynamic value) => value.As<Vector3D>();
     public String TypeName => "Vector3D";
     public Array<String> FieldNames => new[] { (String)"X", (String)"Y", (String)"Z" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z) };
     // Unimplemented concept functions
-    public Vector3D Multiply(Number other) => throw new NotImplementedException();
+    public Vector3D Multiply(Number other) => (X.Multiply(other), Y.Multiply(other), Z.Multiply(other));
     public static Vector3D operator *(Vector3D self, Number other) => self.Multiply(other);
-    public Vector3D Divide(Number other) => throw new NotImplementedException();
+    public Vector3D Divide(Number other) => (X.Divide(other), Y.Divide(other), Z.Divide(other));
     public static Vector3D operator /(Vector3D self, Number other) => self.Divide(other);
-    public Vector3D Modulo(Number other) => throw new NotImplementedException();
+    public Vector3D Modulo(Number other) => (X.Modulo(other), Y.Modulo(other), Z.Modulo(other));
     public static Vector3D operator %(Vector3D self, Number other) => self.Modulo(other);
-    public Vector3D Add(Number other) => throw new NotImplementedException();
+    public Vector3D Add(Number other) => (X.Add(other), Y.Add(other), Z.Add(other));
     public static Vector3D operator +(Vector3D self, Number other) => self.Add(other);
-    public Vector3D Subtract(Number other) => throw new NotImplementedException();
+    public Vector3D Subtract(Number other) => (X.Subtract(other), Y.Subtract(other), Z.Subtract(other));
     public static Vector3D operator -(Vector3D self, Number other) => self.Subtract(other);
     public Number Unlerp(Vector3D a, Vector3D b) => throw new NotImplementedException();
     public Integer Compare(Vector3D y) => throw new NotImplementedException();
@@ -539,21 +639,24 @@ public readonly partial struct Vector4D
     public static implicit operator (Number, Number, Number, Number)(Vector4D self) => (self.X, self.Y, self.Z, self.W);
     public static implicit operator Vector4D((Number, Number, Number, Number) value) => new Vector4D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Number x, out Number y, out Number z, out Number w) { x = X; y = Y; z = Z; w = W; }
+    public override bool Equals(object obj) { if (!(obj is Vector4D)) return false; var other = (Vector4D)obj; return X.Equals(other.X) && Y.Equals(other.Y) && Z.Equals(other.Z) && W.Equals(other.W); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(X, Y, Z, W);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Vector4D self) => new Dynamic(self);
     public static implicit operator Vector4D(Dynamic value) => value.As<Vector4D>();
     public String TypeName => "Vector4D";
     public Array<String> FieldNames => new[] { (String)"X", (String)"Y", (String)"Z", (String)"W" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z), new Dynamic(W) };
     // Unimplemented concept functions
-    public Vector4D Multiply(Number other) => throw new NotImplementedException();
+    public Vector4D Multiply(Number other) => (X.Multiply(other), Y.Multiply(other), Z.Multiply(other), W.Multiply(other));
     public static Vector4D operator *(Vector4D self, Number other) => self.Multiply(other);
-    public Vector4D Divide(Number other) => throw new NotImplementedException();
+    public Vector4D Divide(Number other) => (X.Divide(other), Y.Divide(other), Z.Divide(other), W.Divide(other));
     public static Vector4D operator /(Vector4D self, Number other) => self.Divide(other);
-    public Vector4D Modulo(Number other) => throw new NotImplementedException();
+    public Vector4D Modulo(Number other) => (X.Modulo(other), Y.Modulo(other), Z.Modulo(other), W.Modulo(other));
     public static Vector4D operator %(Vector4D self, Number other) => self.Modulo(other);
-    public Vector4D Add(Number other) => throw new NotImplementedException();
+    public Vector4D Add(Number other) => (X.Add(other), Y.Add(other), Z.Add(other), W.Add(other));
     public static Vector4D operator +(Vector4D self, Number other) => self.Add(other);
-    public Vector4D Subtract(Number other) => throw new NotImplementedException();
+    public Vector4D Subtract(Number other) => (X.Subtract(other), Y.Subtract(other), Z.Subtract(other), W.Subtract(other));
     public static Vector4D operator -(Vector4D self, Number other) => self.Subtract(other);
     public Number Unlerp(Vector4D a, Vector4D b) => throw new NotImplementedException();
     public Integer Compare(Vector4D y) => throw new NotImplementedException();
@@ -587,6 +690,9 @@ public readonly partial struct Orientation3D
     public static Orientation3D New(Rotation3D value) => new Orientation3D(value);
     public static implicit operator Rotation3D(Orientation3D self) => self.Value;
     public static implicit operator Orientation3D(Rotation3D value) => new Orientation3D(value);
+    public override bool Equals(object obj) { if (!(obj is Orientation3D)) return false; var other = (Orientation3D)obj; return Value.Equals(other.Value); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Value);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Orientation3D self) => new Dynamic(self);
     public static implicit operator Orientation3D(Dynamic value) => value.As<Orientation3D>();
     public String TypeName => "Orientation3D";
@@ -614,6 +720,9 @@ public readonly partial struct Pose2D
     public static implicit operator (Vector3D, Orientation3D)(Pose2D self) => (self.Position, self.Orientation);
     public static implicit operator Pose2D((Vector3D, Orientation3D) value) => new Pose2D(value.Item1, value.Item2);
     public void Deconstruct(out Vector3D position, out Orientation3D orientation) { position = Position; orientation = Orientation; }
+    public override bool Equals(object obj) { if (!(obj is Pose2D)) return false; var other = (Pose2D)obj; return Position.Equals(other.Position) && Orientation.Equals(other.Orientation); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Position, Orientation);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Pose2D self) => new Dynamic(self);
     public static implicit operator Pose2D(Dynamic value) => value.As<Pose2D>();
     public String TypeName => "Pose2D";
@@ -641,6 +750,9 @@ public readonly partial struct Pose3D
     public static implicit operator (Vector3D, Orientation3D)(Pose3D self) => (self.Position, self.Orientation);
     public static implicit operator Pose3D((Vector3D, Orientation3D) value) => new Pose3D(value.Item1, value.Item2);
     public void Deconstruct(out Vector3D position, out Orientation3D orientation) { position = Position; orientation = Orientation; }
+    public override bool Equals(object obj) { if (!(obj is Pose3D)) return false; var other = (Pose3D)obj; return Position.Equals(other.Position) && Orientation.Equals(other.Orientation); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Position, Orientation);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Pose3D self) => new Dynamic(self);
     public static implicit operator Pose3D(Dynamic value) => value.As<Pose3D>();
     public String TypeName => "Pose3D";
@@ -670,6 +782,9 @@ public readonly partial struct Transform3D
     public static implicit operator (Vector3D, Rotation3D, Vector3D)(Transform3D self) => (self.Translation, self.Rotation, self.Scale);
     public static implicit operator Transform3D((Vector3D, Rotation3D, Vector3D) value) => new Transform3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Vector3D translation, out Rotation3D rotation, out Vector3D scale) { translation = Translation; rotation = Rotation; scale = Scale; }
+    public override bool Equals(object obj) { if (!(obj is Transform3D)) return false; var other = (Transform3D)obj; return Translation.Equals(other.Translation) && Rotation.Equals(other.Rotation) && Scale.Equals(other.Scale); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Translation, Rotation, Scale);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Transform3D self) => new Dynamic(self);
     public static implicit operator Transform3D(Dynamic value) => value.As<Transform3D>();
     public String TypeName => "Transform3D";
@@ -699,6 +814,9 @@ public readonly partial struct Transform2D
     public static implicit operator (Vector2D, Angle, Vector2D)(Transform2D self) => (self.Translation, self.Rotation, self.Scale);
     public static implicit operator Transform2D((Vector2D, Angle, Vector2D) value) => new Transform2D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Vector2D translation, out Angle rotation, out Vector2D scale) { translation = Translation; rotation = Rotation; scale = Scale; }
+    public override bool Equals(object obj) { if (!(obj is Transform2D)) return false; var other = (Transform2D)obj; return Translation.Equals(other.Translation) && Rotation.Equals(other.Rotation) && Scale.Equals(other.Scale); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Translation, Rotation, Scale);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Transform2D self) => new Dynamic(self);
     public static implicit operator Transform2D(Dynamic value) => value.As<Transform2D>();
     public String TypeName => "Transform2D";
@@ -726,6 +844,9 @@ public readonly partial struct AlignedBox2D
     public static implicit operator (Point2D, Point2D)(AlignedBox2D self) => (self.A, self.B);
     public static implicit operator AlignedBox2D((Point2D, Point2D) value) => new AlignedBox2D(value.Item1, value.Item2);
     public void Deconstruct(out Point2D a, out Point2D b) { a = A; b = B; }
+    public override bool Equals(object obj) { if (!(obj is AlignedBox2D)) return false; var other = (AlignedBox2D)obj; return A.Equals(other.A) && B.Equals(other.B); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(A, B);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(AlignedBox2D self) => new Dynamic(self);
     public static implicit operator AlignedBox2D(Dynamic value) => value.As<AlignedBox2D>();
     public String TypeName => "AlignedBox2D";
@@ -756,6 +877,9 @@ public readonly partial struct AlignedBox3D
     public static implicit operator (Point3D, Point3D)(AlignedBox3D self) => (self.A, self.B);
     public static implicit operator AlignedBox3D((Point3D, Point3D) value) => new AlignedBox3D(value.Item1, value.Item2);
     public void Deconstruct(out Point3D a, out Point3D b) { a = A; b = B; }
+    public override bool Equals(object obj) { if (!(obj is AlignedBox3D)) return false; var other = (AlignedBox3D)obj; return A.Equals(other.A) && B.Equals(other.B); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(A, B);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(AlignedBox3D self) => new Dynamic(self);
     public static implicit operator AlignedBox3D(Dynamic value) => value.As<AlignedBox3D>();
     public String TypeName => "AlignedBox3D";
@@ -786,21 +910,24 @@ public readonly partial struct Complex
     public static implicit operator (Number, Number)(Complex self) => (self.Real, self.Imaginary);
     public static implicit operator Complex((Number, Number) value) => new Complex(value.Item1, value.Item2);
     public void Deconstruct(out Number real, out Number imaginary) { real = Real; imaginary = Imaginary; }
+    public override bool Equals(object obj) { if (!(obj is Complex)) return false; var other = (Complex)obj; return Real.Equals(other.Real) && Imaginary.Equals(other.Imaginary); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Real, Imaginary);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Complex self) => new Dynamic(self);
     public static implicit operator Complex(Dynamic value) => value.As<Complex>();
     public String TypeName => "Complex";
     public Array<String> FieldNames => new[] { (String)"Real", (String)"Imaginary" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Real), new Dynamic(Imaginary) };
     // Unimplemented concept functions
-    public Complex Multiply(Number other) => throw new NotImplementedException();
+    public Complex Multiply(Number other) => (Real.Multiply(other), Imaginary.Multiply(other));
     public static Complex operator *(Complex self, Number other) => self.Multiply(other);
-    public Complex Divide(Number other) => throw new NotImplementedException();
+    public Complex Divide(Number other) => (Real.Divide(other), Imaginary.Divide(other));
     public static Complex operator /(Complex self, Number other) => self.Divide(other);
-    public Complex Modulo(Number other) => throw new NotImplementedException();
+    public Complex Modulo(Number other) => (Real.Modulo(other), Imaginary.Modulo(other));
     public static Complex operator %(Complex self, Number other) => self.Modulo(other);
-    public Complex Add(Number other) => throw new NotImplementedException();
+    public Complex Add(Number other) => (Real.Add(other), Imaginary.Add(other));
     public static Complex operator +(Complex self, Number other) => self.Add(other);
-    public Complex Subtract(Number other) => throw new NotImplementedException();
+    public Complex Subtract(Number other) => (Real.Subtract(other), Imaginary.Subtract(other));
     public static Complex operator -(Complex self, Number other) => self.Subtract(other);
     public Number Unlerp(Complex a, Complex b) => throw new NotImplementedException();
     public Integer Compare(Complex y) => throw new NotImplementedException();
@@ -837,6 +964,9 @@ public readonly partial struct Ray3D
     public static implicit operator (Vector3D, Point3D)(Ray3D self) => (self.Direction, self.Position);
     public static implicit operator Ray3D((Vector3D, Point3D) value) => new Ray3D(value.Item1, value.Item2);
     public void Deconstruct(out Vector3D direction, out Point3D position) { direction = Direction; position = Position; }
+    public override bool Equals(object obj) { if (!(obj is Ray3D)) return false; var other = (Ray3D)obj; return Direction.Equals(other.Direction) && Position.Equals(other.Position); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Direction, Position);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Ray3D self) => new Dynamic(self);
     public static implicit operator Ray3D(Dynamic value) => value.As<Ray3D>();
     public String TypeName => "Ray3D";
@@ -864,6 +994,9 @@ public readonly partial struct Ray2D
     public static implicit operator (Vector2D, Point2D)(Ray2D self) => (self.Direction, self.Position);
     public static implicit operator Ray2D((Vector2D, Point2D) value) => new Ray2D(value.Item1, value.Item2);
     public void Deconstruct(out Vector2D direction, out Point2D position) { direction = Direction; position = Position; }
+    public override bool Equals(object obj) { if (!(obj is Ray2D)) return false; var other = (Ray2D)obj; return Direction.Equals(other.Direction) && Position.Equals(other.Position); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Direction, Position);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Ray2D self) => new Dynamic(self);
     public static implicit operator Ray2D(Dynamic value) => value.As<Ray2D>();
     public String TypeName => "Ray2D";
@@ -891,6 +1024,9 @@ public readonly partial struct Sphere
     public static implicit operator (Point3D, Number)(Sphere self) => (self.Center, self.Radius);
     public static implicit operator Sphere((Point3D, Number) value) => new Sphere(value.Item1, value.Item2);
     public void Deconstruct(out Point3D center, out Number radius) { center = Center; radius = Radius; }
+    public override bool Equals(object obj) { if (!(obj is Sphere)) return false; var other = (Sphere)obj; return Center.Equals(other.Center) && Radius.Equals(other.Radius); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Center, Radius);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Sphere self) => new Dynamic(self);
     public static implicit operator Sphere(Dynamic value) => value.As<Sphere>();
     public String TypeName => "Sphere";
@@ -918,6 +1054,9 @@ public readonly partial struct Plane
     public static implicit operator (Unit3D, Number)(Plane self) => (self.Normal, self.D);
     public static implicit operator Plane((Unit3D, Number) value) => new Plane(value.Item1, value.Item2);
     public void Deconstruct(out Unit3D normal, out Number d) { normal = Normal; d = D; }
+    public override bool Equals(object obj) { if (!(obj is Plane)) return false; var other = (Plane)obj; return Normal.Equals(other.Normal) && D.Equals(other.D); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Normal, D);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Plane self) => new Dynamic(self);
     public static implicit operator Plane(Dynamic value) => value.As<Plane>();
     public String TypeName => "Plane";
@@ -947,6 +1086,9 @@ public readonly partial struct Triangle2D
     public static implicit operator (Point2D, Point2D, Point2D)(Triangle2D self) => (self.A, self.B, self.C);
     public static implicit operator Triangle2D((Point2D, Point2D, Point2D) value) => new Triangle2D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point2D a, out Point2D b, out Point2D c) { a = A; b = B; c = C; }
+    public override bool Equals(object obj) { if (!(obj is Triangle2D)) return false; var other = (Triangle2D)obj; return A.Equals(other.A) && B.Equals(other.B) && C.Equals(other.C); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(A, B, C);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Triangle2D self) => new Dynamic(self);
     public static implicit operator Triangle2D(Dynamic value) => value.As<Triangle2D>();
     public String TypeName => "Triangle2D";
@@ -976,6 +1118,9 @@ public readonly partial struct Triangle3D
     public static implicit operator (Point3D, Point3D, Point3D)(Triangle3D self) => (self.A, self.B, self.C);
     public static implicit operator Triangle3D((Point3D, Point3D, Point3D) value) => new Triangle3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point3D a, out Point3D b, out Point3D c) { a = A; b = B; c = C; }
+    public override bool Equals(object obj) { if (!(obj is Triangle3D)) return false; var other = (Triangle3D)obj; return A.Equals(other.A) && B.Equals(other.B) && C.Equals(other.C); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(A, B, C);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Triangle3D self) => new Dynamic(self);
     public static implicit operator Triangle3D(Dynamic value) => value.As<Triangle3D>();
     public String TypeName => "Triangle3D";
@@ -1007,6 +1152,9 @@ public readonly partial struct Quad2D
     public static implicit operator (Point2D, Point2D, Point2D, Point2D)(Quad2D self) => (self.A, self.B, self.C, self.D);
     public static implicit operator Quad2D((Point2D, Point2D, Point2D, Point2D) value) => new Quad2D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Point2D a, out Point2D b, out Point2D c, out Point2D d) { a = A; b = B; c = C; d = D; }
+    public override bool Equals(object obj) { if (!(obj is Quad2D)) return false; var other = (Quad2D)obj; return A.Equals(other.A) && B.Equals(other.B) && C.Equals(other.C) && D.Equals(other.D); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(A, B, C, D);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Quad2D self) => new Dynamic(self);
     public static implicit operator Quad2D(Dynamic value) => value.As<Quad2D>();
     public String TypeName => "Quad2D";
@@ -1038,6 +1186,9 @@ public readonly partial struct Quad3D
     public static implicit operator (Point3D, Point3D, Point3D, Point3D)(Quad3D self) => (self.A, self.B, self.C, self.D);
     public static implicit operator Quad3D((Point3D, Point3D, Point3D, Point3D) value) => new Quad3D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Point3D a, out Point3D b, out Point3D c, out Point3D d) { a = A; b = B; c = C; d = D; }
+    public override bool Equals(object obj) { if (!(obj is Quad3D)) return false; var other = (Quad3D)obj; return A.Equals(other.A) && B.Equals(other.B) && C.Equals(other.C) && D.Equals(other.D); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(A, B, C, D);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Quad3D self) => new Dynamic(self);
     public static implicit operator Quad3D(Dynamic value) => value.As<Quad3D>();
     public String TypeName => "Quad3D";
@@ -1065,6 +1216,9 @@ public readonly partial struct Point2D
     public static implicit operator (Number, Number)(Point2D self) => (self.X, self.Y);
     public static implicit operator Point2D((Number, Number) value) => new Point2D(value.Item1, value.Item2);
     public void Deconstruct(out Number x, out Number y) { x = X; y = Y; }
+    public override bool Equals(object obj) { if (!(obj is Point2D)) return false; var other = (Point2D)obj; return X.Equals(other.X) && Y.Equals(other.Y); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(X, Y);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Point2D self) => new Dynamic(self);
     public static implicit operator Point2D(Dynamic value) => value.As<Point2D>();
     public String TypeName => "Point2D";
@@ -1076,7 +1230,7 @@ public readonly partial struct Point2D
     public Point2D MinValue => (X.MinValue, Y.MinValue);
     public Point2D MaxValue => (X.MaxValue, Y.MaxValue);
     public Integer Compare(Point2D y) => throw new NotImplementedException();
-    public Point2D Lerp(Point2D b, Number amount) => throw new NotImplementedException();
+    public Point2D Lerp(Point2D b, Number amount) => (X.Lerp(b.X, amount), Y.Lerp(b.Y, amount));
     public Number Unlerp(Point2D a, Point2D b) => throw new NotImplementedException();
     public Point2D Add(Vector2D other) => throw new NotImplementedException();
     public static Point2D operator +(Point2D self, Vector2D other) => self.Add(other);
@@ -1097,6 +1251,9 @@ public readonly partial struct Point3D
     public static implicit operator (Number, Number, Number)(Point3D self) => (self.X, self.Y, self.Z);
     public static implicit operator Point3D((Number, Number, Number) value) => new Point3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number x, out Number y, out Number z) { x = X; y = Y; z = Z; }
+    public override bool Equals(object obj) { if (!(obj is Point3D)) return false; var other = (Point3D)obj; return X.Equals(other.X) && Y.Equals(other.Y) && Z.Equals(other.Z); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(X, Y, Z);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Point3D self) => new Dynamic(self);
     public static implicit operator Point3D(Dynamic value) => value.As<Point3D>();
     public String TypeName => "Point3D";
@@ -1108,7 +1265,7 @@ public readonly partial struct Point3D
     public Point3D MinValue => (X.MinValue, Y.MinValue, Z.MinValue);
     public Point3D MaxValue => (X.MaxValue, Y.MaxValue, Z.MaxValue);
     public Integer Compare(Point3D y) => throw new NotImplementedException();
-    public Point3D Lerp(Point3D b, Number amount) => throw new NotImplementedException();
+    public Point3D Lerp(Point3D b, Number amount) => (X.Lerp(b.X, amount), Y.Lerp(b.Y, amount), Z.Lerp(b.Z, amount));
     public Number Unlerp(Point3D a, Point3D b) => throw new NotImplementedException();
     public Point3D Add(Vector3D other) => throw new NotImplementedException();
     public static Point3D operator +(Point3D self, Vector3D other) => self.Add(other);
@@ -1131,6 +1288,9 @@ public readonly partial struct Point4D
     public static implicit operator (Number, Number, Number, Number)(Point4D self) => (self.X, self.Y, self.Z, self.W);
     public static implicit operator Point4D((Number, Number, Number, Number) value) => new Point4D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Number x, out Number y, out Number z, out Number w) { x = X; y = Y; z = Z; w = W; }
+    public override bool Equals(object obj) { if (!(obj is Point4D)) return false; var other = (Point4D)obj; return X.Equals(other.X) && Y.Equals(other.Y) && Z.Equals(other.Z) && W.Equals(other.W); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(X, Y, Z, W);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Point4D self) => new Dynamic(self);
     public static implicit operator Point4D(Dynamic value) => value.As<Point4D>();
     public String TypeName => "Point4D";
@@ -1142,7 +1302,7 @@ public readonly partial struct Point4D
     public Point4D MinValue => (X.MinValue, Y.MinValue, Z.MinValue, W.MinValue);
     public Point4D MaxValue => (X.MaxValue, Y.MaxValue, Z.MaxValue, W.MaxValue);
     public Integer Compare(Point4D y) => throw new NotImplementedException();
-    public Point4D Lerp(Point4D b, Number amount) => throw new NotImplementedException();
+    public Point4D Lerp(Point4D b, Number amount) => (X.Lerp(b.X, amount), Y.Lerp(b.Y, amount), Z.Lerp(b.Z, amount), W.Lerp(b.W, amount));
     public Number Unlerp(Point4D a, Point4D b) => throw new NotImplementedException();
     public Point4D Add(Vector4D other) => throw new NotImplementedException();
     public static Point4D operator +(Point4D self, Vector4D other) => self.Add(other);
@@ -1161,6 +1321,9 @@ public readonly partial struct Line2D
     public static implicit operator (Point2D, Point2D)(Line2D self) => (self.A, self.B);
     public static implicit operator Line2D((Point2D, Point2D) value) => new Line2D(value.Item1, value.Item2);
     public void Deconstruct(out Point2D a, out Point2D b) { a = A; b = B; }
+    public override bool Equals(object obj) { if (!(obj is Line2D)) return false; var other = (Line2D)obj; return A.Equals(other.A) && B.Equals(other.B); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(A, B);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Line2D self) => new Dynamic(self);
     public static implicit operator Line2D(Dynamic value) => value.As<Line2D>();
     public String TypeName => "Line2D";
@@ -1191,6 +1354,9 @@ public readonly partial struct Line3D
     public static implicit operator (Point3D, Point3D)(Line3D self) => (self.A, self.B);
     public static implicit operator Line3D((Point3D, Point3D) value) => new Line3D(value.Item1, value.Item2);
     public void Deconstruct(out Point3D a, out Point3D b) { a = A; b = B; }
+    public override bool Equals(object obj) { if (!(obj is Line3D)) return false; var other = (Line3D)obj; return A.Equals(other.A) && B.Equals(other.B); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(A, B);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Line3D self) => new Dynamic(self);
     public static implicit operator Line3D(Dynamic value) => value.As<Line3D>();
     public String TypeName => "Line3D";
@@ -1225,6 +1391,9 @@ public readonly partial struct Color
     public static implicit operator (Unit, Unit, Unit, Unit)(Color self) => (self.R, self.G, self.B, self.A);
     public static implicit operator Color((Unit, Unit, Unit, Unit) value) => new Color(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Unit r, out Unit g, out Unit b, out Unit a) { r = R; g = G; b = B; a = A; }
+    public override bool Equals(object obj) { if (!(obj is Color)) return false; var other = (Color)obj; return R.Equals(other.R) && G.Equals(other.G) && B.Equals(other.B) && A.Equals(other.A); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(R, G, B, A);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Color self) => new Dynamic(self);
     public static implicit operator Color(Dynamic value) => value.As<Color>();
     public String TypeName => "Color";
@@ -1253,6 +1422,9 @@ public readonly partial struct ColorLUV
     public static implicit operator (Percent, Unit, Unit)(ColorLUV self) => (self.Lightness, self.U, self.V);
     public static implicit operator ColorLUV((Percent, Unit, Unit) value) => new ColorLUV(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Percent lightness, out Unit u, out Unit v) { lightness = Lightness; u = U; v = V; }
+    public override bool Equals(object obj) { if (!(obj is ColorLUV)) return false; var other = (ColorLUV)obj; return Lightness.Equals(other.Lightness) && U.Equals(other.U) && V.Equals(other.V); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Lightness, U, V);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(ColorLUV self) => new Dynamic(self);
     public static implicit operator ColorLUV(Dynamic value) => value.As<ColorLUV>();
     public String TypeName => "ColorLUV";
@@ -1281,6 +1453,9 @@ public readonly partial struct ColorLAB
     public static implicit operator (Percent, Integer, Integer)(ColorLAB self) => (self.Lightness, self.A, self.B);
     public static implicit operator ColorLAB((Percent, Integer, Integer) value) => new ColorLAB(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Percent lightness, out Integer a, out Integer b) { lightness = Lightness; a = A; b = B; }
+    public override bool Equals(object obj) { if (!(obj is ColorLAB)) return false; var other = (ColorLAB)obj; return Lightness.Equals(other.Lightness) && A.Equals(other.A) && B.Equals(other.B); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Lightness, A, B);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(ColorLAB self) => new Dynamic(self);
     public static implicit operator ColorLAB(Dynamic value) => value.As<ColorLAB>();
     public String TypeName => "ColorLAB";
@@ -1307,6 +1482,9 @@ public readonly partial struct ColorLCh
     public static implicit operator (Percent, PolarCoordinate)(ColorLCh self) => (self.Lightness, self.ChromaHue);
     public static implicit operator ColorLCh((Percent, PolarCoordinate) value) => new ColorLCh(value.Item1, value.Item2);
     public void Deconstruct(out Percent lightness, out PolarCoordinate chromaHue) { lightness = Lightness; chromaHue = ChromaHue; }
+    public override bool Equals(object obj) { if (!(obj is ColorLCh)) return false; var other = (ColorLCh)obj; return Lightness.Equals(other.Lightness) && ChromaHue.Equals(other.ChromaHue); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Lightness, ChromaHue);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(ColorLCh self) => new Dynamic(self);
     public static implicit operator ColorLCh(Dynamic value) => value.As<ColorLCh>();
     public String TypeName => "ColorLCh";
@@ -1335,6 +1513,9 @@ public readonly partial struct ColorHSV
     public static implicit operator (Angle, Unit, Unit)(ColorHSV self) => (self.Hue, self.S, self.V);
     public static implicit operator ColorHSV((Angle, Unit, Unit) value) => new ColorHSV(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Angle hue, out Unit s, out Unit v) { hue = Hue; s = S; v = V; }
+    public override bool Equals(object obj) { if (!(obj is ColorHSV)) return false; var other = (ColorHSV)obj; return Hue.Equals(other.Hue) && S.Equals(other.S) && V.Equals(other.V); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Hue, S, V);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(ColorHSV self) => new Dynamic(self);
     public static implicit operator ColorHSV(Dynamic value) => value.As<ColorHSV>();
     public String TypeName => "ColorHSV";
@@ -1363,6 +1544,9 @@ public readonly partial struct ColorHSL
     public static implicit operator (Angle, Unit, Unit)(ColorHSL self) => (self.Hue, self.Saturation, self.Luminance);
     public static implicit operator ColorHSL((Angle, Unit, Unit) value) => new ColorHSL(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Angle hue, out Unit saturation, out Unit luminance) { hue = Hue; saturation = Saturation; luminance = Luminance; }
+    public override bool Equals(object obj) { if (!(obj is ColorHSL)) return false; var other = (ColorHSL)obj; return Hue.Equals(other.Hue) && Saturation.Equals(other.Saturation) && Luminance.Equals(other.Luminance); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Hue, Saturation, Luminance);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(ColorHSL self) => new Dynamic(self);
     public static implicit operator ColorHSL(Dynamic value) => value.As<ColorHSL>();
     public String TypeName => "ColorHSL";
@@ -1391,6 +1575,9 @@ public readonly partial struct ColorYCbCr
     public static implicit operator (Unit, Unit, Unit)(ColorYCbCr self) => (self.Y, self.Cb, self.Cr);
     public static implicit operator ColorYCbCr((Unit, Unit, Unit) value) => new ColorYCbCr(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Unit y, out Unit cb, out Unit cr) { y = Y; cb = Cb; cr = Cr; }
+    public override bool Equals(object obj) { if (!(obj is ColorYCbCr)) return false; var other = (ColorYCbCr)obj; return Y.Equals(other.Y) && Cb.Equals(other.Cb) && Cr.Equals(other.Cr); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Y, Cb, Cr);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(ColorYCbCr self) => new Dynamic(self);
     public static implicit operator ColorYCbCr(Dynamic value) => value.As<ColorYCbCr>();
     public String TypeName => "ColorYCbCr";
@@ -1419,6 +1606,9 @@ public readonly partial struct SphericalCoordinate
     public static implicit operator (Number, Angle, Angle)(SphericalCoordinate self) => (self.Radius, self.Azimuth, self.Polar);
     public static implicit operator SphericalCoordinate((Number, Angle, Angle) value) => new SphericalCoordinate(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number radius, out Angle azimuth, out Angle polar) { radius = Radius; azimuth = Azimuth; polar = Polar; }
+    public override bool Equals(object obj) { if (!(obj is SphericalCoordinate)) return false; var other = (SphericalCoordinate)obj; return Radius.Equals(other.Radius) && Azimuth.Equals(other.Azimuth) && Polar.Equals(other.Polar); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Radius, Azimuth, Polar);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(SphericalCoordinate self) => new Dynamic(self);
     public static implicit operator SphericalCoordinate(Dynamic value) => value.As<SphericalCoordinate>();
     public String TypeName => "SphericalCoordinate";
@@ -1445,6 +1635,9 @@ public readonly partial struct PolarCoordinate
     public static implicit operator (Number, Angle)(PolarCoordinate self) => (self.Radius, self.Angle);
     public static implicit operator PolarCoordinate((Number, Angle) value) => new PolarCoordinate(value.Item1, value.Item2);
     public void Deconstruct(out Number radius, out Angle angle) { radius = Radius; angle = Angle; }
+    public override bool Equals(object obj) { if (!(obj is PolarCoordinate)) return false; var other = (PolarCoordinate)obj; return Radius.Equals(other.Radius) && Angle.Equals(other.Angle); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Radius, Angle);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(PolarCoordinate self) => new Dynamic(self);
     public static implicit operator PolarCoordinate(Dynamic value) => value.As<PolarCoordinate>();
     public String TypeName => "PolarCoordinate";
@@ -1471,6 +1664,9 @@ public readonly partial struct LogPolarCoordinate
     public static implicit operator (Number, Angle)(LogPolarCoordinate self) => (self.Rho, self.Azimuth);
     public static implicit operator LogPolarCoordinate((Number, Angle) value) => new LogPolarCoordinate(value.Item1, value.Item2);
     public void Deconstruct(out Number rho, out Angle azimuth) { rho = Rho; azimuth = Azimuth; }
+    public override bool Equals(object obj) { if (!(obj is LogPolarCoordinate)) return false; var other = (LogPolarCoordinate)obj; return Rho.Equals(other.Rho) && Azimuth.Equals(other.Azimuth); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Rho, Azimuth);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(LogPolarCoordinate self) => new Dynamic(self);
     public static implicit operator LogPolarCoordinate(Dynamic value) => value.As<LogPolarCoordinate>();
     public String TypeName => "LogPolarCoordinate";
@@ -1499,6 +1695,9 @@ public readonly partial struct CylindricalCoordinate
     public static implicit operator (Number, Angle, Number)(CylindricalCoordinate self) => (self.RadialDistance, self.Azimuth, self.Height);
     public static implicit operator CylindricalCoordinate((Number, Angle, Number) value) => new CylindricalCoordinate(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number radialDistance, out Angle azimuth, out Number height) { radialDistance = RadialDistance; azimuth = Azimuth; height = Height; }
+    public override bool Equals(object obj) { if (!(obj is CylindricalCoordinate)) return false; var other = (CylindricalCoordinate)obj; return RadialDistance.Equals(other.RadialDistance) && Azimuth.Equals(other.Azimuth) && Height.Equals(other.Height); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(RadialDistance, Azimuth, Height);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(CylindricalCoordinate self) => new Dynamic(self);
     public static implicit operator CylindricalCoordinate(Dynamic value) => value.As<CylindricalCoordinate>();
     public String TypeName => "CylindricalCoordinate";
@@ -1527,6 +1726,9 @@ public readonly partial struct HorizontalCoordinate
     public static implicit operator (Number, Angle, Number)(HorizontalCoordinate self) => (self.Radius, self.Azimuth, self.Height);
     public static implicit operator HorizontalCoordinate((Number, Angle, Number) value) => new HorizontalCoordinate(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number radius, out Angle azimuth, out Number height) { radius = Radius; azimuth = Azimuth; height = Height; }
+    public override bool Equals(object obj) { if (!(obj is HorizontalCoordinate)) return false; var other = (HorizontalCoordinate)obj; return Radius.Equals(other.Radius) && Azimuth.Equals(other.Azimuth) && Height.Equals(other.Height); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Radius, Azimuth, Height);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(HorizontalCoordinate self) => new Dynamic(self);
     public static implicit operator HorizontalCoordinate(Dynamic value) => value.As<HorizontalCoordinate>();
     public String TypeName => "HorizontalCoordinate";
@@ -1553,6 +1755,9 @@ public readonly partial struct GeoCoordinate
     public static implicit operator (Angle, Angle)(GeoCoordinate self) => (self.Latitude, self.Longitude);
     public static implicit operator GeoCoordinate((Angle, Angle) value) => new GeoCoordinate(value.Item1, value.Item2);
     public void Deconstruct(out Angle latitude, out Angle longitude) { latitude = Latitude; longitude = Longitude; }
+    public override bool Equals(object obj) { if (!(obj is GeoCoordinate)) return false; var other = (GeoCoordinate)obj; return Latitude.Equals(other.Latitude) && Longitude.Equals(other.Longitude); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Latitude, Longitude);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(GeoCoordinate self) => new Dynamic(self);
     public static implicit operator GeoCoordinate(Dynamic value) => value.As<GeoCoordinate>();
     public String TypeName => "GeoCoordinate";
@@ -1579,6 +1784,9 @@ public readonly partial struct GeoCoordinateWithAltitude
     public static implicit operator (GeoCoordinate, Number)(GeoCoordinateWithAltitude self) => (self.Coordinate, self.Altitude);
     public static implicit operator GeoCoordinateWithAltitude((GeoCoordinate, Number) value) => new GeoCoordinateWithAltitude(value.Item1, value.Item2);
     public void Deconstruct(out GeoCoordinate coordinate, out Number altitude) { coordinate = Coordinate; altitude = Altitude; }
+    public override bool Equals(object obj) { if (!(obj is GeoCoordinateWithAltitude)) return false; var other = (GeoCoordinateWithAltitude)obj; return Coordinate.Equals(other.Coordinate) && Altitude.Equals(other.Altitude); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Coordinate, Altitude);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(GeoCoordinateWithAltitude self) => new Dynamic(self);
     public static implicit operator GeoCoordinateWithAltitude(Dynamic value) => value.As<GeoCoordinateWithAltitude>();
     public String TypeName => "GeoCoordinateWithAltitude";
@@ -1605,6 +1813,9 @@ public readonly partial struct Circle
     public static implicit operator (Point2D, Number)(Circle self) => (self.Center, self.Radius);
     public static implicit operator Circle((Point2D, Number) value) => new Circle(value.Item1, value.Item2);
     public void Deconstruct(out Point2D center, out Number radius) { center = Center; radius = Radius; }
+    public override bool Equals(object obj) { if (!(obj is Circle)) return false; var other = (Circle)obj; return Center.Equals(other.Center) && Radius.Equals(other.Radius); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Center, Radius);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Circle self) => new Dynamic(self);
     public static implicit operator Circle(Dynamic value) => value.As<Circle>();
     public String TypeName => "Circle";
@@ -1632,6 +1843,9 @@ public readonly partial struct Chord
     public static implicit operator (Circle, Arc)(Chord self) => (self.Circle, self.Arc);
     public static implicit operator Chord((Circle, Arc) value) => new Chord(value.Item1, value.Item2);
     public void Deconstruct(out Circle circle, out Arc arc) { circle = Circle; arc = Arc; }
+    public override bool Equals(object obj) { if (!(obj is Chord)) return false; var other = (Chord)obj; return Circle.Equals(other.Circle) && Arc.Equals(other.Arc); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Circle, Arc);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Chord self) => new Dynamic(self);
     public static implicit operator Chord(Dynamic value) => value.As<Chord>();
     public String TypeName => "Chord";
@@ -1659,6 +1873,9 @@ public readonly partial struct Size2D
     public static implicit operator (Number, Number)(Size2D self) => (self.Width, self.Height);
     public static implicit operator Size2D((Number, Number) value) => new Size2D(value.Item1, value.Item2);
     public void Deconstruct(out Number width, out Number height) { width = Width; height = Height; }
+    public override bool Equals(object obj) { if (!(obj is Size2D)) return false; var other = (Size2D)obj; return Width.Equals(other.Width) && Height.Equals(other.Height); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Width, Height);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Size2D self) => new Dynamic(self);
     public static implicit operator Size2D(Dynamic value) => value.As<Size2D>();
     public String TypeName => "Size2D";
@@ -1688,6 +1905,9 @@ public readonly partial struct Size3D
     public static implicit operator (Number, Number, Number)(Size3D self) => (self.Width, self.Height, self.Depth);
     public static implicit operator Size3D((Number, Number, Number) value) => new Size3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number width, out Number height, out Number depth) { width = Width; height = Height; depth = Depth; }
+    public override bool Equals(object obj) { if (!(obj is Size3D)) return false; var other = (Size3D)obj; return Width.Equals(other.Width) && Height.Equals(other.Height) && Depth.Equals(other.Depth); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Width, Height, Depth);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Size3D self) => new Dynamic(self);
     public static implicit operator Size3D(Dynamic value) => value.As<Size3D>();
     public String TypeName => "Size3D";
@@ -1715,6 +1935,9 @@ public readonly partial struct Rectangle2D
     public static implicit operator (Point2D, Size2D)(Rectangle2D self) => (self.Center, self.Size);
     public static implicit operator Rectangle2D((Point2D, Size2D) value) => new Rectangle2D(value.Item1, value.Item2);
     public void Deconstruct(out Point2D center, out Size2D size) { center = Center; size = Size; }
+    public override bool Equals(object obj) { if (!(obj is Rectangle2D)) return false; var other = (Rectangle2D)obj; return Center.Equals(other.Center) && Size.Equals(other.Size); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Center, Size);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Rectangle2D self) => new Dynamic(self);
     public static implicit operator Rectangle2D(Dynamic value) => value.As<Rectangle2D>();
     public String TypeName => "Rectangle2D";
@@ -1730,52 +1953,6 @@ public readonly partial struct Rectangle2D
     public Boolean NotEquals(Rectangle2D b) => (Center.NotEquals(b.Center) & Size.NotEquals(b.Size));
     public static Boolean operator !=(Rectangle2D a, Rectangle2D b) => a.NotEquals(b);
 }
-public readonly partial struct Proportion
-{
-    public readonly Number Value;
-    public Proportion WithValue(Number value) => (value);
-    public Proportion(Number value) => (Value) = (value);
-    public static Proportion Default = new Proportion();
-    public static Proportion New(Number value) => new Proportion(value);
-    public static implicit operator Number(Proportion self) => self.Value;
-    public static implicit operator Proportion(Number value) => new Proportion(value);
-    public static implicit operator Dynamic(Proportion self) => new Dynamic(self);
-    public static implicit operator Proportion(Dynamic value) => value.As<Proportion>();
-    public String TypeName => "Proportion";
-    public Array<String> FieldNames => new[] { (String)"Value" };
-    public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
-    // Unimplemented concept functions
-    public Proportion Multiply(Number other) => throw new NotImplementedException();
-    public static Proportion operator *(Proportion self, Number other) => self.Multiply(other);
-    public Proportion Divide(Number other) => throw new NotImplementedException();
-    public static Proportion operator /(Proportion self, Number other) => self.Divide(other);
-    public Proportion Modulo(Number other) => throw new NotImplementedException();
-    public static Proportion operator %(Proportion self, Number other) => self.Modulo(other);
-    public Proportion Add(Number other) => throw new NotImplementedException();
-    public static Proportion operator +(Proportion self, Number other) => self.Add(other);
-    public Proportion Subtract(Number other) => throw new NotImplementedException();
-    public static Proportion operator -(Proportion self, Number other) => self.Subtract(other);
-    public Number Unlerp(Proportion a, Proportion b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Integer Compare(Proportion y) => throw new NotImplementedException();
-    public Proportion Reciprocal => (Value.Reciprocal);
-    public Proportion Negative => (Value.Negative);
-    public static Proportion operator -(Proportion self) => self.Negative;
-    public Proportion Multiply(Proportion other) => (Value.Multiply(other.Value));
-    public static Proportion operator *(Proportion self, Proportion other) => self.Multiply(other);
-    public Proportion Divide(Proportion other) => (Value.Divide(other.Value));
-    public static Proportion operator /(Proportion self, Proportion other) => self.Divide(other);
-    public Proportion Modulo(Proportion other) => (Value.Modulo(other.Value));
-    public static Proportion operator %(Proportion self, Proportion other) => self.Modulo(other);
-    public Proportion Add(Proportion other) => (Value.Add(other.Value));
-    public static Proportion operator +(Proportion self, Proportion other) => self.Add(other);
-    public Proportion Subtract(Proportion other) => (Value.Subtract(other.Value));
-    public static Proportion operator -(Proportion self, Proportion other) => self.Subtract(other);
-    public Proportion Zero => (Value.Zero);
-    public Proportion One => (Value.One);
-    public Proportion MinValue => (Value.MinValue);
-    public Proportion MaxValue => (Value.MaxValue);
-}
 public readonly partial struct Fraction
 {
     public readonly Number Numerator;
@@ -1788,6 +1965,9 @@ public readonly partial struct Fraction
     public static implicit operator (Number, Number)(Fraction self) => (self.Numerator, self.Denominator);
     public static implicit operator Fraction((Number, Number) value) => new Fraction(value.Item1, value.Item2);
     public void Deconstruct(out Number numerator, out Number denominator) { numerator = Numerator; denominator = Denominator; }
+    public override bool Equals(object obj) { if (!(obj is Fraction)) return false; var other = (Fraction)obj; return Numerator.Equals(other.Numerator) && Denominator.Equals(other.Denominator); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Numerator, Denominator);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Fraction self) => new Dynamic(self);
     public static implicit operator Fraction(Dynamic value) => value.As<Fraction>();
     public String TypeName => "Fraction";
@@ -1812,13 +1992,16 @@ public readonly partial struct Angle
     public static Angle New(Number radians) => new Angle(radians);
     public static implicit operator Number(Angle self) => self.Radians;
     public static implicit operator Angle(Number value) => new Angle(value);
+    public override bool Equals(object obj) { if (!(obj is Angle)) return false; var other = (Angle)obj; return Radians.Equals(other.Radians); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Radians);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Angle self) => new Dynamic(self);
     public static implicit operator Angle(Dynamic value) => value.As<Angle>();
     public String TypeName => "Angle";
     public Array<String> FieldNames => new[] { (String)"Radians" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Radians) };
     // Unimplemented concept functions
-    public Angle Lerp(Angle b, Number amount) => throw new NotImplementedException();
+    public Angle Lerp(Angle b, Number amount) => (Radians.Lerp(b.Radians, amount));
     public Number Unlerp(Angle a, Angle b) => throw new NotImplementedException();
     public Integer Compare(Angle y) => throw new NotImplementedException();
     public Angle Zero => (Radians.Zero);
@@ -1835,13 +2018,16 @@ public readonly partial struct Length
     public static Length New(Number meters) => new Length(meters);
     public static implicit operator Number(Length self) => self.Meters;
     public static implicit operator Length(Number value) => new Length(value);
+    public override bool Equals(object obj) { if (!(obj is Length)) return false; var other = (Length)obj; return Meters.Equals(other.Meters); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Meters);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Length self) => new Dynamic(self);
     public static implicit operator Length(Dynamic value) => value.As<Length>();
     public String TypeName => "Length";
     public Array<String> FieldNames => new[] { (String)"Meters" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Meters) };
     // Unimplemented concept functions
-    public Length Lerp(Length b, Number amount) => throw new NotImplementedException();
+    public Length Lerp(Length b, Number amount) => (Meters.Lerp(b.Meters, amount));
     public Number Unlerp(Length a, Length b) => throw new NotImplementedException();
     public Integer Compare(Length y) => throw new NotImplementedException();
     public Length Zero => (Meters.Zero);
@@ -1858,13 +2044,16 @@ public readonly partial struct Mass
     public static Mass New(Number kilograms) => new Mass(kilograms);
     public static implicit operator Number(Mass self) => self.Kilograms;
     public static implicit operator Mass(Number value) => new Mass(value);
+    public override bool Equals(object obj) { if (!(obj is Mass)) return false; var other = (Mass)obj; return Kilograms.Equals(other.Kilograms); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Kilograms);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Mass self) => new Dynamic(self);
     public static implicit operator Mass(Dynamic value) => value.As<Mass>();
     public String TypeName => "Mass";
     public Array<String> FieldNames => new[] { (String)"Kilograms" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Kilograms) };
     // Unimplemented concept functions
-    public Mass Lerp(Mass b, Number amount) => throw new NotImplementedException();
+    public Mass Lerp(Mass b, Number amount) => (Kilograms.Lerp(b.Kilograms, amount));
     public Number Unlerp(Mass a, Mass b) => throw new NotImplementedException();
     public Integer Compare(Mass y) => throw new NotImplementedException();
     public Mass Zero => (Kilograms.Zero);
@@ -1881,13 +2070,16 @@ public readonly partial struct Temperature
     public static Temperature New(Number celsius) => new Temperature(celsius);
     public static implicit operator Number(Temperature self) => self.Celsius;
     public static implicit operator Temperature(Number value) => new Temperature(value);
+    public override bool Equals(object obj) { if (!(obj is Temperature)) return false; var other = (Temperature)obj; return Celsius.Equals(other.Celsius); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Celsius);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Temperature self) => new Dynamic(self);
     public static implicit operator Temperature(Dynamic value) => value.As<Temperature>();
     public String TypeName => "Temperature";
     public Array<String> FieldNames => new[] { (String)"Celsius" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Celsius) };
     // Unimplemented concept functions
-    public Temperature Lerp(Temperature b, Number amount) => throw new NotImplementedException();
+    public Temperature Lerp(Temperature b, Number amount) => (Celsius.Lerp(b.Celsius, amount));
     public Number Unlerp(Temperature a, Temperature b) => throw new NotImplementedException();
     public Integer Compare(Temperature y) => throw new NotImplementedException();
     public Temperature Zero => (Celsius.Zero);
@@ -1904,13 +2096,16 @@ public readonly partial struct Time
     public static Time New(Number seconds) => new Time(seconds);
     public static implicit operator Number(Time self) => self.Seconds;
     public static implicit operator Time(Number value) => new Time(value);
+    public override bool Equals(object obj) { if (!(obj is Time)) return false; var other = (Time)obj; return Seconds.Equals(other.Seconds); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Seconds);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Time self) => new Dynamic(self);
     public static implicit operator Time(Dynamic value) => value.As<Time>();
     public String TypeName => "Time";
     public Array<String> FieldNames => new[] { (String)"Seconds" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Seconds) };
     // Unimplemented concept functions
-    public Time Lerp(Time b, Number amount) => throw new NotImplementedException();
+    public Time Lerp(Time b, Number amount) => (Seconds.Lerp(b.Seconds, amount));
     public Number Unlerp(Time a, Time b) => throw new NotImplementedException();
     public Integer Compare(Time y) => throw new NotImplementedException();
     public Time Zero => (Seconds.Zero);
@@ -1930,6 +2125,9 @@ public readonly partial struct TimeRange
     public static implicit operator (DateTime, DateTime)(TimeRange self) => (self.Begin, self.End);
     public static implicit operator TimeRange((DateTime, DateTime) value) => new TimeRange(value.Item1, value.Item2);
     public void Deconstruct(out DateTime begin, out DateTime end) { begin = Begin; end = End; }
+    public override bool Equals(object obj) { if (!(obj is TimeRange)) return false; var other = (TimeRange)obj; return Begin.Equals(other.Begin) && End.Equals(other.End); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Begin, End);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(TimeRange self) => new Dynamic(self);
     public static implicit operator TimeRange(Dynamic value) => value.As<TimeRange>();
     public String TypeName => "TimeRange";
@@ -1957,6 +2155,9 @@ public readonly partial struct DateTime
     public static DateTime New(Number value) => new DateTime(value);
     public static implicit operator Number(DateTime self) => self.Value;
     public static implicit operator DateTime(Number value) => new DateTime(value);
+    public override bool Equals(object obj) { if (!(obj is DateTime)) return false; var other = (DateTime)obj; return Value.Equals(other.Value); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Value);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(DateTime self) => new Dynamic(self);
     public static implicit operator DateTime(Dynamic value) => value.As<DateTime>();
     public String TypeName => "DateTime";
@@ -1968,7 +2169,7 @@ public readonly partial struct DateTime
     public DateTime MinValue => (Value.MinValue);
     public DateTime MaxValue => (Value.MaxValue);
     public Integer Compare(DateTime y) => throw new NotImplementedException();
-    public DateTime Lerp(DateTime b, Number amount) => throw new NotImplementedException();
+    public DateTime Lerp(DateTime b, Number amount) => (Value.Lerp(b.Value, amount));
     public Number Unlerp(DateTime a, DateTime b) => throw new NotImplementedException();
     public DateTime Add(Time other) => throw new NotImplementedException();
     public static DateTime operator +(DateTime self, Time other) => self.Add(other);
@@ -1987,6 +2188,9 @@ public readonly partial struct AnglePair
     public static implicit operator (Angle, Angle)(AnglePair self) => (self.Start, self.End);
     public static implicit operator AnglePair((Angle, Angle) value) => new AnglePair(value.Item1, value.Item2);
     public void Deconstruct(out Angle start, out Angle end) { start = Start; end = End; }
+    public override bool Equals(object obj) { if (!(obj is AnglePair)) return false; var other = (AnglePair)obj; return Start.Equals(other.Start) && End.Equals(other.End); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Start, End);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(AnglePair self) => new Dynamic(self);
     public static implicit operator AnglePair(Dynamic value) => value.As<AnglePair>();
     public String TypeName => "AnglePair";
@@ -2017,6 +2221,9 @@ public readonly partial struct Ring
     public static implicit operator (Circle, Number)(Ring self) => (self.Circle, self.InnerRadius);
     public static implicit operator Ring((Circle, Number) value) => new Ring(value.Item1, value.Item2);
     public void Deconstruct(out Circle circle, out Number innerRadius) { circle = Circle; innerRadius = InnerRadius; }
+    public override bool Equals(object obj) { if (!(obj is Ring)) return false; var other = (Ring)obj; return Circle.Equals(other.Circle) && InnerRadius.Equals(other.InnerRadius); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Circle, InnerRadius);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Ring self) => new Dynamic(self);
     public static implicit operator Ring(Dynamic value) => value.As<Ring>();
     public String TypeName => "Ring";
@@ -2044,6 +2251,9 @@ public readonly partial struct Arc
     public static implicit operator (AnglePair, Circle)(Arc self) => (self.Angles, self.Cirlce);
     public static implicit operator Arc((AnglePair, Circle) value) => new Arc(value.Item1, value.Item2);
     public void Deconstruct(out AnglePair angles, out Circle cirlce) { angles = Angles; cirlce = Cirlce; }
+    public override bool Equals(object obj) { if (!(obj is Arc)) return false; var other = (Arc)obj; return Angles.Equals(other.Angles) && Cirlce.Equals(other.Cirlce); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Angles, Cirlce);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Arc self) => new Dynamic(self);
     public static implicit operator Arc(Dynamic value) => value.As<Arc>();
     public String TypeName => "Arc";
@@ -2059,35 +2269,38 @@ public readonly partial struct Arc
     public Boolean NotEquals(Arc b) => (Angles.NotEquals(b.Angles) & Cirlce.NotEquals(b.Cirlce));
     public static Boolean operator !=(Arc a, Arc b) => a.NotEquals(b);
 }
-public readonly partial struct RealInterval
+public readonly partial struct NumberInterval
 {
     public readonly Number A;
     public readonly Number B;
-    public RealInterval WithA(Number a) => (a, B);
-    public RealInterval WithB(Number b) => (A, b);
-    public RealInterval(Number a, Number b) => (A, B) = (a, b);
-    public static RealInterval Default = new RealInterval();
-    public static RealInterval New(Number a, Number b) => new RealInterval(a, b);
-    public static implicit operator (Number, Number)(RealInterval self) => (self.A, self.B);
-    public static implicit operator RealInterval((Number, Number) value) => new RealInterval(value.Item1, value.Item2);
+    public NumberInterval WithA(Number a) => (a, B);
+    public NumberInterval WithB(Number b) => (A, b);
+    public NumberInterval(Number a, Number b) => (A, B) = (a, b);
+    public static NumberInterval Default = new NumberInterval();
+    public static NumberInterval New(Number a, Number b) => new NumberInterval(a, b);
+    public static implicit operator (Number, Number)(NumberInterval self) => (self.A, self.B);
+    public static implicit operator NumberInterval((Number, Number) value) => new NumberInterval(value.Item1, value.Item2);
     public void Deconstruct(out Number a, out Number b) { a = A; b = B; }
-    public static implicit operator Dynamic(RealInterval self) => new Dynamic(self);
-    public static implicit operator RealInterval(Dynamic value) => value.As<RealInterval>();
-    public String TypeName => "RealInterval";
+    public override bool Equals(object obj) { if (!(obj is NumberInterval)) return false; var other = (NumberInterval)obj; return A.Equals(other.A) && B.Equals(other.B); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(A, B);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
+    public static implicit operator Dynamic(NumberInterval self) => new Dynamic(self);
+    public static implicit operator NumberInterval(Dynamic value) => value.As<NumberInterval>();
+    public String TypeName => "NumberInterval";
     public Array<String> FieldNames => new[] { (String)"A", (String)"B" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B) };
     // Unimplemented concept functions
     public Number Min => throw new NotImplementedException();
     public Number Max => throw new NotImplementedException();
     public Number Size => throw new NotImplementedException();
-    public RealInterval Zero => (A.Zero, B.Zero);
-    public RealInterval One => (A.One, B.One);
-    public RealInterval MinValue => (A.MinValue, B.MinValue);
-    public RealInterval MaxValue => (A.MaxValue, B.MaxValue);
-    public Boolean Equals(RealInterval b) => (A.Equals(b.A) & B.Equals(b.B));
-    public static Boolean operator ==(RealInterval a, RealInterval b) => a.Equals(b);
-    public Boolean NotEquals(RealInterval b) => (A.NotEquals(b.A) & B.NotEquals(b.B));
-    public static Boolean operator !=(RealInterval a, RealInterval b) => a.NotEquals(b);
+    public NumberInterval Zero => (A.Zero, B.Zero);
+    public NumberInterval One => (A.One, B.One);
+    public NumberInterval MinValue => (A.MinValue, B.MinValue);
+    public NumberInterval MaxValue => (A.MaxValue, B.MaxValue);
+    public Boolean Equals(NumberInterval b) => (A.Equals(b.A) & B.Equals(b.B));
+    public static Boolean operator ==(NumberInterval a, NumberInterval b) => a.Equals(b);
+    public Boolean NotEquals(NumberInterval b) => (A.NotEquals(b.A) & B.NotEquals(b.B));
+    public static Boolean operator !=(NumberInterval a, NumberInterval b) => a.NotEquals(b);
 }
 public readonly partial struct Capsule
 {
@@ -2101,6 +2314,9 @@ public readonly partial struct Capsule
     public static implicit operator (Line3D, Number)(Capsule self) => (self.Line, self.Radius);
     public static implicit operator Capsule((Line3D, Number) value) => new Capsule(value.Item1, value.Item2);
     public void Deconstruct(out Line3D line, out Number radius) { line = Line; radius = Radius; }
+    public override bool Equals(object obj) { if (!(obj is Capsule)) return false; var other = (Capsule)obj; return Line.Equals(other.Line) && Radius.Equals(other.Radius); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Line, Radius);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Capsule self) => new Dynamic(self);
     public static implicit operator Capsule(Dynamic value) => value.As<Capsule>();
     public String TypeName => "Capsule";
@@ -2132,6 +2348,9 @@ public readonly partial struct Matrix3D
     public static implicit operator (Vector4D, Vector4D, Vector4D, Vector4D)(Matrix3D self) => (self.Column1, self.Column2, self.Column3, self.Column4);
     public static implicit operator Matrix3D((Vector4D, Vector4D, Vector4D, Vector4D) value) => new Matrix3D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Vector4D column1, out Vector4D column2, out Vector4D column3, out Vector4D column4) { column1 = Column1; column2 = Column2; column3 = Column3; column4 = Column4; }
+    public override bool Equals(object obj) { if (!(obj is Matrix3D)) return false; var other = (Matrix3D)obj; return Column1.Equals(other.Column1) && Column2.Equals(other.Column2) && Column3.Equals(other.Column3) && Column4.Equals(other.Column4); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Column1, Column2, Column3, Column4);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Matrix3D self) => new Dynamic(self);
     public static implicit operator Matrix3D(Dynamic value) => value.As<Matrix3D>();
     public String TypeName => "Matrix3D";
@@ -2159,6 +2378,9 @@ public readonly partial struct Cylinder
     public static implicit operator (Line3D, Number)(Cylinder self) => (self.Line, self.Radius);
     public static implicit operator Cylinder((Line3D, Number) value) => new Cylinder(value.Item1, value.Item2);
     public void Deconstruct(out Line3D line, out Number radius) { line = Line; radius = Radius; }
+    public override bool Equals(object obj) { if (!(obj is Cylinder)) return false; var other = (Cylinder)obj; return Line.Equals(other.Line) && Radius.Equals(other.Radius); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Line, Radius);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Cylinder self) => new Dynamic(self);
     public static implicit operator Cylinder(Dynamic value) => value.As<Cylinder>();
     public String TypeName => "Cylinder";
@@ -2186,6 +2408,9 @@ public readonly partial struct Cone
     public static implicit operator (Line3D, Number)(Cone self) => (self.Line, self.Radius);
     public static implicit operator Cone((Line3D, Number) value) => new Cone(value.Item1, value.Item2);
     public void Deconstruct(out Line3D line, out Number radius) { line = Line; radius = Radius; }
+    public override bool Equals(object obj) { if (!(obj is Cone)) return false; var other = (Cone)obj; return Line.Equals(other.Line) && Radius.Equals(other.Radius); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Line, Radius);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Cone self) => new Dynamic(self);
     public static implicit operator Cone(Dynamic value) => value.As<Cone>();
     public String TypeName => "Cone";
@@ -2215,6 +2440,9 @@ public readonly partial struct Tube
     public static implicit operator (Line3D, Number, Number)(Tube self) => (self.Line, self.InnerRadius, self.OuterRadius);
     public static implicit operator Tube((Line3D, Number, Number) value) => new Tube(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Line3D line, out Number innerRadius, out Number outerRadius) { line = Line; innerRadius = InnerRadius; outerRadius = OuterRadius; }
+    public override bool Equals(object obj) { if (!(obj is Tube)) return false; var other = (Tube)obj; return Line.Equals(other.Line) && InnerRadius.Equals(other.InnerRadius) && OuterRadius.Equals(other.OuterRadius); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Line, InnerRadius, OuterRadius);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Tube self) => new Dynamic(self);
     public static implicit operator Tube(Dynamic value) => value.As<Tube>();
     public String TypeName => "Tube";
@@ -2244,6 +2472,9 @@ public readonly partial struct ConeSegment
     public static implicit operator (Line3D, Number, Number)(ConeSegment self) => (self.Line, self.Radius1, self.Radius2);
     public static implicit operator ConeSegment((Line3D, Number, Number) value) => new ConeSegment(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Line3D line, out Number radius1, out Number radius2) { line = Line; radius1 = Radius1; radius2 = Radius2; }
+    public override bool Equals(object obj) { if (!(obj is ConeSegment)) return false; var other = (ConeSegment)obj; return Line.Equals(other.Line) && Radius1.Equals(other.Radius1) && Radius2.Equals(other.Radius2); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Line, Radius1, Radius2);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(ConeSegment self) => new Dynamic(self);
     public static implicit operator ConeSegment(Dynamic value) => value.As<ConeSegment>();
     public String TypeName => "ConeSegment";
@@ -2273,6 +2504,9 @@ public readonly partial struct Box2D
     public static implicit operator (Point2D, Angle, Size2D)(Box2D self) => (self.Center, self.Rotation, self.Extent);
     public static implicit operator Box2D((Point2D, Angle, Size2D) value) => new Box2D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point2D center, out Angle rotation, out Size2D extent) { center = Center; rotation = Rotation; extent = Extent; }
+    public override bool Equals(object obj) { if (!(obj is Box2D)) return false; var other = (Box2D)obj; return Center.Equals(other.Center) && Rotation.Equals(other.Rotation) && Extent.Equals(other.Extent); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Center, Rotation, Extent);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Box2D self) => new Dynamic(self);
     public static implicit operator Box2D(Dynamic value) => value.As<Box2D>();
     public String TypeName => "Box2D";
@@ -2302,6 +2536,9 @@ public readonly partial struct Box3D
     public static implicit operator (Point3D, Rotation3D, Size3D)(Box3D self) => (self.Center, self.Rotation, self.Extent);
     public static implicit operator Box3D((Point3D, Rotation3D, Size3D) value) => new Box3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point3D center, out Rotation3D rotation, out Size3D extent) { center = Center; rotation = Rotation; extent = Extent; }
+    public override bool Equals(object obj) { if (!(obj is Box3D)) return false; var other = (Box3D)obj; return Center.Equals(other.Center) && Rotation.Equals(other.Rotation) && Extent.Equals(other.Extent); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Center, Rotation, Extent);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Box3D self) => new Dynamic(self);
     public static implicit operator Box3D(Dynamic value) => value.As<Box3D>();
     public String TypeName => "Box3D";
@@ -2329,6 +2566,9 @@ public readonly partial struct UV
     public static implicit operator (Unit, Unit)(UV self) => (self.U, self.V);
     public static implicit operator UV((Unit, Unit) value) => new UV(value.Item1, value.Item2);
     public void Deconstruct(out Unit u, out Unit v) { u = U; v = V; }
+    public override bool Equals(object obj) { if (!(obj is UV)) return false; var other = (UV)obj; return U.Equals(other.U) && V.Equals(other.V); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(U, V);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(UV self) => new Dynamic(self);
     public static implicit operator UV(Dynamic value) => value.As<UV>();
     public String TypeName => "UV";
@@ -2382,6 +2622,9 @@ public readonly partial struct UVW
     public static implicit operator (Unit, Unit, Unit)(UVW self) => (self.U, self.V, self.W);
     public static implicit operator UVW((Unit, Unit, Unit) value) => new UVW(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Unit u, out Unit v, out Unit w) { u = U; v = V; w = W; }
+    public override bool Equals(object obj) { if (!(obj is UVW)) return false; var other = (UVW)obj; return U.Equals(other.U) && V.Equals(other.V) && W.Equals(other.W); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(U, V, W);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(UVW self) => new Dynamic(self);
     public static implicit operator UVW(Dynamic value) => value.As<UVW>();
     public String TypeName => "UVW";
@@ -2437,6 +2680,9 @@ public readonly partial struct CubicBezier2D
     public static implicit operator (Point2D, Point2D, Point2D, Point2D)(CubicBezier2D self) => (self.A, self.B, self.C, self.D);
     public static implicit operator CubicBezier2D((Point2D, Point2D, Point2D, Point2D) value) => new CubicBezier2D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Point2D a, out Point2D b, out Point2D c, out Point2D d) { a = A; b = B; c = C; d = D; }
+    public override bool Equals(object obj) { if (!(obj is CubicBezier2D)) return false; var other = (CubicBezier2D)obj; return A.Equals(other.A) && B.Equals(other.B) && C.Equals(other.C) && D.Equals(other.D); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(A, B, C, D);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(CubicBezier2D self) => new Dynamic(self);
     public static implicit operator CubicBezier2D(Dynamic value) => value.As<CubicBezier2D>();
     public String TypeName => "CubicBezier2D";
@@ -2468,6 +2714,9 @@ public readonly partial struct CubicBezier3D
     public static implicit operator (Point3D, Point3D, Point3D, Point3D)(CubicBezier3D self) => (self.A, self.B, self.C, self.D);
     public static implicit operator CubicBezier3D((Point3D, Point3D, Point3D, Point3D) value) => new CubicBezier3D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Point3D a, out Point3D b, out Point3D c, out Point3D d) { a = A; b = B; c = C; d = D; }
+    public override bool Equals(object obj) { if (!(obj is CubicBezier3D)) return false; var other = (CubicBezier3D)obj; return A.Equals(other.A) && B.Equals(other.B) && C.Equals(other.C) && D.Equals(other.D); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(A, B, C, D);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(CubicBezier3D self) => new Dynamic(self);
     public static implicit operator CubicBezier3D(Dynamic value) => value.As<CubicBezier3D>();
     public String TypeName => "CubicBezier3D";
@@ -2497,6 +2746,9 @@ public readonly partial struct QuadraticBezier2D
     public static implicit operator (Point2D, Point2D, Point2D)(QuadraticBezier2D self) => (self.A, self.B, self.C);
     public static implicit operator QuadraticBezier2D((Point2D, Point2D, Point2D) value) => new QuadraticBezier2D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point2D a, out Point2D b, out Point2D c) { a = A; b = B; c = C; }
+    public override bool Equals(object obj) { if (!(obj is QuadraticBezier2D)) return false; var other = (QuadraticBezier2D)obj; return A.Equals(other.A) && B.Equals(other.B) && C.Equals(other.C); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(A, B, C);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(QuadraticBezier2D self) => new Dynamic(self);
     public static implicit operator QuadraticBezier2D(Dynamic value) => value.As<QuadraticBezier2D>();
     public String TypeName => "QuadraticBezier2D";
@@ -2526,6 +2778,9 @@ public readonly partial struct QuadraticBezier3D
     public static implicit operator (Point3D, Point3D, Point3D)(QuadraticBezier3D self) => (self.A, self.B, self.C);
     public static implicit operator QuadraticBezier3D((Point3D, Point3D, Point3D) value) => new QuadraticBezier3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point3D a, out Point3D b, out Point3D c) { a = A; b = B; c = C; }
+    public override bool Equals(object obj) { if (!(obj is QuadraticBezier3D)) return false; var other = (QuadraticBezier3D)obj; return A.Equals(other.A) && B.Equals(other.B) && C.Equals(other.C); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(A, B, C);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(QuadraticBezier3D self) => new Dynamic(self);
     public static implicit operator QuadraticBezier3D(Dynamic value) => value.As<QuadraticBezier3D>();
     public String TypeName => "QuadraticBezier3D";
@@ -2550,13 +2805,16 @@ public readonly partial struct Area
     public static Area New(Number metersSquared) => new Area(metersSquared);
     public static implicit operator Number(Area self) => self.MetersSquared;
     public static implicit operator Area(Number value) => new Area(value);
+    public override bool Equals(object obj) { if (!(obj is Area)) return false; var other = (Area)obj; return MetersSquared.Equals(other.MetersSquared); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(MetersSquared);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Area self) => new Dynamic(self);
     public static implicit operator Area(Dynamic value) => value.As<Area>();
     public String TypeName => "Area";
     public Array<String> FieldNames => new[] { (String)"MetersSquared" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersSquared) };
     // Unimplemented concept functions
-    public Area Lerp(Area b, Number amount) => throw new NotImplementedException();
+    public Area Lerp(Area b, Number amount) => (MetersSquared.Lerp(b.MetersSquared, amount));
     public Number Unlerp(Area a, Area b) => throw new NotImplementedException();
     public Integer Compare(Area y) => throw new NotImplementedException();
     public Area Zero => (MetersSquared.Zero);
@@ -2573,13 +2831,16 @@ public readonly partial struct Volume
     public static Volume New(Number metersCubed) => new Volume(metersCubed);
     public static implicit operator Number(Volume self) => self.MetersCubed;
     public static implicit operator Volume(Number value) => new Volume(value);
+    public override bool Equals(object obj) { if (!(obj is Volume)) return false; var other = (Volume)obj; return MetersCubed.Equals(other.MetersCubed); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(MetersCubed);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Volume self) => new Dynamic(self);
     public static implicit operator Volume(Dynamic value) => value.As<Volume>();
     public String TypeName => "Volume";
     public Array<String> FieldNames => new[] { (String)"MetersCubed" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersCubed) };
     // Unimplemented concept functions
-    public Volume Lerp(Volume b, Number amount) => throw new NotImplementedException();
+    public Volume Lerp(Volume b, Number amount) => (MetersCubed.Lerp(b.MetersCubed, amount));
     public Number Unlerp(Volume a, Volume b) => throw new NotImplementedException();
     public Integer Compare(Volume y) => throw new NotImplementedException();
     public Volume Zero => (MetersCubed.Zero);
@@ -2596,13 +2857,16 @@ public readonly partial struct Velocity
     public static Velocity New(Number metersPerSecond) => new Velocity(metersPerSecond);
     public static implicit operator Number(Velocity self) => self.MetersPerSecond;
     public static implicit operator Velocity(Number value) => new Velocity(value);
+    public override bool Equals(object obj) { if (!(obj is Velocity)) return false; var other = (Velocity)obj; return MetersPerSecond.Equals(other.MetersPerSecond); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(MetersPerSecond);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Velocity self) => new Dynamic(self);
     public static implicit operator Velocity(Dynamic value) => value.As<Velocity>();
     public String TypeName => "Velocity";
     public Array<String> FieldNames => new[] { (String)"MetersPerSecond" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersPerSecond) };
     // Unimplemented concept functions
-    public Velocity Lerp(Velocity b, Number amount) => throw new NotImplementedException();
+    public Velocity Lerp(Velocity b, Number amount) => (MetersPerSecond.Lerp(b.MetersPerSecond, amount));
     public Number Unlerp(Velocity a, Velocity b) => throw new NotImplementedException();
     public Integer Compare(Velocity y) => throw new NotImplementedException();
     public Velocity Zero => (MetersPerSecond.Zero);
@@ -2619,13 +2883,16 @@ public readonly partial struct Acceleration
     public static Acceleration New(Number metersPerSecondSquared) => new Acceleration(metersPerSecondSquared);
     public static implicit operator Number(Acceleration self) => self.MetersPerSecondSquared;
     public static implicit operator Acceleration(Number value) => new Acceleration(value);
+    public override bool Equals(object obj) { if (!(obj is Acceleration)) return false; var other = (Acceleration)obj; return MetersPerSecondSquared.Equals(other.MetersPerSecondSquared); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(MetersPerSecondSquared);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Acceleration self) => new Dynamic(self);
     public static implicit operator Acceleration(Dynamic value) => value.As<Acceleration>();
     public String TypeName => "Acceleration";
     public Array<String> FieldNames => new[] { (String)"MetersPerSecondSquared" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersPerSecondSquared) };
     // Unimplemented concept functions
-    public Acceleration Lerp(Acceleration b, Number amount) => throw new NotImplementedException();
+    public Acceleration Lerp(Acceleration b, Number amount) => (MetersPerSecondSquared.Lerp(b.MetersPerSecondSquared, amount));
     public Number Unlerp(Acceleration a, Acceleration b) => throw new NotImplementedException();
     public Integer Compare(Acceleration y) => throw new NotImplementedException();
     public Acceleration Zero => (MetersPerSecondSquared.Zero);
@@ -2642,13 +2909,16 @@ public readonly partial struct Force
     public static Force New(Number newtons) => new Force(newtons);
     public static implicit operator Number(Force self) => self.Newtons;
     public static implicit operator Force(Number value) => new Force(value);
+    public override bool Equals(object obj) { if (!(obj is Force)) return false; var other = (Force)obj; return Newtons.Equals(other.Newtons); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Newtons);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Force self) => new Dynamic(self);
     public static implicit operator Force(Dynamic value) => value.As<Force>();
     public String TypeName => "Force";
     public Array<String> FieldNames => new[] { (String)"Newtons" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Newtons) };
     // Unimplemented concept functions
-    public Force Lerp(Force b, Number amount) => throw new NotImplementedException();
+    public Force Lerp(Force b, Number amount) => (Newtons.Lerp(b.Newtons, amount));
     public Number Unlerp(Force a, Force b) => throw new NotImplementedException();
     public Integer Compare(Force y) => throw new NotImplementedException();
     public Force Zero => (Newtons.Zero);
@@ -2665,13 +2935,16 @@ public readonly partial struct Pressure
     public static Pressure New(Number pascals) => new Pressure(pascals);
     public static implicit operator Number(Pressure self) => self.Pascals;
     public static implicit operator Pressure(Number value) => new Pressure(value);
+    public override bool Equals(object obj) { if (!(obj is Pressure)) return false; var other = (Pressure)obj; return Pascals.Equals(other.Pascals); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Pascals);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Pressure self) => new Dynamic(self);
     public static implicit operator Pressure(Dynamic value) => value.As<Pressure>();
     public String TypeName => "Pressure";
     public Array<String> FieldNames => new[] { (String)"Pascals" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Pascals) };
     // Unimplemented concept functions
-    public Pressure Lerp(Pressure b, Number amount) => throw new NotImplementedException();
+    public Pressure Lerp(Pressure b, Number amount) => (Pascals.Lerp(b.Pascals, amount));
     public Number Unlerp(Pressure a, Pressure b) => throw new NotImplementedException();
     public Integer Compare(Pressure y) => throw new NotImplementedException();
     public Pressure Zero => (Pascals.Zero);
@@ -2688,13 +2961,16 @@ public readonly partial struct Energy
     public static Energy New(Number joules) => new Energy(joules);
     public static implicit operator Number(Energy self) => self.Joules;
     public static implicit operator Energy(Number value) => new Energy(value);
+    public override bool Equals(object obj) { if (!(obj is Energy)) return false; var other = (Energy)obj; return Joules.Equals(other.Joules); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Joules);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Energy self) => new Dynamic(self);
     public static implicit operator Energy(Dynamic value) => value.As<Energy>();
     public String TypeName => "Energy";
     public Array<String> FieldNames => new[] { (String)"Joules" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Joules) };
     // Unimplemented concept functions
-    public Energy Lerp(Energy b, Number amount) => throw new NotImplementedException();
+    public Energy Lerp(Energy b, Number amount) => (Joules.Lerp(b.Joules, amount));
     public Number Unlerp(Energy a, Energy b) => throw new NotImplementedException();
     public Integer Compare(Energy y) => throw new NotImplementedException();
     public Energy Zero => (Joules.Zero);
@@ -2704,20 +2980,23 @@ public readonly partial struct Energy
 }
 public readonly partial struct Memory
 {
-    public readonly Integer Bytes;
-    public Memory WithBytes(Integer bytes) => (bytes);
-    public Memory(Integer bytes) => (Bytes) = (bytes);
+    public readonly Number Bytes;
+    public Memory WithBytes(Number bytes) => (bytes);
+    public Memory(Number bytes) => (Bytes) = (bytes);
     public static Memory Default = new Memory();
-    public static Memory New(Integer bytes) => new Memory(bytes);
-    public static implicit operator Integer(Memory self) => self.Bytes;
-    public static implicit operator Memory(Integer value) => new Memory(value);
+    public static Memory New(Number bytes) => new Memory(bytes);
+    public static implicit operator Number(Memory self) => self.Bytes;
+    public static implicit operator Memory(Number value) => new Memory(value);
+    public override bool Equals(object obj) { if (!(obj is Memory)) return false; var other = (Memory)obj; return Bytes.Equals(other.Bytes); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Bytes);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Memory self) => new Dynamic(self);
     public static implicit operator Memory(Dynamic value) => value.As<Memory>();
     public String TypeName => "Memory";
     public Array<String> FieldNames => new[] { (String)"Bytes" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Bytes) };
     // Unimplemented concept functions
-    public Memory Lerp(Memory b, Number amount) => throw new NotImplementedException();
+    public Memory Lerp(Memory b, Number amount) => (Bytes.Lerp(b.Bytes, amount));
     public Number Unlerp(Memory a, Memory b) => throw new NotImplementedException();
     public Integer Compare(Memory y) => throw new NotImplementedException();
     public Memory Zero => (Bytes.Zero);
@@ -2734,13 +3013,16 @@ public readonly partial struct Frequency
     public static Frequency New(Number hertz) => new Frequency(hertz);
     public static implicit operator Number(Frequency self) => self.Hertz;
     public static implicit operator Frequency(Number value) => new Frequency(value);
+    public override bool Equals(object obj) { if (!(obj is Frequency)) return false; var other = (Frequency)obj; return Hertz.Equals(other.Hertz); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Hertz);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Frequency self) => new Dynamic(self);
     public static implicit operator Frequency(Dynamic value) => value.As<Frequency>();
     public String TypeName => "Frequency";
     public Array<String> FieldNames => new[] { (String)"Hertz" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Hertz) };
     // Unimplemented concept functions
-    public Frequency Lerp(Frequency b, Number amount) => throw new NotImplementedException();
+    public Frequency Lerp(Frequency b, Number amount) => (Hertz.Lerp(b.Hertz, amount));
     public Number Unlerp(Frequency a, Frequency b) => throw new NotImplementedException();
     public Integer Compare(Frequency y) => throw new NotImplementedException();
     public Frequency Zero => (Hertz.Zero);
@@ -2757,13 +3039,16 @@ public readonly partial struct Loudness
     public static Loudness New(Number decibels) => new Loudness(decibels);
     public static implicit operator Number(Loudness self) => self.Decibels;
     public static implicit operator Loudness(Number value) => new Loudness(value);
+    public override bool Equals(object obj) { if (!(obj is Loudness)) return false; var other = (Loudness)obj; return Decibels.Equals(other.Decibels); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Decibels);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Loudness self) => new Dynamic(self);
     public static implicit operator Loudness(Dynamic value) => value.As<Loudness>();
     public String TypeName => "Loudness";
     public Array<String> FieldNames => new[] { (String)"Decibels" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Decibels) };
     // Unimplemented concept functions
-    public Loudness Lerp(Loudness b, Number amount) => throw new NotImplementedException();
+    public Loudness Lerp(Loudness b, Number amount) => (Decibels.Lerp(b.Decibels, amount));
     public Number Unlerp(Loudness a, Loudness b) => throw new NotImplementedException();
     public Integer Compare(Loudness y) => throw new NotImplementedException();
     public Loudness Zero => (Decibels.Zero);
@@ -2780,13 +3065,16 @@ public readonly partial struct LuminousIntensity
     public static LuminousIntensity New(Number candelas) => new LuminousIntensity(candelas);
     public static implicit operator Number(LuminousIntensity self) => self.Candelas;
     public static implicit operator LuminousIntensity(Number value) => new LuminousIntensity(value);
+    public override bool Equals(object obj) { if (!(obj is LuminousIntensity)) return false; var other = (LuminousIntensity)obj; return Candelas.Equals(other.Candelas); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Candelas);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(LuminousIntensity self) => new Dynamic(self);
     public static implicit operator LuminousIntensity(Dynamic value) => value.As<LuminousIntensity>();
     public String TypeName => "LuminousIntensity";
     public Array<String> FieldNames => new[] { (String)"Candelas" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Candelas) };
     // Unimplemented concept functions
-    public LuminousIntensity Lerp(LuminousIntensity b, Number amount) => throw new NotImplementedException();
+    public LuminousIntensity Lerp(LuminousIntensity b, Number amount) => (Candelas.Lerp(b.Candelas, amount));
     public Number Unlerp(LuminousIntensity a, LuminousIntensity b) => throw new NotImplementedException();
     public Integer Compare(LuminousIntensity y) => throw new NotImplementedException();
     public LuminousIntensity Zero => (Candelas.Zero);
@@ -2803,13 +3091,16 @@ public readonly partial struct ElectricPotential
     public static ElectricPotential New(Number volts) => new ElectricPotential(volts);
     public static implicit operator Number(ElectricPotential self) => self.Volts;
     public static implicit operator ElectricPotential(Number value) => new ElectricPotential(value);
+    public override bool Equals(object obj) { if (!(obj is ElectricPotential)) return false; var other = (ElectricPotential)obj; return Volts.Equals(other.Volts); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Volts);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(ElectricPotential self) => new Dynamic(self);
     public static implicit operator ElectricPotential(Dynamic value) => value.As<ElectricPotential>();
     public String TypeName => "ElectricPotential";
     public Array<String> FieldNames => new[] { (String)"Volts" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Volts) };
     // Unimplemented concept functions
-    public ElectricPotential Lerp(ElectricPotential b, Number amount) => throw new NotImplementedException();
+    public ElectricPotential Lerp(ElectricPotential b, Number amount) => (Volts.Lerp(b.Volts, amount));
     public Number Unlerp(ElectricPotential a, ElectricPotential b) => throw new NotImplementedException();
     public Integer Compare(ElectricPotential y) => throw new NotImplementedException();
     public ElectricPotential Zero => (Volts.Zero);
@@ -2826,13 +3117,16 @@ public readonly partial struct ElectricCharge
     public static ElectricCharge New(Number columbs) => new ElectricCharge(columbs);
     public static implicit operator Number(ElectricCharge self) => self.Columbs;
     public static implicit operator ElectricCharge(Number value) => new ElectricCharge(value);
+    public override bool Equals(object obj) { if (!(obj is ElectricCharge)) return false; var other = (ElectricCharge)obj; return Columbs.Equals(other.Columbs); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Columbs);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(ElectricCharge self) => new Dynamic(self);
     public static implicit operator ElectricCharge(Dynamic value) => value.As<ElectricCharge>();
     public String TypeName => "ElectricCharge";
     public Array<String> FieldNames => new[] { (String)"Columbs" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Columbs) };
     // Unimplemented concept functions
-    public ElectricCharge Lerp(ElectricCharge b, Number amount) => throw new NotImplementedException();
+    public ElectricCharge Lerp(ElectricCharge b, Number amount) => (Columbs.Lerp(b.Columbs, amount));
     public Number Unlerp(ElectricCharge a, ElectricCharge b) => throw new NotImplementedException();
     public Integer Compare(ElectricCharge y) => throw new NotImplementedException();
     public ElectricCharge Zero => (Columbs.Zero);
@@ -2849,13 +3143,16 @@ public readonly partial struct ElectricCurrent
     public static ElectricCurrent New(Number amperes) => new ElectricCurrent(amperes);
     public static implicit operator Number(ElectricCurrent self) => self.Amperes;
     public static implicit operator ElectricCurrent(Number value) => new ElectricCurrent(value);
+    public override bool Equals(object obj) { if (!(obj is ElectricCurrent)) return false; var other = (ElectricCurrent)obj; return Amperes.Equals(other.Amperes); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Amperes);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(ElectricCurrent self) => new Dynamic(self);
     public static implicit operator ElectricCurrent(Dynamic value) => value.As<ElectricCurrent>();
     public String TypeName => "ElectricCurrent";
     public Array<String> FieldNames => new[] { (String)"Amperes" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Amperes) };
     // Unimplemented concept functions
-    public ElectricCurrent Lerp(ElectricCurrent b, Number amount) => throw new NotImplementedException();
+    public ElectricCurrent Lerp(ElectricCurrent b, Number amount) => (Amperes.Lerp(b.Amperes, amount));
     public Number Unlerp(ElectricCurrent a, ElectricCurrent b) => throw new NotImplementedException();
     public Integer Compare(ElectricCurrent y) => throw new NotImplementedException();
     public ElectricCurrent Zero => (Amperes.Zero);
@@ -2872,13 +3169,16 @@ public readonly partial struct ElectricResistance
     public static ElectricResistance New(Number ohms) => new ElectricResistance(ohms);
     public static implicit operator Number(ElectricResistance self) => self.Ohms;
     public static implicit operator ElectricResistance(Number value) => new ElectricResistance(value);
+    public override bool Equals(object obj) { if (!(obj is ElectricResistance)) return false; var other = (ElectricResistance)obj; return Ohms.Equals(other.Ohms); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Ohms);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(ElectricResistance self) => new Dynamic(self);
     public static implicit operator ElectricResistance(Dynamic value) => value.As<ElectricResistance>();
     public String TypeName => "ElectricResistance";
     public Array<String> FieldNames => new[] { (String)"Ohms" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Ohms) };
     // Unimplemented concept functions
-    public ElectricResistance Lerp(ElectricResistance b, Number amount) => throw new NotImplementedException();
+    public ElectricResistance Lerp(ElectricResistance b, Number amount) => (Ohms.Lerp(b.Ohms, amount));
     public Number Unlerp(ElectricResistance a, ElectricResistance b) => throw new NotImplementedException();
     public Integer Compare(ElectricResistance y) => throw new NotImplementedException();
     public ElectricResistance Zero => (Ohms.Zero);
@@ -2895,13 +3195,16 @@ public readonly partial struct Power
     public static Power New(Number watts) => new Power(watts);
     public static implicit operator Number(Power self) => self.Watts;
     public static implicit operator Power(Number value) => new Power(value);
+    public override bool Equals(object obj) { if (!(obj is Power)) return false; var other = (Power)obj; return Watts.Equals(other.Watts); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Watts);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Power self) => new Dynamic(self);
     public static implicit operator Power(Dynamic value) => value.As<Power>();
     public String TypeName => "Power";
     public Array<String> FieldNames => new[] { (String)"Watts" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Watts) };
     // Unimplemented concept functions
-    public Power Lerp(Power b, Number amount) => throw new NotImplementedException();
+    public Power Lerp(Power b, Number amount) => (Watts.Lerp(b.Watts, amount));
     public Number Unlerp(Power a, Power b) => throw new NotImplementedException();
     public Integer Compare(Power y) => throw new NotImplementedException();
     public Power Zero => (Watts.Zero);
@@ -2918,13 +3221,16 @@ public readonly partial struct Density
     public static Density New(Number kilogramsPerMeterCubed) => new Density(kilogramsPerMeterCubed);
     public static implicit operator Number(Density self) => self.KilogramsPerMeterCubed;
     public static implicit operator Density(Number value) => new Density(value);
+    public override bool Equals(object obj) { if (!(obj is Density)) return false; var other = (Density)obj; return KilogramsPerMeterCubed.Equals(other.KilogramsPerMeterCubed); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(KilogramsPerMeterCubed);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Density self) => new Dynamic(self);
     public static implicit operator Density(Dynamic value) => value.As<Density>();
     public String TypeName => "Density";
     public Array<String> FieldNames => new[] { (String)"KilogramsPerMeterCubed" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(KilogramsPerMeterCubed) };
     // Unimplemented concept functions
-    public Density Lerp(Density b, Number amount) => throw new NotImplementedException();
+    public Density Lerp(Density b, Number amount) => (KilogramsPerMeterCubed.Lerp(b.KilogramsPerMeterCubed, amount));
     public Number Unlerp(Density a, Density b) => throw new NotImplementedException();
     public Integer Compare(Density y) => throw new NotImplementedException();
     public Density Zero => (KilogramsPerMeterCubed.Zero);
@@ -2944,6 +3250,9 @@ public readonly partial struct NormalDistribution
     public static implicit operator (Number, Number)(NormalDistribution self) => (self.Mean, self.StandardDeviation);
     public static implicit operator NormalDistribution((Number, Number) value) => new NormalDistribution(value.Item1, value.Item2);
     public void Deconstruct(out Number mean, out Number standardDeviation) { mean = Mean; standardDeviation = StandardDeviation; }
+    public override bool Equals(object obj) { if (!(obj is NormalDistribution)) return false; var other = (NormalDistribution)obj; return Mean.Equals(other.Mean) && StandardDeviation.Equals(other.StandardDeviation); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Mean, StandardDeviation);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(NormalDistribution self) => new Dynamic(self);
     public static implicit operator NormalDistribution(Dynamic value) => value.As<NormalDistribution>();
     public String TypeName => "NormalDistribution";
@@ -2971,6 +3280,9 @@ public readonly partial struct PoissonDistribution
     public static implicit operator (Number, Integer)(PoissonDistribution self) => (self.Expected, self.Occurrences);
     public static implicit operator PoissonDistribution((Number, Integer) value) => new PoissonDistribution(value.Item1, value.Item2);
     public void Deconstruct(out Number expected, out Integer occurrences) { expected = Expected; occurrences = Occurrences; }
+    public override bool Equals(object obj) { if (!(obj is PoissonDistribution)) return false; var other = (PoissonDistribution)obj; return Expected.Equals(other.Expected) && Occurrences.Equals(other.Occurrences); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Expected, Occurrences);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(PoissonDistribution self) => new Dynamic(self);
     public static implicit operator PoissonDistribution(Dynamic value) => value.As<PoissonDistribution>();
     public String TypeName => "PoissonDistribution";
@@ -2995,6 +3307,9 @@ public readonly partial struct BernoulliDistribution
     public static BernoulliDistribution New(Probability p) => new BernoulliDistribution(p);
     public static implicit operator Probability(BernoulliDistribution self) => self.P;
     public static implicit operator BernoulliDistribution(Probability value) => new BernoulliDistribution(value);
+    public override bool Equals(object obj) { if (!(obj is BernoulliDistribution)) return false; var other = (BernoulliDistribution)obj; return P.Equals(other.P); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(P);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(BernoulliDistribution self) => new Dynamic(self);
     public static implicit operator BernoulliDistribution(Dynamic value) => value.As<BernoulliDistribution>();
     public String TypeName => "BernoulliDistribution";
@@ -3010,52 +3325,6 @@ public readonly partial struct BernoulliDistribution
     public Boolean NotEquals(BernoulliDistribution b) => (P.NotEquals(b.P));
     public static Boolean operator !=(BernoulliDistribution a, BernoulliDistribution b) => a.NotEquals(b);
 }
-public readonly partial struct Probability
-{
-    public readonly Number Value;
-    public Probability WithValue(Number value) => (value);
-    public Probability(Number value) => (Value) = (value);
-    public static Probability Default = new Probability();
-    public static Probability New(Number value) => new Probability(value);
-    public static implicit operator Number(Probability self) => self.Value;
-    public static implicit operator Probability(Number value) => new Probability(value);
-    public static implicit operator Dynamic(Probability self) => new Dynamic(self);
-    public static implicit operator Probability(Dynamic value) => value.As<Probability>();
-    public String TypeName => "Probability";
-    public Array<String> FieldNames => new[] { (String)"Value" };
-    public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
-    // Unimplemented concept functions
-    public Probability Multiply(Number other) => throw new NotImplementedException();
-    public static Probability operator *(Probability self, Number other) => self.Multiply(other);
-    public Probability Divide(Number other) => throw new NotImplementedException();
-    public static Probability operator /(Probability self, Number other) => self.Divide(other);
-    public Probability Modulo(Number other) => throw new NotImplementedException();
-    public static Probability operator %(Probability self, Number other) => self.Modulo(other);
-    public Probability Add(Number other) => throw new NotImplementedException();
-    public static Probability operator +(Probability self, Number other) => self.Add(other);
-    public Probability Subtract(Number other) => throw new NotImplementedException();
-    public static Probability operator -(Probability self, Number other) => self.Subtract(other);
-    public Number Unlerp(Probability a, Probability b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
-    public Integer Compare(Probability y) => throw new NotImplementedException();
-    public Probability Reciprocal => (Value.Reciprocal);
-    public Probability Negative => (Value.Negative);
-    public static Probability operator -(Probability self) => self.Negative;
-    public Probability Multiply(Probability other) => (Value.Multiply(other.Value));
-    public static Probability operator *(Probability self, Probability other) => self.Multiply(other);
-    public Probability Divide(Probability other) => (Value.Divide(other.Value));
-    public static Probability operator /(Probability self, Probability other) => self.Divide(other);
-    public Probability Modulo(Probability other) => (Value.Modulo(other.Value));
-    public static Probability operator %(Probability self, Probability other) => self.Modulo(other);
-    public Probability Add(Probability other) => (Value.Add(other.Value));
-    public static Probability operator +(Probability self, Probability other) => self.Add(other);
-    public Probability Subtract(Probability other) => (Value.Subtract(other.Value));
-    public static Probability operator -(Probability self, Probability other) => self.Subtract(other);
-    public Probability Zero => (Value.Zero);
-    public Probability One => (Value.One);
-    public Probability MinValue => (Value.MinValue);
-    public Probability MaxValue => (Value.MaxValue);
-}
 public readonly partial struct BinomialDistribution
 {
     public readonly Integer Trials;
@@ -3068,6 +3337,9 @@ public readonly partial struct BinomialDistribution
     public static implicit operator (Integer, Probability)(BinomialDistribution self) => (self.Trials, self.P);
     public static implicit operator BinomialDistribution((Integer, Probability) value) => new BinomialDistribution(value.Item1, value.Item2);
     public void Deconstruct(out Integer trials, out Probability p) { trials = Trials; p = P; }
+    public override bool Equals(object obj) { if (!(obj is BinomialDistribution)) return false; var other = (BinomialDistribution)obj; return Trials.Equals(other.Trials) && P.Equals(other.P); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Trials, P);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(BinomialDistribution self) => new Dynamic(self);
     public static implicit operator BinomialDistribution(Dynamic value) => value.As<BinomialDistribution>();
     public String TypeName => "BinomialDistribution";
@@ -3095,6 +3367,12 @@ public readonly partial struct Tuple2<T0, T1>
     public static implicit operator (T0, T1)(Tuple2<T0, T1> self) => (self.Item0, self.Item1);
     public static implicit operator Tuple2<T0, T1>((T0, T1) value) => new Tuple2<T0, T1>(value.Item1, value.Item2);
     public void Deconstruct(out T0 item0, out T1 item1) { item0 = Item0; item1 = Item1; }
+    public override bool Equals(object obj)
+    {
+        return obj is Tuple2<T0, T1> tuple2 && Item0.Equals(tuple2.Item0) && Item1.Equals(tuple2.Item1);
+    }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Item0, Item1);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Tuple2<T0, T1> self) => new Dynamic(self);
     public static implicit operator Tuple2<T0, T1>(Dynamic value) => value.As<Tuple2<T0, T1>>();
     public String TypeName => "Tuple2<T0, T1>";
@@ -3116,6 +3394,9 @@ public readonly partial struct Tuple3<T0, T1, T2>
     public static implicit operator (T0, T1, T2)(Tuple3<T0, T1, T2> self) => (self.Item0, self.Item1, self.Item2);
     public static implicit operator Tuple3<T0, T1, T2>((T0, T1, T2) value) => new Tuple3<T0, T1, T2>(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out T0 item0, out T1 item1, out T2 item2) { item0 = Item0; item1 = Item1; item2 = Item2; }
+    public override bool Equals(object obj) { if (!(obj is Tuple3<T0, T1, T2>)) return false; var other = (Tuple3<T0, T1, T2>)obj; return Item0.Equals(other.Item0) && Item1.Equals(other.Item1) && Item2.Equals(other.Item2); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Item0, Item1, Item2);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Tuple3<T0, T1, T2> self) => new Dynamic(self);
     public static implicit operator Tuple3<T0, T1, T2>(Dynamic value) => value.As<Tuple3<T0, T1, T2>>();
     public String TypeName => "Tuple3<T0, T1, T2>";

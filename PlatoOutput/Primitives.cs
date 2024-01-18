@@ -8,6 +8,12 @@ public readonly partial struct String
     public Integer Count => Value.Length;
 }
 
+public readonly partial struct Boolean
+{
+    public static bool operator true(Boolean b) => b.Value;
+    public static bool operator false(Boolean b) => !b.Value;
+}
+
 public readonly partial struct Number
 {
     public Number Zero => 0;

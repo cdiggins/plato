@@ -17,6 +17,15 @@ concept Value
     MaxValue(x: Self): Self;
 }
 
+// Represents a continuous one dimensional value.
+// https://en.wikipedia.org/wiki/Real_number
+// Most things that are Real, are also Numerical except for Measures.
+concept Real
+    inherits Value, ScalarArithmetic, Comparable, Magnitudinal, Interpolatable
+{
+    Value(x: Self): Number;
+}
+
 // Arrays are immutable types which can be indexed. 
 // The "At" function maps to the indexing operator in C#. 
 concept Array<T>
@@ -43,9 +52,8 @@ concept Coordinate
 // It resembles a numerical type except you cannot multiply or divide two measures without 
 // getting a new type. It does however support ScalarArithmetic 
 concept Measure
-    inherits Value, ScalarArithmetic, Comparable, Magnitudinal, Interpolatable
+    inherits Real
 { 
-    Value(x: Self): Number;
 }
 
 // Used for integer and cardinal types.
@@ -61,7 +69,6 @@ concept Numerical
 
 // Any type which has a numerical magnitude (like numbers, vectors, and measurements)
 concept Magnitudinal
-    inherits Comparable
 {
     Magnitude(x: Self): Number;
 }

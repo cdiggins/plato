@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 public static class Intrinsics
 {
@@ -34,4 +35,34 @@ public static class Intrinsics
     public static Boolean Not(Boolean x) => !x.Value;
 
     public static Number ToNumber(Integer x) => x.Value;
+
+    public static string MakeString(string typeName, Array<String> fieldNames, Array<Dynamic> fieldValues)
+    {
+        var sb = new StringBuilder();
+        sb.Append($"{{ _type=\"{typeName}\" ");
+        for (var i = 0; i < fieldNames.Count; i++)
+            sb.Append(", ").Append(fieldNames.At(i).Value).Append(" = ").Append(fieldValues.At(i).Value);
+        sb.Append(" }");
+        return sb.ToString();
+    }
+
+    public static int CombineHashCodes(params object[] objects)
+    {
+        if (objects.Length == 0) return 0;
+        var r = objects[0].GetHashCode();
+        for (var i = 1; i < objects.Length; ++i)
+            r = CombineHashCodes(r, objects[i].GetHashCode());
+        return r;
+    }
+
+    public static int CombineHashCodes(int h1, int h2)
+    {
+        unchecked
+        {
+            // RyuJIT optimizes this to use the ROL instruction
+            // Related GitHub pull request: dotnet/coreclr#1830
+            var rol5 = ((uint)h1 << 5) | ((uint)h1 >> 27);
+            return ((int)rol5 + h1) ^ h2;
+        }
+    }
 }
