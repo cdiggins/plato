@@ -67,7 +67,9 @@ public readonly partial struct Dynamic
     public String TypeName => "Dynamic";
     public Array FieldNames => (Array<String>)new[] { (String)"Value" };
     public Array FieldValues => (Array<Dynamic>)new[] { (Dynamic)Value };
+    public T As<T>() => (T)Value;
 }
+
 public static class PrimitiveExtensions
 {
     public static (T0, T1) Tuple<T0, T1>(this T0 self, T1 other)

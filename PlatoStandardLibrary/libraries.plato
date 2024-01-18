@@ -225,9 +225,12 @@ library Comparable
     Greater(a: Comparable, b: Comparable): Comparable 
         => a >= b ? a : b;
 }
-
+    
 library Measures
 {
+    Magnitude(x: Measure): Number
+        => x.Value; 
+
     Fahrenheit(x: Temperature): Number
         => (x.Celsius * 9.0 / 5.0) + 32.0;
 

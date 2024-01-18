@@ -481,6 +481,9 @@ namespace Plato.CSharpWriter
                 WriteLine($"public static implicit operator {name}({fieldType} value) => new {name}(value);");
             }
 
+            WriteLine($"public static implicit operator Dynamic({name} self) => new Dynamic(self);");
+            WriteLine($"public static implicit operator {name}(Dynamic value) => value.As<{name}>();");
+
             WriteLine($"public String TypeName => {name.Quote()};");
 
             var fieldNamesAsStringsStr = fieldNames.Select(n => $"(String){n.Quote()}").JoinStringsWithComma();

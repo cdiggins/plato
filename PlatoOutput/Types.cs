@@ -8,6 +8,8 @@ public readonly partial struct Number
     public static Number New(double value) => new Number(value);
     public static implicit operator double(Number self) => self.Value;
     public static implicit operator Number(double value) => new Number(value);
+    public static implicit operator Dynamic(Number self) => new Dynamic(self);
+    public static implicit operator Number(Dynamic value) => value.As<Number>();
     public String TypeName => "Number";
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
@@ -21,6 +23,8 @@ public readonly partial struct Integer
     public static Integer New(int value) => new Integer(value);
     public static implicit operator int(Integer self) => self.Value;
     public static implicit operator Integer(int value) => new Integer(value);
+    public static implicit operator Dynamic(Integer self) => new Dynamic(self);
+    public static implicit operator Integer(Dynamic value) => value.As<Integer>();
     public String TypeName => "Integer";
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
@@ -34,6 +38,8 @@ public readonly partial struct String
     public static String New(string value) => new String(value);
     public static implicit operator string(String self) => self.Value;
     public static implicit operator String(string value) => new String(value);
+    public static implicit operator Dynamic(String self) => new Dynamic(self);
+    public static implicit operator String(Dynamic value) => value.As<String>();
     public String TypeName => "String";
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
@@ -47,6 +53,8 @@ public readonly partial struct Boolean
     public static Boolean New(bool value) => new Boolean(value);
     public static implicit operator bool(Boolean self) => self.Value;
     public static implicit operator Boolean(bool value) => new Boolean(value);
+    public static implicit operator Dynamic(Boolean self) => new Dynamic(self);
+    public static implicit operator Boolean(Dynamic value) => value.As<Boolean>();
     public String TypeName => "Boolean";
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
@@ -60,6 +68,8 @@ public readonly partial struct Character
     public static Character New(char value) => new Character(value);
     public static implicit operator char(Character self) => self.Value;
     public static implicit operator Character(char value) => new Character(value);
+    public static implicit operator Dynamic(Character self) => new Dynamic(self);
+    public static implicit operator Character(Dynamic value) => value.As<Character>();
     public String TypeName => "Character";
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
@@ -73,6 +83,8 @@ public readonly partial struct Cardinal
     public static Cardinal New(Integer value) => new Cardinal(value);
     public static implicit operator Integer(Cardinal self) => self.Value;
     public static implicit operator Cardinal(Integer value) => new Cardinal(value);
+    public static implicit operator Dynamic(Cardinal self) => new Dynamic(self);
+    public static implicit operator Cardinal(Dynamic value) => value.As<Cardinal>();
     public String TypeName => "Cardinal";
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
@@ -102,6 +114,8 @@ public readonly partial struct Index
     public static Index New(Integer value) => new Index(value);
     public static implicit operator Integer(Index self) => self.Value;
     public static implicit operator Index(Integer value) => new Index(value);
+    public static implicit operator Dynamic(Index self) => new Dynamic(self);
+    public static implicit operator Index(Dynamic value) => value.As<Index>();
     public String TypeName => "Index";
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
@@ -131,6 +145,8 @@ public readonly partial struct Unit
     public static Unit New(Number value) => new Unit(value);
     public static implicit operator Number(Unit self) => self.Value;
     public static implicit operator Unit(Number value) => new Unit(value);
+    public static implicit operator Dynamic(Unit self) => new Dynamic(self);
+    public static implicit operator Unit(Dynamic value) => value.As<Unit>();
     public String TypeName => "Unit";
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
@@ -175,6 +191,8 @@ public readonly partial struct Percent
     public static Percent New(Number value) => new Percent(value);
     public static implicit operator Number(Percent self) => self.Value;
     public static implicit operator Percent(Number value) => new Percent(value);
+    public static implicit operator Dynamic(Percent self) => new Dynamic(self);
+    public static implicit operator Percent(Dynamic value) => value.As<Percent>();
     public String TypeName => "Percent";
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
@@ -226,6 +244,8 @@ public readonly partial struct Quaternion
     public static implicit operator (Number, Number, Number, Number)(Quaternion self) => (self.X, self.Y, self.Z, self.W);
     public static implicit operator Quaternion((Number, Number, Number, Number) value) => new Quaternion(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Number x, out Number y, out Number z, out Number w) { x = X; y = Y; z = Z; w = W; }
+    public static implicit operator Dynamic(Quaternion self) => new Dynamic(self);
+    public static implicit operator Quaternion(Dynamic value) => value.As<Quaternion>();
     public String TypeName => "Quaternion";
     public Array<String> FieldNames => new[] { (String)"X", (String)"Y", (String)"Z", (String)"W" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z), new Dynamic(W) };
@@ -251,6 +271,8 @@ public readonly partial struct Unit2D
     public static implicit operator (Unit, Unit)(Unit2D self) => (self.X, self.Y);
     public static implicit operator Unit2D((Unit, Unit) value) => new Unit2D(value.Item1, value.Item2);
     public void Deconstruct(out Unit x, out Unit y) { x = X; y = Y; }
+    public static implicit operator Dynamic(Unit2D self) => new Dynamic(self);
+    public static implicit operator Unit2D(Dynamic value) => value.As<Unit2D>();
     public String TypeName => "Unit2D";
     public Array<String> FieldNames => new[] { (String)"X", (String)"Y" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(X), new Dynamic(Y) };
@@ -278,6 +300,8 @@ public readonly partial struct Unit3D
     public static implicit operator (Unit, Unit, Unit)(Unit3D self) => (self.X, self.Y, self.Z);
     public static implicit operator Unit3D((Unit, Unit, Unit) value) => new Unit3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Unit x, out Unit y, out Unit z) { x = X; y = Y; z = Z; }
+    public static implicit operator Dynamic(Unit3D self) => new Dynamic(self);
+    public static implicit operator Unit3D(Dynamic value) => value.As<Unit3D>();
     public String TypeName => "Unit3D";
     public Array<String> FieldNames => new[] { (String)"X", (String)"Y", (String)"Z" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z) };
@@ -300,6 +324,8 @@ public readonly partial struct Direction3D
     public static Direction3D New(Unit3D value) => new Direction3D(value);
     public static implicit operator Unit3D(Direction3D self) => self.Value;
     public static implicit operator Direction3D(Unit3D value) => new Direction3D(value);
+    public static implicit operator Dynamic(Direction3D self) => new Dynamic(self);
+    public static implicit operator Direction3D(Dynamic value) => value.As<Direction3D>();
     public String TypeName => "Direction3D";
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
@@ -325,6 +351,8 @@ public readonly partial struct AxisAngle
     public static implicit operator (Unit3D, Angle)(AxisAngle self) => (self.Axis, self.Angle);
     public static implicit operator AxisAngle((Unit3D, Angle) value) => new AxisAngle(value.Item1, value.Item2);
     public void Deconstruct(out Unit3D axis, out Angle angle) { axis = Axis; angle = Angle; }
+    public static implicit operator Dynamic(AxisAngle self) => new Dynamic(self);
+    public static implicit operator AxisAngle(Dynamic value) => value.As<AxisAngle>();
     public String TypeName => "AxisAngle";
     public Array<String> FieldNames => new[] { (String)"Axis", (String)"Angle" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Axis), new Dynamic(Angle) };
@@ -352,6 +380,8 @@ public readonly partial struct EulerAngles
     public static implicit operator (Angle, Angle, Angle)(EulerAngles self) => (self.Yaw, self.Pitch, self.Roll);
     public static implicit operator EulerAngles((Angle, Angle, Angle) value) => new EulerAngles(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Angle yaw, out Angle pitch, out Angle roll) { yaw = Yaw; pitch = Pitch; roll = Roll; }
+    public static implicit operator Dynamic(EulerAngles self) => new Dynamic(self);
+    public static implicit operator EulerAngles(Dynamic value) => value.As<EulerAngles>();
     public String TypeName => "EulerAngles";
     public Array<String> FieldNames => new[] { (String)"Yaw", (String)"Pitch", (String)"Roll" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Yaw), new Dynamic(Pitch), new Dynamic(Roll) };
@@ -374,6 +404,8 @@ public readonly partial struct Rotation3D
     public static Rotation3D New(Quaternion quaternion) => new Rotation3D(quaternion);
     public static implicit operator Quaternion(Rotation3D self) => self.Quaternion;
     public static implicit operator Rotation3D(Quaternion value) => new Rotation3D(value);
+    public static implicit operator Dynamic(Rotation3D self) => new Dynamic(self);
+    public static implicit operator Rotation3D(Dynamic value) => value.As<Rotation3D>();
     public String TypeName => "Rotation3D";
     public Array<String> FieldNames => new[] { (String)"Quaternion" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Quaternion) };
@@ -399,6 +431,8 @@ public readonly partial struct Vector2D
     public static implicit operator (Number, Number)(Vector2D self) => (self.X, self.Y);
     public static implicit operator Vector2D((Number, Number) value) => new Vector2D(value.Item1, value.Item2);
     public void Deconstruct(out Number x, out Number y) { x = X; y = Y; }
+    public static implicit operator Dynamic(Vector2D self) => new Dynamic(self);
+    public static implicit operator Vector2D(Dynamic value) => value.As<Vector2D>();
     public String TypeName => "Vector2D";
     public Array<String> FieldNames => new[] { (String)"X", (String)"Y" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(X), new Dynamic(Y) };
@@ -450,6 +484,8 @@ public readonly partial struct Vector3D
     public static implicit operator (Number, Number, Number)(Vector3D self) => (self.X, self.Y, self.Z);
     public static implicit operator Vector3D((Number, Number, Number) value) => new Vector3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number x, out Number y, out Number z) { x = X; y = Y; z = Z; }
+    public static implicit operator Dynamic(Vector3D self) => new Dynamic(self);
+    public static implicit operator Vector3D(Dynamic value) => value.As<Vector3D>();
     public String TypeName => "Vector3D";
     public Array<String> FieldNames => new[] { (String)"X", (String)"Y", (String)"Z" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z) };
@@ -503,6 +539,8 @@ public readonly partial struct Vector4D
     public static implicit operator (Number, Number, Number, Number)(Vector4D self) => (self.X, self.Y, self.Z, self.W);
     public static implicit operator Vector4D((Number, Number, Number, Number) value) => new Vector4D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Number x, out Number y, out Number z, out Number w) { x = X; y = Y; z = Z; w = W; }
+    public static implicit operator Dynamic(Vector4D self) => new Dynamic(self);
+    public static implicit operator Vector4D(Dynamic value) => value.As<Vector4D>();
     public String TypeName => "Vector4D";
     public Array<String> FieldNames => new[] { (String)"X", (String)"Y", (String)"Z", (String)"W" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z), new Dynamic(W) };
@@ -549,6 +587,8 @@ public readonly partial struct Orientation3D
     public static Orientation3D New(Rotation3D value) => new Orientation3D(value);
     public static implicit operator Rotation3D(Orientation3D self) => self.Value;
     public static implicit operator Orientation3D(Rotation3D value) => new Orientation3D(value);
+    public static implicit operator Dynamic(Orientation3D self) => new Dynamic(self);
+    public static implicit operator Orientation3D(Dynamic value) => value.As<Orientation3D>();
     public String TypeName => "Orientation3D";
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
@@ -574,6 +614,8 @@ public readonly partial struct Pose2D
     public static implicit operator (Vector3D, Orientation3D)(Pose2D self) => (self.Position, self.Orientation);
     public static implicit operator Pose2D((Vector3D, Orientation3D) value) => new Pose2D(value.Item1, value.Item2);
     public void Deconstruct(out Vector3D position, out Orientation3D orientation) { position = Position; orientation = Orientation; }
+    public static implicit operator Dynamic(Pose2D self) => new Dynamic(self);
+    public static implicit operator Pose2D(Dynamic value) => value.As<Pose2D>();
     public String TypeName => "Pose2D";
     public Array<String> FieldNames => new[] { (String)"Position", (String)"Orientation" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Position), new Dynamic(Orientation) };
@@ -599,6 +641,8 @@ public readonly partial struct Pose3D
     public static implicit operator (Vector3D, Orientation3D)(Pose3D self) => (self.Position, self.Orientation);
     public static implicit operator Pose3D((Vector3D, Orientation3D) value) => new Pose3D(value.Item1, value.Item2);
     public void Deconstruct(out Vector3D position, out Orientation3D orientation) { position = Position; orientation = Orientation; }
+    public static implicit operator Dynamic(Pose3D self) => new Dynamic(self);
+    public static implicit operator Pose3D(Dynamic value) => value.As<Pose3D>();
     public String TypeName => "Pose3D";
     public Array<String> FieldNames => new[] { (String)"Position", (String)"Orientation" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Position), new Dynamic(Orientation) };
@@ -626,6 +670,8 @@ public readonly partial struct Transform3D
     public static implicit operator (Vector3D, Rotation3D, Vector3D)(Transform3D self) => (self.Translation, self.Rotation, self.Scale);
     public static implicit operator Transform3D((Vector3D, Rotation3D, Vector3D) value) => new Transform3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Vector3D translation, out Rotation3D rotation, out Vector3D scale) { translation = Translation; rotation = Rotation; scale = Scale; }
+    public static implicit operator Dynamic(Transform3D self) => new Dynamic(self);
+    public static implicit operator Transform3D(Dynamic value) => value.As<Transform3D>();
     public String TypeName => "Transform3D";
     public Array<String> FieldNames => new[] { (String)"Translation", (String)"Rotation", (String)"Scale" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Translation), new Dynamic(Rotation), new Dynamic(Scale) };
@@ -653,6 +699,8 @@ public readonly partial struct Transform2D
     public static implicit operator (Vector2D, Angle, Vector2D)(Transform2D self) => (self.Translation, self.Rotation, self.Scale);
     public static implicit operator Transform2D((Vector2D, Angle, Vector2D) value) => new Transform2D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Vector2D translation, out Angle rotation, out Vector2D scale) { translation = Translation; rotation = Rotation; scale = Scale; }
+    public static implicit operator Dynamic(Transform2D self) => new Dynamic(self);
+    public static implicit operator Transform2D(Dynamic value) => value.As<Transform2D>();
     public String TypeName => "Transform2D";
     public Array<String> FieldNames => new[] { (String)"Translation", (String)"Rotation", (String)"Scale" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Translation), new Dynamic(Rotation), new Dynamic(Scale) };
@@ -678,6 +726,8 @@ public readonly partial struct AlignedBox2D
     public static implicit operator (Point2D, Point2D)(AlignedBox2D self) => (self.A, self.B);
     public static implicit operator AlignedBox2D((Point2D, Point2D) value) => new AlignedBox2D(value.Item1, value.Item2);
     public void Deconstruct(out Point2D a, out Point2D b) { a = A; b = B; }
+    public static implicit operator Dynamic(AlignedBox2D self) => new Dynamic(self);
+    public static implicit operator AlignedBox2D(Dynamic value) => value.As<AlignedBox2D>();
     public String TypeName => "AlignedBox2D";
     public Array<String> FieldNames => new[] { (String)"A", (String)"B" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B) };
@@ -706,6 +756,8 @@ public readonly partial struct AlignedBox3D
     public static implicit operator (Point3D, Point3D)(AlignedBox3D self) => (self.A, self.B);
     public static implicit operator AlignedBox3D((Point3D, Point3D) value) => new AlignedBox3D(value.Item1, value.Item2);
     public void Deconstruct(out Point3D a, out Point3D b) { a = A; b = B; }
+    public static implicit operator Dynamic(AlignedBox3D self) => new Dynamic(self);
+    public static implicit operator AlignedBox3D(Dynamic value) => value.As<AlignedBox3D>();
     public String TypeName => "AlignedBox3D";
     public Array<String> FieldNames => new[] { (String)"A", (String)"B" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B) };
@@ -734,6 +786,8 @@ public readonly partial struct Complex
     public static implicit operator (Number, Number)(Complex self) => (self.Real, self.Imaginary);
     public static implicit operator Complex((Number, Number) value) => new Complex(value.Item1, value.Item2);
     public void Deconstruct(out Number real, out Number imaginary) { real = Real; imaginary = Imaginary; }
+    public static implicit operator Dynamic(Complex self) => new Dynamic(self);
+    public static implicit operator Complex(Dynamic value) => value.As<Complex>();
     public String TypeName => "Complex";
     public Array<String> FieldNames => new[] { (String)"Real", (String)"Imaginary" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Real), new Dynamic(Imaginary) };
@@ -783,6 +837,8 @@ public readonly partial struct Ray3D
     public static implicit operator (Vector3D, Point3D)(Ray3D self) => (self.Direction, self.Position);
     public static implicit operator Ray3D((Vector3D, Point3D) value) => new Ray3D(value.Item1, value.Item2);
     public void Deconstruct(out Vector3D direction, out Point3D position) { direction = Direction; position = Position; }
+    public static implicit operator Dynamic(Ray3D self) => new Dynamic(self);
+    public static implicit operator Ray3D(Dynamic value) => value.As<Ray3D>();
     public String TypeName => "Ray3D";
     public Array<String> FieldNames => new[] { (String)"Direction", (String)"Position" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Direction), new Dynamic(Position) };
@@ -808,6 +864,8 @@ public readonly partial struct Ray2D
     public static implicit operator (Vector2D, Point2D)(Ray2D self) => (self.Direction, self.Position);
     public static implicit operator Ray2D((Vector2D, Point2D) value) => new Ray2D(value.Item1, value.Item2);
     public void Deconstruct(out Vector2D direction, out Point2D position) { direction = Direction; position = Position; }
+    public static implicit operator Dynamic(Ray2D self) => new Dynamic(self);
+    public static implicit operator Ray2D(Dynamic value) => value.As<Ray2D>();
     public String TypeName => "Ray2D";
     public Array<String> FieldNames => new[] { (String)"Direction", (String)"Position" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Direction), new Dynamic(Position) };
@@ -833,6 +891,8 @@ public readonly partial struct Sphere
     public static implicit operator (Point3D, Number)(Sphere self) => (self.Center, self.Radius);
     public static implicit operator Sphere((Point3D, Number) value) => new Sphere(value.Item1, value.Item2);
     public void Deconstruct(out Point3D center, out Number radius) { center = Center; radius = Radius; }
+    public static implicit operator Dynamic(Sphere self) => new Dynamic(self);
+    public static implicit operator Sphere(Dynamic value) => value.As<Sphere>();
     public String TypeName => "Sphere";
     public Array<String> FieldNames => new[] { (String)"Center", (String)"Radius" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Center), new Dynamic(Radius) };
@@ -858,6 +918,8 @@ public readonly partial struct Plane
     public static implicit operator (Unit3D, Number)(Plane self) => (self.Normal, self.D);
     public static implicit operator Plane((Unit3D, Number) value) => new Plane(value.Item1, value.Item2);
     public void Deconstruct(out Unit3D normal, out Number d) { normal = Normal; d = D; }
+    public static implicit operator Dynamic(Plane self) => new Dynamic(self);
+    public static implicit operator Plane(Dynamic value) => value.As<Plane>();
     public String TypeName => "Plane";
     public Array<String> FieldNames => new[] { (String)"Normal", (String)"D" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Normal), new Dynamic(D) };
@@ -885,6 +947,8 @@ public readonly partial struct Triangle2D
     public static implicit operator (Point2D, Point2D, Point2D)(Triangle2D self) => (self.A, self.B, self.C);
     public static implicit operator Triangle2D((Point2D, Point2D, Point2D) value) => new Triangle2D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point2D a, out Point2D b, out Point2D c) { a = A; b = B; c = C; }
+    public static implicit operator Dynamic(Triangle2D self) => new Dynamic(self);
+    public static implicit operator Triangle2D(Dynamic value) => value.As<Triangle2D>();
     public String TypeName => "Triangle2D";
     public Array<String> FieldNames => new[] { (String)"A", (String)"B", (String)"C" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C) };
@@ -912,6 +976,8 @@ public readonly partial struct Triangle3D
     public static implicit operator (Point3D, Point3D, Point3D)(Triangle3D self) => (self.A, self.B, self.C);
     public static implicit operator Triangle3D((Point3D, Point3D, Point3D) value) => new Triangle3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point3D a, out Point3D b, out Point3D c) { a = A; b = B; c = C; }
+    public static implicit operator Dynamic(Triangle3D self) => new Dynamic(self);
+    public static implicit operator Triangle3D(Dynamic value) => value.As<Triangle3D>();
     public String TypeName => "Triangle3D";
     public Array<String> FieldNames => new[] { (String)"A", (String)"B", (String)"C" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C) };
@@ -941,6 +1007,8 @@ public readonly partial struct Quad2D
     public static implicit operator (Point2D, Point2D, Point2D, Point2D)(Quad2D self) => (self.A, self.B, self.C, self.D);
     public static implicit operator Quad2D((Point2D, Point2D, Point2D, Point2D) value) => new Quad2D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Point2D a, out Point2D b, out Point2D c, out Point2D d) { a = A; b = B; c = C; d = D; }
+    public static implicit operator Dynamic(Quad2D self) => new Dynamic(self);
+    public static implicit operator Quad2D(Dynamic value) => value.As<Quad2D>();
     public String TypeName => "Quad2D";
     public Array<String> FieldNames => new[] { (String)"A", (String)"B", (String)"C", (String)"D" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C), new Dynamic(D) };
@@ -970,6 +1038,8 @@ public readonly partial struct Quad3D
     public static implicit operator (Point3D, Point3D, Point3D, Point3D)(Quad3D self) => (self.A, self.B, self.C, self.D);
     public static implicit operator Quad3D((Point3D, Point3D, Point3D, Point3D) value) => new Quad3D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Point3D a, out Point3D b, out Point3D c, out Point3D d) { a = A; b = B; c = C; d = D; }
+    public static implicit operator Dynamic(Quad3D self) => new Dynamic(self);
+    public static implicit operator Quad3D(Dynamic value) => value.As<Quad3D>();
     public String TypeName => "Quad3D";
     public Array<String> FieldNames => new[] { (String)"A", (String)"B", (String)"C", (String)"D" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C), new Dynamic(D) };
@@ -995,6 +1065,8 @@ public readonly partial struct Point2D
     public static implicit operator (Number, Number)(Point2D self) => (self.X, self.Y);
     public static implicit operator Point2D((Number, Number) value) => new Point2D(value.Item1, value.Item2);
     public void Deconstruct(out Number x, out Number y) { x = X; y = Y; }
+    public static implicit operator Dynamic(Point2D self) => new Dynamic(self);
+    public static implicit operator Point2D(Dynamic value) => value.As<Point2D>();
     public String TypeName => "Point2D";
     public Array<String> FieldNames => new[] { (String)"X", (String)"Y" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(X), new Dynamic(Y) };
@@ -1025,6 +1097,8 @@ public readonly partial struct Point3D
     public static implicit operator (Number, Number, Number)(Point3D self) => (self.X, self.Y, self.Z);
     public static implicit operator Point3D((Number, Number, Number) value) => new Point3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number x, out Number y, out Number z) { x = X; y = Y; z = Z; }
+    public static implicit operator Dynamic(Point3D self) => new Dynamic(self);
+    public static implicit operator Point3D(Dynamic value) => value.As<Point3D>();
     public String TypeName => "Point3D";
     public Array<String> FieldNames => new[] { (String)"X", (String)"Y", (String)"Z" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z) };
@@ -1057,6 +1131,8 @@ public readonly partial struct Point4D
     public static implicit operator (Number, Number, Number, Number)(Point4D self) => (self.X, self.Y, self.Z, self.W);
     public static implicit operator Point4D((Number, Number, Number, Number) value) => new Point4D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Number x, out Number y, out Number z, out Number w) { x = X; y = Y; z = Z; w = W; }
+    public static implicit operator Dynamic(Point4D self) => new Dynamic(self);
+    public static implicit operator Point4D(Dynamic value) => value.As<Point4D>();
     public String TypeName => "Point4D";
     public Array<String> FieldNames => new[] { (String)"X", (String)"Y", (String)"Z", (String)"W" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z), new Dynamic(W) };
@@ -1085,6 +1161,8 @@ public readonly partial struct Line2D
     public static implicit operator (Point2D, Point2D)(Line2D self) => (self.A, self.B);
     public static implicit operator Line2D((Point2D, Point2D) value) => new Line2D(value.Item1, value.Item2);
     public void Deconstruct(out Point2D a, out Point2D b) { a = A; b = B; }
+    public static implicit operator Dynamic(Line2D self) => new Dynamic(self);
+    public static implicit operator Line2D(Dynamic value) => value.As<Line2D>();
     public String TypeName => "Line2D";
     public Array<String> FieldNames => new[] { (String)"A", (String)"B" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B) };
@@ -1113,6 +1191,8 @@ public readonly partial struct Line3D
     public static implicit operator (Point3D, Point3D)(Line3D self) => (self.A, self.B);
     public static implicit operator Line3D((Point3D, Point3D) value) => new Line3D(value.Item1, value.Item2);
     public void Deconstruct(out Point3D a, out Point3D b) { a = A; b = B; }
+    public static implicit operator Dynamic(Line3D self) => new Dynamic(self);
+    public static implicit operator Line3D(Dynamic value) => value.As<Line3D>();
     public String TypeName => "Line3D";
     public Array<String> FieldNames => new[] { (String)"A", (String)"B" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B) };
@@ -1145,6 +1225,8 @@ public readonly partial struct Color
     public static implicit operator (Unit, Unit, Unit, Unit)(Color self) => (self.R, self.G, self.B, self.A);
     public static implicit operator Color((Unit, Unit, Unit, Unit) value) => new Color(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Unit r, out Unit g, out Unit b, out Unit a) { r = R; g = G; b = B; a = A; }
+    public static implicit operator Dynamic(Color self) => new Dynamic(self);
+    public static implicit operator Color(Dynamic value) => value.As<Color>();
     public String TypeName => "Color";
     public Array<String> FieldNames => new[] { (String)"R", (String)"G", (String)"B", (String)"A" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(R), new Dynamic(G), new Dynamic(B), new Dynamic(A) };
@@ -1171,6 +1253,8 @@ public readonly partial struct ColorLUV
     public static implicit operator (Percent, Unit, Unit)(ColorLUV self) => (self.Lightness, self.U, self.V);
     public static implicit operator ColorLUV((Percent, Unit, Unit) value) => new ColorLUV(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Percent lightness, out Unit u, out Unit v) { lightness = Lightness; u = U; v = V; }
+    public static implicit operator Dynamic(ColorLUV self) => new Dynamic(self);
+    public static implicit operator ColorLUV(Dynamic value) => value.As<ColorLUV>();
     public String TypeName => "ColorLUV";
     public Array<String> FieldNames => new[] { (String)"Lightness", (String)"U", (String)"V" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Lightness), new Dynamic(U), new Dynamic(V) };
@@ -1197,6 +1281,8 @@ public readonly partial struct ColorLAB
     public static implicit operator (Percent, Integer, Integer)(ColorLAB self) => (self.Lightness, self.A, self.B);
     public static implicit operator ColorLAB((Percent, Integer, Integer) value) => new ColorLAB(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Percent lightness, out Integer a, out Integer b) { lightness = Lightness; a = A; b = B; }
+    public static implicit operator Dynamic(ColorLAB self) => new Dynamic(self);
+    public static implicit operator ColorLAB(Dynamic value) => value.As<ColorLAB>();
     public String TypeName => "ColorLAB";
     public Array<String> FieldNames => new[] { (String)"Lightness", (String)"A", (String)"B" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Lightness), new Dynamic(A), new Dynamic(B) };
@@ -1221,6 +1307,8 @@ public readonly partial struct ColorLCh
     public static implicit operator (Percent, PolarCoordinate)(ColorLCh self) => (self.Lightness, self.ChromaHue);
     public static implicit operator ColorLCh((Percent, PolarCoordinate) value) => new ColorLCh(value.Item1, value.Item2);
     public void Deconstruct(out Percent lightness, out PolarCoordinate chromaHue) { lightness = Lightness; chromaHue = ChromaHue; }
+    public static implicit operator Dynamic(ColorLCh self) => new Dynamic(self);
+    public static implicit operator ColorLCh(Dynamic value) => value.As<ColorLCh>();
     public String TypeName => "ColorLCh";
     public Array<String> FieldNames => new[] { (String)"Lightness", (String)"ChromaHue" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Lightness), new Dynamic(ChromaHue) };
@@ -1247,6 +1335,8 @@ public readonly partial struct ColorHSV
     public static implicit operator (Angle, Unit, Unit)(ColorHSV self) => (self.Hue, self.S, self.V);
     public static implicit operator ColorHSV((Angle, Unit, Unit) value) => new ColorHSV(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Angle hue, out Unit s, out Unit v) { hue = Hue; s = S; v = V; }
+    public static implicit operator Dynamic(ColorHSV self) => new Dynamic(self);
+    public static implicit operator ColorHSV(Dynamic value) => value.As<ColorHSV>();
     public String TypeName => "ColorHSV";
     public Array<String> FieldNames => new[] { (String)"Hue", (String)"S", (String)"V" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Hue), new Dynamic(S), new Dynamic(V) };
@@ -1273,6 +1363,8 @@ public readonly partial struct ColorHSL
     public static implicit operator (Angle, Unit, Unit)(ColorHSL self) => (self.Hue, self.Saturation, self.Luminance);
     public static implicit operator ColorHSL((Angle, Unit, Unit) value) => new ColorHSL(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Angle hue, out Unit saturation, out Unit luminance) { hue = Hue; saturation = Saturation; luminance = Luminance; }
+    public static implicit operator Dynamic(ColorHSL self) => new Dynamic(self);
+    public static implicit operator ColorHSL(Dynamic value) => value.As<ColorHSL>();
     public String TypeName => "ColorHSL";
     public Array<String> FieldNames => new[] { (String)"Hue", (String)"Saturation", (String)"Luminance" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Hue), new Dynamic(Saturation), new Dynamic(Luminance) };
@@ -1299,6 +1391,8 @@ public readonly partial struct ColorYCbCr
     public static implicit operator (Unit, Unit, Unit)(ColorYCbCr self) => (self.Y, self.Cb, self.Cr);
     public static implicit operator ColorYCbCr((Unit, Unit, Unit) value) => new ColorYCbCr(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Unit y, out Unit cb, out Unit cr) { y = Y; cb = Cb; cr = Cr; }
+    public static implicit operator Dynamic(ColorYCbCr self) => new Dynamic(self);
+    public static implicit operator ColorYCbCr(Dynamic value) => value.As<ColorYCbCr>();
     public String TypeName => "ColorYCbCr";
     public Array<String> FieldNames => new[] { (String)"Y", (String)"Cb", (String)"Cr" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Y), new Dynamic(Cb), new Dynamic(Cr) };
@@ -1325,6 +1419,8 @@ public readonly partial struct SphericalCoordinate
     public static implicit operator (Number, Angle, Angle)(SphericalCoordinate self) => (self.Radius, self.Azimuth, self.Polar);
     public static implicit operator SphericalCoordinate((Number, Angle, Angle) value) => new SphericalCoordinate(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number radius, out Angle azimuth, out Angle polar) { radius = Radius; azimuth = Azimuth; polar = Polar; }
+    public static implicit operator Dynamic(SphericalCoordinate self) => new Dynamic(self);
+    public static implicit operator SphericalCoordinate(Dynamic value) => value.As<SphericalCoordinate>();
     public String TypeName => "SphericalCoordinate";
     public Array<String> FieldNames => new[] { (String)"Radius", (String)"Azimuth", (String)"Polar" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Radius), new Dynamic(Azimuth), new Dynamic(Polar) };
@@ -1349,6 +1445,8 @@ public readonly partial struct PolarCoordinate
     public static implicit operator (Number, Angle)(PolarCoordinate self) => (self.Radius, self.Angle);
     public static implicit operator PolarCoordinate((Number, Angle) value) => new PolarCoordinate(value.Item1, value.Item2);
     public void Deconstruct(out Number radius, out Angle angle) { radius = Radius; angle = Angle; }
+    public static implicit operator Dynamic(PolarCoordinate self) => new Dynamic(self);
+    public static implicit operator PolarCoordinate(Dynamic value) => value.As<PolarCoordinate>();
     public String TypeName => "PolarCoordinate";
     public Array<String> FieldNames => new[] { (String)"Radius", (String)"Angle" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Radius), new Dynamic(Angle) };
@@ -1373,6 +1471,8 @@ public readonly partial struct LogPolarCoordinate
     public static implicit operator (Number, Angle)(LogPolarCoordinate self) => (self.Rho, self.Azimuth);
     public static implicit operator LogPolarCoordinate((Number, Angle) value) => new LogPolarCoordinate(value.Item1, value.Item2);
     public void Deconstruct(out Number rho, out Angle azimuth) { rho = Rho; azimuth = Azimuth; }
+    public static implicit operator Dynamic(LogPolarCoordinate self) => new Dynamic(self);
+    public static implicit operator LogPolarCoordinate(Dynamic value) => value.As<LogPolarCoordinate>();
     public String TypeName => "LogPolarCoordinate";
     public Array<String> FieldNames => new[] { (String)"Rho", (String)"Azimuth" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Rho), new Dynamic(Azimuth) };
@@ -1399,6 +1499,8 @@ public readonly partial struct CylindricalCoordinate
     public static implicit operator (Number, Angle, Number)(CylindricalCoordinate self) => (self.RadialDistance, self.Azimuth, self.Height);
     public static implicit operator CylindricalCoordinate((Number, Angle, Number) value) => new CylindricalCoordinate(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number radialDistance, out Angle azimuth, out Number height) { radialDistance = RadialDistance; azimuth = Azimuth; height = Height; }
+    public static implicit operator Dynamic(CylindricalCoordinate self) => new Dynamic(self);
+    public static implicit operator CylindricalCoordinate(Dynamic value) => value.As<CylindricalCoordinate>();
     public String TypeName => "CylindricalCoordinate";
     public Array<String> FieldNames => new[] { (String)"RadialDistance", (String)"Azimuth", (String)"Height" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(RadialDistance), new Dynamic(Azimuth), new Dynamic(Height) };
@@ -1425,6 +1527,8 @@ public readonly partial struct HorizontalCoordinate
     public static implicit operator (Number, Angle, Number)(HorizontalCoordinate self) => (self.Radius, self.Azimuth, self.Height);
     public static implicit operator HorizontalCoordinate((Number, Angle, Number) value) => new HorizontalCoordinate(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number radius, out Angle azimuth, out Number height) { radius = Radius; azimuth = Azimuth; height = Height; }
+    public static implicit operator Dynamic(HorizontalCoordinate self) => new Dynamic(self);
+    public static implicit operator HorizontalCoordinate(Dynamic value) => value.As<HorizontalCoordinate>();
     public String TypeName => "HorizontalCoordinate";
     public Array<String> FieldNames => new[] { (String)"Radius", (String)"Azimuth", (String)"Height" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Radius), new Dynamic(Azimuth), new Dynamic(Height) };
@@ -1449,6 +1553,8 @@ public readonly partial struct GeoCoordinate
     public static implicit operator (Angle, Angle)(GeoCoordinate self) => (self.Latitude, self.Longitude);
     public static implicit operator GeoCoordinate((Angle, Angle) value) => new GeoCoordinate(value.Item1, value.Item2);
     public void Deconstruct(out Angle latitude, out Angle longitude) { latitude = Latitude; longitude = Longitude; }
+    public static implicit operator Dynamic(GeoCoordinate self) => new Dynamic(self);
+    public static implicit operator GeoCoordinate(Dynamic value) => value.As<GeoCoordinate>();
     public String TypeName => "GeoCoordinate";
     public Array<String> FieldNames => new[] { (String)"Latitude", (String)"Longitude" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Latitude), new Dynamic(Longitude) };
@@ -1473,6 +1579,8 @@ public readonly partial struct GeoCoordinateWithAltitude
     public static implicit operator (GeoCoordinate, Number)(GeoCoordinateWithAltitude self) => (self.Coordinate, self.Altitude);
     public static implicit operator GeoCoordinateWithAltitude((GeoCoordinate, Number) value) => new GeoCoordinateWithAltitude(value.Item1, value.Item2);
     public void Deconstruct(out GeoCoordinate coordinate, out Number altitude) { coordinate = Coordinate; altitude = Altitude; }
+    public static implicit operator Dynamic(GeoCoordinateWithAltitude self) => new Dynamic(self);
+    public static implicit operator GeoCoordinateWithAltitude(Dynamic value) => value.As<GeoCoordinateWithAltitude>();
     public String TypeName => "GeoCoordinateWithAltitude";
     public Array<String> FieldNames => new[] { (String)"Coordinate", (String)"Altitude" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Coordinate), new Dynamic(Altitude) };
@@ -1497,6 +1605,8 @@ public readonly partial struct Circle
     public static implicit operator (Point2D, Number)(Circle self) => (self.Center, self.Radius);
     public static implicit operator Circle((Point2D, Number) value) => new Circle(value.Item1, value.Item2);
     public void Deconstruct(out Point2D center, out Number radius) { center = Center; radius = Radius; }
+    public static implicit operator Dynamic(Circle self) => new Dynamic(self);
+    public static implicit operator Circle(Dynamic value) => value.As<Circle>();
     public String TypeName => "Circle";
     public Array<String> FieldNames => new[] { (String)"Center", (String)"Radius" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Center), new Dynamic(Radius) };
@@ -1522,6 +1632,8 @@ public readonly partial struct Chord
     public static implicit operator (Circle, Arc)(Chord self) => (self.Circle, self.Arc);
     public static implicit operator Chord((Circle, Arc) value) => new Chord(value.Item1, value.Item2);
     public void Deconstruct(out Circle circle, out Arc arc) { circle = Circle; arc = Arc; }
+    public static implicit operator Dynamic(Chord self) => new Dynamic(self);
+    public static implicit operator Chord(Dynamic value) => value.As<Chord>();
     public String TypeName => "Chord";
     public Array<String> FieldNames => new[] { (String)"Circle", (String)"Arc" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Circle), new Dynamic(Arc) };
@@ -1547,6 +1659,8 @@ public readonly partial struct Size2D
     public static implicit operator (Number, Number)(Size2D self) => (self.Width, self.Height);
     public static implicit operator Size2D((Number, Number) value) => new Size2D(value.Item1, value.Item2);
     public void Deconstruct(out Number width, out Number height) { width = Width; height = Height; }
+    public static implicit operator Dynamic(Size2D self) => new Dynamic(self);
+    public static implicit operator Size2D(Dynamic value) => value.As<Size2D>();
     public String TypeName => "Size2D";
     public Array<String> FieldNames => new[] { (String)"Width", (String)"Height" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Width), new Dynamic(Height) };
@@ -1574,6 +1688,8 @@ public readonly partial struct Size3D
     public static implicit operator (Number, Number, Number)(Size3D self) => (self.Width, self.Height, self.Depth);
     public static implicit operator Size3D((Number, Number, Number) value) => new Size3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number width, out Number height, out Number depth) { width = Width; height = Height; depth = Depth; }
+    public static implicit operator Dynamic(Size3D self) => new Dynamic(self);
+    public static implicit operator Size3D(Dynamic value) => value.As<Size3D>();
     public String TypeName => "Size3D";
     public Array<String> FieldNames => new[] { (String)"Width", (String)"Height", (String)"Depth" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Width), new Dynamic(Height), new Dynamic(Depth) };
@@ -1599,6 +1715,8 @@ public readonly partial struct Rectangle2D
     public static implicit operator (Point2D, Size2D)(Rectangle2D self) => (self.Center, self.Size);
     public static implicit operator Rectangle2D((Point2D, Size2D) value) => new Rectangle2D(value.Item1, value.Item2);
     public void Deconstruct(out Point2D center, out Size2D size) { center = Center; size = Size; }
+    public static implicit operator Dynamic(Rectangle2D self) => new Dynamic(self);
+    public static implicit operator Rectangle2D(Dynamic value) => value.As<Rectangle2D>();
     public String TypeName => "Rectangle2D";
     public Array<String> FieldNames => new[] { (String)"Center", (String)"Size" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Center), new Dynamic(Size) };
@@ -1621,6 +1739,8 @@ public readonly partial struct Proportion
     public static Proportion New(Number value) => new Proportion(value);
     public static implicit operator Number(Proportion self) => self.Value;
     public static implicit operator Proportion(Number value) => new Proportion(value);
+    public static implicit operator Dynamic(Proportion self) => new Dynamic(self);
+    public static implicit operator Proportion(Dynamic value) => value.As<Proportion>();
     public String TypeName => "Proportion";
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
@@ -1668,6 +1788,8 @@ public readonly partial struct Fraction
     public static implicit operator (Number, Number)(Fraction self) => (self.Numerator, self.Denominator);
     public static implicit operator Fraction((Number, Number) value) => new Fraction(value.Item1, value.Item2);
     public void Deconstruct(out Number numerator, out Number denominator) { numerator = Numerator; denominator = Denominator; }
+    public static implicit operator Dynamic(Fraction self) => new Dynamic(self);
+    public static implicit operator Fraction(Dynamic value) => value.As<Fraction>();
     public String TypeName => "Fraction";
     public Array<String> FieldNames => new[] { (String)"Numerator", (String)"Denominator" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Numerator), new Dynamic(Denominator) };
@@ -1690,6 +1812,8 @@ public readonly partial struct Angle
     public static Angle New(Number radians) => new Angle(radians);
     public static implicit operator Number(Angle self) => self.Radians;
     public static implicit operator Angle(Number value) => new Angle(value);
+    public static implicit operator Dynamic(Angle self) => new Dynamic(self);
+    public static implicit operator Angle(Dynamic value) => value.As<Angle>();
     public String TypeName => "Angle";
     public Array<String> FieldNames => new[] { (String)"Radians" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Radians) };
@@ -1697,7 +1821,6 @@ public readonly partial struct Angle
     public Number Value => throw new NotImplementedException();
     public Angle Lerp(Angle b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Angle a, Angle b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Angle y) => throw new NotImplementedException();
     public Angle Multiply(Number other) => throw new NotImplementedException();
     public static Angle operator *(Angle self, Number other) => self.Multiply(other);
@@ -1723,6 +1846,8 @@ public readonly partial struct Length
     public static Length New(Number meters) => new Length(meters);
     public static implicit operator Number(Length self) => self.Meters;
     public static implicit operator Length(Number value) => new Length(value);
+    public static implicit operator Dynamic(Length self) => new Dynamic(self);
+    public static implicit operator Length(Dynamic value) => value.As<Length>();
     public String TypeName => "Length";
     public Array<String> FieldNames => new[] { (String)"Meters" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Meters) };
@@ -1730,7 +1855,6 @@ public readonly partial struct Length
     public Number Value => throw new NotImplementedException();
     public Length Lerp(Length b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Length a, Length b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Length y) => throw new NotImplementedException();
     public Length Multiply(Number other) => throw new NotImplementedException();
     public static Length operator *(Length self, Number other) => self.Multiply(other);
@@ -1756,6 +1880,8 @@ public readonly partial struct Mass
     public static Mass New(Number kilograms) => new Mass(kilograms);
     public static implicit operator Number(Mass self) => self.Kilograms;
     public static implicit operator Mass(Number value) => new Mass(value);
+    public static implicit operator Dynamic(Mass self) => new Dynamic(self);
+    public static implicit operator Mass(Dynamic value) => value.As<Mass>();
     public String TypeName => "Mass";
     public Array<String> FieldNames => new[] { (String)"Kilograms" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Kilograms) };
@@ -1763,7 +1889,6 @@ public readonly partial struct Mass
     public Number Value => throw new NotImplementedException();
     public Mass Lerp(Mass b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Mass a, Mass b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Mass y) => throw new NotImplementedException();
     public Mass Multiply(Number other) => throw new NotImplementedException();
     public static Mass operator *(Mass self, Number other) => self.Multiply(other);
@@ -1789,6 +1914,8 @@ public readonly partial struct Temperature
     public static Temperature New(Number celsius) => new Temperature(celsius);
     public static implicit operator Number(Temperature self) => self.Celsius;
     public static implicit operator Temperature(Number value) => new Temperature(value);
+    public static implicit operator Dynamic(Temperature self) => new Dynamic(self);
+    public static implicit operator Temperature(Dynamic value) => value.As<Temperature>();
     public String TypeName => "Temperature";
     public Array<String> FieldNames => new[] { (String)"Celsius" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Celsius) };
@@ -1796,7 +1923,6 @@ public readonly partial struct Temperature
     public Number Value => throw new NotImplementedException();
     public Temperature Lerp(Temperature b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Temperature a, Temperature b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Temperature y) => throw new NotImplementedException();
     public Temperature Multiply(Number other) => throw new NotImplementedException();
     public static Temperature operator *(Temperature self, Number other) => self.Multiply(other);
@@ -1822,6 +1948,8 @@ public readonly partial struct Time
     public static Time New(Number seconds) => new Time(seconds);
     public static implicit operator Number(Time self) => self.Seconds;
     public static implicit operator Time(Number value) => new Time(value);
+    public static implicit operator Dynamic(Time self) => new Dynamic(self);
+    public static implicit operator Time(Dynamic value) => value.As<Time>();
     public String TypeName => "Time";
     public Array<String> FieldNames => new[] { (String)"Seconds" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Seconds) };
@@ -1829,7 +1957,6 @@ public readonly partial struct Time
     public Number Value => throw new NotImplementedException();
     public Time Lerp(Time b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Time a, Time b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Time y) => throw new NotImplementedException();
     public Time Multiply(Number other) => throw new NotImplementedException();
     public static Time operator *(Time self, Number other) => self.Multiply(other);
@@ -1858,6 +1985,8 @@ public readonly partial struct TimeRange
     public static implicit operator (DateTime, DateTime)(TimeRange self) => (self.Begin, self.End);
     public static implicit operator TimeRange((DateTime, DateTime) value) => new TimeRange(value.Item1, value.Item2);
     public void Deconstruct(out DateTime begin, out DateTime end) { begin = Begin; end = End; }
+    public static implicit operator Dynamic(TimeRange self) => new Dynamic(self);
+    public static implicit operator TimeRange(Dynamic value) => value.As<TimeRange>();
     public String TypeName => "TimeRange";
     public Array<String> FieldNames => new[] { (String)"Begin", (String)"End" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Begin), new Dynamic(End) };
@@ -1883,6 +2012,8 @@ public readonly partial struct DateTime
     public static DateTime New(Number value) => new DateTime(value);
     public static implicit operator Number(DateTime self) => self.Value;
     public static implicit operator DateTime(Number value) => new DateTime(value);
+    public static implicit operator Dynamic(DateTime self) => new Dynamic(self);
+    public static implicit operator DateTime(Dynamic value) => value.As<DateTime>();
     public String TypeName => "DateTime";
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
@@ -1911,6 +2042,8 @@ public readonly partial struct AnglePair
     public static implicit operator (Angle, Angle)(AnglePair self) => (self.Start, self.End);
     public static implicit operator AnglePair((Angle, Angle) value) => new AnglePair(value.Item1, value.Item2);
     public void Deconstruct(out Angle start, out Angle end) { start = Start; end = End; }
+    public static implicit operator Dynamic(AnglePair self) => new Dynamic(self);
+    public static implicit operator AnglePair(Dynamic value) => value.As<AnglePair>();
     public String TypeName => "AnglePair";
     public Array<String> FieldNames => new[] { (String)"Start", (String)"End" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Start), new Dynamic(End) };
@@ -1939,6 +2072,8 @@ public readonly partial struct Ring
     public static implicit operator (Circle, Number)(Ring self) => (self.Circle, self.InnerRadius);
     public static implicit operator Ring((Circle, Number) value) => new Ring(value.Item1, value.Item2);
     public void Deconstruct(out Circle circle, out Number innerRadius) { circle = Circle; innerRadius = InnerRadius; }
+    public static implicit operator Dynamic(Ring self) => new Dynamic(self);
+    public static implicit operator Ring(Dynamic value) => value.As<Ring>();
     public String TypeName => "Ring";
     public Array<String> FieldNames => new[] { (String)"Circle", (String)"InnerRadius" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Circle), new Dynamic(InnerRadius) };
@@ -1964,6 +2099,8 @@ public readonly partial struct Arc
     public static implicit operator (AnglePair, Circle)(Arc self) => (self.Angles, self.Cirlce);
     public static implicit operator Arc((AnglePair, Circle) value) => new Arc(value.Item1, value.Item2);
     public void Deconstruct(out AnglePair angles, out Circle cirlce) { angles = Angles; cirlce = Cirlce; }
+    public static implicit operator Dynamic(Arc self) => new Dynamic(self);
+    public static implicit operator Arc(Dynamic value) => value.As<Arc>();
     public String TypeName => "Arc";
     public Array<String> FieldNames => new[] { (String)"Angles", (String)"Cirlce" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Angles), new Dynamic(Cirlce) };
@@ -1989,6 +2126,8 @@ public readonly partial struct RealInterval
     public static implicit operator (Number, Number)(RealInterval self) => (self.A, self.B);
     public static implicit operator RealInterval((Number, Number) value) => new RealInterval(value.Item1, value.Item2);
     public void Deconstruct(out Number a, out Number b) { a = A; b = B; }
+    public static implicit operator Dynamic(RealInterval self) => new Dynamic(self);
+    public static implicit operator RealInterval(Dynamic value) => value.As<RealInterval>();
     public String TypeName => "RealInterval";
     public Array<String> FieldNames => new[] { (String)"A", (String)"B" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B) };
@@ -2017,6 +2156,8 @@ public readonly partial struct Capsule
     public static implicit operator (Line3D, Number)(Capsule self) => (self.Line, self.Radius);
     public static implicit operator Capsule((Line3D, Number) value) => new Capsule(value.Item1, value.Item2);
     public void Deconstruct(out Line3D line, out Number radius) { line = Line; radius = Radius; }
+    public static implicit operator Dynamic(Capsule self) => new Dynamic(self);
+    public static implicit operator Capsule(Dynamic value) => value.As<Capsule>();
     public String TypeName => "Capsule";
     public Array<String> FieldNames => new[] { (String)"Line", (String)"Radius" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Line), new Dynamic(Radius) };
@@ -2046,6 +2187,8 @@ public readonly partial struct Matrix3D
     public static implicit operator (Vector4D, Vector4D, Vector4D, Vector4D)(Matrix3D self) => (self.Column1, self.Column2, self.Column3, self.Column4);
     public static implicit operator Matrix3D((Vector4D, Vector4D, Vector4D, Vector4D) value) => new Matrix3D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Vector4D column1, out Vector4D column2, out Vector4D column3, out Vector4D column4) { column1 = Column1; column2 = Column2; column3 = Column3; column4 = Column4; }
+    public static implicit operator Dynamic(Matrix3D self) => new Dynamic(self);
+    public static implicit operator Matrix3D(Dynamic value) => value.As<Matrix3D>();
     public String TypeName => "Matrix3D";
     public Array<String> FieldNames => new[] { (String)"Column1", (String)"Column2", (String)"Column3", (String)"Column4" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Column1), new Dynamic(Column2), new Dynamic(Column3), new Dynamic(Column4) };
@@ -2071,6 +2214,8 @@ public readonly partial struct Cylinder
     public static implicit operator (Line3D, Number)(Cylinder self) => (self.Line, self.Radius);
     public static implicit operator Cylinder((Line3D, Number) value) => new Cylinder(value.Item1, value.Item2);
     public void Deconstruct(out Line3D line, out Number radius) { line = Line; radius = Radius; }
+    public static implicit operator Dynamic(Cylinder self) => new Dynamic(self);
+    public static implicit operator Cylinder(Dynamic value) => value.As<Cylinder>();
     public String TypeName => "Cylinder";
     public Array<String> FieldNames => new[] { (String)"Line", (String)"Radius" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Line), new Dynamic(Radius) };
@@ -2096,6 +2241,8 @@ public readonly partial struct Cone
     public static implicit operator (Line3D, Number)(Cone self) => (self.Line, self.Radius);
     public static implicit operator Cone((Line3D, Number) value) => new Cone(value.Item1, value.Item2);
     public void Deconstruct(out Line3D line, out Number radius) { line = Line; radius = Radius; }
+    public static implicit operator Dynamic(Cone self) => new Dynamic(self);
+    public static implicit operator Cone(Dynamic value) => value.As<Cone>();
     public String TypeName => "Cone";
     public Array<String> FieldNames => new[] { (String)"Line", (String)"Radius" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Line), new Dynamic(Radius) };
@@ -2123,6 +2270,8 @@ public readonly partial struct Tube
     public static implicit operator (Line3D, Number, Number)(Tube self) => (self.Line, self.InnerRadius, self.OuterRadius);
     public static implicit operator Tube((Line3D, Number, Number) value) => new Tube(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Line3D line, out Number innerRadius, out Number outerRadius) { line = Line; innerRadius = InnerRadius; outerRadius = OuterRadius; }
+    public static implicit operator Dynamic(Tube self) => new Dynamic(self);
+    public static implicit operator Tube(Dynamic value) => value.As<Tube>();
     public String TypeName => "Tube";
     public Array<String> FieldNames => new[] { (String)"Line", (String)"InnerRadius", (String)"OuterRadius" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Line), new Dynamic(InnerRadius), new Dynamic(OuterRadius) };
@@ -2150,6 +2299,8 @@ public readonly partial struct ConeSegment
     public static implicit operator (Line3D, Number, Number)(ConeSegment self) => (self.Line, self.Radius1, self.Radius2);
     public static implicit operator ConeSegment((Line3D, Number, Number) value) => new ConeSegment(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Line3D line, out Number radius1, out Number radius2) { line = Line; radius1 = Radius1; radius2 = Radius2; }
+    public static implicit operator Dynamic(ConeSegment self) => new Dynamic(self);
+    public static implicit operator ConeSegment(Dynamic value) => value.As<ConeSegment>();
     public String TypeName => "ConeSegment";
     public Array<String> FieldNames => new[] { (String)"Line", (String)"Radius1", (String)"Radius2" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Line), new Dynamic(Radius1), new Dynamic(Radius2) };
@@ -2177,6 +2328,8 @@ public readonly partial struct Box2D
     public static implicit operator (Point2D, Angle, Size2D)(Box2D self) => (self.Center, self.Rotation, self.Extent);
     public static implicit operator Box2D((Point2D, Angle, Size2D) value) => new Box2D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point2D center, out Angle rotation, out Size2D extent) { center = Center; rotation = Rotation; extent = Extent; }
+    public static implicit operator Dynamic(Box2D self) => new Dynamic(self);
+    public static implicit operator Box2D(Dynamic value) => value.As<Box2D>();
     public String TypeName => "Box2D";
     public Array<String> FieldNames => new[] { (String)"Center", (String)"Rotation", (String)"Extent" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Center), new Dynamic(Rotation), new Dynamic(Extent) };
@@ -2204,6 +2357,8 @@ public readonly partial struct Box3D
     public static implicit operator (Point3D, Rotation3D, Size3D)(Box3D self) => (self.Center, self.Rotation, self.Extent);
     public static implicit operator Box3D((Point3D, Rotation3D, Size3D) value) => new Box3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point3D center, out Rotation3D rotation, out Size3D extent) { center = Center; rotation = Rotation; extent = Extent; }
+    public static implicit operator Dynamic(Box3D self) => new Dynamic(self);
+    public static implicit operator Box3D(Dynamic value) => value.As<Box3D>();
     public String TypeName => "Box3D";
     public Array<String> FieldNames => new[] { (String)"Center", (String)"Rotation", (String)"Extent" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Center), new Dynamic(Rotation), new Dynamic(Extent) };
@@ -2229,6 +2384,8 @@ public readonly partial struct UV
     public static implicit operator (Unit, Unit)(UV self) => (self.U, self.V);
     public static implicit operator UV((Unit, Unit) value) => new UV(value.Item1, value.Item2);
     public void Deconstruct(out Unit u, out Unit v) { u = U; v = V; }
+    public static implicit operator Dynamic(UV self) => new Dynamic(self);
+    public static implicit operator UV(Dynamic value) => value.As<UV>();
     public String TypeName => "UV";
     public Array<String> FieldNames => new[] { (String)"U", (String)"V" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(U), new Dynamic(V) };
@@ -2280,6 +2437,8 @@ public readonly partial struct UVW
     public static implicit operator (Unit, Unit, Unit)(UVW self) => (self.U, self.V, self.W);
     public static implicit operator UVW((Unit, Unit, Unit) value) => new UVW(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Unit u, out Unit v, out Unit w) { u = U; v = V; w = W; }
+    public static implicit operator Dynamic(UVW self) => new Dynamic(self);
+    public static implicit operator UVW(Dynamic value) => value.As<UVW>();
     public String TypeName => "UVW";
     public Array<String> FieldNames => new[] { (String)"U", (String)"V", (String)"W" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(U), new Dynamic(V), new Dynamic(W) };
@@ -2333,6 +2492,8 @@ public readonly partial struct CubicBezier2D
     public static implicit operator (Point2D, Point2D, Point2D, Point2D)(CubicBezier2D self) => (self.A, self.B, self.C, self.D);
     public static implicit operator CubicBezier2D((Point2D, Point2D, Point2D, Point2D) value) => new CubicBezier2D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Point2D a, out Point2D b, out Point2D c, out Point2D d) { a = A; b = B; c = C; d = D; }
+    public static implicit operator Dynamic(CubicBezier2D self) => new Dynamic(self);
+    public static implicit operator CubicBezier2D(Dynamic value) => value.As<CubicBezier2D>();
     public String TypeName => "CubicBezier2D";
     public Array<String> FieldNames => new[] { (String)"A", (String)"B", (String)"C", (String)"D" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C), new Dynamic(D) };
@@ -2362,6 +2523,8 @@ public readonly partial struct CubicBezier3D
     public static implicit operator (Point3D, Point3D, Point3D, Point3D)(CubicBezier3D self) => (self.A, self.B, self.C, self.D);
     public static implicit operator CubicBezier3D((Point3D, Point3D, Point3D, Point3D) value) => new CubicBezier3D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Point3D a, out Point3D b, out Point3D c, out Point3D d) { a = A; b = B; c = C; d = D; }
+    public static implicit operator Dynamic(CubicBezier3D self) => new Dynamic(self);
+    public static implicit operator CubicBezier3D(Dynamic value) => value.As<CubicBezier3D>();
     public String TypeName => "CubicBezier3D";
     public Array<String> FieldNames => new[] { (String)"A", (String)"B", (String)"C", (String)"D" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C), new Dynamic(D) };
@@ -2389,6 +2552,8 @@ public readonly partial struct QuadraticBezier2D
     public static implicit operator (Point2D, Point2D, Point2D)(QuadraticBezier2D self) => (self.A, self.B, self.C);
     public static implicit operator QuadraticBezier2D((Point2D, Point2D, Point2D) value) => new QuadraticBezier2D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point2D a, out Point2D b, out Point2D c) { a = A; b = B; c = C; }
+    public static implicit operator Dynamic(QuadraticBezier2D self) => new Dynamic(self);
+    public static implicit operator QuadraticBezier2D(Dynamic value) => value.As<QuadraticBezier2D>();
     public String TypeName => "QuadraticBezier2D";
     public Array<String> FieldNames => new[] { (String)"A", (String)"B", (String)"C" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C) };
@@ -2416,6 +2581,8 @@ public readonly partial struct QuadraticBezier3D
     public static implicit operator (Point3D, Point3D, Point3D)(QuadraticBezier3D self) => (self.A, self.B, self.C);
     public static implicit operator QuadraticBezier3D((Point3D, Point3D, Point3D) value) => new QuadraticBezier3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point3D a, out Point3D b, out Point3D c) { a = A; b = B; c = C; }
+    public static implicit operator Dynamic(QuadraticBezier3D self) => new Dynamic(self);
+    public static implicit operator QuadraticBezier3D(Dynamic value) => value.As<QuadraticBezier3D>();
     public String TypeName => "QuadraticBezier3D";
     public Array<String> FieldNames => new[] { (String)"A", (String)"B", (String)"C" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C) };
@@ -2438,6 +2605,8 @@ public readonly partial struct Area
     public static Area New(Number metersSquared) => new Area(metersSquared);
     public static implicit operator Number(Area self) => self.MetersSquared;
     public static implicit operator Area(Number value) => new Area(value);
+    public static implicit operator Dynamic(Area self) => new Dynamic(self);
+    public static implicit operator Area(Dynamic value) => value.As<Area>();
     public String TypeName => "Area";
     public Array<String> FieldNames => new[] { (String)"MetersSquared" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersSquared) };
@@ -2445,7 +2614,6 @@ public readonly partial struct Area
     public Number Value => throw new NotImplementedException();
     public Area Lerp(Area b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Area a, Area b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Area y) => throw new NotImplementedException();
     public Area Multiply(Number other) => throw new NotImplementedException();
     public static Area operator *(Area self, Number other) => self.Multiply(other);
@@ -2471,6 +2639,8 @@ public readonly partial struct Volume
     public static Volume New(Number metersCubed) => new Volume(metersCubed);
     public static implicit operator Number(Volume self) => self.MetersCubed;
     public static implicit operator Volume(Number value) => new Volume(value);
+    public static implicit operator Dynamic(Volume self) => new Dynamic(self);
+    public static implicit operator Volume(Dynamic value) => value.As<Volume>();
     public String TypeName => "Volume";
     public Array<String> FieldNames => new[] { (String)"MetersCubed" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersCubed) };
@@ -2478,7 +2648,6 @@ public readonly partial struct Volume
     public Number Value => throw new NotImplementedException();
     public Volume Lerp(Volume b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Volume a, Volume b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Volume y) => throw new NotImplementedException();
     public Volume Multiply(Number other) => throw new NotImplementedException();
     public static Volume operator *(Volume self, Number other) => self.Multiply(other);
@@ -2504,6 +2673,8 @@ public readonly partial struct Velocity
     public static Velocity New(Number metersPerSecond) => new Velocity(metersPerSecond);
     public static implicit operator Number(Velocity self) => self.MetersPerSecond;
     public static implicit operator Velocity(Number value) => new Velocity(value);
+    public static implicit operator Dynamic(Velocity self) => new Dynamic(self);
+    public static implicit operator Velocity(Dynamic value) => value.As<Velocity>();
     public String TypeName => "Velocity";
     public Array<String> FieldNames => new[] { (String)"MetersPerSecond" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersPerSecond) };
@@ -2511,7 +2682,6 @@ public readonly partial struct Velocity
     public Number Value => throw new NotImplementedException();
     public Velocity Lerp(Velocity b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Velocity a, Velocity b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Velocity y) => throw new NotImplementedException();
     public Velocity Multiply(Number other) => throw new NotImplementedException();
     public static Velocity operator *(Velocity self, Number other) => self.Multiply(other);
@@ -2537,6 +2707,8 @@ public readonly partial struct Acceleration
     public static Acceleration New(Number metersPerSecondSquared) => new Acceleration(metersPerSecondSquared);
     public static implicit operator Number(Acceleration self) => self.MetersPerSecondSquared;
     public static implicit operator Acceleration(Number value) => new Acceleration(value);
+    public static implicit operator Dynamic(Acceleration self) => new Dynamic(self);
+    public static implicit operator Acceleration(Dynamic value) => value.As<Acceleration>();
     public String TypeName => "Acceleration";
     public Array<String> FieldNames => new[] { (String)"MetersPerSecondSquared" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersPerSecondSquared) };
@@ -2544,7 +2716,6 @@ public readonly partial struct Acceleration
     public Number Value => throw new NotImplementedException();
     public Acceleration Lerp(Acceleration b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Acceleration a, Acceleration b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Acceleration y) => throw new NotImplementedException();
     public Acceleration Multiply(Number other) => throw new NotImplementedException();
     public static Acceleration operator *(Acceleration self, Number other) => self.Multiply(other);
@@ -2570,6 +2741,8 @@ public readonly partial struct Force
     public static Force New(Number newtons) => new Force(newtons);
     public static implicit operator Number(Force self) => self.Newtons;
     public static implicit operator Force(Number value) => new Force(value);
+    public static implicit operator Dynamic(Force self) => new Dynamic(self);
+    public static implicit operator Force(Dynamic value) => value.As<Force>();
     public String TypeName => "Force";
     public Array<String> FieldNames => new[] { (String)"Newtons" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Newtons) };
@@ -2577,7 +2750,6 @@ public readonly partial struct Force
     public Number Value => throw new NotImplementedException();
     public Force Lerp(Force b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Force a, Force b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Force y) => throw new NotImplementedException();
     public Force Multiply(Number other) => throw new NotImplementedException();
     public static Force operator *(Force self, Number other) => self.Multiply(other);
@@ -2603,6 +2775,8 @@ public readonly partial struct Pressure
     public static Pressure New(Number pascals) => new Pressure(pascals);
     public static implicit operator Number(Pressure self) => self.Pascals;
     public static implicit operator Pressure(Number value) => new Pressure(value);
+    public static implicit operator Dynamic(Pressure self) => new Dynamic(self);
+    public static implicit operator Pressure(Dynamic value) => value.As<Pressure>();
     public String TypeName => "Pressure";
     public Array<String> FieldNames => new[] { (String)"Pascals" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Pascals) };
@@ -2610,7 +2784,6 @@ public readonly partial struct Pressure
     public Number Value => throw new NotImplementedException();
     public Pressure Lerp(Pressure b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Pressure a, Pressure b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Pressure y) => throw new NotImplementedException();
     public Pressure Multiply(Number other) => throw new NotImplementedException();
     public static Pressure operator *(Pressure self, Number other) => self.Multiply(other);
@@ -2636,6 +2809,8 @@ public readonly partial struct Energy
     public static Energy New(Number joules) => new Energy(joules);
     public static implicit operator Number(Energy self) => self.Joules;
     public static implicit operator Energy(Number value) => new Energy(value);
+    public static implicit operator Dynamic(Energy self) => new Dynamic(self);
+    public static implicit operator Energy(Dynamic value) => value.As<Energy>();
     public String TypeName => "Energy";
     public Array<String> FieldNames => new[] { (String)"Joules" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Joules) };
@@ -2643,7 +2818,6 @@ public readonly partial struct Energy
     public Number Value => throw new NotImplementedException();
     public Energy Lerp(Energy b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Energy a, Energy b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Energy y) => throw new NotImplementedException();
     public Energy Multiply(Number other) => throw new NotImplementedException();
     public static Energy operator *(Energy self, Number other) => self.Multiply(other);
@@ -2669,6 +2843,8 @@ public readonly partial struct Memory
     public static Memory New(Integer bytes) => new Memory(bytes);
     public static implicit operator Integer(Memory self) => self.Bytes;
     public static implicit operator Memory(Integer value) => new Memory(value);
+    public static implicit operator Dynamic(Memory self) => new Dynamic(self);
+    public static implicit operator Memory(Dynamic value) => value.As<Memory>();
     public String TypeName => "Memory";
     public Array<String> FieldNames => new[] { (String)"Bytes" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Bytes) };
@@ -2676,7 +2852,6 @@ public readonly partial struct Memory
     public Number Value => throw new NotImplementedException();
     public Memory Lerp(Memory b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Memory a, Memory b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Memory y) => throw new NotImplementedException();
     public Memory Multiply(Number other) => throw new NotImplementedException();
     public static Memory operator *(Memory self, Number other) => self.Multiply(other);
@@ -2702,6 +2877,8 @@ public readonly partial struct Frequency
     public static Frequency New(Number hertz) => new Frequency(hertz);
     public static implicit operator Number(Frequency self) => self.Hertz;
     public static implicit operator Frequency(Number value) => new Frequency(value);
+    public static implicit operator Dynamic(Frequency self) => new Dynamic(self);
+    public static implicit operator Frequency(Dynamic value) => value.As<Frequency>();
     public String TypeName => "Frequency";
     public Array<String> FieldNames => new[] { (String)"Hertz" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Hertz) };
@@ -2709,7 +2886,6 @@ public readonly partial struct Frequency
     public Number Value => throw new NotImplementedException();
     public Frequency Lerp(Frequency b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Frequency a, Frequency b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Frequency y) => throw new NotImplementedException();
     public Frequency Multiply(Number other) => throw new NotImplementedException();
     public static Frequency operator *(Frequency self, Number other) => self.Multiply(other);
@@ -2735,6 +2911,8 @@ public readonly partial struct Loudness
     public static Loudness New(Number decibels) => new Loudness(decibels);
     public static implicit operator Number(Loudness self) => self.Decibels;
     public static implicit operator Loudness(Number value) => new Loudness(value);
+    public static implicit operator Dynamic(Loudness self) => new Dynamic(self);
+    public static implicit operator Loudness(Dynamic value) => value.As<Loudness>();
     public String TypeName => "Loudness";
     public Array<String> FieldNames => new[] { (String)"Decibels" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Decibels) };
@@ -2742,7 +2920,6 @@ public readonly partial struct Loudness
     public Number Value => throw new NotImplementedException();
     public Loudness Lerp(Loudness b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Loudness a, Loudness b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Loudness y) => throw new NotImplementedException();
     public Loudness Multiply(Number other) => throw new NotImplementedException();
     public static Loudness operator *(Loudness self, Number other) => self.Multiply(other);
@@ -2768,6 +2945,8 @@ public readonly partial struct LuminousIntensity
     public static LuminousIntensity New(Number candelas) => new LuminousIntensity(candelas);
     public static implicit operator Number(LuminousIntensity self) => self.Candelas;
     public static implicit operator LuminousIntensity(Number value) => new LuminousIntensity(value);
+    public static implicit operator Dynamic(LuminousIntensity self) => new Dynamic(self);
+    public static implicit operator LuminousIntensity(Dynamic value) => value.As<LuminousIntensity>();
     public String TypeName => "LuminousIntensity";
     public Array<String> FieldNames => new[] { (String)"Candelas" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Candelas) };
@@ -2775,7 +2954,6 @@ public readonly partial struct LuminousIntensity
     public Number Value => throw new NotImplementedException();
     public LuminousIntensity Lerp(LuminousIntensity b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(LuminousIntensity a, LuminousIntensity b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(LuminousIntensity y) => throw new NotImplementedException();
     public LuminousIntensity Multiply(Number other) => throw new NotImplementedException();
     public static LuminousIntensity operator *(LuminousIntensity self, Number other) => self.Multiply(other);
@@ -2801,6 +2979,8 @@ public readonly partial struct ElectricPotential
     public static ElectricPotential New(Number volts) => new ElectricPotential(volts);
     public static implicit operator Number(ElectricPotential self) => self.Volts;
     public static implicit operator ElectricPotential(Number value) => new ElectricPotential(value);
+    public static implicit operator Dynamic(ElectricPotential self) => new Dynamic(self);
+    public static implicit operator ElectricPotential(Dynamic value) => value.As<ElectricPotential>();
     public String TypeName => "ElectricPotential";
     public Array<String> FieldNames => new[] { (String)"Volts" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Volts) };
@@ -2808,7 +2988,6 @@ public readonly partial struct ElectricPotential
     public Number Value => throw new NotImplementedException();
     public ElectricPotential Lerp(ElectricPotential b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(ElectricPotential a, ElectricPotential b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(ElectricPotential y) => throw new NotImplementedException();
     public ElectricPotential Multiply(Number other) => throw new NotImplementedException();
     public static ElectricPotential operator *(ElectricPotential self, Number other) => self.Multiply(other);
@@ -2834,6 +3013,8 @@ public readonly partial struct ElectricCharge
     public static ElectricCharge New(Number columbs) => new ElectricCharge(columbs);
     public static implicit operator Number(ElectricCharge self) => self.Columbs;
     public static implicit operator ElectricCharge(Number value) => new ElectricCharge(value);
+    public static implicit operator Dynamic(ElectricCharge self) => new Dynamic(self);
+    public static implicit operator ElectricCharge(Dynamic value) => value.As<ElectricCharge>();
     public String TypeName => "ElectricCharge";
     public Array<String> FieldNames => new[] { (String)"Columbs" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Columbs) };
@@ -2841,7 +3022,6 @@ public readonly partial struct ElectricCharge
     public Number Value => throw new NotImplementedException();
     public ElectricCharge Lerp(ElectricCharge b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(ElectricCharge a, ElectricCharge b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(ElectricCharge y) => throw new NotImplementedException();
     public ElectricCharge Multiply(Number other) => throw new NotImplementedException();
     public static ElectricCharge operator *(ElectricCharge self, Number other) => self.Multiply(other);
@@ -2867,6 +3047,8 @@ public readonly partial struct ElectricCurrent
     public static ElectricCurrent New(Number amperes) => new ElectricCurrent(amperes);
     public static implicit operator Number(ElectricCurrent self) => self.Amperes;
     public static implicit operator ElectricCurrent(Number value) => new ElectricCurrent(value);
+    public static implicit operator Dynamic(ElectricCurrent self) => new Dynamic(self);
+    public static implicit operator ElectricCurrent(Dynamic value) => value.As<ElectricCurrent>();
     public String TypeName => "ElectricCurrent";
     public Array<String> FieldNames => new[] { (String)"Amperes" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Amperes) };
@@ -2874,7 +3056,6 @@ public readonly partial struct ElectricCurrent
     public Number Value => throw new NotImplementedException();
     public ElectricCurrent Lerp(ElectricCurrent b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(ElectricCurrent a, ElectricCurrent b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(ElectricCurrent y) => throw new NotImplementedException();
     public ElectricCurrent Multiply(Number other) => throw new NotImplementedException();
     public static ElectricCurrent operator *(ElectricCurrent self, Number other) => self.Multiply(other);
@@ -2900,6 +3081,8 @@ public readonly partial struct ElectricResistance
     public static ElectricResistance New(Number ohms) => new ElectricResistance(ohms);
     public static implicit operator Number(ElectricResistance self) => self.Ohms;
     public static implicit operator ElectricResistance(Number value) => new ElectricResistance(value);
+    public static implicit operator Dynamic(ElectricResistance self) => new Dynamic(self);
+    public static implicit operator ElectricResistance(Dynamic value) => value.As<ElectricResistance>();
     public String TypeName => "ElectricResistance";
     public Array<String> FieldNames => new[] { (String)"Ohms" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Ohms) };
@@ -2907,7 +3090,6 @@ public readonly partial struct ElectricResistance
     public Number Value => throw new NotImplementedException();
     public ElectricResistance Lerp(ElectricResistance b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(ElectricResistance a, ElectricResistance b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(ElectricResistance y) => throw new NotImplementedException();
     public ElectricResistance Multiply(Number other) => throw new NotImplementedException();
     public static ElectricResistance operator *(ElectricResistance self, Number other) => self.Multiply(other);
@@ -2933,6 +3115,8 @@ public readonly partial struct Power
     public static Power New(Number watts) => new Power(watts);
     public static implicit operator Number(Power self) => self.Watts;
     public static implicit operator Power(Number value) => new Power(value);
+    public static implicit operator Dynamic(Power self) => new Dynamic(self);
+    public static implicit operator Power(Dynamic value) => value.As<Power>();
     public String TypeName => "Power";
     public Array<String> FieldNames => new[] { (String)"Watts" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Watts) };
@@ -2940,7 +3124,6 @@ public readonly partial struct Power
     public Number Value => throw new NotImplementedException();
     public Power Lerp(Power b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Power a, Power b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Power y) => throw new NotImplementedException();
     public Power Multiply(Number other) => throw new NotImplementedException();
     public static Power operator *(Power self, Number other) => self.Multiply(other);
@@ -2966,6 +3149,8 @@ public readonly partial struct Density
     public static Density New(Number kilogramsPerMeterCubed) => new Density(kilogramsPerMeterCubed);
     public static implicit operator Number(Density self) => self.KilogramsPerMeterCubed;
     public static implicit operator Density(Number value) => new Density(value);
+    public static implicit operator Dynamic(Density self) => new Dynamic(self);
+    public static implicit operator Density(Dynamic value) => value.As<Density>();
     public String TypeName => "Density";
     public Array<String> FieldNames => new[] { (String)"KilogramsPerMeterCubed" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(KilogramsPerMeterCubed) };
@@ -2973,7 +3158,6 @@ public readonly partial struct Density
     public Number Value => throw new NotImplementedException();
     public Density Lerp(Density b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Density a, Density b) => throw new NotImplementedException();
-    public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Density y) => throw new NotImplementedException();
     public Density Multiply(Number other) => throw new NotImplementedException();
     public static Density operator *(Density self, Number other) => self.Multiply(other);
@@ -3002,6 +3186,8 @@ public readonly partial struct NormalDistribution
     public static implicit operator (Number, Number)(NormalDistribution self) => (self.Mean, self.StandardDeviation);
     public static implicit operator NormalDistribution((Number, Number) value) => new NormalDistribution(value.Item1, value.Item2);
     public void Deconstruct(out Number mean, out Number standardDeviation) { mean = Mean; standardDeviation = StandardDeviation; }
+    public static implicit operator Dynamic(NormalDistribution self) => new Dynamic(self);
+    public static implicit operator NormalDistribution(Dynamic value) => value.As<NormalDistribution>();
     public String TypeName => "NormalDistribution";
     public Array<String> FieldNames => new[] { (String)"Mean", (String)"StandardDeviation" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Mean), new Dynamic(StandardDeviation) };
@@ -3027,6 +3213,8 @@ public readonly partial struct PoissonDistribution
     public static implicit operator (Number, Integer)(PoissonDistribution self) => (self.Expected, self.Occurrences);
     public static implicit operator PoissonDistribution((Number, Integer) value) => new PoissonDistribution(value.Item1, value.Item2);
     public void Deconstruct(out Number expected, out Integer occurrences) { expected = Expected; occurrences = Occurrences; }
+    public static implicit operator Dynamic(PoissonDistribution self) => new Dynamic(self);
+    public static implicit operator PoissonDistribution(Dynamic value) => value.As<PoissonDistribution>();
     public String TypeName => "PoissonDistribution";
     public Array<String> FieldNames => new[] { (String)"Expected", (String)"Occurrences" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Expected), new Dynamic(Occurrences) };
@@ -3049,6 +3237,8 @@ public readonly partial struct BernoulliDistribution
     public static BernoulliDistribution New(Probability p) => new BernoulliDistribution(p);
     public static implicit operator Probability(BernoulliDistribution self) => self.P;
     public static implicit operator BernoulliDistribution(Probability value) => new BernoulliDistribution(value);
+    public static implicit operator Dynamic(BernoulliDistribution self) => new Dynamic(self);
+    public static implicit operator BernoulliDistribution(Dynamic value) => value.As<BernoulliDistribution>();
     public String TypeName => "BernoulliDistribution";
     public Array<String> FieldNames => new[] { (String)"P" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(P) };
@@ -3071,6 +3261,8 @@ public readonly partial struct Probability
     public static Probability New(Number value) => new Probability(value);
     public static implicit operator Number(Probability self) => self.Value;
     public static implicit operator Probability(Number value) => new Probability(value);
+    public static implicit operator Dynamic(Probability self) => new Dynamic(self);
+    public static implicit operator Probability(Dynamic value) => value.As<Probability>();
     public String TypeName => "Probability";
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
@@ -3118,6 +3310,8 @@ public readonly partial struct BinomialDistribution
     public static implicit operator (Integer, Probability)(BinomialDistribution self) => (self.Trials, self.P);
     public static implicit operator BinomialDistribution((Integer, Probability) value) => new BinomialDistribution(value.Item1, value.Item2);
     public void Deconstruct(out Integer trials, out Probability p) { trials = Trials; p = P; }
+    public static implicit operator Dynamic(BinomialDistribution self) => new Dynamic(self);
+    public static implicit operator BinomialDistribution(Dynamic value) => value.As<BinomialDistribution>();
     public String TypeName => "BinomialDistribution";
     public Array<String> FieldNames => new[] { (String)"Trials", (String)"P" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Trials), new Dynamic(P) };
@@ -3143,6 +3337,8 @@ public readonly partial struct Tuple2<T0, T1>
     public static implicit operator (T0, T1)(Tuple2<T0, T1> self) => (self.Item0, self.Item1);
     public static implicit operator Tuple2<T0, T1>((T0, T1) value) => new Tuple2<T0, T1>(value.Item1, value.Item2);
     public void Deconstruct(out T0 item0, out T1 item1) { item0 = Item0; item1 = Item1; }
+    public static implicit operator Dynamic(Tuple2<T0, T1> self) => new Dynamic(self);
+    public static implicit operator Tuple2<T0, T1>(Dynamic value) => value.As<Tuple2<T0, T1>>();
     public String TypeName => "Tuple2<T0, T1>";
     public Array<String> FieldNames => new[] { (String)"Item0", (String)"Item1" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Item0), new Dynamic(Item1) };
@@ -3162,6 +3358,8 @@ public readonly partial struct Tuple3<T0, T1, T2>
     public static implicit operator (T0, T1, T2)(Tuple3<T0, T1, T2> self) => (self.Item0, self.Item1, self.Item2);
     public static implicit operator Tuple3<T0, T1, T2>((T0, T1, T2) value) => new Tuple3<T0, T1, T2>(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out T0 item0, out T1 item1, out T2 item2) { item0 = Item0; item1 = Item1; item2 = Item2; }
+    public static implicit operator Dynamic(Tuple3<T0, T1, T2> self) => new Dynamic(self);
+    public static implicit operator Tuple3<T0, T1, T2>(Dynamic value) => value.As<Tuple3<T0, T1, T2>>();
     public String TypeName => "Tuple3<T0, T1, T2>";
     public Array<String> FieldNames => new[] { (String)"Item0", (String)"Item1", (String)"Item2" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Item0), new Dynamic(Item1), new Dynamic(Item2) };
