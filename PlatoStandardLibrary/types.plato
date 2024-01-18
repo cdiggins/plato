@@ -817,13 +817,6 @@ type BinomialDistribution
 
 // Generic types. These are not used 
 
-type Array1<T>
-    implements Array<T>
-{
-    Count: Integer;
-    Map: Function1<Integer, T>;
-}
-
 type Tuple2<T0, T1>
 {
     Item0: T0;

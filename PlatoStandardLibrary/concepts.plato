@@ -55,7 +55,7 @@ concept WholeNumber
 
 // A numerical type represents things like floats and complex numbers
 concept Numerical 
-    inherits Value, Arithmetic, Equatable, Comparable, Magnitudinal, Interpolatable
+    inherits Value, Arithmetic, Equatable, Comparable, Magnitudinal, Interpolatable, ScalarArithmetic
 {
 }
 

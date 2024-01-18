@@ -1,3 +1,4 @@
+/*
 public interface Any
 {
     Array<String>  FieldNames { get; }
@@ -29,7 +30,7 @@ public interface Measure<Self>: Value<Self>, ScalarArithmetic<Self>, Comparable<
 public interface WholeNumber<Self>: Arithmetic<Self>, Equatable<Self>, Comparable<Self>, Magnitudinal<Self>
 {
 }
-public interface Numerical<Self>: Value<Self>, Arithmetic<Self>, Equatable<Self>, Comparable<Self>, Magnitudinal<Self>, Interpolatable<Self>
+public interface Numerical<Self>: Value<Self>, Arithmetic<Self>, Equatable<Self>, Comparable<Self>, Magnitudinal<Self>, Interpolatable<Self>, ScalarArithmetic<Self>
 {
 }
 public interface Magnitudinal<Self>: Comparable<Self>
@@ -87,3 +88,4 @@ public interface Interpolatable<Self>
     Self  Lerp(Self b, Number amount);
     Number  Unlerp(Self a, Self b);
 }
+*/

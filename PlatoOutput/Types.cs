@@ -1,5 +1,5 @@
 using System;
-public readonly partial struct Number: Numerical<Number>
+public readonly partial struct Number
 {
     public readonly double Value;
     public Number WithValue(double value) => (value);
@@ -9,10 +9,10 @@ public readonly partial struct Number: Numerical<Number>
     public static implicit operator double(Number self) => self.Value;
     public static implicit operator Number(double value) => new Number(value);
     public String TypeName => "Number";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
+    public Array<String> FieldNames => new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
 }
-public readonly partial struct Integer: WholeNumber<Integer>
+public readonly partial struct Integer
 {
     public readonly int Value;
     public Integer WithValue(int value) => (value);
@@ -22,10 +22,10 @@ public readonly partial struct Integer: WholeNumber<Integer>
     public static implicit operator int(Integer self) => self.Value;
     public static implicit operator Integer(int value) => new Integer(value);
     public String TypeName => "Integer";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
+    public Array<String> FieldNames => new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
 }
-public readonly partial struct String: Array<Character>, Comparable<String>, Equatable<String>
+public readonly partial struct String
 {
     public readonly string Value;
     public String WithValue(string value) => (value);
@@ -35,10 +35,10 @@ public readonly partial struct String: Array<Character>, Comparable<String>, Equ
     public static implicit operator string(String self) => self.Value;
     public static implicit operator String(string value) => new String(value);
     public String TypeName => "String";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
+    public Array<String> FieldNames => new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
 }
-public readonly partial struct Boolean: BooleanOperations<Boolean>
+public readonly partial struct Boolean
 {
     public readonly bool Value;
     public Boolean WithValue(bool value) => (value);
@@ -48,10 +48,10 @@ public readonly partial struct Boolean: BooleanOperations<Boolean>
     public static implicit operator bool(Boolean self) => self.Value;
     public static implicit operator Boolean(bool value) => new Boolean(value);
     public String TypeName => "Boolean";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
+    public Array<String> FieldNames => new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
 }
-public readonly partial struct Character: Value<Character>
+public readonly partial struct Character
 {
     public readonly char Value;
     public Character WithValue(char value) => (value);
@@ -61,10 +61,10 @@ public readonly partial struct Character: Value<Character>
     public static implicit operator char(Character self) => self.Value;
     public static implicit operator Character(char value) => new Character(value);
     public String TypeName => "Character";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
+    public Array<String> FieldNames => new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
 }
-public readonly partial struct Cardinal: WholeNumber<Cardinal>
+public readonly partial struct Cardinal
 {
     public readonly Integer Value;
     public Cardinal WithValue(Integer value) => (value);
@@ -74,8 +74,8 @@ public readonly partial struct Cardinal: WholeNumber<Cardinal>
     public static implicit operator Integer(Cardinal self) => self.Value;
     public static implicit operator Cardinal(Integer value) => new Cardinal(value);
     public String TypeName => "Cardinal";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
+    public Array<String> FieldNames => new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Cardinal y) => throw new NotImplementedException();
@@ -93,7 +93,7 @@ public readonly partial struct Cardinal: WholeNumber<Cardinal>
     public Cardinal Subtract(Cardinal other) => (Value.Subtract(other.Value));
     public static Cardinal operator -(Cardinal self, Cardinal other) => self.Subtract(other);
 }
-public readonly partial struct Index: WholeNumber<Index>
+public readonly partial struct Index
 {
     public readonly Integer Value;
     public Index WithValue(Integer value) => (value);
@@ -103,8 +103,8 @@ public readonly partial struct Index: WholeNumber<Index>
     public static implicit operator Integer(Index self) => self.Value;
     public static implicit operator Index(Integer value) => new Index(value);
     public String TypeName => "Index";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
+    public Array<String> FieldNames => new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Index y) => throw new NotImplementedException();
@@ -122,7 +122,7 @@ public readonly partial struct Index: WholeNumber<Index>
     public Index Subtract(Index other) => (Value.Subtract(other.Value));
     public static Index operator -(Index self, Index other) => self.Subtract(other);
 }
-public readonly partial struct Unit: Numerical<Unit>
+public readonly partial struct Unit
 {
     public readonly Number Value;
     public Unit WithValue(Number value) => (value);
@@ -132,9 +132,19 @@ public readonly partial struct Unit: Numerical<Unit>
     public static implicit operator Number(Unit self) => self.Value;
     public static implicit operator Unit(Number value) => new Unit(value);
     public String TypeName => "Unit";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
+    public Array<String> FieldNames => new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
+    public Unit Multiply(Number other) => throw new NotImplementedException();
+    public static Unit operator *(Unit self, Number other) => self.Multiply(other);
+    public Unit Divide(Number other) => throw new NotImplementedException();
+    public static Unit operator /(Unit self, Number other) => self.Divide(other);
+    public Unit Modulo(Number other) => throw new NotImplementedException();
+    public static Unit operator %(Unit self, Number other) => self.Modulo(other);
+    public Unit Add(Number other) => throw new NotImplementedException();
+    public static Unit operator +(Unit self, Number other) => self.Add(other);
+    public Unit Subtract(Number other) => throw new NotImplementedException();
+    public static Unit operator -(Unit self, Number other) => self.Subtract(other);
     public Number Unlerp(Unit a, Unit b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Unit y) => throw new NotImplementedException();
@@ -156,7 +166,7 @@ public readonly partial struct Unit: Numerical<Unit>
     public Unit MinValue => (Value.MinValue);
     public Unit MaxValue => (Value.MaxValue);
 }
-public readonly partial struct Percent: Numerical<Percent>
+public readonly partial struct Percent
 {
     public readonly Number Value;
     public Percent WithValue(Number value) => (value);
@@ -166,9 +176,19 @@ public readonly partial struct Percent: Numerical<Percent>
     public static implicit operator Number(Percent self) => self.Value;
     public static implicit operator Percent(Number value) => new Percent(value);
     public String TypeName => "Percent";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
+    public Array<String> FieldNames => new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
+    public Percent Multiply(Number other) => throw new NotImplementedException();
+    public static Percent operator *(Percent self, Number other) => self.Multiply(other);
+    public Percent Divide(Number other) => throw new NotImplementedException();
+    public static Percent operator /(Percent self, Number other) => self.Divide(other);
+    public Percent Modulo(Number other) => throw new NotImplementedException();
+    public static Percent operator %(Percent self, Number other) => self.Modulo(other);
+    public Percent Add(Number other) => throw new NotImplementedException();
+    public static Percent operator +(Percent self, Number other) => self.Add(other);
+    public Percent Subtract(Number other) => throw new NotImplementedException();
+    public static Percent operator -(Percent self, Number other) => self.Subtract(other);
     public Number Unlerp(Percent a, Percent b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Percent y) => throw new NotImplementedException();
@@ -190,7 +210,7 @@ public readonly partial struct Percent: Numerical<Percent>
     public Percent MinValue => (Value.MinValue);
     public Percent MaxValue => (Value.MaxValue);
 }
-public readonly partial struct Quaternion: Value<Quaternion>
+public readonly partial struct Quaternion
 {
     public readonly Number X;
     public readonly Number Y;
@@ -207,8 +227,8 @@ public readonly partial struct Quaternion: Value<Quaternion>
     public static implicit operator Quaternion((Number, Number, Number, Number) value) => new Quaternion(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Number x, out Number y, out Number z, out Number w) { x = X; y = Y; z = Z; w = W; }
     public String TypeName => "Quaternion";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y", (String)"Z", (String)"W" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z), new Dynamic(W) };
+    public Array<String> FieldNames => new[] { (String)"X", (String)"Y", (String)"Z", (String)"W" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z), new Dynamic(W) };
     // Unimplemented concept functions
     public Quaternion Zero => (X.Zero, Y.Zero, Z.Zero, W.Zero);
     public Quaternion One => (X.One, Y.One, Z.One, W.One);
@@ -219,7 +239,7 @@ public readonly partial struct Quaternion: Value<Quaternion>
     public Boolean NotEquals(Quaternion b) => (X.NotEquals(b.X) & Y.NotEquals(b.Y) & Z.NotEquals(b.Z) & W.NotEquals(b.W));
     public static Boolean operator !=(Quaternion a, Quaternion b) => a.NotEquals(b);
 }
-public readonly partial struct Unit2D: Value<Unit2D>
+public readonly partial struct Unit2D
 {
     public readonly Unit X;
     public readonly Unit Y;
@@ -232,8 +252,8 @@ public readonly partial struct Unit2D: Value<Unit2D>
     public static implicit operator Unit2D((Unit, Unit) value) => new Unit2D(value.Item1, value.Item2);
     public void Deconstruct(out Unit x, out Unit y) { x = X; y = Y; }
     public String TypeName => "Unit2D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(X), new Dynamic(Y) };
+    public Array<String> FieldNames => new[] { (String)"X", (String)"Y" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(X), new Dynamic(Y) };
     // Unimplemented concept functions
     public Unit2D Zero => (X.Zero, Y.Zero);
     public Unit2D One => (X.One, Y.One);
@@ -244,7 +264,7 @@ public readonly partial struct Unit2D: Value<Unit2D>
     public Boolean NotEquals(Unit2D b) => (X.NotEquals(b.X) & Y.NotEquals(b.Y));
     public static Boolean operator !=(Unit2D a, Unit2D b) => a.NotEquals(b);
 }
-public readonly partial struct Unit3D: Value<Unit3D>
+public readonly partial struct Unit3D
 {
     public readonly Unit X;
     public readonly Unit Y;
@@ -259,8 +279,8 @@ public readonly partial struct Unit3D: Value<Unit3D>
     public static implicit operator Unit3D((Unit, Unit, Unit) value) => new Unit3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Unit x, out Unit y, out Unit z) { x = X; y = Y; z = Z; }
     public String TypeName => "Unit3D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y", (String)"Z" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z) };
+    public Array<String> FieldNames => new[] { (String)"X", (String)"Y", (String)"Z" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z) };
     // Unimplemented concept functions
     public Unit3D Zero => (X.Zero, Y.Zero, Z.Zero);
     public Unit3D One => (X.One, Y.One, Z.One);
@@ -271,7 +291,7 @@ public readonly partial struct Unit3D: Value<Unit3D>
     public Boolean NotEquals(Unit3D b) => (X.NotEquals(b.X) & Y.NotEquals(b.Y) & Z.NotEquals(b.Z));
     public static Boolean operator !=(Unit3D a, Unit3D b) => a.NotEquals(b);
 }
-public readonly partial struct Direction3D: Value<Direction3D>
+public readonly partial struct Direction3D
 {
     public readonly Unit3D Value;
     public Direction3D WithValue(Unit3D value) => (value);
@@ -281,8 +301,8 @@ public readonly partial struct Direction3D: Value<Direction3D>
     public static implicit operator Unit3D(Direction3D self) => self.Value;
     public static implicit operator Direction3D(Unit3D value) => new Direction3D(value);
     public String TypeName => "Direction3D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
+    public Array<String> FieldNames => new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
     public Direction3D Zero => (Value.Zero);
     public Direction3D One => (Value.One);
@@ -293,7 +313,7 @@ public readonly partial struct Direction3D: Value<Direction3D>
     public Boolean NotEquals(Direction3D b) => (Value.NotEquals(b.Value));
     public static Boolean operator !=(Direction3D a, Direction3D b) => a.NotEquals(b);
 }
-public readonly partial struct AxisAngle: Value<AxisAngle>
+public readonly partial struct AxisAngle
 {
     public readonly Unit3D Axis;
     public readonly Angle Angle;
@@ -306,8 +326,8 @@ public readonly partial struct AxisAngle: Value<AxisAngle>
     public static implicit operator AxisAngle((Unit3D, Angle) value) => new AxisAngle(value.Item1, value.Item2);
     public void Deconstruct(out Unit3D axis, out Angle angle) { axis = Axis; angle = Angle; }
     public String TypeName => "AxisAngle";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Axis", (String)"Angle" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Axis), new Dynamic(Angle) };
+    public Array<String> FieldNames => new[] { (String)"Axis", (String)"Angle" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Axis), new Dynamic(Angle) };
     // Unimplemented concept functions
     public AxisAngle Zero => (Axis.Zero, Angle.Zero);
     public AxisAngle One => (Axis.One, Angle.One);
@@ -318,7 +338,7 @@ public readonly partial struct AxisAngle: Value<AxisAngle>
     public Boolean NotEquals(AxisAngle b) => (Axis.NotEquals(b.Axis) & Angle.NotEquals(b.Angle));
     public static Boolean operator !=(AxisAngle a, AxisAngle b) => a.NotEquals(b);
 }
-public readonly partial struct EulerAngles: Value<EulerAngles>
+public readonly partial struct EulerAngles
 {
     public readonly Angle Yaw;
     public readonly Angle Pitch;
@@ -333,8 +353,8 @@ public readonly partial struct EulerAngles: Value<EulerAngles>
     public static implicit operator EulerAngles((Angle, Angle, Angle) value) => new EulerAngles(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Angle yaw, out Angle pitch, out Angle roll) { yaw = Yaw; pitch = Pitch; roll = Roll; }
     public String TypeName => "EulerAngles";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Yaw", (String)"Pitch", (String)"Roll" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Yaw), new Dynamic(Pitch), new Dynamic(Roll) };
+    public Array<String> FieldNames => new[] { (String)"Yaw", (String)"Pitch", (String)"Roll" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Yaw), new Dynamic(Pitch), new Dynamic(Roll) };
     // Unimplemented concept functions
     public EulerAngles Zero => (Yaw.Zero, Pitch.Zero, Roll.Zero);
     public EulerAngles One => (Yaw.One, Pitch.One, Roll.One);
@@ -345,7 +365,7 @@ public readonly partial struct EulerAngles: Value<EulerAngles>
     public Boolean NotEquals(EulerAngles b) => (Yaw.NotEquals(b.Yaw) & Pitch.NotEquals(b.Pitch) & Roll.NotEquals(b.Roll));
     public static Boolean operator !=(EulerAngles a, EulerAngles b) => a.NotEquals(b);
 }
-public readonly partial struct Rotation3D: Value<Rotation3D>
+public readonly partial struct Rotation3D
 {
     public readonly Quaternion Quaternion;
     public Rotation3D WithQuaternion(Quaternion quaternion) => (quaternion);
@@ -355,8 +375,8 @@ public readonly partial struct Rotation3D: Value<Rotation3D>
     public static implicit operator Quaternion(Rotation3D self) => self.Quaternion;
     public static implicit operator Rotation3D(Quaternion value) => new Rotation3D(value);
     public String TypeName => "Rotation3D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Quaternion" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Quaternion) };
+    public Array<String> FieldNames => new[] { (String)"Quaternion" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Quaternion) };
     // Unimplemented concept functions
     public Rotation3D Zero => (Quaternion.Zero);
     public Rotation3D One => (Quaternion.One);
@@ -367,7 +387,7 @@ public readonly partial struct Rotation3D: Value<Rotation3D>
     public Boolean NotEquals(Rotation3D b) => (Quaternion.NotEquals(b.Quaternion));
     public static Boolean operator !=(Rotation3D a, Rotation3D b) => a.NotEquals(b);
 }
-public readonly partial struct Vector2D: Vector<Vector2D>
+public readonly partial struct Vector2D
 {
     public readonly Number X;
     public readonly Number Y;
@@ -380,8 +400,8 @@ public readonly partial struct Vector2D: Vector<Vector2D>
     public static implicit operator Vector2D((Number, Number) value) => new Vector2D(value.Item1, value.Item2);
     public void Deconstruct(out Number x, out Number y) { x = X; y = Y; }
     public String TypeName => "Vector2D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(X), new Dynamic(Y) };
+    public Array<String> FieldNames => new[] { (String)"X", (String)"Y" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(X), new Dynamic(Y) };
     // Unimplemented concept functions
     public Vector2D Multiply(Number other) => throw new NotImplementedException();
     public static Vector2D operator *(Vector2D self, Number other) => self.Multiply(other);
@@ -416,7 +436,7 @@ public readonly partial struct Vector2D: Vector<Vector2D>
     public Number At(Integer n) => throw new NotImplementedException();
     public Number this[Integer n] => At(n);
 }
-public readonly partial struct Vector3D: Vector<Vector3D>
+public readonly partial struct Vector3D
 {
     public readonly Number X;
     public readonly Number Y;
@@ -431,8 +451,8 @@ public readonly partial struct Vector3D: Vector<Vector3D>
     public static implicit operator Vector3D((Number, Number, Number) value) => new Vector3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number x, out Number y, out Number z) { x = X; y = Y; z = Z; }
     public String TypeName => "Vector3D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y", (String)"Z" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z) };
+    public Array<String> FieldNames => new[] { (String)"X", (String)"Y", (String)"Z" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z) };
     // Unimplemented concept functions
     public Vector3D Multiply(Number other) => throw new NotImplementedException();
     public static Vector3D operator *(Vector3D self, Number other) => self.Multiply(other);
@@ -467,7 +487,7 @@ public readonly partial struct Vector3D: Vector<Vector3D>
     public Number At(Integer n) => throw new NotImplementedException();
     public Number this[Integer n] => At(n);
 }
-public readonly partial struct Vector4D: Vector<Vector4D>
+public readonly partial struct Vector4D
 {
     public readonly Number X;
     public readonly Number Y;
@@ -484,8 +504,8 @@ public readonly partial struct Vector4D: Vector<Vector4D>
     public static implicit operator Vector4D((Number, Number, Number, Number) value) => new Vector4D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Number x, out Number y, out Number z, out Number w) { x = X; y = Y; z = Z; w = W; }
     public String TypeName => "Vector4D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y", (String)"Z", (String)"W" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z), new Dynamic(W) };
+    public Array<String> FieldNames => new[] { (String)"X", (String)"Y", (String)"Z", (String)"W" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z), new Dynamic(W) };
     // Unimplemented concept functions
     public Vector4D Multiply(Number other) => throw new NotImplementedException();
     public static Vector4D operator *(Vector4D self, Number other) => self.Multiply(other);
@@ -520,7 +540,7 @@ public readonly partial struct Vector4D: Vector<Vector4D>
     public Number At(Integer n) => throw new NotImplementedException();
     public Number this[Integer n] => At(n);
 }
-public readonly partial struct Orientation3D: Value<Orientation3D>
+public readonly partial struct Orientation3D
 {
     public readonly Rotation3D Value;
     public Orientation3D WithValue(Rotation3D value) => (value);
@@ -530,8 +550,8 @@ public readonly partial struct Orientation3D: Value<Orientation3D>
     public static implicit operator Rotation3D(Orientation3D self) => self.Value;
     public static implicit operator Orientation3D(Rotation3D value) => new Orientation3D(value);
     public String TypeName => "Orientation3D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
+    public Array<String> FieldNames => new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
     public Orientation3D Zero => (Value.Zero);
     public Orientation3D One => (Value.One);
@@ -542,7 +562,7 @@ public readonly partial struct Orientation3D: Value<Orientation3D>
     public Boolean NotEquals(Orientation3D b) => (Value.NotEquals(b.Value));
     public static Boolean operator !=(Orientation3D a, Orientation3D b) => a.NotEquals(b);
 }
-public readonly partial struct Pose2D: Value<Pose2D>
+public readonly partial struct Pose2D
 {
     public readonly Vector3D Position;
     public readonly Orientation3D Orientation;
@@ -555,8 +575,8 @@ public readonly partial struct Pose2D: Value<Pose2D>
     public static implicit operator Pose2D((Vector3D, Orientation3D) value) => new Pose2D(value.Item1, value.Item2);
     public void Deconstruct(out Vector3D position, out Orientation3D orientation) { position = Position; orientation = Orientation; }
     public String TypeName => "Pose2D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Position", (String)"Orientation" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Position), new Dynamic(Orientation) };
+    public Array<String> FieldNames => new[] { (String)"Position", (String)"Orientation" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Position), new Dynamic(Orientation) };
     // Unimplemented concept functions
     public Pose2D Zero => (Position.Zero, Orientation.Zero);
     public Pose2D One => (Position.One, Orientation.One);
@@ -567,7 +587,7 @@ public readonly partial struct Pose2D: Value<Pose2D>
     public Boolean NotEquals(Pose2D b) => (Position.NotEquals(b.Position) & Orientation.NotEquals(b.Orientation));
     public static Boolean operator !=(Pose2D a, Pose2D b) => a.NotEquals(b);
 }
-public readonly partial struct Pose3D: Value<Pose3D>
+public readonly partial struct Pose3D
 {
     public readonly Vector3D Position;
     public readonly Orientation3D Orientation;
@@ -580,8 +600,8 @@ public readonly partial struct Pose3D: Value<Pose3D>
     public static implicit operator Pose3D((Vector3D, Orientation3D) value) => new Pose3D(value.Item1, value.Item2);
     public void Deconstruct(out Vector3D position, out Orientation3D orientation) { position = Position; orientation = Orientation; }
     public String TypeName => "Pose3D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Position", (String)"Orientation" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Position), new Dynamic(Orientation) };
+    public Array<String> FieldNames => new[] { (String)"Position", (String)"Orientation" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Position), new Dynamic(Orientation) };
     // Unimplemented concept functions
     public Pose3D Zero => (Position.Zero, Orientation.Zero);
     public Pose3D One => (Position.One, Orientation.One);
@@ -592,7 +612,7 @@ public readonly partial struct Pose3D: Value<Pose3D>
     public Boolean NotEquals(Pose3D b) => (Position.NotEquals(b.Position) & Orientation.NotEquals(b.Orientation));
     public static Boolean operator !=(Pose3D a, Pose3D b) => a.NotEquals(b);
 }
-public readonly partial struct Transform3D: Value<Transform3D>
+public readonly partial struct Transform3D
 {
     public readonly Vector3D Translation;
     public readonly Rotation3D Rotation;
@@ -607,8 +627,8 @@ public readonly partial struct Transform3D: Value<Transform3D>
     public static implicit operator Transform3D((Vector3D, Rotation3D, Vector3D) value) => new Transform3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Vector3D translation, out Rotation3D rotation, out Vector3D scale) { translation = Translation; rotation = Rotation; scale = Scale; }
     public String TypeName => "Transform3D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Translation", (String)"Rotation", (String)"Scale" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Translation), new Dynamic(Rotation), new Dynamic(Scale) };
+    public Array<String> FieldNames => new[] { (String)"Translation", (String)"Rotation", (String)"Scale" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Translation), new Dynamic(Rotation), new Dynamic(Scale) };
     // Unimplemented concept functions
     public Transform3D Zero => (Translation.Zero, Rotation.Zero, Scale.Zero);
     public Transform3D One => (Translation.One, Rotation.One, Scale.One);
@@ -619,7 +639,7 @@ public readonly partial struct Transform3D: Value<Transform3D>
     public Boolean NotEquals(Transform3D b) => (Translation.NotEquals(b.Translation) & Rotation.NotEquals(b.Rotation) & Scale.NotEquals(b.Scale));
     public static Boolean operator !=(Transform3D a, Transform3D b) => a.NotEquals(b);
 }
-public readonly partial struct Transform2D: Value<Transform2D>
+public readonly partial struct Transform2D
 {
     public readonly Vector2D Translation;
     public readonly Angle Rotation;
@@ -634,8 +654,8 @@ public readonly partial struct Transform2D: Value<Transform2D>
     public static implicit operator Transform2D((Vector2D, Angle, Vector2D) value) => new Transform2D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Vector2D translation, out Angle rotation, out Vector2D scale) { translation = Translation; rotation = Rotation; scale = Scale; }
     public String TypeName => "Transform2D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Translation", (String)"Rotation", (String)"Scale" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Translation), new Dynamic(Rotation), new Dynamic(Scale) };
+    public Array<String> FieldNames => new[] { (String)"Translation", (String)"Rotation", (String)"Scale" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Translation), new Dynamic(Rotation), new Dynamic(Scale) };
     // Unimplemented concept functions
     public Transform2D Zero => (Translation.Zero, Rotation.Zero, Scale.Zero);
     public Transform2D One => (Translation.One, Rotation.One, Scale.One);
@@ -646,7 +666,7 @@ public readonly partial struct Transform2D: Value<Transform2D>
     public Boolean NotEquals(Transform2D b) => (Translation.NotEquals(b.Translation) & Rotation.NotEquals(b.Rotation) & Scale.NotEquals(b.Scale));
     public static Boolean operator !=(Transform2D a, Transform2D b) => a.NotEquals(b);
 }
-public readonly partial struct AlignedBox2D: Interval<AlignedBox2D, Point2D, Vector2D>
+public readonly partial struct AlignedBox2D
 {
     public readonly Point2D A;
     public readonly Point2D B;
@@ -659,8 +679,8 @@ public readonly partial struct AlignedBox2D: Interval<AlignedBox2D, Point2D, Vec
     public static implicit operator AlignedBox2D((Point2D, Point2D) value) => new AlignedBox2D(value.Item1, value.Item2);
     public void Deconstruct(out Point2D a, out Point2D b) { a = A; b = B; }
     public String TypeName => "AlignedBox2D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(A), new Dynamic(B) };
+    public Array<String> FieldNames => new[] { (String)"A", (String)"B" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B) };
     // Unimplemented concept functions
     public Point2D Min => throw new NotImplementedException();
     public Point2D Max => throw new NotImplementedException();
@@ -674,7 +694,7 @@ public readonly partial struct AlignedBox2D: Interval<AlignedBox2D, Point2D, Vec
     public Boolean NotEquals(AlignedBox2D b) => (A.NotEquals(b.A) & B.NotEquals(b.B));
     public static Boolean operator !=(AlignedBox2D a, AlignedBox2D b) => a.NotEquals(b);
 }
-public readonly partial struct AlignedBox3D: Interval<AlignedBox3D, Point3D, Vector3D>
+public readonly partial struct AlignedBox3D
 {
     public readonly Point3D A;
     public readonly Point3D B;
@@ -687,8 +707,8 @@ public readonly partial struct AlignedBox3D: Interval<AlignedBox3D, Point3D, Vec
     public static implicit operator AlignedBox3D((Point3D, Point3D) value) => new AlignedBox3D(value.Item1, value.Item2);
     public void Deconstruct(out Point3D a, out Point3D b) { a = A; b = B; }
     public String TypeName => "AlignedBox3D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(A), new Dynamic(B) };
+    public Array<String> FieldNames => new[] { (String)"A", (String)"B" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B) };
     // Unimplemented concept functions
     public Point3D Min => throw new NotImplementedException();
     public Point3D Max => throw new NotImplementedException();
@@ -702,7 +722,7 @@ public readonly partial struct AlignedBox3D: Interval<AlignedBox3D, Point3D, Vec
     public Boolean NotEquals(AlignedBox3D b) => (A.NotEquals(b.A) & B.NotEquals(b.B));
     public static Boolean operator !=(AlignedBox3D a, AlignedBox3D b) => a.NotEquals(b);
 }
-public readonly partial struct Complex: Vector<Complex>
+public readonly partial struct Complex
 {
     public readonly Number Real;
     public readonly Number Imaginary;
@@ -715,8 +735,8 @@ public readonly partial struct Complex: Vector<Complex>
     public static implicit operator Complex((Number, Number) value) => new Complex(value.Item1, value.Item2);
     public void Deconstruct(out Number real, out Number imaginary) { real = Real; imaginary = Imaginary; }
     public String TypeName => "Complex";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Real", (String)"Imaginary" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Real), new Dynamic(Imaginary) };
+    public Array<String> FieldNames => new[] { (String)"Real", (String)"Imaginary" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Real), new Dynamic(Imaginary) };
     // Unimplemented concept functions
     public Complex Multiply(Number other) => throw new NotImplementedException();
     public static Complex operator *(Complex self, Number other) => self.Multiply(other);
@@ -751,7 +771,7 @@ public readonly partial struct Complex: Vector<Complex>
     public Number At(Integer n) => throw new NotImplementedException();
     public Number this[Integer n] => At(n);
 }
-public readonly partial struct Ray3D: Value<Ray3D>
+public readonly partial struct Ray3D
 {
     public readonly Vector3D Direction;
     public readonly Point3D Position;
@@ -764,8 +784,8 @@ public readonly partial struct Ray3D: Value<Ray3D>
     public static implicit operator Ray3D((Vector3D, Point3D) value) => new Ray3D(value.Item1, value.Item2);
     public void Deconstruct(out Vector3D direction, out Point3D position) { direction = Direction; position = Position; }
     public String TypeName => "Ray3D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Direction", (String)"Position" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Direction), new Dynamic(Position) };
+    public Array<String> FieldNames => new[] { (String)"Direction", (String)"Position" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Direction), new Dynamic(Position) };
     // Unimplemented concept functions
     public Ray3D Zero => (Direction.Zero, Position.Zero);
     public Ray3D One => (Direction.One, Position.One);
@@ -776,7 +796,7 @@ public readonly partial struct Ray3D: Value<Ray3D>
     public Boolean NotEquals(Ray3D b) => (Direction.NotEquals(b.Direction) & Position.NotEquals(b.Position));
     public static Boolean operator !=(Ray3D a, Ray3D b) => a.NotEquals(b);
 }
-public readonly partial struct Ray2D: Value<Ray2D>
+public readonly partial struct Ray2D
 {
     public readonly Vector2D Direction;
     public readonly Point2D Position;
@@ -789,8 +809,8 @@ public readonly partial struct Ray2D: Value<Ray2D>
     public static implicit operator Ray2D((Vector2D, Point2D) value) => new Ray2D(value.Item1, value.Item2);
     public void Deconstruct(out Vector2D direction, out Point2D position) { direction = Direction; position = Position; }
     public String TypeName => "Ray2D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Direction", (String)"Position" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Direction), new Dynamic(Position) };
+    public Array<String> FieldNames => new[] { (String)"Direction", (String)"Position" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Direction), new Dynamic(Position) };
     // Unimplemented concept functions
     public Ray2D Zero => (Direction.Zero, Position.Zero);
     public Ray2D One => (Direction.One, Position.One);
@@ -801,7 +821,7 @@ public readonly partial struct Ray2D: Value<Ray2D>
     public Boolean NotEquals(Ray2D b) => (Direction.NotEquals(b.Direction) & Position.NotEquals(b.Position));
     public static Boolean operator !=(Ray2D a, Ray2D b) => a.NotEquals(b);
 }
-public readonly partial struct Sphere: Value<Sphere>
+public readonly partial struct Sphere
 {
     public readonly Point3D Center;
     public readonly Number Radius;
@@ -814,8 +834,8 @@ public readonly partial struct Sphere: Value<Sphere>
     public static implicit operator Sphere((Point3D, Number) value) => new Sphere(value.Item1, value.Item2);
     public void Deconstruct(out Point3D center, out Number radius) { center = Center; radius = Radius; }
     public String TypeName => "Sphere";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Center", (String)"Radius" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Center), new Dynamic(Radius) };
+    public Array<String> FieldNames => new[] { (String)"Center", (String)"Radius" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Center), new Dynamic(Radius) };
     // Unimplemented concept functions
     public Sphere Zero => (Center.Zero, Radius.Zero);
     public Sphere One => (Center.One, Radius.One);
@@ -826,7 +846,7 @@ public readonly partial struct Sphere: Value<Sphere>
     public Boolean NotEquals(Sphere b) => (Center.NotEquals(b.Center) & Radius.NotEquals(b.Radius));
     public static Boolean operator !=(Sphere a, Sphere b) => a.NotEquals(b);
 }
-public readonly partial struct Plane: Value<Plane>
+public readonly partial struct Plane
 {
     public readonly Unit3D Normal;
     public readonly Number D;
@@ -839,8 +859,8 @@ public readonly partial struct Plane: Value<Plane>
     public static implicit operator Plane((Unit3D, Number) value) => new Plane(value.Item1, value.Item2);
     public void Deconstruct(out Unit3D normal, out Number d) { normal = Normal; d = D; }
     public String TypeName => "Plane";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Normal", (String)"D" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Normal), new Dynamic(D) };
+    public Array<String> FieldNames => new[] { (String)"Normal", (String)"D" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Normal), new Dynamic(D) };
     // Unimplemented concept functions
     public Plane Zero => (Normal.Zero, D.Zero);
     public Plane One => (Normal.One, D.One);
@@ -851,7 +871,7 @@ public readonly partial struct Plane: Value<Plane>
     public Boolean NotEquals(Plane b) => (Normal.NotEquals(b.Normal) & D.NotEquals(b.D));
     public static Boolean operator !=(Plane a, Plane b) => a.NotEquals(b);
 }
-public readonly partial struct Triangle2D: Value<Triangle2D>
+public readonly partial struct Triangle2D
 {
     public readonly Point2D A;
     public readonly Point2D B;
@@ -866,8 +886,8 @@ public readonly partial struct Triangle2D: Value<Triangle2D>
     public static implicit operator Triangle2D((Point2D, Point2D, Point2D) value) => new Triangle2D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point2D a, out Point2D b, out Point2D c) { a = A; b = B; c = C; }
     public String TypeName => "Triangle2D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C) };
+    public Array<String> FieldNames => new[] { (String)"A", (String)"B", (String)"C" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C) };
     // Unimplemented concept functions
     public Triangle2D Zero => (A.Zero, B.Zero, C.Zero);
     public Triangle2D One => (A.One, B.One, C.One);
@@ -878,7 +898,7 @@ public readonly partial struct Triangle2D: Value<Triangle2D>
     public Boolean NotEquals(Triangle2D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C));
     public static Boolean operator !=(Triangle2D a, Triangle2D b) => a.NotEquals(b);
 }
-public readonly partial struct Triangle3D: Value<Triangle3D>
+public readonly partial struct Triangle3D
 {
     public readonly Point3D A;
     public readonly Point3D B;
@@ -893,8 +913,8 @@ public readonly partial struct Triangle3D: Value<Triangle3D>
     public static implicit operator Triangle3D((Point3D, Point3D, Point3D) value) => new Triangle3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point3D a, out Point3D b, out Point3D c) { a = A; b = B; c = C; }
     public String TypeName => "Triangle3D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C) };
+    public Array<String> FieldNames => new[] { (String)"A", (String)"B", (String)"C" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C) };
     // Unimplemented concept functions
     public Triangle3D Zero => (A.Zero, B.Zero, C.Zero);
     public Triangle3D One => (A.One, B.One, C.One);
@@ -905,7 +925,7 @@ public readonly partial struct Triangle3D: Value<Triangle3D>
     public Boolean NotEquals(Triangle3D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C));
     public static Boolean operator !=(Triangle3D a, Triangle3D b) => a.NotEquals(b);
 }
-public readonly partial struct Quad2D: Value<Quad2D>
+public readonly partial struct Quad2D
 {
     public readonly Point2D A;
     public readonly Point2D B;
@@ -922,8 +942,8 @@ public readonly partial struct Quad2D: Value<Quad2D>
     public static implicit operator Quad2D((Point2D, Point2D, Point2D, Point2D) value) => new Quad2D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Point2D a, out Point2D b, out Point2D c, out Point2D d) { a = A; b = B; c = C; d = D; }
     public String TypeName => "Quad2D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C", (String)"D" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C), new Dynamic(D) };
+    public Array<String> FieldNames => new[] { (String)"A", (String)"B", (String)"C", (String)"D" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C), new Dynamic(D) };
     // Unimplemented concept functions
     public Quad2D Zero => (A.Zero, B.Zero, C.Zero, D.Zero);
     public Quad2D One => (A.One, B.One, C.One, D.One);
@@ -934,7 +954,7 @@ public readonly partial struct Quad2D: Value<Quad2D>
     public Boolean NotEquals(Quad2D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C) & D.NotEquals(b.D));
     public static Boolean operator !=(Quad2D a, Quad2D b) => a.NotEquals(b);
 }
-public readonly partial struct Quad3D: Value<Quad3D>
+public readonly partial struct Quad3D
 {
     public readonly Point3D A;
     public readonly Point3D B;
@@ -951,8 +971,8 @@ public readonly partial struct Quad3D: Value<Quad3D>
     public static implicit operator Quad3D((Point3D, Point3D, Point3D, Point3D) value) => new Quad3D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Point3D a, out Point3D b, out Point3D c, out Point3D d) { a = A; b = B; c = C; d = D; }
     public String TypeName => "Quad3D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C", (String)"D" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C), new Dynamic(D) };
+    public Array<String> FieldNames => new[] { (String)"A", (String)"B", (String)"C", (String)"D" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C), new Dynamic(D) };
     // Unimplemented concept functions
     public Quad3D Zero => (A.Zero, B.Zero, C.Zero, D.Zero);
     public Quad3D One => (A.One, B.One, C.One, D.One);
@@ -963,7 +983,7 @@ public readonly partial struct Quad3D: Value<Quad3D>
     public Boolean NotEquals(Quad3D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C) & D.NotEquals(b.D));
     public static Boolean operator !=(Quad3D a, Quad3D b) => a.NotEquals(b);
 }
-public readonly partial struct Point2D: Coordinate<Point2D>, AdditiveArithmetic<Point2D, Vector2D>
+public readonly partial struct Point2D
 {
     public readonly Number X;
     public readonly Number Y;
@@ -976,8 +996,8 @@ public readonly partial struct Point2D: Coordinate<Point2D>, AdditiveArithmetic<
     public static implicit operator Point2D((Number, Number) value) => new Point2D(value.Item1, value.Item2);
     public void Deconstruct(out Number x, out Number y) { x = X; y = Y; }
     public String TypeName => "Point2D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(X), new Dynamic(Y) };
+    public Array<String> FieldNames => new[] { (String)"X", (String)"Y" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(X), new Dynamic(Y) };
     // Unimplemented concept functions
     public Point2D Zero => (X.Zero, Y.Zero);
     public Point2D One => (X.One, Y.One);
@@ -991,7 +1011,7 @@ public readonly partial struct Point2D: Coordinate<Point2D>, AdditiveArithmetic<
     public Point2D Subtract(Vector2D other) => throw new NotImplementedException();
     public static Point2D operator -(Point2D self, Vector2D other) => self.Subtract(other);
 }
-public readonly partial struct Point3D: Coordinate<Point3D>, AdditiveArithmetic<Point3D, Vector3D>
+public readonly partial struct Point3D
 {
     public readonly Number X;
     public readonly Number Y;
@@ -1006,8 +1026,8 @@ public readonly partial struct Point3D: Coordinate<Point3D>, AdditiveArithmetic<
     public static implicit operator Point3D((Number, Number, Number) value) => new Point3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number x, out Number y, out Number z) { x = X; y = Y; z = Z; }
     public String TypeName => "Point3D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y", (String)"Z" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z) };
+    public Array<String> FieldNames => new[] { (String)"X", (String)"Y", (String)"Z" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z) };
     // Unimplemented concept functions
     public Point3D Zero => (X.Zero, Y.Zero, Z.Zero);
     public Point3D One => (X.One, Y.One, Z.One);
@@ -1021,7 +1041,7 @@ public readonly partial struct Point3D: Coordinate<Point3D>, AdditiveArithmetic<
     public Point3D Subtract(Vector3D other) => throw new NotImplementedException();
     public static Point3D operator -(Point3D self, Vector3D other) => self.Subtract(other);
 }
-public readonly partial struct Point4D: Coordinate<Point4D>, AdditiveArithmetic<Point4D, Vector4D>
+public readonly partial struct Point4D
 {
     public readonly Number X;
     public readonly Number Y;
@@ -1038,8 +1058,8 @@ public readonly partial struct Point4D: Coordinate<Point4D>, AdditiveArithmetic<
     public static implicit operator Point4D((Number, Number, Number, Number) value) => new Point4D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Number x, out Number y, out Number z, out Number w) { x = X; y = Y; z = Z; w = W; }
     public String TypeName => "Point4D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"X", (String)"Y", (String)"Z", (String)"W" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z), new Dynamic(W) };
+    public Array<String> FieldNames => new[] { (String)"X", (String)"Y", (String)"Z", (String)"W" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(X), new Dynamic(Y), new Dynamic(Z), new Dynamic(W) };
     // Unimplemented concept functions
     public Point4D Zero => (X.Zero, Y.Zero, Z.Zero, W.Zero);
     public Point4D One => (X.One, Y.One, Z.One, W.One);
@@ -1053,7 +1073,7 @@ public readonly partial struct Point4D: Coordinate<Point4D>, AdditiveArithmetic<
     public Point4D Subtract(Vector4D other) => throw new NotImplementedException();
     public static Point4D operator -(Point4D self, Vector4D other) => self.Subtract(other);
 }
-public readonly partial struct Line2D: Interval<Line2D, Point2D, Vector2D>
+public readonly partial struct Line2D
 {
     public readonly Point2D A;
     public readonly Point2D B;
@@ -1066,8 +1086,8 @@ public readonly partial struct Line2D: Interval<Line2D, Point2D, Vector2D>
     public static implicit operator Line2D((Point2D, Point2D) value) => new Line2D(value.Item1, value.Item2);
     public void Deconstruct(out Point2D a, out Point2D b) { a = A; b = B; }
     public String TypeName => "Line2D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(A), new Dynamic(B) };
+    public Array<String> FieldNames => new[] { (String)"A", (String)"B" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B) };
     // Unimplemented concept functions
     public Point2D Min => throw new NotImplementedException();
     public Point2D Max => throw new NotImplementedException();
@@ -1081,7 +1101,7 @@ public readonly partial struct Line2D: Interval<Line2D, Point2D, Vector2D>
     public Boolean NotEquals(Line2D b) => (A.NotEquals(b.A) & B.NotEquals(b.B));
     public static Boolean operator !=(Line2D a, Line2D b) => a.NotEquals(b);
 }
-public readonly partial struct Line3D: Interval<Line3D, Point3D, Vector3D>
+public readonly partial struct Line3D
 {
     public readonly Point3D A;
     public readonly Point3D B;
@@ -1094,8 +1114,8 @@ public readonly partial struct Line3D: Interval<Line3D, Point3D, Vector3D>
     public static implicit operator Line3D((Point3D, Point3D) value) => new Line3D(value.Item1, value.Item2);
     public void Deconstruct(out Point3D a, out Point3D b) { a = A; b = B; }
     public String TypeName => "Line3D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(A), new Dynamic(B) };
+    public Array<String> FieldNames => new[] { (String)"A", (String)"B" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B) };
     // Unimplemented concept functions
     public Point3D Min => throw new NotImplementedException();
     public Point3D Max => throw new NotImplementedException();
@@ -1109,7 +1129,7 @@ public readonly partial struct Line3D: Interval<Line3D, Point3D, Vector3D>
     public Boolean NotEquals(Line3D b) => (A.NotEquals(b.A) & B.NotEquals(b.B));
     public static Boolean operator !=(Line3D a, Line3D b) => a.NotEquals(b);
 }
-public readonly partial struct Color: Coordinate<Color>
+public readonly partial struct Color
 {
     public readonly Unit R;
     public readonly Unit G;
@@ -1126,8 +1146,8 @@ public readonly partial struct Color: Coordinate<Color>
     public static implicit operator Color((Unit, Unit, Unit, Unit) value) => new Color(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Unit r, out Unit g, out Unit b, out Unit a) { r = R; g = G; b = B; a = A; }
     public String TypeName => "Color";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"R", (String)"G", (String)"B", (String)"A" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(R), new Dynamic(G), new Dynamic(B), new Dynamic(A) };
+    public Array<String> FieldNames => new[] { (String)"R", (String)"G", (String)"B", (String)"A" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(R), new Dynamic(G), new Dynamic(B), new Dynamic(A) };
     // Unimplemented concept functions
     public Color Zero => (R.Zero, G.Zero, B.Zero, A.Zero);
     public Color One => (R.One, G.One, B.One, A.One);
@@ -1137,7 +1157,7 @@ public readonly partial struct Color: Coordinate<Color>
     public Color Lerp(Color b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(Color a, Color b) => throw new NotImplementedException();
 }
-public readonly partial struct ColorLUV: Coordinate<ColorLUV>
+public readonly partial struct ColorLUV
 {
     public readonly Percent Lightness;
     public readonly Unit U;
@@ -1152,8 +1172,8 @@ public readonly partial struct ColorLUV: Coordinate<ColorLUV>
     public static implicit operator ColorLUV((Percent, Unit, Unit) value) => new ColorLUV(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Percent lightness, out Unit u, out Unit v) { lightness = Lightness; u = U; v = V; }
     public String TypeName => "ColorLUV";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Lightness", (String)"U", (String)"V" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Lightness), new Dynamic(U), new Dynamic(V) };
+    public Array<String> FieldNames => new[] { (String)"Lightness", (String)"U", (String)"V" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Lightness), new Dynamic(U), new Dynamic(V) };
     // Unimplemented concept functions
     public ColorLUV Zero => (Lightness.Zero, U.Zero, V.Zero);
     public ColorLUV One => (Lightness.One, U.One, V.One);
@@ -1163,7 +1183,7 @@ public readonly partial struct ColorLUV: Coordinate<ColorLUV>
     public ColorLUV Lerp(ColorLUV b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(ColorLUV a, ColorLUV b) => throw new NotImplementedException();
 }
-public readonly partial struct ColorLAB: Coordinate<ColorLAB>
+public readonly partial struct ColorLAB
 {
     public readonly Percent Lightness;
     public readonly Integer A;
@@ -1178,8 +1198,8 @@ public readonly partial struct ColorLAB: Coordinate<ColorLAB>
     public static implicit operator ColorLAB((Percent, Integer, Integer) value) => new ColorLAB(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Percent lightness, out Integer a, out Integer b) { lightness = Lightness; a = A; b = B; }
     public String TypeName => "ColorLAB";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Lightness", (String)"A", (String)"B" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Lightness), new Dynamic(A), new Dynamic(B) };
+    public Array<String> FieldNames => new[] { (String)"Lightness", (String)"A", (String)"B" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Lightness), new Dynamic(A), new Dynamic(B) };
     // Unimplemented concept functions
     public ColorLAB Zero => (Lightness.Zero, A.Zero, B.Zero);
     public ColorLAB One => (Lightness.One, A.One, B.One);
@@ -1189,7 +1209,7 @@ public readonly partial struct ColorLAB: Coordinate<ColorLAB>
     public ColorLAB Lerp(ColorLAB b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(ColorLAB a, ColorLAB b) => throw new NotImplementedException();
 }
-public readonly partial struct ColorLCh: Coordinate<ColorLCh>
+public readonly partial struct ColorLCh
 {
     public readonly Percent Lightness;
     public readonly PolarCoordinate ChromaHue;
@@ -1202,8 +1222,8 @@ public readonly partial struct ColorLCh: Coordinate<ColorLCh>
     public static implicit operator ColorLCh((Percent, PolarCoordinate) value) => new ColorLCh(value.Item1, value.Item2);
     public void Deconstruct(out Percent lightness, out PolarCoordinate chromaHue) { lightness = Lightness; chromaHue = ChromaHue; }
     public String TypeName => "ColorLCh";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Lightness", (String)"ChromaHue" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Lightness), new Dynamic(ChromaHue) };
+    public Array<String> FieldNames => new[] { (String)"Lightness", (String)"ChromaHue" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Lightness), new Dynamic(ChromaHue) };
     // Unimplemented concept functions
     public ColorLCh Zero => (Lightness.Zero, ChromaHue.Zero);
     public ColorLCh One => (Lightness.One, ChromaHue.One);
@@ -1213,7 +1233,7 @@ public readonly partial struct ColorLCh: Coordinate<ColorLCh>
     public ColorLCh Lerp(ColorLCh b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(ColorLCh a, ColorLCh b) => throw new NotImplementedException();
 }
-public readonly partial struct ColorHSV: Coordinate<ColorHSV>
+public readonly partial struct ColorHSV
 {
     public readonly Angle Hue;
     public readonly Unit S;
@@ -1228,8 +1248,8 @@ public readonly partial struct ColorHSV: Coordinate<ColorHSV>
     public static implicit operator ColorHSV((Angle, Unit, Unit) value) => new ColorHSV(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Angle hue, out Unit s, out Unit v) { hue = Hue; s = S; v = V; }
     public String TypeName => "ColorHSV";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Hue", (String)"S", (String)"V" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Hue), new Dynamic(S), new Dynamic(V) };
+    public Array<String> FieldNames => new[] { (String)"Hue", (String)"S", (String)"V" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Hue), new Dynamic(S), new Dynamic(V) };
     // Unimplemented concept functions
     public ColorHSV Zero => (Hue.Zero, S.Zero, V.Zero);
     public ColorHSV One => (Hue.One, S.One, V.One);
@@ -1239,7 +1259,7 @@ public readonly partial struct ColorHSV: Coordinate<ColorHSV>
     public ColorHSV Lerp(ColorHSV b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(ColorHSV a, ColorHSV b) => throw new NotImplementedException();
 }
-public readonly partial struct ColorHSL: Coordinate<ColorHSL>
+public readonly partial struct ColorHSL
 {
     public readonly Angle Hue;
     public readonly Unit Saturation;
@@ -1254,8 +1274,8 @@ public readonly partial struct ColorHSL: Coordinate<ColorHSL>
     public static implicit operator ColorHSL((Angle, Unit, Unit) value) => new ColorHSL(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Angle hue, out Unit saturation, out Unit luminance) { hue = Hue; saturation = Saturation; luminance = Luminance; }
     public String TypeName => "ColorHSL";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Hue", (String)"Saturation", (String)"Luminance" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Hue), new Dynamic(Saturation), new Dynamic(Luminance) };
+    public Array<String> FieldNames => new[] { (String)"Hue", (String)"Saturation", (String)"Luminance" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Hue), new Dynamic(Saturation), new Dynamic(Luminance) };
     // Unimplemented concept functions
     public ColorHSL Zero => (Hue.Zero, Saturation.Zero, Luminance.Zero);
     public ColorHSL One => (Hue.One, Saturation.One, Luminance.One);
@@ -1265,7 +1285,7 @@ public readonly partial struct ColorHSL: Coordinate<ColorHSL>
     public ColorHSL Lerp(ColorHSL b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(ColorHSL a, ColorHSL b) => throw new NotImplementedException();
 }
-public readonly partial struct ColorYCbCr: Coordinate<ColorYCbCr>
+public readonly partial struct ColorYCbCr
 {
     public readonly Unit Y;
     public readonly Unit Cb;
@@ -1280,8 +1300,8 @@ public readonly partial struct ColorYCbCr: Coordinate<ColorYCbCr>
     public static implicit operator ColorYCbCr((Unit, Unit, Unit) value) => new ColorYCbCr(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Unit y, out Unit cb, out Unit cr) { y = Y; cb = Cb; cr = Cr; }
     public String TypeName => "ColorYCbCr";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Y", (String)"Cb", (String)"Cr" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Y), new Dynamic(Cb), new Dynamic(Cr) };
+    public Array<String> FieldNames => new[] { (String)"Y", (String)"Cb", (String)"Cr" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Y), new Dynamic(Cb), new Dynamic(Cr) };
     // Unimplemented concept functions
     public ColorYCbCr Zero => (Y.Zero, Cb.Zero, Cr.Zero);
     public ColorYCbCr One => (Y.One, Cb.One, Cr.One);
@@ -1291,7 +1311,7 @@ public readonly partial struct ColorYCbCr: Coordinate<ColorYCbCr>
     public ColorYCbCr Lerp(ColorYCbCr b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(ColorYCbCr a, ColorYCbCr b) => throw new NotImplementedException();
 }
-public readonly partial struct SphericalCoordinate: Coordinate<SphericalCoordinate>
+public readonly partial struct SphericalCoordinate
 {
     public readonly Number Radius;
     public readonly Angle Azimuth;
@@ -1306,8 +1326,8 @@ public readonly partial struct SphericalCoordinate: Coordinate<SphericalCoordina
     public static implicit operator SphericalCoordinate((Number, Angle, Angle) value) => new SphericalCoordinate(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number radius, out Angle azimuth, out Angle polar) { radius = Radius; azimuth = Azimuth; polar = Polar; }
     public String TypeName => "SphericalCoordinate";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Radius", (String)"Azimuth", (String)"Polar" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Radius), new Dynamic(Azimuth), new Dynamic(Polar) };
+    public Array<String> FieldNames => new[] { (String)"Radius", (String)"Azimuth", (String)"Polar" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Radius), new Dynamic(Azimuth), new Dynamic(Polar) };
     // Unimplemented concept functions
     public SphericalCoordinate Zero => (Radius.Zero, Azimuth.Zero, Polar.Zero);
     public SphericalCoordinate One => (Radius.One, Azimuth.One, Polar.One);
@@ -1317,7 +1337,7 @@ public readonly partial struct SphericalCoordinate: Coordinate<SphericalCoordina
     public SphericalCoordinate Lerp(SphericalCoordinate b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(SphericalCoordinate a, SphericalCoordinate b) => throw new NotImplementedException();
 }
-public readonly partial struct PolarCoordinate: Coordinate<PolarCoordinate>
+public readonly partial struct PolarCoordinate
 {
     public readonly Number Radius;
     public readonly Angle Angle;
@@ -1330,8 +1350,8 @@ public readonly partial struct PolarCoordinate: Coordinate<PolarCoordinate>
     public static implicit operator PolarCoordinate((Number, Angle) value) => new PolarCoordinate(value.Item1, value.Item2);
     public void Deconstruct(out Number radius, out Angle angle) { radius = Radius; angle = Angle; }
     public String TypeName => "PolarCoordinate";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Radius", (String)"Angle" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Radius), new Dynamic(Angle) };
+    public Array<String> FieldNames => new[] { (String)"Radius", (String)"Angle" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Radius), new Dynamic(Angle) };
     // Unimplemented concept functions
     public PolarCoordinate Zero => (Radius.Zero, Angle.Zero);
     public PolarCoordinate One => (Radius.One, Angle.One);
@@ -1341,7 +1361,7 @@ public readonly partial struct PolarCoordinate: Coordinate<PolarCoordinate>
     public PolarCoordinate Lerp(PolarCoordinate b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(PolarCoordinate a, PolarCoordinate b) => throw new NotImplementedException();
 }
-public readonly partial struct LogPolarCoordinate: Coordinate<LogPolarCoordinate>
+public readonly partial struct LogPolarCoordinate
 {
     public readonly Number Rho;
     public readonly Angle Azimuth;
@@ -1354,8 +1374,8 @@ public readonly partial struct LogPolarCoordinate: Coordinate<LogPolarCoordinate
     public static implicit operator LogPolarCoordinate((Number, Angle) value) => new LogPolarCoordinate(value.Item1, value.Item2);
     public void Deconstruct(out Number rho, out Angle azimuth) { rho = Rho; azimuth = Azimuth; }
     public String TypeName => "LogPolarCoordinate";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Rho", (String)"Azimuth" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Rho), new Dynamic(Azimuth) };
+    public Array<String> FieldNames => new[] { (String)"Rho", (String)"Azimuth" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Rho), new Dynamic(Azimuth) };
     // Unimplemented concept functions
     public LogPolarCoordinate Zero => (Rho.Zero, Azimuth.Zero);
     public LogPolarCoordinate One => (Rho.One, Azimuth.One);
@@ -1365,7 +1385,7 @@ public readonly partial struct LogPolarCoordinate: Coordinate<LogPolarCoordinate
     public LogPolarCoordinate Lerp(LogPolarCoordinate b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(LogPolarCoordinate a, LogPolarCoordinate b) => throw new NotImplementedException();
 }
-public readonly partial struct CylindricalCoordinate: Coordinate<CylindricalCoordinate>
+public readonly partial struct CylindricalCoordinate
 {
     public readonly Number RadialDistance;
     public readonly Angle Azimuth;
@@ -1380,8 +1400,8 @@ public readonly partial struct CylindricalCoordinate: Coordinate<CylindricalCoor
     public static implicit operator CylindricalCoordinate((Number, Angle, Number) value) => new CylindricalCoordinate(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number radialDistance, out Angle azimuth, out Number height) { radialDistance = RadialDistance; azimuth = Azimuth; height = Height; }
     public String TypeName => "CylindricalCoordinate";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"RadialDistance", (String)"Azimuth", (String)"Height" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(RadialDistance), new Dynamic(Azimuth), new Dynamic(Height) };
+    public Array<String> FieldNames => new[] { (String)"RadialDistance", (String)"Azimuth", (String)"Height" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(RadialDistance), new Dynamic(Azimuth), new Dynamic(Height) };
     // Unimplemented concept functions
     public CylindricalCoordinate Zero => (RadialDistance.Zero, Azimuth.Zero, Height.Zero);
     public CylindricalCoordinate One => (RadialDistance.One, Azimuth.One, Height.One);
@@ -1391,7 +1411,7 @@ public readonly partial struct CylindricalCoordinate: Coordinate<CylindricalCoor
     public CylindricalCoordinate Lerp(CylindricalCoordinate b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(CylindricalCoordinate a, CylindricalCoordinate b) => throw new NotImplementedException();
 }
-public readonly partial struct HorizontalCoordinate: Coordinate<HorizontalCoordinate>
+public readonly partial struct HorizontalCoordinate
 {
     public readonly Number Radius;
     public readonly Angle Azimuth;
@@ -1406,8 +1426,8 @@ public readonly partial struct HorizontalCoordinate: Coordinate<HorizontalCoordi
     public static implicit operator HorizontalCoordinate((Number, Angle, Number) value) => new HorizontalCoordinate(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number radius, out Angle azimuth, out Number height) { radius = Radius; azimuth = Azimuth; height = Height; }
     public String TypeName => "HorizontalCoordinate";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Radius", (String)"Azimuth", (String)"Height" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Radius), new Dynamic(Azimuth), new Dynamic(Height) };
+    public Array<String> FieldNames => new[] { (String)"Radius", (String)"Azimuth", (String)"Height" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Radius), new Dynamic(Azimuth), new Dynamic(Height) };
     // Unimplemented concept functions
     public HorizontalCoordinate Zero => (Radius.Zero, Azimuth.Zero, Height.Zero);
     public HorizontalCoordinate One => (Radius.One, Azimuth.One, Height.One);
@@ -1417,7 +1437,7 @@ public readonly partial struct HorizontalCoordinate: Coordinate<HorizontalCoordi
     public HorizontalCoordinate Lerp(HorizontalCoordinate b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(HorizontalCoordinate a, HorizontalCoordinate b) => throw new NotImplementedException();
 }
-public readonly partial struct GeoCoordinate: Coordinate<GeoCoordinate>
+public readonly partial struct GeoCoordinate
 {
     public readonly Angle Latitude;
     public readonly Angle Longitude;
@@ -1430,8 +1450,8 @@ public readonly partial struct GeoCoordinate: Coordinate<GeoCoordinate>
     public static implicit operator GeoCoordinate((Angle, Angle) value) => new GeoCoordinate(value.Item1, value.Item2);
     public void Deconstruct(out Angle latitude, out Angle longitude) { latitude = Latitude; longitude = Longitude; }
     public String TypeName => "GeoCoordinate";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Latitude", (String)"Longitude" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Latitude), new Dynamic(Longitude) };
+    public Array<String> FieldNames => new[] { (String)"Latitude", (String)"Longitude" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Latitude), new Dynamic(Longitude) };
     // Unimplemented concept functions
     public GeoCoordinate Zero => (Latitude.Zero, Longitude.Zero);
     public GeoCoordinate One => (Latitude.One, Longitude.One);
@@ -1441,7 +1461,7 @@ public readonly partial struct GeoCoordinate: Coordinate<GeoCoordinate>
     public GeoCoordinate Lerp(GeoCoordinate b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(GeoCoordinate a, GeoCoordinate b) => throw new NotImplementedException();
 }
-public readonly partial struct GeoCoordinateWithAltitude: Coordinate<GeoCoordinateWithAltitude>
+public readonly partial struct GeoCoordinateWithAltitude
 {
     public readonly GeoCoordinate Coordinate;
     public readonly Number Altitude;
@@ -1454,8 +1474,8 @@ public readonly partial struct GeoCoordinateWithAltitude: Coordinate<GeoCoordina
     public static implicit operator GeoCoordinateWithAltitude((GeoCoordinate, Number) value) => new GeoCoordinateWithAltitude(value.Item1, value.Item2);
     public void Deconstruct(out GeoCoordinate coordinate, out Number altitude) { coordinate = Coordinate; altitude = Altitude; }
     public String TypeName => "GeoCoordinateWithAltitude";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Coordinate", (String)"Altitude" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Coordinate), new Dynamic(Altitude) };
+    public Array<String> FieldNames => new[] { (String)"Coordinate", (String)"Altitude" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Coordinate), new Dynamic(Altitude) };
     // Unimplemented concept functions
     public GeoCoordinateWithAltitude Zero => (Coordinate.Zero, Altitude.Zero);
     public GeoCoordinateWithAltitude One => (Coordinate.One, Altitude.One);
@@ -1465,7 +1485,7 @@ public readonly partial struct GeoCoordinateWithAltitude: Coordinate<GeoCoordina
     public GeoCoordinateWithAltitude Lerp(GeoCoordinateWithAltitude b, Number amount) => throw new NotImplementedException();
     public Number Unlerp(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) => throw new NotImplementedException();
 }
-public readonly partial struct Circle: Value<Circle>
+public readonly partial struct Circle
 {
     public readonly Point2D Center;
     public readonly Number Radius;
@@ -1478,8 +1498,8 @@ public readonly partial struct Circle: Value<Circle>
     public static implicit operator Circle((Point2D, Number) value) => new Circle(value.Item1, value.Item2);
     public void Deconstruct(out Point2D center, out Number radius) { center = Center; radius = Radius; }
     public String TypeName => "Circle";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Center", (String)"Radius" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Center), new Dynamic(Radius) };
+    public Array<String> FieldNames => new[] { (String)"Center", (String)"Radius" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Center), new Dynamic(Radius) };
     // Unimplemented concept functions
     public Circle Zero => (Center.Zero, Radius.Zero);
     public Circle One => (Center.One, Radius.One);
@@ -1490,7 +1510,7 @@ public readonly partial struct Circle: Value<Circle>
     public Boolean NotEquals(Circle b) => (Center.NotEquals(b.Center) & Radius.NotEquals(b.Radius));
     public static Boolean operator !=(Circle a, Circle b) => a.NotEquals(b);
 }
-public readonly partial struct Chord: Value<Chord>
+public readonly partial struct Chord
 {
     public readonly Circle Circle;
     public readonly Arc Arc;
@@ -1503,8 +1523,8 @@ public readonly partial struct Chord: Value<Chord>
     public static implicit operator Chord((Circle, Arc) value) => new Chord(value.Item1, value.Item2);
     public void Deconstruct(out Circle circle, out Arc arc) { circle = Circle; arc = Arc; }
     public String TypeName => "Chord";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Circle", (String)"Arc" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Circle), new Dynamic(Arc) };
+    public Array<String> FieldNames => new[] { (String)"Circle", (String)"Arc" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Circle), new Dynamic(Arc) };
     // Unimplemented concept functions
     public Chord Zero => (Circle.Zero, Arc.Zero);
     public Chord One => (Circle.One, Arc.One);
@@ -1515,7 +1535,7 @@ public readonly partial struct Chord: Value<Chord>
     public Boolean NotEquals(Chord b) => (Circle.NotEquals(b.Circle) & Arc.NotEquals(b.Arc));
     public static Boolean operator !=(Chord a, Chord b) => a.NotEquals(b);
 }
-public readonly partial struct Size2D: Value<Size2D>
+public readonly partial struct Size2D
 {
     public readonly Number Width;
     public readonly Number Height;
@@ -1528,8 +1548,8 @@ public readonly partial struct Size2D: Value<Size2D>
     public static implicit operator Size2D((Number, Number) value) => new Size2D(value.Item1, value.Item2);
     public void Deconstruct(out Number width, out Number height) { width = Width; height = Height; }
     public String TypeName => "Size2D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Width", (String)"Height" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Width), new Dynamic(Height) };
+    public Array<String> FieldNames => new[] { (String)"Width", (String)"Height" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Width), new Dynamic(Height) };
     // Unimplemented concept functions
     public Size2D Zero => (Width.Zero, Height.Zero);
     public Size2D One => (Width.One, Height.One);
@@ -1540,7 +1560,7 @@ public readonly partial struct Size2D: Value<Size2D>
     public Boolean NotEquals(Size2D b) => (Width.NotEquals(b.Width) & Height.NotEquals(b.Height));
     public static Boolean operator !=(Size2D a, Size2D b) => a.NotEquals(b);
 }
-public readonly partial struct Size3D: Value<Size3D>
+public readonly partial struct Size3D
 {
     public readonly Number Width;
     public readonly Number Height;
@@ -1555,8 +1575,8 @@ public readonly partial struct Size3D: Value<Size3D>
     public static implicit operator Size3D((Number, Number, Number) value) => new Size3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Number width, out Number height, out Number depth) { width = Width; height = Height; depth = Depth; }
     public String TypeName => "Size3D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Width", (String)"Height", (String)"Depth" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Width), new Dynamic(Height), new Dynamic(Depth) };
+    public Array<String> FieldNames => new[] { (String)"Width", (String)"Height", (String)"Depth" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Width), new Dynamic(Height), new Dynamic(Depth) };
     // Unimplemented concept functions
     public Size3D Zero => (Width.Zero, Height.Zero, Depth.Zero);
     public Size3D One => (Width.One, Height.One, Depth.One);
@@ -1567,7 +1587,7 @@ public readonly partial struct Size3D: Value<Size3D>
     public Boolean NotEquals(Size3D b) => (Width.NotEquals(b.Width) & Height.NotEquals(b.Height) & Depth.NotEquals(b.Depth));
     public static Boolean operator !=(Size3D a, Size3D b) => a.NotEquals(b);
 }
-public readonly partial struct Rectangle2D: Value<Rectangle2D>
+public readonly partial struct Rectangle2D
 {
     public readonly Point2D Center;
     public readonly Size2D Size;
@@ -1580,8 +1600,8 @@ public readonly partial struct Rectangle2D: Value<Rectangle2D>
     public static implicit operator Rectangle2D((Point2D, Size2D) value) => new Rectangle2D(value.Item1, value.Item2);
     public void Deconstruct(out Point2D center, out Size2D size) { center = Center; size = Size; }
     public String TypeName => "Rectangle2D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Center", (String)"Size" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Center), new Dynamic(Size) };
+    public Array<String> FieldNames => new[] { (String)"Center", (String)"Size" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Center), new Dynamic(Size) };
     // Unimplemented concept functions
     public Rectangle2D Zero => (Center.Zero, Size.Zero);
     public Rectangle2D One => (Center.One, Size.One);
@@ -1592,7 +1612,7 @@ public readonly partial struct Rectangle2D: Value<Rectangle2D>
     public Boolean NotEquals(Rectangle2D b) => (Center.NotEquals(b.Center) & Size.NotEquals(b.Size));
     public static Boolean operator !=(Rectangle2D a, Rectangle2D b) => a.NotEquals(b);
 }
-public readonly partial struct Proportion: Numerical<Proportion>
+public readonly partial struct Proportion
 {
     public readonly Number Value;
     public Proportion WithValue(Number value) => (value);
@@ -1602,9 +1622,19 @@ public readonly partial struct Proportion: Numerical<Proportion>
     public static implicit operator Number(Proportion self) => self.Value;
     public static implicit operator Proportion(Number value) => new Proportion(value);
     public String TypeName => "Proportion";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
+    public Array<String> FieldNames => new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
+    public Proportion Multiply(Number other) => throw new NotImplementedException();
+    public static Proportion operator *(Proportion self, Number other) => self.Multiply(other);
+    public Proportion Divide(Number other) => throw new NotImplementedException();
+    public static Proportion operator /(Proportion self, Number other) => self.Divide(other);
+    public Proportion Modulo(Number other) => throw new NotImplementedException();
+    public static Proportion operator %(Proportion self, Number other) => self.Modulo(other);
+    public Proportion Add(Number other) => throw new NotImplementedException();
+    public static Proportion operator +(Proportion self, Number other) => self.Add(other);
+    public Proportion Subtract(Number other) => throw new NotImplementedException();
+    public static Proportion operator -(Proportion self, Number other) => self.Subtract(other);
     public Number Unlerp(Proportion a, Proportion b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Proportion y) => throw new NotImplementedException();
@@ -1626,7 +1656,7 @@ public readonly partial struct Proportion: Numerical<Proportion>
     public Proportion MinValue => (Value.MinValue);
     public Proportion MaxValue => (Value.MaxValue);
 }
-public readonly partial struct Fraction: Value<Fraction>
+public readonly partial struct Fraction
 {
     public readonly Number Numerator;
     public readonly Number Denominator;
@@ -1639,8 +1669,8 @@ public readonly partial struct Fraction: Value<Fraction>
     public static implicit operator Fraction((Number, Number) value) => new Fraction(value.Item1, value.Item2);
     public void Deconstruct(out Number numerator, out Number denominator) { numerator = Numerator; denominator = Denominator; }
     public String TypeName => "Fraction";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Numerator", (String)"Denominator" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Numerator), new Dynamic(Denominator) };
+    public Array<String> FieldNames => new[] { (String)"Numerator", (String)"Denominator" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Numerator), new Dynamic(Denominator) };
     // Unimplemented concept functions
     public Fraction Zero => (Numerator.Zero, Denominator.Zero);
     public Fraction One => (Numerator.One, Denominator.One);
@@ -1651,7 +1681,7 @@ public readonly partial struct Fraction: Value<Fraction>
     public Boolean NotEquals(Fraction b) => (Numerator.NotEquals(b.Numerator) & Denominator.NotEquals(b.Denominator));
     public static Boolean operator !=(Fraction a, Fraction b) => a.NotEquals(b);
 }
-public readonly partial struct Angle: Measure<Angle>
+public readonly partial struct Angle
 {
     public readonly Number Radians;
     public Angle WithRadians(Number radians) => (radians);
@@ -1661,8 +1691,8 @@ public readonly partial struct Angle: Measure<Angle>
     public static implicit operator Number(Angle self) => self.Radians;
     public static implicit operator Angle(Number value) => new Angle(value);
     public String TypeName => "Angle";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Radians" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Radians) };
+    public Array<String> FieldNames => new[] { (String)"Radians" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Radians) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public Angle Lerp(Angle b, Number amount) => throw new NotImplementedException();
@@ -1684,7 +1714,7 @@ public readonly partial struct Angle: Measure<Angle>
     public Angle MinValue => (Radians.MinValue);
     public Angle MaxValue => (Radians.MaxValue);
 }
-public readonly partial struct Length: Measure<Length>
+public readonly partial struct Length
 {
     public readonly Number Meters;
     public Length WithMeters(Number meters) => (meters);
@@ -1694,8 +1724,8 @@ public readonly partial struct Length: Measure<Length>
     public static implicit operator Number(Length self) => self.Meters;
     public static implicit operator Length(Number value) => new Length(value);
     public String TypeName => "Length";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Meters" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Meters) };
+    public Array<String> FieldNames => new[] { (String)"Meters" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Meters) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public Length Lerp(Length b, Number amount) => throw new NotImplementedException();
@@ -1717,7 +1747,7 @@ public readonly partial struct Length: Measure<Length>
     public Length MinValue => (Meters.MinValue);
     public Length MaxValue => (Meters.MaxValue);
 }
-public readonly partial struct Mass: Measure<Mass>
+public readonly partial struct Mass
 {
     public readonly Number Kilograms;
     public Mass WithKilograms(Number kilograms) => (kilograms);
@@ -1727,8 +1757,8 @@ public readonly partial struct Mass: Measure<Mass>
     public static implicit operator Number(Mass self) => self.Kilograms;
     public static implicit operator Mass(Number value) => new Mass(value);
     public String TypeName => "Mass";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Kilograms" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Kilograms) };
+    public Array<String> FieldNames => new[] { (String)"Kilograms" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Kilograms) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public Mass Lerp(Mass b, Number amount) => throw new NotImplementedException();
@@ -1750,7 +1780,7 @@ public readonly partial struct Mass: Measure<Mass>
     public Mass MinValue => (Kilograms.MinValue);
     public Mass MaxValue => (Kilograms.MaxValue);
 }
-public readonly partial struct Temperature: Measure<Temperature>
+public readonly partial struct Temperature
 {
     public readonly Number Celsius;
     public Temperature WithCelsius(Number celsius) => (celsius);
@@ -1760,8 +1790,8 @@ public readonly partial struct Temperature: Measure<Temperature>
     public static implicit operator Number(Temperature self) => self.Celsius;
     public static implicit operator Temperature(Number value) => new Temperature(value);
     public String TypeName => "Temperature";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Celsius" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Celsius) };
+    public Array<String> FieldNames => new[] { (String)"Celsius" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Celsius) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public Temperature Lerp(Temperature b, Number amount) => throw new NotImplementedException();
@@ -1783,7 +1813,7 @@ public readonly partial struct Temperature: Measure<Temperature>
     public Temperature MinValue => (Celsius.MinValue);
     public Temperature MaxValue => (Celsius.MaxValue);
 }
-public readonly partial struct Time: Measure<Time>
+public readonly partial struct Time
 {
     public readonly Number Seconds;
     public Time WithSeconds(Number seconds) => (seconds);
@@ -1793,8 +1823,8 @@ public readonly partial struct Time: Measure<Time>
     public static implicit operator Number(Time self) => self.Seconds;
     public static implicit operator Time(Number value) => new Time(value);
     public String TypeName => "Time";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Seconds" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Seconds) };
+    public Array<String> FieldNames => new[] { (String)"Seconds" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Seconds) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public Time Lerp(Time b, Number amount) => throw new NotImplementedException();
@@ -1816,7 +1846,7 @@ public readonly partial struct Time: Measure<Time>
     public Time MinValue => (Seconds.MinValue);
     public Time MaxValue => (Seconds.MaxValue);
 }
-public readonly partial struct TimeRange: Interval<TimeRange, DateTime, Time>
+public readonly partial struct TimeRange
 {
     public readonly DateTime Begin;
     public readonly DateTime End;
@@ -1829,8 +1859,8 @@ public readonly partial struct TimeRange: Interval<TimeRange, DateTime, Time>
     public static implicit operator TimeRange((DateTime, DateTime) value) => new TimeRange(value.Item1, value.Item2);
     public void Deconstruct(out DateTime begin, out DateTime end) { begin = Begin; end = End; }
     public String TypeName => "TimeRange";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Begin", (String)"End" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Begin), new Dynamic(End) };
+    public Array<String> FieldNames => new[] { (String)"Begin", (String)"End" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Begin), new Dynamic(End) };
     // Unimplemented concept functions
     public DateTime Min => throw new NotImplementedException();
     public DateTime Max => throw new NotImplementedException();
@@ -1844,7 +1874,7 @@ public readonly partial struct TimeRange: Interval<TimeRange, DateTime, Time>
     public Boolean NotEquals(TimeRange b) => (Begin.NotEquals(b.Begin) & End.NotEquals(b.End));
     public static Boolean operator !=(TimeRange a, TimeRange b) => a.NotEquals(b);
 }
-public readonly partial struct DateTime: Coordinate<DateTime>, AdditiveArithmetic<DateTime, Time>
+public readonly partial struct DateTime
 {
     public readonly Number Value;
     public DateTime WithValue(Number value) => (value);
@@ -1854,8 +1884,8 @@ public readonly partial struct DateTime: Coordinate<DateTime>, AdditiveArithmeti
     public static implicit operator Number(DateTime self) => self.Value;
     public static implicit operator DateTime(Number value) => new DateTime(value);
     public String TypeName => "DateTime";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
+    public Array<String> FieldNames => new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
     public DateTime Zero => (Value.Zero);
     public DateTime One => (Value.One);
@@ -1869,7 +1899,7 @@ public readonly partial struct DateTime: Coordinate<DateTime>, AdditiveArithmeti
     public DateTime Subtract(Time other) => throw new NotImplementedException();
     public static DateTime operator -(DateTime self, Time other) => self.Subtract(other);
 }
-public readonly partial struct AnglePair: Interval<AnglePair, Angle, Angle>
+public readonly partial struct AnglePair
 {
     public readonly Angle Start;
     public readonly Angle End;
@@ -1882,8 +1912,8 @@ public readonly partial struct AnglePair: Interval<AnglePair, Angle, Angle>
     public static implicit operator AnglePair((Angle, Angle) value) => new AnglePair(value.Item1, value.Item2);
     public void Deconstruct(out Angle start, out Angle end) { start = Start; end = End; }
     public String TypeName => "AnglePair";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Start", (String)"End" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Start), new Dynamic(End) };
+    public Array<String> FieldNames => new[] { (String)"Start", (String)"End" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Start), new Dynamic(End) };
     // Unimplemented concept functions
     public Angle Min => throw new NotImplementedException();
     public Angle Max => throw new NotImplementedException();
@@ -1897,7 +1927,7 @@ public readonly partial struct AnglePair: Interval<AnglePair, Angle, Angle>
     public Boolean NotEquals(AnglePair b) => (Start.NotEquals(b.Start) & End.NotEquals(b.End));
     public static Boolean operator !=(AnglePair a, AnglePair b) => a.NotEquals(b);
 }
-public readonly partial struct Ring: Value<Ring>
+public readonly partial struct Ring
 {
     public readonly Circle Circle;
     public readonly Number InnerRadius;
@@ -1910,8 +1940,8 @@ public readonly partial struct Ring: Value<Ring>
     public static implicit operator Ring((Circle, Number) value) => new Ring(value.Item1, value.Item2);
     public void Deconstruct(out Circle circle, out Number innerRadius) { circle = Circle; innerRadius = InnerRadius; }
     public String TypeName => "Ring";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Circle", (String)"InnerRadius" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Circle), new Dynamic(InnerRadius) };
+    public Array<String> FieldNames => new[] { (String)"Circle", (String)"InnerRadius" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Circle), new Dynamic(InnerRadius) };
     // Unimplemented concept functions
     public Ring Zero => (Circle.Zero, InnerRadius.Zero);
     public Ring One => (Circle.One, InnerRadius.One);
@@ -1922,7 +1952,7 @@ public readonly partial struct Ring: Value<Ring>
     public Boolean NotEquals(Ring b) => (Circle.NotEquals(b.Circle) & InnerRadius.NotEquals(b.InnerRadius));
     public static Boolean operator !=(Ring a, Ring b) => a.NotEquals(b);
 }
-public readonly partial struct Arc: Value<Arc>
+public readonly partial struct Arc
 {
     public readonly AnglePair Angles;
     public readonly Circle Cirlce;
@@ -1935,8 +1965,8 @@ public readonly partial struct Arc: Value<Arc>
     public static implicit operator Arc((AnglePair, Circle) value) => new Arc(value.Item1, value.Item2);
     public void Deconstruct(out AnglePair angles, out Circle cirlce) { angles = Angles; cirlce = Cirlce; }
     public String TypeName => "Arc";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Angles", (String)"Cirlce" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Angles), new Dynamic(Cirlce) };
+    public Array<String> FieldNames => new[] { (String)"Angles", (String)"Cirlce" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Angles), new Dynamic(Cirlce) };
     // Unimplemented concept functions
     public Arc Zero => (Angles.Zero, Cirlce.Zero);
     public Arc One => (Angles.One, Cirlce.One);
@@ -1947,7 +1977,7 @@ public readonly partial struct Arc: Value<Arc>
     public Boolean NotEquals(Arc b) => (Angles.NotEquals(b.Angles) & Cirlce.NotEquals(b.Cirlce));
     public static Boolean operator !=(Arc a, Arc b) => a.NotEquals(b);
 }
-public readonly partial struct RealInterval: Interval<RealInterval, Number, Number>
+public readonly partial struct RealInterval
 {
     public readonly Number A;
     public readonly Number B;
@@ -1960,8 +1990,8 @@ public readonly partial struct RealInterval: Interval<RealInterval, Number, Numb
     public static implicit operator RealInterval((Number, Number) value) => new RealInterval(value.Item1, value.Item2);
     public void Deconstruct(out Number a, out Number b) { a = A; b = B; }
     public String TypeName => "RealInterval";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(A), new Dynamic(B) };
+    public Array<String> FieldNames => new[] { (String)"A", (String)"B" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B) };
     // Unimplemented concept functions
     public Number Min => throw new NotImplementedException();
     public Number Max => throw new NotImplementedException();
@@ -1975,7 +2005,7 @@ public readonly partial struct RealInterval: Interval<RealInterval, Number, Numb
     public Boolean NotEquals(RealInterval b) => (A.NotEquals(b.A) & B.NotEquals(b.B));
     public static Boolean operator !=(RealInterval a, RealInterval b) => a.NotEquals(b);
 }
-public readonly partial struct Capsule: Value<Capsule>
+public readonly partial struct Capsule
 {
     public readonly Line3D Line;
     public readonly Number Radius;
@@ -1988,8 +2018,8 @@ public readonly partial struct Capsule: Value<Capsule>
     public static implicit operator Capsule((Line3D, Number) value) => new Capsule(value.Item1, value.Item2);
     public void Deconstruct(out Line3D line, out Number radius) { line = Line; radius = Radius; }
     public String TypeName => "Capsule";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Line", (String)"Radius" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Line), new Dynamic(Radius) };
+    public Array<String> FieldNames => new[] { (String)"Line", (String)"Radius" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Line), new Dynamic(Radius) };
     // Unimplemented concept functions
     public Capsule Zero => (Line.Zero, Radius.Zero);
     public Capsule One => (Line.One, Radius.One);
@@ -2000,7 +2030,7 @@ public readonly partial struct Capsule: Value<Capsule>
     public Boolean NotEquals(Capsule b) => (Line.NotEquals(b.Line) & Radius.NotEquals(b.Radius));
     public static Boolean operator !=(Capsule a, Capsule b) => a.NotEquals(b);
 }
-public readonly partial struct Matrix3D: Value<Matrix3D>
+public readonly partial struct Matrix3D
 {
     public readonly Vector4D Column1;
     public readonly Vector4D Column2;
@@ -2017,8 +2047,8 @@ public readonly partial struct Matrix3D: Value<Matrix3D>
     public static implicit operator Matrix3D((Vector4D, Vector4D, Vector4D, Vector4D) value) => new Matrix3D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Vector4D column1, out Vector4D column2, out Vector4D column3, out Vector4D column4) { column1 = Column1; column2 = Column2; column3 = Column3; column4 = Column4; }
     public String TypeName => "Matrix3D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Column1", (String)"Column2", (String)"Column3", (String)"Column4" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Column1), new Dynamic(Column2), new Dynamic(Column3), new Dynamic(Column4) };
+    public Array<String> FieldNames => new[] { (String)"Column1", (String)"Column2", (String)"Column3", (String)"Column4" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Column1), new Dynamic(Column2), new Dynamic(Column3), new Dynamic(Column4) };
     // Unimplemented concept functions
     public Matrix3D Zero => (Column1.Zero, Column2.Zero, Column3.Zero, Column4.Zero);
     public Matrix3D One => (Column1.One, Column2.One, Column3.One, Column4.One);
@@ -2029,7 +2059,7 @@ public readonly partial struct Matrix3D: Value<Matrix3D>
     public Boolean NotEquals(Matrix3D b) => (Column1.NotEquals(b.Column1) & Column2.NotEquals(b.Column2) & Column3.NotEquals(b.Column3) & Column4.NotEquals(b.Column4));
     public static Boolean operator !=(Matrix3D a, Matrix3D b) => a.NotEquals(b);
 }
-public readonly partial struct Cylinder: Value<Cylinder>
+public readonly partial struct Cylinder
 {
     public readonly Line3D Line;
     public readonly Number Radius;
@@ -2042,8 +2072,8 @@ public readonly partial struct Cylinder: Value<Cylinder>
     public static implicit operator Cylinder((Line3D, Number) value) => new Cylinder(value.Item1, value.Item2);
     public void Deconstruct(out Line3D line, out Number radius) { line = Line; radius = Radius; }
     public String TypeName => "Cylinder";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Line", (String)"Radius" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Line), new Dynamic(Radius) };
+    public Array<String> FieldNames => new[] { (String)"Line", (String)"Radius" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Line), new Dynamic(Radius) };
     // Unimplemented concept functions
     public Cylinder Zero => (Line.Zero, Radius.Zero);
     public Cylinder One => (Line.One, Radius.One);
@@ -2054,7 +2084,7 @@ public readonly partial struct Cylinder: Value<Cylinder>
     public Boolean NotEquals(Cylinder b) => (Line.NotEquals(b.Line) & Radius.NotEquals(b.Radius));
     public static Boolean operator !=(Cylinder a, Cylinder b) => a.NotEquals(b);
 }
-public readonly partial struct Cone: Value<Cone>
+public readonly partial struct Cone
 {
     public readonly Line3D Line;
     public readonly Number Radius;
@@ -2067,8 +2097,8 @@ public readonly partial struct Cone: Value<Cone>
     public static implicit operator Cone((Line3D, Number) value) => new Cone(value.Item1, value.Item2);
     public void Deconstruct(out Line3D line, out Number radius) { line = Line; radius = Radius; }
     public String TypeName => "Cone";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Line", (String)"Radius" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Line), new Dynamic(Radius) };
+    public Array<String> FieldNames => new[] { (String)"Line", (String)"Radius" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Line), new Dynamic(Radius) };
     // Unimplemented concept functions
     public Cone Zero => (Line.Zero, Radius.Zero);
     public Cone One => (Line.One, Radius.One);
@@ -2079,7 +2109,7 @@ public readonly partial struct Cone: Value<Cone>
     public Boolean NotEquals(Cone b) => (Line.NotEquals(b.Line) & Radius.NotEquals(b.Radius));
     public static Boolean operator !=(Cone a, Cone b) => a.NotEquals(b);
 }
-public readonly partial struct Tube: Value<Tube>
+public readonly partial struct Tube
 {
     public readonly Line3D Line;
     public readonly Number InnerRadius;
@@ -2094,8 +2124,8 @@ public readonly partial struct Tube: Value<Tube>
     public static implicit operator Tube((Line3D, Number, Number) value) => new Tube(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Line3D line, out Number innerRadius, out Number outerRadius) { line = Line; innerRadius = InnerRadius; outerRadius = OuterRadius; }
     public String TypeName => "Tube";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Line", (String)"InnerRadius", (String)"OuterRadius" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Line), new Dynamic(InnerRadius), new Dynamic(OuterRadius) };
+    public Array<String> FieldNames => new[] { (String)"Line", (String)"InnerRadius", (String)"OuterRadius" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Line), new Dynamic(InnerRadius), new Dynamic(OuterRadius) };
     // Unimplemented concept functions
     public Tube Zero => (Line.Zero, InnerRadius.Zero, OuterRadius.Zero);
     public Tube One => (Line.One, InnerRadius.One, OuterRadius.One);
@@ -2106,7 +2136,7 @@ public readonly partial struct Tube: Value<Tube>
     public Boolean NotEquals(Tube b) => (Line.NotEquals(b.Line) & InnerRadius.NotEquals(b.InnerRadius) & OuterRadius.NotEquals(b.OuterRadius));
     public static Boolean operator !=(Tube a, Tube b) => a.NotEquals(b);
 }
-public readonly partial struct ConeSegment: Value<ConeSegment>
+public readonly partial struct ConeSegment
 {
     public readonly Line3D Line;
     public readonly Number Radius1;
@@ -2121,8 +2151,8 @@ public readonly partial struct ConeSegment: Value<ConeSegment>
     public static implicit operator ConeSegment((Line3D, Number, Number) value) => new ConeSegment(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Line3D line, out Number radius1, out Number radius2) { line = Line; radius1 = Radius1; radius2 = Radius2; }
     public String TypeName => "ConeSegment";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Line", (String)"Radius1", (String)"Radius2" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Line), new Dynamic(Radius1), new Dynamic(Radius2) };
+    public Array<String> FieldNames => new[] { (String)"Line", (String)"Radius1", (String)"Radius2" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Line), new Dynamic(Radius1), new Dynamic(Radius2) };
     // Unimplemented concept functions
     public ConeSegment Zero => (Line.Zero, Radius1.Zero, Radius2.Zero);
     public ConeSegment One => (Line.One, Radius1.One, Radius2.One);
@@ -2133,7 +2163,7 @@ public readonly partial struct ConeSegment: Value<ConeSegment>
     public Boolean NotEquals(ConeSegment b) => (Line.NotEquals(b.Line) & Radius1.NotEquals(b.Radius1) & Radius2.NotEquals(b.Radius2));
     public static Boolean operator !=(ConeSegment a, ConeSegment b) => a.NotEquals(b);
 }
-public readonly partial struct Box2D: Value<Box2D>
+public readonly partial struct Box2D
 {
     public readonly Point2D Center;
     public readonly Angle Rotation;
@@ -2148,8 +2178,8 @@ public readonly partial struct Box2D: Value<Box2D>
     public static implicit operator Box2D((Point2D, Angle, Size2D) value) => new Box2D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point2D center, out Angle rotation, out Size2D extent) { center = Center; rotation = Rotation; extent = Extent; }
     public String TypeName => "Box2D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Center", (String)"Rotation", (String)"Extent" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Center), new Dynamic(Rotation), new Dynamic(Extent) };
+    public Array<String> FieldNames => new[] { (String)"Center", (String)"Rotation", (String)"Extent" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Center), new Dynamic(Rotation), new Dynamic(Extent) };
     // Unimplemented concept functions
     public Box2D Zero => (Center.Zero, Rotation.Zero, Extent.Zero);
     public Box2D One => (Center.One, Rotation.One, Extent.One);
@@ -2160,7 +2190,7 @@ public readonly partial struct Box2D: Value<Box2D>
     public Boolean NotEquals(Box2D b) => (Center.NotEquals(b.Center) & Rotation.NotEquals(b.Rotation) & Extent.NotEquals(b.Extent));
     public static Boolean operator !=(Box2D a, Box2D b) => a.NotEquals(b);
 }
-public readonly partial struct Box3D: Value<Box3D>
+public readonly partial struct Box3D
 {
     public readonly Point3D Center;
     public readonly Rotation3D Rotation;
@@ -2175,8 +2205,8 @@ public readonly partial struct Box3D: Value<Box3D>
     public static implicit operator Box3D((Point3D, Rotation3D, Size3D) value) => new Box3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point3D center, out Rotation3D rotation, out Size3D extent) { center = Center; rotation = Rotation; extent = Extent; }
     public String TypeName => "Box3D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Center", (String)"Rotation", (String)"Extent" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Center), new Dynamic(Rotation), new Dynamic(Extent) };
+    public Array<String> FieldNames => new[] { (String)"Center", (String)"Rotation", (String)"Extent" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Center), new Dynamic(Rotation), new Dynamic(Extent) };
     // Unimplemented concept functions
     public Box3D Zero => (Center.Zero, Rotation.Zero, Extent.Zero);
     public Box3D One => (Center.One, Rotation.One, Extent.One);
@@ -2187,7 +2217,7 @@ public readonly partial struct Box3D: Value<Box3D>
     public Boolean NotEquals(Box3D b) => (Center.NotEquals(b.Center) & Rotation.NotEquals(b.Rotation) & Extent.NotEquals(b.Extent));
     public static Boolean operator !=(Box3D a, Box3D b) => a.NotEquals(b);
 }
-public readonly partial struct UV: Vector<UV>
+public readonly partial struct UV
 {
     public readonly Unit U;
     public readonly Unit V;
@@ -2200,8 +2230,8 @@ public readonly partial struct UV: Vector<UV>
     public static implicit operator UV((Unit, Unit) value) => new UV(value.Item1, value.Item2);
     public void Deconstruct(out Unit u, out Unit v) { u = U; v = V; }
     public String TypeName => "UV";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"U", (String)"V" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(U), new Dynamic(V) };
+    public Array<String> FieldNames => new[] { (String)"U", (String)"V" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(U), new Dynamic(V) };
     // Unimplemented concept functions
     public UV Multiply(Number other) => throw new NotImplementedException();
     public static UV operator *(UV self, Number other) => self.Multiply(other);
@@ -2236,7 +2266,7 @@ public readonly partial struct UV: Vector<UV>
     public Number At(Integer n) => throw new NotImplementedException();
     public Number this[Integer n] => At(n);
 }
-public readonly partial struct UVW: Vector<UVW>
+public readonly partial struct UVW
 {
     public readonly Unit U;
     public readonly Unit V;
@@ -2251,8 +2281,8 @@ public readonly partial struct UVW: Vector<UVW>
     public static implicit operator UVW((Unit, Unit, Unit) value) => new UVW(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Unit u, out Unit v, out Unit w) { u = U; v = V; w = W; }
     public String TypeName => "UVW";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"U", (String)"V", (String)"W" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(U), new Dynamic(V), new Dynamic(W) };
+    public Array<String> FieldNames => new[] { (String)"U", (String)"V", (String)"W" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(U), new Dynamic(V), new Dynamic(W) };
     // Unimplemented concept functions
     public UVW Multiply(Number other) => throw new NotImplementedException();
     public static UVW operator *(UVW self, Number other) => self.Multiply(other);
@@ -2287,7 +2317,7 @@ public readonly partial struct UVW: Vector<UVW>
     public Number At(Integer n) => throw new NotImplementedException();
     public Number this[Integer n] => At(n);
 }
-public readonly partial struct CubicBezier2D: Value<CubicBezier2D>
+public readonly partial struct CubicBezier2D
 {
     public readonly Point2D A;
     public readonly Point2D B;
@@ -2304,8 +2334,8 @@ public readonly partial struct CubicBezier2D: Value<CubicBezier2D>
     public static implicit operator CubicBezier2D((Point2D, Point2D, Point2D, Point2D) value) => new CubicBezier2D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Point2D a, out Point2D b, out Point2D c, out Point2D d) { a = A; b = B; c = C; d = D; }
     public String TypeName => "CubicBezier2D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C", (String)"D" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C), new Dynamic(D) };
+    public Array<String> FieldNames => new[] { (String)"A", (String)"B", (String)"C", (String)"D" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C), new Dynamic(D) };
     // Unimplemented concept functions
     public CubicBezier2D Zero => (A.Zero, B.Zero, C.Zero, D.Zero);
     public CubicBezier2D One => (A.One, B.One, C.One, D.One);
@@ -2316,7 +2346,7 @@ public readonly partial struct CubicBezier2D: Value<CubicBezier2D>
     public Boolean NotEquals(CubicBezier2D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C) & D.NotEquals(b.D));
     public static Boolean operator !=(CubicBezier2D a, CubicBezier2D b) => a.NotEquals(b);
 }
-public readonly partial struct CubicBezier3D: Value<CubicBezier3D>
+public readonly partial struct CubicBezier3D
 {
     public readonly Point3D A;
     public readonly Point3D B;
@@ -2333,8 +2363,8 @@ public readonly partial struct CubicBezier3D: Value<CubicBezier3D>
     public static implicit operator CubicBezier3D((Point3D, Point3D, Point3D, Point3D) value) => new CubicBezier3D(value.Item1, value.Item2, value.Item3, value.Item4);
     public void Deconstruct(out Point3D a, out Point3D b, out Point3D c, out Point3D d) { a = A; b = B; c = C; d = D; }
     public String TypeName => "CubicBezier3D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C", (String)"D" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C), new Dynamic(D) };
+    public Array<String> FieldNames => new[] { (String)"A", (String)"B", (String)"C", (String)"D" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C), new Dynamic(D) };
     // Unimplemented concept functions
     public CubicBezier3D Zero => (A.Zero, B.Zero, C.Zero, D.Zero);
     public CubicBezier3D One => (A.One, B.One, C.One, D.One);
@@ -2345,7 +2375,7 @@ public readonly partial struct CubicBezier3D: Value<CubicBezier3D>
     public Boolean NotEquals(CubicBezier3D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C) & D.NotEquals(b.D));
     public static Boolean operator !=(CubicBezier3D a, CubicBezier3D b) => a.NotEquals(b);
 }
-public readonly partial struct QuadraticBezier2D: Value<QuadraticBezier2D>
+public readonly partial struct QuadraticBezier2D
 {
     public readonly Point2D A;
     public readonly Point2D B;
@@ -2360,8 +2390,8 @@ public readonly partial struct QuadraticBezier2D: Value<QuadraticBezier2D>
     public static implicit operator QuadraticBezier2D((Point2D, Point2D, Point2D) value) => new QuadraticBezier2D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point2D a, out Point2D b, out Point2D c) { a = A; b = B; c = C; }
     public String TypeName => "QuadraticBezier2D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C) };
+    public Array<String> FieldNames => new[] { (String)"A", (String)"B", (String)"C" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C) };
     // Unimplemented concept functions
     public QuadraticBezier2D Zero => (A.Zero, B.Zero, C.Zero);
     public QuadraticBezier2D One => (A.One, B.One, C.One);
@@ -2372,7 +2402,7 @@ public readonly partial struct QuadraticBezier2D: Value<QuadraticBezier2D>
     public Boolean NotEquals(QuadraticBezier2D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C));
     public static Boolean operator !=(QuadraticBezier2D a, QuadraticBezier2D b) => a.NotEquals(b);
 }
-public readonly partial struct QuadraticBezier3D: Value<QuadraticBezier3D>
+public readonly partial struct QuadraticBezier3D
 {
     public readonly Point3D A;
     public readonly Point3D B;
@@ -2387,8 +2417,8 @@ public readonly partial struct QuadraticBezier3D: Value<QuadraticBezier3D>
     public static implicit operator QuadraticBezier3D((Point3D, Point3D, Point3D) value) => new QuadraticBezier3D(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out Point3D a, out Point3D b, out Point3D c) { a = A; b = B; c = C; }
     public String TypeName => "QuadraticBezier3D";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"A", (String)"B", (String)"C" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C) };
+    public Array<String> FieldNames => new[] { (String)"A", (String)"B", (String)"C" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(A), new Dynamic(B), new Dynamic(C) };
     // Unimplemented concept functions
     public QuadraticBezier3D Zero => (A.Zero, B.Zero, C.Zero);
     public QuadraticBezier3D One => (A.One, B.One, C.One);
@@ -2399,7 +2429,7 @@ public readonly partial struct QuadraticBezier3D: Value<QuadraticBezier3D>
     public Boolean NotEquals(QuadraticBezier3D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C));
     public static Boolean operator !=(QuadraticBezier3D a, QuadraticBezier3D b) => a.NotEquals(b);
 }
-public readonly partial struct Area: Measure<Area>
+public readonly partial struct Area
 {
     public readonly Number MetersSquared;
     public Area WithMetersSquared(Number metersSquared) => (metersSquared);
@@ -2409,8 +2439,8 @@ public readonly partial struct Area: Measure<Area>
     public static implicit operator Number(Area self) => self.MetersSquared;
     public static implicit operator Area(Number value) => new Area(value);
     public String TypeName => "Area";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"MetersSquared" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(MetersSquared) };
+    public Array<String> FieldNames => new[] { (String)"MetersSquared" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersSquared) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public Area Lerp(Area b, Number amount) => throw new NotImplementedException();
@@ -2432,7 +2462,7 @@ public readonly partial struct Area: Measure<Area>
     public Area MinValue => (MetersSquared.MinValue);
     public Area MaxValue => (MetersSquared.MaxValue);
 }
-public readonly partial struct Volume: Measure<Volume>
+public readonly partial struct Volume
 {
     public readonly Number MetersCubed;
     public Volume WithMetersCubed(Number metersCubed) => (metersCubed);
@@ -2442,8 +2472,8 @@ public readonly partial struct Volume: Measure<Volume>
     public static implicit operator Number(Volume self) => self.MetersCubed;
     public static implicit operator Volume(Number value) => new Volume(value);
     public String TypeName => "Volume";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"MetersCubed" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(MetersCubed) };
+    public Array<String> FieldNames => new[] { (String)"MetersCubed" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersCubed) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public Volume Lerp(Volume b, Number amount) => throw new NotImplementedException();
@@ -2465,7 +2495,7 @@ public readonly partial struct Volume: Measure<Volume>
     public Volume MinValue => (MetersCubed.MinValue);
     public Volume MaxValue => (MetersCubed.MaxValue);
 }
-public readonly partial struct Velocity: Measure<Velocity>
+public readonly partial struct Velocity
 {
     public readonly Number MetersPerSecond;
     public Velocity WithMetersPerSecond(Number metersPerSecond) => (metersPerSecond);
@@ -2475,8 +2505,8 @@ public readonly partial struct Velocity: Measure<Velocity>
     public static implicit operator Number(Velocity self) => self.MetersPerSecond;
     public static implicit operator Velocity(Number value) => new Velocity(value);
     public String TypeName => "Velocity";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"MetersPerSecond" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(MetersPerSecond) };
+    public Array<String> FieldNames => new[] { (String)"MetersPerSecond" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersPerSecond) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public Velocity Lerp(Velocity b, Number amount) => throw new NotImplementedException();
@@ -2498,7 +2528,7 @@ public readonly partial struct Velocity: Measure<Velocity>
     public Velocity MinValue => (MetersPerSecond.MinValue);
     public Velocity MaxValue => (MetersPerSecond.MaxValue);
 }
-public readonly partial struct Acceleration: Measure<Acceleration>
+public readonly partial struct Acceleration
 {
     public readonly Number MetersPerSecondSquared;
     public Acceleration WithMetersPerSecondSquared(Number metersPerSecondSquared) => (metersPerSecondSquared);
@@ -2508,8 +2538,8 @@ public readonly partial struct Acceleration: Measure<Acceleration>
     public static implicit operator Number(Acceleration self) => self.MetersPerSecondSquared;
     public static implicit operator Acceleration(Number value) => new Acceleration(value);
     public String TypeName => "Acceleration";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"MetersPerSecondSquared" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(MetersPerSecondSquared) };
+    public Array<String> FieldNames => new[] { (String)"MetersPerSecondSquared" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersPerSecondSquared) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public Acceleration Lerp(Acceleration b, Number amount) => throw new NotImplementedException();
@@ -2531,7 +2561,7 @@ public readonly partial struct Acceleration: Measure<Acceleration>
     public Acceleration MinValue => (MetersPerSecondSquared.MinValue);
     public Acceleration MaxValue => (MetersPerSecondSquared.MaxValue);
 }
-public readonly partial struct Force: Measure<Force>
+public readonly partial struct Force
 {
     public readonly Number Newtons;
     public Force WithNewtons(Number newtons) => (newtons);
@@ -2541,8 +2571,8 @@ public readonly partial struct Force: Measure<Force>
     public static implicit operator Number(Force self) => self.Newtons;
     public static implicit operator Force(Number value) => new Force(value);
     public String TypeName => "Force";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Newtons" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Newtons) };
+    public Array<String> FieldNames => new[] { (String)"Newtons" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Newtons) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public Force Lerp(Force b, Number amount) => throw new NotImplementedException();
@@ -2564,7 +2594,7 @@ public readonly partial struct Force: Measure<Force>
     public Force MinValue => (Newtons.MinValue);
     public Force MaxValue => (Newtons.MaxValue);
 }
-public readonly partial struct Pressure: Measure<Pressure>
+public readonly partial struct Pressure
 {
     public readonly Number Pascals;
     public Pressure WithPascals(Number pascals) => (pascals);
@@ -2574,8 +2604,8 @@ public readonly partial struct Pressure: Measure<Pressure>
     public static implicit operator Number(Pressure self) => self.Pascals;
     public static implicit operator Pressure(Number value) => new Pressure(value);
     public String TypeName => "Pressure";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Pascals" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Pascals) };
+    public Array<String> FieldNames => new[] { (String)"Pascals" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Pascals) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public Pressure Lerp(Pressure b, Number amount) => throw new NotImplementedException();
@@ -2597,7 +2627,7 @@ public readonly partial struct Pressure: Measure<Pressure>
     public Pressure MinValue => (Pascals.MinValue);
     public Pressure MaxValue => (Pascals.MaxValue);
 }
-public readonly partial struct Energy: Measure<Energy>
+public readonly partial struct Energy
 {
     public readonly Number Joules;
     public Energy WithJoules(Number joules) => (joules);
@@ -2607,8 +2637,8 @@ public readonly partial struct Energy: Measure<Energy>
     public static implicit operator Number(Energy self) => self.Joules;
     public static implicit operator Energy(Number value) => new Energy(value);
     public String TypeName => "Energy";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Joules" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Joules) };
+    public Array<String> FieldNames => new[] { (String)"Joules" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Joules) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public Energy Lerp(Energy b, Number amount) => throw new NotImplementedException();
@@ -2630,7 +2660,7 @@ public readonly partial struct Energy: Measure<Energy>
     public Energy MinValue => (Joules.MinValue);
     public Energy MaxValue => (Joules.MaxValue);
 }
-public readonly partial struct Memory: Measure<Memory>
+public readonly partial struct Memory
 {
     public readonly Integer Bytes;
     public Memory WithBytes(Integer bytes) => (bytes);
@@ -2640,8 +2670,8 @@ public readonly partial struct Memory: Measure<Memory>
     public static implicit operator Integer(Memory self) => self.Bytes;
     public static implicit operator Memory(Integer value) => new Memory(value);
     public String TypeName => "Memory";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Bytes" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Bytes) };
+    public Array<String> FieldNames => new[] { (String)"Bytes" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Bytes) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public Memory Lerp(Memory b, Number amount) => throw new NotImplementedException();
@@ -2663,7 +2693,7 @@ public readonly partial struct Memory: Measure<Memory>
     public Memory MinValue => (Bytes.MinValue);
     public Memory MaxValue => (Bytes.MaxValue);
 }
-public readonly partial struct Frequency: Measure<Frequency>
+public readonly partial struct Frequency
 {
     public readonly Number Hertz;
     public Frequency WithHertz(Number hertz) => (hertz);
@@ -2673,8 +2703,8 @@ public readonly partial struct Frequency: Measure<Frequency>
     public static implicit operator Number(Frequency self) => self.Hertz;
     public static implicit operator Frequency(Number value) => new Frequency(value);
     public String TypeName => "Frequency";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Hertz" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Hertz) };
+    public Array<String> FieldNames => new[] { (String)"Hertz" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Hertz) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public Frequency Lerp(Frequency b, Number amount) => throw new NotImplementedException();
@@ -2696,7 +2726,7 @@ public readonly partial struct Frequency: Measure<Frequency>
     public Frequency MinValue => (Hertz.MinValue);
     public Frequency MaxValue => (Hertz.MaxValue);
 }
-public readonly partial struct Loudness: Measure<Loudness>
+public readonly partial struct Loudness
 {
     public readonly Number Decibels;
     public Loudness WithDecibels(Number decibels) => (decibels);
@@ -2706,8 +2736,8 @@ public readonly partial struct Loudness: Measure<Loudness>
     public static implicit operator Number(Loudness self) => self.Decibels;
     public static implicit operator Loudness(Number value) => new Loudness(value);
     public String TypeName => "Loudness";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Decibels" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Decibels) };
+    public Array<String> FieldNames => new[] { (String)"Decibels" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Decibels) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public Loudness Lerp(Loudness b, Number amount) => throw new NotImplementedException();
@@ -2729,7 +2759,7 @@ public readonly partial struct Loudness: Measure<Loudness>
     public Loudness MinValue => (Decibels.MinValue);
     public Loudness MaxValue => (Decibels.MaxValue);
 }
-public readonly partial struct LuminousIntensity: Measure<LuminousIntensity>
+public readonly partial struct LuminousIntensity
 {
     public readonly Number Candelas;
     public LuminousIntensity WithCandelas(Number candelas) => (candelas);
@@ -2739,8 +2769,8 @@ public readonly partial struct LuminousIntensity: Measure<LuminousIntensity>
     public static implicit operator Number(LuminousIntensity self) => self.Candelas;
     public static implicit operator LuminousIntensity(Number value) => new LuminousIntensity(value);
     public String TypeName => "LuminousIntensity";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Candelas" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Candelas) };
+    public Array<String> FieldNames => new[] { (String)"Candelas" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Candelas) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public LuminousIntensity Lerp(LuminousIntensity b, Number amount) => throw new NotImplementedException();
@@ -2762,7 +2792,7 @@ public readonly partial struct LuminousIntensity: Measure<LuminousIntensity>
     public LuminousIntensity MinValue => (Candelas.MinValue);
     public LuminousIntensity MaxValue => (Candelas.MaxValue);
 }
-public readonly partial struct ElectricPotential: Measure<ElectricPotential>
+public readonly partial struct ElectricPotential
 {
     public readonly Number Volts;
     public ElectricPotential WithVolts(Number volts) => (volts);
@@ -2772,8 +2802,8 @@ public readonly partial struct ElectricPotential: Measure<ElectricPotential>
     public static implicit operator Number(ElectricPotential self) => self.Volts;
     public static implicit operator ElectricPotential(Number value) => new ElectricPotential(value);
     public String TypeName => "ElectricPotential";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Volts" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Volts) };
+    public Array<String> FieldNames => new[] { (String)"Volts" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Volts) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public ElectricPotential Lerp(ElectricPotential b, Number amount) => throw new NotImplementedException();
@@ -2795,7 +2825,7 @@ public readonly partial struct ElectricPotential: Measure<ElectricPotential>
     public ElectricPotential MinValue => (Volts.MinValue);
     public ElectricPotential MaxValue => (Volts.MaxValue);
 }
-public readonly partial struct ElectricCharge: Measure<ElectricCharge>
+public readonly partial struct ElectricCharge
 {
     public readonly Number Columbs;
     public ElectricCharge WithColumbs(Number columbs) => (columbs);
@@ -2805,8 +2835,8 @@ public readonly partial struct ElectricCharge: Measure<ElectricCharge>
     public static implicit operator Number(ElectricCharge self) => self.Columbs;
     public static implicit operator ElectricCharge(Number value) => new ElectricCharge(value);
     public String TypeName => "ElectricCharge";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Columbs" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Columbs) };
+    public Array<String> FieldNames => new[] { (String)"Columbs" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Columbs) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public ElectricCharge Lerp(ElectricCharge b, Number amount) => throw new NotImplementedException();
@@ -2828,7 +2858,7 @@ public readonly partial struct ElectricCharge: Measure<ElectricCharge>
     public ElectricCharge MinValue => (Columbs.MinValue);
     public ElectricCharge MaxValue => (Columbs.MaxValue);
 }
-public readonly partial struct ElectricCurrent: Measure<ElectricCurrent>
+public readonly partial struct ElectricCurrent
 {
     public readonly Number Amperes;
     public ElectricCurrent WithAmperes(Number amperes) => (amperes);
@@ -2838,8 +2868,8 @@ public readonly partial struct ElectricCurrent: Measure<ElectricCurrent>
     public static implicit operator Number(ElectricCurrent self) => self.Amperes;
     public static implicit operator ElectricCurrent(Number value) => new ElectricCurrent(value);
     public String TypeName => "ElectricCurrent";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Amperes" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Amperes) };
+    public Array<String> FieldNames => new[] { (String)"Amperes" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Amperes) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public ElectricCurrent Lerp(ElectricCurrent b, Number amount) => throw new NotImplementedException();
@@ -2861,7 +2891,7 @@ public readonly partial struct ElectricCurrent: Measure<ElectricCurrent>
     public ElectricCurrent MinValue => (Amperes.MinValue);
     public ElectricCurrent MaxValue => (Amperes.MaxValue);
 }
-public readonly partial struct ElectricResistance: Measure<ElectricResistance>
+public readonly partial struct ElectricResistance
 {
     public readonly Number Ohms;
     public ElectricResistance WithOhms(Number ohms) => (ohms);
@@ -2871,8 +2901,8 @@ public readonly partial struct ElectricResistance: Measure<ElectricResistance>
     public static implicit operator Number(ElectricResistance self) => self.Ohms;
     public static implicit operator ElectricResistance(Number value) => new ElectricResistance(value);
     public String TypeName => "ElectricResistance";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Ohms" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Ohms) };
+    public Array<String> FieldNames => new[] { (String)"Ohms" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Ohms) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public ElectricResistance Lerp(ElectricResistance b, Number amount) => throw new NotImplementedException();
@@ -2894,7 +2924,7 @@ public readonly partial struct ElectricResistance: Measure<ElectricResistance>
     public ElectricResistance MinValue => (Ohms.MinValue);
     public ElectricResistance MaxValue => (Ohms.MaxValue);
 }
-public readonly partial struct Power: Measure<Power>
+public readonly partial struct Power
 {
     public readonly Number Watts;
     public Power WithWatts(Number watts) => (watts);
@@ -2904,8 +2934,8 @@ public readonly partial struct Power: Measure<Power>
     public static implicit operator Number(Power self) => self.Watts;
     public static implicit operator Power(Number value) => new Power(value);
     public String TypeName => "Power";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Watts" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Watts) };
+    public Array<String> FieldNames => new[] { (String)"Watts" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Watts) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public Power Lerp(Power b, Number amount) => throw new NotImplementedException();
@@ -2927,7 +2957,7 @@ public readonly partial struct Power: Measure<Power>
     public Power MinValue => (Watts.MinValue);
     public Power MaxValue => (Watts.MaxValue);
 }
-public readonly partial struct Density: Measure<Density>
+public readonly partial struct Density
 {
     public readonly Number KilogramsPerMeterCubed;
     public Density WithKilogramsPerMeterCubed(Number kilogramsPerMeterCubed) => (kilogramsPerMeterCubed);
@@ -2937,8 +2967,8 @@ public readonly partial struct Density: Measure<Density>
     public static implicit operator Number(Density self) => self.KilogramsPerMeterCubed;
     public static implicit operator Density(Number value) => new Density(value);
     public String TypeName => "Density";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"KilogramsPerMeterCubed" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(KilogramsPerMeterCubed) };
+    public Array<String> FieldNames => new[] { (String)"KilogramsPerMeterCubed" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(KilogramsPerMeterCubed) };
     // Unimplemented concept functions
     public Number Value => throw new NotImplementedException();
     public Density Lerp(Density b, Number amount) => throw new NotImplementedException();
@@ -2960,7 +2990,7 @@ public readonly partial struct Density: Measure<Density>
     public Density MinValue => (KilogramsPerMeterCubed.MinValue);
     public Density MaxValue => (KilogramsPerMeterCubed.MaxValue);
 }
-public readonly partial struct NormalDistribution: Value<NormalDistribution>
+public readonly partial struct NormalDistribution
 {
     public readonly Number Mean;
     public readonly Number StandardDeviation;
@@ -2973,8 +3003,8 @@ public readonly partial struct NormalDistribution: Value<NormalDistribution>
     public static implicit operator NormalDistribution((Number, Number) value) => new NormalDistribution(value.Item1, value.Item2);
     public void Deconstruct(out Number mean, out Number standardDeviation) { mean = Mean; standardDeviation = StandardDeviation; }
     public String TypeName => "NormalDistribution";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Mean", (String)"StandardDeviation" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Mean), new Dynamic(StandardDeviation) };
+    public Array<String> FieldNames => new[] { (String)"Mean", (String)"StandardDeviation" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Mean), new Dynamic(StandardDeviation) };
     // Unimplemented concept functions
     public NormalDistribution Zero => (Mean.Zero, StandardDeviation.Zero);
     public NormalDistribution One => (Mean.One, StandardDeviation.One);
@@ -2985,7 +3015,7 @@ public readonly partial struct NormalDistribution: Value<NormalDistribution>
     public Boolean NotEquals(NormalDistribution b) => (Mean.NotEquals(b.Mean) & StandardDeviation.NotEquals(b.StandardDeviation));
     public static Boolean operator !=(NormalDistribution a, NormalDistribution b) => a.NotEquals(b);
 }
-public readonly partial struct PoissonDistribution: Value<PoissonDistribution>
+public readonly partial struct PoissonDistribution
 {
     public readonly Number Expected;
     public readonly Integer Occurrences;
@@ -2998,8 +3028,8 @@ public readonly partial struct PoissonDistribution: Value<PoissonDistribution>
     public static implicit operator PoissonDistribution((Number, Integer) value) => new PoissonDistribution(value.Item1, value.Item2);
     public void Deconstruct(out Number expected, out Integer occurrences) { expected = Expected; occurrences = Occurrences; }
     public String TypeName => "PoissonDistribution";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Expected", (String)"Occurrences" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Expected), new Dynamic(Occurrences) };
+    public Array<String> FieldNames => new[] { (String)"Expected", (String)"Occurrences" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Expected), new Dynamic(Occurrences) };
     // Unimplemented concept functions
     public PoissonDistribution Zero => (Expected.Zero, Occurrences.Zero);
     public PoissonDistribution One => (Expected.One, Occurrences.One);
@@ -3010,7 +3040,7 @@ public readonly partial struct PoissonDistribution: Value<PoissonDistribution>
     public Boolean NotEquals(PoissonDistribution b) => (Expected.NotEquals(b.Expected) & Occurrences.NotEquals(b.Occurrences));
     public static Boolean operator !=(PoissonDistribution a, PoissonDistribution b) => a.NotEquals(b);
 }
-public readonly partial struct BernoulliDistribution: Value<BernoulliDistribution>
+public readonly partial struct BernoulliDistribution
 {
     public readonly Probability P;
     public BernoulliDistribution WithP(Probability p) => (p);
@@ -3020,8 +3050,8 @@ public readonly partial struct BernoulliDistribution: Value<BernoulliDistributio
     public static implicit operator Probability(BernoulliDistribution self) => self.P;
     public static implicit operator BernoulliDistribution(Probability value) => new BernoulliDistribution(value);
     public String TypeName => "BernoulliDistribution";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"P" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(P) };
+    public Array<String> FieldNames => new[] { (String)"P" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(P) };
     // Unimplemented concept functions
     public BernoulliDistribution Zero => (P.Zero);
     public BernoulliDistribution One => (P.One);
@@ -3032,7 +3062,7 @@ public readonly partial struct BernoulliDistribution: Value<BernoulliDistributio
     public Boolean NotEquals(BernoulliDistribution b) => (P.NotEquals(b.P));
     public static Boolean operator !=(BernoulliDistribution a, BernoulliDistribution b) => a.NotEquals(b);
 }
-public readonly partial struct Probability: Numerical<Probability>
+public readonly partial struct Probability
 {
     public readonly Number Value;
     public Probability WithValue(Number value) => (value);
@@ -3042,9 +3072,19 @@ public readonly partial struct Probability: Numerical<Probability>
     public static implicit operator Number(Probability self) => self.Value;
     public static implicit operator Probability(Number value) => new Probability(value);
     public String TypeName => "Probability";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Value" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Value) };
+    public Array<String> FieldNames => new[] { (String)"Value" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
+    public Probability Multiply(Number other) => throw new NotImplementedException();
+    public static Probability operator *(Probability self, Number other) => self.Multiply(other);
+    public Probability Divide(Number other) => throw new NotImplementedException();
+    public static Probability operator /(Probability self, Number other) => self.Divide(other);
+    public Probability Modulo(Number other) => throw new NotImplementedException();
+    public static Probability operator %(Probability self, Number other) => self.Modulo(other);
+    public Probability Add(Number other) => throw new NotImplementedException();
+    public static Probability operator +(Probability self, Number other) => self.Add(other);
+    public Probability Subtract(Number other) => throw new NotImplementedException();
+    public static Probability operator -(Probability self, Number other) => self.Subtract(other);
     public Number Unlerp(Probability a, Probability b) => throw new NotImplementedException();
     public Number Magnitude => throw new NotImplementedException();
     public Integer Compare(Probability y) => throw new NotImplementedException();
@@ -3066,7 +3106,7 @@ public readonly partial struct Probability: Numerical<Probability>
     public Probability MinValue => (Value.MinValue);
     public Probability MaxValue => (Value.MaxValue);
 }
-public readonly partial struct BinomialDistribution: Value<BinomialDistribution>
+public readonly partial struct BinomialDistribution
 {
     public readonly Integer Trials;
     public readonly Probability P;
@@ -3079,8 +3119,8 @@ public readonly partial struct BinomialDistribution: Value<BinomialDistribution>
     public static implicit operator BinomialDistribution((Integer, Probability) value) => new BinomialDistribution(value.Item1, value.Item2);
     public void Deconstruct(out Integer trials, out Probability p) { trials = Trials; p = P; }
     public String TypeName => "BinomialDistribution";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Trials", (String)"P" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Trials), new Dynamic(P) };
+    public Array<String> FieldNames => new[] { (String)"Trials", (String)"P" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Trials), new Dynamic(P) };
     // Unimplemented concept functions
     public BinomialDistribution Zero => (Trials.Zero, P.Zero);
     public BinomialDistribution One => (Trials.One, P.One);
@@ -3104,8 +3144,8 @@ public readonly partial struct Tuple2<T0, T1>
     public static implicit operator Tuple2<T0, T1>((T0, T1) value) => new Tuple2<T0, T1>(value.Item1, value.Item2);
     public void Deconstruct(out T0 item0, out T1 item1) { item0 = Item0; item1 = Item1; }
     public String TypeName => "Tuple2<T0, T1>";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Item0", (String)"Item1" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Item0), new Dynamic(Item1) };
+    public Array<String> FieldNames => new[] { (String)"Item0", (String)"Item1" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Item0), new Dynamic(Item1) };
     // Unimplemented concept functions
 }
 public readonly partial struct Tuple3<T0, T1, T2>
@@ -3123,7 +3163,7 @@ public readonly partial struct Tuple3<T0, T1, T2>
     public static implicit operator Tuple3<T0, T1, T2>((T0, T1, T2) value) => new Tuple3<T0, T1, T2>(value.Item1, value.Item2, value.Item3);
     public void Deconstruct(out T0 item0, out T1 item1, out T2 item2) { item0 = Item0; item1 = Item1; item2 = Item2; }
     public String TypeName => "Tuple3<T0, T1, T2>";
-    public Array<String> FieldNames => (Array1<String>)new[] { (String)"Item0", (String)"Item1", (String)"Item2" };
-    public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] { new Dynamic(Item0), new Dynamic(Item1), new Dynamic(Item2) };
+    public Array<String> FieldNames => new[] { (String)"Item0", (String)"Item1", (String)"Item2" };
+    public Array<Dynamic> FieldValues => new[] { new Dynamic(Item0), new Dynamic(Item1), new Dynamic(Item2) };
     // Unimplemented concept functions
 }

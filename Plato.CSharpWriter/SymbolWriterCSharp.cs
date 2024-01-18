@@ -13,7 +13,7 @@ namespace Plato.CSharpWriter
 {
     public class SymbolWriterCSharp : CodeBuilder<SymbolWriterCSharp>
     {
-        public const bool EmitInterfaces = true;
+        public const bool EmitInterfaces = false;
         public const bool EmitStructsInsteadOfClasses = true;
 
         public Compiler.Compilation Compilation { get; }
@@ -298,9 +298,13 @@ namespace Plato.CSharpWriter
         public SymbolWriterCSharp WriteConceptInterfaces()
         {
             StartNewFile(OutputFolder.RelativeFile("Concepts.cs"));
+            if (!EmitInterfaces)
+                WriteLine("/*");
             foreach (var c in Compilation.AllTypeAndLibraryDefinitions)
                 if (c.IsConcept())
                     WriteConceptInterface(c);
+            if (!EmitInterfaces)
+                WriteLine("*/");
             return this;
         }
 
@@ -480,9 +484,9 @@ namespace Plato.CSharpWriter
             WriteLine($"public String TypeName => {name.Quote()};");
 
             var fieldNamesAsStringsStr = fieldNames.Select(n => $"(String){n.Quote()}").JoinStringsWithComma();
-            WriteLine($"public Array<String> FieldNames => (Array1<String>)new[] {{ {fieldNamesAsStringsStr} }};");
+            WriteLine($"public Array<String> FieldNames => new[] {{ {fieldNamesAsStringsStr} }};");
             var fieldValuesAsDynamicsStr = fieldNames.Select(n => $"new Dynamic({n})").JoinStringsWithComma();
-            WriteLine($"public Array<Dynamic> FieldValues => (Array1<Dynamic>)new[] {{ {fieldValuesAsDynamicsStr} }};");
+            WriteLine($"public Array<Dynamic> FieldValues => new[] {{ {fieldValuesAsDynamicsStr} }};");
 
             /* TODO:    
             var fieldNamesAsStrings = string.Join(", ", fieldNames.Select(f => $"\"{f}\""));
