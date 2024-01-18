@@ -175,7 +175,6 @@ public readonly partial struct Unit
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Number Unlerp(Unit a, Unit b) => (Value.Unlerp(a.Value, b.Value));
     public Integer Compare(Unit y) => (Value.Compare(y.Value));
     public Unit Multiply(Number other) => (Value.Multiply(other));
     public static Unit operator *(Unit self, Number other) => self.Multiply(other);
@@ -205,54 +204,6 @@ public readonly partial struct Unit
     public Unit Subtract(Unit other) => (Value.Subtract(other.Value));
     public static Unit operator -(Unit self, Unit other) => self.Subtract(other);
 }
-public readonly partial struct Percent
-{
-    public readonly Number Value;
-    public Percent WithValue(Number value) => (value);
-    public Percent(Number value) => (Value) = (value);
-    public static Percent Default = new Percent();
-    public static Percent New(Number value) => new Percent(value);
-    public static implicit operator Number(Percent self) => self.Value;
-    public static implicit operator Percent(Number value) => new Percent(value);
-    public override bool Equals(object obj) { if (!(obj is Percent)) return false; var other = (Percent)obj; return Value.Equals(other.Value); }
-    public override int GetHashCode() => Intrinsics.CombineHashCodes(Value);
-    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
-    public static implicit operator Dynamic(Percent self) => new Dynamic(self);
-    public static implicit operator Percent(Dynamic value) => value.As<Percent>();
-    public String TypeName => "Percent";
-    public Array<String> FieldNames => new[] { (String)"Value" };
-    public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
-    // Unimplemented concept functions
-    public Number Unlerp(Percent a, Percent b) => (Value.Unlerp(a.Value, b.Value));
-    public Integer Compare(Percent y) => (Value.Compare(y.Value));
-    public Percent Multiply(Number other) => (Value.Multiply(other));
-    public static Percent operator *(Percent self, Number other) => self.Multiply(other);
-    public Percent Divide(Number other) => (Value.Divide(other));
-    public static Percent operator /(Percent self, Number other) => self.Divide(other);
-    public Percent Modulo(Number other) => (Value.Modulo(other));
-    public static Percent operator %(Percent self, Number other) => self.Modulo(other);
-    public Percent Add(Number other) => (Value.Add(other));
-    public static Percent operator +(Percent self, Number other) => self.Add(other);
-    public Percent Subtract(Number other) => (Value.Subtract(other));
-    public static Percent operator -(Percent self, Number other) => self.Subtract(other);
-    public Percent Zero => (Value.Zero);
-    public Percent One => (Value.One);
-    public Percent MinValue => (Value.MinValue);
-    public Percent MaxValue => (Value.MaxValue);
-    public Percent Reciprocal => (Value.Reciprocal);
-    public Percent Negative => (Value.Negative);
-    public static Percent operator -(Percent self) => self.Negative;
-    public Percent Multiply(Percent other) => (Value.Multiply(other.Value));
-    public static Percent operator *(Percent self, Percent other) => self.Multiply(other);
-    public Percent Divide(Percent other) => (Value.Divide(other.Value));
-    public static Percent operator /(Percent self, Percent other) => self.Divide(other);
-    public Percent Modulo(Percent other) => (Value.Modulo(other.Value));
-    public static Percent operator %(Percent self, Percent other) => self.Modulo(other);
-    public Percent Add(Percent other) => (Value.Add(other.Value));
-    public static Percent operator +(Percent self, Percent other) => self.Add(other);
-    public Percent Subtract(Percent other) => (Value.Subtract(other.Value));
-    public static Percent operator -(Percent self, Percent other) => self.Subtract(other);
-}
 public readonly partial struct Probability
 {
     public readonly Number Value;
@@ -271,7 +222,6 @@ public readonly partial struct Probability
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Number Unlerp(Probability a, Probability b) => (Value.Unlerp(a.Value, b.Value));
     public Integer Compare(Probability y) => (Value.Compare(y.Value));
     public Probability Multiply(Number other) => (Value.Multiply(other));
     public static Probability operator *(Probability self, Number other) => self.Multiply(other);
@@ -544,7 +494,6 @@ public readonly partial struct Vector2D
     public static Vector2D operator +(Vector2D self, Number other) => self.Add(other);
     public Vector2D Subtract(Number other) => (X.Subtract(other), Y.Subtract(other));
     public static Vector2D operator -(Vector2D self, Number other) => self.Subtract(other);
-    public Number Unlerp(Vector2D a, Vector2D b) => throw new NotImplementedException();
     public Integer Compare(Vector2D y) => throw new NotImplementedException();
     public Vector2D Reciprocal => (X.Reciprocal, Y.Reciprocal);
     public Vector2D Negative => (X.Negative, Y.Negative);
@@ -600,7 +549,6 @@ public readonly partial struct Vector3D
     public static Vector3D operator +(Vector3D self, Number other) => self.Add(other);
     public Vector3D Subtract(Number other) => (X.Subtract(other), Y.Subtract(other), Z.Subtract(other));
     public static Vector3D operator -(Vector3D self, Number other) => self.Subtract(other);
-    public Number Unlerp(Vector3D a, Vector3D b) => throw new NotImplementedException();
     public Integer Compare(Vector3D y) => throw new NotImplementedException();
     public Vector3D Reciprocal => (X.Reciprocal, Y.Reciprocal, Z.Reciprocal);
     public Vector3D Negative => (X.Negative, Y.Negative, Z.Negative);
@@ -658,7 +606,6 @@ public readonly partial struct Vector4D
     public static Vector4D operator +(Vector4D self, Number other) => self.Add(other);
     public Vector4D Subtract(Number other) => (X.Subtract(other), Y.Subtract(other), Z.Subtract(other), W.Subtract(other));
     public static Vector4D operator -(Vector4D self, Number other) => self.Subtract(other);
-    public Number Unlerp(Vector4D a, Vector4D b) => throw new NotImplementedException();
     public Integer Compare(Vector4D y) => throw new NotImplementedException();
     public Vector4D Reciprocal => (X.Reciprocal, Y.Reciprocal, Z.Reciprocal, W.Reciprocal);
     public Vector4D Negative => (X.Negative, Y.Negative, Z.Negative, W.Negative);
@@ -929,7 +876,6 @@ public readonly partial struct Complex
     public static Complex operator +(Complex self, Number other) => self.Add(other);
     public Complex Subtract(Number other) => (Real.Subtract(other), Imaginary.Subtract(other));
     public static Complex operator -(Complex self, Number other) => self.Subtract(other);
-    public Number Unlerp(Complex a, Complex b) => throw new NotImplementedException();
     public Integer Compare(Complex y) => throw new NotImplementedException();
     public Complex Reciprocal => (Real.Reciprocal, Imaginary.Reciprocal);
     public Complex Negative => (Real.Negative, Imaginary.Negative);
@@ -1231,7 +1177,6 @@ public readonly partial struct Point2D
     public Point2D MaxValue => (X.MaxValue, Y.MaxValue);
     public Integer Compare(Point2D y) => throw new NotImplementedException();
     public Point2D Lerp(Point2D b, Number amount) => (X.Lerp(b.X, amount), Y.Lerp(b.Y, amount));
-    public Number Unlerp(Point2D a, Point2D b) => throw new NotImplementedException();
     public Point2D Add(Vector2D other) => throw new NotImplementedException();
     public static Point2D operator +(Point2D self, Vector2D other) => self.Add(other);
     public Point2D Subtract(Vector2D other) => throw new NotImplementedException();
@@ -1266,7 +1211,6 @@ public readonly partial struct Point3D
     public Point3D MaxValue => (X.MaxValue, Y.MaxValue, Z.MaxValue);
     public Integer Compare(Point3D y) => throw new NotImplementedException();
     public Point3D Lerp(Point3D b, Number amount) => (X.Lerp(b.X, amount), Y.Lerp(b.Y, amount), Z.Lerp(b.Z, amount));
-    public Number Unlerp(Point3D a, Point3D b) => throw new NotImplementedException();
     public Point3D Add(Vector3D other) => throw new NotImplementedException();
     public static Point3D operator +(Point3D self, Vector3D other) => self.Add(other);
     public Point3D Subtract(Vector3D other) => throw new NotImplementedException();
@@ -1303,7 +1247,6 @@ public readonly partial struct Point4D
     public Point4D MaxValue => (X.MaxValue, Y.MaxValue, Z.MaxValue, W.MaxValue);
     public Integer Compare(Point4D y) => throw new NotImplementedException();
     public Point4D Lerp(Point4D b, Number amount) => (X.Lerp(b.X, amount), Y.Lerp(b.Y, amount), Z.Lerp(b.Z, amount), W.Lerp(b.W, amount));
-    public Number Unlerp(Point4D a, Point4D b) => throw new NotImplementedException();
     public Point4D Add(Vector4D other) => throw new NotImplementedException();
     public static Point4D operator +(Point4D self, Vector4D other) => self.Add(other);
     public Point4D Subtract(Vector4D other) => throw new NotImplementedException();
@@ -1406,22 +1349,21 @@ public readonly partial struct Color
     public Color MaxValue => (R.MaxValue, G.MaxValue, B.MaxValue, A.MaxValue);
     public Integer Compare(Color y) => throw new NotImplementedException();
     public Color Lerp(Color b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(Color a, Color b) => throw new NotImplementedException();
 }
 public readonly partial struct ColorLUV
 {
-    public readonly Percent Lightness;
+    public readonly Unit Lightness;
     public readonly Unit U;
     public readonly Unit V;
-    public ColorLUV WithLightness(Percent lightness) => (lightness, U, V);
+    public ColorLUV WithLightness(Unit lightness) => (lightness, U, V);
     public ColorLUV WithU(Unit u) => (Lightness, u, V);
     public ColorLUV WithV(Unit v) => (Lightness, U, v);
-    public ColorLUV(Percent lightness, Unit u, Unit v) => (Lightness, U, V) = (lightness, u, v);
+    public ColorLUV(Unit lightness, Unit u, Unit v) => (Lightness, U, V) = (lightness, u, v);
     public static ColorLUV Default = new ColorLUV();
-    public static ColorLUV New(Percent lightness, Unit u, Unit v) => new ColorLUV(lightness, u, v);
-    public static implicit operator (Percent, Unit, Unit)(ColorLUV self) => (self.Lightness, self.U, self.V);
-    public static implicit operator ColorLUV((Percent, Unit, Unit) value) => new ColorLUV(value.Item1, value.Item2, value.Item3);
-    public void Deconstruct(out Percent lightness, out Unit u, out Unit v) { lightness = Lightness; u = U; v = V; }
+    public static ColorLUV New(Unit lightness, Unit u, Unit v) => new ColorLUV(lightness, u, v);
+    public static implicit operator (Unit, Unit, Unit)(ColorLUV self) => (self.Lightness, self.U, self.V);
+    public static implicit operator ColorLUV((Unit, Unit, Unit) value) => new ColorLUV(value.Item1, value.Item2, value.Item3);
+    public void Deconstruct(out Unit lightness, out Unit u, out Unit v) { lightness = Lightness; u = U; v = V; }
     public override bool Equals(object obj) { if (!(obj is ColorLUV)) return false; var other = (ColorLUV)obj; return Lightness.Equals(other.Lightness) && U.Equals(other.U) && V.Equals(other.V); }
     public override int GetHashCode() => Intrinsics.CombineHashCodes(Lightness, U, V);
     public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
@@ -1437,22 +1379,21 @@ public readonly partial struct ColorLUV
     public ColorLUV MaxValue => (Lightness.MaxValue, U.MaxValue, V.MaxValue);
     public Integer Compare(ColorLUV y) => throw new NotImplementedException();
     public ColorLUV Lerp(ColorLUV b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(ColorLUV a, ColorLUV b) => throw new NotImplementedException();
 }
 public readonly partial struct ColorLAB
 {
-    public readonly Percent Lightness;
-    public readonly Integer A;
-    public readonly Integer B;
-    public ColorLAB WithLightness(Percent lightness) => (lightness, A, B);
-    public ColorLAB WithA(Integer a) => (Lightness, a, B);
-    public ColorLAB WithB(Integer b) => (Lightness, A, b);
-    public ColorLAB(Percent lightness, Integer a, Integer b) => (Lightness, A, B) = (lightness, a, b);
+    public readonly Unit Lightness;
+    public readonly Number A;
+    public readonly Number B;
+    public ColorLAB WithLightness(Unit lightness) => (lightness, A, B);
+    public ColorLAB WithA(Number a) => (Lightness, a, B);
+    public ColorLAB WithB(Number b) => (Lightness, A, b);
+    public ColorLAB(Unit lightness, Number a, Number b) => (Lightness, A, B) = (lightness, a, b);
     public static ColorLAB Default = new ColorLAB();
-    public static ColorLAB New(Percent lightness, Integer a, Integer b) => new ColorLAB(lightness, a, b);
-    public static implicit operator (Percent, Integer, Integer)(ColorLAB self) => (self.Lightness, self.A, self.B);
-    public static implicit operator ColorLAB((Percent, Integer, Integer) value) => new ColorLAB(value.Item1, value.Item2, value.Item3);
-    public void Deconstruct(out Percent lightness, out Integer a, out Integer b) { lightness = Lightness; a = A; b = B; }
+    public static ColorLAB New(Unit lightness, Number a, Number b) => new ColorLAB(lightness, a, b);
+    public static implicit operator (Unit, Number, Number)(ColorLAB self) => (self.Lightness, self.A, self.B);
+    public static implicit operator ColorLAB((Unit, Number, Number) value) => new ColorLAB(value.Item1, value.Item2, value.Item3);
+    public void Deconstruct(out Unit lightness, out Number a, out Number b) { lightness = Lightness; a = A; b = B; }
     public override bool Equals(object obj) { if (!(obj is ColorLAB)) return false; var other = (ColorLAB)obj; return Lightness.Equals(other.Lightness) && A.Equals(other.A) && B.Equals(other.B); }
     public override int GetHashCode() => Intrinsics.CombineHashCodes(Lightness, A, B);
     public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
@@ -1468,20 +1409,19 @@ public readonly partial struct ColorLAB
     public ColorLAB MaxValue => (Lightness.MaxValue, A.MaxValue, B.MaxValue);
     public Integer Compare(ColorLAB y) => throw new NotImplementedException();
     public ColorLAB Lerp(ColorLAB b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(ColorLAB a, ColorLAB b) => throw new NotImplementedException();
 }
 public readonly partial struct ColorLCh
 {
-    public readonly Percent Lightness;
+    public readonly Unit Lightness;
     public readonly PolarCoordinate ChromaHue;
-    public ColorLCh WithLightness(Percent lightness) => (lightness, ChromaHue);
+    public ColorLCh WithLightness(Unit lightness) => (lightness, ChromaHue);
     public ColorLCh WithChromaHue(PolarCoordinate chromaHue) => (Lightness, chromaHue);
-    public ColorLCh(Percent lightness, PolarCoordinate chromaHue) => (Lightness, ChromaHue) = (lightness, chromaHue);
+    public ColorLCh(Unit lightness, PolarCoordinate chromaHue) => (Lightness, ChromaHue) = (lightness, chromaHue);
     public static ColorLCh Default = new ColorLCh();
-    public static ColorLCh New(Percent lightness, PolarCoordinate chromaHue) => new ColorLCh(lightness, chromaHue);
-    public static implicit operator (Percent, PolarCoordinate)(ColorLCh self) => (self.Lightness, self.ChromaHue);
-    public static implicit operator ColorLCh((Percent, PolarCoordinate) value) => new ColorLCh(value.Item1, value.Item2);
-    public void Deconstruct(out Percent lightness, out PolarCoordinate chromaHue) { lightness = Lightness; chromaHue = ChromaHue; }
+    public static ColorLCh New(Unit lightness, PolarCoordinate chromaHue) => new ColorLCh(lightness, chromaHue);
+    public static implicit operator (Unit, PolarCoordinate)(ColorLCh self) => (self.Lightness, self.ChromaHue);
+    public static implicit operator ColorLCh((Unit, PolarCoordinate) value) => new ColorLCh(value.Item1, value.Item2);
+    public void Deconstruct(out Unit lightness, out PolarCoordinate chromaHue) { lightness = Lightness; chromaHue = ChromaHue; }
     public override bool Equals(object obj) { if (!(obj is ColorLCh)) return false; var other = (ColorLCh)obj; return Lightness.Equals(other.Lightness) && ChromaHue.Equals(other.ChromaHue); }
     public override int GetHashCode() => Intrinsics.CombineHashCodes(Lightness, ChromaHue);
     public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
@@ -1497,7 +1437,6 @@ public readonly partial struct ColorLCh
     public ColorLCh MaxValue => (Lightness.MaxValue, ChromaHue.MaxValue);
     public Integer Compare(ColorLCh y) => throw new NotImplementedException();
     public ColorLCh Lerp(ColorLCh b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(ColorLCh a, ColorLCh b) => throw new NotImplementedException();
 }
 public readonly partial struct ColorHSV
 {
@@ -1528,7 +1467,6 @@ public readonly partial struct ColorHSV
     public ColorHSV MaxValue => (Hue.MaxValue, S.MaxValue, V.MaxValue);
     public Integer Compare(ColorHSV y) => throw new NotImplementedException();
     public ColorHSV Lerp(ColorHSV b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(ColorHSV a, ColorHSV b) => throw new NotImplementedException();
 }
 public readonly partial struct ColorHSL
 {
@@ -1559,7 +1497,6 @@ public readonly partial struct ColorHSL
     public ColorHSL MaxValue => (Hue.MaxValue, Saturation.MaxValue, Luminance.MaxValue);
     public Integer Compare(ColorHSL y) => throw new NotImplementedException();
     public ColorHSL Lerp(ColorHSL b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(ColorHSL a, ColorHSL b) => throw new NotImplementedException();
 }
 public readonly partial struct ColorYCbCr
 {
@@ -1590,7 +1527,6 @@ public readonly partial struct ColorYCbCr
     public ColorYCbCr MaxValue => (Y.MaxValue, Cb.MaxValue, Cr.MaxValue);
     public Integer Compare(ColorYCbCr y) => throw new NotImplementedException();
     public ColorYCbCr Lerp(ColorYCbCr b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(ColorYCbCr a, ColorYCbCr b) => throw new NotImplementedException();
 }
 public readonly partial struct SphericalCoordinate
 {
@@ -1621,7 +1557,6 @@ public readonly partial struct SphericalCoordinate
     public SphericalCoordinate MaxValue => (Radius.MaxValue, Azimuth.MaxValue, Polar.MaxValue);
     public Integer Compare(SphericalCoordinate y) => throw new NotImplementedException();
     public SphericalCoordinate Lerp(SphericalCoordinate b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(SphericalCoordinate a, SphericalCoordinate b) => throw new NotImplementedException();
 }
 public readonly partial struct PolarCoordinate
 {
@@ -1650,7 +1585,6 @@ public readonly partial struct PolarCoordinate
     public PolarCoordinate MaxValue => (Radius.MaxValue, Angle.MaxValue);
     public Integer Compare(PolarCoordinate y) => throw new NotImplementedException();
     public PolarCoordinate Lerp(PolarCoordinate b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(PolarCoordinate a, PolarCoordinate b) => throw new NotImplementedException();
 }
 public readonly partial struct LogPolarCoordinate
 {
@@ -1679,7 +1613,6 @@ public readonly partial struct LogPolarCoordinate
     public LogPolarCoordinate MaxValue => (Rho.MaxValue, Azimuth.MaxValue);
     public Integer Compare(LogPolarCoordinate y) => throw new NotImplementedException();
     public LogPolarCoordinate Lerp(LogPolarCoordinate b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(LogPolarCoordinate a, LogPolarCoordinate b) => throw new NotImplementedException();
 }
 public readonly partial struct CylindricalCoordinate
 {
@@ -1710,7 +1643,6 @@ public readonly partial struct CylindricalCoordinate
     public CylindricalCoordinate MaxValue => (RadialDistance.MaxValue, Azimuth.MaxValue, Height.MaxValue);
     public Integer Compare(CylindricalCoordinate y) => throw new NotImplementedException();
     public CylindricalCoordinate Lerp(CylindricalCoordinate b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(CylindricalCoordinate a, CylindricalCoordinate b) => throw new NotImplementedException();
 }
 public readonly partial struct HorizontalCoordinate
 {
@@ -1741,7 +1673,6 @@ public readonly partial struct HorizontalCoordinate
     public HorizontalCoordinate MaxValue => (Radius.MaxValue, Azimuth.MaxValue, Height.MaxValue);
     public Integer Compare(HorizontalCoordinate y) => throw new NotImplementedException();
     public HorizontalCoordinate Lerp(HorizontalCoordinate b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(HorizontalCoordinate a, HorizontalCoordinate b) => throw new NotImplementedException();
 }
 public readonly partial struct GeoCoordinate
 {
@@ -1770,7 +1701,6 @@ public readonly partial struct GeoCoordinate
     public GeoCoordinate MaxValue => (Latitude.MaxValue, Longitude.MaxValue);
     public Integer Compare(GeoCoordinate y) => throw new NotImplementedException();
     public GeoCoordinate Lerp(GeoCoordinate b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(GeoCoordinate a, GeoCoordinate b) => throw new NotImplementedException();
 }
 public readonly partial struct GeoCoordinateWithAltitude
 {
@@ -1799,7 +1729,6 @@ public readonly partial struct GeoCoordinateWithAltitude
     public GeoCoordinateWithAltitude MaxValue => (Coordinate.MaxValue, Altitude.MaxValue);
     public Integer Compare(GeoCoordinateWithAltitude y) => throw new NotImplementedException();
     public GeoCoordinateWithAltitude Lerp(GeoCoordinateWithAltitude b, Number amount) => throw new NotImplementedException();
-    public Number Unlerp(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) => throw new NotImplementedException();
 }
 public readonly partial struct Circle
 {
@@ -2002,7 +1931,6 @@ public readonly partial struct Angle
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Radians) };
     // Unimplemented concept functions
     public Angle Lerp(Angle b, Number amount) => (Radians.Lerp(b.Radians, amount));
-    public Number Unlerp(Angle a, Angle b) => (Radians.Unlerp(a.Radians, b.Radians));
     public Integer Compare(Angle y) => (Radians.Compare(y.Radians));
     public Angle Zero => (Radians.Zero);
     public Angle One => (Radians.One);
@@ -2028,7 +1956,6 @@ public readonly partial struct Length
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Meters) };
     // Unimplemented concept functions
     public Length Lerp(Length b, Number amount) => (Meters.Lerp(b.Meters, amount));
-    public Number Unlerp(Length a, Length b) => (Meters.Unlerp(a.Meters, b.Meters));
     public Integer Compare(Length y) => (Meters.Compare(y.Meters));
     public Length Zero => (Meters.Zero);
     public Length One => (Meters.One);
@@ -2054,7 +1981,6 @@ public readonly partial struct Mass
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Kilograms) };
     // Unimplemented concept functions
     public Mass Lerp(Mass b, Number amount) => (Kilograms.Lerp(b.Kilograms, amount));
-    public Number Unlerp(Mass a, Mass b) => (Kilograms.Unlerp(a.Kilograms, b.Kilograms));
     public Integer Compare(Mass y) => (Kilograms.Compare(y.Kilograms));
     public Mass Zero => (Kilograms.Zero);
     public Mass One => (Kilograms.One);
@@ -2080,7 +2006,6 @@ public readonly partial struct Temperature
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Celsius) };
     // Unimplemented concept functions
     public Temperature Lerp(Temperature b, Number amount) => (Celsius.Lerp(b.Celsius, amount));
-    public Number Unlerp(Temperature a, Temperature b) => (Celsius.Unlerp(a.Celsius, b.Celsius));
     public Integer Compare(Temperature y) => (Celsius.Compare(y.Celsius));
     public Temperature Zero => (Celsius.Zero);
     public Temperature One => (Celsius.One);
@@ -2106,7 +2031,6 @@ public readonly partial struct Time
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Seconds) };
     // Unimplemented concept functions
     public Time Lerp(Time b, Number amount) => (Seconds.Lerp(b.Seconds, amount));
-    public Number Unlerp(Time a, Time b) => (Seconds.Unlerp(a.Seconds, b.Seconds));
     public Integer Compare(Time y) => (Seconds.Compare(y.Seconds));
     public Time Zero => (Seconds.Zero);
     public Time One => (Seconds.One);
@@ -2170,7 +2094,6 @@ public readonly partial struct DateTime
     public DateTime MaxValue => (Value.MaxValue);
     public Integer Compare(DateTime y) => (Value.Compare(y.Value));
     public DateTime Lerp(DateTime b, Number amount) => (Value.Lerp(b.Value, amount));
-    public Number Unlerp(DateTime a, DateTime b) => (Value.Unlerp(a.Value, b.Value));
     public DateTime Add(Time other) => throw new NotImplementedException();
     public static DateTime operator +(DateTime self, Time other) => self.Add(other);
     public DateTime Subtract(Time other) => throw new NotImplementedException();
@@ -2585,7 +2508,6 @@ public readonly partial struct UV
     public static UV operator +(UV self, Number other) => self.Add(other);
     public UV Subtract(Number other) => throw new NotImplementedException();
     public static UV operator -(UV self, Number other) => self.Subtract(other);
-    public Number Unlerp(UV a, UV b) => throw new NotImplementedException();
     public Integer Compare(UV y) => throw new NotImplementedException();
     public UV Reciprocal => (U.Reciprocal, V.Reciprocal);
     public UV Negative => (U.Negative, V.Negative);
@@ -2641,7 +2563,6 @@ public readonly partial struct UVW
     public static UVW operator +(UVW self, Number other) => self.Add(other);
     public UVW Subtract(Number other) => throw new NotImplementedException();
     public static UVW operator -(UVW self, Number other) => self.Subtract(other);
-    public Number Unlerp(UVW a, UVW b) => throw new NotImplementedException();
     public Integer Compare(UVW y) => throw new NotImplementedException();
     public UVW Reciprocal => (U.Reciprocal, V.Reciprocal, W.Reciprocal);
     public UVW Negative => (U.Negative, V.Negative, W.Negative);
@@ -2815,7 +2736,6 @@ public readonly partial struct Area
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersSquared) };
     // Unimplemented concept functions
     public Area Lerp(Area b, Number amount) => (MetersSquared.Lerp(b.MetersSquared, amount));
-    public Number Unlerp(Area a, Area b) => (MetersSquared.Unlerp(a.MetersSquared, b.MetersSquared));
     public Integer Compare(Area y) => (MetersSquared.Compare(y.MetersSquared));
     public Area Zero => (MetersSquared.Zero);
     public Area One => (MetersSquared.One);
@@ -2841,7 +2761,6 @@ public readonly partial struct Volume
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersCubed) };
     // Unimplemented concept functions
     public Volume Lerp(Volume b, Number amount) => (MetersCubed.Lerp(b.MetersCubed, amount));
-    public Number Unlerp(Volume a, Volume b) => (MetersCubed.Unlerp(a.MetersCubed, b.MetersCubed));
     public Integer Compare(Volume y) => (MetersCubed.Compare(y.MetersCubed));
     public Volume Zero => (MetersCubed.Zero);
     public Volume One => (MetersCubed.One);
@@ -2867,7 +2786,6 @@ public readonly partial struct Velocity
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersPerSecond) };
     // Unimplemented concept functions
     public Velocity Lerp(Velocity b, Number amount) => (MetersPerSecond.Lerp(b.MetersPerSecond, amount));
-    public Number Unlerp(Velocity a, Velocity b) => (MetersPerSecond.Unlerp(a.MetersPerSecond, b.MetersPerSecond));
     public Integer Compare(Velocity y) => (MetersPerSecond.Compare(y.MetersPerSecond));
     public Velocity Zero => (MetersPerSecond.Zero);
     public Velocity One => (MetersPerSecond.One);
@@ -2893,7 +2811,6 @@ public readonly partial struct Acceleration
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersPerSecondSquared) };
     // Unimplemented concept functions
     public Acceleration Lerp(Acceleration b, Number amount) => (MetersPerSecondSquared.Lerp(b.MetersPerSecondSquared, amount));
-    public Number Unlerp(Acceleration a, Acceleration b) => (MetersPerSecondSquared.Unlerp(a.MetersPerSecondSquared, b.MetersPerSecondSquared));
     public Integer Compare(Acceleration y) => (MetersPerSecondSquared.Compare(y.MetersPerSecondSquared));
     public Acceleration Zero => (MetersPerSecondSquared.Zero);
     public Acceleration One => (MetersPerSecondSquared.One);
@@ -2919,7 +2836,6 @@ public readonly partial struct Force
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Newtons) };
     // Unimplemented concept functions
     public Force Lerp(Force b, Number amount) => (Newtons.Lerp(b.Newtons, amount));
-    public Number Unlerp(Force a, Force b) => (Newtons.Unlerp(a.Newtons, b.Newtons));
     public Integer Compare(Force y) => (Newtons.Compare(y.Newtons));
     public Force Zero => (Newtons.Zero);
     public Force One => (Newtons.One);
@@ -2945,7 +2861,6 @@ public readonly partial struct Pressure
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Pascals) };
     // Unimplemented concept functions
     public Pressure Lerp(Pressure b, Number amount) => (Pascals.Lerp(b.Pascals, amount));
-    public Number Unlerp(Pressure a, Pressure b) => (Pascals.Unlerp(a.Pascals, b.Pascals));
     public Integer Compare(Pressure y) => (Pascals.Compare(y.Pascals));
     public Pressure Zero => (Pascals.Zero);
     public Pressure One => (Pascals.One);
@@ -2971,7 +2886,6 @@ public readonly partial struct Energy
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Joules) };
     // Unimplemented concept functions
     public Energy Lerp(Energy b, Number amount) => (Joules.Lerp(b.Joules, amount));
-    public Number Unlerp(Energy a, Energy b) => (Joules.Unlerp(a.Joules, b.Joules));
     public Integer Compare(Energy y) => (Joules.Compare(y.Joules));
     public Energy Zero => (Joules.Zero);
     public Energy One => (Joules.One);
@@ -2997,7 +2911,6 @@ public readonly partial struct Memory
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Bytes) };
     // Unimplemented concept functions
     public Memory Lerp(Memory b, Number amount) => (Bytes.Lerp(b.Bytes, amount));
-    public Number Unlerp(Memory a, Memory b) => (Bytes.Unlerp(a.Bytes, b.Bytes));
     public Integer Compare(Memory y) => (Bytes.Compare(y.Bytes));
     public Memory Zero => (Bytes.Zero);
     public Memory One => (Bytes.One);
@@ -3023,7 +2936,6 @@ public readonly partial struct Frequency
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Hertz) };
     // Unimplemented concept functions
     public Frequency Lerp(Frequency b, Number amount) => (Hertz.Lerp(b.Hertz, amount));
-    public Number Unlerp(Frequency a, Frequency b) => (Hertz.Unlerp(a.Hertz, b.Hertz));
     public Integer Compare(Frequency y) => (Hertz.Compare(y.Hertz));
     public Frequency Zero => (Hertz.Zero);
     public Frequency One => (Hertz.One);
@@ -3049,7 +2961,6 @@ public readonly partial struct Loudness
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Decibels) };
     // Unimplemented concept functions
     public Loudness Lerp(Loudness b, Number amount) => (Decibels.Lerp(b.Decibels, amount));
-    public Number Unlerp(Loudness a, Loudness b) => (Decibels.Unlerp(a.Decibels, b.Decibels));
     public Integer Compare(Loudness y) => (Decibels.Compare(y.Decibels));
     public Loudness Zero => (Decibels.Zero);
     public Loudness One => (Decibels.One);
@@ -3075,7 +2986,6 @@ public readonly partial struct LuminousIntensity
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Candelas) };
     // Unimplemented concept functions
     public LuminousIntensity Lerp(LuminousIntensity b, Number amount) => (Candelas.Lerp(b.Candelas, amount));
-    public Number Unlerp(LuminousIntensity a, LuminousIntensity b) => (Candelas.Unlerp(a.Candelas, b.Candelas));
     public Integer Compare(LuminousIntensity y) => (Candelas.Compare(y.Candelas));
     public LuminousIntensity Zero => (Candelas.Zero);
     public LuminousIntensity One => (Candelas.One);
@@ -3101,7 +3011,6 @@ public readonly partial struct ElectricPotential
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Volts) };
     // Unimplemented concept functions
     public ElectricPotential Lerp(ElectricPotential b, Number amount) => (Volts.Lerp(b.Volts, amount));
-    public Number Unlerp(ElectricPotential a, ElectricPotential b) => (Volts.Unlerp(a.Volts, b.Volts));
     public Integer Compare(ElectricPotential y) => (Volts.Compare(y.Volts));
     public ElectricPotential Zero => (Volts.Zero);
     public ElectricPotential One => (Volts.One);
@@ -3127,7 +3036,6 @@ public readonly partial struct ElectricCharge
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Columbs) };
     // Unimplemented concept functions
     public ElectricCharge Lerp(ElectricCharge b, Number amount) => (Columbs.Lerp(b.Columbs, amount));
-    public Number Unlerp(ElectricCharge a, ElectricCharge b) => (Columbs.Unlerp(a.Columbs, b.Columbs));
     public Integer Compare(ElectricCharge y) => (Columbs.Compare(y.Columbs));
     public ElectricCharge Zero => (Columbs.Zero);
     public ElectricCharge One => (Columbs.One);
@@ -3153,7 +3061,6 @@ public readonly partial struct ElectricCurrent
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Amperes) };
     // Unimplemented concept functions
     public ElectricCurrent Lerp(ElectricCurrent b, Number amount) => (Amperes.Lerp(b.Amperes, amount));
-    public Number Unlerp(ElectricCurrent a, ElectricCurrent b) => (Amperes.Unlerp(a.Amperes, b.Amperes));
     public Integer Compare(ElectricCurrent y) => (Amperes.Compare(y.Amperes));
     public ElectricCurrent Zero => (Amperes.Zero);
     public ElectricCurrent One => (Amperes.One);
@@ -3179,7 +3086,6 @@ public readonly partial struct ElectricResistance
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Ohms) };
     // Unimplemented concept functions
     public ElectricResistance Lerp(ElectricResistance b, Number amount) => (Ohms.Lerp(b.Ohms, amount));
-    public Number Unlerp(ElectricResistance a, ElectricResistance b) => (Ohms.Unlerp(a.Ohms, b.Ohms));
     public Integer Compare(ElectricResistance y) => (Ohms.Compare(y.Ohms));
     public ElectricResistance Zero => (Ohms.Zero);
     public ElectricResistance One => (Ohms.One);
@@ -3205,7 +3111,6 @@ public readonly partial struct Power
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Watts) };
     // Unimplemented concept functions
     public Power Lerp(Power b, Number amount) => (Watts.Lerp(b.Watts, amount));
-    public Number Unlerp(Power a, Power b) => (Watts.Unlerp(a.Watts, b.Watts));
     public Integer Compare(Power y) => (Watts.Compare(y.Watts));
     public Power Zero => (Watts.Zero);
     public Power One => (Watts.One);
@@ -3231,7 +3136,6 @@ public readonly partial struct Density
     public Array<Dynamic> FieldValues => new[] { new Dynamic(KilogramsPerMeterCubed) };
     // Unimplemented concept functions
     public Density Lerp(Density b, Number amount) => (KilogramsPerMeterCubed.Lerp(b.KilogramsPerMeterCubed, amount));
-    public Number Unlerp(Density a, Density b) => (KilogramsPerMeterCubed.Unlerp(a.KilogramsPerMeterCubed, b.KilogramsPerMeterCubed));
     public Integer Compare(Density y) => (KilogramsPerMeterCubed.Compare(y.KilogramsPerMeterCubed));
     public Density Zero => (KilogramsPerMeterCubed.Zero);
     public Density One => (KilogramsPerMeterCubed.One);

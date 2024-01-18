@@ -6,9 +6,6 @@ library Interval
     Lerp(x: Interval<$Value, $Size>, amount: Number): $Value
         => x.Min.Lerp(x.Max, amount);
     
-    Unlerp(x: Interval<$Value, $Size>, value: $Value): Number
-        => value.Unlerp(x.Min, x.Max);
-    
     Reverse(x: Interval<$Value, $Size>): Interval<$Value, $Size> 
         => (x.Max, x.Min);
         
@@ -52,7 +49,7 @@ library Interval
         => (x.Clamp(y.Min), x.Clamp(y.Max));
     
     Clamp(x: Interval<$Value, $Size>, value: $Value): $Value
-        => x.Min.Lerp(x.Max, value.Unlerp(x.Min, x.Max).ClampOne);
+        => value.Clamp(x.Min, x.Max);
     
     Within(x: Interval<$Value, $Size>, value: $Value): Boolean
         => value >= x.Min && value <= x.Max;
@@ -102,7 +99,7 @@ library Numerical
         => x * x;
 
     ClampOne(x: Number): Number 
-        => Clamp(x, 0.0, 1.0);
+        => x.Clamp(0.0, 1.0);
 
     PlusOne(x: Numerical): Numerical 
         => x + x.One;
@@ -182,6 +179,18 @@ library Numerical
         
     Between(self: Comparable, min: Comparable, max: Comparable): Boolean
         => self >= min && self <= max;
+
+    Percent(self: Number): Unit
+        => self / 100.0;
+
+    Percent(self: Unit): Number
+        => self.Value * 100.0;
+
+    InverseLerp(a: Number, b: Number, v: Number): Number
+        => (v - a) / (b - a);
+
+    Remap(aIn: Number, bIn: Number, aOut: Number, bOut: Number, v: Number): Number
+        => aOut.Lerp(bOut, aIn.InverseLerp(aOut, v));
 }
 
 library Angles 

@@ -30,6 +30,9 @@ public readonly partial struct Number
     public Number SmoothStep => this.Square.Multiply(((Number)3).Subtract(this.Twice));
     public Number ClampOne => this.Clamp(((Number)0), ((Number)1));
     public Boolean AlmostZero => this.Abs.LessThan(Constants.Epsilon);
+    public Unit Percent => this.Divide(((Number)100));
+    public Number InverseLerp(Number b, Number v) => v.Subtract(this).Divide(b.Subtract(this));
+    public Number Remap(Number bIn, Number aOut, Number bOut, Number v) => aOut.Lerp(bOut, this.InverseLerp(aOut, v));
     public Angle Radians => this;
     public Angle Degrees => this.Divide(((Integer)360)).Turns;
     public Angle Turns => this.Multiply(Constants.TwoPi);
@@ -187,6 +190,7 @@ public readonly partial struct Index
 }
 public readonly partial struct Unit
 {
+    public Number Percent => this.Value.Multiply(((Number)100));
     public Number Magnitude => this.Value;
     public Unit Half => this.Divide(((Number)2));
     public Unit Quarter => this.Divide(((Number)4));
@@ -226,48 +230,6 @@ public readonly partial struct Unit
     public Boolean AlmostEqual(Unit y) => this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
     public Unit Lerp(Unit b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
     public Unit Nearest(Unit b, Number t) => t.LessThanOrEquals(((Number)0.5)) ? this : b;
-}
-public readonly partial struct Percent
-{
-    public Number Magnitude => this.Value;
-    public Percent Half => this.Divide(((Number)2));
-    public Percent Quarter => this.Divide(((Number)4));
-    public Percent Eighth => this.Divide(((Number)8));
-    public Percent Tenth => this.Divide(((Number)10));
-    public Percent Twice => this.Multiply(((Number)2));
-    public Boolean Between(Percent min, Percent max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public Percent Clamp(Percent a, Percent b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(Percent b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(Percent a, Percent b) => a.Equals(b);
-    public Boolean NotEquals(Percent b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(Percent a, Percent b) => a.NotEquals(b);
-    public Boolean LessThan(Percent b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(Percent a, Percent b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Percent b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(Percent a, Percent b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Percent b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(Percent a, Percent b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Percent b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(Percent a, Percent b) => a.GreaterThanOrEquals(b);
-    public Percent Lesser(Percent b) => this.LessThanOrEquals(b) ? this : b;
-    public Percent Greater(Percent b) => this.GreaterThanOrEquals(b) ? this : b;
-    public Percent Square => this.Multiply(this);
-    public Percent PlusOne => this.Add(this.One);
-    public Percent MinusOne => this.Subtract(this.One);
-    public Percent FromOne => this.One.Subtract(this);
-    public Boolean IsPositive => this.GtEqZ;
-    public Boolean GtZ => this.GreaterThan(this.Zero);
-    public Boolean LtZ => this.LessThan(this.Zero);
-    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
-    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
-    public Boolean IsNegative => this.LessThan(this.Zero);
-    public Percent Sign => this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
-    public Percent Abs => this.LtZ ? this.Negative : this;
-    public Percent Pow2 => this.Multiply(this);
-    public Percent MultiplyEpsilon(Percent y) => this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
-    public Boolean AlmostEqual(Percent y) => this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
-    public Percent Lerp(Percent b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
-    public Percent Nearest(Percent b, Number t) => t.LessThanOrEquals(((Number)0.5)) ? this : b;
 }
 public readonly partial struct Probability
 {
@@ -543,7 +505,6 @@ public readonly partial struct AlignedBox2D
 {
     public Boolean IsEmpty => this.Min.GreaterThanOrEquals(this.Max);
     public Point2D Lerp(Number amount) => this.Min.Lerp(this.Max, amount);
-    public Number Unlerp(Point2D value) => value.Unlerp(this.Min, this.Max);
     public AlignedBox2D Reverse => this.Max.Tuple(this.Min);
     public Point2D Center => this.Lerp(((Number)0.5));
     public Boolean Contains(Point2D value) => this.Min.LessThanOrEquals(value).And(value.LessThanOrEquals(this.Max));
@@ -558,14 +519,13 @@ public readonly partial struct AlignedBox2D
     public AlignedBox2D RightHalf => this.Right(((Number)0.5));
     public AlignedBox2D Recenter(Point2D c) => c.Subtract(this.Size.Half).Tuple(c.Add(this.Size.Half));
     public AlignedBox2D Clamp(AlignedBox2D y) => this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
-    public Point2D Clamp(Point2D value) => this.Min.Lerp(this.Max, value.Unlerp(this.Min, this.Max).ClampOne);
+    public Point2D Clamp(Point2D value) => value.Clamp(this.Min, this.Max);
     public Boolean Within(Point2D value) => value.GreaterThanOrEquals(this.Min).And(value.LessThanOrEquals(this.Max));
 }
 public readonly partial struct AlignedBox3D
 {
     public Boolean IsEmpty => this.Min.GreaterThanOrEquals(this.Max);
     public Point3D Lerp(Number amount) => this.Min.Lerp(this.Max, amount);
-    public Number Unlerp(Point3D value) => value.Unlerp(this.Min, this.Max);
     public AlignedBox3D Reverse => this.Max.Tuple(this.Min);
     public Point3D Center => this.Lerp(((Number)0.5));
     public Boolean Contains(Point3D value) => this.Min.LessThanOrEquals(value).And(value.LessThanOrEquals(this.Max));
@@ -580,7 +540,7 @@ public readonly partial struct AlignedBox3D
     public AlignedBox3D RightHalf => this.Right(((Number)0.5));
     public AlignedBox3D Recenter(Point3D c) => c.Subtract(this.Size.Half).Tuple(c.Add(this.Size.Half));
     public AlignedBox3D Clamp(AlignedBox3D y) => this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
-    public Point3D Clamp(Point3D value) => this.Min.Lerp(this.Max, value.Unlerp(this.Min, this.Max).ClampOne);
+    public Point3D Clamp(Point3D value) => value.Clamp(this.Min, this.Max);
     public Boolean Within(Point3D value) => value.GreaterThanOrEquals(this.Min).And(value.LessThanOrEquals(this.Max));
 }
 public readonly partial struct Complex
@@ -732,7 +692,6 @@ public readonly partial struct Line2D
 {
     public Boolean IsEmpty => this.Min.GreaterThanOrEquals(this.Max);
     public Point2D Lerp(Number amount) => this.Min.Lerp(this.Max, amount);
-    public Number Unlerp(Point2D value) => value.Unlerp(this.Min, this.Max);
     public Line2D Reverse => this.Max.Tuple(this.Min);
     public Point2D Center => this.Lerp(((Number)0.5));
     public Boolean Contains(Point2D value) => this.Min.LessThanOrEquals(value).And(value.LessThanOrEquals(this.Max));
@@ -747,14 +706,13 @@ public readonly partial struct Line2D
     public Line2D RightHalf => this.Right(((Number)0.5));
     public Line2D Recenter(Point2D c) => c.Subtract(this.Size.Half).Tuple(c.Add(this.Size.Half));
     public Line2D Clamp(Line2D y) => this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
-    public Point2D Clamp(Point2D value) => this.Min.Lerp(this.Max, value.Unlerp(this.Min, this.Max).ClampOne);
+    public Point2D Clamp(Point2D value) => value.Clamp(this.Min, this.Max);
     public Boolean Within(Point2D value) => value.GreaterThanOrEquals(this.Min).And(value.LessThanOrEquals(this.Max));
 }
 public readonly partial struct Line3D
 {
     public Boolean IsEmpty => this.Min.GreaterThanOrEquals(this.Max);
     public Point3D Lerp(Number amount) => this.Min.Lerp(this.Max, amount);
-    public Number Unlerp(Point3D value) => value.Unlerp(this.Min, this.Max);
     public Line3D Reverse => this.Max.Tuple(this.Min);
     public Point3D Center => this.Lerp(((Number)0.5));
     public Boolean Contains(Point3D value) => this.Min.LessThanOrEquals(value).And(value.LessThanOrEquals(this.Max));
@@ -769,7 +727,7 @@ public readonly partial struct Line3D
     public Line3D RightHalf => this.Right(((Number)0.5));
     public Line3D Recenter(Point3D c) => c.Subtract(this.Size.Half).Tuple(c.Add(this.Size.Half));
     public Line3D Clamp(Line3D y) => this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
-    public Point3D Clamp(Point3D value) => this.Min.Lerp(this.Max, value.Unlerp(this.Min, this.Max).ClampOne);
+    public Point3D Clamp(Point3D value) => value.Clamp(this.Min, this.Max);
     public Boolean Within(Point3D value) => value.GreaterThanOrEquals(this.Min).And(value.LessThanOrEquals(this.Max));
 }
 public readonly partial struct Color
@@ -1272,7 +1230,6 @@ public readonly partial struct TimeRange
 {
     public Boolean IsEmpty => this.Min.GreaterThanOrEquals(this.Max);
     public DateTime Lerp(Number amount) => this.Min.Lerp(this.Max, amount);
-    public Number Unlerp(DateTime value) => value.Unlerp(this.Min, this.Max);
     public TimeRange Reverse => this.Max.Tuple(this.Min);
     public DateTime Center => this.Lerp(((Number)0.5));
     public Boolean Contains(DateTime value) => this.Min.LessThanOrEquals(value).And(value.LessThanOrEquals(this.Max));
@@ -1287,7 +1244,7 @@ public readonly partial struct TimeRange
     public TimeRange RightHalf => this.Right(((Number)0.5));
     public TimeRange Recenter(DateTime c) => c.Subtract(this.Size.Half).Tuple(c.Add(this.Size.Half));
     public TimeRange Clamp(TimeRange y) => this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
-    public DateTime Clamp(DateTime value) => this.Min.Lerp(this.Max, value.Unlerp(this.Min, this.Max).ClampOne);
+    public DateTime Clamp(DateTime value) => value.Clamp(this.Min, this.Max);
     public Boolean Within(DateTime value) => value.GreaterThanOrEquals(this.Min).And(value.LessThanOrEquals(this.Max));
 }
 public readonly partial struct DateTime
@@ -1313,7 +1270,6 @@ public readonly partial struct AnglePair
 {
     public Boolean IsEmpty => this.Min.GreaterThanOrEquals(this.Max);
     public Angle Lerp(Number amount) => this.Min.Lerp(this.Max, amount);
-    public Number Unlerp(Angle value) => value.Unlerp(this.Min, this.Max);
     public AnglePair Reverse => this.Max.Tuple(this.Min);
     public Angle Center => this.Lerp(((Number)0.5));
     public Boolean Contains(Angle value) => this.Min.LessThanOrEquals(value).And(value.LessThanOrEquals(this.Max));
@@ -1328,7 +1284,7 @@ public readonly partial struct AnglePair
     public AnglePair RightHalf => this.Right(((Number)0.5));
     public AnglePair Recenter(Angle c) => c.Subtract(this.Size.Half).Tuple(c.Add(this.Size.Half));
     public AnglePair Clamp(AnglePair y) => this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
-    public Angle Clamp(Angle value) => this.Min.Lerp(this.Max, value.Unlerp(this.Min, this.Max).ClampOne);
+    public Angle Clamp(Angle value) => value.Clamp(this.Min, this.Max);
     public Boolean Within(Angle value) => value.GreaterThanOrEquals(this.Min).And(value.LessThanOrEquals(this.Max));
 }
 public readonly partial struct Ring
@@ -1341,7 +1297,6 @@ public readonly partial struct NumberInterval
 {
     public Boolean IsEmpty => this.Min.GreaterThanOrEquals(this.Max);
     public Number Lerp(Number amount) => this.Min.Lerp(this.Max, amount);
-    public Number Unlerp(Number value) => value.Unlerp(this.Min, this.Max);
     public NumberInterval Reverse => this.Max.Tuple(this.Min);
     public Number Center => this.Lerp(((Number)0.5));
     public Boolean Contains(Number value) => this.Min.LessThanOrEquals(value).And(value.LessThanOrEquals(this.Max));
@@ -1356,7 +1311,7 @@ public readonly partial struct NumberInterval
     public NumberInterval RightHalf => this.Right(((Number)0.5));
     public NumberInterval Recenter(Number c) => c.Subtract(this.Size.Half).Tuple(c.Add(this.Size.Half));
     public NumberInterval Clamp(NumberInterval y) => this.Clamp(y.Min).Tuple(this.Clamp(y.Max));
-    public Number Clamp(Number value) => this.Min.Lerp(this.Max, value.Unlerp(this.Min, this.Max).ClampOne);
+    public Number Clamp(Number value) => value.Clamp(this.Min, this.Max);
     public Boolean Within(Number value) => value.GreaterThanOrEquals(this.Min).And(value.LessThanOrEquals(this.Max));
 }
 public readonly partial struct Capsule

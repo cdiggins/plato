@@ -140,5 +140,4 @@ concept Interval<TValue, TSize>
 concept Interpolatable
 {
     Lerp(a: Self, b: Self, amount: Number): Self;
-    Unlerp(v: Self, a: Self, b: Self): Number;
 }

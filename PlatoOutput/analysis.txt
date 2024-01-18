@@ -65,6 +65,9 @@ Type analysis for Number
   Function: SmoothStep(ConcreteType:Number x)
   Function: ClampOne(ConcreteType:Number x)
   Function: AlmostZero(ConcreteType:Number x)
+  Function: Percent(ConcreteType:Number self)
+  Function: InverseLerp(ConcreteType:Number a, ConcreteType:Number b, ConcreteType:Number v)
+  Function: Remap(ConcreteType:Number aIn, ConcreteType:Number bIn, ConcreteType:Number aOut, ConcreteType:Number bOut, ConcreteType:Number v)
   Function: Radians(ConcreteType:Number x)
   Function: Degrees(ConcreteType:Number x)
   Function: Turns(ConcreteType:Number x)
@@ -249,83 +252,7 @@ Type analysis for Unit
     Function: Twice(Concept:ScalarArithmetic x)
       Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:UnitT=ConcreteType:NumberScalarArithmetic=ConcreteType:UnitNumerical=ConcreteType:UnitSelf=ConcreteType:Unit
       Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:UnitT=ConcreteType:NumberScalarArithmetic=ConcreteType:UnitNumerical=ConcreteType:UnitSelf=ConcreteType:Unit
-Type analysis for Percent
-  Concept=Real Expr=Concept:Real Subs=Real=ConcreteType:PercentSelf=ConcreteType:Percent
-  Function: Magnitude(Concept:Real x)
-    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:PercentReal=ConcreteType:PercentSelf=ConcreteType:Percent
-      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:PercentValue=ConcreteType:PercentReal=ConcreteType:PercentSelf=ConcreteType:Percent
-      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:PercentValue=ConcreteType:PercentReal=ConcreteType:PercentSelf=ConcreteType:Percent
-    Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs=ScalarArithmetic=ConcreteType:PercentReal=ConcreteType:PercentSelf=ConcreteType:Percent
-    Function: Half(Concept:ScalarArithmetic x)
-    Function: Quarter(Concept:ScalarArithmetic x)
-    Function: Eighth(Concept:ScalarArithmetic x)
-    Function: Tenth(Concept:ScalarArithmetic x)
-    Function: Twice(Concept:ScalarArithmetic x)
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:PercentT=ConcreteType:NumberScalarArithmetic=ConcreteType:PercentReal=ConcreteType:PercentSelf=ConcreteType:Percent
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:PercentT=ConcreteType:NumberScalarArithmetic=ConcreteType:PercentReal=ConcreteType:PercentSelf=ConcreteType:Percent
-    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:PercentReal=ConcreteType:PercentSelf=ConcreteType:Percent
-    Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
-    Function: Clamp(Concept:Comparable v, Concept:Comparable a, Concept:Comparable b)
-    Function: Equals(Concept:Comparable a, Concept:Comparable b)
-    Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
-    Function: LessThan(Concept:Comparable a, Concept:Comparable b)
-    Function: LessThanOrEquals(Concept:Comparable a, Concept:Comparable b)
-    Function: GreaterThan(Concept:Comparable a, Concept:Comparable b)
-    Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
-    Function: Lesser(Concept:Comparable a, Concept:Comparable b)
-    Function: Greater(Concept:Comparable a, Concept:Comparable b)
-      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:PercentComparable=ConcreteType:PercentReal=ConcreteType:PercentSelf=ConcreteType:Percent
-    Concept=Magnitudinal Expr=Concept:Magnitudinal Subs=Magnitudinal=ConcreteType:PercentReal=ConcreteType:PercentSelf=ConcreteType:Percent
-    Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:PercentReal=ConcreteType:PercentSelf=ConcreteType:Percent
-  Concept=Numerical Expr=Concept:Numerical Subs=Numerical=ConcreteType:PercentSelf=ConcreteType:Percent
-  Function: Square(Concept:Numerical x)
-  Function: PlusOne(Concept:Numerical x)
-  Function: MinusOne(Concept:Numerical x)
-  Function: FromOne(Concept:Numerical x)
-  Function: IsPositive(Concept:Numerical x)
-  Function: GtZ(Concept:Numerical x)
-  Function: LtZ(Concept:Numerical x)
-  Function: GtEqZ(Concept:Numerical x)
-  Function: LtEqZ(Concept:Numerical x)
-  Function: IsNegative(Concept:Numerical x)
-  Function: Sign(Concept:Numerical x)
-  Function: Abs(Concept:Numerical x)
-  Function: Pow2(Concept:Numerical x)
-  Function: MultiplyEpsilon(Concept:Numerical x, Concept:Numerical y)
-  Function: AlmostEqual(Concept:Numerical x, Concept:Numerical y)
-  Function: Lerp(Concept:Numerical a, Concept:Numerical b, ConcreteType:Number t)
-  Function: Nearest(Concept:Numerical a, Concept:Numerical b, ConcreteType:Number t)
-    Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
-      Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:PercentValue=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
-      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:PercentValue=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
-    Concept=Arithmetic Expr=Concept:Arithmetic Subs=Arithmetic=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=AdditiveArithmetic=ConcreteType:PercentT=TypeVariable:SelfArithmetic=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=MultiplicativeArithmetic=ConcreteType:PercentT=TypeVariable:SelfArithmetic=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
-      Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:PercentArithmetic=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
-      Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:PercentArithmetic=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
-    Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
-    Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
-    Function: Between(Concept:Comparable self, Concept:Comparable min, Concept:Comparable max)
-    Function: Clamp(Concept:Comparable v, Concept:Comparable a, Concept:Comparable b)
-    Function: Equals(Concept:Comparable a, Concept:Comparable b)
-    Function: NotEquals(Concept:Comparable a, Concept:Comparable b)
-    Function: LessThan(Concept:Comparable a, Concept:Comparable b)
-    Function: LessThanOrEquals(Concept:Comparable a, Concept:Comparable b)
-    Function: GreaterThan(Concept:Comparable a, Concept:Comparable b)
-    Function: GreaterThanOrEquals(Concept:Comparable a, Concept:Comparable b)
-    Function: Lesser(Concept:Comparable a, Concept:Comparable b)
-    Function: Greater(Concept:Comparable a, Concept:Comparable b)
-      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:PercentComparable=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
-    Concept=Magnitudinal Expr=Concept:Magnitudinal Subs=Magnitudinal=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
-    Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
-    Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs=ScalarArithmetic=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
-    Function: Half(Concept:ScalarArithmetic x)
-    Function: Quarter(Concept:ScalarArithmetic x)
-    Function: Eighth(Concept:ScalarArithmetic x)
-    Function: Tenth(Concept:ScalarArithmetic x)
-    Function: Twice(Concept:ScalarArithmetic x)
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:PercentT=ConcreteType:NumberScalarArithmetic=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:PercentT=ConcreteType:NumberScalarArithmetic=ConcreteType:PercentNumerical=ConcreteType:PercentSelf=ConcreteType:Percent
+  Function: Percent(ConcreteType:Unit self)
 Type analysis for Probability
   Concept=Real Expr=Concept:Real Subs=Real=ConcreteType:ProbabilitySelf=ConcreteType:Probability
   Function: Magnitude(Concept:Real x)
@@ -665,7 +592,6 @@ Type analysis for AlignedBox2D
   Concept=Interval Expr=Concept:Interval<ConcreteType:Point2D,ConcreteType:Vector2D> Subs=Interval=ConcreteType:AlignedBox2DTSize=ConcreteType:Vector2DTValue=ConcreteType:Point2DSelf=ConcreteType:AlignedBox2D
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Lerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, ConcreteType:Number amount)
-  Function: Unlerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
   Function: Reverse(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Center(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Contains(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
@@ -690,7 +616,6 @@ Type analysis for AlignedBox3D
   Concept=Interval Expr=Concept:Interval<ConcreteType:Point3D,ConcreteType:Vector3D> Subs=Interval=ConcreteType:AlignedBox3DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point3DSelf=ConcreteType:AlignedBox3D
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Lerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, ConcreteType:Number amount)
-  Function: Unlerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
   Function: Reverse(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Center(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Contains(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
@@ -874,7 +799,6 @@ Type analysis for Line2D
   Concept=Interval Expr=Concept:Interval<ConcreteType:Point2D,ConcreteType:Vector2D> Subs=Interval=ConcreteType:Line2DTSize=ConcreteType:Vector2DTValue=ConcreteType:Point2DSelf=ConcreteType:Line2D
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Lerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, ConcreteType:Number amount)
-  Function: Unlerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
   Function: Reverse(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Center(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Contains(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
@@ -899,7 +823,6 @@ Type analysis for Line3D
   Concept=Interval Expr=Concept:Interval<ConcreteType:Point3D,ConcreteType:Vector3D> Subs=Interval=ConcreteType:Line3DTSize=ConcreteType:Vector3DTValue=ConcreteType:Point3DSelf=ConcreteType:Line3D
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Lerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, ConcreteType:Number amount)
-  Function: Unlerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
   Function: Reverse(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Center(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Contains(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
@@ -1403,7 +1326,6 @@ Type analysis for TimeRange
   Concept=Interval Expr=Concept:Interval<ConcreteType:DateTime,ConcreteType:Time> Subs=Interval=ConcreteType:TimeRangeTSize=ConcreteType:TimeTValue=ConcreteType:DateTimeSelf=ConcreteType:TimeRange
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Lerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, ConcreteType:Number amount)
-  Function: Unlerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
   Function: Reverse(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Center(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Contains(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
@@ -1447,7 +1369,6 @@ Type analysis for AnglePair
   Concept=Interval Expr=Concept:Interval<ConcreteType:Angle,ConcreteType:Angle> Subs=Interval=ConcreteType:AnglePairTSize=ConcreteType:AngleTValue=ConcreteType:AngleSelf=ConcreteType:AnglePair
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Lerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, ConcreteType:Number amount)
-  Function: Unlerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
   Function: Reverse(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Center(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Contains(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
@@ -1480,7 +1401,6 @@ Type analysis for NumberInterval
   Concept=Interval Expr=Concept:Interval<ConcreteType:Number,ConcreteType:Number> Subs=Interval=ConcreteType:NumberIntervalTSize=ConcreteType:NumberTValue=ConcreteType:NumberSelf=ConcreteType:NumberInterval
   Function: IsEmpty(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Lerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, ConcreteType:Number amount)
-  Function: Unlerp(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)
   Function: Reverse(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Center(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x)
   Function: Contains(Concept:Interval<TypeVariable:$Value,TypeVariable:$Size> x, TypeVariable:$Value value)

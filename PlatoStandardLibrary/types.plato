@@ -52,13 +52,6 @@ type Unit
     Value: Number;
 }
 
-// A numerical type normally in the range of 0 to 100 
-type Percent
-    implements Real, Numerical
-{
-    Value: Number;
-}
-
 // A value in the range of 0 to 1 representing a chance of probability
 type Probability
     implements Real, Numerical
@@ -315,7 +308,7 @@ type Color
 type ColorLUV
     implements Coordinate
 {
-    Lightness: Percent;
+    Lightness: Unit;
     U: Unit;
     V: Unit;
 }
@@ -324,16 +317,16 @@ type ColorLUV
 type ColorLAB
     implements Coordinate
 {
-    Lightness: Percent;
-    A: Integer;
-    B: Integer;
+    Lightness: Unit;
+    A: Number; 
+    B: Number;
 }
 
 // https://en.wikipedia.org/wiki/CIELAB_color_space#Cylindrical_model
 type ColorLCh
     implements Coordinate
 {
-    Lightness: Percent;
+    Lightness: Unit;
     ChromaHue: PolarCoordinate;
 }
 

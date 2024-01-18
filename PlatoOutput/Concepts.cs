@@ -89,6 +89,5 @@ public interface Interval<Self, TValue, TSize>: Equatable<Self>, Value<Self>
 public interface Interpolatable<Self>
 {
     Self  Lerp(Self b, Number amount);
-    Number  Unlerp(Self a, Self b);
 }
 */
