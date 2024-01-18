@@ -29,7 +29,12 @@ public readonly partial struct Number
     public Number SquareRoot => this.Pow(((Number)0.5));
     public Number SmoothStep => this.Square.Multiply(((Number)3).Subtract(this.Twice));
     public Number ClampOne => this.Clamp(((Number)0), ((Number)1));
+    public Number Sign => this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
+    public Number Abs => this.LtZ ? this.Negative : this;
+    public Number MultiplyEpsilon(Number y) => this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
+    public Boolean AlmostEqual(Number y) => this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
     public Boolean AlmostZero => this.Abs.LessThan(Constants.Epsilon);
+    public Number Nearest(Number b, Number t) => t.LessThanOrEquals(((Number)0.5)) ? this : b;
     public Unit Percent => this.Divide(((Number)100));
     public Number InverseLerp(Number b, Number v) => v.Subtract(this).Divide(b.Subtract(this));
     public Number Remap(Number bIn, Number aOut, Number bOut, Number v) => aOut.Lerp(bOut, this.InverseLerp(aOut, v));
@@ -45,23 +50,13 @@ public readonly partial struct Number
     public Time Hours => this.Multiply(((Integer)60)).Minutes;
     public Number HeavisideStep => this.LtZ ? ((Number)0) : ((Number)1);
     public Number Rectangular(Number width) => this.Abs.GreaterThanOrEquals(width.Half) ? ((Number)0) : ((Number)1);
-    public Number Square => this.Multiply(this);
-    public Number PlusOne => this.Add(this.One);
-    public Number MinusOne => this.Subtract(this.One);
-    public Number FromOne => this.One.Subtract(this);
-    public Boolean IsPositive => this.GtEqZ;
+    public Number Magnitude => this.Value;
     public Boolean GtZ => this.GreaterThan(this.Zero);
     public Boolean LtZ => this.LessThan(this.Zero);
     public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
     public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
-    public Boolean IsNegative => this.LessThan(this.Zero);
-    public Number Sign => this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
-    public Number Abs => this.LtZ ? this.Negative : this;
-    public Number Pow2 => this.Multiply(this);
-    public Number MultiplyEpsilon(Number y) => this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
-    public Boolean AlmostEqual(Number y) => this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
-    public Number Lerp(Number b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
-    public Number Nearest(Number b, Number t) => t.LessThanOrEquals(((Number)0.5)) ? this : b;
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Number min, Number max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Number Clamp(Number a, Number b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Number b) => this.Compare(b).Equals(((Integer)0));
@@ -83,6 +78,11 @@ public readonly partial struct Number
     public Number Eighth => this.Divide(((Number)8));
     public Number Tenth => this.Divide(((Number)10));
     public Number Twice => this.Multiply(((Number)2));
+    public Number Lerp(Number b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
+    public Number PlusOne => this.Add(this.One);
+    public Number MinusOne => this.Subtract(this.One);
+    public Number FromOne => this.One.Subtract(this);
+    public Number Square => this.Multiply(this);
 }
 public readonly partial struct Integer
 {
@@ -99,6 +99,16 @@ public readonly partial struct Integer
     public Integer Negative => Intrinsics.Negative(this);
     public static Integer operator -(Integer x) => x.Negative;
     public Number ToNumber => Intrinsics.ToNumber(this);
+    public Integer PlusOne => this.Add(this.One);
+    public Integer MinusOne => this.Subtract(this.One);
+    public Integer FromOne => this.One.Subtract(this);
+    public Integer Square => this.Multiply(this);
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Integer min, Integer max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Integer Clamp(Integer a, Integer b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Integer b) => this.Compare(b).Equals(((Integer)0));
@@ -118,6 +128,12 @@ public readonly partial struct Integer
 }
 public readonly partial struct String
 {
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(String min, String max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public String Clamp(String a, String b) => this.Greater(a).Lesser(b);
     public Boolean Equals(String b) => this.Compare(b).Equals(((Integer)0));
@@ -152,6 +168,16 @@ public readonly partial struct Dynamic
 }
 public readonly partial struct Cardinal
 {
+    public Cardinal PlusOne => this.Add(this.One);
+    public Cardinal MinusOne => this.Subtract(this.One);
+    public Cardinal FromOne => this.One.Subtract(this);
+    public Cardinal Square => this.Multiply(this);
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Cardinal min, Cardinal max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Cardinal Clamp(Cardinal a, Cardinal b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Cardinal b) => this.Compare(b).Equals(((Integer)0));
@@ -171,6 +197,16 @@ public readonly partial struct Cardinal
 }
 public readonly partial struct Index
 {
+    public Index PlusOne => this.Add(this.One);
+    public Index MinusOne => this.Subtract(this.One);
+    public Index FromOne => this.One.Subtract(this);
+    public Index Square => this.Multiply(this);
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Index min, Index max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Index Clamp(Index a, Index b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Index b) => this.Compare(b).Equals(((Integer)0));
@@ -192,11 +228,12 @@ public readonly partial struct Unit
 {
     public Number Percent => this.Value.Multiply(((Number)100));
     public Number Magnitude => this.Value;
-    public Unit Half => this.Divide(((Number)2));
-    public Unit Quarter => this.Divide(((Number)4));
-    public Unit Eighth => this.Divide(((Number)8));
-    public Unit Tenth => this.Divide(((Number)10));
-    public Unit Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Unit min, Unit max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Unit Clamp(Unit a, Unit b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Unit b) => this.Compare(b).Equals(((Integer)0));
@@ -213,32 +250,26 @@ public readonly partial struct Unit
     public static Boolean operator >=(Unit a, Unit b) => a.GreaterThanOrEquals(b);
     public Unit Lesser(Unit b) => this.LessThanOrEquals(b) ? this : b;
     public Unit Greater(Unit b) => this.GreaterThanOrEquals(b) ? this : b;
-    public Unit Square => this.Multiply(this);
+    public Unit Half => this.Divide(((Number)2));
+    public Unit Quarter => this.Divide(((Number)4));
+    public Unit Eighth => this.Divide(((Number)8));
+    public Unit Tenth => this.Divide(((Number)10));
+    public Unit Twice => this.Multiply(((Number)2));
+    public Unit Lerp(Unit b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
     public Unit PlusOne => this.Add(this.One);
     public Unit MinusOne => this.Subtract(this.One);
     public Unit FromOne => this.One.Subtract(this);
-    public Boolean IsPositive => this.GtEqZ;
-    public Boolean GtZ => this.GreaterThan(this.Zero);
-    public Boolean LtZ => this.LessThan(this.Zero);
-    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
-    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
-    public Boolean IsNegative => this.LessThan(this.Zero);
-    public Unit Sign => this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
-    public Unit Abs => this.LtZ ? this.Negative : this;
-    public Unit Pow2 => this.Multiply(this);
-    public Unit MultiplyEpsilon(Unit y) => this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
-    public Boolean AlmostEqual(Unit y) => this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
-    public Unit Lerp(Unit b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
-    public Unit Nearest(Unit b, Number t) => t.LessThanOrEquals(((Number)0.5)) ? this : b;
+    public Unit Square => this.Multiply(this);
 }
 public readonly partial struct Probability
 {
     public Number Magnitude => this.Value;
-    public Probability Half => this.Divide(((Number)2));
-    public Probability Quarter => this.Divide(((Number)4));
-    public Probability Eighth => this.Divide(((Number)8));
-    public Probability Tenth => this.Divide(((Number)10));
-    public Probability Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Probability min, Probability max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Probability Clamp(Probability a, Probability b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Probability b) => this.Compare(b).Equals(((Integer)0));
@@ -255,23 +286,16 @@ public readonly partial struct Probability
     public static Boolean operator >=(Probability a, Probability b) => a.GreaterThanOrEquals(b);
     public Probability Lesser(Probability b) => this.LessThanOrEquals(b) ? this : b;
     public Probability Greater(Probability b) => this.GreaterThanOrEquals(b) ? this : b;
-    public Probability Square => this.Multiply(this);
+    public Probability Half => this.Divide(((Number)2));
+    public Probability Quarter => this.Divide(((Number)4));
+    public Probability Eighth => this.Divide(((Number)8));
+    public Probability Tenth => this.Divide(((Number)10));
+    public Probability Twice => this.Multiply(((Number)2));
+    public Probability Lerp(Probability b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
     public Probability PlusOne => this.Add(this.One);
     public Probability MinusOne => this.Subtract(this.One);
     public Probability FromOne => this.One.Subtract(this);
-    public Boolean IsPositive => this.GtEqZ;
-    public Boolean GtZ => this.GreaterThan(this.Zero);
-    public Boolean LtZ => this.LessThan(this.Zero);
-    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
-    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
-    public Boolean IsNegative => this.LessThan(this.Zero);
-    public Probability Sign => this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
-    public Probability Abs => this.LtZ ? this.Negative : this;
-    public Probability Pow2 => this.Multiply(this);
-    public Probability MultiplyEpsilon(Probability y) => this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
-    public Boolean AlmostEqual(Probability y) => this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
-    public Probability Lerp(Probability b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
-    public Probability Nearest(Probability b, Number t) => t.LessThanOrEquals(((Number)0.5)) ? this : b;
+    public Probability Square => this.Multiply(this);
 }
 public readonly partial struct Quaternion
 {
@@ -322,44 +346,16 @@ public readonly partial struct Vector2D
     public Number Dot(Vector2D v2) => this.Multiply(v2).Sum;
     public Vector2D Normal => this.Divide(this.Magnitude);
     public Number Average => this.Sum.Divide(this.Count);
-    public Vector2D Square => this.Multiply(this);
     public Vector2D PlusOne => this.Add(this.One);
     public Vector2D MinusOne => this.Subtract(this.One);
     public Vector2D FromOne => this.One.Subtract(this);
-    public Boolean IsPositive => this.GtEqZ;
-    public Boolean GtZ => this.GreaterThan(this.Zero);
-    public Boolean LtZ => this.LessThan(this.Zero);
-    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
-    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
-    public Boolean IsNegative => this.LessThan(this.Zero);
-    public Vector2D Sign => this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
-    public Vector2D Abs => this.LtZ ? this.Negative : this;
-    public Vector2D Pow2 => this.Multiply(this);
-    public Vector2D MultiplyEpsilon(Vector2D y) => this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
-    public Boolean AlmostEqual(Vector2D y) => this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
-    public Vector2D Lerp(Vector2D b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
-    public Vector2D Nearest(Vector2D b, Number t) => t.LessThanOrEquals(((Number)0.5)) ? this : b;
-    public Boolean Between(Vector2D min, Vector2D max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public Vector2D Clamp(Vector2D a, Vector2D b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(Vector2D b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(Vector2D a, Vector2D b) => a.Equals(b);
-    public Boolean NotEquals(Vector2D b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(Vector2D a, Vector2D b) => a.NotEquals(b);
-    public Boolean LessThan(Vector2D b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(Vector2D a, Vector2D b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Vector2D b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(Vector2D a, Vector2D b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Vector2D b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(Vector2D a, Vector2D b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Vector2D b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(Vector2D a, Vector2D b) => a.GreaterThanOrEquals(b);
-    public Vector2D Lesser(Vector2D b) => this.LessThanOrEquals(b) ? this : b;
-    public Vector2D Greater(Vector2D b) => this.GreaterThanOrEquals(b) ? this : b;
+    public Vector2D Square => this.Multiply(this);
     public Vector2D Half => this.Divide(((Number)2));
     public Vector2D Quarter => this.Divide(((Number)4));
     public Vector2D Eighth => this.Divide(((Number)8));
     public Vector2D Tenth => this.Divide(((Number)10));
     public Vector2D Twice => this.Multiply(((Number)2));
+    public Vector2D Lerp(Vector2D b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct Vector3D
 {
@@ -389,44 +385,16 @@ public readonly partial struct Vector3D
     public Number Dot(Vector3D v2) => this.Multiply(v2).Sum;
     public Vector3D Normal => this.Divide(this.Magnitude);
     public Number Average => this.Sum.Divide(this.Count);
-    public Vector3D Square => this.Multiply(this);
     public Vector3D PlusOne => this.Add(this.One);
     public Vector3D MinusOne => this.Subtract(this.One);
     public Vector3D FromOne => this.One.Subtract(this);
-    public Boolean IsPositive => this.GtEqZ;
-    public Boolean GtZ => this.GreaterThan(this.Zero);
-    public Boolean LtZ => this.LessThan(this.Zero);
-    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
-    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
-    public Boolean IsNegative => this.LessThan(this.Zero);
-    public Vector3D Sign => this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
-    public Vector3D Abs => this.LtZ ? this.Negative : this;
-    public Vector3D Pow2 => this.Multiply(this);
-    public Vector3D MultiplyEpsilon(Vector3D y) => this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
-    public Boolean AlmostEqual(Vector3D y) => this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
-    public Vector3D Lerp(Vector3D b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
-    public Vector3D Nearest(Vector3D b, Number t) => t.LessThanOrEquals(((Number)0.5)) ? this : b;
-    public Boolean Between(Vector3D min, Vector3D max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public Vector3D Clamp(Vector3D a, Vector3D b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(Vector3D b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(Vector3D a, Vector3D b) => a.Equals(b);
-    public Boolean NotEquals(Vector3D b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(Vector3D a, Vector3D b) => a.NotEquals(b);
-    public Boolean LessThan(Vector3D b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(Vector3D a, Vector3D b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Vector3D b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(Vector3D a, Vector3D b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Vector3D b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(Vector3D a, Vector3D b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Vector3D b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(Vector3D a, Vector3D b) => a.GreaterThanOrEquals(b);
-    public Vector3D Lesser(Vector3D b) => this.LessThanOrEquals(b) ? this : b;
-    public Vector3D Greater(Vector3D b) => this.GreaterThanOrEquals(b) ? this : b;
+    public Vector3D Square => this.Multiply(this);
     public Vector3D Half => this.Divide(((Number)2));
     public Vector3D Quarter => this.Divide(((Number)4));
     public Vector3D Eighth => this.Divide(((Number)8));
     public Vector3D Tenth => this.Divide(((Number)10));
     public Vector3D Twice => this.Multiply(((Number)2));
+    public Vector3D Lerp(Vector3D b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct Vector4D
 {
@@ -456,44 +424,16 @@ public readonly partial struct Vector4D
     public Number Dot(Vector4D v2) => this.Multiply(v2).Sum;
     public Vector4D Normal => this.Divide(this.Magnitude);
     public Number Average => this.Sum.Divide(this.Count);
-    public Vector4D Square => this.Multiply(this);
     public Vector4D PlusOne => this.Add(this.One);
     public Vector4D MinusOne => this.Subtract(this.One);
     public Vector4D FromOne => this.One.Subtract(this);
-    public Boolean IsPositive => this.GtEqZ;
-    public Boolean GtZ => this.GreaterThan(this.Zero);
-    public Boolean LtZ => this.LessThan(this.Zero);
-    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
-    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
-    public Boolean IsNegative => this.LessThan(this.Zero);
-    public Vector4D Sign => this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
-    public Vector4D Abs => this.LtZ ? this.Negative : this;
-    public Vector4D Pow2 => this.Multiply(this);
-    public Vector4D MultiplyEpsilon(Vector4D y) => this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
-    public Boolean AlmostEqual(Vector4D y) => this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
-    public Vector4D Lerp(Vector4D b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
-    public Vector4D Nearest(Vector4D b, Number t) => t.LessThanOrEquals(((Number)0.5)) ? this : b;
-    public Boolean Between(Vector4D min, Vector4D max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public Vector4D Clamp(Vector4D a, Vector4D b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(Vector4D b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(Vector4D a, Vector4D b) => a.Equals(b);
-    public Boolean NotEquals(Vector4D b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(Vector4D a, Vector4D b) => a.NotEquals(b);
-    public Boolean LessThan(Vector4D b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(Vector4D a, Vector4D b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Vector4D b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(Vector4D a, Vector4D b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Vector4D b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(Vector4D a, Vector4D b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Vector4D b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(Vector4D a, Vector4D b) => a.GreaterThanOrEquals(b);
-    public Vector4D Lesser(Vector4D b) => this.LessThanOrEquals(b) ? this : b;
-    public Vector4D Greater(Vector4D b) => this.GreaterThanOrEquals(b) ? this : b;
+    public Vector4D Square => this.Multiply(this);
     public Vector4D Half => this.Divide(((Number)2));
     public Vector4D Quarter => this.Divide(((Number)4));
     public Vector4D Eighth => this.Divide(((Number)8));
     public Vector4D Tenth => this.Divide(((Number)10));
     public Vector4D Twice => this.Multiply(((Number)2));
+    public Vector4D Lerp(Vector4D b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct Orientation3D
 {
@@ -573,44 +513,16 @@ public readonly partial struct Complex
     public Number Dot(Complex v2) => this.Multiply(v2).Sum;
     public Complex Normal => this.Divide(this.Magnitude);
     public Number Average => this.Sum.Divide(this.Count);
-    public Complex Square => this.Multiply(this);
     public Complex PlusOne => this.Add(this.One);
     public Complex MinusOne => this.Subtract(this.One);
     public Complex FromOne => this.One.Subtract(this);
-    public Boolean IsPositive => this.GtEqZ;
-    public Boolean GtZ => this.GreaterThan(this.Zero);
-    public Boolean LtZ => this.LessThan(this.Zero);
-    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
-    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
-    public Boolean IsNegative => this.LessThan(this.Zero);
-    public Complex Sign => this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
-    public Complex Abs => this.LtZ ? this.Negative : this;
-    public Complex Pow2 => this.Multiply(this);
-    public Complex MultiplyEpsilon(Complex y) => this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
-    public Boolean AlmostEqual(Complex y) => this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
-    public Complex Lerp(Complex b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
-    public Complex Nearest(Complex b, Number t) => t.LessThanOrEquals(((Number)0.5)) ? this : b;
-    public Boolean Between(Complex min, Complex max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public Complex Clamp(Complex a, Complex b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(Complex b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(Complex a, Complex b) => a.Equals(b);
-    public Boolean NotEquals(Complex b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(Complex a, Complex b) => a.NotEquals(b);
-    public Boolean LessThan(Complex b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(Complex a, Complex b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(Complex b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(Complex a, Complex b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(Complex b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(Complex a, Complex b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(Complex b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(Complex a, Complex b) => a.GreaterThanOrEquals(b);
-    public Complex Lesser(Complex b) => this.LessThanOrEquals(b) ? this : b;
-    public Complex Greater(Complex b) => this.GreaterThanOrEquals(b) ? this : b;
+    public Complex Square => this.Multiply(this);
     public Complex Half => this.Divide(((Number)2));
     public Complex Quarter => this.Divide(((Number)4));
     public Complex Eighth => this.Divide(((Number)8));
     public Complex Tenth => this.Divide(((Number)10));
     public Complex Twice => this.Multiply(((Number)2));
+    public Complex Lerp(Complex b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct Ray3D
 {
@@ -765,11 +677,12 @@ public readonly partial struct Angle
     public Angle Negative => this.Value.Negative;
     public static Angle operator -(Angle x) => x.Negative;
     public Number Magnitude => this.Value;
-    public Angle Half => this.Divide(((Number)2));
-    public Angle Quarter => this.Divide(((Number)4));
-    public Angle Eighth => this.Divide(((Number)8));
-    public Angle Tenth => this.Divide(((Number)10));
-    public Angle Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Angle min, Angle max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Angle Clamp(Angle a, Angle b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Angle b) => this.Compare(b).Equals(((Integer)0));
@@ -786,6 +699,12 @@ public readonly partial struct Angle
     public static Boolean operator >=(Angle a, Angle b) => a.GreaterThanOrEquals(b);
     public Angle Lesser(Angle b) => this.LessThanOrEquals(b) ? this : b;
     public Angle Greater(Angle b) => this.GreaterThanOrEquals(b) ? this : b;
+    public Angle Half => this.Divide(((Number)2));
+    public Angle Quarter => this.Divide(((Number)4));
+    public Angle Eighth => this.Divide(((Number)8));
+    public Angle Tenth => this.Divide(((Number)10));
+    public Angle Twice => this.Multiply(((Number)2));
+    public Angle Lerp(Angle b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct Length
 {
@@ -809,11 +728,12 @@ public readonly partial struct Length
     public Length Negative => this.Value.Negative;
     public static Length operator -(Length x) => x.Negative;
     public Number Magnitude => this.Value;
-    public Length Half => this.Divide(((Number)2));
-    public Length Quarter => this.Divide(((Number)4));
-    public Length Eighth => this.Divide(((Number)8));
-    public Length Tenth => this.Divide(((Number)10));
-    public Length Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Length min, Length max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Length Clamp(Length a, Length b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Length b) => this.Compare(b).Equals(((Integer)0));
@@ -830,6 +750,12 @@ public readonly partial struct Length
     public static Boolean operator >=(Length a, Length b) => a.GreaterThanOrEquals(b);
     public Length Lesser(Length b) => this.LessThanOrEquals(b) ? this : b;
     public Length Greater(Length b) => this.GreaterThanOrEquals(b) ? this : b;
+    public Length Half => this.Divide(((Number)2));
+    public Length Quarter => this.Divide(((Number)4));
+    public Length Eighth => this.Divide(((Number)8));
+    public Length Tenth => this.Divide(((Number)10));
+    public Length Twice => this.Multiply(((Number)2));
+    public Length Lerp(Length b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct Mass
 {
@@ -849,11 +775,12 @@ public readonly partial struct Mass
     public Mass Negative => this.Value.Negative;
     public static Mass operator -(Mass x) => x.Negative;
     public Number Magnitude => this.Value;
-    public Mass Half => this.Divide(((Number)2));
-    public Mass Quarter => this.Divide(((Number)4));
-    public Mass Eighth => this.Divide(((Number)8));
-    public Mass Tenth => this.Divide(((Number)10));
-    public Mass Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Mass min, Mass max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Mass Clamp(Mass a, Mass b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Mass b) => this.Compare(b).Equals(((Integer)0));
@@ -870,6 +797,12 @@ public readonly partial struct Mass
     public static Boolean operator >=(Mass a, Mass b) => a.GreaterThanOrEquals(b);
     public Mass Lesser(Mass b) => this.LessThanOrEquals(b) ? this : b;
     public Mass Greater(Mass b) => this.GreaterThanOrEquals(b) ? this : b;
+    public Mass Half => this.Divide(((Number)2));
+    public Mass Quarter => this.Divide(((Number)4));
+    public Mass Eighth => this.Divide(((Number)8));
+    public Mass Tenth => this.Divide(((Number)10));
+    public Mass Twice => this.Multiply(((Number)2));
+    public Mass Lerp(Mass b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct Temperature
 {
@@ -889,11 +822,12 @@ public readonly partial struct Temperature
     public Temperature Negative => this.Value.Negative;
     public static Temperature operator -(Temperature x) => x.Negative;
     public Number Magnitude => this.Value;
-    public Temperature Half => this.Divide(((Number)2));
-    public Temperature Quarter => this.Divide(((Number)4));
-    public Temperature Eighth => this.Divide(((Number)8));
-    public Temperature Tenth => this.Divide(((Number)10));
-    public Temperature Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Temperature min, Temperature max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Temperature Clamp(Temperature a, Temperature b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Temperature b) => this.Compare(b).Equals(((Integer)0));
@@ -910,6 +844,12 @@ public readonly partial struct Temperature
     public static Boolean operator >=(Temperature a, Temperature b) => a.GreaterThanOrEquals(b);
     public Temperature Lesser(Temperature b) => this.LessThanOrEquals(b) ? this : b;
     public Temperature Greater(Temperature b) => this.GreaterThanOrEquals(b) ? this : b;
+    public Temperature Half => this.Divide(((Number)2));
+    public Temperature Quarter => this.Divide(((Number)4));
+    public Temperature Eighth => this.Divide(((Number)8));
+    public Temperature Tenth => this.Divide(((Number)10));
+    public Temperature Twice => this.Multiply(((Number)2));
+    public Temperature Lerp(Temperature b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct Time
 {
@@ -933,11 +873,12 @@ public readonly partial struct Time
     public Time Negative => this.Value.Negative;
     public static Time operator -(Time x) => x.Negative;
     public Number Magnitude => this.Value;
-    public Time Half => this.Divide(((Number)2));
-    public Time Quarter => this.Divide(((Number)4));
-    public Time Eighth => this.Divide(((Number)8));
-    public Time Tenth => this.Divide(((Number)10));
-    public Time Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Time min, Time max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Time Clamp(Time a, Time b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Time b) => this.Compare(b).Equals(((Integer)0));
@@ -954,6 +895,12 @@ public readonly partial struct Time
     public static Boolean operator >=(Time a, Time b) => a.GreaterThanOrEquals(b);
     public Time Lesser(Time b) => this.LessThanOrEquals(b) ? this : b;
     public Time Greater(Time b) => this.GreaterThanOrEquals(b) ? this : b;
+    public Time Half => this.Divide(((Number)2));
+    public Time Quarter => this.Divide(((Number)4));
+    public Time Eighth => this.Divide(((Number)8));
+    public Time Tenth => this.Divide(((Number)10));
+    public Time Twice => this.Multiply(((Number)2));
+    public Time Lerp(Time b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct TimeRange
 {
@@ -1070,44 +1017,16 @@ public readonly partial struct UV
     public Number Dot(UV v2) => this.Multiply(v2).Sum;
     public UV Normal => this.Divide(this.Magnitude);
     public Number Average => this.Sum.Divide(this.Count);
-    public UV Square => this.Multiply(this);
     public UV PlusOne => this.Add(this.One);
     public UV MinusOne => this.Subtract(this.One);
     public UV FromOne => this.One.Subtract(this);
-    public Boolean IsPositive => this.GtEqZ;
-    public Boolean GtZ => this.GreaterThan(this.Zero);
-    public Boolean LtZ => this.LessThan(this.Zero);
-    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
-    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
-    public Boolean IsNegative => this.LessThan(this.Zero);
-    public UV Sign => this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
-    public UV Abs => this.LtZ ? this.Negative : this;
-    public UV Pow2 => this.Multiply(this);
-    public UV MultiplyEpsilon(UV y) => this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
-    public Boolean AlmostEqual(UV y) => this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
-    public UV Lerp(UV b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
-    public UV Nearest(UV b, Number t) => t.LessThanOrEquals(((Number)0.5)) ? this : b;
-    public Boolean Between(UV min, UV max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public UV Clamp(UV a, UV b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(UV b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(UV a, UV b) => a.Equals(b);
-    public Boolean NotEquals(UV b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(UV a, UV b) => a.NotEquals(b);
-    public Boolean LessThan(UV b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(UV a, UV b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(UV b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(UV a, UV b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(UV b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(UV a, UV b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(UV b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(UV a, UV b) => a.GreaterThanOrEquals(b);
-    public UV Lesser(UV b) => this.LessThanOrEquals(b) ? this : b;
-    public UV Greater(UV b) => this.GreaterThanOrEquals(b) ? this : b;
+    public UV Square => this.Multiply(this);
     public UV Half => this.Divide(((Number)2));
     public UV Quarter => this.Divide(((Number)4));
     public UV Eighth => this.Divide(((Number)8));
     public UV Tenth => this.Divide(((Number)10));
     public UV Twice => this.Multiply(((Number)2));
+    public UV Lerp(UV b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct UVW
 {
@@ -1134,44 +1053,16 @@ public readonly partial struct UVW
     public Number Dot(UVW v2) => this.Multiply(v2).Sum;
     public UVW Normal => this.Divide(this.Magnitude);
     public Number Average => this.Sum.Divide(this.Count);
-    public UVW Square => this.Multiply(this);
     public UVW PlusOne => this.Add(this.One);
     public UVW MinusOne => this.Subtract(this.One);
     public UVW FromOne => this.One.Subtract(this);
-    public Boolean IsPositive => this.GtEqZ;
-    public Boolean GtZ => this.GreaterThan(this.Zero);
-    public Boolean LtZ => this.LessThan(this.Zero);
-    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
-    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
-    public Boolean IsNegative => this.LessThan(this.Zero);
-    public UVW Sign => this.LtZ ? this.One.Negative : this.GtZ ? this.One : this.Zero;
-    public UVW Abs => this.LtZ ? this.Negative : this;
-    public UVW Pow2 => this.Multiply(this);
-    public UVW MultiplyEpsilon(UVW y) => this.Abs.Greater(y.Abs).Multiply(Constants.Epsilon);
-    public Boolean AlmostEqual(UVW y) => this.Subtract(y).Abs.LessThanOrEquals(this.MultiplyEpsilon(y));
-    public UVW Lerp(UVW b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
-    public UVW Nearest(UVW b, Number t) => t.LessThanOrEquals(((Number)0.5)) ? this : b;
-    public Boolean Between(UVW min, UVW max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
-    public UVW Clamp(UVW a, UVW b) => this.Greater(a).Lesser(b);
-    public Boolean Equals(UVW b) => this.Compare(b).Equals(((Integer)0));
-    public static Boolean operator ==(UVW a, UVW b) => a.Equals(b);
-    public Boolean NotEquals(UVW b) => this.Compare(b).NotEquals(((Integer)0));
-    public static Boolean operator !=(UVW a, UVW b) => a.NotEquals(b);
-    public Boolean LessThan(UVW b) => this.Compare(b).LessThan(((Integer)0));
-    public static Boolean operator <(UVW a, UVW b) => a.LessThan(b);
-    public Boolean LessThanOrEquals(UVW b) => this.Compare(b).LessThanOrEquals(((Integer)0));
-    public static Boolean operator <=(UVW a, UVW b) => a.LessThanOrEquals(b);
-    public Boolean GreaterThan(UVW b) => this.Compare(b).GreaterThan(((Integer)0));
-    public static Boolean operator >(UVW a, UVW b) => a.GreaterThan(b);
-    public Boolean GreaterThanOrEquals(UVW b) => this.Compare(b).GreaterThanOrEquals(((Integer)0));
-    public static Boolean operator >=(UVW a, UVW b) => a.GreaterThanOrEquals(b);
-    public UVW Lesser(UVW b) => this.LessThanOrEquals(b) ? this : b;
-    public UVW Greater(UVW b) => this.GreaterThanOrEquals(b) ? this : b;
+    public UVW Square => this.Multiply(this);
     public UVW Half => this.Divide(((Number)2));
     public UVW Quarter => this.Divide(((Number)4));
     public UVW Eighth => this.Divide(((Number)8));
     public UVW Tenth => this.Divide(((Number)10));
     public UVW Twice => this.Multiply(((Number)2));
+    public UVW Lerp(UVW b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct CubicBezier2D
 {
@@ -1205,11 +1096,12 @@ public readonly partial struct Area
     public Area Negative => this.Value.Negative;
     public static Area operator -(Area x) => x.Negative;
     public Number Magnitude => this.Value;
-    public Area Half => this.Divide(((Number)2));
-    public Area Quarter => this.Divide(((Number)4));
-    public Area Eighth => this.Divide(((Number)8));
-    public Area Tenth => this.Divide(((Number)10));
-    public Area Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Area min, Area max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Area Clamp(Area a, Area b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Area b) => this.Compare(b).Equals(((Integer)0));
@@ -1226,6 +1118,12 @@ public readonly partial struct Area
     public static Boolean operator >=(Area a, Area b) => a.GreaterThanOrEquals(b);
     public Area Lesser(Area b) => this.LessThanOrEquals(b) ? this : b;
     public Area Greater(Area b) => this.GreaterThanOrEquals(b) ? this : b;
+    public Area Half => this.Divide(((Number)2));
+    public Area Quarter => this.Divide(((Number)4));
+    public Area Eighth => this.Divide(((Number)8));
+    public Area Tenth => this.Divide(((Number)10));
+    public Area Twice => this.Multiply(((Number)2));
+    public Area Lerp(Area b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct Volume
 {
@@ -1247,11 +1145,12 @@ public readonly partial struct Volume
     public Volume Negative => this.Value.Negative;
     public static Volume operator -(Volume x) => x.Negative;
     public Number Magnitude => this.Value;
-    public Volume Half => this.Divide(((Number)2));
-    public Volume Quarter => this.Divide(((Number)4));
-    public Volume Eighth => this.Divide(((Number)8));
-    public Volume Tenth => this.Divide(((Number)10));
-    public Volume Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Volume min, Volume max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Volume Clamp(Volume a, Volume b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Volume b) => this.Compare(b).Equals(((Integer)0));
@@ -1268,6 +1167,12 @@ public readonly partial struct Volume
     public static Boolean operator >=(Volume a, Volume b) => a.GreaterThanOrEquals(b);
     public Volume Lesser(Volume b) => this.LessThanOrEquals(b) ? this : b;
     public Volume Greater(Volume b) => this.GreaterThanOrEquals(b) ? this : b;
+    public Volume Half => this.Divide(((Number)2));
+    public Volume Quarter => this.Divide(((Number)4));
+    public Volume Eighth => this.Divide(((Number)8));
+    public Volume Tenth => this.Divide(((Number)10));
+    public Volume Twice => this.Multiply(((Number)2));
+    public Volume Lerp(Volume b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct Velocity
 {
@@ -1291,11 +1196,12 @@ public readonly partial struct Velocity
     public Velocity Negative => this.Value.Negative;
     public static Velocity operator -(Velocity x) => x.Negative;
     public Number Magnitude => this.Value;
-    public Velocity Half => this.Divide(((Number)2));
-    public Velocity Quarter => this.Divide(((Number)4));
-    public Velocity Eighth => this.Divide(((Number)8));
-    public Velocity Tenth => this.Divide(((Number)10));
-    public Velocity Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Velocity min, Velocity max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Velocity Clamp(Velocity a, Velocity b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Velocity b) => this.Compare(b).Equals(((Integer)0));
@@ -1312,6 +1218,12 @@ public readonly partial struct Velocity
     public static Boolean operator >=(Velocity a, Velocity b) => a.GreaterThanOrEquals(b);
     public Velocity Lesser(Velocity b) => this.LessThanOrEquals(b) ? this : b;
     public Velocity Greater(Velocity b) => this.GreaterThanOrEquals(b) ? this : b;
+    public Velocity Half => this.Divide(((Number)2));
+    public Velocity Quarter => this.Divide(((Number)4));
+    public Velocity Eighth => this.Divide(((Number)8));
+    public Velocity Tenth => this.Divide(((Number)10));
+    public Velocity Twice => this.Multiply(((Number)2));
+    public Velocity Lerp(Velocity b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct Acceleration
 {
@@ -1333,11 +1245,12 @@ public readonly partial struct Acceleration
     public Acceleration Negative => this.Value.Negative;
     public static Acceleration operator -(Acceleration x) => x.Negative;
     public Number Magnitude => this.Value;
-    public Acceleration Half => this.Divide(((Number)2));
-    public Acceleration Quarter => this.Divide(((Number)4));
-    public Acceleration Eighth => this.Divide(((Number)8));
-    public Acceleration Tenth => this.Divide(((Number)10));
-    public Acceleration Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Acceleration min, Acceleration max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Acceleration Clamp(Acceleration a, Acceleration b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Acceleration b) => this.Compare(b).Equals(((Integer)0));
@@ -1354,6 +1267,12 @@ public readonly partial struct Acceleration
     public static Boolean operator >=(Acceleration a, Acceleration b) => a.GreaterThanOrEquals(b);
     public Acceleration Lesser(Acceleration b) => this.LessThanOrEquals(b) ? this : b;
     public Acceleration Greater(Acceleration b) => this.GreaterThanOrEquals(b) ? this : b;
+    public Acceleration Half => this.Divide(((Number)2));
+    public Acceleration Quarter => this.Divide(((Number)4));
+    public Acceleration Eighth => this.Divide(((Number)8));
+    public Acceleration Tenth => this.Divide(((Number)10));
+    public Acceleration Twice => this.Multiply(((Number)2));
+    public Acceleration Lerp(Acceleration b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct Force
 {
@@ -1371,11 +1290,12 @@ public readonly partial struct Force
     public Force Negative => this.Value.Negative;
     public static Force operator -(Force x) => x.Negative;
     public Number Magnitude => this.Value;
-    public Force Half => this.Divide(((Number)2));
-    public Force Quarter => this.Divide(((Number)4));
-    public Force Eighth => this.Divide(((Number)8));
-    public Force Tenth => this.Divide(((Number)10));
-    public Force Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Force min, Force max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Force Clamp(Force a, Force b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Force b) => this.Compare(b).Equals(((Integer)0));
@@ -1392,6 +1312,12 @@ public readonly partial struct Force
     public static Boolean operator >=(Force a, Force b) => a.GreaterThanOrEquals(b);
     public Force Lesser(Force b) => this.LessThanOrEquals(b) ? this : b;
     public Force Greater(Force b) => this.GreaterThanOrEquals(b) ? this : b;
+    public Force Half => this.Divide(((Number)2));
+    public Force Quarter => this.Divide(((Number)4));
+    public Force Eighth => this.Divide(((Number)8));
+    public Force Tenth => this.Divide(((Number)10));
+    public Force Twice => this.Multiply(((Number)2));
+    public Force Lerp(Force b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct Pressure
 {
@@ -1409,11 +1335,12 @@ public readonly partial struct Pressure
     public Pressure Negative => this.Value.Negative;
     public static Pressure operator -(Pressure x) => x.Negative;
     public Number Magnitude => this.Value;
-    public Pressure Half => this.Divide(((Number)2));
-    public Pressure Quarter => this.Divide(((Number)4));
-    public Pressure Eighth => this.Divide(((Number)8));
-    public Pressure Tenth => this.Divide(((Number)10));
-    public Pressure Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Pressure min, Pressure max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Pressure Clamp(Pressure a, Pressure b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Pressure b) => this.Compare(b).Equals(((Integer)0));
@@ -1430,6 +1357,12 @@ public readonly partial struct Pressure
     public static Boolean operator >=(Pressure a, Pressure b) => a.GreaterThanOrEquals(b);
     public Pressure Lesser(Pressure b) => this.LessThanOrEquals(b) ? this : b;
     public Pressure Greater(Pressure b) => this.GreaterThanOrEquals(b) ? this : b;
+    public Pressure Half => this.Divide(((Number)2));
+    public Pressure Quarter => this.Divide(((Number)4));
+    public Pressure Eighth => this.Divide(((Number)8));
+    public Pressure Tenth => this.Divide(((Number)10));
+    public Pressure Twice => this.Multiply(((Number)2));
+    public Pressure Lerp(Pressure b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct Energy
 {
@@ -1447,11 +1380,12 @@ public readonly partial struct Energy
     public Energy Negative => this.Value.Negative;
     public static Energy operator -(Energy x) => x.Negative;
     public Number Magnitude => this.Value;
-    public Energy Half => this.Divide(((Number)2));
-    public Energy Quarter => this.Divide(((Number)4));
-    public Energy Eighth => this.Divide(((Number)8));
-    public Energy Tenth => this.Divide(((Number)10));
-    public Energy Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Energy min, Energy max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Energy Clamp(Energy a, Energy b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Energy b) => this.Compare(b).Equals(((Integer)0));
@@ -1468,6 +1402,12 @@ public readonly partial struct Energy
     public static Boolean operator >=(Energy a, Energy b) => a.GreaterThanOrEquals(b);
     public Energy Lesser(Energy b) => this.LessThanOrEquals(b) ? this : b;
     public Energy Greater(Energy b) => this.GreaterThanOrEquals(b) ? this : b;
+    public Energy Half => this.Divide(((Number)2));
+    public Energy Quarter => this.Divide(((Number)4));
+    public Energy Eighth => this.Divide(((Number)8));
+    public Energy Tenth => this.Divide(((Number)10));
+    public Energy Twice => this.Multiply(((Number)2));
+    public Energy Lerp(Energy b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct Memory
 {
@@ -1485,11 +1425,12 @@ public readonly partial struct Memory
     public Memory Negative => this.Value.Negative;
     public static Memory operator -(Memory x) => x.Negative;
     public Number Magnitude => this.Value;
-    public Memory Half => this.Divide(((Number)2));
-    public Memory Quarter => this.Divide(((Number)4));
-    public Memory Eighth => this.Divide(((Number)8));
-    public Memory Tenth => this.Divide(((Number)10));
-    public Memory Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Memory min, Memory max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Memory Clamp(Memory a, Memory b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Memory b) => this.Compare(b).Equals(((Integer)0));
@@ -1506,6 +1447,12 @@ public readonly partial struct Memory
     public static Boolean operator >=(Memory a, Memory b) => a.GreaterThanOrEquals(b);
     public Memory Lesser(Memory b) => this.LessThanOrEquals(b) ? this : b;
     public Memory Greater(Memory b) => this.GreaterThanOrEquals(b) ? this : b;
+    public Memory Half => this.Divide(((Number)2));
+    public Memory Quarter => this.Divide(((Number)4));
+    public Memory Eighth => this.Divide(((Number)8));
+    public Memory Tenth => this.Divide(((Number)10));
+    public Memory Twice => this.Multiply(((Number)2));
+    public Memory Lerp(Memory b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct Frequency
 {
@@ -1523,11 +1470,12 @@ public readonly partial struct Frequency
     public Frequency Negative => this.Value.Negative;
     public static Frequency operator -(Frequency x) => x.Negative;
     public Number Magnitude => this.Value;
-    public Frequency Half => this.Divide(((Number)2));
-    public Frequency Quarter => this.Divide(((Number)4));
-    public Frequency Eighth => this.Divide(((Number)8));
-    public Frequency Tenth => this.Divide(((Number)10));
-    public Frequency Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Frequency min, Frequency max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Frequency Clamp(Frequency a, Frequency b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Frequency b) => this.Compare(b).Equals(((Integer)0));
@@ -1544,6 +1492,12 @@ public readonly partial struct Frequency
     public static Boolean operator >=(Frequency a, Frequency b) => a.GreaterThanOrEquals(b);
     public Frequency Lesser(Frequency b) => this.LessThanOrEquals(b) ? this : b;
     public Frequency Greater(Frequency b) => this.GreaterThanOrEquals(b) ? this : b;
+    public Frequency Half => this.Divide(((Number)2));
+    public Frequency Quarter => this.Divide(((Number)4));
+    public Frequency Eighth => this.Divide(((Number)8));
+    public Frequency Tenth => this.Divide(((Number)10));
+    public Frequency Twice => this.Multiply(((Number)2));
+    public Frequency Lerp(Frequency b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct Loudness
 {
@@ -1561,11 +1515,12 @@ public readonly partial struct Loudness
     public Loudness Negative => this.Value.Negative;
     public static Loudness operator -(Loudness x) => x.Negative;
     public Number Magnitude => this.Value;
-    public Loudness Half => this.Divide(((Number)2));
-    public Loudness Quarter => this.Divide(((Number)4));
-    public Loudness Eighth => this.Divide(((Number)8));
-    public Loudness Tenth => this.Divide(((Number)10));
-    public Loudness Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Loudness min, Loudness max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Loudness Clamp(Loudness a, Loudness b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Loudness b) => this.Compare(b).Equals(((Integer)0));
@@ -1582,6 +1537,12 @@ public readonly partial struct Loudness
     public static Boolean operator >=(Loudness a, Loudness b) => a.GreaterThanOrEquals(b);
     public Loudness Lesser(Loudness b) => this.LessThanOrEquals(b) ? this : b;
     public Loudness Greater(Loudness b) => this.GreaterThanOrEquals(b) ? this : b;
+    public Loudness Half => this.Divide(((Number)2));
+    public Loudness Quarter => this.Divide(((Number)4));
+    public Loudness Eighth => this.Divide(((Number)8));
+    public Loudness Tenth => this.Divide(((Number)10));
+    public Loudness Twice => this.Multiply(((Number)2));
+    public Loudness Lerp(Loudness b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct LuminousIntensity
 {
@@ -1599,11 +1560,12 @@ public readonly partial struct LuminousIntensity
     public LuminousIntensity Negative => this.Value.Negative;
     public static LuminousIntensity operator -(LuminousIntensity x) => x.Negative;
     public Number Magnitude => this.Value;
-    public LuminousIntensity Half => this.Divide(((Number)2));
-    public LuminousIntensity Quarter => this.Divide(((Number)4));
-    public LuminousIntensity Eighth => this.Divide(((Number)8));
-    public LuminousIntensity Tenth => this.Divide(((Number)10));
-    public LuminousIntensity Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(LuminousIntensity min, LuminousIntensity max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public LuminousIntensity Clamp(LuminousIntensity a, LuminousIntensity b) => this.Greater(a).Lesser(b);
     public Boolean Equals(LuminousIntensity b) => this.Compare(b).Equals(((Integer)0));
@@ -1620,6 +1582,12 @@ public readonly partial struct LuminousIntensity
     public static Boolean operator >=(LuminousIntensity a, LuminousIntensity b) => a.GreaterThanOrEquals(b);
     public LuminousIntensity Lesser(LuminousIntensity b) => this.LessThanOrEquals(b) ? this : b;
     public LuminousIntensity Greater(LuminousIntensity b) => this.GreaterThanOrEquals(b) ? this : b;
+    public LuminousIntensity Half => this.Divide(((Number)2));
+    public LuminousIntensity Quarter => this.Divide(((Number)4));
+    public LuminousIntensity Eighth => this.Divide(((Number)8));
+    public LuminousIntensity Tenth => this.Divide(((Number)10));
+    public LuminousIntensity Twice => this.Multiply(((Number)2));
+    public LuminousIntensity Lerp(LuminousIntensity b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct ElectricPotential
 {
@@ -1637,11 +1605,12 @@ public readonly partial struct ElectricPotential
     public ElectricPotential Negative => this.Value.Negative;
     public static ElectricPotential operator -(ElectricPotential x) => x.Negative;
     public Number Magnitude => this.Value;
-    public ElectricPotential Half => this.Divide(((Number)2));
-    public ElectricPotential Quarter => this.Divide(((Number)4));
-    public ElectricPotential Eighth => this.Divide(((Number)8));
-    public ElectricPotential Tenth => this.Divide(((Number)10));
-    public ElectricPotential Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(ElectricPotential min, ElectricPotential max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public ElectricPotential Clamp(ElectricPotential a, ElectricPotential b) => this.Greater(a).Lesser(b);
     public Boolean Equals(ElectricPotential b) => this.Compare(b).Equals(((Integer)0));
@@ -1658,6 +1627,12 @@ public readonly partial struct ElectricPotential
     public static Boolean operator >=(ElectricPotential a, ElectricPotential b) => a.GreaterThanOrEquals(b);
     public ElectricPotential Lesser(ElectricPotential b) => this.LessThanOrEquals(b) ? this : b;
     public ElectricPotential Greater(ElectricPotential b) => this.GreaterThanOrEquals(b) ? this : b;
+    public ElectricPotential Half => this.Divide(((Number)2));
+    public ElectricPotential Quarter => this.Divide(((Number)4));
+    public ElectricPotential Eighth => this.Divide(((Number)8));
+    public ElectricPotential Tenth => this.Divide(((Number)10));
+    public ElectricPotential Twice => this.Multiply(((Number)2));
+    public ElectricPotential Lerp(ElectricPotential b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct ElectricCharge
 {
@@ -1675,11 +1650,12 @@ public readonly partial struct ElectricCharge
     public ElectricCharge Negative => this.Value.Negative;
     public static ElectricCharge operator -(ElectricCharge x) => x.Negative;
     public Number Magnitude => this.Value;
-    public ElectricCharge Half => this.Divide(((Number)2));
-    public ElectricCharge Quarter => this.Divide(((Number)4));
-    public ElectricCharge Eighth => this.Divide(((Number)8));
-    public ElectricCharge Tenth => this.Divide(((Number)10));
-    public ElectricCharge Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(ElectricCharge min, ElectricCharge max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public ElectricCharge Clamp(ElectricCharge a, ElectricCharge b) => this.Greater(a).Lesser(b);
     public Boolean Equals(ElectricCharge b) => this.Compare(b).Equals(((Integer)0));
@@ -1696,6 +1672,12 @@ public readonly partial struct ElectricCharge
     public static Boolean operator >=(ElectricCharge a, ElectricCharge b) => a.GreaterThanOrEquals(b);
     public ElectricCharge Lesser(ElectricCharge b) => this.LessThanOrEquals(b) ? this : b;
     public ElectricCharge Greater(ElectricCharge b) => this.GreaterThanOrEquals(b) ? this : b;
+    public ElectricCharge Half => this.Divide(((Number)2));
+    public ElectricCharge Quarter => this.Divide(((Number)4));
+    public ElectricCharge Eighth => this.Divide(((Number)8));
+    public ElectricCharge Tenth => this.Divide(((Number)10));
+    public ElectricCharge Twice => this.Multiply(((Number)2));
+    public ElectricCharge Lerp(ElectricCharge b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct ElectricCurrent
 {
@@ -1713,11 +1695,12 @@ public readonly partial struct ElectricCurrent
     public ElectricCurrent Negative => this.Value.Negative;
     public static ElectricCurrent operator -(ElectricCurrent x) => x.Negative;
     public Number Magnitude => this.Value;
-    public ElectricCurrent Half => this.Divide(((Number)2));
-    public ElectricCurrent Quarter => this.Divide(((Number)4));
-    public ElectricCurrent Eighth => this.Divide(((Number)8));
-    public ElectricCurrent Tenth => this.Divide(((Number)10));
-    public ElectricCurrent Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(ElectricCurrent min, ElectricCurrent max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public ElectricCurrent Clamp(ElectricCurrent a, ElectricCurrent b) => this.Greater(a).Lesser(b);
     public Boolean Equals(ElectricCurrent b) => this.Compare(b).Equals(((Integer)0));
@@ -1734,6 +1717,12 @@ public readonly partial struct ElectricCurrent
     public static Boolean operator >=(ElectricCurrent a, ElectricCurrent b) => a.GreaterThanOrEquals(b);
     public ElectricCurrent Lesser(ElectricCurrent b) => this.LessThanOrEquals(b) ? this : b;
     public ElectricCurrent Greater(ElectricCurrent b) => this.GreaterThanOrEquals(b) ? this : b;
+    public ElectricCurrent Half => this.Divide(((Number)2));
+    public ElectricCurrent Quarter => this.Divide(((Number)4));
+    public ElectricCurrent Eighth => this.Divide(((Number)8));
+    public ElectricCurrent Tenth => this.Divide(((Number)10));
+    public ElectricCurrent Twice => this.Multiply(((Number)2));
+    public ElectricCurrent Lerp(ElectricCurrent b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct ElectricResistance
 {
@@ -1751,11 +1740,12 @@ public readonly partial struct ElectricResistance
     public ElectricResistance Negative => this.Value.Negative;
     public static ElectricResistance operator -(ElectricResistance x) => x.Negative;
     public Number Magnitude => this.Value;
-    public ElectricResistance Half => this.Divide(((Number)2));
-    public ElectricResistance Quarter => this.Divide(((Number)4));
-    public ElectricResistance Eighth => this.Divide(((Number)8));
-    public ElectricResistance Tenth => this.Divide(((Number)10));
-    public ElectricResistance Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(ElectricResistance min, ElectricResistance max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public ElectricResistance Clamp(ElectricResistance a, ElectricResistance b) => this.Greater(a).Lesser(b);
     public Boolean Equals(ElectricResistance b) => this.Compare(b).Equals(((Integer)0));
@@ -1772,6 +1762,12 @@ public readonly partial struct ElectricResistance
     public static Boolean operator >=(ElectricResistance a, ElectricResistance b) => a.GreaterThanOrEquals(b);
     public ElectricResistance Lesser(ElectricResistance b) => this.LessThanOrEquals(b) ? this : b;
     public ElectricResistance Greater(ElectricResistance b) => this.GreaterThanOrEquals(b) ? this : b;
+    public ElectricResistance Half => this.Divide(((Number)2));
+    public ElectricResistance Quarter => this.Divide(((Number)4));
+    public ElectricResistance Eighth => this.Divide(((Number)8));
+    public ElectricResistance Tenth => this.Divide(((Number)10));
+    public ElectricResistance Twice => this.Multiply(((Number)2));
+    public ElectricResistance Lerp(ElectricResistance b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct Power
 {
@@ -1789,11 +1785,12 @@ public readonly partial struct Power
     public Power Negative => this.Value.Negative;
     public static Power operator -(Power x) => x.Negative;
     public Number Magnitude => this.Value;
-    public Power Half => this.Divide(((Number)2));
-    public Power Quarter => this.Divide(((Number)4));
-    public Power Eighth => this.Divide(((Number)8));
-    public Power Tenth => this.Divide(((Number)10));
-    public Power Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Power min, Power max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Power Clamp(Power a, Power b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Power b) => this.Compare(b).Equals(((Integer)0));
@@ -1810,6 +1807,12 @@ public readonly partial struct Power
     public static Boolean operator >=(Power a, Power b) => a.GreaterThanOrEquals(b);
     public Power Lesser(Power b) => this.LessThanOrEquals(b) ? this : b;
     public Power Greater(Power b) => this.GreaterThanOrEquals(b) ? this : b;
+    public Power Half => this.Divide(((Number)2));
+    public Power Quarter => this.Divide(((Number)4));
+    public Power Eighth => this.Divide(((Number)8));
+    public Power Tenth => this.Divide(((Number)10));
+    public Power Twice => this.Multiply(((Number)2));
+    public Power Lerp(Power b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct Density
 {
@@ -1827,11 +1830,12 @@ public readonly partial struct Density
     public Density Negative => this.Value.Negative;
     public static Density operator -(Density x) => x.Negative;
     public Number Magnitude => this.Value;
-    public Density Half => this.Divide(((Number)2));
-    public Density Quarter => this.Divide(((Number)4));
-    public Density Eighth => this.Divide(((Number)8));
-    public Density Tenth => this.Divide(((Number)10));
-    public Density Twice => this.Multiply(((Number)2));
+    public Boolean GtZ => this.GreaterThan(this.Zero);
+    public Boolean LtZ => this.LessThan(this.Zero);
+    public Boolean GtEqZ => this.GreaterThanOrEquals(this.Zero);
+    public Boolean LtEqZ => this.LessThanOrEquals(this.Zero);
+    public Boolean IsPositive => this.GtEqZ;
+    public Boolean IsNegative => this.LtZ;
     public Boolean Between(Density min, Density max) => this.GreaterThanOrEquals(min).And(this.LessThanOrEquals(max));
     public Density Clamp(Density a, Density b) => this.Greater(a).Lesser(b);
     public Boolean Equals(Density b) => this.Compare(b).Equals(((Integer)0));
@@ -1848,6 +1852,12 @@ public readonly partial struct Density
     public static Boolean operator >=(Density a, Density b) => a.GreaterThanOrEquals(b);
     public Density Lesser(Density b) => this.LessThanOrEquals(b) ? this : b;
     public Density Greater(Density b) => this.GreaterThanOrEquals(b) ? this : b;
+    public Density Half => this.Divide(((Number)2));
+    public Density Quarter => this.Divide(((Number)4));
+    public Density Eighth => this.Divide(((Number)8));
+    public Density Tenth => this.Divide(((Number)10));
+    public Density Twice => this.Multiply(((Number)2));
+    public Density Lerp(Density b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
 }
 public readonly partial struct NormalDistribution
 {

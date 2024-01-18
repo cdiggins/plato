@@ -107,7 +107,7 @@ library Numerical
     SmoothStep(x: Number): Number
         => x.Square * (3.0 - x.Twice);    
 
-    Square(x: Numerical): Numerical 
+    Square(x: Arithmetic): Arithmetic 
         => x * x;
 
     ClampOne(x: Number): Number 
@@ -122,28 +122,28 @@ library Numerical
     FromOne(x: Numerical): Numerical 
         => x.One - x;
 
-    IsPositive(x: Numerical): Boolean
-        => x.GtEqZ;
-
-    GtZ(x : Numerical): Boolean
+    GtZ(x : Comparable): Boolean
         => x > x.Zero;
 
-    LtZ(x : Numerical): Boolean
+    LtZ(x : Comparable): Boolean
         => x < x.Zero;
 
-    GtEqZ(x : Numerical): Boolean
+    GtEqZ(x : Comparable): Boolean
         => x >= x.Zero;
 
-    LtEqZ(x : Numerical): Boolean
+    LtEqZ(x : Comparable): Boolean
         => x <= x.Zero;
 
-    IsNegative(x: Numerical): Boolean
-        => x < x.Zero;
+    IsPositive(x: Comparable): Boolean
+        => x.GtEqZ;
 
-    Sign(x: Numerical): Numerical 
+    IsNegative(x: Comparable): Boolean
+        => x.LtZ;
+
+    Sign(x: Number): Number 
         => x.LtZ ? -x.One : x.GtZ ? x.One : x.Zero;
 
-    Abs(x: Numerical): Numerical 
+    Abs(x: Number): Number 
         => x.LtZ ? -x: x;
     
     Half(x: ScalarArithmetic): ScalarArithmetic
@@ -161,9 +161,6 @@ library Numerical
     Twice(x:ScalarArithmetic): ScalarArithmetic 
         => x * 2.0;
     
-    Pow2(x: Numerical): Numerical
-        => x * x;
-
     TwoPi(): Number 
         => Pi.Twice;
     
@@ -173,20 +170,20 @@ library Numerical
     Epsilon(): Number
         => 1E-15;
 
-    MultiplyEpsilon(x: Numerical, y: Numerical): Numerical
+    MultiplyEpsilon(x: Number, y: Number): Number
         => x.Abs.Greater(y.Abs) * Epsilon;
 
     // https://stackoverflow.com/a/2411661
-    AlmostEqual(x: Numerical, y: Numerical): Boolean
+    AlmostEqual(x: Number, y: Number): Boolean
         => (x-y).Abs <= x.MultiplyEpsilon(y);
 
     AlmostZero(x: Number): Boolean
         => x.Abs < Epsilon; 
 
-    Lerp(a: Numerical, b: Numerical, t: Number): Numerical
+    Lerp(a: ScalarArithmetic, b: ScalarArithmetic, t: Number): ScalarArithmetic
         => a * t.FromOne + b * t;
 
-    Nearest(a: Numerical, b: Numerical, t: Number): Numerical
+    Nearest(a: Number, b: Number, t: Number): Number
         => t <= 0.5 ? a : b;
         
     Between(self: Comparable, min: Comparable, max: Comparable): Boolean
@@ -275,9 +272,6 @@ library Measures
 
     Negative(x: Measure): Measure
         => -x.Value;
-
-    Magnitude(x: Measure): Number
-        => x.Value; 
 
     Fahrenheit(x: Temperature): Number
         => (x.Celsius * 9.0 / 5.0) + 32.0;

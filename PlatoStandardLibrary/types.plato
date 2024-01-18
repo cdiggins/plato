@@ -2,7 +2,7 @@
 
 // Built-in type that represents a real number 
 type Number 
-    implements Numerical
+    implements Real, Numerical
 { }
 
 // Built-in type that represent a positive or negative whole number 

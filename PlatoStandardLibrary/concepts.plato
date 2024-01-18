@@ -17,11 +17,18 @@ concept Value
     MaxValue(x: Self): Self;
 }
 
+// A numerical type represents things like floats, vectors, complex numbers
+concept Numerical 
+    inherits Value, Arithmetic, Magnitudinal, Interpolatable, Betweenable, Equatable
+{
+}
+
 // Represents a continuous one dimensional value.
 // https://en.wikipedia.org/wiki/Real_number
 // Most things that are Real, are also Numerical except for Measures.
+// You can't do basic arithmetic on measures. 
 concept Real
-    inherits Value, ScalarArithmetic, Comparable, Magnitudinal, Interpolatable, Betweenable
+    inherits Magnitudinal, Interpolatable, Betweenable, Equatable, Comparable, ScalarArithmetic
 {
     Value(x: Self): Number;
 }
@@ -34,16 +41,16 @@ concept Array<T>
     At(xs: Self, n: Integer): T;
 }
 
-// Vectors are numerical types which are arrays of numerical types. 
+// Vectors are arrays of numerical types. 
 concept Vector
-    inherits Array<Number>, Numerical, Magnitudinal, Equatable, Interpolatable, ScalarArithmetic
+    inherits Array<Number>, Numerical, ScalarArithmetic, 
 {
 }
 
 // A coordinate is a point in some cartesian space. This also includes 
 // a time line, so a DateTime is considered a Coordinate. 
 concept Coordinate
-    inherits Interpolatable, Value, Betweenable
+    inherits Value, Interpolatable, Betweenable
 {
 }
 
@@ -58,14 +65,8 @@ concept Measure
 
 // Used for integer and cardinal types.
 concept WholeNumber 
-    inherits Arithmetic, Equatable, Comparable, Magnitudinal, Betweenable
+    inherits Numerical, Comparable
 { }
-
-// A numerical type represents things like floats and complex numbers
-concept Numerical 
-    inherits Value, Arithmetic, Equatable, Comparable, Magnitudinal, Interpolatable, ScalarArithmetic, Betweenable
-{
-}
 
 // Any type which has a numerical magnitude (like numbers, vectors, and measurements)
 concept Magnitudinal
@@ -75,7 +76,7 @@ concept Magnitudinal
 
 // The compare function return a negative integer if x < y, a positive integer if x > y, or zero otherwise. 
 concept Comparable
-    inherits Equatable
+    inherits Value, Equatable
 {
     Compare(x: Self, y: Self): Integer;
 }

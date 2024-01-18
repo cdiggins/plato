@@ -6,6 +6,7 @@ public readonly partial struct String
     public Integer Compare(String other) => Value.CompareTo(other.Value);
     public Character At(Integer n) => Value[n];
     public Integer Count => Value.Length;
+    public String Zero => "";
 }
 
 public readonly partial struct Boolean
@@ -20,7 +21,6 @@ public readonly partial struct Number
     public Number One => 1;
     public Number MinValue => double.MinValue;
     public Number MaxValue => double.MaxValue;
-    public Number Magnitude => Value;
     public Number Reciprocal => 1.0 / Value;
     public Integer Compare(Number other) => Value.CompareTo(other.Value);
     public Number Unlerp(Number a, Number b) => (double)(this - a) / (double)(b = a);

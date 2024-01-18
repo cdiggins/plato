@@ -12,7 +12,10 @@ public interface Value<Self>: Any, Equatable<Self>
     Self  MinValue { get; }
     Self  MaxValue { get; }
 }
-public interface Real<Self>: Value<Self>, ScalarArithmetic<Self>, Comparable<Self>, Magnitudinal, Interpolatable<Self>, Betweenable<Self>
+public interface Numerical<Self>: Value<Self>, Arithmetic<Self>, Magnitudinal, Interpolatable<Self>, Betweenable<Self>, Equatable<Self>
+{
+}
+public interface Real<Self>: Magnitudinal, Interpolatable<Self>, Betweenable<Self>, Equatable<Self>, Comparable<Self>, ScalarArithmetic<Self>
 {
     Number  Value { get; }
 }
@@ -21,26 +24,23 @@ public interface Array<T>
     Integer  Count { get; }
     T  At(Integer n);
 }
-public interface Vector<Self>: Array<Number>, Numerical<Self>, Magnitudinal, Equatable<Self>, Interpolatable<Self>, ScalarArithmetic<Self>
+public interface Vector<Self>: Array<Number>, Numerical<Self>, ScalarArithmetic<Self>
 {
 }
-public interface Coordinate<Self>: Interpolatable<Self>, Value<Self>, Betweenable<Self>
+public interface Coordinate<Self>: Value<Self>, Interpolatable<Self>, Betweenable<Self>
 {
 }
 public interface Measure<Self>: Real<Self>
 {
 }
-public interface WholeNumber<Self>: Arithmetic<Self>, Equatable<Self>, Comparable<Self>, Magnitudinal, Betweenable<Self>
-{
-}
-public interface Numerical<Self>: Value<Self>, Arithmetic<Self>, Equatable<Self>, Comparable<Self>, Magnitudinal, Interpolatable<Self>, ScalarArithmetic<Self>, Betweenable<Self>
+public interface WholeNumber<Self>: Numerical<Self>, Comparable<Self>
 {
 }
 public interface Magnitudinal
 {
     Number  Magnitude { get; }
 }
-public interface Comparable<Self>: Equatable<Self>
+public interface Comparable<Self>: Value<Self>, Equatable<Self>
 {
     Integer  Compare(Self y);
 }

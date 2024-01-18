@@ -107,8 +107,13 @@ public readonly partial struct Cardinal
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Number Magnitude => (Value.Magnitude);
     public Integer Compare(Cardinal y) => (Value.Compare(y.Value));
+    public Cardinal Zero => (Value.Zero);
+    public Cardinal One => (Value.One);
+    public Cardinal MinValue => (Value.MinValue);
+    public Cardinal MaxValue => (Value.MaxValue);
+    public Cardinal Lerp(Cardinal b, Number amount) => throw new NotImplementedException();
+    public Number Magnitude => (Value.Magnitude);
     public Cardinal Reciprocal => (Value.Reciprocal);
     public Cardinal Negative => (Value.Negative);
     public static Cardinal operator -(Cardinal self) => self.Negative;
@@ -141,8 +146,13 @@ public readonly partial struct Index
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Number Magnitude => (Value.Magnitude);
     public Integer Compare(Index y) => (Value.Compare(y.Value));
+    public Index Zero => (Value.Zero);
+    public Index One => (Value.One);
+    public Index MinValue => (Value.MinValue);
+    public Index MaxValue => (Value.MaxValue);
+    public Index Lerp(Index b, Number amount) => throw new NotImplementedException();
+    public Number Magnitude => (Value.Magnitude);
     public Index Reciprocal => (Value.Reciprocal);
     public Index Negative => (Value.Negative);
     public static Index operator -(Index self) => self.Negative;
@@ -175,7 +185,6 @@ public readonly partial struct Unit
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Integer Compare(Unit y) => (Value.Compare(y.Value));
     public Unit Multiply(Number other) => (Value.Multiply(other));
     public static Unit operator *(Unit self, Number other) => self.Multiply(other);
     public Unit Divide(Number other) => (Value.Divide(other));
@@ -186,6 +195,7 @@ public readonly partial struct Unit
     public static Unit operator +(Unit self, Number other) => self.Add(other);
     public Unit Subtract(Number other) => (Value.Subtract(other));
     public static Unit operator -(Unit self, Number other) => self.Subtract(other);
+    public Integer Compare(Unit y) => (Value.Compare(y.Value));
     public Unit Zero => (Value.Zero);
     public Unit One => (Value.One);
     public Unit MinValue => (Value.MinValue);
@@ -222,7 +232,6 @@ public readonly partial struct Probability
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Integer Compare(Probability y) => (Value.Compare(y.Value));
     public Probability Multiply(Number other) => (Value.Multiply(other));
     public static Probability operator *(Probability self, Number other) => self.Multiply(other);
     public Probability Divide(Number other) => (Value.Divide(other));
@@ -233,6 +242,7 @@ public readonly partial struct Probability
     public static Probability operator +(Probability self, Number other) => self.Add(other);
     public Probability Subtract(Number other) => (Value.Subtract(other));
     public static Probability operator -(Probability self, Number other) => self.Subtract(other);
+    public Integer Compare(Probability y) => (Value.Compare(y.Value));
     public Probability Zero => (Value.Zero);
     public Probability One => (Value.One);
     public Probability MinValue => (Value.MinValue);
@@ -494,7 +504,12 @@ public readonly partial struct Vector2D
     public static Vector2D operator +(Vector2D self, Number other) => self.Add(other);
     public Vector2D Subtract(Number other) => (X.Subtract(other), Y.Subtract(other));
     public static Vector2D operator -(Vector2D self, Number other) => self.Subtract(other);
-    public Integer Compare(Vector2D y) => throw new NotImplementedException();
+    public Boolean Equals(Vector2D b) => (X.Equals(b.X) & Y.Equals(b.Y));
+    public static Boolean operator ==(Vector2D a, Vector2D b) => a.Equals(b);
+    public Boolean NotEquals(Vector2D b) => (X.NotEquals(b.X) & Y.NotEquals(b.Y));
+    public static Boolean operator !=(Vector2D a, Vector2D b) => a.NotEquals(b);
+    public Boolean Between(Vector2D a, Vector2D b) => (X.Between(a.X, b.X) & Y.Between(a.Y, b.Y));
+    public Vector2D Clamp(Vector2D a, Vector2D b) => (X.Clamp(a.X, b.X), Y.Clamp(a.Y, b.Y));
     public Vector2D Reciprocal => (X.Reciprocal, Y.Reciprocal);
     public Vector2D Negative => (X.Negative, Y.Negative);
     public static Vector2D operator -(Vector2D self) => self.Negative;
@@ -546,7 +561,12 @@ public readonly partial struct Vector3D
     public static Vector3D operator +(Vector3D self, Number other) => self.Add(other);
     public Vector3D Subtract(Number other) => (X.Subtract(other), Y.Subtract(other), Z.Subtract(other));
     public static Vector3D operator -(Vector3D self, Number other) => self.Subtract(other);
-    public Integer Compare(Vector3D y) => throw new NotImplementedException();
+    public Boolean Equals(Vector3D b) => (X.Equals(b.X) & Y.Equals(b.Y) & Z.Equals(b.Z));
+    public static Boolean operator ==(Vector3D a, Vector3D b) => a.Equals(b);
+    public Boolean NotEquals(Vector3D b) => (X.NotEquals(b.X) & Y.NotEquals(b.Y) & Z.NotEquals(b.Z));
+    public static Boolean operator !=(Vector3D a, Vector3D b) => a.NotEquals(b);
+    public Boolean Between(Vector3D a, Vector3D b) => (X.Between(a.X, b.X) & Y.Between(a.Y, b.Y) & Z.Between(a.Z, b.Z));
+    public Vector3D Clamp(Vector3D a, Vector3D b) => (X.Clamp(a.X, b.X), Y.Clamp(a.Y, b.Y), Z.Clamp(a.Z, b.Z));
     public Vector3D Reciprocal => (X.Reciprocal, Y.Reciprocal, Z.Reciprocal);
     public Vector3D Negative => (X.Negative, Y.Negative, Z.Negative);
     public static Vector3D operator -(Vector3D self) => self.Negative;
@@ -600,7 +620,12 @@ public readonly partial struct Vector4D
     public static Vector4D operator +(Vector4D self, Number other) => self.Add(other);
     public Vector4D Subtract(Number other) => (X.Subtract(other), Y.Subtract(other), Z.Subtract(other), W.Subtract(other));
     public static Vector4D operator -(Vector4D self, Number other) => self.Subtract(other);
-    public Integer Compare(Vector4D y) => throw new NotImplementedException();
+    public Boolean Equals(Vector4D b) => (X.Equals(b.X) & Y.Equals(b.Y) & Z.Equals(b.Z) & W.Equals(b.W));
+    public static Boolean operator ==(Vector4D a, Vector4D b) => a.Equals(b);
+    public Boolean NotEquals(Vector4D b) => (X.NotEquals(b.X) & Y.NotEquals(b.Y) & Z.NotEquals(b.Z) & W.NotEquals(b.W));
+    public static Boolean operator !=(Vector4D a, Vector4D b) => a.NotEquals(b);
+    public Boolean Between(Vector4D a, Vector4D b) => (X.Between(a.X, b.X) & Y.Between(a.Y, b.Y) & Z.Between(a.Z, b.Z) & W.Between(a.W, b.W));
+    public Vector4D Clamp(Vector4D a, Vector4D b) => (X.Clamp(a.X, b.X), Y.Clamp(a.Y, b.Y), Z.Clamp(a.Z, b.Z), W.Clamp(a.W, b.W));
     public Vector4D Reciprocal => (X.Reciprocal, Y.Reciprocal, Z.Reciprocal, W.Reciprocal);
     public Vector4D Negative => (X.Negative, Y.Negative, Z.Negative, W.Negative);
     public static Vector4D operator -(Vector4D self) => self.Negative;
@@ -867,7 +892,12 @@ public readonly partial struct Complex
     public static Complex operator +(Complex self, Number other) => self.Add(other);
     public Complex Subtract(Number other) => (Real.Subtract(other), Imaginary.Subtract(other));
     public static Complex operator -(Complex self, Number other) => self.Subtract(other);
-    public Integer Compare(Complex y) => throw new NotImplementedException();
+    public Boolean Equals(Complex b) => (Real.Equals(b.Real) & Imaginary.Equals(b.Imaginary));
+    public static Boolean operator ==(Complex a, Complex b) => a.Equals(b);
+    public Boolean NotEquals(Complex b) => (Real.NotEquals(b.Real) & Imaginary.NotEquals(b.Imaginary));
+    public static Boolean operator !=(Complex a, Complex b) => a.NotEquals(b);
+    public Boolean Between(Complex a, Complex b) => (Real.Between(a.Real, b.Real) & Imaginary.Between(a.Imaginary, b.Imaginary));
+    public Complex Clamp(Complex a, Complex b) => (Real.Clamp(a.Real, b.Real), Imaginary.Clamp(a.Imaginary, b.Imaginary));
     public Complex Reciprocal => (Real.Reciprocal, Imaginary.Reciprocal);
     public Complex Negative => (Real.Negative, Imaginary.Negative);
     public static Complex operator -(Complex self) => self.Negative;
@@ -1164,6 +1194,7 @@ public readonly partial struct Point2D
     // Unimplemented concept functions
     public Boolean Between(Point2D a, Point2D b) => (X.Between(a.X, b.X) & Y.Between(a.Y, b.Y));
     public Point2D Clamp(Point2D a, Point2D b) => (X.Clamp(a.X, b.X), Y.Clamp(a.Y, b.Y));
+    public Point2D Lerp(Point2D b, Number amount) => (X.Lerp(b.X, amount), Y.Lerp(b.Y, amount));
     public Point2D Zero => (X.Zero, Y.Zero);
     public Point2D One => (X.One, Y.One);
     public Point2D MinValue => (X.MinValue, Y.MinValue);
@@ -1172,7 +1203,6 @@ public readonly partial struct Point2D
     public static Boolean operator ==(Point2D a, Point2D b) => a.Equals(b);
     public Boolean NotEquals(Point2D b) => (X.NotEquals(b.X) & Y.NotEquals(b.Y));
     public static Boolean operator !=(Point2D a, Point2D b) => a.NotEquals(b);
-    public Point2D Lerp(Point2D b, Number amount) => (X.Lerp(b.X, amount), Y.Lerp(b.Y, amount));
     public Point2D Add(Vector2D other) => throw new NotImplementedException();
     public static Point2D operator +(Point2D self, Vector2D other) => self.Add(other);
     public Point2D Subtract(Vector2D other) => throw new NotImplementedException();
@@ -1203,6 +1233,7 @@ public readonly partial struct Point3D
     // Unimplemented concept functions
     public Boolean Between(Point3D a, Point3D b) => (X.Between(a.X, b.X) & Y.Between(a.Y, b.Y) & Z.Between(a.Z, b.Z));
     public Point3D Clamp(Point3D a, Point3D b) => (X.Clamp(a.X, b.X), Y.Clamp(a.Y, b.Y), Z.Clamp(a.Z, b.Z));
+    public Point3D Lerp(Point3D b, Number amount) => (X.Lerp(b.X, amount), Y.Lerp(b.Y, amount), Z.Lerp(b.Z, amount));
     public Point3D Zero => (X.Zero, Y.Zero, Z.Zero);
     public Point3D One => (X.One, Y.One, Z.One);
     public Point3D MinValue => (X.MinValue, Y.MinValue, Z.MinValue);
@@ -1211,7 +1242,6 @@ public readonly partial struct Point3D
     public static Boolean operator ==(Point3D a, Point3D b) => a.Equals(b);
     public Boolean NotEquals(Point3D b) => (X.NotEquals(b.X) & Y.NotEquals(b.Y) & Z.NotEquals(b.Z));
     public static Boolean operator !=(Point3D a, Point3D b) => a.NotEquals(b);
-    public Point3D Lerp(Point3D b, Number amount) => (X.Lerp(b.X, amount), Y.Lerp(b.Y, amount), Z.Lerp(b.Z, amount));
     public Point3D Add(Vector3D other) => throw new NotImplementedException();
     public static Point3D operator +(Point3D self, Vector3D other) => self.Add(other);
     public Point3D Subtract(Vector3D other) => throw new NotImplementedException();
@@ -1244,6 +1274,7 @@ public readonly partial struct Point4D
     // Unimplemented concept functions
     public Boolean Between(Point4D a, Point4D b) => (X.Between(a.X, b.X) & Y.Between(a.Y, b.Y) & Z.Between(a.Z, b.Z) & W.Between(a.W, b.W));
     public Point4D Clamp(Point4D a, Point4D b) => (X.Clamp(a.X, b.X), Y.Clamp(a.Y, b.Y), Z.Clamp(a.Z, b.Z), W.Clamp(a.W, b.W));
+    public Point4D Lerp(Point4D b, Number amount) => (X.Lerp(b.X, amount), Y.Lerp(b.Y, amount), Z.Lerp(b.Z, amount), W.Lerp(b.W, amount));
     public Point4D Zero => (X.Zero, Y.Zero, Z.Zero, W.Zero);
     public Point4D One => (X.One, Y.One, Z.One, W.One);
     public Point4D MinValue => (X.MinValue, Y.MinValue, Z.MinValue, W.MinValue);
@@ -1252,7 +1283,6 @@ public readonly partial struct Point4D
     public static Boolean operator ==(Point4D a, Point4D b) => a.Equals(b);
     public Boolean NotEquals(Point4D b) => (X.NotEquals(b.X) & Y.NotEquals(b.Y) & Z.NotEquals(b.Z) & W.NotEquals(b.W));
     public static Boolean operator !=(Point4D a, Point4D b) => a.NotEquals(b);
-    public Point4D Lerp(Point4D b, Number amount) => (X.Lerp(b.X, amount), Y.Lerp(b.Y, amount), Z.Lerp(b.Z, amount), W.Lerp(b.W, amount));
     public Point4D Add(Vector4D other) => throw new NotImplementedException();
     public static Point4D operator +(Point4D self, Vector4D other) => self.Add(other);
     public Point4D Subtract(Vector4D other) => throw new NotImplementedException();
@@ -1351,6 +1381,7 @@ public readonly partial struct Color
     // Unimplemented concept functions
     public Boolean Between(Color a, Color b) => (R.Between(a.R, b.R) & G.Between(a.G, b.G) & B.Between(a.B, b.B) & A.Between(a.A, b.A));
     public Color Clamp(Color a, Color b) => (R.Clamp(a.R, b.R), G.Clamp(a.G, b.G), B.Clamp(a.B, b.B), A.Clamp(a.A, b.A));
+    public Color Lerp(Color b, Number amount) => throw new NotImplementedException();
     public Color Zero => (R.Zero, G.Zero, B.Zero, A.Zero);
     public Color One => (R.One, G.One, B.One, A.One);
     public Color MinValue => (R.MinValue, G.MinValue, B.MinValue, A.MinValue);
@@ -1359,7 +1390,6 @@ public readonly partial struct Color
     public static Boolean operator ==(Color a, Color b) => a.Equals(b);
     public Boolean NotEquals(Color b) => (R.NotEquals(b.R) & G.NotEquals(b.G) & B.NotEquals(b.B) & A.NotEquals(b.A));
     public static Boolean operator !=(Color a, Color b) => a.NotEquals(b);
-    public Color Lerp(Color b, Number amount) => throw new NotImplementedException();
 }
 public readonly partial struct ColorLUV
 {
@@ -1386,6 +1416,7 @@ public readonly partial struct ColorLUV
     // Unimplemented concept functions
     public Boolean Between(ColorLUV a, ColorLUV b) => (Lightness.Between(a.Lightness, b.Lightness) & U.Between(a.U, b.U) & V.Between(a.V, b.V));
     public ColorLUV Clamp(ColorLUV a, ColorLUV b) => (Lightness.Clamp(a.Lightness, b.Lightness), U.Clamp(a.U, b.U), V.Clamp(a.V, b.V));
+    public ColorLUV Lerp(ColorLUV b, Number amount) => throw new NotImplementedException();
     public ColorLUV Zero => (Lightness.Zero, U.Zero, V.Zero);
     public ColorLUV One => (Lightness.One, U.One, V.One);
     public ColorLUV MinValue => (Lightness.MinValue, U.MinValue, V.MinValue);
@@ -1394,7 +1425,6 @@ public readonly partial struct ColorLUV
     public static Boolean operator ==(ColorLUV a, ColorLUV b) => a.Equals(b);
     public Boolean NotEquals(ColorLUV b) => (Lightness.NotEquals(b.Lightness) & U.NotEquals(b.U) & V.NotEquals(b.V));
     public static Boolean operator !=(ColorLUV a, ColorLUV b) => a.NotEquals(b);
-    public ColorLUV Lerp(ColorLUV b, Number amount) => throw new NotImplementedException();
 }
 public readonly partial struct ColorLAB
 {
@@ -1421,6 +1451,7 @@ public readonly partial struct ColorLAB
     // Unimplemented concept functions
     public Boolean Between(ColorLAB a, ColorLAB b) => (Lightness.Between(a.Lightness, b.Lightness) & A.Between(a.A, b.A) & B.Between(a.B, b.B));
     public ColorLAB Clamp(ColorLAB a, ColorLAB b) => (Lightness.Clamp(a.Lightness, b.Lightness), A.Clamp(a.A, b.A), B.Clamp(a.B, b.B));
+    public ColorLAB Lerp(ColorLAB b, Number amount) => throw new NotImplementedException();
     public ColorLAB Zero => (Lightness.Zero, A.Zero, B.Zero);
     public ColorLAB One => (Lightness.One, A.One, B.One);
     public ColorLAB MinValue => (Lightness.MinValue, A.MinValue, B.MinValue);
@@ -1429,7 +1460,6 @@ public readonly partial struct ColorLAB
     public static Boolean operator ==(ColorLAB a, ColorLAB b) => a.Equals(b);
     public Boolean NotEquals(ColorLAB b) => (Lightness.NotEquals(b.Lightness) & A.NotEquals(b.A) & B.NotEquals(b.B));
     public static Boolean operator !=(ColorLAB a, ColorLAB b) => a.NotEquals(b);
-    public ColorLAB Lerp(ColorLAB b, Number amount) => throw new NotImplementedException();
 }
 public readonly partial struct ColorLCh
 {
@@ -1454,6 +1484,7 @@ public readonly partial struct ColorLCh
     // Unimplemented concept functions
     public Boolean Between(ColorLCh a, ColorLCh b) => (Lightness.Between(a.Lightness, b.Lightness) & ChromaHue.Between(a.ChromaHue, b.ChromaHue));
     public ColorLCh Clamp(ColorLCh a, ColorLCh b) => (Lightness.Clamp(a.Lightness, b.Lightness), ChromaHue.Clamp(a.ChromaHue, b.ChromaHue));
+    public ColorLCh Lerp(ColorLCh b, Number amount) => throw new NotImplementedException();
     public ColorLCh Zero => (Lightness.Zero, ChromaHue.Zero);
     public ColorLCh One => (Lightness.One, ChromaHue.One);
     public ColorLCh MinValue => (Lightness.MinValue, ChromaHue.MinValue);
@@ -1462,7 +1493,6 @@ public readonly partial struct ColorLCh
     public static Boolean operator ==(ColorLCh a, ColorLCh b) => a.Equals(b);
     public Boolean NotEquals(ColorLCh b) => (Lightness.NotEquals(b.Lightness) & ChromaHue.NotEquals(b.ChromaHue));
     public static Boolean operator !=(ColorLCh a, ColorLCh b) => a.NotEquals(b);
-    public ColorLCh Lerp(ColorLCh b, Number amount) => throw new NotImplementedException();
 }
 public readonly partial struct ColorHSV
 {
@@ -1489,6 +1519,7 @@ public readonly partial struct ColorHSV
     // Unimplemented concept functions
     public Boolean Between(ColorHSV a, ColorHSV b) => (Hue.Between(a.Hue, b.Hue) & S.Between(a.S, b.S) & V.Between(a.V, b.V));
     public ColorHSV Clamp(ColorHSV a, ColorHSV b) => (Hue.Clamp(a.Hue, b.Hue), S.Clamp(a.S, b.S), V.Clamp(a.V, b.V));
+    public ColorHSV Lerp(ColorHSV b, Number amount) => throw new NotImplementedException();
     public ColorHSV Zero => (Hue.Zero, S.Zero, V.Zero);
     public ColorHSV One => (Hue.One, S.One, V.One);
     public ColorHSV MinValue => (Hue.MinValue, S.MinValue, V.MinValue);
@@ -1497,7 +1528,6 @@ public readonly partial struct ColorHSV
     public static Boolean operator ==(ColorHSV a, ColorHSV b) => a.Equals(b);
     public Boolean NotEquals(ColorHSV b) => (Hue.NotEquals(b.Hue) & S.NotEquals(b.S) & V.NotEquals(b.V));
     public static Boolean operator !=(ColorHSV a, ColorHSV b) => a.NotEquals(b);
-    public ColorHSV Lerp(ColorHSV b, Number amount) => throw new NotImplementedException();
 }
 public readonly partial struct ColorHSL
 {
@@ -1524,6 +1554,7 @@ public readonly partial struct ColorHSL
     // Unimplemented concept functions
     public Boolean Between(ColorHSL a, ColorHSL b) => (Hue.Between(a.Hue, b.Hue) & Saturation.Between(a.Saturation, b.Saturation) & Luminance.Between(a.Luminance, b.Luminance));
     public ColorHSL Clamp(ColorHSL a, ColorHSL b) => (Hue.Clamp(a.Hue, b.Hue), Saturation.Clamp(a.Saturation, b.Saturation), Luminance.Clamp(a.Luminance, b.Luminance));
+    public ColorHSL Lerp(ColorHSL b, Number amount) => throw new NotImplementedException();
     public ColorHSL Zero => (Hue.Zero, Saturation.Zero, Luminance.Zero);
     public ColorHSL One => (Hue.One, Saturation.One, Luminance.One);
     public ColorHSL MinValue => (Hue.MinValue, Saturation.MinValue, Luminance.MinValue);
@@ -1532,7 +1563,6 @@ public readonly partial struct ColorHSL
     public static Boolean operator ==(ColorHSL a, ColorHSL b) => a.Equals(b);
     public Boolean NotEquals(ColorHSL b) => (Hue.NotEquals(b.Hue) & Saturation.NotEquals(b.Saturation) & Luminance.NotEquals(b.Luminance));
     public static Boolean operator !=(ColorHSL a, ColorHSL b) => a.NotEquals(b);
-    public ColorHSL Lerp(ColorHSL b, Number amount) => throw new NotImplementedException();
 }
 public readonly partial struct ColorYCbCr
 {
@@ -1559,6 +1589,7 @@ public readonly partial struct ColorYCbCr
     // Unimplemented concept functions
     public Boolean Between(ColorYCbCr a, ColorYCbCr b) => (Y.Between(a.Y, b.Y) & Cb.Between(a.Cb, b.Cb) & Cr.Between(a.Cr, b.Cr));
     public ColorYCbCr Clamp(ColorYCbCr a, ColorYCbCr b) => (Y.Clamp(a.Y, b.Y), Cb.Clamp(a.Cb, b.Cb), Cr.Clamp(a.Cr, b.Cr));
+    public ColorYCbCr Lerp(ColorYCbCr b, Number amount) => throw new NotImplementedException();
     public ColorYCbCr Zero => (Y.Zero, Cb.Zero, Cr.Zero);
     public ColorYCbCr One => (Y.One, Cb.One, Cr.One);
     public ColorYCbCr MinValue => (Y.MinValue, Cb.MinValue, Cr.MinValue);
@@ -1567,7 +1598,6 @@ public readonly partial struct ColorYCbCr
     public static Boolean operator ==(ColorYCbCr a, ColorYCbCr b) => a.Equals(b);
     public Boolean NotEquals(ColorYCbCr b) => (Y.NotEquals(b.Y) & Cb.NotEquals(b.Cb) & Cr.NotEquals(b.Cr));
     public static Boolean operator !=(ColorYCbCr a, ColorYCbCr b) => a.NotEquals(b);
-    public ColorYCbCr Lerp(ColorYCbCr b, Number amount) => throw new NotImplementedException();
 }
 public readonly partial struct SphericalCoordinate
 {
@@ -1594,6 +1624,7 @@ public readonly partial struct SphericalCoordinate
     // Unimplemented concept functions
     public Boolean Between(SphericalCoordinate a, SphericalCoordinate b) => (Radius.Between(a.Radius, b.Radius) & Azimuth.Between(a.Azimuth, b.Azimuth) & Polar.Between(a.Polar, b.Polar));
     public SphericalCoordinate Clamp(SphericalCoordinate a, SphericalCoordinate b) => (Radius.Clamp(a.Radius, b.Radius), Azimuth.Clamp(a.Azimuth, b.Azimuth), Polar.Clamp(a.Polar, b.Polar));
+    public SphericalCoordinate Lerp(SphericalCoordinate b, Number amount) => throw new NotImplementedException();
     public SphericalCoordinate Zero => (Radius.Zero, Azimuth.Zero, Polar.Zero);
     public SphericalCoordinate One => (Radius.One, Azimuth.One, Polar.One);
     public SphericalCoordinate MinValue => (Radius.MinValue, Azimuth.MinValue, Polar.MinValue);
@@ -1602,7 +1633,6 @@ public readonly partial struct SphericalCoordinate
     public static Boolean operator ==(SphericalCoordinate a, SphericalCoordinate b) => a.Equals(b);
     public Boolean NotEquals(SphericalCoordinate b) => (Radius.NotEquals(b.Radius) & Azimuth.NotEquals(b.Azimuth) & Polar.NotEquals(b.Polar));
     public static Boolean operator !=(SphericalCoordinate a, SphericalCoordinate b) => a.NotEquals(b);
-    public SphericalCoordinate Lerp(SphericalCoordinate b, Number amount) => throw new NotImplementedException();
 }
 public readonly partial struct PolarCoordinate
 {
@@ -1627,6 +1657,7 @@ public readonly partial struct PolarCoordinate
     // Unimplemented concept functions
     public Boolean Between(PolarCoordinate a, PolarCoordinate b) => (Radius.Between(a.Radius, b.Radius) & Angle.Between(a.Angle, b.Angle));
     public PolarCoordinate Clamp(PolarCoordinate a, PolarCoordinate b) => (Radius.Clamp(a.Radius, b.Radius), Angle.Clamp(a.Angle, b.Angle));
+    public PolarCoordinate Lerp(PolarCoordinate b, Number amount) => throw new NotImplementedException();
     public PolarCoordinate Zero => (Radius.Zero, Angle.Zero);
     public PolarCoordinate One => (Radius.One, Angle.One);
     public PolarCoordinate MinValue => (Radius.MinValue, Angle.MinValue);
@@ -1635,7 +1666,6 @@ public readonly partial struct PolarCoordinate
     public static Boolean operator ==(PolarCoordinate a, PolarCoordinate b) => a.Equals(b);
     public Boolean NotEquals(PolarCoordinate b) => (Radius.NotEquals(b.Radius) & Angle.NotEquals(b.Angle));
     public static Boolean operator !=(PolarCoordinate a, PolarCoordinate b) => a.NotEquals(b);
-    public PolarCoordinate Lerp(PolarCoordinate b, Number amount) => throw new NotImplementedException();
 }
 public readonly partial struct LogPolarCoordinate
 {
@@ -1660,6 +1690,7 @@ public readonly partial struct LogPolarCoordinate
     // Unimplemented concept functions
     public Boolean Between(LogPolarCoordinate a, LogPolarCoordinate b) => (Rho.Between(a.Rho, b.Rho) & Azimuth.Between(a.Azimuth, b.Azimuth));
     public LogPolarCoordinate Clamp(LogPolarCoordinate a, LogPolarCoordinate b) => (Rho.Clamp(a.Rho, b.Rho), Azimuth.Clamp(a.Azimuth, b.Azimuth));
+    public LogPolarCoordinate Lerp(LogPolarCoordinate b, Number amount) => throw new NotImplementedException();
     public LogPolarCoordinate Zero => (Rho.Zero, Azimuth.Zero);
     public LogPolarCoordinate One => (Rho.One, Azimuth.One);
     public LogPolarCoordinate MinValue => (Rho.MinValue, Azimuth.MinValue);
@@ -1668,7 +1699,6 @@ public readonly partial struct LogPolarCoordinate
     public static Boolean operator ==(LogPolarCoordinate a, LogPolarCoordinate b) => a.Equals(b);
     public Boolean NotEquals(LogPolarCoordinate b) => (Rho.NotEquals(b.Rho) & Azimuth.NotEquals(b.Azimuth));
     public static Boolean operator !=(LogPolarCoordinate a, LogPolarCoordinate b) => a.NotEquals(b);
-    public LogPolarCoordinate Lerp(LogPolarCoordinate b, Number amount) => throw new NotImplementedException();
 }
 public readonly partial struct CylindricalCoordinate
 {
@@ -1695,6 +1725,7 @@ public readonly partial struct CylindricalCoordinate
     // Unimplemented concept functions
     public Boolean Between(CylindricalCoordinate a, CylindricalCoordinate b) => (RadialDistance.Between(a.RadialDistance, b.RadialDistance) & Azimuth.Between(a.Azimuth, b.Azimuth) & Height.Between(a.Height, b.Height));
     public CylindricalCoordinate Clamp(CylindricalCoordinate a, CylindricalCoordinate b) => (RadialDistance.Clamp(a.RadialDistance, b.RadialDistance), Azimuth.Clamp(a.Azimuth, b.Azimuth), Height.Clamp(a.Height, b.Height));
+    public CylindricalCoordinate Lerp(CylindricalCoordinate b, Number amount) => throw new NotImplementedException();
     public CylindricalCoordinate Zero => (RadialDistance.Zero, Azimuth.Zero, Height.Zero);
     public CylindricalCoordinate One => (RadialDistance.One, Azimuth.One, Height.One);
     public CylindricalCoordinate MinValue => (RadialDistance.MinValue, Azimuth.MinValue, Height.MinValue);
@@ -1703,7 +1734,6 @@ public readonly partial struct CylindricalCoordinate
     public static Boolean operator ==(CylindricalCoordinate a, CylindricalCoordinate b) => a.Equals(b);
     public Boolean NotEquals(CylindricalCoordinate b) => (RadialDistance.NotEquals(b.RadialDistance) & Azimuth.NotEquals(b.Azimuth) & Height.NotEquals(b.Height));
     public static Boolean operator !=(CylindricalCoordinate a, CylindricalCoordinate b) => a.NotEquals(b);
-    public CylindricalCoordinate Lerp(CylindricalCoordinate b, Number amount) => throw new NotImplementedException();
 }
 public readonly partial struct HorizontalCoordinate
 {
@@ -1730,6 +1760,7 @@ public readonly partial struct HorizontalCoordinate
     // Unimplemented concept functions
     public Boolean Between(HorizontalCoordinate a, HorizontalCoordinate b) => (Radius.Between(a.Radius, b.Radius) & Azimuth.Between(a.Azimuth, b.Azimuth) & Height.Between(a.Height, b.Height));
     public HorizontalCoordinate Clamp(HorizontalCoordinate a, HorizontalCoordinate b) => (Radius.Clamp(a.Radius, b.Radius), Azimuth.Clamp(a.Azimuth, b.Azimuth), Height.Clamp(a.Height, b.Height));
+    public HorizontalCoordinate Lerp(HorizontalCoordinate b, Number amount) => throw new NotImplementedException();
     public HorizontalCoordinate Zero => (Radius.Zero, Azimuth.Zero, Height.Zero);
     public HorizontalCoordinate One => (Radius.One, Azimuth.One, Height.One);
     public HorizontalCoordinate MinValue => (Radius.MinValue, Azimuth.MinValue, Height.MinValue);
@@ -1738,7 +1769,6 @@ public readonly partial struct HorizontalCoordinate
     public static Boolean operator ==(HorizontalCoordinate a, HorizontalCoordinate b) => a.Equals(b);
     public Boolean NotEquals(HorizontalCoordinate b) => (Radius.NotEquals(b.Radius) & Azimuth.NotEquals(b.Azimuth) & Height.NotEquals(b.Height));
     public static Boolean operator !=(HorizontalCoordinate a, HorizontalCoordinate b) => a.NotEquals(b);
-    public HorizontalCoordinate Lerp(HorizontalCoordinate b, Number amount) => throw new NotImplementedException();
 }
 public readonly partial struct GeoCoordinate
 {
@@ -1763,6 +1793,7 @@ public readonly partial struct GeoCoordinate
     // Unimplemented concept functions
     public Boolean Between(GeoCoordinate a, GeoCoordinate b) => (Latitude.Between(a.Latitude, b.Latitude) & Longitude.Between(a.Longitude, b.Longitude));
     public GeoCoordinate Clamp(GeoCoordinate a, GeoCoordinate b) => (Latitude.Clamp(a.Latitude, b.Latitude), Longitude.Clamp(a.Longitude, b.Longitude));
+    public GeoCoordinate Lerp(GeoCoordinate b, Number amount) => throw new NotImplementedException();
     public GeoCoordinate Zero => (Latitude.Zero, Longitude.Zero);
     public GeoCoordinate One => (Latitude.One, Longitude.One);
     public GeoCoordinate MinValue => (Latitude.MinValue, Longitude.MinValue);
@@ -1771,7 +1802,6 @@ public readonly partial struct GeoCoordinate
     public static Boolean operator ==(GeoCoordinate a, GeoCoordinate b) => a.Equals(b);
     public Boolean NotEquals(GeoCoordinate b) => (Latitude.NotEquals(b.Latitude) & Longitude.NotEquals(b.Longitude));
     public static Boolean operator !=(GeoCoordinate a, GeoCoordinate b) => a.NotEquals(b);
-    public GeoCoordinate Lerp(GeoCoordinate b, Number amount) => throw new NotImplementedException();
 }
 public readonly partial struct GeoCoordinateWithAltitude
 {
@@ -1796,6 +1826,7 @@ public readonly partial struct GeoCoordinateWithAltitude
     // Unimplemented concept functions
     public Boolean Between(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) => (Coordinate.Between(a.Coordinate, b.Coordinate) & Altitude.Between(a.Altitude, b.Altitude));
     public GeoCoordinateWithAltitude Clamp(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) => (Coordinate.Clamp(a.Coordinate, b.Coordinate), Altitude.Clamp(a.Altitude, b.Altitude));
+    public GeoCoordinateWithAltitude Lerp(GeoCoordinateWithAltitude b, Number amount) => throw new NotImplementedException();
     public GeoCoordinateWithAltitude Zero => (Coordinate.Zero, Altitude.Zero);
     public GeoCoordinateWithAltitude One => (Coordinate.One, Altitude.One);
     public GeoCoordinateWithAltitude MinValue => (Coordinate.MinValue, Altitude.MinValue);
@@ -1804,7 +1835,6 @@ public readonly partial struct GeoCoordinateWithAltitude
     public static Boolean operator ==(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) => a.Equals(b);
     public Boolean NotEquals(GeoCoordinateWithAltitude b) => (Coordinate.NotEquals(b.Coordinate) & Altitude.NotEquals(b.Altitude));
     public static Boolean operator !=(GeoCoordinateWithAltitude a, GeoCoordinateWithAltitude b) => a.NotEquals(b);
-    public GeoCoordinateWithAltitude Lerp(GeoCoordinateWithAltitude b, Number amount) => throw new NotImplementedException();
 }
 public readonly partial struct Circle
 {
@@ -2006,7 +2036,6 @@ public readonly partial struct Angle
     public Array<String> FieldNames => new[] { (String)"Radians" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Radians) };
     // Unimplemented concept functions
-    public Angle Lerp(Angle b, Number amount) => (Radians.Lerp(b.Radians, amount));
     public Integer Compare(Angle y) => (Radians.Compare(y.Radians));
     public Angle Zero => (Radians.Zero);
     public Angle One => (Radians.One);
@@ -2031,7 +2060,6 @@ public readonly partial struct Length
     public Array<String> FieldNames => new[] { (String)"Meters" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Meters) };
     // Unimplemented concept functions
-    public Length Lerp(Length b, Number amount) => (Meters.Lerp(b.Meters, amount));
     public Integer Compare(Length y) => (Meters.Compare(y.Meters));
     public Length Zero => (Meters.Zero);
     public Length One => (Meters.One);
@@ -2056,7 +2084,6 @@ public readonly partial struct Mass
     public Array<String> FieldNames => new[] { (String)"Kilograms" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Kilograms) };
     // Unimplemented concept functions
-    public Mass Lerp(Mass b, Number amount) => (Kilograms.Lerp(b.Kilograms, amount));
     public Integer Compare(Mass y) => (Kilograms.Compare(y.Kilograms));
     public Mass Zero => (Kilograms.Zero);
     public Mass One => (Kilograms.One);
@@ -2081,7 +2108,6 @@ public readonly partial struct Temperature
     public Array<String> FieldNames => new[] { (String)"Celsius" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Celsius) };
     // Unimplemented concept functions
-    public Temperature Lerp(Temperature b, Number amount) => (Celsius.Lerp(b.Celsius, amount));
     public Integer Compare(Temperature y) => (Celsius.Compare(y.Celsius));
     public Temperature Zero => (Celsius.Zero);
     public Temperature One => (Celsius.One);
@@ -2106,7 +2132,6 @@ public readonly partial struct Time
     public Array<String> FieldNames => new[] { (String)"Seconds" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Seconds) };
     // Unimplemented concept functions
-    public Time Lerp(Time b, Number amount) => (Seconds.Lerp(b.Seconds, amount));
     public Integer Compare(Time y) => (Seconds.Compare(y.Seconds));
     public Time Zero => (Seconds.Zero);
     public Time One => (Seconds.One);
@@ -2166,6 +2191,7 @@ public readonly partial struct DateTime
     // Unimplemented concept functions
     public Boolean Between(DateTime a, DateTime b) => (Value.Between(a.Value, b.Value));
     public DateTime Clamp(DateTime a, DateTime b) => (Value.Clamp(a.Value, b.Value));
+    public DateTime Lerp(DateTime b, Number amount) => (Value.Lerp(b.Value, amount));
     public DateTime Zero => (Value.Zero);
     public DateTime One => (Value.One);
     public DateTime MinValue => (Value.MinValue);
@@ -2174,7 +2200,6 @@ public readonly partial struct DateTime
     public static Boolean operator ==(DateTime a, DateTime b) => a.Equals(b);
     public Boolean NotEquals(DateTime b) => (Value.NotEquals(b.Value));
     public static Boolean operator !=(DateTime a, DateTime b) => a.NotEquals(b);
-    public DateTime Lerp(DateTime b, Number amount) => (Value.Lerp(b.Value, amount));
     public DateTime Add(Time other) => throw new NotImplementedException();
     public static DateTime operator +(DateTime self, Time other) => self.Add(other);
     public DateTime Subtract(Time other) => throw new NotImplementedException();
@@ -2589,7 +2614,12 @@ public readonly partial struct UV
     public static UV operator +(UV self, Number other) => self.Add(other);
     public UV Subtract(Number other) => throw new NotImplementedException();
     public static UV operator -(UV self, Number other) => self.Subtract(other);
-    public Integer Compare(UV y) => throw new NotImplementedException();
+    public Boolean Equals(UV b) => (U.Equals(b.U) & V.Equals(b.V));
+    public static Boolean operator ==(UV a, UV b) => a.Equals(b);
+    public Boolean NotEquals(UV b) => (U.NotEquals(b.U) & V.NotEquals(b.V));
+    public static Boolean operator !=(UV a, UV b) => a.NotEquals(b);
+    public Boolean Between(UV a, UV b) => (U.Between(a.U, b.U) & V.Between(a.V, b.V));
+    public UV Clamp(UV a, UV b) => (U.Clamp(a.U, b.U), V.Clamp(a.V, b.V));
     public UV Reciprocal => (U.Reciprocal, V.Reciprocal);
     public UV Negative => (U.Negative, V.Negative);
     public static UV operator -(UV self) => self.Negative;
@@ -2644,7 +2674,12 @@ public readonly partial struct UVW
     public static UVW operator +(UVW self, Number other) => self.Add(other);
     public UVW Subtract(Number other) => throw new NotImplementedException();
     public static UVW operator -(UVW self, Number other) => self.Subtract(other);
-    public Integer Compare(UVW y) => throw new NotImplementedException();
+    public Boolean Equals(UVW b) => (U.Equals(b.U) & V.Equals(b.V) & W.Equals(b.W));
+    public static Boolean operator ==(UVW a, UVW b) => a.Equals(b);
+    public Boolean NotEquals(UVW b) => (U.NotEquals(b.U) & V.NotEquals(b.V) & W.NotEquals(b.W));
+    public static Boolean operator !=(UVW a, UVW b) => a.NotEquals(b);
+    public Boolean Between(UVW a, UVW b) => (U.Between(a.U, b.U) & V.Between(a.V, b.V) & W.Between(a.W, b.W));
+    public UVW Clamp(UVW a, UVW b) => (U.Clamp(a.U, b.U), V.Clamp(a.V, b.V), W.Clamp(a.W, b.W));
     public UVW Reciprocal => (U.Reciprocal, V.Reciprocal, W.Reciprocal);
     public UVW Negative => (U.Negative, V.Negative, W.Negative);
     public static UVW operator -(UVW self) => self.Negative;
@@ -2816,7 +2851,6 @@ public readonly partial struct Area
     public Array<String> FieldNames => new[] { (String)"MetersSquared" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersSquared) };
     // Unimplemented concept functions
-    public Area Lerp(Area b, Number amount) => (MetersSquared.Lerp(b.MetersSquared, amount));
     public Integer Compare(Area y) => (MetersSquared.Compare(y.MetersSquared));
     public Area Zero => (MetersSquared.Zero);
     public Area One => (MetersSquared.One);
@@ -2841,7 +2875,6 @@ public readonly partial struct Volume
     public Array<String> FieldNames => new[] { (String)"MetersCubed" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersCubed) };
     // Unimplemented concept functions
-    public Volume Lerp(Volume b, Number amount) => (MetersCubed.Lerp(b.MetersCubed, amount));
     public Integer Compare(Volume y) => (MetersCubed.Compare(y.MetersCubed));
     public Volume Zero => (MetersCubed.Zero);
     public Volume One => (MetersCubed.One);
@@ -2866,7 +2899,6 @@ public readonly partial struct Velocity
     public Array<String> FieldNames => new[] { (String)"MetersPerSecond" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersPerSecond) };
     // Unimplemented concept functions
-    public Velocity Lerp(Velocity b, Number amount) => (MetersPerSecond.Lerp(b.MetersPerSecond, amount));
     public Integer Compare(Velocity y) => (MetersPerSecond.Compare(y.MetersPerSecond));
     public Velocity Zero => (MetersPerSecond.Zero);
     public Velocity One => (MetersPerSecond.One);
@@ -2891,7 +2923,6 @@ public readonly partial struct Acceleration
     public Array<String> FieldNames => new[] { (String)"MetersPerSecondSquared" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersPerSecondSquared) };
     // Unimplemented concept functions
-    public Acceleration Lerp(Acceleration b, Number amount) => (MetersPerSecondSquared.Lerp(b.MetersPerSecondSquared, amount));
     public Integer Compare(Acceleration y) => (MetersPerSecondSquared.Compare(y.MetersPerSecondSquared));
     public Acceleration Zero => (MetersPerSecondSquared.Zero);
     public Acceleration One => (MetersPerSecondSquared.One);
@@ -2916,7 +2947,6 @@ public readonly partial struct Force
     public Array<String> FieldNames => new[] { (String)"Newtons" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Newtons) };
     // Unimplemented concept functions
-    public Force Lerp(Force b, Number amount) => (Newtons.Lerp(b.Newtons, amount));
     public Integer Compare(Force y) => (Newtons.Compare(y.Newtons));
     public Force Zero => (Newtons.Zero);
     public Force One => (Newtons.One);
@@ -2941,7 +2971,6 @@ public readonly partial struct Pressure
     public Array<String> FieldNames => new[] { (String)"Pascals" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Pascals) };
     // Unimplemented concept functions
-    public Pressure Lerp(Pressure b, Number amount) => (Pascals.Lerp(b.Pascals, amount));
     public Integer Compare(Pressure y) => (Pascals.Compare(y.Pascals));
     public Pressure Zero => (Pascals.Zero);
     public Pressure One => (Pascals.One);
@@ -2966,7 +2995,6 @@ public readonly partial struct Energy
     public Array<String> FieldNames => new[] { (String)"Joules" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Joules) };
     // Unimplemented concept functions
-    public Energy Lerp(Energy b, Number amount) => (Joules.Lerp(b.Joules, amount));
     public Integer Compare(Energy y) => (Joules.Compare(y.Joules));
     public Energy Zero => (Joules.Zero);
     public Energy One => (Joules.One);
@@ -2991,7 +3019,6 @@ public readonly partial struct Memory
     public Array<String> FieldNames => new[] { (String)"Bytes" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Bytes) };
     // Unimplemented concept functions
-    public Memory Lerp(Memory b, Number amount) => (Bytes.Lerp(b.Bytes, amount));
     public Integer Compare(Memory y) => (Bytes.Compare(y.Bytes));
     public Memory Zero => (Bytes.Zero);
     public Memory One => (Bytes.One);
@@ -3016,7 +3043,6 @@ public readonly partial struct Frequency
     public Array<String> FieldNames => new[] { (String)"Hertz" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Hertz) };
     // Unimplemented concept functions
-    public Frequency Lerp(Frequency b, Number amount) => (Hertz.Lerp(b.Hertz, amount));
     public Integer Compare(Frequency y) => (Hertz.Compare(y.Hertz));
     public Frequency Zero => (Hertz.Zero);
     public Frequency One => (Hertz.One);
@@ -3041,7 +3067,6 @@ public readonly partial struct Loudness
     public Array<String> FieldNames => new[] { (String)"Decibels" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Decibels) };
     // Unimplemented concept functions
-    public Loudness Lerp(Loudness b, Number amount) => (Decibels.Lerp(b.Decibels, amount));
     public Integer Compare(Loudness y) => (Decibels.Compare(y.Decibels));
     public Loudness Zero => (Decibels.Zero);
     public Loudness One => (Decibels.One);
@@ -3066,7 +3091,6 @@ public readonly partial struct LuminousIntensity
     public Array<String> FieldNames => new[] { (String)"Candelas" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Candelas) };
     // Unimplemented concept functions
-    public LuminousIntensity Lerp(LuminousIntensity b, Number amount) => (Candelas.Lerp(b.Candelas, amount));
     public Integer Compare(LuminousIntensity y) => (Candelas.Compare(y.Candelas));
     public LuminousIntensity Zero => (Candelas.Zero);
     public LuminousIntensity One => (Candelas.One);
@@ -3091,7 +3115,6 @@ public readonly partial struct ElectricPotential
     public Array<String> FieldNames => new[] { (String)"Volts" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Volts) };
     // Unimplemented concept functions
-    public ElectricPotential Lerp(ElectricPotential b, Number amount) => (Volts.Lerp(b.Volts, amount));
     public Integer Compare(ElectricPotential y) => (Volts.Compare(y.Volts));
     public ElectricPotential Zero => (Volts.Zero);
     public ElectricPotential One => (Volts.One);
@@ -3116,7 +3139,6 @@ public readonly partial struct ElectricCharge
     public Array<String> FieldNames => new[] { (String)"Columbs" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Columbs) };
     // Unimplemented concept functions
-    public ElectricCharge Lerp(ElectricCharge b, Number amount) => (Columbs.Lerp(b.Columbs, amount));
     public Integer Compare(ElectricCharge y) => (Columbs.Compare(y.Columbs));
     public ElectricCharge Zero => (Columbs.Zero);
     public ElectricCharge One => (Columbs.One);
@@ -3141,7 +3163,6 @@ public readonly partial struct ElectricCurrent
     public Array<String> FieldNames => new[] { (String)"Amperes" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Amperes) };
     // Unimplemented concept functions
-    public ElectricCurrent Lerp(ElectricCurrent b, Number amount) => (Amperes.Lerp(b.Amperes, amount));
     public Integer Compare(ElectricCurrent y) => (Amperes.Compare(y.Amperes));
     public ElectricCurrent Zero => (Amperes.Zero);
     public ElectricCurrent One => (Amperes.One);
@@ -3166,7 +3187,6 @@ public readonly partial struct ElectricResistance
     public Array<String> FieldNames => new[] { (String)"Ohms" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Ohms) };
     // Unimplemented concept functions
-    public ElectricResistance Lerp(ElectricResistance b, Number amount) => (Ohms.Lerp(b.Ohms, amount));
     public Integer Compare(ElectricResistance y) => (Ohms.Compare(y.Ohms));
     public ElectricResistance Zero => (Ohms.Zero);
     public ElectricResistance One => (Ohms.One);
@@ -3191,7 +3211,6 @@ public readonly partial struct Power
     public Array<String> FieldNames => new[] { (String)"Watts" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Watts) };
     // Unimplemented concept functions
-    public Power Lerp(Power b, Number amount) => (Watts.Lerp(b.Watts, amount));
     public Integer Compare(Power y) => (Watts.Compare(y.Watts));
     public Power Zero => (Watts.Zero);
     public Power One => (Watts.One);
@@ -3216,7 +3235,6 @@ public readonly partial struct Density
     public Array<String> FieldNames => new[] { (String)"KilogramsPerMeterCubed" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(KilogramsPerMeterCubed) };
     // Unimplemented concept functions
-    public Density Lerp(Density b, Number amount) => (KilogramsPerMeterCubed.Lerp(b.KilogramsPerMeterCubed, amount));
     public Integer Compare(Density y) => (KilogramsPerMeterCubed.Compare(y.KilogramsPerMeterCubed));
     public Density Zero => (KilogramsPerMeterCubed.Zero);
     public Density One => (KilogramsPerMeterCubed.One);
