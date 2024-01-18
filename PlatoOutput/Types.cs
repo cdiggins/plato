@@ -107,8 +107,8 @@ public readonly partial struct Cardinal
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Number Magnitude => throw new NotImplementedException();
-    public Integer Compare(Cardinal y) => throw new NotImplementedException();
+    public Number Magnitude => (Value.Magnitude);
+    public Integer Compare(Cardinal y) => (Value.Compare(y.Value));
     public Cardinal Reciprocal => (Value.Reciprocal);
     public Cardinal Negative => (Value.Negative);
     public static Cardinal operator -(Cardinal self) => self.Negative;
@@ -141,8 +141,8 @@ public readonly partial struct Index
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Number Magnitude => throw new NotImplementedException();
-    public Integer Compare(Index y) => throw new NotImplementedException();
+    public Number Magnitude => (Value.Magnitude);
+    public Integer Compare(Index y) => (Value.Compare(y.Value));
     public Index Reciprocal => (Value.Reciprocal);
     public Index Negative => (Value.Negative);
     public static Index operator -(Index self) => self.Negative;
@@ -175,8 +175,8 @@ public readonly partial struct Unit
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Number Unlerp(Unit a, Unit b) => throw new NotImplementedException();
-    public Integer Compare(Unit y) => throw new NotImplementedException();
+    public Number Unlerp(Unit a, Unit b) => (Value.Unlerp(a.Value, b.Value));
+    public Integer Compare(Unit y) => (Value.Compare(y.Value));
     public Unit Multiply(Number other) => (Value.Multiply(other));
     public static Unit operator *(Unit self, Number other) => self.Multiply(other);
     public Unit Divide(Number other) => (Value.Divide(other));
@@ -223,8 +223,8 @@ public readonly partial struct Percent
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Number Unlerp(Percent a, Percent b) => throw new NotImplementedException();
-    public Integer Compare(Percent y) => throw new NotImplementedException();
+    public Number Unlerp(Percent a, Percent b) => (Value.Unlerp(a.Value, b.Value));
+    public Integer Compare(Percent y) => (Value.Compare(y.Value));
     public Percent Multiply(Number other) => (Value.Multiply(other));
     public static Percent operator *(Percent self, Number other) => self.Multiply(other);
     public Percent Divide(Number other) => (Value.Divide(other));
@@ -271,8 +271,8 @@ public readonly partial struct Probability
     public Array<String> FieldNames => new[] { (String)"Value" };
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Value) };
     // Unimplemented concept functions
-    public Number Unlerp(Probability a, Probability b) => throw new NotImplementedException();
-    public Integer Compare(Probability y) => throw new NotImplementedException();
+    public Number Unlerp(Probability a, Probability b) => (Value.Unlerp(a.Value, b.Value));
+    public Integer Compare(Probability y) => (Value.Compare(y.Value));
     public Probability Multiply(Number other) => (Value.Multiply(other));
     public static Probability operator *(Probability self, Number other) => self.Multiply(other);
     public Probability Divide(Number other) => (Value.Divide(other));
@@ -2002,8 +2002,8 @@ public readonly partial struct Angle
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Radians) };
     // Unimplemented concept functions
     public Angle Lerp(Angle b, Number amount) => (Radians.Lerp(b.Radians, amount));
-    public Number Unlerp(Angle a, Angle b) => throw new NotImplementedException();
-    public Integer Compare(Angle y) => throw new NotImplementedException();
+    public Number Unlerp(Angle a, Angle b) => (Radians.Unlerp(a.Radians, b.Radians));
+    public Integer Compare(Angle y) => (Radians.Compare(y.Radians));
     public Angle Zero => (Radians.Zero);
     public Angle One => (Radians.One);
     public Angle MinValue => (Radians.MinValue);
@@ -2028,8 +2028,8 @@ public readonly partial struct Length
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Meters) };
     // Unimplemented concept functions
     public Length Lerp(Length b, Number amount) => (Meters.Lerp(b.Meters, amount));
-    public Number Unlerp(Length a, Length b) => throw new NotImplementedException();
-    public Integer Compare(Length y) => throw new NotImplementedException();
+    public Number Unlerp(Length a, Length b) => (Meters.Unlerp(a.Meters, b.Meters));
+    public Integer Compare(Length y) => (Meters.Compare(y.Meters));
     public Length Zero => (Meters.Zero);
     public Length One => (Meters.One);
     public Length MinValue => (Meters.MinValue);
@@ -2054,8 +2054,8 @@ public readonly partial struct Mass
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Kilograms) };
     // Unimplemented concept functions
     public Mass Lerp(Mass b, Number amount) => (Kilograms.Lerp(b.Kilograms, amount));
-    public Number Unlerp(Mass a, Mass b) => throw new NotImplementedException();
-    public Integer Compare(Mass y) => throw new NotImplementedException();
+    public Number Unlerp(Mass a, Mass b) => (Kilograms.Unlerp(a.Kilograms, b.Kilograms));
+    public Integer Compare(Mass y) => (Kilograms.Compare(y.Kilograms));
     public Mass Zero => (Kilograms.Zero);
     public Mass One => (Kilograms.One);
     public Mass MinValue => (Kilograms.MinValue);
@@ -2080,8 +2080,8 @@ public readonly partial struct Temperature
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Celsius) };
     // Unimplemented concept functions
     public Temperature Lerp(Temperature b, Number amount) => (Celsius.Lerp(b.Celsius, amount));
-    public Number Unlerp(Temperature a, Temperature b) => throw new NotImplementedException();
-    public Integer Compare(Temperature y) => throw new NotImplementedException();
+    public Number Unlerp(Temperature a, Temperature b) => (Celsius.Unlerp(a.Celsius, b.Celsius));
+    public Integer Compare(Temperature y) => (Celsius.Compare(y.Celsius));
     public Temperature Zero => (Celsius.Zero);
     public Temperature One => (Celsius.One);
     public Temperature MinValue => (Celsius.MinValue);
@@ -2106,8 +2106,8 @@ public readonly partial struct Time
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Seconds) };
     // Unimplemented concept functions
     public Time Lerp(Time b, Number amount) => (Seconds.Lerp(b.Seconds, amount));
-    public Number Unlerp(Time a, Time b) => throw new NotImplementedException();
-    public Integer Compare(Time y) => throw new NotImplementedException();
+    public Number Unlerp(Time a, Time b) => (Seconds.Unlerp(a.Seconds, b.Seconds));
+    public Integer Compare(Time y) => (Seconds.Compare(y.Seconds));
     public Time Zero => (Seconds.Zero);
     public Time One => (Seconds.One);
     public Time MinValue => (Seconds.MinValue);
@@ -2168,9 +2168,9 @@ public readonly partial struct DateTime
     public DateTime One => (Value.One);
     public DateTime MinValue => (Value.MinValue);
     public DateTime MaxValue => (Value.MaxValue);
-    public Integer Compare(DateTime y) => throw new NotImplementedException();
+    public Integer Compare(DateTime y) => (Value.Compare(y.Value));
     public DateTime Lerp(DateTime b, Number amount) => (Value.Lerp(b.Value, amount));
-    public Number Unlerp(DateTime a, DateTime b) => throw new NotImplementedException();
+    public Number Unlerp(DateTime a, DateTime b) => (Value.Unlerp(a.Value, b.Value));
     public DateTime Add(Time other) => throw new NotImplementedException();
     public static DateTime operator +(DateTime self, Time other) => self.Add(other);
     public DateTime Subtract(Time other) => throw new NotImplementedException();
@@ -2815,8 +2815,8 @@ public readonly partial struct Area
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersSquared) };
     // Unimplemented concept functions
     public Area Lerp(Area b, Number amount) => (MetersSquared.Lerp(b.MetersSquared, amount));
-    public Number Unlerp(Area a, Area b) => throw new NotImplementedException();
-    public Integer Compare(Area y) => throw new NotImplementedException();
+    public Number Unlerp(Area a, Area b) => (MetersSquared.Unlerp(a.MetersSquared, b.MetersSquared));
+    public Integer Compare(Area y) => (MetersSquared.Compare(y.MetersSquared));
     public Area Zero => (MetersSquared.Zero);
     public Area One => (MetersSquared.One);
     public Area MinValue => (MetersSquared.MinValue);
@@ -2841,8 +2841,8 @@ public readonly partial struct Volume
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersCubed) };
     // Unimplemented concept functions
     public Volume Lerp(Volume b, Number amount) => (MetersCubed.Lerp(b.MetersCubed, amount));
-    public Number Unlerp(Volume a, Volume b) => throw new NotImplementedException();
-    public Integer Compare(Volume y) => throw new NotImplementedException();
+    public Number Unlerp(Volume a, Volume b) => (MetersCubed.Unlerp(a.MetersCubed, b.MetersCubed));
+    public Integer Compare(Volume y) => (MetersCubed.Compare(y.MetersCubed));
     public Volume Zero => (MetersCubed.Zero);
     public Volume One => (MetersCubed.One);
     public Volume MinValue => (MetersCubed.MinValue);
@@ -2867,8 +2867,8 @@ public readonly partial struct Velocity
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersPerSecond) };
     // Unimplemented concept functions
     public Velocity Lerp(Velocity b, Number amount) => (MetersPerSecond.Lerp(b.MetersPerSecond, amount));
-    public Number Unlerp(Velocity a, Velocity b) => throw new NotImplementedException();
-    public Integer Compare(Velocity y) => throw new NotImplementedException();
+    public Number Unlerp(Velocity a, Velocity b) => (MetersPerSecond.Unlerp(a.MetersPerSecond, b.MetersPerSecond));
+    public Integer Compare(Velocity y) => (MetersPerSecond.Compare(y.MetersPerSecond));
     public Velocity Zero => (MetersPerSecond.Zero);
     public Velocity One => (MetersPerSecond.One);
     public Velocity MinValue => (MetersPerSecond.MinValue);
@@ -2893,8 +2893,8 @@ public readonly partial struct Acceleration
     public Array<Dynamic> FieldValues => new[] { new Dynamic(MetersPerSecondSquared) };
     // Unimplemented concept functions
     public Acceleration Lerp(Acceleration b, Number amount) => (MetersPerSecondSquared.Lerp(b.MetersPerSecondSquared, amount));
-    public Number Unlerp(Acceleration a, Acceleration b) => throw new NotImplementedException();
-    public Integer Compare(Acceleration y) => throw new NotImplementedException();
+    public Number Unlerp(Acceleration a, Acceleration b) => (MetersPerSecondSquared.Unlerp(a.MetersPerSecondSquared, b.MetersPerSecondSquared));
+    public Integer Compare(Acceleration y) => (MetersPerSecondSquared.Compare(y.MetersPerSecondSquared));
     public Acceleration Zero => (MetersPerSecondSquared.Zero);
     public Acceleration One => (MetersPerSecondSquared.One);
     public Acceleration MinValue => (MetersPerSecondSquared.MinValue);
@@ -2919,8 +2919,8 @@ public readonly partial struct Force
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Newtons) };
     // Unimplemented concept functions
     public Force Lerp(Force b, Number amount) => (Newtons.Lerp(b.Newtons, amount));
-    public Number Unlerp(Force a, Force b) => throw new NotImplementedException();
-    public Integer Compare(Force y) => throw new NotImplementedException();
+    public Number Unlerp(Force a, Force b) => (Newtons.Unlerp(a.Newtons, b.Newtons));
+    public Integer Compare(Force y) => (Newtons.Compare(y.Newtons));
     public Force Zero => (Newtons.Zero);
     public Force One => (Newtons.One);
     public Force MinValue => (Newtons.MinValue);
@@ -2945,8 +2945,8 @@ public readonly partial struct Pressure
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Pascals) };
     // Unimplemented concept functions
     public Pressure Lerp(Pressure b, Number amount) => (Pascals.Lerp(b.Pascals, amount));
-    public Number Unlerp(Pressure a, Pressure b) => throw new NotImplementedException();
-    public Integer Compare(Pressure y) => throw new NotImplementedException();
+    public Number Unlerp(Pressure a, Pressure b) => (Pascals.Unlerp(a.Pascals, b.Pascals));
+    public Integer Compare(Pressure y) => (Pascals.Compare(y.Pascals));
     public Pressure Zero => (Pascals.Zero);
     public Pressure One => (Pascals.One);
     public Pressure MinValue => (Pascals.MinValue);
@@ -2971,8 +2971,8 @@ public readonly partial struct Energy
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Joules) };
     // Unimplemented concept functions
     public Energy Lerp(Energy b, Number amount) => (Joules.Lerp(b.Joules, amount));
-    public Number Unlerp(Energy a, Energy b) => throw new NotImplementedException();
-    public Integer Compare(Energy y) => throw new NotImplementedException();
+    public Number Unlerp(Energy a, Energy b) => (Joules.Unlerp(a.Joules, b.Joules));
+    public Integer Compare(Energy y) => (Joules.Compare(y.Joules));
     public Energy Zero => (Joules.Zero);
     public Energy One => (Joules.One);
     public Energy MinValue => (Joules.MinValue);
@@ -2997,8 +2997,8 @@ public readonly partial struct Memory
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Bytes) };
     // Unimplemented concept functions
     public Memory Lerp(Memory b, Number amount) => (Bytes.Lerp(b.Bytes, amount));
-    public Number Unlerp(Memory a, Memory b) => throw new NotImplementedException();
-    public Integer Compare(Memory y) => throw new NotImplementedException();
+    public Number Unlerp(Memory a, Memory b) => (Bytes.Unlerp(a.Bytes, b.Bytes));
+    public Integer Compare(Memory y) => (Bytes.Compare(y.Bytes));
     public Memory Zero => (Bytes.Zero);
     public Memory One => (Bytes.One);
     public Memory MinValue => (Bytes.MinValue);
@@ -3023,8 +3023,8 @@ public readonly partial struct Frequency
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Hertz) };
     // Unimplemented concept functions
     public Frequency Lerp(Frequency b, Number amount) => (Hertz.Lerp(b.Hertz, amount));
-    public Number Unlerp(Frequency a, Frequency b) => throw new NotImplementedException();
-    public Integer Compare(Frequency y) => throw new NotImplementedException();
+    public Number Unlerp(Frequency a, Frequency b) => (Hertz.Unlerp(a.Hertz, b.Hertz));
+    public Integer Compare(Frequency y) => (Hertz.Compare(y.Hertz));
     public Frequency Zero => (Hertz.Zero);
     public Frequency One => (Hertz.One);
     public Frequency MinValue => (Hertz.MinValue);
@@ -3049,8 +3049,8 @@ public readonly partial struct Loudness
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Decibels) };
     // Unimplemented concept functions
     public Loudness Lerp(Loudness b, Number amount) => (Decibels.Lerp(b.Decibels, amount));
-    public Number Unlerp(Loudness a, Loudness b) => throw new NotImplementedException();
-    public Integer Compare(Loudness y) => throw new NotImplementedException();
+    public Number Unlerp(Loudness a, Loudness b) => (Decibels.Unlerp(a.Decibels, b.Decibels));
+    public Integer Compare(Loudness y) => (Decibels.Compare(y.Decibels));
     public Loudness Zero => (Decibels.Zero);
     public Loudness One => (Decibels.One);
     public Loudness MinValue => (Decibels.MinValue);
@@ -3075,8 +3075,8 @@ public readonly partial struct LuminousIntensity
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Candelas) };
     // Unimplemented concept functions
     public LuminousIntensity Lerp(LuminousIntensity b, Number amount) => (Candelas.Lerp(b.Candelas, amount));
-    public Number Unlerp(LuminousIntensity a, LuminousIntensity b) => throw new NotImplementedException();
-    public Integer Compare(LuminousIntensity y) => throw new NotImplementedException();
+    public Number Unlerp(LuminousIntensity a, LuminousIntensity b) => (Candelas.Unlerp(a.Candelas, b.Candelas));
+    public Integer Compare(LuminousIntensity y) => (Candelas.Compare(y.Candelas));
     public LuminousIntensity Zero => (Candelas.Zero);
     public LuminousIntensity One => (Candelas.One);
     public LuminousIntensity MinValue => (Candelas.MinValue);
@@ -3101,8 +3101,8 @@ public readonly partial struct ElectricPotential
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Volts) };
     // Unimplemented concept functions
     public ElectricPotential Lerp(ElectricPotential b, Number amount) => (Volts.Lerp(b.Volts, amount));
-    public Number Unlerp(ElectricPotential a, ElectricPotential b) => throw new NotImplementedException();
-    public Integer Compare(ElectricPotential y) => throw new NotImplementedException();
+    public Number Unlerp(ElectricPotential a, ElectricPotential b) => (Volts.Unlerp(a.Volts, b.Volts));
+    public Integer Compare(ElectricPotential y) => (Volts.Compare(y.Volts));
     public ElectricPotential Zero => (Volts.Zero);
     public ElectricPotential One => (Volts.One);
     public ElectricPotential MinValue => (Volts.MinValue);
@@ -3127,8 +3127,8 @@ public readonly partial struct ElectricCharge
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Columbs) };
     // Unimplemented concept functions
     public ElectricCharge Lerp(ElectricCharge b, Number amount) => (Columbs.Lerp(b.Columbs, amount));
-    public Number Unlerp(ElectricCharge a, ElectricCharge b) => throw new NotImplementedException();
-    public Integer Compare(ElectricCharge y) => throw new NotImplementedException();
+    public Number Unlerp(ElectricCharge a, ElectricCharge b) => (Columbs.Unlerp(a.Columbs, b.Columbs));
+    public Integer Compare(ElectricCharge y) => (Columbs.Compare(y.Columbs));
     public ElectricCharge Zero => (Columbs.Zero);
     public ElectricCharge One => (Columbs.One);
     public ElectricCharge MinValue => (Columbs.MinValue);
@@ -3153,8 +3153,8 @@ public readonly partial struct ElectricCurrent
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Amperes) };
     // Unimplemented concept functions
     public ElectricCurrent Lerp(ElectricCurrent b, Number amount) => (Amperes.Lerp(b.Amperes, amount));
-    public Number Unlerp(ElectricCurrent a, ElectricCurrent b) => throw new NotImplementedException();
-    public Integer Compare(ElectricCurrent y) => throw new NotImplementedException();
+    public Number Unlerp(ElectricCurrent a, ElectricCurrent b) => (Amperes.Unlerp(a.Amperes, b.Amperes));
+    public Integer Compare(ElectricCurrent y) => (Amperes.Compare(y.Amperes));
     public ElectricCurrent Zero => (Amperes.Zero);
     public ElectricCurrent One => (Amperes.One);
     public ElectricCurrent MinValue => (Amperes.MinValue);
@@ -3179,8 +3179,8 @@ public readonly partial struct ElectricResistance
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Ohms) };
     // Unimplemented concept functions
     public ElectricResistance Lerp(ElectricResistance b, Number amount) => (Ohms.Lerp(b.Ohms, amount));
-    public Number Unlerp(ElectricResistance a, ElectricResistance b) => throw new NotImplementedException();
-    public Integer Compare(ElectricResistance y) => throw new NotImplementedException();
+    public Number Unlerp(ElectricResistance a, ElectricResistance b) => (Ohms.Unlerp(a.Ohms, b.Ohms));
+    public Integer Compare(ElectricResistance y) => (Ohms.Compare(y.Ohms));
     public ElectricResistance Zero => (Ohms.Zero);
     public ElectricResistance One => (Ohms.One);
     public ElectricResistance MinValue => (Ohms.MinValue);
@@ -3205,8 +3205,8 @@ public readonly partial struct Power
     public Array<Dynamic> FieldValues => new[] { new Dynamic(Watts) };
     // Unimplemented concept functions
     public Power Lerp(Power b, Number amount) => (Watts.Lerp(b.Watts, amount));
-    public Number Unlerp(Power a, Power b) => throw new NotImplementedException();
-    public Integer Compare(Power y) => throw new NotImplementedException();
+    public Number Unlerp(Power a, Power b) => (Watts.Unlerp(a.Watts, b.Watts));
+    public Integer Compare(Power y) => (Watts.Compare(y.Watts));
     public Power Zero => (Watts.Zero);
     public Power One => (Watts.One);
     public Power MinValue => (Watts.MinValue);
@@ -3231,8 +3231,8 @@ public readonly partial struct Density
     public Array<Dynamic> FieldValues => new[] { new Dynamic(KilogramsPerMeterCubed) };
     // Unimplemented concept functions
     public Density Lerp(Density b, Number amount) => (KilogramsPerMeterCubed.Lerp(b.KilogramsPerMeterCubed, amount));
-    public Number Unlerp(Density a, Density b) => throw new NotImplementedException();
-    public Integer Compare(Density y) => throw new NotImplementedException();
+    public Number Unlerp(Density a, Density b) => (KilogramsPerMeterCubed.Unlerp(a.KilogramsPerMeterCubed, b.KilogramsPerMeterCubed));
+    public Integer Compare(Density y) => (KilogramsPerMeterCubed.Compare(y.KilogramsPerMeterCubed));
     public Density Zero => (KilogramsPerMeterCubed.Zero);
     public Density One => (KilogramsPerMeterCubed.One);
     public Density MinValue => (KilogramsPerMeterCubed.MinValue);
@@ -3367,10 +3367,7 @@ public readonly partial struct Tuple2<T0, T1>
     public static implicit operator (T0, T1)(Tuple2<T0, T1> self) => (self.Item0, self.Item1);
     public static implicit operator Tuple2<T0, T1>((T0, T1) value) => new Tuple2<T0, T1>(value.Item1, value.Item2);
     public void Deconstruct(out T0 item0, out T1 item1) { item0 = Item0; item1 = Item1; }
-    public override bool Equals(object obj)
-    {
-        return obj is Tuple2<T0, T1> tuple2 && Item0.Equals(tuple2.Item0) && Item1.Equals(tuple2.Item1);
-    }
+    public override bool Equals(object obj) { if (!(obj is Tuple2<T0, T1>)) return false; var other = (Tuple2<T0, T1>)obj; return Item0.Equals(other.Item0) && Item1.Equals(other.Item1); }
     public override int GetHashCode() => Intrinsics.CombineHashCodes(Item0, Item1);
     public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
     public static implicit operator Dynamic(Tuple2<T0, T1> self) => new Dynamic(self);

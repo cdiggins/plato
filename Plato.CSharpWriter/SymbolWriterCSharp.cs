@@ -187,8 +187,8 @@ namespace Plato.CSharpWriter
 
                 var impl = "throw new NotImplementedException()";
 
-                // Only generate implementations when the the return type is a Boolean or the same as this type
-                var canGenerateImpl = f.ReturnType.Name == t.Name || f.ReturnType.Name == "Boolean";
+                // Only generate implementations when the the return type is a Boolean or the same as this type, or we have only one field.
+                var canGenerateImpl = f.ReturnType.Name == t.Name || f.ReturnType.Name == "Boolean" || fields.Count == 1;
 
                 var fieldTypes = t.DistinctFieldTypes;
 
