@@ -1,0 +1,114 @@
+# Single linked list.
+
+Requires optional (nullable) types.
+* A type reference with a "?" is an optional type. 
+* You can assign "null" to it. 
+* It may or may not have a value present. 
+* Using the value requires a check for null 
+	* Maybe this happens automatically
+* They cannot be changed. 
+
+type SingleLinkedList<T> 
+{
+	T Value;
+	SingleLinkedList<T>? Next;
+}
+
+# Double Linked List
+
+This is trickier. THere is no way to construct a double linked list without modification.
+A constructor would look like what? They have a concept of "this". 
+
+type DoubleLinkedList<T>
+{
+	T Value;
+	SingleLinkedList<T>? Previous;
+	SingleLinkedList<T>? Next;	
+}
+
+library Lists
+{
+	CreateLinkedList(value: $T, prev: DoubleLinkedList<$T>): DoubleLinkedList<$T>
+	{
+		var r = new DoubleLinkedList<T>(Value, prev, null);
+		return r;
+	}
+
+	CreateLinkedList(value: $T, hasNext: Func<$T, bool>, getNext: Func<$T, $T>): DoubleLinkedList<$T>
+	{
+		repeat 
+		{
+			var *r = new DoubleLinkedList<T>(value);
+			r.Next = CreateLinkedList(getNext(value), hasNext prev, null);
+			r.Next.Prev = r;
+			return r;
+		} 
+		until (!hasNext(value));
+		return r;
+	}
+}
+
+Perhaps modification is allowed, when we can prove that a value is not used elsewhere. 
+
+Double linked lists have an interesting challenge, because everything has two pointers.
+And we have the case where we are actively modifying one, there is going to be an extra pointer. 
+
+# File Reader 
+
+This is a unique type. We don't want to share it. 
+
+# Affine, Unique, Linear 
+
+Modification when we can prove that no-one is sharing a reference is safe. 
+
+Proving that is hard. We have things like double-linked lists, or more complex graphs
+where there are potentially lots of references to things. 
+
+What about circular linked list? 
+
+# Simplest thing that Could Possibly Work
+
+Allow pointers. Classes with pointers can not be used in structs. 
+They are "dangerous". 
+
+Pointers are not the same as array references. 
+
+I could have an "Array slice" primitive type. This can help for things like 
+safe copying of regions and analysis. 
+
+# Unique Types 
+
+What kinds of things can I do when I am only allowed one reference at a time?
+Obviously I can have a single linked list. 
+
+Is modifying it possible? I would need a "borrow" mechanism. Where I transfer ownership 
+
+Single linked list has a problem, each node has a reference to next node. This reference 
+needs to be "borrowed", to make a modification. 
+
+How would this work? 
+
+Iterating a linked list, would require borrowing. 
+
+I couldn't have two linked-list iterators active at the same time. This makes a number of algorithms
+very hard to write. 
+
+# Note from Rust
+
+Can only have one reference to a value when we want to change it. Can't have immutable references. 
+
+In Plato the proposal is that "x?" is an immutable reference. 
+
+# Differences from Rust
+
+In Plato you can't change data once it is "fixed". You can't just make a reference to something and modify it. 
+
+Perhaps only values that are freshly made can be modified, or that are stored as pointer. Once it becomes 
+a reference you are done. 
+
+That solves several problems. 
+
+
+
+
+
