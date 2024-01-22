@@ -2,9 +2,8 @@
 
 using System;
 using System.Linq;
-using Parakeet;
-using Parakeet.CST;
-using Parakeet.Grammars;
+using Ara3D.Parsing;
+using Ara3D.Parsing.Grammars;
 
 namespace Plato.Parser
 {

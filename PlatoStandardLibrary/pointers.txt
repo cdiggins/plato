@@ -39,8 +39,10 @@ library Lists
 		repeat 
 		{
 			var *r = new DoubleLinkedList<T>(value);
-			r.Next = CreateLinkedList(getNext(value), hasNext prev, null);
-			r.Next.Prev = r;
+			var *next = CreateLinkedList(getNext(value), hasNext prev, null);
+			next->Prev = r;
+			r->Next = next;
+			// NOTE: the above is kind of a lie. next->Prev suggests that it no longer can be modified. BUu
 			return r;
 		} 
 		until (!hasNext(value));
@@ -106,9 +108,33 @@ In Plato you can't change data once it is "fixed". You can't just make a referen
 Perhaps only values that are freshly made can be modified, or that are stored as pointer. Once it becomes 
 a reference you are done. 
 
-That solves several problems. 
+That could help solve several problems. 
 
+	var *r = new DoubleLinkedList<T>(value);
+	var *next = CreateLinkedList(getNext(value), hasNext prev, null);
+	next->Prev = r;
+	r->Next = next;
+	// NOTE: the above is kind of a lie. next->Prev is an immutable reference, not a pointer which suggests that it 
+	// no longer can be modified. 
+	return r;
 
+I could kind of make it work in the following: 
 
+	var *r = new DoubleLinkedList<T>(value);
+	var *next = CreateLinkedList(getNext(value), hasNext prev, null);
+	(next->Prev, r->nex) = (r, next);
+	return r;
+
+I don't trust that entirely. I worry that it could be tweaked. 
+However, the cute thing is that once I have it done, it kind of works. 
+
+Now what about the idea of modifiable lists. 
+
+In order for a modifiable list to work, all immutable references have to be removed. 
+That is a lot of work. I don't really want to do that ... 
+
+Unless? Maybe there is a special system for borrowing and creating references to mutable types. 
+
+Kind of like Rust. 
 
 

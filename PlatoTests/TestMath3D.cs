@@ -1,7 +1,7 @@
 ﻿using Ara3D.Utils;
-using Parakeet.Tests;
-using Parakeet;
-using Parakeet.Grammars;
+using Ara3D.Parsing.Tests;
+using Ara3D.Parsing;
+using Ara3D.Parsing.Grammars;
 
 namespace PlatoTests
 {

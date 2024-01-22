@@ -1,5 +1,5 @@
-﻿using Parakeet;
-using Parakeet.Grammars;
+﻿using Ara3D.Parsing;
+using Ara3D.Parsing.Grammars;
 
 namespace PlatoTests
 {
