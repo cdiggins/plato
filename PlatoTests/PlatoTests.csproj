@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\tests\Ara3D.Parsing.Tests\Ara3D.Parsing.Tests.csproj" />
     <ProjectReference Include="..\PlatoCompiler\Plato.Compiler.csproj" />
     <ProjectReference Include="..\PlatoTypeInference\PlatoTypeInference.csproj" />
   </ItemGroup>

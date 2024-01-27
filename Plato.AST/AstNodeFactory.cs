@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ara3D.Utils;
-using Ara3D.Parsing;
+using Parakeet;
+using Parakeet.Grammars;
+using Parakeet.Cst.PlatoGrammarNameSpace;
 using Plato.Parser;
 
 namespace Plato.AST
@@ -12,7 +13,7 @@ namespace Plato.AST
         public static AstNode ToIntrinsicInvocation(this CstNode context, string name, params AstNode[] args)
             => new AstInvoke(context, new AstIdentifier(context, name), args);
 
-        public static AstNode ToAst<T>(this CstFilter<T> filter) where T : CstNode
+        public static AstNode ToAst<T>(this CstNodeFilter<T> filter) where T : CstNode
             => ToAst(filter.Node);
 
         // Creates binary operations, adjusting for precedence 

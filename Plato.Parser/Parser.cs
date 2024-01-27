@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Utils;
-using Ara3D.Parsing;
+using Parakeet;
+using Parakeet.Cst.PlatoGrammarNameSpace;
 
 namespace Plato.Parser
 {
@@ -55,7 +56,8 @@ namespace Plato.Parser
                 ParseTreeNode = State.Node?.ToParseTree();
                 
                 Log($"Creating Concrete Syntax Tree (CST)");
-                CstTree = ParseTreeNode.Create();
+                var factory = new CstNodeFactory();
+                CstTree = factory.Create(ParseTreeNode);
 
                 Success = State.AtEnd() && ParsingErrors.Count == 0;
                     
