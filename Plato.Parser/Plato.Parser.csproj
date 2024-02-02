@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\parakeet\Parakeet.Cst.Demo\Parakeet.Cst.Demo.csproj" />
+    <ProjectReference Include="..\..\parakeet\Parakeet.Cst\Parakeet.Cst.csproj" />
     <ProjectReference Include="..\..\parakeet\Parakeet\Parakeet.csproj" />
     <ProjectReference Include="..\..\src\Ara3D.Utils\Ara3D.Utils.csproj" />
   </ItemGroup>
