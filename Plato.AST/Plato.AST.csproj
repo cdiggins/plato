@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\parakeet\Parakeet.Cst\Parakeet.Cst.csproj" />
-    <ProjectReference Include="..\..\parakeet\Parakeet.Grammars\Parakeet.Grammars.csproj" />
+    <ProjectReference Include="..\..\parakeet\Parakeet.Cst\Ara3D.Parakeet.Cst.csproj" />
+    <ProjectReference Include="..\..\parakeet\Parakeet.Grammars\Ara3D.Parakeet.Grammars.csproj" />
     <ProjectReference Include="..\Plato.Parser\Plato.Parser.csproj" />
   </ItemGroup>
 

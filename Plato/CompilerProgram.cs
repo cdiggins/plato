@@ -1,6 +1,6 @@
 ﻿using Ara3D.Utils;
-using Parakeet;
-using Parakeet.Grammars;
+using Ara3D.Parakeet;
+using Ara3D.Parakeet.Grammars;
 using Plato.AST;
 using Plato.CSharpWriter;
 

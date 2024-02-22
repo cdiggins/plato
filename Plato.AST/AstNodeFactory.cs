@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Parakeet;
-using Parakeet.Grammars;
-using Parakeet.Cst.PlatoGrammarNameSpace;
+using Ara3D.Parakeet;
+using Ara3D.Parakeet.Grammars;
+using Ara3D.Parakeet.Cst.PlatoGrammarNameSpace;
 using Plato.Parser;
 
 namespace Plato.AST

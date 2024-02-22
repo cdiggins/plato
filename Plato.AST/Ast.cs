@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Parakeet;
+using Ara3D.Parakeet;
 
 namespace Plato.AST
 {

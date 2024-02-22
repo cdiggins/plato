@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Ara3D.Utils;
-using Parakeet;
+using Ara3D.Parakeet;
 using Plato.AST;
 using Plato.Compiler.Symbols;
 using Plato.Compiler.Types;

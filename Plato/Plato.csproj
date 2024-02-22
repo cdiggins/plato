@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -8,9 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\parakeet\Parakeet.Cst\Parakeet.Cst.csproj" />
-    <ProjectReference Include="..\..\parakeet\Parakeet.Grammars\Parakeet.Grammars.csproj" />
-    <ProjectReference Include="..\..\src\Ara3D.Utils\Ara3D.Utils.csproj" />
+    <ProjectReference Include="..\..\parakeet\Parakeet.Cst\Ara3D.Parakeet.Cst.csproj" />
+    <ProjectReference Include="..\..\parakeet\Parakeet.Grammars\Ara3D.Parakeet.Grammars.csproj" />
     <ProjectReference Include="..\Plato.CSharpWriter\Plato.CSharpWriter.csproj" />
     <ProjectReference Include="..\Plato.Parser\Plato.Parser.csproj" />
     <ProjectReference Include="..\PlatoCompiler\Plato.Compiler.csproj" />
