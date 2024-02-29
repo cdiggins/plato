@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Ara3D.Utils;
 using System.Linq;
 using Plato.Compiler.Symbols;

@@ -5,7 +5,6 @@ using Ara3D.Parakeet;
 using Ara3D.Parakeet.Grammars;
 using Plato.AST;
 using Plato.Compiler;
-using Plato.CSharpWriter;
 using Plato.Parser;
 using Logger = Plato.Compiler.Logger;
 

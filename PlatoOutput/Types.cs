@@ -1,4 +1,3 @@
-using System;
 public readonly partial struct Number
 {
     public readonly double Value;

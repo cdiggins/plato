@@ -1,4 +1,3 @@
-using System;
 public static class Constants
 {
     public static Number TwoPi => Constants.Pi.Twice;
