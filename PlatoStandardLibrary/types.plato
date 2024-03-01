@@ -222,7 +222,7 @@ type Plane
 }
 
 type Triangle2D
-    implements Value
+    implements Value, Vector
 {
     A: Point2D;
     B: Point2D;
@@ -230,7 +230,7 @@ type Triangle2D
 }
 
 type Triangle3D
-    implements Value
+    implements Value, Vector
 {
     A: Point3D;
     B: Point3D;
@@ -238,7 +238,7 @@ type Triangle3D
 }
 
 type Quad2D
-    implements Value
+    implements Value, Vector
 {
     A: Point2D;
     B: Point2D;
@@ -246,9 +246,8 @@ type Quad2D
     D: Point2D;
 }
 
-
 type Quad3D
-    implements Value
+    implements Value, Vector
 {
     A: Point3D;
     B: Point3D;
@@ -257,14 +256,14 @@ type Quad3D
 }
 
 type Point2D
-    implements Coordinate, AdditiveArithmetic<Vector2D>
+    implements Coordinate, AdditiveArithmetic<Vector2D>, Vector
 {
     X: Number;
     Y: Number;
 }
 
 type Point3D
-    implements Coordinate, AdditiveArithmetic<Vector3D>
+    implements Coordinate, AdditiveArithmetic<Vector3D>, Vector
 {
     X: Number;
     Y: Number;
@@ -272,7 +271,7 @@ type Point3D
 }
 
 type Point4D
-    implements Coordinate, AdditiveArithmetic<Vector4D>
+    implements Coordinate, AdditiveArithmetic<Vector4D>, Vector
 {
     X: Number;
     Y: Number;
@@ -543,7 +542,7 @@ type Capsule
 // Column major layout in memory 
 // Translation component is in Column4.XYZ    
 type Matrix3D
-    implements Value
+    implements Value, Vector
 {
     Column1: Vector4D;
     Column2: Vector4D;
@@ -830,4 +829,27 @@ type Function2<T0, T1, TR>
 
 type Function3<T0, T1, T2, TR>
 {
+}
+
+type BiquadraticBezierPatch
+    implements BezierPatch
+{
+    K00: Point3D;
+    K01: Point3D;
+    K10: Point3D;
+    K11: Point3D;
+}
+
+concept BicubicBezierPatch
+    implements BezierPatch
+{
+    K00: Point3D;
+    K01: Point3D;
+    K02: Point3D;
+    K10: Point3D;
+    K11: Point3D;
+    K12: Point3D;
+    K20: Point3D;
+    K21: Point3D;
+    K22: Point3D;
 }
