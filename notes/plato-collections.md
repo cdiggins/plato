@@ -159,8 +159,6 @@ interface ISet<T>
 By keeping the interface minimal, it is possible to implement infinite sets, and provide efficient representation of operations 
 like set complement.
 
-```
-
 ## Explicit Ordering 
 
 Collections that have been created with a specific ordering, store the ordering function explicitly. This has an impact on algorithmic 
