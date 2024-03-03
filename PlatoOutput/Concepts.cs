@@ -5,58 +5,58 @@ public interface Any
     Array<Dynamic>  FieldValues { get; }
     String  TypeName { get; }
 }
-public interface Value<Self>: Any, Equatable<Self>
+public interface Value: Any, Equatable
 {
-    Self  Zero { get; }
-    Self  One { get; }
-    Self  MinValue { get; }
-    Self  MaxValue { get; }
+    Value Zero { get; }
+    Value One { get; }
+    Value MinValue { get; }
+    Value MaxValue { get; }
 }
-public interface Numerical<Self>: Value<Self>, Arithmetic<Self>, Magnitudinal, Betweenable<Self>, Equatable<Self>
+public interface Numerical: Value, Arithmetic, Magnitudinal, Betweenable, Equatable
 {
 }
-public interface Real<Self>: Magnitudinal, Interpolatable<Self>, Betweenable<Self>, Equatable<Self>, Comparable<Self>, ScalarArithmetic<Self>
+public interface Real: Magnitudinal, Interpolatable, Betweenable, Equatable, Comparable, ScalarArithmetic
 {
     Number  Value { get; }
 }
-public interface Array<T>
+public interface IArray<T>
 {
     Integer  Count { get; }
     T  At(Integer n);
 }
-public interface Vector<Self>: Array<Number>, Numerical<Self>, ScalarArithmetic<Self>, Interpolatable<Self>
+public interface Vector: IArray<Number>, Numerical, ScalarArithmetic, Interpolatable
 {
 }
-public interface Coordinate<Self>: Value<Self>, Interpolatable<Self>, Betweenable<Self>
+public interface Coordinate: Value, Interpolatable, Betweenable
 {
 }
-public interface Measure<Self>: Real<Self>
+public interface Measure: Real
 {
 }
-public interface WholeNumber<Self>: Numerical<Self>, Comparable<Self>
+public interface WholeNumber: Numerical, Comparable
 {
 }
 public interface Magnitudinal
 {
     Number  Magnitude { get; }
 }
-public interface Comparable<Self>: Value<Self>, Equatable<Self>
+public interface Comparable: Value, Equatable
 {
-    Integer  Compare(Self y);
+    Integer  Compare(Value y);
 }
-public interface Equatable<Self>
+public interface Equatable
 {
-    Boolean  Equals(Self b);
-    Boolean  NotEquals(Self b);
+    Boolean  Equals(Value b);
+    Boolean  NotEquals(Value b);
 }
-public interface Arithmetic<Self>: AdditiveArithmetic<Self, Self>, MultiplicativeArithmetic<Self, Self>, AdditiveInverse<Self>, MultiplicativeInverse<Self>
+public interface Arithmetic: AdditiveArithmetic<Self, Self>, MultiplicativeArithmetic<Self, Self>, AdditiveInverse, MultiplicativeInverse
 {
 }
-public interface AdditiveInverse<Self>
+public interface AdditiveInverse
 {
     Self  Negative { get; }
 }
-public interface MultiplicativeInverse<Self>
+public interface MultiplicativeInverse
 {
     Self  Reciprocal { get; }
 }
@@ -71,26 +71,26 @@ public interface MultiplicativeArithmetic<Self, T>
     Self  Divide(T other);
     Self  Modulo(T other);
 }
-public interface ScalarArithmetic<Self>: AdditiveArithmetic<Self, Number>, MultiplicativeArithmetic<Self, Number>
+public interface ScalarArithmetic: AdditiveArithmetic<Self, Number>, MultiplicativeArithmetic<Self, Number>
 {
 }
-public interface BooleanOperations<Self>
+public interface BooleanOperations
 {
     Self  And(Self b);
     Self  Or(Self b);
     Self  Not { get; }
 }
-public interface Interval<Self, TValue, TSize>: Equatable<Self>, Value<Self>
+public interface Interval<Self, TValue, TSize>: Equatable, Value
 {
     TValue  Min { get; }
     TValue  Max { get; }
     TSize  Size { get; }
 }
-public interface Interpolatable<Self>
+public interface Interpolatable
 {
     Self  Lerp(Self b, Number amount);
 }
-public interface Betweenable<Self>
+public interface Betweenable
 {
     Boolean  Between(Self a, Self b);
     Self  Clamp(Self a, Self b);

@@ -36,10 +36,10 @@ namespace Plato.AST
 
         public static AstNode ToAst(this CstExpression expr)
         {
-            var r = ToAst(expr.LeafExpression.Node);
+            var r = ToAst(expr.InnerExpression.Node.LeafExpression.Node);
             var i = 0;
 
-            var nodes = expr.PostfixOperator.Nodes;
+            var nodes = expr.InnerExpression.Node.PostfixOperator.Nodes;
             while (i < nodes.Count)
             {
                 var postfix = nodes[i++];
@@ -114,7 +114,7 @@ namespace Plato.AST
                 }
             }
 
-            foreach (var prefix in expr.PrefixOperator.Nodes)
+            foreach (var prefix in expr.InnerExpression.Node.PrefixOperator.Nodes)
             {
                 r = ToIntrinsicInvocation(prefix,
                     Operators.UnaryOperatorToName(prefix.Text.Trim()), r);
@@ -589,7 +589,7 @@ namespace Plato.AST
                     throw new NotImplementedException();
 
                 case CstStatement cstStatement:
-                    return ToAst(cstStatement.Node);
+                    return ToAst(cstStatement.InnerStatement.Node);
 
                 case CstStringInterpolation cstStringInterpolation:
                     return new AstInvoke(cstStringInterpolation, new AstIdentifier(cstStringInterpolation, "Interpolate"),
