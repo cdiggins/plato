@@ -26,7 +26,7 @@ namespace Plato.Parser
                 Log($"Starting to parse {Input.LineToChar.Count} lines containing {Input.Text.Length} characters");
 
                 Log($"Tokenization phase");
-                TokenizerState = Input.Parse(TokenizerRule);
+                TokenizerState = TokenizerRule.Parse(Input);
                 if (!TokenizerState.AtEnd())
                     Log($"Partially completed tokenize {State.Position}/{State.Input.Length}");
                 else
@@ -34,7 +34,7 @@ namespace Plato.Parser
                 TokenNodes = TokenizerState.AllNodes().ToList();
 
                 Log($"Starting main parse");
-                State = Input.Parse(Rule);
+                State = Rule.Parse(Input);
                 if (!State.AtEnd())
                     Log($"Partially completed parsing {State.Position}/{State.Input.Length}");
                 else 
