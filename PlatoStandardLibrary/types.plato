@@ -172,14 +172,16 @@ type Transform2D
     Scale: Vector2D;
 }
 
-type AlignedBox2D
+// Axis-Aligned bounding box 
+type Bounds2D
     implements Interval<Point2D, Vector2D>
 {
     Min: Point2D;
     Max: Point2D;
 }
 
-type AlignedBox3D
+// Axis-Aligned bounding box 
+type Bounds3D
     implements Interval<Point3D, Vector3D>
 {
     Min: Point3D;

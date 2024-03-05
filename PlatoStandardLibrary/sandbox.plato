@@ -1,0 +1,59 @@
+﻿
+// https://en.wikipedia.org/wiki/Polygon
+
+// The boundary of the polygon crosses itself. The term complex is sometimes used in contrast to simple, 
+concept SelfIntersectingPolygon inherits Polygon { }
+
+// The boundary of the polygon does not cross itself. 
+concept SimplePolygon inherits Polygon { }
+
+// Any line drawn through the polygon (and not tangent to an edge or corner) meets its boundary exactly twice. 
+// As a consequence, all its interior angles are less than 180°. Equivalently, any line segment with endpoints 
+// on the boundary passes through only interior points between its endpoints. 
+concept ConvexPolygon inherits StarShapedPolygon  { }
+
+// A line may be found which meets its boundary more than twice. Equivalently, there exists a line segment between 
+// two boundary points that passes outside the polygon.
+concept NonConvexPolygon inherits Polygon { }
+
+// There is at least one interior angle greater than 180°.
+concept ConcavePolygon inherits NonConvexPolygon, SimplePolygon { }
+
+// The whole interior is visible from at least one point, without crossing any edge. The polygon may be convex or concave. 
+concept StarShapedPolygon inherits SimplePolygon { }
+
+// A polygon which self-intersects in a regular way. A polygon cannot be both a star and star-shaped.
+concept StarPolygon inherits SelfIntersectingPolygon { }
+
+// All corner angles are equal.
+concept EquiangularPolygon inherits Polygon 
+{ 
+    CornerAngle(x: Self): Angle;
+}
+
+// All edges are of the same length.
+concept EquilateralPolygon inherits Polygon 
+{ 
+    EdgeLength(x: Self): Number;
+} 
+
+// both equilateral and equiangular.
+concept RegularPolygon inherits EquilateralPolygon, EquiangularPolygon { }
+
+// all corners lie on a single circle, called the circumcircle.
+concept CylicPolygon inherits Polygon
+{
+    Radius(x: Self): Number;
+}
+
+// all sides are tangent to an inscribed circle.
+concept TangentialPolygon inherits Polygon 
+{ 
+    InscribedCircleRadius(x: Self): Number;
+}
+
+// vertex-transitive: all corners lie within the same symmetry orbit. The polygon is also cyclic and equiangular.
+concept IsogonalPolygon inherits CyclicPolygon, Equiangular { }
+
+// edge-transitive: all sides lie within the same symmetry orbit. The polygon is also equilateral and tangential.
+concept IsotoxalPolygon inherits EquilateralPolygon, TangentialPolygon { }
