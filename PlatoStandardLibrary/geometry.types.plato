@@ -1,0 +1,170 @@
+
+// 2D Shapes
+// ==
+
+type Circle
+    implements ClosedShape2D
+{
+    Center: Point2D;
+    Radius: Number;
+}
+
+type Chord
+    implements ClosedShape2D
+{
+    Arc: Arc;
+}
+
+type Rectangle
+    implements ClosedShape2D
+{
+    Center: Point2D;
+    Size: Size2D;
+}
+
+type Ring
+    implements ClosedShape2D
+{
+    Circle: Circle;
+    InnerRadius: Number;
+}
+
+type Arc
+    implements OpenShape2D
+{
+    Angles: AnglePair;
+    Circle: Circle;
+}
+
+type Box2D
+    implements Shape2D
+{
+    Center: Point2D;
+    Rotation: Angle;
+    Extent: Size2D;
+}
+
+// 3D Shapes
+// ==
+
+type Capsule
+    implements Shape3D
+{
+    Line: Line3D;
+    Radius: Number;
+}
+
+
+type Cylinder
+    implements Shape3D
+{
+    Line: Line3D;
+    Radius: Number;
+}
+
+type Cone
+    implements Shape3D
+{
+    Line: Line3D;
+    Radius: Number;
+}
+
+type Tube
+    implements Shape3D
+{
+    Line: Line3D;
+    InnerRadius: Number;
+    OuterRadius: Number;
+}
+
+type ConeSegment
+    implements Shape3D
+{
+    Line: Line3D;
+    Radius1: Number;
+    Radius2: Number;
+}
+
+type Box3D
+    implements Shape3D
+{
+    Center: Point3D;
+    Rotation: Rotation3D;
+    Extent: Size3D;
+}
+
+type BiquadraticBezierPatch
+    implements BezierPatch
+{
+    K00: Point3D;
+    K01: Point3D;
+    K10: Point3D;
+    K11: Point3D;
+}
+
+type BicubicBezierPatch
+    implements BezierPatch
+{
+    K00: Point3D;
+    K01: Point3D;
+    K02: Point3D;
+    K10: Point3D;
+    K11: Point3D;
+    K12: Point3D;
+    K20: Point3D;
+    K21: Point3D;
+    K22: Point3D;
+}
+
+
+// https://en.wikipedia.org/wiki/B%C3%A9zier_curve    
+type CubicBezier2D
+    implements PointsGeometry2D
+{
+    A: Point2D;
+    B: Point2D;
+    C: Point2D;
+    D: Point2D;
+}   
+
+// https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+type CubicBezier3D
+    implements PointsGeometry3D
+{
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
+    D: Point3D;
+}
+
+// https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+type QuadraticBezier2D
+    implements PointsGeometry2D
+{
+    A: Point2D;
+    B: Point2D;
+    C: Point2D;
+}
+
+// https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+type QuadraticBezier3D
+    implements PointsGeometry3D
+{
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
+}
+
+type Deformed2D
+    implements Geometry2D
+{ 
+    Source: Geometry2D;
+    Function<Vector3D, Vector3D>: Deformation;
+}
+
+type Deformed3D
+    implements Geometry3D
+{ 
+    Source: Geometry2D;
+    Function<Vector3D, Vector3D>: Deformation;
+}

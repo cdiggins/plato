@@ -1,4 +1,14 @@
-﻿concept Transformable2D 
+﻿concept Bounded2D
+{
+    Bounds(x: Self): Bounds2D;
+}
+
+concept Bounded3D
+{
+    Bounds(x: Self): Bounds3D;
+}
+
+concept Transformable2D 
 {
     Transform(x: Self, Matrix2D matrix): Self;
 }
@@ -11,6 +21,11 @@ concept Transformable3D
 concept Deformable2D 
 {
     Deform(x: Self, Function1<Vector2D, Vector2D> f): Self;
+}
+
+concept OpenClosedShape
+{ 
+    Closed(x: Self);
 }
 
 concept Deformable3D 
@@ -34,6 +49,49 @@ concept Geometry3D
     inherits Deformable3D, Geometry
 { }
 
+concept GeometricSpace2D
+    inherits Geometry2D
+{ }
+
+concept GeometricSpace3D 
+    inherits Geometry3D 
+{ }
+
+concept Shape2D 
+    inherits Geometry2D 
+{ }
+
+concept Shape3D
+    inherits Geometry3D
+{ }
+
+//=== 
+// Open and closed shapes
+
+concept OpenShape2D 
+    inherits Geometry2D, OpenClosedShape
+{ 
+    Outline(x: Self): Curve2D;
+}
+
+concept ClosedShape2D 
+    inherits Geometry2D, OpenClosedShape
+{ 
+    Outline(x: Self): Curve2D;
+}
+
+concept OpenShape3D 
+    inherits Geometry3D, OpenClosedShape
+{ 
+    Surface(x: Self): Curve3D;
+}
+
+concept ClosedShape3D 
+    inherits Geometry3D, OpenClosedShape
+{ 
+    Surface(x: Self): Curve2D;
+}
+
 // A parametric geometry in any number of dimensions
 concept Procedural<TDomain, TRange>
 {
@@ -47,7 +105,7 @@ concept PointGeometry3D
 }
 
 concept Curve<TRange> 
-    inherits Procedural<Unit, TRange>
+    inherits Procedural<Unit, TRange>, OpenClosedShape
 { 
     Periodic(x: Self): Boolean;
 }

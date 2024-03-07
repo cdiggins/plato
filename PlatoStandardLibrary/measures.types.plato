@@ -1,0 +1,119 @@
+﻿
+// https://en.wikipedia.org/wiki/Area
+type Area
+    implements Measure
+{
+    MetersSquared: Number;
+}
+
+// https://en.wikipedia.org/wiki/Volume
+type Volume
+    implements Measure
+{
+    MetersCubed: Number;
+}
+
+// https://en.wikipedia.org/wiki/Velocity   
+type Velocity
+    implements Measure
+{
+    MetersPerSecond: Number;
+}
+
+// https://en.wikipedia.org/wiki/Acceleration
+type Acceleration
+    implements Measure
+{
+    MetersPerSecondSquared: Number;
+}
+
+// https://en.wikipedia.org/wiki/Force
+type Force
+    implements Measure
+{
+    Newtons: Number;
+}
+
+// https://en.wikipedia.org/wiki/Pressure  
+type Pressure
+    implements Measure
+{
+    Pascals: Number;
+}
+
+// https://en.wikipedia.org/wiki/Energy   
+type Energy
+    implements Measure
+{
+    Joules: Number;
+}
+
+// https://en.wikipedia.org/wiki/Byte    
+type Memory
+    implements Measure
+{
+    Bytes: Number;
+}
+
+// https://en.wikipedia.org/wiki/Frequency    
+type Frequency
+    implements Measure
+{
+    Hertz: Number;
+}
+
+// https://en.wikipedia.org/wiki/Loudness
+type Loudness
+    implements Measure
+{
+    Decibels: Number;
+}
+
+// https://en.wikipedia.org/wiki/Luminous_intensity    
+type LuminousIntensity
+    implements Measure
+{
+    Candelas: Number;
+}
+
+// https://en.wikipedia.org/wiki/Electric_potential    
+type ElectricPotential
+    implements Measure
+{
+    Volts: Number;
+}
+
+// https://en.wikipedia.org/wiki/Electric_charge
+type ElectricCharge
+    implements Measure
+{
+    Columbs: Number;
+}
+
+// https://en.wikipedia.org/wiki/Electric_current   
+type ElectricCurrent
+    implements Measure
+{
+    Amperes: Number;
+}
+
+// https://en.wikipedia.org/wiki/Electrical_resistance_and_conductance    
+type ElectricResistance
+    implements Measure
+{
+    Ohms: Number;
+}
+
+// https://en.wikipedia.org/wiki/Power_(physics)    
+type Power
+    implements Measure
+{
+    Watts: Number;
+}
+
+// https://en.wikipedia.org/wiki/Density    
+type Density
+    implements Measure
+{
+    KilogramsPerMeterCubed: Number;
+}

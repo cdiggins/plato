@@ -35,13 +35,13 @@ namespace Plato.Parser
 
                 Log($"Starting main parse");
                 State = Rule.Parse(Input);
-                if (!State.AtEnd())
-                    Log($"Partially completed parsing {State.Position}/{State.Input.Length}");
-                else 
-                    Log($"Completed parsing");
 
                 if (State == null)
                     throw new Exception("Unrecoverable parser failure");
+
+                Log(!State.AtEnd()
+                    ? $"Partially completed parsing {State.Position}/{State.Input.Length}"
+                    : $"Completed parsing");
 
                 Log($"Gathering parse errors");
                 foreach (var error in State.AllErrors())

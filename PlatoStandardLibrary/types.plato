@@ -417,20 +417,6 @@ type GeoCoordinateWithAltitude
     Altitude: Number;
 }
 
-type Circle
-    implements Value
-{
-    Center: Point2D;
-    Radius: Number;
-}
-
-type Chord
-    implements Value
-{
-    Circle: Circle;
-    Arc: Arc;
-}
-
 type Size2D
     implements Value
 {
@@ -446,12 +432,6 @@ type Size3D
     Depth: Number;
 }
 
-type Rectangle2D
-    implements Value
-{
-    Center: Point2D;
-    Size: Size2D;
-}
 
 type Fraction
     implements Value
@@ -512,32 +492,11 @@ type AnglePair
     Max: Angle;
 }
 
-type Ring
-    implements Value
-{
-    Circle: Circle;
-    InnerRadius: Number;
-}
-
-type Arc
-    implements Value
-{
-    Angles: AnglePair;
-    Cirlce: Circle;
-}
-
 type NumberInterval
     implements Interval<Number, Number>
 {
     Min: Number;
     Max: Number;
-}
-
-type Capsule
-    implements Value
-{
-    Line: Line3D;
-    Radius: Number;
 }
 
 // https://mindcontrol.org/~hplus/graphics/matrix-layout.html
@@ -550,52 +509,6 @@ type Matrix3D
     Column2: Vector4D;
     Column3: Vector4D;
     Column4: Vector4D;
-}
-
-type Cylinder
-    implements Value
-{
-    Line: Line3D;
-    Radius: Number;
-}
-
-type Cone
-    implements Value
-{
-    Line: Line3D;
-    Radius: Number;
-}
-
-type Tube
-    implements Value
-{
-    Line: Line3D;
-    InnerRadius: Number;
-    OuterRadius: Number;
-}
-
-type ConeSegment
-    implements Value
-{
-    Line: Line3D;
-    Radius1: Number;
-    Radius2: Number;
-}
-
-type Box2D
-    implements Value
-{
-    Center: Point2D;
-    Rotation: Angle;
-    Extent: Size2D;
-}
-
-type Box3D
-    implements Value
-{
-    Center: Point3D;
-    Rotation: Rotation3D;
-    Extent: Size3D;
 }
 
 // https://en.wikipedia.org/wiki/UV_mapping    
@@ -614,162 +527,6 @@ type UVW
     W: Unit;
 }
 
-// https://en.wikipedia.org/wiki/B%C3%A9zier_curve    
-type CubicBezier2D
-    implements Value
-{
-    A: Point2D;
-    B: Point2D;
-    C: Point2D;
-    D: Point2D;
-}   
-
-// https://en.wikipedia.org/wiki/B%C3%A9zier_curve
-type CubicBezier3D
-    implements Value
-{
-    A: Point3D;
-    B: Point3D;
-    C: Point3D;
-    D: Point3D;
-}
-
-// https://en.wikipedia.org/wiki/B%C3%A9zier_curve
-type QuadraticBezier2D
-    implements Value
-{
-    A: Point2D;
-    B: Point2D;
-    C: Point2D;
-}
-
-// https://en.wikipedia.org/wiki/B%C3%A9zier_curve
-type QuadraticBezier3D
-    implements Value
-{
-    A: Point3D;
-    B: Point3D;
-    C: Point3D;
-}
-
-// https://en.wikipedia.org/wiki/Area
-type Area
-    implements Measure
-{
-    MetersSquared: Number;
-}
-
-// https://en.wikipedia.org/wiki/Volume
-type Volume
-    implements Measure
-{
-    MetersCubed: Number;
-}
-
-// https://en.wikipedia.org/wiki/Velocity   
-type Velocity
-    implements Measure
-{
-    MetersPerSecond: Number;
-}
-
-// https://en.wikipedia.org/wiki/Acceleration
-type Acceleration
-    implements Measure
-{
-    MetersPerSecondSquared: Number;
-}
-
-// https://en.wikipedia.org/wiki/Force
-type Force
-    implements Measure
-{
-    Newtons: Number;
-}
-
-// https://en.wikipedia.org/wiki/Pressure  
-type Pressure
-    implements Measure
-{
-    Pascals: Number;
-}
-
-// https://en.wikipedia.org/wiki/Energy   
-type Energy
-    implements Measure
-{
-    Joules: Number;
-}
-
-// https://en.wikipedia.org/wiki/Byte    
-type Memory
-    implements Measure
-{
-    Bytes: Number;
-}
-
-// https://en.wikipedia.org/wiki/Frequency    
-type Frequency
-    implements Measure
-{
-    Hertz: Number;
-}
-
-// https://en.wikipedia.org/wiki/Loudness
-type Loudness
-    implements Measure
-{
-    Decibels: Number;
-}
-
-// https://en.wikipedia.org/wiki/Luminous_intensity    
-type LuminousIntensity
-    implements Measure
-{
-    Candelas: Number;
-}
-
-// https://en.wikipedia.org/wiki/Electric_potential    
-type ElectricPotential
-    implements Measure
-{
-    Volts: Number;
-}
-
-// https://en.wikipedia.org/wiki/Electric_charge
-type ElectricCharge
-    implements Measure
-{
-    Columbs: Number;
-}
-
-// https://en.wikipedia.org/wiki/Electric_current   
-type ElectricCurrent
-    implements Measure
-{
-    Amperes: Number;
-}
-
-// https://en.wikipedia.org/wiki/Electrical_resistance_and_conductance    
-type ElectricResistance
-    implements Measure
-{
-    Ohms: Number;
-}
-
-// https://en.wikipedia.org/wiki/Power_(physics)    
-type Power
-    implements Measure
-{
-    Watts: Number;
-}
-
-// https://en.wikipedia.org/wiki/Density    
-type Density
-    implements Measure
-{
-    KilogramsPerMeterCubed: Number;
-}
 
 // https://en.wikipedia.org/wiki/Normal_distribution    
 type NormalDistribution
@@ -833,25 +590,3 @@ type Function3<T0, T1, T2, TR>
 {
 }
 
-type BiquadraticBezierPatch
-    implements BezierPatch
-{
-    K00: Point3D;
-    K01: Point3D;
-    K10: Point3D;
-    K11: Point3D;
-}
-
-concept BicubicBezierPatch
-    implements BezierPatch
-{
-    K00: Point3D;
-    K01: Point3D;
-    K02: Point3D;
-    K10: Point3D;
-    K11: Point3D;
-    K12: Point3D;
-    K20: Point3D;
-    K21: Point3D;
-    K22: Point3D;
-}
