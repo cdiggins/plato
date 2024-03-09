@@ -428,7 +428,7 @@ namespace Plato.AST
                 var inherits = concept.InheritsList.Node?.TypeExpr.Nodes.Select(ToAst).ToArray() ?? Array.Empty<AstTypeNode>();
                 var members = concept.MethodDeclaration.Nodes.Select(ToAst).ToArray();
                 var constraints = concept.ConstraintList.Node?.Constraint.Nodes.Select(ToAst).ToArray() ?? Array.Empty<AstConstraint>();
-
+                    
                 return new AstTypeDeclaration(cstTopLevelDeclaration, TypeKind.Concept, name, typeParameters, inherits, Enumerable.Empty<AstTypeNode>(), constraints, members);
             }
 
@@ -437,11 +437,12 @@ namespace Plato.AST
 
         public static AstNode ToAst(this CstNode node)
         {
-            if (node == null)
-                return null;
-
-            switch (node)
+            var platoNode = node as IPlatoCstNode;
+            switch (platoNode)
             {
+                case null:
+                    return null;
+
                 // Literals 
 
                 case CstLiteral cstLiteral:
@@ -507,6 +508,139 @@ namespace Plato.AST
 
                 case CstWhileStatement cstWhileStatement:
                     return new AstLoop(cstWhileStatement, ToAst(cstWhileStatement.ParenthesizedExpression), ToAst(cstWhileStatement.Statement));
+                
+                case CstArrayInitializationValue cstArrayInitializationValue:
+                    throw new NotImplementedException();
+
+                case CstArrayRankSpecifier cstArrayRankSpecifier:
+                    throw new NotImplementedException();
+                
+                case CstArrayRankSpecifiers cstArrayRankSpecifiers:
+                    throw new NotImplementedException();
+                
+                case CstArraySizeSpecifier cstArraySizeSpecifier:
+                    throw new NotImplementedException();
+                
+                case CstAsOperation cstAsOperation:
+                    throw new NotImplementedException();
+                
+                case CstBinaryOperation cstBinaryOperation:
+                    throw new NotImplementedException();
+                
+                case CstBinaryOperator cstBinaryOperator:
+                    throw new NotImplementedException();
+                
+                case CstCaseClause cstCaseClause:
+                    throw new NotImplementedException();
+                
+                case CstCompoundOrSimpleTypeExpr cstCompoundOrSimpleTypeExpr:
+                    throw new NotImplementedException();
+                
+                case CstCompoundTypeExpr cstCompoundTypeExpr:
+                    throw new NotImplementedException();
+                
+                case CstConcept cstConcept:
+                    throw new NotImplementedException();
+                
+                case CstConditionalMemberAccess cstConditionalMemberAccess:
+                    throw new NotImplementedException();
+                
+                case CstConstraint cstConstraint:
+                    throw new NotImplementedException();
+                
+                case CstConstraintList cstConstraintList:
+                    throw new NotImplementedException();
+                
+                case CstDelimiter cstDelimiter:
+                    throw new NotImplementedException();
+                
+                case CstFieldDeclaration cstFieldDeclaration:
+                    throw new NotImplementedException();
+
+                case CstFieldName cstFieldName:
+                    throw new NotImplementedException();
+                
+                case CstFunctionArgKeyword cstFunctionArgKeyword:
+                    throw new NotImplementedException();
+                case CstFunctionArgs cstFunctionArgs:
+                    throw new NotImplementedException();
+                case CstFunctionDeclStatement cstFunctionDeclStatement:
+                    throw new NotImplementedException();
+                case CstFunctionName cstFunctionName:
+                    throw new NotImplementedException();
+                case CstFunctionParameter cstFunctionParameter:
+                    throw new NotImplementedException();
+                case CstFunctionParameterList cstFunctionParameterList:
+                    throw new NotImplementedException();
+                case CstImplementsList cstImplementsList:
+                    throw new NotImplementedException();
+                case CstIndexer cstIndexer:
+                    throw new NotImplementedException();
+                case CstInheritsList cstInheritsList:
+                    throw new NotImplementedException();
+                case CstInitializationValue cstInitializationValue:
+                    throw new NotImplementedException();
+                case CstInnerExpression cstInnerExpression:
+                    throw new NotImplementedException();
+                case CstInnerStatement cstInnerStatement:
+                    throw new NotImplementedException();
+                case CstIsOperation cstIsOperation:
+                    throw new NotImplementedException();
+                case CstLambdaParameters cstLambdaParameters:
+                    throw new NotImplementedException();
+                case CstLibrary cstLibrary:
+                    throw new NotImplementedException();
+                case CstMemberAccess cstMemberAccess:
+                    throw new NotImplementedException();
+                case CstMemberDeclaration cstMemberDeclaration:
+                    throw new NotImplementedException();
+                case CstMethodDeclaration cstMethodDeclaration:
+                    throw new NotImplementedException();
+                case CstOperator cstOperator:
+                    throw new NotImplementedException();
+                case CstParameterName cstParameterName:
+                    throw new NotImplementedException();
+                case CstPostfixOperator cstPostfixOperator:
+                    throw new NotImplementedException();
+                case CstPrefixOperator cstPrefixOperator:
+                    throw new NotImplementedException();
+                case CstSeparator cstSeparator:
+                    throw new NotImplementedException();
+                case CstSimpleTypeExpr cstSimpleTypeExpr:
+                    throw new NotImplementedException();
+                case CstStatementKeyword cstStatementKeyword:
+                    throw new NotImplementedException();
+                case CstSwitchStatement cstSwitchStatement:
+                    throw new NotImplementedException();
+                case CstTernaryOperation cstTernaryOperation:
+                    throw new NotImplementedException();
+                case CstTopLevelDeclaration cstTopLevelDeclaration:
+                    throw new NotImplementedException();
+                case CstType cstType:
+                    throw new NotImplementedException();
+                case CstTypeName cstTypeName:
+                    throw new NotImplementedException();
+                case CstTypeParameter cstTypeParameter:
+                    throw new NotImplementedException();
+                case CstTypeParameterList cstTypeParameterList:
+                    throw new NotImplementedException();
+                case CstTypeParametersToken cstTypeParametersToken:
+                    throw new NotImplementedException();
+                case CstTypeParameterToken cstTypeParameterToken:
+                    throw new NotImplementedException();
+                case CstTypeVar cstTypeVar:
+                    throw new NotImplementedException();
+                case CstUnknown cstUnknown:
+                    throw new NotImplementedException();
+                case CstVarWithInitialization cstVarWithInitialization:
+                    throw new NotImplementedException();
+                case CstYieldBreak:
+                    throw new NotImplementedException();
+
+                case CstYieldReturn cstYieldReturn:
+                    throw new NotImplementedException();
+                case CstYieldStatement cstYieldStatement:
+                    throw new NotImplementedException();
 
                 case CstContinueStatement _:
                     return AstContinue.Default;
@@ -650,7 +784,7 @@ namespace Plato.AST
                     return ToAst(functionArg);
             }
 
-            throw new NotImplementedException();
+            throw new NotImplementedException($"{node}");
         }
 
         public static AstNode ToAst(this CstFunctionArg functionArg)
