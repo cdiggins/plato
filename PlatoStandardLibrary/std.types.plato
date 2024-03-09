@@ -10,6 +10,11 @@ type Integer
     implements WholeNumber
 { }
 
+// A positive whole number 
+type Count
+    implements WholeNumber
+{ }
+
 // Built-in type that represents text
 type String
     implements Array<Character>, Comparable, Equatable
@@ -255,44 +260,6 @@ type Quad3D
     B: Point3D;
     C: Point3D;
     D: Point3D;
-}
-
-type Point2D
-    implements Coordinate, AdditiveArithmetic<Vector2D>, Vector
-{
-    X: Number;
-    Y: Number;
-}
-
-type Point3D
-    implements Coordinate, AdditiveArithmetic<Vector3D>, Vector
-{
-    X: Number;
-    Y: Number;
-    Z: Number;
-}
-
-type Point4D
-    implements Coordinate, AdditiveArithmetic<Vector4D>, Vector
-{
-    X: Number;
-    Y: Number;
-    Z: Number;
-    W: Number;
-}
-
-type Line2D
-    implements Value
-{
-    A: Point2D;
-    B: Point2D;
-}
-
-type Line3D
-    implements Value
-{
-    A: Point3D;
-    B: Point3D;
 }
 
 // https://en.wikipedia.org/wiki/RGB_color_spaces

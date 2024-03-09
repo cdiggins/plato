@@ -2,6 +2,20 @@
 // 2D Shapes
 // ==
 
+type Point2D
+    implements Coordinate, AdditiveArithmetic<Vector2D>, Vector
+{
+    X: Number;
+    Y: Number;
+}
+
+type Line2D
+    implements OpenPolygon2D
+{
+    A: Point2D;
+    B: Point2D;
+}
+
 type Circle
     implements ClosedShape2D
 {
@@ -9,14 +23,30 @@ type Circle
     Radius: Number;
 }
 
-type Chord
+// https://en.wikipedia.org/wiki/Lens_(geometry)
+type Lens
     implements ClosedShape2D
 {
-    Arc: Arc;
+    A: Circle;
+    B: Circle;
+}
+
+type Pentagon
+    implements RegularPolygon2D
+{ 
+    Center: Point2D;
+    Radius: Number;
+}
+
+type Hexagon
+    implements RegularPolygon2D
+{ 
+    Center: Point2D;
+    Radius: Number;
 }
 
 type Rectangle
-    implements ClosedShape2D
+    implements Polygon2D
 {
     Center: Point2D;
     Size: Size2D;
@@ -25,8 +55,9 @@ type Rectangle
 type Ring
     implements ClosedShape2D
 {
-    Circle: Circle;
+    Center: Point2D;
     InnerRadius: Number;
+    OuterRadius: Number;
 }
 
 type Arc
@@ -34,6 +65,45 @@ type Arc
 {
     Angles: AnglePair;
     Circle: Circle;
+}
+
+type Sector
+    implements ClosedShape2D
+{
+    Arc: Arc;
+}
+
+type Chord
+    implements ClosedShape2D
+{
+    Arc: Arc;
+}
+
+type Segment
+    implements ClosedShape2D
+{
+    Arc: Arc;
+}
+
+type Square
+    implements RegularPolygon2D
+{
+    Center: Point2D;
+    Side: Number;
+}
+
+type EquilateralTriangle
+    implements RegularPolygon2D
+{
+    Center: Point2D;
+    Side: Number;
+}
+
+type IsocelesTriangle
+    implements Polygon2D
+{
+    Center: Point2D;
+    Size2D: Number;
 }
 
 type Box2D
@@ -44,8 +114,44 @@ type Box2D
     Extent: Size2D;
 }
 
+type Deformed2D
+    implements Geometry2D
+{ 
+    Source: Geometry2D;
+    Deformation: Function<Vector3D, Vector3D>;
+}
+
+type RegularPolygon
+    implements RegularPolygon2D
+{
+    Center: Point2D;
+    Points: Count;
+}
+
+type RegularStarPolygon
+    implements Polygon2D
+{
+    Center: Point2D;
+    Points: Count;
+}
+
 // 3D Shapes
 // ==
+
+type Point3D
+    implements Coordinate, AdditiveArithmetic<Vector3D>, Vector
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+}
+
+type Line3D
+    implements OpenPolygon3D
+{
+    A: Point3D;
+    B: Point3D;
+}
 
 type Capsule
     implements Shape3D
@@ -53,7 +159,6 @@ type Capsule
     Line: Line3D;
     Radius: Number;
 }
-
 
 type Cylinder
     implements Shape3D
@@ -155,16 +260,35 @@ type QuadraticBezier3D
     C: Point3D;
 }
 
-type Deformed2D
-    implements Geometry2D
-{ 
-    Source: Geometry2D;
-    Function<Vector3D, Vector3D>: Deformation;
-}
-
 type Deformed3D
     implements Geometry3D
 { 
     Source: Geometry2D;
-    Function<Vector3D, Vector3D>: Deformation;
+    Deformation: Function<Vector3D, Vector3D>;
+}
+
+type PolygonTransformedTo3D
+    implements Polygon3D 
+{
+    Polygon: Polygon2D;
+    Transform: Pose3D;
+}
+
+//===
+// 4D Shapes 
+
+type Point4D
+    implements Coordinate, AdditiveArithmetic<Vector4D>, Vector
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+    W: Number;
+}
+
+type Line4D
+    implements Value
+{
+    A: Point4D;
+    B: Point4D;
 }

@@ -1,0 +1,19 @@
+library SignalFunctions 
+{    
+    // https://en.wikipedia.org/wiki/Sinc_function
+    Sinc(x: Angle): Number
+        => x.Radians.AlmostZero ? 1.0 : x.Sin / x;
+
+    // https://en.wikipedia.org/wiki/Heaviside_step_function
+    HeavisideStep(t: Number): Number
+        => t.LtZ ? 0.0 : 1.0;
+
+    // https://en.wikipedia.org/wiki/Rectangular_function
+    Rectangular(t: Number, width: Number): Number
+        => t.Abs >= width.Half ? 0.0 : 1.0; 
+        
+    // TODO: wave functions 
+    // https://en.wikipedia.org/wiki/Sawtooth_wave
+    // https://en.wikipedia.org/wiki/Square_wave 
+    // https://en.wikipedia.org/wiki/Filter_(signal_processing)
+}

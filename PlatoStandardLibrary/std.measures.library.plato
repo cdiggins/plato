@@ -1,0 +1,145 @@
+   
+library Measures
+{
+    Value(x: Measure): Number
+        => x.FieldValues[0];
+
+    Add(x: Measure, y: Number): Measure
+        => x.Value + y;
+
+    Subtract(x: Measure, y: Number): Measure
+        => x.Value - y;
+
+    Multiply(x: Measure, y: Number): Measure
+        => x.Value * y;
+
+    Divide(x: Measure, y: Number): Measure
+        => x.Value / y;
+
+    Modulo(x: Measure, y: Number): Measure
+        => x.Value % y;
+
+    Negative(x: Measure): Measure
+        => -x.Value;
+
+    Fahrenheit(x: Temperature): Number
+        => (x.Celsius * 9.0 / 5.0) + 32.0;
+
+    Fahrenheit(x: Number): Temperature
+        => (x - 32.0) * 5.0 / 9.0;
+
+    Kelvin(x: Temperature): Number
+        => x.Celsius + 273.15;
+
+    Kelvin(x: Number): Temperature
+        => x - 273.15;
+
+    Multiply(x: Length, y: Length): Area
+        => x.Value * y.Value;
+
+    Divide(x: Area, y: Length): Length
+        => x.Value / y.Value;
+
+    Multiply(x: Area, y: Length): Volume
+        => x.Value * y.Value;
+
+    Multiply(x: Length, y: Area): Volume
+        => x.Value * y.Value;
+
+    Divide(x: Volume, y: Length): Area
+        => x.Value / y.Value;
+
+    Divide(x: Volume, y: Area): Length
+        => x.Value / y.Value;
+
+    Multiply(x: Length, y: Time): Velocity
+        => x.Value * y.Value;
+
+    Multiply(x: Time, y: Length): Velocity
+        => x.Value * y.Value;
+
+    Divide(x: Velocity, y: Time): Length
+        => x.Value / y.Value;
+
+    Divide(x: Velocity, y: Length): Time
+        => x.Value / y.Value;
+
+    Multiply(x: Velocity, y: Time): Acceleration
+        => x.Value * y.Value;
+
+    Divide(x: Acceleration, y: Time): Velocity
+        => x.Value / y.Value;
+
+    Divide(x: Acceleration, y: Velocity): Time
+        => x.Value / y.Value;
+
+    Multiply(x: Mass, y: Acceleration): Force
+        => x.Value * y.Value;
+
+    Days(x: Number): Time
+        => x * 86400.0;
+
+    Milliseconds(x: Number): Time
+        => (x / 1000.0).Seconds;
+
+    Seconds(x: Number): Time
+        => x;
+
+    Minutes(x: Number): Time
+        => (x * 60.0).Seconds;
+
+    Hours(x: Number): Time
+        => (x * 60).Minutes;
+
+    Days(x: Time): Number
+        => (x * 24.0).Hours;
+
+    Milliseconds(x: Time): Number
+        => x.Seconds * 1000.0;
+
+    Minutes(x: Time): Number
+        => x.Seconds / 60.0;
+
+    Hours(x: Time): Number
+        => x.Minutes / 60.0;
+
+    Days(x: Time): Number
+        => x.Hours / 24.0;
+
+    Subtract(a: DateTime, b: DateTime): Time
+        => a.Value - b.Value;
+
+    // https://en.wikipedia.org/wiki/Unit_of_length
+    Meters(value: Number): Length => value;
+    Kilometer(value: Number): Length => value * 1000;
+    Centimeters(value: Number): Length => value / 100;
+    Decimeters(value: Number): Length => value / 10;
+    Millimeters(value: Number): Length => value / 100;
+    Microns(value: Number): Length => value / 1000 / 1000;
+    Nanometers(value: Number): Length => value / 1000 / 1000 / 1000;
+    Inches(value: Number): Length => Feet(value / 12);
+    Feet(value: Number): Length => value / Constants.FeetPerMeter;
+    Yards(value: Number): Length => Feet(value * 3);
+    Miles(value: Number): Length => Feet(value * Constants.FeetPerMile);
+    Leagues(value: Number): Length => Miles(value * 3);
+    Lightyears(value: Number): Length => value * Constants.MetersPerLightyear;
+    AU(value: Number): Length => value * Constants.MetersPerAU;
+    HubbleLength(value: Number): Length => value * 14.4.Billion() * Lightyears(value);
+
+    Kilometers(length: Length): Number => length.Meters / 1000;
+    Decimeters(length: Length): Number => length.Meters * 10;
+    Centimeters(length: Length): Number => length.Meters * 100;
+    Millimeters(length: Length): Number => length.Meters * 1000;
+    Microns(length: Length): Number => length.Millimeters * 1000;
+    Nanometers(length: Length): Number => length.Microns * 1000;
+    Inches(length: Length): Number => length.Feet * 12;
+    Feet(length: Length): Number => length * Constants.FeetPerMeter;
+    Yards(length: Length): Number => ToFeet(length) / 3;
+    Rods(length: Length): Number => ToChains(length) * 4;
+    Chains(length: Length): Number => ToYards(length) / 22;
+    Miles(length: Length): Number => length.Meters * Constants.FeetPerMeter / Constants.FeetPerMile;
+    League(length: Length): Number => ToMiles(length) / 3;
+    Lightyears(length: Length): Number => length / Constants.MetersPerLightyear;
+    AU(length: Length): Number => length / Constants.MetersPerAU;
+    HubbleLength(length: Length): Number => value / 1.HubbleLength();
+}

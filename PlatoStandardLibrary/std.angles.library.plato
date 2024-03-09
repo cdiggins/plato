@@ -1,0 +1,35 @@
+library Angles 
+{
+    Radians(x : Number): Angle
+        => x;
+
+    Degrees(x: Number): Angle
+        => (x / 360f).Turns; 
+        
+    ArcMinutes(x: Number): Angle 
+        => x.Degrees / 60f;
+
+    ArcSeconds(x: Number): Angle 
+        => x.ArcMinutes / 60f;
+
+    Grads(x: Number): Angle 
+        => (x / 400f).Turns;
+     
+    Turns(x: Number): Angle 
+        => x * TwoPi;    
+
+    Degrees(x: Angle): Number
+        => x.Turns * 360f;
+
+    Turns(x: Angle): Number
+        => x / TwoPi;    
+
+    ArcMinutes(x: Angle): Number
+        => x.Degress * 60f;    
+
+    ArcSeconds(x: Angle): Number
+        => x.ArcMinutes * 60f;    
+
+    Grad(x: Angle): Number
+        => x.Turns * 400f;    
+}

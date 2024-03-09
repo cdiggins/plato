@@ -111,4 +111,31 @@ library Easings
     
     BounceEaseInOut(p: Numerical): Numerical
         => BlendEaseFunc(p, BounceEaseIn, BounceEaseOut);
+
+    //===
+    // http://www.flong.com/archive/texts/code/shapers_circ/
+
+    CircleSigmoid(x: Number, a: Number): Number 
+        => x <= a
+            ? a - (a.Pow2 - x.Pow2).Sqrt
+            : a + (a.FromOne.Pow2 - x.MinusOne.Pow2.Pow2).Sqrt;
+
+    CircularSeat(x: Number, a: Number): Number 
+        => x <= a 
+            ? (a.Pow2 - (x - a).Pow2).Sqrt 
+            : (a.FromOne.Pow2 - (x - a).Pow2).Sqrt;
+
+    EllipticalSeat(x: Number, a: Number, b: Number): Number 
+        => (a.AlmostZeroOrOne) 
+            ? a :
+            (x <= a) 
+                ? (b / a) * (a.Pow2 - (x - a).Pow2).Sqrt 
+                : 1 - (b.FromOne / a.FromOne) * (a.FromOne.Pow2 - (x - a).Pow2).Sqrt;
+
+    EllipticalSigmoid(x: Number, a: Number, b: Number): Number
+        => a.AlmostZeroOrOne 
+            ? a :
+                (x <= a) 
+                    ? b * (a.Pow2 - x.Pow2) / a).Sqrt.FromOne 
+                    : b + (b.FromOne / a.FromOne * (a.FromOne.Pow2 - x.MinusOne.Pow2).Sqrt;
 }

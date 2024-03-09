@@ -24,11 +24,8 @@ namespace Plato
 
             logger.Log("Opening files");
 
-            var files = new[]
-            {
-                "intrinsics.plato", "concepts.plato", "types.plato", "libraries.plato"
-            };
-            var inputs = files.Select(f => OpenFile(inputFolder.RelativeFile(f))).ToList();
+            var files = inputFolder.GetFiles("*.plato").ToList();
+            var inputs = files.Select(OpenFile).ToList();
 
             logger.Log("Parsing");
             var parsers = inputs.Select(i => Parse(logger, i)).ToList();
@@ -39,7 +36,6 @@ namespace Plato
                 return;
             }
             
-
             logger.Log("Creating AST trees");
             var trees = new List<AstNode>();
             foreach (var p in parsers)

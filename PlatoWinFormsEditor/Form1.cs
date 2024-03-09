@@ -8,7 +8,7 @@ namespace PlatoWinFormsEditor
         {
             InitializeComponent();
             this.WindowState = FormWindowState.Maximized;
-            IDE = new IDE(tabControl1, richTextBoxOutput);
+            IDE = new IDE(mainTabControl, mainOutputBox);
             
         }
     }

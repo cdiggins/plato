@@ -1,0 +1,108 @@
+library ParametricCurves
+{
+    //===
+    // 1 dimensional curves
+
+    // https://en.wikipedia.org/wiki/Catenary
+    Caternay(x: Number, a: Number): Number
+        => (x / a).Radians.Cosh;
+
+    // https://en.wikipedia.org/wiki/Catenary
+    Caternay(x: Number): Number
+        => x.Radians.Cosh;
+
+    //===
+    // https://en.wikipedia.org/wiki/Parametric_equation
+
+    // https://en.wikipedia.org/wiki/Parabola
+    Parabola(x: Number): Vector2D
+        => (x, x.Pow2);
+
+    // https://en.wikipedia.org/wiki/Hyperbola
+    Hyperbola(t: Angle): Vector2D
+        => (t.Sec, t.Tan);
+
+    // https://en.wikipedia.org/wiki/Lemniscate_of_Gerono
+    LeminscateOfGerono(t: Angle): Vector2D
+        => (t.Cos, t.Sin * t.Cos);
+
+    // https://en.wikipedia.org/wiki/Circle
+    Circle(t: Angle): Vector2D
+        => (t.Cos, t.Sin);
+
+    // https://en.wikipedia.org/wiki/Lissajous_curve
+    Lissajous(t: Angle, a: Number, b: Number, kx: Number, ky: Number): Vector2D 
+        => (a * (kx * t).Cos,
+            b * (ky * t).Sin);
+
+    // https://en.wikipedia.org/wiki/Hypotrochoid
+    // Note: will require multiple revolutions beyond one
+    Hypotrochoid(t: Angle, r1: Number, r2: Number, d: Number): Vector2D
+        => ((r1 - r2) * t.Cos + d * ((r1 - r2) * t / r2).Cos,
+            (r1 - r2) * t.Sin + d * ((r1 - r2) * t / r2).Sin);
+
+    // https://en.wikipedia.org/wiki/Epicycloid
+    Epicycloid(t: Angle, r: Number, k: Number): Vector2D
+        => (r * (k + 1) * t.Cos - r * ((k + 1) * t).Cos,
+            r * (k + 1) * t.Sin - r * ((k + 1) * t).Sin);
+
+    // https://en.wikipedia.org/wiki/Epicycloid
+    ClosedEpicycloid(t: Angle, k: Number): Vector2D 
+        => Epicycloid(t, k.Inverse, 1);
+    
+    // https://en.wikipedia.org/wiki/Cardoid
+    Cardoid(t: Angle): Vector2D  
+        => ClosedEpicycloid(t, 1);
+
+    // https://en.wikipedia.org/wiki/Nephroid
+    Nephroid(t: Angle): Vector2D 
+        => ClosedEpicycloid(t, 2);
+    
+    // https://en.wikipedia.org/wiki/Epicycloid
+    Trefoiloid(t: Angle): Vector2D 
+        => ClosedEpicycloid(t, 3);
+    
+    // https://en.wikipedia.org/wiki/Epicycloid
+    Quatrefoiloid(t: Angle): Vector2D 
+        => ClosedEpicycloid(t, 4);
+
+    // https://en.wikipedia.org/wiki/Hypocycloid
+    Hypocycloid(t: Angle, r: Number, k: Number): Vector2D
+        => (r * (k - 1) * t.Cos + r * ((k - 1) * t).Cos,
+            r * (k - 1) * t.Sin + r * ((k - 1) * t).Cos);
+
+    // https://en.wikipedia.org/wiki/Hypocycloid
+    ClosedHypocycloid(t: Angle, k: Number): Vector2D 
+        => Hypocycloid(t, k.Inverse, 1);
+    
+    // https://en.wikipedia.org/wiki/Deltoid
+    Deltoid(t: Angle): Vector2D 
+        => ClosedHypocycloid(t, 3);
+    
+    // https://en.wikipedia.org/wiki/Astroid
+    Astroid(t: Angle): Vector2D  
+        => ClosedHypocycloid(t, 4);
+
+    // https://en.wikipedia.org/wiki/Epitrochoid
+    Epitrochoid(t: Angle, r: Number, d: Number): Vector2D 
+        => ((1 + r) * t.Cos - d * ((1 + r) / r * t).Cos,
+            (1 + r) * t.Sin - d * ((1 + r) / r * t).Sin);
+
+    // https://en.wikipedia.org/wiki/Lima%C3%A7on
+    CartesianLimacon(t: Angle, a: Number a, b: Number b): Vector2D
+        => ToCartesian((PolarLimacon(t, a, b), t));
+
+    // https://en.wikipedia.org/wiki/Cycloid
+    Cycloid(t: Angle): Vector2D
+        => (t - t.Sin, 1 - t.Cos);
+
+    // https://en.wikipedia.org/wiki/Trochoid
+    Trochoid(t: Angle, a: Number, b: Number): Vector2D
+        => (a * t - b * t.Sin, a - b * t.Cos);
+
+    // https://en.wikipedia.org/wiki/Cyclocycloid
+    Cyclocycloid(t: Angle, r0: Number, r1: Number, d: Number): Vector2D
+        => ((r0 + r1) * t.Cos - (d * ((r0 + r1) * t).Cos),
+            (r0 + r1) * t.Sin - (d * ((r0 + r1) * t).Sin));            
+}
+

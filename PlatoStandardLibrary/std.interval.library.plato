@@ -1,0 +1,53 @@
+library Interval
+{
+    Size(x: Interval<$Value, $Size>): $Size
+        => x.Max - x.Min;
+ 
+    Lerp(x: Interval<$Value, $Size>, amount: Number): $Value
+        => x.Min.Lerp(x.Max, amount);
+    
+    Reverse(x: Interval<$Value, $Size>): Interval<$Value, $Size> 
+        => (x.Max, x.Min);
+        
+    Center(x: Interval<$Value, $Size>): $Value
+        => x.Lerp(0.5);    
+    
+    Contains(x: Interval<$Value, $Size>, value: $Value): Boolean 
+        => value.Between(x.Min, x.Max);
+    
+    Contains(x: Interval<$Value, $Size>, y: Interval<$Value, $Size>): Boolean 
+        => x.Contains(y.Min) && x.Contains(y.Max);
+    
+    Overlaps(x: Interval<$Value, $Size>, y: Interval<$Value, $Size>): Boolean 
+        => x.Contains(y.Min) || x.Contains(y.Max) || y.Contains(x.Min) || y.Contains(x.Max);
+    
+    SplitAt(x: Interval<$Value, $Size>, t: Number): Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>> 
+        => (x.Left(t), x.Right(t));
+    
+    Split(x: Interval<$Value, $Size>): Tuple2<Interval<$Value, $Size>, Interval<$Value, $Size>>
+        => x.SplitAt(0.5);
+
+    Left(x: Interval<$Value, $Size>, t: Number): Interval<$Value, $Size>
+        => (x.Min, x.Lerp(t));
+    
+    Right(x: Interval<$Value, $Size>, t: Number): Interval<$Value, $Size>
+        => (x.Lerp(t), x.Max);
+
+    MoveTo(x: Interval<$Value, $Size>, v: $Value): Interval<$Value, $Size>
+        => (v, v + x.Size);
+    
+    LeftHalf(x: Interval<$Value, $Size>): Interval<$Value, $Size> 
+        => x.Left(0.5);
+    
+    RightHalf(x: Interval<$Value, $Size>): Interval<$Value, $Size> 
+        => x.Right(0.5);
+    
+    Recenter(x: Interval<$Value, $Size>, c: $Value): Interval<$Value, $Size> 
+        => (c - x.Size.Half, c + x.Size.Half);
+    
+    Clamp(x: Interval<$Value, $Size>, y: Interval<$Value, $Size>): Interval<$Value, $Size>
+        => (x.Clamp(y.Min), x.Clamp(y.Max));
+    
+    Clamp(x: Interval<$Value, $Size>, value: $Value): $Value
+        => value.Clamp(x.Min, x.Max);
+}

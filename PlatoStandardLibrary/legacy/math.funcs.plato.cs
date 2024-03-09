@@ -504,8 +504,8 @@ namespace Plato.__FUNCS__
             (x <= a) ? b * (1 - ((a.Pow2() - x.Pow2()) / a).Sqrt()) :
             b + ((1 - b) / (1 - a)) * ((1 - a).Pow2() - (x - 1).Pow2()).Sqrt();
 
-        // https://en.wikipedia.org/wiki/Catenary
-        Number Caternay(Number x, Number a = 1.0) => (x / a).Radians().Cosh();
+            // https://en.wikipedia.org/wiki/Catenary
+            Number Caternay(Number x, Number a = 1.0) => (x / a).Radians().Cosh();
 
         //== 
         // Some parametric curves 

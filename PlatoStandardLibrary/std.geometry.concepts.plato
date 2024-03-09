@@ -300,7 +300,7 @@ concept PolygonalChain3D
 }
 
 concept ClosedPolygonalChain2D
-    inherits PolygonalChain2D
+    inherits PolygonalChain2D, ClosedShape2D
 { 
 }
 

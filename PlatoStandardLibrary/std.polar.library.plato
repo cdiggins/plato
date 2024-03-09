@@ -1,0 +1,27 @@
+library PolarFunctions
+{
+    // https://en.wikipedia.org/wiki/Polar_coordinate_system
+    Cartesian(polar: PolarCoordinates): Vector2D
+        => Circle(polar.Angle) * polar.Radius;
+
+    // https://en.wikipedia.org/wiki/Lima%C3%A7on
+    PolarLimacon(phi: Angle, a: Number, b: Number): PolarCoordinates
+        => (b + a * phi.Cos, phi);
+
+    // https://en.wikipedia.org/wiki/Rose_(mathematics)        
+    PolarRose(phi: Angle, a: Number, k: Number, c: Number): PolarCoordinates
+        => (a * (k * phi + c).Cos, phi);
+
+    // https://en.wikipedia.org/wiki/Archimedean_spiral
+    PolarSpiral(phi: Angle, a: Number, b: Number): PolarCoordinates
+        => (a + b * phi, phi);
+                
+    // https://en.wikipedia.org/wiki/Cardioid
+    Cardoid(phi: Angle): PolarCoordinates 
+        => Limacon(phi, 1, 1);
+       
+    // https://en.wikipedia.org/wiki/Conic_section
+    ConicSection(phi: Angle, eccentricity: Number, semiLatusRectum: Number): PolarCoordinates
+        => semiLatusRectum / (1 - eccentricity * t.Cos);
+}
+
