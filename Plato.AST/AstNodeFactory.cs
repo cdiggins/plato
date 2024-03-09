@@ -583,7 +583,8 @@ namespace Plato.AST
                 case CstInnerExpression cstInnerExpression:
                     throw new NotImplementedException();
                 case CstInnerStatement cstInnerStatement:
-                    throw new NotImplementedException();
+                    return cstInnerStatement.Node.ToAst();
+
                 case CstIsOperation cstIsOperation:
                     throw new NotImplementedException();
                 case CstLambdaParameters cstLambdaParameters:
@@ -634,7 +635,7 @@ namespace Plato.AST
                     throw new NotImplementedException();
                 case CstVarWithInitialization cstVarWithInitialization:
                     throw new NotImplementedException();
-                case CstYieldBreak:
+                case CstYieldBreak _:
                     throw new NotImplementedException();
 
                 case CstYieldReturn cstYieldReturn:

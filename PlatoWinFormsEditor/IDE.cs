@@ -41,6 +41,7 @@ public class IDE
 
         var splitPanel = new SplitContainer();
         tabPage.Controls.Add(splitPanel);
+        splitPanel.Dock = DockStyle.Fill;
 
         var editInput = new RichTextBox();
         splitPanel.Panel1.Controls.Add(editInput);
