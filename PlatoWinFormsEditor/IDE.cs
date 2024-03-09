@@ -7,7 +7,6 @@ using Ara3D.Parakeet.Grammars;
 using Ara3D.Services;
 using Plato.AST;
 using Plato.Compiler;
-using Plato.Parser;
 using Logger = Plato.Compiler.Logger;
 
 namespace PlatoWinFormsEditor;
@@ -19,12 +18,6 @@ public class IDE
     public ILogger Logger { get; } 
     public TabControl TabControl { get; }
     public RichTextBox LoggingOutputEditor { get; }
-
-    public ILogWriter CreateWriter()
-        => LogWriter.Create(OnLogEntry);
-
-    public void OnLogEntry(string msg)
-        => LoggingOutputEditor.AppendText(msg + Environment.NewLine);
 
     public static void InitTextBox(RichTextBox edit)
     {
@@ -51,19 +44,16 @@ public class IDE
         splitPanel.Panel2.Controls.Add(editOutput);
         InitTextBox(editOutput);
 
-        var editor = new Editor(filePath, editInput, editOutput, Logger);
+        var editor = new Editor(filePath, editInput, Logger);
         Editors.Add(editor);
-
-        editor.ApplyStylesAndOutputErrors();
 
         return editor;
     }
 
-    public IDE(TabControl tabControl, RichTextBox loggingOutputEditor)
+    public IDE(TabControl tabControl, ILogger logger)
     {
         TabControl = tabControl;
-        LoggingOutputEditor = loggingOutputEditor;
-        Logger = new Logger();
+        Logger = logger;
 
         var inputFolder = SourceCodeLocation.GetFolder()
             .RelativeFolder("..", "PlatoStandardLibrary");
@@ -76,26 +66,15 @@ public class IDE
 
         // TODO: Splitter distance 
 
-        var parsingSuccessful = true;
-        foreach (var e in Editors)
-        {
-            if (e.Parser.Success)
-            {
-                Logger.Log($"Parsing passed: {e.BaseFileName}");
-            }
-            else
-            {
-                Logger.Log($"Parsing failed: {e.BaseFileName}");
-                parsingSuccessful = false;
-            }
-        }
+        var parsingSuccessful = Editors.All(e => e.Parser.Succeeded);
 
         if (!parsingSuccessful)
         {
-            Logger.Log("Parsing failed overall");
+            Logger.Log("Parsing failed for one of the input files, halting");
             return;
         }
-
+        
+        Logger.Log("Parsing succeeded for all files");
         Logger.Log("Compiling");
         var trees = Editors.Select(e => e.Ast);
         Compilation = new Compilation(Logger, trees);

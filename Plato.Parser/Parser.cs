@@ -19,9 +19,11 @@ namespace Plato.Parser
         {
             Logger = logger;
             Log($"Starting compiling {fileName} at {DateTime.Now}");
+
             Input = input;
             TokenizerRule = tokenizerRule;
             Rule = rule;
+            
             try
             {
                 Log($"Starting to parse {Input.LineToChar.Count} lines containing {Input.Text.Length} characters");
@@ -60,12 +62,18 @@ namespace Plato.Parser
                 var factory = new CstNodeFactory();
                 CstTree = factory.Create(ParseTreeNode);
 
-                Success = State.AtEnd() && ParsingErrors.Count == 0;
+                if (!State.AtEnd())
+                {
+                    Log($"")
+                }
                     
-                if (Success)
+                if (!Success)
                     Log($"Completed all steps, result is successful");
                 else
                     Log($"Completed all steps, result was not successful");
+
+                Logger.Log("Creating AST trees");
+                Ast = Parser.CstTree.ToAst();
             }
             catch (ParserException pe)
             {
@@ -104,7 +112,6 @@ namespace Plato.Parser
         public CstNode CstTree { get; }
         public ILogger Logger { get; }
 
-        public List<string> Diagnostics { get; } = new List<string>();
         public List<ParserError> ParsingErrors { get; } = new List<ParserError>();
 
     }

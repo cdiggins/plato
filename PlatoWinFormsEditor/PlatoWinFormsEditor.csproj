@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\domo\Ara3D.Domo\Ara3D.Domo.csproj" />
     <ProjectReference Include="..\..\src\Ara3D.Logging\Ara3D.Logging.csproj" />
+    <ProjectReference Include="..\..\src\Ara3D.Parsing\Ara3D.Parsing.csproj" />
     <ProjectReference Include="..\..\src\Ara3D.Services\Ara3D.Services.csproj" />
     <ProjectReference Include="..\..\src\Ara3D.Utils\Ara3D.Utils.csproj" />
     <ProjectReference Include="..\Plato.CSharpWriter\Plato.CSharpWriter.csproj" />

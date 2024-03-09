@@ -2,6 +2,7 @@
 using Ara3D.Utils;
 using Ara3D.Parakeet;
 using Ara3D.Parakeet.Grammars;
+using Ara3D.Parsing;
 using Plato.AST;
 using Plato.CSharpWriter;
 
@@ -12,9 +13,6 @@ namespace Plato
         public static ParserInput OpenFile(FilePath filePath)
             => new(filePath.ReadAllText(), filePath);
 
-        public static Parser.Parser Parse(ILogger logger, ParserInput input)
-            => new(input.File, input, PlatoGrammar.Instance.File, PlatoTokenGrammar.Instance.Tokenizer, logger);
-        
         public static void Main(string[] args)
         {
             var logger = Logger.Default;
@@ -29,8 +27,8 @@ namespace Plato
             var inputs = files.Select(OpenFile).ToList();
 
             logger.Log("Parsing");
-            var parsers = inputs.Select(i => Parse(logger, i)).ToList();
-            var parsingSuccess = parsers.All(p => p?.Success == true);
+            var parsers = inputs.Select(i => CommonParsers.PlatoParser(i, logger)).ToList();
+            var parsingSuccess = parsers.All(p => p.Succeeded);
             if (!parsingSuccess)
             {
                 logger.Log("Parsing was not successful");
@@ -43,7 +41,7 @@ namespace Plato
             {
                 try
                 {
-                    trees.Add(p.CstTree.ToAst());
+                    trees.Add(p.Cst.ToAst());
                 }
                 catch (Exception ex)
                 {

@@ -9,8 +9,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\parakeet\Parakeet.Cst\Ara3D.Parakeet.Cst.csproj" />
     <ProjectReference Include="..\..\parakeet\Parakeet.Grammars\Ara3D.Parakeet.Grammars.csproj" />
+    <ProjectReference Include="..\..\src\Ara3D.Parsing\Ara3D.Parsing.csproj" />
     <ProjectReference Include="..\Plato.CSharpWriter\Plato.CSharpWriter.csproj" />
-    <ProjectReference Include="..\Plato.Parser\Plato.Parser.csproj" />
     <ProjectReference Include="..\PlatoCompiler\Plato.Compiler.csproj" />
   </ItemGroup>
 </Project>
