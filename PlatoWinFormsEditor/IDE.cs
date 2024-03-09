@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Ara3D.Logging;
 using Ara3D.Utils;
 using Ara3D.Parakeet;
 using Ara3D.Parakeet.Grammars;
@@ -13,11 +14,17 @@ namespace PlatoWinFormsEditor;
 
 public class IDE
 {
-    public RichTextBox CompilationOutputBox { get; }
     public List<Editor> Editors { get; } = new List<Editor>();
     public Compilation Compilation { get; }   
     public ILogger Logger { get; } 
     public TabControl TabControl { get; }
+    public RichTextBox LoggingOutputEditor { get; }
+
+    public ILogWriter CreateWriter()
+        => LogWriter.Create(OnLogEntry);
+
+    public void OnLogEntry(string msg)
+        => LoggingOutputEditor.AppendText(msg + Environment.NewLine);
 
     public static void InitTextBox(RichTextBox edit)
     {
@@ -43,7 +50,7 @@ public class IDE
         splitPanel.Panel2.Controls.Add(editOutput);
         InitTextBox(editOutput);
 
-        var editor = new Editor(filePath, editInput, editOutput);
+        var editor = new Editor(filePath, editInput, editOutput, Logger);
         Editors.Add(editor);
 
         editor.ApplyStylesAndOutputErrors();
@@ -51,11 +58,10 @@ public class IDE
         return editor;
     }
 
-
-    public IDE(TabControl tabControl, RichTextBox compilationOutputBox)
+    public IDE(TabControl tabControl, RichTextBox loggingOutputEditor)
     {
         TabControl = tabControl;
-        CompilationOutputBox = compilationOutputBox;
+        LoggingOutputEditor = loggingOutputEditor;
         Logger = new Logger();
 
         var inputFolder = SourceCodeLocation.GetFolder()
@@ -69,26 +75,33 @@ public class IDE
 
         // TODO: Splitter distance 
 
-
-        Logger.Log("Gathering parsers");
-        var parsers = Editors.Select(p => p.Parser).ToList();
-        var parsingSuccess = parsers.All(p => p?.Success == true);
-        if (!parsingSuccess)
+        var parsingSuccessful = true;
+        foreach (var e in Editors)
         {
-            Logger.Log("Parsing was not successful");
+            if (e.Parser.Success)
+            {
+                Logger.Log($"Parsing passed: {e.BaseFileName}");
+            }
+            else
+            {
+                Logger.Log($"Parsing failed: {e.BaseFileName}");
+                parsingSuccessful = false;
+            }
+        }
+
+        if (!parsingSuccessful)
+        {
+            Logger.Log("Parsing failed overall");
             return;
         }
 
+        Logger.Log("Compiling");
+        var trees = Editors.Select(e => e.Ast);
         Compilation = new Compilation(Logger, trees);
-
-        OutputTextBox.Lines = Logger.Messages.ToArray();
-        var logFile = Path.Combine(inputFolder, "log.txt");
-        File.WriteAllLines(logFile, Logger.Messages);
-
+        
         if (!Compilation.CompletedCompilation)
         {
             Logger.Log("Compilation was not completed");
         }
     }
-    
 }

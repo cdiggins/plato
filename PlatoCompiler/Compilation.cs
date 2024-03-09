@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Ara3D.Logging;
 using Ara3D.Utils;
 using Ara3D.Parakeet;
 using Plato.AST;

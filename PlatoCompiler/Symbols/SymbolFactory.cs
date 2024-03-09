@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Ara3D.Logging;
 using Ara3D.Utils;
 using Plato.AST;
 using Plato.Compiler.Types;

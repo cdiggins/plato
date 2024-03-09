@@ -1,13 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <StartupObject>PlatoIntrinsics.Program</StartupObject>
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\parakeet\Parakeet\Parakeet.csproj" />
   </ItemGroup>
-
 </Project>

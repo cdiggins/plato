@@ -1,9 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="legacy\math.funcs.plato.cs" />
     <Compile Remove="legacy\math.funcs.plato.g.cs" />
@@ -11,5 +10,4 @@
     <Compile Remove="legacy\test.cs" />
     <Compile Remove="legacy\unused.cs" />
   </ItemGroup>
-
 </Project>

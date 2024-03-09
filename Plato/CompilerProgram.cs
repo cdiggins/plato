@@ -1,4 +1,5 @@
-﻿using Ara3D.Utils;
+﻿using Ara3D.Logging;
+using Ara3D.Utils;
 using Ara3D.Parakeet;
 using Ara3D.Parakeet.Grammars;
 using Plato.AST;
@@ -16,7 +17,7 @@ namespace Plato
         
         public static void Main(string[] args)
         {
-            var logger = new StdLogger();
+            var logger = Logger.Default;
 
             var currentFolder = PathUtil.GetCallerSourceFolder();
             var inputFolder = currentFolder.RelativeFolder("..", "PlatoStandardLibrary");

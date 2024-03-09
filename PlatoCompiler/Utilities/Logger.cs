@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Ara3D.Utils;
+using Ara3D.Logging;
 
 namespace Plato.Compiler
 {
@@ -21,6 +21,6 @@ namespace Plato.Compiler
             return this; 
         }
 
-        public string Category => "Compilation";
+        public string Name => "Compilation";
     }
 }
