@@ -89,7 +89,7 @@ library ParametricCurves
             (1 + r) * t.Sin - d * ((1 + r) / r * t).Sin);
 
     // https://en.wikipedia.org/wiki/Lima%C3%A7on
-    CartesianLimacon(t: Angle, a: Number a, b: Number b): Vector2D
+    CartesianLimacon(t: Angle, a: Number, b: Number): Vector2D
         => ToCartesian((PolarLimacon(t, a, b), t));
 
     // https://en.wikipedia.org/wiki/Cycloid

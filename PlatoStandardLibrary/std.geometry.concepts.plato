@@ -10,17 +10,17 @@ concept Bounded3D
 
 concept Transformable2D 
 {
-    Transform(x: Self, Matrix2D matrix): Self;
+    Transform(x: Self, matrix: Matrix2D): Self;
 }
 
 concept Transformable3D 
 {
-    Transform(x: Self, Matrix3D matrix): Self;
+    Transform(x: Self, matrix: Matrix3D): Self;
 }
 
 concept Deformable2D 
 {
-    Deform(x: Self, Function1<Vector2D, Vector2D> f): Self;
+    Deform(x: Self, f: Function1<Vector2D, Vector2D>): Self;
 }
 
 concept OpenClosedShape
@@ -31,7 +31,7 @@ concept OpenClosedShape
 concept Deformable3D 
     inherits Transformable3D
 {
-    Deform(x: Self, Function1<Vector3D, Vector3D> f): Self;
+    Deform(x: Self, f: Function1<Vector3D, Vector3D>): Self;
 }
 
 // The set of all geometric objects: figures, shapes, points, fields, lines, and meshes. 
