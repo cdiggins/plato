@@ -1,4 +1,5 @@
-﻿using Ara3D.Logging;
+﻿using System.Text;
+using Ara3D.Logging;
 using Ara3D.Parakeet;
 using Ara3D.Parsing;
 using Ara3D.Utils;
@@ -24,7 +25,9 @@ namespace PlatoWinFormsEditor
         public AstNode? Ast { get; }
         public Dictionary<string, Font> Fonts { get; }
         public ILogger Logger { get; }
+        public StringBuilder LogBuilder { get; } = new StringBuilder();
 
+        public string LogString => LogBuilder.ToString();
         public string AstString { get; }
         public string TokensString { get; }
         public string ParseTreeString { get; }
@@ -39,7 +42,7 @@ namespace PlatoWinFormsEditor
         {
             FilePath = filePath;
             InputEditor = inputEditor;
-            Logger = logger;
+            Logger = new Logger(LogWriter.Create(OnLogMessage), BaseFileName);
             Logger.Log("Initializing fonts");
             Fonts = Styling.Styles.ToDictionary(kv => kv.Key,
                 kv => kv.Value.ToFont(InputEditor.Font));
@@ -78,11 +81,20 @@ namespace PlatoWinFormsEditor
                 ErrorsString = Parser.ErrorMessages.JoinStrings(Environment.NewLine);
 
                 Logger.Log($"Successfully completed editor creation for {BaseFileName}");
+                if (ErrorsString.IsNullOrWhiteSpace())
+                    ErrorsString = "Parsing Success";
             }
             catch (Exception ex)
             {
-                Logger.Log($"Unhandled exception {ex}");
+                var msg = $"Unhandled exception {ex}";
+                ErrorsString += msg;
+                Logger.Log(msg);
             }
+        }
+
+        public void OnLogMessage(string logMsg)
+        {
+            LogBuilder.AppendLine(logMsg);
         }
 
         public void ApplyStyle(string kind, int start, int length)

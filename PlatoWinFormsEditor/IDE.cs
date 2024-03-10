@@ -1,11 +1,5 @@
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using Ara3D.Logging;
 using Ara3D.Utils;
-using Ara3D.Parakeet;
-using Ara3D.Parakeet.Grammars;
-using Ara3D.Services;
-using Plato.AST;
 using Plato.Compiler;
 using Logger = Plato.Compiler.Logger;
 
@@ -18,11 +12,12 @@ public class IDE
     public ILogger Logger { get; } 
     public TabControl TabControl { get; }
     public RichTextBox LoggingOutputEditor { get; }
+    public Action<Editor> EditorChanged { get; }
 
     public static void InitTextBox(RichTextBox edit)
     {
         edit.WordWrap = false;
-        edit.Font = new Font("Lucida Console", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
+        edit.Font = new Font("Consolas", 8F, FontStyle.Regular, GraphicsUnit.Point);
         edit.Dock = DockStyle.Fill;
         edit.CreateControl();
     }
@@ -31,22 +26,17 @@ public class IDE
     {
         var tabPage = new TabPage(Path.GetFileName(filePath));
         TabControl.TabPages.Add(tabPage);
-
-        var splitPanel = new SplitContainer();
-        tabPage.Controls.Add(splitPanel);
-        splitPanel.Dock = DockStyle.Fill;
-
+        
         var editInput = new RichTextBox();
-        splitPanel.Panel1.Controls.Add(editInput);
         InitTextBox(editInput);
-
-        var editOutput = new RichTextBox();
-        splitPanel.Panel2.Controls.Add(editOutput);
-        InitTextBox(editOutput);
-
+        tabPage.Controls.Add(editInput);
+        Logger.Log($"Parsing {filePath}");
         var editor = new Editor(filePath, editInput, Logger);
+        var nErrors = editor.Parser.ParserErrors.Count;
+        var status = editor.Parser.Succeeded ? "Succeed" : nErrors > 0 ? $"{nErrors} Errors" : "Unknown Error";
+        Logger.Log($"Parsing status: {status}");
+        tabPage.Tag = editor;
         Editors.Add(editor);
-
         return editor;
     }
 
@@ -63,8 +53,6 @@ public class IDE
         var files = inputFolder.GetFiles("*.plato");
         foreach (var file in files)
             OpenFile(file);
-
-        // TODO: Splitter distance 
 
         var parsingSuccessful = Editors.All(e => e.Parser.Succeeded);
 

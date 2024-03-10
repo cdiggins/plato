@@ -29,34 +29,37 @@
         private void InitializeComponent()
         {
             mainSplitContainer = new SplitContainer();
-            tabControl1 = new TabControl();
-            tabPage1 = new TabPage();
-            richTextBoxLog = new RichTextBox();
-            tabPage3 = new TabPage();
-            tabPage4 = new TabPage();
-            tabPage5 = new TabPage();
-            tabPage6 = new TabPage();
             splitContainer1 = new SplitContainer();
             listBoxFiles = new ListBox();
-            richTextBoxErrors = new RichTextBox();
-            richTextBoxCST = new RichTextBox();
-            richTextBoxAst = new RichTextBox();
-            richTextBoxAnalysis = new RichTextBox();
             tabControlEditors = new TabControl();
+            TabControl = new TabControl();
+            console = new TabPage();
+            richTextBoxConsole = new RichTextBox();
+            log = new TabPage();
+            richTextBoxLog = new RichTextBox();
+            errors = new TabPage();
+            richTextBoxErrors = new RichTextBox();
+            cst = new TabPage();
+            richTextBoxCst = new RichTextBox();
+            ast = new TabPage();
+            richTextBoxAst = new RichTextBox();
+            tokens = new TabPage();
+            richTextBoxTokens = new RichTextBox();
             ((System.ComponentModel.ISupportInitialize)mainSplitContainer).BeginInit();
             mainSplitContainer.Panel1.SuspendLayout();
             mainSplitContainer.Panel2.SuspendLayout();
             mainSplitContainer.SuspendLayout();
-            tabControl1.SuspendLayout();
-            tabPage1.SuspendLayout();
-            tabPage3.SuspendLayout();
-            tabPage4.SuspendLayout();
-            tabPage5.SuspendLayout();
-            tabPage6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
+            TabControl.SuspendLayout();
+            console.SuspendLayout();
+            log.SuspendLayout();
+            errors.SuspendLayout();
+            cst.SuspendLayout();
+            ast.SuspendLayout();
+            tokens.SuspendLayout();
             SuspendLayout();
             // 
             // mainSplitContainer
@@ -71,86 +74,11 @@
             // 
             // mainSplitContainer.Panel2
             // 
-            mainSplitContainer.Panel2.Controls.Add(tabControl1);
+            mainSplitContainer.Panel2.Controls.Add(TabControl);
             mainSplitContainer.Size = new Size(800, 450);
             mainSplitContainer.SplitterDistance = 473;
             mainSplitContainer.TabIndex = 1;
             mainSplitContainer.SplitterMoved += mainSplitContainer_SplitterMoved;
-            // 
-            // tabControl1
-            // 
-            tabControl1.Controls.Add(tabPage1);
-            tabControl1.Controls.Add(tabPage3);
-            tabControl1.Controls.Add(tabPage4);
-            tabControl1.Controls.Add(tabPage5);
-            tabControl1.Controls.Add(tabPage6);
-            tabControl1.Dock = DockStyle.Fill;
-            tabControl1.Location = new Point(0, 0);
-            tabControl1.Name = "tabControl1";
-            tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(323, 450);
-            tabControl1.TabIndex = 1;
-            // 
-            // tabPage1
-            // 
-            tabPage1.Controls.Add(richTextBoxLog);
-            tabPage1.Location = new Point(4, 29);
-            tabPage1.Name = "tabPage1";
-            tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(315, 417);
-            tabPage1.TabIndex = 0;
-            tabPage1.Text = "Log";
-            tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // richTextBoxLog
-            // 
-            richTextBoxLog.Dock = DockStyle.Fill;
-            richTextBoxLog.Location = new Point(3, 3);
-            richTextBoxLog.Name = "richTextBoxLog";
-            richTextBoxLog.Size = new Size(309, 411);
-            richTextBoxLog.TabIndex = 1;
-            richTextBoxLog.Text = "";
-            // 
-            // tabPage3
-            // 
-            tabPage3.Controls.Add(richTextBoxErrors);
-            tabPage3.Location = new Point(4, 29);
-            tabPage3.Name = "tabPage3";
-            tabPage3.Padding = new Padding(3);
-            tabPage3.Size = new Size(315, 417);
-            tabPage3.TabIndex = 1;
-            tabPage3.Text = "Errors";
-            tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // tabPage4
-            // 
-            tabPage4.Controls.Add(richTextBoxCST);
-            tabPage4.Location = new Point(4, 29);
-            tabPage4.Name = "tabPage4";
-            tabPage4.Size = new Size(315, 417);
-            tabPage4.TabIndex = 2;
-            tabPage4.Text = "CST";
-            tabPage4.UseVisualStyleBackColor = true;
-            // 
-            // tabPage5
-            // 
-            tabPage5.Controls.Add(richTextBoxAst);
-            tabPage5.Location = new Point(4, 29);
-            tabPage5.Name = "tabPage5";
-            tabPage5.Size = new Size(315, 417);
-            tabPage5.TabIndex = 3;
-            tabPage5.Text = "AST";
-            tabPage5.UseVisualStyleBackColor = true;
-            // 
-            // tabPage6
-            // 
-            tabPage6.Controls.Add(richTextBoxAnalysis);
-            tabPage6.Location = new Point(4, 29);
-            tabPage6.Name = "tabPage6";
-            tabPage6.Size = new Size(315, 417);
-            tabPage6.TabIndex = 4;
-            tabPage6.Text = "Analysis";
-            tabPage6.UseVisualStyleBackColor = true;
             // 
             // splitContainer1
             // 
@@ -178,42 +106,7 @@
             listBoxFiles.Name = "listBoxFiles";
             listBoxFiles.Size = new Size(157, 450);
             listBoxFiles.TabIndex = 0;
-            // 
-            // richTextBoxErrors
-            // 
-            richTextBoxErrors.Dock = DockStyle.Fill;
-            richTextBoxErrors.Location = new Point(3, 3);
-            richTextBoxErrors.Name = "richTextBoxErrors";
-            richTextBoxErrors.Size = new Size(309, 411);
-            richTextBoxErrors.TabIndex = 2;
-            richTextBoxErrors.Text = "";
-            // 
-            // richTextBoxCST
-            // 
-            richTextBoxCST.Dock = DockStyle.Fill;
-            richTextBoxCST.Location = new Point(0, 0);
-            richTextBoxCST.Name = "richTextBoxCST";
-            richTextBoxCST.Size = new Size(315, 417);
-            richTextBoxCST.TabIndex = 2;
-            richTextBoxCST.Text = "";
-            // 
-            // richTextBoxAst
-            // 
-            richTextBoxAst.Dock = DockStyle.Fill;
-            richTextBoxAst.Location = new Point(0, 0);
-            richTextBoxAst.Name = "richTextBoxAst";
-            richTextBoxAst.Size = new Size(315, 417);
-            richTextBoxAst.TabIndex = 2;
-            richTextBoxAst.Text = "";
-            // 
-            // richTextBoxAnalysis
-            // 
-            richTextBoxAnalysis.Dock = DockStyle.Fill;
-            richTextBoxAnalysis.Location = new Point(0, 0);
-            richTextBoxAnalysis.Name = "richTextBoxAnalysis";
-            richTextBoxAnalysis.Size = new Size(315, 417);
-            richTextBoxAnalysis.TabIndex = 2;
-            richTextBoxAnalysis.Text = "";
+            listBoxFiles.SelectedIndexChanged += listBoxFiles_SelectedIndexChanged;
             // 
             // tabControlEditors
             // 
@@ -223,6 +116,144 @@
             tabControlEditors.SelectedIndex = 0;
             tabControlEditors.Size = new Size(312, 450);
             tabControlEditors.TabIndex = 0;
+            // 
+            // TabControl
+            // 
+            TabControl.Controls.Add(console);
+            TabControl.Controls.Add(log);
+            TabControl.Controls.Add(errors);
+            TabControl.Controls.Add(cst);
+            TabControl.Controls.Add(ast);
+            TabControl.Controls.Add(tokens);
+            TabControl.Dock = DockStyle.Fill;
+            TabControl.Location = new Point(0, 0);
+            TabControl.Name = "TabControl";
+            TabControl.SelectedIndex = 0;
+            TabControl.Size = new Size(323, 450);
+            TabControl.TabIndex = 1;
+            // 
+            // console
+            // 
+            console.Controls.Add(richTextBoxConsole);
+            console.Location = new Point(4, 29);
+            console.Name = "console";
+            console.Padding = new Padding(3);
+            console.Size = new Size(315, 417);
+            console.TabIndex = 0;
+            console.Text = "Console";
+            console.UseVisualStyleBackColor = true;
+            // 
+            // richTextBoxConsole
+            // 
+            richTextBoxConsole.Dock = DockStyle.Fill;
+            richTextBoxConsole.Location = new Point(3, 3);
+            richTextBoxConsole.Name = "richTextBoxConsole";
+            richTextBoxConsole.Size = new Size(309, 411);
+            richTextBoxConsole.TabIndex = 1;
+            richTextBoxConsole.Text = "";
+            richTextBoxConsole.WordWrap = false;
+            // 
+            // log
+            // 
+            log.Controls.Add(richTextBoxLog);
+            log.Location = new Point(4, 29);
+            log.Name = "log";
+            log.Padding = new Padding(3);
+            log.Size = new Size(315, 417);
+            log.TabIndex = 5;
+            log.Text = "Log";
+            log.UseVisualStyleBackColor = true;
+            // 
+            // richTextBoxLog
+            // 
+            richTextBoxLog.Dock = DockStyle.Fill;
+            richTextBoxLog.Location = new Point(3, 3);
+            richTextBoxLog.Name = "richTextBoxLog";
+            richTextBoxLog.Size = new Size(309, 411);
+            richTextBoxLog.TabIndex = 2;
+            richTextBoxLog.Text = "";
+            richTextBoxLog.WordWrap = false;
+            // 
+            // errors
+            // 
+            errors.Controls.Add(richTextBoxErrors);
+            errors.Location = new Point(4, 29);
+            errors.Name = "errors";
+            errors.Padding = new Padding(3);
+            errors.Size = new Size(315, 417);
+            errors.TabIndex = 1;
+            errors.Text = "Errors";
+            errors.UseVisualStyleBackColor = true;
+            // 
+            // richTextBoxErrors
+            // 
+            richTextBoxErrors.Dock = DockStyle.Fill;
+            richTextBoxErrors.Location = new Point(3, 3);
+            richTextBoxErrors.Name = "richTextBoxErrors";
+            richTextBoxErrors.Size = new Size(309, 411);
+            richTextBoxErrors.TabIndex = 2;
+            richTextBoxErrors.Text = "";
+            richTextBoxErrors.WordWrap = false;
+            // 
+            // cst
+            // 
+            cst.Controls.Add(richTextBoxCst);
+            cst.Location = new Point(4, 29);
+            cst.Name = "cst";
+            cst.Size = new Size(315, 417);
+            cst.TabIndex = 2;
+            cst.Text = "CST";
+            cst.UseVisualStyleBackColor = true;
+            // 
+            // richTextBoxCst
+            // 
+            richTextBoxCst.Dock = DockStyle.Fill;
+            richTextBoxCst.Location = new Point(0, 0);
+            richTextBoxCst.Name = "richTextBoxCst";
+            richTextBoxCst.Size = new Size(315, 417);
+            richTextBoxCst.TabIndex = 2;
+            richTextBoxCst.Text = "";
+            richTextBoxCst.WordWrap = false;
+            // 
+            // ast
+            // 
+            ast.Controls.Add(richTextBoxAst);
+            ast.Location = new Point(4, 29);
+            ast.Name = "ast";
+            ast.Size = new Size(315, 417);
+            ast.TabIndex = 3;
+            ast.Text = "AST";
+            ast.UseVisualStyleBackColor = true;
+            // 
+            // richTextBoxAst
+            // 
+            richTextBoxAst.Dock = DockStyle.Fill;
+            richTextBoxAst.Location = new Point(0, 0);
+            richTextBoxAst.Name = "richTextBoxAst";
+            richTextBoxAst.Size = new Size(315, 417);
+            richTextBoxAst.TabIndex = 2;
+            richTextBoxAst.Text = "";
+            richTextBoxAst.WordWrap = false;
+            // 
+            // tokens
+            // 
+            tokens.Controls.Add(richTextBoxTokens);
+            tokens.Location = new Point(4, 29);
+            tokens.Name = "tokens";
+            tokens.Size = new Size(315, 417);
+            tokens.TabIndex = 4;
+            tokens.Text = "Tokens";
+            tokens.UseVisualStyleBackColor = true;
+            // 
+            // richTextBoxTokens
+            // 
+            richTextBoxTokens.Dock = DockStyle.Fill;
+            richTextBoxTokens.Location = new Point(0, 0);
+            richTextBoxTokens.Name = "richTextBoxTokens";
+            richTextBoxTokens.Size = new Size(315, 417);
+            richTextBoxTokens.TabIndex = 2;
+            richTextBoxTokens.Text = "";
+            richTextBoxTokens.WordWrap = false;
             // 
             // Form1
             // 
@@ -237,36 +268,39 @@
             mainSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)mainSplitContainer).EndInit();
             mainSplitContainer.ResumeLayout(false);
-            tabControl1.ResumeLayout(false);
-            tabPage1.ResumeLayout(false);
-            tabPage3.ResumeLayout(false);
-            tabPage4.ResumeLayout(false);
-            tabPage5.ResumeLayout(false);
-            tabPage6.ResumeLayout(false);
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
+            TabControl.ResumeLayout(false);
+            console.ResumeLayout(false);
+            log.ResumeLayout(false);
+            errors.ResumeLayout(false);
+            cst.ResumeLayout(false);
+            ast.ResumeLayout(false);
+            tokens.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
         private TabPage tabPage2;
         private SplitContainer mainSplitContainer;
-        private TabControl tabControl1;
-        private TabPage tabPage1;
-        private RichTextBox richTextBoxLog;
-        private TabPage tabPage3;
-        private TabPage tabPage4;
-        private TabPage tabPage5;
-        private TabPage tabPage6;
+        private TabControl TabControl;
+        private TabPage console;
+        private RichTextBox richTextBoxConsole;
+        private TabPage errors;
+        private TabPage cst;
+        private TabPage ast;
+        private TabPage tokens;
         private SplitContainer splitContainer1;
         private ListBox listBoxFiles;
         private RichTextBox richTextBoxEdit;
         private RichTextBox richTextBoxErrors;
-        private RichTextBox richTextBoxCST;
+        private RichTextBox richTextBoxCst;
         private RichTextBox richTextBoxAst;
-        private RichTextBox richTextBoxAnalysis;
+        private RichTextBox richTextBoxTokens;
         private TabControl tabControlEditors;
+        private TabPage log;
+        private RichTextBox richTextBoxLog;
     }
 }
