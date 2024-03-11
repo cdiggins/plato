@@ -240,18 +240,9 @@ namespace Plato.AST
                 md,
                 ToAst(md.Identifier.Node),
                 ToAst(md.TypeAnnotation.Node),
-                md.FunctionParameterList.Node.FunctionParameter.Nodes.Select(ToAst).ToList(),
+                md.FunctionParameterList.Node?.FunctionParameter.Nodes.Select(ToAst).ToList() 
+                    ?? Enumerable.Empty<AstParameterDeclaration>(),
                 ToAst(md.FunctionBody.Node));
-        }
-
-        public static AstMemberDeclaration ToAst(this CstMemberDeclaration memberDeclaration)
-        {
-            if (memberDeclaration.MethodDeclaration.Present)
-                return ToAst(memberDeclaration.MethodDeclaration.Node);
-            if (memberDeclaration.FieldDeclaration.Present)
-                return ToAst(memberDeclaration.FieldDeclaration.Node);
-            
-            throw new Exception($"Unrecognized member type {memberDeclaration.Text}");  
         }
 
         public static AstParameterDeclaration ToAst(this CstLambdaParameter lp, int index)
@@ -593,8 +584,6 @@ namespace Plato.AST
                     throw new NotImplementedException();
                 case CstMemberAccess cstMemberAccess:
                     throw new NotImplementedException();
-                case CstMemberDeclaration cstMemberDeclaration:
-                    throw new NotImplementedException();
                 case CstMethodDeclaration cstMethodDeclaration:
                     throw new NotImplementedException();
                 case CstOperator cstOperator:
@@ -799,7 +788,7 @@ namespace Plato.AST
             => cstQualifiedIdentifier.Text;
 
         public static string ToAst(this CstIdentifier cstIdentifier)
-            => cstIdentifier.Text;
+            => cstIdentifier?.Text ?? "";
 
         public static IEnumerable<AstVarDef> CreateVarDefs(this CstVarDecl cstVarDecl)
         {

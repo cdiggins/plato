@@ -97,6 +97,11 @@ namespace PlatoWinFormsEditor
             LogBuilder.AppendLine(logMsg);
         }
 
+        public void ApplyStyle(string kind, ParserRange range)
+        {
+
+        }
+
         public void ApplyStyle(string kind, int start, int length)
         {
             var style = Styling.Styles[kind];
@@ -115,7 +120,7 @@ namespace PlatoWinFormsEditor
         {
             foreach (var node in Tokenizer.ParserNodes)
             {
-                if (Styling.Styles.ContainsKey(node.Name))
+                if (node.IsEnd && Styling.Styles.ContainsKey(node.Name))
                 {
                     ApplyStyle(node.Name, node.Start, node.Length);
                 }
@@ -123,16 +128,7 @@ namespace PlatoWinFormsEditor
 
             foreach (var error in Parser.ParserErrors)
             {
-                var pos1 = error.ParentState.Position;
-                var pos2 = error.State.Position;
-                var cnt = pos2 - pos1;
-                if (cnt > 5)
-                {
-                    cnt = 5;
-                    pos1 = pos2 - cnt;
-                }
-
-                ApplyStyle("ERROR", pos1, cnt);
+                ApplyStyle("ERROR", error.Range);
             }
 
             // TODO: set the properties. 

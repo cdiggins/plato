@@ -257,6 +257,7 @@ namespace Plato.Compiler
         public IType GetExpressionType(Expression expr)
             => ExpressionTypes.TryGetValue(expr, out var r) ? r : null;
         
+        // TODO: I have to make these more like Parser Errors 
         public void LogResolutionErrors(IEnumerable<SymbolFactory.ResolutionError> resolutionErrors)
         {
             foreach (var error in resolutionErrors)
@@ -265,9 +266,9 @@ namespace Plato.Compiler
                 Log($"Symbol resolution error: {error.Message}");
                 if (pos != null)
                 {
-                    Log(pos.Node.Range.Begin.Input.File);
-                    Log(pos.Node.Range.Begin.CurrentLine);
-                    Log(pos.Node.Range.Begin.Indicator);
+                    Log(pos.Node.Range.End.Input.File);
+                    Log(pos.Node.Range.Begin?.CurrentLine);
+                    Log(pos.Node.Range.Begin?.Indicator);
                     Log(pos.Node.Range.End.CurrentLine);
                     Log(pos.Node.Range.End.Indicator);
                 }

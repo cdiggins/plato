@@ -46,8 +46,7 @@
             tokens = new TabPage();
             richTextBoxTokens = new RichTextBox();
             menuStrip1 = new MenuStrip();
-            fileToolStripMenuItem = new ToolStripMenuItem();
-            fileToolStripMenuItem1 = new ToolStripMenuItem();
+            aboutPlatoToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)mainSplitContainer).BeginInit();
             mainSplitContainer.Panel1.SuspendLayout();
             mainSplitContainer.Panel2.SuspendLayout();
@@ -69,8 +68,8 @@
             // mainSplitContainer
             // 
             mainSplitContainer.Dock = DockStyle.Fill;
-            mainSplitContainer.Location = new Point(0, 33);
-            mainSplitContainer.Margin = new Padding(4, 4, 4, 4);
+            mainSplitContainer.Location = new Point(0, 24);
+            mainSplitContainer.Margin = new Padding(3, 2, 3, 2);
             mainSplitContainer.Name = "mainSplitContainer";
             // 
             // mainSplitContainer.Panel1
@@ -80,9 +79,8 @@
             // mainSplitContainer.Panel2
             // 
             mainSplitContainer.Panel2.Controls.Add(TabControl);
-            mainSplitContainer.Size = new Size(1000, 529);
-            mainSplitContainer.SplitterDistance = 591;
-            mainSplitContainer.SplitterWidth = 5;
+            mainSplitContainer.Size = new Size(700, 313);
+            mainSplitContainer.SplitterDistance = 413;
             mainSplitContainer.TabIndex = 1;
             mainSplitContainer.SplitterMoved += mainSplitContainer_SplitterMoved;
             // 
@@ -90,7 +88,7 @@
             // 
             splitContainer1.Dock = DockStyle.Fill;
             splitContainer1.Location = new Point(0, 0);
-            splitContainer1.Margin = new Padding(4, 4, 4, 4);
+            splitContainer1.Margin = new Padding(3, 2, 3, 2);
             splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -100,20 +98,19 @@
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(tabControlEditors);
-            splitContainer1.Size = new Size(591, 529);
-            splitContainer1.SplitterDistance = 196;
-            splitContainer1.SplitterWidth = 5;
+            splitContainer1.Size = new Size(413, 313);
+            splitContainer1.SplitterDistance = 136;
             splitContainer1.TabIndex = 0;
             // 
             // listBoxFiles
             // 
             listBoxFiles.Dock = DockStyle.Fill;
             listBoxFiles.FormattingEnabled = true;
-            listBoxFiles.ItemHeight = 25;
+            listBoxFiles.ItemHeight = 15;
             listBoxFiles.Location = new Point(0, 0);
-            listBoxFiles.Margin = new Padding(4, 4, 4, 4);
+            listBoxFiles.Margin = new Padding(3, 2, 3, 2);
             listBoxFiles.Name = "listBoxFiles";
-            listBoxFiles.Size = new Size(196, 529);
+            listBoxFiles.Size = new Size(136, 313);
             listBoxFiles.TabIndex = 0;
             listBoxFiles.SelectedIndexChanged += listBoxFiles_SelectedIndexChanged;
             // 
@@ -121,10 +118,10 @@
             // 
             tabControlEditors.Dock = DockStyle.Fill;
             tabControlEditors.Location = new Point(0, 0);
-            tabControlEditors.Margin = new Padding(4, 4, 4, 4);
+            tabControlEditors.Margin = new Padding(3, 2, 3, 2);
             tabControlEditors.Name = "tabControlEditors";
             tabControlEditors.SelectedIndex = 0;
-            tabControlEditors.Size = new Size(390, 529);
+            tabControlEditors.Size = new Size(273, 313);
             tabControlEditors.TabIndex = 0;
             // 
             // TabControl
@@ -137,20 +134,20 @@
             TabControl.Controls.Add(tokens);
             TabControl.Dock = DockStyle.Fill;
             TabControl.Location = new Point(0, 0);
-            TabControl.Margin = new Padding(4, 4, 4, 4);
+            TabControl.Margin = new Padding(3, 2, 3, 2);
             TabControl.Name = "TabControl";
             TabControl.SelectedIndex = 0;
-            TabControl.Size = new Size(404, 529);
+            TabControl.Size = new Size(283, 313);
             TabControl.TabIndex = 1;
             // 
             // console
             // 
             console.Controls.Add(richTextBoxConsole);
-            console.Location = new Point(4, 34);
-            console.Margin = new Padding(4, 4, 4, 4);
+            console.Location = new Point(4, 24);
+            console.Margin = new Padding(3, 2, 3, 2);
             console.Name = "console";
-            console.Padding = new Padding(4, 4, 4, 4);
-            console.Size = new Size(396, 491);
+            console.Padding = new Padding(3, 2, 3, 2);
+            console.Size = new Size(275, 285);
             console.TabIndex = 0;
             console.Text = "Console";
             console.UseVisualStyleBackColor = true;
@@ -158,10 +155,10 @@
             // richTextBoxConsole
             // 
             richTextBoxConsole.Dock = DockStyle.Fill;
-            richTextBoxConsole.Location = new Point(4, 4);
-            richTextBoxConsole.Margin = new Padding(4, 4, 4, 4);
+            richTextBoxConsole.Location = new Point(3, 2);
+            richTextBoxConsole.Margin = new Padding(3, 2, 3, 2);
             richTextBoxConsole.Name = "richTextBoxConsole";
-            richTextBoxConsole.Size = new Size(388, 483);
+            richTextBoxConsole.Size = new Size(269, 281);
             richTextBoxConsole.TabIndex = 1;
             richTextBoxConsole.Text = "";
             richTextBoxConsole.WordWrap = false;
@@ -169,22 +166,22 @@
             // log
             // 
             log.Controls.Add(richTextBoxLog);
-            log.Location = new Point(4, 34);
-            log.Margin = new Padding(4, 4, 4, 4);
+            log.Location = new Point(4, 24);
+            log.Margin = new Padding(3, 2, 3, 2);
             log.Name = "log";
-            log.Padding = new Padding(4, 4, 4, 4);
-            log.Size = new Size(396, 524);
+            log.Padding = new Padding(3, 2, 3, 2);
+            log.Size = new Size(275, 285);
             log.TabIndex = 5;
-            log.Text = "Log";
+            log.Text = "File Log";
             log.UseVisualStyleBackColor = true;
             // 
             // richTextBoxLog
             // 
             richTextBoxLog.Dock = DockStyle.Fill;
-            richTextBoxLog.Location = new Point(4, 4);
-            richTextBoxLog.Margin = new Padding(4, 4, 4, 4);
+            richTextBoxLog.Location = new Point(3, 2);
+            richTextBoxLog.Margin = new Padding(3, 2, 3, 2);
             richTextBoxLog.Name = "richTextBoxLog";
-            richTextBoxLog.Size = new Size(388, 516);
+            richTextBoxLog.Size = new Size(269, 281);
             richTextBoxLog.TabIndex = 2;
             richTextBoxLog.Text = "";
             richTextBoxLog.WordWrap = false;
@@ -192,22 +189,22 @@
             // errors
             // 
             errors.Controls.Add(richTextBoxErrors);
-            errors.Location = new Point(4, 34);
-            errors.Margin = new Padding(4, 4, 4, 4);
+            errors.Location = new Point(4, 24);
+            errors.Margin = new Padding(3, 2, 3, 2);
             errors.Name = "errors";
-            errors.Padding = new Padding(4, 4, 4, 4);
-            errors.Size = new Size(396, 524);
+            errors.Padding = new Padding(3, 2, 3, 2);
+            errors.Size = new Size(275, 285);
             errors.TabIndex = 1;
-            errors.Text = "Errors";
+            errors.Text = "Parse Errors";
             errors.UseVisualStyleBackColor = true;
             // 
             // richTextBoxErrors
             // 
             richTextBoxErrors.Dock = DockStyle.Fill;
-            richTextBoxErrors.Location = new Point(4, 4);
-            richTextBoxErrors.Margin = new Padding(4, 4, 4, 4);
+            richTextBoxErrors.Location = new Point(3, 2);
+            richTextBoxErrors.Margin = new Padding(3, 2, 3, 2);
             richTextBoxErrors.Name = "richTextBoxErrors";
-            richTextBoxErrors.Size = new Size(388, 516);
+            richTextBoxErrors.Size = new Size(269, 281);
             richTextBoxErrors.TabIndex = 2;
             richTextBoxErrors.Text = "";
             richTextBoxErrors.WordWrap = false;
@@ -215,10 +212,10 @@
             // cst
             // 
             cst.Controls.Add(richTextBoxCst);
-            cst.Location = new Point(4, 34);
-            cst.Margin = new Padding(4, 4, 4, 4);
+            cst.Location = new Point(4, 24);
+            cst.Margin = new Padding(3, 2, 3, 2);
             cst.Name = "cst";
-            cst.Size = new Size(396, 524);
+            cst.Size = new Size(275, 285);
             cst.TabIndex = 2;
             cst.Text = "CST";
             cst.UseVisualStyleBackColor = true;
@@ -227,9 +224,9 @@
             // 
             richTextBoxCst.Dock = DockStyle.Fill;
             richTextBoxCst.Location = new Point(0, 0);
-            richTextBoxCst.Margin = new Padding(4, 4, 4, 4);
+            richTextBoxCst.Margin = new Padding(3, 2, 3, 2);
             richTextBoxCst.Name = "richTextBoxCst";
-            richTextBoxCst.Size = new Size(396, 524);
+            richTextBoxCst.Size = new Size(275, 285);
             richTextBoxCst.TabIndex = 2;
             richTextBoxCst.Text = "";
             richTextBoxCst.WordWrap = false;
@@ -237,10 +234,10 @@
             // ast
             // 
             ast.Controls.Add(richTextBoxAst);
-            ast.Location = new Point(4, 34);
-            ast.Margin = new Padding(4, 4, 4, 4);
+            ast.Location = new Point(4, 24);
+            ast.Margin = new Padding(3, 2, 3, 2);
             ast.Name = "ast";
-            ast.Size = new Size(396, 524);
+            ast.Size = new Size(275, 285);
             ast.TabIndex = 3;
             ast.Text = "AST";
             ast.UseVisualStyleBackColor = true;
@@ -249,9 +246,9 @@
             // 
             richTextBoxAst.Dock = DockStyle.Fill;
             richTextBoxAst.Location = new Point(0, 0);
-            richTextBoxAst.Margin = new Padding(4, 4, 4, 4);
+            richTextBoxAst.Margin = new Padding(3, 2, 3, 2);
             richTextBoxAst.Name = "richTextBoxAst";
-            richTextBoxAst.Size = new Size(396, 524);
+            richTextBoxAst.Size = new Size(275, 285);
             richTextBoxAst.TabIndex = 2;
             richTextBoxAst.Text = "";
             richTextBoxAst.WordWrap = false;
@@ -259,10 +256,10 @@
             // tokens
             // 
             tokens.Controls.Add(richTextBoxTokens);
-            tokens.Location = new Point(4, 34);
-            tokens.Margin = new Padding(4, 4, 4, 4);
+            tokens.Location = new Point(4, 24);
+            tokens.Margin = new Padding(3, 2, 3, 2);
             tokens.Name = "tokens";
-            tokens.Size = new Size(396, 524);
+            tokens.Size = new Size(275, 285);
             tokens.TabIndex = 4;
             tokens.Text = "Tokens";
             tokens.UseVisualStyleBackColor = true;
@@ -271,9 +268,9 @@
             // 
             richTextBoxTokens.Dock = DockStyle.Fill;
             richTextBoxTokens.Location = new Point(0, 0);
-            richTextBoxTokens.Margin = new Padding(4, 4, 4, 4);
+            richTextBoxTokens.Margin = new Padding(3, 2, 3, 2);
             richTextBoxTokens.Name = "richTextBoxTokens";
-            richTextBoxTokens.Size = new Size(396, 524);
+            richTextBoxTokens.Size = new Size(275, 285);
             richTextBoxTokens.TabIndex = 2;
             richTextBoxTokens.Text = "";
             richTextBoxTokens.WordWrap = false;
@@ -281,34 +278,30 @@
             // menuStrip1
             // 
             menuStrip1.ImageScalingSize = new Size(24, 24);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem1, fileToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { aboutPlatoToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(1000, 33);
+            menuStrip1.Padding = new Padding(4, 1, 0, 1);
+            menuStrip1.Size = new Size(700, 24);
             menuStrip1.TabIndex = 2;
             menuStrip1.Text = "menuStrip1";
             // 
-            // fileToolStripMenuItem
+            // aboutPlatoToolStripMenuItem
             // 
-            fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            fileToolStripMenuItem.Size = new Size(95, 29);
-            fileToolStripMenuItem.Text = "&About ...";
-            // 
-            // fileToolStripMenuItem1
-            // 
-            fileToolStripMenuItem1.Name = "fileToolStripMenuItem1";
-            fileToolStripMenuItem1.Size = new Size(54, 29);
-            fileToolStripMenuItem1.Text = "&File";
+            aboutPlatoToolStripMenuItem.Name = "aboutPlatoToolStripMenuItem";
+            aboutPlatoToolStripMenuItem.Size = new Size(94, 22);
+            aboutPlatoToolStripMenuItem.Text = "About Plato ...";
+            aboutPlatoToolStripMenuItem.Click += aboutPlatoToolStripMenuItem_Click;
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1000, 562);
+            ClientSize = new Size(700, 337);
             Controls.Add(mainSplitContainer);
             Controls.Add(menuStrip1);
             MainMenuStrip = menuStrip1;
-            Margin = new Padding(4, 4, 4, 4);
+            Margin = new Padding(3, 2, 3, 2);
             Name = "Form1";
             Text = "Plato - Code Viewer";
             Resize += Form1_Resize;
@@ -354,7 +347,6 @@
         private TabPage log;
         private RichTextBox richTextBoxLog;
         private MenuStrip menuStrip1;
-        private ToolStripMenuItem fileToolStripMenuItem1;
-        private ToolStripMenuItem fileToolStripMenuItem;
+        private ToolStripMenuItem aboutPlatoToolStripMenuItem;
     }
 }

@@ -1,6 +1,6 @@
 library Angles 
 {
-    Radians(x : Number): Angle
+    Radians(x: Number): Angle
         => x;
 
     Degrees(x: Number): Angle
