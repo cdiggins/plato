@@ -3,6 +3,8 @@
 
 **Plato** is a high-performance cross-platform programming language inspired by JavaScript and C#. 
 
+[Join Discord](https://discord.gg/cjVfPBtJ).
+
 ## About the Language
 
 Plato is a statically typed functional language that looks and behaves like an 
