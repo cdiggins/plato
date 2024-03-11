@@ -25,7 +25,7 @@ concept Deformable2D
 
 concept OpenClosedShape
 { 
-    Closed(x: Self);
+    Closed(x: Self): Boolean;
 }
 
 concept Deformable3D 
@@ -245,7 +245,7 @@ concept BezierSurface
 concept Polyhedron 
     inherits Surface
 {
-    Indices(x: Self): Array<Array<Integer>>
+    Indices(x: Self): Array<Array<Integer>>;
 }
 
 concept ConvexPolyhedron
@@ -285,18 +285,16 @@ concept QuadGrid
 
 // https://en.wikipedia.org/wiki/Polygonal_chain
 concept PolygonalChain2D
-    inherits Points2D
+    inherits Points2D, OpenClosedShape
 { 
-    Closed(x: Self): Boolean;
 }
 
 // https://en.wikipedia.org/wiki/Polygonal_chain
 // Also known as a a "PolyLine"
 // There are different interpretations of rate of change, so different curves can be defined from a chain.
 concept PolygonalChain3D
-    inherits Points3D
+    inherits Points3D, OpenClosedShape
 { 
-    Closed(x: Self): Boolean;
 }
 
 concept ClosedPolygonalChain2D

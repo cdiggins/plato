@@ -4,32 +4,32 @@ library Angles
         => x;
 
     Degrees(x: Number): Angle
-        => (x / 360f).Turns; 
+        => (x / 360).Turns; 
         
     ArcMinutes(x: Number): Angle 
-        => x.Degrees / 60f;
+        => x.Degrees / 60;
 
     ArcSeconds(x: Number): Angle 
-        => x.ArcMinutes / 60f;
+        => x.ArcMinutes / 60;
 
     Grads(x: Number): Angle 
-        => (x / 400f).Turns;
+        => (x / 400).Turns;
      
     Turns(x: Number): Angle 
         => x * TwoPi;    
 
     Degrees(x: Angle): Number
-        => x.Turns * 360f;
+        => x.Turns * 360;
 
     Turns(x: Angle): Number
         => x / TwoPi;    
 
     ArcMinutes(x: Angle): Number
-        => x.Degress * 60f;    
+        => x.Degress * 60;    
 
     ArcSeconds(x: Angle): Number
-        => x.ArcMinutes * 60f;    
+        => x.ArcMinutes * 60;    
 
     Grad(x: Angle): Number
-        => x.Turns * 400f;    
+        => x.Turns * 400;    
 }

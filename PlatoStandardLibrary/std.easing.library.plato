@@ -131,6 +131,6 @@ library Easings
         => a.AlmostZeroOrOne 
             ? a :
                 (x <= a) 
-                    ? b * (a.Pow2 - x.Pow2) / a).Sqrt.FromOne 
+                    ? (b * (a.Pow2 - x.Pow2) / a).Sqrt.FromOne 
                     : b + (b.FromOne / a.FromOne * (a.FromOne.Pow2 - x.MinusOne.Pow2).Sqrt);
 }
