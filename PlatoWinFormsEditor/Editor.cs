@@ -63,22 +63,23 @@ namespace PlatoWinFormsEditor
 
                 Logger.Log($"Tokenization");
                 Tokenizer = CommonParsers.PlatoTokenizer(Input, Logger);
-
-                Logger.Log($"Parsing");
-                Parser = CommonParsers.PlatoParser(Input, Logger);
-
-                Logger.Log($"Creating AST");
-                Ast = Parser.Cst?.ToAst();
+                TokensString = Tokenizer.ParserNodes.JoinStrings(Environment.NewLine);
 
                 Logger.Log("Applying styles");
                 ApplyStyles();
 
-                Logger.Log($"Creating strings");
-                AstString = Ast?.ToXml() ?? "";
+                Logger.Log($"Parsing");
+                Parser = CommonParsers.PlatoParser(Input, Logger);
                 CstString = Parser.CstXml;
-                TokensString = Tokenizer.ParserNodes.JoinStrings(Environment.NewLine);
                 ParseTreeString = Parser.ParseXml;
                 ErrorsString = Parser.ErrorMessages.JoinStrings(Environment.NewLine);
+
+                Logger.Log($"Highlighting Errors");
+                HighlightErrors();
+
+                Logger.Log($"Creating AST");
+                Ast = Parser.Cst?.ToAst();
+                AstString = Ast?.ToXml() ?? "";
 
                 Logger.Log($"Successfully completed editor creation for {BaseFileName}");
                 if (ErrorsString.IsNullOrWhiteSpace())
@@ -125,7 +126,10 @@ namespace PlatoWinFormsEditor
                     ApplyStyle(node.Name, node.Start, node.Length);
                 }
             }
+        }
 
+        public void HighlightErrors()
+        {
             foreach (var error in Parser.ParserErrors)
             {
                 ApplyStyle("ERROR", error.Range);
