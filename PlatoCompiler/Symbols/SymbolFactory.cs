@@ -183,6 +183,12 @@ namespace Plato.Compiler.Symbols
             var args = astTypeNode.TypeArguments.Select(ResolveType).ToArray();
             if (args.Length > 0)
             {
+                if (!SymbolsToNodes.ContainsKey(sym))
+                {
+                    LogError($"No associated node was found for {sym}");
+                    return null;
+                }
+
                 // NOTE: it looks like we could use the "tds" (TypeDefinition) type parameters list directly,
                 // however at this point in the code it hasn't be initialized yet.
                 // So instead what we do is look at the ast representation. 
