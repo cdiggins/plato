@@ -49,6 +49,8 @@ namespace PlatoWinFormsEditor
             AddHandlers(richTextBoxLog);
             AddHandlers(richTextBoxConsole);
             AddHandlers(richTextBoxTokens);
+            AddHandlers(richTextBoxParseTree);
+            AddHandlers(richTextBoxNodes);
             AddHandlers(richTextBoxAst);
             AddHandlers(richTextBoxCst);
             AddHandlers(richTextBoxErrors);
@@ -145,6 +147,8 @@ namespace PlatoWinFormsEditor
             richTextBoxCst.Text = editor?.CstString ?? "";
             richTextBoxErrors.Text = editor?.ErrorsString ?? "";
             richTextBoxTokens.Text = editor?.TokensString ?? "";
+            richTextBoxParseTree.Text = editor?.ParseTreeString ?? "";
+            richTextBoxNodes.Text = editor?.ParseNodesString ?? "";
         }
 
         public void OnLogMsg(string msg)

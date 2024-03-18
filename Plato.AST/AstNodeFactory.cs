@@ -33,7 +33,7 @@ namespace Plato.AST
 
             return new AstBinaryOp(location, op, left, right);
         }
-
+            
         public static AstNode ToAst(this CstExpression expr)
         {
             var r = ToAst(expr.InnerExpression.Node.LeafExpression.Node);

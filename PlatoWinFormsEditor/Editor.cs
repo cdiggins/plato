@@ -30,6 +30,7 @@ namespace PlatoWinFormsEditor
         public string LogString => LogBuilder.ToString();
         public string AstString { get; }
         public string TokensString { get; }
+        public string ParseNodesString { get; }
         public string ParseTreeString { get; }
         public string CstString { get; }
         public string ErrorsString { get; }
@@ -63,15 +64,16 @@ namespace PlatoWinFormsEditor
 
                 Logger.Log($"Tokenization");
                 Tokenizer = CommonParsers.PlatoTokenizer(Input, Logger);
-                TokensString = Tokenizer.ParserNodes.JoinStrings(Environment.NewLine);
+                TokensString = Tokenizer.ParserNodesString;
 
                 Logger.Log("Applying styles");
                 ApplyStyles();
 
                 Logger.Log($"Parsing");
                 Parser = CommonParsers.PlatoParser(Input, Logger);
-                CstString = Parser.CstXml;
+                ParseNodesString = Parser.ParserNodesString;
                 ParseTreeString = Parser.ParseXml;
+                CstString = Parser.CstXml;
                 ErrorsString = Parser.ErrorMessages.JoinStrings(Environment.NewLine);
 
                 Logger.Log($"Highlighting Errors");
@@ -100,7 +102,7 @@ namespace PlatoWinFormsEditor
 
         public void ApplyStyle(string kind, ParserRange range)
         {
-
+            ApplyStyle(kind, range.BeginPosition, range.EndPosition);
         }
 
         public void ApplyStyle(string kind, int start, int length)

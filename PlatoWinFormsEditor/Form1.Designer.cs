@@ -47,6 +47,10 @@
             richTextBoxTokens = new RichTextBox();
             menuStrip1 = new MenuStrip();
             aboutPlatoToolStripMenuItem = new ToolStripMenuItem();
+            nodes = new TabPage();
+            tree = new TabPage();
+            richTextBoxNodes = new RichTextBox();
+            richTextBoxParseTree = new RichTextBox();
             ((System.ComponentModel.ISupportInitialize)mainSplitContainer).BeginInit();
             mainSplitContainer.Panel1.SuspendLayout();
             mainSplitContainer.Panel2.SuspendLayout();
@@ -63,6 +67,8 @@
             ast.SuspendLayout();
             tokens.SuspendLayout();
             menuStrip1.SuspendLayout();
+            nodes.SuspendLayout();
+            tree.SuspendLayout();
             SuspendLayout();
             // 
             // mainSplitContainer
@@ -79,8 +85,8 @@
             // mainSplitContainer.Panel2
             // 
             mainSplitContainer.Panel2.Controls.Add(TabControl);
-            mainSplitContainer.Size = new Size(700, 313);
-            mainSplitContainer.SplitterDistance = 413;
+            mainSplitContainer.Size = new Size(914, 481);
+            mainSplitContainer.SplitterDistance = 539;
             mainSplitContainer.TabIndex = 1;
             mainSplitContainer.SplitterMoved += mainSplitContainer_SplitterMoved;
             // 
@@ -98,8 +104,8 @@
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(tabControlEditors);
-            splitContainer1.Size = new Size(413, 313);
-            splitContainer1.SplitterDistance = 136;
+            splitContainer1.Size = new Size(539, 481);
+            splitContainer1.SplitterDistance = 177;
             splitContainer1.TabIndex = 0;
             // 
             // listBoxFiles
@@ -110,7 +116,7 @@
             listBoxFiles.Location = new Point(0, 0);
             listBoxFiles.Margin = new Padding(3, 2, 3, 2);
             listBoxFiles.Name = "listBoxFiles";
-            listBoxFiles.Size = new Size(136, 313);
+            listBoxFiles.Size = new Size(177, 481);
             listBoxFiles.TabIndex = 0;
             listBoxFiles.SelectedIndexChanged += listBoxFiles_SelectedIndexChanged;
             // 
@@ -121,7 +127,7 @@
             tabControlEditors.Margin = new Padding(3, 2, 3, 2);
             tabControlEditors.Name = "tabControlEditors";
             tabControlEditors.SelectedIndex = 0;
-            tabControlEditors.Size = new Size(273, 313);
+            tabControlEditors.Size = new Size(358, 481);
             tabControlEditors.TabIndex = 0;
             // 
             // TabControl
@@ -129,15 +135,17 @@
             TabControl.Controls.Add(console);
             TabControl.Controls.Add(log);
             TabControl.Controls.Add(errors);
+            TabControl.Controls.Add(tokens);
+            TabControl.Controls.Add(nodes);
+            TabControl.Controls.Add(tree);
             TabControl.Controls.Add(cst);
             TabControl.Controls.Add(ast);
-            TabControl.Controls.Add(tokens);
             TabControl.Dock = DockStyle.Fill;
             TabControl.Location = new Point(0, 0);
             TabControl.Margin = new Padding(3, 2, 3, 2);
             TabControl.Name = "TabControl";
             TabControl.SelectedIndex = 0;
-            TabControl.Size = new Size(283, 313);
+            TabControl.Size = new Size(371, 481);
             TabControl.TabIndex = 1;
             // 
             // console
@@ -147,7 +155,7 @@
             console.Margin = new Padding(3, 2, 3, 2);
             console.Name = "console";
             console.Padding = new Padding(3, 2, 3, 2);
-            console.Size = new Size(275, 285);
+            console.Size = new Size(363, 453);
             console.TabIndex = 0;
             console.Text = "Console";
             console.UseVisualStyleBackColor = true;
@@ -158,7 +166,7 @@
             richTextBoxConsole.Location = new Point(3, 2);
             richTextBoxConsole.Margin = new Padding(3, 2, 3, 2);
             richTextBoxConsole.Name = "richTextBoxConsole";
-            richTextBoxConsole.Size = new Size(269, 281);
+            richTextBoxConsole.Size = new Size(357, 449);
             richTextBoxConsole.TabIndex = 1;
             richTextBoxConsole.Text = "";
             richTextBoxConsole.WordWrap = false;
@@ -170,7 +178,7 @@
             log.Margin = new Padding(3, 2, 3, 2);
             log.Name = "log";
             log.Padding = new Padding(3, 2, 3, 2);
-            log.Size = new Size(275, 285);
+            log.Size = new Size(363, 453);
             log.TabIndex = 5;
             log.Text = "File Log";
             log.UseVisualStyleBackColor = true;
@@ -181,7 +189,7 @@
             richTextBoxLog.Location = new Point(3, 2);
             richTextBoxLog.Margin = new Padding(3, 2, 3, 2);
             richTextBoxLog.Name = "richTextBoxLog";
-            richTextBoxLog.Size = new Size(269, 281);
+            richTextBoxLog.Size = new Size(357, 449);
             richTextBoxLog.TabIndex = 2;
             richTextBoxLog.Text = "";
             richTextBoxLog.WordWrap = false;
@@ -193,7 +201,7 @@
             errors.Margin = new Padding(3, 2, 3, 2);
             errors.Name = "errors";
             errors.Padding = new Padding(3, 2, 3, 2);
-            errors.Size = new Size(275, 285);
+            errors.Size = new Size(363, 453);
             errors.TabIndex = 1;
             errors.Text = "Parse Errors";
             errors.UseVisualStyleBackColor = true;
@@ -204,7 +212,7 @@
             richTextBoxErrors.Location = new Point(3, 2);
             richTextBoxErrors.Margin = new Padding(3, 2, 3, 2);
             richTextBoxErrors.Name = "richTextBoxErrors";
-            richTextBoxErrors.Size = new Size(269, 281);
+            richTextBoxErrors.Size = new Size(357, 449);
             richTextBoxErrors.TabIndex = 2;
             richTextBoxErrors.Text = "";
             richTextBoxErrors.WordWrap = false;
@@ -215,7 +223,7 @@
             cst.Location = new Point(4, 24);
             cst.Margin = new Padding(3, 2, 3, 2);
             cst.Name = "cst";
-            cst.Size = new Size(275, 285);
+            cst.Size = new Size(363, 453);
             cst.TabIndex = 2;
             cst.Text = "CST";
             cst.UseVisualStyleBackColor = true;
@@ -226,7 +234,7 @@
             richTextBoxCst.Location = new Point(0, 0);
             richTextBoxCst.Margin = new Padding(3, 2, 3, 2);
             richTextBoxCst.Name = "richTextBoxCst";
-            richTextBoxCst.Size = new Size(275, 285);
+            richTextBoxCst.Size = new Size(363, 453);
             richTextBoxCst.TabIndex = 2;
             richTextBoxCst.Text = "";
             richTextBoxCst.WordWrap = false;
@@ -237,7 +245,7 @@
             ast.Location = new Point(4, 24);
             ast.Margin = new Padding(3, 2, 3, 2);
             ast.Name = "ast";
-            ast.Size = new Size(275, 285);
+            ast.Size = new Size(363, 453);
             ast.TabIndex = 3;
             ast.Text = "AST";
             ast.UseVisualStyleBackColor = true;
@@ -248,7 +256,7 @@
             richTextBoxAst.Location = new Point(0, 0);
             richTextBoxAst.Margin = new Padding(3, 2, 3, 2);
             richTextBoxAst.Name = "richTextBoxAst";
-            richTextBoxAst.Size = new Size(275, 285);
+            richTextBoxAst.Size = new Size(363, 453);
             richTextBoxAst.TabIndex = 2;
             richTextBoxAst.Text = "";
             richTextBoxAst.WordWrap = false;
@@ -259,7 +267,7 @@
             tokens.Location = new Point(4, 24);
             tokens.Margin = new Padding(3, 2, 3, 2);
             tokens.Name = "tokens";
-            tokens.Size = new Size(275, 285);
+            tokens.Size = new Size(363, 453);
             tokens.TabIndex = 4;
             tokens.Text = "Tokens";
             tokens.UseVisualStyleBackColor = true;
@@ -270,7 +278,7 @@
             richTextBoxTokens.Location = new Point(0, 0);
             richTextBoxTokens.Margin = new Padding(3, 2, 3, 2);
             richTextBoxTokens.Name = "richTextBoxTokens";
-            richTextBoxTokens.Size = new Size(275, 285);
+            richTextBoxTokens.Size = new Size(363, 453);
             richTextBoxTokens.TabIndex = 2;
             richTextBoxTokens.Text = "";
             richTextBoxTokens.WordWrap = false;
@@ -282,7 +290,7 @@
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Padding = new Padding(4, 1, 0, 1);
-            menuStrip1.Size = new Size(700, 24);
+            menuStrip1.Size = new Size(914, 24);
             menuStrip1.TabIndex = 2;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -293,11 +301,53 @@
             aboutPlatoToolStripMenuItem.Text = "About Plato ...";
             aboutPlatoToolStripMenuItem.Click += aboutPlatoToolStripMenuItem_Click;
             // 
+            // nodes
+            // 
+            nodes.Controls.Add(richTextBoxNodes);
+            nodes.Location = new Point(4, 24);
+            nodes.Name = "nodes";
+            nodes.Size = new Size(363, 453);
+            nodes.TabIndex = 6;
+            nodes.Text = "Nodes";
+            nodes.UseVisualStyleBackColor = true;
+            // 
+            // tree
+            // 
+            tree.Controls.Add(richTextBoxParseTree);
+            tree.Location = new Point(4, 24);
+            tree.Name = "tree";
+            tree.Size = new Size(363, 453);
+            tree.TabIndex = 7;
+            tree.Text = "Parse Tree";
+            tree.UseVisualStyleBackColor = true;
+            // 
+            // richTextBoxNodes
+            // 
+            richTextBoxNodes.Dock = DockStyle.Fill;
+            richTextBoxNodes.Location = new Point(0, 0);
+            richTextBoxNodes.Margin = new Padding(3, 2, 3, 2);
+            richTextBoxNodes.Name = "richTextBoxNodes";
+            richTextBoxNodes.Size = new Size(363, 453);
+            richTextBoxNodes.TabIndex = 3;
+            richTextBoxNodes.Text = "";
+            richTextBoxNodes.WordWrap = false;
+            // 
+            // richTextBoxParseTree
+            // 
+            richTextBoxParseTree.Dock = DockStyle.Fill;
+            richTextBoxParseTree.Location = new Point(0, 0);
+            richTextBoxParseTree.Margin = new Padding(3, 2, 3, 2);
+            richTextBoxParseTree.Name = "richTextBoxParseTree";
+            richTextBoxParseTree.Size = new Size(363, 453);
+            richTextBoxParseTree.TabIndex = 3;
+            richTextBoxParseTree.Text = "";
+            richTextBoxParseTree.WordWrap = false;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(700, 337);
+            ClientSize = new Size(914, 505);
             Controls.Add(mainSplitContainer);
             Controls.Add(menuStrip1);
             MainMenuStrip = menuStrip1;
@@ -322,12 +372,14 @@
             tokens.ResumeLayout(false);
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
+            nodes.ResumeLayout(false);
+            tree.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
-        private TabPage tabPage2;
+        private TabPage tree;
         private SplitContainer mainSplitContainer;
         private TabControl TabControl;
         private TabPage console;
@@ -348,5 +400,8 @@
         private RichTextBox richTextBoxLog;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem aboutPlatoToolStripMenuItem;
+        private TabPage nodes;
+        private RichTextBox richTextBoxNodes;
+        private RichTextBox richTextBoxParseTree;
     }
 }
