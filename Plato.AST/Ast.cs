@@ -19,6 +19,7 @@ namespace Plato.AST
         public string Text { get; }
         public AstLeaf(ILocation location, string text = "") : base(location) => Text = text;
         public override string ToString() => $"({GetType().Name}={Text})";
+        public static implicit operator string(AstLeaf node) => node.Text;
     }
 
     public class AstIdentifier : AstLeaf
@@ -148,18 +149,18 @@ namespace Plato.AST
 
     public class AstVarDef : AstNode
     {
-        public string Name { get; }
+        public AstIdentifier Name { get; }
         public AstNode Value { get; }
         public AstTypeNode Type { get; }
-        public AstVarDef(ILocation location, string name, AstNode value, AstTypeNode type) : base(location) => (Name, Value, Type) = (name, value, type);
+        public AstVarDef(ILocation location, AstIdentifier name, AstNode value, AstTypeNode type) : base(location) => (Name, Value, Type) = (name, value, type);
         public override IEnumerable<AstNode> Children => base.Children.Append(Value).Append(Type);
     }
 
     public class AstAssign : AstNode
     {
-        public string Var { get; }
+        public AstIdentifier Var { get; }
         public AstNode Value { get; }
-        public AstAssign(ILocation location, string var, AstNode value) : base(location) => (Var, Value) = (var, value);
+        public AstAssign(ILocation location, AstIdentifier var, AstNode value) : base(location) => (Var, Value) = (var, value);
         public override IEnumerable<AstNode> Children => new[] { Value };
     }
 
@@ -186,39 +187,40 @@ namespace Plato.AST
 
     public class AstTypeNode : AstNode
     {
-        public string Name { get; }
+        public AstIdentifier Name { get; }
         public IReadOnlyList<AstTypeNode> TypeArguments { get; }
-        public AstTypeNode(ILocation location, string name, params AstTypeNode[] args) : base(location) => (Name, TypeArguments) = (name, args);
-        public override IEnumerable<AstNode> Children => TypeArguments;
+        public AstTypeNode(ILocation location, AstIdentifier name, params AstTypeNode[] args) : base(location) => (Name, TypeArguments) = (name, args);
+        public override IEnumerable<AstNode> Children => base.Children.Append(Name).Concat(TypeArguments);
         public override string ToString() => $"({GetType().Name} {Name}<{string.Join(",", TypeArguments)}>)";
     }
 
     public abstract class AstDeclaration : AstNode
     {
-        public string Name { get; }
-        protected AstDeclaration(ILocation location, string name) : base(location) => Name = name;
+        public AstIdentifier Name { get; }
+        protected AstDeclaration(ILocation location, AstIdentifier name) : base(location) => Name = name;
         public override string ToString() => $"({GetType().Name} {Name})";
+        public override IEnumerable<AstNode> Children => base.Children.Append(Name);
     }
 
     public abstract class AstMemberDeclaration : AstDeclaration
     {
         public AstTypeNode Type { get; }
-        protected AstMemberDeclaration(ILocation location, string name, AstTypeNode type) : base(location, name) => Type = type;
+        protected AstMemberDeclaration(ILocation location, AstIdentifier name, AstTypeNode type) : base(location, name) => Type = type;
         public override IEnumerable<AstNode> Children => base.Children.Append(Type);
     }
 
-    public class AstNamespace : AstDeclaration
+    public class AstFile : AstNode
     {
         public IReadOnlyList<AstTypeDeclaration> Types { get; }
         public override IEnumerable<AstNode> Children => Types;
-        public AstNamespace(ILocation location, string name, IEnumerable<AstTypeDeclaration> types) : base(location, name)
+        public AstFile(ILocation location, IEnumerable<AstTypeDeclaration> types) : base(location)
             => Types = types.ToListOrEmpty();
     }
 
     public class AstFieldDeclaration : AstMemberDeclaration
     {
         public AstNode Node { get; }
-        public AstFieldDeclaration(ILocation location, string name, AstTypeNode type, AstNode node) : base(location, name, type) => Node = node;
+        public AstFieldDeclaration(ILocation location, AstIdentifier name, AstTypeNode type, AstNode node) : base(location, name, type) => Node = node;
         public override IEnumerable<AstNode> Children => base.Children.Append(Node);
     }
 
@@ -226,7 +228,7 @@ namespace Plato.AST
     {
         public int Index { get; }
         public AstTypeNode Type { get; }
-        public AstParameterDeclaration(ILocation location, string name, AstTypeNode type, int index) : base(location, name) 
+        public AstParameterDeclaration(ILocation location, AstIdentifier name, AstTypeNode type, int index) : base(location, name) 
             => (Type, Index) = (type, index);
         public override IEnumerable<AstNode> Children => base.Children.Append(Type);
     }
@@ -236,7 +238,8 @@ namespace Plato.AST
         public AstNode Body { get; }
         public IReadOnlyList<AstParameterDeclaration> Parameters { get; }
 
-        public AstMethodDeclaration(ILocation location, string name,
+        public AstMethodDeclaration(ILocation location, 
+            AstIdentifier name,
             AstTypeNode type,
             IEnumerable<AstParameterDeclaration> parameters,
             AstNode body) :
@@ -259,7 +262,7 @@ namespace Plato.AST
 
     public class AstTypeParameter : AstDeclaration
     {
-        public AstTypeParameter(ILocation location, string name)
+        public AstTypeParameter(ILocation location, AstIdentifier name)
             : base(location, name)
         { }
     }
@@ -267,7 +270,7 @@ namespace Plato.AST
     public class AstConstraint : AstDeclaration
     {
         public AstTypeNode Constraint { get; }
-        public AstConstraint(ILocation location, string name, AstTypeNode type)
+        public AstConstraint(ILocation location, AstIdentifier name, AstTypeNode type)
             : base(location, name)
             => Constraint = type;
     }
@@ -292,8 +295,8 @@ namespace Plato.AST
 
         public AstTypeDeclaration(
             ILocation location,
-            TypeKind kind, 
-            string name, 
+            TypeKind kind,
+            AstIdentifier name, 
             IEnumerable<AstTypeParameter> typeParameters,
             IEnumerable<AstTypeNode> inherits, 
             IEnumerable<AstTypeNode> implements, 

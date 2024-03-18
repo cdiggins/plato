@@ -136,7 +136,7 @@ namespace Plato.AST
                             cb.WriteStatements(astBlock.Statements));
                     }
 
-                case AstBreak astBreak:
+                case AstBreak _:
                     return WriteLine("break");
 
                 case AstConditional astConditional:
@@ -183,7 +183,7 @@ namespace Plato.AST
 
                 case AstTypeDeclaration typeDeclaration:
                     {
-                        var r = Write($"{typeDeclaration.Kind} ").WriteLine(typeDeclaration.Name);
+                        var r = Write($"{typeDeclaration.Kind} ").WriteLine(typeDeclaration.Name.Text);
 
                         // TODO: this needs to convert from attributes to implements list 
                         if (typeDeclaration.Implements.Count > 0)
@@ -218,11 +218,11 @@ namespace Plato.AST
 
                 case AstFieldDeclaration fieldDeclaration:
                     return Write("field ")
-                        .WriteTypedName(fieldDeclaration.Name, fieldDeclaration.Type)
+                        .WriteTypedName(fieldDeclaration.Name.Text, fieldDeclaration.Type)
                         .WriteEol();
 
                 case AstParameterDeclaration parameterDeclaration:
-                    return WriteTypedName(parameterDeclaration.Name, parameterDeclaration.Type);
+                    return WriteTypedName(parameterDeclaration.Name.Text, parameterDeclaration.Type);
 
                 case AstParenthesized parenthesized:
                     return Write("(").Write(parenthesized.Inner).Write(")");
@@ -240,7 +240,7 @@ namespace Plato.AST
                         .Write(methodDeclaration.Body)
                         .WriteLine();
 
-                case AstNamespace astNamespace:
+                case AstFile astNamespace:
                     return astNamespace.Children.Aggregate(this, (w, n) => w.Write(n));
 
                 default:

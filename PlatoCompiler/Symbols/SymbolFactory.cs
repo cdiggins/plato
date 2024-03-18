@@ -148,7 +148,7 @@ namespace Plato.Compiler.Symbols
                 //return null;
                 return CreateAny();
             }
-            var name = astTypeNode.Name.Trim();
+            var name = astTypeNode.Name.Text.Trim();
             if (name == "var")
             {
                 // NOTE: maybe this might be 
@@ -363,14 +363,14 @@ namespace Plato.Compiler.Symbols
                 {
                     if (m is AstFieldDeclaration fd)
                     {
-                        var fDef = new FieldDefinition(typeDef, ResolveType(fd.Type), fd.Name);
+                        var fDef = new FieldDefinition(typeDef, ResolveType(fd.Type), fd.Name.Text);
                         typeDef.Fields.Add(fDef);
                         SymbolsToNodes.Add(fDef, fd);
                         CreateOrLookupGroupDefinition(fDef);
                     }
                     else if (m is AstMethodDeclaration md)
                     {
-                        var mDef = new MethodDefinition(typeDef, ResolveType(md.Type), md.Name);
+                        var mDef = new MethodDefinition(typeDef, ResolveType(md.Type), md.Name.Text);
                         typeDef.Methods.Add(mDef);
                         SymbolsToNodes.Add(mDef, md);
                         CreateOrLookupGroupDefinition(mDef);
