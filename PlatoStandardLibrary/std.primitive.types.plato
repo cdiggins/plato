@@ -1,0 +1,84 @@
+﻿// In Plato, the primitive types are assumed to exist, by name, by the compiler.
+// This file is used to define the functionality and member data contained in those primitives.   
+
+// A floating point representation of a real number 
+type Number 
+    implements Real, Numerical
+{ }
+
+// A positive or negative whole number 
+type Integer   
+    implements WholeNumber
+{ }
+
+// Text
+type String
+    implements Array<Character>, Comparable, Equatable
+{ }
+
+// Truth value (true or false)
+type Boolean 
+    implements BooleanOperations
+{ }
+
+// A single character of text 
+type Character
+    implements Value
+{ }
+
+// A run-time checked value. 
+type Dynamic
+{ }
+
+// Information contained in an exception 
+type Error
+{ }
+
+// A tuple of two values written as: (a, b)
+type Tuple2<T0, T1>
+{
+    Item0: T0;
+    Item1: T1;
+}
+
+// A tuple of three values written as: (a, b, c) 
+type Tuple3<T0, T1, T2>
+{
+    Item0: T0;
+    Item1: T1;
+    Item2: T2;
+}
+
+// A tuple of four values written as: (a, b, c, d) 
+type Tuple4<T0, T1, T2, T3>
+{
+    Item0: T0;
+    Item1: T1;
+    Item2: T2;
+    Item3: T3;
+}
+
+// A function with no arguments
+type Function0<TR>
+{
+}
+
+// A function with one argument
+type Function1<T0, TR>
+{
+}
+
+// A function with two arguments 
+type Function2<T0, T1, TR>
+{
+}
+
+// A function with three arguments 
+type Function3<T0, T1, T2, TR>
+{
+}
+
+// A function with four arguments 
+type Function3<T0, T1, T2, TR>
+{
+}

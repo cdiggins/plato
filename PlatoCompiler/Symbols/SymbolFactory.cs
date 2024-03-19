@@ -15,21 +15,8 @@ namespace Plato.Compiler.Symbols
     /// </summary>
     public class SymbolFactory
     {
-        public class ResolutionError
-        {
-            public AstNode Node { get; }
-            public string Message { get; }
-
-            public ResolutionError(string message, AstNode node)
-            {
-                Node = node;
-                Message = message;
-            }
-        }
-
         public SymbolFactory(ILogger logger)
         {
-            BindPredefinedSymbols();
             Logger = logger;
         }
 
@@ -42,20 +29,6 @@ namespace Plato.Compiler.Symbols
 
         public List<TypeDefinition> TypeDefs { get; } = new List<TypeDefinition>();
 
-        public void BindPredefinedSymbols()
-        {
-            BindType(PrimitiveTypeDefinitions.Tuple);
-            BindType(PrimitiveTypeDefinitions.Function);
-            // TODO: is this used? 
-            BindPredefined(null, "intrinsic");
-            // TODO: what is this? 
-            BindPredefined(PrimitiveTypeDefinitions.Tuple.ToTypeExpression(), "Tuple");
-        }
-
-        public void BindPredefined(TypeExpression type, string name)
-        {
-            BindValue(name, new PredefinedDefinition(type, name));
-        }
 
         public T BindValue<T>(string name, T value) where T : Symbol
         {
@@ -85,7 +58,7 @@ namespace Plato.Compiler.Symbols
             if (val is FunctionGroupDefinition group)
                 return group;
 
-            var fgs = new FunctionGroupDefinition(Array.Empty<FunctionDefinition>(), name);
+            var fgs = new FunctionGroupDefinition(CreateAny(), Array.Empty<FunctionDefinition>(), name);
             return BindValue(name, fgs);
         }
 
@@ -181,26 +154,6 @@ namespace Plato.Compiler.Symbols
 
             // TODO: maybe the symbols should contain the ast nodes instead of using dictionaries everywhere. 
             var args = astTypeNode.TypeArguments.Select(ResolveType).ToArray();
-            if (args.Length > 0)
-            {
-                if (!SymbolsToNodes.ContainsKey(sym))
-                {
-                    LogError($"No associated node was found for {sym}");
-                    return null;
-                }
-
-                // NOTE: it looks like we could use the "tds" (TypeDefinition) type parameters list directly,
-                // however at this point in the code it hasn't be initialized yet.
-                // So instead what we do is look at the ast representation. 
-                var typeDefNode = SymbolsToNodes[sym] as AstTypeDeclaration;
-                if (args.Length != typeDefNode.TypeParameters.Count)
-                {
-                    LogError(
-                        $"Referring to a type with an incorrect number of arguments, {args.Length} instead of {typeDefNode.TypeParameters.Count}",
-                        astTypeNode);
-                }
-            }
-
             return new TypeExpression(tds, args);
         }
 
@@ -309,7 +262,7 @@ namespace Plato.Compiler.Symbols
                             var ps = astLambda.Parameters.Select(Resolve).ToArray();
                             var body = ResolveExpr(astLambda.Body);
                             var r = new Lambda(new FunctionDefinition("_lambda_", null, 
-                                PrimitiveTypeDefinitions.Function.ToTypeExpression(), body, ps));
+                                CreateLambdaType(ps.Length), body, ps));
                             ValueBindingsScope = ValueBindingsScope.Pop();
                             return r;
                         }
@@ -523,7 +476,13 @@ namespace Plato.Compiler.Symbols
 
         public TypeExpression CreateTuple(params TypeExpression[] args)
         {
-            return new TypeExpression(GetTypeDefinition("Tuple"), args);
+            return new TypeExpression(GetTypeDefinition($"Tuple{args.Length}"), args);
+        }
+
+        public TypeExpression CreateLambdaType(int args)
+        {
+            var typeArgs = Enumerable.Range(0, args + 1).Select(i => TypeExpression.CreateTypeVar($"$T{i}")).ToArray();
+            return new TypeExpression(GetTypeDefinition($"Function{args}"), typeArgs);
         }
 
         public TypeExpression CreateAny()

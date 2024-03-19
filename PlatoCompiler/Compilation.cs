@@ -33,8 +33,7 @@ namespace Plato.Compiler
                 SymbolFactory = new SymbolFactory(Logger);
 
                 Log("Creating type definitions");
-                var typeDefs = SymbolFactory.CreateTypeDefs(TypeDeclarations)
-                    .Concat(PrimitiveTypeDefinitions.AllPrimitives);
+                var typeDefs = SymbolFactory.CreateTypeDefs(TypeDeclarations);
 
                 foreach (var td in typeDefs)
                 {
@@ -171,6 +170,7 @@ namespace Plato.Compiler
         public Dictionary<string, TypeDefinition> LibraryDefinitionsByName { get; } = new Dictionary<string, TypeDefinition>();
         public IReadOnlyList<FunctionDefinition> FunctionDefinitions { get; }
         public IEnumerable<TypeDefinition> TypeDefinitions => TypeDefinitionsByName.Values;
+        public IEnumerable<Symbol> Symbols => SymbolFactory.SymbolsToNodes.Keys.OrderBy(s => s.Id);
 
         public Dictionary<Expression, IType> ExpressionTypes { get; } = new Dictionary<Expression, IType>();
         public Dictionary<string, ReifiedType> ReifiedTypes { get; }
@@ -182,6 +182,10 @@ namespace Plato.Compiler
         public List<string> SemanticErrors { get; } = new List<string>();
         public List<string> SemanticWarnings { get; } = new List<string>();
         public List<string> InternalErrors { get; } = new List<string>();
+
+        public IEnumerable<string> Diagnostics => SemanticWarnings.Select(w => $"[WARNING] {w}")
+            .Concat(SemanticErrors.Select(e => $"[ERROR] {e}"))
+            .Concat(InternalErrors.Select(i => $"[INTERNAL ERROR] {i}"));
 
         public List<VisualSyntaxGraph> Graphs { get; } = new List<VisualSyntaxGraph>();
 
@@ -196,8 +200,6 @@ namespace Plato.Compiler
             FunctionAnalyses.Add(fd, fa);
             return fa;
         }
-
-
 
         public void AddLibraryFunctionsToReifiedTypes()
         {
@@ -258,7 +260,7 @@ namespace Plato.Compiler
             => ExpressionTypes.TryGetValue(expr, out var r) ? r : null;
         
         // TODO: I have to make these more like Parser Errors 
-        public void LogResolutionErrors(IEnumerable<SymbolFactory.ResolutionError> resolutionErrors)
+        public void LogResolutionErrors(IEnumerable<ResolutionError> resolutionErrors)
         {
             foreach (var error in resolutionErrors)
             {

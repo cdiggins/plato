@@ -1,7 +1,6 @@
 using Ara3D.Logging;
 using Ara3D.Utils;
 using Plato.Compiler;
-using Logger = Plato.Compiler.Logger;
 
 namespace PlatoWinFormsEditor;
 
@@ -13,6 +12,11 @@ public class IDE
     public TabControl TabControl { get; }
     public RichTextBox LoggingOutputEditor { get; }
     public Action<Editor> EditorChanged { get; }
+
+    public string SymbolErrorsString { get; }
+    public string SymbolsString { get; }
+    public string TypesString { get; }
+    public string SemanticDiagnosticsString { get; }
 
     public static void InitTextBox(RichTextBox edit)
     {
@@ -71,5 +75,10 @@ public class IDE
         {
             Logger.Log("Compilation was not completed");
         }
+
+        TypesString = Compilation.TypeDefinitions.Select(td => $"{td.Kind} {td.Name}").JoinStringsWithNewLine();
+        SymbolsString = Compilation.Symbols.Select(sym => $"{sym.Name} {sym.Id}").JoinStringsWithNewLine();
+        SymbolErrorsString = Compilation.SymbolFactory.Errors.Select(e => $"{e.Message} at {e.Node}").JoinStringsWithNewLine();
+        SemanticDiagnosticsString = Compilation.Diagnostics.JoinStringsWithNewLine();
     }
 }

@@ -6,14 +6,14 @@ using System;
 
 namespace PlatoWinFormsEditor
 {
-    public partial class Form1 : Form
+    public partial class PlatoCodeViewerForm : Form
     {
         public IDE IDE { get; }
         public double SplitterRatio { get; private set; }
 
         public ILogger Logger { get; }
 
-        public Form1()
+        public PlatoCodeViewerForm()
         {
             InitializeComponent();
             ComputeSplitterRatio();
@@ -54,6 +54,11 @@ namespace PlatoWinFormsEditor
             AddHandlers(richTextBoxAst);
             AddHandlers(richTextBoxCst);
             AddHandlers(richTextBoxErrors);
+            AddHandlers(richTextBoxSymbols);
+            AddHandlers(richTextBoxSymbolErrors);
+            AddHandlers(richTextBoxTypes);
+
+            OnCompilationCompleted();
         }
 
         public static Regex LineNumRegex = new Regex(@"Ln\:\s*(\d+)");
@@ -149,6 +154,14 @@ namespace PlatoWinFormsEditor
             richTextBoxTokens.Text = editor?.TokensString ?? "";
             richTextBoxParseTree.Text = editor?.ParseTreeString ?? "";
             richTextBoxNodes.Text = editor?.ParseNodesString ?? "";
+        }
+
+        private void OnCompilationCompleted()
+        {
+            richTextBoxSymbols.Text = IDE?.SymbolsString ?? "";
+            richTextBoxSymbolErrors.Text = IDE?.SymbolErrorsString ?? "";
+            richTextBoxTypes.Text = IDE?.TypesString ?? "";
+            richTextBoxSemantics.Text = IDE?.SemanticDiagnosticsString ?? "";
         }
 
         public void OnLogMsg(string msg)

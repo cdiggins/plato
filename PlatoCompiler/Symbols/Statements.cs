@@ -10,6 +10,9 @@ namespace Plato.Compiler.Symbols
     {
         public IReadOnlyList<Symbol> Symbols { get; }
 
+        public override string Name
+            => "{}";
+
         public BlockStatement(params Symbol[] symbols)
             => Symbols = symbols;
 
@@ -26,6 +29,8 @@ namespace Plato.Compiler.Symbols
 
         public override IEnumerable<Symbol> GetChildSymbols()
             => Symbols;
+
+        public override string Name => ",";
     }
 
     public class ReturnStatement : Statement
@@ -33,9 +38,10 @@ namespace Plato.Compiler.Symbols
         public Symbol Expression { get; }
 
         public ReturnStatement(Symbol expression)
-        {
-            Expression = expression;
-        }
+            => Expression = expression;
+
+        public override string Name 
+            => "return";
 
         public override IEnumerable<Symbol> GetChildSymbols()
             => Expression == null ? Array.Empty<Symbol>() : new[] { Expression };
@@ -45,6 +51,9 @@ namespace Plato.Compiler.Symbols
     {
         public Symbol Condition { get; }
         public Symbol Body { get; }
+
+        public override string Name
+            => "while";
 
         public LoopStatement(Symbol condition, Symbol body)
         {

@@ -6,11 +6,9 @@ using Plato.Compiler.Utilities;
 
 namespace Plato.Compiler.Symbols
 {
-    // TODO: this needs to be finished along with statements
-
     public class TypeExpression : Symbol
     {
-        public string Name => Definition?.Name ?? throw new Exception("Unresolved");
+        public override string Name => Definition?.Name ?? throw new Exception("Unresolved");
         public TypeDefinition Definition { get; }
         public IReadOnlyList<TypeExpression> TypeArgs { get; }
             
@@ -32,9 +30,6 @@ namespace Plato.Compiler.Symbols
             => name.StartsWith("$")
                 ? new TypeExpression(new TypeDefinition(TypeKind.TypeVariable, name))
                 : throw new Exception("Type variable names must start with $ character");
-
-        public static TypeExpression CreateFunction(params TypeExpression[] types)
-            => new TypeExpression(PrimitiveTypeDefinitions.Function, types);
 
         public override IEnumerable<Symbol> GetChildSymbols()
             => TypeArgs;

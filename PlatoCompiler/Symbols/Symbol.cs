@@ -18,5 +18,7 @@ namespace Plato.Compiler.Symbols
             => Id.GetHashCode();
 
         public abstract IEnumerable<Symbol> GetChildSymbols();
+
+        public abstract string Name { get; }
     }
 }

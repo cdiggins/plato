@@ -81,7 +81,7 @@ namespace Plato.Compiler.Types
             if (superTypesB.Count > 0)
                 return superTypesB[0];
 
-            return PrimitiveTypeDefinitions.Error;
+            return null;
         }
 
         public static TypeDefinition Unify(this TypeDefinition a, TypeDefinition b)

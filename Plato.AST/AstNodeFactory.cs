@@ -81,7 +81,7 @@ namespace Plato.AST
                 }
                 else if (postfix.Indexer.Present)
                 {
-                    r = ToIntrinsicInvocation(postfix.Indexer, Operators.BinaryOperatorToName("[]")
+                    r = ToIntrinsicInvocation(postfix.Indexer.Node, Operators.BinaryOperatorToName("[]")
                         , r, ToAst(postfix.Indexer.Node.Expression));
                 }
                 else if (postfix.IsOperation.Present)
@@ -201,9 +201,9 @@ namespace Plato.AST
             var cstType = forEach.TypeExpr.Node;
             var name = ToAst(cstIdent);
             var astType = ToAst(cstType);
-            var vd = new AstVarDef(forEach.Identifier, name, null, astType);
+            var vd = new AstVarDef(forEach.Identifier.Node, name, null, astType);
             return new AstBlock(
-                forEach.Statement,
+                forEach.Statement.Node,
                 vd,
                 new AstLoop(
                     forEach,
@@ -338,7 +338,7 @@ namespace Plato.AST
                 var body = ToAst(expr.LambdaExpr.Node.LambdaBody);
                 var parameters = expr.LambdaExpr.Node.LambdaParameters.Node.LambdaParameter.Nodes
                     .Select(ToAst).ToArray();
-                return new AstLambda(expr.LambdaExpr, body, parameters);
+                return new AstLambda(expr.LambdaExpr.Node, body, parameters);
             }
             if (expr.Literal.Present)
             {
@@ -346,7 +346,7 @@ namespace Plato.AST
             }
             if (expr.NameOf.Present)
             {
-                return AstConstant.Create(expr.NameOf.Node.Expression.Text);
+                return AstConstant.Create(expr.NameOf.Node.Expression.Node.Text);
             }
             if (expr.NewOperation.Present)
             {
@@ -359,7 +359,7 @@ namespace Plato.AST
                     .Select(ToAst)
                     .Prepend(ToAst(newOp.TypeExpr));
 
-                return ToIntrinsicInvocation(expr.NewOperation, "New", args.ToArray());
+                return ToIntrinsicInvocation(expr.NewOperation.Node, "New", args.ToArray());
             }
             if (expr.ParenthesizedExpression.Present)
             {
@@ -369,16 +369,16 @@ namespace Plato.AST
             {
                 // TODO: this actually needs to convert the interpolated parts into a literal array.
                 // However, Plato doesn't support literal arrays yet. 
-                return ToIntrinsicInvocation(expr.StringInterpolation, "Interpolate",
+                return ToIntrinsicInvocation(expr.StringInterpolation.Node, "Interpolate",
                     expr.StringInterpolation.Node.StringInterpolationContent.Nodes.Select(ToAst).ToArray());
             }
             if (expr.ThrowExpression.Present)
             {
-                return ToIntrinsicInvocation(expr.ThrowExpression, "Throw", ToAst(expr.ThrowExpression.Node.Expression));
+                return ToIntrinsicInvocation(expr.ThrowExpression.Node, "Throw", ToAst(expr.ThrowExpression.Node.Expression));
             }
             if (expr.TypeOf.Present)
             {
-                return ToIntrinsicInvocation(expr.TypeOf, "TypeOf", ToAst(expr.TypeOf.Node.TypeExpr));
+                return ToIntrinsicInvocation(expr.TypeOf.Node, "TypeOf", ToAst(expr.TypeOf.Node.TypeExpr));
             }
 
             throw new Exception("Unrecognized leaf expression");
@@ -479,7 +479,7 @@ namespace Plato.AST
                     return AstBreak.Default;
 
                 case CstCompoundStatement cstCompoundStatement:
-                    return new AstBlock(cstCompoundStatement, cstCompoundStatement.Statement.Children.Select(ToAst).ToArray());
+                    return new AstBlock(cstCompoundStatement, cstCompoundStatement.Statement.Nodes.Select(ToAst).ToArray());
 
                 case CstDoWhileStatement cstDoWhileStatement:
                     return new AstMulti(cstDoWhileStatement,

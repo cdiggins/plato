@@ -11,7 +11,7 @@ namespace Plato.Compiler.Symbols
     {
         public TypeExpression Type { get; }
 
-        public string Name { get; }
+        public override string Name { get; }
 
         protected DefinitionSymbol(TypeExpression type, string name)
         {
@@ -116,7 +116,7 @@ namespace Plato.Compiler.Symbols
         public List<TypeExpression> Implements { get; } = new List<TypeExpression>();
         public List<FunctionDefinition> CompilerGeneratedFunctions { get; } = new List<FunctionDefinition>();
 
-        public string Name { get; }
+        public override string Name { get; }
        
         public SelfType Self { get; }
 
@@ -253,8 +253,9 @@ namespace Plato.Compiler.Symbols
     {
         public List<FunctionDefinition> Functions { get; }
 
-        public FunctionGroupDefinition(IEnumerable<FunctionDefinition> functions, string name)
-            : base(PrimitiveTypeDefinitions.Function.ToTypeExpression(), name)
+        // NOTE: for now the "returnType" is always Any. 
+        public FunctionGroupDefinition(TypeExpression returnType, IEnumerable<FunctionDefinition> functions, string name)
+            : base(returnType, name)
         {
             Functions = functions.ToList();
         }

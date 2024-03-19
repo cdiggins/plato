@@ -166,7 +166,7 @@
 
         public TypeExpression CreateType(Tuple tuple)
         {
-            var args = tuple.Children.Select(Resolve).ToArray();
+            var args = tuple.Nodes.Select(Resolve).ToArray();
             // TODO: maybe choose one of the numbered tuples
             return new TypeExpression(Compiler.GetTypeDefinition("Tuple"), args);
         }

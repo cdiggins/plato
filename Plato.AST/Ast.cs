@@ -24,7 +24,7 @@ namespace Plato.AST
 
     public class AstIdentifier : AstLeaf
     {
-        public AstIdentifier(ILocation location, string text) : base(location, text) { }
+        public AstIdentifier(ILocation location, string text) : base(location, text.Trim()) { }
     }
 
     public class AstParenthesized : AstNode

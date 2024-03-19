@@ -1,37 +1,6 @@
-// Primitives 
-
-// Built-in type that represents a real number 
-type Number 
-    implements Real, Numerical
-{ }
-
-// Built-in type that represent a positive or negative whole number 
-type Integer   
-    implements WholeNumber
-{ }
-
 // A positive whole number 
 type Count
     implements WholeNumber
-{ }
-
-// Built-in type that represents text
-type String
-    implements Array<Character>, Comparable, Equatable
-{ }
-
-// Built-in type that represents a truth value 
-type Boolean 
-    implements BooleanOperations
-{ }
-
-// Built-in type that represents a character of text 
-type Character
-    implements Value
-{ }
-
-// Built-in type that represents a run-time checked value. 
-type Dynamic
 { }
 
 // An integer type in the range of 0 to N is used to return the number of items 
@@ -526,34 +495,5 @@ type BinomialDistribution
     P: Probability;
 }
 
-// Generic types. These are not used 
 
-type Tuple2<T0, T1>
-{
-    Item0: T0;
-    Item1: T1;
-}
-
-type Tuple3<T0, T1, T2>
-{
-    Item0: T0;
-    Item1: T1;
-    Item2: T2;
-}
-
-type Function0<TR>
-{
-}
-
-type Function1<T0, TR>
-{
-}
-
-type Function2<T0, T1, TR>
-{
-}
-
-type Function3<T0, T1, T2, TR>
-{
-}
 

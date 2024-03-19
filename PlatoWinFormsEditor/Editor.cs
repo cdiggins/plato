@@ -74,7 +74,7 @@ namespace PlatoWinFormsEditor
                 ParseNodesString = Parser.ParserNodesString;
                 ParseTreeString = Parser.ParseXml;
                 CstString = Parser.CstXml;
-                ErrorsString = Parser.ErrorMessages.JoinStrings(Environment.NewLine);
+                ErrorsString = Parser.ParserErrorsString;
 
                 Logger.Log($"Highlighting Errors");
                 HighlightErrors();
