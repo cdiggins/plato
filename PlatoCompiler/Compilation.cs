@@ -37,19 +37,26 @@ namespace Plato.Compiler
 
                 foreach (var td in typeDefs)
                 {
-                    if (td.IsLibrary())
+                    try
                     {
-                        LibraryDefinitionsByName.Add(td.Name, td);
+                        if (td.IsLibrary())
+                        {
+                            LibraryDefinitionsByName.Add(td.Name, td);
+                        }
+                        else
+                        {
+                            TypeDefinitionsByName.Add(td.Name, td);
+                        }
                     }
-                    else
+                    catch (Exception e)
                     {
-                        TypeDefinitionsByName.Add(td.Name, td);
+                        LogSymbolError($"Failed to store type definition {td.Name} for reason {e}.", td);
                     }
                 }
 
-                Log($"Found {SymbolFactory.Errors.Count} symbol resolution errors");
                 LogResolutionErrors(SymbolFactory.Errors);
 
+                Log($"Found {SymbolFactory.Errors.Count} symbol resolution errors");
                 if (SymbolFactory.Errors.Count > 0)
                 {
                     Log("Halting further computation");
@@ -264,20 +271,8 @@ namespace Plato.Compiler
         {
             foreach (var error in resolutionErrors)
             {
-                var pos = GetParserTreeNode(error.Node);
                 Log($"Symbol resolution error: {error.Message}");
-                if (pos != null)
-                {
-                    Log(pos.Node.Range.End.Input.File);
-                    Log(pos.Node.Range.Begin?.CurrentLine);
-                    Log(pos.Node.Range.Begin?.Indicator);
-                    Log(pos.Node.Range.End.CurrentLine);
-                    Log(pos.Node.Range.End.Indicator);
-                }
-                else
-                {
-                    Log("Unknown location.");
-                }
+                LogPosition(error.Node);
             }
         }
 
@@ -462,5 +457,37 @@ namespace Plato.Compiler
 
         public IEnumerable<TypeDefinition> GetConcepts()
             => AllTypeAndLibraryDefinitions.Where(t => t.IsConcept());
+
+        public AstNode GetAstNode(Symbol symbol)
+        {
+            if (SymbolFactory.SymbolsToNodes.ContainsKey(symbol))
+                return SymbolFactory.SymbolsToNodes[symbol];
+            return null;
+        }
+
+        public void LogSymbolError(string message, Symbol symbol)
+        {
+            Logger.LogError(message);
+            var node = GetAstNode(symbol);
+            LogPosition(node);
+        }
+
+        public void LogPosition(ILocation location)
+        {
+            var range = location?.GetRange();
+
+            if (range != null)
+            {
+                Log(range.End.Input.File);
+                Log(range.Begin?.CurrentLine);
+                Log(range.Begin?.Indicator);
+                Log(range.End.CurrentLine);
+                Log(range.End.Indicator);
+            }
+            else
+            {
+                Log("Unknown location.");
+            }
+        }
     }
 }

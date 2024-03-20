@@ -5,13 +5,14 @@ using Ara3D.Parakeet;
 
 namespace Plato.AST
 {
-    public abstract class AstNode
+    public abstract class AstNode : ILocation
     {
         public ILocation Location { get; }
+        public ParserRange GetRange() => Location.GetRange();
         public virtual IEnumerable<AstNode> Children => Enumerable.Empty<AstNode>();
         public override string ToString() => $"({GetType().Name})";
         protected AstNode(ILocation location) => Location = location ?? NoLocation;
-        public static ILocation NoLocation = new Location();
+        public static readonly ILocation NoLocation = new Location();
     }
 
     public class AstLeaf : AstNode

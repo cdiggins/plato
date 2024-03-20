@@ -50,7 +50,6 @@ concept Array2D<T>
     At(xs: Self, column: Integer, row: Integer): T;
 }
 
-
 // Vectors are arrays of numerical types. 
 concept Vector
     inherits Array<Number>, Numerical, ScalarArithmetic, Interpolatable 

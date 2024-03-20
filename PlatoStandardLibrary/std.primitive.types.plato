@@ -79,6 +79,6 @@ type Function3<T0, T1, T2, TR>
 }
 
 // A function with four arguments 
-type Function3<T0, T1, T2, TR>
+type Function4<T0, T1, T2, T3, TR>
 {
 }

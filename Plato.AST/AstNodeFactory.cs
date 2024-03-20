@@ -207,7 +207,7 @@ namespace Plato.AST
                 vd,
                 new AstLoop(
                     forEach,
-                    ToIntrinsicInvocation("MoveNext", null),
+                    ToIntrinsicInvocation(forEach, "MoveNext", null),
                     ToAst(forEach.Statement)));
         }
 
