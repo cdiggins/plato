@@ -56,9 +56,9 @@
             symbolsTabPage = new TabPage();
             richTextBoxSymbols = new RichTextBox();
             semanticsTabPage = new TabPage();
+            richTextBoxSemantics = new RichTextBox();
             menuStrip1 = new MenuStrip();
             aboutPlatoToolStripMenuItem = new ToolStripMenuItem();
-            richTextBoxSemantics = new RichTextBox();
             ((System.ComponentModel.ISupportInitialize)mainSplitContainer).BeginInit();
             mainSplitContainer.Panel1.SuspendLayout();
             mainSplitContainer.Panel2.SuspendLayout();
@@ -179,6 +179,7 @@
             // richTextBoxConsole
             // 
             richTextBoxConsole.Dock = DockStyle.Fill;
+            richTextBoxConsole.Font = new Font("Consolas", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
             richTextBoxConsole.Location = new Point(3, 2);
             richTextBoxConsole.Margin = new Padding(3, 2, 3, 2);
             richTextBoxConsole.Name = "richTextBoxConsole";
@@ -415,6 +416,17 @@
             semanticsTabPage.Text = "Semantics";
             semanticsTabPage.UseVisualStyleBackColor = true;
             // 
+            // richTextBoxSemantics
+            // 
+            richTextBoxSemantics.Dock = DockStyle.Fill;
+            richTextBoxSemantics.Location = new Point(0, 0);
+            richTextBoxSemantics.Margin = new Padding(3, 2, 3, 2);
+            richTextBoxSemantics.Name = "richTextBoxSemantics";
+            richTextBoxSemantics.Size = new Size(363, 453);
+            richTextBoxSemantics.TabIndex = 4;
+            richTextBoxSemantics.Text = "";
+            richTextBoxSemantics.WordWrap = false;
+            // 
             // menuStrip1
             // 
             menuStrip1.ImageScalingSize = new Size(24, 24);
@@ -432,17 +444,6 @@
             aboutPlatoToolStripMenuItem.Size = new Size(94, 22);
             aboutPlatoToolStripMenuItem.Text = "About Plato ...";
             aboutPlatoToolStripMenuItem.Click += aboutPlatoToolStripMenuItem_Click;
-            // 
-            // richTextBoxSemantics
-            // 
-            richTextBoxSemantics.Dock = DockStyle.Fill;
-            richTextBoxSemantics.Location = new Point(0, 0);
-            richTextBoxSemantics.Margin = new Padding(3, 2, 3, 2);
-            richTextBoxSemantics.Name = "richTextBoxSemantics";
-            richTextBoxSemantics.Size = new Size(363, 453);
-            richTextBoxSemantics.TabIndex = 4;
-            richTextBoxSemantics.Text = "";
-            richTextBoxSemantics.WordWrap = false;
             // 
             // PlatoCodeViewerForm
             // 

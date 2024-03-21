@@ -45,7 +45,7 @@ namespace PlatoWinFormsEditor
 
             tabControlEditors.Selected += TabControlEditors_Selected;
             EditorChanged(CurrentEditor);
-
+            
             AddHandlers(richTextBoxLog);
             AddHandlers(richTextBoxConsole);
             AddHandlers(richTextBoxTokens);
@@ -61,9 +61,8 @@ namespace PlatoWinFormsEditor
             OnCompilationCompleted();
         }
 
-        public static Regex LineNumRegex = new Regex(@"Ln\:\s*(\d+)");
-        public static Regex RangeRegex = new Regex(@"\((\d+),(\d+),(\d+),(\d+)\)");
-
+        public static Regex LineNumRegex = new Regex(@"Line\:\s*(\d+)");
+        
         public void AddHandlers(RichTextBox textBox)
         {
             textBox.DetectUrls = false;
@@ -88,18 +87,31 @@ namespace PlatoWinFormsEditor
 
                         return;
                     }
-                    match = RangeRegex.Match(lineText);
-                    if (match.Success)
+
+                    var f = FileAndRange.Parse(lineText);
+                    if (f != null)
                     {
-                        Verifier.Assert(match.Groups.Count >= 5);
-                        if (!int.TryParse(match.Groups[1].Value, out var beginLine)) return;
-                        if (!int.TryParse(match.Groups[2].Value, out var beginCol)) return;
-                        if (!int.TryParse(match.Groups[3].Value, out var endLine)) return;
-                        if (!int.TryParse(match.Groups[4].Value, out var endCol)) return;
-                        GotoLine(beginLine, beginCol, endLine, endCol);
+                        GotoEditor(f.FilePath);
+                        GotoPosition(f.StartIndex, f.EndIndex);
                     }
                 }
             };
+        }
+
+        public void GotoEditor(FilePath fp)
+        {
+            if (fp == null) return;
+            if (!fp.Exists()) return;
+            foreach (TabPage tab in tabControlEditors.TabPages)
+            {
+                var editor = tab.Tag as Editor;
+                if (editor == null)
+                    return;
+                if (editor.FilePath.IsSameFile(fp))
+                {
+                    tabControlEditors.SelectedTab = tab;
+                }
+            }
         }
 
         public Editor CurrentEditor
@@ -108,17 +120,14 @@ namespace PlatoWinFormsEditor
         public RichTextBox CurrentEditBox
             => CurrentEditor?.InputEditor;
 
-        public void GotoLine(int beginLine, int beginCol, int endLine, int endCol)
+        public void GotoPosition(int startIndex, int endIndex)
         {
             // TODO: there is some stuff here that could go into a WinForms utility
             var editBox = CurrentEditBox;
             if (editBox == null) return;
-            if (beginLine < 0 || beginLine >= editBox.Lines.Length) return;
-            if (endLine < 0 || endLine >= editBox.Lines.Length) return;
-            var beginIndex = editBox.GetFirstCharIndexFromLine(beginLine) + beginCol;
-            var endIndex = editBox.GetFirstCharIndexFromLine(endLine) + endCol;
-            editBox.SelectionStart = beginIndex;
-            editBox.SelectionLength = endIndex - beginIndex;
+            if (endIndex < startIndex) endIndex = startIndex;
+            editBox.SelectionStart = startIndex;
+            editBox.SelectionLength = endIndex - startIndex;
             editBox.Focus();
             editBox.ScrollToCaret();
 
@@ -166,7 +175,16 @@ namespace PlatoWinFormsEditor
 
         public void OnLogMsg(string msg)
         {
-            richTextBoxConsole.AppendText(msg + Environment.NewLine);
+            var start = richTextBoxConsole.TextLength;
+            richTextBoxConsole.AppendText(msg);
+            var end = richTextBoxConsole.TextLength;
+            if (msg.ToLowerInvariant().Contains("error"))
+            {
+                richTextBoxConsole.Select(start, end - start);
+                richTextBoxConsole.SelectionColor = Color.Brown;
+            }
+            richTextBoxConsole.AppendText(Environment.NewLine);
+            
         }
 
         private void ComputeSplitterRatio()

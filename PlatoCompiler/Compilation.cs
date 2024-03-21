@@ -476,9 +476,10 @@ namespace Plato.Compiler
         {
             var range = location?.GetRange();
 
+            var fileAndRange = range.ToFileAndRange();
             if (range != null)
             {
-                Log(range.End.Input.File);
+                Log(fileAndRange.ToString());
                 Log(range.Begin?.CurrentLine);
                 Log(range.Begin?.Indicator);
                 Log(range.End.CurrentLine);
