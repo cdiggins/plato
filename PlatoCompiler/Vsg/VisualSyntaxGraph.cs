@@ -141,9 +141,6 @@ namespace Plato.Compiler.Vsg
                 case ParameterDefinition parameterSymbol:
                     return CreateNode($"{parameterSymbol.Name} as Function");
 
-                case PredefinedDefinition predefinedSymbol:
-                    return CreateNode(predefinedSymbol);
-
                 case VariableDefinition variableSymbol:
                     break;
             }
@@ -222,9 +219,6 @@ namespace Plato.Compiler.Vsg
             }
             return CreateNode(expr)?.MainOutput;
         }
-
-        public VsgNode CreateNode(PredefinedDefinition pds)
-            => CreateNode(pds.Name);
 
         public VsgNode CreateNode(Literal lit)
             => CreateNode(lit.Value.ToLiteralString());

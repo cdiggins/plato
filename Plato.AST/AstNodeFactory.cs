@@ -309,7 +309,8 @@ namespace Plato.AST
             if (expr.Expression.Nodes.Count == 1)
                 return new AstParenthesized(expr, ToAst(expr.Expression.Node));
 
-            return ToIntrinsicInvocation(expr, "Tuple", expr.Expression.Nodes.Select(ToAst).ToArray());
+            var arity = expr.Expression.Nodes.Count;
+            return ToIntrinsicInvocation(expr, $"Tuple{arity}", expr.Expression.Nodes.Select(ToAst).ToArray());
         }
 
         public static AstNode ToAst(this CstLeafExpression expr)

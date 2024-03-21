@@ -411,10 +411,6 @@ namespace Plato.Compiler.Types
                     r = Process(parenthesized);
                     break;
 
-                case PredefinedReference predefinedReference:
-                    r = ToIType(predefinedReference.Definition.Type);
-                    break;
-
                 case VariableReference variableReference:
                     r = ToIType(variableReference.Definition.Type);
                     break;
@@ -486,14 +482,6 @@ namespace Plato.Compiler.Types
                 return bestFunction.DeterminedReturnType;
             }
             
-            if (fc.Function is PredefinedReference pr)
-            {
-                if (pr.Definition.Name == "Tuple")
-                    return CreateTuple(argTypes);
-                
-                throw new Exception($"Unrecognized predefined definition {pr.Definition.Name}");
-            }
-
             if (fc.Function is ParameterReference paramRef)
             {
                 // Look at the declared parameter type. If there is none, we are going to create an 

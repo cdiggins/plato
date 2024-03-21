@@ -115,14 +115,14 @@ namespace Plato.CSharpWriter
         {
             switch (symbol)
             {
+                case TypeDefinition typeDefinition:
+                    return Write(typeDefinition);
                 case DefinitionSymbol definition:
                     return Write(definition);
                 case Expression expression:
                     return Write(expression);
                 case Statement statement:
                     return Write(statement);
-                case TypeDefinition typeDefinition:
-                    return Write(typeDefinition);
                 case TypeExpression typeExpression:
                     return Write(typeExpression);
                 default:
@@ -644,9 +644,6 @@ namespace Plato.CSharpWriter
 
                 case VariableDefinition variable:
                     return Write("var ").Write(variable.Name).Write(" = ").Write(variable.Value).WriteLine(";");
-
-                case PredefinedDefinition predefined:
-                    return Write(predefined.Name);
             }
 
             return this;

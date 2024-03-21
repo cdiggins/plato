@@ -9,6 +9,7 @@ namespace Plato.Compiler.Symbols
 {
     public abstract class DefinitionSymbol : Symbol
     {
+        // NOTE: type definitions, have no type expression. It gets circular and confusing. 
         public TypeExpression Type { get; }
 
         public override string Name { get; }
@@ -22,19 +23,6 @@ namespace Plato.Compiler.Symbols
         public override string ToString() => $"{GetType().Name}={Name}${Id}:{Type}";
 
         public abstract Reference ToReference();
-    }
-
-    public class PredefinedDefinition : DefinitionSymbol
-    {
-        public PredefinedDefinition(TypeExpression typeRef, string name)
-            : base(typeRef, name)
-        { }
-
-        public override Reference ToReference()
-            => new PredefinedReference(this);
-
-        public override IEnumerable<Symbol> GetChildSymbols()
-            => Enumerable.Empty<Symbol>();
     }
 
     public class FunctionDefinition : DefinitionSymbol, IFunction
@@ -100,7 +88,7 @@ namespace Plato.Compiler.Symbols
             => new[] { Type };
     }
 
-    public class TypeDefinition : Symbol
+    public class TypeDefinition : DefinitionSymbol
     {
         public TypeKind Kind { get; }
 
@@ -116,13 +104,11 @@ namespace Plato.Compiler.Symbols
         public List<TypeExpression> Implements { get; } = new List<TypeExpression>();
         public List<FunctionDefinition> CompilerGeneratedFunctions { get; } = new List<FunctionDefinition>();
 
-        public override string Name { get; }
-       
         public SelfType Self { get; }
 
         public TypeDefinition(TypeKind kind, string name)
+            : base(null, name)
         {
-            Name = name;
             Kind = kind;
             if (!this.IsTypeVariable())
                 Self = new SelfType();
@@ -172,6 +158,9 @@ namespace Plato.Compiler.Symbols
 
         public override string ToString()
             => $"{Name}_{Id}:{Kind}";
+
+        public override Reference ToReference()
+            => new TypeReference(this);
 
         public override IEnumerable<Symbol> GetChildSymbols()
             => Methods.Cast<Symbol>().Concat(Fields).Concat(TypeParameters).Concat(Inherits).Concat(Implements);

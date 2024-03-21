@@ -29,7 +29,6 @@ namespace Plato.Compiler.Symbols
 
         public List<TypeDefinition> TypeDefs { get; } = new List<TypeDefinition>();
 
-
         public T BindValue<T>(string name, T value) where T : Symbol
         {
             ValueBindingsScope = ValueBindingsScope.Bind(name, value);
@@ -90,8 +89,14 @@ namespace Plato.Compiler.Symbols
             var sym = ValueBindingsScope.GetValue(name);
             if (sym == null)
             {
-                LogError($"Could not find symbol {name}", node);
-                return null;
+                var td = GetTypeDefinition(name);
+                if (td == null)
+                {
+                    LogError($"Could not find symbol {name}", node);
+                    return null;
+                }
+
+                return td.ToReference();
             }
 
             if (sym is DefinitionSymbol def)

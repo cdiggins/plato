@@ -35,13 +35,13 @@ namespace Plato.Compiler.Symbols
         public override string ToString() => Name;
     }
 
-    public class PredefinedReference : Reference
+    public class TypeReference : Reference
     {
-        public PredefinedReference(PredefinedDefinition def)
+        public TypeReference(TypeDefinition def)
             : base(def)
         { }
 
-        public new PredefinedDefinition Definition => base.Definition as PredefinedDefinition;
+        public new TypeDefinition Definition => base.Definition as TypeDefinition;
     }
 
     public class VariableReference : Reference
