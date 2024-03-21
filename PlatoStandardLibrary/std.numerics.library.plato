@@ -3,6 +3,12 @@ library Numerical
     Magnitude(x: Real): Number
         => x.Value;
 
+    Inverse(x: Number): Number
+        => 1 / x;
+
+    Reciprocal(x: Number): Number
+        => x.Inverse;
+
     SquareRoot(x: Number): Number 
         => x.Pow(0.5);
 

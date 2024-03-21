@@ -25,7 +25,7 @@ library Angles
         => x / TwoPi;    
 
     ArcMinutes(x: Angle): Number
-        => x.Degress * 60;    
+        => x.Degrees * 60;    
 
     ArcSeconds(x: Angle): Number
         => x.ArcMinutes * 60;    

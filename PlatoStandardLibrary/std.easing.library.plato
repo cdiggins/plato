@@ -8,6 +8,9 @@ library Easings
     // This is an extremely good example of why Plato matters as a language. 
     // When we look at the source code of the two other implementations. 
     
+    BlendEaseFunc(p: Numerical, easeIn: Function1, easeOut: Function1): Numerical
+        => p < 0.5 ? 0.5 * easeIn(p * 2) : 0.5 * easeOut(p * 2 - 1) + 0.5;
+       
     InvertEaseFunc(p: Numerical, easeIn: Function1): Numerical 
         => 1 - easeIn(1 - p);
 
