@@ -98,7 +98,9 @@ namespace Plato.AST
             if (value is float f)
                 return new AstConstant(NoLocation, LiteralTypesEnum.Number, f);
             if (value is int n)
-                return new AstConstant(NoLocation, LiteralTypesEnum.Integer, n);
+                return new AstConstant(NoLocation, LiteralTypesEnum.Integer, (long)n);
+            if (value is long l)
+                return new AstConstant(NoLocation, LiteralTypesEnum.Integer, l);
             throw new Exception($"Not a recognized constant type {value}");
         }
 

@@ -32,4 +32,46 @@ library Angles
 
     Grad(x: Angle): Number
         => x.Turns * 400;    
+
+    //===
+    // https://en.wikipedia.org/wiki/Hyperbolic_functions
+
+    Sinh(x: Number): Number
+        => (x.Exp - (-x).Exp) / 2;
+
+    Cosh(x: Number): Number
+        => (x.Exp + (-x).Exp) / 2;
+
+    Tanh(x: Number): Number
+        => x.Sinh / x.Cosh;
+
+    Coth(x: Number): Number
+        => x.Cosh / x.Sinh;
+
+    Sech(x: Number): Number
+        => x.Cosh.Inverse;
+
+    Csch(x: Number): Number
+        => x.Sinh.Inverse;
+
+    //===
+    // https://en.wikipedia.org/wiki/Trigonometric_functions
+
+    Sec(x: Angle): Number
+        => x.Cos.Inverse;
+
+    Csc(x: Angle): Number
+        => x.Cos.Inverse;
+
+    Cot(x: Angle): Number
+        => x.Tan.Inverse;
+
+    //==
+    // Complex plane trig: https://en.wikipedia.org/wiki/Trigonometric_functions#In_the_complex_plane
+
+    Sin(x: Complex): Complex
+        => (x.Sin * y.Cosh, x.Cos * y.Sinh);
+
+    Cos(x: Complex): Complex
+        => (x.Cos * y.Cosh, x.Sin * y.Sinh);
 }

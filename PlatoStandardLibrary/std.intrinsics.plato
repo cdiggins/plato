@@ -9,8 +9,8 @@
 
     Pow(x: Number, y: Number): Number;
     Log(x: Number, y: Number): Number;
-    NaturalLog(x: Number): Number;
-    NaturalPower(x: Number): Number;
+    Ln(x: Number): Number;
+    Exp(x: Number): Number;  
 
     Add(x: Number, y: Number): Number;
     Subtract(x: Number, y: Number): Number;

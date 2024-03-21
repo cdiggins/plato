@@ -1,4 +1,14 @@
-   
+// TODO: complete, by looking at: 
+// https://github.com/cdiggins/plato/blob/main/PlatoStandardLibrary/legacy/math.funcs.plato.cs
+// Also Consider:   
+// https://www.codeproject.com/Articles/23087/Measurement-Unit-Conversion-Library
+// https://github.com/angularsen/UnitsNet 
+// https://stackoverflow.com/questions/348853/units-of-measure-in-c-sharp-almost
+// https://www.codeproject.com/Articles/413750/Units-of-Measure-Validator-for-Csharp
+// https://stackoverflow.com/questions/2791724/units-of-measurement-conversion-logic-in-c-sharp
+// https://digidemic.github.io/UnitOf/
+// https://github.com/martinmoene/PhysUnits-CT-Cpp11 - Overview of C++ libraries
+
 library Measures
 {
     Value(x: Measure): Number
@@ -110,36 +120,97 @@ library Measures
         => a.Value - b.Value;
 
     // https://en.wikipedia.org/wiki/Unit_of_length
-    Meters(value: Number): Length => value;
-    Kilometer(value: Number): Length => value * 1000;
-    Centimeters(value: Number): Length => value / 100;
-    Decimeters(value: Number): Length => value / 10;
-    Millimeters(value: Number): Length => value / 100;
-    Microns(value: Number): Length => value / 1000 / 1000;
-    Nanometers(value: Number): Length => value / 1000 / 1000 / 1000;
-    Inches(value: Number): Length => Feet(value / 12);
-    Feet(value: Number): Length => value / Constants.FeetPerMeter;
-    Yards(value: Number): Length => Feet(value * 3);
-    Miles(value: Number): Length => Feet(value * Constants.FeetPerMile);
-    Leagues(value: Number): Length => Miles(value * 3);
-    Lightyears(value: Number): Length => value * Constants.MetersPerLightyear;
-    AU(value: Number): Length => value * Constants.MetersPerAU;
-    HubbleLength(value: Number): Length => value * 14.4.Billion() * Lightyears(value);
+    Meters(value: Number): Length 
+        => value;
+    
+    Kilometer(value: Number): Length 
+        => value * 1000;
+    
+    Centimeters(value: Number): Length 
+        => value / 100;
+    
+    Decimeters(value: Number): Length 
+        => value / 10;
+    
+    Millimeters(value: Number): Length 
+        => value / 100;
+    
+    Microns(value: Number): Length 
+        => value / 1000 / 1000;
+    
+    Nanometers(value: Number): Length 
+        => value / 1000 / 1000 / 1000;
+    
+    Inches(value: Number): Length 
+        => (value / 12).Feet;
+    
+    Feet(value: Number): Length 
+        => value / Constants.FeetPerMeter;
+    
+    Yards(value: Number): Length 
+        => Feet(value * 3);
 
-    Kilometers(length: Length): Number => length.Meters / 1000;
-    Decimeters(length: Length): Number => length.Meters * 10;
-    Centimeters(length: Length): Number => length.Meters * 100;
-    Millimeters(length: Length): Number => length.Meters * 1000;
-    Microns(length: Length): Number => length.Millimeters * 1000;
-    Nanometers(length: Length): Number => length.Microns * 1000;
-    Inches(length: Length): Number => length.Feet * 12;
-    Feet(length: Length): Number => length * Constants.FeetPerMeter;
-    Yards(length: Length): Number => ToFeet(length) / 3;
-    Rods(length: Length): Number => ToChains(length) * 4;
-    Chains(length: Length): Number => ToYards(length) / 22;
-    Miles(length: Length): Number => length.Meters * Constants.FeetPerMeter / Constants.FeetPerMile;
-    League(length: Length): Number => ToMiles(length) / 3;
-    Lightyears(length: Length): Number => length / Constants.MetersPerLightyear;
-    AU(length: Length): Number => length / Constants.MetersPerAU;
-    HubbleLength(length: Length): Number => value / 1.HubbleLength();
+    Miles(value: Number): Length 
+        => Feet(value * Constants.FeetPerMile);
+    
+    Leagues(value: Number): Length 
+        => (value * 3).Miles;
+
+    Lightyears(value: Number): Length 
+        => value * Constants.MetersPerLightyear;
+    
+    AU(value: Number): Length 
+        => value * Constants.MetersPerAU;
+    
+    HubbleLength(value: Number): Length 
+        => value * 14.4.Billion * value.Lightyears;
+
+    Kilometers(length: Length): Number 
+        => length.Meters / 1000;
+    
+    Decimeters(length: Length): Number 
+        => length.Meters * 10;
+    
+    Centimeters(length: Length): Number 
+        => length.Meters * 100;
+    
+    Millimeters(length: Length): Number 
+        => length.Meters * 1000;
+    
+    Microns(length: Length): Number 
+        => length.Millimeters * 1000;
+    
+    Nanometers(length: Length): Number 
+        => length.Microns * 1000;
+    
+    Inches(length: Length): Number 
+        => length.Feet * 12;
+    
+    Feet(length: Length): Number 
+        => length * Constants.FeetPerMeter;
+    
+    Yards(length: Length): Number 
+        => length.Feet / 3;
+    
+    Rods(length: Length): Number 
+        => length.Chains * 4;
+
+    Chains(length: Length): Number 
+        => length.Yards / 22;
+    
+    Miles(length: Length): Number 
+        => length.Meters * FeetPerMeter / FeetPerMile;
+    
+    League(length: Length): Number 
+        => length.Miles / 3;
+
+    Lightyears(length: Length): Number 
+        => length.Meters / Constants.MetersPerLightyear;
+    
+    AU(length: Length): Number 
+        => length.Meters / Constants.MetersPerAU;
+    
+    HubbleLength(length: Length): Number 
+        => value.Meters / 1.HubbleLength.Meters;
 }
+    

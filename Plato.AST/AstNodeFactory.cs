@@ -290,7 +290,7 @@ namespace Plato.AST
 
             if (literal.IntegerLiteral.Present)
             {
-                return AstConstant.Create(int.Parse(literal.Text));
+                return AstConstant.Create(long.Parse(literal.Text));
             }
 
             if (literal.StringLiteral.Present)
