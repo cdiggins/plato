@@ -6,8 +6,26 @@ library Numerical
     SquareRoot(x: Number): Number 
         => x.Pow(0.5);
 
+    Sqrt(x: Number): Number
+        => x.SquareRoot;
+
     SmoothStep(x: Number): Number
         => x.Square * (3.0 - x.Twice);    
+
+    Square(x: Arithmetic): Arithmetic 
+        => x.Pow2;
+
+    Pow2(x: Arithmetic): Arithmetic 
+        => x * x;
+
+    Pow3(x: Arithmetic): Arithmetic 
+        => x.Pow2 * x;
+
+    Pow4(x: Arithmetic): Arithmetic 
+        => x.Pow3 * x;
+
+    Pow5(x: Arithmetic): Arithmetic 
+        => x.Pow4 * x;
 
     Square(x: Arithmetic): Arithmetic 
         => x * x;

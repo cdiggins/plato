@@ -118,7 +118,7 @@ type Deformed2D
     implements Geometry2D
 { 
     Source: Geometry2D;
-    Deformation: Function<Vector3D, Vector3D>;
+    Deformation: Function1<Vector3D, Vector3D>;
 }
 
 type RegularPolygon
@@ -264,7 +264,7 @@ type Deformed3D
     implements Geometry3D
 { 
     Source: Geometry2D;
-    Deformation: Function<Vector3D, Vector3D>;
+    Deformation: Function1<Vector3D, Vector3D>;
 }
 
 type PolygonTransformedTo3D

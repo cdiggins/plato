@@ -142,6 +142,7 @@ namespace Plato.AST
 
         public static AstTypeNode ToAst(this CstCompoundTypeExpr typeExpr)
         {
+            // TODO: I think this is wrong. I don't have a ValueTuple type
             return new AstTypeNode(typeExpr, new AstIdentifier(null, "ValueTuple"), typeExpr.TypeExpr.Nodes.Select(ToAst).ToArray());
         }
 
@@ -176,7 +177,7 @@ namespace Plato.AST
             => new AstTypeNode(type, type.Identifier.Node.ToAst());
 
         public static AstTypeNode ToAst(this CstTypeVar type) 
-            => new AstTypeNode(type, type.Identifier.Node.ToAst());
+            => new AstTypeNode(type, new AstIdentifier(type.Identifier.Node, "$" + type.Identifier.Node.Text));
 
         public static AstTypeNode ToAst(this CstCompoundOrSimpleTypeExpr compOrSimple)
         {

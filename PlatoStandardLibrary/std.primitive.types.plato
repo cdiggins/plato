@@ -82,3 +82,30 @@ type Function3<T0, T1, T2, TR>
 type Function4<T0, T1, T2, T3, TR>
 {
 }
+
+// A pair of integers 
+type Integer2
+    implements Array<Integer>
+{
+    A: Integer;
+    B: Integer;
+}
+
+// A tuple of 3 integers 
+type Integer3
+    implements Array<Integer>
+{
+    A: Integer;
+    B: Integer;
+    C: Integer;
+}
+
+// A tuple of 4 integers 
+type Integer4
+    implements Array<Integer>
+{
+    A: Integer;
+    B: Integer;
+    C: Integer;
+    D: Integer;
+}

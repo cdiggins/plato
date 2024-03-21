@@ -260,7 +260,7 @@ concept SolidPolyhedron
 concept TriMesh
     inherits Polyhedron
 {
-    Indices(x: Self): Array<Int3>;
+    Indices(x: Self): Array<Integer3>;
 }
 
 // A 3 dimensional shape consisting of quadrilateral faces. 
@@ -268,7 +268,7 @@ concept TriMesh
 concept QuadMesh
     inherits Polyhedron
 {
-    Indices(x: Self): Array<Int4>;
+    Indices(x: Self): Array<Integer4>;
 }
 
 concept Grid2D
