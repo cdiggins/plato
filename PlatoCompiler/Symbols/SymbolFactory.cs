@@ -37,8 +37,6 @@ namespace Plato.Compiler.Symbols
 
         public TypeDefinition BindType(TypeDefinition value)
         {
-            if (value.Kind == TypeKind.Library)
-                return null;
             return BindType(value.Name, value);
         }
 
@@ -295,13 +293,28 @@ namespace Plato.Compiler.Symbols
 
         public IEnumerable<TypeDefinition> CreateTypeDefs(IEnumerable<AstTypeDeclaration> types)
         {
-            // Typedefs and their methods are all at the top-level
+            // First, we bind the libraries 
             foreach (var astTypeDeclaration in types)
             {
-                var typeDef = new TypeDefinition(astTypeDeclaration.Kind, astTypeDeclaration.Name);
-                SymbolsToNodes.Add(typeDef, astTypeDeclaration);
-                BindType(typeDef);
-                TypeDefs.Add(typeDef);
+                if (astTypeDeclaration.Kind == TypeKind.Library)
+                {
+                    var typeDef = new TypeDefinition(astTypeDeclaration.Kind, astTypeDeclaration.Name);
+                    SymbolsToNodes.Add(typeDef, astTypeDeclaration);
+                    BindType(typeDef);
+                    TypeDefs.Add(typeDef);
+                }
+            }
+
+            // Now we bind the types (might be overlap in names)
+            foreach (var astTypeDeclaration in types)
+            {
+                if (astTypeDeclaration.Kind != TypeKind.Library)
+                {
+                    var typeDef = new TypeDefinition(astTypeDeclaration.Kind, astTypeDeclaration.Name);
+                    SymbolsToNodes.Add(typeDef, astTypeDeclaration);
+                    BindType(typeDef);
+                    TypeDefs.Add(typeDef);
+                }
             }
 
             foreach (var typeDef in TypeDefs)
@@ -475,14 +488,10 @@ namespace Plato.Compiler.Symbols
         }
 
         public TypeExpression GetTypeExpression(string name)
-        {
-            return GetTypeDefinition(name).ToTypeExpression();
-        }
+            => GetTypeDefinition(name).ToTypeExpression();
 
         public TypeExpression CreateTuple(params TypeExpression[] args)
-        {
-            return new TypeExpression(GetTypeDefinition($"Tuple{args.Length}"), args);
-        }
+            => new TypeExpression(GetTypeDefinition($"Tuple{args.Length}"), args);
 
         public TypeExpression CreateLambdaType(int args)
         {
