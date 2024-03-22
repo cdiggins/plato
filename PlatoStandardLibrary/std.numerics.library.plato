@@ -104,7 +104,10 @@ library Numerical
         => (x-y).Abs <= x.MultiplyEpsilon(y);
 
     AlmostZero(x: Number): Boolean
-        => x.Abs < Epsilon; 
+        => x.Abs < Epsilon;
+
+    AlmostZeroOrOne(x: Number): Boolean
+        => AlmostEqual(x, 0) || AlmostEqual(x, 1);
 
     Lerp(a: ScalarArithmetic, b: ScalarArithmetic, t: Number): ScalarArithmetic
         => a * t.FromOne + b * t;

@@ -211,6 +211,6 @@ library Measures
         => length.Meters / Constants.MetersPerAU;
     
     HubbleLength(length: Length): Number 
-        => value.Meters / 1.HubbleLength.Meters;
+        => length.Meters / 1.HubbleLength.Meters;
 }
     

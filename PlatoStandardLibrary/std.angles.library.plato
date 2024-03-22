@@ -69,9 +69,9 @@ library Angles
     //==
     // Complex plane trig: https://en.wikipedia.org/wiki/Trigonometric_functions#In_the_complex_plane
 
-    Sin(x: Complex): Complex
-        => (x.Sin * y.Cosh, x.Cos * y.Sinh);
+    Sin(c: Complex): Complex
+        => (c.X.Sin * c.Y.Cosh, c.X.Cos * c.Y.Sinh);
 
-    Cos(x: Complex): Complex
-        => (x.Cos * y.Cosh, x.Sin * y.Sinh);
+    Cos(c: Complex): Complex
+        => (c.X.Cos * c.Y.Cosh, c.X.Sin * c.Y.Sinh);
 }

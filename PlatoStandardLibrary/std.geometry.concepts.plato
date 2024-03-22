@@ -224,6 +224,13 @@ concept ImplicitVolume
 { }
 
 // Any geometrical concept defined by a finite number of points 
+concept Points2D
+    inherits Geometry2D
+{ 
+    Points(x: Self): Array<Point2D>;
+}
+
+// Any geometrical concept defined by a finite number of points 
 concept Points3D
     inherits Geometry3D
 { 
@@ -232,13 +239,13 @@ concept Points3D
 
 // https://en.wikipedia.org/wiki/B%C3%A9zier_surface
 concept BezierPatch
-    inherits Points3D, Surface3D, Array2D<Point3D>    
+    inherits Points3D, Surface, Array2D<Point3D>    
 { }
 
 // A grid of bezier patches  
 // https://en.wikipedia.org/wiki/B%C3%A9zier_surface
 concept BezierSurface
-    inherits Points3D, Surface3D, Array2D<BicubicBezierPatch>    
+    inherits Points3D, Surface, Array2D<BicubicBezierPatch>    
 { }
 
 // https://en.wikipedia.org/wiki/Polyhedron

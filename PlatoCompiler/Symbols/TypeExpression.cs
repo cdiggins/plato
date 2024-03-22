@@ -8,7 +8,7 @@ namespace Plato.Compiler.Symbols
 {
     public class TypeExpression : Symbol
     {
-        public override string Name => Definition?.Name ?? throw new Exception("Unresolved");
+        public override string Name => Definition?.Name ?? "_untyped_";
         public TypeDefinition Definition { get; }
         public IReadOnlyList<TypeExpression> TypeArgs { get; }
             

@@ -10,7 +10,7 @@ type Point2D
 }
 
 type Line2D
-    implements OpenPolygon2D
+    implements PolygonalChain2D
 {
     A: Point2D;
     B: Point2D;
@@ -147,7 +147,7 @@ type Point3D
 }
 
 type Line3D
-    implements OpenPolygon3D
+    implements PolygonalChain3D
 {
     A: Point3D;
     B: Point3D;
@@ -221,10 +221,9 @@ type BicubicBezierPatch
     K22: Point3D;
 }
 
-
 // https://en.wikipedia.org/wiki/B%C3%A9zier_curve    
 type CubicBezier2D
-    implements PointsGeometry2D
+    implements Points2D
 {
     A: Point2D;
     B: Point2D;
@@ -234,7 +233,7 @@ type CubicBezier2D
 
 // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
 type CubicBezier3D
-    implements PointsGeometry3D
+    implements Points3D
 {
     A: Point3D;
     B: Point3D;
@@ -244,7 +243,7 @@ type CubicBezier3D
 
 // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
 type QuadraticBezier2D
-    implements PointsGeometry2D
+    implements Points2D
 {
     A: Point2D;
     B: Point2D;
@@ -253,7 +252,7 @@ type QuadraticBezier2D
 
 // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
 type QuadraticBezier3D
-    implements PointsGeometry3D
+    implements Points3D
 {
     A: Point3D;
     B: Point3D;

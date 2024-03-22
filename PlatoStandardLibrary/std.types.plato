@@ -435,6 +435,18 @@ type NumberInterval
     Max: Number;
 }
 
+// Affine 2D transformation matrix 
+// https://en.wikipedia.org/wiki/Transformation_matrix#Affine_transformations
+type Matrix2D 
+    implements Value, Vector
+{
+    Column1: Vector3D;   
+    Column2: Vector3D;   
+    Column3: Vector3D;   
+}
+
+// Affine 3D transformation matrix 
+// https://en.wikipedia.org/wiki/Transformation_matrix#Affine_transformations
 // https://mindcontrol.org/~hplus/graphics/matrix-layout.html
 // Column major layout in memory 
 // Translation component is in Column4.XYZ    
