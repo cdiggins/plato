@@ -15,7 +15,7 @@ namespace Plato
 
         public static void Main(string[] args)
         {
-            var logger = Logger.Default;
+            var logger = Logger.Console;
 
             var currentFolder = PathUtil.GetCallerSourceFolder();
             var inputFolder = currentFolder.RelativeFolder("..", "PlatoStandardLibrary");
