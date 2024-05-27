@@ -1,0 +1,155 @@
+﻿// In Plato, the primitive types are assumed to exist, by name, by the compiler.
+// This file is used to define the functionality and member data contained in those primitives.   
+
+// A floating point representation of a real number 
+type Number 
+    implements Real, Numerical
+{ }
+
+// A positive or negative whole number 
+type Integer   
+    implements WholeNumber
+{ }
+
+// Text
+type String
+    implements Array<Character>, Comparable, Equatable
+{ }
+
+// Truth value (true or false)
+type Boolean 
+    implements BooleanOperations
+{ }
+
+// A single character of text 
+type Character
+    implements Value
+{ }
+
+// A run-time checked value. 
+type Dynamic
+{ }
+
+// A value that represents a type 
+type Type 
+{ }
+
+// Information contained in an exception 
+type Error
+{ }
+
+type Tuple2<T0, T1>
+{
+    X0: T0; X1: T1; 
+}
+
+type Tuple3<T0, T1, T2>
+{
+    X0: T0; X1: T1; X2: T2;  
+}
+
+type Tuple4<T0, T1, T2, T3>
+{
+    X0: T0; X1: T1; X2: T2; X3: T3;  
+}
+
+type Tuple5<T0, T1, T2, T3, T4>
+{
+    X0: T0; X1: T1; X2: T2; X3: T3; X4: T4;  
+}
+
+type Tuple6<T0, T1, T2, T3, T4, T5>
+{
+    X0: T0; X1: T1; X2: T2; X3: T3; X4: T4; X5: T5;  
+}
+
+type Tuple7<T0, T1, T2, T3, T4, T5, T6>
+{
+    X0: T0; X1: T1; X2: T2; X3: T3; X4: T4; X5: T5; X6: T6;  
+}
+
+type Tuple8<T0, T1, T2, T3, T4, T5, T6, T7>
+{
+    X0: T0; X1: T1; X2: T2; X3: T3; X4: T4; X5: T5; X6: T6; X7: T7;  
+}
+
+type Tuple9<T0, T1, T2, T3, T4, T5, T6, T7, T8>
+{
+    X0: T0; X1: T1; X2: T2; X3: T3; X4: T4; X5: T5; X6: T6; X7: T7; X8: T8;  
+}
+
+type Tuple10<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>
+{
+    X0: T0; X1: T1; X2: T2; X3: T3; X4: T4; X5: T5; X6: T6; X7: T7; X8: T8; X9: T9; 
+}
+
+type Function0<TR>
+{
+}
+
+type Function1<T0, TR>
+{
+}
+
+type Function2<T0, T1, TR>
+{
+}
+
+type Function3<T0, T1, T2, TR>
+{
+}
+
+type Function4<T0, T1, T2, T3, TR>
+{
+}
+
+type Function5<T0, T1, T2, T3, T4, TR>
+{
+}
+
+type Function6<T0, T1, T2, T3, T4, T5, TR>
+{
+}
+
+type Function7<T0, T1, T2, T3, T4, T5, T6, TR>
+{
+}
+
+type Function8<T0, T1, T2, T3, T4, T5, T6, T7, TR>
+{
+}
+
+type Function9<T0, T1, T2, T3, T4, T5, T6, T7, T8, TR>
+{
+}
+
+type Function10<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, TR>
+{
+}
+
+// A pair of integers 
+type Integer2
+    implements Array<Integer>
+{
+    A: Integer;
+    B: Integer;
+}
+
+// A tuple of 3 integers 
+type Integer3
+    implements Array<Integer>
+{
+    A: Integer;
+    B: Integer;
+    C: Integer;
+}
+
+// A tuple of 4 integers 
+type Integer4
+    implements Array<Integer>
+{
+    A: Integer;
+    B: Integer;
+    C: Integer;
+    D: Integer;
+}

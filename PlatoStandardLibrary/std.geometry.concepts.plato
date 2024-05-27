@@ -1,0 +1,335 @@
+﻿concept Bounded2D
+{
+    Bounds(x: Self): Bounds2D;
+}
+
+concept Bounded3D
+{
+    Bounds(x: Self): Bounds3D;
+}
+
+concept Transformable2D 
+{
+    Transform(x: Self, matrix: Matrix2D): Self;
+}
+
+concept Transformable3D 
+{
+    Transform(x: Self, matrix: Matrix3D): Self;
+}
+
+concept Deformable2D 
+{
+    Deform(x: Self, f: Function1<Vector2D, Vector2D>): Self;
+}
+
+concept OpenClosedShape
+{ 
+    Closed(x: Self): Boolean;
+}
+
+concept Deformable3D 
+    inherits Transformable3D
+{
+    Deform(x: Self, f: Function1<Vector3D, Vector3D>): Self;
+}
+
+// The set of all geometric objects: figures, shapes, points, fields, lines, and meshes. 
+concept Geometry 
+    inherits Interpolatable
+{ }
+
+// The set of all 2D geometric objects
+concept Geometry2D
+    inherits Deformable2D, Geometry
+{ }
+
+// The set of all 3D geometric objects
+concept Geometry3D
+    inherits Deformable3D, Geometry
+{ }
+
+concept GeometricSpace2D
+    inherits Geometry2D
+{ }
+
+concept GeometricSpace3D 
+    inherits Geometry3D 
+{ }
+
+concept Shape2D 
+    inherits Geometry2D 
+{ }
+
+concept Shape3D
+    inherits Geometry3D
+{ }
+
+//=== 
+// Open and closed shapes
+
+concept OpenShape2D 
+    inherits Geometry2D, OpenClosedShape
+{ 
+    Outline(x: Self): Curve2D;
+}
+
+concept ClosedShape2D 
+    inherits Geometry2D, OpenClosedShape
+{ 
+    Outline(x: Self): Curve2D;
+}
+
+concept OpenShape3D 
+    inherits Geometry3D, OpenClosedShape
+{ 
+    Surface(x: Self): Curve3D;
+}
+
+concept ClosedShape3D 
+    inherits Geometry3D, OpenClosedShape
+{ 
+    Surface(x: Self): Curve2D;
+}
+
+// A parametric geometry in any number of dimensions
+concept Procedural<TDomain, TRange>
+{
+    Eval(x: Self, amount: TDomain): TRange;
+}
+
+concept PointGeometry3D
+    inherits Geometry3D
+{
+    Points(x: Self): Array<Point3D>;
+}
+
+concept Curve<TRange> 
+    inherits Procedural<Unit, TRange>, OpenClosedShape
+{ 
+    Periodic(x: Self): Boolean;
+}
+
+// A 1 dimensional shape with a topological space of 1 dimensions
+// Basically a simple function 
+concept Curve1D 
+    inherits Curve<Number>
+{ }
+
+// A 2 dimensional shape with a topological space of 1 dimensions
+concept Curve2D
+    inherits Geometry2D, Curve<Point2D>
+{ }
+
+// A 3 dimensional shape with a topological space of 1 dimensions
+concept Curve3D
+    inherits Geometry3D, Curve<Point3D>
+{ }
+
+// Surfaces are 3 dimensional shapes with a topological space of 2 dimensions
+concept Surface
+    inherits Geometry3D 
+{ }
+
+// Parametric surfaces are shapes defined from two variables (U and V)
+// They may be periodic in 0 (e.g., plane), 1 (e.g., tube), or 2 dimensions (e.g., torus). 
+// https://en.wikipedia.org/wiki/Surface_(mathematics)
+concept ParametricSurface
+    inherits Procedural<UV, Point3D>, Surface 
+{
+    PeriodicU(x: Self): Boolean;
+    PeriodicV(x: Self): Boolean;
+}
+
+// Explicit surfaces are defined 
+concept ExplicitSurface 
+    inherits Procedural<UV, Number>, Surface
+{ }
+
+concept DistanceField<TDomain>
+    inherits Procedural<TDomain, Number>
+{ }
+
+// A Vector or Scalar field in 2-Dimensions
+// https://en.wikipedia.org/wiki/Vector_field
+concept Field2D<T>
+    inherits Geometry2D, Procedural<Point2D, T>
+{ }
+
+// A Vector or Scalar field in 3-Dimensions
+// https://en.wikipedia.org/wiki/Vector_field
+concept Field3D<T>
+    inherits Geometry3D, Procedural<Point3D, T>
+{ }
+
+concept ScalarField2D    
+    inherits Field2D<Number> 
+{ }
+
+concept ScalarField3D
+    inherits Field3D<Number>
+{ }
+
+concept DistanceField2D 
+    inherits ScalarField2D
+{ }
+
+concept DistanceField3D
+    inherits ScalarField3D
+{ }
+
+concept Vector3Field2D 
+    inherits Field2D<Vector3D> 
+{ }
+
+concept Vector4Field2D 
+    inherits Field2D<Vector4D> 
+{ }
+
+// A 3D field of 2D Vectors 
+concept Vector2Field3D 
+    inherits Field3D<Vector2D> 
+{ }
+    
+// A 3D field of 3D Vectors (e.g., colors without alpha, or force vectors)
+concept Vector3Field3D 
+    inherits Field3D<Vector3D> 
+{ }
+
+// A 3D field of 4D Vectors (e.g., colors with alpha, or rotations)
+concept Vector4Field3D 
+    inherits Field3D<Vector4D> 
+{ }
+
+// An implicit procedural requires an epsilon to be provided for comparison 
+// purposes. This provide the 'width' of an implicit curve, or depth of a surface. 
+concept ImplicitProcedural<TDomain>  
+{
+    Eval(x: Self, amount: TDomain, epsilon: TDomain): Boolean;
+}
+
+// An implicit surface, where we are either on the surface or not. 
+concept ImplicitSurface
+    inherits Surface, ImplicitProcedural<Point3D>
+{ }
+
+// An implicitly defined curve
+concept ImplicitCurve2D
+    inherits Geometry2D, ImplicitProcedural<Point2D>
+{ }
+
+// An implicit solid/volume, where we are either inside (true) or outside (false).
+concept ImplicitVolume
+    inherits Geometry3D, ImplicitProcedural<Point3D>
+{ }
+
+// Any geometrical concept defined by a finite number of points 
+concept Points2D
+    inherits Geometry2D
+{ 
+    Points(x: Self): Array<Point2D>;
+}
+
+// Any geometrical concept defined by a finite number of points 
+concept Points3D
+    inherits Geometry3D
+{ 
+    Points(x: Self): Array<Point3D>;
+}
+
+// https://en.wikipedia.org/wiki/B%C3%A9zier_surface
+concept BezierPatch
+    inherits Points3D, Surface, Array2D<Point3D>    
+{ }
+
+// A grid of bezier patches  
+// https://en.wikipedia.org/wiki/B%C3%A9zier_surface
+concept BezierSurface
+    inherits Points3D, Surface, Array2D<BicubicBezierPatch>    
+{ }
+
+// https://en.wikipedia.org/wiki/Polyhedron
+concept Polyhedron 
+    inherits Surface
+{
+    Indices(x: Self): Array<Array<Integer>>;
+}
+
+concept ConvexPolyhedron
+    inherits Polyhedron 
+{ }
+
+concept SolidPolyhedron
+    inherits Polyhedron 
+{ }
+
+// A 3 dimensional triangle mesh
+concept TriMesh
+    inherits Polyhedron
+{
+    Indices(x: Self): Array<Integer3>;
+}
+
+// A 3 dimensional shape consisting of quadrilateral faces. 
+// Quad meshes are easier to generate from UV functions.  
+concept QuadMesh
+    inherits Polyhedron
+{
+    Indices(x: Self): Array<Integer4>;
+}
+
+concept Grid2D
+    inherits Array2D<Point2D>
+{ }
+
+// Also known as quad strips. 
+concept QuadGrid
+    inherits Array2D<Point3D>
+{ 
+    ClosedX(x: Self): Boolean;
+    ClosedY(x: Self): Boolean;
+}
+
+// https://en.wikipedia.org/wiki/Polygonal_chain
+concept PolygonalChain2D
+    inherits Points2D, OpenClosedShape
+{ 
+}
+
+// https://en.wikipedia.org/wiki/Polygonal_chain
+// Also known as a a "PolyLine"
+// There are different interpretations of rate of change, so different curves can be defined from a chain.
+concept PolygonalChain3D
+    inherits Points3D, OpenClosedShape
+{ 
+}
+
+concept ClosedPolygonalChain2D
+    inherits PolygonalChain2D, ClosedShape2D
+{ 
+}
+
+concept ClosedPolygonalChain3D
+    inherits PolygonalChain3D
+{ 
+}
+
+concept Polygon2D
+    inherits PolygonalChain2D
+{
+}
+
+concept Polygon3D
+    inherits PolygonalChain3D
+{
+}
+
+concept RegularPolygon2D
+    inherits Polygon2D
+{ 
+}
+
+concept RegularPolygon3D
+    inherits Polygon3D
+{ 
+}

@@ -1,0 +1,132 @@
+library Numerical
+{
+    Magnitude(x: Real): Number
+        => x.Value;
+
+    Inverse(x: Number): Number
+        => 1 / x;
+
+    Reciprocal(x: Number): Number
+        => x.Inverse;
+
+    SquareRoot(x: Number): Number 
+        => x.Pow(0.5);
+
+    Sqrt(x: Number): Number
+        => x.SquareRoot;
+
+    SmoothStep(x: Number): Number
+        => x.Square * (3.0 - x.Twice);    
+
+    Square(x: Arithmetic): Arithmetic 
+        => x.Pow2;
+
+    Pow2(x: Arithmetic): Arithmetic 
+        => x * x;
+
+    Pow3(x: Arithmetic): Arithmetic 
+        => x.Pow2 * x;
+
+    Pow4(x: Arithmetic): Arithmetic 
+        => x.Pow3 * x;
+
+    Pow5(x: Arithmetic): Arithmetic 
+        => x.Pow4 * x;
+
+    Square(x: Arithmetic): Arithmetic 
+        => x * x;
+
+    ClampOne(x: Number): Number 
+        => x.Clamp(0.0, 1.0);
+
+    PlusOne(x: Numerical): Numerical 
+        => x + x.One;
+
+    MinusOne(x: Numerical): Numerical
+        => x - x.One;
+    
+    FromOne(x: Numerical): Numerical 
+        => x.One - x;
+
+    GtZ(x : Comparable): Boolean
+        => x > x.Zero;
+
+    LtZ(x : Comparable): Boolean
+        => x < x.Zero;
+
+    GtEqZ(x : Comparable): Boolean
+        => x >= x.Zero;
+
+    LtEqZ(x : Comparable): Boolean
+        => x <= x.Zero;
+
+    IsPositive(x: Comparable): Boolean
+        => x.GtEqZ;
+
+    IsNegative(x: Comparable): Boolean
+        => x.LtZ;
+
+    Sign(x: Number): Number 
+        => x.LtZ ? -x.One : x.GtZ ? x.One : x.Zero;
+
+    Abs(x: Number): Number 
+        => x.LtZ ? -x: x;
+    
+    Half(x: ScalarArithmetic): ScalarArithmetic
+        => x / 2.0;
+        
+    Quarter(x:ScalarArithmetic): ScalarArithmetic
+        => x / 4.0;
+    
+    Eighth(x:ScalarArithmetic): ScalarArithmetic
+        => x / 8.0;
+        
+    Tenth(x:ScalarArithmetic): ScalarArithmetic 
+        => x / 10.0;
+    
+    Twice(x:ScalarArithmetic): ScalarArithmetic 
+        => x * 2.0;
+    
+    TwoPi(): Number 
+        => Pi.Twice;
+    
+    Pi(): Number 
+        => 3.1415926535897;
+
+    Epsilon(): Number
+        => 1E-15;
+
+    MultiplyEpsilon(x: Number, y: Number): Number
+        => x.Abs.Greater(y.Abs) * Epsilon;
+
+    // https://stackoverflow.com/a/2411661
+    AlmostEqual(x: Number, y: Number): Boolean
+        => (x-y).Abs <= x.MultiplyEpsilon(y);
+
+    AlmostZero(x: Number): Boolean
+        => x.Abs < Epsilon;
+
+    AlmostZeroOrOne(x: Number): Boolean
+        => AlmostEqual(x, 0) || AlmostEqual(x, 1);
+
+    Lerp(a: ScalarArithmetic, b: ScalarArithmetic, t: Number): ScalarArithmetic
+        => a * t.FromOne + b * t;
+
+    Nearest(a: Number, b: Number, t: Number): Number
+        => t <= 0.5 ? a : b;
+        
+    Between(self: Comparable, min: Comparable, max: Comparable): Boolean
+        => self >= min && self <= max;
+
+    Percent(self: Number): Unit
+        => self / 100.0;
+
+    Percent(self: Unit): Number
+        => self.Value * 100.0;
+
+    InverseLerp(a: Number, b: Number, v: Number): Number
+        => (v - a) / (b - a);
+
+    Remap(aIn: Number, bIn: Number, aOut: Number, bOut: Number, v: Number): Number
+        => aOut.Lerp(bOut, aIn.InverseLerp(aOut, v));
+}

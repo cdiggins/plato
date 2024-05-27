@@ -1,0 +1,446 @@
+// A positive whole number 
+type Count
+    implements WholeNumber
+{ }
+
+// An integer type in the range of 0 to N is used to return the number of items 
+// https://en.wikipedia.org/wiki/Cardinal_number
+type Cardinal
+    implements WholeNumber
+{
+    Value: Integer;
+}
+
+// An integer type in the range of -1 to N and is used for indexing arrays and collections 
+// The -1 value represent "not present". 
+type Index
+    implements WholeNumber
+{
+    Value: Integer;
+}
+
+// A numerical type that is normally in the range of 0 to 1. 
+type Unit
+    implements Real, Numerical
+{
+    Value: Number;
+}
+
+// A value in the range of 0 to 1 representing a chance of probability
+type Probability
+    implements Real, Numerical
+{
+    Value: Number;
+}
+
+// A numerical type used to accurately represent rotations in 3D space
+// https://en.wikipedia.org/wiki/Quaternion
+type Quaternion
+    implements Value
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+    W: Number;
+}
+
+type Unit2D
+    implements Value
+{
+    X: Unit;
+    Y: Unit;
+}
+
+type Unit3D
+    implements Value
+{
+    X: Unit;
+    Y: Unit;
+    Z: Unit;
+}
+
+type Direction3D
+    implements Value
+{
+    Value: Unit3D;
+}
+
+type AxisAngle
+    implements Value
+{
+    Axis: Unit3D;
+    Angle: Angle;
+}
+
+type EulerAngles
+    implements Value
+{
+    Yaw: Angle;
+    Pitch: Angle;
+    Roll: Angle;
+}
+
+type Rotation3D
+    implements Value
+{
+    Quaternion: Quaternion;
+}
+
+type Vector2D
+    implements Vector
+{
+    X: Number;
+    Y: Number;
+}
+
+type Vector3D
+    implements Vector
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+}
+
+type Vector4D
+    implements Vector
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+    W: Number;
+}
+
+type Orientation3D
+    implements Value
+{
+    Value: Rotation3D;
+}
+
+type Pose2D
+    implements Value
+{
+    Position: Vector3D;
+    Orientation: Orientation3D;
+}
+
+type Pose3D
+    implements Value
+{
+    Position: Vector3D;
+    Orientation: Orientation3D;
+}
+
+type Transform3D
+    implements Value
+{
+    Translation: Vector3D;
+    Rotation: Rotation3D;
+    Scale: Vector3D;
+}
+
+type Transform2D
+    implements Value
+{
+    Translation: Vector2D;
+    Rotation: Angle;
+    Scale: Vector2D;
+}
+
+// Axis-Aligned bounding box 
+type Bounds2D
+    implements Interval<Point2D, Vector2D>
+{
+    Min: Point2D;
+    Max: Point2D;
+}
+
+// Axis-Aligned bounding box 
+type Bounds3D
+    implements Interval<Point3D, Vector3D>
+{
+    Min: Point3D;
+    Max: Point3D;
+}
+
+type Complex
+    implements Vector
+{
+    Real: Number;
+    Imaginary: Number;
+}
+
+
+// https://en.wikipedia.org/wiki/RGB_color_spaces
+type Color
+    implements Coordinate
+{
+    R: Unit;
+    G: Unit;
+    B: Unit;
+    A: Unit;
+}
+
+// https://en.wikipedia.org/wiki/CIELUV
+type ColorLUV
+    implements Coordinate
+{
+    Lightness: Unit;
+    U: Unit;
+    V: Unit;
+}
+
+// https://en.wikipedia.org/wiki/CIELAB_color_space
+type ColorLAB
+    implements Coordinate
+{
+    Lightness: Unit;
+    A: Number; 
+    B: Number;
+}
+
+// https://en.wikipedia.org/wiki/CIELAB_color_space#Cylindrical_model
+type ColorLCh
+    implements Coordinate
+{
+    Lightness: Unit;
+    ChromaHue: PolarCoordinate;
+}
+
+// https://en.wikipedia.org/wiki/HSL_and_HSV
+type ColorHSV
+    implements Coordinate
+{
+    Hue: Angle;
+    S: Unit;
+    V: Unit;
+}
+
+// https://en.wikipedia.org/wiki/HSL_and_HSV
+type ColorHSL
+    implements Coordinate
+{
+    Hue: Angle;
+    Saturation: Unit;
+    Luminance: Unit;
+}
+
+// https://en.wikipedia.org/wiki/YCbCr   
+type ColorYCbCr
+    implements Coordinate
+{
+    Y: Unit;
+    Cb: Unit;
+    Cr: Unit;
+}
+
+// https://en.wikipedia.org/wiki/Spherical_coordinate_system    
+type SphericalCoordinate
+    implements Coordinate
+{
+    Radius: Number;
+    Azimuth: Angle;
+    Polar: Angle;
+}
+
+// https://en.wikipedia.org/wiki/Polar_coordinate_system   
+type PolarCoordinate
+    implements Coordinate
+{
+    Radius: Number;
+    Angle: Angle;
+}
+
+// https://en.wikipedia.org/wiki/Log-polar_coordinates    
+type LogPolarCoordinate
+    implements Coordinate
+{
+    Rho: Number;
+    Azimuth: Angle;
+}
+
+// https://en.wikipedia.org/wiki/Cylindrical_coordinate_system    
+type CylindricalCoordinate
+    implements Coordinate
+{
+    RadialDistance: Number;
+    Azimuth: Angle;
+    Height: Number;
+}
+
+// https://en.wikipedia.org/wiki/Horizontal_coordinate_system    
+type HorizontalCoordinate
+    implements Coordinate
+{
+    Radius: Number;
+    Azimuth: Angle;
+    Height: Number;
+}
+
+// https://en.wikipedia.org/wiki/Geographic_coordinate_system    
+type GeoCoordinate
+    implements Coordinate
+{
+    Latitude: Angle;
+    Longitude: Angle;
+}
+
+// https://en.wikipedia.org/wiki/Geographic_coordinate_system    
+type GeoCoordinateWithAltitude
+    implements Coordinate
+{
+    Coordinate: GeoCoordinate;
+    Altitude: Number;
+}
+
+type Size2D
+    implements Value
+{
+    Width: Number;
+    Height: Number;
+}
+
+type Size3D
+    implements Value
+{
+    Width: Number;
+    Height: Number;
+    Depth: Number;
+}
+
+type Fraction
+    implements Value
+{
+    Numerator: Number;
+    Denominator: Number;
+}
+
+type Angle
+    implements Measure
+{
+    Radians: Number;
+}
+
+type Length
+    implements Measure
+{
+    Meters: Number;
+}
+
+type Mass
+    implements Measure
+{
+    Kilograms: Number;
+}
+
+type Temperature
+    implements Measure
+{
+    Celsius: Number;
+}
+
+type Time
+    implements Measure
+{
+    Seconds: Number;
+}
+
+type TimeRange
+    implements Interval<DateTime, Time>
+{
+    Min: DateTime;
+    Max: DateTime;
+}
+
+// Unix date-time representation: number of non-leap seconds elapsed since January 1st, 1970.
+// https://en.wikipedia.org/wiki/Unix_time
+type DateTime
+    implements Coordinate, AdditiveArithmetic<Time>
+{
+    Value: Number; 
+}
+
+type AnglePair
+    implements Interval<Angle, Angle>
+{
+    Min: Angle;
+    Max: Angle;
+}
+
+type NumberInterval
+    implements Interval<Number, Number>
+{
+    Min: Number;
+    Max: Number;
+}
+
+// Affine 2D transformation matrix 
+// https://en.wikipedia.org/wiki/Transformation_matrix#Affine_transformations
+type Matrix2D 
+    implements Value, Vector
+{
+    Column1: Vector3D;   
+    Column2: Vector3D;   
+    Column3: Vector3D;   
+}
+
+// Affine 3D transformation matrix 
+// https://en.wikipedia.org/wiki/Transformation_matrix#Affine_transformations
+// https://mindcontrol.org/~hplus/graphics/matrix-layout.html
+// Column major layout in memory 
+// Translation component is in Column4.XYZ    
+type Matrix3D
+    implements Value, Vector
+{
+    Column1: Vector4D;
+    Column2: Vector4D;
+    Column3: Vector4D;
+    Column4: Vector4D;
+}
+
+// https://en.wikipedia.org/wiki/UV_mapping    
+type UV
+    implements Vector
+{
+    U: Unit;
+    V: Unit;
+}
+
+type UVW
+    implements Vector
+{
+    U: Unit;
+    V: Unit;
+    W: Unit;
+}
+
+// https://en.wikipedia.org/wiki/Normal_distribution    
+type NormalDistribution
+    implements Value
+{
+    Mean: Number;
+    StandardDeviation: Number;
+}
+
+// https://en.wikipedia.org/wiki/Poisson_distribution    
+type PoissonDistribution
+    implements Value
+{
+    Expected: Number;
+    Occurrences: Integer;
+}
+
+// https://en.wikipedia.org/wiki/Bernoulli_distribution    
+type BernoulliDistribution
+    implements Value
+{
+    P: Probability;
+}
+
+// https://en.wikipedia.org/wiki/Binomial_distribution    
+type BinomialDistribution
+    implements Value
+{
+    Trials: Integer;
+    P: Probability;
+}
+

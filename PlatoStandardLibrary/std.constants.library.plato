@@ -1,0 +1,25 @@
+﻿library Constants
+{
+    Pi(): Number => 3.1415926535897;
+    TwoPi(): Number => Pi * 2;
+    HalfPi(): Number => Pi / 2;
+    FeetPerMeter(): Number => 3.280839895;
+    FeetPerMile(): Number => 5280;
+    MetersPerLightyear(): Number => 9.46073047258e+15;
+    MetersPerAU(): Number => 149597870691;
+    DaltonPerKilogram(): Number => 1.66053e-27;
+    PoundPerKilogram(): Number => 0.45359237;
+    PoundPerTon(): Number => 2000;
+    KilogramPerSolarMass(): Number => 1.9889200011446E+30;
+    JulianYearSeconds(): Number => 31557600;
+    GregorianYearDays(): Number => 365.2425;
+    Hundred(): Number => 100;  
+    Thousand(): Number => 1000;
+    Million(): Number => Thousand * Thousand;
+    Billion(): Number => Thousand * Million;
+    Trillion(): Number => Thousand * Billion;
+    OunceToGram(): Number => 28.349523125;
+    TroyOunceToGram(): Number => 31.1034768;
+    GrainToMilligram(): Number => 64.79891;
+    Mole(): Number => 6.02214076e+23;
+}

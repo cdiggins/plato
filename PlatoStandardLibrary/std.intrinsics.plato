@@ -1,0 +1,34 @@
+﻿library Intrinsics
+{
+    Cos(x: Angle): Number;
+    Sin(x: Angle): Number;
+    Tan(x: Angle): Number;
+    Acos(x: Number): Angle;
+    Asin(x: Number): Angle;
+    Atan(x: Number): Angle;    
+
+    Pow(x: Number, y: Number): Number;
+    Log(x: Number, y: Number): Number;
+    Ln(x: Number): Number;
+    Exp(x: Number): Number;  
+
+    Add(x: Number, y: Number): Number;
+    Subtract(x: Number, y: Number): Number;
+    Divide(x: Number, y: Number): Number;
+    Multiply(x: Number, y: Number): Number;
+    Modulo(x: Number, y: Number): Number;
+    Negative(x: Number): Number;
+
+    Add(x: Integer, y: Integer): Integer;
+    Subtract(x: Integer, y: Integer): Integer;
+    Divide(x: Integer, y: Integer): Integer;
+    Multiply(x: Integer, y: Integer): Integer;
+    Modulo(x: Integer, y: Integer): Integer;
+    Negative(x: Integer): Integer;
+
+    And(x: Boolean, y: Boolean): Boolean;
+    Or(x: Boolean, y: Boolean): Boolean;
+    Not(x: Boolean): Boolean;
+
+    ToNumber(x: Integer): Number;
+}

@@ -1,0 +1,356 @@
+
+// 2D Shapes
+// ==
+
+
+type Ray3D
+    implements Value
+{
+    Direction: Vector3D;
+    Position: Point3D;
+}
+
+type Ray2D
+    implements Value
+{
+    Direction: Vector2D;
+    Position: Point2D;
+}
+
+type Sphere
+    implements Value
+{
+    Center: Point3D;
+    Radius: Number;
+}
+
+type Plane
+    implements Value
+{
+    Normal: Unit3D;
+    D: Number;
+}
+
+type Triangle2D
+    implements Value, Vector
+{
+    A: Point2D;
+    B: Point2D;
+    C: Point2D;
+}
+
+type Triangle3D
+    implements Value, Vector
+{
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
+}
+
+type Quad2D
+    implements Value, Vector
+{
+    A: Point2D;
+    B: Point2D;
+    C: Point2D;
+    D: Point2D;
+}
+
+type Quad3D
+    implements Value, Vector
+{
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
+    D: Point3D;
+}
+
+type Point2D
+    implements Coordinate, AdditiveArithmetic<Vector2D>, Vector
+{
+    X: Number;
+    Y: Number;
+}
+
+type Line2D
+    implements PolygonalChain2D
+{
+    A: Point2D;
+    B: Point2D;
+}
+
+type Circle
+    implements ClosedShape2D
+{
+    Center: Point2D;
+    Radius: Number;
+}
+
+// https://en.wikipedia.org/wiki/Lens_(geometry)
+type Lens
+    implements ClosedShape2D
+{
+    A: Circle;
+    B: Circle;
+}
+
+type Pentagon
+    implements RegularPolygon2D
+{ 
+    Center: Point2D;
+    Radius: Number;
+}
+
+type Hexagon
+    implements RegularPolygon2D
+{ 
+    Center: Point2D;
+    Radius: Number;
+}
+
+type Rectangle
+    implements Polygon2D
+{
+    Center: Point2D;
+    Size: Size2D;
+}
+
+type Ring
+    implements ClosedShape2D
+{
+    Center: Point2D;
+    InnerRadius: Number;
+    OuterRadius: Number;
+}
+
+type Arc
+    implements OpenShape2D
+{
+    Angles: AnglePair;
+    Circle: Circle;
+}
+
+type Sector
+    implements ClosedShape2D
+{
+    Arc: Arc;
+}
+
+type Chord
+    implements ClosedShape2D
+{
+    Arc: Arc;
+}
+
+type Segment
+    implements ClosedShape2D
+{
+    Arc: Arc;
+}
+
+type Square
+    implements RegularPolygon2D
+{
+    Center: Point2D;
+    Side: Number;
+}
+
+type EquilateralTriangle
+    implements RegularPolygon2D
+{
+    Center: Point2D;
+    Side: Number;
+}
+
+type IsocelesTriangle
+    implements Polygon2D
+{
+    Center: Point2D;
+    Size2D: Number;
+}
+
+type Box2D
+    implements Shape2D
+{
+    Center: Point2D;
+    Rotation: Angle;
+    Extent: Size2D;
+}
+
+type Deformed2D
+    implements Geometry2D
+{ 
+    Source: Geometry2D;
+    Deformation: Function1<Vector3D, Vector3D>;
+}
+
+type RegularPolygon
+    implements RegularPolygon2D
+{
+    Center: Point2D;
+    Points: Count;
+}
+
+type RegularStarPolygon
+    implements Polygon2D
+{
+    Center: Point2D;
+    Points: Count;
+}
+
+// 3D Shapes
+// ==
+
+type Point3D
+    implements Coordinate, AdditiveArithmetic<Vector3D>, Vector
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+}
+
+type Line3D
+    implements PolygonalChain3D
+{
+    A: Point3D;
+    B: Point3D;
+}
+
+type Capsule
+    implements Shape3D
+{
+    Line: Line3D;
+    Radius: Number;
+}
+
+type Cylinder
+    implements Shape3D
+{
+    Line: Line3D;
+    Radius: Number;
+}
+
+type Cone
+    implements Shape3D
+{
+    Line: Line3D;
+    Radius: Number;
+}
+
+type Tube
+    implements Shape3D
+{
+    Line: Line3D;
+    InnerRadius: Number;
+    OuterRadius: Number;
+}
+
+type ConeSegment
+    implements Shape3D
+{
+    Line: Line3D;
+    Radius1: Number;
+    Radius2: Number;
+}
+
+type Box3D
+    implements Shape3D
+{
+    Center: Point3D;
+    Rotation: Rotation3D;
+    Extent: Size3D;
+}
+
+type BiquadraticBezierPatch
+    implements BezierPatch
+{
+    K00: Point3D;
+    K01: Point3D;
+    K10: Point3D;
+    K11: Point3D;
+}
+
+type BicubicBezierPatch
+    implements BezierPatch
+{
+    K00: Point3D;
+    K01: Point3D;
+    K02: Point3D;
+    K10: Point3D;
+    K11: Point3D;
+    K12: Point3D;
+    K20: Point3D;
+    K21: Point3D;
+    K22: Point3D;
+}
+
+// https://en.wikipedia.org/wiki/B%C3%A9zier_curve    
+type CubicBezier2D
+    implements Points2D
+{
+    A: Point2D;
+    B: Point2D;
+    C: Point2D;
+    D: Point2D;
+}   
+
+// https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+type CubicBezier3D
+    implements Points3D
+{
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
+    D: Point3D;
+}
+
+// https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+type QuadraticBezier2D
+    implements Points2D
+{
+    A: Point2D;
+    B: Point2D;
+    C: Point2D;
+}
+
+// https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+type QuadraticBezier3D
+    implements Points3D
+{
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
+}
+
+type Deformed3D
+    implements Geometry3D
+{ 
+    Source: Geometry2D;
+    Deformation: Function1<Vector3D, Vector3D>;
+}
+
+type PolygonTransformedTo3D
+    implements Polygon3D 
+{
+    Polygon: Polygon2D;
+    Transform: Pose3D;
+}
+
+//===
+// 4D Shapes 
+
+type Point4D
+    implements Coordinate, AdditiveArithmetic<Vector4D>, Vector
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+    W: Number;
+}
+
+type Line4D
+    implements Value
+{
+    A: Point4D;
+    B: Point4D;
+}

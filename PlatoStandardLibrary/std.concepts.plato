@@ -1,0 +1,157 @@
+// https://en.wikipedia.org/wiki/Top_type
+// This is the Top Type in Plato. All types provide this. 
+concept Any
+{ 
+    FieldNames(x: Self): Array<String>;     
+    FieldValues(x: Self): Array<Dynamic>;
+    TypeName(x: Self): String;
+}
+
+// Values is a read-only type which has any only Values as members
+concept Value 
+    inherits Any, Equatable
+{ 
+    Zero(x: Self): Self;
+    One(x: Self): Self;
+    MinValue(x: Self): Self;
+    MaxValue(x: Self): Self;
+}
+
+// A numerical type represents things like floats, vectors, complex numbers
+concept Numerical 
+    inherits Value, Arithmetic, Magnitudinal, Betweenable, Equatable
+{
+}
+
+// Represents a continuous one dimensional value.
+// https://en.wikipedia.org/wiki/Real_number
+// Most things that are Real, are also Numerical except for Measures.
+// You can't do basic arithmetic on measures. 
+concept Real
+    inherits Magnitudinal, Interpolatable, Betweenable, Equatable, Comparable, ScalarArithmetic
+{
+    Value(x: Self): Number;
+}
+
+// Arrays are immutable types which can be indexed. 
+// The "At" function maps to the indexing operator in C#. 
+concept Array<T>
+{
+    Count(xs: Self): Integer;
+    At(xs: Self, n: Integer): T;
+}
+
+// Extends the Array concept with rows and columns. 
+concept Array2D<T>
+    inherits Array<T>
+{ 
+    RowCount(xs: Self): Integer;
+    ColumnCount(xs: Self): Integer;
+    At(xs: Self, column: Integer, row: Integer): T;
+}
+
+// Vectors are arrays of numerical types. 
+concept Vector
+    inherits Array<Number>, Numerical, ScalarArithmetic, Interpolatable 
+{ }
+
+// A coordinate is a point in some cartesian space. This also includes 
+// a time line, so a DateTime is considered a Coordinate. 
+concept Coordinate
+    inherits Value, Interpolatable, Betweenable
+{ }
+
+// A measure is a numeric value with an intrinisic unit of measure 
+// which is implied by the implementing type. 
+// It resembles a numerical type except you cannot multiply or divide two measures without 
+// getting a new type. It does however support ScalarArithmetic 
+concept Measure
+    inherits Real
+{ }
+
+// Used for integer and cardinal types.
+concept WholeNumber 
+    inherits Numerical, Comparable
+{ }
+
+// Any type which has a numerical magnitude (like numbers, vectors, and measurements)
+concept Magnitudinal
+{
+    Magnitude(x: Self): Number;
+}
+
+// The compare function return a negative integer if x < y, a positive integer if x > y, or zero otherwise. 
+concept Comparable
+    inherits Value, Equatable
+{
+    Compare(x: Self, y: Self): Integer;
+}
+
+// Supported for when two values are equal 
+concept Equatable
+{
+    Equals(a: Self, b: Self): Boolean;
+    NotEquals(a: Self, b: Self): Boolean;
+}
+
+concept Arithmetic 
+    inherits AdditiveArithmetic<Self>, MultiplicativeArithmetic<Self>, 
+        AdditiveInverse, MultiplicativeInverse
+{ }
+
+concept AdditiveInverse
+{
+    Negative(self: Self): Self;
+}
+
+concept MultiplicativeInverse
+{
+    Reciprocal(self: Self): Self;
+}
+
+concept AdditiveArithmetic<T>
+{
+    Add(self: Self, other: T): Self;    
+    Subtract(self: Self, other: T): Self;
+}
+
+concept MultiplicativeArithmetic<T>
+{
+    Multiply(self: Self, other: T): Self;
+    Divide(self: Self, other: T): Self;    
+    Modulo(self: Self, other: T): Self;
+}
+
+concept ScalarArithmetic
+    inherits AdditiveArithmetic<Number>, MultiplicativeArithmetic<Number>
+{ }
+
+concept BooleanOperations
+{
+    And(a: Self, b: Self): Self;
+    Or(a: Self, b: Self): Self;    
+    Not(a: Self): Self;
+}
+
+concept Interval<TValue, TSize>    
+    where TValue: Interpolatable, 
+        TValue: Betweenable, 
+        TValue: AdditiveArithmetic<TSize>, 
+        TSize: ScalarArithmetic 
+    inherits Equatable, Value
+{
+    Min(x: Self): TValue;
+    Max(x: Self): TValue;
+    Size(x: Self): TSize;
+}
+    
+concept Interpolatable
+{
+    Lerp(a: Self, b: Self, amount: Number): Self;
+}
+
+concept Betweenable
+{
+    Between(x: Self, a: Self, b: Self): Boolean;
+    Clamp(x: Self, a: Self, b: Self): Self;
+}
