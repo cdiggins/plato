@@ -65,7 +65,8 @@ namespace Plato.Compiler
 
                 Log("Gathering function definitions");
                 FunctionDefinitions = TypeDefinitions.SelectMany(td => td.Functions)
-                    .Concat(LibraryDefinitionsByName.Values.SelectMany(ld => ld.Functions)).ToList();
+                    .Concat(LibraryDefinitionsByName.Values.SelectMany(ld => ld.Functions))
+                    .ToList();
                 Log($"Found {FunctionDefinitions.Count} functions");
 
                 Log("Checking semantics");
@@ -90,10 +91,9 @@ namespace Plato.Compiler
                     .Select(c => new ConcreteType(c, Libraries))
                     .ToList();
 
-                //Log("Reified types");
-                //WriteReifiedTypes();
+                Log("Reified types");
+                WriteReifiedTypes();
 
-                /*
                 Log("Creating function analysis");
                 var sb = new StringBuilder();
                 foreach (var fd in FunctionDefinitions)
@@ -124,7 +124,7 @@ namespace Plato.Compiler
                     sb.AppendLine(fgc.ToString());
 
                 Logger.Log(sb.ToString());                
-                */
+
                 /*
                 Log("Creating resolvers");
                 TypeResolvers = FunctionDefinitions
@@ -408,7 +408,6 @@ namespace Plato.Compiler
             var ca = new ConstraintAnalysis(fca.Function);
             ca.Output(sb, "        ");
         }
-
 
         public void OutputFunctionAnalysis()
         {

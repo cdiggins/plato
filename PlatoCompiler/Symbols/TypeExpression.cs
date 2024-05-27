@@ -14,6 +14,8 @@ namespace Plato.Compiler.Symbols
             
         public TypeExpression(TypeDefinition def, params TypeExpression[] args)
         {
+            if (def == null)
+                throw new ArgumentNullException(nameof(def));
             Definition = def;
             TypeArgs = args;
         }

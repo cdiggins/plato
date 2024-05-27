@@ -10,21 +10,42 @@ namespace Plato.Compiler.Types
     {
     }
 
+    /// <summary>
+    /// Right now a constraint is just a concept. 
+    /// </summary>
+    public class TypeConstraint
+    {
+        private IType Concept;
+
+        public TypeConstraint(IType concept)
+        {
+            Verifier.AssertNotNull(concept, nameof(concept));
+            Verifier.Assert(concept.IsConcept(), "TypeVariables can only have concepts as constraints");
+            Concept = concept;
+        }
+
+        public bool IsSatisfied(IType type)
+        {
+            return type.Implements(Concept);
+        }
+
+        public override string ToString()
+            => $"constraint={Concept}";
+    }
+
     public class TypeVariable : IType
     {
         public int Id { get; } = NextId++;
         public static int NextId;
-        public IType Constraint { get; }
+        public TypeConstraint[] Constraints { get; }
 
-        public TypeVariable(IType constraint)
+        public TypeVariable(params TypeConstraint[] constraints)
         {
-            Verifier.AssertNotNull(constraint, nameof(constraint));
-            Verifier.Assert(constraint.IsConcept(), "TypeVariables can only have concepts as constraints");
-            Constraint = constraint;
+            Constraints = constraints;
         }
 
         public override string ToString()
-            => $"${Id}:{Constraint}";
+            => $"${Id}:{Constraints.JoinStringsWithComma()}";
 
         public override int GetHashCode()
             => Id;

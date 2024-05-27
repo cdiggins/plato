@@ -62,25 +62,15 @@ namespace Plato.Compiler.Types
                 // For now, we are only really worried about functions.
                 // And I think we can just look at how things are called. 
 
-                if (p.Type.Name == "Function")
-                {
-                    var n = ComputeCardinalityOfFunction(p, function.Body);
-                    var f = CreateFunctionType(n);
-                    ParameterToTypeLookup.Add(p, f);
-                    pTypes.Add(f);
-                }
-                else
-                {
-                    var pt = ToIType(p.Type);
+                var pt = ToIType(p.Type);
 
-                    if (p.Type.Definition.IsConcept())
-                    {
-                        pt = GenerateTypeVariable(pt);
-                    }
-                    
-                    ParameterToTypeLookup.Add(p, pt);
-                    pTypes.Add(pt);
+                if (p.Type.Definition.IsConcept())
+                {
+                    pt = GenerateTypeVariable(pt);
                 }
+                
+                ParameterToTypeLookup.Add(p, pt);
+                pTypes.Add(pt);
             }
 
             if (Function.ReturnType.Name.StartsWith("Function"))
@@ -107,17 +97,13 @@ namespace Plato.Compiler.Types
         public TypeList ToTypeList(IType first, IEnumerable<IType> rest)
             => new TypeList(rest.Prepend(first).ToList());
 
-        public TypeList CreateFunctionType(IEnumerable<IType> args, IType returnType)
-            => ToTypeList(ToSimpleType("Function"), args.Append(returnType));
+        public TypeList CreateFunctionType(IReadOnlyList<IType> args, IType returnType)
+            =>  args.Count > 10 
+                ? throw new NotImplementedException("Only functions up to 10 arguments are supported, if you want more update this function and std.primitives.types.plato")
+                : ToTypeList(ToSimpleType($"Function{args.Count}"), args.Append(returnType));
 
         public IType CreateFunctionType(int n)
-            => CreateFunctionType(Enumerable.Range(0, n).Select(_ => GenerateUnconstrainedTypeVariable()), GenerateUnconstrainedTypeVariable());
-
-        // TODO: I am confident that this will fail. When referring to a type, there might be references to type parameters .
-        public bool IsTypeExpressionComplete(TypeExpression tes) 
-            => tes.TypeArgs.Count == tes.Definition.TypeParameters.Count
-            && !tes.Definition.IsTypeVariable()
-            && tes.TypeArgs.All(IsTypeExpressionComplete);
+            => CreateFunctionType(Enumerable.Range(0, n).Select(_ => GenerateTypeVariable()).ToList(), GenerateTypeVariable());
 
         public IType ToSimpleType(string name)
             => ToSimpleType(Compilation.GetTypeDefinition(name));
@@ -128,8 +114,8 @@ namespace Plato.Compiler.Types
                 : new TypeConstant(td);
 
         public IType ToTypeVariable(TypeParameterDefinition tpd)
-            => throw new NotImplementedException();
-        //=> TypeParameterToTypeLookup.TryGetValue(tpd, out var r)  ? r : GenerateTypeVariable(tpd.Constraint);
+            => TypeParameterToTypeLookup.TryGetValue(tpd, out var r)  
+                ? r : GenerateTypeVariable(tpd.Constraints.Select(ToIType).ToArray());
 
         public IType ToTypeList(TypeExpression expr)
         {
@@ -194,60 +180,37 @@ namespace Plato.Compiler.Types
             {
                 throw new Exception("Libraries cannot be variables");
             }
+
+            if (tes.Definition.IsTypeVariable())
+            {
+                return GenerateTypeVariable();
+            }
             
             throw new Exception($"Unrecognized type expression {tes}");
         }
 
-        public TypeVariable GenerateTypeVariable(IType constraint)
+        public TypeVariable GenerateTypeVariable(IType constraintType)
         {
-            constraint = constraint ?? ToSimpleType("Any");
-            var r = new TypeVariable(constraint);
-            Variables.Add(r);
-            return r;
+            return GenerateTypeVariable(new[] { constraintType });
         }
 
-        public TypeVariable GenerateUnconstrainedTypeVariable()
+        public TypeVariable GenerateTypeVariable(IType[] constraintTypes)
         {
-            return GenerateTypeVariable(null);
+            return GenerateTypeVariable(constraintTypes.Select(t => new TypeConstraint(t)).ToArray());
+        }
+
+        public TypeVariable GenerateTypeVariable(params TypeConstraint[] typeConstraints)
+        {
+            var r = new TypeVariable(typeConstraints);
+            Variables.Add(r);
+            return r;
         }
 
         public TypeVariable GenerateConstrainedTypeVariable(TypeExpression concept)
         {
             return GenerateTypeVariable(concept != null ? ToIType(concept) : null);
         }
-
-        public int ComputeCardinalityOfFunction(ParameterDefinition pd, Symbol body)
-        {
-            throw new NotImplementedException();
-            /*
-            Verifier.Assert(pd.Type.Name == "Function");
-            var r = -1;
-            foreach (var fc in body.GetExpressionTree().OfType<FunctionCall>())
-            {
-                if (fc.Function is ParameterReference pr)
-                {
-                    if (pr.Definition.Equals(pd))
-                    {
-                        if (r < 0)
-                        {
-                            r = fc.Args.Count;
-                        }
-
-                        if (r != fc.Args.Count)
-                        {
-                            throw new Exception($"Inconsistent cardinality of function call to {pd} expected {r} at {fc}");
-                        }
-                    }
-                }
-            }
-
-            if (r < 0)
-                throw new Exception($"Unable to determine cardinality of function {pd}, it never appears to be called");
-            
-            return r;
-            */
-        }
-
+       
         public string ParameterString(ParameterDefinition pd)
         {
             return $"{pd.Name}: {ParameterToTypeLookup[pd]}";
@@ -344,11 +307,9 @@ namespace Plato.Compiler.Types
             {
                 IsProcessing = true;
 
-                if (Function.Body != null)
+                if (Function.Body is Expression expr)
                 {
-                    throw new NotImplementedException();
-                    //if (Function.OwnerType.IsConcrete() || Function.OwnerType.IsLibrary())
-                    //    Process(Function.Body);
+                    Process(expr);
                 }
             }
             finally
@@ -392,7 +353,7 @@ namespace Plato.Compiler.Types
                     break;
                     
                 case FunctionGroupReference functionGroupReference:
-                    r = ToSimpleType("Function");
+                    r = ToSimpleType("Any");
                     break;
 
                 case Lambda lambda:
@@ -413,6 +374,10 @@ namespace Plato.Compiler.Types
 
                 case VariableReference variableReference:
                     r = ToIType(variableReference.Definition.Type);
+                    break;
+
+                case TypeReference typeReference:
+                    r = ToSimpleType("Type");
                     break;
 
                 case Reference reference:
@@ -448,7 +413,7 @@ namespace Plato.Compiler.Types
             }
 
             if (argType is TypeList typeListA && paramType is TypeList typeListB)
-            {
+            {   
                 for (var i=0; i < Math.Min(typeListA.Children.Count, typeListB.Children.Count); ++i)
                     GenerateArgConstraint(typeListA.Children[i], typeListB.Children[i]);
             }
@@ -476,7 +441,7 @@ namespace Plato.Compiler.Types
 
                 // TODO: log this
                 if (bestFunction == null)
-                    return GenerateUnconstrainedTypeVariable();
+                    return GenerateTypeVariable();
 
                 GenerateCallerConstraint(bestFunction, argTypes);
                 return bestFunction.DeterminedReturnType;
@@ -490,16 +455,21 @@ namespace Plato.Compiler.Types
                 // TODO: this should probably be a type list, with a type-variable for each parameter.
                 // Accepting the fact that each type-variable can be cast from the appropriate argument. 
                 if (tmp == null) 
-                    return GenerateUnconstrainedTypeVariable();
+                    return GenerateTypeVariable();
 
                 var ret = tmp.GetFunctionReturnType();
                 if (ret != null)
                     return ret;
 
                 // This might just be "Function" without more information. 
-                return GenerateUnconstrainedTypeVariable();
+                return GenerateTypeVariable();
 
                 // throw new Exception($"Parameter had a type {paramRef.Type}, but it was not the correct type");
+            }
+
+            if (fc.Function is TypeReference typeRef)
+            {
+                return ToIType(typeRef.Definition);
             }
             
             throw new NotImplementedException();

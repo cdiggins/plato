@@ -137,6 +137,9 @@ namespace Plato.Compiler.Types
         /// </summary>
         public int ArgumentFit(IType typeArgument, IType typeParameter)
         {
+            // TODO: 
+            return 0;
+            /*
             if (typeArgument == null)
                 return NoFit;
 
@@ -168,7 +171,7 @@ namespace Plato.Compiler.Types
                 if (typeArgument.IsConcrete() || typeArgument.IsPrimitive())
                 {
                     // Check that the type argument implements all of the constraints of the type variable
-                    if (!typeArgument.Implements(tv.Constraint))
+                    if (!tv.Constraints.All(constraint => !typeArgument.Implements(tv.Constraint)))
                         return DoesntMatchDeclaredConstraintFit;
 
                     // All of the declared constraints are satisfied.
@@ -239,6 +242,7 @@ namespace Plato.Compiler.Types
             }
 
             throw new InvalidOperationException("Should not be reachable");
+            */
         }
     }
 }

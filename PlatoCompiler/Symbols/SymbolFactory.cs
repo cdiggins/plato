@@ -408,6 +408,10 @@ namespace Plato.Compiler.Symbols
                     }
 
                     var body = Resolve(location.Body);
+                    if (body == null && location.Body != null)
+                    {
+                        throw new Exception("Unexpected missing body");
+                    }
                     var f = new FunctionDefinition(m.Name, typeDef, m.Type, body, list.ToArray());
                     Debug.Assert(m.Function == null);
                     m.Function = f;
@@ -491,7 +495,9 @@ namespace Plato.Compiler.Symbols
             => GetTypeDefinition(name).ToTypeExpression();
 
         public TypeExpression CreateTuple(params TypeExpression[] args)
-            => new TypeExpression(GetTypeDefinition($"Tuple{args.Length}"), args);
+            => args.Length > 10 
+                ? throw new Exception("Only tuples up to 10 fields are supported, update here and 'std.primitive.types.plato' if you want more")
+                : new TypeExpression(GetTypeDefinition($"Tuple{args.Length}"), args);
 
         public TypeExpression CreateLambdaType(int args)
         {

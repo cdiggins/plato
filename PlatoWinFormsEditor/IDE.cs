@@ -80,5 +80,8 @@ public class IDE
         SymbolsString = Compilation.Symbols.Select(sym => $"{sym.Name} {sym.Id}").JoinStringsWithNewLine();
         SymbolErrorsString = Compilation.SymbolFactory.Errors.Select(e => $"{e.Message} at {e.Node}").JoinStringsWithNewLine();
         SemanticDiagnosticsString = Compilation.Diagnostics.JoinStringsWithNewLine();
+
+        //Compilation.OutputFunctionAnalysis();
+        Compilation.OutputFunctionCallAnalysis();
     }
 }
