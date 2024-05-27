@@ -4,12 +4,6 @@ using Plato.Compiler.Symbols;
 
 namespace Plato.Compiler.Types
 {
-    /// <summary>
-    /// TODO: I may need to update this so that it tells us more about the process.
-    /// And it might be useful to tell us about the kinds of casts that are required,
-    /// or the constraints that are created. For example: when passing a type-variable
-    /// to a concrete type. 
-    /// </summary>
     public class FunctionGroupCallResolution
     {                                                                                                                                                                                                                                                                                                                                                                                                                                                   
         public FunctionAnalysis Context { get; }
@@ -40,6 +34,7 @@ namespace Plato.Compiler.Types
 
             BestFunctions = CallableFunctions;
 
+            /*
             if (BestFunctions.Count > 0)
             {
                 BestFunctions = CallableFunctions
@@ -52,6 +47,7 @@ namespace Plato.Compiler.Types
                     .OrderBy(g => g.Key)
                     .First().ToList();
             }
+            */
 
             DistinctReturnTypes = BestFunctions
                 .Select(fca => fca.DeterminedReturnType)

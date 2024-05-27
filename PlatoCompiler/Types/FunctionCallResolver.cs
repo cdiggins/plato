@@ -185,10 +185,7 @@ namespace Plato.Compiler.Types
                     // TODO: maybe I could check against that constraints declared for the type variable? 
                     return 20;
                 }
-
-                if (at.Definition.IsPrimitive())
-                    return 0;
-
+                
                 throw new Exception($"Expected argument to be concrete type, concept, primitive, or type variable");
             }
 
@@ -226,16 +223,6 @@ namespace Plato.Compiler.Types
             {
                 // TODO: create a constraint 
                 return 30; 
-            }
-
-            // When expecting primitives, only a primitive will 
-            if (pt.Definition.IsPrimitive())
-            {
-                // They aren't exact types.
-                if (at.Definition.Equals(pt.Definition))
-                    return 50;
-
-                return 0;
             }
 
             throw new Exception($"Unsupported parameter type {pt}");

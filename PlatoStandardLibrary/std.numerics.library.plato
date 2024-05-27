@@ -36,8 +36,8 @@ library Numerical
     Square(x: Arithmetic): Arithmetic 
         => x * x;
 
-    ClampOne(x: Number): Number 
-        => x.Clamp(0.0, 1.0);
+    ClampOne(x: Numerical): Numerical 
+        => x.Clamp(x.Zero, x.One);
 
     PlusOne(x: Numerical): Numerical 
         => x + x.One;
@@ -66,10 +66,10 @@ library Numerical
     IsNegative(x: Comparable): Boolean
         => x.LtZ;
 
-    Sign(x: Number): Number 
-        => x.LtZ ? -x.One : x.GtZ ? x.One : x.Zero;
+    Sign(x: Numerical): Integer
+        => x.LtZ ? -1 : x.GtZ ? 1 : 0;
 
-    Abs(x: Number): Number 
+    Abs(x: Numerical): Numerical 
         => x.LtZ ? -x: x;
     
     Half(x: ScalarArithmetic): ScalarArithmetic

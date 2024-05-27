@@ -15,10 +15,7 @@ namespace Plato.Compiler.Types
             => ts.Kind == TypeKind.Concept;
 
         public static bool IsConcrete(this TypeDefinition ts)
-            => ts.Kind == TypeKind.ConcreteType;
-
-        public static bool IsPrimitive(this TypeDefinition ts)
-            => ts.Kind == TypeKind.Primitive;
+            => ts.Kind == TypeKind.ConcreteType || ts.Kind == TypeKind.Primitive;
 
         public static bool IsLibrary(this TypeDefinition ts)
             => ts.Kind == TypeKind.Library;

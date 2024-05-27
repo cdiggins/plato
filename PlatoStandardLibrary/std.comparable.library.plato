@@ -1,0 +1,29 @@
+library Comparable
+{
+    Clamp(v: Comparable, a: Comparable, b: Comparable): Comparable
+        => v.Greater(a).Lesser(b);
+
+    Equals(a: Comparable, b: Comparable): Boolean 
+        => a.Compare(b) == 0;
+    
+    NotEquals(a: Comparable, b: Comparable): Boolean 
+        => a.Compare(b) != 0;
+    
+    LessThan(a: Comparable, b: Comparable): Boolean 
+        => a.Compare(b) < 0;
+    
+    LessThanOrEquals(a: Comparable, b: Comparable): Boolean
+        => a.Compare(b) <= 0;
+    
+    GreaterThan(a: Comparable, b: Comparable): Boolean 
+        => a.Compare(b) > 0;
+    
+    GreaterThanOrEquals(a: Comparable, b: Comparable): Boolean 
+        => a.Compare(b) >= 0;
+       
+    Lesser(a: Comparable, b: Comparable): Comparable 
+        => a <= b ? a : b;
+    
+    Greater(a: Comparable, b: Comparable): Comparable 
+        => a >= b ? a : b;
+}

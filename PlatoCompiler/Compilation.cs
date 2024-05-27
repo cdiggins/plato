@@ -399,14 +399,12 @@ namespace Plato.Compiler
         public void OutputFunctionCallAnalysis(StringBuilder sb, FunctionCallAnalysis fca)
         {
             sb.AppendLine($"    Function = {fca.Function.Signature}");
-            //sb.AppendLine($"    Callable = {fca.Callable}");
-            //sb.AppendLine($"    Message = {fca.Message}");
-            sb.AppendLine($"    First Score = {fca.FirstScore}");
-            sb.AppendLine($"    Final Score = {fca.FinalScore}");
-            sb.AppendLine($"    Scores = {string.Join(", ", fca.Scores)}");
-
-            var ca = new ConstraintAnalysis(fca.Function);
-            ca.Output(sb, "        ");
+            sb.AppendLine($"    Callable = {fca.Callable}, Arity Matches = {fca.ArityMatches}, # Concrete type = {fca.NumConcreteTypes}");
+            if (fca.ArityMatches)
+            {
+                for (var i = 0; i < fca.Arguments.Count; ++i)
+                    sb.AppendLine($"      Argument {i} = {fca.ArgDetails(i)}");
+            }
         }
 
         public void OutputFunctionAnalysis()
@@ -429,20 +427,20 @@ namespace Plato.Compiler
 
         public void OutputFunctionCallAnalysis()
         {
-            var results = FunctionGroupCalls.Values.Where(fgc => fgc.DistinctReturnTypes.Count != 1).ToList();
+            var results = FunctionGroupCalls.Values.Where(fgc => fgc.CallableFunctions.Count != 1).ToList();
+            //var results = FunctionGroupCalls.Values.ToList();
             var sb = new StringBuilder();
 
             var i = 0;
-            sb.AppendLine($"Function group call analysis");
+            sb.AppendLine($"Function call analysis");
             foreach (var fgc in results)
             {
                 sb.AppendLine($"{i++}.");
                 sb.AppendLine($"  Callsite: {fgc.Callsite}");
                 sb.AppendLine($"  Args: {fgc.ArgString}");
-                sb.AppendLine($"  results: {string.Join(", ", fgc.DistinctReturnTypes)}");
-                sb.AppendLine($"  All functions count: {fgc.Functions.Count}");
+                sb.AppendLine($"  Possible Return Types: {string.Join(", ", fgc.DistinctReturnTypes)}");
                 sb.AppendLine($"  Callable function count: {fgc.CallableFunctions.Count}");
-                sb.AppendLine($"  Best function count: {fgc.BestFunctions.Count}");
+                //sb.AppendLine($"  Best function count: {fgc.BestFunctions.Count}");
                 foreach (var f in fgc.Functions)
                     OutputFunctionCallAnalysis(sb, f);
             }

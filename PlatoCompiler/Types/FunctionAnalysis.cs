@@ -10,9 +10,6 @@ using Tuple = Plato.Compiler.Symbols.Tuple;
 
 namespace Plato.Compiler.Types
 {
-    /// <summary>
-    /// The function analysis is a place-holder for all of the information. 
-    /// </summary>
     public class FunctionAnalysis
     {
         public List<TypeVariable> Variables { get; } = new List<TypeVariable>();
@@ -58,10 +55,6 @@ namespace Plato.Compiler.Types
             var pTypes  = new List<IType>();
             foreach (var p in function.Parameters)
             {
-                // Try to figure out the cardinality of each parameter. 
-                // For now, we are only really worried about functions.
-                // And I think we can just look at how things are called. 
-
                 var pt = ToIType(p.Type);
 
                 if (p.Type.Definition.IsConcept())
@@ -168,7 +161,7 @@ namespace Plato.Compiler.Types
                 //return tv;
             }
             
-            if (tes.Definition.IsConcept() || tes.Definition.IsConcrete() || tes.Definition.IsPrimitive())
+            if (tes.Definition.IsConcept() || tes.Definition.IsConcrete())
             {
                 if (tes.Definition.TypeParameters.Count > 0)
                     return ToTypeList(tes);

@@ -60,7 +60,7 @@ namespace Plato.Compiler.Types
 
         public TypeConstant(TypeDefinition tds)
         {
-            Verifier.Assert(tds.IsConcept() || tds.IsPrimitive() || tds.IsConcrete());
+            Verifier.Assert(tds.IsConcept() || tds.IsConcrete());
             TypeDefinition = tds;
         }
 
@@ -105,9 +105,6 @@ namespace Plato.Compiler.Types
                     return null;
             }
         }
-
-        public static bool IsPrimitive(this IType type)
-            => type.GetTypeDefinition()?.IsPrimitive() ?? false;
 
         public static bool IsConcept(this IType type)
             => type.GetTypeDefinition()?.IsConcept() ?? false;
