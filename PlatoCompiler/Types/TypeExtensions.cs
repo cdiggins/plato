@@ -8,47 +8,47 @@ namespace Plato.Compiler.Types
 {
     public static class TypeDefinitionExtensions
     {
-        public static bool IsFullyImplementedConcept(TypeDefinition ts)
+        public static bool IsFullyImplementedConcept(TypeDef ts)
             => ts.IsConcept() && ts.Functions.All(f => f.HasImplementation());
 
-        public static bool IsConcept(this TypeDefinition ts)
+        public static bool IsConcept(this TypeDef ts)
             => ts.Kind == TypeKind.Concept;
 
-        public static bool IsConcrete(this TypeDefinition ts)
+        public static bool IsConcrete(this TypeDef ts)
             => ts.Kind == TypeKind.ConcreteType || ts.Kind == TypeKind.Primitive;
 
-        public static bool IsLibrary(this TypeDefinition ts)
+        public static bool IsLibrary(this TypeDef ts)
             => ts.Kind == TypeKind.Library;
 
-        public static bool IsTypeVariable(this TypeDefinition ts)
+        public static bool IsTypeVariable(this TypeDef ts)
             => ts.Kind == TypeKind.TypeVariable;    
 
-        public static int InheritsDepth(this TypeDefinition self, TypeDefinition other)
+        public static int InheritsDepth(this TypeDef self, TypeDef other)
         {
             if (self.Equals(other))
                 return 0;
             var r = self.Inherits
-                .MinWhere(x => x.Definition?.InheritsDepth(other) ?? -1,
+                .MinWhere(x => x.Def?.InheritsDepth(other) ?? -1,
                 x => x >= 0, -1);
             if (r >= 0)
                 return r + 1;
             return -1;
         }
 
-        public static int ImplementsDepth(this TypeDefinition self, TypeDefinition other)
+        public static int ImplementsDepth(this TypeDef self, TypeDef other)
         {
             return self.Implements
-                .MinWhere(x => x.Definition?.InheritsDepth(other) ?? -1,
+                .MinWhere(x => x.Def?.InheritsDepth(other) ?? -1,
                     x => x >= 0, -1);
         }
 
-        public static bool InheritsFrom(this TypeDefinition self, TypeDefinition other)
+        public static bool InheritsFrom(this TypeDef self, TypeDef other)
             => self.InheritsDepth(other) >= 0;
 
-        public static bool Implements(this TypeDefinition self, TypeDefinition other)
-            => other.IsConcept() && self.GetAllImplementedConcepts().Select(c => c.Definition).Contains(other);
+        public static bool Implements(this TypeDef self, TypeDef other)
+            => other.IsConcept() && self.GetAllImplementedConcepts().Select(c => c.Def).Contains(other);
 
-        public static bool IsSubType(this TypeDefinition self, TypeDefinition other)
+        public static bool IsSubType(this TypeDef self, TypeDef other)
         {
             if (self.IsLibrary() || other.IsLibrary())
                 return false;
@@ -61,10 +61,10 @@ namespace Plato.Compiler.Types
             return false;
         }
 
-        public static bool IsSubType(this TypeDefinition self, IEnumerable<TypeDefinition> others)
+        public static bool IsSubType(this TypeDef self, IEnumerable<TypeDef> others)
             => others.All(x => self.IsSubType(x));
 
-        public static TypeDefinition Unify(this IEnumerable<TypeDefinition> conceptsA, IEnumerable<TypeDefinition> conceptsB)
+        public static TypeDef Unify(this IEnumerable<TypeDef> conceptsA, IEnumerable<TypeDef> conceptsB)
         {
             // Which concepts in A supercede all of those in B? 
             var superTypesA = conceptsA.Where(c => c.IsSubType(conceptsB)).ToList();
@@ -81,7 +81,7 @@ namespace Plato.Compiler.Types
             return null;
         }
 
-        public static TypeDefinition Unify(this TypeDefinition a, TypeDefinition b)
+        public static TypeDef Unify(this TypeDef a, TypeDef b)
         {
             // If one type inher
 
@@ -103,8 +103,8 @@ namespace Plato.Compiler.Types
 
             if (a.IsConcrete() && b.IsConcrete())
             {
-                var aConcepts = a.Implements.Select(i => i.Definition);
-                var bConcepts = b.Implements.Select(i => i.Definition);
+                var aConcepts = a.Implements.Select(i => i.Def);
+                var bConcepts = b.Implements.Select(i => i.Def);
                 return aConcepts.Unify(bConcepts);
             }
 

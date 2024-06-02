@@ -16,21 +16,21 @@ namespace Plato.Compiler.Symbols
                 yield return x;
         }
 
-        public static bool IsPartiallyTyped(this FunctionDefinition fs)
+        public static bool IsPartiallyTyped(this FunctionDef fs)
             => !fs.IsExplicitlyTyped() &&
                (fs.Parameters.Any(p => p.Type != null) || fs.Type != null);
 
-        public static bool IsExplicitlyTyped(this FunctionDefinition fs)
+        public static bool IsExplicitlyTyped(this FunctionDef fs)
             => fs.Parameters.All(p => p.Type != null) && fs.Type != null;
 
-        public static IEnumerable<Reference> GetParameterReferences(this ParameterDefinition definition,
-            FunctionDefinition function)
-            => definition.GetReferencesTo(function.Body);
+        public static IEnumerable<RefSymbol> GetParameterReferences(this ParameterDef def,
+            FunctionDef function)
+            => def.GetReferencesTo(function.Body);
 
-        public static IEnumerable<Reference> GetReferencesTo(this DefinitionSymbol def, Symbol within)
-            => within.GetSymbolTree().OfType<Reference>().Where(rs => rs.Definition.Equals(def));
+        public static IEnumerable<RefSymbol> GetReferencesTo(this DefSymbol def, Symbol within)
+            => within.GetSymbolTree().OfType<RefSymbol>().Where(rs => rs.Def.Equals(def));
 
-        public static bool HasImplementation(this FunctionDefinition fs)
+        public static bool HasImplementation(this FunctionDef fs)
             => fs.Body != null;
 
     }

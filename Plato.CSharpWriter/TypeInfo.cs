@@ -15,25 +15,25 @@ namespace Plato.CSharpWriter
         public TypeExpression ActualType { get; }
         public TypeExpression OriginalType { get; }
         public string OriginalName => OriginalType.Name;
-        public bool IsSelfConstrained => OriginalDefinition.IsSelfConstrained();
-        public TypeDefinition OriginalDefinition => OriginalType.Definition;
+        public bool IsSelfConstrained => OriginalDef.IsSelfConstrained();
+        public TypeDef OriginalDef => OriginalType.Def;
         public bool IsGeneric => TypeParameters.Count > 0;
-        public bool IsConcept => OriginalDefinition.IsConcept();
-        public bool IsConcrete => OriginalDefinition.IsConcrete();
+        public bool IsConcept => OriginalDef.IsConcept();
+        public bool IsConcrete => OriginalDef.IsConcrete();
         public string Name { get; }
         
         public TypeInfo(string name, TypeExpression original, TypeExpression actual)
         {
             Name = name;
             Debug.Assert(OriginalType != null);
-            Debug.Assert(OriginalDefinition != null);
+            Debug.Assert(OriginalDef != null);
             Debug.Assert(OriginalType.TypeArgs.Count == 0);
             // Either IsConcept, or IsConcrete, but never both or neither. 
             Debug.Assert(IsConcept ^ IsConcrete);
         }
 
-        public IReadOnlyList<TypeParameterDefinition> TypeParameters
-            => OriginalDefinition.TypeParameters;
+        public IReadOnlyList<TypeParameterDef> TypeParameters
+            => OriginalDef.TypeParameters;
 
         public IEnumerable<string> TypeParameterNames
             => TypeParameters.Select(tp => tp.Name);

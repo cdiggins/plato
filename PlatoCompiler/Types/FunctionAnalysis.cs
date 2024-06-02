@@ -16,10 +16,10 @@ namespace Plato.Compiler.Types
         public List<IConstraint> Constraints { get; } = new List<IConstraint>();
 
         public Compilation Compilation { get; }
-        public FunctionDefinition Function { get; }
+        public FunctionDef Def { get; }
         
-        public TypeDefinition OwnerType 
-            => Function.OwnerType;
+        public TypeDef OwnerType 
+            => Def.OwnerType;
         
         public bool IsConcept 
             => OwnerType.IsConcept();
@@ -27,20 +27,20 @@ namespace Plato.Compiler.Types
         public bool IsGenericLibraryFunction 
             => OwnerType.IsLibrary() && Variables.Count > 0;
 
-        public Dictionary<ParameterDefinition, IType> ParameterToTypeLookup { get; } =
-            new Dictionary<ParameterDefinition, IType>();
+        public Dictionary<ParameterDef, IType> ParameterToTypeLookup { get; } =
+            new Dictionary<ParameterDef, IType>();
 
-        public Dictionary<TypeParameterDefinition, IType> TypeParameterToTypeLookup { get; } =
-            new Dictionary<TypeParameterDefinition, IType>();
-
+        public Dictionary<TypeParameterDef, IType> TypeParameterToTypeLookup { get; } =
+            new Dictionary<TypeParameterDef, IType>();
+            
         public IType DeclaredReturnType { get; }
         public IReadOnlyList<IType> ParameterTypes { get; }
         public IType Self { get; }
 
-        public FunctionAnalysis(Compilation compilation, FunctionDefinition function)
+        public FunctionAnalysis(Compilation compilation, FunctionDef def)
         {
             Compilation = compilation;
-            Function = function;
+            Def = def;
 
             foreach (var tp in OwnerType.TypeParameters)
             {
@@ -53,38 +53,44 @@ namespace Plato.Compiler.Types
             }
 
             var pTypes  = new List<IType>();
-            foreach (var p in function.Parameters)
+            foreach (var p in def.Parameters)
             {
                 var pt = ToIType(p.Type);
+
+                /*
+                I used to think that this would be a better way to do things, but resolving against
+                type variables with constraints is very complicated. For now I am doing this.
+                However, if a function has a concept listed twice, it is the same concept. 
 
                 if (p.Type.Definition.IsConcept())
                 {
                     pt = GenerateTypeVariable(pt);
                 }
-                
+                */
+
                 ParameterToTypeLookup.Add(p, pt);
                 pTypes.Add(pt);
             }
 
-            if (Function.ReturnType.Name.StartsWith("Function"))
+            if (Def.ReturnType.Name.StartsWith("Function"))
             {
-                var n = Function.ReturnType.TypeArgs.Count;
+                var n = Def.ReturnType.TypeArgs.Count;
                 if (n == 0)
                     throw new Exception("Functions returning functions are not supported yet because we can't easily determine their cardinality");
                 var f = CreateFunctionType(n);
                 DeclaredReturnType = f;
             }
 
-            DeclaredReturnType = ToIType(Function.ReturnType);
+            DeclaredReturnType = ToIType(Def.ReturnType);
 
-            if (Function.ReturnType.Definition.IsConcept())
+            if (Def.ReturnType.Def.IsConcept())
             {
                 DeclaredReturnType = GenerateTypeVariable(DeclaredReturnType);
             }
 
             ParameterTypes = pTypes;
 
-            Debug.Assert(ParameterTypes.Count == Function.Parameters.Count);
+            Debug.Assert(ParameterTypes.Count == Def.Parameters.Count);
         }
 
         public TypeList ToTypeList(IType first, IEnumerable<IType> rest)
@@ -101,21 +107,21 @@ namespace Plato.Compiler.Types
         public IType ToSimpleType(string name)
             => ToSimpleType(Compilation.GetTypeDefinition(name));
 
-        public IType ToSimpleType(TypeDefinition td) 
-            => td is TypeParameterDefinition tpd
+        public IType ToSimpleType(TypeDef td) 
+            => td is TypeParameterDef tpd
                 ? ToTypeVariable(tpd)
                 : new TypeConstant(td);
 
-        public IType ToTypeVariable(TypeParameterDefinition tpd)
+        public IType ToTypeVariable(TypeParameterDef tpd)
             => TypeParameterToTypeLookup.TryGetValue(tpd, out var r)  
                 ? r : GenerateTypeVariable(tpd.Constraints.Select(ToIType).ToArray());
 
         public IType ToTypeList(TypeExpression expr)
         {
-            var tmp = new List<IType> { ToSimpleType(expr.Definition) };
-            for (var i = 0; i < expr.Definition.TypeParameters.Count; ++i)
+            var tmp = new List<IType> { ToSimpleType(expr.Def) };
+            for (var i = 0; i < expr.Def.TypeParameters.Count; ++i)
             {
-                var tp = expr.Definition.TypeParameters[i];
+                var tp = expr.Def.TypeParameters[i];
 
                 if (i < expr.TypeArgs.Count)
                 {
@@ -131,7 +137,7 @@ namespace Plato.Compiler.Types
             return new TypeList(tmp);
         }
 
-        public IType ToIType(TypeDefinition td)
+        public IType ToIType(TypeDef td)
         {
             var tmp = ToSimpleType(td);
             return td.TypeParameters.Count == 0 
@@ -148,7 +154,7 @@ namespace Plato.Compiler.Types
                 return Self;
             }
 
-            if (tes.Definition is TypeParameterDefinition tpd)
+            if (tes.Def is TypeParameterDef tpd)
             {
                 Verifier.Assert(tes.TypeArgs.Count == 0);
                 Verifier.Assert(tpd.TypeParameters.Count == 0);
@@ -161,20 +167,20 @@ namespace Plato.Compiler.Types
                 //return tv;
             }
             
-            if (tes.Definition.IsConcept() || tes.Definition.IsConcrete())
+            if (tes.Def.IsConcept() || tes.Def.IsConcrete())
             {
-                if (tes.Definition.TypeParameters.Count > 0)
+                if (tes.Def.TypeParameters.Count > 0)
                     return ToTypeList(tes);
 
-                return new TypeConstant(tes.Definition);
+                return new TypeConstant(tes.Def);
             }
             
-            if (tes.Definition.IsLibrary())
+            if (tes.Def.IsLibrary())
             {
                 throw new Exception("Libraries cannot be variables");
             }
 
-            if (tes.Definition.IsTypeVariable())
+            if (tes.Def.IsTypeVariable())
             {
                 return GenerateTypeVariable();
             }
@@ -204,23 +210,23 @@ namespace Plato.Compiler.Types
             return GenerateTypeVariable(concept != null ? ToIType(concept) : null);
         }
        
-        public string ParameterString(ParameterDefinition pd)
+        public string ParameterString(ParameterDef pd)
         {
             return $"{pd.Name}: {ParameterToTypeLookup[pd]}";
         }
 
         public string ParametersString()
         {
-            return string.Join(", ", Function.Parameters.Select(ParameterString));
+            return string.Join(", ", Def.Parameters.Select(ParameterString));
         }
 
         public string Signature
-            => $"{Function.OwnerType}.{Function.Name}({ParametersString()}): {DeclaredReturnType}";
+            => $"{Def.OwnerType}.{Def.Name}({ParametersString()}): {DeclaredReturnType}";
 
         public StringBuilder BuildAnalysisOutput(StringBuilder sb = null)
         {
             sb = sb ?? new StringBuilder();
-            sb.AppendLine($"Original function: {Function}");
+            sb.AppendLine($"Original function: {Def}");
             sb.AppendLine($"New signature: {Signature}");
             sb.AppendLine($"Variables: {string.Join(", ", Variables)}");
             sb.AppendLine($"Constraints:");
@@ -300,7 +306,7 @@ namespace Plato.Compiler.Types
             {
                 IsProcessing = true;
 
-                if (Function.Body is Expression expr)
+                if (Def.Body is Expression expr)
                 {
                     Process(expr);
                 }
@@ -345,7 +351,7 @@ namespace Plato.Compiler.Types
                     r = Process(functionCall);
                     break;
                     
-                case FunctionGroupReference functionGroupReference:
+                case FunctionGroupRefSymbol functionGroupReference:
                     r = ToSimpleType("Any");
                     break;
 
@@ -357,23 +363,23 @@ namespace Plato.Compiler.Types
                     r = ToIType(literal.TypeEnum);
                     break;
                 
-                case ParameterReference parameterReference:
-                    r = ParameterToTypeLookup[parameterReference.Definition];
+                case ParameterRefSymbol parameterReference:
+                    r = ParameterToTypeLookup[parameterReference.Def];
                     break;
 
                 case Parenthesized parenthesized:
                     r = Process(parenthesized);
                     break;
 
-                case VariableReference variableReference:
-                    r = ToIType(variableReference.Definition.Type);
+                case VariableRefSymbol variableReference:
+                    r = ToIType(variableReference.Def.Type);
                     break;
 
-                case TypeReference typeReference:
+                case TypeRefSymbol typeReference:
                     r = ToSimpleType("Type");
                     break;
 
-                case Reference reference:
+                case RefSymbol reference:
                     throw new NotImplementedException();
 
                 case Tuple tuple:
@@ -427,11 +433,12 @@ namespace Plato.Compiler.Types
             var ft = Process(fc.Function);
             AddConstraint(new CallableConstraint(ft, argTypes));
 
-            if (fc.Function is FunctionGroupReference fgr)
+            if (fc.Function is FunctionGroupRefSymbol fgr)
             {
                 var fca = Compilation.ResolveFunctionGroup(this, fc, fgr, argTypes);
                 var bestFunction = fca.BestFunctions.FirstOrDefault();
 
+                // TODO: fix this ASAP!! 
                 // TODO: log this
                 if (bestFunction == null)
                     return GenerateTypeVariable();
@@ -440,7 +447,7 @@ namespace Plato.Compiler.Types
                 return bestFunction.DeterminedReturnType;
             }
             
-            if (fc.Function is ParameterReference paramRef)
+            if (fc.Function is ParameterRefSymbol paramRef)
             {
                 // Look at the declared parameter type. If there is none, we are going to create an 
                 var tmp = ToIType(paramRef.Type);
@@ -460,9 +467,9 @@ namespace Plato.Compiler.Types
                 // throw new Exception($"Parameter had a type {paramRef.Type}, but it was not the correct type");
             }
 
-            if (fc.Function is TypeReference typeRef)
+            if (fc.Function is TypeRefSymbol typeRef)
             {
-                return ToIType(typeRef.Definition);
+                return ToIType(typeRef.Def);
             }
             
             throw new NotImplementedException();

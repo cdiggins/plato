@@ -13,12 +13,12 @@ namespace Plato.Compiler.Types
     {
         // Passed as arguments
         public Compilation Compilation { get; }
-        public FunctionGroupReference Fgr { get; }
+        public FunctionGroupRefSymbol Fgr { get; }
         public IReadOnlyList<TypeExpression> ArgTypes { get; }
         public TypeExpression ResultType { get; set; }
 
         public FunctionCallResolver(Compilation compilation,
-            FunctionGroupReference fgr,
+            FunctionGroupRefSymbol fgr,
             IReadOnlyList<TypeExpression> argTypes)
         {
             Compilation = compilation;
@@ -29,7 +29,7 @@ namespace Plato.Compiler.Types
                 throw new Exception("Null argument type");
 
             // First we are going to look for a viable result from the function group 
-            var funcs = fgr.Definition.Functions;
+            var funcs = fgr.Def.Functions;
             if (funcs.Count == 0)
                 throw new Exception($"No functions found in group {Fgr}");
             if (HasSingleReturnType(funcs)) return;
@@ -115,10 +115,10 @@ namespace Plato.Compiler.Types
         public int GetScoreForOverload(IFunction f, int pos)
             => CastingScore(ArgTypes[pos], f.GetParameterType(pos));
 
-        public bool IsCastFunction(IFunction f, TypeDefinition td)
-            => f.Name == $"To{td.Name}" && f.NumParameters == 0 && f.ReturnType.Definition.Equals(td);
+        public bool IsCastFunction(IFunction f, TypeDef td)
+            => f.Name == $"To{td.Name}" && f.NumParameters == 0 && f.ReturnType.Def.Equals(td);
 
-        public ReifiedFunction GetCastFunction(TypeDefinition a, TypeDefinition b)
+        public ReifiedFunction GetCastFunction(TypeDef a, TypeDef b)
         {
             if (Compilation.ReifiedTypes.ContainsKey(a.Name))
             {
@@ -131,7 +131,7 @@ namespace Plato.Compiler.Types
             return null;
         }
 
-        public bool CastFunctionExists(TypeDefinition a, TypeDefinition b)
+        public bool CastFunctionExists(TypeDef a, TypeDef b)
             => GetCastFunction(a, b) != null;
 
         public bool CanCast(TypeExpression at, TypeExpression pt)
@@ -145,10 +145,10 @@ namespace Plato.Compiler.Types
             if (pt == null)
                 throw new ArgumentNullException($"Parameter type");
             
-            if (at.Definition.IsLibrary())
+            if (at.Def.IsLibrary())
                 throw new ArgumentException($"Argument type {at} cannot be library");
 
-            if (pt.Definition.IsLibrary())
+            if (pt.Def.IsLibrary())
                 throw new Exception($"Parameter types {pt} cannot be libraries");
 
             // If they are the same type, done and done. 
@@ -157,29 +157,29 @@ namespace Plato.Compiler.Types
 
             // Are we passing to a concrete type? 
             // Always prefer to successfully pass to a concrete type 
-            if (pt.Definition.IsConcrete())
+            if (pt.Def.IsConcrete())
             {
-                if (at.Definition.IsConcrete())
+                if (at.Def.IsConcrete())
                 {
-                    if (at.Definition.Equals(pt.Definition))
+                    if (at.Def.Equals(pt.Def))
                         return 1;
 
-                    if (CastFunctionExists(at.Definition, pt.Definition))
+                    if (CastFunctionExists(at.Def, pt.Def))
                         return 2;
 
                     return 0;
                 }
 
-                if (at.Definition.IsConcept())
+                if (at.Def.IsConcept())
                 {
-                    if (CastFunctionExists(at.Definition, pt.Definition))
+                    if (CastFunctionExists(at.Def, pt.Def))
                         return 3;
 
                     // Definitely a conflict. The passed type is not implemented by the desired concept. 
                     return 0;
                 }
 
-                if (at.Definition.IsTypeVariable())
+                if (at.Def.IsTypeVariable())
                 {
                     // This might be compatible. It would create a constraint. 
                     // TODO: maybe I could check against that constraints declared for the type variable? 
@@ -189,29 +189,29 @@ namespace Plato.Compiler.Types
                 throw new Exception($"Expected argument to be concrete type, concept, primitive, or type variable");
             }
 
-            if (pt.Definition.IsConcept())
+            if (pt.Def.IsConcept())
             {
-                if (at.Definition.IsConcrete())
+                if (at.Def.IsConcrete())
                 {
                     // The passed concrete type implements the expected concept
-                    if (at.Definition.Implements(pt.Definition))
+                    if (at.Def.Implements(pt.Def))
                         return 3;
 
                     return 0;
                 }
 
-                if (at.Definition.IsConcept())
+                if (at.Def.IsConcept())
                 {
                     // Same concept? 
-                    if (at.Definition.Equals(pt.Definition))
+                    if (at.Def.Equals(pt.Def))
                         return 4;
 
                     // Passing a sub-type to a super-type
-                    if (at.Definition.Implements(pt.Definition))
+                    if (at.Def.Implements(pt.Def))
                         return 5;
 
                     // Casting from concept a to concept b. 
-                    if (CastFunctionExists(at.Definition, pt.Definition))
+                    if (CastFunctionExists(at.Def, pt.Def))
                         return 6;
                     
                     // Unrecognized concept 
@@ -219,7 +219,7 @@ namespace Plato.Compiler.Types
                 }
             }
 
-            if (pt.Definition.IsTypeVariable())
+            if (pt.Def.IsTypeVariable())
             {
                 // TODO: create a constraint 
                 return 30; 

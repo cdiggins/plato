@@ -6,15 +6,18 @@ using Plato.Compiler.Symbols;
 
 namespace Plato.Compiler.Analysis
 {
+    // TODO: this has TypeSubstitutions as well. We need to know what they are. 
+    // This way when we query functions, inherited types, and implemented types
+    // We can figure it all out. 
     public class TypeInstance
     {
-        public string Name => Definition.Name;
-        public TypeDefinition Definition { get; }
+        public string Name => Def.Name;
+        public TypeDef Def { get; }
 
-        public TypeInstance(TypeDefinition definition, IEnumerable<TypeInstance> args)
+        public TypeInstance(TypeDef def, IEnumerable<TypeInstance> args)
         {
-            Debug.Assert(!(definition is TypeVariable));
-            Definition = definition;
+            Debug.Assert(!(def is TypeVariable));
+            Def = def;
             Args = args?.ToList() ?? new List<TypeInstance>();
         }
 
@@ -22,7 +25,7 @@ namespace Plato.Compiler.Analysis
 
         public override string ToString()
         {
-            var r = Definition.Name;
+            var r = Def.Name;
             if (Args.Count == 0) return r;
             return $"{r}<{Args.JoinStringsWithComma()}>";
         }

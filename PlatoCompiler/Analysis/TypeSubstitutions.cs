@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Plato.Compiler.Symbols;
+using Plato.Compiler.Types;
 
 namespace Plato.Compiler.Analysis
 {
@@ -11,9 +12,9 @@ namespace Plato.Compiler.Analysis
         public TypeSubstitutions Previous { get; }
     
         public TypeSubstitutions Add(TypeExpression expr)
-            => Add(expr.TypeArgs, expr.Definition);
+            => Add(expr.TypeArgs, expr.Def);
 
-        public TypeSubstitutions Add(IReadOnlyList<TypeExpression> args, TypeDefinition def)
+        public TypeSubstitutions Add(IReadOnlyList<TypeExpression> args, TypeDef def)
         {
             if (args.Count != def.TypeParameters.Count)
                 throw new Exception($"Number of type arguments does not match number of type parameters");
@@ -27,7 +28,7 @@ namespace Plato.Compiler.Analysis
             return r; 
         }
 
-        public TypeSubstitutions Add(TypeParameterDefinition parameter, TypeExpression replace)
+        public TypeSubstitutions Add(TypeParameterDef parameter, TypeExpression replace)
             => Add(parameter.Name, replace);
 
         public TypeSubstitutions Add(string name, TypeExpression replace)
@@ -35,17 +36,25 @@ namespace Plato.Compiler.Analysis
 
         public override string ToString()
         {
-            var s = $"{Name}={Replacement}";
+            var s = $"{Name}={Replacement};";
             return Previous != null ? s + Previous : s;
         }
 
         public TypeExpression Replace(TypeExpression expr)
-            => expr.Name == Name
-                ? Replacement 
-                : Previous != null 
-                    ? Previous.Replace(expr) 
-                    : expr;
+        {
+            if (expr.Name == Name)
+            {
+                var r = Replacement;
+                if (r.Def.IsTypeVariable() && Previous != null)
+                    return Previous.Replace(r);
+                return r;
+            }
 
+            if (Previous != null)
+                return Previous.Replace(expr);
+            return expr;
+        }
+        
         public TypeSubstitutions(string name, TypeExpression replace, TypeSubstitutions subs = null)
         {
             Name = name;

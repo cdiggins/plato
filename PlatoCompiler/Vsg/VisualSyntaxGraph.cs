@@ -94,17 +94,17 @@ namespace Plato.Compiler.Vsg
 
     public class VsgBuilder
     {
-        public Dictionary<ParameterDefinition, VsgSocket> Parameters { get; }
-            = new Dictionary<ParameterDefinition, VsgSocket>();
+        public Dictionary<ParameterDef, VsgSocket> Parameters { get; }
+            = new Dictionary<ParameterDef, VsgSocket>();
 
         public List<VsgNode> Nodes { get; } = new List<VsgNode>();
         public List<VsgConnection> Connections { get; } = new List<VsgConnection>();
 
-        public VisualSyntaxGraph ToVsg(FunctionDefinition definition)
+        public VisualSyntaxGraph ToVsg(FunctionDef def)
         {
             // Input nodes.
             var input = CreateNode("Inputs", false);
-            foreach (var p in definition.Parameters)
+            foreach (var p in def.Parameters)
             {
                 var socket = new VsgSocket(p.Name, p.Type.Name);
                 input.Outputs.Add(socket);
@@ -112,36 +112,36 @@ namespace Plato.Compiler.Vsg
             }
 
             var output = CreateNode("Output", false);
-            var finalSocket = new VsgSocket("Result", definition.Type.Name);
+            var finalSocket = new VsgSocket("Result", def.Type.Name);
             output.Inputs.Add(finalSocket);
-            Connect(GetSocket(definition.Body), finalSocket);
-            return new VisualSyntaxGraph(definition.Name, Nodes, Connections);
+            Connect(GetSocket(def.Body), finalSocket);
+            return new VisualSyntaxGraph(def.Name, Nodes, Connections);
         }
 
-        public VsgNode CreateNode(DefinitionSymbol symbol)
+        public VsgNode CreateNode(DefSymbol symbol)
         {
             if (symbol == null)
                 return null;
 
             switch (symbol)
             {
-                case FieldDefinition fieldDefSymbol:
+                case FieldDef fieldDefSymbol:
                     return CreateNode(fieldDefSymbol.Function);
 
-                case FunctionGroupDefinition functionGroupSymbol:
+                case FunctionGroupDef functionGroupSymbol:
                     // TODO: remove function groups 
                     return CreateNode(functionGroupSymbol.Functions[0]);
 
-                case FunctionDefinition functionSymbol:
+                case FunctionDef functionSymbol:
                     return CreateNode(functionSymbol);
 
-                case MethodDefinition methodDefSymbol:
+                case MethodDef methodDefSymbol:
                     return CreateNode(methodDefSymbol.Function);
 
-                case ParameterDefinition parameterSymbol:
+                case ParameterDef parameterSymbol:
                     return CreateNode($"{parameterSymbol.Name} as Function");
 
-                case VariableDefinition variableSymbol:
+                case VariableDef variableSymbol:
                     break;
             }
 
@@ -170,8 +170,8 @@ namespace Plato.Compiler.Vsg
                 case Literal literalSymbol:
                     return CreateNode(literalSymbol);
 
-                case Reference refSymbol:
-                    return CreateNode(refSymbol.Definition);
+                case RefSymbol refSymbol:
+                    return CreateNode(refSymbol.Def);
 
                 case Lambda lambdaSymbol:
                     return CreateNode(lambdaSymbol);
@@ -198,11 +198,11 @@ namespace Plato.Compiler.Vsg
             return node;
         }
 
-        public VsgSocket GetSocket(DefinitionSymbol def)
+        public VsgSocket GetSocket(DefSymbol def)
         {
             switch (def)
             {
-                case ParameterDefinition parameterSymbol:
+                case ParameterDef parameterSymbol:
                     return Parameters[parameterSymbol];
             }
             return CreateNode(def)?.MainOutput;
@@ -214,8 +214,8 @@ namespace Plato.Compiler.Vsg
             {
                 case Argument argumentSymbol:
                     return GetSocket(argumentSymbol.Expression);
-                case Reference refSymbol:
-                    return GetSocket(refSymbol?.Definition);
+                case RefSymbol refSymbol:
+                    return GetSocket(refSymbol?.Def);
             }
             return CreateNode(expr)?.MainOutput;
         }
@@ -237,7 +237,7 @@ namespace Plato.Compiler.Vsg
 
         public VsgNode CreateNode(FunctionCall symbol)
         {
-            if (symbol.Function is Reference rs && rs.Definition is ParameterDefinition ps)
+            if (symbol.Function is RefSymbol rs && rs.Def is ParameterDef ps)
             {
                 var f = CreateNode("Lambda");
                 var inputs = symbol.Args.Select(GetSocket).ToList();
@@ -277,10 +277,10 @@ namespace Plato.Compiler.Vsg
             return r;
         }
 
-        public VsgNode CreateNode(FunctionDefinition definition)
+        public VsgNode CreateNode(FunctionDef def)
         {
-            var r = CreateNode(definition.Name);
-            foreach (var p in definition.Parameters)
+            var r = CreateNode(def.Name);
+            foreach (var p in def.Parameters)
             {
                 r.CreateInputSocket(p.Name);
             }

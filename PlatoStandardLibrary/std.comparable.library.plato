@@ -13,7 +13,7 @@ library Comparable
         => a.Compare(b) < 0;
     
     LessThanOrEquals(a: Comparable, b: Comparable): Boolean
-        => a.Compare(b) <= 0;
+        => a.Compare(b) <= 0;   
     
     GreaterThan(a: Comparable, b: Comparable): Boolean 
         => a.Compare(b) > 0;

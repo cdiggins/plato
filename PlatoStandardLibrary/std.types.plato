@@ -1,7 +1,9 @@
 // A positive whole number 
 type Count
     implements WholeNumber
-{ }
+{ 
+    Value: Integer;
+}
 
 // An integer type in the range of 0 to N is used to return the number of items 
 // https://en.wikipedia.org/wiki/Cardinal_number
@@ -33,135 +35,6 @@ type Probability
     Value: Number;
 }
 
-// A numerical type used to accurately represent rotations in 3D space
-// https://en.wikipedia.org/wiki/Quaternion
-type Quaternion
-    implements Value
-{
-    X: Number;
-    Y: Number;
-    Z: Number;
-    W: Number;
-}
-
-type Unit2D
-    implements Value
-{
-    X: Unit;
-    Y: Unit;
-}
-
-type Unit3D
-    implements Value
-{
-    X: Unit;
-    Y: Unit;
-    Z: Unit;
-}
-
-type Direction3D
-    implements Value
-{
-    Value: Unit3D;
-}
-
-type AxisAngle
-    implements Value
-{
-    Axis: Unit3D;
-    Angle: Angle;
-}
-
-type EulerAngles
-    implements Value
-{
-    Yaw: Angle;
-    Pitch: Angle;
-    Roll: Angle;
-}
-
-type Rotation3D
-    implements Value
-{
-    Quaternion: Quaternion;
-}
-
-type Vector2D
-    implements Vector
-{
-    X: Number;
-    Y: Number;
-}
-
-type Vector3D
-    implements Vector
-{
-    X: Number;
-    Y: Number;
-    Z: Number;
-}
-
-type Vector4D
-    implements Vector
-{
-    X: Number;
-    Y: Number;
-    Z: Number;
-    W: Number;
-}
-
-type Orientation3D
-    implements Value
-{
-    Value: Rotation3D;
-}
-
-type Pose2D
-    implements Value
-{
-    Position: Vector3D;
-    Orientation: Orientation3D;
-}
-
-type Pose3D
-    implements Value
-{
-    Position: Vector3D;
-    Orientation: Orientation3D;
-}
-
-type Transform3D
-    implements Value
-{
-    Translation: Vector3D;
-    Rotation: Rotation3D;
-    Scale: Vector3D;
-}
-
-type Transform2D
-    implements Value
-{
-    Translation: Vector2D;
-    Rotation: Angle;
-    Scale: Vector2D;
-}
-
-// Axis-Aligned bounding box 
-type Bounds2D
-    implements Interval<Point2D, Vector2D>
-{
-    Min: Point2D;
-    Max: Point2D;
-}
-
-// Axis-Aligned bounding box 
-type Bounds3D
-    implements Interval<Point3D, Vector3D>
-{
-    Min: Point3D;
-    Max: Point3D;
-}
-
 type Complex
     implements Vector
 {
@@ -169,6 +42,32 @@ type Complex
     Imaginary: Number;
 }
 
+// A pair of integers 
+type Integer2
+    implements Array<Integer>
+{
+    A: Integer;
+    B: Integer;
+}
+
+// A tuple of 3 integers 
+type Integer3
+    implements Array<Integer>
+{
+    A: Integer;
+    B: Integer;
+    C: Integer;
+}
+
+// A tuple of 4 integers 
+type Integer4
+    implements Array<Integer>
+{
+    A: Integer;
+    B: Integer;
+    C: Integer;
+    D: Integer;
+}
 
 // https://en.wikipedia.org/wiki/RGB_color_spaces
 type Color
@@ -354,7 +253,7 @@ type TimeRange
 // Unix date-time representation: number of non-leap seconds elapsed since January 1st, 1970.
 // https://en.wikipedia.org/wiki/Unix_time
 type DateTime
-    implements Coordinate, AdditiveArithmetic<Time>
+    implements Coordinate, Difference<Time>
 {
     Value: Number; 
 }
@@ -401,46 +300,38 @@ type Matrix3D
 type UV
     implements Vector
 {
-    U: Unit;
-    V: Unit;
+    U: Number;
+    V: Number;
 }
 
 type UVW
     implements Vector
 {
-    U: Unit;
-    V: Unit;
-    W: Unit;
+    U: Number;
+    V: Number;
+    W: Number;
 }
 
-// https://en.wikipedia.org/wiki/Normal_distribution    
-type NormalDistribution
-    implements Value
+type Vector2D
+    implements Vector
 {
-    Mean: Number;
-    StandardDeviation: Number;
+    X: Number;
+    Y: Number;
 }
 
-// https://en.wikipedia.org/wiki/Poisson_distribution    
-type PoissonDistribution
-    implements Value
+type Vector3D
+    implements Vector
 {
-    Expected: Number;
-    Occurrences: Integer;
+    X: Number;
+    Y: Number;
+    Z: Number;
 }
 
-// https://en.wikipedia.org/wiki/Bernoulli_distribution    
-type BernoulliDistribution
-    implements Value
+type Vector4D
+    implements Vector
 {
-    P: Probability;
+    X: Number;
+    Y: Number;
+    Z: Number;
+    W: Number;
 }
-
-// https://en.wikipedia.org/wiki/Binomial_distribution    
-type BinomialDistribution
-    implements Value
-{
-    Trials: Integer;
-    P: Probability;
-}
-

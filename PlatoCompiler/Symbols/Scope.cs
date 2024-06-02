@@ -12,6 +12,7 @@ namespace Plato.Compiler.Symbols
 
         public Scope Bind(string name, Symbol value)
         {
+            // TODO: this overwrites bindings, instead we probably want a linked list of bindings. 
             Bindings[name] = value;
             return this;
         }

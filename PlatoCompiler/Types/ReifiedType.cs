@@ -8,12 +8,12 @@ namespace Plato.Compiler.Types
 {
     public class ReifiedType
     {
-        public TypeDefinition Type { get; }
+        public TypeDef Type { get; }
         public TypeExpression Self => Type.ToTypeExpression();
         public HashSet<ReifiedFunction> Functions { get; } = new HashSet<ReifiedFunction>();
         public string Name => Type.Name;
         
-        public ReifiedType(TypeDefinition type)
+        public ReifiedType(TypeDef type)
         {
             Verifier.AssertNotNull(type, nameof(type));
             Verifier.Assert(type.IsConcrete(), "Is concrete type");
@@ -30,9 +30,9 @@ namespace Plato.Compiler.Types
             // Add functions for each concept 
             foreach (var concept in Type.GetAllImplementedConcepts())
             {
-                var conceptDef = concept.Definition;
+                var conceptDef = concept.Def;
 
-                var _typeArgs = new Dictionary<TypeParameterDefinition, TypeExpression>();
+                var _typeArgs = new Dictionary<TypeParameterDef, TypeExpression>();
 
                 // TODO: this should be a compilation error. 
                 Verifier.AssertEquals(concept.TypeArgs.Count, conceptDef.TypeParameters.Count);
@@ -48,7 +48,7 @@ namespace Plato.Compiler.Types
                 {
                     if (tes.Name == "Self")
                         return Self;
-                    if (tes.Definition is TypeParameterDefinition tpd)
+                    if (tes.Def is TypeParameterDef tpd)
                     {
                         if (_typeArgs.ContainsKey(tpd))
                             return _typeArgs[tpd];
@@ -69,38 +69,38 @@ namespace Plato.Compiler.Types
             // Multiple passes. 
         }
 
-        public ReifiedFunction CreateFunction(TypeDefinition ownerType, FunctionDefinition functionDefinition, Func<TypeExpression, TypeExpression> map)
+        public ReifiedFunction CreateFunction(TypeDef ownerType, FunctionDef functionDef, Func<TypeExpression, TypeExpression> map)
         {
-            var r = new ReifiedFunction(functionDefinition, this,
-                functionDefinition.Parameters.Select(p => p.Type.Replace(map)).ToList(),
-                functionDefinition.ReturnType.Replace(map));
+            var r = new ReifiedFunction(functionDef, this,
+                functionDef.Parameters.Select(p => p.Type.Replace(map)).ToList(),
+                functionDef.ReturnType.Replace(map));
 
             //r.Verify();
             return r;
         }
 
-        public void AddConceptLibraryFunction(TypeDefinition library, FunctionDefinition functionDefinition)
+        public void AddConceptLibraryFunction(TypeDef library, FunctionDef functionDef)
         {
-            Verifier.Assert(functionDefinition.Parameters.Count > 0);
-            var pt = functionDefinition.Parameters[0].Type;
-            Verifier.Assert(pt.Definition.IsConcept());
+            Verifier.Assert(functionDef.Parameters.Count > 0);
+            var pt = functionDef.Parameters[0].Type;
+            Verifier.Assert(pt.Def.IsConcept());
             Verifier.Assert(library.IsLibrary());
 
             TypeExpression LocalMapType(TypeExpression te)
                 => te.Equals(pt) ? Type.ToTypeExpression() : te;
 
-            var r = CreateFunction(library, functionDefinition, LocalMapType);
+            var r = CreateFunction(library, functionDef, LocalMapType);
             Functions.Add(r);
         }
 
-        public void AddConcreteTypeLibraryFunction(TypeDefinition library, FunctionDefinition functionDefinition)
+        public void AddConcreteTypeLibraryFunction(TypeDef library, FunctionDef functionDef)
         {
-            Verifier.Assert(functionDefinition.Parameters.Count > 0);
-            var pt = functionDefinition.Parameters[0].Type;
-            Verifier.Assert(pt.Definition.IsConcrete());
+            Verifier.Assert(functionDef.Parameters.Count > 0);
+            var pt = functionDef.Parameters[0].Type;
+            Verifier.Assert(pt.Def.IsConcrete());
             Verifier.Assert(library.IsLibrary());
 
-            var r = CreateFunction(library, functionDefinition, x => x);
+            var r = CreateFunction(library, functionDef, x => x);
             Functions.Add(r);
         }
     }
@@ -109,15 +109,15 @@ namespace Plato.Compiler.Types
     {
         public static void VerifyIsReified(this TypeExpression tes)
         {
-            tes.Definition.VerifyIsReified();
+            tes.Def.VerifyIsReified();
             foreach (var ta in tes.TypeArgs)
                 ta.VerifyIsReified();
         }
 
-        public static void VerifyIsReified(this TypeDefinition tds)
+        public static void VerifyIsReified(this TypeDef tds)
         {
             Verifier.AssertNotNull(tds, "Type definition");
-            Verifier.Assert(tds, d => !(d is TypeParameterDefinition), "Not is type parameter definition");
+            Verifier.Assert(tds, d => !(d is TypeParameterDef), "Not is type parameter definition");
             Verifier.Assert(tds, d => d.IsConcrete(), "Is concrete type");
         }
 
@@ -140,7 +140,7 @@ namespace Plato.Compiler.Types
             // If nothing changed, just return the original type. 
             return args.Zip(self.TypeArgs, ReferenceEquals).All(b => b) 
                 ? self 
-                : new TypeExpression(self.Definition, args);
+                : new TypeExpression(self.Def, args);
         }
     }
 }

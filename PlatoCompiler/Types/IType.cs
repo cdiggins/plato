@@ -56,22 +56,22 @@ namespace Plato.Compiler.Types
 
     public class TypeConstant : IType
     {
-        public TypeDefinition TypeDefinition { get; }
+        public TypeDef TypeDef { get; }
 
-        public TypeConstant(TypeDefinition tds)
+        public TypeConstant(TypeDef tds)
         {
             Verifier.Assert(tds.IsConcept() || tds.IsConcrete());
-            TypeDefinition = tds;
+            TypeDef = tds;
         }
 
         public override string ToString()
-            => TypeDefinition.Name;
+            => TypeDef.Name;
 
         public override int GetHashCode()
-            => TypeDefinition.GetHashCode();
+            => TypeDef.GetHashCode();
 
         public override bool Equals(object obj)
-            => obj is TypeConstant tc && tc.TypeDefinition.Equals(TypeDefinition);
+            => obj is TypeConstant tc && tc.TypeDef.Equals(TypeDef);
     }
 
     public class TypeList : IType
@@ -93,12 +93,12 @@ namespace Plato.Compiler.Types
 
     public static class ITypeExtensions
     {
-        public static TypeDefinition GetTypeDefinition(this IType type)
+        public static TypeDef GetTypeDefinition(this IType type)
         {
             switch (type)
             {
                 case TypeConstant tc:
-                    return tc.TypeDefinition;
+                    return tc.TypeDef;
                 case TypeList tl:
                     return tl.Children.First().GetTypeDefinition();
                 default:

@@ -13,7 +13,7 @@ namespace Plato.Compiler.Analysis
     public class ConcreteType
     {
         public string Name => Type.Name;
-        public TypeDefinition Type { get; }
+        public TypeDef Type { get; }
         public LibraryFunctions Libraries { get; }
         public TypeSubstitutions Substitutions { get; }
         public IReadOnlyList<ConceptImplementation> Concepts { get; }
@@ -24,7 +24,7 @@ namespace Plato.Compiler.Analysis
         public IReadOnlyList<FunctionInstance> ImplementedFunctions { get; }
         public IReadOnlyList<FunctionInstance> UnimplementedFunctions { get; }
 
-        public ConcreteType(TypeDefinition type, LibraryFunctions libraries)
+        public ConcreteType(TypeDef type, LibraryFunctions libraries)
         {
             Verifier.AssertNotNull(type, nameof(type));
             Verifier.AssertNotNull(libraries, nameof(libraries));
@@ -47,7 +47,7 @@ namespace Plato.Compiler.Analysis
         public ConceptImplementation CreateConceptImplementation(TypeExpression type)
             => new ConceptImplementation(Libraries, Type, Substitutions.Add(type), type);
 
-        public FunctionInstance AnalyzeFunction(FunctionDefinition function)
+        public FunctionInstance AnalyzeFunction(FunctionDef function)
             => new FunctionInstance(Type, function, Substitutions);
 
         public IEnumerable<FunctionInstance> GetConceptFunctions()

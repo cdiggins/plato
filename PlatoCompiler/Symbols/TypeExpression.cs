@@ -8,21 +8,21 @@ namespace Plato.Compiler.Symbols
 {
     public class TypeExpression : Symbol
     {
-        public override string Name => Definition?.Name ?? "_untyped_";
-        public TypeDefinition Definition { get; }
+        public override string Name => Def?.Name ?? "_untyped_";
+        public TypeDef Def { get; }
         public IReadOnlyList<TypeExpression> TypeArgs { get; }
             
-        public TypeExpression(TypeDefinition def, params TypeExpression[] args)
+        public TypeExpression(TypeDef def, params TypeExpression[] args)
         {
             if (def == null)
                 throw new ArgumentNullException(nameof(def));
-            Definition = def;
+            Def = def;
             TypeArgs = args;
         }
 
         public override string ToString()
         {
-            var kind = Definition?.Kind.ToString() ?? "";
+            var kind = Def?.Kind.ToString() ?? "";
             if (TypeArgs.Count > 0)
                 return kind + ":" + Name + $"<{string.Join(",", TypeArgs)}>";
             return kind + ":" + Name;
@@ -30,19 +30,19 @@ namespace Plato.Compiler.Symbols
 
         public static TypeExpression CreateTypeVar(string name)
             => name.StartsWith("$")
-                ? new TypeExpression(new TypeDefinition(TypeKind.TypeVariable, name))
+                ? new TypeExpression(new TypeDef(TypeKind.TypeVariable, name))
                 : throw new Exception("Type variable names must start with $ character");
 
         public override IEnumerable<Symbol> GetChildSymbols()
             => TypeArgs;
 
         public override int GetHashCode()
-            => Hasher.Combine(TypeArgs.Select(ta => ta.GetHashCode()).Append(Definition.GetHashCode()));
+            => Hasher.Combine(TypeArgs.Select(ta => ta.GetHashCode()).Append(Def.GetHashCode()));
 
         public override bool Equals(object obj)
             => obj is TypeExpression tes
-                   && tes.Definition.Name == Definition.Name
-                   && tes.Definition.Id == Definition.Id
+                   && tes.Def.Name == Def.Name
+                   && tes.Def.Id == Def.Id
                    && tes.TypeArgs.SequenceEqual(TypeArgs);
 
         public bool IsSelfType()

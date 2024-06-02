@@ -1,0 +1,124 @@
+library Geometry
+{
+	/*
+	Deform(xs: Points3D, f: Function1<Vector3D, Vector3D>): Points3D
+		=> xs.Points.Map(f);
+
+	Points(xs: Array<Point2D>): Geometry2D
+		=> xs;
+	
+	Points(xs: Array<Point3D>): Geometry3D
+		=> xs;
+	*/
+
+	/*
+	// TODO: this doesn't work because it is treated the same as Implicit(x: Point2D) other. 
+	Implicit(x: Point2D): Vector3D
+		=> (x.X, x.Y, 0.0);
+	*/
+
+	Implicit(x: Point2D): Vector2D
+		=> (x.X, x.Y);
+
+	Implicit(x: Vector2D): Point2D
+		=> (x.X, x.Y);
+
+	Implicit(x: Vector3D): Point3D
+		=> (x.X, x.Y, x.Z);
+
+	Implicit(x: Point3D): Vector3D
+		=> (x.X, x.Y, x.Z);
+
+	Implicit(x: Vector4D): Point4D
+		=> (x.X, x.Y, x.Z, x.W);
+
+	Implicit(x: Point4D): Vector4D
+		=> (x.X, x.Y, x.Z, x.W);
+
+	Deform(x: Point3D, f: Function1<Vector3D, Vector3D>): Point3D
+		=> f(x);
+
+	Deform(x: Point2D, f: Function1<Vector3D, Vector3D>): Point3D
+		=> f((x.X, x.Y, 0));
+
+	Transform(x: Deformable3D, m: Matrix3D): Deformable3D
+		=> x.Deform(v => m * v);
+
+	Closed(x: Line2D): Boolean
+		=> false;
+
+	Closed(x: Line3D): Boolean
+		=> false;
+
+	Closed(x: ClosedShape2D): Boolean
+		=> true;
+
+	Closed(x: ClosedShape3D): Boolean
+		=> true;
+
+	Closed(x: OpenShape2D): Boolean
+		=> false;
+
+	// TODO: move these function out
+
+	Turns(x: Number): Angle
+		=> x;
+
+	CirclePoint(a: Angle): Point2D
+		=> (a.Sin, a.Cos);
+
+	FloatDivision(x: Integer, y: Integer): Number
+		=> x.ToNumber / y.ToNumber;
+
+	Fractions(x: Integer): Array<Number>
+		=> x.Range.Map((i) => i.FloatDivision(x));
+
+	CirclePoints(n: Integer): Array<Point2D>
+		=> n.Fractions.Map((x) => x.Turns.CirclePoint);
+
+	Points(x: RegularPolygon): Array<Point2D>
+		=> x.NumPoints.CirclePoints;
+
+	Closed(x: Polygon2D): Boolean
+		=> true;
+
+	Closed(x: Polygon3D): Boolean
+		=> true;
+
+	ToVector(a: Point3D): Vector3D
+		=> a;
+
+	Add(a: Point3D, b: Vector3D): Point3D
+		=> a.ToVector + b;
+
+	Subtract(a: Point3D, b: Vector3D): Point3D
+		=> a.ToVector - b;
+
+	Subtract(a: Point3D, b: Point3D): Vector3D
+		=> a.ToVector - b.ToVector;
+
+	ToVector(a: Point2D): Vector2D
+		=> a;
+
+	Add(a: Point2D, b: Vector2D): Point2D
+		=> a.ToVector+ b;
+
+	Subtract(a: Point2D, b: Vector2D): Point2D
+		=> a.ToVector - b;
+
+	Subtract(a: Point2D, b: Point2D): Vector2D
+		=> a.ToVector - b.ToVector;
+
+	ToVector(a: Point4D): Vector4D
+		=> a;
+
+	Add(a: Point4D, b: Vector4D): Point4D
+		=> a.ToVector+ b;
+
+	Subtract(a: Point4D, b: Vector4D): Point4D
+		=> a.ToVector - b;
+
+	Subtract(a: Point4D, b: Point4D): Vector4D
+		=> a.ToVector - b.ToVector;
+
+}

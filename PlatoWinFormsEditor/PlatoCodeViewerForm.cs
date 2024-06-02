@@ -211,7 +211,7 @@ namespace PlatoWinFormsEditor
 
         private void aboutPlatoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ProcessUtil.OpenUrl("https://github.com");
+            ProcessUtil.OpenUrl("https://github.com/cdiggins/plato");
         }
     }
 }

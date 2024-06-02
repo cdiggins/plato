@@ -35,31 +35,23 @@ concept Deformable3D
 }
 
 // The set of all geometric objects: figures, shapes, points, fields, lines, and meshes. 
+
 concept Geometry 
-    inherits Interpolatable
 { }
 
 // The set of all 2D geometric objects
 concept Geometry2D
-    inherits Deformable2D, Geometry
+    inherits Geometry
 { }
 
 // The set of all 3D geometric objects
 concept Geometry3D
-    inherits Deformable3D, Geometry
-{ }
-
-concept GeometricSpace2D
-    inherits Geometry2D
-{ }
-
-concept GeometricSpace3D 
-    inherits Geometry3D 
+    inherits Geometry
 { }
 
 concept Shape2D 
     inherits Geometry2D 
-{ }
+{ } 
 
 concept Shape3D
     inherits Geometry3D
@@ -71,37 +63,35 @@ concept Shape3D
 concept OpenShape2D 
     inherits Geometry2D, OpenClosedShape
 { 
-    Outline(x: Self): Curve2D;
+    // TODO: make a decision in the future. 
+    // Outline(x: Self): Curve2D;
 }
 
 concept ClosedShape2D 
     inherits Geometry2D, OpenClosedShape
 { 
-    Outline(x: Self): Curve2D;
+    // TODO: make a decision in the future. 
+    // Outline(x: Self): Curve2D;
 }
 
 concept OpenShape3D 
     inherits Geometry3D, OpenClosedShape
 { 
-    Surface(x: Self): Curve3D;
+    // TODO: make a decision in the future. 
+    // Surface(x: Self): Curve3D;
 }
 
 concept ClosedShape3D 
     inherits Geometry3D, OpenClosedShape
 { 
-    Surface(x: Self): Curve2D;
+    // TODO: make a decision in the future. 
+    // Surface(x: Self): Curve2D;
 }
 
 // A parametric geometry in any number of dimensions
 concept Procedural<TDomain, TRange>
 {
     Eval(x: Self, amount: TDomain): TRange;
-}
-
-concept PointGeometry3D
-    inherits Geometry3D
-{
-    Points(x: Self): Array<Point3D>;
 }
 
 concept Curve<TRange> 
@@ -242,17 +232,18 @@ concept BezierPatch
     inherits Points3D, Surface, Array2D<Point3D>    
 { }
 
-// A grid of bezier patches  
-// https://en.wikipedia.org/wiki/B%C3%A9zier_surface
-concept BezierSurface
-    inherits Points3D, Surface, Array2D<BicubicBezierPatch>    
-{ }
+concept PolyhederalFace
+{
+    FaceIndex(x: Self): Integer;
+    VertexIndices(x: Self): Array<Integer>;
+    Polyhedron(x: Self): Polyhedron;
+}
 
 // https://en.wikipedia.org/wiki/Polyhedron
 concept Polyhedron 
-    inherits Surface
+    inherits Surface, Points3D
 {
-    Indices(x: Self): Array<Array<Integer>>;
+    Faces(x: Self): Array<PolyhederalFace>;
 }
 
 concept ConvexPolyhedron
@@ -267,7 +258,6 @@ concept SolidPolyhedron
 concept TriMesh
     inherits Polyhedron
 {
-    Indices(x: Self): Array<Integer3>;
 }
 
 // A 3 dimensional shape consisting of quadrilateral faces. 
@@ -275,7 +265,6 @@ concept TriMesh
 concept QuadMesh
     inherits Polyhedron
 {
-    Indices(x: Self): Array<Integer4>;
 }
 
 concept Grid2D
@@ -324,12 +313,3 @@ concept Polygon3D
 {
 }
 
-concept RegularPolygon2D
-    inherits Polygon2D
-{ 
-}
-
-concept RegularPolygon3D
-    inherits Polygon3D
-{ 
-}

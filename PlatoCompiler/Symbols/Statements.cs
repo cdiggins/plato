@@ -48,7 +48,7 @@ namespace Plato.Compiler.Symbols
     }
 
     public class LoopStatement : Statement
-    {
+    {   
         public Symbol Condition { get; }
         public Symbol Body { get; }
 

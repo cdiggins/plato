@@ -11,17 +11,17 @@ namespace Plato.Compiler.Analysis
     /// </summary>
     public class FunctionInstance
     {
-        public TypeDefinition ConcreteType { get; }
-        public FunctionDefinition Implementation { get; }
+        public TypeDef ConcreteType { get; }
+        public FunctionDef Implementation { get; }
         public TypeSubstitutions Substitutions { get; private set; }
-        public TypeDefinition Concept { get; }
+        public TypeDef Concept { get; }
         public string ConceptName => Concept?.Name ?? "";
         public IReadOnlyList<string> ParameterNames { get; }
         public string Name => Implementation.Name;
         public TypeInstance ReturnType { get; }
         public string SignatureId => $"{Name}({ParameterTypes.JoinStringsWithComma()})";
         public IReadOnlyList<TypeInstance> ParameterTypes { get; }
-        public IReadOnlyList<TypeParameterDefinition> UsedTypeParameters { get; }
+        public IReadOnlyList<TypeParameterDef> UsedTypeParameters { get; }
         public override string ToString() => $"{SignatureId}:{ReturnType}";
 
         // TODO: this might be necessary in the future, when choosing the correct type parameter is difficult.
@@ -29,8 +29,8 @@ namespace Plato.Compiler.Analysis
         //    new Dictionary<TypeParameterDefinition, TypeParameterDefinition>();
 
         public FunctionInstance(
-            TypeDefinition concreteType,
-            FunctionDefinition implementation,
+            TypeDef concreteType,
+            FunctionDef implementation,
             TypeSubstitutions substitutions)
         {
             ConcreteType = concreteType;
@@ -39,8 +39,8 @@ namespace Plato.Compiler.Analysis
             ParameterNames = Implementation.Parameters.Select(p => p.Name).ToList();
             
             var first = Implementation.Parameters.FirstOrDefault();
-            if (first?.Type.Definition.IsConcept() == true)
-                Concept = first.Type.Definition;
+            if (first?.Type.Def.IsConcept() == true)
+                Concept = first.Type.Def;
 
             foreach (var p in Implementation.Parameters)
                 GatherTypeVariables(p.Type);
@@ -49,8 +49,8 @@ namespace Plato.Compiler.Analysis
             ParameterTypes = Implementation.Parameters.Select(p => ToInstance(p.Type)).ToList();
 
             UsedTypeParameters = ParameterTypes.SelectMany(t => t.SelfAndDescendants())
-                .Select(t => t.Definition)
-                .OfType<TypeParameterDefinition>().Distinct().
+                .Select(t => t.Def)
+                .OfType<TypeParameterDef>().Distinct().
                 ToList();
         }
 
@@ -59,7 +59,7 @@ namespace Plato.Compiler.Analysis
             for (var i = 0; i < expr.TypeArgs.Count; ++i)
             {
                 var ta = expr.TypeArgs[i];
-                var tp = expr.Definition.TypeParameters[i];
+                var tp = expr.Def.TypeParameters[i];
 
                 if (ta.Name.StartsWith("$"))
                 {
@@ -78,7 +78,7 @@ namespace Plato.Compiler.Analysis
                 var r = Substitutions.Replace(expr);
 
                 if (ReferenceEquals(r, expr)) 
-                    return new TypeInstance(r.Definition, r.TypeArgs.Select(ToInstance));
+                    return new TypeInstance(r.Def, r.TypeArgs.Select(ToInstance));
 
                 expr = r;
             }

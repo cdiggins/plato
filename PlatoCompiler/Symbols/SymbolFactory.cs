@@ -25,9 +25,9 @@ namespace Plato.Compiler.Symbols
         public Scope ValueBindingsScope { get; set; } = new Scope(null);
         public Scope TypeBindingsScope { get; set; } = new Scope(null);
 
-        public Dictionary<Symbol, AstNode> SymbolsToNodes = new Dictionary<Symbol, AstNode>();
+        public readonly Dictionary<Symbol, AstNode> SymbolsToNodes = new Dictionary<Symbol, AstNode>();
 
-        public List<TypeDefinition> TypeDefs { get; } = new List<TypeDefinition>();
+        public List<TypeDef> TypeDefs { get; } = new List<TypeDef>();
 
         public T BindValue<T>(string name, T value) where T : Symbol
         {
@@ -35,52 +35,52 @@ namespace Plato.Compiler.Symbols
             return value;
         }
 
-        public TypeDefinition BindType(TypeDefinition value)
+        public TypeDef BindType(TypeDef value)
         {
             return BindType(value.Name, value);
         }
 
-        public TypeDefinition BindType(string name, TypeDefinition value)
+        public TypeDef BindType(string name, TypeDef value)
         {
             TypeBindingsScope = TypeBindingsScope.Bind(name, value);
             return value;
         }
 
-        public FunctionGroupDefinition CreateOrLookupGroupDefinition(MemberDefinition member)
+        public FunctionGroupDef CreateOrLookupGroupDefinition(MemberDef member)
             => CreateOrLookupGroupDefinition(member.Name);
 
-        public FunctionGroupDefinition CreateOrLookupGroupDefinition(string name)
+        public FunctionGroupDef CreateOrLookupGroupDefinition(string name)
         {
             var val = ValueBindingsScope.GetValue(name);
-            if (val is FunctionGroupDefinition group)
+            if (val is FunctionGroupDef group)
                 return group;
 
-            var fgs = new FunctionGroupDefinition(CreateAny(), Array.Empty<FunctionDefinition>(), name);
+            var fgs = new FunctionGroupDef(ValueBindingsScope, CreateAny(), Array.Empty<FunctionDef>(), name);
             return BindValue(name, fgs);
         }
 
-        public void AddToGroupDefinitionAndCreateIfNeeded(FunctionDefinition function)
+        public void AddToGroupDefinitionAndCreateIfNeeded(FunctionDef function)
             => CreateOrLookupGroupDefinition(function.Name).Add(function);
 
-        public FunctionGroupDefinition AddToGroupDefinition(FunctionDefinition function)
+        public FunctionGroupDef AddToGroupDefinition(FunctionDef function)
         {
             var name = function.Name;
             var val = ValueBindingsScope.GetValue(name);
             if (val == null)
                 throw new Exception($"Could not find function group {function.Name}");
 
-            if (val is FunctionGroupDefinition group)
+            if (val is FunctionGroupDef group)
                 group.Add(function);
             else
                 throw new Exception($"Expected a group definition but got a {val}");
             return group;
         }
 
-        public Reference GetValue(string name, AstNode node)
+        public RefSymbol GetValue(string name, AstNode node)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                LogError("Invalid variable name", node);
+                LogResolutionError("Invalid variable name", node);
                 return null;
             }
 
@@ -90,30 +90,30 @@ namespace Plato.Compiler.Symbols
                 var td = GetTypeDefinition(name);
                 if (td == null)
                 {
-                    LogError($"Could not find symbol {name}", node);
+                    LogResolutionError($"Could not find symbol {name}", node);
                     return null;
                 }
 
                 return td.ToReference();
             }
 
-            if (sym is DefinitionSymbol def)
+            if (sym is DefSymbol def)
             {
                 return def.ToReference();
             }
 
-            LogError($"Could not properly resolve symbol {name}", node);
+            LogResolutionError($"Could not properly resolve symbol {name}", node);
             return null;
         }
 
-        public void LogError(string message, AstNode node)
+        public void LogResolutionError(string message, AstNode node)
         {
             Errors.Add(new ResolutionError(message, node));
         }
 
-        public TypeDefinition GetTypeDefinition(string name)
+        public TypeDef GetTypeDefinition(string name)
         {
-            return TypeBindingsScope.GetValue(name) as TypeDefinition;
+            return TypeBindingsScope.GetValue(name) as TypeDef;
         }
 
         public TypeExpression ResolveType(AstTypeNode astTypeNode)
@@ -132,7 +132,7 @@ namespace Plato.Compiler.Symbols
             }
             if (string.IsNullOrWhiteSpace(name))
             {
-                LogError("Invalid variable name", astTypeNode);
+                LogResolutionError("Invalid variable name", astTypeNode);
                 return null;
             }
 
@@ -145,13 +145,13 @@ namespace Plato.Compiler.Symbols
             var sym = TypeBindingsScope.GetValue(name);
             if (sym == null)
             {
-                LogError($"Could not find type {name}", astTypeNode);
+                LogResolutionError($"Could not find type {name}", astTypeNode);
                 return null;
             }
-            var tds = sym as TypeDefinition;
+            var tds = sym as TypeDef;
             if (tds == null)
             {
-                LogError($"Could not resolve type {name} instead got {sym}", astTypeNode);
+                LogResolutionError($"Could not resolve type {name} instead got {sym}", astTypeNode);
                 return null;
             }
 
@@ -160,10 +160,10 @@ namespace Plato.Compiler.Symbols
             return new TypeExpression(tds, args);
         }
 
-        public ParameterDefinition Resolve(AstParameterDeclaration astParameterDeclaration)
+        public ParameterDef Resolve(AstParameterDeclaration astParameterDeclaration)
         {
             return BindValue(astParameterDeclaration.Name,
-                new ParameterDefinition(astParameterDeclaration.Name, 
+                new ParameterDef(ValueBindingsScope, astParameterDeclaration.Name, 
                     ResolveType(astParameterDeclaration.Type), astParameterDeclaration.Index));
         }
 
@@ -181,6 +181,56 @@ namespace Plato.Compiler.Symbols
             if (r != null)
                 SymbolsToNodes[r] = node;
             return r;
+        }
+
+        public AstNode ReduceFunctionToLoop(AstInvoke invoke)
+        {
+            // NOTE: I need a generalized way to convert an expression into a statement when needed. 
+            // Perhaps in the AST a block can have a value, and if it is expressed as a value ... then the whole function body 
+            // needs to be written as a block? I can imagine function bodies being written in a "block/statement" form, or an "expression" form
+            // depdning on theneeds.
+            // I don't want to use block form always because it is very verbose, and might be slow because of the extra things that are introduced.
+            // However, I can't just always use "function" form, because it is VERY slow, when lambdas are involved. 
+
+            var f = invoke.Function;
+            if (f is AstIdentifier ident && ident.Text == "Reduce")
+            {
+                if (invoke.Arguments.Count != 3)
+                    throw new Exception("Reduce expression must have three arguments");
+
+                var collection = invoke.Arguments[0];
+                var initialValue = invoke.Arguments[1];
+                var func = invoke.Arguments[2] as AstLambda;
+                if (func == null)
+                    throw new Exception("Expected third argument to be a lambda");
+
+                // TODO : use AstBuilder 
+                /*
+                var result = new AstVarDef(null, new AstIdentifier(null, "__result"), initialValue, null);
+                var loopVar = new AstVarDef(null, new AstIdentifier(null, "__i"), 0, new AstTypeNode(null, "Integer"));
+                var forLoop = new AstLoop(null, null, null);
+                var forBody = func.Body;
+                */
+                // create a for-loop, and a variable. 
+
+            }
+
+            throw new NotImplementedException();
+        }
+
+        public Symbol ResolveFunctionCall(AstInvoke astInvoke)
+        {
+            var args = astInvoke.Arguments.Select((a, i) =>
+                new Argument(ResolveExpr(a), i)).ToArray();
+
+            var funcRef = ResolveExpr(astInvoke.Function);
+            if (funcRef == null)
+            {
+                LogResolutionError($"Could not find function {astInvoke.Function}", astInvoke);
+                throw new Exception("");
+            }
+            
+            return new FunctionCall(funcRef, args);
         }
 
         public Symbol InternalResolve(AstNode node)
@@ -247,24 +297,15 @@ namespace Plato.Compiler.Symbols
                         return GetValue(astIdentifier.Text, astIdentifier);
 
                     case AstInvoke astInvoke:
-                        {
-                            var args = astInvoke.Arguments.Select((a, i) =>
-                                new Argument(ResolveExpr(a), i)).ToArray();
-                            var funcRef = ResolveExpr(astInvoke.Function);
-                            if (funcRef == null)
-                            {
-                                LogError($"Could not find function {astInvoke.Function}", astInvoke);
-                            }
-
-                            return new FunctionCall(funcRef, args);
-                        }
+                        return ResolveFunctionCall(astInvoke);
 
                     case AstLambda astLambda:
-                        {
+                    {
+                        var outerScope = ValueBindingsScope;
                             ValueBindingsScope = ValueBindingsScope.Push();
                             var ps = astLambda.Parameters.Select(Resolve).ToArray();
                             var body = ResolveExpr(astLambda.Body);
-                            var r = new Lambda(new FunctionDefinition("_lambda_", null, 
+                            var r = new Lambda(new FunctionDef(outerScope, $"_lambda_{NextLambdaId++}", null, 
                                 CreateLambdaType(ps.Length), body, ps));
                             ValueBindingsScope = ValueBindingsScope.Pop();
                             return r;
@@ -272,7 +313,7 @@ namespace Plato.Compiler.Symbols
 
                     case AstVarDef astVarDef:
                         return BindValue(astVarDef.Name,
-                            new VariableDefinition(astVarDef.Name, ResolveType(astVarDef.Type), ResolveExpr(astVarDef.Value)));
+                            new VariableDef(ValueBindingsScope, astVarDef.Name, ResolveType(astVarDef.Type), ResolveExpr(astVarDef.Value)));
 
                     case AstLoop astLoop:
                         return new LoopStatement(Resolve(astLoop.Condition), Resolve(astLoop.Body));
@@ -281,24 +322,26 @@ namespace Plato.Compiler.Symbols
                         return InternalResolve(astBinaryOp.ToInvocation());
                 }
 
-                LogError($"Node can't be evaluated", node);
+                LogResolutionError($"Node can't be evaluated", node);
                 return null;
             }
             catch (Exception e)
             {
-                LogError($"Exception occurred {e}", node);
+                LogResolutionError($"Exception occurred {e}", node);
                 return null;
             }
         }
 
-        public IEnumerable<TypeDefinition> CreateTypeDefs(IEnumerable<AstTypeDeclaration> types)
+        public static int NextLambdaId = 0;
+
+        public IEnumerable<TypeDef> CreateTypeDefs(IEnumerable<AstTypeDeclaration> types)
         {
             // First, we bind the libraries 
             foreach (var astTypeDeclaration in types)
             {
                 if (astTypeDeclaration.Kind == TypeKind.Library)
                 {
-                    var typeDef = new TypeDefinition(astTypeDeclaration.Kind, astTypeDeclaration.Name);
+                    var typeDef = new TypeDef(TypeBindingsScope, astTypeDeclaration.Kind, astTypeDeclaration.Name);
                     SymbolsToNodes.Add(typeDef, astTypeDeclaration);
                     BindType(typeDef);
                     TypeDefs.Add(typeDef);
@@ -310,7 +353,7 @@ namespace Plato.Compiler.Symbols
             {
                 if (astTypeDeclaration.Kind != TypeKind.Library)
                 {
-                    var typeDef = new TypeDefinition(astTypeDeclaration.Kind, astTypeDeclaration.Name);
+                    var typeDef = new TypeDef(TypeBindingsScope, astTypeDeclaration.Kind, astTypeDeclaration.Name);
                     SymbolsToNodes.Add(typeDef, astTypeDeclaration);
                     BindType(typeDef);
                     TypeDefs.Add(typeDef);
@@ -327,7 +370,7 @@ namespace Plato.Compiler.Symbols
                     var constraints = astTypeDeclaration.Constraints
                         .Where(c => c.Name == tp.Name)
                         .Select(c => ResolveType(c.Constraint)).ToList();
-                    var tpd = new TypeParameterDefinition(tp.Name, constraints);
+                    var tpd = new TypeParameterDef(TypeBindingsScope, tp.Name, constraints);
                     BindType(tpd.Name, tpd);
                     typeDef.TypeParameters.Add(tpd);
                 }
@@ -340,21 +383,21 @@ namespace Plato.Compiler.Symbols
                 {
                     if (m is AstFieldDeclaration fd)
                     {
-                        var fDef = new FieldDefinition(typeDef, ResolveType(fd.Type), fd.Name.Text);
+                        var fDef = new FieldDef(ValueBindingsScope, typeDef, ResolveType(fd.Type), fd.Name.Text);
                         typeDef.Fields.Add(fDef);
                         SymbolsToNodes.Add(fDef, fd);
                         CreateOrLookupGroupDefinition(fDef);
                     }
                     else if (m is AstMethodDeclaration md)
                     {
-                        var mDef = new MethodDefinition(typeDef, ResolveType(md.Type), md.Name.Text);
+                        var mDef = new MethodDef(ValueBindingsScope, typeDef, ResolveType(md.Type), md.Name.Text);
                         typeDef.Methods.Add(mDef);
                         SymbolsToNodes.Add(mDef, md);
                         CreateOrLookupGroupDefinition(mDef);
                     }
                     else
                     {
-                        LogError($"MemberDefSymbol not recognized", m);
+                        LogResolutionError($"MemberDefSymbol not recognized", m);
                         return null;
                     }
                 }
@@ -400,7 +443,7 @@ namespace Plato.Compiler.Symbols
                     ValueBindingsScope = ValueBindingsScope.Push();
                     var location = SymbolsToNodes[m] as AstMethodDeclaration;
                     if (location == null) throw new Exception($"Missing AstMethodDeclaration at {location}");
-                    var list = new List<ParameterDefinition>();
+                    var list = new List<ParameterDef>();
                     foreach (var p in location.Parameters)
                     {
                         var pValue = Resolve(p);
@@ -412,7 +455,9 @@ namespace Plato.Compiler.Symbols
                     {
                         throw new Exception("Unexpected missing body");
                     }
-                    var f = new FunctionDefinition(m.Name, typeDef, m.Type, body, list.ToArray());
+
+                    
+                    var f = new FunctionDef(ValueBindingsScope, m.Name, typeDef, m.Type, body, list.ToArray());
                     Debug.Assert(m.Function == null);
                     m.Function = f;
 
@@ -443,8 +488,8 @@ namespace Plato.Compiler.Symbols
                 // If there is at least one field, add a constructor function
                 if (typeDef.Fields.Count > 0)
                 {
-                    var ctor = new FunctionDefinition(typeDef.Name, typeDef, typeDef.ToTypeExpression(), null,
-                        typeDef.Fields.Select((f, i) => new ParameterDefinition(f.Name, f.Type, i)).ToArray());
+                    var ctor = new FunctionDef(ValueBindingsScope, typeDef.Name, typeDef, typeDef.ToTypeExpression(), null,
+                        typeDef.Fields.Select((f, i) => new ParameterDef(ValueBindingsScope, f.Name, f.Type, i)).ToArray());
                     AddCompilerGeneratedFunction(typeDef, ctor);
                 }
 
@@ -452,8 +497,8 @@ namespace Plato.Compiler.Symbols
                 if (typeDef.Fields.Count == 1)
                 {
                     var field = typeDef.Fields[0];
-                    var cast = new FunctionDefinition($"To{field.Name}", typeDef, field.Type, null,
-                        new ParameterDefinition("arg", typeDef.ToTypeExpression(), 0));
+                    var cast = new FunctionDef(ValueBindingsScope, Operators.ImplicitCast, typeDef, field.Type, null,
+                        new ParameterDef(ValueBindingsScope, "arg", typeDef.ToTypeExpression(), 0));
                     AddCompilerGeneratedFunction(typeDef, cast);
                 }
 
@@ -461,12 +506,12 @@ namespace Plato.Compiler.Symbols
                 if (typeDef.Fields.Count > 1)
                 {
                     var tupleType = CreateTuple(typeDef.Fields.Select(f => f.Type).ToArray());
-                    var ctor = new FunctionDefinition(typeDef.Name, typeDef, typeDef.ToTypeExpression(), null,
-                        new ParameterDefinition("arg", tupleType, 0));
+                    var ctor = new FunctionDef(ValueBindingsScope, typeDef.Name, typeDef, typeDef.ToTypeExpression(), null, 
+                        new ParameterDef(ValueBindingsScope, "arg", tupleType, 0));
                     AddCompilerGeneratedFunction(typeDef, ctor);
 
-                    var tupleCast = new FunctionDefinition("ToTuple", typeDef, tupleType, null,
-                        new ParameterDefinition("self", typeDef.ToTypeExpression(), 0));
+                    var tupleCast = new FunctionDef(ValueBindingsScope, Operators.ImplicitCast, typeDef, tupleType, null, 
+                        new ParameterDef(ValueBindingsScope, "self", typeDef.ToTypeExpression(), 0));
                     AddCompilerGeneratedFunction(typeDef, tupleCast);
                 }
 
@@ -477,7 +522,7 @@ namespace Plato.Compiler.Symbols
             return TypeDefs;
         }
 
-        public void AddCompilerGeneratedFunction(TypeDefinition typeDef, FunctionDefinition f)
+        public void AddCompilerGeneratedFunction(TypeDef typeDef, FunctionDef f)
         {
             typeDef.CompilerGeneratedFunctions.Add(f);
             AddToGroupDefinitionAndCreateIfNeeded(f);

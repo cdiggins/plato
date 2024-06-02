@@ -10,16 +10,16 @@ namespace Plato.Compiler.Analysis
     /// </summary>
     public class LibraryFunctions
     {
-        public Dictionary<string, List<FunctionDefinition>> Lookup { get; } =
-            new Dictionary<string, List<FunctionDefinition>>();
+        public Dictionary<string, List<FunctionDef>> Lookup { get; } =
+            new Dictionary<string, List<FunctionDef>>();
 
-        public IEnumerable<FunctionDefinition> AllFunctions()
+        public IEnumerable<FunctionDef> AllFunctions()
             => Lookup.Values.SelectMany(g => g);
 
-        public IEnumerable<FunctionDefinition> GetFunctionsForType(string typeName)
+        public IEnumerable<FunctionDef> GetFunctionsForType(string typeName)
             => AllFunctions().Where(f => f.Parameters.Count > 0 && f.Parameters[0].Type.Name == typeName);
 
-        public IEnumerable<FunctionDefinition> AllConstants()
+        public IEnumerable<FunctionDef> AllConstants()
             => AllFunctions().Where(f => f.Parameters.Count == 0);
 
         public LibraryFunctions(Plato.Compiler.Compilation c)
@@ -28,7 +28,7 @@ namespace Plato.Compiler.Analysis
             {
                 if (!t.IsLibrary())
                     continue;
-                var list = new List<FunctionDefinition>();
+                var list = new List<FunctionDef>();
                 foreach (var m in t.Methods)
                 {
                     list.Add(m.Function);

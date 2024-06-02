@@ -1,10 +1,76 @@
 library Numerical
 {
+    Pi(): Number 
+        => 3.1415926535897;
+    
+    TwoPi(): Number 
+        => Pi.Twice;
+    
+    HalfPi(): Number 
+        => Pi.Half;
+
+    Epsilon(): Number 
+        => 1E-15;
+    
+    FeetPerMeter(): Number 
+        => 3.280839895;
+    
+    FeetPerMile(): Number 
+        => 5280;
+    
+    MetersPerLightyear(): Number 
+        => 9.46073047258e+15;
+    
+    MetersPerAU(): Number 
+        => 149597870691.0;
+    
+    DaltonPerKilogram(): Number 
+        => 1.66053e-27;
+    
+    PoundPerKilogram(): Number 
+        => 0.45359237;
+    
+    PoundPerTon(): Number 
+        => 2000;
+    
+    KilogramPerSolarMass(): Number 
+        => 1.9889200011446E+30;
+    
+    JulianYearSeconds(): Number 
+        => 31557600;
+    
+    GregorianYearDays(): Number 
+        => 365.2425;
+    
+    Hundred(x: Number): Number 
+        => x * 100;  
+    
+    Thousand(x: Number): Number 
+        => x * 1000;
+    
+    Million(x: Number): Number 
+        => x.Thousand.Thousand;
+    
+    Billion(x: Number): Number 
+        => x.Thousand.Million;
+        
+    OunceToGram(x: Number): Number 
+        => x * 28.349523125;
+    
+    TroyOunceToGram(x: Number): Number 
+        => x * 31.1034768;
+    
+    GrainToMilligram(x: Number): Number 
+        => x * 64.79891;    
+    
+    Mole(x: Number): Number 
+        => x * 6.02214076e+23;
+
     Magnitude(x: Real): Number
         => x.Value;
 
     Inverse(x: Number): Number
-        => 1 / x;
+        => 1.0 / x;
 
     Reciprocal(x: Number): Number
         => x.Inverse;
@@ -17,9 +83,6 @@ library Numerical
 
     SmoothStep(x: Number): Number
         => x.Square * (3.0 - x.Twice);    
-
-    Square(x: Arithmetic): Arithmetic 
-        => x.Pow2;
 
     Pow2(x: Arithmetic): Arithmetic 
         => x * x;
@@ -34,9 +97,9 @@ library Numerical
         => x.Pow4 * x;
 
     Square(x: Arithmetic): Arithmetic 
-        => x * x;
+        => x.Pow2;
 
-    ClampOne(x: Numerical): Numerical 
+    ClampOne(x: Real): Real
         => x.Clamp(x.Zero, x.One);
 
     PlusOne(x: Numerical): Numerical 
@@ -48,54 +111,42 @@ library Numerical
     FromOne(x: Numerical): Numerical 
         => x.One - x;
 
-    GtZ(x : Comparable): Boolean
+    GtZ(x : Real): Boolean
         => x > x.Zero;
 
-    LtZ(x : Comparable): Boolean
+    LtZ(x : Real): Boolean
         => x < x.Zero;
 
-    GtEqZ(x : Comparable): Boolean
+    GtEqZ(x : Real): Boolean
         => x >= x.Zero;
 
-    LtEqZ(x : Comparable): Boolean
+    LtEqZ(x : Real): Boolean
         => x <= x.Zero;
 
-    IsPositive(x: Comparable): Boolean
+    IsPositive(x: Real): Boolean
         => x.GtEqZ;
 
-    IsNegative(x: Comparable): Boolean
+    IsNegative(x: Real): Boolean
         => x.LtZ;
 
-    Sign(x: Numerical): Integer
+    Sign(x: Real): Integer
         => x.LtZ ? -1 : x.GtZ ? 1 : 0;
 
-    Abs(x: Numerical): Numerical 
+    Abs(x: Real): Real 
         => x.LtZ ? -x: x;
     
     Half(x: ScalarArithmetic): ScalarArithmetic
         => x / 2.0;
         
-    Quarter(x:ScalarArithmetic): ScalarArithmetic
+    Quarter(x: ScalarArithmetic): ScalarArithmetic
         => x / 4.0;
     
-    Eighth(x:ScalarArithmetic): ScalarArithmetic
-        => x / 8.0;
-        
-    Tenth(x:ScalarArithmetic): ScalarArithmetic 
+    Tenth(x: ScalarArithmetic): ScalarArithmetic 
         => x / 10.0;
     
-    Twice(x:ScalarArithmetic): ScalarArithmetic 
+    Twice(x: ScalarArithmetic): ScalarArithmetic 
         => x * 2.0;
     
-    TwoPi(): Number 
-        => Pi.Twice;
-    
-    Pi(): Number 
-        => 3.1415926535897;
-
-    Epsilon(): Number
-        => 1E-15;
-
     MultiplyEpsilon(x: Number, y: Number): Number
         => x.Abs.Greater(y.Abs) * Epsilon;
 
@@ -111,22 +162,35 @@ library Numerical
 
     Lerp(a: ScalarArithmetic, b: ScalarArithmetic, t: Number): ScalarArithmetic
         => a * t.FromOne + b * t;
-
-    Nearest(a: Number, b: Number, t: Number): Number
-        => t <= 0.5 ? a : b;
-        
+          
     Between(self: Comparable, min: Comparable, max: Comparable): Boolean
         => self >= min && self <= max;
-
-    Percent(self: Number): Unit
-        => self / 100.0;
-
-    Percent(self: Unit): Number
-        => self.Value * 100.0;
 
     InverseLerp(a: Number, b: Number, v: Number): Number
         => (v - a) / (b - a);
 
     Remap(aIn: Number, bIn: Number, aOut: Number, bOut: Number, v: Number): Number
         => aOut.Lerp(bOut, aIn.InverseLerp(aOut, v));
+
+    M11(m: Matrix3D): Number => m.Column1.X;
+    M12(m: Matrix3D): Number => m.Column2.X;
+    M13(m: Matrix3D): Number => m.Column3.X;
+    M14(m: Matrix3D): Number => m.Column4.X;
+    M21(m: Matrix3D): Number => m.Column1.Y;
+    M22(m: Matrix3D): Number => m.Column2.Y;
+    M23(m: Matrix3D): Number => m.Column3.Y;
+    M24(m: Matrix3D): Number => m.Column4.Y;
+    M31(m: Matrix3D): Number => m.Column1.Z;
+    M32(m: Matrix3D): Number => m.Column2.Z;
+    M33(m: Matrix3D): Number => m.Column3.Z;
+    M34(m: Matrix3D): Number => m.Column4.Z;
+    M41(m: Matrix3D): Number => m.Column1.W;
+    M42(m: Matrix3D): Number => m.Column2.W;
+    M43(m: Matrix3D): Number => m.Column3.W;
+    M44(m: Matrix3D): Number => m.Column4.W;
+
+    Multiply(m: Matrix3D, v: Vector3D): Vector3D
+        =>  (v.X * m.M11 + v.Y * m.M21 + v.Z * m.M31 + m.M41,
+            v.X * m.M12 + v.Y * m.M22 + v.Z * m.M32 + m.M42,
+            v.X * m.M13 + v.Y * m.M23 + v.Z * m.M33 + m.M43);
 }

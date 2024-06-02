@@ -15,15 +15,15 @@ namespace Plato.Compiler.Analysis
         public ConceptImplementation InheritedFrom { get; }
         public IEnumerable<ConceptImplementation> Children { get; }
         public TypeExpression Expression { get; }
-        public TypeDefinition Concept => Expression.Definition;
-        public TypeDefinition ConcreteType { get;}
+        public TypeDef Concept => Expression.Def;
+        public TypeDef ConcreteType { get;}
         public TypeSubstitutions Substitutions { get; }
         public IReadOnlyList<FunctionInstance> ImplementedFunctions { get; }
         public IReadOnlyList<FunctionInstance> DeclaredFunctions { get; }
 
         public ConceptImplementation(
             LibraryFunctions libraries,
-            TypeDefinition concreteType, 
+            TypeDef concreteType, 
             TypeSubstitutions substitutions, 
             TypeExpression expression,
             ConceptImplementation inheritedFrom = null)
@@ -34,7 +34,7 @@ namespace Plato.Compiler.Analysis
             Verifier.AssertNotNull(substitutions, nameof(expression));
 
             Verifier.Assert(concreteType.IsConcrete());
-            Verifier.Assert(expression.Definition.IsConcept());
+            Verifier.Assert(expression.Def.IsConcept());
 
             Libraries = libraries;
             InheritedFrom = inheritedFrom;
@@ -55,7 +55,7 @@ namespace Plato.Compiler.Analysis
         public ConceptImplementation CreateInheritedConceptImplementation(TypeExpression inheritsType)
             => new ConceptImplementation(Libraries, ConcreteType, Substitutions.Add(inheritsType), inheritsType, this);
 
-        public FunctionInstance AnalyzeConceptFunction(FunctionDefinition function)
+        public FunctionInstance AnalyzeConceptFunction(FunctionDef function)
             => new FunctionInstance(ConcreteType, function, Substitutions);
 
         public IEnumerable<FunctionInstance> AllFunctions()

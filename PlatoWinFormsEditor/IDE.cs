@@ -1,6 +1,7 @@
 using Ara3D.Logging;
 using Ara3D.Utils;
 using Plato.Compiler;
+using Plato.CSharpWriter;
 
 namespace PlatoWinFormsEditor;
 
@@ -83,5 +84,18 @@ public class IDE
 
         //Compilation.OutputFunctionAnalysis();
         Compilation.OutputFunctionCallAnalysis();
+
+        if (Compilation.CompletedCompilation)
+        {
+            var currentFolder = PathUtil.GetCallerSourceFolder();
+            var outputFolder = currentFolder.RelativeFolder("..", "PlatoOutput");
+            logger.Log("Writing C#");
+            var output = Compilation.ToCSharp(outputFolder);
+            foreach (var kv in output.Files)
+            {
+                var fp = new FilePath(kv.Key);
+                fp.WriteAllText(kv.Value.ToString());
+            }
+        }
     }
 }

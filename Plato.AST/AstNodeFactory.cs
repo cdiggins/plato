@@ -331,7 +331,7 @@ namespace Plato.AST
             }
             if (expr.CastExpression.Present)
             {
-                return ToIntrinsicInvocation(expr, "cast",
+                return ToIntrinsicInvocation(expr, Operators.ExplicitCast,
                     ToAst(expr.CastExpression.Node.TypeExpr),
                     ToAst(expr.CastExpression.Node.Expression));
             }
@@ -642,7 +642,7 @@ namespace Plato.AST
                     return AstContinue.Default;
 
                 case CstCastExpression cstCastExpression:
-                    return ToIntrinsicInvocation(cstCastExpression, "Cast", ToAst(cstCastExpression.Expression), ToAst(cstCastExpression.TypeExpr));
+                    return ToIntrinsicInvocation(cstCastExpression, Operators.ExplicitCast, ToAst(cstCastExpression.Expression), ToAst(cstCastExpression.TypeExpr));
 
                 case CstCatchClause _:
                     throw new NotImplementedException();

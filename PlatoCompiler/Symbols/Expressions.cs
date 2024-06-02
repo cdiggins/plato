@@ -21,54 +21,54 @@ namespace Plato.Compiler.Symbols
             => Children;
     }
 
-    public abstract class Reference : Expression
+    public abstract class RefSymbol : Expression
     {
-        public DefinitionSymbol Definition { get; }
-        public TypeExpression Type => Definition.Type;
-        public override string Name => Definition.Name;
+        public DefSymbol Def { get; }
+        public TypeExpression Type => Def.Type;
+        public override string Name => Def.Name;
 
-        protected Reference(DefinitionSymbol def)
+        protected RefSymbol(DefSymbol def)
         {
-            Definition = def ?? throw new Exception("No definition provided");
+            Def = def ?? throw new Exception("No definition provided");
         }
 
         public override string ToString() => Name;
     }
 
-    public class TypeReference : Reference
+    public class TypeRefSymbol : RefSymbol
     {
-        public TypeReference(TypeDefinition def)
+        public TypeRefSymbol(TypeDef def)
             : base(def)
         { }
 
-        public new TypeDefinition Definition => base.Definition as TypeDefinition;
+        public new TypeDef Def => base.Def as TypeDef;
     }
 
-    public class VariableReference : Reference
+    public class VariableRefSymbol : RefSymbol
     {
-        public VariableReference(VariableDefinition def)
+        public VariableRefSymbol(VariableDef def)
             : base(def)
         { }
 
-        public new VariableDefinition Definition => base.Definition as VariableDefinition;
+        public new VariableDef Def => base.Def as VariableDef;
     }
 
-    public class ParameterReference : Reference
+    public class ParameterRefSymbol : RefSymbol
     {
-        public ParameterReference(ParameterDefinition def)
+        public ParameterRefSymbol(ParameterDef def)
             : base(def)
         { }
 
-        public new ParameterDefinition Definition => base.Definition as ParameterDefinition;
+        public new ParameterDef Def => base.Def as ParameterDef;
     }
 
-    public class FunctionGroupReference : Reference
+    public class FunctionGroupRefSymbol : RefSymbol
     {
-        public FunctionGroupReference(FunctionGroupDefinition funcs)
+        public FunctionGroupRefSymbol(FunctionGroupDef funcs)
             : base(funcs)
         { }
 
-        public new FunctionGroupDefinition Definition => base.Definition as FunctionGroupDefinition;
+        public new FunctionGroupDef Def => base.Def as FunctionGroupDef;
     }
 
     public class ConditionalExpression : Expression
@@ -177,9 +177,9 @@ namespace Plato.Compiler.Symbols
 
     public class Lambda : Expression
     {
-        public FunctionDefinition Function { get; }
+        public FunctionDef Function { get; }
 
-        public Lambda(FunctionDefinition function)
+        public Lambda(FunctionDef function)
             => Function = function;
 
         public override string Name => "=>";

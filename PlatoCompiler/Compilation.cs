@@ -168,15 +168,15 @@ namespace Plato.Compiler
         public IReadOnlyList<AstNode> Trees { get; }
         public SymbolFactory SymbolFactory { get; }
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; }
-        public IDictionary<FunctionDefinition, FunctionAnalysis> FunctionAnalyses { get; } = new Dictionary<FunctionDefinition, FunctionAnalysis>();
+        public IDictionary<FunctionDef, FunctionAnalysis> FunctionAnalyses { get; } = new Dictionary<FunctionDef, FunctionAnalysis>();
 
-        public IEnumerable<TypeDefinition> AllTypeAndLibraryDefinitions => TypeDefinitions
+        public IEnumerable<TypeDef> AllTypeAndLibraryDefinitions => TypeDefinitions
             .Concat(LibraryDefinitionsByName.Values);
 
-        public Dictionary<string, TypeDefinition> TypeDefinitionsByName { get; } = new Dictionary<string, TypeDefinition>();
-        public Dictionary<string, TypeDefinition> LibraryDefinitionsByName { get; } = new Dictionary<string, TypeDefinition>();
-        public IReadOnlyList<FunctionDefinition> FunctionDefinitions { get; }
-        public IEnumerable<TypeDefinition> TypeDefinitions => TypeDefinitionsByName.Values;
+        public Dictionary<string, TypeDef> TypeDefinitionsByName { get; } = new Dictionary<string, TypeDef>();
+        public Dictionary<string, TypeDef> LibraryDefinitionsByName { get; } = new Dictionary<string, TypeDef>();
+        public IReadOnlyList<FunctionDef> FunctionDefinitions { get; }
+        public IEnumerable<TypeDef> TypeDefinitions => TypeDefinitionsByName.Values;
         public IEnumerable<Symbol> Symbols => SymbolFactory.SymbolsToNodes.Keys.OrderBy(s => s.Id);
 
         public Dictionary<Expression, IType> ExpressionTypes { get; } = new Dictionary<Expression, IType>();
@@ -199,7 +199,7 @@ namespace Plato.Compiler
         public LibraryFunctions Libraries { get; }
         public IReadOnlyList<ConcreteType> ConcreteTypes { get; }
 
-        public FunctionAnalysis GetOrComputeFunctionAnalysis(FunctionDefinition fd)
+        public FunctionAnalysis GetOrComputeFunctionAnalysis(FunctionDef fd)
         {
             if (FunctionAnalyses.ContainsKey(fd))
                 return FunctionAnalyses[fd];
@@ -217,7 +217,7 @@ namespace Plato.Compiler
                     if (f.Parameters.Count == 0)
                         continue;
 
-                    var firstParamType = f.Parameters[0].Type?.Definition;
+                    var firstParamType = f.Parameters[0].Type?.Def;
 
                     Verifier.AssertNotNull(firstParamType, $"First parameter type of {f}");
 
@@ -299,8 +299,8 @@ namespace Plato.Compiler
                     if (!p.GetParameterReferences(f).Any())
                         SemanticWarnings.Add($"No references found to {p}");
 
-                foreach (var r in f.Body.GetSymbolTree().OfType<Reference>())
-                    if (r.Definition == null)
+                foreach (var r in f.Body.GetSymbolTree().OfType<RefSymbol>())
+                    if (r.Def == null)
                         SemanticErrors.Add($"Could not resolve reference for {r}");
 
                 if (f.IsPartiallyTyped())
@@ -313,7 +313,7 @@ namespace Plato.Compiler
                 {
                     if (t2 == null)
                         SemanticErrors.Add($"One of the implemented types of {t} was not resolved");
-                    else if (t2.Definition?.Kind != TypeKind.Concept)
+                    else if (t2.Def?.Kind != TypeKind.Concept)
                         SemanticErrors.Add($"Only concepts can be implemented. Instead {t} implements {t2}");
                 }
 
@@ -321,7 +321,7 @@ namespace Plato.Compiler
                 {
                     if (t2 == null)
                         SemanticErrors.Add($"One of the inherited types of {t} was not resolved");
-                    else if (t2.Definition?.Kind != TypeKind.Concept)
+                    else if (t2.Def?.Kind != TypeKind.Concept)
                         InternalErrors.Add($"Only concepts can be inherited. Instead {t} inherits {t2}");
                 }
                     
@@ -351,19 +351,19 @@ namespace Plato.Compiler
             }
         }
 
-        public TypeDefinition GetTypeDefinition(string name)
+        public TypeDef GetTypeDefinition(string name)
         {
             return TypeDefinitionsByName[name];
         }
 
-        public FunctionAnalysis GetProcessedFunctionAnalysis(FunctionDefinition fd)
+        public FunctionAnalysis GetProcessedFunctionAnalysis(FunctionDef fd)
         {
             var r = FunctionAnalyses[fd];
             r.Process();
             return r;
         }
 
-        public FunctionGroupCallResolution ResolveFunctionGroup(FunctionAnalysis context, FunctionCall callSite, FunctionGroupReference fgr, List<IType> argTypes)
+        public FunctionGroupCallResolution ResolveFunctionGroup(FunctionAnalysis context, FunctionCall callSite, FunctionGroupRefSymbol fgr, List<IType> argTypes)
         {
             if (FunctionGroupCalls.ContainsKey(callSite))
                 return FunctionGroupCalls[callSite];
@@ -372,34 +372,34 @@ namespace Plato.Compiler
             return tmp;
         }
 
-        public FunctionDefinition FindImplicitCast(IType from, IType to)
+        public FunctionDef FindImplicitCast(IType from, IType to)
         {
             var name = to.GetTypeDefinition()?.Name;
             if (string.IsNullOrEmpty(name)) return null;
-            var funcs = FunctionDefinitions.Where(fd => fd.Name == $"To{name}").Select(GetProcessedFunctionAnalysis).ToList();
+            var funcs = FunctionDefinitions.Where(fd => fd.FunctionType == FunctionType.Cast).Select(GetProcessedFunctionAnalysis).ToList();
             funcs = funcs.Where(fd => fd?.DeclaredReturnType?.Equals(to) == true).ToList();
             funcs = funcs.Where(fd => fd.ParameterTypes.Count == 1 && fd.ParameterTypes[0].Equals(from)).ToList();
             if (funcs.Count == 0) return null;
             if (funcs.Count > 1) throw new Exception("Ambiguous cast functions");
-            return funcs[0].Function;
+            return funcs[0].Def;
         }
 
-        public FunctionDefinition FindCastConstructor(IType from, IType to)
+        public FunctionDef FindCastConstructor(IType from, IType to)
         {
             var name = to.GetTypeDefinition()?.Name;
             if (string.IsNullOrEmpty(name)) return null;
-            var funcs = FunctionDefinitions.Where(fd => fd.Name == $"{name}").Select(GetProcessedFunctionAnalysis).ToList();
+            var funcs = FunctionDefinitions.Where(fd => fd.FunctionType == FunctionType.Constructor).Select(GetProcessedFunctionAnalysis).ToList();
             funcs = funcs.Where(fd => fd?.DeclaredReturnType?.Equals(to) == true).ToList();
             funcs = funcs.Where(fd => fd.ParameterTypes.Count == 1 && fd.ParameterTypes[0].Equals(from)).ToList();
             if (funcs.Count == 0) return null;
             if (funcs.Count > 1) throw new Exception("Ambiguous constructor functions");
-            return funcs[0].Function;
+            return funcs[0].Def;
         }
 
         public void OutputFunctionCallAnalysis(StringBuilder sb, FunctionCallAnalysis fca)
         {
             sb.AppendLine($"    Function = {fca.Function.Signature}");
-            sb.AppendLine($"    Callable = {fca.Callable}, Arity Matches = {fca.ArityMatches}, # Concrete type = {fca.NumConcreteTypes}");
+            sb.AppendLine($"    Callable = {fca.Callable}, Has body = {fca.HasBody}, Arity Matches = {fca.ArityMatches}, # Concrete type = {fca.NumConcreteTypes}");
             if (fca.ArityMatches)
             {
                 for (var i = 0; i < fca.Arguments.Count; ++i)
@@ -414,10 +414,10 @@ namespace Plato.Compiler
             foreach (var fa in FunctionAnalyses.Values)
             {
                 var typeSig = $"({string.Join(", ", fa.ParameterTypes)}) => {fa.DeclaredReturnType}";
-                sb.AppendLine($"{i++}. {fa.Function.Name}");
+                sb.AppendLine($"{i++}. {fa.Def.Name}");
                 sb.AppendLine($"  Type sig: {typeSig}");
                 sb.AppendLine($"  Sig: {fa.Signature}");
-                sb.AppendLine($"  Body: {fa.Function.Body}");
+                sb.AppendLine($"  Body: {fa.Def.Body}");
                 //sb.AppendLine($"  Has {fa.TypeParameterToTypeLookup.Count} Type parameters ");
                 //sb.AppendLine($"  Has type parameter in return: {fa.DeclaredReturnType.HasTypeVariable()}");
             }
@@ -427,7 +427,7 @@ namespace Plato.Compiler
 
         public void OutputFunctionCallAnalysis()
         {
-            var results = FunctionGroupCalls.Values.Where(fgc => fgc.CallableFunctions.Count != 1).ToList();
+            var results = FunctionGroupCalls.Values.Where(fgc => fgc.BestFunctions.Count != 1).ToList();
             //var results = FunctionGroupCalls.Values.ToList();
             var sb = new StringBuilder();
 
@@ -440,8 +440,8 @@ namespace Plato.Compiler
                 sb.AppendLine($"  Args: {fgc.ArgString}");
                 sb.AppendLine($"  Possible Return Types: {string.Join(", ", fgc.DistinctReturnTypes)}");
                 sb.AppendLine($"  Callable function count: {fgc.CallableFunctions.Count}");
-                //sb.AppendLine($"  Best function count: {fgc.BestFunctions.Count}");
-                foreach (var f in fgc.Functions)
+                sb.AppendLine($"  Best function count: {fgc.BestFunctions.Count}");
+                foreach (var f in fgc.CallableFunctions)
                     OutputFunctionCallAnalysis(sb, f);
             }
 
@@ -449,10 +449,10 @@ namespace Plato.Compiler
             File.WriteAllText(outputFille, sb.ToString()); 
         }
 
-        public IEnumerable<TypeDefinition> GetConcreteTypes()
+        public IEnumerable<TypeDef> GetConcreteTypes()
             => AllTypeAndLibraryDefinitions.Where(t => t.IsConcrete());
 
-        public IEnumerable<TypeDefinition> GetConcepts()
+        public IEnumerable<TypeDef> GetConcepts()
             => AllTypeAndLibraryDefinitions.Where(t => t.IsConcept());
 
         public AstNode GetAstNode(Symbol symbol)

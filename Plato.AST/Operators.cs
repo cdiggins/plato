@@ -57,6 +57,9 @@ namespace Plato.AST
         public static string NameToUnaryOperator(string name)
             => NamesToUnaryOperators.ContainsKey(name) ? NamesToUnaryOperators[name] : null;
 
+        public const string ImplicitCast = "Implicit";
+        public const string ExplicitCast = "Cast";
+
         public static int BinaryOperatorPrecedence(string op)
         {
             switch (op)

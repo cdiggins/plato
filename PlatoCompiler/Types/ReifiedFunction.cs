@@ -14,15 +14,15 @@ namespace Plato.Compiler.Types
             => ParameterTypes[n];
 
         public TypeExpression ReturnType { get; }
-        public TypeDefinition OwnerType => Original.OwnerType;
-        public FunctionDefinition Original { get; }
+        public TypeDef OwnerType => Original.OwnerType;
+        public FunctionDef Original { get; }
         public ReifiedType ReifiedType { get; }
         public string Name => Original.Name;
         public int NumParameters => ParameterTypes.Count;
-
+        public FunctionType FunctionType => Original.FunctionType;
         public Symbol Body => Original.Body;
 
-        public ReifiedFunction(FunctionDefinition original, 
+        public ReifiedFunction(FunctionDef original, 
             ReifiedType reifiedType, 
             IReadOnlyList<TypeExpression> parameterTypes, 
             TypeExpression returnType)

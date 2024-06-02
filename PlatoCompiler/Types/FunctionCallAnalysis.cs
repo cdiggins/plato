@@ -10,20 +10,21 @@ namespace Plato.Compiler.Types
         public IReadOnlyList<IType> Arguments { get; }
         public IReadOnlyList<IType> Parameters { get; }
         public FunctionAnalysis Function { get; }
+        public FunctionDef FunctionDef => Function.Def;
         public Compilation Compilation => Function.Compilation;
         public IType DeterminedReturnType { get; }
+        public bool HasBody => Function.Def.Body != null;
         public bool Callable { get; }
         public bool MaybeCallable { get; } 
         public bool PerfectFit { get; }
         public bool ArityMatches => Arguments.Count == Parameters.Count;
         public List<ArgFit> ArgFits { get; }
-        public List<FunctionDefinition> Casts { get; } = new List<FunctionDefinition>();
+        public List<FunctionDef> Casts { get; } = new List<FunctionDef>();
         public int NumConcreteTypes { get; } 
 
         public static bool IsNotFit(ArgFit argFit)
         {
             return argFit == ArgFit.NoFitNullTypeArg || argFit == ArgFit.NoFitConceptToConcrete || argFit == ArgFit.NoFitNullTypeParam || argFit == ArgFit.NoFit;
-
         }
 
         public static bool IsMaybeFit(ArgFit argFit)
@@ -33,7 +34,7 @@ namespace Plato.Compiler.Types
 
         public string ArgDetails(int index)
         {
-            var name = Function.Function.GetParameterName(index);
+            var name = Function.Def.GetParameterName(index);
             return $"{name}:{Parameters[index]} <= {Arguments[index]} = {ArgFits[index]}";
         }
 
@@ -56,7 +57,15 @@ namespace Plato.Compiler.Types
                 Casts.Add(cast);
             }
 
-            Callable = !ArgFits.Any(IsNotFit);
+            var ft = FunctionDef.FunctionType; 
+            Callable = ArityMatches 
+                       /*&& 
+                       (
+                           FunctionDef.Body != null || 
+                           ft == FunctionType.Field || 
+                           ft == FunctionType.Intrinsic
+                        )*/
+                       && !ArgFits.Any(IsNotFit);
             MaybeCallable = !ArgFits.Any(IsMaybeFit);
 
             NumConcreteTypes = Function.ParameterTypes.Count(pt => pt.IsConcrete());
@@ -76,7 +85,7 @@ namespace Plato.Compiler.Types
             FitConceptInheritsConcept,
         }
 
-        public static ArgFit ComputeArgFit(Compilation compilation, IType typeArg, IType typeParam, out FunctionDefinition cast)
+        public static ArgFit ComputeArgFit(Compilation compilation, IType typeArg, IType typeParam, out FunctionDef cast)
         {
             cast = null;
             if (typeArg == null)

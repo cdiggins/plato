@@ -31,4 +31,9 @@
     Not(x: Boolean): Boolean;
 
     ToNumber(x: Integer): Number;
+
+    // These are known by the compiler, so that it can do a better job of optimizing.
+    Reduce(xs: Array<$T>, init: $U, f: Function2<$U, $T, $U>): $U;
+    Map(xs: Array<$T>, f: Function1<$T, $U>): Array<$U>;
+    Range(x: Integer): Array<Integer>;
 }

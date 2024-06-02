@@ -1,0 +1,14 @@
+library std
+{
+    Count(xs: Array2D<$T>): Integer 
+        => xs.RowCount * xs.ColumnCount;
+    
+    At(xs: Array2D<$T>, i: Integer): $T 
+        => xs.At(i % xs.ColumnCount, i / xs.ColumnCount);
+
+    Count(xs: Array3D<$T>): Integer 
+        => xs.RowCount * xs.ColumnCount * xs.LayerCount;
+    
+    At(xs: Array3D<$T>, i: Integer): $T 
+        => xs.At(i % xs.ColumnCount, i / xs.ColumnCount, i / xs.LayerCount);
+}

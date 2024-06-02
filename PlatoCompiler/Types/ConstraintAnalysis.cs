@@ -12,7 +12,7 @@ namespace Plato.Compiler.Types
         public StringBuilder Output(StringBuilder sb, string indent)
         {
             sb.AppendLine($"{indent}Constraint analysis for {Function.Signature}");
-            sb.AppendLine($"{indent}Function body {Function.Function.Body}");
+            sb.AppendLine($"{indent}Function body {Function.Def.Body}");
             sb.AppendLine($"{indent}Has {Function.TypeParameterToTypeLookup.Count} Type parameters ");
             sb.AppendLine($"{indent}Has type parameter in return: {Function.DeclaredReturnType.HasTypeVariable()}");
             sb.AppendLine($"{indent}Found {Function.Constraints.Count} constraints");
