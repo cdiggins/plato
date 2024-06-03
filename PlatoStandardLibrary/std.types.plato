@@ -275,7 +275,7 @@ type NumberInterval
 // Affine 2D transformation matrix 
 // https://en.wikipedia.org/wiki/Transformation_matrix#Affine_transformations
 type Matrix2D 
-    implements Value, Vector
+    implements Value, Array<Vector3D>
 {
     Column1: Vector3D;   
     Column2: Vector3D;   
@@ -288,7 +288,7 @@ type Matrix2D
 // Column major layout in memory 
 // Translation component is in Column4.XYZ    
 type Matrix3D
-    implements Value, Vector
+    implements Value, Array<Vector4D>
 {
     Column1: Vector4D;
     Column2: Vector4D;

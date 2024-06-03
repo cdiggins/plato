@@ -1,10 +1,24 @@
 ﻿using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace Plato.Compiler.Symbols
 {
     public abstract class Statement : Symbol
     { }
+
+    public class ExpressionStatement : Statement
+    {
+        public Expression Expression { get; }
+
+        public ExpressionStatement(Expression expr)
+            => Expression = expr;
+
+        public override string Name => "expression";
+
+        public override IEnumerable<Symbol> GetChildSymbols()
+            => new[] { Expression };
+    }
 
     public class BlockStatement : Statement
     {
@@ -63,5 +77,20 @@ namespace Plato.Compiler.Symbols
 
         public override IEnumerable<Symbol> GetChildSymbols()
             => new[] { Body, Condition };
+    }
+
+    public class CommentStatement : Statement
+    {
+        public string Comment { get; }
+
+        public CommentStatement(string comment)
+        {
+            Comment = comment;
+        }
+
+        public override string Name => "comment";
+
+        public override IEnumerable<Symbol> GetChildSymbols()
+            => Enumerable.Empty<Symbol>();
     }
 }

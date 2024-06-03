@@ -28,9 +28,9 @@ namespace Plato.Compiler.Symbols
             return kind + ":" + Name;
         }
 
-        public static TypeExpression CreateTypeVar(string name)
+        public static TypeExpression CreateTypeVar(Scope scope, string name)
             => name.StartsWith("$")
-                ? new TypeExpression(new TypeDef(TypeKind.TypeVariable, name))
+                ? new TypeExpression(new TypeDef(scope, TypeKind.TypeVariable, name))
                 : throw new Exception("Type variable names must start with $ character");
 
         public override IEnumerable<Symbol> GetChildSymbols()

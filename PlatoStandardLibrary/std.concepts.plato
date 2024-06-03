@@ -136,8 +136,14 @@ concept MultiplicativeArithmetic<T>
 }
 
 concept ScalarArithmetic
-    inherits AdditiveArithmetic<Number>, MultiplicativeArithmetic<Number>, AdditiveInverse, MultiplicativeInverse
-{ }
+    inherits AdditiveInverse, MultiplicativeInverse
+{ 
+    Add(self: Self, other: Number): Self;    
+    Subtract(self: Self, other: Number): Self;
+    Multiply(self: Self, other: Number): Self;
+    Divide(self: Self, other: Number): Self;    
+    Modulo(self: Self, other: Number): Self;
+}
 
 concept BooleanOperations
 {

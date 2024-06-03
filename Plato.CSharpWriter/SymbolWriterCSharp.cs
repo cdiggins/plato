@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Xml.Linq;
 using Ara3D.Parakeet.Cst.CSharpGrammarNameSpace;
@@ -17,10 +18,10 @@ namespace Plato.CSharpWriter
     {
         public const bool EmitInterfaces = true;
         public const bool EmitStructsInsteadOfClasses = true;
-        public static bool UseSelfConstraints = true;
+        public const bool UseSelfConstraints = true;
 
         public Compiler.Compilation Compilation { get; }
-        
+        public string CurrentType { get; set; }
         public Dictionary<string, StringBuilder> Files { get; } = new Dictionary<string, StringBuilder>();
 
         public DirectoryPath OutputFolder { get; }
@@ -156,28 +157,47 @@ namespace Plato.CSharpWriter
 
         public SymbolWriterCSharp WriteBody(Symbol body, bool isStatic)
         {
-            return isStatic ? WriteStaticOrLambdaBody(body) : Write(body);
+            var r = this;
+            if (body is Expression)
+                r = r.Write(" => ");
+            r = isStatic ? r.WriteStaticOrLambdaBody(body) : r.Write(body);
+            if (body is Expression)
+                r = r.WriteLine(";");
+            return r;
         }
 
         public SymbolWriterCSharp WriteFunctionBody(Symbol body0, bool isProperty, bool isStatic)
         {
-            var body = RewriteLambdas(body0);
+            var body = body0.RewriteLambdasCapturingVars();
 
             return body is BlockStatement bs
                 ? isProperty
                     ? WriteLine().WriteStartBlock().WriteLine("get").WriteBody(bs, isStatic).WriteEndBlock()
                     : WriteLine().WriteBody(bs, isStatic)
-                : Write(" => ").WriteBody(body, isStatic).WriteLine(";");
+                : WriteBody(body, isStatic);
         }
 
+        public string ToCSharp(TypeDef type)
+            => ToCSharp(TypeInstance.Create(type));
 
-        public static string ToCSharp(TypeInstance type)
+        public string ToCSharp(TypeExpression expr)
+            => ToCSharp(TypeInstance.Create(expr));
+
+        public string ToCSharp(TypeInstance type)
         {
             var sb = new StringBuilder();
             if (type.Name.StartsWith("Function"))
                 sb.Append("System.Func");
             else
-                sb.Append(type.Name);
+            {
+                if (!UseSelfConstraints && type.Name == "Self")
+                {
+                    return CurrentType;
+                }
+                else {
+                    sb.Append(type.Name);
+                }
+            }
 
             if (type.Args.Count > 0)
             {
@@ -189,22 +209,19 @@ namespace Plato.CSharpWriter
         
         public SymbolWriterCSharp WriteFunction(FunctionInstance f, ConcreteType t, bool generateImpl = false)
         {
-            if (f.Name == "Map" || f.Name == "Reduce")
-            {
-                return this;
-            }
-
             var ret = ToCSharp(f.ReturnType);
-
+            
             var funcTypeParams = f.UsedTypeParameters
                 .Where(tp => !t.Type.TypeParameters.Contains(tp)).ToList();
 
+            /*
             if (funcTypeParams.Count > 0)
             {
                 // TODO: the type parameter in this case should come from the parent type.
                 // It doesn't so that is a problem. I need to be more sophisticated in FunctionInstance
                 throw new Exception("Whoops!!");
             }
+            */
 
             var funcTypeParamsStr = funcTypeParams.Count == 0
                 ? ""
@@ -249,7 +266,9 @@ namespace Plato.CSharpWriter
                     .WriteFunctionBody(f.Implementation.Body, isProperty, true);
             }
 
-            if (f.Implementation.Body != null)
+            var isVectorOp = f.Name == "Map" || f.Name == "Reduce";
+
+            if (f.Implementation.Body != null && !isVectorOp)
             {
                 Write($"public {ret} {f.Name}{funcTypeParamsStr}{paramList}");
                 WriteFunctionBody(f.Implementation.Body, isProperty, false);
@@ -267,12 +286,45 @@ namespace Plato.CSharpWriter
                 var canGenerateImpl = ret == t.Name || ret == "Boolean" || fields.Count == 1;
 
                 var fieldTypes = t.DistinctFieldTypes;
-
-                // If the underlying struct is "vector-like", all fields have the same type.
-                // Then we can auto-generate a "vectorized" type implementation.
                 var elementType = fieldTypes.Count == 1 ? fieldTypes[0] : null;
+                var isVectorLike = elementType != null;
 
-                if (generateImpl && canGenerateImpl)
+
+                // Special case skip "map" and "reduce" for array-like types. 
+
+                if (f.Name == "Map")
+                {
+                    if (!isVectorLike) return this; // throw new Exception("Not vector like");
+                    impl = "(" + string.Join(", ", fields.Select((fieldName) => $"f({fieldName})")) + ")";
+                    return WriteLine($"public {t.Type.Name} Map(System.Func<{elementType.Name}, {elementType.Name}> f) => {impl};");
+                }
+
+                if (f.Name == "Reduce")
+                {
+                    if (!isVectorLike) return this; // throw new Exception("Not vector like");
+                    impl = "init";
+                    foreach (var fieldName in fields)
+                        impl = $"f({impl}, {fieldName})";
+                    return WriteLine($"public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, {elementType.Name}, TAcc> f) => {impl};");
+                }
+
+                if (generateImpl && !canGenerateImpl && isVectorLike)
+                {
+                    switch (f.Name)
+                    {
+                        case "At":
+                            impl = string.Join(" : ", fields.Select((fieldName, i) => $"n == {i} ? {fieldName}")) 
+                                   + " : throw new System.IndexOutOfRangeException()";
+                            break;
+
+                        case "Count":
+                            impl = fields.Count.ToString();
+                            break;
+
+                     
+                    }
+                }
+                else if (generateImpl && canGenerateImpl)
                 {
                     if (f.ParameterNames.Count <= 1)
                     {
@@ -390,7 +442,8 @@ namespace Plato.CSharpWriter
                 var typeParamsStr = JoinTypeParameters(t.Type.TypeParameters.Select(tp => tp.Name));
 
                 var kind = EmitStructsInsteadOfClasses ? "readonly partial struct" : "partial class";
-                WriteLine($"public {kind} {t.Type.Name}{typeParamsStr}");
+                CurrentType = $"{t.Type.Name}{typeParamsStr}";
+                WriteLine($"public {kind} {CurrentType}");
                 WriteStartBlock();
 
                 var funcGroups = t
@@ -431,14 +484,20 @@ namespace Plato.CSharpWriter
 
         public string TypeStr(TypeExpression type)
         {
-            return type.Name + JoinTypeParameters(type.TypeArgs.Select(TypeStr));
+            var typeArgs = type.TypeArgs;
+            if (!UseSelfConstraints)
+                typeArgs = typeArgs.Where(ta => !ta.IsSelfType() && ta.Name != "Self").ToList();
+            return type.Name + JoinTypeParameters(typeArgs.Select(TypeStr));
         }
 
         public string TypeAsInherited(TypeExpression type)
         {
+            var typeArgs = type.TypeArgs;
+            if (!UseSelfConstraints)
+                typeArgs = typeArgs.Where(ta => !ta.IsSelfType() && ta.Name != "Self").ToList();
             return type.Name + JoinTypeParameters((UseSelfConstraints && type.Def.IsSelfConstrained()) 
-                ? type.TypeArgs.Select(TypeStr).Prepend("Self") 
-                : type.TypeArgs.Select(TypeStr));
+                ? typeArgs.Select(TypeStr).Prepend("Self") 
+                : typeArgs.Select(TypeStr));
         }
 
         public SymbolWriterCSharp WriteConceptInterface(TypeDef type)
@@ -454,6 +513,7 @@ namespace Plato.CSharpWriter
                 ? ": " + type.Inherits.Select(TypeAsInherited).JoinStrings(", ")
                 : "";
 
+            CurrentType = fullName;
             Write("public interface ").Write(fullName).WriteLine(inherited);
 
             foreach (var tp in type.TypeParameters)
@@ -511,7 +571,7 @@ namespace Plato.CSharpWriter
 
             var kind = EmitStructsInsteadOfClasses ? "readonly partial struct" : "partial class";
             Write($"public {kind} ");
-            
+            CurrentType = t.Name;
             Write(t.Name);
             Write(typeParamsStr);
             WriteLine(implements);
@@ -669,10 +729,7 @@ namespace Plato.CSharpWriter
             {
                 if (arrayConcept.TypeArgs.Count != 1)
                     throw new Exception("The Array concept must have exactly one type argument");
-                var elementType = arrayConcept.TypeArgs[0].Name;
-
-                WriteLine($"public TAcc Reduce<TAcc>(TAcc init, Func<TAcc, {elementType}, TAcc> f) => throw new NotImplementedException();");
-                WriteLine($"public TResult Map<TResult>(Func<{elementType}, TResult> f) => throw new NotImplementedException();");
+               
 
                 // NOTE: we may eventually want implicit cast operators to/from the native array type.
             }
@@ -683,16 +740,16 @@ namespace Plato.CSharpWriter
         
         public SymbolWriterCSharp WriteSignature(FunctionDef function, bool skipFirstParameter, bool eos)
         {
-            Write(function.Type);
+            
+            Write(ToCSharp(function.Type));
             Write(" ");
             Write(function.Name);
 
-            if (function.Parameters.Count > 1)
+            var parameters = function.Parameters.Select(p => $"{ToCSharp(p.Type)} {p.Name}").ToList();
+            if (parameters.Count > 1)
             {
                 var r = Write("(")
-                    .WriteCommaList(skipFirstParameter
-                        ? function.Parameters.Skip(1)
-                        : function.Parameters)
+                    .WriteCommaList(skipFirstParameter ? parameters.Skip(1) : parameters)
                     .Write(")");
                 if (eos)
                      r = r.WriteLine(";");
@@ -821,6 +878,9 @@ namespace Plato.CSharpWriter
 
                     return WriteEndBlock();
                 }
+
+                case CommentStatement commentStatement:
+                    return Write($"/* {commentStatement.Comment} */");
             }
 
             return this;
@@ -853,6 +913,9 @@ namespace Plato.CSharpWriter
 
             switch (expr)
             {
+                case ThrowExpression te:
+                    return Write("throw new Exception()");
+
                 case ParameterRefSymbol pr:
                     return pr.Def.Index == 0 && !IsStaticOrLambda
                         ? Write("this") 
@@ -925,19 +988,5 @@ namespace Plato.CSharpWriter
             throw new NotImplementedException();
         }
 
-        public static Symbol RewriteLambdas(Symbol sym)
-        {
-            if (sym is FunctionCall fc && fc.Function.Name == "Map" && fc.Args.Count == 2 &&
-                fc.Args[1].Expression is Lambda lambda)
-            {
-                // TODO: 
-                var ret = new ReturnStatement(
-                    new Literal(LiteralTypesEnum.Integer, 99));
-                var bs = new BlockStatement(ret);
-                return bs;
-            }
-
-            return sym;
-        }
     }
 }

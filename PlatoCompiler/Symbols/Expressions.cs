@@ -39,25 +39,35 @@ namespace Plato.Compiler.Symbols
     {
         public TypeRefSymbol(TypeDef def)
             : base(def)
-        { }
+        {
+        }
 
         public new TypeDef Def => base.Def as TypeDef;
     }
 
-    public class VariableRefSymbol : RefSymbol
+    public class ParameterOrVariableRefSymbol : RefSymbol
+    {
+        public ParameterOrVariableRefSymbol(DefSymbol def)
+            : base(def)
+        { }
+    }
+
+    public class VariableRefSymbol : ParameterOrVariableRefSymbol
     {
         public VariableRefSymbol(VariableDef def)
             : base(def)
-        { }
+        {
+        }
 
         public new VariableDef Def => base.Def as VariableDef;
     }
 
-    public class ParameterRefSymbol : RefSymbol
+    public class ParameterRefSymbol : ParameterOrVariableRefSymbol
     {
         public ParameterRefSymbol(ParameterDef def)
             : base(def)
-        { }
+        {
+        }
 
         public new ParameterDef Def => base.Def as ParameterDef;
     }
@@ -119,8 +129,6 @@ namespace Plato.Compiler.Symbols
             Expression = expression;
             Position = position;
         }
-
-
         public override string ToString()
             => Expression.ToString();
     }
@@ -145,10 +153,11 @@ namespace Plato.Compiler.Symbols
     {
         public object Value { get; }
         public LiteralTypesEnum TypeEnum { get; }
+
         public Literal(LiteralTypesEnum typeEnum, object value)
             => (TypeEnum, Value) = (typeEnum, value);
 
-        public override string Name 
+        public override string Name
             => ToString();
 
         public override string ToString()
@@ -159,6 +168,7 @@ namespace Plato.Compiler.Symbols
     {
         public Expression Function { get; }
         public IReadOnlyList<Argument> Args { get; }
+
         public FunctionCall(Expression function, params Argument[] args)
             : base(args.Prepend(function).ToArray())
         {
@@ -185,7 +195,7 @@ namespace Plato.Compiler.Symbols
         public override string Name => "=>";
 
         public override IEnumerable<Symbol> GetChildSymbols()
-            => new [] { Function };
+            => new[] { Function };
 
         public override string ToString()
             => $"(\\({string.Join(", ", Function.Parameters)}) -> {Function.ReturnType}";
@@ -195,18 +205,25 @@ namespace Plato.Compiler.Symbols
     {
         public Tuple(params Expression[] children)
             : base(children)
-        { }
+        {
+        }
 
-        public override string Name 
+        public override string Name
             => "(,)";
 
         public override string ToString()
             => $"({string.Join(", ", Children)})";
     }
 
-    public static class ExpressionExtensions
+    public class ThrowExpression : Expression
     {
-        public static IEnumerable<Expression> GetExpressionTree(this Expression expr)
-            => expr.GetSymbolTree().OfType<Expression>();
+        public ThrowExpression()
+        { }
+
+        public override string Name
+            => "throw";
+
+        public override string ToString()
+            => Name;
     }
 }

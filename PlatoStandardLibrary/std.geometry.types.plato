@@ -150,13 +150,6 @@ type Box2D
     Extent: Size2D;
 }
 
-type Deformed2D
-    implements Geometry2D
-{ 
-    Source: Geometry2D;
-    Deformation: Function1<Vector3D, Vector3D>;
-}
-
 //# 3D Shapes
 
 type Point3D
@@ -213,7 +206,7 @@ type Ray3D
 }
 
 type Triangle3D
-    implements Value, Array<Point2D>
+    implements Value, Array<Point3D>
 {
     A: Point3D;
     B: Point3D;

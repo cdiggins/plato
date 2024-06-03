@@ -8,6 +8,7 @@ Type analysis for Point2D
   Concept=Difference Expr=Concept:Difference<ConcreteType:Vector2D> Subs=Difference=ConcreteType:Point2D;T=ConcreteType:Vector2D;Self=ConcreteType:Point2D;
     Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:T> Subs=AdditiveArithmetic=ConcreteType:Point2D;T=TypeVariable:T;Difference=ConcreteType:Point2D;T=ConcreteType:Vector2D;Self=ConcreteType:Point2D;
   Function: Implicit(ConcreteType:Point2D x)
+  Function: Implicit(ConcreteType:Point2D x)
   Function: Deform(ConcreteType:Point2D x, ConcreteType:Function1<ConcreteType:Vector3D,ConcreteType:Vector3D> f)
   Function: ToVector(ConcreteType:Point2D a)
   Function: Add(ConcreteType:Point2D a, ConcreteType:Vector2D b)
@@ -68,7 +69,7 @@ Type analysis for Quad2D
     Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Quad2D;Value=ConcreteType:Quad2D;Self=ConcreteType:Quad2D;
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Quad2D;Value=ConcreteType:Quad2D;Self=ConcreteType:Quad2D;
   Concept=Array Expr=Concept:Array<ConcreteType:Point2D> Subs=Array=ConcreteType:Quad2D;T=ConcreteType:Point2D;Self=ConcreteType:Quad2D;
-  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$U init, ConcreteType:Function2<TypeVariable:$U,TypeVariable:$T,TypeVariable:$U> f)
+  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
   Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
 Type analysis for Line2D
   Concept=PolygonalChain2D Expr=Concept:PolygonalChain2D Subs=PolygonalChain2D=ConcreteType:Line2D;Self=ConcreteType:Line2D;
@@ -77,7 +78,7 @@ Type analysis for Line2D
         Concept=Geometry Expr=Concept:Geometry Subs=Geometry=ConcreteType:Line2D;Geometry2D=ConcreteType:Line2D;Points2D=ConcreteType:Line2D;PolygonalChain2D=ConcreteType:Line2D;Self=ConcreteType:Line2D;
     Concept=OpenClosedShape Expr=Concept:OpenClosedShape Subs=OpenClosedShape=ConcreteType:Line2D;PolygonalChain2D=ConcreteType:Line2D;Self=ConcreteType:Line2D;
   Concept=Array Expr=Concept:Array<ConcreteType:Point2D> Subs=Array=ConcreteType:Line2D;T=ConcreteType:Point2D;Self=ConcreteType:Line2D;
-  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$U init, ConcreteType:Function2<TypeVariable:$U,TypeVariable:$T,TypeVariable:$U> f)
+  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
   Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
   Function: Closed(ConcreteType:Line2D x)
 Type analysis for Circle
@@ -144,9 +145,6 @@ Type analysis for Box2D
   Concept=Shape2D Expr=Concept:Shape2D Subs=Shape2D=ConcreteType:Box2D;Self=ConcreteType:Box2D;
     Concept=Geometry2D Expr=Concept:Geometry2D Subs=Geometry2D=ConcreteType:Box2D;Shape2D=ConcreteType:Box2D;Self=ConcreteType:Box2D;
       Concept=Geometry Expr=Concept:Geometry Subs=Geometry=ConcreteType:Box2D;Geometry2D=ConcreteType:Box2D;Shape2D=ConcreteType:Box2D;Self=ConcreteType:Box2D;
-Type analysis for Deformed2D
-  Concept=Geometry2D Expr=Concept:Geometry2D Subs=Geometry2D=ConcreteType:Deformed2D;Self=ConcreteType:Deformed2D;
-    Concept=Geometry Expr=Concept:Geometry Subs=Geometry=ConcreteType:Deformed2D;Geometry2D=ConcreteType:Deformed2D;Self=ConcreteType:Deformed2D;
 Type analysis for Point3D
   Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:Point3D;Self=ConcreteType:Point3D;
     Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Point3D;Coordinate=ConcreteType:Point3D;Self=ConcreteType:Point3D;
@@ -209,15 +207,15 @@ Type analysis for Triangle3D
   Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Triangle3D;Self=ConcreteType:Triangle3D;
     Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Triangle3D;Value=ConcreteType:Triangle3D;Self=ConcreteType:Triangle3D;
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Triangle3D;Value=ConcreteType:Triangle3D;Self=ConcreteType:Triangle3D;
-  Concept=Array Expr=Concept:Array<ConcreteType:Point2D> Subs=Array=ConcreteType:Triangle3D;T=ConcreteType:Point2D;Self=ConcreteType:Triangle3D;
-  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$U init, ConcreteType:Function2<TypeVariable:$U,TypeVariable:$T,TypeVariable:$U> f)
+  Concept=Array Expr=Concept:Array<ConcreteType:Point3D> Subs=Array=ConcreteType:Triangle3D;T=ConcreteType:Point3D;Self=ConcreteType:Triangle3D;
+  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
   Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
 Type analysis for Quad3D
   Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Quad3D;Self=ConcreteType:Quad3D;
     Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Quad3D;Value=ConcreteType:Quad3D;Self=ConcreteType:Quad3D;
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Quad3D;Value=ConcreteType:Quad3D;Self=ConcreteType:Quad3D;
   Concept=Array Expr=Concept:Array<ConcreteType:Point3D> Subs=Array=ConcreteType:Quad3D;T=ConcreteType:Point3D;Self=ConcreteType:Quad3D;
-  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$U init, ConcreteType:Function2<TypeVariable:$U,TypeVariable:$T,TypeVariable:$U> f)
+  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
   Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
 Type analysis for Capsule
   Concept=Shape3D Expr=Concept:Shape3D Subs=Shape3D=ConcreteType:Capsule;Self=ConcreteType:Capsule;
@@ -269,7 +267,7 @@ Type analysis for Quaternion
   Function: Normal(Concept:Vector v)
   Function: Average(Concept:Vector v)
     Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=Array=ConcreteType:Quaternion;T=ConcreteType:Number;Vector=ConcreteType:Quaternion;Self=ConcreteType:Quaternion;
-    Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$U init, ConcreteType:Function2<TypeVariable:$U,TypeVariable:$T,TypeVariable:$U> f)
+    Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
     Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
     Concept=Numerical Expr=Concept:Numerical Subs=Numerical=ConcreteType:Quaternion;Vector=ConcreteType:Quaternion;Self=ConcreteType:Quaternion;
     Function: PlusOne(Concept:Numerical x)
@@ -297,8 +295,6 @@ Type analysis for Quaternion
     Function: Tenth(Concept:ScalarArithmetic x)
     Function: Twice(Concept:ScalarArithmetic x)
     Function: Lerp(Concept:ScalarArithmetic a, Concept:ScalarArithmetic b, ConcreteType:Number t)
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:Quaternion;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Quaternion;Vector=ConcreteType:Quaternion;Self=ConcreteType:Quaternion;
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:Quaternion;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Quaternion;Vector=ConcreteType:Quaternion;Self=ConcreteType:Quaternion;
       Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:Quaternion;ScalarArithmetic=ConcreteType:Quaternion;Vector=ConcreteType:Quaternion;Self=ConcreteType:Quaternion;
       Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:Quaternion;ScalarArithmetic=ConcreteType:Quaternion;Vector=ConcreteType:Quaternion;Self=ConcreteType:Quaternion;
 Type analysis for AxisAngle
@@ -345,7 +341,7 @@ Type analysis for Quadray
   Function: Normal(Concept:Vector v)
   Function: Average(Concept:Vector v)
     Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=Array=ConcreteType:Quadray;T=ConcreteType:Number;Vector=ConcreteType:Quadray;Self=ConcreteType:Quadray;
-    Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$U init, ConcreteType:Function2<TypeVariable:$U,TypeVariable:$T,TypeVariable:$U> f)
+    Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
     Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
     Concept=Numerical Expr=Concept:Numerical Subs=Numerical=ConcreteType:Quadray;Vector=ConcreteType:Quadray;Self=ConcreteType:Quadray;
     Function: PlusOne(Concept:Numerical x)
@@ -373,8 +369,6 @@ Type analysis for Quadray
     Function: Tenth(Concept:ScalarArithmetic x)
     Function: Twice(Concept:ScalarArithmetic x)
     Function: Lerp(Concept:ScalarArithmetic a, Concept:ScalarArithmetic b, ConcreteType:Number t)
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:Quadray;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Quadray;Vector=ConcreteType:Quadray;Self=ConcreteType:Quadray;
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:Quadray;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Quadray;Vector=ConcreteType:Quadray;Self=ConcreteType:Quadray;
       Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:Quadray;ScalarArithmetic=ConcreteType:Quadray;Vector=ConcreteType:Quadray;Self=ConcreteType:Quadray;
       Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:Quadray;ScalarArithmetic=ConcreteType:Quadray;Vector=ConcreteType:Quadray;Self=ConcreteType:Quadray;
 Type analysis for Number
@@ -416,8 +410,6 @@ Type analysis for Number
     Function: Tenth(Concept:ScalarArithmetic x)
     Function: Twice(Concept:ScalarArithmetic x)
     Function: Lerp(Concept:ScalarArithmetic a, Concept:ScalarArithmetic b, ConcreteType:Number t)
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:Number;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Number;Real=ConcreteType:Number;Self=ConcreteType:Number;
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:Number;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Number;Real=ConcreteType:Number;Self=ConcreteType:Number;
       Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:Number;ScalarArithmetic=ConcreteType:Number;Real=ConcreteType:Number;Self=ConcreteType:Number;
       Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:Number;ScalarArithmetic=ConcreteType:Number;Real=ConcreteType:Number;Self=ConcreteType:Number;
     Concept=Difference Expr=Concept:Difference<ConcreteType:Number> Subs=Difference=ConcreteType:Number;T=ConcreteType:Number;Real=ConcreteType:Number;Self=ConcreteType:Number;
@@ -532,7 +524,7 @@ Type analysis for Integer
   Function: Range(ConcreteType:Integer x)
 Type analysis for String
   Concept=Array Expr=Concept:Array<ConcreteType:Character> Subs=Array=ConcreteType:String;T=ConcreteType:Character;Self=ConcreteType:String;
-  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$U init, ConcreteType:Function2<TypeVariable:$U,TypeVariable:$T,TypeVariable:$U> f)
+  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
   Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
   Concept=Comparable Expr=Concept:Comparable Subs=Comparable=ConcreteType:String;Self=ConcreteType:String;
   Function: Clamp(Concept:Comparable v, Concept:Comparable a, Concept:Comparable b)
@@ -716,8 +708,6 @@ Type analysis for Unit
     Function: Tenth(Concept:ScalarArithmetic x)
     Function: Twice(Concept:ScalarArithmetic x)
     Function: Lerp(Concept:ScalarArithmetic a, Concept:ScalarArithmetic b, ConcreteType:Number t)
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:Unit;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Unit;Real=ConcreteType:Unit;Self=ConcreteType:Unit;
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:Unit;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Unit;Real=ConcreteType:Unit;Self=ConcreteType:Unit;
       Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:Unit;ScalarArithmetic=ConcreteType:Unit;Real=ConcreteType:Unit;Self=ConcreteType:Unit;
       Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:Unit;ScalarArithmetic=ConcreteType:Unit;Real=ConcreteType:Unit;Self=ConcreteType:Unit;
     Concept=Difference Expr=Concept:Difference<ConcreteType:Number> Subs=Difference=ConcreteType:Unit;T=ConcreteType:Number;Real=ConcreteType:Unit;Self=ConcreteType:Unit;
@@ -771,8 +761,6 @@ Type analysis for Probability
     Function: Tenth(Concept:ScalarArithmetic x)
     Function: Twice(Concept:ScalarArithmetic x)
     Function: Lerp(Concept:ScalarArithmetic a, Concept:ScalarArithmetic b, ConcreteType:Number t)
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:Probability;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Probability;Real=ConcreteType:Probability;Self=ConcreteType:Probability;
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:Probability;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Probability;Real=ConcreteType:Probability;Self=ConcreteType:Probability;
       Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:Probability;ScalarArithmetic=ConcreteType:Probability;Real=ConcreteType:Probability;Self=ConcreteType:Probability;
       Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:Probability;ScalarArithmetic=ConcreteType:Probability;Real=ConcreteType:Probability;Self=ConcreteType:Probability;
     Concept=Difference Expr=Concept:Difference<ConcreteType:Number> Subs=Difference=ConcreteType:Probability;T=ConcreteType:Number;Real=ConcreteType:Probability;Self=ConcreteType:Probability;
@@ -797,7 +785,7 @@ Type analysis for Complex
   Function: Normal(Concept:Vector v)
   Function: Average(Concept:Vector v)
     Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=Array=ConcreteType:Complex;T=ConcreteType:Number;Vector=ConcreteType:Complex;Self=ConcreteType:Complex;
-    Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$U init, ConcreteType:Function2<TypeVariable:$U,TypeVariable:$T,TypeVariable:$U> f)
+    Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
     Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
     Concept=Numerical Expr=Concept:Numerical Subs=Numerical=ConcreteType:Complex;Vector=ConcreteType:Complex;Self=ConcreteType:Complex;
     Function: PlusOne(Concept:Numerical x)
@@ -825,23 +813,21 @@ Type analysis for Complex
     Function: Tenth(Concept:ScalarArithmetic x)
     Function: Twice(Concept:ScalarArithmetic x)
     Function: Lerp(Concept:ScalarArithmetic a, Concept:ScalarArithmetic b, ConcreteType:Number t)
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:Complex;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Complex;Vector=ConcreteType:Complex;Self=ConcreteType:Complex;
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:Complex;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Complex;Vector=ConcreteType:Complex;Self=ConcreteType:Complex;
       Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:Complex;ScalarArithmetic=ConcreteType:Complex;Vector=ConcreteType:Complex;Self=ConcreteType:Complex;
       Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:Complex;ScalarArithmetic=ConcreteType:Complex;Vector=ConcreteType:Complex;Self=ConcreteType:Complex;
   Function: Count(ConcreteType:Complex c)
   Function: At(ConcreteType:Complex c, ConcreteType:Integer n)
 Type analysis for Integer2
   Concept=Array Expr=Concept:Array<ConcreteType:Integer> Subs=Array=ConcreteType:Integer2;T=ConcreteType:Integer;Self=ConcreteType:Integer2;
-  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$U init, ConcreteType:Function2<TypeVariable:$U,TypeVariable:$T,TypeVariable:$U> f)
+  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
   Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
 Type analysis for Integer3
   Concept=Array Expr=Concept:Array<ConcreteType:Integer> Subs=Array=ConcreteType:Integer3;T=ConcreteType:Integer;Self=ConcreteType:Integer3;
-  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$U init, ConcreteType:Function2<TypeVariable:$U,TypeVariable:$T,TypeVariable:$U> f)
+  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
   Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
 Type analysis for Integer4
   Concept=Array Expr=Concept:Array<ConcreteType:Integer> Subs=Array=ConcreteType:Integer4;T=ConcreteType:Integer;Self=ConcreteType:Integer4;
-  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$U init, ConcreteType:Function2<TypeVariable:$U,TypeVariable:$T,TypeVariable:$U> f)
+  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
   Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
 Type analysis for Color
   Concept=Coordinate Expr=Concept:Coordinate Subs=Coordinate=ConcreteType:Color;Self=ConcreteType:Color;
@@ -993,8 +979,6 @@ Type analysis for Angle
       Function: Tenth(Concept:ScalarArithmetic x)
       Function: Twice(Concept:ScalarArithmetic x)
       Function: Lerp(Concept:ScalarArithmetic a, Concept:ScalarArithmetic b, ConcreteType:Number t)
-        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:Angle;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Angle;Real=ConcreteType:Angle;Measure=ConcreteType:Angle;Self=ConcreteType:Angle;
-        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:Angle;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Angle;Real=ConcreteType:Angle;Measure=ConcreteType:Angle;Self=ConcreteType:Angle;
         Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:Angle;ScalarArithmetic=ConcreteType:Angle;Real=ConcreteType:Angle;Measure=ConcreteType:Angle;Self=ConcreteType:Angle;
         Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:Angle;ScalarArithmetic=ConcreteType:Angle;Real=ConcreteType:Angle;Measure=ConcreteType:Angle;Self=ConcreteType:Angle;
       Concept=Difference Expr=Concept:Difference<ConcreteType:Number> Subs=Difference=ConcreteType:Angle;T=ConcreteType:Number;Real=ConcreteType:Angle;Measure=ConcreteType:Angle;Self=ConcreteType:Angle;
@@ -1045,8 +1029,6 @@ Type analysis for Length
       Function: Tenth(Concept:ScalarArithmetic x)
       Function: Twice(Concept:ScalarArithmetic x)
       Function: Lerp(Concept:ScalarArithmetic a, Concept:ScalarArithmetic b, ConcreteType:Number t)
-        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:Length;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Length;Real=ConcreteType:Length;Measure=ConcreteType:Length;Self=ConcreteType:Length;
-        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:Length;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Length;Real=ConcreteType:Length;Measure=ConcreteType:Length;Self=ConcreteType:Length;
         Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:Length;ScalarArithmetic=ConcreteType:Length;Real=ConcreteType:Length;Measure=ConcreteType:Length;Self=ConcreteType:Length;
         Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:Length;ScalarArithmetic=ConcreteType:Length;Real=ConcreteType:Length;Measure=ConcreteType:Length;Self=ConcreteType:Length;
       Concept=Difference Expr=Concept:Difference<ConcreteType:Number> Subs=Difference=ConcreteType:Length;T=ConcreteType:Number;Real=ConcreteType:Length;Measure=ConcreteType:Length;Self=ConcreteType:Length;
@@ -1093,8 +1075,6 @@ Type analysis for Mass
       Function: Tenth(Concept:ScalarArithmetic x)
       Function: Twice(Concept:ScalarArithmetic x)
       Function: Lerp(Concept:ScalarArithmetic a, Concept:ScalarArithmetic b, ConcreteType:Number t)
-        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:Mass;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Mass;Real=ConcreteType:Mass;Measure=ConcreteType:Mass;Self=ConcreteType:Mass;
-        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:Mass;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Mass;Real=ConcreteType:Mass;Measure=ConcreteType:Mass;Self=ConcreteType:Mass;
         Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:Mass;ScalarArithmetic=ConcreteType:Mass;Real=ConcreteType:Mass;Measure=ConcreteType:Mass;Self=ConcreteType:Mass;
         Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:Mass;ScalarArithmetic=ConcreteType:Mass;Real=ConcreteType:Mass;Measure=ConcreteType:Mass;Self=ConcreteType:Mass;
       Concept=Difference Expr=Concept:Difference<ConcreteType:Number> Subs=Difference=ConcreteType:Mass;T=ConcreteType:Number;Real=ConcreteType:Mass;Measure=ConcreteType:Mass;Self=ConcreteType:Mass;
@@ -1141,8 +1121,6 @@ Type analysis for Temperature
       Function: Tenth(Concept:ScalarArithmetic x)
       Function: Twice(Concept:ScalarArithmetic x)
       Function: Lerp(Concept:ScalarArithmetic a, Concept:ScalarArithmetic b, ConcreteType:Number t)
-        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:Temperature;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Temperature;Real=ConcreteType:Temperature;Measure=ConcreteType:Temperature;Self=ConcreteType:Temperature;
-        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:Temperature;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Temperature;Real=ConcreteType:Temperature;Measure=ConcreteType:Temperature;Self=ConcreteType:Temperature;
         Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:Temperature;ScalarArithmetic=ConcreteType:Temperature;Real=ConcreteType:Temperature;Measure=ConcreteType:Temperature;Self=ConcreteType:Temperature;
         Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:Temperature;ScalarArithmetic=ConcreteType:Temperature;Real=ConcreteType:Temperature;Measure=ConcreteType:Temperature;Self=ConcreteType:Temperature;
       Concept=Difference Expr=Concept:Difference<ConcreteType:Number> Subs=Difference=ConcreteType:Temperature;T=ConcreteType:Number;Real=ConcreteType:Temperature;Measure=ConcreteType:Temperature;Self=ConcreteType:Temperature;
@@ -1189,8 +1167,6 @@ Type analysis for Time
       Function: Tenth(Concept:ScalarArithmetic x)
       Function: Twice(Concept:ScalarArithmetic x)
       Function: Lerp(Concept:ScalarArithmetic a, Concept:ScalarArithmetic b, ConcreteType:Number t)
-        Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:Time;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Time;Real=ConcreteType:Time;Measure=ConcreteType:Time;Self=ConcreteType:Time;
-        Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:Time;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Time;Real=ConcreteType:Time;Measure=ConcreteType:Time;Self=ConcreteType:Time;
         Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:Time;ScalarArithmetic=ConcreteType:Time;Real=ConcreteType:Time;Measure=ConcreteType:Time;Self=ConcreteType:Time;
         Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:Time;ScalarArithmetic=ConcreteType:Time;Real=ConcreteType:Time;Measure=ConcreteType:Time;Self=ConcreteType:Time;
       Concept=Difference Expr=Concept:Difference<ConcreteType:Number> Subs=Difference=ConcreteType:Time;T=ConcreteType:Number;Real=ConcreteType:Time;Measure=ConcreteType:Time;Self=ConcreteType:Time;
@@ -1279,92 +1255,16 @@ Type analysis for Matrix2D
   Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
     Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Matrix2D;Value=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Matrix2D;Value=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
-  Concept=Vector Expr=Concept:Vector Subs=Vector=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
-  Function: Sum(Concept:Vector v)
-  Function: SumSquares(Concept:Vector v)
-  Function: MagnitudeSquared(Concept:Vector v)
-  Function: Magnitude(Concept:Vector v)
-  Function: Dot(Concept:Vector v1, Concept:Vector v2)
-  Function: Normal(Concept:Vector v)
-  Function: Average(Concept:Vector v)
-    Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=Array=ConcreteType:Matrix2D;T=ConcreteType:Number;Vector=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
-    Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$U init, ConcreteType:Function2<TypeVariable:$U,TypeVariable:$T,TypeVariable:$U> f)
-    Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
-    Concept=Numerical Expr=Concept:Numerical Subs=Numerical=ConcreteType:Matrix2D;Vector=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
-    Function: PlusOne(Concept:Numerical x)
-    Function: MinusOne(Concept:Numerical x)
-    Function: FromOne(Concept:Numerical x)
-      Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Matrix2D;Numerical=ConcreteType:Matrix2D;Vector=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
-        Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Matrix2D;Value=ConcreteType:Matrix2D;Numerical=ConcreteType:Matrix2D;Vector=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
-        Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Matrix2D;Value=ConcreteType:Matrix2D;Numerical=ConcreteType:Matrix2D;Vector=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
-      Concept=Betweenable Expr=Concept:Betweenable Subs=Betweenable=ConcreteType:Matrix2D;Numerical=ConcreteType:Matrix2D;Vector=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
-      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Matrix2D;Numerical=ConcreteType:Matrix2D;Vector=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
-      Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:Matrix2D;Numerical=ConcreteType:Matrix2D;Vector=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
-    Concept=Arithmetic Expr=Concept:Arithmetic Subs=Arithmetic=ConcreteType:Matrix2D;Vector=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
-    Function: Pow2(Concept:Arithmetic x)
-    Function: Pow3(Concept:Arithmetic x)
-    Function: Pow4(Concept:Arithmetic x)
-    Function: Pow5(Concept:Arithmetic x)
-    Function: Square(Concept:Arithmetic x)
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=AdditiveArithmetic=ConcreteType:Matrix2D;T=TypeVariable:Self;Arithmetic=ConcreteType:Matrix2D;Vector=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=MultiplicativeArithmetic=ConcreteType:Matrix2D;T=TypeVariable:Self;Arithmetic=ConcreteType:Matrix2D;Vector=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
-      Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:Matrix2D;Arithmetic=ConcreteType:Matrix2D;Vector=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
-      Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:Matrix2D;Arithmetic=ConcreteType:Matrix2D;Vector=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
-    Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs=ScalarArithmetic=ConcreteType:Matrix2D;Vector=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
-    Function: Half(Concept:ScalarArithmetic x)
-    Function: Quarter(Concept:ScalarArithmetic x)
-    Function: Tenth(Concept:ScalarArithmetic x)
-    Function: Twice(Concept:ScalarArithmetic x)
-    Function: Lerp(Concept:ScalarArithmetic a, Concept:ScalarArithmetic b, ConcreteType:Number t)
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:Matrix2D;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Matrix2D;Vector=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:Matrix2D;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Matrix2D;Vector=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
-      Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:Matrix2D;ScalarArithmetic=ConcreteType:Matrix2D;Vector=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
-      Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:Matrix2D;ScalarArithmetic=ConcreteType:Matrix2D;Vector=ConcreteType:Matrix2D;Self=ConcreteType:Matrix2D;
+  Concept=Array Expr=Concept:Array<ConcreteType:Vector3D> Subs=Array=ConcreteType:Matrix2D;T=ConcreteType:Vector3D;Self=ConcreteType:Matrix2D;
+  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
+  Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
 Type analysis for Matrix3D
   Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
     Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Matrix3D;Value=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Matrix3D;Value=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
-  Concept=Vector Expr=Concept:Vector Subs=Vector=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
-  Function: Sum(Concept:Vector v)
-  Function: SumSquares(Concept:Vector v)
-  Function: MagnitudeSquared(Concept:Vector v)
-  Function: Magnitude(Concept:Vector v)
-  Function: Dot(Concept:Vector v1, Concept:Vector v2)
-  Function: Normal(Concept:Vector v)
-  Function: Average(Concept:Vector v)
-    Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=Array=ConcreteType:Matrix3D;T=ConcreteType:Number;Vector=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
-    Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$U init, ConcreteType:Function2<TypeVariable:$U,TypeVariable:$T,TypeVariable:$U> f)
-    Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
-    Concept=Numerical Expr=Concept:Numerical Subs=Numerical=ConcreteType:Matrix3D;Vector=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
-    Function: PlusOne(Concept:Numerical x)
-    Function: MinusOne(Concept:Numerical x)
-    Function: FromOne(Concept:Numerical x)
-      Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Matrix3D;Numerical=ConcreteType:Matrix3D;Vector=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
-        Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Matrix3D;Value=ConcreteType:Matrix3D;Numerical=ConcreteType:Matrix3D;Vector=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
-        Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Matrix3D;Value=ConcreteType:Matrix3D;Numerical=ConcreteType:Matrix3D;Vector=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
-      Concept=Betweenable Expr=Concept:Betweenable Subs=Betweenable=ConcreteType:Matrix3D;Numerical=ConcreteType:Matrix3D;Vector=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
-      Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Matrix3D;Numerical=ConcreteType:Matrix3D;Vector=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
-      Concept=Interpolatable Expr=Concept:Interpolatable Subs=Interpolatable=ConcreteType:Matrix3D;Numerical=ConcreteType:Matrix3D;Vector=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
-    Concept=Arithmetic Expr=Concept:Arithmetic Subs=Arithmetic=ConcreteType:Matrix3D;Vector=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
-    Function: Pow2(Concept:Arithmetic x)
-    Function: Pow3(Concept:Arithmetic x)
-    Function: Pow4(Concept:Arithmetic x)
-    Function: Pow5(Concept:Arithmetic x)
-    Function: Square(Concept:Arithmetic x)
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:Self> Subs=AdditiveArithmetic=ConcreteType:Matrix3D;T=TypeVariable:Self;Arithmetic=ConcreteType:Matrix3D;Vector=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<TypeVariable:Self> Subs=MultiplicativeArithmetic=ConcreteType:Matrix3D;T=TypeVariable:Self;Arithmetic=ConcreteType:Matrix3D;Vector=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
-      Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:Matrix3D;Arithmetic=ConcreteType:Matrix3D;Vector=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
-      Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:Matrix3D;Arithmetic=ConcreteType:Matrix3D;Vector=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
-    Concept=ScalarArithmetic Expr=Concept:ScalarArithmetic Subs=ScalarArithmetic=ConcreteType:Matrix3D;Vector=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
-    Function: Half(Concept:ScalarArithmetic x)
-    Function: Quarter(Concept:ScalarArithmetic x)
-    Function: Tenth(Concept:ScalarArithmetic x)
-    Function: Twice(Concept:ScalarArithmetic x)
-    Function: Lerp(Concept:ScalarArithmetic a, Concept:ScalarArithmetic b, ConcreteType:Number t)
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:Matrix3D;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Matrix3D;Vector=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:Matrix3D;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Matrix3D;Vector=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
-      Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:Matrix3D;ScalarArithmetic=ConcreteType:Matrix3D;Vector=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
-      Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:Matrix3D;ScalarArithmetic=ConcreteType:Matrix3D;Vector=ConcreteType:Matrix3D;Self=ConcreteType:Matrix3D;
+  Concept=Array Expr=Concept:Array<ConcreteType:Vector4D> Subs=Array=ConcreteType:Matrix3D;T=ConcreteType:Vector4D;Self=ConcreteType:Matrix3D;
+  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
+  Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
   Function: M11(ConcreteType:Matrix3D m)
   Function: M12(ConcreteType:Matrix3D m)
   Function: M13(ConcreteType:Matrix3D m)
@@ -1392,7 +1292,7 @@ Type analysis for UV
   Function: Normal(Concept:Vector v)
   Function: Average(Concept:Vector v)
     Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=Array=ConcreteType:UV;T=ConcreteType:Number;Vector=ConcreteType:UV;Self=ConcreteType:UV;
-    Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$U init, ConcreteType:Function2<TypeVariable:$U,TypeVariable:$T,TypeVariable:$U> f)
+    Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
     Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
     Concept=Numerical Expr=Concept:Numerical Subs=Numerical=ConcreteType:UV;Vector=ConcreteType:UV;Self=ConcreteType:UV;
     Function: PlusOne(Concept:Numerical x)
@@ -1420,8 +1320,6 @@ Type analysis for UV
     Function: Tenth(Concept:ScalarArithmetic x)
     Function: Twice(Concept:ScalarArithmetic x)
     Function: Lerp(Concept:ScalarArithmetic a, Concept:ScalarArithmetic b, ConcreteType:Number t)
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:UV;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:UV;Vector=ConcreteType:UV;Self=ConcreteType:UV;
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:UV;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:UV;Vector=ConcreteType:UV;Self=ConcreteType:UV;
       Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:UV;ScalarArithmetic=ConcreteType:UV;Vector=ConcreteType:UV;Self=ConcreteType:UV;
       Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:UV;ScalarArithmetic=ConcreteType:UV;Vector=ConcreteType:UV;Self=ConcreteType:UV;
   Function: Count(ConcreteType:UV v)
@@ -1436,7 +1334,7 @@ Type analysis for UVW
   Function: Normal(Concept:Vector v)
   Function: Average(Concept:Vector v)
     Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=Array=ConcreteType:UVW;T=ConcreteType:Number;Vector=ConcreteType:UVW;Self=ConcreteType:UVW;
-    Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$U init, ConcreteType:Function2<TypeVariable:$U,TypeVariable:$T,TypeVariable:$U> f)
+    Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
     Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
     Concept=Numerical Expr=Concept:Numerical Subs=Numerical=ConcreteType:UVW;Vector=ConcreteType:UVW;Self=ConcreteType:UVW;
     Function: PlusOne(Concept:Numerical x)
@@ -1464,8 +1362,6 @@ Type analysis for UVW
     Function: Tenth(Concept:ScalarArithmetic x)
     Function: Twice(Concept:ScalarArithmetic x)
     Function: Lerp(Concept:ScalarArithmetic a, Concept:ScalarArithmetic b, ConcreteType:Number t)
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:UVW;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:UVW;Vector=ConcreteType:UVW;Self=ConcreteType:UVW;
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:UVW;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:UVW;Vector=ConcreteType:UVW;Self=ConcreteType:UVW;
       Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:UVW;ScalarArithmetic=ConcreteType:UVW;Vector=ConcreteType:UVW;Self=ConcreteType:UVW;
       Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:UVW;ScalarArithmetic=ConcreteType:UVW;Vector=ConcreteType:UVW;Self=ConcreteType:UVW;
   Function: Count(ConcreteType:UVW v)
@@ -1480,7 +1376,7 @@ Type analysis for Vector2D
   Function: Normal(Concept:Vector v)
   Function: Average(Concept:Vector v)
     Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=Array=ConcreteType:Vector2D;T=ConcreteType:Number;Vector=ConcreteType:Vector2D;Self=ConcreteType:Vector2D;
-    Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$U init, ConcreteType:Function2<TypeVariable:$U,TypeVariable:$T,TypeVariable:$U> f)
+    Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
     Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
     Concept=Numerical Expr=Concept:Numerical Subs=Numerical=ConcreteType:Vector2D;Vector=ConcreteType:Vector2D;Self=ConcreteType:Vector2D;
     Function: PlusOne(Concept:Numerical x)
@@ -1508,8 +1404,6 @@ Type analysis for Vector2D
     Function: Tenth(Concept:ScalarArithmetic x)
     Function: Twice(Concept:ScalarArithmetic x)
     Function: Lerp(Concept:ScalarArithmetic a, Concept:ScalarArithmetic b, ConcreteType:Number t)
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:Vector2D;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Vector2D;Vector=ConcreteType:Vector2D;Self=ConcreteType:Vector2D;
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:Vector2D;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Vector2D;Vector=ConcreteType:Vector2D;Self=ConcreteType:Vector2D;
       Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:Vector2D;ScalarArithmetic=ConcreteType:Vector2D;Vector=ConcreteType:Vector2D;Self=ConcreteType:Vector2D;
       Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:Vector2D;ScalarArithmetic=ConcreteType:Vector2D;Vector=ConcreteType:Vector2D;Self=ConcreteType:Vector2D;
   Function: Implicit(ConcreteType:Vector2D x)
@@ -1525,7 +1419,7 @@ Type analysis for Vector3D
   Function: Normal(Concept:Vector v)
   Function: Average(Concept:Vector v)
     Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=Array=ConcreteType:Vector3D;T=ConcreteType:Number;Vector=ConcreteType:Vector3D;Self=ConcreteType:Vector3D;
-    Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$U init, ConcreteType:Function2<TypeVariable:$U,TypeVariable:$T,TypeVariable:$U> f)
+    Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
     Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
     Concept=Numerical Expr=Concept:Numerical Subs=Numerical=ConcreteType:Vector3D;Vector=ConcreteType:Vector3D;Self=ConcreteType:Vector3D;
     Function: PlusOne(Concept:Numerical x)
@@ -1553,8 +1447,6 @@ Type analysis for Vector3D
     Function: Tenth(Concept:ScalarArithmetic x)
     Function: Twice(Concept:ScalarArithmetic x)
     Function: Lerp(Concept:ScalarArithmetic a, Concept:ScalarArithmetic b, ConcreteType:Number t)
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:Vector3D;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Vector3D;Vector=ConcreteType:Vector3D;Self=ConcreteType:Vector3D;
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:Vector3D;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Vector3D;Vector=ConcreteType:Vector3D;Self=ConcreteType:Vector3D;
       Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:Vector3D;ScalarArithmetic=ConcreteType:Vector3D;Vector=ConcreteType:Vector3D;Self=ConcreteType:Vector3D;
       Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:Vector3D;ScalarArithmetic=ConcreteType:Vector3D;Vector=ConcreteType:Vector3D;Self=ConcreteType:Vector3D;
   Function: Implicit(ConcreteType:Vector3D x)
@@ -1570,7 +1462,7 @@ Type analysis for Vector4D
   Function: Normal(Concept:Vector v)
   Function: Average(Concept:Vector v)
     Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=Array=ConcreteType:Vector4D;T=ConcreteType:Number;Vector=ConcreteType:Vector4D;Self=ConcreteType:Vector4D;
-    Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$U init, ConcreteType:Function2<TypeVariable:$U,TypeVariable:$T,TypeVariable:$U> f)
+    Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
     Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
     Concept=Numerical Expr=Concept:Numerical Subs=Numerical=ConcreteType:Vector4D;Vector=ConcreteType:Vector4D;Self=ConcreteType:Vector4D;
     Function: PlusOne(Concept:Numerical x)
@@ -1598,8 +1490,6 @@ Type analysis for Vector4D
     Function: Tenth(Concept:ScalarArithmetic x)
     Function: Twice(Concept:ScalarArithmetic x)
     Function: Lerp(Concept:ScalarArithmetic a, Concept:ScalarArithmetic b, ConcreteType:Number t)
-      Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<ConcreteType:Number> Subs=AdditiveArithmetic=ConcreteType:Vector4D;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Vector4D;Vector=ConcreteType:Vector4D;Self=ConcreteType:Vector4D;
-      Concept=MultiplicativeArithmetic Expr=Concept:MultiplicativeArithmetic<ConcreteType:Number> Subs=MultiplicativeArithmetic=ConcreteType:Vector4D;T=ConcreteType:Number;ScalarArithmetic=ConcreteType:Vector4D;Vector=ConcreteType:Vector4D;Self=ConcreteType:Vector4D;
       Concept=AdditiveInverse Expr=Concept:AdditiveInverse Subs=AdditiveInverse=ConcreteType:Vector4D;ScalarArithmetic=ConcreteType:Vector4D;Vector=ConcreteType:Vector4D;Self=ConcreteType:Vector4D;
       Concept=MultiplicativeInverse Expr=Concept:MultiplicativeInverse Subs=MultiplicativeInverse=ConcreteType:Vector4D;ScalarArithmetic=ConcreteType:Vector4D;Vector=ConcreteType:Vector4D;Self=ConcreteType:Vector4D;
   Function: Implicit(ConcreteType:Vector4D x)

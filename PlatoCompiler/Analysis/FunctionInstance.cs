@@ -19,7 +19,7 @@ namespace Plato.Compiler.Analysis
         public IReadOnlyList<string> ParameterNames { get; }
         public string Name => Implementation.Name;
         public TypeInstance ReturnType { get; }
-        public string SignatureId => $"{Name}({ParameterTypes.JoinStringsWithComma()})";
+        public string SignatureId => $"{Name}({ParameterTypes.JoinStringsWithComma()}):{ReturnType}";
         public IReadOnlyList<TypeInstance> ParameterTypes { get; }
         public IReadOnlyList<TypeParameterDef> UsedTypeParameters { get; }
         public override string ToString() => $"{SignatureId}:{ReturnType}";

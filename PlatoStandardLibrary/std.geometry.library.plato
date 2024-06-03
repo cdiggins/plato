@@ -1,21 +1,7 @@
 library Geometry
 {
-	/*
-	Deform(xs: Points3D, f: Function1<Vector3D, Vector3D>): Points3D
-		=> xs.Points.Map(f);
-
-	Points(xs: Array<Point2D>): Geometry2D
-		=> xs;
-	
-	Points(xs: Array<Point3D>): Geometry3D
-		=> xs;
-	*/
-
-	/*
-	// TODO: this doesn't work because it is treated the same as Implicit(x: Point2D) other. 
-	Implicit(x: Point2D): Vector3D
+	Implicit(x: Point2D): Point3D
 		=> (x.X, x.Y, 0.0);
-	*/
 
 	Implicit(x: Point2D): Vector2D
 		=> (x.X, x.Y);

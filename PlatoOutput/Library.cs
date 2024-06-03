@@ -8,6 +8,7 @@ public static class Constants
     public static Number FeetPerMeter => ((Number)3.280839895);
     public static Number FeetPerMile => ((Integer)5280);
     public static Number MetersPerLightyear => ((Number)9460730472580000);
+    public static Number MetersPerAU => ((Number)149597870691);
     public static Number DaltonPerKilogram => ((Number)1.66053E-27);
     public static Number PoundPerKilogram => ((Number)0.45359237);
     public static Number PoundPerTon => ((Integer)2000);
@@ -17,8 +18,9 @@ public static class Constants
 }
 public readonly partial struct Point2D
 {
+    public static implicit operator Point3D(Point2D x)  => x.X.Tuple3(x.Y, ((Number)0));
     public static implicit operator Vector2D(Point2D x)  => x.X.Tuple2(x.Y);
-    public Point3D Deform(System.Func<Vector3D, Vector3D> f) => f(this);
+    public Point3D Deform(System.Func<Vector3D, Vector3D> f) => f(this.X.Tuple3(this.Y, ((Integer)0)));
     public Vector2D ToVector => this;
     public Point2D Add(Vector2D b) => this.ToVector.Add(b);
     public static Point2D operator +(Point2D a, Vector2D b) => a.Add(b);
@@ -67,10 +69,14 @@ public readonly partial struct Triangle2D
 }
 public readonly partial struct Quad2D
 {
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Point2D, TAcc> f) => f(f(f(f(init, A), B), C), D);
+    public Quad2D Map(System.Func<Point2D, Point2D> f) => (f(A), f(B), f(C), f(D));
 }
 public readonly partial struct Line2D
 {
     public Boolean Closed => ((Boolean)false);
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Point2D, TAcc> f) => f(f(init, A), B);
+    public Line2D Map(System.Func<Point2D, Point2D> f) => (f(A), f(B));
 }
 public readonly partial struct Circle
 {
@@ -113,9 +119,6 @@ public readonly partial struct RegularPolygon
     public Boolean Closed => ((Boolean)true);
 }
 public readonly partial struct Box2D
-{
-}
-public readonly partial struct Deformed2D
 {
 }
 public readonly partial struct Point3D
@@ -168,9 +171,13 @@ public readonly partial struct Ray3D
 }
 public readonly partial struct Triangle3D
 {
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Point3D, TAcc> f) => f(f(f(init, A), B), C);
+    public Triangle3D Map(System.Func<Point3D, Point3D> f) => (f(A), f(B), f(C));
 }
 public readonly partial struct Quad3D
 {
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Point3D, TAcc> f) => f(f(f(f(init, A), B), C), D);
+    public Quad3D Map(System.Func<Point3D, Point3D> f) => (f(A), f(B), f(C), f(D));
 }
 public readonly partial struct Capsule
 {
@@ -211,6 +218,8 @@ public readonly partial struct Quaternion
     public Number Dot(Quaternion v2) => this.Multiply(v2).Sum;
     public Quaternion Normal => this.Divide(this.Magnitude);
     public Number Average => this.Sum.Divide(this.Count);
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Number, TAcc> f) => f(f(f(f(init, X), Y), Z), W);
+    public Quaternion Map(System.Func<Number, Number> f) => (f(X), f(Y), f(Z), f(W));
     public Quaternion PlusOne => this.Add(this.One);
     public Quaternion MinusOne => this.Subtract(this.One);
     public Quaternion FromOne => this.One.Subtract(this);
@@ -260,6 +269,8 @@ public readonly partial struct Quadray
     public Number Dot(Quadray v2) => this.Multiply(v2).Sum;
     public Quadray Normal => this.Divide(this.Magnitude);
     public Number Average => this.Sum.Divide(this.Count);
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Number, TAcc> f) => f(f(f(f(init, X), Y), Z), W);
+    public Quadray Map(System.Func<Number, Number> f) => (f(X), f(Y), f(Z), f(W));
     public Quadray PlusOne => this.Add(this.One);
     public Quadray MinusOne => this.Subtract(this.One);
     public Quadray FromOne => this.One.Subtract(this);
@@ -362,16 +373,11 @@ public readonly partial struct Integer
     {
         get
         {
-            throw new NotImplementedException();
+            var _var0 = this;
+            return this.Range.Map((i) => i.FloatDivision(_var0));
         }
     }
-    public Array<Point2D> CirclePoints
-    {
-        get
-        {
-            throw new NotImplementedException();
-        }
-    }
+    public Array<Point2D> CirclePoints => this.Fractions.Map((x) => x.Turns.CirclePoint);
     public Integer Add(Integer y) => Intrinsics.Add(this, y);
     public static Integer operator +(Integer x, Integer y) => x.Add(y);
     public Integer Subtract(Integer y) => Intrinsics.Subtract(this, y);
@@ -678,6 +684,8 @@ public readonly partial struct Complex
     public Number Dot(Complex v2) => this.Multiply(v2).Sum;
     public Complex Normal => this.Divide(this.Magnitude);
     public Number Average => this.Sum.Divide(this.Count);
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Number, TAcc> f) => f(f(init, Real), Imaginary);
+    public Complex Map(System.Func<Number, Number> f) => (f(Real), f(Imaginary));
     public Complex PlusOne => this.Add(this.One);
     public Complex MinusOne => this.Subtract(this.One);
     public Complex FromOne => this.One.Subtract(this);
@@ -694,12 +702,18 @@ public readonly partial struct Complex
 }
 public readonly partial struct Integer2
 {
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Integer, TAcc> f) => f(f(init, A), B);
+    public Integer2 Map(System.Func<Integer, Integer> f) => (f(A), f(B));
 }
 public readonly partial struct Integer3
 {
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Integer, TAcc> f) => f(f(f(init, A), B), C);
+    public Integer3 Map(System.Func<Integer, Integer> f) => (f(A), f(B), f(C));
 }
 public readonly partial struct Integer4
 {
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Integer, TAcc> f) => f(f(f(f(init, A), B), C), D);
+    public Integer4 Map(System.Func<Integer, Integer> f) => (f(A), f(B), f(C), f(D));
 }
 public readonly partial struct Color
 {
@@ -1006,26 +1020,8 @@ public readonly partial struct NumberInterval
 }
 public readonly partial struct Matrix2D
 {
-    public Number Sum => this.Reduce(((Number)0), (a, b) => a.Add(b));
-    public Number SumSquares => this.Square.Sum;
-    public Number MagnitudeSquared => this.SumSquares;
-    public Number Magnitude => this.MagnitudeSquared.SquareRoot;
-    public Number Dot(Matrix2D v2) => this.Multiply(v2).Sum;
-    public Matrix2D Normal => this.Divide(this.Magnitude);
-    public Number Average => this.Sum.Divide(this.Count);
-    public Matrix2D PlusOne => this.Add(this.One);
-    public Matrix2D MinusOne => this.Subtract(this.One);
-    public Matrix2D FromOne => this.One.Subtract(this);
-    public Matrix2D Pow2 => this.Multiply(this);
-    public Matrix2D Pow3 => this.Pow2.Multiply(this);
-    public Matrix2D Pow4 => this.Pow3.Multiply(this);
-    public Matrix2D Pow5 => this.Pow4.Multiply(this);
-    public Matrix2D Square => this.Pow2;
-    public Matrix2D Half => this.Divide(((Number)2));
-    public Matrix2D Quarter => this.Divide(((Number)4));
-    public Matrix2D Tenth => this.Divide(((Number)10));
-    public Matrix2D Twice => this.Multiply(((Number)2));
-    public Matrix2D Lerp(Matrix2D b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Vector3D, TAcc> f) => f(f(f(init, Column1), Column2), Column3);
+    public Matrix2D Map(System.Func<Vector3D, Vector3D> f) => (f(Column1), f(Column2), f(Column3));
 }
 public readonly partial struct Matrix3D
 {
@@ -1047,26 +1043,8 @@ public readonly partial struct Matrix3D
     public Number M44 => this.Column4.W;
     public Vector3D Multiply(Vector3D v) => v.X.Multiply(this.M11).Add(v.Y.Multiply(this.M21).Add(v.Z.Multiply(this.M31).Add(this.M41))).Tuple3(v.X.Multiply(this.M12).Add(v.Y.Multiply(this.M22).Add(v.Z.Multiply(this.M32).Add(this.M42))), v.X.Multiply(this.M13).Add(v.Y.Multiply(this.M23).Add(v.Z.Multiply(this.M33).Add(this.M43))));
     public static Vector3D operator *(Matrix3D m, Vector3D v) => m.Multiply(v);
-    public Number Sum => this.Reduce(((Number)0), (a, b) => a.Add(b));
-    public Number SumSquares => this.Square.Sum;
-    public Number MagnitudeSquared => this.SumSquares;
-    public Number Magnitude => this.MagnitudeSquared.SquareRoot;
-    public Number Dot(Matrix3D v2) => this.Multiply(v2).Sum;
-    public Matrix3D Normal => this.Divide(this.Magnitude);
-    public Number Average => this.Sum.Divide(this.Count);
-    public Matrix3D PlusOne => this.Add(this.One);
-    public Matrix3D MinusOne => this.Subtract(this.One);
-    public Matrix3D FromOne => this.One.Subtract(this);
-    public Matrix3D Pow2 => this.Multiply(this);
-    public Matrix3D Pow3 => this.Pow2.Multiply(this);
-    public Matrix3D Pow4 => this.Pow3.Multiply(this);
-    public Matrix3D Pow5 => this.Pow4.Multiply(this);
-    public Matrix3D Square => this.Pow2;
-    public Matrix3D Half => this.Divide(((Number)2));
-    public Matrix3D Quarter => this.Divide(((Number)4));
-    public Matrix3D Tenth => this.Divide(((Number)10));
-    public Matrix3D Twice => this.Multiply(((Number)2));
-    public Matrix3D Lerp(Matrix3D b, Number t) => this.Multiply(t.FromOne).Add(b.Multiply(t));
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Vector4D, TAcc> f) => f(f(f(f(init, Column1), Column2), Column3), Column4);
+    public Matrix3D Map(System.Func<Vector4D, Vector4D> f) => (f(Column1), f(Column2), f(Column3), f(Column4));
 }
 public readonly partial struct UV
 {
@@ -1080,6 +1058,8 @@ public readonly partial struct UV
     public Number Dot(UV v2) => this.Multiply(v2).Sum;
     public UV Normal => this.Divide(this.Magnitude);
     public Number Average => this.Sum.Divide(this.Count);
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Number, TAcc> f) => f(f(init, U), V);
+    public UV Map(System.Func<Number, Number> f) => (f(U), f(V));
     public UV PlusOne => this.Add(this.One);
     public UV MinusOne => this.Subtract(this.One);
     public UV FromOne => this.One.Subtract(this);
@@ -1106,6 +1086,8 @@ public readonly partial struct UVW
     public Number Dot(UVW v2) => this.Multiply(v2).Sum;
     public UVW Normal => this.Divide(this.Magnitude);
     public Number Average => this.Sum.Divide(this.Count);
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Number, TAcc> f) => f(f(f(init, U), V), W);
+    public UVW Map(System.Func<Number, Number> f) => (f(U), f(V), f(W));
     public UVW PlusOne => this.Add(this.One);
     public UVW MinusOne => this.Subtract(this.One);
     public UVW FromOne => this.One.Subtract(this);
@@ -1133,6 +1115,8 @@ public readonly partial struct Vector2D
     public Number Dot(Vector2D v2) => this.Multiply(v2).Sum;
     public Vector2D Normal => this.Divide(this.Magnitude);
     public Number Average => this.Sum.Divide(this.Count);
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Number, TAcc> f) => f(f(init, X), Y);
+    public Vector2D Map(System.Func<Number, Number> f) => (f(X), f(Y));
     public Vector2D PlusOne => this.Add(this.One);
     public Vector2D MinusOne => this.Subtract(this.One);
     public Vector2D FromOne => this.One.Subtract(this);
@@ -1160,6 +1144,8 @@ public readonly partial struct Vector3D
     public Number Dot(Vector3D v2) => this.Multiply(v2).Sum;
     public Vector3D Normal => this.Divide(this.Magnitude);
     public Number Average => this.Sum.Divide(this.Count);
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Number, TAcc> f) => f(f(f(init, X), Y), Z);
+    public Vector3D Map(System.Func<Number, Number> f) => (f(X), f(Y), f(Z));
     public Vector3D PlusOne => this.Add(this.One);
     public Vector3D MinusOne => this.Subtract(this.One);
     public Vector3D FromOne => this.One.Subtract(this);
@@ -1187,6 +1173,8 @@ public readonly partial struct Vector4D
     public Number Dot(Vector4D v2) => this.Multiply(v2).Sum;
     public Vector4D Normal => this.Divide(this.Magnitude);
     public Number Average => this.Sum.Divide(this.Count);
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Number, TAcc> f) => f(f(f(f(init, X), Y), Z), W);
+    public Vector4D Map(System.Func<Number, Number> f) => (f(X), f(Y), f(Z), f(W));
     public Vector4D PlusOne => this.Add(this.One);
     public Vector4D MinusOne => this.Subtract(this.One);
     public Vector4D FromOne => this.One.Subtract(this);

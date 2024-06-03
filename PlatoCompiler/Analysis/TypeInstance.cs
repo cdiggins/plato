@@ -37,5 +37,11 @@ namespace Plato.Compiler.Analysis
             foreach (var arg2 in arg.SelfAndDescendants())
                 yield return arg2;
         }
+
+        public static TypeInstance Create(TypeDef def)
+            => new TypeInstance(def, def.TypeParameters.Select(Create));
+
+        public static TypeInstance Create(TypeExpression expr)
+            => new TypeInstance(expr.Def, expr.TypeArgs.Select(Create));
     }
 }

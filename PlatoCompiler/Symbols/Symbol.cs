@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Plato.Compiler.Symbols
 {
@@ -19,6 +20,6 @@ namespace Plato.Compiler.Symbols
 
         public abstract IEnumerable<Symbol> GetChildSymbols();
 
-        public abstract string Name { get; }
+       public abstract string Name { get; }
     }
 }

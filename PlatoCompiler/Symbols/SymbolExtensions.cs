@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Plato.Compiler.Symbols
 {
@@ -33,5 +35,43 @@ namespace Plato.Compiler.Symbols
         public static bool HasImplementation(this FunctionDef fs)
             => fs.Body != null;
 
+        public static IEnumerable<Expression> GetExpressionTree(this Symbol symbol)
+        {
+            if (symbol is Expression expr)
+                return expr.GetExpressionTree();
+            if (symbol is Statement st)
+                return st.GetExpressionTree();
+            return Enumerable.Empty<Expression>();
+        }
+
+        public static IEnumerable<Expression> GetExpressionTree(this Statement st)
+        {
+            switch (st)
+            {
+                case BlockStatement blockStatement:
+                    break;
+                case CommentStatement commentStatement:
+                    break;
+                case ExpressionStatement expressionStatement:
+                    return expressionStatement.Expression.GetExpressionTree();
+                case LoopStatement loopStatement:
+                    return loopStatement.Condition.GetExpressionTree();
+                case MultiStatement multiStatement:
+                    break;
+                case ReturnStatement returnStatement:
+                    return returnStatement.Expression.GetExpressionTree();
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(st));
+            }
+
+            return Enumerable.Empty<Expression>();
+        }
+
+        public static IEnumerable<Expression> GetExpressionTree(this Expression expr)
+        {
+            foreach (var child in expr.Children)
+                yield return child;
+            yield return expr;
+        }
     }
 }

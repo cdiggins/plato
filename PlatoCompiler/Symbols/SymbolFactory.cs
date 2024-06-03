@@ -139,7 +139,7 @@ namespace Plato.Compiler.Symbols
             // Is it a Type Variable 
             if (name.StartsWith("$"))
             {
-                return TypeExpression.CreateTypeVar(name);
+                return TypeExpression.CreateTypeVar(TypeBindingsScope, name);
             }
 
             var sym = TypeBindingsScope.GetValue(name);
@@ -291,7 +291,8 @@ namespace Plato.Compiler.Symbols
                         return new Literal(astConstant1.TypeEnum, astConstant1.Value);
 
                     case AstExpressionStatement astExpressionStatement:
-                        return Scoped(() => Resolve(astExpressionStatement.Expression));
+                        return Scoped(() => new ExpressionStatement(
+                            ResolveExpr(astExpressionStatement.Expression)));
 
                     case AstIdentifier astIdentifier:
                         return GetValue(astIdentifier.Text, astIdentifier);
@@ -546,7 +547,7 @@ namespace Plato.Compiler.Symbols
 
         public TypeExpression CreateLambdaType(int args)
         {
-            var typeArgs = Enumerable.Range(0, args + 1).Select(i => TypeExpression.CreateTypeVar($"$T{i}")).ToArray();
+            var typeArgs = Enumerable.Range(0, args + 1).Select(i => TypeExpression.CreateTypeVar(TypeBindingsScope, $"$T{i}")).ToArray();
             return new TypeExpression(GetTypeDefinition($"Function{args}"), typeArgs);
         }
 

@@ -246,11 +246,9 @@ public readonly partial struct Quad2D: Value<Quad2D>, Array<Point2D>
     public static Boolean operator ==(Quad2D a, Quad2D b) => a.Equals(b);
     public Boolean NotEquals(Quad2D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C) & D.NotEquals(b.D));
     public static Boolean operator !=(Quad2D a, Quad2D b) => a.NotEquals(b);
-    public Integer Count => throw new NotImplementedException();
-    public Point2D At(Integer n) => throw new NotImplementedException();
+    public Integer Count => 4;
+    public Point2D At(Integer n) => n == 0 ? A : n == 1 ? B : n == 2 ? C : n == 3 ? D : throw new System.IndexOutOfRangeException();
     public Point2D this[Integer n] => At(n);
-    public TAcc Reduce<TAcc>(TAcc init, Func<TAcc, Point2D, TAcc> f) => throw new NotImplementedException();
-    public TResult Map<TResult>(Func<Point2D, TResult> f) => throw new NotImplementedException();
 }
 public readonly partial struct Line2D: PolygonalChain2D, Array<Point2D>
 {
@@ -274,11 +272,9 @@ public readonly partial struct Line2D: PolygonalChain2D, Array<Point2D>
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(A), new Dynamic(B));
     // Unimplemented concept functions
     public Array<Point2D> Points => throw new NotImplementedException();
-    public Integer Count => throw new NotImplementedException();
-    public Point2D At(Integer n) => throw new NotImplementedException();
+    public Integer Count => 2;
+    public Point2D At(Integer n) => n == 0 ? A : n == 1 ? B : throw new System.IndexOutOfRangeException();
     public Point2D this[Integer n] => At(n);
-    public TAcc Reduce<TAcc>(TAcc init, Func<TAcc, Point2D, TAcc> f) => throw new NotImplementedException();
-    public TResult Map<TResult>(Func<Point2D, TResult> f) => throw new NotImplementedException();
 }
 public readonly partial struct Circle: ClosedShape2D
 {
@@ -515,28 +511,6 @@ public readonly partial struct Box2D: Shape2D
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(Center), new Dynamic(Rotation), new Dynamic(Extent));
     // Unimplemented concept functions
 }
-public readonly partial struct Deformed2D: Geometry2D
-{
-    public readonly Geometry2D Source;
-    public readonly Function1<Vector3D, Vector3D> Deformation;
-    public Deformed2D WithSource(Geometry2D source) => (source, Deformation);
-    public Deformed2D WithDeformation(Function1<Vector3D, Vector3D> deformation) => (Source, deformation);
-    public Deformed2D(Geometry2D source, Function1<Vector3D, Vector3D> deformation) => (Source, Deformation) = (source, deformation);
-    public static Deformed2D Default = new Deformed2D();
-    public static Deformed2D New(Geometry2D source, Function1<Vector3D, Vector3D> deformation) => new Deformed2D(source, deformation);
-    public static implicit operator (Geometry2D, Function1<Vector3D, Vector3D>)(Deformed2D self) => (self.Source, self.Deformation);
-    public static implicit operator Deformed2D((Geometry2D, Function1<Vector3D, Vector3D>) value) => new Deformed2D(value.Item1, value.Item2);
-    public void Deconstruct(out Geometry2D source, out Function1<Vector3D, Vector3D> deformation) { source = Source; deformation = Deformation; }
-    public override bool Equals(object obj) { if (!(obj is Deformed2D)) return false; var other = (Deformed2D)obj; return Source.Equals(other.Source) && Deformation.Equals(other.Deformation); }
-    public override int GetHashCode() => Intrinsics.CombineHashCodes(Source, Deformation);
-    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
-    public static implicit operator Dynamic(Deformed2D self) => new Dynamic(self);
-    public static implicit operator Deformed2D(Dynamic value) => value.As<Deformed2D>();
-    public String TypeName => "Deformed2D";
-    public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"Source", (String)"Deformation");
-    public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(Source), new Dynamic(Deformation));
-    // Unimplemented concept functions
-}
 public readonly partial struct Point3D: Coordinate<Point3D>, Difference<Point3D, Vector3D>
 {
     public readonly Number X;
@@ -723,7 +697,7 @@ public readonly partial struct Ray3D: Value<Ray3D>
     public Boolean NotEquals(Ray3D b) => (Direction.NotEquals(b.Direction) & Position.NotEquals(b.Position));
     public static Boolean operator !=(Ray3D a, Ray3D b) => a.NotEquals(b);
 }
-public readonly partial struct Triangle3D: Value<Triangle3D>, Array<Point2D>
+public readonly partial struct Triangle3D: Value<Triangle3D>, Array<Point3D>
 {
     public readonly Point3D A;
     public readonly Point3D B;
@@ -750,11 +724,9 @@ public readonly partial struct Triangle3D: Value<Triangle3D>, Array<Point2D>
     public static Boolean operator ==(Triangle3D a, Triangle3D b) => a.Equals(b);
     public Boolean NotEquals(Triangle3D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C));
     public static Boolean operator !=(Triangle3D a, Triangle3D b) => a.NotEquals(b);
-    public Integer Count => throw new NotImplementedException();
-    public Point2D At(Integer n) => throw new NotImplementedException();
-    public Point2D this[Integer n] => At(n);
-    public TAcc Reduce<TAcc>(TAcc init, Func<TAcc, Point2D, TAcc> f) => throw new NotImplementedException();
-    public TResult Map<TResult>(Func<Point2D, TResult> f) => throw new NotImplementedException();
+    public Integer Count => 3;
+    public Point3D At(Integer n) => n == 0 ? A : n == 1 ? B : n == 2 ? C : throw new System.IndexOutOfRangeException();
+    public Point3D this[Integer n] => At(n);
 }
 public readonly partial struct Quad3D: Value<Quad3D>, Array<Point3D>
 {
@@ -785,11 +757,9 @@ public readonly partial struct Quad3D: Value<Quad3D>, Array<Point3D>
     public static Boolean operator ==(Quad3D a, Quad3D b) => a.Equals(b);
     public Boolean NotEquals(Quad3D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C) & D.NotEquals(b.D));
     public static Boolean operator !=(Quad3D a, Quad3D b) => a.NotEquals(b);
-    public Integer Count => throw new NotImplementedException();
-    public Point3D At(Integer n) => throw new NotImplementedException();
+    public Integer Count => 4;
+    public Point3D At(Integer n) => n == 0 ? A : n == 1 ? B : n == 2 ? C : n == 3 ? D : throw new System.IndexOutOfRangeException();
     public Point3D this[Integer n] => At(n);
-    public TAcc Reduce<TAcc>(TAcc init, Func<TAcc, Point3D, TAcc> f) => throw new NotImplementedException();
-    public TResult Map<TResult>(Func<Point3D, TResult> f) => throw new NotImplementedException();
 }
 public readonly partial struct Capsule: Shape3D
 {
@@ -1058,19 +1028,19 @@ public readonly partial struct Quaternion: Vector<Quaternion>
     public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"X", (String)"Y", (String)"Z", (String)"W");
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(X), new Dynamic(Y), new Dynamic(Z), new Dynamic(W));
     // Unimplemented concept functions
-    public Quaternion Reciprocal => (X.Reciprocal, Y.Reciprocal, Z.Reciprocal, W.Reciprocal);
-    public Quaternion Negative => (X.Negative, Y.Negative, Z.Negative, W.Negative);
-    public static Quaternion operator -(Quaternion self) => self.Negative;
+    public Quaternion Add(Number other) => (X.Add(other), Y.Add(other), Z.Add(other), W.Add(other));
+    public static Quaternion operator +(Quaternion self, Number other) => self.Add(other);
+    public Quaternion Subtract(Number other) => (X.Subtract(other), Y.Subtract(other), Z.Subtract(other), W.Subtract(other));
+    public static Quaternion operator -(Quaternion self, Number other) => self.Subtract(other);
     public Quaternion Multiply(Number other) => (X.Multiply(other), Y.Multiply(other), Z.Multiply(other), W.Multiply(other));
     public static Quaternion operator *(Quaternion self, Number other) => self.Multiply(other);
     public Quaternion Divide(Number other) => (X.Divide(other), Y.Divide(other), Z.Divide(other), W.Divide(other));
     public static Quaternion operator /(Quaternion self, Number other) => self.Divide(other);
     public Quaternion Modulo(Number other) => (X.Modulo(other), Y.Modulo(other), Z.Modulo(other), W.Modulo(other));
     public static Quaternion operator %(Quaternion self, Number other) => self.Modulo(other);
-    public Quaternion Add(Number other) => (X.Add(other), Y.Add(other), Z.Add(other), W.Add(other));
-    public static Quaternion operator +(Quaternion self, Number other) => self.Add(other);
-    public Quaternion Subtract(Number other) => (X.Subtract(other), Y.Subtract(other), Z.Subtract(other), W.Subtract(other));
-    public static Quaternion operator -(Quaternion self, Number other) => self.Subtract(other);
+    public Quaternion Reciprocal => (X.Reciprocal, Y.Reciprocal, Z.Reciprocal, W.Reciprocal);
+    public Quaternion Negative => (X.Negative, Y.Negative, Z.Negative, W.Negative);
+    public static Quaternion operator -(Quaternion self) => self.Negative;
     public Quaternion Multiply(Quaternion other) => (X.Multiply(other.X), Y.Multiply(other.Y), Z.Multiply(other.Z), W.Multiply(other.W));
     public static Quaternion operator *(Quaternion self, Quaternion other) => self.Multiply(other);
     public Quaternion Divide(Quaternion other) => (X.Divide(other.X), Y.Divide(other.Y), Z.Divide(other.Z), W.Divide(other.W));
@@ -1091,11 +1061,9 @@ public readonly partial struct Quaternion: Vector<Quaternion>
     public static Boolean operator !=(Quaternion a, Quaternion b) => a.NotEquals(b);
     public Boolean Between(Quaternion a, Quaternion b) => (X.Between(a.X, b.X) & Y.Between(a.Y, b.Y) & Z.Between(a.Z, b.Z) & W.Between(a.W, b.W));
     public Quaternion Clamp(Quaternion a, Quaternion b) => (X.Clamp(a.X, b.X), Y.Clamp(a.Y, b.Y), Z.Clamp(a.Z, b.Z), W.Clamp(a.W, b.W));
-    public Integer Count => throw new NotImplementedException();
-    public Number At(Integer n) => throw new NotImplementedException();
+    public Integer Count => 4;
+    public Number At(Integer n) => n == 0 ? X : n == 1 ? Y : n == 2 ? Z : n == 3 ? W : throw new System.IndexOutOfRangeException();
     public Number this[Integer n] => At(n);
-    public TAcc Reduce<TAcc>(TAcc init, Func<TAcc, Number, TAcc> f) => throw new NotImplementedException();
-    public TResult Map<TResult>(Func<Number, TResult> f) => throw new NotImplementedException();
 }
 public readonly partial struct AxisAngle: Value<AxisAngle>
 {
@@ -1281,19 +1249,19 @@ public readonly partial struct Quadray: Vector<Quadray>
     public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"X", (String)"Y", (String)"Z", (String)"W");
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(X), new Dynamic(Y), new Dynamic(Z), new Dynamic(W));
     // Unimplemented concept functions
-    public Quadray Reciprocal => (X.Reciprocal, Y.Reciprocal, Z.Reciprocal, W.Reciprocal);
-    public Quadray Negative => (X.Negative, Y.Negative, Z.Negative, W.Negative);
-    public static Quadray operator -(Quadray self) => self.Negative;
+    public Quadray Add(Number other) => (X.Add(other), Y.Add(other), Z.Add(other), W.Add(other));
+    public static Quadray operator +(Quadray self, Number other) => self.Add(other);
+    public Quadray Subtract(Number other) => (X.Subtract(other), Y.Subtract(other), Z.Subtract(other), W.Subtract(other));
+    public static Quadray operator -(Quadray self, Number other) => self.Subtract(other);
     public Quadray Multiply(Number other) => (X.Multiply(other), Y.Multiply(other), Z.Multiply(other), W.Multiply(other));
     public static Quadray operator *(Quadray self, Number other) => self.Multiply(other);
     public Quadray Divide(Number other) => (X.Divide(other), Y.Divide(other), Z.Divide(other), W.Divide(other));
     public static Quadray operator /(Quadray self, Number other) => self.Divide(other);
     public Quadray Modulo(Number other) => (X.Modulo(other), Y.Modulo(other), Z.Modulo(other), W.Modulo(other));
     public static Quadray operator %(Quadray self, Number other) => self.Modulo(other);
-    public Quadray Add(Number other) => (X.Add(other), Y.Add(other), Z.Add(other), W.Add(other));
-    public static Quadray operator +(Quadray self, Number other) => self.Add(other);
-    public Quadray Subtract(Number other) => (X.Subtract(other), Y.Subtract(other), Z.Subtract(other), W.Subtract(other));
-    public static Quadray operator -(Quadray self, Number other) => self.Subtract(other);
+    public Quadray Reciprocal => (X.Reciprocal, Y.Reciprocal, Z.Reciprocal, W.Reciprocal);
+    public Quadray Negative => (X.Negative, Y.Negative, Z.Negative, W.Negative);
+    public static Quadray operator -(Quadray self) => self.Negative;
     public Quadray Multiply(Quadray other) => (X.Multiply(other.X), Y.Multiply(other.Y), Z.Multiply(other.Z), W.Multiply(other.W));
     public static Quadray operator *(Quadray self, Quadray other) => self.Multiply(other);
     public Quadray Divide(Quadray other) => (X.Divide(other.X), Y.Divide(other.Y), Z.Divide(other.Z), W.Divide(other.W));
@@ -1314,11 +1282,9 @@ public readonly partial struct Quadray: Vector<Quadray>
     public static Boolean operator !=(Quadray a, Quadray b) => a.NotEquals(b);
     public Boolean Between(Quadray a, Quadray b) => (X.Between(a.X, b.X) & Y.Between(a.Y, b.Y) & Z.Between(a.Z, b.Z) & W.Between(a.W, b.W));
     public Quadray Clamp(Quadray a, Quadray b) => (X.Clamp(a.X, b.X), Y.Clamp(a.Y, b.Y), Z.Clamp(a.Z, b.Z), W.Clamp(a.W, b.W));
-    public Integer Count => throw new NotImplementedException();
-    public Number At(Integer n) => throw new NotImplementedException();
+    public Integer Count => 4;
+    public Number At(Integer n) => n == 0 ? X : n == 1 ? Y : n == 2 ? Z : n == 3 ? W : throw new System.IndexOutOfRangeException();
     public Number this[Integer n] => At(n);
-    public TAcc Reduce<TAcc>(TAcc init, Func<TAcc, Number, TAcc> f) => throw new NotImplementedException();
-    public TResult Map<TResult>(Func<Number, TResult> f) => throw new NotImplementedException();
 }
 public readonly partial struct Number: Real<Number>, Numerical<Number>, Arithmetic<Number>, Comparable<Number>
 {
@@ -1375,8 +1341,6 @@ public readonly partial struct String: Array<Character>, Comparable<String>, Equ
     public String TypeName => "String";
     public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"Value");
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(Value));
-    public TAcc Reduce<TAcc>(TAcc init, Func<TAcc, Character, TAcc> f) => throw new NotImplementedException();
-    public TResult Map<TResult>(Func<Character, TResult> f) => throw new NotImplementedException();
 }
 public readonly partial struct Boolean: BooleanOperations<Boolean>
 {
@@ -1948,15 +1912,15 @@ public readonly partial struct Unit: Real<Unit>, Numerical<Unit>
     public static Unit operator +(Unit self, Number other) => self.Add(other);
     public Unit Subtract(Number other) => (Value.Subtract(other));
     public static Unit operator -(Unit self, Number other) => self.Subtract(other);
-    public Unit Reciprocal => (Value.Reciprocal);
-    public Unit Negative => (Value.Negative);
-    public static Unit operator -(Unit self) => self.Negative;
     public Unit Multiply(Number other) => (Value.Multiply(other));
     public static Unit operator *(Unit self, Number other) => self.Multiply(other);
     public Unit Divide(Number other) => (Value.Divide(other));
     public static Unit operator /(Unit self, Number other) => self.Divide(other);
     public Unit Modulo(Number other) => (Value.Modulo(other));
     public static Unit operator %(Unit self, Number other) => self.Modulo(other);
+    public Unit Reciprocal => (Value.Reciprocal);
+    public Unit Negative => (Value.Negative);
+    public static Unit operator -(Unit self) => self.Negative;
     public Integer Compare(Unit y) => (Value.Compare(y.Value));
     public Unit Zero => (Value.Zero);
     public Unit One => (Value.One);
@@ -1988,15 +1952,15 @@ public readonly partial struct Probability: Real<Probability>, Numerical<Probabi
     public static Probability operator +(Probability self, Number other) => self.Add(other);
     public Probability Subtract(Number other) => (Value.Subtract(other));
     public static Probability operator -(Probability self, Number other) => self.Subtract(other);
-    public Probability Reciprocal => (Value.Reciprocal);
-    public Probability Negative => (Value.Negative);
-    public static Probability operator -(Probability self) => self.Negative;
     public Probability Multiply(Number other) => (Value.Multiply(other));
     public static Probability operator *(Probability self, Number other) => self.Multiply(other);
     public Probability Divide(Number other) => (Value.Divide(other));
     public static Probability operator /(Probability self, Number other) => self.Divide(other);
     public Probability Modulo(Number other) => (Value.Modulo(other));
     public static Probability operator %(Probability self, Number other) => self.Modulo(other);
+    public Probability Reciprocal => (Value.Reciprocal);
+    public Probability Negative => (Value.Negative);
+    public static Probability operator -(Probability self) => self.Negative;
     public Integer Compare(Probability y) => (Value.Compare(y.Value));
     public Probability Zero => (Value.Zero);
     public Probability One => (Value.One);
@@ -2024,19 +1988,19 @@ public readonly partial struct Complex: Vector<Complex>
     public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"Real", (String)"Imaginary");
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(Real), new Dynamic(Imaginary));
     // Unimplemented concept functions
-    public Complex Reciprocal => (Real.Reciprocal, Imaginary.Reciprocal);
-    public Complex Negative => (Real.Negative, Imaginary.Negative);
-    public static Complex operator -(Complex self) => self.Negative;
+    public Complex Add(Number other) => (Real.Add(other), Imaginary.Add(other));
+    public static Complex operator +(Complex self, Number other) => self.Add(other);
+    public Complex Subtract(Number other) => (Real.Subtract(other), Imaginary.Subtract(other));
+    public static Complex operator -(Complex self, Number other) => self.Subtract(other);
     public Complex Multiply(Number other) => (Real.Multiply(other), Imaginary.Multiply(other));
     public static Complex operator *(Complex self, Number other) => self.Multiply(other);
     public Complex Divide(Number other) => (Real.Divide(other), Imaginary.Divide(other));
     public static Complex operator /(Complex self, Number other) => self.Divide(other);
     public Complex Modulo(Number other) => (Real.Modulo(other), Imaginary.Modulo(other));
     public static Complex operator %(Complex self, Number other) => self.Modulo(other);
-    public Complex Add(Number other) => (Real.Add(other), Imaginary.Add(other));
-    public static Complex operator +(Complex self, Number other) => self.Add(other);
-    public Complex Subtract(Number other) => (Real.Subtract(other), Imaginary.Subtract(other));
-    public static Complex operator -(Complex self, Number other) => self.Subtract(other);
+    public Complex Reciprocal => (Real.Reciprocal, Imaginary.Reciprocal);
+    public Complex Negative => (Real.Negative, Imaginary.Negative);
+    public static Complex operator -(Complex self) => self.Negative;
     public Complex Multiply(Complex other) => (Real.Multiply(other.Real), Imaginary.Multiply(other.Imaginary));
     public static Complex operator *(Complex self, Complex other) => self.Multiply(other);
     public Complex Divide(Complex other) => (Real.Divide(other.Real), Imaginary.Divide(other.Imaginary));
@@ -2057,8 +2021,6 @@ public readonly partial struct Complex: Vector<Complex>
     public static Boolean operator !=(Complex a, Complex b) => a.NotEquals(b);
     public Boolean Between(Complex a, Complex b) => (Real.Between(a.Real, b.Real) & Imaginary.Between(a.Imaginary, b.Imaginary));
     public Complex Clamp(Complex a, Complex b) => (Real.Clamp(a.Real, b.Real), Imaginary.Clamp(a.Imaginary, b.Imaginary));
-    public TAcc Reduce<TAcc>(TAcc init, Func<TAcc, Number, TAcc> f) => throw new NotImplementedException();
-    public TResult Map<TResult>(Func<Number, TResult> f) => throw new NotImplementedException();
 }
 public readonly partial struct Integer2: Array<Integer>
 {
@@ -2081,11 +2043,9 @@ public readonly partial struct Integer2: Array<Integer>
     public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"A", (String)"B");
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(A), new Dynamic(B));
     // Unimplemented concept functions
-    public Integer Count => throw new NotImplementedException();
-    public Integer At(Integer n) => throw new NotImplementedException();
+    public Integer Count => 2;
+    public Integer At(Integer n) => n == 0 ? A : n == 1 ? B : throw new System.IndexOutOfRangeException();
     public Integer this[Integer n] => At(n);
-    public TAcc Reduce<TAcc>(TAcc init, Func<TAcc, Integer, TAcc> f) => throw new NotImplementedException();
-    public TResult Map<TResult>(Func<Integer, TResult> f) => throw new NotImplementedException();
 }
 public readonly partial struct Integer3: Array<Integer>
 {
@@ -2110,11 +2070,9 @@ public readonly partial struct Integer3: Array<Integer>
     public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"A", (String)"B", (String)"C");
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(A), new Dynamic(B), new Dynamic(C));
     // Unimplemented concept functions
-    public Integer Count => throw new NotImplementedException();
-    public Integer At(Integer n) => throw new NotImplementedException();
+    public Integer Count => 3;
+    public Integer At(Integer n) => n == 0 ? A : n == 1 ? B : n == 2 ? C : throw new System.IndexOutOfRangeException();
     public Integer this[Integer n] => At(n);
-    public TAcc Reduce<TAcc>(TAcc init, Func<TAcc, Integer, TAcc> f) => throw new NotImplementedException();
-    public TResult Map<TResult>(Func<Integer, TResult> f) => throw new NotImplementedException();
 }
 public readonly partial struct Integer4: Array<Integer>
 {
@@ -2141,11 +2099,9 @@ public readonly partial struct Integer4: Array<Integer>
     public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"A", (String)"B", (String)"C", (String)"D");
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(A), new Dynamic(B), new Dynamic(C), new Dynamic(D));
     // Unimplemented concept functions
-    public Integer Count => throw new NotImplementedException();
-    public Integer At(Integer n) => throw new NotImplementedException();
+    public Integer Count => 4;
+    public Integer At(Integer n) => n == 0 ? A : n == 1 ? B : n == 2 ? C : n == 3 ? D : throw new System.IndexOutOfRangeException();
     public Integer this[Integer n] => At(n);
-    public TAcc Reduce<TAcc>(TAcc init, Func<TAcc, Integer, TAcc> f) => throw new NotImplementedException();
-    public TResult Map<TResult>(Func<Integer, TResult> f) => throw new NotImplementedException();
 }
 public readonly partial struct Color: Coordinate<Color>
 {
@@ -2678,15 +2634,15 @@ public readonly partial struct Angle: Measure<Angle>
     public Angle Subtract(Number other) => (Radians.Subtract(other));
     public static Angle operator -(Angle self, Number other) => self.Subtract(other);
     public Number Value => (Radians.Value);
-    public Angle Reciprocal => (Radians.Reciprocal);
-    public Angle Negative => (Radians.Negative);
-    public static Angle operator -(Angle self) => self.Negative;
     public Angle Multiply(Number other) => (Radians.Multiply(other));
     public static Angle operator *(Angle self, Number other) => self.Multiply(other);
     public Angle Divide(Number other) => (Radians.Divide(other));
     public static Angle operator /(Angle self, Number other) => self.Divide(other);
     public Angle Modulo(Number other) => (Radians.Modulo(other));
     public static Angle operator %(Angle self, Number other) => self.Modulo(other);
+    public Angle Reciprocal => (Radians.Reciprocal);
+    public Angle Negative => (Radians.Negative);
+    public static Angle operator -(Angle self) => self.Negative;
     public Integer Compare(Angle y) => (Radians.Compare(y.Radians));
     public Angle Zero => (Radians.Zero);
     public Angle One => (Radians.One);
@@ -2718,15 +2674,15 @@ public readonly partial struct Length: Measure<Length>
     public Length Subtract(Number other) => (Meters.Subtract(other));
     public static Length operator -(Length self, Number other) => self.Subtract(other);
     public Number Value => (Meters.Value);
-    public Length Reciprocal => (Meters.Reciprocal);
-    public Length Negative => (Meters.Negative);
-    public static Length operator -(Length self) => self.Negative;
     public Length Multiply(Number other) => (Meters.Multiply(other));
     public static Length operator *(Length self, Number other) => self.Multiply(other);
     public Length Divide(Number other) => (Meters.Divide(other));
     public static Length operator /(Length self, Number other) => self.Divide(other);
     public Length Modulo(Number other) => (Meters.Modulo(other));
     public static Length operator %(Length self, Number other) => self.Modulo(other);
+    public Length Reciprocal => (Meters.Reciprocal);
+    public Length Negative => (Meters.Negative);
+    public static Length operator -(Length self) => self.Negative;
     public Integer Compare(Length y) => (Meters.Compare(y.Meters));
     public Length Zero => (Meters.Zero);
     public Length One => (Meters.One);
@@ -2758,15 +2714,15 @@ public readonly partial struct Mass: Measure<Mass>
     public Mass Subtract(Number other) => (Kilograms.Subtract(other));
     public static Mass operator -(Mass self, Number other) => self.Subtract(other);
     public Number Value => (Kilograms.Value);
-    public Mass Reciprocal => (Kilograms.Reciprocal);
-    public Mass Negative => (Kilograms.Negative);
-    public static Mass operator -(Mass self) => self.Negative;
     public Mass Multiply(Number other) => (Kilograms.Multiply(other));
     public static Mass operator *(Mass self, Number other) => self.Multiply(other);
     public Mass Divide(Number other) => (Kilograms.Divide(other));
     public static Mass operator /(Mass self, Number other) => self.Divide(other);
     public Mass Modulo(Number other) => (Kilograms.Modulo(other));
     public static Mass operator %(Mass self, Number other) => self.Modulo(other);
+    public Mass Reciprocal => (Kilograms.Reciprocal);
+    public Mass Negative => (Kilograms.Negative);
+    public static Mass operator -(Mass self) => self.Negative;
     public Integer Compare(Mass y) => (Kilograms.Compare(y.Kilograms));
     public Mass Zero => (Kilograms.Zero);
     public Mass One => (Kilograms.One);
@@ -2798,15 +2754,15 @@ public readonly partial struct Temperature: Measure<Temperature>
     public Temperature Subtract(Number other) => (Celsius.Subtract(other));
     public static Temperature operator -(Temperature self, Number other) => self.Subtract(other);
     public Number Value => (Celsius.Value);
-    public Temperature Reciprocal => (Celsius.Reciprocal);
-    public Temperature Negative => (Celsius.Negative);
-    public static Temperature operator -(Temperature self) => self.Negative;
     public Temperature Multiply(Number other) => (Celsius.Multiply(other));
     public static Temperature operator *(Temperature self, Number other) => self.Multiply(other);
     public Temperature Divide(Number other) => (Celsius.Divide(other));
     public static Temperature operator /(Temperature self, Number other) => self.Divide(other);
     public Temperature Modulo(Number other) => (Celsius.Modulo(other));
     public static Temperature operator %(Temperature self, Number other) => self.Modulo(other);
+    public Temperature Reciprocal => (Celsius.Reciprocal);
+    public Temperature Negative => (Celsius.Negative);
+    public static Temperature operator -(Temperature self) => self.Negative;
     public Integer Compare(Temperature y) => (Celsius.Compare(y.Celsius));
     public Temperature Zero => (Celsius.Zero);
     public Temperature One => (Celsius.One);
@@ -2838,15 +2794,15 @@ public readonly partial struct Time: Measure<Time>
     public Time Subtract(Number other) => (Seconds.Subtract(other));
     public static Time operator -(Time self, Number other) => self.Subtract(other);
     public Number Value => (Seconds.Value);
-    public Time Reciprocal => (Seconds.Reciprocal);
-    public Time Negative => (Seconds.Negative);
-    public static Time operator -(Time self) => self.Negative;
     public Time Multiply(Number other) => (Seconds.Multiply(other));
     public static Time operator *(Time self, Number other) => self.Multiply(other);
     public Time Divide(Number other) => (Seconds.Divide(other));
     public static Time operator /(Time self, Number other) => self.Divide(other);
     public Time Modulo(Number other) => (Seconds.Modulo(other));
     public static Time operator %(Time self, Number other) => self.Modulo(other);
+    public Time Reciprocal => (Seconds.Reciprocal);
+    public Time Negative => (Seconds.Negative);
+    public static Time operator -(Time self) => self.Negative;
     public Integer Compare(Time y) => (Seconds.Compare(y.Seconds));
     public Time Zero => (Seconds.Zero);
     public Time One => (Seconds.One);
@@ -2969,7 +2925,7 @@ public readonly partial struct NumberInterval: Interval<NumberInterval, Number, 
     public Boolean NotEquals(NumberInterval b) => (Min.NotEquals(b.Min) & Max.NotEquals(b.Max));
     public static Boolean operator !=(NumberInterval a, NumberInterval b) => a.NotEquals(b);
 }
-public readonly partial struct Matrix2D: Value<Matrix2D>, Vector<Matrix2D>
+public readonly partial struct Matrix2D: Value<Matrix2D>, Array<Vector3D>
 {
     public readonly Vector3D Column1;
     public readonly Vector3D Column2;
@@ -2996,42 +2952,11 @@ public readonly partial struct Matrix2D: Value<Matrix2D>, Vector<Matrix2D>
     public static Boolean operator ==(Matrix2D a, Matrix2D b) => a.Equals(b);
     public Boolean NotEquals(Matrix2D b) => (Column1.NotEquals(b.Column1) & Column2.NotEquals(b.Column2) & Column3.NotEquals(b.Column3));
     public static Boolean operator !=(Matrix2D a, Matrix2D b) => a.NotEquals(b);
-    public Matrix2D Reciprocal => (Column1.Reciprocal, Column2.Reciprocal, Column3.Reciprocal);
-    public Matrix2D Negative => (Column1.Negative, Column2.Negative, Column3.Negative);
-    public static Matrix2D operator -(Matrix2D self) => self.Negative;
-    public Matrix2D Multiply(Number other) => (Column1.Multiply(other), Column2.Multiply(other), Column3.Multiply(other));
-    public static Matrix2D operator *(Matrix2D self, Number other) => self.Multiply(other);
-    public Matrix2D Divide(Number other) => (Column1.Divide(other), Column2.Divide(other), Column3.Divide(other));
-    public static Matrix2D operator /(Matrix2D self, Number other) => self.Divide(other);
-    public Matrix2D Modulo(Number other) => (Column1.Modulo(other), Column2.Modulo(other), Column3.Modulo(other));
-    public static Matrix2D operator %(Matrix2D self, Number other) => self.Modulo(other);
-    public Matrix2D Add(Number other) => (Column1.Add(other), Column2.Add(other), Column3.Add(other));
-    public static Matrix2D operator +(Matrix2D self, Number other) => self.Add(other);
-    public Matrix2D Subtract(Number other) => (Column1.Subtract(other), Column2.Subtract(other), Column3.Subtract(other));
-    public static Matrix2D operator -(Matrix2D self, Number other) => self.Subtract(other);
-    public Matrix2D Multiply(Matrix2D other) => (Column1.Multiply(other.Column1), Column2.Multiply(other.Column2), Column3.Multiply(other.Column3));
-    public static Matrix2D operator *(Matrix2D self, Matrix2D other) => self.Multiply(other);
-    public Matrix2D Divide(Matrix2D other) => (Column1.Divide(other.Column1), Column2.Divide(other.Column2), Column3.Divide(other.Column3));
-    public static Matrix2D operator /(Matrix2D self, Matrix2D other) => self.Divide(other);
-    public Matrix2D Modulo(Matrix2D other) => (Column1.Modulo(other.Column1), Column2.Modulo(other.Column2), Column3.Modulo(other.Column3));
-    public static Matrix2D operator %(Matrix2D self, Matrix2D other) => self.Modulo(other);
-    public Matrix2D Add(Matrix2D other) => (Column1.Add(other.Column1), Column2.Add(other.Column2), Column3.Add(other.Column3));
-    public static Matrix2D operator +(Matrix2D self, Matrix2D other) => self.Add(other);
-    public Matrix2D Subtract(Matrix2D other) => (Column1.Subtract(other.Column1), Column2.Subtract(other.Column2), Column3.Subtract(other.Column3));
-    public static Matrix2D operator -(Matrix2D self, Matrix2D other) => self.Subtract(other);
-    public Matrix2D Zero => (Column1.Zero, Column2.Zero, Column3.Zero);
-    public Matrix2D One => (Column1.One, Column2.One, Column3.One);
-    public Matrix2D MinValue => (Column1.MinValue, Column2.MinValue, Column3.MinValue);
-    public Matrix2D MaxValue => (Column1.MaxValue, Column2.MaxValue, Column3.MaxValue);
-    public Boolean Between(Matrix2D a, Matrix2D b) => (Column1.Between(a.Column1, b.Column1) & Column2.Between(a.Column2, b.Column2) & Column3.Between(a.Column3, b.Column3));
-    public Matrix2D Clamp(Matrix2D a, Matrix2D b) => (Column1.Clamp(a.Column1, b.Column1), Column2.Clamp(a.Column2, b.Column2), Column3.Clamp(a.Column3, b.Column3));
-    public Integer Count => throw new NotImplementedException();
-    public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[Integer n] => At(n);
-    public TAcc Reduce<TAcc>(TAcc init, Func<TAcc, Number, TAcc> f) => throw new NotImplementedException();
-    public TResult Map<TResult>(Func<Number, TResult> f) => throw new NotImplementedException();
+    public Integer Count => 3;
+    public Vector3D At(Integer n) => n == 0 ? Column1 : n == 1 ? Column2 : n == 2 ? Column3 : throw new System.IndexOutOfRangeException();
+    public Vector3D this[Integer n] => At(n);
 }
-public readonly partial struct Matrix3D: Value<Matrix3D>, Vector<Matrix3D>
+public readonly partial struct Matrix3D: Value<Matrix3D>, Array<Vector4D>
 {
     public readonly Vector4D Column1;
     public readonly Vector4D Column2;
@@ -3060,40 +2985,9 @@ public readonly partial struct Matrix3D: Value<Matrix3D>, Vector<Matrix3D>
     public static Boolean operator ==(Matrix3D a, Matrix3D b) => a.Equals(b);
     public Boolean NotEquals(Matrix3D b) => (Column1.NotEquals(b.Column1) & Column2.NotEquals(b.Column2) & Column3.NotEquals(b.Column3) & Column4.NotEquals(b.Column4));
     public static Boolean operator !=(Matrix3D a, Matrix3D b) => a.NotEquals(b);
-    public Matrix3D Reciprocal => (Column1.Reciprocal, Column2.Reciprocal, Column3.Reciprocal, Column4.Reciprocal);
-    public Matrix3D Negative => (Column1.Negative, Column2.Negative, Column3.Negative, Column4.Negative);
-    public static Matrix3D operator -(Matrix3D self) => self.Negative;
-    public Matrix3D Multiply(Number other) => (Column1.Multiply(other), Column2.Multiply(other), Column3.Multiply(other), Column4.Multiply(other));
-    public static Matrix3D operator *(Matrix3D self, Number other) => self.Multiply(other);
-    public Matrix3D Divide(Number other) => (Column1.Divide(other), Column2.Divide(other), Column3.Divide(other), Column4.Divide(other));
-    public static Matrix3D operator /(Matrix3D self, Number other) => self.Divide(other);
-    public Matrix3D Modulo(Number other) => (Column1.Modulo(other), Column2.Modulo(other), Column3.Modulo(other), Column4.Modulo(other));
-    public static Matrix3D operator %(Matrix3D self, Number other) => self.Modulo(other);
-    public Matrix3D Add(Number other) => (Column1.Add(other), Column2.Add(other), Column3.Add(other), Column4.Add(other));
-    public static Matrix3D operator +(Matrix3D self, Number other) => self.Add(other);
-    public Matrix3D Subtract(Number other) => (Column1.Subtract(other), Column2.Subtract(other), Column3.Subtract(other), Column4.Subtract(other));
-    public static Matrix3D operator -(Matrix3D self, Number other) => self.Subtract(other);
-    public Matrix3D Multiply(Matrix3D other) => (Column1.Multiply(other.Column1), Column2.Multiply(other.Column2), Column3.Multiply(other.Column3), Column4.Multiply(other.Column4));
-    public static Matrix3D operator *(Matrix3D self, Matrix3D other) => self.Multiply(other);
-    public Matrix3D Divide(Matrix3D other) => (Column1.Divide(other.Column1), Column2.Divide(other.Column2), Column3.Divide(other.Column3), Column4.Divide(other.Column4));
-    public static Matrix3D operator /(Matrix3D self, Matrix3D other) => self.Divide(other);
-    public Matrix3D Modulo(Matrix3D other) => (Column1.Modulo(other.Column1), Column2.Modulo(other.Column2), Column3.Modulo(other.Column3), Column4.Modulo(other.Column4));
-    public static Matrix3D operator %(Matrix3D self, Matrix3D other) => self.Modulo(other);
-    public Matrix3D Add(Matrix3D other) => (Column1.Add(other.Column1), Column2.Add(other.Column2), Column3.Add(other.Column3), Column4.Add(other.Column4));
-    public static Matrix3D operator +(Matrix3D self, Matrix3D other) => self.Add(other);
-    public Matrix3D Subtract(Matrix3D other) => (Column1.Subtract(other.Column1), Column2.Subtract(other.Column2), Column3.Subtract(other.Column3), Column4.Subtract(other.Column4));
-    public static Matrix3D operator -(Matrix3D self, Matrix3D other) => self.Subtract(other);
-    public Matrix3D Zero => (Column1.Zero, Column2.Zero, Column3.Zero, Column4.Zero);
-    public Matrix3D One => (Column1.One, Column2.One, Column3.One, Column4.One);
-    public Matrix3D MinValue => (Column1.MinValue, Column2.MinValue, Column3.MinValue, Column4.MinValue);
-    public Matrix3D MaxValue => (Column1.MaxValue, Column2.MaxValue, Column3.MaxValue, Column4.MaxValue);
-    public Boolean Between(Matrix3D a, Matrix3D b) => (Column1.Between(a.Column1, b.Column1) & Column2.Between(a.Column2, b.Column2) & Column3.Between(a.Column3, b.Column3) & Column4.Between(a.Column4, b.Column4));
-    public Matrix3D Clamp(Matrix3D a, Matrix3D b) => (Column1.Clamp(a.Column1, b.Column1), Column2.Clamp(a.Column2, b.Column2), Column3.Clamp(a.Column3, b.Column3), Column4.Clamp(a.Column4, b.Column4));
-    public Integer Count => throw new NotImplementedException();
-    public Number At(Integer n) => throw new NotImplementedException();
-    public Number this[Integer n] => At(n);
-    public TAcc Reduce<TAcc>(TAcc init, Func<TAcc, Number, TAcc> f) => throw new NotImplementedException();
-    public TResult Map<TResult>(Func<Number, TResult> f) => throw new NotImplementedException();
+    public Integer Count => 4;
+    public Vector4D At(Integer n) => n == 0 ? Column1 : n == 1 ? Column2 : n == 2 ? Column3 : n == 3 ? Column4 : throw new System.IndexOutOfRangeException();
+    public Vector4D this[Integer n] => At(n);
 }
 public readonly partial struct UV: Vector<UV>
 {
@@ -3116,19 +3010,19 @@ public readonly partial struct UV: Vector<UV>
     public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"U", (String)"V");
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(U), new Dynamic(V));
     // Unimplemented concept functions
-    public UV Reciprocal => (U.Reciprocal, V.Reciprocal);
-    public UV Negative => (U.Negative, V.Negative);
-    public static UV operator -(UV self) => self.Negative;
+    public UV Add(Number other) => (U.Add(other), V.Add(other));
+    public static UV operator +(UV self, Number other) => self.Add(other);
+    public UV Subtract(Number other) => (U.Subtract(other), V.Subtract(other));
+    public static UV operator -(UV self, Number other) => self.Subtract(other);
     public UV Multiply(Number other) => (U.Multiply(other), V.Multiply(other));
     public static UV operator *(UV self, Number other) => self.Multiply(other);
     public UV Divide(Number other) => (U.Divide(other), V.Divide(other));
     public static UV operator /(UV self, Number other) => self.Divide(other);
     public UV Modulo(Number other) => (U.Modulo(other), V.Modulo(other));
     public static UV operator %(UV self, Number other) => self.Modulo(other);
-    public UV Add(Number other) => (U.Add(other), V.Add(other));
-    public static UV operator +(UV self, Number other) => self.Add(other);
-    public UV Subtract(Number other) => (U.Subtract(other), V.Subtract(other));
-    public static UV operator -(UV self, Number other) => self.Subtract(other);
+    public UV Reciprocal => (U.Reciprocal, V.Reciprocal);
+    public UV Negative => (U.Negative, V.Negative);
+    public static UV operator -(UV self) => self.Negative;
     public UV Multiply(UV other) => (U.Multiply(other.U), V.Multiply(other.V));
     public static UV operator *(UV self, UV other) => self.Multiply(other);
     public UV Divide(UV other) => (U.Divide(other.U), V.Divide(other.V));
@@ -3149,8 +3043,6 @@ public readonly partial struct UV: Vector<UV>
     public static Boolean operator !=(UV a, UV b) => a.NotEquals(b);
     public Boolean Between(UV a, UV b) => (U.Between(a.U, b.U) & V.Between(a.V, b.V));
     public UV Clamp(UV a, UV b) => (U.Clamp(a.U, b.U), V.Clamp(a.V, b.V));
-    public TAcc Reduce<TAcc>(TAcc init, Func<TAcc, Number, TAcc> f) => throw new NotImplementedException();
-    public TResult Map<TResult>(Func<Number, TResult> f) => throw new NotImplementedException();
 }
 public readonly partial struct UVW: Vector<UVW>
 {
@@ -3175,19 +3067,19 @@ public readonly partial struct UVW: Vector<UVW>
     public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"U", (String)"V", (String)"W");
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(U), new Dynamic(V), new Dynamic(W));
     // Unimplemented concept functions
-    public UVW Reciprocal => (U.Reciprocal, V.Reciprocal, W.Reciprocal);
-    public UVW Negative => (U.Negative, V.Negative, W.Negative);
-    public static UVW operator -(UVW self) => self.Negative;
+    public UVW Add(Number other) => (U.Add(other), V.Add(other), W.Add(other));
+    public static UVW operator +(UVW self, Number other) => self.Add(other);
+    public UVW Subtract(Number other) => (U.Subtract(other), V.Subtract(other), W.Subtract(other));
+    public static UVW operator -(UVW self, Number other) => self.Subtract(other);
     public UVW Multiply(Number other) => (U.Multiply(other), V.Multiply(other), W.Multiply(other));
     public static UVW operator *(UVW self, Number other) => self.Multiply(other);
     public UVW Divide(Number other) => (U.Divide(other), V.Divide(other), W.Divide(other));
     public static UVW operator /(UVW self, Number other) => self.Divide(other);
     public UVW Modulo(Number other) => (U.Modulo(other), V.Modulo(other), W.Modulo(other));
     public static UVW operator %(UVW self, Number other) => self.Modulo(other);
-    public UVW Add(Number other) => (U.Add(other), V.Add(other), W.Add(other));
-    public static UVW operator +(UVW self, Number other) => self.Add(other);
-    public UVW Subtract(Number other) => (U.Subtract(other), V.Subtract(other), W.Subtract(other));
-    public static UVW operator -(UVW self, Number other) => self.Subtract(other);
+    public UVW Reciprocal => (U.Reciprocal, V.Reciprocal, W.Reciprocal);
+    public UVW Negative => (U.Negative, V.Negative, W.Negative);
+    public static UVW operator -(UVW self) => self.Negative;
     public UVW Multiply(UVW other) => (U.Multiply(other.U), V.Multiply(other.V), W.Multiply(other.W));
     public static UVW operator *(UVW self, UVW other) => self.Multiply(other);
     public UVW Divide(UVW other) => (U.Divide(other.U), V.Divide(other.V), W.Divide(other.W));
@@ -3208,8 +3100,6 @@ public readonly partial struct UVW: Vector<UVW>
     public static Boolean operator !=(UVW a, UVW b) => a.NotEquals(b);
     public Boolean Between(UVW a, UVW b) => (U.Between(a.U, b.U) & V.Between(a.V, b.V) & W.Between(a.W, b.W));
     public UVW Clamp(UVW a, UVW b) => (U.Clamp(a.U, b.U), V.Clamp(a.V, b.V), W.Clamp(a.W, b.W));
-    public TAcc Reduce<TAcc>(TAcc init, Func<TAcc, Number, TAcc> f) => throw new NotImplementedException();
-    public TResult Map<TResult>(Func<Number, TResult> f) => throw new NotImplementedException();
 }
 public readonly partial struct Vector2D: Vector<Vector2D>
 {
@@ -3232,19 +3122,19 @@ public readonly partial struct Vector2D: Vector<Vector2D>
     public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"X", (String)"Y");
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(X), new Dynamic(Y));
     // Unimplemented concept functions
-    public Vector2D Reciprocal => (X.Reciprocal, Y.Reciprocal);
-    public Vector2D Negative => (X.Negative, Y.Negative);
-    public static Vector2D operator -(Vector2D self) => self.Negative;
+    public Vector2D Add(Number other) => (X.Add(other), Y.Add(other));
+    public static Vector2D operator +(Vector2D self, Number other) => self.Add(other);
+    public Vector2D Subtract(Number other) => (X.Subtract(other), Y.Subtract(other));
+    public static Vector2D operator -(Vector2D self, Number other) => self.Subtract(other);
     public Vector2D Multiply(Number other) => (X.Multiply(other), Y.Multiply(other));
     public static Vector2D operator *(Vector2D self, Number other) => self.Multiply(other);
     public Vector2D Divide(Number other) => (X.Divide(other), Y.Divide(other));
     public static Vector2D operator /(Vector2D self, Number other) => self.Divide(other);
     public Vector2D Modulo(Number other) => (X.Modulo(other), Y.Modulo(other));
     public static Vector2D operator %(Vector2D self, Number other) => self.Modulo(other);
-    public Vector2D Add(Number other) => (X.Add(other), Y.Add(other));
-    public static Vector2D operator +(Vector2D self, Number other) => self.Add(other);
-    public Vector2D Subtract(Number other) => (X.Subtract(other), Y.Subtract(other));
-    public static Vector2D operator -(Vector2D self, Number other) => self.Subtract(other);
+    public Vector2D Reciprocal => (X.Reciprocal, Y.Reciprocal);
+    public Vector2D Negative => (X.Negative, Y.Negative);
+    public static Vector2D operator -(Vector2D self) => self.Negative;
     public Vector2D Multiply(Vector2D other) => (X.Multiply(other.X), Y.Multiply(other.Y));
     public static Vector2D operator *(Vector2D self, Vector2D other) => self.Multiply(other);
     public Vector2D Divide(Vector2D other) => (X.Divide(other.X), Y.Divide(other.Y));
@@ -3265,8 +3155,6 @@ public readonly partial struct Vector2D: Vector<Vector2D>
     public static Boolean operator !=(Vector2D a, Vector2D b) => a.NotEquals(b);
     public Boolean Between(Vector2D a, Vector2D b) => (X.Between(a.X, b.X) & Y.Between(a.Y, b.Y));
     public Vector2D Clamp(Vector2D a, Vector2D b) => (X.Clamp(a.X, b.X), Y.Clamp(a.Y, b.Y));
-    public TAcc Reduce<TAcc>(TAcc init, Func<TAcc, Number, TAcc> f) => throw new NotImplementedException();
-    public TResult Map<TResult>(Func<Number, TResult> f) => throw new NotImplementedException();
 }
 public readonly partial struct Vector3D: Vector<Vector3D>
 {
@@ -3291,19 +3179,19 @@ public readonly partial struct Vector3D: Vector<Vector3D>
     public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"X", (String)"Y", (String)"Z");
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(X), new Dynamic(Y), new Dynamic(Z));
     // Unimplemented concept functions
-    public Vector3D Reciprocal => (X.Reciprocal, Y.Reciprocal, Z.Reciprocal);
-    public Vector3D Negative => (X.Negative, Y.Negative, Z.Negative);
-    public static Vector3D operator -(Vector3D self) => self.Negative;
+    public Vector3D Add(Number other) => (X.Add(other), Y.Add(other), Z.Add(other));
+    public static Vector3D operator +(Vector3D self, Number other) => self.Add(other);
+    public Vector3D Subtract(Number other) => (X.Subtract(other), Y.Subtract(other), Z.Subtract(other));
+    public static Vector3D operator -(Vector3D self, Number other) => self.Subtract(other);
     public Vector3D Multiply(Number other) => (X.Multiply(other), Y.Multiply(other), Z.Multiply(other));
     public static Vector3D operator *(Vector3D self, Number other) => self.Multiply(other);
     public Vector3D Divide(Number other) => (X.Divide(other), Y.Divide(other), Z.Divide(other));
     public static Vector3D operator /(Vector3D self, Number other) => self.Divide(other);
     public Vector3D Modulo(Number other) => (X.Modulo(other), Y.Modulo(other), Z.Modulo(other));
     public static Vector3D operator %(Vector3D self, Number other) => self.Modulo(other);
-    public Vector3D Add(Number other) => (X.Add(other), Y.Add(other), Z.Add(other));
-    public static Vector3D operator +(Vector3D self, Number other) => self.Add(other);
-    public Vector3D Subtract(Number other) => (X.Subtract(other), Y.Subtract(other), Z.Subtract(other));
-    public static Vector3D operator -(Vector3D self, Number other) => self.Subtract(other);
+    public Vector3D Reciprocal => (X.Reciprocal, Y.Reciprocal, Z.Reciprocal);
+    public Vector3D Negative => (X.Negative, Y.Negative, Z.Negative);
+    public static Vector3D operator -(Vector3D self) => self.Negative;
     public Vector3D Multiply(Vector3D other) => (X.Multiply(other.X), Y.Multiply(other.Y), Z.Multiply(other.Z));
     public static Vector3D operator *(Vector3D self, Vector3D other) => self.Multiply(other);
     public Vector3D Divide(Vector3D other) => (X.Divide(other.X), Y.Divide(other.Y), Z.Divide(other.Z));
@@ -3324,8 +3212,6 @@ public readonly partial struct Vector3D: Vector<Vector3D>
     public static Boolean operator !=(Vector3D a, Vector3D b) => a.NotEquals(b);
     public Boolean Between(Vector3D a, Vector3D b) => (X.Between(a.X, b.X) & Y.Between(a.Y, b.Y) & Z.Between(a.Z, b.Z));
     public Vector3D Clamp(Vector3D a, Vector3D b) => (X.Clamp(a.X, b.X), Y.Clamp(a.Y, b.Y), Z.Clamp(a.Z, b.Z));
-    public TAcc Reduce<TAcc>(TAcc init, Func<TAcc, Number, TAcc> f) => throw new NotImplementedException();
-    public TResult Map<TResult>(Func<Number, TResult> f) => throw new NotImplementedException();
 }
 public readonly partial struct Vector4D: Vector<Vector4D>
 {
@@ -3352,19 +3238,19 @@ public readonly partial struct Vector4D: Vector<Vector4D>
     public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"X", (String)"Y", (String)"Z", (String)"W");
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(X), new Dynamic(Y), new Dynamic(Z), new Dynamic(W));
     // Unimplemented concept functions
-    public Vector4D Reciprocal => (X.Reciprocal, Y.Reciprocal, Z.Reciprocal, W.Reciprocal);
-    public Vector4D Negative => (X.Negative, Y.Negative, Z.Negative, W.Negative);
-    public static Vector4D operator -(Vector4D self) => self.Negative;
+    public Vector4D Add(Number other) => (X.Add(other), Y.Add(other), Z.Add(other), W.Add(other));
+    public static Vector4D operator +(Vector4D self, Number other) => self.Add(other);
+    public Vector4D Subtract(Number other) => (X.Subtract(other), Y.Subtract(other), Z.Subtract(other), W.Subtract(other));
+    public static Vector4D operator -(Vector4D self, Number other) => self.Subtract(other);
     public Vector4D Multiply(Number other) => (X.Multiply(other), Y.Multiply(other), Z.Multiply(other), W.Multiply(other));
     public static Vector4D operator *(Vector4D self, Number other) => self.Multiply(other);
     public Vector4D Divide(Number other) => (X.Divide(other), Y.Divide(other), Z.Divide(other), W.Divide(other));
     public static Vector4D operator /(Vector4D self, Number other) => self.Divide(other);
     public Vector4D Modulo(Number other) => (X.Modulo(other), Y.Modulo(other), Z.Modulo(other), W.Modulo(other));
     public static Vector4D operator %(Vector4D self, Number other) => self.Modulo(other);
-    public Vector4D Add(Number other) => (X.Add(other), Y.Add(other), Z.Add(other), W.Add(other));
-    public static Vector4D operator +(Vector4D self, Number other) => self.Add(other);
-    public Vector4D Subtract(Number other) => (X.Subtract(other), Y.Subtract(other), Z.Subtract(other), W.Subtract(other));
-    public static Vector4D operator -(Vector4D self, Number other) => self.Subtract(other);
+    public Vector4D Reciprocal => (X.Reciprocal, Y.Reciprocal, Z.Reciprocal, W.Reciprocal);
+    public Vector4D Negative => (X.Negative, Y.Negative, Z.Negative, W.Negative);
+    public static Vector4D operator -(Vector4D self) => self.Negative;
     public Vector4D Multiply(Vector4D other) => (X.Multiply(other.X), Y.Multiply(other.Y), Z.Multiply(other.Z), W.Multiply(other.W));
     public static Vector4D operator *(Vector4D self, Vector4D other) => self.Multiply(other);
     public Vector4D Divide(Vector4D other) => (X.Divide(other.X), Y.Divide(other.Y), Z.Divide(other.Z), W.Divide(other.W));
@@ -3385,6 +3271,4 @@ public readonly partial struct Vector4D: Vector<Vector4D>
     public static Boolean operator !=(Vector4D a, Vector4D b) => a.NotEquals(b);
     public Boolean Between(Vector4D a, Vector4D b) => (X.Between(a.X, b.X) & Y.Between(a.Y, b.Y) & Z.Between(a.Z, b.Z) & W.Between(a.W, b.W));
     public Vector4D Clamp(Vector4D a, Vector4D b) => (X.Clamp(a.X, b.X), Y.Clamp(a.Y, b.Y), Z.Clamp(a.Z, b.Z), W.Clamp(a.W, b.W));
-    public TAcc Reduce<TAcc>(TAcc init, Func<TAcc, Number, TAcc> f) => throw new NotImplementedException();
-    public TResult Map<TResult>(Func<Number, TResult> f) => throw new NotImplementedException();
 }

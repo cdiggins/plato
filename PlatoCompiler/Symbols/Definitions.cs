@@ -38,7 +38,7 @@ namespace Plato.Compiler.Symbols
         public TypeExpression ReturnType => Type;
         public TypeDef OwnerType { get; }
         public IEnumerable<TypeExpression> ParametersAndReturnType => Parameters.Select(p => p.Type).Append(ReturnType);
-        public IReadOnlyList<Symbol> CapturedSymbols { get; }
+        public IReadOnlyList<ParameterOrVariableRefSymbol> CapturedSymbols { get; }
 
         public FunctionDef(Scope scope, string name, TypeDef ownerType, TypeExpression returnType, Symbol body, params ParameterDef[] parameters)
             : base(scope, returnType, name)
@@ -83,10 +83,10 @@ namespace Plato.Compiler.Symbols
             CapturedSymbols = ComputeCapturedSymbols().ToList();
         }
 
-        public IEnumerable<RefSymbol> ComputeCapturedSymbols()
+        public IEnumerable<ParameterOrVariableRefSymbol> ComputeCapturedSymbols()
         {
             var defs = new HashSet<DefSymbol>(GetAllDefs());
-            foreach (var reference in GetAllRefs())
+            foreach (var reference in GetAllRefs().OfType<ParameterOrVariableRefSymbol>())
             {
                 var def = reference.Def;
                 Debug.Assert(def != null);

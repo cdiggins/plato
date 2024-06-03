@@ -1,6 +1,12 @@
 ﻿using System;
 using System.Text;
-
+/*
+public interface Array<T>
+{
+    Integer Count { get; }
+    T At(Integer n);
+}
+*/
 public static class Intrinsics
 {
     public static Number Cos(Angle x) => Math.Cos(x.Value);
@@ -59,7 +65,7 @@ public static class Intrinsics
             r = CombineHashCodes(r, objects[i].GetHashCode());
         return r;
     }
-
+  
     public readonly struct PrimitiveArray<T> : Array<T>
     {
         private readonly T[] _data;
@@ -106,4 +112,11 @@ public static class Intrinsics
 
     public static Array<T1> Map<T0, T1>(this Array<T0> self, Func<T0, T1> f)
         => new MappedArray<T0, T1>(self, f);
+
+    public static TAcc Reduce<T, TAcc>(this Array<T> self, TAcc init, Func<TAcc, T, TAcc> f)
+    {
+        for (var i = 0; i < self.Count; ++i)
+            init = f(init, self.At(i));
+        return init;
+    }
 }
