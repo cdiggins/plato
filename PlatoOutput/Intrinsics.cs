@@ -99,6 +99,7 @@ public static class Intrinsics
     public static Array<T> MakeArray<T>(params T[] args)
         => new PrimitiveArray<T>(args);
 
+
     public static int CombineHashCodes(int h1, int h2)
     {
         unchecked

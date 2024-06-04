@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Ara3D.Utils;
 using Plato.AST;
 
 namespace Plato.Compiler.Symbols
@@ -201,29 +202,16 @@ namespace Plato.Compiler.Symbols
             => $"(\\({string.Join(", ", Function.Parameters)}) -> {Function.ReturnType}";
     }
 
-    public class Tuple : Expression
+    public class ArrayLiteral : Expression
     {
-        public Tuple(params Expression[] children)
-            : base(children)
-        {
-        }
-
-        public override string Name
-            => "(,)";
+        public override string Name => "[]";
+        
+        public IReadOnlyList<Expression> Expressions { get; }
+        
+        public ArrayLiteral(IReadOnlyList<Expression> expressions)
+            => Expressions = expressions;
 
         public override string ToString()
-            => $"({string.Join(", ", Children)})";
-    }
-
-    public class ThrowExpression : Expression
-    {
-        public ThrowExpression()
-        { }
-
-        public override string Name
-            => "throw";
-
-        public override string ToString()
-            => Name;
+            => $"[{Expressions.JoinStringsWithComma()}]";
     }
 }

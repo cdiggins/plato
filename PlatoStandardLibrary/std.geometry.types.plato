@@ -52,7 +52,7 @@ type Plane
 }
 
 type Triangle2D
-    implements Value, Points2D
+    implements Value, Array<Point2D>
 {
     A: Point2D;
     B: Point2D;
@@ -96,8 +96,15 @@ type PolygonFace
     PointIndices: Array<Integer>;
 }
 
-type Rectangle
+type Rect
     implements Polygon2D
+{
+    Center: Point2D;
+    Size: Size2D;
+}
+
+type Ellipse
+    implements Curve2D
 {
     Center: Point2D;
     Size: Size2D;
@@ -153,7 +160,7 @@ type Box2D
 //# 3D Shapes
 
 type Point3D
-    implements Coordinate, Difference<Vector3D>
+    implements Coordinate, Difference<Vector3D>, Array<Number>
 {
     X: Number;
     Y: Number;
@@ -192,7 +199,7 @@ type Bounds3D
 }
 
 type Line3D
-    implements PolygonalChain3D
+    implements PolygonalChain3D, Array<Point3D>
 {
     A: Point3D;
     B: Point3D;
@@ -269,7 +276,7 @@ type Box3D
 
 // https://en.wikipedia.org/wiki/B%C3%A9zier_curve    
 type CubicBezier2D
-    implements Points2D
+    implements Array<Point2D>
 {
     A: Point2D;
     B: Point2D;
@@ -279,7 +286,7 @@ type CubicBezier2D
 
 // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
 type CubicBezier3D
-    implements Points3D
+    implements Array<Point3D>
 {
     A: Point3D;
     B: Point3D;
@@ -289,7 +296,7 @@ type CubicBezier3D
 
 // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
 type QuadraticBezier2D
-    implements Points2D
+    implements Array<Point2D>
 {
     A: Point2D;
     B: Point2D;
@@ -298,7 +305,7 @@ type QuadraticBezier2D
 
 // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
 type QuadraticBezier3D
-    implements Points3D
+    implements Array<Point3D>
 {
     A: Point3D;
     B: Point3D;
@@ -346,7 +353,7 @@ type Orientation3D
 //# 4D Shapes 
 
 type Point4D
-    implements Coordinate, Difference<Vector4D>
+    implements Coordinate, Difference<Vector4D>, Array<Number>
 {
     X: Number;
     Y: Number;
@@ -355,7 +362,7 @@ type Point4D
 }
 
 type Line4D
-    implements Value
+    implements Value, Array<Point4D>
 {
     A: Point4D;
     B: Point4D;

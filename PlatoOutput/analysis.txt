@@ -61,9 +61,10 @@ Type analysis for Triangle2D
   Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Triangle2D;Self=ConcreteType:Triangle2D;
     Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Triangle2D;Value=ConcreteType:Triangle2D;Self=ConcreteType:Triangle2D;
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Triangle2D;Value=ConcreteType:Triangle2D;Self=ConcreteType:Triangle2D;
-  Concept=Points2D Expr=Concept:Points2D Subs=Points2D=ConcreteType:Triangle2D;Self=ConcreteType:Triangle2D;
-    Concept=Geometry2D Expr=Concept:Geometry2D Subs=Geometry2D=ConcreteType:Triangle2D;Points2D=ConcreteType:Triangle2D;Self=ConcreteType:Triangle2D;
-      Concept=Geometry Expr=Concept:Geometry Subs=Geometry=ConcreteType:Triangle2D;Geometry2D=ConcreteType:Triangle2D;Points2D=ConcreteType:Triangle2D;Self=ConcreteType:Triangle2D;
+  Concept=Array Expr=Concept:Array<ConcreteType:Point2D> Subs=Array=ConcreteType:Triangle2D;T=ConcreteType:Point2D;Self=ConcreteType:Triangle2D;
+  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
+  Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
+  Function: Points(ConcreteType:Triangle2D x)
 Type analysis for Quad2D
   Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Quad2D;Self=ConcreteType:Quad2D;
     Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Quad2D;Value=ConcreteType:Quad2D;Self=ConcreteType:Quad2D;
@@ -81,6 +82,7 @@ Type analysis for Line2D
   Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
   Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
   Function: Closed(ConcreteType:Line2D x)
+  Function: Points(ConcreteType:Line2D x)
 Type analysis for Circle
   Concept=ClosedShape2D Expr=Concept:ClosedShape2D Subs=ClosedShape2D=ConcreteType:Circle;Self=ConcreteType:Circle;
   Function: Closed(Concept:ClosedShape2D x)
@@ -94,14 +96,36 @@ Type analysis for Lens
       Concept=Geometry Expr=Concept:Geometry Subs=Geometry=ConcreteType:Lens;Geometry2D=ConcreteType:Lens;ClosedShape2D=ConcreteType:Lens;Self=ConcreteType:Lens;
     Concept=OpenClosedShape Expr=Concept:OpenClosedShape Subs=OpenClosedShape=ConcreteType:Lens;ClosedShape2D=ConcreteType:Lens;Self=ConcreteType:Lens;
 Type analysis for PolygonFace
-Type analysis for Rectangle
-  Concept=Polygon2D Expr=Concept:Polygon2D Subs=Polygon2D=ConcreteType:Rectangle;Self=ConcreteType:Rectangle;
+Type analysis for Rect
+  Concept=Polygon2D Expr=Concept:Polygon2D Subs=Polygon2D=ConcreteType:Rect;Self=ConcreteType:Rect;
   Function: Closed(Concept:Polygon2D x)
-    Concept=PolygonalChain2D Expr=Concept:PolygonalChain2D Subs=PolygonalChain2D=ConcreteType:Rectangle;Polygon2D=ConcreteType:Rectangle;Self=ConcreteType:Rectangle;
-      Concept=Points2D Expr=Concept:Points2D Subs=Points2D=ConcreteType:Rectangle;PolygonalChain2D=ConcreteType:Rectangle;Polygon2D=ConcreteType:Rectangle;Self=ConcreteType:Rectangle;
-        Concept=Geometry2D Expr=Concept:Geometry2D Subs=Geometry2D=ConcreteType:Rectangle;Points2D=ConcreteType:Rectangle;PolygonalChain2D=ConcreteType:Rectangle;Polygon2D=ConcreteType:Rectangle;Self=ConcreteType:Rectangle;
-          Concept=Geometry Expr=Concept:Geometry Subs=Geometry=ConcreteType:Rectangle;Geometry2D=ConcreteType:Rectangle;Points2D=ConcreteType:Rectangle;PolygonalChain2D=ConcreteType:Rectangle;Polygon2D=ConcreteType:Rectangle;Self=ConcreteType:Rectangle;
-      Concept=OpenClosedShape Expr=Concept:OpenClosedShape Subs=OpenClosedShape=ConcreteType:Rectangle;PolygonalChain2D=ConcreteType:Rectangle;Polygon2D=ConcreteType:Rectangle;Self=ConcreteType:Rectangle;
+    Concept=PolygonalChain2D Expr=Concept:PolygonalChain2D Subs=PolygonalChain2D=ConcreteType:Rect;Polygon2D=ConcreteType:Rect;Self=ConcreteType:Rect;
+      Concept=Points2D Expr=Concept:Points2D Subs=Points2D=ConcreteType:Rect;PolygonalChain2D=ConcreteType:Rect;Polygon2D=ConcreteType:Rect;Self=ConcreteType:Rect;
+        Concept=Geometry2D Expr=Concept:Geometry2D Subs=Geometry2D=ConcreteType:Rect;Points2D=ConcreteType:Rect;PolygonalChain2D=ConcreteType:Rect;Polygon2D=ConcreteType:Rect;Self=ConcreteType:Rect;
+          Concept=Geometry Expr=Concept:Geometry Subs=Geometry=ConcreteType:Rect;Geometry2D=ConcreteType:Rect;Points2D=ConcreteType:Rect;PolygonalChain2D=ConcreteType:Rect;Polygon2D=ConcreteType:Rect;Self=ConcreteType:Rect;
+      Concept=OpenClosedShape Expr=Concept:OpenClosedShape Subs=OpenClosedShape=ConcreteType:Rect;PolygonalChain2D=ConcreteType:Rect;Polygon2D=ConcreteType:Rect;Self=ConcreteType:Rect;
+  Function: Width(ConcreteType:Rect x)
+  Function: Height(ConcreteType:Rect x)
+  Function: HalfWidth(ConcreteType:Rect x)
+  Function: HalfHeight(ConcreteType:Rect x)
+  Function: Top(ConcreteType:Rect x)
+  Function: Bottom(ConcreteType:Rect x)
+  Function: Left(ConcreteType:Rect x)
+  Function: Right(ConcreteType:Rect x)
+  Function: TopLeft(ConcreteType:Rect x)
+  Function: TopRight(ConcreteType:Rect x)
+  Function: BottomRight(ConcreteType:Rect x)
+  Function: BottomLeft(ConcreteType:Rect x)
+  Function: Points(ConcreteType:Rect x)
+Type analysis for Ellipse
+  Concept=Curve2D Expr=Concept:Curve2D Subs=Curve2D=ConcreteType:Ellipse;Self=ConcreteType:Ellipse;
+    Concept=Geometry2D Expr=Concept:Geometry2D Subs=Geometry2D=ConcreteType:Ellipse;Curve2D=ConcreteType:Ellipse;Self=ConcreteType:Ellipse;
+      Concept=Geometry Expr=Concept:Geometry Subs=Geometry=ConcreteType:Ellipse;Geometry2D=ConcreteType:Ellipse;Curve2D=ConcreteType:Ellipse;Self=ConcreteType:Ellipse;
+    Concept=Curve Expr=Concept:Curve<ConcreteType:Point2D> Subs=Curve=ConcreteType:Ellipse;TRange=ConcreteType:Point2D;Curve2D=ConcreteType:Ellipse;Self=ConcreteType:Ellipse;
+      Concept=Procedural Expr=Concept:Procedural<ConcreteType:Number,TypeVariable:TRange> Subs=Procedural=ConcreteType:Ellipse;TRange=TypeVariable:TRange;TDomain=ConcreteType:Number;Curve=ConcreteType:Ellipse;TRange=ConcreteType:Point2D;Curve2D=ConcreteType:Ellipse;Self=ConcreteType:Ellipse;
+      Concept=OpenClosedShape Expr=Concept:OpenClosedShape Subs=OpenClosedShape=ConcreteType:Ellipse;Curve=ConcreteType:Ellipse;TRange=ConcreteType:Point2D;Curve2D=ConcreteType:Ellipse;Self=ConcreteType:Ellipse;
+  Function: Closed(ConcreteType:Ellipse x)
+  Function: Eval(ConcreteType:Ellipse x, ConcreteType:Number t)
 Type analysis for Ring
   Concept=ClosedShape2D Expr=Concept:ClosedShape2D Subs=ClosedShape2D=ConcreteType:Ring;Self=ConcreteType:Ring;
   Function: Closed(Concept:ClosedShape2D x)
@@ -154,6 +178,9 @@ Type analysis for Point3D
     Concept=Betweenable Expr=Concept:Betweenable Subs=Betweenable=ConcreteType:Point3D;Coordinate=ConcreteType:Point3D;Self=ConcreteType:Point3D;
   Concept=Difference Expr=Concept:Difference<ConcreteType:Vector3D> Subs=Difference=ConcreteType:Point3D;T=ConcreteType:Vector3D;Self=ConcreteType:Point3D;
     Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:T> Subs=AdditiveArithmetic=ConcreteType:Point3D;T=TypeVariable:T;Difference=ConcreteType:Point3D;T=ConcreteType:Vector3D;Self=ConcreteType:Point3D;
+  Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=Array=ConcreteType:Point3D;T=ConcreteType:Number;Self=ConcreteType:Point3D;
+  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
+  Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
   Function: Implicit(ConcreteType:Point3D x)
   Function: Deform(ConcreteType:Point3D x, ConcreteType:Function1<ConcreteType:Vector3D,ConcreteType:Vector3D> f)
   Function: ToVector(ConcreteType:Point3D a)
@@ -198,7 +225,11 @@ Type analysis for Line3D
       Concept=Geometry3D Expr=Concept:Geometry3D Subs=Geometry3D=ConcreteType:Line3D;Points3D=ConcreteType:Line3D;PolygonalChain3D=ConcreteType:Line3D;Self=ConcreteType:Line3D;
         Concept=Geometry Expr=Concept:Geometry Subs=Geometry=ConcreteType:Line3D;Geometry3D=ConcreteType:Line3D;Points3D=ConcreteType:Line3D;PolygonalChain3D=ConcreteType:Line3D;Self=ConcreteType:Line3D;
     Concept=OpenClosedShape Expr=Concept:OpenClosedShape Subs=OpenClosedShape=ConcreteType:Line3D;PolygonalChain3D=ConcreteType:Line3D;Self=ConcreteType:Line3D;
+  Concept=Array Expr=Concept:Array<ConcreteType:Point3D> Subs=Array=ConcreteType:Line3D;T=ConcreteType:Point3D;Self=ConcreteType:Line3D;
+  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
+  Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
   Function: Closed(ConcreteType:Line3D x)
+  Function: Points(ConcreteType:Line3D x)
 Type analysis for Ray3D
   Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Ray3D;Self=ConcreteType:Ray3D;
     Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Ray3D;Value=ConcreteType:Ray3D;Self=ConcreteType:Ray3D;
@@ -242,21 +273,21 @@ Type analysis for Box3D
     Concept=Geometry3D Expr=Concept:Geometry3D Subs=Geometry3D=ConcreteType:Box3D;Shape3D=ConcreteType:Box3D;Self=ConcreteType:Box3D;
       Concept=Geometry Expr=Concept:Geometry Subs=Geometry=ConcreteType:Box3D;Geometry3D=ConcreteType:Box3D;Shape3D=ConcreteType:Box3D;Self=ConcreteType:Box3D;
 Type analysis for CubicBezier2D
-  Concept=Points2D Expr=Concept:Points2D Subs=Points2D=ConcreteType:CubicBezier2D;Self=ConcreteType:CubicBezier2D;
-    Concept=Geometry2D Expr=Concept:Geometry2D Subs=Geometry2D=ConcreteType:CubicBezier2D;Points2D=ConcreteType:CubicBezier2D;Self=ConcreteType:CubicBezier2D;
-      Concept=Geometry Expr=Concept:Geometry Subs=Geometry=ConcreteType:CubicBezier2D;Geometry2D=ConcreteType:CubicBezier2D;Points2D=ConcreteType:CubicBezier2D;Self=ConcreteType:CubicBezier2D;
+  Concept=Array Expr=Concept:Array<ConcreteType:Point2D> Subs=Array=ConcreteType:CubicBezier2D;T=ConcreteType:Point2D;Self=ConcreteType:CubicBezier2D;
+  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
+  Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
 Type analysis for CubicBezier3D
-  Concept=Points3D Expr=Concept:Points3D Subs=Points3D=ConcreteType:CubicBezier3D;Self=ConcreteType:CubicBezier3D;
-    Concept=Geometry3D Expr=Concept:Geometry3D Subs=Geometry3D=ConcreteType:CubicBezier3D;Points3D=ConcreteType:CubicBezier3D;Self=ConcreteType:CubicBezier3D;
-      Concept=Geometry Expr=Concept:Geometry Subs=Geometry=ConcreteType:CubicBezier3D;Geometry3D=ConcreteType:CubicBezier3D;Points3D=ConcreteType:CubicBezier3D;Self=ConcreteType:CubicBezier3D;
+  Concept=Array Expr=Concept:Array<ConcreteType:Point3D> Subs=Array=ConcreteType:CubicBezier3D;T=ConcreteType:Point3D;Self=ConcreteType:CubicBezier3D;
+  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
+  Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
 Type analysis for QuadraticBezier2D
-  Concept=Points2D Expr=Concept:Points2D Subs=Points2D=ConcreteType:QuadraticBezier2D;Self=ConcreteType:QuadraticBezier2D;
-    Concept=Geometry2D Expr=Concept:Geometry2D Subs=Geometry2D=ConcreteType:QuadraticBezier2D;Points2D=ConcreteType:QuadraticBezier2D;Self=ConcreteType:QuadraticBezier2D;
-      Concept=Geometry Expr=Concept:Geometry Subs=Geometry=ConcreteType:QuadraticBezier2D;Geometry2D=ConcreteType:QuadraticBezier2D;Points2D=ConcreteType:QuadraticBezier2D;Self=ConcreteType:QuadraticBezier2D;
+  Concept=Array Expr=Concept:Array<ConcreteType:Point2D> Subs=Array=ConcreteType:QuadraticBezier2D;T=ConcreteType:Point2D;Self=ConcreteType:QuadraticBezier2D;
+  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
+  Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
 Type analysis for QuadraticBezier3D
-  Concept=Points3D Expr=Concept:Points3D Subs=Points3D=ConcreteType:QuadraticBezier3D;Self=ConcreteType:QuadraticBezier3D;
-    Concept=Geometry3D Expr=Concept:Geometry3D Subs=Geometry3D=ConcreteType:QuadraticBezier3D;Points3D=ConcreteType:QuadraticBezier3D;Self=ConcreteType:QuadraticBezier3D;
-      Concept=Geometry Expr=Concept:Geometry Subs=Geometry=ConcreteType:QuadraticBezier3D;Geometry3D=ConcreteType:QuadraticBezier3D;Points3D=ConcreteType:QuadraticBezier3D;Self=ConcreteType:QuadraticBezier3D;
+  Concept=Array Expr=Concept:Array<ConcreteType:Point3D> Subs=Array=ConcreteType:QuadraticBezier3D;T=ConcreteType:Point3D;Self=ConcreteType:QuadraticBezier3D;
+  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
+  Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
 Type analysis for Quaternion
   Concept=Vector Expr=Concept:Vector Subs=Vector=ConcreteType:Quaternion;Self=ConcreteType:Quaternion;
   Function: Sum(Concept:Vector v)
@@ -322,6 +353,9 @@ Type analysis for Point4D
     Concept=Betweenable Expr=Concept:Betweenable Subs=Betweenable=ConcreteType:Point4D;Coordinate=ConcreteType:Point4D;Self=ConcreteType:Point4D;
   Concept=Difference Expr=Concept:Difference<ConcreteType:Vector4D> Subs=Difference=ConcreteType:Point4D;T=ConcreteType:Vector4D;Self=ConcreteType:Point4D;
     Concept=AdditiveArithmetic Expr=Concept:AdditiveArithmetic<TypeVariable:T> Subs=AdditiveArithmetic=ConcreteType:Point4D;T=TypeVariable:T;Difference=ConcreteType:Point4D;T=ConcreteType:Vector4D;Self=ConcreteType:Point4D;
+  Concept=Array Expr=Concept:Array<ConcreteType:Number> Subs=Array=ConcreteType:Point4D;T=ConcreteType:Number;Self=ConcreteType:Point4D;
+  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
+  Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
   Function: Implicit(ConcreteType:Point4D x)
   Function: ToVector(ConcreteType:Point4D a)
   Function: Add(ConcreteType:Point4D a, ConcreteType:Vector4D b)
@@ -331,6 +365,9 @@ Type analysis for Line4D
   Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Line4D;Self=ConcreteType:Line4D;
     Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Line4D;Value=ConcreteType:Line4D;Self=ConcreteType:Line4D;
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Line4D;Value=ConcreteType:Line4D;Self=ConcreteType:Line4D;
+  Concept=Array Expr=Concept:Array<ConcreteType:Point4D> Subs=Array=ConcreteType:Line4D;T=ConcreteType:Point4D;Self=ConcreteType:Line4D;
+  Function: Reduce(Concept:Array<TypeVariable:$T> xs, TypeVariable:$TAcc init, ConcreteType:Function2<TypeVariable:$TAcc,TypeVariable:$T,TypeVariable:$TAcc> f)
+  Function: Map(Concept:Array<TypeVariable:$T> xs, ConcreteType:Function1<TypeVariable:$T,TypeVariable:$U> f)
 Type analysis for Quadray
   Concept=Vector Expr=Concept:Vector Subs=Vector=ConcreteType:Quadray;Self=ConcreteType:Quadray;
   Function: Sum(Concept:Vector v)
@@ -931,6 +968,7 @@ Type analysis for Size2D
   Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Size2D;Self=ConcreteType:Size2D;
     Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Size2D;Value=ConcreteType:Size2D;Self=ConcreteType:Size2D;
     Concept=Equatable Expr=Concept:Equatable Subs=Equatable=ConcreteType:Size2D;Value=ConcreteType:Size2D;Self=ConcreteType:Size2D;
+  Function: Implicit(ConcreteType:Size2D a)
 Type analysis for Size3D
   Concept=Value Expr=Concept:Value Subs=Value=ConcreteType:Size3D;Self=ConcreteType:Size3D;
     Concept=Any Expr=Concept:Any Subs=Any=ConcreteType:Size3D;Value=ConcreteType:Size3D;Self=ConcreteType:Size3D;

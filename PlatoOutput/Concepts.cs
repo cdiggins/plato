@@ -173,9 +173,8 @@ public interface Procedural<TDomain, TRange>
 {
     TRange Eval(TDomain amount);
 }
-public interface Curve<TRange>: Procedural<Unit, TRange>, OpenClosedShape
+public interface Curve<TRange>: Procedural<Number, TRange>, OpenClosedShape
 {
-    Boolean Periodic { get; }
 }
 public interface Curve1D: Curve<Number>
 {

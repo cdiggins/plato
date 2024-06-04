@@ -20,6 +20,6 @@ namespace Plato.Compiler.Symbols
 
         public abstract IEnumerable<Symbol> GetChildSymbols();
 
-       public abstract string Name { get; }
+        public abstract string Name { get; }
     }
 }

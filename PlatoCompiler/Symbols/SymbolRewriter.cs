@@ -76,6 +76,9 @@ namespace Plato.Compiler.Symbols
 
             switch (self)
             {
+                case ArrayLiteral arrayLiteral:
+                    return new ArrayLiteral(arrayLiteral.Expressions.RewriteList(f));
+
                 case FunctionDef functionDef:
                     return new FunctionDef(functionDef.Scope, functionDef.Name, functionDef.OwnerType,
                         functionDef.ReturnType, functionDef.Body.TypedRewrite(f),
@@ -143,12 +146,6 @@ namespace Plato.Compiler.Symbols
                 case RefSymbol refSymbol:
                     return self;
 
-                case ThrowExpression throwExpression:
-                    return self;
-
-                case Tuple tuple:
-                    return new Tuple(tuple.Children.RewriteList(f));
-
                 case Expression expression:
                     throw new Exception("Unexpected case statement");
 
@@ -166,6 +163,7 @@ namespace Plato.Compiler.Symbols
 
                 case TypeExpression typeExpression:
                     return self;
+
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(self));

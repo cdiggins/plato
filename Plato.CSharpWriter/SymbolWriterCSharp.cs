@@ -913,9 +913,6 @@ namespace Plato.CSharpWriter
 
             switch (expr)
             {
-                case ThrowExpression te:
-                    return Write("throw new Exception()");
-
                 case ParameterRefSymbol pr:
                     return pr.Def.Index == 0 && !IsStaticOrLambda
                         ? Write("this") 
@@ -958,6 +955,11 @@ namespace Plato.CSharpWriter
                         .WriteCommaList(lambda.Function.Parameters.Select(p => p.Name))
                         .Write(") => ")
                         .WriteStaticOrLambdaBody(lambda.Function.Body);
+
+                case ArrayLiteral arrayLiteral:
+                    return Write("Intrinsics.MakeArray(")
+                        .WriteCommaList(arrayLiteral.Expressions)
+                        .Write(")");
             }
 
             throw new ArgumentOutOfRangeException(nameof(expr));

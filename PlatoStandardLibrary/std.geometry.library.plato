@@ -65,6 +65,15 @@ library Geometry
 	Points(x: RegularPolygon): Array<Point2D>
 		=> x.NumPoints.CirclePoints;
 
+	Points(x: Line3D): Array<Point3D>
+		=> x;
+
+	Closed(x: Ellipse): Boolean
+		=> true;
+
+	Eval(x: Ellipse, t: Number): Point2D
+		=> t.Turns.CirclePoint.ToVector * x.Size + x.Center;
+
 	Closed(x: Polygon2D): Boolean
 		=> true;
 
@@ -86,8 +95,11 @@ library Geometry
 	ToVector(a: Point2D): Vector2D
 		=> a;
 
+	Implicit(a: Size2D): Vector2D
+		=> (a.Width, a.Height);
+
 	Add(a: Point2D, b: Vector2D): Point2D
-		=> a.ToVector+ b;
+		=> a.ToVector + b;
 
 	Subtract(a: Point2D, b: Vector2D): Point2D
 		=> a.ToVector - b;
@@ -107,4 +119,48 @@ library Geometry
 	Subtract(a: Point4D, b: Point4D): Vector4D
 		=> a.ToVector - b.ToVector;
 
+	Points(x: Line2D): Array<Point2D>
+		=> x;
+
+	Points(x: Triangle2D): Array<Point2D>
+		=> CirclePoints(3);
+
+	Width(x: Rect): Number
+		=> x.Size.Width;
+
+	Height(x: Rect): Number
+		=> x.Size.Height;
+
+	HalfWidth(x: Rect): Number
+		=> x.Width.Half;
+
+	HalfHeight(x: Rect): Number
+		=> x.Height.Half;
+
+	Top(x: Rect): Number
+		=> x.Center.Y + HalfHeight;
+
+	Bottom(x: Rect): Number
+		=> x.Top + x.Height;
+
+	Left(x: Rect): Number
+		=> x.Center.X - HalfWidth;
+
+	Right(x: Rect): Number
+		=> x.Left + x.Width;
+
+	TopLeft(x: Rect): Point2D
+		=> (x.Left, x.Top);
+
+	TopRight(x: Rect): Point2D
+		=> (x.Right, x.Top);
+
+	BottomRight(x: Rect): Point2D
+		=> (x.Right, x.Bottom);
+
+	BottomLeft(x: Rect): Point2D
+		=> (x.Left, x.Bottom);
+
+	Points(x: Rect): Array<Point2D>
+		=> [x.TopLeft, x.TopRight, x.BottomRight, x.BottomLeft];
 }

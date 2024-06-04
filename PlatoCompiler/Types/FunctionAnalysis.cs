@@ -6,7 +6,6 @@ using System.Text;
 using Ara3D.Utils;
 using Plato.AST;
 using Plato.Compiler.Symbols;
-using Tuple = Plato.Compiler.Symbols.Tuple;
 
 namespace Plato.Compiler.Types
 {
@@ -36,6 +35,12 @@ namespace Plato.Compiler.Types
         public IType DeclaredReturnType { get; }
         public IReadOnlyList<IType> ParameterTypes { get; }
         public IType Self { get; }
+
+        public IType CreateArrayType(IReadOnlyList<Expression> expressions)
+        {
+            // TODO: we need to get the type of the array from the expressions provided 
+            return new TypeList(new[] { ToSimpleType("Array"), GenerateTypeVariable() });
+        }
 
         public FunctionAnalysis(Compilation compilation, FunctionDef def)
         {
@@ -382,8 +387,8 @@ namespace Plato.Compiler.Types
                 case RefSymbol reference:
                     throw new NotImplementedException();
 
-                case Tuple tuple:
-                    r = CreateTuple(tuple.Children.Select(Process).ToList());
+                case ArrayLiteral arrayLiteral:
+                    r = CreateArrayType(arrayLiteral.Expressions);
                     break;
 
                 default:

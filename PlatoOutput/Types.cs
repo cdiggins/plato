@@ -188,7 +188,7 @@ public readonly partial struct Plane: Value<Plane>
     public Boolean NotEquals(Plane b) => (Normal.NotEquals(b.Normal) & D.NotEquals(b.D));
     public static Boolean operator !=(Plane a, Plane b) => a.NotEquals(b);
 }
-public readonly partial struct Triangle2D: Value<Triangle2D>, Points2D
+public readonly partial struct Triangle2D: Value<Triangle2D>, Array<Point2D>
 {
     public readonly Point2D A;
     public readonly Point2D B;
@@ -215,7 +215,9 @@ public readonly partial struct Triangle2D: Value<Triangle2D>, Points2D
     public static Boolean operator ==(Triangle2D a, Triangle2D b) => a.Equals(b);
     public Boolean NotEquals(Triangle2D b) => (A.NotEquals(b.A) & B.NotEquals(b.B) & C.NotEquals(b.C));
     public static Boolean operator !=(Triangle2D a, Triangle2D b) => a.NotEquals(b);
-    public Array<Point2D> Points => throw new NotImplementedException();
+    public Integer Count => 3;
+    public Point2D At(Integer n) => n == 0 ? A : n == 1 ? B : n == 2 ? C : throw new System.IndexOutOfRangeException();
+    public Point2D this[Integer n] => At(n);
 }
 public readonly partial struct Quad2D: Value<Quad2D>, Array<Point2D>
 {
@@ -271,7 +273,6 @@ public readonly partial struct Line2D: PolygonalChain2D, Array<Point2D>
     public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"A", (String)"B");
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(A), new Dynamic(B));
     // Unimplemented concept functions
-    public Array<Point2D> Points => throw new NotImplementedException();
     public Integer Count => 2;
     public Point2D At(Integer n) => n == 0 ? A : n == 1 ? B : throw new System.IndexOutOfRangeException();
     public Point2D this[Integer n] => At(n);
@@ -342,28 +343,49 @@ public readonly partial struct PolygonFace
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(FaceIndex), new Dynamic(PointIndices));
     // Unimplemented concept functions
 }
-public readonly partial struct Rectangle: Polygon2D
+public readonly partial struct Rect: Polygon2D
 {
     public readonly Point2D Center;
     public readonly Size2D Size;
-    public Rectangle WithCenter(Point2D center) => (center, Size);
-    public Rectangle WithSize(Size2D size) => (Center, size);
-    public Rectangle(Point2D center, Size2D size) => (Center, Size) = (center, size);
-    public static Rectangle Default = new Rectangle();
-    public static Rectangle New(Point2D center, Size2D size) => new Rectangle(center, size);
-    public static implicit operator (Point2D, Size2D)(Rectangle self) => (self.Center, self.Size);
-    public static implicit operator Rectangle((Point2D, Size2D) value) => new Rectangle(value.Item1, value.Item2);
+    public Rect WithCenter(Point2D center) => (center, Size);
+    public Rect WithSize(Size2D size) => (Center, size);
+    public Rect(Point2D center, Size2D size) => (Center, Size) = (center, size);
+    public static Rect Default = new Rect();
+    public static Rect New(Point2D center, Size2D size) => new Rect(center, size);
+    public static implicit operator (Point2D, Size2D)(Rect self) => (self.Center, self.Size);
+    public static implicit operator Rect((Point2D, Size2D) value) => new Rect(value.Item1, value.Item2);
     public void Deconstruct(out Point2D center, out Size2D size) { center = Center; size = Size; }
-    public override bool Equals(object obj) { if (!(obj is Rectangle)) return false; var other = (Rectangle)obj; return Center.Equals(other.Center) && Size.Equals(other.Size); }
+    public override bool Equals(object obj) { if (!(obj is Rect)) return false; var other = (Rect)obj; return Center.Equals(other.Center) && Size.Equals(other.Size); }
     public override int GetHashCode() => Intrinsics.CombineHashCodes(Center, Size);
     public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
-    public static implicit operator Dynamic(Rectangle self) => new Dynamic(self);
-    public static implicit operator Rectangle(Dynamic value) => value.As<Rectangle>();
-    public String TypeName => "Rectangle";
+    public static implicit operator Dynamic(Rect self) => new Dynamic(self);
+    public static implicit operator Rect(Dynamic value) => value.As<Rect>();
+    public String TypeName => "Rect";
     public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"Center", (String)"Size");
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(Center), new Dynamic(Size));
     // Unimplemented concept functions
-    public Array<Point2D> Points => throw new NotImplementedException();
+}
+public readonly partial struct Ellipse: Curve2D
+{
+    public readonly Point2D Center;
+    public readonly Size2D Size;
+    public Ellipse WithCenter(Point2D center) => (center, Size);
+    public Ellipse WithSize(Size2D size) => (Center, size);
+    public Ellipse(Point2D center, Size2D size) => (Center, Size) = (center, size);
+    public static Ellipse Default = new Ellipse();
+    public static Ellipse New(Point2D center, Size2D size) => new Ellipse(center, size);
+    public static implicit operator (Point2D, Size2D)(Ellipse self) => (self.Center, self.Size);
+    public static implicit operator Ellipse((Point2D, Size2D) value) => new Ellipse(value.Item1, value.Item2);
+    public void Deconstruct(out Point2D center, out Size2D size) { center = Center; size = Size; }
+    public override bool Equals(object obj) { if (!(obj is Ellipse)) return false; var other = (Ellipse)obj; return Center.Equals(other.Center) && Size.Equals(other.Size); }
+    public override int GetHashCode() => Intrinsics.CombineHashCodes(Center, Size);
+    public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
+    public static implicit operator Dynamic(Ellipse self) => new Dynamic(self);
+    public static implicit operator Ellipse(Dynamic value) => value.As<Ellipse>();
+    public String TypeName => "Ellipse";
+    public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"Center", (String)"Size");
+    public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(Center), new Dynamic(Size));
+    // Unimplemented concept functions
 }
 public readonly partial struct Ring: ClosedShape2D
 {
@@ -511,7 +533,7 @@ public readonly partial struct Box2D: Shape2D
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(Center), new Dynamic(Rotation), new Dynamic(Extent));
     // Unimplemented concept functions
 }
-public readonly partial struct Point3D: Coordinate<Point3D>, Difference<Point3D, Vector3D>
+public readonly partial struct Point3D: Coordinate<Point3D>, Difference<Point3D, Vector3D>, Array<Number>
 {
     public readonly Number X;
     public readonly Number Y;
@@ -541,6 +563,9 @@ public readonly partial struct Point3D: Coordinate<Point3D>, Difference<Point3D,
     public static Boolean operator ==(Point3D a, Point3D b) => a.Equals(b);
     public Boolean NotEquals(Point3D b) => (X.NotEquals(b.X) & Y.NotEquals(b.Y) & Z.NotEquals(b.Z));
     public static Boolean operator !=(Point3D a, Point3D b) => a.NotEquals(b);
+    public Integer Count => 3;
+    public Number At(Integer n) => n == 0 ? X : n == 1 ? Y : n == 2 ? Z : throw new System.IndexOutOfRangeException();
+    public Number this[Integer n] => At(n);
 }
 public readonly partial struct Transform3D: Value<Transform3D>
 {
@@ -648,7 +673,7 @@ public readonly partial struct Bounds3D: Interval<Bounds3D, Point3D, Vector3D>
     public Boolean NotEquals(Bounds3D b) => (Min.NotEquals(b.Min) & Max.NotEquals(b.Max));
     public static Boolean operator !=(Bounds3D a, Bounds3D b) => a.NotEquals(b);
 }
-public readonly partial struct Line3D: PolygonalChain3D
+public readonly partial struct Line3D: PolygonalChain3D, Array<Point3D>
 {
     public readonly Point3D A;
     public readonly Point3D B;
@@ -669,7 +694,9 @@ public readonly partial struct Line3D: PolygonalChain3D
     public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"A", (String)"B");
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(A), new Dynamic(B));
     // Unimplemented concept functions
-    public Array<Point3D> Points => throw new NotImplementedException();
+    public Integer Count => 2;
+    public Point3D At(Integer n) => n == 0 ? A : n == 1 ? B : throw new System.IndexOutOfRangeException();
+    public Point3D this[Integer n] => At(n);
 }
 public readonly partial struct Ray3D: Value<Ray3D>
 {
@@ -899,7 +926,7 @@ public readonly partial struct Box3D: Shape3D
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(Center), new Dynamic(Rotation), new Dynamic(Extent));
     // Unimplemented concept functions
 }
-public readonly partial struct CubicBezier2D: Points2D
+public readonly partial struct CubicBezier2D: Array<Point2D>
 {
     public readonly Point2D A;
     public readonly Point2D B;
@@ -924,9 +951,11 @@ public readonly partial struct CubicBezier2D: Points2D
     public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"A", (String)"B", (String)"C", (String)"D");
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(A), new Dynamic(B), new Dynamic(C), new Dynamic(D));
     // Unimplemented concept functions
-    public Array<Point2D> Points => throw new NotImplementedException();
+    public Integer Count => 4;
+    public Point2D At(Integer n) => n == 0 ? A : n == 1 ? B : n == 2 ? C : n == 3 ? D : throw new System.IndexOutOfRangeException();
+    public Point2D this[Integer n] => At(n);
 }
-public readonly partial struct CubicBezier3D: Points3D
+public readonly partial struct CubicBezier3D: Array<Point3D>
 {
     public readonly Point3D A;
     public readonly Point3D B;
@@ -951,9 +980,11 @@ public readonly partial struct CubicBezier3D: Points3D
     public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"A", (String)"B", (String)"C", (String)"D");
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(A), new Dynamic(B), new Dynamic(C), new Dynamic(D));
     // Unimplemented concept functions
-    public Array<Point3D> Points => throw new NotImplementedException();
+    public Integer Count => 4;
+    public Point3D At(Integer n) => n == 0 ? A : n == 1 ? B : n == 2 ? C : n == 3 ? D : throw new System.IndexOutOfRangeException();
+    public Point3D this[Integer n] => At(n);
 }
-public readonly partial struct QuadraticBezier2D: Points2D
+public readonly partial struct QuadraticBezier2D: Array<Point2D>
 {
     public readonly Point2D A;
     public readonly Point2D B;
@@ -976,9 +1007,11 @@ public readonly partial struct QuadraticBezier2D: Points2D
     public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"A", (String)"B", (String)"C");
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(A), new Dynamic(B), new Dynamic(C));
     // Unimplemented concept functions
-    public Array<Point2D> Points => throw new NotImplementedException();
+    public Integer Count => 3;
+    public Point2D At(Integer n) => n == 0 ? A : n == 1 ? B : n == 2 ? C : throw new System.IndexOutOfRangeException();
+    public Point2D this[Integer n] => At(n);
 }
-public readonly partial struct QuadraticBezier3D: Points3D
+public readonly partial struct QuadraticBezier3D: Array<Point3D>
 {
     public readonly Point3D A;
     public readonly Point3D B;
@@ -1001,7 +1034,9 @@ public readonly partial struct QuadraticBezier3D: Points3D
     public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"A", (String)"B", (String)"C");
     public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(A), new Dynamic(B), new Dynamic(C));
     // Unimplemented concept functions
-    public Array<Point3D> Points => throw new NotImplementedException();
+    public Integer Count => 3;
+    public Point3D At(Integer n) => n == 0 ? A : n == 1 ? B : n == 2 ? C : throw new System.IndexOutOfRangeException();
+    public Point3D this[Integer n] => At(n);
 }
 public readonly partial struct Quaternion: Vector<Quaternion>
 {
@@ -1165,7 +1200,7 @@ public readonly partial struct Orientation3D: Value<Orientation3D>
     public Boolean NotEquals(Orientation3D b) => (Value.NotEquals(b.Value));
     public static Boolean operator !=(Orientation3D a, Orientation3D b) => a.NotEquals(b);
 }
-public readonly partial struct Point4D: Coordinate<Point4D>, Difference<Point4D, Vector4D>
+public readonly partial struct Point4D: Coordinate<Point4D>, Difference<Point4D, Vector4D>, Array<Number>
 {
     public readonly Number X;
     public readonly Number Y;
@@ -1197,8 +1232,11 @@ public readonly partial struct Point4D: Coordinate<Point4D>, Difference<Point4D,
     public static Boolean operator ==(Point4D a, Point4D b) => a.Equals(b);
     public Boolean NotEquals(Point4D b) => (X.NotEquals(b.X) & Y.NotEquals(b.Y) & Z.NotEquals(b.Z) & W.NotEquals(b.W));
     public static Boolean operator !=(Point4D a, Point4D b) => a.NotEquals(b);
+    public Integer Count => 4;
+    public Number At(Integer n) => n == 0 ? X : n == 1 ? Y : n == 2 ? Z : n == 3 ? W : throw new System.IndexOutOfRangeException();
+    public Number this[Integer n] => At(n);
 }
-public readonly partial struct Line4D: Value<Line4D>
+public readonly partial struct Line4D: Value<Line4D>, Array<Point4D>
 {
     public readonly Point4D A;
     public readonly Point4D B;
@@ -1223,6 +1261,9 @@ public readonly partial struct Line4D: Value<Line4D>
     public static Boolean operator ==(Line4D a, Line4D b) => a.Equals(b);
     public Boolean NotEquals(Line4D b) => (A.NotEquals(b.A) & B.NotEquals(b.B));
     public static Boolean operator !=(Line4D a, Line4D b) => a.NotEquals(b);
+    public Integer Count => 2;
+    public Point4D At(Integer n) => n == 0 ? A : n == 1 ? B : throw new System.IndexOutOfRangeException();
+    public Point4D this[Integer n] => At(n);
 }
 public readonly partial struct Quadray: Vector<Quadray>
 {

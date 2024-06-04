@@ -95,9 +95,8 @@ concept Procedural<TDomain, TRange>
 }
 
 concept Curve<TRange> 
-    inherits Procedural<Unit, TRange>, OpenClosedShape
+    inherits Procedural<Number, TRange>, OpenClosedShape
 { 
-    Periodic(x: Self): Boolean;
 }
 
 // A 1 dimensional shape with a topological space of 1 dimensions

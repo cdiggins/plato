@@ -321,6 +321,9 @@ namespace Plato.Compiler.Symbols
 
                     case AstBinaryOp astBinaryOp:
                         return InternalResolve(astBinaryOp.ToInvocation());
+
+                    case AstArrayLiteral astArray:
+                        return new ArrayLiteral(astArray.Nodes.Select(ResolveExpr).ToArray()); 
                 }
 
                 LogResolutionError($"Node can't be evaluated", node);

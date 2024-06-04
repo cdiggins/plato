@@ -107,7 +107,12 @@ namespace Plato.AST
         public static AstConstant True => Create(true);
         public static AstConstant False => Create(false);
         public override string ToString() => $"({GetType().Name}:{TypeEnum} {Value})";
+    }
 
+    public class AstArrayLiteral : AstNode
+    {
+        public IReadOnlyList<AstNode> Nodes { get; }
+        public AstArrayLiteral(ILocation location, params AstNode[] nodes) : base(location) => Nodes = nodes;
     }
 
     public class AstLambda : AstNode
@@ -188,6 +193,7 @@ namespace Plato.AST
         public override string ToString() => $"{Function}({string.Join(",", Arguments)})";
     }
 
+
     public class AstTypeNode : AstNode
     {
         public AstIdentifier Name { get; }
@@ -226,6 +232,7 @@ namespace Plato.AST
         public AstFieldDeclaration(ILocation location, AstIdentifier name, AstTypeNode type, AstNode node) : base(location, name, type) => Node = node;
         public override IEnumerable<AstNode> Children => base.Children.Append(Node);
     }
+    
 
     public class AstParameterDeclaration : AstDeclaration
     {

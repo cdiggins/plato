@@ -66,6 +66,9 @@ public readonly partial struct Plane
 }
 public readonly partial struct Triangle2D
 {
+    public Array<Point2D> Points => ((Integer)3).CirclePoints;
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Point2D, TAcc> f) => f(f(f(init, A), B), C);
+    public Triangle2D Map(System.Func<Point2D, Point2D> f) => (f(A), f(B), f(C));
 }
 public readonly partial struct Quad2D
 {
@@ -75,6 +78,7 @@ public readonly partial struct Quad2D
 public readonly partial struct Line2D
 {
     public Boolean Closed => ((Boolean)false);
+    public Array<Point2D> Points => this;
     public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Point2D, TAcc> f) => f(f(init, A), B);
     public Line2D Map(System.Func<Point2D, Point2D> f) => (f(A), f(B));
 }
@@ -89,9 +93,27 @@ public readonly partial struct Lens
 public readonly partial struct PolygonFace
 {
 }
-public readonly partial struct Rectangle
+public readonly partial struct Rect
+{
+    public Number Width => this.Size.Width;
+    public Number Height => this.Size.Height;
+    public Number HalfWidth => this.Width.Half;
+    public Number HalfHeight => this.Height.Half;
+    public Number Top => this.Center.Y.Add(HalfHeight);
+    public Number Bottom => this.Top.Add(this.Height);
+    public Number Left => this.Center.X.Subtract(HalfWidth);
+    public Number Right => this.Left.Add(this.Width);
+    public Point2D TopLeft => this.Left.Tuple2(this.Top);
+    public Point2D TopRight => this.Right.Tuple2(this.Top);
+    public Point2D BottomRight => this.Right.Tuple2(this.Bottom);
+    public Point2D BottomLeft => this.Left.Tuple2(this.Bottom);
+    public Array<Point2D> Points => Intrinsics.MakeArray(this.TopLeft, this.TopRight, this.BottomRight, this.BottomLeft);
+    public Boolean Closed => ((Boolean)true);
+}
+public readonly partial struct Ellipse
 {
     public Boolean Closed => ((Boolean)true);
+    public Point2D Eval(Number t) => t.Turns.CirclePoint.ToVector.Multiply(this.Size).Add(this.Center);
 }
 public readonly partial struct Ring
 {
@@ -132,6 +154,8 @@ public readonly partial struct Point3D
     public static Point3D operator -(Point3D a, Vector3D b) => a.Subtract(b);
     public Vector3D Subtract(Point3D b) => this.ToVector.Subtract(b.ToVector);
     public static Vector3D operator -(Point3D a, Point3D b) => a.Subtract(b);
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Number, TAcc> f) => f(f(f(init, X), Y), Z);
+    public Point3D Map(System.Func<Number, Number> f) => (f(X), f(Y), f(Z));
 }
 public readonly partial struct Transform3D
 {
@@ -165,6 +189,9 @@ public readonly partial struct Bounds3D
 public readonly partial struct Line3D
 {
     public Boolean Closed => ((Boolean)false);
+    public Array<Point3D> Points => this;
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Point3D, TAcc> f) => f(f(init, A), B);
+    public Line3D Map(System.Func<Point3D, Point3D> f) => (f(A), f(B));
 }
 public readonly partial struct Ray3D
 {
@@ -199,15 +226,23 @@ public readonly partial struct Box3D
 }
 public readonly partial struct CubicBezier2D
 {
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Point2D, TAcc> f) => f(f(f(f(init, A), B), C), D);
+    public CubicBezier2D Map(System.Func<Point2D, Point2D> f) => (f(A), f(B), f(C), f(D));
 }
 public readonly partial struct CubicBezier3D
 {
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Point3D, TAcc> f) => f(f(f(f(init, A), B), C), D);
+    public CubicBezier3D Map(System.Func<Point3D, Point3D> f) => (f(A), f(B), f(C), f(D));
 }
 public readonly partial struct QuadraticBezier2D
 {
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Point2D, TAcc> f) => f(f(f(init, A), B), C);
+    public QuadraticBezier2D Map(System.Func<Point2D, Point2D> f) => (f(A), f(B), f(C));
 }
 public readonly partial struct QuadraticBezier3D
 {
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Point3D, TAcc> f) => f(f(f(init, A), B), C);
+    public QuadraticBezier3D Map(System.Func<Point3D, Point3D> f) => (f(A), f(B), f(C));
 }
 public readonly partial struct Quaternion
 {
@@ -256,9 +291,13 @@ public readonly partial struct Point4D
     public static Point4D operator -(Point4D a, Vector4D b) => a.Subtract(b);
     public Vector4D Subtract(Point4D b) => this.ToVector.Subtract(b.ToVector);
     public static Vector4D operator -(Point4D a, Point4D b) => a.Subtract(b);
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Number, TAcc> f) => f(f(f(f(init, X), Y), Z), W);
+    public Point4D Map(System.Func<Number, Number> f) => (f(X), f(Y), f(Z), f(W));
 }
 public readonly partial struct Line4D
 {
+    public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, Point4D, TAcc> f) => f(f(init, A), B);
+    public Line4D Map(System.Func<Point4D, Point4D> f) => (f(A), f(B));
 }
 public readonly partial struct Quadray
 {
@@ -759,6 +798,7 @@ public readonly partial struct GeoCoordinateWithAltitude
 }
 public readonly partial struct Size2D
 {
+    public static implicit operator Vector2D(Size2D a)  => a.Width.Tuple2(a.Height);
 }
 public readonly partial struct Size3D
 {

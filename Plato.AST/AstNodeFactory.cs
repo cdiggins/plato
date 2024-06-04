@@ -383,6 +383,12 @@ namespace Plato.AST
                 return ToIntrinsicInvocation(expr.TypeOf.Node, "TypeOf", ToAst(expr.TypeOf.Node.TypeExpr));
             }
 
+            if (expr.ArrayExpression.Present)
+            {
+                return new AstArrayLiteral(expr.ArrayExpression.Node, 
+                    expr.ArrayExpression.Node.Expression.Nodes.Select(ToAst).ToArray());
+            }
+
             throw new Exception("Unrecognized leaf expression");
         }
 
