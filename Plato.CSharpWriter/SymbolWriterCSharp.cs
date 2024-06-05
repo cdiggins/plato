@@ -19,6 +19,10 @@ namespace Plato.CSharpWriter
         public const bool EmitInterfaces = true;
         public const bool EmitStructsInsteadOfClasses = true;
         public const bool UseSelfConstraints = true;
+        public string FloatType;
+        public string Namespace;
+        public string OtherPrecisionFloatType;
+        public string OtherPrecisionNamespace;
 
         public Compiler.Compilation Compilation { get; }
         public string CurrentType { get; set; }
@@ -64,7 +68,7 @@ namespace Plato.CSharpWriter
 
         public static Dictionary<string, string> PrimitiveTypes = new Dictionary<string, string>()
         {
-            { "Number", "double" },
+            { "Number", "{{float}}" },
             { "Boolean", "bool" },
             { "Integer", "int" },
             { "Character", "char" },
@@ -79,14 +83,33 @@ namespace Plato.CSharpWriter
             OutputFolder = outputFolder;
         }
 
-
-        public SymbolWriterCSharp WriteAll()
+        public SymbolWriterCSharp WriteAll(string fileName, string floatType)
         {
+            FloatType = floatType;
+            Namespace = floatType == "float"
+                ? "Ara3D.SinglePrecision"
+                : floatType == "double"
+                    ? "Ara3D.DoublePrecision"
+                    : throw new NotImplementedException("Only 'float' and 'double' are supported");
+            OtherPrecisionFloatType = floatType == "float" ? "double" : "float";
+            OtherPrecisionNamespace = floatType == "float" ? "Ara3D.DoublePrecision" : "Ara3D.SinglePrecision";
+            StartNewFile(fileName);
+            WriteLine($"namespace {Namespace}");
+            WriteStartBlock();
             WriteConceptInterfaces();
             WriteTypeImplementations();
             WriteLibraryMethods();
-            WriteAnalyses();
+            WriteIntrinsics();
+            WriteEndBlock();
+            sb.Replace("{{float}}", floatType);
             return this;
+        }
+
+        public SymbolWriterCSharp WriteIntrinsics()
+        {
+            var intrinsicsFile = PathUtil.GetCallerSourceFolder().RelativeFile("Intrinsics.txt");
+            var intrinsicsContent = intrinsicsFile.ReadAllText();
+            return WriteLine(intrinsicsContent);
         }
 
         public void WriteAnalysis(FunctionInstance fa, string indent = "  ")
@@ -423,9 +446,6 @@ namespace Plato.CSharpWriter
 
         public SymbolWriterCSharp WriteLibraryMethods()
         {
-            StartNewFile(OutputFolder.RelativeFile("Library.cs"));
-            WriteLine("using System;");
-
             WriteLine($"public static class Constants");
             WriteStartBlock();
             foreach (var f in Compilation.Libraries.AllConstants())
@@ -465,7 +485,6 @@ namespace Plato.CSharpWriter
         
         public SymbolWriterCSharp WriteConceptInterfaces()
         {
-            StartNewFile(OutputFolder.RelativeFile("Concepts.cs"));
             if (!EmitInterfaces)
                 WriteLine("/*");
             foreach (var c in Compilation.AllTypeAndLibraryDefinitions)
@@ -539,8 +558,6 @@ namespace Plato.CSharpWriter
         
         public SymbolWriterCSharp WriteTypeImplementations()
         {
-            StartNewFile(OutputFolder.RelativeFile("Types.cs"));
-            WriteLine("using System;");
             foreach (var c in Compilation.ConcreteTypes)
                 if (!IgnoredTypes.Contains(c.Type.Name))
                     WriteTypeImplementation(c);
@@ -636,7 +653,15 @@ namespace Plato.CSharpWriter
 
             // Static factory function (New)
             WriteLine($"public static {name} New({parametersStr}) => new {name}({parameterNamesStr});");
-            
+
+            // Precision changes
+            if (t.TypeParameters.Count == 0 && fieldNames.Count != 0 && !fieldTypes.Any(ft => ft.Contains("<")))
+            {
+                var changeFields = fieldNames.Select(f => $"{f}.ChangePrecision()").JoinStringsWithComma();
+                WriteLine($"public {OtherPrecisionNamespace}.{t.Name} ChangePrecision() => ({changeFields});");
+                WriteLine($"public static implicit operator {OtherPrecisionNamespace}.{t.Name}({t.Name} self) => self.ChangePrecision();");
+            }
+
             // Implicit operators 
             if (fieldNames.Count > 1)
             {

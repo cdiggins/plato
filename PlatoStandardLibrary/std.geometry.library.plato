@@ -3,6 +3,9 @@ library Geometry
 	Implicit(x: Point2D): Point3D
 		=> (x.X, x.Y, 0.0);
 
+	Implicit(x: Point2D): Vector3D
+		=> (x.X, x.Y, 0.0);
+
 	Implicit(x: Point2D): Vector2D
 		=> (x.X, x.Y);
 
@@ -25,7 +28,7 @@ library Geometry
 		=> f(x);
 
 	Deform(x: Point2D, f: Function1<Vector3D, Vector3D>): Point3D
-		=> f((x.X, x.Y, 0));
+		=> f(x);
 
 	Transform(x: Deformable3D, m: Matrix3D): Deformable3D
 		=> x.Deform(v => m * v);

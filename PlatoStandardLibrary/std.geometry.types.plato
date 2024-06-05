@@ -189,7 +189,6 @@ type Frame3D
     Right: Vector3D;
 }
 
-
 // Axis-Aligned bounding box 
 type Bounds3D
     implements Interval<Point3D, Vector3D>

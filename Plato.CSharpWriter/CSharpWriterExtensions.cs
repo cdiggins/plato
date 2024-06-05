@@ -7,7 +7,10 @@ namespace Plato.CSharpWriter
         public static SymbolWriterCSharp ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder)
         {
             var writer = new SymbolWriterCSharp(compilation, outputFolder);
-            return writer.WriteAll();
+            writer.WriteAll("Ara3D.SinglePrecision.cs","float");
+            writer.WriteAll("Ara3D.DoublePrecision.cs", "double");
+            //writer.WriteAnalyses();
+            return writer;
         }
     }
 }

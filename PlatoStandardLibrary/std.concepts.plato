@@ -84,7 +84,7 @@ concept Coordinate
 
 // Used for integer and cardinal types.
 concept WholeNumber 
-    inherits Numerical, Comparable, Arithmetic
+    inherits Numerical, Comparable, AdditiveArithmetic<Self>, MultiplicativeArithmetic<Self>, AdditiveInverse
 {
     Value(x: Self): Integer;
 }

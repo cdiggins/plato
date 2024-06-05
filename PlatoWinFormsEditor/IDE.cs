@@ -1,5 +1,6 @@
 using Ara3D.Logging;
 using Ara3D.Utils;
+using Microsoft.VisualBasic.ApplicationServices;
 using Plato.Compiler;
 using Plato.CSharpWriter;
 
@@ -89,11 +90,12 @@ public class IDE
         {
             var currentFolder = PathUtil.GetCallerSourceFolder();
             var outputFolder = currentFolder.RelativeFolder("..", "PlatoOutput");
+
             logger.Log("Writing C#");
             var output = Compilation.ToCSharp(outputFolder);
             foreach (var kv in output.Files)
             {
-                var fp = new FilePath(kv.Key);
+                var fp = outputFolder.RelativeFile(kv.Key);
                 fp.WriteAllText(kv.Value.ToString());
             }
         }

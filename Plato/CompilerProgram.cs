@@ -57,6 +57,9 @@ namespace Plato
                 return;
             }
 
+
+           
+
             logger.Log("Writing C#");
             var output = compiler.ToCSharp(outputFolder);
             foreach (var kv in output.Files)
@@ -64,7 +67,6 @@ namespace Plato
                 var fp = new FilePath(kv.Key);
                 fp.WriteAllText(kv.Value.ToString());
             }
-
 
             //Logger.Log("Writing HTML");
             //File.WriteAllText(Path.Combine(outputFolder, "output.plato.html"), Compiler.ToPlatoHtml());
