@@ -128,42 +128,42 @@ library Geometry
 	Points(x: Triangle2D): Array<Point2D>
 		=> CirclePoints(3);
 
-	Width(x: Rect): Number
+	Width(x: Rect2D): Number
 		=> x.Size.Width;
 
-	Height(x: Rect): Number
+	Height(x: Rect2D): Number
 		=> x.Size.Height;
 
-	HalfWidth(x: Rect): Number
+	HalfWidth(x: Rect2D): Number
 		=> x.Width.Half;
 
-	HalfHeight(x: Rect): Number
+	HalfHeight(x: Rect2D): Number
 		=> x.Height.Half;
 
-	Top(x: Rect): Number
+	Top(x: Rect2D): Number
 		=> x.Center.Y + HalfHeight;
 
-	Bottom(x: Rect): Number
+	Bottom(x: Rect2D): Number
 		=> x.Top + x.Height;
 
-	Left(x: Rect): Number
+	Left(x: Rect2D): Number
 		=> x.Center.X - HalfWidth;
 
-	Right(x: Rect): Number
+	Right(x: Rect2D): Number
 		=> x.Left + x.Width;
 
-	TopLeft(x: Rect): Point2D
+	TopLeft(x: Rect2D): Point2D
 		=> (x.Left, x.Top);
 
-	TopRight(x: Rect): Point2D
+	TopRight(x: Rect2D): Point2D
 		=> (x.Right, x.Top);
 
-	BottomRight(x: Rect): Point2D
+	BottomRight(x: Rect2D): Point2D
 		=> (x.Right, x.Bottom);
 
-	BottomLeft(x: Rect): Point2D
+	BottomLeft(x: Rect2D): Point2D
 		=> (x.Left, x.Bottom);
 
-	Points(x: Rect): Array<Point2D>
+	Points(x: Rect2D): Array<Point2D>
 		=> [x.TopLeft, x.TopRight, x.BottomRight, x.BottomLeft];
 }

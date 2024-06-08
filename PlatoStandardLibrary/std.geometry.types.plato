@@ -96,7 +96,7 @@ type PolygonFace
     PointIndices: Array<Integer>;
 }
 
-type Rect
+type Rect2D
     implements Polygon2D
 {
     Center: Point2D;

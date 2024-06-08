@@ -674,26 +674,26 @@ namespace Ara3D.SinglePrecision
         public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(FaceIndex), new Dynamic(PointIndices));
         // Unimplemented concept functions
     }
-    public readonly partial struct Rect: Polygon2D
+    public readonly partial struct Rect2D: Polygon2D
     {
         public readonly Point2D Center;
         public readonly Size2D Size;
-        public Rect WithCenter(Point2D center) => (center, Size);
-        public Rect WithSize(Size2D size) => (Center, size);
-        public Rect(Point2D center, Size2D size) => (Center, Size) = (center, size);
-        public static Rect Default = new Rect();
-        public static Rect New(Point2D center, Size2D size) => new Rect(center, size);
-        public Ara3D.DoublePrecision.Rect ChangePrecision() => (Center.ChangePrecision(), Size.ChangePrecision());
-        public static implicit operator Ara3D.DoublePrecision.Rect(Rect self) => self.ChangePrecision();
-        public static implicit operator (Point2D, Size2D)(Rect self) => (self.Center, self.Size);
-        public static implicit operator Rect((Point2D, Size2D) value) => new Rect(value.Item1, value.Item2);
+        public Rect2D WithCenter(Point2D center) => (center, Size);
+        public Rect2D WithSize(Size2D size) => (Center, size);
+        public Rect2D(Point2D center, Size2D size) => (Center, Size) = (center, size);
+        public static Rect2D Default = new Rect2D();
+        public static Rect2D New(Point2D center, Size2D size) => new Rect2D(center, size);
+        public Ara3D.DoublePrecision.Rect2D ChangePrecision() => (Center.ChangePrecision(), Size.ChangePrecision());
+        public static implicit operator Ara3D.DoublePrecision.Rect2D(Rect2D self) => self.ChangePrecision();
+        public static implicit operator (Point2D, Size2D)(Rect2D self) => (self.Center, self.Size);
+        public static implicit operator Rect2D((Point2D, Size2D) value) => new Rect2D(value.Item1, value.Item2);
         public void Deconstruct(out Point2D center, out Size2D size) { center = Center; size = Size; }
-        public override bool Equals(object obj) { if (!(obj is Rect)) return false; var other = (Rect)obj; return Center.Equals(other.Center) && Size.Equals(other.Size); }
+        public override bool Equals(object obj) { if (!(obj is Rect2D)) return false; var other = (Rect2D)obj; return Center.Equals(other.Center) && Size.Equals(other.Size); }
         public override int GetHashCode() => Intrinsics.CombineHashCodes(Center, Size);
         public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);
-        public static implicit operator Dynamic(Rect self) => new Dynamic(self);
-        public static implicit operator Rect(Dynamic value) => value.As<Rect>();
-        public String TypeName => "Rect";
+        public static implicit operator Dynamic(Rect2D self) => new Dynamic(self);
+        public static implicit operator Rect2D(Dynamic value) => value.As<Rect2D>();
+        public String TypeName => "Rect2D";
         public Array<String> FieldNames => Intrinsics.MakeArray<String>((String)"Center", (String)"Size");
         public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(Center), new Dynamic(Size));
         // Unimplemented concept functions
@@ -3904,7 +3904,7 @@ namespace Ara3D.SinglePrecision
     public readonly partial struct PolygonFace
     {
     }
-    public readonly partial struct Rect
+    public readonly partial struct Rect2D
     {
         public Number Width => this.Size.Width;
         public Number Height => this.Size.Height;
