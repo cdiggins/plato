@@ -194,7 +194,7 @@ namespace Ara3D.SinglePrecision
     {
         Boolean PeriodicU { get; }
         Boolean PeriodicV { get; }
-    }
+    }   
     public interface ExplicitSurface: Procedural<UV, Number>, Surface
     {
     }

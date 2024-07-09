@@ -89,11 +89,6 @@ public static class UnityAdapters
     public static UnityEngine.Matrix4x4 ToUnity(this Ara3D.DoublePrecision.Matrix3D self) => self.ChangePrecision().ToUnity();
 }
 
-public static class Geometry3SharpAdapters
-{
-    public static 
-}
-
 public static class SpeckleAdapters
 {
     public static Objects.Geometry.Vector ToSpeckle(this Ara3D.DoublePrecision.Vector3D self) => new(self.X, self.Y, self.Z);
