@@ -11,6 +11,6 @@ namespace PlatoWinFormsEditor
         public static Config Load(FilePath? fp) => fp.LoadObjectAsJsonOrWriteDefault<Config>();
 
         public string InputFolder = SourceCodeLocation.GetFolder().RelativeFolder("..", "..", "Plato.Geometry", "plato-src");
-        public string OutputFolder = SourceCodeLocation.GetFolder().RelativeFolder("..", "..", "Plato.Geometry", "Plato.Geometry.CSharpx");
+        public string OutputFolder = SourceCodeLocation.GetFolder().RelativeFolder("..", "..", "Plato.Geometry", "Plato.Geometry.CSharp");
     }
 }

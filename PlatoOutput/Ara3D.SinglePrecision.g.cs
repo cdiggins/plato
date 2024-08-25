@@ -4640,7 +4640,7 @@ namespace Ara3D.SinglePrecision
     }
     public readonly partial struct Length
     {
-        public Number Magnitude => this.Value;  
+        public Number Magnitude => this.Value;
         public Length ClampOne => this.Clamp(this.Zero, this.One);
         public Boolean GtZ => this.GreaterThan(this.Zero);
         public Boolean LtZ => this.LessThan(this.Zero);

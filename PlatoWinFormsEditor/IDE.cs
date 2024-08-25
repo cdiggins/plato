@@ -13,6 +13,7 @@ public class IDE
     public TabControl TabControl { get; }
     public RichTextBox LoggingOutputEditor { get; }
     public Action<Editor> EditorChanged { get; }
+    public Config Config = Config.Current;
 
     public string SymbolErrorsString { get; }
     public string SymbolsString { get; }
@@ -50,8 +51,7 @@ public class IDE
         TabControl = tabControl;
         Logger = logger;
 
-        var inputFolder = SourceCodeLocation.GetFolder()
-            .RelativeFolder("..", "PlatoStandardLibrary");
+        var inputFolder = new DirectoryPath(Config.InputFolder);
 
         Logger.Log("Opening files");
 
@@ -88,7 +88,7 @@ public class IDE
         if (Compilation.CompletedCompilation)
         {
             var currentFolder = PathUtil.GetCallerSourceFolder();
-            var outputFolder = currentFolder.RelativeFolder("..", "PlatoOutput");
+            var outputFolder = new DirectoryPath(Config.OutputFolder);
 
             logger.Log("Writing C#");
             var output = Compilation.ToCSharp(outputFolder);
