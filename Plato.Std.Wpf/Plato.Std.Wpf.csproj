@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\PlatoOutput\Ara3D.DoublePrecision.cs" Link="Ara3D.DoublePrecision.cs" />
-    <Compile Include="..\PlatoOutput\Ara3D.SinglePrecision.cs" Link="Ara3D.SinglePrecision.cs" />
+    <Compile Include="..\..\Plato.Geometry\Plato.Geometry.CSharp\Ara3D.DoublePrecision.g.cs" Link="Ara3D.DoublePrecision.g.cs" />
+    <Compile Include="..\..\Plato.Geometry\Plato.Geometry.CSharp\Ara3D.SinglePrecision.g.cs" Link="Ara3D.SinglePrecision.g.cs" />
     <Compile Include="..\PlatoOutput\PrimitiveExtensions.cs" Link="PrimitiveExtensions.cs" />
   </ItemGroup>
 

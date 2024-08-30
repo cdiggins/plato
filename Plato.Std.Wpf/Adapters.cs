@@ -100,6 +100,9 @@ public static class SpeckleAdapters
     public static Objects.Geometry.Mesh ToSpeckle(this Ara3D.DoublePrecision.TriMesh self)
     {
         var verts = new List<double>();
+
+        throw new NotImplementedException("Missing 'Points' member on TriMesh");
+        /*
         for (var i = 0; i < self.Points.Count; ++i)
         {
             var pt = self.Points.At(i);
@@ -107,6 +110,7 @@ public static class SpeckleAdapters
             verts.Add(pt.Y);
             verts.Add(pt.Z);
         }
+        */
 
         var faces = new List<int>();
         for (var i = 0; i < self.Faces.Count; ++i)

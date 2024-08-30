@@ -96,7 +96,9 @@ namespace Plato.Compiler.Symbols
                     return self;
 
                 case VariableDef variableDef:
-                    throw new Exception("I'm not sure how to implement this");
+                    // TEMP: I'm not sure? 
+                    return self;    
+                    //throw new Exception("I'm not sure how to implement this");
 
                 case DefSymbol defSymbol:
                     throw new Exception("Should be unreachable");

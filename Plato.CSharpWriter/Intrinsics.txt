@@ -1,5 +1,15 @@
     public static class Intrinsics
     {
+        public static TR Invoke<TR>(this Function0<TR> self) => self._function();
+        public static TR Invoke<T0, TR>(this Function1<T0, TR> self, T0 arg) => self._function(arg);
+        public static TR Invoke<T0, T1, TR>(this Function2<T0, T1, TR> self, T0 arg0, T1 arg1) => self._function(arg0, arg1);
+        public static TR Invoke<T0, T1, T2, TR>(this Function3<T0, T1, T2, TR> self, T0 arg0, T1 arg1, T2 arg2) => self._function(arg0, arg1, arg2);
+        public static TR Invoke<T0, T1, T2, T3, TR>(this Function4<T0, T1, T2, T3, TR> self, T0 arg0, T1 arg1, T2 arg2, T3 arg3) => self._function(arg0, arg1, arg2, arg3);
+
+        public static T ChangePrecision<T>(this T self) => self;
+        public static float ChangePrecision(this double self) => (float)self;
+        public static string ChangePrecision(this string self) => self;
+
         public static Number Cos(Angle x) => ({{float}})System.Math.Cos(x.Value);
         public static Number Sin(Angle x) => ({{float}})System.Math.Sin(x.Value);
         public static Number Tan(Angle x) => ({{float}})System.Math.Tan(x.Value);
@@ -86,7 +96,7 @@
             for (var i = 0; i < self.Count; ++i)
                 init = f(init, self.At(i));
             return init;
-        }
+        }        
     }
 
     public readonly struct PrimitiveArray<T> : Array<T>
@@ -180,4 +190,39 @@
         public Array<String> FieldNames => Intrinsics.MakeArray<String>("Value");
         public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(Value));
         public T As<T>() => (T)Value;
+    }
+
+    public readonly partial struct Function0<TR>
+    {
+        public readonly System.Func<TR> _function;
+        public Function0(System.Func<TR> f) => _function = f;
+        public static implicit operator Function0<TR>(System.Func<TR> f) => new Function0<TR>(f);
+    }
+
+    public readonly partial struct Function1<T0, TR>
+    {
+        public readonly System.Func<T0, TR> _function;
+        public Function1(System.Func<T0, TR> f) => _function = f;
+        public static implicit operator Function1<T0, TR>(System.Func<T0, TR> f) => new Function1<T0, TR>(f);
+    }
+
+    public readonly partial struct Function2<T0, T1, TR>
+    {
+        public readonly System.Func<T0, T1, TR> _function;
+        public Function2(System.Func<T0, T1, TR> f) => _function = f;
+        public static implicit operator Function2<T0, T1, TR>(System.Func<T0, T1, TR> f) => new Function2<T0, T1, TR>(f);
+    }
+
+    public readonly partial struct Function3<T0, T1, T2, TR>
+    {
+        public readonly System.Func<T0, T1, T2, TR> _function;
+        public Function3(System.Func<T0, T1, T2, TR> f) => _function = f;
+        public static implicit operator Function3<T0, T1, T2, TR>(System.Func<T0, T1, T2, TR> f) => new Function3<T0, T1, T2, TR>(f);
+    }
+    
+    public readonly partial struct Function4<T0, T1, T2, T3, TR>
+    {
+        public readonly System.Func<T0, T1, T2, T3, TR> _function;
+        public Function4(System.Func<T0, T1, T2, T3, TR> f) => _function = f;
+        public static implicit operator Function4<T0, T1, T2, T3, TR>(System.Func<T0, T1, T2, T3, TR> f) => new Function4<T0, T1, T2, T3, TR>(f);
     }
