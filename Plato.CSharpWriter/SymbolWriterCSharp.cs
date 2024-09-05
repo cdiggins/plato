@@ -87,12 +87,12 @@ namespace Plato.CSharpWriter
         {
             FloatType = floatType;
             Namespace = floatType == "float"
-                ? "Ara3D.SinglePrecision"
+                ? "Plato.SinglePrecision"
                 : floatType == "double"
-                    ? "Ara3D.DoublePrecision"
+                    ? "Plato.DoublePrecision"
                     : throw new NotImplementedException("Only 'float' and 'double' are supported");
             OtherPrecisionFloatType = floatType == "float" ? "double" : "float";
-            OtherPrecisionNamespace = floatType == "float" ? "Ara3D.DoublePrecision" : "Ara3D.SinglePrecision";
+            OtherPrecisionNamespace = floatType == "float" ? "Plato.DoublePrecision" : "Plato.SinglePrecision";
             StartNewFile(fileName);
             WriteLine($"namespace {Namespace}");
             WriteStartBlock();
