@@ -35,7 +35,8 @@ namespace Plato.Compiler.Types
                 var _typeArgs = new Dictionary<TypeParameterDef, TypeExpression>();
 
                 // TODO: this should be a compilation error. 
-                Verifier.AssertEquals(concept.TypeArgs.Count, conceptDef.TypeParameters.Count);
+                if (concept.TypeArgs.Count != conceptDef.TypeParameters.Count)
+                    throw new Exception("Type mismatch");
 
                 for (var i = 0; i < concept.TypeArgs.Count; i++)
                 {

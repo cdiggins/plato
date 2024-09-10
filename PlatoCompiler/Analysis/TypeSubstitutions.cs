@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Plato.Compiler.Symbols;
 using Plato.Compiler.Types;
 
@@ -52,6 +53,7 @@ namespace Plato.Compiler.Analysis
 
             if (Previous != null)
                 return Previous.Replace(expr);
+
             return expr;
         }
         

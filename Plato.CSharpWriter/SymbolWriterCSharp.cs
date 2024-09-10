@@ -56,6 +56,8 @@ namespace Plato.CSharpWriter
             "FieldNames",
             "FieldValues",
             "TypeName",
+            "NumComponents",
+            "Component",
             
             // The core vector primitives 
             "Map",
@@ -255,7 +257,7 @@ namespace Plato.CSharpWriter
                 .JoinStringsWithComma();
 
             var firstName = f.ParameterNames.FirstOrDefault() ?? "";
-
+                            
             var parameterTypes = f.ParameterTypes.Select(ToCSharp).ToList();
 
             var paramList = parameterTypes.Skip(1)
@@ -295,6 +297,15 @@ namespace Plato.CSharpWriter
             {
                 Write($"public {ret} {f.Name}{funcTypeParamsStr}{paramList}");
                 WriteFunctionBody(f.Implementation.Body, isProperty, false);
+
+                /*
+                if (f.Name == "At")
+                {
+                    Debug.Assert(funcTypeParamsStr.IsNullOrWhiteSpace());
+
+                    Write($"public {ret} this[{paramList}]");
+                    WriteFunctionBody(f.Implementation.Body, isProperty, false);
+                }*/
             }
             else
             {
@@ -305,7 +316,7 @@ namespace Plato.CSharpWriter
 
                 var impl = "throw new NotImplementedException()";
 
-                // Only generate implementations when the the return type is a Boolean or the same as this type, or we have only one field.
+                // Only generate implementations when the return type is a Boolean or the same as this type, or we have only one field.
                 var canGenerateImpl = ret == t.Name || ret == "Boolean" || fields.Count == 1;
 
                 var fieldTypes = t.DistinctFieldTypes;
@@ -409,6 +420,12 @@ namespace Plato.CSharpWriter
                 }
 
                 WriteLine($"public {ret} {f.Name}{funcTypeParamsStr}{paramList} => {impl};");
+
+                /*
+                if (f.Name == "At" && funcTypeParamsStr.IsNullOrWhiteSpace())
+                {
+                    WriteLine($"public {ret} this[{paramList}] => {impl};");
+                }*/
             }
 
             if (f.ParameterNames.Count == 2)
@@ -550,7 +567,7 @@ namespace Plato.CSharpWriter
 
             WriteStartBlock();
             foreach (var m in type.Methods)
-                WriteSignature(m.Function, true, true);
+                WriteSignature(m.Function);
 
             WriteEndBlock();
             return this;
@@ -649,6 +666,7 @@ namespace Plato.CSharpWriter
             if (!EmitStructsInsteadOfClasses)
                 WriteLine($"public {t.Name}() {{ }}");
 
+
             WriteLine($"public static {name} Default = new {name}();");
 
             // Static factory function (New)
@@ -685,6 +703,13 @@ namespace Plato.CSharpWriter
 
                 WriteLine($"public static implicit operator {fieldType}({name} self) => self.{fieldName};");
                 WriteLine($"public static implicit operator {name}({fieldType} value) => new {name}(value);");
+
+                // Any time that we are implicitly casting to/from Number (floating point)
+                // We can also cast from Integers. 
+                if (fieldType == "Number")
+                {
+                    WriteLine($"public static implicit operator {name}(Integer value) => new {name}(value);");
+                }
             }
 
             // Object.Equals override
@@ -759,13 +784,32 @@ namespace Plato.CSharpWriter
                 // NOTE: we may eventually want implicit cast operators to/from the native array type.
             }
 
+            // Check if the type is "Numerical", if so provide implementations of the default types. 
+            var isNumerical = t.GetAllImplementedConcepts().Any(te => te.Name == "Numerical");
+            if (isNumerical)
+            {
+                var numDistinctFieldTypes = fieldTypes.Distinct().Count();
+                if (numDistinctFieldTypes != 1)
+                    throw new Exception("Numerical types are assumed to have all of the fields of the same type");
+
+                // Provide Dimensions function for numerical types.
+                var numFields = fieldNames.Count;
+                WriteLine($"public Integer NumComponents => {numFields};");
+
+                // Provide Component function for numerical types.
+                var impl = string.Join(" : ", fieldNames.Select((fieldName, i) => $"n == {i} ? {fieldName}"))
+                           + " : throw new System.IndexOutOfRangeException()";
+                var fieldType = fieldTypes[0];
+                WriteLine($"public Number Component(Integer n) => {impl};");
+
+            }
+
             WriteEndBlock();
             return this;
         }
         
-        public SymbolWriterCSharp WriteSignature(FunctionDef function, bool skipFirstParameter, bool eos)
+        public SymbolWriterCSharp WriteSignature(FunctionDef function)
         {
-            
             Write(ToCSharp(function.Type));
             Write(" ");
             Write(function.Name);
@@ -773,19 +817,28 @@ namespace Plato.CSharpWriter
             var parameters = function.Parameters.Select(p => $"{ToCSharp(p.Type)} {p.Name}").ToList();
             if (parameters.Count > 1)
             {
-                var r = Write("(")
-                    .WriteCommaList(skipFirstParameter ? parameters.Skip(1) : parameters)
-                    .Write(")");
-                if (eos)
-                     r = r.WriteLine(";");
-                return r;
+                Write("(");
+                WriteCommaList(parameters.Skip(1));
+                Write(")");
+                WriteLine(";");
             }
             else
             {
-                var r = Write(" { get; }");
-                if (eos) r = r.WriteLine();
-                return r;
+                Write(" { get; }");
+                WriteLine();
             }
+
+            /*
+            if (function.Name == "At" && parameters.Count == 2)
+            {
+                Write(ToCSharp(function.Type));
+                Write(" this[");
+                Write(parameters[1]);
+                Write("] { get; }");
+            }
+            */
+
+            return this;
         }
 
         public static string ParameterizedTypeName(string name, IEnumerable<string> args)

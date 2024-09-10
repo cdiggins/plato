@@ -10,12 +10,17 @@
         public static float ChangePrecision(this double self) => (float)self;
         public static string ChangePrecision(this string self) => self;
 
-        public static Number Cos(Angle x) => ({{float}})System.Math.Cos(x.Value);
-        public static Number Sin(Angle x) => ({{float}})System.Math.Sin(x.Value);
-        public static Number Tan(Angle x) => ({{float}})System.Math.Tan(x.Value);
+        public static Number Cos(Angle x) => ({{float}})System.Math.Cos(x.Radians);
+        public static Number Sin(Angle x) => ({{float}})System.Math.Sin(x.Radians);
+        public static Number Tan(Angle x) => ({{float}})System.Math.Tan(x.Radians);
 
         public static Number Ln(Number x) => ({{float}})System.Math.Log(x.Value);
         public static Number Exp(Number x) => ({{float}})System.Math.Exp(x.Value);
+
+        public static Number Floor(Number x) => ({{float}})System.Math.Floor(x.Value);
+        public static Number Ceiling(Number x) => ({{float}})System.Math.Ceiling(x.Value);
+        public static Number Round(Number x) => ({{float}})System.Math.Round(x.Value);
+        public static Number Truncate(Number x) => ({{float}})System.Math.Truncate(x.Value);
 
         public static Angle Acos(Number x) => new Angle(({{float}})System.Math.Acos(x));
         public static Angle Asin(Number x) => new Angle(({{float}})System.Math.Asin(x));
@@ -39,6 +44,7 @@
         public static Integer Multiply(Integer x, Integer y) => x.Value * y.Value;
         public static Integer Modulo(Integer x, Integer y) => x.Value % y.Value;
         public static Integer Negative(Integer x) => -x.Value;
+        public static Integer Reciprocal(Integer x) => (int)(1.0 / (double)x.Value);
 
         public static Array<Integer> Range(Integer x) => new RangeStruct(x);
 
@@ -150,6 +156,7 @@
         public Number MaxValue => {{float}}.MaxValue;
         public Integer Compare(Number other) => Value.CompareTo(other.Value);
         public Number Unlerp(Number a, Number b) => ({{float}})(this - a) / ({{float}})(b - a);
+        public Number Component(int index) => Value;
     }
 
     public readonly partial struct Integer
@@ -161,8 +168,8 @@
         public Number Magnitude => Value;
         public static implicit operator Number(Integer self) => self.Value;
         public Integer Compare(Integer other) => Value.CompareTo(other.Value);
-        public Integer Lerp(Integer b, Number t) => (int)(Value * (1.0 - t) + b * t);
         public Number Unlerp(Integer a, Integer b) => ({{float}})(this - a) / ({{float}})(b - a);
+        public Number Component(int index) => Value;
     }
 
     public readonly partial struct Character

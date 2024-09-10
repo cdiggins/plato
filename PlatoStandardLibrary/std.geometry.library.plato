@@ -53,9 +53,6 @@ library Geometry
 	Turns(x: Number): Angle
 		=> x;
 
-	CirclePoint(a: Angle): Point2D
-		=> (a.Sin, a.Cos);
-
 	FloatDivision(x: Integer, y: Integer): Number
 		=> x.ToNumber / y.ToNumber;
 
@@ -63,7 +60,7 @@ library Geometry
 		=> x.Range.Map((i) => i.FloatDivision(x));
 
 	CirclePoints(n: Integer): Array<Point2D>
-		=> n.Fractions.Map((x) => x.Turns.CirclePoint);
+		=> n.Fractions.Map((x) => x.Circle);
 
 	Points(x: RegularPolygon): Array<Point2D>
 		=> x.NumPoints.CirclePoints;
