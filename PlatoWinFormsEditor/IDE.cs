@@ -79,7 +79,7 @@ public class IDE
 
         TypesString = Compilation.TypeDefinitions.Select(td => $"{td.Kind} {td.Name}").JoinStringsWithNewLine();
         SymbolsString = Compilation.Symbols.Select(sym => $"{sym.Name} {sym.Id}").JoinStringsWithNewLine();
-        SymbolErrorsString = Compilation.SymbolFactory.Errors.Select(e => $"{e.Message} at {e.Node}").JoinStringsWithNewLine();
+        SymbolErrorsString = Compilation.SymbolFactory.Errors.Select(e => $"{e.Message} at {e.Node} {e.Node.Location}").JoinStringsWithNewLine();
         SemanticDiagnosticsString = Compilation.Diagnostics.JoinStringsWithNewLine();
 
         //Compilation.OutputFunctionAnalysis();

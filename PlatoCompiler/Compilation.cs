@@ -32,31 +32,36 @@ namespace Plato.Compiler
                 Log("Creating symbol resolver");
                 SymbolFactory = new SymbolFactory(Logger);
 
-                Log("Creating type definitions");
-                var typeDefs = SymbolFactory.CreateTypeDefs(TypeDeclarations);
-
-                foreach (var td in typeDefs)
+                try
                 {
-                    try
+                    Log("Creating type definitions");
+                    var typeDefs = SymbolFactory.CreateTypeDefs(TypeDeclarations);
+
+                    foreach (var td in typeDefs)
                     {
-                        if (td.IsLibrary())
+                        try
                         {
-                            LibraryDefinitionsByName.Add(td.Name, td);
+                            if (td.IsLibrary())
+                            {
+                                LibraryDefinitionsByName.Add(td.Name, td);
+                            }
+                            else
+                            {
+                                TypeDefinitionsByName.Add(td.Name, td);
+                            }
                         }
-                        else
+                        catch (Exception e)
                         {
-                            TypeDefinitionsByName.Add(td.Name, td);
+                            LogSymbolError($"Failed to store type definition {td.Name} for reason {e}.", td);
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        LogSymbolError($"Failed to store type definition {td.Name} for reason {e}.", td);
                     }
                 }
+                finally
+                {
+                    LogResolutionErrors(SymbolFactory.Errors);
+                    Log($"Found {SymbolFactory.Errors.Count} symbol resolution errors");
+                }
 
-                LogResolutionErrors(SymbolFactory.Errors);
-
-                Log($"Found {SymbolFactory.Errors.Count} symbol resolution errors");
                 if (SymbolFactory.Errors.Count > 0)
                 {
                     Log("Halting further computation");

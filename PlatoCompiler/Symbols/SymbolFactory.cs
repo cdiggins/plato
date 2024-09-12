@@ -172,7 +172,10 @@ namespace Plato.Compiler.Symbols
             var r = Resolve(node);
             if (r == null) return null;
             if (r is Expression x) return x;
-            throw new Exception($"Expected an expression not {r}");
+            if (r is TypeExpression tx) return new TypeRefSymbol(tx.Def);
+            var msg = $"Expected an expression not {r}";
+            LogResolutionError(msg, node);
+            throw new Exception(msg);
         }
 
         public Symbol Resolve(AstNode node)
@@ -226,8 +229,9 @@ namespace Plato.Compiler.Symbols
             var funcRef = ResolveExpr(astInvoke.Function);
             if (funcRef == null)
             {
-                LogResolutionError($"Could not find function {astInvoke.Function}", astInvoke);
-                throw new Exception("");
+                var msg = $"Could not find function {astInvoke.Function}";
+                LogResolutionError(msg, astInvoke);
+                throw new Exception(msg);
             }
             
             return new FunctionCall(funcRef, args);
@@ -286,6 +290,12 @@ namespace Plato.Compiler.Symbols
                             ResolveExpr(astConditional.Condition),
                             ResolveExpr(astConditional.IfTrue),
                             ResolveExpr(astConditional.IfFalse)));
+
+                    case AstIfStatement astIf:
+                        return new IfStatement(
+                            ResolveExpr(astIf.Condition),
+                            Resolve(astIf.IfTrue),
+                            Resolve(astIf.IfFalse));
 
                     case AstConstant astConstant1:
                         return new Literal(astConstant1.TypeEnum, astConstant1.Value);
@@ -457,7 +467,8 @@ namespace Plato.Compiler.Symbols
                     var body = Resolve(location.Body);
                     if (body == null && location.Body != null)
                     {
-                        throw new Exception("Unexpected missing body");
+                        LogResolutionError("Unexpected missing body", location.Body);
+                        continue;
                     }
 
                     

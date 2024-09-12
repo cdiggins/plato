@@ -256,6 +256,9 @@ namespace Plato.CSharpWriter
                 .ParameterNames.Skip(1)
                 .JoinStringsWithComma();
 
+            var staticArgList = f.ParameterNames
+                .JoinStringsWithComma();
+
             var firstName = f.ParameterNames.FirstOrDefault() ?? "";
                             
             var parameterTypes = f.ParameterTypes.Select(ToCSharp).ToList();
@@ -278,10 +281,13 @@ namespace Plato.CSharpWriter
                 if (f.ParameterTypes.Count != 1)
                     throw new Exception("Implicit cast can have no parameters");
 
-                return Write($"public static implicit operator {ret}({staticParamList}) ")
+                Write($"public static implicit operator {ret}({staticParamList})")
                     .WriteFunctionBody(f.Implementation.Body, isProperty, true);
+
+                return Write($"public {ret} {ret}")
+                    .WriteFunctionBody(f.Implementation.Body, true, false);
             }
-            
+
             if (f.Name == Operators.ExplicitCast)
             {
                 if (f.ParameterTypes.Count != 1)
@@ -440,8 +446,14 @@ namespace Plato.CSharpWriter
                 {
                     if (op != "[]")
                     {
-                        WriteLine(
-                            $"public static {ret} operator {op}{funcTypeParamsStr}({staticParamList}) => {firstName}.{f.Name}({argList});");
+                        var isStatic = f.ParameterTypes[0].Name != t.Name;
+                        
+                        if (isStatic)
+                            WriteLine(
+                                $"public static {ret} operator {op}{funcTypeParamsStr}({staticParamList}) => {f.Name}({staticArgList});");
+                        else
+                            WriteLine(
+                                $"public static {ret} operator {op}{funcTypeParamsStr}({staticParamList}) => {firstName}.{f.Name}({argList});");
                     }
                     else
                     {
@@ -468,9 +480,10 @@ namespace Plato.CSharpWriter
             foreach (var f in Compilation.Libraries.AllConstants())
             {
                 var retType = f.ReturnType;
-                Write($"public static {retType.Name} {f.Name} => ")
-                    .Write(f.Body)
-                    .WriteLine(";");
+                Write($"public static {retType.Name} {f.Name} => ");
+                if (f.Body == null) Write($"Intrinsics.{f.Name}");
+                else Write(f.Body);
+                WriteLine(";");
             }
             WriteEndBlock();
 
@@ -738,6 +751,7 @@ namespace Plato.CSharpWriter
 
             var fieldNamesAsStringsStr = fieldNames.Select(n => $"(String){n.Quote()}").JoinStringsWithComma();
             WriteLine($"public Array<String> FieldNames => Intrinsics.MakeArray<String>({fieldNamesAsStringsStr});");
+
             var fieldValuesAsDynamicsStr = fieldNames.Select(n => $"new Dynamic({n})").JoinStringsWithComma();
             WriteLine($"public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>({fieldValuesAsDynamicsStr});");
 
@@ -768,7 +782,7 @@ namespace Plato.CSharpWriter
                 {
                     if (IgnoredFunctions.Contains(f.Name))
                         continue;
-
+                    // TODO: group these according to which concept they came from, and document it. 
                     WriteFunction(f, concreteType, true);
                 }
             }
@@ -779,8 +793,7 @@ namespace Plato.CSharpWriter
             {
                 if (arrayConcept.TypeArgs.Count != 1)
                     throw new Exception("The Array concept must have exactly one type argument");
-               
-
+                
                 // NOTE: we may eventually want implicit cast operators to/from the native array type.
             }
 
@@ -791,20 +804,15 @@ namespace Plato.CSharpWriter
                 var numDistinctFieldTypes = fieldTypes.Distinct().Count();
                 if (numDistinctFieldTypes != 1)
                     throw new Exception("Numerical types are assumed to have all of the fields of the same type");
+                WriteLine($"public Array<Number> Components => Intrinsics.MakeArray({fieldNames.JoinStringsWithComma()});");
 
-                // Provide Dimensions function for numerical types.
-                var numFields = fieldNames.Count;
-                WriteLine($"public Integer NumComponents => {numFields};");
-
-                // Provide Component function for numerical types.
-                var impl = string.Join(" : ", fieldNames.Select((fieldName, i) => $"n == {i} ? {fieldName}"))
-                           + " : throw new System.IndexOutOfRangeException()";
-                var fieldType = fieldTypes[0];
-                WriteLine($"public Number Component(Integer n) => {impl};");
-
+                var tmp = Enumerable.Range(0, fieldNames.Count).Select(i => $"numbers[{i}").JoinStringsWithComma();
+                var fromCompImpl = $"new {name}({tmp})";
+                WriteLine($"public {name} FromComponents(Array<Number> numbers) => {fromCompImpl}");
             }
 
             WriteEndBlock();
+
             return this;
         }
         

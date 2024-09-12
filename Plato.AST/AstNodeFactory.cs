@@ -357,9 +357,11 @@ namespace Plato.AST
                     throw new NotImplementedException();
                 if (newOp.Initializer.Present)
                     throw new NotImplementedException();
+
+                var typeAsExpr = ToAst(newOp.TypeExpr);
                 var args = newOp.FunctionArgs.Node.FunctionArg.Nodes
                     .Select(ToAst)
-                    .Prepend(ToAst(newOp.TypeExpr));
+                    .Prepend(typeAsExpr);
 
                 return ToIntrinsicInvocation(expr.NewOperation.Node, "New", args.ToArray());
             }
@@ -675,7 +677,7 @@ namespace Plato.AST
                     return new AstIdentifier(cstIdentifier, cstIdentifier.Text);
 
                 case CstIfStatement cstIfStatement:
-                    return new AstConditional(cstIfStatement, ToAst(cstIfStatement.ParenthesizedExpression),
+                    return new AstIfStatement(cstIfStatement, ToAst(cstIfStatement.ParenthesizedExpression),
                         ToAst(cstIfStatement.Statement),
                         ToAst(cstIfStatement.ElseClause));
 

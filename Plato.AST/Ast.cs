@@ -155,6 +155,16 @@ namespace Plato.AST
         public override string ToString() => $"({Condition} ? {IfTrue} : {IfFalse})";
     }
 
+    public class AstIfStatement : AstNode
+    {
+        public AstNode Condition { get; }
+        public AstNode IfTrue { get; }
+        public AstNode IfFalse { get; }
+        public AstIfStatement(ILocation location, AstNode condition, AstNode ifTrue, AstNode ifFalse) : base(location) => (Condition, IfTrue, IfFalse) = (condition, ifTrue, ifFalse);
+        public override IEnumerable<AstNode> Children => base.Children.Append(Condition).Append(IfTrue).Append(IfFalse);
+        public override string ToString() => $"if ({Condition})\n {{\n{IfTrue}\n}}\nelse\n{{\n{IfFalse}\n}}\n)";
+    }
+
     public class AstVarDef : AstNode
     {
         public AstIdentifier Name { get; }
@@ -192,7 +202,6 @@ namespace Plato.AST
         public override IEnumerable<AstNode> Children => new[] { Function };
         public override string ToString() => $"{Function}({string.Join(",", Arguments)})";
     }
-
 
     public class AstTypeNode : AstNode
     {

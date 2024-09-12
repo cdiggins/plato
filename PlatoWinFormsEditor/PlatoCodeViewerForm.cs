@@ -84,7 +84,7 @@ namespace PlatoWinFormsEditor
                         {
                             GotoLine(parseLineIndex);
                         }
-
+                            
                         return;
                     }
 

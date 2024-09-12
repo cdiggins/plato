@@ -79,6 +79,25 @@ namespace Plato.Compiler.Symbols
             => new[] { Body, Condition };
     }
 
+    public class IfStatement : Statement
+    {
+        public Symbol Condition { get; }
+        public Symbol IfTrue { get; }
+        public Symbol IfFalse { get; }
+
+        public override string Name => "if";
+
+        public IfStatement(Symbol condition, Symbol ifTrue, Symbol ifFalse)
+        {
+            Condition = condition;
+            IfTrue = ifTrue;
+            IfFalse = ifFalse;
+        }
+
+        public override IEnumerable<Symbol> GetChildSymbols()
+            => new[] { Condition, IfTrue, IfFalse };
+    }
+
     public class CommentStatement : Statement
     {
         public string Comment { get; }

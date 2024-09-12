@@ -10,6 +10,9 @@
         public static float ChangePrecision(this double self) => (float)self;
         public static string ChangePrecision(this string self) => self;
 
+        public static Number MinNumber => {{float}}.MinValue;
+        public static Number MaxNumber => {{float}}.MinValue;
+
         public static Number Cos(Angle x) => ({{float}})System.Math.Cos(x.Radians);
         public static Number Sin(Angle x) => ({{float}})System.Math.Sin(x.Radians);
         public static Number Tan(Angle x) => ({{float}})System.Math.Tan(x.Radians);
