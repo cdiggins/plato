@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Ara3D.Utils;
 using System.Linq;
+using Plato.AST;
 using Plato.Compiler.Symbols;
 using Plato.Compiler.Types;
 
@@ -23,6 +24,7 @@ namespace Plato.Compiler.Analysis
         public IReadOnlyList<TypeInstance> ParameterTypes { get; }
         public IReadOnlyList<TypeParameterDef> UsedTypeParameters { get; }
         public override string ToString() => $"{SignatureId}:{ReturnType}";
+        public bool IsImplicitCast => Name == ReturnType.Name && ParameterNames.Count == 1;
 
         // TODO: this might be necessary in the future, when choosing the correct type parameter is difficult.
         //public Dictionary<TypeParameterDefinition, TypeParameterDefinition> Unifiers { get; } =

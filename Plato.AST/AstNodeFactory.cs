@@ -81,8 +81,7 @@ namespace Plato.AST
                 }
                 else if (postfix.Indexer.Present)
                 {
-                    r = ToIntrinsicInvocation(postfix.Indexer.Node, Operators.BinaryOperatorToName("[]")
-                        , r, ToAst(postfix.Indexer.Node.Expression));
+                    r = ToIntrinsicInvocation(postfix.Indexer.Node, "At", r, ToAst(postfix.Indexer.Node.Expression));
                 }
                 else if (postfix.IsOperation.Present)
                 {
@@ -331,9 +330,12 @@ namespace Plato.AST
             }
             if (expr.CastExpression.Present)
             {
+                throw new Exception("Explicit casts are not currently supported");
+                /*
                 return ToIntrinsicInvocation(expr, Operators.ExplicitCast,
                     ToAst(expr.CastExpression.Node.TypeExpr),
                     ToAst(expr.CastExpression.Node.Expression));
+                */
             }
             if (expr.LambdaExpr.Present)
             {
@@ -650,7 +652,8 @@ namespace Plato.AST
                     return AstContinue.Default;
 
                 case CstCastExpression cstCastExpression:
-                    return ToIntrinsicInvocation(cstCastExpression, Operators.ExplicitCast, ToAst(cstCastExpression.Expression), ToAst(cstCastExpression.TypeExpr));
+                    throw new Exception("Explicit casts are not currently supported");    
+                //return ToIntrinsicInvocation(cstCastExpression, Operators.ExplicitCast, ToAst(cstCastExpression.Expression), ToAst(cstCastExpression.TypeExpr));
 
                 case CstCatchClause _:
                     throw new NotImplementedException();

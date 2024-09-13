@@ -512,7 +512,7 @@ namespace Plato.Compiler.Symbols
                 if (typeDef.Fields.Count == 1)
                 {
                     var field = typeDef.Fields[0];
-                    var cast = new FunctionDef(ValueBindingsScope, Operators.ImplicitCast, typeDef, field.Type, null,
+                    var cast = new FunctionDef(ValueBindingsScope, field.Type.Name, typeDef, field.Type, null,
                         new ParameterDef(ValueBindingsScope, "arg", typeDef.ToTypeExpression(), 0));
                     AddCompilerGeneratedFunction(typeDef, cast);
                 }
@@ -525,9 +525,12 @@ namespace Plato.Compiler.Symbols
                         new ParameterDef(ValueBindingsScope, "arg", tupleType, 0));
                     AddCompilerGeneratedFunction(typeDef, ctor);
 
-                    var tupleCast = new FunctionDef(ValueBindingsScope, Operators.ImplicitCast, typeDef, tupleType, null, 
+                    /*
+                    TODO: not sure what to do here. Is it really required?  
+                    var tupleCast = new FunctionDef(ValueBindingsScope, "Tuple", typeDef, tupleType, null, 
                         new ParameterDef(ValueBindingsScope, "self", typeDef.ToTypeExpression(), 0));
                     AddCompilerGeneratedFunction(typeDef, tupleCast);
+                    */
                 }
 
                 ValueBindingsScope = ValueBindingsScope.Pop();

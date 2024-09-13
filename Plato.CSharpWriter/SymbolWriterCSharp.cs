@@ -11,6 +11,8 @@ using Plato.AST;
 using Plato.Compiler.Analysis;
 using Plato.Compiler.Symbols;
 using Plato.Compiler.Types;
+using static Plato.Compiler.Types.FunctionCallAnalysis;
+
 
 namespace Plato.CSharpWriter
 {
@@ -21,8 +23,11 @@ namespace Plato.CSharpWriter
         public const bool UseSelfConstraints = true;
         public string FloatType;
         public string Namespace;
+
+#if CHANGE_PRECISION
         public string OtherPrecisionFloatType;
         public string OtherPrecisionNamespace;
+#endif
 
         public Compiler.Compilation Compilation { get; }
         public string CurrentType { get; set; }
@@ -56,16 +61,8 @@ namespace Plato.CSharpWriter
             "FieldNames",
             "FieldValues",
             "TypeName",
-            "NumComponents",
-            "Component",
-            
-            // The core vector primitives 
-            "Map",
-            "Filter",
-            "Reduce",
-            "MapReduce",
-            "FilterReduce",
-            "MapFilterReduce",
+            "Components",
+            "FromComponents",
         };
 
         public static Dictionary<string, string> PrimitiveTypes = new Dictionary<string, string>()
@@ -93,15 +90,17 @@ namespace Plato.CSharpWriter
                 : floatType == "double"
                     ? "Plato.DoublePrecision"
                     : throw new NotImplementedException("Only 'float' and 'double' are supported");
+#if CHANGE_PRECISION
             OtherPrecisionFloatType = floatType == "float" ? "double" : "float";
             OtherPrecisionNamespace = floatType == "float" ? "Plato.DoublePrecision" : "Plato.SinglePrecision";
+#endif 
             StartNewFile(fileName);
             WriteLine($"namespace {Namespace}");
             WriteStartBlock();
+            WriteIntrinsics();
             WriteConceptInterfaces();
             WriteTypeImplementations();
             WriteLibraryMethods();
-            WriteIntrinsics();
             WriteEndBlock();
             sb.Replace("{{float}}", floatType);
             return this;
@@ -193,6 +192,9 @@ namespace Plato.CSharpWriter
 
         public SymbolWriterCSharp WriteFunctionBody(Symbol body0, bool isProperty, bool isStatic)
         {
+            if (body0 == null)
+                return WriteLine(" => throw new System.NotImplementedException();");
+
             var body = body0.RewriteLambdasCapturingVars();
 
             return body is BlockStatement bs
@@ -231,88 +233,128 @@ namespace Plato.CSharpWriter
 
             return sb.ToString();
         }
-        
-        public SymbolWriterCSharp WriteFunction(FunctionInstance f, ConcreteType t, bool generateImpl = false)
+
+        public SymbolWriterCSharp WriteMemberFunction(FunctionInstance f, ConcreteType t)
         {
             var ret = ToCSharp(f.ReturnType);
-            
-            var funcTypeParams = f.UsedTypeParameters
-                .Where(tp => !t.Type.TypeParameters.Contains(tp)).ToList();
 
-            /*
-            if (funcTypeParams.Count > 0)
-            {
-                // TODO: the type parameter in this case should come from the parent type.
-                // It doesn't so that is a problem. I need to be more sophisticated in FunctionInstance
-                throw new Exception("Whoops!!");
-            }
-            */
-
-            var funcTypeParamsStr = funcTypeParams.Count == 0
-                ? ""
-                : $"<{funcTypeParams.Select(tp => tp.Name).JoinStringsWithComma()}>";
-
-            var argList = f
-                .ParameterNames.Skip(1)
-                .JoinStringsWithComma();
-
-            var staticArgList = f.ParameterNames
-                .JoinStringsWithComma();
-
-            var firstName = f.ParameterNames.FirstOrDefault() ?? "";
-                            
             var parameterTypes = f.ParameterTypes.Select(ToCSharp).ToList();
+            var staticArgList = f.ParameterNames .JoinStringsWithComma();
+            var argList = f.ParameterNames.Skip(1).Prepend("this").JoinStringsWithComma();
+            var staticParamList = parameterTypes
+                .Zip(f.ParameterNames, (pt, pn) => $"{pt} {pn}")
+                .JoinStringsWithComma();
 
             var paramList = parameterTypes.Skip(1)
                 .Zip(f.ParameterNames.Skip(1), (pt, pn) => $"{pt} {pn}")
                 .JoinStringsWithComma();
 
-            if (paramList.Length > 0)
-                paramList = $"({paramList})";
+            var funcTypeParams = f.UsedTypeParameters
+                .Where(tp => !t.Type.TypeParameters.Contains(tp)).ToList();
 
-            var staticParamList = parameterTypes
-                .Zip(f.ParameterNames, (pt, pn) => $"{pt} {pn}")
-                .JoinStringsWithComma();
+            var funcTypeParamsStr = funcTypeParams.Count == 0
+                ? ""
+                : $"<{funcTypeParams.Select(tp => tp.Name).JoinStringsWithComma()}>";
 
-            var isProperty = paramList.IsNullOrWhiteSpace();
-
-            if (f.Name == Operators.ImplicitCast)
+            if (f.ParameterNames.Count == 1)
             {
-                if (f.ParameterTypes.Count != 1)
-                    throw new Exception("Implicit cast can have no parameters");
-
-                Write($"public static implicit operator {ret}({staticParamList})")
-                    .WriteFunctionBody(f.Implementation.Body, isProperty, true);
-
-                return Write($"public {ret} {ret}")
-                    .WriteFunctionBody(f.Implementation.Body, true, false);
-            }
-
-            if (f.Name == Operators.ExplicitCast)
-            {
-                if (f.ParameterTypes.Count != 1)
-                    throw new Exception("Explicit cast can have no parameters");
-
-                return Write($"public static explicit operator {ret}({staticParamList}) ")
-                    .WriteFunctionBody(f.Implementation.Body, isProperty, true);
-            }
-
-            var isVectorOp = f.Name == "Map" || f.Name == "Reduce";
-
-            if (f.Implementation.Body != null && !isVectorOp)
-            {
-                Write($"public {ret} {f.Name}{funcTypeParamsStr}{paramList}");
-                WriteFunctionBody(f.Implementation.Body, isProperty, false);
-
-                /*
-                if (f.Name == "At")
+                var op = Operators.NameToUnaryOperator(f.Name);
+                if (op != null)
                 {
-                    Debug.Assert(funcTypeParamsStr.IsNullOrWhiteSpace());
+                    Write($"public static {ret} operator {op}({staticParamList})");
+                    WriteFunctionBody(f.Implementation.Body, false, true);
+                }
 
-                    Write($"public {ret} this[{paramList}]");
-                    WriteFunctionBody(f.Implementation.Body, isProperty, false);
-                }*/
+                if (f.IsImplicitCast)
+                {
+                    Write($"public static implicit operator {ret}({staticParamList})")
+                        .WriteFunctionBody(f.Implementation.Body, false, true);
+                }
+                
+                Write($"public {ret} {f.Name}");
+                WriteFunctionBody(f.Implementation.Body, true, false);
             }
+            else
+            if (f.ParameterTypes.Count > 1)
+            {
+                if (f.ParameterNames.Count == 2)
+                {
+                    var op = Operators.NameToBinaryOperator(f.Name);
+
+                    // NOTE: this is because in C#, the "||" and "&&" operators cannot be overridden.
+                    if (op == "||") op = "|";
+                    if (op == "&&") op = "&";
+
+                    if (op != null)
+                    {
+                        Write($"public static {ret} operator {op}{funcTypeParamsStr}({staticParamList})");
+                        WriteFunctionBody(f.Implementation.Body, false, true);
+                    }
+                }
+
+                var firstParamType = parameterTypes[0];
+                if (firstParamType == ToCSharp(t.Type))
+                {
+                    if (f.Name == "At")
+                    {
+                        var paramList2 = paramList.Replace('(', '[').Replace(')', ']');
+                        Write($"public {ret} this{funcTypeParamsStr}[{paramList2}]");
+                        WriteFunctionBody(f.Implementation.Body, true, false);
+                    }
+
+                    Write($"public {ret} {f.Name}{funcTypeParamsStr}({paramList})");
+                    WriteFunctionBody(f.Implementation.Body, false, false);
+                }
+                else
+                {
+                    Write($"public static {ret} {f.Name}{funcTypeParamsStr}({staticParamList})");
+                    WriteFunctionBody(f.Implementation.Body, false, true);
+                }
+            }
+
+            return this;
+
+        }
+
+        public SymbolWriterCSharp WriteExtensionFunction(FunctionInstance f, ConcreteType t, bool generateImpl = false)
+        {
+            var ret = ToCSharp(f.ReturnType);
+            var typeParamsStr = JoinTypeParameters(t.Type.TypeParameters.Select(tp => tp.Name));
+
+            var funcTypeParams = 
+                t.Type.TypeParameters.Concat(f.UsedTypeParameters
+                .Where(tp => !t.Type.TypeParameters.Contains(tp))).
+                ToList();
+
+            var funcTypeParamsStr = funcTypeParams.Count == 0
+                ? ""
+                : $"<{funcTypeParams.Select(tp => tp.Name).JoinStringsWithComma()}>";
+
+            var parameterTypes = f.ParameterTypes.Select(ToCSharp).ToList();
+            
+            var paramList = parameterTypes
+                    .Zip(f.ParameterNames, (pt, pn) => $"{pt} {pn}")
+                    .JoinStringsWithComma();
+
+            Write($"public static {ret} {f.Name}{funcTypeParamsStr}(this {paramList}) ");
+            if (f.Implementation.Body != null)
+            {
+                WriteFunctionBody(f.Implementation.Body, false, true);
+            }
+            /*
+            else             
+            {
+                var impl = "throw new NotImplementedException()";
+                
+                if (f.Implementation.OwnerType.Name == "Intrinsics")
+                {
+                    var args = f.ParameterNames.JoinStringsWithComma();
+                    impl = $"Intrinsics.{f.Name}({args})";
+                }
+
+                WriteLine($"=> {impl};");
+            }
+            */
             else
             {
                 // Create a default implementation the best we can looking at each field. 
@@ -325,46 +367,7 @@ namespace Plato.CSharpWriter
                 // Only generate implementations when the return type is a Boolean or the same as this type, or we have only one field.
                 var canGenerateImpl = ret == t.Name || ret == "Boolean" || fields.Count == 1;
 
-                var fieldTypes = t.DistinctFieldTypes;
-                var elementType = fieldTypes.Count == 1 ? fieldTypes[0] : null;
-                var isVectorLike = elementType != null;
-
-
-                // Special case skip "map" and "reduce" for array-like types. 
-
-                if (f.Name == "Map")
-                {
-                    if (!isVectorLike) return this; // throw new Exception("Not vector like");
-                    impl = "(" + string.Join(", ", fields.Select((fieldName) => $"f({fieldName})")) + ")";
-                    return WriteLine($"public {t.Type.Name} Map(System.Func<{elementType.Name}, {elementType.Name}> f) => {impl};");
-                }
-
-                if (f.Name == "Reduce")
-                {
-                    if (!isVectorLike) return this; // throw new Exception("Not vector like");
-                    impl = "init";
-                    foreach (var fieldName in fields)
-                        impl = $"f({impl}, {fieldName})";
-                    return WriteLine($"public TAcc Reduce<TAcc>(TAcc init, System.Func<TAcc, {elementType.Name}, TAcc> f) => {impl};");
-                }
-
-                if (generateImpl && !canGenerateImpl && isVectorLike)
-                {
-                    switch (f.Name)
-                    {
-                        case "At":
-                            impl = string.Join(" : ", fields.Select((fieldName, i) => $"n == {i} ? {fieldName}")) 
-                                   + " : throw new System.IndexOutOfRangeException()";
-                            break;
-
-                        case "Count":
-                            impl = fields.Count.ToString();
-                            break;
-
-                     
-                    }
-                }
-                else if (generateImpl && canGenerateImpl)
+                if (generateImpl && canGenerateImpl)
                 {
                     if (f.ParameterNames.Count <= 1)
                     {
@@ -426,48 +429,6 @@ namespace Plato.CSharpWriter
                 }
 
                 WriteLine($"public {ret} {f.Name}{funcTypeParamsStr}{paramList} => {impl};");
-
-                /*
-                if (f.Name == "At" && funcTypeParamsStr.IsNullOrWhiteSpace())
-                {
-                    WriteLine($"public {ret} this[{paramList}] => {impl};");
-                }*/
-            }
-
-            if (f.ParameterNames.Count == 2)
-            {
-                var op = Operators.NameToBinaryOperator(f.Name);
-
-                // NOTE: this is because in C#, the "||" and "&&" operators cannot be overridden.
-                if (op == "||") op = "|";
-                if (op == "&&") op = "&";
-
-                if (op != null)
-                {
-                    if (op != "[]")
-                    {
-                        var isStatic = f.ParameterTypes[0].Name != t.Name;
-                        
-                        if (isStatic)
-                            WriteLine(
-                                $"public static {ret} operator {op}{funcTypeParamsStr}({staticParamList}) => {f.Name}({staticArgList});");
-                        else
-                            WriteLine(
-                                $"public static {ret} operator {op}{funcTypeParamsStr}({staticParamList}) => {firstName}.{f.Name}({argList});");
-                    }
-                    else
-                    {
-                        var paramList2 = paramList.Replace('(', '[').Replace(')', ']');
-                        WriteLine($"public {ret} this{funcTypeParamsStr}{paramList2} => {f.Name}({argList});");
-                    }
-                }
-            }
-
-            if (f.ParameterNames.Count == 1)
-            {
-                var op = Operators.NameToUnaryOperator(f.Name);
-                if (op != null)
-                    WriteLine($"public static {ret} operator {op}({staticParamList}) => {firstName}.{f.Name};");
             }
 
             return this;
@@ -486,29 +447,6 @@ namespace Plato.CSharpWriter
                 WriteLine(";");
             }
             WriteEndBlock();
-
-            foreach (var t in Compilation.ConcreteTypes)
-            {
-                var typeParamsStr = JoinTypeParameters(t.Type.TypeParameters.Select(tp => tp.Name));
-
-                var kind = EmitStructsInsteadOfClasses ? "readonly partial struct" : "partial class";
-                CurrentType = $"{t.Type.Name}{typeParamsStr}";
-                WriteLine($"public {kind} {CurrentType}");
-                WriteStartBlock();
-
-                var funcGroups = t
-                    .ConcreteFunctions
-                    .Concat(t.GetConceptFunctions())
-                    .GroupBy(f => f.SignatureId);
-
-                foreach (var g in funcGroups)
-                {
-                    var f = g.First();
-                    WriteFunction(f, t);
-                }
-
-                WriteEndBlock();
-            }
 
             return this;
         }
@@ -580,7 +518,19 @@ namespace Plato.CSharpWriter
 
             WriteStartBlock();
             foreach (var m in type.Methods)
+            {
+                var f = m.Function;
+                if (f.NumParameters == 0)
+                    continue;
+                var firstParamType = f.GetParameterType(0).Name;
+                
+                // A concept can have functions that are not defined on "itself" as the first parameter.
+                // In this case, it does not make sense for that function to be in an interface (in fact it can't be).
+                if (firstParamType != "Self")
+                    continue;
+
                 WriteSignature(m.Function);
+            }
 
             WriteEndBlock();
             return this;
@@ -679,12 +629,12 @@ namespace Plato.CSharpWriter
             if (!EmitStructsInsteadOfClasses)
                 WriteLine($"public {t.Name}() {{ }}");
 
-
             WriteLine($"public static {name} Default = new {name}();");
 
             // Static factory function (New)
             WriteLine($"public static {name} New({parametersStr}) => new {name}({parameterNamesStr});");
 
+#if CHANGE_PRECISION
             // Precision changes
             if (t.TypeParameters.Count == 0 && fieldNames.Count != 0 && !fieldTypes.Any(ft => ft.Contains("<")))
             {
@@ -692,6 +642,7 @@ namespace Plato.CSharpWriter
                 WriteLine($"public {OtherPrecisionNamespace}.{t.Name} ChangePrecision() => ({changeFields});");
                 WriteLine($"public static implicit operator {OtherPrecisionNamespace}.{t.Name}({t.Name} self) => self.ChangePrecision();");
             }
+#endif
 
             // Implicit operators 
             if (fieldNames.Count > 1)
@@ -771,51 +722,84 @@ namespace Plato.CSharpWriter
                         }
                     }
                 }
-
-            }
-
-            // For the primitives, we have predefined implementations of the standard concepts .
-            if (!isPrimitive)
-            {
-                WriteLine("// Unimplemented concept functions");
-                foreach (var f in concreteType.UnimplementedFunctions)
-                {
-                    if (IgnoredFunctions.Contains(f.Name))
-                        continue;
-                    // TODO: group these according to which concept they came from, and document it. 
-                    WriteFunction(f, concreteType, true);
-                }
-            }
-
-            // Check if the type is an "Array", if so provide implementations of the default types. 
-            var arrayConcept = t.GetAllImplementedConcepts().FirstOrDefault(te => te.Name == "Array");
-            if (arrayConcept != null)
-            {
-                if (arrayConcept.TypeArgs.Count != 1)
-                    throw new Exception("The Array concept must have exactly one type argument");
-                
-                // NOTE: we may eventually want implicit cast operators to/from the native array type.
             }
 
             // Check if the type is "Numerical", if so provide implementations of the default types. 
             var isNumerical = t.GetAllImplementedConcepts().Any(te => te.Name == "Numerical");
             if (isNumerical)
             {
+                WriteLine($"// Numerical predefined functions");
                 var numDistinctFieldTypes = fieldTypes.Distinct().Count();
                 if (numDistinctFieldTypes != 1)
                     throw new Exception("Numerical types are assumed to have all of the fields of the same type");
-                WriteLine($"public Array<Number> Components => Intrinsics.MakeArray({fieldNames.JoinStringsWithComma()});");
+                WriteLine($"public Array<Number> Components => Intrinsics.MakeArray<Number>({fieldNames.JoinStringsWithComma()});");
 
-                var tmp = Enumerable.Range(0, fieldNames.Count).Select(i => $"numbers[{i}").JoinStringsWithComma();
+                var tmp = Enumerable.Range(0, fieldNames.Count).Select(i => $"numbers[{i}]").JoinStringsWithComma();
                 var fromCompImpl = $"new {name}({tmp})";
-                WriteLine($"public {name} FromComponents(Array<Number> numbers) => {fromCompImpl}");
+                WriteLine($"public {name} FromComponents(Array<Number> numbers) => {fromCompImpl};");
+            }
+
+            // For the primitives, we have predefined implementations of the standard concepts .
+            WriteLine("// Implemented concept functions and type functions");
+            var funcGroups = concreteType
+                .ConcreteFunctions
+                .Concat(concreteType.GetConceptFunctions())
+                .GroupBy(f => f.SignatureId);
+
+            foreach (var g in funcGroups)
+            {
+                var f = g.First();
+                if (f.ConceptName == "Array")
+                {
+                    continue;
+                }
+
+                WriteMemberFunction(f, concreteType);
+            }
+
+            WriteLine("// Unimplemented concept functions");
+            foreach (var f in concreteType.UnimplementedFunctions)
+            {
+                if (IgnoredFunctions.Contains(f.Name))
+                    continue;
+                WriteMemberFunction(f, concreteType);
             }
 
             WriteEndBlock();
 
+            /*
+            if (!isPrimitive)
+            {
+                Write($"public static class {t.Name}Functions");
+                WriteStartBlock();
+
+                WriteLine("// Implemented concept functions and type functions");
+                var funcGroups = concreteType
+                    .ConcreteFunctions
+                    .Concat(concreteType.GetConceptFunctions())
+                    .GroupBy(f => f.SignatureId);
+
+                foreach (var g in funcGroups)
+                {
+                    var f = g.First();
+                    WriteExtensionFunction(f, concreteType);
+                }
+
+                WriteLine("// Unimplemented concept functions");
+                foreach (var f in concreteType.UnimplementedFunctions)
+                {
+                    if (IgnoredFunctions.Contains(f.Name))
+                        continue;
+                    WriteExtensionFunction(f, concreteType);
+                }
+
+                WriteEndBlock();
+            }
+            */
+
             return this;
         }
-        
+
         public SymbolWriterCSharp WriteSignature(FunctionDef function)
         {
             Write(ToCSharp(function.Type));
@@ -836,15 +820,14 @@ namespace Plato.CSharpWriter
                 WriteLine();
             }
 
-            /*
-            if (function.Name == "At" && parameters.Count == 2)
+            // Add an indexing property if the function is named "At"
+            if (function.Name == "At")
             {
                 Write(ToCSharp(function.Type));
                 Write(" this[");
-                Write(parameters[1]);
-                Write("] { get; }");
+                WriteCommaList(parameters.Skip(1));
+                WriteLine("] { get; }");
             }
-            */
 
             return this;
         }
@@ -978,9 +961,12 @@ namespace Plato.CSharpWriter
             if (functionCall.Args.Count == 0)
                 return Write("Constants.").Write(functionCall.Function);
 
-            if (functionCall.Function is ParameterRefSymbol pr)
+            // Calling a parameter, or variable 
+            if (functionCall.Function is ParameterRefSymbol 
+                || functionCall.Function is VariableRefSymbol
+                || functionCall.Function is FunctionCall)
             {
-                return Write(functionCall.Function).Write("(").WriteCommaList(functionCall.Args).Write(")");
+                return Write(functionCall.Function).Write(".Invoke(").WriteCommaList(functionCall.Args).Write(")");
             }
 
             Write(functionCall.Args[0]).Write(".").Write(functionCall.Function);
