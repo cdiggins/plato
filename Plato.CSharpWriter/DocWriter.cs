@@ -54,26 +54,39 @@ namespace Plato.CSharpWriter
             return this;
         }
 
-        public DocWriter WriteConcept(IEnumerable<TypeDef> allTypes, TypeDef concept)
+        public DocWriter WriteConcept(IReadOnlyList<TypeDef> allTypes, TypeDef concept)
         {
             Sb.AppendLine($"## Concept {concept.Name}");
             Sb.AppendLine();
 
-            var inheritsList = concept.GetSelfAndAllInheritedTypes().OrderBy(t => t.Name).ToList();
+            var inheritsList = concept.GetSelfAndAllInheritedTypes().Where(t => t.Name != concept.Name).OrderBy(t => t.Name).ToList();
             var inheritsStr = inheritsList.Select(t1 => t1.Name).JoinStringsWithComma();
             Sb.AppendLine($"Inherits: {inheritsStr}.");
             Sb.AppendLine();
 
-            var implementingTypes = allTypes.Where(t => t.Implements(concept)).ToList(); 
+            var implementingTypes = allTypes.Where(t => t.Implements(concept) && t.IsConcrete()).ToList(); 
             var implementingStr = implementingTypes.Select(t1 => t1.Name).JoinStringsWithComma();
             Sb.AppendLine($"Implemented by: {implementingStr}.");
             Sb.AppendLine();
 
-            var functions = concept.GetConceptMethods().OrderBy(m => m.Name).ToList();
+            var inheritingTypes = allTypes.Where(t => t.Implements(concept) && t.IsConcept()).ToList();
+            var inheritingStr = inheritingTypes.Select(t1 => t1.Name).JoinStringsWithComma();
+            Sb.AppendLine($"Inherited by: {inheritingStr}.");
+            Sb.AppendLine();
+
+            var functions = concept.Methods.OrderBy(m => m.Name).ToList();
             var functionsStr = functions.Select(f => f.Name).JoinStringsWithComma();
             Sb.AppendLine($"Functions: {functionsStr}.");
             Sb.AppendLine();
-            
+
+            var fields = concept.Fields.OrderBy(m => m.Name).ToList();
+            var fieldsStr = fields.Select(f => f.Name).JoinStringsWithComma();
+            Sb.AppendLine($"Fields: {fieldsStr}.");
+            Sb.AppendLine();
+
+            // TODO: list all inherited members 
+            // TODO: format the thing better. 
+
             return this;
         }
 

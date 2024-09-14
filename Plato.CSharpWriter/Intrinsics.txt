@@ -92,6 +92,22 @@
                 return ((int)rol5 + h1) ^ h2;
             }
         }     
+
+        // TODO: I need to implemnt this. 
+        public static Dynamic New(Type type, Array<Any> args) 
+            => throw new System.NotImplementedException("");
+
+        public static Integer Compare(this Number a, Number b) => a.Value.CompareTo(b.Value);
+        public static Integer Compare(this Character a, Character b) => a.Value.CompareTo(b.Value);
+        public static Integer Compare(this Integer a, Integer b) => a.Value.CompareTo(b.Value);
+        public static Integer Compare(this Boolean a, Boolean b) => a.Value.CompareTo(b.Value);
+        public static Integer Compare(this String a, String b) => a.Value.CompareTo(b.Value);
+    
+        public static Boolean Equals(this Number a, Number b) => a.Value.Equals(b.Value);
+        public static Boolean Equals(this Character a, Character b) => a.Value.Equals(b.Value);
+        public static Boolean Equals(this Integer a, Integer b) => a.Value.Equals(b.Value);
+        public static Boolean Equals(this Boolean a, Boolean b) => a.Value.Equals(b.Value);
+        public static Boolean Equals(this String a, String b) => a.Value.Equals(b.Value);
     }
     
     public readonly partial struct Number
