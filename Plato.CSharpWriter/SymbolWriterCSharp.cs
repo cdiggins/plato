@@ -217,6 +217,13 @@ namespace Plato.CSharpWriter
                     return WriteLine($" => {pns[0]}.{forwardTo}({pns.Skip(1).JoinStringsWithComma()});");
             }
 
+            var impl = "throw new System.NotImplementedException()";
+            if (f.Implementation.OwnerType.Name == "Intrinsics")
+            {
+                var args = pns.Skip(1).Prepend("this").JoinStringsWithComma();
+                return WriteLine($" => Intrinsics.{f.Name}({args});");
+            }
+
             var fs = t.Type.Fields.Select(tf => tf.Name).ToList();
             if (f.Name == "At")
             {
@@ -233,20 +240,10 @@ namespace Plato.CSharpWriter
                 return WriteLine($" => {fs.Count};");
             }
 
-            var impl = "throw new System.NotImplementedException()";
-
-            if (f.Implementation.OwnerType.Name == "Intrinsics")
-            {
-                var args = pns.Skip(1).Prepend("this").JoinStringsWithComma();
-                impl = $"Intrinsics.{f.Name}({args})";
-            }
-            else
-            {
-                var isNumerical = t.Type.GetAllImplementedConcepts().Any(te => te.Name == "Numerical");
-                Debug.Assert(isNumerical);
-            }
-
             /*
+            NOTE: these are super efficient versions of the ZipComponents and MapComponents functions.
+            In theory, we can reduce down to this in the compiler by evaluating constant expressions 
+            at compile-time.
             
             var fields = t.Type.Fields.Select(field => field.Name).ToList();
                var isPrimitive = PrimitiveTypes.ContainsKey(t.Name);
@@ -386,6 +383,38 @@ namespace Plato.CSharpWriter
                 ? ""
                 : $"<{funcTypeParams.Select(tp => tp.Name).JoinStringsWithComma()}>";
 
+
+            var pns = f.ParameterNames;
+            var pts = parameterTypes;
+            Debug.Assert(pns.Count == pts.Count);
+
+            if (pts.Count > 0 && pts[0] != ToCSharp(t.Type))
+            {
+                // HACK: Scalar multiply hack
+
+                // NOTE: this is a member function where the first type is NOT the same as the enclosing member. 
+                // e.g., Multiply(Number n, Vector2D v)) 
+
+                // Right now this only happens for scalar multiplication, but we may be able to extend thsi to other types 
+                
+                Debug.Assert(f.Name == "Multiply" && pts.Count == 2 && pts[0] == "Number");
+
+                Write($"public static {ret} {f.Name}{funcTypeParamsStr}({staticParamList})");
+                WriteLine($" => {pns[1]}.{f.Name}({pns[0]});");
+
+                var op = Operators.NameToBinaryOperator(f.Name);
+
+                // NOTE: this is because in C#, the "||" and "&&" operators cannot be overridden.
+                if (op == "||") op = "|";
+                if (op == "&&") op = "&";
+
+                if (op != null)
+                {
+                    Write($"public static {ret} operator {op}{funcTypeParamsStr}({staticParamList})");
+                    WriteLine($" => {f.Name}({pns.JoinStringsWithComma()});");
+                }
+                return this;
+            }
             if (f.ParameterNames.Count == 1)
             {
                 var op = Operators.NameToUnaryOperator(f.Name);
@@ -422,25 +451,15 @@ namespace Plato.CSharpWriter
                     }
                 }
 
-                var firstParamType = parameterTypes[0];
-                if (firstParamType == ToCSharp(t.Type))
+                if (f.Name == "At")
                 {
-                    if (f.Name == "At")
-                    {
-                        var paramList2 = paramList.Replace('(', '[').Replace(')', ']');
-                        Write($"public {ret} this{funcTypeParamsStr}[{paramList2}]");
-                        WriteFunctionBody(f, t, true, false, null);
-                    }
+                    var paramList2 = paramList.Replace('(', '[').Replace(')', ']');
+                    Write($"public {ret} this{funcTypeParamsStr}[{paramList2}]");
+                    WriteFunctionBody(f, t, true, false, null);
+                }
 
-                    Write($"public {ret} {f.Name}{funcTypeParamsStr}({paramList})");
-                    WriteFunctionBody(f, t, false, false, null);
-                }
-                else
-                {
-                    Write($"public static {ret} {f.Name}{funcTypeParamsStr}({staticParamList})");
-                    WriteFunctionBody(f, t, false, true, null);
-                    AddToExtensionList(f);
-                }
+                Write($"public {ret} {f.Name}{funcTypeParamsStr}({paramList})");
+                WriteFunctionBody(f, t, false, false, null);
             }
 
             return this;
