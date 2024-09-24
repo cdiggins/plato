@@ -97,17 +97,17 @@
         public static Dynamic New(Type type, Array<Any> args) 
             => throw new System.NotImplementedException("");
 
-        public static Integer Compare(this Number a, Number b) => a.Value.CompareTo(b.Value);
-        public static Integer Compare(this Character a, Character b) => a.Value.CompareTo(b.Value);
-        public static Integer Compare(this Integer a, Integer b) => a.Value.CompareTo(b.Value);
-        public static Integer Compare(this Boolean a, Boolean b) => a.Value.CompareTo(b.Value);
-        public static Integer Compare(this String a, String b) => a.Value.CompareTo(b.Value);
-    
         public static Boolean Equals(this Number a, Number b) => a.Value.Equals(b.Value);
         public static Boolean Equals(this Character a, Character b) => a.Value.Equals(b.Value);
         public static Boolean Equals(this Integer a, Integer b) => a.Value.Equals(b.Value);
         public static Boolean Equals(this Boolean a, Boolean b) => a.Value.Equals(b.Value);
         public static Boolean Equals(this String a, String b) => a.Value.Equals(b.Value);
+
+        public static Boolean LessThanOrEquals(this Number a, Number b) => a.Value <= b.Value;
+        public static Boolean LessThanOrEquals(this Character a, Character b) => a.Value <= b.Value;
+        public static Boolean LessThanOrEquals(this Integer a, Integer b) => a.Value <= b.Value;
+        public static Boolean LessThanOrEquals(this Boolean a, Boolean b) => !a || (a && b);
+        public static Boolean LessThanOrEquals(this String a, String b) => a.Value.CompareTo(b.Value) <= 0;
     }
     
     public readonly partial struct Number

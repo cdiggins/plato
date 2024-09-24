@@ -701,10 +701,14 @@ namespace Plato.CSharpWriter
                 WriteLine($"public static implicit operator {name}({fieldType} value) => new {name}(value);");
 
                 // Any time that we are implicitly casting to/from Number (floating point)
-                // We can also cast from Integers. 
+                // We can also cast from Plato.Integers and built-in integers, as well to/from built-in floating types 
                 if (fieldType == "Number")
                 {
                     WriteLine($"public static implicit operator {name}(Integer value) => new {name}(value);");
+                    WriteLine($"public static implicit operator {name}(int value) => new Integer(value);");
+                    WriteLine($"public static implicit operator {name}({FloatType} value) => new Number(value);");
+                    WriteLine($"public static implicit operator {FloatType}({name} value) => value.{fieldName};");
+
                 }
             }
 
