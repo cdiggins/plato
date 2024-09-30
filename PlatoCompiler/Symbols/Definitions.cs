@@ -178,6 +178,7 @@ namespace Plato.Compiler.Symbols
         {
             var r = new HashSet<TypeExpression>(); 
 
+
             foreach (var tmp in Implements)
             {
                 if (tmp == null)
@@ -229,6 +230,23 @@ namespace Plato.Compiler.Symbols
             if (Inherits.Any(te => te.UsesSelfType()))
                 return true;
             return Inherits.Any(i => i.Def.IsSelfConstrained());
+        }
+
+        public int DepthTo(TypeDef other)
+        {
+            if (this.ToString() == other.ToString())
+                return 0;
+            foreach (var i in Inherits)
+            {
+                if (i.Def.DepthTo(other) >= 0)
+                    return 1 + i.Def.DepthTo(other);
+            }
+            foreach (var i in Implements)
+            {
+                if (i.Def.DepthTo(other) >= 0)
+                    return 1 + i.Def.DepthTo(other);
+            }
+            return -1;
         }
     }
 

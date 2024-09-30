@@ -22,7 +22,7 @@ namespace Plato.Compiler.Analysis
         public IEnumerable<FunctionDef> AllConstants()
             => AllFunctions().Where(f => f.Parameters.Count == 0);
 
-        public LibraryFunctions(Plato.Compiler.Compilation c)
+        public LibraryFunctions(Compilation c)
         {
             foreach (var t in c.AllTypeAndLibraryDefinitions)
             {

@@ -6,6 +6,7 @@ using Plato.Compiler.Symbols;
 
 namespace Plato.Compiler.Analysis
 {
+    // TODO: it's been a while, and I'm really struggling to understand how this is different from a TypeExpression. 
     // TODO: this has TypeSubstitutions as well. We need to know what they are. 
     // This way when we query functions, inherited types, and implemented types
     // We can figure it all out. 

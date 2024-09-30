@@ -35,7 +35,7 @@ namespace Plato.Compiler.Symbols
 
         public override IEnumerable<Symbol> GetChildSymbols()
             => TypeArgs;
-
+            
         public override int GetHashCode()
             => Hasher.Combine(TypeArgs.Select(ta => ta.GetHashCode()).Append(Def.GetHashCode()));
 
@@ -50,5 +50,16 @@ namespace Plato.Compiler.Symbols
 
         public bool UsesSelfType()
             => IsSelfType() || TypeArgs.Any(ta => ta.UsesSelfType());
+
+        public TypeExpression GetReplacement(TypeExpression te)
+        {
+            for (var i=0; i < Def.TypeParameters.Count; i++)
+            {
+                if (Def.TypeParameters[i].Name == te.Name)
+                    return TypeArgs[i];
+            }
+
+            return te;
+        }
     }
 }

@@ -569,6 +569,6 @@ namespace Plato.Compiler.Symbols
         }
 
         public TypeExpression CreateAny()
-            => GetTypeExpression("Any");
+            => GetTypeExpression("IAny");
     }
 }

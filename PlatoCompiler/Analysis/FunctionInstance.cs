@@ -12,10 +12,10 @@ namespace Plato.Compiler.Analysis
     /// </summary>
     public class FunctionInstance
     {
-        public TypeDef ConcreteType { get; }
         public FunctionDef Implementation { get; }
         public TypeSubstitutions Substitutions { get; private set; }
         public TypeDef Concept { get; }
+        public ConcreteType ConcreteType { get; }
         public string ConceptName => Concept?.Name ?? "";
         public IReadOnlyList<string> ParameterNames { get; }
         public string Name => Implementation.Name;
@@ -24,19 +24,12 @@ namespace Plato.Compiler.Analysis
         public IReadOnlyList<TypeInstance> ParameterTypes { get; }
         public IReadOnlyList<TypeParameterDef> UsedTypeParameters { get; }
         public override string ToString() => $"{SignatureId}:{ReturnType}";
-        public bool IsImplicitCast => Name == ReturnType.Name && ParameterNames.Count == 1;
+        public bool IsImplicitCast => Name == ReturnType.Name && ParameterNames.Count == 1 && !ReturnType.Def.IsConcept();
 
-        // TODO: this might be necessary in the future, when choosing the correct type parameter is difficult.
-        //public Dictionary<TypeParameterDefinition, TypeParameterDefinition> Unifiers { get; } =
-        //    new Dictionary<TypeParameterDefinition, TypeParameterDefinition>();
-
-        public FunctionInstance(
-            TypeDef concreteType,
-            FunctionDef implementation,
-            TypeSubstitutions substitutions)
+        public FunctionInstance(FunctionDef implementation, ConcreteType type, TypeSubstitutions substitutions = null)
         {
-            ConcreteType = concreteType;
             Implementation = implementation;
+            ConcreteType = type;
             Substitutions = substitutions;
             ParameterNames = Implementation.Parameters.Select(p => p.Name).ToList();
             
@@ -65,7 +58,8 @@ namespace Plato.Compiler.Analysis
 
                 if (ta.Name.StartsWith("$"))
                 {
-                    Substitutions = Substitutions.Add(ta.Name, tp.ToTypeExpression());
+                    Substitutions = Substitutions?.Add(ta.Name, tp.ToTypeExpression()) 
+                        ?? new TypeSubstitutions(ta.Name, tp.ToTypeExpression());
                 }
 
                 GatherTypeVariables(ta);
@@ -77,7 +71,7 @@ namespace Plato.Compiler.Analysis
             // Repeat until we don't change anymore. 
             while (true)
             {
-                var r = Substitutions.Replace(expr);
+                var r = Substitutions?.Replace(expr) ?? expr;
 
                 if (ReferenceEquals(r, expr)) 
                     return new TypeInstance(r.Def, r.TypeArgs.Select(ToInstance));

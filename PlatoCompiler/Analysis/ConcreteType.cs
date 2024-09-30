@@ -45,15 +45,18 @@ namespace Plato.Compiler.Analysis
         }
 
         public ConceptImplementation CreateConceptImplementation(TypeExpression type)
-            => new ConceptImplementation(Libraries, Type, Substitutions.Add(type), type);
+            => new ConceptImplementation(Libraries, this, Substitutions.Add(type), type);
 
         public FunctionInstance AnalyzeFunction(FunctionDef function)
-            => new FunctionInstance(Type, function, Substitutions);
+            => new FunctionInstance(function, this, Substitutions);
 
         public IEnumerable<FunctionInstance> GetConceptFunctions()
             => Concepts.SelectMany(c => c.AllFunctions());
 
         public IReadOnlyList<TypeExpression> DistinctFieldTypes
             => Type.Fields.Select(f => f.Type).Distinct().ToList();
+
+        public override string ToString()
+            => $"Concrete:{Type}";
     }
 }

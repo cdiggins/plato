@@ -11,19 +11,20 @@ namespace Plato.Compiler.Analysis
     /// </summary>
     public class ConceptImplementation : ITree<ConceptImplementation>
     {
+        public string Name => Concept.Name;
         public LibraryFunctions Libraries { get; }
         public ConceptImplementation InheritedFrom { get; }
         public IEnumerable<ConceptImplementation> Children { get; }
         public TypeExpression Expression { get; }
         public TypeDef Concept => Expression.Def;
-        public TypeDef ConcreteType { get;}
+        public ConcreteType ConcreteType { get;}
         public TypeSubstitutions Substitutions { get; }
         public IReadOnlyList<FunctionInstance> ImplementedFunctions { get; }
         public IReadOnlyList<FunctionInstance> DeclaredFunctions { get; }
 
         public ConceptImplementation(
             LibraryFunctions libraries,
-            TypeDef concreteType, 
+            ConcreteType concreteType, 
             TypeSubstitutions substitutions, 
             TypeExpression expression,
             ConceptImplementation inheritedFrom = null)
@@ -33,14 +34,13 @@ namespace Plato.Compiler.Analysis
             Verifier.AssertNotNull(substitutions, nameof(substitutions));
             Verifier.AssertNotNull(substitutions, nameof(expression));
 
-            Verifier.Assert(concreteType.IsConcrete());
             Verifier.Assert(expression.Def.IsConcept());
 
             Libraries = libraries;
             InheritedFrom = inheritedFrom;
             ConcreteType = concreteType;
             Expression = expression;
-            Substitutions = substitutions.Add(Concept.Name, ConcreteType.ToTypeExpression());
+            Substitutions = substitutions.Add(Concept.Name, ConcreteType.Type.ToTypeExpression());
 
             Verifier.Assert(Concept.IsConcept());
 
@@ -56,7 +56,7 @@ namespace Plato.Compiler.Analysis
             => new ConceptImplementation(Libraries, ConcreteType, Substitutions.Add(inheritsType), inheritsType, this);
 
         public FunctionInstance AnalyzeConceptFunction(FunctionDef function)
-            => new FunctionInstance(ConcreteType, function, Substitutions);
+            => new FunctionInstance(function, ConcreteType, Substitutions);
 
         public IEnumerable<FunctionInstance> AllFunctions()
             => ImplementedFunctions.Concat(Children.SelectMany(i => i.AllFunctions()));

@@ -39,7 +39,7 @@ namespace Plato.Compiler.Types
         public IType CreateArrayType(IReadOnlyList<Expression> expressions)
         {
             // TODO: we need to get the type of the array from the expressions provided 
-            return new TypeList(new[] { ToSimpleType("Array"), GenerateTypeVariable() });
+            return new TypeList(new[] { ToSimpleType("IArray"), GenerateTypeVariable() });
         }
 
         public FunctionAnalysis(Compilation compilation, FunctionDef def)
@@ -357,7 +357,7 @@ namespace Plato.Compiler.Types
                     break;
                     
                 case FunctionGroupRefSymbol functionGroupReference:
-                    r = ToSimpleType("Any");
+                    r = ToSimpleType("IAny");
                     break;
 
                 case Lambda lambda:

@@ -49,8 +49,24 @@
         public static Integer Negative(Integer x) => -x.Value;
 
         // These are the two ways to make an array. 
-        public static Array<T> Map<T>(this Integer x, System.Func<Integer, T> f) => new LazyArray<T>(x, f);
-        public static Array<T> MakeArray<T>(params T[] args) => new PrimitiveArray<T>(args);
+        public static IArray<T> MapRange<T>(this Integer x, System.Func<Integer, T> f) => new Array<T>(x, f);
+        public static IArray<T> MakeArray<T>(params T[] args) => new PrimitiveArray<T>(args);
+        
+        // This is a built-in implementation
+        public static IArray<T1> FlatMap<T0, T1>(IArray<T0> xs, System.Func<T0, IArray<T1>> f) 
+        {
+            var r = new System.Collections.Generic.List<T1>();
+            for (var i=0; i < xs.Count; ++i)
+            {
+                var tmp = f(xs[i]);
+                for (var j=0; j < xs.Count; ++j)
+                {
+                    r.Add(tmp[j]);
+                }
+            }
+            return new ListArray<T1>(r);
+        }
+
 
         public static Boolean And(Boolean x, Boolean y) => x.Value && y.Value;
         public static Boolean Or(Boolean x, Boolean y) => x.Value || y.Value;
@@ -61,7 +77,7 @@
         public static Character At(String x, Integer n) => x.Value[n];
         public static Integer Count(String x) => x.Value.Length;
 
-        public static string MakeString(string typeName, Array<String> fieldNames, Array<Dynamic> fieldValues)
+        public static string MakeString(string typeName, IArray<String> fieldNames, IArray<Dynamic> fieldValues)
         {
             var sb = new System.Text.StringBuilder();
             sb.Append($"{{ _type=\"{typeName}\" ");
@@ -92,10 +108,20 @@
                 return ((int)rol5 + h1) ^ h2;
             }
         }     
+        
+        public static Dynamic New(Type type, IArray<IAny> args) 
+            => Dynamic.New(System.Activator.CreateInstance(type.Value, args.ToSystemArray()));
 
-        // TODO: I need to implemnt this. 
-        public static Dynamic New(Type type, Array<Any> args) 
-            => throw new System.NotImplementedException("");
+        public static T[] ToSystemArray<T>(this IArray<T> self) 
+        {
+           var r = new T[self.Count];
+           for (var i=0; i< self.Count; i++)
+			   r[i] = self.At(i);
+           return r;
+        }
+
+        public static Array<T> ToPrimitiveArray<T>(this IArray<T> self)
+            => self is Array<T> a ? a : new Array<T>(self.Count, self.At);
 
         public static Boolean Equals(this Number a, Number b) => a.Value.Equals(b.Value);
         public static Boolean Equals(this Character a, Character b) => a.Value.Equals(b.Value);
@@ -114,20 +140,20 @@
     {
     }
 
-    public readonly struct LazyArray<T> : Array<T>
+    public readonly struct Array<T> : IArray<T>
     {
         private readonly System.Func<Integer, T> _func;
         public Integer Count { get; }
         public T At(Integer n) => _func(n);
         public T this[Integer n] => _func(n);
-        public LazyArray(Integer count, System.Func<Integer, T> func)
+        public Array(Integer count, System.Func<Integer, T> func)
         {
             Count = count;
             _func = func;
         }
     }
 
-   public readonly struct LazyArray2D<T> : Array2D<T>
+   public readonly struct Array2D<T> : IArray2D<T>
     {
         private readonly System.Func<Integer, Integer, T> _func;
         public Integer Count => ColumnCount * RowCount;
@@ -137,7 +163,7 @@
         public T this[Integer n] => At(n % ColumnCount, n / ColumnCount);
         public T At(Integer col, Integer row) => _func(col, row);
         public T this[Integer col, Integer row] => _func(col, row);
-        public LazyArray2D(Integer numCols, Integer numRows, System.Func<Integer, Integer, T> func)
+        public Array2D(Integer numCols, Integer numRows, System.Func<Integer, Integer, T> func)
         {
             ColumnCount = numCols;
             RowCount = numRows;
@@ -145,14 +171,22 @@
         }
     }
 
-    public readonly struct PrimitiveArray<T> : Array<T>
+    public readonly struct PrimitiveArray<T> : IArray<T>
     {
         private readonly T[] _data;
         public Integer Count => _data.Length;
         public T At(Integer n) => _data[n];
         public T this[Integer n] => _data[n];
-        public PrimitiveArray(T[] data) => _data = data;
-        public static Array<T> Default = new PrimitiveArray<T>(System.Array.Empty<T>());
+        public PrimitiveArray(T[] data) => _data = data;    
+    }
+
+    public readonly struct ListArray<T> : IArray<T>
+    {
+        private readonly System.Collections.Generic.IReadOnlyList<T> _data;
+        public Integer Count => _data.Count;
+        public T At(Integer n) => _data[n];
+        public T this[Integer n] => _data[n];
+        public ListArray(System.Collections.Generic.IReadOnlyList<T> data) => _data = data;
     }
 
     public readonly partial struct String
@@ -183,8 +217,8 @@
         public static Dynamic Default = new Dynamic();
         public static Dynamic New(object value) => new Dynamic(value);
         public String TypeName => "Dynamic";
-        public Array<String> FieldNames => Intrinsics.MakeArray<String>("Value");
-        public Array<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(Value));
+        public IArray<String> FieldNames => Intrinsics.MakeArray<String>("Value");
+        public IArray<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>(new Dynamic(Value));
         public T As<T>() => (T)Value;
     }
 
