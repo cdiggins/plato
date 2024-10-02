@@ -77,10 +77,32 @@
         public static Character At(String x, Integer n) => x.Value[n];
         public static Integer Count(String x) => x.Value.Length;
 
-        public static string MakeString(string typeName, IArray<String> fieldNames, IArray<Dynamic> fieldValues)
+        public static string MakeString<T>(T self, string typeName, IArray<String> fieldNames, IArray<Dynamic> fieldValues)
         {
+            if (self is Integer n)
+            {
+                return n.Value.ToString();
+			}
+            else if (self is Number x)
+            {
+                return x.Value.ToString();
+            }
+            else if (self is Character c)
+            {
+                return $"\"{c.Value.ToString().Replace("\\", "\\\\").Replace("\"", "\\\"")}\"";
+            }
+            else if (self is String s)
+            {
+                return $"\"{s.Value.ToString().Replace("\\", "\\\\").Replace("\"", "\\\"")}\"";
+            }
+            else if (self is Boolean b)
+            {
+                if (b) return "true";
+				else return "false";
+            }
+
             var sb = new System.Text.StringBuilder();
-            sb.Append($"{{ _type=\"{typeName}\" ");
+            sb.Append($"{{ _type = \"{typeName}\" ");
             for (var i = 0; i < fieldNames.Count; i++)
                 sb.Append(", ").Append(fieldNames.At(i).Value).Append(" = ").Append(fieldValues.At(i).Value);
             sb.Append(" }");
@@ -136,6 +158,13 @@
         public static Boolean LessThanOrEquals(this String a, String b) => a.Value.CompareTo(b.Value) <= 0;
     }
     
+    public interface IArray<T> : System.Collections.Generic.IReadOnlyList<T>
+    {
+        Integer Count { get; }
+        T At(Integer n);
+        T this[Integer n] { get; }
+    }
+
     public readonly partial struct Number
     {
     }
@@ -151,6 +180,14 @@
             Count = count;
             _func = func;
         }
+        public System.Collections.Generic.IEnumerator<T> GetEnumerator()
+		{
+			for (var i = 0; i < Count; i++)
+				yield return this[i];
+		}
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+        T System.Collections.Generic.IReadOnlyList<T>.this[int n] => At(n);
+        int System.Collections.Generic.IReadOnlyCollection<T>.Count => this.Count;
     }
 
    public readonly struct Array2D<T> : IArray2D<T>
@@ -169,6 +206,14 @@
             RowCount = numRows;
             _func = func;
         }
+        public System.Collections.Generic.IEnumerator<T> GetEnumerator()
+		{
+			for (var i = 0; i < Count; i++)
+				yield return this[i];
+		}
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+        T System.Collections.Generic.IReadOnlyList<T>.this[int n] => At(n);
+        int System.Collections.Generic.IReadOnlyCollection<T>.Count => this.Count;
     }
 
     public readonly struct PrimitiveArray<T> : IArray<T>
@@ -178,6 +223,14 @@
         public T At(Integer n) => _data[n];
         public T this[Integer n] => _data[n];
         public PrimitiveArray(T[] data) => _data = data;    
+        public System.Collections.Generic.IEnumerator<T> GetEnumerator()
+		{
+			for (var i = 0; i < Count; i++)
+				yield return this[i];
+		}
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+        T System.Collections.Generic.IReadOnlyList<T>.this[int n] => At(n);
+        int System.Collections.Generic.IReadOnlyCollection<T>.Count => this.Count;
     }
 
     public readonly struct ListArray<T> : IArray<T>
@@ -187,6 +240,14 @@
         public T At(Integer n) => _data[n];
         public T this[Integer n] => _data[n];
         public ListArray(System.Collections.Generic.IReadOnlyList<T> data) => _data = data;
+        public System.Collections.Generic.IEnumerator<T> GetEnumerator()
+		{
+			for (var i = 0; i < Count; i++)
+				yield return this[i];
+		}
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+        T System.Collections.Generic.IReadOnlyList<T>.this[int n] => At(n);
+        int System.Collections.Generic.IReadOnlyCollection<T>.Count => this.Count;
     }
 
     public readonly partial struct String

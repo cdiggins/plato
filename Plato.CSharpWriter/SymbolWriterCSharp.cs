@@ -404,6 +404,10 @@ namespace Plato.CSharpWriter
 
             Debug.Assert(type.IsConcept());
 
+            // We have a special implementation of IArray
+            if (type.Name == "IArray")
+                return this;
+
             var baseTypeParams = type.TypeParameters.Select(tp => tp.Name).ToList();
 
             var typeParams = type.IsSelfConstrained()
@@ -617,7 +621,7 @@ namespace Plato.CSharpWriter
             WriteLine($"public override int GetHashCode() => Intrinsics.CombineHashCodes({fieldNamesStr});");
             
             // Object.ToString() override 
-            WriteLine($"public override string ToString() => Intrinsics.MakeString(TypeName, FieldNames, FieldValues);");
+            WriteLine($"public override string ToString() => Intrinsics.MakeString(this, TypeName, FieldNames, FieldValues);");
 
             // Implicit casting operators to/from Dynamic
             WriteLine($"public static implicit operator Dynamic({name} self) => new Dynamic(self);");
@@ -681,12 +685,11 @@ namespace Plato.CSharpWriter
                 // Allow implicit casting to Array<T>
                 WriteLine($"public static implicit operator Array<{elem}>({name} self) => self.ToPrimitiveArray();");
 
-                // Provide an enumerator, so that we can "ForEach" over the values. 
+                // Implementation of IReadOnlyList
                 WriteLine($"public System.Collections.Generic.IEnumerator<{elem}> GetEnumerator() {{ for (var i=0; i < Count; i++) yield return At(i); }}");
-
-                // TODO: maybe an implicit cast to/from Array? 
-
-                // TODO: maybe add a select few specialized array functions (or add them all, I don't know / care) 
+                WriteLine($"System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();");
+                WriteLine($"{elem} System.Collections.Generic.IReadOnlyList<{elem}>.this[int n] => At(n);");
+                WriteLine($"int System.Collections.Generic.IReadOnlyCollection<{elem}>.Count => this.Count;");
             }
 
             // Check if the type is "INumerical", if so provide implementations of the default types. 
@@ -798,14 +801,8 @@ namespace Plato.CSharpWriter
 
         public FunctionInstance ChooseBestFunction(IReadOnlyList<FunctionInstance> xs)
         {
-            // If all functions have no body, we can choose any one. 
-            var orig = xs;
-            var tmp = xs.Where(x => x.Implementation.Body != null).ToList();
-            if (tmp.Count == 0)
-                return xs[0];
-            xs = tmp;
-
             // We only want distinct implementations. 
+            var first = xs[0];
             xs = xs.Distinct(x => x.Implementation.Id).ToList();
 
             if (xs.Count > 1)
@@ -816,7 +813,7 @@ namespace Plato.CSharpWriter
             }
 
             if (xs.Count > 1)
-                throw new Exception($"Amgiguous: could not choose a best function implementation for {orig[0]}.");
+                throw new Exception($"Amgiguous: could not choose a best function implementation for {first}.");
 
             if (xs.Count == 0)
                 throw new Exception("No results: could not find a best function.");

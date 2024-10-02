@@ -13,12 +13,14 @@ namespace Plato.CSharpWriter
     public class DocWriter
     {
         public StringBuilder Sb { get; set; } = new StringBuilder();
+        public StringBuilder SbConcepts = new StringBuilder();
+        public StringBuilder SbTypes = new StringBuilder();
 
         public DocWriter(Compilation compilation)
         {
             var types = compilation.AllTypeAndLibraryDefinitions.ToList();
-            WriteConcepts(types);
             WriteTypes(types);
+            WriteConcepts(types);
         }
 
         public override string ToString()
@@ -30,8 +32,13 @@ namespace Plato.CSharpWriter
         public DocWriter WriteTypes(IReadOnlyList<TypeDef> typeDefs)
         {
             var types = typeDefs.Where(t => t.IsConcrete()).OrderBy(t => t.Name).ToList();
-            Sb.AppendLine($"# Types").AppendLine();
-            Sb.AppendLine($"Types are implemented as structs.");
+            Sb.AppendLine($"<Details>");
+            Sb.AppendLine($"<Summary>");
+            Sb.AppendLine($"# Types");
+            Sb.AppendLine($"</Summary>");
+            Sb.AppendLine();
+
+            Sb.AppendLine($"Types in Plato are readonly structs.");
 
             foreach (var t in types)
                 WriteType(t);
@@ -42,21 +49,26 @@ namespace Plato.CSharpWriter
         {
             var concepts = typeDefs.Where(t => t.IsConcept()).OrderBy(t => t.Name).ToList();
 
+            Sb.AppendLine($"<Details>");
+            Sb.AppendLine($"<Summary>");
             Sb.AppendLine($"# Concepts");
+            Sb.AppendLine($"</Summary>");
             Sb.AppendLine();
             
-            Sb.AppendLine($"Concepts are implemented as interfaces. Functions defined on a concept are available on every type that implements the concept.");
+            Sb.AppendLine($"Concepts in Plato are interfaces. Functions defined on a concept are available on every type that implements the concept.");
             Sb.AppendLine();
 
             foreach (var c in concepts)
                 WriteConcept(typeDefs, c);
+
+            Sb.AppendLine($"</Details>");
 
             return this;
         }
 
         public DocWriter WriteConcept(IReadOnlyList<TypeDef> allTypes, TypeDef concept)
         {
-            Sb.AppendLine($"## Concept {concept.Name}");
+            Sb.AppendLine($"## {concept.Name}");
             Sb.AppendLine();
 
             var inheritsList = concept.GetSelfAndAllInheritedTypes().Where(t => t.Name != concept.Name).OrderBy(t => t.Name).ToList();
@@ -77,12 +89,15 @@ namespace Plato.CSharpWriter
             var functions = concept.Methods.OrderBy(m => m.Name).ToList();
             var functionsStr = functions.Select(f => f.Name).JoinStringsWithComma();
             Sb.AppendLine($"Functions: {functionsStr}.");
+            foreach (var f in functionsStr)
             Sb.AppendLine();
 
+            /*
             var fields = concept.Fields.OrderBy(m => m.Name).ToList();
             var fieldsStr = fields.Select(f => f.Name).JoinStringsWithComma();
             Sb.AppendLine($"Fields: {fieldsStr}.");
             Sb.AppendLine();
+            */
 
             // TODO: list all inherited members 
             // TODO: format the thing better. 
