@@ -57,16 +57,9 @@
         {
             var r = new System.Collections.Generic.List<T1>();
             for (var i=0; i < xs.Count; ++i)
-            {
-                var tmp = f(xs[i]);
-                for (var j=0; j < xs.Count; ++j)
-                {
-                    r.Add(tmp[j]);
-                }
-            }
+                r.AddRange(f(xs[i]));            }
             return new ListArray<T1>(r);
         }
-
 
         public static Boolean And(Boolean x, Boolean y) => x.Value && y.Value;
         public static Boolean Or(Boolean x, Boolean y) => x.Value || y.Value;
