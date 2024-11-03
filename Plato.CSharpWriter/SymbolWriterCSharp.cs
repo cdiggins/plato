@@ -14,6 +14,7 @@ namespace Plato.CSharpWriter
     {
         public const bool EmitInterfaces = true;
         public const bool EmitStructsInsteadOfClasses = true;
+        public const bool EmitDataContracts = true;
         public string FloatType;
         public string Namespace;
         public string SelfType;
@@ -79,6 +80,9 @@ namespace Plato.CSharpWriter
             OtherPrecisionNamespace = floatType == "float" ? "Plato.DoublePrecision" : "Plato.SinglePrecision";
 #endif 
             StartNewFile(fileName);
+            WriteLine("using System.Runtime.Serialization;");
+            WriteLine("using System.Runtime.InteropServices;");
+            WriteLine("");
             WriteLine($"namespace {Namespace}");
             WriteStartBlock();
             WriteIntrinsics();
@@ -298,7 +302,12 @@ namespace Plato.CSharpWriter
                 WriteLine(f.IndexerImpl);
 
             if (f.IsImplicit)
-                WriteLine(f.ImplicitImpl);
+            {
+                if (f.ConcreteType.Name != f.Name)
+                    WriteLine(f.ImplicitImpl);
+                else
+                    Debug.WriteLine("Skipping implicit cast to self");
+            }
 
             return this;
         }
@@ -488,7 +497,10 @@ namespace Plato.CSharpWriter
             var typeParamsStr = JoinTypeParameters(t.TypeParameters.Select(tp => tp.Name));
 
             var kind = EmitStructsInsteadOfClasses ? "readonly partial struct" : "partial class";
-            Write($"public {kind} ");
+            var attr = EmitDataContracts 
+                ? "[DataContract, StructLayout(LayoutKind.Sequential, Pack=1)] " 
+                : "[StructLayout(LayoutKind.Sequential, Pack=1)] ";
+            Write($"{attr}public {kind} ");
             SelfType = t.Name;
             Write(t.Name);
             Write(typeParamsStr);
@@ -515,7 +527,8 @@ namespace Plato.CSharpWriter
             {
                 var ft = fieldTypes[i];     
                 var fn = fieldNames[i];
-                WriteLine($"public readonly {ft} {fn};");
+                var memberAttr = EmitDataContracts ? "[DataMember] " : "";
+                WriteLine($"{memberAttr}public readonly {ft} {fn};");
             }
 
             for (var i = 0; i < fieldTypes.Count; ++i)
@@ -621,7 +634,29 @@ namespace Plato.CSharpWriter
             WriteLine($"public override int GetHashCode() => Intrinsics.CombineHashCodes({fieldNamesStr});");
             
             // Object.ToString() override 
-            WriteLine($"public override string ToString() => Intrinsics.MakeString(this, TypeName, FieldNames, FieldValues);");
+            if (isPrimitive)
+            {
+                WriteLine($"public override string ToString() => Intrinsics.ToString(this);");
+            }
+            else
+            {
+                var toStr = "$\"{{ " + fieldNames.Select(fn => $"\\\"{fn}\\\" = {{{fn}}}").JoinStringsWithComma() + " }}\"";
+                WriteLine($"public override string ToString() => {toStr};");
+            }
+
+            // TODO: later
+            /*
+            WriteLine($"public static {name} FromString(String value) {{ int offset = 0; return ParseString(value, ref offset); }}");
+            if (isPrimitive)
+            {
+                WriteLine($"public static {name} ParseString(String value, ref int offset) => Intrinsics.ParseValue(value);");
+            }
+            else
+            {
+                var fromStr = fieldTypes.Select(ft => $"{ft}.ParseString(value, offset)").JoinStringsWithComma(); 
+                WriteLine($"public static {name} ParseString(String value, ref int offset) => ({fromStr});");
+            }
+            */
 
             // Implicit casting operators to/from Dynamic
             WriteLine($"public static implicit operator Dynamic({name} self) => new Dynamic(self);");
@@ -668,7 +703,8 @@ namespace Plato.CSharpWriter
                 var elem = ToCSharp(argType);
                 WriteLine($"// Array predefined functions");
 
-                if (name != "String")
+                // Check that there are mul
+                if (fieldNames.Count > 1 && fieldTypes.All(ft => ft == elem))
                 {
                     // Add a constructor from arrays 
                     var ctorArrayArgs = Enumerable.Range(0, fieldNames.Count).Select(i => $"xs[{i}]")
@@ -728,7 +764,9 @@ namespace Plato.CSharpWriter
                     continue;
                 }
 
-                WriteMemberFunction(ToFunctionInfo(f, concreteType));
+                // We have to be sure to not implement functions that cast to themselves
+                if (f.Name != name)
+                    WriteMemberFunction(ToFunctionInfo(f, concreteType));
             }
 
             WriteLine("// Unimplemented concept functions");
@@ -813,7 +851,9 @@ namespace Plato.CSharpWriter
             }
 
             if (xs.Count > 1)
-                throw new Exception($"Amgiguous: could not choose a best function implementation for {first}.");
+            {
+                WriteLine($"// Ambiguous: could not choose a best function implementation for {first}.");
+            }
 
             if (xs.Count == 0)
                 throw new Exception("No results: could not find a best function.");

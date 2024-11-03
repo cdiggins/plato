@@ -46,7 +46,7 @@ namespace Plato.Compiler.Analysis
 
             Children = Concept.Inherits.Select(CreateInheritedConceptImplementation).ToList();
 
-            var implementedFunctions = libraries.GetFunctionsForType(Concept.Name);
+            var implementedFunctions = libraries.GetFunctionsForType(Expression);
             ImplementedFunctions = implementedFunctions.Select(AnalyzeConceptFunction).ToList();
 
             DeclaredFunctions = Concept.Functions.Select(AnalyzeConceptFunction).ToList();

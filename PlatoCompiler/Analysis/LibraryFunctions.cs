@@ -16,8 +16,37 @@ namespace Plato.Compiler.Analysis
         public IEnumerable<FunctionDef> AllFunctions()
             => Lookup.Values.SelectMany(g => g);
 
-        public IEnumerable<FunctionDef> GetFunctionsForType(string typeName)
-            => AllFunctions().Where(f => f.Parameters.Count > 0 && f.Parameters[0].Type.Name == typeName);
+        public static bool MatchesType(TypeExpression parameter, TypeExpression target)
+        {
+            if (parameter.Name != target.Name)
+                return false;
+            
+            if (parameter.TypeArgs.Count != target.TypeArgs.Count)
+                return false;
+
+            for (var i = 0; i < parameter.TypeArgs.Count; i++)
+            {
+                var srcArg = parameter.TypeArgs[i];
+                var targetArg = target.TypeArgs[i];
+
+                if (srcArg.Name.StartsWith("$"))
+                    continue;
+
+                if (srcArg.Name != targetArg.Name)
+                    return false;
+            }
+
+            return true;
+        }
+
+        public IEnumerable<FunctionDef> GetFunctionsForType(TypeExpression typeExpr)
+        {
+            //var typeName = typeExpr.Name;
+            var r = AllFunctions()
+                .Where(f => f.Parameters.Count > 0 
+                    && MatchesType(f.Parameters[0].Type, typeExpr));
+            return r;
+        }
 
         public IEnumerable<FunctionDef> AllConstants()
             => AllFunctions().Where(f => f.Parameters.Count == 0);

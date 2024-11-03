@@ -57,7 +57,7 @@
         {
             var r = new System.Collections.Generic.List<T1>();
             for (var i=0; i < xs.Count; ++i)
-                r.AddRange(f(xs[i]));            }
+                r.AddRange(f(xs[i]));            
             return new ListArray<T1>(r);
         }
 
@@ -69,38 +69,6 @@
 
         public static Character At(String x, Integer n) => x.Value[n];
         public static Integer Count(String x) => x.Value.Length;
-
-        public static string MakeString<T>(T self, string typeName, IArray<String> fieldNames, IArray<Dynamic> fieldValues)
-        {
-            if (self is Integer n)
-            {
-                return n.Value.ToString();
-			}
-            else if (self is Number x)
-            {
-                return x.Value.ToString();
-            }
-            else if (self is Character c)
-            {
-                return $"\"{c.Value.ToString().Replace("\\", "\\\\").Replace("\"", "\\\"")}\"";
-            }
-            else if (self is String s)
-            {
-                return $"\"{s.Value.ToString().Replace("\\", "\\\\").Replace("\"", "\\\"")}\"";
-            }
-            else if (self is Boolean b)
-            {
-                if (b) return "true";
-				else return "false";
-            }
-
-            var sb = new System.Text.StringBuilder();
-            sb.Append($"{{ _type = \"{typeName}\" ");
-            for (var i = 0; i < fieldNames.Count; i++)
-                sb.Append(", ").Append(fieldNames.At(i).Value).Append(" = ").Append(fieldValues.At(i).Value);
-            sb.Append(" }");
-            return sb.ToString();
-        }
 
         public static int CombineHashCodes(params object[] objects)
         {
@@ -149,6 +117,13 @@
         public static Boolean LessThanOrEquals(this Integer a, Integer b) => a.Value <= b.Value;
         public static Boolean LessThanOrEquals(this Boolean a, Boolean b) => !a || (a && b);
         public static Boolean LessThanOrEquals(this String a, String b) => a.Value.CompareTo(b.Value) <= 0;
+
+        public static String ToString(this Number x) => x.Value.ToString();
+        public static String ToString(this Boolean x) => x ? "true" : "false";
+        public static String ToString(this Character x) => x.Value.ToString();
+        public static String ToString(this Integer x) => x.Value.ToString();
+        public static String ToString(this String x) => $"\"{x.Value}\"";
+        public static String ToString(this Type x) => $"\"{x.Value}\"";
     }
     
     public interface IArray<T> : System.Collections.Generic.IReadOnlyList<T>

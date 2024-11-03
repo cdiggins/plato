@@ -34,7 +34,7 @@ namespace Plato.Compiler.Analysis
             Substitutions = new TypeSubstitutions("Self", Type.ToTypeExpression());
             Concepts = type.Implements.Select(CreateConceptImplementation).ToList();
             AllConcepts = Concepts.AllDescendants().ToList();
-            ConcreteFunctions = libraries.GetFunctionsForType(Type.Name).Select(AnalyzeFunction).ToList();
+            ConcreteFunctions = libraries.GetFunctionsForType(Type.ToTypeExpression()).Select(AnalyzeFunction).ToList();
             FieldFunctions = Type.Fields.Select(f => AnalyzeFunction(f.Function)).ToList();
 
             ImplementedFunctions = AllConcepts.SelectMany(c => c.ImplementedFunctions).Concat(ConcreteFunctions).Concat(FieldFunctions).ToList();
@@ -51,7 +51,14 @@ namespace Plato.Compiler.Analysis
             => new FunctionInstance(function, this, Substitutions);
 
         public IEnumerable<FunctionInstance> GetConceptFunctions()
-            => Concepts.SelectMany(c => c.AllFunctions());
+        {
+            var r = Concepts.SelectMany(c => c.AllFunctions()).ToList();
+            // NOTE: the problem here, is that I only want Concept functions that exactly match this concrete type.
+            // For example, there might be a function to defined specifically for IArray<Vector3D> and that would not 
+            // work here. 
+            // So there are "AllFunctions", and it depends on whether we are setting stuff  
+            return r;
+        }
 
         public IReadOnlyList<TypeExpression> DistinctFieldTypes
             => Type.Fields.Select(f => f.Type).Distinct().ToList();
