@@ -34,8 +34,8 @@ namespace Plato.Compiler.Analysis
             Substitutions = new TypeSubstitutions("Self", Type.ToTypeExpression());
             Concepts = type.Implements.Select(CreateConceptImplementation).ToList();
             AllConcepts = Concepts.AllDescendants().ToList();
-            ConcreteFunctions = libraries.GetFunctionsForType(Type.ToTypeExpression()).Select(AnalyzeFunction).ToList();
-            FieldFunctions = Type.Fields.Select(f => AnalyzeFunction(f.Function)).ToList();
+            ConcreteFunctions = libraries.GetFunctionsForType(Type.ToTypeExpression()).Select(f => AnalyzeFunction(f, FunctionInstanceKind.ConcreteType)).ToList();
+            FieldFunctions = Type.Fields.Select(f => AnalyzeFunction(f.Function, FunctionInstanceKind.FieldType)).ToList();
 
             ImplementedFunctions = AllConcepts.SelectMany(c => c.ImplementedFunctions).Concat(ConcreteFunctions).Concat(FieldFunctions).ToList();
             DeclaredFunctions = AllConcepts.SelectMany(c => c.DeclaredFunctions).Distinct(d => d.SignatureId).ToList();
@@ -47,8 +47,8 @@ namespace Plato.Compiler.Analysis
         public ConceptImplementation CreateConceptImplementation(TypeExpression type)
             => new ConceptImplementation(Libraries, this, Substitutions.Add(type), type);
 
-        public FunctionInstance AnalyzeFunction(FunctionDef function)
-            => new FunctionInstance(function, this, Substitutions);
+        public FunctionInstance AnalyzeFunction(FunctionDef function, FunctionInstanceKind kind)
+            => new FunctionInstance(function, this, null, kind, Substitutions);
 
         public IEnumerable<FunctionInstance> GetConceptFunctions()
         {

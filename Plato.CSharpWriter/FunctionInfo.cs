@@ -52,7 +52,10 @@ namespace Plato.CSharpWriter
         public string MethodParametersString => NumParameters > 1 ? $"({MethodParameters.JoinStringsWithComma()})" : "";
         public string StaticSignature => $"public static {ReturnType} {Name}{GenericsString}{StaticParametersString}";
         public string ExtensionSignature => $"public static {ReturnType} {Name}{GenericsString}{ExtensionParametersString}";
-        public string MethodSignature => $"public {ReturnType} {Name}{GenericsString}{MethodParametersString}";
+
+        public bool IsStatic => ParameterNames.Count == 0 || ParameterNames.Count == 1 && ParameterNames[0] == "_";
+        public string StaticKeyword => IsStatic ? "static " : "";
+        public string MethodSignature => $"public {StaticKeyword}{ReturnType} {Name}{GenericsString}{MethodParametersString}";
         public string StaticArgsString => NumParameters > 0 ? $"({ParameterNames.JoinStringsWithComma()})" : "";
         public string MethodArgsString => NumParameters > 1 ? $"({ParameterNames.Skip(1).JoinStringsWithComma()})" : "";
         public string IntrinsicsArgsString => NumParameters > 0 ? $"({ParameterNames.Skip(1).Prepend("this").JoinStringsWithComma()})" : "";

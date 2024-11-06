@@ -124,6 +124,23 @@
         public static String ToString(this Integer x) => x.Value.ToString();
         public static String ToString(this String x) => $"\"{x.Value}\"";
         public static String ToString(this Type x) => $"\"{x.Value}\"";
+
+        public static Vector2D Eval(this ICurve2D self, Number x) => throw new System.NotImplementedException();
+        public static Vector3D Eval(this ICurve3D self, Number x) => throw new System.NotImplementedException();
+        public static Vector3D Eval(this ISurface self, Vector2D uv) => throw new System.NotImplementedException();
+
+        public static Number Distance(this ICurve2D self, Vector2D uv) => throw new System.NotImplementedException();
+        public static Number Distance(this ICurve3D self, Vector3D p) => throw new System.NotImplementedException();
+        public static Number Distance(this ISurface self, Vector3D p) => throw new System.NotImplementedException();
+    
+        public static Bounds3D Deform(this Bounds3D self, System.Func<Vector3D, Vector3D> f) => throw new System.NotImplementedException();
+    
+        public static Boolean ClosedX(this ISurface self) => throw new System.NotImplementedException();
+        public static Boolean ClosedY(this ISurface self) => throw new System.NotImplementedException();
+
+        public static Vector2D Divide(this Number s, Vector2D v) => (s / v.X, s / v.Y);
+        public static Vector3D Divide(this Number s, Vector3D v) => (s / v.X, s / v.Y, s / v.Z);
+        public static Vector4D Divide(this Number s, Vector4D v) => (s / v.X, s / v.Y, s / v.Z, s / v.W);
     }
     
     public interface IArray<T> : System.Collections.Generic.IReadOnlyList<T>
@@ -158,7 +175,7 @@
         int System.Collections.Generic.IReadOnlyCollection<T>.Count => this.Count;
     }
 
-   public readonly struct Array2D<T> : IArray2D<T>
+    public readonly struct Array2D<T> : IArray2D<T>
     {
         private readonly System.Func<Integer, Integer, T> _func;
         public Integer Count => ColumnCount * RowCount;

@@ -47,16 +47,16 @@ namespace Plato.Compiler.Analysis
             Children = Concept.Inherits.Select(CreateInheritedConceptImplementation).ToList();
 
             var implementedFunctions = libraries.GetFunctionsForType(Expression);
-            ImplementedFunctions = implementedFunctions.Select(AnalyzeConceptFunction).ToList();
+            ImplementedFunctions = implementedFunctions.Select(f => AnalyzeConceptFunction(f, FunctionInstanceKind.ConceptImpemented)).ToList();
 
-            DeclaredFunctions = Concept.Functions.Select(AnalyzeConceptFunction).ToList();
+            DeclaredFunctions = Concept.Functions.Select(f => AnalyzeConceptFunction(f, FunctionInstanceKind.ConceptDeclared)).ToList();
         }
 
         public ConceptImplementation CreateInheritedConceptImplementation(TypeExpression inheritsType)
             => new ConceptImplementation(Libraries, ConcreteType, Substitutions.Add(inheritsType), inheritsType, this);
 
-        public FunctionInstance AnalyzeConceptFunction(FunctionDef function)
-            => new FunctionInstance(function, ConcreteType, Substitutions);
+        public FunctionInstance AnalyzeConceptFunction(FunctionDef function, FunctionInstanceKind kind)
+            => new FunctionInstance(function, ConcreteType, this, kind, Substitutions);
 
         public IEnumerable<FunctionInstance> AllFunctions()
             => ImplementedFunctions.Concat(Children.SelectMany(i => i.AllFunctions()));

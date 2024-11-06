@@ -9,7 +9,7 @@ namespace Plato.AST
     public static class AstNodeFactory
     {
         public static AstNode ToIntrinsicInvocation(this CstNode context, string name, params AstNode[] args)
-            => new AstInvoke(context, new AstIdentifier(context, name), args);
+            => new AstInvoke(context, new AstIdentifier(context, name), false, args);
 
         public static AstNode ToAst<T>(this CstNodeFilter<T> filter) where T : CstNode
             => ToAst(filter.Node);
@@ -76,7 +76,7 @@ namespace Plato.AST
                 }
                 else if (postfix.FunctionArgs.Present)
                 {
-                    r = new AstInvoke(expr, r,
+                    r = new AstInvoke(expr, r, true,
                         postfix.FunctionArgs.Node.FunctionArg.Nodes.Select(n => ToAst<CstExpression>(n.Expression)).ToArray());
                 }
                 else if (postfix.Indexer.Present)
@@ -94,14 +94,16 @@ namespace Plato.AST
                     // a.b => b(a)
                     // a.b(c, d) => b(a, c, d);
 
+                    var hasArgList = false;
                     if (nextPostfix != null && nextPostfix.FunctionArgs.Present)
                     {
                         i++;
+                        hasArgList = true;
                         args.AddRange(nextPostfix.FunctionArgs.Node.FunctionArg.Nodes.Select(n => ToAst(n.Expression)));
                     }
 
                     var func = postfix.MemberAccess.Node.Identifier.ToAst();
-                    r = new AstInvoke(expr, func, args.ToArray());
+                    r = new AstInvoke(expr, func, hasArgList, args.ToArray());
                 }
                 else if (postfix.TernaryOperation.Present)
                 {
@@ -733,7 +735,7 @@ namespace Plato.AST
                     return ToAst(cstStatement.InnerStatement.Node);
 
                 case CstStringInterpolation cstStringInterpolation:
-                    return new AstInvoke(cstStringInterpolation, new AstIdentifier(cstStringInterpolation, "Interpolate"),
+                    return new AstInvoke(cstStringInterpolation, new AstIdentifier(cstStringInterpolation, "Interpolate"), true,
                         cstStringInterpolation.StringInterpolationContent.Nodes.Select(ToAst).ToArray());
 
                 case CstStringInterpolationContent cstStringInterpolationContent:

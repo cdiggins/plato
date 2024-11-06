@@ -122,7 +122,7 @@ namespace Plato.Compiler.Symbols
                     return new Argument(argument.Expression.TypedRewrite(f), argument.Position);
 
                 case FunctionCall functionCall:
-                    return new FunctionCall(functionCall.Function.TypedRewrite(f), functionCall.Args.RewriteList(f));
+                    return new FunctionCall(functionCall.Function.TypedRewrite(f), functionCall.HasArgList, functionCall.Args.RewriteList(f));
 
                 case FunctionGroupRefSymbol functionGroupRefSymbol:
                     return self;

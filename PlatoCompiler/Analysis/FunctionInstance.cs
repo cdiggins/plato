@@ -7,6 +7,17 @@ using Plato.Compiler.Types;
 
 namespace Plato.Compiler.Analysis
 {
+    public enum FunctionInstanceKind
+    {
+        ConceptDeclared,
+        ConceptImpemented,
+        ConcreteType,
+        FieldType,
+        Constant,
+        InterfaceExtension,
+        ConceptInterface,
+    }
+
     /// <summary>
     /// Represents an instance of a function. Used for analyzing library functions and generating code.
     /// </summary>
@@ -25,11 +36,16 @@ namespace Plato.Compiler.Analysis
         public IReadOnlyList<TypeParameterDef> UsedTypeParameters { get; }
         public override string ToString() => $"{SignatureId}:{ReturnType}";
         public bool IsImplicitCast => Name == ReturnType.Name && ParameterNames.Count == 1 && !ReturnType.Def.IsConcept();
+        public ConceptImplementation ConceptImplementation { get; }
+        public FunctionInstanceKind Kind { get; }
 
-        public FunctionInstance(FunctionDef implementation, ConcreteType type, TypeSubstitutions substitutions = null)
+        public FunctionInstance(FunctionDef implementation, ConcreteType type, ConceptImplementation ci, FunctionInstanceKind kind, TypeSubstitutions substitutions = null)
         {
             Implementation = implementation;
             ConcreteType = type;
+            ConceptImplementation = ci;
+            Kind = kind;
+
             Substitutions = substitutions;
             ParameterNames = Implementation.Parameters.Select(p => p.Name).ToList();
             

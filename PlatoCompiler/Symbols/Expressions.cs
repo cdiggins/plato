@@ -168,12 +168,14 @@ namespace Plato.Compiler.Symbols
     public class FunctionCall : Expression
     {
         public Expression Function { get; }
+        public bool HasArgList { get; }
         public IReadOnlyList<Argument> Args { get; }
 
-        public FunctionCall(Expression function, params Argument[] args)
+        public FunctionCall(Expression function, bool hasArgList, params Argument[] args)
             : base(args.Prepend(function).ToArray())
         {
             Function = function;
+            HasArgList = hasArgList;
             if (Function == null)
                 Debug.WriteLine("Unexpected empty function");
             Args = args;

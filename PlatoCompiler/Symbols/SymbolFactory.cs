@@ -234,7 +234,7 @@ namespace Plato.Compiler.Symbols
                 throw new Exception(msg);
             }
             
-            return new FunctionCall(funcRef, args);
+            return new FunctionCall(funcRef, astInvoke.HasArgList, args);
         }
 
         public Symbol InternalResolve(AstNode node)

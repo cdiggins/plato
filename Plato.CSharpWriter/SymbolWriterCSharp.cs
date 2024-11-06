@@ -15,6 +15,7 @@ namespace Plato.CSharpWriter
         public const bool EmitInterfaces = true;
         public const bool EmitStructsInsteadOfClasses = true;
         public const bool EmitDataContracts = true;
+        public const bool SkipGenericIArrayMethods = true;
         public string FloatType;
         public string Namespace;
         public string SelfType;
@@ -174,7 +175,7 @@ namespace Plato.CSharpWriter
         public SymbolWriterCSharp WriteCommaList(IEnumerable<string> symbols)
             => WriteCommaList(symbols, (w, s) => w.Write(s));
 
-        public SymbolWriterCSharp Write(Symbol symbol)
+        public SymbolWriterCSharp Write(Symbol symbol, string type = null)
         {
             switch (symbol)
             {
@@ -183,7 +184,7 @@ namespace Plato.CSharpWriter
                 case DefSymbol definition:
                     return Write(definition);
                 case Expression expression:
-                    return Write(expression);
+                    return Write(expression, type);
                 case Statement statement:
                     return Write(statement);
                 case TypeExpression typeExpression:
@@ -212,7 +213,7 @@ namespace Plato.CSharpWriter
                 if (fi.NumParameters == 1 && !(body is Expression))
                     Write(" { get ").Write(body).Write(" } ");
                 else
-                    Write(body);
+                    Write(body, fi.ReturnType);
             }
             if (body is Expression)
                 WriteLine(";");
@@ -323,7 +324,7 @@ namespace Plato.CSharpWriter
             WriteLine($"public static class Constants");
             WriteStartBlock();
             foreach (var f in Compilation.Libraries.AllConstants())
-                WriteStaticFunction(ToFunctionInfo(f, null));
+                WriteStaticFunction(ToFunctionInfo(f, null, FunctionInstanceKind.Constant));
             WriteEndBlock();
             return this;
         }
@@ -334,7 +335,7 @@ namespace Plato.CSharpWriter
             WriteStartBlock();
             foreach (var f in Compilation.Libraries.AllFunctions())
             {
-                if (f.NumParameters > 1)
+                if (f.NumParameters > 0)
                 {
                     var pt = f.Parameters[0].Type;
                     if (!pt.Def.IsConcept())
@@ -347,7 +348,7 @@ namespace Plato.CSharpWriter
                     if (pt.Def.Name != "IArray")
                         continue; 
 
-                    var fi = ToFunctionInfo(f, null);
+                    var fi = ToFunctionInfo(f, null, FunctionInstanceKind.InterfaceExtension);
                     WriteExtensionFunction(fi);
                 }
             }
@@ -393,7 +394,7 @@ namespace Plato.CSharpWriter
             WriteStartBlock();
             foreach (var m in type.Methods)
             {
-                var fi = ToFunctionInfo(m.Function, null);
+                var fi = ToFunctionInfo(m.Function, null, FunctionInstanceKind.ConceptInterface);
                 WriteLine(fi.MethodInterface);
                 if (fi.IsIndexer)
                     WriteLine(fi.IndexerInterface);
@@ -498,9 +499,10 @@ namespace Plato.CSharpWriter
 
             var kind = EmitStructsInsteadOfClasses ? "readonly partial struct" : "partial class";
             var attr = EmitDataContracts 
-                ? "[DataContract, StructLayout(LayoutKind.Sequential, Pack=1)] " 
-                : "[StructLayout(LayoutKind.Sequential, Pack=1)] ";
-            Write($"{attr}public {kind} ");
+                ? "[DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]" 
+                : "[StructLayout(LayoutKind.Sequential, Pack=1)]";
+            WriteLine($"{attr}");
+            Write($"public {kind} ");
             SelfType = t.Name;
             Write(t.Name);
             Write(typeParamsStr);
@@ -754,14 +756,30 @@ namespace Plato.CSharpWriter
             foreach (var g in funcGroups)
             {
                 var f = ChooseBestFunction(g);
+                
+                // Note: we skip functions that are named after a field ... 
+                if (fieldNames.Contains(f.Name))
+                    continue;
+
                 if (f.ConceptName == "IArray")
                 {
-                    // TODO: why is this here. Why are we skipping the IArray methods?
-                    // I am assuming because there are too many of them.
-                    // I think then maybe what we want is an "ArrayLike" concept, which is a subset of IArray
-                    // Think about this though ... if we put the "IArray" methods here, they would be more efficient. 
-                    // We aren't doing something special, 
-                    continue;
+                    // TODO: We skip the generic IArray methods because there are too many of them.
+                    // We can re-enable this for some experiments in the future, because they would be potentially more efficient. 
+                    // Maybe what we want is an "ArrayLike" concept, which is a subset of IArray, if we want the programmer to be able to control some of the details
+                    if (SkipGenericIArrayMethods && f.Concept.TypeParameters.Count == 1)
+                    {
+                        var p = f.Implementation.Parameters.FirstOrDefault();
+                        var typeArg = p.Type.TypeArgs.FirstOrDefault();
+                        if (typeArg == null || typeArg.Def.IsTypeVariable())
+                            continue;
+                        Debug.WriteLine($"Implementing IArray function: {f}");
+
+                        // TEMP: we aren't bothering to implement any of them now.
+                        continue;
+                    }
+
+                    // The problem here is that what we really care about is why the function is being implemented.
+                    // Is it from a specific interface ?? 
                 }
 
                 // We have to be sure to not implement functions that cast to themselves
@@ -861,8 +879,8 @@ namespace Plato.CSharpWriter
             return xs[0];
         }
 
-        public FunctionInfo ToFunctionInfo(FunctionDef fd, ConcreteType ct)
-            => ToFunctionInfo(new FunctionInstance(fd, ct));
+        public FunctionInfo ToFunctionInfo(FunctionDef fd, ConcreteType ct, FunctionInstanceKind kind)
+            => ToFunctionInfo(new FunctionInstance(fd, ct, null, kind));
 
         public FunctionInfo ToFunctionInfo(FunctionInstance fi, ConcreteType ct = null)
         {
@@ -1014,12 +1032,14 @@ namespace Plato.CSharpWriter
             }
 
             Write(functionCall.Args[0]).Write(".").Write(functionCall.Function);
-            if (functionCall.Args.Count == 1)
+            
+            if (functionCall.Args.Count == 1 && !functionCall.HasArgList) 
                 return this;
+            
             return Write("(").WriteCommaList(functionCall.Args.Skip(1)).Write(")");
         }
 
-        public SymbolWriterCSharp Write(Expression expr)
+        public SymbolWriterCSharp Write(Expression expr, string type = null)
         {
             if (expr == null)
                 return this;
@@ -1073,9 +1093,14 @@ namespace Plato.CSharpWriter
                         .WriteStaticOrLambdaBody(lambda.Function.Body);
 
                 case ArrayLiteral arrayLiteral:
-                    return Write("Intrinsics.MakeArray(")
+                {
+                    var arg = "";
+                    if (type != null && type.StartsWith("IArray"))
+                        arg = type.Substring("IArray".Length);
+                    return Write($"Intrinsics.MakeArray{arg}(")
                         .WriteCommaList(arrayLiteral.Expressions)
                         .Write(")");
+                }
             }
 
             throw new ArgumentOutOfRangeException(nameof(expr));
