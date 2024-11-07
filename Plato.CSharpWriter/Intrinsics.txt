@@ -51,7 +51,8 @@
         // These are the two ways to make an array. 
         public static IArray<T> MapRange<T>(this Integer x, System.Func<Integer, T> f) => new Array<T>(x, f);
         public static IArray<T> MakeArray<T>(params T[] args) => new PrimitiveArray<T>(args);
-        
+        public static IArray2D<T> MakeArray2D<T>(this Integer columns, Integer rows, System.Func<Integer, Integer, T> f) => new Array2D<T>(columns, rows, f);
+
         // This is a built-in implementation
         public static IArray<T1> FlatMap<T0, T1>(IArray<T0> xs, System.Func<T0, IArray<T1>> f) 
         {
@@ -65,7 +66,9 @@
         public static Boolean Or(Boolean x, Boolean y) => x.Value || y.Value;
         public static Boolean Not(Boolean x) => !x.Value;
 
-        public static Number ToNumber(Integer x) => x.Value;
+        public static Number Number(Integer x) => x.Value;
+        public static Number Number(Character x) => x.Value;
+        public static Integer Integer(Character x) => x.Value;
 
         public static Character At(String x, Integer n) => x.Value[n];
         public static Integer Count(String x) => x.Value.Length;
@@ -247,12 +250,10 @@
     
     public readonly partial struct Integer
     {
-         public static implicit operator Number(Integer self) => self.Value;
     }
 
     public readonly partial struct Character
     {
-        public static implicit operator Number(Character self) => self.Value;
     }
 
     public readonly partial struct Dynamic

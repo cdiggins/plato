@@ -304,10 +304,12 @@ namespace Plato.CSharpWriter
 
             if (f.IsImplicit)
             {
-                if (f.ConcreteType.Name != f.Name)
-                    WriteLine(f.ImplicitImpl);
-                else
+                if (f.ConcreteType.Name == f.Name)
                     Debug.WriteLine("Skipping implicit cast to self");
+                else if (f.ConcreteType.Type.Fields.Count == 1 && f.ConcreteType.Type.Fields[0].Type.Def.Name == f.Name)
+                    Debug.WriteLine("Skipping implicit cast to single field (already included)");
+                else
+                    WriteLine(f.ImplicitImpl);
             }
 
             return this;
@@ -1012,7 +1014,20 @@ namespace Plato.CSharpWriter
 
                 case CommentStatement commentStatement:
                     return Write($"/* {commentStatement.Comment} */");
-            }
+
+                case IfStatement ifStatement:
+                    Write("if (");
+                    Write(ifStatement.Condition);
+                    WriteLine(")");
+                    Write(ifStatement.IfTrue);
+                    if (ifStatement.IfFalse != null)
+                    {
+                        WriteLine("else");
+                        Write(ifStatement.IfFalse);
+                    }
+
+                    return this;
+                }
 
             return this;
         }
