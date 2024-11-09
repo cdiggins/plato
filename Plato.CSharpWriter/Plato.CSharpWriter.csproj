@@ -2,6 +2,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+
+    <DefineConstants>CHANGE_PRECISION</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\PlatoCompiler\Plato.Compiler.csproj" />

@@ -8,6 +8,7 @@ using Plato.Compiler.Analysis;
 using Plato.Compiler.Symbols;
 using Plato.Compiler.Types;
 
+
 namespace Plato.CSharpWriter
 {
     public class SymbolWriterCSharp : CodeBuilder<SymbolWriterCSharp>
@@ -347,8 +348,12 @@ namespace Plato.CSharpWriter
                     // Ultimately it needs to be done with Self-constrained versions of the interfaces. 
                     // Writing those function signatures will be a lot of work. 
                     // Even then, there could be some problems (like 
-                    if (pt.Def.Name != "IArray")
-                        continue; 
+                    if (!pt.Def.Name.StartsWith("IArray")) continue; 
+
+
+                    // TODO: still a hack, we are skipping self-constrained interfaces temporarily
+                    //if (pt.Def.IsSelfConstrained()) continue;
+                    // NOTE: this causes problems because we have to implement property calls differently. 
 
                     var fi = ToFunctionInfo(f, null, FunctionInstanceKind.InterfaceExtension);
                     WriteExtensionFunction(fi);
@@ -489,330 +494,346 @@ namespace Plato.CSharpWriter
             => fieldName.Length == 0 || fieldName[0].IsLower() 
                 ? $"_{fieldName}" 
                 : fieldName.DecapitalizeFirst();
-        
+
         public SymbolWriterCSharp WriteTypeImplementation(ConcreteType concreteType)
         {
             var t = concreteType.Type;
-            var implements = EmitInterfaces && t.Implements.Count > 0
-                ? ": " + string.Join(", ", t.Implements.Select(te => ImplementedTypeString(te, t.Name, true)))
-                : "";
-
-            var typeParamsStr = JoinTypeParameters(t.TypeParameters.Select(tp => tp.Name));
-
-            var kind = EmitStructsInsteadOfClasses ? "readonly partial struct" : "partial class";
-            var attr = EmitDataContracts 
-                ? "[DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]" 
-                : "[StructLayout(LayoutKind.Sequential, Pack=1)]";
-            WriteLine($"{attr}");
-            Write($"public {kind} ");
-            SelfType = t.Name;
-            Write(t.Name);
-            Write(typeParamsStr);
-            WriteLine(implements);
-            WriteStartBlock();
-
-            var name = t.Name + typeParamsStr;
-            var fieldTypes = t.Fields.Select(f => TypeStr(f.Type)).ToList();
-            var fieldNames = t.Fields.Select(f => f.Name).ToList();
-            var parameterNames = fieldNames.Select(FieldNameToParameterName);
-            Debug.Assert(fieldTypes.Count == fieldNames.Count);
-
-            var isPrimitive = PrimitiveTypes.ContainsKey(name);
-            if (isPrimitive && fieldTypes.Count != 0)
-                throw new Exception($"Primitive {name} should not have fields");
-
-            if (isPrimitive)
-            {
-                fieldNames.Add("Value");
-                fieldTypes.Add(PrimitiveTypes[name]);
-            }
-
-            for (var i = 0; i < fieldTypes.Count; ++i)
-            {
-                var ft = fieldTypes[i];     
-                var fn = fieldNames[i];
-                var memberAttr = EmitDataContracts ? "[DataMember] " : "";
-                WriteLine($"{memberAttr}public readonly {ft} {fn};");
-            }
-
-            for (var i = 0; i < fieldTypes.Count; ++i)
-            {
-                var ft = fieldTypes[i];
-                var fn = fieldNames[i];
-                var pn = FieldNameToParameterName(fn);
-                var args = fieldNames.Select((n, j) => j == i ? pn : n).JoinStringsWithComma();
-                WriteLine($"public {name} With{fn}({ft} {pn}) => new {name}({args});");
-            }
-
-            var parameters = fieldTypes.Zip(parameterNames, (pt, pn) => $"{pt} {pn}");
-            var parameterNamesStr = parameterNames.JoinStringsWithComma();
-            var parametersStr = parameters.JoinStringsWithComma();
-            var deconstructorParametersStr = fieldTypes.Zip(parameterNames, (pt, pn) => $"out {pt} {pn}").JoinStringsWithComma();
-
-            var fieldTypesStr = string.Join(", ", fieldTypes);
-            var fieldNamesStr = fieldNames.JoinStringsWithComma();
-
-            // Regular Constructor 
-            if (fieldNames.Count > 0)
-            {
-                WriteLine($"public {t.Name}({parametersStr}) => ({fieldNamesStr}) = ({parameterNamesStr});");
-            }
-            else
-            {
-                if (!EmitStructsInsteadOfClasses)
-                    WriteLine($"public {t.Name}({parametersStr}) {{ }}");
-            }
-
-            // Parameterless constructor, but not if writing structs
-            if (!EmitStructsInsteadOfClasses)
-                WriteLine($"public {t.Name}() {{ }}");
-
-            WriteLine($"public static {name} Default = new {name}();");
-
-            // Static factory function (New)
-            WriteLine($"public static {name} New({parametersStr}) => new {name}({parameterNamesStr});");
-
-#if CHANGE_PRECISION
-            // Precision changes
-            if (t.TypeParameters.Count == 0 && fieldNames.Count != 0 && !fieldTypes.Any(ft => ft.Contains("<")))
-            {
-                var changeFields = fieldNames.Select(f => $"{f}.ChangePrecision()").JoinStringsWithComma();
-                WriteLine($"public {OtherPrecisionNamespace}.{t.Name} ChangePrecision() => ({changeFields});");
-                WriteLine($"public static implicit operator {OtherPrecisionNamespace}.{t.Name}({t.Name} self) => self.ChangePrecision();");
-            }
-#endif
-
-            // Implicit operators 
-            if (fieldNames.Count > 1)
-            {
-                // Implicit value-tuple operator 
-                var qualifiedFieldNames = fieldNames.Select(f => $"self.{f}").JoinStringsWithComma();
-                var tupleNames = string.Join(", ", Enumerable.Range(1, fieldNames.Count).Select(i => $"value.Item{i}"));
-                WriteLine($"public static implicit operator ({fieldTypesStr})({name} self) => ({qualifiedFieldNames});");
-                WriteLine($"public static implicit operator {name}(({fieldTypesStr}) value) => new {name}({tupleNames});");
-
-                // Deconstructor function 
-                Write($"public void Deconstruct({deconstructorParametersStr}) {{ ");
-                foreach (var fn in fieldNames)
-                    Write($"{FieldNameToParameterName(fn)} = {fn}; ");
-                WriteLine("}");
-            }
-            else if (fieldNames.Count == 1)
-            {
-                // Implicit operator to/from the field 
-                var fieldName = fieldNames[0];
-                var fieldType = fieldTypes[0];
-
-                // Only implicit operators if we are not an 
-                if (isPrimitive || !t.Fields[0].Type.Def.IsConcept())
-                {
-                    WriteLine($"public static implicit operator {fieldType}({name} self) => self.{fieldName};");
-                    WriteLine($"public static implicit operator {name}({fieldType} value) => new {name}(value);");
-                }
-
-                // Any time that we are implicitly casting to/from Number (floating point)
-                // We can also cast from Plato.Integers and built-in integers, as well to/from built-in floating types 
-                if (fieldType == "Number")
-                {
-                    WriteLine($"public static implicit operator {name}(Integer value) => new {name}(value);");
-                    WriteLine($"public static implicit operator {name}(int value) => new Integer(value);");
-                    WriteLine($"public static implicit operator {name}({FloatType} value) => new Number(value);");
-                    WriteLine($"public static implicit operator {FloatType}({name} value) => value.{fieldName};");
-
-                }
-            }
-
-            // Object.Equals override
-            if (fieldNames.Count > 0)
-            {
-                Write($"public override bool Equals(object obj) {{ if (!(obj is {name})) return false; var other = ({name})obj; return ")
-                    .Write(fieldNames.Select(f => $"{f}.Equals(other.{f})").JoinStrings(" && "))
-                    .WriteLine("; }");
-            }
-            else
-            {
-                WriteLine($"public override bool Equals(object obj) => true;");
-            }
-
-            // Object.GetHashCode override 
-            WriteLine($"public override int GetHashCode() => Intrinsics.CombineHashCodes({fieldNamesStr});");
             
-            // Object.ToString() override 
-            if (isPrimitive)
+            return SetSelfType(t.Name, () =>
             {
-                WriteLine($"public override string ToString() => Intrinsics.ToString(this);");
-            }
-            else
-            {
-                var toStr = "$\"{{ " + fieldNames.Select(fn => $"\\\"{fn}\\\" = {{{fn}}}").JoinStringsWithComma() + " }}\"";
-                WriteLine($"public override string ToString() => {toStr};");
-            }
+                var implements = EmitInterfaces && t.Implements.Count > 0
+                    ? ": " + string.Join(", ", t.Implements.Select(te => ImplementedTypeString(te, t.Name, true)))
+                    : "";
 
-            // TODO: later
-            /*
-            WriteLine($"public static {name} FromString(String value) {{ int offset = 0; return ParseString(value, ref offset); }}");
-            if (isPrimitive)
-            {
-                WriteLine($"public static {name} ParseString(String value, ref int offset) => Intrinsics.ParseValue(value);");
-            }
-            else
-            {
-                var fromStr = fieldTypes.Select(ft => $"{ft}.ParseString(value, offset)").JoinStringsWithComma(); 
-                WriteLine($"public static {name} ParseString(String value, ref int offset) => ({fromStr});");
-            }
-            */
+                var typeParamsStr = JoinTypeParameters(t.TypeParameters.Select(tp => tp.Name));
 
-            // Implicit casting operators to/from Dynamic
-            WriteLine($"public static implicit operator Dynamic({name} self) => new Dynamic(self);");
-            WriteLine($"public static implicit operator {name}(Dynamic value) => value.As<{name}>();");
+                var kind = EmitStructsInsteadOfClasses ? "readonly partial struct" : "partial class";
+                var attr = EmitDataContracts
+                    ? "[DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]"
+                    : "[StructLayout(LayoutKind.Sequential, Pack=1)]";
+                WriteLine($"{attr}");
+                Write($"public {kind} ");
 
-            WriteLine($"public String TypeName => {name.Quote()};");
+                Write(t.Name);
+                Write(typeParamsStr);
+                WriteLine(implements);
+                WriteStartBlock();
 
-            var fieldNamesAsStringsStr = fieldNames.Select(n => $"(String){n.Quote()}").JoinStringsWithComma();
-            WriteLine($"public IArray<String> FieldNames => Intrinsics.MakeArray<String>({fieldNamesAsStringsStr});");
+                var name = t.Name + typeParamsStr;
+                var fieldTypes = t.Fields.Select(f => TypeStr(f.Type)).ToList();
+                var fieldNames = t.Fields.Select(f => f.Name).ToList();
+                var parameterNames = fieldNames.Select(FieldNameToParameterName);
+                Debug.Assert(fieldTypes.Count == fieldNames.Count);
 
-            var fieldValuesAsDynamicsStr = fieldNames.Select(n => $"new Dynamic({n})").JoinStringsWithComma();
-            WriteLine($"public IArray<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>({fieldValuesAsDynamicsStr});");
+                var isPrimitive = PrimitiveTypes.ContainsKey(name);
+                if (isPrimitive && fieldTypes.Count != 0)
+                    throw new Exception($"Primitive {name} should not have fields");
 
-            if (EmitInterfaces)
-            {
-                // Explicit implementation of properties by forwarding to fields
-                foreach (var te in t.GetAllImplementedConcepts())
+                if (isPrimitive)
                 {
-                    var its = ImplementedTypeString(te, t.Name, true);
-
-                    foreach (var f in te.Def.Functions)
-                    {
-                        var fieldIndex = fieldNames.IndexOf(f.Name);
-                        if (f.Parameters.Count == 1 && fieldIndex >= 0)
-                        {
-                            var fieldType = isPrimitive ? name : fieldTypes[fieldIndex];
-                            WriteLine($"{fieldType} {its}.{f.Name} => {f.Name};");
-                        }
-                    }
+                    fieldNames.Add("Value");
+                    fieldTypes.Add(PrimitiveTypes[name]);
                 }
 
-                foreach (var c in t.GetAllImplementedConcepts())
+                for (var i = 0; i < fieldTypes.Count; ++i)
                 {
-                    WriteSimpleInterface(concreteType, name, c);
-                }
-            }
-
-            // Check if the type is "IArray", so can add an enumerator and an implicit cast to/from system array. 
-            var arrayConcept = concreteType.AllConcepts.FirstOrDefault(c => c.Name == "IArray");
-            var isArray = arrayConcept != null;
-            if (isArray)
-            {
-                var argType = arrayConcept.Substitutions.Replace(arrayConcept.Expression.TypeArgs[0]);
-                var elem = ToCSharp(argType);
-                WriteLine($"// Array predefined functions");
-
-                // Check that there are mul
-                if (fieldNames.Count > 1 && fieldTypes.All(ft => ft == elem))
-                {
-                    // Add a constructor from arrays 
-                    var ctorArrayArgs = Enumerable.Range(0, fieldNames.Count).Select(i => $"xs[{i}]")
-                        .JoinStringsWithComma();
-                    WriteLine($"public {name}(IArray<{elem}> xs) : this({ctorArrayArgs}) {{ }}");
-                    WriteLine($"public {name}({elem}[] xs) : this({ctorArrayArgs}) {{ }}");
-                    WriteLine($"public static {name} New(IArray<{elem}> xs) => new {name}(xs);");
-                    WriteLine($"public static {name} New({elem}[] xs) => new {name}(xs);");
+                    var ft = fieldTypes[i];
+                    var fn = fieldNames[i];
+                    var memberAttr = EmitDataContracts ? "[DataMember] " : "";
+                    WriteLine($"{memberAttr}public readonly {ft} {fn};");
                 }
 
-                // Allow implicit casting to System.Array
-                WriteLine($"public static implicit operator {elem}[]({name} self) => self.ToSystemArray();");
-
-                // Allow implicit casting to Array<T>
-                WriteLine($"public static implicit operator Array<{elem}>({name} self) => self.ToPrimitiveArray();");
-
-                // Implementation of IReadOnlyList
-                WriteLine($"public System.Collections.Generic.IEnumerator<{elem}> GetEnumerator() {{ for (var i=0; i < Count; i++) yield return At(i); }}");
-                WriteLine($"System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();");
-                WriteLine($"{elem} System.Collections.Generic.IReadOnlyList<{elem}>.this[int n] => At(n);");
-                WriteLine($"int System.Collections.Generic.IReadOnlyCollection<{elem}>.Count => this.Count;");
-            }
-
-            // Check if the type is "INumerical", if so provide implementations of the default types. 
-            var isNumerical = t.GetAllImplementedConcepts().Any(te => te.Name == "INumerical");
-            if (isNumerical)
-            {
-                WriteLine($"// Numerical predefined functions");
-                var numDistinctFieldTypes = fieldTypes.Distinct().Count();
-                if (numDistinctFieldTypes != 1)
-                    throw new Exception("INumerical types are assumed to have all of the fields of the same type");
-                WriteLine($"public IArray<Number> Components => Intrinsics.MakeArray<Number>({fieldNames.JoinStringsWithComma()});");
-
-                var tmp = Enumerable.Range(0, fieldNames.Count).Select(i => $"numbers[{i}]").JoinStringsWithComma();
-                var fromCompImpl = $"new {name}({tmp})";
-                WriteLine($"public {name} FromComponents(IArray<Number> numbers) => {fromCompImpl};");
-            }
-
-            // For the primitives, we have predefined implementations of the standard concepts .
-            WriteLine("// Implemented concept functions and type functions");
-            var funcGroups = concreteType
-                .ConcreteFunctions
-                .Concat(concreteType.GetConceptFunctions())
-                .GroupBy(f => f.SignatureId)
-                .Select(g => g.ToList());
-
-            foreach (var g in funcGroups)
-            {
-                var f = ChooseBestFunction(g);
-                
-                // Note: we skip functions that are named after a field ... 
-                if (fieldNames.Contains(f.Name))
-                    continue;
-
-                if (f.ConceptName == "IArray")
+                for (var i = 0; i < fieldTypes.Count; ++i)
                 {
-                    // TODO: We skip the generic IArray methods because there are too many of them.
-                    // We can re-enable this for some experiments in the future, because they would be potentially more efficient. 
-                    // Maybe what we want is an "ArrayLike" concept, which is a subset of IArray, if we want the programmer to be able to control some of the details
-                    if (SkipGenericIArrayMethods && f.Concept.TypeParameters.Count == 1)
-                    {
-                        var p = f.Implementation.Parameters.FirstOrDefault();
-                        var typeArg = p.Type.TypeArgs.FirstOrDefault();
-                        if (typeArg == null || typeArg.Def.IsTypeVariable())
-                            continue;
-                        Debug.WriteLine($"Implementing IArray function: {f}");
-
-                        // TEMP: we aren't bothering to implement any of them now.
-                        continue;
-                    }
-
-                    // The problem here is that what we really care about is why the function is being implemented.
-                    // Is it from a specific interface ?? 
+                    var ft = fieldTypes[i];
+                    var fn = fieldNames[i];
+                    var pn = FieldNameToParameterName(fn);
+                    var args = fieldNames.Select((n, j) => j == i ? pn : n).JoinStringsWithComma();
+                    WriteLine($"public {name} With{fn}({ft} {pn}) => new {name}({args});");
                 }
 
-                // We have to be sure to not implement functions that cast to themselves
-                if (f.Name != name)
-                    WriteMemberFunction(ToFunctionInfo(f, concreteType));
-            }
+                var parameters = fieldTypes.Zip(parameterNames, (pt, pn) => $"{pt} {pn}");
+                var parameterNamesStr = parameterNames.JoinStringsWithComma();
+                var parametersStr = parameters.JoinStringsWithComma();
+                var deconstructorParametersStr =
+                    fieldTypes.Zip(parameterNames, (pt, pn) => $"out {pt} {pn}").JoinStringsWithComma();
 
-            WriteLine("// Unimplemented concept functions");
-            foreach (var f in concreteType.UnimplementedFunctions)
-            {
-                if (IgnoredFunctions.Contains(f.Name))
-                    continue;
+                var fieldTypesStr = string.Join(", ", fieldTypes);
+                var fieldNamesStr = fieldNames.JoinStringsWithComma();
 
-                if (f.Name == "At" || f.Name == "Count")
+                // Regular Constructor 
+                if (fieldNames.Count > 0)
                 {
-                    if (name == "String")
-                        continue;
-
-                    Debug.WriteLine($"IArray is being implemented for {name}");
-                    var fi = ToFunctionInfo(f, concreteType);
-                    GenerateFunc(fi, concreteType);
+                    WriteLine($"public {t.Name}({parametersStr}) => ({fieldNamesStr}) = ({parameterNamesStr});");
                 }
                 else
                 {
-                    WriteMemberFunction(ToFunctionInfo(f, concreteType));
+                    if (!EmitStructsInsteadOfClasses)
+                        WriteLine($"public {t.Name}({parametersStr}) {{ }}");
                 }
-            }
 
-            WriteEndBlock();
-            
-            return this;
+                // Parameterless constructor, but not if writing structs
+                if (!EmitStructsInsteadOfClasses)
+                    WriteLine($"public {t.Name}() {{ }}");
+
+                WriteLine($"public static {name} Default = new {name}();");
+
+                // Static factory function (New)
+                WriteLine($"public static {name} New({parametersStr}) => new {name}({parameterNamesStr});");
+
+#if CHANGE_PRECISION
+                // Precision changes
+                if (t.TypeParameters.Count == 0 && fieldNames.Count != 0 && !fieldTypes.Any(ft => ft.Contains("<")))
+                {
+                    var changeFields = fieldNames.Select(f => $"{f}.ChangePrecision()").JoinStringsWithComma();
+                    WriteLine($"public {OtherPrecisionNamespace}.{t.Name} ChangePrecision() => ({changeFields});");
+                    WriteLine(
+                        $"public static implicit operator {OtherPrecisionNamespace}.{t.Name}({t.Name} self) => self.ChangePrecision();");
+                }
+#endif
+
+                // Implicit operators 
+                if (fieldNames.Count > 1)
+                {
+                    // Implicit value-tuple operator 
+                    var qualifiedFieldNames = fieldNames.Select(f => $"self.{f}").JoinStringsWithComma();
+                    var tupleNames = string.Join(", ",
+                        Enumerable.Range(1, fieldNames.Count).Select(i => $"value.Item{i}"));
+                    WriteLine(
+                        $"public static implicit operator ({fieldTypesStr})({name} self) => ({qualifiedFieldNames});");
+                    WriteLine(
+                        $"public static implicit operator {name}(({fieldTypesStr}) value) => new {name}({tupleNames});");
+
+                    // Deconstructor function 
+                    Write($"public void Deconstruct({deconstructorParametersStr}) {{ ");
+                    foreach (var fn in fieldNames)
+                        Write($"{FieldNameToParameterName(fn)} = {fn}; ");
+                    WriteLine("}");
+                }
+                else if (fieldNames.Count == 1)
+                {
+                    // Implicit operator to/from the field 
+                    var fieldName = fieldNames[0];
+                    var fieldType = fieldTypes[0];
+
+                    // Only implicit operators if we are not an 
+                    if (isPrimitive || !t.Fields[0].Type.Def.IsConcept())
+                    {
+                        WriteLine($"public static implicit operator {fieldType}({name} self) => self.{fieldName};");
+                        WriteLine($"public static implicit operator {name}({fieldType} value) => new {name}(value);");
+                    }
+
+                    // Any time that we are implicitly casting to/from Number (floating point)
+                    // We can also cast from Plato.Integers and built-in integers, as well to/from built-in floating types 
+                    if (fieldType == "Number")
+                    {
+                        WriteLine($"public static implicit operator {name}(Integer value) => new {name}(value);");
+                        WriteLine($"public static implicit operator {name}(int value) => new Integer(value);");
+                        WriteLine($"public static implicit operator {name}({FloatType} value) => new Number(value);");
+                        WriteLine($"public static implicit operator {FloatType}({name} value) => value.{fieldName};");
+
+                    }
+                }
+
+                // Object.Equals override
+                if (fieldNames.Count > 0)
+                {
+                    Write(
+                            $"public override bool Equals(object obj) {{ if (!(obj is {name})) return false; var other = ({name})obj; return ")
+                        .Write(fieldNames.Select(f => $"{f}.Equals(other.{f})").JoinStrings(" && "))
+                        .WriteLine("; }");
+                }
+                else
+                {
+                    WriteLine($"public override bool Equals(object obj) => true;");
+                }
+
+                // Object.GetHashCode override 
+                WriteLine($"public override int GetHashCode() => Intrinsics.CombineHashCodes({fieldNamesStr});");
+
+                // Object.ToString() override 
+                if (isPrimitive)
+                {
+                    WriteLine($"public override string ToString() => Intrinsics.ToString(this);");
+                }
+                else
+                {
+                    var toStr = "$\"{{ " + fieldNames.Select(fn => $"\\\"{fn}\\\" = {{{fn}}}").JoinStringsWithComma() +
+                                " }}\"";
+                    WriteLine($"public override string ToString() => {toStr};");
+                }
+
+                // TODO: later
+                /*
+                WriteLine($"public static {name} FromString(String value) {{ int offset = 0; return ParseString(value, ref offset); }}");
+                if (isPrimitive)
+                {
+                    WriteLine($"public static {name} ParseString(String value, ref int offset) => Intrinsics.ParseValue(value);");
+                }
+                else
+                {
+                    var fromStr = fieldTypes.Select(ft => $"{ft}.ParseString(value, offset)").JoinStringsWithComma();
+                    WriteLine($"public static {name} ParseString(String value, ref int offset) => ({fromStr});");
+                }
+                */
+
+                // Implicit casting operators to/from Dynamic
+                WriteLine($"public static implicit operator Dynamic({name} self) => new Dynamic(self);");
+                WriteLine($"public static implicit operator {name}(Dynamic value) => value.As<{name}>();");
+
+                WriteLine($"public String TypeName => {name.Quote()};");
+
+                var fieldNamesAsStringsStr = fieldNames.Select(n => $"(String){n.Quote()}").JoinStringsWithComma();
+                WriteLine(
+                    $"public IArray<String> FieldNames => Intrinsics.MakeArray<String>({fieldNamesAsStringsStr});");
+
+                var fieldValuesAsDynamicsStr = fieldNames.Select(n => $"new Dynamic({n})").JoinStringsWithComma();
+                WriteLine(
+                    $"public IArray<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>({fieldValuesAsDynamicsStr});");
+
+                if (EmitInterfaces)
+                {
+                    // Explicit implementation of properties by forwarding to fields
+                    foreach (var te in t.GetAllImplementedConcepts())
+                    {
+                        var its = ImplementedTypeString(te, t.Name, true);
+
+                        foreach (var f in te.Def.Functions)
+                        {
+                            var fieldIndex = fieldNames.IndexOf(f.Name);
+                            if (f.Parameters.Count == 1 && fieldIndex >= 0)
+                            {
+                                var fieldType = isPrimitive ? name : fieldTypes[fieldIndex];
+                                WriteLine($"{fieldType} {its}.{f.Name} => {f.Name};");
+                            }
+                        }
+                    }
+
+                    foreach (var c in t.GetAllImplementedConcepts())
+                    {
+                        WriteSimpleInterface(concreteType, name, c);
+                    }
+                }
+
+                // Check if the type is "IArray", so can add an enumerator and an implicit cast to/from system array. 
+                var arrayConcept = concreteType.AllConcepts.FirstOrDefault(c => c.Name == "IArray");
+                var isArray = arrayConcept != null;
+                if (isArray)
+                {
+                    var argType = arrayConcept.Substitutions.Replace(arrayConcept.Expression.TypeArgs[0]);
+                    var elem = ToCSharp(argType);
+                    WriteLine($"// Array predefined functions");
+
+                    // Check that there are mul
+                    if (fieldNames.Count > 1 && fieldTypes.All(ft => ft == elem))
+                    {
+                        // Add a constructor from arrays 
+                        var ctorArrayArgs = Enumerable.Range(0, fieldNames.Count).Select(i => $"xs[{i}]")
+                            .JoinStringsWithComma();
+                        WriteLine($"public {name}(IArray<{elem}> xs) : this({ctorArrayArgs}) {{ }}");
+                        WriteLine($"public {name}({elem}[] xs) : this({ctorArrayArgs}) {{ }}");
+                        WriteLine($"public static {name} New(IArray<{elem}> xs) => new {name}(xs);");
+                        WriteLine($"public static {name} New({elem}[] xs) => new {name}(xs);");
+                    }
+
+                    // Allow implicit casting to System.Array
+                    WriteLine($"public static implicit operator {elem}[]({name} self) => self.ToSystemArray();");
+
+                    // Allow implicit casting to Array<T>
+                    WriteLine(
+                        $"public static implicit operator Array<{elem}>({name} self) => self.ToPrimitiveArray();");
+
+                    // Implementation of IReadOnlyList
+                    WriteLine(
+                        $"public System.Collections.Generic.IEnumerator<{elem}> GetEnumerator() {{ for (var i=0; i < Count; i++) yield return At(i); }}");
+                    WriteLine(
+                        $"System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();");
+                    WriteLine($"{elem} System.Collections.Generic.IReadOnlyList<{elem}>.this[int n] => At(n);");
+                    WriteLine($"int System.Collections.Generic.IReadOnlyCollection<{elem}>.Count => this.Count;");
+                }
+
+                // Check if the type is "INumerical", if so provide implementations of the default types. 
+                var isNumerical = t.GetAllImplementedConcepts().Any(te => te.Name == "INumerical");
+                if (isNumerical)
+                {
+                    WriteLine($"// Numerical predefined functions");
+                    var numDistinctFieldTypes = fieldTypes.Distinct().Count();
+                    if (numDistinctFieldTypes != 1)
+                        throw new Exception("INumerical types are assumed to have all of the fields of the same type");
+                    WriteLine(
+                        $"public IArray<Number> Components => Intrinsics.MakeArray<Number>({fieldNames.JoinStringsWithComma()});");
+
+                    var tmp = Enumerable.Range(0, fieldNames.Count).Select(i => $"numbers[{i}]").JoinStringsWithComma();
+                    var fromCompImpl = $"new {name}({tmp})";
+                    WriteLine($"public {name} FromComponents(IArray<Number> numbers) => {fromCompImpl};");
+                }
+
+                // For the primitives, we have predefined implementations of the standard concepts .
+                WriteLine("// Implemented concept functions and type functions");
+                var funcGroups = concreteType
+                    .ConcreteFunctions
+                    .Concat(concreteType.GetConceptFunctions())
+                    .GroupBy(f => f.SignatureId)
+                    .Select(g => g.ToList());
+
+                foreach (var g in funcGroups)
+                {
+                    var f = ChooseBestFunction(g);
+
+                    // Note: we skip functions that are named after a field ... 
+                    if (fieldNames.Contains(f.Name))
+                        continue;
+
+                    if (f.ConceptName == "IArray")
+                    {
+                        // TODO: We skip the generic IArray methods because there are too many of them.
+                        // We can re-enable this for some experiments in the future, because they would be potentially more efficient. 
+                        // Maybe what we want is an "ArrayLike" concept, which is a subset of IArray, if we want the programmer to be able to control some of the details
+                        if (SkipGenericIArrayMethods && f.Concept.TypeParameters.Count == 1)
+                        {
+                            var p = f.Implementation.Parameters.FirstOrDefault();
+                            var typeArg = p.Type.TypeArgs.FirstOrDefault();
+                            if (typeArg == null || typeArg.Def.IsTypeVariable())
+                                continue;
+                            Debug.WriteLine($"Implementing IArray function: {f}");
+
+                            // TEMP: we aren't bothering to implement any of them now.
+                            continue;
+                        }
+
+                        // The problem here is that what we really care about is why the function is being implemented.
+                        // Is it from a specific interface ?? 
+                    }
+
+                    // We have to be sure to not implement functions that cast to themselves
+                    if (f.Name != name)
+                        WriteMemberFunction(ToFunctionInfo(f, concreteType));
+                }
+
+                WriteLine("// Unimplemented concept functions");
+                foreach (var f in concreteType.UnimplementedFunctions)
+                {
+                    if (IgnoredFunctions.Contains(f.Name))
+                        continue;
+
+                    if (f.Name == "At" || f.Name == "Count")
+                    {
+                        if (name == "String")
+                            continue;
+
+                        Debug.WriteLine($"IArray is being implemented for {name}");
+                        var fi = ToFunctionInfo(f, concreteType);
+                        GenerateFunc(fi, concreteType);
+                    }
+                    else
+                    {
+                        WriteMemberFunction(ToFunctionInfo(f, concreteType));
+                    }
+                }
+
+                WriteEndBlock();
+                return this;
+            });
         }
 
         public SymbolWriterCSharp WriteSimpleInterface(ConcreteType concrete, string name, TypeExpression concept)
