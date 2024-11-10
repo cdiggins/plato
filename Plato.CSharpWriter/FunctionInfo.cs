@@ -53,7 +53,7 @@ namespace Plato.CSharpWriter
         public string StaticSignature => $"public static {ReturnType} {Name}{GenericsString}{StaticParametersString}";
         public string ExtensionSignature => $"public static {ReturnType} {Name}{GenericsString}{ExtensionParametersString}";
 
-        public bool IsStatic => ParameterNames.Count == 0 || ParameterNames.Count == 1 && ParameterNames[0] == "_";
+        public bool IsStatic => ParameterNames.Count == 0 || ParameterNames[0] == "_";
         public string StaticKeyword => IsStatic ? "static " : "";
         public string MethodSignature => $"public {StaticKeyword}{ReturnType} {Name}{GenericsString}{MethodParametersString}";
         public string StaticArgsString => NumParameters > 0 ? $"({ParameterNames.JoinStringsWithComma()})" : "";
