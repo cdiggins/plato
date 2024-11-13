@@ -28,6 +28,7 @@
         public static Angle Acos(Number x) => new Angle(({{float}})System.Math.Acos(x));
         public static Angle Asin(Number x) => new Angle(({{float}})System.Math.Asin(x));
         public static Angle Atan(Number x) => new Angle(({{float}})System.Math.Atan(x));
+        public static Angle Atan2(Number y, Number x) => new Angle(({{float}})System.Math.Atan2(y, x));
 
         public static Number Pow(Number x, Number y) => ({{float}})System.Math.Pow(x, y);
         public static Number Log(Number x, Number y) => ({{float}})System.Math.Log(x, y);
@@ -161,8 +162,14 @@
     {
         private readonly System.Func<Integer, T> _func;
         public Integer Count { get; }
-        public T At(Integer n) => _func(n);
-        public T this[Integer n] => _func(n);
+        public T At(Integer n) => _func(VerifyIndex(n));
+        public T this[Integer n] => _func(VerifyIndex(n));
+#if DEBUG
+        public int VerifyIndex(int x) => x < 0 || x >= Count ? throw new System.ArgumentOutOfRangeException($"Index was {x} limit is {Count}") : x;
+#else
+        public int VerifyIndex(int x) => x;
+#endif
+
         public Array(Integer count, System.Func<Integer, T> func)
         {
             Count = count;
@@ -181,17 +188,24 @@
     public readonly struct Array2D<T> : IArray2D<T>
     {
         private readonly System.Func<Integer, Integer, T> _func;
-        public Integer Count => ColumnCount * RowCount;
-        public Integer ColumnCount { get; }
-        public Integer RowCount { get; }
-        public T At(Integer n) => At(n % ColumnCount, n / ColumnCount);
-        public T this[Integer n] => At(n % ColumnCount, n / ColumnCount);
-        public T At(Integer col, Integer row) => _func(col, row);
-        public T this[Integer col, Integer row] => _func(col, row);
+        public Integer Count => NumColumns * NumRows;
+        public Integer NumColumns { get; }
+        public Integer NumRows { get; }
+#if DEBUG
+        public int VerifyColumn(int x) => x < 0 || x >= NumColumns ? throw new System.ArgumentOutOfRangeException($"Column was {x} limit is {NumColumns}") : x;
+        public int VerifyRow(int x) => x < 0 || x >= NumRows ? throw new System.ArgumentOutOfRangeException($"Row was {x} limit is {NumRows}") : x;
+#else
+        public int VerifyColumn(int x) => x;
+        public int VerifyRow(int x) => x;
+#endif
+        public T At(Integer n) => At(n % NumColumns, n / NumColumns);
+        public T this[Integer n] => At(n % NumColumns, n / NumColumns);
+        public T At(Integer col, Integer row) => _func(VerifyColumn(col), VerifyRow(row));
+        public T this[Integer col, Integer row] => _func(VerifyColumn(col), VerifyRow(row));
         public Array2D(Integer numCols, Integer numRows, System.Func<Integer, Integer, T> func)
         {
-            ColumnCount = numCols;
-            RowCount = numRows;
+            NumColumns = numCols;
+            NumRows = numRows;
             _func = func;
         }
         public System.Collections.Generic.IEnumerator<T> GetEnumerator()
