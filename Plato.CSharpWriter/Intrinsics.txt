@@ -11,7 +11,7 @@
         public static string ChangePrecision(this string self) => self;
 
         public static Number MinNumber => {{float}}.MinValue;
-        public static Number MaxNumber => {{float}}.MinValue;
+        public static Number MaxNumber => {{float}}.MaxValue;
 
         public static Number Cos(Angle x) => ({{float}})System.Math.Cos(x.Radians);
         public static Number Sin(Angle x) => ({{float}})System.Math.Sin(x.Radians);
