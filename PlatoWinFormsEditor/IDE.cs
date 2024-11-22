@@ -82,9 +82,6 @@ public class IDE
         SymbolErrorsString = Compilation.SymbolFactory.Errors.Select(e => $"{e.Message} at {e.Node} {e.Node.Location}").JoinStringsWithNewLine();
         SemanticDiagnosticsString = Compilation.Diagnostics.JoinStringsWithNewLine();
 
-        //Compilation.OutputFunctionAnalysis();
-        Compilation.OutputFunctionCallAnalysis();
-
         if (Compilation.CompletedCompilation)
         {
             var currentFolder = PathUtil.GetCallerSourceFolder();

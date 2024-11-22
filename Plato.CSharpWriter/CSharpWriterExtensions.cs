@@ -1,4 +1,5 @@
-﻿using Ara3D.Utils;
+﻿using System.Net;
+using Ara3D.Utils;
 
 namespace Plato.CSharpWriter
 {
@@ -8,16 +9,23 @@ namespace Plato.CSharpWriter
         {
             var writer = new SymbolWriterCSharp(compilation, outputFolder);
 #if CHANGE_PRECISION
-            writer.WriteAll("Plato.SinglePrecision.g.cs","float");
+            writer.WriteAll("Plato.SinglePrecision.g.cs", "float");
 #endif
             writer.WriteAll("Plato.DoublePrecision.g.cs", "double");
             //writer.WriteAnalyses();
 
-            var docWriter = new DocWriter(compilation);
-            var fp = outputFolder.RelativeFile("docs.md");
-            fp.WriteAllText(docWriter.ToString());
+            //var docWriter = new DocWriter(compilation);
+            //var fp = outputFolder.RelativeFile("docs.md");
+            //fp.WriteAllText(docWriter.ToString());
+
+            Analyze(compilation, outputFolder);
 
             return writer;
+        }
+
+        public static TotalAnalysis Analyze(this Compiler.Compilation compilation, DirectoryPath outputFolder)
+        {
+            return new TotalAnalysis(compilation, outputFolder);
         }
     }
 }

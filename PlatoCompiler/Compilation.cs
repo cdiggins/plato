@@ -96,38 +96,15 @@ namespace Plato.Compiler
                     .Select(c => new ConcreteType(c, Libraries))
                     .ToList();
 
-                Log("Reified types");
-                WriteReifiedTypes();
-
                 Log("Creating function analysis");
                 var sb = new StringBuilder();
                 foreach (var fd in FunctionDefinitions)
                     GetOrComputeFunctionAnalysis(fd);
 
-                foreach (var fa in FunctionAnalyses.Values.Where(f => f.IsConcept)) 
-                    fa.BuildAnalysisOutput(sb);
-                
-                sb.AppendLine("Generic library functions"); 
-                foreach (var fa in FunctionAnalyses.Values.Where(f => f.IsGenericLibraryFunction))
-                    fa.BuildAnalysisOutput(sb);
-
                 Log("Gathering constraints for each function");
                 foreach (var fa in FunctionAnalyses.Values)
                     fa.Process();
-
-                OutputFunctionCallAnalysis();
-                OutputFunctionAnalysis();
-
-                var noResults = FunctionGroupCalls.Values.Where(fgc => fgc.DistinctReturnTypes.Count == 0).ToList();
-                sb.AppendLine($"Function group call unresolved: no functions {noResults.Count}");
-                foreach (var fgc in noResults)
-                    sb.AppendLine(fgc.ToString());
-
-                var ambResults = FunctionGroupCalls.Values.Where(fgc => fgc.DistinctReturnTypes.Count > 1).ToList();
-                sb.AppendLine($"Function group call unresolved: ambiguous {ambResults.Count}");
-                foreach (var fgc in ambResults)
-                    sb.AppendLine(fgc.ToString());
-
+                    
                 Logger.Log(sb.ToString());                
 
                 /*
@@ -245,24 +222,6 @@ namespace Plato.Compiler
                     else
                     {
                         throw new Exception($"First parameter type in function {f} not a concrete type or concept");
-                    }
-                }
-            }
-        }
-
-        public void WriteReifiedTypes()
-        {
-            foreach (var kv in ReifiedTypes)
-            {
-                var rt = kv.Value;
-                Log($"= Reified type {rt.Name}");
-                var funcGroups = rt.Functions.GroupBy(f => f.OwnerType);
-                foreach (var group in funcGroups)
-                {
-                    Log($" = Reified functions for group {group.Key}");
-                    foreach (var f in group)
-                    {
-                        Log($"    {f}");
                     }
                 }
             }
@@ -399,59 +358,6 @@ namespace Plato.Compiler
             if (funcs.Count == 0) return null;
             if (funcs.Count > 1) throw new Exception("Ambiguous constructor functions");
             return funcs[0].Def;
-        }
-
-        public void OutputFunctionCallAnalysis(StringBuilder sb, FunctionCallAnalysis fca)
-        {
-            sb.AppendLine($"    Function = {fca.Function.Signature}");
-            sb.AppendLine($"    Callable = {fca.Callable}, Has body = {fca.HasBody}, Arity Matches = {fca.ArityMatches}, # Concrete type = {fca.NumConcreteTypes}");
-            if (fca.ArityMatches)
-            {
-                for (var i = 0; i < fca.Arguments.Count; ++i)
-                    sb.AppendLine($"      Argument {i} = {fca.ArgDetails(i)}");
-            }
-        }
-
-        public void OutputFunctionAnalysis()
-        {
-            var sb = new StringBuilder();
-            var i = 0;
-            foreach (var fa in FunctionAnalyses.Values)
-            {
-                var typeSig = $"({string.Join(", ", fa.ParameterTypes)}) => {fa.DeclaredReturnType}";
-                sb.AppendLine($"{i++}. {fa.Def.Name}");
-                sb.AppendLine($"  Type sig: {typeSig}");
-                sb.AppendLine($"  Sig: {fa.Signature}");
-                sb.AppendLine($"  Body: {fa.Def.Body}");
-                //sb.AppendLine($"  Has {fa.TypeParameterToTypeLookup.Count} Type parameters ");
-                //sb.AppendLine($"  Has type parameter in return: {fa.DeclaredReturnType.HasTypeVariable()}");
-            }
-            var outputFille = Path.Combine(Path.GetTempPath(), "FunctionAnalysis.txt");
-            File.WriteAllText(outputFille, sb.ToString());
-        }
-
-        public void OutputFunctionCallAnalysis()
-        {
-            var results = FunctionGroupCalls.Values.Where(fgc => fgc.BestFunctions.Count != 1).ToList();
-            //var results = FunctionGroupCalls.Values.ToList();
-            var sb = new StringBuilder();
-
-            var i = 0;
-            sb.AppendLine($"Function call analysis");
-            foreach (var fgc in results)
-            {
-                sb.AppendLine($"{i++}.");
-                sb.AppendLine($"  Callsite: {fgc.Callsite}");
-                sb.AppendLine($"  Args: {fgc.ArgString}");
-                sb.AppendLine($"  Possible Return Types: {string.Join(", ", fgc.DistinctReturnTypes)}");
-                sb.AppendLine($"  Callable function count: {fgc.CallableFunctions.Count}");
-                sb.AppendLine($"  Best function count: {fgc.BestFunctions.Count}");
-                foreach (var f in fgc.CallableFunctions)
-                    OutputFunctionCallAnalysis(sb, f);
-            }
-
-            var outputFille = Path.Combine(Path.GetTempPath(), "FunctionCallAnalysis.txt");
-            File.WriteAllText(outputFille, sb.ToString()); 
         }
 
         public IEnumerable<TypeDef> GetConcreteTypes()
