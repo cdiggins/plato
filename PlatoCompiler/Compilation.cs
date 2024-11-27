@@ -144,7 +144,7 @@ namespace Plato.Compiler
             }
         }
 
-        public bool DisplayWarnings = false;
+        public readonly bool DisplayWarnings = false;
         public ILogger Logger { get; }
         public bool CompletedCompilation { get; }
         public IReadOnlyList<AstNode> Trees { get; }
@@ -164,9 +164,6 @@ namespace Plato.Compiler
         public Dictionary<Expression, IType> ExpressionTypes { get; } = new Dictionary<Expression, IType>();
         public Dictionary<string, ReifiedType> ReifiedTypes { get; }
         public Dictionary<string, List<ReifiedFunction>> ReifiedFunctionsByName { get; }
-
-        public Dictionary<FunctionCall, FunctionGroupCallResolution> FunctionGroupCalls { get; } =
-            new Dictionary<FunctionCall, FunctionGroupCallResolution>();
 
         public List<string> SemanticErrors { get; } = new List<string>();
         public List<string> SemanticWarnings { get; } = new List<string>();
@@ -326,16 +323,7 @@ namespace Plato.Compiler
             r.Process();
             return r;
         }
-
-        public FunctionGroupCallResolution ResolveFunctionGroup(FunctionAnalysis context, FunctionCall callSite, FunctionGroupRefSymbol fgr, List<IType> argTypes)
-        {
-            if (FunctionGroupCalls.ContainsKey(callSite))
-                return FunctionGroupCalls[callSite];
-            var tmp = new FunctionGroupCallResolution(callSite, context, fgr, argTypes);
-            FunctionGroupCalls.Add(callSite, tmp);
-            return tmp;
-        }
-
+        
         public FunctionDef FindImplicitCast(IType from, IType to)
         {
             var name = to.GetTypeDefinition()?.Name;

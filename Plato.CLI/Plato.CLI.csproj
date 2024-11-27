@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\parakeet\Parakeet\Ara3D.Parakeet.csproj" />
+    <ProjectReference Include="..\..\src\Ara3D.Logging\Ara3D.Logging.csproj" />
+    <ProjectReference Include="..\..\src\Ara3D.Parsing\Ara3D.Parsing.csproj" />
+    <ProjectReference Include="..\..\Utils\Ara3D.Utils\Ara3D.Utils.csproj" />
+    <ProjectReference Include="..\Plato.AST\Plato.AST.csproj" />
+    <ProjectReference Include="..\Plato.CSharpWriter\Plato.CSharpWriter.csproj" />
+    <ProjectReference Include="..\PlatoCompiler\Plato.Compiler.csproj" />
+  </ItemGroup>
+
+</Project>

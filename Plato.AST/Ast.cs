@@ -43,26 +43,19 @@ namespace Plato.AST
 
     public abstract class AstReducible : AstNode
     {
-        protected AstReducible(ILocation location) : base(location)
-        { }
+        protected AstReducible(ILocation location) : base(location) { }
     }
 
     public class AstBreak : AstReducible
     {
         public static AstBreak Default { get; } = new AstBreak(NoLocation);
-
-        public AstBreak(ILocation location) : base(location)
-        {
-        }
+        public AstBreak(ILocation location) : base(location) { }
     }
 
     public class AstContinue : AstReducible
     {
         public static AstContinue Default { get; } = new AstContinue(NoLocation);
-
-        public AstContinue(ILocation location) : base(location)
-        {
-        }
+        public AstContinue(ILocation location) : base(location) { }
     }
 
     public class AstReturn : AstReducible
@@ -114,6 +107,14 @@ namespace Plato.AST
         public IReadOnlyList<AstNode> Nodes { get; }
         public AstArrayLiteral(ILocation location, params AstNode[] nodes) : base(location) => Nodes = nodes;
     }
+    
+    /* TODO: decided whether I need to have this.
+    public class AstTupleLiteral : AstNode
+    {
+        public IReadOnlyList<AstNode> Nodes { get; }
+        public AstTupleLiteral(ILocation location, params AstNode[] nodes) : base(location) => Nodes = nodes;
+    }
+    */
 
     public class AstLambda : AstNode
     {
@@ -243,7 +244,6 @@ namespace Plato.AST
         public override IEnumerable<AstNode> Children => base.Children.Append(Node);
     }
     
-
     public class AstParameterDeclaration : AstDeclaration
     {
         public int Index { get; }

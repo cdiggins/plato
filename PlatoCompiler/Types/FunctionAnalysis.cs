@@ -11,7 +11,7 @@ namespace Plato.Compiler.Types
 {
     public class FunctionAnalysis
     {
-        public List<TypeVariable> Variables { get; } = new List<TypeVariable>();
+        public List<TypeVariable> TypeVariables { get; } = new List<TypeVariable>();
         public List<IConstraint> Constraints { get; } = new List<IConstraint>();
 
         public Compilation Compilation { get; }
@@ -20,11 +20,17 @@ namespace Plato.Compiler.Types
         public TypeDef OwnerType 
             => Def.OwnerType;
         
-        public bool IsConcept 
+        public bool IsConceptFunction 
             => OwnerType.IsConcept();
-        
+
+        public bool IsLibraryFunction
+            => OwnerType.IsLibrary();
+
         public bool IsGenericLibraryFunction 
-            => OwnerType.IsLibrary() && Variables.Count > 0;
+            => IsLibraryFunction && TypeVariables.Count > 0;
+
+        public bool IsConceptExtension 
+            => IsLibraryFunction && Def.Parameters.Count > 0 && Def.Parameters[0].Type.Def.IsConcept();
 
         public Dictionary<ParameterDef, IType> ParameterToTypeLookup { get; } =
             new Dictionary<ParameterDef, IType>();
@@ -164,8 +170,8 @@ namespace Plato.Compiler.Types
                 Verifier.Assert(tes.TypeArgs.Count == 0);
                 Verifier.Assert(tpd.TypeParameters.Count == 0);
 
-                if (TypeParameterToTypeLookup.ContainsKey(tpd))
-                    return TypeParameterToTypeLookup[tpd];
+                if (TypeParameterToTypeLookup.TryGetValue(tpd, out var type))
+                    return type;
 
                 throw new NotImplementedException();
                 //var tv = GenerateConstrainedTypeVariable(tpd.Constraint);
@@ -206,7 +212,7 @@ namespace Plato.Compiler.Types
         public TypeVariable GenerateTypeVariable(params TypeConstraint[] typeConstraints)
         {
             var r = new TypeVariable(typeConstraints);
-            Variables.Add(r);
+            TypeVariables.Add(r);
             return r;
         }
 
@@ -233,7 +239,7 @@ namespace Plato.Compiler.Types
             sb = sb ?? new StringBuilder();
             sb.AppendLine($"Original function: {Def}");
             sb.AppendLine($"New signature: {Signature}");
-            sb.AppendLine($"Variables: {string.Join(", ", Variables)}");
+            sb.AppendLine($"Variables: {string.Join(", ", TypeVariables)}");
             sb.AppendLine($"Constraints:");
             foreach (var c in Constraints)
                 sb.AppendLine($"   {c}");
@@ -407,28 +413,20 @@ namespace Plato.Compiler.Types
         public void GenerateArgConstraint(IType argType, IType paramType)
         {
             if (argType is TypeVariable argTv)
-            {
                 AddConstraint(new PassFromVariable(paramType, argTv));
-            }
 
             if (paramType is TypeVariable paramTv)
-            {
                 AddConstraint(new PassToVariable(paramType, paramTv));
-            }
 
             if (argType is TypeList typeListA && paramType is TypeList typeListB)
-            {   
                 for (var i=0; i < Math.Min(typeListA.Children.Count, typeListB.Children.Count); ++i)
                     GenerateArgConstraint(typeListA.Children[i], typeListB.Children[i]);
-            }
         }
 
         public void GenerateCallerConstraint(FunctionCallAnalysis fca, IReadOnlyList<IType> argTypes)
         {
             for (var i=0; i < argTypes.Count; ++i)
-            {
                 GenerateArgConstraint(argTypes[i], fca.Function.ParameterTypes[i]);
-            }
         }
 
         public IType Process(FunctionCall fc)
@@ -438,19 +436,7 @@ namespace Plato.Compiler.Types
             var ft = Process(fc.Function);
             AddConstraint(new CallableConstraint(ft, argTypes));
 
-            if (fc.Function is FunctionGroupRefSymbol fgr)
-            {
-                var fca = Compilation.ResolveFunctionGroup(this, fc, fgr, argTypes);
-                var bestFunction = fca.BestFunctions.FirstOrDefault();
-
-                // TODO: fix this ASAP!! 
-                // TODO: log this
-                if (bestFunction == null)
-                    return GenerateTypeVariable();
-
-                GenerateCallerConstraint(bestFunction, argTypes);
-                return bestFunction.DeterminedReturnType;
-            }
+            var fcr = new FunctionCallResolver(Compilation, this, fc);
             
             if (fc.Function is ParameterRefSymbol paramRef)
             {
@@ -468,16 +454,12 @@ namespace Plato.Compiler.Types
 
                 // This might just be "Function" without more information. 
                 return GenerateTypeVariable();
-
-                // throw new Exception($"Parameter had a type {paramRef.Type}, but it was not the correct type");
             }
 
             if (fc.Function is TypeRefSymbol typeRef)
-            {
                 return ToIType(typeRef.Def);
-            }
-            
-            throw new NotImplementedException();
+
+            return fcr.FinalResultType;
         }
 
         public FunctionCallAnalysis AnalyzeCall(IReadOnlyList<IType> argTypes)

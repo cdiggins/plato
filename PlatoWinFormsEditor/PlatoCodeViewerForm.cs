@@ -21,7 +21,6 @@ namespace PlatoWinFormsEditor
             // TODO: maximize the window (the below does not work I thnik)
             //this.WindowState = FormWindowState.Maximized;
 
-            // TODO: create the logger. 
             Logger = Logger.Create("Log", OnLogMsg);
 
             IDE = new IDE(tabControlEditors, Logger);

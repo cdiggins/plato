@@ -144,7 +144,8 @@ namespace Plato.AST
         public static AstTypeNode ToAst(this CstCompoundTypeExpr typeExpr)
         {
             // TODO: I think this is wrong. I don't have a ValueTuple type
-            return new AstTypeNode(typeExpr, new AstIdentifier(null, "ValueTuple"), typeExpr.TypeExpr.Nodes.Select(ToAst).ToArray());
+            //return new AstTypeNode(typeExpr, new AstIdentifier(null, "ValueTuple"), typeExpr.TypeExpr.Nodes.Select(ToAst).ToArray());
+            throw new NotImplementedException("This needs to be deleted");
         }
 
         public static AstTypeNode ToAst(this CstInnerTypeExpr innerType)
@@ -312,7 +313,22 @@ namespace Plato.AST
                 return new AstParenthesized(expr, ToAst(expr.Expression.Node));
 
             var arity = expr.Expression.Nodes.Count;
+
             return ToIntrinsicInvocation(expr, $"Tuple{arity}", expr.Expression.Nodes.Select(ToAst).ToArray());
+
+            /*
+            var typeAsExpr = ToAst(newOp.TypeExpr);
+
+            var args = expr
+                .Expression
+                .Nodes
+                .Select(ToAst)
+                .Prepend(typeAsExpr)
+                .ToArray();
+
+            return ToIntrinsicInvocation(expr, "New", args);
+            */
+
         }
 
         public static AstNode ToAst(this CstLeafExpression expr)
@@ -333,11 +349,6 @@ namespace Plato.AST
             if (expr.CastExpression.Present)
             {
                 throw new Exception("Explicit casts are not currently supported");
-                /*
-                return ToIntrinsicInvocation(expr, Operators.ExplicitCast,
-                    ToAst(expr.CastExpression.Node.TypeExpr),
-                    ToAst(expr.CastExpression.Node.Expression));
-                */
             }
             if (expr.LambdaExpr.Present)
             {

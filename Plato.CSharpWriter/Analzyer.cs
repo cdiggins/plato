@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Ara3D.Utils;
@@ -7,32 +8,7 @@ using Plato.Compiler.Types;
 
 namespace Plato.CSharpWriter
 {
-    public class Analysis
-    {
-        public int Id = NextId++;
-        public static int NextId = 0;
-        public virtual string Name { get; }
-    }
-    
-    public class TypeAnalysis : Analysis
-    {
-    }
-
-    public class ParameterAnalysis : Analysis
-    {
-        public string Name;
-        public TypeAnalysis Type;
-    }
-    
-    public class ExpressionAnalysis : Analysis
-    {
-        public string Type; 
-        public Expression Expression;
-        public FunctionAnalysis Function;
-        public List<ExpressionAnalysis> Children  = new List<ExpressionAnalysis>();
-    }
-
-    public class TotalAnalysis : Analysis
+    public class TotalAnalysis 
     {
         public List<TypeInfo> TypeInfos { get; } = new List<TypeInfo>();
         public List<FunctionAnalysis> Functions { get; } = new List<FunctionAnalysis>();
@@ -52,27 +28,9 @@ namespace Plato.CSharpWriter
             Directory = d;
 
             var sb = new StringBuilder();
-            WriteReifiedTypes(sb);
-            SaveToFile(sb, "reified-types.txt");
-
-            /*
-            var noResults = c.FunctionGroupCalls.Values.Where(fgc => fgc.DistinctReturnTypes.Count == 0).ToList();
-            sb.AppendLine($"Function group call unresolved: no results {noResults.Count}");
-            foreach (var fgc in noResults)
-                sb.AppendLine(fgc.ToString());
-
-            var ambResults = c.FunctionGroupCalls.Values.Where(fgc => fgc.DistinctReturnTypes.Count > 1).ToList();
-            sb.AppendLine($"Function group call unresolved: ambiguous {ambResults.Count}");
-            foreach (var fgc in ambResults)
-                sb.AppendLine(fgc.ToString());
-            SaveToFile(sb, "Function group calls");
-            */
 
             OutputFunctionAnalysis(sb);
             SaveToFile(sb, "function-analysis.txt");
-
-            OutputFunctionCallAnalysis(sb);
-            SaveToFile(sb, "function-call-analysis.txt");
         }
 
         public StringBuilder WriteReifiedTypes(StringBuilder sb)
@@ -95,49 +53,99 @@ namespace Plato.CSharpWriter
             return sb;
         }
 
-        public StringBuilder OutputFunctionCallAnalysis(StringBuilder sb)
+        public static List<FunctionDef> ViableFunctions(FunctionCall fc, FunctionGroupRefSymbol fgr)
         {
-            var results = Compilation.FunctionGroupCalls.Values.Where(fgc => fgc.BestFunctions.Count != 1).ToList();
-            //var results = FunctionGroupCalls.Values.ToList();
-
-            var i = 0;
-            sb.AppendLine($"Function call analysis");
-            foreach (var fgc in results)
-            {
-                sb.AppendLine($"{i++}.");
-                sb.AppendLine($"  Callsite: {fgc.Callsite}");
-                sb.AppendLine($"  Args: {fgc.ArgString}");
-                sb.AppendLine($"  Possible Return Types: {string.Join(", ", fgc.DistinctReturnTypes)}");
-                sb.AppendLine($"  Callable function count: {fgc.CallableFunctions.Count}");
-                sb.AppendLine($"  Best function count: {fgc.BestFunctions.Count}");
-                foreach (var f in fgc.CallableFunctions)
-                    OutputFunctionCallAnalysis(sb, f);
-            }
-
-            return sb;
+            // Get all the functions that have the same number of arguments as the function call, and that aren't abstract. 
+            return fgr.Def.Functions.Where(f1 => !f1.OwnerType.IsConcept() && f1.Parameters.Count == fc.Args.Count).ToList();
         }
-
-        public StringBuilder OutputFunctionAnalysis(StringBuilder sb)
+        
+        public StringBuilder OutputFunctionAnalysis(StringBuilder sb2)
         {
             var i = 0;
-            foreach (var fa in Compilation.FunctionAnalyses.Values)
+            
+            var functionGroups = Compilation
+                .FunctionAnalyses
+                .Values
+                //.Where(fa => fa.IsConceptFunction)
+                .Where(fa => fa.IsConceptExtension || fa.IsLibraryFunction)
+                .GroupBy(fa => fa.OwnerType)
+                .ToList();
+
+            sb2.AppendLine($"Found {functionGroups.Count} function groups");
+
+            foreach (var g in functionGroups)
             {
-                var typeSig = $"({string.Join(", ", fa.ParameterTypes)}) => {fa.DeclaredReturnType}";
-                sb.AppendLine($"{i++}. {fa.Def.Name}");
-                sb.AppendLine($"  Type: {typeSig}");
-                sb.AppendLine($"  Sig: {fa.Signature}");
-                sb.AppendLine($"  Body: {fa.Def.Body}");
-                //sb.AppendLine($"  Has {fa.TypeParameterToTypeLookup.Count} Type parameters ");
-                //sb.AppendLine($"  Has type parameter in return: {fa.DeclaredReturnType.HasTypeVariable()}");
+                sb2.AppendLine();
+                sb2.AppendLine($"Group {g.Key}");
+                sb2.AppendLine();
+
+                foreach (var fa in g)
+                {
+                    var sb = new StringBuilder();
+
+                    var isAmb = false;
+
+                    var typeSig = $"({string.Join(", ", fa.ParameterTypes)}) => {fa.DeclaredReturnType}";
+                    sb.AppendLine($"{i++}. {fa.Def.Name}");
+                    sb.AppendLine($"  Type: {typeSig}");
+                    sb.AppendLine($"  Sig: {fa.Signature}");
+                    sb.AppendLine($"  Body: {fa.Def.Body}");
+
+                    var expr = fa.Def.Body;
+
+                    if (expr is FunctionCall fc)
+                    {
+                        var r = new FunctionCallResolver(Compilation, fa, fc);
+                        var f = fc.Function;
+                        if (f is FunctionGroupRefSymbol fgr)
+                        {
+                            var fcr = new FunctionCallResolver(Compilation, fa, fc);
+                            var funcs = ViableFunctions(fc, fgr);
+                            isAmb = funcs.Count > 1;
+                            var isAmbStr = isAmb ? "AMBIGUOUS" : "";
+                            sb.AppendLine($"  # functions: {funcs.Count} {isAmbStr}");
+                            foreach (var f1 in funcs)
+                            {
+                                sb.AppendLine($"    - {f1.GetSignature()} => {f1.Body}");
+                            }
+                        }
+                        else if (f is TypeRefSymbol trs)
+                        {
+                            sb.AppendLine($"   _NEW_ {trs}({fc.Args.JoinStringsWithComma()});");
+                        }
+                        else
+                        {
+                            sb.AppendLine($"   NOT A FUNCTION GROUP");
+                        }
+
+                        for (var j = 0; j < fc.Args.Count; ++j)
+                        {
+                            var arg = fc.Args[j];
+                            var argType = r.ArgTypes[j];
+                            sb.AppendLine($"    _ARG_ {j}: {arg} => {argType}");
+                        }
+                    }
+                    else
+                    {
+                        sb.AppendLine($"  NOT FUNCTION CALL");
+                    }
+
+                    // Only do this for the ambiguous functions
+                    if (isAmb)
+                        sb2.AppendLine(sb.ToString());
+
+                    //sb.AppendLine($"  Has {fa.TypeParameterToTypeLookup.Count} Type parameters ");
+                    //sb.AppendLine($"  Has type parameter in return: {fa.DeclaredReturnType.HasTypeVariable()}");
+                }
             }
 
-            return sb;
+            return sb2;
         }
 
         public void OutputFunctionCallAnalysis(StringBuilder sb, FunctionCallAnalysis fca)
         {
             sb.AppendLine($"    Function = {fca.Function.Signature}");
-            sb.AppendLine($"    Callable = {fca.Callable}, Has body = {fca.HasBody}, Arity Matches = {fca.ArityMatches}, # Concrete type = {fca.NumConcreteTypes}");
+            sb.AppendLine($"    Callable = {fca.Valid}, Has body = {fca.HasBody}, Arity Matches = {fca.ArityMatches}, # Concrete type = {fca.NumConcreteTypes}");
             if (fca.ArityMatches)
             {
                 for (var i = 0; i < fca.Arguments.Count; ++i)

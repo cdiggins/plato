@@ -157,6 +157,12 @@ namespace Plato.Compiler.Types
 
         public static bool HasTypeVariable(this IType type)
             => type.GetAllTypeVariables().Any();
+    }
 
+    public class TypeSet : IType
+    {
+        public IReadOnlyList<IType> Options { get; }
+        public TypeSet(params IType[] options) => Options = options;
+        public override string ToString() => string.Join("|", Options);
     }
 }

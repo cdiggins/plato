@@ -14,23 +14,22 @@ namespace Plato.Compiler.Types
         public Compilation Compilation => Function.Compilation;
         public IType DeterminedReturnType { get; }
         public bool HasBody => Function.Def.Body != null;
-        public bool Callable { get; }
-        public bool MaybeCallable { get; } 
-        public bool PerfectFit { get; }
+        public bool Valid { get; }
         public bool ArityMatches => Arguments.Count == Parameters.Count;
         public List<ArgFit> ArgFits { get; }
         public List<FunctionDef> Casts { get; } = new List<FunctionDef>();
         public int NumConcreteTypes { get; } 
 
         public static bool IsNotFit(ArgFit argFit)
-        {
-            return argFit == ArgFit.NoFitNullTypeArg || argFit == ArgFit.NoFitConceptToConcrete || argFit == ArgFit.NoFitNullTypeParam || argFit == ArgFit.NoFit;
-        }
+            => argFit == ArgFit.NoFitNullTypeArg 
+                   || argFit == ArgFit.NoFitConceptToConcrete 
+                   || argFit == ArgFit.NoFitNullTypeParam 
+                   || argFit == ArgFit.NoFit;
 
         public static bool IsMaybeFit(ArgFit argFit)
-        {
-            return argFit == ArgFit.UnknownArgIsTypeVar || argFit == ArgFit.UnknownParamIsTypeVar;
-        }
+            => argFit == ArgFit.UnknownArgIsTypeVar 
+               || argFit == ArgFit.UnknownParamIsTypeVar;
+        
 
         public string ArgDetails(int index)
         {
@@ -57,17 +56,7 @@ namespace Plato.Compiler.Types
                 Casts.Add(cast);
             }
 
-            var ft = FunctionDef.FunctionType; 
-            Callable = ArityMatches 
-                       /*&& 
-                       (
-                           FunctionDef.Body != null || 
-                           ft == FunctionType.Field || 
-                           ft == FunctionType.Intrinsic
-                        )*/
-                       && !ArgFits.Any(IsNotFit);
-            MaybeCallable = !ArgFits.Any(IsMaybeFit);
-
+            Valid = ArityMatches && !ArgFits.Any(IsNotFit);
             NumConcreteTypes = Function.ParameterTypes.Count(pt => pt.IsConcrete());
         }
         
