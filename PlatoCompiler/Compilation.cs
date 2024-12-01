@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using Ara3D.Logging;
@@ -385,6 +384,48 @@ namespace Plato.Compiler
             {
                 Log("Unknown location.");
             }
+        }
+
+        public CastDetails CanCast(TypeExpression from, TypeExpression to)
+        {
+            if (from.IsTypeVariable)
+            {
+                return new CastDetails(from, to);
+            }
+
+            if (to.IsTypeVariable)
+            {
+                return new CastDetails(from, to);
+            }
+
+            if (from.Def.IsConcept())
+            {
+                if (to.Def.IsConcrete())
+                    return null;
+
+                if (to.Def.IsConcept())
+                    return new CastDetails(from, to, to.Def.InheritsDepth(from.Def));
+            }
+            else if (from.Def.IsConcrete())
+            {
+                if (to.Def.IsConcrete())
+                {
+                    if (from.TypeArgs.Count != to.TypeArgs.Count)
+                        return null;
+
+                    if (from.Name == to.Name)
+                        return new CastDetails(from, to);
+
+                    // TOOD: 
+                    // var cast = Compilation.FindImplicitCast(from, to);
+                    return null;
+                }
+
+                if (to.Def.IsConcept())
+                    return new CastDetails(from, to);
+            }
+
+            throw new Exception($"Unrecognized type cast {from} to {to}");
         }
     }
 }

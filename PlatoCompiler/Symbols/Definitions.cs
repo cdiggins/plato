@@ -109,6 +109,9 @@ namespace Plato.Compiler.Symbols
 
         public override string ToString()
             => this.GetSignature();
+
+        public override Symbol Rewrite(Func<Symbol, Symbol> f)
+            => f(new FunctionDef(Scope, Name, OwnerType, ReturnType, Body?.Rewrite(f), Parameters.ToArray()));
     }
 
     public class ParameterDef : DefSymbol
@@ -126,6 +129,9 @@ namespace Plato.Compiler.Symbols
 
         public override IEnumerable<Symbol> GetChildSymbols()
             => new [] { Type };
+
+        public override Symbol Rewrite(Func<Symbol, Symbol> f)
+            => f(this);
     }
 
     public class VariableDef : DefSymbol
@@ -143,6 +149,9 @@ namespace Plato.Compiler.Symbols
 
         public override IEnumerable<Symbol> GetChildSymbols()
             => new[] { Type };
+
+        public override Symbol Rewrite(Func<Symbol, Symbol> f)
+            => f(new VariableDef(Scope, Name, Type, Value?.Rewrite(f) as Expression));
     }
 
     public class TypeDef : DefSymbol
@@ -248,6 +257,9 @@ namespace Plato.Compiler.Symbols
             }
             return -1;
         }
+
+        public override Symbol Rewrite(Func<Symbol, Symbol> f)
+            => f(this);
     }
 
     public class TypeParameterDef : TypeDef
@@ -259,6 +271,9 @@ namespace Plato.Compiler.Symbols
         {
             Constraints = constraints ?? Array.Empty<TypeExpression>();
         }
+
+        public override Symbol Rewrite(Func<Symbol, Symbol> f)
+            => f(this);
     }
 
     public class TypeVariable : TypeDef
@@ -266,6 +281,9 @@ namespace Plato.Compiler.Symbols
         public TypeVariable(Scope scope, string name)
             : base(scope, TypeKind.TypeVariable, name)
         { }
+
+        public override Symbol Rewrite(Func<Symbol, Symbol> f)
+            => f(this);
     }
 
     public class SelfType : TypeParameterDef
@@ -273,6 +291,9 @@ namespace Plato.Compiler.Symbols
         public SelfType(Scope scope)
             : base(scope, "Self", null)
         { }
+
+        public override Symbol Rewrite(Func<Symbol, Symbol> f)
+            => f(this);
     }
 
     public abstract class MemberDef : DefSymbol
@@ -288,6 +309,9 @@ namespace Plato.Compiler.Symbols
 
         public override IEnumerable<Symbol> GetChildSymbols()
             => new Symbol[] { Function, Type };
+
+        public override Symbol Rewrite(Func<Symbol, Symbol> f)
+            => f(this);
     }
 
     public class MethodDef : MemberDef
@@ -298,6 +322,9 @@ namespace Plato.Compiler.Symbols
 
         public override RefSymbol ToReference()
             => throw new NotSupportedException();
+
+        public override Symbol Rewrite(Func<Symbol, Symbol> f)
+            => f(this);
     }
 
     public class FieldDef : MemberDef
@@ -310,6 +337,9 @@ namespace Plato.Compiler.Symbols
 
         public override RefSymbol ToReference()
             => throw new NotSupportedException();
+
+        public override Symbol Rewrite(Func<Symbol, Symbol> f)
+            => f(this);
     }
 
     public class FunctionGroupDef : DefSymbol
@@ -348,5 +378,8 @@ namespace Plato.Compiler.Symbols
 
         public override IEnumerable<Symbol> GetChildSymbols()
             => Functions;
+
+        public override Symbol Rewrite(Func<Symbol, Symbol> f)
+            => f(this);
     }
 }

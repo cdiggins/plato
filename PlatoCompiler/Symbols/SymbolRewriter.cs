@@ -118,9 +118,6 @@ namespace Plato.Compiler.Symbols
                         conditionalExpression.IfTrue.TypedRewrite(f),
                         conditionalExpression.IfFalse.TypedRewrite(f));
                 
-                case Argument argument:
-                    return new Argument(argument.Expression.TypedRewrite(f), argument.Position);
-
                 case FunctionCall functionCall:
                     return new FunctionCall(functionCall.Function.TypedRewrite(f), functionCall.HasArgList, functionCall.Args.RewriteList(f));
 

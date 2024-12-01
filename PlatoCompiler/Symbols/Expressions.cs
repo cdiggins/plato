@@ -44,11 +44,13 @@ namespace Plato.Compiler.Symbols
         }
 
         public new TypeDef Def => base.Def as TypeDef;
+
+        public override Symbol Rewrite(Func<Symbol, Symbol> f) => f(this);
     }
 
-    public class ParameterOrVariableRefSymbol : RefSymbol
+    public abstract class ParameterOrVariableRefSymbol : RefSymbol
     {
-        public ParameterOrVariableRefSymbol(DefSymbol def)
+        protected ParameterOrVariableRefSymbol(DefSymbol def)
             : base(def)
         { }
     }
@@ -60,6 +62,7 @@ namespace Plato.Compiler.Symbols
         {
         }
 
+        public override Symbol Rewrite(Func<Symbol, Symbol> f) => f(this);
         public new VariableDef Def => base.Def as VariableDef;
     }
 
@@ -71,6 +74,7 @@ namespace Plato.Compiler.Symbols
         }
 
         public new ParameterDef Def => base.Def as ParameterDef;
+        public override Symbol Rewrite(Func<Symbol, Symbol> f) => f(this);
     }
 
     public class FunctionGroupRefSymbol : RefSymbol
@@ -80,6 +84,7 @@ namespace Plato.Compiler.Symbols
         { }
 
         public new FunctionGroupDef Def => base.Def as FunctionGroupDef;
+        public override Symbol Rewrite(Func<Symbol, Symbol> f) => f(this);
     }
 
     public class ConditionalExpression : Expression
@@ -100,6 +105,9 @@ namespace Plato.Compiler.Symbols
 
         public override string ToString()
             => $"({Condition}?{IfTrue}:{IfFalse})";
+
+        public override Symbol Rewrite(Func<Symbol, Symbol> f) =>
+            f(new ConditionalExpression(Condition?.Rewrite(f) as Expression, IfTrue?.Rewrite(f) as Expression, IfFalse?.Rewrite(f) as Expression));
     }
 
     public class Assignment : Expression
@@ -115,23 +123,11 @@ namespace Plato.Compiler.Symbols
 
         public override string ToString()
             => $"({LValue} = {RValue})";
-    }
 
-    public class Argument : Expression
-    {
-        public Expression Expression { get; }
-        public int Position { get; }
-
-        public override string Name => $"#{Position}";
-
-        public Argument(Expression expression, int position)
-            : base(expression)
-        {
-            Expression = expression;
-            Position = position;
-        }
-        public override string ToString()
-            => Expression.ToString();
+        public override Symbol Rewrite(Func<Symbol, Symbol> f) 
+            => f(new Assignment(
+                LValue?.Rewrite(f) as Expression, 
+                RValue?.Rewrite(f) as Expression));
     }
 
     public class Parenthesized : Expression
@@ -148,6 +144,9 @@ namespace Plato.Compiler.Symbols
 
         public override string ToString()
             => $"({Expression}";
+
+        public override Symbol Rewrite(Func<Symbol, Symbol> f) => f(
+            new Parenthesized(Expression.Rewrite(f) as Expression));
     }
 
     public class Literal : Expression
@@ -163,15 +162,17 @@ namespace Plato.Compiler.Symbols
 
         public override string ToString()
             => $"{Value}";
+
+        public override Symbol Rewrite(Func<Symbol, Symbol> f) => f(this);
     }
 
     public class FunctionCall : Expression
     {
         public Expression Function { get; }
         public bool HasArgList { get; }
-        public IReadOnlyList<Argument> Args { get; }
+        public IReadOnlyList<Expression> Args { get; }
 
-        public FunctionCall(Expression function, bool hasArgList, params Argument[] args)
+        public FunctionCall(Expression function, bool hasArgList, params Expression[] args)
             : base(args.Prepend(function).ToArray())
         {
             Function = function;
@@ -186,6 +187,10 @@ namespace Plato.Compiler.Symbols
 
         public override string ToString()
             => $"{Function}({string.Join(", ", Args)})";
+
+        public override Symbol Rewrite(Func<Symbol, Symbol> f) => f(new FunctionCall(
+            Function?.Rewrite(f) as Expression, HasArgList, 
+            Args.Select(a => a?.Rewrite(f) as Expression).ToArray()));
     }
 
     public class Lambda : Expression
@@ -201,7 +206,11 @@ namespace Plato.Compiler.Symbols
             => new[] { Function };
 
         public override string ToString()
-            => $"(\\({string.Join(", ", Function.Parameters)}) -> {Function.ReturnType}";
+            //=> $"(\\({string.Join(", ", Function.Parameters)}) -> {Function.ReturnType}";
+            => $"({Function.Parameters.Select(p => p.Name).JoinStringsWithComma()}) => {Function.Body}";
+
+        public override Symbol Rewrite(Func<Symbol, Symbol> f) 
+            => f(new Lambda(Function?.Rewrite(f) as FunctionDef));
     }
 
     public class ArrayLiteral : Expression
@@ -215,5 +224,8 @@ namespace Plato.Compiler.Symbols
 
         public override string ToString()
             => $"[{Expressions.JoinStringsWithComma()}]";
+
+        public override Symbol Rewrite(Func<Symbol, Symbol> f)
+            => f(new ArrayLiteral(Expressions.Select(expr => expr.Rewrite(f) as Expression).ToArray()));
     }
 }

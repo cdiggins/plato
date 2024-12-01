@@ -61,5 +61,11 @@ namespace Plato.Compiler.Symbols
 
             return te;
         }
+
+        public override Symbol Rewrite(Func<Symbol, Symbol> f)
+            => f(this);
+
+        public bool IsTypeVariable
+            => Def.Kind == TypeKind.TypeVariable;
     }
 }

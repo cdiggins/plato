@@ -9,7 +9,8 @@ namespace Plato.Compiler.Types
         public Compilation Compilation { get; }
         public FunctionAnalysis Context { get; }
         public FunctionCall FunctionCall { get; }
-        public List<FunctionCallAnalysis> Options { get; }
+        public IReadOnlyList<FunctionCallAnalysis> AllFunctions { get; }
+        public IReadOnlyList<FunctionCallAnalysis> ViableFunctions { get; }
         public IReadOnlyList<IType> ArgTypes { get; }
         public IReadOnlyList<IType> ResultTypes { get; }
         public IType FinalResultType { get; }
@@ -26,13 +27,17 @@ namespace Plato.Compiler.Types
             var funcs = FunctionCall.Function is FunctionGroupRefSymbol fgr 
                 ? fgr.Def.Functions 
                 : new List<FunctionDef>();
-            
-            Options = funcs
+
+            AllFunctions = funcs
                 .Select(Compilation.GetProcessedFunctionAnalysis)
                 .Select(f => new FunctionCallAnalysis(f, ArgTypes))
                 .ToList();
 
-            ResultTypes = Options
+            ViableFunctions = AllFunctions
+                .Where(f => f.Valid)
+                .ToList(); 
+            
+            ResultTypes = ViableFunctions
                 .Select(f => f.DeterminedReturnType)
                 .Distinct()
                 .ToList();

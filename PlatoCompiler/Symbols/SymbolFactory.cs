@@ -223,8 +223,7 @@ namespace Plato.Compiler.Symbols
 
         public Symbol ResolveFunctionCall(AstInvoke astInvoke)
         {
-            var args = astInvoke.Arguments.Select((a, i) =>
-                new Argument(ResolveExpr(a), i)).ToArray();
+            var args = astInvoke.Arguments.Select(ResolveExpr).ToArray();
 
             var funcRef = ResolveExpr(astInvoke.Function);
             if (funcRef == null)

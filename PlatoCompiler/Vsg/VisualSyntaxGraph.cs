@@ -155,10 +155,7 @@ namespace Plato.Compiler.Vsg
 
             switch (symbol)
             {
-                case Argument argumentSymbol:
-                    return CreateNode(argumentSymbol.Expression);
-
-                case Assignment assignmentSymbol:
+               case Assignment assignmentSymbol:
                     break;
 
                 case ConditionalExpression conditionalExpressionSymbol:
@@ -212,8 +209,6 @@ namespace Plato.Compiler.Vsg
         {
             switch (expr)
             {
-                case Argument argumentSymbol:
-                    return GetSocket(argumentSymbol.Expression);
                 case RefSymbol refSymbol:
                     return GetSocket(refSymbol?.Def);
             }

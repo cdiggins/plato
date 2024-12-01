@@ -36,11 +36,9 @@ namespace Plato.Compiler.Types
         }
 
         public static int ImplementsDepth(this TypeDef self, TypeDef other)
-        {
-            return self.Implements
+            => self.Implements
                 .MinWhere(x => x.Def?.InheritsDepth(other) ?? -1,
                     x => x >= 0, -1);
-        }
 
         public static bool InheritsFrom(this TypeDef self, TypeDef other)
             => self.InheritsDepth(other) >= 0;
@@ -83,7 +81,7 @@ namespace Plato.Compiler.Types
 
         public static TypeDef Unify(this TypeDef a, TypeDef b)
         {
-            // If one type inher
+            // If one type inhere
 
             if (a == null)
                 return b;

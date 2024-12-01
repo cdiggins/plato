@@ -1100,10 +1100,7 @@ namespace Plato.CSharpWriter
 
                 case RefSymbol refSymbol:
                     return Write(refSymbol.Name);
-
-                case Argument argument:
-                    return Write(argument.Expression);
-
+                    
                 case Assignment assignment:
                     return Write(assignment.LValue)
                         .Write(" = ")

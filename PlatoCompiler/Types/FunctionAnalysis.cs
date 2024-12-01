@@ -67,18 +67,6 @@ namespace Plato.Compiler.Types
             foreach (var p in def.Parameters)
             {
                 var pt = ToIType(p.Type);
-
-                /*
-                I used to think that this would be a better way to do things, but resolving against
-                type variables with constraints is very complicated. For now I am doing this.
-                However, if a function has a concept listed twice, it is the same concept. 
-
-                if (p.Type.Definition.IsConcept())
-                {
-                    pt = GenerateTypeVariable(pt);
-                }
-                */
-
                 ParameterToTypeLookup.Add(p, pt);
                 pTypes.Add(pt);
             }
@@ -174,8 +162,8 @@ namespace Plato.Compiler.Types
                     return type;
 
                 throw new NotImplementedException();
-                //var tv = GenerateConstrainedTypeVariable(tpd.Constraint);
-                //return tv;
+                    //var tv = GenerateConstrainedTypeVariable(tpd.Constraint);
+                    //return tv;
             }
             
             if (tes.Def.IsConcept() || tes.Def.IsConcrete())
@@ -346,10 +334,6 @@ namespace Plato.Compiler.Types
 
             switch (expr)
             {
-                case Argument argument:
-                    r = Process(argument.Expression);
-                    break;
-
                 case Assignment assignment:
                     throw new Exception("Assignment not supported");
 
@@ -462,7 +446,7 @@ namespace Plato.Compiler.Types
             return fcr.FinalResultType;
         }
 
-        public FunctionCallAnalysis AnalyzeCall(IReadOnlyList<IType> argTypes)
+        public FunctionCallAnalysis AnalyzeCall(IReadOnlyList<TypeExpression> argTypes)
             => new FunctionCallAnalysis(this, argTypes);
     }
 }
