@@ -1,36 +1,36 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Plato.Compiler.Symbols;
 
 namespace Plato.Compiler.Types
 {
-    public class FunctionCallResolver
+    public class FunctionGroupCallAnalysis
     {
         public Compilation Compilation { get; }
         public FunctionAnalysis Context { get; }
         public FunctionCall FunctionCall { get; }
         public IReadOnlyList<FunctionCallAnalysis> AllFunctions { get; }
         public IReadOnlyList<FunctionCallAnalysis> ViableFunctions { get; }
-        public IReadOnlyList<IType> ArgTypes { get; }
-        public IReadOnlyList<IType> ResultTypes { get; }
-        public IType FinalResultType { get; }
+        public IReadOnlyList<TypeExpression> ArgTypes { get; }
+        public IReadOnlyList<TypeExpression> ResultTypes { get; }
+        public TypeExpression FinalResultType { get; }
         public bool Success { get; }
     
-        public FunctionCallResolver(Compilation compilation, FunctionAnalysis context, FunctionCall fc)
+        public FunctionGroupCallAnalysis(Compilation compilation, FunctionAnalysis context, FunctionCall fc)
         {
             Compilation = compilation;
             Context = context;
             FunctionCall = fc;
 
-            ArgTypes = fc.Args.Select(GetTypeOfExpr).ToList();
+            ArgTypes = fc.Args.Select(Compilation.GetType).ToList();
             
             var funcs = FunctionCall.Function is FunctionGroupRefSymbol fgr 
                 ? fgr.Def.Functions 
                 : new List<FunctionDef>();
 
             AllFunctions = funcs
-                .Select(Compilation.GetProcessedFunctionAnalysis)
-                .Select(f => new FunctionCallAnalysis(f, ArgTypes))
+                .Select(f => new FunctionCallAnalysis(Compilation, f, ArgTypes))
                 .ToList();
 
             ViableFunctions = AllFunctions
@@ -44,12 +44,10 @@ namespace Plato.Compiler.Types
             
             Success = ResultTypes.Count == 1;
 
-            // TODO: order the results.
+            if (!Success)
+                throw new Exception($"Could not find a definitive return type for function call {fc}");
             
             FinalResultType = ResultTypes.FirstOrDefault();
         }
-
-        public IType GetTypeOfExpr(Expression expr)
-            => Compilation.GetExpressionType(expr);
     }
 }

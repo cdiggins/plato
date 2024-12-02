@@ -99,23 +99,8 @@ namespace Plato.Compiler
                 var sb = new StringBuilder();
                 foreach (var fd in FunctionDefinitions)
                     GetOrComputeFunctionAnalysis(fd);
-
-                Log("Gathering constraints for each function");
-                foreach (var fa in FunctionAnalyses.Values)
-                    fa.Process();
                     
                 Logger.Log(sb.ToString());                
-
-                /*
-                Log("Creating resolvers");
-                TypeResolvers = FunctionDefinitions
-                    // TODO: TEMP: skip concept function implementations for now.
-                    .Where(fd => !fd.OwnerType.IsConcept())
-                    .Select(fd => new TypeResolver(this, fd))
-                    .ToList();
-                Log($"Found {TypeResolvers.Count} resolvers");
-                Log($"Applied type to {ExpressionTypes.Count} expressions");
-                */
 
                 //Log("Generating Visual Syntax Graphs");
                 //Graphs.Clear();
@@ -143,24 +128,27 @@ namespace Plato.Compiler
             }
         }
 
+        public TypeResolver TypeResolver = new TypeResolver();
         public readonly bool DisplayWarnings = false;
         public ILogger Logger { get; }
         public bool CompletedCompilation { get; }
         public IReadOnlyList<AstNode> Trees { get; }
         public SymbolFactory SymbolFactory { get; }
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; }
-        public IDictionary<FunctionDef, FunctionAnalysis> FunctionAnalyses { get; } = new Dictionary<FunctionDef, FunctionAnalysis>();
 
+        public IDictionary<FunctionDef, FunctionAnalysis> FunctionAnalyses { get; } = new Dictionary<FunctionDef, FunctionAnalysis>();
+        public IDictionary<FunctionCall, FunctionGroupCallAnalysis> FunctionGroupCallAnalyses { get; } = new Dictionary<FunctionCall, FunctionGroupCallAnalysis>();
+        
         public IEnumerable<TypeDef> AllTypeAndLibraryDefinitions => TypeDefinitions
             .Concat(LibraryDefinitionsByName.Values);
 
         public Dictionary<string, TypeDef> TypeDefinitionsByName { get; } = new Dictionary<string, TypeDef>();
         public Dictionary<string, TypeDef> LibraryDefinitionsByName { get; } = new Dictionary<string, TypeDef>();
         public IReadOnlyList<FunctionDef> FunctionDefinitions { get; }
+        
         public IEnumerable<TypeDef> TypeDefinitions => TypeDefinitionsByName.Values;
         public IEnumerable<Symbol> Symbols => SymbolFactory.SymbolsToNodes.Keys.OrderBy(s => s.Id);
 
-        public Dictionary<Expression, IType> ExpressionTypes { get; } = new Dictionary<Expression, IType>();
         public Dictionary<string, ReifiedType> ReifiedTypes { get; }
         public Dictionary<string, List<ReifiedFunction>> ReifiedFunctionsByName { get; }
 
@@ -172,18 +160,25 @@ namespace Plato.Compiler
             .Concat(SemanticErrors.Select(e => $"[ERROR] {e}"))
             .Concat(InternalErrors.Select(i => $"[INTERNAL ERROR] {i}"));
 
-        public List<VisualSyntaxGraph> Graphs { get; } = new List<VisualSyntaxGraph>();
-
         public LibraryFunctions Libraries { get; }
         public IReadOnlyList<ConcreteType> ConcreteTypes { get; }
 
         public FunctionAnalysis GetOrComputeFunctionAnalysis(FunctionDef fd)
         {
-            if (FunctionAnalyses.ContainsKey(fd))
-                return FunctionAnalyses[fd];
+            if (FunctionAnalyses.TryGetValue(fd, out var analysis))
+                return analysis;
             var fa = new FunctionAnalysis(this, fd);
             FunctionAnalyses.Add(fd, fa);
             return fa;
+        }
+
+        public FunctionGroupCallAnalysis GetOrComputeFunctionGroupCallAnalysis(FunctionAnalysis context, FunctionCall fc)
+        {
+            if (FunctionGroupCallAnalyses.TryGetValue(fc, out var analysis))
+                return analysis;
+            var r = new FunctionGroupCallAnalysis(this, context, fc);
+            FunctionGroupCallAnalyses.Add(fc, r);
+            return r;
         }
 
         public void AddLibraryFunctionsToReifiedTypes()
@@ -222,10 +217,7 @@ namespace Plato.Compiler
                 }
             }
         }
-
-        public IType GetExpressionType(Expression expr)
-            => ExpressionTypes.TryGetValue(expr, out var r) ? r : null;
-        
+            
         // TODO: I have to make these more like Parser Errors 
         public void LogResolutionErrors(IEnumerable<ResolutionError> resolutionErrors)
         {
@@ -311,42 +303,9 @@ namespace Plato.Compiler
             }
         }
 
-        public TypeDef GetTypeDefinition(string name)
-        {
-            return TypeDefinitionsByName[name];
-        }
-
-        public FunctionAnalysis GetProcessedFunctionAnalysis(FunctionDef fd)
-        {
-            var r = FunctionAnalyses[fd];
-            r.Process();
-            return r;
-        }
+        public TypeDef GetTypeDefinition(string name) 
+            => TypeDefinitionsByName[name];
         
-        public FunctionDef FindImplicitCast(IType from, IType to)
-        {
-            var name = to.GetTypeDefinition()?.Name;
-            if (string.IsNullOrEmpty(name)) return null;
-            var funcs = FunctionDefinitions.Where(fd => fd.FunctionType == FunctionType.Cast).Select(GetProcessedFunctionAnalysis).ToList();
-            funcs = funcs.Where(fd => fd?.DeclaredReturnType?.Equals(to) == true).ToList();
-            funcs = funcs.Where(fd => fd.ParameterTypes.Count == 1 && fd.ParameterTypes[0].Equals(from)).ToList();
-            if (funcs.Count == 0) return null;
-            if (funcs.Count > 1) throw new Exception("Ambiguous cast functions");
-            return funcs[0].Def;
-        }
-
-        public FunctionDef FindCastConstructor(IType from, IType to)
-        {
-            var name = to.GetTypeDefinition()?.Name;
-            if (string.IsNullOrEmpty(name)) return null;
-            var funcs = FunctionDefinitions.Where(fd => fd.FunctionType == FunctionType.Constructor).Select(GetProcessedFunctionAnalysis).ToList();
-            funcs = funcs.Where(fd => fd?.DeclaredReturnType?.Equals(to) == true).ToList();
-            funcs = funcs.Where(fd => fd.ParameterTypes.Count == 1 && fd.ParameterTypes[0].Equals(from)).ToList();
-            if (funcs.Count == 0) return null;
-            if (funcs.Count > 1) throw new Exception("Ambiguous constructor functions");
-            return funcs[0].Def;
-        }
-
         public IEnumerable<TypeDef> GetConcreteTypes()
             => AllTypeAndLibraryDefinitions.Where(t => t.IsConcrete());
 
@@ -385,6 +344,9 @@ namespace Plato.Compiler
                 Log("Unknown location.");
             }
         }
+
+        public TypeExpression GetType(Expression expr)
+            => TypeResolver.GetType(expr);
 
         public CastDetails CanCast(TypeExpression from, TypeExpression to)
         {
@@ -426,6 +388,6 @@ namespace Plato.Compiler
             }
 
             throw new Exception($"Unrecognized type cast {from} to {to}");
-        }
+        }   
     }
 }

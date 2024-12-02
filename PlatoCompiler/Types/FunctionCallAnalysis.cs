@@ -7,6 +7,33 @@ using Plato.Compiler.Symbols;
 
 namespace Plato.Compiler.Types
 {
+    /*
+     *        
+       public FunctionDef FindImplicitCast(IType from, IType to)
+       {
+           var name = to.GetTypeDefinition()?.Name;
+           if (string.IsNullOrEmpty(name)) return null;
+           var funcs = FunctionDefinitions.Where(fd => fd.FunctionType == FunctionType.Cast).Select(GetProcessedFunctionAnalysis).ToList();
+           funcs = funcs.Where(fd => fd?.DeclaredReturnType?.Equals(to) == true).ToList();
+           funcs = funcs.Where(fd => fd.ParameterTypes.Count == 1 && fd.ParameterTypes[0].Equals(from)).ToList();
+           if (funcs.Count == 0) return null;
+           if (funcs.Count > 1) throw new Exception("Ambiguous cast functions");
+           return funcs[0].Def;
+       }
+
+       public FunctionDef FindCastConstructor(IType from, IType to)
+       {
+           var name = to.GetTypeDefinition()?.Name;
+           if (string.IsNullOrEmpty(name)) return null;
+           var funcs = FunctionDefinitions.Where(fd => fd.FunctionType == FunctionType.Constructor).Select(GetProcessedFunctionAnalysis).ToList();
+           funcs = funcs.Where(fd => fd?.DeclaredReturnType?.Equals(to) == true).ToList();
+           funcs = funcs.Where(fd => fd.ParameterTypes.Count == 1 && fd.ParameterTypes[0].Equals(from)).ToList();
+           if (funcs.Count == 0) return null;
+           if (funcs.Count > 1) throw new Exception("Ambiguous constructor functions");
+           return funcs[0].Def;
+       }
+     */
+
     public class CastDetails
     {
         public readonly TypeExpression From;
@@ -71,29 +98,28 @@ namespace Plato.Compiler.Types
 
     public class FunctionCallAnalysis
     {
-        public FunctionAnalysis Function { get; }
         public List<FunctionArgAnalysis> Args { get; } = new List<FunctionArgAnalysis>();
-        public FunctionDef FunctionDef => Function.Def;
-        public Compilation Compilation => Function.Compilation;
+        public FunctionDef FunctionDef { get; }
         public TypeExpression DeclaredReturnType => FunctionDef.ReturnType;
         public TypeExpression DeterminedReturnType { get; }
-        public bool HasBody => Function.Def.Body != null;
+        public bool HasBody => FunctionDef.Body != null;
         public bool Valid { get; }
         public bool ArityMatches { get; }
         public Dictionary<string, TypeDef> TypeVariables { get; } = new Dictionary<string, TypeDef>();
         public Dictionary<string, List<TypeExpression>> TypeReplacements = new Dictionary<string, List<TypeExpression>>();
 
-        public FunctionCallAnalysis(FunctionAnalysis function, IReadOnlyList<TypeExpression> args)
+        public FunctionCallAnalysis(Compilation compilation, FunctionDef def, IReadOnlyList<TypeExpression> args)
         {
-            ArityMatches = function.Def.Parameters.Count == args.Count;
+            FunctionDef = def;
+            ArityMatches = FunctionDef.Parameters.Count == args.Count;
                 
             if (!ArityMatches) return;
 
             for (var i = 0; i < args.Count; i++)
             {
                 var argType = args[i];
-                var parameter = function.Def.Parameters[i];
-                var cast = Compilation.CanCast(argType, parameter.Type);
+                var parameter = FunctionDef.Parameters[i];
+                var cast = compilation.CanCast(argType, parameter.Type);
                 var arg = new FunctionArgAnalysis(i, parameter, argType, cast);
                 foreach (var tr in arg.TypeReplacements)
                 {

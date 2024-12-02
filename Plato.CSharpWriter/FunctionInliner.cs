@@ -102,7 +102,7 @@ namespace Plato.CSharpWriter
             }
             else if (fc.Function is FunctionGroupRefSymbol fg)
             {
-                var fcr = new FunctionCallResolver(Compilation, Context, fc);
+                var fcr = new FunctionGroupCallAnalysis(Compilation, Context, fc);
                 var funcs = fcr.ViableFunctions;
                 if (funcs.Count > 1)
                 {

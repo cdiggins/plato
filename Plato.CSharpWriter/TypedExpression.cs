@@ -10,7 +10,7 @@ namespace Plato.CSharpWriter
         public IType DeterminedType;
         public IType UsageType;
         public Expression Expression;
-        public FunctionCallResolver Resolver;
+        public FunctionGroupCallAnalysis Analysis;
 
         public TypedExpression(Expression expr, IType determined, IType usage)
         {
@@ -28,16 +28,16 @@ namespace Plato.CSharpWriter
 
         public override string ToString()
         {
-            var fid = Resolver?.ViableFunctions.Count;
+            var fid = Analysis?.ViableFunctions.Count;
             return $"{Expression}#{fid}";// :{DeterminedType}:{UsageType}";
         }
 
         public override Symbol Rewrite(Func<Symbol, Symbol> f)
             => throw new NotImplementedException();
 
-        public TypedExpression With(FunctionCallResolver fcr)
+        public TypedExpression With(FunctionGroupCallAnalysis fcr)
         {
-            Resolver = fcr;
+            Analysis = fcr;
             return this;
         }
     }

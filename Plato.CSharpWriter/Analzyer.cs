@@ -55,11 +55,11 @@ namespace Plato.CSharpWriter
         public StringBuilder AnalyzeBody(FunctionAnalysis fa, FunctionCall fc)
         {
             var sb = new StringBuilder();
-            var r = new FunctionCallResolver(Compilation, fa, fc);
+            var r = new FunctionGroupCallAnalysis(Compilation, fa, fc);
             var f = fc.Function;
             if (f is FunctionGroupRefSymbol fgr)
             {
-                var fcr = new FunctionCallResolver(Compilation, fa, fc);
+                var fcr = new FunctionGroupCallAnalysis(Compilation, fa, fc);
                 var funcs = fcr.ViableFunctions;
                 var isAmb = funcs.Count > 1;
                 var isAmbStr = isAmb ? "AMBIGUOUS" : "";
