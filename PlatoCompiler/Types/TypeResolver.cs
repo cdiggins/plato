@@ -8,8 +8,12 @@ namespace Plato.Compiler.Types
 {
     public class TypeResolver
     {
-        public Compilation Compilation { get; }
-        
+        public Compilation Compilation => Context.Compilation;
+        public FunctionAnalysis Context { get; }
+
+        public TypeResolver(FunctionAnalysis context)
+            => Context = context;
+
         public Dictionary<Expression, TypeExpression> Types { get; } 
             = new Dictionary<Expression, TypeExpression>();
 
@@ -80,7 +84,9 @@ namespace Plato.Compiler.Types
                     break;
 
                 case FunctionCall functionCall:
-                    //r = Compilation.GetOrComputeFunctionCallAnalysis(functionCall).;
+                    var tmp = Compilation.GetOrComputeFunctionGroupCallAnalysis(Context, functionCall);
+                    // TODO: is this sufficient?
+                    return tmp.FinalResultType;
                     break;
 
                 case FunctionGroupRefSymbol functionGroupReference:

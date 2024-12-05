@@ -7,23 +7,24 @@ namespace Plato.Compiler.Types
 {
     public class FunctionGroupCallAnalysis
     {
-        public Compilation Compilation { get; }
+        public Compilation Compilation => Context.Compilation;
         public FunctionAnalysis Context { get; }
         public FunctionCall FunctionCall { get; }
         public IReadOnlyList<FunctionCallAnalysis> AllFunctions { get; }
         public IReadOnlyList<FunctionCallAnalysis> ViableFunctions { get; }
+        public IReadOnlyList<FunctionCallAnalysis> OrderedFunctions { get; }
+        public IReadOnlyList<FunctionCallAnalysis> BestFunctions { get; }
         public IReadOnlyList<TypeExpression> ArgTypes { get; }
         public IReadOnlyList<TypeExpression> ResultTypes { get; }
         public TypeExpression FinalResultType { get; }
         public bool Success { get; }
     
-        public FunctionGroupCallAnalysis(Compilation compilation, FunctionAnalysis context, FunctionCall fc)
+        public FunctionGroupCallAnalysis(FunctionAnalysis context, FunctionCall fc)
         {
-            Compilation = compilation;
             Context = context;
             FunctionCall = fc;
 
-            ArgTypes = fc.Args.Select(Compilation.GetType).ToList();
+            ArgTypes = fc.Args.Select(Context.TypeResolver.GetType).ToList();
             
             var funcs = FunctionCall.Function is FunctionGroupRefSymbol fgr 
                 ? fgr.Def.Functions 
@@ -35,13 +36,20 @@ namespace Plato.Compiler.Types
 
             ViableFunctions = AllFunctions
                 .Where(f => f.Valid)
-                .ToList(); 
-            
-            ResultTypes = ViableFunctions
+                .ToList();
+
+            if (ViableFunctions.Count == 0)
+                throw new Exception("No viable functions found");
+
+            OrderedFunctions = ViableFunctions.OrderBy(x => x).ToList();
+            var bestFunction = OrderedFunctions[0];
+            BestFunctions = OrderedFunctions.TakeWhile(f => f.CompareTo(bestFunction) == 0).ToList();
+
+            ResultTypes = BestFunctions
                 .Select(f => f.DeterminedReturnType)
                 .Distinct()
                 .ToList();
-            
+
             Success = ResultTypes.Count == 1;
 
             if (!Success)
@@ -49,5 +57,7 @@ namespace Plato.Compiler.Types
             
             FinalResultType = ResultTypes.FirstOrDefault();
         }
+
+       
     }
 }

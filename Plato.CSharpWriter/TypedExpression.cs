@@ -7,12 +7,12 @@ namespace Plato.CSharpWriter
 {
     public class TypedExpression : Expression
     {
-        public IType DeterminedType;
-        public IType UsageType;
+        public TypeExpression DeterminedType;
+        public TypeExpression UsageType;
         public Expression Expression;
         public FunctionGroupCallAnalysis Analysis;
 
-        public TypedExpression(Expression expr, IType determined, IType usage)
+        public TypedExpression(Expression expr, TypeExpression determined, TypeExpression usage)
         {
             DeterminedType = determined;
             UsageType = usage;

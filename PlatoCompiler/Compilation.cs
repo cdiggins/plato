@@ -128,7 +128,6 @@ namespace Plato.Compiler
             }
         }
 
-        public TypeResolver TypeResolver = new TypeResolver();
         public readonly bool DisplayWarnings = false;
         public ILogger Logger { get; }
         public bool CompletedCompilation { get; }
@@ -176,7 +175,7 @@ namespace Plato.Compiler
         {
             if (FunctionGroupCallAnalyses.TryGetValue(fc, out var analysis))
                 return analysis;
-            var r = new FunctionGroupCallAnalysis(this, context, fc);
+            var r = new FunctionGroupCallAnalysis(context, fc);
             FunctionGroupCallAnalyses.Add(fc, r);
             return r;
         }
@@ -314,8 +313,8 @@ namespace Plato.Compiler
 
         public AstNode GetAstNode(Symbol symbol)
         {
-            if (SymbolFactory.SymbolsToNodes.ContainsKey(symbol))
-                return SymbolFactory.SymbolsToNodes[symbol];
+            if (SymbolFactory.SymbolsToNodes.TryGetValue(symbol, out var node))
+                return node;
             return null;
         }
 
@@ -344,9 +343,6 @@ namespace Plato.Compiler
                 Log("Unknown location.");
             }
         }
-
-        public TypeExpression GetType(Expression expr)
-            => TypeResolver.GetType(expr);
 
         public CastDetails CanCast(TypeExpression from, TypeExpression to)
         {
@@ -388,6 +384,6 @@ namespace Plato.Compiler
             }
 
             throw new Exception($"Unrecognized type cast {from} to {to}");
-        }   
+        }
     }
 }

@@ -55,11 +55,11 @@ namespace Plato.CSharpWriter
         public StringBuilder AnalyzeBody(FunctionAnalysis fa, FunctionCall fc)
         {
             var sb = new StringBuilder();
-            var r = new FunctionGroupCallAnalysis(Compilation, fa, fc);
+            var r = new FunctionGroupCallAnalysis(fa, fc);
             var f = fc.Function;
             if (f is FunctionGroupRefSymbol fgr)
             {
-                var fcr = new FunctionGroupCallAnalysis(Compilation, fa, fc);
+                var fcr = new FunctionGroupCallAnalysis(fa, fc);
                 var funcs = fcr.ViableFunctions;
                 var isAmb = funcs.Count > 1;
                 var isAmbStr = isAmb ? "AMBIGUOUS" : "";
@@ -125,17 +125,6 @@ namespace Plato.CSharpWriter
             }
 
             return sb;
-        }
-
-        public void OutputFunctionCallAnalysis(StringBuilder sb, FunctionCallAnalysis fca)
-        {
-            sb.AppendLine($"    Function = {fca.Function.Signature}");
-            sb.AppendLine($"    Callable = {fca.Valid}, Has body = {fca.HasBody}, Arity Matches = {fca.ArityMatches}, # Concrete type = {fca.NumConcreteTypes}");
-            if (fca.ArityMatches)
-            {
-                for (var i = 0; i < fca.Arguments.Count; ++i)
-                    sb.AppendLine($"      Argument {i} = {fca.ArgDetails(i)}");
-            }
         }
     }
 }

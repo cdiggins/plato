@@ -53,7 +53,7 @@ namespace Plato.Compiler.Types
             => $"Cast<{From},{To},{Depth},{CastFunction}>";
     }
 
-    public class FunctionArgAnalysis
+    public class FunctionArgAnalysis : IComparable<FunctionArgAnalysis>
     {
         public int Index { get; }
         public string Name => Parameter.Name;
@@ -78,12 +78,72 @@ namespace Plato.Compiler.Types
         public void GatherTypeReplacements(TypeExpression from, TypeExpression to)
         {
             if (to.IsTypeVariable)
+            {
                 TypeReplacements.Add(new TypeReplacement(to.Def, from));
-            if (from.TypeArgs.Count != to.TypeArgs.Count)
-                throw new Exception(
-                    $"Mismatched number of type arguments: this cast should not be possible from {from} to {to}");
-            for (var i=0; i < from.TypeArgs.Count; ++i)
-                GatherTypeReplacements(from.TypeArgs[i], to.TypeArgs[i]);
+            }
+            else
+            {
+                if (from.TypeArgs.Count != to.TypeArgs.Count)
+                    throw new Exception(
+                        $"Mismatched number of type arguments: this cast should not be possible from {from} to {to}");
+                for (var i = 0; i < from.TypeArgs.Count; ++i)
+                    GatherTypeReplacements(from.TypeArgs[i], to.TypeArgs[i]);
+            }
+        }
+
+        public int CompareTo(FunctionArgAnalysis arg2)
+        {
+            if (!ArgType.Equals(arg2.ArgType))
+                throw new Exception("Expected both arguments to be the same");
+            if (ParameterType.Equals(arg2.ParameterType))
+                return 0;
+            
+            if (ParameterType.Def.IsConcrete())
+            {
+                if (!arg2.ParameterType.Def.IsConcrete())
+                    return -1;
+
+                // Both types are concrete. If one has the correct na
+                if (ParameterType.Name.Equals(ArgType.Name))
+                {
+                    if (!arg2.ParameterType.Name.Equals(ArgType.Name))
+                        return -1;
+                    return 0;
+                }
+                else
+                {
+                    if (arg2.ParameterType.Name.Equals(ArgType.Name))
+                        return +1;
+                    return 0;
+                }
+
+                // Both types are concrete, but neither have the correct name.
+                return 0;
+            }
+
+            if (arg2.ParameterType.Def.IsConcrete())
+                return +1;
+
+            if (ParameterType.Def.IsConcept())
+            {
+                if (!ParameterType.Def.IsConcept())
+                    return +1;
+
+                if (Depth < arg2.Depth)
+                    return -1;
+                if (Depth > arg2.Depth)
+                    return +1;
+
+                return 0;
+            }
+
+            if (arg2.ParameterType.Def.IsConcept())
+                return +1;
+
+            Debug.Assert(ParameterType.Def.IsTypeVariable());
+            Debug.Assert(arg2.ParameterType.Def.IsTypeVariable());
+            
+            return 0;
         }
     }
 
@@ -96,7 +156,7 @@ namespace Plato.Compiler.Types
             => (Variable, Type) = (def, type);
     }
 
-    public class FunctionCallAnalysis
+    public class FunctionCallAnalysis : IComparable<FunctionCallAnalysis>
     {
         public List<FunctionArgAnalysis> Args { get; } = new List<FunctionArgAnalysis>();
         public FunctionDef FunctionDef { get; }
@@ -164,6 +224,25 @@ namespace Plato.Compiler.Types
             var def = expr.Def;
             var args = expr.TypeArgs.Select(ApplyTypeReplacements).ToArray();
             return new TypeExpression(def, args);
+        }
+
+        public int CompareTo(FunctionCallAnalysis other)
+        {
+            if (Args.Count != other.Args.Count)
+                throw new Exception("Expected both functions to have the same number of arguments");
+
+            for (var i = 0; i < Args.Count; i++)
+            {
+                var a1 = Args[i];
+                var a2 = other.Args[i];
+                var tmp = a1.CompareTo(a2);
+                if (tmp < 0)
+                    return -1;
+                if (tmp > 0)
+                    return +1;
+            }
+
+            return 0;
         }
     }
 }

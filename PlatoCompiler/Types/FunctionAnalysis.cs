@@ -6,6 +6,15 @@ namespace Plato.Compiler.Types
 {
     public class FunctionAnalysis
     {
+        public FunctionAnalysis(Compilation compilation, FunctionDef def)
+        {
+            Compilation = compilation;
+            Def = def;
+            TypeResolver = new TypeResolver(this);
+        }
+
+        public TypeResolver TypeResolver { get; }
+
         public List<TypeVariable> TypeVariables { get; } 
             = new List<TypeVariable>();
 
@@ -31,12 +40,6 @@ namespace Plato.Compiler.Types
 
         public TypeExpression DeclaredReturnType
             => Def.ReturnType;
-        
-        public FunctionAnalysis(Compilation compilation, FunctionDef def)
-        {
-            Compilation = compilation;
-            Def = def;
-        }
 
         public string ParametersString()
             => string.Join(", ", Def.Parameters.JoinStringsWithComma());

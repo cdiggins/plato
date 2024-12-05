@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Plato.AST;
 using Plato.Compiler;
 using Plato.Compiler.Symbols;
 using Plato.Compiler.Types;
@@ -10,14 +11,13 @@ namespace Plato.CSharpWriter
     public class FunctionInliner
     {
         public Compilation Compilation => Context.Compilation;
+        public TypeResolver TypeResolver => Context.TypeResolver;
         public readonly FunctionAnalysis Context;
         public readonly List<string> FailedInlines = new List<string>();
         public readonly TypedExpression InlinedBody;
-        public readonly IType BooleanType;
 
         public FunctionInliner(FunctionAnalysis fa)
         {
-            BooleanType = fa.ToSimpleType("Boolean");
             Context = fa;
             var body = fa.Def.Body as Expression;
             InlinedBody = body == null 
@@ -28,9 +28,9 @@ namespace Plato.CSharpWriter
                     fa.DeclaredReturnType);
         }
 
-        public TypedExpression InlineExpression(Expression expr, ParameterReplacements replacements, IType usage = null)
+        public TypedExpression InlineExpression(Expression expr, ParameterReplacements replacements, TypeExpression usage = null)
         {
-            var type = Compilation.GetExpressionType(expr);
+            var type = TypeResolver.GetType(expr);
             var r = new TypedExpression(expr, type, usage);
 
             switch (expr)
@@ -47,7 +47,7 @@ namespace Plato.CSharpWriter
                 case ConditionalExpression conditionalExpression:
                     return new TypedExpression(
                         new ConditionalExpression(
-                            InlineExpression(conditionalExpression.Condition, replacements, BooleanType),
+                            InlineExpression(conditionalExpression.Condition, replacements, TypeResolver.CreateType(LiteralTypesEnum.Boolean)),
                             InlineExpression(conditionalExpression.IfTrue, replacements, null),
                             // TODO: the second branch might need to be cast to the first (or vice versa)
                             InlineExpression(conditionalExpression.IfFalse, replacements, null)),
@@ -86,9 +86,9 @@ namespace Plato.CSharpWriter
             }
         }
 
-        public TypedExpression InlineCall(FunctionCall fc, ParameterReplacements replacements, IType usage)
+        public TypedExpression InlineCall(FunctionCall fc, ParameterReplacements replacements, TypeExpression usage)
         {
-            var determined = Compilation.GetExpressionType(fc);
+            var determined = TypeResolver.GetType(fc);
             var args = fc.Args.Select(a => InlineExpression(a, replacements)).ToList();
             var r = new TypedExpression(
                 new FunctionCall(fc.Function, fc.HasArgList, args.Cast<Expression>().ToArray()), determined, usage);
@@ -102,7 +102,7 @@ namespace Plato.CSharpWriter
             }
             else if (fc.Function is FunctionGroupRefSymbol fg)
             {
-                var fcr = new FunctionGroupCallAnalysis(Compilation, Context, fc);
+                var fcr = new FunctionGroupCallAnalysis(Context, fc);
                 var funcs = fcr.ViableFunctions;
                 if (funcs.Count > 1)
                 {
@@ -120,12 +120,12 @@ namespace Plato.CSharpWriter
 
                 var f = funcs[0];
                 var fd = f.FunctionDef;
-                var fa = Compilation.GetProcessedFunctionAnalysis(fd);
+                var fa = Compilation.GetOrComputeFunctionAnalysis(fd);
 
                 var args2 = new List<TypedExpression>();
                 for (var i = 0; i < fc.Args.Count; ++i)
                 {
-                    var parameterType = fa.ParameterTypes[i];
+                    var parameterType = fa.Def.GetParameterType(i);
                     var arg = InlineExpression(fc.Args[i], replacements, parameterType);
                     args2.Add(arg);
                 }
