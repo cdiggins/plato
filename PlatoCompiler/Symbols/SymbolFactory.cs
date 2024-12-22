@@ -370,6 +370,16 @@ namespace Plato.Compiler.Symbols
                     SymbolsToNodes.Add(typeDef, astTypeDeclaration);
                     BindType(typeDef);
                     TypeDefs.Add(typeDef);
+
+                    if (astTypeDeclaration.Kind == TypeKind.ConcreteType)
+                    {
+                        // Add a global constructor function 
+                        var ctor = new FunctionDef(ValueBindingsScope, typeDef.Name, typeDef,
+                            typeDef.ToTypeExpression(), null,
+                            typeDef.Fields.Select((f, i) => new ParameterDef(ValueBindingsScope, f.Name, f.Type, i))
+                                .ToArray());
+                        AddCompilerGeneratedFunction(typeDef, ctor);
+                    }
                 }
             }
 
@@ -453,6 +463,11 @@ namespace Plato.Compiler.Symbols
                 foreach (var m in typeDef.Methods)
                 {
                     // Create the function 
+
+                    // NOTE: I haven't really tested whether this makes sense. 
+                    // It looks like we are creating a new scope for each function here,
+                    // I have a hard time understanding how that would work for constructors. 
+
                     ValueBindingsScope = ValueBindingsScope.Push();
                     var location = SymbolsToNodes[m] as AstMethodDeclaration;
                     if (location == null) throw new Exception($"Missing AstMethodDeclaration at {location}");

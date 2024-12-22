@@ -22,10 +22,16 @@ namespace Plato.Compiler.Symbols
 
         public override string ToString()
         {
+            return TypeArgs.Count > 0 
+                ? $"{Name}<{string.Join(",", TypeArgs)}>" 
+                : Name;
+
+            /*
             var kind = Def?.Kind.ToString() ?? "";
             if (TypeArgs.Count > 0)
                 return kind + ":" + Name + $"<{string.Join(",", TypeArgs)}>";
             return kind + ":" + Name;
+            */
         }
 
         public static TypeExpression CreateTypeVar(Scope scope, string name)

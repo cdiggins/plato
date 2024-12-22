@@ -13,7 +13,6 @@ public class IDE
     public TabControl TabControl { get; }
     public RichTextBox LoggingOutputEditor { get; }
     public Action<Editor> EditorChanged { get; }
-    public Config Config = Config.Current;
 
     public string SymbolErrorsString { get; }
     public string SymbolsString { get; }

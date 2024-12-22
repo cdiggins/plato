@@ -23,9 +23,15 @@ namespace Plato.Compiler
             CompletedCompilation = false;
             Trees = trees.ToList();
 
+            if (Trees.Count == 0)
+            {
+                Log("No nodes provided");
+                return;
+            }
+
             Log("Gathering type declarations");
             TypeDeclarations = Trees.SelectMany(tree => tree.GetAllTypes()).ToList();
-
+            
             try
             {
                 Log("Creating symbol resolver");
@@ -90,17 +96,14 @@ namespace Plato.Compiler
                 ReifiedFunctionsByName = ReifiedTypes.Values.SelectMany(rt => rt.Functions)
                     .ToDictionaryOfLists(rf => rf.Name);
 
+                // ?? 
                 Libraries = new LibraryFunctions(this);
                 ConcreteTypes = GetConcreteTypes()
                     .Select(c => new ConcreteType(c, Libraries))
                     .ToList();
 
-                Log("Creating function analysis");
-                var sb = new StringBuilder();
-                foreach (var fd in FunctionDefinitions)
-                    GetOrComputeFunctionAnalysis(fd);
-                    
-                Logger.Log(sb.ToString());                
+                Log("Computing the type relations");
+                TypeRelations = new TypeRelations(this);                    
 
                 //Log("Generating Visual Syntax Graphs");
                 //Graphs.Clear();
@@ -117,6 +120,14 @@ namespace Plato.Compiler
                         Log("Semantic Warning : " + sw);
 
                 CompletedCompilation = true;
+
+                Log("Creating function analysis");
+                var sb = new StringBuilder();
+                foreach (var fd in FunctionDefinitions)
+                    GetOrComputeFunctionAnalysis(fd);
+
+                Logger.Log(sb.ToString());
+
             }
             catch (AstException ae)
             {
@@ -134,10 +145,14 @@ namespace Plato.Compiler
         public IReadOnlyList<AstNode> Trees { get; }
         public SymbolFactory SymbolFactory { get; }
         public IReadOnlyList<AstTypeDeclaration> TypeDeclarations { get; }
+        public TypeRelations TypeRelations { get; }
 
         public IDictionary<FunctionDef, FunctionAnalysis> FunctionAnalyses { get; } = new Dictionary<FunctionDef, FunctionAnalysis>();
         public IDictionary<FunctionCall, FunctionGroupCallAnalysis> FunctionGroupCallAnalyses { get; } = new Dictionary<FunctionCall, FunctionGroupCallAnalysis>();
-        
+
+        public IEnumerable<ReifiedFunction> ReifiedFunctions =>
+            ReifiedFunctionsByName.SelectMany(kv => kv.Value);
+
         public IEnumerable<TypeDef> AllTypeAndLibraryDefinitions => TypeDefinitions
             .Concat(LibraryDefinitionsByName.Values);
 
@@ -344,46 +359,16 @@ namespace Plato.Compiler
             }
         }
 
-        public CastDetails CanCast(TypeExpression from, TypeExpression to)
+        public TypeRelation GetRelation(TypeExpression src, TypeExpression dest)
         {
-            if (from.IsTypeVariable)
-            {
-                return new CastDetails(from, to);
-            }
-
-            if (to.IsTypeVariable)
-            {
-                return new CastDetails(from, to);
-            }
-
-            if (from.Def.IsConcept())
-            {
-                if (to.Def.IsConcrete())
-                    return null;
-
-                if (to.Def.IsConcept())
-                    return new CastDetails(from, to, to.Def.InheritsDepth(from.Def));
-            }
-            else if (from.Def.IsConcrete())
-            {
-                if (to.Def.IsConcrete())
-                {
-                    if (from.TypeArgs.Count != to.TypeArgs.Count)
-                        return null;
-
-                    if (from.Name == to.Name)
-                        return new CastDetails(from, to);
-
-                    // TOOD: 
-                    // var cast = Compilation.FindImplicitCast(from, to);
-                    return null;
-                }
-
-                if (to.Def.IsConcept())
-                    return new CastDetails(from, to);
-            }
-
-            throw new Exception($"Unrecognized type cast {from} to {to}");
+            if (!TypeRelations.RelationLookup.TryGetValue(src.Def, out var list))
+                return null;
+            var options = list.Where(rel => rel.Dest.Equals(dest.Def)).ToList();
+            if (options.Count > 1) 
+                throw new Exception($"Expected only one relation matching {src} to {dest}");
+            if (options.Count == 0) 
+                return null;
+            return options[0];
         }
     }
 }

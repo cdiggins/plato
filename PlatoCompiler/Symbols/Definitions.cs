@@ -224,7 +224,7 @@ namespace Plato.Compiler.Symbols
             => new TypeExpression(this, TypeParameters.Select(tp => tp.ToTypeExpression()).ToArray());
 
         public override string ToString()
-            => $"{Name}_{Id}:{Kind}";
+            => $"{Name}_{Id}";
 
         public override RefSymbol ToReference()
             => new TypeRefSymbol(this);

@@ -1,125 +1,154 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Ara3D.Utils;
+using Plato.AST;
 using Plato.Compiler;
-using Plato.Compiler.Analysis;
 using Plato.Compiler.Symbols;
 using Plato.Compiler.Types;
 
 namespace Plato.CSharpWriter
 {
-    public class DocWriter
+    public class DocWriter : HtmlBuilder
     {
-        public StringBuilder Sb { get; set; } = new StringBuilder();
-        public StringBuilder SbConcepts = new StringBuilder();
-        public StringBuilder SbTypes = new StringBuilder();
+        public const string Prefix = @"
+<!DOCTYPE html>
+<html lang=""en"">
+<head>
+    <meta charset=""UTF-8"" />
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0""/> 
+    <link rel=""stylesheet"" href=""style.css""/>
+    <title>Plato Geometry Documentation</title>
+</head>
+<body>
+";
+
+        public const string Suffix = @"
+</body>
+<html>";
 
         public DocWriter(Compilation compilation)
         {
             var types = compilation.AllTypeAndLibraryDefinitions.ToList();
-            WriteTypes(types);
-            WriteConcepts(types);
+
+            WriteLine(Prefix);
+
+            WriteStartTag("div", "container").WriteLine();
+            WriteStartTag("div", "nav").WriteLine();
+            WriteToc(types);
+            WriteEndTag("div").WriteLine();
+
+            WriteStartTag("div", "content").WriteLine();
+            WriteClasses(types);
+            WriteInterfaces(types);
+            WriteEndTag("div").WriteLine();
+            WriteEndTag("div");
+
+            WriteLine(Suffix);
         }
 
-        public override string ToString()
+        public void WriteToc(IReadOnlyList<TypeDef> typeDefs)
         {
-            return Sb.ToString();
+            WriteTaggedText("h3", "Classes", ("class", "collapsible")).WriteLine();
+            var concreteTypes = typeDefs.Where(t => t.IsConcrete()).OrderBy(t => t.Name).ToList();
+            WriteStartTag("ul").WriteLine();
+            foreach (var t in concreteTypes)
+            {
+                var te = t.ToTypeExpression();
+                WriteUnescapedTaggedText("li", $"{LinkType(te)}").WriteLine();
+            }
+            WriteEndTag("ul").WriteLine();
+        
+            WriteTaggedText("h3", "Interfaces", ("class", "collapsible")).WriteLine();
+            var interfaceTypes = typeDefs.Where(t => t.IsConcept()).OrderBy(t => t.Name).ToList();
+            WriteStartTag("ul").WriteLine();
+            foreach (var t in interfaceTypes)
+            {
+                var te = t.ToTypeExpression();
+                WriteUnescapedTaggedText("li", $"{LinkType(te)}").WriteLine();
+            }
+            WriteEndTag("ul").WriteLine();
         }
 
-
-        public DocWriter WriteTypes(IReadOnlyList<TypeDef> typeDefs)
+        public void WriteClasses(IEnumerable<TypeDef> typeDefs)
         {
             var types = typeDefs.Where(t => t.IsConcrete()).OrderBy(t => t.Name).ToList();
-            Sb.AppendLine($"<Details>");
-            Sb.AppendLine($"<Summary>");
-            Sb.AppendLine($"# Types");
-            Sb.AppendLine($"</Summary>");
-            Sb.AppendLine();
-
-            Sb.AppendLine($"Types in Plato are readonly structs.");
-
+            WriteTaggedText("h1", "Classes", ("class", "collapsible")).WriteLine();
             foreach (var t in types)
-                WriteType(t);
-            return this;
+                WriteClass(t);
         }
 
-        public DocWriter WriteConcepts(IReadOnlyList<TypeDef> typeDefs)
+        public void WriteInterfaces(IEnumerable<TypeDef> typeDefs)
         {
-            var concepts = typeDefs.Where(t => t.IsConcept()).OrderBy(t => t.Name).ToList();
-
-            Sb.AppendLine($"<Details>");
-            Sb.AppendLine($"<Summary>");
-            Sb.AppendLine($"# Concepts");
-            Sb.AppendLine($"</Summary>");
-            Sb.AppendLine();
-            
-            Sb.AppendLine($"Concepts in Plato are interfaces. Functions defined on a concept are available on every type that implements the concept.");
-            Sb.AppendLine();
-
-            foreach (var c in concepts)
-                WriteConcept(typeDefs, c);
-
-            Sb.AppendLine($"</Details>");
-
-            return this;
+            var types = typeDefs.Where(t => t.IsConcept()).OrderBy(t => t.Name).ToList();
+            WriteTaggedText("h1", "Interfaces", ("class", "collapsible")).WriteLine();
+            foreach (var t in types)
+                WriteInterface(t);
         }
 
-        public DocWriter WriteConcept(IReadOnlyList<TypeDef> allTypes, TypeDef concept)
+        public static HtmlAttribute IdAttr(TypeDef td)
+            => IdAttr(Id(td));
+
+        public static string Id(TypeDef td)
         {
-            Sb.AppendLine($"## {concept.Name}");
-            Sb.AppendLine();
-
-            var inheritsList = concept.GetSelfAndAllInheritedTypes().Where(t => t.Name != concept.Name).OrderBy(t => t.Name).ToList();
-            var inheritsStr = inheritsList.Select(t1 => t1.Name).JoinStringsWithComma();
-            Sb.AppendLine($"Inherits: {inheritsStr}.");
-            Sb.AppendLine();
-
-            var implementingTypes = allTypes.Where(t => t.Implements(concept) && t.IsConcrete()).ToList(); 
-            var implementingStr = implementingTypes.Select(t1 => t1.Name).JoinStringsWithComma();
-            Sb.AppendLine($"Implemented by: {implementingStr}.");
-            Sb.AppendLine();
-
-            var inheritingTypes = allTypes.Where(t => t.Implements(concept) && t.IsConcept()).ToList();
-            var inheritingStr = inheritingTypes.Select(t1 => t1.Name).JoinStringsWithComma();
-            Sb.AppendLine($"Inherited by: {inheritingStr}.");
-            Sb.AppendLine();
-
-            var functions = concept.Methods.OrderBy(m => m.Name).ToList();
-            var functionsStr = functions.Select(f => f.Name).JoinStringsWithComma();
-            Sb.AppendLine($"Functions: {functionsStr}.");
-            foreach (var f in functionsStr)
-            Sb.AppendLine();
-
-            /*
-            var fields = concept.Fields.OrderBy(m => m.Name).ToList();
-            var fieldsStr = fields.Select(f => f.Name).JoinStringsWithComma();
-            Sb.AppendLine($"Fields: {fieldsStr}.");
-            Sb.AppendLine();
-            */
-
-            // TODO: list all inherited members 
-            // TODO: format the thing better. 
-
-            return this;
+            var kind = td.Kind == TypeKind.Concept ? "interface" : "class";
+            return $"{kind}-{td.Name}";
         }
 
-        public DocWriter WriteType(TypeDef type)
+        public string LinkType(TypeExpression te)
         {
-            Sb.AppendLine($"## Type {type.Name}");
-            Sb.AppendLine();
+            var id = Id(te.Def);
+            var baseName = (te.Def.IsConcrete() || te.Def.IsConcept())
+                ? $"<a href='#{id}'>{te.Def.Name}</a>"
+                : te.Def.Name;
+            if (te.TypeArgs.Count == 0)
+                return baseName;
+            var args = te.TypeArgs.Select(LinkType).JoinStringsWithComma();
+            return $"{baseName}&lt;{args}&gt;";
+        }
 
-            var fieldsStr = type.Fields.OrderBy(f => f.Name).Select(f => $"{f.Name}:{f.Type}").JoinStringsWithComma();
-            Sb.AppendLine($"Fields: {fieldsStr}.");
-            Sb.AppendLine();
+        public void WriteClass(TypeDef type)
+        {
+            WriteUnescapedTaggedText("h2", $"Class {type.Name}", IdAttr(type)).WriteLine();
 
-            var implementsType = type.GetAllImplementedConcepts().OrderBy(t => t.Name).ToList();
-            var implementsStr = implementsType.Select(t1 => t1.Name).JoinStringsWithComma();
-            Sb.AppendLine($"Implements: {implementsStr}.");
-            Sb.AppendLine();
+            WriteTaggedText("h3", $"Fields").WriteLine();
 
-            return this;
+            WriteStartTag("ul").WriteLine();
+            foreach (var f in type.Fields)
+                WriteUnescapedTaggedText("li", $"{LinkType(f.Type)} {f.Name}").WriteLine();
+            WriteEndTag("ul").WriteLine();
+
+            WriteTaggedText("h3", $"Interfaces").WriteLine();
+
+            WriteStartTag("ul").WriteLine();
+            foreach (var impl in type.Implements)
+                WriteUnescapedTaggedText("li", $"{LinkType(impl)}").WriteLine();
+            WriteEndTag("ul").WriteLine();
+                
+            Write("<hr class='solid'/>");
+        }
+
+        public void WriteInterface(TypeDef type)
+        {
+            WriteUnescapedTaggedText("h2", $"Interface {type.Name}", IdAttr(type)).WriteLine();
+
+            WriteTaggedText("h3", $"Functions").WriteLine();
+
+            WriteStartTag("ul").WriteLine();
+            foreach (var f in type.Functions)
+            {
+                var paramStr = f.Parameters.Select(p => $"{LinkType(p.Type)} {p.Name}").JoinStringsWithComma(); 
+                WriteUnescapedTaggedText("li", $"{LinkType(f.ReturnType)} {f.Name}({paramStr});").WriteLine();
+            }
+            WriteEndTag("ul").WriteLine();
+
+            WriteTaggedText("h3", $"Inherits").WriteLine();
+
+            WriteStartTag("ul").WriteLine();
+            foreach (var te in type.Inherits)
+                WriteUnescapedTaggedText("li", $"{LinkType(te)}").WriteLine();
+            WriteEndTag("ul").WriteLine();
+
+            Write("<hr class='solid'/>");
         }
     }
 }

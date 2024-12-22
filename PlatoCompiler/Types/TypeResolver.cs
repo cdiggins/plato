@@ -87,11 +87,19 @@ namespace Plato.Compiler.Types
                     var tmp = Compilation.GetOrComputeFunctionGroupCallAnalysis(Context, functionCall);
                     // TODO: is this sufficient?
                     return tmp.FinalResultType;
-                    break;
 
                 case FunctionGroupRefSymbol functionGroupReference:
-                    r = CreateFunctionType(functionGroupReference.Def.Functions[0].NumParameters);
-                    break;
+                    //var tmp2 = Compilation.GetOrComputeFunctionGroupCallAnalysis(Context, fgr); 
+                    //r = CreateFunctionType(functionGroupReference.Def.Functions[0].NumParameters);
+                    //r = CreateFunctionType(functionGroupReference.Def.Functions[0].NumParameters);
+                    if (functionGroupReference.Def.Functions.Count > 1)
+                        throw new Exception("Too many functions");
+                    if (functionGroupReference.Def.Functions.Count == 0)
+                        throw new Exception("Not enough functions");
+                    var f = functionGroupReference.Def.Functions[0];
+                    if (f.Parameters.Count != 0)
+                        throw new Exception("Expected no parameters");
+                    return f.ReturnType;
 
                 case Lambda lambda:
                     r = CreateFunctionType(lambda.Function.NumParameters);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Ara3D.Utils;
@@ -30,6 +31,26 @@ namespace Plato.CSharpWriter
 
             OutputFunctionAnalysis(sb);
             SaveToFile(sb, "function-analysis.txt");
+
+            sb.Clear();
+            OutputTypeRelations(sb);
+            SaveToFile(sb, "type-relations.txt");
+        }
+
+        public StringBuilder OutputTypeRelations(StringBuilder sb)
+        {
+            foreach (var kv in Compilation.TypeRelations.RelationLookup)
+            {
+                sb.AppendLine($"{kv.Key}");
+
+                foreach (var r in kv.Value)
+                {
+                    // TODO: write it to the console.
+                    sb.AppendLine($"{r.Source} => {r.Dest}, Depth = {r.Depth}, Cast = {r.Cast}, Expr = {r.Expr}");
+                }
+            }
+
+            return sb;
         }
 
         public StringBuilder WriteReifiedTypes(StringBuilder sb)
@@ -110,17 +131,24 @@ namespace Plato.CSharpWriter
 
                 foreach (var fa in g)
                 {
-                    var inliner = new FunctionInliner(fa);
-                    if (inliner.InlinedBody == null)
-                        continue;
-                    sb.AppendLine($"{i++}. {fa.Def.Name}");
-                    //var typeSig = $"({string.Join(", ", fa.ParameterTypes)}) => {fa.DeclaredReturnType}";
-                    //sb.AppendLine($"  Type   : {typeSig}");
-                    sb.AppendLine($"  Signature : {fa.Signature}");
-                    sb.AppendLine($"  Body      : {fa.Def.Body}");
-                    sb.AppendLine($"  Inline    : {inliner.InlinedBody}");
-                    //sb.AppendLine($"  Has {fa.TypeParameterToTypeLookup.Count} Type parameters ");
-                    //sb.AppendLine($"  Has type parameter in return: {fa.DeclaredReturnType.HasTypeVariable()}");
+                    try
+                    {
+                        var inliner = new FunctionInliner(fa);
+                        if (inliner.InlinedBody == null)
+                            continue;
+                        sb.AppendLine($"{i++}. {fa.Def.Name}");
+                        //var typeSig = $"({string.Join(", ", fa.ParameterTypes)}) => {fa.DeclaredReturnType}";
+                        //sb.AppendLine($"  Type   : {typeSig}");
+                        sb.AppendLine($"  Signature : {fa.Signature}");
+                        sb.AppendLine($"  Body      : {fa.Def.Body}");
+                        sb.AppendLine($"  Inline    : {inliner.InlinedBody}");
+                        //sb.AppendLine($"  Has {fa.TypeParameterToTypeLookup.Count} Type parameters ");
+                        //sb.AppendLine($"  Has type parameter in return: {fa.DeclaredReturnType.HasTypeVariable()}");
+                    }
+                    catch (Exception e)
+                    {
+                        sb.AppendLine($"Error {e.Message} occurred during analysis of {fa.Def}");
+                    }
                 }
             }
 

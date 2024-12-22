@@ -8,9 +8,6 @@ namespace Plato.CLI
 {
     public static class Program
     {
-        public static Config Config { get; } 
-            = Config.Current;
-
         public static void Main(string[] args)
         {
             var logger = Logger.Console;

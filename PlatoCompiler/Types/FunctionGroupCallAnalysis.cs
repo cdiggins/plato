@@ -25,7 +25,7 @@ namespace Plato.Compiler.Types
             FunctionCall = fc;
 
             ArgTypes = fc.Args.Select(Context.TypeResolver.GetType).ToList();
-            
+                    
             var funcs = FunctionCall.Function is FunctionGroupRefSymbol fgr 
                 ? fgr.Def.Functions 
                 : new List<FunctionDef>();
@@ -52,8 +52,7 @@ namespace Plato.Compiler.Types
 
             Success = ResultTypes.Count == 1;
 
-            if (!Success)
-                throw new Exception($"Could not find a definitive return type for function call {fc}");
+            //if (!Success) throw new Exception($"Could not find a definitive return type for function call {fc}");
             
             FinalResultType = ResultTypes.FirstOrDefault();
         }
