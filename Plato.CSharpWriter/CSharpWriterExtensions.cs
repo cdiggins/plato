@@ -8,9 +8,7 @@ namespace Plato.CSharpWriter
         public static SymbolWriterCSharp ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder)
         {
             var writer = new SymbolWriterCSharp(compilation, outputFolder);
-#if CHANGE_PRECISION
             writer.WriteAll("Plato.SinglePrecision.g.cs", "float");
-#endif
             //writer.WriteAll("Plato.DoublePrecision.g.cs", "double");
 
             // Output documentation 

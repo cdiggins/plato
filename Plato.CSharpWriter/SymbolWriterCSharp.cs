@@ -487,6 +487,8 @@ namespace Plato.CSharpWriter
                 ? $"_{fieldName}" 
                 : fieldName.DecapitalizeFirst();
 
+        public static string Annotation => $"[MethodImpl(AggressiveInlining)]";
+        
         public SymbolWriterCSharp WriteTypeImplementation(ConcreteType concreteType)
         {
             var t = concreteType.Type;
@@ -541,7 +543,7 @@ namespace Plato.CSharpWriter
                     var fn = fieldNames[i];
                     var pn = FieldNameToParameterName(fn);
                     var args = fieldNames.Select((n, j) => j == i ? pn : n).JoinStringsWithComma();
-                    WriteLine($"public {name} With{fn}({ft} {pn}) => new {name}({args});");
+                    WriteLine($"{Annotation} public {name} With{fn}({ft} {pn}) => new {name}({args});");
                 }
 
                 var parameters = fieldTypes.Zip(parameterNames, (pt, pn) => $"{pt} {pn}");
@@ -556,24 +558,17 @@ namespace Plato.CSharpWriter
                 // Regular Constructor 
                 if (fieldNames.Count > 0)
                 {
-                    WriteLine($"public {t.Name}({parametersStr}) => ({fieldNamesStr}) = ({parameterNamesStr});");
+                    var assignments = fieldNames.Zip(parameterNames, (fn, pn) => $"{fn} = {pn}").JoinStrings("; ");
+                    WriteLine($"{Annotation} public {t.Name}({parametersStr}) {{ {assignments} }};" +
                 }
-                else
-                {
-                    if (!EmitStructsInsteadOfClasses)
-                        WriteLine($"public {t.Name}({parametersStr}) {{ }}");
-                }
-
-                // Parameterless constructor, but not if writing structs
-                if (!EmitStructsInsteadOfClasses)
-                    WriteLine($"public {t.Name}() {{ }}");
-
+               
                 WriteLine($"public static {name} Default = new {name}();");
 
                 // Static factory function (New)
-                WriteLine($"public static {name} New({parametersStr}) => new {name}({parameterNamesStr});");
+                WriteLine($"{Annotation} public static {name} Create({parametersStr}) => new {name}({parameterNamesStr});");
 
 #if CHANGE_PRECISION
+                throw new NotImplementedException("This has not been updated")
                 // Precision changes
                 if (t.TypeParameters.Count == 0 && fieldNames.Count != 0 && !fieldTypes.Any(ft => ft.Contains("<")))
                 {
@@ -591,13 +586,11 @@ namespace Plato.CSharpWriter
                     var qualifiedFieldNames = fieldNames.Select(f => $"self.{f}").JoinStringsWithComma();
                     var tupleNames = string.Join(", ",
                         Enumerable.Range(1, fieldNames.Count).Select(i => $"value.Item{i}"));
-                    WriteLine(
-                        $"public static implicit operator ({fieldTypesStr})({name} self) => ({qualifiedFieldNames});");
-                    WriteLine(
-                        $"public static implicit operator {name}(({fieldTypesStr}) value) => new {name}({tupleNames});");
+                    WriteLine($"{Annotation} public static implicit operator ({fieldTypesStr})({name} self) => ({qualifiedFieldNames});");
+                    WriteLine($"{Annotation} public static implicit operator {name}(({fieldTypesStr}) value) => new {name}({tupleNames});");
 
                     // Deconstructor function 
-                    Write($"public void Deconstruct({deconstructorParametersStr}) {{ ");
+                    Write($"{Annotation} public void Deconstruct({deconstructorParametersStr}) {{ ");
                     foreach (var fn in fieldNames)
                         Write($"{FieldNameToParameterName(fn)} = {fn}; ");
                     WriteLine("}");
@@ -611,18 +604,18 @@ namespace Plato.CSharpWriter
                     // Only implicit operators if we are not an 
                     if (isPrimitive || !t.Fields[0].Type.Def.IsConcept())
                     {
-                        WriteLine($"public static implicit operator {fieldType}({name} self) => self.{fieldName};");
-                        WriteLine($"public static implicit operator {name}({fieldType} value) => new {name}(value);");
+                        WriteLine($"{Annotation} public static implicit operator {fieldType}({name} self) => self.{fieldName};");
+                        WriteLine($"{Annotation} public static implicit operator {name}({fieldType} value) => new {name}(value);");
                     }
 
                     // Any time that we are implicitly casting to/from Number (floating point)
                     // We can also cast from Plato.Integers and built-in integers, as well to/from built-in floating types 
                     if (fieldType == "Number")
                     {
-                        WriteLine($"public static implicit operator {name}(Integer value) => new {name}(value);");
-                        WriteLine($"public static implicit operator {name}(int value) => new Integer(value);");
-                        WriteLine($"public static implicit operator {name}({FloatType} value) => new Number(value);");
-                        WriteLine($"public static implicit operator {FloatType}({name} value) => value.{fieldName};");
+                        WriteLine($"{Annotation} public static implicit operator {name}(Integer value) => new {name}(value);");
+                        WriteLine($"{Annotation} public static implicit operator {name}(int value) => new Integer(value);");
+                        WriteLine($"{Annotation} public static implicit operator {name}({FloatType} value) => new Number(value);");
+                        WriteLine($"{Annotation} public static implicit operator {FloatType}({name} value) => value.{fieldName};");
 
                     }
                 }
@@ -630,38 +623,30 @@ namespace Plato.CSharpWriter
                 // Object.Equals override
                 if (fieldNames.Count > 0)
                 {
-                    Write(
-                            $"public override bool Equals(object obj) {{ if (!(obj is {name})) return false; var other = ({name})obj; return ")
+                    Write($"{Annotation} public override bool Equals(object obj) {{ if (!(obj is {name})) return false; var other = ({name})obj; return ")
                         .Write(fieldNames.Select(f => $"{f}.Equals(other.{f})").JoinStrings(" && "))
                         .WriteLine("; }");
                 }
                 else
                 {
-                    WriteLine($"public override bool Equals(object obj) => true;");
+                    WriteLine($"{Annotation} public override bool Equals(object obj) => true;");
                 }
 
                 // Object.GetHashCode override 
-                WriteLine($"public override int GetHashCode() => Intrinsics.CombineHashCodes({fieldNamesStr});");
+                WriteLine($"{Annotation} public override int GetHashCode() => Intrinsics.CombineHashCodes({fieldNamesStr});");
 
                 // Object.ToString() override 
                 if (isPrimitive)
                 {
-                    WriteLine($"public override string ToString() => Intrinsics.ToString(this);");
+                    WriteLine($"{Annotation} public override string ToString() => Intrinsics.ToString(this);");
                 }
                 else
                 {
                     var toStr = "$\"{{ " + fieldNames.Select(fn => $"\\\"{fn}\\\" = {{{fn}}}").JoinStringsWithComma() +
                                 " }}\"";
-                    WriteLine($"public override string ToString() => {toStr};");
+                    WriteLine($"{Annotation} public override string ToString() => {toStr};");
                 }
-                
-                /*
-                WriteLine($"public String TypeName => {name.Quote()};");
-                var fieldNamesAsStringsStr = fieldNames.Select(n => $"(String){n.Quote()}").JoinStringsWithComma();
-                WriteLine(
-                    $"public IArray<String> FieldNames => Intrinsics.MakeArray<String>({fieldNamesAsStringsStr});");
-                */
-
+               
                 if (EmitInterfaces)
                 {
                     // Explicit implementation of properties by forwarding to fields
@@ -675,7 +660,7 @@ namespace Plato.CSharpWriter
                             if (f.Parameters.Count == 1 && fieldIndex >= 0)
                             {
                                 var fieldType = isPrimitive ? name : fieldTypes[fieldIndex];
-                                WriteLine($"{fieldType} {its}.{f.Name} => {f.Name};");
+                                WriteLine($"{Annotation} {fieldType} {its}.{f.Name} => {f.Name};");
                             }
                         }
                     }
@@ -701,23 +686,19 @@ namespace Plato.CSharpWriter
                         // Add a constructor from arrays 
                         var ctorArrayArgs = Enumerable.Range(0, fieldNames.Count).Select(i => $"xs[{i}]")
                             .JoinStringsWithComma();
-                        WriteLine($"public {name}(IReadOnlyList<{elem}> xs) : this({ctorArrayArgs}) {{ }}");
-                        WriteLine($"public {name}({elem}[] xs) : this({ctorArrayArgs}) {{ }}");
-                        WriteLine($"public static {name} Create(IReadOnlyList<{elem}> xs) => new {name}(xs);");
+                        WriteLine($"{Annotation} public {name}(IReadOnlyList<{elem}> xs) : this({ctorArrayArgs}) {{ }}");
+                        WriteLine($"{Annotation} public {name}({elem}[] xs) : this({ctorArrayArgs}) {{ }}");
+                        WriteLine($"{Annotation} public static {name} Create(IReadOnlyList<{elem}> xs) => new {name}(xs);");
                     }
 
                     // Allow implicit casting to System.Array
-                    WriteLine($"public static implicit operator {elem}[]({name} self) => self.ToSystemArray();");
-
-                    // Allow implicit casting to Array<T>
-                    WriteLine(
-                        $"public static implicit operator Array<{elem}>({name} self) => self.ToPrimitiveArray();");
+                    WriteLine($"{Annotation} public static implicit operator {elem}[]({name} self) => self.ToSystemArray();");
 
                     // Implementation of IReadOnlyList
-                    WriteLine($"public System.Collections.Generic.IEnumerator<{elem}> GetEnumerator() => new ArrayEnumerator<{elem}>(this);");
-                    WriteLine($"System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();");
-                    WriteLine($"{elem} System.Collections.Generic.IReadOnlyList<{elem}>.this[int n] => At(n);");
-                    WriteLine($"int System.Collections.Generic.IReadOnlyCollection<{elem}>.Count => this.Count;");
+                    WriteLine($"{Annotation} public System.Collections.Generic.IEnumerator<{elem}> GetEnumerator() => new ArrayEnumerator<{elem}>(this);");
+                    WriteLine($"{Annotation} System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();");
+                    WriteLine($"{Annotation} {elem} System.Collections.Generic.IReadOnlyList<{elem}>.this[int n] => At(n);");
+                    WriteLine($"{Annotation} int System.Collections.Generic.IReadOnlyCollection<{elem}>.Count => this.Count;");
                 }
 
                 // Check if the type is "INumerical", if so provide implementations of the default types. 
@@ -728,12 +709,11 @@ namespace Plato.CSharpWriter
                     var numDistinctFieldTypes = fieldTypes.Distinct().Count();
                     if (numDistinctFieldTypes != 1)
                         throw new Exception("INumerical types are assumed to have all of the fields of the same type");
-                    WriteLine(
-                        $"public IArray<Number> Components => Intrinsics.MakeArray<Number>({fieldNames.JoinStringsWithComma()});");
+                    WriteLine($"{Annotation} public IArray<Number> Components => Intrinsics.MakeArray<Number>({fieldNames.JoinStringsWithComma()});");
 
                     var tmp = Enumerable.Range(0, fieldNames.Count).Select(i => $"numbers[{i}]").JoinStringsWithComma();
                     var fromCompImpl = $"new {name}({tmp})";
-                    WriteLine($"public {name} FromComponents(IArray<Number> numbers) => {fromCompImpl};");
+                    WriteLine($"{Annotation} public {name} FromComponents(IArray<Number> numbers) => {fromCompImpl};");
                 }
 
                 // For the primitives, we have predefined implementations of the standard concepts .
