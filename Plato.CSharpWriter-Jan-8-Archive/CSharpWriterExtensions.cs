@@ -11,16 +11,13 @@ namespace Plato.CSharpWriter
 #if CHANGE_PRECISION
             writer.WriteAll("Plato.SinglePrecision.g.cs", "float");
 #endif
-            //writer.WriteAll("Plato.DoublePrecision.g.cs", "double");
+            writer.WriteAll("Plato.DoublePrecision.g.cs", "double");
 
-            // Output documentation 
-            /*
             var docWriter = new DocWriter(compilation);
             var fp = outputFolder.RelativeFile("docs.html");
             fp.WriteAllText(docWriter.ToString());
-            */
 
-            //Analyze(compilation, outputFolder);
+            Analyze(compilation, outputFolder);
 
             return writer;
         }

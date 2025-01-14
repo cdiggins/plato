@@ -29,7 +29,7 @@ namespace Plato.CSharpWriter
         {
             if (pd.Equals(Parameter))
                 return Expression;
-            if (Previous != null)   
+            if (Previous != null)
                 return Previous.Replace(pd);
             return null;
         }

@@ -18,6 +18,10 @@ namespace Plato.Compiler.Symbols
         public SymbolFactory(ILogger logger)
         {
             Logger = logger;
+
+            // Create and bind Primitives type-defs
+            var td = new TypeDef(null, TypeKind.Library, "Any");
+            BindType(td);
         }
 
         public ILogger Logger { get; }
@@ -583,6 +587,6 @@ namespace Plato.Compiler.Symbols
         }
 
         public TypeExpression CreateAny()
-            => GetTypeExpression("IAny");
+            => GetTypeExpression("Any");
     }
 }

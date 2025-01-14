@@ -87,6 +87,7 @@ namespace Plato.CSharpWriter
             WriteLine("");
             WriteLine($"namespace {Namespace}");
             WriteStartBlock();
+            WriteIntrinsics();
             WriteConceptInterfaces();
             WriteTypeImplementations();
             WriteConstantLibraryMethods();
@@ -108,6 +109,13 @@ namespace Plato.CSharpWriter
             {
                 SelfType = oldSelfType;
             }
+        }
+
+        public SymbolWriterCSharp WriteIntrinsics()
+        {
+            var intrinsicsFile = PathUtil.GetCallerSourceFolder().RelativeFile("Intrinsics.txt");
+            var intrinsicsContent = intrinsicsFile.ReadAllText();
+            return WriteLine(intrinsicsContent);
         }
 
         public void WriteAnalysis(FunctionInstance fa, string indent = "  ")
@@ -654,13 +662,34 @@ namespace Plato.CSharpWriter
                                 " }}\"";
                     WriteLine($"public override string ToString() => {toStr};");
                 }
-                
+
+                // TODO: later
                 /*
+                WriteLine($"public static {name} FromString(String value) {{ int offset = 0; return ParseString(value, ref offset); }}");
+                if (isPrimitive)
+                {
+                    WriteLine($"public static {name} ParseString(String value, ref int offset) => Intrinsics.ParseValue(value);");
+                }
+                else
+                {
+                    var fromStr = fieldTypes.Select(ft => $"{ft}.ParseString(value, offset)").JoinStringsWithComma();
+                    WriteLine($"public static {name} ParseString(String value, ref int offset) => ({fromStr});");
+                }
+                */
+
+                // Implicit casting operators to/from Dynamic
+                WriteLine($"public static implicit operator Dynamic({name} self) => new Dynamic(self);");
+                WriteLine($"public static implicit operator {name}(Dynamic value) => value.As<{name}>();");
+
                 WriteLine($"public String TypeName => {name.Quote()};");
+
                 var fieldNamesAsStringsStr = fieldNames.Select(n => $"(String){n.Quote()}").JoinStringsWithComma();
                 WriteLine(
                     $"public IArray<String> FieldNames => Intrinsics.MakeArray<String>({fieldNamesAsStringsStr});");
-                */
+
+                var fieldValuesAsDynamicsStr = fieldNames.Select(n => $"new Dynamic({n})").JoinStringsWithComma();
+                WriteLine(
+                    $"public IArray<Dynamic> FieldValues => Intrinsics.MakeArray<Dynamic>({fieldValuesAsDynamicsStr});");
 
                 if (EmitInterfaces)
                 {
@@ -701,9 +730,10 @@ namespace Plato.CSharpWriter
                         // Add a constructor from arrays 
                         var ctorArrayArgs = Enumerable.Range(0, fieldNames.Count).Select(i => $"xs[{i}]")
                             .JoinStringsWithComma();
-                        WriteLine($"public {name}(IReadOnlyList<{elem}> xs) : this({ctorArrayArgs}) {{ }}");
+                        WriteLine($"public {name}(IArray<{elem}> xs) : this({ctorArrayArgs}) {{ }}");
                         WriteLine($"public {name}({elem}[] xs) : this({ctorArrayArgs}) {{ }}");
-                        WriteLine($"public static {name} Create(IReadOnlyList<{elem}> xs) => new {name}(xs);");
+                        WriteLine($"public static {name} New(IArray<{elem}> xs) => new {name}(xs);");
+                        WriteLine($"public static {name} New({elem}[] xs) => new {name}(xs);");
                     }
 
                     // Allow implicit casting to System.Array
@@ -714,8 +744,10 @@ namespace Plato.CSharpWriter
                         $"public static implicit operator Array<{elem}>({name} self) => self.ToPrimitiveArray();");
 
                     // Implementation of IReadOnlyList
-                    WriteLine($"public System.Collections.Generic.IEnumerator<{elem}> GetEnumerator() => new ArrayEnumerator<{elem}>(this);");
-                    WriteLine($"System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();");
+                    WriteLine(
+                        $"public System.Collections.Generic.IEnumerator<{elem}> GetEnumerator() {{ for (var i=0; i < Count; i++) yield return At(i); }}");
+                    WriteLine(
+                        $"System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();");
                     WriteLine($"{elem} System.Collections.Generic.IReadOnlyList<{elem}>.this[int n] => At(n);");
                     WriteLine($"int System.Collections.Generic.IReadOnlyCollection<{elem}>.Count => this.Count;");
                 }
