@@ -109,6 +109,9 @@ namespace Plato.Compiler.Symbols
                 case BlockStatement blockStatement:
                     return new BlockStatement(blockStatement.Symbols.RewriteList(f));
 
+                case NewExpression newExpression:
+                    return new NewExpression(newExpression.Type.TypedRewrite(f), newExpression.Args.RewriteList(f));
+
                 case CommentStatement commentStatement:
                     return self;
 

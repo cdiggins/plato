@@ -1,5 +1,4 @@
-﻿ using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Utils;
 using Plato.AST;
@@ -8,7 +7,6 @@ using Plato.Compiler.Symbols;
 
 namespace Plato.CSharpWriter
 {
-    // Specfi
     public class FunctionInfo
     {
         public FunctionInfo(string name,
@@ -55,7 +53,10 @@ namespace Plato.CSharpWriter
 
         public bool IsStatic => ParameterNames.Count == 0 || ParameterNames[0] == "_";
         public string StaticKeyword => IsStatic ? "static " : "";
-        public string MethodSignature => $"public {StaticKeyword}{ReturnType} {Name}{GenericsString}{MethodParametersString}";
+        public bool IsProperty => ParameterNames.Count <= 1;
+        public static string Annotation => "[MethodImpl(AggressiveInlining)] ";
+        public string FunctionAnnotation => IsProperty ? "" : $"{Annotation} "; 
+        public string MethodSignature => $"{FunctionAnnotation}public {StaticKeyword}{ReturnType} {Name}{GenericsString}{MethodParametersString}";
         public string StaticArgsString => NumParameters > 0 ? $"({ParameterNames.JoinStringsWithComma()})" : "";
         public string MethodArgsString => NumParameters > 1 ? $"({ParameterNames.Skip(1).JoinStringsWithComma()})" : "";
         public string IntrinsicsArgsString => NumParameters > 0 ? $"({ParameterNames.Skip(1).Prepend("this").JoinStringsWithComma()})" : "";
@@ -78,13 +79,13 @@ namespace Plato.CSharpWriter
 
         public bool IsIndexer => Name == "At";
         public string IndexerSig => $"public {ReturnType} this[{MethodParameters.JoinStringsWithComma()}]";
-        public string IndexerImpl => $"{IndexerSig} => {Name}{MethodArgsString};";
+        public string IndexerImpl => $"{IndexerSig} {{ {Annotation} get => {Name}{MethodArgsString}; }}";
         public string IndexerInterface => $"{ReturnType} this[{MethodParameters.JoinStringsWithComma()}] {{ get; }}";
 
-        public string ImplicitImpl => $"public static implicit operator {ReturnType}{StaticParametersString} => {FirstParameterName}.{Name}{MethodArgsString};";
+        public string ImplicitImpl => $"{Annotation} public static implicit operator {ReturnType}{StaticParametersString} => {FirstParameterName}.{Name}{MethodArgsString};";
 
         public bool IsOperator => OperatorName != null;
-        public string OperatorImpl => $"public static {ReturnType} operator {OperatorName}{StaticParametersString} => {FirstParameterName}.{Name}{MethodArgsString};";
+        public string OperatorImpl => $"{Annotation} public static {ReturnType} operator {OperatorName}{StaticParametersString} => {FirstParameterName}.{Name}{MethodArgsString};";
 
         public string MethodInterface => $"{ReturnType} {Name}{MethodParametersString}" + (NumParameters > 1 ? ";" : " { get; }");
 

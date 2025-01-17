@@ -225,11 +225,26 @@ namespace Plato.Compiler.Symbols
             throw new NotImplementedException();
         }
 
+        public Symbol NewExpression(AstNew astNew)
+        {
+            var args = astNew.Arguments.Select(ResolveExpr).ToArray();
+            var type = ResolveType(astNew.Type);
+            return new NewExpression(type, args);
+        }
+
         public Symbol ResolveFunctionCall(AstInvoke astInvoke)
         {
             var args = astInvoke.Arguments.Select(ResolveExpr).ToArray();
 
+            // "AstNew" is parsed  as if it is a function.
+            if (astInvoke.Function is AstNew astNew)
+            {
+                var type = ResolveType(astNew.Type);
+                return new NewExpression(type, args);
+            }
+
             var funcRef = ResolveExpr(astInvoke.Function);
+
             if (funcRef == null)
             {
                 var msg = $"Could not find function {astInvoke.Function}";
@@ -312,6 +327,9 @@ namespace Plato.Compiler.Symbols
 
                     case AstInvoke astInvoke:
                         return ResolveFunctionCall(astInvoke);
+
+                    case AstNew astNew:
+                        return NewExpression(astNew);
 
                     case AstLambda astLambda:
                     {

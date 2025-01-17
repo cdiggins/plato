@@ -166,6 +166,18 @@ namespace Plato.Compiler.Symbols
         public override Symbol Rewrite(Func<Symbol, Symbol> f) => f(this);
     }
 
+    public class NewExpression : Expression
+    {
+        public TypeExpression Type { get; }
+        public IReadOnlyList<Expression> Args { get; }
+        public NewExpression(TypeExpression type, params Expression[] args)
+            : base(args)
+            => (Type, Args) = (type, args);
+        public override string Name => "new";
+        public override string ToString() => $"new {Type}({string.Join(", ", Args)})";
+        public override Symbol Rewrite(Func<Symbol, Symbol> f) => f(new NewExpression(Type.Rewrite(f) as TypeExpression, Args.Select(a => a?.Rewrite(f) as Expression).ToArray()));
+    }
+
     public class FunctionCall : Expression
     {
         public Expression Function { get; }

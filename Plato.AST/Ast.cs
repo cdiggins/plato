@@ -195,13 +195,22 @@ namespace Plato.AST
         public int Precedence => Operators.BinaryOperatorPrecedence(Op);
     }
 
+    public class AstNew : AstNode
+    {
+        public AstTypeNode Type { get; }
+        public IReadOnlyList<AstNode> Arguments { get; }
+        public AstNew(ILocation location, AstTypeNode type, params AstNode[] arguments) : base(location) => (Type, Arguments) = (Type, arguments);
+        public override IEnumerable<AstNode> Children => Arguments.Append(Type);
+        public override string ToString() => $"new {Type}({string.Join(",", Arguments)})";
+    }
+
     public class AstInvoke : AstNode
     {
         public AstNode Function { get; }
         public IReadOnlyList<AstNode> Arguments { get; }
         public bool HasArgList { get; }
         public AstInvoke(ILocation location, AstNode function, bool hasArgList, params AstNode[] arguments) : base(location) => (Function, HasArgList, Arguments) = (function, hasArgList, arguments);
-        public override IEnumerable<AstNode> Children => new[] { Function };
+        public override IEnumerable<AstNode> Children => Arguments.Append(Function);
         public override string ToString() => $"{Function}({string.Join(",", Arguments)})";
     }
 

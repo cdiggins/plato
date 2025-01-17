@@ -315,20 +315,6 @@ namespace Plato.AST
             var arity = expr.Expression.Nodes.Count;
 
             return ToIntrinsicInvocation(expr, $"Tuple{arity}", expr.Expression.Nodes.Select(ToAst).ToArray());
-
-            /*
-            var typeAsExpr = ToAst(newOp.TypeExpr);
-
-            var args = expr
-                .Expression
-                .Nodes
-                .Select(ToAst)
-                .Prepend(typeAsExpr)
-                .ToArray();
-
-            return ToIntrinsicInvocation(expr, "New", args);
-            */
-
         }
 
         public static AstNode ToAst(this CstLeafExpression expr)
@@ -378,7 +364,7 @@ namespace Plato.AST
                     .Select(ToAst)
                     .Prepend(typeAsExpr);
 
-                return ToIntrinsicInvocation(expr.NewOperation.Node, "New", args.ToArray());
+                return new AstNew(expr.NewOperation.Node, (AstTypeNode)typeAsExpr, args.ToArray());
             }
             if (expr.ParenthesizedExpression.Present)
             {
@@ -734,7 +720,8 @@ namespace Plato.AST
                     return ToIntrinsicInvocation(cstNameOf, "NameOf", ToAst(cstNameOf.Expression));
 
                 case CstNewOperation cstNewOperation:
-                    return ToIntrinsicInvocation(cstNewOperation, "New", ToAst(cstNewOperation.TypeExpr));
+                    throw new Exception("Should not be reachable");
+                    //return new AstNew(cstNewOperation, (AstTypeNode)ToAst(cstNewOperation.TypeExpr));
 
                 case CstParenthesizedExpression cstParenthesizedExpression:
                     return ToAst(cstParenthesizedExpression.Expression);
