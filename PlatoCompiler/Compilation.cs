@@ -204,17 +204,17 @@ namespace Plato.Compiler
                     if (f.Parameters.Count == 0)
                         continue;
 
-                    var firstParamType = f.Parameters[0].Type?.Def;
+                    var firstParamType = f.Parameters[0].Type;
 
                     Verifier.AssertNotNull(firstParamType, $"First parameter type of {f}");
 
-                    if (firstParamType.IsConcrete())
+                    if (firstParamType.Def.IsConcrete())
                     {
                         var rt = ReifiedTypes[firstParamType.Name];
 
                         rt.AddConcreteTypeLibraryFunction(library, f);
                     }
-                    else if (firstParamType.IsConcept())
+                    else if (firstParamType.Def.IsConcept())
                     {
                         foreach (var rt in ReifiedTypes.Values)
                         {
@@ -323,6 +323,9 @@ namespace Plato.Compiler
         public IEnumerable<TypeDef> GetConcreteTypes()
             => AllTypeAndLibraryDefinitions.Where(t => t.IsConcrete());
 
+        public IEnumerable<TypeDef> GetImplementers(TypeExpression te)
+            => AllTypeAndLibraryDefinitions.Where(t => t.IsConcrete() && t.Implements(te));
+
         public IEnumerable<TypeDef> GetConcepts()
             => AllTypeAndLibraryDefinitions.Where(t => t.IsConcept());
 
@@ -369,6 +372,15 @@ namespace Plato.Compiler
             if (options.Count == 0) 
                 return null;
             return options[0];
+        }
+
+        public TypeDef GetTypeDef(string name)
+        {
+            if (TypeDefinitionsByName.TryGetValue(name, out var td))
+                return td;
+            if (LibraryDefinitionsByName.TryGetValue(name, out var ld))
+                return ld;
+            return null;
         }
     }
 }

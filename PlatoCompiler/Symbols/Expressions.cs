@@ -175,7 +175,8 @@ namespace Plato.Compiler.Symbols
             => (Type, Args) = (type, args);
         public override string Name => "new";
         public override string ToString() => $"new {Type}({string.Join(", ", Args)})";
-        public override Symbol Rewrite(Func<Symbol, Symbol> f) => f(new NewExpression(Type.Rewrite(f) as TypeExpression, Args.Select(a => a?.Rewrite(f) as Expression).ToArray()));
+        public override Symbol Rewrite(Func<Symbol, Symbol> f) 
+            => f(new NewExpression(Type.Rewrite(f) as TypeExpression, Args.Select(a => a?.Rewrite(f) as Expression).ToArray()));
     }
 
     public class FunctionCall : Expression

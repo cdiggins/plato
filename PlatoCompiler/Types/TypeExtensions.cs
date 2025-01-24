@@ -21,8 +21,20 @@ namespace Plato.Compiler.Types
         public static bool IsTypeVariable(this TypeDef ts)
             => ts.Kind == TypeKind.TypeVariable;
 
-        public static bool Implements(this TypeDef a, TypeDef b)
-            => a.Implements.Any(i => i.Def.Equals(b));
+        public static bool IsImplementing(this TypeExpression a, TypeExpression b)
+        {
+            if (a.Name != b.Name)
+                return false;
+            if (a.TypeArgs.Count != b.TypeArgs.Count)
+                return false;
+            for (var i = 0; i < a.TypeArgs.Count; i++)
+                if (!a.TypeArgs[i].IsImplementing(b.TypeArgs[i]))
+                    return false;
+            return true;
+        }
+
+        public static bool Implements(this TypeDef a, TypeExpression b)
+            => a.GetAllImplementedConcepts().Any(i => i.IsImplementing(b));
 
         public static bool Inherits(this TypeDef a, TypeDef b)
             => a.Inherits.Any(i => i.Def.Equals(b));

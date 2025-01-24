@@ -39,6 +39,23 @@ namespace Plato.Compiler.Analysis
         public ConceptImplementation ConceptImplementation { get; }
         public FunctionInstanceKind Kind { get; }
 
+        /// <summary>
+        /// Returns the index of any interface that differs from the interface in the first position.
+        /// </summary>
+        public int NextInterfacePosition()
+        {
+            if (ParameterTypes.Count < 2) return -1;
+            var pt = ParameterTypes[0];
+            for (var i = 1; i < ParameterTypes.Count; i++)
+            {
+                var p = ParameterTypes[i];
+                if (p.Def.IsConcept() && !p.Def.Equals(pt.Def))
+                    return i;
+            }
+
+            return -1;
+        }
+
         public FunctionInstance(FunctionDef implementation, ConcreteType type, ConceptImplementation ci, FunctionInstanceKind kind, TypeSubstitutions substitutions = null)
         {
             Implementation = implementation;
@@ -90,7 +107,7 @@ namespace Plato.Compiler.Analysis
                 var r = Substitutions?.Replace(expr) ?? expr;
 
                 if (ReferenceEquals(r, expr)) 
-                    return new TypeInstance(r.Def, r.TypeArgs.Select(ToInstance));
+                    return new TypeInstance(r, r.TypeArgs.Select(ToInstance));
 
                 expr = r;
             }

@@ -70,7 +70,7 @@ namespace Plato.AST
         Integer,
         Number,
         Boolean,
-        String
+        String,
     }
 
     public class AstConstant : AstNode
@@ -199,7 +199,7 @@ namespace Plato.AST
     {
         public AstTypeNode Type { get; }
         public IReadOnlyList<AstNode> Arguments { get; }
-        public AstNew(ILocation location, AstTypeNode type, params AstNode[] arguments) : base(location) => (Type, Arguments) = (Type, arguments);
+        public AstNew(ILocation location, AstTypeNode type, params AstNode[] arguments) : base(location) => (Type, Arguments) = (type, arguments);
         public override IEnumerable<AstNode> Children => Arguments.Append(Type);
         public override string ToString() => $"new {Type}({string.Join(",", Arguments)})";
     }

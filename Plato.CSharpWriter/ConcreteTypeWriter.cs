@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Ara3D.Utils;
+using Plato.Compiler;
 using Plato.Compiler.Analysis;
 using Plato.Compiler.Symbols;
 using Plato.Compiler.Types;
@@ -21,6 +22,9 @@ namespace Plato.CSharpWriter
         public bool IsPrimitive => SymbolWriterCSharp.PrimitiveTypes.ContainsKey(Name) || IsIntrinsic;
         public string Attr => SymbolWriterCSharp.Annotation;
         public bool IsNumerical => TypeDef.GetAllImplementedConcepts().Any(te => te.Name == "INumerical");
+        public bool IsVectorSpace => TypeDef.GetAllImplementedConcepts().Any(te => te.Name == "IVectorSpace");
+        public Compilation Compilation { get; }
+        public IReadOnlyList<FunctionDef> NumberConstants { get; }
 
         public List<List<FunctionInstance>> ConceptFunctionGroups => ConcreteType
             .ConcreteFunctions
@@ -28,8 +32,9 @@ namespace Plato.CSharpWriter
             .GroupBy(f => f.SignatureId)
             .Select(g => g.ToList()).ToList();
 
-        public ConcreteTypeWriter(ConcreteType t)
+        public ConcreteTypeWriter(Compilation compilation, ConcreteType t)
         {
+            Compilation = compilation;
             ConcreteType = t;
         }
 
@@ -132,36 +137,40 @@ namespace Plato.CSharpWriter
                 sw.WriteLine();
             }
 
+            sw.WriteLine("// Object virtual function overrides: Equals, GetHashCode, ToString");
             if (!IsPrimitive)
             {
-                sw.WriteLine("// Object virtual function overrides: Equals, GetHashCode, ToString");
                 if (fieldNames.Count > 0)
                 {
                     var eqBody = fieldNames.Select(f => $"{f}.Equals(other.{f})").JoinStrings(" && ");
                     sw.WriteLine($"{Attr} public Boolean Equals({Name} other) => {eqBody};");
+                    sw.WriteLine($"{Attr} public Boolean NotEquals({Name} other) => !{eqBody};");
                     sw.WriteLine($"{Attr} public override bool Equals(object obj) => obj is {Name} other ? Equals(other) : false;");
                 }
                 else
                 {
-                    sw.WriteLine($"{Attr} public override bool Equals(object obj) => true;");
+                    sw.WriteLine($"{Attr} public override bool Equals(object obj) => obj is {Name};");
+                    sw.WriteLine($"{Attr} public Boolean Equals({Name} other) => true;");
+                    sw.WriteLine($"{Attr} public Boolean NotEquals({Name} other) => false;");
+                    sw.WriteLine($"{Attr} public static Boolean operator==({Name} a, {Name} b) => true;");
+                    sw.WriteLine($"{Attr} public static Boolean operator!=({Name} a, {Name} b) => false;");
                 }
                 sw.WriteLine($"{Attr} public override int GetHashCode() => Intrinsics.CombineHashCodes({fieldNamesStr});");
 
                 var toStr = "$\"{{ " + fieldNames.Select(fn => $"\\\"{fn}\\\" = {{{fn}}}").JoinStringsWithComma() + " }}\"";
                 sw.WriteLine($"{Attr} public override string ToString() => {toStr};");
-                sw.WriteLine();
             }
             else
             {
-                sw.WriteLine("// Object virtual function overrides: Equals, GetHashCode, ToString");
-                
                 sw.WriteLine($"{Attr} public Boolean Equals({Name} other) => Value.Equals(other.Value);");
+                sw.WriteLine($"{Attr} public Boolean NotEquals({Name} other) => !Value.Equals(other.Value);");
                 sw.WriteLine($"{Attr} public override bool Equals(object obj) => obj is {Name} other ? Equals(other) : false;");
-                sw.WriteLine($"{Attr} public override string ToString() => Value.ToString();");
                 sw.WriteLine($"{Attr} public static Boolean operator==({Name} a, {Name} b) => a.Equals(b);");
                 sw.WriteLine($"{Attr} public static Boolean operator!=({Name} a, {Name} b) => !a.Equals(b);");
-                sw.WriteLine();
+                sw.WriteLine($"{Attr} public override int GetHashCode() => Value.GetHashCode();");
+                sw.WriteLine($"{Attr} public override string ToString() => Value.ToString();");
             }
+            sw.WriteLine();
 
             // TODO: this might be a problem for primitives. 
 
@@ -181,16 +190,7 @@ namespace Plato.CSharpWriter
                 }
             }
             sw.WriteLine();
-
-            /* TEMP: trying to remove "simple" interfaces
-            sw.WriteLine("// Implemented interfaces");
-            foreach (var c in TypeDef.GetAllImplementedConcepts())
-            {
-                sw.WriteSimpleInterface(ConcreteType, Name, c);
-            }
-            sw.WriteLine();
-            */
-
+           
             // Check if the type is "IArray", so can add an enumerator and an implicit cast to/from system array. 
             var arrayConcept = ConcreteType.AllConcepts.FirstOrDefault(c => c.Name == "IArray");
             var isArray = arrayConcept != null;
@@ -224,22 +224,21 @@ namespace Plato.CSharpWriter
                 sw.WriteLine();
             }
 
-            // Check if the type is "INumerical", if so provide implementations of the default types. 
-            // TODO: I have to think about whether there is a better way to implement this stuff.
-            // Also, if everything is "numerical" can I just cast it all to floats?
-            if (IsNumerical)
+            if (IsVectorSpace)
             {
-                sw.WriteLine($"// Numerical predefined functions");
+                sw.WriteLine($"// Vectorspace predefined functions");
              
                 var numDistinctFieldTypes = fieldTypes.Distinct().Count();
                 if (numDistinctFieldTypes > 1)
-                    throw new Exception("INumerical types are assumed to have all of the fields of the same type");
+                    throw new Exception("IVectorSpace types are assumed to have all of the fields of the same type");
 
+                var nComps = Math.Max(fieldTypes.Count, 1);
+                sw.WriteLine($"public static readonly int NumComponents = {nComps};");
                 sw.WriteLine($"public IArray<Number> Components {{ {Attr} get => Intrinsics.MakeArray<Number>({fieldNames.JoinStringsWithComma()}); }}");
 
                 var tmp = Enumerable.Range(0, fieldNames.Count).Select(i => $"numbers[{i}]").JoinStringsWithComma();
                 var fromCompImpl = $"new {Name}({tmp})";
-                sw.WriteLine($"{Attr} public {Name} FromComponents(IArray<Number> numbers) => {fromCompImpl};");
+                sw.WriteLine($"{Attr} public static {Name} CreateFromComponents(IArray<Number> numbers) => {fromCompImpl};");
                 sw.WriteLine();
             }
 
@@ -247,7 +246,10 @@ namespace Plato.CSharpWriter
             sw.WriteLine("// Implemented concept functions and type functions");
 
             foreach (var g in ConceptFunctionGroups)
-            {
+            { 
+                // TODO: the best function is always one defined on intrinsic 
+                // If a function is an operator function ... we will forward it. 
+
                 var f = sw.ChooseBestFunction(g);
 
                 // Note: we skip functions that are named after a field ... 
@@ -257,18 +259,40 @@ namespace Plato.CSharpWriter
                 if (SymbolWriterCSharp.IgnoredFunctions.Contains(f.Name))
                     continue;
 
+                // TEMP: currently I am inheriting all of the IArray functionality. 
+                // I don't think it is that bad. 
+                // We don't inherit all of the "IArray" functionality because it would be too much for vectors 
+                // However, it may make sense for specific Array classes in the future. 
                 if (f.ConceptName == "IArray")
-                    continue;
+                  continue;
 
                 // We have to be sure to not implement functions that cast to themselves
                 if (f.Name == SimpleName)
                     continue;
 
-                // We do not need to write out a function body for primitives that are implemented 
-                if (f.Implementation.Body == null && IsPrimitive)
-                    continue;
+                var nextInterfacePos = f.NextInterfacePosition();
+                
+                // NOTE: we don't count IArray types as different.
+                if (nextInterfacePos > 0 
+                    && !f.ParameterTypes[nextInterfacePos].Name.StartsWith("IArray"))
+                {
 
-                sw.WriteMemberFunction(sw.ToFunctionInfo(f, ConcreteType), IsPrimitive);
+                    // This means multiple versions of the function will need to get created. 
+                    // One for each type that implements the interface. 
+                    var iface = f.ParameterTypes[nextInterfacePos];
+                    var replacements = Compilation.GetImplementers(iface.Expr);
+
+                    foreach (var r in replacements)
+                    {
+                        var fi = sw.ToFunctionInfoReplaceInterface(f, ConcreteType, iface.Expr, r);
+                        sw.WriteMemberFunction(fi, IsPrimitive);
+                    }
+                }
+                else
+                {
+                    var fi = sw.ToFunctionInfo(f, ConcreteType);
+                    sw.WriteMemberFunction(fi, IsPrimitive);
+                }
             }
             sw.WriteLine();
 

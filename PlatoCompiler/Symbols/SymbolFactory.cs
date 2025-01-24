@@ -239,8 +239,9 @@ namespace Plato.Compiler.Symbols
             // "AstNew" is parsed  as if it is a function.
             if (astInvoke.Function is AstNew astNew)
             {
-                var type = ResolveType(astNew.Type);
-                return new NewExpression(type, args);
+                throw new InvalidOperationException();
+                //var type = ResolveType(astNew.Type);
+                //return new NewExpression(type, args);
             }
 
             var funcRef = ResolveExpr(astInvoke.Function);

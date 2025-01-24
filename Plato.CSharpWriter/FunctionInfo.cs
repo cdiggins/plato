@@ -50,7 +50,7 @@ namespace Plato.CSharpWriter
         public string MethodParametersString => NumParameters > 1 ? $"({MethodParameters.JoinStringsWithComma()})" : "";
         public string StaticSignature => $"public static {ReturnType} {Name}{GenericsString}{StaticParametersString}";
         public string ExtensionSignature => $"public static {ReturnType} {Name}{GenericsString}{ExtensionParametersString}";
-
+        
         public bool IsStatic => ParameterNames.Count == 0 || ParameterNames[0] == "_";
         public string StaticKeyword => IsStatic ? "static " : "";
         public bool IsProperty => ParameterNames.Count <= 1;

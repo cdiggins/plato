@@ -45,7 +45,8 @@ namespace Plato.CSharpWriter
             "FieldValues",
             "TypeName",
             "Components",
-            "FromComponents",
+            "CreateFromComponents",
+            "NumComponents",
             "Equals",
             "NotEquals",
             "GetHashCode",
@@ -66,7 +67,15 @@ namespace Plato.CSharpWriter
 
         public static HashSet<string> IntrinsicTypes = new()
         {
-            "Angle", "Matrix3x2", "Matrix4x4", "Quaternion", "Plane", "Vector2", "Vector3", "Vector4", "Vector8"
+            "Angle", 
+            "Matrix3x2", 
+            "Matrix4x4", 
+            "Quaternion", 
+            "Plane", 
+            "Vector2", 
+            "Vector3", 
+            "Vector4", 
+            "Vector8"
         };
 
         public SymbolWriterCSharp(Compiler.Compilation compilation, DirectoryPath outputFolder)
@@ -248,9 +257,8 @@ namespace Plato.CSharpWriter
                 for (var i=0; i < fs.Count; i++)
                     s += $"{p} == {i} ? {fs[i]} : ";
                 s += $"throw new System.IndexOutOfRangeException()";
-                WriteLine($" {{ {Annotation} get => {s}; }}");
-
-                WriteLine($"{f.IndexerSig} => {s};"); 
+                WriteLine($" => {s};");
+                WriteLine($"{f.IndexerSig} {{ {Annotation} get => At(n); }}"); 
                 return this;
             }
 
@@ -262,17 +270,14 @@ namespace Plato.CSharpWriter
             throw new Exception("Only 'At' or 'Count' supported");
         }
 
-        public string ToCSharp(TypeDef type)
-            => ToCSharp(TypeInstance.Create(type), SelfType);
-
         public string ToCSharp(TypeExpression expr)
             => ToCSharp(TypeInstance.Create(expr), SelfType);
 
         public string ToCSharp(TypeInstance type)
             => ToCSharp(type, SelfType);
 
-        public static string ToCSharp(TypeDef type, string selfType)
-            => ToCSharp(TypeInstance.Create(type), selfType);
+        public string ToCSharp(TypeDef type)
+            => ToCSharp(type.ToTypeExpression(), SelfType);
 
         public static string ToCSharp(TypeExpression expr, string selfType)
             => ToCSharp(TypeInstance.Create(expr), selfType);
@@ -295,17 +300,7 @@ namespace Plato.CSharpWriter
 
             return sb.ToString();
         }
-
-        public SymbolWriterCSharp WriteSimpleInterfaceFunction(ConceptImplementation c, FunctionInfo f)
-        {
-            Write(f.MethodSignature);
-            
-            if (f.IsIndexer)
-                WriteLine(f.IndexerImpl);
-
-            return this;
-        }
-
+        
         public SymbolWriterCSharp WriteMemberFunction(FunctionInfo f, bool isPrimitive)
         {
             if (!isPrimitive || f.Body != null)
@@ -315,15 +310,22 @@ namespace Plato.CSharpWriter
             }
             else
             {
-                // This is a primitive with no-body
-                // Operator functions are not implemented in Intrinsics.cs
-                // So we have to add them directly 
                 if (f.IsOperator)
                 {
                     Write(f.MethodSignature);
-                    var parameterNames = f.ParameterNames.Skip(1).Prepend("this");
-                    var args = parameterNames.JoinStringsWithComma();
-                    WriteLine($" => Intrinsics.{f.Name}({args});");
+                    
+                    if (f.ParameterNames.Count == 1)
+                    {
+                        WriteLine($" {{ {Annotation} get => {f.OperatorName}this; }}");
+                    }
+                    else if (f.ParameterNames.Count == 2)
+                    {
+                        WriteLine($" => this {f.OperatorName} {f.ParameterNames[1]};");
+                    }
+                    else
+                    {
+                        throw new NotSupportedException();
+                    }
                 }
 
                 return this;
@@ -421,11 +423,13 @@ namespace Plato.CSharpWriter
 
         public SymbolWriterCSharp WriteConceptInterfaceFunctions(TypeDef type)
         {
-            var t = ToCSharp(type);
+            //var t = ToCSharp(type);
             WriteStartBlock();
             foreach (var m in type.Methods)
             {
                 var fi = ToFunctionInfo(m.Function, null, FunctionInstanceKind.ConceptInterface);
+                if (fi.IsStatic)
+                    continue;
                 WriteLine(fi.MethodInterface);
                 if (fi.IsIndexer)
                     WriteLine(fi.IndexerInterface);
@@ -484,23 +488,6 @@ namespace Plato.CSharpWriter
             }
 
             WriteConceptInterfaceFunctions(type);
-
-            // TODO: removing "simple" interfaces
-            /*
-            // We are going to write another version of the interface, without a "Self"
-            if (type.IsSelfConstrained())
-            {
-                var simpleInherits = type.Inherits.Select(t => TypeAsInherited(t, false)).ToList();
-                var simpleInherited = simpleInherits.Count > 0 ? ": " + simpleInherits.JoinStringsWithComma() : "";
-                SetSelfType(baseFullName, () =>
-                {
-                    Write("public interface ").Write(baseFullName).WriteLine(simpleInherited);
-                    WriteConceptInterfaceFunctions(type);
-                                                                                                                                                                return this;
-                });
-            }
-            */
-
             return this;
         }
 
@@ -521,7 +508,7 @@ namespace Plato.CSharpWriter
         
         public SymbolWriterCSharp WriteTypeImplementation(ConcreteType concreteType)
         {
-            return new ConcreteTypeWriter(concreteType).Write(this);
+            return new ConcreteTypeWriter(Compilation, concreteType).Write(this);
         }
 
         public SymbolWriterCSharp WriteSimpleInterface(ConcreteType concrete, string name, TypeExpression concept)
@@ -556,6 +543,10 @@ namespace Plato.CSharpWriter
             var a = f.ConcreteType;
             var b = f.Concept;
 
+            // Intrinsics are always preferred 
+            if (f.Implementation.OwnerType.Name == "Intrinsics")
+                return -200;
+
             // We assume that if there is no concept, then the function implementation originated as a concrete type.
             // Concrete types provide a better score than any concept. 
             if (b == null)
@@ -572,23 +563,19 @@ namespace Plato.CSharpWriter
             // We only want distinct implementations. 
             var first = xs[0];
             xs = xs.Distinct(x => x.Implementation.Id).ToList();
-
-            if (xs.Count > 1)
-            {
-                xs = xs.GroupBy(ScoreFunction).OrderBy(g => g.Key).First().ToList();
-                // By definition this should always be true, but keep it in case of refactoring. 
-                Debug.Assert(xs.Count > 0);
-            }
-
-            if (xs.Count > 1)
-            {
-                WriteLine($"// Ambiguous: could not choose a best function implementation for {first}.");
-            }
-
+            if (xs.Count == 1)
+                return xs[0];
             if (xs.Count == 0)
                 throw new Exception("No results: could not find a best function.");
 
-            return xs[0];
+            var groups = xs.GroupBy(ScoreFunction).OrderBy(g => g.Key).ToList();
+            var group0 = groups[0].ToList();
+            Debug.Assert(group0.Count > 0);
+            
+            if (group0.Count > 1)
+                throw new Exception($"// Ambiguous: could not choose a best function implementation for {first}.");
+
+            return group0[0];
         }
 
         public FunctionInfo ToFunctionInfo(FunctionDef fd, ConcreteType ct, FunctionInstanceKind kind)
@@ -599,6 +586,28 @@ namespace Plato.CSharpWriter
             var ret = ToCSharp(fi.ReturnType);
             var parameterTypes = fi.ParameterTypes.Select(ToCSharp).ToList();
             var funcTypeParams = ct == null 
+                ? fi.UsedTypeParameters
+                : fi.UsedTypeParameters.Where(tp => !ct.Type.TypeParameters.Contains(tp)).ToList();
+
+            return new FunctionInfo(fi.Name,
+                ct,
+                ret,
+                funcTypeParams.Select(ToCSharp),
+                fi.ParameterNames,
+                parameterTypes,
+                fi.Implementation.Body,
+                fi.IsImplicitCast);
+        }
+
+        public FunctionInfo ToFunctionInfoReplaceInterface(FunctionInstance fi, ConcreteType ct, TypeExpression srcType, TypeDef newType)
+        {
+
+            var newTypeInstance = TypeInstance.Create(newType.ToTypeExpression());
+            var tmp = fi.ParameterTypes.Select(t => t.Expr.IsImplementing(srcType) ? newTypeInstance : t);
+            var parameterTypes = tmp.Select(ToCSharp).ToList();
+            var ret = ToCSharp(fi.ReturnType.Expr.IsImplementing(srcType) ? newTypeInstance : fi.ReturnType);
+
+            var funcTypeParams = ct == null
                 ? fi.UsedTypeParameters
                 : fi.UsedTypeParameters.Where(tp => !ct.Type.TypeParameters.Contains(tp)).ToList();
 
@@ -765,7 +774,8 @@ namespace Plato.CSharpWriter
                 return Write("(").WriteCommaList(functionCall.Args).Write(")");
             }
 
-            Write(functionCall.Args[0]).Write(".").Write(functionCall.Function);
+            var arg = functionCall.Args[0];
+            Write(arg).Write(".").Write(functionCall.Function);
             
             if (functionCall.Args.Count == 1 && !functionCall.HasArgList) 
                 return this;
@@ -777,10 +787,7 @@ namespace Plato.CSharpWriter
         {
             if (expr == null)
                 return this;    
-
-            //var t = Compiler.GetExpressionType(expr);
-            //if (!(expr is Argument)) WriteLine($"/* {t} */");
-
+            
             switch (expr)
             {
                 case NewExpression newExpression:
@@ -793,14 +800,16 @@ namespace Plato.CSharpWriter
 
                 case FunctionGroupRefSymbol fgr:
                     // HACK: check if it is a constant.
-                    // TODO: I need to have all function calls properly resolved to generate better quality code. 
+                    // TODO: I need to have all function     calls properly resolved to generate better quality code. 
                     if (fgr.Def.Functions.Count == 1 &&
                         fgr.Def.Functions[0].NumParameters == 0)
                         return Write($"Constants.{fgr.Name}");
                     return Write(fgr.Name);
 
                 case RefSymbol refSymbol:
-                    return Write(refSymbol.Name);
+                    return Write(refSymbol.Name == "Self" 
+                        ? SelfType 
+                        : refSymbol.Name);
                     
                 case Assignment assignment:
                     return Write(assignment.LValue)

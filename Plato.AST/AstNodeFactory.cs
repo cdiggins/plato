@@ -360,9 +360,7 @@ namespace Plato.AST
                     throw new NotImplementedException();
 
                 var typeAsExpr = ToAst(newOp.TypeExpr);
-                var args = newOp.FunctionArgs.Node.FunctionArg.Nodes
-                    .Select(ToAst)
-                    .Prepend(typeAsExpr);
+                var args = newOp.FunctionArgs.Node.FunctionArg.Nodes.Select(ToAst);
 
                 return new AstNew(expr.NewOperation.Node, (AstTypeNode)typeAsExpr, args.ToArray());
             }

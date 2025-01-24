@@ -13,12 +13,12 @@ namespace Plato.Compiler.Analysis
     public class TypeInstance
     {
         public string Name => Def.Name;
-        public TypeDef Def { get; }
+        public TypeExpression Expr { get; }
+        public TypeDef Def => Expr.Def;
 
-        public TypeInstance(TypeDef def, IEnumerable<TypeInstance> args)
+        public TypeInstance(TypeExpression expr, IEnumerable<TypeInstance> args)
         {
-            Debug.Assert(!(def is TypeVariable));
-            Def = def;
+            Expr = expr;
             Args = args?.ToList() ?? new List<TypeInstance>();
         }
 
@@ -39,10 +39,7 @@ namespace Plato.Compiler.Analysis
                 yield return arg2;
         }
 
-        public static TypeInstance Create(TypeDef def)
-            => new TypeInstance(def, def.TypeParameters.Select(Create));
-
         public static TypeInstance Create(TypeExpression expr)
-            => new TypeInstance(expr.Def, expr.TypeArgs.Select(Create));
+            => new TypeInstance(expr, expr.TypeArgs.Select(Create));
     }
 }
