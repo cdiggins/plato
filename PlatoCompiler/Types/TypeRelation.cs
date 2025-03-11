@@ -19,9 +19,9 @@ namespace Plato.Compiler.Types
             {
                 if (Source == null || Dest == null) 
                     return false;
-                if (!Source.IsConcept() || !Source.IsConcrete())
+                if (!Source.IsInterface() || !Source.IsConcrete())
                     return false;
-                if (!Dest.IsConcept() || !Dest.IsConcrete())
+                if (!Dest.IsInterface() || !Dest.IsConcrete())
                     return false;
                 if (Dest.IsConcrete())
                     return Cast != null;

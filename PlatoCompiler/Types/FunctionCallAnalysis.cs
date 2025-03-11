@@ -38,7 +38,7 @@ namespace Plato.Compiler.Types
 
                 var determinedParameterType = parameterType;
 
-                if (parameterType.Def.IsConcept())
+                if (parameterType.Def.IsInterface())
                 {
                     var tv = new TypeVariable(def.Scope, $"_T{i}");
                     determinedParameterType = tv.ToTypeExpression();

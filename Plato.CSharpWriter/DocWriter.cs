@@ -59,7 +59,7 @@ namespace Plato.CSharpWriter
             WriteEndTag("ul").WriteLine();
         
             WriteTaggedText("h3", "Interfaces", ("class", "collapsible")).WriteLine();
-            var interfaceTypes = typeDefs.Where(t => t.IsConcept()).OrderBy(t => t.Name).ToList();
+            var interfaceTypes = typeDefs.Where(t => t.IsInterface()).OrderBy(t => t.Name).ToList();
             WriteStartTag("ul").WriteLine();
             foreach (var t in interfaceTypes)
             {
@@ -79,7 +79,7 @@ namespace Plato.CSharpWriter
 
         public void WriteInterfaces(IEnumerable<TypeDef> typeDefs)
         {
-            var types = typeDefs.Where(t => t.IsConcept()).OrderBy(t => t.Name).ToList();
+            var types = typeDefs.Where(t => t.IsInterface()).OrderBy(t => t.Name).ToList();
             WriteTaggedText("h1", "Interfaces", ("class", "collapsible")).WriteLine();
             foreach (var t in types)
                 WriteInterface(t);
@@ -97,7 +97,7 @@ namespace Plato.CSharpWriter
         public string LinkType(TypeExpression te)
         {
             var id = Id(te.Def);
-            var baseName = (te.Def.IsConcrete() || te.Def.IsConcept())
+            var baseName = (te.Def.IsConcrete() || te.Def.IsInterface())
                 ? $"<a href='#{id}'>{te.Def.Name}</a>"
                 : te.Def.Name;
             if (te.TypeArgs.Count == 0)

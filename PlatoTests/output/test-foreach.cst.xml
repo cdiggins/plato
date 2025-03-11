@@ -84,7 +84,7 @@
                         <CstInnerTypeExpr>
                         </CstInnerTypeExpr>
                     </CstTypeExpr>
-                    <CstIdentifier>x</CstIdentifier>
+                    <CstIdentifier>X</CstIdentifier>
                 </CstVarDecl>
                 <CstExpression>
                     <CstLeafExpression>
@@ -104,7 +104,7 @@
                                             <CstFunctionArg>
                                                 <CstExpression>
                                                     <CstLeafExpression>
-                                                        <CstIdentifier>x</CstIdentifier>
+                                                        <CstIdentifier>X</CstIdentifier>
                                                     </CstLeafExpression>
                                                     <CstPostfixOperator>
                                                         <CstMemberAccess>

@@ -9,7 +9,7 @@
         <AstNoop></AstNoop>
     </AstVarDef>
     <AstVarDef>
-        <AstIdentifier>x</AstIdentifier>
+        <AstIdentifier>X</AstIdentifier>
         <AstNoop></AstNoop>
     </AstVarDef>
     <AstVarDef>

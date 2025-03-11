@@ -16,6 +16,7 @@ namespace Plato.Compiler.Analysis
         Constant,
         InterfaceExtension,
         ConceptInterface,
+        Lambda,
     }
 
     /// <summary>
@@ -35,8 +36,8 @@ namespace Plato.Compiler.Analysis
         public IReadOnlyList<TypeInstance> ParameterTypes { get; }
         public IReadOnlyList<TypeParameterDef> UsedTypeParameters { get; }
         public override string ToString() => $"{SignatureId}:{ReturnType}";
-        public bool IsImplicitCast => Name == ReturnType.Name && ParameterNames.Count == 1 && !ReturnType.Def.IsConcept();
-        public ConceptImplementation ConceptImplementation { get; }
+        public bool IsImplicitCast => Name == ReturnType.Name && ParameterNames.Count == 1 && !ReturnType.Def.IsInterface();
+        public InterfaceImplementation InterfaceImplementation { get; }
         public FunctionInstanceKind Kind { get; }
 
         /// <summary>
@@ -49,25 +50,25 @@ namespace Plato.Compiler.Analysis
             for (var i = 1; i < ParameterTypes.Count; i++)
             {
                 var p = ParameterTypes[i];
-                if (p.Def.IsConcept() && !p.Def.Equals(pt.Def))
+                if (p.Def.IsInterface() && !p.Def.Equals(pt.Def))
                     return i;
             }
 
             return -1;
         }
 
-        public FunctionInstance(FunctionDef implementation, ConcreteType type, ConceptImplementation ci, FunctionInstanceKind kind, TypeSubstitutions substitutions = null)
+        public FunctionInstance(FunctionDef implementation, ConcreteType type, InterfaceImplementation ci, FunctionInstanceKind kind, TypeSubstitutions substitutions = null)
         {
             Implementation = implementation;
             ConcreteType = type;
-            ConceptImplementation = ci;
+            InterfaceImplementation = ci;
             Kind = kind;
 
             Substitutions = substitutions;
             ParameterNames = Implementation.Parameters.Select(p => p.Name).ToList();
             
             var first = Implementation.Parameters.FirstOrDefault();
-            if (first?.Type.Def.IsConcept() == true)
+            if (first?.Type.Def.IsInterface() == true)
                 Concept = first.Type.Def;
 
             foreach (var p in Implementation.Parameters)

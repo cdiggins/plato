@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using Ara3D.Utils;
 using Plato.AST;
 using Plato.Compiler.Analysis;
@@ -7,37 +8,40 @@ using Plato.Compiler.Symbols;
 
 namespace Plato.CSharpWriter
 {
-    public class FunctionInfo
+    public class CSharpFunctionInfo : ITypeToCSharp
     {
-        public FunctionInfo(string name,
-            ConcreteType owner, // Could be null 
-            string returnType,
-            IEnumerable<string> genericParameters,
-            IEnumerable<string> parameterNames,
-            IEnumerable<string> parameterTypes,
-            Symbol body,
-            bool isImplicit)
+        public CSharpFunctionInfo(FunctionInstance fi, ConcreteType owner, ITypeToCSharp typeToCSharp)
         {
-            Name = name;
+            Function = fi;
             ConcreteType = owner;
-            ReturnType = returnType;
-            Generics = genericParameters.ToList();
-            ParameterNames = parameterNames.ToList();
-            ParameterTypes = parameterTypes.ToList();
-            Body = body;
-            IsImplicit = isImplicit;
+            TypeToCSharp = typeToCSharp;
+
+            ReturnType = this.ToCSharpType(fi.ReturnType);
+            ParameterTypes = Function.ParameterTypes.Select(this.ToCSharpType).ToList();
+
+            var funcTypeParams = fi.UsedTypeParameters;
+            if (ConcreteType != null)
+            {
+                var typeParameterNames = ConcreteType.TypeDef.TypeParameters.Select(tp => tp.Name).ToHashSet();
+                funcTypeParams = fi.UsedTypeParameters.Where(tp => !typeParameterNames.Contains(tp.Name)).ToList();
+            }
+            Generics = funcTypeParams.Select(ft => ft.Name).Distinct().ToList();
+
             if (ParameterNames.Count != ParameterTypes.Count)
                 throw new System.Exception("Parameter names and types must have the same length");
         }
 
-        public string Name { get; }
+        public ITypeToCSharp TypeToCSharp { get; }
+        public FunctionInstance Function { get; }
+        public string Name => Function.Name;
+
         public string ReturnType { get; }
         public ConcreteType ConcreteType { get; }
-        public Symbol Body { get; }
-        public bool IsImplicit { get; }
+        public Symbol Body => Function.Implementation.Body;
+        public bool IsImplicit => Function.IsImplicitCast;
         public IReadOnlyList<string> Generics { get; }
         public int NumParameters => ParameterNames.Count;
-        public IReadOnlyList<string> ParameterNames { get; }
+        public IReadOnlyList<string> ParameterNames => Function.ParameterNames;
         public string FirstParameterName => ParameterNames[0];
         public IReadOnlyList<string> ParameterTypes { get; }
         public IEnumerable<string> MethodParameterNames => ParameterNames.Skip(1);
@@ -89,5 +93,8 @@ namespace Plato.CSharpWriter
 
         public string MethodInterface => $"{ReturnType} {Name}{MethodParametersString}" + (NumParameters > 1 ? ";" : " { get; }");
 
+        // TODO: should we not be taking into account the function type replacements?  
+        public string ToCSharpTypeName(TypeInstance ti)
+            => TypeToCSharp.ToCSharpTypeName(ti);
     }
 }

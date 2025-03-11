@@ -25,7 +25,7 @@ namespace Plato.Compiler.Types
             => Def.OwnerType;
         
         public bool IsConceptFunction 
-            => OwnerType.IsConcept();
+            => OwnerType.IsInterface();
 
         public bool IsLibraryFunction
             => OwnerType.IsLibrary();
@@ -36,7 +36,7 @@ namespace Plato.Compiler.Types
         public bool IsConceptExtension 
             => IsLibraryFunction 
                 && Def.Parameters.Count > 0 
-                && Def.Parameters[0].Type.Def.IsConcept();
+                && Def.Parameters[0].Type.Def.IsInterface();
 
         public TypeExpression DeclaredReturnType
             => Def.ReturnType;

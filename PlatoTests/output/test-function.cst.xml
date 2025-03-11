@@ -30,7 +30,7 @@
                             <CstInnerTypeExpr>
                             </CstInnerTypeExpr>
                         </CstTypeExpr>
-                        <CstIdentifier>x</CstIdentifier>
+                        <CstIdentifier>X</CstIdentifier>
                         <CstFunctionParameterDefaultValue>
                         </CstFunctionParameterDefaultValue>
                         <CstFunctionParameter>
@@ -61,7 +61,7 @@
                                 <CstReturnStatement>
                                     <CstExpression>
                                         <CstLeafExpression>
-                                            <CstIdentifier>x</CstIdentifier>
+                                            <CstIdentifier>X</CstIdentifier>
                                         </CstLeafExpression>
                                         <CstPostfixOperator>
                                             <CstBinaryOperation>
@@ -97,7 +97,7 @@
                         <CstInnerTypeExpr>
                         </CstInnerTypeExpr>
                     </CstTypeExpr>
-                    <CstIdentifier>x</CstIdentifier>
+                    <CstIdentifier>X</CstIdentifier>
                 </CstVarDecl>
                 <CstInitialization>
                     <CstInitializationValue>
@@ -156,7 +156,7 @@
                             <CstFunctionArg>
                                 <CstExpression>
                                     <CstLeafExpression>
-                                        <CstIdentifier>x</CstIdentifier>
+                                        <CstIdentifier>X</CstIdentifier>
                                     </CstLeafExpression>
                                     <CstPostfixOperator>
                                         <CstMemberAccess>
@@ -213,7 +213,7 @@
                                                                                             <CstFunctionArg>
                                                                                                 <CstExpression>
                                                                                                     <CstLeafExpression>
-                                                                                                        <CstIdentifier>x</CstIdentifier>
+                                                                                                        <CstIdentifier>X</CstIdentifier>
                                                                                                     </CstLeafExpression>
                                                                                                 </CstExpression>
                                                                                             </CstFunctionArg>

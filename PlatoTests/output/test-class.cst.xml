@@ -203,7 +203,7 @@
                         <CstInnerTypeExpr>
                         </CstInnerTypeExpr>
                     </CstTypeExpr>
-                    <CstIdentifier>x</CstIdentifier>
+                    <CstIdentifier>X</CstIdentifier>
                 </CstVarDecl>
                 <CstInitialization>
                     <CstInitializationValue>
@@ -314,14 +314,14 @@
                                     <CstFunctionArg>
                                         <CstExpression>
                                             <CstLeafExpression>
-                                                <CstIdentifier>x</CstIdentifier>
+                                                <CstIdentifier>X</CstIdentifier>
                                             </CstLeafExpression>
                                             <CstPostfixOperator>
                                                 <CstBinaryOperation>
                                                     <CstBinaryOperator>* </CstBinaryOperator>
                                                     <CstExpression>
                                                         <CstLeafExpression>
-                                                            <CstIdentifier>x</CstIdentifier>
+                                                            <CstIdentifier>X</CstIdentifier>
                                                         </CstLeafExpression>
                                                         <CstPostfixOperator>
                                                             <CstBinaryOperation>

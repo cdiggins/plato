@@ -214,7 +214,7 @@ namespace Plato.Compiler
 
                         rt.AddConcreteTypeLibraryFunction(library, f);
                     }
-                    else if (firstParamType.Def.IsConcept())
+                    else if (firstParamType.Def.IsInterface())
                     {
                         foreach (var rt in ReifiedTypes.Values)
                         {
@@ -327,7 +327,7 @@ namespace Plato.Compiler
             => AllTypeAndLibraryDefinitions.Where(t => t.IsConcrete() && t.Implements(te));
 
         public IEnumerable<TypeDef> GetConcepts()
-            => AllTypeAndLibraryDefinitions.Where(t => t.IsConcept());
+            => AllTypeAndLibraryDefinitions.Where(t => t.IsInterface());
 
         public AstNode GetAstNode(Symbol symbol)
         {

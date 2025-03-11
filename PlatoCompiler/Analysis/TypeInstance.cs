@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
+using System.IO.Compression;
 using System.Linq;
 using Ara3D.Utils;
 using Plato.Compiler.Symbols;
 
 namespace Plato.Compiler.Analysis
 {
-    // TODO: it's been a while, and I'm really struggling to understand how this is different from a TypeExpression. 
-    // TODO: this has TypeSubstitutions as well. We need to know what they are. 
-    // This way when we query functions, inherited types, and implemented types
-    // We can figure it all out. 
+    // TODO:
+    // 1) I think this needs to take into account substitutions.
+    // 2) It may need the context of the ConcreteType within which it is being used. 
+    // 3) What about the context of the declaring function (if present) and its substitutions. 
+    // 
     public class TypeInstance
     {
         public string Name => Def.Name;
@@ -19,7 +20,13 @@ namespace Plato.Compiler.Analysis
         public TypeInstance(TypeExpression expr, IEnumerable<TypeInstance> args)
         {
             Expr = expr;
-            Args = args?.ToList() ?? new List<TypeInstance>();
+            var tmp = args?.ToList() ?? new List<TypeInstance>();
+            if (Def.IsSelfConstrained())
+            {
+                var self = Create(Def.Self);
+                tmp.Insert(0, self);
+            }
+            Args = tmp;
         }
 
         public IReadOnlyList<TypeInstance> Args { get; }
@@ -41,5 +48,8 @@ namespace Plato.Compiler.Analysis
 
         public static TypeInstance Create(TypeExpression expr)
             => new TypeInstance(expr, expr.TypeArgs.Select(Create));
+
+        public static TypeInstance Create(TypeDef def)
+            => Create(def.ToTypeExpression());
     }
 }

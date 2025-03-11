@@ -14,7 +14,7 @@
                         <CstInnerTypeExpr>
                         </CstInnerTypeExpr>
                     </CstTypeExpr>
-                    <CstIdentifier>x</CstIdentifier>
+                    <CstIdentifier>X</CstIdentifier>
                 </CstVarDecl>
                 <CstInitialization>
                     <CstInitializationValue>
@@ -36,7 +36,7 @@
                 <CstParenthesizedExpression>
                     <CstExpression>
                         <CstLeafExpression>
-                            <CstIdentifier>x</CstIdentifier>
+                            <CstIdentifier>X</CstIdentifier>
                         </CstLeafExpression>
                         <CstPostfixOperator>
                             <CstBinaryOperation>
@@ -59,7 +59,7 @@
                                 <CstParenthesizedExpression>
                                     <CstExpression>
                                         <CstLeafExpression>
-                                            <CstIdentifier>x</CstIdentifier>
+                                            <CstIdentifier>X</CstIdentifier>
                                         </CstLeafExpression>
                                         <CstPostfixOperator>
                                         </CstPostfixOperator>
@@ -110,7 +110,7 @@
                                 <CstParenthesizedExpression>
                                     <CstExpression>
                                         <CstLeafExpression>
-                                            <CstIdentifier>x</CstIdentifier>
+                                            <CstIdentifier>X</CstIdentifier>
                                         </CstLeafExpression>
                                         <CstPostfixOperator>
                                             <CstBinaryOperation>
@@ -141,7 +141,7 @@
                                 <CstParenthesizedExpression>
                                     <CstExpression>
                                         <CstLeafExpression>
-                                            <CstIdentifier>x</CstIdentifier>
+                                            <CstIdentifier>X</CstIdentifier>
                                         </CstLeafExpression>
                                         <CstPostfixOperator>
                                             <CstBinaryOperation>
@@ -187,7 +187,7 @@
                                                             <CstBinaryOperator>+ </CstBinaryOperator>
                                                             <CstExpression>
                                                                 <CstLeafExpression>
-                                                                    <CstIdentifier>x</CstIdentifier>
+                                                                    <CstIdentifier>X</CstIdentifier>
                                                                 </CstLeafExpression>
                                                                 <CstPostfixOperator>
                                                                     <CstMemberAccess>

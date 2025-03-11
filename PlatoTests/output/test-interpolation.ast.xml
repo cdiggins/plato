@@ -1,7 +1,7 @@
 <AstMulti>
     <AstError>Parakeet.Demos.CSharp.CstFunctionDeclStatement had no case statement</AstError>
     <AstVarDef>
-        <AstIdentifier>x</AstIdentifier>
+        <AstIdentifier>X</AstIdentifier>
         <AstNoop></AstNoop>
     </AstVarDef>
     <AstVarDef>

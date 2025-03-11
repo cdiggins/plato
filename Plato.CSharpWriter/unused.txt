@@ -1,0 +1,47 @@
+// Taken from CSharpWriter.cs
+     public CSharpWriter WriteSimpleInterface(ConcreteType concrete, string name, TypeExpression concept)
+        {
+            if (!concept.Def.IsSelfConstrained())
+                return this; 
+
+            var its = ImplementedTypeString(concept, concrete.Type.Name, false);
+
+            return SetSelfType(its, () =>
+            {
+                WriteLine($"// Implementation of {concept.Name}");
+                foreach (var f in concept.Def.Functions)
+                {
+                    var ret = ToCSharp(concept.GetReplacement(f.ReturnType));
+                    var pts = f.Parameters.Skip(1).Select(p => ToCSharp(concept.GetReplacement(p.Type))).ToList();
+                    var pns = f.Parameters.Skip(1).Select(p => p.Name).ToList();
+                    var ps = pts.Zip(pns, (pt, pn) => $"{pt} {pn}").JoinStringsWithComma();
+                    if (ps.Length > 0) ps = $"({ps})";
+                    var casts = pts.Select(p => p == its ? name : p).ToList();
+                    var args = casts.Zip(pns, (cast, pn) => $"({cast}){pn}").JoinStringsWithComma();
+                    if (args.Length > 0) args = $"({args})";
+                    WriteLine($"{ret} {its}.{f.Name}{ps} => this.{f.Name}{args};");
+                }
+
+                return this;
+            });
+        }
+
+        // I think this code got moved into FunctionInfo
+            
+        public static void GatherTypeParameters(TypeExpression te, List<string> set)
+        {
+            if (te.Def.IsSelfConstrained())
+                set.Add("Self");
+            if (te.Name.StartsWith("$"))
+                set.Add("T" + te.Name.Substring(1));
+            foreach (var arg in te.TypeArgs)
+                GatherTypeParameters(arg, set);
+        }
+
+        public static IEnumerable<string> GatherTypeParameters(FunctionDef fd)
+        {
+            var r = new List<string>();
+            foreach (var param in fd.Parameters)
+                GatherTypeParameters(param.Type, r);
+            return r;
+        }

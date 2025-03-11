@@ -7,9 +7,9 @@ namespace Plato.Compiler.Types
     public static class TypeExtensions
     {
         public static bool IsFullyImplementedConcept(TypeDef ts)
-            => ts.IsConcept() && ts.Functions.All(f => f.HasImplementation());
+            => ts.IsInterface() && ts.Functions.All(f => f.HasImplementation());
 
-        public static bool IsConcept(this TypeDef ts)
+        public static bool IsInterface(this TypeDef ts)
             => ts.Kind == TypeKind.Concept;
 
         public static bool IsConcrete(this TypeDef ts)
@@ -30,6 +30,11 @@ namespace Plato.Compiler.Types
             for (var i = 0; i < a.TypeArgs.Count; i++)
                 if (!a.TypeArgs[i].IsImplementing(b.TypeArgs[i]))
                     return false;
+            if (a.Name == b.Name)
+                return true;
+            foreach (var tmp in a.Def.GetAllImplementedConcepts())
+                if (tmp.IsImplementing(b))
+                    return true;
             return true;
         }
 

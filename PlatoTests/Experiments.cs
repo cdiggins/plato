@@ -10,6 +10,12 @@
     {
         int Compare(TSelf b);
     }
+    
+    public interface IVector
+    {
+        float X { get; }
+        float Count { get; }
+    }
 
     public class Number : INumerical<Number>, IComparable<Number>
     {
@@ -19,11 +25,15 @@
         public int Compare(Number b) => x - b.x;
     }
 
-    public class Vector : INumerical<Vector>
+    public class Vector : INumerical<Vector>, IVector
     {
-        public float x;
-        public Vector Add(Vector b) => new Vector() { x = x + b.x };
-        public Vector Negate() => new Vector() { x = -x };
+        public float X;
+        float IVector.X => X;
+        public Vector Add(Vector b) => new Vector() { X = X + b.X };
+        public Vector Negate() => new Vector() { X = -X };
+        
+
+        public float Count => 1;
     }
 
     public static class Extensions
@@ -33,12 +43,38 @@
             return a.Add(b.Negate());
         }
 
+        public static int Count(this IVector v) => 2;
+
+        public static float X(this Vector v) => 2;
+
+        public static int AddCount(this Vector v, IVector other) => 13;
+
+        public static float AddCount(this Vector v, Vector other) => 13.1f;
+
         [Test]
         public static void TestConcept()
         {
             var a = new Number() { x = 3 };
-            var b = new Vector() { x =  3.14f };
+            var b = new Vector() { X =  3.14f };
             a.Subtract(a);
+        }
+
+        [Test]
+        public static void TestExtension()
+        {
+            var b = new Vector() { X = 3.14f };
+
+            Console.WriteLine("Expect 3.14 then 2");
+            Console.WriteLine(b.X);
+            Console.WriteLine(b.X());
+
+            Console.WriteLine("Expect 1 then 2");
+            Console.WriteLine(b.Count);
+            Console.WriteLine(b.Count());
+
+            Console.WriteLine("Expect 13.1 then 13");
+            Console.WriteLine(b.AddCount((Vector)b));
+            Console.WriteLine(b.AddCount((IVector)b));
         }
     }
 }

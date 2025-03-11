@@ -54,13 +54,13 @@
                                 <CstLambdaExpr>
                                     <CstLambdaParameters>
                                         <CstLambdaParameter>
-                                            <CstIdentifier>x</CstIdentifier>
+                                            <CstIdentifier>X</CstIdentifier>
                                         </CstLambdaParameter>
                                     </CstLambdaParameters>
                                     <CstLambdaBody>
                                         <CstExpression>
                                             <CstLeafExpression>
-                                                <CstIdentifier>x</CstIdentifier>
+                                                <CstIdentifier>X</CstIdentifier>
                                             </CstLeafExpression>
                                             <CstPostfixOperator>
                                                 <CstBinaryOperation>

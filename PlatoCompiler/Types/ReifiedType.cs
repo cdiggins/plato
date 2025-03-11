@@ -84,7 +84,7 @@ namespace Plato.Compiler.Types
         {
             Verifier.Assert(functionDef.Parameters.Count > 0);
             var pt = functionDef.Parameters[0].Type;
-            Verifier.Assert(pt.Def.IsConcept());
+            Verifier.Assert(pt.Def.IsInterface());
             Verifier.Assert(library.IsLibrary());
 
             TypeExpression LocalMapType(TypeExpression te)

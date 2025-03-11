@@ -38,18 +38,16 @@ namespace Plato.CSharpWriter
             }
         }
 
-        public static SymbolWriterCSharp ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder)
+        public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder)
         {
-            var writer = new SymbolWriterCSharp(compilation, outputFolder);
+            var writer = new CSharpWriter(compilation, outputFolder);
             writer.WriteAll("float");
             //writer.WriteAll("Plato.DoublePrecision.g.cs", "double");
 
             // Output documentation 
-            /*
             var docWriter = new DocWriter(compilation);
             var fp = outputFolder.RelativeFile("docs.html");
             fp.WriteAllText(docWriter.ToString());
-            */
 
             //Analyze(compilation, outputFolder);
 

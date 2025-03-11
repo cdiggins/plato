@@ -18,7 +18,7 @@ namespace Plato.CSharpWriter
         public bool IsSelfConstrained => OriginalDef.IsSelfConstrained();
         public TypeDef OriginalDef => OriginalType.Def;
         public bool IsGeneric => TypeParameters.Count > 0;
-        public bool IsConcept => OriginalDef.IsConcept();
+        public bool IsConcept => OriginalDef.IsInterface();
         public bool IsConcrete => OriginalDef.IsConcrete();
         public string Name { get; }
         

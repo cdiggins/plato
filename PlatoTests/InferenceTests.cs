@@ -51,11 +51,11 @@ namespace PlatoTests
                 new TestCaseData("a", "a"),
                 new TestCaseData("$a", "b"),
                 new TestCaseData("b", "$a"),
-                new TestCaseData("[$a,$b]", "[x,y]"),
-                new TestCaseData("[$a,$a]", "[x,x]"),
-                new TestCaseData("[$a,$b,$c]", "[x,y,$a]"),
-                new TestCaseData("[$a,$b]", "[x,x]"),
-                new TestCaseData("[$a,$b,$c]", "[$b,x,y]"),
+                new TestCaseData("[$a,$b]", "[X,y]"),
+                new TestCaseData("[$a,$a]", "[X,X]"),
+                new TestCaseData("[$a,$b,$c]", "[X,y,$a]"),
+                new TestCaseData("[$a,$b]", "[X,X]"),
+                new TestCaseData("[$a,$b,$c]", "[$b,X,y]"),
             };
 
         public static void OutputConstraints(Constraints c)

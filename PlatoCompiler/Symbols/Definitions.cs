@@ -63,7 +63,7 @@ namespace Plato.Compiler.Symbols
             {
                 FunctionType = FunctionType.Intrinsic;
             }
-            else if (ownerType.IsConcept())
+            else if (ownerType.IsInterface())
             {
                 FunctionType = FunctionType.Concept;
             }
@@ -186,7 +186,6 @@ namespace Plato.Compiler.Symbols
         public IEnumerable<TypeExpression> GetAllImplementedConcepts()
         {
             var r = new HashSet<TypeExpression>(); 
-
 
             foreach (var tmp in Implements)
             {

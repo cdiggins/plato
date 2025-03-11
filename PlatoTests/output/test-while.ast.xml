@@ -1,6 +1,6 @@
 <AstMulti>
     <AstVarDef>
-        <AstIdentifier>x</AstIdentifier>
+        <AstIdentifier>X</AstIdentifier>
         <AstNoop></AstNoop>
     </AstVarDef>
     <AstLoop>

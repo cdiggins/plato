@@ -23,7 +23,7 @@
                                 <CstLambdaExpr>
                                     <CstLambdaParameters>
                                         <CstLambdaParameter>
-                                            <CstIdentifier>x</CstIdentifier>
+                                            <CstIdentifier>X</CstIdentifier>
                                         </CstLambdaParameter>
                                         <CstLambdaParameter>
                                             <CstIdentifier>y</CstIdentifier>
@@ -32,14 +32,14 @@
                                     <CstLambdaBody>
                                         <CstExpression>
                                             <CstLeafExpression>
-                                                <CstIdentifier>x</CstIdentifier>
+                                                <CstIdentifier>X</CstIdentifier>
                                             </CstLeafExpression>
                                             <CstPostfixOperator>
                                                 <CstBinaryOperation>
                                                     <CstBinaryOperator>* </CstBinaryOperator>
                                                     <CstExpression>
                                                         <CstLeafExpression>
-                                                            <CstIdentifier>x</CstIdentifier>
+                                                            <CstIdentifier>X</CstIdentifier>
                                                         </CstLeafExpression>
                                                         <CstPostfixOperator>
                                                             <CstBinaryOperation>
@@ -89,7 +89,7 @@
                         <CstInnerTypeExpr>
                         </CstInnerTypeExpr>
                     </CstTypeExpr>
-                    <CstIdentifier>x</CstIdentifier>
+                    <CstIdentifier>X</CstIdentifier>
                 </CstVarDecl>
                 <CstInitialization>
                     <CstInitializationValue>
@@ -144,7 +144,7 @@
                                             <CstFunctionArg>
                                                 <CstExpression>
                                                     <CstLeafExpression>
-                                                        <CstIdentifier>x</CstIdentifier>
+                                                        <CstIdentifier>X</CstIdentifier>
                                                     </CstLeafExpression>
                                                 </CstExpression>
                                             </CstFunctionArg>

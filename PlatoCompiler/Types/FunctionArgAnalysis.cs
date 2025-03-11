@@ -94,9 +94,9 @@ namespace Plato.Compiler.Types
             if (arg2.ParameterType.Def.IsConcrete())
                 return +1;
 
-            if (ParameterType.Def.IsConcept())
+            if (ParameterType.Def.IsInterface())
             {
-                if (!ParameterType.Def.IsConcept())
+                if (!ParameterType.Def.IsInterface())
                     return +1;
 
                 if (Depth < arg2.Depth)
@@ -107,7 +107,7 @@ namespace Plato.Compiler.Types
                 return 0;
             }
 
-            if (arg2.ParameterType.Def.IsConcept())
+            if (arg2.ParameterType.Def.IsInterface())
                 return +1;
 
             Debug.Assert(ParameterType.Def.IsTypeVariable());

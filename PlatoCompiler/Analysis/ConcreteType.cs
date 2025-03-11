@@ -7,63 +7,74 @@ using Plato.Compiler.Types;
 namespace Plato.Compiler.Analysis
 {
     /// <summary>
-    /// Holds a list of all the functions associated with the type,
-    /// and the implemented concepts.
+    /// Holds a list of all the functions associated with the type, and the implemented concepts.
     /// </summary>
     public class ConcreteType
     {
-        public string Name => Type.Name;
-        public TypeDef Type { get; }
+        public string Name => TypeDef.Name;
+        public TypeDef TypeDef { get; }
+        public IReadOnlyList<TypeParameterDef> Parameters { get; }
         public LibraryFunctions Libraries { get; }
         public TypeSubstitutions Substitutions { get; }
-        public IReadOnlyList<ConceptImplementation> Concepts { get; }
-        public IReadOnlyList<ConceptImplementation> AllConcepts { get; }
+        public IReadOnlyList<InterfaceImplementation> Interfaces { get; }
+        public IReadOnlyList<InterfaceImplementation> AllInterfaces { get; }
         public IReadOnlyList<FunctionInstance> ConcreteFunctions { get; }
         public IReadOnlyList<FunctionInstance> FieldFunctions { get; }
         public IReadOnlyList<FunctionInstance> DeclaredFunctions { get; }
         public IReadOnlyList<FunctionInstance> ImplementedFunctions { get; }
         public IReadOnlyList<FunctionInstance> UnimplementedFunctions { get; }
 
-        public ConcreteType(TypeDef type, LibraryFunctions libraries)
+        public ConcreteType(TypeDef typeDef, LibraryFunctions libraries)
         {
-            Verifier.AssertNotNull(type, nameof(type));
+            Verifier.AssertNotNull(typeDef, nameof(typeDef));
             Verifier.AssertNotNull(libraries, nameof(libraries));
-            Verifier.Assert(type.IsConcrete());
-            Type = type;
+            Verifier.Assert(typeDef.IsConcrete());
+            TypeDef = typeDef;
             Libraries = libraries;
-            Substitutions = new TypeSubstitutions("Self", Type.ToTypeExpression());
-            Concepts = type.Implements.Select(CreateConceptImplementation).ToList();
-            AllConcepts = Concepts.AllDescendants().ToList();
-            ConcreteFunctions = libraries.GetFunctionsForType(Type.ToTypeExpression()).Select(f => AnalyzeFunction(f, FunctionInstanceKind.ConcreteType)).ToList();
-            FieldFunctions = Type.Fields.Select(f => AnalyzeFunction(f.Function, FunctionInstanceKind.FieldType)).ToList();
+            Substitutions = new TypeSubstitutions("Self", TypeDef.ToTypeExpression());
+            Interfaces = typeDef.Implements.Select(CreateConceptImplementation).ToList();
+            AllInterfaces = Interfaces.AllDescendants().Distinct(i => i.ToString()).OrderBy(i => i.ToString()).ToList();
+            ConcreteFunctions = libraries.GetFunctionsForType(TypeDef.ToTypeExpression()).Select(f => AnalyzeFunction(f, FunctionInstanceKind.ConcreteType)).ToList();
+            FieldFunctions = TypeDef.Fields.Select(f => AnalyzeFunction(f.Function, FunctionInstanceKind.FieldType)).ToList();
 
-            ImplementedFunctions = AllConcepts.SelectMany(c => c.ImplementedFunctions).Concat(ConcreteFunctions).Concat(FieldFunctions).ToList();
-            DeclaredFunctions = AllConcepts.SelectMany(c => c.DeclaredFunctions).Distinct(d => d.SignatureId).ToList();
+            ImplementedFunctions = AllInterfaces.SelectMany(c => c.ImplementedFunctions).Concat(ConcreteFunctions).Concat(FieldFunctions).ToList();
+            DeclaredFunctions = AllInterfaces.SelectMany(c => c.DeclaredFunctions).Distinct(d => d.SignatureId).ToList();
 
             var implementedSigs = new HashSet<string>(ImplementedFunctions.Select(f => f.SignatureId));
             UnimplementedFunctions = DeclaredFunctions.Where(f => !implementedSigs.Contains(f.SignatureId)).ToList();
         }
 
-        public ConceptImplementation CreateConceptImplementation(TypeExpression type)
-            => new ConceptImplementation(Libraries, this, Substitutions.Add(type), type);
+        public InterfaceImplementation CreateConceptImplementation(TypeExpression type)
+            => new InterfaceImplementation(Libraries, this, Substitutions.Add(type), type);
 
         public FunctionInstance AnalyzeFunction(FunctionDef function, FunctionInstanceKind kind)
             => new FunctionInstance(function, this, null, kind, Substitutions);
 
         public IEnumerable<FunctionInstance> GetConceptFunctions()
+            => Interfaces.SelectMany(c => c.AllFunctions().Where(FunctionMatches)).ToList();
+
+        public bool FunctionMatches(FunctionInstance f)
         {
-            var r = Concepts.SelectMany(c => c.AllFunctions()).ToList();
-            // NOTE: the problem here, is that I only want Concept functions that exactly match this concrete type.
-            // For example, there might be a function to defined specifically for IArray<Vector3D> and that would not 
-            // work here. 
-            // So there are "AllFunctions", and it depends on whether we are setting stuff  
-            return r;
+            // NOTE: we assume that the first function matches. 
+            //var tmp = ConceptImplementation
+            var t = f.ParameterTypes[0];
+
+            if (t.Def == TypeDef || t.Def.Equals(TypeDef))
+                return true;
+            
+            if (!t.Def.IsInterface())
+                throw new System.Exception("Expected an interface type in first position");
+
+            if (TypeDef.Implements(t.Expr))
+                return true;
+
+            return false;
         }
 
         public IReadOnlyList<TypeExpression> DistinctFieldTypes
-            => Type.Fields.Select(f => f.Type).Distinct().ToList();
+            => TypeDef.Fields.Select(f => f.Type).Distinct().ToList();
 
         public override string ToString()
-            => $"Concrete:{Type}";
+            => $"Concrete:{TypeDef}";
     }
 }
