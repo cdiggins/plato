@@ -5,7 +5,7 @@
 ## Plato Examples
 
 The [Plato.Geometry](https://github.com/ara3d/Plato.Geometry) contains a large library of 
-Plato functions and types in the [plato-src subdirectory](https://github.com/ara3d/Plato.Geometry/tree/main/plato-src).
+Plato functions and types in the [`/plato-src`](https://github.com/ara3d/Plato.Geometry/tree/main/plato-src) folder.
 
 ## About the Language
 
