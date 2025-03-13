@@ -4,7 +4,8 @@
 
 ## Plato Examples
 
-The [Plato.Geometry library](https://github.com/ara3d/Plato.Geometry/tree/main/plato-src) large library of Plato functions and types.
+The [Plato.Geometry](https://github.com/ara3d/Plato.Geometry) contains a large library of 
+Plato functions and types in the [plato-src subdirectory](https://github.com/ara3d/Plato.Geometry/tree/main/plato-src).
 
 ## About the Language
 
