@@ -68,7 +68,7 @@ The top-level abstractions in Plato are:
 A Plato library contains only functions. It is similar to a static class with extension methods in C#. 
 Library functions can be called using a dot syntax using the first parameter on the left of a dot. 
 Furthermore, any function with no arguments, can be invoked as if it was a parameter. 
-Function parameters can be a mix of either types or concepts. 
+Function parameters can be a mix of either types or interfaces. 
 
 For example:
 
@@ -95,7 +95,7 @@ library MyLibrary
 
 A type is a concrete data structure. 
 It is similar to a record, struct, or class in other languages. 
-It contain fields, and decares the concepts that it implements. 
+It contain fields, and decares the interfaces that it implements. 
 Unlike traditional object-oriented languages, it does not have member functions (aka methods). 
 
 ```plato
@@ -110,10 +110,10 @@ type Vector2D
 ### Interface
 
 An interface is an abstract data type. 
-It declares a list of functions that can be called on any type implementing the concept.
-In the context of the concept, the implementing type is called `Self`.
+It declares a list of functions that can be called on any type implementing the interface.
+In the context of the interface, the implementing type is called `Self`.
 
-Interface can inherit from other concepts. 
+Interface can inherit from other interfaces. 
 
 ```plato
 interface IArray<T>
