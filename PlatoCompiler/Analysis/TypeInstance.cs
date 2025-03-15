@@ -6,11 +6,6 @@ using Plato.Compiler.Symbols;
 
 namespace Plato.Compiler.Analysis
 {
-    // TODO:
-    // 1) I think this needs to take into account substitutions.
-    // 2) It may need the context of the ConcreteType within which it is being used. 
-    // 3) What about the context of the declaring function (if present) and its substitutions. 
-    // 
     public class TypeInstance
     {
         public string Name => Def.Name;

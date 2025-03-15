@@ -18,14 +18,7 @@ namespace Plato.CSharpWriter
 
             ReturnType = this.ToCSharpType(fi.ReturnType);
             ParameterTypes = Function.ParameterTypes.Select(this.ToCSharpType).ToList();
-
-            var funcTypeParams = fi.UsedTypeParameters;
-            if (ConcreteType != null)
-            {
-                var typeParameterNames = ConcreteType.TypeDef.TypeParameters.Select(tp => tp.Name).ToHashSet();
-                funcTypeParams = fi.UsedTypeParameters.Where(tp => !typeParameterNames.Contains(tp.Name)).ToList();
-            }
-            Generics = funcTypeParams.Select(ft => ft.Name).Distinct().ToList();
+            Generics = fi.TypeVariables;
 
             if (ParameterNames.Count != ParameterTypes.Count)
                 throw new System.Exception("Parameter names and types must have the same length");

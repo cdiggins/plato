@@ -19,7 +19,7 @@ public class PlatoAnalyzer
     public int ScoreFunction(FunctionInstance f)
     {
         var a = f.ConcreteType;
-        var b = f.Concept;
+        var b = f.Interface;
 
         // Intrinsics are always preferred 
         if (f.Implementation.OwnerType.Name == "Intrinsics")

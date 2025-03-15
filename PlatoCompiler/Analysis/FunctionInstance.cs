@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Ara3D.Utils;
 using System.Linq;
 using Plato.AST;
@@ -26,36 +27,20 @@ namespace Plato.Compiler.Analysis
     {
         public FunctionDef Implementation { get; }
         public TypeSubstitutions Substitutions { get; private set; }
-        public TypeDef Concept { get; }
+        public TypeDef Interface { get; }
         public ConcreteType ConcreteType { get; }
-        public string ConceptName => Concept?.Name ?? "";
+        public string ConceptName => Interface?.Name ?? "";
         public IReadOnlyList<string> ParameterNames { get; }
         public string Name => Implementation.Name;
         public TypeInstance ReturnType { get; }
         public string SignatureId => $"{Name}({ParameterTypes.JoinStringsWithComma()}):{ReturnType}";
         public IReadOnlyList<TypeInstance> ParameterTypes { get; }
-        public IReadOnlyList<TypeParameterDef> UsedTypeParameters { get; }
         public override string ToString() => $"{SignatureId}:{ReturnType}";
         public bool IsImplicitCast => Name == ReturnType.Name && ParameterNames.Count == 1 && !ReturnType.Def.IsInterface();
         public InterfaceImplementation InterfaceImplementation { get; }
         public FunctionInstanceKind Kind { get; }
-
-        /// <summary>
-        /// Returns the index of any interface that differs from the interface in the first position.
-        /// </summary>
-        public int NextInterfacePosition()
-        {
-            if (ParameterTypes.Count < 2) return -1;
-            var pt = ParameterTypes[0];
-            for (var i = 1; i < ParameterTypes.Count; i++)
-            {
-                var p = ParameterTypes[i];
-                if (p.Def.IsInterface() && !p.Def.Equals(pt.Def))
-                    return i;
-            }
-
-            return -1;
-        }
+        public FunctionTypeVariableAnalysis TypeVariableAnalysis { get; }
+        public IReadOnlyList<string> TypeVariables => TypeVariableAnalysis.GetTypeVariableNames();
 
         public FunctionInstance(FunctionDef implementation, ConcreteType type, InterfaceImplementation ci, FunctionInstanceKind kind, TypeSubstitutions substitutions = null)
         {
@@ -67,36 +52,38 @@ namespace Plato.Compiler.Analysis
             Substitutions = substitutions;
             ParameterNames = Implementation.Parameters.Select(p => p.Name).ToList();
             
+            // The first type in the list, if it is an interface, we are going to replace it with the concrete type 
             var first = Implementation.Parameters.FirstOrDefault();
-            if (first?.Type.Def.IsInterface() == true)
-                Concept = first.Type.Def;
+            if (first?.Type.Def.IsInterface() == true && ci != null) 
+            {
+                Interface = first.Type.Def;
+                ReplaceTypeVariables(first.Type, ci.TypeExpression);
+            }
 
-            foreach (var p in Implementation.Parameters)
-                GatherTypeVariables(p.Type);
-
+            // Create an initial version of the return type, and parameter types
             ReturnType = ToInstance(Implementation.ReturnType);
             ParameterTypes = Implementation.Parameters.Select(p => ToInstance(p.Type)).ToList();
 
-            UsedTypeParameters = ParameterTypes.SelectMany(t => t.SelfAndDescendants())
-                .Select(t => t.Def)
-                .OfType<TypeParameterDef>().Distinct().
-                ToList();
+            // Generate and gather the type variables 
+            TypeVariableAnalysis = new FunctionTypeVariableAnalysis(ParameterTypes, ReturnType);
+
+            // Create the final version of the return type, and parameter types
+            ReturnType = TypeVariableAnalysis.ReturnType;
+            ParameterTypes = TypeVariableAnalysis.ParameterTypes;
         }
 
-        public void GatherTypeVariables(TypeExpression expr)
+        public void ReplaceTypeVariables(TypeExpression original, TypeExpression replace)
         {
-            for (var i = 0; i < expr.TypeArgs.Count; ++i)
+            if (original.Name.StartsWith("$"))
             {
-                var ta = expr.TypeArgs[i];
-                var tp = expr.Def.TypeParameters[i];
-
-                if (ta.Name.StartsWith("$"))
-                {
-                    Substitutions = Substitutions?.Add(ta.Name, tp.ToTypeExpression()) 
-                        ?? new TypeSubstitutions(ta.Name, tp.ToTypeExpression());
-                }
-
-                GatherTypeVariables(ta);
+                Substitutions = new TypeSubstitutions(original.Name, replace, Substitutions);
+                Debug.Assert(original.TypeArgs.Count == 0);
+                return;
+            }
+            Debug.Assert(original.TypeArgs.Count == replace.TypeArgs.Count);
+            for (var i = 0; i < original.TypeArgs.Count; ++i)
+            {
+                ReplaceTypeVariables(original.TypeArgs[i], replace.TypeArgs[i]);
             }
         }
 

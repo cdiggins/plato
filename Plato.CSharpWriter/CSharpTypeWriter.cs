@@ -55,6 +55,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
     {
         Debug.Assert(ct.TypeDef == TypeDef);
         
+        /*
         WriteLine($"/*");
         Indent();
 
@@ -98,7 +99,9 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
 
         WriteLine();
         Dedent();
-        WriteLine($"*/");
+        */
+        //WriteLine($"*/");
+        
         _ = new CSharpConcreteTypeWriter(this, ct);
         return this;
     }
@@ -190,6 +193,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
     {
         if (!isPrimitive || f.Body != null)
         {
+            WriteLine($"// {f.Function.SignatureId}; [{f.Function.Substitutions}]; {f.Function.TypeVariableAnalysis}");
             Write(f.MethodSignature);
             WriteBody(f, false);
         }

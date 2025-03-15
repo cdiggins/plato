@@ -268,7 +268,6 @@ namespace Plato.CSharpWriter
                 // For example: multiplying a scalar by IVectorSpace (or something like that)
 
                 var fi = TypeWriter.ToFunctionInfo(f, ConcreteType);
-                TypeWriter.WriteLine($"// {f.SignatureId}");
                 TypeWriter.WriteMemberFunction(fi, IsPrimitive);
 
                 // TODO: decide whether to keep 

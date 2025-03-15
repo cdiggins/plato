@@ -265,7 +265,7 @@ namespace Plato.Compiler.Symbols
     {
         public IReadOnlyList<TypeExpression> Constraints { get; }
 
-        public TypeParameterDef(Scope scope, string name, IReadOnlyList<TypeExpression> constraints)
+        public TypeParameterDef(Scope scope, string name, IReadOnlyList<TypeExpression> constraints = null)
             : base(scope, TypeKind.TypeVariable, name)
         {
             Constraints = constraints ?? Array.Empty<TypeExpression>();
