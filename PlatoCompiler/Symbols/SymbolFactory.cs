@@ -20,7 +20,7 @@ namespace Plato.Compiler.Symbols
             Logger = logger;
 
             // Create and bind Primitives type-defs
-            var td = new TypeDef(null, TypeKind.Library, "Any");
+            var td = new TypeDef(null, TypeKind.Primitive, "Any");
             BindType(td);
         }
 
@@ -94,6 +94,9 @@ namespace Plato.Compiler.Symbols
                 var td = GetTypeDefinition(name);
                 if (td == null)
                 {
+                    if (name == "default")
+                        return KeywordRefSymbol.Default;
+
                     LogResolutionError($"Could not find symbol {name}", node);
                     return null;
                 }
@@ -112,6 +115,7 @@ namespace Plato.Compiler.Symbols
 
         public void LogResolutionError(string message, AstNode node)
         {
+            Debugger.Break();
             Errors.Add(new ResolutionError(message, node));
         }
 
@@ -252,7 +256,19 @@ namespace Plato.Compiler.Symbols
                 LogResolutionError(msg, astInvoke);
                 throw new Exception(msg);
             }
-            
+
+            if (args.Length > 0 && args[0] is FunctionGroupRefSymbol fgr)
+            {
+                var typeSym = TypeBindingsScope.GetValue(fgr.Name);
+                if (typeSym != null)
+                {
+                    var td = typeSym as TypeDef;
+                    if (td == null)
+                        throw new Exception("Expected a TypeDef");
+                    args[0] = td.ToTypeExpression();
+                }
+            }
+
             return new FunctionCall(funcRef, astInvoke.HasArgList, args);
         }
 
@@ -406,6 +422,8 @@ namespace Plato.Compiler.Symbols
                 }
             }
 
+            BindType(SelfType.Instance);
+
             foreach (var typeDef in TypeDefs)
             {
                 var astTypeDeclaration = SymbolsToNodes[typeDef] as AstTypeDeclaration;
@@ -421,10 +439,6 @@ namespace Plato.Compiler.Symbols
                     typeDef.TypeParameters.Add(tpd);
                 }
 
-                // Add a Self type
-                if (typeDef.Self != null)
-                    BindType(typeDef.Self);
-                
                 foreach (var m in astTypeDeclaration.Members)
                 {
                     if (m is AstFieldDeclaration fd)
@@ -462,12 +476,7 @@ namespace Plato.Compiler.Symbols
                 
                 var astTypeDecl = SymbolsToNodes[typeDef] as AstTypeDeclaration;
 
-                // Add a Self type
-                if (typeDef.Self != null)
-                    BindType(typeDef.Self);
-
                 // Resolve the inherits and implemented type declarations
-
                 foreach (var inheritedType in astTypeDecl.Inherits)
                 {
                     if (inheritedType == null)

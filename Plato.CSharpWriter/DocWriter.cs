@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Ara3D.Utils;
 using Plato.AST;
@@ -39,7 +40,7 @@ namespace Plato.CSharpWriter
 
             WriteStartTag("div", "content").WriteLine();
             WriteClasses(types);
-            WriteInterfaces(types);
+            WriteInterfaces(types, compilation);
             WriteEndTag("div").WriteLine();
             WriteEndTag("div");
 
@@ -77,21 +78,37 @@ namespace Plato.CSharpWriter
                 WriteClass(t);
         }
 
-        public void WriteInterfaces(IEnumerable<TypeDef> typeDefs)
+        public void WriteInterfaces(IEnumerable<TypeDef> typeDefs, Compilation compilation)
         {
-            var types = typeDefs.Where(t => t.IsInterface()).OrderBy(t => t.Name).ToList();
+            var interfaces = typeDefs.Where(t => t.IsInterface()).OrderBy(t => t.Name).ToList();
             WriteTaggedText("h1", "Interfaces", ("class", "collapsible")).WriteLine();
-            foreach (var t in types)
-                WriteInterface(t);
+
+            foreach (var t in interfaces)
+            {
+                var classes = compilation.AllTypeAndLibraryDefinitions.Where(td => td.Implements(t.ToTypeExpression())).OrderBy(t => t.Name).ToList();
+                WriteInterface(t, classes);
+            }
         }
 
-        public static HtmlAttribute IdAttr(TypeDef td)
+        public static HtmlAttribute IdAttr(TypeDef td)  
             => IdAttr(Id(td));
 
         public static string Id(TypeDef td)
         {
-            var kind = td.Kind == TypeKind.Concept ? "interface" : "class";
+            var kind = td.Kind == TypeKind.Interface ? "interface" : "class";
             return $"{kind}-{td.Name}";
+        }
+
+        public string LinkType(TypeDef td)
+        {
+            var id = Id(td);
+            var baseName = (td.IsConcrete() || td.IsInterface())
+                ? $"<a href='#{id}'>{td.Name}</a>"
+                : td.Name;
+            if (td.TypeParameters.Count == 0)
+                return baseName;
+            var args = td.TypeParameters.Select(LinkType).JoinStringsWithComma();
+            return $"{baseName}&lt;{args}&gt;";
         }
 
         public string LinkType(TypeExpression te)
@@ -106,46 +123,62 @@ namespace Plato.CSharpWriter
             return $"{baseName}&lt;{args}&gt;";
         }
 
-        public void WriteClass(TypeDef type)
+        public void WriteClass(TypeDef cls)
         {
-            WriteUnescapedTaggedText("h2", $"Class {type.Name}", IdAttr(type)).WriteLine();
+            WriteUnescapedTaggedText("h2", $"Class {cls.Name}", IdAttr(cls)).WriteLine();
 
             WriteTaggedText("h3", $"Fields").WriteLine();
 
             WriteStartTag("ul").WriteLine();
-            foreach (var f in type.Fields)
+            foreach (var f in cls.Fields)
                 WriteUnescapedTaggedText("li", $"{LinkType(f.Type)} {f.Name}").WriteLine();
             WriteEndTag("ul").WriteLine();
 
             WriteTaggedText("h3", $"Interfaces").WriteLine();
 
             WriteStartTag("ul").WriteLine();
-            foreach (var impl in type.Implements)
+            foreach (var impl in cls.Implements)
                 WriteUnescapedTaggedText("li", $"{LinkType(impl)}").WriteLine();
             WriteEndTag("ul").WriteLine();
                 
             Write("<hr class='solid'/>");
         }
 
-        public void WriteInterface(TypeDef type)
+        public void WriteInterface(TypeDef iface, IReadOnlyList<TypeDef> implementingTypes)
         {
-            WriteUnescapedTaggedText("h2", $"Interface {type.Name}", IdAttr(type)).WriteLine();
+            WriteUnescapedTaggedText("h2", $"Interface {iface.Name}", IdAttr(iface)).WriteLine();
 
             WriteTaggedText("h3", $"Functions").WriteLine();
 
             WriteStartTag("ul").WriteLine();
-            foreach (var f in type.Functions)
+            foreach (var f in iface.Functions)
             {
                 var paramStr = f.Parameters.Select(p => $"{LinkType(p.Type)} {p.Name}").JoinStringsWithComma(); 
                 WriteUnescapedTaggedText("li", $"{LinkType(f.ReturnType)} {f.Name}({paramStr});").WriteLine();
             }
             WriteEndTag("ul").WriteLine();
 
-            WriteTaggedText("h3", $"Inherits").WriteLine();
+            WriteTaggedText("h3", $"Inherited Interfaces").WriteLine();
 
             WriteStartTag("ul").WriteLine();
-            foreach (var te in type.Inherits)
+            foreach (var te in iface.Inherits)
                 WriteUnescapedTaggedText("li", $"{LinkType(te)}").WriteLine();
+            WriteEndTag("ul").WriteLine();
+
+            WriteTaggedText("h3", $"Derived Interfaces").WriteLine();
+
+            WriteStartTag("ul").WriteLine();
+            foreach (var c in implementingTypes)
+                if (c.IsInterface())
+                    WriteUnescapedTaggedText("li", $"{LinkType(c)}").WriteLine();
+            WriteEndTag("ul").WriteLine();
+
+            WriteTaggedText("h3", $"Implementing Classes").WriteLine();
+
+            WriteStartTag("ul").WriteLine();
+            foreach (var c in implementingTypes)
+                if (c.IsConcrete())
+                    WriteUnescapedTaggedText("li", $"{LinkType(c)}").WriteLine();
             WriteEndTag("ul").WriteLine();
 
             Write("<hr class='solid'/>");

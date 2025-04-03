@@ -6,7 +6,7 @@ using Plato.Compiler.Utilities;
 
 namespace Plato.Compiler.Symbols
 {
-    public class TypeExpression : Symbol
+    public class TypeExpression : Expression
     {
         public override string Name => Def?.Name ?? "_untyped_";
         public TypeDef Def { get; }
@@ -29,7 +29,7 @@ namespace Plato.Compiler.Symbols
 
         public static TypeExpression CreateTypeVar(Scope scope, string name)
             => name.StartsWith("$")
-                ? new TypeExpression(new TypeDef(scope, TypeKind.TypeVariable, name))
+                ? new TypeExpression(new TypeVariable(scope, name))
                 : throw new Exception("Type variable names must start with $ character");
 
         public override IEnumerable<Symbol> GetChildSymbols()
@@ -66,5 +66,8 @@ namespace Plato.Compiler.Symbols
 
         public bool IsTypeVariable
             => Def.Kind == TypeKind.TypeVariable;
+
+        public bool IsTypeParameter
+            => Def.Kind == TypeKind.TypeParameter;
     }
 }

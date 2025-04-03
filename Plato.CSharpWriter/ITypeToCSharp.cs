@@ -45,7 +45,11 @@ public static class TypeToCSharpExtensions
         => typeToCSharp.ToCSharpType(type.ToTypeExpression());
 
     public static string ToCSharpType(this ITypeToCSharp typeToCSharp, TypeInstance ti)
-        => typeToCSharp.ToCSharpTypeName(ti) + (ti.Args.Count > 0 ? $"<{ti.Args.Select(typeToCSharp.ToCSharpType).JoinStringsWithComma()}>" : "");
+    {
+        var args = ti.ArgsWithSelf.ToList();
+        var argString = args.Count == 0 ? "" : $"<{args.Select(typeToCSharp.ToCSharpType).JoinStringsWithComma()}>";
+        return typeToCSharp.ToCSharpTypeName(ti) + argString;
+    }
 
     public static string ToCSharpType(this ITypeToCSharp typeToCSharp, InterfaceImplementation ii)
         => typeToCSharp.ToCSharpType(ii.TypeExpression);

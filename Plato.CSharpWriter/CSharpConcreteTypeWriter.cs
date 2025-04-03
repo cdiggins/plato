@@ -13,7 +13,7 @@ namespace Plato.CSharpWriter
     // TODO: this should probably be merged with CSharpTypeWriter. I don't see a clear advantage for it to be alone. 
     public class CSharpConcreteTypeWriter
     {
-        public CSharpTypeWriter TypeWriter { get; private set; }
+        public CSharpTypeWriter TypeWriter { get; }
         public CSharpWriter Writer => TypeWriter.Writer;
         public PlatoAnalyzer Analyzer => TypeWriter.Analyzer;
         public ConcreteType ConcreteType { get; }
@@ -25,13 +25,12 @@ namespace Plato.CSharpWriter
         public bool IsIntrinsic => CSharpWriter.IntrinsicTypes.Contains(Name);
         public bool IsPrimitive => CSharpWriter.PrimitiveTypes.ContainsKey(Name) || IsIntrinsic;
         public string Attr => CSharpTypeWriter.Annotation;
-        public bool IsNumerical => ConcreteType.AllInterfaces.Any(te => te.Name == "INumerical");
-        public bool IsVectorSpace => ConcreteType.AllInterfaces.Any(te => te.Name == "IVectorSpace");
+        public bool IsArrayLike => ConcreteType.AllInterfaces.Any(te => te.Name == "IArrayLike");
         public Compilation Compilation => TypeWriter.Writer.Compilation;
 
-        public List<List<FunctionInstance>> ConceptFunctionGroups => ConcreteType
+        public List<List<FunctionInstance>> InterfaceFunctionGroups => ConcreteType
             .ConcreteFunctions
-            .Concat(ConcreteType.GetConceptFunctions())
+            .Concat(ConcreteType.GetInterfaceFunctions())
             .GroupBy(f => f.SignatureId)
             .Select(g => g.ToList()).ToList();
 
@@ -97,6 +96,10 @@ namespace Plato.CSharpWriter
 
             TypeWriter.WriteLine("// Static factory function");
             TypeWriter.WriteLine($"{Attr} public static {Name} Create({parametersStr}) => new {Name}({parameterNamesStr});");
+            TypeWriter.WriteLine();
+
+            TypeWriter.WriteLine("// Static default implementation");
+            TypeWriter.WriteLine($"public static readonly {Name} Default = default;");
             TypeWriter.WriteLine();
 
             // Implicit operators 
@@ -222,28 +225,52 @@ namespace Plato.CSharpWriter
                 TypeWriter.WriteLine();
             }
 
-            if (IsVectorSpace)
+            if (IsArrayLike)
             {
-                TypeWriter.WriteLine($"// IVectorSpace predefined functions");
-             
                 var numDistinctFieldTypes = fieldTypes.Distinct().Count();
                 if (numDistinctFieldTypes > 1)
-                    throw new Exception("IVectorSpace types are assumed to have all of the fields of the same type");
+                    throw new Exception("IArrayLike types are assumed to have all of the fields of the same type");
 
-                var nComps = Math.Max(fieldTypes.Count, 1);
-                TypeWriter.WriteLine($"public static readonly int NumComponents = {nComps};");
-                TypeWriter.WriteLine($"public IArray<Number> Components {{ {Attr} get => Intrinsics.MakeArray<Number>({fieldNames.JoinStringsWithComma()}); }}");
+                var fieldType = fieldTypes.Count > 0 ? fieldTypes[0] : null;
+                
+                var localFieldNames = fieldNames;
 
-                var tmp = Enumerable.Range(0, fieldNames.Count).Select(i => $"numbers[{i}]").JoinStringsWithComma();
-                var fromCompImpl = $"new {Name}({tmp})";
-                TypeWriter.WriteLine($"{Attr} public static {Name} CreateFromComponents(IArray<Number> numbers) => {fromCompImpl};");
-                TypeWriter.WriteLine();
+                if (IsPrimitive)
+                {
+                    // TEMP: this is a bit of a hack. In the future, we may want IArrayLike primitives that are not Number. 
+                    fieldType = "Number";
+                    if (!PrimitiveFieldNames.ContainsKey(Name))
+                        throw new Exception($"Unrecognized primitive IArrayLike type {Name}");
+                    localFieldNames = PrimitiveFieldNames[Name].ToList(); 
+                }
+
+                var nComps = localFieldNames.Count;
+
+                TypeWriter.WriteLine($"// IArrayLike predefined functions");
+                TypeWriter.WriteLine($"public Integer NumComponents {{ {Attr} get => {nComps}; }}");
+                TypeWriter.WriteLine($"public IArray<{fieldType}> Components {{ {Attr} get => Intrinsics.MakeArray<{fieldType}>({localFieldNames.JoinStringsWithComma()}); }}");
+                {
+                    var tmp = Enumerable.Range(0, localFieldNames.Count).Select(i => $"numbers[{i}]").JoinStringsWithComma();
+                    var impl = $"new {Name}({tmp})";
+                    TypeWriter.WriteLine($"{Attr} public static {Name} CreateFromComponents(IArray<{fieldType}> numbers) => {impl};");
+                    TypeWriter.WriteLine();
+                }
+                {
+                    var tmp = Enumerable.Range(0, localFieldNames.Count).Select(i => $"x").JoinStringsWithComma();
+                    var impl = $"new {Name}({tmp})";
+                    TypeWriter.WriteLine($"{Attr} public static {Name} CreateFromComponent({fieldType} x) => {impl};");
+                    TypeWriter.WriteLine();
+                }
             }
 
             TypeWriter.WriteLine("// Implemented interface functions");
-            foreach (var g in ConceptFunctionGroups)
-            { 
-                var f = Analyzer.ChooseBestFunction(g);
+            foreach (var g in InterfaceFunctionGroups)
+            {
+                var f = Analyzer.ChooseBestFunction(g, out int cnt);
+                if (cnt > 1)
+                {
+                    TypeWriter.WriteLine($"// AMBIGUOUS FUNCTIONS {cnt}");
+                }
 
                 // Note: we skip functions that are named after a field ... 
                 if (fieldNames.Contains(f.Name))
@@ -256,45 +283,15 @@ namespace Plato.CSharpWriter
                 // I don't think it is that bad. 
                 // We don't inherit all of the "IArray" functionality because it would be too much for vectors 
                 // However, it may make sense for specific Array classes in the future. 
-                if (f.ConceptName == "IArray")
+                if (f.InterfaceName == "IArray")
                   continue;
 
                 // We have to be sure to not implement functions that cast to themselves
                 if (f.Name == SimpleName)
                     continue;
 
-                // TEMP: I don't understand the following code, so I rewrote it simpler 
-                // I Think it is related to dealing with an interface not in the first position ...
-                // For example: multiplying a scalar by IVectorSpace (or something like that)
-
                 var fi = TypeWriter.ToFunctionInfo(f, ConcreteType);
                 TypeWriter.WriteMemberFunction(fi, IsPrimitive);
-
-                // TODO: decide whether to keep 
-                /*
-                var nextInterfacePos = f.NextInterfacePosition();
-                // NOTE: we don't count IArray types as different.
-                if (nextInterfacePos > 0
-                    && !f.ParameterTypes[nextInterfacePos].Name.StartsWith("IArray"))
-                {
-
-                    // This means multiple versions of the function will need to get created.
-                    // One for each type that implements the interface.
-                    var iface = f.ParameterTypes[nextInterfacePos];
-                    var replacements = Compilation.GetImplementers(iface.Expr);
-
-                    foreach (var r in replacements)
-                    {
-                        var fi = TypeWriter.ToFunctionInfoReplaceInterface(f, ConcreteType, iface.Expr, r);
-                        TypeWriter.WriteMemberFunction(fi, IsPrimitive);
-                    }
-                }
-                else
-                {
-                    var fi = TypeWriter.ToFunctionInfo(f, ConcreteType);
-                    TypeWriter.WriteMemberFunction(fi, IsPrimitive);
-                }
-                */
             }
             TypeWriter.WriteLine();
 
@@ -303,7 +300,7 @@ namespace Plato.CSharpWriter
             //if (!IsPrimitive)
             // TEMP:
             {
-                TypeWriter.WriteLine("// Unimplemented concept functions");
+                TypeWriter.WriteLine("// Unimplemented interface functions");
                 foreach (var f in ConcreteType.UnimplementedFunctions)
                 {
                     if (CSharpWriter.IgnoredFunctions.Contains(f.Name))
@@ -327,5 +324,27 @@ namespace Plato.CSharpWriter
 
             TypeWriter.WriteEndBlock();
         }
+
+        public static Dictionary<string, string[]> PrimitiveFieldNames = new Dictionary<string, string[]>
+        {
+            { "Angle", ["Value"] },
+            { "Number", ["Value"] },
+            { "Vector2", ["X", "Y"] },
+            { "Vector3", ["X", "Y", "Z"] },
+            { "Vector4", ["X", "Y", "Z", "W"] },
+            { "Vector8", [
+                "X0", "X1", "X2", "X3", 
+                "X4", "X5", "X6", "X7"] },
+            { "Quaternion", ["X", "Y", "Z", "W"] },
+            { "Matrix3x2", [
+                "M11", "M12", 
+                "M21", "M22", 
+                "M31", "M32"] },
+            { "Matrix4x4", [
+                "M11", "M12", "M13", "M14", 
+                "M21", "M22", "M23", "M24", 
+                "M31", "M32", "M33", "M34", 
+                "M41", "M42", "M43", "M44", ] },
+        };
     }
 }

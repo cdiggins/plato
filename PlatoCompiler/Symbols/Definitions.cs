@@ -170,14 +170,10 @@ namespace Plato.Compiler.Symbols
         public List<TypeExpression> Implements { get; } = new List<TypeExpression>();
         public List<FunctionDef> CompilerGeneratedFunctions { get; } = new List<FunctionDef>();
 
-        public SelfType Self { get; }
-
         public TypeDef(Scope scope, TypeKind kind, string name)
             : base(scope, null, name)
         {
             Kind = kind;
-            if (!this.IsTypeVariable())
-                Self = new SelfType(scope);
         }
 
         public IEnumerable<TypeDef> GetSelfAndAllInheritedTypes()
@@ -266,7 +262,7 @@ namespace Plato.Compiler.Symbols
         public IReadOnlyList<TypeExpression> Constraints { get; }
 
         public TypeParameterDef(Scope scope, string name, IReadOnlyList<TypeExpression> constraints = null)
-            : base(scope, TypeKind.TypeVariable, name)
+            : base(scope, TypeKind.TypeParameter, name)
         {
             Constraints = constraints ?? Array.Empty<TypeExpression>();
         }
@@ -285,14 +281,17 @@ namespace Plato.Compiler.Symbols
             => f(this);
     }
 
-    public class SelfType : TypeParameterDef
+    public class SelfType : TypeDef
     {
-        public SelfType(Scope scope)
-            : base(scope, "Self", null)
+        public SelfType()
+            : base(null, TypeKind.SelfType, "Self")
         { }
 
         public override Symbol Rewrite(Func<Symbol, Symbol> f)
             => f(this);
+
+        public static SelfType Instance
+            => new SelfType();
     }
 
     public abstract class MemberDef : DefSymbol

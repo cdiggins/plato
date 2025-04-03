@@ -308,9 +308,11 @@ namespace Plato.AST
     {
         ConcreteType,
         Library,
-        Concept,
+        Interface,
         Primitive,
+        TypeParameter, 
         TypeVariable,
+        SelfType,
     }
 
     public class AstTypeDeclaration : AstDeclaration

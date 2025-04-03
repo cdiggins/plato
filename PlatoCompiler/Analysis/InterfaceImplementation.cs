@@ -47,9 +47,9 @@ namespace Plato.Compiler.Analysis
             Children = Interface.Inherits.Select(CreateInheritedConceptImplementation).ToList();
 
             var implementedFunctions = libraries.GetFunctionsForType(TypeExpression);
-            ImplementedFunctions = implementedFunctions.Select(f => AnalyzeConceptFunction(f, FunctionInstanceKind.ConceptImpemented)).ToList();
+            ImplementedFunctions = implementedFunctions.Select(f => AnalyzeConceptFunction(f, FunctionInstanceKind.InterfaceImplemented)).ToList();
 
-            DeclaredFunctions = Interface.Functions.Select(f => AnalyzeConceptFunction(f, FunctionInstanceKind.ConceptDeclared)).ToList();
+            DeclaredFunctions = Interface.Functions.Select(f => AnalyzeConceptFunction(f, FunctionInstanceKind.InterfaceDeclared)).ToList();
         }
 
         public InterfaceImplementation CreateInheritedConceptImplementation(TypeExpression inheritsType)

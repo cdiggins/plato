@@ -148,6 +148,9 @@ namespace Plato.Compiler.Symbols
                 case RefSymbol refSymbol:
                     return self;
 
+                case TypeExpression typeExpression:
+                    return self;
+
                 case Expression expression:
                     throw new Exception("Unexpected case statement");
 
@@ -162,10 +165,6 @@ namespace Plato.Compiler.Symbols
 
                 case Statement statement:
                     throw new Exception("Unexpected case statement");
-
-                case TypeExpression typeExpression:
-                    return self;
-
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(self));

@@ -36,9 +36,10 @@ public class PlatoAnalyzer
         return depth;
     }
 
-    public FunctionInstance ChooseBestFunction(IReadOnlyList<FunctionInstance> xs)
+    public FunctionInstance ChooseBestFunction(IReadOnlyList<FunctionInstance> xs, out int count)
     {
         // We only want distinct implementations. 
+        count = 1;
         var first = xs[0];
         xs = xs.Distinct(x => x.Implementation.Id).ToList();
         if (xs.Count == 1)
@@ -50,8 +51,7 @@ public class PlatoAnalyzer
         var group0 = groups[0].ToList();
         Debug.Assert(group0.Count > 0);
 
-        if (group0.Count > 1)
-            throw new Exception($"// Ambiguous: could not choose a best function implementation for {first}.");
+        count = group0.Count; 
 
         return group0[0];
     }

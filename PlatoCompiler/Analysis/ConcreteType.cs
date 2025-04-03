@@ -34,8 +34,8 @@ namespace Plato.Compiler.Analysis
             Substitutions = new TypeSubstitutions("Self", TypeDef.ToTypeExpression());
             Interfaces = typeDef.Implements.Select(CreateConceptImplementation).ToList();
             AllInterfaces = Interfaces.AllDescendants().Distinct(i => i.ToString()).OrderBy(i => i.ToString()).ToList();
-            ConcreteFunctions = libraries.GetFunctionsForType(TypeDef.ToTypeExpression()).Select(f => AnalyzeFunction(f, FunctionInstanceKind.ConcreteType)).ToList();
-            FieldFunctions = TypeDef.Fields.Select(f => AnalyzeFunction(f.Function, FunctionInstanceKind.FieldType)).ToList();
+            ConcreteFunctions = libraries.GetFunctionsForType(TypeDef.ToTypeExpression()).Select(f => CreateFunctionInstance(f, FunctionInstanceKind.ConcreteType)).ToList();
+            FieldFunctions = TypeDef.Fields.Select(f => CreateFunctionInstance(f.Function, FunctionInstanceKind.FieldType)).ToList();
 
             ImplementedFunctions = AllInterfaces.SelectMany(c => c.ImplementedFunctions).Concat(ConcreteFunctions).Concat(FieldFunctions).ToList();
             DeclaredFunctions = AllInterfaces.SelectMany(c => c.DeclaredFunctions).Distinct(d => d.SignatureId).ToList();
@@ -47,10 +47,10 @@ namespace Plato.Compiler.Analysis
         public InterfaceImplementation CreateConceptImplementation(TypeExpression type)
             => new InterfaceImplementation(Libraries, this, Substitutions.Add(type), type);
 
-        public FunctionInstance AnalyzeFunction(FunctionDef function, FunctionInstanceKind kind)
+        public FunctionInstance CreateFunctionInstance(FunctionDef function, FunctionInstanceKind kind)
             => new FunctionInstance(function, this, null, kind, Substitutions);
 
-        public IEnumerable<FunctionInstance> GetConceptFunctions()
+        public IEnumerable<FunctionInstance> GetInterfaceFunctions()
             => Interfaces.SelectMany(c => c.AllFunctions().Where(FunctionMatches)).ToList();
 
         public bool FunctionMatches(FunctionInstance f)

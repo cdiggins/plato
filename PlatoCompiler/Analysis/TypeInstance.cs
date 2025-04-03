@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
 using Ara3D.Utils;
 using Plato.Compiler.Symbols;
+using Plato.Compiler.Types;
 
 namespace Plato.Compiler.Analysis
 {
@@ -11,20 +13,18 @@ namespace Plato.Compiler.Analysis
         public string Name => Def.Name;
         public TypeExpression Expr { get; }
         public TypeDef Def => Expr.Def;
+        public bool IsSelfConstrained => Def.IsSelfConstrained();
 
         public TypeInstance(TypeExpression expr, IEnumerable<TypeInstance> args)
         {
             Expr = expr;
-            var tmp = args?.ToList() ?? new List<TypeInstance>();
-            if (Def.IsSelfConstrained())
-            {
-                var self = Create(Def.Self);
-                tmp.Insert(0, self);
-            }
-            Args = tmp;
+            Args = args?.ToList() ?? new List<TypeInstance>();
         }
 
         public IReadOnlyList<TypeInstance> Args { get; }
+
+        public IEnumerable<TypeInstance> ArgsWithSelf
+            => IsSelfConstrained ? Args.Prepend(Self) : Args;
 
         public override string ToString()
         {
@@ -46,5 +46,17 @@ namespace Plato.Compiler.Analysis
 
         public static TypeInstance Create(TypeDef def)
             => Create(def.ToTypeExpression());
+
+        public static TypeInstance Self = 
+            SelfType.Instance.ToTypeInstance();
+    }
+
+    public static class TypeInstanceExtensions
+    {
+        public static TypeInstance ToTypeInstance(this TypeDef self)
+            => TypeInstance.Create(self);
+
+        public static bool ContainsRawTypeVariable(this TypeInstance self)
+            => self.ToString().Contains("$");
     }
 }

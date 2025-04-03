@@ -54,8 +54,8 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
     public CSharpTypeWriter WriteConcreteType(ConcreteType ct)
     {
         Debug.Assert(ct.TypeDef == TypeDef);
-        
-        /*
+
+#if WRITE_TYPE_ANALYSIS
         WriteLine($"/*");
         Indent();
 
@@ -99,8 +99,8 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
 
         WriteLine();
         Dedent();
-        */
-        //WriteLine($"*/");
+        WriteLine($"*/");
+#endif
         
         _ = new CSharpConcreteTypeWriter(this, ct);
         return this;
@@ -114,19 +114,19 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         var type = TypeDef;
         Debug.Assert(type.IsInterface());
 
-        
         // We have a special implementation of IArray
-        if (type.Name.StartsWith("IArray"))
+        if (type.Name == "IArray" || type.Name == "IArray2D" || type.Name == "IArray3D")
             return this;
 
         var inherits = type.Inherits.Select(this.ToCSharpType).ToList();
         var inherited = inherits.Count > 0 ? ": " + inherits.JoinStringsWithComma() : "";
-        
-        Write("public interface ").Write(FullName).WriteLine(inherited);
+        var selfConstraint = type.IsSelfConstrained() ? " where Self : " + FullName : "";
+
+        Write("public interface ").Write(FullName).Write(inherited).WriteLine(selfConstraint);
 
         // TODO: maybe make the "Self" actually constrained on the interface. 
 
-        return WriteConceptInterfaceFunctions(type);
+        return WriteInterfaceFunctions(type);
     }
 
     public CSharpTypeWriter Write(DefSymbol value)
@@ -193,7 +193,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
     {
         if (!isPrimitive || f.Body != null)
         {
-            WriteLine($"// {f.Function.SignatureId}; [{f.Function.Substitutions}]; {f.Function.TypeVariableAnalysis}");
+            //WriteLine($"// {f.Function.SignatureId}; [{f.Function.Substitutions}]; {f.Function.TypeVariableAnalysis}");
             Write(f.MethodSignature);
             WriteBody(f, false);
         }
@@ -238,12 +238,12 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
     public CSharpFunctionInfo ToFunctionInfo(FunctionInstance fi, ConcreteType ct = null)
         => new CSharpFunctionInfo(fi, ct, this);
 
-    public CSharpTypeWriter WriteConceptInterfaceFunctions(TypeDef type)
+    public CSharpTypeWriter WriteInterfaceFunctions(TypeDef type)
     {
         WriteStartBlock();
         foreach (var m in type.Methods)
         {
-            var fi = ToFunctionInfo(m.Function, null, FunctionInstanceKind.ConceptInterface);
+            var fi = ToFunctionInfo(m.Function, null, FunctionInstanceKind.InterfaceDeclared);
             if (fi.IsStatic)
                 continue;
             WriteLine(fi.MethodInterface);
@@ -271,7 +271,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
 
         if (type.Name.StartsWith("Function"))
             return "System.Func";
-
+        
         return type.Name;
     }
 }

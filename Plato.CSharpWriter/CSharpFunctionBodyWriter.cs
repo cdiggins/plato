@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Ara3D.Utils;
 using Plato.Compiler.Analysis;
@@ -61,14 +62,14 @@ public class CSharpFunctionBodyWriter : CodeBuilder<CSharpFunctionBodyWriter>
     {
         switch (symbol)
         {
+            case TypeExpression typeExpression:
+                return Write(typeExpression).Write(".Default");
+
             case Expression expression:
                 return Write(expression, type);
 
             case Statement statement:
                 return Write(statement);
-            
-            case TypeExpression typeExpression:
-                return Write(typeExpression);
             
             case null:
                 return Write("null");
@@ -170,7 +171,19 @@ public class CSharpFunctionBodyWriter : CodeBuilder<CSharpFunctionBodyWriter>
     {
         // If there are no arguments, it is a constant.
         if (functionCall.Args.Count == 0)
-            return Write("Constants.").Write(functionCall.Function);
+        {
+            if (functionCall.Function is KeywordRefSymbol krs)
+            {
+                if (krs.Name != "default")
+                    throw new Exception("Only default keyword supported");
+                return Write("default");
+            }
+            else
+            {
+                return Write("Constants.").Write(functionCall.Function);
+            }
+        }
+
 
         // Calling a parameter, or variable 
         if (functionCall.Function is ParameterRefSymbol 
@@ -200,6 +213,11 @@ public class CSharpFunctionBodyWriter : CodeBuilder<CSharpFunctionBodyWriter>
             
         switch (expr)
         {
+            case TypeExpression typeExpression:
+                if (typeExpression.TypeArgs.Count > 0)
+                    throw new NotSupportedException();
+                return Write(typeExpression.Name);
+    
             case NewExpression newExpression:
                 return Write($"new {Function.ToCSharpType(newExpression.Type)}(").WriteCommaList(newExpression.Args).Write(")");
 
@@ -210,17 +228,19 @@ public class CSharpFunctionBodyWriter : CodeBuilder<CSharpFunctionBodyWriter>
 
             case FunctionGroupRefSymbol fgr:
                 // HACK: check if it is a constant.
-                // TODO: I need to have all function     calls properly resolved to generate better quality code. 
+                // TODO: I need to have all function calls properly resolved to generate better quality code. 
                 if (fgr.Def.Functions.Count == 1 &&
                     fgr.Def.Functions[0].NumParameters == 0)
                     return Write($"Constants.{fgr.Name}");
                 return Write(fgr.Name);
 
             case RefSymbol refSymbol:
-                return Write(refSymbol.Name == "Self" 
-                    ? SelfType 
-                    : refSymbol.Name);
-                    
+                return Write(refSymbol.Name == "Self" ? SelfType : refSymbol.Name);
+                
+                //if (refSymbol.Name == "Self") throw new Exception("Self type references no longer supported");
+            
+                //return Write(refSymbol.Name);
+
             case Assignment assignment:
                 return Write(assignment.LValue)
                     .Write(" = ")

@@ -25,15 +25,30 @@ namespace Plato.Compiler.Symbols
     public abstract class RefSymbol : Expression
     {
         public DefSymbol Def { get; }
-        public TypeExpression Type => Def.Type;
+        public TypeExpression Type => Def?.Type;
         public override string Name => Def.Name;
 
-        protected RefSymbol(DefSymbol def)
+        protected RefSymbol(DefSymbol def, bool allowNulls = false)
         {
-            Def = def ?? throw new Exception("No definition provided");
+            Def = allowNulls ? def : def ?? throw new Exception("No definition provided");
         }
 
         public override string ToString() => Name;
+    }
+
+    public class KeywordRefSymbol : RefSymbol
+    {
+        public readonly string Keyword;
+        public override string Name => Keyword;
+        public override Symbol Rewrite(Func<Symbol, Symbol> f) => f(this);
+
+        public KeywordRefSymbol(string keyword)
+            : base(null, true)
+        {
+            Keyword = keyword;
+        }
+
+        public static KeywordRefSymbol Default => new KeywordRefSymbol("default");
     }
 
     public class TypeRefSymbol : RefSymbol

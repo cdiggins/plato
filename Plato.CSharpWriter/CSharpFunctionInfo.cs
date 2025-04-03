@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Metadata;
 using Ara3D.Utils;
 using Plato.AST;
 using Plato.Compiler.Analysis;
 using Plato.Compiler.Symbols;
+using Plato.Compiler.Types;
 
 namespace Plato.CSharpWriter
 {
@@ -45,15 +48,18 @@ namespace Plato.CSharpWriter
         public string StaticParametersString => NumParameters > 0 ? $"({Parameters.JoinStringsWithComma()})" : "";
         public string ExtensionParametersString => NumParameters > 0 ? $"(this {Parameters.JoinStringsWithComma()})" : "";
         public string MethodParametersString => NumParameters > 1 ? $"({MethodParameters.JoinStringsWithComma()})" : "";
-        public string StaticSignature => $"public static {ReturnType} {Name}{GenericsString}{StaticParametersString}";
-        public string ExtensionSignature => $"public static {ReturnType} {Name}{GenericsString}{ExtensionParametersString}";
-        
+        public string StaticSignature => $"{FunctionAnnotation}public static {ReturnType} {Name}{GenericsString}{StaticParametersString}{Constraints}";
+        public string ExtensionSignature => $"{FunctionAnnotation}public static {ReturnType} {Name}{GenericsString}{ExtensionParametersString}{Constraints}";
+
+        // TODO: this used to be a way to signal static methods. 
         public bool IsStatic => ParameterNames.Count == 0 || ParameterNames[0] == "_";
+
         public string StaticKeyword => IsStatic ? "static " : "";
         public bool IsProperty => ParameterNames.Count <= 1;
         public static string Annotation => "[MethodImpl(AggressiveInlining)] ";
         public string FunctionAnnotation => IsProperty ? "" : $"{Annotation} "; 
-        public string MethodSignature => $"{FunctionAnnotation}public {StaticKeyword}{ReturnType} {Name}{GenericsString}{MethodParametersString}";
+        public string Constraints => Function.ConstrainedTypeVariables.Select(ConstraintString).JoinStrings("");
+        public string MethodSignature => $"{FunctionAnnotation}public {StaticKeyword}{ReturnType} {Name}{GenericsString}{MethodParametersString}{Constraints}";
         public string StaticArgsString => NumParameters > 0 ? $"({ParameterNames.JoinStringsWithComma()})" : "";
         public string MethodArgsString => NumParameters > 1 ? $"({ParameterNames.Skip(1).JoinStringsWithComma()})" : "";
         public string IntrinsicsArgsString => NumParameters > 0 ? $"({ParameterNames.Skip(1).Prepend("this").JoinStringsWithComma()})" : "";
@@ -72,6 +78,24 @@ namespace Plato.CSharpWriter
                 if (op == "||") op = "|";
                 return op;
             }
+        }
+
+        public string ConstraintString(ConstrainedTypeVariable ctv)
+        {
+            if (ctv?.Constraint == null) return "";
+            var constraint = ctv.Constraint;
+            if (constraint.Args.Count == 1 || constraint.IsSelfConstrained)
+            {
+                Debug.Assert(constraint.Def.IsInterface());
+                return $" where {ctv.Name} : {constraint.Def.Name}<{ctv.Name}>";
+            }
+
+            if (constraint.Args.Count == 0)
+            {
+                return $" where {ctv.Name} : {constraint.Def.Name}";
+            }
+
+            throw new NotImplementedException();
         }
 
         public bool IsIndexer => Name == "At";

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.Linq;
 using Plato.AST;
 using Plato.Compiler.Symbols;
 
@@ -6,11 +7,11 @@ namespace Plato.Compiler.Types
 {
     public static class TypeExtensions
     {
-        public static bool IsFullyImplementedConcept(TypeDef ts)
+        public static bool IsFullyImplementedInterface(TypeDef ts)
             => ts.IsInterface() && ts.Functions.All(f => f.HasImplementation());
 
         public static bool IsInterface(this TypeDef ts)
-            => ts.Kind == TypeKind.Concept;
+            => ts.Kind == TypeKind.Interface;
 
         public static bool IsConcrete(this TypeDef ts)
             => ts.Kind == TypeKind.ConcreteType || ts.Kind == TypeKind.Primitive;
@@ -21,10 +22,13 @@ namespace Plato.Compiler.Types
         public static bool IsTypeVariable(this TypeDef ts)
             => ts.Kind == TypeKind.TypeVariable;
 
+        public static bool IsPrimitive(this TypeDef ts)
+            => ts.Kind == TypeKind.Primitive;
+
         public static bool IsImplementing(this TypeExpression a, TypeExpression b)
         {
-            if (a.Name != b.Name)
-                return false;
+            if (a.IsTypeVariable || a.IsTypeParameter || b.IsTypeParameter || b.IsTypeVariable)
+                return true;
             if (a.TypeArgs.Count != b.TypeArgs.Count)
                 return false;
             for (var i = 0; i < a.TypeArgs.Count; i++)
@@ -35,7 +39,7 @@ namespace Plato.Compiler.Types
             foreach (var tmp in a.Def.GetAllImplementedConcepts())
                 if (tmp.IsImplementing(b))
                     return true;
-            return true;
+            return false;
         }
 
         public static bool Implements(this TypeDef a, TypeExpression b)

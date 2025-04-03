@@ -279,7 +279,7 @@ namespace Plato.Compiler
                 {
                     if (t2 == null)
                         SemanticErrors.Add($"One of the implemented types of {t} was not resolved");
-                    else if (t2.Def?.Kind != TypeKind.Concept)
+                    else if (t2.Def?.Kind != TypeKind.Interface)
                         SemanticErrors.Add($"Only concepts can be implemented. Instead {t} implements {t2}");
                 }
 
@@ -287,11 +287,11 @@ namespace Plato.Compiler
                 {
                     if (t2 == null)
                         SemanticErrors.Add($"One of the inherited types of {t} was not resolved");
-                    else if (t2.Def?.Kind != TypeKind.Concept)
+                    else if (t2.Def?.Kind != TypeKind.Interface)
                         InternalErrors.Add($"Only concepts can be inherited. Instead {t} inherits {t2}");
                 }
                     
-                if (t.Kind == TypeKind.Concept)
+                if (t.Kind == TypeKind.Interface)
                 {
                     if (t.Implements.Count > 0)
                         InternalErrors.Add("Concepts should not have implements clauses");

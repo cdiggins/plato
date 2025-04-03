@@ -30,7 +30,7 @@ namespace Plato.Compiler.Symbols
             => def.GetReferencesTo(function.Body);
 
         public static IEnumerable<RefSymbol> GetReferencesTo(this DefSymbol def, Symbol within)
-            => within.GetSymbolTree().OfType<RefSymbol>().Where(rs => rs.Def.Equals(def));
+            => within.GetSymbolTree().OfType<RefSymbol>().Where(rs => rs.Def?.Equals(def) == true);
 
         public static bool HasImplementation(this FunctionDef fs)
             => fs.Body != null;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using Ara3D.Utils;
 using Plato.Compiler.Analysis;
@@ -48,14 +49,16 @@ namespace Plato.CSharpWriter
             "FieldNames",
             "FieldValues",
             "TypeName",
-            "Components",
-            "CreateFromComponents",
-            "NumComponents",
             "Equals",
             "NotEquals",
             "GetHashCode",
             "ToString",
             "GetType",
+            // These are functions of IArrayLike
+            "Components",
+            "CreateFromComponents",
+            "CreateFromComponent",
+            "NumComponents",
         };
 
         public static Dictionary<string, string> PrimitiveTypes = new Dictionary<string, string>()
@@ -154,14 +157,6 @@ namespace Plato.CSharpWriter
             return Write(tmp.ToString());
         }
 
-        public CSharpWriter WriteExtensionFunction(FunctionDef f)
-        {
-            var tmp = NewDefaultTypeWriter();
-            var fi = tmp.ToFunctionInfo(f, null, FunctionInstanceKind.InterfaceExtension);
-            tmp.WriteExtensionFunction(fi);
-            return Write(tmp.ToString());
-        }
-
         public CSharpWriter WriteConstantLibraryMethods()
         {
             WriteLine($"public static class Constants");
@@ -174,6 +169,8 @@ namespace Plato.CSharpWriter
 
         public CSharpWriter WriteInterfaceLibraryMethods()
         {
+            
+                
             WriteLine($"public static class Extensions");
             WriteStartBlock();
             foreach (var f in Compilation.Libraries.AllFunctions())
@@ -186,18 +183,23 @@ namespace Plato.CSharpWriter
 
                     // TODO: this is a HACK! we are temporarily only enabling this for IArray. 
                     // Ultimately it needs to be done with Self-constrained versions of the interfaces. 
-                    // Writing those function signatures will be a lot of work. 
+                    // Writing those function signatures will be a lot of work.     
                     // Even then, there could be some problems (like 
-                    if (!pt.Def.Name.StartsWith("IArray")) 
-                        continue; 
+                    if (pt.Def.Name != "IArray" && pt.Def.Name != "IArray2D" && pt.Def.Name != "IArray3D") 
+                        continue;
 
-                    WriteExtensionFunction(f);
+                    // We need to fix this, we should be creating functions instances.
+                    var interfaceWriter = NewDefaultTypeWriter();
+                    var fi = new FunctionInstance(f, null, null, FunctionInstanceKind.InterfaceExtension);
+                    var cfi = new CSharpFunctionInfo(fi, null, interfaceWriter);
+                    interfaceWriter.WriteExtensionFunction(cfi);
+                    Write(interfaceWriter.ToString());
                 }
             }
             WriteEndBlock();
             return this;
         }
-
+        
         public CSharpWriter WriteConceptInterface(TypeDef type)
         {
             var tmp = new CSharpTypeWriter(this, type);

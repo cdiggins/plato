@@ -433,7 +433,7 @@ namespace Plato.AST
                 var members = concept.MethodDeclaration.Nodes.Select(ToAst).ToArray();
                 var constraints = concept.ConstraintList.Node?.Constraint.Nodes.Select(ToAst).ToArray() ?? Array.Empty<AstConstraint>();
                     
-                return new AstTypeDeclaration(cstTopLevelDeclaration, TypeKind.Concept, name, typeParameters, inherits, Enumerable.Empty<AstTypeNode>(), constraints, members);
+                return new AstTypeDeclaration(cstTopLevelDeclaration, TypeKind.Interface, name, typeParameters, inherits, Enumerable.Empty<AstTypeNode>(), constraints, members);
             }
 
             throw new Exception("Unhandled type declaration");
