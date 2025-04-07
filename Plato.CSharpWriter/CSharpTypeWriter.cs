@@ -253,8 +253,26 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         return WriteEndBlock();
     }
 
+    public static HashSet<string> CSharpKeywords = new HashSet<string>()
+    {
+        "this", "base", "new", "null", "true", "false", "default", 
+        "class", "struct", "interface", "record", "where",
+        "ref", "in", "out", "params",
+        "if", "else", "for", "foreach", "while", "do", "switch", "case", "break", "continue", 
+        "return", "throw", "try", "catch", "finally", "using", "namespace", "until", 
+        "lock", "fixed", "unsafe", "checked", "unchecked", "goto", "async", "await",
+        "public", "private", "protected", "internal", "static", "readonly", "volatile", "const", "abstract", "virtual", "override", "sealed",
+        "void", "object", "type", "dynamic", "int", "float", "char", "bool", "double", "decimal", "string",
+        "typeof", "nameof", "sizeof", "is", "as",
+    };
+
+    public static bool IsReserved(string fieldName)
+    {
+        return CSharpKeywords.Contains(fieldName);
+    }
+
     public static string FieldNameToParameterName(string fieldName)
-        => fieldName.Length == 0 || fieldName[0].IsLower()
+        => fieldName.Length == 0 || fieldName[0].IsLower() || IsReserved(fieldName.DecapitalizeFirst())
             ? $"_{fieldName}"
             : fieldName.DecapitalizeFirst();
 

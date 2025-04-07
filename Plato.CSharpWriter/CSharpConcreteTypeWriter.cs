@@ -109,7 +109,7 @@ namespace Plato.CSharpWriter
                 var qualifiedFieldNames = fieldNames.Select(f => $"self.{f}").JoinStringsWithComma();
                 var tupleNames = string.Join(", ", Enumerable.Range(1, fieldNames.Count).Select(i => $"value.Item{i}"));
                 TypeWriter.WriteLine($"{Attr} public static implicit operator ({fieldTypesStr})({Name} self) => ({qualifiedFieldNames});");
-                TypeWriter.WriteLine($"{Attr} public static implicit operator {Name}(({fieldTypesStr}) value) => new({tupleNames});");
+                TypeWriter.WriteLine($"{Attr} public static implicit operator {Name}(({fieldTypesStr}) value) => new {Name}({tupleNames});");
                 var outAssignments = fieldNames.Zip(parameterNames, (fn, pn) => $"{pn} = {fn}; ").JoinStrings("");
                 TypeWriter.WriteLine($"{Attr} public void Deconstruct({deconstructorParametersStr}) {{ {outAssignments} }}");
                 TypeWriter.WriteLine();
@@ -147,7 +147,7 @@ namespace Plato.CSharpWriter
                     var eqBody = fieldNames.Select(f => $"{f}.Equals(other.{f})").JoinStrings(" && ");
                     TypeWriter.WriteLine($"{Attr} public Boolean Equals({Name} other) => {eqBody};");
                     TypeWriter.WriteLine($"{Attr} public Boolean NotEquals({Name} other) => !{eqBody};");
-                    TypeWriter.WriteLine($"{Attr} public override bool Equals(object obj) => obj is {Name} other ? Equals(other) : false;");
+                    TypeWriter.WriteLine($"{Attr} public override bool Equals(object obj) => obj is {Name} other ? Equals(other).Value : false;");
                 }
                 else
                 {

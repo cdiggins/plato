@@ -115,7 +115,8 @@ namespace Plato.Compiler.Symbols
 
         public void LogResolutionError(string message, AstNode node)
         {
-            Debugger.Break();
+            // TODO: break if you want to catch every isngle 
+            //Debugger.Break();
             Errors.Add(new ResolutionError(message, node));
         }
 
