@@ -9,7 +9,9 @@ namespace PlatoWinFormsEditor
     public partial class PlatoCodeViewerForm : Form
     {
         public IDE IDE { get; }
+#pragma warning disable WFO1000
         public double SplitterRatio { get; private set; }
+#pragma warning restore WFO1000
 
         public ILogger Logger { get; }
 
