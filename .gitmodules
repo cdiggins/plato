@@ -1,0 +1,3 @@
+[submodule "parakeet"]
+	path = parakeet
+	url = https://github.com/ara3d/parakeet
