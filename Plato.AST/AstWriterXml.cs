@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Ara3D.Utils;
 
-namespace Plato.AST
+namespace Ara3D.Geometry.AST
 {
     public class AstWriterXml : CodeBuilder<AstWriterXml>
     {

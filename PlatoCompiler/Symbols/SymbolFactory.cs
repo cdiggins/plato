@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Ara3D.Geometry.AST;
 using Ara3D.Logging;
 using Ara3D.Utils;
-using Plato.AST;
-using Plato.Compiler.Types;
+using Ara3D.Geometry.Compiler.Types;
 
-namespace Plato.Compiler.Symbols
+namespace Ara3D.Geometry.Compiler.Symbols
 {
     /// <summary>
     /// Used primarily to figure out what each name means, and what the type of each expression is.

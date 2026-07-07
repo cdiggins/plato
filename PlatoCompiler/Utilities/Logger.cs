@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Ara3D.Logging;
 
-namespace Plato.Compiler
+namespace Ara3D.Geometry.Compiler
 {
     public class Logger : ILogger
     {

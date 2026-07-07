@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Plato.Compiler.Symbols;
+using Ara3D.Geometry.Compiler.Symbols;
 
-namespace Plato.Compiler.Types
+namespace Ara3D.Geometry.Compiler.Types
 {
     public class ReifiedFunction : IFunction
     {

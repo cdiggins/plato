@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Plato.AST
+namespace Ara3D.Geometry.AST
 {
     public static class Operators
     {

@@ -1,6 +1,6 @@
-﻿using Plato.AST;
+﻿using Ara3D.Geometry.AST;
 
-namespace Plato.Compiler.Symbols
+namespace Ara3D.Geometry.Compiler.Symbols
 {
     public class ResolutionError
     {

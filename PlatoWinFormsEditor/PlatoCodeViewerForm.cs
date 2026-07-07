@@ -1,8 +1,6 @@
 using System.Text.RegularExpressions;
 using Ara3D.Logging;
 using Ara3D.Utils;
-using System.Windows.Forms;
-using System;
 
 namespace PlatoWinFormsEditor
 {

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Compression;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Utils;
-using Plato.Compiler.Symbols;
-using Plato.Compiler.Types;
 
-namespace Plato.Compiler.Analysis
+namespace Ara3D.Geometry.Compiler.Analysis
 {
     public class TypeInstance
     {

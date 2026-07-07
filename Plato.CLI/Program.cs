@@ -1,19 +1,28 @@
-﻿using Ara3D.Logging;
+using Ara3D.Geometry.Compiler;
+using Ara3D.Logging;
 using Ara3D.Utils;
-using Plato.Compiler;
-using Plato.CSharpWriter;
+using Ara3D.Geometry.CSharpWriter;
+using Ara3D.Geometry.TypeScriptWriter;
+using Ara3D.Geometry.RustWriter;
 using Logger = Ara3D.Logging.Logger;
 
-namespace Plato.CLI
+namespace Ara3D.Geometry.CLI
 {
     public static class Program
     {
+        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust]
+        // With no arguments, the folders come from Config and C# is generated (original behavior).
         public static void Main(string[] args)
         {
             var logger = Logger.Console;
-            
+
+            var typeScript = args.Contains("--typescript");
+            var rust = args.Contains("--rust");
+            var folders = args.Where(a => !a.StartsWith("--")).ToList();
+            var inputFolder = new DirectoryPath(folders.Count > 0 ? folders[0] : Config.InputFolder);
+            var outputFolder = new DirectoryPath(folders.Count > 1 ? folders[1] : Config.OutputFolder);
+
             logger.Log("Opening files");
-            var inputFolder = new DirectoryPath(Config.InputFolder);
             var files = inputFolder.GetFiles("*.plato");
             var docs = files.Select(f => new Document(f, logger)).ToList();
             var parsingSuccessful = docs.All(e => e.Parser.Succeeded);
@@ -33,14 +42,38 @@ namespace Plato.CLI
                 return;
             }
 
-            logger.Log("Writing C# Files");
-            var outputFolder = new DirectoryPath(Config.OutputFolder);
-            var output = compilation.ToCSharp(outputFolder);
-            foreach (var kv in output.Files)
+            if (typeScript)
             {
-                var fp = outputFolder.RelativeFile(kv.Key);
-                logger.Log($"Writing {kv.Key}");
-                fp.WriteAllText(kv.Value.ToString());
+                logger.Log("Writing TypeScript Files");
+                var output = compilation.ToTypeScript(outputFolder);
+                foreach (var kv in output.Files)
+                {
+                    var fp = outputFolder.RelativeFile(kv.Key);
+                    logger.Log($"Writing {kv.Key}");
+                    fp.WriteAllText(kv.Value.ToString());
+                }
+            }
+            else if (rust)
+            {
+                logger.Log("Writing Rust Files");
+                var output = compilation.ToRust(outputFolder);
+                foreach (var kv in output.Files)
+                {
+                    var fp = outputFolder.RelativeFile(kv.Key);
+                    logger.Log($"Writing {kv.Key}");
+                    fp.WriteAllText(kv.Value.ToString());
+                }
+            }
+            else
+            {
+                logger.Log("Writing C# Files");
+                var output = compilation.ToCSharp(outputFolder);
+                foreach (var kv in output.Files)
+                {
+                    var fp = outputFolder.RelativeFile(kv.Key);
+                    logger.Log($"Writing {kv.Key}");
+                    fp.WriteAllText(kv.Value.ToString());
+                }
             }
 
             logger.Log("Completed");

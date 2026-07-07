@@ -4,7 +4,7 @@ using System.Linq;
 using Ara3D.Parakeet;
 using Ara3D.Parakeet.Cst.PlatoGrammarNameSpace;
 
-namespace Plato.AST
+namespace Ara3D.Geometry.AST
 {
     public static class AstNodeFactory
     {

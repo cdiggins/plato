@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Utils;
-using Plato.Compiler.Symbols;
-using Plato.Compiler.Types;
+using Ara3D.Geometry.Compiler.Types;
 
-namespace Plato.CSharpWriter
+namespace Ara3D.Geometry.CSharpWriter
 {
     /// <summary>
     /// Contains extra information about a type used in the analyses. 

@@ -1,7 +1,7 @@
 using Ara3D.Logging;
 using Ara3D.Utils;
-using Plato.Compiler;
-using Plato.CSharpWriter;
+using Ara3D.Geometry.Compiler;
+using Ara3D.Geometry.CSharpWriter;
 
 namespace PlatoWinFormsEditor;
 
@@ -51,7 +51,18 @@ public class IDE
         Logger = logger;
 
         var inputFolder = new DirectoryPath(Config.InputFolder);
-
+        if (!inputFolder.Exists())
+            throw new DirectoryNotFoundException($"Input folder does not exist: {inputFolder}");
+        var outputFolder = new DirectoryPath(Config.OutputFolder);
+        if (!outputFolder.Exists())
+            throw new DirectoryNotFoundException($"Output folder does not exist: {outputFolder}");
+        
+        // Delete the existing files. 
+        foreach (var f in outputFolder.GetFiles("*.cs"))
+        {
+            if (f.GetExtension() == ".cs")
+                f.Delete();
+        }
         Logger.Log("Opening files");
 
         var files = inputFolder.GetFiles("*.plato");
@@ -84,7 +95,6 @@ public class IDE
         if (Compilation.CompletedCompilation)
         {
             var currentFolder = PathUtil.GetCallerSourceFolder();
-            var outputFolder = new DirectoryPath(Config.OutputFolder);
 
             logger.Log("Writing C#");
             var output = Compilation.ToCSharp(outputFolder);

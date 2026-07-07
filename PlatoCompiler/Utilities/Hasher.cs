@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Plato.Compiler.Utilities
+namespace Ara3D.Geometry.Compiler.Utilities
 {
     public static class Hasher
     {

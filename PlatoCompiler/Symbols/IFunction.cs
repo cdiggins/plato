@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Plato.Compiler.Symbols
+namespace Ara3D.Geometry.Compiler.Symbols
 {
     public enum FunctionType
     {

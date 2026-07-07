@@ -1,4 +1,4 @@
-﻿namespace Plato.Compiler.Symbols
+﻿namespace Ara3D.Geometry.Compiler.Symbols
 {
     //public class SymbolWriterPlatoHtml: CodeBuilder<SymbolWriterPlatoHtml>
     //{

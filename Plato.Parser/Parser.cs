@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Ara3D.Logging;
-using Ara3D.Utils;
-using Ara3D.Parakeet;
-using Ara3D.Parakeet.Cst.PlatoGrammarNameSpace;
-
-namespace Plato.Parser
+namespace Ara3D.Geometry.Parser
 {
+    /*
+
     public class Parser
     {
         public Parser(
@@ -52,7 +46,7 @@ namespace Plato.Parser
                 Log($"Found {ParsingErrors.Count} errors");
 
                 Log($"Gathering parse nodes");
-                Nodes = State.Node?.AllNodesReversed().ToList() ?? new List<ParserNode>();
+                Nodes = State.Node?.AllEndAllNodesReversed().ToList() ?? new List<ParserNode>();
                 Log($"Found {Nodes.Count} nodes");
 
                 Log($"Creating parse tree");
@@ -64,7 +58,7 @@ namespace Plato.Parser
 
                 if (!State.AtEnd())
                 {
-                    Log($"")
+                    Log($"Expected to be at end of parser");
                 }
                     
                 if (!Success)
@@ -73,7 +67,7 @@ namespace Plato.Parser
                     Log($"Completed all steps, result was not successful");
 
                 Logger.Log("Creating AST trees");
-                Ast = Parser.CstTree.ToAst();
+                Ast = CstTree.ToAst();
             }
             catch (ParserException pe)
             {
@@ -115,4 +109,5 @@ namespace Plato.Parser
         public List<ParserError> ParsingErrors { get; } = new List<ParserError>();
 
     }
+    */
 }

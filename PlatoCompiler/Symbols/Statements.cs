@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 
-namespace Plato.Compiler.Symbols
+namespace Ara3D.Geometry.Compiler.Symbols
 {
     public abstract class Statement : Symbol
     { }

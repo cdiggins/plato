@@ -1,7 +1,7 @@
 ﻿using System;
 using Ara3D.Parakeet;
 
-namespace Plato.AST
+namespace Ara3D.Geometry.AST
 {
     public class AstBuilder
     {

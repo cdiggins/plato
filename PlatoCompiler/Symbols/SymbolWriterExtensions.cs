@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Plato.Compiler.Symbols
+namespace Ara3D.Geometry.Compiler.Symbols
 {
     public static class SymbolWriterExtensions
     {

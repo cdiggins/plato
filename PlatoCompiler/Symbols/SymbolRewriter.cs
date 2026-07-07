@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Utils;
 
-namespace Plato.Compiler.Symbols
+namespace Ara3D.Geometry.Compiler.Symbols
 {
     public static class SymbolRewriter
     {

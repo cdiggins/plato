@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Plato.Compiler.Symbols;
-using Plato.Compiler.Types;
+using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.Compiler.Types;
 
-namespace Plato.Compiler.Analysis
+namespace Ara3D.Geometry.Compiler.Analysis
 {
     /// <summary>
     /// Used to aggregate all functions from all libraries. 

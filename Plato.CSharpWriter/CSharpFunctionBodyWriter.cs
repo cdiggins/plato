@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using Ara3D.Geometry.Compiler.Analysis;
+using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Utils;
-using Plato.Compiler.Analysis;
-using Plato.Compiler.Symbols;
 
-namespace Plato.CSharpWriter;
+namespace Ara3D.Geometry.CSharpWriter;
 
 public class CSharpFunctionBodyWriter : CodeBuilder<CSharpFunctionBodyWriter>
 {
     public CSharpTypeWriter TypeWriter { get; }
     public CSharpWriter Writer => TypeWriter.Writer;
     public bool IsStaticOrLambda { get; }
-    public CSharpFunctionInfo Function { get; }
+    public CSharpFunctionInfo Function { get; }     
     public string SelfType => TypeWriter.SelfType;
- 
+
+    public string Namespace => Writer.Namespace;
+
     public CSharpFunctionBodyWriter(CSharpTypeWriter typeWriter, CSharpFunctionInfo fi, bool isStatic, bool isLambda)
     {
         IndentLevel = typeWriter.IndentLevel;
@@ -198,10 +199,18 @@ public class CSharpFunctionBodyWriter : CodeBuilder<CSharpFunctionBodyWriter>
             return Write("(").WriteCommaList(functionCall.Args).Write(")");
 
         var arg = functionCall.Args[0];
+
+        if (f.Name == "At")
+        {
+            return Write(arg).Write("[").WriteCommaList(functionCall.Args.Skip(1)).Write("]");
+        }
+
         Write(arg).Write(".").Write(functionCall.Function);
-            
-        if (functionCall.Args.Count == 1 && !functionCall.HasArgList) 
+
+        if (functionCall.Args.Count == 1 && !functionCall.HasArgList)
             return this;
+            // TEMPORARY: this will route to the extension methods now instead of the properties.
+            //return Write("()");
             
         return Write("(").WriteCommaList(functionCall.Args.Skip(1)).Write(")");
     }
@@ -216,7 +225,7 @@ public class CSharpFunctionBodyWriter : CodeBuilder<CSharpFunctionBodyWriter>
             case TypeExpression typeExpression:
                 if (typeExpression.TypeArgs.Count > 0)
                     throw new NotSupportedException();
-                return Write(typeExpression.Name);
+                return Write(Namespace + "." + typeExpression.Name);
     
             case NewExpression newExpression:
                 return Write($"new {Function.ToCSharpType(newExpression.Type)}(").WriteCommaList(newExpression.Args).Write(")");

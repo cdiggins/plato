@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Utils;
-using Plato.Compiler.Symbols;
 
-namespace Plato.Compiler.Types
+namespace Ara3D.Geometry.Compiler.Types
 {
     public class FunctionCallAnalysis : IComparable<FunctionCallAnalysis>
     {

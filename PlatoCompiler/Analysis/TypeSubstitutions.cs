@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using Plato.Compiler.Symbols;
-using Plato.Compiler.Types;
+using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.Compiler.Types;
 
-namespace Plato.Compiler.Analysis
+namespace Ara3D.Geometry.Compiler.Analysis
 {
     public class TypeSubstitutions
     {

@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Ara3D.Geometry.Compiler.Analysis;
+using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Utils;
-using Plato.Compiler.Analysis;
-using Plato.Compiler.Symbols;
-using Plato.Compiler.Types;
+using Ara3D.Geometry.Compiler.Types;
 
-namespace Plato.CSharpWriter;
+namespace Ara3D.Geometry.CSharpWriter;
 
 /// <summary>
 /// This can be used to build code for a specific type in C#, or it can be used to build standalone functions,
@@ -184,7 +184,27 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
     }
 
     public CSharpTypeWriter WriteExtensionFunction(CSharpFunctionInfo f)
-        => Write($"{f.ExtensionSignature}").WriteBody(f, true);
+    {
+        // If the first type is a self-constrained interface we need to do something special.
+        var firstType = f.Function.ParameterTypes[0].Def;
+        if (firstType.IsSelfConstrained())
+        {
+            // We need to write the self constraint.
+            var selfTypeName = firstType.Name;
+            var selfType = $"{selfTypeName}<Self>";
+            var generics = f.AllGenerics.Append("Self").JoinStringsWithComma();
+            var parameterTypes = f.Function.ParameterTypes.Skip(1).Select(pt => pt.Name == selfTypeName ? selfType : pt.Name).Prepend(selfType);
+            var parameters = f.ParameterNames.Zip(parameterTypes, (pn, pt) => $"{pt} {pn}").JoinStringsWithComma();
+            var constraints = $"where Self : {selfType}";
+            var retType = f.Function.ReturnType.Name == selfTypeName ? "Self" : f.ReturnType;
+            var extensionSignature = $"{CSharpFunctionInfo.Annotation}public static {retType} {f.Name}<{generics}>(this {parameters}) {constraints}";
+            return Write($"{extensionSignature}").WriteBody(f, true);
+        }
+        else
+        {
+            return Write($"{f.ExtensionSignature}").WriteBody(f, true);
+        }
+    }
 
     public CSharpTypeWriter WriteStaticFunction(CSharpFunctionInfo fi)
         => Write($"{fi.StaticSignature}").WriteBody(fi, true);
@@ -221,9 +241,9 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
 
         if (f.IsImplicit)
         {
-            if (f.ConcreteType.Name == f.Name)
+            if (f.OwnerType.Name == f.Name)
                 Debug.WriteLine("Skipping implicit cast to self");
-            else if (f.ConcreteType.TypeDef.Fields.Count == 1 && f.ConcreteType.TypeDef.Fields[0].Type.Def.Name == f.Name)
+            else if (f.OwnerType.Fields.Count == 1 && f.OwnerType.Fields[0].Type.Def.Name == f.Name)
                 Debug.WriteLine("Skipping implicit cast to single field (already included)");
             else
                 WriteLine(f.ImplicitImpl);
@@ -232,11 +252,11 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         return this;
     }
 
-    public CSharpFunctionInfo ToFunctionInfo(FunctionDef fd, ConcreteType ct, FunctionInstanceKind kind)
-        => ToFunctionInfo(new FunctionInstance(fd, ct, null, kind));
+    public CSharpFunctionInfo ToFunctionInfo(FunctionDef fd, TypeDef td, FunctionInstanceKind kind)
+        => ToFunctionInfo(new FunctionInstance(fd, td, null, kind));
 
-    public CSharpFunctionInfo ToFunctionInfo(FunctionInstance fi, ConcreteType ct = null)
-        => new CSharpFunctionInfo(fi, ct, this);
+    public CSharpFunctionInfo ToFunctionInfo(FunctionInstance fi, TypeDef td = null)
+        => new CSharpFunctionInfo(fi, td, this);
 
     public CSharpTypeWriter WriteInterfaceFunctions(TypeDef type)
     {
@@ -289,7 +309,17 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
 
         if (type.Name.StartsWith("Function"))
             return "System.Func";
-        
-        return type.Name;
+
+
+        var name = type.Name;
+        if (name.Contains("IArray"))
+        {
+            if (name.Contains("IArrayLike"))
+                return name;
+            return name.Replace("IArray", "IReadOnlyList");
+        }
+
+        return name;
     }
 }
+

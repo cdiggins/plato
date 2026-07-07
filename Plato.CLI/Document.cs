@@ -1,10 +1,10 @@
-﻿using Ara3D.Logging;
+﻿using Ara3D.Geometry.AST;
+using Ara3D.Logging;
 using Ara3D.Parakeet;
 using Ara3D.Parsing;
 using Ara3D.Utils;
-using Plato.AST;
 
-namespace Plato.CLI
+namespace Ara3D.Geometry.CLI
 {
     public class Document
     {

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
+using Ara3D.Geometry.Compiler.Analysis;
+using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Utils;
-using Plato.Compiler.Analysis;
-using Plato.Compiler.Symbols;
-using Plato.Compiler.Types;
+using Ara3D.Geometry.Compiler.Types;
 
-namespace Plato.CSharpWriter
+namespace Ara3D.Geometry.CSharpWriter
 {
     public class CSharpWriter : CodeBuilder<CSharpWriter>
     {
@@ -59,6 +58,11 @@ namespace Plato.CSharpWriter
             "CreateFromComponents",
             "CreateFromComponent",
             "NumComponents",
+            
+            // Implemented elswehere
+            "Range",
+            "MakeArray2D",
+            "MapRange",
         };
 
         public static Dictionary<string, string> PrimitiveTypes = new Dictionary<string, string>()
@@ -70,29 +74,25 @@ namespace Plato.CSharpWriter
             { "String", "string" },
             { "Dynamic", "object" },
             { "Type", "System.Type" },
-            { "Function0", "Func" },
-            { "Function1", "Func" },
-            { "Function2", "Func" },
-            { "Function3", "Func" },
-            { "Function4", "Func" },
-            { "Function5", "Func" },
-            { "Function6", "Func" },
-            { "Function7", "Func" },
-            { "Function8", "Func" },
-            { "Function9", "Func" },
-        };
-
-        public static HashSet<string> IntrinsicTypes = new()
-        {
-            "Angle", 
-            "Matrix3x2", 
-            "Matrix4x4", 
-            "Quaternion", 
-            "Plane", 
-            "Vector2", 
-            "Vector3", 
-            "Vector4", 
-            "Vector8"
+            { "Function0", "System.Func" },
+            { "Function1", "System.Func" },
+            { "Function2", "System.Func" },
+            { "Function3", "System.Func" },
+            { "Function4", "System.Func" },
+            { "Function5", "System.Func" },
+            { "Function6", "System.Func" },
+            { "Function7", "System.Func" },
+            { "Function8", "System.Func" },
+            { "Function9", "System.Func" },
+            { "Angle", "float" },
+            { "Matrix3x2", "System.Numerics.Matrix3x2" },
+            { "Matrix4x4", "System.Numerics.Matrix4x4" },
+            { "Quaternion", "System.Numerics.Quaternion" },
+            { "Plane", "System.Numerics.Plane" },
+            { "Vector2", "System.Numerics.Vector2" },
+            { "Vector3", "System.Numerics.Vector3" },
+            { "Vector4", "System.Numerics.Vector4" },
+            { "Vector8", "System.Runtime.Intrinsics.Vector256<float>" }
         };
 
         public CSharpWriter WriteFile(FilePath fileName, Func<CSharpWriter> f)
@@ -105,6 +105,7 @@ namespace Plato.CSharpWriter
             WriteLine("using System.Runtime.Serialization;");
             WriteLine("using System.Runtime.InteropServices;");
             WriteLine("using static System.Runtime.CompilerServices.MethodImplOptions;");
+            WriteLine("using Ara3D.Collections;");
             WriteLine("");
             WriteLine($"namespace {Namespace}");
             WriteStartBlock();
@@ -117,9 +118,9 @@ namespace Plato.CSharpWriter
         {
             FloatType = floatType;
             Namespace = floatType == "float"
-                ? "Plato"
+                ? "Ara3D.Geometry"
                 : floatType == "double"
-                    ? "Plato.DoublePrecision"
+                    ? "Ara3D.Geometry.DoublePrecision"
                     : throw new NotImplementedException("Only 'float' and 'double' are supported");
 #if CHANGE_PRECISION
             OtherPrecisionFloatType = floatType == "float" ? "double" : "float";
@@ -129,6 +130,8 @@ namespace Plato.CSharpWriter
             WriteFile("Interfaces.g.cs", WriteConceptInterfaces);
             WriteFile("Constants.g.cs", WriteConstantLibraryMethods);
             WriteFile("Extensions.g.cs", WriteInterfaceLibraryMethods);
+            
+            //WriteFile("Constructors.g.cs", WriteConstructors);
 
             foreach (var c in Compilation.ConcreteTypes)
             {
@@ -167,11 +170,22 @@ namespace Plato.CSharpWriter
             return this;
         }
 
+        public CSharpWriter WriteConstructors()
+        {
+            WriteLine($"public static class Constructors");
+            WriteStartBlock();
+            foreach (var ct in Compilation.ConcreteTypes)
+            {
+                // TODO: 
+                // Write all constructors as a static extension method
+            }
+            WriteEndBlock();
+            return this;
+        }
+
         public CSharpWriter WriteInterfaceLibraryMethods()
         {
-            
-                
-            WriteLine($"public static class Extensions");
+            WriteLine($"public static partial class Extensions");
             WriteStartBlock();
             foreach (var f in Compilation.Libraries.AllFunctions())
             {
@@ -181,11 +195,11 @@ namespace Plato.CSharpWriter
                     if (!pt.Def.IsInterface())
                         continue;
 
-                    // TODO: this is a HACK! we are temporarily only enabling this for IArray. 
-                    // Ultimately it needs to be done with Self-constrained versions of the interfaces. 
-                    // Writing those function signatures will be a lot of work.     
-                    // Even then, there could be some problems (like 
-                    if (pt.Def.Name != "IArray" && pt.Def.Name != "IArray2D" && pt.Def.Name != "IArray3D") 
+                    // We are going to skip functions that do not have a body
+                    if (f.Body == null)
+                        continue;
+
+                    if (!pt.Def.Name.StartsWith("IArray") || pt.Def.Name.StartsWith("IArrayLike"))
                         continue;
 
                     // We need to fix this, we should be creating functions instances.

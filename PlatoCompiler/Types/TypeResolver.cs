@@ -1,10 +1,10 @@
-﻿using Plato.AST;
-using Plato.Compiler.Symbols;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ara3D.Geometry.AST;
+using Ara3D.Geometry.Compiler.Symbols;
 
-namespace Plato.Compiler.Types
+namespace Ara3D.Geometry.Compiler.Types
 {
     public class TypeResolver
     {

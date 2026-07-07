@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Plato.Compiler.Symbols;
+using Ara3D.Geometry.Compiler.Symbols;
 
-namespace Plato.Compiler.Vsg
+namespace Ara3D.Geometry.Compiler.Vsg
 {
     public class VisualSyntaxGraph
     {

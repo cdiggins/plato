@@ -1,9 +1,8 @@
-﻿using System.Diagnostics;
-using System.Linq;
-using Plato.AST;
-using Plato.Compiler.Symbols;
+﻿using System.Linq;
+using Ara3D.Geometry.AST;
+using Ara3D.Geometry.Compiler.Symbols;
 
-namespace Plato.Compiler.Types
+namespace Ara3D.Geometry.Compiler.Types
 {
     public static class TypeExtensions
     {

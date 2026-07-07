@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Utils;
-using Plato.Compiler.Symbols;
-using Plato.Compiler.Types;
+using Ara3D.Geometry.Compiler.Types;
 
-namespace Plato.Compiler.Analysis
+namespace Ara3D.Geometry.Compiler.Analysis
 {
     /// <summary>
     /// Represents a specific concept implementation in a type. 
@@ -56,7 +56,7 @@ namespace Plato.Compiler.Analysis
             => new InterfaceImplementation(Libraries, ConcreteType, Substitutions.Add(inheritsType), inheritsType, this);
 
         public FunctionInstance AnalyzeConceptFunction(FunctionDef function, FunctionInstanceKind kind)
-            => new FunctionInstance(function, ConcreteType, this, kind, Substitutions);
+            => new FunctionInstance(function, ConcreteType.TypeDef, this, kind, Substitutions);
 
         public IEnumerable<FunctionInstance> AllFunctions()
             => ImplementedFunctions.Concat(Children.SelectMany(i => i.AllFunctions()));

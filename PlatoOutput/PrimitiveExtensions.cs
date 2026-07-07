@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Ara3D
+﻿namespace Ara3D
 {
     public static class PrimitiveExtensions
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Plato.Compiler.Vsg
+namespace Ara3D.Geometry.Compiler.Vsg
 {
     public class VisualSyntaxGraphQueries
     {

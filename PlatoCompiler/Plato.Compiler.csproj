@@ -1,14 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <OutputType>Library</OutputType>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\parakeet\Parakeet.Cst\Ara3D.Parakeet.Cst.csproj" />
     <ProjectReference Include="..\..\parakeet\Parakeet.Grammars\Ara3D.Parakeet.Grammars.csproj" />
     <ProjectReference Include="..\..\parakeet\Parakeet\Ara3D.Parakeet.csproj" />
-    <ProjectReference Include="..\..\src\Ara3D.Logging\Ara3D.Logging.csproj" />
+    <ProjectReference Include="..\..\..\src\Ara3D.Logging\Ara3D.Logging.csproj" />
     <ProjectReference Include="..\Plato.AST\Plato.AST.csproj" />
   </ItemGroup>
 </Project>

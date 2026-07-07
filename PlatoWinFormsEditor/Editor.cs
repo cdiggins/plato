@@ -3,7 +3,7 @@ using Ara3D.Logging;
 using Ara3D.Parakeet;
 using Ara3D.Parsing;
 using Ara3D.Utils;
-using Plato.AST;
+using Ara3D.Geometry.AST;
 
 namespace PlatoWinFormsEditor
 {

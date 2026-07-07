@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Plato.Compiler.Symbols;
-using Plato.Compiler.Types;
+using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.Compiler.Types;
 
-namespace Plato.CSharpWriter
+namespace Ara3D.Geometry.CSharpWriter
 {
     public class TypedExpression : Expression
     {

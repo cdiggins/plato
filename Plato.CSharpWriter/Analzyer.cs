@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.Compiler.Types;
 using Ara3D.Utils;
-using Plato.Compiler.Symbols;
-using Plato.Compiler.Types;
 
-namespace Plato.CSharpWriter
+namespace Ara3D.Geometry.CSharpWriter
 {
     public class TotalAnalysis 
     {

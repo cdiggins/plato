@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using Plato.AST;
-using Plato.Compiler.Types;
+using Ara3D.Geometry.AST;
+using Ara3D.Geometry.Compiler.Types;
 
-namespace Plato.Compiler.Symbols
+namespace Ara3D.Geometry.Compiler.Symbols
 {
     public abstract class DefSymbol : Symbol
     {

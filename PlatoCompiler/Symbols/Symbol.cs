@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Plato.Compiler.Symbols
+namespace Ara3D.Geometry.Compiler.Symbols
 {
     /// <summary>
     /// A symbol is either a definition, an expression, a statement, a type definition, or a type expression.

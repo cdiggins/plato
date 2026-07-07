@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Parakeet;
 
-namespace Plato.AST
+namespace Ara3D.Geometry.AST
 {
     public abstract class AstNode : ILocation
     {

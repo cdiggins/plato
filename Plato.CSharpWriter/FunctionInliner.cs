@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Plato.AST;
-using Plato.Compiler;
-using Plato.Compiler.Symbols;
-using Plato.Compiler.Types;
+using Ara3D.Geometry.AST;
+using Ara3D.Geometry.Compiler;
+using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.Compiler.Types;
 
-namespace Plato.CSharpWriter
+namespace Ara3D.Geometry.CSharpWriter
 {
     public class FunctionInliner
     {

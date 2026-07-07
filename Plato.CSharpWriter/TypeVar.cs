@@ -1,6 +1,6 @@
-﻿using Plato.Compiler.Symbols;
+﻿using Ara3D.Geometry.Compiler.Symbols;
 
-namespace Plato.CSharpWriter
+namespace Ara3D.Geometry.CSharpWriter
 {
     public class TypeVar
     {

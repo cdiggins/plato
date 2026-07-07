@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Plato.AST
+namespace Ara3D.Geometry.AST
 {
     public class AstException : Exception
     {

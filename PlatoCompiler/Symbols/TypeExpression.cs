@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Plato.AST;
-using Plato.Compiler.Utilities;
+using Ara3D.Geometry.AST;
+using Ara3D.Geometry.Compiler.Utilities;
 
-namespace Plato.Compiler.Symbols
+namespace Ara3D.Geometry.Compiler.Symbols
 {
     public class TypeExpression : Expression
     {

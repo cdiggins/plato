@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Ara3D.Geometry.Compiler.Analysis;
 using Ara3D.Utils;
-using Plato.Compiler.Analysis;
 
-namespace Plato.CSharpWriter;
+namespace Ara3D.Geometry.CSharpWriter;
 
 public class PlatoAnalyzer
 {
@@ -18,7 +18,7 @@ public class PlatoAnalyzer
 
     public int ScoreFunction(FunctionInstance f)
     {
-        var a = f.ConcreteType;
+        var a = f.OwnerType;
         var b = f.Interface;
 
         // Intrinsics are always preferred 
@@ -30,7 +30,7 @@ public class PlatoAnalyzer
         if (b == null)
             return -100;
 
-        var depth = a.TypeDef.DepthTo(b);
+        var depth = a.DepthTo(b);
         if (depth < 0)
             throw new Exception($"Expected {b} to be a base type of {a}");
         return depth;
@@ -40,7 +40,6 @@ public class PlatoAnalyzer
     {
         // We only want distinct implementations. 
         count = 1;
-        var first = xs[0];
         xs = xs.Distinct(x => x.Implementation.Id).ToList();
         if (xs.Count == 1)
             return xs[0];
@@ -52,7 +51,6 @@ public class PlatoAnalyzer
         Debug.Assert(group0.Count > 0);
 
         count = group0.Count; 
-
         return group0[0];
     }
 }

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
+using Ara3D.Geometry.Compiler.Analysis;
+using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Utils;
-using Plato.Compiler.Analysis;
-using Plato.Compiler.Symbols;
-using Plato.Compiler.Types;
+using Ara3D.Geometry.Compiler.Types;
 
-namespace Plato.CSharpWriter;
+namespace Ara3D.Geometry.CSharpWriter;
 
 public interface ITypeToCSharp
 {

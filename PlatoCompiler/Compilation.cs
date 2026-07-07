@@ -2,16 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Ara3D.Geometry.AST;
+using Ara3D.Geometry.Compiler.Analysis;
+using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Logging;
 using Ara3D.Utils;
 using Ara3D.Parakeet;
-using Plato.AST;
-using Plato.Compiler.Symbols;
-using Plato.Compiler.Types;
-using Plato.Compiler.Vsg;
-using Plato.Compiler.Analysis;
+using Ara3D.Geometry.Compiler.Types;
+using FunctionAnalysis = Ara3D.Geometry.Compiler.Types.FunctionAnalysis;
+using FunctionGroupCallAnalysis = Ara3D.Geometry.Compiler.Types.FunctionGroupCallAnalysis;
+using ReifiedFunction = Ara3D.Geometry.Compiler.Types.ReifiedFunction;
+using ReifiedType = Ara3D.Geometry.Compiler.Types.ReifiedType;
+using TypeRelation = Ara3D.Geometry.Compiler.Types.TypeRelation;
+using TypeRelations = Ara3D.Geometry.Compiler.Types.TypeRelations;
 
-namespace Plato.Compiler
+namespace Ara3D.Geometry.Compiler
 {
     public class Compilation
     {

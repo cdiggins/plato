@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Ara3D.Geometry.Compiler;
+using Ara3D.Geometry.Compiler.Analysis;
 using Ara3D.Utils;
-using Plato.Compiler;
-using Plato.Compiler.Analysis;
-using Plato.Compiler.Symbols;
-using Plato.Compiler.Types;
+using Ara3D.Geometry.Compiler.Types;
 
-namespace Plato.CSharpWriter
+namespace Ara3D.Geometry.CSharpWriter
 {
     // TODO: this should probably be merged with CSharpTypeWriter. I don't see a clear advantage for it to be alone. 
     public class CSharpConcreteTypeWriter
@@ -22,17 +21,12 @@ namespace Plato.CSharpWriter
             : "";
         public string SimpleName => ConcreteType.Name;
         public string Name => SimpleName + TypeParamsStr;
-        public bool IsIntrinsic => CSharpWriter.IntrinsicTypes.Contains(Name);
-        public bool IsPrimitive => CSharpWriter.PrimitiveTypes.ContainsKey(Name) || IsIntrinsic;
+        public bool IsPrimitive => CSharpWriter.PrimitiveTypes.ContainsKey(Name);
         public string Attr => CSharpTypeWriter.Annotation;
         public bool IsArrayLike => ConcreteType.AllInterfaces.Any(te => te.Name == "IArrayLike");
         public Compilation Compilation => TypeWriter.Writer.Compilation;
-
-        public List<List<FunctionInstance>> InterfaceFunctionGroups => ConcreteType
-            .ConcreteFunctions
-            .Concat(ConcreteType.GetInterfaceFunctions())
-            .GroupBy(f => f.SignatureId)
-            .Select(g => g.ToList()).ToList();
+        public List<string> FieldNames { get; }
+        public List<string> FieldTypes { get; }
 
         public CSharpConcreteTypeWriter(CSharpTypeWriter typeWriter, ConcreteType t)
         {
@@ -43,17 +37,17 @@ namespace Plato.CSharpWriter
             var implements = ConcreteType.Interfaces.Count > 0
                 ? $": " + ConcreteType.Interfaces.Select(TypeWriter.ToCSharpType).JoinStringsWithComma()
                 : "";
-            var fieldTypes = ConcreteType.TypeDef.Fields.Select(f => TypeWriter.ToCSharpType(f.Type)).ToList();
-            var fieldNames = ConcreteType.TypeDef.Fields.Select(f => f.Name).ToList();
-            var parameterNames = fieldNames.Select(CSharpTypeWriter.FieldNameToParameterName).ToList();
-            Debug.Assert(fieldTypes.Count == fieldNames.Count);
-            var parameters = fieldTypes.Zip(parameterNames, (pt, pn) => $"{pt} {pn}");
+            FieldTypes = ConcreteType.TypeDef.Fields.Select(f => TypeWriter.ToCSharpType(f.Type)).ToList();
+            FieldNames = ConcreteType.TypeDef.Fields.Select(f => f.Name).ToList();
+            var parameterNames = FieldNames.Select(CSharpTypeWriter.FieldNameToParameterName).ToList();
+            Debug.Assert(FieldTypes.Count == FieldNames.Count);
+            var parameters = FieldTypes.Zip(parameterNames, (pt, pn) => $"{pt} {pn}");
             var parameterNamesStr = parameterNames.JoinStringsWithComma();
             var parametersStr = parameters.JoinStringsWithComma();
-            var deconstructorParametersStr = fieldTypes.Zip(parameterNames, (pt, pn) => $"out {pt} {pn}").JoinStringsWithComma();
-            var fieldTypesStr = string.Join(", ", fieldTypes);
-            var fieldNamesStr = fieldNames.JoinStringsWithComma();
-            var assignments = fieldNames.Zip(parameterNames, (fn, pn) => $"{fn} = {pn}; ").JoinStrings("");
+            var deconstructorParametersStr = FieldTypes.Zip(parameterNames, (pt, pn) => $"out {pt} {pn}").JoinStringsWithComma();
+            var fieldTypesStr = string.Join(", ", FieldTypes);
+            var fieldNamesStr = FieldNames.JoinStringsWithComma();
+            var assignments = FieldNames.Zip(parameterNames, (fn, pn) => $"{fn} = {pn}; ").JoinStrings("");
 
             if (IsPrimitive)
                 TypeWriter.WriteLine($"[StructLayout(LayoutKind.Sequential, Pack=1)]");
@@ -67,24 +61,24 @@ namespace Plato.CSharpWriter
             if (!IsPrimitive)
             {
                 TypeWriter.WriteLine("// Fields");
-                for (var i = 0; i < fieldTypes.Count; ++i)
-                    TypeWriter.WriteLine($"[DataMember] public readonly {fieldTypes[i]} {fieldNames[i]};");
+                for (var i = 0; i < FieldTypes.Count; ++i)
+                    TypeWriter.WriteLine($"[DataMember] public readonly {FieldTypes[i]} {FieldNames[i]};");
                 TypeWriter.WriteLine("");
 
                 TypeWriter.WriteLine("// With functions ");
-                for (var i = 0; i < fieldTypes.Count; ++i)
+                for (var i = 0; i < FieldTypes.Count; ++i)
                 {
-                    var ft = fieldTypes[i];
-                    var fn = fieldNames[i];
+                    var ft = FieldTypes[i];
+                    var fn = FieldNames[i];
                     var pn = parameterNames[i];
-                    var args = fieldNames.Select((n, j) => j == i ? pn : n).JoinStringsWithComma();
+                    var args = FieldNames.Select((n, j) => j == i ? pn : n).JoinStringsWithComma();
                     TypeWriter.WriteLine($"{Attr} public {Name} With{fn}({ft} {pn}) => new {Name}({args});");
                 }
 
                 TypeWriter.WriteLine();
 
                 TypeWriter.WriteLine("// Regular Constructor");
-                if (fieldNames.Count > 0)
+                if (FieldNames.Count > 0)
                 {
                     TypeWriter.WriteLine($"{Attr} public {SimpleName}({parametersStr}) {{ {assignments}}}");
                 }
@@ -103,22 +97,22 @@ namespace Plato.CSharpWriter
             TypeWriter.WriteLine();
 
             // Implicit operators 
-            if (fieldNames.Count > 1)
+            if (FieldNames.Count > 1)
             {
                 TypeWriter.WriteLine("// Implicit converters to/from value-tuples and deconstructor");
-                var qualifiedFieldNames = fieldNames.Select(f => $"self.{f}").JoinStringsWithComma();
-                var tupleNames = string.Join(", ", Enumerable.Range(1, fieldNames.Count).Select(i => $"value.Item{i}"));
+                var qualifiedFieldNames = FieldNames.Select(f => $"self.{f}").JoinStringsWithComma();
+                var tupleNames = string.Join(", ", Enumerable.Range(1, FieldNames.Count).Select(i => $"value.Item{i}"));
                 TypeWriter.WriteLine($"{Attr} public static implicit operator ({fieldTypesStr})({Name} self) => ({qualifiedFieldNames});");
                 TypeWriter.WriteLine($"{Attr} public static implicit operator {Name}(({fieldTypesStr}) value) => new {Name}({tupleNames});");
-                var outAssignments = fieldNames.Zip(parameterNames, (fn, pn) => $"{pn} = {fn}; ").JoinStrings("");
+                var outAssignments = FieldNames.Zip(parameterNames, (fn, pn) => $"{pn} = {fn}; ").JoinStrings("");
                 TypeWriter.WriteLine($"{Attr} public void Deconstruct({deconstructorParametersStr}) {{ {outAssignments} }}");
                 TypeWriter.WriteLine();
             }
-            else if (fieldNames.Count == 1)
+            else if (FieldNames.Count == 1)
             {
                 TypeWriter.WriteLine("// Implicit converters to/from single field");
-                var fieldName = fieldNames[0];
-                var fieldType = fieldTypes[0];
+                var fieldName = FieldNames[0];
+                var fieldType = FieldTypes[0];
 
                 // Only implicit operators if we are not an 
                 if (IsPrimitive || !ConcreteType.TypeDef.Fields[0].Type.Def.IsInterface())
@@ -142,9 +136,9 @@ namespace Plato.CSharpWriter
             TypeWriter.WriteLine("// Object virtual function overrides: Equals, GetHashCode, ToString");
             if (!IsPrimitive)
             {
-                if (fieldNames.Count > 0)
+                if (FieldNames.Count > 0)
                 {
-                    var eqBody = fieldNames.Select(f => $"{f}.Equals(other.{f})").JoinStrings(" && ");
+                    var eqBody = FieldNames.Select(f => $"{f}.Equals(other.{f})").JoinStrings(" && ");
                     TypeWriter.WriteLine($"{Attr} public Boolean Equals({Name} other) => {eqBody};");
                     TypeWriter.WriteLine($"{Attr} public Boolean NotEquals({Name} other) => !{eqBody};");
                     TypeWriter.WriteLine($"{Attr} public override bool Equals(object obj) => obj is {Name} other ? Equals(other).Value : false;");
@@ -159,7 +153,7 @@ namespace Plato.CSharpWriter
                 }
                 TypeWriter.WriteLine($"{Attr} public override int GetHashCode() => Intrinsics.CombineHashCodes({fieldNamesStr});");
 
-                var toStr = "$\"{{ " + fieldNames.Select(fn => $"\\\"{fn}\\\" = {{{fn}}}").JoinStringsWithComma() + " }}\"";
+                var toStr = "$\"{{ " + FieldNames.Select(fn => $"\\\"{fn}\\\" = {{{fn}}}").JoinStringsWithComma() + " }}\"";
                 TypeWriter.WriteLine($"{Attr} public override string ToString() => {toStr};");
             }
             else
@@ -182,10 +176,10 @@ namespace Plato.CSharpWriter
                 var its = TypeWriter.ToCSharpType(i);
                 foreach (var f in i.DeclaredFunctions)
                 {
-                    var fieldIndex = fieldNames.IndexOf(f.Name);
+                    var fieldIndex = FieldNames.IndexOf(f.Name);
                     if (f.ParameterTypes.Count == 1 && fieldIndex >= 0)
                     {
-                        var fieldType = IsPrimitive ? Name : fieldTypes[fieldIndex];
+                        var fieldType = IsPrimitive ? Name : FieldTypes[fieldIndex];
                         TypeWriter.WriteLine($"{fieldType} {its}.{f.Name} {{ {Attr} get => {f.Name}; }}");
                     }
                 }
@@ -203,10 +197,10 @@ namespace Plato.CSharpWriter
                 var elem = TypeWriter.ToCSharpType(argType);
 
                 // Check that there are mul
-                if (fieldNames.Count > 1 && fieldTypes.All(ft => ft == elem))
+                if (FieldNames.Count > 1 && FieldTypes.All(ft => ft == elem))
                 {
                     // Add a constructor from arrays 
-                    var ctorArrayArgs = Enumerable.Range(0, fieldNames.Count).Select(i => $"xs[{i}]").JoinStringsWithComma();
+                    var ctorArrayArgs = Enumerable.Range(0, FieldNames.Count).Select(i => $"xs[{i}]").JoinStringsWithComma();
                     TypeWriter.WriteLine($"{Attr} public {Name}(IReadOnlyList<{elem}> xs) : this({ctorArrayArgs}) {{ }}");
                     TypeWriter.WriteLine($"{Attr} public {Name}({elem}[] xs) : this({ctorArrayArgs}) {{ }}");
                     TypeWriter.WriteLine($"{Attr} public static {Name} Create(IReadOnlyList<{elem}> xs) => new {Name}(xs);");
@@ -227,13 +221,13 @@ namespace Plato.CSharpWriter
 
             if (IsArrayLike)
             {
-                var numDistinctFieldTypes = fieldTypes.Distinct().Count();
+                var numDistinctFieldTypes = FieldTypes.Distinct().Count();
                 if (numDistinctFieldTypes > 1)
                     throw new Exception("IArrayLike types are assumed to have all of the fields of the same type");
 
-                var fieldType = fieldTypes.Count > 0 ? fieldTypes[0] : null;
+                var fieldType = FieldTypes.Count > 0 ? FieldTypes[0] : null;
                 
-                var localFieldNames = fieldNames;
+                var localFieldNames = FieldNames;
 
                 if (IsPrimitive)
                 {
@@ -248,11 +242,11 @@ namespace Plato.CSharpWriter
 
                 TypeWriter.WriteLine($"// IArrayLike predefined functions");
                 TypeWriter.WriteLine($"public Integer NumComponents {{ {Attr} get => {nComps}; }}");
-                TypeWriter.WriteLine($"public IArray<{fieldType}> Components {{ {Attr} get => Intrinsics.MakeArray<{fieldType}>({localFieldNames.JoinStringsWithComma()}); }}");
+                TypeWriter.WriteLine($"public IReadOnlyList<{fieldType}> Components {{ {Attr} get => Intrinsics.MakeArray<{fieldType}>({localFieldNames.JoinStringsWithComma()}); }}");
                 {
                     var tmp = Enumerable.Range(0, localFieldNames.Count).Select(i => $"numbers[{i}]").JoinStringsWithComma();
                     var impl = $"new {Name}({tmp})";
-                    TypeWriter.WriteLine($"{Attr} public static {Name} CreateFromComponents(IArray<{fieldType}> numbers) => {impl};");
+                    TypeWriter.WriteLine($"{Attr} public static {Name} CreateFromComponents(IReadOnlyList<{fieldType}> numbers) => {impl};");
                     TypeWriter.WriteLine();
                 }
                 {
@@ -263,39 +257,63 @@ namespace Plato.CSharpWriter
                 }
             }
 
+            WriteImplementedInterfaceFunctions();
+
+            WriteUnimplementedInterfaceFunctions();
+
+            TypeWriter.WriteEndBlock();
+
+            WriteExtensionMethods();
+        }
+
+        public bool SkipFunction(FunctionInstance f, bool skipFields = true)
+        {
+            // Note: we skip functions that are named after a field ... 
+            if (skipFields && FieldNames.Contains(f.Name))
+                return true;
+
+            if (CSharpWriter.IgnoredFunctions.Contains(f.Name))
+                return true;
+
+            if (f.InterfaceName == "IArray")
+                return true;
+
+            // We have to be sure to not implement functions that cast to themselves
+            if (f.Name == SimpleName)
+                return true;
+
+            return false;
+        }
+
+        public void WriteImplementedInterfaceFunctions()
+        {
+
             TypeWriter.WriteLine("// Implemented interface functions");
-            foreach (var g in InterfaceFunctionGroups)
+            foreach (var g in ConcreteType.InterfaceFunctionGroups)
             {
                 var f = Analyzer.ChooseBestFunction(g, out int cnt);
+
+                if (SkipFunction(f))
+                    continue;
+
                 if (cnt > 1)
                 {
+                    //throw new Exception($"{cnt} ambiguous function found for {f.Name}");
                     TypeWriter.WriteLine($"// AMBIGUOUS FUNCTIONS {cnt}");
+                    foreach (var tmp in g)
+                    {
+                        TypeWriter.WriteLine($"/* {tmp.Implementation} */");
+                    }
                 }
 
-                // Note: we skip functions that are named after a field ... 
-                if (fieldNames.Contains(f.Name))
-                    continue;
-
-                if (CSharpWriter.IgnoredFunctions.Contains(f.Name))
-                    continue;
-
-                // TEMP: currently I am inheriting all of the IArray functionality. 
-                // I don't think it is that bad. 
-                // We don't inherit all of the "IArray" functionality because it would be too much for vectors 
-                // However, it may make sense for specific Array classes in the future. 
-                if (f.InterfaceName == "IArray")
-                  continue;
-
-                // We have to be sure to not implement functions that cast to themselves
-                if (f.Name == SimpleName)
-                    continue;
-
-                var fi = TypeWriter.ToFunctionInfo(f, ConcreteType);
+                var fi = TypeWriter.ToFunctionInfo(f, ConcreteType.TypeDef);
                 TypeWriter.WriteMemberFunction(fi, IsPrimitive);
             }
             TypeWriter.WriteLine();
+        }
 
-
+        public void WriteUnimplementedInterfaceFunctions()
+        {
             // Primitives don't have unimplemented functions (except operators). 
             //if (!IsPrimitive)
             // TEMP:
@@ -303,7 +321,7 @@ namespace Plato.CSharpWriter
                 TypeWriter.WriteLine("// Unimplemented interface functions");
                 foreach (var f in ConcreteType.UnimplementedFunctions)
                 {
-                    if (CSharpWriter.IgnoredFunctions.Contains(f.Name))
+                    if (SkipFunction(f))
                         continue;
 
                     if (f.Name == "At" || f.Name == "Count")
@@ -311,18 +329,85 @@ namespace Plato.CSharpWriter
                         if (Name == "String")
                             continue;
 
-                        var fi = TypeWriter.ToFunctionInfo(f, ConcreteType);
+                        var fi = TypeWriter.ToFunctionInfo(f, ConcreteType.TypeDef);
                         TypeWriter.GenerateFunc(fi, ConcreteType);
                     }
                     else
                     {
                         // TODO: shouldn't this be a special function? 
-                        TypeWriter.WriteMemberFunction(TypeWriter.ToFunctionInfo(f, ConcreteType), IsPrimitive);
+                        TypeWriter.WriteMemberFunction(TypeWriter.ToFunctionInfo(f, ConcreteType.TypeDef), IsPrimitive);
                     }
                 }
             }
+        }
 
-            TypeWriter.WriteEndBlock();
+        public string GetExtensionMethod(CSharpFunctionInfo fi)
+        {
+            var firstArg = fi.ParameterNames[0];
+            var isProp = fi.ParameterNames.Count <= 1;
+            var args = isProp ?  "" : "(" + fi.ParameterNames.Skip(1).JoinStringsWithComma() + ")";
+            return $"{fi.ExtensionSignature} => {firstArg}.{fi.Name}{args};";
+        }
+
+        public string GetPrimitiveForwardingExtensionMethod(CSharpFunctionInfo fi, string platoType, string primType)
+        {
+            var parameterTypes = fi.ParameterTypes.Skip(1).ToList().Prepend(primType);
+            var parameters = fi.ParameterNames.Zip(parameterTypes, (n, t) => $"{t} {n}").JoinStringsWithComma();
+            var sig = $"{CSharpFunctionInfo.Annotation}public static {fi.ReturnType} {fi.Name}{fi.ExtensionGenericsString}(this {parameters})";
+            var args = fi.ParameterNames.Count <= 1 ? "" : "(" + fi.ParameterNames.Skip(1).JoinStringsWithComma() +")";
+            var firstParamName = fi.ParameterNames[0];
+            return $"{sig} => (({platoType}){firstParamName}).{fi.Name}{args};";
+        }
+
+        public void WriteExtensionMethod(FunctionInstance f)
+        {
+            var tw = TypeWriter;    
+            var fi = TypeWriter.ToFunctionInfo(f, ConcreteType.TypeDef);
+            if (SkipFunction(f, false))
+                return;
+            if (fi.IsStatic) return; // We don't want to generate extension methods for static functions.
+
+            if (f.Implementation.Body == null)
+                // This is an intrinsic function , so we don't want to generate an extension method for it.
+                tw.WriteLine(GetExtensionMethod(fi));
+
+            if (CSharpWriter.PrimitiveTypes.TryGetValue(Name, out var primType))
+            {
+                // HACK:
+                if (fi.Name == "Multiply" && fi.ParameterTypes[1] == "_T0")
+                {
+                    return;
+                }
+
+                // "Angle" is a special function with some space for confusion (it is not the replacement for "float"
+                if (Name == "Angle") return;
+                var extMethod2 = GetPrimitiveForwardingExtensionMethod(fi, Name, primType);
+                tw.WriteLine(extMethod2);
+            }
+        }
+
+        public void WriteExtensionMethods()
+        {
+            var tw = TypeWriter;
+            // We don't want to generate extension methods for generic types .
+            if (ConcreteType.TypeDef.TypeParameters.Count > 0)
+                return; 
+            tw.WriteLine("// Extension methods for the type");
+            tw.WriteLine($"public static class {SimpleName}Extensions");
+            tw.WriteStartBlock();
+
+            foreach (var f in ConcreteType.UnimplementedFunctions)
+                WriteExtensionMethod(f);
+
+            foreach (var g in ConcreteType.InterfaceFunctionGroups)
+            {
+                var f = Analyzer.ChooseBestFunction(g, out int _);
+                WriteExtensionMethod(f);
+            }
+            
+            
+            
+            tw.WriteEndBlock();
         }
 
         public static Dictionary<string, string[]> PrimitiveFieldNames = new Dictionary<string, string[]>

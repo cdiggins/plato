@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Ara3D.Utils;
 using System.Linq;
-using Plato.AST;
-using Plato.Compiler.Symbols;
-using Plato.Compiler.Types;
+using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.Compiler.Types;
 
-namespace Plato.Compiler.Analysis
+namespace Ara3D.Geometry.Compiler.Analysis
 {
     public enum FunctionInstanceKind
     {
@@ -28,8 +27,8 @@ namespace Plato.Compiler.Analysis
         public FunctionDef Implementation { get; }
         public TypeSubstitutions Substitutions { get; private set; }
         public TypeDef Interface { get; }
-        public ConcreteType ConcreteType { get; }
-        public TypeExpression ConcreteTypeExpression { get; }
+        public TypeDef OwnerType { get; }
+        public TypeExpression OwnerTypeExpression { get; }
         public string InterfaceName => Interface?.Name ?? "";
         public IReadOnlyList<string> ParameterNames { get; }
         public string Name => Implementation.Name;
@@ -46,11 +45,11 @@ namespace Plato.Compiler.Analysis
         public bool IsInterfaceDeclaration => Kind == FunctionInstanceKind.InterfaceDeclared;
         public bool IsInterfaceExtension => Kind == FunctionInstanceKind.InterfaceExtension;
             
-        public FunctionInstance(FunctionDef implementation, ConcreteType type, InterfaceImplementation ii, FunctionInstanceKind kind, TypeSubstitutions substitutions = null)
+        public FunctionInstance(FunctionDef implementation, TypeDef ownerType, InterfaceImplementation ii, FunctionInstanceKind kind, TypeSubstitutions substitutions = null)
         {
             Implementation = implementation;
-            ConcreteType = type;
-            ConcreteTypeExpression = type?.TypeDef.ToTypeExpression();
+            OwnerType = ownerType;
+            OwnerTypeExpression = ownerType?.ToTypeExpression();
             InterfaceImplementation = ii;
             Kind = kind;
 
@@ -110,12 +109,10 @@ namespace Plato.Compiler.Analysis
                     {
                         // Nothing happens.
                         Debug.Assert(ii == null);
-                        Debug.Assert(ConcreteType == null);
                     }
                     else if (Kind == FunctionInstanceKind.InterfaceImplemented)
                     {
                         Debug.Assert(ii != null, "We expect there to be a valid interface implementation");
-                        Debug.Assert(ConcreteType != null, "We expect there to be a concrete type");
                         GatherTypeVariableSubstitutions(first.Type, ii.TypeExpression);
                     }
                     else
@@ -132,7 +129,7 @@ namespace Plato.Compiler.Analysis
                         Debug.Assert(Substitutions != null);
                         var tmp = Substitutions?.Replace(first.Type);
                         Debug.Assert(tmp != null);
-                        Debug.Assert(tmp.Def.Equals(ConcreteType.TypeDef));
+                        Debug.Assert(tmp.Def.Equals(OwnerType));
                     }
                 }
                 else if (first.Type.Def.IsTypeVariable())

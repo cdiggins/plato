@@ -2,40 +2,43 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection.Metadata;
+using Ara3D.Geometry.AST;
+using Ara3D.Geometry.Compiler.Analysis;
+using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Utils;
-using Plato.AST;
-using Plato.Compiler.Analysis;
-using Plato.Compiler.Symbols;
-using Plato.Compiler.Types;
+using Ara3D.Geometry.Compiler.Types;
 
-namespace Plato.CSharpWriter
+namespace Ara3D.Geometry.CSharpWriter
 {
     public class CSharpFunctionInfo : ITypeToCSharp
     {
-        public CSharpFunctionInfo(FunctionInstance fi, ConcreteType owner, ITypeToCSharp typeToCSharp)
+        public CSharpFunctionInfo(FunctionInstance fi, TypeDef owner, ITypeToCSharp typeToCSharp)
         {
             Function = fi;
-            ConcreteType = owner;
+            OwnerType = owner;
             TypeToCSharp = typeToCSharp;
 
             ReturnType = this.ToCSharpType(fi.ReturnType);
             ParameterTypes = Function.ParameterTypes.Select(this.ToCSharpType).ToList();
             Generics = fi.TypeVariables;
-
+            TypeGenerics = owner?.TypeParameters.Select(tp => tp.Name).ToList() ?? [];
+            AllGenerics = Generics.Concat(TypeGenerics).Distinct().ToList();
             if (ParameterNames.Count != ParameterTypes.Count)
-                throw new System.Exception("Parameter names and types must have the same length");
+                throw new Exception("Parameter names and types must have the same length");
         }
 
+        public List<string> AllGenerics { get; }
+        
         public ITypeToCSharp TypeToCSharp { get; }
         public FunctionInstance Function { get; }
         public string Name => Function.Name;
 
         public string ReturnType { get; }
-        public ConcreteType ConcreteType { get; }
+        public TypeDef OwnerType { get; }
         public Symbol Body => Function.Implementation.Body;
         public bool IsImplicit => Function.IsImplicitCast;
         public IReadOnlyList<string> Generics { get; }
+        public IReadOnlyList<string> TypeGenerics { get; }
         public int NumParameters => ParameterNames.Count;
         public IReadOnlyList<string> ParameterNames => Function.ParameterNames;
         public string FirstParameterName => ParameterNames[0];
@@ -49,15 +52,17 @@ namespace Plato.CSharpWriter
         public string ExtensionParametersString => NumParameters > 0 ? $"(this {Parameters.JoinStringsWithComma()})" : "";
         public string MethodParametersString => NumParameters > 1 ? $"({MethodParameters.JoinStringsWithComma()})" : "";
         public string StaticSignature => $"{FunctionAnnotation}public static {ReturnType} {Name}{GenericsString}{StaticParametersString}{Constraints}";
-        public string ExtensionSignature => $"{FunctionAnnotation}public static {ReturnType} {Name}{GenericsString}{ExtensionParametersString}{Constraints}";
+        
+        public string ExtensionGenericsString => AllGenerics.Count > 0 ? $"<{AllGenerics.JoinStringsWithComma()}>" : "";
+        public string ExtensionSignature => $"{Annotation}public static {ReturnType} {Name}{ExtensionGenericsString}{ExtensionParametersString}{Constraints}";
 
         // TODO: this used to be a way to signal static methods. 
         public bool IsStatic => ParameterNames.Count == 0 || ParameterNames[0] == "_";
 
         public string StaticKeyword => IsStatic ? "static " : "";
-        public bool IsProperty => ParameterNames.Count <= 1;
+        public bool IsProperty => ParameterNames.Count <= 1 ;
         public static string Annotation => "[MethodImpl(AggressiveInlining)] ";
-        public string FunctionAnnotation => IsProperty ? "" : $"{Annotation} "; 
+        public string FunctionAnnotation => IsProperty ? "" : Annotation; 
         public string Constraints => Function.ConstrainedTypeVariables.Select(ConstraintString).JoinStrings("");
         public string MethodSignature => $"{FunctionAnnotation}public {StaticKeyword}{ReturnType} {Name}{GenericsString}{MethodParametersString}{Constraints}";
         public string StaticArgsString => NumParameters > 0 ? $"({ParameterNames.JoinStringsWithComma()})" : "";
@@ -65,7 +70,7 @@ namespace Plato.CSharpWriter
         public string IntrinsicsArgsString => NumParameters > 0 ? $"({ParameterNames.Skip(1).Prepend("this").JoinStringsWithComma()})" : "";
         public bool IsMethodOf(string typeName) => ParameterTypes.Count > 0 && ParameterTypes[0] == typeName;
 
-        public bool IsMember => ConcreteType != null;
+        public bool IsMember => OwnerType != null;
 
         public string OperatorName
         {
@@ -112,6 +117,8 @@ namespace Plato.CSharpWriter
 
         // TODO: should we not be taking into account the function type replacements?  
         public string ToCSharpTypeName(TypeInstance ti)
-            => TypeToCSharp.ToCSharpTypeName(ti);
+        {
+            return TypeToCSharp.ToCSharpTypeName(ti);
+        }
     }
 }

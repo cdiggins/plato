@@ -1,6 +1,6 @@
 ﻿using Ara3D.Utils;
 
-namespace Plato.CLI
+namespace Ara3D.Geometry.CLI
 {
     public class Config
     {

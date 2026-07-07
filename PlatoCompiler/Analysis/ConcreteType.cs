@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Utils;
-using Plato.Compiler.Symbols;
-using Plato.Compiler.Types;
+using Ara3D.Geometry.Compiler.Types;
 
-namespace Plato.Compiler.Analysis
+namespace Ara3D.Geometry.Compiler.Analysis
 {
     /// <summary>
     /// Holds a list of all the functions associated with the type, and the implemented concepts.
@@ -23,6 +23,7 @@ namespace Plato.Compiler.Analysis
         public IReadOnlyList<FunctionInstance> DeclaredFunctions { get; }
         public IReadOnlyList<FunctionInstance> ImplementedFunctions { get; }
         public IReadOnlyList<FunctionInstance> UnimplementedFunctions { get; }
+        public IReadOnlyList<List<FunctionInstance>> InterfaceFunctionGroups { get; }
 
         public ConcreteType(TypeDef typeDef, LibraryFunctions libraries)
         {
@@ -34,21 +35,30 @@ namespace Plato.Compiler.Analysis
             Substitutions = new TypeSubstitutions("Self", TypeDef.ToTypeExpression());
             Interfaces = typeDef.Implements.Select(CreateConceptImplementation).ToList();
             AllInterfaces = Interfaces.AllDescendants().Distinct(i => i.ToString()).OrderBy(i => i.ToString()).ToList();
-            ConcreteFunctions = libraries.GetFunctionsForType(TypeDef.ToTypeExpression()).Select(f => CreateFunctionInstance(f, FunctionInstanceKind.ConcreteType)).ToList();
-            FieldFunctions = TypeDef.Fields.Select(f => CreateFunctionInstance(f.Function, FunctionInstanceKind.FieldType)).ToList();
+            ConcreteFunctions = libraries.GetFunctionsForType(TypeDef.ToTypeExpression())
+                .Select(f => CreateFunctionInstance(f, FunctionInstanceKind.ConcreteType)).ToList();
+            FieldFunctions = TypeDef.Fields
+                .Select(f => CreateFunctionInstance(f.Function, FunctionInstanceKind.FieldType)).ToList();
 
-            ImplementedFunctions = AllInterfaces.SelectMany(c => c.ImplementedFunctions).Concat(ConcreteFunctions).Concat(FieldFunctions).ToList();
-            DeclaredFunctions = AllInterfaces.SelectMany(c => c.DeclaredFunctions).Distinct(d => d.SignatureId).ToList();
+            ImplementedFunctions = AllInterfaces.SelectMany(c => c.ImplementedFunctions).Concat(ConcreteFunctions)
+                .Concat(FieldFunctions).ToList();
+            DeclaredFunctions = AllInterfaces.SelectMany(c => c.DeclaredFunctions).Distinct(d => d.SignatureId)
+                .ToList();
 
             var implementedSigs = new HashSet<string>(ImplementedFunctions.Select(f => f.SignatureId));
             UnimplementedFunctions = DeclaredFunctions.Where(f => !implementedSigs.Contains(f.SignatureId)).ToList();
+
+            InterfaceFunctionGroups = ConcreteFunctions
+                .Concat(GetInterfaceFunctions())
+                .GroupBy(f => f.SignatureId)
+                .Select(g => g.ToList()).ToList();
         }
 
         public InterfaceImplementation CreateConceptImplementation(TypeExpression type)
             => new InterfaceImplementation(Libraries, this, Substitutions.Add(type), type);
 
         public FunctionInstance CreateFunctionInstance(FunctionDef function, FunctionInstanceKind kind)
-            => new FunctionInstance(function, this, null, kind, Substitutions);
+            => new FunctionInstance(function, TypeDef, null, kind, Substitutions);
 
         public IEnumerable<FunctionInstance> GetInterfaceFunctions()
             => Interfaces.SelectMany(c => c.AllFunctions().Where(FunctionMatches)).ToList();
