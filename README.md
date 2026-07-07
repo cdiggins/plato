@@ -164,7 +164,8 @@ For example:
 In this case the Type parameters are implied, by the use of TypeVariables (type names preceded by a $). 
 
 ```csharp
-	public static IArray<TR> Zip<T0, T1, TR>(this IArray<T0> xs, IArray<T1> ys, System.Func<T0, T1, TR> f) => xs.Count.MapRange(i => f(xs[i], ys[i])); 
+	public static IArray<TR> Zip<T0, T1, TR>(this IArray<T0> xs, IArray<T1> ys, System.Func<T0, T1, TR> f) 
+	   => xs.Count.MapRange(i => f(xs[i], ys[i])); 
 ```
 
 ## Visual Syntax 
