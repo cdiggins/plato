@@ -3,6 +3,10 @@
 Multi-language proof that Plato geometry code can be written once and compiled
 to fast, idiomatic libraries on several targets.
 
+**Live on GitHub Pages: <https://cdiggins.github.io/plato/>**
+([TypeScript](https://cdiggins.github.io/plato/typescript/) ·
+[Rust + WASM](https://cdiggins.github.io/plato/rust/))
+
 ## Layout
 
 ```
@@ -13,6 +17,8 @@ demos/
     geometry-samples/           Vite + Three.js browser demo; Node tests
   rust/
     geometry-samples/           Cargo crate; WASM browser demo; conformance tests
+  site/
+    index.html                  Landing page for the GitHub Pages site
 ```
 
 The curated `geometry.plato` here is a **demo subset** — not the full standard
@@ -25,13 +31,21 @@ codegen for `Ara3D.Geometry`).
 
 ```bat
 npm install
-npm run dev
+npm run dev        # http://localhost:5173
 ```
 
-**Rust tests** (from `demos/rust/geometry-samples/`):
+**Rust browser demo** (from `demos/rust/geometry-samples/`; the WASM module is
+checked in, so this needs only Node — no Rust toolchain):
 
 ```bat
-cargo test
+node web/serve.mjs   # http://localhost:8873
+```
+
+**Tests:**
+
+```bat
+cd demos/typescript/geometry-samples && npm test
+cd demos/rust/geometry-samples && cargo test
 ```
 
 **Regenerate from Plato** after editing `demos/plato-src/geometry.plato`:
@@ -45,6 +59,15 @@ cd demos/rust/geometry-samples
 ```
 
 Both call [`Plato.CLI`](../Plato.CLI) with `--typescript` or `--rust`.
+
+## GitHub Pages deployment
+
+[`.github/workflows/pages.yml`](../.github/workflows/pages.yml) builds and
+deploys the site on every push to `main`: the landing page from `site/`, the
+Vite build of the TypeScript demo under `/typescript/`, and the static Rust
+demo (`web/` plus the `.rs` sources shown in its code panel) under `/rust/`.
+Enable it once in the repo settings: **Settings → Pages → Source: GitHub
+Actions**.
 
 When cloned inside the [Ara 3D studio](https://github.com/ara3d/studio) monorepo,
 these demos live at `submodules/Plato/demos/`. `Plato.CLI` still references

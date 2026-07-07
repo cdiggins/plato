@@ -1,8 +1,28 @@
 # Plato
 
-**Plato** is a small, pure, statically-typed language for writing geometric and numeric libraries once, and compiling them into fast, idiomatic code for other platforms — today C#, with more targets planned.
+**Write geometry once. Run it everywhere.**
 
-It looks like a typed scripting language and compiles like a systems language. Everything is an immutable value, every function is pure, and a compiler amplifies terse declarations into a large, monomorphized, zero-dispatch library: the entire Plato standard library is ~3,500 lines of source, which becomes over 11,000 lines of C#. A three-field vector type comes out the other side as a struct with ~340 members.
+**Plato** is a small, pure, statically-typed language for writing geometric and numeric libraries once, and compiling them into fast, idiomatic code for other platforms. The C# backend is in daily production use — it generates the geometry library consumed by the [Ara 3D SDK](https://github.com/ara3d/ara3d-sdk) — and the **TypeScript and Rust backends are working proofs of concept**, each with a browser demo you can try right now.
+
+### ▶ [Try the live demos](https://cdiggins.github.io/plato/)
+
+Twelve geometry algorithms — Delaunay triangulation, convex hulls, BVHs, half-edge meshes, raycasting, and more — written once in Plato and running in your browser two different ways, from the same source file:
+
+- **[TypeScript sample browser](https://cdiggins.github.io/plato/typescript/)** — Plato compiled to TypeScript, rendered with Three.js.
+- **[Rust sample browser](https://cdiggins.github.io/plato/rust/)** — the same Plato source compiled to Rust, built to WebAssembly, computing every sample live in the browser.
+
+Both pass the same conformance suite: identical algorithms, identical seeds, identical results. To run them locally, see [Demos](#demos) below.
+
+## What it is
+
+Plato looks like a typed scripting language and compiles like a systems language. Everything is an immutable value, every function is pure, and a compiler amplifies terse declarations into a large, monomorphized, zero-dispatch library: the entire Plato standard library is ~3,500 lines of source, which becomes over 11,000 lines of C#. A three-field vector type comes out the other side as a struct with ~340 members.
+
+What that buys you:
+
+- **One source of truth.** Your math library exists once. Every port is generated, so the ports can't drift.
+- **Native-feeling output.** C# gets packed structs and aggressive inlining; TypeScript gets fluent methods on plain `number`s; Rust gets extension traits. Each target reads like it was written by hand, by someone who likes that language.
+- **Performance by construction.** Interface-generic code is monomorphized into direct calls — no boxing, no virtual dispatch, no runtime abstraction penalty.
+- **Correctness by construction.** Distinct types for `Angle` vs. `Number` and `Point` vs. `Vector` turn geometry's classic bugs into compile errors; purity makes every function a trivial unit-test target.
 
 ## A taste of it
 
@@ -109,9 +129,9 @@ As agents write more of the world's code, the premium shifts from languages that
 
 ## Status
 
-The language design is stabilizing after a few years of iteration. The Plato-to-C# compiler is in daily production use: it generates the geometry library consumed by the Ara 3D SDK (`ara3d-sdk/src/Plato.Generated` when built inside the [Ara 3D studio](https://github.com/ara3d/studio) monorepo). Honest caveats:
+The language design is stabilizing after a few years of iteration. The Plato-to-C# compiler is in daily production use: it generates the geometry library consumed by the [Ara 3D SDK](https://github.com/ara3d/ara3d-sdk) (`ara3d-sdk/src/Plato.Generated` when built inside the [Ara 3D studio](https://github.com/ara3d/studio) monorepo). Honest caveats:
 
-- One backend exists today (C#). TypeScript and Rust writers ship with browser demos under [`demos/`](demos/).
+- The C# backend is production; the TypeScript and Rust backends are working proofs of concept — they compile a curated demo library and pass a shared conformance suite (see the [live demos](https://cdiggins.github.io/plato/)), but haven't consumed the full standard library yet.
 - The compiler builds standalone in this repository; the studio monorepo consumes it via `submodules/Plato`.
 - Type errors currently surface through the C# compiler against generated code. A native type checker is the top roadmap item.
 - A visual data-flow syntax (**PlatoFlow**) is under development.
@@ -120,10 +140,30 @@ The compiler is open source and was built alongside the [Parakeet parsing librar
 
 ## Demos
 
-Multi-target geometry browser demos live in [`demos/`](demos/): one shared
+The multi-target geometry sample browsers are **[live on GitHub Pages](https://cdiggins.github.io/plato/)**
+([TypeScript](https://cdiggins.github.io/plato/typescript/) ·
+[Rust + WASM](https://cdiggins.github.io/plato/rust/)), deployed automatically
+by [`.github/workflows/pages.yml`](.github/workflows/pages.yml).
+
+The source lives in [`demos/`](demos/): one shared
 [`geometry.plato`](demos/plato-src/geometry.plato), a TypeScript + Three.js
-sample browser, and a Rust crate with a WebAssembly demo. See
-[`demos/README.md`](demos/README.md).
+sample browser, and a Rust crate with a WebAssembly demo. To run them locally
+(Node 20+ is the only requirement — the WASM module is checked in, so the Rust
+demo doesn't even need a Rust toolchain):
+
+```bat
+:: TypeScript sample browser — http://localhost:5173
+cd demos/typescript/geometry-samples
+npm install
+npm run dev
+
+:: Rust + WASM sample browser — http://localhost:8873
+cd demos/rust/geometry-samples
+node web/serve.mjs
+```
+
+See [`demos/README.md`](demos/README.md) for tests, regeneration from Plato
+source, and how to add a sample.
 
 ## Contributing
 
@@ -132,7 +172,8 @@ Good projects for motivated and patient people:
 - Property-based tests for the standard library
 - A type checker and inference engine with source-anchored diagnostics
 - Plato-to-Plato optimizers (e.g., compile-time unrolling of component-wise operations)
-- Backends: JavaScript, Rust, GLSL, C++, Dart, Java, Go
+- Growing the TypeScript and Rust backends from proof of concept to the full standard library
+- New backends: GLSL, C++, Dart, Java, Go
 - Editor support: LSP, VS Code, Visual Studio
 
 ## Feedback

@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plato — write geometry once, run it everywhere</title>
+    <meta name="description" content="Plato is a small, pure, statically-typed language for writing geometric and numeric libraries once and compiling them to fast, idiomatic code — C#, TypeScript, and Rust." />
+    <style>
+        :root {
+            --bg: #0f1115;
+            --panel: #161a21;
+            --panel2: #12151b;
+            --border: #262c38;
+            --text: #d6dbe4;
+            --dim: #8b93a3;
+            --accent: #4da3ff;
+            --rust: #f74c00;
+            --ts: #4da3ff;
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font: 16px/1.6 "Segoe UI", system-ui, sans-serif;
+        }
+        a { color: var(--accent); }
+        .wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+
+        /* Hero */
+        header {
+            padding: 72px 0 48px;
+            background:
+                radial-gradient(ellipse 70% 60% at 50% -10%, rgba(77, 163, 255, 0.14), transparent),
+                var(--bg);
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 56px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            background: linear-gradient(120deg, #7fc4ff, #4da3ff 45%, #b48cff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        header .tagline {
+            margin: 10px auto 0;
+            font-size: 22px;
+            color: var(--text);
+            font-weight: 350;
+        }
+        header .blurb {
+            margin: 18px auto 0;
+            max-width: 640px;
+            color: var(--dim);
+            font-size: 16px;
+        }
+        .buttons { margin-top: 28px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .btn {
+            display: inline-block;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            text-decoration: none;
+            border: 1px solid var(--border);
+            color: var(--text);
+            background: var(--panel);
+            transition: border-color 0.15s, background 0.15s;
+        }
+        .btn:hover { border-color: var(--accent); }
+        .btn.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #0b1626;
+        }
+        .btn.primary:hover { background: #6db4ff; }
+
+        /* Demo cards */
+        section { padding: 48px 0; }
+        h2 { font-size: 24px; font-weight: 650; margin: 0 0 6px; }
+        .section-sub { color: var(--dim); margin: 0 0 24px; }
+        .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 720px) { .cards { grid-template-columns: 1fr; } }
+        .card {
+            display: block;
+            text-decoration: none;
+            color: var(--text);
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--card-accent, var(--accent));
+            border-radius: 10px;
+            padding: 22px 24px;
+            transition: border-color 0.15s, transform 0.15s;
+        }
+        .card:hover { border-color: var(--card-accent, var(--accent)); transform: translateY(-2px); }
+        .card h3 { margin: 0 0 6px; font-size: 18px; color: var(--card-accent, var(--accent)); }
+        .card p { margin: 0; color: var(--dim); font-size: 14.5px; }
+        .card .go { display: inline-block; margin-top: 14px; font-size: 14px; font-weight: 600; color: var(--text); }
+        .card:hover .go { color: var(--card-accent, var(--accent)); }
+
+        /* Code sample */
+        .code-panel {
+            background: var(--panel2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px 22px;
+            overflow-x: auto;
+        }
+        .code-panel pre { margin: 0; font: 13.5px/1.6 Consolas, "Cascadia Code", monospace; }
+        .k { color: #c678dd; }  /* keyword */
+        .t { color: #7fc4ff; }  /* type */
+        .f { color: #e5c07b; }  /* function */
+        .c { color: #5c6370; }  /* comment */
+
+        /* Pillars */
+        .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        @media (max-width: 720px) { .pillars { grid-template-columns: 1fr; } }
+        .pillar h3 { font-size: 16px; margin: 0 0 6px; color: var(--text); }
+        .pillar p { margin: 0; color: var(--dim); font-size: 14px; }
+
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 28px 0 40px;
+            color: var(--dim);
+            font-size: 14px;
+            text-align: center;
+        }
+        footer a { color: var(--dim); }
+        footer a:hover { color: var(--text); }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="wrap">
+        <h1>Plato</h1>
+        <div class="tagline">Write geometry once. Run it everywhere.</div>
+        <p class="blurb">
+            Plato is a small, pure, statically-typed language for writing geometric and
+            numeric libraries once, and compiling them into fast, idiomatic code for
+            other platforms — C# in daily production use, with working TypeScript and
+            Rust proofs of concept. Developed at <a href="https://ara3d.com">Ara&nbsp;3D</a>.
+        </p>
+        <div class="buttons">
+            <a class="btn primary" href="https://github.com/cdiggins/plato">View on GitHub</a>
+            <a class="btn" href="https://ara3d.com">Ara 3D</a>
+        </div>
+    </div>
+</header>
+
+<section>
+    <div class="wrap">
+        <h2>Live demos</h2>
+        <p class="section-sub">
+            Twelve geometry algorithms — Delaunay, convex hull, BVH, half-edge meshes,
+            raycasting, and more — written once in Plato, running below in two different
+            languages, rendered with <a href="https://threejs.org">Three.js</a>.
+        </p>
+        <div class="cards">
+            <a class="card" href="./typescript/" style="--card-accent: var(--ts)">
+                <h3>TypeScript sample browser</h3>
+                <p>The Plato geometry library compiled to TypeScript. Fluent math on
+                   plain numbers, immutable value types, and code that reads like the
+                   C# original.</p>
+                <span class="go">Open the TypeScript demo &rarr;</span>
+            </a>
+            <a class="card" href="./rust/" style="--card-accent: var(--rust)">
+                <h3>Rust + WebAssembly sample browser</h3>
+                <p>The same Plato source compiled to Rust, built to WebAssembly, and
+                   computing every sample live in your browser — straight out of wasm
+                   linear memory.</p>
+                <span class="go">Open the Rust demo &rarr;</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<section style="padding-top: 0">
+    <div class="wrap">
+        <h2>One source of truth</h2>
+        <p class="section-sub">Real code from the shared demo library — both sample browsers above are generated from it.</p>
+        <div class="code-panel">
+<pre><span class="k">library</span> <span class="t">Vectors3</span>
+{
+    <span class="f">Lerp</span>(a: <span class="t">Vector3D</span>, b: <span class="t">Vector3D</span>, t: <span class="t">Number</span>): <span class="t">Vector3D</span>
+        =&gt; a.Scale(<span class="t">1.0</span> - t).Add(b.Scale(t));
+
+    <span class="f">MidPoint</span>(a: <span class="t">Vector3D</span>, b: <span class="t">Vector3D</span>): <span class="t">Vector3D</span>
+        =&gt; a.Add(b).Scale(<span class="t">0.5</span>);
+
+    <span class="f">Reflect</span>(v: <span class="t">Vector3D</span>, normal: <span class="t">Vector3D</span>): <span class="t">Vector3D</span>
+        =&gt; v.Subtract(normal.Scale(<span class="t">2.0</span> * v.Dot(normal)));
+}</pre>
+        </div>
+    </div>
+</section>
+
+<section style="padding-top: 0">
+    <div class="wrap">
+        <div class="pillars">
+            <div class="pillar">
+                <h3>Pure and immutable</h3>
+                <p>Every value is immutable and every function is pure. No mutation,
+                   no exceptions, no hidden state — which is exactly what makes
+                   retargeting to new languages credible.</p>
+            </div>
+            <div class="pillar">
+                <h3>Compiled, not interpreted</h3>
+                <p>Terse declarations are amplified into large, monomorphized,
+                   zero-dispatch libraries. A three-field vector type comes out the
+                   other side with hundreds of members.</p>
+            </div>
+            <div class="pillar">
+                <h3>Idiomatic output</h3>
+                <p>Generated C# uses structs and aggressive inlining; TypeScript gets
+                   fluent methods on native numbers; Rust gets extension traits.
+                   Each target reads like a native library.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="wrap">
+        <a href="https://github.com/cdiggins/plato">GitHub</a> &middot;
+        <a href="https://ara3d.com">Ara 3D</a> &middot;
+        <a href="https://github.com/ara3d/ara3d-sdk">Ara 3D SDK</a>
+        <div style="margin-top: 8px">Plato is open source, from <a href="https://ara3d.com">Ara 3D</a>.</div>
+    </div>
+</footer>
+
+</body>
+</html>

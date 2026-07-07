@@ -2,15 +2,17 @@
 //
 //   node web/serve.mjs [port]     (from demos/rust/geometry-samples)
 //
-// Serves the crate directory so the page can fetch both /web/* (the app and
-// the wasm module) and /src/* (the Rust sources shown in the code panel).
+// Serves web/ as the site root, with /src/* mapped to the crate's src/ so the
+// code panel can fetch the Rust sources. This mirrors the GitHub Pages layout,
+// where the deploy workflow copies src/ next to the web files.
 
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const root = fileURLToPath(new URL('..', import.meta.url));
+const webRoot = fileURLToPath(new URL('.', import.meta.url));
+const crateRoot = fileURLToPath(new URL('..', import.meta.url));
 const port = Number(process.argv[2] ?? 8873);
 
 const mime = {
@@ -27,12 +29,9 @@ const mime = {
 
 createServer(async (req, res) => {
     let path = decodeURIComponent(new URL(req.url, 'http://x').pathname);
-    if (path === '/') {
-        // Relative URLs in the page must resolve under /web/.
-        res.writeHead(302, { Location: '/web/' }).end();
-        return;
-    }
-    if (path === '/web/' || path === '/web') path = '/web/index.html';
+    if (path === '/') path = '/index.html';
+    // /src/* comes from the crate sources; everything else from web/.
+    const root = path.startsWith('/src/') ? crateRoot : webRoot;
     const file = normalize(join(root, path));
     if (!file.startsWith(normalize(root))) {
         res.writeHead(403).end('forbidden');

@@ -261,8 +261,8 @@ async function fetchSource(path) {
 
 async function showCode(sample, tab) {
     const tabs = [
-        { label: sample.file, path: `../src/samples/${sample.file}` },
-        { label: 'plato.rs (generated)', path: '../src/plato.rs' },
+        { label: sample.file, path: `./src/samples/${sample.file}` },
+        { label: 'plato.rs (generated)', path: './src/plato.rs' },
     ];
     codeTabs.replaceChildren(...tabs.map((t, i) => {
         const b = document.createElement('button');

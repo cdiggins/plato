@@ -1,0 +1,68 @@
+# Builds and deploys the demo site to GitHub Pages:
+#
+#   /            demos/site/index.html         (landing page)
+#   /typescript/ demos/typescript/geometry-samples  (Vite build)
+#   /rust/       demos/rust/geometry-samples/web + src  (static; wasm is checked in)
+#
+# Enable in repo settings: Settings -> Pages -> Source: "GitHub Actions".
+
+name: Deploy demos to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: demos/typescript/geometry-samples/package-lock.json
+
+      - name: Build TypeScript demo
+        working-directory: demos/typescript/geometry-samples
+        run: |
+          npm ci
+          npm test
+          npm run build -- --base=/${{ github.event.repository.name }}/typescript/
+
+      - name: Assemble site
+        run: |
+          mkdir -p _site/rust/src
+          cp demos/site/index.html _site/
+          cp -r demos/typescript/geometry-samples/dist/. _site/typescript/
+          cp demos/rust/geometry-samples/web/index.html \
+             demos/rust/geometry-samples/web/main.js \
+             demos/rust/geometry-samples/web/geometry_samples.wasm \
+             _site/rust/
+          cp demos/rust/geometry-samples/src/plato.rs _site/rust/src/
+          cp -r demos/rust/geometry-samples/src/samples _site/rust/src/samples
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

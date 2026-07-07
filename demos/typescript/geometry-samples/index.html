@@ -33,12 +33,19 @@
             padding: 12px 0;
         }
         #sidebar h1 {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 600;
-            margin: 4px 16px 12px;
-            color: var(--accent);
+            margin: 4px 16px 2px;
+            color: var(--text);
         }
-        #sidebar .subtitle { margin: -8px 16px 12px; font-size: 12px; color: var(--dim); }
+        #sidebar h1 a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        #sidebar h1 a:hover { text-decoration: underline; }
+        #sidebar .subtitle { margin: 0 16px 12px; font-size: 12px; color: var(--dim); }
+        #sidebar .subtitle a { color: var(--dim); text-decoration: underline; text-underline-offset: 2px; }
+        #sidebar .subtitle a:hover { color: var(--text); }
         #sample-list button {
             display: block;
             width: 100%;
@@ -110,8 +117,10 @@
 <body>
 <div id="app">
     <aside id="sidebar">
-        <h1>Geometry Samples</h1>
-        <div class="subtitle">Algorithms &amp; data structures, rendered with Three.js</div>
+        <h1><a href="https://github.com/cdiggins/plato">Plato</a> &middot; Geometry Samples</h1>
+        <div class="subtitle">Geometry written once in <a href="https://github.com/cdiggins/plato">Plato</a>,
+            compiled to <a href="https://www.typescriptlang.org">TypeScript</a>,
+            rendered with <a href="https://threejs.org">Three.js</a>.</div>
         <nav id="sample-list"></nav>
     </aside>
     <main id="main">
