@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -9,10 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
-    <ProjectReference Include="..\..\parakeet\Parakeet\Ara3D.Parakeet.csproj" />
-    <ProjectReference Include="..\..\..\src\Ara3D.Logging\Ara3D.Logging.csproj" />
-    <ProjectReference Include="..\..\..\src\Ara3D.Utils\Ara3D.Utils.csproj" />
+    <ProjectReference Include="..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
+    <ProjectReference Include="..\parakeet\Parakeet\Ara3D.Parakeet.csproj" />
+    <ProjectReference Include="..\..\..\ara3d-sdk\src\Ara3D.Logging\Ara3D.Logging.csproj" />
+    <ProjectReference Include="..\..\..\ara3d-sdk\src\Ara3D.Utils\Ara3D.Utils.csproj" />
     <ProjectReference Include="..\Plato.AST\Plato.AST.csproj" />
     <ProjectReference Include="..\Plato.CSharpWriter\Plato.CSharpWriter.csproj" />
     <ProjectReference Include="..\Plato.TypeScriptWriter\Plato.TypeScriptWriter.csproj" />

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -6,6 +6,6 @@
     <StartupObject>PlatoIntrinsics.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\parakeet\Parakeet\Parakeet.csproj" />
+    <ProjectReference Include="..\parakeet\Parakeet\Parakeet.csproj" />
   </ItemGroup>
 </Project>

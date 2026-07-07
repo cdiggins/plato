@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -9,9 +9,9 @@
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Ara3D.Logging\Ara3D.Logging.csproj" />
-    <ProjectReference Include="..\..\..\src\Ara3D.Utils\Ara3D.Utils.csproj" />
-    <ProjectReference Include="..\..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
+    <ProjectReference Include="..\..\..\ara3d-sdk\src\Ara3D.Logging\Ara3D.Logging.csproj" />
+    <ProjectReference Include="..\..\..\ara3d-sdk\src\Ara3D.Utils\Ara3D.Utils.csproj" />
+    <ProjectReference Include="..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
     <ProjectReference Include="..\Plato.CSharpWriter\Plato.CSharpWriter.csproj" />
     <ProjectReference Include="..\PlatoCompiler\Plato.Compiler.csproj" />
   </ItemGroup>

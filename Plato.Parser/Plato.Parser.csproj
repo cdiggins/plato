@@ -1,12 +1,12 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\parakeet\Parakeet.Cst\Ara3D.Parakeet.Cst.csproj" />
-    <ProjectReference Include="..\..\parakeet\Parakeet\Ara3D.Parakeet.csproj" />
-    <ProjectReference Include="..\..\..\src\Ara3D.Logging\Ara3D.Logging.csproj" />
+    <ProjectReference Include="..\parakeet\Parakeet.Cst\Ara3D.Parakeet.Cst.csproj" />
+    <ProjectReference Include="..\parakeet\Parakeet\Ara3D.Parakeet.csproj" />
+    <ProjectReference Include="..\..\..\ara3d-sdk\src\Ara3D.Logging\Ara3D.Logging.csproj" />
   </ItemGroup>
 </Project>
