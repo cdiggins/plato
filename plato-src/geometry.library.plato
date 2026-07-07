@@ -30,6 +30,7 @@ library Geometry
     RayTo(a: Point3D, b: Point3D): Ray3D => (a, b - a);
     RayFrom(a: Point3D, dir: Vector3): Ray3D => (a, dir);
     Subtract(p1: Point3D, p2: Point3D): Vector3 => p1.Vector3 - p2.Vector3;
+    Subtract(p: Point3D, v: Vector3): Point3D => p.Vector3 - v;
     Add(p1: Point3D, p2: Vector3): Point3D => p1.Vector3 + p2;
     Add(p1: Point3D, p2: Point3D): Point3D => p1.Vector3 + p2.Vector3;
     Multiply(a: Point3D, n: Number): Point3D => (a.X * n, a.Y * n, a.Z * n);
@@ -88,7 +89,7 @@ library Geometry
 	//==
     // Triangle3D functions
 
-    Area(t: Triangle3D): Number => t.CrossProductA.Magnitude;
+    Area(t: Triangle3D): Number => t.CrossProductA.Magnitude.Half;
     CrossProductA(t: Triangle3D): Vector3 => (t.B - t.A).Cross(t.C - t.A);
     Flip(t: Triangle3D): Triangle3D => (t.C, t.B, t.A);        
     Normal(t: Triangle3D): Vector3 => t.CrossProductA.Normalize;

@@ -1,7 +1,7 @@
 library Angles
 {
 	Turns(x: Integer): Angle => x.Number.Turns;
-	Degrees(x: Integer): Angle => x.Number.Turns;
+	Degrees(x: Integer): Angle => x.Number.Degrees;
 	Gradians(x: Integer): Angle => x.Number.Gradians;
 	ArcMinutes(x: Integer): Angle => x.Number.ArcMinutes;
 	ArcSeconds(x: Integer): Angle => x.Number.ArcSeconds;
