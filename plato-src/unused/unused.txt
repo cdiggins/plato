@@ -1,0 +1,61 @@
+
+// A length measurement 
+type Length
+    implements IMeasure
+{
+    Meters: Number;
+}
+
+type Mass
+    implements IMeasure
+{
+    Kilograms: Number;
+}
+
+type Temperature
+    implements IMeasure
+{
+    Celsius: Number;
+}
+
+
+// Unix date-time representation: Number of non-leap seconds elapsed since January 1st, 1970.
+// https://en.wikipedia.org/wiki/Unix_time
+type DateTime
+    implements ICoordinate
+{
+    Value: Number; 
+}
+
+
+// A fraction of two integer
+type Rational 
+	implements IValue
+{
+	Numerator: Integer;
+	Denominator: Integer;
+}
+
+// An arbitrary fraction 
+type Fraction
+    implements IValue
+{
+    Numerator: Number;
+    Denominator: Number;
+}
+
+
+// A value in the range of 0 to 1 that represents the probability of an occurence
+type Probability
+    implements IMeasure
+{
+    Value: Number;
+}
+
+// A two dimensional value, have has a real and imaginary component. 
+type Complex
+    implements IVector
+{
+    Real: Number;
+    Imaginary: Number;
+}

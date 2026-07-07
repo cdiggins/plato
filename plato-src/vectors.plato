@@ -1,0 +1,190 @@
+library Vectors
+{
+    //==
+    // Vector2 functions
+    
+    Vector2(s: Number): Vector2 => (s, s);    
+    Vector3(v: Vector2): Vector3  => v.ToVector3(0.0);
+    Vector4(v: Vector2): Vector4  => v.ToVector4(0.0, 0.0);
+    ToVector3(v: Vector2, z: Number): Vector3 => (v.X, v.Y, z);    
+    ToVector4(v: Vector2, z: Number, w: Number): Vector4 => (v.X, v.Y, z, w);
+
+    UnitX(_: Vector2): Vector2 => (1.0, 0.0);
+    UnitY(_: Vector2): Vector2 => (0.0, 1.0);
+    
+    XVector2(n: Number): Vector2 => (n, 0.0);
+    YVector2(n: Number): Vector2 => (0.0, n);
+
+    Zero2(): Vector2 => (0.0, 0.0);
+    One2(): Vector2 => (1.0, 1.0);
+
+    //==
+    // Vector3 Functions 
+
+    Vector3(s: Number): Vector3 => (s, s, s);
+    Vector4(v: Vector3): Vector4 => v.ToVector4(0.0);
+    ToVector4(v: Vector3, w: Number): Vector4 => (v.X, v.Y, v.Z, w);
+
+    XZY(v: Vector3): Vector3 => (v.X, v.Z, v.Y);    
+    YXZ(v: Vector3): Vector3 => (v.Y, v.X, v.Z);    
+    YZX(v: Vector3): Vector3 => (v.Y, v.Z, v.X);    
+    ZXY(v: Vector3): Vector3 => (v.Z, v.X, v.Y);    
+    ZYX(v: Vector3): Vector3 => (v.Z, v.Y, v.X);    
+
+    XY(v: Vector3): Vector2 => (v.X, v.Y);    
+    YX(v: Vector3): Vector2 => (v.Y, v.X);
+    XZ(v: Vector3): Vector2 => (v.X, v.Z);
+    ZX(v: Vector3): Vector2 => (v.Z, v.X);
+    YZ(v: Vector3): Vector2 => (v.Y, v.Z);
+    ZY(v: Vector3): Vector2 => (v.Z, v.Y);
+    XX(v: Vector3): Vector2 => (v.X, v.X);
+    YY(v: Vector3): Vector2 => (v.Y, v.Y);
+    ZZ(v: Vector3): Vector2 => (v.Z, v.Z);
+    
+    Project(v: Vector3, p: Plane): Vector3  => v - p.Normal * p.Normal.Dot(v);
+    MixedProduct(a: Vector3, b: Vector3, c: Vector3): Number => a.Cross(b).Dot(c);
+    
+    To2D(v: Vector3): Vector2  => (v.X, v.Y);    
+
+    UnitX(_: Vector3): Vector3 => (1.0, 0.0, 0.0);    
+    UnitY(_: Vector3): Vector3 => (0.0, 1.0, 0.0);    
+    UnitZ(_: Vector3): Vector3 => (0.0, 0.0, 1.0);
+
+    XVector3(n: Number): Vector3 => (n, 0.0, 0.0);
+    YVector3(n: Number): Vector3 => (0.0, n, 0.0);
+    ZVector3(n: Number): Vector3 => (0.0, 0.0, n);
+
+    Zero3(): Vector3 => (0.0, 0.0, 0.0);
+    One3(): Vector3 => (1.0, 1.0, 1.0);
+
+    //==
+    // Vector 4 functions 
+
+    Vector4(s: Number): Vector4 => (s, s, s, s);    
+    XYZ(v: Vector4): Vector3 => (v.X, v.Y, v.Z);
+  
+    UnitX(_: Vector4): Vector4 => (1.0, 0.0, 0.0, 0.0);    
+    UnitY(_: Vector4): Vector4 => (0.0, 1.0, 0.0, 0.0);    
+    UnitZ(_: Vector4): Vector4 => (0.0, 0.0, 1.0, 0.0);    
+    UnitW(_: Vector4): Vector4 => (0.0, 0.0, 0.0, 1.0);
+
+    XVector4(n: Number): Vector4 => (n, 0.0, 0.0, 0.0);
+    YVector4(n: Number): Vector4 => (0.0, n, 0.0, 0.0);
+    ZVector4(n: Number): Vector4 => (0.0, 0.0, n, 0.0);
+    WVector4(n: Number): Vector4 => (0.0, 0.0, 0.0, n);
+
+    Zero4(): Vector4 => (0.0, 0.0, 0.0, 0.0);
+    One4(): Vector4 => (1.0, 1.0, 1.0, 1.0);
+
+    //==
+
+    Vector8(s: Number): Vector8 => (s, s, s, s, s, s, s, s);
+    Vector8(v1: Vector4, v2: Vector4): Vector8 => (v1.X, v1.Y, v1.Z, v1.W, v2.X, v2.Y, v2.Z, v2.W);
+    
+    //==
+    // Matrix operations   
+
+    M11(m: Matrix4x4): Number => m.Row1.X;
+    M12(m: Matrix4x4): Number => m.Row1.Y;
+    M13(m: Matrix4x4): Number => m.Row1.Z;
+    M14(m: Matrix4x4): Number => m.Row1.W;
+
+    M21(m: Matrix4x4): Number => m.Row2.X;
+    M22(m: Matrix4x4): Number => m.Row2.Y;
+    M23(m: Matrix4x4): Number => m.Row2.Z;
+    M24(m: Matrix4x4): Number => m.Row2.W;
+    
+    M31(m: Matrix4x4): Number => m.Row3.X;
+    M32(m: Matrix4x4): Number => m.Row3.Y;
+    M33(m: Matrix4x4): Number => m.Row3.Z;
+    M34(m: Matrix4x4): Number => m.Row3.W;
+    
+    M41(m: Matrix4x4): Number => m.Row4.X;
+    M42(m: Matrix4x4): Number => m.Row4.Y;
+    M43(m: Matrix4x4): Number => m.Row4.Z;
+    M44(m: Matrix4x4): Number => m.Row4.W;
+
+    Column1(m: Matrix4x4): Vector4 
+        => (M11, M21, M31, M41);
+    
+    Column2(m: Matrix4x4): Vector4 
+        => (M12, M22, M32, M42);
+    
+    Column3(m: Matrix4x4): Vector4 
+        => (M13, M23, M33, M43);
+    
+    Column4(m: Matrix4x4): Vector4 
+        => (M14, M24, M34, M44);
+
+    Transform(m: Matrix4x4, v: Vector3): Vector3
+        => v.Transform(m);
+    
+    TransformNormal(m: Matrix4x4, v: Vector3): Vector3
+        => v.TransformNormal(m);
+
+    Multiply(m: Matrix4x4, v: Vector3): Vector3
+        => m.Transform(v);
+
+    Identity(_: Matrix4x4): Matrix4x4 
+        => (Vector4.UnitX, Vector4.UnitY, Vector4.UnitZ, Vector4.UnitW);
+
+    //==
+    // Quaternion functions
+
+    Transform(q: Quaternion, v: Vector3): Vector3
+        => v.Transform(q);
+    
+    Multiply(q: Quaternion, v: Vector3): Vector3
+        => q.Transform(v);
+
+    Matrix(q: Quaternion): Matrix4x4
+        => q;
+
+    Matrix4x4(q: Quaternion): Matrix4x4
+        => Matrix4x4.CreateFromQuaternion(q);
+
+    Identity(_: Quaternion): Quaternion 
+        => (0.0, 0.0, 0.0, 1.0);        
+
+    //==
+    // Generic vector functions
+
+    Dot(v1: IVector, v2: IVector): Number 
+        => (v1 * v2).Sum;  
+    
+    Normalize(x: IVector): IVector 
+        => x.MagnitudeSquared > 0 ? x / x.Magnitude : Zero;
+    
+    Reflect(v: IVector, normal: IVector): IVector 
+        => v - normal * v.Dot(normal) * 2.0;
+    
+    Project(v: IVector, other: IVector): IVector 
+        => other * v.Dot(other);
+    
+    Distance(a: IVector, b: IVector): Number 
+        => (b - a).Magnitude;
+    
+    DistanceSquared(a: IVector, b: IVector): Number 
+        => (b - a).MagnitudeSquared;
+    
+    Angle(a: IVector, b: IVector): Angle 
+        => (a.Dot(b) / (a.Magnitude * b.Magnitude)).Acos;     
+    
+    IsParallel(a: IVector, b: IVector): Boolean 
+        => a.Dot(b).Abs >= (1.0 - Epsilon);
+
+    PlusOne(x: IVector): IVector 
+        => x + One;
+
+    MinusOne(x: IVector): IVector 
+        => x - One;    
+
+    FromOne(x: IVector): IVector 
+        => -x + One;
+
+    Length(a: IVector): Number 
+        => a.Magnitude;
+    
+    LengthSquared(a: IVector): Number 
+        => a.MagnitudeSquared;
+}

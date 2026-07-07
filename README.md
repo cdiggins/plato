@@ -87,7 +87,7 @@ The restrictions are the point. No mutation, no `this`, no visibility rules, no 
 
 ## Where it shines, and where it doesn't
 
-Plato is built for pure computational kernels over small value types: vector and matrix algebra, parametric curves and surfaces, signed distance fields, bounds and intervals, color spaces, transforms, meshes, procedural generation. The standard library in [`/plato-src`](../../plato-src) reads remarkably close to the math it implements — curve definitions are one line from the textbook formulas they cite.
+Plato is built for pure computational kernels over small value types: vector and matrix algebra, parametric curves and surfaces, signed distance fields, bounds and intervals, color spaces, transforms, meshes, procedural generation. The standard library in [`plato-src`](plato-src) reads remarkably close to the math it implements — curve definitions are one line from the textbook formulas they cite.
 
 It is deliberately **not** a general-purpose language. There are no strings to speak of, no I/O, no mutation, no application state. Stateful systems, UI, protocols, and algorithms that are naturally imperative belong in the host language; Plato is the layer the host calls into.
 
@@ -109,10 +109,10 @@ As agents write more of the world's code, the premium shifts from languages that
 
 ## Status
 
-The language design is stabilizing after a few years of iteration. The Plato-to-C# compiler is in daily production use: it generates the geometry library consumed by the Ara 3D SDK ([`/src/Plato.Generated`](../../src/Plato.Generated)). Honest caveats:
+The language design is stabilizing after a few years of iteration. The Plato-to-C# compiler is in daily production use: it generates the geometry library consumed by the Ara 3D SDK (`ara3d-sdk/src/Plato.Generated` when built inside the [Ara 3D studio](https://github.com/ara3d/studio) monorepo). Honest caveats:
 
-- One backend exists today (C#). JavaScript, Rust, and GLSL are planned, not shipped.
-- There is no standalone toolchain yet; the compiler builds as part of the Ara 3D SDK.
+- One backend exists today (C#). JavaScript and Rust writers exist; GLSL is planned.
+- The compiler builds standalone in this repository; the studio monorepo consumes it via `submodules/Plato`.
 - Type errors currently surface through the C# compiler against generated code. A native type checker is the top roadmap item.
 - A visual data-flow syntax (**PlatoFlow**) is under development.
 

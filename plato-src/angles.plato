@@ -1,0 +1,22 @@
+library Angles
+{
+	Turns(x: Integer): Angle => x.Number.Turns;
+	Degrees(x: Integer): Angle => x.Number.Turns;
+	Gradians(x: Integer): Angle => x.Number.Gradians;
+	ArcMinutes(x: Integer): Angle => x.Number.ArcMinutes;
+	ArcSeconds(x: Integer): Angle => x.Number.ArcSeconds;
+
+	Turns(x: Number): Angle => (x * TwoPi);
+	Degrees(x: Number): Angle => (x / 360.0).Turns;
+	Gradians(x: Number): Angle => (x / 400.0).Turns;
+	ArcMinutes(x: Number): Angle => (x * 60.0).Degrees;
+	ArcSeconds(x: Number): Angle => (x * 60.0).ArcMinutes;
+
+	Turns(x: Angle): Number => x.Radians / TwoPi;
+	Degrees(x: Angle): Number => x.Turns * 360.0;
+	Gradians(x: Angle): Number => x.Turns * 400.0;
+
+    Sec(x: Angle): Number => x.Cos.Reciprocal;
+    Csc(x: Angle): Number => x.Sin.Reciprocal;
+    Cot(x: Angle): Number => x.Tan.Reciprocal;
+}

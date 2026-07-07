@@ -1,0 +1,90 @@
+
+// Arrays provide a count and support the indexing operator [] 
+interface IArray<T>
+{
+    Count(xs: Self): Integer;
+    At(xs: Self, n: Integer): T;
+}
+
+// Extends the IArray interface with rows and columns. 
+interface IArray2D<T>
+    inherits IArray<T>
+{ 
+    NumRows(xs: Self): Integer;
+    NumColumns(xs: Self): Integer;
+    At(xs: Self, column: Integer, row: Integer): T;
+}
+
+// Extends the IArray interface with rows, columns, and layers. 
+interface IArray3D<T>
+    inherits IArray<T>
+{ 
+    NumRows(xs: Self): Integer;
+    NumColumns(xs: Self): Integer;
+    NumLayers(xs: Self): Integer;
+    At(xs: Self, column: Integer, row: Integer, layer: Integer): T;
+}
+
+type ArrayHelpers 
+{ }
+
+library ArrayLibrary
+{
+    //==
+    // ArrayLike functions
+
+    At(xs: IArrayLike<$T>, n: Integer): $T
+        => xs.Components[n];
+
+    Reverse(xs: IArrayLike<$T>): IArrayLike<$T>
+        => Self.CreateFromComponents(xs.Components.Reverse());
+              
+    MapComponents(x: IArrayLike<$T>, f: Function1<$T, $T>): IArrayLike<$T>
+        => Self.CreateFromComponents(x.Components.Map(f));
+
+    ZipComponents(a: IArrayLike<$T>, b: IArrayLike<$T>, f: Function2<$T, $T, $T>): IArrayLike<$T>
+        => Self.CreateFromComponents(a.Components.Zip(b.Components, f));
+
+    ZipComponents(a: IArrayLike<$T>, b: IArrayLike<$T>, c: IArrayLike<$T>, f: Function3<$T, $T, $T, $T>): IArrayLike<$T>
+        => Self.CreateFromComponents(a.Components.Zip(b.Components, c.Components, f));
+
+    AllZipComponents(a: IArrayLike<$T>, b: IArrayLike<$T>, f: Function2<$T, $T, Boolean>): Boolean
+        => a.Components.Zip(b.Components, f).All(x => x);
+
+    AllZipComponents(a: IArrayLike<$T>, b: IArrayLike<$T>, c: IArrayLike<$T>, f: Function3<$T, $T, $T, Boolean>): Boolean
+        => a.Components.Zip(b.Components, c.Components, f).All(x => x);
+
+    AnyZipComponents(a: IArrayLike<$T>, b: IArrayLike<$T>, f: Function2<$T, $T, Boolean>): Boolean
+        => a.Components.Zip(b.Components, f).Any(x => x);
+
+    AnyZipComponents(a: IArrayLike<$T>, b: IArrayLike<$T>, c: IArrayLike<$T>, f: Function3<$T, $T, $T, Boolean>): Boolean
+        => a.Components.Zip(b.Components, c.Components, f).Any(x => x);
+
+    AllComponents(x: IArrayLike<$T>, predicate: Function1<$T, Boolean>): Boolean
+		=> x.Components.All(predicate);
+
+    AnyComponent(x: IArrayLike<$T>, predicate: Function1<$T, Boolean>): Boolean
+		=> x.Components.Any(predicate);   
+
+    //==
+    // Specialized slices        
+    // These are defined on a static function due to the fact that they resolve to extension methods with no parameters, 
+
+    Integer2Array(_: ArrayHelpers, xs: IArray<Integer>): IArray<Integer2>
+        => xs.MapPairs((a, b) => new Integer2(a, b));
+
+    Integer3Array(_: ArrayHelpers, xs: IArray<Integer>): IArray<Integer3>
+        => xs.MapTriplets((a, b, c) => new Integer3(a, b, c));
+
+    Integer4Array(_: ArrayHelpers, xs: IArray<Integer>): IArray<Integer4>
+        => xs.MapQuartets((a, b, c, d) => new Integer4(a, b, c, d));
+
+    Vector2Array(_: ArrayHelpers, xs: IArray<Number>): IArray<Vector2>
+        => xs.MapPairs((a, b) => new Vector2(a, b));
+
+    Vector3Array(_: ArrayHelpers, xs: IArray<Number>): IArray<Vector3>
+        => xs.MapTriplets((a, b, c) => new Vector3(a, b, c));
+
+    Vector4Array(_: ArrayHelpers, xs: IArray<Number>): IArray<Vector4>
+        => xs.MapQuartets((a, b, c, d) => new Vector4(a, b, c, d));
+} 

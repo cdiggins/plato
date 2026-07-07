@@ -1,0 +1,23 @@
+library Integers
+{
+    //==
+    // Integer operations
+    
+    PlusOne(x: Integer): Integer 
+        => x + 1;
+    
+    MinusOne(x: Integer): Integer 
+        => x - 1;    
+    
+    FromOne(x: Integer): Integer 
+        => 1 - x;
+    
+    FloatDivision(x: Integer, y: Integer): Number 
+        => x.Number / y.Number;        
+	
+    Fractions(x: Integer): IArray<Number> 
+        => x.Range.Map((i) => i.FloatDivision(x - 1));
+	
+    FractionsExclusive(x: Integer): IArray<Number> 
+        => x.Range.Map((i) => i.FloatDivision(x));
+}

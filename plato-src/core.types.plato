@@ -1,0 +1,46 @@
+// A pair of integers 
+type Integer2
+    implements IValue, IArrayLike<Integer>
+{
+    A: Integer;
+    B: Integer;
+}
+
+// A tuple of 3 integers 
+type Integer3
+    implements IValue, IArrayLike<Integer>
+{
+    A: Integer;
+    B: Integer;
+    C: Integer;
+}
+
+// A tuple of 4 integers 
+type Integer4
+    implements IValue, IArrayLike<Integer>
+{
+    A: Integer;
+    B: Integer;
+    C: Integer;
+    D: Integer;
+}
+
+type Time
+    implements IMeasure
+{
+    Seconds: Number;
+}
+
+type AnglePair
+    implements IInterval<Angle>
+{
+    Start: Angle;
+    End: Angle;
+}
+
+type NumberInterval
+    implements IInterval<Number>
+{
+    Start: Number;
+    End: Number;
+}
