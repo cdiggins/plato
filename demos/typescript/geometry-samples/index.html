@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Geometry Samples</title>
+    <style>
+        :root {
+            --bg: #0f1115;
+            --panel: #161a21;
+            --panel2: #12151b;
+            --border: #262c38;
+            --text: #d6dbe4;
+            --dim: #8b93a3;
+            --accent: #4da3ff;
+        }
+        * { box-sizing: border-box; }
+        html, body { height: 100%; margin: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font: 14px/1.5 "Segoe UI", system-ui, sans-serif;
+        }
+        #app { display: flex; height: 100vh; }
+
+        /* Left pane: sample list */
+        #sidebar {
+            width: 280px;
+            flex: none;
+            background: var(--panel);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 12px 0;
+        }
+        #sidebar h1 {
+            font-size: 15px;
+            font-weight: 600;
+            margin: 4px 16px 12px;
+            color: var(--accent);
+        }
+        #sidebar .subtitle { margin: -8px 16px 12px; font-size: 12px; color: var(--dim); }
+        #sample-list button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            border-left: 3px solid transparent;
+            color: var(--text);
+            font: inherit;
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+        #sample-list button:hover { background: #1c2129; }
+        #sample-list button.active {
+            background: #1c2433;
+            border-left-color: var(--accent);
+            color: #fff;
+        }
+        #sample-list .sample-desc { display: block; font-size: 11.5px; color: var(--dim); }
+
+        /* Right pane: viewer above, code below */
+        #main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        #viewer { flex: 1 1 55%; min-height: 0; position: relative; }
+        #viewer canvas { display: block; }
+        #code-panel {
+            flex: 1 1 45%;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            border-top: 1px solid var(--border);
+            background: var(--panel2);
+        }
+        #code-header {
+            flex: none;
+            padding: 8px 16px 4px;
+            font-size: 12.5px;
+            color: var(--dim);
+        }
+        #code-header b { color: var(--text); }
+        #code-tabs {
+            flex: none;
+            display: flex;
+            gap: 2px;
+            padding: 0 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        #code-tabs button {
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--dim);
+            font: 12px Consolas, "Cascadia Code", monospace;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        #code-tabs button:hover { color: var(--text); }
+        #code-tabs button.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        #code-scroll { flex: 1; overflow: auto; }
+        #code-scroll pre { margin: 0; padding: 12px 16px; }
+        #code-scroll code {
+            font: 12.5px/1.55 Consolas, "Cascadia Code", monospace;
+            background: transparent !important;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <aside id="sidebar">
+        <h1>Geometry Samples</h1>
+        <div class="subtitle">Algorithms &amp; data structures, rendered with Three.js</div>
+        <nav id="sample-list"></nav>
+    </aside>
+    <main id="main">
+        <div id="viewer"></div>
+        <div id="code-panel">
+            <div id="code-header"></div>
+            <div id="code-tabs"></div>
+            <div id="code-scroll"><pre><code id="code" class="language-typescript"></code></pre></div>
+        </div>
+    </main>
+</div>
+<script type="module" src="/src/app/main.ts"></script>
+</body>
+</html>

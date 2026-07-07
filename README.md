@@ -111,12 +111,19 @@ As agents write more of the world's code, the premium shifts from languages that
 
 The language design is stabilizing after a few years of iteration. The Plato-to-C# compiler is in daily production use: it generates the geometry library consumed by the Ara 3D SDK (`ara3d-sdk/src/Plato.Generated` when built inside the [Ara 3D studio](https://github.com/ara3d/studio) monorepo). Honest caveats:
 
-- One backend exists today (C#). JavaScript and Rust writers exist; GLSL is planned.
+- One backend exists today (C#). TypeScript and Rust writers ship with browser demos under [`demos/`](demos/).
 - The compiler builds standalone in this repository; the studio monorepo consumes it via `submodules/Plato`.
 - Type errors currently surface through the C# compiler against generated code. A native type checker is the top roadmap item.
 - A visual data-flow syntax (**PlatoFlow**) is under development.
 
 The compiler is open source and was built alongside the [Parakeet parsing library](https://github.com/ara3d/parakeet).
+
+## Demos
+
+Multi-target geometry browser demos live in [`demos/`](demos/): one shared
+[`geometry.plato`](demos/plato-src/geometry.plato), a TypeScript + Three.js
+sample browser, and a Rust crate with a WebAssembly demo. See
+[`demos/README.md`](demos/README.md).
 
 ## Contributing
 
