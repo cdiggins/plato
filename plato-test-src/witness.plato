@@ -1,0 +1,231 @@
+// Witness (formula-vs-citation) tests for the Plato conformance harness
+// (roadmap Phase 1.7). NOT part of the production API: lives in plato-test-src,
+// merged with plato-src only by tools\regen-conformance.ps1.
+//
+// Convention: every function prefixed with Witness_ takes no arguments and
+// returns Boolean. The C# emitter places all no-argument library functions into
+// the generated `Constants` static class; the reflection runner evaluates every
+// Witness_ property there. Each witness checks a hand-computed value from the
+// formula's citation (usually the Wikipedia page referenced in plato-src).
+//
+// Several witnesses intentionally FAIL against the current frozen library: they
+// document the verified bugs of docs/plato-library-review.md par.1 and are recorded
+// in the KnownFailures.json manifest until the Phase 4 bug-fix wave.
+library WitnessTests
+{
+    //==
+    // Unit circle and angle conversions
+
+    // cos(0) = 1, sin(0) = 0
+    Witness_UnitCircleAtZero(): Boolean
+        => 0.0.Turns.UnitCircle.X.LawEq(1.0) && 0.0.Turns.UnitCircle.Y.LawEq(0.0);
+
+    // Quarter turn: cos(pi/2) = 0, sin(pi/2) = 1
+    Witness_UnitCircleAtQuarterTurn(): Boolean
+        => 0.25.Turns.UnitCircle.X.LawEq(0.0) && 0.25.Turns.UnitCircle.Y.LawEq(1.0);
+
+    // Half turn: cos(pi) = -1, sin(pi) = 0
+    Witness_UnitCircleAtHalfTurn(): Boolean
+        => 0.5.Turns.UnitCircle.X.LawEq(-1.0) && 0.5.Turns.UnitCircle.Y.LawEq(0.0);
+
+    // 90 degrees is a quarter turn
+    Witness_Degrees90IsQuarterTurn(): Boolean
+        => 90.0.Degrees.Turns.LawEq(0.25);
+
+    // Integer degrees overload agrees (review par.1.3, fixed by Phase 0.3 drift reconciliation)
+    Witness_IntegerDegrees90IsQuarterTurn(): Boolean
+        => 90.Degrees.Turns.LawEq(0.25);
+
+    // Half a turn is 180 degrees
+    Witness_HalfTurnIs180Degrees(): Boolean
+        => 0.5.Turns.Degrees.LawEq(180.0);
+
+    // 100 gradians is a quarter turn
+    Witness_Gradians100IsQuarterTurn(): Boolean
+        => 100.0.Gradians.Turns.LawEq(0.25);
+
+    // 60 arc-minutes = 1 degree
+    Witness_ArcMinutes60IsOneDegree(): Boolean
+        => 60.0.ArcMinutes.Degrees.LawEq(1.0);
+
+    //==
+    // Constants (review par.1.2)
+
+    // Golden ratio = (1 + sqrt 5)/2 ~ 1.6180339887
+    // KNOWN FAIL: precedence bug computes 1 + sqrt(5)/2 ~ 2.118 (review par.1.2)
+    Witness_GoldenRatio(): Boolean
+        => GoldenRatio.LawEq(1.6180339887);
+
+    // MinNumber should be less than MaxNumber
+    // KNOWN FAIL: the two constants have swapped signs (review par.1.2)
+    Witness_MinNumberLessThanMaxNumber(): Boolean
+        => MinNumber < MaxNumber;
+
+    // sqrt(2)^2 = 2
+    Witness_SqrtTwoSquared(): Boolean
+        => SqrtTwo.Sqr.LawEq(2.0);
+
+    // Pi
+    Witness_PiIsCircleConstant(): Boolean
+        => Pi.LawEq(3.14159265);
+
+    //==
+    // Interpolation and easing (review par.1.4)
+
+    Witness_LerpMidpoint(): Boolean
+        => 2.0.Lerp(4.0, 0.5).LawEq(3.0);
+
+    Witness_LerpQuarter(): Boolean
+        => 0.0.Lerp(8.0, 0.25).LawEq(2.0);
+
+    // SmoothStep(x) = 3x^2 - 2x^3: 0 -> 0, 0.5 -> 0.5, 1 -> 1
+    Witness_SmoothStepAtZero(): Boolean
+        => 0.0.Vector2.SmoothStep.X.LawEq(0.0);
+
+    Witness_SmoothStepAtHalf(): Boolean
+        => 0.5.Vector2.SmoothStep.X.LawEq(0.5);
+
+    Witness_SmoothStepAtOne(): Boolean
+        => 1.0.Vector2.SmoothStep.X.LawEq(1.0);
+
+    // SmootherStep(x) = 6x^5 - 15x^4 + 10x^3: 0 -> 0, 0.5 -> 0.5, 1 -> 1
+    // KNOWN FAIL at 0 and 0.5: body computes 6x^4 - 15x^3 + 10 (review par.1.4)
+    Witness_SmootherStepAtZero(): Boolean
+        => 0.0.Vector2.SmootherStep.X.LawEq(0.0);
+
+    Witness_SmootherStepAtHalf(): Boolean
+        => 0.5.Vector2.SmootherStep.X.LawEq(0.5);
+
+    Witness_SmootherStepAtOne(): Boolean
+        => 1.0.Vector2.SmootherStep.X.LawEq(1.0);
+
+    // Barycentric(v1, v2, v3, (0,0)) must be v1
+    // KNOWN FAIL: parenthesization collapses the first term to v2*u, dropping v1 (review par.1.4)
+    Witness_BarycentricAtOriginIsFirstVertex(): Boolean
+        => new Vector2(3.0, 5.0).Barycentric(new Vector2(7.0, 11.0), new Vector2(13.0, 17.0), new Vector2(0.0, 0.0))
+            .LawEq(new Vector2(3.0, 5.0));
+
+    // Barycentric(v1, v2, v3, (1,0)) must be v2
+    Witness_BarycentricAtUIsSecondVertex(): Boolean
+        => new Vector2(3.0, 5.0).Barycentric(new Vector2(7.0, 11.0), new Vector2(13.0, 17.0), new Vector2(1.0, 0.0))
+            .LawEq(new Vector2(7.0, 11.0));
+
+    //==
+    // Bezier / spline formulas (review par.2.2)
+
+    // Quadratic Bezier at t=0.5 is 0.25a + 0.5b + 0.25c
+    Witness_QuadraticBezierMidpoint(): Boolean
+        => new Vector2(0.0, 0.0).QuadraticBezier(new Vector2(2.0, 4.0), new Vector2(4.0, 0.0), 0.5)
+            .LawEq(new Vector2(2.0, 2.0));
+
+    // Cubic Bezier at t=0.5 is (a + 3b + 3c + d)/8
+    Witness_CubicBezierMidpoint(): Boolean
+        => new Vector2(0.0, 0.0).CubicBezier(new Vector2(0.0, 8.0), new Vector2(8.0, 8.0), new Vector2(8.0, 0.0), 0.5)
+            .LawEq(new Vector2(4.0, 6.0));
+
+    Witness_CubicBezierStartsAtA(): Boolean
+        => new Vector2(1.0, 2.0).CubicBezier(new Vector2(3.0, 4.0), new Vector2(5.0, 6.0), new Vector2(7.0, 8.0), 0.0)
+            .LawEq(new Vector2(1.0, 2.0));
+
+    Witness_CubicBezierEndsAtD(): Boolean
+        => new Vector2(1.0, 2.0).CubicBezier(new Vector2(3.0, 4.0), new Vector2(5.0, 6.0), new Vector2(7.0, 8.0), 1.0)
+            .LawEq(new Vector2(7.0, 8.0));
+
+    // Hermite spline: H(0) = p0, H(1) = p1
+    Witness_HermiteStartsAtP0(): Boolean
+        => new Vector2(1.0, 2.0).Hermite(new Vector2(5.0, 6.0), new Vector2(1.0, 0.0), new Vector2(0.0, 1.0), 0.0)
+            .LawEq(new Vector2(1.0, 2.0));
+
+    Witness_HermiteEndsAtP1(): Boolean
+        => new Vector2(1.0, 2.0).Hermite(new Vector2(5.0, 6.0), new Vector2(1.0, 0.0), new Vector2(0.0, 1.0), 1.0)
+            .LawEq(new Vector2(5.0, 6.0));
+
+    // Catmull-Rom passes through p1 at t=0 and p2 at t=1
+    Witness_CatmullRomStartsAtP1(): Boolean
+        => new Vector2(0.0, 0.0).CatmullRom(new Vector2(1.0, 2.0), new Vector2(3.0, 4.0), new Vector2(5.0, 6.0), 0.0)
+            .LawEq(new Vector2(1.0, 2.0));
+
+    Witness_CatmullRomEndsAtP2(): Boolean
+        => new Vector2(0.0, 0.0).CatmullRom(new Vector2(1.0, 2.0), new Vector2(3.0, 4.0), new Vector2(5.0, 6.0), 1.0)
+            .LawEq(new Vector2(3.0, 4.0));
+
+    //==
+    // Curve formulas (review par.1.5)
+
+    // SineWave(x, amp, freq, phase) = amp * sin(2pi * (x*freq + phase)).
+    // At x=0.25, amp=1, freq=2: sin(2pi*0.5) = 0.
+    // KNOWN FAIL: frequency scales the output instead of the argument (review par.1.5)
+    Witness_SineWaveFrequencyScalesArgument(): Boolean
+        => 0.25.SineWave(1.0, 2.0, 0.0).LawEq(0.0);
+
+    // Lissajous y-component is sin(t*b): at t=0.1 turns, b=2 it is sin(0.2 turns) ~ 0.9510565
+    // KNOWN FAIL: y-component is constant in t (review par.1.5)
+    Witness_LissajousYVariesWithT(): Boolean
+        => 0.1.Turns.Lissajous(3.0, 2.0, 0.0.Turns).Y.LawEq(0.9510565);
+
+    // Epicycloid (R=3, r=1) at t=0: x = (R+r)cos 0 - r cos((R+r)/r * 0) = 4 - 1 = 3
+    // KNOWN FAIL: frequency ratio folded into amplitude (review par.1.5)
+    Witness_EpicycloidAtZero(): Boolean
+        => 0.0.Turns.Epicycloid(3.0, 1.0).X.LawEq(3.0);
+
+    // Hypocycloid (R=4, r=1) at t=0: x = (R-r)cos 0 + r cos((R-r)/r * 0) = 3 + 1 = 4
+    // KNOWN FAIL: frequency ratio folded into amplitude (review par.1.5)
+    Witness_HypocycloidAtZero(): Boolean
+        => 0.0.Turns.Hypocycloid(4.0, 1.0).X.LawEq(4.0);
+
+    // Rose r = cos(k*theta): k=2 at theta = pi/2 gives cos(pi) = -1
+    // KNOWN FAIL: computes k*cos(theta), a circle of radius k (review par.1.5)
+    Witness_RoseAtQuarterTurn(): Boolean
+        => 0.25.Turns.Rose(2.0).LawEq(-1.0);
+
+    // Fermat's spiral r = a*sqrt(theta): a=4 at theta = 2pi gives 4*sqrt(2pi) ~ 10.0265
+    // KNOWN FAIL: computes a linear (Archimedean) spiral (review par.1.5)
+    Witness_FermatsSpiralAtOneTurn(): Boolean
+        => 1.0.Turns.FermatsSpiral(4.0).LawEq(10.0265131);
+
+    // Archimedean spiral r = a + b*t (t in turns here): a=1, b=2 at one turn = 3
+    Witness_ArchimedeanSpiralAtOneTurn(): Boolean
+        => 1.0.Turns.ArchimedeanSpiral(1.0, 2.0).LawEq(3.0);
+
+    //==
+    // Geometry (review par.1.6)
+
+    // A 2D bounding box has exactly 4 corners
+    // KNOWN FAIL: returns 8 points, copy-pasted from the 3D version (review par.1.6)
+    Witness_Bounds2DHasFourCorners(): Boolean
+        => new Bounds2D(new Point2D(0.0, 0.0), new Point2D(1.0, 1.0)).Corners.Count == 4;
+
+    Witness_Bounds3DHasEightCorners(): Boolean
+        => new Bounds3D(new Point3D(0.0, 0.0, 0.0), new Point3D(1.0, 1.0, 1.0)).Corners.Count == 8;
+
+    // Right triangle (0,0),(1,0),(0,1) has area 1/2 (magnitude)
+    Witness_Triangle2DAreaMagnitude(): Boolean
+        => new Triangle2D(new Point2D(0.0, 0.0), new Point2D(1.0, 0.0), new Point2D(0.0, 1.0)).Area.Abs.LawEq(0.5);
+
+    // Shoelace formula: counter-clockwise triangle (0,0),(1,0),(0,1) has SIGNED area +1/2
+    Witness_Triangle2DAreaCCWIsPositive(): Boolean
+        => new Triangle2D(new Point2D(0.0, 0.0), new Point2D(1.0, 0.0), new Point2D(0.0, 1.0)).Area.LawEq(0.5);
+
+    // 3D right triangle (0,0,0),(1,0,0),(0,1,0) has area 1/2
+    // KNOWN FAIL: Area uses Vector3.Magnitude which is wrong by 1/sqrt(3) (review par.1.1)
+    Witness_Triangle3DArea(): Boolean
+        => new Triangle3D(new Point3D(0.0, 0.0, 0.0), new Point3D(1.0, 0.0, 0.0), new Point3D(0.0, 1.0, 0.0))
+            .Area.LawEq(0.5);
+
+    // Vector3 magnitude of (2,3,6) is 7
+    // KNOWN FAIL: MagnitudeSquared divides by component count (review par.1.1)
+    Witness_Vector3MagnitudeOf236Is7(): Boolean
+        => new Vector3(2.0, 3.0, 6.0).Magnitude.LawEq(7.0);
+
+    // Vector3 length of (2,3,6) is 7 (intrinsic path, correct)
+    Witness_Vector3LengthOf236Is7(): Boolean
+        => new Vector3(2.0, 3.0, 6.0).Length.LawEq(7.0);
+
+    // Unit quad has area 1
+    Witness_UnitQuadAreaIsOne(): Boolean
+        => UnitQuad.Area.Abs.LawEq(1.0);
+
+    // A circle sampled at n points yields n points
+    Witness_CirclePointsCount(): Boolean
+        => 8.CirclePoints.Count == 8;
+}

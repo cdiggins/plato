@@ -1,0 +1,115 @@
+// Algebraic law library for the Plato conformance harness (roadmap Phase 1.2).
+// NOT part of the production API: lives in plato-test-src, merged with plato-src
+// only by tools\regen-conformance.ps1.
+//
+// Convention: every function prefixed with Law_ returns Boolean and is a property
+// that must hold for ALL values of its parameter types. The compiler monomorphizes
+// each law onto every concrete type implementing the parameter interface; the
+// C# reflection runner (Ara3D.SDK.ConformanceTests) invokes each (type, law) pair
+// with seeded pseudorandom instances.
+//
+// Helper functions (no Law_ prefix) are ignored by the runner.
+library Laws
+{
+    //==
+    // Tolerance helpers.
+    // The library's own AlmostEqual is a strict relative comparison (eps = 1e-7)
+    // that admits zero error near 0. Laws compose several float operations, so we
+    // use a mixed absolute + relative tolerance instead.
+
+    LawEq(a: Number, b: Number): Boolean
+        => (a - b).Abs <= (a.Abs.Greater(b.Abs) * 1e-5 + 1e-5);
+
+    LawEq(a: IVectorLike, b: IVectorLike): Boolean
+        => a.AllZipComponents(b, (x, y) => x.LawEq(y));
+
+    //==
+    // IAdditive laws (Abelian group over addition)
+
+    Law_AddCommutes(a: IAdditive, b: IAdditive): Boolean
+        => a.Add(b).Equals(b.Add(a));
+
+    Law_SubtractIsAddNegative(a: IAdditive, b: IAdditive): Boolean
+        => a.Subtract(b).Equals(a.Add(b.Negative));
+
+    Law_NegativeIsInvolution(a: IAdditive): Boolean
+        => a.Negative.Negative.Equals(a);
+
+    Law_AddNegativeEqualsSubtractSelf(a: IAdditive): Boolean
+        => a.Add(a.Negative).Equals(a.Subtract(a));
+
+    //==
+    // IInterpolatable laws
+
+    Law_LerpStart(a: IInterpolatable, b: IInterpolatable): Boolean
+        => a.Lerp(b, 0.0).Equals(a);
+
+    Law_LerpEnd(a: IInterpolatable, b: IInterpolatable): Boolean
+        => a.Lerp(b, 1.0).Equals(b);
+
+    Law_LerpWithSelfIsSelf(a: IInterpolatable): Boolean
+        => a.Lerp(a, 0.5).Equals(a);
+
+    //==
+    // IVectorLike laws
+
+    Law_MagnitudeIsNonNegative(v: IVectorLike): Boolean
+        => v.Magnitude >= 0.0;
+
+    Law_MagnitudeIsHomogeneous(v: IVectorLike): Boolean
+        => (v * 2.0).Magnitude.LawEq(v.Magnitude.Twice);
+
+    Law_ScaleByOneIsIdentity(v: IVectorLike): Boolean
+        => (v * 1.0).Equals(v);
+
+    Law_TwiceThenHalfIsIdentity(v: IVectorLike): Boolean
+        => v.Twice.Half.Equals(v);
+
+    //==
+    // IVector laws
+
+    Law_NormalizeIsUnit(v: IVector): Boolean
+        => v.AlmostZero || v.Normalize.Length.LawEq(1.0);
+
+    Law_MagnitudeEqualsLength(v: IVector): Boolean
+        => v.Magnitude.LawEq(v.Length);
+
+    Law_MagnitudeSquaredEqualsLengthSquared(v: IVector): Boolean
+        => v.MagnitudeSquared.LawEq(v.LengthSquared);
+
+    Law_DotWithSelfIsMagnitudeSquared(v: IVector): Boolean
+        => v.Dot(v).LawEq(v.MagnitudeSquared);
+
+    Law_DistanceToSelfIsZero(v: IVector): Boolean
+        => v.Distance(v).Abs <= 1e-5;
+
+    Law_DistanceIsSymmetric(a: IVector, b: IVector): Boolean
+        => a.Distance(b).LawEq(b.Distance(a));
+
+    //==
+    // IOrderable laws
+
+    Law_OrderIsTotal(a: IOrderable, b: IOrderable): Boolean
+        => a.LessThanOrEquals(b) || b.LessThanOrEquals(a);
+
+    Law_LesserNotGreaterThanGreater(a: IOrderable, b: IOrderable): Boolean
+        => a.Lesser(b).LessThanOrEquals(a.Greater(b));
+
+    //==
+    // Angle unit round-trips (concrete laws on Number)
+
+    Law_TurnsRoundTrip(x: Number): Boolean
+        => x.Turns.Turns.LawEq(x);
+
+    Law_DegreesRoundTrip(x: Number): Boolean
+        => x.Degrees.Degrees.LawEq(x);
+
+    Law_GradiansRoundTrip(x: Number): Boolean
+        => x.Gradians.Gradians.LawEq(x);
+
+    //==
+    // Curve laws
+
+    Law_ClosedCurveCloses(c: IClosedCurve2D): Boolean
+        => c.Eval(0.0).LawEq(c.Eval(1.0));
+}
