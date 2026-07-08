@@ -79,7 +79,7 @@ namespace Ara3D.Geometry.CSharpWriter
         {
             ExtensionPlans = new Dictionary<TypeDef, ExtensionStylePlan>();
             foreach (var c in Compilation.ConcreteTypes)
-                if (!IgnoredTypes.Contains(c.TypeDef.Name) && !ExtensionPlans.ContainsKey(c.TypeDef))
+                if (!IgnoredTypes.Contains(c.TypeDef.Name) && !c.TypeDef.IsUnique && !ExtensionPlans.ContainsKey(c.TypeDef))
                     ExtensionPlans[c.TypeDef] = new ExtensionStylePlan(this, c);
 
             // Every name that is (or may be accessed as) a no-arg instance PROPERTY somewhere.
@@ -262,6 +262,18 @@ namespace Ara3D.Geometry.CSharpWriter
 
         public DirectoryPath OutputFolder { get; }
 
+        // Unique (affine) builder types (roadmap Phase 6): the Plato names map to prefixed
+        // C# type names because the handwritten intrinsics live in namespace Ara3D.Geometry,
+        // where a type literally named "List<T>" would shadow System.Collections.Generic.List
+        // for every handwritten file in that namespace (and "Buffer" would collide with
+        // System.Buffer). The generated code (which has no using for S.C.G.List) simply uses
+        // the prefixed names.
+        public static Dictionary<string, string> UniqueTypeCSharpNames = new Dictionary<string, string>()
+        {
+            { "List", "PlatoList" },
+            { "Buffer", "PlatoBuffer" },
+        };
+
         public static HashSet<string> IgnoredTypes = new HashSet<string>()
         {
             "Dynamic",
@@ -370,7 +382,10 @@ namespace Ara3D.Geometry.CSharpWriter
             foreach (var c in Compilation.ConcreteTypes)
             {
                 var name = c.TypeDef.Name;
-                if (!IgnoredTypes.Contains(name))
+                // Unique (affine) builder types are backed entirely by the handwritten
+                // Plato.Intrinsics implementations (PlatoList<T> / PlatoBuffer<T>); no
+                // struct is generated for them (roadmap Phase 6).
+                if (!IgnoredTypes.Contains(name) && !c.TypeDef.IsUnique)
                     WriteFile($"_{name}.g.cs", () => WriteTypeImplementation(c));
             }
 

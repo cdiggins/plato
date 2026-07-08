@@ -1,0 +1,26 @@
+library MathLib
+{
+    Add(x: Integer, y: Integer): Integer => x + y;
+}
+
+concept Comparable
+{
+    Compare(x: Self, y: Self): Integer;
+}
+
+type Point2D
+    implements Value
+{
+    X: Number;
+    Y: Number;
+}
+
+concept Interval<TValue, TSize>
+    where TValue: Interpolatable,
+        TValue: Betweenable,
+        TSize: ScalarArithmetic
+    inherits Equatable, Value
+{
+    Min(x: Self): TValue;
+    Max(x: Self): TValue;
+}

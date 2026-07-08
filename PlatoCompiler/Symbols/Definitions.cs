@@ -157,6 +157,12 @@ namespace Ara3D.Geometry.Compiler.Symbols
     {
         public TypeKind Kind { get; }
 
+        // Affine-type modifier (roadmap Phase 6): declared "unique type ...". Only the
+        // intrinsic builder types (List, Buffer) may carry it (see UniqueTypes); unique
+        // types are backed entirely by handwritten Plato.Intrinsics implementations and
+        // are never emitted as generated structs.
+        public bool IsUnique { get; set; }
+
         public IEnumerable<FunctionDef> Functions => Enumerable.Empty<FunctionDef>()
             .Concat(Methods.Select(m => m.Function))
             .Concat(Fields.Select(f => f.Function))

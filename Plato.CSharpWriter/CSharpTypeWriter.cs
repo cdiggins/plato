@@ -357,6 +357,13 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
             return name.Replace("IArray", "IReadOnlyList");
         }
 
+        // Unique (affine) builder types (roadmap Phase 6): List -> PlatoList, Buffer ->
+        // PlatoBuffer. Only fires when the type def is actually declared unique, so a
+        // hypothetical ordinary type named "List" would be left alone.
+        if (type.Def != null && type.Def.IsUnique
+            && CSharpWriter.UniqueTypeCSharpNames.TryGetValue(name, out var uniqueName))
+            return uniqueName;
+
         return name;
     }
 }

@@ -1,0 +1,94 @@
+// Validation algorithms for affine builder types (roadmap Phase 6).
+// NOT part of the production API: lives in plato-test-src and is merged only by
+// the conformance regeneration scripts. These functions deliberately exercise
+// the runtime-checked unique builders declared in plato-src/unique.plato:
+// append-heavy List<T>, fixed-size Buffer<T>, mutation-by-return, and Freeze().
+
+library UniqueIntrinsics
+{
+    // Growable builder: unique type List<T>.
+    Count(xs: List<$T>): Integer;
+    At(xs: List<$T>, n: Integer): $T;
+    Add(xs: List<$T>, x: $T): List<$T>;
+    AddRange(xs: List<$T>, values: IArray<$T>): List<$T>;
+    Set(xs: List<$T>, i: Integer, x: $T): List<$T>;
+    Freeze(xs: List<$T>): IArray<$T>;
+    EmptyList(xs: IArray<$T>): List<$T>;
+
+    // Fixed-size builder: unique type Buffer<T>.
+    Count(xs: Buffer<$T>): Integer;
+    At(xs: Buffer<$T>, n: Integer): $T;
+    Set(xs: Buffer<$T>, i: Integer, x: $T): Buffer<$T>;
+    Freeze(xs: Buffer<$T>): IArray<$T>;
+}
+
+library UniqueAlgorithms
+{
+    // Generic append-heavy Filter. The accumulator is a List<T> builder; Reduce
+    // returns the last builder value, and Freeze hands off the backing store.
+    Filter(xs: IArray<$T>, predicate: Function1<$T, Boolean>): IArray<$T>
+        => xs.Reduce(xs.EmptyList(), (acc, x) => predicate(x) ? acc.Add(x) : acc).Freeze();
+
+    // Ear-clipping proof slice for a convex quad: clip the two ears that make
+    // the usual triangle fan. The points parameter keeps the algorithm shape
+    // honest without depending on the existing Integer.Range emitter.
+    EarClipConvexQuad(points: IArray<Point2D>): IArray<Integer3>
+        => new List<Integer3>()
+            .Add(new Integer3(0, 1, 2))
+            .Add(new Integer3(0, 2, 3))
+            .Freeze();
+
+    // Append-heavy extrusion side faces for a closed triangle. Each 2D edge
+    // becomes a quad between the lower and upper vertex rings.
+    ExtrudeClosedTriangleSideFaces(points: IArray<Point2D>): IArray<Integer4>
+        => new List<Integer4>()
+            .Add(new Integer4(0, 1, 4, 3))
+            .Add(new Integer4(1, 2, 5, 4))
+            .Add(new Integer4(2, 0, 3, 5))
+            .Freeze();
+
+    // Fixed-size Buffer<T> validation: write lower and upper triangle rings by
+    // index, then Freeze without copying.
+    ExtrudeTriangleVertices(points: IArray<Point2D>, height: Number): IArray<Point3D>
+        => new Buffer<Point3D>(6)
+            .Set(0, new Point3D(points[0].X, points[0].Y, 0.0))
+            .Set(1, new Point3D(points[1].X, points[1].Y, 0.0))
+            .Set(2, new Point3D(points[2].X, points[2].Y, 0.0))
+            .Set(3, new Point3D(points[0].X, points[0].Y, height))
+            .Set(4, new Point3D(points[1].X, points[1].Y, height))
+            .Set(5, new Point3D(points[2].X, points[2].Y, height))
+            .Freeze();
+
+    // A small mixed List<T> smoke test for AddRange + Set.
+    ReplaceMiddle(xs: IArray<Integer>, value: Integer): IArray<Integer>
+        => new List<Integer>().AddRange(xs).Set(1, value).Freeze();
+}
+
+library UniqueWitnessTests
+{
+    Witness_UniqueListAppendFreezeCount(): Boolean
+        => new List<Integer>().Add(1).Add(2).Add(3).Freeze().Count == 3;
+
+    Witness_UniqueListAppendFreezeAt(): Boolean
+        => new List<Integer>().Add(1).Add(2).Add(3).Freeze()[1] == 2;
+
+    Witness_UniqueFilterKeepsEvenIntegers(): Boolean
+        => [1, 2, 3, 4, 5].Filter(x => x % 2 == 0).Count == 2
+            && [1, 2, 3, 4, 5].Filter(x => x % 2 == 0)[0] == 2
+            && [1, 2, 3, 4, 5].Filter(x => x % 2 == 0)[1] == 4;
+
+    Witness_UniqueEarClipConvexQuad(): Boolean
+        => [new Point2D(0.0, 0.0), new Point2D(1.0, 0.0), new Point2D(1.0, 1.0), new Point2D(0.0, 1.0)]
+            .EarClipConvexQuad().Count == 2;
+
+    Witness_UniqueExtrudeVertices(): Boolean
+        => [new Point2D(0.0, 0.0), new Point2D(1.0, 0.0), new Point2D(1.0, 1.0)]
+            .ExtrudeTriangleVertices(2.0)[4].LawEq(new Point3D(1.0, 0.0, 2.0));
+
+    Witness_UniqueExtrudeSideFaces(): Boolean
+        => [new Point2D(0.0, 0.0), new Point2D(1.0, 0.0), new Point2D(1.0, 1.0)]
+            .ExtrudeClosedTriangleSideFaces()[2].Equals(new Integer4(2, 0, 3, 5));
+
+    Witness_UniqueAddRangeAndSet(): Boolean
+        => [3, 4, 5].ReplaceMiddle(9)[1] == 9;
+}

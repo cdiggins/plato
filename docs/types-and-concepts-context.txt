@@ -1,0 +1,248 @@
+concept IArray<T>{Count(xs:Self):Integer;At(xs:Self,n:Integer):T;}
+concept IArray2D<T>inherits IArray<T>{NumRows(xs:Self):Integer;NumColumns(xs:Self):Integer;At(xs:Self,column:Integer,row:Integer):T;}
+concept IArray3D<T>inherits IArray<T>{NumRows(xs:Self):Integer;NumColumns(xs:Self):Integer;NumLayers(xs:Self):Integer;At(xs:Self,column:Integer,row:Integer,layer:Integer):T;}
+type ArrayHelpers{}
+type Color implements ICoordinate{R:Number;G:Number;B:Number;A:Number;}
+type ByteRGB implements ICoordinate{R:Integer;G:Integer;B:Integer;}
+type ByteRGBA implements ICoordinate{R:Integer;G:Integer;B:Integer;A:Integer;}
+type ColorLUV implements ICoordinate{Lightness:Number;U:Number;V:Number;}
+type ColorLAB implements ICoordinate{Lightness:Number;A:Number;B:Number;}
+type ColorLCh implements ICoordinate{Lightness:Number;ChromaHue:PolarCoordinate;}
+type ColorHSV implements ICoordinate{Hue:Angle;S:Number;V:Number;}
+type ColorHSL implements ICoordinate{Hue:Angle;Saturation:Number;Luminance:Number;}
+type ColorYCbCr implements ICoordinate{Y:Number;Cb:Number;Cr:Number;}
+type SphericalCoordinate implements ICoordinate{RadialDistance:Number;Azimuth:Angle;Polar:Angle;}
+type PolarCoordinate implements ICoordinate{Radius:Number;Angle:Angle;}
+type LogPolarCoordinate implements ICoordinate{Rho:Number;Azimuth:Angle;}
+type CylindricalCoordinate implements ICoordinate{RadialDistance:Number;Azimuth:Angle;Height:Number;}
+type HorizontalCoordinate implements ICoordinate{Altitude:Angle;Azimuth:Angle;}
+type GeoCoordinate implements ICoordinate{Latitude:Angle;Longitude:Angle;}
+type GeoCoordinateWithAltitude implements ICoordinate{ICoordinate:GeoCoordinate;Altitude:Number;}
+concept IAny{Equals(a:Self,b:Self):Boolean;}
+concept IValue{}
+concept IAdditive{Add(a:Self,b:Self):Self;Subtract(a:Self,b:Self):Self;Negative(self:Self):Self;}
+concept IScalarArithmetic{Modulo(self:Self,other:Number):Self;Divide(self:Self,other:Number):Self;Multiply(self:Self,other:Number):Self;}
+concept IInterpolatable{Lerp(a:Self,b:Self,t:Number):Self;}
+concept IArrayLike<T>{NumComponents(_:Self):Integer;Components(x:Self):IArray<T>;CreateFromComponents(_:Self,xs:IArray<T>):Self;CreateFromComponent(_:Self,x:T):Self;}
+concept IVectorLike inherits IInterpolatable,IScalarArithmetic,IArrayLike<Number>{}
+concept IMultiplicative{Multiply(a:Self,b:Self):Self;}
+concept IDivisible{Divide(a:Self,b:Self):Self;}
+concept IModulo{Modulo(a:Self,b:Self):Self;}
+concept IArithmetic inherits IAdditive,IMultiplicative,IDivisible,IModulo{}
+concept INumerical inherits IVectorLike,IArithmetic{}
+concept IVector inherits INumerical{}
+concept IOrderable{LessThanOrEquals(x:Self,y:Self):Boolean;}
+concept IInvertible{Inverse(self:Self):Self;}
+concept IMultiplicativeWithInverse inherits IMultiplicative,IInvertible{}
+concept IRealNumber inherits IInterpolatable,IArithmetic,IScalarArithmetic,IOrderable{}
+concept IWholeNumber inherits IOrderable,IArithmetic,IInterpolatable{}
+concept IMeasure inherits IVectorLike,IOrderable{}
+concept ICoordinate{}
+concept IDifference<T>{Add(x:Self,amount:T):Self;Subtract(x:Self,amount:T):Self;Subtract(x:Self,y:Self):T;}
+concept IBoolean{And(a:Self,b:Self):Self;Or(a:Self,b:Self):Self;Not(a:Self):Self;}
+concept IInterval<T>where T:IVectorLike inherits IValue{Start(x:Self):T;End(x:Self):T;}
+concept IBounds<TValue,TDelta>where T:IVectorLike,T:IDifference<TDelta>inherits IValue{Min(x:Self):TValue;Max(x:Self):TValue;}
+type Integer2 implements IValue,IArrayLike<Integer>{A:Integer;B:Integer;}
+type Integer3 implements IValue,IArrayLike<Integer>{A:Integer;B:Integer;C:Integer;}
+type Integer4 implements IValue,IArrayLike<Integer>{A:Integer;B:Integer;C:Integer;D:Integer;}
+type Time implements IMeasure{Seconds:Number;}
+type AnglePair implements IInterval<Angle>{Start:Angle;End:Angle;}
+type NumberInterval implements IInterval<Number>{Start:Number;End:Number;}
+concept IRealFunction{Eval(f:Self,x:Number):Number;}
+type LinearEquation implements IRealFunction{Slope:Number;YIntercept:Number;}
+type Quadratic implements IRealFunction{A:Number;B:Number;C:Number;}
+type Cubic implements IRealFunction{A:Number;B:Number;C:Number;D:Number;}
+type Parabola implements IRealFunction,IOpenShape{}
+type SineWave implements IRealFunction,IOpenShape{Amplitude:Number;Frequency:Number;Phase:Number;}
+type Spiral implements IOpenCurve2D{Radius1:Number;Radius2:Number;NumTurns:Number;}
+type QuadraticBezier2D implements IOpenCurve2D{A:Point2D;B:Point2D;C:Point2D;}
+type CubicBezier2D implements IOpenCurve2D{A:Point2D;B:Point2D;C:Point2D;D:Point2D;}
+concept IAngularCurve2D inherits ICurve2D{Eval(curve:Self,t:Angle):Point2D;}
+type Circle implements IAngularCurve2D,IClosedCurve2D{Center:Point2D;Radius:Number;}
+type Ellipse implements IAngularCurve2D,IClosedCurve2D{Center:Point2D;Size:Vector2;}
+type Epicycloid implements IAngularCurve2D,IOpenShape{Radius1:Number;Radius2:Number;}
+type Hypocycloid implements IAngularCurve2D,IOpenShape{Radius1:Number;Radius2:Number;}
+type Epitrochoid implements IAngularCurve2D,IOpenShape{Radius1:Number;Radius2:Number;Dist:Number;}
+type Hypotrochoid implements IAngularCurve2D,IOpenShape{Radius1:Number;Radius2:Number;Dist:Number;}
+type ButterflyCurve implements IAngularCurve2D,IOpenShape{}
+type Lissajous implements IAngularCurve2D,IOpenShape{Delta:Angle;A:Number;B:Number;}
+concept IPolarCurve inherits IAngularCurve2D{GetRadius(curve:Self,t:Angle):Number;}
+type CycloidOfCeva implements IPolarCurve,IOpenShape{}
+type Limacon implements IPolarCurve,IOpenShape{A:Number;B:Number;}
+type Cardoid implements IPolarCurve,IClosedShape{}
+type Rose implements IPolarCurve,IClosedShape{K:Integer;}
+type ArchimedeanSpiral implements IPolarCurve,IOpenShape{A:Number;B:Number;}
+type ConicSection implements IPolarCurve,IOpenShape{Eccentricity:Number;SemiLatusRectum:Number;}
+type LemniscateOfBernoulli implements IPolarCurve,IOpenShape{A:Number;}
+type TrisectrixOfMaclaurin implements IPolarCurve,IOpenShape{A:Number;}
+type ConchoidOfDeSluze implements IPolarCurve,IOpenShape{A:Number;}
+type TschirnhausenCubic implements IPolarCurve,IOpenShape{A:Number;}
+type SinusoidalSpiral implements IPolarCurve,IOpenShape{A:Number;N:Number;}
+type FermatsSpiral implements IPolarCurve,IOpenShape{A:Number;}
+type LogarithmicSpiral implements IPolarCurve,IOpenShape{A:Number;K:Number;}
+type CubicBezier3D implements IOpenShape{A:Point3D;B:Point3D;C:Point3D;D:Point3D;}
+type QuadraticBezier3D implements IOpenShape{A:Point3D;B:Point3D;C:Point3D;}
+concept IAngularCurve3D inherits ICurve3D{Eval(curve:Self,t:Angle):Point3D;}
+type TorusKnot implements IAngularCurve3D,IClosedShape{P:Integer;Q:Integer;Radius:Number;}
+type TrefoilKnot implements IAngularCurve3D,IClosedShape{}
+type FigureEightKnot implements IAngularCurve3D,IClosedShape{}
+type Helix implements IAngularCurve3D,IOpenShape{Radius:Number;Height:Number;NumTurns:Number;}
+concept IGeometry{}
+concept IGeometry2D inherits IGeometry{}
+concept IGeometry3D inherits IGeometry{}
+concept IShape inherits IGeometry{}
+concept IShape2D inherits IShape,IGeometry2D{}
+concept IShape3D inherits IShape,IGeometry3D{}
+concept IOpenClosedShape inherits IShape{Closed(x:Self):Boolean;}
+concept IOpenShape inherits IOpenClosedShape{}
+concept IClosedShape inherits IOpenClosedShape{}
+concept IOpenShape2D inherits IGeometry2D,IOpenShape{}
+concept IClosedShape2D inherits IGeometry2D,IClosedShape{}
+concept IOpenShape3D inherits IGeometry3D,IOpenShape{}
+concept IClosedShape3D inherits IGeometry3D,IClosedShape{}
+concept ICurve<TRange>inherits IProcedural<Number,TRange>,IOpenClosedShape{}
+concept IDistanceField2D inherits IProcedural<Vector2,Number>{Distance(x:Self,p:Point2D):Number;}
+concept IDistanceField3D inherits IProcedural<Vector3,Number>{Distance(x:Self,p:Point3D):Number;}
+concept ICurve1D inherits ICurve<Number>{}
+concept ICurve2D inherits IGeometry2D,ICurve<Point2D>{}
+concept IClosedCurve2D inherits ICurve2D,IClosedShape2D{}
+concept IOpenCurve2D inherits ICurve2D,IOpenShape2D{}
+concept ICurve3D inherits IGeometry3D,ICurve<Point3D>{}
+concept IClosedCurve3D inherits ICurve3D,IClosedShape3D{}
+concept IOpenCurve3D inherits ICurve3D,IOpenShape3D{}
+concept ISurface inherits IGeometry3D{}
+concept IProceduralSurface inherits IProcedural<Vector2,Point3D>,ISurface{ClosedX(x:Self):Boolean;ClosedY(x:Self):Boolean;}
+concept IExplicitSurface inherits IProcedural<Vector2,Number>,ISurface{}
+concept IImplicitProcedural<TDomain>inherits IProcedural<TDomain,Boolean>{}
+concept IImplicitVolume inherits IGeometry3D,IImplicitProcedural<Point3D>{}
+concept IPolyLine2D inherits IPointGeometry2D,IOpenClosedShape,ICurve2D{}
+concept IPolyLine3D inherits IPointGeometry3D,IOpenClosedShape,ICurve3D{}
+concept IPolygon2D inherits IPolyLine2D,IClosedShape2D{}
+concept IPolygon3D inherits IPolyLine3D,IClosedShape3D{}
+concept ISolid inherits IProceduralSurface{}
+concept IPointGeometry2D inherits IGeometry2D,IDeformable2D{Points(x:Self):IArray<Point2D>;}
+concept IPointGeometry3D inherits IGeometry3D,IDeformable3D{Points(x:Self):IArray<Point3D>;}
+concept IGeometricPrimitive2D inherits IPointGeometry2D{}
+concept IGeometricPrimitive3D inherits IPointGeometry3D{}
+concept IPrimitiveGeometry2D<T>where T:IGeometricPrimitive2D inherits IGeometry2D{Primitives(x:Self):IArray<T>;}
+concept IPrimitiveGeometry3D<PrimitiveT>where T:IGeometricPrimitive3D inherits IGeometry3D{Primitives(x:Self):IArray<PrimitiveT>;}
+concept IIndexedGeometry3D<IndexT>inherits IPointGeometry3D{FaceIndices(x:Self):IArray<IndexT>;}
+concept ITransformable3D{Transform(x:Self,t:Transform3D):Self;}
+concept IDeformable3D inherits ITransformable3D{Deform(x:Self,f:Function1<Point3D,Point3D>):Self;}
+concept ITransformable2D{Transform(x:Self,t:Transform2D):Self;}
+concept IDeformable2D inherits ITransformable2D{Deform(x:Self,f:Function1<Point2D,Point2D>):Self;}
+type Point2D implements ICoordinate,IVectorLike,IGeometricPrimitive2D,IDifference<Vector2>{X:Number;Y:Number;}
+type Bounds2D implements IBounds<Point2D,Vector2>,IArrayLike<Point2D>{Min:Point2D;Max:Point2D;}
+type Ray2D implements IValue{Origin:Point2D;Direction:Vector2;}
+type Triangle2D implements IPolygon2D,IGeometricPrimitive2D,IArrayLike<Point2D>{A:Point2D;B:Point2D;C:Point2D;}
+type Quad2D implements IPolygon2D,IArrayLike<Point2D>{A:Point2D;B:Point2D;C:Point2D;D:Point2D;}
+type Line2D implements IArrayLike<Point2D>,IInterval<Point2D>{A:Point2D;B:Point2D;}
+type Lens implements IClosedShape2D{A:Circle;B:Circle;}
+type Rect2D implements IPolygon2D{Center:Point2D;Size:Vector2;}
+type Ring implements IClosedShape2D{Center:Point2D;InnerRadius:Number;OuterRadius:Number;}
+type Arc implements IOpenShape2D{Angles:AnglePair;Circle:Circle;}
+type Sector implements IClosedShape2D{Arc:Arc;}
+type Chord implements IClosedShape2D{Arc:Arc;}
+type Segment implements IClosedShape2D{Arc:Arc;}
+type RegularPolygon implements IPolygon2D{Center:Point2D;NumPoints:Integer;}
+type Polygon implements IPolygon2D{Points:IArray<Point2D>;}
+type Point3D implements ICoordinate,IVectorLike,IGeometricPrimitive3D,IDifference<Vector3>{X:Number;Y:Number;Z:Number;}
+type Plane implements IValue{Normal:Vector3;D:Number;}
+type Bounds3D implements IBounds<Point3D,Vector3>,IDeformable3D,IArrayLike<Point3D>{Min:Point3D;Max:Point3D;}
+type Line3D implements IDeformable3D,IInterval<Point3D>,IArrayLike<Point3D>{A:Point3D;B:Point3D;}
+type Ray3D implements IValue,IDeformable3D{Origin:Point3D;Direction:Vector3;}
+type Triangle3D implements IDeformable3D,IArrayLike<Point3D>{A:Point3D;B:Point3D;C:Point3D;}
+type Quad3D implements IDeformable3D,IArrayLike<Point3D>{A:Point3D;B:Point3D;C:Point3D;D:Point3D;}
+type Points2D implements IPrimitiveGeometry2D<Point2D>{Primitives:IArray<Point2D>;}
+type Lines2D implements IPrimitiveGeometry2D<Line2D>{Primitives:IArray<Line2D>;}
+type PolyLine2D implements IGeometry2D{Points:IArray<Point2D>;Closed:Boolean;}
+type Points3D implements IPrimitiveGeometry3D<Point3D>{Primitives:IArray<Point3D>;}
+type Lines3D implements IPrimitiveGeometry3D<Line3D>{Primitives:IArray<Line3D>;}
+type Triangles3D implements IPrimitiveGeometry3D<Triangle3D>{Primitives:IArray<Triangle3D>;}
+type Quads3D implements IPrimitiveGeometry3D<Quad3D>{Primitives:IArray<Quad3D>;}
+type PolyLine3D implements IGeometry3D{Points:IArray<Point3D>;Closed:Boolean;}
+type LineMesh3D implements IIndexedGeometry3D<Integer2>{Points:IArray<Point3D>;FaceIndices:IArray<Integer2>;}
+type TriangleMesh3D implements IIndexedGeometry3D<Integer3>{Points:IArray<Point3D>;FaceIndices:IArray<Integer3>;}
+type QuadMesh3D implements IIndexedGeometry3D<Integer4>{Points:IArray<Point3D>;FaceIndices:IArray<Integer4>;}
+type QuadGrid3D implements IGeometry3D{PointGrid:IArray2D<Point3D>;ClosedX:Boolean;ClosedY:Boolean;}
+type Number implements IRealNumber{}
+type Angle implements IMeasure{}
+type Object implements IValue{}
+type Integer implements IWholeNumber{}
+type String implements IValue,IOrderable{}
+type Boolean implements IValue,IOrderable,IBoolean{}
+type Character implements IValue,IOrderable{}
+type Tuple2<T0,T1>{X0:T0;X1:T1;}
+type Tuple3<T0,T1,T2>{X0:T0;X1:T1;X2:T2;}
+type Tuple4<T0,T1,T2,T3>{X0:T0;X1:T1;X2:T2;X3:T3;}
+type Tuple5<T0,T1,T2,T3,T4>{X0:T0;X1:T1;X2:T2;X3:T3;X4:T4;}
+type Tuple6<T0,T1,T2,T3,T4,T5>{X0:T0;X1:T1;X2:T2;X3:T3;X4:T4;X5:T5;}
+type Tuple7<T0,T1,T2,T3,T4,T5,T6>{X0:T0;X1:T1;X2:T2;X3:T3;X4:T4;X5:T5;X6:T6;}
+type Tuple8<T0,T1,T2,T3,T4,T5,T6,T7>{X0:T0;X1:T1;X2:T2;X3:T3;X4:T4;X5:T5;X6:T6;X7:T7;}
+type Function0<TR>{}
+type Function1<T0,TR>{}
+type Function2<T0,T1,TR>{}
+type Function3<T0,T1,T2,TR>{}
+type Function4<T0,T1,T2,T3,TR>{}
+type Function5<T0,T1,T2,T3,T4,TR>{}
+type Function6<T0,T1,T2,T3,T4,T5,TR>{}
+type Function7<T0,T1,T2,T3,T4,T5,T6,TR>{}
+type Function8<T0,T1,T2,T3,T4,T5,T6,T7,TR>{}
+type Function9<T0,T1,T2,T3,T4,T5,T6,T7,T8,TR>{}
+type Array<T>implements IArray<T>{}
+type Array2D<T>implements IArray2D<T>{}
+type Array3D<T>implements IArray3D<T>{}
+type Vector2 implements IVector{X:Number;Y:Number;}
+type Vector3 implements IVector{X:Number;Y:Number;Z:Number;}
+type Vector4 implements IVector{X:Number;Y:Number;Z:Number;W:Number;}
+type Vector8 implements IVector{X0:Number;X1:Number;X2:Number;X3:Number;X4:Number;X5:Number;X6:Number;X7:Number;}
+type Matrix3x2 implements IValue,IArrayLike<Number>{Row1:Vector2;Row2:Vector2;Row3:Vector2;}
+type Matrix4x4 implements IValue,IArrayLike<Number>{Row1:Vector4;Row2:Vector4;Row3:Vector4;Row4:Vector4;}
+type Quaternion implements IValue,IArrayLike<Number>{X:Number;Y:Number;Z:Number;W:Number;}
+concept IProcedural<TIn,TOut>{Eval(x:Self,t:TIn):TOut;}
+type Procedural<TIn,TOut>{Function:Function1<TIn,TOut>;}
+type Sphere implements ISolid{Radius:Number;}
+type Cylinder implements ISurface{Height:Number;Radius:Number;}
+type Capsule implements ISolid{Height:Number;Radius:Number;}
+type Cone implements ISolid{Height:Number;Radius:Number;}
+type ConeSegment implements ISolid{Height:Number;Radius1:Number;Radius2:Number;}
+type Box implements ISolid{Extent:Vector3;}
+type Pyramid implements ISolid{Height:Number;BaseLength:Number;}
+type Torus implements ISolid{MajorRadius:Number;MinorRadius:Number;}
+type NPrism implements ISolid{Height:Number;Radius:Number;NumSides:Integer;}
+type Tube implements ISolid{Height:Number;InnerRadius:Number;OuterRadius:Number;}
+type NPyramid implements ISolid{Height:Number;Radius:Number;NumSides:Integer;}
+type Ellipsoid implements ISolid{Radii:Vector3;}
+concept ITransform2D{Matrix(x:Self):Matrix3x2;}
+concept IRigidTransform2D inherits ITransform2D{}
+type Translation2D implements IRigidTransform2D{Vector:Vector2;}
+type UniformScale2D implements ITransform2D{Amount:Number;}
+type Scale2D implements ITransform2D{Amount:Vector2;}
+type OffsetScale2D implements ITransform2D{Amount:Vector2;Center:Point2D;}
+type Rotation2D implements IRigidTransform2D{Angle:Angle;}
+type OffsetRotation2D implements IRigidTransform2D{Angle:Angle;Center:Point2D;}
+type TRSTransform2D implements ITransform2D{Translation:Translation2D;Rotation:Rotation2D;Scale:Scale2D;}
+type Pose2D implements IRigidTransform2D{Translation:Translation2D;Rotation:Rotation2D;}
+type Reflection2D implements ITransform2D{}
+type Identity2D implements IRigidTransform2D{}
+type Skew2D implements ITransform2D{x:Angle;y:Angle;}
+type Transform2D implements ITransform2D{Matrix:Matrix3x2;}
+concept ITransform3D{Matrix(x:Self):Matrix4x4;}
+concept IRigidTransform3D inherits ITransform3D{}
+concept IRotation3D inherits IRigidTransform3D{Quaternion(x:Self):Quaternion;}
+type IdentityTransform3D implements IRotation3D{}
+type Transform3D implements ITransform3D{Matrix:Matrix4x4;}
+type Translation3D implements IRigidTransform3D{Vector:Vector3;}
+type Rotation3D implements IRotation3D{Quaternion:Quaternion;}
+type LookDirection3D implements IRotation3D{Direction:Vector3;}
+type LookAt3D implements IRotation3D{Origin:Point3D;Target:Point3D;}
+type Scaling3D implements ITransform3D{Amount:Vector3;}
+type TRSTransform3D implements ITransform3D{Translation:Translation3D;Rotation:Rotation3D;Scale:Scaling3D;}
+type Pose3D implements IRigidTransform3D{Translation:Translation3D;Rotation:Rotation3D;}
+type AxisAngle implements IRotation3D{Axis:Vector3;Angle:Angle;}
+type YawPitchRoll implements IRotation3D{Yaw:Angle;Pitch:Angle;Roll:Angle;}
+type YawPitch implements IRotation3D{Yaw:Angle;Pitch:Angle;}
+type Perspective3D implements ITransform3D{FOV:Angle;AspectRatio:Number;Near:Number;Far:Number;}
+type Orthographic3D implements ITransform3D{Width:Number;Height:Number;Near:Number;Far:Number;}
+type FrenetFrame{Origin:Point3D;Tangent:Vector3;Normal:Vector3;Binormal:Vector3;}
+type PlaneProjection3D implements ITransform3D{Direction:Vector3;Plane:Plane;}

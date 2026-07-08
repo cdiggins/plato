@@ -318,6 +318,11 @@ namespace Ara3D.Geometry.AST
     public class AstTypeDeclaration : AstDeclaration
     {
         public TypeKind Kind { get; }
+
+        // Affine-type modifier (roadmap Phase 6): true when declared "unique type ...".
+        // Only the intrinsic builder types (List, Buffer) may carry it; the compiler
+        // hard-rejects it anywhere else.
+        public bool IsUnique { get; set; }
         public IReadOnlyList<AstTypeParameter> TypeParameters { get; }
         public IReadOnlyList<AstTypeNode> Inherits { get; }
         public IReadOnlyList<AstTypeNode> Implements { get; }

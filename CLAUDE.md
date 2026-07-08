@@ -1,5 +1,7 @@
 # Plato repo — agent guide
 
+**Start here for the language and multi-target codegen:** [`docs/plato-for-agents.md`](docs/plato-for-agents.md).
+
 Plato: pure language for geometry libraries, compiled to C# (TS/Rust writers exist, out of scope).
 Part of the studio monorepo at `C:\Users\cdigg\git\studio` (this repo = `submodules/Plato`).
 Roadmap + status: `../../docs/plato-roadmap.md`. Bug catalog: `../../docs/plato-library-review.md`.

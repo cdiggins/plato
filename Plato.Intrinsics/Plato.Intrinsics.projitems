@@ -20,6 +20,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Matrix4x4.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Number.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Plane.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PlatoBuffer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PlatoList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Quaternion.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ReadOnlyListMapExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)String.cs" />

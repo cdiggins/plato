@@ -37,6 +37,8 @@ namespace Ara3D.Geometry.Compiler.Analysis
     ///   LINT003 - declared-but-unused type fields
     ///   LINT004 - duplicate function signatures within a library
     ///   LINT005 - generic type variables used only once, or used in a return type but not inferable from parameters
+    ///   LINT006 - unique (affine) builder type used as a field type (builders may not be stored in fields)
+    ///   LINT007 - unique (affine) builder type used as a generic type argument (no containers of builders)
     /// The pass is read-only: it never mutates the compilation and has no effect on code generation.
     /// </summary>
     public class Linter
@@ -52,6 +54,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
             CheckUnusedFields();
             CheckDuplicateLibrarySignatures();
             CheckGenericTypeVariableUsage();
+            CheckUniqueTypeStructuralBans();
         }
 
         public IEnumerable<LintFinding> SortedFindings
@@ -314,6 +317,57 @@ namespace Ara3D.Geometry.Compiler.Analysis
                                 $"likely inconsistent with the type variables used");
                         }
                     }
+                }
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // LINT006/LINT007: the two cheap structural bans of the affine-type
+        // conventions (roadmap Phase 6, docs/affine-types.md). Unique builder
+        // types (unique type List<T> / Buffer<T>) may not be stored in fields
+        // (LINT006) and may not appear as a generic type argument of another
+        // type (LINT007: no IArray<List<T>>, no List<List<T>>). These are the
+        // structurally detectable subset of the affine rules; the occurrence-
+        // counting pass rides the future type-checker workstream.
+        // -------------------------------------------------------------------
+        public void CheckUniqueTypeStructuralBans()
+        {
+            bool IsUnique(TypeExpression te)
+                => te?.Def != null && te.Def.IsUnique;
+
+            bool ContainsUniqueArg(TypeExpression te)
+                => te != null && te.TypeArgs.Any(a => IsUnique(a) || ContainsUniqueArg(a));
+
+            foreach (var td in Compilation.TypeDefinitions)
+            {
+                foreach (var field in td.Fields)
+                {
+                    if (IsUnique(field.Type))
+                        Add(field, "LINT006",
+                            $"field '{td.Name}.{field.Name}' has unique type '{field.Type}'; " +
+                            $"builders may not be stored in fields (affine rule, docs/affine-types.md)");
+                    else if (ContainsUniqueArg(field.Type))
+                        Add(field, "LINT007",
+                            $"field '{td.Name}.{field.Name}' uses a unique type as a generic type argument " +
+                            $"in '{field.Type}'; containers of builders are banned (affine rule, docs/affine-types.md)");
+                }
+            }
+
+            foreach (var lib in Compilation.LibraryDefinitionsByName.Values)
+            {
+                foreach (var f in lib.Functions)
+                {
+                    foreach (var p in f.Parameters)
+                        if (ContainsUniqueArg(p.Type))
+                            Add(f, "LINT007",
+                                $"parameter '{p.Name}' of function '{f.Name}' in library '{lib.Name}' uses a unique " +
+                                $"type as a generic type argument in '{p.Type}'; containers of builders are banned " +
+                                $"(affine rule, docs/affine-types.md)");
+                    if (ContainsUniqueArg(f.ReturnType))
+                        Add(f, "LINT007",
+                            $"function '{f.Name}' in library '{lib.Name}' uses a unique type as a generic type " +
+                            $"argument in its return type '{f.ReturnType}'; containers of builders are banned " +
+                            $"(affine rule, docs/affine-types.md)");
                 }
             }
         }

@@ -101,9 +101,15 @@ namespace Ara3D.Geometry.Compiler
                 ReifiedFunctionsByName = ReifiedTypes.Values.SelectMany(rt => rt.Functions)
                     .ToDictionaryOfLists(rf => rf.Name);
 
-                // ?? 
+                // ??
                 Libraries = new LibraryFunctions(this);
+                // Unique (affine) builder types (roadmap Phase 6) are intrinsic-backed and
+                // never emitted as generated structs, so no ConcreteType analysis is built
+                // for them (their library functions are body-less signatures whose single
+                // generic parameter would otherwise trip the FunctionInstance type-variable
+                // machinery, which no generated code needs).
                 ConcreteTypes = GetConcreteTypes()
+                    .Where(td => !td.IsUnique)
                     .Select(c => new ConcreteType(c, Libraries))
                     .ToList();
 

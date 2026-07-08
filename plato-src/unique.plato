@@ -1,0 +1,35 @@
+// Affine builder types (roadmap Phase 6). One keyword, declaration-site only —
+// uniqueness is a property of the type, never of a use site: every pass of a List/Buffer
+// value is a move. Only the intrinsic builder types List and Buffer may be declared
+// unique; the compiler hard-rejects the modifier anywhere else.
+//
+// The implementations are handwritten in Plato.Intrinsics (PlatoList.cs / PlatoBuffer.cs);
+// the compiler maps the Plato names List/Buffer to the C# names PlatoList/PlatoBuffer and
+// never generates structs for unique types. Method effects live in the compiler's
+// intrinsic table (PlatoCompiler UniqueTypes):
+//   observe:  Count, At            — free use, does not invalidate the builder
+//   mutate:   Add, AddRange, Set   — return the builder; rebind ("xs = xs.Add(p)") or chain
+//   consume:  Freeze               — zero-copy handoff to IArray<T>; the builder is
+//                                    invalidated (use-after-freeze throws at runtime)
+//
+// The body-less intrinsic signatures live with the validation algorithms in
+// plato-test-src (library UniqueIntrinsics) until first production use: declaring a new
+// library in plato-src shifts the symbol ids that the emitter leaks into the AMBIGUOUS
+// comments of the _Vector*.g.cs files, and the production output is byte-identity gated.
+//
+// Conventions (runtime-checked today; the static affine pass rides the future
+// type-checker workstream — see docs/affine-types.md):
+//   - never store a builder in a field (LINT006) or a container (LINT007);
+//   - never capture a builder in a lambda;
+//   - write Freeze with parentheses: xs.Freeze()
+//   - create with "new List<T>()" / "new Buffer<T>(n)" (concrete element types), or
+//     xs.EmptyList() where the element type is a type variable.
+
+// A growable affine builder, promoted to an immutable IArray<T> by Freeze.
+unique type List<T>
+{ }
+
+// A fixed-size affine builder (allocate n slots, write by index in any order),
+// promoted to an immutable IArray<T> by Freeze.
+unique type Buffer<T>
+{ }

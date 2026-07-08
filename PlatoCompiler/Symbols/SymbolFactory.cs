@@ -407,6 +407,17 @@ namespace Ara3D.Geometry.Compiler.Symbols
                 if (astTypeDeclaration.Kind != TypeKind.Library)
                 {
                     var typeDef = new TypeDef(TypeBindingsScope, astTypeDeclaration.Kind, astTypeDeclaration.Name);
+
+                    // Affine-type modifier (roadmap Phase 6): only the intrinsic builder
+                    // types may be declared unique. Hard-reject anything else: the error
+                    // halts compilation (SymbolFactory.Errors is checked by Compilation).
+                    typeDef.IsUnique = astTypeDeclaration.IsUnique;
+                    if (typeDef.IsUnique && !UniqueTypes.IsUniqueTypeName(typeDef.Name))
+                        LogResolutionError(
+                            $"The 'unique' modifier is not allowed on type '{typeDef.Name}': only the intrinsic " +
+                            $"builder types ({string.Join(", ", UniqueTypes.Names)}) may be declared unique",
+                            astTypeDeclaration);
+
                     SymbolsToNodes.Add(typeDef, astTypeDeclaration);
                     BindType(typeDef);
                     TypeDefs.Add(typeDef);

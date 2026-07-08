@@ -410,7 +410,11 @@ namespace Ara3D.Geometry.AST
                                  Array.Empty<AstTypeNode>();
                 var members = type.FieldDeclaration.Nodes.Select(ToAst).Cast<AstMemberDeclaration>().ToArray();
 
-                return new AstTypeDeclaration(cstTopLevelDeclaration, TypeKind.ConcreteType, name, typeParameters, inherits, implements, Array.Empty<AstConstraint>(), members);
+                return new AstTypeDeclaration(cstTopLevelDeclaration, TypeKind.ConcreteType, name, typeParameters, inherits, implements, Array.Empty<AstConstraint>(), members)
+                {
+                    // Affine-type modifier (roadmap Phase 6): "unique type ..."
+                    IsUnique = type.UniqueKeyword.Present,
+                };
             }
 
             if (cstTopLevelDeclaration.Library.Present)
