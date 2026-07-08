@@ -17,12 +17,16 @@ public class CSharpFunctionBodyWriter : CodeBuilder<CSharpFunctionBodyWriter>
 
     public string Namespace => Writer.Namespace;
 
-    public CSharpFunctionBodyWriter(CSharpTypeWriter typeWriter, CSharpFunctionInfo fi, bool isStatic, bool isLambda)
+    // "propOverride" forces (or suppresses) the property-getter wrapper independently of the
+    // isStatic/NumParameters heuristic. Used by the extension-block writer (ExtensionStyleWriter),
+    // where the body is written in "static" mode (parameter names, no "this") but the emitted
+    // member is an instance-style extension property. Null preserves the original behavior.
+    public CSharpFunctionBodyWriter(CSharpTypeWriter typeWriter, CSharpFunctionInfo fi, bool isStatic, bool isLambda, bool? propOverride = null)
     {
         IndentLevel = typeWriter.IndentLevel;
         TypeWriter = typeWriter;
         IsStaticOrLambda = isStatic;
-            
+
         Function = fi;
 
         if (fi.Body == null)
@@ -31,7 +35,7 @@ public class CSharpFunctionBodyWriter : CodeBuilder<CSharpFunctionBodyWriter>
             return;
         }
 
-        var isProp = isStatic ? fi.NumParameters == 0 : fi.NumParameters == 1;
+        var isProp = propOverride ?? (isStatic ? fi.NumParameters == 0 : fi.NumParameters == 1);
         if (isProp)
             Write($" {{ {CSharpTypeWriter.Annotation} get ");
 
@@ -205,7 +209,13 @@ public class CSharpFunctionBodyWriter : CodeBuilder<CSharpFunctionBodyWriter>
             return Write(arg).Write("[").WriteCommaList(functionCall.Args.Skip(1)).Write("]");
         }
 
-        Write(arg).Write(".").Write(functionCall.Function);
+        Write(arg).Write(".");
+        // Member-access position: the name is resolved against the receiver, so the
+        // extension-style static qualifier must never apply here.
+        if (TypeWriter.ExtensionReceiverName != null && functionCall.Function is FunctionGroupRefSymbol memberRef)
+            Write(memberRef.Name);
+        else
+            Write(functionCall.Function);
 
         if (functionCall.Args.Count == 1 && !functionCall.HasArgList)
             return this;
@@ -241,6 +251,24 @@ public class CSharpFunctionBodyWriter : CodeBuilder<CSharpFunctionBodyWriter>
                 if (fgr.Def.Functions.Count == 1 &&
                     fgr.Def.Functions[0].NumParameters == 0)
                     return Write($"Constants.{fgr.Name}");
+                // Extension-style mode: bare names bound implicitly inside the partial struct
+                // in the default mode; inside an extension block they must be re-qualified.
+                if (TypeWriter.ExtensionReceiverName != null)
+                {
+                    if (TypeWriter.ExtensionInstanceNames.Contains(fgr.Name))
+                        return Write($"{TypeWriter.ExtensionReceiverName}.{fgr.Name}");
+                    if (TypeWriter.ExtensionStaticNames.Contains(fgr.Name))
+                        return Write($"{TypeWriter.ExtensionStaticQualifier}.{fgr.Name}");
+                    // Type references (e.g. "Integer2" in "Integer2.CreateFromComponents"):
+                    // namespace-qualified, because members of the enclosing static library
+                    // class can shadow type names.
+                    if (Writer.AllTypeNames.Contains(fgr.Name))
+                        return Write($"{Namespace}.{fgr.Name}");
+                    // Unknown to the compiler: a handwritten member of the receiver type in
+                    // Plato.Intrinsics (e.g. Number.Zero). In the default mode it bound inside
+                    // the enclosing struct; statics are the only observed case.
+                    return Write($"{TypeWriter.ExtensionStaticQualifier}.{fgr.Name}");
+                }
                 return Write(fgr.Name);
 
             case RefSymbol refSymbol:

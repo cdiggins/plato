@@ -19,6 +19,18 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
     public string FullName;
     public TypeDef TypeDef;
     public CSharpWriter Writer;
+
+    // Extension-style mode only (--csharp-style=extensions): inside a C# 14 extension block the
+    // receiver type's member scope is NOT implicit, so bare names written by
+    // FunctionGroupRefSymbol must be re-qualified: instance members with the receiver parameter
+    // name ("M11" -> "m.M11"), static members with the namespace-qualified type name
+    // ("One" -> "Ara3D.Geometry.Vector2.One"; the namespace is needed because members of the
+    // enclosing static library class can shadow type names). All null (always, in the default
+    // mode) preserves the original output byte for byte.
+    public string ExtensionReceiverName;
+    public string ExtensionStaticQualifier;
+    public HashSet<string> ExtensionInstanceNames;
+    public HashSet<string> ExtensionStaticNames;
     public PlatoAnalyzer Analyzer => Writer.Analyzer;
 
     public static string Annotation => $"[MethodImpl(AggressiveInlining)]";

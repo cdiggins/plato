@@ -28,6 +28,10 @@ namespace Ara3D.Geometry.CSharpWriter
         public List<string> FieldNames { get; }
         public List<string> FieldTypes { get; }
 
+        // Non-null only in extension style (Writer.ExtensionStyle): decides which member
+        // functions move out of the struct into library extension blocks (roadmap P2.2).
+        public ExtensionStylePlan ExtensionPlan { get; }
+
         public CSharpConcreteTypeWriter(CSharpTypeWriter typeWriter, ConcreteType t)
         {
             ConcreteType = t;
@@ -41,6 +45,9 @@ namespace Ara3D.Geometry.CSharpWriter
             FieldNames = ConcreteType.TypeDef.Fields.Select(f => f.Name).ToList();
             var parameterNames = FieldNames.Select(CSharpTypeWriter.FieldNameToParameterName).ToList();
             Debug.Assert(FieldTypes.Count == FieldNames.Count);
+
+            if (Writer.ExtensionStyle)
+                ExtensionPlan = new ExtensionStylePlan(this);
             var parameters = FieldTypes.Zip(parameterNames, (pt, pn) => $"{pt} {pn}");
             var parameterNamesStr = parameterNames.JoinStringsWithComma();
             var parametersStr = parameters.JoinStringsWithComma();
@@ -295,6 +302,14 @@ namespace Ara3D.Geometry.CSharpWriter
 
                 if (SkipFunction(f))
                     continue;
+
+                // Extension style: this function is emitted later into a library extension
+                // block (see ExtensionStyleWriter) instead of as an instance member.
+                if (ExtensionPlan != null && ExtensionPlan.ShouldMove(f))
+                {
+                    Writer.MovedMembers.Add(new MovedExtensionMember(f, ConcreteType, f.Implementation.OwnerType.Name, ExtensionPlan));
+                    continue;
+                }
 
                 if (cnt > 1)
                 {

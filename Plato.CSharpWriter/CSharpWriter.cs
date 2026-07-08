@@ -19,6 +19,23 @@ namespace Ara3D.Geometry.CSharpWriter
         public string FloatType;
         public string Namespace;
 
+        // When true, emits the "extension style" output (--csharp-style=extensions, roadmap P2.2):
+        // the library-function fanout is written to C# 14 extension blocks (one static class per
+        // Plato library) instead of instance members on the partial structs. Requires
+        // <LangVersion>14</LangVersion> in the consuming project. Default (false) output is
+        // byte-identical to the original writer.
+        public bool ExtensionStyle;
+
+        // Collected by CSharpConcreteTypeWriter while writing each type in extension style;
+        // written out by ExtensionStyleWriter.WriteLibraryFiles at the end of WriteAll.
+        public List<MovedExtensionMember> MovedMembers { get; } = new List<MovedExtensionMember>();
+
+        // All Plato type/library/interface names; used by the extension-style body writer to
+        // distinguish bare type references from bare static-member references.
+        private HashSet<string> _allTypeNames;
+        public HashSet<string> AllTypeNames => _allTypeNames ?? (_allTypeNames = new HashSet<string>(
+            System.Linq.Enumerable.Select(Compilation.AllTypeAndLibraryDefinitions, t => t?.Name ?? "")));
+
 
 #if CHANGE_PRECISION
         public string OtherPrecisionFloatType;
@@ -139,6 +156,9 @@ namespace Ara3D.Geometry.CSharpWriter
                 if (!IgnoredTypes.Contains(name))
                     WriteFile($"_{name}.g.cs", () => WriteTypeImplementation(c));
             }
+
+            if (ExtensionStyle)
+                ExtensionStyleWriter.WriteLibraryFiles(this);
 
             return this;
         }

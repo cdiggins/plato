@@ -11,7 +11,7 @@ namespace Ara3D.Geometry.CLI
 {
     public static class Program
     {
-        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust]
+        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust] [--csharp-style=default|extensions]
         //        Plato.CLI lint <inputFolder> [--strict]
         // With no arguments, the folders come from Config and C# is generated (original behavior).
         // In lint mode the sources are compiled (parse + resolve, no output) and warnings are
@@ -26,6 +26,17 @@ namespace Ara3D.Geometry.CLI
 
             var typeScript = args.Contains("--typescript");
             var rust = args.Contains("--rust");
+
+            // C# writer style (roadmap P2.2). "default" = original writer (byte-identical output);
+            // "extensions" = C# 14 extension-block output (requires LangVersion 14 to compile).
+            var csharpStyle = args.Where(a => a.StartsWith("--csharp-style="))
+                .Select(a => a.Substring("--csharp-style=".Length)).LastOrDefault() ?? "default";
+            if (csharpStyle != "default" && csharpStyle != "extensions")
+            {
+                Console.Error.WriteLine($"Unknown --csharp-style value '{csharpStyle}' (expected 'default' or 'extensions')");
+                return 1;
+            }
+
             var folders = args.Where(a => !a.StartsWith("--")).ToList();
             var inputFolder = new DirectoryPath(folders.Count > 0 ? folders[0] : Config.InputFolder);
             var outputFolder = new DirectoryPath(folders.Count > 1 ? folders[1] : Config.OutputFolder);
@@ -75,7 +86,7 @@ namespace Ara3D.Geometry.CLI
             else
             {
                 logger.Log("Writing C# Files");
-                var output = compilation.ToCSharp(outputFolder);
+                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions");
                 foreach (var kv in output.Files)
                 {
                     var fp = outputFolder.RelativeFile(kv.Key);
