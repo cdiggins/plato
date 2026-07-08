@@ -1,4 +1,5 @@
 using Ara3D.Geometry.Compiler;
+using Ara3D.Geometry.Compiler.Analysis;
 using Ara3D.Logging;
 using Ara3D.Utils;
 using Ara3D.Geometry.CSharpWriter;
@@ -11,10 +12,17 @@ namespace Ara3D.Geometry.CLI
     public static class Program
     {
         // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust]
+        //        Plato.CLI lint <inputFolder> [--strict]
         // With no arguments, the folders come from Config and C# is generated (original behavior).
-        public static void Main(string[] args)
+        // In lint mode the sources are compiled (parse + resolve, no output) and warnings are
+        // reported as "file(line): LINT###: message". Exit code is 0 unless --strict is passed,
+        // in which case any finding produces exit code 1 (compilation failures always exit 1).
+        public static int Main(string[] args)
         {
             var logger = Logger.Console;
+
+            if (args.Length > 0 && args[0] == "lint")
+                return Lint(args.Skip(1).ToArray(), logger);
 
             var typeScript = args.Contains("--typescript");
             var rust = args.Contains("--rust");
@@ -29,7 +37,7 @@ namespace Ara3D.Geometry.CLI
             if (!parsingSuccessful)
             {
                 logger.Log("Parsing failed for one of the input files, halting");
-                return;
+                return 0; // preserved original behavior: generation mode always exits 0
             }
             logger.Log("Parsing succeeded for all files");
 
@@ -39,7 +47,7 @@ namespace Ara3D.Geometry.CLI
             if (!compilation.CompletedCompilation)
             {
                 logger.Log("Compilation was not completed");
-                return;
+                return 0; // preserved original behavior: generation mode always exits 0
             }
 
             if (typeScript)
@@ -77,6 +85,54 @@ namespace Ara3D.Geometry.CLI
             }
 
             logger.Log("Completed");
+            return 0;
+        }
+
+        // Plato.CLI lint <inputFolder> [--strict]
+        // Compiles (parse + resolve) with no output and reports lint warnings.
+        public static int Lint(string[] args, ILogger logger)
+        {
+            var strict = args.Contains("--strict");
+            var folders = args.Where(a => !a.StartsWith("--")).ToList();
+            if (folders.Count < 1)
+            {
+                Console.Error.WriteLine("Usage: Plato.CLI lint <inputFolder> [--strict]");
+                return 1;
+            }
+
+            var inputFolder = new DirectoryPath(folders[0]);
+            var files = inputFolder.GetFiles("*.plato");
+            var docs = files.Select(f => new Document(f, logger)).ToList();
+            if (docs.Count == 0)
+            {
+                Console.Error.WriteLine($"No .plato files found in {inputFolder}");
+                return 1;
+            }
+            if (!docs.All(d => d.Parser.Succeeded))
+            {
+                Console.Error.WriteLine("Parsing failed for one of the input files, halting");
+                return 1;
+            }
+
+            var compilation = new Compilation(logger, docs.Select(d => d.Ast));
+            if (!compilation.CompletedCompilation)
+            {
+                Console.Error.WriteLine("Compilation was not completed; cannot lint");
+                return 1;
+            }
+
+            var linter = new Linter(compilation);
+            foreach (var finding in linter.SortedFindings)
+                Console.WriteLine(finding);
+
+            var byCode = linter.Findings.GroupBy(f => f.Code).OrderBy(g => g.Key);
+            Console.WriteLine();
+            Console.WriteLine($"{linter.Findings.Count} lint finding(s)" +
+                (linter.Findings.Count > 0
+                    ? ": " + string.Join(", ", byCode.Select(g => $"{g.Key} x{g.Count()}"))
+                    : ""));
+
+            return strict && linter.Findings.Count > 0 ? 1 : 0;
         }
     }
 }
