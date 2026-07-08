@@ -26,6 +26,21 @@ namespace Ara3D.Geometry.CSharpWriter
         // byte-identical to the original writer.
         public bool ExtensionStyle;
 
+        // When true, applies the component-op unrolling optimization (--optimize, roadmap P3.1):
+        // recognized MapComponents/ZipComponents/Reduce/All*/Any* call sites on statically-known
+        // IArrayLike types are rewritten to direct field expressions at emission time (see
+        // ComponentUnroller). Default (false) output is byte-identical to the original writer.
+        public bool Optimize;
+
+        // Lazily-built table for ComponentUnroller: concrete IArrayLike type name -> field names.
+        private Dictionary<string, IReadOnlyList<string>> _componentFields;
+        public IReadOnlyList<string> GetComponentFields(string typeName)
+        {
+            if (_componentFields == null)
+                _componentFields = ComponentUnroller.BuildComponentFieldTable(Compilation);
+            return typeName != null && _componentFields.TryGetValue(typeName, out var fields) ? fields : null;
+        }
+
         // Collected by CSharpConcreteTypeWriter while writing each type in extension style;
         // written out by ExtensionStyleWriter.WriteLibraryFiles at the end of WriteAll.
         public List<MovedExtensionMember> MovedMembers { get; } = new List<MovedExtensionMember>();

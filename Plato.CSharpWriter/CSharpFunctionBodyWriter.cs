@@ -39,7 +39,14 @@ public class CSharpFunctionBodyWriter : CodeBuilder<CSharpFunctionBodyWriter>
         if (isProp)
             Write($" {{ {CSharpTypeWriter.Annotation} get ");
 
-        var body = fi.Body?.RewriteLambdasCapturingVars();
+        var body = fi.Body;
+        // Component-op unrolling (--optimize, roadmap P3.1): rewrite recognized component-HOF
+        // call sites before the lambda-capture rewriting (the unrolled result has no lambdas,
+        // so RewriteLambdasCapturingVars is a no-op on it). Off by default: with Optimize false
+        // this block never runs and the output is byte-identical to the original writer.
+        if (Writer.Optimize)
+            body = ComponentUnroller.TryUnroll(fi, Writer) ?? body;
+        body = body?.RewriteLambdasCapturingVars();
         if (body is Expression)
         {
             Write($" => ").Write(body, fi.ReturnType);
@@ -232,6 +239,31 @@ public class CSharpFunctionBodyWriter : CodeBuilder<CSharpFunctionBodyWriter>
             
         switch (expr)
         {
+            // Emission-only marker nodes produced by ComponentUnroller (--optimize, P3.1).
+            case ComponentAccessExpression ca:
+                if (ca.CastTo != null)
+                    return Write($"(({ca.CastTo})").Write(ca.Receiver).Write(".").Write(ca.FieldName).Write(")");
+                return Write(ca.Receiver).Write(".").Write(ca.FieldName);
+
+            case ConstructorCallExpression cc:
+                // In extension-block mode type names can be shadowed by members of the enclosing
+                // static library class, so qualify with the namespace (same rule as bare type
+                // references in the FunctionGroupRefSymbol case below).
+                return Write("new ")
+                    .Write(TypeWriter.ExtensionReceiverName != null ? $"{Namespace}.{cc.TypeName}" : cc.TypeName)
+                    .Write("(").WriteCommaList(cc.Args).Write(")");
+
+            case BooleanChainExpression bc:
+            {
+                for (var i = 0; i < bc.Terms.Count; ++i)
+                {
+                    if (i > 0)
+                        Write($" {bc.Op} ");
+                    Write(bc.Terms[i]);
+                }
+                return this;
+            }
+
             case TypeExpression typeExpression:
                 if (typeExpression.TypeArgs.Count > 0)
                     throw new NotSupportedException();

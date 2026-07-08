@@ -39,9 +39,10 @@ namespace Ara3D.Geometry.CSharpWriter
 
         // extensionStyle = false: original writer, byte-identical output (production default).
         // extensionStyle = true : C# 14 extension-block output (--csharp-style=extensions, roadmap P2.2).
-        public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false)
+        // optimize = true: component-op unrolling (--optimize, roadmap P3.1; see ComponentUnroller).
+        public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false, bool optimize = false)
         {
-            var writer = new CSharpWriter(compilation, outputFolder) { ExtensionStyle = extensionStyle };
+            var writer = new CSharpWriter(compilation, outputFolder) { ExtensionStyle = extensionStyle, Optimize = optimize };
             writer.WriteAll("float");
             //writer.WriteAll("Plato.DoublePrecision.g.cs", "double");
 

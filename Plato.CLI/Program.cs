@@ -11,7 +11,7 @@ namespace Ara3D.Geometry.CLI
 {
     public static class Program
     {
-        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust] [--csharp-style=default|extensions]
+        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust] [--csharp-style=default|extensions] [--optimize]
         //        Plato.CLI lint <inputFolder> [--strict]
         // With no arguments, the folders come from Config and C# is generated (original behavior).
         // In lint mode the sources are compiled (parse + resolve, no output) and warnings are
@@ -26,6 +26,10 @@ namespace Ara3D.Geometry.CLI
 
             var typeScript = args.Contains("--typescript");
             var rust = args.Contains("--rust");
+
+            // Component-op unrolling optimization (roadmap P3.1). C# backend only; works with
+            // both --csharp-style values. Off by default (byte-identical output without it).
+            var optimize = args.Contains("--optimize");
 
             // C# writer style (roadmap P2.2). "default" = original writer (byte-identical output);
             // "extensions" = C# 14 extension-block output (requires LangVersion 14 to compile).
@@ -86,7 +90,7 @@ namespace Ara3D.Geometry.CLI
             else
             {
                 logger.Log("Writing C# Files");
-                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions");
+                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize);
                 foreach (var kv in output.Files)
                 {
                     var fp = outputFolder.RelativeFile(kv.Key);
