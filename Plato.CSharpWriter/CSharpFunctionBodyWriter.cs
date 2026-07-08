@@ -18,9 +18,9 @@ public class CSharpFunctionBodyWriter : CodeBuilder<CSharpFunctionBodyWriter>
     public string Namespace => Writer.Namespace;
 
     // "propOverride" forces (or suppresses) the property-getter wrapper independently of the
-    // isStatic/NumParameters heuristic. Used by the extension-block writer (ExtensionStyleWriter),
-    // where the body is written in "static" mode (parameter names, no "this") but the emitted
-    // member is an instance-style extension property. Null preserves the original behavior.
+    // isStatic/NumParameters heuristic. Used by ExtensionStyleWriter, which writes moved no-arg
+    // members as classic extension METHODS (never properties, propOverride: false) with the
+    // body in "static" mode (parameter names, no "this"). Null preserves the original behavior.
     public CSharpFunctionBodyWriter(CSharpTypeWriter typeWriter, CSharpFunctionInfo fi, bool isStatic, bool isLambda, bool? propOverride = null)
     {
         IndentLevel = typeWriter.IndentLevel;
@@ -218,17 +218,23 @@ public class CSharpFunctionBodyWriter : CodeBuilder<CSharpFunctionBodyWriter>
 
         Write(arg).Write(".");
         // Member-access position: the name is resolved against the receiver, so the
-        // extension-style static qualifier must never apply here.
-        if (TypeWriter.ExtensionReceiverName != null && functionCall.Function is FunctionGroupRefSymbol memberRef)
+        // extension-style re-qualification (and the constants lookup) must never apply here.
+        if (Writer.ExtensionStyle && functionCall.Function is FunctionGroupRefSymbol memberRef)
             Write(memberRef.Name);
         else
             Write(functionCall.Function);
 
         if (functionCall.Args.Count == 1 && !functionCall.HasArgList)
+        {
+            // Extension style: no-arg library functions that moved out of their structs are
+            // classic extension METHODS (v.Length()), so their call sites need "()". Names in
+            // MovedNoArgNames are guaranteed not to be properties on ANY generated type
+            // (conflicts are demoted back into the structs), so this is decidable by name.
+            if (Writer.ExtensionStyle && Writer.MovedNoArgNames.Contains(functionCall.Function.Name))
+                return Write("()");
             return this;
-            // TEMPORARY: this will route to the extension methods now instead of the properties.
-            //return Write("()");
-            
+        }
+
         return Write("(").WriteCommaList(functionCall.Args.Skip(1)).Write(")");
     }
 
@@ -246,9 +252,9 @@ public class CSharpFunctionBodyWriter : CodeBuilder<CSharpFunctionBodyWriter>
                 return Write(ca.Receiver).Write(".").Write(ca.FieldName);
 
             case ConstructorCallExpression cc:
-                // In extension-block mode type names can be shadowed by members of the enclosing
-                // static library class, so qualify with the namespace (same rule as bare type
-                // references in the FunctionGroupRefSymbol case below).
+                // In extension-style library classes type names can be shadowed by members of
+                // the enclosing static class, so qualify with the namespace (same rule as bare
+                // type references in the FunctionGroupRefSymbol case below).
                 return Write("new ")
                     .Write(TypeWriter.ExtensionReceiverName != null ? $"{Namespace}.{cc.TypeName}" : cc.TypeName)
                     .Write("(").WriteCommaList(cc.Args).Write(")");
@@ -288,7 +294,13 @@ public class CSharpFunctionBodyWriter : CodeBuilder<CSharpFunctionBodyWriter>
                 if (TypeWriter.ExtensionReceiverName != null)
                 {
                     if (TypeWriter.ExtensionInstanceNames.Contains(fgr.Name))
-                        return Write($"{TypeWriter.ExtensionReceiverName}.{fgr.Name}");
+                    {
+                        Write($"{TypeWriter.ExtensionReceiverName}.{fgr.Name}");
+                        // Moved no-arg members are classic extension methods, not properties.
+                        if (Writer.MovedNoArgNames.Contains(fgr.Name))
+                            Write("()");
+                        return this;
+                    }
                     if (TypeWriter.ExtensionStaticNames.Contains(fgr.Name))
                         return Write($"{TypeWriter.ExtensionStaticQualifier}.{fgr.Name}");
                     // Type references (e.g. "Integer2" in "Integer2.CreateFromComponents"):

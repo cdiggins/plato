@@ -4,8 +4,9 @@
     Plato conformance suite, V2 emitter edition (docs/plato-roadmap.md Phase 2.4).
 
     Identical to Ara3D.SDK.ConformanceTests except that Generated\ is produced with the
-    extension-style C# emitter (Plato.CLI "csharp-style=extensions" flag), which requires
-    LangVersion 14 (C# 14 `extension` blocks; builds with the .NET 10 SDK targeting net8.0).
+    extension-style C# emitter (Plato.CLI "csharp-style=extensions" flag): classic extension
+    methods, one static class per Plato library. Compiles with the DEFAULT LangVersion on
+    net8.0 (the C# 14 extension-block dependency was dropped in the Phase 2 revision).
 
     The test sources and KnownFailures.json are LINKED from the V1 project (never copied):
     the two suites must stay literally the same code so any result difference is
@@ -22,7 +23,6 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <LangVersion>14</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <IsPackable>false</IsPackable>

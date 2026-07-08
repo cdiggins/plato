@@ -20,7 +20,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
     public TypeDef TypeDef;
     public CSharpWriter Writer;
 
-    // Extension-style mode only (--csharp-style=extensions): inside a C# 14 extension block the
+    // Extension-style mode only (--csharp-style=extensions): inside a static library class the
     // receiver type's member scope is NOT implicit, so bare names written by
     // FunctionGroupRefSymbol must be re-qualified: instance members with the receiver parameter
     // name ("M11" -> "m.M11"), static members with the namespace-qualified type name
@@ -191,7 +191,12 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
     public CSharpTypeWriter WriteBody(CSharpFunctionInfo f, bool isStatic)
     {
         var tmp = new CSharpFunctionBodyWriter(this, f, isStatic, false);
-        Write(tmp.ToString());
+        // Extension style fixes the V1 indentation quirk (see WriteWithLineStateSync);
+        // the default mode must stay byte-identical, misindentation included.
+        if (Writer.ExtensionStyle)
+            this.WriteWithLineStateSync(tmp.ToString());
+        else
+            Write(tmp.ToString());
         return this;
     }
 

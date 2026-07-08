@@ -47,7 +47,7 @@ namespace Ara3D.Geometry.CSharpWriter
             Debug.Assert(FieldTypes.Count == FieldNames.Count);
 
             if (Writer.ExtensionStyle)
-                ExtensionPlan = new ExtensionStylePlan(this);
+                ExtensionPlan = Writer.GetExtensionPlan(t.TypeDef);
             var parameters = FieldTypes.Zip(parameterNames, (pt, pn) => $"{pt} {pn}");
             var parameterNamesStr = parameterNames.JoinStringsWithComma();
             var parametersStr = parameters.JoinStringsWithComma();
@@ -274,9 +274,14 @@ namespace Ara3D.Geometry.CSharpWriter
         }
 
         public bool SkipFunction(FunctionInstance f, bool skipFields = true)
+            => SkipFunction(f, FieldNames, SimpleName, skipFields);
+
+        // Static so ExtensionStylePlan can apply the identical filter before any
+        // CSharpConcreteTypeWriter exists (plans are computed in a pre-pass).
+        public static bool SkipFunction(FunctionInstance f, IReadOnlyList<string> fieldNames, string simpleName, bool skipFields = true)
         {
-            // Note: we skip functions that are named after a field ... 
-            if (skipFields && FieldNames.Contains(f.Name))
+            // Note: we skip functions that are named after a field ...
+            if (skipFields && fieldNames.Contains(f.Name))
                 return true;
 
             if (CSharpWriter.IgnoredFunctions.Contains(f.Name))
@@ -286,7 +291,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 return true;
 
             // We have to be sure to not implement functions that cast to themselves
-            if (f.Name == SimpleName)
+            if (f.Name == simpleName)
                 return true;
 
             return false;
@@ -370,6 +375,10 @@ namespace Ara3D.Geometry.CSharpWriter
             var parameters = fi.ParameterNames.Zip(parameterTypes, (n, t) => $"{t} {n}").JoinStringsWithComma();
             var sig = $"{CSharpFunctionInfo.Annotation}public static {fi.ReturnType} {fi.Name}{fi.ExtensionGenericsString}(this {parameters})";
             var args = fi.ParameterNames.Count <= 1 ? "" : "(" + fi.ParameterNames.Skip(1).JoinStringsWithComma() +")";
+            // Extension style: forwarded no-arg members that moved out of the struct are now
+            // classic extension METHODS, so the forwarding call site needs parentheses.
+            if (args == "" && Writer.ExtensionStyle && Writer.MovedNoArgNames.Contains(fi.Name))
+                args = "()";
             var firstParamName = fi.ParameterNames[0];
             return $"{sig} => (({platoType}){firstParamName}).{fi.Name}{args};";
         }

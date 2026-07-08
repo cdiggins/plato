@@ -8,6 +8,26 @@ namespace Ara3D.Geometry.CSharpWriter
 {
     public static class CSharpWriterExtensions
     {
+        // CodeBuilder.Write appends a multi-line fragment (the output of a nested builder)
+        // verbatim and leaves AtNewLine false, so whatever is written NEXT misses its
+        // indentation - the cause of the historical indentation inconsistencies in the
+        // generated output (roadmap "Phase 2 revision" item 5). Fragments produced by nested
+        // builders always end in a newline; re-emitting that final newline through WriteLine
+        // keeps the builder's line-start state in sync so the following line is indented.
+        // Only the extension style calls this: the default mode's output is a byte-identity
+        // gate and keeps the quirk until V1 is retired.
+        public static T WriteWithLineStateSync<T>(this T builder, string fragment) where T : CodeBuilder<T>
+        {
+            if (string.IsNullOrEmpty(fragment))
+                return builder;
+            if (!fragment.EndsWith("\n"))
+                return builder.Write(fragment);
+            var cut = fragment.EndsWith("\r\n") ? fragment.Length - 2 : fragment.Length - 1;
+            if (cut > 0)
+                builder.Write(fragment.Substring(0, cut));
+            return builder.WriteLine();
+        }
+
         public static StringBuilder OutputInterfaces(TypeExpression te, StringBuilder sb, string indent)
         {
             sb.AppendLine($"{indent}- {te}");

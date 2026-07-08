@@ -19,12 +19,83 @@ namespace Ara3D.Geometry.CSharpWriter
         public string FloatType;
         public string Namespace;
 
-        // When true, emits the "extension style" output (--csharp-style=extensions, roadmap P2.2):
-        // the library-function fanout is written to C# 14 extension blocks (one static class per
-        // Plato library) instead of instance members on the partial structs. Requires
-        // <LangVersion>14</LangVersion> in the consuming project. Default (false) output is
-        // byte-identical to the original writer.
+        // When true, emits the "extension style" output (--csharp-style=extensions, roadmap P2.2
+        // as amended by the Phase 2 revision): the library-function fanout is written as CLASSIC
+        // extension methods (one plain static class per Plato library) instead of instance
+        // members on the partial structs. Compiles with the default LangVersion on net8.0.
+        // Default (false) output is byte-identical to the original writer.
         public bool ExtensionStyle;
+
+        // Extension style only (null otherwise): per-concrete-type move/keep plans, computed
+        // for ALL types before anything is written (see BuildExtensionPlans).
+        public Dictionary<TypeDef, ExtensionStylePlan> ExtensionPlans { get; private set; }
+
+        // Extension style only (null otherwise): names of no-arg library functions that moved
+        // out of their structs and became classic extension METHODS. The function-body writer
+        // appends "()" at every call site of such a name (v.Length -> v.Length()). Globally
+        // consistent by construction: a name that is a no-arg property on ANY generated type
+        // (or declared no-arg by any interface) is never in this set - such functions are
+        // demoted back into their structs instead.
+        public HashSet<string> MovedNoArgNames { get; private set; }
+
+        public ExtensionStylePlan GetExtensionPlan(TypeDef typeDef)
+            => ExtensionPlans[typeDef];
+
+        // Names the emitter must keep as no-arg struct PROPERTIES because handwritten code in
+        // Plato.Intrinsics either accesses them with property syntax (AlmostZero in
+        // Vector3_Extensions.AnyPerpendicular; Pow2/Pow3 in Number.Cubic/Linear/Quadratic) or
+        // hand-implements them as a property the compiler cannot see
+        // (Number.ReciprocalSquareRootEstimate). The compiler has no view into handwritten
+        // usages, so these are pinned; moving any of them would break the Plato.Intrinsics
+        // build (which is shared byte-for-byte with the default-mode SDK and cannot fork).
+        public static HashSet<string> HandwrittenPropertySyntaxNames = new HashSet<string>
+        {
+            "AlmostZero",
+            "Pow2",
+            "Pow3",
+            "ReciprocalSquareRootEstimate",
+        };
+
+        // Computes the extension-style plans and the global no-arg name partition. Must run
+        // before ANY file is written: Constants.g.cs / Extensions.g.cs / struct-kept bodies all
+        // contain call sites of moved members that need the "()" injection.
+        private void BuildExtensionPlans()
+        {
+            ExtensionPlans = new Dictionary<TypeDef, ExtensionStylePlan>();
+            foreach (var c in Compilation.ConcreteTypes)
+                if (!IgnoredTypes.Contains(c.TypeDef.Name) && !ExtensionPlans.ContainsKey(c.TypeDef))
+                    ExtensionPlans[c.TypeDef] = new ExtensionStylePlan(this, c);
+
+            // Every name that is (or may be accessed as) a no-arg instance PROPERTY somewhere.
+            var keptNoArg = new HashSet<string>(HandwrittenPropertySyntaxNames);
+            foreach (var p in ExtensionPlans.Values)
+                keptNoArg.UnionWith(p.KeptNoArgPropertyNames);
+
+            // Interface-declared no-arg members are C# interface properties; call sites whose
+            // receiver is interface-typed (or a constrained type variable) use property syntax,
+            // so these names must keep property syntax everywhere.
+            foreach (var t in Compilation.AllTypeAndLibraryDefinitions)
+                if (t != null && t.IsInterface())
+                    foreach (var m in t.Methods)
+                        if (m.Function.NumParameters == 1)
+                            keptNoArg.Add(m.Function.Name);
+
+            var movedNoArg = new HashSet<string>();
+            foreach (var p in ExtensionPlans.Values)
+                foreach (var f in p.MovedFunctions)
+                    if (f.ParameterNames.Count == 1)
+                        movedNoArg.Add(f.Name);
+
+            // A name may not be a property on one receiver type and a method on another
+            // (call-site syntax is decided by name): demote the conflicted names everywhere.
+            var conflicted = new HashSet<string>(System.Linq.Enumerable.Where(movedNoArg, keptNoArg.Contains));
+            if (conflicted.Count > 0)
+                foreach (var p in ExtensionPlans.Values)
+                    p.DemoteMovedNames(conflicted);
+
+            movedNoArg.ExceptWith(conflicted);
+            MovedNoArgNames = movedNoArg;
+        }
 
         // When true, applies the component-op unrolling optimization (--optimize, roadmap P3.1):
         // recognized MapComponents/ZipComponents/Reduce/All*/Any* call sites on statically-known
@@ -159,6 +230,9 @@ namespace Ara3D.Geometry.CSharpWriter
             OtherPrecisionNamespace = floatType == "float" ? "Plato.DoublePrecision" : "Plato";
 #endif 
 
+            if (ExtensionStyle)
+                BuildExtensionPlans();
+
             WriteFile("Interfaces.g.cs", WriteConceptInterfaces);
             WriteFile("Constants.g.cs", WriteConstantLibraryMethods);
             WriteFile("Extensions.g.cs", WriteInterfaceLibraryMethods);
@@ -192,7 +266,9 @@ namespace Ara3D.Geometry.CSharpWriter
             var tmp = NewDefaultTypeWriter();
             var fi = tmp.ToFunctionInfo(f, null, FunctionInstanceKind.Constant);
             tmp.WriteStaticFunction(fi);
-            return Write(tmp.ToString());
+            // Extension style fixes the V1 indentation quirk (see WriteWithLineStateSync);
+            // the default mode must stay byte-identical, misindentation included.
+            return ExtensionStyle ? this.WriteWithLineStateSync(tmp.ToString()) : Write(tmp.ToString());
         }
 
         public CSharpWriter WriteConstantLibraryMethods()
@@ -242,7 +318,10 @@ namespace Ara3D.Geometry.CSharpWriter
                     var fi = new FunctionInstance(f, null, null, FunctionInstanceKind.InterfaceExtension);
                     var cfi = new CSharpFunctionInfo(fi, null, interfaceWriter);
                     interfaceWriter.WriteExtensionFunction(cfi);
-                    Write(interfaceWriter.ToString());
+                    if (ExtensionStyle)
+                        this.WriteWithLineStateSync(interfaceWriter.ToString());
+                    else
+                        Write(interfaceWriter.ToString());
                 }
             }
             WriteEndBlock();
@@ -253,7 +332,7 @@ namespace Ara3D.Geometry.CSharpWriter
         {
             var tmp = new CSharpTypeWriter(this, type);
             tmp.WriteConceptInterface();
-            return Write(tmp.ToString());
+            return ExtensionStyle ? this.WriteWithLineStateSync(tmp.ToString()) : Write(tmp.ToString());
         }
 
         public CSharpWriter WriteConceptInterfaces()
@@ -268,7 +347,7 @@ namespace Ara3D.Geometry.CSharpWriter
         {
             var tmp = new CSharpTypeWriter(this, concreteType.TypeDef);
             tmp.WriteConcreteType(concreteType);
-            return Write(tmp.ToString());
+            return ExtensionStyle ? this.WriteWithLineStateSync(tmp.ToString()) : Write(tmp.ToString());
         }
     }
 }
