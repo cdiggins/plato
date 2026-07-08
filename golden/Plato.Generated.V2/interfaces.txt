@@ -1,0 +1,1268 @@
+
+Angle
+  - IMeasure
+    - IVectorLike
+      - IInterpolatable
+      - IScalarArithmetic
+      - IArrayLike<Number>
+    - IOrderable
+
+AnglePair
+  - IInterval<Angle>
+    - IValue
+
+Arc
+  - IOpenShape2D
+    - IGeometry2D
+      - IGeometry
+    - IOpenShape
+      - IOpenClosedShape
+        - IShape
+          - IGeometry
+
+ArchimedeanSpiral
+  - IPolarCurve
+    - IAngularCurve2D
+      - ICurve2D
+        - IGeometry2D
+          - IGeometry
+        - ICurve<Point2D>
+          - IProcedural<Number,TRange>
+          - IOpenClosedShape
+            - IShape
+              - IGeometry
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+Array
+  - IArray<T>
+
+Array2D
+  - IArray2D<T>
+    - IArray<T>
+
+Array3D
+  - IArray3D<T>
+    - IArray<T>
+
+ArrayHelpers
+
+AxisAngle
+  - IRotation3D
+    - IRigidTransform3D
+      - ITransform3D
+
+Boolean
+  - IValue
+  - IOrderable
+  - IBoolean
+
+Bounds2D
+  - IBounds<Point2D,Vector2>
+    - IValue
+  - IArrayLike<Point2D>
+
+Bounds3D
+  - IBounds<Point3D,Vector3>
+    - IValue
+  - IDeformable3D
+    - ITransformable3D
+  - IArrayLike<Point3D>
+
+Box
+  - ISolid
+    - IProceduralSurface
+      - IProcedural<Vector2,Point3D>
+      - ISurface
+        - IGeometry3D
+          - IGeometry
+
+ButterflyCurve
+  - IAngularCurve2D
+    - ICurve2D
+      - IGeometry2D
+        - IGeometry
+      - ICurve<Point2D>
+        - IProcedural<Number,TRange>
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+ByteRGB
+  - ICoordinate
+
+ByteRGBA
+  - ICoordinate
+
+Capsule
+  - ISolid
+    - IProceduralSurface
+      - IProcedural<Vector2,Point3D>
+      - ISurface
+        - IGeometry3D
+          - IGeometry
+
+Cardoid
+  - IPolarCurve
+    - IAngularCurve2D
+      - ICurve2D
+        - IGeometry2D
+          - IGeometry
+        - ICurve<Point2D>
+          - IProcedural<Number,TRange>
+          - IOpenClosedShape
+            - IShape
+              - IGeometry
+  - IClosedShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+Character
+  - IValue
+  - IOrderable
+
+Chord
+  - IClosedShape2D
+    - IGeometry2D
+      - IGeometry
+    - IClosedShape
+      - IOpenClosedShape
+        - IShape
+          - IGeometry
+
+Circle
+  - IAngularCurve2D
+    - ICurve2D
+      - IGeometry2D
+        - IGeometry
+      - ICurve<Point2D>
+        - IProcedural<Number,TRange>
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+  - IClosedCurve2D
+    - ICurve2D
+      - IGeometry2D
+        - IGeometry
+      - ICurve<Point2D>
+        - IProcedural<Number,TRange>
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+    - IClosedShape2D
+      - IGeometry2D
+        - IGeometry
+      - IClosedShape
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+
+Color
+  - ICoordinate
+
+ColorHSL
+  - ICoordinate
+
+ColorHSV
+  - ICoordinate
+
+ColorLAB
+  - ICoordinate
+
+ColorLCh
+  - ICoordinate
+
+ColorLUV
+  - ICoordinate
+
+ColorYCbCr
+  - ICoordinate
+
+ConchoidOfDeSluze
+  - IPolarCurve
+    - IAngularCurve2D
+      - ICurve2D
+        - IGeometry2D
+          - IGeometry
+        - ICurve<Point2D>
+          - IProcedural<Number,TRange>
+          - IOpenClosedShape
+            - IShape
+              - IGeometry
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+Cone
+  - ISolid
+    - IProceduralSurface
+      - IProcedural<Vector2,Point3D>
+      - ISurface
+        - IGeometry3D
+          - IGeometry
+
+ConeSegment
+  - ISolid
+    - IProceduralSurface
+      - IProcedural<Vector2,Point3D>
+      - ISurface
+        - IGeometry3D
+          - IGeometry
+
+ConicSection
+  - IPolarCurve
+    - IAngularCurve2D
+      - ICurve2D
+        - IGeometry2D
+          - IGeometry
+        - ICurve<Point2D>
+          - IProcedural<Number,TRange>
+          - IOpenClosedShape
+            - IShape
+              - IGeometry
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+Cubic
+  - IRealFunction
+
+CubicBezier2D
+  - IOpenCurve2D
+    - ICurve2D
+      - IGeometry2D
+        - IGeometry
+      - ICurve<Point2D>
+        - IProcedural<Number,TRange>
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+    - IOpenShape2D
+      - IGeometry2D
+        - IGeometry
+      - IOpenShape
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+
+CubicBezier3D
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+CycloidOfCeva
+  - IPolarCurve
+    - IAngularCurve2D
+      - ICurve2D
+        - IGeometry2D
+          - IGeometry
+        - ICurve<Point2D>
+          - IProcedural<Number,TRange>
+          - IOpenClosedShape
+            - IShape
+              - IGeometry
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+Cylinder
+  - ISurface
+    - IGeometry3D
+      - IGeometry
+
+CylindricalCoordinate
+  - ICoordinate
+
+Ellipse
+  - IAngularCurve2D
+    - ICurve2D
+      - IGeometry2D
+        - IGeometry
+      - ICurve<Point2D>
+        - IProcedural<Number,TRange>
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+  - IClosedCurve2D
+    - ICurve2D
+      - IGeometry2D
+        - IGeometry
+      - ICurve<Point2D>
+        - IProcedural<Number,TRange>
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+    - IClosedShape2D
+      - IGeometry2D
+        - IGeometry
+      - IClosedShape
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+
+Ellipsoid
+  - ISolid
+    - IProceduralSurface
+      - IProcedural<Vector2,Point3D>
+      - ISurface
+        - IGeometry3D
+          - IGeometry
+
+Epicycloid
+  - IAngularCurve2D
+    - ICurve2D
+      - IGeometry2D
+        - IGeometry
+      - ICurve<Point2D>
+        - IProcedural<Number,TRange>
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+Epitrochoid
+  - IAngularCurve2D
+    - ICurve2D
+      - IGeometry2D
+        - IGeometry
+      - ICurve<Point2D>
+        - IProcedural<Number,TRange>
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+FermatsSpiral
+  - IPolarCurve
+    - IAngularCurve2D
+      - ICurve2D
+        - IGeometry2D
+          - IGeometry
+        - ICurve<Point2D>
+          - IProcedural<Number,TRange>
+          - IOpenClosedShape
+            - IShape
+              - IGeometry
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+FigureEightKnot
+  - IAngularCurve3D
+    - ICurve3D
+      - IGeometry3D
+        - IGeometry
+      - ICurve<Point3D>
+        - IProcedural<Number,TRange>
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+  - IClosedShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+FrenetFrame
+
+Function0
+
+Function1
+
+Function2
+
+Function3
+
+Function4
+
+Function5
+
+Function6
+
+Function7
+
+Function8
+
+Function9
+
+GeoCoordinate
+  - ICoordinate
+
+GeoCoordinateWithAltitude
+  - ICoordinate
+
+Helix
+  - IAngularCurve3D
+    - ICurve3D
+      - IGeometry3D
+        - IGeometry
+      - ICurve<Point3D>
+        - IProcedural<Number,TRange>
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+HorizontalCoordinate
+  - ICoordinate
+
+Hypocycloid
+  - IAngularCurve2D
+    - ICurve2D
+      - IGeometry2D
+        - IGeometry
+      - ICurve<Point2D>
+        - IProcedural<Number,TRange>
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+Hypotrochoid
+  - IAngularCurve2D
+    - ICurve2D
+      - IGeometry2D
+        - IGeometry
+      - ICurve<Point2D>
+        - IProcedural<Number,TRange>
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+Identity2D
+  - IRigidTransform2D
+    - ITransform2D
+
+IdentityTransform3D
+  - IRotation3D
+    - IRigidTransform3D
+      - ITransform3D
+
+Integer
+  - IWholeNumber
+    - IOrderable
+    - IArithmetic
+      - IAdditive
+      - IMultiplicative
+      - IDivisible
+      - IModulo
+    - IInterpolatable
+
+Integer2
+  - IValue
+  - IArrayLike<Integer>
+
+Integer3
+  - IValue
+  - IArrayLike<Integer>
+
+Integer4
+  - IValue
+  - IArrayLike<Integer>
+
+LemniscateOfBernoulli
+  - IPolarCurve
+    - IAngularCurve2D
+      - ICurve2D
+        - IGeometry2D
+          - IGeometry
+        - ICurve<Point2D>
+          - IProcedural<Number,TRange>
+          - IOpenClosedShape
+            - IShape
+              - IGeometry
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+Lens
+  - IClosedShape2D
+    - IGeometry2D
+      - IGeometry
+    - IClosedShape
+      - IOpenClosedShape
+        - IShape
+          - IGeometry
+
+Limacon
+  - IPolarCurve
+    - IAngularCurve2D
+      - ICurve2D
+        - IGeometry2D
+          - IGeometry
+        - ICurve<Point2D>
+          - IProcedural<Number,TRange>
+          - IOpenClosedShape
+            - IShape
+              - IGeometry
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+Line2D
+  - IArrayLike<Point2D>
+  - IInterval<Point2D>
+    - IValue
+
+Line3D
+  - IDeformable3D
+    - ITransformable3D
+  - IInterval<Point3D>
+    - IValue
+  - IArrayLike<Point3D>
+
+LinearEquation
+  - IRealFunction
+
+LineMesh3D
+  - IIndexedGeometry3D<Integer2>
+    - IPointGeometry3D
+      - IGeometry3D
+        - IGeometry
+      - IDeformable3D
+        - ITransformable3D
+
+Lines2D
+  - IPrimitiveGeometry2D<Line2D>
+    - IGeometry2D
+      - IGeometry
+
+Lines3D
+  - IPrimitiveGeometry3D<Line3D>
+    - IGeometry3D
+      - IGeometry
+
+Lissajous
+  - IAngularCurve2D
+    - ICurve2D
+      - IGeometry2D
+        - IGeometry
+      - ICurve<Point2D>
+        - IProcedural<Number,TRange>
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+LogarithmicSpiral
+  - IPolarCurve
+    - IAngularCurve2D
+      - ICurve2D
+        - IGeometry2D
+          - IGeometry
+        - ICurve<Point2D>
+          - IProcedural<Number,TRange>
+          - IOpenClosedShape
+            - IShape
+              - IGeometry
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+LogPolarCoordinate
+  - ICoordinate
+
+LookAt3D
+  - IRotation3D
+    - IRigidTransform3D
+      - ITransform3D
+
+LookDirection3D
+  - IRotation3D
+    - IRigidTransform3D
+      - ITransform3D
+
+Matrix3x2
+  - IValue
+  - IArrayLike<Number>
+
+Matrix4x4
+  - IValue
+  - IArrayLike<Number>
+
+NPrism
+  - ISolid
+    - IProceduralSurface
+      - IProcedural<Vector2,Point3D>
+      - ISurface
+        - IGeometry3D
+          - IGeometry
+
+NPyramid
+  - ISolid
+    - IProceduralSurface
+      - IProcedural<Vector2,Point3D>
+      - ISurface
+        - IGeometry3D
+          - IGeometry
+
+Number
+  - IRealNumber
+    - IInterpolatable
+    - IArithmetic
+      - IAdditive
+      - IMultiplicative
+      - IDivisible
+      - IModulo
+    - IScalarArithmetic
+    - IOrderable
+
+NumberInterval
+  - IInterval<Number>
+    - IValue
+
+Object
+  - IValue
+
+OffsetRotation2D
+  - IRigidTransform2D
+    - ITransform2D
+
+OffsetScale2D
+  - ITransform2D
+
+Orthographic3D
+  - ITransform3D
+
+Parabola
+  - IRealFunction
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+Perspective3D
+  - ITransform3D
+
+Plane
+  - IValue
+
+PlaneProjection3D
+  - ITransform3D
+
+Point2D
+  - ICoordinate
+  - IVectorLike
+    - IInterpolatable
+    - IScalarArithmetic
+    - IArrayLike<Number>
+  - IGeometricPrimitive2D
+    - IPointGeometry2D
+      - IGeometry2D
+        - IGeometry
+      - IDeformable2D
+        - ITransformable2D
+  - IDifference<Vector2>
+
+Point3D
+  - ICoordinate
+  - IVectorLike
+    - IInterpolatable
+    - IScalarArithmetic
+    - IArrayLike<Number>
+  - IGeometricPrimitive3D
+    - IPointGeometry3D
+      - IGeometry3D
+        - IGeometry
+      - IDeformable3D
+        - ITransformable3D
+  - IDifference<Vector3>
+
+Points2D
+  - IPrimitiveGeometry2D<Point2D>
+    - IGeometry2D
+      - IGeometry
+
+Points3D
+  - IPrimitiveGeometry3D<Point3D>
+    - IGeometry3D
+      - IGeometry
+
+PolarCoordinate
+  - ICoordinate
+
+Polygon
+  - IPolygon2D
+    - IPolyLine2D
+      - IPointGeometry2D
+        - IGeometry2D
+          - IGeometry
+        - IDeformable2D
+          - ITransformable2D
+      - IOpenClosedShape
+        - IShape
+          - IGeometry
+      - ICurve2D
+        - IGeometry2D
+          - IGeometry
+        - ICurve<Point2D>
+          - IProcedural<Number,TRange>
+          - IOpenClosedShape
+            - IShape
+              - IGeometry
+    - IClosedShape2D
+      - IGeometry2D
+        - IGeometry
+      - IClosedShape
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+
+PolyLine2D
+  - IGeometry2D
+    - IGeometry
+
+PolyLine3D
+  - IGeometry3D
+    - IGeometry
+
+Pose2D
+  - IRigidTransform2D
+    - ITransform2D
+
+Pose3D
+  - IRigidTransform3D
+    - ITransform3D
+
+Procedural
+
+Pyramid
+  - ISolid
+    - IProceduralSurface
+      - IProcedural<Vector2,Point3D>
+      - ISurface
+        - IGeometry3D
+          - IGeometry
+
+Quad2D
+  - IPolygon2D
+    - IPolyLine2D
+      - IPointGeometry2D
+        - IGeometry2D
+          - IGeometry
+        - IDeformable2D
+          - ITransformable2D
+      - IOpenClosedShape
+        - IShape
+          - IGeometry
+      - ICurve2D
+        - IGeometry2D
+          - IGeometry
+        - ICurve<Point2D>
+          - IProcedural<Number,TRange>
+          - IOpenClosedShape
+            - IShape
+              - IGeometry
+    - IClosedShape2D
+      - IGeometry2D
+        - IGeometry
+      - IClosedShape
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+  - IArrayLike<Point2D>
+
+Quad3D
+  - IDeformable3D
+    - ITransformable3D
+  - IArrayLike<Point3D>
+
+QuadGrid3D
+  - IGeometry3D
+    - IGeometry
+
+QuadMesh3D
+  - IIndexedGeometry3D<Integer4>
+    - IPointGeometry3D
+      - IGeometry3D
+        - IGeometry
+      - IDeformable3D
+        - ITransformable3D
+
+Quadratic
+  - IRealFunction
+
+QuadraticBezier2D
+  - IOpenCurve2D
+    - ICurve2D
+      - IGeometry2D
+        - IGeometry
+      - ICurve<Point2D>
+        - IProcedural<Number,TRange>
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+    - IOpenShape2D
+      - IGeometry2D
+        - IGeometry
+      - IOpenShape
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+
+QuadraticBezier3D
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+Quads3D
+  - IPrimitiveGeometry3D<Quad3D>
+    - IGeometry3D
+      - IGeometry
+
+Quaternion
+  - IValue
+  - IArrayLike<Number>
+
+Ray2D
+  - IValue
+
+Ray3D
+  - IValue
+  - IDeformable3D
+    - ITransformable3D
+
+Rect2D
+  - IPolygon2D
+    - IPolyLine2D
+      - IPointGeometry2D
+        - IGeometry2D
+          - IGeometry
+        - IDeformable2D
+          - ITransformable2D
+      - IOpenClosedShape
+        - IShape
+          - IGeometry
+      - ICurve2D
+        - IGeometry2D
+          - IGeometry
+        - ICurve<Point2D>
+          - IProcedural<Number,TRange>
+          - IOpenClosedShape
+            - IShape
+              - IGeometry
+    - IClosedShape2D
+      - IGeometry2D
+        - IGeometry
+      - IClosedShape
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+
+Reflection2D
+  - ITransform2D
+
+RegularPolygon
+  - IPolygon2D
+    - IPolyLine2D
+      - IPointGeometry2D
+        - IGeometry2D
+          - IGeometry
+        - IDeformable2D
+          - ITransformable2D
+      - IOpenClosedShape
+        - IShape
+          - IGeometry
+      - ICurve2D
+        - IGeometry2D
+          - IGeometry
+        - ICurve<Point2D>
+          - IProcedural<Number,TRange>
+          - IOpenClosedShape
+            - IShape
+              - IGeometry
+    - IClosedShape2D
+      - IGeometry2D
+        - IGeometry
+      - IClosedShape
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+
+Ring
+  - IClosedShape2D
+    - IGeometry2D
+      - IGeometry
+    - IClosedShape
+      - IOpenClosedShape
+        - IShape
+          - IGeometry
+
+Rose
+  - IPolarCurve
+    - IAngularCurve2D
+      - ICurve2D
+        - IGeometry2D
+          - IGeometry
+        - ICurve<Point2D>
+          - IProcedural<Number,TRange>
+          - IOpenClosedShape
+            - IShape
+              - IGeometry
+  - IClosedShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+Rotation2D
+  - IRigidTransform2D
+    - ITransform2D
+
+Rotation3D
+  - IRotation3D
+    - IRigidTransform3D
+      - ITransform3D
+
+Scale2D
+  - ITransform2D
+
+Scaling3D
+  - ITransform3D
+
+Sector
+  - IClosedShape2D
+    - IGeometry2D
+      - IGeometry
+    - IClosedShape
+      - IOpenClosedShape
+        - IShape
+          - IGeometry
+
+Segment
+  - IClosedShape2D
+    - IGeometry2D
+      - IGeometry
+    - IClosedShape
+      - IOpenClosedShape
+        - IShape
+          - IGeometry
+
+SineWave
+  - IRealFunction
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+SinusoidalSpiral
+  - IPolarCurve
+    - IAngularCurve2D
+      - ICurve2D
+        - IGeometry2D
+          - IGeometry
+        - ICurve<Point2D>
+          - IProcedural<Number,TRange>
+          - IOpenClosedShape
+            - IShape
+              - IGeometry
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+Skew2D
+  - ITransform2D
+
+Sphere
+  - ISolid
+    - IProceduralSurface
+      - IProcedural<Vector2,Point3D>
+      - ISurface
+        - IGeometry3D
+          - IGeometry
+
+SphericalCoordinate
+  - ICoordinate
+
+Spiral
+  - IOpenCurve2D
+    - ICurve2D
+      - IGeometry2D
+        - IGeometry
+      - ICurve<Point2D>
+        - IProcedural<Number,TRange>
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+    - IOpenShape2D
+      - IGeometry2D
+        - IGeometry
+      - IOpenShape
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+
+String
+  - IValue
+  - IOrderable
+
+Time
+  - IMeasure
+    - IVectorLike
+      - IInterpolatable
+      - IScalarArithmetic
+      - IArrayLike<Number>
+    - IOrderable
+
+Torus
+  - ISolid
+    - IProceduralSurface
+      - IProcedural<Vector2,Point3D>
+      - ISurface
+        - IGeometry3D
+          - IGeometry
+
+TorusKnot
+  - IAngularCurve3D
+    - ICurve3D
+      - IGeometry3D
+        - IGeometry
+      - ICurve<Point3D>
+        - IProcedural<Number,TRange>
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+  - IClosedShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+Transform2D
+  - ITransform2D
+
+Transform3D
+  - ITransform3D
+
+Translation2D
+  - IRigidTransform2D
+    - ITransform2D
+
+Translation3D
+  - IRigidTransform3D
+    - ITransform3D
+
+TrefoilKnot
+  - IAngularCurve3D
+    - ICurve3D
+      - IGeometry3D
+        - IGeometry
+      - ICurve<Point3D>
+        - IProcedural<Number,TRange>
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+  - IClosedShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+Triangle2D
+  - IPolygon2D
+    - IPolyLine2D
+      - IPointGeometry2D
+        - IGeometry2D
+          - IGeometry
+        - IDeformable2D
+          - ITransformable2D
+      - IOpenClosedShape
+        - IShape
+          - IGeometry
+      - ICurve2D
+        - IGeometry2D
+          - IGeometry
+        - ICurve<Point2D>
+          - IProcedural<Number,TRange>
+          - IOpenClosedShape
+            - IShape
+              - IGeometry
+    - IClosedShape2D
+      - IGeometry2D
+        - IGeometry
+      - IClosedShape
+        - IOpenClosedShape
+          - IShape
+            - IGeometry
+  - IGeometricPrimitive2D
+    - IPointGeometry2D
+      - IGeometry2D
+        - IGeometry
+      - IDeformable2D
+        - ITransformable2D
+  - IArrayLike<Point2D>
+
+Triangle3D
+  - IDeformable3D
+    - ITransformable3D
+  - IArrayLike<Point3D>
+
+TriangleMesh3D
+  - IIndexedGeometry3D<Integer3>
+    - IPointGeometry3D
+      - IGeometry3D
+        - IGeometry
+      - IDeformable3D
+        - ITransformable3D
+
+Triangles3D
+  - IPrimitiveGeometry3D<Triangle3D>
+    - IGeometry3D
+      - IGeometry
+
+TrisectrixOfMaclaurin
+  - IPolarCurve
+    - IAngularCurve2D
+      - ICurve2D
+        - IGeometry2D
+          - IGeometry
+        - ICurve<Point2D>
+          - IProcedural<Number,TRange>
+          - IOpenClosedShape
+            - IShape
+              - IGeometry
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+TRSTransform2D
+  - ITransform2D
+
+TRSTransform3D
+  - ITransform3D
+
+TschirnhausenCubic
+  - IPolarCurve
+    - IAngularCurve2D
+      - ICurve2D
+        - IGeometry2D
+          - IGeometry
+        - ICurve<Point2D>
+          - IProcedural<Number,TRange>
+          - IOpenClosedShape
+            - IShape
+              - IGeometry
+  - IOpenShape
+    - IOpenClosedShape
+      - IShape
+        - IGeometry
+
+Tube
+  - ISolid
+    - IProceduralSurface
+      - IProcedural<Vector2,Point3D>
+      - ISurface
+        - IGeometry3D
+          - IGeometry
+
+Tuple2
+
+Tuple3
+
+Tuple4
+
+Tuple5
+
+Tuple6
+
+Tuple7
+
+Tuple8
+
+UniformScale2D
+  - ITransform2D
+
+Vector2
+  - IVector
+    - INumerical
+      - IVectorLike
+        - IInterpolatable
+        - IScalarArithmetic
+        - IArrayLike<Number>
+      - IArithmetic
+        - IAdditive
+        - IMultiplicative
+        - IDivisible
+        - IModulo
+
+Vector3
+  - IVector
+    - INumerical
+      - IVectorLike
+        - IInterpolatable
+        - IScalarArithmetic
+        - IArrayLike<Number>
+      - IArithmetic
+        - IAdditive
+        - IMultiplicative
+        - IDivisible
+        - IModulo
+
+Vector4
+  - IVector
+    - INumerical
+      - IVectorLike
+        - IInterpolatable
+        - IScalarArithmetic
+        - IArrayLike<Number>
+      - IArithmetic
+        - IAdditive
+        - IMultiplicative
+        - IDivisible
+        - IModulo
+
+Vector8
+  - IVector
+    - INumerical
+      - IVectorLike
+        - IInterpolatable
+        - IScalarArithmetic
+        - IArrayLike<Number>
+      - IArithmetic
+        - IAdditive
+        - IMultiplicative
+        - IDivisible
+        - IModulo
+
+YawPitch
+  - IRotation3D
+    - IRigidTransform3D
+      - ITransform3D
+
+YawPitchRoll
+  - IRotation3D
+    - IRigidTransform3D
+      - ITransform3D

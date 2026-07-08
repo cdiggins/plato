@@ -1,0 +1,4183 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/> 
+    <link rel="stylesheet" href="style.css"/>
+    <title>Plato Geometry Documentation</title>
+</head>
+<body>
+
+<div class = 'container'>
+<div class = 'nav'>
+<h3 class = 'collapsible'>Classes</h3>
+<ul>
+<li><a href='#class-Angle'>Angle</a></li>
+<li><a href='#class-AnglePair'>AnglePair</a></li>
+<li><a href='#class-Arc'>Arc</a></li>
+<li><a href='#class-ArchimedeanSpiral'>ArchimedeanSpiral</a></li>
+<li><a href='#class-Array'>Array</a>&lt;T&gt;</li>
+<li><a href='#class-Array2D'>Array2D</a>&lt;T&gt;</li>
+<li><a href='#class-Array3D'>Array3D</a>&lt;T&gt;</li>
+<li><a href='#class-ArrayHelpers'>ArrayHelpers</a></li>
+<li><a href='#class-AxisAngle'>AxisAngle</a></li>
+<li><a href='#class-Boolean'>Boolean</a></li>
+<li><a href='#class-Bounds2D'>Bounds2D</a></li>
+<li><a href='#class-Bounds3D'>Bounds3D</a></li>
+<li><a href='#class-Box'>Box</a></li>
+<li><a href='#class-ButterflyCurve'>ButterflyCurve</a></li>
+<li><a href='#class-ByteRGB'>ByteRGB</a></li>
+<li><a href='#class-ByteRGBA'>ByteRGBA</a></li>
+<li><a href='#class-Capsule'>Capsule</a></li>
+<li><a href='#class-Cardoid'>Cardoid</a></li>
+<li><a href='#class-Character'>Character</a></li>
+<li><a href='#class-Chord'>Chord</a></li>
+<li><a href='#class-Circle'>Circle</a></li>
+<li><a href='#class-Color'>Color</a></li>
+<li><a href='#class-ColorHSL'>ColorHSL</a></li>
+<li><a href='#class-ColorHSV'>ColorHSV</a></li>
+<li><a href='#class-ColorLAB'>ColorLAB</a></li>
+<li><a href='#class-ColorLCh'>ColorLCh</a></li>
+<li><a href='#class-ColorLUV'>ColorLUV</a></li>
+<li><a href='#class-ColorYCbCr'>ColorYCbCr</a></li>
+<li><a href='#class-ConchoidOfDeSluze'>ConchoidOfDeSluze</a></li>
+<li><a href='#class-Cone'>Cone</a></li>
+<li><a href='#class-ConeSegment'>ConeSegment</a></li>
+<li><a href='#class-ConicSection'>ConicSection</a></li>
+<li><a href='#class-Cubic'>Cubic</a></li>
+<li><a href='#class-CubicBezier2D'>CubicBezier2D</a></li>
+<li><a href='#class-CubicBezier3D'>CubicBezier3D</a></li>
+<li><a href='#class-CycloidOfCeva'>CycloidOfCeva</a></li>
+<li><a href='#class-Cylinder'>Cylinder</a></li>
+<li><a href='#class-CylindricalCoordinate'>CylindricalCoordinate</a></li>
+<li><a href='#class-Ellipse'>Ellipse</a></li>
+<li><a href='#class-Ellipsoid'>Ellipsoid</a></li>
+<li><a href='#class-Epicycloid'>Epicycloid</a></li>
+<li><a href='#class-Epitrochoid'>Epitrochoid</a></li>
+<li><a href='#class-FermatsSpiral'>FermatsSpiral</a></li>
+<li><a href='#class-FigureEightKnot'>FigureEightKnot</a></li>
+<li><a href='#class-FrenetFrame'>FrenetFrame</a></li>
+<li><a href='#class-Function0'>Function0</a>&lt;TR&gt;</li>
+<li><a href='#class-Function1'>Function1</a>&lt;T0, TR&gt;</li>
+<li><a href='#class-Function2'>Function2</a>&lt;T0, T1, TR&gt;</li>
+<li><a href='#class-Function3'>Function3</a>&lt;T0, T1, T2, TR&gt;</li>
+<li><a href='#class-Function4'>Function4</a>&lt;T0, T1, T2, T3, TR&gt;</li>
+<li><a href='#class-Function5'>Function5</a>&lt;T0, T1, T2, T3, T4, TR&gt;</li>
+<li><a href='#class-Function6'>Function6</a>&lt;T0, T1, T2, T3, T4, T5, TR&gt;</li>
+<li><a href='#class-Function7'>Function7</a>&lt;T0, T1, T2, T3, T4, T5, T6, TR&gt;</li>
+<li><a href='#class-Function8'>Function8</a>&lt;T0, T1, T2, T3, T4, T5, T6, T7, TR&gt;</li>
+<li><a href='#class-Function9'>Function9</a>&lt;T0, T1, T2, T3, T4, T5, T6, T7, T8, TR&gt;</li>
+<li><a href='#class-GeoCoordinate'>GeoCoordinate</a></li>
+<li><a href='#class-GeoCoordinateWithAltitude'>GeoCoordinateWithAltitude</a></li>
+<li><a href='#class-Helix'>Helix</a></li>
+<li><a href='#class-HorizontalCoordinate'>HorizontalCoordinate</a></li>
+<li><a href='#class-Hypocycloid'>Hypocycloid</a></li>
+<li><a href='#class-Hypotrochoid'>Hypotrochoid</a></li>
+<li><a href='#class-Identity2D'>Identity2D</a></li>
+<li><a href='#class-IdentityTransform3D'>IdentityTransform3D</a></li>
+<li><a href='#class-Integer'>Integer</a></li>
+<li><a href='#class-Integer2'>Integer2</a></li>
+<li><a href='#class-Integer3'>Integer3</a></li>
+<li><a href='#class-Integer4'>Integer4</a></li>
+<li><a href='#class-LemniscateOfBernoulli'>LemniscateOfBernoulli</a></li>
+<li><a href='#class-Lens'>Lens</a></li>
+<li><a href='#class-Limacon'>Limacon</a></li>
+<li><a href='#class-Line2D'>Line2D</a></li>
+<li><a href='#class-Line3D'>Line3D</a></li>
+<li><a href='#class-LinearEquation'>LinearEquation</a></li>
+<li><a href='#class-LineMesh3D'>LineMesh3D</a></li>
+<li><a href='#class-Lines2D'>Lines2D</a></li>
+<li><a href='#class-Lines3D'>Lines3D</a></li>
+<li><a href='#class-Lissajous'>Lissajous</a></li>
+<li><a href='#class-LogarithmicSpiral'>LogarithmicSpiral</a></li>
+<li><a href='#class-LogPolarCoordinate'>LogPolarCoordinate</a></li>
+<li><a href='#class-LookAt3D'>LookAt3D</a></li>
+<li><a href='#class-LookDirection3D'>LookDirection3D</a></li>
+<li><a href='#class-Matrix3x2'>Matrix3x2</a></li>
+<li><a href='#class-Matrix4x4'>Matrix4x4</a></li>
+<li><a href='#class-NPrism'>NPrism</a></li>
+<li><a href='#class-NPyramid'>NPyramid</a></li>
+<li><a href='#class-Number'>Number</a></li>
+<li><a href='#class-NumberInterval'>NumberInterval</a></li>
+<li><a href='#class-Object'>Object</a></li>
+<li><a href='#class-OffsetRotation2D'>OffsetRotation2D</a></li>
+<li><a href='#class-OffsetScale2D'>OffsetScale2D</a></li>
+<li><a href='#class-Orthographic3D'>Orthographic3D</a></li>
+<li><a href='#class-Parabola'>Parabola</a></li>
+<li><a href='#class-Perspective3D'>Perspective3D</a></li>
+<li><a href='#class-Plane'>Plane</a></li>
+<li><a href='#class-PlaneProjection3D'>PlaneProjection3D</a></li>
+<li><a href='#class-Point2D'>Point2D</a></li>
+<li><a href='#class-Point3D'>Point3D</a></li>
+<li><a href='#class-Points2D'>Points2D</a></li>
+<li><a href='#class-Points3D'>Points3D</a></li>
+<li><a href='#class-PolarCoordinate'>PolarCoordinate</a></li>
+<li><a href='#class-Polygon'>Polygon</a></li>
+<li><a href='#class-PolyLine2D'>PolyLine2D</a></li>
+<li><a href='#class-PolyLine3D'>PolyLine3D</a></li>
+<li><a href='#class-Pose2D'>Pose2D</a></li>
+<li><a href='#class-Pose3D'>Pose3D</a></li>
+<li><a href='#class-Procedural'>Procedural</a>&lt;TIn, TOut&gt;</li>
+<li><a href='#class-Pyramid'>Pyramid</a></li>
+<li><a href='#class-Quad2D'>Quad2D</a></li>
+<li><a href='#class-Quad3D'>Quad3D</a></li>
+<li><a href='#class-QuadGrid3D'>QuadGrid3D</a></li>
+<li><a href='#class-QuadMesh3D'>QuadMesh3D</a></li>
+<li><a href='#class-Quadratic'>Quadratic</a></li>
+<li><a href='#class-QuadraticBezier2D'>QuadraticBezier2D</a></li>
+<li><a href='#class-QuadraticBezier3D'>QuadraticBezier3D</a></li>
+<li><a href='#class-Quads3D'>Quads3D</a></li>
+<li><a href='#class-Quaternion'>Quaternion</a></li>
+<li><a href='#class-Ray2D'>Ray2D</a></li>
+<li><a href='#class-Ray3D'>Ray3D</a></li>
+<li><a href='#class-Rect2D'>Rect2D</a></li>
+<li><a href='#class-Reflection2D'>Reflection2D</a></li>
+<li><a href='#class-RegularPolygon'>RegularPolygon</a></li>
+<li><a href='#class-Ring'>Ring</a></li>
+<li><a href='#class-Rose'>Rose</a></li>
+<li><a href='#class-Rotation2D'>Rotation2D</a></li>
+<li><a href='#class-Rotation3D'>Rotation3D</a></li>
+<li><a href='#class-Scale2D'>Scale2D</a></li>
+<li><a href='#class-Scaling3D'>Scaling3D</a></li>
+<li><a href='#class-Sector'>Sector</a></li>
+<li><a href='#class-Segment'>Segment</a></li>
+<li><a href='#class-SineWave'>SineWave</a></li>
+<li><a href='#class-SinusoidalSpiral'>SinusoidalSpiral</a></li>
+<li><a href='#class-Skew2D'>Skew2D</a></li>
+<li><a href='#class-Sphere'>Sphere</a></li>
+<li><a href='#class-SphericalCoordinate'>SphericalCoordinate</a></li>
+<li><a href='#class-Spiral'>Spiral</a></li>
+<li><a href='#class-String'>String</a></li>
+<li><a href='#class-Time'>Time</a></li>
+<li><a href='#class-Torus'>Torus</a></li>
+<li><a href='#class-TorusKnot'>TorusKnot</a></li>
+<li><a href='#class-Transform2D'>Transform2D</a></li>
+<li><a href='#class-Transform3D'>Transform3D</a></li>
+<li><a href='#class-Translation2D'>Translation2D</a></li>
+<li><a href='#class-Translation3D'>Translation3D</a></li>
+<li><a href='#class-TrefoilKnot'>TrefoilKnot</a></li>
+<li><a href='#class-Triangle2D'>Triangle2D</a></li>
+<li><a href='#class-Triangle3D'>Triangle3D</a></li>
+<li><a href='#class-TriangleMesh3D'>TriangleMesh3D</a></li>
+<li><a href='#class-Triangles3D'>Triangles3D</a></li>
+<li><a href='#class-TrisectrixOfMaclaurin'>TrisectrixOfMaclaurin</a></li>
+<li><a href='#class-TRSTransform2D'>TRSTransform2D</a></li>
+<li><a href='#class-TRSTransform3D'>TRSTransform3D</a></li>
+<li><a href='#class-TschirnhausenCubic'>TschirnhausenCubic</a></li>
+<li><a href='#class-Tube'>Tube</a></li>
+<li><a href='#class-Tuple2'>Tuple2</a>&lt;T0, T1&gt;</li>
+<li><a href='#class-Tuple3'>Tuple3</a>&lt;T0, T1, T2&gt;</li>
+<li><a href='#class-Tuple4'>Tuple4</a>&lt;T0, T1, T2, T3&gt;</li>
+<li><a href='#class-Tuple5'>Tuple5</a>&lt;T0, T1, T2, T3, T4&gt;</li>
+<li><a href='#class-Tuple6'>Tuple6</a>&lt;T0, T1, T2, T3, T4, T5&gt;</li>
+<li><a href='#class-Tuple7'>Tuple7</a>&lt;T0, T1, T2, T3, T4, T5, T6&gt;</li>
+<li><a href='#class-Tuple8'>Tuple8</a>&lt;T0, T1, T2, T3, T4, T5, T6, T7&gt;</li>
+<li><a href='#class-UniformScale2D'>UniformScale2D</a></li>
+<li><a href='#class-Vector2'>Vector2</a></li>
+<li><a href='#class-Vector3'>Vector3</a></li>
+<li><a href='#class-Vector4'>Vector4</a></li>
+<li><a href='#class-Vector8'>Vector8</a></li>
+<li><a href='#class-YawPitch'>YawPitch</a></li>
+<li><a href='#class-YawPitchRoll'>YawPitchRoll</a></li>
+</ul>
+<h3 class = 'collapsible'>Interfaces</h3>
+<ul>
+<li><a href='#interface-IAdditive'>IAdditive</a></li>
+<li><a href='#interface-IAngularCurve2D'>IAngularCurve2D</a></li>
+<li><a href='#interface-IAngularCurve3D'>IAngularCurve3D</a></li>
+<li><a href='#interface-IAny'>IAny</a></li>
+<li><a href='#interface-IArithmetic'>IArithmetic</a></li>
+<li><a href='#interface-IArray'>IArray</a>&lt;T&gt;</li>
+<li><a href='#interface-IArray2D'>IArray2D</a>&lt;T&gt;</li>
+<li><a href='#interface-IArray3D'>IArray3D</a>&lt;T&gt;</li>
+<li><a href='#interface-IArrayLike'>IArrayLike</a>&lt;T&gt;</li>
+<li><a href='#interface-IBoolean'>IBoolean</a></li>
+<li><a href='#interface-IBounds'>IBounds</a>&lt;TValue, TDelta&gt;</li>
+<li><a href='#interface-IClosedCurve2D'>IClosedCurve2D</a></li>
+<li><a href='#interface-IClosedCurve3D'>IClosedCurve3D</a></li>
+<li><a href='#interface-IClosedShape'>IClosedShape</a></li>
+<li><a href='#interface-IClosedShape2D'>IClosedShape2D</a></li>
+<li><a href='#interface-IClosedShape3D'>IClosedShape3D</a></li>
+<li><a href='#interface-ICoordinate'>ICoordinate</a></li>
+<li><a href='#interface-ICurve'>ICurve</a>&lt;TRange&gt;</li>
+<li><a href='#interface-ICurve1D'>ICurve1D</a></li>
+<li><a href='#interface-ICurve2D'>ICurve2D</a></li>
+<li><a href='#interface-ICurve3D'>ICurve3D</a></li>
+<li><a href='#interface-IDeformable2D'>IDeformable2D</a></li>
+<li><a href='#interface-IDeformable3D'>IDeformable3D</a></li>
+<li><a href='#interface-IDifference'>IDifference</a>&lt;T&gt;</li>
+<li><a href='#interface-IDistanceField2D'>IDistanceField2D</a></li>
+<li><a href='#interface-IDistanceField3D'>IDistanceField3D</a></li>
+<li><a href='#interface-IDivisible'>IDivisible</a></li>
+<li><a href='#interface-IExplicitSurface'>IExplicitSurface</a></li>
+<li><a href='#interface-IGeometricPrimitive2D'>IGeometricPrimitive2D</a></li>
+<li><a href='#interface-IGeometricPrimitive3D'>IGeometricPrimitive3D</a></li>
+<li><a href='#interface-IGeometry'>IGeometry</a></li>
+<li><a href='#interface-IGeometry2D'>IGeometry2D</a></li>
+<li><a href='#interface-IGeometry3D'>IGeometry3D</a></li>
+<li><a href='#interface-IImplicitProcedural'>IImplicitProcedural</a>&lt;TDomain&gt;</li>
+<li><a href='#interface-IImplicitVolume'>IImplicitVolume</a></li>
+<li><a href='#interface-IIndexedGeometry3D'>IIndexedGeometry3D</a>&lt;IndexT&gt;</li>
+<li><a href='#interface-IInterpolatable'>IInterpolatable</a></li>
+<li><a href='#interface-IInterval'>IInterval</a>&lt;T&gt;</li>
+<li><a href='#interface-IInvertible'>IInvertible</a></li>
+<li><a href='#interface-IMeasure'>IMeasure</a></li>
+<li><a href='#interface-IModulo'>IModulo</a></li>
+<li><a href='#interface-IMultiplicative'>IMultiplicative</a></li>
+<li><a href='#interface-IMultiplicativeWithInverse'>IMultiplicativeWithInverse</a></li>
+<li><a href='#interface-INumerical'>INumerical</a></li>
+<li><a href='#interface-IOpenClosedShape'>IOpenClosedShape</a></li>
+<li><a href='#interface-IOpenCurve2D'>IOpenCurve2D</a></li>
+<li><a href='#interface-IOpenCurve3D'>IOpenCurve3D</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+<li><a href='#interface-IOpenShape2D'>IOpenShape2D</a></li>
+<li><a href='#interface-IOpenShape3D'>IOpenShape3D</a></li>
+<li><a href='#interface-IOrderable'>IOrderable</a></li>
+<li><a href='#interface-IPointGeometry2D'>IPointGeometry2D</a></li>
+<li><a href='#interface-IPointGeometry3D'>IPointGeometry3D</a></li>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+<li><a href='#interface-IPolygon2D'>IPolygon2D</a></li>
+<li><a href='#interface-IPolygon3D'>IPolygon3D</a></li>
+<li><a href='#interface-IPolyLine2D'>IPolyLine2D</a></li>
+<li><a href='#interface-IPolyLine3D'>IPolyLine3D</a></li>
+<li><a href='#interface-IPrimitiveGeometry2D'>IPrimitiveGeometry2D</a>&lt;T&gt;</li>
+<li><a href='#interface-IPrimitiveGeometry3D'>IPrimitiveGeometry3D</a>&lt;PrimitiveT&gt;</li>
+<li><a href='#interface-IProcedural'>IProcedural</a>&lt;TIn, TOut&gt;</li>
+<li><a href='#interface-IProceduralSurface'>IProceduralSurface</a></li>
+<li><a href='#interface-IRealFunction'>IRealFunction</a></li>
+<li><a href='#interface-IRealNumber'>IRealNumber</a></li>
+<li><a href='#interface-IRigidTransform2D'>IRigidTransform2D</a></li>
+<li><a href='#interface-IRigidTransform3D'>IRigidTransform3D</a></li>
+<li><a href='#interface-IRotation3D'>IRotation3D</a></li>
+<li><a href='#interface-IScalarArithmetic'>IScalarArithmetic</a></li>
+<li><a href='#interface-IShape'>IShape</a></li>
+<li><a href='#interface-IShape2D'>IShape2D</a></li>
+<li><a href='#interface-IShape3D'>IShape3D</a></li>
+<li><a href='#interface-ISolid'>ISolid</a></li>
+<li><a href='#interface-ISurface'>ISurface</a></li>
+<li><a href='#interface-ITransform2D'>ITransform2D</a></li>
+<li><a href='#interface-ITransform3D'>ITransform3D</a></li>
+<li><a href='#interface-ITransformable2D'>ITransformable2D</a></li>
+<li><a href='#interface-ITransformable3D'>ITransformable3D</a></li>
+<li><a href='#interface-IValue'>IValue</a></li>
+<li><a href='#interface-IVector'>IVector</a></li>
+<li><a href='#interface-IVectorLike'>IVectorLike</a></li>
+<li><a href='#interface-IWholeNumber'>IWholeNumber</a></li>
+</ul>
+</div>
+<div class = 'content'>
+<h1 class = 'collapsible'>Classes</h1>
+<h2 id = 'class-Angle'>Class Angle</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IMeasure'>IMeasure</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-AnglePair'>Class AnglePair</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Angle'>Angle</a> Start</li>
+<li><a href='#class-Angle'>Angle</a> End</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IInterval'>IInterval</a>&lt;<a href='#class-Angle'>Angle</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Arc'>Class Arc</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-AnglePair'>AnglePair</a> Angles</li>
+<li><a href='#class-Circle'>Circle</a> Circle</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IOpenShape2D'>IOpenShape2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-ArchimedeanSpiral'>Class ArchimedeanSpiral</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> A</li>
+<li><a href='#class-Number'>Number</a> B</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Array'>Class Array</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IArray'>IArray</a>&lt;T&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Array2D'>Class Array2D</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IArray2D'>IArray2D</a>&lt;T&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Array3D'>Class Array3D</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IArray3D'>IArray3D</a>&lt;T&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-ArrayHelpers'>Class ArrayHelpers</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'class-AxisAngle'>Class AxisAngle</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Vector3'>Vector3</a> Axis</li>
+<li><a href='#class-Angle'>Angle</a> Angle</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IRotation3D'>IRotation3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Boolean'>Class Boolean</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IValue'>IValue</a></li>
+<li><a href='#interface-IOrderable'>IOrderable</a></li>
+<li><a href='#interface-IBoolean'>IBoolean</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Bounds2D'>Class Bounds2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Point2D'>Point2D</a> Min</li>
+<li><a href='#class-Point2D'>Point2D</a> Max</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IBounds'>IBounds</a>&lt;<a href='#class-Point2D'>Point2D</a>, <a href='#class-Vector2'>Vector2</a>&gt;</li>
+<li><a href='#interface-IArrayLike'>IArrayLike</a>&lt;<a href='#class-Point2D'>Point2D</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Bounds3D'>Class Bounds3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Point3D'>Point3D</a> Min</li>
+<li><a href='#class-Point3D'>Point3D</a> Max</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IBounds'>IBounds</a>&lt;<a href='#class-Point3D'>Point3D</a>, <a href='#class-Vector3'>Vector3</a>&gt;</li>
+<li><a href='#interface-IDeformable3D'>IDeformable3D</a></li>
+<li><a href='#interface-IArrayLike'>IArrayLike</a>&lt;<a href='#class-Point3D'>Point3D</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Box'>Class Box</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Vector3'>Vector3</a> Extent</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ISolid'>ISolid</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-ButterflyCurve'>Class ButterflyCurve</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve2D'>IAngularCurve2D</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-ByteRGB'>Class ByteRGB</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Integer'>Integer</a> R</li>
+<li><a href='#class-Integer'>Integer</a> G</li>
+<li><a href='#class-Integer'>Integer</a> B</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ICoordinate'>ICoordinate</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-ByteRGBA'>Class ByteRGBA</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Integer'>Integer</a> R</li>
+<li><a href='#class-Integer'>Integer</a> G</li>
+<li><a href='#class-Integer'>Integer</a> B</li>
+<li><a href='#class-Integer'>Integer</a> A</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ICoordinate'>ICoordinate</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Capsule'>Class Capsule</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Height</li>
+<li><a href='#class-Number'>Number</a> Radius</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ISolid'>ISolid</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Cardoid'>Class Cardoid</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+<li><a href='#interface-IClosedShape'>IClosedShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Character'>Class Character</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IValue'>IValue</a></li>
+<li><a href='#interface-IOrderable'>IOrderable</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Chord'>Class Chord</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Arc'>Arc</a> Arc</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IClosedShape2D'>IClosedShape2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Circle'>Class Circle</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Point2D'>Point2D</a> Center</li>
+<li><a href='#class-Number'>Number</a> Radius</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve2D'>IAngularCurve2D</a></li>
+<li><a href='#interface-IClosedCurve2D'>IClosedCurve2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Color'>Class Color</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> R</li>
+<li><a href='#class-Number'>Number</a> G</li>
+<li><a href='#class-Number'>Number</a> B</li>
+<li><a href='#class-Number'>Number</a> A</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ICoordinate'>ICoordinate</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-ColorHSL'>Class ColorHSL</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Angle'>Angle</a> Hue</li>
+<li><a href='#class-Number'>Number</a> Saturation</li>
+<li><a href='#class-Number'>Number</a> Luminance</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ICoordinate'>ICoordinate</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-ColorHSV'>Class ColorHSV</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Angle'>Angle</a> Hue</li>
+<li><a href='#class-Number'>Number</a> S</li>
+<li><a href='#class-Number'>Number</a> V</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ICoordinate'>ICoordinate</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-ColorLAB'>Class ColorLAB</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Lightness</li>
+<li><a href='#class-Number'>Number</a> A</li>
+<li><a href='#class-Number'>Number</a> B</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ICoordinate'>ICoordinate</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-ColorLCh'>Class ColorLCh</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Lightness</li>
+<li><a href='#class-PolarCoordinate'>PolarCoordinate</a> ChromaHue</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ICoordinate'>ICoordinate</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-ColorLUV'>Class ColorLUV</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Lightness</li>
+<li><a href='#class-Number'>Number</a> U</li>
+<li><a href='#class-Number'>Number</a> V</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ICoordinate'>ICoordinate</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-ColorYCbCr'>Class ColorYCbCr</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Y</li>
+<li><a href='#class-Number'>Number</a> Cb</li>
+<li><a href='#class-Number'>Number</a> Cr</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ICoordinate'>ICoordinate</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-ConchoidOfDeSluze'>Class ConchoidOfDeSluze</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> A</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Cone'>Class Cone</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Height</li>
+<li><a href='#class-Number'>Number</a> Radius</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ISolid'>ISolid</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-ConeSegment'>Class ConeSegment</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Height</li>
+<li><a href='#class-Number'>Number</a> Radius1</li>
+<li><a href='#class-Number'>Number</a> Radius2</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ISolid'>ISolid</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-ConicSection'>Class ConicSection</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Eccentricity</li>
+<li><a href='#class-Number'>Number</a> SemiLatusRectum</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Cubic'>Class Cubic</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> A</li>
+<li><a href='#class-Number'>Number</a> B</li>
+<li><a href='#class-Number'>Number</a> C</li>
+<li><a href='#class-Number'>Number</a> D</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IRealFunction'>IRealFunction</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-CubicBezier2D'>Class CubicBezier2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Point2D'>Point2D</a> A</li>
+<li><a href='#class-Point2D'>Point2D</a> B</li>
+<li><a href='#class-Point2D'>Point2D</a> C</li>
+<li><a href='#class-Point2D'>Point2D</a> D</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IOpenCurve2D'>IOpenCurve2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-CubicBezier3D'>Class CubicBezier3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Point3D'>Point3D</a> A</li>
+<li><a href='#class-Point3D'>Point3D</a> B</li>
+<li><a href='#class-Point3D'>Point3D</a> C</li>
+<li><a href='#class-Point3D'>Point3D</a> D</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-CycloidOfCeva'>Class CycloidOfCeva</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Cylinder'>Class Cylinder</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Height</li>
+<li><a href='#class-Number'>Number</a> Radius</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ISurface'>ISurface</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-CylindricalCoordinate'>Class CylindricalCoordinate</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> RadialDistance</li>
+<li><a href='#class-Angle'>Angle</a> Azimuth</li>
+<li><a href='#class-Number'>Number</a> Height</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ICoordinate'>ICoordinate</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Ellipse'>Class Ellipse</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Point2D'>Point2D</a> Center</li>
+<li><a href='#class-Vector2'>Vector2</a> Size</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve2D'>IAngularCurve2D</a></li>
+<li><a href='#interface-IClosedCurve2D'>IClosedCurve2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Ellipsoid'>Class Ellipsoid</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Vector3'>Vector3</a> Radii</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ISolid'>ISolid</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Epicycloid'>Class Epicycloid</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Radius1</li>
+<li><a href='#class-Number'>Number</a> Radius2</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve2D'>IAngularCurve2D</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Epitrochoid'>Class Epitrochoid</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Radius1</li>
+<li><a href='#class-Number'>Number</a> Radius2</li>
+<li><a href='#class-Number'>Number</a> Dist</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve2D'>IAngularCurve2D</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-FermatsSpiral'>Class FermatsSpiral</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> A</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-FigureEightKnot'>Class FigureEightKnot</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve3D'>IAngularCurve3D</a></li>
+<li><a href='#interface-IClosedShape'>IClosedShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-FrenetFrame'>Class FrenetFrame</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Point3D'>Point3D</a> Origin</li>
+<li><a href='#class-Vector3'>Vector3</a> Tangent</li>
+<li><a href='#class-Vector3'>Vector3</a> Normal</li>
+<li><a href='#class-Vector3'>Vector3</a> Binormal</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'class-Function0'>Class Function0</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'class-Function1'>Class Function1</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'class-Function2'>Class Function2</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'class-Function3'>Class Function3</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'class-Function4'>Class Function4</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'class-Function5'>Class Function5</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'class-Function6'>Class Function6</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'class-Function7'>Class Function7</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'class-Function8'>Class Function8</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'class-Function9'>Class Function9</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'class-GeoCoordinate'>Class GeoCoordinate</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Angle'>Angle</a> Latitude</li>
+<li><a href='#class-Angle'>Angle</a> Longitude</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ICoordinate'>ICoordinate</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-GeoCoordinateWithAltitude'>Class GeoCoordinateWithAltitude</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-GeoCoordinate'>GeoCoordinate</a> ICoordinate</li>
+<li><a href='#class-Number'>Number</a> Altitude</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ICoordinate'>ICoordinate</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Helix'>Class Helix</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Radius</li>
+<li><a href='#class-Number'>Number</a> Height</li>
+<li><a href='#class-Number'>Number</a> NumTurns</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve3D'>IAngularCurve3D</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-HorizontalCoordinate'>Class HorizontalCoordinate</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Angle'>Angle</a> Altitude</li>
+<li><a href='#class-Angle'>Angle</a> Azimuth</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ICoordinate'>ICoordinate</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Hypocycloid'>Class Hypocycloid</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Radius1</li>
+<li><a href='#class-Number'>Number</a> Radius2</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve2D'>IAngularCurve2D</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Hypotrochoid'>Class Hypotrochoid</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Radius1</li>
+<li><a href='#class-Number'>Number</a> Radius2</li>
+<li><a href='#class-Number'>Number</a> Dist</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve2D'>IAngularCurve2D</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Identity2D'>Class Identity2D</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IRigidTransform2D'>IRigidTransform2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-IdentityTransform3D'>Class IdentityTransform3D</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IRotation3D'>IRotation3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Integer'>Class Integer</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IWholeNumber'>IWholeNumber</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Integer2'>Class Integer2</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Integer'>Integer</a> A</li>
+<li><a href='#class-Integer'>Integer</a> B</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IValue'>IValue</a></li>
+<li><a href='#interface-IArrayLike'>IArrayLike</a>&lt;<a href='#class-Integer'>Integer</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Integer3'>Class Integer3</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Integer'>Integer</a> A</li>
+<li><a href='#class-Integer'>Integer</a> B</li>
+<li><a href='#class-Integer'>Integer</a> C</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IValue'>IValue</a></li>
+<li><a href='#interface-IArrayLike'>IArrayLike</a>&lt;<a href='#class-Integer'>Integer</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Integer4'>Class Integer4</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Integer'>Integer</a> A</li>
+<li><a href='#class-Integer'>Integer</a> B</li>
+<li><a href='#class-Integer'>Integer</a> C</li>
+<li><a href='#class-Integer'>Integer</a> D</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IValue'>IValue</a></li>
+<li><a href='#interface-IArrayLike'>IArrayLike</a>&lt;<a href='#class-Integer'>Integer</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-LemniscateOfBernoulli'>Class LemniscateOfBernoulli</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> A</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Lens'>Class Lens</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Circle'>Circle</a> A</li>
+<li><a href='#class-Circle'>Circle</a> B</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IClosedShape2D'>IClosedShape2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Limacon'>Class Limacon</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> A</li>
+<li><a href='#class-Number'>Number</a> B</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Line2D'>Class Line2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Point2D'>Point2D</a> A</li>
+<li><a href='#class-Point2D'>Point2D</a> B</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IArrayLike'>IArrayLike</a>&lt;<a href='#class-Point2D'>Point2D</a>&gt;</li>
+<li><a href='#interface-IInterval'>IInterval</a>&lt;<a href='#class-Point2D'>Point2D</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Line3D'>Class Line3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Point3D'>Point3D</a> A</li>
+<li><a href='#class-Point3D'>Point3D</a> B</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IDeformable3D'>IDeformable3D</a></li>
+<li><a href='#interface-IInterval'>IInterval</a>&lt;<a href='#class-Point3D'>Point3D</a>&gt;</li>
+<li><a href='#interface-IArrayLike'>IArrayLike</a>&lt;<a href='#class-Point3D'>Point3D</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-LinearEquation'>Class LinearEquation</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Slope</li>
+<li><a href='#class-Number'>Number</a> YIntercept</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IRealFunction'>IRealFunction</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-LineMesh3D'>Class LineMesh3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#interface-IArray'>IArray</a>&lt;<a href='#class-Point3D'>Point3D</a>&gt; Points</li>
+<li><a href='#interface-IArray'>IArray</a>&lt;<a href='#class-Integer2'>Integer2</a>&gt; FaceIndices</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IIndexedGeometry3D'>IIndexedGeometry3D</a>&lt;<a href='#class-Integer2'>Integer2</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Lines2D'>Class Lines2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#interface-IArray'>IArray</a>&lt;<a href='#class-Line2D'>Line2D</a>&gt; Primitives</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPrimitiveGeometry2D'>IPrimitiveGeometry2D</a>&lt;<a href='#class-Line2D'>Line2D</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Lines3D'>Class Lines3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#interface-IArray'>IArray</a>&lt;<a href='#class-Line3D'>Line3D</a>&gt; Primitives</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPrimitiveGeometry3D'>IPrimitiveGeometry3D</a>&lt;<a href='#class-Line3D'>Line3D</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Lissajous'>Class Lissajous</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Angle'>Angle</a> Delta</li>
+<li><a href='#class-Number'>Number</a> A</li>
+<li><a href='#class-Number'>Number</a> B</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve2D'>IAngularCurve2D</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-LogarithmicSpiral'>Class LogarithmicSpiral</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> A</li>
+<li><a href='#class-Number'>Number</a> K</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-LogPolarCoordinate'>Class LogPolarCoordinate</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Rho</li>
+<li><a href='#class-Angle'>Angle</a> Azimuth</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ICoordinate'>ICoordinate</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-LookAt3D'>Class LookAt3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Point3D'>Point3D</a> Origin</li>
+<li><a href='#class-Point3D'>Point3D</a> Target</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IRotation3D'>IRotation3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-LookDirection3D'>Class LookDirection3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Vector3'>Vector3</a> Direction</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IRotation3D'>IRotation3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Matrix3x2'>Class Matrix3x2</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Vector2'>Vector2</a> Row1</li>
+<li><a href='#class-Vector2'>Vector2</a> Row2</li>
+<li><a href='#class-Vector2'>Vector2</a> Row3</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IValue'>IValue</a></li>
+<li><a href='#interface-IArrayLike'>IArrayLike</a>&lt;<a href='#class-Number'>Number</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Matrix4x4'>Class Matrix4x4</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Vector4'>Vector4</a> Row1</li>
+<li><a href='#class-Vector4'>Vector4</a> Row2</li>
+<li><a href='#class-Vector4'>Vector4</a> Row3</li>
+<li><a href='#class-Vector4'>Vector4</a> Row4</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IValue'>IValue</a></li>
+<li><a href='#interface-IArrayLike'>IArrayLike</a>&lt;<a href='#class-Number'>Number</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-NPrism'>Class NPrism</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Height</li>
+<li><a href='#class-Number'>Number</a> Radius</li>
+<li><a href='#class-Integer'>Integer</a> NumSides</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ISolid'>ISolid</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-NPyramid'>Class NPyramid</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Height</li>
+<li><a href='#class-Number'>Number</a> Radius</li>
+<li><a href='#class-Integer'>Integer</a> NumSides</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ISolid'>ISolid</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Number'>Class Number</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IRealNumber'>IRealNumber</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-NumberInterval'>Class NumberInterval</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Start</li>
+<li><a href='#class-Number'>Number</a> End</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IInterval'>IInterval</a>&lt;<a href='#class-Number'>Number</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Object'>Class Object</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IValue'>IValue</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-OffsetRotation2D'>Class OffsetRotation2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Angle'>Angle</a> Angle</li>
+<li><a href='#class-Point2D'>Point2D</a> Center</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IRigidTransform2D'>IRigidTransform2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-OffsetScale2D'>Class OffsetScale2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Vector2'>Vector2</a> Amount</li>
+<li><a href='#class-Point2D'>Point2D</a> Center</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ITransform2D'>ITransform2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Orthographic3D'>Class Orthographic3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Width</li>
+<li><a href='#class-Number'>Number</a> Height</li>
+<li><a href='#class-Number'>Number</a> Near</li>
+<li><a href='#class-Number'>Number</a> Far</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ITransform3D'>ITransform3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Parabola'>Class Parabola</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IRealFunction'>IRealFunction</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Perspective3D'>Class Perspective3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Angle'>Angle</a> FOV</li>
+<li><a href='#class-Number'>Number</a> AspectRatio</li>
+<li><a href='#class-Number'>Number</a> Near</li>
+<li><a href='#class-Number'>Number</a> Far</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ITransform3D'>ITransform3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Plane'>Class Plane</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Vector3'>Vector3</a> Normal</li>
+<li><a href='#class-Number'>Number</a> D</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IValue'>IValue</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-PlaneProjection3D'>Class PlaneProjection3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Vector3'>Vector3</a> Direction</li>
+<li><a href='#class-Plane'>Plane</a> Plane</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ITransform3D'>ITransform3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Point2D'>Class Point2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> X</li>
+<li><a href='#class-Number'>Number</a> Y</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ICoordinate'>ICoordinate</a></li>
+<li><a href='#interface-IVectorLike'>IVectorLike</a></li>
+<li><a href='#interface-IGeometricPrimitive2D'>IGeometricPrimitive2D</a></li>
+<li><a href='#interface-IDifference'>IDifference</a>&lt;<a href='#class-Vector2'>Vector2</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Point3D'>Class Point3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> X</li>
+<li><a href='#class-Number'>Number</a> Y</li>
+<li><a href='#class-Number'>Number</a> Z</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ICoordinate'>ICoordinate</a></li>
+<li><a href='#interface-IVectorLike'>IVectorLike</a></li>
+<li><a href='#interface-IGeometricPrimitive3D'>IGeometricPrimitive3D</a></li>
+<li><a href='#interface-IDifference'>IDifference</a>&lt;<a href='#class-Vector3'>Vector3</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Points2D'>Class Points2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#interface-IArray'>IArray</a>&lt;<a href='#class-Point2D'>Point2D</a>&gt; Primitives</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPrimitiveGeometry2D'>IPrimitiveGeometry2D</a>&lt;<a href='#class-Point2D'>Point2D</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Points3D'>Class Points3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#interface-IArray'>IArray</a>&lt;<a href='#class-Point3D'>Point3D</a>&gt; Primitives</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPrimitiveGeometry3D'>IPrimitiveGeometry3D</a>&lt;<a href='#class-Point3D'>Point3D</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-PolarCoordinate'>Class PolarCoordinate</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Radius</li>
+<li><a href='#class-Angle'>Angle</a> Angle</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ICoordinate'>ICoordinate</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Polygon'>Class Polygon</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#interface-IArray'>IArray</a>&lt;<a href='#class-Point2D'>Point2D</a>&gt; Points</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolygon2D'>IPolygon2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-PolyLine2D'>Class PolyLine2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#interface-IArray'>IArray</a>&lt;<a href='#class-Point2D'>Point2D</a>&gt; Points</li>
+<li><a href='#class-Boolean'>Boolean</a> Closed</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometry2D'>IGeometry2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-PolyLine3D'>Class PolyLine3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#interface-IArray'>IArray</a>&lt;<a href='#class-Point3D'>Point3D</a>&gt; Points</li>
+<li><a href='#class-Boolean'>Boolean</a> Closed</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometry3D'>IGeometry3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Pose2D'>Class Pose2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Translation2D'>Translation2D</a> Translation</li>
+<li><a href='#class-Rotation2D'>Rotation2D</a> Rotation</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IRigidTransform2D'>IRigidTransform2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Pose3D'>Class Pose3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Translation3D'>Translation3D</a> Translation</li>
+<li><a href='#class-Rotation3D'>Rotation3D</a> Rotation</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IRigidTransform3D'>IRigidTransform3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Procedural'>Class Procedural</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Function1'>Function1</a>&lt;TIn, TOut&gt; Function</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'class-Pyramid'>Class Pyramid</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Height</li>
+<li><a href='#class-Number'>Number</a> BaseLength</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ISolid'>ISolid</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Quad2D'>Class Quad2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Point2D'>Point2D</a> A</li>
+<li><a href='#class-Point2D'>Point2D</a> B</li>
+<li><a href='#class-Point2D'>Point2D</a> C</li>
+<li><a href='#class-Point2D'>Point2D</a> D</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolygon2D'>IPolygon2D</a></li>
+<li><a href='#interface-IArrayLike'>IArrayLike</a>&lt;<a href='#class-Point2D'>Point2D</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Quad3D'>Class Quad3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Point3D'>Point3D</a> A</li>
+<li><a href='#class-Point3D'>Point3D</a> B</li>
+<li><a href='#class-Point3D'>Point3D</a> C</li>
+<li><a href='#class-Point3D'>Point3D</a> D</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IDeformable3D'>IDeformable3D</a></li>
+<li><a href='#interface-IArrayLike'>IArrayLike</a>&lt;<a href='#class-Point3D'>Point3D</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-QuadGrid3D'>Class QuadGrid3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#interface-IArray2D'>IArray2D</a>&lt;<a href='#class-Point3D'>Point3D</a>&gt; PointGrid</li>
+<li><a href='#class-Boolean'>Boolean</a> ClosedX</li>
+<li><a href='#class-Boolean'>Boolean</a> ClosedY</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometry3D'>IGeometry3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-QuadMesh3D'>Class QuadMesh3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#interface-IArray'>IArray</a>&lt;<a href='#class-Point3D'>Point3D</a>&gt; Points</li>
+<li><a href='#interface-IArray'>IArray</a>&lt;<a href='#class-Integer4'>Integer4</a>&gt; FaceIndices</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IIndexedGeometry3D'>IIndexedGeometry3D</a>&lt;<a href='#class-Integer4'>Integer4</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Quadratic'>Class Quadratic</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> A</li>
+<li><a href='#class-Number'>Number</a> B</li>
+<li><a href='#class-Number'>Number</a> C</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IRealFunction'>IRealFunction</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-QuadraticBezier2D'>Class QuadraticBezier2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Point2D'>Point2D</a> A</li>
+<li><a href='#class-Point2D'>Point2D</a> B</li>
+<li><a href='#class-Point2D'>Point2D</a> C</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IOpenCurve2D'>IOpenCurve2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-QuadraticBezier3D'>Class QuadraticBezier3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Point3D'>Point3D</a> A</li>
+<li><a href='#class-Point3D'>Point3D</a> B</li>
+<li><a href='#class-Point3D'>Point3D</a> C</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Quads3D'>Class Quads3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#interface-IArray'>IArray</a>&lt;<a href='#class-Quad3D'>Quad3D</a>&gt; Primitives</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPrimitiveGeometry3D'>IPrimitiveGeometry3D</a>&lt;<a href='#class-Quad3D'>Quad3D</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Quaternion'>Class Quaternion</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> X</li>
+<li><a href='#class-Number'>Number</a> Y</li>
+<li><a href='#class-Number'>Number</a> Z</li>
+<li><a href='#class-Number'>Number</a> W</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IValue'>IValue</a></li>
+<li><a href='#interface-IArrayLike'>IArrayLike</a>&lt;<a href='#class-Number'>Number</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Ray2D'>Class Ray2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Point2D'>Point2D</a> Origin</li>
+<li><a href='#class-Vector2'>Vector2</a> Direction</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IValue'>IValue</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Ray3D'>Class Ray3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Point3D'>Point3D</a> Origin</li>
+<li><a href='#class-Vector3'>Vector3</a> Direction</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IValue'>IValue</a></li>
+<li><a href='#interface-IDeformable3D'>IDeformable3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Rect2D'>Class Rect2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Point2D'>Point2D</a> Center</li>
+<li><a href='#class-Vector2'>Vector2</a> Size</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolygon2D'>IPolygon2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Reflection2D'>Class Reflection2D</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ITransform2D'>ITransform2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-RegularPolygon'>Class RegularPolygon</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Point2D'>Point2D</a> Center</li>
+<li><a href='#class-Integer'>Integer</a> NumPoints</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolygon2D'>IPolygon2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Ring'>Class Ring</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Point2D'>Point2D</a> Center</li>
+<li><a href='#class-Number'>Number</a> InnerRadius</li>
+<li><a href='#class-Number'>Number</a> OuterRadius</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IClosedShape2D'>IClosedShape2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Rose'>Class Rose</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Integer'>Integer</a> K</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+<li><a href='#interface-IClosedShape'>IClosedShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Rotation2D'>Class Rotation2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Angle'>Angle</a> Angle</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IRigidTransform2D'>IRigidTransform2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Rotation3D'>Class Rotation3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Quaternion'>Quaternion</a> Quaternion</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IRotation3D'>IRotation3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Scale2D'>Class Scale2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Vector2'>Vector2</a> Amount</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ITransform2D'>ITransform2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Scaling3D'>Class Scaling3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Vector3'>Vector3</a> Amount</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ITransform3D'>ITransform3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Sector'>Class Sector</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Arc'>Arc</a> Arc</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IClosedShape2D'>IClosedShape2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Segment'>Class Segment</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Arc'>Arc</a> Arc</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IClosedShape2D'>IClosedShape2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-SineWave'>Class SineWave</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Amplitude</li>
+<li><a href='#class-Number'>Number</a> Frequency</li>
+<li><a href='#class-Number'>Number</a> Phase</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IRealFunction'>IRealFunction</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-SinusoidalSpiral'>Class SinusoidalSpiral</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> A</li>
+<li><a href='#class-Number'>Number</a> N</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Skew2D'>Class Skew2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Angle'>Angle</a> x</li>
+<li><a href='#class-Angle'>Angle</a> y</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ITransform2D'>ITransform2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Sphere'>Class Sphere</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Radius</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ISolid'>ISolid</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-SphericalCoordinate'>Class SphericalCoordinate</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> RadialDistance</li>
+<li><a href='#class-Angle'>Angle</a> Azimuth</li>
+<li><a href='#class-Angle'>Angle</a> Polar</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ICoordinate'>ICoordinate</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Spiral'>Class Spiral</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Radius1</li>
+<li><a href='#class-Number'>Number</a> Radius2</li>
+<li><a href='#class-Number'>Number</a> NumTurns</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IOpenCurve2D'>IOpenCurve2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-String'>Class String</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IValue'>IValue</a></li>
+<li><a href='#interface-IOrderable'>IOrderable</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Time'>Class Time</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Seconds</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IMeasure'>IMeasure</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Torus'>Class Torus</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> MajorRadius</li>
+<li><a href='#class-Number'>Number</a> MinorRadius</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ISolid'>ISolid</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-TorusKnot'>Class TorusKnot</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Integer'>Integer</a> P</li>
+<li><a href='#class-Integer'>Integer</a> Q</li>
+<li><a href='#class-Number'>Number</a> Radius</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve3D'>IAngularCurve3D</a></li>
+<li><a href='#interface-IClosedShape'>IClosedShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Transform2D'>Class Transform2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Matrix3x2'>Matrix3x2</a> Matrix</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ITransform2D'>ITransform2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Transform3D'>Class Transform3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Matrix4x4'>Matrix4x4</a> Matrix</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ITransform3D'>ITransform3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Translation2D'>Class Translation2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Vector2'>Vector2</a> Vector</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IRigidTransform2D'>IRigidTransform2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Translation3D'>Class Translation3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Vector3'>Vector3</a> Vector</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IRigidTransform3D'>IRigidTransform3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-TrefoilKnot'>Class TrefoilKnot</h2>
+<h3>Fields</h3>
+<ul>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve3D'>IAngularCurve3D</a></li>
+<li><a href='#interface-IClosedShape'>IClosedShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Triangle2D'>Class Triangle2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Point2D'>Point2D</a> A</li>
+<li><a href='#class-Point2D'>Point2D</a> B</li>
+<li><a href='#class-Point2D'>Point2D</a> C</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolygon2D'>IPolygon2D</a></li>
+<li><a href='#interface-IGeometricPrimitive2D'>IGeometricPrimitive2D</a></li>
+<li><a href='#interface-IArrayLike'>IArrayLike</a>&lt;<a href='#class-Point2D'>Point2D</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Triangle3D'>Class Triangle3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Point3D'>Point3D</a> A</li>
+<li><a href='#class-Point3D'>Point3D</a> B</li>
+<li><a href='#class-Point3D'>Point3D</a> C</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IDeformable3D'>IDeformable3D</a></li>
+<li><a href='#interface-IArrayLike'>IArrayLike</a>&lt;<a href='#class-Point3D'>Point3D</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-TriangleMesh3D'>Class TriangleMesh3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#interface-IArray'>IArray</a>&lt;<a href='#class-Point3D'>Point3D</a>&gt; Points</li>
+<li><a href='#interface-IArray'>IArray</a>&lt;<a href='#class-Integer3'>Integer3</a>&gt; FaceIndices</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IIndexedGeometry3D'>IIndexedGeometry3D</a>&lt;<a href='#class-Integer3'>Integer3</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Triangles3D'>Class Triangles3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#interface-IArray'>IArray</a>&lt;<a href='#class-Triangle3D'>Triangle3D</a>&gt; Primitives</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPrimitiveGeometry3D'>IPrimitiveGeometry3D</a>&lt;<a href='#class-Triangle3D'>Triangle3D</a>&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'class-TrisectrixOfMaclaurin'>Class TrisectrixOfMaclaurin</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> A</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-TRSTransform2D'>Class TRSTransform2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Translation2D'>Translation2D</a> Translation</li>
+<li><a href='#class-Rotation2D'>Rotation2D</a> Rotation</li>
+<li><a href='#class-Scale2D'>Scale2D</a> Scale</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ITransform2D'>ITransform2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-TRSTransform3D'>Class TRSTransform3D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Translation3D'>Translation3D</a> Translation</li>
+<li><a href='#class-Rotation3D'>Rotation3D</a> Rotation</li>
+<li><a href='#class-Scaling3D'>Scaling3D</a> Scale</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ITransform3D'>ITransform3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-TschirnhausenCubic'>Class TschirnhausenCubic</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> A</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Tube'>Class Tube</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Height</li>
+<li><a href='#class-Number'>Number</a> InnerRadius</li>
+<li><a href='#class-Number'>Number</a> OuterRadius</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ISolid'>ISolid</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Tuple2'>Class Tuple2</h2>
+<h3>Fields</h3>
+<ul>
+<li>T0 X0</li>
+<li>T1 X1</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'class-Tuple3'>Class Tuple3</h2>
+<h3>Fields</h3>
+<ul>
+<li>T0 X0</li>
+<li>T1 X1</li>
+<li>T2 X2</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'class-Tuple4'>Class Tuple4</h2>
+<h3>Fields</h3>
+<ul>
+<li>T0 X0</li>
+<li>T1 X1</li>
+<li>T2 X2</li>
+<li>T3 X3</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'class-Tuple5'>Class Tuple5</h2>
+<h3>Fields</h3>
+<ul>
+<li>T0 X0</li>
+<li>T1 X1</li>
+<li>T2 X2</li>
+<li>T3 X3</li>
+<li>T4 X4</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'class-Tuple6'>Class Tuple6</h2>
+<h3>Fields</h3>
+<ul>
+<li>T0 X0</li>
+<li>T1 X1</li>
+<li>T2 X2</li>
+<li>T3 X3</li>
+<li>T4 X4</li>
+<li>T5 X5</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'class-Tuple7'>Class Tuple7</h2>
+<h3>Fields</h3>
+<ul>
+<li>T0 X0</li>
+<li>T1 X1</li>
+<li>T2 X2</li>
+<li>T3 X3</li>
+<li>T4 X4</li>
+<li>T5 X5</li>
+<li>T6 X6</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'class-Tuple8'>Class Tuple8</h2>
+<h3>Fields</h3>
+<ul>
+<li>T0 X0</li>
+<li>T1 X1</li>
+<li>T2 X2</li>
+<li>T3 X3</li>
+<li>T4 X4</li>
+<li>T5 X5</li>
+<li>T6 X6</li>
+<li>T7 X7</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'class-UniformScale2D'>Class UniformScale2D</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Amount</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-ITransform2D'>ITransform2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Vector2'>Class Vector2</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> X</li>
+<li><a href='#class-Number'>Number</a> Y</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IVector'>IVector</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Vector3'>Class Vector3</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> X</li>
+<li><a href='#class-Number'>Number</a> Y</li>
+<li><a href='#class-Number'>Number</a> Z</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IVector'>IVector</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Vector4'>Class Vector4</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> X</li>
+<li><a href='#class-Number'>Number</a> Y</li>
+<li><a href='#class-Number'>Number</a> Z</li>
+<li><a href='#class-Number'>Number</a> W</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IVector'>IVector</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-Vector8'>Class Vector8</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> X0</li>
+<li><a href='#class-Number'>Number</a> X1</li>
+<li><a href='#class-Number'>Number</a> X2</li>
+<li><a href='#class-Number'>Number</a> X3</li>
+<li><a href='#class-Number'>Number</a> X4</li>
+<li><a href='#class-Number'>Number</a> X5</li>
+<li><a href='#class-Number'>Number</a> X6</li>
+<li><a href='#class-Number'>Number</a> X7</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IVector'>IVector</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-YawPitch'>Class YawPitch</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Angle'>Angle</a> Yaw</li>
+<li><a href='#class-Angle'>Angle</a> Pitch</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IRotation3D'>IRotation3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'class-YawPitchRoll'>Class YawPitchRoll</h2>
+<h3>Fields</h3>
+<ul>
+<li><a href='#class-Angle'>Angle</a> Yaw</li>
+<li><a href='#class-Angle'>Angle</a> Pitch</li>
+<li><a href='#class-Angle'>Angle</a> Roll</li>
+</ul>
+<h3>Interfaces</h3>
+<ul>
+<li><a href='#interface-IRotation3D'>IRotation3D</a></li>
+</ul>
+<hr class='solid'/><h1 class = 'collapsible'>Interfaces</h1>
+<h2 id = 'interface-IAdditive'>Interface IAdditive</h2>
+<h3>Functions</h3>
+<ul>
+<li>Self Add(Self a, Self b);</li>
+<li>Self Subtract(Self a, Self b);</li>
+<li>Self Negative(Self self);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IArithmetic'>IArithmetic</a></li>
+<li><a href='#interface-INumerical'>INumerical</a></li>
+<li><a href='#interface-IRealNumber'>IRealNumber</a></li>
+<li><a href='#interface-IVector'>IVector</a></li>
+<li><a href='#interface-IWholeNumber'>IWholeNumber</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Integer'>Integer</a></li>
+<li><a href='#class-Number'>Number</a></li>
+<li><a href='#class-Vector2'>Vector2</a></li>
+<li><a href='#class-Vector3'>Vector3</a></li>
+<li><a href='#class-Vector4'>Vector4</a></li>
+<li><a href='#class-Vector8'>Vector8</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IAngularCurve2D'>Interface IAngularCurve2D</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#class-Point2D'>Point2D</a> Eval(Self curve, <a href='#class-Angle'>Angle</a> t);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-ICurve2D'>ICurve2D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-ArchimedeanSpiral'>ArchimedeanSpiral</a></li>
+<li><a href='#class-ButterflyCurve'>ButterflyCurve</a></li>
+<li><a href='#class-Cardoid'>Cardoid</a></li>
+<li><a href='#class-Circle'>Circle</a></li>
+<li><a href='#class-ConchoidOfDeSluze'>ConchoidOfDeSluze</a></li>
+<li><a href='#class-ConicSection'>ConicSection</a></li>
+<li><a href='#class-CycloidOfCeva'>CycloidOfCeva</a></li>
+<li><a href='#class-Ellipse'>Ellipse</a></li>
+<li><a href='#class-Epicycloid'>Epicycloid</a></li>
+<li><a href='#class-Epitrochoid'>Epitrochoid</a></li>
+<li><a href='#class-FermatsSpiral'>FermatsSpiral</a></li>
+<li><a href='#class-Hypocycloid'>Hypocycloid</a></li>
+<li><a href='#class-Hypotrochoid'>Hypotrochoid</a></li>
+<li><a href='#class-LemniscateOfBernoulli'>LemniscateOfBernoulli</a></li>
+<li><a href='#class-Limacon'>Limacon</a></li>
+<li><a href='#class-Lissajous'>Lissajous</a></li>
+<li><a href='#class-LogarithmicSpiral'>LogarithmicSpiral</a></li>
+<li><a href='#class-Rose'>Rose</a></li>
+<li><a href='#class-SinusoidalSpiral'>SinusoidalSpiral</a></li>
+<li><a href='#class-TrisectrixOfMaclaurin'>TrisectrixOfMaclaurin</a></li>
+<li><a href='#class-TschirnhausenCubic'>TschirnhausenCubic</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IAngularCurve3D'>Interface IAngularCurve3D</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#class-Point3D'>Point3D</a> Eval(Self curve, <a href='#class-Angle'>Angle</a> t);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-ICurve3D'>ICurve3D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-FigureEightKnot'>FigureEightKnot</a></li>
+<li><a href='#class-Helix'>Helix</a></li>
+<li><a href='#class-TorusKnot'>TorusKnot</a></li>
+<li><a href='#class-TrefoilKnot'>TrefoilKnot</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IAny'>Interface IAny</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#class-Boolean'>Boolean</a> Equals(Self a, Self b);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IArithmetic'>Interface IArithmetic</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IAdditive'>IAdditive</a></li>
+<li><a href='#interface-IMultiplicative'>IMultiplicative</a></li>
+<li><a href='#interface-IDivisible'>IDivisible</a></li>
+<li><a href='#interface-IModulo'>IModulo</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-INumerical'>INumerical</a></li>
+<li><a href='#interface-IRealNumber'>IRealNumber</a></li>
+<li><a href='#interface-IVector'>IVector</a></li>
+<li><a href='#interface-IWholeNumber'>IWholeNumber</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Integer'>Integer</a></li>
+<li><a href='#class-Number'>Number</a></li>
+<li><a href='#class-Vector2'>Vector2</a></li>
+<li><a href='#class-Vector3'>Vector3</a></li>
+<li><a href='#class-Vector4'>Vector4</a></li>
+<li><a href='#class-Vector8'>Vector8</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IArray'>Interface IArray</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#class-Integer'>Integer</a> Count(Self xs);</li>
+<li>T At(Self xs, <a href='#class-Integer'>Integer</a> n);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IArray2D'>IArray2D</a>&lt;T&gt;</li>
+<li><a href='#interface-IArray3D'>IArray3D</a>&lt;T&gt;</li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Array'>Array</a>&lt;T&gt;</li>
+<li><a href='#class-Array2D'>Array2D</a>&lt;T&gt;</li>
+<li><a href='#class-Array3D'>Array3D</a>&lt;T&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IArray2D'>Interface IArray2D</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#class-Integer'>Integer</a> NumRows(Self xs);</li>
+<li><a href='#class-Integer'>Integer</a> NumColumns(Self xs);</li>
+<li>T At(Self xs, <a href='#class-Integer'>Integer</a> column, <a href='#class-Integer'>Integer</a> row);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IArray'>IArray</a>&lt;T&gt;</li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Array2D'>Array2D</a>&lt;T&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IArray3D'>Interface IArray3D</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#class-Integer'>Integer</a> NumRows(Self xs);</li>
+<li><a href='#class-Integer'>Integer</a> NumColumns(Self xs);</li>
+<li><a href='#class-Integer'>Integer</a> NumLayers(Self xs);</li>
+<li>T At(Self xs, <a href='#class-Integer'>Integer</a> column, <a href='#class-Integer'>Integer</a> row, <a href='#class-Integer'>Integer</a> layer);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IArray'>IArray</a>&lt;T&gt;</li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Array3D'>Array3D</a>&lt;T&gt;</li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IArrayLike'>Interface IArrayLike</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#class-Integer'>Integer</a> NumComponents(Self _);</li>
+<li><a href='#interface-IArray'>IArray</a>&lt;T&gt; Components(Self x);</li>
+<li>Self CreateFromComponents(Self _, <a href='#interface-IArray'>IArray</a>&lt;T&gt; xs);</li>
+<li>Self CreateFromComponent(Self _, T x);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IMeasure'>IMeasure</a></li>
+<li><a href='#interface-INumerical'>INumerical</a></li>
+<li><a href='#interface-IVector'>IVector</a></li>
+<li><a href='#interface-IVectorLike'>IVectorLike</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Angle'>Angle</a></li>
+<li><a href='#class-Bounds2D'>Bounds2D</a></li>
+<li><a href='#class-Bounds3D'>Bounds3D</a></li>
+<li><a href='#class-Integer2'>Integer2</a></li>
+<li><a href='#class-Integer3'>Integer3</a></li>
+<li><a href='#class-Integer4'>Integer4</a></li>
+<li><a href='#class-Line2D'>Line2D</a></li>
+<li><a href='#class-Line3D'>Line3D</a></li>
+<li><a href='#class-Matrix3x2'>Matrix3x2</a></li>
+<li><a href='#class-Matrix4x4'>Matrix4x4</a></li>
+<li><a href='#class-Point2D'>Point2D</a></li>
+<li><a href='#class-Point3D'>Point3D</a></li>
+<li><a href='#class-Quad2D'>Quad2D</a></li>
+<li><a href='#class-Quad3D'>Quad3D</a></li>
+<li><a href='#class-Quaternion'>Quaternion</a></li>
+<li><a href='#class-Time'>Time</a></li>
+<li><a href='#class-Triangle2D'>Triangle2D</a></li>
+<li><a href='#class-Triangle3D'>Triangle3D</a></li>
+<li><a href='#class-Vector2'>Vector2</a></li>
+<li><a href='#class-Vector3'>Vector3</a></li>
+<li><a href='#class-Vector4'>Vector4</a></li>
+<li><a href='#class-Vector8'>Vector8</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IBoolean'>Interface IBoolean</h2>
+<h3>Functions</h3>
+<ul>
+<li>Self And(Self a, Self b);</li>
+<li>Self Or(Self a, Self b);</li>
+<li>Self Not(Self a);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Boolean'>Boolean</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IBounds'>Interface IBounds</h2>
+<h3>Functions</h3>
+<ul>
+<li>TValue Min(Self x);</li>
+<li>TValue Max(Self x);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IValue'>IValue</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Bounds2D'>Bounds2D</a></li>
+<li><a href='#class-Bounds3D'>Bounds3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IClosedCurve2D'>Interface IClosedCurve2D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-ICurve2D'>ICurve2D</a></li>
+<li><a href='#interface-IClosedShape2D'>IClosedShape2D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Circle'>Circle</a></li>
+<li><a href='#class-Ellipse'>Ellipse</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IClosedCurve3D'>Interface IClosedCurve3D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-ICurve3D'>ICurve3D</a></li>
+<li><a href='#interface-IClosedShape3D'>IClosedShape3D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IClosedShape'>Interface IClosedShape</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IOpenClosedShape'>IOpenClosedShape</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IClosedCurve2D'>IClosedCurve2D</a></li>
+<li><a href='#interface-IClosedCurve3D'>IClosedCurve3D</a></li>
+<li><a href='#interface-IClosedShape2D'>IClosedShape2D</a></li>
+<li><a href='#interface-IClosedShape3D'>IClosedShape3D</a></li>
+<li><a href='#interface-IPolygon2D'>IPolygon2D</a></li>
+<li><a href='#interface-IPolygon3D'>IPolygon3D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Cardoid'>Cardoid</a></li>
+<li><a href='#class-Chord'>Chord</a></li>
+<li><a href='#class-Circle'>Circle</a></li>
+<li><a href='#class-Ellipse'>Ellipse</a></li>
+<li><a href='#class-FigureEightKnot'>FigureEightKnot</a></li>
+<li><a href='#class-Lens'>Lens</a></li>
+<li><a href='#class-Polygon'>Polygon</a></li>
+<li><a href='#class-Quad2D'>Quad2D</a></li>
+<li><a href='#class-Rect2D'>Rect2D</a></li>
+<li><a href='#class-RegularPolygon'>RegularPolygon</a></li>
+<li><a href='#class-Ring'>Ring</a></li>
+<li><a href='#class-Rose'>Rose</a></li>
+<li><a href='#class-Sector'>Sector</a></li>
+<li><a href='#class-Segment'>Segment</a></li>
+<li><a href='#class-TorusKnot'>TorusKnot</a></li>
+<li><a href='#class-TrefoilKnot'>TrefoilKnot</a></li>
+<li><a href='#class-Triangle2D'>Triangle2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IClosedShape2D'>Interface IClosedShape2D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometry2D'>IGeometry2D</a></li>
+<li><a href='#interface-IClosedShape'>IClosedShape</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IClosedCurve2D'>IClosedCurve2D</a></li>
+<li><a href='#interface-IPolygon2D'>IPolygon2D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Chord'>Chord</a></li>
+<li><a href='#class-Circle'>Circle</a></li>
+<li><a href='#class-Ellipse'>Ellipse</a></li>
+<li><a href='#class-Lens'>Lens</a></li>
+<li><a href='#class-Polygon'>Polygon</a></li>
+<li><a href='#class-Quad2D'>Quad2D</a></li>
+<li><a href='#class-Rect2D'>Rect2D</a></li>
+<li><a href='#class-RegularPolygon'>RegularPolygon</a></li>
+<li><a href='#class-Ring'>Ring</a></li>
+<li><a href='#class-Sector'>Sector</a></li>
+<li><a href='#class-Segment'>Segment</a></li>
+<li><a href='#class-Triangle2D'>Triangle2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IClosedShape3D'>Interface IClosedShape3D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometry3D'>IGeometry3D</a></li>
+<li><a href='#interface-IClosedShape'>IClosedShape</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IClosedCurve3D'>IClosedCurve3D</a></li>
+<li><a href='#interface-IPolygon3D'>IPolygon3D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'interface-ICoordinate'>Interface ICoordinate</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-ByteRGB'>ByteRGB</a></li>
+<li><a href='#class-ByteRGBA'>ByteRGBA</a></li>
+<li><a href='#class-Color'>Color</a></li>
+<li><a href='#class-ColorHSL'>ColorHSL</a></li>
+<li><a href='#class-ColorHSV'>ColorHSV</a></li>
+<li><a href='#class-ColorLAB'>ColorLAB</a></li>
+<li><a href='#class-ColorLCh'>ColorLCh</a></li>
+<li><a href='#class-ColorLUV'>ColorLUV</a></li>
+<li><a href='#class-ColorYCbCr'>ColorYCbCr</a></li>
+<li><a href='#class-CylindricalCoordinate'>CylindricalCoordinate</a></li>
+<li><a href='#class-GeoCoordinate'>GeoCoordinate</a></li>
+<li><a href='#class-GeoCoordinateWithAltitude'>GeoCoordinateWithAltitude</a></li>
+<li><a href='#class-HorizontalCoordinate'>HorizontalCoordinate</a></li>
+<li><a href='#class-LogPolarCoordinate'>LogPolarCoordinate</a></li>
+<li><a href='#class-Point2D'>Point2D</a></li>
+<li><a href='#class-Point3D'>Point3D</a></li>
+<li><a href='#class-PolarCoordinate'>PolarCoordinate</a></li>
+<li><a href='#class-SphericalCoordinate'>SphericalCoordinate</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-ICurve'>Interface ICurve</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IProcedural'>IProcedural</a>&lt;<a href='#class-Number'>Number</a>, TRange&gt;</li>
+<li><a href='#interface-IOpenClosedShape'>IOpenClosedShape</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve2D'>IAngularCurve2D</a></li>
+<li><a href='#interface-IAngularCurve3D'>IAngularCurve3D</a></li>
+<li><a href='#interface-IClosedCurve2D'>IClosedCurve2D</a></li>
+<li><a href='#interface-IClosedCurve3D'>IClosedCurve3D</a></li>
+<li><a href='#interface-ICurve1D'>ICurve1D</a></li>
+<li><a href='#interface-ICurve2D'>ICurve2D</a></li>
+<li><a href='#interface-ICurve3D'>ICurve3D</a></li>
+<li><a href='#interface-IOpenCurve2D'>IOpenCurve2D</a></li>
+<li><a href='#interface-IOpenCurve3D'>IOpenCurve3D</a></li>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+<li><a href='#interface-IPolygon2D'>IPolygon2D</a></li>
+<li><a href='#interface-IPolygon3D'>IPolygon3D</a></li>
+<li><a href='#interface-IPolyLine2D'>IPolyLine2D</a></li>
+<li><a href='#interface-IPolyLine3D'>IPolyLine3D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-ArchimedeanSpiral'>ArchimedeanSpiral</a></li>
+<li><a href='#class-ButterflyCurve'>ButterflyCurve</a></li>
+<li><a href='#class-Cardoid'>Cardoid</a></li>
+<li><a href='#class-Circle'>Circle</a></li>
+<li><a href='#class-ConchoidOfDeSluze'>ConchoidOfDeSluze</a></li>
+<li><a href='#class-ConicSection'>ConicSection</a></li>
+<li><a href='#class-CubicBezier2D'>CubicBezier2D</a></li>
+<li><a href='#class-CycloidOfCeva'>CycloidOfCeva</a></li>
+<li><a href='#class-Ellipse'>Ellipse</a></li>
+<li><a href='#class-Epicycloid'>Epicycloid</a></li>
+<li><a href='#class-Epitrochoid'>Epitrochoid</a></li>
+<li><a href='#class-FermatsSpiral'>FermatsSpiral</a></li>
+<li><a href='#class-FigureEightKnot'>FigureEightKnot</a></li>
+<li><a href='#class-Helix'>Helix</a></li>
+<li><a href='#class-Hypocycloid'>Hypocycloid</a></li>
+<li><a href='#class-Hypotrochoid'>Hypotrochoid</a></li>
+<li><a href='#class-LemniscateOfBernoulli'>LemniscateOfBernoulli</a></li>
+<li><a href='#class-Limacon'>Limacon</a></li>
+<li><a href='#class-Lissajous'>Lissajous</a></li>
+<li><a href='#class-LogarithmicSpiral'>LogarithmicSpiral</a></li>
+<li><a href='#class-Polygon'>Polygon</a></li>
+<li><a href='#class-Quad2D'>Quad2D</a></li>
+<li><a href='#class-QuadraticBezier2D'>QuadraticBezier2D</a></li>
+<li><a href='#class-Rect2D'>Rect2D</a></li>
+<li><a href='#class-RegularPolygon'>RegularPolygon</a></li>
+<li><a href='#class-Rose'>Rose</a></li>
+<li><a href='#class-SinusoidalSpiral'>SinusoidalSpiral</a></li>
+<li><a href='#class-Spiral'>Spiral</a></li>
+<li><a href='#class-TorusKnot'>TorusKnot</a></li>
+<li><a href='#class-TrefoilKnot'>TrefoilKnot</a></li>
+<li><a href='#class-Triangle2D'>Triangle2D</a></li>
+<li><a href='#class-TrisectrixOfMaclaurin'>TrisectrixOfMaclaurin</a></li>
+<li><a href='#class-TschirnhausenCubic'>TschirnhausenCubic</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-ICurve1D'>Interface ICurve1D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-ICurve'>ICurve</a>&lt;<a href='#class-Number'>Number</a>&gt;</li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'interface-ICurve2D'>Interface ICurve2D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometry2D'>IGeometry2D</a></li>
+<li><a href='#interface-ICurve'>ICurve</a>&lt;<a href='#class-Point2D'>Point2D</a>&gt;</li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve2D'>IAngularCurve2D</a></li>
+<li><a href='#interface-IClosedCurve2D'>IClosedCurve2D</a></li>
+<li><a href='#interface-IOpenCurve2D'>IOpenCurve2D</a></li>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+<li><a href='#interface-IPolygon2D'>IPolygon2D</a></li>
+<li><a href='#interface-IPolyLine2D'>IPolyLine2D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-ArchimedeanSpiral'>ArchimedeanSpiral</a></li>
+<li><a href='#class-ButterflyCurve'>ButterflyCurve</a></li>
+<li><a href='#class-Cardoid'>Cardoid</a></li>
+<li><a href='#class-Circle'>Circle</a></li>
+<li><a href='#class-ConchoidOfDeSluze'>ConchoidOfDeSluze</a></li>
+<li><a href='#class-ConicSection'>ConicSection</a></li>
+<li><a href='#class-CubicBezier2D'>CubicBezier2D</a></li>
+<li><a href='#class-CycloidOfCeva'>CycloidOfCeva</a></li>
+<li><a href='#class-Ellipse'>Ellipse</a></li>
+<li><a href='#class-Epicycloid'>Epicycloid</a></li>
+<li><a href='#class-Epitrochoid'>Epitrochoid</a></li>
+<li><a href='#class-FermatsSpiral'>FermatsSpiral</a></li>
+<li><a href='#class-Hypocycloid'>Hypocycloid</a></li>
+<li><a href='#class-Hypotrochoid'>Hypotrochoid</a></li>
+<li><a href='#class-LemniscateOfBernoulli'>LemniscateOfBernoulli</a></li>
+<li><a href='#class-Limacon'>Limacon</a></li>
+<li><a href='#class-Lissajous'>Lissajous</a></li>
+<li><a href='#class-LogarithmicSpiral'>LogarithmicSpiral</a></li>
+<li><a href='#class-Polygon'>Polygon</a></li>
+<li><a href='#class-Quad2D'>Quad2D</a></li>
+<li><a href='#class-QuadraticBezier2D'>QuadraticBezier2D</a></li>
+<li><a href='#class-Rect2D'>Rect2D</a></li>
+<li><a href='#class-RegularPolygon'>RegularPolygon</a></li>
+<li><a href='#class-Rose'>Rose</a></li>
+<li><a href='#class-SinusoidalSpiral'>SinusoidalSpiral</a></li>
+<li><a href='#class-Spiral'>Spiral</a></li>
+<li><a href='#class-Triangle2D'>Triangle2D</a></li>
+<li><a href='#class-TrisectrixOfMaclaurin'>TrisectrixOfMaclaurin</a></li>
+<li><a href='#class-TschirnhausenCubic'>TschirnhausenCubic</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-ICurve3D'>Interface ICurve3D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometry3D'>IGeometry3D</a></li>
+<li><a href='#interface-ICurve'>ICurve</a>&lt;<a href='#class-Point3D'>Point3D</a>&gt;</li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve3D'>IAngularCurve3D</a></li>
+<li><a href='#interface-IClosedCurve3D'>IClosedCurve3D</a></li>
+<li><a href='#interface-IOpenCurve3D'>IOpenCurve3D</a></li>
+<li><a href='#interface-IPolygon3D'>IPolygon3D</a></li>
+<li><a href='#interface-IPolyLine3D'>IPolyLine3D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-FigureEightKnot'>FigureEightKnot</a></li>
+<li><a href='#class-Helix'>Helix</a></li>
+<li><a href='#class-TorusKnot'>TorusKnot</a></li>
+<li><a href='#class-TrefoilKnot'>TrefoilKnot</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IDeformable2D'>Interface IDeformable2D</h2>
+<h3>Functions</h3>
+<ul>
+<li>Self Deform(Self x, <a href='#class-Function1'>Function1</a>&lt;<a href='#class-Point2D'>Point2D</a>, <a href='#class-Point2D'>Point2D</a>&gt; f);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-ITransformable2D'>ITransformable2D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometricPrimitive2D'>IGeometricPrimitive2D</a></li>
+<li><a href='#interface-IPointGeometry2D'>IPointGeometry2D</a></li>
+<li><a href='#interface-IPolygon2D'>IPolygon2D</a></li>
+<li><a href='#interface-IPolyLine2D'>IPolyLine2D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Point2D'>Point2D</a></li>
+<li><a href='#class-Polygon'>Polygon</a></li>
+<li><a href='#class-Quad2D'>Quad2D</a></li>
+<li><a href='#class-Rect2D'>Rect2D</a></li>
+<li><a href='#class-RegularPolygon'>RegularPolygon</a></li>
+<li><a href='#class-Triangle2D'>Triangle2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IDeformable3D'>Interface IDeformable3D</h2>
+<h3>Functions</h3>
+<ul>
+<li>Self Deform(Self x, <a href='#class-Function1'>Function1</a>&lt;<a href='#class-Point3D'>Point3D</a>, <a href='#class-Point3D'>Point3D</a>&gt; f);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-ITransformable3D'>ITransformable3D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometricPrimitive3D'>IGeometricPrimitive3D</a></li>
+<li><a href='#interface-IIndexedGeometry3D'>IIndexedGeometry3D</a>&lt;IndexT&gt;</li>
+<li><a href='#interface-IPointGeometry3D'>IPointGeometry3D</a></li>
+<li><a href='#interface-IPolygon3D'>IPolygon3D</a></li>
+<li><a href='#interface-IPolyLine3D'>IPolyLine3D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Bounds3D'>Bounds3D</a></li>
+<li><a href='#class-Line3D'>Line3D</a></li>
+<li><a href='#class-LineMesh3D'>LineMesh3D</a></li>
+<li><a href='#class-Point3D'>Point3D</a></li>
+<li><a href='#class-Quad3D'>Quad3D</a></li>
+<li><a href='#class-QuadMesh3D'>QuadMesh3D</a></li>
+<li><a href='#class-Ray3D'>Ray3D</a></li>
+<li><a href='#class-Triangle3D'>Triangle3D</a></li>
+<li><a href='#class-TriangleMesh3D'>TriangleMesh3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IDifference'>Interface IDifference</h2>
+<h3>Functions</h3>
+<ul>
+<li>Self Add(Self x, T amount);</li>
+<li>Self Subtract(Self x, T amount);</li>
+<li>T Subtract(Self x, Self y);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Point2D'>Point2D</a></li>
+<li><a href='#class-Point3D'>Point3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IDistanceField2D'>Interface IDistanceField2D</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Distance(Self x, <a href='#class-Point2D'>Point2D</a> p);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IProcedural'>IProcedural</a>&lt;<a href='#class-Vector2'>Vector2</a>, <a href='#class-Number'>Number</a>&gt;</li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IDistanceField3D'>Interface IDistanceField3D</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Distance(Self x, <a href='#class-Point3D'>Point3D</a> p);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IProcedural'>IProcedural</a>&lt;<a href='#class-Vector3'>Vector3</a>, <a href='#class-Number'>Number</a>&gt;</li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IDivisible'>Interface IDivisible</h2>
+<h3>Functions</h3>
+<ul>
+<li>Self Divide(Self a, Self b);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IArithmetic'>IArithmetic</a></li>
+<li><a href='#interface-INumerical'>INumerical</a></li>
+<li><a href='#interface-IRealNumber'>IRealNumber</a></li>
+<li><a href='#interface-IVector'>IVector</a></li>
+<li><a href='#interface-IWholeNumber'>IWholeNumber</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Integer'>Integer</a></li>
+<li><a href='#class-Number'>Number</a></li>
+<li><a href='#class-Vector2'>Vector2</a></li>
+<li><a href='#class-Vector3'>Vector3</a></li>
+<li><a href='#class-Vector4'>Vector4</a></li>
+<li><a href='#class-Vector8'>Vector8</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IExplicitSurface'>Interface IExplicitSurface</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IProcedural'>IProcedural</a>&lt;<a href='#class-Vector2'>Vector2</a>, <a href='#class-Number'>Number</a>&gt;</li>
+<li><a href='#interface-ISurface'>ISurface</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IGeometricPrimitive2D'>Interface IGeometricPrimitive2D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IPointGeometry2D'>IPointGeometry2D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Point2D'>Point2D</a></li>
+<li><a href='#class-Triangle2D'>Triangle2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IGeometricPrimitive3D'>Interface IGeometricPrimitive3D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IPointGeometry3D'>IPointGeometry3D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Point3D'>Point3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IGeometry'>Interface IGeometry</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve2D'>IAngularCurve2D</a></li>
+<li><a href='#interface-IAngularCurve3D'>IAngularCurve3D</a></li>
+<li><a href='#interface-IClosedCurve2D'>IClosedCurve2D</a></li>
+<li><a href='#interface-IClosedCurve3D'>IClosedCurve3D</a></li>
+<li><a href='#interface-IClosedShape'>IClosedShape</a></li>
+<li><a href='#interface-IClosedShape2D'>IClosedShape2D</a></li>
+<li><a href='#interface-IClosedShape3D'>IClosedShape3D</a></li>
+<li><a href='#interface-ICurve'>ICurve</a>&lt;TRange&gt;</li>
+<li><a href='#interface-ICurve1D'>ICurve1D</a></li>
+<li><a href='#interface-ICurve2D'>ICurve2D</a></li>
+<li><a href='#interface-ICurve3D'>ICurve3D</a></li>
+<li><a href='#interface-IExplicitSurface'>IExplicitSurface</a></li>
+<li><a href='#interface-IGeometricPrimitive2D'>IGeometricPrimitive2D</a></li>
+<li><a href='#interface-IGeometricPrimitive3D'>IGeometricPrimitive3D</a></li>
+<li><a href='#interface-IGeometry2D'>IGeometry2D</a></li>
+<li><a href='#interface-IGeometry3D'>IGeometry3D</a></li>
+<li><a href='#interface-IImplicitVolume'>IImplicitVolume</a></li>
+<li><a href='#interface-IIndexedGeometry3D'>IIndexedGeometry3D</a>&lt;IndexT&gt;</li>
+<li><a href='#interface-IOpenClosedShape'>IOpenClosedShape</a></li>
+<li><a href='#interface-IOpenCurve2D'>IOpenCurve2D</a></li>
+<li><a href='#interface-IOpenCurve3D'>IOpenCurve3D</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+<li><a href='#interface-IOpenShape2D'>IOpenShape2D</a></li>
+<li><a href='#interface-IOpenShape3D'>IOpenShape3D</a></li>
+<li><a href='#interface-IPointGeometry2D'>IPointGeometry2D</a></li>
+<li><a href='#interface-IPointGeometry3D'>IPointGeometry3D</a></li>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+<li><a href='#interface-IPolygon2D'>IPolygon2D</a></li>
+<li><a href='#interface-IPolygon3D'>IPolygon3D</a></li>
+<li><a href='#interface-IPolyLine2D'>IPolyLine2D</a></li>
+<li><a href='#interface-IPolyLine3D'>IPolyLine3D</a></li>
+<li><a href='#interface-IPrimitiveGeometry2D'>IPrimitiveGeometry2D</a>&lt;T&gt;</li>
+<li><a href='#interface-IPrimitiveGeometry3D'>IPrimitiveGeometry3D</a>&lt;PrimitiveT&gt;</li>
+<li><a href='#interface-IProceduralSurface'>IProceduralSurface</a></li>
+<li><a href='#interface-IShape'>IShape</a></li>
+<li><a href='#interface-IShape2D'>IShape2D</a></li>
+<li><a href='#interface-IShape3D'>IShape3D</a></li>
+<li><a href='#interface-ISolid'>ISolid</a></li>
+<li><a href='#interface-ISurface'>ISurface</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Arc'>Arc</a></li>
+<li><a href='#class-ArchimedeanSpiral'>ArchimedeanSpiral</a></li>
+<li><a href='#class-Box'>Box</a></li>
+<li><a href='#class-ButterflyCurve'>ButterflyCurve</a></li>
+<li><a href='#class-Capsule'>Capsule</a></li>
+<li><a href='#class-Cardoid'>Cardoid</a></li>
+<li><a href='#class-Chord'>Chord</a></li>
+<li><a href='#class-Circle'>Circle</a></li>
+<li><a href='#class-ConchoidOfDeSluze'>ConchoidOfDeSluze</a></li>
+<li><a href='#class-Cone'>Cone</a></li>
+<li><a href='#class-ConeSegment'>ConeSegment</a></li>
+<li><a href='#class-ConicSection'>ConicSection</a></li>
+<li><a href='#class-CubicBezier2D'>CubicBezier2D</a></li>
+<li><a href='#class-CubicBezier3D'>CubicBezier3D</a></li>
+<li><a href='#class-CycloidOfCeva'>CycloidOfCeva</a></li>
+<li><a href='#class-Cylinder'>Cylinder</a></li>
+<li><a href='#class-Ellipse'>Ellipse</a></li>
+<li><a href='#class-Ellipsoid'>Ellipsoid</a></li>
+<li><a href='#class-Epicycloid'>Epicycloid</a></li>
+<li><a href='#class-Epitrochoid'>Epitrochoid</a></li>
+<li><a href='#class-FermatsSpiral'>FermatsSpiral</a></li>
+<li><a href='#class-FigureEightKnot'>FigureEightKnot</a></li>
+<li><a href='#class-Helix'>Helix</a></li>
+<li><a href='#class-Hypocycloid'>Hypocycloid</a></li>
+<li><a href='#class-Hypotrochoid'>Hypotrochoid</a></li>
+<li><a href='#class-LemniscateOfBernoulli'>LemniscateOfBernoulli</a></li>
+<li><a href='#class-Lens'>Lens</a></li>
+<li><a href='#class-Limacon'>Limacon</a></li>
+<li><a href='#class-LineMesh3D'>LineMesh3D</a></li>
+<li><a href='#class-Lines2D'>Lines2D</a></li>
+<li><a href='#class-Lines3D'>Lines3D</a></li>
+<li><a href='#class-Lissajous'>Lissajous</a></li>
+<li><a href='#class-LogarithmicSpiral'>LogarithmicSpiral</a></li>
+<li><a href='#class-NPrism'>NPrism</a></li>
+<li><a href='#class-NPyramid'>NPyramid</a></li>
+<li><a href='#class-Parabola'>Parabola</a></li>
+<li><a href='#class-Point2D'>Point2D</a></li>
+<li><a href='#class-Point3D'>Point3D</a></li>
+<li><a href='#class-Points2D'>Points2D</a></li>
+<li><a href='#class-Points3D'>Points3D</a></li>
+<li><a href='#class-Polygon'>Polygon</a></li>
+<li><a href='#class-PolyLine2D'>PolyLine2D</a></li>
+<li><a href='#class-PolyLine3D'>PolyLine3D</a></li>
+<li><a href='#class-Pyramid'>Pyramid</a></li>
+<li><a href='#class-Quad2D'>Quad2D</a></li>
+<li><a href='#class-QuadGrid3D'>QuadGrid3D</a></li>
+<li><a href='#class-QuadMesh3D'>QuadMesh3D</a></li>
+<li><a href='#class-QuadraticBezier2D'>QuadraticBezier2D</a></li>
+<li><a href='#class-QuadraticBezier3D'>QuadraticBezier3D</a></li>
+<li><a href='#class-Quads3D'>Quads3D</a></li>
+<li><a href='#class-Rect2D'>Rect2D</a></li>
+<li><a href='#class-RegularPolygon'>RegularPolygon</a></li>
+<li><a href='#class-Ring'>Ring</a></li>
+<li><a href='#class-Rose'>Rose</a></li>
+<li><a href='#class-Sector'>Sector</a></li>
+<li><a href='#class-Segment'>Segment</a></li>
+<li><a href='#class-SineWave'>SineWave</a></li>
+<li><a href='#class-SinusoidalSpiral'>SinusoidalSpiral</a></li>
+<li><a href='#class-Sphere'>Sphere</a></li>
+<li><a href='#class-Spiral'>Spiral</a></li>
+<li><a href='#class-Torus'>Torus</a></li>
+<li><a href='#class-TorusKnot'>TorusKnot</a></li>
+<li><a href='#class-TrefoilKnot'>TrefoilKnot</a></li>
+<li><a href='#class-Triangle2D'>Triangle2D</a></li>
+<li><a href='#class-TriangleMesh3D'>TriangleMesh3D</a></li>
+<li><a href='#class-Triangles3D'>Triangles3D</a></li>
+<li><a href='#class-TrisectrixOfMaclaurin'>TrisectrixOfMaclaurin</a></li>
+<li><a href='#class-TschirnhausenCubic'>TschirnhausenCubic</a></li>
+<li><a href='#class-Tube'>Tube</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IGeometry2D'>Interface IGeometry2D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometry'>IGeometry</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve2D'>IAngularCurve2D</a></li>
+<li><a href='#interface-IClosedCurve2D'>IClosedCurve2D</a></li>
+<li><a href='#interface-IClosedShape2D'>IClosedShape2D</a></li>
+<li><a href='#interface-ICurve2D'>ICurve2D</a></li>
+<li><a href='#interface-IGeometricPrimitive2D'>IGeometricPrimitive2D</a></li>
+<li><a href='#interface-IOpenCurve2D'>IOpenCurve2D</a></li>
+<li><a href='#interface-IOpenShape2D'>IOpenShape2D</a></li>
+<li><a href='#interface-IPointGeometry2D'>IPointGeometry2D</a></li>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+<li><a href='#interface-IPolygon2D'>IPolygon2D</a></li>
+<li><a href='#interface-IPolyLine2D'>IPolyLine2D</a></li>
+<li><a href='#interface-IPrimitiveGeometry2D'>IPrimitiveGeometry2D</a>&lt;T&gt;</li>
+<li><a href='#interface-IShape2D'>IShape2D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Arc'>Arc</a></li>
+<li><a href='#class-ArchimedeanSpiral'>ArchimedeanSpiral</a></li>
+<li><a href='#class-ButterflyCurve'>ButterflyCurve</a></li>
+<li><a href='#class-Cardoid'>Cardoid</a></li>
+<li><a href='#class-Chord'>Chord</a></li>
+<li><a href='#class-Circle'>Circle</a></li>
+<li><a href='#class-ConchoidOfDeSluze'>ConchoidOfDeSluze</a></li>
+<li><a href='#class-ConicSection'>ConicSection</a></li>
+<li><a href='#class-CubicBezier2D'>CubicBezier2D</a></li>
+<li><a href='#class-CycloidOfCeva'>CycloidOfCeva</a></li>
+<li><a href='#class-Ellipse'>Ellipse</a></li>
+<li><a href='#class-Epicycloid'>Epicycloid</a></li>
+<li><a href='#class-Epitrochoid'>Epitrochoid</a></li>
+<li><a href='#class-FermatsSpiral'>FermatsSpiral</a></li>
+<li><a href='#class-Hypocycloid'>Hypocycloid</a></li>
+<li><a href='#class-Hypotrochoid'>Hypotrochoid</a></li>
+<li><a href='#class-LemniscateOfBernoulli'>LemniscateOfBernoulli</a></li>
+<li><a href='#class-Lens'>Lens</a></li>
+<li><a href='#class-Limacon'>Limacon</a></li>
+<li><a href='#class-Lines2D'>Lines2D</a></li>
+<li><a href='#class-Lissajous'>Lissajous</a></li>
+<li><a href='#class-LogarithmicSpiral'>LogarithmicSpiral</a></li>
+<li><a href='#class-Point2D'>Point2D</a></li>
+<li><a href='#class-Points2D'>Points2D</a></li>
+<li><a href='#class-Polygon'>Polygon</a></li>
+<li><a href='#class-PolyLine2D'>PolyLine2D</a></li>
+<li><a href='#class-Quad2D'>Quad2D</a></li>
+<li><a href='#class-QuadraticBezier2D'>QuadraticBezier2D</a></li>
+<li><a href='#class-Rect2D'>Rect2D</a></li>
+<li><a href='#class-RegularPolygon'>RegularPolygon</a></li>
+<li><a href='#class-Ring'>Ring</a></li>
+<li><a href='#class-Rose'>Rose</a></li>
+<li><a href='#class-Sector'>Sector</a></li>
+<li><a href='#class-Segment'>Segment</a></li>
+<li><a href='#class-SinusoidalSpiral'>SinusoidalSpiral</a></li>
+<li><a href='#class-Spiral'>Spiral</a></li>
+<li><a href='#class-Triangle2D'>Triangle2D</a></li>
+<li><a href='#class-TrisectrixOfMaclaurin'>TrisectrixOfMaclaurin</a></li>
+<li><a href='#class-TschirnhausenCubic'>TschirnhausenCubic</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IGeometry3D'>Interface IGeometry3D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometry'>IGeometry</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve3D'>IAngularCurve3D</a></li>
+<li><a href='#interface-IClosedCurve3D'>IClosedCurve3D</a></li>
+<li><a href='#interface-IClosedShape3D'>IClosedShape3D</a></li>
+<li><a href='#interface-ICurve3D'>ICurve3D</a></li>
+<li><a href='#interface-IExplicitSurface'>IExplicitSurface</a></li>
+<li><a href='#interface-IGeometricPrimitive3D'>IGeometricPrimitive3D</a></li>
+<li><a href='#interface-IImplicitVolume'>IImplicitVolume</a></li>
+<li><a href='#interface-IIndexedGeometry3D'>IIndexedGeometry3D</a>&lt;IndexT&gt;</li>
+<li><a href='#interface-IOpenCurve3D'>IOpenCurve3D</a></li>
+<li><a href='#interface-IOpenShape3D'>IOpenShape3D</a></li>
+<li><a href='#interface-IPointGeometry3D'>IPointGeometry3D</a></li>
+<li><a href='#interface-IPolygon3D'>IPolygon3D</a></li>
+<li><a href='#interface-IPolyLine3D'>IPolyLine3D</a></li>
+<li><a href='#interface-IPrimitiveGeometry3D'>IPrimitiveGeometry3D</a>&lt;PrimitiveT&gt;</li>
+<li><a href='#interface-IProceduralSurface'>IProceduralSurface</a></li>
+<li><a href='#interface-IShape3D'>IShape3D</a></li>
+<li><a href='#interface-ISolid'>ISolid</a></li>
+<li><a href='#interface-ISurface'>ISurface</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Box'>Box</a></li>
+<li><a href='#class-Capsule'>Capsule</a></li>
+<li><a href='#class-Cone'>Cone</a></li>
+<li><a href='#class-ConeSegment'>ConeSegment</a></li>
+<li><a href='#class-Cylinder'>Cylinder</a></li>
+<li><a href='#class-Ellipsoid'>Ellipsoid</a></li>
+<li><a href='#class-FigureEightKnot'>FigureEightKnot</a></li>
+<li><a href='#class-Helix'>Helix</a></li>
+<li><a href='#class-LineMesh3D'>LineMesh3D</a></li>
+<li><a href='#class-Lines3D'>Lines3D</a></li>
+<li><a href='#class-NPrism'>NPrism</a></li>
+<li><a href='#class-NPyramid'>NPyramid</a></li>
+<li><a href='#class-Point3D'>Point3D</a></li>
+<li><a href='#class-Points3D'>Points3D</a></li>
+<li><a href='#class-PolyLine3D'>PolyLine3D</a></li>
+<li><a href='#class-Pyramid'>Pyramid</a></li>
+<li><a href='#class-QuadGrid3D'>QuadGrid3D</a></li>
+<li><a href='#class-QuadMesh3D'>QuadMesh3D</a></li>
+<li><a href='#class-Quads3D'>Quads3D</a></li>
+<li><a href='#class-Sphere'>Sphere</a></li>
+<li><a href='#class-Torus'>Torus</a></li>
+<li><a href='#class-TorusKnot'>TorusKnot</a></li>
+<li><a href='#class-TrefoilKnot'>TrefoilKnot</a></li>
+<li><a href='#class-TriangleMesh3D'>TriangleMesh3D</a></li>
+<li><a href='#class-Triangles3D'>Triangles3D</a></li>
+<li><a href='#class-Tube'>Tube</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IImplicitProcedural'>Interface IImplicitProcedural</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IProcedural'>IProcedural</a>&lt;TDomain, <a href='#class-Boolean'>Boolean</a>&gt;</li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IImplicitVolume'>IImplicitVolume</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IImplicitVolume'>Interface IImplicitVolume</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometry3D'>IGeometry3D</a></li>
+<li><a href='#interface-IImplicitProcedural'>IImplicitProcedural</a>&lt;<a href='#class-Point3D'>Point3D</a>&gt;</li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IIndexedGeometry3D'>Interface IIndexedGeometry3D</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#interface-IArray'>IArray</a>&lt;IndexT&gt; FaceIndices(Self x);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IPointGeometry3D'>IPointGeometry3D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-LineMesh3D'>LineMesh3D</a></li>
+<li><a href='#class-QuadMesh3D'>QuadMesh3D</a></li>
+<li><a href='#class-TriangleMesh3D'>TriangleMesh3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IInterpolatable'>Interface IInterpolatable</h2>
+<h3>Functions</h3>
+<ul>
+<li>Self Lerp(Self a, Self b, <a href='#class-Number'>Number</a> t);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IMeasure'>IMeasure</a></li>
+<li><a href='#interface-INumerical'>INumerical</a></li>
+<li><a href='#interface-IRealNumber'>IRealNumber</a></li>
+<li><a href='#interface-IVector'>IVector</a></li>
+<li><a href='#interface-IVectorLike'>IVectorLike</a></li>
+<li><a href='#interface-IWholeNumber'>IWholeNumber</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Angle'>Angle</a></li>
+<li><a href='#class-Integer'>Integer</a></li>
+<li><a href='#class-Number'>Number</a></li>
+<li><a href='#class-Point2D'>Point2D</a></li>
+<li><a href='#class-Point3D'>Point3D</a></li>
+<li><a href='#class-Time'>Time</a></li>
+<li><a href='#class-Vector2'>Vector2</a></li>
+<li><a href='#class-Vector3'>Vector3</a></li>
+<li><a href='#class-Vector4'>Vector4</a></li>
+<li><a href='#class-Vector8'>Vector8</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IInterval'>Interface IInterval</h2>
+<h3>Functions</h3>
+<ul>
+<li>T Start(Self x);</li>
+<li>T End(Self x);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IValue'>IValue</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-AnglePair'>AnglePair</a></li>
+<li><a href='#class-Line2D'>Line2D</a></li>
+<li><a href='#class-Line3D'>Line3D</a></li>
+<li><a href='#class-NumberInterval'>NumberInterval</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IInvertible'>Interface IInvertible</h2>
+<h3>Functions</h3>
+<ul>
+<li>Self Inverse(Self self);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IMultiplicativeWithInverse'>IMultiplicativeWithInverse</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IMeasure'>Interface IMeasure</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IVectorLike'>IVectorLike</a></li>
+<li><a href='#interface-IOrderable'>IOrderable</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Angle'>Angle</a></li>
+<li><a href='#class-Time'>Time</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IModulo'>Interface IModulo</h2>
+<h3>Functions</h3>
+<ul>
+<li>Self Modulo(Self a, Self b);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IArithmetic'>IArithmetic</a></li>
+<li><a href='#interface-INumerical'>INumerical</a></li>
+<li><a href='#interface-IRealNumber'>IRealNumber</a></li>
+<li><a href='#interface-IVector'>IVector</a></li>
+<li><a href='#interface-IWholeNumber'>IWholeNumber</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Integer'>Integer</a></li>
+<li><a href='#class-Number'>Number</a></li>
+<li><a href='#class-Vector2'>Vector2</a></li>
+<li><a href='#class-Vector3'>Vector3</a></li>
+<li><a href='#class-Vector4'>Vector4</a></li>
+<li><a href='#class-Vector8'>Vector8</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IMultiplicative'>Interface IMultiplicative</h2>
+<h3>Functions</h3>
+<ul>
+<li>Self Multiply(Self a, Self b);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IArithmetic'>IArithmetic</a></li>
+<li><a href='#interface-IMultiplicativeWithInverse'>IMultiplicativeWithInverse</a></li>
+<li><a href='#interface-INumerical'>INumerical</a></li>
+<li><a href='#interface-IRealNumber'>IRealNumber</a></li>
+<li><a href='#interface-IVector'>IVector</a></li>
+<li><a href='#interface-IWholeNumber'>IWholeNumber</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Integer'>Integer</a></li>
+<li><a href='#class-Number'>Number</a></li>
+<li><a href='#class-Vector2'>Vector2</a></li>
+<li><a href='#class-Vector3'>Vector3</a></li>
+<li><a href='#class-Vector4'>Vector4</a></li>
+<li><a href='#class-Vector8'>Vector8</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IMultiplicativeWithInverse'>Interface IMultiplicativeWithInverse</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IMultiplicative'>IMultiplicative</a></li>
+<li><a href='#interface-IInvertible'>IInvertible</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'interface-INumerical'>Interface INumerical</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IVectorLike'>IVectorLike</a></li>
+<li><a href='#interface-IArithmetic'>IArithmetic</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IVector'>IVector</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Vector2'>Vector2</a></li>
+<li><a href='#class-Vector3'>Vector3</a></li>
+<li><a href='#class-Vector4'>Vector4</a></li>
+<li><a href='#class-Vector8'>Vector8</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IOpenClosedShape'>Interface IOpenClosedShape</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#class-Boolean'>Boolean</a> Closed(Self x);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IShape'>IShape</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve2D'>IAngularCurve2D</a></li>
+<li><a href='#interface-IAngularCurve3D'>IAngularCurve3D</a></li>
+<li><a href='#interface-IClosedCurve2D'>IClosedCurve2D</a></li>
+<li><a href='#interface-IClosedCurve3D'>IClosedCurve3D</a></li>
+<li><a href='#interface-IClosedShape'>IClosedShape</a></li>
+<li><a href='#interface-IClosedShape2D'>IClosedShape2D</a></li>
+<li><a href='#interface-IClosedShape3D'>IClosedShape3D</a></li>
+<li><a href='#interface-ICurve'>ICurve</a>&lt;TRange&gt;</li>
+<li><a href='#interface-ICurve1D'>ICurve1D</a></li>
+<li><a href='#interface-ICurve2D'>ICurve2D</a></li>
+<li><a href='#interface-ICurve3D'>ICurve3D</a></li>
+<li><a href='#interface-IOpenCurve2D'>IOpenCurve2D</a></li>
+<li><a href='#interface-IOpenCurve3D'>IOpenCurve3D</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+<li><a href='#interface-IOpenShape2D'>IOpenShape2D</a></li>
+<li><a href='#interface-IOpenShape3D'>IOpenShape3D</a></li>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+<li><a href='#interface-IPolygon2D'>IPolygon2D</a></li>
+<li><a href='#interface-IPolygon3D'>IPolygon3D</a></li>
+<li><a href='#interface-IPolyLine2D'>IPolyLine2D</a></li>
+<li><a href='#interface-IPolyLine3D'>IPolyLine3D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Arc'>Arc</a></li>
+<li><a href='#class-ArchimedeanSpiral'>ArchimedeanSpiral</a></li>
+<li><a href='#class-ButterflyCurve'>ButterflyCurve</a></li>
+<li><a href='#class-Cardoid'>Cardoid</a></li>
+<li><a href='#class-Chord'>Chord</a></li>
+<li><a href='#class-Circle'>Circle</a></li>
+<li><a href='#class-ConchoidOfDeSluze'>ConchoidOfDeSluze</a></li>
+<li><a href='#class-ConicSection'>ConicSection</a></li>
+<li><a href='#class-CubicBezier2D'>CubicBezier2D</a></li>
+<li><a href='#class-CubicBezier3D'>CubicBezier3D</a></li>
+<li><a href='#class-CycloidOfCeva'>CycloidOfCeva</a></li>
+<li><a href='#class-Ellipse'>Ellipse</a></li>
+<li><a href='#class-Epicycloid'>Epicycloid</a></li>
+<li><a href='#class-Epitrochoid'>Epitrochoid</a></li>
+<li><a href='#class-FermatsSpiral'>FermatsSpiral</a></li>
+<li><a href='#class-FigureEightKnot'>FigureEightKnot</a></li>
+<li><a href='#class-Helix'>Helix</a></li>
+<li><a href='#class-Hypocycloid'>Hypocycloid</a></li>
+<li><a href='#class-Hypotrochoid'>Hypotrochoid</a></li>
+<li><a href='#class-LemniscateOfBernoulli'>LemniscateOfBernoulli</a></li>
+<li><a href='#class-Lens'>Lens</a></li>
+<li><a href='#class-Limacon'>Limacon</a></li>
+<li><a href='#class-Lissajous'>Lissajous</a></li>
+<li><a href='#class-LogarithmicSpiral'>LogarithmicSpiral</a></li>
+<li><a href='#class-Parabola'>Parabola</a></li>
+<li><a href='#class-Polygon'>Polygon</a></li>
+<li><a href='#class-Quad2D'>Quad2D</a></li>
+<li><a href='#class-QuadraticBezier2D'>QuadraticBezier2D</a></li>
+<li><a href='#class-QuadraticBezier3D'>QuadraticBezier3D</a></li>
+<li><a href='#class-Rect2D'>Rect2D</a></li>
+<li><a href='#class-RegularPolygon'>RegularPolygon</a></li>
+<li><a href='#class-Ring'>Ring</a></li>
+<li><a href='#class-Rose'>Rose</a></li>
+<li><a href='#class-Sector'>Sector</a></li>
+<li><a href='#class-Segment'>Segment</a></li>
+<li><a href='#class-SineWave'>SineWave</a></li>
+<li><a href='#class-SinusoidalSpiral'>SinusoidalSpiral</a></li>
+<li><a href='#class-Spiral'>Spiral</a></li>
+<li><a href='#class-TorusKnot'>TorusKnot</a></li>
+<li><a href='#class-TrefoilKnot'>TrefoilKnot</a></li>
+<li><a href='#class-Triangle2D'>Triangle2D</a></li>
+<li><a href='#class-TrisectrixOfMaclaurin'>TrisectrixOfMaclaurin</a></li>
+<li><a href='#class-TschirnhausenCubic'>TschirnhausenCubic</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IOpenCurve2D'>Interface IOpenCurve2D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-ICurve2D'>ICurve2D</a></li>
+<li><a href='#interface-IOpenShape2D'>IOpenShape2D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-CubicBezier2D'>CubicBezier2D</a></li>
+<li><a href='#class-QuadraticBezier2D'>QuadraticBezier2D</a></li>
+<li><a href='#class-Spiral'>Spiral</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IOpenCurve3D'>Interface IOpenCurve3D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-ICurve3D'>ICurve3D</a></li>
+<li><a href='#interface-IOpenShape3D'>IOpenShape3D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IOpenShape'>Interface IOpenShape</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IOpenClosedShape'>IOpenClosedShape</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IOpenCurve2D'>IOpenCurve2D</a></li>
+<li><a href='#interface-IOpenCurve3D'>IOpenCurve3D</a></li>
+<li><a href='#interface-IOpenShape2D'>IOpenShape2D</a></li>
+<li><a href='#interface-IOpenShape3D'>IOpenShape3D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Arc'>Arc</a></li>
+<li><a href='#class-ArchimedeanSpiral'>ArchimedeanSpiral</a></li>
+<li><a href='#class-ButterflyCurve'>ButterflyCurve</a></li>
+<li><a href='#class-ConchoidOfDeSluze'>ConchoidOfDeSluze</a></li>
+<li><a href='#class-ConicSection'>ConicSection</a></li>
+<li><a href='#class-CubicBezier2D'>CubicBezier2D</a></li>
+<li><a href='#class-CubicBezier3D'>CubicBezier3D</a></li>
+<li><a href='#class-CycloidOfCeva'>CycloidOfCeva</a></li>
+<li><a href='#class-Epicycloid'>Epicycloid</a></li>
+<li><a href='#class-Epitrochoid'>Epitrochoid</a></li>
+<li><a href='#class-FermatsSpiral'>FermatsSpiral</a></li>
+<li><a href='#class-Helix'>Helix</a></li>
+<li><a href='#class-Hypocycloid'>Hypocycloid</a></li>
+<li><a href='#class-Hypotrochoid'>Hypotrochoid</a></li>
+<li><a href='#class-LemniscateOfBernoulli'>LemniscateOfBernoulli</a></li>
+<li><a href='#class-Limacon'>Limacon</a></li>
+<li><a href='#class-Lissajous'>Lissajous</a></li>
+<li><a href='#class-LogarithmicSpiral'>LogarithmicSpiral</a></li>
+<li><a href='#class-Parabola'>Parabola</a></li>
+<li><a href='#class-QuadraticBezier2D'>QuadraticBezier2D</a></li>
+<li><a href='#class-QuadraticBezier3D'>QuadraticBezier3D</a></li>
+<li><a href='#class-SineWave'>SineWave</a></li>
+<li><a href='#class-SinusoidalSpiral'>SinusoidalSpiral</a></li>
+<li><a href='#class-Spiral'>Spiral</a></li>
+<li><a href='#class-TrisectrixOfMaclaurin'>TrisectrixOfMaclaurin</a></li>
+<li><a href='#class-TschirnhausenCubic'>TschirnhausenCubic</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IOpenShape2D'>Interface IOpenShape2D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometry2D'>IGeometry2D</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IOpenCurve2D'>IOpenCurve2D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Arc'>Arc</a></li>
+<li><a href='#class-CubicBezier2D'>CubicBezier2D</a></li>
+<li><a href='#class-QuadraticBezier2D'>QuadraticBezier2D</a></li>
+<li><a href='#class-Spiral'>Spiral</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IOpenShape3D'>Interface IOpenShape3D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometry3D'>IGeometry3D</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IOpenCurve3D'>IOpenCurve3D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IOrderable'>Interface IOrderable</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#class-Boolean'>Boolean</a> LessThanOrEquals(Self x, Self y);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IMeasure'>IMeasure</a></li>
+<li><a href='#interface-IRealNumber'>IRealNumber</a></li>
+<li><a href='#interface-IWholeNumber'>IWholeNumber</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Angle'>Angle</a></li>
+<li><a href='#class-Boolean'>Boolean</a></li>
+<li><a href='#class-Character'>Character</a></li>
+<li><a href='#class-Integer'>Integer</a></li>
+<li><a href='#class-Number'>Number</a></li>
+<li><a href='#class-String'>String</a></li>
+<li><a href='#class-Time'>Time</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IPointGeometry2D'>Interface IPointGeometry2D</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#interface-IArray'>IArray</a>&lt;<a href='#class-Point2D'>Point2D</a>&gt; Points(Self x);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometry2D'>IGeometry2D</a></li>
+<li><a href='#interface-IDeformable2D'>IDeformable2D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometricPrimitive2D'>IGeometricPrimitive2D</a></li>
+<li><a href='#interface-IPolygon2D'>IPolygon2D</a></li>
+<li><a href='#interface-IPolyLine2D'>IPolyLine2D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Point2D'>Point2D</a></li>
+<li><a href='#class-Polygon'>Polygon</a></li>
+<li><a href='#class-Quad2D'>Quad2D</a></li>
+<li><a href='#class-Rect2D'>Rect2D</a></li>
+<li><a href='#class-RegularPolygon'>RegularPolygon</a></li>
+<li><a href='#class-Triangle2D'>Triangle2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IPointGeometry3D'>Interface IPointGeometry3D</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#interface-IArray'>IArray</a>&lt;<a href='#class-Point3D'>Point3D</a>&gt; Points(Self x);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometry3D'>IGeometry3D</a></li>
+<li><a href='#interface-IDeformable3D'>IDeformable3D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometricPrimitive3D'>IGeometricPrimitive3D</a></li>
+<li><a href='#interface-IIndexedGeometry3D'>IIndexedGeometry3D</a>&lt;IndexT&gt;</li>
+<li><a href='#interface-IPolygon3D'>IPolygon3D</a></li>
+<li><a href='#interface-IPolyLine3D'>IPolyLine3D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-LineMesh3D'>LineMesh3D</a></li>
+<li><a href='#class-Point3D'>Point3D</a></li>
+<li><a href='#class-QuadMesh3D'>QuadMesh3D</a></li>
+<li><a href='#class-TriangleMesh3D'>TriangleMesh3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IPolarCurve'>Interface IPolarCurve</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> GetRadius(Self curve, <a href='#class-Angle'>Angle</a> t);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve2D'>IAngularCurve2D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-ArchimedeanSpiral'>ArchimedeanSpiral</a></li>
+<li><a href='#class-Cardoid'>Cardoid</a></li>
+<li><a href='#class-ConchoidOfDeSluze'>ConchoidOfDeSluze</a></li>
+<li><a href='#class-ConicSection'>ConicSection</a></li>
+<li><a href='#class-CycloidOfCeva'>CycloidOfCeva</a></li>
+<li><a href='#class-FermatsSpiral'>FermatsSpiral</a></li>
+<li><a href='#class-LemniscateOfBernoulli'>LemniscateOfBernoulli</a></li>
+<li><a href='#class-Limacon'>Limacon</a></li>
+<li><a href='#class-LogarithmicSpiral'>LogarithmicSpiral</a></li>
+<li><a href='#class-Rose'>Rose</a></li>
+<li><a href='#class-SinusoidalSpiral'>SinusoidalSpiral</a></li>
+<li><a href='#class-TrisectrixOfMaclaurin'>TrisectrixOfMaclaurin</a></li>
+<li><a href='#class-TschirnhausenCubic'>TschirnhausenCubic</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IPolygon2D'>Interface IPolygon2D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolyLine2D'>IPolyLine2D</a></li>
+<li><a href='#interface-IClosedShape2D'>IClosedShape2D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Polygon'>Polygon</a></li>
+<li><a href='#class-Quad2D'>Quad2D</a></li>
+<li><a href='#class-Rect2D'>Rect2D</a></li>
+<li><a href='#class-RegularPolygon'>RegularPolygon</a></li>
+<li><a href='#class-Triangle2D'>Triangle2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IPolygon3D'>Interface IPolygon3D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolyLine3D'>IPolyLine3D</a></li>
+<li><a href='#interface-IClosedShape3D'>IClosedShape3D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IPolyLine2D'>Interface IPolyLine2D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IPointGeometry2D'>IPointGeometry2D</a></li>
+<li><a href='#interface-IOpenClosedShape'>IOpenClosedShape</a></li>
+<li><a href='#interface-ICurve2D'>ICurve2D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolygon2D'>IPolygon2D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Polygon'>Polygon</a></li>
+<li><a href='#class-Quad2D'>Quad2D</a></li>
+<li><a href='#class-Rect2D'>Rect2D</a></li>
+<li><a href='#class-RegularPolygon'>RegularPolygon</a></li>
+<li><a href='#class-Triangle2D'>Triangle2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IPolyLine3D'>Interface IPolyLine3D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IPointGeometry3D'>IPointGeometry3D</a></li>
+<li><a href='#interface-IOpenClosedShape'>IOpenClosedShape</a></li>
+<li><a href='#interface-ICurve3D'>ICurve3D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IPolygon3D'>IPolygon3D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IPrimitiveGeometry2D'>Interface IPrimitiveGeometry2D</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#interface-IArray'>IArray</a>&lt;T&gt; Primitives(Self x);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometry2D'>IGeometry2D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Lines2D'>Lines2D</a></li>
+<li><a href='#class-Points2D'>Points2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IPrimitiveGeometry3D'>Interface IPrimitiveGeometry3D</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#interface-IArray'>IArray</a>&lt;PrimitiveT&gt; Primitives(Self x);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometry3D'>IGeometry3D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Lines3D'>Lines3D</a></li>
+<li><a href='#class-Points3D'>Points3D</a></li>
+<li><a href='#class-Quads3D'>Quads3D</a></li>
+<li><a href='#class-Triangles3D'>Triangles3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IProcedural'>Interface IProcedural</h2>
+<h3>Functions</h3>
+<ul>
+<li>TOut Eval(Self x, TIn t);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve2D'>IAngularCurve2D</a></li>
+<li><a href='#interface-IAngularCurve3D'>IAngularCurve3D</a></li>
+<li><a href='#interface-IClosedCurve2D'>IClosedCurve2D</a></li>
+<li><a href='#interface-IClosedCurve3D'>IClosedCurve3D</a></li>
+<li><a href='#interface-ICurve'>ICurve</a>&lt;TRange&gt;</li>
+<li><a href='#interface-ICurve1D'>ICurve1D</a></li>
+<li><a href='#interface-ICurve2D'>ICurve2D</a></li>
+<li><a href='#interface-ICurve3D'>ICurve3D</a></li>
+<li><a href='#interface-IDistanceField2D'>IDistanceField2D</a></li>
+<li><a href='#interface-IDistanceField3D'>IDistanceField3D</a></li>
+<li><a href='#interface-IExplicitSurface'>IExplicitSurface</a></li>
+<li><a href='#interface-IImplicitProcedural'>IImplicitProcedural</a>&lt;TDomain&gt;</li>
+<li><a href='#interface-IImplicitVolume'>IImplicitVolume</a></li>
+<li><a href='#interface-IOpenCurve2D'>IOpenCurve2D</a></li>
+<li><a href='#interface-IOpenCurve3D'>IOpenCurve3D</a></li>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+<li><a href='#interface-IPolygon2D'>IPolygon2D</a></li>
+<li><a href='#interface-IPolygon3D'>IPolygon3D</a></li>
+<li><a href='#interface-IPolyLine2D'>IPolyLine2D</a></li>
+<li><a href='#interface-IPolyLine3D'>IPolyLine3D</a></li>
+<li><a href='#interface-IProceduralSurface'>IProceduralSurface</a></li>
+<li><a href='#interface-ISolid'>ISolid</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-ArchimedeanSpiral'>ArchimedeanSpiral</a></li>
+<li><a href='#class-Box'>Box</a></li>
+<li><a href='#class-ButterflyCurve'>ButterflyCurve</a></li>
+<li><a href='#class-Capsule'>Capsule</a></li>
+<li><a href='#class-Cardoid'>Cardoid</a></li>
+<li><a href='#class-Circle'>Circle</a></li>
+<li><a href='#class-ConchoidOfDeSluze'>ConchoidOfDeSluze</a></li>
+<li><a href='#class-Cone'>Cone</a></li>
+<li><a href='#class-ConeSegment'>ConeSegment</a></li>
+<li><a href='#class-ConicSection'>ConicSection</a></li>
+<li><a href='#class-CubicBezier2D'>CubicBezier2D</a></li>
+<li><a href='#class-CycloidOfCeva'>CycloidOfCeva</a></li>
+<li><a href='#class-Ellipse'>Ellipse</a></li>
+<li><a href='#class-Ellipsoid'>Ellipsoid</a></li>
+<li><a href='#class-Epicycloid'>Epicycloid</a></li>
+<li><a href='#class-Epitrochoid'>Epitrochoid</a></li>
+<li><a href='#class-FermatsSpiral'>FermatsSpiral</a></li>
+<li><a href='#class-FigureEightKnot'>FigureEightKnot</a></li>
+<li><a href='#class-Helix'>Helix</a></li>
+<li><a href='#class-Hypocycloid'>Hypocycloid</a></li>
+<li><a href='#class-Hypotrochoid'>Hypotrochoid</a></li>
+<li><a href='#class-LemniscateOfBernoulli'>LemniscateOfBernoulli</a></li>
+<li><a href='#class-Limacon'>Limacon</a></li>
+<li><a href='#class-Lissajous'>Lissajous</a></li>
+<li><a href='#class-LogarithmicSpiral'>LogarithmicSpiral</a></li>
+<li><a href='#class-NPrism'>NPrism</a></li>
+<li><a href='#class-NPyramid'>NPyramid</a></li>
+<li><a href='#class-Polygon'>Polygon</a></li>
+<li><a href='#class-Pyramid'>Pyramid</a></li>
+<li><a href='#class-Quad2D'>Quad2D</a></li>
+<li><a href='#class-QuadraticBezier2D'>QuadraticBezier2D</a></li>
+<li><a href='#class-Rect2D'>Rect2D</a></li>
+<li><a href='#class-RegularPolygon'>RegularPolygon</a></li>
+<li><a href='#class-Rose'>Rose</a></li>
+<li><a href='#class-SinusoidalSpiral'>SinusoidalSpiral</a></li>
+<li><a href='#class-Sphere'>Sphere</a></li>
+<li><a href='#class-Spiral'>Spiral</a></li>
+<li><a href='#class-Torus'>Torus</a></li>
+<li><a href='#class-TorusKnot'>TorusKnot</a></li>
+<li><a href='#class-TrefoilKnot'>TrefoilKnot</a></li>
+<li><a href='#class-Triangle2D'>Triangle2D</a></li>
+<li><a href='#class-TrisectrixOfMaclaurin'>TrisectrixOfMaclaurin</a></li>
+<li><a href='#class-TschirnhausenCubic'>TschirnhausenCubic</a></li>
+<li><a href='#class-Tube'>Tube</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IProceduralSurface'>Interface IProceduralSurface</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#class-Boolean'>Boolean</a> ClosedX(Self x);</li>
+<li><a href='#class-Boolean'>Boolean</a> ClosedY(Self x);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IProcedural'>IProcedural</a>&lt;<a href='#class-Vector2'>Vector2</a>, <a href='#class-Point3D'>Point3D</a>&gt;</li>
+<li><a href='#interface-ISurface'>ISurface</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-ISolid'>ISolid</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Box'>Box</a></li>
+<li><a href='#class-Capsule'>Capsule</a></li>
+<li><a href='#class-Cone'>Cone</a></li>
+<li><a href='#class-ConeSegment'>ConeSegment</a></li>
+<li><a href='#class-Ellipsoid'>Ellipsoid</a></li>
+<li><a href='#class-NPrism'>NPrism</a></li>
+<li><a href='#class-NPyramid'>NPyramid</a></li>
+<li><a href='#class-Pyramid'>Pyramid</a></li>
+<li><a href='#class-Sphere'>Sphere</a></li>
+<li><a href='#class-Torus'>Torus</a></li>
+<li><a href='#class-Tube'>Tube</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IRealFunction'>Interface IRealFunction</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#class-Number'>Number</a> Eval(Self f, <a href='#class-Number'>Number</a> x);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Cubic'>Cubic</a></li>
+<li><a href='#class-LinearEquation'>LinearEquation</a></li>
+<li><a href='#class-Parabola'>Parabola</a></li>
+<li><a href='#class-Quadratic'>Quadratic</a></li>
+<li><a href='#class-SineWave'>SineWave</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IRealNumber'>Interface IRealNumber</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IInterpolatable'>IInterpolatable</a></li>
+<li><a href='#interface-IArithmetic'>IArithmetic</a></li>
+<li><a href='#interface-IScalarArithmetic'>IScalarArithmetic</a></li>
+<li><a href='#interface-IOrderable'>IOrderable</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Number'>Number</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IRigidTransform2D'>Interface IRigidTransform2D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-ITransform2D'>ITransform2D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Identity2D'>Identity2D</a></li>
+<li><a href='#class-OffsetRotation2D'>OffsetRotation2D</a></li>
+<li><a href='#class-Pose2D'>Pose2D</a></li>
+<li><a href='#class-Rotation2D'>Rotation2D</a></li>
+<li><a href='#class-Translation2D'>Translation2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IRigidTransform3D'>Interface IRigidTransform3D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-ITransform3D'>ITransform3D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IRotation3D'>IRotation3D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-AxisAngle'>AxisAngle</a></li>
+<li><a href='#class-IdentityTransform3D'>IdentityTransform3D</a></li>
+<li><a href='#class-LookAt3D'>LookAt3D</a></li>
+<li><a href='#class-LookDirection3D'>LookDirection3D</a></li>
+<li><a href='#class-Pose3D'>Pose3D</a></li>
+<li><a href='#class-Rotation3D'>Rotation3D</a></li>
+<li><a href='#class-Translation3D'>Translation3D</a></li>
+<li><a href='#class-YawPitch'>YawPitch</a></li>
+<li><a href='#class-YawPitchRoll'>YawPitchRoll</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IRotation3D'>Interface IRotation3D</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#class-Quaternion'>Quaternion</a> Quaternion(Self x);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IRigidTransform3D'>IRigidTransform3D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-AxisAngle'>AxisAngle</a></li>
+<li><a href='#class-IdentityTransform3D'>IdentityTransform3D</a></li>
+<li><a href='#class-LookAt3D'>LookAt3D</a></li>
+<li><a href='#class-LookDirection3D'>LookDirection3D</a></li>
+<li><a href='#class-Rotation3D'>Rotation3D</a></li>
+<li><a href='#class-YawPitch'>YawPitch</a></li>
+<li><a href='#class-YawPitchRoll'>YawPitchRoll</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IScalarArithmetic'>Interface IScalarArithmetic</h2>
+<h3>Functions</h3>
+<ul>
+<li>Self Modulo(Self self, <a href='#class-Number'>Number</a> other);</li>
+<li>Self Divide(Self self, <a href='#class-Number'>Number</a> other);</li>
+<li>Self Multiply(Self self, <a href='#class-Number'>Number</a> other);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IMeasure'>IMeasure</a></li>
+<li><a href='#interface-INumerical'>INumerical</a></li>
+<li><a href='#interface-IRealNumber'>IRealNumber</a></li>
+<li><a href='#interface-IVector'>IVector</a></li>
+<li><a href='#interface-IVectorLike'>IVectorLike</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Angle'>Angle</a></li>
+<li><a href='#class-Number'>Number</a></li>
+<li><a href='#class-Point2D'>Point2D</a></li>
+<li><a href='#class-Point3D'>Point3D</a></li>
+<li><a href='#class-Time'>Time</a></li>
+<li><a href='#class-Vector2'>Vector2</a></li>
+<li><a href='#class-Vector3'>Vector3</a></li>
+<li><a href='#class-Vector4'>Vector4</a></li>
+<li><a href='#class-Vector8'>Vector8</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IShape'>Interface IShape</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometry'>IGeometry</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IAngularCurve2D'>IAngularCurve2D</a></li>
+<li><a href='#interface-IAngularCurve3D'>IAngularCurve3D</a></li>
+<li><a href='#interface-IClosedCurve2D'>IClosedCurve2D</a></li>
+<li><a href='#interface-IClosedCurve3D'>IClosedCurve3D</a></li>
+<li><a href='#interface-IClosedShape'>IClosedShape</a></li>
+<li><a href='#interface-IClosedShape2D'>IClosedShape2D</a></li>
+<li><a href='#interface-IClosedShape3D'>IClosedShape3D</a></li>
+<li><a href='#interface-ICurve'>ICurve</a>&lt;TRange&gt;</li>
+<li><a href='#interface-ICurve1D'>ICurve1D</a></li>
+<li><a href='#interface-ICurve2D'>ICurve2D</a></li>
+<li><a href='#interface-ICurve3D'>ICurve3D</a></li>
+<li><a href='#interface-IOpenClosedShape'>IOpenClosedShape</a></li>
+<li><a href='#interface-IOpenCurve2D'>IOpenCurve2D</a></li>
+<li><a href='#interface-IOpenCurve3D'>IOpenCurve3D</a></li>
+<li><a href='#interface-IOpenShape'>IOpenShape</a></li>
+<li><a href='#interface-IOpenShape2D'>IOpenShape2D</a></li>
+<li><a href='#interface-IOpenShape3D'>IOpenShape3D</a></li>
+<li><a href='#interface-IPolarCurve'>IPolarCurve</a></li>
+<li><a href='#interface-IPolygon2D'>IPolygon2D</a></li>
+<li><a href='#interface-IPolygon3D'>IPolygon3D</a></li>
+<li><a href='#interface-IPolyLine2D'>IPolyLine2D</a></li>
+<li><a href='#interface-IPolyLine3D'>IPolyLine3D</a></li>
+<li><a href='#interface-IShape2D'>IShape2D</a></li>
+<li><a href='#interface-IShape3D'>IShape3D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Arc'>Arc</a></li>
+<li><a href='#class-ArchimedeanSpiral'>ArchimedeanSpiral</a></li>
+<li><a href='#class-ButterflyCurve'>ButterflyCurve</a></li>
+<li><a href='#class-Cardoid'>Cardoid</a></li>
+<li><a href='#class-Chord'>Chord</a></li>
+<li><a href='#class-Circle'>Circle</a></li>
+<li><a href='#class-ConchoidOfDeSluze'>ConchoidOfDeSluze</a></li>
+<li><a href='#class-ConicSection'>ConicSection</a></li>
+<li><a href='#class-CubicBezier2D'>CubicBezier2D</a></li>
+<li><a href='#class-CubicBezier3D'>CubicBezier3D</a></li>
+<li><a href='#class-CycloidOfCeva'>CycloidOfCeva</a></li>
+<li><a href='#class-Ellipse'>Ellipse</a></li>
+<li><a href='#class-Epicycloid'>Epicycloid</a></li>
+<li><a href='#class-Epitrochoid'>Epitrochoid</a></li>
+<li><a href='#class-FermatsSpiral'>FermatsSpiral</a></li>
+<li><a href='#class-FigureEightKnot'>FigureEightKnot</a></li>
+<li><a href='#class-Helix'>Helix</a></li>
+<li><a href='#class-Hypocycloid'>Hypocycloid</a></li>
+<li><a href='#class-Hypotrochoid'>Hypotrochoid</a></li>
+<li><a href='#class-LemniscateOfBernoulli'>LemniscateOfBernoulli</a></li>
+<li><a href='#class-Lens'>Lens</a></li>
+<li><a href='#class-Limacon'>Limacon</a></li>
+<li><a href='#class-Lissajous'>Lissajous</a></li>
+<li><a href='#class-LogarithmicSpiral'>LogarithmicSpiral</a></li>
+<li><a href='#class-Parabola'>Parabola</a></li>
+<li><a href='#class-Polygon'>Polygon</a></li>
+<li><a href='#class-Quad2D'>Quad2D</a></li>
+<li><a href='#class-QuadraticBezier2D'>QuadraticBezier2D</a></li>
+<li><a href='#class-QuadraticBezier3D'>QuadraticBezier3D</a></li>
+<li><a href='#class-Rect2D'>Rect2D</a></li>
+<li><a href='#class-RegularPolygon'>RegularPolygon</a></li>
+<li><a href='#class-Ring'>Ring</a></li>
+<li><a href='#class-Rose'>Rose</a></li>
+<li><a href='#class-Sector'>Sector</a></li>
+<li><a href='#class-Segment'>Segment</a></li>
+<li><a href='#class-SineWave'>SineWave</a></li>
+<li><a href='#class-SinusoidalSpiral'>SinusoidalSpiral</a></li>
+<li><a href='#class-Spiral'>Spiral</a></li>
+<li><a href='#class-TorusKnot'>TorusKnot</a></li>
+<li><a href='#class-TrefoilKnot'>TrefoilKnot</a></li>
+<li><a href='#class-Triangle2D'>Triangle2D</a></li>
+<li><a href='#class-TrisectrixOfMaclaurin'>TrisectrixOfMaclaurin</a></li>
+<li><a href='#class-TschirnhausenCubic'>TschirnhausenCubic</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IShape2D'>Interface IShape2D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IShape'>IShape</a></li>
+<li><a href='#interface-IGeometry2D'>IGeometry2D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IShape3D'>Interface IShape3D</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IShape'>IShape</a></li>
+<li><a href='#interface-IGeometry3D'>IGeometry3D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+</ul>
+<hr class='solid'/><h2 id = 'interface-ISolid'>Interface ISolid</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IProceduralSurface'>IProceduralSurface</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Box'>Box</a></li>
+<li><a href='#class-Capsule'>Capsule</a></li>
+<li><a href='#class-Cone'>Cone</a></li>
+<li><a href='#class-ConeSegment'>ConeSegment</a></li>
+<li><a href='#class-Ellipsoid'>Ellipsoid</a></li>
+<li><a href='#class-NPrism'>NPrism</a></li>
+<li><a href='#class-NPyramid'>NPyramid</a></li>
+<li><a href='#class-Pyramid'>Pyramid</a></li>
+<li><a href='#class-Sphere'>Sphere</a></li>
+<li><a href='#class-Torus'>Torus</a></li>
+<li><a href='#class-Tube'>Tube</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-ISurface'>Interface ISurface</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IGeometry3D'>IGeometry3D</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IExplicitSurface'>IExplicitSurface</a></li>
+<li><a href='#interface-IProceduralSurface'>IProceduralSurface</a></li>
+<li><a href='#interface-ISolid'>ISolid</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Box'>Box</a></li>
+<li><a href='#class-Capsule'>Capsule</a></li>
+<li><a href='#class-Cone'>Cone</a></li>
+<li><a href='#class-ConeSegment'>ConeSegment</a></li>
+<li><a href='#class-Cylinder'>Cylinder</a></li>
+<li><a href='#class-Ellipsoid'>Ellipsoid</a></li>
+<li><a href='#class-NPrism'>NPrism</a></li>
+<li><a href='#class-NPyramid'>NPyramid</a></li>
+<li><a href='#class-Pyramid'>Pyramid</a></li>
+<li><a href='#class-Sphere'>Sphere</a></li>
+<li><a href='#class-Torus'>Torus</a></li>
+<li><a href='#class-Tube'>Tube</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-ITransform2D'>Interface ITransform2D</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#class-Matrix3x2'>Matrix3x2</a> Matrix(Self x);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IRigidTransform2D'>IRigidTransform2D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Identity2D'>Identity2D</a></li>
+<li><a href='#class-OffsetRotation2D'>OffsetRotation2D</a></li>
+<li><a href='#class-OffsetScale2D'>OffsetScale2D</a></li>
+<li><a href='#class-Pose2D'>Pose2D</a></li>
+<li><a href='#class-Reflection2D'>Reflection2D</a></li>
+<li><a href='#class-Rotation2D'>Rotation2D</a></li>
+<li><a href='#class-Scale2D'>Scale2D</a></li>
+<li><a href='#class-Skew2D'>Skew2D</a></li>
+<li><a href='#class-Transform2D'>Transform2D</a></li>
+<li><a href='#class-Translation2D'>Translation2D</a></li>
+<li><a href='#class-TRSTransform2D'>TRSTransform2D</a></li>
+<li><a href='#class-UniformScale2D'>UniformScale2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-ITransform3D'>Interface ITransform3D</h2>
+<h3>Functions</h3>
+<ul>
+<li><a href='#class-Matrix4x4'>Matrix4x4</a> Matrix(Self x);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IRigidTransform3D'>IRigidTransform3D</a></li>
+<li><a href='#interface-IRotation3D'>IRotation3D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-AxisAngle'>AxisAngle</a></li>
+<li><a href='#class-IdentityTransform3D'>IdentityTransform3D</a></li>
+<li><a href='#class-LookAt3D'>LookAt3D</a></li>
+<li><a href='#class-LookDirection3D'>LookDirection3D</a></li>
+<li><a href='#class-Orthographic3D'>Orthographic3D</a></li>
+<li><a href='#class-Perspective3D'>Perspective3D</a></li>
+<li><a href='#class-PlaneProjection3D'>PlaneProjection3D</a></li>
+<li><a href='#class-Pose3D'>Pose3D</a></li>
+<li><a href='#class-Rotation3D'>Rotation3D</a></li>
+<li><a href='#class-Scaling3D'>Scaling3D</a></li>
+<li><a href='#class-Transform3D'>Transform3D</a></li>
+<li><a href='#class-Translation3D'>Translation3D</a></li>
+<li><a href='#class-TRSTransform3D'>TRSTransform3D</a></li>
+<li><a href='#class-YawPitch'>YawPitch</a></li>
+<li><a href='#class-YawPitchRoll'>YawPitchRoll</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-ITransformable2D'>Interface ITransformable2D</h2>
+<h3>Functions</h3>
+<ul>
+<li>Self Transform(Self x, <a href='#class-Transform2D'>Transform2D</a> t);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IDeformable2D'>IDeformable2D</a></li>
+<li><a href='#interface-IGeometricPrimitive2D'>IGeometricPrimitive2D</a></li>
+<li><a href='#interface-IPointGeometry2D'>IPointGeometry2D</a></li>
+<li><a href='#interface-IPolygon2D'>IPolygon2D</a></li>
+<li><a href='#interface-IPolyLine2D'>IPolyLine2D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Point2D'>Point2D</a></li>
+<li><a href='#class-Polygon'>Polygon</a></li>
+<li><a href='#class-Quad2D'>Quad2D</a></li>
+<li><a href='#class-Rect2D'>Rect2D</a></li>
+<li><a href='#class-RegularPolygon'>RegularPolygon</a></li>
+<li><a href='#class-Triangle2D'>Triangle2D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-ITransformable3D'>Interface ITransformable3D</h2>
+<h3>Functions</h3>
+<ul>
+<li>Self Transform(Self x, <a href='#class-Transform3D'>Transform3D</a> t);</li>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IDeformable3D'>IDeformable3D</a></li>
+<li><a href='#interface-IGeometricPrimitive3D'>IGeometricPrimitive3D</a></li>
+<li><a href='#interface-IIndexedGeometry3D'>IIndexedGeometry3D</a>&lt;IndexT&gt;</li>
+<li><a href='#interface-IPointGeometry3D'>IPointGeometry3D</a></li>
+<li><a href='#interface-IPolygon3D'>IPolygon3D</a></li>
+<li><a href='#interface-IPolyLine3D'>IPolyLine3D</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Bounds3D'>Bounds3D</a></li>
+<li><a href='#class-Line3D'>Line3D</a></li>
+<li><a href='#class-LineMesh3D'>LineMesh3D</a></li>
+<li><a href='#class-Point3D'>Point3D</a></li>
+<li><a href='#class-Quad3D'>Quad3D</a></li>
+<li><a href='#class-QuadMesh3D'>QuadMesh3D</a></li>
+<li><a href='#class-Ray3D'>Ray3D</a></li>
+<li><a href='#class-Triangle3D'>Triangle3D</a></li>
+<li><a href='#class-TriangleMesh3D'>TriangleMesh3D</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IValue'>Interface IValue</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IBounds'>IBounds</a>&lt;TValue, TDelta&gt;</li>
+<li><a href='#interface-IInterval'>IInterval</a>&lt;T&gt;</li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-AnglePair'>AnglePair</a></li>
+<li><a href='#class-Boolean'>Boolean</a></li>
+<li><a href='#class-Bounds2D'>Bounds2D</a></li>
+<li><a href='#class-Bounds3D'>Bounds3D</a></li>
+<li><a href='#class-Character'>Character</a></li>
+<li><a href='#class-Integer2'>Integer2</a></li>
+<li><a href='#class-Integer3'>Integer3</a></li>
+<li><a href='#class-Integer4'>Integer4</a></li>
+<li><a href='#class-Line2D'>Line2D</a></li>
+<li><a href='#class-Line3D'>Line3D</a></li>
+<li><a href='#class-Matrix3x2'>Matrix3x2</a></li>
+<li><a href='#class-Matrix4x4'>Matrix4x4</a></li>
+<li><a href='#class-NumberInterval'>NumberInterval</a></li>
+<li><a href='#class-Object'>Object</a></li>
+<li><a href='#class-Plane'>Plane</a></li>
+<li><a href='#class-Quaternion'>Quaternion</a></li>
+<li><a href='#class-Ray2D'>Ray2D</a></li>
+<li><a href='#class-Ray3D'>Ray3D</a></li>
+<li><a href='#class-String'>String</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IVector'>Interface IVector</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-INumerical'>INumerical</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Vector2'>Vector2</a></li>
+<li><a href='#class-Vector3'>Vector3</a></li>
+<li><a href='#class-Vector4'>Vector4</a></li>
+<li><a href='#class-Vector8'>Vector8</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IVectorLike'>Interface IVectorLike</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IInterpolatable'>IInterpolatable</a></li>
+<li><a href='#interface-IScalarArithmetic'>IScalarArithmetic</a></li>
+<li><a href='#interface-IArrayLike'>IArrayLike</a>&lt;<a href='#class-Number'>Number</a>&gt;</li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+<li><a href='#interface-IMeasure'>IMeasure</a></li>
+<li><a href='#interface-INumerical'>INumerical</a></li>
+<li><a href='#interface-IVector'>IVector</a></li>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Angle'>Angle</a></li>
+<li><a href='#class-Point2D'>Point2D</a></li>
+<li><a href='#class-Point3D'>Point3D</a></li>
+<li><a href='#class-Time'>Time</a></li>
+<li><a href='#class-Vector2'>Vector2</a></li>
+<li><a href='#class-Vector3'>Vector3</a></li>
+<li><a href='#class-Vector4'>Vector4</a></li>
+<li><a href='#class-Vector8'>Vector8</a></li>
+</ul>
+<hr class='solid'/><h2 id = 'interface-IWholeNumber'>Interface IWholeNumber</h2>
+<h3>Functions</h3>
+<ul>
+</ul>
+<h3>Inherited Interfaces</h3>
+<ul>
+<li><a href='#interface-IOrderable'>IOrderable</a></li>
+<li><a href='#interface-IArithmetic'>IArithmetic</a></li>
+<li><a href='#interface-IInterpolatable'>IInterpolatable</a></li>
+</ul>
+<h3>Derived Interfaces</h3>
+<ul>
+</ul>
+<h3>Implementing Classes</h3>
+<ul>
+<li><a href='#class-Integer'>Integer</a></li>
+</ul>
+<hr class='solid'/></div>
+</div>
+</body>
+<html>
