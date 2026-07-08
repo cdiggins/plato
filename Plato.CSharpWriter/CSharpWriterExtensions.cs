@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Utils;
@@ -58,11 +59,15 @@ namespace Ara3D.Geometry.CSharpWriter
         }
 
         // extensionStyle = false: original writer, byte-identical output (production default).
-        // extensionStyle = true : C# 14 extension-block output (--csharp-style=extensions, roadmap P2.2).
+        // extensionStyle = true : classic-extension-method output (--csharp-style=extensions, roadmap P2.2).
         // optimize = true: component-op unrolling (--optimize, roadmap P3.1; see ComponentUnroller).
-        public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false, bool optimize = false)
+        // scalarErase = true: erase the scalar wrappers to native primitives (--scalar=float,
+        //                     roadmap "Phase 2 revision" item 3; requires extensionStyle).
+        public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false, bool optimize = false, bool scalarErase = false)
         {
-            var writer = new CSharpWriter(compilation, outputFolder) { ExtensionStyle = extensionStyle, Optimize = optimize };
+            if (scalarErase && !extensionStyle)
+                throw new NotSupportedException("--scalar=float requires --csharp-style=extensions (the default wrapper-struct layout keeps scalar members inside partial structs, which do not exist under erasure)");
+            var writer = new CSharpWriter(compilation, outputFolder) { ExtensionStyle = extensionStyle, Optimize = optimize, ScalarErase = scalarErase };
             writer.WriteAll("float");
             //writer.WriteAll("Plato.DoublePrecision.g.cs", "double");
 

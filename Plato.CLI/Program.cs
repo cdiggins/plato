@@ -11,7 +11,7 @@ namespace Ara3D.Geometry.CLI
 {
     public static class Program
     {
-        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust] [--csharp-style=default|extensions] [--optimize]
+        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust] [--csharp-style=default|extensions] [--optimize] [--scalar=wrapper|float]
         //        Plato.CLI lint <inputFolder> [--strict]
         // With no arguments, the folders come from Config and C# is generated (original behavior).
         // In lint mode the sources are compiled (parse + resolve, no output) and warnings are
@@ -38,6 +38,24 @@ namespace Ara3D.Geometry.CLI
             if (csharpStyle != "default" && csharpStyle != "extensions")
             {
                 Console.Error.WriteLine($"Unknown --csharp-style value '{csharpStyle}' (expected 'default' or 'extensions')");
+                return 1;
+            }
+
+            // Scalar erasure (roadmap "Phase 2 revision" item 3). "wrapper" = the Number/Integer/
+            // Boolean/Character/String wrapper structs (byte-identical default); "float" = erase
+            // the wrappers to native primitives in all generated code. Only supported together
+            // with --csharp-style=extensions: the default style keeps scalar members as
+            // instance members of the wrapper partial structs, which do not exist under erasure.
+            var scalar = args.Where(a => a.StartsWith("--scalar="))
+                .Select(a => a.Substring("--scalar=".Length)).LastOrDefault() ?? "wrapper";
+            if (scalar != "wrapper" && scalar != "float")
+            {
+                Console.Error.WriteLine($"Unknown --scalar value '{scalar}' (expected 'wrapper' or 'float')");
+                return 1;
+            }
+            if (scalar == "float" && csharpStyle != "extensions")
+            {
+                Console.Error.WriteLine("--scalar=float requires --csharp-style=extensions (--csharp-style=default with erased scalars is not supported)");
                 return 1;
             }
 
@@ -90,7 +108,7 @@ namespace Ara3D.Geometry.CLI
             else
             {
                 logger.Log("Writing C# Files");
-                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize);
+                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, scalar == "float");
                 foreach (var kv in output.Files)
                 {
                     var fp = outputFolder.RelativeFile(kv.Key);

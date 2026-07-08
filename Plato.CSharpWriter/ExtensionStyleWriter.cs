@@ -88,6 +88,38 @@ public class ExtensionStylePlan
     // on any generated type.
     public HashSet<string> KeptNoArgPropertyNames { get; } = new HashSet<string>();
 
+    // Scalar erasure only (--scalar=float): every NO-ARG member-function name of this type.
+    // For the five scalar types these all become classic extension methods on the primitive,
+    // so call sites with provably scalar receivers must use "()" (CSharpWriter.ScalarMemberNames).
+    public HashSet<string> NoArgMemberFunctionNames { get; } = new HashSet<string>();
+
+    // Scalar erasure only: declared Plato signatures (parameter type names incl. receiver,
+    // return type name) per member-function name of this (scalar) type. Feeds
+    // CSharpWriter.ScalarOverloads, which drives the body writer's receiver/argument analysis
+    // (a member call on a scalar receiver with scalar args binds an all-scalar overload).
+    public Dictionary<string, List<(IReadOnlyList<string> Params, string Return)>> MemberFunctionSignatures { get; }
+        = new Dictionary<string, List<(IReadOnlyList<string>, string)>>();
+
+    private void RecordSignature(FunctionInstance f)
+    {
+        var rt = f.ReturnType?.Name ?? "?";
+        var ps = System.Linq.Enumerable.ToList(
+            System.Linq.Enumerable.Select(f.ParameterTypes, p => p?.Name ?? "?"));
+        if (!MemberFunctionSignatures.TryGetValue(f.Name, out var list))
+            MemberFunctionSignatures[f.Name] = list = new List<(IReadOnlyList<string>, string)>();
+        list.Add((ps, rt));
+    }
+
+    // Scalar erasure only (empty otherwise): every candidate member FunctionInstance of this
+    // type, for the body writer's receiver-type-aware analysis (a call on a receiver of this
+    // type whose overloads all MOVED has a fully erased result type).
+    public List<FunctionInstance> CandidateFunctions { get; } = new List<FunctionInstance>();
+
+    // True when this plan's type is one of the five scalar wrappers being erased
+    // (--scalar=float): the type contributes NO kept no-arg property names (there is no
+    // struct to keep them in - everything becomes an extension method on the primitive).
+    public bool IsErasedScalar { get; }
+
     public IEnumerable<FunctionInstance> MovedFunctions => _moved;
 
     public ExtensionStylePlan(CSharpWriter writer, ConcreteType ct)
@@ -100,6 +132,7 @@ public class ExtensionStylePlan
             : "";
         var name = ct.Name + typeParamsStr;
         var isPrimitive = CSharpWriter.PrimitiveTypes.ContainsKey(name);
+        IsErasedScalar = writer.ScalarErase && CSharpWriter.ScalarPrimitives.ContainsKey(name);
 
         // Generic concrete types keep all their members (mirrors the V1 decision to not
         // generate per-type extension classes for generic types).
@@ -131,13 +164,27 @@ public class ExtensionStylePlan
         foreach (var f in ct.UnimplementedFunctions)
             keepNames.Add(f.Name);
 
-        // No-arg properties that unconditionally remain in the struct.
-        KeptNoArgPropertyNames.UnionWith(fieldNames);
-        if (pseudoFields != null)
-            KeptNoArgPropertyNames.UnionWith(pseudoFields);
-        foreach (var f in ct.UnimplementedFunctions)
-            if (f.ParameterNames.Count == 1)
-                KeptNoArgPropertyNames.Add(f.Name);
+        // No-arg properties that unconditionally remain in the struct. An erased scalar type
+        // has no struct: it contributes no kept property names at all.
+        if (!IsErasedScalar)
+        {
+            KeptNoArgPropertyNames.UnionWith(fieldNames);
+            if (pseudoFields != null)
+                KeptNoArgPropertyNames.UnionWith(pseudoFields);
+            foreach (var f in ct.UnimplementedFunctions)
+                if (f.ParameterNames.Count == 1)
+                    KeptNoArgPropertyNames.Add(f.Name);
+        }
+
+        if (IsErasedScalar)
+        {
+            foreach (var f in ct.UnimplementedFunctions)
+            {
+                if (f.ParameterNames.Count == 1)
+                    NoArgMemberFunctionNames.Add(f.Name);
+                RecordSignature(f);
+            }
+        }
 
         // Record the V1 member-name universe for bare-name re-qualification in moved bodies.
         InstanceNames.UnionWith(keepNames);
@@ -145,8 +192,18 @@ public class ExtensionStylePlan
             (fi.IsStatic ? StaticNames : InstanceNames).Add(f.Name);
 
         var movable = new List<FunctionInstance>();
+        if (writer.ScalarErase)
+            foreach (var (f, _) in candidates)
+                CandidateFunctions.Add(f);
         foreach (var (f, fi) in candidates)
         {
+            if (IsErasedScalar && !fi.IsStatic)
+            {
+                if (f.ParameterNames.Count == 1)
+                    NoArgMemberFunctionNames.Add(f.Name);
+                RecordSignature(f);
+            }
+
             var keep =
                 isGeneric                                           // generic types keep everything
                 || declaredSigs.Contains(f.SignatureId)             // C# interface obligation
@@ -162,7 +219,7 @@ public class ExtensionStylePlan
             if (keep)
             {
                 keepNames.Add(f.Name);
-                if (!fi.IsStatic && f.ParameterNames.Count == 1)
+                if (!IsErasedScalar && !fi.IsStatic && f.ParameterNames.Count == 1)
                     KeptNoArgPropertyNames.Add(f.Name);
             }
             else
@@ -173,7 +230,7 @@ public class ExtensionStylePlan
         {
             if (!keepNames.Contains(f.Name))
                 _moved.Add(f);
-            else if (f.ParameterNames.Count == 1)
+            else if (!IsErasedScalar && f.ParameterNames.Count == 1)
                 KeptNoArgPropertyNames.Add(f.Name); // stays in the struct as a property (name-shadow keep)
         }
     }
@@ -193,7 +250,10 @@ public class ExtensionStylePlan
         foreach (var f in demoted)
         {
             _moved.Remove(f);
-            if (f.ParameterNames.Count == 1)
+            // Scalar erasure: a "demoted" member of an erased scalar type is not a property
+            // (there is no struct); it is emitted as an extension method by the per-type
+            // writer instead of the library file, so it contributes no kept property name.
+            if (!IsErasedScalar && f.ParameterNames.Count == 1)
                 KeptNoArgPropertyNames.Add(f.Name);
         }
     }
@@ -263,6 +323,9 @@ public static class ExtensionStyleWriter
             ExtensionReceiverName = m.ReceiverName,
             ExtensionStaticQualifier = $"{writer.Namespace}.{m.ConcreteType.TypeDef.Name}",
             ExtensionInstanceNames = m.Plan.InstanceNames,
-            ExtensionStaticNames = m.Plan.StaticNames
+            ExtensionStaticNames = m.Plan.StaticNames,
+            // Scalar erasure: the receiver of a scalar type's moved member is a primitive, so
+            // re-qualified no-arg instance names are extension-method calls (need "()").
+            ExtensionReceiverIsScalar = m.Plan.IsErasedScalar
         };
 }

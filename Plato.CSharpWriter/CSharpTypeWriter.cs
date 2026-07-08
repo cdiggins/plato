@@ -31,6 +31,15 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
     public string ExtensionStaticQualifier;
     public HashSet<string> ExtensionInstanceNames;
     public HashSet<string> ExtensionStaticNames;
+
+    // Scalar erasure (--scalar=float) only. EraseScalars: whether this writer maps the five
+    // scalar wrapper type names to their primitives (defaults to Writer.ScalarErase; switched
+    // OFF while writing concept interfaces and struct-kept members of non-scalar types, which
+    // keep wrapper types to match the handwritten Plato.Intrinsics boundary).
+    // ExtensionReceiverIsScalar: this writer is emitting the body of an extension method whose
+    // receiver is an erased scalar primitive, so re-qualified bare instance names need "()".
+    public bool EraseScalars;
+    public bool ExtensionReceiverIsScalar;
     public PlatoAnalyzer Analyzer => Writer.Analyzer;
 
     public static string Annotation => $"[MethodImpl(AggressiveInlining)]";
@@ -40,6 +49,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         IndentLevel = writer.IndentLevel;
         Writer = writer;
         TypeDef = type;
+        EraseScalars = writer.ScalarErase;
 
         if (type == null)
         {
@@ -122,6 +132,11 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
     {
         // When writing interfaces, the "Self" type is literally "Self".
         SelfType = "Self";
+
+        // Scalar erasure: concept interfaces keep the wrapper types. Handwritten members in
+        // Plato.Intrinsics (which cannot change) satisfy interface obligations with wrapper
+        // signatures, so erasing interface declarations would break the intrinsics build.
+        EraseScalars = false;
 
         var type = TypeDef;
         Debug.Assert(type.IsInterface());
@@ -326,6 +341,12 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
 
         if (type.Name.StartsWith("Function"))
             return "System.Func";
+
+        // Scalar erasure (--scalar=float): the five wrapper types become native primitives in
+        // generated type positions (generic arguments recurse through here, so
+        // IArray<Number> -> IReadOnlyList<float> falls out automatically).
+        if (EraseScalars && CSharpWriter.ScalarPrimitives.TryGetValue(type.Name, out var prim))
+            return prim;
 
 
         var name = type.Name;

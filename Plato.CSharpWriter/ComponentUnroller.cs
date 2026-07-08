@@ -61,19 +61,26 @@ namespace Ara3D.Geometry.CSharpWriter
         public string FieldName { get; }
         public string CastTo { get; }
 
-        public ComponentAccessExpression(Expression receiver, string fieldName, string castTo)
+        // Scalar erasure (--scalar=float) only: the primitive this component erases to when it
+        // is a scalar-wrapper Plato type (either an erased struct field, or a wrapper-typed
+        // pseudo-field explicitly cast down via CastTo="float"); null otherwise. Feeds
+        // CSharpFunctionBodyWriter.ScalarPrimOf for method-call syntax decisions.
+        public string ScalarComponentPrim { get; }
+
+        public ComponentAccessExpression(Expression receiver, string fieldName, string castTo, string scalarComponentPrim = null)
             : base(receiver)
         {
             Receiver = receiver;
             FieldName = fieldName;
             CastTo = castTo;
+            ScalarComponentPrim = scalarComponentPrim;
         }
 
         public override string Name => FieldName;
         public override string ToString() => $"{Receiver}.{FieldName}";
 
         public override Symbol Rewrite(Func<Symbol, Symbol> f)
-            => f(new ComponentAccessExpression(Receiver?.Rewrite(f) as Expression, FieldName, CastTo));
+            => f(new ComponentAccessExpression(Receiver?.Rewrite(f) as Expression, FieldName, CastTo, ScalarComponentPrim));
     }
 
     /// <summary>Emission-only marker: "new TypeName(args...)" where TypeName is a known concrete
@@ -282,9 +289,23 @@ namespace Ara3D.Geometry.CSharpWriter
             // The float-backed one-component primitives (Number, Angle) expose a raw
             // "float Value" field; accessing it directly needs an explicit cast back to the
             // Plato component type (see ComponentAccessExpression).
-            var castTo = CSharpWriter.PrimitiveTypes.TryGetValue(typeName, out var prim) && prim == "float"
-                ? "Number"
-                : null;
+            var isPrimitive = CSharpWriter.PrimitiveTypes.TryGetValue(typeName, out var prim);
+            var castTo = isPrimitive && prim == "float" ? "Number" : null;
+            string scalarComponentPrim = null;
+            if (writer.ScalarErase)
+            {
+                // Scalar erasure (--scalar=float): unrolled bodies live in "float-land".
+                //  - Number/Angle expose a raw float Value field: use it uncast.
+                //  - The other primitives' handwritten pseudo-fields (Vector3.X, Matrix4x4.M11,
+                //    ...) return the WRAPPER Number, so cast them down to float.
+                //  - Non-primitive IArrayLike structs have erased fields already; no cast.
+                // Angle is not a scalar wrapper, but its Plato component type is Number, so its
+                // components are scalar-valued in the erased output like everyone else's.
+                castTo = isPrimitive && prim != "float" ? "float" : null;
+                var compType = writer.GetComponentPlatoType(typeName);
+                if (compType != null && CSharpWriter.ScalarPrimitives.TryGetValue(compType, out var compPrim))
+                    scalarComponentPrim = compPrim;
+            }
 
             switch (name)
             {
@@ -293,7 +314,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 {
                     var args = fields
                         .Select(fd => Substitute(lambdaBody, lambdaParams,
-                            vecArgs.Select(v => Component(v, fd, castTo)).ToArray()))
+                            vecArgs.Select(v => Component(v, fd, castTo, scalarComponentPrim)).ToArray()))
                         .ToArray();
                     return new ConstructorCallExpression(typeName, args);
                 }
@@ -306,7 +327,7 @@ namespace Ara3D.Geometry.CSharpWriter
                     var op = name.StartsWith("All") ? "&&" : "||";
                     var terms = fields
                         .Select(fd => Substitute(lambdaBody, lambdaParams,
-                            vecArgs.Select(v => Component(v, fd, castTo)).ToArray()))
+                            vecArgs.Select(v => Component(v, fd, castTo, scalarComponentPrim)).ToArray()))
                         .ToArray();
                     return terms.Length == 1 ? terms[0] : new BooleanChainExpression(op, terms);
                 }
@@ -325,7 +346,7 @@ namespace Ara3D.Geometry.CSharpWriter
 
                     var acc = init;
                     foreach (var fd in fields)
-                        acc = Substitute(lambdaBody, lambdaParams, new[] { acc, Component(vecArgs[0], fd, castTo) });
+                        acc = Substitute(lambdaBody, lambdaParams, new[] { acc, Component(vecArgs[0], fd, castTo, scalarComponentPrim) });
                     return acc;
                 }
             }
@@ -333,8 +354,8 @@ namespace Ara3D.Geometry.CSharpWriter
             return null;
         }
 
-        private static Expression Component(Expression receiver, string fieldName, string castTo)
-            => new ComponentAccessExpression(receiver, fieldName, castTo);
+        private static Expression Component(Expression receiver, string fieldName, string castTo, string scalarComponentPrim)
+            => new ComponentAccessExpression(receiver, fieldName, castTo, scalarComponentPrim);
 
         /// <summary>Beta reduction: returns a copy of the lambda body with each reference to a
         /// lambda parameter replaced by the corresponding expression. References to anything else

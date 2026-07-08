@@ -76,7 +76,7 @@ namespace Ara3D.SDK.ConformanceTests
         [Test]
         public void ManifestKeysAreValid()
         {
-            var lawKeys = LawTests.LawCases().Select(c => $"{((Type)c.Arguments[0]).Name}.{((System.Reflection.MemberInfo)c.Arguments[1]).Name}");
+            var lawKeys = LawTests.LawCases().Select(c => $"{LawTests.MappedTypeName((Type)c.Arguments[0])}.{((System.Reflection.MemberInfo)c.Arguments[1]).Name}");
             var witnessKeys = WitnessRunnerTests.WitnessCases().Select(c => ((PropertyInfo)c.Arguments[0]).Name);
             var valid = new HashSet<string>(lawKeys.Concat(witnessKeys), StringComparer.Ordinal);
             var stale = KnownFailures.Map.Keys.Where(k => !valid.Contains(k)).ToList();

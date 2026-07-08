@@ -41,6 +41,22 @@ namespace Ara3D.Geometry.CSharpWriter
         public ExtensionStylePlan GetExtensionPlan(TypeDef typeDef)
             => ExtensionPlans[typeDef];
 
+        // Scalar erasure only: plan lookup by concrete type NAME, for the body writer's
+        // receiver-type-aware analysis.
+        private Dictionary<string, ExtensionStylePlan> _plansByName;
+        public ExtensionStylePlan GetExtensionPlanByTypeName(string typeName)
+        {
+            if (ExtensionPlans == null || typeName == null)
+                return null;
+            if (_plansByName == null)
+            {
+                _plansByName = new Dictionary<string, ExtensionStylePlan>();
+                foreach (var kv in ExtensionPlans)
+                    _plansByName[kv.Key.Name] = kv.Value;
+            }
+            return _plansByName.TryGetValue(typeName, out var p) ? p : null;
+        }
+
         // Names the emitter must keep as no-arg struct PROPERTIES because handwritten code in
         // Plato.Intrinsics either accesses them with property syntax (AlmostZero in
         // Vector3_Extensions.AnyPerpendicular; Pow2/Pow3 in Number.Cubic/Linear/Quadratic) or
@@ -67,9 +83,34 @@ namespace Ara3D.Geometry.CSharpWriter
                     ExtensionPlans[c.TypeDef] = new ExtensionStylePlan(this, c);
 
             // Every name that is (or may be accessed as) a no-arg instance PROPERTY somewhere.
+            // The pinned handwritten-property-syntax names stay seeded under scalar erasure too:
+            // handwritten intrinsics use property syntax on NON-scalar receivers as well
+            // (Vector3_Extensions.AnyPerpendicular reads v.AlmostZero on a Vector3), so those
+            // members must remain struct properties on every non-scalar type. On the erased
+            // scalar types they become extension methods + the Number partial-struct shim.
             var keptNoArg = new HashSet<string>(HandwrittenPropertySyntaxNames);
             foreach (var p in ExtensionPlans.Values)
                 keptNoArg.UnionWith(p.KeptNoArgPropertyNames);
+
+            // Scalar erasure: record every member-function name of the five scalar types (all of
+            // them become extension methods on the primitives; used for receiver-aware "()"),
+            // and the subset whose scalar overloads all return scalars (receiver-chain analysis).
+            if (ScalarErase)
+            {
+                ScalarMemberNames.UnionWith(HandwrittenScalarExtensionMethodNames);
+                foreach (var kv in ExtensionPlans)
+                {
+                    if (!ScalarPrimitives.ContainsKey(kv.Key.Name))
+                        continue;
+                    ScalarMemberNames.UnionWith(kv.Value.NoArgMemberFunctionNames);
+                    foreach (var sig in kv.Value.MemberFunctionSignatures)
+                    {
+                        if (!ScalarOverloads.TryGetValue(sig.Key, out var list))
+                            ScalarOverloads[sig.Key] = list = new List<(IReadOnlyList<string>, string)>();
+                        list.AddRange(sig.Value);
+                    }
+                }
+            }
 
             // Interface-declared no-arg members are C# interface properties; call sites whose
             // receiver is interface-typed (or a constrained type variable) use property syntax,
@@ -97,6 +138,69 @@ namespace Ara3D.Geometry.CSharpWriter
             MovedNoArgNames = movedNoArg;
         }
 
+        // When true (--scalar=float, roadmap "Phase 2 revision" item 3), the five scalar wrapper
+        // types (Number/Integer/Boolean/Character/String) are ERASED from the generated output in
+        // favor of the native C# primitives (float/int/bool/char/string):
+        //   - every generated signature, field, property, local and generic argument uses the
+        //     primitive (IArray<Number> -> IReadOnlyList<float>);
+        //   - the per-type files (_Number.g.cs, ...) no longer emit partial structs; they emit
+        //     extension-method classes over the primitives (see CSharpConcreteTypeWriter);
+        //   - generated bodies are normalized to "float-land": scalar-typed parameter references
+        //     are written as ((float)x), calls to scalar-returning function groups are wrapped in
+        //     ((float)...) casts, and no-arg member accesses on scalar receivers get "()" (all
+        //     scalar members are classic extension methods on the primitives);
+        //   - literals lose their wrapper casts: ((Number)0.5) becomes 0.5f.
+        // Deliberate NON-erasure (the handwritten Plato.Intrinsics boundary, which cannot fork):
+        //   - generated concept interfaces (Interfaces.g.cs) keep wrapper types, because
+        //     handwritten intrinsic members (e.g. Vector3.Magnitude returning Number) satisfy
+        //     interface obligations and their signatures cannot change;
+        //   - struct-kept members of NON-scalar types (interface obligations, operators,
+        //     scaffolding) keep wrapper signatures for the same reason; their bodies still
+        //     compile because the wrappers convert implicitly both ways;
+        //   - a tiny "public partial struct Number" shim keeps the pinned
+        //     HandwrittenPropertySyntaxNames members as wrapper properties (handwritten
+        //     intrinsics access them with property syntax on Number receivers).
+        // Requires ExtensionStyle. Default (false) output is byte-identical to the original.
+        public bool ScalarErase;
+
+        // The scalar wrapper types --scalar=float erases, and their native primitives. This is
+        // deliberately NOT CSharpWriter.PrimitiveTypes: Angle (and every other struct) remains a
+        // real type - only the five scalar wrappers erase.
+        public static readonly Dictionary<string, string> ScalarPrimitives = new Dictionary<string, string>
+        {
+            { "Number", "float" },
+            { "Integer", "int" },
+            { "Boolean", "bool" },
+            { "Character", "char" },
+            { "String", "string" },
+        };
+
+        // Scalar erasure only (empty otherwise): every member-function name of the five scalar
+        // types. Under erasure these all exist as classic extension methods on the primitives,
+        // so a no-arg access on a receiver the writer can prove scalar-valued must be written
+        // with "()" even if the same name is a kept property on some non-scalar type.
+        public HashSet<string> ScalarMemberNames { get; } = new HashSet<string>();
+
+        // Scalar erasure only (empty otherwise): declared Plato signatures of the five scalar
+        // types' member functions, by name. Drives the body writer's receiver/argument
+        // analysis: a member call whose receiver and arguments are provably scalar binds an
+        // all-scalar-parameter overload (exact match beats any conversion), so its result type
+        // is that overload's (scalar) return - this lets the analysis chase chains like
+        // "1f.Subtract(t).Sqr()".
+        public Dictionary<string, List<(IReadOnlyList<string> Params, string Return)>> ScalarOverloads { get; }
+            = new Dictionary<string, List<(IReadOnlyList<string>, string)>>();
+
+        // Handwritten no-arg extension methods over the scalar primitives in Plato.Intrinsics
+        // (compiler-invisible); their call sites need "()" on scalar receivers like everything
+        // else, so they are folded into ScalarMemberNames under erasure.
+        public static HashSet<string> HandwrittenScalarExtensionMethodNames = new HashSet<string>
+        {
+            "Range", // ArrayExtensions.Range(this int count)
+            // Handwritten Number property invisible to the compiler; the scalar path emits a
+            // hardwired float forwarder for it, so scalar call sites use method syntax.
+            "ReciprocalSquareRootEstimate",
+        };
+
         // When true, applies the component-op unrolling optimization (--optimize, roadmap P3.1):
         // recognized MapComponents/ZipComponents/Reduce/All*/Any* call sites on statically-known
         // IArrayLike types are rewritten to direct field expressions at emission time (see
@@ -110,6 +214,30 @@ namespace Ara3D.Geometry.CSharpWriter
             if (_componentFields == null)
                 _componentFields = ComponentUnroller.BuildComponentFieldTable(Compilation);
             return typeName != null && _componentFields.TryGetValue(typeName, out var fields) ? fields : null;
+        }
+
+        // Lazily-built table for ComponentUnroller under scalar erasure: concrete IArrayLike
+        // type name -> the PLATO type of its components ("Number" for the primitive
+        // pseudo-field types, the shared field type otherwise).
+        private Dictionary<string, string> _componentPlatoTypes;
+        public string GetComponentPlatoType(string typeName)
+        {
+            if (_componentPlatoTypes == null)
+            {
+                _componentPlatoTypes = new Dictionary<string, string>();
+                foreach (var ct in Compilation.ConcreteTypes)
+                {
+                    if (ct.TypeDef.TypeParameters.Count > 0)
+                        continue;
+                    if (!System.Linq.Enumerable.Any(ct.AllInterfaces, i => i.Name == "IArrayLike"))
+                        continue;
+                    if (PrimitiveTypes.ContainsKey(ct.Name))
+                        _componentPlatoTypes[ct.Name] = "Number"; // matches the Components scaffolding hack
+                    else if (ct.TypeDef.Fields.Count > 0)
+                        _componentPlatoTypes[ct.Name] = ct.TypeDef.Fields[0].Type.Name;
+                }
+            }
+            return typeName != null && _componentPlatoTypes.TryGetValue(typeName, out var t) ? t : null;
         }
 
         // Collected by CSharpConcreteTypeWriter while writing each type in extension style;
