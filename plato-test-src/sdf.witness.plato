@@ -1,0 +1,35 @@
+// Witness (formula-vs-citation) tests for the Sdf3D library (content-leads Track C.3).
+// NOT part of the production API: lives in plato-test-src, merged only by
+// tools\regen-conformance.ps1. Each Witness_ takes no args and returns Boolean.
+library SdfWitnessTests
+{
+    // Sphere r=1: centre -> -1, surface point -> 0, outside (2,0,0) -> 1
+    Witness_SdSphereAtCenter(): Boolean
+        => new Vector3(0.0, 0.0, 0.0).SdSphere(1.0).LawEq(-1.0);
+    Witness_SdSphereOnSurface(): Boolean
+        => new Vector3(1.0, 0.0, 0.0).SdSphere(1.0).LawEq(0.0);
+    Witness_SdSphereOutside(): Boolean
+        => new Vector3(2.0, 0.0, 0.0).SdSphere(1.0).LawEq(1.0);
+
+    // Box half-extents (1,1,1): centre -> -1, outside (2,0,0) -> 1
+    Witness_SdBoxAtCenter(): Boolean
+        => new Vector3(0.0, 0.0, 0.0).SdBox(new Vector3(1.0, 1.0, 1.0)).LawEq(-1.0);
+    Witness_SdBoxOutside(): Boolean
+        => new Vector3(2.0, 0.0, 0.0).SdBox(new Vector3(1.0, 1.0, 1.0)).LawEq(1.0);
+
+    // Torus (major 2, tube 0.5): point on outer equator (2.5,0,0) is on the surface (0)
+    Witness_SdTorusOnSurface(): Boolean
+        => new Vector3(2.5, 0.0, 0.0).SdTorus(new Vector2(2.0, 0.5)).LawEq(0.0);
+
+    // Plane y=0 (normal +Y, offset 0): point above at height 3 -> 3
+    Witness_SdPlaneAbove(): Boolean
+        => new Vector3(0.0, 3.0, 0.0).SdPlane(new Vector3(0.0, 1.0, 0.0), 0.0).LawEq(3.0);
+
+    // CSG: union = min, intersect = max, subtract a-b = max(a,-b)
+    Witness_OpUnionIsMin(): Boolean
+        => (3.0).OpUnion(-2.0).LawEq(-2.0);
+    Witness_OpIntersectIsMax(): Boolean
+        => (3.0).OpIntersect(-2.0).LawEq(3.0);
+    Witness_OpSubtractRemoves(): Boolean
+        => (-1.0).OpSubtract(-2.0).LawEq(2.0);
+}
