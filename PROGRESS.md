@@ -6,5 +6,5 @@
 - [x] 4. CSharpWriter: skip unique types in WriteAll/BuildExtensionPlans; map List->PlatoList, Buffer->PlatoBuffer
 - [x] 5. Intrinsics: PlatoList.cs / PlatoBuffer.cs (+projitems); regen-plato -Apply sync
 - [x] 6. plato-src/unique.plato (decls + body-less sigs); byte-identity: only docs.html/interfaces.txt may differ
-- [ ] 7. plato-test-src/unique.algorithms.plato (EarClip, Extrude, Filter + witnesses); conformance V1/V2/Opt/Scalar
-- [ ] 8. docs/affine-types.md; roadmap DONE note; COMMIT_MSG.txt; check-all.ps1
+- [x] 7. plato-test-src/unique.algorithms.plato (EarClip, Extrude, Filter + witnesses); conformance V1/V2/Opt/Scalar
+- [x] 8. docs/affine-types.md; roadmap DONE note; COMMIT_MSG.txt; check-all.ps1
