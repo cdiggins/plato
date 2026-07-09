@@ -1,0 +1,26 @@
+// Witnesses for function-valued fields (ScalarField3D). plato-test-src only.
+// These exercise: constructing a field from a lambda, invoking the stored function,
+// and combining fields into new fields that hold composed lambdas.
+library FieldWitnessTests
+{
+    // A unit sphere as a field: field(p) = |p| - 1. At the centre it is -1.
+    Witness_SphereFieldAtCenter(): Boolean
+        => new ScalarField3D(p => p.SdSphere(1.0)).Eval(new Vector3(0.0, 0.0, 0.0)).LawEq(-1.0);
+
+    // At (2,0,0) it is +1.
+    Witness_SphereFieldOutside(): Boolean
+        => new ScalarField3D(p => p.SdSphere(1.0)).Eval(new Vector3(2.0, 0.0, 0.0)).LawEq(1.0);
+
+    // Union (min) of a unit sphere and a radius-2 sphere, at (1.5,0,0):
+    // r=1 gives 0.5, r=2 gives -0.5, min = -0.5.
+    Witness_FieldUnionIsMin(): Boolean
+        => new ScalarField3D(p => p.SdSphere(1.0))
+            .Union(new ScalarField3D(p => p.SdSphere(2.0)))
+            .Eval(new Vector3(1.5, 0.0, 0.0)).LawEq(-0.5);
+
+    // Offsetting the unit sphere by 0.5 puts its surface at radius 1.5:
+    // (|1.5| - 1) - 0.5 = 0.
+    Witness_FieldOffsetMovesSurface(): Boolean
+        => new ScalarField3D(p => p.SdSphere(1.0)).Offset(0.5)
+            .Eval(new Vector3(1.5, 0.0, 0.0)).LawEq(0.0);
+}

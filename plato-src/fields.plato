@@ -1,0 +1,42 @@
+// Function-valued fields.
+//
+// A ScalarField3D is a value that HOLDS A FUNCTION from a point in space to a number
+// (the canonical example is a signed distance field). This demonstrates function-valued
+// fields end to end: the stored function is invoked (Eval), fields are constructed from
+// lambdas (the combinators below), and composed into new fields that hold the composed
+// lambda. It is the concrete, monomorphization-friendly form of the IProcedural idea and
+// the compositional layer under SDF booleans, domain warps, and effector/falloff fields.
+type ScalarField3D
+    implements IValue
+{
+    Function: Function1<Vector3, Number>;
+}
+
+library ScalarFields3D
+{
+    // Evaluate the field at a point: invoke the stored function.
+    Eval(self: ScalarField3D, p: Vector3): Number
+        => self.Function(p);
+
+    // Combine two fields pointwise with a binary operator, producing a new field.
+    Combine(a: ScalarField3D, b: ScalarField3D, op: Function2<Number, Number, Number>): ScalarField3D
+        => new ScalarField3D(p => op(a.Eval(p), b.Eval(p)));
+
+    // Transform a field's output value.
+    MapValue(self: ScalarField3D, f: Function1<Number, Number>): ScalarField3D
+        => new ScalarField3D(p => f(self.Eval(p)));
+
+    // CSG on distance fields. SDF convention: union = min, intersection = max.
+    Union(a: ScalarField3D, b: ScalarField3D): ScalarField3D
+        => a.Combine(b, (x, y) => x.Min(y));
+
+    Intersection(a: ScalarField3D, b: ScalarField3D): ScalarField3D
+        => a.Combine(b, (x, y) => x.Max(y));
+
+    Difference(a: ScalarField3D, b: ScalarField3D): ScalarField3D
+        => a.Combine(b, (x, y) => x.Max(0.0 - y));
+
+    // Offset (grow/shrink) a distance field by a constant.
+    Offset(self: ScalarField3D, amount: Number): ScalarField3D
+        => self.MapValue(x => x - amount);
+}
