@@ -21,7 +21,12 @@ namespace Ara3D.Geometry.AST
                 throw new Exception($"Operation `{op}` is not a valid operator name");
 
             var precedence = Operators.BinaryOperatorPrecedence(op);
-            if (right is AstBinaryOp binRight && binRight.Precedence < precedence)
+            // All Plato binary operators are left-associative (assignment is intercepted before
+            // CreateBinaryOp; there is no right-associative operator). The right-recursive PEG parse
+            // must therefore be rebalanced for EQUAL precedence too, not just strictly-looser: '<='
+            // (not '<') is what makes 'a - b + c' associate as '(a - b) + c'. The recursion re-checks
+            // the rebuilt subtree. See docs/plato-assoc-bug-diagnosis.md (Defect 1).
+            if (right is AstBinaryOp binRight && binRight.Precedence <= precedence)
                 return CreateBinaryOp(binRight.Location, binRight.Op, CreateBinaryOp(location, op, left, binRight.Left), binRight.Right);
 
             if (right is AstConditional conditional)
@@ -38,6 +43,19 @@ namespace Ara3D.Geometry.AST
         {
             var r = ToAst(expr.InnerExpression.Node.LeafExpression.Node);
             var i = 0;
+            var prefixesApplied = false;
+
+            // Prefix operators (unary minus, not) bind tighter than any binary/ternary operator but
+            // looser than the tight postfixes (member access, calls, indexing). So they must wrap the
+            // accumulated leaf-plus-tight-postfixes BEFORE the first binary/ternary fold — not after the
+            // whole postfix loop (which produced '-x.Twice + 3' => (2x+3).Negative). See
+            // docs/plato-assoc-bug-diagnosis.md (Defect 2).
+            AstNode ApplyPrefixes(AstNode node)
+            {
+                foreach (var prefix in expr.InnerExpression.Node.PrefixOperator.Nodes)
+                    node = ToIntrinsicInvocation(prefix, Operators.UnaryOperatorToName(prefix.Text.Trim()), node);
+                return node;
+            }
 
             var nodes = expr.InnerExpression.Node.PostfixOperator.Nodes;
             while (i < nodes.Count)
@@ -66,6 +84,7 @@ namespace Ara3D.Geometry.AST
                         throw new Exception($"Can only assign to a variable not {r}");
                     }
 
+                    if (!prefixesApplied) { r = ApplyPrefixes(r); prefixesApplied = true; }
                     r = CreateBinaryOp(currentBinOp, op, r, right);
                 }
                 else if (postfix.ConditionalMemberAccess.Present)
@@ -107,6 +126,7 @@ namespace Ara3D.Geometry.AST
                 }
                 else if (postfix.TernaryOperation.Present)
                 {
+                    if (!prefixesApplied) { r = ApplyPrefixes(r); prefixesApplied = true; }
                     r = new AstConditional(
                         expr,
                         r,
@@ -115,11 +135,8 @@ namespace Ara3D.Geometry.AST
                 }
             }
 
-            foreach (var prefix in expr.InnerExpression.Node.PrefixOperator.Nodes)
-            {
-                r = ToIntrinsicInvocation(prefix,
-                    Operators.UnaryOperatorToName(prefix.Text.Trim()), r);
-            }
+            if (!prefixesApplied)
+                r = ApplyPrefixes(r);
 
             return r;
         }
