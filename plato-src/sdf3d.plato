@@ -16,14 +16,14 @@ library Sdf3D
     SdBox(p: Vector3, b: Vector3): Number
     {
         var q = p.Abs - b;
-        return q.Max(new Vector3(0.0, 0.0, 0.0)).Length + q.X.Max(q.Y.Max(q.Z)).Min(0.0);
+        return q.Max(Vector3(0.0)).Length + q.X.Max(q.Y.Max(q.Z)).Min(0.0);
     }
 
     // Axis-aligned box with half-extents b, rounded by radius r.
     SdRoundBox(p: Vector3, b: Vector3, r: Number): Number
     {
-        var q = p.Abs - b + new Vector3(r, r, r);
-        return q.Max(new Vector3(0.0, 0.0, 0.0)).Length + q.X.Max(q.Y.Max(q.Z)).Min(0.0) - r;
+        var q = p.Abs - b + Vector3(r);
+        return q.Max(Vector3(0.0)).Length + q.X.Max(q.Y.Max(q.Z)).Min(0.0) - r;
     }
 
     // Torus in the XZ plane: t.X = major radius, t.Y = tube radius.
@@ -44,7 +44,7 @@ library Sdf3D
     SdCappedCylinder(p: Vector3, h: Number, r: Number): Number
     {
         var d = new Vector2(p.XZ.Length, p.Y).Abs - new Vector2(r, h);
-        return d.X.Max(d.Y).Min(0.0) + d.Max(new Vector2(0.0, 0.0)).Length;
+        return d.X.Max(d.Y).Min(0.0) + d.Max(Vector2(0.0)).Length;
     }
 
     // Plane with unit normal n at signed offset h from the origin: dot(p, n) + h.

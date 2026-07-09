@@ -557,7 +557,18 @@ public class CSharpFunctionBodyWriter : CodeBuilder<CSharpFunctionBodyWriter>
         else
             Write(functionCall.Function);
 
-        if (functionCall.Args.Count == 1 && !functionCall.HasArgList)
+        // A single-argument call is receiver-only, so its callee is a nullary-after-receiver
+        // member. Member form (v.Length, HasArgList false) is already property-style here.
+        // Prefix form (Foo(v), HasArgList true) usually needs "()" because the intrinsic
+        // IArray/IReadOnlyList helpers are C# METHODS (e.g. xs.Components.Reverse()). The one
+        // exception is a call whose name is a generated TYPE: a type-named single-argument
+        // conversion (Vector3(0.0), Point3D(v)) always resolves to a nullary conversion
+        // PROPERTY on the argument, so it must NOT get "()", or the prefix broadcast miscompiles
+        // to ((Number)0).Vector3() against the Vector3 property.
+        var isConversionProperty = functionCall.HasArgList
+            && functionCall.Function is FunctionGroupRefSymbol
+            && Writer.AllTypeNames.Contains(functionCall.Function.Name);
+        if (functionCall.Args.Count == 1 && (!functionCall.HasArgList || isConversionProperty))
         {
             // Extension style: no-arg library functions that moved out of their structs are
             // classic extension METHODS (v.Length()), so their call sites need "()". Names in
