@@ -154,8 +154,10 @@ source → AST → Symbol graph → Normalize → Constrain → Solve → ⟨ela
 
 The last three passes are new and currently run in **shadow mode** — they compute a fully-typed,
 diagnosed view of every function but do not yet feed code generation, so the production emitter's
-byte-for-byte output is unchanged. Implicit conversions, concept-constraint satisfaction, and the
-elaboration that lets the backends consume a fully-typed IR are the next increments.
+byte-for-byte output is unchanged. The solver already does exact/generic unification, concept
+(interface) satisfaction with Self-style return refinement, and implicit casts; generic-concept
+element inference and the elaboration that lets the backends consume a fully-typed IR are the next
+increments.
 
 ## Status
 

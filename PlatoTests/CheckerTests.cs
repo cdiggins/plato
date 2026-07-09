@@ -158,5 +158,67 @@ namespace PlatoTests
             var (s2, r2) = SolveCall("Id", new[] { T("Boolean") }, id);
             Assert.AreEqual("Boolean", s2.Zonk(r2).ToString());
         }
+
+        // --- concept satisfaction & ranking --------------------------------------
+
+        private static TypeExpression Concept(string name)
+            => new TypeExpression(new TypeDef(null, TypeKind.Interface, name));
+
+        /// <summary>A concrete type declared to implement the given concepts.</summary>
+        private static TypeExpression Implementing(string name, params TypeExpression[] concepts)
+        {
+            var td = new TypeDef(null, TypeKind.ConcreteType, name);
+            td.Implements.AddRange(concepts);
+            return td.ToTypeExpression();
+        }
+
+        [Test]
+        public static void ConcreteArgumentSatisfiesInterfaceParameter()
+        {
+            var inum = Concept("INumerical");
+            var negate = Func("Negate", inum, inum);           // Negate(x: INumerical): INumerical
+            var number = Implementing("Number", inum);
+
+            var (s, result) = SolveCall("Negate", new[] { number }, negate);
+            Assert.IsTrue(s.Succeeded);
+            // Self refinement: the return type is the concrete argument, not the interface.
+            Assert.AreEqual("Number", s.Zonk(result).ToString());
+        }
+
+        [Test]
+        public static void NonImplementingArgumentDoesNotMatchInterface()
+        {
+            var inum = Concept("INumerical");
+            var negate = Func("Negate", inum, inum);
+            var boolean = T("Boolean"); // implements nothing
+
+            var (s, _) = SolveCall("Negate", new[] { boolean }, negate);
+            Assert.IsFalse(s.Succeeded);
+            Assert.IsTrue(HasError(s, "CHK201"));
+        }
+
+        [Test]
+        public static void ExactOverloadBeatsConceptOverload()
+        {
+            var inum = Concept("INumerical");
+            var number = Implementing("Number", inum);
+            var exact = Func("F", T("Number"), T("Number"));   // F(Number): Number   (cost 0)
+            var viaConcept = Func("F", T("Boolean"), inum);    // F(INumerical): Boolean (cost 3)
+
+            var (s, result) = SolveCall("F", new[] { number }, exact, viaConcept);
+            Assert.IsTrue(s.Succeeded, "the exact overload should win outright, not tie");
+            Assert.AreEqual("Number", s.Zonk(result).ToString());
+        }
+
+        [Test]
+        public static void ConcreteOverloadBeatsGenericOverload()
+        {
+            var specific = Func("G", T("Number"), T("Number")); // G(Number): Number    (cost 0)
+            var generic = Func("G", Var("T"), Var("T"));         // G<$T>($T): $T         (cost 2)
+
+            var (s, result) = SolveCall("G", new[] { T("Number") }, specific, generic);
+            Assert.IsTrue(s.Succeeded);
+            Assert.AreEqual("Number", s.Zonk(result).ToString());
+        }
     }
 }

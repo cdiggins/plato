@@ -123,12 +123,20 @@ Consumes the constraint system and produces a substitution plus located diagnost
   types (`$a ~ Array<$a>` is reported, not looped — contrast the concatenative engine's `(rec N)`).
 - **Nominal unification** — only `$`-type-variables are flexible; declared type parameters (rigid)
   and named types match by name; type arguments unify structurally.
+- **Tiered argument matching** — an argument matches a parameter, in order of preference:
+  1. **exact** (unify), 2. **generic** (bind a `$`-variable), 3. **concept** (the argument's type
+  implements an interface parameter, via `TypeExpression.IsImplementing`; the return type is refined
+  to the concrete argument where it names the same interface — Plato's "Self" behavior), 4.
+  **conversion** (an implicit cast relation exists, via `Compilation.TypeRelations`). Each tier has a
+  cost; the lowest total cost wins, so a concrete overload beats a generic one and an exact match
+  beats a conversion.
 - **Deferred-commitment overload resolution** — an overloaded call is resolved only once its
-  argument types are ground. Candidates are trial-unified on a scratch substitution; then:
-  - exactly one survives → **commit** (unify args↔params, result↔return);
-  - zero survive → **`CHK201` no-match** (error);
-  - several survive with a common return type → bind the result, **`CHK202`** (info);
-  - several survive with different return types → **`CHK203` ambiguous** (error) — *reported, not
+  argument types are ground. Candidates are trial-matched on a scratch substitution and ranked by
+  cost; then:
+  - a unique lowest-cost candidate → **commit** (bind args↔params, result↔return);
+  - zero viable → **`CHK201` no-match** (error);
+  - a lowest-cost tie with a common return type → bind the result, **`CHK202`** (info);
+  - a lowest-cost tie with different return types → **`CHK203` ambiguous** (error) — *reported, not
     silently resolved to the first candidate*.
 
   Generic candidates are **instantiated with fresh variables per call**, so each use of an overload
@@ -145,16 +153,18 @@ Consumes the constraint system and produces a substitution plus located diagnost
 | `CHK202` | multiple overloads match with a common return type (info) |
 | `CHK203` | ambiguous call — overloads match with differing return types |
 
-### First-cut scope
+### Scope
 
-This solver deliberately does **not** yet implement implicit conversions (the "type-named function
-is a conversion" rule) or concept/`Self` constraint satisfaction. Calls that need those resolve to a
-reported diagnostic rather than a commitment — which is the intended shadow-mode behavior. At the
-time of writing this first cut fully resolves **210 of 823** stdlib function bodies with zero errors
-(the `SolverResolvesSomeStdLibFunctionsCleanly` test prints the live figure); the remainder are
-*reported*, never crashed. Implicit conversions and concept satisfaction are the next increment, on
-top of the same solver, followed by the **elaborate → monomorphize → emit** retargeting that lets
-the writers consume a fully-typed IR and drop their emit-time heuristics.
+The solver handles exact/generic unification, concept (interface) satisfaction with Self-style
+return refinement, and implicit casts. At the time of writing it fully resolves **246 of 823**
+stdlib function bodies with zero errors (the `SolverResolvesSomeStdLibFunctionsCleanly` test prints
+the live figure); the remainder are *reported*, never crashed.
+
+The main remaining gap is **generic-concept element inference** — binding the element type when an
+argument implements a *generic* interface (e.g. matching `List<Number>` against `IArray<$T>` so `$T`
+becomes `Number`); today such a match succeeds but can leave the element type under-determined.
+After that comes the **elaborate → monomorphize → emit** retargeting that lets the writers consume a
+fully-typed IR and drop their emit-time heuristics.
 
 ## Orchestration and use
 

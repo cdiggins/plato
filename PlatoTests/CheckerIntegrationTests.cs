@@ -97,7 +97,7 @@ namespace PlatoTests
             var clean = results.Count(r => r.Succeeded);
             TestContext.WriteLine(
                 $"Checker: {clean}/{results.Count} stdlib functions resolved with no errors " +
-                $"(first cut has no implicit conversions / concept satisfaction yet).");
+                $"(concept satisfaction + implicit casts in; generic-concept element inference pending).");
             Assert.Greater(clean, 0,
                 "expected the first-cut solver to fully resolve at least some real functions");
         }

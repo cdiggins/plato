@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.AST;
 using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.Compiler.Types;
 
 namespace Ara3D.Geometry.Compiler.Checking
 {
@@ -12,14 +13,16 @@ namespace Ara3D.Geometry.Compiler.Checking
     ///   * total — never throws; a clash / no-match / ambiguity / recursive type is a diagnostic;
     ///   * occurs-checked — a variable is never bound to a type that contains it (no infinite types);
     ///   * deferred-commitment — an overloaded call is resolved only once its argument types are
-    ///     ground; a unique surviving candidate is committed, 0 is a no-match error, and >1 with
-    ///     differing return types is reported as an ambiguity rather than silently picking the first.
+    ///     ground; the most-specific surviving candidate is committed, 0 is a no-match error, and an
+    ///     unresolved tie with differing return types is reported rather than silently picked.
     ///
-    /// Unification is over the nominal <see cref="TypeExpression"/> representation: only
-    /// $-prefixed <c>TypeVariable</c>s are flexible; declared <c>TypeParameter</c>s (rigid) and
-    /// named types match by name. This first cut has no implicit conversions or concept
-    /// satisfaction — those calls are *reported*, which is exactly the intended shadow-mode
-    /// behavior.
+    /// Argument matching is tiered, mirroring Plato's own resolution primitives
+    /// (<see cref="TypeExtensions.IsImplementing"/> and <see cref="Compilation.GetRelation"/>):
+    ///
+    ///   exact (unify) &lt; generic (bind a type variable) &lt; concept (arg implements an interface
+    ///   parameter, with the return refined to the concrete arg — "Self") &lt; conversion (an implicit
+    ///   cast relation exists). Lower cost wins, so a concrete overload beats a generic one and an
+    ///   exact match beats a conversion.
     /// </summary>
     public class Solver
     {
@@ -29,6 +32,12 @@ namespace Ara3D.Geometry.Compiler.Checking
 
         private readonly TypeVarFactory _vars;
         private const int MaxDepth = 512;
+
+        // Argument-match cost tiers (lower is more specific).
+        private const int ExactCost = 0;
+        private const int GenericCost = 2;
+        private const int ConceptCost = 3;
+        private const int ConversionCost = 5;
 
         public Solver(Compilation compilation, TypeVarFactory vars = null)
         {
@@ -67,6 +76,17 @@ namespace Ara3D.Geometry.Compiler.Checking
 
         // --- overload resolution -------------------------------------------------
 
+        /// <summary>An instantiated candidate: fresh generic holes, interface params replaced by
+        /// fresh "concept" variables (recorded in <see cref="ConceptOf"/>), and a return type
+        /// refined to share a concept variable when it names the same interface as a parameter.</summary>
+        private class Candidate
+        {
+            public FunctionDef Function;
+            public TypeExpression[] Ps;
+            public TypeExpression Ret;
+            public Dictionary<string, TypeExpression> ConceptOf = new Dictionary<string, TypeExpression>();
+        }
+
         private bool ResolveOverload(OverloadConstraint oc, bool force)
         {
             var args = oc.ArgTypes.Select(a => Zonk(a, Substitution)).ToList();
@@ -74,25 +94,24 @@ namespace Ara3D.Geometry.Compiler.Checking
             if (!force && args.Any(HasVar))
                 return false; // not ground yet — defer
 
-            // Trial each candidate on a scratch substitution; keep the ones that unify.
-            var viable = new List<(TypeExpression[] ps, TypeExpression ret)>();
+            // Trial each candidate on a scratch substitution; keep the viable ones with their cost.
+            var viable = new List<(Candidate cand, int cost)>();
             foreach (var f in oc.Candidates)
             {
                 if (f.Parameters.Count != args.Count)
                     continue;
-                var inst = Instantiate(f);
+                var cand = InstantiateCandidate(f);
                 var scratch = new Dictionary<string, TypeExpression>(Substitution);
+                var cost = 0;
                 var ok = true;
                 for (var i = 0; i < args.Count; i++)
                 {
-                    if (!Unify(inst.ps[i], args[i], scratch, oc.Origin, record: false))
-                    {
-                        ok = false;
-                        break;
-                    }
+                    var m = MatchArg(args[i], cand.Ps[i], cand, scratch);
+                    if (!m.ok) { ok = false; break; }
+                    cost += m.cost;
                 }
                 if (ok)
-                    viable.Add(inst);
+                    viable.Add((cand, cost));
             }
 
             if (viable.Count == 0)
@@ -102,53 +121,128 @@ namespace Ara3D.Geometry.Compiler.Checking
                 return true;
             }
 
-            if (viable.Count == 1)
+            // "Most specific wins": keep only the lowest-cost candidates.
+            var best = viable.Min(v => v.cost);
+            var winners = viable.Where(v => v.cost == best).Select(v => v.cand).ToList();
+
+            if (winners.Count == 1)
             {
-                Commit(viable[0], args, oc);
+                CommitCandidate(winners[0], args, oc);
                 return true;
             }
 
-            // Multiple candidates survive. If they all yield the same return type, the call is
-            // still well-defined (bind the result); otherwise it is a genuine ambiguity.
-            var rets = viable
-                .Select(v => Zonk(v.ret, new Dictionary<string, TypeExpression>(Substitution)).ToString())
+            // A genuine tie at the best cost: well-defined iff all winners agree on the return type.
+            var rets = winners
+                .Select(w => Zonk(w.Ret, new Dictionary<string, TypeExpression>(Substitution)).ToString())
                 .Distinct().ToList();
 
             if (rets.Count == 1)
             {
-                Unify(oc.Result, viable[0].ret, Substitution, oc.Origin, record: true);
+                CommitCandidate(winners[0], args, oc);
                 Report(DiagnosticSeverity.Info, "CHK202",
-                    $"Call to '{oc.Name}' has {viable.Count} matching overloads with a common return type", oc.Origin);
+                    $"Call to '{oc.Name}' has {winners.Count} equally-specific overloads with a common return type", oc.Origin);
             }
             else
             {
                 Report(DiagnosticSeverity.Error, "CHK203",
-                    $"Ambiguous call to '{oc.Name}': {viable.Count} overloads match with return types {string.Join(" | ", rets)}", oc.Origin);
+                    $"Ambiguous call to '{oc.Name}': {winners.Count} equally-specific overloads with return types {string.Join(" | ", rets)}", oc.Origin);
             }
             return true;
         }
 
-        private void Commit((TypeExpression[] ps, TypeExpression ret) cand, IReadOnlyList<TypeExpression> args, OverloadConstraint oc)
+        private void CommitCandidate(Candidate cand, IReadOnlyList<TypeExpression> args, OverloadConstraint oc)
         {
+            // Re-run the matches on the real substitution to bind generic/concept variables, then
+            // unify the call's result with the (possibly refined) return type.
             for (var i = 0; i < args.Count; i++)
-                Unify(cand.ps[i], args[i], Substitution, oc.Origin, record: true);
-            Unify(oc.Result, cand.ret, Substitution, oc.Origin, record: true);
+                MatchArg(args[i], cand.Ps[i], cand, Substitution);
+            Unify(oc.Result, cand.Ret, Substitution, oc.Origin, record: true);
+        }
+
+        /// <summary>
+        /// Match one argument against one (instantiated) parameter, returning success and a cost.
+        /// Order of preference: exact unify, generic binding, concept satisfaction, implicit cast.
+        /// </summary>
+        private (bool ok, int cost) MatchArg(TypeExpression argType, TypeExpression param, Candidate cand, Dictionary<string, TypeExpression> sub)
+        {
+            if (param == null || argType == null)
+                return (true, ExactCost);
+
+            // A concept parameter: the argument must implement the interface (or convert to it).
+            if (IsVar(param) && cand.ConceptOf.TryGetValue(param.Name, out var concept))
+            {
+                if (Implements(argType, concept))
+                {
+                    Unify(param, argType, sub, null, record: false); // Self: bind the concept var to the concrete arg
+                    return (true, ConceptCost);
+                }
+                if (HasConversion(argType, concept))
+                    return (true, ConversionCost);
+                return (false, 0);
+            }
+
+            var generic = IsVar(ResolveTop(param, sub));
+            if (Unify(param, argType, sub, null, record: false))
+                return (true, generic ? GenericCost : ExactCost);
+
+            if (HasConversion(argType, param))
+                return (true, ConversionCost);
+
+            return (false, 0);
+        }
+
+        private static bool Implements(TypeExpression argType, TypeExpression concept)
+            => argType.IsImplementing(concept);
+
+        private bool HasConversion(TypeExpression from, TypeExpression to)
+        {
+            // Look up cast relations directly rather than via Compilation.GetRelation, which throws
+            // when a source has multiple relations to the same destination. The solver must stay total.
+            if (Compilation?.TypeRelations == null || from?.Def == null || to?.Def == null)
+                return false;
+            if (!Compilation.TypeRelations.RelationLookup.TryGetValue(from.Def, out var list))
+                return false;
+            return list.Any(rel => rel.Cast != null && rel.Dest.Equals(to.Def));
         }
 
         // --- instantiation -------------------------------------------------------
 
         /// <summary>
-        /// Give a candidate's generic holes (its $-type-variables and declared type parameters)
-        /// fresh unification variables, so each use of an overload is independent.
+        /// Give a candidate's generic holes fresh unification variables, replace interface
+        /// parameters with fresh "concept" variables (so a concrete argument binds through them),
+        /// and refine an interface return type to the concept variable of the parameter it names.
         /// </summary>
-        private (TypeExpression[] ps, TypeExpression ret) Instantiate(FunctionDef f)
+        private Candidate InstantiateCandidate(FunctionDef f)
         {
             var map = new Dictionary<string, TypeExpression>();
             foreach (var t in f.Parameters.Select(p => p.Type).Append(f.ReturnType))
                 CollectHoles(t, map);
-            var ps = f.Parameters.Select(p => Substitute(p.Type, map)).ToArray();
+
+            var cand = new Candidate { Function = f, Ps = new TypeExpression[f.Parameters.Count] };
+            var conceptVarByInstance = new Dictionary<string, TypeExpression>();
+
+            for (var i = 0; i < cand.Ps.Length; i++)
+            {
+                var pt = Substitute(f.Parameters[i].Type, map);
+                if (pt?.Def != null && pt.Def.IsInterface())
+                {
+                    var v = _vars.Fresh("C");
+                    cand.ConceptOf[v.Name] = pt;
+                    conceptVarByInstance[pt.ToString()] = v;
+                    cand.Ps[i] = v;
+                }
+                else
+                {
+                    cand.Ps[i] = pt;
+                }
+            }
+
             var ret = Substitute(f.ReturnType, map);
-            return (ps, ret);
+            if (ret != null && conceptVarByInstance.TryGetValue(ret.ToString(), out var rv))
+                ret = rv; // Self-style refinement: return the concrete argument's type
+            cand.Ret = ret;
+
+            return cand;
         }
 
         private void CollectHoles(TypeExpression t, Dictionary<string, TypeExpression> map)
