@@ -1,10 +1,14 @@
-# Phase 6 affine types — PROGRESS
+# PROGRESS — content-leads workstream (started 2026-07-09)
 
-- [x] 1. Grammar/CST: `unique` modifier (parakeet: PlatoGrammar.cs + PlatoGrammarCst.cs + factory; baseline diff saved to scratchpad)
-- [x] 2. AST: AstTypeDeclaration.IsUnique; AstNodeFactory reads CstType.UniqueKeyword
-- [x] 3. Compiler: TypeDef.IsUnique; hard-reject unique non-List/Buffer; UniqueTypes effect table; LINT006/007
-- [x] 4. CSharpWriter: skip unique types in WriteAll/BuildExtensionPlans; map List->PlatoList, Buffer->PlatoBuffer
-- [x] 5. Intrinsics: PlatoList.cs / PlatoBuffer.cs (+projitems); regen-plato -Apply sync
-- [x] 6. plato-src/unique.plato (decls + body-less sigs); byte-identity: only docs.html/interfaces.txt may differ
-- [x] 7. plato-test-src/unique.algorithms.plato (EarClip, Extrude, Filter + witnesses); conformance V1/V2/Opt/Scalar
-- [x] 8. docs/affine-types.md; roadmap DONE note; COMMIT_MSG.txt; check-all.ps1
+Plan: docs/plato-execution-plan-2026-07-09.md (studio). Decisions locked: Fraction,
+plato-src writable + plato-src-legacy snapshot, double precision near-term,
+unblock function-fields, content-leads.
+
+- [x] Setup: plato-src-legacy snapshot (25 files), execution plan, reassessment doc
+- [ ] Track 0: compiler associativity fix (AstNodeFactory) + drop 5 assoc manifest entries
+- [ ] Track A: Phase 4 bug burn-down (MagnitudeSquared first) + type-surface defects
+- [ ] Track B: Fraction, Option/Result, Tolerance, IInnerProduct, function-fields
+- [ ] Track C: content (ports, surfaces, SDF, PRNG, deformers…)
+- [ ] Track D: Plato.Geometry lib, double precision, GLSL, optimizer
+
+Baseline: check-all green (8/8) at start. Commit per repo, local only, explicit staging.

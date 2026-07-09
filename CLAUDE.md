@@ -7,7 +7,11 @@ Part of the studio monorepo at `C:\Users\cdigg\git\studio` (this repo = `submodu
 Roadmap + status: `../../docs/plato-roadmap.md`. Bug catalog: `../../docs/plato-library-review.md`.
 
 ## Layout (what matters)
-- `plato-src/` — production stdlib source. **FROZEN until the Phase 4 bug wave** (additive new files OK).
+- `plato-src/` — production stdlib source. **WRITABLE as of 2026-07-09** (content-leads
+  refactor; the old Phase-4 freeze is retired). Edit freely; each change = `regen-plato.ps1 -Apply`
+  + `check-all.ps1` green + commit. Plan: `../../docs/plato-execution-plan-2026-07-09.md`.
+- `plato-src-legacy/` — **FROZEN 2026-07-09 snapshot** of the pre-refactor library. Reference only;
+  never edit, never compile. Diff `plato-src` against it to see how far the library has moved.
 - `plato-test-src/` — law/witness libraries (`Law_*`, `Witness_*` Boolean functions). Never merge into plato-src.
 - `Plato.CLI/` — entry point. `Program.cs` args: `[input] [output] [--typescript|--rust] [--csharp-style=default|extensions] [--optimize] [--scalar=...]` and `lint <folder> [--strict]`. **CAVEAT: exits 0 even on compile errors** — always sanity-check output file count / build the result.
 - `PlatoCompiler/` — compilation + `Analysis/Linter.cs` (LINT001–005).
@@ -28,7 +32,10 @@ Roadmap + status: `../../docs/plato-roadmap.md`. Bug catalog: `../../docs/plato-
 1. No git commits unless the mission says so; never stage parakeet or pre-existing dirty files.
 2. Off-flag emitter output must stay BYTE-IDENTICAL (regen-plato.ps1 is the gate).
 3. Generated code must compile with DEFAULT LangVersion on net8.0. No C# 14 features.
-4. Known bugs are preserved, not fixed (Phase 4 gate). If a KnownFailures test starts passing, your change altered semantics — that's a defect in your change.
+4. Known bugs are now BEING fixed (content-leads, from 2026-07-09). The `KnownFailures.json`
+   manifest is the burn-down queue: when you fix a bug, REMOVE its manifest entry in the same change
+   (a passing still-listed entry fails the runner with "remove from manifest"). Off-flag byte-identity
+   (rule 2) still holds for source you did NOT change — it protects against unintended emitter drift.
 5. The conformance law runner reflects instance members; `Law_*` functions stay in structs.
 
 ## Mission protocol

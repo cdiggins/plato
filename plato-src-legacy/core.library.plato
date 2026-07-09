@@ -1,0 +1,127 @@
+library Core
+{
+    //==
+    // Number 
+
+    AlmostEqual(x: Number, y: Number): Boolean => (x-y).Abs <= x.MultiplyEpsilon(y);   
+    AlmostZero(x: Number): Boolean => x.Abs < Epsilon;    
+    AlmostZeroOrOne(x: Number): Boolean => x.AlmostEqual(Zero) || x.AlmostEqual(One);
+    Average(x: Number, y: Number): Number => (x + y).Half;
+    Between(x: Number, a: Number, b: Number): Boolean => x >= a && x <= b;
+    Between01(x: Number): Boolean => x.Between(0.0, 1.0);
+    ClampZeroOne(x: Number): Number => x.Clamp(Zero, One);
+    Fract(x: Number): Number => x - x.Floor;
+    FromOne(x: Number): Number => 1.0 - x;
+    InversePow(x: Number, y: Number): Number => x.Pow(y.Reciprocal);
+    Lerp(a: Number, b: Number, t: Number): Number => a * t.FromOne + b * t;
+    MultiplyEpsilon(x: Number, y: Number): Number => x.Abs.Greater(y.Abs) * Epsilon;
+    Pow2(x: Number): Number => x * x;
+    Pow3(x: Number): Number => x * x * x;
+    Pow4(x: Number): Number => x * x * x * x;
+    Pow5(x: Number): Number => x * x * x * x * x;    
+    Sqr(x: Number): Number => x.Pow2;
+    
+    //==
+    // Vector-like specific functions
+
+    Zero(_: IVectorLike): IVectorLike => Self.CreateFromComponent(0.0);
+    One(_: IVectorLike): IVectorLike => Self.CreateFromComponent(1.0);
+    MinValue(_: IVectorLike): IVectorLike => Self.CreateFromComponent(Number.MinValue);
+    MaxValue(_: IVectorLike): IVectorLike => Self.CreateFromComponent(Number.MaxValue);
+    Reduce(v: IVectorLike, initial: Number, f: Function2<Number, Number, Number>): Number => v.Components.Reduce(initial, f);        
+    MinComponent(x: IVectorLike): Number => x.Reduce(x[0], (a, b) => a.Min(b));
+    MaxComponent(x: IVectorLike): Number => x.Reduce(x[0], (a, b) => a.Max(b));
+    SumComponents(v: IVectorLike): Number => v.Reduce(0.0, (a, b) => a + b);    
+    SumSqrComponents(v: IVectorLike): Number => v.Reduce(0.0, (a, b) => a + b * b);    
+    AvgComponent(v: IVectorLike): Number => v.SumComponents / v.NumComponents;
+    Magnitude(v: IVectorLike): Number => v.MagnitudeSquared.Sqrt;
+    MagnitudeSquared(v: IVectorLike): Number => v.SumSqrComponents / v.NumComponents;
+
+    //==
+    // Vector-like functions derived from Number intrinsics
+
+    Abs(self: IVectorLike): IVectorLike => self.MapComponents(x => x.Abs);
+    BitDecrement(self: IVectorLike): IVectorLike => self.MapComponents(x => x.BitDecrement);
+    BitIncrement(self: IVectorLike): IVectorLike => self.MapComponents(x => x.BitIncrement);
+    Cbrt(self: IVectorLike): IVectorLike => self.MapComponents(x => x.Cbrt);
+    Ceiling(self: IVectorLike): IVectorLike => self.MapComponents(x => x.Ceiling);
+    Clamp(self: IVectorLike, min: IVectorLike, max: IVectorLike): IVectorLike => self.ZipComponents(min, max, (a, b, c) => a.Clamp(b, c));
+    CopySign(self: IVectorLike, y: IVectorLike): IVectorLike => self.ZipComponents(y, (a, b) => a.CopySign(b));
+    Exp(self: IVectorLike): IVectorLike => self.MapComponents(x => x.Exp);
+    Floor(self: IVectorLike): IVectorLike => self.MapComponents(x => x.Floor);
+    FusedMultiplyAdd(self: IVectorLike, y: IVectorLike, z: IVectorLike): IVectorLike => self.ZipComponents(y, z, (a, b, c) => a.FusedMultiplyAdd(b, c));
+    ILogB(self: IVectorLike): IVectorLike => self.MapComponents(x => x.ILogB);
+    IEEERemainder(self: IVectorLike, y: IVectorLike): IVectorLike => self.ZipComponents(y, (a, b) => a.IEEERemainder(b));
+    //Log(self: IVectorLike, newBase: IVectorLike): IVectorLike => self.ZipComponents(newBase, (a, b) => a.Log(b));
+    Log10(self: IVectorLike): IVectorLike => self.MapComponents(x => x.Log10);
+    Log2(self: IVectorLike): IVectorLike => self.MapComponents(x => x.Log2);
+    Min(self: IVectorLike, other: IVectorLike): IVectorLike => self.ZipComponents(other, (a, b) => a.Min(b));
+    MinMagnitude(self: IVectorLike, other: IVectorLike): IVectorLike => self.ZipComponents(other, (a, b) => a.MinMagnitude(b));
+    Max(self: IVectorLike, other: IVectorLike): IVectorLike => self.ZipComponents(other, (a, b) => a.Max(b));
+    MaxMagnitude(self: IVectorLike, other: IVectorLike): IVectorLike => self.ZipComponents(other, (a, b) => a.MaxMagnitude(b));
+    NaturalLog(self: IVectorLike): IVectorLike => self.MapComponents(x => x.NaturalLog);
+    Pow(self: IVectorLike, power: IVectorLike): IVectorLike => self.ZipComponents(power, (a, b) => a.Pow(b));
+    Reciprocal(self: IVectorLike): IVectorLike => self.MapComponents(x => x.Reciprocal);
+    ReciprocalEstimate(self: IVectorLike): IVectorLike => self.MapComponents(x => x.ReciprocalEstimate);
+    ReciprocalSquareRootEstimate(self: IVectorLike): IVectorLike => self.MapComponents(x => x.ReciprocalSquareRootEstimate);
+    RoundToZero(self: IVectorLike, digits: Integer): IVectorLike => self.MapComponents(x => x.RoundToZero(digits));
+    ScaleB(self: IVectorLike, n: Integer): IVectorLike => self.MapComponents(x => x.ScaleB(n));
+
+    //==
+    // Vector-like functions derived from Number functions (see above)
+
+    AlmostEqual(x: IVectorLike, y: IVectorLike): Boolean => x.AllZipComponents(y, (a, b) => a.AlmostEqual(b));
+    AlmostZero(x: IVectorLike): Boolean => x.AllComponents(x => x.AlmostZero);
+    Average(x: IVectorLike, y: IVectorLike): IVectorLike => x.Lerp(y, 0.5);
+    Between(x: IVectorLike, a: IVectorLike, b: IVectorLike): Boolean => x.AllZipComponents(a, b, (x1, a1, b1) => x1.Between(a1, b1));
+    Between01(x: IVectorLike): Boolean => x.AllComponents(x1 => x1.Between01);
+    ClampZeroOne(x: IVectorLike): IVectorLike => x.MapComponents(x1 => x1.ClampZeroOne);
+    Fract(x: IVectorLike): IVectorLike => x.MapComponents(x1 => x1.Fract);
+    FromOne(x: IVectorLike): IVectorLike => x.MapComponents(x1 => x1.FromOne);
+    InversePow(x: IVectorLike, y: IVectorLike): IVectorLike => x.ZipComponents(y, (x1, y1) => x1.InversePow(y1));
+    Lerp(a: IVectorLike, b: IVectorLike, t: Number): IVectorLike => a.ZipComponents(b, (a1, b1) => a1.Lerp(b1, t));    
+    MultiplyEpsilon(x: IVectorLike, y: IVectorLike): IVectorLike => x.ZipComponents(y, (x1, y1) => x1.MultiplyEpsilon(y1));
+    Pow2(x: IVectorLike): IVectorLike => x.MapComponents(x1 => x1.Pow2);
+    Pow3(x: IVectorLike): IVectorLike => x.MapComponents(x1 => x1.Pow3);
+    Pow4(x: IVectorLike): IVectorLike => x.MapComponents(x1 => x1.Pow4);
+    Pow5(x: IVectorLike): IVectorLike => x.MapComponents(x1 => x1.Pow5);   
+    Sqr(x: IVectorLike): IVectorLike => x.MapComponents(x1 => x1.Sqr);          
+    Sqrt(x: IVectorLike): IVectorLike => x.MapComponents(x1 => x1.Sqrt);
+
+    //==    
+    // IScalarArithmetic operations 
+
+    Half(x: IScalarArithmetic): IScalarArithmetic => x / 2.0;            
+    Quarter(x: IScalarArithmetic): IScalarArithmetic => x / 4.0;        
+    Eight(x: IScalarArithmetic): IScalarArithmetic => x / 8.0;        
+    Sixteenth(x: IScalarArithmetic): IScalarArithmetic => x / 16.0;    
+    Tenth(x: IScalarArithmetic): IScalarArithmetic => x / 10.0;        
+    Twice(x: IScalarArithmetic): IScalarArithmetic => x * 2.0;                  
+    Hundred(x: IScalarArithmetic): IScalarArithmetic => x * 100.0;          
+    Thousand(x: IScalarArithmetic): IScalarArithmetic => x * 1000.0;    
+    Million(x: IScalarArithmetic): IScalarArithmetic => x.Thousand.Thousand;    
+    Billion(x: IScalarArithmetic): IScalarArithmetic => x.Thousand.Million;    
+    Hundredth(x: IScalarArithmetic): IScalarArithmetic => x / 100.0;          
+    Thousandth(x: IScalarArithmetic): IScalarArithmetic => x / 1000.0;    
+    Millionth(x: IScalarArithmetic): IScalarArithmetic => x.Thousandth.Thousandth;    
+    Billionth(x: IScalarArithmetic): IScalarArithmetic => x.Thousandth.Millionth;
+    
+    // Support for having the scalar on the left 
+    Multiply(scalar: Number, x: IScalarArithmetic): IScalarArithmetic => x * scalar;
+
+    //==
+    // IOrderable functions
+    
+    LessThan(a: IOrderable, b: IOrderable): Boolean => a <= b && a != b;    
+    GreaterThan(a: IOrderable, b: IOrderable): Boolean => b < a;    
+    GreaterThanOrEquals(a: IOrderable, b: IOrderable): Boolean => b <= a;       
+    Lesser(a: IOrderable, b: IOrderable): IOrderable => a <= b ? a : b;    
+    Greater(a: IOrderable, b: IOrderable): IOrderable => a >= b ? a : b;   
+    CompareTo(a: IOrderable, b: IOrderable): Integer => a <= b ? (a == b ? 0 : - 1) : 1; 
+
+    //==
+    // IInterpolatable
+
+    Average(a: IInterpolatable, b: IInterpolatable): IInterpolatable => a.Lerp(b, 0.5);
+    Sample(a: IInterpolatable, b: IInterpolatable, n: Integer): IArray<IInterpolatable> => n.LinearSpace.Map(i => a.Lerp(b, i));
+ }

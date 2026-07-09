@@ -1,0 +1,153 @@
+library Algebra
+{           
+    // Barycentric interpolation (e.g. triangle)
+    Barycentric(v1: INumerical, v2: INumerical, v3: INumerical, uv: Vector2): INumerical 
+        => (v1 + (v2 - v1)) * uv.X + (v3 - v1) * uv.Y;   
+
+    //====================
+    // Polynomials 
+    //====================
+
+    // https://en.wikipedia.org/wiki/Linear_equation#Equation_of_a_line
+    Linear(m: INumerical, b: INumerical, x: Number): INumerical
+        => m * x + b;
+    
+    //  https://en.wikipedia.org/wiki/Quadratic_function
+    Quadratic(a: INumerical, b: INumerical, c: INumerical, x: Number): INumerical
+        => a * x.Sqr + b * x + c;
+        
+    //  https://en.wikipedia.org/wiki/Cubic_function
+    Cubic(a: INumerical, b: INumerical, c: INumerical, d: INumerical, x: Number): INumerical
+        => a * x.Pow3 + b * x.Sqr + c * x + d;
+
+    // https://en.wikipedia.org/wiki/Quartic_function
+    Quartic(a: INumerical, b: INumerical, c: INumerical, d: INumerical, e: INumerical, x: Number): INumerical
+        => a * x.Pow4 + b * x.Pow3 + c * x.Sqr + d * x + e;
+
+    // Linear derivative: dy/dx = m
+    LinearDerivative(m: INumerical, b: INumerical, x: Number): INumerical
+        => m;  
+
+    // Linear second derivative: d2y/dx2 = 0
+    LinearSecondDerivative(m: INumerical, b: INumerical, x: Number): INumerical
+        => default; 
+
+    // Quadratic derivative: dy/dx = 2*a*x + b
+    QuadraticDerivative(a: INumerical, b: INumerical, c: INumerical, x: Number): INumerical
+        => (a * 2.0) * x + b;
+
+    // Quadratic second derivative: d2y/dx2 = 2*a
+    QuadraticSecondDerivative(a: INumerical, b: INumerical, c: INumerical, x: Number): INumerical
+        => a * 2.0;
+
+    // Cubic derivative: dy/dx = 3*a*x^2 + 2*b*x + c
+    CubicDerivative(a: INumerical, b: INumerical, c: INumerical, d: INumerical, x: Number): INumerical
+        => (a * 3.0) * x.Sqr + (b * 2.0) * x + c;
+
+    // Cubic second derivative: d2y/dx2 = 6*a*x + 2*b
+    CubicSecondDerivative(a: INumerical, b: INumerical, c: INumerical, d: INumerical, x: Number): INumerical
+        => (a * 6.0) * x + (b * 2.0);
+
+    // Quartic derivative: dy/dx = 4*a*x^3 + 3*b*x^2 + 2*c*x + d
+    QuarticDerivative(a: INumerical, b: INumerical, c: INumerical, d: INumerical, e: INumerical, x: INumerical): INumerical
+        => (a * 4.0) * x.Pow3
+         + (b * 3.0) * x.Sqr
+         + (c * 2.0) * x
+         + d;
+
+    // Quartic second derivative: d2y/dx2 = 12*a*x^2 + 6*b*x + 2*c
+    QuarticSecondDerivative(a: INumerical, b: INumerical, c: INumerical, d: INumerical, e: INumerical, x: Number): INumerical
+        => (a * 12.0) * x.Sqr
+         + (b * 6.0)  * x
+         + (c * 2.0);
+
+    //====================
+    // Bezier functions
+    // https://en.wikipedia.org/wiki/B%C3%A9zier_curve    
+    //====================
+
+    CubicBezier(a: INumerical, b: INumerical, c: INumerical, d: INumerical, t: Number): INumerical
+		=> a * (1.0 - t).Pow3 
+           + b * 3.0 * (1.0 - t).Sqr * t 
+           + c * 3.0 * (1.0 - t) * t.Sqr 
+           + d * t.Pow3;	
+   
+    CubicBezierDerivative(a: INumerical, b: INumerical, c: INumerical, d: INumerical, t: Number): INumerical
+       => (b - a) * 3.0 * (1.0 - t).Sqr
+          + (c - b) * 6.0 * (1.0 - t) * t
+          + (d - c) * 3.0 * t.Sqr;
+    
+    CubicBezierSecondDerivative(a: INumerical, b: INumerical, c: INumerical, d: INumerical, t: Number): INumerical
+        => (c - b * 2.0 + a) * 6.0 * (1.0 - t)
+           + (d - c * 2.0 + b) * 6.0 * t;
+    
+    QuadraticBezier(a: INumerical, b: INumerical, c: INumerical, t: Number): INumerical
+   	   => a * (1.0 - t).Sqr 
+   		    + b * 2.0 * (1.0 - t) * t 
+   		    + c * t.Sqr;
+   
+    QuadraticBezierDerivative(a: INumerical, b: INumerical, c: INumerical, t: Number): INumerical
+   		=> (b - a) * 2.0 * (1.0 - t)
+   		   + (c - b) * 2.0 * t;
+   
+    QuadraticBezierSecondDerivative(a: INumerical, b: INumerical, c: INumerical, t: Number): INumerical
+        => 2.0 * (a - b * 2.0 + c);
+   
+    //====================
+    // Hermite Spline
+    // https://en.wikipedia.org/wiki/Cubic_Hermite_spline
+    //    Given two endpoints (p0, p1) and two tangents (m0, m1)
+    //    Standard Cubic Hermite form:
+    //    H(t) = (2t^3 - 3t^2 + 1)*p0 
+    //         + (t^3 - 2t^2 + t)*m0
+    //         + (-2t^3 + 3t^2)*p1
+    //         + (t^3 - t^2)*m1
+    Hermite(p0: INumerical, p1: INumerical, m0: INumerical, m1: INumerical, t: Number): INumerical
+        => p0 * (2.0 * t.Pow3 - 3.0 * t.Sqr + 1.0)
+            + m0 * (t.Pow3 - 2.0 * t.Sqr + t)
+            + p1 * (-2.0 * t.Pow3 + 3.0 * t.Sqr)
+            + m1 * (t.Pow3 - t.Sqr);              
+
+    // Hermite derivative: 
+    // dH/dt = (6t^2 - 6t) * p0 + (3t^2 - 4t + 1) * m0
+    //                       + (-6t^2 + 6t) * p1 + (3t^2 - 2t) * m1
+    HermiteDerivative(p0: INumerical, p1: INumerical, m0: INumerical, m1: INumerical, t: Number): INumerical
+        => p0 * (6.0 * t.Sqr - 6.0 * t)       
+           + m0 * (3.0 * t.Sqr - 4.0 * t + 1.0)
+            + p1 * (-6.0 * t.Sqr + 6.0 * t)
+            + m1 * (3.0 * t.Sqr - 2.0 * t);       
+
+    //====================
+    // Catmull–Rom Spline
+    //    A common cubic spline interpolation that uses four control points
+    //    We'll name them p0, p1, p2, p3, with the curve passing from p1 to p2.
+    //    Parameter "t" in [0..1].
+    //    This form is typically:
+    //
+    //    CR(t) = 0.5 * [  (2 * p1)
+    //                   + (-p0 + p2) * t
+    //                   + (2p0 - 5p1 + 4p2 - p3) * t^2
+    //                   + (-p0 + 3p1 - 3p2 + p3) * t^3 ]
+    // https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Catmull%E2%80%93Rom_spline   
+   CatmullRom(p0: INumerical, p1: INumerical, p2: INumerical, p3: INumerical, t: Number): INumerical
+        => 0.5 * (p1 * 2.0 
+            + (p2 - p0) * t 
+            + (p0 * 2.0 - p1 * 5.0 + p2 * 4.0 - p3) * t.Sqr 
+            + (-p0 + p1 * 3.0 - p2 * 3.0 + p3) * t.Pow3);
+
+    // CatmullRom derivative:
+    // dCR/dt = 0.5 * [(-p0 + p2) 
+    //               + 2*(2p0 - 5p1 + 4p2 - p3)*t
+    //               + 3*(-p0 + 3p1 - 3p2 + p3)*t^2 ]
+    CatmullRomDerivative(p0: INumerical, p1: INumerical, p2: INumerical, p3: INumerical, t: Number): INumerical
+        => 0.5 * ((p2 - p0)
+            + 2.0 * (p0 * 2.0 - p1 * 5.0 + p2 * 4.0 - p3) * t
+            + 3.0 * (-p0 + p1 * 3.0 - p2 * 3.0 + p3) * t.Sqr);       
+
+    // https://en.wikipedia.org/wiki/Smoothstep
+    SmoothStep(x: INumerical): INumerical 
+        => x.Sqr * (-x.Twice + 3.0);   
+  
+    SmootherStep(x: INumerical): INumerical 
+        => x.Pow3 * (x * 6.0 - 15.0) + 10.0;
+}

@@ -1,0 +1,54 @@
+﻿library Constants
+{
+    // Common values
+    Zero(): Number => 0.0;
+    One(): Number => 1.0;
+    MinusOne(): Number => -1.0;
+
+    // Limits 
+    Epsilon(): Number => 1e-7;
+    MinNumber(): Number => 3.40282347E+38;
+    MaxNumber(): Number => -3.40282347E+38;
+
+    // Commonly used irrational values
+    Pi(): Number => 3.1415926535897;   
+    E(): Number => 2.7182818284590;
+    GoldenRatio(): Number => 1.0 + 5.0.Sqrt / 2.0;
+    Phi(): Number => GoldenRatio;   
+    RPhi(): Number => Phi.Reciprocal;
+    SqrtTwo(): Number => 1.41421356237;
+    SqrtThree(): Number => 1.73205080757;
+    SqrtFive(): Number => 2.23606797750;
+    Ln10(): Number => 2.302585093;
+    Ln2(): Number => 0.69314718056;
+    Log10E(): Number => 0.4342944819;
+    
+    // Common angle constants 
+    TwoPi(): Number => Pi.Twice;    
+    HalfPi(): Number => Pi.Half;
+    RadiansPerDegree(): Number => Pi / 180.0;
+    DegreesPerRadian(): Number => 180.0 / Pi;  
+    
+    // Distances 
+    FeetPerMeter(): Number => 3.280839895;
+    FeetPerMile(): Number => 5280;    
+    
+    // Weights 
+    PoundPerKilogram(): Number => 0.45359237;    
+    PoundPerTon(): Number => 2000;    
+    OuncePerGram(): Number => 28.349523125;   
+    TroyOuncePerGram(): Number => 31.1034768;    
+
+    // Time
+    GregorianYearDays(): Number => 365.2425;
+
+    // Other common types
+    XAxis2D(): Vector2 => Vector2.UnitX;
+    YAxis2D(): Vector2 => Vector2.UnitY;
+    XAxis3D(): Vector3 => Vector3.UnitX;
+    YAxis3D(): Vector3 => Vector3.UnitY;
+    ZAxis3D(): Vector3 => Vector3.UnitZ;
+
+    UnitInterval(): NumberInterval => (0.0, 1.0);
+    UnitCircle(): Circle => ((0.0, 0.0), 1.0);
+}

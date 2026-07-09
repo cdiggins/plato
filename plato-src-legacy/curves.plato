@@ -1,0 +1,598 @@
+// A library of curves, spirals, and equations in 2D and 3D
+// TODO: consult the following     
+// https://en.wikipedia.org/wiki/List_of_curves
+// https://en.wikipedia.org/wiki/List_of_spirals
+library Curves
+{
+    Sample(curve: ICurve2D, numPoints: Integer): IArray<Point2D>
+		=> numPoints.LinearSpace.Map(x => curve.Eval(x));
+
+    Sample(curve: ICurve3D, numPoints: Integer): IArray<Point3D>
+		=> numPoints.LinearSpace.Map(x => curve.Eval(x));
+
+    ToPolyLine2D(curve: ICurve2D, numPoints: Integer): PolyLine2D
+	    => (curve.Sample(numPoints), curve.Closed);    
+
+    ToPolyLine3D(curve: ICurve3D, numPoints: Integer): PolyLine3D
+	    => (curve.Sample(numPoints), curve.Closed);    
+
+    Eval(f: LinearEquation, x: Number): Number 
+        => x.Linear(f.Slope, f.YIntercept);
+    
+    Eval(f: Quadratic, x: Number): Number 
+        => x.Quadratic(f.A, f.B, f.C);
+
+    Eval(f: Cubic, x: Number): Number 
+        => x.Cubic(f.A, f.B, f.C, f.D);
+
+    //https://en.wikipedia.org/wiki/Sine_wave   
+    SineWave(x: Number, amplitude: Number, frequency: Number, phase: Number): Number
+		=> amplitude * (frequency * x.Turns.Sin + phase);
+
+    Eval(f: SineWave, x: Number): Number 
+        => x.SineWave(f.Amplitude, f.Frequency, f.Phase);
+
+    // https://en.wikipedia.org/wiki/Parabola
+    Eval(f: Parabola, x: Number): Number 
+        => x.Sqr;
+
+    // https://mathworld.wolfram.com/StaircaseFunction.html
+    StaircaseFloor(x: Number, steps: Integer): Number   
+        => (x * steps).Floor / steps;
+
+    // https://mathworld.wolfram.com/StaircaseFunction.html
+    StaircaseCeiling(x: Number, steps: Integer): Number
+        => (x * steps).Ceiling / steps;
+
+    // https://mathworld.wolfram.com/StaircaseFunction.html
+    StaircaseRound(x: Number, steps: Integer): Number
+        => (x * steps).Round(0) / steps; 
+}
+
+//====
+// Real functions
+
+interface IRealFunction
+{
+    Eval(f: Self, x: Number): Number;
+}
+
+// https://en.wikipedia.org/wiki/Linear_equation#Equation_of_a_line
+type LinearEquation
+    implements IRealFunction
+{
+    // Also called "M"
+    Slope: Number;
+
+    // Also called "B"
+    YIntercept: Number; 
+}
+
+type Quadratic
+    implements IRealFunction
+{
+    A: Number;
+    B: Number;
+    C: Number;
+}
+
+type Cubic
+    implements IRealFunction
+{
+    A: Number;
+    B: Number;
+    C: Number;
+    D: Number;
+}
+
+type Parabola
+    implements IRealFunction, IOpenShape
+{
+}
+  
+type SineWave
+    implements IRealFunction, IOpenShape
+{
+   	Amplitude: Number;
+   	Frequency: Number;
+   	Phase: Number;
+}
+
+//====
+// Standard 2D Curves
+
+library Curves2D
+{
+    Spiral(t: Number, R: Number, r: Number, numTurns: Number): Point2D
+        => new Vector2((t.Turns * numTurns).Cos, (t.Turns * numTurns).Sin) * r.Lerp(R, t);
+
+    Eval(curve: Spiral, t: Number): Point2D
+		=> t.Spiral(curve.Radius1, curve.Radius2, curve.NumTurns);
+
+    Eval(curve: QuadraticBezier2D, t: Number): Point2D
+		=> curve.A.Vector2.QuadraticBezier(curve.B, curve.C, t);
+
+    Eval(curve: CubicBezier2D, t: Number): Point2D
+		=> curve.A.Vector2.CubicBezier(curve.B, curve.C, curve.D, t);
+}
+
+type Spiral
+   	implements IOpenCurve2D
+{
+   	Radius1: Number;
+    Radius2: Number;
+    NumTurns: Number;
+}
+  
+// https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+type QuadraticBezier2D
+    implements IOpenCurve2D
+{
+    A: Point2D;
+    B: Point2D;
+    C: Point2D;
+}
+
+// https://en.wikipedia.org/wiki/B%C3%A9zier_curve    
+type CubicBezier2D
+    implements IOpenCurve2D
+{
+    A: Point2D;
+    B: Point2D;
+    C: Point2D;
+    D: Point2D;
+}   
+
+//====
+// 2D Angular curves
+
+interface IAngularCurve2D inherits ICurve2D
+{
+    Eval(curve: Self, t: Angle): Point2D;
+}
+    
+library AngularCurves2D
+{
+    // Angular curves are defined in terms of a parameter t that is an angle    
+    Eval(curve: IAngularCurve2D, t: Number): Point2D
+    	=> curve.Eval(t.Turns);
+
+    UnitCircle(t: Angle): Point2D
+		=> (t.Cos, t.Sin);
+
+    Circle(t: Angle, center: Point2D, radius: Number): Point2D
+		=> t.UnitCircle * radius + center;
+
+    Eval(curve: Circle, t: Angle): Point2D
+		=> t.Circle(curve.Center, curve.Radius);
+
+    Ellipse(t: Angle, center: Point2D, size: Vector2): Point2D 
+        => t.UnitCircle * size + center;
+
+    Eval(curve: Ellipse, t: Angle): Point2D 
+        => t.UnitCircle * curve.Size + curve.Center;
+
+	// https://en.wikipedia.org/wiki/Epicycloid
+	Epicycloid(t: Angle, R: Number, r: Number): Point2D
+		=> ((R + r) * t.Cos - r * (R + r) * (t / r).Cos,
+			(R + r) * t.Sin - r * (R + r) * (t / r).Sin);
+
+    Eval(curve: Epicycloid, t: Angle): Point2D
+        => t.Epicycloid(curve.Radius1, curve.Radius2);
+
+	// https://en.wikipedia.org/wiki/Hypocycloid
+	Hypocycloid(t: Angle, R: Number, r: Number): Point2D
+		=> ((R - r) * t.Cos + r * (R - r) * (t / r).Cos,
+			(R - r) * t.Sin - r * (R - r) * (t / r).Sin);
+
+    Eval(curve: Hypocycloid, t: Angle): Point2D
+		=> t.Hypocycloid(curve.Radius1, curve.Radius2);
+
+	// https://en.wikipedia.org/wiki/Epitrochoid
+	Epitrochoid(t: Angle, R: Number, r: Number, d: Number): Point2D
+		=> ((R + r) * t.Cos - d * (R + r) * (t / r).Cos,
+			(R + r) * t.Sin - d * (R + r) * (t / r).Sin);
+
+    Eval(curve: Epitrochoid, t: Angle): Point2D
+        => t.Epitrochoid(curve.Radius1, curve.Radius2, curve.Dist);
+
+	// https://en.wikipedia.org/wiki/Hypotrochoid
+	Hypotrochoid(t: Angle, R: Number, r: Number, d: Number): Point2D
+		=> ((R - r) * t.Cos + d * (R - r) * (t / r).Cos,
+			(R - r) * t.Sin - d * (R - r) * (t / r).Sin);
+
+    Eval(curve: Hypotrochoid, t: Angle): Point2D
+		=> t.Hypotrochoid(curve.Radius1, curve.Radius2, curve.Dist);
+
+    // https://en.wikipedia.org/wiki/Butterfly_curve_(transcendental)
+    ButterflyCurve(t: Angle): Point2D
+        => (t / 6.0).ButterflyCurveSection;
+
+    ButterflyCurveSection(t: Angle): Point2D
+        => ((t * (t.Cos.Exp - 2.0 * (t * 4.0).Cos - (t / 12.0).Sin.Pow(5.0))).Sin,
+            (t * (t.Cos.Exp - 2.0 * (t * 4.0).Cos - (t / 12.0).Sin.Pow(5.0))).Cos);
+
+    Eval(curve: ButterflyCurve, t: Angle): Point2D
+        => t.ButterflyCurve;
+
+    // https://en.wikipedia.org/wiki/Lissajous_curve
+    Lissajous(t: Angle, a: Number, b: Number, d: Angle): Point2D
+        => ((t + d).Sin, b.Turns.Sin);
+
+    Eval(curve: Lissajous, t: Angle): Point2D
+		=> t.Lissajous(curve.A, curve.B, curve.Delta);
+}
+
+type Circle
+   implements IAngularCurve2D, IClosedCurve2D
+{ 
+    Center: Point2D;
+    Radius: Number;
+}
+
+type Ellipse
+   implements IAngularCurve2D, IClosedCurve2D
+{ 
+    Center: Point2D;
+    Size: Vector2;
+}
+
+// https://en.wikipedia.org/wiki/Epicycloid
+type Epicycloid
+	implements IAngularCurve2D, IOpenShape
+{
+	Radius1: Number;
+	Radius2: Number;
+}
+
+// https://en.wikipedia.org/wiki/Hypocycloid
+type Hypocycloid
+    implements IAngularCurve2D, IOpenShape
+{
+	Radius1: Number;
+	Radius2: Number;
+}
+	
+// https://en.wikipedia.org/wiki/Epitrochoid
+type Epitrochoid
+	implements IAngularCurve2D, IOpenShape
+{
+	Radius1: Number;
+	Radius2: Number;
+	Dist: Number;
+}
+
+// https://en.wikipedia.org/wiki/Hypotrochoid
+type Hypotrochoid
+	implements IAngularCurve2D, IOpenShape
+{
+	Radius1: Number;
+	Radius2: Number;
+	Dist: Number;
+}
+
+// https://en.wikipedia.org/wiki/Butterfly_curve_(transcendental)
+type ButterflyCurve
+	implements IAngularCurve2D, IOpenShape
+{
+}
+
+// https://en.wikipedia.org/wiki/Lissajous_curve
+type Lissajous
+    implements IAngularCurve2D, IOpenShape
+{
+    Delta: Angle;
+    A: Number;
+    B: Number;
+}
+
+//====
+// Polar curves
+
+// https://en.wikipedia.org/wiki/Polar_curve
+interface IPolarCurve 
+    inherits IAngularCurve2D 
+{
+    GetRadius(curve: Self, t: Angle): Number;
+}
+
+library PolarCurves
+{
+    // Get the polar coordinates of a point on a polar curve. 
+    EvalPolar(curve: IPolarCurve, t: Angle): PolarCoordinate
+        => (curve.GetRadius(t), t);
+
+    // Convert polar coordinates to Cartesian
+    // https://en.wikipedia.org/wiki/Polar_coordinate_system
+    Point2D(coord: PolarCoordinate): Point2D 
+        => new Vector2(coord.Angle.Cos, coord.Angle.Sin) * coord.Radius;
+
+    // Get the cartesian coordinates of a point on a polar curve. 
+    Eval(curve: IPolarCurve, t: Angle): Point2D
+        => curve.EvalPolar(t);
+
+    // https://en.wikipedia.org/wiki/Tommaso_Ceva#The_Cycloid_of_Ceva
+    CycloidOfCeva(t: Angle): Number
+        => 1.0 + (t * 2.0).Cos * 2.0;
+
+    GetRadius(curve: CycloidOfCeva, t: Angle): Number
+        => t.CycloidOfCeva;
+
+    // https://en.wikipedia.org/wiki/Lima%C3%A7on
+    Limacon(t: Angle, a: Number, b: Number): Number
+        => a * t.Cos + b;
+
+    GetRadius(curve: Limacon, t: Angle): Number
+		=> t.Limacon(curve.A, curve.B);
+
+    // https://en.wikipedia.org/wiki/Cardioid
+    Cardoid(t: Angle): Number
+	    => 1.0 + t.Cos;
+
+    GetRadius(curve: Cardoid, t: Angle): Number
+	    => t.Cardoid;
+
+    // https://en.wikipedia.org/wiki/Tschirnhausen_cubic
+    TschirnhausenCubic(t: Angle, a: Number): Number
+        => a * (t / 3.0).Sec.Pow3;
+        
+    GetRadius(curve: TschirnhausenCubic, t: Angle): Number
+        => t.TschirnhausenCubic(curve.A);
+
+    // https://en.wikipedia.org/wiki/Rose_(mathematics)
+    Rose(t: Angle, k: Number): Number
+        => k * t.Cos;
+
+    GetRadius(curve: Rose, t: Angle): Number
+        => t.Rose(curve.K);
+
+    // https://en.wikipedia.org/wiki/Archimedean_spiral
+    ArchimedeanSpiral(t: Angle, a: Number, b: Number): Number
+        => a + b * t.Turns;
+
+    GetRadius(curve: ArchimedeanSpiral, t: Angle): Number  
+        => t.ArchimedeanSpiral(curve.A, curve.B);
+
+    // https://en.wikipedia.org/wiki/Conic_section
+    ConicSection(t: Angle, semiLatusRectum: Number, eccentricity: Number): Number
+        => semiLatusRectum / (1.0 - eccentricity * t.Cos);
+
+    GetRadius(curve: ConicSection, t: Angle): Number 
+        => t.ConicSection(curve.SemiLatusRectum, curve.Eccentricity);
+
+    // https://en.wikipedia.org/wiki/Lemniscate_of_Bernoulli
+    LemniscateOfBernoulli(t: Angle, a: Number): Number
+        => (a.Sqr * (t * 2.0).Cos).Sqrt;
+
+    GetRadius(curve: LemniscateOfBernoulli, t: Angle): Number
+        => t.LemniscateOfBernoulli(curve.A);
+
+    // https://en.wikipedia.org/wiki/Trisectrix_of_Maclaurin
+    TrisectrixOfMaclaurin(t: Angle, a: Number): Number
+        => (2.0 * a) / (t / 3.0).Cos;
+
+    GetRadius(curve: TrisectrixOfMaclaurin, t: Angle): Number
+        => t.TrisectrixOfMaclaurin(curve.A);
+
+    // https://en.wikipedia.org/wiki/Conchoid_of_de_Sluze
+    ConchoidOfDeSluze(t: Angle, a: Number): Number
+        => t.Sec + a * t.Cos;
+
+    GetRadius(curve: ConchoidOfDeSluze, t: Angle): Number
+        => t.ConchoidOfDeSluze(curve.A);
+
+    // https://en.wikipedia.org/wiki/Sinusoidal_spiral
+    SinusoidalSpiral(t: Angle, a: Number, n: Number): Number
+        => (a.Pow(n) * (t * n).Cos).InversePow(a);
+
+    GetRadius(curve: SinusoidalSpiral, t: Angle): Number
+        => t.SinusoidalSpiral(curve.A, curve.N);
+
+    // https://en.wikipedia.org/wiki/Fermat%27s_spiral
+    FermatsSpiral(t: Angle, a: Number): Number
+		=> (a * t.Turns.Sqr).Sqrt;
+
+    GetRadius(curve: FermatsSpiral, t: Angle): Number
+        => t.FermatsSpiral(curve.A);
+    
+	// https://en.wikipedia.org/wiki/Logarithmic_spiral
+	LogarithmicSpiral(t: Angle, a: Number, k: Number): Number
+		=> a * (t.Radians * k).Exp;
+
+    GetRadius(curve: LogarithmicSpiral, t: Angle): Number
+		=> t.LogarithmicSpiral(curve.A, curve.K);
+}
+
+type CycloidOfCeva
+    implements IPolarCurve, IOpenShape
+{ }
+
+type Limacon 
+    implements IPolarCurve, IOpenShape
+{
+    A: Number;
+    B: Number;  
+}
+
+type Cardoid 
+    implements IPolarCurve, IClosedShape
+{
+}
+
+type Rose 
+    implements IPolarCurve, IClosedShape
+{
+    K: Integer;
+}
+
+type ArchimedeanSpiral 
+    implements IPolarCurve, IOpenShape
+{
+    A: Number;
+    B: Number;
+}
+
+type ConicSection 
+    implements IPolarCurve, IOpenShape
+{
+    Eccentricity: Number;
+    SemiLatusRectum: Number;
+}
+
+type LemniscateOfBernoulli
+    implements IPolarCurve, IOpenShape
+{
+    A: Number;
+}
+
+type TrisectrixOfMaclaurin
+    implements IPolarCurve, IOpenShape
+{
+    A: Number;
+}
+
+type ConchoidOfDeSluze
+	implements IPolarCurve, IOpenShape
+{
+	A: Number;
+}
+
+type TschirnhausenCubic
+    implements IPolarCurve, IOpenShape
+{
+    A: Number;
+}
+
+type SinusoidalSpiral
+    implements IPolarCurve, IOpenShape
+{
+    A: Number;
+    N: Number;
+}
+
+// https://en.wikipedia.org/wiki/Fermat%27s_spiral
+type FermatsSpiral
+    implements IPolarCurve, IOpenShape
+{
+	A: Number;
+}
+
+// https://en.wikipedia.org/wiki/Logarithmic_spiral
+type LogarithmicSpiral
+    implements IPolarCurve, IOpenShape
+{
+	A: Number;
+	K: Number;
+}
+
+//====
+// Standard 3D Curves
+
+library Curves3D
+{
+    Eval(curve: QuadraticBezier3D, t: Number): Point3D
+		=> curve.A.Vector3.QuadraticBezier(curve.B, curve.C, t);
+
+    Eval(curve: CubicBezier3D, t: Number): Point3D
+		=> curve.A.Vector3.CubicBezier(curve.B, curve.C, curve.D, t);
+}
+
+// https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+type CubicBezier3D
+    implements IOpenShape
+{
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
+    D: Point3D;
+}
+
+// https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+type QuadraticBezier3D
+    implements IOpenShape
+{
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
+}
+
+//====
+// 3D Angular curves
+
+interface IAngularCurve3D 
+    inherits ICurve3D
+{
+	Eval(curve: Self, t: Angle): Point3D;
+}
+
+library AngularCurves3D
+{
+    Eval(curve: IAngularCurve3D, t: Number): Point3D
+		=> curve.Eval(t.Turns);
+
+    // https://en.wikipedia.org/wiki/Torus_knot
+    TorusKnot(t: Angle, p: Number, q: Number): Point3D
+    {
+        var r = (t * q).Cos + 2.0;
+        var x = r * (t * p).Cos;
+        var y = r * (t * p).Sin;    
+        var z = -(t * q).Sin;
+        return (x, y, z);
+    }
+
+    Eval(curve: TorusKnot, t: Angle): Point3D
+        => t.TorusKnot(curve.P, curve.Q) * curve.Radius;
+
+    // https://en.wikipedia.org/wiki/Trefoil_knot
+    TrefoilKnot(t: Angle): Point3D
+        => (t.Sin + (t * 2.0).Sin * 2.0,
+            t.Cos + (t * 2.0).Cos * 2.0,
+            -(t * 3.0).Sin);
+
+    Eval(curve: TrefoilKnot, t: Angle): Point3D
+        => t.TrefoilKnot;
+
+    // https://en.wikipedia.org/wiki/Figure-eight_knot_(mathematics)
+    FigureEightKnot(t: Angle): Point3D
+        => ((2.0 + (t * 2.0).Cos) * (t * 3.0).Cos,
+            (2.0 + (t * 2.0).Cos) * (t * 3.0).Sin,
+            (t * 4.0).Sin);
+
+    Eval(curve: FigureEightKnot, t: Angle): Point3D
+        => t.FigureEightKnot;
+
+    // https://en.wikipedia.org/wiki/Parametric_equation#Helix
+    Helix(t: Angle, revs: Number): Point3D
+        => ((t * revs).Sin, 
+            (t * revs).Cos,
+            t.Turns);
+
+    Eval(curve: Helix, t: Angle): Point3D
+        => t.Helix(curve.NumTurns) * (curve.Radius, curve.Radius, curve.Height);
+}
+
+type TorusKnot
+    implements IAngularCurve3D, IClosedShape
+{
+    P: Integer;
+	Q: Integer;
+	Radius: Number;
+}
+
+type TrefoilKnot
+    implements IAngularCurve3D, IClosedShape
+{
+}
+
+type FigureEightKnot
+	implements IAngularCurve3D, IClosedShape
+{
+}
+
+type Helix
+	implements IAngularCurve3D, IOpenShape
+{
+	Radius: Number;
+	Height: Number;
+	NumTurns: Number;
+}

@@ -1,0 +1,79 @@
+// https://en.wikipedia.org/wiki/RGB_color_spaces
+type Color
+    implements ICoordinate
+{
+    R: Number;
+    G: Number;
+    B: Number;
+    A: Number;
+}
+
+type ByteRGB
+    implements ICoordinate
+{
+    R: Integer;
+    G: Integer;
+    B: Integer;
+}
+
+type ByteRGBA
+    implements ICoordinate
+{
+    R: Integer;
+    G: Integer;
+    B: Integer;
+    A: Integer;
+}
+
+// https://en.wikipedia.org/wiki/CIELUV
+type ColorLUV
+    implements ICoordinate
+{
+    Lightness: Number;
+    U: Number;
+    V: Number;
+}
+
+// https://en.wikipedia.org/wiki/CIELAB_color_space
+type ColorLAB
+    implements ICoordinate
+{
+    Lightness: Number;
+    A: Number; 
+    B: Number;
+}
+
+// https://en.wikipedia.org/wiki/CIELAB_color_space#Cylindrical_model
+type ColorLCh
+    implements ICoordinate
+{
+    Lightness: Number;
+    ChromaHue: PolarCoordinate;
+}
+
+// https://en.wikipedia.org/wiki/HSL_and_HSV
+type ColorHSV
+    implements ICoordinate
+{
+    Hue: Angle;
+    S: Number;
+    V: Number;
+}
+
+// https://en.wikipedia.org/wiki/HSL_and_HSV
+type ColorHSL
+    implements ICoordinate
+{
+    Hue: Angle;
+    Saturation: Number;
+    Luminance: Number;
+}
+
+// https://en.wikipedia.org/wiki/YCbCr   
+type ColorYCbCr
+    implements ICoordinate
+{
+    Y: Number;
+    Cb: Number;
+    Cr: Number;
+}

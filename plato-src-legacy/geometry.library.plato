@@ -1,0 +1,221 @@
+library Geometry
+{
+    //==
+    // Point2D 
+
+    Origin2D(): Point2D => (0.0, 0.0);
+    MinPoint2D(): Point2D => Point2D.MinValue;
+    MaxPoint2D(): Point2D => Point2D.MaxValue;
+    Vector2(x: Point2D): Vector2 => (x.X, x.Y);
+    Point2D(x: Vector2): Point2D => (x.X, x.Y);
+    LineTo(a: Point2D, b: Point2D): Line2D => (a, b);
+    RayTo(a: Point2D, b: Point2D): Ray2D => (a, b - a);
+    RayFrom(a: Point2D, dir: Vector2): Ray2D => (a, dir);
+    Subtract(p1: Point2D, p2: Point2D): Vector2 => p1.Vector2 - p2.Vector2;
+    Add(p1: Point2D, p2: Vector2): Point2D => p1.Vector2 + p2;
+    Add(p1: Point2D, p2: Point2D): Point2D => p1.Vector2 + p2.Vector2;
+    Multiply(a: Point2D, n: Number): Point2D => (a.X * n, a.Y * n);
+    Divide(a: Point2D, n: Number): Point2D => (a.X / n, a.Y / n);
+    Multiply(a: Point2D, v: Vector2): Point2D => a.Vector2 * v;
+    
+    //==
+    // Point3D
+
+    Origin3D(): Point3D => (0.0, 0.0, 0.0);
+    MinPoint3D(): Point3D => Point3D.MinValue;
+    MaxPoint3D(): Point3D => Point3D.MaxValue;
+    Vector3(x: Point3D): Vector3 => (x.X, x.Y, x.Z);
+    Point3D(x: Vector3): Point3D => (x.X, x.Y, x.Z);
+    LineTo(a: Point3D, b: Point3D): Line3D => (a, b);
+    RayTo(a: Point3D, b: Point3D): Ray3D => (a, b - a);
+    RayFrom(a: Point3D, dir: Vector3): Ray3D => (a, dir);
+    Subtract(p1: Point3D, p2: Point3D): Vector3 => p1.Vector3 - p2.Vector3;
+    Subtract(p: Point3D, v: Vector3): Point3D => p.Vector3 - v;
+    Add(p1: Point3D, p2: Vector3): Point3D => p1.Vector3 + p2;
+    Add(p1: Point3D, p2: Point3D): Point3D => p1.Vector3 + p2.Vector3;
+    Multiply(a: Point3D, n: Number): Point3D => (a.X * n, a.Y * n, a.Z * n);
+    Divide(a: Point3D, n: Number): Point3D => (a.X / n, a.Y / n, a.Z / n);
+    Multiply(a: Point3D, v: Vector3): Point3D => a.Vector3 * v;
+
+    //==
+	// 2D Lines
+	
+	Length(x: Line2D): Number => (x.B - x.A).Length;
+	Direction(x: Line2D): Vector2 => (x.B - x.A);
+	Ray2D(x: Line2D): Ray2D => (x.A, x.Direction);
+    Reverse(x: Line2D): Line2D => (x.B, x.A);
+    Start(x: Line2D): Point2D => x.A;
+    End(x: Line2D): Point2D => x.B;
+    Center(x: Line2D): Point2D => x.A.Average(x.B);
+    Eval(x: Line2D, t: Number): Point2D => x.A.Lerp(x.B, t);
+    
+    //==
+    // 2D Rays
+
+    Ray2D(v: Vector2): Ray2D => (Origin2D, v);
+
+	//== 
+	// 3D Lines
+	 
+	Length(x: Line3D): Number => (x.B - x.A).Length;
+	Direction(x: Line3D): Vector3 => (x.B - x.A);
+	Ray3D(x: Line3D): Ray3D => (x.A, x.Direction.Normalize);
+    Reverse(x: Line3D): Line3D => (x.B, x.A);
+    Bounds3D(x: Line3D): Bounds3D => (x.A.Min(x.B), x.A.Max(x.B));
+    Start(x: Line3D): Point3D => x.A;
+    End(x: Line3D): Point3D => x.B;
+    Center(x: Line3D): Point3D => x.A.Average(x.B);
+    Eval(x: Line3D, t: Number): Point3D => x.A.Lerp(x.B, t);  
+
+	//==
+	// 3D Rays
+
+    Ray3D(v: Vector3): Ray3D => (Origin3D, v);
+	Angle(a: Ray3D, b: Ray3D): Angle => a.Direction.Angle(b.Direction);
+    Reverse(r: Ray3D): Ray3D => (r.Origin, -r.Direction);
+
+	//==
+	// Triangle 2D functions 
+
+	Area(t: Triangle2D): Number => (t.A.X * (t.C.Y - t.B.Y) + t.B.X * (t.A.Y - t.C.Y) + t.C.X * (t.B.Y - t.A.Y)).Half;
+	Flip(t: Triangle2D): Triangle2D => (t.C, t.B, t.A);
+    Center(t: Triangle2D): Point2D => (t.A + t.B + t.C) / 3.0;
+	Barycentric(t: Triangle2D, uv: Vector2): Point2D => t.A.Vector2.Barycentric(t.B, t.C, uv);
+    LineA(t: Triangle2D): Line2D => (t.A, t.B);        
+    LineB(t: Triangle2D): Line2D => (t.B, t.C);        
+    LineC(t: Triangle2D): Line2D => (t.C, t.A);        
+    Points(t: Triangle2D): IArray<Point2D> => t.Components;
+    
+	//==
+    // Triangle3D functions
+
+    Area(t: Triangle3D): Number => t.CrossProductA.Magnitude.Half;
+    CrossProductA(t: Triangle3D): Vector3 => (t.B - t.A).Cross(t.C - t.A);
+    Flip(t: Triangle3D): Triangle3D => (t.C, t.B, t.A);        
+    Normal(t: Triangle3D): Vector3 => t.CrossProductA.Normalize;
+    Center(t: Triangle3D): Point3D => (t.A + t.B + t.C) / 3.0;
+    Plane(t: Triangle3D): Plane => (t.Normal, t.Normal.Dot(t.A));
+    LineA(t: Triangle3D): Line3D => (t.A, t.B);        
+    LineB(t: Triangle3D): Line3D => (t.B, t.C);        
+    LineC(t: Triangle3D): Line3D => (t.C, t.A);        
+    Barycentric(t: Triangle3D, uv: Vector2): Point3D => t.A.Vector3.Barycentric(t.B, t.C, uv);
+    Points(t: Triangle2D): IArray<Point2D> => t.Components;
+    
+    //==
+    // Rect2D functions 
+
+    Width(x: Rect2D): Number => x.Size.X;
+    Height(x: Rect2D): Number => x.Size.Y;
+    Left(x: Rect2D): Number => x.Center.X - x.Width.Half;
+    Right(x: Rect2D): Number => x.Left + x.Width;
+    Bottom(x: Rect2D): Number => x.Center.Y - x.Height.Half;
+    Top(x: Rect2D): Number => x.Bottom + x.Height;
+    BottomLeft(x: Rect2D): Point2D => (x.Left, x.Bottom);
+    BottomRight(x: Rect2D): Point2D => (x.Right, x.Bottom);
+    TopRight(x: Rect2D): Point2D => (x.Right, x.Top);
+    TopLeft(x: Rect2D): Point2D => (x.Left, x.Top);
+    Quad2D(x: Rect2D): Quad2D => (x.BottomLeft, x.BottomRight, x.TopRight, x.TopLeft);
+    Points(x: Rect2D): IArray<Point2D> => x.Quad2D.Points;
+
+    //==
+    // Quad2D functions
+
+    Flip(q: Quad2D): Quad2D => (q.D, q.C, q.B, q.A);        
+    Center(q: Quad2D): Point2D => (q.A + q.B + q.C + q.D) / 4.0;
+    LineA(q: Quad2D): Line2D => (q.A, q.B);        
+    LineB(q: Quad2D): Line2D => (q.B, q.C);        
+    LineC(q: Quad2D): Line2D => (q.C, q.D);        
+    LineD(q: Quad2D): Line2D => (q.D, q.A);            
+    TriangleA(q: Quad2D): Triangle2D => (q.A, q.B, q.C);        
+    TriangleB(q: Quad2D): Triangle2D => (q.C, q.D, q.A);        
+    Area(q: Quad2D): Number => q.TriangleA.Area + q.TriangleB.Area;
+    Points(q: Quad2D): IArray<Point2D> => q.Components;
+
+    //==
+    // Quad3D functions
+
+    Flip(q: Quad3D): Quad3D => (q.D, q.C, q.B, q.A);        
+    Center(q: Quad3D): Point3D => (q.A + q.B + q.C + q.D) / 4.0;
+    LineA(q: Quad3D): Line3D => (q.A, q.B);        
+    LineB(q: Quad3D): Line3D => (q.B, q.C);        
+    LineC(q: Quad3D): Line3D => (q.C, q.D);        
+    LineD(q: Quad3D): Line3D => (q.D, q.A);            
+    TriangleA(q: Quad3D): Triangle3D => (q.A, q.B, q.C);        
+    TriangleB(q: Quad3D): Triangle3D => (q.C, q.D, q.A);       
+    Points(q: Quad3D): IArray<Point3D> => q.Components;
+    Area(q: Quad3D): Number => q.TriangleA.Area + q.TriangleB.Area;
+    Normal(q: Quad3D): Vector3 => q.TriangleA.Normal.Average(q.TriangleB.Normal).Normalize;
+
+    //==
+    // Bounds2D functions
+
+    Center(x: Bounds2D): Point2D => x.Min.Average(x.Max);
+    Corners(x: Bounds2D): IArray<Point2D> => [
+        new Point2D(x.Min.X, x.Min.Y), 
+        new Point2D(x.Max.X, x.Min.Y), 
+        new Point2D(x.Min.X, x.Max.Y), 
+        new Point2D(x.Max.X, x.Max.Y), 
+        new Point2D(x.Min.X, x.Min.Y), 
+        new Point2D(x.Max.X, x.Min.Y),
+        new Point2D(x.Min.X, x.Max.Y), 
+        new Point2D(x.Max.X, x.Max.Y)];
+    Empty(_: Bounds2D): Bounds2D => (MaxPoint2D, MinPoint2D);
+    Bounds(xs: IArray<Point2D>): Bounds2D => xs.Reduce(Bounds2D.Empty, (a, b) => a.Include(b));
+
+    //==
+    // Bounds3D functions
+
+    Center(x: Bounds3D): Point3D => x.Min.Average(x.Max);
+    Corners(x: Bounds3D): IArray<Point3D> => [
+        new Point3D(x.Min.X, x.Min.Y, x.Min.Z), 
+        new Point3D(x.Max.X, x.Min.Y, x.Min.Z), 
+        new Point3D(x.Min.X, x.Max.Y, x.Min.Z), 
+        new Point3D(x.Max.X, x.Max.Y, x.Min.Z), 
+        new Point3D(x.Min.X, x.Min.Y, x.Max.Z), 
+        new Point3D(x.Max.X, x.Min.Y, x.Max.Z),
+        new Point3D(x.Min.X, x.Max.Y, x.Max.Z), 
+        new Point3D(x.Max.X, x.Max.Y, x.Max.Z)];
+    Empty(_: Bounds3D): Bounds3D => (MaxPoint3D, MinPoint3D);
+    Bounds(xs: IArray<Point3D>): Bounds3D => xs.Reduce(Bounds3D.Empty, (a, b) => a.Include(b));
+
+	//==
+	// Closed functions 
+
+    Closed(x: IClosedShape): Boolean => true;
+	Closed(x: IOpenShape): Boolean => false;
+    
+    //== 
+	// Misc functions 
+
+    CirclePoints(n: Integer): IArray<Point2D> => n.Fractions.Map(x => x.Turns.UnitCircle);
+	Points(x: RegularPolygon): IArray<Point2D> => x.NumPoints.CirclePoints;
+    At(x: RegularPolygon, n: Integer): Point2D => (n.Number / x.NumPoints).Turns.UnitCircle;
+    Count(x: RegularPolygon): Integer => x.NumPoints;
+    
+    //==
+    // 2D to 3D
+    
+    To3D(x: Vector2): Vector3 => (x.X, x.Y, 0);
+    To3D(x: Point2D): Point3D => (x.X, x.Y, 0);
+    To3D(x: Line2D): Line3D => (x.A.To3D, x.B.To3D);
+    To3D(x: Triangle2D): Triangle3D => (x.A.To3D, x.B.To3D, x.C.To3D);
+    To3D(x: Quad2D): Quad3D => (x.A.To3D, x.B.To3D, x.C.To3D, x.D.To3D);
+    To3D(x: Bounds2D): Bounds3D => (x.Min.To3D, x.Max.To3D);
+    To3D(x: Ray2D): Ray3D => (x.Origin.To3D, x.Direction.To3D);
+    To3D(x: PolyLine2D): PolyLine3D => (x.Points.Map(p => p.To3D), x.Closed);
+
+    Line3D(x: Line2D): Line3D => x.To3D;
+    Triangle3D(x: Triangle2D): Triangle3D => x.To3D;
+    Quad3D(x: Quad2D): Quad3D => x.To3D;
+    Bounds3D(x: Bounds2D): Bounds3D => x.To3D;
+    Ray3D(x: Ray2D): Ray3D => x.To3D;
+    PolyLine3D(x: PolyLine2D): PolyLine3D => x.To3D;
+
+    //==
+    // Some constants 
+
+    Unit(_: Triangle2D): Triangle2D => ((-0.5, -3.0.Sqrt.Half), (-0.5, 3.0.Sqrt.Half), (0.0, 1.0));
+    UnitTriangle(): Triangle2D => Triangle2D.Unit;
+    Unit(_: Quad2D): Quad2D => ((0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0));
+    UnitQuad(): Quad2D => Quad2D.Unit;
+}

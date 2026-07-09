@@ -1,0 +1,270 @@
+//===
+//# 2D Shapes
+
+type Point2D
+    implements ICoordinate, IVectorLike, IGeometricPrimitive2D, IDifference<Vector2>
+{
+    X: Number;
+    Y: Number;
+}
+
+// Axis-Aligned bounding box 
+type Bounds2D
+    implements IBounds<Point2D, Vector2>, IArrayLike<Point2D>
+{
+    Min: Point2D;
+    Max: Point2D;
+}
+
+type Ray2D
+    implements IValue
+{
+    Origin: Point2D;
+    Direction: Vector2;
+}
+
+type Triangle2D
+    implements IPolygon2D, IGeometricPrimitive2D, IArrayLike<Point2D>
+{
+    A: Point2D;
+    B: Point2D;
+    C: Point2D;
+}
+
+type Quad2D
+    implements IPolygon2D, IArrayLike<Point2D>
+{
+    A: Point2D;
+    B: Point2D;
+    C: Point2D;
+    D: Point2D;
+}
+
+// A line segment in 2D.
+type Line2D
+    implements IArrayLike<Point2D>, IInterval<Point2D>
+{
+    A: Point2D;
+    B: Point2D;
+}
+
+// https://en.wikipedia.org/wiki/Lens_(geometry)
+type Lens
+    implements IClosedShape2D
+{
+    A: Circle;
+    B: Circle;
+}
+
+type Rect2D
+    implements IPolygon2D
+{
+    Center: Point2D;
+    Size: Vector2;
+}
+
+type Ring
+    implements IClosedShape2D
+{
+    Center: Point2D;
+    InnerRadius: Number;
+    OuterRadius: Number;
+}
+
+type Arc
+    implements IOpenShape2D
+{
+    Angles: AnglePair;
+    Circle: Circle;
+}
+
+type Sector
+    implements IClosedShape2D
+{
+    Arc: Arc;
+}
+
+type Chord
+    implements IClosedShape2D
+{       
+    Arc: Arc;
+}
+
+type Segment
+    implements IClosedShape2D
+{
+    Arc: Arc;
+}
+
+type RegularPolygon
+    implements IPolygon2D
+{
+    Center: Point2D;
+    NumPoints: Integer;
+}
+
+type Polygon
+    implements IPolygon2D
+{
+    Points: IArray<Point2D>;
+}
+
+//===
+//# 3D Types
+
+type Point3D
+    implements ICoordinate, IVectorLike, IGeometricPrimitive3D, IDifference<Vector3>
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+}
+
+// An infinite plane. 
+type Plane
+    implements IValue
+{
+    Normal: Vector3;
+    D: Number;
+}
+
+// Axis-Aligned bounding box 
+type Bounds3D
+    implements IBounds<Point3D, Vector3>, IDeformable3D, IArrayLike<Point3D>
+{
+    Min: Point3D;
+    Max: Point3D;
+}
+
+// A line segment in 3D.
+type Line3D 
+    implements IDeformable3D, IInterval<Point3D>, IArrayLike<Point3D>
+{
+    A: Point3D;
+    B: Point3D;
+}
+
+type Ray3D
+    implements IValue, IDeformable3D
+{
+    Origin: Point3D;
+    Direction: Vector3;
+}
+
+//===
+//# 3D Curves 
+
+type Triangle3D
+    implements IDeformable3D, IArrayLike<Point3D>
+{
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
+}
+
+type Quad3D
+    implements IDeformable3D, IArrayLike<Point3D>
+{
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
+    D: Point3D;
+}
+
+//==
+//# 2D Primitive Geometry 
+
+// A collection of 3D points, also known as a point cloud.
+type Points2D
+    implements IPrimitiveGeometry2D<Point2D>
+{ 
+    Primitives: IArray<Point2D>;
+}
+
+// A collection of 2D lines.
+type Lines2D
+    implements IPrimitiveGeometry2D<Line2D>
+{ 
+    Primitives: IArray<Line2D>;
+}
+
+// A series of connected line segments 
+type PolyLine2D
+    implements IGeometry2D
+{
+    Points: IArray<Point2D>;
+    Closed: Boolean;
+}
+
+//==
+//# 3D Primitive Geometry 
+
+// A collection of 3D points, also known as a point cloud.
+type Points3D
+    implements IPrimitiveGeometry3D<Point3D>
+{ 
+    Primitives: IArray<Point3D>;
+}
+
+// A collection of 3D lines.
+type Lines3D
+    implements IPrimitiveGeometry3D<Line3D>
+{ 
+    Primitives: IArray<Line3D>;
+}
+
+// A collection of 3D triangles
+type Triangles3D
+    implements IPrimitiveGeometry3D<Triangle3D>
+{ 
+    Primitives: IArray<Triangle3D>;
+}
+
+// A collection of 3D quadrilaterals
+type Quads3D
+    implements IPrimitiveGeometry3D<Quad3D>
+{ 
+    Primitives: IArray<Quad3D>;
+}
+
+// A series of connected line segments 
+type PolyLine3D
+    implements IGeometry3D
+{
+    Points: IArray<Point3D>;
+    Closed: Boolean;
+}
+
+//==
+// # Meshes and Indexed Geometry 
+// Indexed geometry means points can be shared across primitives. 
+
+type LineMesh3D
+    implements IIndexedGeometry3D<Integer2>
+{
+    Points: IArray<Point3D>;
+    FaceIndices: IArray<Integer2>;
+}
+
+type TriangleMesh3D
+    implements IIndexedGeometry3D<Integer3>
+{
+    Points: IArray<Point3D>;
+    FaceIndices: IArray<Integer3>;
+}
+
+type QuadMesh3D
+    implements IIndexedGeometry3D<Integer4>
+{
+    Points: IArray<Point3D>;
+    FaceIndices: IArray<Integer4>;
+}
+
+// A mesh that corresponds to a grid of points 
+type QuadGrid3D
+    implements IGeometry3D
+{
+    PointGrid: IArray2D<Point3D>; 
+	ClosedX: Boolean;
+    ClosedY: Boolean;
+}

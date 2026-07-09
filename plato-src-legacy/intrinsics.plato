@@ -1,0 +1,487 @@
+﻿// This library is a wrapper around many of the functions and types found in the C# libraries 
+// System.Numerics and MathF.
+
+library Intrinsics
+{     
+    //==
+    // Matrix4x4
+    //==
+
+    Row1(self: Matrix4x4): Vector4;
+    Row2(self: Matrix4x4): Vector4;
+    Row3(self: Matrix4x4): Vector4;
+    Row4(self: Matrix4x4): Vector4;
+
+    WithRow1(self: Matrix4x4, row: Vector4): Matrix4x4;
+    WithRow2(self: Matrix4x4, row: Vector4): Matrix4x4;
+    WithRow3(self: Matrix4x4, row: Vector4): Matrix4x4;
+    WithRow4(self: Matrix4x4, row: Vector4): Matrix4x4;
+    
+    Determinant(self: Matrix4x4): Number;
+    Transpose(self: Matrix4x4): Matrix4x4;
+    Add(value1: Matrix4x4, value2: Matrix4x4): Matrix4x4;
+    Subtract(value1: Matrix4x4, value2: Matrix4x4): Matrix4x4;
+    Multiply(value1: Matrix4x4, value2: Matrix4x4): Matrix4x4;
+    Multiply(value1: Matrix4x4, f: Number): Matrix4x4;
+    Multiply(f: Number, value1: Matrix4x4): Matrix4x4;
+    Divide(value1: Matrix4x4, f: Number): Matrix4x4;
+    Decompose(self: Matrix4x4): Tuple4<Vector3, Quaternion, Vector3, Boolean>;
+    Lerp(self: Matrix4x4, matrix2: Matrix4x4, amount: Number): Matrix4x4;
+    Invert(self: Matrix4x4): Matrix4x4;
+    CanInvert(self: Matrix4x4): Boolean;
+    GetHashCode(self: Matrix4x4): Integer;
+    Rotation(self: Matrix4x4): Quaternion;
+    Translation(self: Matrix4x4): Vector3;
+    WithTranslation(self: Matrix4x4, translation: Vector3): Matrix4x4;
+    
+    CreateTranslation(_: Matrix4x4, position: Vector3): Matrix4x4;
+    CreateScale(_: Matrix4x4, scale: Number): Matrix4x4;
+    CreateScale(_: Matrix4x4, xScale: Number, yScale: Number, zScale: Number): Matrix4x4;
+    CreateRotationX(_: Matrix4x4, angle: Angle): Matrix4x4;
+    CreateRotationY(_: Matrix4x4, angle: Angle): Matrix4x4;
+    CreateRotationZ(_: Matrix4x4, angle: Angle): Matrix4x4;
+    CreatePerspectiveFieldOfView(_: Matrix4x4, fieldOfView: Number, aspectRatio: Number, nearPlane: Number, farPlane: Number): Matrix4x4;
+    CreateBillboard(_: Matrix4x4, objectPosition: Vector3, cameraPosition: Vector3, cameraUpVector: Vector3, cameraForwardVector: Vector3): Matrix4x4;
+    CreateConstrainedBillboard(_: Matrix4x4, objectPosition: Vector3, cameraPosition: Vector3, rotateAxis: Vector3, cameraForwardVector: Vector3, objectForwardVector: Vector3): Matrix4x4;
+    CreateFromAxisAngle(_: Matrix4x4, axis: Vector3, angle: Angle): Matrix4x4;
+    CreateFromQuaternion(_: Matrix4x4, quaternion: Quaternion): Matrix4x4;
+    CreateFromYawPitchRoll(_: Matrix4x4, yaw: Angle, pitch: Angle, roll: Angle): Matrix4x4;
+    CreateLookAt(_: Matrix4x4, cameraPosition: Vector3, cameraTarget: Vector3, cameraUpVector: Vector3): Matrix4x4;
+    CreateOrthographic(_: Matrix4x4, width: Number, height: Number, zNearPlane: Number, zFarPlane: Number): Matrix4x4;
+    CreateOrthographicOffCenter(_: Matrix4x4, left: Number, right: Number, bottom: Number, top: Number, zNearPlane: Number, zFarPlane: Number): Matrix4x4;
+    CreatePerspective(_: Matrix4x4, width: Number, height: Number, nearPlaneDistance: Number, farPlaneDistance: Number): Matrix4x4;
+    CreatePerspectiveOffCenter(_: Matrix4x4, left: Number, right: Number, bottom: Number, top: Number, nearPlaneDistance: Number, farPlaneDistance: Number): Matrix4x4;
+    CreateReflection(_: Matrix4x4, value: Plane): Matrix4x4;
+    CreateShadow(_: Matrix4x4, lightDirection: Vector3, plane: Plane): Matrix4x4;
+    CreateWorld(_: Matrix4x4, position: Vector3, forward: Vector3, up: Vector3): Matrix4x4;
+
+    //==
+    // Matrix3x2
+    //==
+    
+    Row1(self: Matrix3x2): Vector2;
+    Row2(self: Matrix3x2): Vector2;
+    Row3(self: Matrix3x2): Vector2;
+    
+    WithRow1(self: Matrix3x2, row: Vector2): Matrix3x2;
+    WithRow2(self: Matrix3x2, row: Vector2): Matrix3x2;
+    WithRow3(self: Matrix3x2, row: Vector2): Matrix3x2;
+
+    Invert(self: Matrix3x2): Tuple2<Matrix3x2, Boolean>;
+    Determinant(self: Matrix3x2): Number;
+    Add(value1: Matrix3x2, value2: Matrix3x2): Matrix3x2;
+    Subtract(value1: Matrix3x2, value2: Matrix3x2): Matrix3x2;
+    Multiply(value1: Matrix3x2, value2: Matrix3x2): Matrix3x2;
+    Multiply(value1: Matrix3x2, scalar: Number): Matrix3x2;
+    Multiply(scalar: Number, value1: Matrix3x2): Matrix3x2;
+    Divide(value1: Matrix3x2, scalar: Number): Matrix3x2;
+    Equals(a: Matrix3x2, b: Matrix3x2): Boolean;
+    NotEquals(a: Matrix3x2, b: Matrix3x2): Boolean;
+    Lerp(self: Matrix3x2, matrix2: Matrix3x2, amount: Number): Matrix3x2;
+    GetHashCode(self: Matrix3x2): Integer;
+
+    CreateTranslation(_: Matrix3x2, xPosition: Number, yPosition: Number): Matrix3x2;
+    CreateTranslation(_: Matrix3x2, position: Vector2): Matrix3x2;
+    CreateScale(_: Matrix3x2, scale: Number): Matrix3x2;
+    CreateScale(_: Matrix3x2, xScale: Number, yScale: Number): Matrix3x2;
+    CreateScale(_: Matrix3x2, scales: Vector2): Matrix3x2;
+    CreateScale(_: Matrix3x2, xScale: Number, yScale: Number, centerPoint: Vector2): Matrix3x2;
+    CreateRotation(_: Matrix3x2, radians: Number): Matrix3x2;
+    CreateRotation(_: Matrix3x2, radians: Number, centerPoint: Vector2): Matrix3x2;
+
+    //==
+    // Vector2
+    //==
+
+    X(self: Vector2): Number;
+    Y(self: Vector2): Number;
+
+    WithX(self: Vector2, x: Number): Vector2;
+    WithY(self: Vector2, y: Number): Vector2;
+
+    Normalize(self: Vector2): Vector2;
+    Length(self: Vector2): Number;
+    LengthSquared(self: Vector2): Number;
+    Abs(self: Vector2): Vector2;
+    Sqrt(self: Vector2): Vector2;
+    Add(left: Vector2, right: Vector2): Vector2;
+    Subtract(left: Vector2, right: Vector2): Vector2;
+    Multiply(left: Vector2, right: Vector2): Vector2;
+    Multiply(left: Vector2, scalar: Number): Vector2;
+    Multiply(scalar: Number, right: Vector2): Vector2;
+    Divide(left: Vector2, right: Vector2): Vector2;
+    Divide(left: Vector2, scalar: Number): Vector2;
+    Negative(value: Vector2): Vector2;
+    Dot(self: Vector2, right: Vector2): Number;
+    Distance(self: Vector2, value2: Vector2): Number;
+    DistanceSquared(self: Vector2, value2: Vector2): Number;
+    Clamp(self: Vector2, min: Vector2, max: Vector2): Vector2;
+    Reflect(self: Vector2, normal: Vector2): Vector2;
+    Transform(self: Vector2, matrix: Matrix3x2): Vector2;
+    Transform(self: Vector2, matrix: Matrix4x4): Vector2;
+    Transform(self: Vector2, rotation: Quaternion): Vector2;
+    TransformNormal(self: Vector2, matrix: Matrix3x2): Vector2;
+    TransformNormal(self: Vector2, matrix: Matrix4x4): Vector2;
+    Max(self: Vector2, value2: Vector2): Vector2;
+    Min(self: Vector2, value2: Vector2): Vector2;
+    GetHashCode(self: Vector2): Integer;
+
+    //==
+    // Vector3
+    //==
+
+    X(self: Vector3): Number;
+    Y(self: Vector3): Number;
+    Z(self: Vector3): Number;
+    
+    WithX(self: Vector3, x: Number): Vector3;
+    WithY(self: Vector3, y: Number): Vector3;
+    WithZ(self: Vector3, z: Number): Vector3;
+
+    Normalize(self: Vector3): Vector3;
+    Length(self: Vector3): Number;
+    LengthSquared(self: Vector3): Number;
+    Abs(self: Vector3): Vector3;
+    Sqrt(self: Vector3): Vector3;
+    Add(left: Vector3, right: Vector3): Vector3;
+    Subtract(left: Vector3, right: Vector3): Vector3;
+    Multiply(left: Vector3, right: Vector3): Vector3;
+    Multiply(left: Vector3, scalar: Number): Vector3;
+    Multiply(scalar: Number, right: Vector3): Vector3;
+    Divide(left: Vector3, right: Vector3): Vector3;
+    Divide(left: Vector3, scalar: Number): Vector3;
+    Negative(value: Vector3): Vector3;
+    Dot(self: Vector3, right: Vector3): Number;
+    Cross(self: Vector3, right: Vector3): Vector3;
+    Distance(self: Vector3, value2: Vector3): Number;
+    DistanceSquared(self: Vector3, value2: Vector3): Number;
+    Clamp(self: Vector3, min: Vector3, max: Vector3): Vector3;
+    Reflect(self: Vector3, normal: Vector3): Vector3;
+    Transform(self: Vector3, matrix: Matrix4x4): Vector3;
+    Transform(self: Vector3, rotation: Quaternion): Vector3;
+    TransformNormal(self: Vector3, matrix: Matrix4x4): Vector3;
+    Max(self: Vector3, value2: Vector3): Vector3;
+    Min(self: Vector3, value2: Vector3): Vector3;
+    GetHashCode(self: Vector3): Integer;
+
+    //==
+    // Vector4
+    //==
+    
+    X(self: Vector4): Number;
+    Y(self: Vector4): Number;
+    Z(self: Vector4): Number;
+    W(self: Vector4): Number;
+
+    WithX(self: Vector4, x: Number): Vector4;
+    WithY(self: Vector4, y: Number): Vector4;
+    WithZ(self: Vector4, z: Number): Vector4;
+    WithW(self: Vector4, w: Number): Vector4;
+
+    Normalize(self: Vector4): Vector4;
+    Length(self: Vector4): Number;
+    LengthSquared(self: Vector4): Number;
+    Abs(self: Vector4): Vector4;
+    Sqrt(self: Vector4): Vector4;
+    Add(left: Vector4, right: Vector4): Vector4;
+    Subtract(left: Vector4, right: Vector4): Vector4;
+    Multiply(left: Vector4, right: Vector4): Vector4;
+    Multiply(left: Vector4, scalar: Number): Vector4;
+    Multiply(scalar: Number, right: Vector4): Vector4;
+    Divide(left: Vector4, right: Vector4): Vector4;
+    Divide(left: Vector4, scalar: Number): Vector4;
+    Negative(value: Vector4): Vector4;
+    Dot(self: Vector4, right: Vector4): Number;
+    Distance(self: Vector4, value2: Vector4): Number;
+    DistanceSquared(self: Vector4, value2: Vector4): Number;
+    Clamp(self: Vector4, min: Vector4, max: Vector4): Vector4;
+    Transform(self: Vector4, matrix: Matrix4x4): Vector4;
+    Transform(self: Vector4, rotation: Quaternion): Vector4;
+    Max(self: Vector4, value2: Vector4): Vector4;
+    Min(self: Vector4, value2: Vector4): Vector4;
+    GetHashCode(self: Vector4): Integer;
+
+    //==
+    // Vector8
+    //==
+    
+    X0(self: Vector8): Number;
+    X1(self: Vector8): Number;
+    X2(self: Vector8): Number;
+    X3(self: Vector8): Number;
+    X4(self: Vector8): Number;
+    X5(self: Vector8): Number;
+    X6(self: Vector8): Number;
+    X7(self: Vector8): Number;
+
+    Lower(self: Vector8): Vector4;
+    Upper(self: Vector8): Vector4;
+    
+    WithElement(self: Vector8, i: Integer, f: Number): Vector8;
+    WithLower(self: Vector8, lower: Vector4): Vector8;
+    WithUpper(self: Vector8, upper: Vector4): Vector8;
+
+    Abs(self: Vector8): Vector8;
+    Reciprocal(self: Vector8): Vector8;
+    ReciprocalSqrtEstimate(self: Vector8): Vector8;
+    Sqrt(self: Vector8): Vector8;
+    Sqr(self: Vector8): Vector8;
+    Sum(self: Vector8): Number;
+    Add(left: Vector8, right: Vector8): Vector8;
+    Subtract(left: Vector8, right: Vector8): Vector8;
+    Multiply(left: Vector8, right: Vector8): Vector8;
+    Multiply(left: Vector8, scalar: Number): Vector8;
+    Multiply(scalar: Number, right: Vector8): Vector8;
+    Divide(left: Vector8, right: Vector8): Vector8;
+    Divide(left: Vector8, scalar: Number): Vector8;
+    Divide(scalar: Number, right: Vector8): Vector8;
+    Negative(value: Vector8): Vector8;
+    AndNot(a: Vector8, b: Vector8): Vector8;
+    BitwiseAnd(a: Vector8, b: Vector8): Vector8;
+    BitwiseOr(a: Vector8, b: Vector8): Vector8;
+    Complement(a: Vector8): Vector8;
+    ConditionalSelect(condition: Vector8, a: Vector8, b: Vector8): Vector8;
+    Equals(a: Vector8, b: Vector8): Vector8;
+    NotEquals(a: Vector8, b: Vector8): Vector8;
+    LessThan(a: Vector8, b: Vector8): Vector8;
+    LessThanOrEquals(a: Vector8, b: Vector8): Vector8;
+    GreaterThan(a: Vector8, b: Vector8): Vector8;
+    GreaterThanOrEquals(a: Vector8, b: Vector8): Vector8;
+    Max(self: Vector8, other: Vector8): Vector8;
+    Min(self: Vector8, other: Vector8): Vector8;
+    Dot(self: Vector8, other: Vector8): Number;
+    FirstElement(self: Vector8): Number;
+    GetHashCode(self: Vector8): Integer;
+
+    //==
+    // Plane
+    //==
+
+    Normal(self: Plane): Vector3;
+    D(self: Plane): Number;
+
+    WithNormal(self: Plane, normal: Vector3): Plane;
+    WithD(self: Plane, d: Number): Plane;
+
+    Normalize(self: Plane): Plane;
+    CreateFromVertices(_: Plane, point1: Vector3, point2: Vector3, point3: Vector3): Plane;
+    Dot(self: Plane, value: Vector4): Number;
+    DotCoordinate(self: Plane, value: Vector3): Number;
+    DotNormal(self: Plane, value: Vector3): Number;
+    Transform(self: Plane, rotation: Quaternion): Plane;
+    Transform(self: Plane, matrix: Matrix4x4): Plane;
+    GetHashCode(self: Plane): Integer;
+
+    //==
+    // Quaternion
+    //==
+
+    X(self: Quaternion): Number;
+    Y(self: Quaternion): Number;
+    Z(self: Quaternion): Number;
+    W(self: Quaternion): Number;
+
+    WithX(self: Quaternion, x: Number): Quaternion;
+    WithY(self: Quaternion, y: Number): Quaternion;
+    WithZ(self: Quaternion, z: Number): Quaternion;
+    WithW(self: Quaternion, w: Number): Quaternion;
+
+    Length(self: Quaternion): Number;
+    LengthSquared(self: Quaternion): Number;
+    Normalize(self: Quaternion): Quaternion;
+    Conjugate(self: Quaternion): Quaternion;
+    Inverse(self: Quaternion): Quaternion;
+    Add(a: Quaternion, b: Quaternion): Quaternion;
+    Subtract(a: Quaternion, b: Quaternion): Quaternion;
+    Negative(a: Quaternion): Quaternion;
+    Multiply(a: Quaternion, b: Quaternion): Quaternion;
+    Multiply(a: Quaternion, scalar: Number): Quaternion;
+    Divide(a: Quaternion, b: Quaternion): Quaternion;
+    Concatenate(self: Quaternion, value2: Quaternion): Quaternion;
+    Dot(self: Quaternion, quaternion2: Quaternion): Number;
+    Lerp(self: Quaternion, quaternion2: Quaternion, amount: Number): Quaternion;
+    Slerp(self: Quaternion, quaternion2: Quaternion, amount: Number): Quaternion;
+    GetHashCode(self: Quaternion): Integer;
+
+    CreateFromAxisAngle(_: Quaternion, axis: Vector3, angle: Number): Quaternion;
+    CreateFromYawPitchRoll(_: Quaternion, yaw: Angle, pitch: Angle, roll: Angle): Quaternion;
+    CreateFromRotationMatrix(_: Quaternion, matrix: Matrix4x4): Quaternion;
+
+    //==
+    // Number
+    //==
+
+    Abs(self: Number): Number;
+    Acos(self: Number): Angle;
+    Acosh(self: Number): Angle;
+    Asin(self: Number): Angle;
+    Asinh(self: Number): Angle;
+    Atan(self: Number): Angle;
+    Atan2(self: Number, x: Number): Angle;
+    Atanh(self: Number): Angle;
+    BitDecrement(self: Number): Number;
+    BitIncrement(self: Number): Number;
+    Cbrt(self: Number): Number;
+    Ceiling(self: Number): Number;
+    Clamp(self: Number, min: Number, max: Number): Number;
+    CopySign(self: Number, y: Number): Number;
+    Exp(self: Number): Number;
+    Floor(self: Number): Number;
+    FusedMultiplyAdd(self: Number, y: Number, z: Number): Number;
+    ILogB(self: Number): Number;
+    IEEERemainder(self: Number, y: Number): Number;
+    Log(self: Number, newBase: Number): Number;
+    Log10(self: Number): Number;
+    Log2(self: Number): Number;
+    Min(self: Number, other: Number): Number;
+    MinMagnitude(self: Number, other: Number): Number;
+    Max(self: Number, other: Number): Number;
+    MaxMagnitude(self: Number, other: Number): Number;
+    NaturalLog(self: Number): Number;
+    Pow(self: Number, power: Number): Number;
+    Reciprocal(self: Number): Number;
+    ReciprocalEstimate(self: Number): Number;
+    ReciprocalSqrtEstimate(self: Number): Number;
+    Round(self: Number, digits: Integer): Number;
+    RoundAwayFromZero(self: Number, digits: Integer): Number;
+    RoundToZero(self: Number, digits: Integer): Number;
+    ScaleB(self: Number, n: Integer): Number;
+    Sign(self: Number): Integer;
+    Sqrt(self: Number): Number;
+    Square(self: Number): Number;
+    Truncate(self: Number): Number;
+   
+    Add(a: Number, b: Number): Number;
+    Subtract(a: Number, b: Number): Number;
+    Multiply(a: Number, b: Number): Number;
+    Divide(a: Number, b: Number): Number;
+    Negative(n: Number): Number;
+
+    Equals(a: Number, b: Number): Boolean;
+    NotEquals(a: Number, b: Number): Boolean;
+    LessThan(a: Number, b: Number): Boolean;
+    LessThanOrEquals(a: Number, b: Number): Boolean;
+    GreaterThan(a: Number, b: Number): Boolean;
+    GreaterThanOrEquals(a: Number, b: Number): Boolean;
+    CompareTo(self: Number, other: Number): Integer;
+
+    GetHashCode(self: Number): Integer;
+
+    //==
+    // Integer
+    //==
+
+    Abs(self: Integer): Integer;
+    Add(a: Integer, b: Integer): Integer;
+    CompareTo(self: Integer, other: Integer): Integer;
+    Divide(a: Integer, b: Integer): Integer;
+    GetHashCode(self: Integer): Integer;
+    GreaterThan(a: Integer, b: Integer): Boolean;
+    GreaterThanOrEquals(a: Integer, b: Integer): Boolean;
+    LessThan(a: Integer, b: Integer): Boolean;
+    LessThanOrEquals(a: Integer, b: Integer): Boolean;
+    Modulo(a: Integer, b: Integer): Integer;
+    Multiply(a: Integer, b: Integer): Integer;
+    Negative(n: Integer): Integer;
+    Number(n: Integer): Number;
+    Range(self: Integer): IArray<Integer>;
+    Sign(self: Integer): Integer;
+    Subtract(a: Integer, b: Integer): Integer;
+
+    //==
+    // Boolean
+    //==
+
+    BitwiseAnd(a: Boolean, b: Boolean): Boolean;
+    BitwiseOr(a: Boolean, b: Boolean): Boolean;
+    CompareTo(self: Boolean, other: Boolean): Integer;
+    ExclusiveOr(a: Boolean, b: Boolean): Boolean;
+    GetHashCode(self: Boolean): Integer;
+    Not(b: Boolean): Boolean;
+
+    //==
+    // Angle
+    //==
+
+    Add(a: Angle, b: Angle): Angle;
+    CompareTo(self: Angle, other: Angle): Integer;
+    Cos(self: Angle): Number;
+    Cosh(self: Angle): Number;
+    Divide(a: Angle, x: Number): Angle;
+    GetHashCode(self: Angle): Integer;
+    GreaterThan(a: Angle, b: Angle): Boolean;
+    GreaterThanOrEquals(a: Angle, b: Angle): Boolean;
+    LessThan(a: Angle, b: Angle): Boolean;
+    LessThanOrEquals(a: Angle, b: Angle): Boolean;
+    Multiply(a: Angle, x: Number): Angle;
+    Multiply(x: Number, a: Angle): Angle;
+    Negative(n: Angle): Angle;
+    Radians(self: Angle): Number;
+    Sin(self: Angle): Number;
+    SinCos(self: Angle): Tuple2<Number, Number>;
+    Sinh(self: Angle): Number;
+    Subtract(a: Angle, b: Angle): Angle;
+    Tan(self: Angle): Number;
+    Tanh(self: Angle): Number;
+
+    //==
+    // Array
+    //==
+
+    All(xs: IArray<$T>, f: Function1<$T, Boolean>): Boolean;
+    Any(xs: IArray<$T>, f: Function1<$T, Boolean>): Boolean;
+    Append(self: IArray<$T>, value: $T): IArray<$T>;
+    AtModulo(xs: IArray<$T>, n: Integer): $T;
+    CartesianProduct(columns: IArray<$TColumn>, rows: IArray<$TRow>, func: Function2<$TColumn, $TRow, $TResult>): IArray2D<$TResult>;
+    Concatenate(xs: IArray<$T>, ys: IArray<$T>): IArray<$T>;
+    Drop(xs: IArray<$T>, n: Integer): IArray<$T>;
+    EveryNth(self: IArray<$T>, n: Integer): IArray<$T>;
+    First(xs: IArray<$T>): $T;        
+    FlatMap(xs: IArray<$T1>, f: Function1<$T1, IArray<$T2>>): IArray<$T2>;
+    Indices(xs: IArray<$T>): IArray<Integer>;
+    IsEmpty(xs: IArray<$T>): Boolean;
+    Last(xs: IArray<$T>): $T;
+    MakeArray2D(columns: Integer, rows: Integer, f: Function2<Integer, Integer, $T>): IArray2D<$T>;   
+    Map(xs: IArray<$T1>, f: Function1<$T1, $T2>): IArray<$T2>;
+    Map(xs: IArray<$T1>, f: Function1<$T1, Integer, $T2>): IArray<$T2>;
+    MapIndices(xs: IArray<$T>): IArray<Integer>;               
+    MapPairs(xs: IArray<$T>, f: Function2<$T, $T, $TR>): IArray<$TR>;
+    MapQuartets(xs: IArray<$T>, f: Function4<$T, $T, $T, $T, $TR>): IArray<$TR>;    
+    MapRange(n: Integer, f: Function1<Integer, $T>): IArray<$T>;
+    MapTriplets(xs: IArray<$T>, f: Function3<$T, $T, $T, $TR>): IArray<$TR>;
+    Middle(xs: IArray<$T>): $T;
+    Prepend(self: IArray<$T>, value: $T): IArray<$T>;
+    PrependAndAppend(self: IArray<$T>, before: $T, after: $T): IArray<$T>;
+    Range(n: Integer): IArray<Integer>;
+    Reduce(xs: IArray<$T>, acc: $U, f: Function2<$U, $T, $U>): $U;
+    Repeat(x: IAny, n: Integer): IArray<IAny>;
+    Rest(xs: IArray<$T>): IArray<$T>;
+    Reverse(self: IArray<$T>): IArray<$T>;
+    Shift(xs: IArray<$T>, n: Integer): IArray<$T>;
+    Skip(xs: IArray<$T>, n: Integer): IArray<$T>;
+    Slice(xs: IArray<$T>, from: Integer, to: Integer): IArray<$T>;
+    Slice(xs: IArray<$T>, from: Integer, to: Integer, stride: Integer): IArray<$T>;
+    Slices(xs: IArray<$T>, size: Integer): IArray2D<$T>;
+    SubArray(xs: IArray<$T>, from: Integer, count: Integer): IArray<$T>;
+    Stride(xs: IArray<$T>, stride: Integer): IArray<$T>;
+    Stride(xs: IArray<$T>, offset: Integer, stride: Integer): IArray<$T>;
+    Take(xs: IArray<$T>, n: Integer): IArray<$T>;
+    TakeLast(xs: IArray<$T>, n: Integer): IArray<$T>;
+    WithNext(self: IArray<$T>, f: Function2<$T, $T, $TR>, first: Boolean): IArray<$T>;
+    Zip(xs: IArray<$T1>, ys: IArray<$T2>, f: Function2<$T1, $T2, $T3>): IArray<$T3>;  
+    Zip(xs: IArray<$T1>, ys: IArray<$T2>, zs: IArray<$T3>, f: Function3<$T1, $T2, $T3, $T4>): IArray<$T4>;  
+    
+    //==
+    // Array2D and Array3D
+    //==
+
+    At(xs: IArray2D<$T>, i: Integer): $T;  
+    At(xs: IArray3D<$T>, i: Integer): $T;
+    Column(self: IArray2D<$T>, col: Integer): IArray<$T>;
+    Columns(self: IArray2D<$T>): IArray<IArray<$T>>;
+    Count(xs: IArray2D<$T>): Integer;
+    Count(xs: IArray3D<$T>): Integer;    
+    Map(xs: IArray2D<$T1>, f: Function1<$T1, $T2>): IArray2D<$T2>;
+    Row(self: IArray2D<$T>, row: Integer): IArray<$T>;
+    Rows(self: IArray2D<$T>): IArray<IArray<$T>>;
+}

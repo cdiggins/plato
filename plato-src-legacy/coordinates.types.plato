@@ -1,0 +1,57 @@
+﻿// https://en.wikipedia.org/wiki/Spherical_coordinate_system    
+type SphericalCoordinate
+    implements ICoordinate
+{
+    RadialDistance: Number;
+    Azimuth: Angle;
+    Polar: Angle;
+}
+
+// https://en.wikipedia.org/wiki/Polar_coordinate_system   
+type PolarCoordinate
+    implements ICoordinate
+{
+    Radius: Number;
+    Angle: Angle;
+}
+
+// https://en.wikipedia.org/wiki/Log-polar_coordinates    
+type LogPolarCoordinate
+    implements ICoordinate
+{
+    Rho: Number;
+    Azimuth: Angle;
+}
+
+// https://en.wikipedia.org/wiki/Cylindrical_coordinate_system    
+type CylindricalCoordinate
+    implements ICoordinate
+{
+    RadialDistance: Number;
+    Azimuth: Angle;
+    Height: Number;
+}
+
+// https://en.wikipedia.org/wiki/Horizontal_coordinate_system    
+type HorizontalCoordinate
+    implements ICoordinate
+{
+    Altitude: Angle;
+    Azimuth: Angle;
+}
+
+// https://en.wikipedia.org/wiki/Geographic_coordinate_system    
+type GeoCoordinate
+    implements ICoordinate
+{
+    Latitude: Angle;
+    Longitude: Angle;
+}
+
+// https://en.wikipedia.org/wiki/Geographic_coordinate_system    
+type GeoCoordinateWithAltitude
+    implements ICoordinate
+{
+    ICoordinate: GeoCoordinate;
+    Altitude: Number;
+}

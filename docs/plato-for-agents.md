@@ -122,9 +122,11 @@ submodules\Plato\tools\export-types-context.bat
 
 ## Rules when editing Plato
 
-1. **`plato-src/` is frozen** until the Phase 4 bug-fix wave (additive new files OK). See [`docs/plato-roadmap.md`](../../../docs/plato-roadmap.md) in the studio repo.
+1. **`plato-src/` is WRITABLE** as of 2026-07-09 (content-leads refactor; the Phase-4 freeze is retired).
+   Edit freely; the frozen pre-refactor snapshot lives in `plato-src-legacy/` (reference only). Plan:
+   [`docs/plato-execution-plan-2026-07-09.md`](../../../docs/plato-execution-plan-2026-07-09.md).
 2. **Do not hand-edit** `ara3d-sdk/src/Plato.Generated/` — regenerate via `regen-plato.ps1`.
-3. **Known bugs are preserved** by policy until Phase 4; see [`docs/plato-library-review.md`](../../../docs/plato-library-review.md).
+3. **Known bugs are being fixed**, tracked in `conformance/.../KnownFailures.json`; see [`docs/plato-library-review.md`](../../../docs/plato-library-review.md).
 4. **Do not touch** `parakeet/` (nested submodule).
 5. Conformance expected result: **142 pass / 36 ignored-known / 0 fail** (`.\tools\check-all.ps1` from studio root).
 

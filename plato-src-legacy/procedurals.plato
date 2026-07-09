@@ -1,0 +1,129 @@
+/*
+    # Procedurals
+
+    The `IProcedural<TDomain, TRange>` interface provides a simple, powerful way to define and transform geometric shapes, patterns, and forms using functions. 
+    These forms can exist in different dimensional spaces and can have different input (domain) and output (range) types.
+
+    Procedurals can describe geometry, areas, volumes, fields, and much more. Procedurals are not strictly restricted to geometric objects, they can also be 
+    used to define functions and fields in a variety of domains. 
+
+    ## Understanding Procedurals
+
+    A procedural is like a mathematical recipe: you give it an input, and it returns a result. 
+    The input is from the "domain," and the output is from the "range."
+
+    - Domain: What kind of inputs the procedural takes (like points on a number line, points on a plane, or points in space).
+    - Range: The output produced by the procedural function.
+
+    # Special Kinds of Procedural
+
+    Procedurals which output boolean values are known as predicates or filters.
+    Procedurals which output numbers are known as scalar fields. Scalar fields with a threshold  
+
+    # Continuous versus Discrete Geometric Forms 
+
+    Continuous geometric forms are defined analytically using a function over one or more real numbers between 0 to 1. 
+    They are smooth and resolution independent, similar to vector graphics. 
+    Some examples include signed distance fields, bezier curves, and NURBS (Non-Uniform Rational B-Splines).
+    Procedurals are excellent for defining continuous geomtric forms. 
+
+    Discrete geometric forms are defined in terms of a discrete (countable) set of primitive forms. For example triangular or quadrilateral meshes, 
+    polygonal chains, or point clouds.    
+
+    ## The Interface
+
+    The IProcedural<TDomain, TRange> interface can define a continuous geometric forms in different dimensional spaces with different dimensional topology. 
+    The domain is the input space, and the range is the output space. The dimension of the domain corresponds with dimension of the topological space.
+
+    For example: 
+
+    - a 2D curve has a domain of 1 dimension, and a range of 2 dimensions.
+    - a 3D curve has a domain of 1 dimension, and a range of 3 dimensions.
+    - a 3D surface has a domain of 2 dimensions, and a range of 3 dimensions.
+
+    Procedurals have a continous input domain, and always output a valid value. The output may or may not be continuous. 
+    A set of operations are available to combine procedurals, such as union, intersection, difference, etc. which 
+    can be used to create very complex shapes. Procedurals can be chained with other functions to modify the input space and the output space,
+    or even change the dimensionalities of the domain and range.
+
+    Some examples of procedurals where the inputs and outputs are defined over Real numbers (Number):
+    - IProcedural<Number, Number> defines a function. Also known as a scalar field.
+    - IProcedural<Number, Vector2> defines a parametric curve in 2D space. 
+    - IProcedural<Number, Vector3> defines a parametric curve in 3D space
+    - IProcedural<Vector2, Number> defines a signed distance field in 2D space. Also known as a distance function, distance map, or distance transform.
+    - IProcedural<Vector2, Vector2> defines a 2D vector field in 2D space. 
+    - IProcedural<Vector2, Vector3> defines a parametric surface in 3D space.
+    - IProcedural<Vector3, Number> defines a signed distance field in 3D space. Also known as a distance function, distance map, or distance transform.
+    - IProcedural<Vector3, Vector2> defines a 2d vector field in 3D space.
+    - IProcedural<Vector3, Vector3> defines a 3D vector field in 3D space.
+
+    Procedurals which output boolean values are known as predicates or filters. 
+    Some examples include: 
+    - IProcedural<Number, Boolean> is as a threshold function. Also known as a step, gate, or indicator function. 
+    - IProcedural<Vector2, Boolean> defines an area in 2D space. Also known as a region, domain, or field.
+    - IProcedural<Vector3, Boolean> defines a parametric volume in 3D space
+  
+    Procedurals may also be defined over an integer input domain. When the domain is an integer, the procedural is effectively an array without bounds.
+    In 3D graphics this corresponds to a texture map or a sampler. Broadly speaking, this is a discrete field.
+
+    Some examples include: 
+    - IProcedural<Integer2, Boolean> defines a black and white texture map. 
+    - IProcedural<Integer2, Number> defines a height map, or gray-scale texture map.
+    - IProcedural<Integer2, Vector3> defines a color texture map (without alpha)
+    - IProcedural<Integer3, Boolean> defines a voxelized discrete volume. Also known as a voxel grid, voxel map, or voxel field.
+    - IProcedural<Integer3, Number> defines a voxelized continous volume.
+    - IProcedural<Integer3, Vector3> defines a voxelized color volume.
+*/
+
+interface IProcedural<TIn, TOut>
+{
+    Eval(x: Self, t: TIn): TOut;
+}
+
+type Procedural<TIn, TOut> 
+{
+    Function: Function1<TIn, TOut>;
+}
+
+library procedurals
+{
+/*
+    Eval(self: Procedural<$TIn, $TOut>, input: $TIn): $TOut
+        => self.Function(input);
+
+    Combine(a: IProcedural<$TIn, $TOut>, b: IProcedural<$TIn, $TOut>, f: Function2<$TOut, $TOut, $TOut>): Procedural<$TIn, $TOut>
+        => new Procedural<$TIn, $TOut>(x => f(a.Eval(x), b.Eval(x)));
+
+    Map(self: IProcedural<$TIn, $TOut>, f: Function1<$TOut, $TOut2>): Procedural<$TIn, $TOut2>
+        => new Procedural<$TIn, $TOut>(x => f(self.Eval(x)));
+
+    MapDomain(self: IProcedural<$TIn, $TOut>, f: Function1<$TIn, $TIn2>): Procedural<$TIn2, $TOut>
+        => new Procedural<$TIn2, $TOut>(x => self.Eval(f(x)));
+
+    Function(self: IProcedural<$TIn, $TOut>): Function1<$TIn, $TOut>
+        => x => self.Eval(x);
+
+    Compose(a: IProcedural<$TIn, $TOut>, b: IProcedural<$TOut, $TOut2>): Procedural<$TIn, $TOut2>
+        => new Procedural<$TIn, $TOut>(x => b.Eval(a.Eval(x)));
+
+    //==
+    // The following operations are defined for procedurals that output a number (scalar field)
+    // NOTE: we could in theory define these for any type that supports arithmetic operations, but adding constraints within functions is not yet supported.
+    // So I would have to make copies of these functions for each type that supports arithmetic operations. 
+
+    Union(a: IProcedural<$TIn, Number>, b: IProcedural<$TIn, Number>): Procedural<$TIn, $TOut>
+        => a.Combine(b, (a, b) => a.Max(b));
+
+    Intersection(a: IProcedural<$TIn, Number>, b: IProcedural<$TIn, Number>): Procedural<$TIn, $TOut>
+        => a.Combine(b, (a, b) => a.Min(b));
+
+    Difference(a: IProcedural<$TIn, Number>, b: IProcedural<$TIn, Number>): Procedural<$TIn, $TOut>
+        => a.Combine(b, (a, b) => a.Max(-b));
+
+    Inverse(a: IProcedural<$TIn, Number>): Procedural<$TIn, Number>
+        => a.Map(x => -x);
+
+    Threshold(a: IProcedural<$TIn, Number>, threshold: Number): Procedural<$TIn, Boolean>
+        => a.Map(x => x >= threshold);
+*/
+}

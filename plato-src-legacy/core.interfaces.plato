@@ -1,0 +1,182 @@
+// https://en.wikipedia.org/wiki/Top_type
+// This is the Top Type in Plato. All types implement this. 
+interface IAny
+{ 
+    Equals(a: Self, b: Self): Boolean;
+}
+
+// A value is a read-only type which has the implicit rule that only Values are members
+// Currently everything is an IValue 
+interface IValue 
+{ 
+}
+
+// The formal term for this is an Abelian group over addition
+interface IAdditive
+{
+    Add(a: Self, b: Self): Self;    
+    Subtract(a: Self, b: Self): Self;    
+    Negative(self: Self): Self;
+}
+
+// Types implementing this interface can be multiplied or divided by a scalar value
+// This includes vectors and measurements
+interface IScalarArithmetic
+{ 
+    Modulo(self: Self, other: Number): Self;    
+    Divide(self: Self, other: Number): Self;    
+    Multiply(self: Self, other: Number): Self;    
+}
+
+// A type which supports linear interpolation. 
+interface IInterpolatable   
+{ 
+    Lerp(a: Self, b: Self, t: Number): Self;
+}
+
+// Support for types that are arrays of values. 
+interface IArrayLike<T>
+{
+    // A static function that returns the dimensionality of the type. 
+    NumComponents(_: Self): Integer;
+
+    // Returns the components of the type as an array
+    Components(x: Self): IArray<T>;
+    
+    // Creates a new instance of the type from an array of values
+    CreateFromComponents(_: Self, xs: IArray<T>): Self;
+
+    // Creates a new instance of the type from a single value, by setting them all. 
+    CreateFromComponent(_: Self, x: T): Self;
+}
+
+// This is a generalization of real number to multiple dimensions, and with or without units of measure.
+// Coordinates, Measurements, and Vectors are all considered IVectorLike types.
+// They do not necessarily support multiplication and division (e.g., Angles and Lengths). 
+// Adding and subtracting them might yield new types (e.g., Points and DateTimes)
+// Closely related to vector space: https://en.wikipedia.org/wiki/Vector_space
+interface IVectorLike
+    inherits IInterpolatable, IScalarArithmetic, IArrayLike<Number>
+{
+}
+
+// A type which can be multiplied by itself
+// Monoid over multiplication
+interface IMultiplicative
+{
+    Multiply(a: Self, b: Self): Self;
+}
+
+// A type which can be divided by itself 
+interface IDivisible
+{ 
+    Divide(a: Self, b: Self): Self;    
+}
+
+// A type which supports modulo arithmetic
+interface IModulo
+{
+    Modulo(a: Self, b: Self): Self;
+}
+
+// Basic arithmetic operators 
+// Technically this is an arithmetic field plus an additional modulo operation
+// https://en.wikipedia.org/wiki/Field_(mathematics)
+// It applies to Numbers and Vectors, but does not include measurements. 
+interface IArithmetic 
+    inherits IAdditive, IMultiplicative, IDivisible, IModulo
+{ 
+}
+
+// A numerical type that has full arithmetic.
+// This includes real numbers, complex numbers, and vectors.
+// It does not include measurements. INumerical types are not necessarily orderable.
+interface INumerical
+    inherits IVectorLike, IArithmetic
+{ }
+
+// A vector supports component-wise arithmetic operations.
+interface IVector 
+    inherits INumerical
+{ }
+
+// The less than function return true if the first value is strictly less than the other. 
+interface IOrderable 
+{
+	LessThanOrEquals(x: Self, y: Self): Boolean;
+}
+
+// IMultiplicative inverse
+interface IInvertible
+{
+    Inverse(self: Self): Self;  
+}
+
+// Represents an Abelian group under multiplication 
+interface IMultiplicativeWithInverse
+    inherits IMultiplicative, IInvertible
+{ }
+
+// Represents a continuous one dimensional value.
+// https://en.wikipedia.org/wiki/Real_float
+// It supports all arithmetic operations.
+// The "Number" type is currently the only example of a IRealNumber
+interface IRealNumber
+    inherits IInterpolatable, IArithmetic, IScalarArithmetic, IOrderable
+{ }
+
+// Used for integer and cardinal types. 
+// They are not considered INumerical types because they are not invertible over multiplication,
+// division is only an approximation. 
+// They do however support arithmetic operations. 
+// Lerp is defined for whole numbers. 
+interface IWholeNumber 
+    inherits IOrderable, IArithmetic, IInterpolatable
+{ }
+
+// A measure is a numeric value with an intrinisic unit of measure. 
+// It resembles an IRealNumber except you cannot multiply or divide two measures without 
+// getting a new type. It does however support addition, negation, and scalar arithmetic
+// We can think of it as a vector with a single component, and as such can be ordered.  
+interface IMeasure
+    inherits IVectorLike, IOrderable
+{ }
+
+// A coordinate is a point in some space (e.g., a cartesian grid). 
+// This also includes a time line, so a DateTime is considered a ICoordinate. 
+interface ICoordinate
+{ }
+
+// When subtracting values gives us a new type (like Point2D gives Vector2)
+interface IDifference<T>
+{
+    Add(x: Self, amount: T): Self;
+    Subtract(x: Self, amount: T): Self;
+    Subtract(x: Self, y: Self): T;
+}
+
+// Basic boolean operations, which are also similar to set operations.  
+interface IBoolean
+{
+    And(a: Self, b: Self): Self;
+    Or(a: Self, b: Self): Self;    
+    Not(a: Self): Self;
+}
+
+// Represents an interval of values. 
+interface IInterval<T>    
+    where T: IVectorLike
+    inherits IValue
+{
+    Start(x: Self): T;
+    End(x: Self): T;
+}
+
+// Represents a range of values. 
+interface IBounds<TValue, TDelta>    
+    where T: IVectorLike, T: IDifference<TDelta>
+    inherits IValue
+{
+    Min(x: Self): TValue;
+    Max(x: Self): TValue;
+}

@@ -1,0 +1,470 @@
+
+//==
+// 2D Transforms
+// See: https://en.wikipedia.org/wiki/Affine_transformation
+
+// Used for types that represent transformations in 2D space
+interface ITransform2D
+{
+    // Returns a 3x2 matrix representation of the transformation. 
+    Matrix(x: Self): Matrix3x2;
+}
+
+// These are transforms that only have a translation and rotation component 
+interface IRigidTransform2D
+    inherits ITransform2D
+{ }
+
+// A translation transformation in 2D space 
+type Translation2D
+    implements IRigidTransform2D
+{
+    Vector: Vector2;
+}
+
+// A uniform scaling transformation in 2D space
+type UniformScale2D
+    implements ITransform2D
+{
+    Amount: Number;
+}
+
+// A scaling transformation in 2D space
+type Scale2D
+    implements ITransform2D
+{
+    Amount: Vector2;
+}
+
+// A scaling transformation in 2D space with an offset
+type OffsetScale2D
+    implements ITransform2D
+{
+    Amount: Vector2;
+    Center: Point2D;
+}
+
+// A rotational transformation in 2D space
+type Rotation2D 
+    implements IRigidTransform2D
+{
+    Angle: Angle;
+}
+
+// A rotational transformation in 2D space
+type OffsetRotation2D 
+    implements IRigidTransform2D
+{
+    Angle: Angle;
+    Center: Point2D;
+}
+
+// A transformation that consists of translation, rotation, and scale
+type TRSTransform2D
+    implements ITransform2D
+{
+    Translation: Translation2D;
+    Rotation: Rotation2D;
+    Scale: Scale2D;
+}
+
+// A rigid transformation consisting of only position and rotation
+type Pose2D
+    implements IRigidTransform2D
+{
+    Translation: Translation2D;
+    Rotation: Rotation2D;
+}
+
+// A 2D reflection transformation 
+type Reflection2D
+    implements ITransform2D
+{ }
+
+// The identity transfom in 2D
+type Identity2D
+    implements IRigidTransform2D
+{ }
+
+// A skew (aka shear) transformation in 2D
+type Skew2D
+    implements ITransform2D
+{ 
+    x: Angle;
+    y: Angle;
+}
+
+// A generic matrix transformation in 2D 
+type Transform2D 
+    implements ITransform2D
+{
+    Matrix: Matrix3x2;
+}
+
+//==
+// 3D Transforms 
+
+// Used for types that represent transformations in 3D space
+interface ITransform3D
+{
+    // Returns a 4x4 matrix representation of the transformation. 
+    Matrix(x: Self): Matrix4x4;
+}
+
+// Rigid transforms have only a translation and/or a rotational component.
+// Working with rigid transforms only is easier, less error-prone, and more efficient. 
+interface IRigidTransform3D 
+    inherits ITransform3D
+{
+}
+
+// Rotational transforms have only a rotational component.
+// They can always be converted into a Quaternion.
+// They are also rigid transforms because they have no translation
+interface IRotation3D
+    inherits IRigidTransform3D
+{
+    Quaternion(x: Self): Quaternion;
+}
+
+// The transform which does not change anything 
+type IdentityTransform3D
+    implements IRotation3D
+{
+}
+
+// An affine transform expressed by a 4x4 matrix.
+// There are no assurances made that the matrix is affine. 
+type Transform3D
+    implements ITransform3D
+{
+    Matrix: Matrix4x4;
+}
+
+// A rigid transform with no rotational component. 
+type Translation3D
+    implements IRigidTransform3D
+{
+    Vector: Vector3;
+}
+
+// A rigid transform wit no translational component
+type Rotation3D
+    implements IRotation3D
+{
+    Quaternion: Quaternion;
+}
+
+// A rotational transform expressed by a forward direction  
+type LookDirection3D
+    implements IRotation3D
+{
+    Direction: Vector3;
+}
+
+// A rotational transform expressed by a position a target 
+type LookAt3D
+    implements IRotation3D
+{
+    Origin: Point3D;
+    Target: Point3D;
+}
+
+// A scaling transform: non-rigid 
+type Scaling3D
+    implements ITransform3D
+{
+    Amount: Vector3;
+}
+
+// A transform that applies, translation, rotation, and scale, in that order 
+type TRSTransform3D
+    implements ITransform3D
+{
+    Translation: Translation3D;
+    Rotation: Rotation3D;
+    Scale: Scaling3D;
+}
+
+// Translates and rotates, but does not scale. Also known as a Rigid Body Transform. 
+type Pose3D
+    implements IRigidTransform3D
+{
+    Translation: Translation3D;
+    Rotation: Rotation3D;
+}
+
+// A rotational transform expressed by an angle and an axis
+type AxisAngle
+    implements IRotation3D
+{
+    Axis: Vector3;
+    Angle: Angle;
+}
+
+// A rotational transform expressed by three rotational components: yaw (left-right), pitch (up-down), and roll (around the forward axis).  
+type YawPitchRoll
+    implements IRotation3D
+{
+    Yaw: Angle;
+    Pitch: Angle;
+    Roll: Angle;
+}
+
+// A rotational transform expressed by only two rotation components: yaw (left-right) and pitch (up-down). Useful for cameras.  
+type YawPitch
+    implements IRotation3D
+{
+    Yaw: Angle;
+    Pitch: Angle;
+}
+
+// A perspective view transform 
+type Perspective3D
+    implements ITransform3D
+{
+    FOV: Angle;
+    AspectRatio: Number;
+    Near: Number;
+    Far: Number;
+}
+
+// An orthographic view transform 
+type Orthographic3D
+    implements ITransform3D
+{
+    Width: Number;
+    Height: Number;
+    Near: Number;
+    Far: Number;
+}
+
+// A frame of reference for a moving particle
+// https://en.wikipedia.org/wiki/Frenet%E2%80%93Serret_formulas
+type FrenetFrame
+{
+    Origin: Point3D;
+    Tangent: Vector3;
+    Normal: Vector3;
+    Binormal: Vector3;
+}
+
+// A transform for projecting points onto a plane, e.g., for shadows.  
+type PlaneProjection3D
+    implements ITransform3D
+{
+    Direction: Vector3;
+    Plane: Plane;
+}
+
+library Transforms
+{            
+    //==
+    // Operator overloading
+
+    Multiply(x: ITransform3D, v: Point3D): Point3D
+        => x.TransformPoint(v);
+
+    Multiply(x: ITransform3D, v: Vector3): Vector3
+        => x.TransformNormal(v);
+
+    Multiply(x: ITransform3D, m: Matrix4x4): Transform3D
+        => x.Compose(m);
+
+    //==
+    // General ITransform3D helpers
+
+    // Every Transform class provides a Matrix
+    Transform3D(x: ITransform3D): Transform3D
+        => x.Matrix;
+
+    // Transforms a point 
+    TransformPoint(x: ITransform3D, v: Point3D): Point3D
+        => v.Vector3.Transform(x.Matrix);
+    
+    // Transforms a normal vector 
+    TransformNormal(x: ITransform3D, v: Vector3): Vector3
+        => v.TransformNormal(x.Matrix);
+
+    // Assures that every transform can be implicitly converted into a Matrix4x4 
+    Matrix4x4(t: ITransform3D): Matrix4x4
+		=> t.Matrix;
+
+    // Any 3D transform can be trivially inverted 
+    Invert(t: ITransform3D): Transform3D
+        => t.Matrix.Invert;
+
+    // Two 3D transforms can be combined (composed) into one via matrix multiplication
+    Compose(t: ITransform3D, m: Matrix4x4): Transform3D
+        => t.Matrix * m;
+  
+    //==
+    // General IRotation3D helpers
+
+    Matrix(r: IRotation3D): Matrix4x4
+        => r.Quaternion.Matrix;
+
+    //==
+    // IdentityTransform3D
+
+    Matrix(t: IdentityTransform3D): Matrix4x4
+		=> Matrix4x4.Identity;
+
+    // A constant representing the identity transform
+    Identity3D(): IdentityTransform3D
+        => new IdentityTransform3D();
+    
+    //==
+    // Translation3D functions
+
+    // Get the matrix from the 3D translation
+    Matrix(t: Translation3D): Matrix4x4
+        => Matrix4x4.CreateTranslation(t.Vector);
+        
+    // An identity translation is a zero vector
+    Identity(_: Translation3D): Translation3D
+        => Zero3;
+
+    TranslationX(x: Number): Translation3D
+        => x.XVector3;
+
+    TranslationY(x: Number): Translation3D
+        => x.YVector3;
+
+    TranslationZ(x: Number): Translation3D
+        => x.ZVector3;
+    
+    //==
+    // Transform3D
+    
+    // The identity matrix 
+    Identity(_: Transform3D): Transform3D
+        => Matrix4x4.Identity;
+
+    //==
+    // Rotation3D
+
+    // Implictly converts a Rotation3D into a Quaternion
+    Quaternion(r: Rotation3D): Quaternion
+        => r.Quaternion;
+
+    // Creates the identity rotation
+    Identity(_: Rotation3D): Rotation3D
+        => Quaternion.Identity;
+
+    //==
+    // LookDirection3D
+
+    Matrix(r: LookDirection3D): Matrix4x4
+        => Matrix4x4.CreateWorld(0.0, r.Direction, ZAxis3D);
+
+    Identity(_: LookDirection3D): LookDirection3D
+        => Vector3.UnitY;        
+        
+    //==
+    // LookAt3D
+
+    Matrix(r: LookAt3D): Matrix4x4
+        => Matrix4x4.CreateWorld(0.0, r.Forward, ZAxis3D);
+
+    Identity(_: LookAt3D): LookAt3D
+        => (Origin3D, YAxis3D);        
+
+    LookAt(from: Point3D, target: Point3D): LookAt3D
+        => (from, target);
+
+    Forward(self: LookAt3D): Vector3
+        => (self.Target - self.Origin).Normalize;
+
+    //==
+    // Scaling3D
+
+    Matrix(s: Scaling3D): Matrix4x4
+        => Matrix4x4.CreateScale(s.Amount.X, s.Amount.Y, s.Amount.Z);           
+
+    UniformScaling3D(x: Number): Scaling3D
+        => new Vector3(x);
+
+    Identity(_: Scaling3D): Scaling3D
+        => Vector3.One;
+
+    //==
+    // TRSTransform3D
+
+	Matrix(t: TRSTransform3D): Matrix4x4
+		=> (t.Translation * t.Rotation) * t.Scale.Matrix;
+
+    Identity(_: TRSTransform3D): TRSTransform3D
+        => (Translation3D.Identity, Rotation3D.Identity, Scaling3D.Identity);
+
+    //==
+    // Pose3D
+
+    Matrix(p: Pose3D): Matrix4x4
+        => p.Translation.Matrix * p.Rotation.Matrix;
+
+    Identity(_: Pose3D): Pose3D
+        => (Translation3D.Identity, Rotation3D.Identity);
+    
+    //==
+    // Axis Angle
+
+    Quaternion(aa: AxisAngle): Quaternion
+	    => Quaternion.CreateFromAxisAngle(aa.Axis, aa.Angle);
+
+    // Creates a rotation by rotating around an axis by a given angle
+    Rotation(axis: Vector3, a: Angle): AxisAngle
+        => (axis, a);
+    
+    // Creates a rotation by rotating around the X axis by a given angle
+    RotateX(a: Angle): AxisAngle
+        => (XAxis3D, a);
+
+    // Creates a rotation by rotating around the Y by a given angle
+    RotateY(a: Angle): AxisAngle
+        => (YAxis3D, a);
+
+    // Creates a rotation by rotating around the Z by a given angle
+    RotateZ(a: Angle): AxisAngle
+        => (ZAxis3D, a);  
+
+    // The default axis angle is a rotation of 0 degrees around the Z axis
+    Identity(_: AxisAngle): AxisAngle
+        => (ZAxis3D, 0.0);
+
+    //==
+    // Yaw Pitch Roll
+
+    Quaternion(e: YawPitchRoll): Quaternion
+        => Quaternion.CreateFromYawPitchRoll(e.Yaw, e.Pitch, e.Roll);
+
+    Identity(_: YawPitchRoll): YawPitchRoll
+        => (0.0, 0.0, 0.0);
+
+    //==
+    // Yaw Pitch 
+
+    Quaternion(e: YawPitch): Quaternion
+        => Quaternion.CreateFromYawPitchRoll(e.Yaw, e.Pitch, 0.0);
+
+    Identity(_: YawPitch): YawPitch
+        => (0.0, 0.0);
+
+    //==
+    // Perspective3D
+
+    Matrix(p: Perspective3D): Matrix4x4
+        => Matrix4x4.CreatePerspectiveFieldOfView(p.FOV.Radians, p.AspectRatio, p.Near, p.Far);
+
+    //==
+    // Orthographic3D
+
+    Matrix(o: Orthographic3D): Matrix4x4
+        => Matrix4x4.CreateOrthographic(o.Width, o.Height, o.Near, o.Far);
+
+    //==
+    // Plane projection
+
+    Matrix(pp: PlaneProjection3D): Matrix4x4
+        => Matrix4x4.CreateShadow(pp.Direction, pp.Plane);
+}
