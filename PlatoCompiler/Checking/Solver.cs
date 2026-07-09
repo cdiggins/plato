@@ -152,10 +152,24 @@ namespace Ara3D.Geometry.Compiler.Checking
 
         private void CommitCandidate(Candidate cand, IReadOnlyList<TypeExpression> args, OverloadConstraint oc)
         {
-            // Re-run the matches on the real substitution to bind generic/concept variables, then
-            // unify the call's result with the (possibly refined) return type.
+            // Re-run the matches on the real substitution to bind generic/concept variables.
             for (var i = 0; i < args.Count; i++)
                 MatchArg(args[i], cand.Ps[i], cand, Substitution);
+
+            // Refine the element types of generic concept parameters from the concrete argument
+            // (List<Number> : IArray<$T> => $T = Number). Best-effort and post-commit: it only
+            // sharpens the result type and never rejects the already-chosen overload.
+            for (var i = 0; i < args.Count; i++)
+            {
+                var p = cand.Ps[i];
+                if (p != null && IsVar(p) && cand.ConceptOf.TryGetValue(p.Name, out var concept))
+                {
+                    var direct = DirectInstance(Zonk(args[i], Substitution), concept.Def);
+                    if (direct != null)
+                        BindBestEffort(concept, direct, Substitution);
+                }
+            }
+
             Unify(oc.Result, cand.Ret, Substitution, oc.Origin, record: true);
         }
 
@@ -171,8 +185,11 @@ namespace Ara3D.Geometry.Compiler.Checking
             // A concept parameter: the argument must implement the interface (or convert to it).
             if (IsVar(param) && cand.ConceptOf.TryGetValue(param.Name, out var concept))
             {
-                if (Implements(argType, concept))
+                if (argType.IsImplementing(concept))
                 {
+                    // Only decide viability + Self here. Element-type refinement (binding $T from
+                    // List<Number> : IArray<$T>) happens post-commit so it can never change which
+                    // overload is chosen — see CommitCandidate.
                     Unify(param, argType, sub, null, record: false); // Self: bind the concept var to the concrete arg
                     return (true, ConceptCost);
                 }
@@ -191,8 +208,42 @@ namespace Ara3D.Geometry.Compiler.Checking
             return (false, 0);
         }
 
-        private static bool Implements(TypeExpression argType, TypeExpression concept)
-            => argType.IsImplementing(concept);
+        /// <summary>
+        /// The instance of <paramref name="conceptDef"/> the argument implements *directly* (as itself,
+        /// or via a one-level Implements/Inherits clause), with the argument's type arguments
+        /// substituted in — e.g. List&lt;Number&gt; : IArray&lt;T&gt; yields IArray&lt;Number&gt;. Returns null
+        /// for purely transitive implementations, where a one-level substitution would be incomplete.
+        /// </summary>
+        private TypeExpression DirectInstance(TypeExpression argType, TypeDef conceptDef)
+        {
+            if (argType.Def.Name == conceptDef.Name)
+                return argType;
+            var map = BuildParamSubstitution(argType);
+            foreach (var impl in argType.Def.Implements.Concat(argType.Def.Inherits))
+                if (impl?.Def != null && impl.Def.Name == conceptDef.Name)
+                    return Substitute(impl, map);
+            return null;
+        }
+
+        /// <summary>Unify on a scratch copy and adopt the bindings only if it fully succeeds, so a
+        /// partial/failed match never leaves spurious bindings or rejects the candidate.</summary>
+        private void BindBestEffort(TypeExpression a, TypeExpression b, Dictionary<string, TypeExpression> sub)
+        {
+            var scratch = new Dictionary<string, TypeExpression>(sub);
+            if (Unify(a, b, scratch, null, record: false))
+                foreach (var kv in scratch)
+                    sub[kv.Key] = kv.Value;
+        }
+
+        /// <summary>Map a type's declared parameters to its actual arguments (List's T -&gt; Number).</summary>
+        private static Dictionary<string, TypeExpression> BuildParamSubstitution(TypeExpression t)
+        {
+            var map = new Dictionary<string, TypeExpression>();
+            var tps = t.Def.TypeParameters;
+            for (var i = 0; i < tps.Count && i < t.TypeArgs.Count; i++)
+                map[tps[i].Name] = t.TypeArgs[i];
+            return map;
+        }
 
         private bool HasConversion(TypeExpression from, TypeExpression to)
         {

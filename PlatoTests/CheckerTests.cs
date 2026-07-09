@@ -220,5 +220,27 @@ namespace PlatoTests
             Assert.IsTrue(s.Succeeded);
             Assert.AreEqual("Number", s.Zonk(result).ToString());
         }
+
+        [Test]
+        public static void GenericConceptBindsElementType()
+        {
+            // IArray<T> concept; List<T> implements IArray<T>; candidate First(xs: IArray<$E>): $E.
+            var iarrayDef = new TypeDef(null, TypeKind.Interface, "IArray");
+            iarrayDef.TypeParameters.Add(new TypeParameterDef(null, "T"));
+
+            var listDef = new TypeDef(null, TypeKind.ConcreteType, "List");
+            var listTP = new TypeParameterDef(null, "T");
+            listDef.TypeParameters.Add(listTP);
+            listDef.Implements.Add(new TypeExpression(iarrayDef, new TypeExpression(listTP)));
+
+            var listOfNumber = new TypeExpression(listDef, T("Number"));
+            var elem = Var("E");
+            var first = Func("First", elem, new TypeExpression(iarrayDef, elem)); // First(IArray<$E>): $E
+
+            var (s, result) = SolveCall("First", new[] { listOfNumber }, first);
+            Assert.IsTrue(s.Succeeded);
+            Assert.AreEqual("Number", s.Zonk(result).ToString(),
+                "the element type $E should be inferred as Number from List<Number> : IArray<Number>");
+        }
     }
 }

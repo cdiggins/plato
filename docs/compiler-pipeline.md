@@ -156,15 +156,18 @@ Consumes the constraint system and produces a substitution plus located diagnost
 ### Scope
 
 The solver handles exact/generic unification, concept (interface) satisfaction with Self-style
-return refinement, and implicit casts. At the time of writing it fully resolves **246 of 823**
-stdlib function bodies with zero errors (the `SolverResolvesSomeStdLibFunctionsCleanly` test prints
-the live figure); the remainder are *reported*, never crashed.
+return refinement, implicit casts, and **generic-concept element inference** — when an argument
+directly implements a generic interface (`List<Number>` against `IArray<$T>`), the element variable
+binds (`$T = Number`). Element inference runs **post-commit and best-effort**: it only sharpens the
+result type, and never changes which overload was chosen, so it cannot introduce a false mismatch on
+a type variable shared with another parameter. It fully resolves **246 of 823** stdlib function
+bodies with zero errors (the `SolverResolvesSomeStdLibFunctionsCleanly` test prints the live figure);
+the remainder are *reported*, never crashed.
 
-The main remaining gap is **generic-concept element inference** — binding the element type when an
-argument implements a *generic* interface (e.g. matching `List<Number>` against `IArray<$T>` so `$T`
-becomes `Number`); today such a match succeeds but can leave the element type under-determined.
-After that comes the **elaborate → monomorphize → emit** retargeting that lets the writers consume a
-fully-typed IR and drop their emit-time heuristics.
+Remaining: element inference through *transitive* (multi-level) concept chains is best-effort — a
+one-level substitution can leave it under-determined — and the larger **elaborate → monomorphize →
+emit** retargeting (letting the writers consume a fully-typed IR and drop their emit-time
+heuristics) is still ahead.
 
 ## Orchestration and use
 
