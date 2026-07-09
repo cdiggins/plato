@@ -1,0 +1,15 @@
+// IMeasure obligations for concrete measure types.
+//
+// Time is the only concrete IMeasure declared in plato-src (Angle is an intrinsic
+// with its own runtime). IMeasure inherits IScalarArithmetic (Multiply/Divide/
+// Modulo by a Number) and IOrderable (LessThanOrEquals). Those have no generic
+// IVectorLike implementation (a generic one would collide with the intrinsic
+// vector operators), so each concrete measure supplies them here. Without these,
+// the compiler emits throwing stubs for the unfulfilled obligations.
+library Measures
+{
+    Multiply(x: Time, s: Number): Time => new Time(x.Seconds * s);
+    Divide(x: Time, s: Number): Time => new Time(x.Seconds / s);
+    Modulo(x: Time, s: Number): Time => new Time(x.Seconds.Modulo(s));
+    LessThanOrEquals(a: Time, b: Time): Boolean => a.Seconds <= b.Seconds;
+}

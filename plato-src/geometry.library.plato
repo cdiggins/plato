@@ -12,6 +12,7 @@ library Geometry
     RayTo(a: Point2D, b: Point2D): Ray2D => (a, b - a);
     RayFrom(a: Point2D, dir: Vector2): Ray2D => (a, dir);
     Subtract(p1: Point2D, p2: Point2D): Vector2 => p1.Vector2 - p2.Vector2;
+    Subtract(p: Point2D, v: Vector2): Point2D => p.Vector2 - v;
     Add(p1: Point2D, p2: Vector2): Point2D => p1.Vector2 + p2;
     Add(p1: Point2D, p2: Point2D): Point2D => p1.Vector2 + p2.Vector2;
     Multiply(a: Point2D, n: Number): Point2D => (a.X * n, a.Y * n);

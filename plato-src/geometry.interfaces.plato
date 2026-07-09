@@ -213,7 +213,7 @@ interface IPrimitiveGeometry2D<T>
 
 // 3D Primitive geometry 
 interface IPrimitiveGeometry3D<PrimitiveT>
-    where T: IGeometricPrimitive3D
+    where PrimitiveT: IGeometricPrimitive3D
     inherits IGeometry3D
 {
     Primitives(x: Self): IArray<PrimitiveT>;

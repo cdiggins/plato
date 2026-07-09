@@ -6,38 +6,9 @@
     "content-leads bug burn-down: when a fix lands, REMOVE its entry in the same change, else the",
     "runner fails the still-listed entry with 'remove from manifest'.",
     "Schema: test = Law_*/Witness_* member name; type = generated type carrying the law (omit for witnesses).",
-    "Remaining: the 5 Time laws (unfulfilled IMeasure obligations) pending the Time arithmetic fix."
+    "EMPTY: the full 36-entry bug burn-down has landed. Add an entry only to quarantine a NEW",
+    "known failure while its fix is pending."
   ],
   "knownFailures": [
-    {
-      "test": "Law_OrderIsTotal",
-      "type": "Time",
-      "reason": "Generated Time.LessThanOrEquals is a throwing stub: IMeasure requires IOrderable but no implementation exists for Time (unfulfilled interface obligation, silently accepted).",
-      "reference": "plato-library-review.md §2.1 check 1 (cf. §1.8); discovered by Phase 1 harness"
-    },
-    {
-      "test": "Law_LesserNotGreaterThanGreater",
-      "type": "Time",
-      "reason": "Generated Time.LessThanOrEquals is a throwing stub (unfulfilled IOrderable obligation).",
-      "reference": "plato-library-review.md §2.1 check 1 (cf. §1.8); discovered by Phase 1 harness"
-    },
-    {
-      "test": "Law_ScaleByOneIsIdentity",
-      "type": "Time",
-      "reason": "Generated Time.Multiply(Number) is a throwing stub: IMeasure requires IScalarArithmetic but Multiply/Divide/Modulo are unimplemented for Time.",
-      "reference": "plato-library-review.md §2.1 check 1 (cf. §1.8); discovered by Phase 1 harness"
-    },
-    {
-      "test": "Law_TwiceThenHalfIsIdentity",
-      "type": "Time",
-      "reason": "Generated Time.Multiply(Number)/Divide(Number) are throwing stubs (unfulfilled IScalarArithmetic obligation).",
-      "reference": "plato-library-review.md §2.1 check 1 (cf. §1.8); discovered by Phase 1 harness"
-    },
-    {
-      "test": "Law_MagnitudeIsHomogeneous",
-      "type": "Time",
-      "reason": "Law body multiplies by a scalar; generated Time.Multiply(Number) is a throwing stub (unfulfilled IScalarArithmetic obligation).",
-      "reference": "plato-library-review.md §2.1 check 1 (cf. §1.8); discovered by Phase 1 harness"
-    }
   ]
 }
