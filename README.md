@@ -127,13 +127,43 @@ Plato was designed before coding agents were the norm, but its architecture is a
 
 As agents write more of the world's code, the premium shifts from languages that are easy to write toward languages that are dense to read, cheap to verify, and safe to regenerate from. That is the niche Plato occupies.
 
+## Compiler pipeline
+
+A `.plato` file becomes generated code through a series of intermediate representations, each
+produced by a single pass. The full internals guide is
+[`docs/compiler-pipeline.md`](docs/compiler-pipeline.md); the shape is:
+
+```
+source → AST → Symbol graph → Normalize → Constrain → Solve → ⟨elaborate → monomorphize → emit⟩
+```
+
+- **AST** (`Plato.AST`) — syntax with source spans. Operators, member access (`a.b`), UFCS
+  (`a.b(c)`), and indexers are already lowered here: `a + b` is `Add(a, b)`, `a.Magnitude` is a
+  receiver-first call.
+- **Symbol graph** (`PlatoCompiler/Symbols`) — names resolved to definitions, scopes established,
+  nominal `TypeExpression`s in place. Calls still point at whole overload *groups*; expression types
+  are not yet resolved.
+- **Normalize** (`PlatoCompiler/Checking/Normalizer`) — canonicalizes the symbol graph for the
+  checker (strips residual parentheses, eta-expands first-class function references into lambdas) and
+  guarantees a small set of invariants. Behavior-preserving and idempotent.
+- **Constrain** (`…/ConstraintGenerator`) — bidirectional walk that assigns a type variable to every
+  expression and emits equality and overload constraints.
+- **Solve** (`…/Solver`) — nominal unification with an occurs check and deferred-commitment overload
+  resolution. It is *total*: a clash, no-match, or ambiguity becomes a **located diagnostic** that
+  points at the offending expression, instead of surfacing later as an error in generated C#.
+
+The last three passes are new and currently run in **shadow mode** — they compute a fully-typed,
+diagnosed view of every function but do not yet feed code generation, so the production emitter's
+byte-for-byte output is unchanged. Implicit conversions, concept-constraint satisfaction, and the
+elaboration that lets the backends consume a fully-typed IR are the next increments.
+
 ## Status
 
 The language design is stabilizing after a few years of iteration. The Plato-to-C# compiler is in daily production use: it generates the geometry library consumed by the [Ara 3D SDK](https://github.com/ara3d/ara3d-sdk) (`ara3d-sdk/src/Plato.Generated` when built inside the [Ara 3D studio](https://github.com/ara3d/studio) monorepo). Honest caveats:
 
 - The C# backend is production; the TypeScript and Rust backends are working proofs of concept — they compile a curated demo library and pass a shared conformance suite (see the [live demos](https://cdiggins.github.io/plato/)), but haven't consumed the full standard library yet.
 - The compiler builds standalone in this repository; the studio monorepo consumes it via `submodules/Plato`.
-- Type errors currently surface through the C# compiler against generated code. A native type checker is the top roadmap item.
+- Type errors still ultimately surface through the C# compiler against generated code, but a native type-checker front-end (normalize → constrain → solve, with located diagnostics) now runs in shadow mode over the standard library; wiring it into the pipeline is in progress. See [`docs/compiler-pipeline.md`](docs/compiler-pipeline.md).
 - A visual data-flow syntax (**PlatoFlow**) is under development.
 
 The compiler is open source and was built alongside the [Parakeet parsing library](https://github.com/ara3d/parakeet).

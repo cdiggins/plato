@@ -161,6 +161,33 @@ namespace Ara3D.Geometry.Compiler
         public IDictionary<FunctionDef, FunctionAnalysis> FunctionAnalyses { get; } = new Dictionary<FunctionDef, FunctionAnalysis>();
         public IDictionary<FunctionCall, FunctionGroupCallAnalysis> FunctionGroupCallAnalyses { get; } = new Dictionary<FunctionCall, FunctionGroupCallAnalysis>();
 
+        // Normalized (canonical) form of every function body, produced by Checking.Normalizer.
+        // This is an ADDITIVE artifact consumed by the type-checker passes (constrain/solve).
+        // It is computed lazily and is NOT read by any code-generation backend, so generated
+        // output stays byte-identical. See docs "Compiler pipeline" section in the README.
+        private Dictionary<FunctionDef, FunctionDef> _normalizedFunctions;
+
+        public IReadOnlyDictionary<FunctionDef, FunctionDef> NormalizedFunctions
+        {
+            get
+            {
+                if (_normalizedFunctions == null)
+                {
+                    var normalizer = new Checking.Normalizer();
+                    _normalizedFunctions = new Dictionary<FunctionDef, FunctionDef>();
+                    foreach (var fd in FunctionDefinitions ?? Enumerable.Empty<FunctionDef>())
+                        _normalizedFunctions[fd] = normalizer.NormalizeFunction(fd);
+                }
+                return _normalizedFunctions;
+            }
+        }
+
+        /// <summary>The normalized body of a function (falls back to normalizing on demand).</summary>
+        public FunctionDef GetNormalizedFunction(FunctionDef fd)
+            => NormalizedFunctions.TryGetValue(fd, out var n)
+                ? n
+                : new Checking.Normalizer().NormalizeFunction(fd);
+
         public IEnumerable<ReifiedFunction> ReifiedFunctions =>
             ReifiedFunctionsByName.SelectMany(kv => kv.Value);
 

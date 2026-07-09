@@ -17,6 +17,9 @@
   <ItemGroup>
     <ProjectReference Include="..\PlatoCompiler\Plato.Compiler.csproj" />
     <ProjectReference Include="..\PlatoTypeInference\PlatoTypeInference.csproj" />
+    <!-- Parser + utils, so checker tests can build a Compilation from real .plato source. -->
+    <ProjectReference Include="..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
+    <ProjectReference Include="..\..\..\ara3d-sdk\src\Ara3D.Utils\Ara3D.Utils.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="output\" />
