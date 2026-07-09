@@ -1,5 +1,22 @@
 # Plato Standard Library Recommendations
 
+> ⚠️ **NOT A SOURCE OF TRUTH — AI-GENERATED SUGGESTIONS.**
+> This document is the output of a conversation with an AI model. It is an
+> idea bank, not authoritative direction. Some of its suggestions are useful,
+> some are speculative, and at least one directly contradicts another Plato
+> design doc (it recommends `Amount` for the lerp parameter, whereas
+> [`naming-fraction-and-rational-types.md`](naming-fraction-and-rational-types.md)
+> argues against `Amount` — the name is already taken by scale factors — and
+> recommends `Fraction`). Treat every recommendation here as a proposal to be
+> weighed, not a decision that has been made.
+>
+> **The actual sources of truth are:** the guiding vision in
+> [`plato-overview.md`](plato-overview.md) (author-written), the execution
+> status and decisions in [`../../../docs/plato-roadmap.md`](../../../docs/plato-roadmap.md),
+> the *verified* bug catalog in [`../../../docs/plato-library-review.md`](../../../docs/plato-library-review.md),
+> and the Plato source itself (`plato-src/`). When this doc conflicts with any
+> of those, they win.
+
 These are the highest-leverage recommendations for evolving the Plato standard
 library. The main design assumption is that the generated C# library is the
 primary user-facing surface, with TypeScript and Rust following the same semantic

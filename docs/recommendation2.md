@@ -1,3 +1,22 @@
+# Plato Type & Concept Surface Review (AI-generated)
+
+> ⚠️ **NOT A SOURCE OF TRUTH — AI-GENERATED SUGGESTIONS.**
+> This document is the output of a conversation with an AI model reviewing the
+> exported type/concept surface. It is an idea bank, not authoritative
+> direction. It mixes genuinely-verified defects (e.g. the `IBounds` /
+> `IPrimitiveGeometry3D` broken constraints, which the linter independently
+> confirms) with speculative type/concept additions that have not been
+> decided. Weigh each suggestion; do not treat any of it as committed.
+>
+> **The actual sources of truth are:** the guiding vision in
+> [`plato-overview.md`](plato-overview.md) (author-written), the execution
+> status and decisions in [`../../../docs/plato-roadmap.md`](../../../docs/plato-roadmap.md),
+> the *verified* bug catalog in [`../../../docs/plato-library-review.md`](../../../docs/plato-library-review.md),
+> and the Plato source itself (`plato-src/`). When this doc conflicts with any
+> of those, they win.
+
+---
+
 I've reviewed the exported type/concept surface, cross-checked suspicious declarations against `plato-src`, and read the companion docs (`docs/plato-library-roadmap-ideas.md` already covers *function-level* content like SDF catalogs and noise, so this review focuses on the **type and concept surface itself** — what the export actually shows). Here's my assessment.
 
 ## Overall
