@@ -1,73 +1,14 @@
 {
   "_comment": [
     "Known-failures manifest for the Plato conformance suite (docs/plato-roadmap.md Phase 1.5).",
-    "Each entry quarantines one (law-or-witness, type) pair that fails against the FROZEN library.",
+    "Each entry quarantines one (law-or-witness, type) pair that fails against the library.",
     "References point into docs/plato-library-review.md. This file is the work queue for the",
-    "Phase 4 bug-fix wave: when a fix lands, the runner fails the still-listed entry with",
-    "'remove from manifest', flipping it back into an enforced test.",
-    "Schema: test = Law_*/Witness_* member name; type = generated type carrying the law (omit for witnesses)."
+    "content-leads bug burn-down: when a fix lands, REMOVE its entry in the same change, else the",
+    "runner fails the still-listed entry with 'remove from manifest'.",
+    "Schema: test = Law_*/Witness_* member name; type = generated type carrying the law (omit for witnesses).",
+    "Remaining: the 5 Time laws (unfulfilled IMeasure obligations) pending the Time arithmetic fix."
   ],
   "knownFailures": [
-    {
-      "test": "Law_MagnitudeEqualsLength",
-      "type": "Vector2",
-      "reason": "MagnitudeSquared divides by component count; intrinsic Length is correct, so Magnitude = Length/sqrt(2).",
-      "reference": "plato-library-review.md §1.1 MagnitudeSquared"
-    },
-    {
-      "test": "Law_MagnitudeEqualsLength",
-      "type": "Vector3",
-      "reason": "MagnitudeSquared divides by component count; intrinsic Length is correct, so Magnitude = Length/sqrt(3).",
-      "reference": "plato-library-review.md §1.1 MagnitudeSquared"
-    },
-    {
-      "test": "Law_MagnitudeEqualsLength",
-      "type": "Vector4",
-      "reason": "MagnitudeSquared divides by component count; intrinsic Length is correct, so Magnitude = Length/2.",
-      "reference": "plato-library-review.md §1.1 MagnitudeSquared"
-    },
-    {
-      "test": "Law_MagnitudeSquaredEqualsLengthSquared",
-      "type": "Vector2",
-      "reason": "MagnitudeSquared = SumSqrComponents/2 vs intrinsic LengthSquared = SumSqrComponents.",
-      "reference": "plato-library-review.md §1.1 MagnitudeSquared"
-    },
-    {
-      "test": "Law_MagnitudeSquaredEqualsLengthSquared",
-      "type": "Vector3",
-      "reason": "MagnitudeSquared = SumSqrComponents/3 vs intrinsic LengthSquared = SumSqrComponents.",
-      "reference": "plato-library-review.md §1.1 MagnitudeSquared"
-    },
-    {
-      "test": "Law_MagnitudeSquaredEqualsLengthSquared",
-      "type": "Vector4",
-      "reason": "MagnitudeSquared = SumSqrComponents/4 vs intrinsic LengthSquared = SumSqrComponents.",
-      "reference": "plato-library-review.md §1.1 MagnitudeSquared"
-    },
-    {
-      "test": "Law_DotWithSelfIsMagnitudeSquared",
-      "type": "Vector2",
-      "reason": "Intrinsic Dot(v,v) = SumSqrComponents but MagnitudeSquared divides by component count.",
-      "reference": "plato-library-review.md §1.1 MagnitudeSquared"
-    },
-    {
-      "test": "Law_DotWithSelfIsMagnitudeSquared",
-      "type": "Vector3",
-      "reason": "Intrinsic Dot(v,v) = SumSqrComponents but MagnitudeSquared divides by component count.",
-      "reference": "plato-library-review.md §1.1 MagnitudeSquared"
-    },
-    {
-      "test": "Law_DotWithSelfIsMagnitudeSquared",
-      "type": "Vector4",
-      "reason": "Intrinsic Dot(v,v) = SumSqrComponents but MagnitudeSquared divides by component count.",
-      "reference": "plato-library-review.md §1.1 MagnitudeSquared"
-    },
-    {
-      "test": "Law_DotWithSelfIsMagnitudeSquared",
-      "type": "Vector8",
-      "reason": "Intrinsic Dot(v,v) = SumSqrComponents but MagnitudeSquared divides by component count (8).",
-      "reference": "plato-library-review.md §1.1 MagnitudeSquared"
-    },
     {
       "test": "Law_OrderIsTotal",
       "type": "Time",
@@ -97,86 +38,6 @@
       "type": "Time",
       "reason": "Law body multiplies by a scalar; generated Time.Multiply(Number) is a throwing stub (unfulfilled IScalarArithmetic obligation).",
       "reference": "plato-library-review.md §2.1 check 1 (cf. §1.8); discovered by Phase 1 harness"
-    },
-    {
-      "test": "Witness_ArcMinutes60IsOneDegree",
-      "reason": "ArcMinutes/ArcSeconds conversion factors are inverted (angles.plato:12-13 multiply by 60 instead of dividing): 60 arcminutes evaluates to 3600 degrees. NOT in review §1 — new bug found by this harness.",
-      "reference": "plato-library-review.md §1.3 (angles family); discovered by Phase 1 harness"
-    },
-    {
-      "test": "Witness_Triangle2DAreaCCWIsPositive",
-      "reason": "Area(Triangle2D) shoelace terms are transposed (geometry.library.plato:80 uses C.Y-B.Y etc.), negating the signed area: the CCW triangle (0,0),(1,0),(0,1) yields -0.5. Magnitude is correct. NOT in review §1 — found by this harness.",
-      "reference": "plato-library-review.md §1.6 (Triangle2D family); discovered by Phase 1 harness"
-    },
-    {
-      "test": "Witness_GoldenRatio",
-      "reason": "Precedence bug: computes 1 + sqrt(5)/2 ≈ 2.118 instead of (1+sqrt(5))/2 ≈ 1.618.",
-      "reference": "plato-library-review.md §1.2 Constants"
-    },
-    {
-      "test": "Witness_MinNumberLessThanMaxNumber",
-      "reason": "MinNumber/MaxNumber literals have swapped signs (MinNumber = +3.4e38, MaxNumber = -3.4e38).",
-      "reference": "plato-library-review.md §1.2 Constants"
-    },
-    {
-      "test": "Witness_SmootherStepAtZero",
-      "reason": "SmootherStep body is 6x^4-15x^3+10 (gives 10 at x=0) instead of 6x^5-15x^4+10x^3.",
-      "reference": "plato-library-review.md §1.4 SmootherStep"
-    },
-    {
-      "test": "Witness_SmootherStepAtHalf",
-      "reason": "SmootherStep body is 6x^4-15x^3+10 (gives 8.5 at x=0.5) instead of 6x^5-15x^4+10x^3 (0.5).",
-      "reference": "plato-library-review.md §1.4 SmootherStep"
-    },
-    {
-      "test": "Witness_BarycentricAtOriginIsFirstVertex",
-      "reason": "Parenthesization collapses the first term to v2*u and drops v1; at uv=(0,0) the result is 0, not v1.",
-      "reference": "plato-library-review.md §1.4 Barycentric"
-    },
-    {
-      "test": "Witness_SineWaveFrequencyScalesArgument",
-      "reason": "Frequency scales the output and phase is added to the output instead of the argument.",
-      "reference": "plato-library-review.md §1.5 SineWave"
-    },
-    {
-      "test": "Witness_LissajousYVariesWithT",
-      "reason": "Lissajous y-component is b.Turns.Sin, constant in t; field A is unused.",
-      "reference": "plato-library-review.md §1.5 Lissajous"
-    },
-    {
-      "test": "Witness_EpicycloidAtZero",
-      "reason": "Frequency ratio folded into the amplitude: r*(R+r)*cos(t/r) instead of r*cos((R+r)/r*t).",
-      "reference": "plato-library-review.md §1.5 Epicycloid"
-    },
-    {
-      "test": "Witness_HypocycloidAtZero",
-      "reason": "Frequency ratio folded into the amplitude: r*(R-r)*cos(t/r) instead of r*cos((R-r)/r*t).",
-      "reference": "plato-library-review.md §1.5 Hypocycloid"
-    },
-    {
-      "test": "Witness_RoseAtQuarterTurn",
-      "reason": "Rose computes k*cos(t) (a circle of radius k) instead of cos(k*t).",
-      "reference": "plato-library-review.md §1.5 Rose"
-    },
-    {
-      "test": "Witness_FermatsSpiralAtOneTurn",
-      "reason": "Computes sqrt(a*turns^2) = sqrt(a)*|turns| (Archimedean, linear in theta) instead of a*sqrt(theta).",
-      "reference": "plato-library-review.md §1.5 FermatsSpiral"
-    },
-    {
-      "test": "Witness_Bounds2DHasFourCorners",
-      "reason": "Corners(Bounds2D) returns 8 points (the 4 corners duplicated), copy-pasted from the 3D version.",
-      "reference": "plato-library-review.md §1.6 Bounds2D.Corners"
-    },
-    {
-      "test": "Witness_Triangle3DArea",
-      "reason": "Area(Triangle3D) = CrossProductA.Magnitude.Half and Vector3.Magnitude is wrong by 1/sqrt(3).",
-      "reference": "plato-library-review.md §1.1 MagnitudeSquared"
-    },
-    {
-      "test": "Witness_Vector3MagnitudeOf236Is7",
-      "reason": "Magnitude of (2,3,6) reports 7/sqrt(3) ≈ 4.04 instead of 7.",
-      "reference": "plato-library-review.md §1.1 MagnitudeSquared"
     }
   ]
 }

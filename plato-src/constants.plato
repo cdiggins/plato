@@ -5,23 +5,23 @@
     One(): Number => 1.0;
     MinusOne(): Number => -1.0;
 
-    // Limits 
+    // Limits
     Epsilon(): Number => 1e-7;
-    MinNumber(): Number => 3.40282347E+38;
-    MaxNumber(): Number => -3.40282347E+38;
+    MinNumber(): Number => -3.40282347E+38;
+    MaxNumber(): Number => 3.40282347E+38;
 
-    // Commonly used irrational values
-    Pi(): Number => 3.1415926535897;   
-    E(): Number => 2.7182818284590;
-    GoldenRatio(): Number => 1.0 + 5.0.Sqrt / 2.0;
-    Phi(): Number => GoldenRatio;   
+    // Commonly used irrational values (full double precision; float truncates on emit)
+    Pi(): Number => 3.141592653589793;
+    E(): Number => 2.718281828459045;
+    GoldenRatio(): Number => (1.0 + 5.0.Sqrt) / 2.0;
+    Phi(): Number => GoldenRatio;
     RPhi(): Number => Phi.Reciprocal;
-    SqrtTwo(): Number => 1.41421356237;
-    SqrtThree(): Number => 1.73205080757;
-    SqrtFive(): Number => 2.23606797750;
-    Ln10(): Number => 2.302585093;
-    Ln2(): Number => 0.69314718056;
-    Log10E(): Number => 0.4342944819;
+    SqrtTwo(): Number => 1.4142135623730951;
+    SqrtThree(): Number => 1.7320508075688772;
+    SqrtFive(): Number => 2.23606797749979;
+    Ln10(): Number => 2.302585092994046;
+    Ln2(): Number => 0.6931471805599453;
+    Log10E(): Number => 0.4342944819032518;
     
     // Common angle constants 
     TwoPi(): Number => Pi.Twice;    

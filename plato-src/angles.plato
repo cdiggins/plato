@@ -9,8 +9,8 @@ library Angles
 	Turns(x: Number): Angle => (x * TwoPi);
 	Degrees(x: Number): Angle => (x / 360.0).Turns;
 	Gradians(x: Number): Angle => (x / 400.0).Turns;
-	ArcMinutes(x: Number): Angle => (x * 60.0).Degrees;
-	ArcSeconds(x: Number): Angle => (x * 60.0).ArcMinutes;
+	ArcMinutes(x: Number): Angle => (x / 60.0).Degrees;
+	ArcSeconds(x: Number): Angle => (x / 60.0).ArcMinutes;
 
 	Turns(x: Angle): Number => x.Radians / TwoPi;
 	Degrees(x: Angle): Number => x.Turns * 360.0;

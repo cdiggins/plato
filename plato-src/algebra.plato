@@ -1,8 +1,8 @@
 library Algebra
 {           
-    // Barycentric interpolation (e.g. triangle)
-    Barycentric(v1: INumerical, v2: INumerical, v3: INumerical, uv: Vector2): INumerical 
-        => (v1 + (v2 - v1)) * uv.X + (v3 - v1) * uv.Y;   
+    // Barycentric interpolation (e.g. triangle): at uv=(0,0) -> v1, (1,0) -> v2, (0,1) -> v3
+    Barycentric(v1: INumerical, v2: INumerical, v3: INumerical, uv: Vector2): INumerical
+        => v1 + (v2 - v1) * uv.X + (v3 - v1) * uv.Y;
 
     //====================
     // Polynomials 
@@ -118,7 +118,7 @@ library Algebra
             + m1 * (3.0 * t.Sqr - 2.0 * t);       
 
     //====================
-    // Catmull–Rom Spline
+    // Catmullï¿½Rom Spline
     //    A common cubic spline interpolation that uses four control points
     //    We'll name them p0, p1, p2, p3, with the curve passing from p1 to p2.
     //    Parameter "t" in [0..1].
@@ -148,6 +148,7 @@ library Algebra
     SmoothStep(x: INumerical): INumerical 
         => x.Sqr * (-x.Twice + 3.0);   
   
-    SmootherStep(x: INumerical): INumerical 
-        => x.Pow3 * (x * 6.0 - 15.0) + 10.0;
+    // 6x^5 - 15x^4 + 10x^3 = x^3 * (x * (6x - 15) + 10)
+    SmootherStep(x: INumerical): INumerical
+        => x.Pow3 * (x * (x * 6.0 - 15.0) + 10.0);
 }

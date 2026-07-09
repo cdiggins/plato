@@ -35,7 +35,7 @@ library Core
     SumSqrComponents(v: IVectorLike): Number => v.Reduce(0.0, (a, b) => a + b * b);    
     AvgComponent(v: IVectorLike): Number => v.SumComponents / v.NumComponents;
     Magnitude(v: IVectorLike): Number => v.MagnitudeSquared.Sqrt;
-    MagnitudeSquared(v: IVectorLike): Number => v.SumSqrComponents / v.NumComponents;
+    MagnitudeSquared(v: IVectorLike): Number => v.SumSqrComponents;
 
     //==
     // Vector-like functions derived from Number intrinsics

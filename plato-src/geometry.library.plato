@@ -77,7 +77,8 @@ library Geometry
 	//==
 	// Triangle 2D functions 
 
-	Area(t: Triangle2D): Number => (t.A.X * (t.C.Y - t.B.Y) + t.B.X * (t.A.Y - t.C.Y) + t.C.X * (t.B.Y - t.A.Y)).Half;
+	// Signed shoelace area: positive for counter-clockwise winding
+	Area(t: Triangle2D): Number => (t.A.X * (t.B.Y - t.C.Y) + t.B.X * (t.C.Y - t.A.Y) + t.C.X * (t.A.Y - t.B.Y)).Half;
 	Flip(t: Triangle2D): Triangle2D => (t.C, t.B, t.A);
     Center(t: Triangle2D): Point2D => (t.A + t.B + t.C) / 3.0;
 	Barycentric(t: Triangle2D, uv: Vector2): Point2D => t.A.Vector2.Barycentric(t.B, t.C, uv);
@@ -99,8 +100,8 @@ library Geometry
     LineB(t: Triangle3D): Line3D => (t.B, t.C);        
     LineC(t: Triangle3D): Line3D => (t.C, t.A);        
     Barycentric(t: Triangle3D, uv: Vector2): Point3D => t.A.Vector3.Barycentric(t.B, t.C, uv);
-    Points(t: Triangle2D): IArray<Point2D> => t.Components;
-    
+    // (Points(Triangle3D) lives in meshes.library.plato; the duplicate that was here was removed)
+
     //==
     // Rect2D functions 
 
@@ -151,14 +152,10 @@ library Geometry
 
     Center(x: Bounds2D): Point2D => x.Min.Average(x.Max);
     Corners(x: Bounds2D): IArray<Point2D> => [
-        new Point2D(x.Min.X, x.Min.Y), 
-        new Point2D(x.Max.X, x.Min.Y), 
-        new Point2D(x.Min.X, x.Max.Y), 
-        new Point2D(x.Max.X, x.Max.Y), 
-        new Point2D(x.Min.X, x.Min.Y), 
+        new Point2D(x.Min.X, x.Min.Y),
         new Point2D(x.Max.X, x.Min.Y),
-        new Point2D(x.Min.X, x.Max.Y), 
-        new Point2D(x.Max.X, x.Max.Y)];
+        new Point2D(x.Max.X, x.Max.Y),
+        new Point2D(x.Min.X, x.Max.Y)];
     Empty(_: Bounds2D): Bounds2D => (MaxPoint2D, MinPoint2D);
     Bounds(xs: IArray<Point2D>): Bounds2D => xs.Reduce(Bounds2D.Empty, (a, b) => a.Include(b));
 
