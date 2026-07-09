@@ -1,0 +1,20 @@
+// Witnesses for the 2D vector parity + interpolation helpers (content-leads).
+// plato-test-src only; merged for conformance by tools\regen-conformance.ps1.
+library ParityWitnessTests
+{
+    // (1,0) x (0,1) = 1
+    Witness_Vector2CrossZY(): Boolean
+        => new Vector2(1.0, 0.0).Cross(new Vector2(0.0, 1.0)).LawEq(1.0);
+    // perpendicular of +X is +Y
+    Witness_Vector2Perpendicular(): Boolean
+        => new Vector2(1.0, 0.0).Perpendicular.LawEq(new Vector2(0.0, 1.0));
+    // rotating +X by a quarter turn gives +Y
+    Witness_Vector2RotateQuarter(): Boolean
+        => new Vector2(1.0, 0.0).Rotate(0.25.Turns).LawEq(new Vector2(0.0, 1.0));
+    // InverseLerp(2,4,3) = 0.5
+    Witness_InverseLerpMid(): Boolean
+        => 2.0.InverseLerp(4.0, 3.0).LawEq(0.5);
+    // Remap 3 from [2,4] to [0,10] = 5
+    Witness_RemapMid(): Boolean
+        => 3.0.Remap(2.0, 4.0, 0.0, 10.0).LawEq(5.0);
+}

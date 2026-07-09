@@ -14,6 +14,11 @@ library Core
     FromOne(x: Number): Number => 1.0 - x;
     InversePow(x: Number, y: Number): Number => x.Pow(y.Reciprocal);
     Lerp(a: Number, b: Number, t: Number): Number => a * t.FromOne + b * t;
+    // Inverse of Lerp: the parameter t for which Lerp(a, b, t) == v
+    InverseLerp(a: Number, b: Number, v: Number): Number => (v - a) / (b - a);
+    // Map v from the input range [inA, inB] to the output range [outA, outB]
+    Remap(v: Number, inA: Number, inB: Number, outA: Number, outB: Number): Number
+        => outA.Lerp(outB, inA.InverseLerp(inB, v));
     MultiplyEpsilon(x: Number, y: Number): Number => x.Abs.Greater(y.Abs) * Epsilon;
     Pow2(x: Number): Number => x * x;
     Pow3(x: Number): Number => x * x * x;

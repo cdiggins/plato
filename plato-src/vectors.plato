@@ -18,6 +18,14 @@ library Vectors
     Zero2(): Vector2 => (0.0, 0.0);
     One2(): Vector2 => (1.0, 1.0);
 
+    // 2D cross product (perp-dot): signed area of the parallelogram; positive when b is CCW from a
+    Cross(a: Vector2, b: Vector2): Number => a.X * b.Y - a.Y * b.X;
+    // 90-degree counter-clockwise rotation
+    Perpendicular(v: Vector2): Vector2 => (-v.Y, v.X);
+    // Rotate a 2D vector counter-clockwise by an angle
+    Rotate(v: Vector2, a: Angle): Vector2
+        => (v.X * a.Cos - v.Y * a.Sin, v.X * a.Sin + v.Y * a.Cos);
+
     //==
     // Vector3 Functions 
 
