@@ -30,6 +30,12 @@ namespace Ara3D.Geometry.Compiler.Checking
         public Dictionary<string, TypeExpression> Substitution { get; } = new Dictionary<string, TypeExpression>();
         public List<CheckDiagnostic> Diagnostics { get; } = new List<CheckDiagnostic>();
 
+        /// <summary>The candidate the solver committed for each cleanly-resolved call. This is the
+        /// bridge to elaboration: it remembers *which* overload won, its instantiated signature, and
+        /// how each argument matched (so a conversion becomes an explicit IR node). Populated in
+        /// <see cref="CommitCandidate"/>; ambiguous / no-match calls are absent.</summary>
+        public Dictionary<FunctionCall, ResolvedCall> ResolvedCalls { get; } = new Dictionary<FunctionCall, ResolvedCall>();
+
         private readonly TypeVarFactory _vars;
         private const int MaxDepth = 512;
 
@@ -152,9 +158,30 @@ namespace Ara3D.Geometry.Compiler.Checking
 
         private void CommitCandidate(Candidate cand, IReadOnlyList<TypeExpression> args, OverloadConstraint oc)
         {
-            // Re-run the matches on the real substitution to bind generic/concept variables.
+            // Re-run the matches on the real substitution to bind generic/concept variables. Because
+            // the base substitution and argument order are identical to the winning trial, this
+            // reproduces that trial's per-argument outcomes exactly, so the recorded match kinds are
+            // faithful. Capture them (and any cast function) for the elaborate pass.
+            var kinds = new ArgMatchKind[args.Count];
+            var conversions = new IFunction[args.Count];
+            var paramTypes = new TypeExpression[args.Count];
             for (var i = 0; i < args.Count; i++)
-                MatchArg(args[i], cand.Ps[i], cand, Substitution);
+            {
+                var m = MatchArg(args[i], cand.Ps[i], cand, Substitution);
+                kinds[i] = m.kind;
+
+                // The declared parameter type: a concept parameter is recorded as its interface (the
+                // fresh concept var only exists to carry the Self binding), everything else as the
+                // instantiated parameter.
+                var p = cand.Ps[i];
+                var target = p != null && IsVar(p) && cand.ConceptOf.TryGetValue(p.Name, out var concept)
+                    ? concept
+                    : p;
+                paramTypes[i] = Zonk(target, Substitution);
+
+                if (m.kind == ArgMatchKind.Conversion)
+                    conversions[i] = FindConversion(Zonk(args[i], Substitution), paramTypes[i]);
+            }
 
             // Refine the element types of generic concept parameters from the concrete argument
             // (List<Number> : IArray<$T> => $T = Number). Best-effort and post-commit: it only
@@ -171,16 +198,29 @@ namespace Ara3D.Geometry.Compiler.Checking
             }
 
             Unify(oc.Result, cand.Ret, Substitution, oc.Origin, record: true);
+
+            // Record the committed decision (only for real calls; synthetic unit-test constraints
+            // carry a null Call). Zonk after the result unify so the signature is as ground as
+            // possible. Re-zonk the parameter types too, in case element inference sharpened them.
+            if (oc.Call != null)
+            {
+                for (var i = 0; i < paramTypes.Length; i++)
+                    paramTypes[i] = Zonk(paramTypes[i], Substitution);
+                ResolvedCalls[oc.Call] = new ResolvedCall(
+                    oc.Call, cand.Function, paramTypes, Zonk(cand.Ret, Substitution), kinds, conversions);
+            }
         }
 
         /// <summary>
-        /// Match one argument against one (instantiated) parameter, returning success and a cost.
-        /// Order of preference: exact unify, generic binding, concept satisfaction, implicit cast.
+        /// Match one argument against one (instantiated) parameter, returning success, a cost, and
+        /// the match kind. Order of preference: exact unify, generic binding, concept satisfaction,
+        /// implicit cast. The ok/cost values are unchanged from before the kind was added, so
+        /// overload ranking is unaffected.
         /// </summary>
-        private (bool ok, int cost) MatchArg(TypeExpression argType, TypeExpression param, Candidate cand, Dictionary<string, TypeExpression> sub)
+        private (bool ok, int cost, ArgMatchKind kind) MatchArg(TypeExpression argType, TypeExpression param, Candidate cand, Dictionary<string, TypeExpression> sub)
         {
             if (param == null || argType == null)
-                return (true, ExactCost);
+                return (true, ExactCost, ArgMatchKind.Exact);
 
             // A concept parameter: the argument must implement the interface (or convert to it).
             if (IsVar(param) && cand.ConceptOf.TryGetValue(param.Name, out var concept))
@@ -191,21 +231,21 @@ namespace Ara3D.Geometry.Compiler.Checking
                     // List<Number> : IArray<$T>) happens post-commit so it can never change which
                     // overload is chosen — see CommitCandidate.
                     Unify(param, argType, sub, null, record: false); // Self: bind the concept var to the concrete arg
-                    return (true, ConceptCost);
+                    return (true, ConceptCost, ArgMatchKind.Concept);
                 }
                 if (HasConversion(argType, concept))
-                    return (true, ConversionCost);
-                return (false, 0);
+                    return (true, ConversionCost, ArgMatchKind.Conversion);
+                return (false, 0, ArgMatchKind.Exact);
             }
 
             var generic = IsVar(ResolveTop(param, sub));
             if (Unify(param, argType, sub, null, record: false))
-                return (true, generic ? GenericCost : ExactCost);
+                return (true, generic ? GenericCost : ExactCost, generic ? ArgMatchKind.Generic : ArgMatchKind.Exact);
 
             if (HasConversion(argType, param))
-                return (true, ConversionCost);
+                return (true, ConversionCost, ArgMatchKind.Conversion);
 
-            return (false, 0);
+            return (false, 0, ArgMatchKind.Exact);
         }
 
         /// <summary>
@@ -246,14 +286,20 @@ namespace Ara3D.Geometry.Compiler.Checking
         }
 
         private bool HasConversion(TypeExpression from, TypeExpression to)
+            => FindConversion(from, to) != null;
+
+        /// <summary>The cast function witnessing an implicit conversion from <paramref name="from"/>
+        /// to <paramref name="to"/>, or null if none. Looks up cast relations directly rather than via
+        /// Compilation.GetRelation, which throws when a source has multiple relations to the same
+        /// destination — the solver must stay total. The returned function is recorded on a
+        /// <see cref="ResolvedCall"/> so the elaborator's TirCoerce node names the exact conversion.</summary>
+        private IFunction FindConversion(TypeExpression from, TypeExpression to)
         {
-            // Look up cast relations directly rather than via Compilation.GetRelation, which throws
-            // when a source has multiple relations to the same destination. The solver must stay total.
             if (Compilation?.TypeRelations == null || from?.Def == null || to?.Def == null)
-                return false;
+                return null;
             if (!Compilation.TypeRelations.RelationLookup.TryGetValue(from.Def, out var list))
-                return false;
-            return list.Any(rel => rel.Cast != null && rel.Dest.Equals(to.Def));
+                return null;
+            return list.FirstOrDefault(rel => rel.Cast != null && rel.Dest.Equals(to.Def))?.Cast;
         }
 
         // --- instantiation -------------------------------------------------------

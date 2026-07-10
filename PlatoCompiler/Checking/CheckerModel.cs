@@ -26,6 +26,41 @@ namespace Ara3D.Geometry.Compiler.Checking
             => $"[{Severity}] {Code}: {Message}" + (Origin != null ? $" (at {Origin.GetType().Name} #{Origin.Id})" : "");
     }
 
+    /// <summary>How one argument matched its parameter during overload resolution, in order of
+    /// preference. Recorded per argument on a <see cref="ResolvedCall"/> so the elaborator can
+    /// make the implicit-conversion class an explicit IR node (see <c>TirCoerce</c>).</summary>
+    public enum ArgMatchKind { Exact, Generic, Concept, Conversion }
+
+    /// <summary>
+    /// The decision the solver committed for one resolved <see cref="FunctionCall"/>: which
+    /// candidate won, its instantiated (zonked) signature, and how each argument matched. This is
+    /// what the elaborate pass consumes so the writers stop re-deriving callee/signature/conversion
+    /// semantics at emit time. Produced only for cleanly-committed calls (a unique winner, or a
+    /// CHK202 common-return tie); ambiguous / no-match calls are not recorded.
+    /// </summary>
+    public class ResolvedCall
+    {
+        public FunctionCall Call { get; }
+        public FunctionDef Callee { get; }
+        /// <summary>The instantiated (zonked) parameter types — the declared signature with generic
+        /// holes filled and interface (concept) parameters kept as the interface.</summary>
+        public IReadOnlyList<TypeExpression> ParameterTypes { get; }
+        public TypeExpression ReturnType { get; }
+        public IReadOnlyList<ArgMatchKind> ArgKinds { get; }
+        /// <summary>The cast function for each argument, non-null only where the match kind is
+        /// <see cref="ArgMatchKind.Conversion"/> and a cast relation was found.</summary>
+        public IReadOnlyList<IFunction> ArgConversions { get; }
+
+        public ResolvedCall(FunctionCall call, FunctionDef callee,
+            IReadOnlyList<TypeExpression> parameterTypes, TypeExpression returnType,
+            IReadOnlyList<ArgMatchKind> argKinds, IReadOnlyList<IFunction> argConversions)
+            => (Call, Callee, ParameterTypes, ReturnType, ArgKinds, ArgConversions)
+                = (call, callee, parameterTypes, returnType, argKinds, argConversions);
+
+        public override string ToString()
+            => $"{Callee?.Name}({string.Join(", ", ParameterTypes)}) -> {ReturnType} [{string.Join(",", ArgKinds)}]";
+    }
+
     /// <summary>Mints uniquely-named unification type variables ($V0, $Ret1, ...).</summary>
     public class TypeVarFactory
     {

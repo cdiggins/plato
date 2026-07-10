@@ -54,6 +54,10 @@ namespace Ara3D.Geometry.Compiler.Checking
         public IEnumerable<CheckDiagnostic> Errors => Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error);
         public bool Succeeded => Solver.Succeeded;
 
+        /// <summary>The overload decision the solver committed for each cleanly-resolved call in the
+        /// normalized body — the input to the elaborate pass.</summary>
+        public IReadOnlyDictionary<FunctionCall, ResolvedCall> ResolvedCalls => Solver.ResolvedCalls;
+
         /// <summary>The solved type of an expression in the normalized body, if one was assigned.</summary>
         public TypeExpression TypeOf(Expression e)
             => System.ExprTypes.TryGetValue(e, out var t) ? Solver.Zonk(t) : null;
