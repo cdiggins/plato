@@ -53,6 +53,32 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     private bool IsTypeName(string name)
         => name != null && _tw.Writer.AllTypeNames.Contains(name);
 
+    // Recognizes the normalizer's eta-expansion of a bare member-group reference in value
+    // position: `M` -> `(_eta{id}_0, ..., _eta{id}_N) => M(_eta{id}_0, ..., _eta{id}_N)`
+    // (Normalizer.EtaExpand, R3). The shape is a lambda whose parameters were all synthesized by
+    // that pass (their names carry the `_eta` prefix it hard-codes) and whose body is a single
+    // resolved call forwarding those parameters, in order, as the call's arguments (arity >= 1).
+    // The reference writer consumes the ORIGINAL (un-normalized) graph, so it emits the bare member
+    // name `M`; we recover it here. The `_eta`-name guard keeps a USER-authored forwarding lambda
+    // (`(x) => x.M()`) — which the reference writer keeps as a lambda — from being collapsed.
+    private static bool TryGetEtaForwardedName(TirLambda lam, out string name)
+    {
+        name = null;
+        if (lam?.Parameters == null || lam.Parameters.Count == 0)
+            return false;
+        if (!lam.Parameters.All(p => p.Name != null && p.Name.StartsWith("_eta")))
+            return false;
+        if (!(lam.Body is TirCall call) || call.Name == null)
+            return false;
+        if (call.Args.Count != lam.Parameters.Count)
+            return false;
+        for (var i = 0; i < call.Args.Count; i++)
+            if (!(call.Args[i] is TirParameter p) || !ReferenceEquals(p.Def, lam.Parameters[i]))
+                return false;
+        name = call.Name;
+        return true;
+    }
+
     // --- top level: mirror CSharpFunctionBodyWriter's default-mode framing exactly ----------
 
     private void WriteFunctionBody()
@@ -200,12 +226,15 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 return;
 
             case TirCoerce c:
-                // The whole point of the phase: an implicit conversion is an explicit node. The
-                // default writer emits a broadcast / cast as a type-named member access on the
-                // inner value (Vector3(0.0) -> ((Number)0).Vector3; Number->Angle -> x.Angle).
+                // A TirCoerce is ALWAYS a solver-inserted IMPLICIT-widening conversion (the
+                // Elaborator only wraps ArgMatchKind.Conversion arguments): Integer->Number,
+                // Self->interface, Number->Vector3 broadcast, etc. The reference writer never
+                // renders these — it writes the inner value and lets C#'s implicit conversion
+                // operators do the widening at the call boundary. So we suppress the conversion
+                // and emit the inner node only. Genuine SOURCE-level conversions the programmer
+                // wrote (`Vector3(0.0)`, `x.Number`) arrive as a TirCall with
+                // EmissionKind.Conversion and are rendered by WriteCall — those are kept as-is.
                 WriteNode(c.Inner);
-                Write(".");
-                Write(c.ToType?.Name ?? "?");
                 return;
 
             case TirInvoke inv:
@@ -244,6 +273,15 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 return;
 
             case TirLambda lam:
+                // The normalizer eta-expands a bare member-group reference used in value position
+                // into a forwarding lambda `(_p0..._pN) => M(_p0, ..., _pN)` (Normalizer R3). The
+                // reference writer never saw that rewrite — it consumes the original graph and
+                // emits the bare member name `M`. Recover the bare reference so we match it.
+                if (TryGetEtaForwardedName(lam, out var etaName))
+                {
+                    Write(etaName);
+                    return;
+                }
                 Write("(");
                 Write(string.Join(", ", lam.Parameters.Select(p => p.Name)));
                 Write(") ");

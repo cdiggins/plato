@@ -210,16 +210,21 @@ namespace Ara3D.Geometry.Compiler.Checking
             if (call != null && call.Args.Count == 1 && IsTypeName(f.Name))
                 return EmissionKind.Conversion;
 
+            // A receiver-only member access written as `a.b` (no arg list) reads as a PROPERTY, and
+            // this shape must be decided BEFORE the Operator/Intrinsic classification. The writer
+            // keys property-vs-method purely on the member-access shape (HasArgList), so a no-arg
+            // intrinsic/operator member (`v.Sqrt`, `v.Negative` from `-v`) is emitted with property
+            // syntax, not a `()` call. Deciding Operator/Intrinsic first loses that distinction and
+            // makes the TIR writer emit `v.Sqrt()`. Also catches computed no-arg library/concept
+            // members (`v.Magnitude`) that are not Field getters.
+            if (call != null && f.NumParameters == 1 && !call.HasArgList)
+                return EmissionKind.Property;
+
             if (IsOperatorName(f.Name))
                 return EmissionKind.Operator;
 
             if (f.FunctionType == FunctionType.Intrinsic)
                 return EmissionKind.Intrinsic;
-
-            // A receiver-only member access written as `a.b` (no arg list) reads as a property. This
-            // catches computed no-arg library/concept members (v.Magnitude) that are not Field getters.
-            if (call != null && f.NumParameters == 1 && !call.HasArgList)
-                return EmissionKind.Property;
 
             return f.NumParameters == 0 ? EmissionKind.StaticMethod : EmissionKind.InstanceMethod;
         }

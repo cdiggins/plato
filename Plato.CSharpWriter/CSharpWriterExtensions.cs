@@ -63,11 +63,15 @@ namespace Ara3D.Geometry.CSharpWriter
         // optimize = true: component-op unrolling (--optimize, roadmap P3.1; see ComponentUnroller).
         // scalarErase = true: erase the scalar wrappers to native primitives (--scalar=float,
         //                     roadmap "Phase 2 revision" item 3; requires extensionStyle).
-        public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false, bool optimize = false, bool scalarErase = false)
+        // useTir = true: emit member-instance function BODIES from the monomorphized TIR
+        //                (Elaborate → Monomorphize → Emit retarget probe, off by default). Only
+        //                takes effect in the pure default style; a measurement/de-risking switch,
+        //                not yet the production path. Default (false) output is byte-identical.
+        public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false, bool optimize = false, bool scalarErase = false, bool useTir = false)
         {
             if (scalarErase && !extensionStyle)
                 throw new NotSupportedException("--scalar=float requires --csharp-style=extensions (the default wrapper-struct layout keeps scalar members inside partial structs, which do not exist under erasure)");
-            var writer = new CSharpWriter(compilation, outputFolder) { ExtensionStyle = extensionStyle, Optimize = optimize, ScalarErase = scalarErase };
+            var writer = new CSharpWriter(compilation, outputFolder) { ExtensionStyle = extensionStyle, Optimize = optimize, ScalarErase = scalarErase, UseTir = useTir };
             writer.WriteAll("float");
             //writer.WriteAll("Plato.DoublePrecision.g.cs", "double");
 

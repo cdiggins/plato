@@ -31,6 +31,11 @@ namespace Ara3D.Geometry.CLI
             // both --csharp-style values. Off by default (byte-identical output without it).
             var optimize = args.Contains("--optimize");
 
+            // Emit member-instance function bodies from the monomorphized TIR (Elaborate →
+            // Monomorphize → Emit retarget probe). Off by default and byte-identical without it;
+            // only takes effect in the pure default C# style. A de-risking measurement switch.
+            var useTir = args.Contains("--use-tir");
+
             // C# writer style (roadmap P2.2). "default" = original writer (byte-identical output);
             // "extensions" = C# 14 extension-block output (requires LangVersion 14 to compile).
             var csharpStyle = args.Where(a => a.StartsWith("--csharp-style="))
@@ -108,7 +113,7 @@ namespace Ara3D.Geometry.CLI
             else
             {
                 logger.Log("Writing C# Files");
-                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, scalar == "float");
+                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, scalar == "float", useTir);
                 foreach (var kv in output.Files)
                 {
                     var fp = outputFolder.RelativeFile(kv.Key);

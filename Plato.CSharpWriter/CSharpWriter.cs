@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Ara3D.Geometry.Compiler.Analysis;
+using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Utils;
 using Ara3D.Geometry.Compiler.Types;
@@ -200,6 +201,55 @@ namespace Ara3D.Geometry.CSharpWriter
             // hardwired float forwarder for it, so scalar call sites use method syntax.
             "ReciprocalSquareRootEstimate",
         };
+
+        // When true (off by default), the retarget probe for the Elaborate → Monomorphize → Emit
+        // phase: a function's member-instance BODY is emitted from the monomorphized TIR through
+        // TirCSharpBodyWriter instead of from the symbol graph through CSharpFunctionBodyWriter,
+        // falling back to the current writer for any (function, type) without a fully-ground TIR.
+        // Only fires in the pure DEFAULT style (no extension/scalar/optimize) — the mode the TIR
+        // writer was validated byte-for-byte against by EmitDifferentialTests. Default (false)
+        // output is byte-identical to the original writer: with the flag off, WriteBody never
+        // constructs a TIR writer and never builds the ground-TIR lookup below.
+        public bool UseTir;
+
+        // UseTir measurement counters (no effect on output): member-instance bodies emitted from
+        // the monomorphized TIR, and eligible bodies that fell back to the current writer because
+        // no fully-ground TIR was available for that (function, concrete type).
+        public int TirBodiesEmitted;
+        public int TirFallbackBodies;
+
+        // Lazily built the first time a ground TIR is requested (UseTir only): the fully-ground,
+        // bodied monomorphized TIR for each (source FunctionDef, concrete type name), keyed exactly
+        // as EmitDifferentialTests aligns them. Never built on the default path.
+        private Dictionary<(FunctionDef, string), TirFunction> _groundTirByKey;
+
+        /// <summary>The fully-ground monomorphized TIR body for a (source function, concrete type),
+        /// or null when none exists (non-ground / unresolved / not bodied) — in which case the
+        /// caller uses the current writer. Returns null unless <see cref="UseTir"/> is set, so the
+        /// (expensive) monomorphization pass is never triggered on the default path.</summary>
+        public TirFunction TryGetGroundTir(FunctionDef original, TypeDef concreteType)
+        {
+            if (!UseTir || original == null || concreteType == null)
+                return null;
+            if (_groundTirByKey == null)
+                BuildGroundTirLookup();
+            return _groundTirByKey.TryGetValue((original, concreteType.Name), out var tir) ? tir : null;
+        }
+
+        private void BuildGroundTirLookup()
+        {
+            _groundTirByKey = new Dictionary<(FunctionDef, string), TirFunction>();
+            // MonomorphizeAll is total (never throws) and runs in the same shadow-mode passes the
+            // checker tests exercise; it is only reached when UseTir is on.
+            foreach (var m in new Monomorphizer(Compilation).MonomorphizeAll())
+            {
+                if (!m.HasBody || !m.IsFullyGround)
+                    continue;
+                var key = (m.Original, m.ConcreteType?.Name);
+                if (m.Original != null && key.Item2 != null && !_groundTirByKey.ContainsKey(key))
+                    _groundTirByKey[key] = m.Tir;
+            }
+        }
 
         // When true, applies the component-op unrolling optimization (--optimize, roadmap P3.1):
         // recognized MapComponents/ZipComponents/Reduce/All*/Any* call sites on statically-known

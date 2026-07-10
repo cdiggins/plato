@@ -205,6 +205,26 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
 
     public CSharpTypeWriter WriteBody(CSharpFunctionInfo f, bool isStatic)
     {
+        // Off-by-default TIR retarget (Writer.UseTir): for the member-instance body path in the
+        // pure default style, emit from the monomorphized TIR when a fully-ground one exists for
+        // this (function, concrete type), falling back to the current writer otherwise. With the
+        // flag OFF (the default) this whole block is skipped and the existing code below runs
+        // unchanged, so off-flag output stays byte-identical. The guards restrict the TIR path to
+        // exactly the shape TirCSharpBodyWriter reproduces (a non-static member on a concrete type
+        // in the default style — no extension/scalar/optimize framing).
+        if (Writer.UseTir && !isStatic && TypeDef != null
+            && !Writer.ExtensionStyle && !Writer.ScalarErase && !Writer.Optimize)
+        {
+            var tir = Writer.TryGetGroundTir(f.Function?.Implementation, TypeDef);
+            if (tir != null)
+            {
+                Writer.TirBodiesEmitted++;
+                Write(new TirCSharpBodyWriter(this, tir).ToString());
+                return this;
+            }
+            Writer.TirFallbackBodies++;
+        }
+
         var tmp = new CSharpFunctionBodyWriter(this, f, isStatic, false);
         // Extension style fixes the V1 indentation quirk (see WriteWithLineStateSync);
         // the default mode must stay byte-identical, misindentation included.
