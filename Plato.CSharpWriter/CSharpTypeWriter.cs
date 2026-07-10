@@ -212,19 +212,32 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         // unchanged, so off-flag output stays byte-identical. The guards restrict the TIR path to
         // exactly the shape TirCSharpBodyWriter reproduces (a non-static member on a concrete type
         // in the default style — no extension/scalar/optimize framing).
-        if (Writer.UseTir && !isStatic && TypeDef != null
-            && !Writer.ExtensionStyle && !Writer.ScalarErase && !Writer.Optimize)
+        if (Writer.UseTir && !Writer.ExtensionStyle && !Writer.ScalarErase && !Writer.Optimize)
         {
             // Only bodies with actual Plato source count for the TIR/fallback split: a body-less
             // function emits a fixed `=> throw new NotImplementedException();` line with no
             // heuristics involved, identically in both writers.
-            if (f.Function?.Implementation?.Body != null)
+            if (!isStatic && TypeDef != null && f.Function?.Implementation?.Body != null)
             {
+                // Member-instance body: emitted from the fully-ground monomorphized TIR.
                 var tir = Writer.TryGetGroundTir(f.Function.Implementation, TypeDef);
                 if (tir != null)
                 {
                     Writer.TirBodiesEmitted++;
                     Write(new TirCSharpBodyWriter(this, tir).ToString());
+                    return this;
+                }
+                Writer.TirFallbackBodies++;
+            }
+            else if (isStatic && TypeDef == null && f.Function?.Implementation?.Body != null)
+            {
+                // Static body (a constant, or an IArray library function in Extensions.g.cs):
+                // emitted from the generic elaborated TIR — no specialization involved.
+                var tir = Writer.TryGetStaticTir(f.Function.Implementation);
+                if (tir != null)
+                {
+                    Writer.TirBodiesEmitted++;
+                    Write(new TirCSharpBodyWriter(this, tir, isStatic: true).ToString());
                     return this;
                 }
                 Writer.TirFallbackBodies++;

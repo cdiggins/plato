@@ -40,7 +40,7 @@ Everything from **Normalize** onward lives in `PlatoCompiler/Checking/` (the che
 | **Solve** | done | total; tiered matching exact<generic<concept<conversion; concept-method `Self` instantiated as concept-constrained var (Self-return refinement); concept satisfaction walks the transitive Implements/Inherits closure with per-level type-arg substitution and binds element holes; `Self` unifies permissively (grounded at monomorphize); HOF scheduling (function-shaped args don't block resolution; forced resolutions re-enter the fixpoint); return coercions (cast relation / tuple→same-shape struct / value→implemented interface). **745/823** stdlib functions resolve with zero errors |
 | **Elaborate** | done | **823/823 elaborate fully** (no unresolved nodes): local `var` decls (`TirLet`), type-as-value (`TirTypeRef`, namespace-qualified for raw `TypeExpression`s), bare constant groups (zero-arg `TirCall` → `Constants.X`), bare multi-overload names (`TirName`), and SYNTACTIC calls (null-callee `TirCall`: name + shape, for targets the compiler cannot see, e.g. handwritten intrinsic statics). Recorded call signatures re-zonked live |
 | **Monomorphize** | done | **3247** instantiations (3245 reified 1:1 + 2 non-reified concrete-first-param library functions); **1998/2014** bodied instantiations fully ground. Grounding = declared-signature pairing + solver-ZONKED-signature pairing (terminal-form vars) + element-instance walk (`IArrayLike<$T>` ↔ `Vector3` binds `$T→Number`) + post-specialization residual grounding (return positions vs the reified/Self-refined return incl. pre-coercion call types; leftover interface instances vs Self's concept instances). Re-dispatch preserves the call-site `EmissionKind` (shape) |
-| **Emit** | **DEFAULT** | `UseTir` **on by default** (CLI `--no-tir` = legacy path). Differential **1914/1914 byte-identical**; flag-on vs flag-off **164/164 files**; `regen-plato.ps1` green **on the TIR path**; **fallback = 0** (gated by `FallbackDiagnosticsTests`). Lambda-capture hoist mirrored on TIR (`TirLambdaCaptureRewriter`), sharing `SymbolRewriter.NextId` so `_var{N}` numbering matches the golden exactly |
+| **Emit** | **DEFAULT** | `UseTir` **on by default** (CLI `--no-tir` = legacy path). **The default C# style is single-engine**: member bodies emit from the fully-ground monomorphized TIR and STATIC bodies (`Constants.g.cs`, `Extensions.g.cs`) from the generic elaborated TIR — 2111 bodies total, **fallback = 0** (asserted by `EmitFlagOnTests` + `FallbackDiagnosticsTests`); the legacy writer's only default-style job is the fixed throw-stub for body-less functions. Flag-on vs flag-off **164/164 files**, compared EXACTLY (the `_var{N}` counter now resets per `WriteAll`); `regen-plato.ps1` green on the TIR path. Lambda-capture hoist mirrored on TIR (`TirLambdaCaptureRewriter`) |
 
 ## Hard rules (from `CLAUDE.md`)
 
@@ -80,22 +80,19 @@ block emission at all (emission is name+shape; re-dispatch is only an identity r
 
 ## Next increments (in order of leverage)
 
-1. **Retire the legacy body writer for the remaining default-style bodies**: constants
-   (`Constants.g.cs`) and the `IArray` library functions (`Extensions.g.cs`) are static bodies
-   (`WriteBody(fi, isStatic: true)`) still emitted by `CSharpFunctionBodyWriter`. The TIR writer
-   needs a static mode (parameter names instead of `this`, property framing on 0 params, generic
-   signatures) + a differential over those bodies.
+1. ~~Retire the legacy body writer for the remaining default-style bodies~~ **DONE 2026-07-10**:
+   static bodies (`Constants.g.cs`, `Extensions.g.cs`) emit from the generic elaborated TIR
+   (`TirCSharpBodyWriter` static mode; `CSharpWriter.TryGetStaticTir`).
 2. **Extend to the other styles** (extension / scalar / optimize) and the TS/Rust writers. Only
-   after 1+2 can the emit-time heuristics (`HasArgList` guessing, `MovedNoArgNames`, property
-   guessing, scalar re-inference) actually be **deleted** — today they are dead *only* for
-   default-style member bodies, and every other path still runs them.
+   then can the emit-time heuristics (`HasArgList` guessing, `MovedNoArgNames`, property
+   guessing, scalar re-inference) actually be **deleted** — today they are dead for the whole
+   default style, but every other style still runs them.
 3. **Checker completeness**: 78/823 stdlib functions still carry located diagnostics (they emit
    fine — syntactic calls — but the checker's view is incomplete: mostly calls into handwritten
    intrinsic members it cannot see, plus a few genuine ambiguities worth surfacing to the author).
-4. Pre-existing finding: the writer's process-global name counters (`SymbolRewriter.NextId`,
-   `{Library}_{N}` ids) don't reset between `WriteAll` runs — masked because the CLI runs fresh per
-   invocation; the TIR path deliberately SHARES `NextId` so numbering matches. Fix is "reset per
-   WriteAll" in both paths at once.
+4. ~~Process-global name counters~~ **DONE 2026-07-10**: `SymbolRewriter.NextId` resets per
+   `WriteAll` in all three writers; the Symbol-id leak into output (`Geometry_15` in the retired
+   "AMBIGUOUS FUNCTIONS" comments) is gone.
 
 ## Commit history (`main`, most recent last)
 

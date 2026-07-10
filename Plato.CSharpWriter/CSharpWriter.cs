@@ -219,30 +219,54 @@ namespace Ara3D.Geometry.CSharpWriter
         public int TirBodiesEmitted;
         public int TirFallbackBodies;
 
-        // Lazily built the first time a ground TIR is requested (UseTir only): the fully-ground,
-        // bodied monomorphized TIR for each (source FunctionDef, concrete type name), keyed exactly
-        // as EmitDifferentialTests aligns them. Never built on the default path.
+        // Lazily built the first time a TIR is requested (UseTir only): the fully-ground, bodied
+        // monomorphized TIR for each (source FunctionDef, concrete type name) — member bodies —
+        // and the GENERIC elaborated TIR per FunctionDef for the static bodies (Constants.g.cs /
+        // Extensions.g.cs), which are emitted unspecialized. Never built on the default-off path.
         private Dictionary<(FunctionDef, string), TirFunction> _groundTirByKey;
+        private Dictionary<FunctionDef, TirFunction> _staticTirByFn;
 
         /// <summary>The fully-ground monomorphized TIR body for a (source function, concrete type),
         /// or null when none exists (non-ground / unresolved / not bodied) — in which case the
-        /// caller uses the current writer. Returns null unless <see cref="UseTir"/> is set, so the
-        /// (expensive) monomorphization pass is never triggered on the default path.</summary>
+        /// caller uses the legacy writer. Returns null unless <see cref="UseTir"/> is set, so the
+        /// (expensive) monomorphization pass is never triggered when the flag is off.</summary>
         public TirFunction TryGetGroundTir(FunctionDef original, TypeDef concreteType)
         {
             if (!UseTir || original == null || concreteType == null)
                 return null;
             if (_groundTirByKey == null)
-                BuildGroundTirLookup();
+                BuildTirLookups();
             return _groundTirByKey.TryGetValue((original, concreteType.Name), out var tir) ? tir : null;
         }
 
-        private void BuildGroundTirLookup()
+        /// <summary>The generic (unspecialized) TIR for a STATIC body — a constant or an IArray
+        /// library function — or null when the function's elaboration has unresolved nodes.
+        /// Static bodies are emitted from name + shape, so residual generic types are fine; an
+        /// unresolved CALL is not (its emission would be a guess).</summary>
+        public TirFunction TryGetStaticTir(FunctionDef original)
+        {
+            if (!UseTir || original == null)
+                return null;
+            if (_staticTirByFn == null)
+                BuildTirLookups();
+            return _staticTirByFn.TryGetValue(original, out var tir) ? tir : null;
+        }
+
+        private void BuildTirLookups()
         {
             _groundTirByKey = new Dictionary<(FunctionDef, string), TirFunction>();
-            // MonomorphizeAll is total (never throws) and runs in the same shadow-mode passes the
-            // checker tests exercise; it is only reached when UseTir is on.
-            foreach (var m in new Monomorphizer(Compilation).MonomorphizeAll())
+            _staticTirByFn = new Dictionary<FunctionDef, TirFunction>();
+
+            // One checker+elaborator run feeds both maps; MonomorphizeAll is total (never throws).
+            var mono = new Monomorphizer(Compilation);
+            var elaborated = mono.ElaborateAll();
+
+            foreach (var kv in elaborated)
+                if (kv.Value?.Body != null
+                    && !System.Linq.Enumerable.Any(kv.Value.AllNodes, n => n is TirUnresolved))
+                    _staticTirByFn[kv.Key] = kv.Value;
+
+            foreach (var m in mono.MonomorphizeAll(elaborated))
             {
                 if (!m.HasBody || !m.IsFullyGround)
                     continue;

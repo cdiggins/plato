@@ -55,6 +55,13 @@ namespace PlatoTests
             Assert.Greater(flagOn.TirBodiesEmitted, 0,
                 "the TIR path never fired — the flag-on library would be trivially all-fallback");
 
+            // Since improvement #1 the TIR covers EVERY default-style body with Plato source —
+            // member-instance AND static (Constants.g.cs / Extensions.g.cs). The legacy writer's
+            // only remaining default-style job is the fixed `throw new NotImplementedException()`
+            // line for body-less functions.
+            Assert.AreEqual(0, flagOn.TirFallbackBodies,
+                "a default-style body fell back to the legacy writer");
+
             Assert.AreEqual(flagOff.Files.Count, flagOn.Files.Count, "flag-on generated a different set of files");
 
             var differing = new List<string>();

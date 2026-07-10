@@ -37,16 +37,22 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     private readonly TirFunction _tir;
     private readonly string _selfType;
 
+    // Static mode (constants in Constants.g.cs, the IArray library functions in Extensions.g.cs):
+    // parameter #0 is emitted by name instead of `this`, and the property-getter framing applies
+    // to ZERO-parameter functions (a member needs its receiver parameter, a static does not).
+    private readonly bool _isStatic;
+
     // >0 while rendering a lambda body: parameter #0 is emitted by name, not `this`
     // (the reference lambda body writer runs in "static" mode, isStatic:true).
     private int _lambdaDepth;
 
-    public TirCSharpBodyWriter(CSharpTypeWriter tw, TirFunction tir)
+    public TirCSharpBodyWriter(CSharpTypeWriter tw, TirFunction tir, bool isStatic = false)
     {
         IndentLevel = tw.IndentLevel;
         _tw = tw;
         _tir = tir;
         _selfType = tw.SelfType;
+        _isStatic = isStatic;
         WriteFunctionBody();
     }
 
@@ -89,10 +95,10 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             return;
         }
 
-        // Member instance path (WriteMemberFunction always calls WriteBody(fi, isStatic:false)):
-        // a single-parameter member is emitted as a property getter.
+        // A receiver-only member (1 parameter) or a nullary static is emitted as a property
+        // getter — the same rule the reference writer applies per isStatic.
         var numParams = _tir.Original?.NumParameters ?? _tir.Parameters.Count;
-        var isProp = numParams == 1;
+        var isProp = _isStatic ? numParams == 0 : numParams == 1;
 
         // The reference writer hoists lambda-captured references into `var _var{N} = x;` blocks
         // before emitting (RewriteLambdasCapturingVars); mirror it, sharing the same counter.
@@ -217,7 +223,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             case TirParameter p:
             {
                 var idx = p.Def?.Index ?? -1;
-                Write(idx == 0 && _lambdaDepth == 0 ? "this" : p.Def?.Name ?? "?");
+                Write(idx == 0 && !_isStatic && _lambdaDepth == 0 ? "this" : p.Def?.Name ?? "?");
                 return;
             }
 

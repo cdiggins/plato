@@ -305,31 +305,12 @@ namespace Ara3D.Geometry.Compiler.Checking
             if (argType.Def.Name == concept.Def.Name)
                 return UnifyAllOrNothing(argType, concept, sub);
 
-            foreach (var inst in ConceptInstancesOf(argType))
+            foreach (var inst in ConceptClosure.InstancesOf(argType))
                 if (inst?.Def != null && inst.Def.Name == concept.Def.Name
                     && UnifyAllOrNothing(inst, concept, sub))
                     return true;
 
             return false;
-        }
-
-        /// <summary>Every concept instance <paramref name="t"/> implements or inherits, transitively,
-        /// with each level's type arguments substituted through (<c>List&lt;Number&gt;</c> yields
-        /// <c>IArray&lt;Number&gt;</c>, not <c>IArray&lt;T&gt;</c>). Cycle-capped by depth.</summary>
-        private IEnumerable<TypeExpression> ConceptInstancesOf(TypeExpression t, int depth = 0)
-        {
-            if (t?.Def == null || depth > 8)
-                yield break;
-            var map = BuildParamSubstitution(t);
-            foreach (var impl in t.Def.Implements.Concat(t.Def.Inherits))
-            {
-                if (impl?.Def == null)
-                    continue;
-                var inst = Substitute(impl, map);
-                yield return inst;
-                foreach (var deeper in ConceptInstancesOf(inst, depth + 1))
-                    yield return deeper;
-            }
         }
 
         /// <summary>Unify on a scratch copy; adopt the bindings only on full success. Returns

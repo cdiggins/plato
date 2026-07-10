@@ -143,7 +143,7 @@ namespace Ara3D.Geometry.Compiler.Checking
                 // "$-element types the checker didn't ground" class.
                 if (abstractT.TypeArgs.Count > 0 && abstractT.Def.IsInterface() && groundT.Def != null)
                 {
-                    var instance = FindConceptInstance(groundT, abstractT.Def.Name);
+                    var instance = ConceptClosure.FindInstance(groundT, abstractT.Def.Name);
                     if (instance != null && instance.TypeArgs.Count == abstractT.TypeArgs.Count)
                         for (var i = 0; i < abstractT.TypeArgs.Count; i++)
                             Pair(abstractT.TypeArgs[i], instance.TypeArgs[i], map);
@@ -154,31 +154,6 @@ namespace Ara3D.Geometry.Compiler.Checking
             if (abstractT.TypeArgs.Count == groundT.TypeArgs.Count)
                 for (var i = 0; i < abstractT.TypeArgs.Count; i++)
                     Pair(abstractT.TypeArgs[i], groundT.TypeArgs[i], map);
-        }
-
-        /// <summary>The instance of the named concept that <paramref name="t"/> implements or
-        /// inherits (transitively, with each level's type arguments substituted through:
-        /// <c>Vector3 : IVectorLike : IArrayLike&lt;Number&gt;</c>), or null.</summary>
-        internal static TypeExpression FindConceptInstance(TypeExpression t, string conceptName, int depth = 0)
-        {
-            if (t?.Def == null || depth > 8)
-                return null;
-            if (t.Def.Name == conceptName)
-                return t;
-            var map = new Dictionary<string, TypeExpression>();
-            var tps = t.Def.TypeParameters;
-            for (var i = 0; i < tps.Count && i < t.TypeArgs.Count; i++)
-                map[tps[i].Name] = t.TypeArgs[i];
-            foreach (var impl in t.Def.Implements.Concat(t.Def.Inherits))
-            {
-                if (impl?.Def == null)
-                    continue;
-                var inst = impl.Replace(x => x != null && map.TryGetValue(x.ToString(), out var r) ? r : x);
-                var found = FindConceptInstance(inst, conceptName, depth + 1);
-                if (found != null)
-                    return found;
-            }
-            return null;
         }
 
         private static bool IsSubstitutable(TypeExpression t)

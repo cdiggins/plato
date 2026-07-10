@@ -41,22 +41,33 @@ namespace Ara3D.Geometry.Compiler.Checking
 
         // --- driver --------------------------------------------------------------
 
-        /// <summary>
-        /// Monomorphize the whole compilation: for each <see cref="Types.ReifiedFunction"/> derive the
-        /// grounding substitution (<see cref="TypeSubstitution.FromSignature"/>) and, when the source
-        /// function has a body, specialize its elaborated TIR. Produces exactly one
-        /// <see cref="MonomorphizedFunction"/> per reified function, so the set tracks
-        /// <see cref="Compilation.ReifiedFunctions"/> 1:1.
-        /// </summary>
-        public IReadOnlyList<MonomorphizedFunction> MonomorphizeAll()
+        /// <summary>Check and elaborate every bodied function once, keyed by its original
+        /// definition — the GENERIC (unspecialized) TIR. Also the input to
+        /// <see cref="MonomorphizeAll"/>, so a caller needing both maps runs the checker once.</summary>
+        public Dictionary<FunctionDef, TirFunction> ElaborateAll()
         {
-            // Elaborate every checked (bodied) function once, keyed by its original definition.
             var tirByOriginal = new Dictionary<FunctionDef, TirFunction>();
             var checker = new TypeChecker(Compilation);
             var elaborator = new Elaborator(Compilation);
             foreach (var result in checker.CheckAll())
                 if (result?.Function != null)
                     tirByOriginal[result.Function] = elaborator.Elaborate(result);
+            return tirByOriginal;
+        }
+
+        /// <summary>
+        /// Monomorphize the whole compilation: for each <see cref="Types.ReifiedFunction"/> derive the
+        /// grounding substitution (<see cref="TypeSubstitution.FromSignature"/>) and, when the source
+        /// function has a body, specialize its elaborated TIR. Produces exactly one
+        /// <see cref="MonomorphizedFunction"/> per reified function (tracking
+        /// <see cref="Compilation.ReifiedFunctions"/> 1:1), plus direct entries for
+        /// concrete-first-parameter library functions the reifier never stamps.
+        /// </summary>
+        public IReadOnlyList<MonomorphizedFunction> MonomorphizeAll(
+            Dictionary<FunctionDef, TirFunction> elaborated = null)
+        {
+            // Elaborate every checked (bodied) function once, keyed by its original definition.
+            var tirByOriginal = elaborated ?? ElaborateAll();
 
             var results = new List<MonomorphizedFunction>();
             foreach (var rf in Compilation.ReifiedFunctions)
@@ -273,7 +284,7 @@ namespace Ara3D.Geometry.Compiler.Checking
             var groundReturn = returnType;
             if (groundReturn?.Def != null && groundReturn.Def.IsInterface()
                 && self != null
-                && TypeSubstitution.FindConceptInstance(self, groundReturn.Def.Name) != null)
+                && ConceptClosure.FindInstance(self, groundReturn.Def.Name) != null)
                 groundReturn = self;
             if (groundReturn != null && TypeSubstitution.IsGround(groundReturn))
             {
@@ -302,7 +313,7 @@ namespace Ara3D.Geometry.Compiler.Checking
                     if (t?.Def != null && t.Def.IsInterface() && t.TypeArgs.Count > 0
                         && !TypeSubstitution.IsGround(t))
                     {
-                        var instance = TypeSubstitution.FindConceptInstance(self, t.Def.Name);
+                        var instance = ConceptClosure.FindInstance(self, t.Def.Name);
                         if (instance != null)
                             ResidualPair(t, instance, map);
                     }
@@ -372,7 +383,7 @@ namespace Ara3D.Geometry.Compiler.Checking
             // An interface instance for a ground type that implements it.
             if (residual.Def.IsInterface())
             {
-                var instance = TypeSubstitution.FindConceptInstance(ground, residual.Def.Name);
+                var instance = ConceptClosure.FindInstance(ground, residual.Def.Name);
                 if (instance != null && instance.TypeArgs.Count == residual.TypeArgs.Count)
                     for (var i = 0; i < residual.TypeArgs.Count; i++)
                         ResidualPair(residual.TypeArgs[i], instance.TypeArgs[i], map);
