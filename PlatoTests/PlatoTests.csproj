@@ -17,6 +17,9 @@
   <ItemGroup>
     <ProjectReference Include="..\PlatoCompiler\Plato.Compiler.csproj" />
     <ProjectReference Include="..\PlatoTypeInference\PlatoTypeInference.csproj" />
+    <!-- Test-only: the emit-differential harness diffs the experimental TirCSharpBodyWriter against
+         the current CSharpFunctionBodyWriter. Does NOT affect the default emit path. -->
+    <ProjectReference Include="..\Plato.CSharpWriter\Plato.CSharpWriter.csproj" />
     <!-- Parser + utils, so checker tests can build a Compilation from real .plato source. -->
     <ProjectReference Include="..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
     <ProjectReference Include="..\..\..\ara3d-sdk\src\Ara3D.Utils\Ara3D.Utils.csproj" />
