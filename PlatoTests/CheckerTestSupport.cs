@@ -32,7 +32,9 @@ namespace PlatoTests
         public static AstNode ParseFile(string path)
         {
             var text = File.ReadAllText(path);
-            var parser = CommonParsers.PlatoParser(new ParserInput(text, path));
+            // Logger.Null: the parser's default logger prints ~10 [Info] lines per file, which
+            // swamps real test output when the whole stdlib is compiled per fixture.
+            var parser = CommonParsers.PlatoParser(new ParserInput(text, path), Ara3D.Logging.Logger.Null);
             if (!parser.Succeeded)
                 throw new Exception($"Parse failed for {path}: {string.Join("; ", parser.ErrorMessages)}");
             return parser.Cst!.ToAst();

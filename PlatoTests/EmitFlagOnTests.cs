@@ -17,34 +17,19 @@ namespace PlatoTests
     /// is the real flip criterion: the full 164-file library, not just the aligned-subset
     /// differential. It also reports the body-level split (how many bodies came from the TIR).
     ///
-    /// NORMALIZATION: the writer uses two PROCESS-GLOBAL monotonic counters for synthesized names —
-    /// <c>_var{N}</c> (lambda-capture temporaries) and <c>Core_{N}</c> (library class ids) — that do
-    /// NOT reset between <c>WriteAll</c> runs, so any two runs in one process differ on those names
-    /// alone (a fresh-process CLI run has no such offset — <c>--use-tir</c> vs the golden is
-    /// 164/164). Both flag-off and flag-on emit these names identically MODULO the counter value, so
-    /// the comparison canonicalizes the counters before diffing, exactly as regen strips the
-    /// volatile timestamp header. This is pre-existing writer nondeterminism, unrelated to the flag.
+    /// The comparison is EXACT modulo the volatile "// Created on" timestamp header (the same
+    /// line regen strips): the `_var{N}` lambda-capture counter resets per WriteAll, and the
+    /// Symbol-id name leak (Core_7-style, via the retired "AMBIGUOUS FUNCTIONS" debug comments)
+    /// is gone from generated output, so no name canonicalization is needed — a numbering drift
+    /// between the two paths now FAILS this test.
     /// </summary>
     [TestFixture]
     public static class EmitFlagOnTests
     {
-        // Lambda-capture temporaries "_var{N}" and any synthesized "{LibraryName}_{N}" class id
-        // (Core_7, Vectors_24, ...) — both driven by process-global counters. The suffix regex
-        // keeps the prefix (so a genuine name difference is still caught) and only canonicalizes
-        // the volatile "_<digits>" tail that a letter precedes.
-        private static readonly Regex VarCounter = new Regex(@"_var\d+", RegexOptions.Compiled);
-        private static readonly Regex NameIdSuffix = new Regex(@"(?<=[A-Za-z])_\d+", RegexOptions.Compiled);
-
-        // Drop the volatile "// Created on" header and canonicalize the process-global name
-        // counters, so only real content differences remain.
+        // Drop the volatile "// Created on" header so only real content differences remain.
         private static string Canonical(string s)
-        {
-            s = string.Join("\n", (s ?? "").Replace("\r\n", "\n").Split('\n')
+            => string.Join("\n", (s ?? "").Replace("\r\n", "\n").Split('\n')
                 .Where(line => !line.StartsWith("// Created on ")));
-            s = VarCounter.Replace(s, "_var#");
-            s = NameIdSuffix.Replace(s, "_#");
-            return s;
-        }
 
         [Test]
         public static void UseTirOnReproducesTheFullDefaultLibraryByteForByte()

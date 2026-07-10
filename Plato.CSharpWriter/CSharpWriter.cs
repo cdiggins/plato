@@ -302,11 +302,6 @@ namespace Ara3D.Geometry.CSharpWriter
             System.Linq.Enumerable.Select(Compilation.AllTypeAndLibraryDefinitions, t => t?.Name ?? "")));
 
 
-#if CHANGE_PRECISION
-        public string OtherPrecisionFloatType;
-        public string OtherPrecisionNamespace;
-#endif
-
         public Compiler.Compilation Compilation => Analyzer.Compilation;
         public PlatoAnalyzer Analyzer { get; }
         public Dictionary<string, StringBuilder> Files { get; } = new Dictionary<string, StringBuilder>();
@@ -410,16 +405,17 @@ namespace Ara3D.Geometry.CSharpWriter
 
         public CSharpWriter WriteAll(string floatType)
         {
+            // The lambda-capture hoist names (`_var{N}`) draw from a process-global counter;
+            // reset it per generation so two WriteAll runs in one process produce identical
+            // output (a fresh CLI process always started at 0, so file output is unchanged).
+            SymbolRewriter.NextId = 0;
+
             FloatType = floatType;
             Namespace = floatType == "float"
                 ? "Ara3D.Geometry"
                 : floatType == "double"
                     ? "Ara3D.Geometry.DoublePrecision"
                     : throw new NotImplementedException("Only 'float' and 'double' are supported");
-#if CHANGE_PRECISION
-            OtherPrecisionFloatType = floatType == "float" ? "double" : "float";
-            OtherPrecisionNamespace = floatType == "float" ? "Plato.DoublePrecision" : "Plato";
-#endif 
 
             if (ExtensionStyle)
                 BuildExtensionPlans();
@@ -427,8 +423,6 @@ namespace Ara3D.Geometry.CSharpWriter
             WriteFile("Interfaces.g.cs", WriteConceptInterfaces);
             WriteFile("Constants.g.cs", WriteConstantLibraryMethods);
             WriteFile("Extensions.g.cs", WriteInterfaceLibraryMethods);
-            
-            //WriteFile("Constructors.g.cs", WriteConstructors);
 
             foreach (var c in Compilation.ConcreteTypes)
             {
@@ -471,19 +465,6 @@ namespace Ara3D.Geometry.CSharpWriter
             WriteStartBlock();
             foreach (var f in Compilation.Libraries.AllConstants())
                 WriteConstantFunction(f);
-            WriteEndBlock();
-            return this;
-        }
-
-        public CSharpWriter WriteConstructors()
-        {
-            WriteLine($"public static class Constructors");
-            WriteStartBlock();
-            foreach (var ct in Compilation.ConcreteTypes)
-            {
-                // TODO: 
-                // Write all constructors as a static extension method
-            }
             WriteEndBlock();
             return this;
         }

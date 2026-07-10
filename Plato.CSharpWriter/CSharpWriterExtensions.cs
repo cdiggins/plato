@@ -74,7 +74,6 @@ namespace Ara3D.Geometry.CSharpWriter
                 throw new NotSupportedException("--scalar=float requires --csharp-style=extensions (the default wrapper-struct layout keeps scalar members inside partial structs, which do not exist under erasure)");
             var writer = new CSharpWriter(compilation, outputFolder) { ExtensionStyle = extensionStyle, Optimize = optimize, ScalarErase = scalarErase, UseTir = useTir };
             writer.WriteAll("float");
-            //writer.WriteAll("Plato.DoublePrecision.g.cs", "double");
 
             // Output documentation 
             var docWriter = new DocWriter(compilation);

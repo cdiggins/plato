@@ -76,8 +76,8 @@ namespace Ara3D.Geometry.CLI
             var parsingSuccessful = docs.All(e => e.Parser.Succeeded);
             if (!parsingSuccessful)
             {
-                logger.Log("Parsing failed for one of the input files, halting");
-                return 0; // preserved original behavior: generation mode always exits 0
+                Console.Error.WriteLine("Parsing failed for one of the input files, halting");
+                return 1;
             }
             logger.Log("Parsing succeeded for all files");
 
@@ -86,8 +86,8 @@ namespace Ara3D.Geometry.CLI
             var compilation = new Compilation(logger, trees);
             if (!compilation.CompletedCompilation)
             {
-                logger.Log("Compilation was not completed");
-                return 0; // preserved original behavior: generation mode always exits 0
+                Console.Error.WriteLine("Compilation was not completed");
+                return 1;
             }
 
             if (typeScript)

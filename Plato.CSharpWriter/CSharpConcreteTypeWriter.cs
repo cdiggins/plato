@@ -176,7 +176,8 @@ namespace Ara3D.Geometry.CSharpWriter
                 {
                     var eqBody = FieldNames.Select(f => $"{f}.Equals(other.{f})").JoinStrings(" && ");
                     TypeWriter.WriteLine($"{Attr} public Boolean Equals({Name} other) => {eqBody};");
-                    TypeWriter.WriteLine($"{Attr} public Boolean NotEquals({Name} other) => !{eqBody};");
+                    // Parenthesized: a bare `!a && b` would negate only the first field's comparison.
+                    TypeWriter.WriteLine($"{Attr} public Boolean NotEquals({Name} other) => !({eqBody});");
                     TypeWriter.WriteLine($"{Attr} public override bool Equals(object obj) => obj is {Name} other ? Equals(other).Value : false;");
                 }
                 else
@@ -613,7 +614,7 @@ namespace Ara3D.Geometry.CSharpWriter
             TypeWriter.WriteLine("// Implemented interface functions");
             foreach (var g in ConcreteType.InterfaceFunctionGroups)
             {
-                var f = Analyzer.ChooseBestFunction(g, out int cnt);
+                var f = Analyzer.ChooseBestFunction(g, out _);
 
                 if (SkipFunction(f))
                     continue;
@@ -626,15 +627,11 @@ namespace Ara3D.Geometry.CSharpWriter
                     continue;
                 }
 
-                if (cnt > 1)
-                {
-                    //throw new Exception($"{cnt} ambiguous function found for {f.Name}");
-                    TypeWriter.WriteLine($"// AMBIGUOUS FUNCTIONS {cnt}");
-                    foreach (var tmp in g)
-                    {
-                        TypeWriter.WriteLine($"/* {tmp.Implementation} */");
-                    }
-                }
+                // A same-name tie is resolved by ChooseBestFunction's specificity rules; it used
+                // to be flagged with an "// AMBIGUOUS FUNCTIONS" debug comment in the SHIPPED
+                // output (which also leaked process-global Symbol ids like "Geometry_15").
+                // Ambiguity now surfaces through the checker's CHK202/CHK203 diagnostics and the
+                // linter — generated code is not the reporting channel.
 
                 var fi = TypeWriter.ToFunctionInfo(f, ConcreteType.TypeDef);
                 TypeWriter.WriteMemberFunction(fi, IsPrimitive);

@@ -79,6 +79,8 @@ Box
         - IGeometry3D
           - IGeometry
 
+Buffer
+
 ButterflyCurve
   - IAngularCurve2D
     - ICurve2D
@@ -576,6 +578,8 @@ Lissajous
       - IShape
         - IGeometry
 
+List
+
 LogarithmicSpiral
   - IPolarCurve
     - IAngularCurve2D
@@ -946,6 +950,9 @@ Rotation3D
   - IRotation3D
     - IRigidTransform3D
       - ITransform3D
+
+ScalarField3D
+  - IValue
 
 Scale2D
   - ITransform2D
