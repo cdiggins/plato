@@ -92,6 +92,33 @@ namespace Ara3D.Geometry.Compiler.Checking
             return new TypeSubstitution(map);
         }
 
+        /// <summary>Derive a substitution by pairing an abstract signature given as type lists —
+        /// used with a solver-ZONKED signature, whose variables are in the same terminal form as
+        /// the TIR body's residual variables (see <see cref="Checking.TirFunction"/>).</summary>
+        public static TypeSubstitution FromSignature(IReadOnlyList<TypeExpression> abstractParams,
+            TypeExpression abstractReturn, IReadOnlyList<TypeExpression> groundParams, TypeExpression groundReturn)
+        {
+            var map = new Dictionary<string, TypeExpression>();
+            if (abstractParams != null && groundParams != null)
+                for (var i = 0; i < abstractParams.Count && i < groundParams.Count; i++)
+                    Pair(abstractParams[i], groundParams[i], map);
+            Pair(abstractReturn, groundReturn, map);
+            return new TypeSubstitution(map);
+        }
+
+        /// <summary>This substitution extended with <paramref name="other"/>'s bindings (existing
+        /// keys win).</summary>
+        public TypeSubstitution MergedWith(TypeSubstitution other)
+        {
+            if (other == null || other.IsEmpty)
+                return this;
+            var m = new Dictionary<string, TypeExpression>(_map);
+            foreach (var key in other.Keys)
+                if (!m.ContainsKey(key))
+                    m[key] = other.Lookup(key);
+            return new TypeSubstitution(m);
+        }
+
         private static void Pair(TypeExpression abstractT, TypeExpression groundT,
             Dictionary<string, TypeExpression> map)
         {
@@ -108,12 +135,50 @@ namespace Ara3D.Geometry.Compiler.Checking
                 var key = abstractT.ToString();
                 if (IsSubstitutable(abstractT) && !map.ContainsKey(key))
                     map[key] = groundT;
+
+                // A generic-interface head replaced by a concrete type ALSO determines the
+                // interface's element types: IArrayLike<$T> ↔ Vector3 binds $T → Number through
+                // Vector3's IArrayLike<Number> instance. Without this, body types built from the
+                // elements (IArray<$T>, Function2<$T,$T,$T>) stay abstract — the residual
+                // "$-element types the checker didn't ground" class.
+                if (abstractT.TypeArgs.Count > 0 && abstractT.Def.IsInterface() && groundT.Def != null)
+                {
+                    var instance = FindConceptInstance(groundT, abstractT.Def.Name);
+                    if (instance != null && instance.TypeArgs.Count == abstractT.TypeArgs.Count)
+                        for (var i = 0; i < abstractT.TypeArgs.Count; i++)
+                            Pair(abstractT.TypeArgs[i], instance.TypeArgs[i], map);
+                }
                 return;
             }
 
             if (abstractT.TypeArgs.Count == groundT.TypeArgs.Count)
                 for (var i = 0; i < abstractT.TypeArgs.Count; i++)
                     Pair(abstractT.TypeArgs[i], groundT.TypeArgs[i], map);
+        }
+
+        /// <summary>The instance of the named concept that <paramref name="t"/> implements or
+        /// inherits (transitively, with each level's type arguments substituted through:
+        /// <c>Vector3 : IVectorLike : IArrayLike&lt;Number&gt;</c>), or null.</summary>
+        internal static TypeExpression FindConceptInstance(TypeExpression t, string conceptName, int depth = 0)
+        {
+            if (t?.Def == null || depth > 8)
+                return null;
+            if (t.Def.Name == conceptName)
+                return t;
+            var map = new Dictionary<string, TypeExpression>();
+            var tps = t.Def.TypeParameters;
+            for (var i = 0; i < tps.Count && i < t.TypeArgs.Count; i++)
+                map[tps[i].Name] = t.TypeArgs[i];
+            foreach (var impl in t.Def.Implements.Concat(t.Def.Inherits))
+            {
+                if (impl?.Def == null)
+                    continue;
+                var inst = impl.Replace(x => x != null && map.TryGetValue(x.ToString(), out var r) ? r : x);
+                var found = FindConceptInstance(inst, conceptName, depth + 1);
+                if (found != null)
+                    return found;
+            }
+            return null;
         }
 
         private static bool IsSubstitutable(TypeExpression t)

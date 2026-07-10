@@ -173,7 +173,10 @@ namespace PlatoTests
 
             var rc = result.AllNodes.OfType<TirCall>().Single();
             Assert.AreSame(concreteMul, rc.Callee, "the concept call must re-point to the concrete impl");
-            Assert.AreEqual(EmissionKind.Intrinsic, rc.EmissionKind, "EmissionKind re-derived from the target");
+            // The EmissionKind is PRESERVED across re-dispatch: it encodes the call-site shape
+            // (member access vs arg list), which is what emitted syntax keys on — re-deriving it
+            // from the target would turn `this.Matrix` into `this.Matrix()`.
+            Assert.AreEqual(call.EmissionKind, rc.EmissionKind, "EmissionKind preserved (call-site shape)");
             Assert.AreEqual(1, stats.Redispatched);
             Assert.AreEqual(0, stats.DeferredConcept);
         }
@@ -224,10 +227,17 @@ namespace PlatoTests
         [Test]
         public static void MonomorphizationTracksTheReifiedSetOneToOne()
         {
+            // One instantiation per reified function, 1:1 with the oracle — plus the handful of
+            // NON-reified entries (library functions whose first parameter is already a concrete
+            // type; the reifier never stamps those, but the writer emits them as members).
             var reifiedCount = _compilation.ReifiedFunctions.Count();
             Assert.IsNotEmpty(_all);
-            Assert.AreEqual(reifiedCount, _all.Count,
+            Assert.AreEqual(reifiedCount, _all.Count(m => m.Reified != null),
                 "one monomorphized instantiation per reified function (aligned with the oracle)");
+            foreach (var extra in _all.Where(m => m.Reified == null))
+                Assert.IsTrue(extra.Original?.Parameters.Count > 0
+                    && extra.Original.Parameters[0].Type?.Def?.Name == extra.ConcreteType?.Name,
+                    "a non-reified entry must be a concrete-first-parameter function on that type");
         }
 
         [Test]
@@ -265,7 +275,11 @@ namespace PlatoTests
             var strictlyMoreGround = 0;
             foreach (var m in _all)
             {
+                // Non-reified entries (concrete-first-param library functions the reifier never
+                // stamps) have no oracle signature to agree with.
                 var rf = m.Reified;
+                if (rf == null)
+                    continue;
                 var ps = rf.Original.Parameters;
                 for (var i = 0; i < ps.Count && i < rf.ParameterTypes.Count; i++)
                     AssertAgree(m, ps[i].Type, rf.ParameterTypes[i], $"param {i}", ref strictlyMoreGround);

@@ -78,7 +78,34 @@ the gap.
 3. **Flip the default** only when (2) holds across default style, then extend to
    extension/scalar/optimize styles and the TS/Rust writers.
 
-## Recommended increment 2 (close the taxonomy, in order)
+## Increment 3 result (2026-07-10): the default flipped
+
+Increment 2 closed the taxonomy (differential 100% on 611). Increment 3 closed the FALLBACK:
+solver/elaborator/monomorphizer upgrades (see `compiler-pipeline.md` and `monomorphize-plan.md`)
+grew coverage from 611 to **all 1914 default-style member-instance bodies with Plato source** —
+fallback **0**, differential **1914/1914 byte-identical**, flag-on vs flag-off **164/164 files**,
+and `regen-plato.ps1` green with the TIR path as the default. `UseTir` now defaults to **true**
+(CLI `--no-tir` selects the legacy path). Emission fidelity additions on the TIR side:
+
+- `TirLambdaCaptureRewriter` — mirrors the reference writer's `RewriteLambdasCapturingVars`
+  (hoisted `var _var{N} = x;` blocks), drawing names from the SAME process-global counter so the
+  `_var` numbering matches the golden exactly in a fresh-process generation.
+- Syntactic calls (null-callee `TirCall`), bare names (`TirName`), namespace-qualified type refs,
+  `TirLet` — name+shape-faithful emission for constructs the checker cannot (or need not) resolve.
+- Concept re-dispatch preserves the call-site-shape `EmissionKind` (`this.Matrix`, not
+  `this.Matrix()`).
+
+Gates: `EmitDifferentialTests` (aligned ⇒ byte-identical), `EmitFlagOnTests` (whole library,
+flag-on == flag-off), `FallbackDiagnosticsTests` (fallback == 0, with a root-cause classification
+when it regresses).
+
+**The heuristics are NOT deleted yet.** `CSharpFunctionBodyWriter` still emits the default style's
+STATIC bodies (`Constants.g.cs`, `Extensions.g.cs`) and everything in the extension/scalar/optimize
+styles, so `HasArgList`/`MovedNoArgNames`/property-guessing/scalar re-inference remain live there.
+Deleting them requires extending the TIR writer to static bodies and the other styles (and the
+TS/Rust writers) — the staged path below.
+
+## Increment 2 (closed the taxonomy, in order)
 
 1. **Property-shape on `TirCall`** (closes 98 + 2 → ~93.6%). The writer keys property-vs-method on
    call *shape* (`Args.Count == 1 && !HasArgList`), but `Elaborator.DeriveEmissionKind` checks

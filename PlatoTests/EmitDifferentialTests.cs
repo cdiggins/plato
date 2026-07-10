@@ -118,7 +118,12 @@ namespace PlatoTests
                     catch { _tirThrew++; _rows.Add(row); continue; }
                     row.Candidate = candidate;
 
-                    row.Match = reference == candidate;
+                    // The lambda-capture hoist draws `_var{N}` names from a process-global counter
+                    // (SymbolRewriter.NextId); rendering the same body twice in one process
+                    // necessarily yields different numbers, so canonicalize them for comparison —
+                    // exactly as EmitFlagOnTests does. Numbering EXACTNESS is gated by
+                    // regen-plato.ps1 with the flag on (a fresh process per generation).
+                    row.Match = CanonVar(reference) == CanonVar(candidate);
                     if (!row.Match)
                         row.Category = Classify(reference, candidate);
                     _rows.Add(row);
@@ -130,6 +135,9 @@ namespace PlatoTests
 
         private static readonly Regex Ws = new Regex(@"\s+", RegexOptions.Compiled);
         private static string NoWs(string s) => Ws.Replace(s ?? "", "");
+
+        private static readonly Regex VarCounter = new Regex(@"_var\d+", RegexOptions.Compiled);
+        private static string CanonVar(string s) => VarCounter.Replace(s ?? "", "_var#");
 
         private static string Classify(string reference, string candidate)
         {
@@ -256,8 +264,13 @@ namespace PlatoTests
                 }
             }
 
-            // A measurement, not a brittle gate: just prove the harness produced a real number.
             Assert.Greater(aligned.Count, 0);
+            // Since the increment-3 flip this is a GATE, not a measurement: an aligned ground TIR
+            // must render byte-identical to the legacy writer (modulo the canonicalized _var
+            // counter). Coverage may legitimately shrink (a new body shape falls back to the
+            // legacy writer and EmitFlagOnTests still proves equality); fidelity may not.
+            Assert.AreEqual(0, aligned.Count - matched,
+                "a TIR-rendered body diverged from the legacy writer; see the taxonomy above");
         }
 
         private static string Trim(string s)

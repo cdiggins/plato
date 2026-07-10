@@ -59,13 +59,17 @@ namespace Ara3D.Geometry.Compiler.Checking
             foreach (var eq in system.Equalities)
                 Unify(eq.A, eq.B, Substitution, eq.Origin, record: true);
 
-            // Phase 2: overloads to a fixpoint. A call is resolved when its argument types are
-            // ground; resolving one may ground another (its result feeds an outer call).
+            // Phase 2: overloads and return-coercions to a joint fixpoint. A call is resolved when
+            // its argument types are ground (a function-shaped argument may keep holes — the chosen
+            // candidate's signature determines a lambda's parameter types); resolving one may
+            // ground another (its result feeds an outer call, a coercion target grounds a tuple).
             var pending = system.Overloads.ToList();
+            var coercions = system.Coercions.ToList();
             bool progress = true;
-            while (progress && pending.Count > 0)
+            while (progress && (pending.Count > 0 || coercions.Count > 0))
             {
                 progress = false;
+
                 var still = new List<OverloadConstraint>();
                 foreach (var oc in pending)
                 {
@@ -73,11 +77,38 @@ namespace Ara3D.Geometry.Compiler.Checking
                     else still.Add(oc);
                 }
                 pending = still;
+
+                var stillCoerce = new List<CoercionConstraint>();
+                foreach (var cc in coercions)
+                {
+                    if (ResolveCoercion(cc, force: false)) progress = true;
+                    else stillCoerce.Add(cc);
+                }
+                coercions = stillCoerce;
             }
 
             // Whatever could not be grounded is resolved on a best-effort basis and reported.
-            foreach (var oc in pending)
-                ResolveOverload(oc, force: true);
+            // Each forced resolution may unblock others, so re-enter the fixpoint after each one.
+            while (pending.Count > 0)
+            {
+                ResolveOverload(pending[0], force: true);
+                pending.RemoveAt(0);
+                progress = true;
+                while (progress && pending.Count > 0)
+                {
+                    progress = false;
+                    var still = new List<OverloadConstraint>();
+                    foreach (var oc in pending)
+                    {
+                        if (ResolveOverload(oc, force: false)) progress = true;
+                        else still.Add(oc);
+                    }
+                    pending = still;
+                }
+            }
+
+            foreach (var cc in coercions)
+                ResolveCoercion(cc, force: true);
         }
 
         // --- overload resolution -------------------------------------------------
@@ -97,7 +128,10 @@ namespace Ara3D.Geometry.Compiler.Checking
         {
             var args = oc.ArgTypes.Select(a => Zonk(a, Substitution)).ToList();
 
-            if (!force && args.Any(HasVar))
+            // Defer until the argument types are ground — EXCEPT function-shaped arguments
+            // (Function{N}), whose holes are lambda parameter/result types that the chosen
+            // candidate's signature is supposed to determine (checking-mode inference for HOFs).
+            if (!force && args.Any(a => HasVar(a) && !IsFunctionShaped(a)))
                 return false; // not ground yet — defer
 
             // Trial each candidate on a scratch substitution; keep the viable ones with their cost.
@@ -225,11 +259,12 @@ namespace Ara3D.Geometry.Compiler.Checking
             // A concept parameter: the argument must implement the interface (or convert to it).
             if (IsVar(param) && cand.ConceptOf.TryGetValue(param.Name, out var concept))
             {
-                if (argType.IsImplementing(concept))
+                if (SatisfiesConcept(argType, Zonk(concept, sub), sub))
                 {
-                    // Only decide viability + Self here. Element-type refinement (binding $T from
-                    // List<Number> : IArray<$T>) happens post-commit so it can never change which
-                    // overload is chosen — see CommitCandidate.
+                    // Viability + Self here; SatisfiesConcept also binds the concept's element
+                    // holes from the argument's instance (IVectorLike : IArrayLike<Number> binds
+                    // $T = Number). The coarser post-commit refinement in CommitCandidate remains
+                    // for the paths this walk does not reach.
                     Unify(param, argType, sub, null, record: false); // Self: bind the concept var to the concrete arg
                     return (true, ConceptCost, ArgMatchKind.Concept);
                 }
@@ -246,6 +281,131 @@ namespace Ara3D.Geometry.Compiler.Checking
                 return (true, ConversionCost, ArgMatchKind.Conversion);
 
             return (false, 0, ArgMatchKind.Exact);
+        }
+
+        /// <summary>
+        /// Solver-side concept satisfaction: does <paramref name="argType"/> implement
+        /// <paramref name="concept"/>? Unlike <see cref="TypeExtensions.IsImplementing"/> (which
+        /// requires equal type-argument counts up front, so a non-generic interface like
+        /// <c>IVectorLike</c> can never satisfy <c>IArrayLike&lt;$T&gt;</c>), this walks the
+        /// argument's transitive Implements/Inherits closure with per-level type-argument
+        /// substitution, and — on a name match — unifies the found instance's arguments with the
+        /// concept's (binding element holes: <c>IVectorLike : IArrayLike&lt;Number&gt;</c> binds
+        /// <c>$T = Number</c>). A type variable or type parameter satisfies anything (it may yet be
+        /// bound); <c>Self</c> satisfies anything (the reifier decides what Self is).
+        /// </summary>
+        private bool SatisfiesConcept(TypeExpression argType, TypeExpression concept, Dictionary<string, TypeExpression> sub)
+        {
+            if (argType?.Def == null || concept?.Def == null)
+                return true;
+            if (IsVar(argType) || argType.Def.Kind == TypeKind.TypeParameter
+                || argType.Def.Kind == TypeKind.SelfType)
+                return true;
+
+            if (argType.Def.Name == concept.Def.Name)
+                return UnifyAllOrNothing(argType, concept, sub);
+
+            foreach (var inst in ConceptInstancesOf(argType))
+                if (inst?.Def != null && inst.Def.Name == concept.Def.Name
+                    && UnifyAllOrNothing(inst, concept, sub))
+                    return true;
+
+            return false;
+        }
+
+        /// <summary>Every concept instance <paramref name="t"/> implements or inherits, transitively,
+        /// with each level's type arguments substituted through (<c>List&lt;Number&gt;</c> yields
+        /// <c>IArray&lt;Number&gt;</c>, not <c>IArray&lt;T&gt;</c>). Cycle-capped by depth.</summary>
+        private IEnumerable<TypeExpression> ConceptInstancesOf(TypeExpression t, int depth = 0)
+        {
+            if (t?.Def == null || depth > 8)
+                yield break;
+            var map = BuildParamSubstitution(t);
+            foreach (var impl in t.Def.Implements.Concat(t.Def.Inherits))
+            {
+                if (impl?.Def == null)
+                    continue;
+                var inst = Substitute(impl, map);
+                yield return inst;
+                foreach (var deeper in ConceptInstancesOf(inst, depth + 1))
+                    yield return deeper;
+            }
+        }
+
+        /// <summary>Unify on a scratch copy; adopt the bindings only on full success. Returns
+        /// whether unification succeeded (contrast <see cref="BindBestEffort"/>, which is void).</summary>
+        private bool UnifyAllOrNothing(TypeExpression a, TypeExpression b, Dictionary<string, TypeExpression> sub)
+        {
+            var scratch = new Dictionary<string, TypeExpression>(sub);
+            if (!Unify(a, b, scratch, null, record: false))
+                return false;
+            foreach (var kv in scratch)
+                sub[kv.Key] = kv.Value;
+            return true;
+        }
+
+        /// <summary>A top-level function type (<c>Function{N}</c>) — a lambda's shape.</summary>
+        private static bool IsFunctionShaped(TypeExpression t)
+            => t?.Def?.Name != null && t.Def.Name.StartsWith("Function");
+
+        // --- return-position coercion ---------------------------------------------
+
+        /// <summary>
+        /// Resolve a return-position coercion: the body's type must unify with — or implicitly
+        /// convert to — the declared return type. Accepted conversions mirror what the generated C#
+        /// compiles implicitly: a cast relation (<c>Vector3</c> → <c>Point3D</c>), a same-shape
+        /// tuple for a struct (<c>(a, b)</c> → <c>Line2D</c>, binding the tuple's element holes
+        /// from the struct's fields), and a value for an interface it implements. When not forced,
+        /// defers while either side still has holes a later resolution could fill.
+        /// </summary>
+        private bool ResolveCoercion(CoercionConstraint cc, bool force)
+        {
+            var from = Zonk(cc.From, Substitution);
+            var to = Zonk(cc.To, Substitution);
+
+            // A variable on either side: unifying is both the cheapest and the most informative
+            // outcome (it grounds the body type from the declared return, or vice versa).
+            if (from == null || to == null || IsVar(from) || IsVar(to))
+            {
+                Unify(cc.From, cc.To, Substitution, cc.Origin, record: true);
+                return true;
+            }
+
+            if (!force && (HasVar(from) || HasVar(to)))
+                return false; // inner holes may still be filled — defer
+
+            if (UnifyAllOrNothing(from, to, Substitution))
+                return true;
+
+            if (HasConversion(from, to))
+                return true;
+
+            if (TupleConvertsToStruct(from, to))
+                return true;
+
+            if (to.Def.IsInterface() && SatisfiesConcept(from, to, Substitution))
+                return true;
+
+            // Nothing fits: report as the unification failure it is (located).
+            Unify(from, to, Substitution, cc.Origin, record: true);
+            return true;
+        }
+
+        /// <summary>A <c>Tuple{N}</c> converts to a concrete struct with N fields whose types unify
+        /// element-wise (the generated structs carry an implicit tuple conversion operator).</summary>
+        private bool TupleConvertsToStruct(TypeExpression from, TypeExpression to)
+        {
+            if (from?.Def?.Name == null || !from.Def.Name.StartsWith("Tuple"))
+                return false;
+            if (to?.Def == null || !to.Def.IsConcrete() || to.Def.Fields.Count != from.TypeArgs.Count)
+                return false;
+            var scratch = new Dictionary<string, TypeExpression>(Substitution);
+            for (var i = 0; i < from.TypeArgs.Count; i++)
+                if (!Unify(from.TypeArgs[i], to.Def.Fields[i].Type, scratch, null, record: false))
+                    return false;
+            foreach (var kv in scratch)
+                Substitution[kv.Key] = kv.Value;
+            return true;
         }
 
         /// <summary>
@@ -308,6 +468,10 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// Give a candidate's generic holes fresh unification variables, replace interface
         /// parameters with fresh "concept" variables (so a concrete argument binds through them),
         /// and refine an interface return type to the concept variable of the parameter it names.
+        /// A CONCEPT METHOD's <c>Self</c> becomes a concept variable constrained to the owning
+        /// interface (with the interface's type parameters as fresh holes), so
+        /// <c>Divide(self: Self, other: Number): Self</c> on <c>IScalarArithmetic</c> matches any
+        /// implementing argument and returns its concrete type — the "Self" behavior.
         /// </summary>
         private Candidate InstantiateCandidate(FunctionDef f)
         {
@@ -317,6 +481,19 @@ namespace Ara3D.Geometry.Compiler.Checking
 
             var cand = new Candidate { Function = f, Ps = new TypeExpression[f.Parameters.Count] };
             var conceptVarByInstance = new Dictionary<string, TypeExpression>();
+
+            // Concept method: map "Self" (anywhere in the signature — Substitute keys by name) to a
+            // fresh concept variable constrained to the owning interface's instance.
+            if (f.OwnerType != null && f.OwnerType.IsInterface())
+            {
+                var ownerInstance = f.OwnerType.ToTypeExpression();
+                CollectHoles(ownerInstance, map);
+                ownerInstance = Substitute(ownerInstance, map);
+                var selfVar = _vars.Fresh("C");
+                cand.ConceptOf[selfVar.Name] = ownerInstance;
+                conceptVarByInstance[ownerInstance.ToString()] = selfVar;
+                map["Self"] = selfVar;
+            }
 
             for (var i = 0; i < cand.Ps.Length; i++)
             {
@@ -383,6 +560,13 @@ namespace Ara3D.Geometry.Compiler.Checking
                 return Bind(a, b, sub, origin, record);
             if (IsVar(b))
                 return Bind(b, a, sub, origin, record);
+
+            // `Self` is compatible with anything: it is a placeholder the reifier replaces with
+            // the concrete type a function is stamped onto, so at generic-check time both
+            // `Self ~ Vector3` and `Self ~ IArrayLike<T>` are satisfiable-by-substitution. No
+            // binding: Self stays Self in the solved view and monomorphization grounds it.
+            if (a.Def?.Kind == TypeKind.SelfType || b.Def?.Kind == TypeKind.SelfType)
+                return true;
 
             // Both are named (or rigid type parameters): match nominally.
             if (a.Def?.Name != b.Def?.Name)

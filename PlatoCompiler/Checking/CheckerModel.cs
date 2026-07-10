@@ -111,6 +111,23 @@ namespace Ara3D.Geometry.Compiler.Checking
     }
 
     /// <summary>
+    /// A soft equality for RETURN positions: <see cref="From"/> must unify with — or implicitly
+    /// convert to — <see cref="To"/>. Plato's generated C# admits an implicit conversion at the
+    /// return boundary (tuple → same-shape struct, cast relation, value → implemented interface),
+    /// so a hard unify would reject bodies the emitter compiles fine.
+    /// </summary>
+    public class CoercionConstraint : Constraint
+    {
+        public TypeExpression From { get; }
+        public TypeExpression To { get; }
+
+        public CoercionConstraint(TypeExpression from, TypeExpression to, Symbol origin) : base(origin)
+            => (From, To) = (from, to);
+
+        public override string ToString() => $"{From} ~> {To}";
+    }
+
+    /// <summary>
     /// The output of the constrain pass: the constraints to solve, the type assigned to every
     /// expression (a variable until solved), and any generation-time diagnostics.
     /// </summary>
@@ -122,6 +139,7 @@ namespace Ara3D.Geometry.Compiler.Checking
 
         public IEnumerable<EqualityConstraint> Equalities => Constraints.OfType<EqualityConstraint>();
         public IEnumerable<OverloadConstraint> Overloads => Constraints.OfType<OverloadConstraint>();
+        public IEnumerable<CoercionConstraint> Coercions => Constraints.OfType<CoercionConstraint>();
 
         public void Equate(TypeExpression a, TypeExpression b, Symbol origin)
         {

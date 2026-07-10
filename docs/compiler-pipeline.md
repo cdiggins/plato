@@ -26,17 +26,22 @@ It is aimed at people working *on the compiler*. For the language itself see
       │  solve            Checking/Solver                 ← NEW
       ▼
  Substitution + diagnostics
-      ┊  elaborate        (planned) → fully-typed IR
-      ┊  monomorphize     (planned)
-      ┊  emit             CSharpWriter / RustWriter / TypeScriptWriter (today: consume the
-                          symbol graph + Types/Analysis directly)
+      │  elaborate        Checking/Elaborator            → Typed IR (TIR)
+      ▼
+ TIR (typed, resolved, coercions explicit)
+      │  monomorphize     Checking/Monomorphizer         (per concrete instantiation, ground)
+      ▼
+ monomorphized TIR
+      │  emit             DEFAULT C# style member bodies: TirCSharpBodyWriter (UseTir, on by
+                          default). Everything else (static bodies, extension/scalar/optimize
+                          styles, TS/Rust): the legacy writers, consuming the symbol graph.
 ```
 
-The three **NEW** passes live in [`PlatoCompiler/Checking/`](../PlatoCompiler/Checking) and run in
-**shadow mode**: they compute a normalized, fully-constrained, solved view of every function and
-report diagnostics, but they do **not** feed code generation yet. This is deliberate — it lets the
-checker mature against the real standard library (the "stdlib as oracle" strategy) with zero risk to
-the production emitter. The off-pipeline byte-identity gate (`tools/regen-plato.ps1`) still passes.
+The passes live in [`PlatoCompiler/Checking/`](../PlatoCompiler/Checking). They matured in
+**shadow mode** against the real standard library (the "stdlib as oracle" strategy); since
+increment 3 the TIR is the **production emit path for default-style member bodies**, proven
+byte-identical to the legacy writer (the byte-identity gate `tools/regen-plato.ps1` now exercises
+it). The checker also reports located diagnostics for every function.
 
 ## The IRs
 
@@ -105,12 +110,23 @@ Walks a normalized function body and produces a `ConstraintSystem`. It is **bidi
 - `Synthesize(e)` infers a type upward (literals → their scalar type; parameter/variable references
   → their declared type; `new T(…)` → `T`; array literals → `Array<$E>`; conditionals → a fresh
   result variable with both branches checked against it; …).
-- `Check(e, expected)` pushes an expected type downward — into conditional branches, return
-  positions, and the `default` keyword (whose type is *entirely* contextual).
+- `Check(e, expected)` pushes an expected type downward — into conditional branches and the
+  `default` keyword (whose type is *entirely* contextual).
 
 An overloaded call `f(a, b)` becomes an **`OverloadConstraint`**: the argument types, a fresh result
-variable, and the candidate `FunctionDef`s of the group. The declared return type of the enclosing
-function is imposed as a `Check` on the body, so the body's type must match the signature.
+variable, and the candidate `FunctionDef`s of the group.
+
+Details that matter (added in increment 3):
+
+- **Unannotated lambda parameters and locals carry the placeholder type `Any`** from binding — the
+  generator mints a fresh inference hole per unannotated lambda parameter / `var` local and uses it
+  for every reference, so the enclosing HOF signature (or the initializer) determines them.
+- **A type used as a value** (`Self.CreateFromComponents(…)`, `Number.MinValue`'s receiver) is
+  typed as the referenced type itself, so concept parameters can bind through it.
+- **A bare reference to a unique nullary function** (a constant) is typed as its return type — the
+  writer's `Constants.<Name>` rule, mirrored.
+- **RETURN positions emit a `CoercionConstraint`** (soft), not an equality: Plato's generated C#
+  admits an implicit conversion at the return boundary (see the solver below).
 
 ## Pass 3 — Solve (`Checking/Solver.cs`)
 
@@ -156,18 +172,36 @@ Consumes the constraint system and produces a substitution plus located diagnost
 ### Scope
 
 The solver handles exact/generic unification, concept (interface) satisfaction with Self-style
-return refinement, implicit casts, and **generic-concept element inference** — when an argument
-directly implements a generic interface (`List<Number>` against `IArray<$T>`), the element variable
-binds (`$T = Number`). Element inference runs **post-commit and best-effort**: it only sharpens the
-result type, and never changes which overload was chosen, so it cannot introduce a false mismatch on
-a type variable shared with another parameter. It fully resolves **246 of 823** stdlib function
-bodies with zero errors (the `SolverResolvesSomeStdLibFunctionsCleanly` test prints the live figure);
-the remainder are *reported*, never crashed.
+return refinement, implicit casts, and generic-concept element inference. Increment 3 extended it
+substantially; the mechanisms now in place:
 
-Remaining: element inference through *transitive* (multi-level) concept chains is best-effort — a
-one-level substitution can leave it under-determined — and the larger **elaborate → monomorphize →
-emit** retargeting (letting the writers consume a fully-typed IR and drop their emit-time
-heuristics) is still ahead.
+- **Concept-method `Self` instantiation** — a candidate that is a concept method (`Divide(self:
+  Self, other: Number): Self` on `IScalarArithmetic`) instantiates `Self` (anywhere in its
+  signature) as a fresh concept variable constrained to the owning interface, with the interface's
+  type parameters as fresh holes. Matching binds the variable to the concrete argument, so a `Self`
+  return refines to the receiver's type — the "Self" behavior.
+- **Closure-walking concept satisfaction** (solver-local; `TypeExtensions.IsImplementing` is left
+  untouched for the production writer) — satisfaction walks the argument's transitive
+  Implements/Inherits closure with per-level type-argument substitution and, on a name match,
+  unifies the found instance's arguments with the concept's, binding element holes
+  (`IVectorLike : IArrayLike<Number>` binds `$T = Number`). Works when the argument is itself an
+  interface. The older post-commit element refinement remains as a backstop.
+- **Permissive `Self`** — `Self` unifies with anything, binding nothing: it is a placeholder the
+  reifier replaces per concrete type, so at generic-check time `Self ~ IArrayLike<T>` is
+  satisfiable-by-substitution; monomorphization grounds it.
+- **HOF scheduling** — a function-shaped argument (`Function{N}` with holes) does not block
+  overload resolution: the chosen candidate's signature determines the lambda's parameter types
+  (checking-mode inference). Forced resolutions re-enter the fixpoint one at a time, so each
+  commitment can unblock the rest.
+- **Return coercions** (`CoercionConstraint`) — unify, else accept a cast relation
+  (`Vector3` for `Point3D`), a `Tuple{N}` for a same-shape concrete struct (binding the tuple's
+  element holes from the struct's fields — the generated structs carry an implicit tuple
+  conversion), or a value for an interface it implements; else report `CHK101`.
+
+It fully resolves **745 of 823** stdlib function bodies with zero errors (the
+`SolverResolvesSomeStdLibFunctionsCleanly` test prints the live figure); the remainder are
+*reported*, never crashed — mostly calls into handwritten intrinsic members the compiler cannot
+see, which the elaborator emits as *syntactic* calls (name + shape).
 
 ## Orchestration and use
 

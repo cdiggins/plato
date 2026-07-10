@@ -93,7 +93,11 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         // a single-parameter member is emitted as a property getter.
         var numParams = _tir.Original?.NumParameters ?? _tir.Parameters.Count;
         var isProp = numParams == 1;
-        var isBlock = _tir.Body is TirBlock;
+
+        // The reference writer hoists lambda-captured references into `var _var{N} = x;` blocks
+        // before emitting (RewriteLambdasCapturingVars); mirror it, sharing the same counter.
+        var body = TirLambdaCaptureRewriter.Rewrite(_tir.Body);
+        var isBlock = body is TirBlock;
 
         if (isProp)
             Write($" {{ {CSharpTypeWriter.Annotation} get ");
@@ -101,12 +105,12 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         if (!isBlock)
         {
             Write(" => ");
-            WriteNode(_tir.Body);
+            WriteNode(body);
             Write(";");
         }
         else
         {
-            WriteStatement(_tir.Body);
+            WriteStatement(body);
         }
 
         if (isProp)
@@ -145,6 +149,14 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             case TirReturn r:
                 Write("return ");
                 WriteNode(r.Value);
+                WriteLine(";");
+                return;
+
+            case TirLet let:
+                Write("var ");
+                Write(let.Def?.Name ?? "?");
+                Write(" = ");
+                WriteNode(let.Value);
                 WriteLine(";");
                 return;
 
@@ -214,11 +226,30 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 return;
 
             case TirTypeRef t:
-                Write(t.TypeDef?.Name == "Self" ? _selfType : t.TypeDef?.Name ?? "?");
+                // A raw-TypeExpression reference is namespace-qualified (`Ara3D.Geometry.Number`),
+                // a bound type reference is bare (`Self` -> the concrete type name) — the two
+                // paths of the reference writer.
+                if (t.NamespaceQualified && t.TypeDef?.Name != "Self")
+                    Write($"{_tw.Writer.Namespace}.{t.TypeDef?.Name ?? "?"}");
+                else
+                    Write(t.TypeDef?.Name == "Self" ? _selfType : t.TypeDef?.Name ?? "?");
+                return;
+
+            case TirLet let:
+                // A let in expression position (statement-position lets are handled in
+                // WriteStatement); the reference writes the same `var` form.
+                Write($"var {let.Def?.Name ?? "?"} = ");
+                WriteNode(let.Value);
                 return;
 
             case TirDefault:
                 Write("default");
+                return;
+
+            case TirName nm:
+                // A bare multi-overload group reference (`One`, `Zero`): the reference writer
+                // emits the bare name and lets C# member lookup bind it.
+                Write(nm.Name);
                 return;
 
             case TirCall call:
@@ -286,11 +317,19 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 Write(string.Join(", ", lam.Parameters.Select(p => p.Name)));
                 Write(") ");
                 _lambdaDepth++;
-                Write(" => ");
-                if (lam.Body is TirBlock)
-                    WriteStatement(lam.Body);
+                // The reference constructs a fresh body writer per lambda, whose constructor
+                // re-runs the capture hoist on the lambda's own body, and writes " => " only for
+                // an expression body. Mirror both (a hoisted lambda body is block-shaped).
+                var lamBody = TirLambdaCaptureRewriter.Rewrite(lam.Body);
+                if (IsStatementNode(lamBody))
+                {
+                    WriteStatement(lamBody);
+                }
                 else
-                    WriteNode(lam.Body);
+                {
+                    Write(" => ");
+                    WriteNode(lamBody);
+                }
                 _lambdaDepth--;
                 return;
 

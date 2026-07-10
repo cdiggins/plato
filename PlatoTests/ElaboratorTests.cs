@@ -189,10 +189,12 @@ namespace PlatoTests
         // --- totality ------------------------------------------------------------
 
         [Test]
-        public static void UnresolvedCallElaboratesToUnresolvedNode()
+        public static void UnresolvedCallElaboratesToSyntacticCall()
         {
-            // A call the solver never recorded: the elaborator must stay total (no throw) and emit a
-            // partial node plus an ELB001 diagnostic.
+            // A call the solver never recorded: the elaborator must stay total (no throw) and emit
+            // a SYNTACTIC TirCall — null callee, the group's name, a shape-derived EmissionKind —
+            // plus an ELB001 diagnostic. Emission needs only name + shape, so an unresolvable call
+            // is still rendered faithfully; groundness is decided by its types.
             var f = LibFunc("Mystery", T("Number"), null, T("Number"));
             var fc = Call(f, true, Int(1));
 
@@ -204,7 +206,10 @@ namespace PlatoTests
             var elaborator = new Elaborator(null);
             var tir = elaborator.Elaborate(result);
 
-            Assert.IsInstanceOf<TirUnresolved>(tir.Body);
+            var call = tir.Body as TirCall;
+            Assert.NotNull(call, "an unresolved named call elaborates to a syntactic TirCall");
+            Assert.IsNull(call.Callee);
+            Assert.AreEqual("Mystery", call.Name);
             Assert.IsTrue(elaborator.Diagnostics.Any(d => d.Code == "ELB001"));
         }
     }
@@ -255,7 +260,7 @@ namespace PlatoTests
         }
 
         [Test]
-        public static void EveryTypedCallNodeCarriesACallee()
+        public static void EveryTypedCallNodeCarriesANameAndResolvedCallsASignature()
         {
             var results = new TypeChecker(_compilation).CheckAll();
             var elaborator = new Elaborator(_compilation);
@@ -265,8 +270,12 @@ namespace PlatoTests
                 var tir = elaborator.Elaborate(r);
                 foreach (var call in tir.AllNodes.OfType<TirCall>())
                 {
-                    Assert.NotNull(call.Callee, $"a TirCall in '{r.Function.Name}' has no callee");
-                    Assert.NotNull(call.ReturnType, $"a TirCall to '{call.Name}' in '{r.Function.Name}' has no return type");
+                    // A RESOLVED call carries the winning callee and its instantiated signature;
+                    // a SYNTACTIC call (null callee — target invisible to the compiler or
+                    // unresolved) must still carry the name its emission is keyed on.
+                    Assert.NotNull(call.Name, $"a TirCall in '{r.Function.Name}' has no name");
+                    if (call.Callee != null)
+                        Assert.NotNull(call.ReturnType, $"a resolved TirCall to '{call.Name}' in '{r.Function.Name}' has no return type");
                 }
             }
         }

@@ -83,13 +83,30 @@ namespace Ara3D.Geometry.Compiler.Checking
         public override string ToString() => Def?.Name ?? "<var>";
     }
 
-    /// <summary>A bare type reference used as a value (e.g. a static qualifier).</summary>
+    /// <summary>A bare type reference used as a value (e.g. a static qualifier). A reference bound
+    /// through a <c>TypeRefSymbol</c> emits as the bare type name (<c>Self</c> → <c>Time</c>); one
+    /// that reached the body as a raw <c>TypeExpression</c> emits namespace-qualified
+    /// (<c>Ara3D.Geometry.Number</c>) — mirroring the two paths in the current writer.</summary>
     public class TirTypeRef : TirNode
     {
         public TypeDef TypeDef { get; }
-        public TirTypeRef(TypeDef typeDef, TypeExpression type, Symbol origin)
-            : base(type, origin) => TypeDef = typeDef;
+        public bool NamespaceQualified { get; }
+        public TirTypeRef(TypeDef typeDef, TypeExpression type, Symbol origin, bool namespaceQualified = false)
+            : base(type, origin) => (TypeDef, NamespaceQualified) = (typeDef, namespaceQualified);
         public override string ToString() => TypeDef?.Name ?? "<type>";
+    }
+
+    /// <summary>A local variable declaration statement (<c>var x = value;</c>). Also synthesized by
+    /// the emit-side lambda-capture hoist, mirroring the current writer's
+    /// <c>RewriteLambdasCapturingVars</c>.</summary>
+    public class TirLet : TirNode
+    {
+        public VariableDef Def { get; }
+        public TirNode Value { get; }
+        public TirLet(VariableDef def, TirNode value, TypeExpression type, Symbol origin)
+            : base(type, origin) => (Def, Value) = (def, value);
+        public override IEnumerable<TirNode> Children => new[] { Value };
+        public override string ToString() => $"var {Def?.Name} = {Value};";
     }
 
     /// <summary>The <c>default</c> keyword. Its type is entirely contextual (carried in Type).</summary>
@@ -99,11 +116,26 @@ namespace Ara3D.Geometry.Compiler.Checking
         public override string ToString() => $"default({Type})";
     }
 
+    /// <summary>A bare name in value position — a reference to a function group with several
+    /// overloads (mixed arity, or multiple nullary constants like <c>One</c>/<c>Zero</c>), which
+    /// the current writer emits as the bare name and lets C# member lookup bind (typically to a
+    /// handwritten static on the enclosing struct). Purely syntactic; the type is a best-effort
+    /// context annotation.</summary>
+    public class TirName : TirNode
+    {
+        public string Name { get; }
+        public TirName(string name, TypeExpression type, Symbol origin) : base(type, origin) => Name = name;
+        public override string ToString() => Name;
+    }
+
     // --- calls & coercions ---------------------------------------------------
 
-    /// <summary>A resolved call to a named overload. Carries the winning callee, its instantiated
-    /// signature, the elaborated arguments (with conversions already wrapped in
-    /// <see cref="TirCoerce"/>), and how it should be emitted.</summary>
+    /// <summary>A call to a named overload. Usually resolved (a winning callee plus its
+    /// instantiated signature); a SYNTACTIC call carries a null <see cref="Callee"/> and just the
+    /// name — the call's target is invisible to the compiler (a handwritten intrinsic member like
+    /// <c>Matrix4x4.CreateTranslation</c>) or was not resolved, but its emission is still fully
+    /// determined by name + shape, exactly as the current writer emits it. Arguments have
+    /// conversions already wrapped in <see cref="TirCoerce"/>.</summary>
     public class TirCall : TirNode
     {
         public FunctionDef Callee { get; }
@@ -111,11 +143,11 @@ namespace Ara3D.Geometry.Compiler.Checking
         public IReadOnlyList<TypeExpression> ParameterTypes { get; }
         public TypeExpression ReturnType { get; }
         public IReadOnlyList<TirNode> Args { get; }
-        public string Name => Callee?.Name;
+        public string Name { get; }
 
         public TirCall(FunctionDef callee, EmissionKind emissionKind,
             IReadOnlyList<TypeExpression> parameterTypes, TypeExpression returnType,
-            IReadOnlyList<TirNode> args, TypeExpression type, Symbol origin)
+            IReadOnlyList<TirNode> args, TypeExpression type, Symbol origin, string name = null)
             : base(type, origin)
         {
             Callee = callee;
@@ -123,6 +155,7 @@ namespace Ara3D.Geometry.Compiler.Checking
             ParameterTypes = parameterTypes ?? new List<TypeExpression>();
             ReturnType = returnType;
             Args = args ?? new List<TirNode>();
+            Name = name ?? callee?.Name;
         }
 
         public override IEnumerable<TirNode> Children => Args;
@@ -305,20 +338,29 @@ namespace Ara3D.Geometry.Compiler.Checking
 
     // --- top level -----------------------------------------------------------
 
-    /// <summary>A fully elaborated function: the original definition plus its TIR body.</summary>
+    /// <summary>A fully elaborated function: the original definition plus its TIR body. The
+    /// solver-ZONKED signature (when the elaborator had a solver) carries the declared signature
+    /// with every type variable chased to its terminal form — the same form the body's residual
+    /// variables appear in, so monomorphization can pair it against a reified ground signature to
+    /// bind them.</summary>
     public class TirFunction
     {
         public FunctionDef Original { get; }
         public IReadOnlyList<ParameterDef> Parameters { get; }
         public TypeExpression ReturnType { get; }
         public TirNode Body { get; }
+        public IReadOnlyList<TypeExpression> ZonkedParameterTypes { get; }
+        public TypeExpression ZonkedReturnType { get; }
 
-        public TirFunction(FunctionDef original, IReadOnlyList<ParameterDef> parameters, TypeExpression returnType, TirNode body)
+        public TirFunction(FunctionDef original, IReadOnlyList<ParameterDef> parameters, TypeExpression returnType, TirNode body,
+            IReadOnlyList<TypeExpression> zonkedParameterTypes = null, TypeExpression zonkedReturnType = null)
         {
             Original = original;
             Parameters = parameters ?? new List<ParameterDef>();
             ReturnType = returnType;
             Body = body;
+            ZonkedParameterTypes = zonkedParameterTypes;
+            ZonkedReturnType = zonkedReturnType;
         }
 
         /// <summary>Every TIR node in the body, pre-order (empty when there is no body).</summary>

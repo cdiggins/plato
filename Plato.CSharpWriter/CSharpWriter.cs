@@ -202,15 +202,16 @@ namespace Ara3D.Geometry.CSharpWriter
             "ReciprocalSquareRootEstimate",
         };
 
-        // When true (off by default), the retarget probe for the Elaborate → Monomorphize → Emit
-        // phase: a function's member-instance BODY is emitted from the monomorphized TIR through
-        // TirCSharpBodyWriter instead of from the symbol graph through CSharpFunctionBodyWriter,
-        // falling back to the current writer for any (function, type) without a fully-ground TIR.
-        // Only fires in the pure DEFAULT style (no extension/scalar/optimize) — the mode the TIR
-        // writer was validated byte-for-byte against by EmitDifferentialTests. Default (false)
-        // output is byte-identical to the original writer: with the flag off, WriteBody never
-        // constructs a TIR writer and never builds the ground-TIR lookup below.
-        public bool UseTir;
+        // The Elaborate → Monomorphize → Emit retarget, ON BY DEFAULT since increment 3: in the
+        // pure DEFAULT C# style (no extension/scalar/optimize), every member-instance BODY with
+        // Plato source is emitted from the monomorphized TIR through TirCSharpBodyWriter instead
+        // of from the symbol graph through CSharpFunctionBodyWriter. The TIR covers all such
+        // bodies (fallback count 0) and reproduces the previous writer byte-for-byte
+        // (EmitDifferentialTests 1914/1914; EmitFlagOnTests 164/164 files; regen-plato.ps1 gates
+        // the checked-in golden). Set false (or pass --no-tir to the CLI) to fall back to the
+        // legacy symbol-graph body writer, which also still serves the non-default styles and
+        // static/extension bodies.
+        public bool UseTir = true;
 
         // UseTir measurement counters (no effect on output): member-instance bodies emitted from
         // the monomorphized TIR, and eligible bodies that fell back to the current writer because

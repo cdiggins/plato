@@ -68,7 +68,39 @@ reifier fully succeeded.
    hand-built concrete impl) and integration over `plato-src` (total; count fully-ground TIRs;
    assert the derived substitution reproduces every `rf` signature; report re-dispatch coverage).
 
-## Deferred to increment 2
+## Increment 3 (2026-07-10): grounding completed
+
+The deferred classes below are closed. The grounding substitution is now derived from FOUR sources,
+in order (`MonomorphizeAll`):
+
+1. **Declared-signature pairing** (`FromSignature(original, …)`) — unchanged; keeps the reifier
+   cross-check intact.
+2. **Solver-ZONKED-signature pairing** — the TIR body's residual variables appear in *terminal*
+   zonked form (`$G14`, not the declared `$T`), because the solver binds through chains; the
+   elaborator records the zonked declared signature on `TirFunction` and a second pairing binds
+   those terminal names. (Recorded call signatures are also re-zonked LIVE at elaboration —
+   `CommitCandidate` snapshots them at commit time, before later unifications land.)
+3. **Element-instance walk inside `Pair`** — a generic-interface head replaced by a concrete type
+   also determines the interface's element types: `IArrayLike<$T>` ↔ `Vector3` finds Vector3's
+   `IArrayLike<Number>` instance (transitive, per-level substituted) and binds `$T → Number`.
+4. **Post-specialization residual grounding** — variables the signature cannot reach are paired
+   against ground context: return-position types (including a call's PRE-coercion `ReturnType` —
+   a `Tuple2<Angle,$r>` under an already-coerced `AnglePair`-typed node) against the reified
+   return (Self-refined when it is an interface the Self type implements; a tuple pairs
+   element-wise against the concrete struct's fields), and leftover interface instances against
+   the Self type's own concept instances. Then re-specialize.
+
+Also: **non-reified entries** — library functions whose first parameter is already a concrete type
+(`Matrix(r: LookAt3D)`) are never stamped by the reifier but the writer emits them as members;
+`MonomorphizeAll` now covers them directly (their signature is its own ground signature). And
+**re-dispatch preserves the elaborator's call-site-shape `EmissionKind`** instead of re-deriving it
+from the target (re-derivation turned `this.Matrix` into `this.Matrix()`).
+
+Result: **1998 / 2014** bodied instantiations fully ground; the 16 non-ground remainder have no
+emitted body in the default style (they are not writer-eligible). Every writer-eligible
+member-instance body is covered — `FallbackDiagnosticsTests` gates this at 0.
+
+## Deferred to increment 2 (historical — closed by increment 3)
 
 The 127 concept calls left un-re-dispatched over the stdlib fall into two understood classes, both
 genuinely out of scope for a safe direct pass:

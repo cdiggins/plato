@@ -28,13 +28,19 @@ namespace Ara3D.Geometry.Compiler.Checking
             => Compilation = compilation;
 
         /// <summary>Elaborate one solved function into TIR. Reuses the normalized body the solver
-        /// checked, so the recorded call decisions line up by identity.</summary>
+        /// checked, so the recorded call decisions line up by identity. The function's declared
+        /// signature is also recorded SOLVER-ZONKED: the body's residual type variables all appear
+        /// in terminal (fully-chased) form, so the zonked signature is the form monomorphization
+        /// can pair against a reified ground signature to bind them (see
+        /// <see cref="TypeSubstitution.FromSignature"/>).</summary>
         public TirFunction Elaborate(TypeCheckResult result)
         {
             _result = result;
             var f = result.Normalized ?? result.Function;
             var body = ElaborateStatement(f?.Body);
-            return new TirFunction(f, f?.Parameters, f?.ReturnType, body);
+            var zonkedParams = f?.Parameters?.Select(p => result.Solver.Zonk(p.Type)).ToList();
+            var zonkedReturn = f != null ? result.Solver.Zonk(f.ReturnType) : null;
+            return new TirFunction(f, f?.Parameters, f?.ReturnType, body, zonkedParams, zonkedReturn);
         }
 
         private TypeExpression TypeOf(Expression e)
@@ -75,10 +81,11 @@ namespace Ara3D.Geometry.Compiler.Checking
                     return null;
 
                 case VariableDef vd:
-                    // A local variable definition (rare in a pure expression language). Keep the
-                    // initializer walkable under an unresolved wrapper.
-                    return new TirUnresolved(vd, "local variable declaration",
-                        vd.Value != null ? new List<TirNode> { ElaborateExpr(vd.Value) } : null);
+                {
+                    // A local variable declaration: `var x = value;`.
+                    var value = vd.Value is Expression ve ? ElaborateExpr(ve) : ElaborateStatement(vd.Value);
+                    return new TirLet(vd, value, value?.Type, vd);
+                }
 
                 default:
                     return new TirUnresolved(s, $"unhandled statement {s.GetType().Name}");
@@ -130,10 +137,25 @@ namespace Ara3D.Geometry.Compiler.Checking
                     // `default` in value position; its type is contextual.
                     return new TirDefault(type, k);
 
+                case TypeExpression te:
+                    // A raw type expression in value position (`Number.MinValue`'s receiver): a
+                    // namespace-qualified static access in the emitted C#.
+                    return new TirTypeRef(te.Def, type ?? te, te, namespaceQualified: true);
+
+                case FunctionGroupRefSymbol g
+                    when g.Def?.Functions != null && g.Def.Functions.Count == 1
+                         && g.Def.Functions[0].NumParameters == 0:
+                    // A bare reference to a unique nullary function is a CONSTANT — the writer
+                    // emits `Constants.<Name>`; a zero-argument TirCall renders identically.
+                    return new TirCall(g.Def.Functions[0], EmissionKind.StaticMethod,
+                        null, g.Def.Functions[0].ReturnType,
+                        null, type ?? g.Def.Functions[0].ReturnType, g);
+
                 case FunctionGroupRefSymbol g:
-                    // A bare group reference left in value position (a zero/mixed-arity group the
-                    // normalizer does not eta-expand — behaves as a value/constant).
-                    return new TirUnresolved(g, "bare function-group reference in value position");
+                    // A bare group reference left in value position (a mixed-arity group the
+                    // normalizer does not eta-expand: `One`, `Zero`, `Epsilon`). The current
+                    // writer emits the bare name and lets C# member lookup bind it; mirror that.
+                    return new TirName(g.Name, type, g);
 
                 default:
                     return new TirUnresolved(e, $"unhandled expression {e.GetType().Name}");
@@ -158,9 +180,14 @@ namespace Ara3D.Geometry.Compiler.Checking
             }
 
             // A resolved named overload: emit a typed call, wrapping any conversion argument.
+            // The recorded signature is re-zonked LIVE: CommitCandidate snapshots it at commit
+            // time, and unifications that landed later (a forced overload, a return coercion) may
+            // have ground its variables further.
             if (_result != null && _result.ResolvedCalls.TryGetValue(fc, out var rc) && rc.Callee != null)
             {
                 var kind = DeriveEmissionKind(rc.Callee, fc);
+                var paramTypes = rc.ParameterTypes?.Select(t => _result.Solver.Zonk(t)).ToList();
+                var returnType = _result.Solver.Zonk(rc.ReturnType);
                 var args = new List<TirNode>(fc.Args.Count);
                 for (var i = 0; i < fc.Args.Count; i++)
                 {
@@ -168,20 +195,39 @@ namespace Ara3D.Geometry.Compiler.Checking
                     if (inner != null && rc.ArgKinds != null && i < rc.ArgKinds.Count
                         && rc.ArgKinds[i] == ArgMatchKind.Conversion)
                     {
-                        var toType = i < rc.ParameterTypes.Count ? rc.ParameterTypes[i] : null;
+                        var toType = paramTypes != null && i < paramTypes.Count ? paramTypes[i] : null;
                         var conv = rc.ArgConversions != null && i < rc.ArgConversions.Count ? rc.ArgConversions[i] : null;
                         inner = new TirCoerce(inner, inner.Type, toType, conv, fc.Args[i]);
                     }
                     args.Add(inner);
                 }
-                return new TirCall(rc.Callee, kind, rc.ParameterTypes, rc.ReturnType ?? type, args, type ?? rc.ReturnType, fc);
+                return new TirCall(rc.Callee, kind, paramTypes, returnType ?? type, args, type ?? returnType, fc);
             }
 
-            // Unresolved: stay total — a partial node plus a located diagnostic.
+            // Unresolved named call: emit a SYNTACTIC TirCall (null callee). Emission needs only
+            // name + shape — exactly what the current writer uses — so an unresolvable call (a
+            // handwritten intrinsic member the compiler cannot see, an ambiguous group) is still
+            // rendered faithfully. Whether the body counts as ground is decided by its TYPES: an
+            // un-typed result leaves the node non-ground and the body on the fallback path.
             Diagnostics.Add(new CheckDiagnostic(DiagnosticSeverity.Info, "ELB001",
-                $"Call to '{fc.Function?.Name}' was not resolved by the solver; emitting a partial TIR node", fc));
-            var children = fc.Args.Select(ElaborateExpr).Where(n => n != null).ToList();
-            return new TirUnresolved(fc, "unresolved overload", children);
+                $"Call to '{fc.Function?.Name}' was not resolved by the solver; emitting a syntactic TIR call", fc));
+            var syntacticArgs = fc.Args.Select(ElaborateExpr).ToList();
+            return new TirCall(null, DeriveSyntacticEmissionKind(fc), null, null,
+                syntacticArgs, type, fc, fc.Function?.Name);
+        }
+
+        /// <summary>Shape-only <see cref="EmissionKind"/> for a syntactic (unresolved) call —
+        /// the same rules as <see cref="DeriveEmissionKind"/> minus the callee-driven cases.</summary>
+        private EmissionKind DeriveSyntacticEmissionKind(FunctionCall call)
+        {
+            var name = call.Function?.Name;
+            if (call.Args.Count == 1 && call.HasArgList && IsTypeName(name))
+                return EmissionKind.Conversion;
+            if (call.Args.Count == 1 && !call.HasArgList)
+                return EmissionKind.Property;
+            if (IsOperatorName(name))
+                return EmissionKind.Operator;
+            return call.Args.Count == 0 ? EmissionKind.StaticMethod : EmissionKind.InstanceMethod;
         }
 
         // --- emission-kind derivation -------------------------------------------

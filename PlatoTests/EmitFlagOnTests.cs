@@ -51,8 +51,9 @@ namespace PlatoTests
         {
             // Each writer gets its OWN freshly-parsed compilation (WriteAll is not idempotent over a
             // shared Compilation), so the only residual same-process nondeterminism is the two global
-            // name counters canonicalized above.
-            var flagOff = new CSharpWriter(CheckerTestSupport.CompileStdLib(), "unused-flag-off");
+            // name counters canonicalized above. UseTir defaults to TRUE since increment 3, so the
+            // legacy comparison writer pins it off explicitly.
+            var flagOff = new CSharpWriter(CheckerTestSupport.CompileStdLib(), "unused-flag-off") { UseTir = false };
             flagOff.WriteAll("float");
 
             var flagOn = new CSharpWriter(CheckerTestSupport.CompileStdLib(), "unused-flag-on") { UseTir = true };

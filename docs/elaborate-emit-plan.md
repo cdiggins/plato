@@ -1,9 +1,11 @@
 # Elaborate → Monomorphize → Emit (scope)
 
 The checker front-end (normalize → constrain → solve) computes a *solved* view of every
-function but feeds nothing. This phase turns that view into a fully-typed, fully-resolved
-IR (the **TIR**) that backends can eventually consume, so the writers stop re-deriving
-semantics at emit time. It is three sub-passes; only the first is built so far.
+function. This phase turns that view into a fully-typed, fully-resolved IR (the **TIR**)
+that backends consume, so the writers stop re-deriving semantics at emit time. All three
+sub-passes are built; since increment 3 the TIR is the production emit path for
+default-style member bodies (see `emit-retarget-plan.md` and `monomorphize-plan.md` for
+where each sub-pass ended up — this doc is the original scope).
 
 ```
  solved view (Solver: Substitution + ResolvedCalls)

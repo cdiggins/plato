@@ -63,11 +63,12 @@ namespace Ara3D.Geometry.CSharpWriter
         // optimize = true: component-op unrolling (--optimize, roadmap P3.1; see ComponentUnroller).
         // scalarErase = true: erase the scalar wrappers to native primitives (--scalar=float,
         //                     roadmap "Phase 2 revision" item 3; requires extensionStyle).
-        // useTir = true: emit member-instance function BODIES from the monomorphized TIR
-        //                (Elaborate → Monomorphize → Emit retarget probe, off by default). Only
-        //                takes effect in the pure default style; a measurement/de-risking switch,
-        //                not yet the production path. Default (false) output is byte-identical.
-        public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false, bool optimize = false, bool scalarErase = false, bool useTir = false)
+        // useTir = true (the DEFAULT since increment 3): emit member-instance function BODIES from
+        //                the monomorphized TIR (Elaborate → Monomorphize → Emit). Only takes
+        //                effect in the pure default style; byte-identical to the legacy
+        //                symbol-graph body writer (regen-plato.ps1 gates the golden). Pass false
+        //                (CLI --no-tir) for the legacy path.
+        public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false, bool optimize = false, bool scalarErase = false, bool useTir = true)
         {
             if (scalarErase && !extensionStyle)
                 throw new NotSupportedException("--scalar=float requires --csharp-style=extensions (the default wrapper-struct layout keeps scalar members inside partial structs, which do not exist under erasure)");

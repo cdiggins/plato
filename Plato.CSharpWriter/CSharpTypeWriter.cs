@@ -215,14 +215,20 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         if (Writer.UseTir && !isStatic && TypeDef != null
             && !Writer.ExtensionStyle && !Writer.ScalarErase && !Writer.Optimize)
         {
-            var tir = Writer.TryGetGroundTir(f.Function?.Implementation, TypeDef);
-            if (tir != null)
+            // Only bodies with actual Plato source count for the TIR/fallback split: a body-less
+            // function emits a fixed `=> throw new NotImplementedException();` line with no
+            // heuristics involved, identically in both writers.
+            if (f.Function?.Implementation?.Body != null)
             {
-                Writer.TirBodiesEmitted++;
-                Write(new TirCSharpBodyWriter(this, tir).ToString());
-                return this;
+                var tir = Writer.TryGetGroundTir(f.Function.Implementation, TypeDef);
+                if (tir != null)
+                {
+                    Writer.TirBodiesEmitted++;
+                    Write(new TirCSharpBodyWriter(this, tir).ToString());
+                    return this;
+                }
+                Writer.TirFallbackBodies++;
             }
-            Writer.TirFallbackBodies++;
         }
 
         var tmp = new CSharpFunctionBodyWriter(this, f, isStatic, false);

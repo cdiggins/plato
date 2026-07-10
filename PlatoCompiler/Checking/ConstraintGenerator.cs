@@ -75,7 +75,7 @@ namespace Ara3D.Geometry.Compiler.Checking
                 case null:
                     break;
                 case Expression e: // expression-bodied function
-                    Check(e, returnType);
+                    CheckReturn(e, returnType);
                     break;
                 default:
                     CheckStatement(body, returnType);
@@ -83,12 +83,29 @@ namespace Ara3D.Geometry.Compiler.Checking
             }
         }
 
+        /// <summary>Check an expression in RETURN position. Unlike <see cref="Check"/> this emits a
+        /// coercion constraint rather than a hard equality: Plato (like the generated C#) admits an
+        /// implicit conversion at the return boundary — a tuple result for a same-shape struct
+        /// (<c>(a, b)</c> for a <c>Line2D</c>), a cast relation (<c>Vector3</c> for <c>Point3D</c>),
+        /// or a value for an interface it implements.</summary>
+        private void CheckReturn(Expression e, TypeExpression returnType)
+        {
+            if (IsDefaultCall(e))
+            {
+                System.ExprTypes[e] = returnType;
+                return;
+            }
+            var t = Synthesize(e);
+            if (t != null && returnType != null)
+                System.Add(new CoercionConstraint(t, returnType, e));
+        }
+
         private void CheckStatement(Symbol s, TypeExpression returnType)
         {
             switch (s)
             {
                 case ReturnStatement r when r.Expression is Expression e:
-                    Check(e, returnType);
+                    CheckReturn(e, returnType);
                     break;
                 case ReturnStatement r:
                     CheckBody(r.Expression, returnType);
@@ -113,7 +130,12 @@ namespace Ara3D.Geometry.Compiler.Checking
                     break;
                 case VariableDef v when v.Value != null:
                     var vt = Synthesize(v.Value);
-                    if (v.Type != null) System.Equate(vt, v.Type, v);
+                    if (v.Type != null && !IsUnannotated(v.Type))
+                        System.Equate(vt, v.Type, v);
+                    else
+                        // `var q = ...`: the declared type is the "Any" placeholder (or absent).
+                        // Record the initializer's type so references to q synthesize it, not Any.
+                        _localVarTypes[v] = vt;
                     break;
                 case Expression expr:
                     Synthesize(expr);
@@ -153,11 +175,14 @@ namespace Ara3D.Geometry.Compiler.Checking
                     break;
 
                 case ParameterRefSymbol p:
-                    r = p.Def?.Type ?? Vars.Fresh("Param");
+                    r = (p.Def != null && _lambdaParamTypes.TryGetValue(p.Def, out var hole) ? hole : null)
+                        ?? p.Def?.Type ?? Vars.Fresh("Param");
                     break;
 
                 case VariableRefSymbol v:
-                    r = v.Def?.Type ?? Vars.Fresh("Var");
+                    r = (v.Def != null && _localVarTypes.TryGetValue(v.Def, out var localType) ? localType : null)
+                        ?? (v.Def?.Type != null && !IsUnannotated(v.Def.Type) ? v.Def.Type : null)
+                        ?? Vars.Fresh("Var");
                     break;
 
                 case FunctionCall fc:
@@ -204,12 +229,27 @@ namespace Ara3D.Geometry.Compiler.Checking
                     r = Synthesize(par.Expression);
                     break;
 
-                case TypeRefSymbol _:
-                    r = Named("Type");
+                // A type used as a value (`Self.CreateFromComponents(...)`, `Number.MinValue`) is a
+                // static-access receiver: its "type" is the referenced type itself, so a concept
+                // parameter can bind through it (Self satisfies any concept — the reifier decides
+                // what Self is) and the member resolves against it.
+                case TypeRefSymbol tr:
+                    r = tr.Def?.ToTypeExpression() ?? Vars.Fresh("Type");
                     break;
 
-                // A bare group reference should have been eta-expanded; a bare keyword ref is
-                // only well-typed in checking position. Fall back to a fresh variable.
+                case TypeExpression te:
+                    r = te;
+                    break;
+
+                // A bare reference to a unique nullary function is a CONSTANT (the writer emits
+                // `Constants.<Name>`): its type is that function's declared return type. This is
+                // exactly the current writer's constants rule, mirrored.
+                case FunctionGroupRefSymbol g when IsUniqueNullary(g):
+                    r = g.Def.Functions[0].ReturnType ?? Vars.Fresh("Const");
+                    break;
+
+                // Any other bare group reference should have been eta-expanded; a bare keyword ref
+                // is only well-typed in checking position. Fall back to a fresh variable.
                 case FunctionGroupRefSymbol _:
                 case KeywordRefSymbol _:
                 default:
@@ -266,9 +306,38 @@ namespace Ara3D.Geometry.Compiler.Checking
         private TypeExpression LambdaType(Lambda lam)
         {
             var f = lam.Function;
-            var ps = f.Parameters.Select(p => p.Type ?? Vars.Fresh("LP")).ToList();
+            // Unannotated lambda parameters carry the placeholder type "Any" from binding — they
+            // are inference HOLES, not a concrete type. A fresh variable per parameter lets the
+            // enclosing HOF's signature (Function1<$T,$T>) determine them.
+            var ps = f.Parameters.Select(p =>
+            {
+                var t = p.Type != null && !IsUnannotated(p.Type) ? p.Type : Vars.Fresh("LP");
+                if (!ReferenceEquals(t, p.Type))
+                    _lambdaParamTypes[p] = t;
+                return t;
+            }).ToList();
             var body = f.Body is Expression be ? Synthesize(be) : Vars.Fresh("LBody");
             return Named($"Function{ps.Count}", ps.Append(body).ToArray());
         }
+
+        /// <summary>The placeholder type given to unannotated parameters/locals during binding.</summary>
+        private static bool IsUnannotated(TypeExpression t)
+            => t?.Def?.Name == "Any";
+
+        /// <summary>A function group with exactly one nullary overload — the writer's constants rule.</summary>
+        private static bool IsUniqueNullary(FunctionGroupRefSymbol g)
+            => g?.Def?.Functions != null
+               && g.Def.Functions.Count == 1
+               && g.Def.Functions[0].NumParameters == 0;
+
+        // The fresh hole minted for each unannotated lambda parameter, so a reference to the
+        // parameter inside the lambda body synthesizes the SAME hole (p.Def.Type would give "Any").
+        private readonly Dictionary<ParameterDef, TypeExpression> _lambdaParamTypes
+            = new Dictionary<ParameterDef, TypeExpression>();
+
+        // The initializer type of each unannotated local (`var q = ...`), so references to the
+        // local share the initializer's type instead of the "Any" placeholder.
+        private readonly Dictionary<VariableDef, TypeExpression> _localVarTypes
+            = new Dictionary<VariableDef, TypeExpression>();
     }
 }

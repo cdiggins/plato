@@ -31,10 +31,12 @@ namespace Ara3D.Geometry.CLI
             // both --csharp-style values. Off by default (byte-identical output without it).
             var optimize = args.Contains("--optimize");
 
-            // Emit member-instance function bodies from the monomorphized TIR (Elaborate →
-            // Monomorphize → Emit retarget probe). Off by default and byte-identical without it;
-            // only takes effect in the pure default C# style. A de-risking measurement switch.
-            var useTir = args.Contains("--use-tir");
+            // Member-instance function bodies are emitted from the monomorphized TIR (Elaborate →
+            // Monomorphize → Emit) BY DEFAULT since increment 3; only takes effect in the pure
+            // default C# style and is byte-identical to the legacy symbol-graph body writer.
+            // --no-tir selects the legacy path (--use-tir is accepted as a no-op for older
+            // invocations).
+            var useTir = !args.Contains("--no-tir");
 
             // C# writer style (roadmap P2.2). "default" = original writer (byte-identical output);
             // "extensions" = C# 14 extension-block output (requires LangVersion 14 to compile).
