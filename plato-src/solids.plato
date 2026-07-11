@@ -87,3 +87,160 @@ type Ellipsoid
 {
     Radii: Vector3;
 }
+
+//==
+// Parametric surfaces for the solids (the IProceduralSurface obligations).
+// All solids are centered at the origin with Z as the up axis. UV is in [0,1]x[0,1]:
+// U wraps AROUND the Z axis (so ClosedX is true for every solid), V runs up the shape
+// (or around it, for the torus). The polygonal solids walk their profile at constant
+// rate with flat sides (linear between vertices), so a UV quad grid meshes them exactly.
+//==
+
+library Solids
+{
+    //==
+    // Shared profile helpers 
+    //==
+
+    // A point on the regular N-gon inscribed in the unit circle, walked at constant
+    // rate: t in [0,1] covers the whole perimeter, linear between vertices.
+    NGonPoint(t: Number, n: Integer): Point2D
+    {
+        var p = t.Fract * n.Number;
+        var f = p.Fract;
+        var a = (p.Floor / n.Number).Turns.UnitCircle;
+        var b = ((p.Floor + 1.0) / n.Number).Turns.UnitCircle;
+        return a.Lerp(b, f);
+    }
+
+    // A point on the axis-aligned square with corners at (+-1, +-1), walked at
+    // constant rate (an N-gon with four sides, rotated an eighth turn and scaled
+    // so the sides are axis-aligned).
+    SquarePoint(t: Number): Point2D
+    {
+        var p = t.Fract * 4.0;
+        var f = p.Fract;
+        var c = (2.0).Sqrt;
+        var a = ((p.Floor + 0.5) / 4.0).Turns.UnitCircle * c;
+        var b = ((p.Floor + 1.5) / 4.0).Turns.UnitCircle * c;
+        return a.Lerp(b, f);
+    }
+
+    // Latitude/longitude point on the unit sphere: u wraps around the equator,
+    // v runs from the north pole (v=0) to the south pole (v=1).
+    UnitSphere(uv: Vector2): Vector3
+    {
+        var theta = uv.X.Turns;
+        var phi = (uv.Y * 0.5).Turns;
+        return (phi.Sin * theta.Cos, phi.Sin * theta.Sin, phi.Cos);
+    }
+
+    //==
+    // Surfaces of revolution
+    //==
+
+    Eval(s: Sphere, uv: Vector2): Point3D
+        => uv.UnitSphere * s.Radius;
+    ClosedX(s: Sphere): Boolean => true;
+    ClosedY(s: Sphere): Boolean => false;
+
+    Eval(s: Ellipsoid, uv: Vector2): Point3D
+        => uv.UnitSphere * s.Radii;
+    ClosedX(s: Ellipsoid): Boolean => true;
+    ClosedY(s: Ellipsoid): Boolean => false;
+
+    // https://en.wikipedia.org/wiki/Torus#Geometry: u around the main (Z) axis,
+    // v around the tube.
+    Eval(s: Torus, uv: Vector2): Point3D
+    {
+        var u = uv.X.Turns;
+        var v = uv.Y.Turns;
+        return ((s.MajorRadius + s.MinorRadius * v.Cos) * u.Cos,
+                (s.MajorRadius + s.MinorRadius * v.Cos) * u.Sin,
+                s.MinorRadius * v.Sin);
+    }
+    ClosedX(s: Torus): Boolean => true;
+    ClosedY(s: Torus): Boolean => true;
+
+    Eval(s: Cone, uv: Vector2): Point3D
+    {
+        var p = uv.X.Turns.UnitCircle * (s.Radius * (1.0 - uv.Y));
+        return (p.X, p.Y, (uv.Y - 0.5) * s.Height);
+    }
+    ClosedX(s: Cone): Boolean => true;
+    ClosedY(s: Cone): Boolean => false;
+
+    Eval(s: ConeSegment, uv: Vector2): Point3D
+    {
+        var p = uv.X.Turns.UnitCircle * s.Radius1.Lerp(s.Radius2, uv.Y);
+        return (p.X, p.Y, (uv.Y - 0.5) * s.Height);
+    }
+    ClosedX(s: ConeSegment): Boolean => true;
+    ClosedY(s: ConeSegment): Boolean => false;
+
+    // Cylindrical side plus two hemispherical caps: v crosses the bottom cap for
+    // [0, 0.25], the side for [0.25, 0.75], and the top cap for [0.75, 1].
+    Eval(s: Capsule, uv: Vector2): Point3D
+    {
+        var theta = uv.X.Turns;
+        var h = s.Height * 0.5;
+        var r = s.Radius;
+        var v = uv.Y;
+        var phiB = (0.5 - 0.25 * (v * 4.0)).Turns;
+        var phiT = (0.25 - 0.25 * ((v - 0.75) * 4.0)).Turns;
+        return v <= 0.25
+            ? (phiB.Sin * theta.Cos * r, phiB.Sin * theta.Sin * r, phiB.Cos * r - h)
+            : (v >= 0.75
+                ? (phiT.Sin * theta.Cos * r, phiT.Sin * theta.Sin * r, phiT.Cos * r + h)
+                : (theta.Cos * r, theta.Sin * r, (((v - 0.25) * 2.0) - 0.5) * s.Height));
+    }
+    ClosedX(s: Capsule): Boolean => true;
+    ClosedY(s: Capsule): Boolean => false;
+
+    // Outer wall up (v in [0, 0.5]) then inner wall back down (v in [0.5, 1]).
+    Eval(s: Tube, uv: Vector2): Point3D
+    {
+        var theta = uv.X.Turns;
+        var r = uv.Y < 0.5 ? s.OuterRadius : s.InnerRadius;
+        var z = (uv.Y < 0.5 ? (uv.Y * 2.0) - 0.5 : 1.5 - (uv.Y * 2.0)) * s.Height;
+        return (theta.Cos * r, theta.Sin * r, z);
+    }
+    ClosedX(s: Tube): Boolean => true;
+    ClosedY(s: Tube): Boolean => false;
+
+    //==
+    // Polygonal prisms and pyramids
+    //==
+
+    Eval(s: NPrism, uv: Vector2): Point3D
+    {
+        var p = uv.X.NGonPoint(s.NumSides) * s.Radius;
+        return (p.X, p.Y, (uv.Y - 0.5) * s.Height);
+    }
+    ClosedX(s: NPrism): Boolean => true;
+    ClosedY(s: NPrism): Boolean => false;
+
+    Eval(s: NPyramid, uv: Vector2): Point3D
+    {
+        var p = uv.X.NGonPoint(s.NumSides) * (s.Radius * (1.0 - uv.Y));
+        return (p.X, p.Y, (uv.Y - 0.5) * s.Height);
+    }
+    ClosedX(s: NPyramid): Boolean => true;
+    ClosedY(s: NPyramid): Boolean => false;
+
+    Eval(s: Box, uv: Vector2): Point3D
+    {
+        var p = uv.X.SquarePoint;
+        return (p.X * s.Extent.X * 0.5, p.Y * s.Extent.Y * 0.5, (uv.Y - 0.5) * s.Extent.Z);
+    }
+    ClosedX(s: Box): Boolean => true;
+    ClosedY(s: Box): Boolean => false;
+
+    Eval(s: Pyramid, uv: Vector2): Point3D
+    {
+        var p = uv.X.SquarePoint * (s.BaseLength * 0.5 * (1.0 - uv.Y));
+        return (p.X, p.Y, (uv.Y - 0.5) * s.Height);
+    }
+    ClosedX(s: Pyramid): Boolean => true;
+    ClosedY(s: Pyramid): Boolean => false;
+}

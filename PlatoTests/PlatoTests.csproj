@@ -20,6 +20,8 @@
     <!-- Test-only: the emit-differential harness diffs the experimental TirCSharpBodyWriter against
          the current CSharpFunctionBodyWriter. Does NOT affect the default emit path. -->
     <ProjectReference Include="..\Plato.CSharpWriter\Plato.CSharpWriter.csproj" />
+    <ProjectReference Include="..\Plato.TypeScriptWriter\Plato.TypeScriptWriter.csproj" />
+    <ProjectReference Include="..\Plato.RustWriter\Plato.RustWriter.csproj" />
     <!-- Parser + utils, so checker tests can build a Compilation from real .plato source. -->
     <ProjectReference Include="..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
     <ProjectReference Include="..\..\..\ara3d-sdk\src\Ara3D.Utils\Ara3D.Utils.csproj" />

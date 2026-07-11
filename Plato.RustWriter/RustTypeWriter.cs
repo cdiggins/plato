@@ -109,6 +109,22 @@ public class RustTypeWriter : CodeBuilder<RustTypeWriter>, ITypeToRust
 
     public RustTypeWriter WriteBody(RustFunctionInfo f, bool isStatic)
     {
+        // Emit from the Typed IR when one is available (Writer.UseTir): the ground monomorphized
+        // TIR for member bodies of a concrete type, the generic elaborated TIR for everything
+        // else (constants, Arr methods, free array functions). Legacy writer as the fallback.
+        if (Writer.UseTir && f.Function?.Implementation?.Body != null)
+        {
+            var tir = TypeDef != null && !isStatic
+                ? Writer.TryGetGroundTir(f.Function.Implementation, TypeDef)
+                    ?? Writer.TryGetStaticTir(f.Function.Implementation)
+                : Writer.TryGetStaticTir(f.Function.Implementation);
+            if (tir != null)
+            {
+                Writer.TirBodiesEmitted++;
+                return WriteTrimmed(new TirRustBodyWriter(this, tir, isStatic).ToString());
+            }
+            Writer.TirFallbackBodies++;
+        }
         var tmp = new RustFunctionBodyWriter(this, f, isStatic, false);
         return WriteTrimmed(tmp.ToString());
     }

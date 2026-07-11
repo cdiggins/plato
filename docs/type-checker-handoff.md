@@ -83,13 +83,21 @@ block emission at all (emission is name+shape; re-dispatch is only an identity r
 1. ~~Retire the legacy body writer for the remaining default-style bodies~~ **DONE 2026-07-10**:
    static bodies (`Constants.g.cs`, `Extensions.g.cs`) emit from the generic elaborated TIR
    (`TirCSharpBodyWriter` static mode; `CSharpWriter.TryGetStaticTir`).
-2. **Extend to the other styles** (extension / scalar / optimize) and the TS/Rust writers. Only
-   then can the emit-time heuristics (`HasArgList` guessing, `MovedNoArgNames`, property
-   guessing, scalar re-inference) actually be **deleted** — today they are dead for the whole
-   default style, but every other style still runs them.
-3. **Checker completeness**: 78/823 stdlib functions still carry located diagnostics (they emit
-   fine — syntactic calls — but the checker's view is incomplete: mostly calls into handwritten
-   intrinsic members it cannot see, plus a few genuine ambiguities worth surfacing to the author).
+2. ~~Extend to the other styles and the TS/Rust writers~~ **DONE 2026-07-10**: extension
+   (`WriteBareName` re-qualification + moved-body routing), optimize (`TirComponentUnroller`),
+   scalar (`ScalarEraseAnalysis` consulted over TIR Origin symbols), and
+   `TirTypeScriptBodyWriter`/`TirRustBodyWriter` — each proven byte-identical by a full-library
+   flag-on/off differential (`{Extension,TypeScript,Rust,Optimize,Scalar}EmitFlagOnTests`, fallback
+   0 everywhere). Shared plumbing: `TirEmitSource` + `TirLambdaCaptureRewriter` now live in
+   `PlatoCompiler/Checking`. The ONE legacy-only path left: scalar+optimize combined (the legacy
+   scalar analysis reads the component-unrolled symbol tree). Deleting the legacy heuristics is now
+   unblocked (they remain as the `--no-tir` fallback and the differentials' reference).
+3. **Checker completeness**: 68/823 stdlib functions still carry located diagnostics (was 78;
+   2026-07-10 declared the handwritten intrinsics in `plato-src/intrinsics.plato` — Number
+   MinValue/MaxValue/RSRE/Linear/Quadratic/Cubic, IOrderable equality, the Number→Angle cast —
+   CHK201 22 → 13). `CheckerDiagnosticsSummaryTests` prints the remaining worklist: mostly
+   concept-dispatch ambiguities (CHK203) and arg/return coercion gaps (CHK101), i.e. solver work,
+   not missing declarations.
 4. ~~Process-global name counters~~ **DONE 2026-07-10**: `SymbolRewriter.NextId` resets per
    `WriteAll` in all three writers; the Symbol-id leak into output (`Geometry_15` in the retired
    "AMBIGUOUS FUNCTIONS" comments) is gone.

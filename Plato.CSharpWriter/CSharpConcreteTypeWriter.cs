@@ -443,7 +443,11 @@ namespace Ara3D.Geometry.CSharpWriter
 
                 if (fi.IsStatic)
                 {
-                    shimMembers.Add(f); // a partial struct is the only host for statics
+                    // A partial struct is the only host for statics — but only BODIED ones: a
+                    // bodiless static declaration (Number.MinValue in intrinsics.plato) names a
+                    // handwritten member the wrapper already defines.
+                    if (f.Implementation.Body != null)
+                        shimMembers.Add(f);
                     continue;
                 }
 
@@ -474,8 +478,25 @@ namespace Ara3D.Geometry.CSharpWriter
                         dropped.Add($"implicit operator {fi.ReturnType}({prim}) => re-homed as a partial-struct operator on {fi.ReturnType} + method {fi.Name}()");
                     }
                     tw.Write(fi.ExtensionSignature);
-                    var body = new CSharpFunctionBodyWriter(tw, fi, true, false, false);
-                    tw.WriteWithLineStateSync(body.ToString());
+                    // Scalar extension-method bodies over the primitives emit from the ground
+                    // monomorphized TIR when available (Writer.UseTir), legacy as the fallback.
+                    var tir = Writer.UseTir
+                        ? Writer.TryGetGroundTir(f.Implementation, ConcreteType.TypeDef)
+                        : null;
+                    if (tir != null)
+                    {
+                        Writer.TirBodiesEmitted++;
+                        tir = TirComponentUnroller.UnrollFunction(tir, fi, Writer);
+                        tir = TirArrayMaterializer.Rewrite(tir, Writer);
+                        tw.WriteWithLineStateSync(new TirCSharpBodyWriter(tw, tir, isStatic: true, fi).ToString());
+                    }
+                    else
+                    {
+                        if (Writer.UseTir)
+                            Writer.TirFallbackBodies++;
+                        var body = new CSharpFunctionBodyWriter(tw, fi, true, false, false);
+                        tw.WriteWithLineStateSync(body.ToString());
+                    }
                     AddBridge(fi);
                 }
                 else if (fi.IsOperator)
@@ -516,16 +537,9 @@ namespace Ara3D.Geometry.CSharpWriter
             tw.WriteLine($"{CSharpTypeWriter.Annotation} public static bool NotEquals(this {prim} a, {prim} b) => !a.Equals(b);");
             tw.WriteLine($"{CSharpTypeWriter.Annotation} public static bool NotEquals(this {SimpleName} a, {prim} b) => !(({prim})a).Equals(b);");
 
-            if (SimpleName == "Number")
-            {
-                // Handwritten members of the Number wrapper that the Plato compiler cannot see
-                // (Plato.Intrinsics Number.cs "TODO: Figure out why these aren't being provided
-                // by Plato"); generated call sites use them on scalar receivers.
-                tw.WriteLine($"{CSharpTypeWriter.Annotation} public static float Cubic(this float x, float a, float b, float c, float d) => ((Number)x).Cubic(a, b, c, d);");
-                tw.WriteLine($"{CSharpTypeWriter.Annotation} public static float Linear(this float x, float a, float b) => ((Number)x).Linear(a, b);");
-                tw.WriteLine($"{CSharpTypeWriter.Annotation} public static float Quadratic(this float x, float a, float b, float c) => ((Number)x).Quadratic(a, b, c);");
-                tw.WriteLine($"{CSharpTypeWriter.Annotation} public static float ReciprocalSquareRootEstimate(this float x) => ((Number)x).ReciprocalSquareRootEstimate;");
-            }
+            // (The old hardwired Cubic/Linear/Quadratic/ReciprocalSquareRootEstimate float
+            // forwarders are gone: those members are now DECLARED in plato-src/intrinsics.plato,
+            // so the regular intrinsic-forwarder path generates them.)
 
             if (SimpleName == "Integer")
             {
@@ -694,7 +708,7 @@ namespace Ara3D.Geometry.CSharpWriter
 
         public void WriteExtensionMethod(FunctionInstance f)
         {
-            var tw = TypeWriter;    
+            var tw = TypeWriter;
             var fi = TypeWriter.ToFunctionInfo(f, ConcreteType.TypeDef);
             if (SkipFunction(f, false))
                 return;

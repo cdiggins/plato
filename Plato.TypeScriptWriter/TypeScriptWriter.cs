@@ -60,6 +60,25 @@ namespace Ara3D.Geometry.TypeScriptWriter
         /// </summary>
         public HashSet<string> AllFieldNames { get; } = new HashSet<string>();
 
+        /// <summary>Emit function bodies from the Typed IR (TirTypeScriptBodyWriter) when one is
+        /// available, the legacy symbol-graph writer as the fallback. Mirrors CSharpWriter.UseTir.</summary>
+        public bool UseTir = true;
+
+        // UseTir measurement counters (no effect on output).
+        public int TirBodiesEmitted;
+        public int TirFallbackBodies;
+
+        // Lazily built the first time a TIR is requested (UseTir only).
+        private Compiler.Checking.TirEmitSource _tirSource;
+        private Compiler.Checking.TirEmitSource TirSource
+            => _tirSource ?? (_tirSource = new Compiler.Checking.TirEmitSource(Compilation));
+
+        public Compiler.Checking.TirFunction TryGetGroundTir(FunctionDef original, TypeDef concreteType)
+            => UseTir ? TirSource.TryGetGroundTir(original, concreteType) : null;
+
+        public Compiler.Checking.TirFunction TryGetStaticTir(FunctionDef original)
+            => UseTir ? TirSource.TryGetStaticTir(original) : null;
+
         /// <summary>
         /// Member names already installed per native prototype interface
         /// ("Number", "Boolean", "String"). Plato's Number and Integer both map to

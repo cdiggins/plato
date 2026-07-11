@@ -111,17 +111,38 @@ public class TypeScriptTypeWriter : CodeBuilder<TypeScriptTypeWriter>, ITypeToTy
         => new TypeScriptFunctionInfo(fi, td, this);
 
     public TypeScriptTypeWriter WriteBody(TypeScriptFunctionInfo f, bool isStatic)
-    {
-        var tmp = new TypeScriptFunctionBodyWriter(this, f, isStatic, false);
-        return WriteTrimmed(tmp.ToString());
-    }
+        => WriteTrimmed(RenderBody(f, isStatic));
 
     /// <summary>
     /// Renders a function body to a string without the trailing newline
     /// (used when something must follow the body on the same line).
     /// </summary>
     public string BodyText(TypeScriptFunctionInfo f, bool isStatic)
-        => new TypeScriptFunctionBodyWriter(this, f, isStatic, false).ToString().TrimEnd('\r', '\n');
+        => RenderBody(f, isStatic).TrimEnd('\r', '\n');
+
+    /// <summary>
+    /// Renders a body from the Typed IR when one is available (Writer.UseTir): the ground
+    /// monomorphized TIR for member bodies of a concrete type, the generic elaborated TIR for
+    /// everything else (constants, Arr methods, free array functions — emitted unspecialized,
+    /// with parameter #0 as `this` when not static). Legacy symbol-graph writer as the fallback.
+    /// </summary>
+    private string RenderBody(TypeScriptFunctionInfo f, bool isStatic)
+    {
+        if (Writer.UseTir && f.Function?.Implementation?.Body != null)
+        {
+            var tir = TypeDef != null && !isStatic
+                ? Writer.TryGetGroundTir(f.Function.Implementation, TypeDef)
+                    ?? Writer.TryGetStaticTir(f.Function.Implementation)
+                : Writer.TryGetStaticTir(f.Function.Implementation);
+            if (tir != null)
+            {
+                Writer.TirBodiesEmitted++;
+                return new TirTypeScriptBodyWriter(this, tir, isStatic).ToString();
+            }
+            Writer.TirFallbackBodies++;
+        }
+        return new TypeScriptFunctionBodyWriter(this, f, isStatic, false).ToString();
+    }
 
     /// <summary>
     /// Writes pre-rendered multi-line text, replacing the trailing newline with a

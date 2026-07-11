@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
 
-namespace Ara3D.Geometry.CSharpWriter;
+namespace Ara3D.Geometry.Compiler.Checking;
 
 /// <summary>
 /// The TIR mirror of <see cref="SymbolRewriter.RewriteLambdasCapturingVars"/>, which the current

@@ -329,13 +329,8 @@ namespace Ara3D.Geometry.RustWriter
                 if (SkipFunction(f))
                     continue;
 
-                if (cnt > 1)
-                {
-                    TypeWriter.WriteLine($"// AMBIGUOUS FUNCTIONS {cnt}");
-                    foreach (var tmp in g)
-                        TypeWriter.WriteLine($"/* {tmp.Implementation} */");
-                }
-
+                // (The old "AMBIGUOUS FUNCTIONS" debug comments were retired: they leaked the
+                // volatile Symbol-id counter into generated output — same cleanup as the C# writer.)
                 if (!TryClaimMember(f.Name))
                     continue;
 

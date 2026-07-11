@@ -11,7 +11,7 @@ namespace Ara3D.Geometry.CLI
 {
     public static class Program
     {
-        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust] [--csharp-style=default|extensions] [--optimize] [--scalar=wrapper|float]
+        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust] [--csharp-style=default|extensions] [--optimize] [--optimize-arrays] [--scalar=wrapper|float]
         //        Plato.CLI lint <inputFolder> [--strict]
         // With no arguments, the folders come from Config and C# is generated (original behavior).
         // In lint mode the sources are compiled (parse + resolve, no output) and warnings are
@@ -30,6 +30,10 @@ namespace Ara3D.Geometry.CLI
             // Component-op unrolling optimization (roadmap P3.1). C# backend only; works with
             // both --csharp-style values. Off by default (byte-identical output without it).
             var optimize = args.Contains("--optimize");
+
+            // Loop-into-buffer lowering (optimizer stage 2 increment 1): Map/MapRange results in
+            // materialization positions become eager arrays. C# backend, TIR path only.
+            var optimizeArrays = args.Contains("--optimize-arrays");
 
             // Member-instance function bodies are emitted from the monomorphized TIR (Elaborate →
             // Monomorphize → Emit) BY DEFAULT since increment 3; only takes effect in the pure
@@ -93,7 +97,7 @@ namespace Ara3D.Geometry.CLI
             if (typeScript)
             {
                 logger.Log("Writing TypeScript Files");
-                var output = compilation.ToTypeScript(outputFolder);
+                var output = compilation.ToTypeScript(outputFolder, useTir);
                 foreach (var kv in output.Files)
                 {
                     var fp = outputFolder.RelativeFile(kv.Key);
@@ -104,7 +108,7 @@ namespace Ara3D.Geometry.CLI
             else if (rust)
             {
                 logger.Log("Writing Rust Files");
-                var output = compilation.ToRust(outputFolder);
+                var output = compilation.ToRust(outputFolder, useTir);
                 foreach (var kv in output.Files)
                 {
                     var fp = outputFolder.RelativeFile(kv.Key);
@@ -115,7 +119,7 @@ namespace Ara3D.Geometry.CLI
             else
             {
                 logger.Log("Writing C# Files");
-                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, scalar == "float", useTir);
+                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, scalar == "float", useTir, optimizeArrays);
                 foreach (var kv in output.Files)
                 {
                     var fp = outputFolder.RelativeFile(kv.Key);

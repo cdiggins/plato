@@ -376,6 +376,14 @@ namespace Ara3D.Geometry
             [MethodImpl(AggressiveInlining)] get => MathF.ReciprocalSqrtEstimate(Value);
         }
 
+        /// <summary>The implicit Number -> Angle conversion as a member, so the generated
+        /// conversion forwarder (declared in plato-src/intrinsics.plato) has a target -
+        /// same pattern as Integer.Number.</summary>
+        public Angle Angle
+        {
+            [MethodImpl(AggressiveInlining)] get => new(Value);
+        }
+
         public static Number MinValue = float.MinValue;
         public static Number MaxValue = float.MaxValue;
         public static Number Zero = 0;

@@ -367,6 +367,21 @@ library Intrinsics
 
     GetHashCode(self: Number): Integer;
 
+    // Generated equality scaffolding: every concrete type defines Equals/NotEquals in C#
+    // (the writers list them in IgnoredFunctions and never emit members for them), but the
+    // checker could not previously see them for concept-typed receivers.
+    Equals(a: IOrderable, b: IOrderable): Boolean;
+    NotEquals(a: IOrderable, b: IOrderable): Boolean;
+
+    // Handwritten Number members the compiler could not previously see
+    // (Plato.Intrinsics/Number.cs).
+    MinValue(_: Number): Number;
+    MaxValue(_: Number): Number;
+    ReciprocalSquareRootEstimate(self: Number): Number;
+    Linear(self: Number, a: Number, b: Number): Number;
+    Quadratic(self: Number, a: Number, b: Number, c: Number): Number;
+    Cubic(self: Number, a: Number, b: Number, c: Number, d: Number): Number;
+
     //==
     // Integer
     //==
@@ -402,6 +417,10 @@ library Intrinsics
     //==
     // Angle
     //==
+
+    // Handwritten implicit conversion (Plato.Intrinsics/Angle.cs: implicit operator
+    // Angle(Number)) — a type-named unary function is how a cast relation is declared.
+    Angle(x: Number): Angle;
 
     Add(a: Angle, b: Angle): Angle;
     CompareTo(self: Angle, other: Angle): Integer;

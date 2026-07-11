@@ -1,10 +1,16 @@
 # golden/ — compiler golden artifacts
 
-`Plato.Generated.V2` is the golden extension-style production output of `plato-src`, generated with
+`Plato.Generated.V2` is the golden extension-style production output of `plato-src`. Since
+2026-07-10 the optimizers are ON by default — the golden shows the optimized adoption shape
+(component-op unrolling + eager materialization of struct-stored Map/MapRange results):
 
 ```
-Plato.CLI plato-src golden\Plato.Generated.V2 --csharp-style=extensions --scalar=float
+Plato.CLI plato-src golden\Plato.Generated.V2 --csharp-style=extensions --scalar=float --optimize --optimize-arrays
 ```
+
+Regenerate/diff with `tools\regen-golden-v2.ps1` (`-Apply` to refresh); `check-all.ps1` gates it.
+The same recipe is semantically gated by the Scalar conformance suite (which runs both optimizer
+flags over merged plato-src + plato-test-src).
 
 This is the **intended adoption shape** (roadmap Phase 2 revision): classic extension methods
 (one static class per Plato library), default LangVersion on net8.0, and **scalar erasure** —
