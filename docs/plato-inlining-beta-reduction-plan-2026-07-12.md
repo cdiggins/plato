@@ -143,6 +143,36 @@ Cost / scope of the first step:
 This is worth doing on its own merits (it is the endgame of the V2 property-free runtime); the
 inlining increment is one beneficiary, not the justification.
 
+### §4 execution log (2026-07-12)
+
+Runtime port started; a **scalar-erased vs non-erased** boundary emerged that splits the step:
+
+- **Scalar-erased types — DONE** (`Number`, `Integer`, `Boolean`; commits a4c5b0f, 4f8d15a).
+  Handwritten intrinsics moved to `<Type>Intrinsics` extension classes. These port cleanly with
+  no emitter change: under `--scalar=float` the *generated* extensions land on `float`/`int`/`bool`
+  while the handwritten ones stay on the wrapper (`Number`/`Integer`/`Boolean`), so the receiver
+  types differ and there is no collision. `Character`/`String` have nothing to move (only
+  conversions + IArrayLike obligations).
+- **Non-erased wrapper types — BLOCKED on the emitter** (`Angle`, `Vector2/3/4/8`,
+  `Matrix3x2/4x4`, `Quaternion`, `Plane`). The emitter already generates a *forwarder* extension
+  for each library function on the same wrapper type (`AngleExtensions.Cos(this Angle)` forwarding
+  to the intrinsic). While the intrinsic is an INSTANCE method, instance-vs-extension resolution
+  picks the instance and there is no conflict; once the intrinsic becomes an extension, the two
+  `Cos(this Angle)` extensions are **CS0121-ambiguous** (and the forwarder would self-recurse). So
+  these types need the emitter to stop emitting the duplicate forwarder (emit the library function
+  as a direct call to the intrinsic, or not at all when the intrinsic already covers it) BEFORE
+  their intrinsics can move. That is the emitter half of §4.
+
+- **Verification: DONE** — a new `Ara3D.SDK.ConformanceTests.V2Runtime` suite (commit 3007529;
+  regen `tools/regen-conformance-v2runtime.ps1`, commit 5264b35 in studio) imports
+  `Plato.Intrinsics.V2` and runs the full `--no-properties` recipe. **204/204**, matching Scalar.
+  Every runtime-port step is now gated by it.
+
+Revised near-term order: (1) emitter change to drop/redirect the wrapper-type forwarders so
+non-erased intrinsics can move (unblocks `Vector3.AlmostZero` etc. — the actual inlining pins);
+(2) finish the non-erased runtime port behind that; (3) then §5c owner-resolution + re-apply the
+inlining WIP against the now-uniform surface.
+
 ## 5. Brainstorm — other ways to address the risky refactor
 
 Complementary or alternative, roughly independent:
