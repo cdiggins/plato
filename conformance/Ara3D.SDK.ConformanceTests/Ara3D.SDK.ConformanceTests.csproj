@@ -1,21 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <!--
-    Plato conformance suite, V2-RUNTIME edition.
+    THE Plato conformance suite.
 
-    Semantic coverage for the all-extension-methods runtime (Plato.Intrinsics.V2). Identical
-    to Ara3D.SDK.ConformanceTests.Scalar except it imports Plato.Intrinsics.V2 (not V1) and
-    Generated\ is produced with the full V2 adoption recipe, the no-properties recipe that
-    Plato.Generated.Optimized uses: the wrapper structs expose no properties, and V2's
-    handwritten intrinsics live in the per-type "Intrinsics" extension classes.
+    Semantic coverage for the live library: the all-extension-methods runtime (Plato.Intrinsics.V2)
+    with Generated\ produced by the full V2 adoption recipe (extensions, scalar-erased,
+    no-properties) that Plato.Generated.Optimized uses. Self-contained (the shared Law/Witness test
+    sources live here). Consolidation plan C2 retired the four legacy recipe suites; C5 renamed this
+    one from Ara3D.SDK.ConformanceTests.V2Runtime.
 
-    Consolidation plan C2 (2026-07-12): this is now THE Plato conformance suite. The four legacy
-    recipe suites (V1 / V2 / Opt / Scalar) were retired and their shared test sources
-    (ConformanceSupport.cs, LawTests.cs, WitnessRunnerTests.cs, KnownFailures.json) MOVED here, so
-    this project is self-contained. (Rename to Ara3D.SDK.ConformanceTests deferred to C5.)
-
-    Run tools\regen-conformance-v2runtime.ps1 (studio repo) before building: Generated\ is not
-    committed. Deliberately not added to any .sln (wire into CI explicitly).
+    Run tools\regen-conformance.ps1 (studio repo) before building: Generated\ is not committed.
+    Deliberately not added to any .sln (wire into CI explicitly).
   -->
 
   <PropertyGroup>

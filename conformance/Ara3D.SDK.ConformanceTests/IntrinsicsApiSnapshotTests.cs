@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using NUnit.Framework;
 
-namespace Ara3D.SDK.ConformanceTests.V2Runtime
+namespace Ara3D.SDK.ConformanceTests
 {
     /// <summary>
     /// API-snapshot guard for the handwritten intrinsic struct surface (consolidation plan C3 / M5).

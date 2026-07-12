@@ -1,6 +1,7 @@
 # Plato repo — agent guide
 
 **Start here for the language and multi-target codegen:** [`docs/plato-for-agents.md`](docs/plato-for-agents.md).
+**Confused by V1/V2/Plato.Generated/Intrinsics?** [`docs/plato-library-map.md`](docs/plato-library-map.md) maps every artifact, which is frozen, and who consumes it.
 
 Plato: pure language for geometry libraries, compiled to C# (TS/Rust writers exist, out of scope).
 Part of the studio monorepo at `C:\Users\cdigg\git\studio` (this repo = `submodules/Plato`).
@@ -22,13 +23,13 @@ Plato-language `.plato` source, nor the C# the writers emit (that shape is set b
 - `Plato.AST/` — the old associativity bug was FIXED in `392dfa8` (2026-07-09); `../../docs/plato-assoc-bug-diagnosis.md` is historical.
 - `Plato.CSharpWriter/` — `CSharpWriter.cs` (flags: `ExtensionStyle`, `Optimize`, `ScalarErase`, `UseTir` — **on by default**: default-style member bodies emit from the Typed IR via `TirCSharpBodyWriter`; `--no-tir` = legacy path), `ExtensionStyleWriter.cs` (classic extension methods, one static class per Plato library; moved no-arg fns are METHODS `v.Magnitude()`, kept struct members are properties), `ComponentUnroller.cs` (`--optimize` field-wise unrolling), `CSharpFunctionBodyWriter.cs` (the LEGACY body writer — still serves default-style static bodies and the extension/scalar/optimize styles).
 - `Plato.Intrinsics/` — **FROZEN V1 runtime** (consolidation plan C0). The live runtime is `Plato.Intrinsics.V2/` (System.Numerics-backed, method-form). Both `Plato.Intrinsics` and the ara3d-sdk `Plato.Generated`/`Plato.Intrinsics` copies are frozen — protected by `tools\check-frozen-v1.ps1` (manifest `tools\frozen-v1.sha256`), never edit/regenerate.
-- `conformance/Ara3D.SDK.ConformanceTests.V2Runtime/` — **THE** Plato conformance suite (consolidation plan C2 retired the V1/V2/Opt/Scalar recipe suites; their shared sources moved here so it is self-contained). Runs the shipping V2 recipe against `Plato.Intrinsics.V2`. `Generated/` is script-produced, gitignored. Expected: **204 pass / 0 fail** (manifest: `KnownFailures.json`; known+passing = must fail with "remove from manifest"). Regen: `tools\regen-conformance-v2runtime.ps1 -Test`.
+- `conformance/Ara3D.SDK.ConformanceTests/` — **THE** Plato conformance suite (consolidation plan C2 retired the V1/V2/Opt/Scalar recipe suites; their shared sources moved here so it is self-contained). Runs the shipping V2 recipe against `Plato.Intrinsics.V2`. `Generated/` is script-produced, gitignored. Expected: **204 pass / 0 fail** (manifest: `KnownFailures.json`; known+passing = must fail with "remove from manifest"). Regen: `tools\regen-conformance.ps1 -Test`.
 - `Generated/` — buildable generated projects (extension-style, scalar-erased), each a real csproj in `Ara3D.Studio.sln`: `Plato.Generated.Unoptimized` (optimizers off, readable reference) and `Plato.Generated.Optimized` (full optimizer pipeline, adoption shape). Diff-gated by `tools\regen-generated.ps1`; docs in `Generated/README.md`. Supersedes the retired `golden/Plato.Generated.V2`.
 - `parakeet/` — sub-submodule, PRE-EXISTING DIRTY STATE. Never touch, never stage.
 
 ## Commands (run from `C:\Users\cdigg\git\studio`)
 - `.\tools\check-frozen-v1.ps1` — freeze tripwire: SHA-256 of the frozen V1 artifacts (ara3d-sdk `Plato.Generated`/`Plato.Intrinsics` + Plato-repo `Plato.Intrinsics`). Exit 1 on any drift. `-Update` re-baselines (deliberate only). Replaced regen-plato in check-all (C0). `regen-plato.ps1` still runs the legacy emitter; retired at C4.
-- `.\tools\regen-conformance-v2runtime.ps1 -Test` — regenerate merged (plato-src + plato-test-src) output into the one conformance suite and run it (204/204).
+- `.\tools\regen-conformance.ps1 -Test` — regenerate merged (plato-src + plato-test-src) output into the one conformance suite and run it (204/204).
 - `.\tools\check-all.ps1` — full gate battery, PASS/FAIL table. **Run once at the end of a mission**; iterate on a single relevant gate during development.
 - `dotnet run --project submodules\Plato\Plato.CLI -c Release -- lint submodules\Plato\plato-src` — exit 0 unless `--strict`; the finding count drifts with library content, so compare against the previous run, not a hardcoded baseline.
 

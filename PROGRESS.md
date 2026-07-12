@@ -30,7 +30,12 @@ freeze the ara3d-sdk Geometry artifacts (never touch), make the emitter simple +
       default-style path + regen-plato; delete CSharpFunctionBodyWriter (~750 lines); collapse
       MethodsOnly/NoProperties + delete pins (golden-neutral under V2); shrink ScalarEraseAnalysis.
       Write emit-snapshot rigor first.
-- [ ] C5 Naming pass (optional, last): rename V2Runtime->ConformanceTests, Intrinsics.V2->Intrinsics.
+- [~] C5 Naming pass: DONE rename V2Runtime suite -> Ara3D.SDK.ConformanceTests (folder/csproj/
+      namespace + regen-conformance-v2runtime.ps1 -> regen-conformance.ps1 + check-all + CLAUDE.md;
+      205/205, check-all ALL PASS). Intrinsics.V2 -> Intrinsics still pending (needs V1 deleted first).
+- [x] Cleanup: reconciled the two drifted frozen files (Vector3.cs UnitZ->literal portability fix;
+      _Tube.g.cs associativity parenthesization fix — both intentional, kept; tripwire green).
+      Added docs/plato-library-map.md (the V1/V2/golden reference) linked from CLAUDE.md.
 - [ ] C5 Naming pass (optional, last).
 
 Gates: check-all ALL PASS; V2Runtime 204/204. Frozen artifacts (ara3d-sdk) must stay byte-frozen
