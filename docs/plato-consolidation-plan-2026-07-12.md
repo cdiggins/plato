@@ -67,14 +67,19 @@ NoProperties gating forks in TirInliner, the pins, ScalarEraseAnalysis special c
   the legacy writer itself is deleted in C4, not here.
 - **Gate:** V2 goldens byte-identical under the sugar flag; V2Runtime 204/204.
 
-### C2 — Conformance consolidation (½ day, mostly deletion)
+### C2 — Conformance consolidation — DONE 2026-07-12 (author-authorized)
 
-- Delete `Ara3D.SDK.ConformanceTests`, `.V2`, `.Opt`, `.Scalar` (+ their regen scripts and
-  check-all rows). Rename `.V2Runtime` → `Ara3D.SDK.ConformanceTests` — *the* conformance suite.
-  Its `KnownFailures.json` burn-down semantics stay.
-- check-all shrinks to: frozen-v1 tripwire · V2 golden diffs · conformance · PlatoTests ·
-  optimizer-smoke build · lint · SDK build + GeometryTests. Expect ~half the wall time.
-- **Requires author sign-off** (this deletes green tests; the argument is principle 3).
+- Deleted `Ara3D.SDK.ConformanceTests` (V1), `.V2`, `.Opt`, `.Scalar` project files + their 4
+  `tools/regen-conformance*.ps1` scripts + the 4 check-all conformance rows. The shared test
+  sources the base suite held (`ConformanceSupport.cs`, `LawTests.cs`, `WitnessRunnerTests.cs`,
+  `KnownFailures.json`) — which `.V2Runtime` *linked* — were `git mv`'d into `.V2Runtime`, so the
+  surviving suite is now **self-contained** (its csproj's external `..\` links removed).
+- check-all conformance is now one gate: `conformance (V2 runtime, 204/204)`. The battery dropped
+  from 9 gates to 6 (tripwire · V2 golden diffs · lint · conformance · SDK build · GeometryTests).
+- Rename `.V2Runtime` → `Ara3D.SDK.ConformanceTests` **deferred to C5** (naming, lower risk as a
+  pure rename once nothing else references the folder).
+- CLAUDE.md + the regen-v2runtime header updated to the one-suite reality.
+- **Gate:** reduced check-all ALL PASS; the moved-source suite builds + runs 204/204 standalone.
 
 ### C3 — M5 runtime port, with the surface contract (1–2 days)
 

@@ -21,20 +21,20 @@ Plato-language `.plato` source, nor the C# the writers emit (that shape is set b
 - `PlatoCompiler/` — compilation + `Analysis/Linter.cs` (LINT001–005) + `Checking/` (the type checker + Typed IR: Normalize → Constrain → Solve → Elaborate → Monomorphize; handoff doc `docs/type-checker-handoff.md`).
 - `Plato.AST/` — the old associativity bug was FIXED in `392dfa8` (2026-07-09); `../../docs/plato-assoc-bug-diagnosis.md` is historical.
 - `Plato.CSharpWriter/` — `CSharpWriter.cs` (flags: `ExtensionStyle`, `Optimize`, `ScalarErase`, `UseTir` — **on by default**: default-style member bodies emit from the Typed IR via `TirCSharpBodyWriter`; `--no-tir` = legacy path), `ExtensionStyleWriter.cs` (classic extension methods, one static class per Plato library; moved no-arg fns are METHODS `v.Magnitude()`, kept struct members are properties), `ComponentUnroller.cs` (`--optimize` field-wise unrolling), `CSharpFunctionBodyWriter.cs` (the LEGACY body writer — still serves default-style static bodies and the extension/scalar/optimize styles).
-- `Plato.Intrinsics/` — **SOURCE OF TRUTH** for the handwritten C# runtime (Number/Vector2-8/Matrix/Angle wrappers). ara3d-sdk holds a byte-identical synced copy, diff-gated — never let them diverge; never edit the ara3d-sdk copy.
-- `conformance/Ara3D.SDK.ConformanceTests{,.V2,.Opt}/` — NUnit suites; `Generated/` folders are script-produced, gitignored. Expected result everywhere: **142 pass / 36 ignored-known / 0 fail** (manifest: `KnownFailures.json`; known+passing = must fail with "remove from manifest").
+- `Plato.Intrinsics/` — **FROZEN V1 runtime** (consolidation plan C0). The live runtime is `Plato.Intrinsics.V2/` (System.Numerics-backed, method-form). Both `Plato.Intrinsics` and the ara3d-sdk `Plato.Generated`/`Plato.Intrinsics` copies are frozen — protected by `tools\check-frozen-v1.ps1` (manifest `tools\frozen-v1.sha256`), never edit/regenerate.
+- `conformance/Ara3D.SDK.ConformanceTests.V2Runtime/` — **THE** Plato conformance suite (consolidation plan C2 retired the V1/V2/Opt/Scalar recipe suites; their shared sources moved here so it is self-contained). Runs the shipping V2 recipe against `Plato.Intrinsics.V2`. `Generated/` is script-produced, gitignored. Expected: **204 pass / 0 fail** (manifest: `KnownFailures.json`; known+passing = must fail with "remove from manifest"). Regen: `tools\regen-conformance-v2runtime.ps1 -Test`.
 - `Generated/` — buildable generated projects (extension-style, scalar-erased), each a real csproj in `Ara3D.Studio.sln`: `Plato.Generated.Unoptimized` (optimizers off, readable reference) and `Plato.Generated.Optimized` (full optimizer pipeline, adoption shape). Diff-gated by `tools\regen-generated.ps1`; docs in `Generated/README.md`. Supersedes the retired `golden/Plato.Generated.V2`.
 - `parakeet/` — sub-submodule, PRE-EXISTING DIRTY STATE. Never touch, never stage.
 
 ## Commands (run from `C:\Users\cdigg\git\studio`)
-- `.\tools\regen-plato.ps1` — default-mode byte-identity + intrinsics-sync diff vs ara3d-sdk. Exit 1 on drift. `-Apply` syncs. Excludes `_Sphere.g.cs`/`_Cylinder.g.cs` (name collisions, resolved at V2 adoption).
-- `.\tools\regen-conformance.ps1 -Test` / `-v2` / `-opt` variants — regenerate merged (plato-src + plato-test-src) output into the respective conformance project and run it.
+- `.\tools\check-frozen-v1.ps1` — freeze tripwire: SHA-256 of the frozen V1 artifacts (ara3d-sdk `Plato.Generated`/`Plato.Intrinsics` + Plato-repo `Plato.Intrinsics`). Exit 1 on any drift. `-Update` re-baselines (deliberate only). Replaced regen-plato in check-all (C0). `regen-plato.ps1` still runs the legacy emitter; retired at C4.
+- `.\tools\regen-conformance-v2runtime.ps1 -Test` — regenerate merged (plato-src + plato-test-src) output into the one conformance suite and run it (204/204).
 - `.\tools\check-all.ps1` — full gate battery, PASS/FAIL table. **Run once at the end of a mission**; iterate on a single relevant gate during development.
 - `dotnet run --project submodules\Plato\Plato.CLI -c Release -- lint submodules\Plato\plato-src` — exit 0 unless `--strict`; the finding count drifts with library content, so compare against the previous run, not a hardcoded baseline.
 
 ## Hard rules
 1. No git commits unless the mission says so; never stage parakeet or pre-existing dirty files.
-2. Off-flag emitter output must stay BYTE-IDENTICAL (regen-plato.ps1 is the gate).
+2. The FROZEN V1 artifacts (ara3d-sdk Plato.Generated/Plato.Intrinsics + Plato-repo Plato.Intrinsics) must not change — `tools\check-frozen-v1.ps1` is the gate. The live V2 goldens (`Generated/`) are diff-gated by `regen-generated.ps1`; refresh them in the same change as any intended emitter-behavior change.
 3. Generated code must compile with DEFAULT LangVersion on net8.0. No C# 14 features.
 4. Known bugs are now BEING fixed (content-leads, from 2026-07-09). The `KnownFailures.json`
    manifest is the burn-down queue: when you fix a bug, REMOVE its manifest entry in the same change
