@@ -162,11 +162,16 @@ NoProperties gating forks in TirInliner, the pins, ScalarEraseAnalysis special c
    `partial struct Number` shim members (`AlmostZero`/`Pow2`/`Pow3`, present in the golden); the
    latter is load-bearing for global (not per-receiver) call-site property/method syntax. Both are
    kept and re-documented as the uniform-surface sets, not pins. Goldens 184/184 byte-identical.
-5. **DONE (reconciled)** — `ScalarEraseAnalysis` has no dead members (every method is consumed by
-   `TirCSharpBodyWriter`, directly or internally); its docstring was updated to reflect it is now
-   the SOLE float-land implementation (no longer "a copy of the legacy writer"). A genuine *shrink*
-   (removing the redundant `((float)(((float)x)))` double-casts) would change the emitted bytes, so
-   it is deferred as an intended-output-change follow-up, OUT of C4's byte-identical scope.
+5. **DONE** — `ScalarEraseAnalysis` has no dead members (every method is consumed by
+   `TirCSharpBodyWriter`, directly or internally); its docstring now reflects that it is the SOLE
+   float-land implementation. The genuine *shrink* — collapsing the redundant idempotent
+   `((float)(((float)x)))` double-casts (an argument already rendered as `((float)…)` re-cast to the
+   same primitive) — was then landed as a deliberate INTENDED-OUTPUT change (the one exception to
+   C4's byte-identical rule): `TirCSharpBodyWriter.WriteScalarCastArg` drops the outer cast when the
+   inner already renders as a whole cast to that same primitive (a no-op float→float; wrapper casts
+   like `((Number)…)` are always kept). Double-casts fell 726→174 (the survivors correctly keep the
+   semantic scalar-return wrap around calls). Both goldens were refreshed (`regen-generated -Apply`,
+   58 + 66 files), COMPILE, and conformance stays 205/205; the emit-snapshot was re-baselined.
 
 ### C4 (original brief) — Emitter separation + the delete list (2–3 days; the payoff)
 

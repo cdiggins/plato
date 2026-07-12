@@ -30,8 +30,10 @@ freeze the ara3d-sdk Geometry artifacts (never touch), make the emitter simple +
       MethodsOnly->NoProperties (1 flag); deleted dead StaticNoArgMethodNames; TirInliner forks
       unconditional; PropertySyntaxNames->StructSurfacePropertyNames (uniform rule). RECONCILED:
       HandwrittenPropertySyntaxNames (Number shim) + StructSurfacePropertyNames (global call-site
-      surface) kept — deleting them changes goldens. step4: ScalarEraseAnalysis has no dead code
-      (all load-bearing for the float-land casts); true shrink needs a golden refresh (follow-up).
+      surface) kept — deleting them changes goldens. step4: ScalarEraseAnalysis no dead code; the
+      genuine shrink LANDED as an intended-output change: WriteScalarCastArg collapses redundant
+      idempotent ((float)(((float)x))) double-casts (726->174), goldens refreshed+compile,
+      conformance 205/205, snapshot re-baselined.
 - [~] C5 Naming pass: DONE rename V2Runtime suite -> Ara3D.SDK.ConformanceTests (folder/csproj/
       namespace + regen-conformance-v2runtime.ps1 -> regen-conformance.ps1 + check-all + CLAUDE.md;
       205/205, check-all ALL PASS). Intrinsics.V2 -> Intrinsics still pending (needs V1 deleted first).

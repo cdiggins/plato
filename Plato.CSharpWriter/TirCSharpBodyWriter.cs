@@ -782,15 +782,11 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             if (argPrims != null && argPrim != null
                 && CSharpWriter.ScalarPrimitives.TryGetValue(argPrims[argIndex], out var castPrim))
             {
-                Write($"(({castPrim})(");
-                WriteNode(a);
-                Write("))");
+                WriteScalarCastArg(castPrim, a);
             }
             else if (argPrim != null && receiverPrim == null)
             {
-                Write($"(({RestoreCastType(call, argIndex, argPrim)})(");
-                WriteNode(a);
-                Write("))");
+                WriteScalarCastArg(RestoreCastType(call, argIndex, argPrim), a);
             }
             else
             {
@@ -1033,6 +1029,55 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                     return argPrim;
             }
         return ScalarEraseAnalysis.WrapperOfPrim(argPrim);
+    }
+
+    /// <summary>Writes an argument that overload resolution wants pinned to a specific type
+    /// <paramref name="castType"/>. When <paramref name="castType"/> is a scalar primitive AND the
+    /// argument already renders as a whole cast to that SAME primitive, the outer cast is a no-op
+    /// (float->float) and is dropped — collapsing the redundant `((float)(((float)x)))` double-cast
+    /// to `((float)x)`. A wrapper cast (e.g. Number, a genuine float->Number conversion) is always
+    /// kept.</summary>
+    private void WriteScalarCastArg(string castType, TirNode a)
+    {
+        var rendered = Render(() => WriteNode(a));
+        if (CSharpWriter.ScalarPrimitives.ContainsValue(castType) && IsWholeScalarCast(rendered, castType))
+        {
+            Write(rendered);
+            return;
+        }
+        Write($"(({castType})(");
+        Write(rendered);
+        Write("))");
+    }
+
+    /// <summary>Renders <paramref name="write"/> into a scratch buffer and returns the text, leaving
+    /// the main buffer untouched. Used to inspect how an inline expression will render before
+    /// deciding whether to wrap it (the argument runs exactly once, so no side effect is doubled).</summary>
+    private string Render(System.Action write)
+    {
+        var saved = sb;
+        sb = new System.Text.StringBuilder();
+        write();
+        var s = sb.ToString();
+        sb = saved;
+        return s;
+    }
+
+    /// <summary>Whether <paramref name="s"/> is exactly one cast to <paramref name="prim"/> around a
+    /// whole inner expression — `((prim)…)` whose outermost paren closes only at the final char (so
+    /// `((float)x)` qualifies but `((float)x).Foo()` does not).</summary>
+    private static bool IsWholeScalarCast(string s, string prim)
+    {
+        var head = "((" + prim + ")";
+        if (s.Length <= head.Length || !s.StartsWith(head) || s[s.Length - 1] != ')')
+            return false;
+        var depth = 0;
+        for (var i = 0; i < s.Length; i++)
+        {
+            if (s[i] == '(') depth++;
+            else if (s[i] == ')' && --depth == 0) return i == s.Length - 1;
+        }
+        return false;
     }
 
     /// <summary>Writes a call ARGUMENT. Scalar erasure only: a reference to a function-typed
