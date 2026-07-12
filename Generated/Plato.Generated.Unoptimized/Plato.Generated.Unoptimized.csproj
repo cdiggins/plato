@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Plato.Generated.Unoptimized - buildable golden of the extension-style, scalar-erased
+    Plato standard library with the OPTIMIZERS OFF.
+
+    Recipe (see Generated\README.md) - flags shown without the leading dashes:
+        Plato.CLI plato-src Generated\Plato.Generated.Unoptimized
+            csharp-style=extensions scalar=float
+
+    This is the readable reference shape: classic extension methods, Number/Integer/Boolean/
+    Character/String erased to native primitives, but no optimizer passes.
+    Diffing it against Plato.Generated.Optimized shows exactly what the optimizer passes do,
+    and that they are semantics-preserving.
+
+    Regenerate with tools\regen-generated.ps1 (studio repo). The .g.cs files ARE committed
+    (this is a golden); docs.html / interfaces.txt generator side-products are gitignored.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+    <PlatformTarget>x64</PlatformTarget>
+    <Platforms>AnyCPU;x64</Platforms>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RootNamespace>Ara3D.Geometry</RootNamespace>
+    <!-- Generated code produces a large number of benign warnings. -->
+    <NoWarn>$(NoWarn);CS0108;CS0114;CS0660;CS0661;CS1591</NoWarn>
+  </PropertyGroup>
+
+  <!-- Link the handwritten intrinsics runtime (shared project). -->
+  <Import Project="..\..\Plato.Intrinsics\Plato.Intrinsics.projitems" Label="Shared" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\ara3d-sdk\src\Ara3D.Collections\Ara3D.Collections.csproj" />
+    <ProjectReference Include="..\..\..\..\ara3d-sdk\src\Ara3D.Memory\Ara3D.Memory.csproj" />
+    <ProjectReference Include="..\..\..\..\ara3d-sdk\src\Ara3D.Utils\Ara3D.Utils.csproj" />
+  </ItemGroup>
+
+</Project>

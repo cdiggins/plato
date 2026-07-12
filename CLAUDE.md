@@ -17,13 +17,13 @@ Plato-language `.plato` source, nor the C# the writers emit (that shape is set b
 - `plato-src-legacy/` — **FROZEN 2026-07-09 snapshot** of the pre-refactor library. Reference only;
   never edit, never compile. Diff `plato-src` against it to see how far the library has moved.
 - `plato-test-src/` — law/witness libraries (`Law_*`, `Witness_*` Boolean functions). Never merge into plato-src.
-- `Plato.CLI/` — entry point. `Program.cs` args: `[input] [output] [--typescript|--rust] [--csharp-style=default|extensions] [--optimize] [--scalar=...] [--no-tir]` and `lint <folder> [--strict]`. Exits 1 on parse/compile failure (fixed 2026-07-10).
+- `Plato.CLI/` — entry point. `Program.cs` args: `[input] [output] [--typescript|--rust] [--csharp-style=default|extensions] [--optimize] [--optimize-arrays] [--inline] [--scalar=...] [--no-tir]` and `lint <folder> [--strict]`. Exits 1 on parse/compile failure (fixed 2026-07-10).
 - `PlatoCompiler/` — compilation + `Analysis/Linter.cs` (LINT001–005) + `Checking/` (the type checker + Typed IR: Normalize → Constrain → Solve → Elaborate → Monomorphize; handoff doc `docs/type-checker-handoff.md`).
 - `Plato.AST/` — the old associativity bug was FIXED in `392dfa8` (2026-07-09); `../../docs/plato-assoc-bug-diagnosis.md` is historical.
 - `Plato.CSharpWriter/` — `CSharpWriter.cs` (flags: `ExtensionStyle`, `Optimize`, `ScalarErase`, `UseTir` — **on by default**: default-style member bodies emit from the Typed IR via `TirCSharpBodyWriter`; `--no-tir` = legacy path), `ExtensionStyleWriter.cs` (classic extension methods, one static class per Plato library; moved no-arg fns are METHODS `v.Magnitude()`, kept struct members are properties), `ComponentUnroller.cs` (`--optimize` field-wise unrolling), `CSharpFunctionBodyWriter.cs` (the LEGACY body writer — still serves default-style static bodies and the extension/scalar/optimize styles).
 - `Plato.Intrinsics/` — **SOURCE OF TRUTH** for the handwritten C# runtime (Number/Vector2-8/Matrix/Angle wrappers). ara3d-sdk holds a byte-identical synced copy, diff-gated — never let them diverge; never edit the ara3d-sdk copy.
 - `conformance/Ara3D.SDK.ConformanceTests{,.V2,.Opt}/` — NUnit suites; `Generated/` folders are script-produced, gitignored. Expected result everywhere: **142 pass / 36 ignored-known / 0 fail** (manifest: `KnownFailures.json`; known+passing = must fail with "remove from manifest").
-- `golden/Plato.Generated.V2/` — golden extension-style production output (the intended adoption shape).
+- `Generated/` — buildable generated projects (extension-style, scalar-erased), each a real csproj in `Ara3D.Studio.sln`: `Plato.Generated.Unoptimized` (optimizers off, readable reference) and `Plato.Generated.Optimized` (full optimizer pipeline, adoption shape). Diff-gated by `tools\regen-generated.ps1`; docs in `Generated/README.md`. Supersedes the retired `golden/Plato.Generated.V2`.
 - `parakeet/` — sub-submodule, PRE-EXISTING DIRTY STATE. Never touch, never stage.
 
 ## Commands (run from `C:\Users\cdigg\git\studio`)
