@@ -1,0 +1,62 @@
+# Plato V2 emit snapshot (C4 emitter gate). Recipe: --csharp-style=extensions --scalar=float --no-properties.
+# Re-baseline with PLATO_UPDATE_EMIT_SNAPSHOT=1. Authoritative gate is tools/regen-generated.ps1.
+@ _Number.g.cs :: float Abs(this float self)
+  [MethodImpl(AggressiveInlining)] public static float Abs(this float self) => ((Number)self).Abs();
+@ _Number.g.cs :: float Sqrt(this float self)
+  [MethodImpl(AggressiveInlining)] public static float Sqrt(this float self) => ((Number)self).Sqrt();
+@ _Number.g.cs :: float Clamp(this float self, float min, float max)
+  [MethodImpl(AggressiveInlining)] public static float Clamp(this float self, float min, float max) => ((Number)self).Clamp(min, max);
+@ _Number.g.cs :: float Lerp(this float a, float b, float t)
+  [MethodImpl(AggressiveInlining)] public static float Lerp(this float a, float b, float t) => ((float)a).Multiply(((float)(((float)t).FromOne()))).Add(((float)(((float)b).Multiply(((float)(((float)t)))))));
+@ _Number.g.cs :: int Sign(this float self)
+  [MethodImpl(AggressiveInlining)] public static int Sign(this float self) => ((Number)self).Sign();
+@ _Number.g.cs :: Angle Atan2(this float self, float x)
+  [MethodImpl(AggressiveInlining)] public static Angle Atan2(this float self, float x) => ((Number)self).Atan2(x);
+@ _Number.g.cs :: _T0 Multiply<_T0>(this float scalar
+  [MethodImpl(AggressiveInlining)] public static _T0 Multiply<_T0>(this float scalar, _T0 x) where _T0 : IScalarArithmetic<_T0> => x.Multiply(((float)(((float)scalar))));
+@ _Number.g.cs :: Vector3 Multiply(this float scalar, Vector3 right)
+  [MethodImpl(AggressiveInlining)] public static Vector3 Multiply(this float scalar, Vector3 right) => ((Number)scalar) * right;
+@ _Number.g.cs :: Vector8 Divide(this float scalar, Vector8 right)
+  [MethodImpl(AggressiveInlining)] public static Vector8 Divide(this float scalar, Vector8 right) => ((Number)scalar) / right;
+@ _Number.g.cs :: bool NotEquals(this Number a, float b)
+  [MethodImpl(AggressiveInlining)] public static bool NotEquals(this Number a, float b) => !((float)a).Equals(b);
+@ _Number.g.cs :: implicit operator Vector2(Number value)
+  [MethodImpl(AggressiveInlining)] public static implicit operator Vector2(Number value) => ((float)value).Vector2();
+@ _Boolean.g.cs :: bool Not(this bool b)
+  [MethodImpl(AggressiveInlining)] public static bool Not(this bool b) => !((Boolean)b);
+@ _Boolean.g.cs :: bool And(this bool a, bool b)
+  [MethodImpl(AggressiveInlining)] public static bool And(this bool a, bool b) => ((Boolean)a) & ((Boolean)b);
+@ _Vector3.g.cs :: float X(this System.Numerics.Vector3 self)
+  [MethodImpl(AggressiveInlining)] public static float X(this System.Numerics.Vector3 self) => ((Vector3)self).X;
+@ _Vector3.g.cs :: Vector3 Normalize(this System.Numerics.Vector3 self)
+  [MethodImpl(AggressiveInlining)] public static Vector3 Normalize(this System.Numerics.Vector3 self) => ((Vector3)self).Normalize();
+@ _Vector3.g.cs :: float Length(this System.Numerics.Vector3 self)
+  [MethodImpl(AggressiveInlining)] public static float Length(this System.Numerics.Vector3 self) => ((Vector3)self).Length();
+@ _Vector3.g.cs :: float Dot(this System.Numerics.Vector3 self, Vector3 right)
+  [MethodImpl(AggressiveInlining)] public static float Dot(this System.Numerics.Vector3 self, Vector3 right) => ((Vector3)self).Dot(right);
+@ Constants.g.cs :: float Pi()
+  [MethodImpl(AggressiveInlining)] public static float Pi() => 3.141592653589793f;
+@ Constants.g.cs :: float TwoPi()
+  [MethodImpl(AggressiveInlining)] public static float TwoPi() => Constants.Pi().Twice();
+@ Constants.g.cs :: float HalfPi()
+  [MethodImpl(AggressiveInlining)] public static float HalfPi() => Constants.Pi().Half();
+@ Vectors.g.cs :: Vector2 Perpendicular(this Vector2 v)
+  [MethodImpl(AggressiveInlining)] public static Vector2 Perpendicular(this Vector2 v) => (((float)v.Y).Negative(), ((float)v.X));
+@ Vectors.g.cs :: Vector2 Rotate(this Vector2 v, Angle a)
+  [MethodImpl(AggressiveInlining)] public static Vector2 Rotate(this Vector2 v, Angle a) => (((float)v.X).Multiply(((float)(((float)a.Cos())))).Subtract(((float)(((float)v.Y).Multiply(((float)(((float)a.Sin()))))))), ((float)v.X).Multiply(((float)(((float)a.Sin())))).Add(((float)(((float)v.Y).Multiply(((float)(((float)a.Cos()))))))));
+@ Vectors.g.cs :: Angle Angle(this Vector2 a, Vector2 b)
+  [MethodImpl(AggressiveInlining)] public static Angle Angle(this Vector2 a, Vector2 b) => ((float)a.Dot(b)).Divide(((float)(((float)a.Magnitude()).Multiply(((float)(((float)b.Magnitude()))))))).Acos();
+@ Vectors.g.cs :: bool IsParallel(this Vector2 a, Vector2 b)
+  [MethodImpl(AggressiveInlining)] public static bool IsParallel(this Vector2 a, Vector2 b) => ((float)a.Dot(b)).Abs().GreaterThanOrEquals(((float)(1f.Subtract(((float)(Constants.Epsilon()))))));
+@ Angles.g.cs :: float Turns(this Angle x)
+  [MethodImpl(AggressiveInlining)] public static float Turns(this Angle x) => ((float)x.Radians()).Divide(((float)(Constants.TwoPi())));
+@ Angles.g.cs :: Angle Turns(this float x)
+  [MethodImpl(AggressiveInlining)] public static Angle Turns(this float x) => ((float)x).Multiply(((float)(Constants.TwoPi())));
+@ Angles.g.cs :: Angle Turns(this int x)
+  [MethodImpl(AggressiveInlining)] public static Angle Turns(this int x) => ((float)((int)x).Number()).Turns();
+@ Transforms.g.cs :: Vector3 TransformNormal(this Transform3D x, Vector3 v)
+  [MethodImpl(AggressiveInlining)] public static Vector3 TransformNormal(this Transform3D x, Vector3 v) => v.TransformNormal(x.Matrix);
+@ _IdentityTransform3D.g.cs :: Quaternion Quaternion =>
+  public Quaternion Quaternion => throw new NotImplementedException();
+@ _Identity2D.g.cs :: Matrix3x2 Matrix =>
+  public Matrix3x2 Matrix => throw new NotImplementedException();
