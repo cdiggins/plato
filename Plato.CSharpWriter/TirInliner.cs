@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.Compiler.Types;
 
 namespace Ara3D.Geometry.CSharpWriter;
 
@@ -43,7 +44,7 @@ public static class TirInliner
     // (CSharpWriter.WriteAll) so repeated runs produce identical output.
     public static int NextRenameId;
 
-    public static TirFunction Inline(TirFunction tir, CSharpWriter writer, out int inlinedCalls)
+    public static TirFunction Inline(TirFunction tir, CSharpWriter writer, string ownerTypeName, out int inlinedCalls)
     {
         inlinedCalls = 0;
         if (!writer.InlineCalls || tir?.Body == null)
@@ -56,7 +57,7 @@ public static class TirInliner
             // of these is a CS0136 at emission, so such parameters are alpha-renamed on inline.
             var callerNames = CollectBoundNames(tir, body);
 
-            var count = 0;
+            var count = new int[1];
             var lambdaDepth = 0;
             var etaDepth = 0;
             // Call sites INSIDE lambdas inline restrictively (lambda-free callee, cheap args):
@@ -66,14 +67,21 @@ public static class TirInliner
             // shape the emitter recovers as a bare member name.
             body = TirRewrite.Rewrite(body, n =>
                 etaDepth == 0 && n is TirCall call
-                && TryInlineCall(call, tir, writer, lambdaDepth > 0, callerNames, out var inlined)
-                    ? Bump(ref count, inlined)
+                && TryInlineCall(call, tir, writer, ownerTypeName, lambdaDepth > 0, callerNames, false, out var inlined)
+                    ? Bump(count, inlined)
                     : n,
                 enter: n => { if (n is TirLambda l) { lambdaDepth++; if (IsEtaShaped(l)) etaDepth++; } },
                 exit: n => { if (n is TirLambda l) { lambdaDepth--; if (IsEtaShaped(l)) etaDepth--; } });
-            if (count == 0)
+
+            // Tail-position sweep: a tuple->struct return body inlines only where its result lands
+            // in a slot typed as the callee's return type (see the tuple tail-lift). This is a
+            // top-down property, so it runs as a separate walk of the tail spine, not the
+            // bottom-up rewrite above.
+            body = InlineTails(body, tir, writer, ownerTypeName, callerNames, count);
+
+            if (count[0] == 0)
                 break;
-            inlinedCalls += count;
+            inlinedCalls += count[0];
         }
 
         return inlinedCalls == 0
@@ -82,14 +90,44 @@ public static class TirInliner
                 tir.ZonkedParameterTypes, tir.ZonkedReturnType);
     }
 
-    private static TirNode Bump(ref int count, TirNode n)
+    private static TirNode Bump(int[] count, TirNode n)
     {
-        count++;
+        count[0]++;
         return n;
     }
 
+    /// <summary>Top-down walk of a body's TAIL spine (the whole body, a return value, both branches
+    /// of a conditional, the inner of a suppressed coercion, the value of a block's trailing
+    /// return), inlining a tail-position call under the tuple tail-lift. Non-tail subtrees are left
+    /// to the bottom-up pass; this only reaches calls whose result flows to the caller's return
+    /// slot.</summary>
+    private static TirNode InlineTails(TirNode n, TirFunction tir, CSharpWriter writer,
+        string ownerTypeName, HashSet<string> callerNames, int[] count)
+    {
+        switch (n)
+        {
+            case TirCall c when TryInlineCall(c, tir, writer, ownerTypeName, false, callerNames, true, out var inlined):
+                return Bump(count, inlined);
+            case TirCoerce co:
+                return new TirCoerce(InlineTails(co.Inner, tir, writer, ownerTypeName, callerNames, count),
+                    co.FromType, co.ToType, co.ConversionFn, co.Origin);
+            case TirConditional cond:
+                return new TirConditional(cond.Condition,
+                    InlineTails(cond.IfTrue, tir, writer, ownerTypeName, callerNames, count),
+                    InlineTails(cond.IfFalse, tir, writer, ownerTypeName, callerNames, count), cond.Type, cond.Origin);
+            case TirReturn r:
+                return new TirReturn(InlineTails(r.Value, tir, writer, ownerTypeName, callerNames, count), r.Origin);
+            case TirBlock b when b.Statements.Count > 0 && b.Statements[b.Statements.Count - 1] is TirReturn:
+                var stmts = b.Statements.ToList();
+                stmts[stmts.Count - 1] = InlineTails(stmts[stmts.Count - 1], tir, writer, ownerTypeName, callerNames, count);
+                return new TirBlock(stmts, b.Origin);
+            default:
+                return n;
+        }
+    }
+
     private static bool TryInlineCall(TirCall call, TirFunction callerTir, CSharpWriter writer,
-        bool insideLambda, HashSet<string> callerNames, out TirNode inlined)
+        string ownerTypeName, bool insideLambda, HashSet<string> callerNames, bool tailPosition, out TirNode inlined)
     {
         inlined = null;
 
@@ -107,7 +145,7 @@ public static class TirInliner
         // type comes from TRUSTED sources (the caller's zonked signature for parameters, the
         // literal type for literals) before the node's own type: loosely-solved node types
         // (Self-unifies-anything) can name a different specialization than the emitted surface.
-        var receiverTypeName = TrustedTypeName(callerTir, call.Args[0]);
+        var receiverTypeName = TrustedTypeName(callerTir, call.Args[0], writer, ownerTypeName);
         var calleeTir = writer.TryGetGroundTirByTypeName(call.Callee, receiverTypeName);
         var calleeBody = calleeTir?.Body;
         if (calleeBody == null)
@@ -119,12 +157,25 @@ public static class TirInliner
 
         // The body's value type must BE the declared return type: a mismatch means the function
         // relies on a return-position implicit conversion (Number -> Angle in `Turns`,
-        // tuple -> struct), which evaporates when the body moves to the call site.
+        // tuple -> struct), which evaporates when the body moves to the call site — EXCEPT in tail
+        // position, where the inlined result occupies a slot whose target type is the callee's
+        // return type, so a tuple->struct conversion still fires (the emitter renders a tuple body
+        // bare and lets C# convert). Restricted to tuple bodies: other mismatches (Number->Angle)
+        // need an implicit operator that may not exist for the surrounding position.
+        //
+        // NOT under scalar erasure: the struct's implicit operator is defined for the WRAPPER-typed
+        // tuple ((Number,Number,Number)), but the erased body yields (float,float,float), which does
+        // not convert. The original callee body compiles because its own return renders the wrapper
+        // tuple; moving it to a foreign scalar call site loses that. (Wrapper-aware tuple emission
+        // under erasure is the follow-up that lifts the mesh/tuple family into the scalar recipe.)
         var bodyTypeName = calleeBody.Type?.Name;
         var returnTypeName = (calleeTir.ZonkedReturnType ?? calleeTir.ReturnType)?.Name;
-        if (bodyTypeName == null || returnTypeName == null || bodyTypeName != returnTypeName)
+        var tupleTailLift = tailPosition && !writer.ScalarErase
+            && bodyTypeName != null && bodyTypeName.StartsWith("Tuple") && returnTypeName != null;
+        if (bodyTypeName == null || returnTypeName == null
+            || (bodyTypeName != returnTypeName && !tupleTailLift))
             return false;
-        if (!IsSelfContained(writer, calleeBody, out var calleeHasLambda))
+        if (!IsSelfContained(writer, calleeBody, tupleTailLift, out var calleeHasLambda))
             return false;
 
         // Under a lambda at the CALL SITE: only lambda-free callee bodies with all-cheap
@@ -149,16 +200,39 @@ public static class TirInliner
             // already TirCoerce-wrapped and carry the target type; a silent mismatch means the
             // solver unified loosely and the fetched specialization is not the emitted one).
             var paramTypeName = ResolvedParamTypeName(writer, calleeTir, paramDefs, i, receiverTypeName);
-            var argTypeName = TrustedTypeName(callerTir, arg);
+            var argTypeName = TrustedTypeName(callerTir, arg, writer, ownerTypeName);
             if (paramTypeName != null && argTypeName != null && paramTypeName != argTypeName)
                 return false;
 
             if (TirRewrite.IsCheap(arg))
                 continue;
-            if (TirRewrite.StripCoerce(arg) is TirLambda)
-                return false;
             uses = uses ?? TirRewrite.CountParamUses(calleeBody);
-            if (uses.TryGetValue(paramDefs[i], out var u) && (u.Count > 1 || u.UnderLambda))
+            uses.TryGetValue(paramDefs[i], out var u);
+
+            if (TirRewrite.StripCoerce(arg) is TirLambda lamArg)
+            {
+                // Delegate-parameter inlining (substituting a lambda into a Function-typed
+                // parameter, then β-reducing) is a V2-recipe feature: it relies on the uniform
+                // method-form surface (--no-properties). Under the property-ful recipes it stays
+                // OFF — a lambda argument is refused, exactly as the pre-increment inliner did.
+                if (!writer.NoProperties)
+                    return false;
+                // A lambda substitutes into a delegate-typed parameter only when EVERY use is a
+                // CONSUMING position: the target of an application (which then β-reduces away — no
+                // residual lambda) or a direct call argument (target-typed by the callee's Func
+                // parameter). Never under a nested lambda (the per-lambda capture hoist), and the
+                // total substituted lambda-body size is bounded to cap code growth on multi-use
+                // parameters (the f(A)/f(B)/f(C) tuple bodies apply f several times).
+                if (u.UnderLambda || !AllUsesConsuming(calleeBody, paramDefs[i]))
+                    return false;
+                if (u.Count * lamArg.Descendants().Count() > MaxBodyNodes)
+                    return false;
+                continue;
+            }
+
+            // A compound (non-lambda) argument substitutes only when its parameter is used at
+            // most once, outside any lambda (single evaluation, no capture).
+            if (u.Count > 1 || u.UnderLambda)
                 return false;
         }
 
@@ -186,27 +260,78 @@ public static class TirInliner
             byDef[paramDefs[i]] = arg;
         }
 
-        var renames = calleeHasLambda ? BuildLambdaParamRenames(calleeBody, callerNames) : null;
-
         inlined = TirRewrite.Rewrite(calleeBody, n =>
         {
-            if (n is TirParameter p && p.Def != null)
-            {
-                if (byDef.TryGetValue(p.Def, out var arg))
-                    return arg;
-                if (renames != null && renames.TryGetValue(p.Def, out var renamed))
-                    return new TirParameter(renamed, p.Type, p.Origin);
-            }
-            if (n is TirLambda lam && renames != null
-                && lam.Parameters.Any(d => renames.ContainsKey(d)))
-                return new TirLambda(
-                    lam.Parameters.Select(d => renames.TryGetValue(d, out var r) ? r : d).ToList(),
-                    lam.Body, lam.Type, lam.Origin);
+            // Post-order: a substituted delegate parameter has already turned `f(x)` into
+            // `(λ….e)(x)`; β-reduce it away so no lambda is left in applied position. The
+            // lambda body is the caller's own (no callee params / Self inside), so the reduced
+            // node needs no further callee-side rewriting.
+            if (n is TirInvoke invk && TirRewrite.TryBetaReduce(invk, out var reduced))
+                return reduced;
+            if (n is TirParameter p && p.Def != null && byDef.TryGetValue(p.Def, out var arg))
+                return arg;
             if (n is TirTypeRef t && t.TypeDef?.Name == "Self" && selfDef != null)
                 return new TirTypeRef(selfDef, t.Type, t.Origin);
             return n;
         });
+
+        // Alpha-rename any lambda parameter in the FINAL inlined tree that collides with a
+        // caller-bound name (CS0136 once the body lands in the caller's scope). Computed over the
+        // rewritten result — not just the callee body — so it also covers a substituted
+        // caller-lambda argument and any lambda a β-reduction left exposed.
+        inlined = AlphaRenameCollidingLambdas(inlined, callerNames);
         return true;
+    }
+
+    /// <summary>Rename every lambda parameter in <paramref name="node"/> whose name collides with a
+    /// caller-bound name to a fresh clone (<c>{name}_{N}</c>), updating both the lambda's parameter
+    /// list and the parameter references in its body.</summary>
+    private static TirNode AlphaRenameCollidingLambdas(TirNode node, HashSet<string> callerNames)
+    {
+        var renames = BuildLambdaParamRenames(node, callerNames);
+        if (renames == null)
+            return node;
+        return TirRewrite.Rewrite(node, n =>
+        {
+            if (n is TirParameter p && p.Def != null && renames.TryGetValue(p.Def, out var renamed))
+                return new TirParameter(renamed, p.Type, p.Origin);
+            if (n is TirLambda lam && lam.Parameters.Any(d => renames.ContainsKey(d)))
+                return new TirLambda(
+                    lam.Parameters.Select(d => renames.TryGetValue(d, out var r) ? r : d).ToList(),
+                    lam.Body, lam.Type, lam.Origin);
+            return n;
+        });
+    }
+
+    /// <summary>Whether every reference to <paramref name="pd"/> in <paramref name="body"/> sits in
+    /// a position that CONSUMES it as a function value without leaving a bare lambda in a
+    /// non-target-typed slot: the target of a <see cref="TirInvoke"/> (β-reduced away on
+    /// substitution) or a direct argument of a <see cref="TirCall"/> (target-typed by the callee's
+    /// <c>Function{N}</c> parameter). Any other occurrence (a tuple element, a <c>new</c> field, a
+    /// returned/aliased value) would lose the delegate's target-typing once a lambda is substituted,
+    /// so the substitution is refused.</summary>
+    private static bool AllUsesConsuming(TirNode body, ParameterDef pd)
+    {
+        var total = 0;
+        var consuming = 0;
+        bool IsRef(TirNode n) => TirRewrite.StripCoerce(n) is TirParameter p && p.Def == pd;
+        void Walk(TirNode n)
+        {
+            if (n == null)
+                return;
+            if (n is TirParameter tp && tp.Def == pd)
+                total++;
+            if (n is TirInvoke inv && IsRef(inv.Target))
+                consuming++;
+            if (n is TirCall c)
+                foreach (var a in c.Args)
+                    if (IsRef(a))
+                        consuming++;
+            foreach (var ch in n.Children)
+                Walk(ch);
+        }
+        Walk(body);
+        return total > 0 && total == consuming;
     }
 
     /// <summary>Every name bound in the caller: function parameters, lambda parameters and let
@@ -260,7 +385,7 @@ public static class TirInliner
     /// SYNTACTIC calls (null callee: only trustworthy in the body's HOME emission context — e.g.
     /// the library Dot's body for Vector3 references a Sum overload that does not exist there;
     /// the handwritten intrinsic Dot is what actually ships for that type).</summary>
-    private static bool IsSelfContained(CSharpWriter writer, TirNode calleeBody, out bool hasLambda)
+    private static bool IsSelfContained(CSharpWriter writer, TirNode calleeBody, bool allowRootTuple, out bool hasLambda)
     {
         hasLambda = false;
         var nodes = calleeBody.Descendants().ToList();
@@ -290,8 +415,16 @@ public static class TirInliner
                     return false;
                 hasLambda = true;
             }
-            if (n is TirCall tc && (tc.Callee == null || (tc.Name != null && tc.Name.StartsWith("Tuple"))))
-                return false;
+            // A syntactic tuple's target-typed conversion belongs to the position it sits in, so a
+            // nested tuple is refused — but the ROOT tuple of a tail-position body converts at the
+            // caller's return slot (see the tuple tail-lift in TryInlineCall), so it is permitted.
+            if (n is TirCall tc)
+            {
+                var isRootTuple = allowRootTuple && ReferenceEquals(n, calleeBody)
+                    && tc.Name != null && tc.Name.StartsWith("Tuple");
+                if (!isRootTuple && (tc.Callee == null || (tc.Name != null && tc.Name.StartsWith("Tuple"))))
+                    return false;
+            }
         }
         return true;
     }
@@ -325,8 +458,15 @@ public static class TirInliner
 
     /// <summary>The most trustworthy Plato type name for a node: an explicit coercion's target,
     /// the caller's zonked signature type for the caller's own parameters, the literal type for
-    /// literals, then the node's zonked type (which loose solving can render misleading).</summary>
-    private static string TrustedTypeName(TirFunction callerTir, TirNode n)
+    /// literals, then the node's zonked type (which loose solving can render misleading).
+    ///
+    /// The receiver parameter (index 0) is special-cased: a method emitted as a member of the
+    /// concrete <paramref name="ownerTypeName"/> binds its receiver to that concrete type even when
+    /// the signature declares an INTERFACE (<c>Transform(self: IDeformable3D)</c> emitted on
+    /// Bounds3D has <c>self : Bounds3D</c>). Monomorphization specializes only <c>Self</c>, so the
+    /// zonked receiver type can still be the interface; the owner type is the emitted truth and is
+    /// what the concrete callee (<c>Deform@Bounds3D</c>) is keyed under.</summary>
+    private static string TrustedTypeName(TirFunction callerTir, TirNode n, CSharpWriter writer, string ownerTypeName)
     {
         if (n is TirCoerce co && co.ToType?.Name != null)
             return co.ToType.Name;
@@ -334,10 +474,31 @@ public static class TirInliner
         if (n is TirParameter p && p.Def != null && callerTir?.Parameters != null)
             for (var i = 0; i < callerTir.Parameters.Count; i++)
                 if (ReferenceEquals(callerTir.Parameters[i], p.Def))
-                    return (callerTir.ZonkedParameterTypes != null && i < callerTir.ZonkedParameterTypes.Count
-                               ? callerTir.ZonkedParameterTypes[i]?.Name
-                               : null)
-                           ?? p.Def.Type?.Name ?? n.Type?.Name;
+                {
+                    var zonked = callerTir.ZonkedParameterTypes != null && i < callerTir.ZonkedParameterTypes.Count
+                        ? callerTir.ZonkedParameterTypes[i]?.Name
+                        : null;
+                    // The receiver (param 0) needs a CONCRETE, emittable type to key the ground
+                    // callee. When the caller's zonked signature kept an INTERFACE — Transform is
+                    // written `Transform(self: IDeformable3D): Self` and monomorphized only in its
+                    // Self return, so `self` stays IDeformable3D in the signature though the emitted
+                    // member binds it to the concrete owner — the node's OWN solved type is the
+                    // monomorphized truth (self.Type = Bounds3D). Prefer, in order: a concrete
+                    // zonked signature type, the node's concrete solved type, then the owner type.
+                    // A genuine type variable stays unresolved (none is concrete) and falls through
+                    // to the zonked name unchanged, so no specialization is mis-selected elsewhere.
+                    if (i == 0)
+                    {
+                        if (zonked != null && IsConcreteName(writer, zonked))
+                            return zonked;
+                        var nodeType = n.Type?.Name;
+                        if (nodeType != null && IsConcreteName(writer, nodeType))
+                            return nodeType;
+                        if (ownerTypeName != null && IsConcreteName(writer, ownerTypeName))
+                            return ownerTypeName;
+                    }
+                    return zonked ?? p.Def.Type?.Name ?? n.Type?.Name;
+                }
         if (n is TirLiteral lit)
             return lit.LiteralType.ToString();
         return n?.Type?.Name;
@@ -382,7 +543,7 @@ public static class TirInliner
         var returnTypeName = (calleeTir.ZonkedReturnType ?? calleeTir.ReturnType)?.Name;
         if (bodyTypeName == null || returnTypeName == null || bodyTypeName != returnTypeName)
             return false;
-        if (!IsSelfContained(writer, body, out var hasLambda) || (insideLambda && hasLambda))
+        if (!IsSelfContained(writer, body, false, out var hasLambda) || (insideLambda && hasLambda))
             return false;
         inlined = body;
         return true;

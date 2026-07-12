@@ -257,7 +257,7 @@ namespace Ara3D.Geometry.CSharpWriter
         {
             if (TirDumpDir == null)
             {
-                tir = TirInliner.Inline(tir, this, out _);
+                tir = TirInliner.Inline(tir, this, fi?.OwnerType?.Name, out _);
                 tir = TirComponentUnroller.UnrollFunction(tir, fi, this);
                 tir = TirArrayMaterializer.Rewrite(tir, this);
                 return TirLoopLowerer.Rewrite(tir, this);
@@ -276,7 +276,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 var s = t?.Body?.ToString() ?? "<null>";
                 if (s != prev) { sb.AppendLine($"-- after {name} --"); sb.AppendLine(s); prev = s; }
             }
-            tir = TirInliner.Inline(tir, this, out _);                 Phase("inline (layer 7)", tir);
+            tir = TirInliner.Inline(tir, this, fi?.OwnerType?.Name, out _); Phase("inline (layer 7)", tir);
             tir = TirComponentUnroller.UnrollFunction(tir, fi, this);  Phase("optimize / component-unroll (layer 8)", tir);
             tir = TirArrayMaterializer.Rewrite(tir, this);            Phase("optimize-arrays / materialize (layer 9)", tir);
             tir = TirLoopLowerer.Rewrite(tir, this);                  Phase("loops / lower (layer 10)", tir);
