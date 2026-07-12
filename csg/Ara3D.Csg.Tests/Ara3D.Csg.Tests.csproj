@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Test library for the Plato CSG port (../csg.plato).
+
+    Generated\ holds the C# emitted from the FULL Plato standard library merged
+    with csg.plato, using the same recipe as the earcut port (extensions style,
+    scalar erasure to float, both optimizer passes, methods). It is not
+    committed: run ..\regen-csg.ps1 before building.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <PlatformTarget>x64</PlatformTarget>
+    <Platforms>AnyCPU;x64</Platforms>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- Generated code produces a large number of benign warnings; keep test output readable. -->
+    <NoWarn>$(NoWarn);CS0108;CS0114;CS0660;CS0661;CS1591</NoWarn>
+  </PropertyGroup>
+
+  <Import Project="..\..\Plato.Intrinsics\Plato.Intrinsics.projitems" Label="Shared" />
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="NUnit" Version="3.14.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\ara3d-sdk\src\Ara3D.Collections\Ara3D.Collections.csproj" />
+    <ProjectReference Include="..\..\..\..\ara3d-sdk\src\Ara3D.Memory\Ara3D.Memory.csproj" />
+    <ProjectReference Include="..\..\..\..\ara3d-sdk\src\Ara3D.Utils\Ara3D.Utils.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="NUnit.Framework" />
+  </ItemGroup>
+
+</Project>

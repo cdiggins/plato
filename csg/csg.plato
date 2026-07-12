@@ -1,0 +1,197 @@
+// ============================================================================
+// CSG — constructive solid geometry (union / intersection / difference) on
+// closed polyhedra, a functional re-expression of evanw/csg.js (MIT license).
+//
+// Same model as csg.js: a solid is a "polygon soup" — a set of oriented convex
+// faces whose outward normals bound a closed volume. Boolean operations return
+// another such soup.
+//
+// Where csg.js drives everything through a mutable BSP tree — build() and
+// clipTo() recurse over nodes, splitting and re-linking polygons in place — a
+// BSP tree is a recursive value that Plato (immutable, non-recursive) cannot
+// hold, and its traversals are recursive functions Plato does not have. So this
+// version keeps the *essence* of what the BSP computes and drops the tree:
+//
+//   A boolean of A and B is assembled from pieces of A's faces and pieces of
+//   B's faces. A face piece belongs in the output only if it lies wholly inside
+//   or wholly outside the other solid — never straddling its surface. csg.js
+//   guarantees that by splitting polygons at every BSP plane; we guarantee it
+//   directly: cut each face of A by *every* plane of B (Sutherland-Hodgman,
+//   one plane at a time), so no resulting fragment crosses a B plane, hence
+//   none crosses B's boundary. Then a single inside/outside test per fragment —
+//   even-odd ray parity against B's faces — decides whether to keep it.
+//
+// Cutting a convex face by k planes yields O(k^2) fragments (a plane-arrangement
+// subdivision, not 2^k), and classifying each is O(faces), so a boolean is
+// O(|A|^2 |B| + |B|^2 |A|). As with the earcut port, simplicity and ease of
+// verification are chosen over speed throughout; a fast BSP version is a later
+// pass. The one geometric compromise is exactly coplanar shared faces, which a
+// centroid-on-the-boundary test cannot orient — see FINDINGS.md.
+// ============================================================================
+
+// A convex, planar face: an ordered ring of coplanar points, counter-clockwise
+// about its outward normal (the winding that makes the plane normal point out).
+type Facet
+{
+    Points: IArray<Point3D>;
+}
+
+// A closed solid as a soup of outward-facing convex facets (csg.js's polygon list).
+type Solid
+{
+    Faces: IArray<Facet>;
+}
+
+library Csg
+{
+    //==
+    // Small array helpers: a 0- or 1-element list, used to keep or drop a value
+    // inside a FlatMap without a filter primitive (as earcut used MapRange).
+
+    Single(f: Facet): IArray<Facet>
+        => 1.MapRange(i => f);
+
+    KeepIf(cond: Boolean, p: Point3D): IArray<Point3D>
+        => (cond ? 1 : 0).MapRange(i => p);
+
+    KeepIf(cond: Boolean, f: Facet): IArray<Facet>
+        => (cond ? 1 : 0).MapRange(i => f);
+
+    //==
+    // The supporting plane of a facet, and signed distances to it.
+    // A plane is (Normal, D) with a point p on it when Normal.Dot(p) == D;
+    // SignedDistance is positive on the side the normal points toward.
+
+    Plane(f: Facet): Plane
+        => new Triangle3D(f.Points.At(0), f.Points.At(1), f.Points.At(2)).Plane;
+
+    SignedDistance(pl: Plane, p: Point3D): Number
+        => pl.Normal.Dot(p.Vector3) - pl.D;
+
+    // The plane facing the opposite half-space.
+    Flip(pl: Plane): Plane
+        => new Plane(-pl.Normal, -pl.D);
+
+    // Do a and b lie on opposite sides of the plane?
+    Straddles(pl: Plane, a: Point3D, b: Point3D): Boolean
+        => (pl.SignedDistance(a) >= 0.0).ExclusiveOr(pl.SignedDistance(b) >= 0.0);
+
+    // Where segment (a, b) meets the plane. Defined only when it straddles.
+    CrossPoint(pl: Plane, a: Point3D, b: Point3D): Point3D
+        => a.Lerp(b, pl.SignedDistance(a) / (pl.SignedDistance(a) - pl.SignedDistance(b)));
+
+    //==
+    // Clipping a convex facet to one half-space (Sutherland-Hodgman): walk the
+    // ring, keeping every vertex on the positive side and adding the crossing
+    // point on every edge that leaves or enters the half-space. The result is
+    // the convex facet f restricted to { SignedDistance >= 0 }.
+
+    // Vertices edge (a -> b) contributes to the clipped ring: a itself when
+    // it is kept, followed by the crossing point when the edge cuts the plane.
+    ClipEdge(pl: Plane, a: Point3D, b: Point3D): IArray<Point3D>
+        => KeepIf(pl.SignedDistance(a) >= 0.0, a)
+            .Concatenate(KeepIf(pl.Straddles(a, b), pl.CrossPoint(a, b)));
+
+    ClipToHalfSpace(f: Facet, pl: Plane): Facet
+        => new Facet(f.Points.Indices.FlatMap(i
+            => pl.ClipEdge(f.Points.At(i), f.Points.AtModulo(i + 1))));
+
+    // A facet with fewer than three vertices bounds no area: drop it.
+    NonDegenerate(f: Facet): IArray<Facet>
+        => KeepIf(f.Points.Count >= 3, f);
+
+    // Does every vertex of the facet lie on the plane (the facet is coplanar)?
+    CoplanarWith(f: Facet, pl: Plane): Boolean
+        => f.Points.All(p => pl.SignedDistance(p).Abs < 0.0000001);
+
+    // Split a facet by a plane into its (at most two) non-degenerate pieces: the
+    // part in front of the plane and the part behind it. A facet lying on the
+    // plane is kept once — clipping it to each half-space (both tests pass on the
+    // boundary) would otherwise duplicate it.
+    SplitBy(f: Facet, pl: Plane): IArray<Facet>
+        => f.CoplanarWith(pl)
+            ? f.Single
+            : f.ClipToHalfSpace(pl).NonDegenerate
+                .Concatenate(f.ClipToHalfSpace(pl.Flip).NonDegenerate);
+
+    //==
+    // Fragmenting: cut a facet, and then all of a solid's facets, by a whole
+    // set of planes. After cutting by every plane of B no fragment straddles a
+    // B plane, so each lies wholly inside or wholly outside B.
+
+    Planes(s: Solid): IArray<Plane>
+        => s.Faces.Map(f => f.Plane);
+
+    // One cutting plane applied to every current fragment.
+    CutAll(frags: IArray<Facet>, pl: Plane): IArray<Facet>
+        => frags.FlatMap(f => f.SplitBy(pl));
+
+    // The pieces of one facet after cutting by every plane, in turn.
+    FragmentFacet(f: Facet, planes: IArray<Plane>): IArray<Facet>
+        => planes.Reduce(f.Single, (frags, pl) => frags.CutAll(pl));
+
+    // Every facet of s, each cut by every plane.
+    Fragment(s: Solid, planes: IArray<Plane>): IArray<Facet>
+        => s.Faces.FlatMap(f => f.FragmentFacet(planes));
+
+    //==
+    // Point classification by even-odd ray parity: q is inside a solid when a
+    // ray from q crosses an odd number of its facets. The ray direction is a
+    // fixed skew vector, chosen so it is parallel to no axis-aligned face and
+    // unlikely to graze an edge (the same exact-float robustness posture as
+    // earcut and csg.js).
+
+    RayDirection(): Vector3
+        => new Vector3(0.5235987755982988, 0.6931471805599453, 0.7853981633974483).Normalize;
+
+    // Does the ray from q along dir strike facet f at a positive distance?
+    RayHits(f: Facet, q: Point3D, dir: Vector3): Boolean
+    {
+        var pl = f.Plane;
+        var denom = pl.Normal.Dot(dir);
+        var t = (pl.D - pl.Normal.Dot(q.Vector3)) / denom;
+        return denom.Abs > 0.000000001 && t > 0.000000001 && f.ContainsCoplanar(q + dir * t);
+    }
+
+    // Is p, assumed to lie in the facet's plane, inside the convex facet?
+    // Every edge turns the same way about the outward normal for an interior point.
+    ContainsCoplanar(f: Facet, p: Point3D): Boolean
+        => f.Points.Indices.All(i
+            => (f.Points.AtModulo(i + 1) - f.Points.At(i)).Cross(p - f.Points.At(i)).Dot(f.Plane.Normal) >= 0.0);
+
+    Inside(s: Solid, q: Point3D): Boolean
+        => s.Faces.Map(f => f.RayHits(q, RayDirection) ? 1 : 0).Reduce(0, (a, b) => a + b) % 2 == 1;
+
+    // The centroid of a convex facet — always interior, so a valid classification
+    // probe for a fragment that lies wholly on one side of the other solid.
+    Centroid(f: Facet): Point3D
+        => (f.Points.Map(p => p.Vector3).Reduce(new Vector3(0.0, 0.0, 0.0), (a, b) => a + b)
+            / f.Points.Count.Number).Point3D;
+
+    //==
+    // Boolean operations. Every boolean is a union of selected fragments: cut
+    // A's facets by B's planes and keep those whose centroid is inside (or
+    // outside) B, and symmetrically for B against A.
+
+    // Fragments of a, cut by b's planes, kept when their centroid's insideness
+    // matches `inside`.
+    Selected(a: Solid, b: Solid, inside: Boolean): IArray<Facet>
+        => a.Fragment(b.Planes).FlatMap(f => KeepIf(!b.Inside(f.Centroid).ExclusiveOr(inside), f));
+
+    // A facet turned inside out: reversed winding flips its outward normal.
+    Reversed(f: Facet): Facet
+        => new Facet(f.Points.Reverse);
+
+    // A | B: the surface of A outside B, plus the surface of B outside A.
+    Union(a: Solid, b: Solid): Solid
+        => new Solid(a.Selected(b, false).Concatenate(b.Selected(a, false)));
+
+    // A & B: the surface of A inside B, plus the surface of B inside A.
+    Intersect(a: Solid, b: Solid): Solid
+        => new Solid(a.Selected(b, true).Concatenate(b.Selected(a, true)));
+
+    // A - B: the surface of A outside B, plus the surface of B inside A turned
+    // inside out (it now faces into the carved cavity).
+    Subtract(a: Solid, b: Solid): Solid
+        => new Solid(a.Selected(b, false).Concatenate(b.Selected(a, true).Map(f => f.Reversed)));
+}
