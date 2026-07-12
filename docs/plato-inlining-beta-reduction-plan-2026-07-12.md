@@ -1,14 +1,20 @@
 # Beta-reduction / delegate-inlining — emission integration plan (2026-07-12)
 
-> Status: **increment-2 mechanism proven at the TIR level; emission integration deferred.**
-> The reusable substitution/β-reduction foundation shipped in `a71b1ff`
-> (`TirRewrite` + `TirRewriteTests`). The *application* of it (delegate-parameter
-> substitution, β-reduction wiring, tuple tail-lift) is preserved as WIP but NOT committed —
-> it breaks the scalar+methods conformance build. This doc explains why, and proposes an
-> all-extension-methods runtime as the first step that de-risks the whole surface.
+> Status: **LANDED under the V2 recipe (commit 38f59c7).** The delegate-parameter inlining +
+> β-reduction increment now collapses the `Transform → Deform(lambda)` family to inline loops
+> end-to-end under `--no-properties`, gated so the property-ful recipes are unaffected. The
+> "deferred / WIP" framing below is superseded; the reasoning is kept for the record.
 
-WIP artifacts (not on any branch): `git stash` entry on `plato-generated-projects`, and a
-standalone patch at `scratchpad/increment2-wip.patch` (334 lines).
+Landed via: `TirRewrite` + `TirRewriteTests` foundation (a71b1ff); scalar-erased runtime port
+Number/Boolean/Integer (a4c5b0f, 4f8d15a); V2Runtime conformance suite (3007529, regen
+`tools/regen-conformance-v2runtime.ps1`); the increment itself (38f59c7). Verified: flag-off
+byte-identity + Scalar V1 204/204 + V2Runtime 204/204; emitted `Bounds3D.Transform` is a bare
+loop, no delegate. What resolved the two blockers the earlier draft flagged: **§5c** — the
+node-type-first receiver resolution (`TrustedTypeName` prefers a concrete param-0 type over an
+interface signature) makes the flagship collapses fire; **§3 alpha-rename** — a post-substitution
+rename over the final inlined tree fixes CS0136 param shadowing. **§5b (tuple tail-lift under
+scalar erasure) remains deferred** — the tuple/mesh family still doesn't collapse under the
+scalar recipe; that needs wrapper-aware tuple emission.
 
 ---
 
