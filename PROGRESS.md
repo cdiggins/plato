@@ -14,8 +14,14 @@ freeze the ara3d-sdk Geometry artifacts (never touch), make the emitter simple +
       gates, ALL PASS; suite 204/204 standalone. Rename V2Runtime->ConformanceTests deferred to C5.
 - [ ] C1 One recipe, fewer flags: --modern sugar; collapse MethodsOnly/NoProperties (now unblocked
       — Scalar suite retired) + delete pins.
-- [ ] C3 M5 runtime port: struct-surface contract doc + API-snapshot test FIRST; drop colliding
-      forwarders; port Angle/Vector*/Matrix*/Quaternion/Plane intrinsics to <Type>Intrinsics.
+- [~] C3 M5 runtime port: SAFETY NET done (docs/plato-struct-surface.md + IntrinsicsApiSnapshotTests,
+      runs in conformance gate). EMITTER UNBLOCK done (WriteExtensionMethod skips colliding
+      forwarders for non-erased primitives under --no-properties; validated 204/204, goldens
+      compile). ANGLE ported (trig -> AngleIntrinsics; snapshot re-baselined, no loss). REMAINING
+      (mechanical, snapshot-guarded, has per-type nuance e.g. Vector3 instance/static Dot duality):
+      Vector2/3/4/8, Matrix3x2/4x4, Quaternion, Plane. Pattern: move behavioural instance methods to
+      <Type>Intrinsics (keep operators/conversions/withers/statics/field-props/obligations), regen
+      goldens, re-baseline snapshot (PLATO_UPDATE_API_SNAPSHOT=1), check-all.
 - [ ] C4 Emitter extraction + delete list: V2-only writer; emit-snapshot tests; delete legacy
       body writer, ScalarEraseAnalysis remnants, pins, NoProperties forks. (The payoff.)
 - [ ] C5 Naming pass (optional, last).
