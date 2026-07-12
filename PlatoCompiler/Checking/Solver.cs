@@ -171,12 +171,21 @@ namespace Ara3D.Geometry.Compiler.Checking
                 return true;
             }
 
-            // A genuine tie at the best cost: well-defined iff all winners agree on the return type.
-            var rets = winners
-                .Select(w => Zonk(w.Ret, new Dictionary<string, TypeExpression>(Substitution)).ToString())
-                .Distinct().ToList();
+            // A tie at the best cost: well-defined iff all winners agree on the return type — OR
+            // every winner's return is still an unbound type VARIABLE. The latter is the
+            // concept-method case: each candidate returns its own fresh Self var (the winning trials'
+            // scratch bindings were discarded, so the shared var is unbound here). These carry no
+            // genuine disagreement — monomorphization grounds every one of them to the SAME concrete
+            // argument type, and re-dispatch there selects the right concrete overload by type. So
+            // committing the first is an identity hint, not a semantic choice (type-checker handoff:
+            // "re-dispatch is only an identity refinement").
+            var zonkedRets = winners
+                .Select(w => Zonk(w.Ret, new Dictionary<string, TypeExpression>(Substitution)))
+                .ToList();
+            var rets = zonkedRets.Select(r => r?.ToString() ?? "?").Distinct().ToList();
+            var allVarReturns = zonkedRets.All(r => r != null && IsVar(r));
 
-            if (rets.Count == 1)
+            if (rets.Count == 1 || allVarReturns)
             {
                 CommitCandidate(winners[0], args, oc);
                 Report(DiagnosticSeverity.Info, "CHK202",
@@ -355,16 +364,7 @@ namespace Ara3D.Geometry.Compiler.Checking
             if (!force && (HasVar(from) || HasVar(to)))
                 return false; // inner holes may still be filled — defer
 
-            if (UnifyAllOrNothing(from, to, Substitution))
-                return true;
-
-            if (HasConversion(from, to))
-                return true;
-
-            if (TupleConvertsToStruct(from, to))
-                return true;
-
-            if (to.Def.IsInterface() && SatisfiesConcept(from, to, Substitution))
+            if (TryCoerce(from, to, Substitution))
                 return true;
 
             // Nothing fits: report as the unification failure it is (located).
@@ -372,20 +372,78 @@ namespace Ara3D.Geometry.Compiler.Checking
             return true;
         }
 
-        /// <summary>A <c>Tuple{N}</c> converts to a concrete struct with N fields whose types unify
-        /// element-wise (the generated structs carry an implicit tuple conversion operator).</summary>
-        private bool TupleConvertsToStruct(TypeExpression from, TypeExpression to)
+        /// <summary>
+        /// Whether <paramref name="from"/> coerces to <paramref name="to"/> under the same rules the
+        /// generated C# compiles implicitly, binding any variables the match determines (committed to
+        /// <paramref name="sub"/> only on full success):
+        ///   * identity / unification;
+        ///   * a declared cast relation (<c>Vector3</c> → <c>Point3D</c>);
+        ///   * a value into a single-field struct wrapping a type it coerces to (<c>Vector3</c> →
+        ///     <c>Translation3D { Vector: Vector3 }</c>) — the generated single-field implicit operator;
+        ///   * a same-shape <c>Tuple{N}</c> into an N-field struct, each element coercing to its field
+        ///     (the generated tuple-constructor implicit operator applies per-argument conversions,
+        ///     so <c>(Vector3, Number)</c> → <c>AxisAngle { Axis: Vector3, Angle: Angle }</c> works via
+        ///     <c>Number</c> → <c>Angle</c>);
+        ///   * a value into an interface it implements.
+        /// Mirrors <see cref="CSharpConcreteTypeWriter"/>'s emitted implicit operators, so a coercion
+        /// accepted here is one the runtime actually performs.
+        /// </summary>
+        private bool TryCoerce(TypeExpression from, TypeExpression to, Dictionary<string, TypeExpression> sub, int depth = 0)
+        {
+            if (from == null || to == null || depth > MaxDepth)
+                return true;
+            if (UnifyAllOrNothing(from, to, sub))
+                return true;
+            if (HasConversion(from, to))
+                return true;
+            if (TupleConvertsToStruct(from, to, sub, depth))
+                return true;
+            if (ValueConvertsToSingleFieldStruct(from, to, sub, depth))
+                return true;
+            if (to.Def != null && to.Def.IsInterface() && SatisfiesConcept(from, to, sub))
+                return true;
+            return false;
+        }
+
+        /// <summary>A <c>Tuple{N}</c> converts to a concrete struct with N fields, each element
+        /// COERCING (not merely unifying) to its field type — the generated tuple-constructor
+        /// implicit operator applies an implicit conversion per constructor argument.</summary>
+        private bool TupleConvertsToStruct(TypeExpression from, TypeExpression to, Dictionary<string, TypeExpression> sub, int depth)
         {
             if (from?.Def?.Name == null || !from.Def.Name.StartsWith("Tuple"))
                 return false;
             if (to?.Def == null || !to.Def.IsConcrete() || to.Def.Fields.Count != from.TypeArgs.Count)
                 return false;
-            var scratch = new Dictionary<string, TypeExpression>(Substitution);
+            var map = BuildParamSubstitution(to);
+            var scratch = new Dictionary<string, TypeExpression>(sub);
             for (var i = 0; i < from.TypeArgs.Count; i++)
-                if (!Unify(from.TypeArgs[i], to.Def.Fields[i].Type, scratch, null, record: false))
+            {
+                var fieldType = Substitute(to.Def.Fields[i].Type, map);
+                if (!TryCoerce(Zonk(from.TypeArgs[i], scratch), Zonk(fieldType, scratch), scratch, depth + 1))
                     return false;
+            }
             foreach (var kv in scratch)
-                Substitution[kv.Key] = kv.Value;
+                sub[kv.Key] = kv.Value;
+            return true;
+        }
+
+        /// <summary>A value converts to a single-field concrete struct whose (non-interface) field
+        /// type it coerces to — the generated <c>implicit operator {Struct}({FieldType})</c> (emitted
+        /// by <see cref="CSharpConcreteTypeWriter"/> only when the field is not an interface).
+        /// <c>Matrix4x4</c> → <c>Transform3D { Matrix: Matrix4x4 }</c>.</summary>
+        private bool ValueConvertsToSingleFieldStruct(TypeExpression from, TypeExpression to, Dictionary<string, TypeExpression> sub, int depth)
+        {
+            if (to?.Def == null || !to.Def.IsConcrete() || to.Def.Fields.Count != 1)
+                return false;
+            var fieldType = to.Def.Fields[0].Type;
+            if (fieldType?.Def == null || fieldType.Def.IsInterface())
+                return false;
+            fieldType = Substitute(fieldType, BuildParamSubstitution(to));
+            var scratch = new Dictionary<string, TypeExpression>(sub);
+            if (!TryCoerce(Zonk(from, scratch), Zonk(fieldType, scratch), scratch, depth + 1))
+                return false;
+            foreach (var kv in scratch)
+                sub[kv.Key] = kv.Value;
             return true;
         }
 

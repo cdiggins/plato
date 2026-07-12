@@ -45,6 +45,15 @@ public static class TirLambdaCaptureRewriter
 
         foreach (var capture in captures)
         {
+            // Only a captured PARAMETER may be hoisted: it is in scope at the body's top, so
+            // wrapping the whole body in `var _varN = p; { … }` is valid. A captured LOCAL is left
+            // in place — C# closures capture locals correctly, and in this pure single-assignment
+            // language the by-value snapshot is never semantically needed — because hoisting it
+            // above the body would forward-reference its own mid-body declaration (the
+            // Solids.NGonPoint/SquarePoint CS0103 bug, surfaced once `Lerp` inlines a lambda that
+            // captures the local `f`).
+            if (!(capture is TirParameter))
+                continue;
             var def = new VariableDef(null, $"_var{SymbolRewriter.NextId++}", capture.Type, null);
             var let = new TirLet(def, capture, capture.Type, capture.Origin);
             var replaced = ReplaceNode(body, capture, new TirVariable(def, capture.Type, capture.Origin));
