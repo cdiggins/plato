@@ -59,15 +59,15 @@ namespace Ara3D.Geometry.CSharpWriter
         // TODO: this used to be a way to signal static methods.
         public bool IsStatic => ParameterNames.Count == 0 || ParameterNames[0] == "_";
 
-        // MethodsOnly (--methods): a no-arg member that would emit as a property emits as a
-        // METHOD instead, unless its name is pinned to property syntax (fields, handwritten
-        // intrinsics, Count — see CSharpWriter.PropertySyntaxNames).
-        public bool MethodsOnly => (TypeToCSharp as CSharpTypeWriter)?.Writer?.MethodsOnly ?? false;
-        // Interface DECLARATIONS are always methods (pinned-name obligations are satisfied by
+        // --no-properties: a no-arg member that would emit as a property emits as a METHOD instead,
+        // unless its name is on the struct surface (a field, primitive pseudo-field, or Count — see
+        // CSharpWriter.StructSurfacePropertyNames, the uniform rendering rule).
+        public bool NoProperties => (TypeToCSharp as CSharpTypeWriter)?.Writer?.NoProperties ?? false;
+        // Interface DECLARATIONS are always methods (struct-surface obligations are satisfied by
         // explicit interface implementations forwarding to the property/field).
-        public bool EmitAsMethod => MethodsOnly && !IsIndexer
+        public bool EmitAsMethod => NoProperties && !IsIndexer
             && ((Function.Kind == FunctionInstanceKind.InterfaceDeclared && OwnerType == null)
-                || !((TypeToCSharp as CSharpTypeWriter)?.Writer?.PropertySyntaxNames?.Contains(Name) ?? false));
+                || !((TypeToCSharp as CSharpTypeWriter)?.Writer?.StructSurfacePropertyNames?.Contains(Name) ?? false));
 
         public string StaticKeyword => IsStatic ? "static " : "";
         public bool IsProperty => ParameterNames.Count <= 1 && !EmitAsMethod;

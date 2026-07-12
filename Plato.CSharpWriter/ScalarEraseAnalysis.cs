@@ -5,12 +5,14 @@ using Ara3D.Geometry.Compiler.Symbols;
 namespace Ara3D.Geometry.CSharpWriter;
 
 /// <summary>
-/// The scalar-erasure (--scalar=float) decision procedures of <see cref="CSharpFunctionBodyWriter"/>,
-/// as a standalone SYMBOL-side analysis for the TIR emit path: every TIR node carries its
-/// originating symbol, so consulting the same analysis over the same symbols yields byte-identical
-/// decisions ("which primitive is this expression in the erased output"), while the syntax itself
-/// renders from the TIR. A verbatim copy of the legacy writer's logic — it replaces that logic
-/// outright when the legacy writer is retired. All methods are inert unless Writer.ScalarErase.
+/// The scalar-erasure (--scalar=float) "float-land" decision procedures for the TIR emit path (the
+/// SOLE C# body writer since the legacy CSharpFunctionBodyWriter was retired at C4). Every TIR node
+/// carries its originating symbol, so this SYMBOL-side analysis answers "which primitive is this
+/// expression in the erased output" over those symbols, while the syntax itself renders from the
+/// TIR. Its answers drive the explicit `((float)…)` / `((Number)…)` casts, the `()` on scalar
+/// extension members, and the argument wrapper-restoration that keep overload resolution exact in
+/// the erased output — all load-bearing for the goldens. Every method is consumed by
+/// <see cref="TirCSharpBodyWriter"/> (directly or internally). Inert unless Writer.ScalarErase.
 /// </summary>
 public class ScalarEraseAnalysis
 {

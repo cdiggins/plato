@@ -152,10 +152,9 @@ public static class TirInliner
 
         // Under a lambda at the CALL SITE: only lambda-free callee bodies with all-cheap
         // arguments (see Inline).
-        // Under a lambda, args must be cheap. The cost-based cheap-projection relaxation is a
-        // V2-recipe (--no-properties) feature; the property-ful recipes keep the frozen leaf-only
-        // rule (the property/method duality flips coercion emission in inlined bodies otherwise).
-        bool CheapArg(TirNode a) => writer.NoProperties ? IsCheapProjection(writer, a) : TirRewrite.IsCheap(a);
+        // Under a lambda, args must be cheap — the cost-based cheap-projection relaxation (the one
+        // recipe is --no-properties since C4, so this is unconditional).
+        bool CheapArg(TirNode a) => IsCheapProjection(writer, a);
         if (insideLambda && (calleeHasLambda || !call.Args.All(CheapArg)))
             return Refuse(InlineRefusal.InsideLambda);
 
@@ -188,11 +187,8 @@ public static class TirInliner
             if (TirRewrite.StripCoerce(arg) is TirLambda lamArg)
             {
                 // Delegate-parameter inlining (substituting a lambda into a Function-typed
-                // parameter, then β-reducing) is a V2-recipe feature: it relies on the uniform
-                // method-form surface (--no-properties). Under the property-ful recipes it stays
-                // OFF — a lambda argument is refused, exactly as the pre-increment inliner did.
-                if (!writer.NoProperties)
-                    return Refuse(InlineRefusal.LambdaArgRefused);
+                // parameter, then β-reducing) relies on the uniform method-form surface
+                // (--no-properties, the one recipe since C4).
                 // A lambda substitutes into a delegate-typed parameter only when EVERY use is a
                 // CONSUMING position: the target of an application (which then β-reduces away — no
                 // residual lambda) or a direct call argument (target-typed by the callee's Func
@@ -220,7 +216,7 @@ public static class TirInliner
             // multiple uses because re-running it costs only a few machine ops. The under-lambda
             // refusal stands regardless: substituting into a captured position trips the emitter's
             // per-lambda capture hoist (an emission constraint, not an evaluation-count one).
-            if ((u.Count > 1 && !(writer.NoProperties && IsCheapProjection(writer, arg))) || u.UnderLambda)
+            if ((u.Count > 1 && !IsCheapProjection(writer, arg)) || u.UnderLambda)
                 return Refuse(InlineRefusal.MultiUseCompound);
         }
 

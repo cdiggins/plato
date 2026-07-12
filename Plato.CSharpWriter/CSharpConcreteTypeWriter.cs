@@ -57,7 +57,7 @@ namespace Ara3D.Geometry.CSharpWriter
             // erases with them; unerasedFieldTypes stays truly unerased (it feeds analyses, not
             // emission).
             var saveErase = TypeWriter.EraseScalars;
-            TypeWriter.EraseScalars = Writer.MethodsOnly && saveErase;
+            TypeWriter.EraseScalars = Writer.NoProperties && saveErase;
             var implements = ConcreteType.Interfaces.Count > 0
                 ? $": " + ConcreteType.Interfaces.Select(TypeWriter.ToCSharpType).JoinStringsWithComma()
                 : "";
@@ -176,8 +176,8 @@ namespace Ara3D.Geometry.CSharpWriter
             TypeWriter.WriteLine("// Object virtual function overrides: Equals, GetHashCode, ToString");
             // MethodsOnly: Boolean-returning scaffolding erases to bool (and Equals(other) is
             // already a bool, so no .Value unwrap).
-            var boolT = Writer.MethodsOnly ? "bool" : "Boolean";
-            var boolVal = Writer.MethodsOnly ? "" : ".Value";
+            var boolT = Writer.NoProperties ? "bool" : "Boolean";
+            var boolVal = Writer.NoProperties ? "" : ".Value";
             if (!IsPrimitive)
             {
                 if (FieldNames.Count > 0)
@@ -220,7 +220,7 @@ namespace Ara3D.Geometry.CSharpWriter
             // (unerased, wrapper-typed) member types; the erased field converts implicitly.
             // MethodsOnly: the interfaces are erased and declare METHODS, so the forwarders are
             // erased explicit methods.
-            TypeWriter.EraseScalars = Writer.MethodsOnly && saveErase;
+            TypeWriter.EraseScalars = Writer.NoProperties && saveErase;
             var emittedExplicitImpls = new HashSet<string>();
             foreach (var i in t.AllInterfaces)
             {
@@ -231,9 +231,9 @@ namespace Ara3D.Geometry.CSharpWriter
                     if (f.ParameterTypes.Count == 1 && fieldIndex >= 0)
                     {
                         var fieldType = IsPrimitive ? Name
-                            : Writer.MethodsOnly ? FieldTypes[fieldIndex] : unerasedFieldTypes[fieldIndex];
+                            : Writer.NoProperties ? FieldTypes[fieldIndex] : unerasedFieldTypes[fieldIndex];
                         if (emittedExplicitImpls.Add($"{its}.{f.Name}"))
-                            TypeWriter.WriteLine(Writer.MethodsOnly
+                            TypeWriter.WriteLine(Writer.NoProperties
                                 ? $"{Attr} {fieldType} {its}.{f.Name}() => {f.Name};"
                                 : $"{fieldType} {its}.{f.Name} {{ {Attr} get => {f.Name}; }}");
                     }
@@ -241,8 +241,8 @@ namespace Ara3D.Geometry.CSharpWriter
                     // handwritten Plato.Intrinsics property like Quaternion.Inverse) cannot
                     // become a method on the struct; an explicit interface implementation
                     // forwards the method obligation to the property.
-                    else if (Writer.MethodsOnly && f.ParameterTypes.Count == 1
-                        && Writer.PropertySyntaxNames.Contains(f.Name)
+                    else if (Writer.NoProperties && f.ParameterTypes.Count == 1
+                        && Writer.StructSurfacePropertyNames.Contains(f.Name)
                         && emittedExplicitImpls.Add($"{its}.{f.Name}"))
                     {
                         var retType = TypeWriter.ToCSharpType(f.ReturnType);
@@ -265,7 +265,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 // Scalar erasure: the IReadOnlyList<T> interface obligation comes from the
                 // unerased IArray<T> concept, so the element type must stay unerased too.
                 // MethodsOnly: the concept erases, so the element type erases with it.
-                TypeWriter.EraseScalars = Writer.MethodsOnly && saveErase;
+                TypeWriter.EraseScalars = Writer.NoProperties && saveErase;
                 var argType = arrayConcept.Substitutions.Replace(arrayConcept.TypeExpression.TypeArgs[0]);
                 var elem = TypeWriter.ToCSharpType(argType);
                 TypeWriter.EraseScalars = saveErase;
@@ -323,7 +323,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 var nComps = localFieldNames.Count;
 
                 TypeWriter.WriteLine($"// IArrayLike predefined functions");
-                if (Writer.MethodsOnly)
+                if (Writer.NoProperties)
                 {
                     TypeWriter.WriteLine($"{Attr} public int NumComponents() => {nComps};");
                     TypeWriter.WriteLine($"{Attr} public IReadOnlyList<{fieldType}> Components() => Intrinsics.MakeArray<{fieldType}>({localFieldNames.JoinStringsWithComma()});");
@@ -337,7 +337,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 }
                 // MethodsOnly: the IArrayLike obligation is erased, so the public (erased)
                 // Components method satisfies it directly — no explicit twin.
-                if (Writer.ScalarErase && !Writer.MethodsOnly && fieldType != obligationFieldType)
+                if (Writer.ScalarErase && !Writer.NoProperties && fieldType != obligationFieldType)
                 {
                     // Explicit implementation of the unerased IArrayLike<Self, T> obligation
                     // (the public Components above is erased; wrappers convert element-wise).
@@ -371,7 +371,7 @@ namespace Ara3D.Geometry.CSharpWriter
             // implicitly at the boundaries). The extension-method forwarders below the struct
             // ARE erased: they are API surface, not obligations.
             // MethodsOnly: the concept interfaces are erased, so kept members erase to match.
-            TypeWriter.EraseScalars = Writer.MethodsOnly && saveErase;
+            TypeWriter.EraseScalars = Writer.NoProperties && saveErase;
             WriteImplementedInterfaceFunctions();
 
             WriteUnimplementedInterfaceFunctions();
@@ -738,7 +738,7 @@ namespace Ara3D.Geometry.CSharpWriter
             // no-arg intrinsic, which is a PROPERTY on the wrapper by convention.
             if (args == "" && !forcePropertySyntax && Writer.ExtensionStyle
                 && (Writer.MovedNoArgNames.Contains(fi.Name)
-                    || (Writer.MethodsOnly && !Writer.PropertySyntaxNames.Contains(fi.Name))))
+                    || (Writer.NoProperties && !Writer.StructSurfacePropertyNames.Contains(fi.Name))))
                 args = "()";
             var firstParamName = fi.ParameterNames[0];
             return $"{sig} => (({platoType}){firstParamName}).{fi.Name}{args};";

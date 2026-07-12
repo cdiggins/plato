@@ -26,8 +26,12 @@ freeze the ara3d-sdk Geometry artifacts (never touch), make the emitter simple +
       ~30 pins) DONE; step1 bodiless stubs off legacy writer DONE; step2 DELETED
       CSharpFunctionBodyWriter (~854 lines) + UseTir + --no-tir/--csharp-style=default + regen-plato
       + 5 oracle tests (fallback provably 0 both recipes; TIR now sole C# body writer). Gates:
-      goldens 184/184 both, conformance 205/205, PlatoTests 97/97. REMAINING: step3 collapse
-      MethodsOnly/NoProperties + delete pins (uniform rendering rule); step4 shrink ScalarEraseAnalysis.
+      goldens 184/184 both, conformance 205/205, PlatoTests 97/97. step3 DONE: collapsed
+      MethodsOnly->NoProperties (1 flag); deleted dead StaticNoArgMethodNames; TirInliner forks
+      unconditional; PropertySyntaxNames->StructSurfacePropertyNames (uniform rule). RECONCILED:
+      HandwrittenPropertySyntaxNames (Number shim) + StructSurfacePropertyNames (global call-site
+      surface) kept — deleting them changes goldens. step4: ScalarEraseAnalysis has no dead code
+      (all load-bearing for the float-land casts); true shrink needs a golden refresh (follow-up).
 - [~] C5 Naming pass: DONE rename V2Runtime suite -> Ara3D.SDK.ConformanceTests (folder/csproj/
       namespace + regen-conformance-v2runtime.ps1 -> regen-conformance.ps1 + check-all + CLAUDE.md;
       205/205, check-all ALL PASS). Intrinsics.V2 -> Intrinsics still pending (needs V1 deleted first).

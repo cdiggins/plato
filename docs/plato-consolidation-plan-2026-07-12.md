@@ -118,7 +118,7 @@ NoProperties gating forks in TirInliner, the pins, ScalarEraseAnalysis special c
 - **Gates:** API snapshot unchanged-or-intentionally-extended · conformance 204/204 · golden diff
   reviewed · optimizer-smoke builds.
 
-### C4 — Emitter separation + the delete list — IN PROGRESS 2026-07-12
+### C4 — Emitter separation + the delete list — DONE 2026-07-12 (legacy writer gone)
 
 **Findings (investigation done):**
 - Under the V2 recipe the emitter reports **`legacy fallback bodies: 0`** (2365 TIR bodies). So the
@@ -151,11 +151,22 @@ NoProperties gating forks in TirInliner, the pins, ScalarEraseAnalysis special c
    null ground TIR (fallback count is provably 0 under both shipping recipes). The 5 legacy-vs-TIR
    oracle tests (`Emit{Differential,FlagOn,…}Tests`) were deleted with their `UseTir=false` oracle.
    Gates across steps 1–3: both goldens 184/184 byte-identical, conformance 205/205, PlatoTests 97/97.
-4. Collapse `MethodsOnly`/`NoProperties` to one flag; delete `PropertySyntaxNames` /
-   `HandwrittenPropertySyntaxNames` / `StaticNoArgMethodNames` pins and the `NoProperties` forks in
-   `TirInliner` (they become unconditional) — the property/method duality the plan calls the risk
-   surface. Under V2 the pins are already empty, so this should be golden-neutral.
-5. Shrink `ScalarEraseAnalysis` to a pure type substitution under the uniform surface.
+4. **DONE (reconciled)** — `MethodsOnly` and `NoProperties` collapsed to the single `NoProperties`
+   flag (the weaker `--methods` variant retired with the default style). `StaticNoArgMethodNames`
+   deleted (it was built but never read — dead). The three `NoProperties` forks in `TirInliner`
+   made unconditional. `PropertySyntaxNames` renamed → `StructSurfacePropertyNames` and re-derived
+   as the uniform rendering rule (a name is property-syntax iff it is a field, a primitive
+   pseudo-field, or a Count-family BCL obligation), decoupled from the pin seeding.
+   **Reconciliation (byte-identity beat the delete list):** `HandwrittenPropertySyntaxNames` and
+   `StructSurfacePropertyNames` are NOT deletable byte-neutrally — the former still selects the
+   `partial struct Number` shim members (`AlmostZero`/`Pow2`/`Pow3`, present in the golden); the
+   latter is load-bearing for global (not per-receiver) call-site property/method syntax. Both are
+   kept and re-documented as the uniform-surface sets, not pins. Goldens 184/184 byte-identical.
+5. **DONE (reconciled)** — `ScalarEraseAnalysis` has no dead members (every method is consumed by
+   `TirCSharpBodyWriter`, directly or internally); its docstring was updated to reflect it is now
+   the SOLE float-land implementation (no longer "a copy of the legacy writer"). A genuine *shrink*
+   (removing the redundant `((float)(((float)x)))` double-casts) would change the emitted bytes, so
+   it is deferred as an intended-output-change follow-up, OUT of C4's byte-identical scope.
 
 ### C4 (original brief) — Emitter separation + the delete list (2–3 days; the payoff)
 

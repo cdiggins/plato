@@ -120,9 +120,9 @@ public class ExtensionStylePlan
     // struct to keep them in - everything becomes an extension method on the primitive).
     public bool IsErasedScalar { get; }
 
-    // MethodsOnly (--methods) only: no-arg STATIC members with generated bodies — emitted as
-    // static METHODS, so bare-name call sites need "()". Aggregated into
-    // CSharpWriter.StaticNoArgMethodNames.
+    // --no-properties only: no-arg STATIC members of this type with generated bodies — emitted as
+    // static METHODS, so bare-name call sites need "()". Consulted per-receiver-type by the body
+    // writer (TirCSharpBodyWriter.IsGeneratedStaticMethodName / WriteCallCore).
     public HashSet<string> GeneratedNoArgStaticNames { get; } = new HashSet<string>();
 
     public IEnumerable<FunctionInstance> MovedFunctions => _moved;
@@ -169,22 +169,19 @@ public class ExtensionStylePlan
         foreach (var f in ct.UnimplementedFunctions)
             keepNames.Add(f.Name);
 
-        // No-arg properties that unconditionally remain in the struct. An erased scalar type
-        // has no struct: it contributes no kept property names at all. MethodsOnly (--methods):
-        // only fields, pseudo-fields and the HANDWRITTEN intrinsic members of the primitive
-        // types keep property/field access syntax — generated no-arg members (stubs included)
-        // become methods, so they contribute nothing here.
+        // No-arg property/field names that remain member-syntax in the struct. An erased scalar
+        // type has no struct, so it contributes none. Under --no-properties only the genuine
+        // struct-surface names (fields + pseudo-fields) qualify — generated no-arg members (stubs
+        // included) become methods; the property-ful extension style also keeps the no-arg stubs.
         if (!IsErasedScalar)
         {
             KeptNoArgPropertyNames.UnionWith(fieldNames);
             if (pseudoFields != null)
                 KeptNoArgPropertyNames.UnionWith(pseudoFields);
-            foreach (var f in ct.UnimplementedFunctions)
-                if (f.ParameterNames.Count == 1
-                    && (!writer.MethodsOnly
-                        || (!writer.NoProperties && isPrimitive && AST.Operators.NameToUnaryOperator(f.Name) == null
-                            && !CSharpWriter.IgnoredFunctions.Contains(f.Name))))
-                    KeptNoArgPropertyNames.Add(f.Name);
+            if (!writer.NoProperties)
+                foreach (var f in ct.UnimplementedFunctions)
+                    if (f.ParameterNames.Count == 1)
+                        KeptNoArgPropertyNames.Add(f.Name);
         }
 
         if (IsErasedScalar)
@@ -230,14 +227,12 @@ public class ExtensionStylePlan
             if (keep)
             {
                 keepNames.Add(f.Name);
-                // MethodsOnly: kept GENERATED members emit as methods; only bodiless NON-operator
-                // members of the primitive types (handwritten in Plato.Intrinsics) remain
-                // properties (operator-named bodiless members are GENERATED from the operator).
+                // Under --no-properties kept GENERATED members emit as methods, so a kept no-arg
+                // member keeps property syntax only in the property-ful extension style.
                 if (!IsErasedScalar && !fi.IsStatic && f.ParameterNames.Count == 1
-                    && (!writer.MethodsOnly
-                        || (!writer.NoProperties && isPrimitive && f.Implementation.Body == null && !fi.IsOperator)))
+                    && !writer.NoProperties)
                     KeptNoArgPropertyNames.Add(f.Name);
-                if (writer.MethodsOnly && fi.IsStatic && f.Implementation.Body != null
+                if (writer.NoProperties && fi.IsStatic && f.Implementation.Body != null
                     && f.ParameterNames.Count <= 1)
                     GeneratedNoArgStaticNames.Add(f.Name);
             }
@@ -250,7 +245,7 @@ public class ExtensionStylePlan
             if (!keepNames.Contains(f.Name))
                 _moved.Add(f);
             else if (!IsErasedScalar && f.ParameterNames.Count == 1
-                && (!writer.MethodsOnly || KeptNoArgPropertyNames.Contains(f.Name)
+                && (!writer.NoProperties || KeptNoArgPropertyNames.Contains(f.Name)
                     || fieldNames.Contains(f.Name)
                     || (pseudoFields != null && System.Linq.Enumerable.Contains(pseudoFields, f.Name))))
                 KeptNoArgPropertyNames.Add(f.Name); // stays in the struct as a property (name-shadow keep)

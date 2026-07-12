@@ -58,13 +58,12 @@ namespace Ara3D.Geometry.CSharpWriter
             return _plansByName.TryGetValue(typeName, out var p) ? p : null;
         }
 
-        // Names the emitter must keep as no-arg struct PROPERTIES because handwritten code in
-        // Plato.Intrinsics either accesses them with property syntax (AlmostZero in
-        // Vector3_Extensions.AnyPerpendicular; Pow2/Pow3 in Number.Cubic/Linear/Quadratic) or
-        // hand-implements them as a property the compiler cannot see
-        // (Number.ReciprocalSquareRootEstimate). The compiler has no view into handwritten
-        // usages, so these are pinned; moving any of them would break the Plato.Intrinsics
-        // build (which is shared byte-for-byte with the default-mode SDK and cannot fork).
+        // Number members that handwritten Plato.Intrinsics code accesses on a Number receiver
+        // (Number.Cubic/Linear/Quadratic use a.Pow2/a.Pow3; AnyPerpendicular reads v.AlmostZero).
+        // Under --scalar=float the Number struct is not generated, so these bodied members are
+        // emitted into the minimal `partial struct Number` SHIM (see WriteScalarErasedType) so the
+        // handwritten call sites still bind. NOT a property-syntax pin (the V2 runtime exposes them
+        // as methods and the shim emits them as such) — purely the shim-membership selector.
         public static HashSet<string> HandwrittenPropertySyntaxNames = new HashSet<string>
         {
             "AlmostZero",
@@ -83,16 +82,12 @@ namespace Ara3D.Geometry.CSharpWriter
                 if (!IgnoredTypes.Contains(c.TypeDef.Name) && !c.TypeDef.IsUnique && !ExtensionPlans.ContainsKey(c.TypeDef))
                     ExtensionPlans[c.TypeDef] = new ExtensionStylePlan(this, c);
 
-            // Every name that is (or may be accessed as) a no-arg instance PROPERTY somewhere.
-            // The pinned handwritten-property-syntax names stay seeded under scalar erasure too:
-            // handwritten intrinsics use property syntax on NON-scalar receivers as well
-            // (Vector3_Extensions.AnyPerpendicular reads v.AlmostZero on a Vector3), so those
-            // members must remain struct properties on every non-scalar type. On the erased
-            // scalar types they become extension methods + the Number partial-struct shim.
-            // --no-properties: the handwritten pins become methods (the V2 runtime exposes them
-            // as methods), so nothing is seeded here. The per-plan pseudo-field/field names are
-            // still unioned in below and keep property syntax.
-            var keptNoArg = NoProperties ? new HashSet<string>() : new HashSet<string>(HandwrittenPropertySyntaxNames);
+            // The struct-surface property-name set (the uniform rendering rule): every name that
+            // renders with member/property syntax at a call site. Under --no-properties this is
+            // exactly the per-type field + pseudo-field names (unioned below) plus the BCL
+            // Count/NumColumns/NumRows obligations — no handwritten "pins" (the V2 runtime exposes
+            // those members as methods).
+            var keptNoArg = new HashSet<string>();
             foreach (var p in ExtensionPlans.Values)
                 keptNoArg.UnionWith(p.KeptNoArgPropertyNames);
 
@@ -116,19 +111,16 @@ namespace Ara3D.Geometry.CSharpWriter
                 }
             }
 
-            // Interface-declared no-arg members are C# interface properties; call sites whose
-            // receiver is interface-typed (or a constrained type variable) use property syntax,
-            // so these names must keep property syntax everywhere. MethodsOnly: interfaces
-            // declare METHODS instead, so nothing is seeded — but an interface-declared name
-            // that collides with a pinned/field property name would make its obligations
-            // unsatisfiable, so that is a hard error.
+            // Property-ful (non-NoProperties) extension style only: interface-declared no-arg
+            // members are C# interface properties, so their names keep property syntax everywhere.
+            // Under --no-properties interfaces declare METHODS, so nothing is seeded here.
             foreach (var t in Compilation.AllTypeAndLibraryDefinitions)
                 if (t != null && t.IsInterface())
                     foreach (var m in t.Methods)
-                        if (m.Function.NumParameters == 1 && !MethodsOnly)
+                        if (m.Function.NumParameters == 1 && !NoProperties)
                             keptNoArg.Add(m.Function.Name);
 
-            if (MethodsOnly)
+            if (NoProperties)
             {
                 // BCL/collection parity: Count (IReadOnlyCollection) and NumColumns/NumRows
                 // (the handwritten Ara3D.Collections IReadOnlyList2D) are PROPERTIES on
@@ -137,11 +129,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 keptNoArg.Add("Count");
                 keptNoArg.Add("NumColumns");
                 keptNoArg.Add("NumRows");
-                PropertySyntaxNames = keptNoArg;
-                StaticNoArgMethodNames = new HashSet<string>();
-                foreach (var p in ExtensionPlans.Values)
-                    StaticNoArgMethodNames.UnionWith(p.GeneratedNoArgStaticNames);
-                StaticNoArgMethodNames.ExceptWith(keptNoArg);
+                StructSurfacePropertyNames = keptNoArg;
             }
 
             var movedNoArg = new HashSet<string>();
@@ -320,40 +308,31 @@ namespace Ara3D.Geometry.CSharpWriter
         public TirFunction TestGetGroundTir(string concreteTypeName, string functionName)
             => TirSource.TryGetGroundTirByNames(concreteTypeName, functionName);
 
-        // When true (--methods), the generated output declares NO C# properties or indexers:
+        // The single property/method flag (--no-properties / --methods, unified at C4). When true,
+        // the generated output declares NO C# properties or indexers — the shipping V2 recipe:
         //   - concept interfaces (Interfaces.g.cs) declare no-arg obligations as METHODS with
         //     scalar-ERASED signatures (bool Closed(); float Eval(float x); ...);
-        //   - struct-KEPT members (obligations, conversions, statics, stubs) emit as methods
-        //     with erased signatures; struct indexers are dropped (At() remains);
+        //   - struct-KEPT members (obligations, conversions, statics, stubs) emit as methods with
+        //     erased signatures; struct indexers are dropped (At() remains);
         //   - the IArrayLike scaffolding (NumComponents/Components) and nullary constants
-        //     (Constants.Pi()) become methods; call sites get "()" accordingly;
-        //   - static readonly Default fields, BCL plumbing (IReadOnlyList explicit
-        //     implementations, the public Count property) and the pinned
-        //     HandwrittenPropertySyntaxNames members are the documented exceptions — fields are
-        //     not properties, the BCL interfaces require properties, and handwritten
-        //     Plato.Intrinsics code cannot change.
-        // Requires ExtensionStyle + ScalarErase + UseTir. Default (false) output is unchanged.
-        public bool MethodsOnly;
-
-        // When true (--no-properties), a strict superset of MethodsOnly: the primitive-type
-        // exceptions that MethodsOnly still keeps as properties are ALSO erased to methods —
-        // the handwritten no-arg members of the primitive structs (Angle.Cos, Number.Abs,
-        // Vector3.Normalize, the swizzles, ...) and the HandwrittenPropertySyntaxNames pins.
-        // Intended for a runtime whose primitive structs expose those members AS METHODS
-        // (Plato.Intrinsics.V2). The only names that stay property/field syntax are genuine
-        // fields, the primitive pseudo-fields (X/Y/Z, M11...), and the BCL Count/NumRows/
-        // NumColumns obligations. Implies MethodsOnly; requires ExtensionStyle + ScalarErase + UseTir.
+        //     (Constants.Pi()) become methods; call sites get "()" accordingly.
+        // The UNIFORM RENDERING RULE decides call-site syntax: a member renders as member/property
+        // syntax iff its name is on the struct surface (a genuine field, a primitive pseudo-field
+        // X/Y/Z/M11..., or a BCL Count/NumRows/NumColumns obligation — see StructSurfacePropertyNames);
+        // every other member is a method call. Requires ExtensionStyle + ScalarErase.
+        // (Historically two flags — MethodsOnly kept the primitive handwritten members as
+        // properties, NoProperties erased them too; the weaker MethodsOnly variant was retired
+        // with the default style at C4, leaving this one flag.)
         public bool NoProperties;
 
-        // MethodsOnly: names that keep PROPERTY/field access syntax at call sites (fields,
-        // primitive pseudo-fields, handwritten intrinsic no-arg members of the primitive types,
-        // the pinned names, and Count). Everything else no-arg gets "()".
-        public HashSet<string> PropertySyntaxNames { get; private set; }
-
-        // MethodsOnly: no-arg STATIC member names with generated bodies — emitted as static
-        // methods, so bare-name references need "()". Handwritten statics (Body == null) keep
-        // member-access syntax.
-        public HashSet<string> StaticNoArgMethodNames { get; private set; }
+        // The UNIFORM RENDERING RULE, realized as a global name set: names that keep PROPERTY/field
+        // access syntax at call sites — struct fields, the primitive pseudo-fields (X/Y/Z, M11...),
+        // and the BCL Count/NumRows/NumColumns obligations. Every other no-arg member gets "()".
+        // Decided globally by name (never per-receiver): the moved/kept partition demotes any name
+        // that is a property on ANY generated type back into the struct on ALL types, so a name is
+        // uniformly a property or uniformly a method across the whole output. Built in
+        // BuildExtensionPlans; consulted by the body writer and CSharpFunctionInfo.EmitAsMethod.
+        public HashSet<string> StructSurfacePropertyNames { get; private set; }
 
         // When true (--loops), recognized array-combinator call sites (Map/Zip/Reduce/All/Any/
         // Reverse/WithNext/MapPairs/... on one-dimensional list receivers) are lowered to

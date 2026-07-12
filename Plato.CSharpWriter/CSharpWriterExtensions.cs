@@ -69,13 +69,15 @@ namespace Ara3D.Geometry.CSharpWriter
         //                (--optimize-arrays, optimizer stage 2 increment 1; see TirArrayMaterializer).
         public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false, bool optimize = false, bool scalarErase = false, bool optimizeArrays = false, bool inlineCalls = false, bool methodsOnly = false, bool lowerLoops = false, string tirDumpDir = null, bool noProperties = false, bool inlineReport = false)
         {
-            // --no-properties is a strict superset of --methods.
-            methodsOnly = methodsOnly || noProperties;
+            // --methods and --no-properties collapsed to one flag at C4 (the weaker --methods
+            // variant, which kept primitive handwritten members as properties, was retired with
+            // the default style). Either flag now selects the property-free output.
+            noProperties = noProperties || methodsOnly;
             if (scalarErase && !extensionStyle)
                 throw new NotSupportedException("--scalar=float requires --csharp-style=extensions (the default wrapper-struct layout keeps scalar members inside partial structs, which do not exist under erasure)");
-            if (methodsOnly && !scalarErase)
-                throw new NotSupportedException("--methods requires --scalar=float (erased interfaces)");
-            var writer = new CSharpWriter(compilation, outputFolder) { ExtensionStyle = extensionStyle, Optimize = optimize, ScalarErase = scalarErase, OptimizeArrays = optimizeArrays, InlineCalls = inlineCalls, MethodsOnly = methodsOnly, NoProperties = noProperties, LowerLoops = lowerLoops, TirDumpDir = string.IsNullOrEmpty(tirDumpDir) ? null : tirDumpDir };
+            if (noProperties && !scalarErase)
+                throw new NotSupportedException("--no-properties requires --scalar=float (erased interfaces)");
+            var writer = new CSharpWriter(compilation, outputFolder) { ExtensionStyle = extensionStyle, Optimize = optimize, ScalarErase = scalarErase, OptimizeArrays = optimizeArrays, InlineCalls = inlineCalls, NoProperties = noProperties, LowerLoops = lowerLoops, TirDumpDir = string.IsNullOrEmpty(tirDumpDir) ? null : tirDumpDir };
             if (inlineReport)
                 writer.InlineReport = new InlineReport();
             writer.WriteAll("float");

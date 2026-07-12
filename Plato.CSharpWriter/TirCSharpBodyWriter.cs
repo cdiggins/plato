@@ -85,7 +85,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     // MethodsOnly: whether a bare STATIC name of the current receiver type is a generated
     // static METHOD (needs "()"); handwritten statics keep member-access syntax.
     private bool IsGeneratedStaticMethodName(string name)
-        => _tw.Writer.MethodsOnly && _tw.TypeDef != null
+        => _tw.Writer.NoProperties && _tw.TypeDef != null
            && _tw.Writer.GetExtensionPlanByTypeName(_tw.TypeDef.Name) is ExtensionStylePlan plan
            && plan.GeneratedNoArgStaticNames.Contains(name);
 
@@ -108,7 +108,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             // name is not pinned to property syntax is a method.
             if (_tw.Writer.MovedNoArgNames.Contains(name)
                 || (_tw.ExtensionReceiverIsScalar && _tw.Writer.ScalarMemberNames.Contains(name))
-                || (_tw.Writer.MethodsOnly && !_tw.Writer.PropertySyntaxNames.Contains(name)))
+                || (_tw.Writer.NoProperties && !_tw.Writer.StructSurfacePropertyNames.Contains(name)))
                 Write("()");
             return;
         }
@@ -179,7 +179,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         var isProp = _isStatic ? numParams == 0 : numParams == 1;
         // MethodsOnly (--methods): the signature declared a METHOD unless the name is pinned
         // to property syntax — frame the body to match.
-        if (_tw.Writer.MethodsOnly && _fi != null && _fi.EmitAsMethod)
+        if (_tw.Writer.NoProperties && _fi != null && _fi.EmitAsMethod)
             isProp = false;
 
         // The reference writer hoists lambda-captured references into `var _var{N} = x;` blocks
@@ -374,7 +374,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 // MethodsOnly: a scalar -> concrete-type BROADCAST must go through the WRAPPER
                 // (the broadcast implicit operators are deliberately wrapper-sourced), and the
                 // erased scalar expression no longer converts on its own.
-                if (_tw.Writer.MethodsOnly && _scalar != null && c.ToType?.Name != null
+                if (_tw.Writer.NoProperties && _scalar != null && c.ToType?.Name != null
                     && !CSharpWriter.ScalarPrimitives.ContainsKey(c.ToType.Name)
                     && _tw.Writer.GetExtensionPlanByTypeName(c.ToType.Name) != null)
                 {
@@ -615,7 +615,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         {
             Write($"Constants.{name}");
             // MethodsOnly: constants are static methods.
-            if (_tw.Writer.MethodsOnly)
+            if (_tw.Writer.NoProperties)
                 Write("()");
             return;
         }
@@ -643,7 +643,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         if (name == "At")
         {
             var recvType = TirRewrite.StripCoerce(args[0])?.Type?.Name;
-            if (_tw.Writer.MethodsOnly && recvType != null
+            if (_tw.Writer.NoProperties && recvType != null
                 && _tw.Writer.GetExtensionPlanByTypeName(recvType) != null
                 && !CSharpWriter.ScalarPrimitives.ContainsKey(recvType))
             {
@@ -710,7 +710,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             // pinned to property/field syntax. STATIC member accesses (type-ref receiver) are
             // decided by the target type's plan: generated statics are methods, handwritten
             // statics (Number.MinValue) keep member syntax.
-            if (_tw.Writer.MethodsOnly)
+            if (_tw.Writer.NoProperties)
             {
                 if (TirRewrite.StripCoerce(args[0]) is TirTypeRef recvT)
                 {
@@ -718,7 +718,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                     if (recvPlan != null && recvPlan.GeneratedNoArgStaticNames.Contains(name))
                         Write("()");
                 }
-                else if (!_tw.Writer.PropertySyntaxNames.Contains(name))
+                else if (!_tw.Writer.StructSurfacePropertyNames.Contains(name))
                     Write("()");
             }
             return;
@@ -1005,7 +1005,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     /// otherwise the wrapper (broadcast).</summary>
     private string RestoreCastType(TirCall call, int argIndex, string argPrim)
     {
-        if (!_tw.Writer.MethodsOnly)
+        if (!_tw.Writer.NoProperties)
             return ScalarEraseAnalysis.WrapperOfPrim(argPrim);
         // The resolved callee's declared parameter type is the strongest signal: a scalar
         // parameter erased to the primitive (exact binding), anything else wants the wrapper.

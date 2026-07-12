@@ -138,7 +138,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         // signatures, so erasing interface declarations would break the intrinsics build.
         // MethodsOnly (--methods): every obligation is generated (no handwritten member
         // satisfies a concept interface), so the interfaces erase and declare methods.
-        EraseScalars = Writer.MethodsOnly && Writer.ScalarErase;
+        EraseScalars = Writer.NoProperties && Writer.ScalarErase;
 
         var type = TypeDef;
         Debug.Assert(type.IsInterface());
@@ -194,7 +194,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
             s += $"throw new System.IndexOutOfRangeException()";
             WriteLine($" => {s};");
             // MethodsOnly: no indexers — At() is the access surface.
-            if (!Writer.MethodsOnly)
+            if (!Writer.NoProperties)
                 WriteLine($"{f.IndexerSig} {{ {Annotation} get => At(n); }}");
             return this;
         }
@@ -300,7 +300,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         if (f.IsOperator && !isPrimitive)
             WriteLine(f.OperatorImpl);
 
-        if (f.IsIndexer && !Writer.MethodsOnly)
+        if (f.IsIndexer && !Writer.NoProperties)
             WriteLine(f.IndexerImpl);
 
         if (f.IsImplicit)
@@ -331,7 +331,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
             if (fi.IsStatic)
                 continue;
             WriteLine(fi.MethodInterface);
-            if (fi.IsIndexer && !Writer.MethodsOnly)
+            if (fi.IsIndexer && !Writer.NoProperties)
                 WriteLine(fi.IndexerInterface);
         }
         return WriteEndBlock();
