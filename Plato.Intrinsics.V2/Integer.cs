@@ -90,35 +90,6 @@ namespace Ara3D.Geometry
         public int CompareTo(Integer other)
             => Value.CompareTo(other.Value);
 
-        // -------------------------------------------------------------------------------
-        // Integer-specific Helper Properties/Methods
-        // -------------------------------------------------------------------------------
-
-        /// <summary>
-        /// The absolute value of the integer.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Integer Abs() => Math.Abs(Value);
-
-        /// <summary>
-        /// An integer that indicates the sign of this integer (-1, 0, or 1).
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Integer Sign() => Math.Sign(Value);
-
-        /// <summary>
-        /// Linear interpolation, using default integer rounding.
-        /// </summary>
-        public Integer Lerp(Integer other, Number t)
-        {
-            var delta = other - this;
-            return (int)(Value + (delta.Value * t));
-        }
-
-        /// <summary>
-        /// Creates a range of integers from 0 to this integer. 
-        /// </summary>
-        [MethodImpl(AggressiveInlining)]
-        public IReadOnlyList<Integer> Range() => ArrayExtensions.Range(this);
-
         /// <summary>
         /// Implicit conversion to <see cref="Number"/> type.
         /// </summary>
@@ -129,5 +100,37 @@ namespace Ara3D.Geometry
         /// Conversion function 
         /// </summary>
         [MethodImpl(AggressiveInlining)] public Number Number() => Value;
+    }
+
+    /// <summary>
+    /// Plato math intrinsics for <see cref="Integer"/>, as extension methods (the
+    /// all-extension-methods runtime).
+    /// </summary>
+    public static class IntegerIntrinsics
+    {
+        /// <summary>
+        /// The absolute value of the integer.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Integer Abs(this Integer self) => Math.Abs(self.Value);
+
+        /// <summary>
+        /// An integer that indicates the sign of this integer (-1, 0, or 1).
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Integer Sign(this Integer self) => Math.Sign(self.Value);
+
+        /// <summary>
+        /// Linear interpolation, using default integer rounding.
+        /// </summary>
+        public static Integer Lerp(this Integer self, Integer other, Number t)
+        {
+            var delta = other - self;
+            return (int)(self.Value + (delta.Value * t));
+        }
+
+        /// <summary>
+        /// Creates a range of integers from 0 to this integer.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)]
+        public static IReadOnlyList<Integer> Range(this Integer self) => ArrayExtensions.Range(self);
     }
 }
