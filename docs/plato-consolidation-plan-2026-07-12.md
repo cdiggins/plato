@@ -41,15 +41,19 @@ NoProperties gating forks in TirInliner, the pins, ScalarEraseAnalysis special c
 
 ## 2. Phases
 
-### C0 — Freeze + tripwire (½ day)
+### C0 — Freeze + tripwire (½ day) — DONE 2026-07-12
 
-- Tag the Plato repo (`v1-freeze-2026-07`) and record the ara3d-sdk commit it pairs with.
-- New `tools/check-frozen-v1.ps1`: SHA-256 manifest of `ara3d-sdk/src/Plato.Generated/**` and
-  `ara3d-sdk/src/Plato.Intrinsics/**` checked against a committed `frozen-v1.sha256`. Replaces
-  `regen-plato.ps1` in `check-all.ps1` (keep regen-plato runnable until C4 deletes its path).
-- READMEs in `Plato.Intrinsics/` and the ara3d-sdk folders: "FROZEN — consumed by Ara3D.Studio;
-  the live library is the V2 recipe; do not edit, do not regenerate."
-- **Gate:** check-all green with the tripwire substituted.
+- `tools/check-frozen-v1.ps1`: SHA-256 manifest (`tools/frozen-v1.sha256`, 210 files) of
+  `ara3d-sdk/src/Plato.Generated/**`, `ara3d-sdk/src/Plato.Intrinsics/**`, AND
+  `submodules/Plato/Plato.Intrinsics/**` (so the source-of-truth copy can't be edited either).
+  `-Update` re-baselines. Verify runs in **0.3s** vs regen-plato's ~7.7s.
+- Swapped into `check-all.ps1` in place of the regen-plato byte-identity gate. regen-plato.ps1
+  kept runnable (deleted at C4).
+- FROZEN banner added to `Plato.Intrinsics/README.md` (Plato repo). **ara3d-sdk deliberately NOT
+  touched** (it's a dirty submodule the author consumes; its intrinsics README already says
+  "SYNCED COPY — do not edit"; the tripwire protects those bytes without editing them).
+- **Gate:** check-all ALL PASS with the tripwire substituted.
+- Deferred from the original C0: the `v1-freeze` git tag (do at end of mission / author's call).
 
 ### C1 — One recipe, fewer flags (½–1 day)
 
