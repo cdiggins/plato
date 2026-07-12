@@ -1,4 +1,4 @@
-# Generated\ is produced by tools\regen-conformance-v2runtime.ps1 (studio repo root); never commit it.
+# Generated\ is produced by tools\regen-conformance.ps1 (studio repo root); never commit it.
 Generated/
 bin/
 obj/
