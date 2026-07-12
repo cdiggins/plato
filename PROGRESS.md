@@ -22,14 +22,12 @@ freeze the ara3d-sdk Geometry artifacts (never touch), make the emitter simple +
       Vector2/3/4/8, Matrix3x2/4x4, Quaternion, Plane. Pattern: move behavioural instance methods to
       <Type>Intrinsics (keep operators/conversions/withers/statics/field-props/obligations), regen
       goldens, re-baseline snapshot (PLATO_UPDATE_API_SNAPSHOT=1), check-all.
-- [~] C4 Emitter extraction + delete list: FINDINGS — V2 recipe has legacy fallback bodies = 0
-      (2365 TIR), but CSharpFunctionBodyWriter still emits BODILESS functions (not counted as
-      fallback), so not trivially dead. DONE (safe, golden-neutral): consolidated IsStatementNode
-      (3 copies) + StripCoerce call sites into TirRewrite; deleted unused.txt (184/184 both goldens,
-      PlatoTests 103/103). REMAINING (payoff): migrate bodiless emission off legacy writer; retire
-      default-style path + regen-plato; delete CSharpFunctionBodyWriter (~750 lines); collapse
-      MethodsOnly/NoProperties + delete pins (golden-neutral under V2); shrink ScalarEraseAnalysis.
-      Write emit-snapshot rigor first.
+- [~] C4 Emitter deletion (big deletion): step0 emit-snapshot gate (PlatoTests/emit-snapshot.txt,
+      ~30 pins) DONE; step1 bodiless stubs off legacy writer DONE; step2 DELETED
+      CSharpFunctionBodyWriter (~854 lines) + UseTir + --no-tir/--csharp-style=default + regen-plato
+      + 5 oracle tests (fallback provably 0 both recipes; TIR now sole C# body writer). Gates:
+      goldens 184/184 both, conformance 205/205, PlatoTests 97/97. REMAINING: step3 collapse
+      MethodsOnly/NoProperties + delete pins (uniform rendering rule); step4 shrink ScalarEraseAnalysis.
 - [~] C5 Naming pass: DONE rename V2Runtime suite -> Ara3D.SDK.ConformanceTests (folder/csproj/
       namespace + regen-conformance-v2runtime.ps1 -> regen-conformance.ps1 + check-all + CLAUDE.md;
       205/205, check-all ALL PASS). Intrinsics.V2 -> Intrinsics still pending (needs V1 deleted first).

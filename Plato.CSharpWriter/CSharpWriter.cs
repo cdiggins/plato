@@ -224,22 +224,10 @@ namespace Ara3D.Geometry.CSharpWriter
             "ReciprocalSquareRootEstimate",
         };
 
-        // The Elaborate → Monomorphize → Emit retarget, ON BY DEFAULT since increment 3: in the
-        // pure DEFAULT C# style (no extension/scalar/optimize), every member-instance BODY with
-        // Plato source is emitted from the monomorphized TIR through TirCSharpBodyWriter instead
-        // of from the symbol graph through CSharpFunctionBodyWriter. The TIR covers all such
-        // bodies (fallback count 0) and reproduces the previous writer byte-for-byte
-        // (EmitDifferentialTests 1914/1914; EmitFlagOnTests 164/164 files; regen-plato.ps1 gates
-        // the checked-in golden). Set false (or pass --no-tir to the CLI) to fall back to the
-        // legacy symbol-graph body writer, which also still serves the non-default styles and
-        // static/extension bodies.
-        public bool UseTir = true;
-
-        // UseTir measurement counters (no effect on output): member-instance bodies emitted from
-        // the monomorphized TIR, and eligible bodies that fell back to the current writer because
-        // no fully-ground TIR was available for that (function, concrete type).
+        // Count of member/static bodies emitted from the monomorphized TIR (Elaborate →
+        // Monomorphize → Emit). The TIR is the SOLE C# body writer since the legacy
+        // CSharpFunctionBodyWriter was retired (consolidation plan C4). Diagnostic only.
         public int TirBodiesEmitted;
-        public int TirFallbackBodies;
 
         // --dump-tir=<dir> (null = off): write the per-phase TIR of every emitted body to
         // <dir>, one file per owner type. Records the elaborated/monomorphized INPUT and then
@@ -313,26 +301,24 @@ namespace Ara3D.Geometry.CSharpWriter
         private TirEmitSource TirSource => _tirSource ?? (_tirSource = new TirEmitSource(Compilation));
 
         /// <summary>The fully-ground monomorphized TIR body for a (source function, concrete type),
-        /// or null when none exists (non-ground / unresolved / not bodied) — in which case the
-        /// caller uses the legacy writer. Returns null unless <see cref="UseTir"/> is set, so the
-        /// (expensive) monomorphization pass is never triggered when the flag is off.</summary>
+        /// or null when none exists (non-ground / unresolved / not bodied).</summary>
         public TirFunction TryGetGroundTir(FunctionDef original, TypeDef concreteType)
-            => UseTir ? TirSource.TryGetGroundTir(original, concreteType) : null;
+            => TirSource.TryGetGroundTir(original, concreteType);
 
         /// <summary>The generic (unspecialized) TIR for a STATIC body — a constant or an IArray
         /// library function — or null when the function's elaboration has unresolved nodes.</summary>
         public TirFunction TryGetStaticTir(FunctionDef original)
-            => UseTir ? TirSource.TryGetStaticTir(original) : null;
+            => TirSource.TryGetStaticTir(original);
 
         /// <summary>Name-keyed ground-TIR lookup for the inliner (--inline): the callee's body
         /// specialized for the receiver's solved concrete type name.</summary>
         public TirFunction TryGetGroundTirByTypeName(FunctionDef original, string concreteTypeName)
-            => UseTir ? TirSource.TryGetGroundTir(original, concreteTypeName) : null;
+            => TirSource.TryGetGroundTir(original, concreteTypeName);
 
         /// <summary>Test helper: the ground input TIR for a (concrete type name, function name),
-        /// for in-proc inliner shape tests (M0). Returns null unless <see cref="UseTir"/> is set.</summary>
+        /// for in-proc inliner shape tests (M0).</summary>
         public TirFunction TestGetGroundTir(string concreteTypeName, string functionName)
-            => UseTir ? TirSource.TryGetGroundTirByNames(concreteTypeName, functionName) : null;
+            => TirSource.TryGetGroundTirByNames(concreteTypeName, functionName);
 
         // When true (--methods), the generated output declares NO C# properties or indexers:
         //   - concept interfaces (Interfaces.g.cs) declare no-arg obligations as METHODS with

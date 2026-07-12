@@ -138,10 +138,19 @@ NoProperties gating forks in TirInliner, the pins, ScalarEraseAnalysis special c
   `TirRewrite` in `Plato.CSharpWriter`.)
 - **Gate:** both V2 goldens byte-identical (184/184); PlatoTests 103/103.
 
-**Remaining (the payoff, next focused session — write the emit-snapshot rigor first):**
-1. Migrate bodiless-function emission off `CSharpFunctionBodyWriter`.
-2. Retire the default-style emit path + `regen-plato.ps1` (V1 is frozen; the tripwire guards it).
-3. Delete `CSharpFunctionBodyWriter` (~750 lines) + the now-dead fallbacks.
+**Remaining (the payoff — write the emit-snapshot rigor first):**
+- **Step 0 DONE**: `PlatoTests/EmitSnapshotTests.cs` + committed `emit-snapshot.txt` — ~30 pinned
+  V2 member bodies rendered in-proc, string-compared in seconds. The byte-identical goldens stay
+  authoritative; this is the fast inner loop.
+1. **DONE** — Body-less-function emission migrated off `CSharpFunctionBodyWriter`:
+   `CSharpTypeWriter.WriteBody` intercepts `Body==null` and emits the fixed stub directly.
+2. **DONE** — Default-style emit path + `regen-plato.ps1` retired; `--csharp-style=default` and
+   `--no-tir` removed from `Plato.CLI`; `UseTir` field/gate deleted (TIR unconditional).
+3. **DONE** — `CSharpFunctionBodyWriter` (~854 lines) deleted; the two bodied fallbacks
+   (`CSharpConcreteTypeWriter` scalar path, `ExtensionStyleWriter` moved members) now throw on a
+   null ground TIR (fallback count is provably 0 under both shipping recipes). The 5 legacy-vs-TIR
+   oracle tests (`Emit{Differential,FlagOn,…}Tests`) were deleted with their `UseTir=false` oracle.
+   Gates across steps 1–3: both goldens 184/184 byte-identical, conformance 205/205, PlatoTests 97/97.
 4. Collapse `MethodsOnly`/`NoProperties` to one flag; delete `PropertySyntaxNames` /
    `HandwrittenPropertySyntaxNames` / `StaticNoArgMethodNames` pins and the `NoProperties` forks in
    `TirInliner` (they become unconditional) — the property/method duality the plan calls the risk

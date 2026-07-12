@@ -63,24 +63,19 @@ namespace Ara3D.Geometry.CSharpWriter
         // optimize = true: component-op unrolling (--optimize, roadmap P3.1; see ComponentUnroller).
         // scalarErase = true: erase the scalar wrappers to native primitives (--scalar=float,
         //                     roadmap "Phase 2 revision" item 3; requires extensionStyle).
-        // useTir = true (the DEFAULT since increment 3): emit member-instance function BODIES from
-        //                the monomorphized TIR (Elaborate → Monomorphize → Emit). Only takes
-        //                effect in the pure default style; byte-identical to the legacy
-        //                symbol-graph body writer (regen-plato.ps1 gates the golden). Pass false
-        //                (CLI --no-tir) for the legacy path.
+        // Function bodies emit from the monomorphized TIR (Elaborate → Monomorphize → Emit) — the
+        // sole C# body writer since the legacy CSharpFunctionBodyWriter was retired (C4).
         // optimizeArrays = true: loop-into-buffer lowering of multi-consumed Map/MapRange results
         //                (--optimize-arrays, optimizer stage 2 increment 1; see TirArrayMaterializer).
-        public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false, bool optimize = false, bool scalarErase = false, bool useTir = true, bool optimizeArrays = false, bool inlineCalls = false, bool methodsOnly = false, bool lowerLoops = false, string tirDumpDir = null, bool noProperties = false, bool inlineReport = false)
+        public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false, bool optimize = false, bool scalarErase = false, bool optimizeArrays = false, bool inlineCalls = false, bool methodsOnly = false, bool lowerLoops = false, string tirDumpDir = null, bool noProperties = false, bool inlineReport = false)
         {
             // --no-properties is a strict superset of --methods.
             methodsOnly = methodsOnly || noProperties;
             if (scalarErase && !extensionStyle)
                 throw new NotSupportedException("--scalar=float requires --csharp-style=extensions (the default wrapper-struct layout keeps scalar members inside partial structs, which do not exist under erasure)");
-            if (methodsOnly && (!scalarErase || !useTir))
-                throw new NotSupportedException("--methods requires --scalar=float (erased interfaces) and the TIR emit path (no --no-tir)");
-            if (lowerLoops && !useTir)
-                throw new NotSupportedException("--loops requires the TIR emit path (no --no-tir)");
-            var writer = new CSharpWriter(compilation, outputFolder) { ExtensionStyle = extensionStyle, Optimize = optimize, ScalarErase = scalarErase, UseTir = useTir, OptimizeArrays = optimizeArrays, InlineCalls = inlineCalls, MethodsOnly = methodsOnly, NoProperties = noProperties, LowerLoops = lowerLoops, TirDumpDir = string.IsNullOrEmpty(tirDumpDir) ? null : tirDumpDir };
+            if (methodsOnly && !scalarErase)
+                throw new NotSupportedException("--methods requires --scalar=float (erased interfaces)");
+            var writer = new CSharpWriter(compilation, outputFolder) { ExtensionStyle = extensionStyle, Optimize = optimize, ScalarErase = scalarErase, OptimizeArrays = optimizeArrays, InlineCalls = inlineCalls, MethodsOnly = methodsOnly, NoProperties = noProperties, LowerLoops = lowerLoops, TirDumpDir = string.IsNullOrEmpty(tirDumpDir) ? null : tirDumpDir };
             if (inlineReport)
                 writer.InlineReport = new InlineReport();
             writer.WriteAll("float");

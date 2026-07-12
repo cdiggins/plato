@@ -329,25 +329,20 @@ public static class ExtensionStyleWriter
             // No-arg moved functions are deliberately METHODS (v.Length()), never properties;
             // the body writer is told so via propOverride: false.
             tw.Write(fi.ExtensionSignature);
-            // Moved bodies emit from the fully-ground monomorphized TIR (UseTir), rendered in
-            // static mode (receiver by parameter name) with the extension re-qualification
-            // context set on tw above; legacy writer as the fallback.
-            var tir = writer.UseTir && m.Function.Implementation?.Body != null
+            // Moved bodies emit from the fully-ground monomorphized TIR, rendered in static mode
+            // (receiver by parameter name) with the extension re-qualification context set on tw
+            // above — the sole body writer since C4. Moved members are always bodied (the plan
+            // keeps body-less functions in the struct).
+            var tir = m.Function.Implementation?.Body != null
                     ? writer.TryGetGroundTir(m.Function.Implementation, m.ConcreteType.TypeDef)
                     : null;
-            if (tir != null)
-            {
-                writer.TirBodiesEmitted++;
-                tir = writer.RunOptimizerPasses(tir, fi);
-                tw.Write(new TirCSharpBodyWriter(tw, tir, isStatic: true, fi).ToString());
-            }
-            else
-            {
-                if (writer.UseTir && m.Function.Implementation?.Body != null)
-                    writer.TirFallbackBodies++;
-                var body = new CSharpFunctionBodyWriter(tw, fi, true, false, false);
-                tw.Write(body.ToString());
-            }
+            if (tir == null)
+                throw new System.InvalidOperationException(
+                    $"No ground TIR for moved member {m.LibraryName}.{fi.Name}; "
+                    + "the legacy body writer was removed (consolidation plan C4).");
+            writer.TirBodiesEmitted++;
+            tir = writer.RunOptimizerPasses(tir, fi);
+            tw.Write(new TirCSharpBodyWriter(tw, tir, isStatic: true, fi).ToString());
             writer.WriteWithLineStateSync(tw.ToString());
         }
 

@@ -36,9 +36,26 @@ public class ScalarEraseAnalysis
     }
 
     /// <summary>If every overload of the referenced function group declares the SAME scalar
-    /// wrapper return type, the primitive it erases to; otherwise null.</summary>
+    /// wrapper return type, the primitive it erases to; otherwise null. Used to normalize
+    /// generated bodies to "float-land": call results that would be wrapper-typed (kept members,
+    /// handwritten intrinsics) are cast down to the primitive at the call site.</summary>
     public static string ScalarReturnPrimitive(Symbol function)
-        => CSharpFunctionBodyWriter.ScalarReturnPrimitive(function);
+    {
+        if (!(function is FunctionGroupRefSymbol fgr) || fgr.Def?.Functions == null || fgr.Def.Functions.Count == 0)
+            return null;
+        string name = null;
+        foreach (var f in fgr.Def.Functions)
+        {
+            var rt = f.ReturnType?.Name;
+            if (rt == null)
+                return null;
+            if (name == null)
+                name = rt;
+            else if (name != rt)
+                return null;
+        }
+        return name != null && CSharpWriter.ScalarPrimitives.TryGetValue(name, out var prim) ? prim : null;
+    }
 
     /// <summary>The primitive a scalar-typed parameter erases to, or null when the parameter is
     /// not provably scalar.</summary>

@@ -11,7 +11,7 @@ namespace Ara3D.Geometry.CLI
 {
     public static class Program
     {
-        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust] [--csharp-style=default|extensions] [--optimize] [--optimize-arrays] [--inline] [--scalar=wrapper|float]
+        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust] [--csharp-style=extensions] [--optimize] [--optimize-arrays] [--inline] [--scalar=wrapper|float]
         //        Plato.CLI lint <inputFolder> [--strict]
         // With no arguments, the folders come from Config and C# is generated (original behavior).
         // In lint mode the sources are compiled (parse + resolve, no output) and warnings are
@@ -60,24 +60,18 @@ namespace Ara3D.Geometry.CLI
             var tirDumpDir = args.Where(a => a.StartsWith("--dump-tir="))
                 .Select(a => a.Substring("--dump-tir=".Length)).LastOrDefault();
 
-            // Member-instance function bodies are emitted from the monomorphized TIR (Elaborate →
-            // Monomorphize → Emit) BY DEFAULT since increment 3; only takes effect in the pure
-            // default C# style and is byte-identical to the legacy symbol-graph body writer.
-            // --no-tir selects the legacy path (--use-tir is accepted as a no-op for older
-            // invocations).
-            var useTir = !args.Contains("--no-tir");
-
             // --inline-report: print a per-generation table of inliner refusals + success totals
             // to stderr after emission (M0 optimizer instrumentation). No effect on emitted C#.
             var inlineReport = args.Contains("--inline-report");
 
-            // C# writer style (roadmap P2.2). "default" = original writer (byte-identical output);
-            // "extensions" = C# 14 extension-block output (requires LangVersion 14 to compile).
+            // The C# emitter produces one recipe: extension-style, scalar-erased output. The legacy
+            // default (wrapper-struct) style was retired with CSharpFunctionBodyWriter (consolidation
+            // plan C4); --csharp-style=extensions is still accepted for script/flag parity.
             var csharpStyle = args.Where(a => a.StartsWith("--csharp-style="))
-                .Select(a => a.Substring("--csharp-style=".Length)).LastOrDefault() ?? "default";
-            if (csharpStyle != "default" && csharpStyle != "extensions")
+                .Select(a => a.Substring("--csharp-style=".Length)).LastOrDefault() ?? "extensions";
+            if (csharpStyle != "extensions")
             {
-                Console.Error.WriteLine($"Unknown --csharp-style value '{csharpStyle}' (expected 'default' or 'extensions')");
+                Console.Error.WriteLine($"Unsupported --csharp-style value '{csharpStyle}' (only 'extensions' is supported; the default style was retired in C4)");
                 return 1;
             }
 
@@ -91,11 +85,6 @@ namespace Ara3D.Geometry.CLI
             if (scalar != "wrapper" && scalar != "float")
             {
                 Console.Error.WriteLine($"Unknown --scalar value '{scalar}' (expected 'wrapper' or 'float')");
-                return 1;
-            }
-            if (scalar == "float" && csharpStyle != "extensions")
-            {
-                Console.Error.WriteLine("--scalar=float requires --csharp-style=extensions (--csharp-style=default with erased scalars is not supported)");
                 return 1;
             }
 
@@ -126,7 +115,7 @@ namespace Ara3D.Geometry.CLI
             if (typeScript)
             {
                 logger.Log("Writing TypeScript Files");
-                var output = compilation.ToTypeScript(outputFolder, useTir);
+                var output = compilation.ToTypeScript(outputFolder, true);
                 foreach (var kv in output.Files)
                 {
                     var fp = outputFolder.RelativeFile(kv.Key);
@@ -137,7 +126,7 @@ namespace Ara3D.Geometry.CLI
             else if (rust)
             {
                 logger.Log("Writing Rust Files");
-                var output = compilation.ToRust(outputFolder, useTir);
+                var output = compilation.ToRust(outputFolder, true);
                 foreach (var kv in output.Files)
                 {
                     var fp = outputFolder.RelativeFile(kv.Key);
@@ -148,8 +137,8 @@ namespace Ara3D.Geometry.CLI
             else
             {
                 logger.Log("Writing C# Files");
-                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, scalar == "float", useTir, optimizeArrays, inline, methods, loops, tirDumpDir, noProperties, inlineReport);
-                logger.Log($"TIR bodies emitted: {output.TirBodiesEmitted}; legacy fallback bodies: {output.TirFallbackBodies}");
+                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, scalar == "float", optimizeArrays, inline, methods, loops, tirDumpDir, noProperties, inlineReport);
+                logger.Log($"TIR bodies emitted: {output.TirBodiesEmitted}");
                 foreach (var kv in output.Files)
                 {
                     var fp = outputFolder.RelativeFile(kv.Key);

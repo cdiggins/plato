@@ -80,7 +80,6 @@ namespace PlatoTests
                 ScalarErase = true,
                 MethodsOnly = true,
                 NoProperties = true,
-                UseTir = true,
             };
             w.WriteAll("float");
             return w;

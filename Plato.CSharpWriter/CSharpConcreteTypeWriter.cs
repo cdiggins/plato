@@ -519,23 +519,15 @@ namespace Ara3D.Geometry.CSharpWriter
                     }
                     tw.Write(fi.ExtensionSignature);
                     // Scalar extension-method bodies over the primitives emit from the ground
-                    // monomorphized TIR when available (Writer.UseTir), legacy as the fallback.
-                    var tir = Writer.UseTir
-                        ? Writer.TryGetGroundTir(f.Implementation, ConcreteType.TypeDef)
-                        : null;
-                    if (tir != null)
-                    {
-                        Writer.TirBodiesEmitted++;
-                        tir = Writer.RunOptimizerPasses(tir, fi);
-                        tw.WriteWithLineStateSync(new TirCSharpBodyWriter(tw, tir, isStatic: true, fi).ToString());
-                    }
-                    else
-                    {
-                        if (Writer.UseTir)
-                            Writer.TirFallbackBodies++;
-                        var body = new CSharpFunctionBodyWriter(tw, fi, true, false, false);
-                        tw.WriteWithLineStateSync(body.ToString());
-                    }
+                    // monomorphized TIR — the sole body writer since C4.
+                    var tir = Writer.TryGetGroundTir(f.Implementation, ConcreteType.TypeDef);
+                    if (tir == null)
+                        throw new System.InvalidOperationException(
+                            $"No ground TIR for scalar-erased {SimpleName}.{fi.Name}; "
+                            + "the legacy body writer was removed (consolidation plan C4).");
+                    Writer.TirBodiesEmitted++;
+                    tir = Writer.RunOptimizerPasses(tir, fi);
+                    tw.WriteWithLineStateSync(new TirCSharpBodyWriter(tw, tir, isStatic: true, fi).ToString());
                     AddBridge(fi);
                 }
                 else if (fi.IsOperator)

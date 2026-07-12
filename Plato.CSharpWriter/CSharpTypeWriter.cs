@@ -216,58 +216,27 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
 
     public CSharpTypeWriter WriteBody(CSharpFunctionInfo f, bool isStatic)
     {
-        // Body-less function: emit the fixed stub directly, off the legacy CSharpFunctionBodyWriter.
+        // Body-less function: emit the fixed stub directly (consolidation plan C4 step 1).
         if (f.Body == null)
             return WriteBodyText(BodilessBodyText);
 
-        // Off-by-default TIR retarget (Writer.UseTir): for the member-instance body path in the
-        // pure default style, emit from the monomorphized TIR when a fully-ground one exists for
-        // this (function, concrete type), falling back to the current writer otherwise. With the
-        // flag OFF (the default) this whole block is skipped and the existing code below runs
-        // unchanged, so off-flag output stays byte-identical. The guards restrict the TIR path to
-        // exactly the shape TirCSharpBodyWriter reproduces (a non-static member on a concrete type
-        // in the default style — no extension/scalar/optimize framing).
-        // NOTE scalar+optimize: the TIR path is NOT byte-identical to the legacy writer for that
-        // combination (the legacy scalar analysis runs over the component-UNROLLED symbol tree,
-        // while the origin-symbol mimicry sees the original shapes, so a few conservative casts
-        // differ). No golden or differential ever covered the combo; it is gated semantically by
-        // the Scalar conformance suite, which runs with both optimizer flags.
-        if (Writer.UseTir)
-        {
-            // Only bodies with actual Plato source count for the TIR/fallback split: a body-less
-            // function emits a fixed `=> throw new NotImplementedException();` line with no
-            // heuristics involved, identically in both writers.
-            if (!isStatic && TypeDef != null && f.Function?.Implementation?.Body != null)
-            {
-                // Member-instance body: emitted from the fully-ground monomorphized TIR
-                // (component-unrolled first under --optimize).
-                var tir = Writer.TryGetGroundTir(f.Function.Implementation, TypeDef);
-                if (tir != null)
-                {
-                    Writer.TirBodiesEmitted++;
-                    tir = Writer.RunOptimizerPasses(tir, f);
-                    return WriteBodyText(new TirCSharpBodyWriter(this, tir, isStatic: false, f).ToString());
-                }
-                Writer.TirFallbackBodies++;
-            }
-            else if (f.Function?.Implementation?.Body != null)
-            {
-                // Static body (a constant, an IArray library function in Extensions.g.cs, or a
-                // struct-hosted static such as the scalar shim's): emitted from the generic
-                // elaborated TIR — no specialization involved.
-                var tir = Writer.TryGetStaticTir(f.Function.Implementation);
-                if (tir != null)
-                {
-                    Writer.TirBodiesEmitted++;
-                    tir = Writer.RunOptimizerPasses(tir, f);
-                    return WriteBodyText(new TirCSharpBodyWriter(this, tir, isStatic: true, f).ToString());
-                }
-                Writer.TirFallbackBodies++;
-            }
-        }
-
-        var tmp = new CSharpFunctionBodyWriter(this, f, isStatic, false);
-        return WriteBodyText(tmp.ToString());
+        // Bodied member/static: emitted from the monomorphized TIR (Elaborate → Monomorphize →
+        // Emit) — the SOLE C# body writer since the legacy CSharpFunctionBodyWriter was retired
+        // (consolidation plan C4). A member-instance body renders with `this`; a static body (a
+        // constant, an IArray library function in Extensions.g.cs, a scalar shim member) renders
+        // its receiver by name. Every bodied (function, concrete type) has a fully-ground TIR
+        // under the shipping recipes (legacy fallback bodies: 0); a null here is a regression.
+        var isMember = !isStatic && TypeDef != null;
+        var tir = isMember
+            ? Writer.TryGetGroundTir(f.Function.Implementation, TypeDef)
+            : Writer.TryGetStaticTir(f.Function.Implementation);
+        if (tir == null)
+            throw new InvalidOperationException(
+                $"No ground TIR for bodied {(TypeDef != null ? TypeDef.Name + "." : "")}{f.Name}; "
+                + "the legacy body writer was removed (consolidation plan C4).");
+        Writer.TirBodiesEmitted++;
+        tir = Writer.RunOptimizerPasses(tir, f);
+        return WriteBodyText(new TirCSharpBodyWriter(this, tir, isStatic: !isMember, f).ToString());
     }
 
     // Extension style fixes the V1 indentation quirk (see WriteWithLineStateSync);
