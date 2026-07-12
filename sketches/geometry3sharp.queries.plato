@@ -1,0 +1,118 @@
+//===
+//# geometry3sharp.queries.plato — P0 query kernels (Milestone A)
+//
+// Draft scaffold from docs/geometry3sharp-port-candidates-for-plato.md.
+// Closest-point / distance / intersection kernels over primitives Plato already
+// owns, returning structured hit records instead of G3-style out-params + flags.
+//
+// Records are built with tuple constructors, e.g. `(q, dist)` for ClosestPoint3D.
+// A no-hit is an explicit record with HasHit = false until Plato grows Option<T>.
+
+//===
+//# Query result records
+
+type ClosestPoint3D implements IValue
+{
+    Point: Point3D;
+    DistanceSquared: Number;
+}
+
+type RayHit3D implements IValue
+{
+    HasHit: Boolean;
+    T: Number;         // ray parameter: Origin + Direction * T
+    Point: Point3D;
+}
+
+library Geometry3SharpQueries
+{
+    //== Point / segment
+
+    ClosestPointOnSegment(p: Point3D, seg: Line3D): ClosestPoint3D
+    {
+        var ab = seg.B - seg.A;
+        var d = ab.Dot(ab);
+        var t = d <= 0.0 ? 0.0 : ((p - seg.A).Dot(ab) / d).Clamp(0.0, 1.0);
+        var q = seg.A + ab * t;
+        return (q, (p - q).LengthSquared);
+    }
+
+    DistanceToSegment(p: Point3D, seg: Line3D): Number
+        => p.ClosestPointOnSegment(seg).DistanceSquared.Sqrt;
+
+    //== Point / triangle (Ericson barycentric-region method)
+
+    ClosestPointOnTriangle(p: Point3D, tri: Triangle3D): ClosestPoint3D
+    {
+        var ab = tri.B - tri.A;
+        var ac = tri.C - tri.A;
+        var ap = p - tri.A;
+        var d1 = ab.Dot(ap);
+        var d2 = ac.Dot(ap);
+        var bp = p - tri.B;
+        var d3 = ab.Dot(bp);
+        var d4 = ac.Dot(bp);
+        var cp = p - tri.C;
+        var d5 = ab.Dot(cp);
+        var d6 = ac.Dot(cp);
+        var vc = d1 * d4 - d3 * d2;
+        var vb = d5 * d2 - d1 * d6;
+        var va = d3 * d6 - d5 * d4;
+        var denom = 1.0 / (va + vb + vc);
+
+        var q =
+            d1 <= 0.0 && d2 <= 0.0 ? tri.A
+            : d3 >= 0.0 && d4 <= d3 ? tri.B
+            : d6 >= 0.0 && d5 <= d6 ? tri.C
+            : vc <= 0.0 && d1 >= 0.0 && d3 <= 0.0 ? tri.A + ab * (d1 / (d1 - d3))
+            : vb <= 0.0 && d2 >= 0.0 && d6 <= 0.0 ? tri.A + ac * (d2 / (d2 - d6))
+            : va <= 0.0 && (d4 - d3) >= 0.0 && (d5 - d6) >= 0.0 ? tri.B + (tri.C - tri.B) * ((d4 - d3) / ((d4 - d3) + (d5 - d6)))
+            : tri.A + ab * (vb * denom) + ac * (vc * denom);
+
+        return (q, (p - q).LengthSquared);
+    }
+
+    DistanceToTriangle(p: Point3D, tri: Triangle3D): Number
+        => p.ClosestPointOnTriangle(tri).DistanceSquared.Sqrt;
+
+    //== Ray / plane
+
+    IntersectsPlane(ray: Ray3D, plane: Plane): RayHit3D
+    {
+        var denom = plane.Normal.Dot(ray.Direction);
+        var t = (0.0 - plane.D - plane.Normal.Dot(ray.Origin.ToVector)) / denom;
+        return (denom.Abs > 0.0 && t >= 0.0, t, ray.Origin + ray.Direction * t);
+    }
+
+    //== Ray / triangle (Möller–Trumbore)
+
+    IntersectsTriangle(ray: Ray3D, tri: Triangle3D): RayHit3D
+    {
+        var e1 = tri.B - tri.A;
+        var e2 = tri.C - tri.A;
+        var pv = ray.Direction.Cross(e2);
+        var det = e1.Dot(pv);
+        var inv = 1.0 / det;
+        var tv = ray.Origin - tri.A;
+        var u = tv.Dot(pv) * inv;
+        var qv = tv.Cross(e1);
+        var v = ray.Direction.Dot(qv) * inv;
+        var t = e2.Dot(qv) * inv;
+        var hit = det.Abs > 0.0 && u >= 0.0 && v >= 0.0 && (u + v) <= 1.0 && t >= 0.0;
+        return (hit, t, ray.Origin + ray.Direction * t);
+    }
+
+    //== Ray / AABB (slab test)
+
+    IntersectsBounds(ray: Ray3D, box: Bounds3D): RayHit3D
+    {
+        var inv = ray.Direction.Reciprocal;
+        var t0 = (box.Min - ray.Origin) * inv;
+        var t1 = (box.Max - ray.Origin) * inv;
+        var lo = t0.Min(t1);
+        var hi = t0.Max(t1);
+        var near = lo.X.Max(lo.Y).Max(lo.Z).Max(0.0);
+        var far = hi.X.Min(hi.Y).Min(hi.Z);
+        return (near <= far, near, ray.Origin + ray.Direction * near);
+    }
+}

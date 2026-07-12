@@ -1,0 +1,74 @@
+//===
+//# geometry3sharp.volumes.plato — P1 dense grids + P2 isosurfacing / mesh SDF
+//
+// Draft scaffold from docs/geometry3sharp-port-candidates-for-plato.md.
+// Stage 5+ of the dependency sequence: dense scalar grids and trilinear sampling
+// first, then deterministic single-threaded Marching Cubes, then mesh signed
+// distance / winding number (which depend on the AABB tree in mesh.plato).
+
+//===
+//# Dense grid records
+
+// A dense 3D scalar grid: values laid out over a regular lattice with an origin
+// and uniform cell size. Aligns with Plato's IArray3D and scalar-field roadmap.
+type ScalarGrid3D implements IValue
+{
+    Values: IArray3D<Number>;
+    Origin: Point3D;
+    CellSize: Number;
+}
+
+// A dense boolean occupancy grid (G3 Bitmap3 analogue).
+type Bitmap3 implements IValue
+{
+    Bits: IArray3D<Boolean>;
+    Origin: Point3D;
+    CellSize: Number;
+}
+
+library Geometry3SharpVolumes
+{
+    //== Dense grid indexing + sampling
+
+    // World-space center of cell (i,j,k).
+    CellCenter(g: ScalarGrid3D, i: Integer, j: Integer, k: Integer): Point3D
+        => g.Origin + new Vector3(i.Number + 0.5, j.Number + 0.5, k.Number + 0.5) * g.CellSize;
+
+    // Continuous world point -> fractional grid coordinate.
+    ToGrid(g: ScalarGrid3D, p: Point3D): Vector3
+        => (p - g.Origin) / g.CellSize;
+
+    // Trilinear interpolation of the scalar field at a world point.
+    // Deferred detail: the 8-corner gather + lerp; sketched via a helper.
+    Sample(g: ScalarGrid3D, p: Point3D): Number
+        => g.Trilinear(g.ToGrid(p));                       // deferred: 8-corner gather
+
+    // Sample a scalar field (SDF etc.) into a dense grid of the given resolution.
+    FromField(field: ScalarField3D, box: Bounds3D, res: Integer): ScalarGrid3D
+        => field.Rasterize(box, res);                      // deferred: 3D affine fill
+
+    //== Marching Cubes (P2) — deterministic, single-threaded
+    //
+    // Classic 256-case table with edge interpolation. Deferred: large lookup
+    // tables + per-cell affine mesh emission. Signature fixes the API; start
+    // from single-threaded MarchingCubes, not MarchingCubesPro.
+    MarchingCubes(g: ScalarGrid3D, iso: Number): TriangleMesh3D
+        => g.MarchCubes(iso);                              // deferred: case tables + builder
+
+    //== Mesh signed distance / winding (P2) — depend on the AABB tree
+    //
+    // Stage: unsigned distance grid -> signed classification for closed meshes ->
+    // generalized / fast winding. Each is a per-cell query against the tree.
+
+    // Unsigned distance from every cell center to the mesh surface.
+    UnsignedDistanceGrid(tree: AabbTree, box: Bounds3D, res: Integer): ScalarGrid3D
+        => tree.DistanceField(box, res);                   // deferred: per-cell nearest-point
+
+    // Signed distance for a closed oriented mesh (sign from winding number).
+    SignedDistanceGrid(tree: AabbTree, box: Bounds3D, res: Integer): ScalarGrid3D
+        => tree.SignedField(box, res);                     // deferred: distance + winding sign
+
+    // Solid-angle winding number of the mesh around a point (inside > 0.5).
+    WindingNumber(m: TriangleMesh3D, p: Point3D): Number
+        => m.Triangles.Map(t => t.SolidAngle(p)).Sum / (4.0 * Constants.Pi);
+}

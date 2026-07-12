@@ -1,0 +1,109 @@
+//===
+//# geometry3sharp.ops.plato — P2 mesh operations + supporting numerics
+//
+// Draft scaffold from docs/geometry3sharp-port-candidates-for-plato.md.
+// These are the architecturally substantial ports (stages 6–7). Each is expressed
+// as a pipeline of pure passes over immutable meshes plus operation-specific
+// workspaces, NOT as a DMesh3 clone. Heavy mutable cores (priority queue, sparse
+// solver) are marked deferred to a runtime intrinsic.
+
+//===
+//# Records
+
+// Result of a plane cut: the mesh on/below the plane plus the extracted cut loops.
+type PlaneCutResult implements IValue
+{
+    Below: TriangleMesh3D;
+    CutLoops: IArray<EdgeLoop>;
+}
+
+// A rigid-body transform result from alignment (ICP best-fit).
+type RigidFit implements IValue
+{
+    Transform: Matrix4x4;
+    Rms: Number;
+}
+
+library Geometry3SharpOps
+{
+    //== Laplacian smoothing (explicit iterative form) — the tractable P2 op.
+    // One uniform-weight iteration: move each vertex toward its neighbour centroid.
+    SmoothOnce(top: MeshTopology, lambda: Number): TriangleMesh3D
+    {
+        var pts = top.Mesh.Points;
+        var moved = pts.MapIndexed((p, i) =>              // MapIndexed: needs stdlib support
+            {
+                var nbrs = top.Corners.Where(c => c.A == i).Map(c => pts[c.B]);
+                var centroid = nbrs.Reduce(Point3D.Default, (a, b) => a + b.ToVector) / nbrs.Count.Number;
+                return p.Lerp(centroid, lambda);
+            });
+        return (moved, top.Mesh.FaceIndices);
+    }
+
+    Smooth(top: MeshTopology, lambda: Number, iterations: Integer): TriangleMesh3D
+        => iterations.Range.Reduce(top.Mesh, (m, _) => m.Topology.SmoothOnce(lambda));
+
+    //== Plane cut (pipeline: classify -> split -> extract loops -> optional cap)
+    // Classify vertices by signed plane distance, split straddling triangles at
+    // the plane, keep the below side, chain new edges into cut loops.
+    // Deferred: the per-triangle split emits a variable face count (affine builder).
+    Cut(m: TriangleMesh3D, plane: Plane): PlaneCutResult
+        => m.PlaneCut(plane);                             // deferred: split + chaining builder
+
+    // Planar cap of a single boundary loop (simplest hole-fill variant).
+    CapLoop(loop: EdgeLoop): TriangleMesh3D
+        => loop.FanTriangulate;                           // deferred: fan/ear triangulation
+
+    //== QEM simplification (P2, XL) — greedy edge collapse to a target count.
+    // Needs a mutable priority queue keyed by quadric error plus incremental
+    // topology updates and collapse-legality checks. Deferred to a heap intrinsic;
+    // signature fixes the target-count API.
+    Reduce(m: TriangleMesh3D, targetTriangles: Integer): TriangleMesh3D
+        => m.QuadricSimplify(targetTriangles);            // deferred: heap + collapse workspace
+
+    //== ICP alignment (P2) — nearest-point + rigid best-fit iteration.
+    // Depends on the AABB tree (nearest point) and a 3x3 SVD (best-fit rotation).
+    // Deferred: SVD; signature shows the point-to-point narrow API.
+    AlignTo(source: IArray<Point3D>, target: AabbTree, iterations: Integer): RigidFit
+        => source.IcpFit(target, iterations);            // deferred: SVD best-fit
+}
+
+//===
+//# Supporting numerics (P2) — port when a concrete consumer arrives
+//
+// Priority queue / Dijkstra (for QEM, geodesics), matrix-free conjugate gradient
+// (for smoothing/deformation/fitting), and B-spline basis (NURBS). The mutable
+// or recursion-heavy cores are deferred to runtime intrinsics; the API shapes are
+// recorded so consumers can be written against them.
+
+// A weighted graph edge for shortest-path queries.
+type GraphEdge implements IValue
+{
+    From: Integer;
+    To: Integer;
+    Weight: Number;
+}
+
+library Geometry3SharpNumerics
+{
+    // Single-source shortest path distances. Deferred: mutable binary heap with
+    // decrease-key; prefer an affine heap builder / intrinsic over encoding heap
+    // mutation functionally.
+    Dijkstra(edges: IArray<GraphEdge>, vertexCount: Integer, source: Integer): IArray<Number>
+        => edges.ShortestPaths(vertexCount, source);      // deferred: heap intrinsic
+
+    // Matrix-free conjugate gradient: caller supplies the multiply A*x. Fixed
+    // iteration count keeps it pure; convergence is reported explicitly by callers.
+    // Deferred: the iteration carries mutable residual/direction state — sketched
+    // as a fold over a fixed iteration budget.
+    ConjugateGradient(multiply: Function1<IArray<Number>, IArray<Number>>, b: IArray<Number>, iterations: Integer): IArray<Number>
+        => multiply.CgSolve(b, iterations);               // deferred: iteration workspace
+
+    // Cox–de Boor B-spline basis value: N(i, degree, t) over a knot vector.
+    // Naturally recursive; port BSplineBasis before full NURBS curve evaluation.
+    BSplineBasis(knots: IArray<Number>, i: Integer, degree: Integer, t: Number): Number
+        => degree == 0
+            ? (knots[i] <= t && t < knots[i + 1] ? 1.0 : 0.0)
+            : (t - knots[i]) / (knots[i + degree] - knots[i]) * knots.BSplineBasis(i, degree - 1, t)
+              + (knots[i + degree + 1] - t) / (knots[i + degree + 1] - knots[i + 1]) * knots.BSplineBasis(i + 1, degree - 1, t);
+}

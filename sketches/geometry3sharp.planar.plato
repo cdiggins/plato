@@ -1,0 +1,117 @@
+//===
+//# geometry3sharp.planar.plato — P1 planar geometry, curves, integration, fitting
+//
+// Draft scaffold from docs/geometry3sharp-port-candidates-for-plato.md.
+// Self-contained computational geometry: polygon basics, convex hull, minimum
+// enclosing shapes, curve sampling / arc-length, polyline simplification,
+// numerical integration, and point-set fitting. Built on the P0 predicate layer.
+//
+// Assumed array vocabulary flagged inline (Sum, MinBy, MaxBy, SortBy, ScanLeft,
+// WithNext, BinarySearch, Pairs).
+
+//===
+//# Records
+
+// Cumulative arc-length parameterization of a sampled curve.
+type ArcLengthTable implements IValue
+{
+    Points: IArray<Point2D>;
+    Cumulative: IArray<Number>;   // prefix sums of segment lengths; last = total length
+}
+
+type Circle2D implements IValue
+{
+    Center: Point2D;
+    Radius: Number;
+}
+
+// Best-fit plane through a 3D point set (from mean + covariance eigenvector).
+type FitPlane implements IValue
+{
+    Point: Point3D;
+    Normal: Vector3;
+}
+
+library Geometry3SharpPlanar
+{
+    //== Polygon basics
+
+    // Signed area via the shoelace formula; positive for CCW winding.
+    SignedArea(poly: Polygon): Number
+        => poly.Points.WithNext((a, b) => a.X * b.Y - b.X * a.Y, true).Sum * 0.5;
+
+    IsClockwise(poly: Polygon): Boolean
+        => poly.SignedArea < 0.0;
+
+    // Even-odd point-in-polygon via ray crossing.
+    Contains(poly: Polygon, p: Point2D): Boolean
+        => poly.Points.WithNext((a, b) =>
+               (a.Y > p.Y) != (b.Y > p.Y)
+               && p.X < (b.X - a.X) * (p.Y - a.Y) / (b.Y - a.Y) + a.X, true)
+           .Reduce(false, (acc, cross) => cross ? !acc : acc);
+
+    // Douglas–Peucker simplification. Deferred: needs a recursive split with a
+    // returned sub-array; sketched as the entry point.
+    Simplify(poly: PolyLine2D, tolerance: Number): PolyLine2D
+        => poly.DouglasPeucker(tolerance);                // deferred: recursive split
+
+    //== Convex hull (monotone chain)
+    // Sort by (x,y), build lower + upper chains keeping left turns. Deferred:
+    // needs the sort + running-stack fold; signature shows the shape.
+    ConvexHull(points: IArray<Point2D>): Polygon
+        => points.SortBy(p => p).MonotoneChain;           // deferred: chain fold
+
+    //== Minimum enclosing shapes
+
+    // Minimum enclosing circle (Welzl). Deferred: randomized incremental recursion.
+    MinEnclosingCircle(points: IArray<Point2D>): Circle2D
+        => points.Welzl;                                  // deferred: Welzl recursion
+
+    //== Curve sampling and arc-length
+
+    // Sample a parametric 2D curve uniformly in t over [0,1].
+    Sample(curve: Curve2D, n: Integer): IArray<Point2D>
+        => n.Fractions.Map(t => curve.Eval(t));
+
+    // Cumulative arc-length table from sampled points.
+    ArcLengths(points: IArray<Point2D>): ArcLengthTable
+        => (points, points.WithNext((a, b) => (b - a).Length, false).ScanLeft(0.0, (a, b) => a + b));
+
+    // Map a normalized [0,1] fraction of total length back to a point via search.
+    AtFraction(table: ArcLengthTable, s: Number): Point2D
+    {
+        var target = s * table.Cumulative.Last;
+        var i = table.Cumulative.BinarySearch(target);    // BinarySearch: needs stdlib support
+        return table.Points[i];
+    }
+
+    // Resample a polyline to n evenly spaced points along its length.
+    ResampleEven(points: IArray<Point2D>, n: Integer): IArray<Point2D>
+    {
+        var table = points.ArcLengths;
+        return n.Fractions.Map(s => table.AtFraction(s));
+    }
+
+    //== Numerical integration
+
+    Trapezoid(f: Function1<Number, Number>, a: Number, b: Number, n: Integer): Number
+    {
+        var h = (b - a) / n.Number;
+        return n.Range.Map(i => (f(a + i.Number * h) + f(a + (i.Number + 1.0) * h)) * 0.5 * h).Sum;
+    }
+
+    // Fixed-order (5-point) Gauss–Legendre on [a,b]. Nodes/weights are constants;
+    // sketched here as a call into a constant table.
+    GaussLegendre5(f: Function1<Number, Number>, a: Number, b: Number): Number
+        => f.GaussQuadrature(a, b, 5);                     // deferred: constant node/weight table
+
+    //== Point-set fitting
+
+    Mean(points: IArray<Point3D>): Point3D
+        => points.Reduce(Point3D.Default, (a, b) => a + b.ToVector) / points.Count.Number;
+
+    // Best-fit plane: mean point + smallest-eigenvector of the covariance matrix.
+    // Deferred: needs a symmetric 3x3 eigensolver.
+    FitPlaneThrough(points: IArray<Point3D>): FitPlane
+        => (points.Mean, points.CovarianceSmallestEigenvector);  // deferred: 3x3 eigensolver
+}

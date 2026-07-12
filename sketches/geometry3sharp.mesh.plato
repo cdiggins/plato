@@ -1,0 +1,164 @@
+//===
+//# geometry3sharp.mesh.plato — P1 immutable mesh analysis + AABB tree (Milestones B & C)
+//
+// Draft scaffold from docs/geometry3sharp-port-candidates-for-plato.md.
+// Everything here is immutable analysis over TriangleMesh3D — no DMesh3 mutation.
+// Derived topology is stored as flat arrays (sorted-edge adjacency), per the doc's
+// "compact immutable derived topology, not a DMesh3 clone" guidance.
+//
+// Assumed array vocabulary (some may need adding to the stdlib before this compiles):
+//   Sum, Flatten, MapIndexed, SortBy, GroupAdjacent, IndexOf, Contains, Distinct.
+// Flagged inline where used.
+
+//===
+//# Derived-topology records
+
+// One directed corner: the edge leaving vertex A toward B, within a face.
+// Undirected pairing of corners yields neighbors and boundary edges.
+type MeshCorner implements IValue
+{
+    Face: Integer;
+    A: Integer;        // origin vertex index
+    B: Integer;        // destination vertex index
+}
+
+// Compact immutable topology derived once from FaceIndices.
+type MeshTopology implements IValue
+{
+    Mesh: TriangleMesh3D;
+    Corners: IArray<MeshCorner>;      // 3 per face
+    BoundaryEdges: IArray<Integer2>;  // undirected (min,max) vertex pairs with one adjacent face
+}
+
+// Aggregated geometric + topological measures of a closed, oriented mesh.
+type MeshMeasures implements IValue
+{
+    Area: Number;
+    Volume: Number;      // signed; meaningful only for closed oriented meshes
+    Centroid: Point3D;
+    Bounds: Bounds3D;
+}
+
+// A closed edge loop (e.g. a boundary), stored as ordered vertex indices.
+type EdgeLoop implements IValue
+{
+    Mesh: TriangleMesh3D;
+    Vertices: IArray<Integer>;
+}
+
+// A connected component as a set of face indices.
+type MeshComponent implements IValue
+{
+    Mesh: TriangleMesh3D;
+    Faces: IArray<Integer>;
+}
+
+library Geometry3SharpMesh
+{
+    //== Measurements (pure reductions over triangles)
+
+    SurfaceArea(m: TriangleMesh3D): Number
+        => m.Triangles.Map(t => t.Area).Sum;
+
+    // Signed volume via the divergence/tetrahedron sum; sign needs a consistent winding.
+    SignedVolume(m: TriangleMesh3D): Number
+        => m.Triangles.Map(t => t.A.ToVector.Dot(t.B.ToVector.Cross(t.C.ToVector))).Sum / 6.0;
+
+    Centroid(m: TriangleMesh3D): Point3D
+        => m.Points.Reduce(Point3D.Default, (a, b) => a + b.ToVector) / m.Points.Count.Number;
+
+    Measures(m: TriangleMesh3D): MeshMeasures
+        => (m.SurfaceArea, m.SignedVolume, m.Centroid, m.Bounds);
+
+    //== Normals
+
+    FaceNormals(m: TriangleMesh3D): IArray<Vector3>
+        => m.Triangles.Map(t => t.Normal);
+
+    // Angle-weighted vertex normals: scatter each face normal onto its 3 vertices.
+    // Uses the derived topology to gather incident faces per vertex.
+    VertexNormals(top: MeshTopology): IArray<Vector3>
+        => top.Mesh.Points.MapIndexed((_, i) =>          // MapIndexed: needs stdlib support
+            top.Corners
+               .Where(c => c.A == i)
+               .Map(c => top.Mesh.Triangle(top.Mesh.FaceIndices[c.Face]).Normal)
+               .Reduce(Vector3.Default, (a, b) => a + b)
+               .Normalize);
+
+    //== Derived topology (sorted-edge adjacency)
+
+    Corners(m: TriangleMesh3D): IArray<MeshCorner>
+        => m.FaceIndices.MapIndexed((f, i) => [           // one face -> three corners, then Flatten
+               new MeshCorner(i, f.A, f.B),
+               new MeshCorner(i, f.B, f.C),
+               new MeshCorner(i, f.C, f.A)]).Flatten;
+
+    // Undirected key (min,max) for an edge; groups the two half-edges of an interior edge.
+    UndirectedKey(c: MeshCorner): Integer2
+        => (c.A.Min(c.B), c.A.Max(c.B));
+
+    // Boundary edges = undirected keys with exactly one adjacent corner.
+    BoundaryEdges(m: TriangleMesh3D): IArray<Integer2>
+        => m.Corners
+            .Map(UndirectedKey)
+            .SortBy(k => k)                                // SortBy + GroupAdjacent: needs stdlib support
+            .GroupAdjacent
+            .Where(g => g.Count == 1)
+            .Map(g => g[0]);
+
+    Topology(m: TriangleMesh3D): MeshTopology
+        => (m, m.Corners, m.BoundaryEdges);
+
+    //== Connected components (functional flood fill over shared edges)
+    // Deferred: needs a visited-set / worklist. Sketched as a signature so the
+    // API shape is visible; body assumes a `FloodFill` array intrinsic.
+    ConnectedComponents(top: MeshTopology): IArray<MeshComponent>
+        => top.FloodFill;                                 // deferred: worklist intrinsic
+
+    //== Boundary loops
+    // Chain boundary edges into ordered loops. Deferred like components: needs a
+    // successor walk with a visited set.
+    BoundaryLoops(top: MeshTopology): IArray<EdgeLoop>
+        => top.ChainBoundary;                             // deferred: successor-walk intrinsic
+}
+
+//===
+//# Flat immutable triangle AABB tree (Milestone C)
+//
+// Build with an affine buffer, then freeze into flat node arrays. Ship
+// nearest-triangle / nearest-point / nearest ray-hit first; dynamic refit,
+// tree/tree intersection, and winding number are later extensions.
+
+// One flat BVH node. Leaves reference a contiguous triangle range; interior
+// nodes reference child node indices. Left < 0 marks a leaf.
+type AabbNode implements IValue
+{
+    Bounds: Bounds3D;
+    Left: Integer;      // child node index, or -1 for a leaf
+    Right: Integer;     // child node index, or leaf triangle start
+    Count: Integer;     // leaf triangle count (0 for interior)
+}
+
+type AabbTree implements IValue
+{
+    Mesh: TriangleMesh3D;
+    Nodes: IArray<AabbNode>;      // Nodes[0] is the root
+    TriangleOrder: IArray<Integer>;  // leaf-ordered face indices
+}
+
+library Geometry3SharpAabb
+{
+    // Construction is a median/SAH split into an affine buffer, frozen to Nodes.
+    // Deferred: needs the affine buffer builder; signature shows the entry point.
+    Build(m: TriangleMesh3D): AabbTree
+        => m.BuildBvh;                                    // deferred: affine BVH builder
+
+    // Nearest point on the mesh surface to p, using branch-and-bound over Nodes.
+    // Deferred: needs a stack/stackless traversal intrinsic.
+    NearestPoint(tree: AabbTree, p: Point3D): ClosestPoint3D
+        => tree.NearestPointQuery(p);                     // deferred: traversal intrinsic
+
+    // Nearest ray hit against the mesh, broad-phased by the tree.
+    Raycast(tree: AabbTree, ray: Ray3D): RayHit3D
+        => tree.RaycastQuery(ray);                        // deferred: traversal intrinsic
+}
