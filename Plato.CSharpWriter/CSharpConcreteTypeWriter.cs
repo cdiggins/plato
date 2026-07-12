@@ -761,8 +761,21 @@ namespace Ara3D.Geometry.CSharpWriter
             if (fi.IsStatic) return; // We don't want to generate extension methods for static functions.
 
             if (f.Implementation.Body == null)
-                // This is an intrinsic function , so we don't want to generate an extension method for it.
-                tw.WriteLine(GetExtensionMethod(fi));
+            {
+                // A handwritten intrinsic: normally we emit a forwarder extension
+                // TExtensions.Foo(this T) => self.Foo(). Under the V2 runtime (--no-properties),
+                // the NON-erased primitive types (Angle, Vector*, Matrix*, Quaternion, Plane) are
+                // being ported so their intrinsics are handwritten EXTENSION methods
+                // (TIntrinsics.Foo(this T)); emitting the forwarder too would be a CS0121-ambiguous
+                // second Foo(this T) extension (and self-recurse). Skip it — the handwritten
+                // extension (or, until a type is ported, its instance method) provides x.Foo().
+                // (M5 / consolidation plan C3. Scalar-erased primitives keep the forwarder: it lands
+                // on the erased receiver float/int/bool, distinct from the wrapper, so no collision.)
+                var nonErasedPrimitive = CSharpWriter.PrimitiveTypes.ContainsKey(Name)
+                    && !CSharpWriter.ScalarPrimitives.ContainsKey(Name);
+                if (!(Writer.NoProperties && nonErasedPrimitive))
+                    tw.WriteLine(GetExtensionMethod(fi));
+            }
 
             if (CSharpWriter.PrimitiveTypes.TryGetValue(Name, out var primType))
             {

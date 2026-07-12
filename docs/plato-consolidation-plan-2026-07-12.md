@@ -81,7 +81,25 @@ NoProperties gating forks in TirInliner, the pins, ScalarEraseAnalysis special c
 - CLAUDE.md + the regen-v2runtime header updated to the one-suite reality.
 - **Gate:** reduced check-all ALL PASS; the moved-source suite builds + runs 204/204 standalone.
 
-### C3 — M5 runtime port, with the surface contract (1–2 days)
+### C3 — M5 runtime port — IN PROGRESS 2026-07-12
+
+- **Safety net DONE**: `docs/plato-struct-surface.md` (keep-on-struct contract) +
+  `IntrinsicsApiSnapshotTests` (committed baseline `intrinsics-api-snapshot.txt`, runs in the
+  conformance gate; Law_/Witness_ filtered). An instance→extension move is a reviewable diff; a
+  member lost from both struct and extension is caught.
+- **Emitter unblock DONE**: `CSharpConcreteTypeWriter.WriteExtensionMethod` skips the colliding
+  `TExtensions.Foo(this T) => self.Foo()` forwarder for NON-erased primitives (Angle, Vector*,
+  Matrix*, Quaternion, Plane) under `--no-properties`. Validated: goldens compile + 204/204. The
+  forwarders were redundant (instance/extension methods serve `x.Foo()`); scalar-erased primitives
+  keep theirs (distinct erased receiver). Removed forwarders from all 9 golden files (both goldens).
+- **Angle ported DONE**: trig (Cos/Cosh/Sin/SinCos/Sinh/Tan/Tanh) moved to `AngleIntrinsics`
+  extensions; Radians/CompareTo/operators/conversions stay on the struct. Snapshot re-baselined
+  (verified move, no loss). check-all ALL PASS.
+- **Remaining (mechanical, snapshot-guarded)**: move the behavioural instance methods of
+  `Vector2/3/4/8`, `Matrix3x2/4x4`, `Quaternion`, `Plane` to `<Type>Intrinsics`. The emitter is
+  already ready; each is a runtime edit + snapshot re-baseline + conformance.
+
+### C3 (original brief) — M5 runtime port, with the surface contract (1–2 days)
 
 - Write `docs/plato-struct-surface.md`: the enumerated keep-on-struct list — fields; constructors;
   operators (C# operators cannot be extensions on our LangVersion anyway); implicit conversions;

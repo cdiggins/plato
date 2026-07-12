@@ -101,44 +101,36 @@ namespace Ara3D.Geometry
         public Integer CompareTo(Angle other)
             => Value.CompareTo(other.Value);
 
-        // -------------------------------------------------------------------------------
-        // Trigonometric Functions
-        // https://en.wikipedia.org/wiki/Trigonometric_functions
-        // -------------------------------------------------------------------------------
+    }
 
-        /// <summary>
-        /// Cosine 
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number Cos() => MathF.Cos(Value);
+    /// <summary>
+    /// Behavioural intrinsics for <see cref="Angle"/> as extension methods — the all-extension-methods
+    /// runtime (M5 / consolidation plan C3). Fields, constructors, operators, conversions,
+    /// <see cref="Angle.Radians"/> and <see cref="Angle.CompareTo"/> stay on the struct; see
+    /// docs/plato-struct-surface.md. The trigonometric functions
+    /// (https://en.wikipedia.org/wiki/Trigonometric_functions) move here.
+    /// </summary>
+    public static class AngleIntrinsics
+    {
+        /// <summary>Cosine.</summary>
+        [MethodImpl(AggressiveInlining)] public static Number Cos(this Angle self) => MathF.Cos(self.Value);
 
-        /// <summary>
-        /// Hyperbolic cosine.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number Cosh() => MathF.Cosh(Value);
+        /// <summary>Hyperbolic cosine.</summary>
+        [MethodImpl(AggressiveInlining)] public static Number Cosh(this Angle self) => MathF.Cosh(self.Value);
 
-        /// <summary>
-        /// Sine
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number Sin() => MathF.Sin(Value);
+        /// <summary>Sine.</summary>
+        [MethodImpl(AggressiveInlining)] public static Number Sin(this Angle self) => MathF.Sin(self.Value);
 
-        /// <summary>
-        /// Sine and cosine.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public (Number Sin, Number Cos) SinCos() => MathF.SinCos(Value);
+        /// <summary>Sine and cosine.</summary>
+        [MethodImpl(AggressiveInlining)] public static (Number Sin, Number Cos) SinCos(this Angle self) => MathF.SinCos(self.Value);
 
-        /// <summary>
-        /// Hyperbolic sine
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number Sinh() => MathF.Sinh(Value);
+        /// <summary>Hyperbolic sine.</summary>
+        [MethodImpl(AggressiveInlining)] public static Number Sinh(this Angle self) => MathF.Sinh(self.Value);
 
-        /// <summary>
-        /// The tangent.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number Tan() => MathF.Tan(Value);
+        /// <summary>The tangent.</summary>
+        [MethodImpl(AggressiveInlining)] public static Number Tan(this Angle self) => MathF.Tan(self.Value);
 
-        /// <summary>
-        /// The hyperbolic tangent. 
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number Tanh() => MathF.Tanh(Value);
+        /// <summary>The hyperbolic tangent.</summary>
+        [MethodImpl(AggressiveInlining)] public static Number Tanh(this Angle self) => MathF.Tanh(self.Value);
     }
 }
