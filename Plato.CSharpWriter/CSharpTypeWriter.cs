@@ -136,7 +136,9 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         // Scalar erasure: concept interfaces keep the wrapper types. Handwritten members in
         // Plato.Intrinsics (which cannot change) satisfy interface obligations with wrapper
         // signatures, so erasing interface declarations would break the intrinsics build.
-        EraseScalars = false;
+        // MethodsOnly (--methods): every obligation is generated (no handwritten member
+        // satisfies a concept interface), so the interfaces erase and declare methods.
+        EraseScalars = Writer.MethodsOnly && Writer.ScalarErase;
 
         var type = TypeDef;
         Debug.Assert(type.IsInterface());
@@ -191,7 +193,9 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
                 s += $"{p} == {i} ? {fs[i]} : ";
             s += $"throw new System.IndexOutOfRangeException()";
             WriteLine($" => {s};");
-            WriteLine($"{f.IndexerSig} {{ {Annotation} get => At(n); }}");
+            // MethodsOnly: no indexers — At() is the access surface.
+            if (!Writer.MethodsOnly)
+                WriteLine($"{f.IndexerSig} {{ {Annotation} get => At(n); }}");
             return this;
         }
 
@@ -230,8 +234,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
                 if (tir != null)
                 {
                     Writer.TirBodiesEmitted++;
-                    tir = TirComponentUnroller.UnrollFunction(tir, f, Writer);
-                    tir = TirArrayMaterializer.Rewrite(tir, Writer);
+                    tir = Writer.RunOptimizerPasses(tir, f);
                     return WriteBodyText(new TirCSharpBodyWriter(this, tir, isStatic: false, f).ToString());
                 }
                 Writer.TirFallbackBodies++;
@@ -245,8 +248,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
                 if (tir != null)
                 {
                     Writer.TirBodiesEmitted++;
-                    tir = TirComponentUnroller.UnrollFunction(tir, f, Writer);
-                    tir = TirArrayMaterializer.Rewrite(tir, Writer);
+                    tir = Writer.RunOptimizerPasses(tir, f);
                     return WriteBodyText(new TirCSharpBodyWriter(this, tir, isStatic: true, f).ToString());
                 }
                 Writer.TirFallbackBodies++;
@@ -304,7 +306,9 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
                 Write(f.MethodSignature);
 
                 if (f.ParameterNames.Count == 1)
-                    WriteLine($" {{ {Annotation} get => {f.OperatorName}this; }}");
+                    WriteLine(f.EmitAsMethod
+                        ? $" => {f.OperatorName}this;"
+                        : $" {{ {Annotation} get => {f.OperatorName}this; }}");
                 else if (f.ParameterNames.Count == 2)
                     WriteLine($" => this {f.OperatorName} {f.ParameterNames[1]};");
                 else
@@ -316,7 +320,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         if (f.IsOperator && !isPrimitive)
             WriteLine(f.OperatorImpl);
 
-        if (f.IsIndexer)
+        if (f.IsIndexer && !Writer.MethodsOnly)
             WriteLine(f.IndexerImpl);
 
         if (f.IsImplicit)
@@ -347,7 +351,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
             if (fi.IsStatic)
                 continue;
             WriteLine(fi.MethodInterface);
-            if (fi.IsIndexer)
+            if (fi.IsIndexer && !Writer.MethodsOnly)
                 WriteLine(fi.IndexerInterface);
         }
         return WriteEndBlock();

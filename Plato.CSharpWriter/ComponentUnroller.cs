@@ -268,12 +268,18 @@ namespace Ara3D.Geometry.CSharpWriter
                 return null;
 
             // All vector arguments must be plain parameter references (cheap + pure to duplicate
-            // per component) of one and the same statically-known IArrayLike type.
+            // per component) — or `p.Components` reads of one (the components of an IArrayLike
+            // ARE its fields; mirrors the TIR unroller) — of one and the same statically-known
+            // IArrayLike type.
             var vecArgs = new Expression[vecArgCount];
             string typeName = null;
             for (var i = 0; i < vecArgCount; ++i)
             {
-                if (!(fc.Args[i] is ParameterRefSymbol pr) || !paramTypes.TryGetValue(pr.Def, out var t))
+                var argExpr = fc.Args[i];
+                if (argExpr is FunctionCall compCall && compCall.Function is FunctionGroupRefSymbol cg
+                    && cg.Name == "Components" && compCall.Args.Count == 1)
+                    argExpr = compCall.Args[0];
+                if (!(argExpr is ParameterRefSymbol pr) || !paramTypes.TryGetValue(pr.Def, out var t))
                     return null;
                 if (typeName == null)
                     typeName = t;

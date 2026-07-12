@@ -1,0 +1,144 @@
+// A compact input corpus for Plato C# emitter and optimizer spikes.
+// Keep this file small: production coverage belongs in plato-src and conformance.
+
+// ---- Concepts -------------------------------------------------------------
+
+interface IArray<T>
+{
+    Count(xs: Self): Integer;
+    At(xs: Self, n: Integer): T;
+}
+
+// ---- Primitive scaffolding ------------------------------------------------
+
+type Number { }
+type Integer { }
+type Boolean { }
+type String { }
+type Character { }
+type Object { }
+
+// The compiler synthesizes a tuple conversion for every type with two fields.
+type Tuple2<T0, T1> { X0: T0; X1: T1; }
+type Tuple3<T0, T1, T2> { X0: T0; X1: T1; X2: T2; }
+
+type Function0<TR> { }
+type Function1<T0, TR> { }
+type Function2<T0, T1, TR> { }
+
+type Array<T> implements IArray<T> { }
+
+// A non-intrinsic fixed-component type for constructor, field, and inlining tests.
+type Pair
+{
+    X: Number;
+    Y: Number;
+}
+
+// Plato.Intrinsics has one handwritten helper that expects this generated compatibility member.
+type Vector3
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+}
+
+// ---- Native operations ----------------------------------------------------
+
+// These declarations have no Plato body. Backends map them to native operations.
+library Intrinsics
+{
+    Add(a: Number, b: Number): Number;
+    Subtract(a: Number, b: Number): Number;
+    Multiply(a: Number, b: Number): Number;
+    Divide(a: Number, b: Number): Number;
+    Negative(x: Number): Number;
+    LessThan(a: Number, b: Number): Boolean;
+    GreaterThan(a: Number, b: Number): Boolean;
+
+    Add(a: Integer, b: Integer): Integer;
+    LessThan(a: Integer, b: Integer): Boolean;
+
+    All(xs: IArray<$T>, predicate: Function1<$T, Boolean>): Boolean;
+    Any(xs: IArray<$T>, predicate: Function1<$T, Boolean>): Boolean;
+    Map(xs: IArray<$T>, f: Function1<$T, $U>): IArray<$U>;
+    Reduce(xs: IArray<$T>, seed: $U, f: Function2<$U, $T, $U>): $U;
+    Reverse(xs: IArray<$T>): IArray<$T>;
+    Zip(xs: IArray<$T>, ys: IArray<$U>, f: Function2<$T, $U, $V>): IArray<$V>;
+}
+
+// ---- Scalar and inlining probes ------------------------------------------
+
+library Scalars
+{
+    Square(x: Number): Number
+        => x * x;
+
+    Pow2(x: Number): Number
+        => x * x;
+
+    Pow3(x: Number): Number
+        => x * x * x;
+
+    AddOne(x: Number): Number
+        => x + 1.0;
+
+    // Multi-level call chain for --inline.
+    SquareAfterAddingOne(x: Number): Number
+        => x.AddOne.Square;
+
+    ClampZeroOne(x: Number): Number
+        => x < 0.0 ? 0.0 : x > 1.0 ? 1.0 : x;
+
+    // A zero-argument function should become a method under --methods.
+    Magic(): Number
+        => 42.0;
+}
+
+// ---- Fixed-component probes ----------------------------------------------
+
+library Pairs
+{
+    Add(a: Pair, b: Pair): Pair
+        => new Pair(a.X + b.X, a.Y + b.Y);
+
+    Scale(v: Pair, amount: Number): Pair
+        => new Pair(v.X * amount, v.Y * amount);
+
+    Dot(a: Pair, b: Pair): Number
+        => a.X * b.X + a.Y * b.Y;
+
+    // Nested calls let --inline expose component-wise scalar operations.
+    Blend(a: Pair, b: Pair, t: Number): Pair
+        => a.Scale(1.0 - t).Add(b.Scale(t));
+}
+
+library Vectors
+{
+    // Required by one handwritten Plato.Intrinsics helper. Squared length avoids needing Abs.
+    AlmostZero(v: Vector3): Boolean
+        => v.X * v.X + v.Y * v.Y + v.Z * v.Z < 0.0000001;
+}
+
+// ---- One-dimensional loop-lowering probes --------------------------------
+
+library Arrays
+{
+    DoubleAll(xs: IArray<Number>): IArray<Number>
+        => xs.Map(x => x * 2.0);
+
+    AddPairs(xs: IArray<Number>, ys: IArray<Number>): IArray<Number>
+        => xs.Zip(ys, (x, y) => x + y);
+
+    Sum(xs: IArray<Number>): Number
+        => xs.Reduce(0.0, (total, x) => total + x);
+
+    AllPositive(xs: IArray<Number>): Boolean
+        => xs.All(x => x > 0.0);
+
+    AnyNegative(xs: IArray<Number>): Boolean
+        => xs.Any(x => x < 0.0);
+
+    Reversed(xs: IArray<Number>): IArray<Number>
+        => xs.Reverse;
+}

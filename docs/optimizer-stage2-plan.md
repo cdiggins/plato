@@ -35,6 +35,22 @@ always SOUND; the analysis is only about when it is PROFITABLE.
    Probe (1M `Vector3` points, stored result, 4-pass consumption): 1.37× — interface-dispatch
    consumption dominates the micro-shape; the win scales with callback cost/pipeline depth, and
    each element now evaluates exactly once regardless of consumer count.
+1b. **DONE 2026-07-10 — source-level inlining (`--inline`, roadmap 3.2 "beta reduction" first
+   slice; `TirInliner.cs`).** Resolved calls whose callee has a fully-ground TIR body for the
+   receiver's concrete type are inlined (iterative, 3 passes, 40-node budget) BEFORE the unroller
+   and materializer run, so HOF plumbing hidden inside small library functions becomes visible to
+   them (`MagnitudeSquared` = `SumSqrComponents` call → `Components.Reduce(0,(a,b)=>a+b*b)` →
+   unrolled to `0.Add(X*X).Add(Y*Y).Add(Z*Z)`). The unrollers (TIR + legacy) also learned to see
+   through `p.Components` receivers. Hygiene rules (each earned by a real miscompile during
+   bring-up): all args must be CHEAP leaves; no call sites inside lambdas; callee bodies must be
+   expression-shaped, ≤ budget, free of tuples / bare names / eta-lambdas / SYNTACTIC calls, and
+   their value type must equal the declared return type (return-position implicit conversions
+   evaporate at the call site). Emitter fixes that fell out: parenthesized ternary/boolean-chain
+   receivers (this also fixed a real latent bug in Tube.Eval's z term) and `=>` on block-bodied
+   lambdas. Footprint on the stdlib: 580 bodies across 81 of 164 default-style files. Gates:
+   V1 conformance 204/204 over both `--inline` and `--inline --optimize --optimize-arrays`
+   output. NOT in the golden recipe yet — an experiment flag until fusion (below) lands.
+
 2. **`Map∘Map` / `MapRange∘Map` fusion** (3.5 overlap): collapse adjacent lazy maps into one
    callback before deciding eager/lazy, so materialization never captures an avoidable indirection.
 3. **Struct-functor emission for surviving HOFs** (3.2 overlap): `TFunc : struct, IFunc<T,R>`

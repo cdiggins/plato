@@ -37,6 +37,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     private readonly CSharpTypeWriter _tw;
     private readonly TirFunction _tir;
     private readonly string _selfType;
+    private readonly CSharpFunctionInfo _fi;
 
     // Static mode (constants in Constants.g.cs, the IArray library functions in Extensions.g.cs):
     // parameter #0 is emitted by name instead of `this`, and the property-getter framing applies
@@ -66,6 +67,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         _tir = tir;
         _selfType = tw.SelfType;
         _isStatic = isStatic;
+        _fi = fi;
         if (tw.Writer.ScalarErase && fi != null)
             _scalar = new ScalarEraseAnalysis(tw, fi.Function.Implementation, fi.ParameterTypes, lambdaParamPrim);
         WriteFunctionBody();
@@ -80,11 +82,21 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     // namespace-qualified type name for statics, the namespace for bare type names. Mirrors the
     // FunctionGroupRefSymbol extension branch of the legacy writer exactly. In default mode (and
     // for struct-kept extension-style bodies) the context is null and the name is written bare.
+    // MethodsOnly: whether a bare STATIC name of the current receiver type is a generated
+    // static METHOD (needs "()"); handwritten statics keep member-access syntax.
+    private bool IsGeneratedStaticMethodName(string name)
+        => _tw.Writer.MethodsOnly && _tw.TypeDef != null
+           && _tw.Writer.GetExtensionPlanByTypeName(_tw.TypeDef.Name) is ExtensionStylePlan plan
+           && plan.GeneratedNoArgStaticNames.Contains(name);
+
     private void WriteBareName(string name)
     {
         if (_tw.ExtensionReceiverName == null)
         {
             Write(name);
+            // MethodsOnly: a bare generated static of the enclosing type is a method.
+            if (IsGeneratedStaticMethodName(name))
+                Write("()");
             return;
         }
         if (_tw.ExtensionInstanceNames.Contains(name))
@@ -92,15 +104,19 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             Write($"{_tw.ExtensionReceiverName}.{name}");
             // Moved no-arg members are classic extension methods, not properties. Under scalar
             // erasure the receiver of a scalar type's moved member is a primitive, so ALL its
-            // no-arg members are extension methods too.
+            // no-arg members are extension methods too. MethodsOnly: every no-arg member whose
+            // name is not pinned to property syntax is a method.
             if (_tw.Writer.MovedNoArgNames.Contains(name)
-                || (_tw.ExtensionReceiverIsScalar && _tw.Writer.ScalarMemberNames.Contains(name)))
+                || (_tw.ExtensionReceiverIsScalar && _tw.Writer.ScalarMemberNames.Contains(name))
+                || (_tw.Writer.MethodsOnly && !_tw.Writer.PropertySyntaxNames.Contains(name)))
                 Write("()");
             return;
         }
         if (_tw.ExtensionStaticNames.Contains(name))
         {
             Write($"{_tw.ExtensionStaticQualifier}.{name}");
+            if (IsGeneratedStaticMethodName(name))
+                Write("()");
             return;
         }
         // Type references: namespace-qualified because members of the enclosing static library
@@ -161,6 +177,10 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         // getter — the same rule the reference writer applies per isStatic.
         var numParams = _tir.Original?.NumParameters ?? _tir.Parameters.Count;
         var isProp = _isStatic ? numParams == 0 : numParams == 1;
+        // MethodsOnly (--methods): the signature declared a METHOD unless the name is pinned
+        // to property syntax — frame the body to match.
+        if (_tw.Writer.MethodsOnly && _fi != null && _fi.EmitAsMethod)
+            isProp = false;
 
         // The reference writer hoists lambda-captured references into `var _var{N} = x;` blocks
         // before emitting (RewriteLambdasCapturingVars); mirror it, sharing the same counter.
@@ -190,7 +210,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     // --- statements ----------------------------------------------------------
 
     private static bool IsStatementNode(TirNode n)
-        => n is TirBlock || n is TirReturn || n is TirIf || n is TirLoop;
+        => n is TirBlock || n is TirReturn || n is TirIf || n is TirLoop || n is TirLoweredLoop;
 
     private void WriteStatement(TirNode n)
     {
@@ -248,6 +268,10 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 WriteStatement(l.Body);
                 WriteEndBlock();
                 WriteLine();
+                return;
+
+            case TirLoweredLoop ll:
+                WriteLoweredLoop(ll);
                 return;
 
             default:
@@ -349,6 +373,22 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 // and emit the inner node only. Genuine SOURCE-level conversions the programmer
                 // wrote (`Vector3(0.0)`, `x.Number`) arrive as a TirCall with
                 // EmissionKind.Conversion and are rendered by WriteCall — those are kept as-is.
+                // MethodsOnly: a scalar -> concrete-type BROADCAST must go through the WRAPPER
+                // (the broadcast implicit operators are deliberately wrapper-sourced), and the
+                // erased scalar expression no longer converts on its own.
+                if (_tw.Writer.MethodsOnly && _scalar != null && c.ToType?.Name != null
+                    && !CSharpWriter.ScalarPrimitives.ContainsKey(c.ToType.Name)
+                    && _tw.Writer.GetExtensionPlanByTypeName(c.ToType.Name) != null)
+                {
+                    var innerPrim = AuthoritativePrim(c.Inner, null);
+                    if (innerPrim != null)
+                    {
+                        Write($"(({ScalarEraseAnalysis.WrapperOfPrim(innerPrim)})(");
+                        WriteNode(c.Inner);
+                        Write("))");
+                        return;
+                    }
+                }
                 WriteNode(c.Inner);
                 return;
 
@@ -416,7 +456,11 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 // constructs a fresh body writer per lambda with lambdaParamPrim).
                 var savedScalar = _scalar;
                 var savedPending = _pendingLambdaParamPrim;
-                if (_tw.Writer.ScalarErase && lam.Origin is Lambda lamSym)
+                // Defensive: a generic lambda origin (type-variable first parameter) cannot build
+                // a FunctionInstance; keep the enclosing analysis (the inliner refuses to move
+                // such lambdas out of their home context, so this only guards future callers).
+                if (_tw.Writer.ScalarErase && lam.Origin is Lambda lamSym
+                    && !(lamSym.Function.NumParameters > 0 && lamSym.Function.Parameters[0].Type.IsTypeVariable))
                 {
                     var lfi = _tw.ToFunctionInfo(lamSym.Function, null, FunctionInstanceKind.Lambda);
                     _scalar = new ScalarEraseAnalysis(_tw, lfi.Function.Implementation, lfi.ParameterTypes, _pendingLambdaParamPrim);
@@ -428,6 +472,11 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 var lamBody = TirLambdaCaptureRewriter.Rewrite(lam.Body);
                 if (IsStatementNode(lamBody))
                 {
+                    // A C# lambda with a statement body still needs the arrow. No such lambda
+                    // occurs in any non-inline output (the flag differentials pin that), but the
+                    // inliner can create capture-hoisted block bodies inside lambdas.
+                    if (lamBody is TirBlock)
+                        Write("=> ");
                     WriteStatement(lamBody);
                 }
                 else
@@ -465,6 +514,10 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 Write(")");
                 return;
 
+            case TirTempRef tr:
+                Write(tr.Name);
+                return;
+
             case TirBooleanChain bc:
                 for (var i = 0; i < bc.Terms.Count; i++)
                 {
@@ -496,6 +549,49 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     private string NodeScalarPrim(TirNode n)
         => StripCoerce(n) is TirComponentAccess ca ? ca.ScalarComponentPrim : null;
 
+    // Scalar erasure + --inline only: the erased primitive of a LITERAL node. Inlining puts
+    // literals in receiver/argument positions whose enclosing call's origin symbols still point
+    // at the callee's source (a `Pi` group reference), where the origin analysis answers null;
+    // the literal itself is authoritative. Deliberately NOT generalized to arbitrary node types:
+    // zonked node types can be looser than the emitted surface (Self-unifies-anything), so only
+    // literals are trusted. Gated on InlineCalls so non-inline output stays byte-identical.
+    private string AuthoritativePrim(TirNode n, string originPrim)
+    {
+        var marker = NodeScalarPrim(n);
+        if (marker != null)
+            return marker;
+        if (!_tw.Writer.InlineCalls)
+            return originPrim;
+        // The inliner tags substituted arguments with the callee's zonked scalar parameter type
+        // via a transparent TirCoerce (see TirInliner) — walking outside-in, a scalar coercion
+        // target is authoritative, and a KNOWN CONCRETE non-scalar target (a solver broadcast
+        // like Number -> Vector3) is authoritatively NOT scalar; only unknown targets
+        // (interfaces, type variables) are skipped.
+        for (var m = n; m is TirCoerce c; m = c.Inner)
+        {
+            if (c.ToType?.Name == null)
+                continue;
+            if (CSharpWriter.ScalarPrimitives.TryGetValue(c.ToType.Name, out var coPrim))
+                return coPrim;
+            if (_tw.Writer.GetExtensionPlanByTypeName(c.ToType.Name) != null)
+                return null;
+        }
+        var stripped = StripCoerce(n);
+        if (stripped is TirLiteral lit)
+            switch (lit.LiteralType)
+            {
+                case Ara3D.Geometry.AST.LiteralTypesEnum.Number: return "float";
+                case Ara3D.Geometry.AST.LiteralTypesEnum.Integer: return "int";
+                case Ara3D.Geometry.AST.LiteralTypesEnum.Boolean: return "bool";
+                case Ara3D.Geometry.AST.LiteralTypesEnum.String: return "string";
+            }
+        if (originPrim != null)
+            return originPrim;
+        // Substituted nodes: the enclosing call's origin points at the callee's (generic)
+        // source, but the node itself kept ITS home origin — analyze that instead.
+        return _scalar != null && stripped?.Origin is Expression oe ? _scalar.ScalarPrimOf(oe) : null;
+    }
+
     private void WriteCall(TirCall call)
     {
         // Scalar erasure: wrap calls whose function GROUP determinately returns a scalar wrapper
@@ -522,6 +618,9 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         if (args.Count == 0)
         {
             Write($"Constants.{name}");
+            // MethodsOnly: constants are static methods.
+            if (_tw.Writer.MethodsOnly)
+                Write("()");
             return;
         }
 
@@ -534,9 +633,30 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             return;
         }
 
-        // Indexer: At(a, i, ...) -> a[i, ...].
+        // A lowered-loop result temp is a C# ARRAY: Count reads become Length.
+        if (name == "Count" && args.Count == 1 && StripCoerce(args[0]) is TirTempRef)
+        {
+            WriteNode(args[0]);
+            Write(".Length");
+            return;
+        }
+
+        // Indexer: At(a, i, ...) -> a[i, ...]. MethodsOnly: generated structs have no indexer,
+        // so a receiver of a known generated type calls .At(...) instead (IReadOnlyList and
+        // other unknown receivers keep their own indexers).
         if (name == "At")
         {
+            var recvType = StripCoerce(args[0])?.Type?.Name;
+            if (_tw.Writer.MethodsOnly && recvType != null
+                && _tw.Writer.GetExtensionPlanByTypeName(recvType) != null
+                && !CSharpWriter.ScalarPrimitives.ContainsKey(recvType))
+            {
+                WriteNode(args[0]);
+                Write(".At(");
+                WriteArgs(args.Skip(1));
+                Write(")");
+                return;
+            }
             WriteNode(args[0]);
             Write("[");
             WriteArgs(args.Skip(1));
@@ -545,8 +665,22 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         }
 
         // Member / method-call form: receiver first, then `.Name`, then `(rest)` unless it reads
-        // as a property (no-arg member access) or a type-named conversion property.
-        WriteNode(args[0]);
+        // as a property (no-arg member access) or a type-named conversion property. A ternary
+        // (or lambda/assignment) receiver must be parenthesized or the member access binds to its
+        // last operand; such receivers only arise from the inliner (the flag differentials pin
+        // that no non-inline output has them).
+        var recvNode = StripCoerce(args[0]);
+        if (recvNode is TirConditional || recvNode is TirLambda || recvNode is TirAssign
+            || recvNode is TirBooleanChain)
+        {
+            Write("(");
+            WriteNode(args[0]);
+            Write(")");
+        }
+        else
+        {
+            WriteNode(args[0]);
+        }
         Write(".");
         Write(name);
 
@@ -569,10 +703,28 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             // Scalar erasure: every member of the five scalar types is an extension METHOD on
             // the primitive, so a no-arg access on a provably scalar-valued receiver needs "()".
             if (_scalar != null && _tw.Writer.ScalarMemberNames.Contains(name)
-                && (NodeScalarPrim(args[0]) != null
+                && (AuthoritativePrim(args[0], null) != null
                     || (originFc != null && originFc.Args.Count >= 1
                         && originFc.Args[0] is Expression origRecv && _scalar.IsScalarValued(origRecv))))
+            {
                 Write("()");
+                return;
+            }
+            // MethodsOnly: every no-arg member access is a method call unless the name is
+            // pinned to property/field syntax. STATIC member accesses (type-ref receiver) are
+            // decided by the target type's plan: generated statics are methods, handwritten
+            // statics (Number.MinValue) keep member syntax.
+            if (_tw.Writer.MethodsOnly)
+            {
+                if (StripCoerce(args[0]) is TirTypeRef recvT)
+                {
+                    var recvPlan = _tw.Writer.GetExtensionPlanByTypeName(recvT.TypeDef?.Name);
+                    if (recvPlan != null && recvPlan.GeneratedNoArgStaticNames.Contains(name))
+                        Write("()");
+                }
+                else if (!_tw.Writer.PropertySyntaxNames.Contains(name))
+                    Write("()");
+            }
             return;
         }
 
@@ -590,10 +742,19 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         // scalar arguments at non-scalar member call sites — the legacy writer's two cast rules.
         IReadOnlyList<string> argPrims = null;
         string receiverPrim = null;
+        if (_scalar != null && _tw.Writer.InlineCalls)
+        {
+            // Inlined bodies: the enclosing origin may not be a group call (operator origins),
+            // but the receiver node itself may still be provably scalar — without this, a
+            // known-scalar argument at an unknown receiver takes the wrapper-restoring cast
+            // and turns an exact float binding into an ambiguous one.
+            var recvOrigin = originFc != null && originFc.Args.Count >= 1 ? originFc.Args[0] as Expression : null;
+            receiverPrim = AuthoritativePrim(args[0], recvOrigin != null ? _scalar.ScalarPrimOf(recvOrigin) : null);
+        }
         if (_scalar != null && originFc != null && originFc.Function is FunctionGroupRefSymbol fgrc
             && originFc.Args.Count >= 1 && originFc.Args[0] is Expression recvExpr)
         {
-            receiverPrim = NodeScalarPrim(args[0]) ?? _scalar.ScalarPrimOf(recvExpr);
+            receiverPrim = receiverPrim ?? AuthoritativePrim(args[0], _scalar.ScalarPrimOf(recvExpr));
             if (receiverPrim != null)
             {
                 var overloads = _scalar.MatchingScalarOverloads(fgrc.Name, originFc.Args.Count, receiverPrim);
@@ -620,7 +781,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 ? originFc.Args[argIndex] as Expression
                 : null;
             var argPrim = _scalar != null
-                ? NodeScalarPrim(a) ?? (symArg != null ? _scalar.ScalarPrimOf(symArg) : null)
+                ? AuthoritativePrim(a, symArg != null ? _scalar.ScalarPrimOf(symArg) : null)
                 : null;
             if (argPrims != null && argPrim != null
                 && CSharpWriter.ScalarPrimitives.TryGetValue(argPrims[argIndex], out var castPrim))
@@ -631,7 +792,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             }
             else if (argPrim != null && receiverPrim == null)
             {
-                Write($"(({ScalarEraseAnalysis.WrapperOfPrim(argPrim)})(");
+                Write($"(({RestoreCastType(call, argIndex, argPrim)})(");
                 WriteNode(a);
                 Write("))");
             }
@@ -643,6 +804,239 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         }
         Write(")");
         _pendingLambdaParamPrim = savedPrim;
+    }
+
+    // --- loop lowering emission (--loops; see TirLoopLowerer) --------------------------------
+
+    private void WriteLoweredLoop(TirLoweredLoop ll)
+    {
+        var k = ll.Id;
+        // Prefer the lowerer's authoritative result-element type (taken from the producing
+        // function's own type); fall back to the call's zonked IArray<T> argument.
+        var elem = ll.ElemType?.Name != null
+            ? _tw.ToCSharpType(ll.ElemType)
+            : ll.Type != null && ll.Type.TypeArgs.Count == 1 ? _tw.ToCSharpType(ll.Type.TypeArgs[0]) : null;
+        var srcNames = new List<string>();
+        var srcCounts = new List<string>();
+        for (var s = 0; s < ll.Sources.Count; s++)
+        {
+            var name = ll.Sources.Count == 1 ? $"_s{k}" : $"_s{k}{(char)('a' + s)}";
+            srcNames.Add(name);
+            // A source that is itself a lowered-loop result is a C# ARRAY: Length, not Count.
+            srcCounts.Add(StripCoerce(ll.Sources[s]) is TirTempRef ? $"{name}.Length" : $"{name}.Count");
+            Write($"var {name} = ");
+            WriteNode(ll.Sources[s]);
+            WriteLine(";");
+        }
+        var n = $"_n{k}";
+        var i = $"_i{k}";
+        var t = ll.TempName;
+
+        void For(string count, System.Action body)
+        {
+            WriteLine($"for (var {i} = 0; {i} < {count}; {i}++)");
+            WriteStartBlock();
+            body();
+            WriteEndBlock();
+        }
+
+        // The function argument: a lambda literal's body is emitted INLINE with its parameters
+        // declared as loop locals; a delegate-typed reference is invoked.
+        var fn = ll.Fn == null ? null : StripCoerce(ll.Fn);
+        var lam = fn as TirLambda;
+        void DeclareParams(params string[] elems)
+        {
+            if (lam == null)
+                return;
+            for (var p = 0; p < lam.Parameters.Count && p < elems.Length; p++)
+                WriteLine($"var {lam.Parameters[p].Name} = {elems[p]};");
+        }
+        void WriteFnValue(params string[] elems)
+        {
+            if (lam != null)
+            {
+                var savedScalar = _scalar;
+                var savedPending = _pendingLambdaParamPrim;
+                if (_tw.Writer.ScalarErase && lam.Origin is Lambda lamSym
+                    && !(lamSym.Function.NumParameters > 0 && lamSym.Function.Parameters[0].Type.IsTypeVariable))
+                {
+                    var lfi = _tw.ToFunctionInfo(lamSym.Function, null, FunctionInstanceKind.Lambda);
+                    _scalar = new ScalarEraseAnalysis(_tw, lfi.Function.Implementation, lfi.ParameterTypes, _pendingLambdaParamPrim);
+                    _pendingLambdaParamPrim = null;
+                }
+                _lambdaDepth++;
+                WriteNode(lam.Body);
+                _lambdaDepth--;
+                _scalar = savedScalar;
+                _pendingLambdaParamPrim = savedPending;
+            }
+            else
+            {
+                WriteNode(fn);
+                Write("(");
+                Write(string.Join(", ", elems));
+                Write(")");
+            }
+        }
+        // The element prim the lambda's parameters erase to, when the receiver's origin can
+        // determine it (same channel the call-site emission uses for element-wise HOFs).
+        if (lam != null && _scalar != null && ll.Origin is FunctionCall originFc
+            && originFc.Args.Count >= 1 && originFc.Args[0] is Expression recvExpr)
+            _pendingLambdaParamPrim = _scalar.ElementPrimOf(recvExpr);
+
+        switch (ll.Kind)
+        {
+            case "Map" or "MapIdx":
+                WriteLine($"var {n} = {srcCounts[0]};");
+                WriteLine($"var {t} = new {elem}[{n}];");
+                For(n, () =>
+                {
+                    var elems = ll.Kind == "MapIdx"
+                        ? new[] { $"{srcNames[0]}[{i}]", i }
+                        : new[] { $"{srcNames[0]}[{i}]" };
+                    DeclareParams(elems);
+                    Write($"{t}[{i}] = ");
+                    WriteFnValue(elems);
+                    WriteLine(";");
+                });
+                break;
+            case "MapRange":
+                WriteLine($"var {t} = new {elem}[{srcNames[0]}];");
+                For($"{srcNames[0]}", () =>
+                {
+                    DeclareParams(i);
+                    Write($"{t}[{i}] = ");
+                    WriteFnValue(i);
+                    WriteLine(";");
+                });
+                break;
+            case "Zip2":
+            case "Zip3":
+                Write($"var {n} = System.Math.Min({srcCounts[0]}, {srcCounts[1]});");
+                WriteLine(ll.Kind == "Zip3" ? $" {n} = System.Math.Min({n}, {srcCounts[2]});" : "");
+                WriteLine($"var {t} = new {elem}[{n}];");
+                For(n, () =>
+                {
+                    var elems = srcNames.Select(sn => $"{sn}[{i}]").ToArray();
+                    DeclareParams(elems);
+                    Write($"{t}[{i}] = ");
+                    WriteFnValue(elems);
+                    WriteLine(";");
+                });
+                break;
+            case "Reduce":
+                Write($"var {t} = ");
+                WriteNode(ll.Seed);
+                WriteLine(";");
+                WriteLine($"var {n} = {srcCounts[0]};");
+                For(n, () =>
+                {
+                    DeclareParams(t, $"{srcNames[0]}[{i}]");
+                    Write($"{t} = ");
+                    WriteFnValue(t, $"{srcNames[0]}[{i}]");
+                    WriteLine(";");
+                });
+                break;
+            case "All":
+            case "Any":
+                var isAll = ll.Kind == "All";
+                WriteLine($"var {t} = {(isAll ? "true" : "false")};");
+                WriteLine($"var {n} = {srcCounts[0]};");
+                For(n, () =>
+                {
+                    DeclareParams($"{srcNames[0]}[{i}]");
+                    Write(isAll ? "if (!(bool)(" : "if ((bool)(");
+                    WriteFnValue($"{srcNames[0]}[{i}]");
+                    WriteLine("))");
+                    WriteStartBlock();
+                    WriteLine($"{t} = {(isAll ? "false" : "true")};");
+                    WriteLine("break;");
+                    WriteEndBlock();
+                });
+                break;
+            case "Reverse":
+                WriteLine($"var {n} = {srcCounts[0]};");
+                WriteLine($"var {t} = new {elem}[{n}];");
+                For(n, () => WriteLine($"{t}[{i}] = {srcNames[0]}[{n} - 1 - {i}];"));
+                break;
+            case "WithNext":
+            {
+                WriteLine($"var {n} = {srcCounts[0]};");
+                Write($"var _m{k} = (bool)(");
+                WriteNode(ll.IncludeFirst);
+                WriteLine($") ? {n} : ({n} > 1 ? {n} - 1 : 0);");
+                WriteLine($"var {t} = new {elem}[_m{k}];");
+                For($"_m{k}", () =>
+                {
+                    DeclareParams($"{srcNames[0]}[{i}]", $"{srcNames[0]}[({i} + 1) % {n}]");
+                    Write($"{t}[{i}] = ");
+                    WriteFnValue($"{srcNames[0]}[{i}]", $"{srcNames[0]}[({i} + 1) % {n}]");
+                    WriteLine(";");
+                });
+                break;
+            }
+            case "MapPairs":
+            case "MapTriplets":
+            case "MapQuartets":
+            {
+                var stride = ll.Kind == "MapPairs" ? 2 : ll.Kind == "MapTriplets" ? 3 : 4;
+                WriteLine($"var {n} = {srcCounts[0]} / {stride};");
+                WriteLine($"var {t} = new {elem}[{n}];");
+                For(n, () =>
+                {
+                    var elems = Enumerable.Range(0, stride)
+                        .Select(o => o == 0 ? $"{srcNames[0]}[{i} * {stride}]" : $"{srcNames[0]}[{i} * {stride} + {o}]")
+                        .ToArray();
+                    DeclareParams(elems);
+                    Write($"{t}[{i}] = ");
+                    WriteFnValue(elems);
+                    WriteLine(";");
+                });
+                break;
+            }
+            default:
+                WriteLine($"/*unknown lowered loop kind: {ll.Kind}*/");
+                break;
+        }
+        _pendingLambdaParamPrim = null;
+    }
+
+    /// <summary>The cast that pins a scalar argument's type at a call site whose receiver the
+    /// writer cannot prove scalar. Classically the WRAPPER (kept members take wrapper types, and
+    /// broadcasts like Number -> Vector3 are wrapper-sourced). Under --methods the kept members
+    /// take erased primitives, so consult the receiver type's overload surface: a same-name
+    /// overload with a scalar parameter at this position wants the primitive (exact binding);
+    /// otherwise the wrapper (broadcast).</summary>
+    private string RestoreCastType(TirCall call, int argIndex, string argPrim)
+    {
+        if (!_tw.Writer.MethodsOnly)
+            return ScalarEraseAnalysis.WrapperOfPrim(argPrim);
+        // The resolved callee's declared parameter type is the strongest signal: a scalar
+        // parameter erased to the primitive (exact binding), anything else wants the wrapper.
+        var declared = call.ParameterTypes != null && argIndex < call.ParameterTypes.Count
+            ? call.ParameterTypes[argIndex]?.Name
+            : null;
+        declared = declared
+            ?? (call.Callee?.Parameters != null && argIndex < call.Callee.Parameters.Count
+                ? call.Callee.Parameters[argIndex]?.Type?.Name
+                : null);
+        if (declared != null && CSharpWriter.ScalarPrimitives.ContainsKey(declared))
+            return argPrim;
+        // Receiver-surface fallback: a same-name overload with a scalar parameter here means
+        // the primitive binds exactly.
+        var recvNode = StripCoerce(call.Args[0]);
+        var recvType = recvNode is TirTypeRef tr ? tr.TypeDef?.Name : recvNode?.Type?.Name;
+        var plan = declared == null ? _tw.Writer.GetExtensionPlanByTypeName(recvType) : null;
+        if (plan != null)
+            foreach (var f in plan.CandidateFunctions)
+            {
+                if (f.Name != call.Name || f.ParameterTypes.Count != call.Args.Count)
+                    continue;
+                var pt = argIndex < f.ParameterTypes.Count ? f.ParameterTypes[argIndex]?.Name : null;
+                if (pt != null && CSharpWriter.ScalarPrimitives.ContainsKey(pt))
+                    return argPrim;
+            }
+        return ScalarEraseAnalysis.WrapperOfPrim(argPrim);
     }
 
     /// <summary>Writes a call ARGUMENT. Scalar erasure only: a reference to a function-typed

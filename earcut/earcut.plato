@@ -1,0 +1,275 @@
+// ============================================================================
+// Earcut — polygon-with-holes triangulation by ear clipping.
+//
+// A functional re-expression of mapbox/earcut (ISC license). Same input model
+// (one point array; each hole is a trailing ring identified by the index of
+// its first vertex) and same output model (triangles as indices into the
+// input points, counter-clockwise).
+//
+// Where the original earcut is a doubly-linked vertex list mutated in place,
+// accelerated by z-order-curve hashing and repaired by special-case passes,
+// this version is a pipeline of pure folds:
+//   1. every ring is oriented (outer counter-clockwise, holes clockwise)
+//      and stripped of degenerate corners (earcut's filterPoints),
+//   2. each hole is spliced into the outer ring through a visible bridge,
+//   3. one ear is clipped per step until only a triangle remains.
+// Cost is O(n^2) for ear clipping and O(n^3) per hole bridge — simplicity,
+// portability, and ease of verification are preferred over speed throughout.
+// The findings document next to this file compares the two formulations.
+// ============================================================================
+
+// A polygon with zero or more holes, earcut-style: all rings share one point
+// array; ring r > 0 (a hole) starts at HoleStarts[r-1]; the outer ring starts
+// at 0. Rings may be stored in either winding; triangulation normalizes them.
+type PolygonWithHoles
+{
+    Points: IArray<Point2D>;
+    HoleStarts: IArray<Integer>;
+}
+
+// One step of an ear-clipping pass: the vertex indices of the not-yet-clipped
+// ring, and the triangles emitted so far.
+type EarClipState
+{
+    Ring: IArray<Integer>;
+    Triangles: IArray<Integer3>;
+}
+
+library Earcut
+{
+    //==
+    // Array helpers
+
+    // The array with element i removed.
+    RemoveAt(xs: IArray<$T>, i: Integer): IArray<$T>
+        => xs.Take(i).Concatenate(xs.Skip(i + 1));
+
+    NoTriangles(p: PolygonWithHoles): IArray<Integer3>
+        => 0.MapRange(i => new Integer3(i, i, i));
+
+    //==
+    // Planar predicates
+
+    // Twice the signed area of triangle (a, b, c): positive when the corner
+    // turns counter-clockwise.
+    Turn(a: Point2D, b: Point2D, c: Point2D): Number
+        => (b - a).Cross(c - a);
+
+    SamePoint(a: Point2D, b: Point2D): Boolean
+        => a.X == b.X && a.Y == b.Y;
+
+    // Is p inside or on the boundary of the counter-clockwise triangle (a, b, c)?
+    InsideTriangle(p: Point2D, a: Point2D, b: Point2D, c: Point2D): Boolean
+        => a.Turn(b, p) >= 0.0 && b.Turn(c, p) >= 0.0 && c.Turn(a, p) >= 0.0;
+
+    // Proper crossing of segments (a, b) and (c, d): a single intersection
+    // point interior to both. Shared endpoints and collinear touching do not count.
+    Crosses(a: Point2D, b: Point2D, c: Point2D, d: Point2D): Boolean
+        => a.Turn(b, c) * a.Turn(b, d) < 0.0
+        && c.Turn(d, a) * c.Turn(d, b) < 0.0;
+
+    // Does edge (a, b) cross the horizontal ray from p towards +X?
+    // Half-open in Y so an edge chain crossing a shared vertex counts once.
+    CrossesRay(a: Point2D, b: Point2D, p: Point2D): Boolean
+        => (a.Y > p.Y).ExclusiveOr(b.Y > p.Y)
+        && p.X < a.X + (p.Y - a.Y) / (b.Y - a.Y) * (b.X - a.X);
+
+    // Does q lie strictly between a and b on the segment (a, b)?
+    OnSegment(q: Point2D, a: Point2D, b: Point2D): Boolean
+        => a.Turn(b, q) == 0.0 && (q - a).Dot(q - b) < 0.0;
+
+    //==
+    // Rings: cyclic sequences of indices into a shared point array
+
+    // The ring vertex at cyclic position i.
+    RingPoint(points: IArray<Point2D>, ring: IArray<Integer>, i: Integer): Point2D
+        => points.At(ring.AtModulo(i));
+
+    // Twice the signed shoelace area: positive when counter-clockwise.
+    RingTwiceArea(points: IArray<Point2D>, ring: IArray<Integer>): Number
+        => ring.Indices.Map(i
+            => points.RingPoint(ring, i).Vector2.Cross(points.RingPoint(ring, i + 1).Vector2))
+            .Reduce(0.0, (a, b) => a + b);
+
+    // Twice the signed area of the corner at cyclic position i.
+    CornerTurn(points: IArray<Point2D>, ring: IArray<Integer>, i: Integer): Number
+        => points.RingPoint(ring, i + ring.Count - 1).Turn(
+           points.RingPoint(ring, i),
+           points.RingPoint(ring, i + 1));
+
+    // Does segment (a, b) properly cross any edge of the ring?
+    RingCrossed(points: IArray<Point2D>, ring: IArray<Integer>, a: Point2D, b: Point2D): Boolean
+        => ring.Indices.Any(i
+            => a.Crosses(b, points.RingPoint(ring, i), points.RingPoint(ring, i + 1)));
+
+    // How many ring edges does the ray from q towards +X cross?
+    CrossingCount(points: IArray<Point2D>, ring: IArray<Integer>, q: Point2D): Integer
+        => ring.Indices.Map(i
+            => points.RingPoint(ring, i).CrossesRay(points.RingPoint(ring, i + 1), q) ? 1 : 0)
+            .Reduce(0, (a, b) => a + b);
+
+    //==
+    // The rings of a polygon with holes
+
+    NumRings(p: PolygonWithHoles): Integer
+        => p.HoleStarts.Count + 1;
+
+    RingStart(p: PolygonWithHoles, r: Integer): Integer
+        => r == 0 ? 0 : p.HoleStarts.At(r - 1);
+
+    RingEnd(p: PolygonWithHoles, r: Integer): Integer
+        => r == p.HoleStarts.Count ? p.Points.Count : p.HoleStarts.At(r);
+
+    RawRing(p: PolygonWithHoles, r: Integer): IArray<Integer>
+        => (p.RingEnd(r) - p.RingStart(r)).Range.Map(i => i + p.RingStart(r));
+
+    // The first corner with zero turn — a duplicated vertex, a collinear
+    // midpoint, or a zero-width spike — or -1 when the ring is clean.
+    DegenerateCorner(points: IArray<Point2D>, ring: IArray<Integer>): Integer
+        => ring.Count.Range.Reduce(-1, (best, i)
+            => best >= 0 ? best : points.CornerTurn(ring, i) == 0.0 ? i : best);
+
+    FilterStep(points: IArray<Point2D>, ring: IArray<Integer>): IArray<Integer>
+        => ring.Count < 3 ? ring.Take(0)
+         : points.DegenerateCorner(ring) < 0 ? ring
+         : ring.RemoveAt(points.DegenerateCorner(ring));
+
+    // Remove degenerate corners until none remain (earcut's filterPoints).
+    // Each step removes one vertex, so n steps always reach the fixed point.
+    FilterRing(points: IArray<Point2D>, ring: IArray<Integer>): IArray<Integer>
+        => ring.Map(v => ring).Reduce(ring, (r, t) => points.FilterStep(r));
+
+    // Ring r wound the way triangulation needs it (the outer ring
+    // counter-clockwise, holes clockwise) and stripped of degenerate corners.
+    OrientedRing(p: PolygonWithHoles, r: Integer): IArray<Integer>
+        => p.Points.FilterRing(
+            (p.Points.RingTwiceArea(p.RawRing(r)) > 0.0).ExclusiveOr(r == 0)
+                ? p.RawRing(r).Reverse
+                : p.RawRing(r));
+
+    // Is q strictly inside the polygon (inside the outer ring, outside every
+    // hole)? Even-odd over the edges of all rings.
+    Contains(p: PolygonWithHoles, q: Point2D): Boolean
+        => p.NumRings.Range.Map(r => p.Points.CrossingCount(p.RawRing(r), q))
+            .Reduce(0, (a, b) => a + b) % 2 == 1;
+
+    //==
+    // Hole bridging: splice each hole ring into the outer ring through a
+    // bridge segment both endpoints can "see" (it crosses no edge and runs
+    // through the interior).
+
+    // Segment (a, b) is a usable bridge when it crosses no edge of the merged
+    // ring or of any original ring, passes through no vertex, and runs through
+    // the polygon's interior.
+    CanSee(p: PolygonWithHoles, a: Point2D, b: Point2D, ring: IArray<Integer>): Boolean
+        => !p.Points.RingCrossed(ring, a, b)
+        && !p.NumRings.Range.Any(r => p.Points.RingCrossed(p.RawRing(r), a, b))
+        && !p.Points.Any(v => v.OnSegment(a, b))
+        && p.Contains(a.Average(b));
+
+    IsValidBridge(p: PolygonWithHoles, ring: IArray<Integer>, hole: IArray<Integer>, k: Integer, j: Integer): Boolean
+        => p.CanSee(p.Points.At(ring.At(k)), p.Points.At(hole.At(j)), ring);
+
+    // The first (ring position, hole position) pair joinable by a valid
+    // bridge, encoded as k * hole.Count + j; -1 when none exists.
+    FindBridge(p: PolygonWithHoles, ring: IArray<Integer>, hole: IArray<Integer>): Integer
+        => (ring.Count * hole.Count).Range.Reduce(-1, (best, c)
+            => best >= 0 ? best
+             : p.IsValidBridge(ring, hole, c / hole.Count, c % hole.Count) ? c
+             : best);
+
+    // The ring with the hole spliced in: ...ring[k], hole[j..], hole[..j],
+    // hole[j], ring[k]... — the bridge edge appears twice, once per direction.
+    Splice(ring: IArray<Integer>, hole: IArray<Integer>, k: Integer, j: Integer): IArray<Integer>
+        => ring.Take(k + 1)
+            .Concatenate(hole.Skip(j))
+            .Concatenate(hole.Take(j + 1))
+            .Concatenate(ring.Skip(k));
+
+    // A hole reduced below a triangle by filtering encloses nothing: skip it.
+    MergeHole(p: PolygonWithHoles, ring: IArray<Integer>, hole: IArray<Integer>): IArray<Integer>
+        => hole.Count < 3 ? ring : p.BridgedSplice(ring, hole, p.FindBridge(ring, hole));
+
+    // Splice at an encoded bridge; an unbridgeable hole (invalid input)
+    // falls back to position (0, 0) so triangulation still terminates.
+    BridgedSplice(p: PolygonWithHoles, ring: IArray<Integer>, hole: IArray<Integer>, c: Integer): IArray<Integer>
+        => c >= 0
+            ? ring.Splice(hole, c / hole.Count, c % hole.Count)
+            : ring.Splice(hole, 0, 0);
+
+    HoleRings(p: PolygonWithHoles): IArray<IArray<Integer>>
+        => p.HoleStarts.Count.MapRange(h => p.OrientedRing(h + 1));
+
+    // All rings joined into one: the outer ring with every hole bridged in.
+    MergedRing(p: PolygonWithHoles): IArray<Integer>
+        => p.HoleRings.Reduce(p.OrientedRing(0), (ring, hole) => p.MergeHole(ring, hole));
+
+    //==
+    // Ear clipping over the merged ring
+
+    // A vertex blocks an ear unless it coincides with one of its corners.
+    Blocks(q: Point2D, a: Point2D, b: Point2D, c: Point2D): Boolean
+        => !q.SamePoint(a) && !q.SamePoint(b) && !q.SamePoint(c)
+        && q.InsideTriangle(a, b, c);
+
+    // Corner i is an ear when it turns counter-clockwise and no other ring
+    // vertex lies inside (or on) its triangle.
+    IsEar(points: IArray<Point2D>, ring: IArray<Integer>, i: Integer): Boolean
+        => points.CornerTurn(ring, i) > 0.0
+        && !ring.Any(v => points.At(v).Blocks(
+            points.RingPoint(ring, i + ring.Count - 1),
+            points.RingPoint(ring, i),
+            points.RingPoint(ring, i + 1)));
+
+    FirstEar(points: IArray<Point2D>, ring: IArray<Integer>): Integer
+        => ring.Count.Range.Reduce(-1, (best, i)
+            => best >= 0 ? best : points.IsEar(ring, i) ? i : best);
+
+    FirstConvex(points: IArray<Point2D>, ring: IArray<Integer>): Integer
+        => ring.Count.Range.Reduce(-1, (best, i)
+            => best >= 0 ? best : points.CornerTurn(ring, i) > 0.0 ? i : best);
+
+    // Clip one corner: the first ear, or — for degenerate or self-intersecting
+    // input, where no ear exists — the first convex corner, or corner 0.
+    // Only corners with positive area emit a triangle.
+    ClipOne(points: IArray<Point2D>, s: EarClipState): EarClipState
+    {
+        var ear = points.FirstEar(s.Ring);
+        var convex = ear >= 0 ? ear : points.FirstConvex(s.Ring);
+        var i = convex >= 0 ? convex : 0;
+        var tri = new Integer3(
+            s.Ring.AtModulo(i + s.Ring.Count - 1),
+            s.Ring.At(i),
+            s.Ring.AtModulo(i + 1));
+        return new EarClipState(
+            s.Ring.RemoveAt(i),
+            points.CornerTurn(s.Ring, i) > 0.0 ? s.Triangles.Append(tri) : s.Triangles);
+    }
+
+    //==
+    // Entry points
+
+    StartState(p: PolygonWithHoles, ring: IArray<Integer>): EarClipState
+        => new EarClipState(ring, p.NoTriangles);
+
+    // Clip until only a triangle remains: a ring of n vertices takes exactly
+    // n - 2 clips. (The fold's elements are unused copies of the start state:
+    // the emitter currently mis-types folds whose accumulator differs from the
+    // element type — see the findings document.)
+    ClipAll(p: PolygonWithHoles, ring: IArray<Integer>): EarClipState
+        => (ring.Count < 3 ? 0 : ring.Count - 2).MapRange(i => p.StartState(ring))
+            .Reduce(p.StartState(ring), (s, t) => p.Points.ClipOne(s));
+
+    // Triangulate: bridge the holes into the outer ring, then clip ears.
+    Triangulate(p: PolygonWithHoles): IArray<Integer3>
+        => p.ClipAll(p.MergedRing).Triangles;
+
+    // A simple polygon (no holes).
+    Triangulate(poly: Polygon): IArray<Integer3>
+        => new PolygonWithHoles(poly.Points, poly.Points.Map(x => 0).Take(0)).Triangulate;
+
+    // The original earcut signature: flat [x0, y0, x1, y1, ...] coordinates
+    // plus the vertex index at which each hole starts.
+    Triangulate(coords: IArray<Number>, holeStarts: IArray<Integer>): IArray<Integer3>
+        => new PolygonWithHoles(coords.MapPairs((x, y) => new Point2D(x, y)), holeStarts).Triangulate;
+}

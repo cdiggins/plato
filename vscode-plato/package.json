@@ -1,0 +1,45 @@
+{
+  "name": "plato",
+  "displayName": "Plato",
+  "description": "Syntax highlighting for the Plato programming language (.plato)",
+  "version": "0.1.0",
+  "publisher": "ara3d",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "keywords": [
+    "plato",
+    "geometry",
+    "syntax"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ara3d/plato"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "plato",
+        "aliases": [
+          "Plato",
+          "plato"
+        ],
+        "extensions": [
+          ".plato"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "plato",
+        "scopeName": "source.plato",
+        "path": "./syntaxes/plato.tmLanguage.json"
+      }
+    ]
+  }
+}

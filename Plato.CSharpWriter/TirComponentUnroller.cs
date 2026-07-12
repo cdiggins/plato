@@ -193,20 +193,25 @@ public static class TirComponentUnroller
         if (lambdaBody.Descendants().OfType<TirLambda>().Any())
             return null;
 
-        // All vector arguments must be plain parameter references of one and the same
-        // statically-known IArrayLike type.
+        // All vector arguments must be plain parameter references — or `p.Components` reads of
+        // one (the components of an IArrayLike ARE its fields, so the wrapper is transparent;
+        // this is what a Reduce over Components looks like after inlining exposes it) — of one
+        // and the same statically-known IArrayLike type.
         var vecArgs = new TirNode[vecArgCount];
         string typeName = null;
         for (var i = 0; i < vecArgCount; ++i)
         {
-            if (!(Strip(fc.Args[i]) is TirParameter pr) || pr.Def == null
+            var arg = Strip(fc.Args[i]);
+            if (arg is TirCall compCall && compCall.Name == "Components" && compCall.Args.Count == 1)
+                arg = Strip(compCall.Args[0]);
+            if (!(arg is TirParameter pr) || pr.Def == null
                 || !paramTypes.TryGetValue(pr.Def, out var t))
                 return null;
             if (typeName == null)
                 typeName = t;
             else if (typeName != t)
                 return null;
-            vecArgs[i] = Strip(fc.Args[i]);
+            vecArgs[i] = arg;
         }
 
         var fields = writer.GetComponentFields(typeName);

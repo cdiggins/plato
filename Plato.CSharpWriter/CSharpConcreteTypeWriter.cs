@@ -53,11 +53,15 @@ namespace Ara3D.Geometry.CSharpWriter
 
             // Scalar erasure: the implements-list keeps wrapper types (concept interfaces are
             // not erased - see CSharpTypeWriter.WriteConceptInterface), while FIELDS erase.
+            // MethodsOnly (--methods): the concept interfaces ARE erased, so the implements-list
+            // erases with them; unerasedFieldTypes stays truly unerased (it feeds analyses, not
+            // emission).
             var saveErase = TypeWriter.EraseScalars;
-            TypeWriter.EraseScalars = false;
+            TypeWriter.EraseScalars = Writer.MethodsOnly && saveErase;
             var implements = ConcreteType.Interfaces.Count > 0
                 ? $": " + ConcreteType.Interfaces.Select(TypeWriter.ToCSharpType).JoinStringsWithComma()
                 : "";
+            TypeWriter.EraseScalars = false;
             var unerasedFieldTypes = ConcreteType.TypeDef.Fields.Select(f => TypeWriter.ToCSharpType(f.Type)).ToList();
             TypeWriter.EraseScalars = saveErase;
 
@@ -170,23 +174,27 @@ namespace Ara3D.Geometry.CSharpWriter
             }
 
             TypeWriter.WriteLine("// Object virtual function overrides: Equals, GetHashCode, ToString");
+            // MethodsOnly: Boolean-returning scaffolding erases to bool (and Equals(other) is
+            // already a bool, so no .Value unwrap).
+            var boolT = Writer.MethodsOnly ? "bool" : "Boolean";
+            var boolVal = Writer.MethodsOnly ? "" : ".Value";
             if (!IsPrimitive)
             {
                 if (FieldNames.Count > 0)
                 {
                     var eqBody = FieldNames.Select(f => $"{f}.Equals(other.{f})").JoinStrings(" && ");
-                    TypeWriter.WriteLine($"{Attr} public Boolean Equals({Name} other) => {eqBody};");
+                    TypeWriter.WriteLine($"{Attr} public {boolT} Equals({Name} other) => {eqBody};");
                     // Parenthesized: a bare `!a && b` would negate only the first field's comparison.
-                    TypeWriter.WriteLine($"{Attr} public Boolean NotEquals({Name} other) => !({eqBody});");
-                    TypeWriter.WriteLine($"{Attr} public override bool Equals(object obj) => obj is {Name} other ? Equals(other).Value : false;");
+                    TypeWriter.WriteLine($"{Attr} public {boolT} NotEquals({Name} other) => !({eqBody});");
+                    TypeWriter.WriteLine($"{Attr} public override bool Equals(object obj) => obj is {Name} other ? Equals(other){boolVal} : false;");
                 }
                 else
                 {
                     TypeWriter.WriteLine($"{Attr} public override bool Equals(object obj) => obj is {Name};");
-                    TypeWriter.WriteLine($"{Attr} public Boolean Equals({Name} other) => true;");
-                    TypeWriter.WriteLine($"{Attr} public Boolean NotEquals({Name} other) => false;");
-                    TypeWriter.WriteLine($"{Attr} public static Boolean operator==({Name} a, {Name} b) => true;");
-                    TypeWriter.WriteLine($"{Attr} public static Boolean operator!=({Name} a, {Name} b) => false;");
+                    TypeWriter.WriteLine($"{Attr} public {boolT} Equals({Name} other) => true;");
+                    TypeWriter.WriteLine($"{Attr} public {boolT} NotEquals({Name} other) => false;");
+                    TypeWriter.WriteLine($"{Attr} public static {boolT} operator==({Name} a, {Name} b) => true;");
+                    TypeWriter.WriteLine($"{Attr} public static {boolT} operator!=({Name} a, {Name} b) => false;");
                 }
                 TypeWriter.WriteLine($"{Attr} public override int GetHashCode() => Intrinsics.CombineHashCodes({fieldNamesStr});");
 
@@ -195,11 +203,11 @@ namespace Ara3D.Geometry.CSharpWriter
             }
             else
             {
-                TypeWriter.WriteLine($"{Attr} public Boolean Equals({Name} other) => Value.Equals(other.Value);");
-                TypeWriter.WriteLine($"{Attr} public Boolean NotEquals({Name} other) => !Value.Equals(other.Value);");
+                TypeWriter.WriteLine($"{Attr} public {boolT} Equals({Name} other) => Value.Equals(other.Value);");
+                TypeWriter.WriteLine($"{Attr} public {boolT} NotEquals({Name} other) => !Value.Equals(other.Value);");
                 TypeWriter.WriteLine($"{Attr} public override bool Equals(object obj) => obj is {Name} other ? Equals(other) : false;");
-                TypeWriter.WriteLine($"{Attr} public static Boolean operator==({Name} a, {Name} b) => a.Equals(b);");
-                TypeWriter.WriteLine($"{Attr} public static Boolean operator!=({Name} a, {Name} b) => !a.Equals(b);");
+                TypeWriter.WriteLine($"{Attr} public static {boolT} operator==({Name} a, {Name} b) => a.Equals(b);");
+                TypeWriter.WriteLine($"{Attr} public static {boolT} operator!=({Name} a, {Name} b) => !a.Equals(b);");
                 TypeWriter.WriteLine($"{Attr} public override int GetHashCode() => Value.GetHashCode();");
                 TypeWriter.WriteLine($"{Attr} public override string ToString() => Value.ToString();");
             }
@@ -210,7 +218,10 @@ namespace Ara3D.Geometry.CSharpWriter
             TypeWriter.WriteLine("// Explicit implementation of interfaces by forwarding properties to fields");
             // Scalar erasure: explicit interface implementations must use the interface's
             // (unerased, wrapper-typed) member types; the erased field converts implicitly.
-            TypeWriter.EraseScalars = false;
+            // MethodsOnly: the interfaces are erased and declare METHODS, so the forwarders are
+            // erased explicit methods.
+            TypeWriter.EraseScalars = Writer.MethodsOnly && saveErase;
+            var emittedExplicitImpls = new HashSet<string>();
             foreach (var i in t.AllInterfaces)
             {
                 var its = TypeWriter.ToCSharpType(i);
@@ -219,8 +230,25 @@ namespace Ara3D.Geometry.CSharpWriter
                     var fieldIndex = FieldNames.IndexOf(f.Name);
                     if (f.ParameterTypes.Count == 1 && fieldIndex >= 0)
                     {
-                        var fieldType = IsPrimitive ? Name : unerasedFieldTypes[fieldIndex];
-                        TypeWriter.WriteLine($"{fieldType} {its}.{f.Name} {{ {Attr} get => {f.Name}; }}");
+                        var fieldType = IsPrimitive ? Name
+                            : Writer.MethodsOnly ? FieldTypes[fieldIndex] : unerasedFieldTypes[fieldIndex];
+                        if (emittedExplicitImpls.Add($"{its}.{f.Name}"))
+                            TypeWriter.WriteLine(Writer.MethodsOnly
+                                ? $"{Attr} {fieldType} {its}.{f.Name}() => {f.Name};"
+                                : $"{fieldType} {its}.{f.Name} {{ {Attr} get => {f.Name}; }}");
+                    }
+                    // MethodsOnly: an obligation whose name is PINNED to property syntax (a
+                    // handwritten Plato.Intrinsics property like Quaternion.Inverse) cannot
+                    // become a method on the struct; an explicit interface implementation
+                    // forwards the method obligation to the property.
+                    else if (Writer.MethodsOnly && f.ParameterTypes.Count == 1
+                        && Writer.PropertySyntaxNames.Contains(f.Name)
+                        && emittedExplicitImpls.Add($"{its}.{f.Name}"))
+                    {
+                        var retType = TypeWriter.ToCSharpType(f.ReturnType);
+                        // Pinned-name struct members are uniformly PROPERTIES (handwritten on
+                        // primitive types, generated elsewhere) — plain member access.
+                        TypeWriter.WriteLine($"{Attr} {retType} {its}.{f.Name}() => {f.Name};");
                     }
                 }
             }
@@ -236,7 +264,8 @@ namespace Ara3D.Geometry.CSharpWriter
 
                 // Scalar erasure: the IReadOnlyList<T> interface obligation comes from the
                 // unerased IArray<T> concept, so the element type must stay unerased too.
-                TypeWriter.EraseScalars = false;
+                // MethodsOnly: the concept erases, so the element type erases with it.
+                TypeWriter.EraseScalars = Writer.MethodsOnly && saveErase;
                 var argType = arrayConcept.Substitutions.Replace(arrayConcept.TypeExpression.TypeArgs[0]);
                 var elem = TypeWriter.ToCSharpType(argType);
                 TypeWriter.EraseScalars = saveErase;
@@ -294,11 +323,21 @@ namespace Ara3D.Geometry.CSharpWriter
                 var nComps = localFieldNames.Count;
 
                 TypeWriter.WriteLine($"// IArrayLike predefined functions");
-                TypeWriter.WriteLine(Writer.ScalarErase
-                    ? $"public int NumComponents {{ {Attr} get => {nComps}; }}"
-                    : $"public Integer NumComponents {{ {Attr} get => {nComps}; }}");
-                TypeWriter.WriteLine($"public IReadOnlyList<{fieldType}> Components {{ {Attr} get => Intrinsics.MakeArray<{fieldType}>({localFieldNames.JoinStringsWithComma()}); }}");
-                if (Writer.ScalarErase && fieldType != obligationFieldType)
+                if (Writer.MethodsOnly)
+                {
+                    TypeWriter.WriteLine($"{Attr} public int NumComponents() => {nComps};");
+                    TypeWriter.WriteLine($"{Attr} public IReadOnlyList<{fieldType}> Components() => Intrinsics.MakeArray<{fieldType}>({localFieldNames.JoinStringsWithComma()});");
+                }
+                else
+                {
+                    TypeWriter.WriteLine(Writer.ScalarErase
+                        ? $"public int NumComponents {{ {Attr} get => {nComps}; }}"
+                        : $"public Integer NumComponents {{ {Attr} get => {nComps}; }}");
+                    TypeWriter.WriteLine($"public IReadOnlyList<{fieldType}> Components {{ {Attr} get => Intrinsics.MakeArray<{fieldType}>({localFieldNames.JoinStringsWithComma()}); }}");
+                }
+                // MethodsOnly: the IArrayLike obligation is erased, so the public (erased)
+                // Components method satisfies it directly — no explicit twin.
+                if (Writer.ScalarErase && !Writer.MethodsOnly && fieldType != obligationFieldType)
                 {
                     // Explicit implementation of the unerased IArrayLike<Self, T> obligation
                     // (the public Components above is erased; wrappers convert element-wise).
@@ -331,7 +370,8 @@ namespace Ara3D.Geometry.CSharpWriter
             // normalized to "float-land" by CSharpFunctionBodyWriter (wrappers convert
             // implicitly at the boundaries). The extension-method forwarders below the struct
             // ARE erased: they are API surface, not obligations.
-            TypeWriter.EraseScalars = false;
+            // MethodsOnly: the concept interfaces are erased, so kept members erase to match.
+            TypeWriter.EraseScalars = Writer.MethodsOnly && saveErase;
             WriteImplementedInterfaceFunctions();
 
             WriteUnimplementedInterfaceFunctions();
@@ -486,8 +526,7 @@ namespace Ara3D.Geometry.CSharpWriter
                     if (tir != null)
                     {
                         Writer.TirBodiesEmitted++;
-                        tir = TirComponentUnroller.UnrollFunction(tir, fi, Writer);
-                        tir = TirArrayMaterializer.Rewrite(tir, Writer);
+                        tir = Writer.RunOptimizerPasses(tir, fi);
                         tw.WriteWithLineStateSync(new TirCSharpBodyWriter(tw, tir, isStatic: true, fi).ToString());
                     }
                     else
@@ -524,10 +563,11 @@ namespace Ara3D.Geometry.CSharpWriter
                 else
                 {
                     // Intrinsic: forward into the handwritten wrapper member (no-arg
-                    // handwritten intrinsics are properties by convention). No wrapper-receiver
-                    // bridge: the wrapper already has the real member, and a same-name
-                    // extension would be shadowed by it anyway.
-                    tw.WriteLine(GetPrimitiveForwardingExtensionMethod(fi, SimpleName, prim, forcePropertySyntax: true));
+                    // handwritten intrinsics are properties by convention — except under
+                    // --no-properties, where the V2 wrapper exposes them as methods). No
+                    // wrapper-receiver bridge: the wrapper already has the real member, and a
+                    // same-name extension would be shadowed by it anyway.
+                    tw.WriteLine(GetPrimitiveForwardingExtensionMethod(fi, SimpleName, prim, forcePropertySyntax: !Writer.NoProperties));
                 }
 
                 tw.ExtensionReceiverName = null;
@@ -685,8 +725,12 @@ namespace Ara3D.Geometry.CSharpWriter
         public string GetExtensionMethod(CSharpFunctionInfo fi)
         {
             var firstArg = fi.ParameterNames[0];
-            var isProp = fi.ParameterNames.Count <= 1;
-            var args = isProp ?  "" : "(" + fi.ParameterNames.Skip(1).JoinStringsWithComma() + ")";
+            // MethodsOnly: the forwarding TARGET is a method unless its name is pinned to
+            // property syntax (MethodArgsString yields "()" exactly then).
+            var isProp = fi.ParameterNames.Count <= 1 && !fi.EmitAsMethod;
+            var args = isProp ? "" : "(" + fi.ParameterNames.Skip(1).JoinStringsWithComma() + ")";
+            if (!isProp && fi.ParameterNames.Count <= 1)
+                args = "()";
             return $"{fi.ExtensionSignature} => {firstArg}.{fi.Name}{args};";
         }
 
@@ -700,7 +744,9 @@ namespace Ara3D.Geometry.CSharpWriter
             // classic extension METHODS, so the forwarding call site needs parentheses.
             // forcePropertySyntax (scalar erasure): the forwarding target is a handwritten
             // no-arg intrinsic, which is a PROPERTY on the wrapper by convention.
-            if (args == "" && !forcePropertySyntax && Writer.ExtensionStyle && Writer.MovedNoArgNames.Contains(fi.Name))
+            if (args == "" && !forcePropertySyntax && Writer.ExtensionStyle
+                && (Writer.MovedNoArgNames.Contains(fi.Name)
+                    || (Writer.MethodsOnly && !Writer.PropertySyntaxNames.Contains(fi.Name))))
                 args = "()";
             var firstParamName = fi.ParameterNames[0];
             return $"{sig} => (({platoType}){firstParamName}).{fi.Name}{args};";

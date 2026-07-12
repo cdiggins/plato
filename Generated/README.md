@@ -18,8 +18,15 @@ structs remain real types.
 
 | Project | Recipe (CLI flags) | Purpose |
 |---|---|---|
-| `Plato.Generated.Unoptimized` | `--csharp-style=extensions --scalar=float` | Readable reference shape; optimizer passes OFF. |
-| `Plato.Generated.Optimized`   | `--csharp-style=extensions --scalar=float --optimize --optimize-arrays --inline --methods --loops` | Intended adoption/shipping shape; full optimizer pipeline ON. |
+| `Plato.Generated.Unoptimized` | `--csharp-style=extensions --scalar=float --no-properties` | Readable reference shape; optimizer passes OFF. |
+| `Plato.Generated.Optimized`   | `--csharp-style=extensions --scalar=float --optimize --optimize-arrays --inline --methods --loops --no-properties` | Intended adoption/shipping shape; full optimizer pipeline ON. |
+
+Both variants are **property-free** (`--no-properties`): every no-arg member is a method,
+including the primitive-struct members (`angle.Cos()`, `v.Normalize()`, `n.Abs()`) that plain
+`--methods` still keeps as properties. To make the fused `partial struct` halves agree, both
+projects link **`Plato.Intrinsics.V2`** (a copy of the handwritten runtime whose primitive
+members are methods, not properties) instead of `Plato.Intrinsics`. Genuine fields and
+pseudo-fields (`X`/`Y`/`Z`, `M11`, `Row1`, `Plane.Normal`, `Count`) stay property/field syntax.
 
 The optimized recipe is exactly the one the **Scalar conformance suite** semantically gates
 (`tools\regen-conformance-scalar.ps1`), so the optimized golden is proven equivalent to the
@@ -33,12 +40,15 @@ to the emitted code.
 Both projects consume the handwritten runtime by importing the shared project:
 
 ```xml
-<Import Project="..\..\Plato.Intrinsics\Plato.Intrinsics.projitems" Label="Shared" />
+<Import Project="..\..\Plato.Intrinsics.V2\Plato.Intrinsics.V2.projitems" Label="Shared" />
 ```
 
-and reference `Ara3D.Collections` / `Ara3D.Memory` / `Ara3D.Utils` from `ara3d-sdk`. `Plato.Intrinsics`
-is the source of truth for the wrapper structs (`Number`, `Vector2-8`, `Matrix`, `Angle`, …); never
-edit its ara3d-sdk synced copy.
+and reference `Ara3D.Collections` / `Ara3D.Memory` / `Ara3D.Utils` from `ara3d-sdk`.
+`Plato.Intrinsics.V2` is the **method-form** copy of the wrapper structs (`Number`, `Vector2-8`,
+`Matrix`, `Angle`, …), used only by these `--no-properties` goldens. `Plato.Intrinsics` (V1)
+remains the source of truth for the property-form runtime and the default-mode SDK; it is byte-
+synced to ara3d-sdk (never edit that copy). When you change a member in one, mirror it in the
+other — V1 keeps the property, V2 exposes the method.
 
 ## Regenerating
 

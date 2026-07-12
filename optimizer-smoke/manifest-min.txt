@@ -1,0 +1,36 @@
+# Minimal COMPILABLE subset of plato-src, for faster optimizer-phase iteration.
+# One filename per line (copied from plato-src by regen-smoke.ps1). '#' = comment.
+#
+# This is the objectively-smallest subset that still compiles, found by greedy removal
+# from the full set. plato-src is NOT cleanly layered: core.library.Sample forward-refers
+# to LinearSpace (interval/curves), interval refers to Circle, intrinsics refers to Plane,
+# and geometry.types/geometry.interfaces pull in curves + transforms. So the closure is
+# large (21 files -> ~158 generated .g.cs vs 184 for full, ~14% smaller). Only the pure
+# leaf libraries drop out: solids, sdf3d, colors(.constants), fields, measures, meshes.library.
+#
+# NOTE: because meshes.library is excluded, this subset does NOT exercise --optimize-arrays
+# (the Map-into-struct-field pattern); it does exercise --inline, --optimize and --loops.
+# Use the Full variant for --optimize-arrays coverage. A genuinely tiny set would need a
+# synthetic (non-subset) .plato or a re-layering of plato-src.
+#
+primitives.plato
+intrinsics.plato
+unique.plato
+core.interfaces.plato
+core.types.plato
+core.library.plato
+constants.plato
+array.plato
+algebra.plato
+angles.plato
+integers.plato
+vectors.plato
+bounds.plato
+interval.plato
+coordinates.types.plato
+geometry.interfaces.plato
+geometry.types.plato
+geometry.library.plato
+transforms.plato
+curves.plato
+procedurals.plato

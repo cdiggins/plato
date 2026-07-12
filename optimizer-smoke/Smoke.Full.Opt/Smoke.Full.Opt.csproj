@@ -1,0 +1,4 @@
+<!-- FULL plato-src, adoption shape, optimizer ON (inline+optimize+optimize-arrays+loops). -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\smoke.props" />
+</Project>

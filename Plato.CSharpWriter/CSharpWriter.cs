@@ -89,7 +89,10 @@ namespace Ara3D.Geometry.CSharpWriter
             // (Vector3_Extensions.AnyPerpendicular reads v.AlmostZero on a Vector3), so those
             // members must remain struct properties on every non-scalar type. On the erased
             // scalar types they become extension methods + the Number partial-struct shim.
-            var keptNoArg = new HashSet<string>(HandwrittenPropertySyntaxNames);
+            // --no-properties: the handwritten pins become methods (the V2 runtime exposes them
+            // as methods), so nothing is seeded here. The per-plan pseudo-field/field names are
+            // still unioned in below and keep property syntax.
+            var keptNoArg = NoProperties ? new HashSet<string>() : new HashSet<string>(HandwrittenPropertySyntaxNames);
             foreach (var p in ExtensionPlans.Values)
                 keptNoArg.UnionWith(p.KeptNoArgPropertyNames);
 
@@ -115,12 +118,31 @@ namespace Ara3D.Geometry.CSharpWriter
 
             // Interface-declared no-arg members are C# interface properties; call sites whose
             // receiver is interface-typed (or a constrained type variable) use property syntax,
-            // so these names must keep property syntax everywhere.
+            // so these names must keep property syntax everywhere. MethodsOnly: interfaces
+            // declare METHODS instead, so nothing is seeded — but an interface-declared name
+            // that collides with a pinned/field property name would make its obligations
+            // unsatisfiable, so that is a hard error.
             foreach (var t in Compilation.AllTypeAndLibraryDefinitions)
                 if (t != null && t.IsInterface())
                     foreach (var m in t.Methods)
-                        if (m.Function.NumParameters == 1)
+                        if (m.Function.NumParameters == 1 && !MethodsOnly)
                             keptNoArg.Add(m.Function.Name);
+
+            if (MethodsOnly)
+            {
+                // BCL/collection parity: Count (IReadOnlyCollection) and NumColumns/NumRows
+                // (the handwritten Ara3D.Collections IReadOnlyList2D) are PROPERTIES on
+                // receivers the emitter does not generate; generated code calls them on both
+                // handwritten and generated receivers, and call-site syntax is decided by name.
+                keptNoArg.Add("Count");
+                keptNoArg.Add("NumColumns");
+                keptNoArg.Add("NumRows");
+                PropertySyntaxNames = keptNoArg;
+                StaticNoArgMethodNames = new HashSet<string>();
+                foreach (var p in ExtensionPlans.Values)
+                    StaticNoArgMethodNames.UnionWith(p.GeneratedNoArgStaticNames);
+                StaticNoArgMethodNames.ExceptWith(keptNoArg);
+            }
 
             var movedNoArg = new HashSet<string>();
             foreach (var p in ExtensionPlans.Values)
@@ -219,6 +241,68 @@ namespace Ara3D.Geometry.CSharpWriter
         public int TirBodiesEmitted;
         public int TirFallbackBodies;
 
+        // --dump-tir=<dir> (null = off): write the per-phase TIR of every emitted body to
+        // <dir>, one file per owner type. Records the elaborated/monomorphized INPUT and then
+        // each optimizer pass (inline -> component-unroll -> array-materialize -> loop-lower)
+        // that CHANGED the tree, so the dump shows exactly what each phase did. A development
+        // aid for the optimizer passes; has no effect on the emitted C#.
+        public string TirDumpDir;
+        private readonly Dictionary<string, StringBuilder> _tirDumps = new Dictionary<string, StringBuilder>();
+
+        /// <summary>Applies the four optimizer TIR passes in order (inline → component-unroll →
+        /// array-materialize → loop-lower) and returns the transformed function. Shared by every
+        /// body-emit site so the pass pipeline is defined once. With <see cref="TirDumpDir"/> set,
+        /// records each phase that changed the tree (see the field comment).</summary>
+        public TirFunction RunOptimizerPasses(TirFunction tir, CSharpFunctionInfo fi)
+        {
+            if (TirDumpDir == null)
+            {
+                tir = TirInliner.Inline(tir, this, out _);
+                tir = TirComponentUnroller.UnrollFunction(tir, fi, this);
+                tir = TirArrayMaterializer.Rewrite(tir, this);
+                return TirLoopLowerer.Rewrite(tir, this);
+            }
+
+            var key = SanitizeFileName(fi?.OwnerType?.Name ?? "Static");
+            if (!_tirDumps.TryGetValue(key, out var sb))
+                _tirDumps[key] = sb = new StringBuilder();
+            var ps = fi?.ParameterTypes ?? (IReadOnlyList<string>)System.Array.Empty<string>();
+            sb.AppendLine($"======== {fi?.ReturnType} {fi?.Name}({string.Join(", ", ps)}) ========");
+            var prev = tir?.Body?.ToString() ?? "<null>";
+            sb.AppendLine("-- input (elaborated / monomorphized) --");
+            sb.AppendLine(prev);
+            void Phase(string name, TirFunction t)
+            {
+                var s = t?.Body?.ToString() ?? "<null>";
+                if (s != prev) { sb.AppendLine($"-- after {name} --"); sb.AppendLine(s); prev = s; }
+            }
+            tir = TirInliner.Inline(tir, this, out _);                 Phase("inline (layer 7)", tir);
+            tir = TirComponentUnroller.UnrollFunction(tir, fi, this);  Phase("optimize / component-unroll (layer 8)", tir);
+            tir = TirArrayMaterializer.Rewrite(tir, this);            Phase("optimize-arrays / materialize (layer 9)", tir);
+            tir = TirLoopLowerer.Rewrite(tir, this);                  Phase("loops / lower (layer 10)", tir);
+            sb.AppendLine();
+            return tir;
+        }
+
+        private static string SanitizeFileName(string s)
+        {
+            foreach (var c in System.IO.Path.GetInvalidFileNameChars())
+                s = s.Replace(c, '_');
+            return s;
+        }
+
+        /// <summary>Writes the collected --dump-tir buffers to disk (one file per owner type).
+        /// Called at the end of WriteAll; a no-op when dumping is off.</summary>
+        public void FlushTirDumps()
+        {
+            if (TirDumpDir == null)
+                return;
+            System.IO.Directory.CreateDirectory(TirDumpDir);
+            foreach (var kv in _tirDumps)
+                System.IO.File.WriteAllText(
+                    System.IO.Path.Combine(TirDumpDir, $"{kv.Key}.tir.txt"), kv.Value.ToString());
+        }
+
         // Lazily built the first time a TIR is requested (UseTir only): the shared checker-run
         // lookups (see TirEmitSource). Never built on the default-off path.
         private TirEmitSource _tirSource;
@@ -235,6 +319,60 @@ namespace Ara3D.Geometry.CSharpWriter
         /// library function — or null when the function's elaboration has unresolved nodes.</summary>
         public TirFunction TryGetStaticTir(FunctionDef original)
             => UseTir ? TirSource.TryGetStaticTir(original) : null;
+
+        /// <summary>Name-keyed ground-TIR lookup for the inliner (--inline): the callee's body
+        /// specialized for the receiver's solved concrete type name.</summary>
+        public TirFunction TryGetGroundTirByTypeName(FunctionDef original, string concreteTypeName)
+            => UseTir ? TirSource.TryGetGroundTir(original, concreteTypeName) : null;
+
+        // When true (--methods), the generated output declares NO C# properties or indexers:
+        //   - concept interfaces (Interfaces.g.cs) declare no-arg obligations as METHODS with
+        //     scalar-ERASED signatures (bool Closed(); float Eval(float x); ...);
+        //   - struct-KEPT members (obligations, conversions, statics, stubs) emit as methods
+        //     with erased signatures; struct indexers are dropped (At() remains);
+        //   - the IArrayLike scaffolding (NumComponents/Components) and nullary constants
+        //     (Constants.Pi()) become methods; call sites get "()" accordingly;
+        //   - static readonly Default fields, BCL plumbing (IReadOnlyList explicit
+        //     implementations, the public Count property) and the pinned
+        //     HandwrittenPropertySyntaxNames members are the documented exceptions — fields are
+        //     not properties, the BCL interfaces require properties, and handwritten
+        //     Plato.Intrinsics code cannot change.
+        // Requires ExtensionStyle + ScalarErase + UseTir. Default (false) output is unchanged.
+        public bool MethodsOnly;
+
+        // When true (--no-properties), a strict superset of MethodsOnly: the primitive-type
+        // exceptions that MethodsOnly still keeps as properties are ALSO erased to methods —
+        // the handwritten no-arg members of the primitive structs (Angle.Cos, Number.Abs,
+        // Vector3.Normalize, the swizzles, ...) and the HandwrittenPropertySyntaxNames pins.
+        // Intended for a runtime whose primitive structs expose those members AS METHODS
+        // (Plato.Intrinsics.V2). The only names that stay property/field syntax are genuine
+        // fields, the primitive pseudo-fields (X/Y/Z, M11...), and the BCL Count/NumRows/
+        // NumColumns obligations. Implies MethodsOnly; requires ExtensionStyle + ScalarErase + UseTir.
+        public bool NoProperties;
+
+        // MethodsOnly: names that keep PROPERTY/field access syntax at call sites (fields,
+        // primitive pseudo-fields, handwritten intrinsic no-arg members of the primitive types,
+        // the pinned names, and Count). Everything else no-arg gets "()".
+        public HashSet<string> PropertySyntaxNames { get; private set; }
+
+        // MethodsOnly: no-arg STATIC member names with generated bodies — emitted as static
+        // methods, so bare-name references need "()". Handwritten statics (Body == null) keep
+        // member-access syntax.
+        public HashSet<string> StaticNoArgMethodNames { get; private set; }
+
+        // When true (--loops), recognized array-combinator call sites (Map/Zip/Reduce/All/Any/
+        // Reverse/WithNext/MapPairs/... on one-dimensional list receivers) are lowered to
+        // for-loop statements filling materialized arrays (see TirLoopLowerer). Runs after the
+        // other optimizer passes. Default (false) output is unchanged.
+        public bool LowerLoops;
+
+        // When true (--inline, roadmap P3.2 "beta reduction"), resolved calls to small library
+        // functions are INLINED at emission: the callee's fully-ground TIR body is substituted at
+        // the call site (parameters replaced by argument nodes), iteratively, before the
+        // component unroller and array materializer run — so HOF call sites hidden inside callees
+        // become visible to those transforms. See TirInliner for the eligibility rules.
+        // Default (false) output is unchanged.
+        public bool InlineCalls;
 
         // When true (--optimize-arrays, optimizer stage 2 increment 1), Map/MapRange call sites in
         // MATERIALIZATION positions (constructor / tuple arguments — results stored into structs —
@@ -397,10 +535,13 @@ namespace Ara3D.Geometry.CSharpWriter
 
         public CSharpWriter WriteAll(string floatType)
         {
-            // The lambda-capture hoist names (`_var{N}`) draw from a process-global counter;
-            // reset it per generation so two WriteAll runs in one process produce identical
-            // output (a fresh CLI process always started at 0, so file output is unchanged).
+            // The lambda-capture hoist names (`_var{N}`) and the inliner's collision-rename
+            // names (`{p}_{N}`) draw from process-global counters; reset them per generation so
+            // two WriteAll runs in one process produce identical output (a fresh CLI process
+            // always started at 0, so file output is unchanged).
             SymbolRewriter.NextId = 0;
+            TirInliner.NextRenameId = 0;
+            TirLoopLowerer.NextId = 0;
 
             FloatType = floatType;
             Namespace = floatType == "float"
@@ -429,6 +570,7 @@ namespace Ara3D.Geometry.CSharpWriter
             if (ExtensionStyle)
                 ExtensionStyleWriter.WriteLibraryFiles(this);
 
+            FlushTirDumps();
             return this;
         }
 

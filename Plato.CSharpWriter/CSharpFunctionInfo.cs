@@ -48,25 +48,35 @@ namespace Ara3D.Geometry.CSharpWriter
         public IEnumerable<string> Parameters => ParameterNames.Zip(ParameterTypes, (n, t) => $"{t} {n}");
         public IEnumerable<string> MethodParameters => MethodParameterNames.Zip(MethodParameterTypes, (n, t) => $"{t} {n}");
         public string GenericsString => Generics.Count > 0 ? $"<{Generics.JoinStringsWithComma()}>" : "";
-        public string StaticParametersString => NumParameters > 0 ? $"({Parameters.JoinStringsWithComma()})" : "";
+        public string StaticParametersString => NumParameters > 0 ? $"({Parameters.JoinStringsWithComma()})" : EmitAsMethod ? "()" : "";
         public string ExtensionParametersString => NumParameters > 0 ? $"(this {Parameters.JoinStringsWithComma()})" : "";
-        public string MethodParametersString => NumParameters > 1 ? $"({MethodParameters.JoinStringsWithComma()})" : "";
+        public string MethodParametersString => NumParameters > 1 ? $"({MethodParameters.JoinStringsWithComma()})" : EmitAsMethod ? "()" : "";
         public string StaticSignature => $"{FunctionAnnotation}public static {ReturnType} {Name}{GenericsString}{StaticParametersString}{Constraints}";
         
         public string ExtensionGenericsString => AllGenerics.Count > 0 ? $"<{AllGenerics.JoinStringsWithComma()}>" : "";
         public string ExtensionSignature => $"{Annotation}public static {ReturnType} {Name}{ExtensionGenericsString}{ExtensionParametersString}{Constraints}";
 
-        // TODO: this used to be a way to signal static methods. 
+        // TODO: this used to be a way to signal static methods.
         public bool IsStatic => ParameterNames.Count == 0 || ParameterNames[0] == "_";
 
+        // MethodsOnly (--methods): a no-arg member that would emit as a property emits as a
+        // METHOD instead, unless its name is pinned to property syntax (fields, handwritten
+        // intrinsics, Count — see CSharpWriter.PropertySyntaxNames).
+        public bool MethodsOnly => (TypeToCSharp as CSharpTypeWriter)?.Writer?.MethodsOnly ?? false;
+        // Interface DECLARATIONS are always methods (pinned-name obligations are satisfied by
+        // explicit interface implementations forwarding to the property/field).
+        public bool EmitAsMethod => MethodsOnly && !IsIndexer
+            && ((Function.Kind == FunctionInstanceKind.InterfaceDeclared && OwnerType == null)
+                || !((TypeToCSharp as CSharpTypeWriter)?.Writer?.PropertySyntaxNames?.Contains(Name) ?? false));
+
         public string StaticKeyword => IsStatic ? "static " : "";
-        public bool IsProperty => ParameterNames.Count <= 1 ;
+        public bool IsProperty => ParameterNames.Count <= 1 && !EmitAsMethod;
         public static string Annotation => "[MethodImpl(AggressiveInlining)] ";
-        public string FunctionAnnotation => IsProperty ? "" : Annotation; 
+        public string FunctionAnnotation => IsProperty ? "" : Annotation;
         public string Constraints => Function.ConstrainedTypeVariables.Select(ConstraintString).JoinStrings("");
         public string MethodSignature => $"{FunctionAnnotation}public {StaticKeyword}{ReturnType} {Name}{GenericsString}{MethodParametersString}{Constraints}";
         public string StaticArgsString => NumParameters > 0 ? $"({ParameterNames.JoinStringsWithComma()})" : "";
-        public string MethodArgsString => NumParameters > 1 ? $"({ParameterNames.Skip(1).JoinStringsWithComma()})" : "";
+        public string MethodArgsString => NumParameters > 1 ? $"({ParameterNames.Skip(1).JoinStringsWithComma()})" : EmitAsMethod ? "()" : "";
         public string IntrinsicsArgsString => NumParameters > 0 ? $"({ParameterNames.Skip(1).Prepend("this").JoinStringsWithComma()})" : "";
         public bool IsMethodOf(string typeName) => ParameterTypes.Count > 0 && ParameterTypes[0] == typeName;
 
@@ -113,7 +123,7 @@ namespace Ara3D.Geometry.CSharpWriter
         public bool IsOperator => OperatorName != null;
         public string OperatorImpl => $"{Annotation} public static {ReturnType} operator {OperatorName}{StaticParametersString} => {FirstParameterName}.{Name}{MethodArgsString};";
 
-        public string MethodInterface => $"{ReturnType} {Name}{MethodParametersString}" + (NumParameters > 1 ? ";" : " { get; }");
+        public string MethodInterface => $"{ReturnType} {Name}{MethodParametersString}" + (NumParameters > 1 || EmitAsMethod ? ";" : " { get; }");
 
         // TODO: should we not be taking into account the function type replacements?  
         public string ToCSharpTypeName(TypeInstance ti)

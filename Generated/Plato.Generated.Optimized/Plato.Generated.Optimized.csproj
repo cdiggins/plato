@@ -30,8 +30,9 @@
     <NoWarn>$(NoWarn);CS0108;CS0114;CS0660;CS0661;CS1591</NoWarn>
   </PropertyGroup>
 
-  <!-- Link the handwritten intrinsics runtime (shared project). -->
-  <Import Project="..\..\Plato.Intrinsics\Plato.Intrinsics.projitems" Label="Shared" />
+  <!-- Link the handwritten intrinsics runtime (shared project). V2 exposes the primitive
+       no-arg members as METHODS (not properties), matching the no-properties recipe. -->
+  <Import Project="..\..\Plato.Intrinsics.V2\Plato.Intrinsics.V2.projitems" Label="Shared" />
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\ara3d-sdk\src\Ara3D.Collections\Ara3D.Collections.csproj" />

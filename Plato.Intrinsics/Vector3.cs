@@ -231,8 +231,11 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)]
         public static Vector3 AnyPerpendicular(this Vector3 v)
         {
+            // Constructed directly (not Vector3.UnitZ): the generated UnitZ member's shape
+            // varies by emitter style (--methods makes it a static method), and this handwritten
+            // file must compile against every style.
             if (v.AlmostZero)
-                return Vector3.UnitZ;
+                return new Vector3(0, 0, 1);
             
             // Choose the smallest component to avoid degeneracy
             if (Math.Abs(v.X) < Math.Abs(v.Y))

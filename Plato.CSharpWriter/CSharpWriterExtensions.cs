@@ -70,11 +70,17 @@ namespace Ara3D.Geometry.CSharpWriter
         //                (CLI --no-tir) for the legacy path.
         // optimizeArrays = true: loop-into-buffer lowering of multi-consumed Map/MapRange results
         //                (--optimize-arrays, optimizer stage 2 increment 1; see TirArrayMaterializer).
-        public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false, bool optimize = false, bool scalarErase = false, bool useTir = true, bool optimizeArrays = false)
+        public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false, bool optimize = false, bool scalarErase = false, bool useTir = true, bool optimizeArrays = false, bool inlineCalls = false, bool methodsOnly = false, bool lowerLoops = false, string tirDumpDir = null, bool noProperties = false)
         {
+            // --no-properties is a strict superset of --methods.
+            methodsOnly = methodsOnly || noProperties;
             if (scalarErase && !extensionStyle)
                 throw new NotSupportedException("--scalar=float requires --csharp-style=extensions (the default wrapper-struct layout keeps scalar members inside partial structs, which do not exist under erasure)");
-            var writer = new CSharpWriter(compilation, outputFolder) { ExtensionStyle = extensionStyle, Optimize = optimize, ScalarErase = scalarErase, UseTir = useTir, OptimizeArrays = optimizeArrays };
+            if (methodsOnly && (!scalarErase || !useTir))
+                throw new NotSupportedException("--methods requires --scalar=float (erased interfaces) and the TIR emit path (no --no-tir)");
+            if (lowerLoops && !useTir)
+                throw new NotSupportedException("--loops requires the TIR emit path (no --no-tir)");
+            var writer = new CSharpWriter(compilation, outputFolder) { ExtensionStyle = extensionStyle, Optimize = optimize, ScalarErase = scalarErase, UseTir = useTir, OptimizeArrays = optimizeArrays, InlineCalls = inlineCalls, MethodsOnly = methodsOnly, NoProperties = noProperties, LowerLoops = lowerLoops, TirDumpDir = string.IsNullOrEmpty(tirDumpDir) ? null : tirDumpDir };
             writer.WriteAll("float");
 
             // Output documentation 

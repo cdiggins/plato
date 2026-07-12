@@ -11,7 +11,7 @@ namespace Ara3D.Geometry.CLI
 {
     public static class Program
     {
-        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust] [--csharp-style=default|extensions] [--optimize] [--optimize-arrays] [--scalar=wrapper|float]
+        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust] [--csharp-style=default|extensions] [--optimize] [--optimize-arrays] [--inline] [--scalar=wrapper|float]
         //        Plato.CLI lint <inputFolder> [--strict]
         // With no arguments, the folders come from Config and C# is generated (original behavior).
         // In lint mode the sources are compiled (parse + resolve, no output) and warnings are
@@ -34,6 +34,31 @@ namespace Ara3D.Geometry.CLI
             // Loop-into-buffer lowering (optimizer stage 2 increment 1): Map/MapRange results in
             // materialization positions become eager arrays. C# backend, TIR path only.
             var optimizeArrays = args.Contains("--optimize-arrays");
+
+            // Source-level function inlining (roadmap P3.2 beta reduction): resolved calls to
+            // small library functions are inlined before the other optimizer passes run.
+            var inline = args.Contains("--inline");
+
+            // No properties/indexers in the generated output: concept interfaces declare
+            // scalar-erased METHOD obligations, kept struct members and constants emit as
+            // methods. Requires --scalar=float (and the default TIR path).
+            var methods = args.Contains("--methods");
+
+            // No properties AT ALL in the generated output (strict superset of --methods): the
+            // primitive-struct no-arg members that --methods still keeps as properties also emit
+            // as methods. For a runtime whose primitive structs expose them as methods
+            // (Plato.Intrinsics.V2). Implies --methods.
+            var noProperties = args.Contains("--no-properties");
+
+            // Array-combinator loop lowering: Map/Zip/Reduce/All/Any/Reverse/... call sites on
+            // one-dimensional list receivers become for-loop statements filling materialized
+            // arrays (see TirLoopLowerer).
+            var loops = args.Contains("--loops");
+
+            // --dump-tir=<dir>: write the per-phase TIR of every emitted body to <dir> (one file
+            // per owner type) for optimizer-pass development. No effect on the emitted C#.
+            var tirDumpDir = args.Where(a => a.StartsWith("--dump-tir="))
+                .Select(a => a.Substring("--dump-tir=".Length)).LastOrDefault();
 
             // Member-instance function bodies are emitted from the monomorphized TIR (Elaborate →
             // Monomorphize → Emit) BY DEFAULT since increment 3; only takes effect in the pure
@@ -119,7 +144,8 @@ namespace Ara3D.Geometry.CLI
             else
             {
                 logger.Log("Writing C# Files");
-                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, scalar == "float", useTir, optimizeArrays);
+                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, scalar == "float", useTir, optimizeArrays, inline, methods, loops, tirDumpDir, noProperties);
+                logger.Log($"TIR bodies emitted: {output.TirBodiesEmitted}; legacy fallback bodies: {output.TirFallbackBodies}");
                 foreach (var kv in output.Files)
                 {
                     var fp = outputFolder.RelativeFile(kv.Key);

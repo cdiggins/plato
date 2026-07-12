@@ -1,0 +1,506 @@
+// ============================================================================
+// EarcutFast — affine, indexed ear clipping.
+//
+// This is deliberately separate from earcut.plato.  The public input and output
+// types are shared, but the implementation replaces persistent array rebuilding
+// with one affine Buffer<FastEarNode>.  The buffer owns an indexed circular
+// doubly-linked list; topology updates are O(1), holes are bridged in O(n h), and
+// cached blocker counts make the complete clipping pass O(n^2) worst-case.
+// Space is O(n + h), including the two duplicate bridge nodes needed per hole.
+// Freeze() is the sole ownership boundary.
+// ============================================================================
+
+type FastEarNode
+{
+    PointIndex: Integer;
+    Prev: Integer;
+    Next: Integer;
+    Ring: Integer;
+    Active: Boolean;
+    PendingHole: Boolean;
+    Convex: Boolean;
+    Blockers: Integer;
+    HasTriangle: Boolean;
+    Triangle: Integer3;
+}
+
+library EarcutFastIntrinsics
+{
+    Count(xs: Buffer<$T>): Integer;
+    At(xs: Buffer<$T>, n: Integer): $T;
+    Set(xs: Buffer<$T>, i: Integer, x: $T): Buffer<$T>;
+    Freeze(xs: Buffer<$T>): IArray<$T>;
+}
+
+library EarcutFast
+{
+    //== Node value updates.  The affine object is the buffer, not its values.
+
+    NewFastNode(pointIndex: Integer, prev: Integer, next: Integer, ring: Integer): FastEarNode
+        => new FastEarNode(pointIndex, prev, next, ring, true, false, false, 0,
+            false, new Integer3(0, 0, 0));
+
+    WithPrev(n: FastEarNode, prev: Integer): FastEarNode
+        => new FastEarNode(n.PointIndex, prev, n.Next, n.Ring, n.Active, n.PendingHole,
+            n.Convex, n.Blockers, n.HasTriangle, n.Triangle);
+
+    WithNext(n: FastEarNode, next: Integer): FastEarNode
+        => new FastEarNode(n.PointIndex, n.Prev, next, n.Ring, n.Active, n.PendingHole,
+            n.Convex, n.Blockers, n.HasTriangle, n.Triangle);
+
+    WithLinks(n: FastEarNode, prev: Integer, next: Integer): FastEarNode
+        => new FastEarNode(n.PointIndex, prev, next, n.Ring, n.Active, n.PendingHole,
+            n.Convex, n.Blockers, n.HasTriangle, n.Triangle);
+
+    WithPendingHole(n: FastEarNode, pending: Boolean): FastEarNode
+        => new FastEarNode(n.PointIndex, n.Prev, n.Next, n.Ring, n.Active, pending,
+            n.Convex, n.Blockers, n.HasTriangle, n.Triangle);
+
+    WithEarState(n: FastEarNode, convex: Boolean, blockers: Integer): FastEarNode
+        => new FastEarNode(n.PointIndex, n.Prev, n.Next, n.Ring, n.Active, n.PendingHole,
+            convex, blockers, n.HasTriangle, n.Triangle);
+
+    WithoutBlocker(n: FastEarNode): FastEarNode
+        => new FastEarNode(n.PointIndex, n.Prev, n.Next, n.Ring, n.Active, n.PendingHole,
+            n.Convex, n.Blockers - 1, n.HasTriangle, n.Triangle);
+
+    Removed(n: FastEarNode): FastEarNode
+        => new FastEarNode(n.PointIndex, n.Prev, n.Next, n.Ring, false, false,
+            false, 0, n.HasTriangle, n.Triangle);
+
+    RemovedWithTriangle(n: FastEarNode, triangle: Integer3): FastEarNode
+        => new FastEarNode(n.PointIndex, n.Prev, n.Next, n.Ring, false, false,
+            false, 0, true, triangle);
+
+    WithTriangle(n: FastEarNode, triangle: Integer3): FastEarNode
+        => new FastEarNode(n.PointIndex, n.Prev, n.Next, n.Ring, n.Active, n.PendingHole,
+            n.Convex, n.Blockers, true, triangle);
+
+    //== Geometry over indexed nodes.  These functions only observe the builder.
+
+    NodePoint(points: IArray<Point2D>, nodes: Buffer<FastEarNode>, i: Integer): Point2D
+        => points.At(nodes.At(i).PointIndex);
+
+    FastTurn(points: IArray<Point2D>, nodes: Buffer<FastEarNode>, a: Integer, b: Integer, c: Integer): Number
+        => (points.NodePoint(nodes, b) - points.NodePoint(nodes, a))
+            .Cross(points.NodePoint(nodes, c) - points.NodePoint(nodes, a));
+
+    FastSamePoint(points: IArray<Point2D>, nodes: Buffer<FastEarNode>, a: Integer, b: Integer): Boolean
+        => points.NodePoint(nodes, a).X == points.NodePoint(nodes, b).X
+        && points.NodePoint(nodes, a).Y == points.NodePoint(nodes, b).Y;
+
+    FastInsideTriangle(p: Point2D, a: Point2D, b: Point2D, c: Point2D): Boolean
+        => (b - a).Cross(p - a) >= 0.0
+        && (c - b).Cross(p - b) >= 0.0
+        && (a - c).Cross(p - c) >= 0.0;
+
+    NodeBlocks(points: IArray<Point2D>, nodes: Buffer<FastEarNode>, q: Integer,
+        a: Integer, b: Integer, c: Integer): Boolean
+    {
+        var p = points.NodePoint(nodes, q);
+        var pa = points.NodePoint(nodes, a);
+        var pb = points.NodePoint(nodes, b);
+        var pc = points.NodePoint(nodes, c);
+        return !(p.X == pa.X && p.Y == pa.Y)
+            && !(p.X == pb.X && p.Y == pb.Y)
+            && !(p.X == pc.X && p.Y == pc.Y)
+            && p.FastInsideTriangle(pa, pb, pc);
+    }
+
+    // Local visibility of b from the sector at a, for a counter-clockwise ring.
+    LocallyInside(points: IArray<Point2D>, nodes: Buffer<FastEarNode>, a: Integer, b: Integer): Boolean
+        => points.FastTurn(nodes, nodes.At(a).Prev, a, nodes.At(a).Next) > 0.0
+            ? points.FastTurn(nodes, a, b, nodes.At(a).Next) <= 0.0
+                && points.FastTurn(nodes, a, nodes.At(a).Prev, b) <= 0.0
+            : points.FastTurn(nodes, a, b, nodes.At(a).Prev) > 0.0
+                || points.FastTurn(nodes, a, nodes.At(a).Next, b) > 0.0;
+
+    //== Entry points
+
+    TriangulateFast(p: PolygonWithHoles): IArray<Integer3>
+    {
+        var pointCount = p.Points.Count;
+        var holeCount = p.HoleStarts.Count;
+        var capacity = pointCount + holeCount * 2;
+        var nodes = new Buffer<FastEarNode>(capacity);
+        var zero = new FastEarNode(0, 0, 0, 0, false, false, false, 0,
+            false, new Integer3(0, 0, 0));
+        var z = 0;
+        while (z < capacity)
+        {
+            nodes = nodes.Set(z, zero);
+            z = z + 1;
+        }
+
+        var outerHead = -1;
+        var outerRemaining = 0;
+        var ring = 0;
+
+        // Build and independently filter each oriented input ring.
+        while (ring <= holeCount)
+        {
+            var start = ring == 0 ? 0 : p.HoleStarts.At(ring - 1);
+            var end = ring == holeCount ? pointCount : p.HoleStarts.At(ring);
+            var count = end - start;
+            var area = 0.0;
+            var ai = start;
+            while (ai < end)
+            {
+                var aj = ai + 1 < end ? ai + 1 : start;
+                area = area + p.Points.At(ai).Vector2.Cross(p.Points.At(aj).Vector2);
+                ai = ai + 1;
+            }
+            var forward = ring == 0 ? area > 0.0 : area < 0.0;
+            var k = 0;
+            while (k < count)
+            {
+                var slot = forward ? start + k : end - 1 - k;
+                var prev = forward
+                    ? (k == 0 ? end - 1 : slot - 1)
+                    : (k == 0 ? start : slot + 1);
+                var next = forward
+                    ? (k + 1 == count ? start : slot + 1)
+                    : (k + 1 == count ? end - 1 : slot - 1);
+                nodes = nodes.Set(slot, new FastEarNode(slot, prev, next, ring, true,
+                    false, false, 0, false, new Integer3(0, 0, 0)));
+                k = k + 1;
+            }
+
+            var head = count > 0 ? (forward ? start : end - 1) : -1;
+            var remaining = count;
+            var changed = true;
+            while (changed && remaining > 0)
+            {
+                changed = false;
+                var visited = 0;
+                var current = head;
+                while (visited < remaining && remaining > 0)
+                {
+                    var nextCurrent = nodes.At(current).Next;
+                    var prevCurrent = nodes.At(current).Prev;
+                    var remove = remaining < 3
+                        || p.Points.FastSamePoint(nodes, current, nextCurrent)
+                        || p.Points.FastTurn(nodes, prevCurrent, current, nextCurrent) == 0.0;
+                    if (remove)
+                    {
+                        nodes = nodes.Set(prevCurrent, nodes.At(prevCurrent).WithNext(nextCurrent));
+                        nodes = nodes.Set(nextCurrent, nodes.At(nextCurrent).WithPrev(prevCurrent));
+                        nodes = nodes.Set(current, nodes.At(current).Removed);
+                        if (current == head) { head = nextCurrent; }
+                        remaining = remaining - 1;
+                        changed = true;
+                        current = prevCurrent;
+                    }
+                    current = nodes.At(current).Next;
+                    visited = visited + 1;
+                }
+            }
+
+            if (ring == 0)
+            {
+                outerHead = remaining >= 3 ? head : -1;
+                outerRemaining = remaining >= 3 ? remaining : 0;
+            }
+            else if (remaining >= 1)
+            {
+                var left = head;
+                var lp = nodes.At(head).Next;
+                while (lp != head)
+                {
+                    var lpp = p.Points.NodePoint(nodes, lp);
+                    var leftp = p.Points.NodePoint(nodes, left);
+                    if (lpp.X < leftp.X || (lpp.X == leftp.X && lpp.Y < leftp.Y))
+                    {
+                        left = lp;
+                    }
+                    lp = nodes.At(lp).Next;
+                }
+                nodes = nodes.Set(left, nodes.At(left).WithPendingHole(true));
+            }
+            ring = ring + 1;
+        }
+
+        if (outerHead < 0)
+        {
+            return new List<Integer3>().Freeze();
+        }
+
+        // Merge holes from left to right.  Selecting the next hole is O(n h),
+        // and each David-Eberly bridge search is O(n): O(n^2) total worst case.
+        var free = pointCount;
+        var pending = true;
+        while (pending)
+        {
+            pending = false;
+            var hole = -1;
+            var scan = 0;
+            while (scan < pointCount)
+            {
+                if (nodes.At(scan).Active && nodes.At(scan).PendingHole)
+                {
+                    pending = true;
+                    if (hole < 0
+                        || p.Points.NodePoint(nodes, scan).X < p.Points.NodePoint(nodes, hole).X
+                        || (p.Points.NodePoint(nodes, scan).X == p.Points.NodePoint(nodes, hole).X
+                            && p.Points.NodePoint(nodes, scan).Y < p.Points.NodePoint(nodes, hole).Y))
+                    {
+                        hole = scan;
+                    }
+                }
+                scan = scan + 1;
+            }
+            if (hole >= 0)
+            {
+                nodes = nodes.Set(hole, nodes.At(hole).WithPendingHole(false));
+                var hp = p.Points.NodePoint(nodes, hole);
+                var hx = hp.X;
+                var hy = hp.Y;
+                var qx = -1000000000000000000000000000000.0;
+                var bridge = -1;
+                var op = outerHead;
+                var firstOuter = true;
+                while (firstOuter || op != outerHead)
+                {
+                    firstOuter = false;
+                    var on = nodes.At(op).Next;
+                    var a = p.Points.NodePoint(nodes, op);
+                    var b = p.Points.NodePoint(nodes, on);
+                    if (hy <= a.Y && hy >= b.Y && b.Y != a.Y)
+                    {
+                        var x = a.X + (hy - a.Y) * (b.X - a.X) / (b.Y - a.Y);
+                        if (x <= hx && x > qx)
+                        {
+                            qx = x;
+                            bridge = a.X < b.X ? op : on;
+                            if (x == hx) { bridge = a.X == hx ? op : on; }
+                        }
+                    }
+                    op = on;
+                }
+
+                if (bridge >= 0 && qx != hx)
+                {
+                    var bp = p.Points.NodePoint(nodes, bridge);
+                    var mx = bp.X;
+                    var my = bp.Y;
+                    var tanMin = 1000000000000000000000000000000.0;
+                    op = outerHead;
+                    firstOuter = true;
+                    while (firstOuter || op != outerHead)
+                    {
+                        firstOuter = false;
+                        var cp = p.Points.NodePoint(nodes, op);
+                        var ta = new Point2D(hy < my ? hx : qx, hy);
+                        var tb = new Point2D(mx, my);
+                        var tc = new Point2D(hy < my ? qx : hx, hy);
+                        if (hx >= cp.X && cp.X >= mx && hx != cp.X
+                            && cp.FastInsideTriangle(ta, tb, tc))
+                        {
+                            var tan = (hy - cp.Y).Abs / (hx - cp.X);
+                            if (p.Points.LocallyInside(nodes, op, hole)
+                                && (tan < tanMin || (tan == tanMin && cp.X > p.Points.NodePoint(nodes, bridge).X)))
+                            {
+                                bridge = op;
+                                tanMin = tan;
+                            }
+                        }
+                        op = nodes.At(op).Next;
+                    }
+                }
+
+                if (bridge >= 0)
+                {
+                    var bridgeNext = nodes.At(bridge).Next;
+                    var holePrev = nodes.At(hole).Prev;
+                    var bridgeCopy = free;
+                    var holeCopy = free + 1;
+                    free = free + 2;
+                    nodes = nodes.Set(bridgeCopy,
+                        new FastEarNode(nodes.At(bridge).PointIndex, holeCopy, bridgeNext, 0,
+                            true, false, false, 0, false, new Integer3(0, 0, 0)));
+                    nodes = nodes.Set(holeCopy,
+                        new FastEarNode(nodes.At(hole).PointIndex, holePrev, bridgeCopy, 0,
+                            true, false, false, 0, false, new Integer3(0, 0, 0)));
+                    nodes = nodes.Set(bridge, nodes.At(bridge).WithNext(hole));
+                    nodes = nodes.Set(hole, nodes.At(hole).WithPrev(bridge));
+                    nodes = nodes.Set(holePrev, nodes.At(holePrev).WithNext(holeCopy));
+                    nodes = nodes.Set(bridgeNext, nodes.At(bridgeNext).WithPrev(bridgeCopy));
+                    outerRemaining = outerRemaining + 2;
+
+                    // The hole's original nodes have joined the outer ring.
+                    var joined = hole;
+                    var firstJoined = true;
+                    while (firstJoined || joined != holeCopy)
+                    {
+                        firstJoined = false;
+                        outerRemaining = outerRemaining + 1;
+                        joined = nodes.At(joined).Next;
+                    }
+                    outerRemaining = outerRemaining - 1;
+                }
+            }
+        }
+
+        // Heal all duplicate/collinear corners introduced by bridge slits.
+        var filtered = true;
+        while (filtered && outerRemaining > 0)
+        {
+            filtered = false;
+            var seen = 0;
+            var fp = outerHead;
+            while (seen < outerRemaining && outerRemaining > 0)
+            {
+                var fn = nodes.At(fp).Next;
+                var fprev = nodes.At(fp).Prev;
+                if (outerRemaining < 3
+                    || p.Points.FastSamePoint(nodes, fp, fn)
+                    || p.Points.FastTurn(nodes, fprev, fp, fn) == 0.0)
+                {
+                    nodes = nodes.Set(fprev, nodes.At(fprev).WithNext(fn));
+                    nodes = nodes.Set(fn, nodes.At(fn).WithPrev(fprev));
+                    nodes = nodes.Set(fp, nodes.At(fp).Removed);
+                    if (fp == outerHead) { outerHead = fn; }
+                    outerRemaining = outerRemaining - 1;
+                    filtered = true;
+                    fp = fprev;
+                }
+                fp = nodes.At(fp).Next;
+                seen = seen + 1;
+            }
+        }
+
+        // Initialize convexity and the number of reflex vertices blocking each ear.
+        var ep = outerHead;
+        var firstEar = true;
+        while (outerRemaining >= 3 && (firstEar || ep != outerHead))
+        {
+            firstEar = false;
+            var ea = nodes.At(ep).Prev;
+            var ec = nodes.At(ep).Next;
+            var convex = p.Points.FastTurn(nodes, ea, ep, ec) > 0.0;
+            var blockers = 0;
+            if (convex)
+            {
+                var eq = nodes.At(ec).Next;
+                while (eq != ea)
+                {
+                    if (p.Points.FastTurn(nodes, nodes.At(eq).Prev, eq, nodes.At(eq).Next) <= 0.0
+                        && p.Points.NodeBlocks(nodes, eq, ea, ep, ec))
+                    {
+                        blockers = blockers + 1;
+                    }
+                    eq = nodes.At(eq).Next;
+                }
+            }
+            nodes = nodes.Set(ep, nodes.At(ep).WithEarState(convex, blockers));
+            ep = nodes.At(ep).Next;
+        }
+
+        // Clip.  Removing an ear can only change the geometry of its two neighbors;
+        // every other candidate merely loses the removed point as a possible blocker.
+        var cursor = outerHead;
+        while (outerRemaining > 3)
+        {
+            var ear = -1;
+            var checked = 0;
+            var candidate = cursor;
+            while (checked < outerRemaining && ear < 0)
+            {
+                if (nodes.At(candidate).Convex && nodes.At(candidate).Blockers == 0)
+                {
+                    ear = candidate;
+                }
+                candidate = nodes.At(candidate).Next;
+                checked = checked + 1;
+            }
+            if (ear < 0)
+            {
+                // Invalid/self-intersecting input: retain the old implementation's
+                // termination guarantee by clipping the first positive-area corner.
+                checked = 0;
+                candidate = cursor;
+                while (checked < outerRemaining && ear < 0)
+                {
+                    if (p.Points.FastTurn(nodes, nodes.At(candidate).Prev, candidate,
+                        nodes.At(candidate).Next) > 0.0) { ear = candidate; }
+                    candidate = nodes.At(candidate).Next;
+                    checked = checked + 1;
+                }
+            }
+            if (ear < 0) { outerRemaining = 0; }
+            else
+            {
+                var prevEar = nodes.At(ear).Prev;
+                var nextEar = nodes.At(ear).Next;
+                var triangle = new Integer3(nodes.At(prevEar).PointIndex,
+                    nodes.At(ear).PointIndex, nodes.At(nextEar).PointIndex);
+
+                // Remove this point from unchanged candidate blocker counts.
+                var uq = nodes.At(nextEar).Next;
+                while (uq != prevEar)
+                {
+                    if (uq != ear && nodes.At(uq).Convex && nodes.At(uq).Blockers > 0
+                        && p.Points.NodeBlocks(nodes, ear, nodes.At(uq).Prev, uq, nodes.At(uq).Next))
+                    {
+                        nodes = nodes.Set(uq, nodes.At(uq).WithoutBlocker);
+                    }
+                    uq = nodes.At(uq).Next;
+                }
+
+                nodes = nodes.Set(prevEar, nodes.At(prevEar).WithNext(nextEar));
+                nodes = nodes.Set(nextEar, nodes.At(nextEar).WithPrev(prevEar));
+                nodes = nodes.Set(ear, nodes.At(ear).RemovedWithTriangle(triangle));
+                outerRemaining = outerRemaining - 1;
+                cursor = nextEar;
+
+                // Recompute the two changed candidates in O(n) each.
+                var side = 0;
+                while (side < 2)
+                {
+                    var u = side == 0 ? prevEar : nextEar;
+                    var ua = nodes.At(u).Prev;
+                    var uc = nodes.At(u).Next;
+                    var uconvex = p.Points.FastTurn(nodes, ua, u, uc) > 0.0;
+                    var ublockers = 0;
+                    if (uconvex)
+                    {
+                        var v = nodes.At(uc).Next;
+                        while (v != ua)
+                        {
+                            if (p.Points.FastTurn(nodes, nodes.At(v).Prev, v, nodes.At(v).Next) <= 0.0
+                                && p.Points.NodeBlocks(nodes, v, ua, u, uc))
+                            {
+                                ublockers = ublockers + 1;
+                            }
+                            v = nodes.At(v).Next;
+                        }
+                    }
+                    nodes = nodes.Set(u, nodes.At(u).WithEarState(uconvex, ublockers));
+                    side = side + 1;
+                }
+            }
+        }
+
+        if (outerRemaining == 3)
+        {
+            var a = cursor;
+            var b = nodes.At(a).Next;
+            var c = nodes.At(b).Next;
+            if (p.Points.FastTurn(nodes, a, b, c) > 0.0)
+            {
+                nodes = nodes.Set(a, nodes.At(a).WithTriangle(
+                    new Integer3(nodes.At(a).PointIndex, nodes.At(b).PointIndex, nodes.At(c).PointIndex)));
+            }
+        }
+
+        var frozen = nodes.Freeze();
+        return frozen.Reduce(new List<Integer3>(), (result, n)
+            => n.HasTriangle ? result.Add(n.Triangle) : result).Freeze();
+    }
+
+    TriangulateFast(poly: Polygon): IArray<Integer3>
+        => new PolygonWithHoles(poly.Points, poly.Points.Map(x => 0).Take(0)).TriangulateFast;
+
+    TriangulateFast(coords: IArray<Number>, holeStarts: IArray<Integer>): IArray<Integer3>
+        => new PolygonWithHoles(coords.MapPairs((x, y) => new Point2D(x, y)), holeStarts).TriangulateFast;
+}

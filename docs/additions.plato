@@ -1,0 +1,457 @@
+// ============================================================================
+// additions.plato  —  PROPOSAL FOR REVIEW (not yet compiled or gated)
+//
+// Proposed new/modified types, concepts, and functions for the Plato standard
+// library, oriented to geometry + graphics and to moving existing C# code
+// (Ara3D.Geometry, incl. the Topology half-edge class) into Plato.
+//
+// Status markers used below:
+//   [PORT]  direct port of pure C# already in Ara3D.Geometry
+//   [NEW]   new capability
+//   [MOD]   modifies/replaces something already in plato-src
+//   [NEEDS] depends on a compiler feature that isn't ready yet (called out)
+//
+// This file is a DRAFT: some items are aspirational and will need refinement to
+// compile. It is deliberately excluded from the gated build until reviewed.
+// ============================================================================
+
+
+// ============================================================================
+// 1. Scalar & tolerance types
+// ============================================================================
+
+// [NEW] The blend/interpolation parameter (your chosen name). Usually in [0,1]
+// but NOT clamped — extrapolation (t<0, t>1) is valid.
+// https://en.wikipedia.org/wiki/Linear_interpolation
+// Follow-up (breaking): thread this through IInterpolatable.Lerp's `t` parameter.
+type Fraction
+    implements IValue, IOrderable
+{
+    Value: Number;
+}
+
+// [NEW] Absolute+relative tolerance for robust floating-point comparison.
+// https://en.wikipedia.org/wiki/Approximation_error
+type Tolerance
+    implements IValue
+{
+    Absolute: Number;
+    Relative: Number;
+}
+
+// [NEW] Approximate equality, first-class instead of scattered helper functions.
+concept IApproximate
+{
+    ApproxEquals(a: Self, b: Self, tolerance: Tolerance): Boolean;
+}
+
+// [NEW] Finiteness predicates (catches NaN/Inf leaking through geometry).
+concept IFinite
+{
+    IsFinite(x: Self): Boolean;
+    IsNaN(x: Self): Boolean;
+}
+
+// [NEW] Honest return type for partial queries (ray miss, no closest point,
+// non-invertible matrix) — replaces -1.0 sentinels and success-flag tuples.
+// https://en.wikipedia.org/wiki/Option_type
+type Option<T>
+    implements IValue
+{
+    HasValue: Boolean;
+    Value: T;   // meaningful only when HasValue
+}
+
+library Options
+{
+    Some(value: $T): Option<$T> => new Option<$T>(true, value);
+    None(_: Option<$T>): Option<$T> => new Option<$T>(false, default);
+    ValueOr(x: Option<$T>, fallback: $T): $T => x.HasValue ? x.Value : fallback;
+}
+
+
+// ============================================================================
+// 2. Array reducers (missing on IArray<Number> / IArray<Vector*>)
+//    Built on the existing Reduce; unlock statistics, centroids, bounds folds.
+// ============================================================================
+
+library ArrayReducers
+{
+    Sum(xs: IArray<Number>): Number => xs.Reduce(0.0, (a, b) => a + b);
+    Average(xs: IArray<Number>): Number => xs.Sum / xs.Count;
+    Min(xs: IArray<Number>): Number => xs.Reduce(xs.First, (a, b) => a.Min(b));
+    Max(xs: IArray<Number>): Number => xs.Reduce(xs.First, (a, b) => a.Max(b));
+
+    Sum(xs: IArray<Vector3>): Vector3 => xs.Reduce(Vector3.Zero, (a, b) => a + b);
+    Sum(xs: IArray<Vector2>): Vector2 => xs.Reduce(Vector2.Zero, (a, b) => a + b);
+
+    // Centroid of a point set.
+    Average(xs: IArray<Vector3>): Vector3 => xs.Sum / xs.Count;
+
+    // [NEEDS affine builders §12] Filter already ships there as the proof slice:
+    //   Filter(xs, p) => xs.Reduce(xs.EmptyList(), (a,x) => p(x) ? a.Add(x) : a).Freeze();
+}
+
+
+// ============================================================================
+// 3. Linear-algebra concepts & missing types
+// ============================================================================
+
+// [NEW] Inner-product space: the single highest-leverage concept addition.
+// Makes projection / Gram-Schmidt / closest-point / least-squares generic
+// instead of per-vector. (vectors.plato already provides these on IVector;
+// promoting them to a concept generalizes and de-duplicates.)
+// https://en.wikipedia.org/wiki/Inner_product_space
+concept IInnerProduct
+    inherits IVector
+{
+    Dot(a: Self, b: Self): Number;
+}
+
+// [NEW] 3x3 matrix — no System.Numerics equivalent. Needed for normal matrices,
+// inertia/covariance tensors, and rotation-without-translation.
+// https://en.wikipedia.org/wiki/Matrix_(mathematics)
+type Matrix3x3
+    implements IValue
+{
+    Row1: Vector3;
+    Row2: Vector3;
+    Row3: Vector3;
+}
+
+library Matrices3x3
+{
+    Column1(m: Matrix3x3): Vector3 => (m.Row1.X, m.Row2.X, m.Row3.X);
+    Column2(m: Matrix3x3): Vector3 => (m.Row1.Y, m.Row2.Y, m.Row3.Y);
+    Column3(m: Matrix3x3): Vector3 => (m.Row1.Z, m.Row2.Z, m.Row3.Z);
+    Transpose(m: Matrix3x3): Matrix3x3 => (m.Column1, m.Column2, m.Column3);
+    Multiply(m: Matrix3x3, v: Vector3): Vector3 => (m.Row1.Dot(v), m.Row2.Dot(v), m.Row3.Dot(v));
+    // https://en.wikipedia.org/wiki/Determinant
+    Determinant(m: Matrix3x3): Number => m.Row1.Dot(m.Row2.Cross(m.Row3));
+}
+
+// [NEW] Complex number — the most conspicuous absence for the scientific half.
+// Slots into the existing hierarchy exactly as Quaternion does.
+// https://en.wikipedia.org/wiki/Complex_number
+type Complex
+    implements IValue, IInvertible
+{
+    Real: Number;
+    Imaginary: Number;
+}
+
+library Complexes
+{
+    Add(a: Complex, b: Complex): Complex => (a.Real + b.Real, a.Imaginary + b.Imaginary);
+    Multiply(a: Complex, b: Complex): Complex
+        => (a.Real * b.Real - a.Imaginary * b.Imaginary,
+            a.Real * b.Imaginary + a.Imaginary * b.Real);
+    Conjugate(a: Complex): Complex => (a.Real, -a.Imaginary);
+    MagnitudeSquared(a: Complex): Number => a.Real.Sqr + a.Imaginary.Sqr;
+    Magnitude(a: Complex): Number => a.MagnitudeSquared.Sqrt;
+    // https://en.wikipedia.org/wiki/Complex_number#Reciprocal_and_division
+    Inverse(a: Complex): Complex => a.Conjugate / a.MagnitudeSquared;
+}
+
+
+// ============================================================================
+// 4. Direction / unit-vector semantic types
+//    Catch the same bug class Angle-vs-Number already catches: "is it
+//    normalized?" and "does it transform as a normal?" become type-level facts.
+// ============================================================================
+
+// [NEW] A vector whose invariant is unit length (construction normalizes).
+type UnitVector3 implements IValue { X: Number; Y: Number; Z: Number; }
+
+// [NEW] A direction (unit vector transformed by the model matrix).
+type Direction3D implements IValue { Value: UnitVector3; }
+
+// [NEW] A surface normal — transforms by the INVERSE-TRANSPOSE, unlike a
+// direction, which is exactly why it deserves its own type.
+// https://en.wikipedia.org/wiki/Normal_(geometry)#Transforming_normals
+type Normal3D implements IValue { Value: UnitVector3; }
+
+library UnitVectors
+{
+    UnitVector3(v: Vector3): UnitVector3 => v.Normalize.Tuple3;   // normalizing ctor
+    Vector3(u: UnitVector3): Vector3 => (u.X, u.Y, u.Z);
+    Direction3D(v: Vector3): Direction3D => new Direction3D(v.UnitVector3);
+    Normal3D(v: Vector3): Normal3D => new Normal3D(v.UnitVector3);
+}
+
+
+// ============================================================================
+// 5. Measures (engineering / BIM) — dimensional algebra as a Plato showcase
+//    Length*Length -> Area, Area*Length -> Volume: the multiply RULE is the type.
+// ============================================================================
+
+// https://en.wikipedia.org/wiki/Length
+type Length implements IMeasure { Meters: Number; }
+// https://en.wikipedia.org/wiki/Area
+type Area   implements IMeasure { SquareMeters: Number; }
+// https://en.wikipedia.org/wiki/Volume
+type Volume implements IMeasure { CubicMeters: Number; }
+
+library Measures2
+{
+    Multiply(a: Length, b: Length): Area   => new Area(a.Meters * b.Meters);
+    Multiply(a: Area, b: Length): Volume   => new Volume(a.SquareMeters * b.Meters);
+    Multiply(a: Length, b: Area): Volume   => new Volume(a.Meters * b.SquareMeters);
+    Divide(a: Area, b: Length): Length     => new Length(a.SquareMeters / b.Meters);
+}
+
+
+// ============================================================================
+// 6. Universal geometry-query concepts + hit records
+//    Make every shape answer the same practical questions.
+// ============================================================================
+
+concept IBounded3D    { Bounds(x: Self): Bounds3D; }
+concept IContains3D   { Contains(x: Self, p: Point3D): Boolean; }
+concept IDistanceTo3D { Distance(x: Self, p: Point3D): Number; }
+concept IClosestPoint3D { ClosestPoint(x: Self, p: Point3D): Point3D; }
+
+// [NEW] Ray/geometry intersection record (replaces -1.0 sentinels).
+type RayHit3D
+    implements IValue
+{
+    Hit: Boolean;
+    Distance: Number;   // t along the ray
+    Position: Point3D;
+    Normal: Normal3D;
+}
+
+
+// ============================================================================
+// 7. Point / line / segment / plane queries   [PORT from GeometryUtil.cs]
+//    Pure total functions currently trapped in C#.
+// ============================================================================
+
+library PointLineQueries
+{
+    // Closest parameter t in [0,1] of point p projected onto segment [a,b].
+    // https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
+    ClosestParameter(seg: Line3D, p: Point3D): Number
+    {
+        var ab = seg.B - seg.A;
+        var t = (p - seg.A).Dot(ab) / ab.Dot(ab);
+        return t.Clamp(0.0, 1.0);
+    }
+
+    ClosestPoint(seg: Line3D, p: Point3D): Point3D => seg.Eval(seg.ClosestParameter(p));
+    Distance(seg: Line3D, p: Point3D): Number => (p - seg.ClosestPoint(p)).Length;
+
+    // Project onto the INFINITE line through the segment; reject = perpendicular part.
+    ProjectOntoLine(seg: Line3D, p: Point3D): Point3D
+        => seg.A + (p - seg.A).Project(seg.B - seg.A);
+    Reject(seg: Line3D, p: Point3D): Vector3
+        => (p - seg.A).Reject(seg.B - seg.A);
+}
+
+library VectorQueries
+{
+    // Component of a along b removed. https://en.wikipedia.org/wiki/Vector_projection
+    Reject(a: Vector3, b: Vector3): Vector3 => a - a.Project(b);
+    Reject(a: Vector2, b: Vector2): Vector2 => a - a.Project(b);
+
+    // Longest / shortest axis of a vector (for OBB fitting, axis selection).
+    LongestAxis(v: Vector3): Integer
+        => v.X.Abs >= v.Y.Abs ? (v.X.Abs >= v.Z.Abs ? 0 : 2) : (v.Y.Abs >= v.Z.Abs ? 1 : 2);
+
+    // Any unit vector perpendicular to v (stable basis construction).
+    AnyPerpendicular(v: Vector3): Vector3
+        => v.X.Abs < v.Y.Abs ? v.Cross(XAxis3D).Normalize : v.Cross(YAxis3D).Normalize;
+}
+
+library PlaneQueries
+{
+    Plane(normal: Vector3, point: Point3D): Plane => new Plane(normal.Normalize, normal.Normalize.Dot(point.Vector3));
+    // Signed distance from a plane (negative behind). https://mathworld.wolfram.com/Point-PlaneDistance.html
+    SignedDistance(pl: Plane, p: Point3D): Number => pl.Normal.Dot(p.Vector3) - pl.D;
+    Project(pl: Plane, p: Point3D): Point3D => p - pl.Normal * pl.SignedDistance(p);
+    // Ray/plane intersection parameter (None when parallel).
+    // https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
+    IntersectRay(pl: Plane, r: Ray3D): Number
+        => (pl.D - pl.Normal.Dot(r.Origin.Vector3)) / pl.Normal.Dot(r.Direction);
+}
+
+
+// ============================================================================
+// 8. Bounds queries   [PORT from GeometryUtil.cs]
+// ============================================================================
+
+library BoundsQueries
+{
+    Size(b: Bounds3D): Vector3 => b.Max - b.Min;
+    Center(b: Bounds3D): Point3D => b.Min.Average(b.Max);
+    Contains(b: Bounds3D, p: Point3D): Boolean => p.Vector3.Between(b.Min.Vector3, b.Max.Vector3);
+    Contains(b: Bounds3D, other: Bounds3D): Boolean => b.Contains(other.Min) && b.Contains(other.Max);
+    Intersects(a: Bounds3D, b: Bounds3D): Boolean
+        => a.Min.X <= b.Max.X && a.Max.X >= b.Min.X
+        && a.Min.Y <= b.Max.Y && a.Max.Y >= b.Min.Y
+        && a.Min.Z <= b.Max.Z && a.Max.Z >= b.Min.Z;
+    Expand(b: Bounds3D, v: Vector3): Bounds3D => (b.Min - v, b.Max + v);
+    Union(a: Bounds3D, b: Bounds3D): Bounds3D => (a.Min.Min(b.Min), a.Max.Max(b.Max));
+    Include(b: Bounds3D, p: Point3D): Bounds3D => (b.Min.Min(p), b.Max.Max(p));
+}
+
+
+// ============================================================================
+// 9. Angle & rotation utilities   [PORT from AngleUtils.cs / GeometryUtil.cs]
+// ============================================================================
+
+library AngleUtils
+{
+    // The missing explicit Number->Angle constructor (close the implicit hole).
+    Radians(x: Number): Angle => new Angle(x);
+    // Wrap into (-pi, pi]. https://en.wikipedia.org/wiki/Argument_(complex_analysis)#Principal_value
+    Normalize(a: Angle): Angle => (a.Turns.Fract - (a.Turns.Fract > 0.5 ? 1.0 : 0.0)).Turns;
+    AngularDistance(a: Angle, b: Angle): Angle => (b - a).Normalize;
+    // Shortest-arc interpolation (avoids the 359°->0° long way around).
+    AngularLerp(a: Angle, b: Angle, t: Number): Angle => a + a.AngularDistance(b) * t;
+}
+
+library RotationUtils
+{
+    // Shortest-arc quaternion rotating unit vector `from` onto unit vector `to`.
+    // https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
+    RotateTo(from: Vector3, to: Vector3): Quaternion
+    {
+        var axis = from.Cross(to);
+        var w = 1.0 + from.Dot(to);
+        return new Quaternion(axis.X, axis.Y, axis.Z, w).Normalize;
+    }
+    AlignZAxisWith(dir: Vector3): Quaternion => ZAxis3D.RotateTo(dir.Normalize);
+}
+
+
+// ============================================================================
+// 10. Mass properties & analysis   [PORT from Topology.cs / GeometryUtil.cs]
+// ============================================================================
+
+library MassProperties
+{
+    SurfaceArea(m: TriangleMesh3D): Number
+        => m.Triangles.Reduce(0.0, (acc, t) => acc + t.Area);
+
+    // Enclosed (signed) volume via the divergence theorem — direct port of
+    // Topology.GetEstimatedVolume: sum of tetra (origin, A, B, C) volumes.
+    // https://en.wikipedia.org/wiki/Polyhedron#Volume
+    EnclosedVolume(m: TriangleMesh3D): Number
+        => m.Triangles.Reduce(0.0,
+             (acc, t) => acc + t.A.Vector3.Dot(t.B.Vector3.Cross(t.C.Vector3))) / 6.0;
+
+    // Vertex centroid (cheap); area-weighted centroid is the accurate version.
+    Centroid(m: TriangleMesh3D): Point3D => m.Points.Map(p => p.Vector3).Average.Point3D;
+
+    IsWatertight(m: TriangleMesh3D): Boolean => m.HalfEdges.All(he => he.HasTwin);
+}
+
+
+// ============================================================================
+// 11. Half-edge topology (PURE INDEX NAVIGATION)   [PORT from Topology.cs]
+//
+// For a triangle mesh, half-edge id `he` factors as (face = he/3, corner = he%3).
+// All of the following is pure index arithmetic over (Points, FaceIndices) and
+// ports Topology.cs directly. Adjacency that needs building (the twin array) is
+// carried as a precomputed IArray<Integer> (-1 = boundary); constructing it is
+// the one mutation-heavy step (§12 affine builders, or stays in C#).
+// https://en.wikipedia.org/wiki/Doubly_connected_edge_list
+// ============================================================================
+
+// A triangle mesh enriched with a precomputed twin half-edge per half-edge.
+type HalfEdgeMesh
+    implements IValue
+{
+    Mesh: TriangleMesh3D;
+    Twins: IArray<Integer>;   // twin half-edge id, or -1 on a boundary
+}
+
+library HalfEdges
+{
+    HalfEdgeCount(m: TriangleMesh3D): Integer => m.FaceIndices.Count * 3;
+    FaceOf(he: Integer): Integer => he / 3;
+    CornerOf(he: Integer): Integer => he % 3;
+    NextHalfEdge(he: Integer): Integer => he.FaceOf * 3 + (he.CornerOf + 1) % 3;
+    PrevHalfEdge(he: Integer): Integer => he.FaceOf * 3 + (he.CornerOf + 2) % 3;
+
+    // Start/end vertex ids of a half-edge.
+    StartVertex(m: TriangleMesh3D, he: Integer): Integer => m.FaceIndices.At(he.FaceOf).At(he.CornerOf);
+    EndVertex(m: TriangleMesh3D, he: Integer): Integer => m.FaceIndices.At(he.FaceOf).At((he.CornerOf + 1) % 3);
+    HalfEdgeLine(m: TriangleMesh3D, he: Integer): Line3D
+        => new Line3D(m.Points.At(m.StartVertex(he)), m.Points.At(m.EndVertex(he)));
+
+    // Twin-based queries on a HalfEdgeMesh.
+    HasTwin(m: HalfEdgeMesh, he: Integer): Boolean => m.Twins.At(he) >= 0;
+    Twin(m: HalfEdgeMesh, he: Integer): Integer => m.Twins.At(he);
+    IsBoundary(m: HalfEdgeMesh, he: Integer): Boolean => !m.HasTwin(he);
+    // Dihedral angle across an inner edge (crease detection / FaceGroupsByCreaseAngle).
+    // https://en.wikipedia.org/wiki/Dihedral_angle
+    DihedralAngle(m: HalfEdgeMesh, he: Integer): Angle
+        => m.Mesh.Triangles.At(he.FaceOf).Normal.Angle(m.Mesh.Triangles.At(m.Twin(he).FaceOf).Normal);
+
+    HalfEdges(m: TriangleMesh3D): IArray<Integer> => m.HalfEdgeCount.Range;
+    // [NEEDS §12] BuildTwins: group half-edges by undirected (min,max) vertex pair
+    // and pair them up — the one construction step that needs builders or C#.
+}
+
+
+// ============================================================================
+// 12. Affine builders — READY. Promote the intrinsic signatures to production,
+//     then use them for procedural mesh construction.
+//
+// unique type List<T>/Buffer<T> already ship in unique.plato; the body-less
+// intrinsic signatures currently live in plato-test-src. First production use =
+// move this library into plato-src (one-time _Vector*.g.cs comment-id churn).
+// ============================================================================
+
+library BuilderIntrinsics
+{
+    Count(xs: List<$T>): Integer;
+    At(xs: List<$T>, n: Integer): $T;
+    Add(xs: List<$T>, x: $T): List<$T>;
+    AddRange(xs: List<$T>, values: IArray<$T>): List<$T>;
+    Set(xs: List<$T>, i: Integer, x: $T): List<$T>;
+    Freeze(xs: List<$T>): IArray<$T>;
+    EmptyList(xs: IArray<$T>): List<$T>;
+
+    Count(xs: Buffer<$T>): Integer;
+    At(xs: Buffer<$T>, n: Integer): $T;
+    Set(xs: Buffer<$T>, i: Integer, x: $T): Buffer<$T>;
+    Freeze(xs: Buffer<$T>): IArray<$T>;
+}
+
+library ProceduralMeshes
+{
+    // Fan-triangulate a convex polygon (indices) around vertex 0.
+    // https://en.wikipedia.org/wiki/Polygon_triangulation#Fan_triangulation
+    FanTriangles(n: Integer): IArray<Integer3>
+        => (n - 2).Range.Map(i => new Integer3(0, i + 1, i + 2));
+
+    // Triangulate a quad mesh into a triangle mesh (each quad -> 2 triangles),
+    // built append-heavy with a List builder.
+    Triangulate(m: QuadMesh3D): TriangleMesh3D
+    {
+        var tris = m.FaceIndices.Reduce(m.FaceIndices.EmptyTriangleList(),
+            (acc, q) => acc.Add(new Integer3(q.A, q.B, q.C)).Add(new Integer3(q.A, q.C, q.D)));
+        return new TriangleMesh3D(m.Points, tris.Freeze());
+    }
+
+    // Extrude a closed 2D polygon to a prism: bottom ring + top ring + side quads.
+    // Vertices written into a fixed-size Buffer (2*n slots), sides appended to a List.
+    ExtrudePrism(poly: IArray<Point2D>, height: Number): QuadMesh3D
+    {
+        var n = poly.Count;
+        var verts = poly.Indices.Reduce(new Buffer<Point3D>(n * 2),
+            (buf, i) => buf
+                .Set(i,     new Point3D(poly.At(i).X, poly.At(i).Y, 0.0))
+                .Set(i + n, new Point3D(poly.At(i).X, poly.At(i).Y, height)));
+        var sides = poly.Indices.Reduce(verts.EmptyQuadList(),
+            (acc, i) => acc.Add(new Integer4(i, (i + 1) % n, (i + 1) % n + n, i + n)));
+        return new QuadMesh3D(verts.Freeze(), sides.Freeze());
+    }
+
+    // 1-4 subdivision of a triangle mesh (midpoint split), assembled with builders.
+    // https://en.wikipedia.org/wiki/Loop_subdivision (topology step only)
+    // [NEEDS a midpoint/vertex-dedup map — sketch of the builder-driven shape.]
+}

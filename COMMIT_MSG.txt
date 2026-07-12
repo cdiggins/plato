@@ -1,0 +1,43 @@
+TIR emit for ALL styles + writers; intrinsics declared to checker; solids surfaces
+
+Item 1 — the Typed IR now drives every emit path (previously default C# style only):
+- Extension style: TirCSharpBodyWriter gains bare-name re-qualification + moved-no-arg "()"
+  (WriteBareName); moved bodies route through the ground TIR in ExtensionStyleWriter.
+- Optimize: TirComponentUnroller mirrors ComponentUnroller on the TIR (marker nodes
+  TirComponentAccess/TirConstructorCall/TirBooleanChain).
+- Scalar erasure: ScalarEraseAnalysis (the legacy float-land decision procedures over Origin
+  symbols) + scalar mode in TirCSharpBodyWriter. scalar+optimize combo stays legacy.
+- TS/Rust: TirTypeScriptBodyWriter / TirRustBodyWriter + UseTir on both writers (CLI --no-tir
+  plumbed); AMBIGUOUS-comment symbol-id leak retired from TS/Rust output.
+- Shared: TirEmitSource (one checker run, two lookups) extracted from CSharpWriter;
+  TirLambdaCaptureRewriter moved to PlatoCompiler/Checking.
+- Flip proofs: {Extension,TypeScript,Rust,Optimize,Scalar}EmitFlagOnTests — flag-on output
+  byte-identical to flag-off on the full library, fallback 0 everywhere.
+
+Item 2 — handwritten intrinsics declared in plato-src/intrinsics.plato (Number MinValue/
+MaxValue/ReciprocalSquareRootEstimate/Linear/Quadratic/Cubic, IOrderable Equals/NotEquals,
+Angle(x: Number) cast + Number.Angle wrapper property; hardwired scalar Number shims retired
+in favor of the generated forwarders; scalar shim skips bodiless statics). Checker
+diagnostics 78 -> 68 of 823 (CHK201 22 -> 13); CheckerDiagnosticsSummaryTests is the burn-down
+report.
+
+Item 3 — library Solids (plato-src/solids.plato): Eval/ClosedX/ClosedY for all 11 ISolid
+types (sphere/ellipsoid/torus/cone/cone-segment/capsule/tube/N-prism/N-pyramid/box/pyramid)
+with NGonPoint/SquarePoint/UnitSphere helpers; the NotImplementedException stubs are gone.
+Numerically verified (poles/corners/edge midpoints exact).
+
+Item 4 — docs/optimizer-stage2-plan.md (loop-into-buffer lowering increments; not implemented).
+
+Gates: check-all ALL PASS (regen-diff, lint, conformance V1/V2/Opt/Scalar, SDK build,
+GeometryTests); PlatoTests 86/86; regen applied (_Number forwarders + solids members).
+
+Optimizer stage 2 increment 1 (--optimize-arrays): loop-into-buffer lowering of
+multi-consumed Map/MapRange results. Eager MapEager/MapRangeEager intrinsics in
+Plato.Intrinsics/ArrayExtensions.cs (array fill; overload set mirrors Map exactly);
+TirArrayMaterializer renames call sites in materialization positions — constructor/
+struct-tuple arguments (the mesh Deform/To3D family, 10 stdlib sites) and multi- or
+loop-referenced lets. Opt conformance now generates with --optimize --optimize-arrays
+(204/204 + MapEager presence check); ArrayMaterializerTests pins the transform footprint
+(rename-only diff); probe: 1.37x on 4-pass consumption of a stored 1M-point map, each
+element evaluated exactly once. Plan + measurements: docs/optimizer-stage2-plan.md.
+PlatoTests 87/87; check-all ALL PASS.

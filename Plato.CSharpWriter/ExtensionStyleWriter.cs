@@ -120,6 +120,11 @@ public class ExtensionStylePlan
     // struct to keep them in - everything becomes an extension method on the primitive).
     public bool IsErasedScalar { get; }
 
+    // MethodsOnly (--methods) only: no-arg STATIC members with generated bodies — emitted as
+    // static METHODS, so bare-name call sites need "()". Aggregated into
+    // CSharpWriter.StaticNoArgMethodNames.
+    public HashSet<string> GeneratedNoArgStaticNames { get; } = new HashSet<string>();
+
     public IEnumerable<FunctionInstance> MovedFunctions => _moved;
 
     public ExtensionStylePlan(CSharpWriter writer, ConcreteType ct)
@@ -165,14 +170,20 @@ public class ExtensionStylePlan
             keepNames.Add(f.Name);
 
         // No-arg properties that unconditionally remain in the struct. An erased scalar type
-        // has no struct: it contributes no kept property names at all.
+        // has no struct: it contributes no kept property names at all. MethodsOnly (--methods):
+        // only fields, pseudo-fields and the HANDWRITTEN intrinsic members of the primitive
+        // types keep property/field access syntax — generated no-arg members (stubs included)
+        // become methods, so they contribute nothing here.
         if (!IsErasedScalar)
         {
             KeptNoArgPropertyNames.UnionWith(fieldNames);
             if (pseudoFields != null)
                 KeptNoArgPropertyNames.UnionWith(pseudoFields);
             foreach (var f in ct.UnimplementedFunctions)
-                if (f.ParameterNames.Count == 1)
+                if (f.ParameterNames.Count == 1
+                    && (!writer.MethodsOnly
+                        || (!writer.NoProperties && isPrimitive && AST.Operators.NameToUnaryOperator(f.Name) == null
+                            && !CSharpWriter.IgnoredFunctions.Contains(f.Name))))
                     KeptNoArgPropertyNames.Add(f.Name);
         }
 
@@ -219,8 +230,16 @@ public class ExtensionStylePlan
             if (keep)
             {
                 keepNames.Add(f.Name);
-                if (!IsErasedScalar && !fi.IsStatic && f.ParameterNames.Count == 1)
+                // MethodsOnly: kept GENERATED members emit as methods; only bodiless NON-operator
+                // members of the primitive types (handwritten in Plato.Intrinsics) remain
+                // properties (operator-named bodiless members are GENERATED from the operator).
+                if (!IsErasedScalar && !fi.IsStatic && f.ParameterNames.Count == 1
+                    && (!writer.MethodsOnly
+                        || (!writer.NoProperties && isPrimitive && f.Implementation.Body == null && !fi.IsOperator)))
                     KeptNoArgPropertyNames.Add(f.Name);
+                if (writer.MethodsOnly && fi.IsStatic && f.Implementation.Body != null
+                    && f.ParameterNames.Count <= 1)
+                    GeneratedNoArgStaticNames.Add(f.Name);
             }
             else
                 movable.Add(f);
@@ -230,7 +249,10 @@ public class ExtensionStylePlan
         {
             if (!keepNames.Contains(f.Name))
                 _moved.Add(f);
-            else if (!IsErasedScalar && f.ParameterNames.Count == 1)
+            else if (!IsErasedScalar && f.ParameterNames.Count == 1
+                && (!writer.MethodsOnly || KeptNoArgPropertyNames.Contains(f.Name)
+                    || fieldNames.Contains(f.Name)
+                    || (pseudoFields != null && System.Linq.Enumerable.Contains(pseudoFields, f.Name))))
                 KeptNoArgPropertyNames.Add(f.Name); // stays in the struct as a property (name-shadow keep)
         }
     }
@@ -316,8 +338,7 @@ public static class ExtensionStyleWriter
             if (tir != null)
             {
                 writer.TirBodiesEmitted++;
-                tir = TirComponentUnroller.UnrollFunction(tir, fi, writer);
-                tir = TirArrayMaterializer.Rewrite(tir, writer);
+                tir = writer.RunOptimizerPasses(tir, fi);
                 tw.Write(new TirCSharpBodyWriter(tw, tir, isStatic: true, fi).ToString());
             }
             else

@@ -44,8 +44,13 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// <summary>The fully-ground monomorphized TIR body for a (source function, concrete type),
         /// or null when none exists (non-ground / unresolved / not bodied).</summary>
         public TirFunction TryGetGroundTir(FunctionDef original, TypeDef concreteType)
-            => original != null && concreteType != null
-                && _groundTirByKey.TryGetValue((original, concreteType.Name), out var tir)
+            => TryGetGroundTir(original, concreteType?.Name);
+
+        /// <summary>Name-keyed variant, for callers that know the receiver's concrete type only as
+        /// the solved type NAME (e.g. the inliner looking up a callee's body).</summary>
+        public TirFunction TryGetGroundTir(FunctionDef original, string concreteTypeName)
+            => original != null && concreteTypeName != null
+                && _groundTirByKey.TryGetValue((original, concreteTypeName), out var tir)
                     ? tir
                     : null;
 

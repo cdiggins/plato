@@ -53,6 +53,9 @@ public class CSharpFunctionBodyWriter : CodeBuilder<CSharpFunctionBodyWriter>
         }
 
         var isProp = propOverride ?? (isStatic ? fi.NumParameters == 0 : fi.NumParameters == 1);
+        // MethodsOnly (--methods): match the method-shaped signature (see CSharpFunctionInfo).
+        if (isProp && fi.EmitAsMethod)
+            isProp = false;
         if (isProp)
             Write($" {{ {CSharpTypeWriter.Annotation} get ");
 
@@ -549,7 +552,14 @@ public class CSharpFunctionBodyWriter : CodeBuilder<CSharpFunctionBodyWriter>
             return Write(arg).Write("[").WriteCommaList(functionCall.Args.Skip(1)).Write("]");
         }
 
-        Write(arg).Write(".");
+        // A ternary (or lambda/assignment/boolean-chain) receiver must be parenthesized or the
+        // member access binds to its last operand (mirrors the TIR writer; the TS/Rust legacy
+        // writers always had this rule).
+        if (arg is ConditionalExpression || arg is Lambda || arg is Assignment || arg is BooleanChainExpression)
+            Write("(").Write(arg).Write(")");
+        else
+            Write(arg);
+        Write(".");
         // Member-access position: the name is resolved against the receiver, so the
         // extension-style re-qualification (and the constants lookup) must never apply here.
         if (Writer.ExtensionStyle && functionCall.Function is FunctionGroupRefSymbol memberRef)
